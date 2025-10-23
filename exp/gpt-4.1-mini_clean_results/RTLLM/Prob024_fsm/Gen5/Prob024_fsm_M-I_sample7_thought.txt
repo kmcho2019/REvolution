@@ -1,0 +1,13 @@
+The existing Mealy FSM is already minimal and clean, using 3-bit binary state encoding with straightforward combinational next-state and output logic. To further optimize PPA, the key opportunities are subtle:
+
+- Performance: Reduce combinational logic depth by simplifying next state transitions to prioritize fewer conditions, e.g., avoid repeated conditions or combine state and input checks into simple expressions.
+- Power: Minimize switching on the MATCH output by registering it (making it synchronous) rather than purely combinational, which adds one clock cycle delay but can greatly reduce glitches and dynamic power.
+- Area: Maintain the same 3-bit encoding but implement the FSM with a slightly simplified next-state logic using boolean expressions rather than case statements for smaller LUTs.
+
+Here, I will:
+1. Implement the next state logic with simple if-else based priority encoding to ease synthesis.
+2. Register the MATCH output on the clock edge for glitch-free output and lower power at the cost of one cycle latency (often acceptable).
+3. Keep synchronous reset.
+4. Document all changes clearly.
+
+This approach will yield slightly better timing due to simplified next-state logic, reduce dynamic power by registering outputs, and keep area minimal. The detection latency increases by one clock cycle, but this is often a beneficial tradeoff in real hardware designs.

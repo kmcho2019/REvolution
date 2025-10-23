@@ -1,0 +1,33 @@
+The original example uses a Radix-4 Booth multiplier with only 4 steps (processing 2 bits per step) and a 3-bit counter, which conflicts with the problem specification requiring a 5-bit counter and 16 steps. The problem explicitly wants:
+
+- On reset: multiplier <= sign-extended a (16 bits), multiplicand <= sign-extended b (16 bits) (note: multiplicand and multiplier are swapped in the example and need correction).
+- A 5-bit counter (ctr) counting from 0 to 15 (16 steps).
+- At each clock cycle (if ctr < 16):
+  - If multiplier[ctr] == 1, product (p) accumulates multiplicand value.
+  - multiplicand is left-shifted by 1 at each step.
+  - Increment ctr.
+- When ctr reaches 16, set rdy=1, and multiplication is done.
+
+This is essentially a simple sequential multiply algorithm (not Radix-4 Booth encoding) counting bits from 0 to 15, accumulating shifted multiplicand accordingly.
+
+The provided example code uses a Radix-4 Booth approach with a 4-step 3-bit counter, arithmetic right shifts of product, and a different partial product scheme, so it does not comply with the problem spec.
+
+Improvement strategy:
+- Follow the problem description exactly: implement a simple sequential multiplier for 8-bit inputs but extended to 16-bit registers to accommodate sign extension.
+- Use 16-bit signed registers for multiplicand and multiplier (properly sign-extended).
+- Use a 16-bit product register (p), starting at zero.
+- Use a 5-bit counter ctr to iterate from 0 to 15.
+- On reset, initialize multiplicand, multiplier, p=0, ctr=0, rdy=0.
+- On each clock (if ctr < 16), if multiplier[ctr] == 1, p = p + multiplicand.
+- Left-shift multiplicand by 1 each cycle to align with bit position.
+- Increment ctr.
+- When ctr == 16, set rdy=1.
+- Output the product p.
+
+This implementation corresponds to a classic shift-and-add multiplier with sign extension, satisfying the problem statement exactly and is simpler and fully compliant.
+
+Note: The problem's wording "multiplier <= {{8{a[7]}}, a}" and "multiplicand <= {{8{b[7]}}, b}" suggests the multiplier is loaded from 'a' and multiplicand from 'b', so we preserve this mapping exactly.
+
+This approach is easy to understand, synthesizable, and meets all problem requirements, producing the 16-bit product on output and raising ready (rdy) after 16 cycles.
+
+Also, to handle sign extension correctly and avoid overflow, registers will be signed 16 bits wide.

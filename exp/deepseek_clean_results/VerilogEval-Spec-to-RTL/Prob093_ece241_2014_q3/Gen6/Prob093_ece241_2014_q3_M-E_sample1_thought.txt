@@ -1,0 +1,19 @@
+Here's a novel approach using multiplexers in a hierarchical fashion to implement the K-map:
+
+1. Key Insight:
+   - Each mux_in[x] output corresponds to a column in the K-map (based on ab)
+   - We can view each output as a 2-input function of c and d
+   - Instead of implementing each output separately, we can use a shared structure
+
+2. New Architecture:
+   - Use the 4-to-1 mux's selection inputs (ab) to determine which K-map column we're implementing
+   - For each possible ab combination, implement the corresponding cd function using 2-to-1 muxes
+   - Create intermediate signals that capture common patterns in the K-map
+
+3. Implementation Strategy:
+   - mux_in[0] (ab=00): Implement as ~c OR d (matches 0,1,1,1 pattern)
+   - mux_in[1] (ab=01): Always 0 (matches K-map)
+   - mux_in[2] (ab=11): Implement as c AND d (matches 0,0,1,0 pattern)
+   - mux_in[3] (ab=10): Implement as ~d OR c (matches 1,0,1,1 pattern)
+   - Use 2-to-1 muxes to implement the OR and AND operations
+   - Total mux count: 3 (one for each non-constant output)

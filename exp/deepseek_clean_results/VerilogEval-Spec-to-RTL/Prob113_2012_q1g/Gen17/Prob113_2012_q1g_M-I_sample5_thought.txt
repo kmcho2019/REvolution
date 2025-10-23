@@ -1,0 +1,17 @@
+To correctly implement the given Karnaugh map, we need to carefully analyze each cell and derive the minimal sum-of-products expression. The K-map shows:
+
+1. f=1 when:
+   - x[3:2]=00 and x[1:0]=00 or 10 (top corners)
+   - x[3:2]=11 and x[1:0]=00,01,11 (left three columns)
+   - x[3:2]=10 and x[1:0]=00,01,10 (all except 11)
+
+This can be expressed as:
+f = (~x[3] & ~x[2] & ~x[0]) |        // 00x0 (covers both 0000 and 0010)
+    (x[3] & x[2] & ~x[1]) |           // 11x0 (covers 1100 and 1101)
+    (x[3] & x[2] & x[1] & x[0]) |     // 1111
+    (x[3] & ~x[2] & ~(x[1] & x[0]))   // 10 and not 11
+
+This implementation:
+1. Correctly covers all 1s in the K-map
+2. Uses minimal terms for efficiency
+3. Maintains readability while being optimal

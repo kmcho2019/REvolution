@@ -1,0 +1,9 @@
+To address the water level control problem, a novel architectural idea is to implement a finite state machine (FSM) that tracks the current water level and the previous sensor state to determine the appropriate flow rate. The FSM will have states corresponding to each possible combination of sensor assertions and will transition between these states based on changes in the sensor inputs. The output signals (`fr2`, `fr1`, `fr0`, `dfr`) will be determined by the current state of the FSM. This approach allows for a clear and systematic handling of the various conditions and state transitions described in the problem statement, including the reset logic.
+
+The states of the FSM can be defined as follows:
+- `S_LOW`: Water level below `s[0]`.
+- `S_LOW_MID`: Water level between `s[0]` and `s[1]`.
+- `S_MID_HIGH`: Water level between `s[1]` and `s[2]`.
+- `S_HIGH`: Water level above `s[2]`.
+
+The FSM will also keep track of the previous state to determine if the water level is rising or falling, which influences the `dfr` signal. The reset condition will be handled by transitioning the FSM to the `S_LOW` state when `reset` is high, ensuring all output signals are set according to the initial condition described in the problem statement.

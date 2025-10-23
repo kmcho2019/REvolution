@@ -1,0 +1,29 @@
+The original solution introduced a `pattern_detect` input which was not specified in the problem and led to dangling inputs and confusion. The problem only specifies `clk`, `reset`, and output `shift_ena`. The requirement is:
+
+- On synchronous reset (active high), assert `shift_ena` for exactly 4 cycles, then deassert forever (until reset again).
+- Enable shift_ena for 4 cycles whenever the proper bit pattern is detected (which presumably is detected elsewhere in the FSM and triggers this module accordingly).
+
+Since the problem states this module is *part* of the FSM and mentions enabling shift_ena for 4 cycles after pattern detection, but the interface has no input for pattern detection, the only event triggering this is reset.
+
+Therefore, the requirement effectively reduces to:
+
+- On reset, assert shift_ena for 4 cycles.
+- After that, shift_ena is 0 forever (until next reset).
+
+To implement this:
+
+- Use a 3-bit counter that is loaded to 4 on synchronous reset.
+- On each clock cycle, if counter > 0, decrement it.
+- shift_ena = (counter != 0).
+
+This solution matches the problem statement (as given in the interface), is minimal, and uses only the defined ports. If pattern detection is handled elsewhere, this module only reacts to reset, enabling shift_ena for 4 cycles after reset.
+
+If the problem does want pattern detection to be handled here, an additional input must be defined (not in the current spec). Without it, this is the logically consistent solution.
+
+The counter counts 4 clock cycles starting immediately after reset (synchronously asserted), asserting shift_ena exactly for 4 cycles.
+
+This solution is clean, meets the spec, and fixes the previous issues (dangling input, conflated conditions).
+
+Also, the synchronous reset uses non-blocking assignments in always @(posedge clk) block.
+
+This is the final improved solution.

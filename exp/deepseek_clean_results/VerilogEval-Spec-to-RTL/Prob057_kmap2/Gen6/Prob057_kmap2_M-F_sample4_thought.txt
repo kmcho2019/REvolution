@@ -1,0 +1,18 @@
+To correctly implement the Karnaugh map:
+1. Re-examine the K-map carefully, noting all positions where output is 1:
+   - Top-left quadrant (ab=00, cd=00/01/10)
+   - Middle-right (ab=11, cd=01/10/11)
+   - Bottom-left (ab=10, cd=00/01)
+   - Top-right (ab=01, cd=00/10)
+
+2. Identify optimal groupings:
+   - ~a~b covers first column (ab=00)
+   - ~a~d covers top-left and bottom-left when cd=00
+   - ~b~c covers top row when cd=00
+   - b~cd covers (ab=11, cd=01)
+   - a~bc covers (ab=10, cd=11)
+   - ab~d covers (ab=11, cd=10)
+
+3. The correct minimal SOP form is:
+   out = ~a~b + ~a~d + ~b~c + b~cd + a~bc + ab~d
+This covers all 1's without including any 0's from the K-map.

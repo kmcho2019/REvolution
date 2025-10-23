@@ -1,0 +1,14 @@
+Implement a purely combinational division by using a shift-subtract approach directly in an always block without intermediate input registers. The division process will be unrolled using a single loop inside the always block, where at each iteration:
+
+- The remainder is left-shifted by one bit, and the next highest bit of the dividend is concatenated.
+- Compare the remainder with the divisor; if remainder ≥ divisor, subtract divisor and set the corresponding quotient bit to 1.
+- Otherwise, set quotient bit to 0.
+  
+This approach simplifies the design by avoiding a separate division function and input registers, adhering to the requested two combinational always blocks:
+
+- One always block copies inputs A and B into local regs.
+- The second always block performs the division using the shift-subtract algorithm, updating quotient and remainder combinationally.
+
+The remainder is stored in a 9-bit register (one bit wider than divisor) and zero-extended to 16 bits at output.
+
+This design is fully combinational, structurally clear, and modular, following the problem specification but distinct from previous examples.

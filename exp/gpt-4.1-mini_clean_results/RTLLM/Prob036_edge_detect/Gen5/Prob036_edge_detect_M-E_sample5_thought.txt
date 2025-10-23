@@ -1,0 +1,7 @@
+Implement edge detection using a single flip-flop to store the previous state of the input signal 'a' synchronized to the clock. On each clock cycle, compare the current 'a' with the stored previous value to detect rising and falling edges. The outputs 'rise' and 'down' are registered signals that go high for exactly one clock cycle immediately after detecting the corresponding edge. This is done by asserting them when the edge is detected, then clearing them in the next cycle unless a new edge is detected. 
+
+Reset synchronously initializes the previous value and output signals to 0. This approach avoids the use of a multi-flip-flop synchronizer for 'a' and instead directly stores 'a' sampled on the clock, assuming 'a' is already clock-aligned or slowly changing enough to avoid metastability. This method simplifies the design and uses registered outputs for precise timing control.
+
+The output signals are one-clock-cycle pulses synchronized to clk. This meets the requirement that rise/down is asserted on the clock cycle immediately after the edge and then returns to 0.
+
+This approach differs from the two-stage synchronizer and combinational output approach by using registered outputs and a single previous value register for detection.

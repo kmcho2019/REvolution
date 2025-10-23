@@ -1,0 +1,29 @@
+Fusion Strategy:
+1. Boundary Handling:
+   - Use explicit boundary condition handling (left=0 for q[0], right=0 for q[511])
+   - This is clearer and more maintainable than circular buffer approaches
+
+2. State Management:
+   - Eliminate redundant current_state register from Example 2
+   - Directly update q register as in Example 1 for cleaner design
+   - Single register approach reduces area and simplifies logic
+
+3. Parallel Computation:
+   - Maintain full parallel computation of all 512 cells each cycle
+   - Keep efficient generate block structure from both examples
+
+4. Clocking and Loading:
+   - Use simple synchronous update structure from Example 1
+   - Single always block for cleaner implementation
+
+Optimizations:
+1. Reduced register usage by eliminating current_state
+2. Simplified boundary handling with direct ternary operators
+3. Maintained full parallel computation for maximum performance
+4. Cleaner clocking structure with single always block
+
+The fused solution combines:
+- The efficient boundary handling from both examples
+- The simpler state management from Example 1
+- The clean clocking structure from Example 1
+- The full parallel computation from both examples

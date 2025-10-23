@@ -1,0 +1,17 @@
+Simplification Strategy:
+1. State Transition Logic:
+   - Directly assign next states based on current state and inputs
+   - Eliminate intermediate wire declarations for current states since we can use state bits directly
+   - Simplify S_next by recognizing it's the default transition case
+   - Remove redundant logic where outputs can be directly derived from state bits
+
+2. Output Logic:
+   - Outputs are directly tied to specific state bits in one-hot encoding
+   - shift_ena can be simplified to just check B0 state since B states are sequential
+   - counting and done outputs directly map to their respective state bits
+
+3. Optimization:
+   - Reduce logic by leveraging one-hot properties
+   - Remove unnecessary intermediate signals
+   - Simplify expressions while maintaining clear functionality
+   - Keep minimal combinational logic

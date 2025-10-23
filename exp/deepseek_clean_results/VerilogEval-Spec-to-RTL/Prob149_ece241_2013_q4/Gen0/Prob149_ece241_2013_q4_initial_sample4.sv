@@ -1,0 +1,90 @@
+module TopModule (
+    input clk,
+    input reset,
+    input [2:0] s,
+    output fr2,
+    output fr1,
+    output fr0,
+    output dfr
+);
+
+    // Define states
+    typedef enum logic [1:0] {
+        STATE_ABOVE_S2,
+        STATE_BETWEEN_S2_S1,
+        STATE_BETWEEN_S1_S0,
+        STATE_BELOW_S0
+    } state_t;
+
+    state_t current_state, next_state;
+    reg [2:0] prev_sensors;
+    reg was_decreasing;
+
+    // State transition and output logic
+    always @(posedge clk) begin
+        if (reset) begin
+            current_state <= STATE_BELOW_S0;
+            prev_sensors <= 3'b000;
+            was_decreasing <= 1'b0;
+        end else begin
+            prev_sensors <= s;
+            current_state <= next_state;
+            
+            // Detect if previous transition was decreasing
+            case (current_state)
+                STATE_ABOVE_S2: was_decreasing <= (next_state != STATE_ABOVE_S2);
+                STATE_BETWEEN_S2_S1: was_decreasing <= (next_state == STATE_BETWEEN_S1_S0 || next_state == STATE_BELOW_S0);
+                STATE_BETWEEN_S1_S0: was_decreasing <= (next_state == STATE_BELOW_S0);
+                STATE_BELOW_S0: was_decreasing <= 1'b0;
+            endcase
+        end
+    end
+
+    // Next state logic
+    always @(*) begin
+        case (current_state)
+            STATE_ABOVE_S2: 
+                next_state = (s == 3'b111) ? STATE_ABOVE_S2 :
+                             (s == 3'b011) ? STATE_BETWEEN_S2_S1 :
+                             (s == 3'b001) ? STATE_BETWEEN_S1_S0 :
+                             STATE_BELOW_S0;
+            
+            STATE_BETWEEN_S2_S1:
+                next_state = (s == 3'b111) ? STATE_ABOVE_S2 :
+                             (s == 3'b011) ? STATE_BETWEEN_S2_S1 :
+                             (s == 3'b001) ? STATE_BETWEEN_S1_S0 :
+                             STATE_BELOW_S0;
+            
+            STATE_BETWEEN_S1_S0:
+                next_state = (s == 3'b111) ? STATE_ABOVE_S2 :
+                             (s == 3'b011) ? STATE_BETWEEN_S2_S1 :
+                             (s == 3'b001) ? STATE_BETWEEN_S1_S0 :
+                             STATE_BELOW_S0;
+            
+            STATE_BELOW_S0:
+                next_state = (s == 3'b111) ? STATE_ABOVE_S2 :
+                             (s == 3'b011) ? STATE_BETWEEN_S2_S1 :
+                             (s == 3'b001) ? STATE_BETWEEN_S1_S0 :
+                             STATE_BELOW_S0;
+            
+            default: next_state = STATE_BELOW_S0;
+        endcase
+    end
+
+    // Output logic
+    assign fr0 = (current_state == STATE_BETWEEN_S2_S1) || 
+                 (current_state == STATE_BETWEEN_S1_S0) || 
+                 (current_state == STATE_BELOW_S0);
+    
+    assign fr1 = (current_state == STATE_BETWEEN_S1_S0) || 
+                 (current_state == STATE_BELOW_S0);
+    
+    assign fr2 = (current_state == STATE_BELOW_S0);
+    
+    // dfr is asserted when transitioning to a higher level (was_decreasing is false)
+    assign dfr = !was_decreasing && 
+                ((current_state == STATE_BETWEEN_S2_S1 && next_state == STATE_ABOVE_S2) ||
+                 (current_state == STATE_BETWEEN_S1_S0 && (next_state == STATE_ABOVE_S2 || next_state == STATE_BETWEEN_S2_S1)) ||
+                 (current_state == STATE_BELOW_S0 && (next_state != STATE_BELOW_S0)));
+
+endmodule

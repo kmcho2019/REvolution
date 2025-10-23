@@ -1,0 +1,12 @@
+To implement the TopModule, we need to follow these steps:
+1. Design the global branch history register (GBHR) to keep track of the branch history.
+2. Implement the Pattern History Table (PHT) using a 128-entry table of two-bit saturating counters.
+3. Develop the hash function to index into the PHT using the 7-bit PC and the 7-bit GBHR.
+4. Implement the prediction logic to produce the predicted branch direction and the state of the GBHR used to make the prediction.
+5. Implement the training logic to update the PHT and recover the GBHR in case of a misprediction.
+6. Handle the case where training and prediction for the same PHT entry happen at the same time.
+
+The GBHR will be updated at the next positive clock edge after a prediction is made. 
+The PHT will be updated at the next positive clock edge after a training request is made.
+If a training request for a misprediction and a prediction request for a different instruction occur in the same cycle, the training request will take precedence.
+If a training request and a prediction request for the same PHT entry occur in the same cycle, the prediction request will see the PHT state before the training request.

@@ -1,0 +1,15 @@
+Fusion Strategy:
+
+1. Use explicit localparams for state and direction encoding separately (like Example 1) for clarity and easier logic optimization.
+2. Keep direction as a separate 1-bit register from the 2-bit state to simplify next-state logic and potentially improve timing.
+3. Retain the Moore FSM style outputs derived from separate state and direction registers for clean combinational output logic.
+4. Prioritize fall > dig > bump direction changes exactly as specified, as in both examples.
+5. Implement bump logic explicitly and precisely as in Example 2 to handle bump_left, bump_right, and bump_both correctly.
+6. Keep fall_timer saturating at 31 with a simple conditional increment to avoid logic complexity.
+7. Update direction and fall_timer registers only when values change to reduce toggling and dynamic power.
+8. Use asynchronous positive-edge reset to initialize state to walking left.
+9. Maintain separate registers for mode (state), direction, and fall_timer to improve clarity and modularity.
+10. Structure combinational next-state logic clearly with default assignments and case statements for maintainability.
+11. Output assignments remain purely combinational from registered state and direction to respect Moore FSM behavior.
+
+This fusion combines Example 1's clean separation and conditional register updates with Example 2's explicit and clear bump handling, resulting in a modular, readable, and potentially more optimizable design.

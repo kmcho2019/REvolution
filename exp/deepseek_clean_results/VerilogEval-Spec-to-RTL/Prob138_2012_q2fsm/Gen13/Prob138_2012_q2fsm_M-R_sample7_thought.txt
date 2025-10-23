@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. State Encoding: Use one-hot encoding (A:000001, B:000010, C:000100, D:001000, E:010000, F:100000) for potentially better timing and simpler decoding logic.
+
+2. State Transition Logic: Implement next state logic using individual assign statements for each state transition. This makes each transition explicit and may help synthesis tools optimize better.
+
+3. Output Logic: Make output z a simple OR of all states that should output 1 (E and F in this case).
+
+4. State Storage: Keep the synchronous reset in a separate always block for clarity.
+
+Key Changes:
+- One-hot encoding for potentially better timing
+- Explicit assign statements for each state transition
+- Simple OR gate for output logic
+- Clear separation of combinational and sequential logic

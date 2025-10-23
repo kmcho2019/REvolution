@@ -1,0 +1,24 @@
+Corrected 8-bit Radix-4 Booth Multiplier Design:
+
+1. Fixed Issues from Feedback:
+   - Proper arithmetic right shift implementation
+   - Correct counter width (4 iterations for 8-bit Radix-4)
+   - Appropriate register sizes for full operation
+   - Proper sign handling throughout the process
+
+2. Key Implementation Details:
+   - 16-bit multiplicand with sign extension
+   - 10-bit multiplier (8-bit + 2-bit lookahead for Radix-4)
+   - 17-bit product register to handle overflow
+   - 3-bit counter (0-4 iterations)
+   - Proper arithmetic right shift by 2 bits each cycle
+
+3. Booth Encoding:
+   - Examine 3 bits at a time (current + previous)
+   - Handle all 8 possible cases (000 to 111)
+   - Perform appropriate addition/subtraction with shift
+
+4. Control Logic:
+   - Reset initializes all registers
+   - Ready signal after 4 complete cycles
+   - Final product truncation to 16 bits

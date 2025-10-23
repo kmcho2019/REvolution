@@ -1,0 +1,11 @@
+I will implement the 4-digit BCD counter using four separate 4-bit registers, one for each digit (ones, tens, hundreds, thousands). The increment and carry propagation will be done sequentially in a clear step-wise manner inside the always block.
+
+The ones digit increments every clock cycle. When it rolls over from 9 to 0, it asserts an internal carry enable to increment the tens digit on the next cycle, and so forth for hundreds and thousands.
+
+The ena outputs are derived directly as internal carry signals representing when the corresponding digit is about to increment (i.e., when the lower digit rolled over from 9 to 0).
+
+This structure avoids a combined 16-bit increment function, instead breaking logic into simple, local BCD increments and clear enable signals. This modular design improves readability and simplifies the critical path, as each digit's increment logic depends only on its own digit and the carry from the previous digit.
+
+Synchronous active-high reset clears all digits and disables enables. All sequential logic triggers on the rising edge of clk.
+
+This architecture naturally reflects BCD counting principles and makes the enable signals meaningful and explicit, facilitating easier downstream timing and control logic.

@@ -1,0 +1,30 @@
+Improvement Strategy: "Optimized Parallel ALU with Resource Sharing"
+
+Key Optimizations:
+1. Arithmetic Unit Optimization:
+   - Combine signed/unsigned operations using common adder
+   - Reuse MSB comparison for overflow detection
+   - Share comparator logic between SLT/SLTU
+
+2. Logic Unit Optimization:
+   - Implement NOR using OR + inverter to save gates
+   - Use bitwise operations directly without intermediate wires
+
+3. Shift Unit Optimization:
+   - Implement hierarchical barrel shifter (5-stage for 32 bits)
+   - Share shift amount logic between all shift operations
+
+4. Flag Generation Optimization:
+   - Zero flag using reduction NOR instead of full comparison
+   - Carry/overflow derived directly from arithmetic unit MSBs
+   - Negative flag taken directly from result MSB
+
+5. Power Optimization:
+   - Add operation-specific enable signals
+   - Use gated clocks for sequential elements (if any)
+
+Benefits:
+- Reduced critical path through arithmetic unit
+- Smaller area through shared comparators and logic
+- Lower power through operation-specific enables
+- Maintained parallel execution advantage

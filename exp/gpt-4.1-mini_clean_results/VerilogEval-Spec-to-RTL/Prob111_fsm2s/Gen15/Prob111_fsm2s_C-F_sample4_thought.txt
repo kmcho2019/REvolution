@@ -1,0 +1,7 @@
+Fuse the strengths of both examples by encoding the FSM state and Moore output using a single state register bit that directly drives the output (`out = state`). This removes the need for a separate output register, reducing area and power. 
+
+Implement the synchronous reset and state update in a single clocked always block with clear localparam symbolic state names for readability and maintainability. Perform combinational next-state calculation within the sequential always block using a case statement, as in Example 2, to keep logic minimal and reduce logic depth on the clock path.
+
+By assigning output directly from state (as in Example 1), we save a flip-flop and remove extra switching on a registered output. Using localparams maintains code clarity and synthesis friendliness.
+
+This design is clean, minimal in area, power efficient, and simple for synthesis tools to optimize, potentially improving PPA metrics beyond the given examples.

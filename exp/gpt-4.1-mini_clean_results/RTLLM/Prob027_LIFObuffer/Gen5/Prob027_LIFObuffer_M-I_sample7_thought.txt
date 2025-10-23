@@ -1,0 +1,22 @@
+To optimize for better PPA (performance, power, and area), I will make the following improvements:
+
+1. Performance:
+   - Modify the pop (read) operation so that `dataOut` is updated combinationally from the top stack element instead of registering it after decrementing SP. This reduces read latency by providing `dataOut` directly without waiting for the next clock edge.
+   - Use the stack pointer (SP) as the index of the next free slot, where SP=0 means empty, SP=4 means full. Push writes at SP, then increments SP. Pop decrements SP, but `dataOut` is always driven from `stack_mem[SP-1]` combinationally if not empty. This avoids a clock cycle delay in output and improves performance.
+
+2. Power:
+   - Prevent unnecessary writes to stack_mem on push when full, and no writes during pop.
+   - Clear stack_mem locations only on reset, not on every pop (already done).
+   - Since `dataOut` is combinational, no extra clock toggling occurs there.
+   - Enable signal (EN) gating operations remains.
+
+3. Area:
+   - Keep SP as a 3-bit counter.
+   - Use a generate loop for stack_mem clearing on reset to potentially help synthesis tools optimize.
+   - Reduce logic in sequential block by shifting `dataOut` update outside the clocked block to a combinational block.
+
+Overall, this approach removes the cycle latency on pop output, potentially improving timing (lower WNS), saves power by preventing unnecessary dataOut register toggling, and keeps the area minimal.
+
+This also aligns with typical stack behavior where the top of stack data is accessible immediately after push or pop.
+
+Note: We still follow synchronous push/pop controlled by EN and RW with proper boundary checks.

@@ -1,0 +1,11 @@
+To improve PPA (power, performance, and area), implement the 256-to-1 4-bit mux hierarchically in two levels: first a 16-to-1 mux stage that reduces 256 inputs to 16 outputs, then a final 16-to-1 mux selecting the final output. This reduces the mux fan-in and critical path, potentially improving timing and power by limiting the number of simultaneously switching inputs.
+
+Specifically, break sel[7:4] as the upper 4 bits selecting one of 16 groups, each group having 16 4-bit inputs, and sel[3:0] as the lower 4 bits selecting within that group. 
+
+Unpack the 1024-bit input into 256 4-bit elements, group them into 16 groups of 16, then use two stages of multiplexing:
+- Stage 1: For each group (16 in total), select one 4-bit input using sel[3:0].
+- Stage 2: Use sel[7:4] to select one of the 16 outputs from stage 1.
+
+This hierarchical mux reduces the large fan-in mux into two smaller muxes, improving timing and potentially area and power.
+
+We keep the input unpacking as before for clarity.

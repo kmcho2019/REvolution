@@ -1,0 +1,13 @@
+Refactor the division logic into a fully combinational `always @(*)` block without latching inputs into separate registers, simplifying the design and avoiding issues with shifting the combined register.
+
+Idea:
+- Represent the remainder as an 8-bit variable that starts at zero.
+- For each of the 16 iterations (from the highest bit of A to the lowest):
+  1. Concatenate the current remainder with the next highest bit of the dividend.
+  2. Compare this 9-bit value with the 8-bit divisor.
+  3. If greater or equal, subtract divisor from this 9-bit value, set quotient bit to 1.
+     Else, set quotient bit to 0, remainder stays as this 9-bit value.
+- This approach exactly matches the long division manual process, using only the upper bits of the dividend segment plus the current remainder.
+- Outputs the final 16-bit quotient and 8-bit remainder extended to 16 bits (upper 8 zero).
+- No input registers required since outputs depend purely on inputs combinationally.
+- This better aligns with the problem's description of extracting the highest bits matching divisor width, setting quotient bits, updating remainder, and concatenating next dividend bit iteratively.

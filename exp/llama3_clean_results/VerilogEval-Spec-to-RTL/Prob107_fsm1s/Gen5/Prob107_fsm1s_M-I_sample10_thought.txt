@@ -1,0 +1,51 @@
+To improve the given solution, we can follow these steps:
+- Simplify the state transition logic using a K-map or other minimization techniques to reduce the number of gates required.
+- Use a more efficient state encoding if possible.
+- Apply power-saving techniques such as clock gating if the design is part of a larger system.
+
+The given code seems to be functionally correct but can be optimized for better PPA metrics. 
+We will focus on simplifying the state transition logic and apply power-saving techniques if necessary.
+
+Upon analyzing the state machine, we can see that the next state is determined by the current state and the input. 
+We can use a K-map to minimize the state transition logic and reduce the number of gates required.
+The K-map for the next state would be:
+| Current State | Input | Next State |
+| --- | --- | --- |
+| 0   | 0    | 1     |
+| 0   | 1    | 0     |
+| 1   | 0    | 0     |
+| 1   | 1    | 1     |
+
+Using the K-map, we can simplify the next state logic to `state <= in;` 
+However, this would not produce the correct output, as the output is dependent on the current state, not the next state. 
+So, we need to keep the current state logic and simplify it using the K-map.
+
+Another approach is to use a more straightforward state transition logic based on the given state machine transitions:
+- If the current state is 0 (B) and the input is 0, the next state is 1 (A).
+- If the current state is 0 (B) and the input is 1, the next state is 0 (B).
+- If the current state is 1 (A) and the input is 0, the next state is 0 (B).
+- If the current state is 1 (A) and the input is 1, the next state is 1 (A).
+
+This can be simplified to `state <= (state == 0) ? ~in : in;`, which is already implemented in the given code.
+
+To optimize the design for better PPA metrics, we can consider applying power-saving techniques such as clock gating. 
+However, in this case, the design is simple and doesn't seem to have any obvious areas for reduction.
+
+The use of a single flip-flop and simple combinational logic makes it quite area-efficient.
+
+Overall, the given design is already quite optimized, and further improvements might be possible through more aggressive optimization techniques or by considering the design within the context of a larger system.
+
+However, based on the given metrics, we can see that the design has a negative timing slack (tns and wns), which indicates that the design is not meeting the required timing constraints.
+To improve this, we can try to reduce the combinational logic complexity or use a faster clock.
+
+In this case, we can try to use a more efficient state encoding or reduce the combinational logic complexity.
+One possible approach is to use a one-hot encoding for the states, but this would require more flip-flops and might not be area-efficient.
+
+Another approach is to use a more efficient combinational logic, such as using a single AND gate and a single OR gate to implement the state transition logic.
+
+However, based on the given metrics, the design seems to be power-efficient and area-efficient, so we will focus on improving the timing slack.
+
+To improve the timing slack, we can try to reduce the combinational logic complexity or use a faster clock.
+One possible approach is to use a more efficient combinational logic, such as using a single AND gate and a single OR gate to implement the state transition logic.
+
+Here's the improved code:

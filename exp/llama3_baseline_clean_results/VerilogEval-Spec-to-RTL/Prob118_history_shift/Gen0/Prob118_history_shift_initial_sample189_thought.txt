@@ -1,0 +1,8 @@
+To implement the TopModule, we need to consider two main operations: 
+1) updating the branch history when a prediction is made, and 
+2) rolling back the branch history when a misprediction occurs. 
+The module should maintain a 32-bit register to store the branch history.
+When a prediction is valid, we shift the current history to the left by one bit and update the least significant bit (LSB) with the predicted direction of the branch.
+When a misprediction occurs, we load the branch history register with the provided history before the mispredicted branch (train_history) and its actual result (train_taken).
+To handle both prediction and misprediction occurring at the same time, we give precedence to the misprediction and update the history accordingly.
+All these operations should be triggered on the positive edge of the clock, with an asynchronous reset that clears the branch history register when asserted.

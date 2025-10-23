@@ -1,0 +1,22 @@
+To fix the issues identified in the feedback, I'll implement the following improvements:
+
+1. **Reset Handling**: Maintain synchronous reset but ensure outputs match the specification exactly during reset (all outputs high).
+
+2. **Output Logic**: 
+   - Simplify output assignments to directly follow the specification table
+   - fr0 should be high in all states except ABOVE_S2
+   - fr1 should be high in BETWEEN_S1_S0 and BELOW_S0 states
+   - fr2 should only be high in BELOW_S0 state
+   - dfr should indicate when water level is rising (transitioning to a higher zone)
+
+3. **State Machine**:
+   - Use simpler state encoding and direct sensor-based transitions
+   - Remove hysteresis logic since it wasn't specified and may cause delays
+   - Track previous state to properly detect rising water levels
+
+4. **Rising Edge Detection**:
+   - Compare current and previous states to detect upward movement
+   - Only set dfr when moving from lower to higher zones
+   - Clear dfr when water level stabilizes or drops
+
+The key improvements are in the simplified state machine and more accurate rising edge detection based on state transitions.

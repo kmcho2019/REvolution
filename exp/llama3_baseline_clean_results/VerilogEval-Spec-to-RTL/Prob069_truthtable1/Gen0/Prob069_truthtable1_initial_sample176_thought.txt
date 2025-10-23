@@ -1,0 +1,9 @@
+The module TopModule can be implemented by analyzing the given truth table. 
+We can see that the output f is 1 whenever x1 or x2 is 1, but the case where x2 and x3 are both 1 and x1 is 0 should produce an output of 0.
+Therefore, we can implement this using basic logical operators in Verilog. 
+The output f can be expressed as (x2 & ~x3) | (x1 & x3) | (x2 & x1 & ~x3) | (x1 & x2 & x3), 
+which can be simplified into (x2 & ~x3) | (x1 & x3) | (x2 & x1).
+However, this can be optimized even further to just (x2 & ~x3) | (x1 & x3) | (x2 & x1) = (x2 | x1) & ((~x3 & x2) | (x3 & x1)), 
+which can then be simplified into just x1*x3 + x2*(~x3 + x1).
+So the final simplified equation will be f = (x1 & x3) | (x2 & (~x3 | x1)).
+This simplification is necessary to minimize the logic gates required for the implementation and improve performance.

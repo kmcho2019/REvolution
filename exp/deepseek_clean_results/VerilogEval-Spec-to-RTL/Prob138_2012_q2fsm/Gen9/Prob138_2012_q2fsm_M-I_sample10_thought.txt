@@ -1,0 +1,17 @@
+Improvement Strategy:
+1. State Encoding Optimization: Maintain the current Gray-like encoding but adjust to ensure E and F (output states) have maximal Hamming distance from idle states to minimize glitches on z.
+
+2. Output Logic Optimization: Replace the simple bit check with a direct state comparison for z to prevent potential glitches during state transitions, though this might slightly increase area.
+
+3. Reset Optimization: Keep synchronous reset but add an asynchronous reset option (commented out) for flexibility in different design scenarios.
+
+4. Power Optimization: Add clock gating for state A where transitions are less frequent (when w=0), reducing dynamic power without affecting functionality.
+
+5. Synthesis Directives: Add synthesis attributes to guide the tool for better state machine implementation.
+
+Key Improvements:
+- More robust output logic to prevent glitches
+- Optional asynchronous reset for flexibility
+- Clock gating for power reduction in idle state
+- Synthesis directives for better optimization
+- Maintain all PPA advantages while improving reliability

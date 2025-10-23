@@ -1,0 +1,9 @@
+To optimize the decade counter for better PPA, focus on reducing switching activity and simplifying the combinational logic on the critical path. Since the counter counts 0 to 9, using a binary-coded decimal (BCD) counter with a carry-based approach can help simplify the logic. Instead of performing a full 4-bit addition and equality check each cycle, use a ripple increment where the counter resets when it reaches 9 by detecting count 9 through combinational logic. Additionally, incorporate a one-hot style reset and avoid the comparator by checking if the lower nibble equals 9 using simple logic. This reduces the critical path delay and dynamic power. The synchronous reset remains as required. This approach simplifies increment and comparison logic and slightly reduces power by minimizing toggling when at terminal count.
+
+Specifically:
+- Replace the comparator with a combinational logic detecting count == 9.
+- On reaching 9, reset to 0; otherwise, increment by 1.
+- Maintain synchronous reset.
+- Keep code clean and minimal to not increase area.
+
+This should improve timing (due to simpler logic) and power (less switching) with negligible area increase.

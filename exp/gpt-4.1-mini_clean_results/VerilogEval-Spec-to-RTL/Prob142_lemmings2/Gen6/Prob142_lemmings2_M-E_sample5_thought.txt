@@ -1,0 +1,30 @@
+Implement the FSM using an enumerated three-state approach representing the combination of direction and falling status as explicit states:
+
+- Define states as an enumerated type with three states:
+  - WALK_LEFT (walking left)
+  - WALK_RIGHT (walking right)
+  - FALLING (falling, with direction stored separately)
+
+- Keep a separate `direction` bit register to remember walking direction during the FALLING state.
+
+- On asynchronous reset, go to WALK_LEFT and set direction to left.
+
+- Transitions:
+  - From WALK_LEFT:
+    - If ground disappears, go to FALLING, keep direction left.
+    - If bump_left or bump_right, update direction accordingly:
+      - bump_left (1): switch to WALK_RIGHT.
+      - bump_right (1): stay WALK_LEFT unless both bumps are active.
+      - If both bumps active, switch direction.
+  - From WALK_RIGHT:
+    - Similarly, handle bumps and ground loss to enter FALLING.
+  - From FALLING:
+    - If ground returns, go to previous walking direction state based on stored `direction`.
+    - Otherwise remain FALLING; bumps ignored.
+
+- Outputs based on current state:
+  - WALK_LEFT: walk_left=1, walk_right=0, aaah=0
+  - WALK_RIGHT: walk_right=1, walk_left=0, aaah=0
+  - FALLING: aaah=1, walk_left=0, walk_right=0
+
+This explicit state encoding keeps logic very clear and simple to follow, leveraging a classic enumerated FSM style that isolates direction updates only in walking states, while falling state is distinct and ignores bumps. Direction state is stored separately during falling and restored once on ground. This reduces combinational complexity in state transitions and output logic, improving clarity and possibly synthesis optimization.

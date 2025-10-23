@@ -1,0 +1,22 @@
+To fix the pulse detection module, we need to strictly detect the 010 pattern (3 cycles) while avoiding false positives from other patterns. Here's the improved approach:
+
+1. State Machine Design:
+   - Use a 3-state machine to track the exact sequence (IDLE, SAW_0, SAW_01)
+   - Only transition states when we see the exact required pattern
+   - Reset to IDLE on any deviation from the expected sequence
+
+2. Precise Detection:
+   - Only output a pulse when we complete the full 010 sequence
+   - Clear the output immediately after detection
+   - Handle all edge cases including continuous 1s or multiple 0s
+
+3. Implementation:
+   - Replace shift register with explicit state tracking
+   - Make transitions deterministic and clear
+   - Maintain single-cycle output as specified
+
+This ensures we:
+- Only detect exact 010 sequences
+- Output exactly on the third cycle
+- Reset properly on any sequence break
+- Handle all input patterns correctly

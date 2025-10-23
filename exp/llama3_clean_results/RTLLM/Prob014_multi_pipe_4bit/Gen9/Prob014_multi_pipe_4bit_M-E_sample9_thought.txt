@@ -1,0 +1,11 @@
+To implement the design of a 4-bit unsigned number pipeline multiplier, I propose a novel architectural idea that utilizes a combination of shift registers and adders to perform the multiplication operation. The design consists of two levels of registers to store intermediate values and control the multiplication process.
+
+The first level of registers, `reg1`, will store the extended input signal `mul_a` with "size" number of zero bits at the most significant bit positions. The second level of registers, `reg2`, will store the sum of the partial products.
+
+The multiplication operation will be performed using a shift register to left-shift the multiplicand `mul_a` by the current bit position `i` of the multiplier `mul_b`. If the current bit of `mul_b` is 1, the shifted `mul_a` will be added to `reg2`. If the current bit of `mul_b` is 0, the shifted `mul_a` will not be added to `reg2`.
+
+The final product will be calculated by accumulating the sum of the partial products in `reg2` and assigning it to the output register `mul_out`.
+
+This design will handle the reset condition by setting the registers to zero when the reset signal `rst_n` is low. When `rst_n` is high, the design will perform the multiplication operation and update the output register with the final product.
+
+The use of shift registers and adders will simplify the multiplication logic and reduce the complexity of the design.

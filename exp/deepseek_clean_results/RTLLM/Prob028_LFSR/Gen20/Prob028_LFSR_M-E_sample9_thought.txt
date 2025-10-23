@@ -1,0 +1,23 @@
+Novel LFSR Architecture: Dual-Feedback Parallel LFSR
+
+1. Core Innovation:
+   - Implements two parallel feedback paths instead of one
+   - Primary feedback: XOR of bits [3] and [2] (standard)
+   - Secondary feedback: XOR of bits [1] and [0] (novel addition)
+   - Combined feedback uses majority voting for enhanced randomness
+
+2. Operational Benefits:
+   - Increased sequence complexity while maintaining 4-bit width
+   - Better pseudo-randomness properties
+   - Still maintains maximal length sequence (15 states)
+   - More uniform bit distribution
+
+3. Implementation Details:
+   - Three-phase operation: feedback calculation, majority decision, shift
+   - Reset initializes to 4'b0001 (non-zero to avoid lock-up)
+   - Clock-edge triggered with synchronous reset
+
+4. Verification Approach:
+   - Self-checking testbench verifies sequence periodicity
+   - Monitors for repeated patterns
+   - Checks all states are visited exactly once in full cycle

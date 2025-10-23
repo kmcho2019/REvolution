@@ -1,0 +1,7 @@
+Refactor the priority encoder by replacing the combinational always block with continuous assign statements using a parallel, prioritized casez statement. This leverages the synthesizable priority encoding nature of casez for clarity and succinctness. 
+
+The approach:
+- Use assign for combinational logic, which can reduce inferred registers and be easier to integrate.
+- Use casez with a mask that matches the first '1' bit from LSB, encoding the position directly.
+- If no bit is set, default to zero as required.
+- This refactoring keeps the same priority logic but uses a more declarative style, improving readability and potentially enabling synthesis tools to optimize the encoder logic better.

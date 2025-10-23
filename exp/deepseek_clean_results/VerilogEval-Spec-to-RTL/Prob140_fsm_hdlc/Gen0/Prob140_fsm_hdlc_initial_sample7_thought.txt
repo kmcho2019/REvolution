@@ -1,0 +1,14 @@
+To implement the HDLC framing decoder, we'll create a Moore FSM with states representing the count of consecutive 1s. The FSM will:
+1. Start in a state representing "previous bit was 0"
+2. Transition through states counting consecutive 1s (1-6)
+3. Detect special patterns:
+   - After 5 consecutive 1s followed by 0: assert disc
+   - After 6 consecutive 1s followed by 0: assert flag
+   - 7 or more consecutive 1s: assert err
+4. Outputs are registered to appear one cycle after detection
+5. Reset returns to initial state (prev_bit_0)
+
+The states are:
+- PREV_0: initial state, previous bit was 0
+- CNT_1 to CNT_6: counting 1-6 consecutive 1s
+- ERR: error state (7+ consecutive 1s)

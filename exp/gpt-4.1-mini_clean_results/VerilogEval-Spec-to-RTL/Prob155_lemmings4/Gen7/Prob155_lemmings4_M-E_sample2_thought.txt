@@ -1,0 +1,9 @@
+I will implement a Moore FSM with three main states: WALK, FALL, DIG, plus a SPLAT terminal state. The FSM stores current direction separately. Instead of a monolithic next-state combinational block, I will separate control signals with explicit priority logic for clarity: FALL has the highest priority, then DIG, then direction switches based on bumps.
+
+I will encode direction as 1-bit, and the state as a 3-bit one-hot encoded vector to simplify combinational logic and speed up decoding at a small area cost. The fall timer is a 6-bit saturating counter to clearly accommodate >20 cycles.
+
+The key idea is to store walking direction in a dedicated register only updated during walk state transitions, and to separate the fall timer increment logic gated by the falling state. I will use synchronous reset for all registers, with asynchronous positive edge reset.
+
+Outputs are derived solely from current state (Moore FSM). When SPLAT state is entered, all outputs go low indefinitely until reset.
+
+This modular and one-hot approach facilitates clear prioritization and straightforward combinational logic. The separation of direction updates and fall timer updates enhances maintainability and potentially improves timing and power by reducing logic depth.

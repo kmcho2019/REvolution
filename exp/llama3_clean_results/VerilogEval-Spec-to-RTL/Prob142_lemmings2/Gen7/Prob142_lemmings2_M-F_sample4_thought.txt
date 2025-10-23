@@ -1,0 +1,9 @@
+To address the issues in the original code, we can improve the state machine's transition logic and synchronization with the clock. The main goals are to ensure that the state machine transitions correctly between the walking and falling states and that the direction is updated correctly based on the bump signals.
+
+One approach is to separate the state machine's logic into two main sections: one for updating the state and another for updating the direction. We can also add additional logic to handle the cases where the ground signal transitions from 1 to 0 and then back to 1 in the same cycle.
+
+To improve the synchronization with the clock, we can use a single always block with a posedge clk condition and handle the asynchronous reset within this block. This will ensure that all state updates occur at the positive edge of the clock, reducing the potential for unexpected behavior.
+
+Additionally, we need to ensure that the direction is not updated when the Lemming is falling. This means that we should only update the direction when the state is 'walking' and the ground signal is high.
+
+By addressing these issues, we can create a more robust and accurate state machine that models the behavior of a Lemming in the game Lemmings.

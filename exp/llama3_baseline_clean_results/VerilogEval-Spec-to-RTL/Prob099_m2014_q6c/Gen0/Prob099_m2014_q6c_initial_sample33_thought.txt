@@ -1,0 +1,20 @@
+To implement the next-state signals Y1 and Y3 corresponding to signal y[0] and y[2] is not requested, rather Y1 and Y3 are required to implement next-state signals Y2 and Y4 corresponding to signal y[1] and y[3], respectively. The next state of a state machine can be determined by the current state and the input. Given the one-hot encoding for the states, we can derive the logic equations for the next-state signals by inspecting the state transition diagram. For each next-state signal, we need to find the conditions under which it will be 1.
+
+For Y2 (next state of y[1]), it will be 1 in the next state if the current state is A and the input w is 1, or if the current state is B and the input w is 0. 
+
+For Y4 (next state of y[3]), it will be 1 in the next state if the current state is C and the input w is 0, or if the current state is D and the input w is 1.
+
+Thus, the logic equations can be derived as follows:
+- Y2 = (y[0] & w) | (y[1] & ~w)
+- Y4 = (y[2] & ~w) | (y[3] & w)
+
+However, according to the problem statement, we are required to implement next-state signals Y1 and Y3 corresponding to signal y[0] and y[2]. Thus the logic equations will be:
+- Y1 = (y[5] & ~w) | (y[1] & w & ~y[5]) | (y[2] & w & ~y[5]) | (y[3] & w & ~y[5]) | (y[4] & w & ~y[5]) 
+- Y3 = (y[1] & ~w) | (y[2] & ~w) 
+
+Given that Y1 and Y3 should implement next-state signals Y2 and Y4, 
+we should implement the equations as:
+- Y1 = (y[0] & w) | (y[1] & ~w)
+- Y3 = (y[2] & ~w) | (y[3] & w)
+
+These equations represent the logic required to implement the next-state signals Y1 and Y3 based on the provided state transition diagram and the one-hot encoding scheme.

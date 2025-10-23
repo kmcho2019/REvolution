@@ -1,0 +1,21 @@
+Implement a 16x16 grid as a 256-bit register 'q'. On each clock cycle, if 'load' is high, load the input data directly. Otherwise, compute the next state of each cell based on its 8 neighbors (with wrapping for edges to make the grid a torus).
+
+For each cell at position (r,c), calculate the number of live neighbors by summing the states of the eight neighbors:
+
+neighbors = q[(r-1)%16, (c-1)%16] + q[(r-1)%16, c] + q[(r-1)%16, (c+1)%16] +
+            q[r, (c-1)%16] +                          q[r, (c+1)%16] +
+            q[(r+1)%16, (c-1)%16] + q[(r+1)%16, c] + q[(r+1)%16, (c+1)%16]
+
+Then apply the rules:
+- 0-1 neighbor: next cell = 0
+- 2 neighbors: next cell = current cell (no change)
+- 3 neighbors: next cell = 1
+- 4+ neighbors: next cell = 0
+
+This logic will be computed combinationally for all 256 cells in a generate loop or using explicit loops. To avoid complexity, a nested loop can be used in an always_comb block to compute the next state as a 256-bit vector, then register it on the next clock cycle.
+
+Edge wrapping is done using modulo operations on indices.
+
+Finally, assign q as the registered next state.
+
+This approach is straightforward, systematic, and should meet the requirements.

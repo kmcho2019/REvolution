@@ -1,0 +1,12 @@
+To implement the next-state signals Y1 and Y3, we first need to understand the state transitions based on the given state machine. Since we are using a one-hot encoding, each state is represented by a unique binary vector where only one bit is high (1) and the rest are low (0). 
+
+For Y1 (y[1]), this bit is high when the current state is B. 
+For Y3 (y[3]), this bit is high when the current state is D.
+
+We will then derive the logic equations for Y1 and Y3 by inspecting the state machine transitions. 
+Y1 will be high in the next state if we are transitioning into state B from state A when w is high.
+Y3 will be high in the next state if we are transitioning into state D from states B, C, E, or F under the appropriate conditions.
+
+Based on the state machine:
+- Y1 is set when the current state is A and w is 1 (because A(1) -> B).
+- Y3 is set when the current state is B and w is 1 (because B(1) -> D), or when the current state is C and w is 1 (because C(1) -> D), or when the current state is E (because E remains in E or goes to D regardless of w when in state E), or when the current state is F and w is 1 (because F(1) -> D).

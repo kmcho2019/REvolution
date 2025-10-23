@@ -1,0 +1,7 @@
+Refactor by implementing the clock as three separate binary counters internally (for seconds, minutes, and hours), each counting in their natural binary ranges (seconds and minutes: 0-59, hours: 1-12). Then convert each counter's value to BCD using combinational logic for output ports. This reduces complex BCD increment and rollover logic by shifting complexity into binary counters and simple binary-to-BCD converters.
+
+PM toggle is done by detecting the hour rollover from 11 to 12 in binary, updating the pm flag synchronously.
+
+Synchronous reset sets counters to 12:00:00 AM.
+
+This structure simplifies sequential logic (less combinational paths in always block), and offloads digit formatting to combinational assignments, improving performance and maintainability while maintaining the original functionality.

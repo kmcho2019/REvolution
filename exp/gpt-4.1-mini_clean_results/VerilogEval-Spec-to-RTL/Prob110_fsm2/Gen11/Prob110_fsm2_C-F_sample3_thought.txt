@@ -1,0 +1,13 @@
+I will fuse the explicit, clear FSM style and registered Moore output from Example 1 with the power-saving clock enable from Example 2 to form a superior design.
+
+Fusion strategy:
+- Use explicit state encoding with localparams (OFF=0, ON=1) for clarity and scalability.
+- Implement next_state combinational logic with a clean case statement.
+- Derive output directly from the registered state for glitch-free, minimal combinational output logic.
+- Employ an enable signal that only updates the state and output registers when the state changes, thus minimizing unnecessary toggling and dynamic power consumption.
+- Maintain asynchronous active-high reset for immediate reset behavior, preserving reset behavior from both examples.
+- Ensure consistent use of non-blocking assignments for safe synchronous updates.
+- This combined design improves power efficiency by gating register updates without introducing complex clock gating cells or risking timing degradation due to extra gating logic, because the enable is used as a conditional update within the always block rather than gating the clock.
+- It preserves the clarity and correctness of the FSM and output logic, balancing performance, power, and area elegantly.
+
+The result is a minimal, clear, glitch-free two-state Moore FSM with asynchronous reset and power-optimized state/output register updates.

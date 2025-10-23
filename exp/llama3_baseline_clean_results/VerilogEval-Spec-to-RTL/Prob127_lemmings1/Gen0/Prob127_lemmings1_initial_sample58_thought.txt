@@ -1,0 +1,9 @@
+To implement the Lemmings game using a Moore state machine, we can design a finite state machine with two states: walking left and walking right. We will use two state variables to represent these states. The next state logic will be determined by the current state and the input signals bump_left and bump_right. If the Lemming is bumped on either side, it will switch directions. We will also include an asynchronous reset input areset to reset the machine to the walking left state. 
+The state machine will have the following states and transitions:
+- State 0 (S0): walking left
+- State 1 (S1): walking right
+Transitions:
+- If the current state is S0 and bump_right is 1, or bump_left is 0 and bump_right is 0, then the next state is S1
+- If the current state is S1 and bump_left is 1, or bump_left is 0 and bump_right is 0, then the next state is S0
+We will use a binary variable to represent the two states, with 0 corresponding to S0 and 1 corresponding to S1.
+The output logic will be determined by the current state, with walk_left being 1 when the current state is S0 and walk_right being 1 when the current state is S1.

@@ -1,0 +1,15 @@
+Use a radix-2 non-restoring division algorithm implemented as an iterative FSM with synchronous logic.  
+On opn_valid, capture inputs and determine signs if signed division is requested.  
+Compute absolute values of dividend and divisor for the division process.  
+Use a 17-bit shift register SR to hold a 9-bit partial remainder in the upper bits and 8-bit quotient in the lower bits.  
+Initialize SR with the dividend (absolute) shifted left by 1 (to provide an extra bit for partial remainder).  
+At each clock cycle when running, shift left SR by 1, then add or subtract the divisor depending on the sign of the partial remainder:  
+- If partial remainder was positive, subtract divisor.  
+- If partial remainder was negative, add divisor.  
+Set the current quotient bit based on the sign of the updated partial remainder after addition/subtraction.  
+After 8 iterations, the division finishes, and if the partial remainder is negative, add back the divisor to correct the remainder.  
+Apply sign corrections to the quotient and remainder based on the original signs of the dividend and divisor for signed division.  
+Output the 16-bit result with remainder in upper 8 bits and quotient in lower 8 bits, and assert res_valid.  
+The design uses a simple counter and start signal to control the FSM and res_valid signal to indicate completion.  
+Reset clears internal state.  
+This approach is different from restoring division by implementing non-restoring division, which avoids restoring partial remainders, potentially increasing efficiency.

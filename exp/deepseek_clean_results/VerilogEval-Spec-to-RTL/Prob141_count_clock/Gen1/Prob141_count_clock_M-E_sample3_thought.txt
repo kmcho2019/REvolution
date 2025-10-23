@@ -1,0 +1,20 @@
+Here's a novel approach using a single counter for the entire time state, encoded in a way that simplifies rollover logic:
+
+1. Represent the entire clock state (hours, minutes, seconds, AM/PM) as a single 26-bit counter value:
+   - Bits 25: PM indicator
+   - Bits 24-17: Hour tens and ones (BCD)
+   - Bits 16-9: Minute tens and ones (BCD)
+   - Bits 8-1: Second tens and ones (BCD)
+
+2. Use a combinational block to calculate the next state:
+   - Increment seconds first, handling BCD rollover
+   - When seconds roll over, increment minutes
+   - When minutes roll over, increment hours with special handling for 12-hour format
+
+3. Advantages:
+   - Single state variable simplifies synchronization
+   - Clear separation between current state and next state logic
+   - Easier to verify rollover conditions
+   - PM toggles only when hours change from 12 to 1
+
+4. Reset sets the counter to represent 12:00:00 AM

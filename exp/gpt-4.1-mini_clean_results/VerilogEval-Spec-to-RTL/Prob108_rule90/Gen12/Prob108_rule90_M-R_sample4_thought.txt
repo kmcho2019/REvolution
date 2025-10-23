@@ -1,0 +1,15 @@
+Refactor the design by merging the entire 512-bit state register into one large register and performing next-state computation fully combinationally in a single always block. This removes the modular 64-bit block structure and associated inter-block wiring, potentially improving timing by localizing all state updates in one process.
+
+The approach:
+- Use a single 512-bit register to store the current state.
+- On load, load the input data directly.
+- On each clock cycle, if not loading, update the state with the Rule 90 next state for all bits simultaneously.
+- Compute the next state combinationally by XORing each cell's left and right neighbors, using 0 for out-of-bound neighbors.
+- This uses a single always block with a nonblocking update.
+- The output q is directly driven by the state register.
+
+This simplifies the design hierarchy, reduces inter-block wiring, and may improve timing due to centralized logic, at the cost of a large always block and wider combinational logic. This may increase fanout but reduces boundary signal delays. Also, by using continuous assignment and slicing for neighbors, the logic is clean and compact.
+
+No clock enable gating on state changes is done here, making the design simpler and easier for timing analysis.
+
+Overall, this refactoring prioritizes simplicity and timing locality by unifying the entire state and computation, without partitioning the 512 cells into blocks.

@@ -1,0 +1,21 @@
+Novel Architectural Idea: Single-Pass Combinational Logic with Shared Inversion
+
+Instead of using separate modules for each operation, we can implement all operations in a single combinational block with optimized logic sharing. Key innovations:
+
+1. Shared Inversion Logic:
+   - Compute ~a and ~b once and reuse for both the NOT output and logical OR
+   - This reduces duplicate inversion operations
+
+2. Efficient Logical OR:
+   - Implement as reduction OR of the bitwise OR result
+   - Avoids separate OR tree computation
+
+3. Compact Bit Placement:
+   - Directly concatenate inverted vectors for NOT output
+   - Maintains clear bit ordering while minimizing intermediate signals
+
+4. Benefits:
+   - Reduced gate count from shared operations
+   - Single combinational path improves timing
+   - Clear, maintainable single-module implementation
+   - No hierarchy overhead

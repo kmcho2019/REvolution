@@ -1,0 +1,11 @@
+To fix the 12-hour clock implementation, we need to:
+1. Correct the PM indicator logic to toggle exactly at 12:00:00 (noon/midnight) rather than during the 12->1 transition
+2. Simplify the hour counter logic by:
+   - Removing redundant checks for invalid 12-hour clock states (like 19->20)
+   - Properly handling the 11->12 and 12->1 transitions in BCD
+3. Maintain all other correct functionality:
+   - Synchronous reset to 12:00:00 AM
+   - Proper BCD counting for seconds and minutes
+   - Correct rollover behavior between counters
+
+The key change is moving the PM toggle to occur when both hours and minutes reach 12:00:00, and simplifying the hour increment logic to naturally handle BCD counting from 01-12.

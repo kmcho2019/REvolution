@@ -1,0 +1,5 @@
+To refactor the sequence detector module, we can utilize a finite state machine (FSM) approach with four states (IDLE, S1, S2, S3) instead of the shift register and comparator logic. This will involve defining each state, the conditions for transitioning between states, and when to assert the `sequence_detected` output. By using an FSM, the design can be more straightforward and easier to understand, with each state representing a specific position in the sequence detection process.
+
+The IDLE state will be the default state where the detector waits for the start of the sequence. Upon receiving a '1' on `data_in`, it will transition to the S1 state. From S1, if a '0' is received, it moves to S2. From S2, if another '0' is received, it moves to S3. Finally, from S3, if a '1' is received, it sets `sequence_detected` high, indicating the sequence has been detected, and then returns to the IDLE state. The `reset_n` signal will be used to reset the FSM to the IDLE state.
+
+This refactored design maintains the same functionality but organizes the logic around states rather than the shift register and comparator, potentially improving readability and maintainability.

@@ -1,0 +1,15 @@
+Refactored approach:
+1. Use a 3-bit counter to explicitly count 4 cycles (0 to 3)
+2. Make shift_ena high only during the counting phase (counter <= 3)
+3. Counter should:
+   - Reset to 0 on reset
+   - Increment each cycle while counting
+   - Freeze at 4 (binary 100) after counting completes
+4. shift_ena becomes purely combinational based on counter state
+5. Explicit terminal state (counter == 4) ensures shift_ena stays low forever
+
+Key improvements:
+- Correct cycle count (4 instead of 3)
+- Explicit terminal state prevents unwanted behavior
+- Still maintains simple counter-based approach
+- Clear separation between counting and output logic

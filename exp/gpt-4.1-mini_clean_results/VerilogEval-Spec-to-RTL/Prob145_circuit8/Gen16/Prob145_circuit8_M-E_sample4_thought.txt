@@ -1,0 +1,21 @@
+The waveform suggests a two-bit state machine with outputs p and q stored in registers updated at the positive edge of clock. The outputs do not change at clock=0 cycles, only at clock=1 cycles. When clock goes from 1 to 0, output q follows p, and p sometimes holds or resets depending on input a.
+
+A possible architectural idea is to implement p and q as a two-bit shift register with enable logic controlled by clock and input a:
+
+- On posedge clock:
+  - p updates based on input a and previous states.
+  - q captures previous p or holds.
+
+- On negedge clock:
+  - q updates to previous p.
+  - p can be cleared or held depending on input a.
+
+We also use the input clock level (not edge) as an enable signal to selectively update p and q.
+
+To match the waveform, implement a synchronous process on the positive edge of clock that updates p using a stored intermediate state and a second process on negative edge that updates q from p.
+
+Add an asynchronous reset (initialized at time 0) to start outputs at 0.
+
+This dual-edge approach combined with reset and state logic allows to track the waveform's behavior with p and q advancing in a pipelined manner, matching output transitions observed in the table.
+
+This approach is novel since it uses both edges of clock and reset, rather than only posedge clock.

@@ -1,0 +1,7 @@
+Instead of using traditional state registers, I'll implement the FSM using a shift register with pattern matching. The key insights are:
+1. Each state transition can be uniquely identified by the current state and input
+2. We can encode transitions as shift operations on a 2-bit register
+3. The output is simply the AND of both bits (state D = 11)
+4. Reset initializes the register to 00 (state A)
+
+This approach eliminates explicit next-state logic by directly computing the next state as a function of current state and input. The shift operations are carefully chosen to match the state transition table while minimizing logic. This may result in better PPA due to simpler combinational logic.

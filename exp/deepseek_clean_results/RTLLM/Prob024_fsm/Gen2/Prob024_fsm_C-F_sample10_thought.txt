@@ -1,0 +1,19 @@
+Fusion Strategy:
+1. State Optimization: Combine the best state reduction from Example 1 (5 states) with the clearer state naming from Example 2. This reduces area while maintaining readability.
+
+2. Output Logic: Use the simpler combinational output from Example 1 but ensure it's properly synchronized with reset like in Example 2.
+
+3. Encoding: Use binary encoding (like Example 2) for better area efficiency while maintaining good timing.
+
+4. Continuous Detection: Implement the overlapping sequence handling from Example 1 where after a match we transition to S1 instead of IDLE.
+
+5. Reset Handling: Keep the synchronous reset from both examples for consistent behavior.
+
+The improved FSM will have these states:
+- IDLE: Initial state
+- S1: Received '1'
+- S10: Received '10'
+- S100: Received '100'
+- S1001: Received '1001'
+
+MATCH is asserted when in S1001 state and IN=1, then we transition to S1 to allow immediate detection of next sequence.

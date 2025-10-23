@@ -1,0 +1,17 @@
+The primary functional bug lies in the pattern detection logic in STATE_C1: when the input x is not 0, the FSM stays in STATE_C1, potentially causing a deadlock and failing to correctly detect the 1,0,1 pattern. Instead, the FSM should reset pattern detection by returning to STATE_C0 so it can wait for a fresh sequence start.
+
+Also, to strictly follow the spec that the f=1 pulse happens *one clock cycle after the next clock edge following reset deassertion*, the current two-step wait states (STATE_WAIT_RELEASE and STATE_B) are correct.
+
+I will fix the pattern detection states as follows:
+
+- In STATE_C1, if x is not 0, transition back to STATE_C0 to restart detection.
+
+- Similarly, in STATE_C2, if x != 1, restart from STATE_C0.
+
+This prevents the FSM from getting stuck in intermediate states and enables robust detection of the 1,0,1 pattern.
+
+The rest of the FSM, including the outputs and reset logic, is already correctly aligned with the spec.
+
+Additionally, I'll include some comments and minor code cleanup for clarity but keep the structure largely unchanged for clarity and synthesis friendliness.
+
+This fix should eliminate the simulation mismatches by ensuring correct pattern detection and properly timed output pulses.

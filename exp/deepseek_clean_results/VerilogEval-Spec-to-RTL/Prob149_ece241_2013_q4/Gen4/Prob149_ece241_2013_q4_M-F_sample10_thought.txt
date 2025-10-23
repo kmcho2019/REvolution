@@ -1,0 +1,20 @@
+To fix the issues identified in the feedback, I'll make the following improvements:
+
+1. **Reset Handling**: Clearly assert all outputs during reset by making them directly dependent on the reset signal, overriding any state-based logic.
+
+2. **Output Logic Correction**: 
+   - Simplify output assignments to directly match the specification table
+   - Ensure fr2 is only asserted in BELOW_S0 state or during reset
+   - Ensure fr1 is asserted in both BETWEEN_S1_S0 and BELOW_S0 states
+   - Ensure fr0 is asserted in all states except ABOVE_S2
+
+3. **Rising Edge Detection**: 
+   - Replace the problematic comparison with explicit state transition checks
+   - Only set dfr when moving from a lower to higher zone (water rising)
+
+4. **State Machine Robustness**:
+   - Maintain the hysteresis approach but make state transitions more explicit
+   - Add default cases to prevent latches
+   - Use non-blocking assignments consistently
+
+The key improvements are in the reset handling and the more reliable rising edge detection mechanism.

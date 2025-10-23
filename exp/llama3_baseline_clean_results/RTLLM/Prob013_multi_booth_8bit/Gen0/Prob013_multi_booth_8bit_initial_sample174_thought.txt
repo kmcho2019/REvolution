@@ -1,0 +1,9 @@
+To implement an 8-bit Radix-4 Booth multiplier in Verilog, we need to create a module named multi_booth_8bit that takes in the clock signal (clk), reset signal (reset), and two 8-bit inputs (a and b), and produces a 16-bit output (p) and a ready signal (rdy). The multiplier will use the Booth algorithm to perform the multiplication.
+
+We will use a 5-bit counter (ctr) to keep track of the current bit being processed in the multiplier. We will also use two 16-bit registers, multiplier and multiplicand, to store the multiplier and multiplicand values, respectively. 
+
+On the positive edge of the clock signal (clk) or the positive edge of the reset signal (reset), we will check if the reset signal is high. If it is, we will initialize the multiplier and multiplicand registers with the input values a and b.
+
+If the reset signal is low, we will check if the counter (ctr) is less than 16. If it is, we will left-shift the multiplicand register by 1 to simulate the Booth algorithm's shifting operation. We will then check the current bit of the multiplier register (multiplier[ctr]). If it is 1, we will accumulate the value of the multiplicand register (multiplicand) in the product register (p).
+
+After each operation, we will increment the counter (ctr) by 1. Once the counter (ctr) reaches 16, indicating the completion of the multiplication process, we will set the ready signal (rdy) to 1.

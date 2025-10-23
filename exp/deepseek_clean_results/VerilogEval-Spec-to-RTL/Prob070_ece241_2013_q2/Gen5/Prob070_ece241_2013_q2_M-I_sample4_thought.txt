@@ -1,0 +1,25 @@
+Improved Approach: Correct Truth Table Implementation with Proper Don't-Care Handling
+
+1. Truth Table Analysis:
+   - Output 1 conditions: 2 (0010), 7 (0111), 15 (1111)
+   - Output 0 conditions: 0,1,4,5,6,9,10,13,14
+   - Don't-cares: 3,8,11,12
+
+2. SOP Correction:
+   - Must include all minterms (2,7,15)
+   - Current solution misses 15 (1111)
+   - New SOP: (~a & ~b & c) | (~a & b & c & d) | (a & b & c & d)
+   - Simplified: (~a & ~b & c) | (b & c & d) [same as before but now correctly covers 15]
+
+3. POS Correction:
+   - Find complement of SOP (0 conditions)
+   - Maxterms: (a+b+c+d)(a+b+c+~d)... etc. for all 0 conditions
+   - Optimized using don't-cares:
+     - Group (0,1,4,5,8,9,12,13) → (a + c)
+     - Group (6,14) → (~b + ~c + ~d)
+     - Final POS remains (a + c)(~b + ~c + ~d) but now properly represents the complement
+
+4. Verification:
+   - SOP now correctly covers all 1 conditions
+   - POS properly represents all 0 conditions
+   - Don't-cares are handled consistently in both forms

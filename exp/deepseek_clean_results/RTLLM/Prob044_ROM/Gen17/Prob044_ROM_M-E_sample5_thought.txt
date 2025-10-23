@@ -1,0 +1,8 @@
+Implementing a ROM with a power-efficient, partially decoded architecture:
+1. Instead of a full 256x16 memory array, use a segmented approach where only active regions are implemented
+2. Divide the address space into 4 segments of 64 locations each (0-63, 64-127, etc.)
+3. Use address bits [7:6] as segment selectors to enable only the relevant memory block
+4. This reduces switching power by only activating the needed segment
+5. Add an output register to reduce glitches and improve timing
+6. Initialize only the used segments (0-3 in this case) to save initialization time
+7. Include a power-down mode when address is in unused segments

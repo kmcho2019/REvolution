@@ -1,0 +1,17 @@
+The current implementation is already quite optimal, but we can make a small improvement by combining the logic more efficiently. Here's the optimization strategy:
+
+1. The fan output is currently computed separately from heater/aircon, but we can observe that:
+   - heater = mode & too_cold
+   - aircon = ~mode & too_hot
+   - fan = heater | aircon | fan_on
+
+2. By using these relationships, we can potentially help the synthesis tool optimize better by:
+   - Making the logical relationships more explicit
+   - Potentially enabling better gate sharing opportunities
+   - Maintaining the same functionality with identical PPA metrics
+
+3. The improvement maintains:
+   - Same area (5.0 um²)
+   - Same power characteristics
+   - Same timing (0 wns/tns)
+   - But with more readable and potentially more synthesis-friendly code

@@ -1,0 +1,9 @@
+Use a single cycle counter that triggers on either synchronous reset or a detected pattern event (signaled by a dedicated input). When triggered, the counter is loaded with 4 and counts down on each clock cycle while asserting shift_ena. When the counter reaches zero, shift_ena deasserts. This removes the need for explicit FSM states by relying on the counter to gate shift_ena, simplifying the design.
+
+Specifically:
+- Add a 'pattern_detected' input to detect the pattern.
+- On synchronous reset or pattern detection, load the counter with 4.
+- While counter > 0, assert shift_ena and decrement counter on each clock.
+- When counter == 0, deassert shift_ena and stay idle until next trigger.
+
+This approach guarantees shift_ena asserted exactly 4 cycles on reset or pattern detection events.

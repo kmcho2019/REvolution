@@ -1,0 +1,5 @@
+Refactor by maintaining a registered previous water level and decoding the current water level in a combinational function. On each clock, when sensors change, update previous level and current level registers. The supplemental flow valve `dfr` is then driven combinationally by comparing the current level to the previous level: if current level > previous level (water rising), assert `dfr`, else deassert. This separates the combinational logic for `dfr` from sequential updating of levels for clarity and correctness.
+
+Also, decode nominal flows directly from the current level as combinational assigns. Reset initializes previous and current levels to the lowest (below s[0]) and all flows including `dfr` asserted, indicating long-term low water.
+
+This approach fixes the previous logic issue by cleanly separating sequential updates of level registers from combinational flow and supplemental valve logic.

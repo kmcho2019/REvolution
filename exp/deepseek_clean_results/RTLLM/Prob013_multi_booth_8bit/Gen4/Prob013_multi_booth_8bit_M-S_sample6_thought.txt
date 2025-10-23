@@ -1,0 +1,13 @@
+To simplify the Radix-4 Booth multiplier while maintaining correct functionality:
+
+1. **Counter Adjustment**: Use a 4-bit counter (0-7 iterations) since Radix-4 processes 2 bits per cycle (8 bits total / 2 bits per cycle = 4 cycles needed).
+
+2. **Simplified State Machine**: Reduce to just 2 states (COMPUTE and DONE) since IDLE isn't necessary with synchronous reset.
+
+3. **Direct Booth Encoding**: Implement the Booth encoding directly in the accumulation logic without intermediate registers.
+
+4. **Efficient Shifting**: Perform arithmetic right shifts on the multiplier and left shifts on partial products during accumulation.
+
+5. **Simplified Control**: Remove unnecessary registers (prev_lsb, shifted_pp) by computing values directly in the accumulation step.
+
+The simplified version maintains correct Radix-4 Booth multiplication while reducing complexity and resource usage.

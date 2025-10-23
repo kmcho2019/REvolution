@@ -1,0 +1,13 @@
+The original solution is already quite optimal for PPA (Power, Performance, Area) as it implements a simple 2:1 mux followed by a D flip-flop. However, we can make a few minor improvements:
+
+1. Remove the initialization (Q = 1'b0) since initial values are often not preserved during synthesis and can lead to mismatches between simulation and hardware
+2. Use non-blocking assignment consistently for flip-flop behavior
+3. Keep the minimal structure that exactly matches the requirements
+
+The improved version will:
+- Maintain the same functionality
+- Be more synthesis-friendly
+- Have slightly better PPA by removing unnecessary initialization
+- Still be instantiable three times in the full_module
+
+The XOR operation remains at the full_module level as intended in the hierarchical design.

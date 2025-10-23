@@ -1,0 +1,17 @@
+Implement a simple FSM with four states: SEARCH, LOAD, COUNT, DONE.
+
+- SEARCH state: Use a 4-bit shift register shifting in data each clock to detect pattern 1101.
+- When pattern detected, move to LOAD state.
+- LOAD state: shift in 4 bits MSB first into delay register.
+- Once delay is loaded, start COUNT state.
+- COUNT state: count cycles in groups of 1000; total groups = delay + 1.
+- Use a 10-bit counter for cycle count (0 to 999), and a 4-bit block counter initialized to delay+1.
+- Each 1000 cycles decrement block counter.
+- Output count shows remaining blocks minus 1 (countdown of delay).
+- When block counter reaches zero and cycle counter completes, go to DONE.
+- DONE state: assert done, wait for ack=1 to return to SEARCH state.
+- Reset initializes FSM to SEARCH and clears registers.
+- During LOAD and COUNT states, ignore data input for pattern detection.
+- Synchronous reset active high, clocks on posedge clk.
+
+This approach uses minimal registers, simple counters, and clear state transitions for correctness and clarity.

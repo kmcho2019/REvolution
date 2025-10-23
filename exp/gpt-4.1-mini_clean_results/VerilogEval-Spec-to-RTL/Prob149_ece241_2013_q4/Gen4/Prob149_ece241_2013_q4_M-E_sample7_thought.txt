@@ -1,0 +1,25 @@
+A novel approach is to explicitly model the water level as an enumerated state rather than decoding from sensor bits every cycle, and to separately track the previous water level *before* any sensor change occurred. 
+
+On each clock:
+- If reset, initialize current and previous water level to the lowest level (below s[0]), and assert all valves.
+- Otherwise, compare current sensor inputs to the expected sensor pattern for the current water level.
+  - If sensor pattern matches current water level, no level change: keep current and previous levels unchanged.
+  - If sensor pattern differs, then:
+    - Update previous water level = current water level (level before the change).
+    - Update current water level to the level decoded from the sensors.
+
+The levels are:
+
+- 3: Above s[2] (s=111)
+- 2: Between s[2] and s[1] (s=011)
+- 1: Between s[1] and s[0] (s=001)
+- 0: Below s[0] (s=000 or otherwise invalid)
+
+Outputs:
+
+- Nominal valves depend only on current water level, per table.
+- Supplemental valve dfr asserted if current level > previous level (water rising).
+
+This approach eliminates ambiguity by keeping explicit state variables for water levels and only updating them on sensor pattern changes. It ensures that the "previous level" correctly holds the level before the last sensor change, enabling accurate supplemental valve control. The sensor patterns are decoded once per clock to determine the level from input.
+
+This is a finite state machine over water levels with a stored previous level. It is simple, clean, and robust.

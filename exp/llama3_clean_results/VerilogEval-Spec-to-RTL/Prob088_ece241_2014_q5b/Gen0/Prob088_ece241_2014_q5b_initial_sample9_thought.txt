@@ -1,0 +1,11 @@
+To implement the given Mealy finite-state machine in Verilog using one-hot encoding, we first define the states of the machine. Since there are two states (A and B), we need two bits to represent them in one-hot encoding. However, to simplify the implementation and strictly adhere to the one-hot encoding principle where only one bit is '1' at a time, we'll use a single bit for each state but ensure only one of them is '1' at any given time.
+
+Next, we need to decode the current state and the input `x` to determine the next state and the output `z`. Since the output is a function of both the current state and the input (Mealy machine), we'll directly generate the output `z` based on the current state and `x`.
+
+The asynchronous reset will set the state to `A` whenever `areset` is high, regardless of the clock. When `areset` is low, the state machine operates based on the clock and input `x`.
+
+The state transitions are as follows:
+- From state `A`, if `x` is `0`, stay in `A` and output `z` is `0`.
+- From state `A`, if `x` is `1`, move to `B` and output `z` is `1`.
+- From state `B`, if `x` is `0`, stay in `B` and output `z` is `1`.
+- From state `B`, if `x` is `1`, stay in `B` and output `z` is `0`.

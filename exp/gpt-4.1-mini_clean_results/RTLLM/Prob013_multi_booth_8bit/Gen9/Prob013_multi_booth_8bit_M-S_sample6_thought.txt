@@ -1,0 +1,14 @@
+Implement a simple iterative Radix-2 Booth multiplier as described in the problem statement for 8-bit inputs.
+
+Key points:
+- Use two 16-bit registers: multiplicand (sign-extended 'a') and multiplier (sign-extended 'b') concatenated with an extra zero bit for Booth processing.
+- Use a 5-bit counter (0 to 16) for iteration.
+- On reset: initialize multiplier = {b, 1'b0} (9 bits) sign-extended to 16 bits with zeros in upper bits, multiplicand = sign-extended 'a' to 16 bits, product = 0, counter = 0, ready = 0.
+- On each clk edge (if not reset and counter < 16):
+  - Examine bits multiplier[counter] and multiplier[counter-1] (or multiplier[counter] and the bit before, depending on direction) to decide to add or subtract the multiplicand or do nothing (Booth radix-2).
+  - Shift multiplicand left by 1 (as per problem statement).
+  - Increment counter.
+- When counter reaches 16, set ready=1 and output the product.
+- Product is accumulated in register p (16 bits).
+  
+This approach exactly matches the problem description's operational flow and keeps the design simple without extra states or complicated recoding logic.

@@ -1,0 +1,27 @@
+Instead of encoding states purely as counts of consecutive ones, use an explicit FSM with named states representing key milestones in detecting the HDLC flag and error conditions. The FSM tracks the number of consecutive ones seen, with special states for error and reset. The outputs are generated from states only, since it's Moore-type.
+
+To ensure outputs assert for one cycle beginning after detecting conditions, register outputs at the sequential stage.
+
+Key states:
+- IDLE: no ones detected (previous input 0 assumed).
+- ONES_1 to ONES_6: counting consecutive ones.
+- ERROR: seven or more consecutive ones.
+
+Transitions:
+- From IDLE on '1' go to ONES_1; on '0' stay IDLE.
+- From ONES_i on '1' go to ONES_{i+1} (or ERROR if i+1=7); on '0' go back to IDLE.
+
+Outputs:
+- disc: asserted for one cycle when transition from ONES_5 on input=0.
+- flag: asserted for one cycle when transition from ONES_6 on input=0.
+- err: asserted whenever in ERROR state.
+
+We implement outputs as registered signals that go high one cycle after detecting conditions, aligning with the problem spec.
+
+This explicit named state FSM enhances clarity and extensibility, while outputs reflect detected patterns cleanly.
+
+Advantages:
+- Clear state names improve readability.
+- Simple next-state and output logic.
+- Moore outputs stable during state.
+- Error asserted continuously once error state entered.

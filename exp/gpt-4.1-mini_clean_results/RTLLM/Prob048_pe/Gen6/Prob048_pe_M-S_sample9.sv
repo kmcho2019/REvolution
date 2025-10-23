@@ -1,0 +1,16 @@
+module pe (
+    input  wire        clk,
+    input  wire        rst,        // synchronous reset, active high
+    input  wire [31:0] a,
+    input  wire [31:0] b,
+    output reg  [31:0] c
+);
+
+    always @(posedge clk) begin
+        if (rst)
+            c <= 32'd0;
+        else
+            c <= c + (a * b);
+    end
+
+endmodule

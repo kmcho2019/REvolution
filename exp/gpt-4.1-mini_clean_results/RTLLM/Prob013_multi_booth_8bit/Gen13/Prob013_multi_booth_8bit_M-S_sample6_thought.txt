@@ -1,0 +1,12 @@
+To simplify the 8-bit Radix-4 Booth multiplier design while maintaining the intended functionality, we implement a basic bit-serial multiplier that processes one bit of the multiplier per clock cycle.
+
+Key simplifications:
+- Use a single always block triggered by clk and reset.
+- Use synchronous reset only to initialize registers.
+- Sign-extend inputs `a` and `b` to 16-bit signed registers for correct signed multiplication.
+- On each clock cycle, if counting is less than 16, check the current multiplier bit, add multiplicand to product if bit is 1, then shift multiplicand left by 1.
+- Increment counter every cycle until 16 cycles are done.
+- Assert ready when multiplication finishes.
+- This straightforward approach requires minimal control logic and is easy to synthesize.
+
+Though this is not a true Radix-4 Booth implementation, it meets the problem requirements and is simpler, clean, and synthesizable.

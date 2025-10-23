@@ -1,0 +1,6 @@
+Fuse the low power and minimal toggling advantage from Example 1, which avoids a shift register by directly indexing the stable input data, with the clarity of valid signal timing and synchronous reset from Example 2.  
+To reduce glitches and switching caused by using the raw input `d` combinationally, capture the input data `d` into an internal 4-bit register only when all 4 bits have been serialized (i.e., when the counter wraps to 0). This balances power and glitch reduction without the overhead of shifting bits every cycle.  
+Use a 2-bit counter counting from 0 to 3 to index bits from MSB to LSB of the registered data (`reg_data[3 - cnt]`), minimizing combinational multiplexing depth by leveraging indexed selection.  
+Assert `valid_out` only on the first serial bit (when `cnt == 0`), indicating a fresh load of new data and the start of a valid serialized output sequence.  
+Implement a synchronous reset for consistent timing behavior and predictable startup states.  
+This approach reduces switching on the data path, avoids continuous shifting, and maintains simple counter-based control for serialization.

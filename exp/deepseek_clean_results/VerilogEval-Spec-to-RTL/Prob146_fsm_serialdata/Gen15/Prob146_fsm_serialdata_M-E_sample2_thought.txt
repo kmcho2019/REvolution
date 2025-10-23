@@ -1,0 +1,12 @@
+Novel Architecture Idea:
+1. Combined Shift-State Register: Instead of separate state and shift registers, use a single 11-bit register that tracks both the received bits and the current state position (start, data bits, stop).
+2. Early Stop Detection: Monitor the incoming bit stream continuously to detect stop bit violations early, reducing error recovery time.
+3. Position-Based State Machine: Use the register's bit positions to implicitly represent the state, eliminating explicit state variables.
+4. Parallel Validation: Check all protocol requirements (start bit, stop bit) in parallel rather than sequentially.
+5. Minimal Control Logic: Reduce FSM complexity by leveraging the shift register's natural progression.
+
+Key Benefits:
+- Reduced area by combining state and data storage
+- Faster error detection by parallel checking
+- Simplified control logic with implicit state representation
+- Lower power due to fewer state transitions

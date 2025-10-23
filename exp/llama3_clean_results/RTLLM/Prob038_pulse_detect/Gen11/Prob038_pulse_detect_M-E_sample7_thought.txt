@@ -1,0 +1,7 @@
+A novel approach to detect pulses in the input signal `data_in` would involve using a finite state machine (FSM) with three distinct states: `IDLE`, `PULSE_STARTED`, and `PULSE_DETECTED`. The `IDLE` state represents the default state where no pulse is being detected. The `PULSE_STARTED` state is entered when `data_in` transitions from 0 to 1, indicating the potential start of a pulse. The `PULSE_DETECTED` state is entered when `data_in` transitions from 1 to 0 after being in the `PULSE_STARTED` state, indicating the completion of a pulse.
+
+This FSM can be implemented using a register to keep track of the current state and a separate register to delay `data_in` by one cycle, allowing for the detection of transitions in `data_in`.
+
+The `data_out` signal is set to 1 when the FSM is in the `PULSE_DETECTED` state and 0 otherwise. This ensures that `data_out` is only asserted at the end of a detected pulse.
+
+To improve performance and area efficiency, the FSM's logic can be optimized to minimize the number of combinational logic gates and reduce the number of state transitions.

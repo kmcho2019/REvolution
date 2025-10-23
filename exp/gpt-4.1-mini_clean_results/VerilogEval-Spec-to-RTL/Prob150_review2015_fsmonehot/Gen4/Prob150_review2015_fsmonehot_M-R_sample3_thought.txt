@@ -1,0 +1,7 @@
+Refactor the combinational next-state and output logic to use explicit intermediate signals for next-state bits rather than building a next_state vector and indexing it for outputs. This approach breaks down the logic into separate assign statements per next-state bit, improving clarity of each next-state condition. Also, express outputs directly from current state bits without intermediate signals.
+
+This style enhances readability by making each next-state condition explicit and avoids creating a wide vector for next states. It does not change functionality but alters the coding style for better clarity and straightforward mapping of each state transition.
+
+We still use localparams for state bit indices and keep the one-hot encoding assumptions. The outputs remain Moore outputs derived solely from the current state. The combinational logic uses simple continuous assignments (assign) for all next-state bits and outputs.
+
+This approach can help simplify debugging and further maintenance since each next-state signal is defined in a self-contained assign statement.

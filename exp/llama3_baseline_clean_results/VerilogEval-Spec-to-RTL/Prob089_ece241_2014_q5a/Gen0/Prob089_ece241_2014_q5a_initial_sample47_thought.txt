@@ -1,0 +1,16 @@
+To implement the TopModule, we need to design a Moore state machine that can handle serial input of bits and produce the 2's complement of the input number. The machine will have two states: an idle state and a running state. In the idle state, the machine waits for the reset signal to be released. Once the reset is released, the machine transitions to the running state, where it starts accepting input bits and accumulating them. The 2's complement is calculated by inverting all the bits and adding 1. We can achieve this by maintaining a running sum of the input bits. When the machine is in the running state, it will output the 2's complement of the accumulated input bits on each clock cycle.
+
+We will use two registers: one to store the accumulated input bits (let's call it 'acc') and another to store the final result (let's call it 'res'). We will also maintain a counter to keep track of the number of bits received so far. When the reset is asserted, the machine resets 'acc' and the counter to zero.
+
+To calculate the 2's complement, we need to invert all the bits of 'acc' and add 1 to it. This can be achieved by using a XOR operation with a register that has all bits set to 1 (for inverting the bits) and then adding 1 to it. However, since we are dealing with serial input, we cannot directly invert and add 1 to the accumulated bits. Instead, we will invert the input bits as they are received and accumulate the inverted bits in 'acc'. Then, when we need to output the 2's complement, we will add 1 to 'acc' (which already contains the inverted bits) to get the final result.
+
+Since we are dealing with serial input of arbitrary length, we cannot have a fixed-size 'acc' and 'res' register. However, we can assume a maximum length for the input number, say 32 bits. Therefore, 'acc' and 'res' will be 32-bit registers.
+
+Here's a step-by-step breakdown of the module's behavior:
+
+1. When reset is asserted, the machine resets 'acc' and the counter to zero.
+2. When reset is released, the machine starts accepting input bits.
+3. On each positive edge of the clock, the machine checks if reset is still released. If it is, the machine accumulates the input bits in 'acc' after inverting them.
+4. The machine outputs the 2's complement of the accumulated input bits on each clock cycle by adding 1 to 'acc' (which contains the inverted bits).
+
+To implement this, we will use a combination of sequential logic (for the state machine and registers) and combinational logic (for the inversion and addition operations).

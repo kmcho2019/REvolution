@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Replace the bitwise wrap-around detection with a direct comparison (q == 4'b1010) which may synthesize more efficiently in modern tools
+   - Remove the separate enable signal to reduce combinatorial path depth
+   - Combine the increment and wrap logic into a single expression
+
+2. Power Optimization:
+   - Maintain the 4-bit binary encoding but simplify the comparison logic
+   - Reduce gate count in the wrap-around detection path
+   - Keep the synchronous reset for clean state initialization
+
+3. Area Optimization:
+   - Use minimal registers (4 flip-flops) with direct reset assignment
+   - Simplify the next-state logic to use a single conditional expression
+
+Key Benefits:
+- Simpler and potentially faster wrap-around detection
+- Reduced combinatorial logic depth
+- Maintains same functionality with cleaner implementation
+- Lower power due to reduced gate count

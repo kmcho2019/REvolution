@@ -1,0 +1,12 @@
+To implement a 64-bit arithmetic shift register with synchronous load and configurable shift operations, we need to:
+1. Use a 64-bit register to store the current value
+2. On each clock edge:
+   - If load is high, load the data input into the register
+   - Else if ena is high, perform the selected shift operation:
+     * Left shift by 1: shift all bits left by 1, fill LSB with 0
+     * Left shift by 8: shift all bits left by 8, fill 8 LSBs with 0
+     * Right arithmetic shift by 1: shift all bits right by 1, extend MSB
+     * Right arithmetic shift by 8: shift all bits right by 8, extend MSB
+3. Output the register value as q
+
+The arithmetic right shift requires sign extension, which means we need to replicate the MSB when shifting right.

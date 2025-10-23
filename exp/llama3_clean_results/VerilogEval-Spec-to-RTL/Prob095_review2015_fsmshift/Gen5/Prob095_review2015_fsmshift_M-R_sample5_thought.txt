@@ -1,0 +1,7 @@
+To refactor the existing code, we can utilize a state machine with two states: idle and enable. The idle state represents the default state where `shift_ena` is de-asserted, and the enable state is where `shift_ena` is asserted for exactly 4 clock cycles. We will use a counter to keep track of the clock cycles during the enable state.
+
+We will also use a different approach to implement the counter and state machine logic. Instead of using an `always_ff` block to update the counter, we will use a single `always_ff` block to update the state and counter.
+
+To further simplify the code, we can eliminate the need for an explicit counter variable by using a single state variable with multiple bits to encode the current state and the remaining clock cycles.
+
+The refactored code will have the same functionality as the original code but with a different structure. We will aim to minimize the number of combinational logic gates and ensure that the state machine logic is properly synchronized with the clock and reset signals.

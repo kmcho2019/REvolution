@@ -1,0 +1,7 @@
+To implement the Moore state machine with a novel architectural idea, we can utilize a One-Hot Encoding (OHE) scheme for the states instead of the traditional binary encoding. In a one-hot encoding scheme, each state is represented by a unique binary word where only one bit is '1' (hence the name one-hot) and all other bits are '0'. This approach can simplify the combinational logic for next state and output determination, potentially reducing the area and improving the performance.
+
+In our case, with two states (OFF and ON), we would use two bits to represent the states in one-hot encoding: OFF could be represented as "10" and ON as "01". The reset state would be OFF, so upon reset, the state register would be set to "10". The next state logic would then be designed to update the state register based on the current state and the inputs j and k, following the specified state transitions.
+
+The output (out) would be determined based on the current state, where out = 1 when the state is ON ("01") and out = 0 when the state is OFF ("10"). This approach allows for a straightforward implementation of the state machine using one-hot encoding, which can be beneficial in certain scenarios, especially when the number of states is relatively small.
+
+One of the advantages of one-hot encoding is that it can lead to faster and more power-efficient designs, as the next state logic and output logic can often be simplified. However, it does require more bits to encode the states, which can increase the area usage compared to binary encoding for larger state machines.

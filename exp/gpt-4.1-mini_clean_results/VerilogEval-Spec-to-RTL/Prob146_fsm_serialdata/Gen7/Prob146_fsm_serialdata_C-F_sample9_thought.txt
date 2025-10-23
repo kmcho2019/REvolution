@@ -1,0 +1,20 @@
+Fuse the strengths of both examples by structuring the FSM with separate combinational next-state logic and sequential state updates for timing clarity and synthesis friendliness. Use a compact 2-bit binary-encoded FSM with states: IDLE, RECEIVE, CHECK_STOP, WAIT_STOP.
+
+Implement the data_shift register with a clear LSB-first shift on each RECEIVE cycle, resetting on start bit detection. Use a 3-bit bit counter gated by RECEIVE state to count data bits.
+
+Drive the `done` signal and `out_byte` register only when a valid stop bit is detected, asserting `done` for a single clock cycle to reduce switching noise.
+
+In the case of an invalid stop bit, transition to WAIT_STOP to wait until the line returns to idle (high), then back to IDLE.
+
+Add clock enables to counters and shift register to avoid unnecessary toggling.
+
+Use non-blocking assignments consistently for synchronous logic and separate combinational next-state logic in a dedicated always block.
+
+This design optimizes clarity, timing, and power by:
+- Separating sequential and combinational logic,
+- Gating counters and shift registers,
+- Minimizing done toggling,
+- Using compact binary state encoding,
+- Proper reset handling.
+
+All logic is synchronous on posedge clk with active-high synchronous reset.

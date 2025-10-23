@@ -1,0 +1,14 @@
+To fix the fractional frequency divider by 3.5 (7/2) using double-edge clocking, the key is to avoid asynchronous combination of signals from separate clock edges and explicitly generate a phase-shifted clock within a single clock domain.
+
+Main corrections:
+
+1. **Use a single clock domain (`posedge clk`) for all logic**, avoiding crossing clock domains (no direct use of negedge clk).
+2. **Implement a phase accumulator approach** that counts half clock cycles (7 half cycles for division by 3.5) to generate the fractional clock.
+3. The counter runs from 0 to 6 (7 counts), representing half periods of the output clock.
+4. Toggle the output clock every time the counter resets (full period = 7 half cycles * clk period / 2 = clk period * 3.5).
+5. To implement the double-edge effect, the output clock is changed at two points within the count cycle, effectively creating unequal high and low durations, achieving the fractional division.
+6. **Register the output clock signals properly** to avoid glitches.
+7. The output `clk_div` is generated entirely synchronized to the input clock, eliminating asynchronous OR and metastability.
+8. This approach produces an output clock with a 3.5 division ratio, with properly phase-shifted edges and consistent duty cycle.
+
+This method uses a single clock domain and a counter running up to 7 (MUL2_DIV_CLK), toggling the output clock twice per cycle at proper counts (e.g., at counts 3 and 6), resulting in an output frequency divided by 3.5 with balanced duty cycle and no glitches.

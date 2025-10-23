@@ -1,0 +1,5 @@
+The pulse detection corresponds to detecting a 0→1→0 pattern within 3 cycles, which is basically detecting a rising edge followed by a falling edge on data_in. We can achieve this with a 2-bit shift register capturing the current and previous two samples of data_in. When the three sampled bits form the pattern 010, the pulse ends at the current cycle, so data_out is asserted.
+
+This approach eliminates the need for an explicit FSM, simplifying the logic and state management while maintaining correct functionality. The data_out is asserted synchronously on the clock edge when the pattern is detected, then returns to 0.
+
+A synchronous reset clears the shift register to zeros.

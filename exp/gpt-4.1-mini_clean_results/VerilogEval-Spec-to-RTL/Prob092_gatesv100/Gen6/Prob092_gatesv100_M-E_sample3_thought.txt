@@ -1,0 +1,7 @@
+Implement all three outputs using vectorized bitwise operations without generate loops for compactness and clarity, leveraging vector slicing and concatenation fully. 
+
+- For out_both: Since it requires checking each bit and its neighbor to the left, shift the input left by one (dropping the MSB), AND it with the original truncated input, and pad the MSB with 0.
+- For out_any: Since it checks the input bit and its neighbor to the right, shift the input right by one (dropping LSB), OR it with the truncated original input, and pad the LSB with 0.
+- For out_different: Use a circular left shift by one bit (wrap-around) XORed with original input, similar to the previous approach but explicitly shift vector by concatenation to clarify wrap-around.
+
+This approach avoids explicit loops, relying purely on vector operations for concise RTL that is highly synthesizable and easy to read. It also naturally handles boundaries by padding with zeros.

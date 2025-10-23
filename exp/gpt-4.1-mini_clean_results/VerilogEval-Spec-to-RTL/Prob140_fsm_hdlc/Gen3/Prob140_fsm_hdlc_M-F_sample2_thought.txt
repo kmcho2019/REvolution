@@ -1,0 +1,26 @@
+Create a Moore FSM with states representing counts of consecutive ones from 0 to 7+, explicitly distinguishing the error state for 7 or more consecutive ones. On each clock:
+
+- If input=0, reset count to 0 (state 0).
+- If input=1 and count<7, increment count.
+- If input=1 and count=7, stay in error state.
+
+Generate outputs solely based on states:
+
+- disc asserted in state "after seeing 5 ones then zero" (call it state D) for exactly one cycle.
+- flag asserted in state "after seeing 6 ones then zero" (state F) for exactly one cycle.
+- err asserted whenever in error state (7 or more ones).
+
+To achieve one cycle delayed output (outputs asserted on cycle after pattern detection), add explicit "disc" and "flag" output states that the FSM transitions into after detecting the zero following 5 or 6 ones, then return to state 0 on next input.
+
+Thus, state progression example:
+
+- States 0-6 count ones.
+- If at 5 ones and input=0: go to DISC state, asserting disc=1 one cycle.
+- If at 6 ones and input=0: go to FLAG state, asserting flag=1 one cycle.
+- If at 6 ones and input=1: go to ERR state.
+- ERR state asserts err=1 while in it.
+- DISC and FLAG states assert outputs, then return to 0 next cycle.
+
+This satisfies Moore output requirements (outputs depend only on current state), asserts outputs for exactly one cycle, and cleanly separates detection and output signaling.
+
+Implement synchronous reset to state 0, assuming previous input=0 as required.

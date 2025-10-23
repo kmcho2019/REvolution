@@ -1,0 +1,7 @@
+Implement the 32-bit global history register as a shift register with an asynchronous reset, but handle the misprediction rollback by first shifting in the train_taken bit and then restoring train_history bits into the upper 31 bits on the same clock edge. Use an explicit priority mux inside the always block to choose between the misprediction rollback and normal prediction shift.
+
+To avoid unnecessary toggling, the register updates only when either a prediction is valid or a misprediction occurs. When a misprediction occurs, overwrite the entire 32-bit register at once with {train_taken, train_history[31:1]}, effectively inserting train_taken as the newest (LSB) bit and rolling back the rest of the history.
+
+This approach reverses the bit order relative to the original so that predict_history[0] remains the youngest branch but is formed by putting train_taken in LSB and the previous history shifted to higher bits. The design prioritizes misprediction updates, respects asynchronous reset, and avoids clock gating logic by selectively updating only on meaningful events.
+
+This design also improves clarity by explicitly building the next history value for both prediction and misprediction cases, using a single always block triggered on clock and reset.

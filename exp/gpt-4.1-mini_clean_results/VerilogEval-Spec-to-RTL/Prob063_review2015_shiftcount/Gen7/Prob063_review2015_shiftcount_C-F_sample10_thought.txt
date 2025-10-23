@@ -1,0 +1,15 @@
+The best approach is to fuse the clear separation of combinational next-state logic and sequential state update from both examples with careful, explicit control of priority that matches the specification (shift_ena prioritized over count_ena). Additionally, clarifying the MSB-first shift as shifting left, with the new data coming into the least significant bit, maintains semantic clarity.
+
+To optimize power, integrate a simple clock enable gating inside the always @(posedge clk) block by updating the register only when either enable is asserted, minimizing unnecessary toggling when no operation is performed.
+
+This fused design maintains simplicity and readability, ensures minimal switching activity, and avoids complexity like explicit clock gating cells. It uses minimal combinational logic and a 4-bit register, balancing PPA well for this small data path.
+
+No reset is added to respect the original problem constraints.
+
+Summary of fusion:  
+- Use a combinational always block computing next_q with shift_ena priority.  
+- Update q only when shift_ena or count_ena is asserted, else hold (minimize toggling).  
+- Maintain clear MSB-first semantics (shift left, input data into LSB).  
+- Keep the code simple, synthesis-friendly, and easy to maintain.
+
+This fusion combines the clarity and synthesis friendliness of both example solutions, adds minor power optimization by preventing unnecessary updates, and aligns precisely with the problem requirements.

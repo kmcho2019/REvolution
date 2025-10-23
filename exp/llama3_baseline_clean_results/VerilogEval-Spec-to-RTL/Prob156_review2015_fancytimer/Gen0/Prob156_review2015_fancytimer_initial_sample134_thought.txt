@@ -1,0 +1,9 @@
+To implement the TopModule, we will use a finite state machine (FSM) to control the different states of the timer. The FSM will have the following states:
+- IDLE: search for the input pattern 1101
+- SHIFT: shift in the 4-bit delay after the pattern is detected
+- COUNT: count down the timer
+- DONE: assert done and wait for ack
+
+We will use a counter to keep track of the remaining time and another counter to shift in the delay bits. We will also use a register to store the delay value.
+
+The FSM will transition between states based on the current state and the inputs. In the IDLE state, the FSM will check for the input pattern 1101 and transition to the SHIFT state if it is detected. In the SHIFT state, the FSM will shift in the 4-bit delay and transition to the COUNT state. In the COUNT state, the FSM will count down the timer and transition to the DONE state when the count reaches 0. In the DONE state, the FSM will assert done and wait for ack before transitioning back to the IDLE state.

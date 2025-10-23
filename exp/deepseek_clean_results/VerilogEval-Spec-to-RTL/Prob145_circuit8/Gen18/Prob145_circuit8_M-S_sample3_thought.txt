@@ -1,0 +1,19 @@
+After carefully re-examining the waveform, here's a simplified approach:
+
+1. Key Observations:
+   - p is simply a delayed version of 'a' by one clock cycle when q=0
+   - q toggles based on seeing two consecutive 'a' highs (detecting a full cycle)
+   - q resets immediately when 'a' is high
+   - Outputs only change at positive clock edges
+
+2. Simplified Strategy:
+   - Use single always block with posedge clock
+   - Track previous 'a' value to detect full cycles
+   - p follows previous 'a' when q=0
+   - q set when we see 'a' high for full cycle (current and previous high)
+   - q clears immediately when 'a' is high
+
+3. Simplifications:
+   - Remove initial block (registers initialize to 0 by default)
+   - Combine q logic into simpler conditional
+   - Make p assignment more straightforward

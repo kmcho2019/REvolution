@@ -1,0 +1,25 @@
+The main issues were off-by-one errors and timing mismatches in the LOAD and COUNT states causing extra cycles to be counted, and misaligned delay bit loading.
+
+To fix:
+
+1. **Pattern detection:** keep a 4-bit shift register shifting in data each clock; when it matches 1101, move to LOAD.
+
+2. **Loading delay bits:** Since delay bits come MSB first, shift left delay_reg and insert data bit at LSB each cycle. Use a 2-bit load_bit_count counting 0 to 3. Only after loading the 4th bit (load_bit_count==3) update `tick_counter <= delay_reg + 1` (with the full loaded delay). Use a temporary register to hold the newly formed delay_reg for accurate loading.
+
+3. **Counting:** Use two counters:
+   - cycle_counter counts 0 to 999 (1000 cycles)
+   - tick_counter counts down from (delay + 1) to 0
+   At each clock:
+   - increment cycle_counter until 999,
+   - when cycle_counter wraps to 0, decrement tick_counter (only if >0)
+   The count output holds the current tick_counter - 1 when tick_counter>0; otherwise 0. This ensures count is stable for 1000 cycles before decrement.
+
+4. **Transition to DONE:** when tick_counter reaches 0 (all ticks done), assert done and deassert counting, wait for ack to return to SEARCH. 
+
+5. **Outputs count:** Output stable count during counting; output valid count during counting, and stable done during WAIT_ACK. In SEARCH and LOAD outputs count can be '0' (for synthesis friendliness) as don't-care.
+
+6. **Reset synchronous:** clears all state and registers including pattern_shift.
+
+7. **Avoid non-synthesizable 'x' values in output, replace with 0 in non-counting states.**
+
+This approach guarantees exact counting of (delay+1)*1000 cycles with stable outputs and correct transitions, fixing previous off-by-one and timing errors.

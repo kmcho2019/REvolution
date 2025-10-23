@@ -1,0 +1,7 @@
+To improve the existing design for better synthesis compatibility and PPA metrics, I will remove the `initial` block since it is typically ignored in synthesis and can cause simulation-synthesis mismatch. Instead, I will add an explicit asynchronous reset input to initialize the flip-flop output to a known state. This aligns with good design practices and ensures consistent behavior between simulation and synthesis.
+
+The reset is active high and asynchronous, allowing a deterministic startup state. If the problem explicitly disallows reset, it should be documented that initial output is undefined after power-up, but typically including a reset is preferable.
+
+This modification improves robustness and avoids unknown states. The rest of the design remains the same: the flip-flop captures the XOR of `in` and the current `out` on the positive clock edge. This approach keeps area minimal and has no performance penalty.
+
+If the reset is strictly disallowed by requirements, this design can still be synthesized without it by tying reset inactive, but having it provides a clean initialization method and is preferred in practical designs.

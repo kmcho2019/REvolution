@@ -1,0 +1,17 @@
+To create a superior JK flip-flop, I will fuse the strengths of both examples:
+
+- From Example 1, I use the explicit Boolean expression that exactly matches the JK truth table, ensuring clarity, correctness, and minimal logic.
+
+- From Example 2, I maintain the simple synchronous always block with non-blocking assignments for proper sequential behavior.
+
+- Additionally, I incorporate a clock enable signal to suppress unnecessary toggling or updates when J=K=0 (hold state). This clock enable avoids redundant register updates, which can reduce power consumption by minimizing switching activity inside the flip-flop and in downstream logic.
+
+- The clock enable signal will be combinationally derived as: en = (j | k). This enables the register only when a state change (set, reset, or toggle) is required.
+
+- The nextQ logic remains as in Example 1 since it cleanly encodes all four JK cases.
+
+- By gating the register update with an enable condition, the design reduces power without adding complex gating logic or latency.
+
+- This approach combines the clarity and correctness of the first example’s next-state logic with the minimalism and simplicity of the second example’s always block, enhanced by power-aware clock gating at RTL level.
+
+The final design thus delivers improved power efficiency, clarity, and reliable JK functionality.

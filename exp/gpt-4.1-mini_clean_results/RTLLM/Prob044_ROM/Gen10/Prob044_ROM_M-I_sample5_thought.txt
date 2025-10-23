@@ -1,0 +1,13 @@
+The original design correctly implements an asynchronous ROM with combinational read, which is suitable for many use cases. To improve performance and power while keeping area minimal, we can:
+
+1. Make the ROM synchronous by adding a clock input and registering the output. This reduces glitches on output data and can improve timing by meeting synchronous design methodology, enabling higher clock frequencies and easier timing closure.
+
+2. Use a parameter for memory size and width for easy scalability.
+
+3. Use a generate block or file initialization to scale easily, but keep explicit initialization for now as only 4 locations are preset.
+
+4. Keep the memory declared as reg array initialized in initial block (or readmemh for scalability).
+
+5. Output dout is registered on the clock edge, which reduces switching noise and dynamic power on output lines.
+
+This synchronous ROM approach is generally more PPA-friendly in ASIC and FPGA flows compared to fully asynchronous ROM, especially when integrated into synchronous designs.

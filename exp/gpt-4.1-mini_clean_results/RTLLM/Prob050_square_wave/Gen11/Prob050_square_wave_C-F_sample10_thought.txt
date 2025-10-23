@@ -1,0 +1,11 @@
+Fuse the strengths of both examples by implementing a synchronous active-low reset and a clock enable signal that only allows counting and toggling when freq > 1, since freq=0 or freq=1 either disables toggling or produces no meaningful output. This further reduces unnecessary switching activity and power compared to only gating at freq=0.
+
+Use an 8-bit comparator (count == freq-1) to detect toggle condition rather than a 9-bit adder with overflow detection, to reduce area and potential timing complexity.
+
+Hold the count register steady (instead of resetting to zero) when counting is disabled, reducing switching power on count register bits.
+
+Retain clean, clear combinational logic signals for toggle condition and counting enable for better readability and easier optimization.
+
+Use non-blocking assignments consistently, and keep all sequential logic in one always block for simplicity.
+
+This fusion balances power efficiency (via clock enable and hold on count), timing (simple comparator), area (no extra bits for adder overflow), and code clarity/maintainability.

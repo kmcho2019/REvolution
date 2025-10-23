@@ -1,0 +1,14 @@
+To improve the existing solution, we need to correct the counting logic and ensure that the 'count', 'counting', and 'done' outputs behave as specified. The main issues identified include incorrect counting, output mismatches, and FSM transition problems. 
+
+1. **Correct Counting Logic**: We should initialize the counter with the correct value based on the delay and ensure it decrements accurately. The counter should count down from the delay value multiplied by 1000, and for each 1000 cycles, the count output should reflect the remaining delay value.
+
+2. **Output Mismatches**: We need to adjust the logic for the 'count', 'counting', and 'done' outputs. The 'count' output should reflect the remaining delay value, 'counting' should be asserted while the counter is active, and 'done' should be asserted when the counter reaches zero.
+
+3. **FSM Transition Issues**: The conditions for transitioning between states need to be corrected. Specifically, the transition from the SHIFT state to the COUNT state should be based on having received all 4 bits of the delay value, not just the most significant bit.
+
+After correcting these functional issues, optimization for Power, Performance, and Area (PPA) metrics can be considered. This might involve simplifying logic, reducing the number of flip-flops, or improving the timing of critical paths.
+
+To optimize the design, we can consider:
+- Using a single counter for both the delay and the 1000-cycle decrement.
+- Improving the logic for 'count', 'counting', and 'done' to minimize hardware usage.
+- Reviewing the FSM states and transitions to ensure they are as simple and efficient as possible.

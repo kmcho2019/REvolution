@@ -1,0 +1,13 @@
+Simplification Approach:
+1. Eliminate the intermediate edge_detect wire by combining XOR operation directly in the always block
+2. Remove the anyedge_reg register since we can assign the XOR result directly to the output
+3. Maintain edge detection functionality by still comparing current and previous inputs
+4. Reduce register count by using prev_in directly for comparison
+5. Output becomes purely combinational from the XOR result, saving one register stage
+
+Key Benefits:
+- Fewer registers (saves area)
+- Simpler code structure
+- Same edge detection functionality
+- Output responds immediately to input changes (no additional pipeline stage)
+- Reduced power consumption from fewer flip-flops

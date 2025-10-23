@@ -1,0 +1,19 @@
+The main problem in the given solution arises from mixing `state` and `next_state` within the synchronous always block, causing timing mismatches for outputs `f` and `g`, and auxiliary counters. Also, the pattern detection logic and y-monitoring counter are updated in confusing places, causing incorrect sequence detection and timing.
+
+To fix this:
+
+- Separate clearly the state registers update on the clock edge from the combinational next state and output logic.
+- Use a Moore FSM style: outputs depend only on the current state (registered state), not next_state.
+- Make `f` and `g` outputs registered, driven directly from the current state.
+- Update auxiliary counters (`pattern_step`, `y_count`) synchronously, based only on current state and inputs, and reset them appropriately.
+- For pattern detection on input `x`, implement a deterministic pattern step register that updates only on clock edge in the pattern monitoring state.
+- For y monitoring, implement a 2-cycle counter that increments only when in the corresponding state, and reset otherwise.
+- On reset (`resetn` low), force the FSM into state A with outputs `f=0`, `g=0`, and counters zeroed.
+- After reset deassertion, transition to F_PULSE state, assert `f=1` for one cycle, then move to MONITOR_X state to detect the `1,0,1` pattern.
+- When pattern detected, move to G_ON_MONITOR_Y state with `g=1`, monitor `y` for up to two cycles.
+- If `y` is 1 during these two cycles, transition to G_ON_PERM to keep `g=1` forever until reset.
+- If `y` is 0 after two cycles, transition to G_OFF_PERM to keep `g=0` forever until reset.
+
+This method ensures all outputs and counters are updated synchronously and deterministically, no use of next_state inside the sequential logic that assigns outputs, and clean separation of combinational and sequential logic, resulting in correct, glitch-free FSM behavior matching the specification.
+
+This approach should resolve the large number of mismatches and produce an accurate FSM implementation.

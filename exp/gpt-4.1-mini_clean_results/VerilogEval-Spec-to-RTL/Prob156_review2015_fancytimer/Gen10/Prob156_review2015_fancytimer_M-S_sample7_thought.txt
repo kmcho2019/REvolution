@@ -1,0 +1,17 @@
+I will implement a simple FSM with four states: SEARCH, LOAD_DELAY, COUNTING, DONE_WAIT.
+
+- SEARCH: Use a 4-bit shift register to detect the pattern 1101 continuously. Keep shifting in the input bit each clock cycle. When the pattern is detected, move to LOAD_DELAY.
+
+- LOAD_DELAY: Shift in 4 bits MSB first into a delay register, using a 3-bit counter (0 to 3) to count bits loaded. Once 4 bits are loaded, initialize a cycle counter to zero and a block counter to delay+1, then move to COUNTING.
+
+- COUNTING: Count cycles up to (delay+1)*1000. Implement a 10-bit sub-counter for cycles modulo 1000. When it reaches 999, decrement blocks remaining. Output the block number remaining minus 1 on count. When blocks remaining reaches zero and the 10-bit counter finishes, move to DONE_WAIT.
+
+- DONE_WAIT: Assert done. Wait for ack signal to go high, then return to SEARCH.
+
+Use synchronous reset to initialize all registers and FSM state. 
+
+Keep all counters and states updated in a single always @(posedge clk) block for clarity and simplicity. Outputs are assigned only based on current state and registers.
+
+During SEARCH and LOAD_DELAY, the count output is don't care (set to zero). During COUNTING, count shows current remaining delay block number (counting down). During DONE_WAIT, done is high and counting is low.
+
+This design keeps logic straightforward, with minimal registers and simple state transitions.

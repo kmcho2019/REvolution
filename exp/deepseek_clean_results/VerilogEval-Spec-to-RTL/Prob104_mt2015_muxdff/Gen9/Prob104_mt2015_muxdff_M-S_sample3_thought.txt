@@ -1,0 +1,10 @@
+The TopModule should be a simple building block that implements just two functions:
+1. A 2:1 mux selecting between r_in (when L=1) and q_in (when L=0)
+2. A D flip-flop that stores the mux output on clock edges
+
+The feedback XOR logic from the original full_module should remain in the higher-level module where it can properly coordinate between the three flip-flops. This makes TopModule simpler and more reusable.
+
+Key simplifications:
+1. Remove any assumptions about feedback logic - that belongs in full_module
+2. Keep only the essential mux and flip-flop functionality
+3. Maintain the exact same interface for proper integration

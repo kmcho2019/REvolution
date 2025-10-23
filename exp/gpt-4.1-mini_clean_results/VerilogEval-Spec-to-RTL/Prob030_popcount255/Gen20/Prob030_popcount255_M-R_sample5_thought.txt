@@ -1,0 +1,11 @@
+Refactor the population count by implementing a balanced tree of adders directly in the TopModule using iterative reductions of partial sums with explicit continuous assignments, rather than recursive module instantiation. 
+
+The idea is to split the 255-bit input into small fixed-size chunks (e.g., 8 bits), count their bits using simple addition of bits (using built-in Verilog sum of bits by reducing with +), and then combine these partial sums in stages by adding pairs together, halving the number of partial sums at each stage, until only one final sum remains.
+
+This avoids recursion and multiple module instantiations, improves clarity by using vectorized additions and generate loops for partial sums, and ensures a balanced adder tree that can be optimized well by synthesis tools. It also keeps the entire logic purely combinational using assigns.
+
+The final output is an 8-bit wire representing the population count (max 255), matching the required output width.
+
+No always blocks, and only generate loops and assigns are used to keep the design purely combinational and clear.
+
+This approach offers better control over the adder tree structure, making it more synthesis-friendly with likely shorter critical paths and reduced area/power compared to the recursive module approach.

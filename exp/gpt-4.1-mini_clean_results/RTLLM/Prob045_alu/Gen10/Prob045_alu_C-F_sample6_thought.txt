@@ -1,0 +1,19 @@
+To create a superior ALU design, I will fuse the best ideas from both examples as follows:
+
+1. Use the case statement structure from Example 1 inside an always_comb block for clear opcode decoding and conditional computation, improving synthesis and timing clarity.
+
+2. Share a single 33-bit adder-subtractor block for ADD/ADDU/SUB/SUBU operations, reducing area and ensuring only relevant operations compute carry/overflow signals, thus reducing power.
+
+3. Compute arithmetic flags (carry, overflow) only for arithmetic operations to avoid unnecessary toggling.
+
+4. Compute shifts and logic operations as needed inside the case, reusing shift amount variables from Example 2, to avoid parallel computation of all operations (power savings).
+
+5. Use combinational assignments for zero and negative flags, derived from the result.
+
+6. Drive the flag output only for SLT and SLTU instructions, and drive it to 0 otherwise (for synthesis friendliness).
+
+7. Correct the LUI construction to shift `a[15:0]` into the upper 16 bits with 16 zero bits in the lower half, as per MIPS LUI semantics.
+
+8. For unknown opcodes, output zero with cleared flags.
+
+This fusion provides clear control decoding, resource sharing for arithmetic ops, minimized toggling, and clean combinational outputs, combining clarity, power efficiency, and area optimization.

@@ -1,0 +1,24 @@
+Improved Strategy:
+
+1. State Machine Enhancement:
+   - Use a 3-state FSM to properly track the 0->1->0 sequence
+   - States: IDLE (waiting for first 0), GOT_RISE (got 0->1 transition), GOT_FALL (got 1->0 transition)
+
+2. Complete Sequence Verification:
+   - Only transition to GOT_RISE if we see 0->1 from IDLE
+   - Only transition to GOT_FALL if we see 1->0 from GOT_RISE
+   - Output pulse only when returning to IDLE from GOT_FALL
+
+3. Edge Detection Retention:
+   - Keep efficient edge detection logic
+   - Add registered input for proper timing
+
+4. Output Alignment:
+   - Ensure data_out is only high for one cycle after complete pulse detection
+   - Maintain registered output for clean timing
+
+5. Reset Handling:
+   - Keep asynchronous reset for reliability
+   - Reset all state elements properly
+
+This approach guarantees correct detection of the 3-cycle pulse while maintaining efficient implementation.

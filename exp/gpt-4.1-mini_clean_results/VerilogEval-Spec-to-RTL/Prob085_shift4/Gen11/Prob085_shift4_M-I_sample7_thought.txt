@@ -1,0 +1,6 @@
+To optimize the PPA metrics, especially timing and power, I will restructure the asynchronous reset handling. Currently, the always block uses posedge areset and posedge clk, which can complicate timing paths and cause glitches. Instead, I will use a standard asynchronous reset pattern where the always block is sensitive to posedge clk and negedge areset (assuming active high reset means using posedge, so will keep it positive edge but separated). However, because the spec requires asynchronous positive-edge reset, I cannot switch to negedge. To maintain the spec while improving timing, I will separate asynchronous reset logic by using an always_ff (or always @) block sensitive only to the asynchronous reset to assign 0 directly, and a synchronous process that only does load/shift logic on posedge clk when reset is not asserted. This isolates the asynchronous reset path from synchronous logic, aiding timing. Also, to reduce power, I will avoid shifting when not enabled. The load has higher priority and is also synchronous, so this is maintained.
+
+Thus, implementation will have:
+- One always block triggered on posedge clk for load/shift logic, executed only if not in reset.
+- One always block triggered asynchronously on posedge areset, which forces q=0 immediately.
+This separation should improve timing and power, and area remains minimal.

@@ -1,0 +1,21 @@
+The Mealy FSM detection circuit can be implemented using a finite state machine that transitions between states based on the input IN. The FSM will have six states: IDLE, S1, S2, S3, S4, and S5. The IDLE state is the initial state, and the FSM transitions to the next state based on the input IN. When the FSM reaches the final state S5, it sets the MATCH signal to 1. If the input sequence does not match the desired sequence, the FSM remains in the IDLE state or transitions back to the IDLE state. The FSM also resets to the IDLE state when the reset signal RST is active.
+
+The state transitions are as follows:
+- IDLE state: If IN = 1, transition to S1 state. Otherwise, remain in IDLE state.
+- S1 state: If IN = 0, transition to S2 state. Otherwise, transition back to IDLE state.
+- S2 state: If IN = 0, transition to S3 state. Otherwise, transition back to IDLE state.
+- S3 state: If IN = 1, transition to S4 state. Otherwise, transition back to IDLE state.
+- S4 state: If IN = 1, transition to S5 state and set MATCH = 1. Otherwise, transition back to IDLE state.
+- S5 state: Set MATCH = 1 and remain in S5 state until the next clock cycle.
+
+However, the above description is incorrect as per Mealy Machine, because in Mealy machine the output depends on both current state and current input.
+
+The correct state transitions for Mealy Machine are as follows:
+- IDLE state: If IN = 1, transition to S1 state. Otherwise, remain in IDLE state and MATCH = 0.
+- S1 state: If IN = 0, transition to S2 state and MATCH = 0. If IN = 1, transition back to IDLE state and MATCH = 0.
+- S2 state: If IN = 0, transition to S3 state and MATCH = 0. If IN = 1, transition back to IDLE state and MATCH = 0.
+- S3 state: If IN = 1, transition to S4 state and MATCH = 0. If IN = 0, transition back to IDLE state and MATCH = 0.
+- S4 state: If IN = 1, transition to S5 state and MATCH = 1. If IN = 0, transition back to IDLE state and MATCH = 0.
+- S5 state: If IN = 1 or IN = 0, transition back to IDLE state and MATCH = 0, but if previous state was S4 and IN = 1 then MATCH = 1.
+
+The correct implementation should consider the output (MATCH) based on both current state and current input.

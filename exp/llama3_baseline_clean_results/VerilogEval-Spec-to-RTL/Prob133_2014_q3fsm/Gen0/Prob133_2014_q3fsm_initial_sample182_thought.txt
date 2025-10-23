@@ -1,0 +1,20 @@
+To implement the required finite state machine (FSM) with the minimum number of states, we can consider the following approach:
+- State A is the reset state where the FSM remains as long as s = 0.
+- When s = 1, the FSM transitions to state B.
+- In state B, we need to count the number of clock cycles where w = 1 over the next three clock cycles. This can be achieved by using a counter.
+- We also need to keep track of the current cycle within these three clock cycles. This can be done using another counter.
+- If w = 1 exactly twice in these three clock cycles, we set z = 1 in the next clock cycle.
+- We can implement the above logic using a single state B and two counters.
+
+However, a simpler approach can be achieved by considering the following states:
+- State A: Initial state, where s = 0.
+- State B: w is checked for three cycles, and z is set based on the count of w = 1.
+Since the FSM only needs to examine w in state B and set z accordingly, we can simplify the FSM by considering the states based on the count of w = 1 within the three clock cycles.
+
+A more efficient implementation can be achieved with the following states:
+- State A: Reset state.
+- State B: First cycle of checking w.
+- State C: Second cycle of checking w.
+- State D: Third cycle of checking w and setting z.
+
+This approach allows us to implement the required FSM with a minimal number of states while achieving the desired functionality.

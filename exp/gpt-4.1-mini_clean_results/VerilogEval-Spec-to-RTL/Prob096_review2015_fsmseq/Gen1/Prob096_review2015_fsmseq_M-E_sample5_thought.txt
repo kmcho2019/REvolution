@@ -1,0 +1,10 @@
+Implement a Moore FSM with five one-hot encoded states representing the progress of matching the sequence "1101":
+- IDLE: no bits matched yet
+- ONE: matched '1'
+- ONE_ONE: matched "11"
+- ONE_ONE_ZERO: matched "110"
+- MATCHED: sequence "1101" detected, start_shifting asserted forever
+
+On each clock edge, transition between states based on the input bit. When the FSM reaches the MATCHED state, start_shifting is set to 1 and held until reset. Reset synchronously returns the FSM to IDLE and clears start_shifting.
+
+Using one-hot encoding simplifies the next-state logic and avoids enum or parameter casting issues. This approach ensures easy-to-understand state transitions and clean synchronous reset behavior.

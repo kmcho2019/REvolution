@@ -1,0 +1,11 @@
+Improvement Strategy:
+1. Timing Optimization: Break the critical path by pre-computing the misprediction update value in combinational logic before the register update.
+2. Power Optimization: Add an enable signal to prevent unnecessary register updates when neither prediction nor training is active.
+3. Area Optimization: Maintain the simple shift register structure but optimize the control logic to reduce multiplexer usage.
+4. Maintain functionality: Ensure the priority scheme (misprediction > prediction) remains intact while improving PPA.
+
+Key Changes:
+1. Added combinational logic for misprediction case to reduce critical path
+2. Introduced update_enable signal to gate clock activity
+3. Simplified the always block logic by moving some computations to combinational
+4. Maintained same reset behavior and functionality

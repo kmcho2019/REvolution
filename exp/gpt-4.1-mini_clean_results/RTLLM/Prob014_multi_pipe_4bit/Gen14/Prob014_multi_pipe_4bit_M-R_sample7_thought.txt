@@ -1,0 +1,8 @@
+Refactor the pipelined multiplier by separating the generation of partial products using continuous assignments (assign statements) outside clocked processes. Then use two levels of registers to pipeline the accumulation:
+
+- Use an array of wires for the partial products, computed combinationally by shifting the multiplicand extended with zeros when the corresponding bit of mul_b is set, otherwise zero.
+- Register these partial products in the first pipeline stage registers on the clock edge with asynchronous reset.
+- Sum the registered partial products in the combinational domain, then register the result in the second pipeline stage register (output stage).
+- This structuring improves clarity by isolating combinational partial product generation from the sequential pipeline stages.
+- Maintain asynchronous active-low reset and two pipeline stages for intermediate sums and final output.
+- This approach makes partial products visible as combinational signals aiding debugging and can ease modification and timing analysis.

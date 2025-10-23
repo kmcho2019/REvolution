@@ -1,0 +1,14 @@
+To optimize the original design for better performance, power, and area (PPA), I will:
+
+1. Simplify w counting by implementing a saturating 2-bit counter for w=1 samples instead of full addition.  
+   Since we only add 0 or 1 each cycle and max count is 3, using increment and saturation logic reduces combinational delay.
+
+2. Update w_count only when w=1 during counting cycles (B_0, B_1, B_2), gating register updates to reduce unnecessary toggling and power.
+
+3. Move the output z update to be synchronous and purely sequential, eliminating combinational z_next calculation outside sequential logic to reduce critical path delay.
+
+4. Keep states minimal (4 states) and the same FSM structure for clarity and correctness.
+
+5. Use non-blocking assignments properly, and ensure reset clears all registers synchronously.
+
+This approach reduces combinational logic in output and next state blocks, decreases power by gating w_count updates, and simplifies w_count increment logic while preserving the required timing (output z asserted one cycle after sampling 3 w inputs).

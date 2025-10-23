@@ -1,0 +1,14 @@
+After carefully analyzing the Karnaugh map, I propose a different approach that leverages the don't-care conditions more effectively:
+
+1. First, observe that when c=0, the output is 1 only when ab=10 or 11 (with exception for cd=00,ab=01)
+2. When c=1, the output is 1 for all ab combinations except 00
+3. The don't-cares can be used to simplify the c=1 case to just check if either a or b is 1
+4. For c=0 case, we need to detect when ab is 10 or 11, but also handle the special case at cd=00,ab=01
+5. This leads to a simpler logic:
+   - out = c ? (a|b) : ((a&~b)|(a&b)) when cd≠00, or (a^b) when cd=00
+   - But we can combine these using cd=00 detection
+
+The final implementation uses:
+- A term for c=1 cases: (a|b)
+- A term for c=0 cases: (a & (cd!=00)) | (a^b & (cd==00))
+- Combined with c as selector

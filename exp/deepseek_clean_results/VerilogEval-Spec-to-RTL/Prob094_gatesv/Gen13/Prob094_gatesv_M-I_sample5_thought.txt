@@ -1,0 +1,21 @@
+To optimize the solution further for better PPA metrics, I'll implement the following improvements:
+
+1. Power Optimization:
+   - Introduce shared intermediate signals for common sub-expressions to reduce redundant computations and switching activity
+   - Maintain constant propagation for don't-care bits to help synthesis optimize power
+
+2. Area Optimization:
+   - Use more compact logic expressions where possible
+   - Ensure minimal logic duplication by reusing intermediate results
+   - Let synthesis tool optimize constant assignments
+
+3. Performance Maintenance:
+   - Keep all operations parallel and combinational
+   - Maintain the same critical path structure
+   - Avoid introducing any additional logic levels
+
+Key improvements:
+- Create intermediate signals for repeated bit pairs (in[3:2], in[2:1], in[1:0])
+- Use these intermediates in all three output calculations
+- Keep the circular XOR for out_different as it's already optimal
+- Let synthesis handle constant optimizations implicitly

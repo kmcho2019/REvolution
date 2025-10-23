@@ -1,0 +1,19 @@
+To optimize this design for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. **State Encoding**: Switch to one-hot encoding which typically offers better timing performance for FPGAs and some ASIC implementations, despite slightly higher area cost. This reduces combinational logic depth.
+
+2. **Next State Logic**: Replace the function with direct combinational always block to potentially reduce logic levels and improve synthesis results.
+
+3. **Output Logic**: Keep the simple bit check but make it more explicit by checking specific one-hot bits, which might help with power optimization.
+
+4. **Reset Handling**: Maintain synchronous reset but initialize all state bits properly.
+
+5. **Optimizations**:
+   - Remove function abstraction to potentially reduce hierarchy overhead
+   - Use parallel case synthesis directive if supported by the tool
+   - Group related states in the case statement for better logic sharing
+
+The improvements should:
+- Improve timing by reducing combinational path depth
+- Maintain or slightly improve power by reducing unnecessary transitions
+- Potentially reduce area through better logic sharing

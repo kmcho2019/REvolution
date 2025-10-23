@@ -1,0 +1,19 @@
+To solve this problem, we will design a Moore-type finite state machine (FSM) with 8 states. The states are as follows:
+- S0: Initial state (no consecutive 1s)
+- S1: One consecutive 1
+- S2: Two consecutive 1s
+- S3: Three consecutive 1s
+- S4: Four consecutive 1s
+- S5: Five consecutive 1s
+- S6: Six consecutive 1s (potential flag)
+- S7: Seven consecutive 1s (error)
+
+The FSM will transition between these states based on the current input bit. If the input is 0, it will reset the consecutive 1 counter. If the input is 1, it will increment the counter. The outputs will be generated based on the current state.
+
+For the "disc" output, we need to signal when we see 6 consecutive 1s followed by a 0 (i.e., 01111110). This means we should assert "disc" when we are in state S6 and the input is 0.
+
+For the "flag" output, we need to signal when we see exactly 7 consecutive 1s (i.e., 01111110). However, we also need to signal when we see 8 or more consecutive 1s, but this is an error condition, so we will handle it separately. For now, let's just focus on the flag condition. We will assert "flag" when we are in state S6 and the next input is 1.
+
+For the "err" output, we need to signal when we see 7 or more consecutive 1s. This means we should assert "err" when we are in state S7.
+
+We will implement the FSM using a case statement to handle the different states and inputs.

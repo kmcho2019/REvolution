@@ -1,0 +1,9 @@
+The original design is already very efficient and clean, but small improvements can be made to reduce area and power further with negligible or no timing impact:
+
+- Remove redundant assignments in the combinational block by avoiding the default assignment to next_state equal to state. Instead, explicitly assign next_state only where it changes, and in all other cases assign it to the current state at the end. This can reduce inferred muxes.
+- Use a single always_comb block (SystemVerilog) or combinational always @(*) block for next_state with minimal logic.
+- Minimize logic in the next-state combinational block by flattening the bump conditions into a single condition using (bump_left | bump_right) instead of separate ifs; since bump_left & bump_right still flips direction, flipping on either bump is enough.
+- Keep asynchronous active-high reset as is, since it meets spec.
+- Remove unnecessary wire declarations for bits of state, use direct bit selects in expressions to reduce logic overhead.
+- Keep outputs as simple combinational assignments decoding state bits.
+- Overall, these changes keep the FSM functionally identical but may reduce LUT usage and switching by simplifying logic and avoiding redundant assignments.

@@ -1,0 +1,13 @@
+To address the issues identified in the feedback, we need to refine the state machine's logic, particularly in the `FALLING` state and when transitioning from the `DIGGING` state to the `FALLING` state. 
+
+Firstly, we should store the original direction of the Lemming before it enters the `FALLING` state. This can be achieved by introducing an additional variable that captures the last walking direction before falling.
+
+Secondly, when the Lemming is in the `DIGGING` state and the ground disappears, it should fall and then continue walking in its original direction when the ground reappears. This implies that the transition logic needs to correctly handle the state changes based on the input signals and the current state.
+
+Additionally, we should review the logic for handling `bump_left` and `bump_right` signals in the `WALK_LEFT` and `WALK_RIGHT` states to ensure that the state machine transitions correctly between these states.
+
+Lastly, to improve the design's Power, Performance, and Area (PPA) metrics, we should focus on simplifying the combinational logic and minimizing unnecessary state transitions. By optimizing the state machine's logic, we can reduce the area required for implementation, improve performance by reducing the critical path delay, and lower power consumption by minimizing switching activity.
+
+We will also remove the `default` branch from the `case` statement, as it is not necessary given the `enum` definition covers all possible states.
+
+With these considerations, we can refine the Verilog code to correctly model the behavior of the Lemming and improve its PPA metrics.

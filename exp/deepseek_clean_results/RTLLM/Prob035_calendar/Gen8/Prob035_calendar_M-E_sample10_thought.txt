@@ -1,0 +1,14 @@
+Novel Architecture: Hierarchical Counter with Pre-computed Rollover
+1. Instead of checking rollover conditions sequentially, pre-compute all possible rollover states in parallel
+2. Use a 3-level hierarchical counter structure where each level has its own independent counter
+3. Implement a "carry propagation" mechanism between counters using enable signals
+4. Optimize bit widths precisely (5 bits for hours, 6 bits for mins/secs)
+5. Use synchronous reset for better timing characteristics
+6. Separate combinational and sequential logic for better synthesis results
+
+Key Advantages:
+- Parallel rollover detection improves timing (no cascaded conditions)
+- Clear separation of concerns between counter levels
+- Minimal logic between clock edges
+- Efficient carry propagation reduces switching activity
+- Precise bit-width usage saves power and area

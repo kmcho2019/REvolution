@@ -1,0 +1,9 @@
+The new solution involves a pipelined architecture with a focus on reducing the critical path length and minimizing switching activity. The design will use a two-stage pipeline: one stage for receiving the start bit and 8 data bits, and another stage for verifying the stop bit. This approach allows for better timing performance and reduces the complexity of the combinational logic.
+
+To minimize switching activity, the design will use a gated clock for the shift register. The clock will only be enabled when a new bit is being received, reducing unnecessary switching.
+
+The state machine will be simplified to have only two states: IDLE and RECEIVE. The IDLE state will wait for the start bit, and the RECEIVE state will collect the incoming bits and verify the stop bit.
+
+To further reduce power consumption, the design will use a dynamic clock gating technique. The clock will be gated off when the FSM is in the IDLE state or when the stop bit is being verified.
+
+The new design will also use a different encoding for the state register, using a one-hot encoding instead of a binary encoding. This will reduce the number of gates required for the state machine and improve timing performance.

@@ -1,0 +1,18 @@
+The key improvements needed are:
+1. Strict priority enforcement (fall > dig > bump)
+2. Proper direction preservation during state transitions
+3. Correct fall timer handling
+4. Clear state transition conditions
+
+Main changes:
+1. Restructure state transitions to strictly follow priority order
+2. Track direction separately and update it only during walking state
+3. Reset fall timer when starting to fall
+4. Handle splat condition properly when landing
+5. Ensure digging only starts when walking on ground
+6. Maintain direction through falls and digs
+
+The state machine now clearly follows:
+- Fall has highest priority (ground=0)
+- Dig comes next (only if walking on ground)
+- Bump handling comes last (only if neither falling nor digging)

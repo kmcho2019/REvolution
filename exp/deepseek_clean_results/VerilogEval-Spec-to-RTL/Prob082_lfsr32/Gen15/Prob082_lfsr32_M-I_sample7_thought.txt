@@ -1,0 +1,14 @@
+To optimize the LFSR implementation for better PPA metrics while maintaining functionality:
+1. **Performance Improvement**:
+   - Move the reset logic into the register block to reduce combinational path
+   - Keep the XOR operations but ensure they're optimally placed
+2. **Power Optimization**:
+   - Add an enable signal to allow clock gating when LFSR isn't needed
+   - This reduces dynamic power by preventing unnecessary toggling
+3. **Area Optimization**:
+   - Maintain the current compact structure
+   - The XOR operations are already minimal for the required taps
+4. **Implementation Strategy**:
+   - Use synchronous reset directly in the always block
+   - Keep the combinational XOR logic separate for clarity
+   - Add enable functionality while maintaining original behavior when enabled

@@ -1,0 +1,12 @@
+The design implements a finite state machine with these main states: SEARCH (looking for the pattern 1101), LOAD_DELAY (shifting in 4 delay bits MSB first), COUNTING (counting down the timer), DONE (asserting done and waiting for ack). 
+
+A 4-bit shift register keeps the last 4 bits to detect the pattern 1101. Once detected, transition to LOAD_DELAY to shift in 4 delay bits MSB first. Then transition to COUNTING, where a cycle counter counts down total clock cycles ((delay+1)*1000), and a 4-bit "count" outputs the current remaining delay value. When done, assert done signal and wait for ack to restart the sequence.
+
+The synchronous reset forces the FSM into SEARCH state and clears relevant registers.
+
+All sequential logic triggers on posedge clk and synchronous reset.
+
+The design will output:
+- count[3:0]: remaining time steps (delay countdown)
+- counting: high during counting state
+- done: high when timer completes and ack not yet asserted

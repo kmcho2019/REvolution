@@ -1,0 +1,8 @@
+The original design uses a large case statement to implement the state transition logic, which can be simplified by using arithmetic since the states mostly count up modulo 7 starting from 4. Specifically, when a=1, q resets to 4; otherwise, q increments modulo 7 with the sequence 4->5->6->0->1->2->3->4. This can be implemented by:
+
+- Detecting the reset condition (a=1) to load q=4.
+- Otherwise, increment q modulo 7.
+
+This eliminates the case statement and reduces combinational logic, improving area and potentially timing. Additionally, updating q only on clock edges and using simple arithmetic helps reduce switching and power. The modulo 7 can be implemented by adding 1 and wrapping values 7 back to 0, but since q only holds values 0-6, adding 1 modulo 7 is enough.
+
+This approach keeps the functionality identical but reduces logic complexity, which is beneficial for PPA optimization.

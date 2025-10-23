@@ -1,0 +1,10 @@
+Novel Circular Buffer Architecture:
+1. Instead of shifting all bits every update, maintain a write pointer to track the current insertion point
+2. For normal predictions, just update the current pointer position and increment
+3. For mispredictions, reset the pointer to the saved position and update accordingly
+4. Use combinational logic to reconstruct the linear history from the circular buffer when needed
+5. Benefits:
+   - Eliminates 32-bit shift operation (reduces critical path)
+   - Only updates one bit per prediction (lower power)
+   - Maintains same functionality with reduced hardware complexity
+   - Pointer arithmetic is simpler than large shifts

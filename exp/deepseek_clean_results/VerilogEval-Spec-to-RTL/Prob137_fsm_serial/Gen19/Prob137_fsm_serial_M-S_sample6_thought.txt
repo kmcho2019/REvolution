@@ -1,0 +1,14 @@
+Simplification Strategy:
+1. Remove unnecessary registered comparison (bit_count_done) to reduce area and improve timing
+2. Eliminate clock gating for shift register as it adds complexity with minimal benefit
+3. Simplify state machine by combining STOP and WAIT states - just wait for stop bit in STOP state
+4. Remove done_reg and generate done combinationally to reduce registers
+5. Use direct bit_count comparison (== 3'd7) for simpler logic
+6. Keep binary state encoding as it's optimal for small FSMs
+
+Key Simplifications:
+- Fewer state transitions (merged STOP/WAIT)
+- Less registered signals
+- Simpler counter logic
+- More direct control flow
+- Maintains same functionality with reduced complexity

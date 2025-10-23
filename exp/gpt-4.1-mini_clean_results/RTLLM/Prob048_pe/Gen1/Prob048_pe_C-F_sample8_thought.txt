@@ -1,0 +1,23 @@
+To create a superior multiplying accumulator, I will fuse the two provided designs as follows:
+
+1. Maintain a synchronous reset (pos. edge clk) rather than asynchronous reset to improve timing closure and design predictability.
+
+2. Use a 64-bit accumulator register internally to avoid overflow when accumulating the full 64-bit product of two 32-bit inputs. This ensures correctness and precision in accumulation without silent truncation errors.
+
+3. Output only the lower 32 bits of the accumulator (c) as the problem requires a 32-bit output port, but keep the internal accumulation full 64-bit to avoid loss of data during accumulation.
+
+4. The multiplier produces a 64-bit product which is fully added to the internal 64-bit accumulator register.
+
+5. Make sure the internal accumulator register is updated only on the positive clock edge, reset synchronously, no asynchronous reset.
+
+This approach ensures:
+
+- Correct accumulation of full 64-bit products without overflow.
+
+- The output port stays 32 bits to meet specification, truncating only at output stage, not during accumulation.
+
+- Synchronous reset for easier timing closure.
+
+- Clean, simple sequential logic that preserves precision while adhering to the 32-bit output constraint.
+
+This fusion improves correctness, timing, and functional clarity, with no additional control signals or complexity, suitable for synthesis and moderate clock frequencies.

@@ -1,0 +1,15 @@
+Implement a 64-bit subtractor as a ripple borrow subtractor built from a simple 1-bit full subtractor module chained in series. This approach uses classic binary subtraction at the bit level, propagating borrow from the least significant bit (LSB) to the most significant bit (MSB). Each 1-bit subtractor takes bits of A and B along with a borrow-in and outputs the difference bit and borrow-out.
+
+The key points:
+- The subtraction is performed bitwise: difference = A - B.
+- Borrow propagates sequentially, forming a ripple chain of borrow signals.
+- Overflow detection uses the signed overflow condition for subtraction:
+  overflow = (A_sign != B_sign) && (result_sign != A_sign).
+- This design emphasizes conceptual simplicity and structural clarity rather than speed.
+
+While slower than CLA-based subtractors, the ripple borrow subtractor is simple, uses minimal logic, and is easy to verify and modify. It serves as a reliable baseline and is beneficial for understanding basic subtraction logic and overflow detection.
+
+The module structure:
+- A 1-bit full subtractor submodule producing difference and borrow-out.
+- The top-level 64-bit subtractor chains 64 instances of the 1-bit subtractor, connecting borrow-out to borrow-in of the next bit.
+- Finally, the top-level module computes overflow using the signs of inputs and result.

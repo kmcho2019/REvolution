@@ -1,0 +1,12 @@
+To implement this Moore state machine, we need to define the states and transitions based on the given behavior. The states can be walking left, walking right, and falling. We will use two bits to represent these states. The transitions will be based on the input signals bump_left, bump_right, and ground. We will use a reset signal to reset the machine to the walking left state.
+
+We will use the following state encoding:
+- 2'b00: Walking left
+- 2'b01: Walking right
+- 2'b10: Falling
+
+The output signals walk_left, walk_right, and aaah will be determined based on the current state.
+
+When ground is 0, the machine will transition to the falling state and stay there until ground becomes 1 again. When ground becomes 1, the machine will transition back to the previous walking state.
+
+When bump_left or bump_right is 1, the machine will switch the walking direction. If both bump_left and bump_right are 1, the machine will still switch the walking direction.

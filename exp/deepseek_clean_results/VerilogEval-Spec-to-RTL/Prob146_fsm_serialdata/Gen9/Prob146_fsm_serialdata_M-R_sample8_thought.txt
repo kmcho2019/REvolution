@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. State Encoding: Switch to one-hot encoding (4 bits) for better timing at the expense of slightly more area. This reduces the combinational logic in state transitions.
+2. Shift Register: Keep the right-shift implementation but move it to combinational logic to reduce clock loading.
+3. Done Signal: Make it combinational for immediate response when stop bit is detected.
+4. Error Handling: Remove explicit ERROR state and handle it within STOP state transitions to simplify FSM.
+5. Counter Logic: Use a simpler equality check for bit_count (compare directly to 7).
+6. Output Logic: Move out_byte assignment to combinational logic for better timing.
+
+Key Improvements:
+- One-hot encoding improves timing critical paths
+- Combinational done signal provides immediate feedback
+- Simplified state machine with fewer states
+- More efficient bit_count comparison
+- Reduced sequential logic by moving some operations to combinational

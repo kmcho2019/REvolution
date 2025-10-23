@@ -1,0 +1,39 @@
+module ring_counter (
+    input clk,
+    input reset,
+    output reg [7:0] out
+);
+
+reg [2:0] ptr;  // 3-bit pointer (0-7)
+
+// Pointer increment and reset logic
+always @(posedge clk or posedge reset) begin
+    if (reset) begin
+        ptr <= 3'b000;
+    end
+    else begin
+        ptr <= ptr + 1;  // Automatically wraps around
+    end
+end
+
+// Pointer to one-hot decoder (registered output)
+always @(posedge clk or posedge reset) begin
+    if (reset) begin
+        out <= 8'b00000001;  // Initialize to LSB set
+    end
+    else begin
+        case (ptr)
+            3'b000: out <= 8'b00000001;
+            3'b001: out <= 8'b00000010;
+            3'b010: out <= 8'b00000100;
+            3'b011: out <= 8'b00001000;
+            3'b100: out <= 8'b00010000;
+            3'b101: out <= 8'b00100000;
+            3'b110: out <= 8'b01000000;
+            3'b111: out <= 8'b10000000;
+            default: out <= 8'b00000001;
+        endcase
+    end
+end
+
+endmodule

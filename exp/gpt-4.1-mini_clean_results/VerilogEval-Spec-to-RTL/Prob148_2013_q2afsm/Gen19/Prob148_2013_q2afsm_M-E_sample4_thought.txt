@@ -1,0 +1,13 @@
+Implement the FSM using a 2-bit binary state encoding for four states: A=00, B=01, C=10, and D=11. This reduces flip-flops count from 3 to 2 and can improve area and power.
+
+Use a synchronous active-low reset to state A (00).
+
+Next state logic uses combinational always block with priority-based decision on input requests. When in idle (A), grant goes to device 0 if r0=1, else device 1 if r1=1, else device 2 if r2=1, else remain idle.
+
+When granted to a device (states B, C, or D), FSM stays in that state while the corresponding request persists; otherwise, returns to idle.
+
+Outputs g[2:0] are generated combinationally from the current state and request inputs to ensure only the granted device's g[i] is asserted.
+
+This output logic avoids direct assignment of g from state encoding, reducing unnecessary toggling on outputs and improving power.
+
+This design achieves a compact binary state FSM, synchronous reset, explicit next state and output logic, and clear priority arbitration.

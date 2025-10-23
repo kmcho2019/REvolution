@@ -1,0 +1,15 @@
+To optimize the original design for better performance and area while maintaining correctness:
+
+1. Replace the linear prefix generation of group generate signals (`gen_int[i] = G[i] | (P[i] & gen_int[i-1])`) with a balanced Brent-Kung style prefix network. This significantly reduces the carry generation logic depth from O(N) to O(log N), improving timing (WNS).
+
+2. Similarly, compute the block propagate signal in a balanced tree manner rather than a flat AND of all bits to reduce fan-in and improve power and timing.
+
+3. Retain the overall hierarchical structure: two 16-bit CLA blocks in the 32-bit adder, with the carry-in of upper block computed from the lower block's group generate and propagate.
+
+4. Keep the indexing and input/output mapping consistent for clarity.
+
+5. This balanced prefix implementation reduces critical path delay (better WNS), lowers power by reducing glitching and fan-in, and reduces area by avoiding long linear chains.
+
+6. The balanced prefix implementation will use a generate-propagate pair struct and recursive combining steps (Brent-Kung style), which is well-known and synthesizable.
+
+This approach optimizes the given design for PPA while preserving its modularity and correctness.

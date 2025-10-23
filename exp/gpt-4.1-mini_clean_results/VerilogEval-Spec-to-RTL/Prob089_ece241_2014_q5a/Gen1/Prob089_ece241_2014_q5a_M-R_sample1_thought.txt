@@ -1,0 +1,19 @@
+Refactor the design to strictly adhere to the Moore FSM definition: the output depends only on the current state and is registered synchronously with the clock. We'll split the logic into three always blocks:
+
+1. State register with asynchronous reset.
+2. Next state combinational logic, depending on current state and input.
+3. Output register assigned based solely on the current state, not directly on input.
+
+In the COPY state, output z = 0 (indicating no inversion yet), and in INVERT state, output z = 1 (meaning bits are inverted). Then, use a combinational assignment after the registers to combine the stored output bit (z registered) with input x according to the Moore logic:
+
+- In COPY state: output = x (since the output register stores 0, output bit = input xor 0 = input)
+- In INVERT state: output = ~x (since output register stores 1, output bit = input xor 1 = ~input)
+
+To implement this efficiently, store the current state in a register, and store a bit indicating if inversion is on or off. The registered output bit will be that inversion bit, which is then XORed with the input to produce the final output.
+
+This ensures:
+- Output register depends only on the state (inversion bit).
+- Output port is driven by registered output bit XORed with input, compliant with Moore FSM.
+- Clean separation of state, output logic, and combinational logic, avoiding Mealy behavior.
+
+This approach maintains the same logic but clarifies output dependence and proper synchronization.

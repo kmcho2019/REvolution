@@ -1,0 +1,12 @@
+Refactor the design to maintain the same behavior but simplify the clocking scheme by using a single always block triggered on both edges of the clock (posedge and negedge) with a simple state machine or registers to track p and q values properly.
+
+Use an internal register for q updated on negedge clock edge, and update p on posedge clock edge according to 'a' and q. To avoid race conditions, use separate registers updated appropriately. 
+
+This approach consolidates the logic into one always block triggered on clock edges, enabling clearer control of timing and avoiding the need for multiple always blocks on different clock edges. Also, initialize registers properly to 'x' to match the waveform initial undefined state, and rely on reset behavior or first clock edges to set values.
+
+Hence:
+- Use a single always block sensitive to both edges of clock.
+- On posedge clock: update p according to the input 'a' and current q.
+- On negedge clock: update q with the current p.
+- Initialize p and q to unknown (x) to reflect initial waveform.
+This preserves original logic but structures the code in a single always block for clearer timing and better matching the waveform.

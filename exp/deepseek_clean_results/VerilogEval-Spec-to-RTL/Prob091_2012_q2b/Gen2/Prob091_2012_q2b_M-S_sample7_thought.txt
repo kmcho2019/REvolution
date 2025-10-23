@@ -1,0 +1,7 @@
+To simplify the implementation, we can observe that:
+1. Y1 only depends on state A (y[0]) and input w, which is already minimal.
+2. For Y3, we can notice that state D is the target whenever w=0 and we're in any state except A or D (since D loops to itself when w=1 isn't shown in transitions). However, since we're using one-hot encoding, we can simplify the Y3 logic by checking if we're in any state (except A) and w=0.
+
+The simplified logic becomes:
+- Y1 remains the same (y[0] & w)
+- Y3 can be expressed as (~y[0] & ~w) since in one-hot encoding, if we're not in state A and w=0, we must transition to D

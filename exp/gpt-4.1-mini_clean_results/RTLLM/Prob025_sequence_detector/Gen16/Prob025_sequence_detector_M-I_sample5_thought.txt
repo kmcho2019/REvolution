@@ -1,0 +1,20 @@
+To optimize the original sequence detector for better Power, Performance, and Area (PPA), I propose the following improvements:
+
+1. Use one-hot encoding for the FSM states:
+   - This reduces the complexity of the next-state decoding, which can improve timing at the cost of a few additional flip-flops.
+   - Given the small FSM size (5 states), one-hot is a good trade-off for performance.
+
+2. Use a synchronous active-low reset for all flip-flops consistently:
+   - This simplifies timing analysis and reduces clock domain issues.
+
+3. Simplify output logic to directly assert `sequence_detected` when entering the last state (S4):
+   - This ensures the output is generated as a registered signal in the same clock cycle as the detection.
+   - Generate the pulse for one cycle only.
+
+4. Use non-blocking assignments consistently in sequential logic.
+
+5. Add comments and clean coding style for clarity.
+
+6. Because the FSM allows overlapping sequences, next state transitions carefully keep this behavior.
+
+These improvements should yield better timing due to simpler combinational logic, consistent synchronous reset, and potentially slightly increased area due to one-hot encoding (acceptable for this scale). Power consumption might improve by reducing combinational logic complexity and toggling in outputs.

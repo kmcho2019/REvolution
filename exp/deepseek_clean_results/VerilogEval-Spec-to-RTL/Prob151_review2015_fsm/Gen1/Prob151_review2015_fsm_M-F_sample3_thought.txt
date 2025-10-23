@@ -1,0 +1,16 @@
+The key issues in the original implementation were:
+1. Pattern detection was happening continuously rather than only in IDLE state
+2. The shift counter logic needed to be more precisely controlled
+3. State transitions needed clearer conditions
+
+The fixes include:
+1. Only update pattern_reg during IDLE state for clean pattern detection
+2. Reset shift_counter properly when leaving SHIFT state
+3. Make state transitions more explicit with proper conditions
+4. Ensure outputs are only asserted in their respective states
+
+The improved FSM will:
+- Detect 1101 only in IDLE state
+- Precisely count 4 shift cycles
+- Maintain proper state transitions
+- Generate correct outputs at the right times

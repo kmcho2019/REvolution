@@ -1,0 +1,10 @@
+The original issue stems from not properly assigning `result_is_zero` when `out` is not zero, leaving it potentially uninitialized. To fix this while keeping the combinational logic, I will use a single always block with complete assignments for both `out` and `result_is_zero` to ensure no latches are inferred.
+
+In this refactoring:
+- Keep the always @(*) block to maintain combinational logic but assign both `out` and `result_is_zero` in every branch.
+- Use an if-else instead of case for clarity.
+- Explicitly set `result_is_zero` to 1 when the output is zero, otherwise 0.
+- Maintain `out` and `result_is_zero` as reg types.
+- This approach keeps the simplicity of the original code but fixes the bug by ensuring `result_is_zero` is always assigned.
+
+This method is straightforward and easy for synthesis tools to interpret correctly.

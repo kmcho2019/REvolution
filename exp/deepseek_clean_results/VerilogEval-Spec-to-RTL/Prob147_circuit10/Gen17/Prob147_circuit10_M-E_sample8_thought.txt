@@ -1,0 +1,12 @@
+New architectural idea:
+1. Instead of using combinational logic for state transitions, we'll use a small state machine with explicit state encoding.
+2. The output q will be computed as a function of both current inputs and state, but with a different logic structure.
+3. Key observations from waveform:
+   - When state=0: q behaves like XOR (a^b)
+   - When state=1: q behaves like XNOR (a~^b)
+   - State transitions occur when (a&b) sets state or (~a&~b) resets state
+
+Implementation approach:
+- Use a simple state machine with just 2 states
+- Compute q using multiplexed XOR/XNOR based on state
+- State transitions follow the observed pattern but implemented as explicit cases

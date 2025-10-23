@@ -1,0 +1,13 @@
+This solution uses a one-hot encoded Moore FSM representing the count of consecutive 1's (from zero up to error state). Instead of a single binary-encoded state variable, use one-hot registers for each state (S0 through S7). This simplifies next state logic to combinational bitwise operations with minimal decoding logic, potentially improving timing and clarity.
+
+The states represent how many consecutive 1s have been seen: S0 means zero consecutive ones (last input was 0), S1 means 1 consecutive one, ..., S6 means 6 consecutive ones, and S7 represents error (7 or more ones).
+
+The outputs are registered and asserted exactly one clock cycle after detecting a sequence as requested:
+
+- disc is asserted when the FSM moves from S5 to S0 on input zero (meaning a zero after 5 ones),
+- flag is asserted when the FSM moves from S6 to S0 on input zero (meaning zero after 6 ones),
+- err is asserted whenever the FSM is in S7.
+
+This one-hot encoding approach makes the combinational next state logic simple logic AND/OR combinations and is more explicit about the FSM structure.
+
+Reset initializes to S0. The outputs are registered and synchronous. This design trades slightly higher area for clearer and potentially faster logic.

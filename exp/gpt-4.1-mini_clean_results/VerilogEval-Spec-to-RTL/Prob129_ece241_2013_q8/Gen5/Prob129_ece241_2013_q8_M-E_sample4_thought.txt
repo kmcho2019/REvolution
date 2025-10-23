@@ -1,0 +1,19 @@
+Implement a Mealy FSM to detect the sequence "101" using only 3 states encoded with one-hot encoding to simplify decoding and speed up transitions. The states correspond to:
+
+- S0: waiting for '1' (encoded as 3'b001)
+- S1: last input was '1' (3'b010)
+- S2: last two inputs were "10" (3'b100)
+
+On a negative edge asynchronous reset, the FSM returns to S0.
+
+Use an always block triggered by the positive edge of the clock and asynchronously by the negative edge of reset to update the state.
+
+The output z is a combinational signal asserted only when current state is S2 and input x is '1', indicating the sequence "101" was detected.
+
+By using one-hot encoding, the combinational logic for next state transitions is simple and fast, potentially improving timing and clarity.
+
+The overlapping sequence detection is handled by transitioning from S2 back to S1 when '1' is input, so detection can continue with overlapping sequences.
+
+Separate combinational next state and output logic from the sequential state update.
+
+Use blocking assignments in combinational always blocks and non-blocking for sequential to follow best practices.

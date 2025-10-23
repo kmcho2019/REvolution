@@ -1,0 +1,10 @@
+To properly implement a fractional frequency divider by 3.5x using double-edge clocking, the key is to explicitly generate two clock signals toggling at uneven intervals (4 and 3 clock cycles) and phase-shift one of them by half a clock period. Since generating an actual half-clock delay in pure RTL without PLL/DCM is challenging, we can exploit both edges of the input clock to generate one of the signals shifted by half a clock cycle.
+
+We use a 3-bit counter that counts from 0 to 6 (7 states), representing 7 half-cycles. We generate two divided clocks:
+
+- clk_even toggles every 4 clock cycles (on posedge),
+- clk_odd toggles every 3 clock cycles but updated on the negative edge of the input clock, achieving an effective half-cycle phase shift relative to clk_even.
+
+Finally, OR-ing these two clocks produces the fractional output with an overall period of 7 input clock cycles, alternating between 4 and 3 clock cycle high/low periods, effectively dividing the frequency by 3.5 with a balanced duty cycle.
+
+This structure explicitly uses both clock edges for phase shift, and counts uneven toggling periods for clk_even and clk_odd, achieving the required fractional division cleanly.

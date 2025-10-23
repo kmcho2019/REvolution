@@ -1,0 +1,10 @@
+To optimize the existing design for better power, performance, and area (PPA), we focus on reducing combinational logic depth and logic fan-in, especially in next_state generation.
+
+Improvement strategy:
+- Replace the for-loop with explicit next_state bit assignments using bitwise logic expressions. This approach transforms iterative assignments into parallel combinational assignments that synthesis tools can optimize into balanced logic trees.
+- For each next_state bit, derive a simplified Boolean expression based on current active states and input. This eliminates priority and multiple-driver situations, reducing logic complexity and delay.
+- Maintain the same output logic using bitwise masking for low overhead.
+- This explicitly parallel next_state logic reduces the complexity and potential power consumption of large OR chains or loops.
+- The tradeoff is slightly more verbose code but improved synthesis optimization potential.
+
+This strategy leverages the problem’s one-hot encoding and known state transitions to derive compact next_state logic expressions suitable for high-quality synthesis, thus improving timing and potentially lowering power and area.

@@ -1,0 +1,13 @@
+A novel approach using a circular buffer with pointer arithmetic:
+1. Instead of a traditional shift register, use a circular buffer with a write pointer
+2. The write pointer increments on each valid input, wrapping around after 8 bits
+3. When the pointer wraps around (after 8 valid inputs), the entire buffer is captured as parallel output
+4. This approach eliminates the need for shifting operations, potentially reducing power consumption
+5. The valid output is generated combinatorially based on pointer position
+6. Reset initializes both the buffer and pointer to zero
+
+Key advantages:
+- No shifting operations means lower dynamic power
+- Clear separation between data storage and output capture
+- Pointer arithmetic may be more efficient in some FPGA architectures
+- Easily scalable to different parallel widths by adjusting pointer size

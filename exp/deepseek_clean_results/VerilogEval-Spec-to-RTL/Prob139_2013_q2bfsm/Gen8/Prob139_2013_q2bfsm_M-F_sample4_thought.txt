@@ -1,0 +1,26 @@
+To fix the issues identified in the feedback, I'll implement the following improvements:
+
+1. **Simplified State Machine**: Reduce to just 3 states (RESET, ACTIVE, FINAL) with clear transitions:
+   - RESET: Initial state, waits for reset deassertion
+   - ACTIVE: Main operational state for sequence detection and monitoring
+   - FINAL: Terminal state that maintains outputs until reset
+
+2. **Precise f Pulse Timing**: Generate the f=1 pulse exactly one cycle after reset deassertion by:
+   - Setting f directly in the state transition from RESET to ACTIVE
+   - Not using any intermediate flags that could cause timing issues
+
+3. **Robust Sequence Detection**:
+   - Use a 3-bit shift register to track last 3 x values
+   - Only trigger sequence detection when exactly 1-0-1 is seen
+   - Immediately set g=1 when sequence is detected
+
+4. **Accurate y Monitoring**:
+   - Start 2-cycle timeout counter when sequence is detected
+   - If y=1 is seen within 2 cycles, stay in FINAL with g=1
+   - If timeout occurs, transition to FINAL with g=0
+   - All transitions to FINAL are permanent until reset
+
+5. **Clear Output Control**:
+   - f is only high for one cycle after reset
+   - g changes based on sequence detection and y monitoring
+   - All outputs maintain their values in FINAL state

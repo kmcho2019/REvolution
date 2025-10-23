@@ -1,0 +1,13 @@
+To address the compilation issue and improve compatibility with plain Verilog tools (not full SystemVerilog), I will refactor the design by removing the SystemVerilog-specific `typedef enum` and instead use localparams and a regular reg for state encoding.
+
+I will also separate the state machine logic from data path updates clearly and use synchronous reset on all sequential blocks. The states will be encoded as simple localparams with 1-bit values, and assigned to a reg `state`.
+
+Furthermore, I'll organize the design as follows:
+- One synchronous always block for state transitions and counter.
+- One synchronous always block for registers update (product, multiplicand_shifted, multiplier_ext).
+- `rdy` will be asserted only when multiplication is done (ctr reaches 16).
+- The multiplicand and multiplier inputs are latched into internal registers on reset (start of operation).
+- The multiplication process iterates 16 cycles; on each cycle, checks multiplier bit and conditionally adds multiplicand_shifted to product, then shifts multiplicand_shifted left.
+- This method follows the original behavior but fixes the compilation issues by avoiding SystemVerilog constructs.
+
+This refactoring keeps the same logic and functionality, improves code clarity and simulation/synthesis compatibility, and resolves the explicit cast and enum-related errors.

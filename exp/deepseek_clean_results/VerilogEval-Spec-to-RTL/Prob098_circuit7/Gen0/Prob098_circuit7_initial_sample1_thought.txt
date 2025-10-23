@@ -1,0 +1,15 @@
+From the simulation waveforms, we can observe that:
+1. The output q changes only on positive clock edges (5ns, 15ns, 25ns, etc.)
+2. q is initially unknown (x) until the first positive edge where it becomes 1
+3. q stays at 1 until a=1 is observed at a positive clock edge (35ns)
+4. Once a=1 is seen, q becomes 0 at the next positive edge (45ns) and stays 0 regardless of subsequent a values
+
+This behavior suggests a circuit that:
+- Starts with q=1
+- Remains 1 until a rising edge where a=1 is detected
+- Then sets q=0 and keeps it at 0 permanently
+
+This can be implemented with a simple state machine that has two states:
+1. State 1: q=1 (initial state)
+2. State 0: q=0 (final state)
+Transition from State 1 to State 0 occurs when a=1 is detected at a rising clock edge.

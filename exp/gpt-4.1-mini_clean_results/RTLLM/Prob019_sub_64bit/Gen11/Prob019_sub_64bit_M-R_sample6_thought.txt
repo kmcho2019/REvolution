@@ -1,0 +1,9 @@
+I will refactor the original design by removing the 16-bit subtractor module and instead perform the entire 64-bit subtraction in one step using the built-in Verilog subtraction operator directly. The borrow chain and segmenting approach will be replaced with straightforward combinational logic.
+
+For overflow detection, I will keep the original logic using sign bits of operands and the result but express the subtraction and overflow logic using continuous assignments only.
+
+This refactor simplifies the design by avoiding hierarchical instantiation and borrow chaining, making the code more concise and easier to maintain. The subtraction is done in one operation leveraging Verilog's native operators which are typically well optimized by synthesis tools.
+
+The overflow condition remains the same: overflow occurs if the signs of A and B differ, and the sign of the result differs from that of A.
+
+This approach trades off explicit modularity for code simplicity and potentially improved performance due to simpler logic with no ripple borrow chain.

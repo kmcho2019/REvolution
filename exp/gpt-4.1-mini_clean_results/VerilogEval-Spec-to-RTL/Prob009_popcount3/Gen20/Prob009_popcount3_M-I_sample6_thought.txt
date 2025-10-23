@@ -1,0 +1,7 @@
+The existing solution uses simple addition of three 1-bit inputs to produce a 2-bit population count, which is optimal for such a small input width. Since the synthesis results show minimal delay, power, and area, there is little room for improvement in PPA by changing the logic structure. However, a marginal improvement could be to explicitly use a combinational always block or a continuous assignment with bitwise operations for clarity or potential slight optimization by synthesis tools.
+
+Alternatively, to reduce toggling and possibly power slightly, the input bits can be OR-reduced first to check if any bit is set and selectively generate output; but given the simplicity, this is unnecessary and could increase logic.
+
+Therefore, the best improvement is to keep the simple addition but implement it inside an always_comb block with a reg output to clarify the combinational intent, which might improve the design's readability and synthesis predictability.
+
+Overall, the change is minor, maintaining minimal logic and confirming the optimality of the original approach.

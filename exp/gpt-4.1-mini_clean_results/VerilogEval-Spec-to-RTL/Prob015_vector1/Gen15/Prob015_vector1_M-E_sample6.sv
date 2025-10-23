@@ -1,0 +1,13 @@
+module TopModule (
+    input  wire [15:0] in,
+    output reg  [7:0]  out_hi,
+    output reg  [7:0]  out_lo
+);
+
+    always @* begin
+        // Explicitly assign each byte from input bits
+        out_hi = {in[15], in[14], in[13], in[12], in[11], in[10], in[9], in[8]};
+        out_lo = {in[7], in[6], in[5], in[4], in[3], in[2], in[1], in[0]};
+    end
+
+endmodule

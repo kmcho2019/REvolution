@@ -1,0 +1,9 @@
+To improve power efficiency, minimize unnecessary switching of counters by gating them so they only count when needed. Since CLK_50 toggles every cycle, it must run continuously, but for CLK_10 and CLK_1 counters, counting can be enabled only when not toggling, reducing switching activity.
+
+Performance-wise, splitting the always blocks allows simpler logic per block and may improve synthesis results by reducing fanout and critical path length.
+
+Area impact will be minimal but the design becomes cleaner and more modular.
+
+Hence, implement three separate always blocks: one for CLK_50 toggling, one for CLK_10 with a gated counter, and one for CLK_1 with a gated counter. Use synchronous reset for all.
+
+This reduces power by gating counters and may improve timing and maintain clarity.

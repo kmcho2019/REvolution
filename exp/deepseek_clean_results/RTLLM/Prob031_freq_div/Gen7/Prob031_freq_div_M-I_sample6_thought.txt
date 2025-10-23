@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Counter Optimization:
+   - For CLK_10: Reduce cnt_10 to 2 bits since we only count to 4 (3'b100)
+   - For CLK_1: Use a 5-bit counter (max value 31) with modified comparison logic to count to 49 more efficiently
+
+2. Clock Gating:
+   - Implement clock gating for higher division counters to reduce switching activity
+   - Use enable signals to control counter increments only when needed
+
+3. Parameter Utilization:
+   - Make the module fully parameterized for different division ratios
+   - Calculate counter limits based on parameters to avoid hard-coded values
+
+4. Resource Sharing:
+   - Share common reset logic to reduce redundant circuitry
+   - Optimize counter comparison logic for better timing
+
+Key Benefits:
+- Reduced area by optimizing counter sizes
+- Lower power consumption through clock gating
+- Better maintainability with full parameterization
+- Improved timing with optimized comparison logic

@@ -1,0 +1,22 @@
+To simplify the FSM while maintaining all functionality, I'll make these key improvements:
+
+1. **Streamlined sequence detection**: Use a 3-state sequence detector for the 1-0-1 pattern on x, eliminating the need for separate history registers.
+
+2. **Simplified timeout logic**: Implement the 2-cycle y timeout directly in the state machine without a separate counter.
+
+3. **Clear state transitions**: Have distinct states for each major operation phase with straightforward transitions.
+
+4. **Direct output assignments**: Make outputs purely combinatorial based on current state.
+
+The simplified FSM will have these states:
+- A: Reset state (f=0, g=0)
+- B: Initial pulse (f=1, g=0)
+- C: Waiting for first '1' in x sequence
+- D: Waiting for '0' after first '1'
+- E: Waiting for final '1' to complete sequence
+- F: Monitoring y with g=1 (first cycle)
+- G: Monitoring y with g=1 (second cycle)
+- H: Permanent g=1 (y was 1 within 2 cycles)
+- I: Permanent g=0 (y wasn't 1 within 2 cycles)
+
+This structure maintains all requirements with minimal complexity.

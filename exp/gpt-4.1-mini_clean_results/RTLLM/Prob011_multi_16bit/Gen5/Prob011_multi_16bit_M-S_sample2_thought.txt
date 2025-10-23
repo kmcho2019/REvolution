@@ -1,0 +1,7 @@
+Simplify the design by directly controlling the shift count up to 16 (instead of 17), avoiding the extra cycle for resetting done. Use done directly asserted when shift count reaches 16 and cleared when start is low or on reset. Combine all operations in one always block for clarity, using non-blocking assignments consistently.
+
+Keep the core shift-and-add algorithm where multiplicand (areg) shifts right each cycle and multiplier (breg) shifts left, adding breg to the accumulator (yout_r) if the LSB of areg is 1.
+
+This removes the extra done clear cycle and eliminates unnecessary holding cycles for registers, simplifying control logic while preserving the original functionality.
+
+Overall, this reduces state and logic complexity without losing correctness.

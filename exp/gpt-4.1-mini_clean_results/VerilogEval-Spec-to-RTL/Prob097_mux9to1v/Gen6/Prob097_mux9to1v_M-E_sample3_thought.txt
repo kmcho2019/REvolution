@@ -1,0 +1,7 @@
+Implement the 9-to-1 multiplexer by first grouping the inputs into three groups of three inputs each, then performing a hierarchical two-level selection: first select among the three inputs in each group using the lower 2 bits of sel, then select among the three intermediate results using the upper bits of sel. For sel values outside 0-8, output all ones. This hierarchical structure mimics a tree of 3-to-1 multiplexers and could potentially improve synthesis optimization by explicitly guiding the mux tree structure.
+
+Steps:
+- Define three 3-to-1 muxes, each taking one of the input groups (a,b,c), (d,e,f), (g,h,i) and selecting one input based on sel[1:0].
+- Then use sel[3:2] (upper bits) to select among the three outputs from the first stage.
+- For sel >= 9 (outside 0 to 8), output 16'hFFFF.
+- Implement with combinational logic using always_comb blocks or continuous assignments.

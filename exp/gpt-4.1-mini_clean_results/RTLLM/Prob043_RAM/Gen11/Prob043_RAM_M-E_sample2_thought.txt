@@ -1,0 +1,11 @@
+I will implement a fully synchronous dual-port RAM where both read and write operations occur on the rising edge of the clock, controlled by their respective enable signals. This RAM will use a simple reg array indexed by the write and read addresses with parameterized width and depth. 
+
+Reset will synchronously clear all memory locations using a for loop within a clocked process, ensuring deterministic startup. The read operation stores data into a registered output (read_data) to maintain stable outputs and simplify timing closure in synchronous designs. When read_en is low, read_data outputs zero.
+
+This approach guarantees that reads and writes can happen simultaneously in the same cycle on different addresses without read-after-write hazards. It also supports clean synchronous reset and stable output timing for ease of integration in pipelined or registered environments.
+
+Key differences:
+- Both read and write are synchronous to clk.
+- read_data is a registered output (captured on clk).
+- Read data zeroed when read_en is low.
+- Synchronous reset clears all RAM locations and read_data.

@@ -1,0 +1,21 @@
+Refactoring Strategy:
+
+1. **Structural Changes**:
+   - Replace sequential always blocks with combinational assign statements for pipeline stages
+   - Use wire declarations instead of reg for pipeline registers
+   - Implement clocked updates through explicit register instantiations
+
+2. **Logic Distribution**:
+   - Move the final addition to a separate combinational stage
+   - Keep pipeline registers purely for storage without embedded logic
+
+3. **Reset Handling**:
+   - Maintain synchronous reset but implement it through a separate conditional assignment
+   - Make reset paths more explicit and consistent
+
+4. **Code Organization**:
+   - Group related operations together
+   - Use more descriptive names for intermediate signals
+   - Add clear section comments
+
+The key improvement is moving from procedural always blocks to continuous assignments with explicit registers, making the data flow more visible while maintaining identical functionality.

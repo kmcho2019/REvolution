@@ -1,0 +1,33 @@
+To optimize the original explicit minterm implementation for better performance, power, and area, we leverage Karnaugh map grouping to minimize the logic expression. The original implementation enumerated many minterms, causing deeper logic and more gates.
+
+By analyzing the Karnaugh map, the following groups can be formed:
+
+- Group 1: (x2=1) rows 11 and 10 have many 1s; this suggests factoring x2.
+- Group 2: (x3=0 & x2=0 & (x1=0)) covers positions with f=1 in the first row.
+- Group 3: Additional groups cover the remaining minterms.
+
+A minimal sum-of-products (SOP) expression derived from the Karnaugh map is:
+
+f = x2 
+  + (~x2 & ~x3 & ~x1)
+  + (x3 & x2 & ~x0 & x1)   // covers the "1110" minterm excluded from x2 alone
+  + (x2 & ~x3 & x0 & ~x1)  // covers some uncovered terms when x2=1, x3=0
+
+However, since the Karnaugh map has some non-rectangular coverage, the minimal expression is:
+
+f = x2
+  + (~x2 & ~x3 & ~x1)
+  + (x3 & x2 & ~x0 & x1)
+  + (x2 & ~x3 & x0 & ~x1)
+
+Simplifying further:
+
+- x2 covers many 1s (all rows with x2=1 except where exceptions appear).
+- The terms (~x2 & ~x3 & ~x1) cover the first row 00 00 and 00 10 positions.
+- The additional terms cover exceptions.
+
+This results in fewer terms and fewer literals than enumerating all minterms, improving gate count and delay.
+
+We implement this optimized expression with combinational assign statements, making sure all inputs are used correctly and the expression matches the original truth table.
+
+This reduces gate levels and shared literals, hence improving PPA while preserving the exact functionality.

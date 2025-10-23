@@ -1,0 +1,12 @@
+Refactor the design by explicitly defining pipeline registers stage-by-stage for the enable signals, inputs, partial product sums, and final output product. Use continuous assignments for partial product generation and addition steps, while registering intermediate sums separately to clarify the pipeline flow. 
+
+Instead of summing four partial products together in one clock edge, break the partial sum addition into two stages of combinational addition separated by registers: 
+- Stage 1: Compute partial products and sum in two groups of four, register the sums.
+- Stage 2: Register inputs and sums from stage 1, then add the two groups combinationally to produce the final product and register it.
+
+Use the pipeline registers for enable signals similarly but explicitly for each pipeline stage to enhance readability and maintainability. 
+Assign output enable as the enable of the last pipeline stage and output product accordingly.
+
+This approach maintains the 3-stage pipeline and similar latency but clarifies and modularizes the pipeline structure using clear assignments and separate always blocks for registers.
+
+This also demonstrates an alternative style using explicit pipeline registers and continuous assignments for arithmetic logic, improving code clarity and maintainability without changing functionality.

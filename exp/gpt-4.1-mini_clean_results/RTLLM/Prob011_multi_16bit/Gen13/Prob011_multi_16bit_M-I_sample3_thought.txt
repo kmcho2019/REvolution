@@ -1,0 +1,7 @@
+To optimize the original design for better power and timing without increasing area significantly, I will implement clock gating on the product register update to avoid unnecessary toggling when the multiplier bit is 0, thus skipping addition and shifting for cycles that do not contribute to the product. This reduces switching activity, lowering dynamic power. 
+
+I also simplify the control logic by removing the explicit FSM state variable, controlling operation purely by a count register that increments on start and resets otherwise. This simplifies state tracking and potentially reduces registers and logic. 
+
+The multiplicand and multiplier registers load only once at start; during the 16 cycles, the product register updates only if enabled by the multiplier bit and the count. The done signal is asserted when the count reaches 16.
+
+This approach retains the correctness and behavior of the multiplier but cuts power by gating the product update logic and improves timing by reducing unnecessary additions each cycle. It also cleans up the code structure by avoiding a separate FSM variable.

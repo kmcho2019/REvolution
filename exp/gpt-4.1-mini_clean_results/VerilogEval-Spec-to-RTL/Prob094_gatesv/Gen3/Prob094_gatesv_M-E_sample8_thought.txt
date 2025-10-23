@@ -1,0 +1,7 @@
+Use vector bitwise operations and shifts to generate the outputs in a compact form:
+
+- For out_both, shift the input left by 1 (pad LSB with 0), then bitwise AND with original input. Clear bit 3 since no left neighbor.
+- For out_any, shift the input right by 1 (pad MSB with 0), then bitwise OR with original input. Clear bit 0 since no right neighbor.
+- For out_different, perform bitwise XOR between the input and a rotated version of the input shifted left by 1 bit (wrapping around), implementing the wrap-around neighbor comparison.
+
+This approach leverages vector operations and avoids manual indexing or concatenations.

@@ -1,0 +1,11 @@
+The best solution fuses the clarity and correctness of explicit Gray-to-binary decoding from both examples with the simplicity and synthesis-friendliness of a combinational continuous assignment using a lookup function. 
+
+Fusion strategy:
+1. Explicitly decode Gray-coded inputs (x3,x4 for row; x1,x2 for column) to binary indices to correctly address the Karnaugh map.
+2. Combine the decoded bits into a single 4-bit address to simplify the logic structure.
+3. Implement the function as a pure combinational function using a case statement inside a function (no always block, no reg outputs) to reduce overhead, improve readability, and facilitate better synthesis optimization.
+4. Treat don't-care values as zeros for determinism and safer synthesis.
+5. Use clear naming and comments to maintain clarity.
+6. This yields a fully combinational, minimal-depth design with straightforward verification and easy future PPA improvements, preserving correctness and improving synthesis friendliness.
+
+The resulting module is clean, performant, and area-efficient by minimizing latch inference risks, eliminating always blocks, and providing clear logic.

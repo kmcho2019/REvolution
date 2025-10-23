@@ -1,0 +1,12 @@
+To improve the existing 16-bit adder design while maintaining modularity, correctness, and simplicity, I will optimize the internal 8-bit ripple carry adder by implementing a carry-lookahead structure within each 8-bit block.
+
+This enhancement reduces the critical path delay caused by ripple carry propagation inside the 8-bit adders, thus improving timing without significantly increasing area or power.
+
+Specifically:
+
+1. Replace the internal ripple carry logic in the 8-bit adder with a carry-lookahead scheme using propagate (P) and generate (G) signals and carry equations.
+2. Keep the top-level 16-bit adder structure unchanged, still instantiating two 8-bit adders and chaining carries.
+3. This approach balances performance improvement by reducing carry chain delay inside the 8-bit blocks while keeping a simple, modular design.
+4. The carry chain between the two 8-bit blocks remains ripple-carry to limit complexity, which is acceptable as the critical internal carry is sped up.
+
+This will enhance maximum clock frequency (reduce delay) with minimal area and power overhead compared to a pure ripple carry design.

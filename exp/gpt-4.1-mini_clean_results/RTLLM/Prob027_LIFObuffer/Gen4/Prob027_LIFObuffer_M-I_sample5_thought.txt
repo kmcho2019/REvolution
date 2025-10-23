@@ -1,0 +1,15 @@
+To optimize the LIFObuffer design for better PPA while keeping functionality intact, I will:
+
+1. Simplify stack pointer (SP) handling by counting up on push and down on pop instead of decrementing on push and incrementing on pop. This aligns SP with the number of stored elements and simplifies boundary checks and indexing.
+
+2. Use non-blocking assignments consistently and update stack_mem after updating SP to avoid critical path issues and improve timing.
+
+3. Update flags (EMPTY and FULL) combinationally based on SP, where EMPTY is when SP is 0 and FULL when SP is 4.
+
+4. Keep dataOut updated only on pop (read) operations.
+
+5. Remove the for-loop clearing stack_mem during reset and instead initialize stack_mem to zero asynchronously with a reset block or rely on synthesis tool initial block to reduce reset path latency.
+
+6. Use a pointer (SP) from 0 (empty) to 4 (full), pushing data into stack_mem[SP] then increment SP, popping by decrementing SP then reading stack_mem[SP-1], thus avoiding indexing arithmetic with subtraction inside sequential logic.
+
+These changes reduce logic complexity, improve timing by simplifying arithmetic, and reduce switching on critical signals, thus improving power and performance without increasing area.

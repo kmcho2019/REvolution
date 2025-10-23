@@ -1,0 +1,17 @@
+Correct the sensor decoding by strictly matching the exact asserted sensor patterns for each water level, eliminating ambiguous or overlapping cases.
+
+Re-map water levels so that their numeric encoding corresponds to actual water height ordering from lowest to highest, enabling straightforward comparison for rising detection:
+- LEVEL_BELOW = 0 (no sensors)
+- LEVEL_BETWEEN1 = 1 (only s[0])
+- LEVEL_BETWEEN2 = 2 (s[0] & s[1])
+- LEVEL_ABOVE = 3 (all sensors)
+
+Determine the current level by a simple combinational decode from the sensor bits as per exact bit patterns.
+
+Track previous level in a register and use `rising = (curr_level > prev_level)` to detect water level increase, opening the supplemental flow valve (dfr) accordingly.
+
+On reset, initialize to lowest level (LEVEL_BELOW) and all valves open (max flow).
+
+Keep the output valve control combinationally determined from the current level as per the nominal flow rate table.
+
+This approach corrects the main functional errors, ensuring correct sensor-level mapping and rising detection, while maintaining clarity and efficiency.

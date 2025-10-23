@@ -1,0 +1,10 @@
+To improve the existing design, we can introduce a novel architectural idea that utilizes a handshake protocol between the two clock domains. This approach ensures that data is transferred safely between the domains without the need for complex synchronization logic. The handshake protocol involves a request signal from the transmitter (clk_a domain) and an acknowledge signal from the receiver (clk_b domain). When the transmitter has data ready, it sends a request signal to the receiver. The receiver then sends an acknowledge signal back to the transmitter once it has accepted the data. This handshake ensures that data is not lost or corrupted during the transfer.
+
+We will use a single-stage synchronizer for the request signal to reduce latency and improve performance. The acknowledge signal will be generated based on the state of the receiver and will be sent back to the transmitter to indicate that the data has been accepted.
+
+The new design will have the following components:
+* A transmitter module in the clk_a domain that generates the request signal and sends the data to the receiver.
+* A receiver module in the clk_b domain that generates the acknowledge signal and receives the data from the transmitter.
+* A handshake controller that manages the request and acknowledge signals to ensure safe data transfer.
+
+This novel architectural idea will improve the performance, power consumption, and area efficiency of the design.

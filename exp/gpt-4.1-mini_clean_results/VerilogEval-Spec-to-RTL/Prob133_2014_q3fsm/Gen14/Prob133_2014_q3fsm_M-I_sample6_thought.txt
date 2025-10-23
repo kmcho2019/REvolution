@@ -1,0 +1,9 @@
+To optimize the original design for better PPA, the approach is to remove the addition operation used for accumulating w by implementing the w accumulator as a simple counter incremented by 1 only when w=1, rather than adding w each cycle. Similarly, cycle count increments straightforwardly each cycle in state B.
+
+Use separate small registers for cycle count (2 bits) and w accumulator (2 bits) with clock enable to update only in state B, which reduces toggling outside of B.
+
+Output z is generated based on the accumulator value and cycle count, producing a pulse one cycle after every three-cycle window.
+
+This explicit separation and simpler increment logic reduce combinational complexity and switching activity. Using clock enables for counters reduces power. The design maintains synchronous reset and a minimal two-state FSM.
+
+Overall, this should improve critical path delay by simplifying combinational logic, lower power by gating counters updates, and keep area minimal with small 2-bit counters instead of a packed 4-bit register that requires addition.

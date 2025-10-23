@@ -1,0 +1,8 @@
+The original solution uses an intermediate wire to share the AND result between the assign statement and the always block, which is clean and readable. However, synthesis tools might infer two separate AND gates because the always block and assign drive separate outputs. To reduce area and power further, I will:
+
+- Remove the intermediate wire to eliminate any ambiguity for synthesis tools and directly compute the AND operation in both assign and always block.
+- Use direct expressions (`a & b`) in both outputs so the synthesis tool can recognize common logic and optimize sharing, potentially leading to a single AND gate driving both outputs.
+- This removes the explicit intermediate wire, which might slightly reduce area.
+- The code remains fully synthesizable, combinational, and meets the problem requirements.
+
+This approach can improve power and area marginally while maintaining the same critical path delay.

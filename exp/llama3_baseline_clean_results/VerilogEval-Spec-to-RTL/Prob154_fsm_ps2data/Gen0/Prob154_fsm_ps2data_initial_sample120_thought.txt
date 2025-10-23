@@ -1,0 +1,11 @@
+The finite state machine (FSM) will be designed with four states: 
+- IDLE: Waiting for the first byte of the message (in[3]=1).
+- BYTE1: The first byte of the message has been received.
+- BYTE2: The second byte of the message has been received.
+- BYTE3: The third byte of the message has been received.
+
+The FSM will start in the IDLE state and transition to BYTE1 when a byte with in[3]=1 is received. 
+It will then transition to BYTE2 and BYTE3 for each subsequent byte, and finally signal done in the cycle after the third byte is received.
+
+The datapath will store each byte in a register and shift the bytes as new ones are received. 
+When the FSM is in the BYTE3 state, it will set the done signal and output the 24-bit message.

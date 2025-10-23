@@ -1,0 +1,9 @@
+Optimization Strategy:
+
+1. **Bit Position Calculation**: Replace the multiplication with shift operations since 5 is a constant (5 = 4 + 1). This reduces logic complexity.
+2. **Diagonal Optimization**: Explicitly set diagonal bits to 1'b1 without using conditional logic, saving area.
+3. **Input Ordering**: Reverse the input vector to match the required output ordering directly, eliminating the need for (4-i) and (4-j) calculations.
+4. **Parallel Comparisons**: Use direct XNOR operations for all comparisons, leveraging Verilog's bitwise operations for efficiency.
+5. **Output Packing**: Arrange the output bits in a more straightforward manner by pre-calculating the comparison order.
+
+These changes reduce arithmetic operations, simplify the generate block, and maintain the same functionality while potentially improving PPA metrics.

@@ -1,0 +1,7 @@
+Implement the 0-to-999 counter by splitting the 10-bit counter into two separate counters: a lower 4-bit BCD counter and an upper 6-bit binary counter.  
+- The lower 4 bits count from 0 to 9 and roll over to 0 on the next clock cycle, incrementing the upper 6-bit counter by 1.  
+- The upper 6-bit counter counts from 0 to 99 (representing the hundreds and tens digits as a binary count). When the upper counter reaches 99 and the lower counter reaches 9, the overall count resets to 0.  
+- This approach mimics a two-stage decimal-like counter using a small BCD stage and a binary stage for readability and modularity.  
+- Synchronous active-high reset resets both counters.  
+- Combine the two counters into the 10-bit output `q` by assigning upper 6 bits to the upper counter and lower 4 bits to the BCD counter.  
+- Using this structure makes counting logic more explicit and modular with simple ripple carry between stages and explicit boundary checks.

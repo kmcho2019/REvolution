@@ -1,0 +1,14 @@
+module TopModule(
+    input  a,
+    input  b,
+    input  sel,
+    output out
+);
+always @(a, b, sel) begin
+    case(sel)
+        1'b0: out = a;
+        1'b1: out = b;
+        default: out = 1'bx; // Handle case where sel is neither 0 nor 1
+    endcase
+end
+endmodule

@@ -1,0 +1,18 @@
+Instead of using nested generate loops, create an array of inputs and explicitly instantiate 25 one-bit XNOR operations by unrolling all pairs in a single always_comb block or by using direct assign statements.
+
+We assign the inputs to a 5-element vector with a=inputs[0], b=inputs[1], c=inputs[2], d=inputs[3], e=inputs[4] to keep it intuitive.
+
+We define the output bits to follow the bit order from out[24] = ~(a ^ a) down to out[0] = ~(e ^ e), which corresponds to a linear ordering through all pairwise combinations in the order of inputs a-e, and for each input, comparing with all inputs a-e.
+
+We will explicitly assign each output bit as ~(inputs[i] ^ inputs[j]) for all i,j from 0 to 4, indexing out bit 24 - (i*5 + j), mapping:
+
+out[24] = ~(a ^ a) (i=0,j=0)
+out[23] = ~(a ^ b) (i=0,j=1)
+...
+out[0] = ~(e ^ e) (i=4,j=4)
+
+This approach is unrolled and straightforward, easy to verify and modify, and does not rely on generate statements or reversed indexing.
+
+Additionally, we implement a small function xnor_bit(a,b) returning ~(a ^ b) to improve clarity.
+
+This approach avoids confusion and makes the mapping explicit.

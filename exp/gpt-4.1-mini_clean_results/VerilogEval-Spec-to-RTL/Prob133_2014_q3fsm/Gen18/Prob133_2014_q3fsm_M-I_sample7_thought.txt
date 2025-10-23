@@ -1,0 +1,12 @@
+To improve the design's performance, power, and area (PPA), we can optimize the logic as follows:
+
+- Combine the cycle counter and w accumulator updates into a single register to reduce logic and register count.
+- Replace the 2-bit separate counters with a 3-bit shift register that shifts in w, thus implicitly counting the number of ones over the last 3 cycles, avoiding explicit addition.
+- Use a combinational count of ones in the 3-bit shift register (popcount of 3 bits) to decide output z.
+- Register z output synchronously but update only after the 3rd cycle.
+- This reduces combinational addition logic and register usage.
+- Still use two states only.
+- Eliminate clock enable style for counters by using shift registers that clear at reset or on state change, reducing control complexity.
+- Overall, this should reduce combinational logic, lower toggle rates, and decrease area with improved timing by simpler combinational logic.
+
+This method effectively uses a 3-bit window shifting in the w input, implicitly accumulating the count needed, and checking for exactly two ones to generate z.

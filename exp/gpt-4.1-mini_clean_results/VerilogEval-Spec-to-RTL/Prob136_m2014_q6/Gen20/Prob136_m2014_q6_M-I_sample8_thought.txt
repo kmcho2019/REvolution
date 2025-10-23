@@ -1,0 +1,11 @@
+To improve the existing FSM implementation for better performance and potentially reduced area, I will apply the following changes:
+
+1. Use one-hot state encoding since the FSM has only six states, which can simplify the next-state and output logic and potentially reduce the critical path delay.
+
+2. Replace the multiple if-else statements with a case statement for the next-state logic, which usually leads to more optimized logic synthesis.
+
+3. Implement output 'z' as a simple combinational expression directly from the one-hot encoded states.
+
+4. Keep synchronous reset logic.
+
+Overall, one-hot encoding usually benefits small FSMs by minimizing state decoding logic complexity and improving timing, although it uses more flip-flops. This can improve the worst negative slack (WNS) and total negative slack (TNS) metrics and possibly reduce power due to simpler logic paths.

@@ -1,0 +1,12 @@
+Novel Hybrid Architecture:
+1. Split the 16-bit adder into four 4-bit carry-lookahead adders (CLAs) for better parallelism
+2. Implement carry-select between the 4-bit blocks to break the critical path
+3. Each 4-bit CLA uses group generate/propagate terms for faster carry computation
+4. The carry-select muxes choose between pre-computed sums based on carry-in
+5. This combines the benefits of CLA (fast local carry) and carry-select (parallel path evaluation)
+
+Key Advantages:
+- Reduced critical path compared to pure ripple-carry
+- Better scalability than pure carry-lookahead for 16-bit width
+- Balanced area/speed tradeoff
+- Modular design allows easy parameterization

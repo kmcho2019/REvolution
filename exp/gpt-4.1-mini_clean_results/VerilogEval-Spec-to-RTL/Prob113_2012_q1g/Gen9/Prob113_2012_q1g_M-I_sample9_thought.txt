@@ -1,0 +1,43 @@
+To optimize the design for better performance, power, and area, I will simplify the boolean function by analyzing the Karnaugh map to find a minimal sum-of-products expression with fewer literals and logic levels.
+
+Given the K-map:
+
+          x[0]x[1]
+x[2]x[3] 00 01 11 10
+  00     1  0  0  1
+  01     0  0  0  0
+  11     1  1  1  0
+  10     1  1  0  1
+
+Let's denote variables as (x3 x2 x1 x0).
+
+From the map, the function f=1 for minterms:
+
+- 0000 (x3=0,x2=0,x1=0,x0=0)
+- 0010 (0 0 1 0)
+- 1100 (1 1 0 0)
+- 1101 (1 1 0 1)
+- 1110 (1 1 1 0)
+- 1111 (1 1 1 1)
+- 1000 (1 0 0 0)
+- 1001 (1 0 0 1)
+
+The grouping reveals these prime implicants:
+
+1. Group of four covering 1100,1101,1110,1111 (x3=1,x2=1)
+2. Group of two covering 1000,1001 (x3=1,x2=0,x1=0)
+3. Two isolated 1s at 0000 and 0010 (x3=0,x2=0,x1=0,x0=0 or x0=1)
+
+From this, minimal SOP can be:
+
+f = (x3 & x2) | (x3 & ~x2 & ~x1) | (~x3 & ~x2 & ~x1 & ~x0)
+
+This expression has three product terms, each with minimal literals, fewer logic levels, and less overlap.
+
+Implementation wise:
+
+- No need for intermediate wires; use direct input bits from x.
+- This reduces logic gates and switching activity.
+- Simple OR of three AND terms reduces depth and area.
+
+This approach should improve PPA metrics relative to the prior solution.

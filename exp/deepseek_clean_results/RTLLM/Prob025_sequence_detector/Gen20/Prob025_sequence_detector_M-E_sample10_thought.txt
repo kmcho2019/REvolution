@@ -1,0 +1,18 @@
+Novel Architecture: "Parallel Prefetch Detection"
+1. Instead of using a shift register or traditional FSM, implement parallel detection of all possible 4-bit sequences
+2. Use a 4-stage pipeline where each stage prefetches and checks one bit position of the target sequence
+3. Each pipeline stage acts as a mini-detector for its specific bit position in the sequence
+4. Final detection occurs when all pipeline stages simultaneously indicate a match
+5. Benefits:
+   - True parallel processing of incoming bits
+   - No sequential state dependencies
+   - Constant-time detection latency (4 cycles)
+   - Naturally pipelined implementation for high frequency
+   - Clear timing path segmentation
+
+Key Features:
+- Four 1-bit registers store the "match progress" for each sequence position
+- Each cycle, the current bit is compared against expected value for its position
+- Match signals propagate through the pipeline stages
+- Final detection occurs when all stages are active simultaneously
+- Reset clears all pipeline stages

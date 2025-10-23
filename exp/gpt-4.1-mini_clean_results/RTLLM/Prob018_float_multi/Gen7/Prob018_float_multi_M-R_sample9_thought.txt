@@ -1,0 +1,7 @@
+Refactor the float_multi module to use a classic synchronous state machine with explicit state encoding rather than a counter. This improves readability by giving meaningful state names. Use combinational always blocks for next-state logic and output computations, separating combinational and sequential logic clearly. 
+
+Extract inputs and special flags in the first state, then move to multiplication, normalization, and rounding states. Store intermediate signals in registers to maintain data across states. Use non-blocking assignments in sequential blocks and blocking assignments in combinational blocks. 
+
+Additionally, use explicit signals for special cases and rounding logic in separate combinational blocks to keep code modular. This structured FSM style enhances maintainability without changing the core functionality.
+
+All operations remain clocked and synchronous with reset. Output `z` updates only at the final state. This also allows better future extension and easier debugging.

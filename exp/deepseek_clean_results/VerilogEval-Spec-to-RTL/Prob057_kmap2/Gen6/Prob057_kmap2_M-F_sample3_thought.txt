@@ -1,0 +1,18 @@
+To correctly implement the Karnaugh map:
+1. Re-analyze the K-map to identify all minterms where output is 1:
+   - 0000, 0001, 0010 (first row)
+   - 0100, 0110 (second row)
+   - 0111, 1111, 1110 (third row)
+   - 1000, 1001 (fourth row)
+
+2. Identify optimal groupings:
+   - ~a~b covers first two rows when ab=00
+   - ~a~d covers left two columns when cd=00
+   - ~b~c covers top-right corner (ab=10, cd=00,01)
+   - bcd covers middle (ab=01, cd=11)
+   - abc covers bottom-right (ab=11, cd=11,10)
+
+3. The correct minimal SOP form is:
+   out = ~a~b + ~a~d + ~b~c + bcd + abc
+
+This covers all 1's in the K-map without including any 0's.

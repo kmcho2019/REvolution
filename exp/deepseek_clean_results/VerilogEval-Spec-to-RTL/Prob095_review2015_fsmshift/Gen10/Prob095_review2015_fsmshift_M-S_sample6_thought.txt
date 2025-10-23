@@ -1,0 +1,15 @@
+Simplified approach:
+1. Use a 2-bit counter to count exactly 4 cycles (0 to 3)
+2. shift_ena should be high only when counter is active (0-3)
+3. Counter should:
+   - Reset to 0 on reset
+   - Increment each cycle while active
+   - Stop at 3 (no wrap-around)
+4. shift_ena becomes purely combinational based on counter state
+5. Remove feedback dependency - counter controls shift_ena, not vice versa
+
+Key simplifications:
+- Eliminate OR condition with reset in shift_ena logic
+- Counter stops after reaching 3 (no need for additional control)
+- Clear separation between counter and output logic
+- Minimal state tracking (only 2-bit counter needed)

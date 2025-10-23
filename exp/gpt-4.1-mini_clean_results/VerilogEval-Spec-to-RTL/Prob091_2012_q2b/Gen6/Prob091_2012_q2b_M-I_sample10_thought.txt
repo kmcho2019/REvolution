@@ -1,0 +1,24 @@
+The original solution cleanly implements the combinational logic for Y1 and Y3 outputs based on the FSM transitions. To optimize for better PPA (performance, power, area), we can try to reduce the logic depth and minimize switching activity slightly.
+
+Improvement strategy:
+
+1. **Logic Simplification:** 
+   - For Y3 = ~w & (y[1] | y[2] | y[4] | y[5]), instead of computing four ORs inside, group states to reduce gates:
+     For example, (y[1] | y[2]) and (y[4] | y[5]) then OR the two results. This might reduce fan-in per gate and flatten logic tree.
+
+2. **Gate-Level Optimization:**
+   - Replace the OR with a smaller number of two-input OR gates.
+   - For Y1, since only one term exists, it remains the same.
+
+3. **Power Optimization:**
+   - Introduce enable signals to gate the outputs when no transition is possible.
+   - In this FSM, Y1 only depends on y[0] & w, so no further gating helps.
+   - For Y3, since it depends on many y[i], adding an enable would add complexity and possibly increase area and delay.
+
+Given the small scale, optimization gains are marginal. However, restructuring Y3's OR gate into smaller groups may slightly improve timing and possibly area.
+
+We will inline the combinational logic inside TopModule directly to save module instantiation overhead, as the added modularization does not benefit PPA here.
+
+Also, use `wire` names with clear grouping for clarity.
+
+This approach balances clarity and minor optimization.

@@ -1,0 +1,15 @@
+To fix the issues identified in the feedback, we need to:
+1. Ensure the FSM stays in STOP state until a valid stop bit (1) is detected
+2. Properly assert 'done' only when a valid stop bit is found
+3. Maintain all other correct functionality (8-bit collection, LSB first)
+
+Key changes:
+- Modify STOP state logic to only transition to IDLE when stop bit is valid
+- Keep 'done' assertion logic in STOP state but ensure it only triggers for valid stop bits
+- Maintain synchronous reset behavior
+- Keep the 8-bit collection with proper shifting (LSB first)
+
+The FSM will now:
+- Stay in STOP state until in == 1
+- Only assert done when transitioning out of STOP state due to valid stop bit
+- Properly handle invalid stop bits by waiting in STOP state

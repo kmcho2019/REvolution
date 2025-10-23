@@ -1,0 +1,17 @@
+The original implementation correctly identifies the SOP form but has issues with the POS form. Let's refactor this by:
+
+1. Keeping the SOP implementation identical since it's correct
+2. Re-deriving the POS form properly by:
+   - Listing all maxterms where output should be 0 (invalid cases)
+   - Creating a POS expression that is 0 only for these cases
+   - Using De Morgan's laws to convert between forms if needed
+
+3. Key insights for POS:
+   - The POS should be 1 for all valid cases (2,7,15) and don't-cares
+   - It should be 0 only for invalid cases (0,1,4,5,6,9,10,13,14)
+   - Each maxterm in POS blocks one invalid case
+
+4. Implementation approach:
+   - Use assign statements for both outputs
+   - For POS, implement the product of maxterms directly
+   - Keep the structure clean and readable

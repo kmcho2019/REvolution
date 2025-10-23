@@ -1,0 +1,6 @@
+Refactor the 5-bit Galois LFSR by separating combinational next-state logic from sequential state update.  
+- Introduce a combinational wire `next_q` to compute the next LFSR state based on current `q` and taps at bits 5 and 3.  
+- Use an always block for the sequential update of `q` from `next_q` on the positive clock edge with synchronous reset.  
+- This separation clarifies data flow, avoids read-after-write hazards, and may improve timing by isolating combinational logic.  
+- Reset remains synchronous active-high and sets `q` to 5'b00001.  
+- Functionality remains identical to the original, preserving the maximal-length Galois LFSR behavior with the specified taps.

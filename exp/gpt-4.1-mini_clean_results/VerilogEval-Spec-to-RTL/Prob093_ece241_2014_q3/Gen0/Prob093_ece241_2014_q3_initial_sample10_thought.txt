@@ -1,0 +1,11 @@
+The 4-to-1 mux uses a,b as selectors and inputs mux_in[3:0]. Each mux_in bit is a function of c,d only, implemented using 2-to-1 muxes (with selectors c or d) since no logic gates are allowed besides multiplexers. From the K-map, each 4-to-1 input corresponds to a value depending on c,d. We can derive each input function by decomposing each column of the map according to c and d, then implementing it with 2-to-1 muxes.
+
+Specifically:
+- mux_in[0] (for ab=00): values for cd=00 to 10 at ab=00 are 0,1,1,1 -> this is a function f0(c,d)
+- mux_in[1] (for ab=01): values 0,0,0,0 -> constant 0
+- mux_in[2] (for ab=11): values 0,0,1,0 -> function f2(c,d)
+- mux_in[3] (for ab=10): values 1,0,1,1 -> function f3(c,d)
+
+We implement each function using muxes with c or d as selectors and inputs 0 or 1 constants or other mux outputs, minimizing the number of muxes.
+
+Then mux_in signals are assigned to these functions accordingly.

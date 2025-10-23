@@ -1,0 +1,9 @@
+The novel architectural idea here is to use a hybrid approach combining a finite state machine (FSM) with a separate counter module. The FSM will handle the pattern detection, delay bits shifting, and state transitions, while the counter module will be responsible for the actual counting and generating the 'count' output.
+
+We will implement the FSM with the following states: `IDLE`, `SHIFT_IN`, `COUNTING`, and `DONE`. The `IDLE` state will be responsible for detecting the '1101' pattern, the `SHIFT_IN` state will shift in the delay bits, the `COUNTING` state will trigger the counter to count for the specified duration, and the `DONE` state will assert the 'done' signal and wait for the 'ack' signal.
+
+The counter module will receive the delay value and start counting for the specified duration when triggered by the FSM. It will also generate the 'count' output based on the remaining time.
+
+This hybrid approach allows for a cleaner separation of concerns, with the FSM handling the control logic and the counter module handling the counting and output generation. This makes the code easier to understand, maintain, and debug.
+
+We will also ensure that all sequential logic is triggered on the positive edge of the clock and that the circuit resets into a state where it begins searching for the input sequence '1101' when the reset signal is asserted.

@@ -1,0 +1,14 @@
+I'll refactor the solution using a more explicit state machine approach with defined states (IDLE, BYTE1, BYTE2, BYTE3) instead of a counter. This makes the design more readable and maintainable while maintaining the same functionality. Key changes:
+
+1. Use named states instead of a counter for clearer intent
+2. Separate next-state logic from output logic
+3. Use `assign` for the `done` output to make it purely combinational
+4. Keep synchronous reset behavior
+5. The state transitions will be:
+   - IDLE: Wait for in[3]=1 to start message
+   - BYTE1: First byte received
+   - BYTE2: Second byte received
+   - BYTE3: Third byte received (assert done)
+   - Then return to IDLE
+
+This approach makes the state transitions more explicit while maintaining the same cycle-accurate behavior.

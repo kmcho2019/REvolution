@@ -1,0 +1,35 @@
+To fix the issues identified:
+
+1. **Reset and f Pulse Timing:**
+   - Keep reset synchronous and active low.
+   - After resetn goes high (de-asserted), on the next clock cycle transition from A to F_PULSE to assert f=1 for exactly one cycle.
+   - This timing is already mostly correct, but ensure stable state transitions and outputs aligned to clock edges.
+
+2. **Robust Pattern Matching on x:**
+   - Implement a clearer pattern detector for the sequence 1,0,1 that can handle overlapping sequences and partial matches.
+   - Use a small state machine or a pattern_step register with defined transitions:
+     - pattern_step=0: waiting for first '1'
+     - pattern_step=1: got '1', waiting for '0'
+     - pattern_step=2: got '1','0', waiting for last '1'
+     - pattern_step=3: pattern matched
+   - On mismatch, backtrack properly to handle overlapping sequences (e.g., if current x=1 and previous step was 1, can restart pattern_step=1).
+
+3. **Strict Monitoring of y for At Most Two Cycles:**
+   - Reset y_count to 0 at entry to G_ON_MONITOR_Y.
+   - Increment y_count each cycle in G_ON_MONITOR_Y.
+   - If y==1 within 2 cycles (y_count = 0 or 1), transition to G_ON_PERM.
+   - If y not seen by y_count==2, transition to G_OFF_PERM at next clock.
+   - This means y_count counts how many cycles have passed since entering G_ON_MONITOR_Y.
+
+4. **Outputs Based Purely on Current State (Moore outputs):**
+   - f=1 only in F_PULSE state for exactly one cycle.
+   - g=1 in G_ON_MONITOR_Y and G_ON_PERM states.
+   - g=0 in all other states including G_OFF_PERM.
+
+5. **General FSM Cleanup:**
+   - Use explicit state encoding with parameters or enum.
+   - Update all state and counters synchronously on clock edge.
+   - Compute next_state combinationally from current state, pattern_step, y_count, and inputs.
+   - Reset pattern_step and y_count appropriately on state changes.
+
+This solution carefully aligns state transitions and outputs to clock edges, fully implements correct pattern detection allowing overlapping sequences, and precisely enforces the 2-cycle limit for y monitoring. This eliminates the timing mismatches and output glitches seen in the simulation.

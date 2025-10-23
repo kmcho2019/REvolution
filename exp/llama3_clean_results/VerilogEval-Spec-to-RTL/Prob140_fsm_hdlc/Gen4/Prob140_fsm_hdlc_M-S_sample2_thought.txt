@@ -1,0 +1,7 @@
+To simplify the HDLC framing finite state machine, we can use a more structured approach with explicit states for recognizing the start and end of frames, as well as for handling errors due to excessive consecutive 1s.
+
+The main idea is to use a single state variable to track the current state and a counter to track consecutive ones. We can define a set of states to represent the different stages of sequence recognition, such as idle, flag detection, and error detection.
+
+When the machine is in the idle state and encounters a 1, it transitions to the flag detection state. If it encounters five consecutive 1s followed by a 0, it asserts the 'disc' output and returns to the idle state. If it encounters six consecutive 1s followed by a 0, it asserts the 'flag' output and returns to the idle state. If it encounters seven or more consecutive 1s, it asserts the 'err' output and remains in the error state until a 0 is encountered.
+
+This approach allows for a clear and structured implementation of the required sequences, with a minimal number of states and transitions.

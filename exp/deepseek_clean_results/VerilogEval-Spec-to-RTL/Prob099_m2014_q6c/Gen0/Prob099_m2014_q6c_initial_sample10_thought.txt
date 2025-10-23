@@ -1,0 +1,22 @@
+To implement the next-state signals Y1 and Y3 for the given state machine with one-hot encoding, we need to analyze the state transitions where these bits are set to 1 in the next state. 
+
+For Y1 (y[1] in next state):
+- From state A (000001) with input w=0, next state is B (000010) → Y1=1
+- From state B (000010) with input w=1, next state is D (001000) → Y1=0 (but we don't care about Y1 here)
+- From state C (000100) with input w=1, next state is D (001000) → Y1=0
+- From state D (001000) with input w=1, next state is A (000001) → Y1=0
+- From state E (010000) with input w=1, next state is D (001000) → Y1=0
+- From state F (100000) with input w=1, next state is D (001000) → Y1=0
+Only transition from A with w=0 sets Y1=1.
+
+For Y3 (y[3] in next state):
+- From state B (000010) with input w=1, next state is D (001000) → Y3=1
+- From state C (000100) with input w=1, next state is D (001000) → Y3=1
+- From state D (001000) with input w=0, next state is F (100000) → Y3=0
+- From state E (010000) with input w=1, next state is D (001000) → Y3=1
+- From state F (100000) with input w=1, next state is D (001000) → Y3=1
+So Y3 is 1 when:
+  (current state is B and w=1) OR
+  (current state is C and w=1) OR
+  (current state is E and w=1) OR
+  (current state is F and w=1)

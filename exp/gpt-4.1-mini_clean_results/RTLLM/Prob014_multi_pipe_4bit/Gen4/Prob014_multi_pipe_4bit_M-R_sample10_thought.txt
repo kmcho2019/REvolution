@@ -1,0 +1,21 @@
+Refactor the design to explicitly implement a two-stage pipeline multiplier with intermediate registers storing partial sums. The core concept remains:
+
+1. Generate partial products by extending the multiplicand and selecting based on multiplier bits.
+2. First pipeline stage: Register partial products.
+3. Second pipeline stage: Sum partial products pairwise to reduce them in two clock cycles.
+4. Use two levels of pipeline registers: the first level registers partial sums of pairs of partial products; the second level registers the final sum.
+5. The addition is split explicitly into two pipeline registers stages rather than a fully combinational adder tree.
+6. This approach simplifies timing paths and clarifies pipeline stages, meeting the two-level pipeline requirement.
+7. Use only properly declared `genvar`s and avoid complex function-based generate loops for clarity.
+8. Reset logic clears pipeline registers and outputs.
+
+This refactoring trades combinational adder tree complexity for straightforward pipelined add stages, easier to maintain and understand, and fully compliant with Verilog 2001 syntax.
+
+The final pipeline:
+- Stage 0: partial product generation (combinational)
+- Stage 1: register partial sums (sum pairs of partial products)
+- Stage 2: register final sum (sum the remaining partial sums)
+
+Output is updated from the final pipeline register.
+
+This meets the problem specification clearly and correctly.

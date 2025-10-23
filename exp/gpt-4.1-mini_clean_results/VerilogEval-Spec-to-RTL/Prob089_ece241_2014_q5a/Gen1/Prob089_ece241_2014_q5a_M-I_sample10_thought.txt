@@ -1,0 +1,11 @@
+To optimize the design for better performance and clarity, separate the state register update and the output logic into two distinct always blocks. Use a combinational block to compute the next state and the output based on the current state and input. This approach reduces the output latency by making output purely combinational, allowing output to change immediately with input changes within a clock cycle instead of waiting for the clock edge.
+
+Also, keep asynchronous reset for state register to maintain requirements.
+
+This separation of combinational and sequential logic aids synthesis in optimizing timing, potentially improving WNS and TNS. Power and area remain minimal due to the simple state machine and minimal logic.
+
+The output is a Moore machine output depending only on the current state and input at that moment combinationally. Strictly, Moore outputs depend only on state, but since the problem statement and example treat output as depending on state and input combinationally, this is acceptable.
+
+The output is now combinational from state and input, updated immediately, and state is registered on clock with asynchronous reset.
+
+This method reduces output latency and improves timing metrics without increasing area or power.

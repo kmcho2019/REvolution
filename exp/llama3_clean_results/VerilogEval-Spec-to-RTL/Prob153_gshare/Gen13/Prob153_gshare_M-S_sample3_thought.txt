@@ -1,0 +1,13 @@
+To simplify the existing Verilog code, we can take the following steps:
+
+1.  **Simplify the combinational logic**: Instead of using conditional statements for prediction, we can directly use the PHT value.
+2.  **Update the history register**: Update the history register only when train_valid is high and the branch is mispredicted, or when predict_valid is high and the branch is taken.
+3.  **Update the PHT**: Update the PHT based on the train_valid and train_taken signals.
+
+By following these steps, we can simplify the code and reduce its complexity while maintaining the required functionality.
+
+The main improvement here is to use the current history to make predictions, but for the actual history update, use the new history value that is computed based on the prediction. This approach simplifies the logic and reduces the complexity.
+
+We will also improve the PHT update logic to correctly handle the case where training and prediction of the same PHT entry happen at the same time. We will use a temporary variable to store the new PHT value and then update the PHT at the next positive clock edge.
+
+To handle the reset logic, we will use an asynchronous active-high reset to reset the predictor when areset is high.

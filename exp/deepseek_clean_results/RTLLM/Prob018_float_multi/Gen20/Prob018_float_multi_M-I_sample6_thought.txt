@@ -1,0 +1,23 @@
+Optimization Strategy for Improved PPA:
+
+1. Timing Optimization:
+- Break mantissa multiplication into 2 pipeline stages (partial products + final addition)
+- Pre-compute exponent sum in parallel with mantissa processing
+- Use leading-zero detection for normalization to reduce critical path
+
+2. Power Optimization:
+- Add early termination for special cases to avoid unnecessary computations
+- Implement clock gating for inactive pipeline stages
+- Reduce register width where possible
+
+3. Area Optimization:
+- Reduce product register to 47 bits (23x24 multiplication)
+- Consolidate special case flags into a 2-bit encoded signal
+- Optimize exponent handling to use 8 bits + overflow flag
+
+Key Improvements:
+1. 4-stage pipeline with better workload balancing
+2. True Wallace tree implementation with carry-save adders
+3. Early termination for special cases
+4. Optimized register sizing
+5. Combined normalization and rounding logic

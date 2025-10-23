@@ -1,0 +1,11 @@
+Design a 5-cycle IEEE-754 single-precision floating-point multiplier with clear pipeline stages to improve timing and separation of concerns:
+
+- Cycle 0: Extract and store sign, exponent, mantissa (including handling denormals), and detect special cases (NaN, Inf, zero).
+- Cycle 1: Calculate output sign (XOR), sum exponents with bias adjustment, and multiply mantissas using a 24x24 multiplier.
+- Cycle 2: Normalize the 48-bit product, shifting if needed, and update exponent accordingly.
+- Cycle 3: Perform rounding using round-to-nearest-even, adjusting mantissa and exponent if rounding overflow occurs.
+- Cycle 4: Handle special cases, overflow, underflow, and format the output IEEE-754 result.
+
+This pipeline spreads complex operations over more cycles reducing combinational depth per clock, improving max frequency. Special case handling is postponed until the final cycle allowing clean logic. Registers are used after each stage to decouple combinational logic. The mantissa multiplication uses a 48-bit product register, but normalization and rounding are neatly separated to simplify logic. The counter and internal signals control the state machine to sequence through steps and produce stable registered output.
+
+This approach differs from the example by adding an explicit separate rounding cycle and handling special cases only at the end, improving modularity and clarity.

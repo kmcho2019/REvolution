@@ -1,0 +1,5 @@
+Instead of using a single 8-bit register to represent the 8 D flip-flops, I will instantiate 8 individual D flip-flop modules, each capturing one bit of input `d` on the positive edge of `clk`. This modular approach models the design explicitly as 8 separate 1-bit flip-flops connected in parallel, which can enhance clarity and testability.
+
+Each DFF module will have a clock, data input, and data output. The TopModule will instantiate these 8 DFFs in a generate loop, wiring each bit of input and output correspondingly.
+
+This approach is functionally equivalent but emphasizes structural design, which might aid synthesis or verification tools by showing clear elemental registers rather than a packed vector. It also supports future easy modification per bit if needed.

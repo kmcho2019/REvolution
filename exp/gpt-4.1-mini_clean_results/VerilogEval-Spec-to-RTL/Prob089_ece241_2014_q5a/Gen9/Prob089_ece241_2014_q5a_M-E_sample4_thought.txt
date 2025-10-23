@@ -1,0 +1,29 @@
+Implement a serial two's complementer using a one-hot encoded three-state Moore FSM that explicitly tracks the progression of inversion and cleanly separates output generation.
+
+The FSM states are:
+
+- IDLE: waiting for reset release, output zero (no valid output yet)
+- COPY: have not yet encountered the first '1' in input; output equals input bit (pass-through)
+- INVERT: after seeing the first '1', output inverted input bits (complementing the higher bits)
+
+Key points:
+
+- On async reset, go to IDLE state.
+- After reset de-asserted, immediately transition to COPY state to start processing bits.
+- While in COPY state, pass input bit as output; when first '1' bit is received, transition to INVERT.
+- In INVERT state, output inverted bits.
+- Output is purely a function of the current state only (Moore output).
+- Input is registered on every clock cycle with an input register to decouple combinational input from output logic.
+- The output depends solely on state (for Moore) and a registered input bit stored internally in a separate register updated at each clock edge.
+- Output is registered on the clock to ensure outputs change only at clock edges (fully synchronous output).
+- The circuit accepts arbitrarily long input bit streams, each bit at clock cycle.
+- When reset is asserted, the circuit stops processing and goes to IDLE (output zero).
+  
+This design differs architecturally from the previous 2-state FSM by:
+
+- Adding explicit IDLE state (clear separation of reset condition).
+- One-hot encoding for clarity and ease of debugging.
+- Registered output (instead of combinational) ensures strict Moore behavior with clock-aligned output changes.
+- Clear state transition upon reset release to start processing immediately.
+
+This approach facilitates easier insertion of pipeline registers if desired and may improve timing closure by reducing combinational logic depth on output path.

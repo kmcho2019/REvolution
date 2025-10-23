@@ -1,0 +1,12 @@
+Instead of using a traditional state machine, we can implement a shift register that stores the last 3 bytes received. We'll then use combinational logic to detect when:
+1. The oldest byte in the shift register has in[3]=1 (indicating start of message)
+2. Exactly 3 bytes have been received since then
+
+This approach has several advantages:
+- Eliminates explicit state transitions, reducing control logic
+- Naturally handles continuous byte streams
+- Easily extensible if message format changes
+- Clear separation of storage and detection logic
+- Done signal generation is purely combinational based on current stored values
+
+The shift register acts as a sliding window over the byte stream, and we simply check the window contents for valid message patterns.

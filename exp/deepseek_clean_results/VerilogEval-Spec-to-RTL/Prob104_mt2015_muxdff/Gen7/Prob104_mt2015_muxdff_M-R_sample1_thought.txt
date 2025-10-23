@@ -1,0 +1,12 @@
+To properly implement the hierarchical design while maintaining the original functionality, we should:
+
+1. Make TopModule a simple mux+flipflop combination without internal feedback logic
+2. Move all feedback logic to the parent module (full_module)
+3. Each TopModule instance will handle just one bit of storage
+4. The parent module will handle the interconnections between bits for feedback
+5. This simplifies TopModule to its core function: load or hold state
+
+This approach better matches the hierarchical decomposition principle where:
+- TopModule handles basic storage and selection
+- full_module handles the feedback logic between bits
+- Each component has a single clear responsibility

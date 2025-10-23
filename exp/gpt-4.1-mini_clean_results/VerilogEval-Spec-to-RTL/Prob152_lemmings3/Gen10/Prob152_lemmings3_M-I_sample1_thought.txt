@@ -1,0 +1,10 @@
+To optimize the existing FSM for better PPA while preserving correctness and clarity, I will:
+
+- Replace the prev_ground register with a combinational "ground_falling" signal, detecting a falling edge of ground by comparing the current ground input with state mode. This removes the prev_ground register, reducing toggling and saving a register.
+- Use a synchronous reset (instead of async) if allowed, to improve timing and reduce asynchronous reset hold constraints. However, if asynchronous reset is mandatory per spec, we keep it.
+- Simplify bump direction logic by combining bump_left and bump_right in a single condition to reduce logic depth.
+- Reduce logic in next_state by merging some conditions and using fewer nested ifs.
+- Since the stable_ground was a gated version of ground & prev_ground, removing prev_ground means falling edge detection needs to be done differently.
+- Maintain mode encoding with 2 bits and direction bit.
+- Keep Moore outputs combinationally dependent on state.
+- Result: Reduced register usage, simpler combinational logic, potentially better timing and lower power from fewer toggling registers.

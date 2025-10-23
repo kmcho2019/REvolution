@@ -1,0 +1,11 @@
+The original solution had some logical flaws in edge detection and state maintenance. Here's the improved approach:
+
+1. **Accurate Falling Edge Detection**: We'll use a single pipeline register (in_prev) to store the previous input value. A falling edge is detected when the current input is 0 and the previous input was 1 (in_prev & ~in).
+
+2. **Proper State Maintenance**: Once a falling edge is detected on any bit, that corresponding output bit should remain high until reset. We'll use an OR operation between the current output and newly detected falling edges.
+
+3. **Synchronous Reset**: All registers will be cleared synchronously when reset is high.
+
+4. **Efficient Implementation**: Using only one pipeline register minimizes area while maintaining correct functionality. The output register maintains state until reset as required.
+
+This solution properly captures the 1→0 transitions and maintains the output state until reset, while being more area-efficient than the original two-register approach.

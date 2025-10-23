@@ -1,0 +1,23 @@
+The FSM has six states encoded one-hot in y[5:0], with the active bit indicating the current state (A to F). The transitions depend on input w, with outputs Y1 and Y3 feeding the state flip-flop inputs y[1] and y[3], respectively.
+
+- Y1 corresponds to next state B (y[1]), so Y1 should be asserted when the FSM transitions to B.
+- Y3 corresponds to next state D (y[3]), so Y3 should be asserted when the FSM transitions to D.
+
+By inspecting the transitions:
+
+Transitions to B:
+- A --1--> B
+
+So Y1 = y[0] & w
+
+Transitions to D:
+- B --0--> D
+- C --0--> D
+- E --0--> D
+- F --0--> D
+
+So Y3 = (y[1] & ~w) | (y[2] & ~w) | (y[4] & ~w) | (y[5] & ~w)
+
+Combine the terms for Y3 accordingly.
+
+Implement these as combinational logic outputs.

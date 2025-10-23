@@ -1,0 +1,5 @@
+Since the original design using the SystemVerilog `$countones` function is minimal and efficient for a 3-bit input, no performance or area improvements are meaningful. However, for better synthesis compatibility and wider tool support (some tools may not support SystemVerilog extensions), rewriting the logic explicitly using addition of bits can improve portability and maintain the same minimal complexity. This approach eliminates the dependency on the system function while keeping the logic straightforward and synthesis-friendly.
+
+We sum the individual bits `in[0] + in[1] + in[2]` and assign that sum to the 2-bit output, which counts the number of 1's in the 3-bit input vector.
+
+This change does not affect the critical path or power since the logic complexity remains the same, but it ensures broader compatibility with more Verilog tools and environments.

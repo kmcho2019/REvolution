@@ -1,0 +1,13 @@
+The initial design is already minimal and synthesis-friendly with a proper nonblocking assignment in the DFF module and a clean hierarchy. Since the design is a simple single-bit D flip-flop, no complex logic optimizations apply. However, to potentially improve power slightly, I can add an input data clock-enable signal inside the DFF module to prevent unnecessary toggling of the output register when the input data is stable, which can help reduce switching activity in downstream logic.
+
+This enhancement uses a simple enable condition inside the flip-flop: the output only updates if the input 'd' differs from the current output 'q'. This avoids re-latching the same value and can reduce unnecessary toggles of the flip-flop output, reducing dynamic power usage.
+
+This technique maintains:
+- Correct synchronous behavior with nonblocking assignments.
+- Minimal logic overhead (one comparator).
+- Potentially less power due to fewer output toggles.
+- Same area footprint as a standard DFF with a small added comparator (which is usually cheap).
+
+The TopModule interface remains unchanged, ensuring compatibility.
+
+This strategy optimizes power without impacting area or performance meaningfully.

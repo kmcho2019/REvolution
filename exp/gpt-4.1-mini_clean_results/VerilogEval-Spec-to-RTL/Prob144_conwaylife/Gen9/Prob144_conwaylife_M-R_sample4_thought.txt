@@ -1,0 +1,9 @@
+Refactor the design to store the current state `q` in a register but compute the next state entirely using a combination of arrays and combinational logic outside of always blocks. Instead of flattening and unflattening inside generate loops multiple times, use a packed 2D reg for state and explicitly assign q from it, improving clarity.
+
+Move the neighbor sum calculation into a single function that takes row and column indices and returns the count with wrap-around. Use this function in a generate loop to compute next state bits for all cells in a single combinational always block.
+
+Update `q` synchronously on the clock edge either by loading input data or by updating to the next computed state.
+
+This restructuring centralizes neighbor counting in a function for reuse and readability. It also cleanly separates combinational next state logic from sequential update logic, avoiding scattered combinational assignments and multiple flatten/unflatten steps. Using a packed 2D reg for state enhances indexing clarity and synthesis friendliness.
+
+Overall, the design retains the original toroidal Game of Life logic and synchronous load but achieves better code structure and modularity by grouping combinational logic in a single block and using a helper function.

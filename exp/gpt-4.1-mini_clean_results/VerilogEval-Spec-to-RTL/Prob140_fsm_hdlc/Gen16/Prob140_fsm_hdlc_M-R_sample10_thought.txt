@@ -1,0 +1,13 @@
+Refactor the FSM by encoding the state as a 3-bit count of consecutive ones (0 to 6) plus three extra states (disc, flag, err) as explicit states beyond 6, but implement next_state logic with a simple always_comb block using if-else conditions instead of a large case statement.
+
+Use an enumerated type for states with `typedef` and localparam for clarity. Separate output signals as combinational functions of state to maintain Moore outputs.
+
+Also, implement state register with synchronous reset using a single always_ff block.
+
+This structure simplifies the next-state logic by removing the concatenated case and replacing it with straightforward if-else, improving readability without changing functionality.
+
+It also maintains one-cycle output pulses triggered by state transitions to the special output states.
+
+The output signals are purely combinational from the current state, ensuring synchronous and glitch-free outputs.
+
+This refactoring keeps all functional behavior intact but improves clarity and modularity of the code.

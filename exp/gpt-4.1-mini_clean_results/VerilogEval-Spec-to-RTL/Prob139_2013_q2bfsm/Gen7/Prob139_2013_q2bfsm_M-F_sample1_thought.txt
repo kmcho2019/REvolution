@@ -1,0 +1,26 @@
+To fix the reported issues, the FSM design needs precise timing alignment and robust pattern matching with careful handling of resets and counters:
+
+1. **Reset and f pulse timing:** 
+   The FSM must remain in state A as long as resetn is low, synchronously resetting all signals. Once resetn goes high, the FSM transitions from A to F_PULSE on the next clock edge, producing f=1 for exactly one cycle. This is already correct but the timing must be ensured by registering resetn properly and careful state update.
+
+2. **Robust pattern matching for x input (sequence 1,0,1):** 
+   The previous `pattern_step` approach doesn't handle overlapping patterns well. Use a small state machine or shift register approach to detect the pattern robustly, allowing detection to restart from partial matches. For example, keep track of how much of the pattern was matched and update this state accordingly, handling overlaps (like input sequence 1 1 0 1).
+
+3. **Y input monitoring:** 
+   The FSM needs to check if y becomes 1 within at most two clock cycles in the G_ON_MONITOR_Y state. The previous counter increments and comparison `y_count >= 2` effectively gives a 3-cycle window. Instead, count from zero and transition out immediately if y is 1 or if the counter reaches 2 (exactly two clock cycles monitored).
+
+4. **Clean Moore FSM style:** 
+   Keep outputs dependent only on current state (no transient outputs from combinational logic). Register all internal states and counters synchronously. Drive outputs via combinational logic from current registered state.
+
+5. **State encoding:** 
+   Use enumerated states for clarity.
+
+6. **No use of SystemVerilog `typedef` to keep Verilog-2001 compatibility.**
+
+The fixes entail:
+- Carefully update pattern detection with precise next step logic.
+- Fix y_count so it counts from 0, and after two cycles if y=0, transition to G_OFF_PERM.
+- Ensure synchronous reset resets all registers properly.
+- Maintain all transitions and outputs purely on registered states.
+
+This will ensure glitch-free, correct output waveforms and proper FSM operation per spec.

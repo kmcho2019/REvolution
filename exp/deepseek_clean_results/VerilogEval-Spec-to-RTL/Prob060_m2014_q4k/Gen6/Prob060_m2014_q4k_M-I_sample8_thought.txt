@@ -1,0 +1,18 @@
+Optimization strategy based on PPA metrics:
+1. **Timing Improvement**: Since WNS is negative (-0.13ns), we can optimize the critical path by:
+   - Using a parallel load structure to reduce the shift chain depth
+   - Implementing a more balanced register structure
+
+2. **Power Optimization**:
+   - Add clock gating when input remains stable
+   - Use conditional shifting to reduce unnecessary transitions
+
+3. **Area Optimization**:
+   - Maintain the current compact 4-bit vector approach
+   - Avoid additional logic that would increase area
+
+Key changes:
+- Implement clock gating when input is stable
+- Keep the simple shift register structure but optimize control
+- Maintain synchronous reset functionality
+- Output remains from MSB of shift register

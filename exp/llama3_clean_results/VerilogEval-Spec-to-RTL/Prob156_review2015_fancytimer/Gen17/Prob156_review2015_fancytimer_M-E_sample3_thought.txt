@@ -1,0 +1,11 @@
+To solve this problem, I propose a novel architectural approach that utilizes a finite state machine (FSM) with a combination of parallel and sequential processes. The FSM will have four primary states: IDLE, SHIFT, COUNT, and DONE.
+
+In the IDLE state, the FSM will continuously monitor the input data for the pattern 1101. Once the pattern is detected, the FSM will transition to the SHIFT state.
+
+In the SHIFT state, the FSM will shift in the next four bits to determine the delay duration. This will be done using a separate counter to track the number of bits shifted.
+
+After the delay duration is determined, the FSM will transition to the COUNT state. In this state, the FSM will count down from the delay duration multiplied by 1000, with the count being displayed on the count output. The counting output will be asserted throughout the counting process.
+
+Once the count reaches zero, the FSM will transition to the DONE state, where it will assert the done output and wait for the ack input to be asserted. Once the ack input is asserted, the FSM will reset to the IDLE state.
+
+To implement this architecture, I will use a combination of always blocks, case statements, and non-blocking assignments in Verilog.

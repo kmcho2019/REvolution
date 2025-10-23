@@ -1,0 +1,7 @@
+To implement a 16-bit full adder using combinational logic and modular 8-bit adders in a novel way, I will design an 8-bit carry-lookahead adder (CLA) module with separate generate and propagate group signals. This module will output both the sum and the block propagate and generate signals to efficiently compute the carry into the next 8-bit block without ripple carry delay.
+
+At the 16-bit level, I will instantiate two such 8-bit CLA modules and implement a simple 2-level carry lookahead for the carry between the two blocks. The upper block's carry-in is computed using the group generate and propagate from the lower block and the initial carry-in, minimizing carry chain delay.
+
+This architecture improves speed by reducing carry propagation stages across 8-bit boundaries, and is distinct from simple ripple carry chaining of two adders. It maintains modularity and clarity by exposing group signals from each 8-bit adder, enabling hierarchical carry lookahead.
+
+No always blocks are used; all logic is combinational. The design strikes a balance between complexity and performance by avoiding full 16-bit carry lookahead while accelerating the critical carry path at block boundaries.

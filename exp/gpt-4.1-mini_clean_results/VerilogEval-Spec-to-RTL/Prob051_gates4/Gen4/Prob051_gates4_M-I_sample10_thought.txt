@@ -1,0 +1,14 @@
+The current design is already optimal at the RTL level using Verilog reduction operators for four-input AND, OR, and XOR operations. These operators map to efficient hardware primitives, resulting in minimal area, power, and delay.
+
+However, an avenue for potential PPA improvement could be to share partial computations among outputs to reduce redundant logic. For example, both the AND and XOR outputs need to examine all four bits; by precomputing some intermediate signals (like pairwise ANDs or XORs), we might allow the synthesis tool to better optimize gate sharing, potentially reducing overall gate count and switching activity.
+
+Specifically, XOR of four bits can be computed as ((in[3]^in[2])^(in[1]^in[0])), and AND as ((in[3]&in[2])&(in[1]&in[0])), while OR as ((in[3]|in[2])|(in[1]|in[0])). Precomputing these halves might allow sharing in logic implementations.
+
+Though this might increase RTL verbosity, it could help synthesis identify common sub-expressions, yielding slightly improved area or power. The timing impact is negligible given the shallow logic levels.
+
+Therefore, the improvement strategy is:
+1. Create intermediate wires for pairs of bits: and_high, and_low, or_high, or_low, xor_high, xor_low.
+2. Use these intermediate signals to compute final outputs.
+3. This structural coding style can aid the synthesis tool in optimizing the implementation.
+
+This might not drastically change PPA, but it is a useful refinement targeting gate sharing and incremental power savings.

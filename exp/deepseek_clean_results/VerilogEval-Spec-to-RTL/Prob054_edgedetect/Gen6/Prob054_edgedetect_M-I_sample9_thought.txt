@@ -1,0 +1,15 @@
+The current implementation is already quite efficient, but we can make some minor optimizations to improve PPA:
+
+1. The negative WNS (-0.13ns) suggests the design is slightly tight on timing. We can pipeline the edge detection by splitting it into two stages:
+   - First stage: Compute ~prev_in
+   - Second stage: AND with current input
+   This will reduce the critical path at the cost of one additional cycle latency.
+
+2. For power optimization, we can add an enable condition to the register updates when inputs change, reducing unnecessary switching.
+
+3. The area is already minimal, but we can ensure the synthesis tool uses optimal cells by adding synthesis attributes.
+
+The improved version will have:
+- Better timing margin due to pipelining
+- Lower power consumption due to conditional updates
+- Same area footprint with better cell utilization

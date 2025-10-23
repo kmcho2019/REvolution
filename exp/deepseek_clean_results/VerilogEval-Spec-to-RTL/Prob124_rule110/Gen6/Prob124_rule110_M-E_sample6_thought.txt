@@ -1,0 +1,14 @@
+To optimize the Rule 110 implementation, I propose a parallel computation approach with optimized boundary handling:
+
+1. Pre-compute boundary conditions separately to avoid repetitive checks
+2. Use bitwise operations to compute next states in parallel
+3. Implement Rule 110 logic using Boolean expressions rather than case statements
+4. Group the computation into three parts:
+   - Left boundary cell (special case)
+   - Middle cells (uniform computation)
+   - Right boundary cell (special case)
+5. This reduces redundant logic and enables better synthesis optimization
+
+The key insight is that Rule 110 can be expressed as:
+next_state = center ^ (left | (center & ~right))
+This Boolean expression captures all cases from the truth table.

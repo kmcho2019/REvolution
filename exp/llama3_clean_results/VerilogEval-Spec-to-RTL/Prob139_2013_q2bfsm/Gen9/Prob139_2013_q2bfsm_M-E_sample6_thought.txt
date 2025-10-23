@@ -1,0 +1,11 @@
+A novel approach to implementing the finite state machine (FSM) for controlling the motor is to use a hierarchical state machine architecture. This approach involves breaking down the overall state machine into smaller, more manageable sub-states, each responsible for a specific part of the functionality. 
+
+The top-level state machine can have two main states: an initialization state (state A) and a monitoring state. In the initialization state, the FSM sets the output f to 1 for one clock cycle after the reset signal is de-asserted. 
+
+Once in the monitoring state, the FSM can use a sub-state machine to detect the sequence of x values (1, 0, 1) over three successive clock cycles. This can be achieved by using a counter to track the position in the sequence and comparing the current x value against the expected value in the sequence.
+
+After detecting the sequence, the FSM enters another sub-state where it monitors the y input for a limited number of clock cycles (two cycles in this case). This sub-state can use a timer to count the clock cycles and check the y input during this time. If y becomes 1 within the specified time limit, the FSM sets g to 1 permanently; otherwise, it sets g to 0 permanently.
+
+This hierarchical approach simplifies the logic and makes the code more readable and maintainable, as each sub-state has a specific and well-defined responsibility.
+
+To implement this, we can use a combination of always blocks and case statements to manage the states and sub-states. The use of case statements allows for clear and concise state transitions, making the code easier to understand and debug.

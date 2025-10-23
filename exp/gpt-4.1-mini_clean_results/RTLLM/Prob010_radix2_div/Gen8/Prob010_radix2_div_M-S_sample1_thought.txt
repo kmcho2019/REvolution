@@ -1,0 +1,15 @@
+Implement a simplified radix-2 divider with an 8-bit dividend and divisor supporting signed and unsigned division. The module operates sequentially over 8 clock cycles, performing restoring division as follows:
+
+1. On opn_valid (and res_valid low), capture inputs, record sign bits, and take absolute values for signed operation.
+2. Initialize a 17-bit shift register SR = {remainder (8 bits), dividend shifted left by 1 bit}.
+3. NEG_DIVISOR = two’s complement of divisor_abs.
+4. Perform 8 iterations:
+   - Shift SR left by 1 bit.
+   - Compute SR[16:8] + NEG_DIVISOR.
+   - If the MSB (bit 16) of the sum is 0 (no borrow), update SR[16:8] with the sum and set SR[0] = 1.
+   - Else keep SR[16:8] unchanged and SR[0] = 0.
+5. After completion, restore the sign of quotient and remainder using stored sign bits.
+6. Output result with remainder in upper 8 bits and quotient in lower 8 bits.
+7. Manage res_valid and wait for res_ready to clear it.
+
+This implementation uses simple shift-add logic, minimal states (IDLE and DIVIDE), counters, and straightforward sign correction, ensuring easy verification and efficient hardware mapping.

@@ -1,0 +1,15 @@
+To fuse the best ideas from both examples, I aim to keep the design fully combinational and minimal for best area and power while ensuring mutual exclusivity of the outputs without generating complementary signals that increase toggling unnecessarily. 
+
+Example 1’s use of a 2-bit encoded wire is conceptually elegant for mutual exclusivity but introduces a vector and bitwise inversion, which may cause additional toggling and slightly larger area.
+
+Example 2’s direct assign statements are simple and minimal, but represent mutual exclusivity through separate expressions rather than encoding, which is straightforward and efficient.
+
+By combining these, I will implement direct continuous assignments like Example 2, but further emphasize explicit mutual exclusivity by using a single enable signal derived from ring, and use that to gate the outputs cleanly without inversions or redundant logic:
+
+- Define an internal wire enable = ring; this signals that outputs can be active.
+- For ringer: enable & ~vibrate_mode
+- For motor: enable & vibrate_mode
+
+This retains minimal logic, ensures only one output is high at a time, and avoids the extra vector and inversions seen in Example 1. It is effectively Example 2 but makes explicit that outputs depend on the enable signal.
+
+This approach optimizes for power (minimal toggling), area (minimal gates), and clarity, fusing the clarity of Example 1’s mutual exclusivity encoding with the simplicity and minimal gate use from Example 2.

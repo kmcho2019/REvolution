@@ -1,0 +1,19 @@
+Improvement Strategy:
+1. Power Optimization:
+   - Add operand isolation to disable partial product generation when multiplier bits are zero
+   - This prevents unnecessary switching activity in the AND gates and adders
+
+2. Area Optimization:
+   - Replace the 3-level adder tree with a carry-save adder (CSA) structure
+   - CSAs reduce area by eliminating carry propagation in intermediate stages
+   - Final addition done with a single carry-propagate adder
+
+3. Performance:
+   - Maintain the same critical path length (3 adder levels)
+   - CSA structure naturally balances the adder tree
+
+Key Changes:
+- Added operand isolation using AND gates with B bits as enables
+- Implemented 4:2 compressor (CSA) for first reduction stage
+- Used carry-save format until final addition
+- Final addition with fast carry-propagate adder

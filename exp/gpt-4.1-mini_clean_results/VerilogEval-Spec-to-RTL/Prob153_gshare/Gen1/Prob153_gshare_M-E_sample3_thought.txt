@@ -1,0 +1,13 @@
+Implement the gshare predictor using a dual-port RAM-like structure for the PHT with one write port for training and one read port for prediction, enabling clean separation of training updates and prediction reads within the same clock cycle.
+
+- Use a 7-bit global history register (ghr) that is updated synchronously.
+- For prediction: when predict_valid is high, compute index = predict_pc ^ ghr and read the PHT entry combinationally.
+- Output predict_taken based on MSB of PHT counter and output the current ghr as predict_history.
+- Prediction updates the ghr at the next clock edge by shifting in the predicted bit.
+- For training: when train_valid is high, compute index = train_pc ^ train_history and update the corresponding PHT entry on the clock edge by saturating the counter according to train_taken.
+- If train_mispredicted is asserted, at the clock edge recover the ghr to train_history instead of updating with prediction.
+- If training (mispredicted) and prediction valid happen simultaneously, training’s ghr update takes priority.
+- On asynchronous reset, initialize all PHT entries to weakly not taken (2'b01) and clear the ghr.
+- This dual-port approach conceptually models separate read/write access without combinational write-through, avoiding potential read-after-write hazards and ensuring the prediction always reads the old PHT value before training updates at clock edge.
+
+This approach cleanly separates prediction and training logic while respecting update priorities and timing constraints.

@@ -1,0 +1,18 @@
+Novel design approach:
+1. Shift register implementation:
+   - Use a 7-bit shift register to track the last 7 input bits
+   - This provides a sliding window of recent history for pattern matching
+
+2. Parallel pattern matching:
+   - Compare the shift register contents against target patterns simultaneously
+   - Detect discard (0111110), flag (01111110), and error (01111111...) conditions
+
+3. Edge-triggered output generation:
+   - Use flip-flops to register outputs for one cycle after pattern detection
+   - Ensures outputs are asserted for exactly one cycle after condition occurs
+
+4. Advantages:
+   - More straightforward pattern matching logic
+   - Easier to extend for different pattern lengths
+   - Clear separation between pattern detection and output timing
+   - Reduced state complexity compared to traditional FSM

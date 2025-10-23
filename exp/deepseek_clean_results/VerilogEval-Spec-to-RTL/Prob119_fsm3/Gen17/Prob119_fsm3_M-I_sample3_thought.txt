@@ -1,0 +1,14 @@
+Improvement Strategy:
+1. **State Encoding Optimization**: Switch to one-hot encoding (4 bits) which typically results in simpler decoding logic and potentially better timing, though at a small area cost. This can help with both timing and power by reducing combinational logic complexity.
+
+2. **Output Registering**: Register the output to improve timing by breaking the combinational path from state to output. This adds one cycle latency but improves clock frequency.
+
+3. **Clock Gating**: Add simple clock gating when the state is stable (no transition) to reduce dynamic power.
+
+4. **Reset Optimization**: Keep asynchronous reset but ensure it only affects state registers for cleaner implementation.
+
+Key Changes:
+- One-hot state encoding (4 bits)
+- Registered output
+- Conditional clock gating
+- Maintain same functionality with improved PPA

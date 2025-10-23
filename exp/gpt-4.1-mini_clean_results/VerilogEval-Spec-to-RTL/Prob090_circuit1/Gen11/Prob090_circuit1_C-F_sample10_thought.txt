@@ -1,0 +1,12 @@
+Both examples correctly implement the AND function, but with trade-offs between modularity and simplicity. Example 1 uses a modular AndGate submodule with a structural NAND-based implementation, achieving clear hierarchy and synthesis-friendly gate-level logic. Example 2 also uses the same NAND structural approach but highlights modularity and clarity.
+
+However, both examples incur extra gate count and area overhead due to the two NAND gates used to realize AND, increasing power consumption. Using a direct continuous assign statement for q = a & b in the TopModule eliminates the need for a submodule and extra gates, reducing area and power while preserving performance since it compiles directly to a primitive AND in synthesis.
+
+The fusion strategy is to:
+- Remove the AndGate submodule to reduce hierarchy overhead and simplify the code.
+- Implement the AND function directly using a continuous assign statement in the TopModule.
+- Maintain a clear, readable, and purely combinational style with no behavioral always blocks.
+- Achieve optimal area and power metrics by leveraging the synthesis tool's native AND gate inference.
+- Preserve zero timing delay and functionality as observed in waveforms.
+
+This solution fuses the clarity and simplicity of a direct assign with the correctness and minimal delay of the NAND-based implementations, but optimizes PPA by eliminating the extra gates and modules. It also eases verification and synthesis mapping by clearly expressing the function as a single AND operation.

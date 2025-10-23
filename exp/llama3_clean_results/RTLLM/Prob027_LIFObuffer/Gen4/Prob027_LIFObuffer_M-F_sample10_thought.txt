@@ -1,0 +1,13 @@
+To address the issues in the original code, we need to revisit the fundamental architecture of the LIFO buffer. The main issue lies in the unnecessary use of both HEAD and TAIL pointers, which can lead to confusion and incorrect behavior. A simpler and more traditional approach for a LIFO buffer is to use a single stack pointer (SP) that tracks the top of the stack. This pointer is decremented when data is pushed onto the stack and incremented when data is popped from the stack.
+
+The buffer will be implemented as a stack memory array (stack_mem) with a depth of 4 entries, each 4 bits wide. The stack pointer (SP) will be a 2-bit register that indicates the current position in the stack, ranging from 0 (empty stack) to 3 (full stack).
+
+Upon reset (Rst high), the stack pointer will be set to 4 (which indicates an empty buffer in our implementation, as the valid indices for the stack_mem array are 0 to 3), and all memory locations in the stack will be initialized to 0.
+
+When the enable signal (EN) is high and the reset signal (Rst) is low, the buffer checks the read/write control signal (RW). If RW is low (write operation), it checks if the buffer is not full. If it's not full, the data from the input dataIn is pushed onto the stack at the current position indicated by the stack pointer, and then the stack pointer is decremented.
+
+If RW is high (read operation), it checks if the buffer is not empty. If it's not empty, the data is popped from the stack into the output dataOut at the position indicated by the stack pointer, and then the stack pointer is incremented.
+
+Finally, the EMPTY and FULL flags are updated based on the stack pointer's value. If the stack pointer is at the maximum value (4), the buffer is considered empty. If the stack pointer is at 0, the buffer is considered full.
+
+This simplified and traditional stack-based approach ensures that the LIFO buffer operates correctly and efficiently, without the unnecessary complexity introduced by using both HEAD and TAIL pointers.

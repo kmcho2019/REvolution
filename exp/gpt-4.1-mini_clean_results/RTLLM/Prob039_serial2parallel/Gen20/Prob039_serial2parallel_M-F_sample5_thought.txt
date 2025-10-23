@@ -1,0 +1,9 @@
+Improve clarity and avoid redundant recomputation of the shifted data by updating the shift register first, then latching its updated value into dout_parallel when the count reaches 7. This ensures dout_parallel always reflects the complete 8-bit data assembled with MSB first.
+
+Also, keep dout_valid asserted high for only one clock cycle precisely when the 8th bit is received, and remain low otherwise. This avoids unnecessary toggling on dout_valid.
+
+Reset the shift register explicitly after output to avoid unintended data retention (though not strictly necessary). Use non-blocking assignments consistently for synchronous logic.
+
+This approach ensures clean timing, less ambiguity, and better simulation stability, addressing the previous timeout issue.
+
+Optional (not strictly requested): To further improve handshake, a ready/ack scheme could be added, but is beyond current scope.

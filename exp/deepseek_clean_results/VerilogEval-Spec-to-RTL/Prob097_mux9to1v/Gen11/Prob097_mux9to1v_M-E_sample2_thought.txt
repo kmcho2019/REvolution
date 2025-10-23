@@ -1,0 +1,14 @@
+Novel Architecture: Priority-Encoded Masking Mux
+1. Instead of traditional mux trees, use priority encoding to generate selection masks
+2. Create 9 selection masks (one per input) based on the sel value
+3. Each mask is 16 bits wide and activates only when sel matches its input
+4. For invalid sel values (9-15), generate an all-ones mask
+5. Bitwise AND each input with its corresponding mask
+6. OR all the masked inputs together to get the final output
+
+Key Advantages:
+- Eliminates traditional mux tree hierarchy
+- Parallel mask generation enables better synthesis optimization
+- Selection logic is consolidated rather than replicated per bit
+- Default case handling is simple and centralized
+- Potential for better technology mapping to FPGA LUTs or ASIC standard cells

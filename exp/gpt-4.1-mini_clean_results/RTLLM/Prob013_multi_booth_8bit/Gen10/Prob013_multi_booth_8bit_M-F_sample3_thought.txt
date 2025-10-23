@@ -1,0 +1,12 @@
+The existing design is functionally correct and synthesizable, but can be optimized for power and clarity without altering its core structure.
+
+Improvements based on feedback:
+- Gate accumulator updates: only update the accumulator when the booth factor is non-zero to reduce unnecessary toggling.
+- Simplify next_state logic by merging it into the main sequential always block to reduce combinational logic levels.
+- Minimize redundant sign extensions by creating a signed 32-bit version of the multiplicand once at reset and reusing it.
+- Use non-blocking assignments consistently for registers in sequential always blocks.
+- Keep the state machine minimal: IDLE waits for reset (which acts as start), then CALC runs for 4 cycles, DONE asserts ready.
+- Output product and ready only at DONE state to avoid glitches.
+- Document code clearly for maintenance.
+
+These changes improve power by reducing register toggling, simplify state logic, and keep the design clean and clear while preserving functionality and synthesis compatibility.

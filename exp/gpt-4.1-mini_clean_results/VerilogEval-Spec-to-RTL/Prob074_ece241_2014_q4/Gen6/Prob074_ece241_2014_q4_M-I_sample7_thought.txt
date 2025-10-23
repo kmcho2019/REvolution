@@ -1,0 +1,26 @@
+To strictly comply with the requirement that the flip-flops are initialized to zero before the machine begins, and since the design does not provide any reset input, the most reliable approach is to use asynchronous active-low reset signals on the flip-flops and assert them at the start of simulation. 
+
+In synthesizable designs, asynchronous reset signals (often active low) are common and guarantee initialization of flip-flops at time zero, preventing unknown states during simulation startup.
+
+Here, I will add an asynchronous active-low reset signal internally, implemented via a 'resetn' signal that is initially asserted (0) and deasserted (1) after a brief startup period using an initial block.
+
+- All flip-flops will have asynchronous reset driven by 'resetn'.
+- 'resetn' starts at 0 (active reset) at time zero.
+- After one timestep delay, 'resetn' is set to 1, releasing reset and allowing the FSM to operate normally.
+- This ensures all flip-flops are zero at simulation start and avoids X states, solving initialization mismatch.
+- The rest of the logic remains unchanged as per the specification.
+
+This approach is synthesizable with an asynchronous reset and aligns the initial flip-flop states correctly with the problem statement.
+
+If asynchronous reset is undesirable, a synchronous reset input could be added and driven similarly, but since the problem does not specify a reset input, the internal asynchronous reset emulation is the best way to ensure correct initialization in simulation.
+
+This also matches typical FPGA/ASIC design practices.
+
+Summary of improvements:
+- Add internal asynchronous active-low reset 'resetn' signal.
+- Initialize flip-flops to zero on resetn asserted.
+- Release resetn after a delta cycle via initial block.
+- Keep combinational logic and flip-flop update logic unchanged.
+- Correctly initialize flip-flops before first clock edge.
+
+This will solve the initialization and simulation mismatch issues previously observed.

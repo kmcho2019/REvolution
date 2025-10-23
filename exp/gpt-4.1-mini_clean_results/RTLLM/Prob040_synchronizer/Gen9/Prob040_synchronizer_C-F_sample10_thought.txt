@@ -1,0 +1,11 @@
+Fuse Example 1's modular two-stage synchronizer for the enable signal with Example 2's conditional data_reg update gated by data_en in clk_a domain to reduce unnecessary toggling. Use Example 1's explicit mux logic on dataout to avoid redundant updates and potential glitches in clk_b domain, improving power efficiency. Remove the unused data_sync register from Example 2 to save area and power. Keep asynchronous resets with clear separation of clock domains, and maintain good coding style with non-blocking assignments and synchronous resets.
+
+Summary of fusion:
+- In clk_a domain: latch data_in into data_reg only when data_en is high (from Ex2).
+- In clk_a domain: latch en_data_reg = data_en (from Ex2 and Ex1).
+- For crossing clk_b domain: use a separate two-stage synchronizer module for en_data_reg (from Ex1) to enhance modularity.
+- In clk_b domain: use a mux-based assignment for dataout = en_clap_two ? data_reg : dataout, which updates dataout only when enable is stable (from Ex1).
+- Remove unnecessary intermediate data_sync register (from Ex2).
+- Keep asynchronous active-low resets distinct in each domain.
+- Use non-blocking assignments to avoid simulation mismatches.
+- Resulting design improves power by gating data updates, reduces area by removing redundant regs, and enhances readability and modularity.

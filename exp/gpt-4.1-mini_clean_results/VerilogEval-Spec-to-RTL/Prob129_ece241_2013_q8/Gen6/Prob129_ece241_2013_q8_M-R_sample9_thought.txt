@@ -1,0 +1,5 @@
+Refactor the Mealy FSM to separate the state register, next-state logic, and output logic more distinctly. Instead of using a single combinational always block for both next state and output, derive next_state using a combinational always block and use a separate continuous assignment for output z based on the current state and input x. This improves clarity and might help synthesis tools optimize output timing by treating output as purely combinational logic outside the always block.
+
+Also, instead of typedef enum, use parameter definitions for states to increase portability. Keep asynchronous negative-edge reset on the state register with posedge clock. The FSM logic and transitions remain functionally identical to detect "101" with overlapping sequences.
+
+This structure enhances modularity of FSM logic while preserving the original FSM behavior.

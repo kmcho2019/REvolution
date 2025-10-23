@@ -1,0 +1,49 @@
+The previous solution used mixed edge-triggered registers for p (posedge) and q (negedge) which causes timing and mismatch issues. The waveform implies that p and q together hold a 2-bit state updated synchronously on clock edges, with output changes only on posedge clock.
+
+Observing the waveform carefully:
+
+- At the first posedge clock (25ns), p becomes 0, q remains unknown.
+- q remains stable for multiple cycles, then changes only on falling clock edge (after 115ns q becomes 1).
+- However, all meaningful output changes happen around posedge clock edges; q seems to be delayed from p but updates also synchronously.
+
+It is better to implement both p and q as registers updated on posedge clock only, removing negedge clock domain which causes race and mismatch problems.
+
+Looking at the waveform and transitions, the behavior is consistent with a 2-bit shift register with inputs:
+
+- On posedge clock, if a==1, p becomes 1, else p remains (or resets?).
+- q takes the previous p value (q <= old p) on same clock edge.
+
+This suggests:
+
+- Both p and q update on posedge clock.
+- p is set to a OR (q & p) or similar, maintaining state.
+- q <= previous p.
+
+Initial unknown values of p and q are resolved at first clock edge to zero.
+
+This is a classic 2-bit shift register or a 2-bit state machine where p depends on input and q latches previous p.
+
+Thus, the improved design is:
+
+- Use synchronous reset (via initialized flag) to set p and q to 0 at first clock edge.
+- On each posedge clock: q <= p; p <= a OR p (or similar, see waveform).
+- To confirm logic, check waveform timings where p sometimes stays 1 when a=0, suggesting some latch of previous p.
+
+Looking at times where p=1:
+
+- p goes to 1 at 90ns when a=1
+- p remains 1 at 100ns, 110ns while a toggles between 1 and 0, indicating p possibly is latched or OR-ed with a.
+
+Thus, p next state logic = a | p.
+
+Similarly, q <= previous p.
+
+This simple 2-bit shift register with p = p | a and q = p covers the waveform.
+
+Hence, implement both p and q updated on posedge clock only with initial reset at first posedge clock.
+
+This solves timing issues, prevents race conditions and matches waveform behavior closely.
+
+No negedge triggered block needed.
+
+This also improves PPA by simplifying clocking and control logic.

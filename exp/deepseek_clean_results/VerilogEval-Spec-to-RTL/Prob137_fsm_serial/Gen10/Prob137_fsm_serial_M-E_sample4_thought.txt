@@ -1,0 +1,7 @@
+Instead of tracking each bit position with a counter, we can leverage the shift register itself to determine when we've received all 8 bits. The key innovations are:
+1. Use a 10-bit shift register to capture start, data, and stop bits together
+2. Detect the start bit using edge detection (falling edge)
+3. The stop bit verification becomes simply checking the MSB of the shift register
+4. Only 2 states needed: IDLE and RECEIVING
+5. Done signal is generated when we have 10 bits and the last bit is 1 (stop bit)
+This reduces state transitions and eliminates the need for a separate bit counter.

@@ -1,0 +1,9 @@
+Fuse the two examples by combining their strengths: use a single accumulator register that directly drives the output to minimize registers and routing; perform the multiplication combinationally as a 64-bit product, but only accumulate the lower 32 bits, applying saturation on 32-bit addition overflow to prevent wrap-around.
+
+Use a synchronous reset and update the accumulator on the rising edge of clk with non-blocking assignment for proper timing and simulation semantics.
+
+Separate combinational and sequential logic clearly: perform multiplication and addition as combinational assignments; update accumulator register in the clocked always block; assign output continuously from accumulator.
+
+This design simplifies the data path by having one accumulator register tied to output, implements saturation to maintain correctness on overflow, and avoids redundant registers or combinational always blocks for output. 
+
+This achieves efficient and clean code with clear timing behavior, reasonable hardware complexity, and good maintainability.

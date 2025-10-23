@@ -1,0 +1,19 @@
+To improve PPA based on the provided metrics, the main strategy is to reduce unnecessary logic switching and simplify the logic expressions where possible:
+
+1. For `out_both`, since it's an AND of neighbors with one bit fixed to zero, we keep it minimal.
+
+2. For `out_any`, instead of OR'ing `in[i]` and `in[i-1]` for i>0, we can use a single right-shifted version of the input vector OR'ed with the input. This reduces indexing complexity and can help synthesis tools optimize better.
+
+3. For `out_different`, XOR with a wrapped neighbor is inherently a rotate operation; thus, using a rotated version of the input vector XOR'ed with the original is clearer and potentially more optimal.
+
+4. We explicitly set bits with no neighbors to zero, so synthesis can optimize those constants away.
+
+5. Use vector operations and avoid partial indexing slices where possible for clarity and to help synthesis inference of shifts/rotations.
+
+6. Add clear comments to aid verification and tooling.
+
+Overall, the logic remains combinational and minimal, but the use of vector shifts and rotations is typically well supported by synthesis tools and could slightly reduce area and power by enabling better muxing and gate sharing.
+
+Since the input is 100 bits (non power-of-2), the rotate for `out_different` requires concatenation of slices instead of a single rotate operator, but this can still be efficiently inferred.
+
+The resulting design should have similar timing but slightly improved power due to clearer and more compact logic description.

@@ -1,0 +1,12 @@
+Implement a simplified IEEE-754 single-precision floating-point multiplier that performs the entire operation in a multi-cycle approach controlled by a 3-bit counter.
+
+Key simplifications:
+- Use sequential steps controlled by a cycle counter to spread the complex multiplication and normalization over multiple clock cycles, reducing combinational path delay.
+- On the first cycle, extract sign, exponent, mantissa and detect special cases.
+- On the second cycle, perform mantissa multiplication and exponent addition.
+- On the third cycle, normalize, round, adjust exponent, and generate the final result.
+- Register all intermediate signals in between cycles to avoid large combinational blocks.
+- Output is registered at the last step.
+- Maintain full IEEE-754 handling of special cases, normalization, rounding, overflow, and underflow.
+
+This approach reduces combinational complexity per cycle, facilitating timing closure and easier debugging while preserving correctness.

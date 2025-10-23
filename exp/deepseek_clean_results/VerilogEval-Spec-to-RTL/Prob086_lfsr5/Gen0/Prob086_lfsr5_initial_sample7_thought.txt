@@ -1,0 +1,12 @@
+To implement a 5-bit maximal-length Galois LFSR with taps at positions 5 and 3:
+1. The LFSR will be 5 bits wide (q[4:0])
+2. For a Galois LFSR, we XOR tap positions (5 and 3) with the LSB (q[0])
+3. The taps correspond to bits q[4] (position 5-1) and q[2] (position 3-1) since we count from 0
+4. On each clock edge:
+   - If reset is high, set q to 1 (00001)
+   - Otherwise:
+     - Calculate next state by:
+       - XORing tap bits (q[4] and q[2]) with q[0]
+       - Shifting right (q[3:0] becomes q[4:1])
+       - New MSB (q[4]) is the XOR result
+5. This will generate a maximum-length sequence of 31 (2^5-1) states

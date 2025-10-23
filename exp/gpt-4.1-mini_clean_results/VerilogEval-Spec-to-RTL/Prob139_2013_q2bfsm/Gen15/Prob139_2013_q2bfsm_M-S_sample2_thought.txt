@@ -1,0 +1,19 @@
+Use a simple one-hot style FSM with clear states representing each phase:
+
+- State A: reset asserted, f=0, g=0.
+- State B: one cycle after reset released, output f=1.
+- State C: continuously shift in x, waiting for pattern 101.
+- State D: output g=1 for one cycle after detecting pattern.
+- State E: monitor y for up to two cycles while holding g=1.
+- State F: hold g=1 permanently if y=1 detected in time.
+- State G: hold g=0 permanently if y=1 not detected in time.
+
+Implement synchronous active-low reset.
+
+Use a 3-bit shift register for x pattern detection updated every clock except during reset and state A.
+
+Use a 2-bit counter for monitoring y in state E.
+
+Output signals f and g depend only on the current state (Moore outputs).
+
+This keeps logic straightforward and minimizes edge conditions and counters.

@@ -1,0 +1,17 @@
+To optimize the LIFObuffer design for better PPA without altering its functionality, I will implement these improvements:
+
+1. Pointer Encoding: Convert SP from binary to one-hot encoding to minimize glitches and improve timing on SP-related logic and memory addressing. This reduces dynamic power and glitching in SP logic.
+
+2. Clock Gating: Introduce a clock enable (CE) signal derived from EN and valid operation conditions (can_push or can_pop) to gate register updates, reducing switching power by disabling unnecessary toggling when no operation occurs.
+
+3. Simplify Reset: Only reset SP and dataOut synchronously; avoid clearing the entire memory array on reset since data is irrelevant when empty, which will reduce reset time and area.
+
+4. Modify stack_mem writes: Only update stack_mem when pushing; do not clear on pop to reduce switching.
+
+5. Adjust dataOut update: Update dataOut only on pop to reduce unnecessary toggling.
+
+6. Use explicit non-blocking assignments and registers for SP in one-hot format, convert one-hot to index for stack_mem addressing during push/pop.
+
+7. Maintain EMPTY and FULL as combinational signals for quick flag generation.
+
+These changes will reduce dynamic power, improve timing by reducing glitches on SP logic, and simplify reset logic, improving overall PPA.

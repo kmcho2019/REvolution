@@ -1,0 +1,14 @@
+I'll refactor the frequency divider using a different approach while maintaining the same functionality:
+1. Keep the same parameter validation and 4-bit counter
+2. Instead of using an always block for the output, generate it combinatorially with assign
+3. Use a separate always block just for the counter logic
+4. The output clock toggles when counter reaches limit (NUM_DIV/2 - 1)
+5. This separates the counter logic from output generation, making it more modular
+6. Still maintains glitch-free operation since output only changes on clock edges
+7. The assign statement makes the output generation more explicit and visible
+
+Key changes:
+- Split counter and output logic
+- Combinational output generation
+- Same reset behavior
+- Same parameter validation

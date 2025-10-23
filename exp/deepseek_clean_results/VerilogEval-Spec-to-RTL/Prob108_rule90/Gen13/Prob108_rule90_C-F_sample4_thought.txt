@@ -1,0 +1,25 @@
+Fusion Strategy:
+1. Boundary Handling Optimization:
+   - Replace ternary operators with concatenation for more efficient boundary handling
+   - Use {1'b0, q[511:1]} for left neighbors and {q[510:0], 1'b0} for right neighbors
+   - This reduces logic complexity and improves synthesis results
+
+2. State Management:
+   - Keep the direct q register update approach (from Example 2)
+   - Eliminate the intermediate next_q wire array to reduce routing complexity
+   - Compute next state directly in the always block
+
+3. Parallel Computation:
+   - Maintain full parallel computation of all 512 cells
+   - Use vector operations instead of generate block for cleaner code and better optimization
+
+4. Power Optimization:
+   - Add clock gating logic to reduce power when not updating
+   - Only compute next state when not in load mode
+
+Key Improvements:
+1. More efficient boundary handling through concatenation
+2. Reduced routing complexity by eliminating next_q
+3. Potential power savings through clock gating
+4. Cleaner code with vector operations
+5. Better synthesis potential with simpler structure

@@ -1,0 +1,22 @@
+module TopModule(
+    input clk,
+    input shift_ena,
+    input count_ena,
+    input data,
+    output reg [3:0] q
+);
+
+always @ (posedge clk) begin
+    if (shift_ena) begin
+        // Shift in most significant bit
+        q <= {data, q[3:1]};
+    end else if (count_ena) begin
+        // Decrement the counter
+        q <= (q == 4'b0)? 4'b0 : q - 1;
+    end else begin
+        // No operation, keep the current state
+        q <= q;
+    end
+end
+
+endmodule

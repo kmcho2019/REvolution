@@ -1,0 +1,11 @@
+The original design is already minimal and synchronous, effectively detecting 0->1 transitions on each bit and registering the output pulse one cycle after the transition.
+
+To improve power and area slightly without harming timing:
+
+- Add a clock enable signal that only updates `prev_in` and `pedge` registers when any bit in `in` changes. This avoids unnecessary toggling and register updates when input is stable, potentially reducing dynamic power.
+- The clock enable logic is a simple XOR comparison of `in` and `prev_in`, implemented as a single bit indicating whether any bit changed.
+- This gating reduces switching in registers without adding significant combinational delay in the critical path.
+- The area overhead for the comparator and clock enable is small compared to flip-flops, but power savings can be meaningful.
+- Timing remains clean since the clock enable is synchronous and the logic is straightforward.
+
+This tradeoff favors power reduction while maintaining minimal area and no timing penalty.

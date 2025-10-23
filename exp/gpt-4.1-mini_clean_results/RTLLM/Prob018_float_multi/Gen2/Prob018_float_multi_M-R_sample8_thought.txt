@@ -1,0 +1,10 @@
+Refactor the floating-point multiplier into a clearly separated multi-stage pipeline with explicit states for input capture, special case detection, multiplication and normalization, rounding, and output packing. 
+Use an explicit finite state machine (FSM) with named states for clarity instead of numeric counters.
+Use combinational `assign` statements for decoding input fields and special case flags.
+Separate the mantissa multiplication into a registered pipeline stage.
+Perform normalization and rounding in separate clock cycles with clean, explicit intermediate registers.
+Implement rounding using the round-to-nearest-even rule, carefully handling mantissa overflow by checking the 25-bit rounded mantissa result.
+Handle exponent overflows, underflows, and zero/subnormal results explicitly in the output stage.
+Provide proper propagation of special cases (NaN, infinity, zero) through the pipeline.
+Use registers for all intermediate values to ensure stable timing and avoid variable part-selects by having separate assignments based on normalization.
+This structure improves readability, maintainability, and timing correctness by avoiding variable index selections and by making each pipeline step explicit and separate.

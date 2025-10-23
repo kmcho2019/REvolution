@@ -1,0 +1,17 @@
+The previous implementation failed due to overly complex nested ternary operations that violated Verilog syntax rules. Here's the corrected approach:
+
+1. Maintain the same barrel shifting functionality but implement it in a more structured way using intermediate signals for each shift stage.
+
+2. Break down the shifting operation into three clear stages:
+   - Stage 1: 4-bit shift controlled by ctrl[2]
+   - Stage 2: 2-bit shift controlled by ctrl[1] (operates on stage1 result)
+   - Stage 3: 1-bit shift controlled by ctrl[0] (operates on stage2 result)
+
+3. Use proper concatenation syntax for each shift operation:
+   - 4-bit shift: {in[3:0], in[7:4]}
+   - 2-bit shift: {in[1:0], in[7:2]}
+   - 1-bit shift: {in[0], in[7:1]}
+
+4. Implement each stage with clear conditional assignments to avoid syntax errors while maintaining the same logical flow.
+
+5. This approach makes the code more readable and maintainable while ensuring correct Verilog syntax.

@@ -1,0 +1,18 @@
+Refactor the float_multi module by replacing the 4-stage pipeline with a cycle-controlled sequential state machine to explicitly sequence the steps (input decode, multiplication, normalization, rounding, and output).  
+This design will use a small FSM driven by the counter register to manage each processing stage over multiple clock cycles.  
+Use combinational assign statements for simple signal derivations where possible to reduce register overhead, and use registered signals only where pipeline or sequential logic is needed.  
+Keep internal signals in wider bit widths as before for safe arithmetic.  
+Handle special cases immediately upon input decode to potentially shortcut processing.  
+Perform normalization and rounding using explicit steps controlled by the FSM counter for clarity and easier debug.  
+This structure sacrifices the throughput of deep pipelining for a simpler, cycle-by-cycle processing approach, making the design easier to follow and potentially reducing dynamic power by disabling unused logic each cycle.
+
+Main changes:  
+- Add a 3-bit counter incremented each cycle to move through stages: 0-input decode, 1-multiply, 2-normalize, 3-round, 4-output.  
+- Use combinational assigns for decoding sign, exponent, and mantissa from inputs.  
+- Store the intermediate product and exponents in registers updated in the corresponding cycle.  
+- Compute rounding in a separate cycle with explicit guard, round, and sticky bits extracted.  
+- Final output assembled at last cycle and latched to output register.  
+- Special cases detected in input decode cycle and stored in flags; output logic prioritizes special cases.  
+- Use blocking assignments within the always block for clarity in sequential stages, as the counter guides progression explicitly.  
+- The design is synchronous, reset clears registers and output.  
+- This structure provides an easily extensible FSM approach with clear operation states instead of a pipeline, improving understanding at the cost of throughput.

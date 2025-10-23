@@ -1,0 +1,12 @@
+The best approach combines the clarity and directness of Example 2's explicit combinational assignments for next_state, which helps minimize logic depth and fan-in on individual signals, with Example 1's clean output logic computed by ORing the current state bits using precise masks. 
+
+By explicitly enumerating all transitions directly in next_state assignments, we avoid the iterative loop and potential overhead or synthesis ambiguities in always blocks, improving synthesis friendliness and timing predictability. Meanwhile, using masked OR operations for outputs keeps output logic minimal and easy to maintain, exactly reflecting the states producing outputs.
+
+This fusion yields:
+- Direct combinational next_state logic for each next state bit, reducing the risk of complex multiplexers or sequential logic inference.
+- Clear, minimal output assignments using bitmasking as in Example 1, ensuring consistent and concise output logic.
+- Maintained support for multiple simultaneous active states through combinational OR of all relevant conditions.
+- A fully combinational module without reg usage, facilitating ease of integration with state registers elsewhere.
+- Minimal logic depth for both state transitions and outputs, optimizing timing and area.
+
+This hybrid design is clean, easy to read, synthesizable, and power- and area-efficient for the 10-state one-hot FSM.

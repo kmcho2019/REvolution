@@ -1,0 +1,9 @@
+Refactor the 16-bit CLA block to explicitly generate the carry signals using a parallel prefix style compute of carry signals instead of a for-generate loop. This means computing carry signals with a single assign statement that recursively builds carry in a tree-like manner using intermediate generate and propagate groupings.
+
+At the top-level 32-bit adder, instead of splitting inputs into two explicit halves and manual concatenations, define a small helper function or localparam to map 1-based inputs to 0-based internal wires using continuous assignments with explicit bit selection, making the interface clearer.
+
+The refactoring removes the generate loop inside cla_16bit for carry calculation and implements the carry signals using intermediate group propagate and generate signals with a hierarchical approach for better clarity and possible synthesis efficiency. Also, we return to explicitly computing sum bits directly from carry and propagate.
+
+The top-level instantiation logic remains modular but uses a cleaner, combinational approach to calculating the carry-in for the upper block based on block P and G without loops.
+
+This restructured code maintains the hierarchical CLA design and 1-based indexing inputs, but uses purely combinational assigns and parallel prefix-style carry computation within 16-bit blocks, improving clarity and demonstrating a different structural approach.

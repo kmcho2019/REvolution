@@ -1,0 +1,15 @@
+Novel Architecture Idea: Shift Register with Early Stop Bit Detection
+1. Instead of using a traditional FSM with separate states, leverage the shift register itself as a state indicator.
+2. Use the MSB of the shift register to detect start/stop conditions:
+   - When idle (shift_reg[8] == 1), wait for start bit (in == 0)
+   - During reception, shift in bits until 9 bits are collected (including start bit)
+   - The 9th bit (shift_reg[8]) serves as the stop bit indicator
+3. Advantages:
+   - Eliminates explicit state machine logic, reducing area
+   - Combines data storage and state tracking in one register
+   - Early stop bit detection by examining shift_reg[8]
+   - Simpler control logic with just a counter
+4. Timing improvements:
+   - Single always block for cleaner timing
+   - Reduced combinatorial logic between states
+   - Parallel stop bit verification during shift

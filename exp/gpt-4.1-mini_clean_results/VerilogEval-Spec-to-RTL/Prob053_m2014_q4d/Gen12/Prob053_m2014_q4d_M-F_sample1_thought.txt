@@ -1,0 +1,5 @@
+The initial implementation is functionally correct and minimal, matching the specification of a D flip-flop whose input is the XOR of 'in' and the current output 'out', without any reset. The feedback highlights that the only issue is the non-deterministic initial value of 'out' in simulation due to the absence of reset. 
+
+Since the problem explicitly disallows a reset signal, and the hardware flip-flop's power-up state is uncertain, the best fix is to add an initial block that sets 'out' to 0 during simulation only. This does not affect synthesis but ensures deterministic behavior for simulation and testing purposes. 
+
+This approach keeps the design aligned with the problem statement, respects the no-reset requirement, and resolves the mismatch at time zero without changing the logic or the hardware behavior.

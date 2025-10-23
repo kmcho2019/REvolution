@@ -1,0 +1,16 @@
+The original solution is functionally correct and modular, but the 64-bit carry chain created by chaining eight 8-bit CLA blocks in series can limit maximum frequency due to long carry propagation. To improve timing (reduce carry chain delay), we will implement a hierarchical two-level CLA structure:
+
+- Split 64-bit inputs into 16 nibbles (4-bit blocks).
+- Each 4-bit block is a fast 4-bit CLA subtractor generating sum, block propagate (P) and generate (G) signals.
+- Use a 16-bit carry lookahead logic at the block level to quickly generate all carry signals for each nibble, reducing carry chain length drastically.
+- This approach reduces carry propagation from 8 blocks to a 1-level 16-block hierarchy, resulting in faster carry computation.
+- The overall area and power overhead is minimal since 4-bit CLAs and a 16-bit block-level CLA carry generator are small and simple.
+- Overflow detection logic remains the same.
+- Use parameterized, clean, fully combinational logic without clocking or registers, suitable for high-frequency arithmetic.
+
+This hierarchical design balances performance and area well:
+- 4-bit CLA blocks have simpler carry logic and faster fanout.
+- The 16-bit block-level CLA carry generator quickly computes carries.
+- The total carry chain delay is mostly limited to the 16-bit carry generator and one 4-bit block delay, enabling better timing than a flat 64-bit or 8x8-bit chain.
+
+We provide the full code including the top module, 4-bit CLA subtractor block, and the 16-bit carry lookahead block-level carry generator. Overflow detection is done after subtraction using the sign bits as requested.

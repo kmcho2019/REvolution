@@ -1,0 +1,23 @@
+module TopModule(
+    input clk,
+    input a,
+    input b,
+    output q,
+    output state
+);
+
+reg state_reg;
+initial state_reg = 0; // Initialize state_reg to 0
+assign state = state_reg;
+
+always @(posedge clk) begin
+    if (a & b) begin
+        state_reg <= ~state_reg;
+    end else begin
+        state_reg <= state_reg;
+    end
+end
+
+assign q = (~a & b) | (a & state_reg);
+
+endmodule

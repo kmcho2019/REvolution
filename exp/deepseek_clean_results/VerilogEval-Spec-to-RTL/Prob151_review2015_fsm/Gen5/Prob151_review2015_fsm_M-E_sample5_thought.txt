@@ -1,0 +1,16 @@
+Novel Architecture: Pattern-Aware State Machine with Edge Detection
+
+Key Innovations:
+1. Pattern detection using a sliding window approach with explicit edge detection
+2. State machine with dedicated WAIT state after pattern detection before shifting
+3. Shift counter implemented as a modulo-4 counter for precise timing
+4. Output generation with registered outputs for clean timing
+5. Explicit state encoding for better readability and debugging
+
+State Flow:
+- IDLE: Wait for pattern 1101 (using edge detection)
+- WAIT: Single-cycle buffer state after pattern detection
+- SHIFT: Enable shift for exactly 4 cycles
+- COUNT: Wait for external done_counting signal
+- DONE: Assert done until acknowledgment
+- Returns to IDLE only after proper acknowledgment

@@ -1,0 +1,12 @@
+To implement the finite state machine for the serial communication protocol, we can design a Moore machine with the following states:
+- IDLE: The initial state where the FSM waits for the start bit.
+- START: The state where the FSM has detected the start bit and waits for the data bits.
+- DATA: The state where the FSM collects the data bits.
+- STOP: The state where the FSM waits for the stop bit.
+- DONE: The state where the FSM has successfully received a byte and signals that it's done.
+
+The FSM will transition between these states based on the current state and the input signal. We will use a counter to count the number of data bits received.
+
+In the DATA state, we will use a shift register to collect the data bits. Once all 8 data bits are collected, the FSM will transition to the STOP state. If the stop bit is not received in the STOP state, the FSM will remain in this state until the stop bit is received. If the stop bit is received, the FSM will transition to the DONE state and signal that it's done.
+
+We will also include an active-high synchronous reset to reset the FSM to the IDLE state.

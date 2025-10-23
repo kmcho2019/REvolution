@@ -1,0 +1,17 @@
+Here's a novel approach using a hierarchical multiplexer tree structure:
+
+1. Instead of sequential stages, implement a parallel selection structure that directly computes all possible shift amounts (0-7)
+2. Use a 3-level multiplexer tree where each level corresponds to one control bit
+3. Pre-compute all 8 possible rotated versions of the input (0-7 positions)
+4. Use the control bits to hierarchically select the correct rotation:
+   - First level: Choose between rotations 0-3 or 4-7 based on ctrl[2]
+   - Second level: Choose between pairs within each group based on ctrl[1]
+   - Third level: Choose between the final two options based on ctrl[0]
+5. This approach has better timing characteristics as the critical path is balanced and predictable
+6. The design is more scalable for wider data paths as the mux tree depth grows logarithmically
+
+Advantages:
+- Constant propagation delay regardless of shift amount
+- Clean hierarchical selection structure
+- Easily extensible to larger shift amounts
+- No intermediate signals between stages

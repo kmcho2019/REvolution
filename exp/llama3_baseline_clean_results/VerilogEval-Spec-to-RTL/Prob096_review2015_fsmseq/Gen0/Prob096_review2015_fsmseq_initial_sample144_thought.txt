@@ -1,0 +1,10 @@
+The approach to solving this problem involves designing a finite-state machine (FSM) that can recognize the sequence 1101 in a bit stream. The FSM will have states corresponding to the detection of each bit in the sequence. When the sequence is detected, the FSM will transition to a state where it sets the start_shifting signal high and remains in this state until a reset is applied. The FSM will be designed using a Moore machine model, where the output depends only on the current state.
+
+The states can be defined as follows:
+- S0: Initial state, waiting for the first '1' of the sequence.
+- S1: First '1' detected, waiting for the second '1'.
+- S2: Second '1' detected, waiting for the '0'.
+- S3: '0' detected, waiting for the final '1'.
+- S4: Final '1' detected, sequence found, set start_shifting high.
+
+The reset signal will be used to asynchronously reset the FSM to its initial state, S0. However, since the reset is specified as synchronous, we will ensure that the FSM resets on the positive edge of the clock when reset is high.

@@ -1,0 +1,19 @@
+To implement the Lemming's behavior, we need a Moore state machine with four states:
+1. WALK_LEFT: Walking left (output walk_left=1)
+2. WALK_RIGHT: Walking right (output walk_right=1)
+3. FALL_LEFT: Falling while previously walking left (output aaah=1)
+4. FALL_RIGHT: Falling while previously walking right (output aaah=1)
+
+The state transitions are as follows:
+- On reset (areset), go to WALK_LEFT
+- In WALK_LEFT:
+  - If ground=0, go to FALL_LEFT
+  - If bump_left=1, go to WALK_RIGHT
+- In WALK_RIGHT:
+  - If ground=0, go to FALL_RIGHT
+  - If bump_right=1, go to WALK_LEFT
+- In FALL_LEFT or FALL_RIGHT:
+  - If ground=1, return to previous walking state
+  - Otherwise remain in falling state
+
+Bump inputs are only considered when in walking states (not falling).

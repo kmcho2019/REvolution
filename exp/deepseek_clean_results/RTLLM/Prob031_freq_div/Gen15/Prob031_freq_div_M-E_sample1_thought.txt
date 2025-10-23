@@ -1,0 +1,14 @@
+Novel Architecture: Cascaded Gated-Enable Counters
+1. Hierarchical division: First divide by 2 (50MHz), then use that as base for 10MHz (divide by 5), then use 10MHz as base for 1MHz (divide by 10)
+2. Each stage generates its own clock enable signal rather than toggling a clock
+3. Actual clock gating happens only at the final output stage
+4. Benefits:
+   - Reduces switching activity in downstream counters
+   - More power efficient as higher frequency counters are smaller
+   - Clear separation of timing domains
+   - Easier timing closure as each stage operates at lower frequency
+5. Implementation:
+   - First stage: Simple toggle flip-flop for 50MHz
+   - Second stage: 3-bit counter with period control for 10MHz
+   - Third stage: 4-bit counter with period control for 1MHz
+   - Output clocks are gated versions of input clock

@@ -1,0 +1,11 @@
+To implement the Lemming state machine, we can use a hierarchical approach. We will break down the state machine into smaller, more manageable components, each handling a specific aspect of the Lemming's behavior. This approach will simplify the overall design and make it easier to understand and maintain.
+
+The top-level module will be responsible for managing the overall state of the Lemming, including walking, falling, digging, and splattering. We will use a separate module to handle the walking direction and another module to manage the fall counter.
+
+The walking direction module will receive the bump left and right signals as inputs and update the walking direction accordingly. The fall counter module will receive the ground signal as an input and increment the fall counter when the ground is not present.
+
+The top-level module will then use the outputs from these sub-modules to determine the next state of the Lemming. This approach will allow us to separate the concerns of walking direction, fall counter, and overall state management, making the design more modular and easier to understand.
+
+Additionally, we will use a more explicit approach to handle the state transitions by using a separate `always_comb` block to determine the next state based on the current state and inputs. This approach will make the code more readable and easier to debug.
+
+We will also use a more robust approach to handle the asynchronous reset by using a separate `always` block to reset the state machine, ensuring that the reset occurs as soon as the reset signal is asserted, regardless of the clock edge.

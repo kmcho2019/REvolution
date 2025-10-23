@@ -1,0 +1,13 @@
+To optimize for better PPA, the main improvements target reducing the critical path and dynamic power:
+
+1. Replace the function and wide concatenation with explicit mux-based next-state logic in the always block. This can aid synthesis tools in generating more optimal multiplexers or barrel-shifter style logic.
+
+2. Implement clock gating by qualifying the register enable to only load or rotate operations to reduce toggling when holding the same value (ena==00 or 11 and load==0).
+
+3. Simplify rotation logic by directly indexing bits without costly concatenation to reduce routing and mux logic depth.
+
+4. Prioritize load over rotation as before, but compute enable locally for the register write (load or (ena==01 or 10)).
+
+This should reduce switching power by gating the register when not needed and improve timing by explicit mux control rather than a function.
+
+The code remains fully synchronous with single clock domain, same interface, and same behavior.

@@ -1,0 +1,11 @@
+The previous design counts down from 3 to 0, enabling shift_ena when counter != 0, which yields only 3 active cycles instead of 4.
+
+To correctly assert shift_ena for 4 cycles immediately after reset, we need the counter to represent a count of 4 clock cycles including the current one.
+
+A simple way is to initialize a 3-bit counter with the value 4 at reset. Then on each clock cycle, decrement the counter until it reaches zero. During all nonzero counter values, shift_ena is asserted.
+
+Counting 4 cycles as 4,3,2,1 enables shift_ena for 4 full clock cycles. When counter reaches 0, shift_ena is low.
+
+This fixes the off-by-one error and meets the spec. Since only 3 bits are needed (to represent up to 4), it remains minimal.
+
+The implementation will still be synchronous reset, with the counter updated on the clock's positive edge.

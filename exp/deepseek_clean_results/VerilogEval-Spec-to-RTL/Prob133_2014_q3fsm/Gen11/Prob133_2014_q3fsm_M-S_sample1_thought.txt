@@ -1,0 +1,18 @@
+Simplification Strategy:
+1. State Reduction:
+   - Keep only 2 states (A and B) as they're sufficient
+   - Remove redundant state transition logic by directly assigning next state
+
+2. Counter Optimization:
+   - Combine cycle tracking and ones counting into a single 3-bit register
+   - Use bit 2 as cycle indicator (0-1-2 pattern)
+   - Use bits 1:0 to count 'w' inputs
+   - Reset to 0 when not in state B
+
+3. Output Logic:
+   - Make output purely combinational based on current state and counters
+   - Check for exact two 'w' inputs when cycle completes (bit 2 transitions)
+
+4. Reset Handling:
+   - Maintain synchronous reset behavior
+   - Clear all registers on reset

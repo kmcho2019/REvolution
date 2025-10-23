@@ -1,0 +1,9 @@
+To implement the finite-state machine (FSM) that controls the timer, we will define several states and transition between them based on the input signals and the current state. 
+
+The states are:
+- IDLE: The initial state where the FSM waits for the pattern 1101 to be detected.
+- SHIFT: After detecting the pattern 1101, the FSM asserts shift_ena for exactly 4 clock cycles to shift in 4 more bits.
+- COUNTING: After shifting in 4 bits, the FSM asserts counting and waits until done_counting is high.
+- DONE: After done_counting is high, the FSM asserts done to notify the user the timer has timed out and waits until ack is 1.
+
+The transitions between states are based on the input signals and the current state.

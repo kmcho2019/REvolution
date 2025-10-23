@@ -1,0 +1,10 @@
+A novel approach is to implement the 64-bit ripple carry adder as a pipeline with 16 stages, each adding 4 bits. Using 4-bit slices balances pipeline depth and latency. Each pipeline stage registers its inputs and outputs: operand slices, carry-in, sum slices, and enable signals.
+
+Key points:
+- Each stage adds its 4-bit slices plus carry-in to produce a 4-bit sum and carry-out.
+- Pipeline registers propagate operands and control signals.
+- The carry-out of stage N feeds the carry-in of stage N+1 in the next cycle.
+- The final output concatenates all sum slices and the last carry-out as a 65-bit result.
+- The enable signal is delayed through pipeline registers to generate output enable (o_en) aligned with the result.
+
+This design uses arrays of pipeline registers to hold the operands, sums, carry signals, and enable across stages. Addition is done combinationally per stage. The pipeline registers are updated on clock edges with synchronous reset. This structure maximizes clock frequency by minimizing combinational delay per stage and ensures a fully pipelined, synchronized 64-bit adder with registered outputs.

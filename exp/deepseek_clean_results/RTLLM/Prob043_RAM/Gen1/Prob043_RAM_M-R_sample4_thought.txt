@@ -1,0 +1,12 @@
+Refactored design with these key changes:
+1. Separated reset logic into its own always block for cleaner timing paths
+2. Used continuous assignment for read_data output when read_en is active
+3. Maintained previous read_data value when read_en is low instead of clearing to 0
+4. Simplified write operation block by removing reset condition
+5. Added clock gating suggestion in comments for power optimization
+
+Benefits:
+- Better timing by separating reset paths
+- Reduced power by minimizing unnecessary toggles
+- Cleaner code structure with dedicated blocks for different functions
+- Maintains same functionality while improving PPA metrics

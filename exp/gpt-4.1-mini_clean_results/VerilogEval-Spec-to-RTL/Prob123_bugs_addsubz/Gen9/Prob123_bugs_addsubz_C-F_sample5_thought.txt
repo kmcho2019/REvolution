@@ -1,0 +1,12 @@
+Fuse the two approaches by leveraging the efficient two's complement subtraction via conditional XOR of B and carry-in addition (Example 2), while implementing an explicit ripple carry adder with explicit carry generation (Example 1) for improved clarity of carry logic and better synthesis mapping. This fusion provides a clear carry path, avoids implicit operators, and uses only one always block with blocking assignments for straightforward combinational logic.
+
+Key fusion points:
+- Use bitwise XOR of B with do_sub to conditionally invert B.
+- Use explicit carry chain ripple adder logic instead of relying on + operator, allowing explicit control over carry propagation and clearer hardware mapping.
+- Initialize carry_in with do_sub to represent addition or subtraction carry-in.
+- Keep all logic inside one combinational always block with blocking assignments to avoid latches and improve readability.
+- Use reduction NOR (~|out) for accurate zero flag detection.
+- Avoid loops for the XOR step by using vector xor for better synthesis clarity.
+- Maintain interface and reg outputs from original code for compatibility.
+
+This hybrid approach maximizes clarity, correctness, and synthesis friendliness, ensuring the zero flag is correctly computed and the arithmetic is implemented in a synthesis-optimized way.

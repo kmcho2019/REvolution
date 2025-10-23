@@ -1,0 +1,8 @@
+To solve this problem, we'll implement a finite state machine (FSM) with the following states:
+1. IDLE: Wait for a start bit (0) on the input line.
+2. START_BIT: Wait for the next clock cycle to ensure the start bit is still low.
+3. DATA_BITS: Collect the 8 data bits. Since the least significant bit is sent first, we'll shift the bits into the out_byte register from the least significant bit to the most significant bit.
+4. STOP_BIT: Verify that the stop bit is 1. If not, stay in this state until a stop bit is received.
+5. DONE: Assert the done signal and output the correctly received data byte.
+
+We'll also include a synchronous reset that resets the FSM to the IDLE state when the reset signal is high.

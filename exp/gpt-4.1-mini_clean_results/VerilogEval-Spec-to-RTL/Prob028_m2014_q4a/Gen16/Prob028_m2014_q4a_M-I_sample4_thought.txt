@@ -1,0 +1,9 @@
+The original implementation correctly infers a D latch behaviorally using an always block with blocking assignment and sensitivity to `d` and `ena`. However, the synthesis failure with unknown module type `DLH_X1` indicates the synthesis tool is trying to map this latch to a technology-specific cell that is missing.
+
+To address this and ensure maximum synthesis compatibility, especially with open-source tools like Yosys, we can use a slightly different coding style for the latch that is well-supported and less likely to be translated into unknown primitives. A common and synthesis-friendly style is using a level-sensitive always block triggered on `ena` or `d` and non-blocking assignments to `q` with an explicit else branch to hold the previous value.
+
+Also, explicitly specifying the sensitivity list using an asynchronous style (`always @*`) and assigning `q` in both branches avoids ambiguity and encourages synthesis tools to infer a latch rather than expecting a cell from a specific technology library.
+
+Therefore, the improvement is to use non-blocking assignments (`<=`) inside an `always @*` block with explicit else to hold the previous value. This style is synthesizable and compatible with Yosys and similar tools, preventing the unknown module type error. It also maintains the same functional behavior of the D latch.
+
+This style yields a transparent latch that updates `q` with `d` when `ena` is high, and holds `q` when `ena` is low, fully compatible with general synthesis flows.

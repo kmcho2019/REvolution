@@ -1,0 +1,13 @@
+To optimize the existing FSM for better performance and area, simplify the next state logic by removing redundant condition checks and combining bump inputs upfront. The original code redundantly checks `(bump_left || (bump_left && bump_right))`, which simplifies to `bump_left`. Also, the logic for switching direction on bumps can be unified since bump on either side or both switches direction.
+
+Reorder and condense conditions to follow the priority (fall > dig > bump) cleanly and use minimal comparisons.
+
+Since falling and digging states do not respond to bumps or dig inputs, the conditions for those states become simpler.
+
+This reduces combinational logic depth, gate count, and switching activity, thereby potentially improving timing, area, and power.
+
+Maintain the same 3-bit state encoding and output decoding for compactness and clarity.
+
+Retain asynchronous reset to walking left.
+
+Overall, the key improvement is in the next state combinational block with simpler and more direct conditions, and the removal of redundant checks.

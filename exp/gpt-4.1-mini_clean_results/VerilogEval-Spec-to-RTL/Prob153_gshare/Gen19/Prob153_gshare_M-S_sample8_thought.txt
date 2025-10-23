@@ -1,0 +1,11 @@
+I will implement the gshare predictor with a single 7-bit global history register (ghr) and a 128-entry 2-bit saturating counter table (PHT). The PHT is asynchronously read for prediction.
+
+On prediction (predict_valid=1), the predictor outputs the prediction based on PHT[predict_pc ^ ghr] and outputs the current ghr as predict_history (the history used for prediction). At the next clock edge, if no training or training invalid, update ghr by shifting in the predicted bit.
+
+On training (train_valid=1), update the PHT entry indexed by train_pc ^ train_history with the actual taken outcome. If the branch was mispredicted, recover ghr to train_history (the state immediately after the mispredicting branch); otherwise, update ghr by shifting in train_taken.
+
+If both training and prediction occur in the same cycle, training updates take precedence: the ghr update will be from training only and prediction does not update ghr.
+
+PHT updates are synchronous at the clock edge; prediction reads asynchronous PHT values so predictions see PHT state before training updates.
+
+This approach minimizes state complexity, cleanly separates update responsibilities, and respects priority and timing requirements, providing correct prediction outputs and history recovery.

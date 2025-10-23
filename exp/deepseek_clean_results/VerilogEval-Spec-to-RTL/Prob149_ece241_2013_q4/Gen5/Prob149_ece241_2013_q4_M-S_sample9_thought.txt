@@ -1,0 +1,12 @@
+To simplify the solution while maintaining functionality, I'll make these key changes:
+
+1. **Zone Detection**: Simplify by directly using sensor values without intermediate zone encoding. The water level can be determined by checking the highest asserted sensor.
+
+2. **Transition Detection**: Instead of comparing encoded zones, directly compare the current and previous sensor states to determine if the level was previously lower.
+
+3. **Output Logic**: 
+   - Generate nominal flow outputs directly from sensor states using combinational logic
+   - Calculate dfr by checking if any higher sensor was previously unasserted (indicating rising level)
+   - Maintain synchronous reset behavior
+
+The simplified version eliminates the zone encoding/decoding steps while keeping the same functionality with cleaner logic.

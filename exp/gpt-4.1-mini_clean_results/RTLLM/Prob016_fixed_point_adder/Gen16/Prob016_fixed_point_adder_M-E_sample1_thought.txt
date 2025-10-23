@@ -1,0 +1,13 @@
+Implement the fixed-point adder using direct two's complement arithmetic without explicit sign and magnitude manipulation. Since inputs `a` and `b` are already in two's complement fixed-point format, addition can be done by simply adding them as signed numbers. The result may overflow the N-bit width, so intermediate sum is computed in N+1 bits to capture overflow.
+
+To comply with the problem statement regarding sign handling, we interpret the MSB as sign and adjust output:
+
+1. Perform addition of `a` and `b` as signed extended operands.
+2. If overflow occurs, saturate the result to maximum positive or negative fixed-point value representable in N bits.
+3. Otherwise, truncate the sum to N bits.
+4. This removes the need for separate absolute value addition/subtraction because two's complement addition inherently handles signed arithmetic correctly.
+5. This approach simplifies the design, reduces combinational logic, and naturally handles fixed-point fractional bits `Q` as the addition operates bitwise.
+
+The module remains parameterized by `N` (total bits) and `Q` (fractional bits), but addition treats inputs as signed numbers. Saturation ensures overflow does not wrap around, preserving arithmetic correctness.
+
+This architecture is novel relative to the previous magnitude and sign bit manipulations and is more efficient and standard-compliant for fixed-point addition.

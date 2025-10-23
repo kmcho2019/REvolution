@@ -1,0 +1,12 @@
+To implement the frequency divider module `freq_diveven`, we need to create a counter that increments on each positive edge of the input clock signal `clk` until it reaches a specified limit. The limit is determined by the `NUM_DIV` parameter, which represents the division factor and must be an even number. When the counter reaches this limit, it resets to zero and toggles the `clk_div` output signal. This process effectively divides the frequency of the input clock by the even number specified by `NUM_DIV`. The module will also be reset when the active-low reset signal `rst_n` is asserted low.
+
+The key components of this implementation are:
+1. A 4-bit counter (`cnt`) to track the number of clock cycles.
+2. A parameter `NUM_DIV` to specify the division factor, which should be an even number.
+3. Logic to increment the counter on each positive edge of `clk` until it reaches the specified limit.
+4. Logic to reset the counter and toggle `clk_div` when the counter reaches the limit.
+5. An active-low reset (`rst_n`) to initialize the counter and `clk_div` to zero.
+
+To ensure the division factor is an even number, we'll use `NUM_DIV` to set the upper limit for the counter, which will be `(NUM_DIV / 2) - 1` to account for zero-based counting. When the counter equals this value, it will reset and toggle `clk_div`, effectively dividing the clock frequency.
+
+Given the requirements, the implementation will involve using a parameterized module to easily adjust the `NUM_DIV` value, conditional statements to control the counter and output based on `rst_n` and the counter value, and a non-blocking assignment to update the counter and `clk_div` on the positive edge of `clk`.

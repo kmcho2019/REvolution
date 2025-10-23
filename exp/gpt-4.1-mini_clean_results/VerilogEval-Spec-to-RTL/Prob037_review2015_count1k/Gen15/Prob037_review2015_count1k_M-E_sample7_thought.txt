@@ -1,0 +1,17 @@
+Implement the 0-to-999 counter as two smaller counters working in cascade to minimize comparator complexity and reduce large number addition logic:
+
+- Divide the 10-bit count into two parts: 
+  - Lower 5-bit counter (count0) counts 0 to 31.
+  - Upper 5-bit counter (count1) counts 0 to 31, but stops incrementing at 31 only when lower counter reaches terminal lower part of the max count (i.e., 999 = 31 * 32 + 7, so the upper counter max is 31 and lower counter max is 7 at the terminal condition).
+
+- This decomposition takes advantage of base-32 counting; since 999 < 32*32, it fits nicely.
+
+- The counter increments count0 each clock; if count0 reaches 31, it resets to 0 and increments count1.
+
+- To detect terminal count (999), check if count1 == 31 and count0 == 7; if so, reset both counters to 0 on next clock.
+
+- The output q is reconstructed as q = count1 * 32 + count0 = {count1, count0}.
+
+- Synchronous reset resets both counters to 0.
+
+This approach reduces the complexity of the incrementer and comparator by splitting into smaller counters and leverages natural binary counting to implement a modulo-1000 counter efficiently. It also clearly separates concerns and potentially improves timing by handling smaller widths.

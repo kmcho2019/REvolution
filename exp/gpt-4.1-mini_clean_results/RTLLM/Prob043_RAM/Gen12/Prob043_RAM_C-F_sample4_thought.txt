@@ -1,0 +1,23 @@
+Fusion Strategy:
+To create a superior dual-port RAM design, fuse the best ideas from both examples:
+
+- Use a synchronous reset triggered on negedge rst_n to initialize all RAM contents to zero, as requested. This aligns with the problem statement specifying an asynchronous reset and initialization on reset assertion.
+- Use a synchronous write process triggered on posedge clk or negedge rst_n. The write operation occurs when write_en is asserted.
+- Perform read operation in a separate always block triggered on posedge clk or negedge rst_n to output read_data registered on the clock. Registering read_data improves timing stability and reduces glitches and power caused by combinational read paths.
+- On reset, clear read_data to zero. When read_en is high, register the data read from RAM at read_addr; otherwise, clear read_data to zero. This output gating reduces power and ensures no invalid data is output when read is disabled.
+- Use minimal address width calculated from DEPTH, ensuring compact addressing and clarity.
+- The code keeps parameterization for WIDTH and DEPTH.
+- Using dual always blocks (one for write and reset of RAM, another for read and reset of read_data) matches the problem specification and ensures independent read and write ports operate simultaneously.
+- The reset on negedge rst_n in both always blocks ensures asynchronous reset as requested.
+- For simulation and synthesis, use nonblocking assignments in sequential logic.
+- Initializing RAM with a for loop on reset is synthesizable and ensures the RAM is cleared when reset is asserted.
+- By registering the read_data output, we gain improved timing and power behavior at the cost of one clock cycle read latency, which is acceptable and often preferred in ASIC/FPGA designs.
+
+This fusion yields:
+- Asynchronous reset (active low) for both RAM initialization and read_data register.
+- Synchronous write on posedge clk.
+- Registered read output with read enable gating.
+- Full dual-port RAM allowing simultaneous independent read and write operations.
+- Proper parameterization and clean coding style.
+
+The result is a clean, synthesizable, power-aware, and timing-robust dual-port RAM implementation matching the problem requirements precisely.

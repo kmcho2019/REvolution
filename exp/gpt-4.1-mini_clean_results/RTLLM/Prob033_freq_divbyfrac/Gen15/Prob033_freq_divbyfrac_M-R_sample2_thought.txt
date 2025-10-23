@@ -1,0 +1,10 @@
+Refactor the fractional frequency divider by separating the clk_pos and clk_neg generation with dedicated counters synchronized on posedge and negedge clk domains respectively. 
+
+- Use a 3-bit counter on posedge clk for clk_pos to generate 4 cycles high and 3 cycles low.
+- Use a 3-bit counter on negedge clk for clk_neg to generate 3 cycles high and 4 cycles low.
+- Each counter resets at 7 (DIV_COUNT) to cycle through 7 counts (for 3.5 division).
+- Generate clk_pos and clk_neg combinationally from their counters: clk_pos high when count <4; clk_neg high when count <3.
+- Finally, OR clk_pos and clk_neg to form clk_div, which creates a 50% duty cycle fractional divided clock with a 3.5 division ratio.
+- Use synchronous resets and ensure that the two counters operate on opposite clock edges to produce the half-clock phase shift naturally.
+
+This structure avoids sampling asynchronous signals between clock domains, providing a clean and robust phase-shifted fractional frequency divider.

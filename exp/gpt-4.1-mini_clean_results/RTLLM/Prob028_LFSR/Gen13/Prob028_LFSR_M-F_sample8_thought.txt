@@ -1,0 +1,9 @@
+The original design correctly calculates feedback and shifts bits, but the shifting direction is inconsistent with the problem statement, which says bits should shift left with the new feedback inserted at the LSB. The example code shifts right and inserts feedback at the MSB, which is incorrect per the spec.
+
+To fix this:
+- Keep feedback calculation as the inverted XOR of out[3] and out[2].
+- On the rising clock edge, shift the register left by one bit (out[2:0] moves to out[3:1]).
+- Insert the feedback bit at the least significant bit (out[0]).
+- Initialize the register to a non-zero seed on reset to avoid lock-up.
+
+This ensures the LFSR behaves exactly as specified, producing a left-shifting pseudo-random sequence with the correct feedback insertion.

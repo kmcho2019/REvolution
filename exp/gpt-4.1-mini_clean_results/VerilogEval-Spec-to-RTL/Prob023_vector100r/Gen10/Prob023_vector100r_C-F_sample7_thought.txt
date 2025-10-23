@@ -1,0 +1,17 @@
+Fuse the modular clarity and hierarchical approach of Example 1 with the concise parameterized generate-loop of Example 2 by creating a parameterized BitRevN module that can reverse any width, including 10 bits, with a simple generate loop.
+
+Use the hierarchical chunk-based reversal of the 100-bit input to improve synthesis locality and potential routing congestion:
+- Partition the 100-bit input into 10 chunks of 10 bits.
+- Reverse each chunk independently using a single reusable BitRevN #(10) module.
+- Concatenate the reversed chunks in the correct reversed order (from the highest chunk index down to zero) to form the full reversed 100-bit output.
+
+This approach:
+- Keeps the code modular and scalable.
+- Uses a single parameterized small submodule for bit reversal to avoid duplication.
+- Matches the chunk-based strategy that may help synthesis tools optimize smaller repeated structures.
+- Fixes the chunk concatenation order to properly reverse the whole vector.
+- Offers an explicit, clear reversal mapping at the submodule level, enabling better routing and timing optimization.
+- Maintains the top-level code simplicity by using generate loops.
+- Balances code clarity, modularity, and synthesis friendliness, leveraging best ideas from both examples.
+
+This fusion targets improved maintainability, correctness, and potential synthesis quality over the previous examples.

@@ -1,0 +1,11 @@
+Alternative Approach Using Bitwise Priority Comparison Logic:
+
+- Instead of modeling subtraction and borrow chains, use direct bitwise comparison from the MSB to LSB.
+- For each bit position from 3 down to 0:
+  - If A[i] > B[i], then A > B regardless of lower bits.
+  - If A[i] < B[i], then A < B regardless of lower bits.
+  - If A[i] == B[i], move to next lower bit.
+- Implement this logic with combinational gates generating "greater" and "less" signals at each bit and combining them hierarchically.
+- Equality is detected by checking if all bits are equal (bitwise XNOR and reduction AND).
+- Outputs are mutually exclusive by construction.
+- This approach does not rely on subtraction or borrow chains, so it might synthesize to simpler logic with potentially lower latency (no carry/borrow chain).

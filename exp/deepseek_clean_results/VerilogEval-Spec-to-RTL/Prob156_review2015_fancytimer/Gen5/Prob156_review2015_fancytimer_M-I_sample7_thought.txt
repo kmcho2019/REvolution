@@ -1,0 +1,31 @@
+Here's an improved design strategy addressing the identified issues:
+
+1. **State Machine Enhancement**:
+   - Separate states clearly: IDLE, CAPTURE_DELAY, COUNTING, DONE
+   - Explicit state encoding for better readability and debugging
+
+2. **Pattern Detection**:
+   - Maintain 4-bit shift register for "1101" detection
+   - Clear after successful detection to prevent false triggers
+
+3. **Delay Capture**:
+   - Dedicated state for capturing 4 delay bits after pattern match
+   - Proper shift register implementation for accurate delay value storage
+
+4. **Counting Logic**:
+   - Two-counter approach:
+     * 10-bit counter for 1000-cycle periods (0-999)
+     * 4-bit counter for delay countdown (delay_val to 0)
+   - Clear separation between counting stages ensures correct timing
+
+5. **Output Control**:
+   - 'counting' only active during COUNTING state
+   - 'done' asserted precisely when counting completes
+   - 'count' shows accurate remaining delay periods
+
+Key improvements:
+- Fixed state machine with clear transitions
+- Correct delay value capture
+- Precise timing with separate counters
+- Proper output signal timing
+- Reset handling for all registers

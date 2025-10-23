@@ -1,0 +1,7 @@
+To improve the solution, we need to modify the logic for updating the `out` register so that once an output bit is set to 1 (due to a falling edge detection), it remains set until a reset occurs. The issue with the original code is that it doesn't maintain the state of `out` across clock cycles correctly, which is essential for achieving the desired functionality. The approach to address this involves ensuring that each bit of `out` retains its value from the previous cycle unless a reset occurs or a new falling edge is detected for that bit.
+
+A key observation is that the non-blocking assignment (`<=`) already helps in avoiding race conditions, but we need to explicitly handle the case where `out` bits should remain set once they are set due to a falling edge. This can be achieved by not resetting `out` bits when they are already set, unless the reset signal is active.
+
+The strategy for optimization involves simplifying the logic while ensuring that the functionality is correctly maintained. One approach to optimize for better PPA (Power, Performance, Area) metrics is to minimize unnecessary logic operations and ensure that the code is synthesized efficiently.
+
+In terms of power consumption, minimizing the switching activity by only updating the `out` bits when necessary can help. For area utilization, using a more straightforward logic that achieves the same functionality without additional registers or complex logic can improve the design's efficiency.

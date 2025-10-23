@@ -1,0 +1,147 @@
+The original solution correctly recognizes that mux_in[3:0] outputs must be functions of inputs c and d alone, with the 4-to-1 mux using selectors a and b externally to select among these four signals to implement the full logic.
+
+However, the mux_in signals as implemented do not perfectly match the K-map for the problem, causing functional mismatches. The main task is to derive the correct function of c and d for each mux input corresponding to ab=00, 01, 11, and 10.
+
+The given K-map is:
+
+        ab
+     cd  00  01  11  10
+     00 | 0 | 0 | 0 | 1 |
+     01 | 1 | 0 | 0 | 0 |
+     11 | 1 | 0 | 1 | 1 |
+     10 | 1 | 0 | 0 | 1 |
+
+For each fixed ab (column), the output values for cd rows (00,01,11,10) are:
+
+- ab=00: 0,1,1,1
+- ab=01: 0,0,0,0
+- ab=11: 0,0,1,0
+- ab=10: 1,0,1,1
+
+Our job is to implement each mux_in[i] (i corresponds to ab) as a function of c,d only, using only 2-to-1 multiplexers (and constants) for minimal complexity, no other gates.
+
+Step 1: For each mux_in[i], write out truth table and minimize.
+
+Use c and d where c is the MSB of cd, d LSB.
+
+cd = 00 (c=0,d=0), 01(0,1), 11(1,1), 10(1,0).
+
+a) mux_in[0] for ab=00:
+
+cd: 00=0, 01=1, 11=1, 10=1
+
+Truth table:
+
+c d | out
+
+0 0 | 0
+
+0 1 | 1
+
+1 1 | 1
+
+1 0 | 1
+
+This matches: out = c + d
+
+(because out=1 except when c=0,d=0)
+
+Implement c + d with 2-to-1 muxes:
+
+c + d = d ? 1 : c
+
+Expressing c + d as a mux:
+
+out = d ? 1 : c
+
+Thus:
+
+mux2to1 sel=d, in0=c, in1=1
+
+b) mux_in[1] for ab=01:
+
+all zeros
+
+out=0
+
+No mux needed, tie 0.
+
+c) mux_in[2] for ab=11:
+
+cd: 00=0, 01=0, 11=1, 10=0
+
+Truth table:
+
+c d | out
+
+0 0 | 0
+
+0 1 | 0
+
+1 1 | 1
+
+1 0 | 0
+
+Only true when c=1 and d=1, so out = c & d
+
+Implement c & d as:
+
+out = d ? c : 0
+
+d) mux_in[3] for ab=10:
+
+cd: 00=1, 01=0, 11=1, 10=1
+
+Truth table:
+
+c d | out
+
+0 0 | 1
+
+0 1 | 0
+
+1 1 | 1
+
+1 0 | 1
+
+Check expression:
+
+Check if out = (~d) + c
+
+(~d) + c is 1 if d=0 or c=1
+
+Check values:
+
+(0,0): ~d=1, c=0, so 1+0=1 correct
+
+(0,1): ~d=0, c=0, 0+0=0 correct
+
+(1,1): ~d=0, c=1, 0+1=1 correct
+
+(1,0): ~d=1, c=1, 1+1=1 correct
+
+Yes, out = (~d) + c
+
+Now implement ~d with mux2to1:
+
+not_d = d ? 0 : 1
+
+Then out = mux2to1 sel=c, in0=not_d, in1=1
+
+(This is because out = c ? 1 : not_d)
+
+Therefore, use two mux2to1 for mux_in[3].
+
+Step 2: Write the code with these refined expressions for mux_in signals.
+
+Use only mux2to1 modules and constants.
+
+Step 3: Assign mux_in in order mux_in[0] for ab=00, mux_in[1] for ab=01, mux_in[2] for ab=11, mux_in[3] for ab=10.
+
+This solution fixes the earlier confusion in mux_in[0] (changed from c?1:d to d?1:c) and makes the implementations clearly minimal and logically accurate.
+
+This will ensure correctness and minimal mux usage.
+
+We keep the 2-to-1 mux module for reuse.
+
+No always blocks, combinational logic only.

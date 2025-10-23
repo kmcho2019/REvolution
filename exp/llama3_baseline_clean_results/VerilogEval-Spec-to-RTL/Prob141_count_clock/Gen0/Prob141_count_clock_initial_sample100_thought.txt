@@ -1,0 +1,14 @@
+The TopModule will utilize counters to track hours, minutes, and seconds. 
+These counters will be triggered by the positive edge of the clock signal 
+and will increment only when the enable signal is high. The hours counter 
+will handle the 12-hour AM/PM logic, while the minutes and seconds counters 
+will reset at 60. The reset signal will be used to reset the clock to 12:00 AM 
+when it is high. To implement this, we will use the following steps:
+- Initialize the counters for hours, minutes, and seconds.
+- On every positive edge of the clock, check if the reset signal is high.
+  If it is, reset the counters to 12:00 AM.
+- If the reset signal is low and the enable signal is high, increment the 
+  seconds counter. If the seconds counter overflows (i.e., reaches 60), 
+  reset it to 0 and increment the minutes counter. If the minutes counter 
+  overflows, reset it to 0 and increment the hours counter. 
+  Handle the 12-hour AM/PM logic in the hours counter.

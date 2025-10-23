@@ -1,0 +1,9 @@
+Implement the module using explicit generate loops to iterate over each bit and assign outputs per the specifications.  
+This approach directly reflects the neighbor relationships with clear logic for edge cases, improving code readability and maintainability.  
+Specifically:  
+- For out_both[i], if i < 99, assign as AND of in[i] and in[i+1]; else zero.  
+- For out_any[i], if i > 0, assign as OR of in[i] and in[i-1]; else zero.  
+- For out_different[i], use wrap-around indexing: out_different[i] = XOR of in[i] and in[(i+1) % 100].  
+
+This method clearly expresses the neighbor-based logic and enables synthesis tools to optimize neighbor logic separately, potentially allowing local optimizations or pipelining if needed.  
+Although it uses generate loops, the hardware will be comparable and it's easier to extend or modify for varying widths or neighbor definitions.

@@ -1,0 +1,15 @@
+Revised approach to achieve correct odd division with 50% duty cycle:
+1. Maintain dual counters (pos_cnt and neg_cnt) but adjust toggle logic
+2. Toggle each intermediate clock only once per full cycle to prevent double-toggling
+3. Phase-shift the negative edge clock by half a cycle relative to positive edge
+4. Use XOR instead of OR to combine clocks for proper phase alignment
+5. Reset both counters and clocks synchronously
+6. Calculate toggle point as (NUM_DIV-1)/2 for midpoint toggle
+7. Ensure counters wrap correctly at NUM_DIV-1
+
+Key improvements:
+- Single toggle per counter cycle prevents waveform corruption
+- Proper phase relationship between pos_clk and neg_clk
+- XOR combination creates symmetric waveform
+- Maintains exact 50% duty cycle for all odd divisors
+- Cleaner state machine implementation

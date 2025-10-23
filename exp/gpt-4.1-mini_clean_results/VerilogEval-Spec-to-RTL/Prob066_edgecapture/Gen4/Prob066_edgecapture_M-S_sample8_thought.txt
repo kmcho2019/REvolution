@@ -1,0 +1,5 @@
+To simplify the design while maintaining functionality, we can remove the intermediate delayed input register `in_d` and instead store the previous input directly in a single register. At each clock cycle, we compare the previous input with the current input to detect falling edges (transition from 1 to 0).
+
+By storing the previous input (`prev_in`) at each clock edge, falling edges are identified by `prev_in & ~in`. Once a falling edge is detected on any bit, we set the corresponding bit in `out` and keep it set until reset.
+
+This reduces complexity by using only two 32-bit registers: one to hold previous input and one to hold the output, with straightforward synchronous reset and no additional delays or complexity.

@@ -1,0 +1,5 @@
+Fuse the best ideas from both examples by implementing a single always block with synchronous reset and non-blocking assignments to ensure atomic, glitch-free updates. Use minimal bit-widths: 5 bits for Hours (0-23) and 6 bits for Mins and Secs (0-59), optimizing area. Adopt a clear, early-exit nested if-else structure to minimize combinational depth and maintain clean rollover logic from Secs → Mins → Hours. This approach ensures correctness with simpler timing paths. 
+
+To reduce unnecessary toggling (power), only update Mins when Secs rolls over, and Hours only when Mins roll over, limiting switching. Use non-blocking assignments consistently to avoid race conditions. The single always block approach improves clarity and maintainability while balancing performance, power, and area (PPA) considerations. The implementation respects the given interface and reset behavior.
+
+This fusion simplifies timing paths by avoiding multiple always blocks while reducing switching activity, achieving a superior overall design.

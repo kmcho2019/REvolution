@@ -1,0 +1,33 @@
+To improve PPA, I will switch from one-hot encoding to a binary encoding, which uses fewer flip-flops (1 instead of 2), reducing area and power. This also simplifies the state registers and logic depth, potentially improving timing.
+
+However, the problem specifically requires one-hot encoding, so I must maintain the one-hot style.
+
+Given that, I can optimize by reducing logic transitions on state_B register: currently, state_B stays high indefinitely after first transition, potentially causing unnecessary toggling. Since B is a stable state, we can latch B only when needed.
+
+But the FSM requires B to be a stable state; thus we must keep it asserted once entered.
+
+I can try to encode the logic to minimize logic transitions:  
+- Implement next_A and next_B as minimal expressions  
+- Use registered outputs to reduce glitching on output z  
+- Implement output logic in sequential block to avoid glitches, since it's Mealy output based on current state and input.
+
+Also, to reduce toggling on state_A when moving to B, I will use synchronous reset with asynchronous set on state_A (i.e., use asynchronous reset only on state_A, with state_B setting synchronously). This might not help much.
+
+Given constraints, main PPA gain will be from using 2-state FSM with one-hot encoding but optimizing next state logic:
+
+- next_A = state_A & ~x  
+- next_B = state_B | (state_A & x)
+
+This is minimal already.
+
+I will re-implement output z as registered output updated on clock edge to reduce glitches. This will add one flip-flop latency but reduce output glitches and potentially improve timing and power.
+
+Finally, I will explicitly declare the next state signals as reg for clarity and move combinational logic into always @* block, improving synthesis friendliness.
+
+This optimizes for timing and glitch reduction at minimal area cost while respecting one-hot requirement.
+
+Summary:  
+- Keep one-hot encoding  
+- Move next state logic and output logic into combinational always block  
+- Register output z  
+- Slightly improve synthesis and reduce glitches, possibly improving timing and power

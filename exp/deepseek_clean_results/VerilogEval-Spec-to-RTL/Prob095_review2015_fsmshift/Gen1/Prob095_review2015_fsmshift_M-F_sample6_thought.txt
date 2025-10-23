@@ -1,0 +1,15 @@
+To fix this implementation, we'll make the following improvements based on the feedback:
+1. Replace the enum-based state encoding with explicit binary encoding to ensure consistent synthesis results
+2. Reduce the state encoding to 2 bits since we only need 5 states (3 bits was overkill)
+3. Explicitly handle the power-on reset case by initializing registers
+4. Maintain the same state transition logic but with more reliable encoding
+5. Keep the same output logic which is functionally correct
+
+The state encoding will be:
+00 - RESET
+01 - COUNT1
+10 - COUNT2
+11 - COUNT3
+(implicit DONE state when counter reaches 4)
+
+We'll use a counter approach that counts up to 4 cycles after reset, which is more synthesis-friendly and achieves the same functionality with potentially better PPA.

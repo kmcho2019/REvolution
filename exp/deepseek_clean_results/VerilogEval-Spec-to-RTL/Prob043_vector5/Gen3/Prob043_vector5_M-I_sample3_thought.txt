@@ -1,0 +1,8 @@
+The current implementation is correct but can be optimized for power and area by:
+1. Observing that the output includes redundant symmetric comparisons (a~^b and b~^a)
+2. Recognizing that the self-comparisons (a~^a, b~^b etc.) are always 1 and can be hardwired
+3. Using a more compact representation that:
+   - Hardwires the diagonal elements (self-comparisons) to 1
+   - Computes only the unique pairwise comparisons
+   - Replicates them for the symmetric positions
+This reduces the number of actual XNOR operations from 25 to 10 while maintaining the same functionality.

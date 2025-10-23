@@ -1,0 +1,7 @@
+To implement Rule 110 correctly and efficiently:
+1. Use a combinational always block to calculate next state in parallel
+2. Implement the exact truth table using case statements for clarity
+3. Handle boundaries by creating virtual left (-1) and right (512) bits set to 0
+4. Store intermediate next state in a temporary register to avoid read-write conflicts
+5. Use a generate block to create identical logic for each cell
+6. The core logic can be expressed as: next_state = (left & center & ~right) | (~left & center) | (center & ~right) | (~left & right)

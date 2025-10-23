@@ -1,0 +1,32 @@
+To implement a high-quality 8-bit Radix-4 Booth multiplier, I will combine the advantages of the two examples:
+
+1. Radix-4 Booth algorithm (processing 2 bits per cycle) drastically reduces the number of cycles from 16 to 5, improving throughput and lowering switching activity (from Example 2).
+
+2. A clear FSM with three states (IDLE, LOAD, CALC) and fully synchronous reset for clean, robust control, easy integration, and maintainability (from Example 1).
+
+3. Maintain separate registers for multiplier, multiplicand, product (accumulator), and counter with proper sign extension.
+
+4. Implement the booth partial product generation as a function with careful sign extension and common sub-expressions minimized.
+
+5. In the CALC state, perform:
+   - Extract a 3-bit window from multiplier bits (including the extra appended bit).
+   - Generate the partial product using the Booth function.
+   - Shift the partial product by 2*step.
+   - Accumulate into the product.
+   - Arithmetic shift the multiplier right by 2 bits.
+   - Increment step.
+
+6. When the step counter reaches 5, output the product and set rdy.
+
+7. Use only synchronous resets and nonblocking assignments in sequential blocks.
+
+8. The ready signal asserted only after calculation is complete.
+
+This fusion yields a design with:
+- Improved speed due to radix-4 decoding (5 cycles).
+- Clear and robust FSM control and handshake.
+- Reduced switching activity and power consumption.
+- Easier debugging and testability.
+- Clean separation of combinational and sequential logic, improving synthesis results.
+
+The resulting code below follows this approach.

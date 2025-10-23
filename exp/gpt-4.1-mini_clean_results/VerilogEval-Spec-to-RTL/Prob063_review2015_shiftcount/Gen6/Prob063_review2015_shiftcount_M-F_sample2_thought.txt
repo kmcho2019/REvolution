@@ -1,0 +1,13 @@
+To fix the issues, first add an asynchronous reset input (e.g., active high) to initialize the 4-bit shift register `q` to zero at start-up, preventing unknown states and mismatches at the beginning of simulation.
+
+Keep the shift operation as shifting right with data shifted into the MSB (bit 3) to conform to "most-significant-bit first," which means new data enters the MSB and the bits shift down towards LSB.
+
+Keep the decrement logic as is, wrapping around from zero to 15, since the problem does not specify limit behavior.
+
+Add the reset as a synchronous reset (since only clk is given, no reset port was specified, so use an initial block to initialize `q`), or use an initial block for simulation only.
+
+Because the problem interface does not specify a reset, use an initial block to set `q` to zero for simulation purposes.
+
+Hence, the main fix is to initialize `q` to zero at start to avoid unknown outputs and simulation mismatches, keeping the rest logic unchanged.
+
+This meets the problem specifications and addresses the feedback about initial unknown values.

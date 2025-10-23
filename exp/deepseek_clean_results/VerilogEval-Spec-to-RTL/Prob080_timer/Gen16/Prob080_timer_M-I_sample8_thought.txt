@@ -1,0 +1,14 @@
+Improvement Strategy:
+1. Timing Optimization: Break down the nested ternary operator into separate logic stages to reduce critical path delay
+2. Power Optimization: Add clock gating when counter is zero to prevent unnecessary toggling
+3. Area Optimization: Simplify zero detection by checking only the MSB (assuming counter won't underflow)
+4. Maintain functionality while improving PPA metrics:
+   - Separate load and decrement logic
+   - Use simpler zero detection
+   - Add clock gating control
+
+Key Changes:
+- Replace nested ternary with parallel mux structure
+- Use counter[9] for zero detection (when counter is 0, MSB is 0)
+- Add clock gating when counter is zero
+- Maintain same behavior with better PPA

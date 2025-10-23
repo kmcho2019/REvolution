@@ -1,0 +1,7 @@
+To solve this problem, we need to design a finite state machine (FSM) that can identify the start bit, wait for the 8 data bits, and then verify the stop bit. The FSM should have the following states:
+- IDLE: Waiting for the start bit
+- START: Found the start bit, waiting for the data bits
+- DATA: Receiving the data bits
+- STOP: Waiting for the stop bit
+- DONE: Received a complete byte, asserting the done signal
+The FSM will transition between these states based on the current state and the input bit. We will use a counter to keep track of the number of data bits received. If the stop bit is not received when expected, the FSM will wait in the STOP state until a stop bit is received, then transition back to the IDLE state.

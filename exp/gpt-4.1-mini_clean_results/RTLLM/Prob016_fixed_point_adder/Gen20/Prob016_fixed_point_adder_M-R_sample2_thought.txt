@@ -1,0 +1,10 @@
+Refactor the fixed-point adder to implement the conditional absolute value addition or subtraction explicitly using continuous assignments rather than always blocks.
+
+- Extract the sign bits of inputs `a` and `b`.
+- Compute the absolute values of `a` and `b` by negating if sign bit is 1.
+- If sign bits are equal, add the absolute values, assign the sign bit to output to match inputs' sign.
+- If sign bits differ, subtract the smaller absolute value from the larger; set the result sign accordingly.
+- Use the result magnitude and sign bit to form the final two's complement output.
+- Use only assign statements to keep logic combinational and concise.
+- Keep the module fully parameterized by N and Q as requested.
+- Overflow wraps naturally in fixed-point arithmetic; no saturation applied.

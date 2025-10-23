@@ -1,0 +1,11 @@
+To design a Mealy FSM that detects a specific sequence of input bits (10011) and outputs a MATCH signal accordingly, we need to consider the following steps:
+
+1. Define the states of the FSM based on the input sequence. Since the sequence is 10011, we can define states for each prefix of the sequence: S0 (initial state), S1 (after seeing 1), S2 (after seeing 10), S3 (after seeing 100), S4 (after seeing 1001), and S5 (after seeing 10011, which is the match state).
+
+2. Determine the state transitions based on the current state and the input bit. For each state, if the input bit matches the next expected bit in the sequence, transition to the next state. If the input bit does not match and we are not in the initial state, we need to decide whether to transition back to an earlier state or stay in the current state based on the Mealy machine characteristics. In this case, since we are looking for any occurrence of the sequence 10011, we should transition back to an earlier state that could potentially lead to the match state with the fewest additional inputs.
+
+3. The output (MATCH) is determined by the current state and the input. In a Mealy machine, the output is a function of the state and the input. The MATCH signal should be 1 when we are in the state that corresponds to the complete sequence (S5) and the input is 1 (the last bit of the sequence).
+
+4. Implement the reset functionality. When the reset signal (RST) is active, the FSM should transition back to its initial state (S0), and the MATCH signal should be set to 0.
+
+5. Write the Verilog code that implements these states, transitions, and output logic.

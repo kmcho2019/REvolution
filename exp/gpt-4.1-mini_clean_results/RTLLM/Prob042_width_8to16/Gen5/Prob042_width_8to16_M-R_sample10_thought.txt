@@ -1,0 +1,10 @@
+Refactor the code by separating the state machine and output registers for clarity and correctness.
+
+1. Use a simple two-state FSM (IDLE and STORE_FIRST) explicitly represented by a reg variable.
+2. In the IDLE state, when `valid_in` is high, latch the first 8-bit input into `data_lock` and transition to STORE_FIRST.
+3. In STORE_FIRST state, when `valid_in` is high, concatenate the stored data with current input to form `data_out_next`, and assert `valid_out_next`.
+4. Output registers `data_out` and `valid_out` are updated synchronously from `_next` signals with a 1-cycle latency.
+5. Reset `_next` signals to zero every cycle unless set otherwise to avoid glitching outputs.
+6. Use blocking assignments in combinational always block to compute `_next` signals, and synchronous always block for state and registers.
+7. This decouples output signal updates from state transitions cleanly and ensures output valid signal aligns correctly 1 cycle after second input.
+8. This structure also handles consecutive inputs robustly without overwriting or missing data.

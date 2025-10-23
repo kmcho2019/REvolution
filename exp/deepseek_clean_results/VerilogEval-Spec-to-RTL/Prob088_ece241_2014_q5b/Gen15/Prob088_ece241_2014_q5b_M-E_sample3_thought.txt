@@ -1,0 +1,21 @@
+Novel Architecture Idea: "Direct Output Encoding with State Minimization"
+
+Key Innovations:
+1. State Representation:
+   - Eliminate explicit state registers by encoding state directly in output behavior
+   - Use a single flip-flop to track "complement mode" (state B)
+2. Transition Logic:
+   - Implement state transitions as a simple toggle when x=1 in state A
+   - Once in complement mode (state B), stay there indefinitely
+3. Output Generation:
+   - Output is simply the XOR of current mode and input x
+   - This captures both state and input in a single operation
+4. Power Optimization:
+   - Reduced flip-flop count minimizes dynamic power
+   - Simple combinational logic reduces switching activity
+
+Advantages:
+- 50% reduction in state storage (1 FF vs 2 FF in one-hot)
+- Output logic becomes trivial XOR operation
+- No unnecessary state transitions after entering complement mode
+- Asynchronous reset maintains clean initialization

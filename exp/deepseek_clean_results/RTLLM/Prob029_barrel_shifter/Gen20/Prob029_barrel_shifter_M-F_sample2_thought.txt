@@ -1,0 +1,14 @@
+The feedback indicates the key issue is implementing rotation instead of shifting as specified. Here's the corrected approach:
+
+1. Shift vs Rotation: Replace rotation with true shifting (bits fall off end, no wrap-around)
+2. Shift Direction: Maintain right-shift as implied by the original design
+3. Shift Amounts: Keep the 4-2-1 stage structure matching control bits
+4. Zero Fill: For right shifts, we'll fill vacated bits with zeros
+5. Modularity: Preserve the parameterized module structure for clean design
+
+The corrected implementation will:
+- Change rotation to shifting in each stage
+- Maintain the 3-stage pipeline (4,2,1 shifts)
+- Use the same control signal mapping
+- Zero-fill on shifts
+- Keep the enable-based control for power efficiency

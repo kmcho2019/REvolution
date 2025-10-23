@@ -1,0 +1,12 @@
+Novel approach using a single register with speculative updates and rollback tracking:
+1. Use a single 32-bit history register that always contains the correct committed history
+2. Track speculative updates separately in a 1-bit register (speculative_bit) and a counter (speculative_depth)
+3. On prediction (predict_valid), store the speculative bit and increment depth instead of immediately updating history
+4. On misprediction (train_mispredicted):
+   - Discard speculative updates by resetting speculative_depth
+   - Reconstruct correct history from train_history and train_taken
+5. On clock edge when no misprediction and no new prediction:
+   - Apply any pending speculative updates to the main history register
+6. Reset clears all state
+7. Output combines committed history with any speculative updates
+This approach reduces register overhead while maintaining single-cycle rollback capability.

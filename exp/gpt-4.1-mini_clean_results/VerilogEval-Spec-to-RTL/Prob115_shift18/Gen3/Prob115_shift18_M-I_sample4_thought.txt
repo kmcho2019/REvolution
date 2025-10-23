@@ -1,0 +1,11 @@
+To improve performance and power, I will implement the shift logic as a purely combinational block that calculates the next shift value in a single step using a case statement keyed on the amount input. This avoids multiple conditional shifts and intermediate registers, reducing combinational depth and toggling.
+
+Key improvements:
+- Use a single combinational expression for all shift variants, minimizing logic levels.
+- Keep the synchronous load and enable logic simple and clean.
+- Use arithmetic right shift with explicit sign extension for clarity and to ensure proper hardware inference.
+- Avoid multiple sequential shifts by doing a single shift based on the amount.
+- Eliminate unnecessary intermediate registers.
+- Separate combinational next-state logic from the sequential register for better synthesis and timing clarity.
+
+This approach reduces critical path delay by avoiding multiple shift stages, minimizes switching activity by computing only one shift per cycle, and reduces area by eliminating intermediate registers and duplicated shift logic.

@@ -1,0 +1,7 @@
+Fix the pipeline multiplier by correctly summing partial products combinationally outside the clocked block and then registering intermediate sums in two pipeline stages:  
+- Stage 1: Generate and sum partial products combinationally and register the intermediate sum.  
+- Stage 2: Register the final product output by accumulating the intermediate sum registered in stage 1.  
+Use zero-extended multiplicand as before.  
+Ensure that summation of partial products is done with a combinational for loop producing a wire sum, which is then clocked into the stage 1 register.  
+Finally, pipeline the registered intermediate sum to the output register on the next clock cycle.  
+This approach preserves the two-level register pipeline and corrects the erroneous accumulation from the prior implementation.

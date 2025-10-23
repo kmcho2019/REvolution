@@ -1,0 +1,10 @@
+Instead of evaluating each state bit independently, we can leverage the fact that in one-hot encoding only one bit is active at a time. We can create a priority-encoded state transition scheme that:
+
+1. Uses a single 4-input multiplexer for each next_state bit, where the select lines are derived from the current state
+2. The output is simply the D state bit (state[3])
+3. For next_state bits:
+   - Each bit's mux selects between possible transitions based on the input
+   - The mux inputs are hardwired according to the transition table
+   - This reduces the logic to simple mux selections rather than combinatorial expressions
+
+This approach is more scalable for larger state machines as it follows a regular structure, though for this small case it has similar complexity to the original solution.

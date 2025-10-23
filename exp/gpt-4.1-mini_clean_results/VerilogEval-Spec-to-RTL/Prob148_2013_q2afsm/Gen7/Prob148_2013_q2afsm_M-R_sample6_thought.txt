@@ -1,0 +1,11 @@
+Refactor the FSM by encoding the states as a 2-bit binary encoding rather than one-hot, which reduces flip-flop count and simplifies state register size. Define states as parameters for clarity. Use combinational always block for output logic, and separate combinational block for next-state logic.
+
+Keep synchronous active-low reset as specified. Outputs will be driven in a combinational always block based on the current state.
+
+Priority decision on idle state (A) is still based on r[0] > r[1] > r[2], and granted states maintain grant as long as their corresponding request remains asserted.
+
+This binary-encoded FSM reduces area and power compared to one-hot encoding and may improve timing by reducing register count and logic fanout.
+
+The outputs g[2:0] are driven as a one-hot grant signal in combinational logic depending on state.
+
+This approach still uses separate always blocks for state flip-flops and state/output combinational logic.

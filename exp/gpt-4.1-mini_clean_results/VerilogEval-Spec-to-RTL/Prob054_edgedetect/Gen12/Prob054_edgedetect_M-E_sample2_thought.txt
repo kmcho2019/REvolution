@@ -1,0 +1,7 @@
+Use a single always block with two pipeline registers to detect and delay the positive edge per bit:  
+- First register samples the input each clock cycle.  
+- Second register detects positive edges by comparing current and previous samples using non-blocking assignments, generating a one-cycle delayed pulse in the same always block.  
+- This approach combines input sampling and edge detection in one sequential block without separate combinational logic, simplifying the design.  
+- It avoids explicit combinational wires, only using two 8-bit registers internally: one for current input sample, one for previous input sample.  
+- The output pedge is assigned the detected positive edges delayed by one clock cycle, matching the specification.  
+- This method reduces logic and register count by leveraging sequential logic efficiently and minimizes combinational path complexity.

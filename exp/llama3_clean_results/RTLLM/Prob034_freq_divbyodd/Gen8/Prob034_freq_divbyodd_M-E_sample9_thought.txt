@@ -1,0 +1,7 @@
+A novel approach to designing the frequency divider for odd divisors involves utilizing a single counter that increments on every clock edge, thus tracking both rising and falling edges without the need for separate counters and logic. This approach simplifies the design and ensures accurate division by odd numbers.
+
+The key insight is to recognize that dividing by an odd number can be achieved by counting every edge (both rising and falling) until the total count reaches the desired divisor, at which point the divided clock output is toggled. This method inherently handles odd divisors without the issues associated with integer division.
+
+By introducing a single counter that increments with every clock edge and comparing it against the parameterized odd divisor (NUM_DIV), we can accurately determine when to toggle the divided clock output (clk_div). The reset logic remains straightforward, initializing the counter and the divided clock output when the active low reset signal (rst_n) is asserted.
+
+This architectural change not only simplifies the design but also enhances its functionality and accuracy, particularly for dividing by odd numbers. The use of a single counter reduces the complexity of the logic, making the design more robust and easier to understand.

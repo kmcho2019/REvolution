@@ -1,0 +1,16 @@
+To implement a Mealy FSM detection circuit, we will use a finite state machine with five states (S0, S1, S2, S3, S4) to detect the sequence 10011. The FSM will be reset to the initial state S0 when RST is active. On every positive edge of the clock signal CLK, the current state will be updated based on the input signal IN and the current state. The output signal MATCH will be 1 when the sequence is detected, and 0 otherwise.
+
+Here's the step-by-step thought process:
+
+1. Define the states of the FSM: We need five states to detect the sequence 10011. The states are:
+   - S0: Initial state, expecting the first '1'
+   - S1: First '1' detected, expecting the first '0'
+   - S2: First '0' detected, expecting the second '0'
+   - S3: Second '0' detected, expecting the second '1'
+   - S4: Second '1' detected, expecting the third '1'
+
+2. Define the state transitions: The state transitions will be based on the current state and the input signal IN. For example, if the current state is S0 and IN is '1', the next state will be S1.
+
+3. Define the output signal MATCH: The output signal MATCH will be 1 when the sequence is detected (i.e., when the current state is S4), and 0 otherwise.
+
+4. Implement the FSM using Verilog: We will use a always_ff block to implement the FSM. The always_ff block will be triggered on the positive edge of the clock signal CLK or the reset signal RST.

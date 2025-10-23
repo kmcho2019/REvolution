@@ -1,0 +1,14 @@
+To address the issue with the original code, we need to declare `walk_left`, `walk_right`, and `aaah` as `reg` instead of `wire` since we are assigning values to them within the module. Additionally, we should re-evaluate the state machine logic to ensure it correctly implements the desired behavior based on the problem description. The state machine should transition between walking left, walking right, and falling based on the `bump_left`, `bump_right`, and `ground` inputs, and it should reset to walking left when `areset` is asserted.
+
+We will keep the same states:
+- Walking Left (WL): 2'b00
+- Walking Right (WR): 2'b01
+- Falling (F): 2'b10
+
+However, the logic for determining the next state and the output values needs to be corrected to handle the bumping and falling conditions properly. We also need to ensure that the outputs are correctly updated based on the current state and inputs.
+
+To simplify the logic and make it more straightforward, we will use two separate always blocks: one for combinational logic to determine the next state and output values, and another for sequential logic to update the current state based on the next state.
+
+The combinational logic block will determine `next_state`, `walk_left`, `walk_right`, and `aaah` based on `current_state`, `bump_left`, `bump_right`, `ground`, and `areset`. The sequential logic block will update `current_state` with `next_state` on the positive edge of `clk`, unless `areset` is high, in which case it resets `current_state` to the initial state (Walking Left).
+
+The main correction involves properly handling the assignments to `walk_left`, `walk_right`, and `aaah` by declaring them as `reg` and ensuring their values are correctly updated based on the state machine's logic. We also need to adjust the state transition logic to accurately reflect the behavior described in the problem, including the handling of `areset` and the transition between states based on `bump_left`, `bump_right`, and `ground`.

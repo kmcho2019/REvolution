@@ -1,0 +1,7 @@
+To optimize the Galois LFSR for better PPA (Performance, Power, Area), we can streamline the next-state logic by reducing the number of XOR operations and minimize the critical path. A common approach for maximal-length 5-bit LFSR taps at bits 5 and 3 (positions 4 and 2 in 0-based indexing) is to XOR the LSB with taps before shifting, which can be implemented by computing a single feedback bit and then shifting.
+
+In this improved design, we compute the feedback bit as the XOR of q[0], q[2], and q[4], then shift right by one, feeding the feedback into q[4]. This reduces the XOR to a single operation and removes multiple XORs scattered across bits, improving timing.
+
+Also, keeping synchronous reset that initializes the register to 1 ensures the maximal-length sequence and avoids the all-zero state.
+
+This approach minimizes the combinational logic and critical path delay, potentially improving maximum operating frequency and lowering power consumption due to less switching on intermediate XOR outputs.

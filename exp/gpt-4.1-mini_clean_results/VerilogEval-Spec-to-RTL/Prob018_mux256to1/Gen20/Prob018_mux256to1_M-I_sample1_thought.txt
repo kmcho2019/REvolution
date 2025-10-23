@@ -1,0 +1,12 @@
+To improve PPA (performance, power, and area) over the previous hierarchical 4-to-1 tree-based 256-to-1 mux, I will use a binary-tree structured mux hierarchy built from simple 2-to-1 muxes instead of 4-to-1 muxes. 
+
+Rationale:
+- Using 2-to-1 muxes leads to a balanced binary tree with log2(256)=8 levels.
+- Although deeper, each mux is very small (1-bit 2-to-1 mux) which can be implemented with a single LUT or gate, minimizing area and power.
+- The simple 2-to-1 mux structure eliminates the overhead and complexity of larger muxes.
+- The binary tree hierarchy is straightforward to generate with a parameterized and recursive generate statement, improving code clarity and scalability.
+- The overall delay might be slightly larger in terms of gate levels, but the critical path contains simple 2-to-1 muxes, potentially leading to good performance and better area/power tradeoff due to smaller mux size.
+- This approach reduces the total number of mux inputs handled at once, reducing switching and fan-in load, thus improving power.
+- The code uses generate blocks to iteratively reduce input width by half until a single output bit remains, reflecting a neat and modular design.
+
+This improved design should yield reduced area (fewer LUTs), lower dynamic power (smaller muxes and lower fan-in), and still maintain correct functionality and acceptable performance.

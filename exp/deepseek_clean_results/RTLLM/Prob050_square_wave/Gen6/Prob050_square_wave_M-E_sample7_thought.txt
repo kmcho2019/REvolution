@@ -1,0 +1,11 @@
+Novel Architecture: Phase Accumulator Square Wave Generator
+1. Core Concept: Use a phase accumulator to track waveform position rather than simple counting
+2. Precision: 16-bit accumulator provides finer frequency control (using upper 8 bits for comparison)
+3. Efficiency: Single adder operation per cycle with implicit phase wrapping
+4. Frequency Handling: Natural overflow behavior eliminates special case for freq=0
+5. Output Generation: MSB of accumulator directly drives output (implicit square wave generation)
+6. Benefits: 
+   - Linear frequency control (output freq = (freq * clk_freq) / 2^16)
+   - No explicit comparison logic needed
+   - Easily extendable to other waveform types
+   - Lower power due to simpler operations

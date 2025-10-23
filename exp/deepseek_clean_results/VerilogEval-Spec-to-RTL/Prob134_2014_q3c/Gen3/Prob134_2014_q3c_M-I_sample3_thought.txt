@@ -1,0 +1,18 @@
+The original solution is functionally correct but has some optimization opportunities. Here's the improvement strategy:
+
+1. **Area Optimization**:
+   - Eliminate the separate next_z register by implementing z as a combinational function of the current state (y)
+   - This reduces the number of registers needed since z can be derived directly from y
+
+2. **Power Optimization**:
+   - Simplify the next_state logic by removing the default case since all states are explicitly covered
+   - This reduces unnecessary logic that would never be exercised
+
+3. **Performance**:
+   - Keep the combinational implementation as it shows good timing characteristics
+   - The critical path remains minimal with these changes
+
+Key changes:
+- Make z purely combinational based on current state
+- Remove default case since all 5 states are explicitly handled
+- Keep the efficient next_state calculation

@@ -1,0 +1,19 @@
+To simplify the FSM while maintaining correct functionality, I'll make these key improvements:
+
+1. **Single-cycle f pulse**: Ensure f=1 for exactly one cycle after reset by using a separate state just for the pulse.
+
+2. **Simpler sequence detection**: Use a 3-bit shift register to detect the 1-0-1 pattern on x, eliminating the need for multiple states.
+
+3. **Clear y monitoring**: Use a 2-bit counter to track the two-cycle timeout period for y detection, making the logic more straightforward.
+
+4. **Permanent outputs**: Once in final states, outputs remain constant until reset, simplifying output logic.
+
+The FSM will now have:
+- STATE_A: Reset state
+- STATE_B: Single-cycle f pulse
+- STATE_C: Monitoring x for 1-0-1 sequence
+- STATE_D: Monitoring y with timeout
+- STATE_E: Permanent g=1
+- STATE_F: Permanent g=0
+
+Outputs are purely state-dependent.

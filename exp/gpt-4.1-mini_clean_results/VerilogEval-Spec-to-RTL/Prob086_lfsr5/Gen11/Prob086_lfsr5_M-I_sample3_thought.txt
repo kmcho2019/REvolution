@@ -1,0 +1,11 @@
+To optimize the existing maximal-length 5-bit Galois LFSR for better power and performance without changing functionality, I will combine the feedback calculation and shift in a single vector assignment. This minimizes explicit bit-by-bit non-blocking assignments, reducing potential register input glitches and possibly improving synthesis optimization and timing.
+
+I will compute the next LFSR state as a whole 5-bit vector based on current `q` and feedback bit, then assign `q` once per clock cycle. This approach reduces logic duplication, helps the synthesizer optimize the feedback and shift logic together, and potentially reduces power by limiting switching events caused by multiple assignment statements.
+
+The synchronous active-high reset remains to 5'b00001 to avoid the all-zero state, and the clock triggering stays on the positive edge. This style preserves maximum-length property and functional correctness.
+
+In summary:
+- Calculate feedback bit once.
+- Create next-state vector using bitwise and shift operations with XOR applied only to tapped bits.
+- Assign entire vector at once.
+- Keep synchronous reset behavior intact.

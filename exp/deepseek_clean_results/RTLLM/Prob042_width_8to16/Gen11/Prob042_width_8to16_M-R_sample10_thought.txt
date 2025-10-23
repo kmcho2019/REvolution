@@ -1,0 +1,16 @@
+Refactored Design Strategy:
+1. Use a simpler state machine with just two states (IDLE and GOT_FIRST_BYTE)
+2. Replace the has_first_byte flag with explicit state transitions
+3. Move combinational logic to assign statements where possible
+4. Maintain the same timing behavior:
+   - First byte stored in IDLE state
+   - Second byte triggers output and returns to IDLE
+5. Keep synchronous reset and same output timing
+6. Improve readability by separating state transitions from output generation
+
+Key Changes:
+- Explicit state machine instead of implicit flag
+- Combinational outputs via assign
+- Clearer state transition logic
+- Same functional behavior but more maintainable structure
+- Still meets all original timing requirements

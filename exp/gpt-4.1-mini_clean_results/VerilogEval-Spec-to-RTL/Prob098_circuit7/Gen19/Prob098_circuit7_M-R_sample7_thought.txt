@@ -1,0 +1,13 @@
+The core functionality is that the output q follows the inverted input 'a' sampled on the rising edge of clk (q <= ~a).
+
+To refactor without a separate DFF module, I will implement the flip-flop directly inside TopModule using a synchronous always block.
+
+Instead of creating an explicit wire d_in with the inverted input before the flip-flop, I will directly assign q <= ~a in the always block triggered on posedge clk.
+
+This approach keeps the logic compact, eliminates the intermediate wire, and encapsulates the sequential behavior entirely in TopModule.
+
+This simplifies the code structure while preserving the same behavior, making the design minimal and self-contained.
+
+The inversion still occurs before the flip-flop input, but now inline in the sequential logic, which is a valid design style as well.
+
+Overall, this approach provides a clear and concise implementation of the required function without extra modules or wires.

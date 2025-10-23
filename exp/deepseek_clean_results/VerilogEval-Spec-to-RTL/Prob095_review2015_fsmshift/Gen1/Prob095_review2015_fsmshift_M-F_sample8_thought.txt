@@ -1,0 +1,15 @@
+To fix this implementation, we'll make the following improvements based on the feedback:
+1. Replace the enum-based state encoding with explicit binary encoding to ensure consistent synthesis results
+2. Reduce the state representation to 2 bits since we only need 5 states (4 would be sufficient)
+3. Add explicit power-on reset handling by initializing the state register
+4. Maintain the same state transition logic but with more reliable encoding
+5. Keep the same output logic which correctly asserts shift_ena for 4 cycles
+
+The state encoding will be:
+00 - RESET (initial state)
+01 - COUNT1
+10 - COUNT2
+11 - COUNT3
+(implicit) - DONE (when counter reaches 4)
+
+We'll use a counter approach instead of explicit states to make it more synthesis-friendly.

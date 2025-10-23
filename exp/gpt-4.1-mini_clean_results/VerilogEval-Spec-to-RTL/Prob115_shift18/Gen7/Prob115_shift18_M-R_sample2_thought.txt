@@ -1,0 +1,7 @@
+Refactor the design to separate combinational shift logic from the sequential register update. Implement a combinational always block or continuous assignment that calculates the next shifted value based on the inputs. Then use a clocked always block to update the output register `q` with either the loaded data or the shifted value when enabled.
+
+This approach enhances clarity, enables easier synthesis optimizations, and avoids nested conditional shifts within the clocked block. Using a single combinational block with a case statement covers all shift directions and amounts explicitly, improving timing and reducing switching by computing only the needed shift.
+
+Arithmetic right shifts will be performed by first sign-extending `q` to a wider signed value, then right-shifting. Left shifts can be done with zero fill by using standard `<<` operator. The load and enable signals will control register loading and shifting synchronously.
+
+This refactoring keeps the two-stage shift concept implicit by handling each shift amount distinctly in the case statement, simplifying combinational logic and improving overall PPA without changing functionality.

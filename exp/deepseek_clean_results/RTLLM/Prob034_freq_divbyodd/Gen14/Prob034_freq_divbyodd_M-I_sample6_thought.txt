@@ -1,0 +1,16 @@
+Improved solution with correct timing and duty cycle:
+1. Maintain separate counters for positive and negative edges but synchronize their toggle points
+2. Calculate toggle points precisely to achieve 50% duty cycle:
+   - Positive edge toggles at (NUM_DIV-1)/2 (rising edge)
+   - Negative edge toggles at NUM_DIV-1 (falling edge)
+3. Use XOR instead of OR to combine the divided clocks for proper phase alignment
+4. Simplify counter logic by removing redundant checks
+5. Ensure reset properly initializes all signals
+6. Maintain parameter validation for odd division
+
+Key improvements:
+- Correct phase alignment between positive and negative edge domains
+- Precise toggle timing for 50% duty cycle
+- More efficient clock combining using XOR
+- Simplified counter control logic
+- Guaranteed proper reset behavior

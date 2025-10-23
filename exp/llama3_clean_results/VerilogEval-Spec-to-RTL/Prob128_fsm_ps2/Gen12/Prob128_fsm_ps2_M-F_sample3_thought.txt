@@ -1,0 +1,11 @@
+The provided Verilog code attempts to implement a finite state machine (FSM) to detect message boundaries in a PS/2 mouse protocol byte stream. However, the simulation log indicates 243 mismatches in the output 'done' signal, suggesting that the FSM is not functioning correctly.
+
+To fix this issue, we need to revisit the state machine definition and ensure that it correctly handles the state transitions based on the input byte stream. Specifically, we should focus on the transition from the initial state to the next state when a byte with in[3] = 1 is encountered. We should also ensure that the 'done' signal is asserted only after three bytes have been received.
+
+One potential approach is to use an enumeration-based state machine, which can improve code readability and maintainability. We can define three states: IDLE, BYTE1, and BYTE2. The FSM starts in the IDLE state and transitions to BYTE1 when a byte with in[3] = 1 is encountered. It then transitions to BYTE2 after receiving the next byte and finally returns to IDLE after receiving the third byte, at which point it asserts the 'done' signal.
+
+Additionally, we should handle the reset condition properly by resetting the state machine to the IDLE state and deasserting the 'done' signal when the reset signal is active.
+
+To optimize the design for Power, Performance, and Area (PPA), we can consider using a compact state encoding, minimizing state transitions, and reducing switching activity. We can also explore clock gating techniques to reduce power consumption.
+
+The corrected code will aim to address the issues mentioned in the feedback and provide a functional FSM that detects message boundaries in the PS/2 mouse protocol byte stream.

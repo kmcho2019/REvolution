@@ -1,0 +1,15 @@
+To improve the PPA metrics of the 10-bit synchronous counter counting from 0 to 999 with synchronous reset, the goal is to reduce the critical path and power consumption while keeping the design simple and synthesizable.
+
+The original design uses a ternary operator (q == 999 ? 0 : q + 1), which synthesizes a comparator and adder logic on every clock edge. The comparator adds delay, and the full 10-bit register toggles every cycle, leading to potentially higher switching power.
+
+Improvement strategy:
+1. Use an explicit separate combinational signal that detects the terminal count (999). This can be done by comparing only the required bits to 999 efficiently.
+2. Implement the counter so that the adder always increments q, and at terminal count, the counter resets to 0 on next clock cycle.
+3. Reduce the switching activity by only toggling the register bits when incrementing, and reset to zero on terminal count.
+4. Optionally, restructure the code to use if-else statements for easier logic optimization by synthesis tools, enabling them to better map the terminal count detection and increment logic.
+5. The 10-bit output width is maintained, since 2^10 = 1024 covers 0-999 comfortably.
+6. Since the reset is synchronous active high, no asynchronous logic is added.
+
+This approach can help synthesis tools optimize comparator logic better, and the explicit terminal count signal can reduce combinational complexity in some synthesis tools. Using if-else instead of ternary may improve readability and synthesis optimizations.
+
+Overall, this approach should improve timing (reduce critical path), slightly reduce power by clarifying the counting logic, and keep the area minimal.

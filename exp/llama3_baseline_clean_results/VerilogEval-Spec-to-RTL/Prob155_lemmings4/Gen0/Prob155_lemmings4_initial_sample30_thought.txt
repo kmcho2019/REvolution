@@ -1,0 +1,23 @@
+To implement the Lemmings' behavior, we need to design a finite state machine (FSM) that can keep track of the current state (walking left, walking right, falling, or digging) and transition between these states based on the input signals.
+
+The FSM will have several states:
+- WALK_LEFT: Lemming is walking to the left.
+- WALK_RIGHT: Lemming is walking to the right.
+- FALLING: Lemming is falling.
+- DIGGING: Lemming is digging.
+- SPLATTERED: Lemming has splattered and will not move anymore.
+
+We will use a counter to keep track of how long the Lemming has been falling.
+
+Transitions between states will be based on the input signals:
+- If the ground disappears, the Lemming will start falling.
+- If the Lemming is walking and the ground appears, it will resume walking.
+- If the Lemming is falling and the ground appears, it will resume walking if it hasn't been falling for more than 20 clock cycles.
+- If the Lemming is walking and it is told to dig, it will start digging.
+- If the Lemming is digging and the ground disappears, it will start falling.
+- If the Lemming hits an obstacle, it will change direction.
+
+We will also use the input signals to determine the output signals:
+- walk_left and walk_right will be set based on the current state.
+- aaah will be set to 1 when the Lemming is falling.
+- digging will be set to 1 when the Lemming is digging.

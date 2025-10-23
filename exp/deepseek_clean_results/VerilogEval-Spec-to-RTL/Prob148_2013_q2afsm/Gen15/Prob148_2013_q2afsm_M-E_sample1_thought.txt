@@ -1,0 +1,12 @@
+Novel Architectural Idea: 
+1. State Encoding: Use one-hot encoding for states to simplify state decoding logic and potentially improve timing.
+2. Priority Logic: Implement a priority encoder separate from the state machine to determine the highest priority request, then feed this into the state transition logic.
+3. Output Logic: Use the state bits directly as grant outputs since we're using one-hot encoding, eliminating the need for separate output decoding logic.
+4. Reset Handling: Maintain synchronous active-low reset that initializes to state A (idle).
+5. Optimization: The one-hot encoding allows for simpler state transition logic and potentially better timing at the cost of slightly more flip-flops.
+
+Key Advantages:
+- One-hot encoding simplifies state decoding (each state is a single bit)
+- Priority encoder separates combinational logic from sequential logic
+- Direct state-to-output mapping eliminates output decoding logic
+- Clear separation of concerns between priority handling and state transitions

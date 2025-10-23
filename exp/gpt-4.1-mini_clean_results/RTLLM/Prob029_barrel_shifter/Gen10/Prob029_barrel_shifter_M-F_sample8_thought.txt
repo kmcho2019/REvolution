@@ -1,0 +1,5 @@
+To fix the design according to the feedback, implement the barrel shifter as a series of three stages corresponding to shifts by 4, 2, and 1 positions, controlled by ctrl[2], ctrl[1], and ctrl[0], respectively. Each stage uses a set of 8 two-to-one multiplexers (`mux2X1`) to select either the original or shifted bit. The shifts are performed in sequence: starting from the original input, stage 1 shifts by 4 if enabled, then the output feeds into stage 2 which shifts by 2 if enabled, then stage 3 shifts by 1 if enabled, producing the final output.
+
+This staged approach aligns exactly with the problem specification and the expected testbench behavior. It also explicitly uses the `mux2X1` module as requested. Each mux chooses between bit `x` and bit `(x - shift_amount) mod 8` of the stage input, ensuring rotation behavior.
+
+The design is purely combinational, with no clock or registers. Using a generate loop helps instantiate the muxes for each bit at each stage cleanly and scalably.

@@ -1,0 +1,132 @@
+// 4-bit Carry-Lookahead Adder with clock gating
+module cla_4bit(
+    input clk,
+    input enable,
+    input [4:1] A,
+    input [4:1] B,
+    input C_in,
+    output [4:1] S,
+    output C_out
+);
+    wire [3:1] C;
+    reg [4:1] S_reg;
+    reg C_out_reg;
+
+    // Compute carry bits
+    assign C[1] = A[1] & B[1] | (A[1] ^ B[1]) & C_in;
+    generate
+        for (genvar i = 2; i <= 3; i++) begin
+            assign C[i] = A[i] & B[i] | (A[i] ^ B[i]) & C[i-1];
+        end
+    endgenerate
+
+    // Compute sum bits
+    assign S[1] = A[1] ^ B[1] ^ C_in;
+    generate
+        for (genvar i = 2; i <= 4; i++) begin
+            assign S[i] = A[i] ^ B[i] ^ C[i-1];
+        end
+    endgenerate
+
+    // Compute carry-out
+    assign C_out = A[4] & B[4] | (A[4] ^ B[4]) & C[3];
+
+    // Clock gating
+    always @(posedge clk) begin
+        if (enable) begin
+            S_reg <= S;
+            C_out_reg <= C_out;
+        end
+    end
+
+    assign S = S_reg;
+    assign C_out = C_out_reg;
+
+endmodule
+
+// 16-bit Carry-Lookahead Adder
+module cla_16bit(
+    input clk,
+    input enable,
+    input [16:1] A,
+    input [16:1] B,
+    input C_in,
+    output [16:1] S,
+    output C_out
+);
+    wire C4, C8, C12;
+
+    cla_4bit u1(
+        .clk(clk),
+        .enable(enable),
+        .A(A[4:1]),
+        .B(B[4:1]),
+        .C_in(C_in),
+        .S(S[4:1]),
+        .C_out(C4)
+    );
+
+    cla_4bit u2(
+        .clk(clk),
+        .enable(enable),
+        .A(A[8:5]),
+        .B(B[8:5]),
+        .C_in(C4),
+        .S(S[8:5]),
+        .C_out(C8)
+    );
+
+    cla_4bit u3(
+        .clk(clk),
+        .enable(enable),
+        .A(A[12:9]),
+        .B(B[12:9]),
+        .C_in(C8),
+        .S(S[12:9]),
+        .C_out(C12)
+    );
+
+    cla_4bit u4(
+        .clk(clk),
+        .enable(enable),
+        .A(A[16:13]),
+        .B(B[16:13]),
+        .C_in(C12),
+        .S(S[16:13]),
+        .C_out(C_out)
+    );
+
+endmodule
+
+// 32-bit Carry-Lookahead Adder
+module adder_32bit(
+    input clk,
+    input enable,
+    input [32:1] A,
+    input [32:1] B,
+    output [32:1] S,
+    output C32
+);
+    wire C16;
+
+    cla_16bit u1(
+        .clk(clk),
+        .enable(enable),
+        .A(A[16:1]),
+        .B(B[16:1]),
+        .C_in(1'b0),
+        .S(S[16:1]),
+        .C_out(C16)
+    );
+
+    cla_16bit u2(
+        .clk(clk),
+        .enable(enable),
+        .A(A[32:17]),
+        .B(B[32:17]),
+        .C_in(C16),
+        .S(S[32:17]),
+        .C_out(C32)
+    );
+
+endmodule

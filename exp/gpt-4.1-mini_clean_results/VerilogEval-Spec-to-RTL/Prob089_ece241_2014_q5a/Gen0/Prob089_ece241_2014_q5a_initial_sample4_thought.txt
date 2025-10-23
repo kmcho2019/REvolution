@@ -1,0 +1,14 @@
+To implement a serial 2's complementer using a Moore state machine, we can leverage the fact that 2's complement is obtained by scanning the input bits from LSB to MSB and:
+- copying all the bits until the first '1' is encountered,
+- then inverting all the remaining bits.
+
+The state machine will have two states:
+- WAIT_FOR_FIRST_ONE: output is equal to input x,
+- INVERT_BITS: output is inverted input x.
+
+On reset, the state returns to WAIT_FOR_FIRST_ONE.
+At each positive clock edge, depending on current state and input, the FSM transitions accordingly.
+The output z depends only on the current state and current input x.
+
+The module uses asynchronous reset, which sets the state to WAIT_FOR_FIRST_ONE immediately.
+The output z is registered (Moore output) and changes on clock edge.

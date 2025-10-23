@@ -1,0 +1,24 @@
+Fusion Strategy:
+1. Control Logic: 
+   - Combine the explicit state machine from Example 2 with the efficient counter usage from Example 1
+   - Use a 5-bit counter (0-16) like Example 1 for better readability and future extensibility
+   - Keep the clean state transitions from Example 2 but simplify to 3 states (IDLE, CALC, DONE)
+
+2. Data Path:
+   - Maintain the shift-and-accumulate approach from both examples
+   - Optimize shift operations by computing them on-demand (avoid Example 2's pre-computation)
+   - Use Example 1's more efficient register usage (single yout_r instead of separate acc)
+
+3. Power Optimization:
+   - Add clock gating for the accumulator register when not in use
+   - Implement output gating using the done signal (like Example 1's suggestion)
+
+4. Timing Improvement:
+   - Pipeline the shift operation by registering shifted values
+   - Simplify the critical path by separating shift and add operations
+
+Key Improvements:
+- Cleaner state machine than Example 1
+- More efficient shift implementation than Example 2
+- Better power management than both
+- Balanced PPA tradeoffs

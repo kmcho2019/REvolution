@@ -1,0 +1,12 @@
+I'll implement a novel "binary tree" approach for the priority encoder. This method divides the 4-bit input into two 2-bit halves and processes them in parallel, then combines the results. The key advantages are:
+
+1. Parallel processing of input bits reduces critical path compared to sequential if-else chains
+2. Uses hierarchical decision making which can be more area-efficient
+3. Maintains the same priority encoding behavior while potentially improving timing
+
+The algorithm works as:
+1. First check if any bit in the lower half (bits [1:0]) is set
+2. If yes, find the first set bit in lower half
+3. If no, find the first set bit in upper half (bits [3:2])
+4. Combine results with proper offset (upper half needs +2)
+5. Handle all-zero case explicitly

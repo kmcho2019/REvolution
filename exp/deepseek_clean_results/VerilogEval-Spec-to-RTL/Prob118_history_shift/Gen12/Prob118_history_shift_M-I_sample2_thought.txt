@@ -1,0 +1,8 @@
+To optimize the design for better PPA (Power, Performance, Area), I'll implement these improvements:
+1. Replace the circular buffer with a simple 32-bit shift register to reduce area and power
+2. Eliminate the separate saved_history register and pointer logic
+3. Handle misprediction by directly loading train_history concatenated with train_taken
+4. Maintain predict_valid updates as simple shifts when no misprediction occurs
+5. Keep the asynchronous reset functionality
+6. Make misprediction handling take precedence as specified
+This reduces storage from 101 bits to just 32 bits, eliminates pointer arithmetic, and simplifies the data path.

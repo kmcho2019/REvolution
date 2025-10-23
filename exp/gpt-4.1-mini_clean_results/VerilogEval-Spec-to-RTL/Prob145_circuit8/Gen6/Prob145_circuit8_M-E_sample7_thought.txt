@@ -1,0 +1,27 @@
+Analyzing the waveform more closely suggests a two-bit state machine encoded in outputs p and q, updated only on rising edges of the clock. The outputs start undefined (x), then stabilize to 0,0 at the first rising edge with a=0. When a=1 at a rising edge, the output pattern changes in a defined way.
+
+Looking at the pattern:
+
+- At clock rising edges, p and q change according to input a and previous state.
+- When a=0, outputs either stay the same or move to (0,0) or (0,1).
+- When a=1, outputs transition to states with p=1.
+- Between clock edges (when clock=0), outputs hold their state.
+- The circuit seems to implement a 2-bit register (p,q) that changes state on clock rising edges, with next state logic depending on current state and input a.
+
+Therefore, the design is a synchronous FSM with state {p,q}, updated on the rising edge of clock, and with next state logic determined by current {p,q} and input a.
+
+Specifically:
+
+- State (p,q) is updated at posedge clock
+- Next state logic:
+   - if (a == 0):
+      - next state is (0,0) if currently unknown or (0,0)
+      - or next state could toggle q depending on prior state
+   - if (a == 1):
+      - next state sets p=1, q depending on previous q and input
+- Initial state unknown (x)
+- Outputs p and q represent state bits.
+
+Implementing this FSM with registers p and q and synchronous next state logic will produce outputs matching the waveform transitions, as the outputs update only on clock rising edges and hold steady otherwise.
+
+This approach avoids sampling on negedge clock and uses purely synchronous design principles, likely matching the given waveforms.

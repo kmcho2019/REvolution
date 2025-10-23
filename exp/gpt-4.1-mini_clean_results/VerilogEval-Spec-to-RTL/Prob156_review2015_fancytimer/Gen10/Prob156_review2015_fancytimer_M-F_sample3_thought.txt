@@ -1,0 +1,34 @@
+To fix the issues based on the feedback:
+
+1. **Pattern Detection Timing and Logic:**
+   - Separate pattern detection from the main FSM state machine by having a shift register updated every clock cycle regardless of FSM state.
+   - Use this registered pattern to trigger the FSM transition from SEARCH to LOAD_DELAY synchronously.
+   - This avoids timing mismatches and off-by-one errors in pattern detection.
+
+2. **Delay Bits Loading MSB-first:**
+   - When shifting delay bits in LOAD_DELAY, shift left and insert the incoming bit at LSB (to form MSB-first loading).
+   - Actually, since the bits come serially MSB first, we want to shift delay_reg left by 1 and append the new bit at LSB.
+   - This is `{delay_reg[2:0], data}`, which is correct MSB-first loading (first bit is MSB).
+
+3. **Counting Logic and Timing:**
+   - `remaining_ticks` counts the number of remaining 1000-cycle blocks, initialized as `delay_reg + 1`.
+   - `cycle_subcount` counts from 0 to 999 for each 1000-cycle block.
+   - The output `count` reflects the current `remaining_ticks` value during COUNTING.
+   - The decrement of `remaining_ticks` should happen **after** counting the full 1000 cycles (i.e., at cycle_subcount == 999).
+   - When `remaining_ticks` is 1 and cycle_subcount is 999, after decrementing `remaining_ticks` becomes 0, and at that next cycle the FSM transitions to DONE_WAIT.
+   - Careful to update `count` synchronously and maintain the same output value for entire 1000 cycle block.
+
+4. **FSM and Signal Assignments:**
+   - Make outputs stable in each state.
+   - Avoid resetting outputs to zero in SEARCH or other states; use default `count` as 'x' or leave it as previous value if "don't care".
+   - Use synchronous reset clearing all registers.
+   - Avoid conflicting or duplicated updates of signals in multiple always blocks.
+
+5. **State Machine Improvements:**
+   - Use a separate shift register `pattern_shift` that continuously shifts in data every clock, regardless of state.
+   - Transition from SEARCH to LOAD_DELAY when `pattern_shift == 4'b1101`.
+   - In LOAD_DELAY, shift delay bits for 4 cycles, then transition to COUNTING.
+   - COUNTING counts cycles and decrements remaining_ticks accordingly.
+   - DONE_WAIT asserts done and waits for ack to return to SEARCH.
+
+This approach ensures timing correctness, proper MSB-first loading, and accurate counting for the exact number of clock cycles needed.

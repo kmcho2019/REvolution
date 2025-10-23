@@ -1,0 +1,17 @@
+I will design the 4-bit comparator using a hierarchy of 1-bit comparators chained together in a "cascade" fashion, where each bit-level comparator compares the corresponding bits of A and B and passes "greater", "equal", and "less" flags upward to the next significant bit.
+
+Each 1-bit comparator:
+- Checks if A[i] > B[i], A[i] == B[i], or A[i] < B[i].
+- Receives signals from the lower bits to decide the overall comparison.
+- Outputs combined greater, equal, and less signals considering the current bit and lower bits.
+
+At the top level (bit 3), the outputs directly reflect A_greater, A_equal, and A_less.
+
+This method:
+- Models comparison explicitly using bitwise cascaded signals.
+- Avoids arithmetic subtraction or borrow logic.
+- Uses clean combinational logic using simple gates and merges comparisons step-by-step.
+- Ensures mutual exclusivity by construction.
+- Is easy to expand to wider bit widths by adding more 1-bit comparator stages.
+
+This "bitwise hierarchical comparator" offers clear reasoning and modularity, with all combinational logic and no arithmetic needed.

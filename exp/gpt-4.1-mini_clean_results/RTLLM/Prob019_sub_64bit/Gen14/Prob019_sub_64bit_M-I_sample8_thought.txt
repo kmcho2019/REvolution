@@ -1,0 +1,11 @@
+To improve the original 64-bit subtractor design in terms of performance and power, I will eliminate the ripple borrow chain by performing the subtraction directly as a 64-bit two’s complement operation using Verilog's built-in subtraction operator. This reduces critical path delays caused by borrow propagation and cuts down intermediate signals switching, improving timing and power consumption.
+
+For overflow detection, the logic remains simple and direct, relying on the sign bits of A, B, and result. By performing a single 64-bit subtraction, the code becomes more synthesis-friendly, likely enabling the tool to infer an optimized carry chain (carry-lookahead or fast adder) automatically.
+
+This approach:
+- Removes modular segmentation and borrow chaining.
+- Uses direct 64-bit subtraction which synthesis tools optimize well.
+- Maintains the same overflow detection logic for signed subtraction.
+- Minimizes netlist complexity and interconnects, reducing area and switching power.
+
+This design achieves better performance and power at likely minimal or no area increase and keeps functional correctness intact.

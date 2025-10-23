@@ -1,0 +1,19 @@
+To implement the TopModule, we'll use a combination of sequential logic (to manage the state of the global branch history register and the pattern history table) and combinational logic (to generate the prediction and update the pattern history table based on training inputs).
+
+We'll start by declaring the signals necessary for our module: 
+- a 7-bit global branch history register (ghr),
+- a 128-entry table of two-bit saturating counters (pattern history table, pht),
+- a wire to represent the predicted branch direction (predict_taken),
+- and wires to compute the index into the pattern history table.
+
+The module's behavior will be divided into two main sections:
+- predicting a branch direction based on a provided pc and the current state of the global branch history register,
+- training the branch predictor based on the outcome of a branch instruction.
+
+When predicting a branch, we'll compute the index into the pattern history table by hashing the pc and global branch history register using xor, then use this index to access the corresponding entry in the pattern history table. The predicted branch direction will be determined based on the value of the saturating counter at this index.
+
+When training the branch predictor, we'll use the provided pc and branch history register value to compute the index into the pattern history table, then update the corresponding entry in the pattern history table based on the actual branch outcome and whether the branch was a misprediction. If the branch was a misprediction, we'll recover the global branch history register to the state immediately after the mispredicting branch completes execution.
+
+We'll use the predict_valid signal to trigger the prediction logic and the train_valid signal to trigger the training logic. If both predict_valid and train_valid are high in the same cycle, the training logic will take precedence.
+
+The module will also include asynchronous reset logic to clear the global branch history register and the pattern history table when the areset signal is high.

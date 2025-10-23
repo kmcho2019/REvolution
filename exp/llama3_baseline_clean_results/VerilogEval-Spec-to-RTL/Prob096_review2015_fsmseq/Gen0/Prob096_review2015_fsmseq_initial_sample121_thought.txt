@@ -1,0 +1,10 @@
+To implement the TopModule, we'll design a finite-state machine (FSM) that transitions through states as it searches for the sequence 1101 in the input bit stream. We'll use a simple Moore machine approach, where the output depends only on the current state. The FSM will have multiple states, each representing a partial match of the target sequence. Once the entire sequence 1101 is matched, the FSM will enter a final state where it sets start_shifting to 1 and remains there until reset.
+
+The states can be defined as follows:
+- S0: Initial state, no match
+- S1: Matched '1'
+- S2: Matched '11'
+- S3: Matched '110'
+- S4: Matched '1101', set start_shifting to 1
+
+We'll use a 2-bit state register to encode these states (since 4 states can be represented with 2 bits). The next state logic will be designed based on the current state and the input data. When reset is high, the FSM will return to the initial state S0.

@@ -1,0 +1,7 @@
+To improve PPA, I will remove the clock enable logic because it adds unnecessary combinational complexity to the clock path, potentially reducing max frequency and increasing delay. The FSM next-state logic is simple and state changes each cycle are rare enough that removing clock gating does not significantly increase switching power but simplifies the design and timing.
+
+I will combine next_state and state register updates into a single always block (two-process FSM style) to reduce register usage and logic, improving area and possibly timing. The synchronous active-high reset is preserved.
+
+Output logic remains combinational and directly derived from the state to ensure glitch-free Moore output. This simplification typically yields better timing and smaller area.
+
+Overall, this approach improves timing and area metrics with minimal impact on power.

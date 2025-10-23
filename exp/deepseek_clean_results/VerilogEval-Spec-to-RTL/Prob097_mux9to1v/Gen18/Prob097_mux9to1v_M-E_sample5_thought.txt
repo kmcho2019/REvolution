@@ -1,0 +1,16 @@
+Here's a novel approach using a hierarchical priority encoder structure:
+
+1. **Priority Encoding**: Instead of a traditional mux, use a priority encoder to select the active input. This converts the selection problem into a bitwise operation.
+
+2. **Bitwise Selection**: For each bit position (0-15), independently select the correct input bit based on the priority-encoded selection.
+
+3. **Efficient Default Handling**: Use a bitwise OR reduction of the selection bits to detect invalid cases (sel >= 9) in parallel.
+
+4. **Power Optimization**: The priority encoding naturally gates unused inputs, reducing switching activity.
+
+Key advantages:
+- Parallel bitwise operations enable better timing
+- Priority encoding reduces logic depth
+- Natural power gating of unused inputs
+- Scalable to wider or more inputs
+- No need for nested case statements

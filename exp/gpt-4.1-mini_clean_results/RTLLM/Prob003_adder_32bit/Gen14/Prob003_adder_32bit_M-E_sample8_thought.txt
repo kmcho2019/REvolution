@@ -1,0 +1,13 @@
+To enhance the carry-lookahead structure and reduce carry propagation delay within each 16-bit block, I will implement a hierarchical carry-lookahead architecture inside the 16-bit CLA.
+
+Specifically, I will divide the 16-bit block into four groups of 4 bits each. For each 4-bit group, I will compute group propagate and generate signals and generate carry-out signals using the classical carry-lookahead logic formula.
+
+Then, these group signals will be combined at a higher level to compute carries into each group, thus avoiding a long ripple of carries and allowing carry computation in parallel within each block.
+
+At the top level, the 32-bit adder consists of two such 16-bit hierarchical CLA blocks chained via carry-out/carry-in.
+
+This hierarchical approach reduces critical path length within each 16-bit block and better exploits the carry-lookahead advantage while keeping code clean and modular.
+
+The inputs/outputs follow the specified bit-widths and naming conventions.
+
+The code uses generate loops for clarity and reusability.

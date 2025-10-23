@@ -1,0 +1,5 @@
+Instead of using an always block with a case statement, I will use continuous assignments with combinational logic for each output separately. Each output will be driven by a simple equality comparison that matches the entire 16-bit scancode against the fixed constants for the arrow keys. This approach removes the need for an always block and explicit registers, relying solely on wire-based combinational assignments.
+
+This makes the design very straightforward and potentially easier to optimize, as each output is independently driven by a single equality check, with minimal logic and no implied priority. The logic will be purely combinational and synthesized as simple comparators. This also makes the outputs fully independent and allows synthesis tools to share comparators if needed or optimize them aggressively.
+
+The code is concise, self-explanatory, and can be easily extended by adding more equality checks for other scancodes if needed.

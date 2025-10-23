@@ -1,0 +1,11 @@
+Implement the 64-bit arithmetic shift register by splitting the shift operation into two steps: first perform an 8-bit shift if needed, then perform a 1-bit shift if needed. This approach uses a two-stage shift path controlled by the amount signals and reduces redundant shift calculations compared to computing all four shifts at once.
+
+For left shifts, zero fill the vacated bits; for right arithmetic shifts, sign-extend with the MSB of the current value.
+
+On each clock edge, if load is high, load `data` into the register; else if enable is high, perform the composite shift based on the amount input by chaining the 8-bit and 1-bit shifts.
+
+This decomposed shifting approach simplifies combinational logic and allows reusing the same shifting logic modules for 1-bit and 8-bit shifts, potentially reducing area and power, and improving timing by minimizing mux complexity.
+
+The shifts are done purely combinationally in the always block to produce the next state, using straightforward bit manipulations without a complex function.
+
+Hold the register if neither load nor ena is asserted.

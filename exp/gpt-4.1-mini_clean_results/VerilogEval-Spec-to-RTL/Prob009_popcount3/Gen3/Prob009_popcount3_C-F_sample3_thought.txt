@@ -1,0 +1,11 @@
+To fuse the two approaches, I will retain the explicit combinational logic from Example 1 that breaks down the population count into parity (odd count) and a majority condition (at least two bits set). This logic is minimal and well suited to simple gate implementation, avoiding the implicit adder logic. At the same time, I will represent the population count output as a standard 2-bit binary number from 0 to 3, exactly as Example 2 does, ensuring straightforward decoding and usability.
+
+The fusion involves:
+- Using the explicit logic for bitwise operations from Example 1 to implement out[0] and out[1].
+- Re-expressing those two bits as a proper 2-bit binary count by deriving the bit values so that out directly encodes the population count numerically (0 to 3).
+
+Because Example 1's out[1] is "at least two bits set" (which matches the MSB of count) and out[0] is parity (which is the LSB in a 2-bit count for three bits), these two signals can be combined without additional logic to form the count.
+
+Hence, the combined design yields an area- and power-efficient, easy-to-synthesize population count without using adders, and outputs a conventional 2-bit binary population count.
+
+This solution achieves the best of both worlds: minimal logic gates (from Example 1) and straightforward numeric output (from Example 2).

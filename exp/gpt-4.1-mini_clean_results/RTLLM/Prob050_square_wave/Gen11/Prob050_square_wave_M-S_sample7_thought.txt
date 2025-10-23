@@ -1,0 +1,7 @@
+Simplify the design by removing the reset input and enable gating to reduce complexity while maintaining the core functionality: incrementing a count every clock cycle and toggling the output when count reaches (freq-1). This keeps the behavior straightforward with minimal registers and combinational logic.
+
+Key points:
+- No reset, count and wave_out start undefined but stable after first cycles.
+- Direct equality check (count == freq-1) triggers toggle and count reset.
+- No gating on freq=0; in that case, toggling happens every clock, which is acceptable for a simplified version.
+- Fewer signals and simpler always block reduce complexity.

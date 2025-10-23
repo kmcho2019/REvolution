@@ -1,0 +1,10 @@
+Fuse the clear, minimal 2-bit binary FSM state encoding and explicit byte-wise out_bytes loading from Example 1, with the direct and clean state transition structure from Example 2. The fusion strategy is:
+
+- Use a 2-bit state register tracking byte positions (0=waiting, 1=byte2, 2=byte3).
+- Load bytes directly into fixed byte lanes (out_bytes[23:16], [15:8], [7:0]) to minimize combinational logic and critical path delay.
+- Only update the relevant byte portion of out_bytes each cycle to reduce unnecessary toggling and switching power.
+- Assert done only for one cycle immediately after the third byte is stored.
+- Keep synchronous active-high reset.
+- Drive done low by default in the sequential block to avoid glitches.
+- Keep next_state logic combinational and simple.
+- This approach merges the timing and power advantages of Example 1 with the straightforward FSM state progression of Example 2.

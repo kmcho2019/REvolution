@@ -1,0 +1,12 @@
+To create a superior decade counter (counting from 1 to 10) by fusing the two examples, I will:
+
+- Maintain synchronous active-high reset setting count to 1.
+- Use a separate combinational always block to compute the next count (`next_q`) for clear separation of combinational and sequential logic. This aids readability and synthesis optimization.
+- Use the minimal bitwise condition `q[3] & ~q[2] & q[1] & ~q[0]` to detect count 10 efficiently.
+- Avoid an explicit `count_enable` signal, as it adds redundant logic; instead, handle reset condition directly in the sequential block.
+- Use non-blocking assignments in the sequential always block.
+- By calculating `next_q` combinationally, the increment is done only once, and the logic to wrap at 10 is simple, which can help optimize timing and power.
+- Keep the register width at 4 bits for minimal area.
+- This approach fuses Example 1's separation of logic and Example 2's concise reset and counting mechanism without extra gating signals, balancing simplicity, performance, and power.
+
+Overall, the fused design will be minimal in logic, have clear separation between combinational and sequential logic, and be straightforward for synthesis to produce optimized PPA results.

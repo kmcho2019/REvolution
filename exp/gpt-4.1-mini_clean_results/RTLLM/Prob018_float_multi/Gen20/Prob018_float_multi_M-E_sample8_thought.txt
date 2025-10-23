@@ -1,0 +1,26 @@
+Implement a fully combinational IEEE-754 single-precision floating-point multiplier with a one-cycle latency and no pipeline. The module performs the entire multiplication in a single clock cycle after inputs are registered. 
+
+Key novel ideas:
+- Use direct combinational logic triggered by clk edge with inputs registered first.
+- Extract and classify operands into special cases (zero, inf, nan) immediately.
+- Compute mantissa product using 24x24 multiply in combinational logic.
+- Adjust exponent by adding inputs' exponents and subtracting bias.
+- Normalize mantissa by checking top bits and shifting left or right accordingly.
+- Perform round-to-nearest-even rounding using guard, round, and sticky bits.
+- Handle special cases explicitly: 
+    - if either input is NaN, output NaN.
+    - if either input is infinity and other zero, output NaN.
+    - if either input is infinity and other non-zero/non-NaN, output infinity with correct sign.
+    - if either input is zero and other not infinity or NaN, output zero with correct sign.
+- Overflow exponent sets output to infinity, underflow sets zero.
+- Sign is XOR of input signs.
+- Reset synchronously clears output.
+- No pipeline registers or intermediate stages—combinational with synchronous input latching.
+- This design is simpler, lower latency, ideal where throughput is less critical but latency minimal.
+- The latency is 1 cycle; inputs must remain stable for entire cycle.
+
+This approach trades off clock frequency and throughput for minimum latency and design simplicity. It suits small, single multiplication use or slower clock domains.
+
+The internal exponent uses 9 bits (8 input bits + carry bit) for sum and adjustment. Mantissa product is 48 bits as usual. The rounding considers the lower bits of the product appropriately.
+
+This design is clean, compact, and fully synchronous with a one-cycle latency and no pipeline stages.

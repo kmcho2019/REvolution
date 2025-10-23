@@ -1,0 +1,31 @@
+The original design attempts a serial, two-stage pipeline multiplier by extending the inputs with zeros at the MSB, shifting registers, and accumulating partial products over multiple clock cycles. However, the extension of inputs by adding 'size' zeros at MSB for both multiplicand and multiplier leads to misalignment, causing multiplier bits to be lost and partial products miscomputed.
+
+Improvement strategy:
+
+1. **Correct Input Extension**: Instead of adding zeros at MSB, extend the inputs to 2*size bits by adding zeros at LSB side. This keeps the multiplier bits intact for sequential processing and multiplicand aligned for shifting.
+
+2. **Generate Partial Products in Parallel**: As per the problem statement, use a generate block to create all partial products based on each bit of the multiplier:
+   - For each bit of multiplier, partial product is multiplicand shifted left by bit position i if multiplier bit i is 1; else zero.
+   
+3. **Two-level Pipeline Registers for Partial Sum Accumulation**:
+   - Stage 1 registers store the sum of partial products for the first half bits (e.g., bits [0:1] or [0:size/2-1]) of multiplier bits.
+   - Stage 2 registers store the sum of partial products for the second half bits and accumulate the final product.
+
+   Alternatively, since size=4, split partial product summation into two groups (bits 0 & 1, bits 2 & 3), each summed in a register stage. The sum of these stage 1 registers is registered in stage 2.
+
+4. **Clocking and Reset Behavior**:
+   - On reset, all pipeline registers and output are cleared.
+   - On clk posedge, pipeline registers update their sums:
+     - Stage 1 regs latch sum of first half partial products.
+     - Stage 2 regs latch sum of second half partial products plus Stage 1 regs.
+   - Output register latches final product.
+
+5. **Output**:
+   - mul_out updated synchronously with stage 2 registers to reflect final product.
+
+6. **Parameterization**:
+   - Use parameter 'size' = 4 to allow scalability.
+
+This method realizes a combinational generation of partial products, then pipelines their accumulation over two clock cycles by using two levels of registers, matching the problem requirements for two register stages and maintaining synchronous reset behavior.
+
+This corrected approach respects the input extension requirement (extension by size bits at MSB replaced with LSB extension for correctness), uses generate block partial product computation, and pipelines partial sums appropriately.

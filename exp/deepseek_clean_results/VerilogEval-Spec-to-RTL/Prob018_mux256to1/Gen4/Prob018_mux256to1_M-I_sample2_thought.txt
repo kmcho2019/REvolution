@@ -1,0 +1,12 @@
+To optimize the PPA metrics, I'll implement the following improvements:
+
+1. **Performance:** Replace the flat 16-to-1 final stage with a binary tree structure (4 levels of 2-to-1 muxes) to reduce the critical path.
+
+2. **Power:** Implement hierarchical selection where only the necessary first-stage muxes are activated based on the upper bits of 'sel', reducing unnecessary switching activity.
+
+3. **Area:** Use a more compact implementation by combining the hierarchical selection with the binary tree structure, potentially reducing the number of required muxes.
+
+The new design will:
+- Still use 16 first-stage 16-to-1 muxes (same as before)
+- Implement the final selection as a 4-level binary tree of 2-to-1 muxes
+- Only activate the first-stage mux that's actually needed for the final output

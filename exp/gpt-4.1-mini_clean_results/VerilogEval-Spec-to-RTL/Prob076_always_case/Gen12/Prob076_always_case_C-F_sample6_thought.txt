@@ -1,0 +1,11 @@
+Combine the directness and synthesis-friendliness of a simple case statement with the modularity of a function for clean code structure, but instead of a separate always block and function call, use an assign statement with a localparam array of inputs indexed by sel. This uses Verilog's packed array feature to represent data inputs as an array, allowing direct indexing, removing the need for an explicit case statement or function call, thus potentially improving synthesis clarity and optimizing area/power by letting synthesis tools infer an efficient mux.
+
+The output is declared as wire (default for assign), making the design fully combinational and concise. The default output when sel is out of range is 0, achieved by checking sel < 6 and indexing accordingly.
+
+This fusion captures:
+- Clarity of mapping inputs by index (like a vector or array) instead of multiple case labels
+- Functional and compact combinational assignment for clarity and efficiency
+- Synthesis friendliness by using simple indexed lookup without explicit function or large case statements
+- Minimal lines of code with explicit defaulting to zero outside valid sel range.
+
+This approach achieves improved readability, slight potential synthesis optimizations, and adherence to the problem constraints.

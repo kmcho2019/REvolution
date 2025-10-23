@@ -1,0 +1,9 @@
+The feedback indicates a potential issue with the initial block's synthesis behavior and possible race conditions. To improve this:
+
+1. Remove the initial block since its synthesis behavior can be tool-dependent
+2. Instead, rely on the natural power-up state of FFs (typically 0) in most technologies
+3. This makes the design more portable across different synthesis tools
+4. The XOR feedback will still work correctly after power-up, regardless of initial state
+5. The circuit maintains the same functionality: out(t) = in(t-1) XOR out(t-1)
+6. This approach is more robust for synthesis while maintaining minimal PPA impact
+7. If a specific initial state is absolutely required, an explicit reset would be needed (but not specified in requirements)

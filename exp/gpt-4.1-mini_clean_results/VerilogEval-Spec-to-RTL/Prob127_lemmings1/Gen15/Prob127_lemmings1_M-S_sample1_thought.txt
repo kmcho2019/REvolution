@@ -1,0 +1,16 @@
+The Lemming state toggles to walk_right (state=1) when bumped on the left, to walk_left (state=0) when bumped on the right, and toggles when bumped on both sides simultaneously. When no bumps occur, it holds the current state.
+
+This behavior can be expressed as:
+
+- If both bumps: next_state = ~state (toggle)
+- Else if bump_left only: next_state = 1 (walk_right)
+- Else if bump_right only: next_state = 0 (walk_left)
+- Else: next_state = state (hold)
+
+Implementing this in a simple conditional within the always block simplifies logic clarity and synthesis. It avoids complex boolean expressions while keeping all cases explicit.
+
+The asynchronous positive-edge reset sets the state to walk_left (0).
+
+Outputs remain directly derived from the state as it's a Moore FSM.
+
+This approach reduces logic complexity and keeps the FSM behavior correct and easy to verify.

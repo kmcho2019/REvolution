@@ -1,0 +1,11 @@
+The primary issue comes from the bit slicing used for rotation concatenations, which is correct logically but uses descending index ranges that can confuse synthesis tools or simulators. For clarity, correctness, and consistency, it is better to explicitly use the standard rotate-left pattern:
+
+- For an 8-bit rotate left by N bits, the output bits are `{input[WIDTH-N-1:0], input[WIDTH-1:WIDTH-N]}`.
+
+To avoid confusion and potential indexing errors, rewrite the slicing using clear ascending indices where possible or confirm the indexing is always descending in a consistent manner. Additionally, rename the mux module to `mux2X1` as per the original problem statement for clarity.
+
+Implement the three rotation stages using the mux2X1 module, each performing rotate-left by 4, 2, and 1 bit, controlled by ctrl[2], ctrl[1], and ctrl[0] respectively.
+
+This approach fixes the indexing problems, aligns with the original specification, and clarifies the code structure.
+
+Also, add comments to improve readability.

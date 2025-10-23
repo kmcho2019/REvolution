@@ -1,0 +1,10 @@
+To improve the previous solution, I aim to optimize for performance (reduce critical path delay) and power by avoiding a full ripple carry adder and leveraging the Verilog built-in addition operator for synthesis optimization. Modern synthesis tools map '+' operators efficiently to carry-lookahead or carry-select adders, reducing delay and switching activity.
+
+The improvement strategy is:
+- Use the built-in '+' operator for addition and subtraction with conditional inversion and carry-in, which synthesis tools will optimize.
+- Implement subtraction by adding the two's complement of b (invert and add 1) when do_sub is high.
+- Calculate the zero flag using a simple reduction NOR of the output, which is combinational and efficient.
+- Keep output ports as reg with a single always_comb block, to maintain the interface and synthesis compatibility.
+- This reduces manual gate-level carry chain logic, letting synthesis optimize the adder.
+
+This approach results in smaller critical path delay and potentially less power by letting synthesis use efficient adder architectures. It also reduces code complexity and improves readability.

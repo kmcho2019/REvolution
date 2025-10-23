@@ -1,0 +1,13 @@
+To improve PPA while maintaining correctness, simplify the decimal 10 detection from the bitwise logic (q[3] & ~q[2] & q[1] & ~q[0]) to a straightforward 4-bit equality check (q == 4'd10). Modern synthesis tools handle equality comparators efficiently, often optimizing them better than manually constructed bitwise expressions, potentially reducing area and power.
+
+Additionally, integrate the synchronous reset directly in the sequential block to reduce combinational logic and simplify the design, as synchronous reset is standard practice and often better for timing. This removes the combinational next_q signal, further reducing power by minimizing toggle activity in combinational logic.
+
+Finally, since this is a small counter, the simplified logic and fewer signals should reduce overall switching activity and area slightly, improving power and area without harming timing.
+
+Summary of improvements:
+1. Replace bitwise decimal 10 detection with q == 4'd10.
+2. Move synchronous reset logic into the sequential always block.
+3. Remove the combinational next_q signal and next-state block.
+4. Use a straightforward sequential counter with synchronous reset and count wrap.
+
+This yields a simpler, cleaner, and potentially more optimized design for area and power while preserving timing.

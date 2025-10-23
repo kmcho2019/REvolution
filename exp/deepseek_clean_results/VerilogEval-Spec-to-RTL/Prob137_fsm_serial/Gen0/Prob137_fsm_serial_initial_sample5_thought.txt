@@ -1,0 +1,8 @@
+To implement a byte receiver FSM for a serial communication protocol with start bit (0), 8 data bits, and stop bit (1), we need to:
+1. Create states for IDLE (waiting for start bit), RECEIVING (collecting 8 data bits), and STOP (verifying stop bit)
+2. Use a 3-bit counter to track which data bit we're receiving (0-7)
+3. Reset to IDLE state on reset signal
+4. Transition from IDLE to RECEIVING when start bit (0) is detected
+5. In RECEIVING state, count 8 bits then transition to STOP
+6. In STOP state, verify stop bit (1) and assert 'done' if correct
+7. If stop bit is missing, stay in STOP until 1 is seen before returning to IDLE

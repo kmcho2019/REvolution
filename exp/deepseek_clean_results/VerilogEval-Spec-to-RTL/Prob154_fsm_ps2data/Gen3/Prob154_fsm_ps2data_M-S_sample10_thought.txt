@@ -1,0 +1,11 @@
+The design can be further simplified by:
+1. Using a 2-bit counter to track the byte position (0=IDLE, 1=first byte, 2=second byte)
+2. Directly shifting incoming bytes into the output register without intermediate storage
+3. Generating 'done' when counter wraps from 2 back to 0
+4. Simplifying reset logic to only clear the counter
+5. Making output don't-care when not done to reduce logic
+
+Key optimizations:
+- Remove explicit output register clearing on reset (output is don't-care when not done)
+- Combine byte storage and counter increment into single operations
+- Simplify done logic to just check counter transition

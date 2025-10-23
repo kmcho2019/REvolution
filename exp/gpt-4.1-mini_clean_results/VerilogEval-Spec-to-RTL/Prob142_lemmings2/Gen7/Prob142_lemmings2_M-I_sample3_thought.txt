@@ -1,0 +1,21 @@
+To optimize the existing design for better PPA, we can encode the FSM states into a single 2-bit register instead of two separate bits. This allows the synthesis tool to better optimize state registers and logic, potentially reducing area and improving timing.
+
+Encoding:
+- 2'b00: walking left
+- 2'b01: walking right
+- 2'b10: falling left
+- 2'b11: falling right
+
+This encoding keeps direction and falling combined, simplifying next state logic with a case statement. Bump inputs affect next state only if in walking states, and ground controls transition between walking and falling while preserving direction.
+
+Using a single state register reduces the number of flip-flops from 2 to 2 (same count but combined), but the logic optimization opportunity is greater.
+
+The asynchronous reset will assign state to walking left (2'b00).
+
+Outputs are decoded from state: if falling (state[1]==1), aaah=1; walk_left if state is walking left or falling left (state[0]==0); walk_right if state is walking right or falling right (state[0]==1).
+
+This structured FSM approach with case statements may reduce combinational logic depth and improve synthesis mapping.
+
+Additionally, replacing multiple nested ifs with a clear case statement enhances readability and may help tools optimize better.
+
+This strategy is likely to reduce area and improve timing marginally while maintaining the same functionality and asynchronous reset behavior.

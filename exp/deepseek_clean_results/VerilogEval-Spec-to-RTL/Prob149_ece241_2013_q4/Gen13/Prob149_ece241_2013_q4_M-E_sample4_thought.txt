@@ -1,0 +1,14 @@
+Here's a novel approach using a priority encoder and transition detector:
+
+1. **Priority-Based Level Detection**: Instead of explicit state encoding, use a priority encoder to determine the highest active sensor. This naturally handles the vertical sensor arrangement where higher sensors imply lower ones are also active.
+
+2. **Transition History**: Maintain a 2-bit history of previous levels to detect rising/falling transitions more reliably than just comparing to the immediate previous state.
+
+3. **Output Generation**:
+   - Flow rates are determined by simple combinatorial logic based on current level
+   - Supplemental flow (dfr) activates when we detect a rising transition pattern in the history bits
+   - Invalid sensor patterns maintain previous outputs
+
+4. **Reset Handling**: Forces all outputs high and initializes history to indicate a long-term low level state.
+
+This approach is more robust to sensor glitches and provides cleaner transition detection through the history buffer.

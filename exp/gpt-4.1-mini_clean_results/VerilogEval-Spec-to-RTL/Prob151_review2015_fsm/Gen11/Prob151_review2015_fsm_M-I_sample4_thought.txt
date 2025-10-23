@@ -1,0 +1,7 @@
+To optimize the FSM for better timing and power, I will use one-hot state encoding which simplifies next-state logic and reduces combinational logic depth. This helps improve timing (larger WNS), reduces power due to fewer toggling bits, and can be area efficient on FPGA. 
+
+Additionally, I will keep the pattern detection states separate but use one-hot encoding, and keep the SHIFT as four sequential states to maintain clarity and exact shift cycle count. The outputs remain Moore type, directly derived from states for stable output timing.
+
+The synchronous reset and positive edge clocking remain unchanged. The FSM will update the state register on the clock edge, with combinational next state logic implemented as a function of current one-hot encoded states and inputs.
+
+This approach keeps the same functionality but optimizes PPA by simplifying combinational logic with one-hot encoding, expected to reduce critical path delay and switching power.

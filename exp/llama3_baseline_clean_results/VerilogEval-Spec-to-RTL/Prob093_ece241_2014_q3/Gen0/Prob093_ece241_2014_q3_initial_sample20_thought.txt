@@ -1,0 +1,19 @@
+To implement the given Karnaugh map using a 4-to-1 multiplexer and 2-to-1 multiplexers, we need to analyze the map and identify the required inputs for each multiplexer. 
+
+Looking at the map, we can see that for ab = 00, the output is c'd' (0 when c or d is 1). For ab = 01 and ab = 11, the output is c'd (0 when c is 1 or d is 0). For ab = 10, the output is c + d' (1 when c is 1 or d is 0). 
+
+We can use a 2-to-1 multiplexer to select between c'd and c'd', and another 2-to-1 multiplexer to select between c'd' and c + d'. The 4-to-1 multiplexer can then select between the outputs of these two multiplexers and the other two required inputs.
+
+However, analyzing the K-map we can see it can be implemented more simply by selecting inputs to the 4-to-1 multiplexer as follows: 
+- For ab = 00, select c'd' = c'd'
+- For ab = 01, select d'
+- For ab = 11, select c
+- For ab = 10, select c + d'
+
+Thus, we need to implement the following logic: 
+- mux_in[0] = c'd'
+- mux_in[1] = d'
+- mux_in[2] = c
+- mux_in[3] = c + d'
+
+This logic can be implemented using 2-to-1 multiplexers for mux_in[0] and mux_in[3]. The other two inputs can be connected directly.

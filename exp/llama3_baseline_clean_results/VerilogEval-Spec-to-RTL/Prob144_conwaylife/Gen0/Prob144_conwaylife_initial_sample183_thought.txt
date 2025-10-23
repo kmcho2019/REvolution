@@ -1,0 +1,9 @@
+To implement the TopModule, we will create a 16x16 grid represented by a 256-bit vector. The grid will be updated every clock cycle based on the rules of the game. We will use a load signal to load the initial state of the grid.
+
+The main idea is to calculate the number of neighbors for each cell and then update the cell's state based on the rules of the game. Since the grid is a toroid, we need to handle the edges and corners carefully to ensure that the sides wrap around correctly.
+
+We will use a nested loop to iterate over each cell in the grid and calculate the number of its neighbors. For each cell, we will check all eight possible neighboring positions, taking into account the toroid nature of the grid.
+
+Once we have calculated the number of neighbors for each cell, we will update the cell's state based on the rules of the game. If the cell has 0-1 neighbors, it becomes 0. If it has 2 neighbors, its state does not change. If it has 3 neighbors, it becomes 1. If it has 4 or more neighbors, it becomes 0.
+
+We will use a separate 256-bit vector to store the updated state of the grid and then assign it to the output q at the next clock edge.

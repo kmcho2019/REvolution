@@ -1,0 +1,17 @@
+Optimization strategy based on PPA metrics:
+1. Timing Critical Path Improvement:
+   - Break down the change_direction logic into simpler stages
+   - Move direction decision to previous cycle to reduce combinatorial path
+2. Explicit Power Optimization:
+   - Add explicit clock gating for wave register updates
+   - Only enable updates when needed (not during direction changes)
+3. Area Optimization:
+   - Replace full comparators with simpler boundary detection
+   - Use single-bit direction register more efficiently
+4. Maintain Functionality:
+   - Preserve clean triangle wave generation
+   - Keep same reset behavior
+5. Implementation Approach:
+   - Pre-compute next direction one cycle early
+   - Use simpler arithmetic with carry lookahead
+   - Add explicit clock gating control

@@ -1,0 +1,9 @@
+To implement the finite-state machine that controls the timer, we will design a Moore machine with five states: IDLE, START_DETECTED, SHIFT_BITS, COUNTING, and DONE. 
+
+- IDLE: This is the initial state where the state machine looks for the start sequence (1101).
+- START_DETECTED: In this state, the state machine checks for the start sequence and asserts shift_ena for exactly 4 clock cycles to shift in the duration bits.
+- SHIFT_BITS: In this state, the state machine asserts shift_ena for 4 clock cycles to shift in the duration bits.
+- COUNTING: The state machine then asserts counting to indicate that it is waiting for the counters to finish counting.
+- DONE: After the counters finish counting, the state machine asserts done to notify the user and waits for ack to reset.
+
+We will use a counter to keep track of the number of bits shifted in the SHIFT_BITS state. The state machine will transition from one state to another based on the current state and the inputs (data, done_counting, ack).

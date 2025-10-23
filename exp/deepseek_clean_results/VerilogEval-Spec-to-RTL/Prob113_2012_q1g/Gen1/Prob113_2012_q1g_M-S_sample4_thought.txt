@@ -1,0 +1,17 @@
+To simplify the implementation, let's analyze the Karnaugh map more carefully and find the most efficient grouping of 1's:
+
+1. For x[3:2] = 00: f=1 only when x[1:0] is 00 or 10
+   - This can be expressed as: ~x[3] & ~x[2] & ~x[0] & (x[1] ^ x[0])
+
+2. For x[3:2] = 11: f=1 when x[1:0] is 00, 01, or 11
+   - This is equivalent to x[3] & x[2] & (x[1] | ~x[0])
+
+3. For x[3:2] = 10: f=1 when x[1:0] is 00, 01, or 10
+   - This can be written as x[3] & ~x[2] & (~x[1] | ~x[0])
+
+The x[3:2] = 01 case is always 0 and doesn't need any terms.
+
+Combining these observations gives us a much simpler expression:
+f = (~x[3] & ~x[2] & ~x[0]) | 
+    (x[3] & x[2] & (x[1] | ~x[0])) | 
+    (x[3] & ~x[2] & (~x[1] | ~x[0]))

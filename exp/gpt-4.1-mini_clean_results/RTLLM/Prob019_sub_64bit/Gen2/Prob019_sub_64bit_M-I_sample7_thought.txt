@@ -1,0 +1,23 @@
+The original implementation is functionally correct and minimal, performing subtraction and overflow detection using straightforward combinational logic. To optimize PPA (performance, power, area), the following improvements are considered:
+
+1. **Performance**: Use the fact that overflow in subtraction can be detected via the carry-out or borrow, but since this is signed arithmetic, the classical sign-based overflow detection is already minimal and efficient. However, explicitly computing the overflow from the MSB subtraction carry may increase complexity, so we retain the simple sign-bit logic.
+
+2. **Power**: Introduce operand change gating by registering inputs to reduce glitching on inputs if synchronous operation is acceptable. However, since no clock input was specified, we keep it purely combinational for general use.
+
+3. **Area**: To reduce redundant logic, merge the overflow condition into a single expression with fewer terms and reduce wiring.
+
+4. **Code clarity and style**: Use a wire to hold intermediate XOR signals to simplify the overflow condition:
+
+   Signed overflow in subtraction (A - B) can be detected by:
+   ```
+   overflow = (sign_A != sign_B) && (sign_res != sign_A)
+   ```
+   This expression covers both positive and negative overflow cases succinctly.
+
+This expression reduces logic gates and simplifies timing, potentially improving area and power.
+
+Final approach:
+- Perform subtraction using assign.
+- Detect overflow using the XOR-based succinct expression.
+
+This minor change enhances clarity and may help synthesis tools optimize further.

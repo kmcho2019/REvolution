@@ -1,0 +1,8 @@
+Use a simple 3-bit counter state that directly counts consecutive ones (0 to 7+). On input 0, reset count to 0. On input 1, increment count up to 7 (error state). Outputs are generated combinationally based on current state and input, then registered to assert outputs for one full clock cycle after detection. This avoids the large case statement by using arithmetic in next-state logic, simplifying the FSM.
+
+- next_state = (in == 1) ? min(state+1, 7) : 0
+- disc = (state == 5) && (in == 0)
+- flag = (state == 6) && (in == 0)
+- err = (next_state == 7)
+
+This yields the same behavior with simpler combinational logic.

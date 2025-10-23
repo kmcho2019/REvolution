@@ -1,0 +1,24 @@
+A clean alternative approach is to build a finite state machine with four states:
+
+1. SEARCH: Continuously shift in serial bits to detect the pattern 1101.
+2. LOAD: After pattern detection, shift in exactly 4 bits MSB-first to form the delay value.
+3. COUNT: Use a 16-bit counter counting from 0 up to ((delay+1)*1000)-1 cycles to precisely measure the delay duration. During counting, output the current remaining count as `count`, changing every 1000 cycles. To do this, use the counter's upper bits (divide by 1000) to determine the current "tick" and then calculate remaining ticks.
+4. WAIT_ACK: When counting finishes, assert `done` and wait for `ack` input before returning to SEARCH.
+
+Key points:
+
+- The timer counts precisely (delay+1)*1000 cycles by counting cycles from 0 to (delay+1)*1000 - 1.
+- Remaining tick = delay - (counter / 1000); integer division is done by a small comparator/logic.
+- Output `count` is stable for full 1000 cycles, counting down from delay to zero.
+- This eliminates off-by-one and tick-counter decrement complexities by having a single free-running cycle counter and combinational logic for count output.
+- During SEARCH, use a 4-bit shift register to detect pattern 1101.
+- In LOAD, shift in 4 bits MSB-first into delay register.
+- The synchronous active-high reset resets all registers and FSM to SEARCH.
+- Only count input bits during SEARCH and LOAD states.
+- The data input is ignored during COUNT and WAIT_ACK.
+- The done signal asserts only during WAIT_ACK.
+- The counting signal asserts only during COUNT.
+- The count output is don't care outside COUNT.
+- All outputs are combinational derived from current state and counters for timing clarity.
+
+This architecture is conceptually simpler and removes the need for multiple counters and decrement logic, preventing off-by-one bugs.

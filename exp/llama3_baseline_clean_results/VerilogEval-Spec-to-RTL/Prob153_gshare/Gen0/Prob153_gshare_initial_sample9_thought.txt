@@ -1,0 +1,9 @@
+To implement the TopModule, we need to design a module that contains a 7-bit global branch history register, a 128-entry table of two-bit saturating counters, and logic to handle prediction and training requests. 
+
+The prediction logic should hash the PC and global history using XOR to generate a 7-bit index, which is used to access the saturating counter table. The predicted branch direction is determined by the value of the saturating counter.
+
+The training logic should update the saturating counter table based on the actual branch outcome and whether the branch was a misprediction. If the branch was a misprediction, the global branch history register should be recovered to the state immediately after the mispredicting branch completes execution.
+
+We need to handle the case where training and prediction requests occur in the same cycle, with training taking precedence. We also need to ensure that the prediction request sees the PHT state before training when training and prediction of the same PHT entry happen at the same time.
+
+The module should be reset asynchronously with an active-high reset signal.

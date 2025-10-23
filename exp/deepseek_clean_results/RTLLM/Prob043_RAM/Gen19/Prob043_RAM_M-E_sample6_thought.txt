@@ -1,0 +1,15 @@
+Bank-Switched Pipelined RAM Architecture:
+1. Memory Partitioning: Split the RAM into two identical banks (Bank A and Bank B) to allow simultaneous read/write operations without contention
+2. Ping-Pong Operation: Alternate writes between banks while maintaining a consistent read path
+3. Pipelined Reads: Add a register stage to the read path for better timing at high frequencies
+4. Write Collision Handling: Implement priority logic when simultaneous read/write to same address occurs
+5. Dynamic Bank Selection: Use LSB of write address to determine active write bank
+6. Initialization: Use synchronous reset for better synthesis compatibility across tools
+
+Key Advantages:
+- Eliminates read/write port contention through bank switching
+- Improved timing with pipelined read path
+- Maintains single-cycle read latency for most cases
+- Graceful handling of read/write collisions
+- Better scalability for larger memory sizes
+- More predictable timing characteristics

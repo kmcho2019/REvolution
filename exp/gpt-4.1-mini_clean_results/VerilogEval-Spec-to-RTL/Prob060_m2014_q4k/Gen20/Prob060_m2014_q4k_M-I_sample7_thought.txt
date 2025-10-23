@@ -1,0 +1,15 @@
+The original design is clean and meets the requirements well. However, synchronous reset causes all flip-flops to toggle on reset, which can increase power consumption during reset. Using an asynchronous reset that is still synchronized internally (i.e., asynchronous assertion but synchronous deassertion) could reduce power consumption at reset while maintaining timing predictability.
+
+Additionally, eliminating the generate loop in favor of a single always block with a shift register vector can slightly reduce area and improve readability. This also reduces module instantiations and could help synthesis tools infer efficient shift register resources or FPGA-specific primitives like SRL.
+
+Thus, the improved design uses a single always block to implement the 4-bit shift register with synchronous load of zero on asynchronous active-low reset. The asynchronous reset is synchronized on the clock’s positive edge by registering the reset signal internally to prevent metastability issues, maintaining stable synchronous logic.
+
+This approach reduces area by removing submodule overhead, reduces power by eliminating synchronous reset toggling, and may improve timing due to simpler combinational logic. It preserves the active-low reset semantics and functionality.
+
+Summary of improvements:
+- Replace synchronous active-low reset with asynchronous active-low reset synchronized internally (safe asynchronous reset).
+- Remove generate loop and DFF module, implement shift register in a single always block.
+- Use vector for shift register state, minimizing logic and improving readability.
+- Maintain positive-edge clock triggering and reset functionality.
+
+These changes improve power and area metrics while maintaining or improving timing.

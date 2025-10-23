@@ -1,0 +1,27 @@
+Novel approach using XOR-based edge detection with state tracking:
+
+1. Core Idea:
+   - Use XOR to detect any bit changes between cycles
+   - Combine with previous state to specifically identify falling edges
+   - Implement a "latch" mechanism that remembers detected edges until reset
+
+2. Key Features:
+   - XOR operation identifies changed bits (both rising and falling edges)
+   - AND with previous value isolates falling edges (1→0 transitions)
+   - Output register acts as a sticky latch that remembers all detected edges
+
+3. Advantages:
+   - More efficient than pipeline approaches (only needs one previous state register)
+   - Clear and simple logic for edge detection
+   - Naturally handles all 32 bits in parallel
+   - Output remains set until explicit reset
+
+4. Implementation:
+   - Single register to store previous input value
+   - XOR detects changed bits
+   - AND with previous value filters for falling edges
+   - OR operation accumulates detected edges in output
+
+5. Reset Behavior:
+   - Clears both the history register and output
+   - Starts fresh detection after reset

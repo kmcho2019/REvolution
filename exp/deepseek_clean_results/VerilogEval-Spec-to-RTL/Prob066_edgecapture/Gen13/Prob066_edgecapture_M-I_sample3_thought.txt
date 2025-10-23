@@ -1,0 +1,13 @@
+Improved solution with correct edge detection timing:
+
+1. **Two-Stage Pipeline for Edge Detection**: First register stores the input from two cycles ago (prev_in), second register stores input from one cycle ago (current_in). This ensures we're comparing values from consecutive cycles.
+
+2. **Proper Edge Timing**: Falling edges are detected between prev_in (cycle n-1) and current_in (cycle n), then captured in cycle n+1. This guarantees correct timing for edge capture.
+
+3. **Maintained Sticky Behavior**: Once a falling edge is detected, the corresponding output bit remains set until reset, as required.
+
+Key improvements:
+- Correct timing relationship for edge detection
+- Clear pipeline stages for proper sequential logic
+- Maintains all original functionality
+- No race conditions in edge capture

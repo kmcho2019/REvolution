@@ -1,0 +1,15 @@
+The module TopModule will be implemented as a finite state machine (FSM) with four states: 
+- IDLE: waiting for the first byte of a message
+- BYTE1: first byte of the message has been received
+- BYTE2: second byte of the message has been received
+- DONE: third byte of the message has been received and the done signal is asserted
+
+The FSM will transition between these states based on the input in and the current state. 
+When the FSM is in the IDLE state, it will discard input bytes until it receives a byte with in[3] = 1. 
+Once it receives such a byte, it will transition to the BYTE1 state and store the byte. 
+In the BYTE1 and BYTE2 states, it will receive and store the next two bytes. 
+Once the third byte is received, it will transition to the DONE state and assert the done signal. 
+The out_bytes output will be valid whenever the done signal is asserted.
+
+To implement the datapath, we will use registers to store the received bytes and a counter to keep track of the current state. 
+We will also use a combinational logic to determine the next state and to generate the out_bytes output.

@@ -1,0 +1,14 @@
+The existing design efficiently detects the sequence 10011 using a 3-bit binary-encoded Mealy FSM, with straightforward next-state logic and Mealy output. To further optimize PPA:
+
+- **Performance:**  
+  Replace the next-state function with direct combinational logic using case statements inside an always @(*) block, avoiding function overhead and improving synthesis clarity. This typically yields better synthesis results and easier timing closure.
+
+- **Power:**  
+  Minimize unnecessary toggling by separating the output logic to combinational continuous assignment to avoid extra registers or logic levels.
+
+- **Area:**  
+  Retain binary state encoding (3 bits) for compactness, but simplify next-state logic without the function. Use synchronous reset and minimal logic to reduce area.
+
+Additionally, explicitly define state registers and next_state in an always block to match typical synthesis style and ensure tools optimize well. Output remains purely combinational based on current state and input for fast response.
+
+This approach should maintain correctness while potentially improving timing and slightly reducing area by better coding style and avoiding function overhead.

@@ -1,0 +1,35 @@
+module freq_divbyodd #(parameter NUM_DIV = 5) (
+    input  wire clk,
+    input  wire rst_n,
+    output reg  clk_div
+);
+
+    // Parameter check
+    initial begin
+        if (NUM_DIV < 3 || (NUM_DIV % 2) == 0) begin
+            $error("NUM_DIV must be an odd number >= 3");
+        end
+    end
+
+    localparam HALF_COUNT = (NUM_DIV - 1) / 2;
+    localparam CNT_WIDTH = $clog2(NUM_DIV);
+
+    reg [CNT_WIDTH-1:0] counter;
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            counter <= 0;
+            clk_div <= 0;
+        end else begin
+            if (counter == NUM_DIV - 1)
+                counter <= 0;
+            else
+                counter <= counter + 1;
+
+            // Toggle clk_div at half_count and at the terminal count
+            if (counter == HALF_COUNT || counter == NUM_DIV - 1)
+                clk_div <= ~clk_div;
+        end
+    end
+
+endmodule

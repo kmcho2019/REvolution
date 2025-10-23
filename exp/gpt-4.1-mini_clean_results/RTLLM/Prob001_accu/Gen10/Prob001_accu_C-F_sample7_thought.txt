@@ -1,0 +1,11 @@
+Fusion strategy to create a superior solution:
+
+1. Use synchronous active-low reset for deterministic behavior.
+2. Combine the enable gating from Example 1 to minimize register toggling by updating accumulator and count only when valid_in is high, reducing dynamic power.
+3. Use a combinational wire (`acc_next`) for clearer timing separation and better synthesis optimization, as in Example 2.
+4. Generate valid_out as a synchronous one-cycle pulse exactly when four inputs are accumulated, resetting accumulator and count immediately in the same cycle.
+5. Assign default valid_out=0 every clock cycle to avoid glitches and ensure clean pulse generation.
+6. Keep accumulator 10 bits and count 2 bits to cover the max sum and count without excess overhead.
+7. Maintain clean, consistent non-blocking assignments inside the sequential always block for synchronous operation.
+8. The design minimizes power by preventing unnecessary toggling when valid_in=0, improves timing clarity via combinational acc_next, and remains area-efficient by using minimal registers and simple logic.
+9. This fusion blends power gating from Example 1 with timing clarity from Example 2, producing a well-balanced, clean, and efficient accumulator module.

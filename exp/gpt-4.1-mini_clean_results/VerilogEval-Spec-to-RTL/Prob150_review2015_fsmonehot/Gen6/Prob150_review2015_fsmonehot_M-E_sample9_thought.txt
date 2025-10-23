@@ -1,0 +1,7 @@
+Instead of directly ORing each state separately for next-state decoding, this design first generates intermediate signals that capture groups of state conditions, then uses those to define next-state signals. This modular approach simplifies debugging and further logic optimization.
+
+We use one-hot state decoding as per the given vector, but build next-state expressions step-by-step: first detect "source" states per transition pattern, then combine with input conditions. This approach emphasizes clarity by capturing intermediate terms like "in_S_states_d0" (states that go to S when d=0), and handles "always go to next cycle" transitions through direct next-state assignments from each B-state.
+
+Outputs are then derived from current states straightforwardly, while next-state outputs indicate when the FSM will move to that particular state next cycle, allowing external logic to track upcoming FSM states if needed.
+
+This modular, staged decomposition facilitates easier modification or extension, supports improved timing by exposing common sub-expressions, and provides a clean separation of concerns between decoding, combinational next-state logic, and outputs.

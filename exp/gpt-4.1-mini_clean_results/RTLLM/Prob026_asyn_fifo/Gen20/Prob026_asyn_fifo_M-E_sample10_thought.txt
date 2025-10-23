@@ -1,0 +1,21 @@
+Implement an asynchronous FIFO with parameterizable WIDTH and DEPTH using a modular approach with clean separation of concerns:
+
+1. Dual-port RAM submodule stores data with separate write and read ports, each synchronous to their own clock domains.
+
+2. Write and read pointers use binary counters internally, converted to Gray code for safe synchronization.
+
+3. For pointer synchronization, apply two-stage flip-flop synchronizers to cross domains, implemented as separate small modules for clarity.
+
+4. The FIFO full and empty logic uses Gray-coded pointers with the classic asynchronous FIFO rules:
+   - Empty: read pointer Gray equals synchronized write pointer Gray in read domain.
+   - Full: write pointer Gray equals read pointer Gray in write domain with top two bits inverted.
+
+5. Pointer increments happen only when write/read enable signals are asserted and the FIFO is not full/empty respectively.
+
+6. For address calculation, use the binary pointer lower bits derived from Gray code converted back to binary.
+
+7. The dual-port RAM read data output is registered in the read clock domain.
+
+8. To improve modularity and clarity, provide dedicated functions for Gray/binary conversion.
+
+This design differs from the example by having dedicated synchronizer modules for pointer crossing, uses explicit binary pointer conversion from Gray for addressing, and registers the read data output separately. The design ensures asynchronous clock domain crossing robustness while maintaining parameterizable depth and width.

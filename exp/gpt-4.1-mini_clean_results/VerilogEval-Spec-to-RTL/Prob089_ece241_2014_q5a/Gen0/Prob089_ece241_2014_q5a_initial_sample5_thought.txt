@@ -1,0 +1,29 @@
+To implement a serial 2's complementer as a Moore state machine, we follow this idea:
+
+The 2's complement of a binary number can be obtained by scanning bits from LSB to MSB, copying bits until the first '1' bit is found (this is the +1 in the 2's complement), and then flipping all subsequent bits.
+
+Therefore, the FSM has two states:
+
+- WAIT_FOR_RESET: when asynchronous reset is asserted, output zeros, no processing.
+- COPY: before the first '1' bit is encountered, output bits are the same as input bits.
+- FLIP: after the first '1' is encountered, output bits are inverted input bits.
+
+We start after reset release in the COPY state.
+
+Inputs: clk, areset (active high async reset), x.
+
+Outputs: z.
+
+All sequential logic triggers on the posedge of clk.
+
+On asynchronous reset (areset asserted), FSM goes to WAIT_FOR_RESET and output z=0.
+
+When reset is released, FSM goes to COPY state.
+
+In COPY state, if input bit x is 0, output z=0, stay in COPY.
+
+If x is 1, output z=1, move to FLIP.
+
+In FLIP state, output z = ~x.
+
+This produces the 2's complement serially on the output z.

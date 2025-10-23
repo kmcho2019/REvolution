@@ -1,0 +1,12 @@
+To implement the series-parallel conversion circuit, we will design a synchronous module named "serial2parallel". This module uses a 4-bit counter to track the number of serial input bits received. When the counter reaches 8 (which corresponds to 3 in 4-bit binary), it sets the dout_valid signal to 1 and outputs the 8-bit parallel data. We will utilize a shift register approach to construct the 8-bit parallel output by shifting the input serial bits into the register at each clock cycle when the input data is valid.
+
+The module will have a clock signal "clk", an active-low reset signal "rst_n", a single-bit serial input data "din_serial", and a validity signal for the input data "din_valid". The module's outputs will be an 8-bit parallel output "dout_parallel" and a validity signal for the output "dout_valid".
+
+We will implement the design using a finite state machine (FSM) or a counter-based approach. Given the requirement, the counter-based approach seems more straightforward. The counter will be reset when it reaches its maximum value or when the reset signal is asserted.
+
+The module's operation can be broken down into the following steps:
+1. Initialize the counter and the output register.
+2. At each rising edge of the clock, check if the input data is valid.
+3. If the input data is valid, shift the serial input into the output register and increment the counter.
+4. When the counter reaches 8, set the dout_valid signal to 1 and prepare to reset the counter and the output register for the next set of input data.
+5. If the reset signal is asserted, reset the counter, the output register, and the dout_valid signal.

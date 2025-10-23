@@ -1,0 +1,15 @@
+This new 4-bit comparator will use a chained bit-level comparison approach inspired by cascading single-bit comparators:
+
+- At each bit, starting from the MSB down to LSB, compare A[i] and B[i].
+- If A[i] > B[i], output A_greater = 1 immediately.
+- If A[i] < B[i], output A_less = 1 immediately.
+- If A[i] == B[i], move to next lower bit.
+- If all bits are equal, output A_equal = 1.
+
+This logic can be realized by creating a cascade of signals reflecting the current comparison state at each bit, terminating as soon as a decisive difference is found. The signals will be combinational and use ternary logic encoded in wires: e.g., using two signals for each bit-level comparison representing whether the decision is done and the outcome.
+
+Finally, the outputs A_greater, A_less, and A_equal are generated from this cascade.
+
+This method simulates how a manual comparison on paper works and uses only simple logic gates: AND, OR, and XOR, with no explicit subtraction or borrow logic. It is easy to understand and synthesizes efficiently.
+
+This approach will ensure mutually exclusive outputs and no subtraction or borrow signals are used.

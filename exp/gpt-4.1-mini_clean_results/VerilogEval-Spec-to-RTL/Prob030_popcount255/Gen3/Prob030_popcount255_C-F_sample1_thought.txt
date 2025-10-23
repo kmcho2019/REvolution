@@ -1,0 +1,7 @@
+Fuse the two solutions by implementing the popcount17 module using a fully combinational, explicit adder-tree approach (like Example 1) for clarity, parallelism, and better synthesis results, but use generate loops for scalability and concise code in TopModule's summation tree (like Example 2) to keep it modular and clean.
+
+This fusion keeps the modular, hierarchical design with 15 groups of 17 bits, each summed by popcount17 with explicit parallel summation (4-bit popcounts and add-tree), reducing long combinational chains in popcount17. For TopModule, use generate loops to build the balanced adder tree summation of the 15 partial counts. This avoids manual repeated assignments, improving readability and scalability.
+
+The popcount17's explicit combinational summation ensures efficient mapping into hardware, and the balanced tree with generate loops in TopModule minimizes critical path. Zero-extend partial sums where needed, and use minimal bit-widths throughout for power and area savings.
+
+Overall, this design blends explicit adder structure in popcount17 (Example 1's clarity and performance) with concise, scalable generate-based summation tree (Example 2's maintainability and clean code).

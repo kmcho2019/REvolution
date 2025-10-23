@@ -1,0 +1,18 @@
+To implement the Lemming behavior as a Moore state machine, we need to identify the states and transitions based on the given conditions. 
+
+1. States: 
+   - WALK_LEFT: Walking left
+   - WALK_RIGHT: Walking right
+   - FALLING: Falling (aaah!)
+   - DIGGING: Digging
+
+2. Transitions:
+   - From WALK_LEFT or WALK_RIGHT to FALLING: when ground=0
+   - From FALLING to WALK_LEFT or WALK_RIGHT: when ground=1, and depending on the previous walking direction
+   - From WALK_LEFT or WALK_RIGHT to DIGGING: when dig=1 and ground=1
+   - From DIGGING to FALLING: when ground=0
+   - Direction switch: when bumped on either side
+
+The Moore state machine will have output signals that depend only on the current state, which are walk_left, walk_right, aaah, and digging. 
+
+We will use two registers to store the current state and the previous walking direction.

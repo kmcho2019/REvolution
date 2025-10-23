@@ -1,0 +1,17 @@
+Fuse the two designs by using a clean FSM with enumerated states for clarity and maintainability. Separate next state combinational logic from sequential logic to improve timing and readability. Implement the shift register and bit counter update only when enabled (in RECEIVE/READ_BITS state) to reduce toggling and power. Use a Moore FSM style where outputs depend only on state and inputs at clock edge, producing a one-cycle done pulse when the stop bit is correctly detected.
+
+For shifting in bits LSB first, explicitly shift the shift register right and insert the new bit into bit 0 (LSB). This aligns better with the serial protocol (LSB first) and matches expected output bit order.
+
+Retain the ERROR_WAIT/RECOVER state to handle invalid stop bits and wait for line to return idle (high) before attempting new reception.
+
+Reset shift register only synchronously on reset and optionally when entering IDLE state to reduce toggling.
+
+Keep all sequential logic positive-edge triggered, synchronous reset, and use non-blocking assignments.
+
+This fusion combines:
+- The clarity and modular FSM style of Example 1 (separate next_state combinational logic, enumerated states).
+- The simplicity of controlling enables for shift and counter updates from Example 2.
+- The explicit LSB-first shift direction for correct bit ordering.
+- Minimal toggling and clean done pulse generation.
+
+Overall, this design maximizes readability, correctness, timing potential, and power efficiency.

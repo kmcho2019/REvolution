@@ -1,0 +1,14 @@
+Key improvements needed:
+1. Fix counting duration by properly implementing (delay+1)*1000 cycles
+2. Ensure pattern detection only triggers after full 4-bit match
+3. Maintain correct count output during COUNTING state
+4. Proper timing for done signal assertion
+5. Optimize state machine transitions
+
+Implementation strategy:
+1. Use delay_reg to store captured delay value permanently
+2. Initialize chunk_counter with delay_reg (not +1) and count down to 0
+3. Count exactly 1000 cycles per chunk (0-999)
+4. Only transition to DONE after last chunk completes
+5. Maintain count output as chunk_counter during COUNTING
+6. Add explicit pattern match check after full shift

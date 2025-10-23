@@ -1,0 +1,16 @@
+The module TopModule will be implemented as a finite-state machine (FSM) with the following states:
+- IDLE: The initial state, where the FSM waits for the pattern 1101 to be detected.
+- SHIFT: After detecting the pattern, the FSM shifts in 4 more bits to determine the duration to delay.
+- COUNT: The FSM waits for the counters to finish counting.
+- DONE: The FSM notifies the user and waits for the user to acknowledge the timer.
+The FSM will transition between these states based on the input signals and the current state.
+
+The pattern detection will be implemented using a serial pattern detector, which will check the input data bit by bit and transition to the SHIFT state when the pattern is detected.
+
+The shift_ena signal will be asserted for exactly 4 clock cycles after the pattern is detected, to shift in the 4 bits that determine the duration to delay.
+
+The counting signal will be asserted after the shift_ena signal is deasserted, to indicate that the FSM is waiting for the counters to finish counting.
+
+The done signal will be asserted after the counters have finished counting and the ack signal is not asserted, to notify the user that the timer has timed out.
+
+The FSM will wait for the ack signal to be asserted before transitioning back to the IDLE state, to wait for the next occurrence of the start sequence.

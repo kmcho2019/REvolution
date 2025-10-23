@@ -1,0 +1,12 @@
+The original design is already optimal in terms of structure and clarity, using modular 4-input NAND gates to precisely replicate the 7420 chip functionality. Given the zero timing violations (TNS = WNS = 0.0), minimal power (5.76e-07 W), and small area (5.0 um²), there is limited scope for significant PPA improvement through RTL changes alone.
+
+However, to potentially reduce area and power slightly, we can eliminate the intermediate nand4 module and directly implement the 4-input NAND gates using bitwise operations in TopModule. This removes an additional module boundary, enabling synthesis tools to perform better logic optimizations like gate merging or transistor folding.
+
+This flattening approach might slightly reduce netlist complexity and area by avoiding explicit module instantiations, while preserving zero combinational delay and full functionality. Also, direct boolean expressions are minimal and straightforward.
+
+In summary, the improvement strategy is:
+- Flatten the design by removing the nand4 module.
+- Implement each 4-input NAND gate inline using bitwise AND and negation.
+- Keep comments for maintainability and clarity.
+
+This approach should yield slightly better PPA metrics due to simpler logic representation for synthesis, without sacrificing readability or correctness.

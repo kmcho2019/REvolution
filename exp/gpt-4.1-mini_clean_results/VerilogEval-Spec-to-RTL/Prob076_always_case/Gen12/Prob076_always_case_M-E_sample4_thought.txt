@@ -1,0 +1,8 @@
+Use a parallel bitwise approach by concatenating all data inputs into a single wide bus and then selecting a 4-bit slice indexed by the sel signal. This approach leverages vector slicing and avoids case statements or functions entirely. If sel is out of range (greater than 5), the selected slice will be zero by design by concatenating an extra zero block at the end.
+
+Specifically:
+- Concatenate data5..data0 into a 24-bit vector: {data5, data4, ..., data0}
+- Add a 4-bit zero block at the end to cover the out-of-range sel=6 or 7.
+- The output out = concatenated_vector[sel*4 +: 4]; if sel>5, the slice is zero due to appended zero block.
+
+This method uses pure continuous assignment without procedural blocks, making out a wire. It achieves a clean, compact, and synthesizable multiplexer using vector slicing.

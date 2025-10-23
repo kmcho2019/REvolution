@@ -1,0 +1,7 @@
+To implement an asynchronous FIFO, we will create a module named `asyn_fifo` with input ports `wclk`, `rclk`, `wrstn`, `rrstn`, `winc`, `rinc`, `wdata`, and output ports `wfull`, `rempty`, `rdata`. The module will have parameters `WIDTH` and `DEPTH` for configurable width and depth.
+
+We will use a dual-port RAM module `dual_port_RAM` for data storage. The write and read pointers will be managed by separate logic, using binary registers and Gray code conversion to reduce glitches and ensure proper synchronization.
+
+We will implement the read pointer synchronizer to collect the write pointer using a two-stage trigger of the write clock and output it to the data write controller. Similarly, we will implement the write pointer synchronizer to collect the read pointer using a two-stage trigger of the read clock and output it to the data read controller.
+
+The method of empty and full judgment will be by comparing the Gray code of the read and write pointers. The FIFO will be considered full when the write pointer has one more cycle RAM than the read pointer, and the highest and second-highest bits of the read and write pointer are opposite, and the remaining bits are the same. The FIFO will be considered empty when the read and write pointers are equal.

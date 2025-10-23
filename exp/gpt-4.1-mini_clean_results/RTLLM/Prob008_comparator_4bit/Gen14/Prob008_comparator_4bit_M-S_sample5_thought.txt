@@ -1,0 +1,8 @@
+Simplify the 4-bit comparator by directly performing subtraction (A - B) using a ripple borrow subtractor implemented with combinational logic.
+
+- Use a ripple borrow chain for the subtraction borrow signal since at 4 bits the delay is minimal.
+- Compute each bit of the difference and borrow sequentially.
+- Determine A_less by the final borrow out.
+- Determine A_equal by checking if all bits of A and B are equal with a simple equality check (bitwise XNOR followed by AND).
+- Determine A_greater as the complement of (A_less | A_equal) to ensure mutual exclusivity.
+- This approach simplifies logic by removing lookahead borrow and borrow generate/propagate signals.

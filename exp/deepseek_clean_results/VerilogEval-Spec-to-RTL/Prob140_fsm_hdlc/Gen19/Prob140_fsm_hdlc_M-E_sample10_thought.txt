@@ -1,0 +1,23 @@
+For a novel approach, I'll implement a shift register-based FSM that tracks the last 7 bits of input. This provides several advantages:
+
+1. Direct Pattern Matching:
+   - Use a 7-bit shift register to store the last 7 input bits
+   - Compare against specific patterns (0111110, 01111110, 01111111...)
+
+2. Parallel Output Logic:
+   - Each output can be derived from simple pattern matching
+   - No need for complex state transitions or counters
+
+3. Timing Benefits:
+   - Fixed comparison logic depth regardless of sequence length
+   - Outputs can be generated combinatorially from register contents
+
+4. Reset Handling:
+   - Initialize shift register to all 0s to simulate previous 0 input
+   - Clear all outputs on reset
+
+Key innovations:
+- Eliminates counter increment logic and associated timing paths
+- Simple, parallel pattern matching replaces sequential counting
+- Easily extensible to detect other patterns if requirements change
+- Clear visibility into the exact bit sequence being analyzed

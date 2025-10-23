@@ -1,0 +1,5 @@
+Refactor the FSM by separating the state register and the output logic more clearly, and by using an explicit counter for the 3-cycle window instead of encoding the cycle count in the state encoding. We reduce the state encoding to two states: A (waiting for s=1) and B (counting w over 3 cycles). Use a 2-bit cycle counter (0 to 2) to track which of the three cycles we are in B, and a 2-bit counter to accumulate w counts.
+
+Output z is registered and asserted exactly one cycle after the third w sample, i.e., when cycle counter rolls over from 2 to 0.
+
+This structure clarifies state transitions, and separates cycle counting from state. Use combinational logic for next_state and counters, and sequential logic only for state, counters, and output registers. This refactor simplifies FSM states (fewer states), improves readability, and keeps same functionality.

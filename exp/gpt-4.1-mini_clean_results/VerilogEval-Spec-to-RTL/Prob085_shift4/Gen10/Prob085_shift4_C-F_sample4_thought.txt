@@ -1,0 +1,9 @@
+To fuse the best ideas from both examples, I will combine the explicit next-state combinational logic (from Example 1) with the clock enable style update (from Example 2) to optimize power and maintain clarity. The priority encoding between load and ena using a 2-bit control signal improves readability and synthesis optimizations. Meanwhile, updating q only when load or ena is asserted reduces unnecessary toggling and dynamic power consumption.
+
+Hence, the design will:
+- Use a combinational always block to compute next_q based on load and ena signals encoded as ctrl.
+- Update the q register only on clk posedge or areset posedge.
+- On areset, clear q asynchronously.
+- On clock edge, update q with next_q only if load or ena is asserted, else hold q to save power.
+This avoids redundant toggling from both load and ena being zero, while cleanly handling priority (load > ena).
+This fusion optimizes power by gating updates, improves performance by clear next state logic, and keeps area minimal.

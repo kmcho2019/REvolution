@@ -1,0 +1,8 @@
+I will refactor the 4-digit BCD counter to separate the increment and carry logic into combinational assignments that compute the next state, and then register the new state on the clock edge. This removes nested `if` statements inside the clocked process and relies on combinational logic to generate the incremented digits and carry signals clearly. Enables will be directly computed from the current counter values as before.
+
+Specifically, I will:
+- Compute one-hot carry signals for each digit combinationally based on the current digits.
+- Compute the next BCD digits by conditionally adding 1 or resetting to 0 depending on the carry.
+- On clock edge, update the register to the next state or reset.
+  
+This approach simplifies the always block to a straightforward register update, improving readability and potentially helping synthesis tools optimize combinational logic better by avoiding nested branching inside sequential logic.

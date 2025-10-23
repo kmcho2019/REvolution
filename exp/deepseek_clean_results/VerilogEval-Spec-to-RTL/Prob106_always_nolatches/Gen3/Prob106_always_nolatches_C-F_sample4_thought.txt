@@ -1,0 +1,18 @@
+The optimal fusion strategy combines the strengths of both examples while addressing their minor weaknesses:
+
+1. From Example 1, we retain the hierarchical comparison (checking 0xe0 prefix first) which reduces power by avoiding unnecessary lower byte comparisons for non-extended keys.
+
+2. From Example 2, we maintain the simple parallel structure for maximum timing efficiency, as all outputs can be determined simultaneously.
+
+3. We optimize area by:
+   - Sharing the extended key detection logic
+   - Using 8-bit comparators instead of 16-bit where possible
+   - Keeping the clean direct assignment structure
+
+4. We ensure mutual exclusivity naturally through the design without needing explicit checks.
+
+This approach provides:
+- Better power efficiency than Example 2 (fewer comparisons)
+- Similar timing to both examples (parallel paths)
+- Potentially better area than either (shared prefix check)
+- Maintained readability and simplicity

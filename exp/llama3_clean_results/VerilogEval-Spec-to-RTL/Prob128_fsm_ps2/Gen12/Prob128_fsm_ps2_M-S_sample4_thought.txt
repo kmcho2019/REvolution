@@ -1,0 +1,7 @@
+To simplify the existing solution, we can re-evaluate the state machine's functionality and reduce the number of states while maintaining the required functionality. Since the task is to detect message boundaries in a PS/2 mouse protocol byte stream, we can implement a 3-state FSM: 
+- State 0: Initial state, waiting for a byte with in[3] = 1.
+- State 1: First byte of the message received, waiting for the second byte.
+- State 2: Second byte of the message received, waiting for the third byte.
+
+When in State 0, we transition to State 1 when we encounter a byte with in[3] = 1. Then, we simply increment the state for each subsequent byte until we reach State 2, at which point we assert the 'done' signal. 
+We can eliminate the need for a separate signal to track message receipt and directly drive the 'done' signal based on the state.

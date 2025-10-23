@@ -1,0 +1,7 @@
+Redefine the stack pointer (SP) to always point to the current top element's index when the stack is not empty. Use SP = -1 (here, 3'b111 or 3'd7) to indicate an empty stack, simplifying EMPTY and FULL conditions. On reset, initialize SP to -1 and clear stack memory.
+
+For push (write) operation when RW=0 and not full: increment SP, then write dataIn at stack_mem[SP]. For pop (read) operation when RW=1 and not empty: output stack_mem[SP], clear that location, then decrement SP. This keeps SP always pointing to the top element or -1 when empty.
+
+Update EMPTY when SP == -1, FULL when SP == 3 (max index). Implement all operations synchronously on rising clock edge when EN is high.
+
+This approach avoids off-by-one errors and race conditions from non-blocking assignment by sequencing SP update and memory accesses correctly within the same clock cycle. It also simplifies flag logic and improves code clarity and reliability.

@@ -1,0 +1,25 @@
+The corrected implementation addresses all issues from the feedback while maintaining proper Radix-4 Booth algorithm operation:
+
+1. **Proper Iteration Count**: 
+   - Use 3-bit counter (5 iterations for 8 bits with Radix-4)
+   - Each iteration processes 2 bits (Radix-4) covering all 8 bits with sign extension
+
+2. **State Machine Improvements**:
+   - Add explicit INIT state for proper register initialization
+   - Maintain DONE state until next reset
+   - Clear ready signal only on reset
+
+3. **Correct Booth Encoding**:
+   - Full 16-bit operations throughout
+   - Proper sign extension in all shifts
+   - Complete case coverage for all Radix-4 encodings
+
+4. **Timing Fixes**:
+   - Ensure ready signal stays high after completion
+   - Proper state sequencing with clear transitions
+   - Maintain registers between operations
+
+5. **Algorithm Accuracy**:
+   - Correct arithmetic right shifts
+   - Proper negative number handling
+   - Complete 16-bit accumulation

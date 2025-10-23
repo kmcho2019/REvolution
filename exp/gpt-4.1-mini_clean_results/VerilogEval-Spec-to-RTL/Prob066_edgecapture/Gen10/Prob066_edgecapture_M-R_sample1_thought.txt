@@ -1,0 +1,11 @@
+The key functionality remains: detect falling edges on each bit (1 to 0 transition) and "capture" them in the output bits until a synchronous reset.
+
+To refactor with the same core approach but a different structure, we can:
+
+1. Separate combinational logic from sequential logic to improve clarity and potentially assist synthesis.
+2. Use an explicit wire signal that represents the falling edge detection by comparing the current and previous inputs.
+3. Update the output register inside an always block using the combinational falling-edge signal combined with the previously latched output, ensuring sticky behavior.
+4. Implement `prev_bits` as a registered version of the input with synchronous reset.
+5. Keep the synchronous reset logic, but organize the code so that the logic is split cleanly between combinational (edge detection) and sequential (state capture) blocks.
+
+This separation also aids in simulation debugging and could solve timing-related mismatches because the edge detection is cleanly defined as combinational logic and then captured synchronously.

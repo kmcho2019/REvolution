@@ -1,0 +1,12 @@
+Here's a novel approach using bitwise operations with a replicated selection signal. Instead of using a conditional operator or traditional AND-OR logic, we'll:
+
+1. Replicate the sel signal to 8 bits to match the input width
+2. Use XOR-based selection where:
+   - When sel=0, output is (a & ~sel_mask) | (b & sel_mask) = a
+   - When sel=1, output is (a & ~sel_mask) | (b & sel_mask) = b
+3. This approach demonstrates an alternative implementation that might have different synthesis characteristics
+
+Key advantages:
+- Eliminates conditional operator which some synthesis tools might implement differently
+- Shows bitwise operation alternative that could be useful in certain optimization scenarios
+- Maintains the same functionality while demonstrating a different architectural approach

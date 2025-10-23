@@ -1,0 +1,9 @@
+Implement the counter using a binary-coded decimal (BCD)-like approach by dividing the 10-bit count into three separate counters representing hundreds, tens, and units digits, each counting from 0 to 9. 
+
+On every clock, increment the units digit. When units reach 9 and wraps to 0, increment the tens digit, and similarly, when tens wraps from 9 to 0, increment the hundreds digit. When the hundreds digit reaches 9 and tens and units wrap to 0, reset all digits to zero.
+
+This approach uses small 4-bit counters internally and simple cascade carry logic, avoiding direct 10-bit comparison or addition of large numbers. It is conceptually similar to a decimal counter implemented in binary digits and can be efficient in hardware since each small counter is limited to 0-9.
+
+Finally, combine the three BCD digits into a single 10-bit output q as a binary count equivalent by computing `q = hundreds*100 + tens*10 + units`. But since the spec requires q as the 10-bit counter value, we will keep the three counters and sum them combinationally into q for output.
+
+The synchronous reset sets all digits to zero.

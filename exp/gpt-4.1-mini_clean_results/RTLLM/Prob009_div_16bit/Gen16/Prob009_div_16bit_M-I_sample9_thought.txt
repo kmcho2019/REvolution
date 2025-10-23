@@ -1,0 +1,11 @@
+To improve the original fully combinational 16-bit by 8-bit divider, which suffers from a large combinational path and high power and area due to unrolled subtractors and comparators, I will implement the division using sequential logic with two combinational always blocks as requested.
+
+- The first always block stores inputs A and B into registers a_reg and b_reg combinationally (per specification, though practically this is unusual since registers imply sequential logic).
+- The second always block performs the division algorithm in a procedural manner using a for-loop iterating over 16 bits, extracting relevant bits of the dividend, comparing with divisor, setting quotient bits, and updating remainder.
+- This reduces combinational complexity by performing the division in a single procedural block rather than multiple parallel subtractors.
+- The algorithm corresponds exactly to the "shift-subtract" division described: in each iteration, remainder is left-shifted by 1, next dividend bit appended, compared with divisor; if remainder >= divisor then subtract divisor and set quotient bit to 1, else quotient bit is 0.
+- Using two always @(*) blocks respects the problem requirement.
+- Registers a_reg and b_reg are assigned combinationally from inputs, enabling consistent read during division.
+- Output signals result (quotient) and odd (remainder) are assigned from internal reg variables.
+
+This approach lowers combinational complexity, potentially improving maximum clock frequency if registered later, reduces area and power compared to fully combinational multiple subtractors, and matches the problem statement closely.

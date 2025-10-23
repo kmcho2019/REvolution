@@ -1,0 +1,5 @@
+Refactor the design by implementing a clear finite state machine (FSM) with three states: IDLE (waiting for operation start), RUN (performing iterative division steps), and DONE (indicating result ready). Declare all intermediate variables (such as remainder, subtraction result, borrow) as module-level regs to avoid illegal in-block declarations. Use synchronous logic with separate combinational logic for subtraction and decision making.
+
+Manage the division iterations via a 4-bit counter counting from 0 to 8. Store dividend and divisor absolute values at the start, handle sign separately, and perform radix-2 division iteratively by subtracting divisor from remainder shifted in a 9-bit register. After completing iterations, apply sign correction to quotient and remainder, then present them together in the output result.
+
+Maintain res_valid until new operation starts, clear it on reset or when a new operation begins. This FSM-based approach improves clarity, correctness, and synthesis friendliness compared to inline variable declarations and scattered control signals.

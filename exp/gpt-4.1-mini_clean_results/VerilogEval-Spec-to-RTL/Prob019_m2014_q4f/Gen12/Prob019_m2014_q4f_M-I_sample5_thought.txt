@@ -1,0 +1,40 @@
+The original design uses a NOT gate on in2 followed by an AND gate with in1. Although functionally correct, this can be optimized for area and power by using a single NAND gate instead. 
+
+The function out = in1 & ~in2 can be rewritten as: out = NAND(in1, in2)' (inversion outside a NAND gate).
+
+However, since the problem requires an AND gate with a bubble on in2 input (which is an inverter on in2 before AND), this is equivalent to an AND with one input inverted.
+
+Using a single NAND gate is more area- and power-efficient than a NOT + AND gate because a NAND gate is a single primitive gate with inverted output internally.
+
+To maintain the exact function (out = in1 & ~in2), observe:
+
+out = in1 & ~in2
+    = ~(~(in1 & ~in2)) 
+    = NAND(in1, in2) ? No, because NAND(in1, in2) = ~(in1 & in2), which is not same as in1 & ~in2.
+
+Alternatively, we can try:
+
+out = in1 & ~in2
+= ~(~(in1 & ~in2))
+= ~(~in1 + in2) (by De Morgan's law)
+= NAND(~in1, in2)
+
+This suggests using NAND with inverted in1 input.
+
+But the problem specifies bubble on in2, so inverting in1 is not acceptable as it changes the "bubble" position.
+
+Hence, using a NAND gate alone is not equivalent to the required function without changing the position of the bubble.
+
+Therefore, the minimal gate solution consistent with the specification is to keep the inverter on in2 and then an AND gate.
+
+Still, we can merge the inverter and AND gate into a single gate primitive called "andn" or an equivalent complex gate if supported, but since standard Verilog primitives are limited, the current explicit NOT + AND is the best clear structural representation.
+
+Alternatively, use assign statement `assign out = in1 & ~in2;` to allow the synthesis tool to optimally implement.
+
+For maximal PPA optimization:
+
+- Use the simple RTL assign statement instead of gate instantiations, because synthesis tools can map this into the best available gates.
+
+Thus, the improved design uses the concise assign statement, which synthesis tools will convert to optimal gate-level implementation, possibly more efficient than explicit NOT + AND gates.
+
+This solution keeps semantic clarity, minimal code, and lets synthesis tools optimize power and area best.

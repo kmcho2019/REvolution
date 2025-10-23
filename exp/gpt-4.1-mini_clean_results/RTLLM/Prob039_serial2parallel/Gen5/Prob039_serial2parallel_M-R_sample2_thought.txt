@@ -1,0 +1,11 @@
+Refactor the design to use a synchronous process with a counter tracking the number of received bits and a parallel load register. Instead of shifting bits from MSB to LSB by concatenation inside the always block, explicitly assign each bit position based on the count, so the first received bit is stored in dout_parallel[7], the second in dout_parallel[6], and so on down to dout_parallel[0].
+
+This approach:
+1. Keeps logic synchronous and simple.
+2. Directly places the input bit into the correct bit of the parallel output register.
+3. Generates a one-clock-cycle dout_valid pulse when 8 bits are received.
+4. Uses a clear and explicit bit indexing instead of shift concatenation to enhance clarity.
+
+The counter counts from 0 to 7, indicating how many bits have been received. When count reaches 7 (8th bit), dout_valid is asserted and counter resets on next valid input.
+
+This refactoring still meets all requirements but provides a straightforward direct mapping of serial input to parallel output bits.

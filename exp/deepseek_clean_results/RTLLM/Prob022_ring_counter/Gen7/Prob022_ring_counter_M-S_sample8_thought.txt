@@ -1,0 +1,14 @@
+Simplification strategy:
+1. Use a simple 8-bit shift register with explicit bit assignments
+2. Avoid array concatenation which caused tool compatibility issues
+3. Implement direct bit-wise shifting with manual wrap-around
+4. Maintain one-hot property by only shifting a single '1' bit
+5. Reset initializes to 8'b00000001 (LSB set)
+6. Each clock cycle performs left shift with explicit MSB-to-LSB wrap
+
+Advantages:
+- Tool-compatible implementation (no array slicing)
+- Minimal logic (just DFFs and simple bit assignments)
+- Clear and explicit state transitions
+- Maintains all original functionality
+- Easier to synthesize across different tools

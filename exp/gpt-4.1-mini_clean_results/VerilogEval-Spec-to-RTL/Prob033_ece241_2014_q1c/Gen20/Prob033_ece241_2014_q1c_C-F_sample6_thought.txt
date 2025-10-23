@@ -1,0 +1,12 @@
+Fuse the hierarchical modularity and simplicity of the two 4-bit ripple carry adders (RCAs) from Example 1 with the efficient carry-lookahead carry generation logic from Example 2.
+
+Specifically:
+- Implement two 4-bit CLA blocks instead of RCAs, chaining them to form the 8-bit adder. 
+- Each 4-bit CLA block internally generates its carry signals using carry-lookahead logic to reduce carry propagation delay within the block, improving speed over pure RCAs.
+- Chain the two 4-bit CLA blocks by feeding the carry-out of the lower block as the carry-in to the upper block. This gives a moderate improvement in delay compared to a full 8-bit RCA but reduces complexity and area compared to a full 8-bit CLA.
+- For overflow detection, use the classic signed overflow detection logic: XOR of carry into MSB (bit 7) and carry out of MSB.
+- This approach balances modularity (ease of understanding and testing), performance (reduced carry delay inside 4-bit blocks), and area (less complex than full 8-bit CLA).
+- The structure avoids explicit full 8-bit carry-lookahead complexity but improves on pure ripple carry delay by faster carry generation inside each 4-bit block.
+- The fused design is hierarchical, easier to extend or reuse parts, and optimized for PPA considering the tradeoffs.
+
+This fusion leverages the clarity and modularity of Example 1 with the carry-lookahead performance gains of Example 2 at a block-level granularity.

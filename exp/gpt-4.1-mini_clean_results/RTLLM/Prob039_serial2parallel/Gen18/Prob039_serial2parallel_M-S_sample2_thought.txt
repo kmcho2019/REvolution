@@ -1,0 +1,10 @@
+To simplify the design while maintaining functionality, we can use an 8-bit shift register that shifts the input serial bit into the MSB position each time a valid input arrives. A 3-bit counter (enough to count 0 to 7) will track how many bits have been received. When the counter reaches 7 (indicating the 8th bit), we output the shift register contents as parallel data and assert dout_valid for one clock cycle.
+
+Key points:
+- Shift register updates only on valid input.
+- Counter increments only on valid input.
+- On the 8th valid bit, output the parallel data and assert valid.
+- Reset clears all registers synchronously.
+- dout_valid is a single-cycle pulse.
+
+This approach reduces the counter width and the control logic without losing clarity or correctness.

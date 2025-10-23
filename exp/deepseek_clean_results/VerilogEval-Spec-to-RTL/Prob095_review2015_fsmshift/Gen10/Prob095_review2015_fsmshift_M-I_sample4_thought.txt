@@ -1,0 +1,9 @@
+Improved solution with correct cycle counting:
+1. Maintain the same 2-state FSM (IDLE/ACTIVE) but fix the cycle counting
+2. Initialize cycle_count to 0 on reset (first cycle is count 0)
+3. Keep shift_ena active while in ACTIVE state (cycles 0-3)
+4. Transition to IDLE after exactly 4 cycles (when cycle_count reaches 3)
+5. Use simple equality comparison for state transition
+6. This ensures shift_ena is high for exactly 4 cycles (0 through 3) after reset
+7. Minimal hardware usage (2-bit counter + 1-bit state)
+8. Clear synchronous reset behavior

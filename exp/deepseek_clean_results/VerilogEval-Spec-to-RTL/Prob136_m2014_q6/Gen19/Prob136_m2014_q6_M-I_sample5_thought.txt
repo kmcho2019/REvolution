@@ -1,0 +1,22 @@
+To optimize this solution further, I'll implement the following improvements:
+
+1. **State Encoding Optimization**:
+   - Switch to one-hot encoding which often provides better timing and power for small state machines (6 states here)
+   - One-hot reduces combinational logic complexity between states
+
+2. **Clock Gating**:
+   - Add clock gating for stable states (E when w=0, A when w=1) to reduce dynamic power
+   - Use enable signals to freeze the clock when no state transition is needed
+
+3. **Logic Simplification**:
+   - Replace the function with direct combinational logic for better synthesis
+   - Simplify output logic to use OR of one-hot bits for E and F states
+
+4. **Reset Optimization**:
+   - Keep synchronous reset but optimize the reset-to-A state transition
+
+Key Benefits:
+- One-hot encoding improves timing by reducing decoder logic
+- Clock gating reduces power during stable states
+- Direct combinational logic may allow better synthesis optimization
+- Maintains all functional requirements while improving PPA

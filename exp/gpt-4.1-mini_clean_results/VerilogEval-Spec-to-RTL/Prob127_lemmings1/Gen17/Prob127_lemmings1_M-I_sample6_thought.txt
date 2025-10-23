@@ -1,0 +1,13 @@
+To improve PPA, I will simplify the next state logic to reduce gate count and depth by directly using the intuitive behavior:
+
+- If bumped on the left side (bump_left=1), the next state is WALK_RIGHT (1).
+- Else if bumped on the right side (bump_right=1), the next state is WALK_LEFT (0).
+- Otherwise, hold current state.
+
+This simplified priority encoding avoids the previous more complex Boolean expression involving toggling when bumped on both sides simultaneously. Since bump_left and bump_right can both be 1 simultaneously, priority to bump_left to walk right is acceptable and matches the problem requirement of switching direction when bumped on any side.
+
+This reduces logic and simplifies synthesis, improving timing (less gate levels) and potentially reducing power and area slightly.
+
+The FSM remains Moore, with asynchronous posedge reset to WALK_LEFT, and outputs assigned accordingly.
+
+This approach maintains correctness, simpler combinational logic, and improves PPA.

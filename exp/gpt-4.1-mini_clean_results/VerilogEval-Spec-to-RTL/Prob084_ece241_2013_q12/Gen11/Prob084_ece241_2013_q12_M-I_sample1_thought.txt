@@ -1,0 +1,7 @@
+To optimize for better performance and power, reduce the shift register toggling by shifting in S at Q[7] instead of Q[0], aligning the MSB with the highest index to match the ABC indexing straightforwardly. This means shifting the register towards lower bits (Q[0] <= Q[1], ...), placing the new bit into Q[7]. It allows the output Z to be directly indexed by {A,B,C} since {A,B,C} indexes Q[0]...Q[7], matching bit 0 = 000, bit 7 = 111 naturally.
+
+This approach reduces routing complexity on the output mux, potentially lowering delay. Also, add a register reset to initialize Q to zero (optional but good design practice). Otherwise, keep logic minimal with a simple shift register and direct mux indexing.
+
+Power and area remain low since no additional combinational logic is added. Performance may improve due to clearer mapping of the selector to the vector bits.
+
+Thus, shift register direction is reversed, but behavior and interface remain the same.

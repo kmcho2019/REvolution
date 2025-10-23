@@ -1,0 +1,9 @@
+To further improve Power, Performance, and Area (PPA), I will add an enable signal inside the always block so that the register only updates when the input vector 'd' changes. This approach avoids unnecessary toggling of the flip-flops when the input remains the same, reducing dynamic power consumption.
+
+Since the specification does not provide an enable signal, I will implement an internal enable condition by comparing the current output 'q' to input 'd'. The register updates only if 'd' differs from 'q'.
+
+This technique can reduce switching activity, saving power, while keeping performance and area impact minimal because the comparison logic is simple and low-cost.
+
+Functionally, this retains the behavior of capturing the input 'd' on the rising edge of 'clk' but only when 'd' changes.
+
+Note: Some synthesis tools might optimize away the comparison if the output is unused or if it causes unintended timing, so care should be taken when integrating this design.

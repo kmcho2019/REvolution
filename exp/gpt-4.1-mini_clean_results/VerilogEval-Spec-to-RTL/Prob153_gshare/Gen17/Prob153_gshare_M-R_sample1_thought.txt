@@ -1,0 +1,16 @@
+Refactor the design by separating the combinational prediction logic from sequential updates clearly and outputting prediction results combinationally in the same cycle as the prediction request, to avoid pipeline latency in outputs.
+
+Key points:
+1. Make `predict_taken` and `predict_history` combinational outputs directly derived from the current `predict_pc` and current GHR, using XOR index into PHT read synchronously via `reg` array.
+2. Hold the GHR as a register updated only on clock edges.
+3. On clock edge, prioritize GHR update by training misprediction recovery; else if prediction valid, update GHR speculatively with predicted taken bit of *last cycle's* prediction (which is the prediction request from last cycle). To do this, save last cycle’s prediction info in registers.
+4. This means prediction outputs are combinational and reflect the *current* GHR and PHT contents; GHR updates on the clock edge, delayed by one cycle from prediction request.
+5. PHT updates on clock edge if training valid, based on training inputs.
+6. Keep the GHR updated speculatively based on the prediction made in previous cycle, matching the spec that the GHR used to predict in cycle N is output during cycle N, and is updated at cycle N+1 based on that prediction or training recovery.
+7. This avoids any pipeline registers for the outputs and aligns outputs directly to current inputs.
+8. Index PHT by XOR of `predict_pc` and current GHR for prediction; index PHT by XOR of `train_pc` and `train_history` for training.
+9. Initialize PHT and GHR on asynchronous reset.
+
+This refactoring maintains the Gshare predictor core but clarifies timing: combinational prediction outputs aligned to inputs, sequential state updates on clock edge with training taking precedence, and speculative GHR update based on prior cycle’s prediction.
+
+This removes the previous one-cycle delay mismatch between prediction request and prediction outputs and aligns with problem timing requirements.

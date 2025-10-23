@@ -1,0 +1,26 @@
+To fix the functional mismatches and ensure the GHR and PHT updates meet the spec precisely, I will:
+
+1. Separate the combinational and sequential logic clearly by:
+   - Using a *stable* version of GHR (`ghr`) for prediction outputs and indexing.
+   - Computing prediction outputs combinationally from `ghr` (no changes here).
+2. Update the PHT and GHR only at the clock edge.
+3. For the GHR update at the clock edge, enforce clear priority:
+   - If `train_valid && train_mispredicted` is true, restore `ghr` to `train_history` (flush recovery).
+   - Else if `predict_valid` is true, update `ghr` by shifting in the *predicted* branch direction.
+   - Else keep `ghr` unchanged.
+4. To handle the case when training and prediction happen on the *same* PHT entry, prediction uses PHT state *before* update (combinationally), training updates PHT at clock edge, preserving the spec timing.
+5. To avoid race conditions:
+   - Read PHT state combinationally for both prediction and training indexes from stable storage.
+   - Update PHT at clock edge only.
+6. For asynchronous reset, initialize PHT entries to weakly not taken (2'b01) and GHR to zero.
+7. Output `predict_history` is the GHR state *used* for the current prediction, i.e., before GHR update.
+8. Output `predict_taken` is zero when `predict_valid` is low, to avoid spurious outputs.
+
+This improved approach enforces the spec timing precisely, making predictions combinational and updates synchronous and prioritized correctly. It resolves previous subtle misprediction recovery and update conflicts.
+
+Additional minor improvements:
+- Use blocking assignments in combinational always blocks (though here there are none).
+- Keep asynchronous reset for PHT initialization.
+- Keep output ports driven combinationally from stable internal states.
+
+This design is logically clean, matches spec timing precisely, and should resolve all mismatches.

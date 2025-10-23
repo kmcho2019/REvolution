@@ -1,0 +1,8 @@
+The main issue is that `out` is declared as a single-bit output while `a` and `b` are 8-bit inputs, and the expected behavior is an 8-bit 2-to-1 mux output. The corrected design should declare `out` as an 8-bit output and assign `out` to select all bits from either `a` or `b` depending on the `sel` signal.
+
+To optimize for power, performance, and area (PPA), the mux operation should be expressed simply with a ternary operator rather than bitwise masking, which typically maps directly to a single 8-bit 2-to-1 mux primitive in hardware. This results in cleaner and more efficient synthesis.
+
+Hence, improvements:
+- Change output `out` to be 8 bits wide.
+- Use the ternary operator: `assign out = sel ? b : a;`
+This yields a concise, clear, and hardware-efficient implementation.

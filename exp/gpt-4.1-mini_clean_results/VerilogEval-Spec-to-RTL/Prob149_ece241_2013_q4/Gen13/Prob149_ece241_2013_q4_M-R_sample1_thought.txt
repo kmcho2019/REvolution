@@ -1,0 +1,14 @@
+Refactor the module by explicitly decoding the sensor inputs into water levels based strictly on the problem’s cumulative sensor assertion pattern:  
+- Above s[2] = all sensors asserted (3'b111)  
+- Between s[2] and s[1] = s[0] and s[1] asserted, s[2] deasserted (3'b011)  
+- Between s[1] and s[0] = only s[0] asserted (3'b001)  
+- Below s[0] = no sensors asserted (3'b000)  
+
+Any other sensor input pattern is invalid and treated as below s[0].  
+
+Use combinational logic via `assign` statements for decoding `current_level`.  
+Use a synchronous process to update `prev_level` and the outputs, which ensures outputs change synchronously with the clock and reset signals, avoiding glitches.  
+In the synchronous process, on reset, set `prev_level` and all outputs to the "low water level for a long time" state (level 0 with all nominal valves and supplemental valve open).  
+On normal operation, set outputs based on decoded `current_level` and `prev_level`, asserting supplemental flow valve (`dfr`) only if water level increased compared to previous.  
+
+This structure satisfies synchronous reset and output timing requirements, clearly enforces valid sensor patterns, and keeps the logic easily understandable and maintainable.

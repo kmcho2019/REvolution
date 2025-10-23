@@ -1,0 +1,17 @@
+Instead of directly deriving minimal boolean expressions by inspection, let's take a structural and modular approach:
+
+1. Since the inputs a,b,c,d represent a 4-bit number with a as MSB and d as LSB, we can interpret the input vector as a 4-bit number "num = {a,b,c,d}".
+
+2. We need to output logic-1 if num equals 2, 7, or 15; logic-0 for 0,1,4,5,6,9,10,13,14; and ignore other inputs (3,8,11,12) which never occur.
+
+3. We'll implement a small combinational module that compares the input to these three numbers in parallel and ORs the result to produce the output signals.
+
+4. For out_sop, we'll generate the minimal sum-of-products by explicitly OR'ing these exact matches (since the set is small). For out_pos, we'll implement the minimal product-of-sums by considering the maxterms of the zeros (logic-0 cases) explicitly and AND'ing them.
+
+5. For clarity and correctness, we'll implement separate functions to generate minterm matches (out_sop) and maxterm matches (out_pos), and combine them accordingly.
+
+6. This approach makes the design easy to verify, readable, and structurally matches the problem constraints without relying solely on algebraic simplification, thus minimizing errors.
+
+7. As a bonus, we encode the number by concatenating bits for easier checking.
+
+This also gives exact Boolean expressions and can be readily verified for correctness.

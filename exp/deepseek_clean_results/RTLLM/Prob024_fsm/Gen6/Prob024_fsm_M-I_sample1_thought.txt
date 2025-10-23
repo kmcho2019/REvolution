@@ -1,0 +1,23 @@
+To optimize this FSM further while maintaining functionality, I'll implement these improvements:
+
+1. Timing Optimization:
+   - Remove the output register to eliminate 1-cycle latency while keeping Mealy behavior
+   - This reduces the critical path by removing the register-to-register path
+
+2. Power Optimization:
+   - Add input change detection to prevent unnecessary state transitions
+   - Only update state when input changes or we're in a state that needs monitoring
+
+3. Area Optimization:
+   - Remove the default case since all states are explicitly covered
+   - Simplify next_state logic by combining conditions where possible
+
+4. Clock Domain:
+   - Given the extremely high clock speed (5.88GHz), add clock gating for power savings
+   - Only enable clock when input changes or we're in an active state
+
+Key Benefits:
+- Eliminates timing violations by reducing critical path
+- Reduces power by minimizing unnecessary transitions
+- Maintains small area while improving efficiency
+- Better matches realistic clock requirements

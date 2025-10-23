@@ -1,0 +1,6 @@
+To implement the TopModule, we can design a finite state machine (FSM) that has four states: Idle, Byte1, Byte2, and Byte3. 
+In the Idle state, the FSM waits for a byte with in[3] = 1 and discards all other bytes. 
+When it encounters such a byte, it transitions to the Byte1 state, 
+then to Byte2 after receiving the next byte, and finally to Byte3 after receiving the next byte after that. 
+Once in the Byte3 state, it signals done and then returns to the Idle state, waiting for the next byte with in[3] = 1. 
+The FSM will also have a reset state that it enters when the reset input is high, forcing it back to the Idle state.

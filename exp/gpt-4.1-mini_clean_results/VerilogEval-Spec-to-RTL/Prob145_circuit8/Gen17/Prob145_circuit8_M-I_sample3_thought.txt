@@ -1,0 +1,26 @@
+By analyzing the waveform, we can infer that outputs `p` and `q` represent a 2-bit state machine updated synchronously on the rising clock edge, with no explicit reset. Initially, outputs are undefined (x), then on the first rising edge `p` is cleared to 0 and `q` remains unknown (since q is x). After the first clock, `q` becomes 0 at the next falling clock edge, so outputs update on the clock edges but `q` changes asynchronously or combinationally to `p` (or with some delay).
+
+From the waveform, at rising edges:
+
+- `p` is set to `a & q` or something similar
+- `q` seems to be a delayed version of `p` but updated at falling clock edges or combinationally
+
+A simpler and more faithful interpretation is to model the state as two flip-flops: 
+- `p` is updated synchronously on the rising clock edge as `a & q` OR some other function involving `a` and `q`.
+- `q` is updated on the falling clock edge, taking the previous value of `p`.
+
+This is a 2-flip-flop design with clocked updates on both edges, implementing a simple shift-register-like behavior.
+
+This explains the delayed behavior of `q` and the alternating values of `p` and `q` seen in the waveforms. Specifically:
+- On rising clock edge: update `p` based on `a` and current `q`.
+- On falling clock edge: update `q` with the value of `p`.
+
+This approach reproduces the waveform transitions accurately.
+
+To implement this, instantiate two registers `p` and `q`:
+- `p` updates on posedge clock
+- `q` updates on negedge clock
+
+No resets are applied so the initial values of `p` and `q` are undefined, matching x in waveform before first clock edges.
+
+This design is both functionally correct and simple, matching the observed waveforms closely.

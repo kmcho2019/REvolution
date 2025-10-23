@@ -1,0 +1,7 @@
+The original design uses a dedicated DFF module with an always block that inverts the input inside the sequential logic. To refactor this while keeping the same core behavior (q at each clock positive edge equals the inverted value of input a at that clock), I will implement the logic directly inside the TopModule using a single always block.
+
+Instead of a separate DFF_invert module, I will declare q as a reg and update q on the posedge clk with q <= ~a;. This keeps the inversion inside the sequential block and avoids any combinational logic outside the always block. The output q will be a registered signal, and the structure is simpler (no module instantiation).
+
+This maintains the behavior and timing characteristics but simplifies the design hierarchy by merging logic into one module. This is an equally valid style for small, simple sequential logic.
+
+No combinational assign statements are needed for q, preserving synchronous behavior only on clock edges.

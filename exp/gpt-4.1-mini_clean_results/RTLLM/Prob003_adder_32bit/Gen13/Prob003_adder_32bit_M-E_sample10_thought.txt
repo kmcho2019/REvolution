@@ -1,0 +1,16 @@
+Implement a 32-bit carry-lookahead adder using a four-stage hierarchical CLA approach with 8-bit CLA blocks. Each 8-bit CLA block will generate block propagate and generate signals for efficient carry calculation at the next hierarchy level. A 4-bit "super CLA" block will take the four pairs of block propagate and generate signals from the 8-bit blocks and produce carries for each block, thus determining their carry-in signals.
+
+This hierarchical 4x8-bit CLA design improves scalability and reduces the carry chain length compared to a 2x16-bit CLA structure. It also balances logic complexity and delay by splitting the 32 bits into smaller blocks and applying a super CLA to generate carries for each block.
+
+Key points:
+
+- 8-bit CLA blocks generate sum, carry-out, block propagate, and block generate.
+- A 4-block CLA (called super_cla_4bit) consumes the block propagate and generate signals from the 8-bit blocks to compute carry-ins for each 8-bit block.
+- The overall carry-in to the first 8-bit block is zero.
+- Internal signals are zero-based indexed; user ports are 1-based indexed as requested.
+- Using generate loops and prefix-style carry computation within 8-bit CLA blocks.
+- The super_cla_4bit computes the carry-in for each block efficiently using carry-lookahead logic on 4 bits.
+- The final carry-out (C32) is the carry-out from the last 8-bit block.
+- This modular and hierarchical design is fast and scalable for larger adders.
+
+This method trades slightly more complexity for improved carry propagation delay and modularity, suitable for high-performance 32-bit addition.

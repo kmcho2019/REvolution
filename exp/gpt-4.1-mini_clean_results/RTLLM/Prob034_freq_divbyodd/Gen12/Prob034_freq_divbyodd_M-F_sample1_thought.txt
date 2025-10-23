@@ -1,0 +1,13 @@
+To fix the frequency divider for odd divisors, synchronize two counters cnt1 and cnt2, each counting from 0 to NUM_DIV-1 on posedge and negedge clk respectively, and toggle clk_div1 and clk_div2 at count (NUM_DIV-1)/2.
+
+This approach aligns toggling of clk_div1 and clk_div2 evenly spaced over the full input clock cycle, ensuring correct timing and a symmetrical output with an odd division.
+
+Specifically:
+- cnt1 increments on posedge clk; when cnt1 reaches (NUM_DIV-1)/2, toggle clk_div1 and reset cnt1.
+- cnt2 increments on negedge clk; when cnt2 reaches (NUM_DIV-1)/2, toggle clk_div2 and reset cnt2.
+- Both counters reset to zero on async active low reset.
+- The final output clk_div = clk_div1 | clk_div2.
+- Add compile-time check for odd NUM_DIV.
+- Use non-blocking assignments and proper reset initialization.
+
+This fixes the previous timing misalignments and achieves a clean odd frequency division.

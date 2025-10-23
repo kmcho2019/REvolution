@@ -1,0 +1,38 @@
+Instead of implementing the minimal sum-of-products expression, I will design the solution using a 4-to-1 multiplexer-based approach. The inputs c and d will select one of four precomputed functions of a and b corresponding to the rows of the Karnaugh map.
+
+Specifically:
+- Use {c,d} as a 2-bit select line for a 4-to-1 mux.
+- For each selection, output the value based on the respective Karnaugh map row values for all {a,b} combinations.
+- The four selected signals are functions of a and b only.
+- Implement each of these four signals (rows) as simple logic expressions derived from their row entries.
+- Finally, use a multiplexer to select the output based on c and d.
+
+This approach modularizes the logic by partitioning the truth table according to c and d, which may be beneficial for certain synthesis flows or target technologies. It also provides an alternative architectural view that can enable more straightforward mapping to multiplexers or memory primitives.
+
+This method results in:
+
+- mux_out = row_sel[c,d] where row_sel is a 4-bit vector, each bit being a function of a,b.
+
+From the Karnaugh map rows:
+
+Row cd=00 (c=0, d=0):
+ab: 00=1,01=1,11=0,10=1
+row0(a,b) = (~a & ~b) | (~a & b) | (a & ~b) = ~a | ~b
+
+Row cd=01 (c=0, d=1):
+ab: 00=1,01=0,11=0,10=1
+row1(a,b) = (~a & ~b) | (a & ~b) = ~b
+
+Row cd=11 (c=1, d=1):
+ab: 00=0,01=1,11=1,10=1
+row3(a,b) = ( ~a & b) | (a & b) | (a & ~b) = a | b
+
+Row cd=10 (c=1, d=0):
+ab: 00=1,01=1,11=0,10=0
+row2(a,b) = (~a & ~b) | (~a & b) = ~a
+
+This matches previous expressions, but now encoded as mux selects.
+
+Then implement a 4:1 mux with select {c,d}.
+
+This design is modular and easy to verify and might be helpful if the circuit is realized with multiplexers or in FPGAs.

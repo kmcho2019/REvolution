@@ -1,0 +1,33 @@
+Design a Moore FSM with states encoding both direction and mode: walking left, walking right, falling (aaah!), digging left, and digging right. On async posedge reset, state initializes to walking left.
+
+Inputs: bump_left, bump_right, ground, dig.
+
+Priority of events on each clock:
+1. If ground=0 and not already falling, transition to falling state (aaah! output).
+2. Else if dig=1, ground=1, and walking (not falling or digging), transition to digging state in the current direction.
+3. Else if bumped (bump_left or bump_right) and walking (and not falling/digging), switch direction.
+4. Otherwise stay in current state.
+
+While falling, bump or dig inputs have no effect. On ground rising from 0 to 1, falling state transitions back to walking in previous direction.
+
+While digging, ground=0 causes transition to falling state. Bumps and dig inputs do not affect state.
+
+Outputs depend only on state (Moore machine):
+
+- walk_left: 1 when walking or digging left
+- walk_right: 1 when walking or digging right
+- aaah: 1 when falling
+- digging: 1 when digging (either direction)
+
+Use an FSM with these states (encoded as enum):
+
+- WALK_LEFT
+- WALK_RIGHT
+- FALLING_LEFT
+- FALLING_RIGHT
+- DIGGING_LEFT
+- DIGGING_RIGHT
+
+When falling or digging states are entered, store the previous walking direction to know where to return.
+
+This FSM is implemented with synchronous state update on clk posedge and async positive reset.

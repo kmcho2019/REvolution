@@ -1,0 +1,26 @@
+Implement a clear finite state machine (FSM) representing the four water levels derived from sensor inputs. On each clock, decode sensors into a water level state. On detecting a sensor-level change, capture the previous level in a register that holds the level before the last change.
+
+Use these registered current and previous states to:
+
+- Compute nominal flow outputs from the current level.
+- Assert the supplemental flow valve (dfr) only when the water level has risen compared to the previous stored level.
+
+Use only synchronous registers updated on clock, including for 'dfr' output, to avoid combinational glitches.
+
+On synchronous reset, initialize the state machine to the lowest water level (no sensors asserted) and assert all flow outputs including dfr, representing maximum flow.
+
+This structure uses explicit enumerated states for water levels, registers to hold current and previous levels, and synchronous update logic that ensures all output signals update predictably and consistently with the clock.
+
+Advantages:
+- Clear state transitions for water levels.
+- Precise detection of water level changes.
+- Synchronous updates for outputs, removing combinational reset dependencies.
+- Explicit coding of the output flow valve signals and the supplemental valve, matching spec directly.
+
+The FSM states correspond to:
+- BELOW_S0 (no sensors)
+- BETWEEN_S1_S0 (only s[0])
+- BETWEEN_S2_S1 (s[0], s[1])
+- ABOVE_S2 (all sensors)
+
+By storing previous_level on sensor change, and comparing it to current_level, we know when the level has risen to turn on the supplemental valve.

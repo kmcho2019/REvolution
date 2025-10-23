@@ -1,0 +1,7 @@
+Analyzing the waveform, the output q becomes the delayed inverse of input a, sampled on the positive clock edge. Instead of explicitly inverting the input outside a flip-flop, I will embed the inversion inside a negative-edge-triggered flip-flop, leveraging the clock's falling edge to implicitly produce the inverted sampled value at the positive edge of the clock.
+
+This way, I will create a master-slave arrangement implicitly by using two registers triggered on opposite clock edges: the first register samples 'a' at the falling edge (storing a), and the second register samples the first register at the rising edge. Because the output q changes on the rising edge based on the previously sampled falling-edge data, this creates an effective delayed inverted signal relative to 'a'.
+
+In implementation, this can be done by having an intermediate register sampling 'a' at negedge clk, then q assigned to the inverse of that register at posedge clk. This results in q being the delayed inverse of 'a', matching the waveform.
+
+This novel clock-edge based architecture leverages dual-edge sampling to avoid explicit combinational inversion logic outside registers and demonstrates how to produce a delayed inverted signal with two flip-flops triggered on opposite edges.

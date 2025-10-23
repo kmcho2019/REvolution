@@ -1,0 +1,11 @@
+The new architecture employs two history registers:
+1. Main history register - holds committed branch history
+2. Speculative history register - tracks in-flight predictions
+
+Key features:
+- Speculative updates happen immediately to the speculative register on predictions
+- Mispredictions trigger a rollback from the main register
+- Committed updates (non-mispredicted predictions) are merged from speculative to main register
+- This reduces critical path by separating prediction and misprediction handling
+- Power savings by only updating main register when needed
+- Reduced multiplexer complexity compared to single-register approach

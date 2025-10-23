@@ -1,0 +1,16 @@
+Novel Architecture Idea: Serial-Parallel Hybrid Multiplier
+1. Instead of fully parallel or fully serial, we'll use a hybrid approach:
+   - Process 4 bits of the multiplier in parallel (lower nibble)
+   - Process remaining 4 bits serially (upper nibble)
+2. Benefits:
+   - Reduced area compared to full parallel (fewer adders)
+   - Faster than fully serial (4x speedup on parallel portion)
+   - Balanced power consumption
+3. Implementation:
+   - First stage: Parallel multiply lower 4 bits using shift-and-add
+   - Second stage: Serial multiply upper 4 bits with clocked accumulation
+   - Final result combines both stages
+4. Key Features:
+   - Single 16-bit accumulator
+   - Shared adder resources
+   - Minimal control logic

@@ -1,0 +1,22 @@
+The original design correctly decodes Gray-coded inputs into binary to index a case statement implementing the function. However, the explicit Gray-to-binary decoding and case statement introduce extra XOR gates and a decode stage, increasing area and power slightly. 
+
+To optimize for power and area while maintaining performance:
+
+1. Directly express f as a minimized combinational Boolean equation derived from the Karnaugh map, using the original Gray-coded inputs x[3:0] without intermediate Gray-to-binary conversion. This eliminates XOR gates for Gray decoding.
+
+2. Incorporate don't-care conditions to minimize logic and possibly reduce switching activity by choosing assignments that simplify the equation.
+
+3. Use a sum-of-products or product-of-sums minimal expression for f in terms of x[3:0] to implement the function as straightforward logic expressions.
+
+4. Implement f as an assign statement, purely combinational, to allow synthesis tools to optimize gate sharing and reduce area and power.
+
+This approach removes extra logic layers, minimizes combinational depth, and reduces gate count, thereby improving PPA (power, performance, area) metrics.
+
+First, I identify the mapping of inputs as per problem notation:
+- x = {x4, x3, x2, x1} = {x[3], x[2], x[1], x[0]}
+
+Next, analyze the Karnaugh map cells directly indexed by these bits to derive a minimized logic expression for f without Gray decoding.
+
+Using Karnaugh map simplification tools on the given truth table with the don't-cares chosen as zeros, we find a minimal SOP expression in terms of the original inputs.
+
+Implement this minimal Boolean expression directly, yielding a compact and efficient implementation.

@@ -1,0 +1,5 @@
+To address the provided problem, we can design a finite-state machine (FSM) that controls the timer based on the input sequence and other signals. The main idea is to use a simple and efficient state machine that can detect the input sequence, shift in the duration, wait for the counters to finish, and then notify the user. We will use a 3-stage FSM: sequence detection, shifting, and counting/timer expiration.
+
+1. **Sequence Detection Stage**: In this stage, the FSM looks for the input sequence 1101. Once detected, it transitions to the shifting stage.
+2. **Shifting Stage**: The FSM shifts in 4 bits to determine the duration to delay. It asserts the `shift_ena` signal during this stage and counts the number of bits shifted.
+3. **Counting/Timer Expiration Stage**: After shifting, the FSM waits for the counters to finish counting. Once done, it notifies the user by asserting the `done` signal and waits for the user's acknowledgment (`ack` signal).

@@ -1,0 +1,17 @@
+Fusion strategy:
+- Use a modular per-bit DFF module triggered on the negative clock edge with synchronous reset loading a parameterized reset value.
+- Internally, each single-bit DFF has its own always block on negedge clk with synchronous reset; this improves modularity and clarity by explicit bit-level instantiation.
+- In TopModule, instantiate eight such single-bit DFFs in a generate loop, connecting each bit of d and q individually.
+- Parameterize the reset value as an 8-bit vector; each DFF instance receives its corresponding reset bit.
+- This retains the clarity and testability of bitwise modules from Example 1 and 2, while explicitly describing eight separate flip-flops, aiding fine-grained control and potential bitwise extensions.
+- Single-bit always blocks simplify synthesis and timing analysis of individual bits.
+- Negative edge triggering and synchronous active-high reset as required.
+- The design is still area and power efficient, avoiding wide vector registers which sometimes complicate reset synthesis.
+- This fusion enhances readability, maintainability, reusability, and aligns with the problem specification accurately.
+
+Benefits:
+- Modular and clear: Each DFF is independently instantiated and parameterized.
+- Meets negative edge and synchronous reset spec exactly.
+- Explicit bitwise approach aids fine-tuning or replacing single bits.
+- Parameterized reset value per bit ensures direct per-flip-flop reset loading.
+- Generate loop eliminates repetitive code.

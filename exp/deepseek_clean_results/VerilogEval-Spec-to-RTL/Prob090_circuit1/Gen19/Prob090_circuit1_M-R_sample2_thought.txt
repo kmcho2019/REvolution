@@ -1,0 +1,12 @@
+The original implementation uses an always block with reg output, which is perfectly valid but slightly heavier than necessary for this simple combinational logic. We can refactor this to:
+
+1. Use continuous assignment (assign) instead of always block since it's a simple combinational function
+2. Make the output wire type (implicit with assign)
+3. Remove the reg declaration since it's not needed with assign
+4. Keep the same AND functionality but with more concise syntax
+
+This refactoring maintains identical functionality while:
+- Reducing code verbosity
+- Making it clearer that this is pure combinational logic
+- Following Verilog best practices for simple gates
+- Potentially improving synthesis results (though trivial for this case)

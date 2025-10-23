@@ -1,0 +1,11 @@
+Instead of using traditional logic gates, we can implement the population count as a lookup table using multiplexers. This approach:
+1. Treats the 3-bit input as an address to select one of 8 possible outputs
+2. Each possible input combination directly maps to its corresponding population count
+3. Uses a tree of multiplexers to efficiently decode the input
+4. Has the advantage of being easily scalable to wider inputs
+5. Provides balanced delay paths for all input combinations
+
+The multiplexer tree implementation:
+- First level selects between count=0/1 and count=2/3 based on in[2]
+- Second level further refines the selection based on in[1] and in[0]
+- Final output is hardwired to the correct count value for each case

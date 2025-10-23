@@ -1,0 +1,35 @@
+To provide a novel architectural approach, I will implement the asynchronous reset D flip-flop by separating the asynchronous reset logic from the synchronous data capturing logic.
+
+The asynchronous reset signal will asynchronously force the output to zero using a separate asynchronous reset block or logic.
+
+To achieve this, I will instantiate a latch that asynchronously clears the output when 'ar' is asserted, and then clocked D flip-flop logic that updates on the clock edge only if 'ar' is not asserted.
+
+However, since a latch is not recommended here due to asynchronous reset, an alternative is to implement the asynchronous reset using a combinational reset mux feeding the flip-flop input.
+
+Therefore, the architecture will be:
+
+- Use a continuous assignment that drives a reset signal or sets D input to zero when 'ar' is high, otherwise passes the data input 'd'.
+
+- A positive edge triggered flip-flop on 'clk' captures this muxed signal synchronously.
+
+- This means the output resets synchronously, but to emulate asynchronous reset, the module will have a high-speed asynchronous reset input that overrides the output register directly using a tri-state or additional logic.
+
+But since asynchronous reset is required, I will do the following:
+
+- Use a combinational reset mux for the flip-flop input.
+
+- The flip-flop itself is synchronous but have an asynchronous reset by leveraging a separate asynchronous reset latch before the flip-flop.
+
+Alternatively, I will implement the asynchronous reset through a dedicated reset register that forces the output when 'ar' is high, but captured asynchronously.
+
+To keep it entirely novel yet synthesis-friendly, I will model the asynchronous reset using an asynchronous latch that gates the output 'q' to zero when 'ar' is high, with the flip-flop output also feeding 'q'. This creates a transparent latch with asynchronous reset combined with a flip-flop.
+
+This dual-register scheme is novel as it separates the asynchronous reset from synchronous data capture by using two stages:
+
+- First stage: asynchronous reset latch that drives output low when 'ar' is high.
+
+- Second stage: D flip-flop capturing 'd' on clock, feeding into the latch when reset is not active.
+
+Finally, the output 'q' will be driven from the output of the latch, thus implementing asynchronous reset behavior with a latch/flip-flop combination.
+
+Though this is not a minimal implementation, it presents a novel architectural idea separating asynchronous and synchronous logic, possibly easing timing and reset distribution.

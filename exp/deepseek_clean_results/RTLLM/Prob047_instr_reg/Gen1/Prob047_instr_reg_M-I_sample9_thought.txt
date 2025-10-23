@@ -1,0 +1,19 @@
+To optimize the instruction register module for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. Performance (Timing):
+   - Register the outputs to break the combinational path and improve timing
+   - This eliminates the negative WNS by reducing the critical path
+
+2. Power:
+   - Remove the combinational always block that was causing unnecessary switching
+   - Only update outputs when relevant registers change
+
+3. Area:
+   - Maintain the same register count but optimize the output logic
+   - Remove redundant default assignments in the case statement
+
+The key changes are:
+- Outputs will now be registered (sequential logic)
+- Simplified case statement by removing redundant assignments
+- More efficient power usage by only updating outputs when needed
+- Better timing characteristics with registered outputs

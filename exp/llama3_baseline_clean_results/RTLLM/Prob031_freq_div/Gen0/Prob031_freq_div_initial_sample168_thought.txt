@@ -1,0 +1,5 @@
+To implement the frequency divider module freq_div, we need to create three counters to divide the input clock frequency of 100MHz into 50MHz, 10MHz, and 1MHz. 
+We will use a counter for each output clock signal. For CLK_50, we simply toggle the signal on every positive edge of the input clock. 
+For CLK_10, we will use a counter cnt_10 that increments on every positive edge of the input clock, and when it reaches 4 (since 100/10=10 and 10/2=5, but we start counting from 0), we toggle the CLK_10 signal and reset the counter. 
+For CLK_1, we will use a counter cnt_100 that increments on every positive edge of the input clock, and when it reaches 49 (since 100/1=100 and 100/2=50, but we start counting from 0, so we need 50-1=49 to get 50), we toggle the CLK_1 signal and reset the counter.
+The reset signal RST will reset all the counters and clock signals.

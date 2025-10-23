@@ -1,0 +1,12 @@
+To improve PPA, reduce redundant shift calculations by restructuring shift logic to compute only one shift result per clock cycle and minimize mux levels. Instead of precomputing all four shifted versions (left 1, left 8, right 1, right 8), first select the shift amount (1 or 8), then compute direction-dependent shifts. For right shifts, implement a single arithmetic right shift by variable amount using sign extension and a generic shift, avoiding separate wires for 1 and 8 bit shifts.
+
+This approach reduces the number of combinational paths and switching activity, improving timing and lowering power. Additionally, gating shift computations with the enable signal via clock gating or clock enable logic ensures shift logic toggles only when shifting is active, further reducing power.
+
+Implement the shift as follows:
+- Determine shift amount (1 or 8)
+- For left shift: shift left by that amount (1 or 8)
+- For right shift: arithmetic right shift by that amount using sign extension concatenation and variable shift
+
+Finally, implement the synchronous load and shift enable logic properly, and hold otherwise.
+
+This reduces combinational complexity, mux count, and switching activity, yielding better PPA.

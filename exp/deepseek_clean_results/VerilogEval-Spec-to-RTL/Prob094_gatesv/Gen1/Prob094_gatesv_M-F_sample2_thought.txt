@@ -1,0 +1,11 @@
+To fix the out_different functionality, we need to properly implement the wrap-around comparison for all bits:
+1. For out_different[3]: Compare in[3] with in[0] (wrap-around)
+2. For out_different[2]: Compare in[2] with in[3]
+3. For out_different[1]: Compare in[1] with in[2]
+4. For out_different[0]: Compare in[0] with in[3] (wrap-around)
+
+The key realization is that the "left neighbor" for each bit should be:
+- For bit 3: bit 0 (wrap-around)
+- For bits 2-0: the next higher bit (normal left neighbor)
+
+This means we need to adjust the comparisons to properly implement the circular wrap-around behavior for all bits in out_different.

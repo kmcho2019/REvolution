@@ -1,0 +1,7 @@
+Implement a 64-bit subtractor by splitting the operands into four 16-bit blocks and chaining four 16-bit carry-lookahead subtractor blocks. Each 16-bit subtractor performs A_block - B_block with borrow-in and borrow-out signals. This segmented approach reduces the carry/borrow chain length compared to a flat 64-bit ripple, improving timing and scalability.
+
+Each 16-bit block uses carry-lookahead logic internally for fast borrow propagation. The top module combines the results from the four blocks, connecting borrows between blocks. This approach blends block-level carry lookahead with manageable block size.
+
+Overflow detection remains based on the sign bits of A, B, and result. Since subtraction is performed directly as A - B with borrow chains, the sign bits reflect correct results for overflow logic.
+
+This hierarchical carry-lookahead subtractor is a novel alternative to the flat CLA or carry-select adders, balancing area and speed by dividing into four independent 16-bit CLA subtractors and assembling the final 64-bit result and overflow flag accordingly.

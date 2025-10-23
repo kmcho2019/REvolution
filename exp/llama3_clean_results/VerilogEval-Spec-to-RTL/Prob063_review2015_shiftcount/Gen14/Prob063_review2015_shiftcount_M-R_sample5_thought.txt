@@ -1,0 +1,7 @@
+The existing code uses an always block to update the state of the register based on the shift_ena and count_ena signals. To refactor this code, we can use a combination of continuous assignments and conditional operators to achieve the same functionality. However, instead of using an always block, we can define a wire that represents the next state of the register, and then use a continuous assignment to update the register value based on this wire. This approach can make the code more concise and easier to understand.
+
+We will define two wires, `shift_reg_out` and `count_reg_out`, to represent the next state of the register for the shift operation and the decrement operation, respectively. We will then use a multiplexer to select the next state of the register based on the shift_ena and count_ena signals.
+
+To handle the case where both shift_ena and count_ena are high, we will prioritize the shift operation. If shift_ena is high, we will select the shift_reg_out as the next state of the register. If shift_ena is low and count_ena is high, we will select the count_reg_out as the next state of the register. Otherwise, we will select the current state of the register as the next state.
+
+We will use a continuous assignment to update the register value based on the selected next state.

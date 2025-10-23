@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Balance pipeline stages by moving some addition logic to earlier stages
+   - Use carry-save adders for intermediate sums to reduce critical path
+   - Reduce final adder complexity by pre-combining terms
+
+2. Power Optimization:
+   - Add gating to partial product generation when b_reg[i] is 0
+   - Make output assignment fully synchronous to prevent unnecessary toggles
+   - Reduce enable pipeline width to minimum required
+
+3. Area Optimization:
+   - Combine intermediate registers where possible
+   - Simplify control logic
+   - Remove redundant registers
+
+Key Changes:
+- Reduced pipeline stages from 3 to 2 while maintaining throughput
+- Implemented carry-save addition for intermediate stages
+- Added power gating to partial products
+- Simplified enable pipeline
+- Made output register fully synchronous

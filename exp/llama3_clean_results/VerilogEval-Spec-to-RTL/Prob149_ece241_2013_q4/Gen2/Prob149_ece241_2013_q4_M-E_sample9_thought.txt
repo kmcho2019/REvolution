@@ -1,0 +1,15 @@
+A novel approach to solve this problem is to implement a state machine that uses an enumeration of states instead of binary encoding. This allows for a more readable and maintainable code. Additionally, instead of using a lookup table or conditional statements to determine the next state, we can use a hierarchical approach to evaluate the sensor inputs and determine the next state. 
+
+We can define an enumeration for the states, where each state corresponds to a specific water level range. The states can be defined as follows:
+- `AboveS2`: Water level above `s[2]`
+- `BetweenS2AndS1`: Water level between `s[2]` and `s[1]`
+- `BetweenS1AndS0`: Water level between `s[1]` and `s[0]`
+- `BelowS0`: Water level below `s[0]`
+
+We can then use a hierarchical approach to evaluate the sensor inputs and determine the next state. For example, if `s[2]` is high, we are in the `AboveS2` state. If `s[2]` is low and `s[1]` is high, we are in the `BetweenS2AndS1` state, and so on.
+
+To determine the `dfr` output, we can use a separate logic that checks if the current state indicates a higher water level than the previous state. If it does, we assert `dfr` to increase the flow rate by opening the supplemental flow valve.
+
+The reset signal will asynchronously reset the state machine to the `BelowS0` state, with all flow rate outputs asserted and `dfr` also asserted, simulating the water level being low for a long time.
+
+This approach simplifies the state machine logic and makes it more readable and maintainable.

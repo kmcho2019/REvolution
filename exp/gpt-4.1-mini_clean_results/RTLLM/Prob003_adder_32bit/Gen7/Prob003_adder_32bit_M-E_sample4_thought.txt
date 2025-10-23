@@ -1,0 +1,16 @@
+Implement a 32-bit carry-lookahead adder by hierarchically composing four 8-bit CLA blocks. Each 8-bit CLA block produces sum bits, carry-out, and block propagate/generate signals. At the top level, use a 4-bit CLA module specifically designed to compute carries between these 8-bit blocks based on their P/G signals and an external carry-in (which is zero here).
+
+This architecture breaks the problem into smaller 8-bit CLA units, reducing the carry chain length inside each block, and a small 4-bit CLA block for the inter-block carry propagation. This approach balances complexity, modularity, and speed, since 8-bit CLA blocks have shorter internal carry chains, and the top-level 4-bit CLA quickly calculates inter-block carries, avoiding ripple carry between 8-bit blocks.
+
+Use zero-based indexing internally and map the top-level inputs/outputs to [32:1] as required.
+
+The 8-bit CLA block computes carries via a straightforward carry-lookahead logic with explicit propagate/generate signals, and the 4-bit CLA for block carries uses the same carry-lookahead principle but only for 4 bits (the four 8-bit blocks).
+
+At top level:
+- Inputs are split into 4 groups of 8 bits.
+- Each 8-bit CLA outputs sum[7:0], P, G, Cout.
+- The top-level 4-bit CLA uses the 4 sets of P and G to produce internal carries C0..C4 (C0=0).
+- These block carries are used as Cin for each 8-bit block to generate final sums.
+- The final carry-out is the carry-out of the last 8-bit block.
+
+This approach modularizes the design and improves carry propagation delay compared to a 2-block 16-bit hierarchy, trading off slightly more hardware for better performance and scalability.

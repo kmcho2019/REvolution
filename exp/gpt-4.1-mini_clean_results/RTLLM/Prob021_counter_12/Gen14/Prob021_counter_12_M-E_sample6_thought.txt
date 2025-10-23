@@ -1,0 +1,7 @@
+Implement the counter using a synchronous always block triggered on the rising edge of clk and with asynchronous active-low reset rst_n. Instead of gating the clock, we use the valid_count signal as an enable inside the always block.
+
+To handle counting from 0 to 11 and wrap around, the next state logic is computed combinationally: if current count is 11 and valid_count is high, next count resets to 0; if valid_count is high and count less than 11, increment count; otherwise hold the current value.
+
+This approach avoids gated clocks and improves timing closure and clock integrity. It is a classic, clean, and reliable counter design with an enable signal.
+
+We also add comments for clarity and explicitly use non-blocking assignments for all sequential logic.

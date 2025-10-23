@@ -1,0 +1,12 @@
+The module TopModule will implement a finite state machine with 4 states: 
+- Idle: Wait for the first byte with in[3]=1, discard all other bytes.
+- Byte1: Store the first byte and wait for the next byte.
+- Byte2: Store the second byte and wait for the next byte.
+- Done: Signal the receipt of a message and output the 24-bit message.
+
+We will use a counter to keep track of the current state and the input byte.
+When the FSM is in the Idle state, it will check each input byte. If the byte has in[3]=1, it will transition to the Byte1 state and store the byte.
+In the Byte1 and Byte2 states, it will store the next two bytes and transition to the next state.
+In the Done state, it will signal the receipt of a message and output the 24-bit message.
+
+We will use a reset signal to reset the FSM to the Idle state.

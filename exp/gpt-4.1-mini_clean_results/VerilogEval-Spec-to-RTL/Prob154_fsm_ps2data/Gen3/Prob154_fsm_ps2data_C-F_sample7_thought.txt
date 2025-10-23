@@ -1,0 +1,6 @@
+Fuse the strengths of both examples by using an explicit 3-state FSM with clear named states for readability and synthesis friendliness, and minimal toggling by updating byte registers only when required with clock enables.  
+Use a single always block for sequential logic that updates state and bytes, and a separate combinational always block to drive done and out_bytes based solely on current state and stored bytes, minimizing logic depth and improving timing.  
+Make done a one-cycle pulse immediately after the third byte is received, with out_bytes valid exactly when done is asserted.  
+Use synchronous active-high reset that resets the FSM and registers.  
+This approach reduces unnecessary toggling by updating byte registers only when needed, separates output signal generation for cleaner logic and easier timing optimization, and maintains minimal and efficient state encoding, combining clarity, performance, and power efficiency.  
+All logic is positive edge triggered and synchronous.

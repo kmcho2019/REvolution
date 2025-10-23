@@ -1,0 +1,12 @@
+Refactoring Strategy:
+1. State Machine Restructuring: Convert the sequential always block to a combinational always block for state transitions and a separate sequential block for state updates. This separates combinational and sequential logic clearly.
+2. Output Logic: Move the output assignments to combinational logic using assign statements where possible, reducing register usage.
+3. Data Storage: Keep byte storage in sequential logic but make the assignments more explicit in their timing.
+4. Reset Handling: Maintain synchronous reset but make the initialization more explicit.
+5. Done Signal: Generate done combinationally from the state to reduce one register.
+
+Key Changes:
+- Split state machine into combinational next-state logic and sequential state update
+- Use assign for done signal to make it purely combinational
+- Keep byte storage in sequential logic for proper timing
+- Maintain same functionality but with clearer separation of concerns

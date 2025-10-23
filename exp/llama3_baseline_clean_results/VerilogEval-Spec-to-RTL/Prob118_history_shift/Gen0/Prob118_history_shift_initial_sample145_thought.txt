@@ -1,0 +1,11 @@
+To implement the TopModule, we need to create a 32-bit shift register that updates based on the input signals predict_valid, predict_taken, train_mispredicted, train_taken, and train_history. The module should also handle the asynchronous reset signal areset. 
+
+The shift register update logic can be divided into two main cases: 
+1. When a branch prediction is made (predict_valid = 1), we shift in predict_taken from the LSB side to update the branch history for the predicted branch.
+2. When a branch misprediction occurs (train_mispredicted = 1), we load the branch history register with the history after the completion of the mispredicted branch, which is train_history concatenated with train_taken.
+
+We also need to consider the case when both a prediction and misprediction occur at the same time. In this case, the misprediction takes precedence.
+
+To implement this logic, we can use an if-else statement inside an always block that is triggered on the positive edge of the clock. We will use a non-blocking assignment to update the register value.
+
+We will also include the asynchronous reset logic to reset the history counter to zero when areset is high.

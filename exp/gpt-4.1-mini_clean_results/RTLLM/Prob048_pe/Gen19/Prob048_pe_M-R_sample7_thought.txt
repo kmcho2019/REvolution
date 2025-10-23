@@ -1,0 +1,11 @@
+Refactor the MAC PE by moving the accumulation logic entirely into a combinational block that calculates the next accumulator value based on current inputs and stored accumulator. Use a non-blocking assignment inside the clocked always block to update the accumulator register with the next value. This keeps synchronous behavior while making the combinational path explicit and modular.
+
+Specifically:
+- Compute the full 64-bit product.
+- Compute the saturated sum in a combinational always @* block, producing next_acc.
+- Store the accumulator acc on the positive edge of clk or reset synchronously.
+- Output c directly from acc.
+- Keep overflow detection and saturation logic in combinational logic for better clarity and maintainability.
+- This separation aids readability and synthesis tools’ optimization.
+
+This structure maintains functional correctness with clearer separation of combinational and sequential logic compared to the original solution, which had some combinational logic spread outside the always block.

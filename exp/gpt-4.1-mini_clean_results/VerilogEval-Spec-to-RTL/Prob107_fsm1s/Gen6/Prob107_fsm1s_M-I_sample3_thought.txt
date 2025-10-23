@@ -1,0 +1,8 @@
+To improve PPA, separate output logic from next state computation to reduce combinational toggling and critical path delay. Keep output as a continuous assignment directly driven by registered state, which avoids unnecessary combinational output logic. This also minimizes glitching on the output. Maintain synchronous active-high reset and 1-bit state encoding for minimal area.
+
+This approach reduces switching power by decoupling output from next_state combinational logic, improves timing by shortening the critical path, and keeps area minimal with only one flip-flop. The FSM remains fully Moore, as output depends only on current state.
+
+Hence, implement:
+- State register with synchronous reset (nonblocking).
+- Next state combinational logic.
+- Output assigned continuously from state (no extra always block).

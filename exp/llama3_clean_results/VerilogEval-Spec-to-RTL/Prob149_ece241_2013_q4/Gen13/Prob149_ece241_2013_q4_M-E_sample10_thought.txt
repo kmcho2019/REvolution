@@ -1,0 +1,9 @@
+To address the challenge of accurately controlling the flow rate based on the water level and sensor inputs, I propose a novel approach using a finite state machine (FSM) with a more intuitive and scalable encoding for the water levels. This new solution involves defining a set of states that directly correspond to the water level ranges and the previous level, allowing for a more straightforward implementation of the flow rate logic.
+
+The key idea is to encode the water level into a state machine that has states for each significant water level range (above s[2], between s[2] and s[1], between s[1] and s[0], and below s[0]) and consider the previous level in the transition logic. This approach simplifies the logic for determining the output signals, as each state directly maps to specific output settings.
+
+For the 'dfr' signal, instead of comparing numerical levels, the FSM will consider the transition between states and set 'dfr' based on whether the water level has increased, which aligns with the requirement to open the supplemental flow valve when the level rises.
+
+This approach also allows for easy incorporation of the synchronous reset, as the FSM can be reset to a state corresponding to the lowest water level, ensuring all flow valves are open.
+
+To further improve the solution, we will use SystemVerilog's enumeration to define the states, making the code more readable and maintainable. This also facilitates the addition of more states or modification of existing ones if the requirements change.

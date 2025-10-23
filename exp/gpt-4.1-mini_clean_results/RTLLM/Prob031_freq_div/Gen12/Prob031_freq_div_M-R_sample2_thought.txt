@@ -1,0 +1,5 @@
+Refactor the frequency divider by separating the counters and clock toggling logic into distinct always blocks for clarity. The 50MHz clock generation remains a simple toggle flip-flop with asynchronous reset. For the 10MHz and 1MHz outputs, use separate counters and toggling flip-flops in individual always blocks, each with its own reset and counting logic.
+
+This approach improves modularity and scalability, as each divided clock signal is handled independently. Also, by splitting counters, it's easier to modify or extend individual dividers. Use non-blocking assignments and asynchronous reset as before to maintain synchronous design and reset behavior.
+
+This restructuring doesn't change the functionality or performance but provides a different, more modular clock divider structure.

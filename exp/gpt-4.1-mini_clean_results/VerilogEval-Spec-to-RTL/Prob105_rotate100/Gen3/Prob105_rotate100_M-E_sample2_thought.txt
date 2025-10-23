@@ -1,0 +1,12 @@
+Implement a 100-bit rotator using two 50-bit registers to split the shift register into halves. On each clock cycle, rotate the data by manipulating and swapping bits between these two halves depending on the direction. This approach breaks the wide 100-bit rotation into smaller 50-bit operations and explicit bit moves, possibly improving synthesis optimization on certain technologies by exploiting smaller datapaths.
+
+Prioritize synchronous load which loads all bits at once into the two 50-bit registers. For rotation:
+- Rotate left by one: MSB of lower half goes to LSB of upper half, the rest shift accordingly.
+- Rotate right by one: LSB of upper half goes to MSB of lower half, with appropriate shifts.
+This avoids using a full 100-bit concatenation and lets synthesis optimize the smaller-width operations more efficiently.
+
+For no rotation, just retain previous values to reduce toggling.
+
+Output q is formed by concatenating upper and lower halves.
+
+This architecture trades a bit more register control logic for potential synthesis and timing improvement, and demonstrates an alternative architectural partitioning of the large shift register.

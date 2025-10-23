@@ -1,0 +1,7 @@
+To simplify the solution, we can eliminate the need for an array of wires to represent the groups of bits and directly calculate the offset within the input vector based on the selector. This approach reduces the complexity of the multiplexer logic and potentially improves the PPA metrics by minimizing the number of wires and operations required.
+
+The idea is to calculate the offset of the 4-bit input within the 1024-bit input vector using the selector. The 8-bit selector can be divided into two parts: the most significant 4 bits (sel[7:4]) that select one of the 16 groups of 64 bits, and the least significant 4 bits (sel[3:0]) that select one of the 16 possible 4-bit inputs within the chosen group.
+
+By multiplying the group selector by the size of each group (64 bits) and adding the offset within the group calculated from the 4-bit selector, we can directly index into the 1024-bit input vector to extract the desired 4-bit output.
+
+This simplified approach maintains the functionality of the original solution while reducing the complexity and potentially improving the PPA metrics.

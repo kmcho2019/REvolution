@@ -1,0 +1,6 @@
+To implement the TopModule, we need to create a 32-bit global history shift register. 
+We will use a reg variable to store the current history and update it based on the input signals.
+When a prediction is made, we shift in the predicted taken bit from the LSB side.
+When a misprediction occurs, we load the history register with the train_history concatenated with the actual taken result.
+We also need to handle the case where both a prediction and a misprediction occur at the same time, in which case the misprediction takes precedence.
+The module will be reset to zero when the asynchronous reset signal areset is high.

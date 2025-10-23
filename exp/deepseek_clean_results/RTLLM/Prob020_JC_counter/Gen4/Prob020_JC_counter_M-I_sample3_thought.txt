@@ -1,0 +1,18 @@
+To optimize the Johnson counter for better PPA metrics while maintaining functionality:
+
+1. Timing Optimization:
+- Add a pipeline register for the next state calculation to break the critical path
+- This will improve WNS by reducing combinational logic between registers
+
+2. Power Optimization:
+- Implement clock gating when the counter reaches its terminal states (all 1s or all 0s)
+- Add an enable signal to prevent unnecessary toggling when not needed
+
+3. Area Optimization:
+- Maintain the simple register structure but optimize the reset logic
+- Use synchronous reset only to save area (assuming no requirement for async reset)
+
+The improved version will:
+- Achieve better timing with pipelining
+- Reduce power with clock gating and enable control
+- Maintain similar area with synchronous reset

@@ -1,0 +1,8 @@
+Implement the FSM next state logic and outputs using combinational lookup tables (LUTs) encoded as explicit logic equations, avoiding functions and always blocks altogether. Precompute and hardcode next states and output z for all possible present states and inputs as a compact 8-entry (since y is 3 bits and x is 1 bit) truth table using a combinational case or conditional operator structure.
+
+Use a single wire vector (4 bits) to represent next state and output z simultaneously, where the upper 3 bits correspond to next state and the LSB to output z. Then assign Y0 from next state LSB and z from this vector's output bit. This reduces complexity by centralizing all combinational logic into one small LUT table, improving synthesis friendliness and potentially reducing area and power. The design uses only assign statements with no reg or always blocks, enabling direct combinational logic inference and minimal logic overhead.
+
+Key points:
+- Combine next state and z outputs in one 4-bit combinational LUT based on present state y and input x.
+- Assign Y0 and z directly from that LUT.
+- No functions or always blocks, purely continuous assignments for next state and output logic.

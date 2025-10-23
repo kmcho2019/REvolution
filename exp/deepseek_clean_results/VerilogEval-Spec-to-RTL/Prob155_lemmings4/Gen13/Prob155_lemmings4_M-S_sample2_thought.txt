@@ -1,0 +1,19 @@
+Simplified Lemming State Machine:
+
+1. States: Only 4 states (WALK, DIG, FALL, SPLAT) with clear transitions
+2. Direction: Single bit register (1=left, 0=right)
+3. Priority Handling:
+   - Fall has highest priority (ground=0)
+   - Then dig if grounded
+   - Finally bump handling if neither
+4. Fall Counter:
+   - Only increments in FALL state
+   - Splat if >20 cycles when landing
+5. Outputs:
+   - Directly derived from state and direction
+   - All outputs zero in SPLAT state
+6. Reset: Initialize to WALK left
+7. Simplified Logic:
+   - Remove redundant conditions
+   - Clear priority ordering
+   - Minimal state transitions

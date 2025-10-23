@@ -1,0 +1,7 @@
+To optimize the 5-bit maximal-length Galois LFSR for better performance, power, and area, I will implement a combinational next-state calculation in a separate wire vector. This approach reduces critical path complexity by having one XOR feedback calculation and a single synchronous register update, allowing synthesis tools to optimize timing better.
+
+Specifically, the feedback bit is q[0], which affects taps at bit positions 5 and 3 (indices 4 and 2 in 0-based). For the Galois configuration, the tapped bits are XORed with the feedback bit before shifting right. This logic can be compactly expressed for the next state.
+
+Using a single vector for the next state reduces switching and routing complexity, improving power and area. The synchronous reset remains, setting q to 1.
+
+This design keeps clarity, is functionally equivalent, and helps synthesis tools generate a more optimal circuit.

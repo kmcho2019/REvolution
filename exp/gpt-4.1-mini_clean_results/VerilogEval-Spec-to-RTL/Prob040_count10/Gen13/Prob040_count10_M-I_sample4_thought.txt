@@ -1,0 +1,12 @@
+To improve power and potentially timing, I will implement a clock enable (ce) signal that disables counting when reset is active or when the counter reaches 9. This avoids unnecessary incrementing and logic toggling on wrap-around cycles or when reset is asserted, slightly reducing power consumption. 
+
+I will keep the synchronous reset intact and use a single always block triggered on the clock's positive edge. The clock enable will gate the counter update, preventing toggling when the counter is at terminal count or reset is active.
+
+This approach optimizes power by minimizing switching activity and might reduce the critical path length because the increment logic only triggers when the counter is enabled.
+
+The area impact is minimal since only a small combinational enable signal is added.
+
+Summary:
+- Introduce a clock enable (ce) signal internally to suppress toggling on reset or at terminal count.
+- Keep synchronous reset and single always block.
+- Maintain simple, readable, and synthesizable code.

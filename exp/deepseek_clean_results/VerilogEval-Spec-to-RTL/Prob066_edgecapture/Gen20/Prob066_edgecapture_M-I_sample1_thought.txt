@@ -1,0 +1,21 @@
+Improved strategy for correct edge detection and capture:
+
+1. Problem Analysis:
+   - Current implementation detects edges one cycle late due to combinational logic using current 'in' with registered 'prev_in'
+   - Need to align edge detection with the clock cycle where transition actually occurs
+
+2. Solution Approach:
+   - Store two previous values of input (prev_in and prev_prev_in)
+   - Detect falling edge when prev_prev_in=1 and prev_in=0
+   - This ensures detection happens exactly one cycle after the actual transition
+   - Maintain same capture behavior (set until reset)
+
+3. Benefits:
+   - Correct timing for edge detection
+   - Still maintains synchronous design principles
+   - Clear separation of detection and capture
+   - Only adds one more register (minimal area overhead)
+
+4. Reset Behavior:
+   - Clears all state (both history registers and capture)
+   - Synchronous reset for consistent behavior

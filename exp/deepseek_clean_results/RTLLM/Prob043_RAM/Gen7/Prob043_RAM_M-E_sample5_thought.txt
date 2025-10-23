@@ -1,0 +1,17 @@
+Novel Architecture: Distributed Control RAM
+1. Instead of using a traditional memory array, implement each memory location as an independent register with its own control logic
+2. Each location has:
+   - Local write enable (decoded from global write_en and address)
+   - Local reset logic
+   - Direct output connection when selected
+3. Benefits:
+   - True parallel read/write capability (no address contention)
+   - Reduced fanout on control signals
+   - Power-efficient (only selected locations activate)
+   - Better timing characteristics (shorter local paths)
+   - Clear physical implementation in FPGA/ASIC
+4. Features:
+   - Read path remains combinational for low latency
+   - Write operations are synchronous
+   - Reset clears all locations
+   - Output zeros when not reading

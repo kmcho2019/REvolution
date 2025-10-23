@@ -1,0 +1,12 @@
+The simplified design maintains the core shift-and-accumulate multiplication but reduces complexity by:
+1. Eliminating explicit state machine - using just a counter and control signals
+2. Removing separate LOAD state - loading operands when start is detected
+3. Simplifying control logic - using just counter value for state determination
+4. Reducing register usage - combining control flags into counter logic
+5. Maintaining same interface and functionality while reducing area and improving timing
+
+Key simplifications:
+- Single always block for all sequential logic
+- Counter serves dual purpose: cycle counting and state tracking
+- Direct assignment of done signal based on counter value
+- Simplified shift-and-add operation without explicit state decoding

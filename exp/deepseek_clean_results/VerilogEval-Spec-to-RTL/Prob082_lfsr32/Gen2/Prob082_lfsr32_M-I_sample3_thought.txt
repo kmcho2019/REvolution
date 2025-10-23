@@ -1,0 +1,22 @@
+The original solution has several issues in implementing the Galois LFSR correctly. Here's the improved strategy:
+
+1. Correct Tap Implementation:
+   - The taps should be at bits 31, 21, 1, and 0 (0-based indexing for 32-bit)
+   - Each tap position should XOR its current value with the outgoing LSB (q[0])
+   - The MSB (q[31]) should be replaced with q[0] XOR q[31]
+
+2. Proper Bit Ordering:
+   - Maintain correct shift register structure
+   - Non-tap bits should simply shift right
+   - Tap bits should shift right with XOR feedback
+
+3. Reset Functionality:
+   - Keep synchronous reset to 32'h1
+   - Ensure reset properly initializes the LFSR state
+
+4. Optimization:
+   - Use a single always block for clean synchronous logic
+   - Explicitly show all bit positions for clarity
+   - Group non-tap bits together for better readability
+
+The key fix is properly implementing the XOR feedback at each tap position while maintaining the correct shift register structure.

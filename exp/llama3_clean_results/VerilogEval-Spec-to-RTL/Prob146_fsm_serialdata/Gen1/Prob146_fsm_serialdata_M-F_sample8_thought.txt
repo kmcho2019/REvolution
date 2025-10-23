@@ -1,0 +1,7 @@
+To fix the issues in the code, we need to address the following:
+1. **Correct Data Bit Counting**: Instead of using a 4-bit register `data_count_reg` which can count up to 15, we should use a mechanism that can accurately track the reception of 8 data bits. We can achieve this by using a counter that specifically checks for the 8th data bit being received.
+2. **Accumulate Data Bits Correctly**: The code should accumulate the received data bits in the `out_byte_reg` as each bit is received, not just when transitioning to the 'STOP' state. This means shifting the bits of `out_byte_reg` to the left and adding the new bit `in` to the least significant position in each clock cycle within the 'DATA' state.
+3. **Correctly Handle the 'ERROR' State**: If an error occurs because a stop bit is not received when expected, the FSM should wait for a stop bit before attempting to receive the next byte. This implies that the FSM should discard any bits received until a stop bit is detected and then transition back to the 'IDLE' state.
+4. **Correct 'done' Signal Assertion**: The 'done' signal should be asserted whenever a stop bit is correctly received, whether it's after successfully receiving a byte or after recovering from an error.
+
+We will modify the state machine to accurately reflect these requirements, ensuring that the FSM correctly receives bytes, accumulates data bits, handles errors, and asserts the 'done' signal as necessary.

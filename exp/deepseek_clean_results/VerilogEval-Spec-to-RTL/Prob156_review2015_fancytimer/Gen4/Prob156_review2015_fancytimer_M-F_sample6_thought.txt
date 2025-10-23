@@ -1,0 +1,25 @@
+To fix the issues identified in the feedback, we need to address several key problems:
+
+1. **Cycle Counting Correction**: The main issue is the incorrect cycle count. We need to ensure we count exactly (delay+1)*1000 cycles. This requires:
+   - Proper initialization of counters when entering RUN state
+   - Accurate counting of 1000 cycles per delay count
+   - Correct transition to COMPLETE state after final count
+
+2. **Pattern Matching Timing**: We'll modify the pattern detection to:
+   - Shift in new bits only in IDLE state
+   - Clear the pattern register when leaving IDLE state
+   - Ensure proper synchronization with input data
+
+3. **Count Output Accuracy**: The count output should:
+   - Show the current delay_counter value during RUN state
+   - Update only at the start of each 1000-cycle period
+   - Be don't-care in other states
+
+4. **State Machine Improvements**: We'll enhance the FSM to:
+   - Clear counters properly during state transitions
+   - Handle the delay capture more robustly
+   - Ensure proper timing of done signal assertion
+
+5. **Reset Handling**: We'll ensure all registers are properly initialized on reset.
+
+The fixed implementation will maintain the same interface but correctly implement the timing requirements.

@@ -1,0 +1,9 @@
+To optimize power and area further, I will add explicit clock enables to byte registers so they only toggle when loaded, reducing unnecessary switching. This reduces dynamic power by gating register updates to when useful data is captured.
+
+I will keep the binary FSM encoding (2-bit state), as it already minimizes flip-flops.
+
+I will also separate the done signal generation into a one-cycle pulse after the third byte is captured, ensuring done is asserted only when valid data is output, which reduces output toggling.
+
+The out_bytes register will be loaded only when done is asserted, minimizing output changes.
+
+This approach preserves the original timing and functionality but reduces switching activity, improving power with minimal area or timing impact.

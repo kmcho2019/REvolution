@@ -1,0 +1,14 @@
+Simplify the float_multi design by removing pipelining and using a single-cycle combinational approach for clarity and simplicity while still handling all IEEE-754 cases (NaN, Inf, zero, normalization, rounding). 
+
+Key simplifications:
+- Single always block triggered by clk and rst for sequential update.
+- Extract sign, exponent, mantissa directly from inputs.
+- Handle special cases explicitly in combinational logic.
+- Perform 24x24 mantissa multiplication in one step.
+- Normalize and round result using straightforward logic.
+- No pipeline stages or sticky bit function hierarchy.
+- Use 10-bit exponent internally to handle overflow but output only 8 bits.
+- Keep rounding to nearest even.
+- Output directly assigned in sequential block.
+
+This yields easier to read, understand, and verify code while maintaining IEEE-754 correctness in multiplication.

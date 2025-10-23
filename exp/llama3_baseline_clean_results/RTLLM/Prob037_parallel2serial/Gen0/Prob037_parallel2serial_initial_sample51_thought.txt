@@ -1,0 +1,13 @@
+To implement the parallel-to-serial conversion module, I will design a finite state machine (FSM) that controls the conversion process. The FSM will have two main states: idle and conversion. In the idle state, the module waits for new parallel input data. When new data is available, the FSM transitions to the conversion state, where it serially outputs the bits of the parallel input. The conversion process is controlled by a counter that keeps track of the current bit being output. On each clock cycle, the counter is incremented, and the corresponding bit of the parallel input is output. When all bits have been output, the FSM returns to the idle state.
+
+The module will use the following components:
+- A counter (cnt) to keep track of the current bit being output.
+- A data register (data) to store the parallel input data.
+- A valid signal (valid_out) to indicate the availability of valid serial output.
+
+The implementation will involve the following steps:
+1. Initialize the counter, data register, and valid signal.
+2. On each clock cycle, check if the counter is 3 (indicating the last bit of the parallel input).
+3. If the counter is 3, update the data register with the parallel input, reset the counter to 0, and set the valid signal to 1.
+4. Otherwise, increment the counter by 1, set the valid signal to 0, and shift the data register one bit to the left, with the most significant bit shifted to the least significant bit.
+5. If the reset signal is high, reset the counter to 0.

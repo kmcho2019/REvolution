@@ -1,0 +1,25 @@
+Novel Hierarchical XOR Tree Architecture:
+1. Divide and Conquer:
+   - Split the 512-bit array into 32 segments of 16 bits each
+   - Compute Rule 90 for each segment independently with boundary conditions
+   - Use a hierarchical XOR tree to combine results while maintaining correct neighbor relationships
+
+2. Pipelined Computation:
+   - Add a pipeline register between segment computations
+   - This breaks the long combinational path while maintaining throughput
+   - Only adds 1 cycle of latency but significantly improves timing
+
+3. Smart Boundary Handling:
+   - Each segment handles its own left/right boundaries
+   - Boundary cells use registered values from neighboring segments
+   - Eliminates the need for global boundary checks
+
+4. Efficient Loading:
+   - Maintain parallel load capability for all segments
+   - Use segment enables to reduce power when not all segments need updating
+
+Advantages:
+- Better timing due to shorter combinational paths
+- Lower power from segmented computation
+- Scalable to larger arrays
+- Maintains full parallelism within segments

@@ -1,0 +1,7 @@
+To optimize for better power, area, and potentially timing, partition the 100-bit mux into smaller chunks rather than one flat 100-bit mux. This reduces the fanout and routing complexity, enabling synthesis tools to better optimize each smaller mux and reduce switching power because smaller mux units toggle independently. 
+
+A practical balance is to split the 100-bit inputs into 10 blocks of 10 bits each, using a generate loop to instantiate 10 small 10-bit muxes. This hierarchical approach keeps modularity, improves local routing, and can reduce both dynamic power and area by enabling optimizations on smaller bit-width muxes. 
+
+The TopModule directly instantiates the array of mux blocks, each parameterized with WIDTH=10. The underlying mux uses a simple conditional assignment, preserving minimal logic and high timing performance.
+
+This approach trades minimal additional module overhead for potential improvements in PPA, especially on large buses.

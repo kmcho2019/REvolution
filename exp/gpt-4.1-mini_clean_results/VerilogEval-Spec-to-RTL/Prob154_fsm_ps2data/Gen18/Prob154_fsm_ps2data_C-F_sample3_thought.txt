@@ -1,0 +1,11 @@
+Fuse the clear, simple 3-state FSM encoding from Example 2 with the one-hot state encoding and byte-enable signal gating from Example 1 to optimize power and timing. 
+
+- Use one-hot FSM states (3 bits) to reduce combinational complexity and improve timing.
+- Create load enables for each byte register to minimize unnecessary toggling and save power.
+- Separate the done signal generation to assert it only on the cycle immediately after the 3rd byte is loaded.
+- Keep synchronous reset active high and implement all sequential logic in one posedge clk block for simplicity.
+- Output out_bytes with bytes in proper order: first byte at [23:16], second at [15:8], and third at [7:0].
+- Done is asserted only for one cycle after the third byte is latched.
+- The FSM waits in WAIT_SYNC until a byte with in[3]=1 is received, then captures 3 bytes in sequence and signals done.
+  
+This fusion approach improves power by gating byte writes, improves performance with one-hot states, and preserves code clarity.

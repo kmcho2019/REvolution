@@ -1,0 +1,9 @@
+To solve this problem, we will create a Verilog module named width_8to16 that takes an 8-bit input and converts it into a 16-bit output. The module will have two output ports: valid_out and data_out. The valid_out signal will indicate the validity of the output data, and the data_out signal will represent the converted 16-bit output data. 
+
+The module will use a flag signal to track whether the first 8-bit data has been received. If the flag is inactive (indicating that this is the first data), the module will store the input data in a temporary register (data_lock) and set the flag. 
+
+When the second valid data is inputted, the module will concatenate the contents of the data_lock register and the current data_in register to form a 16-bit output. The valid_out signal will be set high to indicate that the output data is valid. 
+
+The data_out register will be triggered on the positive edge of the clock signal (posedge clk) or the negative edge of the reset signal (negedge rst_n). On reset, the data_out register will be cleared to 0.
+
+We will use a counter to ensure that the output is only generated after two valid inputs have been received.

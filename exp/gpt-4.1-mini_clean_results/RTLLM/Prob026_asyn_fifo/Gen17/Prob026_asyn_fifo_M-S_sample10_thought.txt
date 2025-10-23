@@ -1,0 +1,9 @@
+Simplify the asynchronous FIFO by integrating pointer synchronization logic directly into the top module without separate submodules, reducing module instantiation overhead. Use straightforward two-stage synchronizers implemented with simple registers in each clock domain.
+
+Maintain separate read and write binary and Gray pointers. Use functions for Gray code conversion. Compute empty and full conditions by directly comparing Gray pointers synchronized to the opposite clock domain.
+
+Implement dual-port RAM as a simple register array with synchronous write and read using the write and read clocks respectively, inside the same file for clarity.
+
+Keep parameterized width and depth. Use only necessary signals and registers to reduce complexity while maintaining the required asynchronous FIFO functionality with proper clock domain crossing.
+
+This approach minimizes code size and improves readability, suitable for educational or moderate complexity use, while preserving the original FIFO functionality.

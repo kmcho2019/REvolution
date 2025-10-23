@@ -1,0 +1,14 @@
+The refactored design simplifies the original implementation while maintaining the core functionality. Key changes:
+1. Removes gray coding and dual-register staging to simplify timing
+2. Uses a simple counter for bit position tracking
+3. Directly assigns the parallel output when 8 bits are collected
+4. Simplifies the valid signal generation
+5. Maintains synchronous design with clean reset
+
+The simplified approach:
+- Uses a 3-bit counter to track received bits
+- Shifts incoming bits into a temporary register
+- Outputs the register and asserts valid when counter reaches 7
+- Resets cleanly on active-low reset
+
+This matches the original requirements more directly while being easier to verify.

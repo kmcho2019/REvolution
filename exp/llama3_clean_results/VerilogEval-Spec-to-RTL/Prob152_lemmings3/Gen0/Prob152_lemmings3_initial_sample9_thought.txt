@@ -1,0 +1,15 @@
+To implement the Lemmings behavior using a Moore state machine, we need to identify the states that the Lemming can be in and the transitions between them based on the given inputs and rules. The primary states will be walking left, walking right, falling, and digging. However, since the Lemming's behavior also depends on its previous direction when transitioning from falling to walking (or from digging to walking when it hits the ground again), we might need additional states to track the direction before falling or digging. 
+
+Given the requirements, a basic state machine can be conceptualized with the following states:
+1. Walking Left (WL)
+2. Walking Right (WR)
+3. Falling Left (FL) - Falling while the last walking direction was left
+4. Falling Right (FR) - Falling while the last walking direction was right
+5. Digging Left (DL) - Digging while moving left
+6. Digging Right (DR) - Digging while moving right
+
+Transitions will be based on inputs like bump_left, bump_right, ground, and dig. For example, if the Lemming is walking left and receives a bump_left, it should start walking right. If it's walking and ground becomes 0, it should transition to falling. If it's digging and ground becomes 0, it also transitions to falling but keeps track of its original direction.
+
+To implement this as a Moore state machine in Verilog, we will use a parameterized case statement to handle the state transitions and output logic. We will also use a reg to store the current state and another reg for the next state, updating the current state on the positive edge of the clock.
+
+The outputs walk_left, walk_right, aaah, and digging will be determined based on the current state of the machine.

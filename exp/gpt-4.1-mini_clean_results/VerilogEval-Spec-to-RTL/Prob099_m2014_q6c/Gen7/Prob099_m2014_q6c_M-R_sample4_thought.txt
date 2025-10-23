@@ -1,0 +1,8 @@
+Refactor the module to use continuous assign statements for decoding the current state and computing the next state signals instead of always blocks. This eliminates the need for procedural blocks and registers, making the logic purely combinational and potentially more synthesizable in some contexts. The one-hot encoded input y can be decoded into one-hot state signals directly, and then the next-state one-hot signals can be computed using logical expressions derived from the state transition diagram and input w.
+
+Then, assign outputs Y2 and Y4 to the next-state bits corresponding to y[1] (B) and y[3] (D), respectively, as required.
+
+This approach:
+- Uses bitwise and combinational logic exclusively.
+- Avoids loops or procedural code, improving readability.
+- Matches output port names exactly to the specification, fixing the naming issue.

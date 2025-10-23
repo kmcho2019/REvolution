@@ -1,0 +1,16 @@
+Circular Buffer Architecture:
+1. Instead of shifting all bits, maintain a write pointer and track the current position
+2. For predictions: 
+   - Store new prediction at current pointer
+   - Increment pointer (with wrap-around)
+3. For mispredictions:
+   - Reset pointer to position after mispredicted branch
+   - Store actual taken bit
+4. Output generation:
+   - Construct history by reading from pointer+1 to pointer (wrapped)
+5. Benefits:
+   - Reduced power: Only 1 bit changes per prediction (vs 32-bit shift)
+   - Faster updates: No large shift operations
+   - Same functionality with different implementation
+6. Reset:
+   - Clear buffer and reset pointer

@@ -1,0 +1,5 @@
+Refactor by separating the multiplication and accumulation operations into different always blocks for clarity and pipeline-style modularity.  
+First, compute the 64-bit product in a combinational assign statement to simplify and highlight the multiplication step.  
+Second, update the accumulator register `c` in an always block on the clock's positive edge with synchronous reset, using a 33-bit intermediate sum register to detect overflow.  
+Finally, assign the output register `c` directly, removing any combinational assignments to it outside the register update, ensuring all state updates are synchronous.  
+This restructuring makes the data flow and timing more explicit, improves readability, and isolates multiplication from accumulation logic, while maintaining the same saturation behavior and functional correctness.

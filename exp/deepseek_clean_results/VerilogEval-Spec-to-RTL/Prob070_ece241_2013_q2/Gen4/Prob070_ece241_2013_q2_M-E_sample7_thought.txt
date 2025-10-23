@@ -1,0 +1,11 @@
+Novel approach using a hybrid LUT-ROM implementation:
+1. Instead of traditional logic gates, implement a small 16x1 lookup table (LUT) using a case statement
+2. The 4-bit input {a,b,c,d} forms the address to the LUT
+3. Store precomputed output values for each valid input combination
+4. For out_sop: Directly output the stored values (sum-of-products equivalent)
+5. For out_pos: Invert the logic and use De Morgan's laws to get product-of-sums form
+6. Benefits:
+   - Explicit truth table implementation ensures correctness
+   - Easy to verify against specifications
+   - Naturally handles don't-care conditions
+   - Clear separation between specification and implementation

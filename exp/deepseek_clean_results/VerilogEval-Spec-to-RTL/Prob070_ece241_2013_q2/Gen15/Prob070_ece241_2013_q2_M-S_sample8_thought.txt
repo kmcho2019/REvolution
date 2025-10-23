@@ -1,0 +1,21 @@
+Simplified design approach:
+
+1. For out_sop (Sum of Products):
+   - Identify that minterms 2 (0010), 7 (0111), and 15 (1111) can be simplified by observing patterns:
+     - 2: c is high while others are low
+     - 7: a is low while b,c,d are high
+     - 15: all inputs are high
+   - This allows us to express the logic without full pattern matching
+
+2. For out_pos (Product of Sums):
+   - Instead of checking all 0-output cases, recognize that the output should be 1 unless:
+     - All inputs are 0 (0)
+     - Only d is 1 (1)
+     - b is 1 without a or c (4,5,6)
+     - a is 1 without b or with specific c,d patterns (9,10,13,14)
+   - This can be expressed more concisely using logical combinations
+
+3. Key optimizations:
+   - Eliminate full pattern matching in favor of simpler logical expressions
+   - Leverage don't-care conditions to minimize logic
+   - Use more fundamental logic operations for cleaner implementation

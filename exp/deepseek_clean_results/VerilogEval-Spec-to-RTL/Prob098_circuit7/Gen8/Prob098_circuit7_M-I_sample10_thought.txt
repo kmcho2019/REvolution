@@ -1,0 +1,12 @@
+From the waveform analysis:
+1. q becomes 1 at 15ns when a=0 (but this is initial state)
+2. q changes to 0 at 45ns when a transitions to 1
+3. q stays 0 as long as a remains 1
+4. The behavior suggests q is set to 1 initially and cleared when a becomes 1
+
+The improved implementation should:
+1. Initialize q to 1 (as seen at first clock edge)
+2. Clear q to 0 when a becomes 1 at clock edge
+3. Keep q at 0 while a remains 1
+4. Use synchronous reset-like behavior
+This matches the waveform exactly while being minimal in hardware.

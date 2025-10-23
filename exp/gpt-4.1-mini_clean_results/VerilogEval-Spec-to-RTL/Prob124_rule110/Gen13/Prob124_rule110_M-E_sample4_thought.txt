@@ -1,0 +1,7 @@
+Implement the 512-cell Rule 110 automaton by representing the entire cell array as a 512-bit shift register that stores the current state `q`. On each clock cycle (when `load` is low), compute the next state by iterating through the bits and computing their next values combinationally, but instead of using a generate-for loop, use a parallel prefix-style combinational computation that leverages bit slicing and vector operations for improved conciseness.
+
+To handle boundary conditions cleanly, explicitly define the neighbors for all bits by shifting the vector left and right, padding with zeros at edges. Then compute the next state vector with a bitwise formula derived from the truth table, applied vector-wise.
+
+Use purely combinational logic to compute the next state in parallel using Verilog bitwise operations, avoiding the explicit loop in generate blocks. The synchronous always block either loads the input data or updates state with the next state.
+
+This vectorized approach avoids explicit per-bit generate loops, simplifying code and possibly aiding synthesis optimization, making the design more compact and potentially easier to optimize for area and performance.

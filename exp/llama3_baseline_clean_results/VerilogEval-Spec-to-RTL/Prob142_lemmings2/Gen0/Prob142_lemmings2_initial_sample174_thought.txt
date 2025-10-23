@@ -1,0 +1,9 @@
+To implement the Lemmings' behavior, we will use a Moore state machine with three states: walking left, walking right, and falling. The state machine will transition between walking left and walking right based on the bump_left and bump_right signals. When the ground signal is 0, the state machine will transition to the falling state, and the Lemmings will say "aaah!". When the ground signal becomes 1 again, the state machine will return to the previous walking state.
+
+We will use a 2-bit state register to store the current state of the Lemmings, where state[1] represents whether the Lemmings are falling (1) or walking (0), and state[0] represents the direction of walking (1 for right, 0 for left). The next state will be determined by the current state, bump_left, bump_right, and ground signals.
+
+When the ground signal is 0, the Lemmings will fall and say "aaah!". In this case, we don't care about the bump_left and bump_right signals.
+
+When the ground signal is 1, the Lemmings will walk in the current direction. If the Lemmings are bumped, they will switch direction.
+
+We will use a combinational logic to determine the next state and the output signals based on the current state and input signals.

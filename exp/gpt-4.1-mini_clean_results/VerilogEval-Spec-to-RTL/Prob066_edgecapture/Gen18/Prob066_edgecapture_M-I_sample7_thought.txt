@@ -1,0 +1,7 @@
+To improve the original design for better synthesis reliability and PPA (Performance, Power, Area), reset `prev_in` to zero instead of the current input `in` on reset. This ensures a well-defined initial state avoiding potential false detection glitches after reset. Since the initial input pattern can be arbitrary, the first detection cycle might flag some bits incorrectly, but this can be tolerated or handled in the testbench.
+
+Additionally, to reduce power and area slightly, store the latched falling-edge detection output in a single register without unnecessary redundant logic. The current bitwise operations are minimal and efficient already, so no further optimization on combinational logic is necessary.
+
+Performance is inherently good due to simple flip-flops and bitwise operations, but minimizing transition glitches by resetting `prev_in` to zero helps.
+
+In summary, the main improvement is changing the reset initialization of `prev_in` to zero while keeping all other logic intact. This provides a clear, fixed start state and better synthesis portability without changing the intended functionality.

@@ -1,0 +1,33 @@
+The original design correctly implements fixed-point addition with signed operands by decomposing inputs into sign and magnitude, performing absolute-value addition or subtraction, and recombining. However, it manually manipulates sign bits and magnitudes and uses functions for absolute value and two's complement conversion, which may reduce synthesis friendliness and cause potential overflow issues.
+
+To improve the design for correctness, synthesizability, and efficiency:
+
+1. Use signed arithmetic throughout by casting inputs to `signed` types. This leverages built-in two's complement addition/subtraction directly and simplifies overflow behavior (wraparound) naturally.
+
+2. Parameterize the module and ensure the testbench (if any) can override parameters properly.
+
+3. Avoid separate absolute-value and sign manipulations; instead, perform addition or subtraction directly on signed operands based on their signs.
+
+4. When signs are the same, add signed values; when different, subtract smaller magnitude from larger magnitude, adjusting sign accordingly.
+
+5. Implement a helper function or task only if synthesis tools handle them well; otherwise, prefer inline combinational code.
+
+6. Handle zero result sign cleanly, forcing sign bit to 0 (positive zero).
+
+7. Since fixed-point addition simply corresponds to integer addition on two's complement numbers with consistent fractional bits, the extra complexity of absolute value arithmetic is unnecessary unless implementing saturation or detection explicitly.
+
+Thus, a much simpler, cleaner, and more synthesis-friendly solution is:
+
+- Cast inputs as signed.
+
+- Perform addition directly when signs match.
+
+- Perform subtraction between magnitudes with sign adjustment when signs differ.
+
+- Compose the final result as a signed value, then assign to output.
+
+This leverages the natural properties of two's complement and fixed-point representations, avoids manual sign and magnitude splitting, and simplifies the design while retaining correct behavior and parameters for precision.
+
+No saturation or overflow clipping is implemented as per the original spec; overflow wraps naturally.
+
+This yields a robust, clean, and synthesizable fixed-point adder module.

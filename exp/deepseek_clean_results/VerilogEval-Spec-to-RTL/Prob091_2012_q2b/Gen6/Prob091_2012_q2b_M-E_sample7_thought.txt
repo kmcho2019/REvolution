@@ -1,0 +1,20 @@
+Here's a novel approach using a more structural implementation that leverages the properties of one-hot encoding and state transitions:
+
+1. Instead of deriving Y1 and Y3 separately, we'll consider them as part of the complete next-state logic for all flip-flops (y[5:0]).
+
+2. For Y1 (next state of y[1]): 
+   - It's only set when in state A (y[0]) and input w is 1
+   - This can be directly implemented as y[0] & w
+
+3. For Y3 (next state of y[3]):
+   - It's set when transitioning from B, C, or F with w=0, or from E with w=0
+   - Using one-hot property, we can express this as:
+     (y[1] | y[2] | y[5]) & ~w | (y[4] & ~w)
+   - This can be simplified to ~w & (y[1] | y[2] | y[4] | y[5])
+
+4. The key novelty is implementing this as a structural decomposition:
+   - First create a common ~w signal to share across logic
+   - Use a 4-input OR gate for the state conditions
+   - AND them together for the final Y3 output
+
+This approach makes the state transition dependencies more explicit while maintaining the one-hot encoding benefits.

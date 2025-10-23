@@ -1,0 +1,12 @@
+The primary issue is the illegal declaration of variables inside the combinational always block (`always @(*)`), which is not allowed in Verilog. To fix this:
+
+- Move all variable declarations (`reg`, `integer`) outside the combinational always block, at the module level or procedure level.
+- Since we need to compute `quotient = cycle_counter / 1000` combinationally, replace the runtime loop with combinational logic using simple conditional comparisons because delay max is 15, so the max cycles is 16000, so quotient fits in 5 bits.
+- Implement combinational division by 1000 by using a chain of if-else checks for thresholds 1000, 2000, ..., 16000 to find quotient efficiently without loops or variables declared in always block.
+- Replace SystemVerilog `typedef enum` with `parameter` state encoding to ensure Verilog-2001 compatibility.
+- Minor cleanup: remove redundant assignments, and organize logic clearly.
+- Maintain synchronous reset and state transitions.
+- Make outputs combinational from current state and counters, no syntax errors.
+- Ensure all signals used in combinational always blocks are declared at module level.
+
+This approach fixes all syntax errors and preserves the intended functionality.

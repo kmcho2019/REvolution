@@ -1,0 +1,16 @@
+To optimize the solution further, I'll focus on better utilizing the don't-care conditions to simplify the logic and reduce power consumption. The current implementation already has good area metrics, but we can potentially reduce power by:
+
+1. Analyzing the K-map more carefully to find additional simplification opportunities:
+   - When x[3]x[4] = 11 (x[3:2] = 11), f is always 1 regardless of x[1]x[2]
+   - When x[3]x[4] = 10 (x[3:2] = 10), f is 1 when x[1]x[2] = 00 or 01
+   - These observations can lead to a simpler expression
+
+2. Rewriting the logic to:
+   - First check the x[3]x[4] cases where output is always 1
+   - Then handle the remaining specific cases
+   - This reduces the number of variables in each term, potentially lowering switching power
+
+3. The improved expression will have:
+   - Fewer logic operations
+   - Reduced variable dependencies in each term
+   - Better utilization of don't-care conditions

@@ -1,0 +1,20 @@
+After carefully analyzing the feedback and waveform behavior, here's the corrected approach:
+
+1. Key Fixes Needed:
+   - Reset condition should only affect outputs when 'a' is high during clock low phase
+   - p should directly follow 'a' when q is 0, sampled at posedge clock
+   - q should become 1 one full cycle after p was high (not immediately)
+   - Proper timing of state transitions to match waveform exactly
+
+2. Corrected Implementation Strategy:
+   - Remove p_was_high flag and use direct state tracking
+   - Implement proper reset detection synchronized with clock
+   - Make q dependent on p's previous value
+   - Ensure outputs only change at clock edges
+   - Clear separation of combinational and sequential logic
+
+3. Behavioral Changes:
+   - p now directly follows 'a' when q is 0 (no additional conditions)
+   - q updates based on p's value from previous cycle
+   - Reset clears outputs only when 'a' is high during clock low phase
+   - Initial state properly handled with undefined outputs until first clock

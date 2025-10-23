@@ -1,0 +1,12 @@
+Refactor by implementing a Moore FSM with clearly separated combinational and sequential blocks.  
+Use an enumerated-type state encoding with parameters for readability.  
+In SEARCH, update a 4-bit shift register on each clock to detect pattern 1101.  
+In LOAD_DELAY, shift in 4 bits MSB first to form delay.  
+At transition to COUNTING, initialize tick_counter to delay and cycle_counter to zero.  
+In COUNTING, count cycle_counter from 0 to 999; decrement tick_counter when cycle_counter wraps.  
+Keep output `count` registered, updated every cycle to tick_counter, reflecting remaining ticks as required.  
+Assert `counting` only in COUNTING state, `done` only in DONE state.  
+In DONE, wait for ack to return to SEARCH and reset all registers.  
+Make all registers update synchronously on clock with synchronous reset.  
+Drive outputs from registered signals for glitch-free outputs.  
+This structure simplifies the timing, ensures outputs match the spec exactly, and clearly initializes and uses counters properly.

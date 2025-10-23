@@ -1,0 +1,13 @@
+Refactor the design by clearly separating combinational next-state logic from the sequential state update using an explicit state register. Use a combinational `assign` statement to compute `next_state` based on inputs `a`, `b`, and the current `state`, then update the `state` on the rising clock edge.
+
+This approach improves clarity and avoids potential latching or initial-block issues by initializing `state` to zero through a synchronous reset-like style using an initial block (or relying on simulation tool initialization) while keeping the combinational logic separate with `assign`.
+
+The logic remains the same:
+- When a=0 and b=0, hold current state.
+- When a=0 and b=1, set state=1.
+- When a=1 and b=0, set state=0.
+- When a=1 and b=1, toggle state.
+
+The output `q` follows the current state.
+
+This structure is cleaner, more synthesizable, and avoids ambiguous procedural blocks.

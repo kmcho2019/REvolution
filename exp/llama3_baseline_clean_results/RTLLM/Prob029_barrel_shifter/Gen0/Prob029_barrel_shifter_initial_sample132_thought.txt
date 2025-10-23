@@ -1,0 +1,4 @@
+To design the barrel shifter, we need to create a module that takes an 8-bit input and shifts it based on a 3-bit control signal. The control signal determines how many positions to shift the input. The shifting is done in stages, with each stage corresponding to a shift of 4, 2, or 1 position. This can be achieved by using a series of 2-to-1 multiplexers that select between the shifted input and the original input at each stage. 
+First, we define the mux2X1 submodule that selects between two input values based on the sel signal. Then, we use this submodule to create the barrel shifter module. 
+In the barrel shifter module, we first shift the input by 4 positions if ctrl[2] is high, then by 2 positions if ctrl[1] is high, and finally by 1 position if ctrl[0] is high. 
+Each stage of shifting is done using the mux2X1 submodule, and the result is passed to the next stage for further shifting if required.

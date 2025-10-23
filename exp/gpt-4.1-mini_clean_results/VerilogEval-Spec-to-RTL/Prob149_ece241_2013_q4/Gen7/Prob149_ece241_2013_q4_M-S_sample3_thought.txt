@@ -1,0 +1,12 @@
+Simplify the design by directly decoding the sensor inputs into four distinct water levels without any fallback or defensive cases. Use a clean ordinal encoding from lowest to highest water level to detect rising water level changes by comparing current and previous levels. On synchronous reset, initialize to the lowest water level (no sensors asserted) with all flow outputs asserted.
+
+Outputs are assigned strictly per the problem table:
+
+- Above highest sensor (all sensors asserted): all flow outputs zero.
+- Between s[2] and s[1] (s[0] and s[1] asserted): only fr0 asserted.
+- Between s[1] and s[0] (only s[0] asserted): fr0 and fr1 asserted.
+- Below s[0] (no sensors asserted): fr0, fr1, fr2 all asserted.
+
+Supplemental flow valve (dfr) asserted only when water level rises compared to previous level; otherwise zero.
+
+This clean approach removes unnecessary cases and registers, ensuring clarity, correctness, and minimal logic.

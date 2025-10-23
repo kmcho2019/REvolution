@@ -1,0 +1,20 @@
+The original solution is already quite efficient, but we can make some minor optimizations to further improve PPA metrics:
+
+1. Timing Optimization:
+   - The WNS violation is minimal (-0.16ns), so we'll keep the same XOR-based edge detection which provides the fastest path
+   - No need for pipelining as the timing is already good
+
+2. Power Optimization:
+   - Add input stability detection to reduce unnecessary switching
+   - Only update the prev_in register when inputs actually change
+   - This reduces clock tree power and register switching power
+
+3. Area Optimization:
+   - The design is already minimal (85.0 um²)
+   - We'll keep the same structure but add the power optimization logic
+   - The additional comparator adds minimal area overhead
+
+The improved version will:
+- Maintain the same edge detection core logic
+- Add input change detection to reduce unnecessary register updates
+- Keep all other good practices (non-blocking assignments, etc.)

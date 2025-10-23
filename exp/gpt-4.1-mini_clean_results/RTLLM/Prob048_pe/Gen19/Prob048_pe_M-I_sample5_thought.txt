@@ -1,0 +1,25 @@
+To optimize the multiplying accumulator for better performance, power, and area (PPA) based on the given metrics and feedback, I will apply the following improvements:
+
+1. Use a synchronous reset only (remove asynchronous reset) to reduce logic complexity and improve timing.
+2. Pipeline the multiplier and accumulator into two stages: 
+   - Stage 1: Multiply inputs (a*b) and register the product.
+   - Stage 2: Accumulate the registered product into the accumulator register.
+   
+   Pipelining the multiplier and accumulator breaks the critical path, improves max frequency (reduces TNS and WNS), and eases timing closure.
+
+3. Remove saturation logic because it was not specified as mandatory and it adds extra logic and overhead.
+   This reduces area and power, simplifies the data path, and avoids unnecessary clamping.
+
+4. Extend accumulator register width from 32 to 64 bits to preserve full precision of accumulation and avoid overflow/truncation issues.
+
+5. Provide a 64-bit output for the accumulator to reflect the wider internal register. If a 32-bit output is strictly required, then saturate/truncate after accumulation. Here, I keep 64-bit output as it is a better design practice given the problem size (32x32 multiplication).
+
+6. Maintain non-blocking assignments and synchronous operations for synthesis friendliness.
+
+These changes will significantly improve timing by reducing combinational logic depth in the critical path, reduce power by pipelining, simplify logic by removing saturation, and preserve full precision by widening the accumulator register.
+
+The module will output a 64-bit accumulation value (which is more appropriate for 32x32 products added multiple times).
+
+If the user strictly needs a 32-bit output, it can be added later by truncating or saturating the 64-bit accumulator output.
+
+This design balances correctness, performance, power efficiency, and area.

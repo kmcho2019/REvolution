@@ -1,0 +1,8 @@
+The issue with the previous approach was multiple non-blocking assignments to different bits of the same register in one always block, which is not allowed in Verilog.
+
+To fix this, I will implement the ring counter as an 8-bit register initialized to 8'b00000001 on reset, and on each clock rising edge, perform a rotate-left operation by combining the bits in a single non-blocking assignment to the entire register at once. This approach uses concatenation and bitwise operations, which are synthesizable and widely supported.
+
+The new approach:
+- On reset, set `out` to 8'b00000001.
+- Else on each rising clock edge, assign `out` to `{out[6:0], out[7]}` to rotate left by 1 bit.
+This guarantees a circulating single '1' bit in a ring counter fashion.

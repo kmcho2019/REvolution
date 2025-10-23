@@ -1,0 +1,11 @@
+Refactoring idea:
+1. Maintain the same LFSR functionality with taps at positions 5 and 3 (1-based indexing)
+2. Use continuous assignments instead of procedural blocks for combinational logic
+3. Separate the combinational next-state logic from the sequential state storage
+4. Keep the synchronous reset functionality but implement it with a mux
+5. This approach makes the design more modular and potentially easier to optimize during synthesis
+
+Key changes:
+- Use `assign` for the combinational next-state calculation
+- Keep the sequential element (flip-flop) in an always block
+- The reset mux selects between initial value (5'b00001) and next state

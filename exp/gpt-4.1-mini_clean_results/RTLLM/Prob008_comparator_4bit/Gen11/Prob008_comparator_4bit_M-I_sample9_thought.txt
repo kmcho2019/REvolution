@@ -1,0 +1,7 @@
+To improve the existing 4-bit comparator design for better PPA:
+
+- Performance: Replace the ripple borrow chain with a more parallel borrow detection using generate/propagate signals, reducing critical path delay for borrow generation. This speeds up A_less detection.
+- Power and Area: Simplify borrow logic by combining borrow generate/propagate signals rather than cascading borrows through all bits.
+- Maintain the balanced AND-tree for equality detection since it is already efficient.
+- Keep outputs mutually exclusive by defining A_greater as neither less nor equal.
+- This approach reduces the longest combinational path for borrow detection and slightly reduces gate count, improving timing and power without adding complexity.

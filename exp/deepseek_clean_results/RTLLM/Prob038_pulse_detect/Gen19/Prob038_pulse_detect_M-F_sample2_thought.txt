@@ -1,0 +1,15 @@
+The feedback indicates the previous solution didn't reliably detect the exact 0→1→0 sequence. To fix this, we should implement an explicit state machine that tracks the progression through the required sequence:
+
+1. Use a 3-state FSM:
+   - IDLE: Waiting for first 0
+   - GOT_0: Saw first 0, waiting for 1
+   - GOT_1: Saw 0→1, waiting for final 0
+
+2. Transition between states based on data_in:
+   - From IDLE to GOT_0 when data_in is 0
+   - From GOT_0 to GOT_1 when data_in is 1
+   - From GOT_1 back to IDLE when data_in is 0 (this is when we detect the pulse)
+
+3. Output data_out is 1 only when we complete the sequence (transition from GOT_1 to IDLE)
+
+This ensures we only detect consecutive 0→1→0 sequences and properly handle all edge cases.

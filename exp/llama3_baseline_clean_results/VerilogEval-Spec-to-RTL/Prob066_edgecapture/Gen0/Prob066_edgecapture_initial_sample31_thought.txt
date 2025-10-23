@@ -1,0 +1,8 @@
+To solve this problem, we can use a combination of sequential logic (registers) and combinatorial logic to detect the change in the input signal and capture the change until reset. The TopModule will have 32 bits of input and output, and each bit will be examined separately. We will use a 32-bit register to store the current output values. The module will work as follows: 
+
+- On the positive edge of the clock, check the input signal for each bit. 
+- If the current input bit is 0 and the previous input bit (which is stored in a separate 32-bit register) is 1, then set the corresponding output bit to 1.
+- If the reset signal is high, reset all the output bits to 0.
+- Otherwise, keep the previous output values.
+
+We can implement this using Verilog, where we will use two 32-bit registers: one to store the previous input values and one to store the current output values.

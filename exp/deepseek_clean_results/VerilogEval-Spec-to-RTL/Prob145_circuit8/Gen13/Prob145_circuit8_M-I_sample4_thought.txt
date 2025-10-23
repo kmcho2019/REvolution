@@ -1,0 +1,19 @@
+After carefully analyzing the waveform and the feedback, here's the improved approach:
+
+1. Key Insights:
+   - p should mirror 'a' on rising clock edges when q=0 (transparent mode)
+   - q becomes 1 only after p has been 1 for one complete clock cycle (both high and low phases)
+   - q resets to 0 only when 'a' is high during clock low phase AND we're in a specific state
+   - p should remain 0 when q=1 (latched mode)
+
+2. Improved Architecture:
+   - Use a state machine with 3 states: IDLE, SAMPLING, and LATCHED
+   - Clear state transitions with well-defined conditions
+   - Separate synchronous and asynchronous logic cleanly
+   - Add proper initialization
+
+3. Benefits:
+   - Correct timing for all state transitions
+   - Accurate waveform matching
+   - Clear state representation
+   - Proper handling of edge cases

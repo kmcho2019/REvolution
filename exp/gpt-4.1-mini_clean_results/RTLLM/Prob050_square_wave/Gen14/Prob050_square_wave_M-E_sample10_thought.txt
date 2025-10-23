@@ -1,0 +1,7 @@
+Implement the square wave generator using a down-counter that loads the frequency value directly and counts down to zero. On each clock cycle, the counter decrements; when it reaches zero, the output toggles and the counter reloads with the frequency value. This approach simplifies the toggle condition to zero detection rather than an equality check.
+
+To handle zero frequency gracefully, detect freq=0 and hold the output steady, avoiding toggling. The design uses a synchronous reset to initialize outputs. The logic is encapsulated in a single always block with non-blocking assignments.
+
+This down-counter approach can reduce the combinational logic required for comparison and may enable the synthesis tool to implement the countdown with less hardware or faster paths. Also, it avoids subtracting one from freq in comparisons, slightly simplifying combinational logic.
+
+This architecture provides a fresh take on frequency control by counting down from freq rather than counting up to freq-1.

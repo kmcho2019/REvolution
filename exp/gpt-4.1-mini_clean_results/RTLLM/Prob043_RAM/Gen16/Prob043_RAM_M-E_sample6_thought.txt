@@ -1,0 +1,11 @@
+Implement the dual-port RAM as a synchronous read/write memory with registered read data output for stable timing and easy timing closure. Use separate clocked always blocks for write and read operations with synchronous reset.
+
+- Parameterize WIDTH and DEPTH, with address width derived from $clog2(DEPTH).
+- Initialize the RAM array to zero using an initial block (simulation only) to meet the requirement of all zeros at startup, avoiding synchronous reset overhead for clearing memory.
+- For synthesis, rely on reset to clear the read_data output register only, not the entire RAM array, reducing reset complexity and improving performance.
+- Write operation: on rising edge of clk, if write_en is asserted, write_data is stored at write_addr.
+- Read operation: on rising edge of clk, if read_en is asserted, read_data is loaded from RAM at read_addr; else read_data is cleared to zero.
+- This architecture supports simultaneous read and write to different addresses. Reading and writing to the same address in the same clock cycle reads the old data, which is typical behavior for synchronous RAMs.
+- Using registered read output provides stable and glitch-free data, beneficial for downstream logic and timing.
+
+This design balances simplicity, timing robustness, and synthesis friendliness while fulfilling the problem specifications.

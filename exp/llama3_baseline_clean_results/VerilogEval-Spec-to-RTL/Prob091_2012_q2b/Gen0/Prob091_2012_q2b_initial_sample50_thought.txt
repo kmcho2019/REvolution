@@ -1,0 +1,16 @@
+To implement the state output logic for the given finite-state machine, 
+we first need to understand the next state logic for each state. 
+Given the one-hot encoding, we can directly implement the next state 
+logic for each flip-flop based on the current state and input w.
+
+For Y1 (y[1]), which corresponds to state B, we need to consider 
+the transitions to state B. According to the FSM, state B can be 
+reached from state A when w = 1. Therefore, Y1 should be 1 when 
+the current state is A and w = 1.
+
+For Y3 (y[3]), which corresponds to state D, we need to consider 
+the transitions to state D. According to the FSM, state D can be 
+reached from states B, C, E, and F when w = 0. Therefore, Y3 should 
+be 1 when the current state is B, C, E, or F and w = 0.
+
+We can implement these conditions using logical expressions in Verilog.

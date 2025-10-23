@@ -1,0 +1,16 @@
+// Module TopModule implements an XNOR gate
+// The XNOR operation outputs 1 when both inputs are the same (either both 0 or both 1), and outputs 0 otherwise
+module TopModule(
+    input a,  // Input signal a
+    input b,  // Input signal b
+    output out // Output signal out
+);
+
+// Use the equality operator (==) to directly compare the two inputs
+// and then use a ternary operator to assign the output
+assign out = (a == b)? 1'b1 : 1'b0;
+
+// Alternatively, we can use the XOR operation (^) and then invert its output to implement XNOR
+// assign out = ~(a ^ b);
+
+endmodule

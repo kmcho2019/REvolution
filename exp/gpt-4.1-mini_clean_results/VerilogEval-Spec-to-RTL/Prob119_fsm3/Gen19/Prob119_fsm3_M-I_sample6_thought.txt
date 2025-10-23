@@ -1,0 +1,7 @@
+To improve PPA, I will replace the asynchronous reset with a synchronous reset. Synchronous resets generally improve timing by avoiding asynchronous set/reset paths, leading to potentially better max clock frequency and reduced power from glitching asynchronous resets. Since the reset signal is single bit and asserted asynchronously, making it synchronous also simplifies the clock domain timing. 
+
+Additionally, I will use one-hot encoding for the states to potentially simplify next state logic and reduce toggle in the state bits, which may reduce dynamic power slightly. While one-hot increases area for small FSMs, the four-state FSM is small enough that power and timing may benefit. 
+
+The output is Moore style and depends only on one state (D), so it remains a simple assignment to a single bit of the one-hot vector. The combinational next state logic will use if-else for clarity and efficient implementation with one-hot encoding.
+
+Overall, this approach may slightly increase area but improve clock frequency and reduce power by synchronous reset and simplified state transitions. The original reset timing path was the main possible bottleneck; fixing this will improve timing slack (wns) and effective clock period (eff_clk_period), as well as reduce power from asynchronous reset glitching.

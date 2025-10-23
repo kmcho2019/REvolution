@@ -1,0 +1,15 @@
+To simplify the solution, we need to minimize the number of signals and state variables while maintaining the functionality of the finite state machine. 
+
+One approach is to eliminate the `new_byte` and `first_byte_valid` signals and instead use the `in` signal directly to determine when to transition between states. 
+
+We can use a single state variable `byte_count` to keep track of the current state and a simple assignment for the `done` signal.
+
+When `reset` is high, we reset the `byte_count` to 0. 
+
+In the IDLE state (when `byte_count` is 0), we check if the current byte has `in[3] = 1`. If so, we increment `byte_count`. 
+
+In the BYTE1 and BYTE2 states, we check if the input has changed, indicating a new byte. If so, we increment `byte_count`. 
+
+In the BYTE3 state, when a new byte is received, we set `done` high and reset `byte_count` to 0.
+
+This approach reduces the complexity of the design while maintaining the correct functionality.

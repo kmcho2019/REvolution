@@ -1,0 +1,5 @@
+To optimize the original design for better performance, power, and area, we should replace the 16-bit shift operation with a direct 4-to-1 multiplexer selecting among the four 4-bit inputs (b, e, a, d) using c[1:0]. This avoids a large shift operation, reduces logic depth, and reduces switching activity by routing only the selected input to q.
+
+For values of c >= 4, output is fixed to 4'hF, so the select mux is gated by (c < 4).
+
+This approach reduces area and power by eliminating unnecessary shifting and improves timing by avoiding barrel-shifter-like logic. Functionality remains identical.

@@ -1,0 +1,17 @@
+To solve this problem, we can design a finite state machine (FSM) with a minimal number of states. We start in state A and move to state B when s = 1. Once in state B, we need to check the value of w in the next three clock cycles. We can achieve this by using a counter to keep track of the number of clock cycles and another variable to count the number of times w is 1. If w is 1 exactly twice in the three clock cycles, we set the output z to 1 in the following clock cycle. We can use a single state (state B) to achieve this by using a counter and a variable to keep track of the number of times w is 1.
+
+We will use the following states:
+- State A: Initial state, waiting for s = 1 to move to state B.
+- State B: Checking the value of w in the next three clock cycles.
+
+We will use the following variables:
+- current_state: The current state of the FSM (A or B).
+- counter: A counter to keep track of the number of clock cycles.
+- w_count: A variable to count the number of times w is 1.
+
+We will use the following logic:
+- If current_state is A and s = 1, move to state B.
+- If current_state is B, increment the counter and check the value of w.
+- If w is 1, increment w_count.
+- If the counter is 3, check the value of w_count. If w_count is 2, set z to 1 in the following clock cycle.
+- Reset the counter and w_count after 3 clock cycles.

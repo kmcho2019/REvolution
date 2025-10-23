@@ -1,0 +1,10 @@
+Simplify by using a single, speculative GHR register and a single PHT memory accessed combinationally.
+
+- On predict_valid, compute prediction index from (predict_pc XOR current GHR), read PHT entry combinationally, output prediction and GHR used.
+- Capture the GHR used for prediction in a register for output.
+- On the next clock edge:
+  - If train_valid and train_mispredicted: recover GHR to train_history (flush and discard speculative updates).
+  - Else if train_valid and not mispredicted: update PHT entry at (train_pc XOR train_history) with actual outcome.
+  - Else if predict_valid and no mispredicted training this cycle: update GHR by shifting in predicted bit from PHT at prediction index.
+- When train_valid and predict_valid occur in the same cycle with mispredicted training, training takes priority (recover GHR), prediction does not update GHR.
+- This cleanly separates combinational prediction outputs and sequential updates, aligns GHR usage for prediction and update, and meets all spec requirements with simpler logic.

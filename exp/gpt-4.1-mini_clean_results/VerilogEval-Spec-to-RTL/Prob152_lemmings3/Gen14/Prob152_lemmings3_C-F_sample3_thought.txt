@@ -1,0 +1,12 @@
+Fuse the compact 3-bit state encoding and clean combinational next-state logic from Example 1 with the explicit separate digging flag and optimized next-state style from Example 2. Use a 3-bit state {mode[1:0], direction} for clarity and minimal area, and a single digging flip-flop for mode distinction between digging and walking. This keeps a clear mode encoding (walk=00, fall=01) separate from digging as a flag, reducing complexity of multiple modes in one vector.
+
+In next-state combinational logic, apply prioritized conditions (fall > dig > bump) clearly and without nested if-else, improving timing. The digging flag differentiates digging vs walking, simplifying output logic and transition rules. Direction toggling logic uses combined bump inputs to minimize logic gates. State updates occur only on changes to reduce unnecessary toggling and power.
+
+Outputs derive from mode, direction, and digging flag straightforwardly, preserving Moore FSM behavior. This fusion achieves the clarity, area efficiency, power saving, and timing improvements demonstrated individually in both examples, resulting in a clean, balanced, and easily synthesizable design.
+
+Summary:
+- 3-bit state: mode(2 bits) + direction(1 bit)
+- Separate digging flag register
+- Combinational logic with prioritized fall, dig, bump handling
+- Minimal redundant assignments
+- Moore outputs decoded from mode, direction, digging

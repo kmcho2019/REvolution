@@ -1,0 +1,15 @@
+I will refactor the original FSM-based Radix-4 Booth multiplier to use a simpler cycle-count controlled iterative approach without explicit FSM states, replacing the state machine with a single counter and control signals. The idea is to:
+
+- Remove the explicit three-state FSM and replace it with a busy signal and a 5-step counter to control the operation.
+- Use a synchronous process to update registers on clock edges, but have combinational logic for Booth partial product calculation outside of sequential blocks.
+- Use a registered start signal triggered by the reset falling edge to initiate multiplication, making reset only initialize registers.
+- Keep multiplicand and multiplier sign-extended similarly, but store them as signed variables consistently.
+- Shift the multiplier arithmetically by 2 bits every cycle by concatenation rather than variable shifts.
+- Accumulate partial products into a signed accumulator.
+- Assert ready (rdy) when the counter reaches 5 (i.e., 5 Radix-4 Booth cycles for 8-bit inputs).
+- Hold outputs stable after completion.
+- Avoid variable shift amounts in partial products by pre-shifting multiplicand inside the booth_op function.
+
+This structure reduces FSM complexity by using the counter and a busy flag, making the design easier to modify and potentially synthesize with simpler control logic. It also clarifies the ready and start control signals, making the interface cleaner.
+
+The core Booth operation and sign extension remains the same to ensure correctness.

@@ -1,0 +1,15 @@
+To address the simulator limitation while maintaining the same functionality, we'll refactor the design using a shift register approach with explicit bit manipulation. Here's the new approach:
+
+1. Instead of using a case statement, we'll implement the ring counter using a simple shift operation with wrap-around
+2. We'll use an 8-bit register to store the current state
+3. On each clock edge:
+   - If reset is active, initialize to 8'b00000001
+   - Otherwise, shift left by 1 bit, and bring the MSB back to LSB position
+4. This achieves the same cyclic one-hot pattern but uses basic bit operations that should be universally supported
+5. The output is directly assigned from the register
+
+Advantages:
+- Uses fundamental operations (shift and OR) that all simulators support
+- Maintains identical functionality to original design
+- More concise implementation
+- Easier to scale to different counter widths if needed

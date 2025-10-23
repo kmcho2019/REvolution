@@ -1,0 +1,17 @@
+Fuse the compact 2-bit state encoding (direction + walk/fall mode) from Example 1 with the integrated digging state bit in the 3-bit encoding style from Example 2, but keep digging as a separate register for better control and clarity as in Example 1. 
+
+This maintains minimal state bits for direction and mode (2 bits), which is efficient for area and power, plus a separate digging register to cleanly handle digging orthogonally without complicating the main FSM state encoding.
+
+Implement the next-state logic combinationally with explicit priority (fall > ground recovery > dig > bump) as in Example 1 but simplified by using the integrated logic style of Example 2. This minimizes nested conditions and clarifies transitions.
+
+In the sequential block, update state and digging separately with asynchronous reset initializing to walking left and no digging.
+
+Outputs remain Moore style, derived straightforwardly from state and digging flags, ensuring walk outputs are zero when falling or digging.
+
+This fusion combines:
+- Minimal flip-flops (2 bits state + 1 bit digging) for area/power benefits.
+- Clear, flat next-state logic for timing and maintainability.
+- Separate digging register for clean semantics and simpler logic.
+- Prioritization and correctness from both examples.
+
+This leads to a robust, readable, and efficient FSM implementation that leverages the best synthesis and design practices from both prior examples.

@@ -1,0 +1,23 @@
+The original solution uses signed addition directly on two's complement fixed-point numbers, which is the simplest and most efficient way to implement fixed-point addition. This inherently handles sign and overflow wrapping correctly without needing explicit sign, absolute value, or conditional logic. 
+
+However, the problem's instructions describe an explicit approach using absolute values, sign checks, and conditional subtraction to handle addition and subtraction scenarios, which could be relevant if the inputs are treated as unsigned magnitudes with a separate sign bit or to illustrate fixed-point addition in a more didactic way.
+
+To strictly follow the problem's specification with conditional logic based on sign bits and absolute value comparisons while preserving precision and overflow wrapping:
+
+1. Extract sign bits (MSBs) of inputs.
+2. Compute absolute values of `a` and `b` by inverting and adding 1 if negative.
+3. If signs are equal, add absolute values and reapply sign.
+4. If signs differ, subtract smaller absolute value from the larger, assign sign accordingly.
+5. Use a register `res` for internal result as required.
+6. Assign `res` to output `c`.
+
+This explicit approach demonstrates the requested logic and handles fixed-point addition correctly.
+
+Additional notes:
+- We use signed arithmetic for convenience but explicitly compute absolute values via bitwise operations.
+- Overflow wrap-around happens naturally in fixed-width arithmetic.
+- This approach is more complex and less efficient but aligns with problem instructions.
+- The internal register `res` is combinational, updated on any input change.
+- Parameterized width and fractional bits are maintained but `Q` mainly informs conceptual understanding rather than logic changes.
+
+Thus, this improved code strictly implements the problem's absolute value addition/subtraction steps, making the logic clear and directly matching the specification.

@@ -1,0 +1,5 @@
+To improve PPA based on the provided metrics and feedback, I will implement an explicit synchronous clock enable derived from the byte enable inputs to gate the register updates. This reduces unnecessary toggling of the flip-flops when no byte is enabled, cutting dynamic power. 
+
+I'll keep the synchronous active-low reset separate to maintain clarity and avoid any potential synthesis issues with gated clocks. The byte-wise conditional updates remain to maintain selective byte writes. This strategy balances power reduction with minimal impact on timing and area.
+
+This approach avoids additional combinational mux delay on the D inputs by simply disabling flip-flop state updates when not needed. It also maintains the clean RTL style for easy synthesis and verification.

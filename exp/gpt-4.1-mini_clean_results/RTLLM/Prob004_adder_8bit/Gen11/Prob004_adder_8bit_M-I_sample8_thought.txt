@@ -1,0 +1,13 @@
+To improve the PPA (Performance, Power, Area) of the original clean hierarchical ripple carry adder design without changing the ripple carry architecture, we can streamline the module hierarchy by removing the intermediate 4-bit adder blocks and directly instantiating eight bit_full_adder modules in the 8-bit adder. This reduces module instantiation overhead (slight area improvement) and enables fine-grained control of carry signals with no extra internal wiring.
+
+Additionally, explicitly name and minimize wire usage by using a single carry bus sized [8:0], where carry[0] = cin and carry[8] = cout, improving readability and synthesis friendliness.
+
+This approach:
+
+- Reduces area slightly by removing intermediate modules and generate constructs.
+- Keeps logic depth and critical path the same (ripple carry).
+- Potentially reduces dynamic power slightly by removing some module overhead and unused signals.
+- Maintains full combinational, synthesizable, modular, and clear code.
+- Gives direct control of each full adder instance, useful for debugging and future optimization.
+
+Overall, the design stays fully functional but is a little more optimized for area and power through simpler hierarchy and signal usage.

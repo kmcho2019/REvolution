@@ -1,0 +1,71 @@
+The problem requires implementing the given K-map function using a single 4-to-1 multiplexer with select inputs {a,b} and four inputs mux_in[3:0] determined solely by inputs c and d using only 2-to-1 multiplexers and no other logic gates.
+
+**Key points:**
+
+- The final output is the 4-to-1 mux selected by a,b, so the K-map rows correspond to inputs c,d, and columns correspond to a,b.
+- We must implement the four mux inputs (mux_in[0] for ab=00, mux_in[1] for ab=01, etc.) as functions of c,d using only 2-to-1 muxes and constants.
+- To minimize 2-to-1 muxes, we express each mux_in bit as a mux tree with c or d as select signals and constants or variables at the leaves.
+- We do not use a and b anywhere except as select inputs to the 4-to-1 mux.
+- The K-map is:
+      ab
+  cd  00  01  11  10
+  00 | 0 | 0 | 0 | 1 |
+  01 | 1 | 0 | 0 | 0 |
+  11 | 1 | 0 | 1 | 1 |
+  10 | 1 | 0 | 0 | 1 |
+
+For example, for mux_in[0] (ab=00), list values for each c,d (rows):
+
+- cd=00 => 0
+- cd=01 => 1
+- cd=11 => 1
+- cd=10 => 1
+
+This function can be implemented as mux_in[0] = c ? 1 : d.
+
+Similarly, working out mux_in[1] (ab=01):
+
+- cd=00 => 0
+- cd=01 => 0
+- cd=11 => 0
+- cd=10 => 0
+
+Constant zero: mux_in[1] = 0
+
+mux_in[2] (ab=11):
+
+- cd=00 => 0
+- cd=01 => 0
+- cd=11 => 1
+- cd=10 => 0
+
+This is c & d
+
+Implement using 2-to-1 muxes: mux_in[2] = c ? d : 0
+
+mux_in[3] (ab=10):
+
+- cd=00 => 1
+- cd=01 => 0
+- cd=11 => 1
+- cd=10 => 1
+
+Expressing mux_in[3] in mux form is more involved but can be implemented as:
+
+mux_in[3] = d ? c : 1
+
+This matches the values (test with d=0 => 1, d=1 => c)
+
+**Final approach:**
+
+Implement mux_in[0], mux_in[2], mux_in[3] as muxes controlled by c or d with constants and signals as inputs.
+
+mux_in[1] is 0.
+
+This exactly reproduces the K-map values when combined with the final 4-to-1 mux selected by {a,b}.
+
+The design only uses multiplexers (no logic gates) and aligns with the problem requirements.
+
+I will explicitly instantiate 2-to-1 muxes as wires and continuous assignments to clearly show the usage of only multiplexers.
+
+This approach ensures correctness, minimal mux usage, and clear mapping from K-map to hardware.

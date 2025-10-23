@@ -1,0 +1,7 @@
+To implement the Lemming's behavior as a Moore state machine, we first identify the states: walking left, walking right, and falling. We also need to keep track of the direction before the fall to resume walking in the same direction when the ground reappears.
+
+The state machine starts in the walking left state upon reset. It transitions to walking right upon receiving a bump on the left and to walking left upon receiving a bump on the right. If the Lemming is bumped on both sides, it still changes direction.
+
+When the ground disappears (ground=0), the state machine transitions to the falling state, and "aaah!" is asserted. In this state, the Lemming does not change direction due to bumps. When the ground reappears (ground=1), the state machine transitions back to walking in the same direction as before the fall.
+
+We will use two bits to encode the three states (walking left, walking right, and falling) and an additional signal to remember the direction before falling.

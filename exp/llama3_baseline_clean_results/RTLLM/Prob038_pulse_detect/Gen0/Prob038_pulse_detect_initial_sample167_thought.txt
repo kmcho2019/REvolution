@@ -1,0 +1,6 @@
+The approach to solve this problem involves designing a finite state machine (FSM) that can recognize the sequence of 0 to 1 to 0 in the input signal data_in. The FSM should have states that track the progress of detecting a pulse. When the sequence is detected, the FSM should assert the data_out signal for one clock cycle. The states can be defined as follows:
+- IDLE: Initial state, waiting for the first '1' in the sequence.
+- PULSE_START: First '1' detected, waiting for the next '0'.
+- PULSE_END: Last '0' in the sequence detected, set data_out to '1'.
+
+The transition between these states depends on the current state and the value of data_in. If the FSM is in the IDLE state and data_in is '1', it transitions to PULSE_START. If it's in PULSE_START and data_in is '0', it transitions to PULSE_END and sets data_out to '1'. After setting data_out to '1', it returns to the IDLE state. If the FSM is in any state and data_in does not match the expected value for a transition, it remains in the IDLE state. The reset signal rst_n resets the FSM to the IDLE state and clears data_out.

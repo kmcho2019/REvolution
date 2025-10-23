@@ -1,0 +1,9 @@
+To improve the PPA of the calendar module, I will combine the minute and hour counters into a single always block triggered by the same clock and reset signals. This reduces the number of always blocks, simplifying the control logic and potentially reducing synthesis overhead.
+
+Also, I will revise the conditions for incrementing minutes and hours to use the current seconds value after increment, rather than checking Secs==59 before increment. This can prevent subtle timing ambiguities on the boundary.
+
+To further optimize power, I will add enable signals for minutes and hours counters to update only when needed, reducing unnecessary toggling.
+
+Lastly, I will fix the output bit-width of Hours to 6 bits as requested (even though 5 bits are enough for 0-23), matching the problem statement.
+
+These optimizations aim to reduce area by merging logic, improve timing by reducing logic depth, and decrease power by conditional updates while maintaining correct wrap-around behavior.

@@ -1,0 +1,10 @@
+Refactor the combinational division logic using continuous assignments and internal wires instead of always blocks, while maintaining the two-stage structure conceptually by separating input registration from division computation.
+
+- Use separate intermediate registers `a_reg` and `b_reg` assigned via continuous assignments to hold the inputs.
+- Implement the division logic within a generate-for loop that builds the quotient and remainder combinationally by iterative shifting and conditional subtraction using arrays of wires.
+- This approach removes always blocks, uses purely combinational assign and generate constructs, clarifies data flow, and potentially helps synthesis tools optimize hardware better.
+- The quotient bits and remainder are constructed step-by-step in a combinational pipeline of wires, preserving the exact division algorithm.
+- Output ports are driven by final wire results assigned to output regs.
+- This also adheres to the requested dual-step conceptual pipeline: inputs "registered" combinationally, followed by division logic.
+
+This approach maintains the same functional behavior, minimizes always blocks usage (in fact, uses none internally), and uses structural Verilog for clarity and potentially easier synthesis optimization.

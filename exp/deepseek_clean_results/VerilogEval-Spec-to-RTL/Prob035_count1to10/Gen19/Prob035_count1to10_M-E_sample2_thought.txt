@@ -1,0 +1,18 @@
+Novel Approach: State Encoding Optimization
+1. Key Idea:
+   - Instead of using binary counting, implement a one-hot encoded state machine with 10 states (1-10)
+   - Each state corresponds to one count value, represented by a single bit in a 10-bit register
+   - This eliminates the need for arithmetic operations and complex wrap-around logic
+
+2. Advantages:
+   - Simpler next-state logic (just shift left with wrap-around)
+   - No arithmetic operations needed (no +1 logic)
+   - Reset and wrap-around become trivial operations
+   - Glitch-free outputs since only one bit changes at a time
+
+3. Implementation:
+   - 10-bit state register for one-hot encoding
+   - Simple shift-left operation for normal counting
+   - Reset sets the first bit (state 1)
+   - Wrap-around shifts bit 10 back to bit 1
+   - Output encoding converts one-hot to binary

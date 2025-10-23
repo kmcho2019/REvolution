@@ -1,0 +1,23 @@
+I will implement the traffic light controller as a Moore FSM with four distinct states: IDLE, RED, GREEN, YELLOW. The design resets to IDLE and immediately transitions to RED on the next clock.
+
+Key idea:
+- Use a single 8-bit down-counter for timing in each state.
+- On entering a new state, the counter loads the preset time.
+- The counter decrements each clock cycle until zero triggers state transition.
+- For pedestrian pass_request, if in GREEN state and the remaining timer is greater than 10, the timer is immediately set to 10, thus shortening green duration.
+- Store previous states of light outputs in separate registers (p_red, p_yellow, p_green) to detect state changes and load timers accordingly.
+- The output red/yellow/green are registered and updated synchronously.
+- The output clock is simply the current timer value.
+- State transitions follow RED -> GREEN -> YELLOW -> RED cycle.
+- IDLE state only lasts one clock cycle on reset.
+- The pedestrian button shortening does not alter state but clamps timer mid-state.
+
+This architecture uses a clearly separated state machine, synchronous output registers, and direct timer manipulation on pass_request, resulting in simple and predictable behavior.
+
+It differs from the example by:
+- Adding an explicit IDLE state.
+- Holding output signals as registers updated each clock.
+- Using p_red/p_yellow/p_green to track previous light outputs for timer reload logic.
+- Manipulating the timer counter inside sequential logic for straightforward timing control.
+
+This design is easy to understand, synthesizes well, and meets the specified requirements.

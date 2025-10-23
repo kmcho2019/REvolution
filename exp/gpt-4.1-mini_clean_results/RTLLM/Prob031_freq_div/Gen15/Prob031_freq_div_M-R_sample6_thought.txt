@@ -1,0 +1,5 @@
+I will refactor the design by consolidating the two counters (cnt_10 and cnt_100) and the three clock outputs into a single always block to minimize duplication and improve code compactness. Instead of multiple always blocks, one synchronous process will handle all counters and clock toggling. This approach reduces the number of always blocks, making the design easier to maintain and possibly improve synthesis optimization by the tool.
+
+For CLK_50, since it toggles every cycle, I will keep it separate for clarity, but combine the logic of counters for CLK_10 and CLK_1 into a single always block, updating counters and toggling clocks accordingly.
+
+This restructuring keeps the asynchronous reset but now all counters are updated within a single clocked process, improving code coherence while maintaining the same timing behavior.

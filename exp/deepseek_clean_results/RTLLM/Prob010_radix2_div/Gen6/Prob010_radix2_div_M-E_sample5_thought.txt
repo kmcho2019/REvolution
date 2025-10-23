@@ -1,0 +1,26 @@
+Novel Architecture Idea: Pipelined Radix-2 Division with Early Termination
+
+Key Innovations:
+1. Two-stage pipeline for better throughput (input processing + division core)
+2. Early termination detection for special cases (div by zero/one/power-of-two)
+3. Optimized remainder calculation using carry-save arithmetic
+4. Sign handling in separate pipeline stage to reduce critical path
+5. State machine with clear separation of control and datapath
+
+Pipeline Stages:
+1. Input Stage:
+   - Handles sign conversion and absolute values
+   - Detects special cases (div by zero/one/power-of-two)
+   - Calculates initial partial remainder
+
+2. Division Stage:
+   - Performs radix-2 non-restoring division
+   - Uses carry-save adder for faster partial remainder calculation
+   - Includes final remainder correction
+   - Applies result signs
+
+Advantages:
+- Higher throughput with pipelining
+- Faster operation for special cases
+- Clean separation of concerns
+- Optimized critical path

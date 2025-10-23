@@ -1,0 +1,14 @@
+Novel Architectural Idea: Parallel Precompute with Conditional Shift
+
+Instead of using a single shift operation, we'll implement a parallel precompute approach that:
+1. Precomputes both possible next states (shift with 0 and shift with 1)
+2. Uses the LSB to select between them via a multiplexer
+3. This allows the synthesis tool to potentially optimize the parallel paths
+4. Adds a detection circuit for terminal states (all 1s or all 0s) to enable clock gating
+5. Uses a parameterized width for flexibility
+
+Benefits:
+- Parallel paths may help with timing closure
+- Explicit terminal state detection enables power optimization
+- Parameterized design increases reusability
+- Clear separation of state transition logic

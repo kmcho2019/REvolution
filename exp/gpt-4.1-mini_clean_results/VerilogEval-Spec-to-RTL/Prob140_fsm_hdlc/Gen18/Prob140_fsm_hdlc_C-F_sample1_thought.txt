@@ -1,0 +1,18 @@
+Fuse the clarity and explicit state encoding from Example 1 with the simplified synchronous logic of Example 2 by implementing the FSM as a 3-bit saturating counter (count of consecutive ones) combined with explicit next-state combinational logic for state transitions and Moore outputs. 
+
+Use an enumerated FSM state variable to represent counts 0 through 6 plus an error state, but drive the FSM transitions and output logic purely combinationally for clarity. Register state and outputs synchronously on clock with synchronous reset. 
+
+This approach:
+- Keeps FSM states explicit for readability and easier debugging (from Example 1)
+- Uses a counter-like representation to reduce combinational complexity
+- Asserts outputs for exactly one cycle after condition detection (Moore)
+- Avoids blocking assignments or asynchronous resets
+- Keeps outputs and state registered separately for timing clarity
+- Enables easy modification or extension (e.g., different flag patterns)
+
+Additionally, to optimize power and switching:
+- Outputs only toggle when asserted, otherwise remain low
+- Use a single state register and combinational next-state logic to minimize logic duplication
+- Avoid unnecessary counting beyond error state (saturate counter)
+
+This combined design balances readability, synthesis friendliness, and clean output timing.

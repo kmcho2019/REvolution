@@ -1,0 +1,22 @@
+To simplify the 4-bit comparator, I will directly use the subtraction result (A - B) in combinational logic to determine A_greater, A_equal, and A_less without the explicit borrow lookahead signals.
+
+Since the subtraction is combinational, the most significant bit of the subtraction result indicates whether a borrow occurred (i.e., if A < B). I will perform the subtraction using the minus operator and check:
+
+- If the result is zero, then A == B.
+- If A < B (indicated by borrow or result interpreted as signed number), then A_less = 1.
+- Else, A_greater = 1.
+
+This approach drastically reduces the combinational logic by leveraging the Verilog subtraction operator and avoids manual borrow calculation, keeping outputs mutually exclusive.
+
+Note: Because A and B are unsigned, subtraction in Verilog yields a 4-bit result. To detect borrow, I will extend the subtraction to 5 bits by casting operands to 5-bit unsigned and check the carry/borrow from MSB. Alternatively, compare A and B directly with combinational logic since comparison is allowed in Verilog.
+
+Given the problem states to use combinational logic with multiple bit-level comparators, I will implement the following:
+
+- Use 1-bit comparators per bit starting from MSB to LSB.
+- For each bit, determine if A[i] > B[i], A[i] == B[i], or A[i] < B[i].
+- Combining bit-level results, decide the final output:
+  - If at the highest differing bit A[i] > B[i], then A_greater=1.
+  - If all bits equal, A_equal=1.
+  - Else, A_less=1.
+
+This removes the complexity of borrow propagation logic and is conceptually clearer and efficient for 4-bit comparison.

@@ -1,0 +1,7 @@
+Refactor the design to separate data_reg and en_reg updating into distinct always blocks for clarity, and replace the multi-stage enable synchronizer with a 2-flip-flop synchronizer plus a gated latch stage in clk_b domain using combinational logic and an enable signal to reduce toggling in synchronization flip-flops.
+
+Use continuous assignment for the synchronized enable signal that controls dataout update, and implement dataout update in an always block triggered by clk_b and reset only. This reduces redundant toggling of enable synchronizer registers and clarifies signal flow.
+
+Also, keep asynchronous resets consistent but avoid assigning data_reg inside a conditional data_en block; instead latch data_in only when data_en is high but keep en_reg update separate for better clock domain control and pipeline clarity.
+
+This approach improves readability, power efficiency (by gating synchronizer flip-flop toggling), and structure without changing the original functionality.

@@ -1,0 +1,27 @@
+To fix the issues identified in the feedback, I'll implement these key improvements:
+
+1. **State Transition Logic**: 
+   - Replace the `state[0]` check with proper direction tracking using a separate register to preserve the walking direction during falls and digs.
+   - Ensure proper state transitions when recovering from FALL state.
+
+2. **Priority Handling**:
+   - Strictly enforce the priority order: fall > dig > direction switching.
+   - Handle edge cases where multiple conditions occur simultaneously.
+
+3. **Digging State Behavior**:
+   - Maintain digging state until ground is lost, then transition to falling.
+   - Prevent premature exit from digging state.
+
+4. **Splatter Condition**:
+   - Ensure splatter occurs only when hitting ground after falling for >20 cycles.
+   - Properly handle the transition to SPLATTER state.
+
+5. **Output Logic**:
+   - Verify outputs match expected behavior in all states.
+   - Ensure outputs are properly synchronized with state transitions.
+
+The improved design will use:
+- A direction register to track original walking direction
+- Clear state transition logic with proper priorities
+- Separate handling for falling timer and splatter condition
+- Correct output assignments for all states

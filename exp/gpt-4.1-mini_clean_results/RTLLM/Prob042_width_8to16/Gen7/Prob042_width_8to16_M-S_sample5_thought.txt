@@ -1,0 +1,12 @@
+Use a simple register to hold the first 8-bit valid input (`data_lock`) when `valid_in` is asserted. Use a one-bit flag (`has_data`) to track if `data_lock` contains valid data.
+
+- On each clock cycle:
+  - If reset, clear all registers.
+  - Else, if `valid_in` is asserted:
+    - If `has_data` is 0, store `data_in` into `data_lock`, set `has_data=1`, and do not produce output.
+    - If `has_data` is 1, concatenate stored `data_lock` (upper 8 bits) with the current `data_in` (lower 8 bits), output this data on the next clock cycle by registering it into `data_out`, assert `valid_out=1`, and clear `has_data` to 0.
+  - Else (no valid input), keep state as is and output valid_out=0.
+
+This approach produces `valid_out` and `data_out` exactly one cycle after receiving the second valid input, holding the first input until the second arrives. It avoids FSM states and separate flags for output generation, relying on registered outputs and combinational logic.
+
+All registers and outputs update on posedge clk or negedge rst_n per specification.

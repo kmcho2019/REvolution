@@ -1,0 +1,9 @@
+To create a superior 64-bit subtractor with overflow detection, fuse the hierarchical 8-bit CLA block approach from Example 2 with the explicit two's complement subtraction and robust overflow logic from Example 1. 
+
+Key aspects of the fusion:
+- Use eight 8-bit CLA blocks for modular carry lookahead internally, improving timing by keeping carry chain manageable.
+- Enhance carry propagation between blocks by implementing a 2-level carry lookahead between the 8-bit blocks instead of a pure ripple of carries, reducing critical path.
+- Implement subtraction as A + (~B) + 1 done globally but chunked in 8-bit CLA blocks; each block processes A, ~B, and carry-in.
+- The top-level module orchestrates carry propagation through a simple 8-bit block propagate/generate signals hierarchy to produce carry-ins faster than ripple.
+- Overflow detection based on the sign bits of A, B, and the final result, as given.
+- This fusion balances modularity, speed, and code clarity, reducing delay on carry propagation while maintaining low area and power.

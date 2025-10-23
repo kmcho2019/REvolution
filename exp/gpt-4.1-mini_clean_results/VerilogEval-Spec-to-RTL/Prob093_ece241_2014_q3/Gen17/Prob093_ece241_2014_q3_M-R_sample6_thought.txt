@@ -1,0 +1,12 @@
+The original implementation used ternary operators directly on the outputs, which may have caused ambiguity or mismatch in signal interpretation. To improve clarity and possibly fix mapping issues, we refactor the module to explicitly build each mux_in bit by instantiating 2-to-1 multiplexers as separate modules, controlled by c or d, and constants as data inputs. This modular approach clarifies the muxing structure and respects the problem constraint of using only 2-to-1 multiplexers inside TopModule. We keep the same logic but implement the mux_in bits using hierarchical 2-to-1 mux modules with explicit inputs, ensuring the selection inputs are exactly c or d. This also facilitates debugging and ensures the mapping is explicit.
+
+The overall logic per mux_in bit remains:
+
+- mux_in[0] = d ? 1 : c
+- mux_in[1] = 0 (constant)
+- mux_in[2] = c ? d : 0
+- mux_in[3] = d ? c : 1
+
+But instead of ternary expressions, each uses instantiated 2-to-1 muxes, following the structure: output = mux(sel, in0, in1).
+
+This respects the design requirement of using only 2-to-1 muxes controlled by c or d and constants, and should avoid ambiguity in interpretation.

@@ -1,0 +1,11 @@
+The waveform reveals a more complex state machine behavior:
+1. p is high only when both clock is high and a transitions to high (edge-sensitive)
+2. q follows p but with a 1-cycle delay
+3. q is cleared asynchronously when a is high while clock is low
+4. The system has memory - q's value affects future states
+
+Key improvements:
+1. Make p edge-sensitive to a only during clock high (not level-sensitive)
+2. Implement proper 1-cycle delay for q
+3. Maintain the asynchronous clear for q
+4. Use proper edge detection for a during clock high

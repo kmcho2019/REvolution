@@ -1,0 +1,15 @@
+Novel Architectural Idea:
+Instead of using pure combinational logic, we can leverage the properties of one-hot encoding more explicitly by recognizing that:
+1. Each state transition only affects one or two flip-flops
+2. The next state logic can be expressed as a function of the current state and input
+3. We can use multiplexer-like behavior where each output is driven by specific state conditions
+
+Key insights:
+- Y1 (next state for B) is only active when in state A and w=1
+- Y3 (next state for D) is active in three cases: 
+  - From B when w=0
+  - From C when w=0 
+  - From F when w=1
+- We can express these as explicit conditions on the current state
+
+This approach makes the state transition logic more explicit and might be more readable/maintainable while maintaining similar PPA characteristics.

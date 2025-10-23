@@ -1,0 +1,12 @@
+To solve this problem, we can design a finite state machine (FSM) that transitions between states based on the inputs x and y, and the current state of the FSM. The FSM will have several states: an initial state (state A), a state to set output f to 1 (state B), a state to monitor the x input (state C), a state to set output g to 1 (state D), and states to monitor the y input (states E and F). The FSM will transition between these states based on the current state and the input values.
+
+Here's a high-level overview of the states and their transitions:
+- State A: Initial state, set f and g to 0. Stay in this state as long as reset is asserted.
+- State B: Set f to 1, transition to state C after one clock cycle.
+- State C: Monitor the x input, transition to state D if x has the values 1, 0, 1 in three successive clock cycles.
+- State D: Set g to 1, transition to state E.
+- State E: Monitor the y input, transition to state F after one clock cycle.
+- State F: If y is 1, stay in this state (g remains 1). If y is not 1 after two clock cycles, transition to state G.
+- State G: Set g to 0, stay in this state until reset is asserted.
+
+We will use a 3-bit state variable to represent the six states (A to G, but only using 3 bits since we can encode 6 states with 3 bits: A=000, B=001, C=010, D=011, E=100, F=101, G=110).

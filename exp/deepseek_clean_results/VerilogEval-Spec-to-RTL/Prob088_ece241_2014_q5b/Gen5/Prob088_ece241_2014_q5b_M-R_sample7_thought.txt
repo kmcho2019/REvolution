@@ -1,0 +1,13 @@
+Refactoring approach:
+1. Maintain the same one-hot state machine behavior but use continuous assignments instead of procedural blocks
+2. Eliminate the explicit state registers by using combinational logic with feedback
+3. Use a single wire to represent state_B (since state_A is just ~state_B in this encoding)
+4. Keep the same output logic (z = state_A ? x : ~x)
+5. Simplify the state transition logic by recognizing that state_B is sticky
+
+Key changes:
+- Replace flip-flops with combinational feedback (possible because next state depends only on current state and input)
+- Use a single state variable (state_B) since state_A is its complement
+- Maintain asynchronous reset functionality
+- All logic becomes continuous assignments
+- This reduces flip-flop usage while keeping the same behavior

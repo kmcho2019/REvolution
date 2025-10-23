@@ -1,0 +1,9 @@
+The key issue is the lack of a reset signal to initialize the shift register `q` to a known state. Since the problem interface doesn't include a reset input, the best fix is to implement a synchronous reset behavior triggered at the first clock edge using an internal initialization flag.
+
+This can be done by adding an internal register to track whether the first clock edge has occurred. At the first clock edge, initialize `q` to zero synchronously. After initialization, normal operation (shifting or counting) can proceed.
+
+This approach avoids using `initial` blocks and ensures that `q` starts from zero in both simulation and hardware, aligning with typical testbench expectations.
+
+The shift and decrement logic remain unchanged, with shift taking priority over count. The decrement wraps naturally as a 4-bit counter, since the problem doesn't specify saturating behavior.
+
+This method fixes the unknown initial state problem without modifying the module interface.

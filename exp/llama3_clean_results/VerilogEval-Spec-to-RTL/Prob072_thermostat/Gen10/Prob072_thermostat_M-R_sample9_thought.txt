@@ -1,0 +1,5 @@
+To refactor the provided Verilog code, we will utilize continuous assignments (`assign`) instead of the `always_comb` block. This approach is more suitable for simple combinational logic, as it is more concise and directly expresses the intent of assigning a value to a signal based on the values of other signals. 
+
+We will maintain the same logic expressions for `heater`, `aircon`, and `fan`, as they are already optimized. This means `heater` will still be assigned based on `mode` and `too_cold`, `aircon` based on the inverse of `mode` and `too_hot`, and `fan` based on the combination of `heater`, `aircon`, and `fan_on`. 
+
+By using `assign`, we make the code more compact and easier to read, especially for designers familiar with this style of Verilog coding. The functionality remains unchanged, ensuring that the thermostat controller behaves as specified, turning on the heater in heating mode when it's too cold, the air conditioner in cooling mode when it's too hot, and always turning on the fan when either the heater or air conditioner is on, or when the `fan_on` signal is asserted.

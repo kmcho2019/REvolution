@@ -1,0 +1,17 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - The critical path involves state transition and output generation. We can simplify the output logic by recognizing that z is simply x XOR state_A, which is more hardware-efficient than a ternary operator.
+   - This reduces the logic depth from state_A to z, improving timing.
+
+2. Power Optimization:
+   - The current design has redundant transitions when in state B. We can modify the state transition logic to only update when necessary (when x=1 in state A).
+   - This reduces unnecessary switching activity, lowering dynamic power.
+
+3. Area Optimization:
+   - While already minimal, we can make the state transition logic more explicit to ensure optimal synthesis.
+   - The XOR-based output logic is more area-efficient than the ternary operator.
+
+Key Changes:
+- Replace ternary output with XOR logic
+- Simplify state transition condition
+- Maintain same functionality with improved PPA

@@ -1,0 +1,10 @@
+Implement a dual-edge triggered flip-flop by sampling the input signal 'd' on the positive edge of 'clk' and on the positive edge of its inverted clock signal 'clk_bar'. This effectively captures data on both edges of the original clock without using an illegal sensitivity list. Then, use a simple 2-to-1 multiplexer controlled by 'clk' to select which sampled data to output.
+
+Specifically:
+- Generate 'clk_bar' as the inverted version of 'clk'.
+- Use two positive-edge triggered flip-flops: one triggered by 'clk' and the other by 'clk_bar'.
+- The flip-flop triggered by 'clk' captures 'd' on the rising edge of 'clk' (i.e., original posedge).
+- The flip-flop triggered by 'clk_bar' captures 'd' on the rising edge of 'clk_bar', which corresponds to the falling edge of 'clk'.
+- Use a mux to select the output from the appropriate flip-flop based on the current 'clk' level.
+  
+This approach avoids any latch or level-sensitive logic, utilizes only positive edge-triggered flip-flops (which are FPGA-friendly), and has a clean timing model. The multiplexer is simple combinational logic that chooses between the two stored values, effectively providing the dual-edge triggered flip-flop behavior.

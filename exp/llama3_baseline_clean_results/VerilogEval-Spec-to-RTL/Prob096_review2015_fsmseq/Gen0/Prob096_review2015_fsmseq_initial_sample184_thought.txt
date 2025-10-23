@@ -1,0 +1,9 @@
+The design will involve implementing a finite-state machine (FSM) with states that track the progression of the input sequence. The states will be defined based on the bits of the sequence 1101 that have been seen so far. The FSM will start in an idle state and transition through states as it receives matching bits from the input stream. Once the complete sequence is detected, it will enter a state where start_shifting is set to 1. This state will remain active until the reset signal is asserted high. The states will be encoded using a binary representation for simplicity and to reduce the number of states needed.
+
+1. Idle state (initial state): Waiting for the first '1' of the sequence.
+2. State after first '1': Waiting for the second '1'.
+3. State after second '1': Waiting for the '0'.
+4. State after '0': Waiting for the final '1'.
+5. Sequence detected state: Sets start_shifting to 1 and remains here until reset.
+
+Reset will be handled synchronously, meaning it will be considered on the positive edge of the clock. If reset is asserted, the FSM will return to its idle state, regardless of its current state.

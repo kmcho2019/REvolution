@@ -1,0 +1,9 @@
+The design requires a state machine-like behavior to handle the 8-bit to 16-bit width conversion. Here's the approach:
+1. Use a register (data_lock) to store the first 8-bit input when valid_in is high
+2. Use a flag (has_first_byte) to indicate when we have the first byte stored
+3. When the second valid input arrives (and has_first_byte is set):
+   - Concatenate the locked byte (MSB) with new byte (LSB) to form 16-bit output
+   - Set valid_out for one clock cycle
+   - Clear the flag to start new conversion
+4. Reset clears all registers and flags
+5. Outputs are registered and updated on clock edges

@@ -1,0 +1,11 @@
+Correct the bump handling in the walking mode:  
+- If bump_left=1 and bump_right=0, set direction to right (1).  
+- If bump_right=1 and bump_left=0, set direction to left (0).  
+- If both bump_left and bump_right=1, toggle direction.  
+This explicit logic fixes the bug where direction was toggled unconditionally.  
+Retain existing mode priorities and transitions.  
+For minor optimization:  
+- Avoid updating fall_timer unnecessarily to reduce power.  
+- Use nonblocking assignments properly and simplify combinational logic with priority if-else for readability.  
+- Keep asynchronous reset and output assignments as before.  
+These changes ensure correctness without compromising FSM clarity or performance.

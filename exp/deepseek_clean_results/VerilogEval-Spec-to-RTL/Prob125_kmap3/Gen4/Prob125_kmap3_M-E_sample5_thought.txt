@@ -1,0 +1,15 @@
+After re-examining the Karnaugh map, I notice that the output is primarily determined by the combination of c and the other inputs, with d being a don't-care that we can leverage for simplification. Here's a new approach:
+
+1. When c=1 (rows cd=11 and cd=10 in the map), the output is almost always 1 except for cd=11,ab=00
+2. When c=0 (rows cd=00 and cd=01), the output follows a different pattern:
+   - For cd=00: output is 1 when ab=10 or 11
+   - For cd=01: output is 0 except for don't-cares
+
+This suggests we can implement the logic as:
+out = c ? (~a | b) : (a & ~b)
+Where:
+- When c=1: output is 1 unless a=0 and b=0 (cd=11,ab=00 case)
+- When c=0: output is 1 only when a=1 and b=0 (cd=00,ab=10 case)
+- The don't-cares in cd=01 are set to 0 for simplicity
+- The cd=00,ab=01 case (output 0) is naturally covered
+This provides a more efficient implementation using just two logic operations.

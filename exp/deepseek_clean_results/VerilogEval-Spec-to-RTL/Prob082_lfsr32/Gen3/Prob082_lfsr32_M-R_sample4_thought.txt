@@ -1,0 +1,13 @@
+To correctly implement the 32-bit Galois LFSR with specified taps:
+1. Maintain the same interface and synchronous reset behavior
+2. Properly implement Galois LFSR feedback logic:
+   - Feedback is always the LSB (q[0])
+   - At tap positions (32,22,2,1 in 1-based = bits 31,21,1,0 in 0-based):
+     - Next value = current bit XOR feedback
+   - Other positions simply shift right
+3. Use continuous assignments for combinational logic
+4. Separate the sequential logic for register updates
+5. Key improvements:
+   - Correct XOR implementation at tap positions
+   - Clear mapping between 1-based tap positions and 0-based indices
+   - Proper Galois structure where taps modify their own next state

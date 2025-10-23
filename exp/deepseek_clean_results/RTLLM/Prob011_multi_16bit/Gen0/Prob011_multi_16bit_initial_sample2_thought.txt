@@ -1,0 +1,12 @@
+The design implements a 16-bit unsigned multiplier using shift-and-add algorithm. The key components are:
+1. Control logic for start/reset conditions and iteration counting
+2. Registers to store multiplicand, multiplier, and partial product
+3. Shift-and-accumulate logic that processes one bit per clock cycle
+4. Done flag generation when all 16 bits are processed
+
+The implementation follows these steps:
+- On reset or when not started, initialize all registers
+- When start is asserted, load input operands
+- For each of the 16 bits (0-15), check if the current multiplicand bit is set
+- If set, add the shifted multiplier to the accumulator
+- After 16 cycles, assert done flag for one cycle

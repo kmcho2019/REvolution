@@ -1,0 +1,20 @@
+Novel Architecture Idea:
+1. Priority-Encoding Transition:
+   - Instead of computing each next state bit separately, use the one-hot property to prioritize state transitions
+   - Create a 4-bit mask for each current state that determines possible next states
+   - Use the input to select between the two possible transitions for each state
+
+2. Output Logic:
+   - Maintain the simple direct output from state D (one-hot bit 3)
+
+3. Benefits:
+   - More explicit state transition mapping that's easier to verify
+   - Potentially better timing as it avoids some logic depth
+   - Clear separation between state transition conditions
+   - Scales well if more states are added
+
+4. Implementation:
+   - Create transition masks for each state (A-D)
+   - Use input to select between the two transition options
+   - Combine using bitwise OR since only one state is active
+   - Output is simply the MSB of current state

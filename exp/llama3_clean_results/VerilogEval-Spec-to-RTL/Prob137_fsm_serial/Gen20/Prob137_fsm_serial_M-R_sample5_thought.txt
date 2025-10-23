@@ -1,0 +1,9 @@
+To refactor the given Verilog code, we can simplify the state machine and reduce the number of states required. Instead of using a 3-bit one-hot encoded state register, we can use a 2-bit binary encoded state register. This will reduce the combinational logic required for state transitions.
+
+We can also merge the `bit_count` counter with the state machine's functionality, reducing the number of registers required. Additionally, we can use a more efficient method for collecting the incoming bits, such as using a shift register.
+
+To minimize switching activity, we can use a more static data collection method, where only the necessary bits are updated. We can also use a more power-efficient approach for shifting the bits, such as using a shift register instead of bit manipulation.
+
+We will use a single always block to handle all the logic, reducing the size of the code and making it more efficient. The `done` signal will be reset in the same always block as the rest of the logic to avoid any potential synchronization issues.
+
+The FSM will have the following states: IDLE, RECEIVE, and ERROR. The IDLE state will wait for the start bit, the RECEIVE state will collect the incoming bits, and the ERROR state will handle the case when the stop bit is incorrect.

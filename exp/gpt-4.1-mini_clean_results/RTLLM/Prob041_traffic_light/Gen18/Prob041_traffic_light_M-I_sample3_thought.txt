@@ -1,0 +1,12 @@
+To improve the provided traffic light controller solution for better PPA, we focus on simplifying the combinational logic and reducing toggling:
+
+1. Replace the combinational always block for next state and counter logic with smaller, clearer sequential blocks to reduce combinational complexity.
+2. Use a synchronous reset and synchronous update style fully, which often improves timing and synthesis results.
+3. Avoid redundant resets of ped_shortened flag in multiple states by resetting it only on GREEN state exit and on reset.
+4. Prevent unnecessary decrement cycles by gating counter decrement with a timer enable signal and state check.
+5. Simplify output logic to avoid unnecessary combinational logic and assign outputs directly from state bits.
+6. Reduce counter width from 7 bits to 6 bits since max counter is 60 (<64), to save area.
+7. Use localparams for states and times consistently.
+8. Make `clock` output a registered output synchronized with the counter to avoid glitches.
+
+These changes reduce combinational logic depth, minimize unnecessary toggling, and optimize resource usage, which should yield better power, area, and timing characteristics.

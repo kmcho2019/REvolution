@@ -1,0 +1,15 @@
+The simplified solution maintains the core functionality while reducing complexity:
+
+1. State Encoding: Use 2-bit encoding for 4 states (A, B, C, D)
+2. Priority Handling: Implement strict priority in state A (r[0] > r[1] > r[2])
+3. State Transitions:
+   - Stay in grant states (B, C, D) while request is active
+   - Return to A when request deasserts
+4. Output Logic: Simple combinational assignments based on current state
+5. Reset: Synchronous active-low reset to state A
+
+Key simplifications:
+- Remove unnecessary default case (covered by initial reset)
+- Make state D behave consistently with B and C (maintain grant while request active)
+- Simplify output logic to direct state comparisons
+- Remove redundant else-if chains by using priority order

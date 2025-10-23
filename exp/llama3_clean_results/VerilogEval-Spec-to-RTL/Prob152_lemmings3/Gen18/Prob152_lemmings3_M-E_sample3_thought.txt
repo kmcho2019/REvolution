@@ -1,0 +1,22 @@
+The existing solution implements a finite state machine (FSM) with three states: walking, falling, and digging. However, we can simplify the design by reducing the number of states and using additional variables to track the Lemming's direction and digging status.
+
+A novel approach is to use a single state variable to track the Lemming's activity (walking, falling, or digging) and two separate variables to track the walking direction and digging status. This allows us to reduce the number of state transitions and simplify the output logic.
+
+Additionally, we can use a separate variable to track the previous ground status, which helps us to determine when the Lemming starts or stops falling.
+
+The new architecture consists of the following components:
+
+1. A single state variable (`state`) with three possible values: walking, falling, and digging.
+2. A walking direction variable (`walk_dir`) with two possible values: left and right.
+3. A digging status variable (`digging`) with two possible values: true and false.
+4. A previous ground status variable (`prev_ground`) with two possible values: true and false.
+
+The state machine transitions are as follows:
+
+* When the Lemming is walking and the ground disappears, it starts falling.
+* When the Lemming is falling and the ground reappears, it starts walking in the same direction as before.
+* When the Lemming is walking and it receives a dig command, it starts digging.
+* When the Lemming is digging and the ground disappears, it starts falling.
+* When the Lemming is walking and it receives a bump command, it changes direction.
+
+The output logic is simplified by directly assigning the outputs based on the current state and variables.

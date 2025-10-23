@@ -1,0 +1,7 @@
+To implement the TopModule, we need to create a finite state machine that searches for message boundaries in the input byte stream. The FSM will have four states: IDLE, BYTE1, BYTE2, and DONE. In the IDLE state, we discard bytes until we see one with in[3]=1, which indicates the start of a message. We then transition to the BYTE1 state and store the current byte. In the BYTE1 state, we wait for the next byte and store it in the BYTE2 state. Finally, in the BYTE2 state, we wait for the third byte and then transition to the DONE state, where we signal the receipt of a message and output the 24-bit message.
+
+We will use a counter to keep track of the current state and a register to store the 24-bit message. We will also use a flag to indicate when a message has been received.
+
+The FSM will be implemented using a case statement, where each case corresponds to a different state. The default case will correspond to the IDLE state.
+
+In the datapath, we will use a 24-bit register to store the message and a multiplexer to select the correct byte to output.

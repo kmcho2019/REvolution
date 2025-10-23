@@ -1,0 +1,26 @@
+To create an optimal solution, I'll combine the best aspects of both examples while addressing their weaknesses:
+
+1. State Encoding: Use a 3-state approach (WALK/FALL/DIG) with a separate direction bit, providing clarity while minimizing states.
+
+2. Priority Handling: Implement explicit priority (fall > dig > bump) with clean nested conditions:
+   - Fall has highest priority when ground=0
+   - Dig is only considered when walking on ground
+   - Bumps only affect direction when walking on ground and not digging
+
+3. Transition Logic Optimization:
+   - Check ground first for fall condition
+   - Only evaluate dig when in WALK state with ground
+   - Process bumps only when in WALK state with ground and not digging
+   - Minimize direction bit toggles by only updating when needed
+
+4. Output Logic:
+   - Keep simple combinatorial outputs
+   - Ensure outputs strictly match requirements
+   - Make outputs mutually exclusive where possible
+
+Key improvements over examples:
+- Fewer states than Example 2 (3 vs 6)
+- Clearer priority structure than Example 1
+- Reduced power by minimizing unnecessary transitions
+- Optimized state transitions with minimal logic
+- Clean separation of state and direction tracking

@@ -1,0 +1,21 @@
+To correctly implement the Karnaugh map, let's re-examine each mux_in output:
+
+1. mux_in[0] (ab=00):
+   - Should be 1 when cd=01,11,10 (i.e., when c OR d is 1, except cd=00)
+   - This is equivalent to c OR d
+
+2. mux_in[1] (ab=01):
+   - Always 0 as per K-map
+
+3. mux_in[2] (ab=11):
+   - Should be 1 only when cd=11
+   - This is c AND d
+
+4. mux_in[3] (ab=10):
+   - Should be 1 when cd=00,11,10
+   - This is NOT d OR (c AND d)
+
+The key realization is that we can implement all these functions using just OR and AND operations, which can be built using 2-to-1 multiplexers. We'll:
+- Use direct assignments for simple cases
+- For mux_in[3], we'll implement it as ~d | (c & d) which simplifies to c | ~d
+- All operations will be implemented using 2-to-1 muxes as basic building blocks

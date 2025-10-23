@@ -1,0 +1,5 @@
+The existing design is already minimal, but to optimize PPA (timing, power, area), we can exploit the fact that the FSM has only two states, which can be directly encoded as the output signal itself (out). This eliminates the need for a separate state register, reducing area and simplifying the design. The next state logic can be directly assigned to 'out' at each clock edge with synchronous reset. This reduces the register count, simplifies combinational logic, and slightly improves timing and power by minimizing logic levels and toggling.
+
+Thus, 'out' becomes the state register, toggling between 0 (OFF) and 1 (ON). On reset, output is 0. On OFF (out=0), if j=1, output transitions to 1; else remains 0. On ON (out=1), if k=1, output transitions to 0; else remains 1.
+
+This maintains correct Moore FSM behavior with the minimal possible hardware and straightforward synchronous logic.

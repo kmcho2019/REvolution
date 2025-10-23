@@ -1,0 +1,5 @@
+To implement the one-hot encoded state machine next-state logic and outputs, I will use a fully parallel decoding approach with a generate block to systematically compute next_state bits from the given state vector and input, avoiding large fan-in OR gates. Each next_state bit is defined by enumerating the states and input that transition to it. 
+
+Outputs are assigned by explicitly checking which states are active that produce nonzero outputs. This approach yields highly regular and modular code, easy to verify and scale. It uses simple conditional expressions and bitwise operations for clarity and synthesis friendliness.
+
+This method differs from prior hierarchical OR structures by fully unrolling the logic in a loop, making it easier to add states and transitions in a scalable manner. It also cleanly separates next_state assignments and output logic without shared intermediate signals, preserving ease of debugging and synthesis predictability.

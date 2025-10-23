@@ -1,0 +1,21 @@
+The 4-to-1 multiplexer has inputs mux_in[3:0] selected by {a,b}. Each mux_in[i] must be a function of c and d only, and the output of the final 4-to-1 mux with selectors a,b implements the K-map function. 
+
+From the K-map, group values by ab to find the function for each mux_in[i]:
+
+- For ab=00 (mux_in[0]): entries at cd=00:0, 01:1, 11:1, 10:1
+  So mux_in[0] = f when a=0,b=0 = K-map with c,d
+- For ab=01 (mux_in[1]): entries at cd=00:0, 01:0, 11:0, 10:0
+  mux_in[1] = 0
+- For ab=11 (mux_in[2]): entries at cd=00:0, 01:0, 11:1, 10:0
+  mux_in[2] = c & d
+- For ab=10 (mux_in[3]): entries at cd=00:1, 01:0, 11:1, 10:1
+  mux_in[3] = c | (~d)
+
+To minimize logic and use only multiplexers (no gates except multiplexers), we implement each mux_in as mux chains from c,d inputs:
+
+- mux_in[0] = 1 if cd!=00 else 0, i.e. mux with selector c: if c=0 then d=0?0:1 else 1
+- mux_in[1] = 0 constant
+- mux_in[2] = c & d = 2-to-1 mux with selector c: if c=0 then 0 else d
+- mux_in[3] = c | ~d can be implemented with muxes: for selector c: if c=1 then 1 else ~d; ~d is 2-to-1 mux with selector d: if d=0 then 1 else 0
+
+We define all using 2-to-1 mux modules and combine into TopModule. The final 4-to-1 mux inputs are mux_in, with selector {a,b} (inputs a,b are external inputs to the whole system and not inside TopModule; the K-map implementation focuses on mux_in).

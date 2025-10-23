@@ -1,0 +1,17 @@
+To improve the existing solution, we need to focus on optimizing its Power, Performance, and Area (PPA) metrics. The current implementation uses simple arithmetic operations to count the number of '1's in the input vector. However, upon closer inspection, the existing solution has a potential issue: it does not accurately count the population of '1's in the input vector. The expression `out = count_01 + in[2]` will produce incorrect results when `count_01` is greater than 1 because `count_01` is a 2-bit value and `in[2]` is a 1-bit value, and their sum can exceed the capacity of the 2-bit output `out`.
+
+To address this issue and optimize the design, we should ensure that the population count is accurately calculated and consider techniques to minimize switching activity, reduce area, and improve timing performance. 
+
+A straightforward and efficient approach to count the population of '1's in a 3-bit input vector is to use a combination of logic gates. Since we are dealing with a small input size, we can directly implement the population count using a few logic operations.
+
+For a 3-bit input vector `in[2:0]`, we can calculate the population count as follows:
+- Count the number of '1's in `in[0]` and `in[1]`.
+- Add the count from the previous step to `in[2]`.
+
+However, to accurately handle the population count, we should ensure that we are not overflowing the output. Given that the maximum population count for a 3-bit vector is 3, we need to adjust our approach to handle this scenario correctly.
+
+We can achieve this by considering each bit individually and using a simple addition logic to sum up the counts. However, given the potential for overflow (since the maximum count is 3 and our output is only 2 bits wide), we must ensure our logic can handle this case correctly.
+
+One way to optimize the design while ensuring accuracy is to use a lookup table (LUT) or implement a small combinational logic that can handle the population count for a 3-bit input vector directly. This approach can potentially reduce area and power consumption by minimizing the number of logic operations required.
+
+In this optimized solution, we will use a direct calculation approach that accurately counts the '1's in the input vector and ensures that the result is correctly represented within the 2-bit output, considering the potential overflow scenario.

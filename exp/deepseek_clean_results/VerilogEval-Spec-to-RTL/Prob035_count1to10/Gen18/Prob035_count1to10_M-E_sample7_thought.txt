@@ -1,0 +1,16 @@
+Novel Approach: State Encoding Optimization
+1. Instead of using binary counting, implement a one-hot encoded state machine for the decade counter
+2. Each state represents one count value (1-10) with a unique bit position
+3. Advantages:
+   - Eliminates the need for incrementer logic (+1 operation)
+   - State transitions become simple shift operations
+   - Terminal count detection is trivial (just check the last state)
+   - Potentially lower power due to reduced switching activity
+   - Simpler reset implementation
+4. Trade-offs:
+   - Uses slightly more flip-flops (10 vs 4)
+   - But eliminates combinational logic for counting and wrap-around
+5. Implementation:
+   - Use 10-bit register for states
+   - Circular shift with reset to initial state
+   - Output encoding converts one-hot to binary

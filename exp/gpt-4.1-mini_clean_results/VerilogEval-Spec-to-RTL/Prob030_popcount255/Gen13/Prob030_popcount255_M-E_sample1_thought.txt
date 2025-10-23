@@ -1,0 +1,5 @@
+Implement a parallel popcount using a hierarchical multi-level adder tree optimized for an irregular input size (255 bits) without recursion. First, group the input bits into small fixed-size blocks (e.g., 5-bit groups), each producing a 3-bit partial count using small dedicated combinational popcount units implemented as LUT-based counters. Then, combine these partial sums in a multi-level balanced adder tree to produce the final count.
+
+This approach avoids recursion and uses fixed small popcount units to reduce complexity. Grouping by 5 bits (popcount max 5) fits well into 3-bit outputs, reducing fan-in. The final adder tree sums the partial counts efficiently, leveraging the small width of each partial result to minimize adder size and improve timing. Padding the input from 255 to 260 bits (52 groups × 5 bits) simplifies the design and alignment.
+
+This architecture balances modularity, flat hierarchy, and deterministic delay, optimizing for moderate size and timing without recursive instantiations.

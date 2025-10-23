@@ -1,0 +1,11 @@
+The original fix correctly implements the adder-subtractor using conditional inversion and carry-in with a single adder, and uses a reduction NOR to detect zero.
+
+To improve PPA:
+- Reduce power by minimizing switching: avoid XOR on all bits of B unconditionally by gating only when do_sub changes.
+- Simplify zero flag generation by directly assigning it combinationally with an assign statement rather than in an always block.
+- Use continuous assignments for out and result_is_zero to remove the need for reg and always blocks, allowing better optimization by synthesis tools.
+- Keep logic purely combinational and compact for better area and timing.
+
+Overall, the improvements focus on removing unnecessary always block and reg declarations for output signals, using assign statements for cleaner and potentially more optimizable code, reducing power by minimizing toggles.
+
+This approach keeps the classical adder-subtractor logic but improves synthesis friendliness and power efficiency.

@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. Remove the explicit 'found' register since we can directly use the shift register's state to determine the output
+2. Use a 4-bit shift register to store the last 4 bits of input
+3. Compare the shift register directly to the target pattern (4'b1101)
+4. Output is simply whether the shift register matches the pattern
+5. Maintain synchronous reset behavior
+
+Key Simplifications:
+- Eliminated redundant 'found' register by using shift register value directly
+- Single comparison operation (shift_reg == 4'b1101) replaces previous two-part comparison
+- Reduced register count by 1 (from 5 to 4 bits total storage)
+- Maintains same functionality with simpler logic

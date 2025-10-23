@@ -1,0 +1,12 @@
+Here's a novel approach using a hierarchical decoder structure:
+
+1. First, decode the x[3:2] bits into 4 possible states (00, 01, 11, 10)
+2. Then, for each of these states, implement the specific logic for x[1:0] bits:
+   - For x[3:2] = 00: f is 1 when x[1:0] is 00, 01, or 10 (but K-map shows 00 and 10)
+   - For x[3:2] = 01: always 0
+   - For x[3:2] = 11: f is 1 when x[1:0] is 00, 01, or 11
+   - For x[3:2] = 10: f is 1 when x[1:0] is 00, 01, or 10
+
+3. This can be implemented using a 2-to-4 decoder for x[3:2] and then OR-ing the appropriate minterms for each case.
+
+4. The advantage is clear separation of concerns between the upper and lower bits, making the design more modular and easier to verify.

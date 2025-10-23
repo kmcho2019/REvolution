@@ -1,0 +1,13 @@
+Implement an 8-bit Radix-4 Booth multiplier using a sequential approach with a 5-bit counter (ctr) that counts from 0 to 16, performing partial accumulations each clock cycle.
+
+Key points:
+- On reset, sign-extend inputs a and b to 16 bits: multiplier <= {{8{b[7]}}, b}, multiplicand <= {{8{a[7]}}, a}.
+- Use a 16-bit signed register 'multiplicand' as the multiplicand value, which is shifted left by 1 each cycle (doubling it) to align with bit position.
+- Use a 17-bit signed register 'multiplier' (with one extra bit at LSB) to hold multiplier bits for Booth encoding.
+- At each cycle (when ctr < 16), examine two consecutive bits of 'multiplier' at positions ctr and ctr-1 (with assumed bit -1 = 0), decode the Booth code to 0, +multiplicand, -multiplicand, +2*multiplicand, or -2*multiplicand.
+- Accumulate the decoded value into a signed 34-bit accumulator (large enough to avoid overflow), shifted appropriately.
+- Increment ctr each clock. When ctr reaches 16, set rdy and assign lower 16 bits of accumulator to output p.
+- The multiplication iterates 16 times, processing 2 multiplier bits per cycle (radix-4).
+- The shifting of the multiplicand is handled by shifting the value left by 1 each cycle to multiply by powers of 2.
+- Use combinational Booth decoding logic inside the sequential always block.
+- The design matches the problem specs for ports and operation, supporting synchronous operation with reset.

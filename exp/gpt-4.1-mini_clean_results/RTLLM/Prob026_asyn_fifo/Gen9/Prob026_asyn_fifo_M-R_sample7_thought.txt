@@ -1,0 +1,8 @@
+Refactor the asynchronous FIFO by restructuring the pointer logic and synchronizers using a clearer split between combinational and sequential logic.  
+- Use explicit pointer increment combinational logic feeding registers updated in always blocks, avoiding next-state logic inside always blocks.  
+- Use separate small modules for Gray code conversion and pointer synchronization to improve modularity and readability.  
+- Implement pointer synchronization with a dedicated synchronizer submodule instead of manual two-flop registers.  
+- Express full and empty logic combinationally with clear signal names and assign statements.  
+- Keep the dual-port RAM as a submodule but use continuous assignments for address generation.  
+- Manage FIFO status flags as combinational outputs driven by synchronized pointers and current pointers, avoiding storing status flags in flip-flops where possible.  
+This modular, clean structural coding style clarifies data flow, improves readability, and better separates functionality while preserving all original FIFO features.

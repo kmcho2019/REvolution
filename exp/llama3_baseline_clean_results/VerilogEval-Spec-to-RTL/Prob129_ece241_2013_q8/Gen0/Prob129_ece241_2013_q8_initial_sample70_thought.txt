@@ -1,0 +1,8 @@
+To implement the Mealy-type finite state machine that recognizes the sequence "101" with a negative edge triggered asynchronous reset, we'll use a 3-state approach. The states can be defined as follows:
+- S0 (initial state): waiting for the first '1'
+- S1: waiting for the '0'
+- S2: waiting for the second '1'
+
+On each state transition, we'll check the current input 'x' and decide which state to go to next. If 'x' matches the expected value for the current state, we move to the next state. If we reach the final state (S2) and 'x' is '1', we assert the output 'z' to '1'.
+
+For the asynchronous reset, we'll use the 'aredet' keyword in the 'always' block to ensure that the reset is triggered on the negative edge of 'aresetn'.

@@ -1,0 +1,7 @@
+To optimize the existing design for better performance and power, I will simplify the combinational next state logic by replacing the conditional ternary operators with direct arithmetic and clamp operations using simple boolean expressions for increment and decrement saturation. This avoids the 3-bit intermediate wire and reduces combinational depth and conditional checks. 
+
+Additionally, I'll add an enable signal for the counter update, so that when `train_valid` is low, the state does not toggle unnecessarily, lowering dynamic power. The counter updates only on `train_valid` high, either incrementing or decrementing, saturating at boundaries 0 and 3, otherwise holding its value. This reduces unnecessary transitions in the register and combinational toggling.
+
+The asynchronous reset remains the same, ensuring immediate reset to 2'b01 on the positive edge of areset. The output state is the current counter value.
+
+This approach is area-efficient by using only 2-bit arithmetic and minimal combinational logic and improves timing by reducing conditional complexity and signal fanout.

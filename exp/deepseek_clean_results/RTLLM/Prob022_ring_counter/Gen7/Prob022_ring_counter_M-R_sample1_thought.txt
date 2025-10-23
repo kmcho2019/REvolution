@@ -1,0 +1,14 @@
+Refactoring strategy:
+1. Maintain the same ring counter functionality but avoid array slicing concatenation
+2. Use a case statement to explicitly define each state transition
+3. Implement as a simple state machine with 8 states
+4. Each state represents one active bit position
+5. Reset initializes to state 0 (LSB active)
+6. State transitions occur on clock edges, cycling through all positions
+
+Advantages:
+- Avoids tool-specific array concatenation issues
+- Explicit state transitions make behavior very clear
+- Still maintains one-hot encoding guarantee
+- Same PPA benefits as original design (just DFFs and simple logic)
+- More portable across different Verilog tools

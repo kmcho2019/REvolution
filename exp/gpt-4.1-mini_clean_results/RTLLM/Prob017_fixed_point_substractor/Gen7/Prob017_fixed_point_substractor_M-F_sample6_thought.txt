@@ -1,0 +1,14 @@
+The main issue causing compilation errors is the missing parameter binding in the module instantiation, which is external to the module but critical for correct simulation or synthesis. To resolve this, the module code itself must be clear on parameter usage, and it is advisable to declare inputs, outputs, and internal signals as signed to make arithmetic operations straightforward and avoid synthesis ambiguities.
+
+Improvements and fixes include:
+- Declare inputs and outputs as `signed` to enable proper signed arithmetic internally.
+- Use continuous assignments for intermediate signals where appropriate to clarify combinational logic.
+- Maintain the combinational `always @*` block with blocking assignments but avoid `reg` for simple intermediate values when possible.
+- Keep the parameter defaults in the module to allow parameterless instantiation if desired.
+- Ensure the sign extension and arithmetic follow signed behavior directly.
+
+The zero detection and sign correction for zero results remain as before.
+
+This fixes the internal module design for clarity and synthesis friendliness. However, note the testbench or instantiation environment must also properly pass parameters if different from defaults.
+
+Below is the corrected and improved module code with signed ports and clean combinational logic.

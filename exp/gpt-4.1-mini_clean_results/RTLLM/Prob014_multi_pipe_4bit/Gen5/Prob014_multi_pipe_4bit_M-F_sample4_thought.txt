@@ -1,0 +1,35 @@
+To fix the design:
+
+1. **Input Extension**: The problem explicitly requests extending inputs by adding "size" zeros at the MSB side. We'll keep this as is, but carefully manage bit alignment when generating partial products.
+
+2. **Partial Product Generation & Pipeline Stages**: Instead of a serial iterative multiplier, implement a two-stage pipeline as follows:
+
+   - **Stage 1**: Generate partial products for each bit of the multiplier using a generate block. For each bit of `mul_b`, if the bit is '1', generate the partial product as `mul_a` shifted left by the bit index; otherwise zero. Each partial product is `2*size` wide.
+
+   - Then, **register these partial products** in Stage 1 registers.
+
+3. **Addition of Partial Products in Two Levels of Pipeline Registers**:
+
+   - Add the partial products in a pipelined manner using two register levels:
+   
+     - Level 1 Registers: sum partial products in pairs (e.g., partial products 0+1, 2+3, ...).
+     - Level 2 Registers: sum the results of Level 1 to get the final product.
+     
+   This matches the requirement of two levels of registers for intermediate sums.
+
+4. **Control and Reset**:
+
+   - On reset, clear all registers and outputs.
+   - On clk posedge and rst_n high, capture partial products into Level 1 registers.
+   - On next clk posedge, Level 1 sums are summed in Level 2 registers.
+   - On next clk posedge, output the final product from Level 2 registers.
+
+5. **Pipeline latency**: The design will have a latency of 3 cycles: input to partial products, Level 1 sum, Level 2 sum and output.
+
+6. **Synchronous operation**: All registers update on the positive edge of clk or reset.
+
+7. **Parameterization**: The code is parameterized by size=4.
+
+This approach respects the problem statement and the feedback: it uses two levels of registers storing intermediate sums of partial products and performs the multiplication in a pipelined manner.
+
+Note: Although the input extension with MSB zeros is unusual, we keep it to meet the specification literally.

@@ -1,0 +1,17 @@
+The original design is already functionally correct and efficient in counter sizes and toggle logic. To optimize for better PPA (Power, Performance, Area):
+
+- Merge the two always blocks into one. This reduces clock domain crossings and register duplication, which can slightly improve performance and area by allowing synthesis to optimize better.
+
+- Use synchronous reset only (no asynchronous), as synchronous reset can improve timing and reduce glitches in some flows, leading to better performance and power.
+
+- Use local parameters for counter maximum values for readability and easier modification.
+
+- For the divide-by-2 clock (50 MHz), use a simple toggle counter instead of toggling the output directly. This can help with timing as toggling is controlled by counter overflow.
+
+- Keep minimal bit widths for counters.
+
+- Use non-blocking assignments consistently.
+
+These changes aim to reduce area slightly by consolidating logic, maintain or improve timing by synchronous reset and single always block, and reduce power by structured counting rather than unconditional toggling.
+
+The resulting design retains clarity, correctness, and is potentially better for synthesis optimizations.

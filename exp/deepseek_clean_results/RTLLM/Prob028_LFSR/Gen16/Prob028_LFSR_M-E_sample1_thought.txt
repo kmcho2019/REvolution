@@ -1,0 +1,18 @@
+Here's a novel approach for the 4-bit LFSR with improved characteristics:
+
+1. Dual-edge triggered design: The LFSR will update on both rising and falling edges of the clock, effectively doubling the sequence generation speed while maintaining the same clock frequency.
+
+2. Dynamic polynomial selection: Instead of fixed feedback taps, we'll alternate between two different polynomials every cycle to improve randomness:
+   - On rising edge: out[3] XOR out[2] (as specified)
+   - On falling edge: out[3] XOR out[1] (additional polynomial)
+
+3. Anti-lockup protection: The design will automatically detect and recover from the all-zero state by forcing a '1' into the LFSR if it ever occurs.
+
+4. Output scrambling: The final output will be a scrambled version of the internal state using a fixed permutation pattern to further improve apparent randomness.
+
+Key advantages:
+- Faster sequence generation without increasing clock frequency
+- Enhanced randomness through alternating polynomials
+- Robust against lock-up states
+- Output scrambling improves statistical properties
+- Maintains the specified interface

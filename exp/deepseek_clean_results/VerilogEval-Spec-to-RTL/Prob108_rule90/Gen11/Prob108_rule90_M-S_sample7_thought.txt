@@ -1,0 +1,15 @@
+To simplify the Rule 90 implementation while maintaining functionality:
+
+1. The core operation is simply XOR between left and right neighbors for each cell
+2. Boundary conditions can be handled by:
+   - Treating left neighbor of q[0] as 0
+   - Treating right neighbor of q[511] as 0
+3. Instead of using a generate block, we can:
+   - Directly implement the XOR operations in a single always block
+   - Use concatenation with 0 for boundary conditions
+4. This approach:
+   - Eliminates the need for separate generate blocks
+   - Reduces the number of intermediate wires
+   - Maintains the same functionality with cleaner code
+   - Still properly handles the boundary conditions
+5. The implementation will use non-blocking assignments for all register updates

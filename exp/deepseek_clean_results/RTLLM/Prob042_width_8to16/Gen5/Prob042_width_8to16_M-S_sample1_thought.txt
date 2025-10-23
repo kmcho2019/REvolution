@@ -1,0 +1,16 @@
+Here's a simplified approach that maintains functionality while reducing complexity:
+
+1. Use a single 8-bit register to store the first byte (data_lock) instead of a shift register
+2. Use a flag (has_first_byte) to track if we have the first byte stored
+3. When valid_in arrives:
+   - If we don't have first byte, store it and set flag
+   - If we already have first byte, concatenate with new byte and output
+4. Output is generated immediately when second byte arrives (next cycle)
+5. Reset clears all registers and flags
+6. No need for complex state machine - simple flag is sufficient
+
+Advantages:
+- Fewer registers (8-bit vs 16-bit)
+- Simpler control logic (flag vs FSM)
+- Same functionality with less code
+- Clear direct mapping to requirements

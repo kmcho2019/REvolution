@@ -1,0 +1,27 @@
+This design uses a clear, two-stage pipeline approach to separate prediction and training logic with minimal race conditions:
+
+- Maintain a committed global history register (`ghr`) updated only on mispredicted training (recovery) or on committing previous predictions. This `ghr` reflects the processor’s real global history state.
+
+- Maintain a speculative global history register (`spec_ghr`) that reflects the processor’s predicted history, updated each cycle by the predicted branch outcome for predictions, or recovered during misprediction training.
+
+- Use combinational logic to generate prediction outputs from the current input PC XORed with the current *committed* `ghr` (not speculative), and PHT read at the same cycle. This ensures predictions and history output are consistent and based on the stable committed history.
+
+- Update PHT only on training requests at the clock edge, applying saturating counter changes.
+
+- On training mispredict, recover both committed and speculative histories to the given `train_history`.
+
+- Otherwise, on a cycle with prediction valid but no training mispredict, update speculative history by shifting in the predicted taken bit.
+
+- At the end of the cycle, commit the speculative history to committed history.
+
+- Register prediction inputs (`predict_valid` and `predict_pc`) at clock edge to stabilize combinational prediction outputs.
+
+- The output `predict_taken` and `predict_history` correspond exactly to the prediction using the committed history *before* update on this clock edge.
+
+- This approach cleanly separates stable committed history (state used for current prediction output) from speculative history (future state based on predicted outcomes), avoids combinational loops, and guarantees correct priority of training mispredict recovery.
+
+- The PHT is modeled as an array of 128 2-bit saturating counters, initialized to weakly not taken.
+
+- All state updates and prioritization logic are strictly synchronous to `clk` and asynchronous reset `areset`.
+
+This architectural separation eliminates timing ambiguities and ensures outputs match expected values precisely.

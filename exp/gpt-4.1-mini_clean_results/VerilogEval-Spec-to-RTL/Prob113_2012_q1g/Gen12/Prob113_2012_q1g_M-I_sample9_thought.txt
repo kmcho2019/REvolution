@@ -1,0 +1,76 @@
+The original expression is correct and minimal in terms of sum-of-products terms, but the four-input AND term (x2 & x3 & x0 & x1) covers only a single minterm and might be costly in power and area. 
+
+To optimize for better PPA:
+- Avoid the four-input AND by splitting or factoring terms to reduce literal count or to share intermediate signals.
+- Analyze the Karnaugh map to find groups covering that single minterm with fewer literals or shared terms.
+- By revisiting the Karnaugh map, this single 4-variable minterm corresponds to the cell at x[3]=1, x[2]=1, x[1]=1, x[0]=1.
+- Check if that minterm is covered by any other groups in the original map.
+
+One approach is to implement the function as a 4-variable equation using the map's minimal prime implicants:
+
+From the K-map:
+
+| x[3] x[2] \ x[1] x[0] | 00 | 01 | 11 | 10 |
+|------------------------|----|----|----|----|
+| 00                     | 1  | 0  | 0  | 1  |
+| 01                     | 0  | 0  | 0  | 0  |
+| 11                     | 1  | 1  | 1  | 0  |
+| 10                     | 1  | 1  | 0  | 1  |
+
+From this, large groups include:
+- A vertical group on x[0]=0, x[1]=0, covering all rows with x[0]=0 and x[1]=0 (e.g. the first column), giving a term ~x0 & ~x1.
+- A group covering x[2]=1 and x[0]=0 (third and fourth rows with x0=0), giving x2 & ~x0.
+
+But careful checking shows the original expression:
+f = (~x3 & ~x1) | (x2 & ~x0) | (x2 & x3 & x0 & x1)
+
+The first two terms cover many minterms, the last covers only the one with all inputs high.
+
+Improvement:
+- Combine the last term with the second. For the minterm (1111), x2=1, x3=1, x0=1, x1=1.
+- Since the second term is x2 & ~x0, it does not cover that minterm. But the minterm can be covered if we factor differently.
+
+Try to rewrite the expression:
+
+Check if (x3 & x2 & x0) alone covers more minterms:
+
+At x3=1, x2=1, x0=1, regardless of x1, we have minterms:
+
+- For x1=0 (1110): f=0 from map
+- For x1=1 (1111): f=1
+
+So cannot cover (1111) without including x1.
+
+Alternatively, express f as:
+
+f = (~x3 & ~x1) | (x2 & ~x0) | (x3 & x2 & x1 & x0)
+
+Try to factor x2 common:
+
+f = (~x3 & ~x1) | x2 & (~x0 | (x3 & x1 & x0))
+
+Since (~x0 | (x3 & x1 & x0)) = (~x0 + x3 x1 x0)
+
+We can simplify:
+
+f = (~x3 & ~x1) | x2 & ( ~x0 | (x3 & x1 & x0) )
+
+But this is no simpler.
+
+Conclusion:
+
+The original minimal expression is already quite optimized. To reduce the four-input AND gate, decompose it into two smaller AND gates feeding an OR:
+
+(x2 & x3 & x0 & x1) = (x2 & x3) & (x0 & x1)
+
+Implement as two two-input AND gates then ANDed.
+
+This may reduce the complexity of large AND gates in some technologies.
+
+Overall improvement strategy:
+
+- Decompose the four-input AND into smaller AND gates for better PPA.
+- Maintain all complemented signals to avoid recomputation.
+- Keep the expression minimal and clear.
+
+This should slightly improve power and area by enabling gate sharing and reducing gate fan-in.

@@ -1,0 +1,11 @@
+To simplify the solution, we can focus on the core functionality of the gshare branch predictor and eliminate unnecessary complexity. The main components include the prediction logic, training logic, and history update logic. 
+
+1. **Prediction Logic**: Use the XOR of `predict_pc` and `history` to calculate the index for the pattern history table (PHT). Ensure the index is within bounds. Predict the branch direction based on the PHT entry value.
+
+2. **Training Logic**: Update the PHT entry based on the actual branch outcome when `train_valid` is asserted. Increment the PHT entry if the branch is taken, and decrement it if not taken, while handling saturation at the maximum and minimum values.
+
+3. **History Update Logic**: Update the global branch history register based on the predicted branch direction when `predict_valid` is asserted. If a misprediction occurs (`train_mispredicted` and `train_valid` are asserted), recover the branch history register to the state after the mispredicting branch.
+
+4. **Reset**: Implement an asynchronous reset to initialize the design properly.
+
+By simplifying the logic and focusing on these key components, we can reduce complexity while maintaining the functionality of the gshare branch predictor.

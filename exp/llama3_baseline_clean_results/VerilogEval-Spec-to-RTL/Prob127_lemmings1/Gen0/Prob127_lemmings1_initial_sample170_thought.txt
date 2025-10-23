@@ -1,0 +1,7 @@
+To implement the Lemmings game as a Moore state machine, we first need to define the states. Let's call the states 'LEFT' and 'RIGHT'. The initial state should be 'LEFT' as specified by the areset signal. 
+
+We then need to define the state transitions. If the current state is 'LEFT' and bump_right is 1, the next state should be 'RIGHT'. If the current state is 'LEFT' and bump_left is 1, the next state should be 'RIGHT'. If the current state is 'RIGHT' and bump_left is 1, the next state should be 'LEFT'. If the current state is 'RIGHT' and bump_right is 1, the next state should be 'LEFT'. If both bump_left and bump_right are 1, the state should still switch.
+
+We can then use the current state to determine the walk_left and walk_right outputs. If the current state is 'LEFT', walk_left should be 1 and walk_right should be 0. If the current state is 'RIGHT', walk_left should be 0 and walk_right should be 1.
+
+We can implement this using a parameterized state machine, with two states and the state transitions based on the bump_left and bump_right inputs.

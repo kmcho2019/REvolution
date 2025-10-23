@@ -1,0 +1,14 @@
+Novel architectural approach:
+1. Use a two-phase pattern detection system with separate registers for pattern matching and delay capture
+2. Implement a hierarchical counter system with a main counter for 1000-cycle chunks and a sub-counter for tracking chunks
+3. Store the delay value in a dedicated register and use it to initialize the chunk counter
+4. Use explicit state transitions with clear conditions for each state change
+5. Implement count output using a separate register that updates only at chunk boundaries
+6. Add a validation step after pattern detection to ensure clean state transitions
+
+Key differences from previous approach:
+- Separate pattern and delay shift registers
+- Explicit initialization of counters with delay+1
+- Clean separation between pattern detection and counting phases
+- Count output updates only at chunk boundaries for stable output
+- Additional validation state after pattern detection

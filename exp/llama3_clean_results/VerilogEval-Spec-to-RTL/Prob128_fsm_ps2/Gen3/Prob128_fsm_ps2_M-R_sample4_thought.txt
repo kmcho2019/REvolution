@@ -1,0 +1,9 @@
+To refactor the provided Verilog code, we will maintain the core functionality of the finite state machine (FSM) while adopting a different structural approach. The main goals are to enhance readability, minimize potential issues with the current implementation, and optimize the design for better performance, area, and power (PPA) metrics.
+
+One of the key changes will be the way we manage state transitions and the assertion of the 'done' signal. Instead of using an explicit case statement within an `always_comb` block, we will use a combination of combinational logic and sequential logic (`always_ff`) blocks to manage state transitions. The 'done' signal will be generated based on the current state and the detection of a valid third byte in the message.
+
+Additionally, to simplify the code and improve readability, we will define the states as enumerations and use a more straightforward encoding scheme, which can potentially reduce the complexity of the combinational logic required for state transitions.
+
+The FSM's logic will remain largely intact, with the key states being IDLE, BYTE1, BYTE2, and BYTE3, corresponding to the initial idle state, the first byte of a message, the second byte, and the third byte, respectively. The transition logic will ensure that the FSM only moves to the next state upon receiving a valid byte (i.e., when 'in[3]' is '1' for the first byte and upon the arrival of subsequent bytes).
+
+By restructuring the state machine logic and using a clearer, more concise coding style, we aim to improve the maintainability and scalability of the code, making it easier to modify or extend the FSM's behavior if needed in the future.

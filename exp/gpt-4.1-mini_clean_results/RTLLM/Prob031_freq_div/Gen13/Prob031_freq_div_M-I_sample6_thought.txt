@@ -1,0 +1,21 @@
+The original solution is functionally correct and well-structured with a single always block and minimal counters. To optimize for power, area, and performance (PPA) further, we can:
+
+1. Directly assign CLK_50 as the inverted CLK_in with a flip-flop (or simply derive from CLK_in) because 50MHz is exactly half of 100MHz, toggling every clock cycle. This removes unnecessary toggle logic and saves one register and toggle operation.
+
+2. For CLK_10 and CLK_1, keep counters but optimize counters for power by using an enable signal to increment only when needed, reducing unnecessary counter toggling.
+
+3. Change counters to start from zero and count up to (half_period - 1) without resetting in separate statements to avoid glitches and simplify synthesis.
+
+4. Use parameters instead of localparams for flexibility.
+
+5. Add comments to improve clarity.
+
+This approach reduces toggle activity on the 50MHz output and might slightly improve timing and power by minimizing toggles and registers. The counters remain minimal in bit-width, preserving area efficiency.
+
+The minor increase in complexity due to enable signals is outweighed by the potential power savings from fewer toggles.
+
+Final result:  
+- CLK_50 output toggles via a flip-flop driven by CLK_in directly, no toggle operation inside always block.  
+- CLK_10 and CLK_1 counters with enabled counting and toggle logic, keeping same division ratios.
+
+This preserves correctness and improves power and area marginally.

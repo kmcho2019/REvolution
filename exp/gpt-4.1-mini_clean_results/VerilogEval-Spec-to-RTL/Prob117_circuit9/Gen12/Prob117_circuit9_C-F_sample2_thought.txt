@@ -1,0 +1,9 @@
+Fuse the two example approaches by implementing a clean separation of next-state combinational logic and synchronous state update, while expressing the next-state logic as a concise combinational function for clarity, modularity, and ease of reuse. This enhances readability and maintainability, keeps logic synthesis-friendly structure, and allows future optimizations like clock gating or alternate encoding.
+
+We preserve the clear state machine behavior:
+- When a=1, q is forced to 4.
+- When a=0, q cycles through 4→5→6→0→1→2→3→4...
+
+Using a function for next state minimizes duplication and isolates combinational logic. Register updates on rising clk edge only update q with the computed next state. This also opens doors for future improvements such as adding clock gating or next-state compare to reduce toggling, while keeping code clean and synthesis friendly.
+
+This fusion takes the best from Example 1 (functional next state logic) and Example 2 (two-process style with clear separation of combinational and sequential logic), resulting in a clear, concise, and optimal design.

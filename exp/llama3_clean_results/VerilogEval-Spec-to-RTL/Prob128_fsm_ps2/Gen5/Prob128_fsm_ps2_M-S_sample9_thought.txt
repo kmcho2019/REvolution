@@ -1,0 +1,5 @@
+The existing solution can be simplified by focusing on the core requirement of identifying message boundaries based on the PS/2 mouse protocol. This involves recognizing bytes with `in[3]=1` as potential start bytes of a message and then capturing the subsequent two bytes as part of the message.
+
+The state machine can be simplified by considering the receipt of a byte with `in[3]=1` as a trigger to start counting bytes, and then asserting `done` after receiving two more bytes, regardless of their values. This approach eliminates the need for explicit states like IDLE, BYTE1, BYTE2, and BYTE3, and instead uses a simple counter to keep track of the bytes received after a potential start byte is identified.
+
+This simplified approach can be implemented using a single binary counter to track the number of bytes received after a start byte is detected. The counter is reset whenever a byte with `in[3]=1` is received, indicating a potential new message start, and `done` is asserted when the counter reaches 2, indicating that two bytes have been received after a start byte.

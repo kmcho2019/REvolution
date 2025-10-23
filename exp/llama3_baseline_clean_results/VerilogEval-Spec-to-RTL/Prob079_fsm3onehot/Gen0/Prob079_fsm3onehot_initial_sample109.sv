@@ -1,0 +1,28 @@
+module TopModule(
+    input in,
+    input [3:0] state,
+    output [3:0] next_state,
+    output out
+);
+
+// State definitions
+parameter A = 4'b0001;
+parameter B = 4'b0010;
+parameter C = 4'b0100;
+parameter D = 4'b1000;
+
+// Output logic
+assign out = (state == D) ? 1'b1 : 1'b0;
+
+// Next state logic
+always @(*) begin
+    case (state)
+        A: next_state = (in == 1'b0) ? A : B;
+        B: next_state = (in == 1'b0) ? C : B;
+        C: next_state = (in == 1'b0) ? A : D;
+        D: next_state = (in == 1'b0) ? C : B;
+        default: next_state = A;
+    endcase
+end
+
+endmodule

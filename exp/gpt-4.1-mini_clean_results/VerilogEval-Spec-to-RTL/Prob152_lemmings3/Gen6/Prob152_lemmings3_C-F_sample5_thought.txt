@@ -1,0 +1,14 @@
+Fuse the best ideas from both examples by:
+
+- Maintaining separate registers for direction and behavioral state, improving clarity and separating concerns (from Example 1).  
+- Using explicit direction-setting logic on bumps instead of toggling blindly: bump_left forces walking right (dir=1), bump_right forces walking left (dir=0), and both bumps simultaneously toggle direction (from Example 2).  
+- Detect stable ground as ground==1 and prev_ground==1 to ignore bumps during ground transitions, stored in prev_ground register (from both examples).  
+- Encode state in a 2-bit behavioral state register (WALKING, FALLING, DIGGING) and a single bit for direction, rather than a combined 3-bit vector, which makes output logic cleaner and state handling more straightforward (from Example 1).  
+- Prioritize behaviors correctly (falling > digging > bump direction change), and avoid any bump or dig actions during falling or digging states.  
+- Async reset sets state to walking and direction left.  
+- Keep the logic simple and separated: next_state and next_dir combinational logic in one always block; state, dir, and prev_ground updated in a synchronous always block.  
+- Use clean combinational output assignments from current state and direction.  
+
+This fusion yields clear, modular, and readable code with a clean state machine that exactly matches the problem requirements. It should be efficient in area, power, and timing, as direction updates and bump checks happen only when walking on stable ground. Bump logic is explicitly defined and avoids ambiguity. The separation of direction and state also helps prevent subtle bugs.
+
+Overall, this design improves clarity, correctness, and performance compared to the provided examples.

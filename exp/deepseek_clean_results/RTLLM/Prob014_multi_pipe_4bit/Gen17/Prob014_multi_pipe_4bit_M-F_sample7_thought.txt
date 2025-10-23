@@ -1,0 +1,20 @@
+Revised Pipeline Multiplier Architecture: Synchronized Partial Product Generation and Accumulation
+
+Key Fixes:
+1. Proper pipeline synchronization - each stage processes one bit of the multiplier in sequence
+2. Correct partial product generation - using registered multiplier bits from stage 0
+3. Accurate accumulation - maintaining running sum through pipeline stages
+4. Optimized register usage - only necessary values are pipelined
+
+New Architecture Details:
+- Stage 0: Register original inputs and initialize accumulation
+- Stage 1: Process LSB (bit 0) - generate partial product and initialize sum
+- Stage 2: Process bit 1 - shift partial product and add to previous sum
+- Stage 3: Process bit 2 - shift partial product and add to accumulated sum
+- Stage 4: Process MSB (bit 3) - final shift and add to complete multiplication
+
+Improvements:
+1. Correct pipeline flow - each stage processes one bit in sequence
+2. Proper use of registered values - maintaining multiplier bits through pipeline
+3. Accurate accumulation - running sum correctly propagated
+4. Clear separation of concerns - each stage has single responsibility

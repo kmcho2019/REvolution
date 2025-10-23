@@ -1,0 +1,11 @@
+The problem can be solved by designing a finite state machine (FSM) with several states to handle the different phases of the motor control. The FSM can be implemented using a always block in Verilog, which is sensitive to the positive edge of the clock. We can use a variable to keep track of the current state and another variable to store the previous values of x and y. 
+
+The states can be defined as follows: 
+- State A: Initial state, reset state, f = 0, g = 0
+- State B: State after reset de-assertion, f = 1 for one clock cycle
+- State C: State after setting f to 1, monitor x for the sequence 1, 0, 1
+- State D: State after detecting the sequence 1, 0, 1 in x, set g to 1 and monitor y
+- State E: State where g is maintained at 1 if y becomes 1 within two clock cycles
+- State F: State where g is set to 0 if y does not become 1 within two clock cycles
+
+We can use a counter to keep track of the clock cycles in states C and D.

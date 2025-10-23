@@ -1,0 +1,15 @@
+I will combine the strengths of both examples to create an efficient 4-digit BCD counter with synchronous reset, clean carry propagation, and stable enable signals:
+
+- Use separate 4-bit registers for each digit for clarity and modularity.
+- Compute carry and next digit values combinationally to ensure stable outputs and enable signals.
+- Generate ena signals combinationally, reflecting precisely when the upper digits should increment (when the previous digit is 9).
+- To improve timing and reduce the critical carry path, I will:
+  - Use a function for BCD digit increment to keep increment logic uniform and minimize nested ternaries.
+  - Combine the function usage with combinational next-state logic for all digits, reducing duplication.
+- To reduce switching and power:
+  - Only update digits when needed, using conditional assignments inside the always block controlled by the carry signals.
+  - This avoids unnecessary toggling of upper digits when lower digits do not roll over.
+- This fusion approach keeps the clarity and stable enable signals of Example 2, but leverages the concise increment function and carry propagation handling of Example 1.
+- This balanced design offers better timing by minimizing nested ternary chains and reduces power by updating registers only when necessary.
+
+Thus, the design outputs are stable throughout the clock cycle, the enable signals reflect the increment conditions accurately, and the carry path is reasonably short and uniform, leading to improved performance and power efficiency.

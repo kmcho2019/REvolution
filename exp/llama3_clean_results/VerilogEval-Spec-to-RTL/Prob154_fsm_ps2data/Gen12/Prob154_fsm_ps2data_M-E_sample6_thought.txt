@@ -1,0 +1,5 @@
+To create a novel architectural solution, we can utilize a pipeline-based approach with a shift register to efficiently process the input byte stream. This design will leverage a 3-stage pipeline to buffer and process the input bytes. Each stage of the pipeline will be responsible for a specific function: the first stage will buffer the input byte, the second stage will perform the message boundary detection, and the third stage will output the formatted message.
+
+The message boundary detection will be performed by checking the 4th bit of the input byte. If the bit is set, it indicates the start of a new message, and the pipeline will be filled with the subsequent two bytes. Once all three bytes are in the pipeline, the output stage will format the bytes into a 24-bit word and assert the done signal.
+
+This pipeline-based approach allows for efficient processing of the input byte stream, reduces the complexity of the state machine, and enables easy scalability if additional processing stages are required in the future.

@@ -1,0 +1,7 @@
+Refactor the radix-2 divider by using a simple state machine with explicit state registers and separate combinational logic for next state and outputs. Separate the sign correction step into its own DONE state where the final quotient and remainder signs are adjusted outside the division loop. Use always blocks only for sequential logic and combinational logic separately. Use intermediate registers for subtraction and quotient bit calculation, and structure the shift register updates clearly. 
+
+This approach improves readability by separating control and data path logic, and by clearly demarcating the start, running, and finish phases of the division. Result valid is asserted only in DONE state. Also, inputs are latched synchronously when starting a new operation.
+
+The main division loop iteratively shifts and subtracts divisor from remainder, setting quotient bits accordingly. After 8 cycles, quotient and remainder are sign-adjusted for signed division. The final result packs remainder (upper 8 bits) and quotient (lower 8 bits).
+
+This design avoids combinational latch inference, and uses nonblocking assignments properly for sequential logic.

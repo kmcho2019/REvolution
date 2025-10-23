@@ -1,0 +1,17 @@
+To implement the given Mealy finite-state machine as a 2's complementer using a one-hot encoding, we first need to understand the states and their transitions. We have two states: A and B. State A is the initial state, and based on the input 'x', we either stay in state A or move to state B. Once in state B, we can stay in state B regardless of the input 'x'. We will use two bits to represent the states in one-hot encoding: state_A and state_B. 
+
+We will use combinational logic to determine the next state and the output 'z' based on the current state and the input 'x'. Since this is a Mealy machine, the output 'z' is determined by both the current state and the input 'x'.
+
+The next state logic will be determined as follows:
+- If we are in state A and 'x' is 0, we stay in state A.
+- If we are in state A and 'x' is 1, we move to state B.
+- If we are in state B, regardless of 'x', we stay in state B.
+
+The output 'z' logic will be determined as follows:
+- If we are in state A and 'x' is 0, 'z' is 0.
+- If we are in state A and 'x' is 1, 'z' is 1.
+- If we are in state B, regardless of 'x', 'z' is the inverse of the previous 'x'.
+
+However, upon closer inspection of the provided state machine, it seems there might be a misunderstanding in interpreting the machine's behavior as a 2's complementer, given the transition and output conditions provided. The provided transitions seem to describe a different functionality than a typical 2's complementer.
+
+To implement this in Verilog, we'll define the state register, the next state logic, and the output logic. We'll also handle the asynchronous reset condition to ensure the module resets into state A when 'areset' is high.

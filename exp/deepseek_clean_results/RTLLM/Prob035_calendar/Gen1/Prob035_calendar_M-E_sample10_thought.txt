@@ -1,0 +1,15 @@
+Here's a novel approach using a single always block with a state machine and unified counter logic:
+
+1. Instead of separate counters, we'll use a single 17-bit counter (enough for 24*60*60 counts) that increments continuously
+2. We'll decode this master counter into hours, minutes, and seconds using division/modulo operations
+3. The counter automatically rolls over after 86400 counts (24 hours)
+4. Reset sets all outputs to zero and resets the master counter
+5. This approach reduces logic complexity and eliminates cascaded conditions
+6. Division/modulo operations are implemented using bit shifts and masks for efficiency
+
+Benefits:
+- Single always block reduces area and power
+- No cascaded conditions improve timing
+- Unified counter simplifies verification
+- Division/modulo via bit operations is hardware-friendly
+- Natural rollover at 24 hours

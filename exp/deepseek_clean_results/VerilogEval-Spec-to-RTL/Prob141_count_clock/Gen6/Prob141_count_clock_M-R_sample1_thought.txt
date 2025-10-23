@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. Split the monolithic counter into separate always blocks for each time unit (hours, minutes, seconds) to improve timing by reducing combinatorial path depth
+2. Use simpler increment logic with BCD correction for each digit pair
+3. Implement hour counter with cleaner state transitions using a single 8-bit register
+4. Move PM indicator logic to a separate always block for better clarity
+5. Use synchronous reset consistently across all blocks
+6. Optimize power by only updating registers when their values actually change
+
+Key Improvements:
+- Flattened hierarchy reduces critical path
+- Separate blocks allow better synthesis optimization
+- Clearer state transitions for hour counter
+- More modular design improves maintainability
+- Reduced switching activity through conditional updates

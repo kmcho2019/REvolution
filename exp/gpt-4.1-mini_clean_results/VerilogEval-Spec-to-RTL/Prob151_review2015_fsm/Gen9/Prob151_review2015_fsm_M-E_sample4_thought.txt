@@ -1,0 +1,13 @@
+Implement the FSM as a Mealy machine that detects the pattern "1101" on-the-fly during data input shifts, without a separate pattern shift register. The FSM transitions through pattern-matching states, tracking received bits sequentially to find the start sequence. Upon detecting the pattern, it immediately transitions to a SHIFT state where shift_ena is asserted for exactly 4 cycles counted by a small counter.
+
+After shifting, the FSM moves to COUNT state and asserts counting until done_counting is asserted. Then it signals done and waits for ack before returning to idle/search state.
+
+Key differences from the example approach:
+
+- Pattern detection is integrated into the FSM via sequential states for each pattern bit, not via a separate shift register.
+- The state encoding is binary-encoded to reduce state bits.
+- Outputs are Mealy-type where appropriate for precise timing.
+- Counters and state transitions are carefully ordered to ensure outputs are asserted exactly as specified, with no off-by-one cycle errors.
+- Reset synchronously returns to the initial search state.
+
+This approach tightly couples pattern detection with the FSM states, reducing logic duplication and ensures outputs are valid and aligned with the clock cycle on which conditions occur.

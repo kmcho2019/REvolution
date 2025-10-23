@@ -1,0 +1,9 @@
+I will refactor the FSM by using binary encoding for the six states with 3 bits instead of one-hot encoding. This reduces the number of flip-flops and potentially the area and power usage. 
+
+The state register and next-state logic will be separated into two always blocks: one synchronous block for state updates with synchronous reset, and one combinational block with a case statement for next state logic. This structure is classic and clear, and synthesis tools can optimize the logic easily.
+
+The output `z` will be assigned continuously using a simple comparison of the current state, as the output depends only on whether the current state is E or F.
+
+Binary encoding simplifies the combinational logic with a case statement, which can help reduce logic complexity and potentially improve area and power. The output logic is also simplified.
+
+This preserves functionality and timing (with a tradeoff in decoding complexity vs one-hot) but reduces FF count and could help power and area.

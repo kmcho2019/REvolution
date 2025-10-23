@@ -1,0 +1,14 @@
+Simplified approach focusing on essential state tracking:
+
+1. Maintain just two states (A and B) since we only need to track if we're in counting mode
+2. Use a 2-bit counter for the 3-cycle window (0-2)
+3. Instead of counting '1's separately, just track if we've seen exactly two '1's in the current window
+4. Use a single bit register to store whether we've seen two '1's in the current window
+5. Output z is simply this register's value when we're at the end of a window (cycle_count==2)
+6. Reset all tracking registers synchronously
+
+Key simplifications:
+- Eliminated separate ones_count register
+- Reduced counting logic to a simple toggle when w=1
+- Fewer registers and simpler conditions
+- Same functionality with less hardware

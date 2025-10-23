@@ -1,0 +1,5 @@
+To implement the TopModule with the desired functionality, we can use a finite state machine (FSM) with two states: IDLE and SHIFTING. When the reset signal is asserted, the FSM transitions to the SHIFTING state and remains there for exactly 4 clock cycles. During this time, the shift_ena signal is asserted. After 4 clock cycles, the FSM transitions back to the IDLE state, where the shift_ena signal remains deasserted until the next reset.
+
+We can use a counter to keep track of the number of clock cycles spent in the SHIFTING state. The counter is initialized to 0 when the FSM is in the IDLE state and is incremented by 1 for each clock cycle spent in the SHIFTING state. When the counter reaches 4, the FSM transitions back to the IDLE state.
+
+This approach ensures that the shift_ena signal is asserted for exactly 4 clock cycles when the reset signal is asserted, and remains deasserted otherwise.

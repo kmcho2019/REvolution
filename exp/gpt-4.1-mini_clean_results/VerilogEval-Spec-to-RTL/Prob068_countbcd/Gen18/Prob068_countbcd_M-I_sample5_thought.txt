@@ -1,0 +1,13 @@
+To improve the PPA metrics of the original 4-digit BCD counter implementation, I will optimize timing and power by removing nested sequential carry propagation within the clocked block and instead use a ripple-carry style that directly computes the next values for each digit combinationally before updating registers.
+
+The key changes:
+
+- Compute carry-out and next digit values combinationally for each digit based on the current digits and the increment of the ones digit.
+- Use registered carry flags and next digit values so that all digits update in one clock cycle without nested if-else.
+- This flattens carry propagation and reduces combinational logic depth, improving timing.
+- Use clock enables on upper digit registers, driven by their corresponding enable signals, to avoid unnecessary toggles and save dynamic power.
+- The enable outputs remain combinational from digit equals 9 checks.
+- Keep synchronous reset and all logic triggered on posedge clk.
+- This approach balances minimal area increase due to additional combinational carry wires with improved timing and power benefits.
+
+This method reduces the critical path from sequential nested bcd_increment calls to a combinational carry chain of simple comparisons and sums, minimizing delay and switching activity.

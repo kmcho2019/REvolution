@@ -1,0 +1,10 @@
+To design a superior frequency divider by an odd number, I will combine the best aspects of both example designs:
+
+- Use two counters running on opposite clock edges (pos and neg edge) as in Example 1, enabling truly independent edge tracking and avoiding the latency of passing delayed count values from posedge to negedge domains.
+- Apply the explicit pulse generation approach from Example 1: instead of toggling clk_div1/clk_div2 at just equality checks, set clk_div1 and clk_div2 high at count zero and low at HALF_DIV. This produces clean, glitch-free pulses with well-defined duty cycles.
+- Keep separate always blocks on posedge and negedge clk to maintain precise edge alignment and reduce timing complexity on each edge domain.
+- Use asynchronous active-low reset to initialize counters and outputs.
+- Perform compile-time oddness check on NUM_DIV.
+- Keep counters width minimal using $clog2(NUM_DIV).
+- The final output clk_div is OR of clk_div1 and clk_div2, capturing both edge activities.
+- This fusion strategy balances the simplicity and glitch-free output pulse control of Example 1 with the dual-edge independent counters for better timing and symmetry, while avoiding Example 2’s cnt_reg latency and toggling delays.

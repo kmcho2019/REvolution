@@ -1,0 +1,11 @@
+To model the Lemming's behavior, we'll design a Moore state machine with several states: walking left, walking right, falling, digging, and splattered. The state machine will have a reset state where it starts walking left when areset is asserted. 
+
+We'll use two counters: one to keep track of the Lemming's walking direction and another to count the number of clock cycles the Lemming has been falling. The state machine will transition between states based on the input signals and the current state.
+
+When the Lemming is walking and ground=0, it will transition to the falling state. When it's falling, it will continue to fall until ground=1. If the Lemming has been falling for more than 20 clock cycles and hits the ground, it will transition to the splattered state.
+
+When the Lemming is walking and dig=1, it will transition to the digging state. It will continue digging until ground=0, at which point it will transition to the falling state. 
+
+When the Lemming is bumped, it will change direction. However, being bumped while falling or digging does not affect the walking direction.
+
+The state machine will output the walking direction, digging, and aaah signals based on the current state.

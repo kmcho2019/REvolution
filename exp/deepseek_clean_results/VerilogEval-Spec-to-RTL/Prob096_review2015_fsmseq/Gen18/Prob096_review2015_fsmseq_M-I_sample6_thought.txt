@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. State Machine Optimization:
+   - Replace shift register with explicit state machine to reduce comparator width
+   - This reduces critical path delay by eliminating the 4-bit comparison
+   - Each state represents progress in the sequence detection
+
+2. Power Optimization:
+   - State transitions stop once sequence is found
+   - No unnecessary toggling of shift registers
+
+3. Area Optimization:
+   - Fewer gates needed for state transitions vs shift register implementation
+   - Only 4 states needed (plus found state)
+
+4. Timing Improvement:
+   - Single-bit state comparisons instead of 4-bit comparison
+   - Shorter critical path for better clock frequency
+
+Key Changes:
+- Implement explicit state machine (IDLE, GOT1, GOT11, GOT110)
+- Remove shift register and wide comparator
+- Maintain same interface and functionality

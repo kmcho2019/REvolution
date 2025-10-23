@@ -1,0 +1,20 @@
+Refactoring Strategy:
+1. Replace the shift register + combinational logic approach with an explicit FSM implementation
+2. Use one-hot encoding for state representation for simpler decoding
+3. Move all logic to continuous assignments (assign statements) for a more dataflow-oriented style
+4. Maintain the same detection behavior and registered outputs
+5. Simplify reset handling by using synchronous reset
+
+Key Changes:
+- Explicit state machine with 5 states (IDLE + 4 sequence steps)
+- One-hot state encoding for efficient implementation
+- All sequential logic expressed through non-blocking assignments
+- Detection logic becomes simple state transitions
+- Output registered in same style as original
+
+Benefits:
+- More explicit state tracking (easier to modify sequence)
+- One-hot encoding often synthesizes efficiently in FPGAs
+- Clean separation of state transition logic
+- Maintains same timing characteristics
+- Easier to extend for longer sequences

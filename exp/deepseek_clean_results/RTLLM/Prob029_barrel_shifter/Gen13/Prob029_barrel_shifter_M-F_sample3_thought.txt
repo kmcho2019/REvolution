@@ -1,0 +1,10 @@
+To fix the barrel shifter implementation, we need to address the potential issue with combined shift operations and ensure correct rotation direction:
+1. The original implementation performs right rotations, but the test failure suggests left rotation might be expected
+2. We'll modify the rotation direction to left rotation (more common for barrel shifters)
+3. For left rotation:
+   - 4-bit rotation moves bits 3:0 to positions 7:4 and vice versa
+   - 2-bit rotation moves bits 5:0 to positions 7:2 and bits 7:6 to positions 1:0
+   - 1-bit rotation moves bit 0 to position 7 and shifts all others left by 1
+4. The stages remain chained with each stage's output feeding the next
+5. Control bits still independently enable their respective rotations
+6. This change should resolve the test failure while maintaining efficient implementation

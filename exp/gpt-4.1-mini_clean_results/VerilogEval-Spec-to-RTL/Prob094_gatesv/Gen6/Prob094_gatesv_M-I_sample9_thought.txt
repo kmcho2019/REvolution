@@ -1,0 +1,5 @@
+To optimize for power and area further, reduce explicit constants by incorporating them into vectorized assignments, enabling better constant propagation and gate sharing by synthesis tools. For out_both and out_any, assign all bits in one vector operation using concatenations with zeros instead of separate assignments. This can reduce overall gate count and minimize toggling by synthesizing constants internally rather than driving dedicated wires externally.
+
+For out_different, maintain the wrap-around XOR vector operation as it is already minimal and efficient.
+
+This approach keeps the logic concise, aids synthesis in constant folding, and slightly reduces explicit gate instantiations, improving power and area without impacting timing.

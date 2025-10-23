@@ -1,0 +1,13 @@
+Refactor the original FSM to use an enumerated-type style with uniform 4-bit state encoding for all states, including error and output states, to ensure consistent comparisons and avoid encoding mismatches.
+
+Implement outputs as purely combinational logic from the state bits (Moore outputs) using `assign` statements rather than inside an always block, improving clarity and potentially synthesis optimizations.
+
+Compute the next state and the disc/flag output indication together in a single combinational always block for clarity.
+
+Remove the separate output_flag register by encoding disc and flag outputs directly as a function of the next state (SO) and previous state transition, simplifying logic and synchronization.
+
+Reset synchronously to S0, and the FSM will count consecutive ones from zero on reset, as specified.
+
+This approach preserves the Moore output behavior, asserting outputs one full clock cycle after pattern detection on the SO state, and asserts the error output while in the error state SE.
+
+Overall, the design is cleaner, with consistent state width, outputs generated combinationally, and no separate output_flag register needed. This reduces chances of timing misalignment of outputs and simplifies the logic for outputs, potentially improving PPA and correctness.

@@ -1,0 +1,27 @@
+The circuit has one bit of state that is updated on the positive edge of clk. From the waveform:
+
+- Initially, state is unknown.
+- When clk rises with a=0, b=0, state stays or becomes 0 and q=0.
+- When b=1 and state=0, q becomes 1.
+- When a=1 and b=0, q remains as previous (no change in state).
+- When a=1 and b=1, state toggles or resets depending on previous state, affecting q.
+- q always seems to be equal to state after the clock edge.
+
+Based on the patterns:
+- The next state depends on the current inputs a, b and current state.
+- q is just the state after clock edge.
+- The state seems to be updated as:
+
+next_state = (state & ~(a & b)) | (~state & b)
+
+Interpreting this:
+- If b=1 and state=0 => next_state=1 (set)
+- If a=1 and b=1 => next_state=0 (reset)
+- Else keep state.
+
+In other words, 
+- The state is set when b=1 and a=0
+- The state is reset when a=1 and b=1
+- Otherwise, state holds its value.
+
+Implement the state machine accordingly, with state updated on posedge clk and q = state.

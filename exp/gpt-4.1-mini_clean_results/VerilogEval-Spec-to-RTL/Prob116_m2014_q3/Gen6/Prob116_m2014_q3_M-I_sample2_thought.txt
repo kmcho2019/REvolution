@@ -1,0 +1,48 @@
+The key issue was the misinterpretation of input bit indices and ignoring the Gray code order of Karnaugh map columns.
+
+In the problem's Karnaugh map, rows are indexed by x[3]x[4] and columns by x[1]x[2], with bits 1-based indexed. Our input is `x[3:0]` (4 bits, 0-based).
+
+We must align input bits as:
+
+- Map Karnaugh map row bits (x[3], x[4]) to input bits `x[3]` and `x[2]` (since no x[4], use x[2] to complete 2 bits row index).
+- Map Karnaugh map column bits (x[1], x[2]) to input bits `x[1]` and `x[0]`.
+
+Next, the Karnaugh map uses Gray code ordering for columns: 00, 01, 11, 10, not standard binary order. Similarly, rows are standard binary order.
+
+Thus, we remap:
+
+- For rows: direct binary index (x[3], x[2]) → 2-bit binary number (00 to 11).
+- For columns: x[1]x[2] in the problem maps to x[1]x[0] in input, but columns are arranged in Gray code order: 00, 01, 11, 10. So, the binary column index (x[1], x[0]) must be mapped to column index in Gray order.
+
+We create a function to convert the 2-bit binary column input into Gray code column indices (0-3) and then use that for table lookup.
+
+Then, we implement f by listing minterms corresponding to cells marked '1' in the K-map.
+
+To optimize for area and power, instead of decoding rows and columns into one-hot vectors, we encode the minterms directly using boolean expressions on input bits, or use a small combinational lookup via a case statement or direct boolean equation.
+
+After enumerating the minterms from the Karnaugh map:
+
+Rows (x[3]x[2]) 0 to 3 and columns (Gray coded):
+
+| Row | Column 00 | Column 01 | Column 11 | Column 10 |
+|-----|-----------|-----------|-----------|-----------|
+| 00  | d (0)     | 0         | d (0)     | d (0)     |
+| 01  | 0         | d (0)     | 1         | 0         |
+| 11  | 1         | 1         | d (0)     | d (0)     |
+| 10  | 1         | 1         | 0         | d (0)     |
+
+Positions with '1' are:
+
+- (row=1, col=11): x[3]x[2]=01, col=11 (Gray) → corresponds to (row=1), col=2
+- (row=3, col=00): x[3]x[2]=11, col=00 → (row=3), col=0
+- (row=3, col=01): (3,1)
+- (row=2, col=00): (2,0)
+- (row=2, col=01): (2,1)
+
+Implementing f as OR of these minterms.
+
+Finally, write the combinational logic implementing this.
+
+This approach guarantees correct input bit usage and column Gray code mapping.
+
+Optimization: implement Gray code column decode inline without one-hot vectors and encode minterms efficiently using direct boolean expressions.

@@ -1,0 +1,17 @@
+To improve the given edge detection module, we will first analyze its current implementation and identify areas for optimization. The module uses a combination of sequential and combinational logic to detect rising and falling edges in the input signal `a`. 
+
+The current implementation uses two always blocks: one for storing the previous state of `a` and another for detecting the edges. We can improve this by reducing the number of always blocks and minimizing the logic required for edge detection.
+
+For improving the **Performance (Timing)**, we can simplify the sequential logic by removing the sensitivity to `negedge rst_n` and instead use a single always block that is sensitive to `posedge clk`. This can help reduce timing-related issues.
+
+In terms of **Power**, we can minimize switching activity by only updating the output signals when necessary. Since the outputs are already being updated only when an edge is detected, we can focus on reducing the switching activity on the `prev_a` register.
+
+Regarding **Area**, the current implementation is relatively simple, but we can explore more compact representations for the edge detection logic.
+
+Our strategy will be to:
+
+1. Simplify the sequential logic and minimize the number of always blocks.
+2. Reduce switching activity on the `prev_a` register.
+3. Explore more compact representations for the edge detection logic.
+
+By implementing these strategies, we aim to improve the PPA metrics of the edge detection module.

@@ -1,0 +1,24 @@
+Novel Approach: Instead of treating each output bit independently, recognize that the K-map outputs can be grouped based on their dependence on inputs c and d. We can implement this using a hierarchical multiplexer structure where:
+
+1. For mux_in[0] (ab=00):
+   - Output is 1 when cd=10 or cd=01 or cd=11
+   - This is equivalent to (c OR ~d)
+   - Can be implemented with a single OR gate, but since we can only use muxes, we'll use a 2-to-1 mux selecting between d and ~d based on c
+
+2. For mux_in[1] (ab=01):
+   - Always 0 (no mux needed)
+
+3. For mux_in[2] (ab=11):
+   - Output is 0 only when cd=01
+   - Implement as ~(c AND ~d) using muxes
+   - Use a 2-to-1 mux to select between 1 and ~d based on c
+
+4. For mux_in[3] (ab=10):
+   - Output is 1 except when cd=01
+   - Same as mux_in[2] implementation
+
+Key Innovations:
+1. Unified treatment of mux_in[2] and mux_in[3] since they share the same pattern
+2. Efficient implementation of OR-like behavior using muxes for mux_in[0]
+3. Minimal hardware usage (3 2-to-1 muxes total)
+4. Clear mapping from K-map to implementation

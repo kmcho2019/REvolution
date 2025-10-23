@@ -1,0 +1,5 @@
+Refactor the design to use a synchronous process that precomputes freq_minus_one to avoid subtracting or comparing with freq directly, replacing the equality check with a less complex comparison (count == freq - 1). Also, remove the enable signal and instead gate counting and toggling internally by checking freq_minus_one != 0. This reduces combinational logic for toggle_condition and improves clarity.
+
+Implement the count and toggle logic inside a single always block triggered on the clock edge with synchronous reset. When freq is zero, wave_out remains steady, and count stays at zero. This approach removes extra wires and consolidates logic, maintaining the core functionality while slightly simplifying control flow.
+
+The code uses only synchronous logic, avoids unnecessary signals, and improves readability while keeping the same behavior.

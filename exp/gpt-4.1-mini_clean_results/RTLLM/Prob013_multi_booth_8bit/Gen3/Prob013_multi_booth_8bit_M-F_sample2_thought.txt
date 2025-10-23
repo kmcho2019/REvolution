@@ -1,0 +1,10 @@
+The original design is solid in performing radix-4 Booth multiplication with proper sign extension, decoding, and accumulation over 4 cycles. The feedback confirms correctness and highlights good PPA trade-offs. To address the feedback more explicitly, I will:
+
+- Keep the structure intact since it is already optimal for area and functionality.
+- Add a clear enable signal to gate the accumulation process, ensuring no unnecessary toggling after operation completion (when rdy is high).
+- Remove possible combinational ambiguity in `bit_minus_1` by making it a wire driven outside the always block rather than using a conditional operator that mixes combinational and sequential logic.
+- Use a dedicated wire for the bit below zero index as zero (for the first group), improving clarity.
+- Keep consistent nonblocking assignments inside the always block to maintain synchronous operation.
+- Maintain the same widths and sign extensions.
+
+These minor refinements improve readability and slightly reduce power consumption by preventing accumulation and decoding after completion, while preserving the functional design already validated by feedback.

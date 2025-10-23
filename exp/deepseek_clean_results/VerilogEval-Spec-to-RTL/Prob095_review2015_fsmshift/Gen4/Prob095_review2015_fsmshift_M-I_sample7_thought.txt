@@ -1,0 +1,15 @@
+To fix the issues in the original solution, I'll make these improvements:
+
+1. Immediate Assertion: Make shift_ena assert immediately in the first cycle after reset (cycle 0) by initializing counter to 0 and done to 0 on reset.
+
+2. Full 4-cycle Count: Ensure shift_ena stays active for exactly 4 full cycles by:
+   - Counting from 0 to 3 (4 cycles)
+   - Setting done flag when counter reaches 3
+   - Keeping shift_ena active until done is set
+
+3. Clear Timing: The counter increments on each clock edge when not done, and shift_ena is simply the inverse of the done flag.
+
+This ensures:
+- shift_ena is active for cycles 0,1,2,3 (4 full cycles)
+- Immediately responds to reset
+- Simple and efficient implementation

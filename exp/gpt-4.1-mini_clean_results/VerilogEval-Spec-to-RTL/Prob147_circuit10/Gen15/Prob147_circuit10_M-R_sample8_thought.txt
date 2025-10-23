@@ -1,0 +1,6 @@
+Refactor the module to use a single always block triggered on the positive edge of clk to update the state register, but compute the output q and next_state signals using continuous assignments outside the always block. This clearly separates sequential state storage from combinational logic for output and next state. The next state logic and output should match the original functional behavior:
+
+- next_state = state ^ (a & b)
+- q = a & state
+
+This style clarifies the design by explicitly showing combinational outputs and next state derivation with assign statements, while the always block only handles state updates.

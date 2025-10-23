@@ -1,0 +1,13 @@
+Novel Architecture Idea:
+1. Instead of using a single register for all bits, implement 8 independent 1-bit edge detectors
+2. Each bit has its own history register and XOR gate
+3. This creates a more modular design where each bit's edge detection is completely independent
+4. Benefits:
+   - Better scalability for wider buses (easier to add more bits)
+   - Potential for better placement/routing in physical design
+   - Clear separation of concerns for each bit
+   - Could enable individual clock gating per bit if needed
+5. Tradeoff:
+   - Slightly more verbose code
+   - Same hardware complexity (still 8 FFs + 8 XORs)
+   - Identical PPA characteristics but with different physical implementation

@@ -1,0 +1,10 @@
+To optimize PPA metrics, reduce combinational logic depth and switching activity by minimizing XOR operations and the number of signals updated per cycle. We can directly implement the Galois LFSR feedback as an XOR of q[0] with tapped bits q[4] and q[2], but since in Galois form only tapped bits that are set get XORed with feedback, we can implement the feedback as q[0]. On each clock, q[0] shifts right, and tapped bits (3 and 5) XOR with the feedback (q[0]). We keep the synchronous reset to 1. To reduce switching, implement clock enable logic by gating updates when reset is asserted or when there's no state change (though LFSR cycles through all states so enabling every cycle is necessary). Instead, we can simplify next state logic by only updating tapped bits on feedback. Also, combine next_q logic into the always block to reduce combinational path length and registers. This reduces complexity, improves timing, and may slightly reduce power and area by having fewer intermediate signals.
+
+Hence, the improvement is to:
+- Merge next state calculation into the sequential block.
+- Use only one clocked always block.
+- Calculate feedback inline.
+- Avoid separate combinational always block.
+- Keep synchronous reset to 1.
+
+This simplification reduces combinational logic depth and unnecessary signals, improving timing and potentially power slightly.

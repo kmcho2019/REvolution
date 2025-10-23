@@ -1,0 +1,15 @@
+Refactor the float_multi module to a fully combinational datapath with synchronous control using a simple FSM and registers only for pipeline stage boundaries. 
+
+Instead of performing all processing inside a multi-cycle always block indexed by a counter, separate the logic into combinational blocks for extraction, multiplication, normalization, rounding, and final result selection. Use a 3-stage pipeline controlled by a simple state machine:
+
+- STATE_IDLE: Wait for inputs and reset output valid signal.
+- STATE_CALC: Compute all intermediate values combinationally based on registered inputs.
+- STATE_DONE: Register final output result.
+
+This approach clarifies data dependencies, reduces sequential complexity, and allows more combinational optimizations by synthesis tools. It also improves timing by pipelining the multiplier and normalization stages clearly, while maintaining IEEE-754 compliance and special cases handling.
+
+Register inputs at start of calculation to avoid glitches, perform all heavy logic combinationally in the next cycle, then latch output result on the following cycle. Use explicit state transitions rather than a counter.
+
+Maintain all special cases, rounding, normalization, and exponent adjustments as combinational functions for clarity.
+
+This modularizes the design into readable blocks, improving maintainability and allowing better synthesis and timing results.

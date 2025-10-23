@@ -1,0 +1,17 @@
+Fuse the best features of both examples by using the minimal single 8-bit register to store the previous input (like Example 2) for area and power efficiency, combined with registering the pedge output inside the clocked always block to improve timing by avoiding purely combinational pedge generation (a minor improvement inspired by Example 1’s explicit pipelining concept). 
+
+This keeps the design minimal and clean with only two 8-bit registers (prev_in and pedge), but ensures pedge is registered, thus optimizing performance without added complexity or area cost.
+
+The pedge signal is assigned synchronously as the bitwise AND of current input and inverted previous input, capturing all 0→1 transitions per bit with a one-cycle output delay. This approach reduces combinational logic at the output stage, which helps in timing closure and slightly reduces glitching/power.
+
+No arrays or multi-bit shift registers are used to minimize register count, simplifying synthesis and reducing switching activity.
+
+In summary, the fusion strategy is:
+
+- Use single prev_in register (Example 2).
+- Register pedge output (improvement inspired by Example 1's pipelined output).
+- Maintain simple combinational logic inside clocked always block for pedge calculation.
+- Avoid combinational always blocks.
+- Keep code clean and synthesizable with non-blocking assignments.
+
+This yields a compact, efficient, and high-performance positive edge detector.

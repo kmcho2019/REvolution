@@ -1,0 +1,5 @@
+Refactor the design by implementing the Moore FSM with explicit state encoding using an enumerated type and combine the next state and output logic into a single combinational always block. Use synchronous reset instead of asynchronous reset for registers but implement the asynchronous reset on the flip-flop inputs using an asynchronous reset signal for clarity. Output z will be driven combinationally from a registered state signal and registered input x, preserving the Moore FSM property that output depends only on state (and the registered input at the output stage).
+
+Also, instead of registering output z directly, register the state and separately register x, and then drive output z combinationally as x_registered XOR inversion_bit. This reduces the number of sequential blocks triggered by asynchronous reset and separates input synchronization and FSM logic.
+
+This approach maintains the original logic but restructures the FSM by using enumerated states and separating input sampling, FSM state update, and output generation clearly.

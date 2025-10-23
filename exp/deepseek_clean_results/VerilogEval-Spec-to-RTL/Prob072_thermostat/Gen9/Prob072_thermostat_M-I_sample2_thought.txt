@@ -1,0 +1,16 @@
+The current implementation is already quite efficient, but we can make a few targeted optimizations to potentially improve PPA metrics:
+
+1. Fan Logic Optimization:
+   - The current fan logic uses two OR operations (heater|aircon) followed by (fan_on|result). We can flatten this to a single 3-input OR gate which might reduce gate count and delay.
+
+2. Output Isolation:
+   - We can ensure heater and aircon are never on simultaneously by making them mutually exclusive through the mode signal, which is already handled correctly.
+
+3. Signal Prioritization:
+   - Since fan_on directly controls the fan regardless of other conditions, we can structure the logic to prioritize this path.
+
+The improved version will:
+- Use a single OR operation for fan control
+- Maintain the same functional behavior
+- Potentially reduce area and power by minimizing logic operations
+- Keep the critical path as short as possible

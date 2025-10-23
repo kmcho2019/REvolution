@@ -1,0 +1,13 @@
+Refactor the design by merging the FSM into one register that encodes both behavior (walking/falling/digging) and direction together in a single state variable. Use an enumerated type with meaningful symbolic state names that combine direction and behavior, reducing the number of separate registers and making transitions explicit and easier to follow.
+
+Use purely combinational logic for next-state decoding and next-state assignments in a single always block. The state machine remains Moore style with outputs decoded from the current state.
+
+Detect ground edges by comparing the current ground input to stored prev_ground in a separate always block. Store prev_ground to avoid edge ambiguity and to avoid bump effects during transitions.
+
+Priority remains: falling > digging > bump (direction change). Direction changes happen only when walking and on stable ground (ground=1 and prev_ground=1).
+
+This reduces complexity by encoding direction and behavior together, removes separate direction register and reduces combinational complexity related to next_dir logic. It makes state transitions clearer and logic more compact, while still asynchronous reset is preserved.
+
+Outputs come from decoding the combined state bits.
+
+Overall, this encoding improves readability and may help synthesis tools optimize better by having fewer registers and more explicit states.

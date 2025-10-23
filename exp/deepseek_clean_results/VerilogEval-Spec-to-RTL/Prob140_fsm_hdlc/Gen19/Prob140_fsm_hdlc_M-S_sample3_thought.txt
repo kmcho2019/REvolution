@@ -1,0 +1,19 @@
+Simplified Design Approach:
+1. State Representation:
+   - Reduce to 5 essential states (0-4 consecutive 1s + error state)
+   - Use a 3-bit counter but only utilize states 0-4 for normal operation
+   - State 5 represents error condition (7+ consecutive 1s)
+
+2. Output Logic:
+   - Generate outputs directly from state and input combination
+   - Remove intermediate next_state register for simpler implementation
+   - Outputs are purely combinational based on current state and input
+
+3. Reset Behavior:
+   - Maintain synchronous reset to state 0 (initial state)
+
+4. Optimizations:
+   - Eliminate separate next_state logic by combining with state transition
+   - Simplify output conditions using direct state comparisons
+   - Remove redundant states and default cases
+   - Make err persistent once triggered until reset

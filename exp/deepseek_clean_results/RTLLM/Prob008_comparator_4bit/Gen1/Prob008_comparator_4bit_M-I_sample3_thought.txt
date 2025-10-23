@@ -1,0 +1,16 @@
+The existing solution is correct but can be optimized further for better PPA (Power, Performance, Area). Here's the improvement strategy:
+
+1. **Power Optimization**: Replace the cascaded if-else with parallel comparison logic to reduce switching activity and glitching power.
+
+2. **Area Optimization**: 
+   - Use direct bitwise comparison instead of arithmetic comparison (>, ==) which might synthesize to larger circuits
+   - Implement hierarchical comparison from MSB to LSB to potentially reduce logic depth
+
+3. **Performance Optimization**:
+   - The comparison is already combinational with no critical path issues, but we'll maintain this while improving other metrics
+   - Use continuous assignments instead of procedural blocks where possible for potentially better synthesis
+
+The improved version will:
+- Compare bits from MSB to LSB in a single always block
+- Use mutually exclusive assignments to ensure only one output is active
+- Avoid arithmetic operations by using direct bit comparisons

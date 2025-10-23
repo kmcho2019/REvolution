@@ -1,0 +1,15 @@
+The original module code is logically correct for the fixed-point addition with signed inputs and absolute value operations. The primary cause of simulation/elaboration failure as per the feedback is missing parameter passing during module instantiation in the testbench or external environment, not the module internals.
+
+To fix the module so that it is robust and eliminates possible ambiguity causing the elaboration error, explicitly assign default parameter values for `N` and `Q` and ensure the parameters are declared correctly using `parameter` keyword (not `localparam`), so they can be overridden at instantiation.
+
+Additionally, the code can be improved for clarity and correctness in sign assignment in subtraction cases by explicitly setting the sign bit after absolute operation rather than forcing it in a potentially inconsistent manner.
+
+I will also:
+- Ensure the sign bit of the result for subtraction is assigned based on the operand with larger magnitude as per spec.
+- Use non-blocking assignments in always_comb block for better coding style (not mandatory but preferred).
+- Provide a clear combinational always block with proper sensitivity list (`always @*`).
+- Add comments clarifying each step for readability.
+- Keep parameter `Q` in the interface even though it is unused internally (for compliance).
+- The module itself needs no logic changes that affect functionality, but to explicitly highlight correct parameter usage and coding style.
+
+These fixes produce a robust, synthesizable, parameterizable module that will not cause elaboration errors related to parameters and matches the specified behavior.

@@ -1,0 +1,29 @@
+The previous design initialized the counter to 4 on synchronous reset and asserted `shift_ena` while the counter was non-zero. This made `shift_ena` high for 4 cycles starting immediately after reset.
+
+However, feedback indicates a timing mismatch, possibly because the counter initialized to 4 causes `shift_ena` to be asserted for cycles counting from 4 down to 1 inclusive, which is correct logically but can cause confusion if reset assertion timing is ambiguous.
+
+To fix this, I will:
+
+- Initialize the counter to 3 on reset instead of 4. This means that on the cycle reset is detected, counter = 3, and `shift_ena` is asserted while counter is not zero.
+
+- The counter will decrement each clock cycle until zero.
+
+- The `shift_ena` signal will be high whenever counter is greater than zero.
+
+This approach ensures `shift_ena` is asserted for exactly 3 cycles *after* the reset cycle, so total asserted cycles including the reset cycle is 4.
+
+Also, to avoid any unknown initial states, explicitly initialize the counter to zero at declaration.
+
+This small off-by-one fix aligns the assertion timing with the expected waveform:
+
+- Cycle when reset is high: counter loaded to 3, `shift_ena` high.
+
+- Next 3 cycles: counter counts down 2,1,0 with `shift_ena` high for counter=3,2,1, and then low at zero.
+
+This satisfies the requirement for asserting `shift_ena` exactly 4 cycles starting synchronously on reset.
+
+All logic remains synchronous, uses non-blocking assignments, and is simple.
+
+No dangling inputs or outputs are introduced.
+
+This addresses the timing issue and mismatch in the original implementation.

@@ -1,0 +1,5 @@
+Refactor the frequency divider by implementing a simple state machine using a single always block with an explicit state for counting and toggling the output. Instead of incrementing and comparing the counter in a nested if-else structure, we will use an explicit state that counts from 0 to HALF_DIV-1, then toggles the output and resets the counter. The divided clock output will be a reg toggled every HALF_DIV input clock cycles, generating a frequency divided by an even number.
+
+We keep the compile-time parameter check for even NUM_DIV, and parameterize the counter width dynamically based on HALF_DIV.
+
+This approach emphasizes a clear sequential state update flow and uses simple conditional logic for better readability and synthesis clarity.

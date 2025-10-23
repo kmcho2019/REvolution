@@ -1,0 +1,19 @@
+I'll refactor the solution using a different approach while maintaining the same state machine behavior:
+
+1. **State Representation**: Keep the same Gray-coded states but represent them using parameters for clarity.
+
+2. **Next State Logic**: Move the state transition logic to combinational always block (Mealy style) while keeping state storage in sequential always block (Moore style). This separates combinational and sequential logic.
+
+3. **Output Logic**: Keep the direct assignment from state bit 2 since it's efficient.
+
+4. **Structural Changes**:
+   - Split the single always block into two: one combinational for next state logic and one sequential for state storage
+   - Use localparam for state definitions at module level for better visibility
+   - Make the state transitions more explicit with a case statement in combinational logic
+   - Keep synchronous reset for consistency
+
+This refactoring provides:
+- Clear separation of combinational and sequential logic
+- Better modularity and readability
+- Same functional behavior with identical state encoding
+- Potential for easier timing constraints in synthesis

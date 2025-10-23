@@ -1,0 +1,41 @@
+To implement the next-state signals Y1 and Y3, we need to analyze the state machine and derive the logic equations for each state bit. We will use the one-hot encoding scheme, where each state is represented by a unique binary code. The state machine has 6 states (A to F), and we need to find the next-state values for Y1 (y[1]) and Y3 (y[3]).
+
+From the state machine, we can see that:
+
+- Y1 (y[1]) is 1 in states B and D.
+- Y3 (y[3]) is 1 in states D and E.
+
+We will derive the logic equations for Y1 and Y3 by inspection, considering all possible current states and inputs.
+
+For Y1 (y[1]):
+- If current state is A (y = 000001) and input w is 1, next state is A, so Y1 = 0.
+- If current state is A (y = 000001) and input w is 0, next state is B, so Y1 = 1.
+- If current state is B (y = 000010) and input w is 1, next state is D, so Y1 = 1.
+- If current state is B (y = 000010) and input w is 0, next state is C, so Y1 = 0.
+- If current state is C (y = 000100) and input w is 1, next state is D, so Y1 = 1.
+- If current state is C (y = 000100) and input w is 0, next state is E, so Y1 = 0.
+- If current state is D (y = 001000) and input w is 1, next state is A, so Y1 = 0.
+- If current state is D (y = 001000) and input w is 0, next state is F, so Y1 = 0.
+- If current state is E (y = 010000) and input w is 1, next state is D, so Y1 = 1.
+- If current state is E (y = 010000) and input w is 0, next state is E, so Y1 = 0.
+- If current state is F (y = 100000) and input w is 1, next state is D, so Y1 = 1.
+- If current state is F (y = 100000) and input w is 0, next state is C, so Y1 = 0.
+
+For Y3 (y[3]):
+- If current state is A (y = 000001) and input w is 1, next state is A, so Y3 = 0.
+- If current state is A (y = 000001) and input w is 0, next state is B, so Y3 = 0.
+- If current state is B (y = 000010) and input w is 1, next state is D, so Y3 = 1.
+- If current state is B (y = 000010) and input w is 0, next state is C, so Y3 = 0.
+- If current state is C (y = 000100) and input w is 1, next state is D, so Y3 = 1.
+- If current state is C (y = 000100) and input w is 0, next state is E, so Y3 = 1.
+- If current state is D (y = 001000) and input w is 1, next state is A, so Y3 = 0.
+- If current state is D (y = 001000) and input w is 0, next state is F, so Y3 = 0.
+- If current state is E (y = 010000) and input w is 1, next state is D, so Y3 = 1.
+- If current state is E (y = 010000) and input w is 0, next state is E, so Y3 = 1.
+- If current state is F (y = 100000) and input w is 1, next state is D, so Y3 = 1.
+- If current state is F (y = 100000) and input w is 0, next state is C, so Y3 = 0.
+
+Now, we can derive the logic equations for Y1 and Y3.
+
+Y1 = (y[0] & ~w) | (y[1] & w) | (y[2] & w) | (y[4] & w) | (y[5] & w)
+Y3 = (y[2] & ~w) | (y[3]) | (y[5] & w)

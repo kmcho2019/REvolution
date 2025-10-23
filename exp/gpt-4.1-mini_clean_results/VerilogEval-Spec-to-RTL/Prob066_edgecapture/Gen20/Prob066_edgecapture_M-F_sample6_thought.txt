@@ -1,0 +1,9 @@
+The core issue is that initializing prev_in to all ones on reset causes false falling edge detection if the actual input is zero or differs, because the first evaluation of falling_edge (prev_in & ~in) will wrongly see a 1→0 transition at bits where input is zero.
+
+To fix this, we should synchronize prev_in to the current input value on reset. This ensures that on the very next clock cycle, prev_in and in start aligned, so falling edges are only detected from real transitions.
+
+Also, the conditional update of out is unnecessary: ORing out with falling_edge when falling_edge is zero leaves out unchanged, so we can always update out = out | falling_edge each clock cycle (except on reset).
+
+This simplifies logic, avoids spurious detection, and preserves the intended behavior: out captures any bit that fell from 1 to 0 and holds it until reset.
+
+All logic remains synchronous with active high reset as requested.

@@ -1,0 +1,17 @@
+The problem describes a finite state machine (FSM) that models the behavior of a Lemming. To implement this FSM, we need to identify the states, inputs, and outputs. The states are: walking left, walking right, falling, and digging. The inputs are: clk, areset, bump_left, bump_right, ground, and dig. The outputs are: walk_left, walk_right, aaah, and digging.
+
+The FSM can be implemented as a Moore machine, where the outputs are determined by the current state only. We can use a 2-bit state variable to represent the four states: walking left (00), walking right (01), falling (10), and digging (11).
+
+The state transitions are as follows:
+- If the Lemming is walking and the ground disappears, it falls.
+- If the Lemming is falling and the ground reappears, it resumes walking in the same direction as before the fall.
+- If the Lemming is walking and it is told to dig, it starts digging if there is ground.
+- If the Lemming is digging and there is no ground, it falls.
+- If the Lemming is bumped while walking, it switches direction.
+
+The output logic is as follows:
+- walk_left and walk_right are determined by the current state and direction.
+- aaah is asserted when the Lemming is falling.
+- digging is asserted when the Lemming is digging.
+
+We can use Verilog to implement the FSM using the above state transitions and output logic.

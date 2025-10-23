@@ -1,0 +1,11 @@
+The provided Verilog code successfully implements a frequency divider that generates three output clock frequencies (50MHz, 10MHz, 1MHz) from a 100MHz input clock signal. However, to optimize the design for better PPA metrics, we can focus on reducing power consumption and area utilization.
+
+One potential strategy for improving power consumption is to minimize the switching activity in the counters and output signals. This can be achieved by only updating the counters and output signals when necessary, rather than on every clock cycle.
+
+Another approach to reduce area utilization is to minimize the number of logic gates and wires required for the counters and output logic. This can be achieved by using more efficient logic structures, such as shared logic for the counters or utilizing the least significant bits of a larger counter for the smaller division ratios.
+
+In the given code, we can see that the counters `cnt_10` and `cnt_100` are updated on every clock cycle, which can lead to unnecessary switching activity and power consumption. To minimize this, we can add a condition to only update the counters when the reset signal is not active.
+
+Additionally, we can simplify the logic for generating the output clock signals `CLK_10` and `CLK_1` by using a single line of code to update their values based on the counter values.
+
+By implementing these optimizations, we can reduce power consumption and area utilization, resulting in improved PPA metrics.

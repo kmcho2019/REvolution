@@ -1,0 +1,9 @@
+I will implement the Moore FSM with a classic and clear structure using an always block with a case statement for next state decoding, instead of combinational continuous assignments. This approach improves readability and maintainability, which is beneficial for larger FSMs.
+
+For state encoding, I will use one-hot encoding (4 bits) since the FSM has only four states. One-hot encoding often improves timing by minimizing the decoding logic and enabling faster state transitions, at the expense of a small area increase.
+
+The state register and output will be updated synchronously on the clock's positive edge, with synchronous active-high reset setting the FSM to state A (one-hot encoded as 4'b0001).
+
+The output is directly derived from the current state (output = 1 only in state D). Using one-hot encoding, output logic is just a simple bit extraction from the state register.
+
+This design is structurally straightforward, exploits one-hot benefits for timing, keeps output logic minimal, and uses a single always block for next state logic to reduce combinational path complexity.

@@ -1,0 +1,13 @@
+The given implementation is already optimal for a 1-bit 2-to-1 mux in terms of area, power, and performance. It uses a straightforward continuous assignment with a ternary operator, which synthesizes efficiently into a single 2-to-1 mux gate.
+
+Since the design is purely combinational with minimal complexity, there's no room for meaningful PPA improvement at the RTL level without changing the module's interface or technology mapping.
+
+However, we can make a minor enhancement by using an explicit always_comb block (SystemVerilog style) for better simulation semantics and potentially improved clarity in large designs. This also clarifies intent that this is combinational logic. In standard Verilog (without SystemVerilog), always @(*) can be used.
+
+This does not affect synthesized hardware or PPA but can help formal verification and code maintainability.
+
+Hence, the improvement is stylistic and maintainability-focused rather than PPA-focused.
+
+If strict Verilog (not SystemVerilog) is required, we use always @(*) instead of always_comb.
+
+I'll provide a standard Verilog always @(*) implementation for broader compatibility, maintaining the same minimal logic.

@@ -1,0 +1,10 @@
+To implement a Mealy-type finite state machine in Verilog that recognizes the sequence "101" on the input signal x, we need to define the states and the transitions between them. Since we are allowed to have only 3 states, we can define them as follows:
+- S0 (initial state): waiting for the first '1'
+- S1: waiting for the '0' after the first '1'
+- S2: waiting for the second '1' after the '0'
+
+The state machine will start in S0 and will transition to S1 when it sees a '1' on the input x. Then, it will transition to S2 when it sees a '0' on the input x. Finally, when it sees a '1' on the input x in state S2, it will assert the output z to '1'. 
+
+We also need to handle the case where the sequence "101" is recognized and the state machine needs to transition back to S0 to recognize overlapping sequences.
+
+The state machine should also be reset asynchronously on the negative edge of the aresetn signal.

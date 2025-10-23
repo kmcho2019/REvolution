@@ -1,0 +1,10 @@
+To improve the given Verilog code for the calendar module, we will first address any potential issues in the existing implementation, focusing on both functional correctness and optimization for better PPA metrics. 
+
+1. **Functional Correctness**: The current implementation seems to have a logical flaw in the second always block where it checks if `Secs == 6'd0 && Secs == 6'd59`. This condition will never be true because `Secs` cannot be both 0 and 59 at the same time. The correct condition should be to increment `Mins` when `Secs` wraps around from 59 to 0.
+
+2. **PPA Optimization**:
+   - For **Performance (Timing)**, we aim to minimize the critical path. Since the updating of `Hours`, `Mins`, and `Secs` depends on each other, we can simplify the logic by directly updating these values in a single always block instead of using three separate blocks. This approach reduces the complexity and potentially the propagation delay.
+   - For **Power**, we minimize unnecessary switching activity. Since `Mins` and `Hours` are updated only when `Secs` reaches 59, we ensure that the logic only updates these values when necessary.
+   - For **Area**, simplifying the logic within the always block and using efficient encoding schemes can help reduce the area.
+
+Given these considerations, we will refine the code to ensure it is functionally correct, efficient in terms of power consumption, and optimized for area.

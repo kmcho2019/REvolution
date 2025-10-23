@@ -1,0 +1,14 @@
+Here's a novel approach using a hierarchical FSM design with parallel state machines:
+
+1. Instead of a single FSM, implement three parallel mini-FSMs (one for each device)
+2. Each mini-FSM handles its own priority and grant logic independently
+3. A master FSM coordinates between the mini-FSMs to ensure only one grant is active
+4. Use binary encoding for states to minimize flip-flops
+5. Implement priority through explicit if-else chains in the master FSM
+6. Outputs are generated based on which mini-FSM is currently active
+
+Key advantages:
+- More modular design that's easier to extend for more devices
+- Clear separation of concerns between priority handling and grant maintenance
+- Potential for better timing as each mini-FSM has simpler logic
+- More flexible priority scheme that can be modified without redesigning the entire FSM

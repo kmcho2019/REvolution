@@ -1,0 +1,16 @@
+The original implementation has a timing issue where partial products are being added to registered values from previous stages, creating potential synchronization problems. To fix this:
+
+1. All partial products should be calculated in parallel in the first stage
+2. The additions should be properly pipelined:
+   - First stage: pp[0] + pp[1] and pp[2] + pp[3] in parallel
+   - Second stage: sum of the intermediate results from first stage
+3. This ensures all additions use synchronized values and maintains proper pipeline timing
+4. The improved version will:
+   - Calculate all partial products simultaneously
+   - Add pairs in parallel in first stage
+   - Combine results in second stage
+   - Maintain the same latency (2 cycles) but with correct timing
+5. For PPA optimization:
+   - Balanced pipeline stages
+   - Reduced critical path in each stage
+   - Maintained registered outputs for clean timing

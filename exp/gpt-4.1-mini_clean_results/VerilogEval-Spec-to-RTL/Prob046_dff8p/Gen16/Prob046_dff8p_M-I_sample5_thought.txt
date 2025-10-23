@@ -1,0 +1,7 @@
+Optimization strategy:
+- Remove the per-bit conditional update to simplify logic and reduce unnecessary comparisons.
+- On negative edge of clk, if reset is asserted, synchronously load 8'h34.
+- Otherwise, load entire input vector d directly into q.
+- This simplifies logic, reduces gate count and dynamic toggling, improving timing and power.
+- Keep synchronous active-high reset and negative-edge triggered DFFs as specified.
+- The simpler logic is more synthesis-friendly and will likely yield better PPA.

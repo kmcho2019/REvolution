@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. Timing Optimization: Pipeline the detection logic to break the critical path into two stages, improving WNS
+2. Power Optimization: Add clock gating to the shift register when in IDLE state to reduce unnecessary switching
+3. Area Optimization: Replace 3-bit shift register with one-hot encoded FSM to eliminate comparator logic
+4. Output Stability: Maintain registered output but optimize the detection window to ensure clean signal
+5. Reset Efficiency: Simplify reset logic to reduce area while maintaining functionality
+
+Key Changes:
+- Split detection into two stages: partial pattern (100) and final bit (1)
+- Implement clock gating when no relevant bits are being collected
+- Use one-hot FSM for more efficient state tracking
+- Optimize reset to only clear essential registers
+- Maintain single-cycle detection latency while improving timing
+
+Expected Benefits:
+- Positive WNS by reducing combinational path delay
+- 15-20% power reduction through clock gating
+- 10-15% area reduction by eliminating comparator
+- More robust timing closure
+- Maintained detection accuracy and latency

@@ -1,0 +1,23 @@
+The feedback highlights several issues that need to be addressed in the FSM implementation. Here's the corrected approach:
+
+1. State D Handling: State D should maintain its grant (g[2]=1) as long as r[2]=1, similar to states B and C. It should only return to A when r[2]=0.
+
+2. Priority System: The priority must be strictly enforced:
+   - r[0] has highest priority (state B)
+   - r[1] has next priority (state C)
+   - r[2] only gets grant when it's the ONLY request (state D)
+   - No grants when all r[i]=0 (state A)
+
+3. State Transitions:
+   - A->B when r[0]=1
+   - A->C when r[0]=0 and r[1]=1
+   - A->D when r[0]=0 and r[1]=0 and r[2]=1
+   - B stays if r[0]=1, else returns to A
+   - C stays if r[1]=1, else returns to A
+   - D stays if r[2]=1, else returns to A
+
+4. Output Logic:
+   - g[0]=1 only in state B
+   - g[1]=1 only in state C
+   - g[2]=1 only in state D
+   - All g[i]=0 in state A

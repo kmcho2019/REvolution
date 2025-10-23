@@ -1,0 +1,11 @@
+To implement a Mealy FSM that detects the sequence "10011", we need to track the input sequence through different states. The FSM will transition between states based on the current input (IN) and the current state. The output (MATCH) will be 1 only when the last '1' of the sequence "10011" is detected, otherwise it will be 0. The FSM should also support continuous detection, meaning after a match, it can immediately start detecting the next sequence.
+
+The states are defined as follows:
+- IDLE: Initial state, waiting for the first '1'.
+- S1: Received '1'.
+- S10: Received '10'.
+- S100: Received '100'.
+- S1001: Received '1001'.
+- S10011: Received '10011' (match state).
+
+On reset (RST), the FSM returns to IDLE and MATCH is 0. On each clock edge, the FSM checks the current input and transitions to the next appropriate state. The output MATCH is 1 only in the transition from S1001 to S10011 when IN is '1'.

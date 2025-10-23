@@ -1,0 +1,13 @@
+Fuse the clarity and correctness of Example 1's always_comb block with the combinational clean structure of Example 2 by using a single always_comb block with non-blocking assignments for registered outputs. This allows controlled and clear sequential-like assignments without unnecessary registers, preserving combinational behavior while improving synthesis friendliness.
+
+Use 33-bit additions/subtractions for carry detection and implement overflow only for signed operations, like in Example 1, but adopt Example 2’s consistent flag and zero/negative signal assignments outside the main computation.
+
+For shifts, consistently use 'a[4:0]' as the shift amount regardless of operation, simplifying control and unifying code.
+
+The 'flag' output will be assigned only for SLT and SLTU, set to 0 otherwise (no high impedance), to reduce glitching and improve power.
+
+For LUI, correct the operation to load immediate from lower 16 bits of 'a' shifted left 16 bits (a[15:0] << 16), consistent with MIPS ISA.
+
+Ensure all outputs are assigned in one combinational always block, which helps reduce redundant intermediate wires (improving area) while keeping the code clear and maintainable.
+
+Overall, this fusion balances performance, power, and area by keeping a clean combinational design with reduced duplication, clear flag logic, and proper handling of signed/unsigned arithmetic and shifts.

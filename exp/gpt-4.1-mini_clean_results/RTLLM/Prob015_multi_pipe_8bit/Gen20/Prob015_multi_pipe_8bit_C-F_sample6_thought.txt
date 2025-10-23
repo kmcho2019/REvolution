@@ -1,0 +1,17 @@
+Fuse the two designs by implementing a balanced, multi-stage pipelined adder tree to sum partial products in multiple clock cycles, thus reducing the combinational critical path and improving timing. Specifically:
+
+- Stage 1: Register inputs on mul_en_in asserted.
+- Stage 2: Generate partial products combinationally.
+- Stage 3: Add partial products in pairs and register sums.
+- Stage 4: Add pairs of sums again and register.
+- Stage 5: Final sum register stage to obtain the product.
+
+This four-stage pipeline for summation greatly shortens the critical path, allowing a higher clock frequency.
+
+Simultaneously, keep the enable signal as a 5-stage shift register to track pipeline latency and indicate valid output.
+
+Conditional registers update only when their respective enables are active, reducing unnecessary switching.
+
+The output product is valid only when the output enable signal is asserted; otherwise zero is output.
+
+This fusion leverages the enable pipeline alignment and balanced adder tree of Example 1 with the straightforward, clean pipeline structure and reset handling of Example 2, yielding an optimized, clean, and efficient pipelined multiplier.

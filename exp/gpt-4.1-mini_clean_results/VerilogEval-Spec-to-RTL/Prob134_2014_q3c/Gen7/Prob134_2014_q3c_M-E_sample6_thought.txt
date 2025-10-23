@@ -1,0 +1,13 @@
+Instead of a combinational function returning next state directly, implement the FSM as a registered synchronous process that stores the next state internally and updates the state at each clock edge. Use a state register initialized to the input y at reset. The next state and output z are computed combinationally from the current state and input x inside an always_comb block.
+
+By registering the FSM state internally, we mimic a real FSM implementation, which can improve timing by breaking long combinational paths and provide a cleaner sequential design.
+
+Additionally, since z depends only on the current state (y), it will be a combinational output signal driven by the current FSM state.
+
+Y0 is extracted from the next state computed combinationally before updating the state register, thus reflecting the FSM's next-state LSB.
+
+This approach explicitly models state registers with synchronous update, facilitating easier integration into a system, improving timing predictability, and potentially reducing glitches or hazard conditions compared to purely combinational next-state logic.
+
+The initial state will be loaded from the input y using a synchronous reset triggered by a reset signal inferred from the input clk posedge and an initial condition (assuming no explicit reset in interface, so initialize state with y at first clock).
+
+This design is more realistic for actual FSM hardware implementation and can lead to improved timing and power characteristics.

@@ -1,0 +1,9 @@
+Implement a Mealy FSM instead of a Moore FSM to detect the sequence "1101". In a Mealy machine, outputs depend on both state and input, allowing immediate assertion of start_shifting as soon as the last bit of the sequence is recognized, potentially saving one clock cycle.
+
+Use a minimal set of states that represent how much of the sequence has been matched so far: states for no match, matched '1', matched '11', and matched '110'. Upon receiving the final '1' bit in the "1101" sequence, output start_shifting = 1 in the same cycle, and then latch start_shifting high forever until reset.
+
+This approach produces a faster output response and reduces the number of states needed. The output is registered via a dedicated output register updated synchronously on the clock, ensuring glitch-free output and synchronous reset handling. The FSM transitions keep track of overlapping sequences for continuous detection capability.
+
+Finally, start_shifting remains high once asserted, serving as a latch until synchronous reset clears it.
+
+This architectural variation (Mealy output, minimal states, output register) provides a novel, efficient way to detect the sequence with immediate output assertion and clean output timing behavior.

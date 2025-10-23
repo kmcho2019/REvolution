@@ -1,0 +1,8 @@
+Implement a simple two-state finite state machine (FSM) to manage the input data collection and output generation.
+
+- State IDLE: Wait for the first valid_in data. When it arrives, store it in a register and move to WAIT_SECOND state.
+- State WAIT_SECOND: Wait for the second valid_in data. When it arrives, concatenate the stored first data (high 8 bits) with the current data_in (low 8 bits), then output the result and assert valid_out in the next clock cycle. Transition back to IDLE for the next pair.
+
+The valid_out and data_out signals are registered and updated only when the second byte arrives, and valid_out is asserted exactly one cycle after the second input data is received, matching the timing requirements.
+
+This FSM approach clearly separates data collection and output generation phases, reduces complexity, and ensures stable outputs for one cycle after concatenation, addressing timing and synchronization issues effectively.

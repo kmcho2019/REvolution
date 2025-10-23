@@ -1,0 +1,9 @@
+To implement the 100-bit left/right rotator module named TopModule, we will use a combination of Verilog's built-in functions and bitwise operations. The module will have the specified input and output ports. 
+
+The internal logic of the module will first determine whether to load the data or rotate the current value. If the load signal is high, the module will load the data into the shift register. 
+
+If the load signal is low, the module will check the ena signal to determine the direction of rotation. If ena is 2'b01, the module will rotate the bits to the right. If ena is 2'b10, the module will rotate the bits to the left. For ena values 2'b00 and 2'b11, the module will not rotate the bits.
+
+To perform the rotation, we can use Verilog's concatenation operator and bit slicing. We can concatenate the least significant bit (LSB) of the register with the rest of the register (excluding the LSB) to rotate right, and concatenate the most significant bit (MSB) of the register with the rest of the register (excluding the MSB) to rotate left.
+
+We will use a reg variable to store the current value of the shift register, and a wire to connect the output port q to this reg variable.

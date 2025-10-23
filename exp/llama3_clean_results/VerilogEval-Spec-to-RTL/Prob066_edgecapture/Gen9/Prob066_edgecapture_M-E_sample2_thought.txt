@@ -1,0 +1,12 @@
+A novel approach to solving this problem is to use a pair of registers for each bit of the input vector, where one register stores the current state of the input bit, and the other register stores the state of the input bit in the previous clock cycle. This allows us to compare the current and previous states of each bit to detect the transition from 1 to 0. Additionally, we will use a flag for each bit to indicate whether the transition has been detected. This flag will be set to 1 when the transition is detected and will remain 1 until the reset is applied.
+
+The architecture will consist of a 32-bit input register to store the current input vector, a 32-bit previous input register to store the previous input vector, and a 32-bit output register with flags for each bit to track the detected transitions. The detection of transitions and the update of flags will be performed in a single clock cycle, ensuring that the output reflects the correct state of detected transitions at the end of each clock cycle.
+
+The logic will operate as follows:
+1. At the start of each clock cycle, the current input vector is stored in the previous input register.
+2. The current input vector is then compared with the previous input vector bit by bit.
+3. If a bit in the previous input vector is 1 and the corresponding bit in the current input vector is 0, the transition flag for that bit is set to 1.
+4. The output register is updated based on the transition flags.
+5. If a reset is applied, all flags and registers are reset to 0.
+
+This approach ensures that the transitions are correctly detected and that the output reflects the correct state of detected transitions at the end of each clock cycle.

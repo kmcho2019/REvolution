@@ -1,0 +1,7 @@
+I will refactor the FSM to use one-hot encoding for the states, which can make next state logic more explicit and can improve synthesis results on some technologies. Also, I'll separate state registers and output logic more clearly: done will be generated combinationally based on the state and input, not stored directly in sequential logic. The byte registers will be updated based on state and input in a synchronous process, but done will be a combinational pulse when the third byte is accepted.
+
+This approach clarifies the timing relationship between done and out_bytes — done is asserted combinationally right after capturing the third byte, making done purely combinational output tied to state and inputs. Also, by representing states as one-hot signals, FSM transitions and logic become straightforward to read and modify. The reset is still synchronous.
+
+Additionally, I will capture the input bytes into byte registers explicitly on their respective state cycles, then form the output bytes concatenation on the done cycle combinationally, ensuring out_bytes is updated when done is asserted. This keeps the output logic clean and synchronous.
+
+The result is functionally equivalent but expressed with a different state encoding and done logic style.

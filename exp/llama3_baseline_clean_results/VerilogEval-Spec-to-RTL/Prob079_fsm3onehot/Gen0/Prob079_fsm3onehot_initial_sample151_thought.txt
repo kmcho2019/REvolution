@@ -1,0 +1,12 @@
+To implement the state transition and output logic for the given Moore state machine, we can first express the next state and output logic equations based on the provided state transition table. Since we are using one-hot encoding, each state (A, B, C, D) is represented by a unique 4-bit binary number.
+
+For the next state logic:
+- To go to state A next, we need to be in state A with in=0 or in state C with in=0.
+- To go to state B next, we need to be in state B with in=0 or in=1, or in state D with in=1.
+- To go to state C next, we need to be in state B with in=0 or in state D with in=0.
+- To go to state D next, we need to be in state C with in=1.
+
+For the output logic:
+- The output is 1 only when in state D, otherwise it's 0.
+
+Given the state encoding (A=4'b0001, B=4'b0010, C=4'b0100, D=4'b1000), we can implement the logic using Verilog.

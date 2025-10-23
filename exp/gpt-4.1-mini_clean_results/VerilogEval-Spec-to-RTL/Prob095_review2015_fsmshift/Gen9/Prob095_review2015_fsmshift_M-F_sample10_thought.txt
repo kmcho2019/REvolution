@@ -1,0 +1,10 @@
+To fully meet the requirements, the module must enable shift_ena for exactly 4 clock cycles whenever either a synchronous reset occurs or a "proper bit pattern" is detected. Since the problem does not provide inputs for pattern detection, I will add a single input `pattern_detected` that, when asserted, triggers the 4-cycle shift_ena assertion similarly to reset.
+
+The design uses a 3-bit counter that loads 4 on either reset or when `pattern_detected` is asserted (assuming it's a one-cycle pulse). The counter decrements on each clock cycle while non-zero, and shift_ena is asserted whenever the counter is non-zero.
+
+This approach ensures:
+- On reset, shift_ena asserts for 4 cycles.
+- On each pattern_detected pulse, shift_ena asserts for 4 cycles.
+- If another pattern_detected arrives while shift_ena is active, the counter reloads to 4, extending the enable period correctly.
+
+This FSM-like counter approach covers both requirements, using synchronous reset and sequential logic triggered on the positive clock edge.

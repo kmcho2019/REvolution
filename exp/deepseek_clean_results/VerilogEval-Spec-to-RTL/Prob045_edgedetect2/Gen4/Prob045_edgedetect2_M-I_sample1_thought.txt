@@ -1,0 +1,19 @@
+To optimize the design for better PPA (Power, Performance, Area) metrics while maintaining functionality:
+
+1. Performance Improvement:
+   - The current negative WNS suggests timing issues. We can pipeline the XOR operation to break the critical path.
+   - Add a pipeline stage for the edge detection logic to improve timing.
+
+2. Power Optimization:
+   - Add an enable signal to gate the edge detection when not needed.
+   - This reduces dynamic power by preventing unnecessary toggling.
+
+3. Area Consideration:
+   - The area is already minimal, but we can explore using shared logic if multiple bits have correlated changes (though this may not help in general case).
+   - Keep the simple flip-flop structure as it's already area-efficient.
+
+The improved design will:
+- Maintain the same edge detection functionality
+- Add an enable signal for power gating
+- Use pipelining to improve timing
+- Keep area overhead minimal

@@ -1,0 +1,7 @@
+A novel architectural idea is to use a hybrid state machine that combines the benefits of both Moore and Mealy machines. In this approach, we can use a single state variable to represent both the walking direction and the falling state. This can be achieved by using a 2-bit state variable, where the first bit represents the walking direction (0 for left, 1 for right) and the second bit represents the falling state (0 for not falling, 1 for falling).
+
+To reduce switching activity and improve power consumption, we can use a clock-gating technique to disable the combinational logic when the Lemming is in the falling state. This is because the falling state does not affect the walking direction, and therefore, there is no need to update the direction when the Lemming is falling.
+
+Additionally, we can use a more efficient state transition logic by using a single conditional statement to determine the next state, rather than multiple conditional statements. This can be achieved by using a XOR operation to toggle the walking direction when the Lemming is bumped, and a simple assignment to update the falling state.
+
+To further optimize the design, we can use a one-hot encoding scheme for the state variable, which can reduce the area usage and improve timing performance.

@@ -1,0 +1,23 @@
+Fusion Strategy:
+1. **State Representation:**
+   - Use individual registers for each state (state_A, state_B) for clarity and direct one-hot encoding
+   - Keep the sticky state_B implementation from Example 1 for power efficiency
+   - Maintain the simple output logic (z = state_A ? x : ~x) from both examples
+
+2. **Logic Optimization:**
+   - Combine the best state transition logic from both examples:
+     - state_A transitions only when x=0 (from Example 1)
+     - state_B becomes sticky but with x condition (from Example 1)
+   - Keep output logic purely combinational for minimal delay
+
+3. **Structural Improvements:**
+   - Use always blocks for sequential logic only
+   - Make all combinational logic continuous assignments
+   - Maintain clear asynchronous reset functionality
+
+Key Benefits:
+- Combines the clear state transition logic of Example 1 with the structured approach of Example 2
+- Uses individual state registers for better readability while maintaining one-hot properties
+- Optimized state_B logic reduces unnecessary transitions (power)
+- Minimal combinational logic ensures good timing
+- Clean separation between combinational and sequential logic

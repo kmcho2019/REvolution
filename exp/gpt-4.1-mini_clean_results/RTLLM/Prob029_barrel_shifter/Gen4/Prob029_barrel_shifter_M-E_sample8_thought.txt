@@ -1,0 +1,11 @@
+Instead of using conditional concatenation or explicit mux2X1 submodules, I will implement the barrel shifter as a cascade of eight 8-to-1 multiplexers, one per output bit, controlled by the 3-bit ctrl signal.
+
+Each output bit is selected from one of eight input bits, rotated by the amount specified by ctrl. Since rotation by N (0-7) means that output bit i comes from input bit (i - N) mod 8, I can compute the rotated index for each output bit inside generate loops.
+
+This approach uses a fully combinational multiway mux implemented with a 8-to-1 case expression per bit, indexing the input bits rotated by ctrl. This is a classic barrel shifter design and is both clear and scalable.
+
+This design inherently does not require staged multiplexers and is more straightforward, fully synthesizable, and directly implements the rotation functionality exactly.
+
+The module ports remain the same: 8-bit input, 3-bit control for rotation amount, 8-bit output rotated accordingly.
+
+This approach avoids confusion of slicing/concatenation and allows the rotation logic to be clearly visible and correct.

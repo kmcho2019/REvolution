@@ -1,0 +1,22 @@
+Optimization Strategy:
+1. Timing Improvement:
+   - Simplify hour counter logic by using a single 4-bit hour counter (1-12) and decode to BCD
+   - Move PM toggle logic to a separate always block triggered only on hour changes
+   - Flatten counter increment logic to reduce nesting
+
+2. Power Reduction:
+   - Gate rollover computations with 'ena' signal to prevent unnecessary switching
+   - Only compute hour-related logic when minute rollover occurs
+   - Use clock gating for PM register updates (only changes twice per day)
+
+3. Area Optimization:
+   - Replace separate BCD digit registers with single counters where possible
+   - Share common BCD increment logic between seconds/minutes
+   - Simplify comparison logic by using range checks instead of exact matches
+
+Key Changes:
+- Single 4-bit hour counter with BCD decoding
+- Separate PM update logic
+- Gated rollover computations
+- Shared BCD increment logic
+- Simplified comparison operations

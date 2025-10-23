@@ -1,0 +1,5 @@
+Refactor the design by separating the next-state logic into a combinational always block and the state update into a clocked always block. 
+
+This two-process structure improves code clarity by explicitly showing next-state computation apart from the state register update, a common design style in synchronous designs. The next count value is computed combinationally based on the current count and up_down signal, and then the count register is updated synchronously on the clock edge. The reset condition is handled synchronously as before.
+
+This approach maintains the same functionality and timing but better illustrates the next-state and state update separation, which can help with formal verification and debugging.

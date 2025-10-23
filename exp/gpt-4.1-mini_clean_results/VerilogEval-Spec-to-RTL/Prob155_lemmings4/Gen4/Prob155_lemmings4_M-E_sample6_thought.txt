@@ -1,0 +1,11 @@
+Use a combined state encoding that merges both walking direction and mode into one state variable, representing all distinct behaviors explicitly: walking left, walking right, digging left, digging right, falling left, falling right, and splattered. This avoids a separate direction bit and makes state transitions more straightforward as transitions move between these specific states directly.
+
+Implement the fall timer as a separate 6-bit saturating counter to track fall duration; increment only when in a falling state. When ground is regained, check fall duration to transition either to splatter or walking in the last falling direction.
+
+Handle asynchronous reset by resetting the FSM state to walking left and clearing the fall timer.
+
+Prioritize transitions according to the problem: falling > digging > bump for walking states. While digging or falling, bump inputs are ignored.
+
+Outputs are decoded directly from the current state (Moore style).
+
+This approach leads to a clean, fully encoded state machine without separate direction bits, facilitating simpler next-state logic and explicit states for each behavior and direction.

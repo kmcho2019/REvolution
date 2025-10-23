@@ -1,0 +1,25 @@
+Revised approach to correctly detect and capture falling edges:
+
+1. Problem Analysis:
+   - Current design detects edges one cycle late due to pipeline timing
+   - Capture logic incorrectly holds all previous detections
+
+2. Solution Approach:
+   - Use immediate input comparison for edge detection (current in vs registered previous value)
+   - Properly synchronize the pipeline to detect edges in the same cycle they occur
+   - Only capture transitions from 1 to 0, not holding previous detections
+
+3. Key Changes:
+   - Compare current input directly with registered previous value
+   - Update output register only when falling edges are detected
+   - Clear output on reset as specified
+
+4. Timing Improvements:
+   - Immediate detection of falling edges in the same cycle they occur
+   - Proper synchronization between input changes and edge detection
+   - Output only reflects actual 1→0 transitions
+
+5. Functional Correctness:
+   - Each bit tracks its own falling edge independently
+   - Output bits remain set until reset
+   - No accumulation of old detections

@@ -1,0 +1,15 @@
+Simplified odd frequency divider using single counter with edge detection:
+1. Use a single counter that counts clock cycles (not edges) up to NUM_DIV-1
+2. Generate two toggling signals:
+   - One toggles at (NUM_DIV-1)/2 (rising edge)
+   - One toggles at (NUM_DIV-1)/2 + 0.5 (simulated with negedge)
+3. Combine these signals with OR to create final 50% duty cycle output
+4. Reset initializes counter and both toggle signals
+5. Simplified logic with only one counter but maintains proper odd division
+
+Key improvements:
+- Eliminates dual-edge counting complexity
+- Uses single counter with clever toggling points
+- Maintains 50% duty cycle through proper phase alignment
+- Fewer registers and simpler control logic
+- Still meets odd division requirement precisely

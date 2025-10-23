@@ -1,0 +1,11 @@
+I will design a true dual-port synchronous RAM with separate clocked read and write operations, both controlled by the same clock and asynchronous reset. The RAM will be a 6-bit wide and 8-depth memory with the following novel aspects:
+
+1. Use fully synchronous read and write with registered output data to provide a stable output and remove combinational path delays.
+2. Implement separate always blocks for read and write to model true dual-port behavior allowing simultaneous read and write at different addresses.
+3. Initialize RAM contents to zero on reset via a synchronous reset inside the write clocked process to maintain synthesis friendliness.
+4. Output read_data is registered and updated only when read_en is asserted; otherwise, output holds previous value to avoid glitches.
+5. Use parameterized address width calculated by $clog2(DEPTH) for minimal logic and improved timing.
+6. Use a procedural loop to clear memory on reset to ensure explicit initial conditions for all memory locations.
+7. When write and read addresses coincide with both enables asserted, read returns the old data (read-before-write) typical for synchronous memories.
+
+This approach ensures deterministic behavior, stable output timing, and true dual-port operation suitable for FPGA or ASIC implementation.

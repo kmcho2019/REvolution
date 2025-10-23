@@ -1,0 +1,16 @@
+Novel Architecture: Priority-Encoded State Transition
+1. Key Idea:
+   - Instead of computing all possible transitions in parallel, implement a priority-based transition scheme
+   - Exploit the fact that in one-hot encoding, only one state bit is active at a time
+   - Use a cascaded priority structure where higher-numbered states take precedence
+
+2. Benefits:
+   - Reduces logic depth by eliminating parallel OR trees
+   - Minimizes fan-out on state bits since each only drives its specific transition logic
+   - Maintains one-hot properties while simplifying next-state computation
+
+3. Implementation:
+   - Implement state transitions as a priority chain
+   - Output logic remains direct from state bits
+   - Special handling for B-state transitions which are unconditional
+   - Use ternary operators for compact priority encoding

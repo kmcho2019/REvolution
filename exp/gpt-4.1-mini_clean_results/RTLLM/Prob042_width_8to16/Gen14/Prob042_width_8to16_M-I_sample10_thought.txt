@@ -1,0 +1,15 @@
+To ensure robust timing and proper handling of corner cases, the design will explicitly separate the stages of storing the first byte and outputting the concatenated 16-bit data in the next cycle. This requires a two-stage pipeline:
+
+1. On receiving a valid input when no byte is stored, store it in `data_lock` and set `have_first`.
+2. On receiving the second valid input, combine it with `data_lock` to form `data_next` and set `valid_next`.
+3. In the next clock cycle, output `data_next` as `data_out` and assert `valid_out` for exactly one cycle.
+4. Clear the stored byte after output to prepare for new inputs.
+
+Additional improvements:
+- Update `valid_out` and `data_out` synchronously and clear them on reset.
+- Hold `data_out` stable only when `valid_out` is high; otherwise, reset it to zero for clarity.
+- Make sure `valid_out` is asserted only for one cycle immediately after concatenation.
+- Handle back-to-back inputs and reset conditions robustly by resetting flags and outputs properly.
+- Use nonblocking assignments consistently to avoid race conditions.
+
+This guarantees timing correctness (valid_out/data_out aligned with the problem statement), stable outputs when no valid data is present, and clean reset behavior, thus passing all test cases.

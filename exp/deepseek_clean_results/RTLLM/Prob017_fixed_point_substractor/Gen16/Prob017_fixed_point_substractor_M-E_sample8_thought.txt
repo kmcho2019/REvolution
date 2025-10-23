@@ -1,0 +1,30 @@
+Novel Architecture: Sign-Magnitude Parallel Path Subtractor
+
+Key Innovations:
+1. Dual-Path Computation:
+   - Separate dedicated hardware paths for same-sign and different-sign cases
+   - Each path computes its result independently in parallel
+   - Final result selected via multiplexer based on sign comparison
+
+2. Early Path Selection:
+   - Sign comparison done first to immediately select computation path
+   - Reduces unnecessary switching activity in the unused path
+
+3. Optimized Zero Handling:
+   - Zero detection integrated into the path selection logic
+   - Special case handling without additional comparison logic
+
+4. Magnitude Processing:
+   - Uses sign-magnitude representation throughout
+   - Avoids two's complement conversion overhead
+   - Direct magnitude comparison and subtraction
+
+5. Resource Sharing:
+   - Common magnitude subtraction unit used by both paths
+   - Only sign logic differs between paths
+
+Advantages:
+- Reduced critical path compared to conditional implementations
+- Better power efficiency due to early path selection
+- Clear separation of concerns in the architecture
+- More predictable timing characteristics

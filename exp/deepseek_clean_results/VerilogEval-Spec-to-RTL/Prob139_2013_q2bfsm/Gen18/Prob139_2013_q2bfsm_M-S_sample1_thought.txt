@@ -1,0 +1,15 @@
+Here's a simplified version that maintains all required functionality with fewer states and clearer logic:
+
+1. **State Reduction**: Combine monitoring states into one active state after reset, using counters/flags for sequencing.
+
+2. **Pattern Detection**: Use a 3-bit shift register to track x inputs, checking for '101' pattern.
+
+3. **Output Control**: 
+   - f pulses high for one cycle after reset deassertion
+   - g goes high after pattern match, then:
+     - If y=1 within 2 cycles, g stays high
+     - Else g goes low permanently
+
+4. **Simpler State Machine**: Only 2 states needed - RESET and ACTIVE, with internal counters handling the sequencing.
+
+The key simplification is using counters and flags within a single active state rather than multiple monitoring states.

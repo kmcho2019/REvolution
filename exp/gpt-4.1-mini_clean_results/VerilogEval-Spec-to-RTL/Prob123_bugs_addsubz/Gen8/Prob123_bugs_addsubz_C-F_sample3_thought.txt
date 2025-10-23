@@ -1,0 +1,15 @@
+To fuse the best ideas from both examples, I will retain the clean and canonical two's complement subtraction approach via conditional XOR and carry-in (do_sub), which ensures correct arithmetic and efficient synthesis of the adder-subtractor.
+
+From Example 1, I take the clear use of blocking assignments inside the combinational always block for predictable synthesis behavior and the concise, efficient zero flag calculation using reduction NOR (~|out).
+
+From Example 2, I keep the neat separation of signals with explicit naming (b_xor or b_modified) for clarity and maintain combinational logic in assignments only, with the always block solely assigning the registered outputs.
+
+To improve further beyond both, I will:
+
+- Use blocking assignments within the always @(*) block, as it is preferred for combinational logic and prevents latch inference.
+- Remove the unused higher bit of the sum since only 8 bits are needed, but keep the 9-bit addition internally to avoid overflow artifacts.
+- Maintain all signals and outputs as reg or wire with proper types for clarity and synthesis compatibility.
+- Use concise code with appropriate comments for maintainability.
+- Ensure the zero flag is updated synchronously with the combinational block without the subtle bug from the original (which checked `if (~out)` without else assignment, possibly latching previous value).
+
+This fusion balances clarity, correctness, synthesis friendliness, and optimal hardware inference, producing a robust adder-subtractor with zero flag.

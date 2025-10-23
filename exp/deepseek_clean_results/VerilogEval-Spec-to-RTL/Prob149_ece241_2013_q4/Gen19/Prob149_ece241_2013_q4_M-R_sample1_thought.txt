@@ -1,0 +1,24 @@
+Refactoring Strategy:
+
+1. **State Representation**:
+   - Use binary encoding that naturally represents water level ordering (00=below, 01=low, 10=mid, 11=above)
+   - This allows proper numeric comparison for level transitions
+
+2. **Transition Logic**:
+   - Implement explicit state transitions based on sensor inputs
+   - Store previous state for comparison
+
+3. **Output Generation**:
+   - Use continuous assignments for all outputs
+   - Make fr outputs directly dependent on state
+   - Calculate dfr by comparing current and previous states
+
+4. **Reset Handling**:
+   - Explicitly set state to "below" condition during reset
+   - Ensure all outputs are properly asserted during reset
+
+Key Improvements:
+- Numerically meaningful state encoding
+- Clearer state transitions
+- Proper reset behavior
+- Correct dfr calculation based on level changes

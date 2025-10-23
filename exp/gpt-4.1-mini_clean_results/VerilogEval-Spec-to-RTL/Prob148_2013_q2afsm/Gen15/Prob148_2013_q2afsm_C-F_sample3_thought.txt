@@ -1,0 +1,25 @@
+Fuse the two examples by retaining the clarity and simplicity of one-hot encoding for easy output logic, but improve power and area by eliminating the all-zero idle state and encoding all four states with one-hot bits.
+
+Use a 4-bit one-hot state encoding for states A, B, C, D, where each state has one-hot bit set:
+
+- A = 4'b0001 (idle)
+- B = 4'b0010 (grant device 0)
+- C = 4'b0100 (grant device 1)
+- D = 4'b1000 (grant device 2)
+
+This removes the ambiguous all-zero state, which can simplify synthesis and glitch prevention.
+
+The FSM transitions:
+
+- From idle (A), check requests in priority order (r0, r1, r2) to select grant states B, C, or D.
+- From any grant state, remain in it if the corresponding request persists; else go back to idle (A).
+- Use synchronous active-low reset to initialize to idle (A).
+- Outputs g[2:0] correspond to grants to devices 0,1,2 and will be assigned from bits of the grant states B,C,D respectively.
+
+This approach keeps minimal flip-flop count (4 bits for 4 states), enables clear and glitch-free output signals, and simplifies next state logic with case statements.
+
+The synchronous reset avoids asynchronous hazards, and explicit encoding of idle as one-hot avoids the potential for illegal all-zero states, reducing glitches and aiding PPA.
+
+Implement separate always blocks for state registers and next-state logic, use blocking assignments in combinational blocks, non-blocking in sequential.
+
+Overall, this design fuses the explicit state assignment and output clarity of Example 1 with the straightforward one-hot encoding and reset clarity from Example 2, while improving robustness and power by eliminating the all-zero idle state.

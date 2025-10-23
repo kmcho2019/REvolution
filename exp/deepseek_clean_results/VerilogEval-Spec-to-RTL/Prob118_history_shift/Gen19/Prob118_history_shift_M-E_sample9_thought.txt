@@ -1,0 +1,11 @@
+Novel Circular Buffer Architecture:
+1. Instead of shifting bits, maintain a circular buffer with head/tail pointers
+2. Use a write pointer to track the current insertion point (youngest branch)
+3. On misprediction, directly load the buffer from train_history and append train_taken
+4. For normal predictions, simply overwrite the oldest entry with new prediction
+5. Benefits:
+   - Eliminates large shift operations (better timing)
+   - Reduces switching activity (only 1 bit changes per prediction)
+   - Simplifies misprediction recovery (direct pointer manipulation)
+   - More power efficient (only active bits change)
+6. Tradeoff: Slightly more complex control logic

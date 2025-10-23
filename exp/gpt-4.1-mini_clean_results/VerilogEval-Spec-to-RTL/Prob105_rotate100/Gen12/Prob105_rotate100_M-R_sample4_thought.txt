@@ -1,0 +1,5 @@
+Refactor the module by implementing the rotation and load logic directly with continuous assignments using a generate block and combinational wire assignments. Specifically, define combinational wires for rotated values (left and right) and select the output based on `load` and `ena` signals using a nested conditional operator. Then, use a synchronous always block solely for updating the register `q` on the clock edge with the selected next state.
+
+This approach reduces the complexity inside the always block by moving combinational rotation logic out, uses concise assign statements for clarity, and avoids an explicit `next_q` register by deriving next state combinationally. It maintains synchronous load and rotation and preserves all functionality.
+
+Additionally, the generate block provides a clear, scalable pattern that would help for larger bit widths, and the use of combinational wires for rotated versions may help synthesis tools optimize the multiplexing more efficiently.

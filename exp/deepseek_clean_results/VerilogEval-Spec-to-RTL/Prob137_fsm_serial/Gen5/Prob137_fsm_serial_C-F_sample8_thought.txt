@@ -1,0 +1,17 @@
+Fusion Strategy:
+1. State Encoding: Use binary encoding (2 bits) for minimal area like both examples
+2. Data Handling: Adopt the efficient right-shift implementation from Example 1 for LSB-first reception
+3. Error Handling: Keep the robust error state that waits for stop bit from both examples
+4. Done Logic: Use Example 2's approach of setting done_reg only in STOP state
+5. Reset: Maintain synchronous reset as specified
+6. Optimizations:
+   - Clear done_reg only when leaving STOP state to reduce unnecessary toggles
+   - Combine state transition and data handling in single always block for cleaner code
+   - Use default assignments for next_state to ensure completeness
+   - Minimize bit counter width (3 bits) while keeping clear comparison logic
+
+Key Improvements:
+- Reduced power by minimizing done_reg toggling
+- Cleaner state machine with combined always block
+- Maintained timing efficiency with binary state encoding
+- Kept robust error handling

@@ -1,0 +1,7 @@
+To optimize for better power and timing without changing functionality, I will introduce clock gating to prevent the prev_in register from toggling when the input remains unchanged. This reduces unnecessary switching in flip-flops, thus saving dynamic power.
+
+Specifically, I'll add an enable signal that is high only when the current input differs from the previous input. This way, prev_in updates only on input changes.
+
+The pedge output must remain registered and still detect rising edges with a one-cycle delay, so I'll keep pedge updated every clock cycle, but the combinational logic and register clock enable will reduce toggling in prev_in.
+
+This slight enhancement should improve power by reducing toggling and potentially help timing by reducing load on the flip-flop inputs, with a minimal area increase due to the added clock enable logic.

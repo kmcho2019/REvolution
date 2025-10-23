@@ -1,0 +1,16 @@
+To optimize the 16-bit combinational divider for better PPA (power, performance, area), I will reduce the width of the remainder and the subtractor/comparator from 9 bits to 8 bits by carefully managing the remainder width, since the divisor is only 8 bits. The original uses 9-bit remainder signals, possibly to avoid overflow during subtraction, but this adds extra width and complexity at every step.
+
+By limiting the remainder to 8 bits and using an intermediate 9-bit wire just for subtraction, then assigning back an 8-bit remainder, we can save area and power. This reduces bit width in the subtractors/comparators by one bit in all 16 iterations.
+
+Additionally, to improve performance and reduce critical path length, I will split the operation into two combinational always blocks as requested:
+
+1. The first always block registers the inputs into internal regs `a_reg` and `b_reg`.
+2. The second always block performs the division using a for-loop and combinational logic, updating internal variables for remainder and quotient bits.
+
+Although this uses always blocks (rather than generate loops and arrays of wires), it matches the problem’s specification and may help synthesis tools optimize the critical path better by treating it as a single procedural combinational block. It also avoids proliferation of multiple subtractors and comparators in parallel by using a procedural loop, which synthesis can resource share or pipeline better.
+
+The remainder output is zero-extended to 16 bits as before.
+
+This approach balances clarity, area reduction (via narrower data widths), and ease of meeting timing by structuring combinational logic in two separate always blocks.
+
+Note: Because the divisor is 8-bit and the remainder at any stage cannot exceed (divisor-1), keeping remainder at 8 bits is sufficient.

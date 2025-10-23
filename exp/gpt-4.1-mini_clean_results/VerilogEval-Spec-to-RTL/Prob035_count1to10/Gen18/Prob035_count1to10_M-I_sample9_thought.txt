@@ -1,0 +1,10 @@
+To improve PPA, focus on simplifying the detection of decimal 10 to reduce combinational delay and potential critical path length, and reduce toggling by gating the counter increment logic. 
+
+Improvement strategy:
+1. Replace the explicit bitwise detection of 10 with a simple equality check using the Verilog comparison operator (q == 4'd10). Synthesizers typically optimize this well, potentially reducing logic depth.
+2. Introduce a clock enable (ce) signal derived from whether the counter reached 10, so that the counter only increments when not at 10; when at 10, it resets to 1 synchronously.
+3. Use a synchronous reset and non-blocking assignments consistently.
+4. This approach reduces combinational logic complexity by relying on simpler comparator logic and clock enable gating, which can improve timing and power by reducing unnecessary toggling.
+5. The area impact is minimal but may be improved slightly due to simpler combinational logic.
+
+This should improve timing slack (WNS), slightly reduce power due to fewer toggles, and keep area roughly the same.

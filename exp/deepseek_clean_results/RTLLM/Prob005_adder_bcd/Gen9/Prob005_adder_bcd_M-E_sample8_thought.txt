@@ -1,0 +1,15 @@
+My novel approach implements a BCD adder using a predictive correction scheme that eliminates the need for a separate correction adder. The key innovations are:
+
+1. Predictive Correction: Instead of first adding then checking for overflow, we predict the correction needed by examining the input operands and carry-in. This allows us to perform the correction in parallel with the addition.
+
+2. Carry Lookahead Logic: We implement optimized carry generation that works directly with BCD digits, reducing the critical path.
+
+3. Early Overflow Detection: By analyzing the MSBs of inputs and intermediate carries, we can determine overflow conditions before the full addition completes.
+
+4. Resource Sharing: The same logic is used for both sum calculation and correction value generation, reducing area.
+
+The design will:
+- Predict correction needs in parallel with addition
+- Use carry lookahead for faster Cout generation
+- Eliminate the sequential "add-then-correct" flow
+- Maintain correct BCD results with improved timing

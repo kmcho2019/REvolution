@@ -1,0 +1,9 @@
+Refactor the design by separating the pipeline stages into clearly defined pipeline registers for operands and carry, but implement the partial sum and carry-out calculation in an always_comb block per stage inside a generate loop. Use intermediate wires for partial sums and carry-outs, and pipeline all necessary signals in arrays of registers.
+
+Instead of concatenating partial sums in a procedural block, directly assemble the final 65-bit sum in a combinational function that reads from pipeline registers, avoiding the need for a separate procedural always block for this.
+
+Synchronize the output enable by pipelining the input enable through flip-flops.
+
+This version improves readability by splitting the combinational addition and pipelining, and by using a generate block with always_comb for each pipeline slice. It also simplifies the sum assembly by making it purely combinational, registered only at output stage.
+
+The pipeline latency remains the same (8 stages), and the initial carry-in is zero. The code is parameterized internally for stage width and stage count.

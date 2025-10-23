@@ -1,0 +1,15 @@
+To properly fix the pulse detection module based on the feedback:
+1. Maintain the 3-state FSM but adjust state transitions to ensure complete pulse detection
+2. Key improvements:
+   - After detecting a full pulse (0->1->0), return to IDLE state to properly separate consecutive pulses
+   - Only transition to next state when the correct input is received, otherwise reset to IDLE
+   - Output is asserted only on the exact cycle when the full pulse is detected (third 0)
+3. State transitions:
+   - IDLE: wait for initial 0
+   - GOT_0: after first 0, wait for 1 (if gets another 0, stay in GOT_0)
+   - GOT_01: after 0->1, wait for final 0 (if gets 1, broken sequence - return to IDLE)
+4. Reset behavior remains the same (reset to IDLE)
+5. This ensures:
+   - Strict 0->1->0 sequence detection
+   - No overlapping or partial pulse detection
+   - Correct output timing (asserted only on third cycle)

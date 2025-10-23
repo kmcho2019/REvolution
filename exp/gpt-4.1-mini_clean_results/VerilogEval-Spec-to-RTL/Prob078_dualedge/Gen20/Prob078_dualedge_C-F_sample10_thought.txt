@@ -1,0 +1,13 @@
+Fuse the two solutions by keeping the two flip-flops (positive-edge and negative-edge triggered) from Example 1 for reliable data capturing. Then replace the continuous combinational mux output (Example 1) with a small, glitch-free registered output stage synchronized to clk. 
+
+Specifically:
+- Use two edge-triggered flip-flops clocked on posedge and negedge of clk to sample 'd'.
+- Instead of directly muxing their outputs by clk level (which can glitch and increase dynamic power), introduce a small output register clocked on posedge clk.
+- This output register updates 'q' using a 2-to-1 mux selecting between q_neg and q_pos based on clk level sampled at posedge. Sampling clk at posedge means the mux select is stable during clock high phase.
+- This method reduces glitches on 'q', improving power and timing, since 'q' only changes on posedge clk.
+- It avoids transparent latches, which may complicate timing and cause hold violations.
+- The approach is fully FPGA-synthesizable, uses only edge-triggered flip-flops and registers, and avoids illegal sensitivity lists.
+- It improves on Example 1 by adding a stable, glitch-free registered output rather than purely combinational mux.
+- It improves on Example 2 by avoiding latches, improving timing robustness and synthesis friendliness.
+
+In summary, the fusion leverages dual-edge sampling from both examples, avoids glitches and dynamic power on 'q' from Example 1 muxing, and improves timing and power predictability by registering output instead of latching as in Example 2.

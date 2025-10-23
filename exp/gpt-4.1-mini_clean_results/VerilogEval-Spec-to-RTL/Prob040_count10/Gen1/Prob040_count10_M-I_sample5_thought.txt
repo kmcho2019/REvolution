@@ -1,0 +1,7 @@
+To optimize the decade counter for better Power, Performance, and Area (PPA), I will introduce an enable signal that only increments the counter when necessary. Since the counter always increments on each clock cycle (except reset or rollover), the switching activity is constant. By gating the counting logic with an enable that is high only when the counter is not at 9, we can reduce toggling within the counter register bits by freezing the count at 9 for one cycle before resetting to 0. However, since the counter rolls over immediately after 9, another approach is to use a one-hot ring counter for a decade counter to minimize logic switching, but that increases area and is less straightforward.
+
+A simpler and effective PPA optimization is to use a combinational next-state signal and register only when necessary. We will calculate the next count combinationally, which is either 0 on reset or 0 when current count is 9, else q+1, then register it. This may help synthesis tools optimize logic and reduce power. Also, this approach keeps the same functionality with potentially better timing by separating combinational and sequential logic clearly.
+
+No major area saving is possible because 4 bits are needed to represent 0-9, and comparison with 9 is minimal logic. Power is reduced slightly by clean combinational/clocked logic separation. Performance may improve due to clearer logic boundaries for synthesis tools.
+
+Overall, the design will keep synchronous reset, count from 0 to 9, and clear combinational next state logic.

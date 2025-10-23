@@ -1,0 +1,13 @@
+To refactor the existing edge detection module, we can simplify the structure by utilizing a single `always` block for sequential logic and leveraging `assign` statements for combinational logic where possible. This approach maintains the core functionality while potentially improving readability and synthesis efficiency.
+
+The main concepts to preserve include:
+1. **Edge Detection**: The XOR operation (`a ^ prev_a`) is essential for detecting edges in the input signal `a`.
+2. **Sequential Logic**: Storing the previous state of `a` (`prev_a`) is necessary for edge detection.
+3. **Reset Behavior**: The module should reset to a known state when `rst_n` is low.
+
+To refactor, we will:
+- Use a single `always` block to handle both the storage of the previous state and the detection of edges, reducing the number of always blocks.
+- Utilize `assign` statements for any combinational logic that can be expressed without needing to store state or react to the clock edge directly.
+- Ensure the reset behavior is correctly implemented within the refactored `always` block.
+
+By doing so, we aim to maintain the functionality of the module while simplifying its structure, which could potentially lead to improvements in area, power, or timing, depending on the specific synthesis and technology used.

@@ -1,0 +1,21 @@
+To optimize the counter design for better PPA (Power, Performance, Area) metrics while maintaining functionality:
+
+1. Timing Optimization:
+- Remove the implicit wrap-around detection (which creates a long combinational path)
+- Implement explicit comparison with 4'd11 (4'b1011) for clearer timing paths
+- This makes the critical path more predictable for synthesis tools
+
+2. Power Optimization:
+- Add clock gating when valid_count is low to prevent unnecessary toggling
+- Use a registered comparison to break timing paths
+
+3. Area Optimization:
+- Keep the simple sequential logic structure
+- The explicit comparison adds minimal area overhead while improving timing
+
+The improved version will:
+- Reset to 0 when rst_n is low
+- Increment only when valid_count is high
+- Explicitly wrap at 11 (4'b1011)
+- Use clock gating for power savings
+- Maintain clean synchronous design practices

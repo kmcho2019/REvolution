@@ -1,0 +1,15 @@
+Fuse the modular clarity of individually instantiated DFF modules (from Example 1) with the parameterized, generate-loop-based instantiation and clean wiring of Example 2. 
+
+Key elements in the fusion:
+- Keep a dedicated synchronous active-low reset DFF module for clear timing and reset semantics.
+- Use a generate loop for instantiation to reduce code duplication and facilitate scaling or modification.
+- Explicitly connect the DFF inputs and outputs to form the shift register chain to maintain structural clarity.
+- Keep signals scalar/wire for each bit to allow easy observation and potential per-bit instrumentation (like toggling or probing).
+- Maintain simple and explicit connection of the input to the first DFF and output from the last.
+- Use non-blocking assignments inside the DFF module.
+- Use minimal combinational logic to reduce delay and fanout.
+- The top module instantiates only the shift register module to keep interface clean.
+
+This hybrid approach balances modularity, scalability, clarity, and synthesis friendliness. It also positions the design for easier debug and extension while keeping power and area efficient by avoiding large vectors or implicit shift registers.
+
+The design remains a 4-stage shift register with synchronous active-low reset, positive-edge clocked, and single-bit ports as specified.

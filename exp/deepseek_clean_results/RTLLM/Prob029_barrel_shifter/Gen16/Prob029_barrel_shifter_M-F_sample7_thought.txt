@@ -1,0 +1,13 @@
+To fix this implementation, we'll:
+1. Break down the complex nested ternary operations into manageable stages
+2. Use intermediate wires to store results from each shift stage
+3. Maintain the same shift order (4-bit, then 2-bit, then 1-bit)
+4. Keep the design purely combinational
+5. Improve readability while preserving functionality
+
+The new approach will:
+- First apply the 4-bit shift if ctrl[2] is set
+- Then apply the 2-bit shift to the intermediate result if ctrl[1] is set
+- Finally apply the 1-bit shift to the new intermediate result if ctrl[0] is set
+- Use clear intermediate signals for each stage
+- Result in cleaner, more maintainable code that's easier to debug

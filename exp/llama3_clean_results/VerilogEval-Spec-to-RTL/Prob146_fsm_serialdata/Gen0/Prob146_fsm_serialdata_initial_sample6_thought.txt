@@ -1,0 +1,10 @@
+To solve this problem, we can design a finite state machine (FSM) with the following states:
+- IDLE: Wait for the start bit (0) in the input stream.
+- START: Received the start bit, now wait for the data bits.
+- DATA: Collect the data bits (8 bits) in the out_byte register, with the least significant bit first.
+- STOP: Wait for the stop bit (1) after receiving all data bits.
+- ERROR: If the stop bit is not received, wait until a stop bit is detected, then transition back to IDLE.
+
+The FSM will use the 'in' input to determine the current bit and the 'clk' to trigger the state transitions on the positive edge. The 'reset' input will be used to reset the FSM to the IDLE state. The 'done' output will be asserted when a complete byte is received and verified.
+
+The 'out_byte' register will store the received data bits. To handle the least significant bit first transmission, we will shift the bits into the 'out_byte' from the least significant bit position.

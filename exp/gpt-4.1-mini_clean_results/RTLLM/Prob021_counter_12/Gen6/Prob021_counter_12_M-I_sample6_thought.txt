@@ -1,0 +1,11 @@
+To improve the previous design, avoid RTL-level clock gating which can cause timing and glitch issues. Instead, use a clean, always running clock and control counting using the valid_count signal as an enable inside the always block. This approach simplifies timing closure and reduces clock skew problems.
+
+The counter increments only when valid_count is high; if valid_count is low, the count remains unchanged. Use an active-low synchronous reset to improve timing reliability. This also simplifies the reset path compared to asynchronous reset.
+
+The code will:
+1. Use posedge clk and synchronous active-low reset.
+2. Increment counter only when valid_count is asserted.
+3. Reset counter to zero when rst_n is deasserted.
+4. Use non-blocking assignments consistently for proper synthesis.
+
+This approach balances power (count only toggles when enabled), timing (no gating on clock), and area (minimal additional logic).

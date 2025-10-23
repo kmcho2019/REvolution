@@ -1,0 +1,5 @@
+To refactor while keeping the core functionality intact, I will separate the XOR logic directly inside a combinational always block to compute the next state, and then use a non-blocking assignment inside a sequential always block triggered by the positive edge of clk to update the output register. This differs from the original by explicitly using a reg for the next state instead of a continuous assign wire. This structure is common for synchronous logic with registered outputs.
+
+Additionally, I will omit the initial block for the output register to ensure synthesis compatibility, as the original initial block is simulation-only and can cause synthesis mismatches.
+
+This approach cleanly separates combinational and sequential logic, making the design structure explicit and clear while maintaining the exact behavior requested.

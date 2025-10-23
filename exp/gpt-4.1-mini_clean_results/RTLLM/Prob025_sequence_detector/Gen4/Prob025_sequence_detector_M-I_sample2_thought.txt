@@ -1,0 +1,15 @@
+The original design correctly implements a Mealy FSM for detecting the sequence "1001" with overlapping detection. However, it uses an active-high reset named `reset`, while the problem explicitly requires an active-low reset named `reset_n`. This mismatch causes testbench connection and simulation errors.
+
+To fix this, rename the reset input to `reset_n` and change the reset logic to be active-low synchronous reset (`if (!reset_n)`). This makes the design compliant with the problem statement and standard naming conventions.
+
+Additionally, keeping the FSM as a Mealy machine provides immediate detection without delay. The existing 2-bit state encoding and transitions are minimal and efficient, so no need to increase state bits.
+
+No asynchronous reset is requested, so synchronous reset logic remains.
+
+In summary:
+- Rename reset to `reset_n`.
+- Adjust reset polarity to active-low synchronous reset.
+- Keep the FSM logic intact.
+- Add brief comments for clarity.
+
+This correction ensures the module can integrate correctly and detect sequences as intended.

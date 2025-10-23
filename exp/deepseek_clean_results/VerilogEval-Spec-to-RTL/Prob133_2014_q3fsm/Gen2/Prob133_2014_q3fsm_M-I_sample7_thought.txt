@@ -1,0 +1,15 @@
+To fix the issues in the original solution, here's an improved approach:
+
+1. Maintain two states (A and B) as before, but add a 2-bit counter to track the 3-cycle windows in state B
+2. Use a 3-bit shift register to store the last three 'w' values
+3. When counter reaches 2 (third cycle), evaluate the shift register contents
+4. Set z=1 in the next cycle if exactly two 1's were present in the window
+5. Reset the counter after each evaluation to start a new 3-cycle window
+6. Clear evaluation logic is separated from data collection
+
+Key improvements:
+- Proper timing of evaluation and output (z set in cycle after window closes)
+- Accurate counting of 1's in the window using shift register
+- Clear window boundary management with counter
+- Simplified state machine with minimal states
+- Correct handling of the initial transition from state A to B

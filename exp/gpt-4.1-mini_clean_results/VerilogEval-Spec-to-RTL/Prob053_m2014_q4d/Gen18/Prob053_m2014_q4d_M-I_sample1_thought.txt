@@ -1,0 +1,10 @@
+To improve synthesis correctness and avoid simulation versus synthesis mismatches, remove the explicit initial value assignment of the register since the problem specification forbids any reset signal. The initial state of the flip-flop will be undefined at hardware startup, which aligns with typical hardware behavior without reset.
+
+Also, declare the output port `out` as a reg and drive it directly inside the sequential block for clarity and better synthesis mapping of the flip-flop output. This avoids confusion from assigning a wire output from an internal reg, which can cause simulation/synthesis mismatches in some tools.
+
+This design remains minimal with a single D flip-flop and one XOR gate and respects the problem statement with no reset, ensuring correctness and better tool compatibility.
+
+Summary of changes:
+- Remove initial value assignment on the reg.
+- Declare output as reg and update it on posedge clock.
+- Maintain the same XOR logic for the D input.

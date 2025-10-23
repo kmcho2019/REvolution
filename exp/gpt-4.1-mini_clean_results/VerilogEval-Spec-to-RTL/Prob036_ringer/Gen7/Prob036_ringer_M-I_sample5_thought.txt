@@ -1,0 +1,6 @@
+Optimize the design by implementing a 2:1 multiplexer to select which output (ringer or motor) is asserted when ring is active. This reduces logic gates by combining the conditions into a single mux control and two outputs that are mutually exclusive by construction. Specifically, when ring=1:
+- If vibrate_mode=0, ringer=1 and motor=0
+- If vibrate_mode=1, ringer=0 and motor=1
+When ring=0, both outputs are 0.
+
+This approach decreases logic complexity (potentially fewer gates), which can reduce area and power. It keeps the critical path minimal and straightforward. The mux inherently enforces mutual exclusivity, ensuring only one output is high at a time without separate AND gates for both outputs.

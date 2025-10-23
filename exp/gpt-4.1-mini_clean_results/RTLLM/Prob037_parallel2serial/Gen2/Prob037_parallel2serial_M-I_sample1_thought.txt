@@ -1,0 +1,18 @@
+To strictly follow the problem description: The module should output one serial bit per clock cycle, starting with the MSB of the 4-bit parallel input. The valid_out signal is asserted only when the serial output is valid, which is during the 4 cycles of outputting the 4 bits.
+
+The key points to implement are:
+
+- A 2-bit counter `cnt` counts from 0 to 3 representing the bit position being output.
+- When `cnt == 3` (last bit cycle), load the shift register `data` with the new parallel input `d` and set `valid_out` to 1.
+- Otherwise, shift the data register one bit to the left (MSB goes into the LSB), output MSB as dout, increment the counter, and set `valid_out` to 0 because only the cycle at `cnt == 3` has new valid parallel data loaded and valid_out=1 to mark start of new data. But problem states valid_out=1 during serial output bits, so valid_out should be 1 for all 4 output cycles.
+- Actually, the problem states valid_out=1 indicates availability of valid serial output. Since serial output happens for all 4 cycles, valid_out should be 1 during these 4 cycles, i.e., valid_out=1 from cnt=0 to cnt=3.
+- On reset, clear all registers.
+
+Implementation detail:
+
+- Load new data into `data` when `cnt == 3` (end of previous 4 bits transmission), output MSB on that cycle, valid_out=1.
+- On other cycles (`cnt` != 3), shift data left by 1 (MSB shifted into LSB), output MSB of `data`, valid_out=1.
+- Increment `cnt` every clock cycle when not in reset.
+- The initial cycle after reset starts with `cnt=3` so that on first clock cycle data is loaded and outputted.
+
+This approach aligns exactly with the problem description and ensures correct valid_out timing and serial output sequence from MSB to LSB.

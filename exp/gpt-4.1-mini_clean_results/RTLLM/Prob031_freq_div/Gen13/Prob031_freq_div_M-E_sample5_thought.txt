@@ -1,0 +1,11 @@
+Implement all three output clocks using a single unified counter that counts from 0 up to 99 (for 100 input clock cycles). This counter resets on reaching 99 or on reset.
+
+- CLK_50 toggles at half the input frequency, so toggle on every count wrap (every 50 input cycles; the half of 100 cycles) by generating it from the MSB of the counter.
+- CLK_10 toggles every 5 input clock cycles (to get 10 MHz from 100 MHz). We detect count values where the counter modulo 10 is 4, then toggle.
+- CLK_1 toggles every 50 cycles (to get 1 MHz from 100 MHz) by toggling when the counter reaches 49.
+
+Use combinational logic to generate toggles by comparing counter values, and update the output clocks in one always block. This reduces the number of counters, saves area, and synchronizes all clock dividers to one single counter, ensuring phase alignment and simpler reset logic. The approach uses a 7-bit counter (since 100 < 128).
+
+Asynchronous reset is maintained as active high.
+
+Non-blocking assignments ensure synchronous updates on clock edge.

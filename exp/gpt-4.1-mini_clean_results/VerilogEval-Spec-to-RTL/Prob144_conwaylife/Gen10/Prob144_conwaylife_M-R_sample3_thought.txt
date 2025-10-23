@@ -1,0 +1,7 @@
+Refactor the module to use a single 2D reg array for the current state and a separate 2D wire array for the next state, computing all next states in combinational logic with a dedicated function to compute neighbor count for clarity and code reuse. This function will implement wrapping by modular arithmetic.
+
+Avoid generate loops by using nested for-loops inside a combinational always block for next state calculation, improving readability while keeping combinational logic explicit. Store state in a 2D reg array for cleaner indexing. On each clock edge, update the register array from the combinationally computed next state or load the initial input data.
+
+Finally, flatten the 2D reg array to the 256-bit output vector `q`.
+
+This structure combines clarity of a procedural next-state calculation with modular neighbor counting via a function, reducing repetitive neighbor sum logic and maintaining synchronous loading and update semantics.

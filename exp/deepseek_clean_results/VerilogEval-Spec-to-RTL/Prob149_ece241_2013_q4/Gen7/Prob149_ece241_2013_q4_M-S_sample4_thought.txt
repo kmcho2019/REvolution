@@ -1,0 +1,11 @@
+To simplify the solution while maintaining functionality, I'll make these key changes:
+
+1. **Eliminate Separate State Tracking**: Instead of tracking previous state and calculating rising edges separately, we can determine dfr directly from the current sensor readings and their previous values.
+
+2. **Simplify State Logic**: Use sensor readings directly to determine outputs without explicit state encoding. The water level zones can be inferred directly from the sensor pattern.
+
+3. **Combine Output Logic**: The nominal flow outputs (fr0, fr1, fr2) can be determined directly from current sensor readings, while dfr can be calculated by comparing current and previous sensor readings.
+
+4. **Maintain Reset Behavior**: Keep the synchronous reset that sets all outputs high as specified.
+
+This approach reduces the design to just tracking previous sensor values and calculating outputs based on current and previous readings, eliminating the need for explicit state encoding and transition logic.

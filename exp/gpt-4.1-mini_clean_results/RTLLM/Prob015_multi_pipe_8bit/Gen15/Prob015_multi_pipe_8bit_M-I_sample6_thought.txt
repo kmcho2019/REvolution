@@ -1,0 +1,15 @@
+To improve the original 3-stage pipeline design, we reduce the long combinational path caused by summing all eight partial products in a single cycle. Instead, we implement a deeper pipeline by accumulating partial products in a balanced adder tree over multiple pipeline stages, distributing addition workload evenly across cycles and reducing critical path delay (improves timing).
+
+Specifically, we pipeline partial product generation and addition into 4 pipeline stages:
+1. Input register stage latches inputs and input enable.
+2. Partial product generation stage creates 8 partial products.
+3. First addition stage sums pairs of partial products to get 4 partial sums.
+4. Second addition stage sums those 4 partial sums into 2 partial sums.
+5. Third addition stage sums the last 2 partial sums into the final product.
+6. Output register stage registers the final product and the output enable.
+
+The enable signal is shifted through a pipeline register matching pipeline depth to indicate valid output timing.
+
+This staged accumulation reduces max combinational path per cycle, increasing clock frequency, and also gates registers with enable signals to avoid unnecessary toggling. The design trades latency for improved frequency and better power efficiency. The pipeline depth is increased from 3 to 6 stages.
+
+This structure improves timing (reduces WNS), reduces power (less combinational logic toggling per cycle), and slightly increases area due to pipeline registers but overall is more efficient.

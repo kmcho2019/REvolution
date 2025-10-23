@@ -1,0 +1,9 @@
+To improve PPA, I will simplify the FSM by removing the clock enable logic, allowing the state register to update unconditionally every clock cycle. This eliminates the comparison logic that can add delay on the clock path and may increase power due to combinational overhead.
+
+I will keep the next_state combinational logic separated from the sequential block to maintain clarity and ease of synthesis.
+
+The synchronous active-high reset remains intact as required.
+
+The output remains a direct Moore output derived from the state to avoid glitches.
+
+This approach slightly increases switching activity but reduces critical path complexity, likely improving timing (WNS) and possibly power by simplifying the combinational logic feeding the clocked register. It also slightly reduces area by removing clock enable logic.

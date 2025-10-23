@@ -1,0 +1,15 @@
+Implement the 10-bit counter using a binary-coded decimal (BCD) approach with three separate counters representing the hundreds, tens, and units digits. Each counter counts from 0 to 9, and the overall count reaches 999 when hundreds=9, tens=9, and units=9. On each clock cycle, increment the units digit; if it rolls over to zero, increment the tens digit; if tens roll over, increment the hundreds digit. After reaching 999 (all digits at 9), reset all digits to zero. This approach uses simpler single-digit decimal counters and cascaded carry logic rather than a direct 10-bit binary counter, offering an intuitive, modular design that may ease verification and implementation of decimal-specific functionality.
+
+The output q combines the three BCD digits into a 10-bit binary number by converting each digit to its binary equivalent and aggregating them as q = hundreds*100 + tens*10 + units. For efficiency and since 999 fits in 10 bits, the BCD digits can be converted using combinational multipliers (or shifts and adds) to form the output.
+
+Reset is synchronous active high and clears all digits to zero.
+
+Summary:
+- Implement three 4-bit BCD counters: units, tens, hundreds (range 0-9).
+- Increment units every clock; if units == 9, roll over to 0 and increment tens.
+- If tens == 9 and rolls over, increment hundreds.
+- If hundreds == 9, reset all digits to 0 on next increment.
+- Combine digits to form 10-bit binary output q (hundreds*100 + tens*10 + units).
+- Use synchronous reset.
+
+This approach is structurally different and models the counter in decimal rather than pure binary, which can be useful for decimal applications or easier to adapt to decimal displays.

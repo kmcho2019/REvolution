@@ -1,0 +1,21 @@
+Simplified approach:
+
+1. **Single State Machine**: Use a clear 4-state FSM (IDLE, CAPTURE, COUNT, DONE) with straightforward transitions.
+
+2. **Pattern Detection**: Use a 4-bit shift register to detect "1101" pattern. Transition to CAPTURE state immediately when detected.
+
+3. **Delay Capture**: In CAPTURE state, shift in next 4 bits to form delay value. Then load counters and go to COUNT state.
+
+4. **Counting Logic**:
+   - Use one counter for 1000 cycles (cycle_cnt)
+   - Use another counter for delay periods (delay_cnt)
+   - Decrement delay_cnt only after each 1000 cycles
+   - Output current delay_cnt value during counting
+
+5. **Done Handling**: Assert done when counting completes, wait for ack before resetting.
+
+Key simplifications:
+- Reduced number of registers
+- Clear state transitions
+- Minimal counter logic
+- Direct output assignments

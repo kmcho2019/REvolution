@@ -1,0 +1,11 @@
+Instead of using a traditional shift register implementation, I'll create a circular buffer with a write pointer. This approach offers several advantages:
+1. More efficient implementation for certain operations (like repeated shifts)
+2. Potential for easier expansion to wider shift registers
+3. Clear separation of control and data paths
+
+The design will:
+1. Use a 4-bit register to store data
+2. Track the effective "start" position with a 2-bit pointer
+3. Implement shifts by moving the pointer rather than physical data movement
+4. Handle load operations by resetting the pointer and loading data
+5. Output will be calculated based on the current pointer position

@@ -1,0 +1,18 @@
+To generate a variable-frequency square wave, a common approach is to toggle the output at intervals controlled by a counter reaching a preset limit.
+
+A novel idea here is to use the freq input as the half-period count directly, but rather than counting from 0 up to freq-1, we can count down from freq to zero, which can sometimes simplify wrap-around logic and potentially reduce glitch chances.
+
+Additionally, to avoid any issues when freq=0 (which would normally cause no toggling or division by zero), we can interpret freq=0 as "hold output steady" (no toggling).
+
+We will implement an asynchronous reset input (active high) for clear initialization.
+
+The key steps:
+- When freq is zero, do not count or toggle, just hold wave_out steady.
+- When freq is non-zero, load count register with freq on reset or when count hits zero.
+- On each clock, decrement the count.
+- When count reaches zero, toggle wave_out and reload count with freq.
+- This counts freq cycles per half period, effectively producing a square wave toggling every freq clock cycles.
+  
+This "count down and reload" approach is functionally equivalent but implemented differently from a typical count-up approach. It also explicitly handles the zero freq case by halting toggling and holding outputs steady.
+
+This approach may provide a simpler critical path (just decrement and compare zero) and straightforward state handling.

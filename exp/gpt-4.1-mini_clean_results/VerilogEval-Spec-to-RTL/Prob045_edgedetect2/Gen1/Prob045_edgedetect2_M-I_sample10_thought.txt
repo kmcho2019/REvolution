@@ -1,0 +1,11 @@
+The original design efficiently detects edges by comparing the current and previous inputs using XOR. To optimize PPA (performance, power, area) further, we can consider two minor improvements:
+
+1. **Power**: Introduce a clock enable to update registers only when input changes occur. This reduces unnecessary toggling of `prev_in` and `anyedge`, lowering dynamic power when inputs remain stable.
+
+2. **Area**: Instead of always storing the full input every cycle, update `prev_in` only when a change is detected. This can slightly reduce switching activity and indirectly improve power without increasing area.
+
+3. **Performance**: The XOR operation is minimal and likely already optimized. Adding a clock enable won't affect critical path significantly because the enable signal is combinational and derived from XOR.
+
+Implementing a clock enable by gating register updates to when input changes occur reduces toggling and dynamic power, while keeping performance and area close to optimal.
+
+This trade-off enhances power efficiency at minimal cost and no negative impact on timing or area.

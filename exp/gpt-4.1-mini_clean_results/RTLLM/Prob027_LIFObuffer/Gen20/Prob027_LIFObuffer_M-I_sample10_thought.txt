@@ -1,0 +1,14 @@
+To improve PPA (Performance, Power, Area) based on the given metrics and code, the following optimizations are applied:
+
+- **Replace synchronous reset with asynchronous reset:** This reduces reset latency and toggle power during reset. It allows the registers to be initialized immediately on reset assertion rather than waiting for a clock edge.
+- **Remove explicit loop to clear stack_mem on reset:** Instead of zeroing out the entire memory, rely on the stack pointer and flags to indicate valid entries. Clearing stack entries on pop is already avoided to save power.
+- **Add clock gating to reduce power:** Use the EN signal to gate the clock for the always block, so registers update only when enabled.
+- **Simplify SP width to 3 bits but constrain max to 4 (no change).**
+- **Use non-blocking assignments consistently.**
+- **Keep dataOut updated only on pop to reduce switching.**
+- **Keep combinational logic minimal and straightforward.**
+- **Add explicit parameter for stack depth for better scalability.**
+
+These changes reduce toggle power during reset and inactive cycles and may improve timing by removing the reset loop and using asynchronous reset, while keeping the original functionality intact.
+
+Note: Asynchronous reset may slightly increase area due to reset synchronization, but the power and performance gains generally outweigh this in FPGA and ASIC implementations.

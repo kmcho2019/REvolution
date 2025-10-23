@@ -1,0 +1,5 @@
+The new approach involves designing a pipeline-based accumulator. This architecture takes advantage of the fact that the accumulation operation can be broken down into stages, each of which can operate concurrently. The idea is to create a 4-stage pipeline where each stage accumulates the input data and passes the result to the next stage. This allows for a high-throughput design where a new accumulation result can be produced every clock cycle once the pipeline is filled.
+
+The pipeline stages will be designed such that the first stage accumulates the input data, the second stage accumulates the result from the first stage with the next input data, and so on. The final stage will produce the output data_out after accumulating four input data values. The valid_out signal will be generated based on the number of valid inputs received, ensuring it is set to 1 only when a complete set of four accumulated data is available at the output.
+
+This approach offers several advantages, including improved throughput, reduced latency once the pipeline is filled, and potentially simpler logic at each stage compared to a complex state machine or counter-based approach.

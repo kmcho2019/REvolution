@@ -1,0 +1,15 @@
+To address the issues identified in the feedback, we need to modify the code to handle the following:
+
+1. Out-of-bounds PHT indexing: We should ensure that the index calculated from the XOR of the predict_pc and history is within the bounds of the 128-entry PHT table.
+2. Handling maximum and minimum PHT values: We should handle the case where the PHT entry is already at its maximum or minimum value to prevent overflow or underflow.
+3. Correct history update logic: We should update the global branch history register correctly based on the predicted branch direction and the actual branch outcome, handling the case where a misprediction occurs and the branch history register needs to be recovered to its previous state.
+4. Static variable initialization: We should address the warning messages regarding static variable initialization to ensure correct behavior.
+5. Reset functionality: We should verify that the reset is working correctly to ensure that the design is properly initialized.
+
+To improve the PPA optimization, we can consider the following:
+
+1. Using a smaller PHT table or a different type of counter to reduce area consumption.
+2. Implementing clock gating or power gating to reduce power consumption in the prediction and training logic.
+3. Pipelining or parallel processing the history update logic to improve performance.
+
+We will modify the code to address these issues and improvements.

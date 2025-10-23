@@ -1,0 +1,13 @@
+To improve the original design for better PPA (performance, power, area), I will:
+
+1. Correct the shift direction: since the serial LSB is sent first, the received bits should be shifted in from LSB side (shift left), placing the new bit on LSB instead of MSB. This reduces combinational mux complexity and matches bit significance naturally.
+
+2. Simplify bit_count reset logic by resetting bit_count to zero only on reset and when start bit detected, avoiding redundant resets in other states.
+
+3. Minimize toggling outside READ_BITS by gating bit_count and shift register updates strictly with a clock enable.
+
+4. Replace the synchronous done and out_byte update to be part of the next_state logic to reduce glitches and improve timing.
+
+5. Maintain the simple 2-bit binary FSM for minimal area, but reorganize next_state logic for cleaner combinational logic and reduce unnecessary transitions.
+
+These steps should improve timing by reducing mux complexity on data_shift, reduce dynamic power by limiting toggling to necessary cycles only, and keep area minimal by simple encoding and logic consolidation.

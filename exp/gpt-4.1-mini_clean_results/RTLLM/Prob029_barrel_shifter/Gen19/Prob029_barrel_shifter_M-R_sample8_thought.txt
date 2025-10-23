@@ -1,0 +1,11 @@
+Refactor the barrel shifter to explicitly instantiate the mux2X1 modules as originally specified, preserving the three-stage rotation-by-4, 2, and 1. Each stage performs conditional rotation controlled by the corresponding bit of `ctrl`. The mux2X1 selects either the shifted or original bit based on the control bit.
+
+This structural approach strictly follows the problem's requirement, improves modularity, and makes the design's behavior clear at the gate level, easing debugging and potentially improving synthesis tool handling. The design remains purely combinational, with no always blocks, and uses continuous assignments to connect mux inputs and outputs.
+
+The implementation proceeds in three stages:
+
+- Stage 0: shift by 4 if ctrl[2]
+- Stage 1: shift by 2 if ctrl[1]
+- Stage 2: shift by 1 if ctrl[0]
+
+Each stage uses 8 mux2X1 instances to pick the output bits. Intermediate wires carry the data between stages.

@@ -1,0 +1,12 @@
+Here's a novel approach using a toggle-based state machine instead of explicit state encoding:
+1. Instead of tracking left/right states, we'll use a single toggle bit that flips when a bump occurs
+2. The direction is determined by the current value of the toggle bit
+3. Bump_left will always set direction to right, bump_right will always set direction to left
+4. Simultaneous bumps will still toggle the direction (consistent with requirements)
+5. This reduces the state machine to a simple toggle flip-flop with combinational output logic
+
+Advantages:
+- More compact state representation (just 1 bit)
+- Simplified next-state logic (just XOR operations)
+- Maintains same behavior while potentially reducing area
+- Interesting alternative to traditional state encoding

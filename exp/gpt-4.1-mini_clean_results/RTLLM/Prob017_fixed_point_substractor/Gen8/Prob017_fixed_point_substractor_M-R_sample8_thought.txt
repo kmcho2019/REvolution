@@ -1,0 +1,13 @@
+Refactor the fixed-point subtractor to rely entirely on two's complement arithmetic without explicit sign-magnitude conversion, using only parameterized subtract/add operations and sign bit extraction for determining the output sign and zero case.
+
+Key changes:
+- Directly perform subtraction as two's complement: `res = a - b;`.
+- Extract sign bit from `res` to set the sign correctly.
+- For zero result, explicitly set the sign bit to 0.
+- Preserve parameterized bit widths N and Q.
+- Avoid any explicit sign-magnitude conversions or magnitude comparisons.
+- Implement the subtraction purely via combinational assign statements to ensure better synthesis.
+- Provide a synchronous or combinational internal register `res` if necessary (or just wire).
+- Retain full precision Q fractional bits by treating inputs as raw two's complement fixed-point numbers.
+
+This approach uses native two's complement properties for subtraction and sign, avoiding synthesis issues related to manual magnitude manipulation, and is the most natural and synthesis-friendly way to implement fixed-point subtraction.

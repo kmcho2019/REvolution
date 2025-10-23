@@ -1,0 +1,9 @@
+To fix the simulation issues caused by the infinite recursion in the clock toggling task, I will revert to a more conventional and robust approach using an initial block with a forever loop.
+
+The design idea:
+- Declare `clk` as a reg output, initialized to 0 in the initial block.
+- Use a forever loop inside the initial block that waits half of the PERIOD and then toggles clk.
+- This approach is simple, synthesizable, and well-supported by all simulators.
+- It avoids the pitfalls of infinite recursive calls and ensures stable periodic clock generation.
+
+This structure will generate the intended periodic clock signal toggling every half PERIOD without causing simulation hang-ups or failures.

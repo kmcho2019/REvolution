@@ -1,0 +1,17 @@
+To fix the issues identified:
+
+1. Keep training update precedence over prediction updates in the same cycle, but ensure speculative history update is consistent with the spec:
+   - When `train_valid` & `train_mispredicted`: recover `ghr_spec` immediately to `train_history`.
+   - When `train_valid` & no misprediction: update `ghr_committed` (with actual branch outcome), but **do not** update `ghr_spec`.
+   - When `predict_valid` & no training: update `ghr_spec` by shifting in predicted bit.
+   - When `predict_valid` & training: **do not** update `ghr_spec` (training takes precedence).
+
+2. Since prediction uses PHT state *before* training update, reading `pht[]` array combinationally is correct.
+
+3. On reset, initialize PHT entries to weakly taken state `2'b10` (more common for gshare).
+
+4. Assign `predict_taken` and `predict_history` combinationally based on `predict_valid`, `ghr_spec`, and PHT read, ensuring outputs are valid only when `predict_valid` is asserted.
+
+5. Use non-blocking assignments and carefully separate the updates of `ghr_committed` and `ghr_spec` to maintain stable, correct state transitions.
+
+This corrected approach cleanly implements the expected speculative global history behavior and PHT updates, respecting training precedence, timing, and output requirements.

@@ -1,0 +1,15 @@
+Novel Architectural Idea: State Machine-Based Counter with Predictive Wrap Detection
+
+Key Innovations:
+1. State Machine Approach: Implement the counter as a 4-state FSM (IDLE, COUNT, WRAP, HOLD) for explicit control flow
+2. Predictive Wrap: Detect when next count will wrap (out == 4'd10) to simplify timing path
+3. Synchronous Enable: Use valid_count as a synchronous enable rather than clock gating
+4. Early Reset Propagation: Combine synchronous reset with async reset for robust initialization
+5. Power Gating: Gate the increment logic only when valid_count is active
+
+Benefits:
+- Clear state transitions improve verification
+- Predictive wrap detection reduces critical path
+- Synchronous enable avoids clock gating risks
+- Better power efficiency through conditional logic activation
+- Maintains single-cycle operation

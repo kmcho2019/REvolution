@@ -1,0 +1,13 @@
+Here's a novel architectural approach that improves PPA metrics:
+
+1. **Parallel Processing**: Instead of using a shift register, we'll use a parallel load approach where each bit is stored in its correct position as it arrives. This eliminates the shifting operation and reduces combinatorial path delays.
+
+2. **Simplified State Machine**: We'll use a 3-state FSM (IDLE, RECEIVE, STOP_CHECK) with one-hot encoding for better timing characteristics. The ERROR state is eliminated by handling invalid stop bits within the STOP_CHECK state.
+
+3. **Early Termination**: We'll detect invalid stop bits immediately in the STOP_CHECK state and return to IDLE without waiting, reducing latency.
+
+4. **Optimized Counting**: Instead of a down counter, we'll use a 3-bit up counter with early termination comparison (count == 7), which is more area-efficient.
+
+5. **Output Registering**: The done signal and out_byte are only updated when a valid byte is received, minimizing unnecessary transitions.
+
+This approach reduces combinatorial logic, improves timing, and maintains clean state transitions.

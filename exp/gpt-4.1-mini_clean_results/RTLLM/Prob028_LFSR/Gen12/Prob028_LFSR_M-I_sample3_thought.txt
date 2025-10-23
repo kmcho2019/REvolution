@@ -1,0 +1,7 @@
+The original LFSR implementation is functionally correct but can be improved by avoiding the all-zero lockup state after reset, which would halt the pseudo-random sequence generation. Instead of resetting to zero, initialize the register to a non-zero value (e.g., 4'b0001) to ensure the LFSR produces a maximal-length pseudo-random sequence.
+
+Also, since the feedback signal is computed combinationally from the current state, it can be declared as a wire without any synthesis issues.
+
+This small change improves the LFSR usability in practice, enabling it to cycle through all 15 non-zero states before repeating, which is typical for maximal-length 4-bit LFSRs.
+
+No change in interface is needed.

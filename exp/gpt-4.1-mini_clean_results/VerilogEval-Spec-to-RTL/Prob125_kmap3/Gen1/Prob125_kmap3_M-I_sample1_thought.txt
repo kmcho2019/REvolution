@@ -1,0 +1,19 @@
+The key problem was misinterpreting the Karnaugh map indexing and input assignments. The original problem explicitly orders columns (ab) as 01, 00, 10, 11 and rows (cd) as 00, 01, 11, 10. We must respect this order exactly when assigning inputs a,b,c,d to the rows and columns in the K-map.
+
+Since 'd' is a don't-care input to the function (not the output!), it means for any input combination with a given d, the output can be chosen as convenient to simplify the logic. We can use d as a "don't care" to simplify the function.
+
+To solve this:
+1. First, rewrite the Karnaugh map with explicit input combinations matching the original ordering.
+2. Mark all the cells with value 1, 0, or don't-care.
+3. Use the don't-care conditions (including all 'd' input combinations for the output and the don't-care cells in the K-map) to find minimal expressions covering all ones.
+4. Implement the resulting minimized expression.
+
+After careful mapping and simplification (or using K-map tools), the minimal SOP expression for the function is:
+
+out = b'c + a c + a b
+
+This expression covers all '1's in the Karnaugh map and respects the don't-care conditions.
+
+Implement this simple and compact expression.
+
+This approach ensures correctness, simplicity, and minimal gate usage, leading to better PPA as well.

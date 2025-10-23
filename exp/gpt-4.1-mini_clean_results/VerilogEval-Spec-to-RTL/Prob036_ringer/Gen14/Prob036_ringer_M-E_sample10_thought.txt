@@ -1,0 +1,22 @@
+A novel architectural approach is to use a single 2-to-1 multiplexer to select which device (ringer or motor) to activate, and use the ring input as an enable signal.
+
+Conceptually, create a 2-bit wire representing the outputs: bit 0 for ringer and bit 1 for motor.
+
+- When ring=0: outputs are 2'b00 (both off)
+- When ring=1: outputs are selected by vibrate_mode as the select signal to choose which bit is set.
+
+This can be done by defining a 2-bit vector with values "10" for ringer active and "01" for motor active.
+
+Then, use vibrate_mode as select to pick the corresponding bit to be asserted.
+
+Finally, assign ringer and motor outputs by splitting the selected bit accordingly.
+
+This approach consolidates the selection logic into a single vector and a single multiplexer operation, which can be efficiently implemented in hardware.
+
+Benefits:
+- Cleaner, more dataflow-oriented style
+- Simplifies logic by encoding outputs as a vector
+- Easy extensibility if more modes or outputs are added
+- Clear separation of enable (ring) and selection (vibrate_mode)
+
+This structure may assist synthesis tools in optimizing multiplexers and reduce glitches by using a single combinational assignment.

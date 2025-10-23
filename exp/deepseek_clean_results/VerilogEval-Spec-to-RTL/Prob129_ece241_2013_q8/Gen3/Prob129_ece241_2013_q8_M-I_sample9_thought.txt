@@ -1,0 +1,8 @@
+To further optimize the Mealy FSM implementation, I'll implement these improvements:
+1. Use Gray coding for state encoding to minimize bit transitions between states, reducing dynamic power
+2. Register the output z to improve timing by breaking the combinational path
+3. Simplify state transition logic by removing redundant conditions
+4. Use one-hot encoding which often synthesizes better in FPGAs (though we'll keep binary for ASIC)
+5. Add a clock gating condition when input x remains unchanged to reduce switching activity
+
+The Gray coding will be particularly effective since our state transitions are mostly sequential (IDLE->GOT1->GOT10->IDLE), which matches Gray code's single-bit change property.

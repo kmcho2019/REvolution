@@ -1,0 +1,12 @@
+Fuse the two examples by using a two-bit state held in separate registers (`falling` and `direction`) for minimal state encoding and clarity (Example 1), and integrate the explicit next-state combinational logic with a compact bump vector and case statement for better synthesis friendliness (Example 2).
+
+Key fusion points:
+- Keep asynchronous reset for immediate initialization to walking left and not falling.
+- Use separate `falling` and `direction` registers for clarity and to isolate state aspects.
+- Implement a combinational always block to calculate `next_falling` and `next_direction` based on current inputs, using a bump vector and concise case statement.
+- Update registers only on clock edge or reset, improving synthesis optimization and timing.
+- Avoid unnecessary state register toggling by only changing registers when needed.
+- Outputs remain Moore type, driven purely by state bits.
+- This fusion leverages Example 1's simplicity and resource efficiency with Example 2's structured and minimal combinational logic, improving timing, power, and clarity.
+
+This yields a clean, minimal, and easily synthesized FSM with good PPA characteristics meeting all requirements.

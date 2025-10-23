@@ -1,0 +1,12 @@
+Novel Architectural Idea:
+1. Instead of a pure down-counter, implement a saturating counter that stops at zero but with a different control mechanism
+2. Use a state machine approach with two states: IDLE (counter at zero) and COUNTING (active counting)
+3. The state transitions are:
+   - Load always takes priority and moves to COUNTING state
+   - In COUNTING state, decrement until zero, then transition to IDLE
+4. Terminal count is simply the IDLE state indicator
+5. Benefits:
+   - Clear separation of control and datapath
+   - More explicit state management
+   - Easier to extend with additional states if needed
+   - Potentially better timing as state logic is simpler than wide OR reduction

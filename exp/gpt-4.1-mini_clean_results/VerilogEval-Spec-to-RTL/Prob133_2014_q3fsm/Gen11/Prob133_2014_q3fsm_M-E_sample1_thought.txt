@@ -1,0 +1,11 @@
+Implement the FSM with three main states: A, B0, and B1. State A waits for s=1 to transition to B0. States B0 and B1 alternate each clock cycle, together counting the three cycles and accumulating w inputs using two small counters instead of packing into one register.
+
+Use a 2-bit cycle counter (0 to 2) to track the three cycles, and a 2-bit accumulator to sum w values incrementally each cycle. After the third cycle (cycle count 2), output z is asserted in the next cycle if exactly two out of three w's were high.
+
+The output z is registered and delayed by one cycle after the counting window to match specification. Use separate registers for state, cycle count, accumulator, and output for clarity.
+
+This approach avoids packing registers together, simplifying combinational logic, while the three-state FSM clarifies progression through counting cycles.
+
+The synchronous reset clears all registers. State transitions and counting only occur on positive clock edges.
+
+This design trades the minimal two-state FSM for a clearer three-state one, making cycle counting straightforward, and the accumulation logic simple and separate, thus minimizing complex combinational updates.

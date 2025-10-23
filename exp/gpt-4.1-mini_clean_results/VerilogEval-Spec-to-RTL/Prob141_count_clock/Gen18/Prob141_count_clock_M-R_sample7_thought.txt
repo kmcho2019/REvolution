@@ -1,0 +1,7 @@
+Refactor the design by separating the counting logic and BCD conversion into distinct modules to improve modularity and clarity. Use a single always block for all counters triggered on posedge clk, with synchronous reset and enable, prioritizing reset over enable as before.
+
+Instead of functions for BCD conversion, implement dedicated combinational BCD converter modules for seconds/minutes and hours. Instantiate these modules and connect the internal binary counters to them, producing BCD outputs via continuous assignments.
+
+This approach uses module hierarchy to isolate conversion logic, making the top module cleaner and enhancing reusability and potential timing optimizations via separate modules. The output BCD signals come from combinational logic derived from binary inputs. The pm signal and hour counter update logic remain as before inside the main always block.
+
+This modularization preserves the same underlying binary counters but improves code structure and may ease synthesis optimizations or verification by clear separation of concerns.

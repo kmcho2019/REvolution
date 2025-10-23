@@ -1,0 +1,5 @@
+To solve this problem, we need to design a frequency divider module named 'freq_div' in Verilog. This module will take an input clock signal 'CLK_in' and a reset signal 'RST', and generate three output clock signals 'CLK_50', 'CLK_10', and 'CLK_1' with frequencies of 50MHz, 10MHz, and 1MHz respectively.
+
+The design uses three counters to divide the input clock frequency. For 'CLK_50', we simply toggle its value on every positive edge of 'CLK_in'. For 'CLK_10' and 'CLK_1', we use counters 'cnt_10' and 'cnt_100' to divide the frequency. When the counter reaches the desired value (4 for 'cnt_10' and 49 for 'cnt_100'), we toggle the corresponding clock signal and reset the counter.
+
+We will implement this design using a single always block with a sensitivity list including 'CLK_in' and 'RST'. Inside the block, we will first check if 'RST' is active. If so, we reset all the clock signals and counters. Otherwise, we proceed with the frequency division logic.

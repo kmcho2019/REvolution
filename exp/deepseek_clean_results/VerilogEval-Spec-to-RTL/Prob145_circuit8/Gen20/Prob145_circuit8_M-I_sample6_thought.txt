@@ -1,0 +1,15 @@
+1. Waveform Analysis:
+   - p changes only when clock is high AND a changes (not on every positive edge)
+   - q appears to be a delayed version of p, but only updates when p has been stable for a full clock cycle
+   - The circuit behaves like a two-stage synchronizer with additional gating conditions
+
+2. Improved Approach:
+   - Use a transparent latch for p that only passes 'a' when clock is high
+   - Use a negative-edge triggered flip-flop for q that samples p
+   - Add a state element to track when p has been stable for a full cycle before updating q
+
+3. Implementation Strategy:
+   - Implement p as a level-sensitive latch (clock high transparent)
+   - Implement q as a negative-edge flip-flop with additional condition
+   - Add a stability detector to ensure p is stable before q updates
+   - This matches the waveform behavior where q updates only after p has been stable

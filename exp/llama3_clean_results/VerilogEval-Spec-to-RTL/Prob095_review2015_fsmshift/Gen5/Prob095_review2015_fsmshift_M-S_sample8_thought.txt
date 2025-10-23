@@ -1,0 +1,5 @@
+To simplify the given solution, we can reduce the complexity by using a single variable to track the number of clock cycles for which `shift_ena` should be enabled. When the module is reset, we initialize this variable to 3, which will cause `shift_ena` to be enabled for exactly 4 clock cycles. The `shift_ena` signal can then be directly driven by the condition whether this variable is greater than 0. On each positive clock edge, if the variable is greater than 0, we decrement it until it reaches 0, ensuring that `shift_ena` is disabled after the desired number of cycles.
+
+This approach eliminates the need for explicit conditional statements to manage the `shift_ena` signal based on the counter's value, thus simplifying the logic and reducing complexity.
+
+The key to this simplification is recognizing that the `shift_ena` signal's behavior directly depends on the counter's value in a straightforward manner, allowing us to combine the logic for enabling/disabling `shift_ena` and the counter's decrement operation into a simpler form.

@@ -1,0 +1,7 @@
+To address the synchronous HDLC framing problem, we will employ a novel architectural idea that utilizes a combination of counters and flags to detect the required sequences. The main strategy is to use two counters: one to count the number of consecutive 1s and another to count the number of consecutive 0s after 5 consecutive 1s. We will also use flags to indicate when a sequence has been detected.
+
+The counters will be incremented or reset based on the input 'in' and the current state of the counters. When the counter for consecutive 1s reaches 6, we will check the next input to determine if it's a 'flag' or an 'err' condition. If the next input is 0, we will set the 'flag' signal. If the next input is 1, we will set the 'err' signal.
+
+To detect the 'disc' signal, we will use the counter for consecutive 0s after 5 consecutive 1s. When this counter reaches 1, we will set the 'disc' signal.
+
+This approach simplifies the state machine and reduces the number of states, making it more efficient and easier to implement.

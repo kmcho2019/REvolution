@@ -1,0 +1,7 @@
+To solve this problem, we will design a module named 'width_8to16' that takes in an 8-bit data input and converts it into a 16-bit data output. The module will have two output ports: 'valid_out' to indicate the validity of the output data and 'data_out' to represent the converted 16-bit output data. 
+
+The approach involves using a flag signal to track the arrival of the first 8-bit data input. When the first valid data arrives, it is stored in a temporary register. The 'valid_out' and 'data_out' signals are generated only after the arrival of the second valid data input, at which point the two 8-bit data inputs are concatenated to form a 16-bit output. 
+
+We will use a clock signal 'clk' for synchronous operation and an active-low reset signal 'rst_n' to clear the registers when needed. The module's operation will be triggered on the positive edge of the clock signal or the negative edge of the reset signal.
+
+To implement this, we will use two registers: one to store the first arriving 8-bit data and another for the final 16-bit output. We will also use a flag signal to track the status of the data input.

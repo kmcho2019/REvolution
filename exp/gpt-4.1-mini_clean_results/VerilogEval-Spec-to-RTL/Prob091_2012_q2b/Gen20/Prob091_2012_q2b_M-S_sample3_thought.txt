@@ -1,0 +1,9 @@
+By analyzing the FSM transitions, we find:
+
+- Y1 (next input to y[1]) is high only when currently in state A (y[0]) and input w is 1, so Y1 = y[0] & w.
+
+- Y3 (next input to y[3]) is high whenever input w = 0 and the current state is B, C, E, or F (y[1], y[2], y[4], or y[5]).
+
+Since y is one-hot encoded, checking if w=0 and any of y[1], y[2], y[4], or y[5] is active is straightforward: Y3 = ~w & (y[1] | y[2] | y[4] | y[5]).
+
+This expression is simpler and more direct than the previous implementation, reducing logic and improving clarity while maintaining correct behavior.

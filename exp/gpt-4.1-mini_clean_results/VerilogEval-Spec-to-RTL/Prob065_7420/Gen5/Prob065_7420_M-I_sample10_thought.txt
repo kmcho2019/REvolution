@@ -1,0 +1,9 @@
+The current implementation cleanly uses two separate 4-input NAND gates, matching the 7420 chip. To improve power and area marginally, we can merge the two nand4 modules into one parameterized module or use a generate block to avoid code duplication, which can help maintainability but likely won't change hardware resource use significantly.
+
+However, a more direct optimization is to avoid the separate nand4 module and implement the NAND gates as simple continuous assignments directly in TopModule. This reduces module instantiation overhead and might help synthesis tools optimize better, potentially reducing area and power slightly.
+
+Moreover, since the 7420 has fixed two 4-input NAND gates, adding no extra functionality or registers is already minimal. To optimize further, removing the separate module and using direct assign statements can reduce complexity, routing, and instantiations, yielding slight power and area benefits.
+
+Timing won't be impacted since the logic is combinational and minimal.
+
+Therefore, the improved design implements the two NAND gates directly inside TopModule as continuous assignments without a separate nand4 module. This reduces hierarchy levels and may yield minor PPA improvements.

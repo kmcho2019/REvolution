@@ -1,0 +1,17 @@
+To simplify the next-state logic for y[1], we should:
+
+1. Analyze when y[1] should be 1 in the next state:
+   - From the state diagram, y[1]=1 in states D (011) and E (100)
+   - So we need to find all transitions to these states
+
+2. Key observations:
+   - Any state transitions to D when w=1 (except F which goes to D regardless)
+   - B (001) transitions to C (010) when w=0 (y[1]=1)
+   - F (101) transitions to C (010) when w=0 (y[1]=1)
+   - E (100) maintains its state when w=0 (y[1]=1)
+
+3. Simplified logic:
+   - y[1] is 1 in next state when:
+     * w=1 (transition to D) OR
+     * current state is B or F with w=0 (transition to C) OR
+     * current state is E with w=0 (stay in E)

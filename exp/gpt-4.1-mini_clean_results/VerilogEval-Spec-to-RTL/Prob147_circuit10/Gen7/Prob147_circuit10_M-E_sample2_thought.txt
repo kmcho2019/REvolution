@@ -1,0 +1,29 @@
+Instead of guessing combinational logic from the waveform directly, we will implement a Mealy-type sequential machine with one-bit state that toggles or resets based on inputs a and b, and outputs depend on both the state and inputs.
+
+By carefully analyzing the waveform:
+
+- The initial state at the first posedge clk is 0.
+- When `state`=0 and (a=0 and b=1), the next state toggles to 1.
+- When `state`=1 and (a=0 and b=0), next state remains 1.
+- When `state`=1 and (a=1 and b=1), next state resets to 0.
+- In other cases, state either holds or changes accordingly.
+- Output `q` follows the current state and inputs by:
+   - q=1 when the current state is 1 and a=0,
+   - or when current state is 1 and b=0,
+   - or when current state is 0 and a=1 and b=1.
+
+This logic can be captured by defining next state and output q as:
+
+- next_state = (state & ~(a & b)) | (~state & b & ~a);
+  This means:
+  - Stay in state 1 if not (a=1 and b=1)
+  - From state 0, go to 1 if b=1 and a=0.
+- q = (state & (~a | ~b)) | (~state & a & b);
+
+This matches waveform behavior closely.
+
+No asynchronous reset is used since waveform initial states are unknown.
+
+The `state` is registered on the positive edge of clk; `q` is combinational.
+
+This approach captures toggling, setting, and resetting behavior as deduced from the waveform and is structurally simple yet precise.

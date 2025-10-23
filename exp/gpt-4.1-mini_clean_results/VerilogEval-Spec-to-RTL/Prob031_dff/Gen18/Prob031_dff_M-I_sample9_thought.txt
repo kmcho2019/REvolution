@@ -1,0 +1,9 @@
+Since the existing design is already minimal and clean, with modular separation and synthesis-friendly coding style, the main avenues for improving PPA lie outside the basic flip-flop logic. However, a small enhancement can be made to reduce unnecessary toggling: adding an enable condition that only updates the output `q` when the input `d` changes. This can slightly reduce dynamic power by avoiding redundant register toggling, especially if `d` often remains constant.
+
+To keep modularity, I will add an enable signal internally computed as (d != q), and update q only when enable is true. This doesn't change functional behavior but may reduce toggles and dynamic power in some synthesis and power analysis tools.
+
+No change to interface is made. This selective update is safe and standard for power optimization.
+
+No other structural changes are needed as area and timing are already optimal for a single flop.
+
+Thus, the improved DFF only updates q when d differs from q, reducing unnecessary toggles and potentially lowering power slightly, with no impact on functional correctness or timing.

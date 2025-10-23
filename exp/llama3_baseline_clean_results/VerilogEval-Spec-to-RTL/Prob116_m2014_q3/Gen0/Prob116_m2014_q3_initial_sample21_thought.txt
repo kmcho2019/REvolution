@@ -1,0 +1,13 @@
+To implement the function f in the TopModule, we need to analyze the Karnaugh map and find the minimum sum of products (SOP) or product of sums (POS) expression that represents the function. Since the Karnaugh map has don't-care values, we need to consider the values that minimize the expression. Looking at the map, we can see that the function can be represented as the sum of products of certain minterms.
+
+First, let's identify the minterms:
+- When x[3]x[0] = 01 and x[1]x[2] = 11, f = 1.
+- When x[3]x[0] = 11 and x[1]x[2] = 00, f = 1.
+- When x[3]x[0] = 11 and x[1]x[2] = 01, f = 1.
+- When x[3]x[0] = 10 and x[1]x[2] = 00, f = 1.
+
+However, looking closely at the Karnaugh map, a simpler expression can be derived by considering the cases where the function is 1:
+- When x[3] = 1 and x[1] = 0, f = 1 (irrespective of x[0] and x[2] due to the pattern and don't-care values).
+- When x[0] = 1 and x[2] = 1, f = 1 (for the case where x[3]x[0] = 01).
+
+Thus, we can express the function as: f = (x[3] & ~x[1]) | (x[0] & x[2]).

@@ -1,0 +1,13 @@
+Refactoring Strategy:
+1. State Encoding: Switch from binary to one-hot encoding for better timing (reduces fan-out)
+2. Power Optimization: Only update 'done' and output registers when necessary
+3. Area Reduction: Use a shift register approach for out_bytes storage
+4. Combinational Logic: Move state transitions to combinational block for clarity
+5. Output Handling: Use continuous assignment for out_bytes to make it clear when outputs are valid
+
+Key Changes:
+- One-hot state encoding (4 states: IDLE, BYTE1, BYTE2, BYTE3)
+- Separate combinational and sequential always blocks
+- Shift register implementation for out_bytes
+- Explicit output validity through done signal
+- Reduced register updates by only storing when needed

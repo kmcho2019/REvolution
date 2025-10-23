@@ -1,0 +1,18 @@
+Fuse the succinctness and area efficiency of a direct case-based multiplexer from Example 1 with the power-aware gating technique from Example 2 by using a simple combinational always block with a case statement, but also include minimal gating on the constant output to avoid unnecessary toggling. This approach:
+
+- Uses a case statement for clear, low-delay, low-area multiplexing.
+- Implements direct assignment for b, e, a, d inputs without extra AND gating, as these are dynamic inputs that must reflect instantly.
+- For the constant output 4'hF (for c≥4), uses an explicit gated enable to avoid toggling constant wires unnecessarily.
+- Avoids complicated one-hot decoding or replicated signals, reducing area and switching.
+- Provides a clean and intuitive behavioral implementation easy for synthesis tools to optimize efficiently.
+
+This fusion balances minimal logic depth and power, reducing the logic needed for selection while gating only the constant output to minimize its switching power.
+
+The functional behavior is:
+- q = b if c==0
+- q = e if c==1
+- q = a if c==2
+- q = d if c==3
+- q = 4'hF otherwise (c≥4)
+
+This design leverages the best of both examples: low logic depth from Example 1, plus power saving on the constant output from Example 2.

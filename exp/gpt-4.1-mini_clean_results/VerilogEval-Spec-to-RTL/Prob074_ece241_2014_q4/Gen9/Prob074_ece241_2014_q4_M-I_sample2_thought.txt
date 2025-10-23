@@ -1,0 +1,17 @@
+The original design meets the functional requirements and simulation semantics but has two main synthesis-related issues:
+
+1. Lack of an explicit reset signal means flip-flops cannot be initialized to zero in real hardware, only in simulation via the initial block. This can lead to unpredictable initial states post-synthesis and cause output mismatches in hardware.
+
+2. Each flip-flop's next state input depends on its own output, creating a combinational feedback loop. Although correct logically, this feedback can increase the critical path delay and reduce maximum achievable clock frequency.
+
+To improve the design for real hardware implementation and optimize PPA, I will:
+
+- Introduce a synchronous reset input (`rst`) to initialize the flip-flops to zero reliably on hardware startup. This does not change FSM functionality but ensures deterministic startup.
+
+- Keep the combinational logic separated from flip-flop registers for clarity.
+
+- Since the problem does not specify a reset input, I will add one with a note that it can be tied low if not needed. This change ensures synthesizability without changing the original FSM behavior apart from initial state control.
+
+- Optionally, to reduce the critical path, the combinational logic can be optimized slightly, but here the logic depth is minimal, so the main benefit is adding reset.
+
+This approach ensures correct initial conditions in hardware, better synthesis results, and no change to the FSM's logical functionality.

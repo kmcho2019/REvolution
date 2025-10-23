@@ -1,0 +1,5 @@
+The original design works correctly but can be simplified for better PPA by:
+- Using a single 1-bit state that also doubles as the walk_right signal, so walk_left is simply the inverse, reducing output logic.
+- Combining bump_left and bump_right conditions into a single expression to minimize combinational logic complexity.
+- Handling the "bump on both sides" condition uniformly by inverting the current state whenever either bump is detected (since any bump triggers a direction switch).
+- This reduces logic depth, LUT count, and power by minimizing the combinational next_state logic and output logic.

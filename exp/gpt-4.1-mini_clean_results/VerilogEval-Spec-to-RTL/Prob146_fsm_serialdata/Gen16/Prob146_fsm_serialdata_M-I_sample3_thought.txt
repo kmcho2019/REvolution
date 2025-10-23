@@ -1,0 +1,19 @@
+To improve the PPA metrics of the existing design, focus on reducing toggling and simplifying combinational logic. Key optimizations include:
+
+1. Clock enable gating: Only update the shift register and bit counter during RECEIVE state, preventing unnecessary toggling in other states.
+
+2. Simplify the shift operation by shifting left (data comes LSB first, so data bits shift into bit 0). This often leads to simpler logic (shift_reg <= {in, shift_reg[7:1]}) or (shift_reg <= {shift_reg[6:0], in}). The original code shifts right with MSB input, but shifting left with LSB input is more intuitive since LSB first is transmitted. Use shift_reg <= {in, shift_reg[7:1]} if shifting right, or shift_reg <= {shift_reg[6:0], in} if left shifting and capturing LSB first bit.
+
+3. Use one-hot encoding for FSM states to reduce combinational logic depth, which can improve timing slack.
+
+4. Implement done signal as a pulse generated only during the CHECK_STOP state when stop bit is detected, and keep done low otherwise to reduce toggling.
+
+5. Hold outputs stable outside the done pulse cycle to reduce toggling on outputs.
+
+6. Use a synchronous clear for bit_cnt and shift_reg only when entering RECEIVE state or on reset, minimizing unnecessary resets.
+
+The resulting FSM states will be one-hot encoded as IDLE=4'b0001, RECEIVE=4'b0010, CHECK_STOP=4'b0100, RECOVER=4'b1000.
+
+By gating updates and using one-hot FSM, the critical path is expected to improve, switching activity is reduced, and area overhead of encoding is minimal given the small number of states.
+
+This solution preserves the required functionality, start bit detection, data shifting LSB first, stop bit verification, done pulse, and recovery on error.

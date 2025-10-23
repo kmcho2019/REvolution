@@ -1,0 +1,52 @@
+To optimize the design for better power and area, I will focus on simplifying the logic for Y3 by re-expressing it to minimize inverters and AND gates, reducing switching activity and gate count.
+
+Starting from the FSM transitions and one-hot encoding:
+
+Y3 corresponds to the next input for y[3] (state D).
+
+From the transitions:
+
+- A(0) --0--> A(0)  (no direct to D)
+- B(0) --0--> D(3)
+- C(0) --0--> D(3)
+- D(0) --0--> A(0)
+- E(1) --0--> D(3)
+- F(1) --0--> D(3)
+
+So, D is entered when (from B,C,E,F states) and w=0
+
+Expressed in terms of states:
+
+Y3 = (B & ~w) | (C & ~w) | (E & w & 0 ?) Actually E's transition to D on input 0, and E requires w=1 to stay E, so when w=0, from E go to D.
+
+Actually, careful:
+
+- B(0): on 0 -> D
+- C(0): on 0 -> D
+- D(0): on 0 -> A, no D input here.
+- E(1): on 0 -> D
+- F(1): on 0 -> D
+
+So, Y3 = (~w) & (y[1] | y[2] | y[4] | y[5]) where states B=1, C=2, E=4, F=5
+
+This is:
+
+Y3 = (~w) & (y[1] | y[2] | y[4] | y[5])
+
+This expression uses only one inverted input (~w) and a four-input OR gate on state bits, which is simpler and potentially less toggling than the previous Y3 = ~w & ~y[0] & ~y[3].
+
+I will implement this minimal and clear expression for Y3.
+
+For Y1:
+
+Y1 = y[0] & w (state A, input 1 leads to B), which is already minimal.
+
+This approach removes multiple negations of y bits and replaces them with a simple OR of positive signals, reducing inverter count and logic depth for Y3.
+
+This will reduce switching and area slightly.
+
+The code will remain modular, with localparams for readability.
+
+No complex gating needed since inputs y and w are one-hot state and control input.
+
+Overall, this optimization should improve power and area marginally by reducing inverter use and simplifying logic for Y3, while maintaining correctness.

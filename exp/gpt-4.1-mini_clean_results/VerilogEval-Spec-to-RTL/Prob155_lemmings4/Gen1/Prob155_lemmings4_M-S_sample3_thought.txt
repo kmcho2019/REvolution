@@ -1,0 +1,15 @@
+Use a simpler FSM encoding with direction (1 bit: 0=left, 1=right) and activity mode encoded separately: walking, digging, falling, splattered.  
+The direction bit remains unchanged while falling or digging, only flips on bump when walking.  
+Fall timer is a 5-bit counter incremented only during falling.  
+On reset, set walking left, fall timer=0, not splattered.  
+Transitions prioritize:  
+1) If splattered, stay splattered.  
+2) If falling and ground reappears: if fall_timer>20 then splatter else resume walking same direction. Else increment fall timer.  
+3) Else if walking and ground lost: start falling with fall timer=1.  
+4) Else if walking and dig=1: start digging.  
+5) Else if walking and bumped: flip direction.  
+6) Else if digging and ground lost: start falling with fall timer=1.  
+7) Else continue current mode and direction.  
+Outputs depend on mode and direction.  
+Use minimal logic and one always_ff block with combinational next state logic, no enum needed, just a few parameters.  
+This reduces state encoding from 3-bit enum to two small variables and simplifies next state logic.

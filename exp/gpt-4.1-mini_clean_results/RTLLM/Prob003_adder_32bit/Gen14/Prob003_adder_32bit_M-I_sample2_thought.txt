@@ -1,0 +1,12 @@
+To improve the original 32-bit CLA adder design for better PPA metrics, I will implement a hierarchical carry-lookahead within each 16-bit CLA block to reduce the carry propagation delay and hence improve timing. This is achieved by dividing the 16-bit block into four 4-bit CLA sub-blocks with their own propagate and generate signals and then using a block-level carry lookahead logic to compute carries in parallel. This hierarchical approach reduces the critical path from linear (ripple inside 16-bit) to logarithmic by handling carries in groups, speeding up the carry computation and reducing overall delay.
+
+The top-level 32-bit adder still uses two instances of these improved 16-bit CLA blocks with carry chaining.
+
+This hierarchy also reduces switching power by limiting the carry signal fanout and number of sequential carry dependencies and will modestly reduce area by logic sharing of group signals.
+
+I will provide the following:
+- A 4-bit CLA submodule to handle small blocks
+- A 16-bit CLA module built from four 4-bit CLA blocks with group generate/propagate logic and carry-lookahead for groups
+- The 32-bit adder instantiates two 16-bit CLA blocks with proper carry chaining
+
+This improves timing significantly while keeping area and power reasonable.

@@ -1,0 +1,18 @@
+Analyze both examples:
+- Example 1 uses one-hot selects with gating inputs and OR'ing the results, reducing switching on unselected inputs and improving power.
+- Example 2 uses a case statement combined with gating inputs, simplifying control flow and clarifying intent.
+
+To fuse these:
+1. Use a compact case statement on input 'c' to reduce comparator overhead and minimize logic depth, improving performance.
+2. Within each case, gate the selected input by AND'ing with a one-hot select to reduce switching on unselected inputs, improving power.
+3. For the default case (c > 3), assign the constant 4'hF directly.
+4. Combine gated inputs with bitwise OR inside the case branches, so that only the selected input’s signals switch.
+5. Use combinational always block with reg output for clearer semantics and easier mapping to mux primitives.
+
+This approach:
+- Minimizes logic levels and multiplexers, improving timing.
+- Reduces switching on unselected inputs, lowering power.
+- Simplifies the comparator logic by using only one comparator for c>3 and a case statement for c ≤ 3.
+- Clearly expresses the functionality, aiding readability and maintainability.
+
+Overall, this fusion combines the gating power optimization of Example 1 with the clean control structure and minimal comparators of Example 2, resulting in a balanced, optimized, and clear implementation.

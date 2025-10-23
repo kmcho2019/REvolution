@@ -1,0 +1,7 @@
+The original design is correct and clear but can be optimized to improve power and timing by simplifying the 'stable_ground' signal and reducing unnecessary updates of 'prev_ground'. Instead of sampling 'ground' every cycle, we can treat 'ground' as synchronous input and detect falling edges within the FSM by comparing current and next states. This removes the 'prev_ground' register, reducing toggle power and combinational logic.
+
+Also, we can fold the bump logic into a simplified direction assignment, since direction only changes when walking on ground and bumped. Using a single if-else cascade with priority and compacting direction change logic helps improve synthesis results.
+
+Finally, we keep the asynchronous reset and Moore FSM style as per spec, but avoid the explicit 'prev_ground' register, using 'ground' and FSM states only.
+
+This yields fewer registers, simpler combinational paths, and reduced power from eliminating 'prev_ground' toggling, improving overall PPA without changing functionality.

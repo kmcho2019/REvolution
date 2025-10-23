@@ -1,0 +1,12 @@
+// TopModule: 1-bit 2-to-1 Multiplexer using conditional operator
+
+module TopModule (
+    input  wire a,
+    input  wire b,
+    input  wire sel,
+    output wire out
+);
+
+assign out = sel ? b : a;
+
+endmodule

@@ -1,0 +1,8 @@
+Implement a radix-2 non-restoring divider with a simple FSM that sequentially performs the division over 8 cycles.  
+At opn_valid, capture and compute absolute values of dividend and divisor, handle sign flags, and initialize a 17-bit shift register (partial remainder + quotient).  
+On each cycle, shift left the shift register by 1 and add or subtract the divisor based on the sign of the partial remainder.  
+After 8 cycles, perform a final correction if the remainder is negative, then apply sign corrections to the quotient and remainder.  
+Output the result with remainder in upper 8 bits and quotient in lower 8 bits, and assert res_valid.  
+Use minimal intermediate signals and keep all variables declared at module scope to avoid synthesis errors.  
+Reset clears all registers and output.  
+The design uses a single always block triggered on clk and rst.

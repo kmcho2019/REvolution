@@ -1,0 +1,19 @@
+To optimize the frequency divider for better PPA (Power, Performance, Area), I'll implement these improvements:
+
+1. Cascade the clock dividers to reduce critical path length and area:
+   - Derive 10MHz from 50MHz instead of 100MHz
+   - Derive 1MHz from 10MHz instead of 100MHz
+   This reduces the number of flip-flops switching at the highest frequency.
+
+2. Implement clock gating for the higher frequency dividers to reduce power consumption:
+   - Only enable counters when they need to increment
+   - Use clock enable signals to prevent unnecessary toggling
+
+3. Optimize counter logic:
+   - Use down-counters with terminal count detection
+   - Share comparator logic where possible
+   - Use pre-calculated constants to reduce runtime calculations
+
+4. Stagger reset signals to reduce peak current during reset.
+
+This approach should improve timing, reduce power consumption, and decrease area usage while maintaining the same functionality.

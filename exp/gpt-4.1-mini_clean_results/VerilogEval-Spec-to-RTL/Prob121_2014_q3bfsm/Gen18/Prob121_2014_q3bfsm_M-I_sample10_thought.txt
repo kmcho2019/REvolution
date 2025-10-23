@@ -1,0 +1,14 @@
+To optimize the FSM for better power and timing, I will apply Gray code encoding to the states. Gray code reduces the number of bit transitions between states, which can lower dynamic power consumption. This also can improve timing by reducing glitching in combinational logic and the state register. The FSM only has 5 states, so encoding them with a 3-bit Gray code is straightforward.
+
+I will update the state encodings accordingly, adjust the next state logic and output assignments, and keep the synchronous reset and the same FSM behavior.
+
+This change keeps the design modular and clear while improving PPA through reduced switching activity. No structural logic changes or extra pipeline stages are added to keep minimal area increase and complexity.
+
+The Gray code states used here are:
+S0 = 3'b000 (0)
+S1 = 3'b001 (1)
+S2 = 3'b011 (3)
+S3 = 3'b010 (2)
+S4 = 3'b110 (6)
+
+I will update the next state transitions and output logic accordingly to reflect this new encoding.

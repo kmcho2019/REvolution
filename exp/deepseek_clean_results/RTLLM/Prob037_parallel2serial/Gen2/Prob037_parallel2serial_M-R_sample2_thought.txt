@@ -1,0 +1,13 @@
+The refactored implementation will use a state machine approach with explicit state transitions for better clarity and control. Key improvements:
+
+1. Replace the counter with a 4-state FSM (IDLE, BIT0, BIT1, BIT2, BIT3) for precise timing control
+2. Use continuous assignments for outputs where possible
+3. Explicit state transitions ensure proper timing of valid_out and data shifting
+4. Clear separation between control logic and data path
+5. Maintain MSB-first output order with proper shifting
+6. Reset puts the system in IDLE state
+7. State transitions occur on every clock cycle
+8. Parallel data is captured when entering BIT0 state
+9. valid_out is high during all active output states (BIT0-BIT3)
+
+The state machine ensures correct timing and eliminates counter-related issues while maintaining the same functionality.

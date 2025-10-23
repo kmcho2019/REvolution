@@ -1,0 +1,7 @@
+Simplify the design by directly using the multiplier (bin) as the multiplicand register to shift and test bits, and accumulating the multiplicand (ain) shifted accordingly. This reduces the number of registers and shifting operations.
+
+Use a 5-bit counter (i) to count from 0 to 16. When i=0, load inputs; for i=1 to 16, check the least significant bit of the multiplier register. If it is 1, add the multiplicand shifted by i-1 to the product accumulator. Then shift the multiplier right by 1 bit each cycle.
+
+The done flag is asserted when i reaches 16 and cleared when i=17 or start is deasserted.
+
+This approach eliminates the separate breg register and large shifts per cycle, relying instead on shifting the multiplier right and shifting the multiplicand by the counter value when adding, minimizing complexity while maintaining functionality.

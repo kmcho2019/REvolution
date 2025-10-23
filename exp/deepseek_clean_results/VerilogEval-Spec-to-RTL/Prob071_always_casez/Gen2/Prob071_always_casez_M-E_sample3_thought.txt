@@ -1,0 +1,7 @@
+A novel approach to implement the priority encoder is to use a logarithmic search structure. Instead of checking bits sequentially, we can divide the 8-bit input into hierarchical groups and use parallel comparisons to find the highest priority set bit. This method reduces the critical path by breaking the long chain of dependencies. The idea is:
+1. First check if any of the lower 4 bits are set (bits 0-3)
+2. If yes, find the exact bit within this group using parallel comparisons
+3. If not, check the upper 4 bits (bits 4-7) and find the exact bit there
+4. This creates a two-level hierarchy with parallel comparisons at each level
+5. The output is constructed based on which group contains the first set bit
+This approach should offer better timing characteristics while maintaining correct functionality.

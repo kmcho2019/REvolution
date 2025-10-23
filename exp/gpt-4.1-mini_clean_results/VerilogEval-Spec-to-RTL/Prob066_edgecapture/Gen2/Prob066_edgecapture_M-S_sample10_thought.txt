@@ -1,0 +1,10 @@
+To simplify while maintaining functionality, I will keep the core idea of capturing each 1->0 transition on each bit and latching it in the output until reset.
+
+I will:
+- Initialize both `prev_in` and `out` to zero on synchronous reset, which is a simpler reset behavior.
+- Keep a single always block triggered on the positive clock edge.
+- Detect transitions by comparing `prev_in` to `in` on each bit (1->0 transitions).
+- Update `out` by OR-ing detected transitions to latch them.
+- Update `prev_in` to the current `in` at every clock cycle.
+  
+This approach reduces logic and state initialization complexity while fulfilling the required functionality.

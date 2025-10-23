@@ -1,0 +1,13 @@
+To refactor the existing code, we will simplify the state machine by merging some of the logic and using more efficient coding techniques. The main idea is to use a single-bit encoding for the states and simplify the control logic.
+
+We will use a single state machine that combines the functions of the x_sequence_detector and control_g modules. This state machine will have six states:
+- `IDLE`: The initial state.
+- `F_SET`: The state where f is set to 1.
+- `X_SEQ_DETECT_1`: The state where the first 1 in the x sequence is detected.
+- `X_SEQ_DETECT_0`: The state where the 0 in the x sequence is detected.
+- `X_SEQ_DETECT_2`: The state where the second 1 in the x sequence is detected.
+- `G_CTRL`: The state where g is controlled based on the y input.
+
+We will use a counter to monitor the y input in the G_CTRL state. If y becomes 1 within two clock cycles, we will set g to 1 permanently. If y does not become 1 within two clock cycles, we will set g to 0 permanently.
+
+We will also use `assign` statements instead of `always` blocks where possible to simplify the code and reduce the number of combinational logic gates.

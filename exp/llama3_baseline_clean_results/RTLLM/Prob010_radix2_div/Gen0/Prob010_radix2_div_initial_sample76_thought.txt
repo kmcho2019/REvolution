@@ -1,0 +1,7 @@
+To implement the simplified radix-2 divider, we will design a module that performs division on 8-bit signed or unsigned integers. The module will have input ports for the clock signal, reset signal, sign indicator, dividend, divisor, and operation validity. It will have output ports for result validity and the 16-bit result containing the quotient and remainder. 
+
+We will initialize the shift register SR with the absolute value of the dividend shifted left by one bit and set NEG_DIVISOR to the negated absolute value of the divisor when the operation is valid and the result is not yet valid. 
+
+The division process will start when the counter is set to 1, and the start_cnt flag is high. We will iterate through the division process until the counter reaches 8. In each iteration, we will compute the subtraction of NEG_DIVISOR from the shift register SR, update SR based on the subtraction result, and increment the counter.
+
+Once the division is complete, we will clear the counter and the start_cnt flag, update the shift register SR with the final remainder and quotient, and assert the result validity signal.

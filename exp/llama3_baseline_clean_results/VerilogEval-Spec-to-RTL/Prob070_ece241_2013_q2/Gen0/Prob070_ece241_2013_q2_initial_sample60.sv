@@ -1,0 +1,16 @@
+module TopModule(
+    input  a,
+    input  b,
+    input  c,
+    input  d,
+    output out_sop,
+    output out_pos
+);
+
+// Minimum sum-of-products form for out_sop
+assign out_sop = (b & ~a & ~c & ~d) | (~a & b & c & d) | (a & b & c & d);
+
+// Minimum product-of-sums form for out_pos
+assign out_pos = (b | ~a) & (~a | c | d) & (a | b | c | d);
+
+endmodule

@@ -1,0 +1,12 @@
+To improve PPA, especially power and timing, I will optimize the output mux to reduce glitches and critical path delay. Instead of continuously multiplexing based on the clock level, I will:
+
+- Register the mux select signal to align with the clock edges and avoid direct combinational mux switching based on the asynchronous clock level.
+- Use an intermediate mux select that switches only at clock edges, minimizing glitching and critical path delay in the mux.
+- Implement a small synchronizer of the clock level signal sampled at the clock edge to generate the mux select signal, reducing glitches and improving timing.
+- This approach adds one flip-flop in the output path but reduces mux glitches and critical path delays, improving timing and power.
+
+This preserves the dual-edge flip-flop functionality without using unsupported sensitivity lists, still uses only positive/negative edge-triggered flip-flops, and makes the output mux glitch-free and timing-friendly.
+
+The area overhead is minimal, the power consumption is reduced due to fewer glitches, and the performance improves as the mux select changes synchronously rather than asynchronously with clock level.
+
+The existing EdgeFF module remains for clarity and modularity.

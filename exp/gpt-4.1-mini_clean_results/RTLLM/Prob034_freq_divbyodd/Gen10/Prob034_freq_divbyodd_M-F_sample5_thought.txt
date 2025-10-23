@@ -1,0 +1,20 @@
+The key issue was toggling clk_div1 and clk_div2 both at the half and full counts within the same counting cycle, which doubled the toggling rate and distorted the output frequency. To fix this, each toggle signal should only toggle once per full cycle:
+
+- On the positive edge, `cnt1` counts from 0 to NUM_DIV-1.
+- At the half count (HALF_DIV), toggle `clk_div1`.
+- On the negative edge, `cnt2` counts similarly.
+- At the half count, toggle `clk_div2`.
+- Do not toggle at the terminal count to avoid double toggling.
+- Reset counters at terminal count.
+
+Since NUM_DIV is odd, `HALF_DIV = NUM_DIV / 2` will be an integer (floor division), correctly splitting the cycle.
+
+By toggling `clk_div1` and `clk_div2` each only once per half cycle but on opposite clock edges, the OR of the two signals produces a divided clock output of frequency input/NUM_DIV with roughly 50% duty cycle.
+
+This fix aligns the toggling frequency with the desired division ratio and avoids glitches or overlaps on the OR gate output.
+
+Additionally, asynchronous reset clears counters and toggles.
+
+A compile-time check ensures NUM_DIV is odd.
+
+This approach strictly follows the original requirement while correcting the toggling logic per the feedback.

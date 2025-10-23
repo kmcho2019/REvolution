@@ -1,0 +1,14 @@
+Refactored design approach:
+1. Maintain the same 4-state FSM but implement with separate always blocks for state transitions and output logic
+2. Use explicit cycle counting with a dedicated counter for 1000-cycle chunks
+3. Simplify pattern detection with a shift register and exact match comparison
+4. Calculate total cycles using shift-and-add multiplication (more hardware efficient)
+5. Generate count output by tracking remaining delay chunks
+6. Implement done/ack handshake with clear state transitions
+
+Key improvements:
+- Separate combinational and sequential logic for better readability
+- More accurate cycle counting with dedicated sub-counters
+- Explicit pattern matching with shift register
+- Efficient multiplication using shift-and-add
+- Clear state transitions with minimal conditions

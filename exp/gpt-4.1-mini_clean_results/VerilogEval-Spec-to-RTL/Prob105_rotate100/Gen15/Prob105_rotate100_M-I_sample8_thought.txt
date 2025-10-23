@@ -1,0 +1,9 @@
+To improve the existing design's power efficiency and timing, add an explicit synchronous clock enable signal that only registers new values when either loading or rotating (ena==2'b01 or 2'b10). This reduces unnecessary toggling of the 100-bit register when the output remains unchanged, lowering dynamic power.
+
+Also, replace the case statement with a two-level conditional to simplify logic and potentially ease synthesis optimization by avoiding a full multiplexer with four inputs. This could marginally improve timing by reducing mux complexity.
+
+The rotation logic itself remains compact with vector slicing and concatenation, as it is already efficient.
+
+Finally, keep the combinational next-state calculation separate from the sequential update for clarity and maintainability.
+
+Overall, the enhancement is aimed at power reduction and slight timing gain by gating register updates.

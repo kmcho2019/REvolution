@@ -1,0 +1,14 @@
+To properly implement a pipelined 64-bit ripple carry adder with multiple stages:
+1. Divide the 64-bit addition into 4 pipeline stages of 16 bits each
+2. Each stage will process 16 bits of the addition with proper carry propagation
+3. Implement registers between stages to pipeline the partial sums and carries
+4. Pipeline the enable signal through all stages to synchronize with the result
+5. Maintain the 65-bit output to include the final carry bit
+6. Reset all registers synchronously when rst_n is low
+
+The implementation will:
+- Break the addition into 4 stages (0-15, 16-31, 32-47, 48-63)
+- Register partial sums and carries between stages
+- Pipeline the enable signal through all stages
+- Output the final result with proper o_en timing
+- Maintain correct reset behavior for all registers

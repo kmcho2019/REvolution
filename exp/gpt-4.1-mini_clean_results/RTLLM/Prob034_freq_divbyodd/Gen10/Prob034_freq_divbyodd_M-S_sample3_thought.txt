@@ -1,0 +1,11 @@
+To simplify the frequency divider for odd division while maintaining functionality, use a single counter and generate the divided clock by toggling output signals on both edges of the input clock. 
+
+The approach:
+- Use one counter incremented on the rising edge of clk, counting from 0 to NUM_DIV-1.
+- Toggle an output register (clk_div) at counts corresponding to half of NUM_DIV and the full NUM_DIV count, but distributed between rising and falling edges.
+- Specifically, toggle clk_div on the rising edge when count reaches half the division count, and toggle again on the falling edge when count resets to zero.
+- This approach creates an output clock with a frequency divided by the odd NUM_DIV and reasonable duty cycle, using only one counter and one output register.
+- Include an asynchronous active low reset to initialize the counter and output clock.
+- Add a compile-time assertion to ensure NUM_DIV is odd.
+
+This approach reduces complexity by eliminating dual counters and dual divided clocks, yet retains the desired frequency division for odd divisors.

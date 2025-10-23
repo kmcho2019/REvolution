@@ -1,0 +1,11 @@
+To strictly meet the requirement that valid_out and data_out are generated exactly one cycle after receiving the second valid input, the design needs a one-cycle output pipeline stage.
+
+Improvement strategy:
+- Keep the two states: IDLE (waiting for first valid input), WAIT_SECOND (waiting for second valid input).
+- When the first valid input arrives in IDLE, store it in a register and move to WAIT_SECOND.
+- When the second valid input arrives in WAIT_SECOND, immediately store the concatenated 16-bit data in a "next stage" register.
+- Introduce dedicated output registers valid_out and data_out which are only updated on the next clock cycle, so output is guaranteed to appear one cycle after receiving the second byte.
+- This separates input capture and output generation cleanly and avoids combinational feedback or glitches.
+- Reset clears all registers, including outputs.
+
+This approach aligns the output timing precisely with the specification, improves robustness, and avoids glitches, ensuring the output is always registered exactly one cycle after the second input is received.

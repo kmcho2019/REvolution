@@ -1,0 +1,11 @@
+Here's an alternative approach using a more mathematical/logic-based implementation rather than case statements:
+1. Represent the state transitions as Boolean equations derived from the truth table
+2. For each next_state bit (next_state[1] and next_state[0]), derive the logic equation based on current state and input
+3. Similarly, derive the output equation based on current state
+4. Implement these equations directly using bitwise operations
+5. This approach may offer better optimization opportunities for synthesis tools as it exposes the underlying logic structure
+
+The equations derived are:
+next_state[1] = (~state[1] & state[0] & ~in) | (state[1] & ~state[0] & in) | (state[1] & state[0] & ~in)
+next_state[0] = (~state[1] & ~state[0] & in) | (~state[1] & state[0]) | (state[1] & state[0] & in)
+out = state[1] & state[0]  // Only true for state D (11)

@@ -1,0 +1,14 @@
+From the waveform, it appears the one-bit state flip-flop acts as a state memory, updated at each positive clock edge based on the inputs 'a' and 'b' and the current 'state'. The output 'q' is a combinational function of 'a', 'b', and 'state'. 
+
+Observing the transitions:
+- The state updates as the next state depending on inputs a and b and current state.
+- The output q is high only for specific combinations of inputs and state, not necessarily equal to state.
+
+To implement this, I will:
+1. Use a registered 'state' that updates at posedge clk with a next_state logic.
+2. Encode the next_state logic as a function of 'a', 'b', and current 'state' using an if-else ladder.
+3. Compute output 'q' as a combinational function of 'a', 'b', and 'state' (different from just passing state).
+
+This explicit separation of next_state update and combinational output will fit the waveform more precisely.
+
+The key architectural difference is that 'q' is not tied to 'state' but computed combinationally from inputs and state. The state register holds memory of the system and updates synchronously.

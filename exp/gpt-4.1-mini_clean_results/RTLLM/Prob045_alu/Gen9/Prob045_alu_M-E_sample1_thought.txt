@@ -1,0 +1,17 @@
+I will implement the ALU by modularizing the arithmetic and logical operations and explicitly separating signed and unsigned operations. Instead of performing addition and subtraction in one combined unit, I will create separate adder and subtractor signals with direct addition and subtraction operators, relying on Verilog synthesis to optimize. 
+
+Shift operations will be handled using Verilog shift operators directly, with the shift amount selected from the appropriate operand bits depending on the instruction (immediate shifts use 'a[4:0]', variable shifts use 'a[4:0]' as shift amount and 'b' as the value to shift).
+
+The flag output will be strictly driven only for SLT and SLTU instructions, otherwise zero, avoiding high impedance or unnecessary toggling.
+
+Carry and overflow are only meaningful for ADD, ADDU, SUB, SUBU; for other operations, they will be zero.
+
+Overflow detection will be done explicitly for signed add and sub using standard conditions.
+
+Zero and negative flags will be generated from the result 'r'.
+
+For LUI, the immediate is shifted left by 16 bits, so I will take the lower 16 bits of 'a' and shift them to the upper half of 'r'.
+
+All unrecognized opcodes will output zero rather than 'z' for synthesis friendliness.
+
+This approach yields a clean, readable, and well-structured ALU design with explicit, separated logic for arithmetic, logical, shift, and set operations, and clear flag outputs.

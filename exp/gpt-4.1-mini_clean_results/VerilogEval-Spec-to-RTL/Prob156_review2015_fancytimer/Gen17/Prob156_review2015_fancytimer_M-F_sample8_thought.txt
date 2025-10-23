@@ -1,0 +1,15 @@
+Fix pattern detection by clearly defining that the newest input bit is shifted into the LSB of the pattern_shift register, so the oldest bit is MSB. Shift pattern_shift right each cycle by one, inserting new data bit at MSB. Detect pattern 1101 with correct bit order.
+
+Load the 4 delay bits MSB-first by shifting left and inserting the new bit at LSB, but since the problem states MSB first, the first received bit should be delay[3], so shift left and insert at LSB is correct.
+
+Initialize counting counters explicitly on entering the COUNT state, detected by comparing current and next state transitions so initialization happens once.
+
+Simplify the counting logic: a 10-bit cycle_counter counts down 999..0 representing 1000 cycles per segment; a 4-bit segment_counter counts down the number of remaining segments (delay + 1) times.
+
+While counting, the output `count` reflects the segment_counter (segments left minus one) during the current 1000-cycle segment; it decrements every 1000 cycles. When counting completes, assert done and wait for ack.
+
+In non-SEARCH states, freeze pattern_shift so no further data bits are accepted until returning to SEARCH.
+
+Reset synchronously initializes all state and registers.
+
+This approach ensures the correct bit order in pattern detection and delay loading, a reliable one-time init of counters at COUNT state entry, proper countdown of timer segments and cycles, and proper done and ack wait behavior.

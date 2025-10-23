@@ -1,0 +1,17 @@
+The existing code implements a finite state machine (FSM) to identify correctly received bytes from a stream of bits in a serial communication protocol. The protocol uses a start bit, 8 data bits, and a stop bit. The FSM resets the 'done' signal in the same always block as the rest of the logic to avoid synchronization issues.
+
+To refactor this code, we will use a more efficient state machine encoding scheme and simplify the logic within the always block. We will also use a single always block to handle all the logic, reducing the size of the shift register and implementing a more efficient state machine encoding.
+
+We will use a 2-bit state register to encode the three states: IDLE, RECEIVE, and ERROR. The IDLE state will wait for the start bit, the RECEIVE state will collect the incoming bits, and the ERROR state will handle the case when the stop bit is incorrect.
+
+We will use a 4-bit counter to keep track of the number of bits received and to determine when to check the stop bit.
+
+The FSM will be designed to reset the 'done' signal in the same always block as the rest of the logic to avoid any potential synchronization issues.
+
+To optimize the design for better PPA metrics, we will consider using a single always block to handle all the logic, reducing the size of the shift register, and implementing a more efficient state machine encoding.
+
+We will also use non-blocking assignments for sequential logic to prevent potential timing issues.
+
+The refactored design will have the following states: IDLE, RECEIVE, and ERROR. The IDLE state will wait for the start bit, the RECEIVE state will collect the incoming bits, and the ERROR state will handle the case when the stop bit is incorrect.
+
+We will use a 9-bit shift register to collect the start bit, 8 data bits, and the stop bit will be checked separately. This approach simplifies the logic and reduces the number of states required.

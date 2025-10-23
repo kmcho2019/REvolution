@@ -1,0 +1,11 @@
+To simplify the 4-bit unsigned number pipeline multiplier, we can restructure the design to properly implement a pipelined multiplier. This involves breaking down the multiplication process into smaller, manageable parts, each handled by a separate stage of the pipeline. 
+
+We will use two levels of registers to store intermediate values and control the multiplication process. In the first stage, we will calculate the partial products based on the bits of the multiplier and accumulate them. In the second stage, we will calculate the final product by adding the partial products.
+
+We will use a generate block to perform the multiplication for each bit position of the multiplier and generate the partial products. For each bit position i from 0 to size-1, the partial product is calculated as follows:
+- If the corresponding bit in the multiplier is 1, the multiplicand is left-shifted by i positions.
+- If the corresponding bit in the multiplier is 0, the partial product is set to 0 ('d0).
+
+We will then add the partial products using registers to store the intermediate sum values. On the positive edge of the clock signal or the falling edge of the reset signal, the module will perform add operations. If the reset signal is low, indicating a reset condition, the registers will be set to 0. If the reset signal is high, the registers will be updated with the sum of the corresponding partial products.
+
+Finally, we will calculate the final product by adding the partial products and store it in the output register.

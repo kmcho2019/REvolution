@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. State Encoding Optimization: Switch from one-hot to binary encoding (2 bits) for the 3-state FSM to reduce flip-flop count and simplify decoding logic.
+2. Power Optimization:
+   - Only update out_bytes when capturing new bytes (byte1, byte2, byte3)
+   - Make done signal set/reset more efficiently (only set in BYTE3, reset in IDLE)
+3. Timing Optimization:
+   - Remove default case since all states are explicitly handled
+   - Simplify state transition logic
+4. Area Optimization:
+   - Reduce state register width from 3 to 2 bits
+   - Keep output registers but only update when needed
+5. Functional Clarity:
+   - Make state transitions more explicit
+   - Clearly separate state machine from data path operations
+
+Key Changes:
+- Binary state encoding (2 bits)
+- Gated register updates
+- Simplified state machine logic
+- More efficient done signal generation

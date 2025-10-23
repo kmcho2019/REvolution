@@ -1,0 +1,25 @@
+I will implement the shift register by partitioning the 64-bit register into eight bytes (8 bits each), and use a simple barrel shifter concept for shifting by 8 bits. For shifts by 1 bit, I will perform bitwise shifts within bytes and handle cross-byte bit transfers explicitly.
+
+This approach splits the problem into two shift types:
+
+- For 8-bit shifts, byte-wise rotation and zero/sign extension are simpler and efficient.
+
+- For 1-bit shifts, explicit bit shifting and handling carry bits between bytes will be done.
+
+The advantages:
+
+- This byte-wise decomposition reduces large-wide multiplexers since only byte-level rotations are needed for 8-bit shifts.
+
+- The 1-bit shift logic uses minimal combinational logic for bit movement between bytes.
+
+- Only compute the selected shift operation dynamically, avoiding parallel computation of all shift variants.
+
+- The shift direction and amount selection are done via a two-level mux (1-bit or 8-bit shift, then left or right) as before.
+
+- The arithmetic right shift sign-extends by replicating MSB in the high bits.
+
+This modular approach reduces large combinational fanout, improves clarity on the shift operations, and potentially lowers switching and area since no full 64-bit wide muxes or parallel all-shift computations are done.
+
+Synchronous load and enable signals are implemented in a single always block with non-blocking assignments for clean sequential logic.
+
+Overall, this approach balances clarity, modularity, and efficiency without requiring large barrel shifters or fully parallel shift calculations.

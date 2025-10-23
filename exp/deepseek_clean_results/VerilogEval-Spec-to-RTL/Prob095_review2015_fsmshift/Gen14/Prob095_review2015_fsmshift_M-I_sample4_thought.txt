@@ -1,0 +1,15 @@
+Improved solution strategy:
+1. Correct cycle counting: Need exactly 4 cycles (0-3) of shift_ena after reset
+2. Use a 2-bit counter (0-3) but properly count all 4 states
+3. Add a 'done' flag to permanently disable shift_ena after 4 cycles
+4. Reset behavior:
+   - Set counter to 0 and clear done flag
+   - Count up to 3 (total 4 cycles)
+   - Set done flag when counter reaches 3
+5. shift_ena logic:
+   - Active when not done AND (counter < 3 or in reset cycle)
+   - This ensures exactly 4 active cycles (0,1,2,3)
+6. Optimization:
+   - Still uses minimal 2-bit counter
+   - Single additional bit for done flag
+   - Clear state machine with no ambiguity

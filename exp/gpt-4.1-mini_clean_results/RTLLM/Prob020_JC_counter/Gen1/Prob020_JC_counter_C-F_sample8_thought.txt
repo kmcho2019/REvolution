@@ -1,0 +1,7 @@
+The 64-bit Johnson counter updates synchronously on the rising edge of clk and asynchronously resets on the falling edge of rst_n. On reset, Q is zero. Each clock cycle, the register shifts right by one bit. The MSB is filled based on the current LSB: if LSB is 0, insert 1; if LSB is 1, insert 0. This matches the Johnson counter's torsional ring behavior.
+
+To improve over previous solutions, the design keeps the clean, simple synchronous logic with asynchronous reset for responsiveness. Using a single always block with nonblocking assignments ensures correct sequential semantics and ease of synthesis. The shift is implemented via concatenation, which synthesizes efficiently as wiring. 
+
+Further enhancements focus on clarity and potential synthesis optimization by explicitly handling reset, maintaining minimal logic depth, and ensuring the output Q is a registered output. The code avoids redundant conditional checks and uses concise style. No extra enable or gating is added to keep functionality exact as specified.
+
+Overall, this fusion keeps simplicity and correctness, with an emphasis on clean and efficient RTL coding style that aids downstream synthesis and PPA optimizations.

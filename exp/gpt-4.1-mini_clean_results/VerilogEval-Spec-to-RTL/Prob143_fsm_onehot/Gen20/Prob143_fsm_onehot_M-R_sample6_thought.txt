@@ -1,0 +1,5 @@
+Refactor the module by replacing the always block with a purely combinational assign-based approach. For each next_state bit, assign it as the OR of all conditions where the FSM transitions to that state from any current active state and input. This leverages the one-hot encoding and known transitions to create concise and parallel next_state assignments without looping or case statements.
+
+Also, outputs remain computed as reduction OR over masked current states. This structure may improve synthesis by enabling clearer parallel logic paths, potentially reducing critical path depth and improving timing at the cost of somewhat longer code but simpler combinational expressions. This approach fully supports multiple active states in 'state' and is easy to extend or verify.
+
+The refactoring emphasizes explicit combinational logic for each next state bit, with next_state signals driven directly by boolean expressions derived from the FSM transitions, avoiding loops or always blocks.

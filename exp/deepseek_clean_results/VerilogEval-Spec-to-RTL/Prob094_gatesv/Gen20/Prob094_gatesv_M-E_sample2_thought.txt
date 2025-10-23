@@ -1,0 +1,13 @@
+Instead of using direct bitwise operations, I'll implement a circular shift approach:
+1. Create left-shifted and right-shifted versions of the input
+2. Use these shifted versions to compute the required relationships
+3. For out_both: AND with left-shifted version (handles the left neighbor requirement)
+4. For out_any: OR with right-shifted version (handles the right neighbor requirement)
+5. For out_different: XOR with circular left-shifted version (handles the wrap-around requirement)
+6. This approach provides a uniform way to handle all neighbor relationships through shifting
+
+Key advantages:
+- Consistent methodology for all three operations
+- Clear separation of concerns
+- Easily scalable to wider vectors
+- Explicit handling of the circular nature for out_different

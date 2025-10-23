@@ -1,0 +1,7 @@
+The refactored version will maintain the same Mealy-type FSM behavior but implement it using explicit state encoding and a classic state machine structure. Instead of using shift registers (prev1, prev2), we'll use three states to track the sequence detection progress:
+
+1. IDLE: Initial state, waiting for first '1'
+2. GOT1: Received first '1', waiting for '0'
+3. GOT10: Received '1' followed by '0', waiting for final '1'
+
+The output z will be asserted combinatorially when in GOT10 state and current input is '1'. This approach makes the state transitions more explicit while maintaining the same functionality. The asynchronous reset will initialize the FSM to IDLE state.

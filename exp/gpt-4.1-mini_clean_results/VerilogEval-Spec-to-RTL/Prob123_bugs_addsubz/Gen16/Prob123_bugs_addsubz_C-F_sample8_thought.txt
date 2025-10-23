@@ -1,0 +1,12 @@
+Fuse the strengths of both examples by implementing the adder-subtractor as a fully combinational design with explicit, clear carry chain logic inside a single always_comb block. Use blocking assignments for readability and synthesis friendliness, preserving reg outputs for interface compatibility.
+
+Key fusion points:
+- Keep the single always_comb block from Example 1 for straightforward procedural description that synthesis tools optimize well.
+- Use conditional XOR of `b` with `do_sub` for two's complement subtraction, ensuring clear and standard subtractor behavior.
+- Implement ripple carry logic explicitly for clear carry propagation, enabling synthesis tools to infer efficient carry chains.
+- Calculate the zero flag with reduction NOR on the result, fixing the original bug and guaranteeing correct zero detection.
+- Unconditionally assign `result_is_zero` to avoid implicit latches and ensure clear flag behavior.
+- Avoid redundant variables and keep the code concise while maintaining explicit logic for clarity.
+- This fusion maintains a reg output interface (matching the original module) and a synthesis-friendly, readable implementation that compilers optimize well.
+
+This combined approach balances clarity, correctness, synthesis friendliness, and interface consistency, producing a robust and maintainable adder-subtractor with a zero flag.

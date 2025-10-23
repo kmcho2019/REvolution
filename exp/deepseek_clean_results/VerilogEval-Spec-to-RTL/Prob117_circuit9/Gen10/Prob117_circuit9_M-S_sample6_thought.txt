@@ -1,0 +1,9 @@
+The previous solution uses a ternary operator for increment/wrap logic which adds some complexity. We can simplify this by:
+1. Maintaining the synchronous reset to 4 when a=1
+2. For a=0, just use a simple increment that naturally wraps around due to 3-bit overflow
+3. This achieves the same behavior with simpler logic since:
+   - 4+1=5
+   - 5+1=6
+   - 6+1=7 (but we want 0)
+   - However, 7+1=0 due to natural 3-bit overflow
+4. The only adjustment needed is to start counting from 4 when a transitions from 1 to 0

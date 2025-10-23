@@ -1,0 +1,16 @@
+To improve the provided radix-2 divider implementation, the focus is on enhancing code clarity, timing, and PPA (Power, Performance, Area) efficiency while ensuring the functional correctness remains intact.
+
+Key improvements:
+
+1. Remove redundant state and use a simple control scheme with start and busy signals to reduce FSM complexity.
+2. Use a dedicated start signal generated internally on opn_valid & !busy to avoid overlapping operations.
+3. Keep the division counter and registers minimal and use non-blocking assignments consistently.
+4. Optimize sign handling by storing signs once and only at the start; apply correction only after the division loop finishes.
+5. Simplify the remainder and quotient update logic by explicitly performing the subtraction and selecting the next remainder based on comparison (no carry flags).
+6. Use a shift register (9 bits) for remainder and explicitly shift quotient bits.
+7. The division loop iterates exactly 8 times, then outputs result with res_valid.
+8. Improve coding style by avoiding mid-always combinational variables and moving computations into sequential or combinational always blocks as suitable.
+9. Add sufficient comments for clarity.
+10. Confirm no port naming mismatches, exactly as requested.
+
+This results in a straightforward and synthesizable radix-2 divider that cleanly supports signed and unsigned division and provides quotient and remainder as per specification.

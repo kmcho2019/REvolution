@@ -1,0 +1,17 @@
+Fusion Strategy:
+1. **State Encoding**: Maintain binary encoding for the 5 states (000-100) as it's most efficient for this small FSM
+2. **Output Logic**: Combine the best aspects of both solutions:
+   - Use Example 2's combined next_state and z assignment for compactness
+   - Adopt Example 1's optimized z logic using bit patterns for better area efficiency
+3. **Next State Logic**: 
+   - Use Example 1's direct Y0 assignment approach to eliminate the intermediate next_state wire
+   - But implement it with a case statement instead of ternary operators for better timing
+4. **Power Optimization**: 
+   - Keep the minimal logic approach from both examples
+   - Use parallel case evaluation to reduce switching activity
+
+Key Improvements:
+- Case statement for better timing predictability
+- Optimized z logic using bit patterns
+- Direct Y0 computation without intermediate signals
+- No default case since all states are defined

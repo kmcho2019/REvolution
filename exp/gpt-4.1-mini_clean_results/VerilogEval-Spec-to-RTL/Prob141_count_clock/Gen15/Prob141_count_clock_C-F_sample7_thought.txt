@@ -1,0 +1,13 @@
+Combine the clarity and minimal combinational complexity of Example 1's direct BCD counting for seconds and minutes with the binary counters and shift-add-based BCD conversion of Example 2 for the hour output, to optimize performance, area, and power.
+
+Use separate 4-bit BCD counters for seconds and minutes tens and units digits, incrementing with simple nested if-elses on the synchronous clock, minimizing combinational paths during counting. This keeps seconds and minutes increments simple and fast.
+
+Use a 4-bit binary counter for hours (1-12) internally, toggling PM at rollover from 11 to 12, to avoid complex BCD hour counting logic. Convert this hour binary value to BCD using straightforward conditional logic (like in both examples) with combinational assignment. This reduces combinational logic in the main clocked always block and keeps conversion simple.
+
+Handle synchronous reset with highest priority, initializing time to 12:00:00 AM.
+
+Outputs are assigned from the BCD counters directly for seconds and minutes, and via combinational conversion for hours.
+
+This fusion leverages the fast, low-complexity BCD counting for seconds and minutes (Example 1) to improve timing and power, while using a simpler binary hour counter and conversion (Example 2) for less area and cleaner PM logic. It avoids costly binary-to-BCD conversion for minutes and seconds and minimizes combinational complexity in the sequential logic.
+
+This design should yield better timing (shorter critical paths), lower power (less toggling in counting logic), and reasonable area by balancing the tradeoffs of both examples.

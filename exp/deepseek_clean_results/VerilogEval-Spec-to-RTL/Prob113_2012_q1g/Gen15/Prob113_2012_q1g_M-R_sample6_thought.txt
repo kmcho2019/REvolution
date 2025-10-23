@@ -1,0 +1,14 @@
+To correctly implement the given Karnaugh map, we need to:
+1. Identify all minterms where f=1 from the K-map
+2. Group adjacent '1's to simplify the logic expression
+3. Implement the simplified expression using a single assign statement
+
+From the K-map, we can see f=1 in these cases:
+- When x[3:2]=00 and x[1:0]=00 or 10 (top row)
+- When x[3:2]=11 and x[1:0]=00, 01, or 11 (third row)
+- When x[3:2]=10 and x[1:0]=00, 01, or 10 (bottom row)
+
+We can express this as:
+f = (~x[3]&~x[2]&~x[1]&~x[0]) | (~x[3]&~x[2]&x[1]&~x[0]) |  // First row
+    (x[3]&x[2]&~x[1]&~x[0]) | (x[3]&x[2]&~x[1]&x[0]) | (x[3]&x[2]&x[1]&x[0]) |  // Third row
+    (x[3]&~x[2]&~x[1]&~x[0]) | (x[3]&~x[2]&~x[1]&x[0]) | (x[3]&~x[2]&x[1]&~x[0])  // Bottom row

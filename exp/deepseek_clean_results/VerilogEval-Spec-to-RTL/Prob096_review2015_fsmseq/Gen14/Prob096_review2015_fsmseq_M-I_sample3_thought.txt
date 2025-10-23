@@ -1,0 +1,18 @@
+To optimize the design for better PPA metrics, I'll implement the following improvements:
+
+1. State Machine Approach: Replace the shift register with a one-hot encoded FSM to reduce logic depth and improve timing. This will:
+   - Reduce the critical path by eliminating the 4-bit comparison
+   - Potentially reduce area by using simpler state transition logic
+   - Maintain the same functionality with clearer state progression
+
+2. Power Optimization:
+   - Add an enable signal to the state transitions to prevent unnecessary switching after detection
+   - Keep the output behavior (stays high until reset) but with more efficient implementation
+
+3. Area Optimization:
+   - One-hot encoding typically uses more flops but simpler combinational logic
+   - Carefully design state transitions to minimize logic gates
+
+4. Timing Improvement:
+   - The FSM approach should have shallower logic depth than the shift+compare method
+   - State transitions depend only on current state and input bit

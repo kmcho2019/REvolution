@@ -1,0 +1,10 @@
+Refactor the frequency divider by implementing a single synchronous process for all outputs to reduce the number of always blocks and group related logic together. Instead of toggling clocks inside separate always blocks, use counters to count half periods for each clock and generate outputs through synchronous logic.
+
+This approach:
+- Uses one always block for all counters and output clock updates, improving code compactness and clarity.
+- Implements counters for the half periods of the divided clocks (for example, CLK_50 toggles every 1 count since it divides by 2, CLK_10 toggles every 5 counts to get 10 MHz, and CLK_1 toggles every 50 counts to get 1 MHz).
+- The outputs toggle when their respective counters reach the half period.
+- Maintains asynchronous reset for all signals.
+- Preserves non-blocking assignments to ensure safe synchronous operation.
+
+This structural change reduces code duplication and groups frequency division logic into a single, easily maintainable block without altering functionality.

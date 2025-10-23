@@ -1,0 +1,15 @@
+Instead of dividing the 64-bit ripple carry adder into equal-width pipeline stages that each do full additions and propagate carries per stage, I will implement a fully pipelined 64-bit ripple carry adder by splitting the addition into byte-wise (8-bit) stages, but chaining the carry explicitly through registers between stages. 
+
+Each stage computes an 8-bit addition plus carry-in, producing a sum byte and carry-out which feeds into the next stage's pipeline register on the next clock. This creates an 8-stage pipeline, where the carry ripples through one stage per clock cycle, but the pipeline registers store partial sums and carry signals.
+
+This architecture is a straightforward hardware pipeline reflecting the ripple carry adder behavior but spread across pipeline stages with registered carries, improving maximum clock frequency by limiting combinational logic per stage.
+
+The module:
+- Registers inputs and enable signal.
+- Uses 8 pipeline stages, each stage adding 8-bit slices and a carry input.
+- Registers sum and carry out at each stage.
+- The output is assembled from all stage sums plus the final carry out.
+- The output enable is delayed along the pipeline to indicate when the output result is valid.
+- Reset clears all pipeline registers.
+
+This design closely models a classic pipelined ripple carry adder with registers on sums and carries at each 8-bit slice, enabling throughput of one addition per clock after latency of 8 cycles, with the carry rippling sequentially through stages.

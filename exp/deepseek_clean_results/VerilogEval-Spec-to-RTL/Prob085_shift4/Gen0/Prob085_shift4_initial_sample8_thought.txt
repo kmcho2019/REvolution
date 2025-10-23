@@ -1,0 +1,10 @@
+To implement a 4-bit shift register with the specified functionality, we need to consider the following:
+1. Asynchronous reset (areset) that clears the register when asserted.
+2. Synchronous load (load) that takes priority over enable (ena) when both are asserted.
+3. Enable (ena) that performs a right shift operation when asserted alone.
+4. The shift operation sets q[3] to 0 and shifts other bits right (q[2] moves to q[1], etc.), with q[0] being discarded.
+
+The design will use a 4-bit register to store the state. On each clock edge:
+- First check areset (highest priority)
+- Then check load (next priority)
+- Finally check ena (lowest priority)

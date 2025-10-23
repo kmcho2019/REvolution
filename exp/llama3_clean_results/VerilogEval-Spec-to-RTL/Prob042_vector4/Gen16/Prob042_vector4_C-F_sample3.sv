@@ -1,0 +1,27 @@
+module SignExtend #(
+    parameter REPLICATION_COUNT = 24,
+    parameter INPUT_WIDTH = 8,
+    parameter OUTPUT_WIDTH = 32
+) (
+    input [INPUT_WIDTH-1:0] in,
+    output [OUTPUT_WIDTH-1:0] out
+);
+
+    // Assign the replicated MSB concatenated with the input to the output
+    // Using a simplified conditional expression to replicate the sign bit
+    assign out = (in[INPUT_WIDTH-1] == 1'b1) ? { {REPLICATION_COUNT{1'b1}}, in } : { {REPLICATION_COUNT{1'b0}}, in };
+
+endmodule
+
+module TopModule (
+    input [7:0] in,
+    output [31:0] out
+);
+
+    SignExtend #(
+        .REPLICATION_COUNT(24),
+        .INPUT_WIDTH(8),
+        .OUTPUT_WIDTH(32)
+    ) se (.in(in), .out(out));
+
+endmodule

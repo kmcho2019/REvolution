@@ -1,0 +1,5 @@
+To optimize for better timing (improve TNS/WNS) and potentially reduce area and power, I will remove the conditional update inside the clocked always block and always update Q on every clock edge. The combinational logic already ensures that when L and E are both low, Q_next equals the current Q, effectively holding the value. This approach eliminates gating logic on the register enable, simplifying the synthesis and potentially improving clock path timing.
+
+This change may slightly increase switching activity (power) due to the register updating every clock cycle, but the improved timing and simpler clocking scheme often outweigh this. The combinational logic remains the same and minimal, so area impact is negligible or slightly reduced by simpler control logic.
+
+Overall, this approach trades a small potential power increase for better timing and simpler design, which is often preferable in high-speed designs.

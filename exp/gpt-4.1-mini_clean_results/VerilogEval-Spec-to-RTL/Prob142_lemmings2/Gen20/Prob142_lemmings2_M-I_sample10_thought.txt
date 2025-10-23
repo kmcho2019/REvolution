@@ -1,0 +1,12 @@
+To optimize the FSM for better PPA (performance, power, area) while maintaining clarity and correctness, I will:
+
+- Use one-hot state encoding instead of 2-bit encoding to potentially simplify logic and enable faster state decoding, since only one bit is active per state.
+- Explicitly define four one-hot states representing walking left, walking right, falling left, and falling right.
+- In one-hot encoding, output decoding and next state logic can be more straightforward and potentially faster due to simpler combinational logic.
+- Retain the asynchronous active-high reset and Moore output style.
+- Keep next_state logic simple and clear with default next_state assignment.
+- Remove redundant condition checks to minimize combinational logic depth.
+- One-hot encoding can slightly increase area due to extra flip-flops but can improve timing and sometimes power due to simpler combinational paths.
+- This tradeoff is acceptable given the very small FSM size.
+
+Overall, this modification aims to improve timing (critical path delay) and possibly power by simplifying combinational logic, at minimal area cost.

@@ -1,0 +1,11 @@
+Implement a frequency divider using a single 7-bit counter that counts from 0 to 99 for the 1MHz output and derive the 50MHz and 10MHz clocks by toggling at specific counts within this counter cycle.
+
+- For the 50MHz clock (divide by 2): toggle on every clock cycle.
+- For the 10MHz clock (divide by 10): toggle when the counter hits 4 and 9 (i.e., toggles twice within the count of 10).
+- For the 1MHz clock (divide by 100): toggle when the counter hits 49 and 99.
+
+This approach consolidates all counters into one, reducing resource usage and simplifying synchronization between derived clocks since they come from a single counting reference.
+
+On reset, all outputs and the counter are cleared. The counter increments on each rising edge of the input clock and wraps back to 0 at 99.
+
+This consolidated approach simplifies timing, reduces register count, and ensures all outputs are phase-aligned based on the same master counter.

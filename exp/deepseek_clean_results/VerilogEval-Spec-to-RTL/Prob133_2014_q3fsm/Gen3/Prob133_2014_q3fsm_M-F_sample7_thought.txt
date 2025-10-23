@@ -1,0 +1,14 @@
+Revised approach addressing timing issues:
+1. Separate data collection and evaluation into distinct phases:
+   - Collect w values for 3 cycles (positions 0,1,2)
+   - Evaluate the collected pattern in the next cycle (position 0)
+2. Introduce a delayed evaluation mechanism:
+   - Store w values in a 3-bit shift register
+   - Set evaluation flag when position counter wraps (pos_cnt==2)
+   - Use this flag to trigger evaluation in the following cycle
+3. Maintain the same state machine structure (A/B states)
+4. Key improvements:
+   - Ensures all 3 w values are captured before evaluation
+   - Properly aligns output generation with the specification
+   - Maintains minimal state count while fixing timing issues
+5. Reset behavior remains unchanged (synchronous, active high)

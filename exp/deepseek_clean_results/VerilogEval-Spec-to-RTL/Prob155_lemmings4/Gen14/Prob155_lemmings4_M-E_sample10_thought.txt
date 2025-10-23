@@ -1,0 +1,33 @@
+Novel Lemming State Machine Design:
+
+1. Hierarchical State Architecture:
+   - Split behavior into two parallel state machines:
+     * Movement FSM (left/right walking)
+     * Action FSM (walking/digging/falling/splat)
+   - This separation simplifies direction tracking during actions
+
+2. Explicit State Preservation:
+   - Maintain original direction in a separate register that only updates during walking state
+   - Action states (dig/fall) preserve this direction without modification
+
+3. Cycle-Accurate Fall Counter:
+   - Implement a dedicated counter that:
+     * Resets when entering fall state
+     * Freezes when not falling
+     * Only triggers splat when ground returns after threshold
+
+4. Priority Encoder:
+   - Use a dedicated combinational block to resolve input priorities:
+     * Fall condition (ground=0) has highest priority
+     * Dig condition checked only if not falling
+     * Bump conditions only considered when walking normally
+
+5. Output Generation:
+   - Generate outputs based on current action state and preserved direction
+   - Special case for splat state overrides all other outputs
+
+Key Advantages:
+- Clear separation of movement and action states
+- Explicit direction preservation simplifies state transitions
+- Dedicated priority resolution ensures correct behavior
+- Cycle-accurate fall counting with proper reset conditions

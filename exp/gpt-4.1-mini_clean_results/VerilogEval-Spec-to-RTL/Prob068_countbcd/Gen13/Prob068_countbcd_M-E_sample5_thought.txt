@@ -1,0 +1,7 @@
+Implement the 4-digit BCD counter using a single 16-bit register representing all digits concatenated, and leverage combinational logic to calculate the next counter value on every clock cycle. The counter increments as a 16-bit number, but after each increment, each 4-bit digit is individually checked for invalid BCD values (>9). If a digit exceeds 9, it is corrected by adding 6 (BCD correction). This method is known as "Double Dabble" or BCD correction via addition of 6.
+
+Enable signals for the upper digits are generated based on whether a digit overflow (carry-out) from the previous digit occurred during the increment. This approach centralizes the digit incrementation and correction logic and decouples carry chain from nested if-elses, potentially improving timing and making the code more compact.
+
+Synchronous active-high reset clears the entire 16-bit register to zero. The counter increments on every positive clock edge, and the ena outputs reflect when the corresponding digit is incremented due to carry from the previous digit.
+
+This design benefits from a more arithmetic-style counting, which may be more amenable to synthesis optimizations and can simplify timing closure.

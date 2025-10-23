@@ -1,0 +1,8 @@
+Optimize the FSM by reducing the state encoding bits from 3 to 2 using one-hot encoding for active states and combinational logic for pattern detection, minimizing combinational logic depth and enabling faster timing. Eliminate the 2-bit shift counter by using a 4-bit shift register to count shift cycles, allowing simpler increment (shift left with '1' shifted in) and minimal toggling. Also, merge pattern detection into a small dedicated pattern state machine with minimal states to reduce complexity. Generate outputs purely combinationally from current states. This reduces combinational next-state logic complexity, decreases toggle rates in state registers and counters, improving power and timing, while maintaining clarity and correctness.
+
+Main changes:
+- Use one-hot encoding for main states, reducing state decoding logic.
+- Use a 4-bit shift register as a shift counter during SHIFT state instead of 2-bit binary counter.
+- Integrate pattern detection states into fewer states with one-hot encoding to enable simple transitions.
+- Keep outputs as Moore outputs, purely combinational on state.
+- Keep synchronous reset and positive-edge triggered registers.

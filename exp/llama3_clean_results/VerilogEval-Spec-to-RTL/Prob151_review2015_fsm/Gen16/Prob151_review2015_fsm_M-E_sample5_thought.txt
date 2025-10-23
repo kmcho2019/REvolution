@@ -1,0 +1,9 @@
+To create a novel architectural solution for the finite-state machine, we can utilize a different approach to designing the state machine. Instead of using a traditional state machine with a fixed number of states, we can use a hierarchical state machine (HSM) with sub-states. This approach allows for a more modular and scalable design, making it easier to add or remove states and transitions as needed.
+
+The HSM will consist of two main states: an 'idle' state and a 'timer' state. The 'idle' state will be responsible for detecting the pattern '1101' and transitioning to the 'timer' state. The 'timer' state will be further divided into sub-states: 'shifting', 'counting', and 'done'.
+
+In the 'shifting' sub-state, the machine will assert the 'shift_ena' output for exactly 4 clock cycles, allowing the serial data to be shifted in. After the shifting is complete, the machine will transition to the 'counting' sub-state, where it will assert the 'counting' output and wait for the 'done_counting' signal to be high.
+
+Once the 'done_counting' signal is high, the machine will transition to the 'done' sub-state, where it will assert the 'done' output and wait for the 'ack' signal to be high. After the 'ack' signal is high, the machine will transition back to the 'idle' state, ready to detect the next occurrence of the pattern '1101'.
+
+This hierarchical approach allows for a more organized and structured design, making it easier to understand and modify the state machine as needed.

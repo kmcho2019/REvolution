@@ -1,0 +1,17 @@
+To address the timing and coordination issues in the initial design, we refactor the fractional frequency divider by using a single free-running 3-bit counter clocked on both edges of the input clock. We employ an `always @(posedge clk or negedge clk or negedge rst_n)` block for the counter to increment on every half clock cycle, effectively doubling the clock edge resolution and naturally creating a half-cycle phase shift.
+
+Using a single counter counting modulo 7 (corresponding to 7 half-cycles for a 3.5 division), we generate two complementary output signals:
+- One output (`clk_out_posedge`) goes high for 4 half-cycles and low for 3 half-cycles,
+- The other output (`clk_out_negedge`) is phase shifted by 1 half-cycle by using an offset counter value (counter + 1 modulo 7) to generate a complementary waveform.
+
+Finally, the outputs are OR-ed together to generate the fractional divided clock with the desired 3.5 division and near 50% duty cycle.
+
+This approach ensures precise half-cycle phase shift by synchronizing both outputs to the same counter and clock domain, avoiding metastability or synchronization problems between separate posedge and negedge counters.
+
+Benefits:
+- Single counter clocked on both edges simplifies design and synchronization.
+- Half-cycle resolution inherently achieved by double-edge clocking.
+- Phase shift implemented via offset in counter value rather than separate FSMs.
+- Cleaner and more robust timing with less state machine complexity.
+
+This method efficiently realizes the fractional division by 3.5x with proper duty cycle and phase shift.

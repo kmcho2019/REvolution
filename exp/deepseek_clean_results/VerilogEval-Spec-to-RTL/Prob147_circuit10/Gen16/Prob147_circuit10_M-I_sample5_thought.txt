@@ -1,0 +1,17 @@
+1. State transition analysis:
+   - State toggles when (a XOR b) is true at positive clock edge
+   - This explains all state transitions in the waveform (times 95ns, 115ns, etc.)
+
+2. Output q logic:
+   - q = 1 when:
+     * Current state is 1 AND b is 1
+     * OR a is 0 AND b is 1
+     * OR a is 0 AND b is 0 AND state is 1
+     * OR a is 1 AND b is 0 AND state is 0
+   - This covers all cases in the waveform including edge cases
+
+3. Implementation approach:
+   - Use a single flip-flop for state with XOR condition for toggling
+   - Implement the comprehensive combinational logic for q
+   - Ensure proper clocking and non-blocking assignments
+   - Keep the design minimal while covering all waveform cases

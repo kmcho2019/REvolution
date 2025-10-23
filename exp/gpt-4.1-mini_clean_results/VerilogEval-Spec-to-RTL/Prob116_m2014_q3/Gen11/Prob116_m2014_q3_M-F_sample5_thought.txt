@@ -1,0 +1,7 @@
+The Karnaugh map indexes rows by x3x4 and columns by x1x2, but the input vector x is ordered as {x4, x3, x2, x1} = {x[3], x[2], x[1], x[0]}. Directly indexing the LUT by x assumes the bits are ordered as row-column = {x4, x3, x2, x1} which conflicts with the Karnaugh map ordering (rows = x3x4, columns = x1x2).
+
+To fix this, we need to reorder the bits of x before indexing the LUT: the LUT index should be {x3, x4, x1, x2} = {x[2], x[3], x[0], x[1]}. This maps the Karnaugh map rows and columns correctly.
+
+This re-indexing ensures the input corresponds exactly to the LUT bits derived from the Karnaugh map, preserving the original localparam LUT values.
+
+Hence, the fix is to create a wire/variable that reorders the bits of x as {x[2], x[3], x[0], x[1]} and index the LUT with that instead of x directly.

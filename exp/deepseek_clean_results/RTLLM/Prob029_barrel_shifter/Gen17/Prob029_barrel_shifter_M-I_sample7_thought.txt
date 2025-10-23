@@ -1,0 +1,15 @@
+The previous implementation attempted to use a single complex continuous assignment with nested ternary operators, which proved to be error-prone and difficult to maintain. My improved strategy:
+
+1. Break down the shifting into clear, sequential stages:
+   - First stage: 4-bit shift controlled by ctrl[2]
+   - Second stage: 2-bit shift controlled by ctrl[1]
+   - Third stage: 1-bit shift controlled by ctrl[0]
+
+2. Use intermediate wires for each stage to improve readability and debugging
+3. Implement each shift stage using simple concatenation and muxing
+4. Maintain the same functionality while making the code more maintainable and synthesizable
+5. Benefits:
+   - Clear separation of shift stages
+   - Easier to debug and modify
+   - More likely to synthesize efficiently
+   - Better readability while maintaining performance

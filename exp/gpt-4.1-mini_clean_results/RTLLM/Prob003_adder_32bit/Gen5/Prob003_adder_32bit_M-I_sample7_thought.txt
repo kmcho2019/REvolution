@@ -1,0 +1,11 @@
+The original design functions correctly but implements the carry-lookahead logic as a ripple through each bit (C[i+1] = G[i] + P[i]*C[i]), which limits timing performance and increases power consumption due to long carry chains.
+
+To optimize the 16-bit CLA block for better timing and power, I will implement hierarchical carry-lookahead logic by grouping bits into 4 groups of 4 bits each. Each 4-bit group computes group generate (GG) and group propagate (GP) signals, then the carry-in for each group is computed using these higher-level signals, allowing the carry for each bit to be derived with fewer logic levels and reduced fanout.
+
+This approach shortens carry propagation delay, improves power by reducing toggling on long carry chains, and can also reduce area by reusing group generate/propagate signals.
+
+I will keep the interface the same and instantiate two optimized 16-bit CLA blocks in the 32-bit adder.
+
+I also change the bit indexing to [15:0] style internally for clarity but keep the module ports [16:1] as requested. The code uses generate-for loops for compactness and clarity.
+
+This structured hierarchical CLA is a standard optimization that significantly improves delay and power over a simple ripple-carry lookahead chain.

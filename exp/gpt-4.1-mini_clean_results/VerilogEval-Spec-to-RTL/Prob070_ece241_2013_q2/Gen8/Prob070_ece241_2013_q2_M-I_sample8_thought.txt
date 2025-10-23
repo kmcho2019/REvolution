@@ -1,0 +1,45 @@
+The SOP expression provided is minimal and correct, so I will keep it as is.
+
+The previous POS expression is incorrect because it does not correctly cover the zeros and don't-cares of the function.
+
+To find the minimal POS:
+
+- Inputs a,b,c,d represent a 4-bit number with a as MSB and d as LSB.
+- The function outputs 1 when inputs are decimal 2(0010), 7(0111), or 15(1111).
+- It outputs 0 for 0,1,4,5,6,9,10,13,14.
+- Inputs 3,8,11,12 are don't-cares.
+
+I will build the Karnaugh map with don't-cares to simplify the function’s complement (the zeros).
+
+The zeros plus don't-cares correspond to maxterms, so the minimal POS corresponds to the intersection of maxterms covering all zeros.
+
+Upon Karnaugh map minimization including don't-cares:
+
+- One term covers zeros 0,1,4,5,6 plus don't-cares 3,8.
+- Another term covers zeros 9,10,13,14 plus don't-cares 11,12.
+
+This leads to a minimal POS with two terms instead of three.
+
+Deriving POS directly from the SOP expression's complement by applying DeMorgan's law to the SOP:
+
+- SOP: out_sop = (~a & ~b & c) | (c & d)
+- Complement: out_pos = (~(~a & ~b & c) & ~(c & d))
+               = (a | b | ~c) & (~c | ~d)
+
+This matches zeros coverage exactly.
+
+Thus, the minimal POS can be:
+
+out_pos = (a | b | ~c) & (~c | ~d)
+
+This expression is simpler and fully covers zeros and don't-cares.
+
+I will implement this corrected minimal POS expression along with the given SOP.
+
+This fixes the functional error, reduces logic complexity, and improves PPA.
+
+I will also comment the logic to clarify.
+
+Finally, note that the initial out_pos with 3 terms was incorrect and led to mismatches.
+
+This new expression matches the function exactly with fewer gates.

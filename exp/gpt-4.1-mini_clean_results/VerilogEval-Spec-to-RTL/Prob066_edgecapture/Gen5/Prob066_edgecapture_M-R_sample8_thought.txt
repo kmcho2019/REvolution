@@ -1,0 +1,11 @@
+To maintain the core idea of detecting falling edges per bit and latching them until reset, I will refactor the code to store only the previous input in a register and compare it directly with the current input to detect falling edges.
+
+The falling edge for each bit occurs when the previous input bit was 1 and the current input bit is 0. I will capture this falling edge in an output register that remains set until reset.
+
+This approach eliminates the unnecessary two-stage shift register and delays, making the logic clear and immediate.
+
+I will use an always block triggered on the positive clock edge and synchronous reset, with two registers: one to store the previous input and one to latch the falling edge captures. This will simplify timing and improve clarity.
+
+Additionally, I will use non-blocking assignments to update both registers sequentially inside the clocked always block to ensure proper synchronization.
+
+This structure is simpler, more direct, and more robust, and it preserves the original functionality.

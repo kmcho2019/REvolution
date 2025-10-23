@@ -1,0 +1,9 @@
+To address the issues identified in the previous design, we can implement a novel architectural idea that utilizes a hierarchical finite-state machine (FSM) approach. The top-level FSM will manage the overall state transitions, while sub-FSMs will handle the pattern detection, shifting, counting, and done notification.
+
+The pattern detection sub-FSM will detect the 1101 pattern in the input data stream. Once the pattern is detected, the top-level FSM will transition to the shifting state, where the shifting sub-FSM will shift in 4 more bits to determine the duration to delay. After shifting, the top-level FSM will transition to the counting state, where the counting sub-FSM will wait for the counters to finish counting. Finally, the top-level FSM will transition to the done state, where the done notification sub-FSM will notify the user and wait for acknowledgement.
+
+This hierarchical approach allows for a more modular and scalable design, making it easier to add or modify functionality in the future. Additionally, the sub-FSMs can be optimized independently, reducing the overall complexity of the design.
+
+To further improve the design, we can utilize a pipelined approach for the pattern detection and shifting sub-FSMs, allowing for increased throughput and reduced latency. The counting and done notification sub-FSMs can be implemented using a straightforward sequential logic approach.
+
+Overall, this novel architectural idea provides a more efficient, scalable, and maintainable solution for the timer finite-state machine.

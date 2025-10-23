@@ -1,0 +1,6 @@
+Novel Architecture Idea:
+1. Shift Register Storage: Instead of storing bytes in fixed positions, use a 24-bit shift register that automatically aligns incoming bytes. This reduces the need for explicit byte-position logic.
+2. One-Hot State Encoding: Use one-hot encoding for the FSM states (3 bits) which typically results in faster state transitions and simpler decoding logic in FPGAs.
+3. Early Done Calculation: Compute the 'done' signal combinationally based on the current state and input, allowing it to be registered in the same cycle.
+4. Power Optimization: Only update the shift register when in an active state (not IDLE), reducing unnecessary switching activity.
+5. Reset Optimization: Use synchronous reset with don't-care initialization for unused bits to allow synthesis tools more optimization freedom.

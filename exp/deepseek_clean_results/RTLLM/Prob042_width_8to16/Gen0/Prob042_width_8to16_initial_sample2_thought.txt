@@ -1,0 +1,7 @@
+The design requires a state machine-like behavior where we need to:
+1. Store the first 8-bit input when valid_in is high
+2. When the next valid_in occurs, concatenate the stored value with the new input to form 16-bit output
+3. Generate valid_out only when we have two valid inputs
+4. Reset everything when rst_n is low
+
+We'll use a register to store the first 8-bit input (data_lock) and a flag (has_first_byte) to indicate whether we have the first byte stored. On each clock edge, we'll check valid_in and update our state accordingly.

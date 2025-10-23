@@ -1,0 +1,22 @@
+My new approach uses a hierarchical state machine with separate control for movement direction and activity state. Key innovations:
+
+1. **Separate Direction and Activity State Machines**:
+   - Direction FSM tracks left/right movement independently
+   - Activity FSM handles walking/falling/digging/splatter states
+
+2. **Explicit State Encoding**:
+   - Clear state definitions with binary encoding
+   - Separate registers for direction and activity
+
+3. **Parallel Processing**:
+   - Direction changes processed independently when not falling/digging
+   - Activity state handles fall timer and dig conditions
+
+4. **Strict Priority Implementation**:
+   - Fall condition checked first in activity FSM
+   - Dig condition only evaluated when not falling
+   - Direction changes only when walking normally
+
+5. **Robust State Transitions**:
+   - Explicit handling of all edge cases
+   - Clear reset behavior for both FSMs

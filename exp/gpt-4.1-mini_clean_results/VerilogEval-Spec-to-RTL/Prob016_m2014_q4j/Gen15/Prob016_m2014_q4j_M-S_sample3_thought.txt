@@ -1,0 +1,8 @@
+To simplify the design while maintaining functionality, we can implement the 4-bit adder without explicitly instantiating separate full adder modules or using carry-lookahead signals. Instead, use a simple ripple-carry approach directly in the TopModule:
+
+- Initialize carry-in as 0.
+- Use a generate-for loop to compute sum bits and carry bits sequentially.
+- Store carries in a small array inside the module.
+- Assign the final carry-out as the MSB of sum (sum[4]).
+
+This reduces the number of module instantiations and wires, making the design more compact and easier to read, while still producing a correct 5-bit sum including overflow.

@@ -1,0 +1,7 @@
+To implement the frequency divider, we need to use three counters to divide the input clock frequency. 
+We will use a single always block to handle the clocked logic and reset. 
+Inside this block, we will check for the reset condition first. If the reset is active, we will set all the output clocks to 0 and reset the counters.
+Then we will handle the generation of each output clock (CLK_50, CLK_10, CLK_1) according to the given conditions.
+For CLK_50, we simply toggle its value on every positive edge of the input clock.
+For CLK_10 and CLK_1, we use counters cnt_10 and cnt_100 respectively to keep track of the number of input clock cycles.
+When the counter reaches the desired value (4 for CLK_10, 49 for CLK_1), we toggle the corresponding output clock and reset the counter.

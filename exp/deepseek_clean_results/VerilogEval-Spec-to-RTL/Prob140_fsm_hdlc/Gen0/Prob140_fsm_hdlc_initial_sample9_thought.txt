@@ -1,0 +1,14 @@
+To implement the HDLC framing decoder as a Moore FSM, we need to track the number of consecutive 1s seen in the input stream. The FSM will have states representing different counts of consecutive 1s (from 0 to 7+). The outputs (disc, flag, err) are purely combinatorial functions of the current state.
+
+Key points:
+1. States represent consecutive 1 counts (0-7+)
+2. Reset initializes to state 0 (as if previous input was 0)
+3. State transitions:
+   - On 0: always return to state 0
+   - On 1: increment state until state 7 (error)
+4. Outputs:
+   - disc: when in state 6 and next input is 0
+   - flag: when in state 7 and next input is 0
+   - err: when reaching state 7 (persists until reset)
+
+The FSM will have 8 states (0-7) where state 7 represents "7 or more 1s".

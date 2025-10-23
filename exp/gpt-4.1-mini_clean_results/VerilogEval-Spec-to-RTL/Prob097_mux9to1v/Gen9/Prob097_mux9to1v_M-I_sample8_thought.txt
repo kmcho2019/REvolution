@@ -1,0 +1,9 @@
+To improve power, area, and possibly timing of the current 9-to-1 16-bit mux implementation, simplify the design by replacing the hierarchical mux tree with a single combinational case statement. This approach:
+
+- Minimizes the number of intermediate signals and logic levels, reducing area and power due to less toggling on intermediate wires.
+- Synthesizes efficiently on FPGAs and ASICs by allowing direct mapping to multiplexers or LUTs.
+- Clearly handles the out-of-range sel cases by assigning 16'hFFFF.
+- Maintains clean and readable code without the complexity of hierarchical muxing.
+- Keeps the output fully combinational and glitch-free.
+
+This streamlined design should reduce LUT count and switching activity, improving PPA metrics compared to the prior multi-level mux tree.

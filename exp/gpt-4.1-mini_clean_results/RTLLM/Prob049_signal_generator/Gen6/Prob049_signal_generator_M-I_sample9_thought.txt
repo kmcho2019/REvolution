@@ -1,0 +1,9 @@
+To improve the original design's PPA (performance, power, area), I will optimize the state and waveform update logic to eliminate redundant state transitions and reduce critical path delay. 
+
+Instead of storing the state in a separate register, I will use the current wave value directly to infer direction by comparing to the boundaries (0 and 31). This avoids an explicit direction register and extra state logic. Wave increments/decrements can be done with a ternary conditional operator selecting +1 or -1 depending on whether wave has reached boundaries.
+
+Additionally, I will implement a clock enable signal internally that only enables wave updates when the wave is not at a boundary or just crossed one. This reduces switching activity and dynamic power. 
+
+Non-blocking assignments will remain to preserve synchronous behavior.
+
+Overall, the approach simplifies the state management and reduces registers and combinational logic, improving timing and area while potentially lowering power by gating updates. The design remains fully synchronous and easily synthesizable.

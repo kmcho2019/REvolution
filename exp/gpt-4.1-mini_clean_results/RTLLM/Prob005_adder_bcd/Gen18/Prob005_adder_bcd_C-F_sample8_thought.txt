@@ -1,0 +1,10 @@
+Combine the low-area and clean arithmetic approach from Example 2 with the hardware-friendly, minimal-logic correction detection from Example 1. 
+
+Specifically:
+- Use a 5-bit raw sum (A + B + Cin) to capture carry-out.
+- Detect correction needed by the efficient Boolean expression from Example 1: correction_needed = raw_sum[4] | (raw_sum[3] & (raw_sum[2] | raw_sum[1])). This avoids a numeric comparator and reduces logic complexity.
+- Use the '+' operator to conditionally add 6 to the raw sum's lower 4 bits when correction is needed, enabling synthesis tools to optimize the adder efficiently (better than manual ripple carry).
+- Generate the final sum from corrected sum bits and the carry-out from the logical OR of the raw sum carry and correction carry.
+- This fusion achieves minimal gate count, reduced switching by avoiding unnecessary correction addition, and improved timing due to shorter carry chains and simpler comparator logic.
+
+The design remains fully combinational, synthesizable, and clear in intent.

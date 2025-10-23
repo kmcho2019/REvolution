@@ -1,0 +1,13 @@
+To implement a novel multi-bit MUX-based synchronizer, let's introduce a new architectural idea that leverages the concept of a handshake protocol to ensure data synchronization between the two clock domains (clk_a and clk_b). This approach will utilize a request-acknowledge handshake to guarantee that data is transferred safely across the clock domains.
+
+The new architecture includes three main components: 
+
+1.  **Data Register**: This module is responsible for storing the input data signal (data_in) from clock domain A (clk_a). It is updated on the positive edge of clk_a or the falling edge of the reset signal (arstn).
+
+2.  **Handshake Controller**: This module manages the handshake protocol between the two clock domains. It generates a request signal (req) when valid data is available in the data register and the enable signal (data_en) is active. The request signal is synchronized to clock domain B (clk_b) using a synchronizer circuit.
+
+3.  **Synchronizer**: This module is responsible for synchronizing the request signal from clock domain A to clock domain B. It uses two D-flip-flops to ensure that the request signal is properly synchronized.
+
+4.  **Output Controller**: This module generates the output data signal (dataout) based on the acknowledge signal (ack) from the handshake controller. When the acknowledge signal is active, the output controller assigns the value of the data register to the output data signal.
+
+By utilizing a handshake protocol, this novel architecture ensures that data is transferred safely across the clock domains, reducing the risk of metastability and ensuring correct operation.

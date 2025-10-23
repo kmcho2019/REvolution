@@ -1,0 +1,24 @@
+From the waveform analysis, the state transitions as follows at rising edges of clk:
+
+- When state=0 and b=1, next_state becomes 1.
+- When state=1 and a=1 and b=0, next_state becomes 0.
+- When state=1 and a=0 and b=0, state remains 1.
+- When state=0 and a=0 and b=0, state remains 0.
+
+This can be summarized as:
+
+next_state = (state & ~(a & ~b)) | (~state & b)
+
+or equivalently:
+
+next_state = (state & (~a | b)) | (~state & b)
+
+But since when state=1 and a=1 and b=0 => next_state=0, this matches next_state = state & ~(a & ~b) | ~state & b.
+
+Output q is high exactly when the new state is 1, that is, q = next_state.
+
+Therefore, q can be assigned as the next_state logic.
+
+Implementing these logic conditions exactly with a single flip-flop updating on the posedge clk and outputting current state on 'state', next_state combinationally derived as above, and q as next_state.
+
+This matches the waveform and ensures the sequential behavior and outputs are consistent with observed simulation data.

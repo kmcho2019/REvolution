@@ -1,0 +1,12 @@
+To implement the Lemming behavior as a Moore state machine, we will define several states:
+- WALK_LEFT: The Lemming is walking left.
+- WALK_RIGHT: The Lemming is walking right.
+- FALLING: The Lemming is falling due to the absence of ground or because it has reached the other side while digging.
+- DIGGING_LEFT: The Lemming is digging while walking left.
+- DIGGING_RIGHT: The Lemming is digging while walking right.
+
+Transitions between states will be triggered by input signals. We will use a variable to keep track of the current state and another variable to keep track of the previous direction before falling or digging.
+
+We will also use a counter to check if the Lemming has reached the other side while digging. When the ground disappears (ground=0) while digging, the counter will start incrementing. If the counter reaches a certain value (representing the width of the wall), the Lemming will stop digging and start falling.
+
+We will also use an additional variable to track the direction of the Lemming before it starts falling, so we can resume walking in the same direction once the ground reappears.

@@ -1,0 +1,12 @@
+Combine the concise vector concatenation rotation from Example 1 with the conditional next-value calculation per bit from Example 2 to achieve a clean, synthesis-friendly, and power-efficient design.
+
+Key points of the fusion:
+- Compute rotated vectors only if rotation is needed, avoiding redundant toggle generation in both rotate_left and rotate_right signals.
+- Use a single always block with a temporary register next_q to hold the next state, assigning q at the clock edge.
+- Prioritize synchronous load, then rotate left or right according to ena, else hold q without reassigning (to minimize toggling and power).
+- By computing rotate_left and rotate_right only under relevant conditions, reduce combinational logic switching and area.
+- Maintain vector concatenation for rotation operations for compactness and efficiency, avoiding per-bit generate loops.
+- Avoid redundant q <= q assignment by omitting it to save power and improve synthesis results.
+- The approach balances clarity, minimal combinational logic, and low toggling for optimized PPA.
+
+Thus, the design retains simplicity and readability of Example 1, with selective conditional logic inspired by Example 2 to reduce power and area.

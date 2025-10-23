@@ -1,0 +1,7 @@
+To simplify the existing solution, we recognize that the core functionality requires a finite-state machine to detect the sequence 1101 in the input bit stream and then set `start_shifting` to 1 until reset. The complexity in the current implementation arises from the handling of the `seq_found` flag and the continuous re-evaluation of `start_shifting`.
+
+We can simplify this by eliminating the explicit `seq_found` flag and directly controlling `start_shifting` based on the detection of the sequence and the reset condition. Once the sequence 1101 is detected, `start_shifting` should be set to 1 and remain so until `reset` is asserted.
+
+This simplification involves directly setting `start_shifting` to 1 when the sequence is detected and ensuring that it remains 1 by only resetting it when `reset` is asserted. This approach reduces the number of signals and the complexity of the logic, making the code more straightforward and easier to understand.
+
+By focusing on the essential logic and removing unnecessary signals, we can achieve a simpler and more efficient implementation of the required functionality.

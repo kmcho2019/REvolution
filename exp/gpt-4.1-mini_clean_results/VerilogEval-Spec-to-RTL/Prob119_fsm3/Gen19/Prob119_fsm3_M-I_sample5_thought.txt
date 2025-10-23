@@ -1,0 +1,9 @@
+The original solution is clean and efficient for the given FSM size, but we can optimize area and power slightly by using one-hot encoding to reduce the complexity of next-state logic and simplify state decoding for output generation. One-hot encoding uses one flip-flop per state, which is acceptable for a 4-state FSM and may reduce gate count in next-state logic and output logic.
+
+This approach trades a few more flip-flops for simpler combinational logic and potentially better timing and lower dynamic power since fewer bits switch per transition. We will encode states as one-hot, use a simple combinational block for next state logic, and derive output directly from the D flip-flop representing state D.
+
+We'll keep the asynchronous reset and positive clock edge-triggered state registers. Output assignment will be a direct wire from the D state register, eliminating comparison logic.
+
+This modification aims to improve timing slack and reduce power by simplifying combinational next-state and output logic, with minimal area increase due to extra flip-flops, which should be negligible.
+
+Note: This may not reduce area compared to 2-bit encoding, but can improve timing and power by lowering logic depth and switching activity.

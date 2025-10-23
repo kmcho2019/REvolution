@@ -1,0 +1,18 @@
+Simplified design for 3.5x fractional frequency division:
+
+1. Core concept remains the same: divide by 3.5 using a 7-cycle pattern (4 high + 3 low)
+2. Key simplifications:
+   - Remove unnecessary phase shifting logic
+   - Use simple OR combination instead of XOR
+   - Eliminate artificial delays
+   - Simplify counter and phase generation
+3. Operation:
+   - Counter counts 0-6 (7 cycles total)
+   - First phase (clk_div1) is high for first 4 cycles (0-3)
+   - Second phase (clk_div2) is high for last 3 cycles (4-6)
+   - Final output is OR of both phases
+4. Benefits:
+   - Fewer registers and simpler logic
+   - No negative edge triggered elements
+   - Clear, straightforward implementation
+   - Maintains correct frequency division ratio

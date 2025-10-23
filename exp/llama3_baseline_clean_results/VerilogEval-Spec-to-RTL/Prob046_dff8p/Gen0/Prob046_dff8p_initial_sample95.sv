@@ -1,0 +1,25 @@
+module TopModule(
+    input clk,
+    input reset,
+    input [7:0] d,
+    output [7:0] q
+);
+
+reg [7:0] q_reg; // internal register to hold the output
+
+// initialize the internal register with the desired reset value
+initial q_reg = 8'h34;
+
+// update the internal register on the negative edge of clk
+always @(negedge clk) begin
+    if (reset) begin
+        q_reg <= 8'h34;
+    end else begin
+        q_reg <= d;
+    end
+end
+
+// assign the output to the internal register
+assign q = q_reg;
+
+endmodule

@@ -1,0 +1,12 @@
+To implement the parallel-to-serial converter differently, I propose using a simple shift register that loads the 4-bit input in MSB-first order at once, and then shifts out one bit per clock cycle from MSB to LSB.
+
+- When the reset is active (rst_n=0), the shift register and counter are reset.
+- When the counter reaches 4, meaning all 4 bits have been output, load the new parallel data into the shift register.
+- valid_out is asserted only on the cycle when new data is loaded and for the next 3 cycles while shifting out bits, i.e., valid_out stays high throughout the 4-cycle output period, indicating continuous valid output bits.
+- A 3-bit counter counts from 0 to 3, tracking which bit is currently output.
+- On each clock, the output dout is the MSB of the shift register.
+- The shift register shifts left by 1 bit on each clock, moving the next bit into MSB position.
+- This avoids rotating bits and toggling all bits unnecessarily, as only a shift left is performed.
+- By keeping valid_out high during the entire 4-bit serial output, downstream logic can reliably know when output bits are valid.
+
+This approach simplifies control logic and reduces toggling by only shifting bits left and asserting valid_out throughout the serial transmission of a 4-bit word.

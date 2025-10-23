@@ -1,0 +1,9 @@
+The original solution is already quite minimal, using only basic combinational logic. However, we can make it slightly more concise by:
+1. Directly embedding the heater and aircon expressions in the fan logic
+2. Eliminating the intermediate signals (though this might make the code slightly less readable)
+3. The functionality remains identical while reducing the number of explicit assignments
+
+The simplified logic becomes:
+- heater = mode & too_cold
+- aircon = ~mode & too_hot
+- fan = (mode & too_cold) | (~mode & too_hot) | fan_on

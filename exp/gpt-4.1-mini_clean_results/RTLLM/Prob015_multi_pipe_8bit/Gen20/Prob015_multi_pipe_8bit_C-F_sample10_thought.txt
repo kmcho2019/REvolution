@@ -1,0 +1,21 @@
+Fuse the two designs by implementing a clean 3-stage pipeline multiplier for unsigned 8-bit inputs with optimized enable signal handling and balanced addition stages for partial product summation. 
+
+Key improvements:
+- Use a 3-stage pipeline:
+  1. Sample inputs and input enable.
+  2. Generate partial products and perform the first stage of summation; register intermediate sums.
+  3. Perform the final stage addition and register the final product with output enable.
+
+- Pipeline the summation of partial products to reduce the critical combinational path and improve max clock frequency:
+  - Stage 2: Compute and register 4 pairwise sums of partial products.
+  - Stage 3: Sum those 4 sums pairwise and register the final product.
+
+- Pipeline the enable signal along all stages so output enable aligns with the valid output.
+
+- Register inputs only when input enable is asserted.
+
+- Only update partial sum registers when the corresponding enable stages are active to reduce toggling.
+
+- Output product is gated by the output enable, otherwise zero.
+
+This design balances performance, power, and area by spreading addition over two cycles instead of one large combinational addition, reducing switching by gating registers with enables, and cleanly synchronizing the enable signal through the pipeline stages.

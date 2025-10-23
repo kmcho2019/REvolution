@@ -1,0 +1,9 @@
+Implement the state output logic using explicit combinational logic derived directly from the FSM transitions, by enumerating all source states that cause the respective next states to be active.
+
+- For Y1 (input to flip-flop y[1], representing state B), only the transition from state A (y[0]) on input w=1 leads to B, so Y1 = y[0] & w.
+
+- For Y3 (input to flip-flop y[3], representing state D), the next state D is activated from states B, C, E, F when w=0. Therefore, Y3 = (~w) & (y[1] | y[2] | y[4] | y[5]).
+
+Implement these expressions directly inside TopModule without any submodules. This approach is straightforward and transparent, making the design easy to verify and extend, and does not rely on gate-level minimization or inversion tricks.
+
+This explicit combinational logic suits the problem size and clarity preference.

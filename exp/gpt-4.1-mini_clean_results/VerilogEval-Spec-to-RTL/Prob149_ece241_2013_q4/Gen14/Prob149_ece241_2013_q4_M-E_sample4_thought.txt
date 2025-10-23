@@ -1,0 +1,11 @@
+I will implement a finite state machine (FSM) that explicitly tracks the water level states as discrete levels corresponding to the sensor readings: BELOW_S0, BETWEEN_S1_S0, BETWEEN_S2_S1, and ABOVE_S2.
+
+The FSM transitions states on sensor input changes, so the previous water level state is naturally stored as the FSM's current state before transitioning. This cleanly captures the "previous level before sensor change".
+
+Each clock cycle, the input sensors are decoded to the next water level. If the level differs from the FSM's current state, the FSM transitions to the new state and simultaneously we can determine if the water level increased (next > current). Based on that, we set dfr output accordingly.
+
+Outputs fr2, fr1, fr0 are purely combinational based on the FSM state (nominal flow rate).
+
+dfr is a registered output set high only if the water level just increased due to a state transition; otherwise low. When reset, all outputs are asserted as required.
+
+This FSM approach clearly separates the previous and current levels: the FSM state holds the previous water level, and the decoded input determines the next level. The transition comparison cleanly produces dfr. This approach avoids race conditions and implicit latching issues from the previous design.

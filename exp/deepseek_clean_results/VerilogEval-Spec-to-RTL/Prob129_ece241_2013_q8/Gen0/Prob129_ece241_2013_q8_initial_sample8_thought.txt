@@ -1,0 +1,6 @@
+To implement a Mealy FSM that detects the sequence "101" with overlapping sequences, we need 3 states:
+1. IDLE: Initial state, waiting for first '1'
+2. GOT1: Received first '1', waiting for '0'
+3. GOT10: Received '1' followed by '0', waiting for final '1'
+
+The output z is asserted when we're in GOT10 state and receive a '1' (completing the "101" sequence). The FSM transitions between these states based on the input x. The reset is asynchronous and negative-edge triggered, returning to IDLE state.

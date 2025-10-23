@@ -1,0 +1,19 @@
+To improve the given popcount255 design's Power, Performance, and Area (PPA), we maintain the balanced adder tree approach because it offers good timing and simplicity. However, we optimize the internal popcount17 module by replacing multiple small-width adders with a parallel, bitwise population count using built-in Verilog bit-count idioms for synthesis tools, which often infer LUT-based counters or fast trees automatically.
+
+Specifically:
+
+- Replace the multi-level summation in popcount17 with a direct reduction using Verilog's built-in bitwise addition of single bits or using a popcount technique that balances tree depth without manual layering. Using "countones" or equivalent is not standard Verilog, so instead we use a bitwise parallel adder tree but compactly written.
+
+- For the final summation of partial counts, reduce the number of addition levels by grouping more inputs before summing, utilizing 3-input adders or wider adders, to reduce adder stages.
+
+- Reduce intermediate wire widths where possible by carefully analyzing max values, but since max is 255, 8 bits suffice, so we keep 8 bits for outputs of partial sums.
+
+- Avoid the leftover bit in popcount17 by grouping inputs in 16-bit chunks (16 is a power of two), then adding the 17th bit at the end, to simplify the structure.
+
+- Use generate loops more compactly to help synthesis tools infer efficient hardware.
+
+- Because the design is fully combinational, no pipelining is added, preserving original timing but with a likely reduction in logic levels and power through simplification.
+
+Overall, this yields a cleaner, potentially faster and smaller popcount17 and a slightly reduced number of addition stages in TopModule.
+
+If further pipelining or resource sharing is desired, it can be added externally, but the problem requests a combinational solution.

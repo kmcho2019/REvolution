@@ -1,0 +1,18 @@
+Implement a 3-state Mealy FSM with states representing the count of matched bits of "101" pattern: S0 (no match), S1 (matched '1'), S2 (matched "10"). On input x, transition states accordingly. Output z is asserted when the next input completes the "101" sequence, i.e., when in S2 and input is 1.
+
+Use negative-edge asynchronous reset to set state to S0.
+
+Implement the FSM with:
+
+- a synchronous always_ff block for state update on clk posedge or negedge aresetn,
+- a combinational always block for next state and output calculation,
+- use an enumerated localparam for states encoded with 2 bits,
+- output z is combinational and only 1 when the pattern "101" is detected.
+
+The state transitions:
+
+- S0: on x=1 -> S1, else stay S0
+- S1: on x=0 -> S2, on x=1 stay S1 (because the first '1' can repeat)
+- S2: on x=1 -> output z=1, move to S1 (to allow overlapping), else go to S0
+
+This design differs by renaming states, clear commentary, and slightly different code structure.

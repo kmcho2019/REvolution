@@ -1,0 +1,15 @@
+To fuse the best ideas from both examples, I will implement the multiplexer using a combination of a small hierarchical mux tree for inputs 0 to 7 and then explicitly handle the 8th input plus unused cases, similarly to example 1 for structured clarity and potential area/timing benefits. 
+
+Instead of fully flattening with an array as in example 2, which is elegant but can lead to larger mux logic for 9 inputs, I will use a hybrid approach:
+- Use a packed 2D wire array for inputs 0 to 7 (a to h) to index via a 3-bit subset of sel for clean code and synthesis efficiency.
+- Handle input i and unused sel values separately using a top-level mux.
+- If sel < 8, output inputs[sel[2:0]]; if sel == 8, output i; else output 16'hFFFF.
+  
+This approach:
+- Leverages array indexing for compactness and tool friendliness on the 8 inputs.
+- Explicitly handles the 9th input and unused cases with simple muxing, reducing unnecessary logic.
+- Limits mux fan-in to smaller 8-input mux plus final mux stage, potentially improving power and area.
+- Keeps combinational logic clear, synthesis-friendly, and easily optimized by tools.
+- Avoids a full flat 9-input mux array, which may increase complexity, by separating the last input.
+  
+This fusion strategy balances code clarity, modularity, and efficient PPA characteristics.

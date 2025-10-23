@@ -1,0 +1,36 @@
+The initial approach to shift q left and right with zero-padding on boundaries is correct and efficient.
+
+The problem lies in the boolean expression for the next state, which must exactly match the Rule 110 truth table for each neighborhood (left, center, right).
+
+From the truth table:
+
+| L | C | R | next |
+|---|---|---|-------|
+| 1 | 1 | 1 | 0     |
+| 1 | 1 | 0 | 1     |
+| 1 | 0 | 1 | 1     |
+| 1 | 0 | 0 | 0     |
+| 0 | 1 | 1 | 1     |
+| 0 | 1 | 0 | 1     |
+| 0 | 0 | 1 | 1     |
+| 0 | 0 | 0 | 0     |
+
+Translating the table into a minimized boolean expression gives:
+
+next = (left & center & ~right) |
+       (left & ~center & right) |
+       (~left & center) |
+       (~left & ~center & right);
+
+To apply to all bits simultaneously, do:
+
+next_state = (left & q & ~right) |
+             (left & ~q & right) |
+             (~left & q) |
+             (~left & ~q & right);
+
+This logic can be implemented efficiently without branching.
+
+Thus, the corrected next state expression is used, with the same shift logic and clocked update.
+
+This fixes functional correctness while keeping the design clean and efficient.

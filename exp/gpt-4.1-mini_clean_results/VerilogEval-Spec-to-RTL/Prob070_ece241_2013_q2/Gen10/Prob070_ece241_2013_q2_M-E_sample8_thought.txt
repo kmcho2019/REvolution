@@ -1,0 +1,18 @@
+A different approach is to treat the four inputs as a 4-bit binary number and directly compare it against the specific values 2, 7, and 15 to generate the output logic-1, and against the zeros explicitly specified for logic-0. Since the problem states that inputs corresponding to decimal values 3,8,11,12 never occur, we don't have to consider them.
+
+To implement this, I will:
+
+1. Concatenate the inputs into a 4-bit vector `in_val = {a,b,c,d}` with `a` as MSB and `d` as LSB.
+2. Implement `out_sop` as the OR of equality checks: `(in_val == 2) | (in_val == 7) | (in_val == 15)`.
+3. Implement `out_pos` by first identifying the zeros from the problem statement and generate the product-of-sums by OR-ing out_val != those zero values, then AND-ing all such sums. 
+   This naturally implements a product-of-sums that excludes the zeros, producing logic 1 only for 2,7,15.
+   
+This approach avoids manual Boolean expression minimization and relies on explicit comparisons, ensuring correctness and simplicity.
+
+To implement this in Verilog, I'll:
+
+- Create `in_val` as `{a,b,c,d}`.
+- Use continuous assignments with equality checks to implement `out_sop`.
+- For `out_pos`, I'll build the POS terms by OR-ing the variables appropriately for each zero, then AND all such sums.
+
+This approach is straightforward, and since the input size is small (4 bits), direct comparison is efficient and clear.

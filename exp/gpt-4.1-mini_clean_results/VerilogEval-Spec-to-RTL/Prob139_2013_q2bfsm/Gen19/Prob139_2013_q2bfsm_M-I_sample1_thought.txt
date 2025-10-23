@@ -1,0 +1,47 @@
+To fix the functional failures and align with the requirements, I will keep the Moore FSM style but improve the pattern detection by encoding the 3-bit pattern detection with overlapping capability using a small sequence state machine, effectively implementing a sliding window detection of the '101' pattern on x.
+
+Instead of strict waiting states that halt on wrong inputs, the pattern detection will transition between states based on the input bit x each cycle, allowing to progress or restart pattern matching appropriately.
+
+The FSM states will be:
+
+- A: reset state, f=0, g=0
+- B: pulse f=1 once after reset release
+- C0: initial pattern detection state, waiting for first bit '1' of the pattern
+- C1: pattern partial matched '1'
+- C2: pattern partial matched '10'
+- D: pulse g=1 once after pattern detected
+- E1, E2: monitor y for up to two cycles while holding g=1
+- F: g=1 permanent
+- G: g=0 permanent
+
+The pattern detection logic is:
+
+- C0 (no bits matched): if x=1 -> C1 else stay C0
+- C1 (matched '1'): if x=0 -> C2 else if x=1 stay C1 else C0
+- C2 (matched '10'): if x=1 pattern found -> D else if x=0 -> C0 else C0
+
+This logic ensures the pattern 1,0,1 detected in three successive cycles (sliding window).
+
+Outputs f and g depend on current state only.
+
+The synchronous reset is active low and synchronous: on reset asserted, state=A, f=0, g=0.
+
+After reset de-asserted at next clock edge, go to B, pulse f=1.
+
+After B, move to C0 for pattern detection.
+
+When pattern found, D pulses g=1.
+
+Then E1 and E2 monitor y for two cycles.
+
+If y==1 at any cycle of E1 or E2, go to F (g=1 permanent).
+
+Else G (g=0 permanent).
+
+The output signals are assigned as Moore outputs in the clocked always block depending on the current state.
+
+This approach fixes the pattern detection to properly slide over inputs, ensures correct pulse lengths, and cleanly implements the y monitoring logic.
+
+No need for extra counters since E1 and E2 represent the two monitoring cycles explicitly.
+
+This design guarantees proper pulse timing and pattern detection.

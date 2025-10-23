@@ -1,0 +1,15 @@
+Fuse the strengths of both examples by implementing the 256-to-1 mux with a hierarchical two-level 16-to-1 mux architecture, where each 16-to-1 mux is described using a procedural case statement (from Example 1) to explicitly guide synthesis tools to infer efficient mux trees, while keeping the top module also implemented in a procedural manner. This merges the clarity and low-fan-in case-based selection from Example 1 with the efficient hierarchical structure and modularity of Example 2.
+
+Fusion Strategy:
+- Each Mux16to1 uses a combinational always block with a case statement over sel[3:0] selecting from its 16 input bits, providing explicit, low-level mux logic for clear synthesis guidance.
+- The TopModule instantiates 16 such Mux16to1 modules to decode 16 16-bit chunks of the 256-bit input using sel[3:0].
+- Then the TopModule uses a procedural always block with a case statement on sel[7:4] to select one of these 16 outputs, avoiding continuous assignment and providing explicit mux behavior.
+- This approach keeps a shallow two-level mux hierarchy and explicit case-based logic to help the synthesis tool generate well-optimized, low-fan-in mux trees, potentially reducing glitching and power consumption compared to fully dataflow indexed muxing.
+- Registers are not used for output as the muxes are purely combinational (output declared reg only to support procedural assignment).
+- The generated logic is structured, explicit, and modular, maintaining clarity and facilitating optimization.
+
+This fusion balances:
+- The clarity and explicitness of procedural case statement mux descriptions (Example 1).
+- The hierarchical, modular, and scalable mux tree approach from Example 2.
+- Avoids deeper mux trees or flat gigantic case statements.
+- Enables synthesis tools to optimize power and area better by controlling mux inference style.

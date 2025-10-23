@@ -1,0 +1,3 @@
+Use a single state register bit (state_A) where state_A=1 means state A, and state_A=0 means state B, keeping the one-hot semantics implied by complement. Derive next_state_A as state_A & ~x, matching the FSM transition. Implement output z directly as the Mealy output combinational logic, (state_A & x) | (~state_A & ~x), reflecting output for both states.
+
+Keep asynchronous active-high reset initializing state_A=1 (state A). Use a single always block for state update on clock posedge or reset posedge, with non-blocking assignment. This eliminates the explicit wire for state_B, reducing code lines while maintaining clarity, simplicity, and functionality.

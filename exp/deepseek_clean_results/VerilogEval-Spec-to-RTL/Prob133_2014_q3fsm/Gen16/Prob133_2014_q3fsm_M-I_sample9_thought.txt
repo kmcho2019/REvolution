@@ -1,0 +1,14 @@
+Optimization Strategy:
+1. Reduce critical path by precomputing ones_count incrementally each cycle instead of using a full adder tree
+2. Eliminate w_history shift register by tracking count of 1s directly
+3. Simplify eval_now logic by making it purely state-based
+4. Maintain minimal state encoding (A=0, B=1)
+5. Reduce switching activity by only updating count when in state B
+6. Use parallel comparison for the exact two 1s condition to improve timing
+
+Key Improvements:
+- Replaced 3-bit shift register with 2-bit counter (reduced area)
+- Incrementally update ones_count (better timing)
+- Simplified evaluation condition (direct comparison)
+- Maintained same functionality with fewer resources
+- Reduced power by minimizing unnecessary updates

@@ -1,0 +1,9 @@
+Implement a 3-state FSM explicitly named to enhance clarity and extensibility: WAIT_START, BYTE2, BYTE3. The FSM starts in WAIT_START, ignores bytes until a byte with in[3]=1 is found, then transitions to BYTE2 and BYTE3 sequentially upon receiving subsequent bytes. Upon receiving the third byte (BYTE3), it asserts done for one cycle and returns to WAIT_START.
+
+Instead of using a counter, encode states as a one-hot style to simplify next-state logic and enable easy debugging. The done signal is generated combinationally based on the current state and input, triggered only in the cycle after the third byte is received.
+
+This FSM strictly processes each byte on every clock cycle, synchronized to clk, and uses synchronous reset. The done output is pulse-width one cycle right after completing a message, cleared otherwise. This explicit state encoding facilitates adding more features later if desired, and offers clean state observability.
+
+Also, done is registered synchronously but driven combinationally from state, reducing unnecessary toggling, and state transitions occur only on valid bytes ensuring robustness.
+
+This approach balances clarity, maintainability, and simplicity without a counter, differing architecturally from the initial solution.

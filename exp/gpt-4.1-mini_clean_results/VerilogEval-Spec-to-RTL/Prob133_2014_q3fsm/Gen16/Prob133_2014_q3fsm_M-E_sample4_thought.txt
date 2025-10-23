@@ -1,0 +1,5 @@
+Implement the FSM using a single 3-bit shift register to sample the last three w inputs once in state B. The FSM remains in state A until s=1, then transitions to B. In B, on each clock, shift in w and keep track of how many samples have been collected (using a 2-bit counter). Once three samples are collected, count the number of '1's in the 3-bit shift register (which represents the last 3 w inputs). If the count equals 2, set z=1 for one cycle, else 0. Then reset the counter and repeat.
+
+This approach avoids accumulating sums incrementally, instead accumulating w in a shift register for more straightforward counting. It uses a small combinational popcount logic to count the bits of the shift register. This method uses minimal extra logic and registers while enabling easier pipelining or combinational simplification for counting.
+
+The reset synchronously clears FSM state and all registers. All sequential logic is clocked on posedge clk. The output z is asserted exactly one cycle after collecting the third w sample, maintaining the specified behavior.

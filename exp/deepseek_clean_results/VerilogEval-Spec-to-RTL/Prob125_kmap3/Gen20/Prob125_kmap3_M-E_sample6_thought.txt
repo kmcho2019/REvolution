@@ -1,0 +1,7 @@
+A novel approach would be to implement the logic using a multiplexer-based architecture. This leverages the observation that the output depends heavily on the value of 'a'. When 'a' is 1, the output is always 1 (OR condition). When 'a' is 0, we need to check the (~b & c) condition. This can be efficiently implemented using 'a' as the select line for a 2:1 mux, where one input is tied high (for a=1 case) and the other input is (~b & c) (for a=0 case).
+
+Advantages:
+1. More intuitive hardware mapping (muxes are fundamental building blocks)
+2. Potentially better routing in some technologies
+3. Clear separation of the two main cases (a=1 and a=0)
+4. Don't-care conditions are naturally handled by not being included in the logic

@@ -1,0 +1,10 @@
+To address the issues identified in the feedback, a revised approach can be implemented. The key insight is to recognize that the 'done' signal should only be asserted when a complete message has been received, which means that the third byte has been received and the next byte has not yet been identified as the start of a new message. This can be achieved by introducing an additional condition to check for the next byte's in[3] bit after the third byte has been received.
+
+The revised approach involves:
+
+1. Introducing a separate signal to track whether the next byte is the start of a new message.
+2. Updating the 'next_byte_count' and 'next_msg_in_progress' signals based on the current state and input conditions.
+3. Asserting the 'done' signal only when the third byte has been received and the next byte's in[3] bit is not set.
+4. Resetting the 'msg_in_progress' signal when a new message is detected.
+
+By implementing these changes, the revised design should correctly detect message boundaries and assert the 'done' signal at the correct time.

@@ -1,0 +1,15 @@
+Novel Design Approach:
+
+1. **Shift Register with Parallel Matching**: Instead of using a traditional FSM for pattern detection, implement a 3-bit shift register that directly compares against the "101" pattern in parallel. This eliminates the need for explicit pattern detection states.
+
+2. **Two-Phase Monitoring**: For the y-input monitoring, use a 2-bit counter to track the two-cycle window. This provides a clear timeout mechanism without additional states.
+
+3. **Output Latching**: Implement permanent output behavior using latches that only reset when resetn is asserted. This ensures outputs remain stable once set until reset.
+
+4. **Minimal State Machine**: Reduce the FSM to just three states (INIT, WAIT, DONE) since most logic can be handled by the shift register and counter.
+
+Key Innovations:
+- Parallel pattern matching simplifies state transitions
+- Explicit counter for timeout tracking
+- Output latching ensures permanent behavior
+- Reduced state complexity

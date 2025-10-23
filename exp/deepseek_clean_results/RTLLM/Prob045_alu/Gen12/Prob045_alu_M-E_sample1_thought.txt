@@ -1,0 +1,24 @@
+The segmented ALU design splits operations into parallel datapaths that execute simultaneously, then selects the correct result based on the operation code. Key features:
+
+1. Parallel Execution Units:
+   - Arithmetic Unit: Handles ADD/SUB with optimized carry lookahead
+   - Logic Unit: Processes AND/OR/XOR/NOR in parallel
+   - Shift Unit: Unified barrel shifter for all shift operations
+   - Comparison Unit: Shared comparator for SLT/SLTU
+
+2. Speculative Flag Calculation:
+   - All status flags (zero, carry, etc.) are pre-calculated for all operations
+   - Final flags are selected using the same mux as the result
+
+3. Optimized Datapaths:
+   - Arithmetic operations use carry-select adders
+   - Logic operations use bitwise parallel processing
+   - Shift operations use a unified 5-stage barrel shifter
+   - Comparison operations share signed/unsigned logic
+
+4. Power Optimization:
+   - Clock gating for unused datapaths
+   - Operand isolation for inactive units
+   - Dynamic power management based on operation frequency
+
+This design achieves lower latency through parallel execution while maintaining power efficiency through selective activation of units.

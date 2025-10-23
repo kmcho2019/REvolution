@@ -1,0 +1,11 @@
+The solution can be further simplified by recognizing that:
+1. We only need to track if we're in a message (1) or not (0)
+2. Instead of counting to 3, we can use a 2-bit shift register to track the last 3 bytes
+3. When we see in[3]=1 and we're not in a message, we start a new message
+4. After exactly 3 bytes (2 more after the start), we assert done and reset
+
+Key improvements:
+- Eliminate the counter completely
+- Use a simple 2-bit shift register to track message progress
+- Fewer comparisons and simpler state transitions
+- Same functionality with less logic

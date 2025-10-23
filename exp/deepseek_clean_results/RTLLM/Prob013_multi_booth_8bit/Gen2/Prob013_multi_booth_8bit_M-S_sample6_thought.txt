@@ -1,0 +1,18 @@
+To simplify the Radix-4 Booth multiplier while maintaining functionality:
+
+1. Reduce State Tracking: Instead of tracking previous bit separately, use the LSB of the multiplier for Booth encoding (standard Radix-2 approach). This eliminates the need for the prev_bit register.
+
+2. Simplify Counter Logic: Use a 3-bit counter (0-7) instead of 5-bit since we only need 8 steps for 8-bit multiplication. This reduces register size.
+
+3. Basic Operations: Implement only the essential operations (+A, -A) without the ±2A cases, effectively making it a Radix-2 multiplier. This simplifies the case statement.
+
+4. Single Shift: Shift by 1 bit per cycle instead of 2, making the shifting operation simpler.
+
+5. Ready Signal: Maintain the same ready signal behavior but based on the simplified counter.
+
+The simplified version will:
+- Use standard Booth encoding (Radix-2)
+- Perform +A/-A operations only
+- Shift by 1 bit per cycle
+- Use smaller counter
+- Maintain same interface and functionality

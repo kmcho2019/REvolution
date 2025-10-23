@@ -1,0 +1,5 @@
+The current design uses Verilog reduction operators which are already highly optimized for area, power, and performance. Since the PPA metrics show zero negative slack, low power, and minimal area, any optimization would be marginal. However, to potentially improve power and area slightly, we can implement the same logic with structural AND, OR, and XOR gates instantiated explicitly and share intermediate signals where possible. This approach might help synthesis tools perform gate sharing or simplification better. Specifically, we'll first combine in[3:0] in pairs, then combine the results to produce the final outputs, allowing possible common sub-expression sharing by the synthesis tool.
+
+Although this does not guarantee a better PPA in all tools, it is a reasonable structural optimization attempt.
+
+Note: For pure combinational logic of 4 bits, the difference will be minimal and usually the original reduction operators are best.

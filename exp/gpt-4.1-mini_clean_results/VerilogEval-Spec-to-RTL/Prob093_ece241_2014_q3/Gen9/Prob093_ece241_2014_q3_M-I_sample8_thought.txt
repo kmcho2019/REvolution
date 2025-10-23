@@ -1,0 +1,48 @@
+The TopModule outputs a 4-bit vector mux_in[3:0], which are the four inputs to an external 4-to-1 mux selected by {a,b}. The selector inputs a and b are external and not part of TopModule; TopModule must produce mux_in purely as functions of c and d according to the given K-map.
+
+Each mux_in[i] corresponds to a fixed pair of (a,b):
+- mux_in[0] corresponds to ab=00
+- mux_in[1] corresponds to ab=01
+- mux_in[2] corresponds to ab=11
+- mux_in[3] corresponds to ab=10
+
+For each mux_in[i], the function is a function of c and d only, as given by the K-map column for ab.
+
+Since we can only use 2-to-1 multiplexers and constants, and the selectors for 2-to-1 muxes must be chosen from inputs c or d (the only available variables), we can implement each mux_in[i] using a 2-level mux tree: first muxes to combine pairs of minterms differing in c, selected by c, then a mux selecting between those results by d.
+
+Specifically:
+
+- Consider d as the MSB and c as the LSB of cd.
+
+- For each mux_in[i], the four cd values (00,01,11,10) correspond to d,c = (0,0),(0,1),(1,1),(1,0) respectively.
+
+- For example, to get the output value for cd=00 and cd=01, use a mux with select c between these two values (with d=0). Similarly, for cd=11 and cd=10, select c between these two values (with d=1). Then select between these two groups by d.
+
+This structure uses three 2-to-1 muxes per bit.
+
+Analyzing each mux_in[i] according to the K-map column:
+
+ab=00 (mux_in[0]): outputs for cd=00,01,11,10 are 0,1,1,1  
+- For d=0 (cd=00,01): c=0→0, c=1→1  
+- For d=1 (cd=11,10): c=1→1, c=0→1 (note that cd=11 is c=1, cd=10 is c=0)  
+=> high_mux inputs both 1; low_mux inputs 0 and 1.
+
+ab=01 (mux_in[1]): outputs all zero -> mux_in[1] = 0.
+
+ab=11 (mux_in[2]): outputs 0,0,1,0  
+- For d=0: c=0→0, c=1→0  
+- For d=1: c=1→1, c=0→0
+
+ab=10 (mux_in[3]): outputs 1,0,1,1  
+- For d=0: c=0→1, c=1→0  
+- For d=1: c=1→1, c=0→1
+
+This direct mapping allows us to implement each mux_in[i] with three 2-to-1 muxes (two bottom muxes with c select, one top mux with d select). For mux_in[1], no mux needed as output is zero.
+
+This matches the original example but corrects the assignments to properly reflect the K-map.
+
+This approach uses only 9 2-to-1 muxes for all bits (except mux_in[1]) and constants, meeting the minimal multiplexer use requirement and matching the given K-map outputs correctly.
+
+No other gates are used.
+
+Below is the implementation of mux2 and TopModule following this logic.

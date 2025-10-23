@@ -1,0 +1,9 @@
+To implement the finite state machine (FSM) with the given requirements, we can use a simple Moore machine or a Mealy machine. Since the output z depends only on the previous states (i.e., the counts of w = 1 in the last three clock cycles), we can use a Moore machine with an additional counter. However, considering the constraint to use as few states as possible and the complexity of the condition (counting w = 1 in exactly two of three cycles), we'll approach this by dividing the state machine into parts: one for handling the initial transition from A to B based on s, and another for the w examination and counting within state B.
+
+We'll need states to manage the counting process within state B. Since the condition is to check for exactly two w = 1 in three cycles, and to minimize states, we can merge the functionality of counting and deciding the output z directly within state B by using additional logic rather than additional states for each count.
+
+The states we'll consider are:
+- State A (reset state): Wait for s = 1 to transition to state B.
+- State B: Examine w for the next three cycles and decide on z accordingly.
+
+We'll use a counter to track the number of w = 1 instances within the three cycles and a flag to indicate when we're in the window of examining w.

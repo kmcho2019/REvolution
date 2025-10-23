@@ -1,0 +1,29 @@
+Implement a gshare predictor with a 7-bit global history register (GHR) and a 128-entry Pattern History Table (PHT) of 2-bit saturating counters. To eliminate timing conflicts and ensure the prediction output matches the PHT state before any training update, we split the PHT into two arrays:
+
+- A **PHT_read** array for combinational read during prediction, updated synchronously.
+- A **PHT_write** array updated only on training at clock edge.
+
+At each clock:
+
+- Prediction reads PHT_read indexed by predict_pc XOR GHR, outputs predicted taken and current GHR.
+- Training updates PHT_write indexed by train_pc XOR train_history on clock edge.
+- After update, PHT_read is updated with the values from PHT_write to reflect the new training state for next cycle.
+
+For GHR updates:
+
+- Maintain two versions: the *current GHR* (for prediction indexing) and a *recovered GHR* used only when train_mispredicted.
+- On each clock edge, update GHR based on priority:
+
+    1. If training misprediction (train_valid & train_mispredicted), GHR is restored to train_history (recover state).
+    2. Else if predict_valid, shift in predicted taken into GHR.
+    3. Else keep current GHR.
+
+This ensures:
+
+- Prediction always outputs immediate results using current GHR and stable PHT_read.
+- Training updates happen on clock edge, updating PHT_write which copies into PHT_read afterwards.
+- Misprediction recovery restores GHR precisely to the known good history.
+- Training takes priority on GHR updates when misprediction occurs.
+- Prediction and training can happen simultaneously without clashing because the read array is stable during prediction and updated only after clock edge.
+
+This architecture cleanly separates prediction and training paths and their timing, resolving races and timing ambiguities.

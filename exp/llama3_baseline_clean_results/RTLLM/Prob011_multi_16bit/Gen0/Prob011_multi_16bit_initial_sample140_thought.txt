@@ -1,0 +1,9 @@
+To implement the unsigned 16-bit multiplier, we will create a Verilog module named multi_16bit with input ports for the clock signal (clk), active-low reset signal (rst_n), start signal (start), multiplicand (ain), and multiplier (bin). The output ports will include the product output (yout) and a completion flag (done). 
+
+We will use a state machine approach with a counter (i) to control the shift and accumulate operations. On every positive edge of the clock signal or the falling edge of the reset signal, the counter (i) will be updated. If the reset signal is low, the counter (i) will be reset to 0. If the start signal is active and the counter (i) is less than 17, the counter (i) will increment by 1.
+
+For the multiplication completion flag generation, we will update the flag (done_r) based on the value of the counter (i). If the counter (i) equals 16, indicating the completion of the multiplication operation, the flag (done_r) will be set to 1. If the counter (i) equals 17, the flag (done_r) will be reset to 0.
+
+We will then perform the shift and accumulate operation based on the counter (i) and the multiplicand (ain) and multiplier (bin) values. If the reset signal is low, the multiplicand register (areg), multiplier register (breg), and product register (yout_r) will be reset to 0. If the start signal is active, the multiplication operation will begin. When the counter (i) is 0, the multiplicand (ain) and multiplier (bin) will be stored in the respective registers. For counter values greater than 0 and less than 17, if the bit at position i-1 in the multiplicand register (areg) is high, the product register (yout_r) will accumulate the shifted value of the multiplier register (breg).
+
+Finally, we will assign the product output (yout) the value of the product register (yout_r).

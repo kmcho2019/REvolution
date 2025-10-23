@@ -1,0 +1,13 @@
+To fix the issues in the given code, we need to address the following key areas: 
+
+1. **Correctly implement the enable signals:** The `min_ena` and `hour_ena` signals should be derived from the maximum values of the seconds and minutes counters, respectively. This ensures that the minutes counter increments when the seconds counter reaches its maximum value (59) and the hours counter increments when the minutes counter reaches its maximum value (59).
+
+2. **Modify the hours counter's increment condition:** The hours counter should increment when the `hour_ena` signal is asserted and should wrap around from 12 to 1 when it reaches 12 PM. Additionally, the `pm` signal should be updated accordingly when the hours counter wraps around.
+
+3. **Remove the unnecessary `pm_ena` signal:** The `pm` signal can be determined solely by the current hour value, eliminating the need for the `pm_ena` signal.
+
+4. **Properly handle the AM/PM transition:** The code should update the `pm` signal when the hours counter wraps around from 12 to 1.
+
+5. **Ensure synchronous resets:** The `reset` signal should be used as a synchronous reset to avoid any potential issues.
+
+By addressing these areas, we can ensure that the code accurately implements a 12-hour clock with the correct behavior for the hours, minutes, and seconds counters, as well as the `pm` signal.

@@ -1,0 +1,19 @@
+Implement a 5-state FSM to manage the whole sequence clearly: SEARCH (for pattern 1101), LOAD_DELAY (shift in 4 bits MSB-first), COUNTING (count down total cycles), DONE_WAIT (assert done and wait for ack), and IDLE (default idle state after reset).
+
+Key architectural ideas:
+
+1. Pattern detection: maintain a 4-bit shift register shifting in incoming data bits MSB-first: pattern_shift <= {pattern_shift[2:0], data}. Transition to LOAD_DELAY when pattern is detected.
+
+2. Load delay bits MSB-first: in LOAD_DELAY state, shift in 4 bits serially; the first loaded bit becomes delay[3], the next delay[2], etc., by shifting left and inserting data at LSB, then reverse the vector for final delay register or shift right inserting data at MSB directly. We will shift left, then after 4 bits reverse the bit order to ensure correct MSB-first loading.
+
+3. Use a single large counter 'countdown' to count cycles remaining. Calculate total cycles as (delay + 1) * 1000. We initialize countdown at start of COUNTING state.
+
+4. Output count shows the current "remaining_ticks" which counts down each 1000 cycle block; decrement remaining_ticks every 1000 cycles, while countdown counts down every cycle.
+
+5. The counting output is asserted only in COUNTING; done asserted only in DONE_WAIT; count is valid only in COUNTING (counts down from delay to 0); otherwise don't care.
+
+6. Use synchronous reset and clocked FSM transitions.
+
+7. Ensure the counters decrement precisely and synchronously.
+
+This approach cleanly separates responsibilities and ensures clarity, correctness, and easy debugging.

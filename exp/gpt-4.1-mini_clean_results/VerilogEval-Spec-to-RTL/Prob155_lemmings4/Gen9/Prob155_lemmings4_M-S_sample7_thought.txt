@@ -1,0 +1,10 @@
+Simplify the FSM by explicitly encoding only the main states (WALK_LEFT, WALK_RIGHT, FALL_LEFT, FALL_RIGHT, DIG_LEFT, DIG_RIGHT, SPLAT) as a one-hot style enumeration that includes direction in the state itself. This avoids packing state and direction bits and reduces logic complexity.
+
+Use a single state register and a 5-bit fall counter.  
+Use a straightforward always block to compute next state and next fall count with clear priorities (fall > dig > bump).  
+Remove separate direction logic by embedding direction in the state name, making output logic trivial.
+
+Use synchronous reset for clarity since asynchronous reset complicates logic; handle asynchronous reset with synchronous assignments if necessary.  
+Outputs map directly from the state with simple combinational assigns.  
+
+This reduces multiplexing and conditional logic, making the FSM easier to follow, smaller, and less prone to subtle bugs while preserving all functionality and priorities.

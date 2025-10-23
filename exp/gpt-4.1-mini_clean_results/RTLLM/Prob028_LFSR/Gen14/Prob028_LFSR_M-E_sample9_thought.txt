@@ -1,0 +1,7 @@
+Instead of using a single register with bit shifting and feedback insertion at the LSB, we implement the 4-bit LFSR as a shift register with parallel feedback calculation in a combinational block. The feedback bit is computed by XORing out[3] and out[2], then inverted, matching the original feedback logic.
+
+The new idea is to use a combinational feedback wire and a synchronous process that updates all bits of the register individually rather than using concatenation. This provides clearer visibility into how each bit is updated and allows easy modification for different tap configurations.
+
+On reset, the register initializes to a non-zero seed (e.g., 4'b0001) instead of zero, because an LFSR stuck at zero state never produces a pseudo-random sequence. Using a non-zero initial value avoids the zero-lock problem.
+
+The code is cleanly organized and fully synchronous.

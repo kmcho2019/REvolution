@@ -1,0 +1,9 @@
+To ensure better synthesis compatibility and avoid issues with latch primitives like DLH_X1 not being found, we can explicitly describe the latch behavior using a nonblocking assignment inside an always block with a full sensitivity list or an asynchronous latch style. Using nonblocking assignments (`<=`) is a recommended style in RTL coding for sequential logic. Additionally, explicitly modeling the latch with a transparent enable signal and assigning q only when enable is high, otherwise retaining the previous state by not assigning it, prevents unintended combinational loops and synthesis issues. This style helps synthesis tools infer the latch more reliably and may improve mapping to technology primitives.
+
+Moreover, replacing the explicit hold assignment `q = q;` with no assignment in the else branch can help synthesis tools infer latch behavior without confusion. The sensitivity list can be written with `always @(*)` (always_comb) to model combinational logic including memory (latch).
+
+Overall, the improved code uses:
+- `output reg q` to hold state
+- `always @(*)` for sensitivity list
+- Nonblocking assignment for state updates
+- Assign q only when ena is high, no assignment otherwise (to infer latch)

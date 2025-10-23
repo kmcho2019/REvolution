@@ -1,0 +1,14 @@
+Fusion Strategy:
+1. State Encoding: Use one-hot encoding for better timing performance (from Example 2 critique) while maintaining clear state transitions.
+2. Buffer Management: Implement a shift register approach (from Example 1) but optimize with conditional updates (inspired by Example 2 critique).
+3. Output Logic: Only update out_bytes when done is asserted (from both examples) but make it registered to reduce power.
+4. Power Optimization: Gate the buffer updates to only occur when needed (from Example 2 critique).
+5. Timing: Simplify combinational logic by making state transitions more direct and reducing unnecessary conditions.
+
+Key Improvements:
+- 3-state FSM (IDLE, BYTE1, BYTE2) with one-hot encoding
+- Buffer updates only when receiving valid bytes
+- Registered output for out_bytes to reduce switching
+- Clean state transitions with minimal combinational logic
+- Synchronous reset for all registers
+- No redundant counters - state tracks position

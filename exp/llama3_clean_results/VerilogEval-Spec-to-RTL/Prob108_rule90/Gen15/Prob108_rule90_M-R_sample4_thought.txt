@@ -1,0 +1,8 @@
+To refactor the existing design, we will focus on restructuring the combinational logic for calculating the next state of each cell in the 512-cell array. Instead of using a `generate` block with conditional statements for boundary conditions, we will implement the logic using arrays and loop through each cell to calculate its next state. This approach aims to maintain simplicity and clarity while potentially improving synthesis results due to the uniformity of the logic.
+
+1. We will replace the `generate` block with a `for` loop within a combinational `always` block to calculate the `next_state`. This allows for a more traditional and potentially synthesizable way of describing the combinational logic.
+2. To handle boundary conditions (cells at positions 0 and 511), we will directly assign the next state of these cells based on their specific rules, ensuring clarity and efficiency.
+3. The use of `assign` statements for updating `q_reg` and `q` will remain to maintain a straightforward and efficient sequential logic path.
+4. To improve readability and potentially reduce area, we will consider the explicit definition of the Rule 90 logic directly within the combinational logic description, avoiding unnecessary complexity.
+
+By refactoring the design in this manner, we aim to achieve a balance between simplicity, readability, and synthesizability, potentially leading to improved PPA metrics.

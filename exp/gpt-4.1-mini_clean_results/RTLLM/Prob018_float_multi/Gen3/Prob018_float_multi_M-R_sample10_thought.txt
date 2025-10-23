@@ -1,0 +1,12 @@
+Refactor the design into a classic 4-stage pipeline using separate always blocks for each pipeline stage with pipeline registers, and use combinational logic with `assign` where appropriate. 
+- Stage 0: Input extraction and special case detection.
+- Stage 1: Mantissa multiplication and exponent addition.
+- Stage 2: Normalization and rounding bits extraction.
+- Stage 3: Rounding, exponent adjustment, and final output formatting.
+
+This pipeline structure will cleanly separate each operation, avoid complex state machine control, and improve readability and timing by making clear pipeline boundaries. 
+Also, pipeline registers for intermediate signals are explicitly declared per stage, allowing for easier timing optimization in synthesis. 
+The sign is computed once and propagated through the pipeline. 
+Rounding is performed in a separate stage with combinational rounding decision logic.
+
+This approach maintains functionality and IEEE-754 compliance while structuring the design in a clearer and more synthesizable way.

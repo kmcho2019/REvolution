@@ -1,0 +1,9 @@
+To improve PPA (power, performance, and area), reduce the combinational logic load and switching activity by partitioning the 512-bit state into smaller chunks and processing these chunks in a pipelined or time-multiplexed fashion. However, given throughput constraints are not specified, a simpler and effective optimization is to implement the neighbor accesses and next state logic more efficiently by directly using bitwise operations on shifted versions of q, instead of the padded vector. This avoids the overhead of concatenation and wide indexing, reducing critical path and area.
+
+Specifically:
+- Use left-shifted and right-shifted versions of q to represent neighbors, inserting zeros for boundary bits.
+- Compute next_state purely with bitwise operators on 512-bit vectors.
+- This eliminates the generate-for loop and wire slicing, improving synthesis efficiency.
+- Keep synchronous load and update logic the same.
+
+This approach should reduce the complexity of neighbor extraction, reduce logic duplication, improve timing by leveraging wide vector operations, and reduce area by eliminating generate constructs.

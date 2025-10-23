@@ -1,0 +1,5 @@
+Refactor the clock generator to use a clock toggling logic inside an always block triggered by a free-running internal counter that increments every time unit. The counter wraps around at the PERIOD value. The clock output toggles when the counter reaches half the PERIOD. This avoids using an initial block with forever and delay-based toggling, providing a more synthesizable and deterministic way to generate the clock signal.
+
+By using an always block with a counter and combinational logic for the clock, the clock toggling is edge-aligned and controlled by the counter value, improving simulation stability and compatibility with testbenches expecting synchronous clock edges. This approach keeps the same behavior: the clock toggles every half period, starting from zero, but relies on a counter and event-driven always block instead of delay-based initial block.
+
+The clk output is declared as reg since it changes inside the always block. The counter is a reg holding the current time modulo PERIOD. The clock toggles when counter equals zero, initializing clk to zero at start.

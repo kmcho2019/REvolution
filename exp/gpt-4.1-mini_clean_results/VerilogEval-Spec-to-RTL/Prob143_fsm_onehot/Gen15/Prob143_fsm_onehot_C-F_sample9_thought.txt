@@ -1,0 +1,11 @@
+To create a superior solution, fuse the explicit per-bit next_state combinational assignments of Example 1 with the iterative per-active-state processing style of Example 2 for clarity and synthesis friendliness, while avoiding large OR chains and preserving minimal logic depth.
+
+Specifically:
+- Use an always_comb block with a for-loop over active state bits to accumulate next_state bits, ensuring clear, scalable, and maintainable code that naturally supports multiple active states.
+- Inside the loop, use a case statement for concise transition logic, minimizing redundant logic and allowing synthesis tools to optimize shared paths.
+- Compute outputs with localparam masks and simple bitwise AND + OR reductions for efficient, clear, and scalable output logic.
+- Keep all logic purely combinational, no flip-flops or registers except for the combinational next_state_reg to accumulate next_state bits.
+- For next_state[0], rely on the loop logic instead of a large OR to reduce gate fan-in and optimize timing.
+- This approach combines the synthesis efficiency and minimal depth of Example 1’s next_state assignments with the maintainability and clarity of Example 2’s iterative loop, yielding a solution optimal for timing, power, and area while straightforward to understand and extend.
+
+Overall, this fusion balances explicitness, compact logic, scalability, and synthesis friendliness while fully supporting multi-hot one-hot states and output logic.

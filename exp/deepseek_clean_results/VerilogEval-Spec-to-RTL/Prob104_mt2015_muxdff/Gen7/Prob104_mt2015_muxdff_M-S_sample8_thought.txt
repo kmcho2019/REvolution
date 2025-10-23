@@ -1,0 +1,10 @@
+The key insight is that TopModule should be a simple building block - just a single D flip-flop with a 2:1 mux at its input. The XOR feedback logic belongs in the higher-level full_module, not here. 
+
+1. TopModule should be a basic loadable flip-flop:
+   - When L=1, load r_in
+   - When L=0, load q_in
+2. No feedback logic needed here - that's full_module's job
+3. Single always block for clean synchronous behavior
+4. No need for additional registers - just the output Q
+
+This matches the hierarchical design goal where TopModule is a simple reusable component, and the more complex feedback logic is handled at the higher level.

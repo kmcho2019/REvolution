@@ -1,0 +1,28 @@
+To optimize the solution further while maintaining correctness, I'll implement these improvements:
+
+1. **State Encoding Optimization**:
+   - Switch to one-hot encoding (6 bits) which often provides better timing for small state machines
+   - One-hot reduces combinational logic complexity between states
+
+2. **Next State Logic**:
+   - Replace function with direct combinational always block for better synthesis
+   - Use parallel case synthesis directive for optimization
+   - Group related state transitions for clarity
+
+3. **Output Logic**:
+   - Maintain simple combinational output but optimize encoding
+   - Output is now just OR of E and F states (bit 4 and 5 in one-hot)
+
+4. **Power Optimization**:
+   - Add clock gating conditions for stable states
+   - Use casez for more efficient synthesis of one-hot
+
+5. **Area Optimization**:
+   - Despite using more bits (6 vs 3), the simpler logic may reduce overall area
+   - Remove function overhead for simpler synthesis
+
+Key Benefits:
+- Expected timing improvement from simpler next-state logic
+- Potential power savings from clock gating
+- Maintained readability with clear state definitions
+- Better synthesis optimization through parallel case

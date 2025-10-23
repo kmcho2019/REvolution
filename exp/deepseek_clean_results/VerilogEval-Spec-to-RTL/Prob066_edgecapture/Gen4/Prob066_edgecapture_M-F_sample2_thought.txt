@@ -1,0 +1,11 @@
+To fix the issues identified in the feedback, here's the improved approach:
+
+1. **Stable Edge Detection**: Use a two-stage pipeline for input sampling (in_prev and in_prev2) to ensure stable comparison. This eliminates race conditions by comparing values from two different clock cycles.
+
+2. **Proper Falling Edge Detection**: Detect falling edges by comparing the input from two cycles ago (in_prev2) with the input from one cycle ago (in_prev). This ensures the comparison happens between stable, registered values.
+
+3. **Reliable State Capture**: Maintain the output state using a simple OR operation between the current output and any new falling edges detected. This ensures once a bit is set, it remains set until reset.
+
+4. **Synchronous Reset**: Clear all registers synchronously on reset to ensure clean initialization.
+
+This solution addresses both the timing issues in edge detection and provides reliable state maintenance until reset.

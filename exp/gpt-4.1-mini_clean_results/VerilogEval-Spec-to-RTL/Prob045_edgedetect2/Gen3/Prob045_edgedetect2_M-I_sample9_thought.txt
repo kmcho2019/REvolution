@@ -1,0 +1,5 @@
+The previous design uses a 2-bit shift register per bit, storing both current and previous inputs. This is more storage than necessary. Since we only need to detect if a bit has changed from the previous cycle, storing only the previous cycle's input vector in a single 8-bit register suffices. Then, by XOR-ing the current input and the stored previous input, we can detect edges. Outputting the XOR result registered one cycle later meets the requirement of outputting `anyedge` exactly one cycle after the input transition.
+
+This reduces register usage from 16 bits (2 bits per input bit × 8) to 8 bits, cutting area and power by approximately half. It also simplifies combinational logic by directly XOR-ing input vectors instead of array accesses, likely improving timing. The single-cycle delayed output register ensures `anyedge` is synchronous and only high one cycle after the edge.
+
+This streamlined design optimizes area and power while maintaining the exact same functional behavior and timing specification.

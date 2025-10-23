@@ -1,0 +1,5 @@
+The design requires a two-bit saturating counter that increments or decrements based on input conditions and stays unchanged when not training. It also needs to handle asynchronous reset. 
+
+1. Initialize a 2-bit register `state` to hold the counter value.
+2. Use an asynchronous reset (`areset`) to reset `state` to 2'b01 on the positive edge of `areset`.
+3. At the positive edge of the clock (`clk`), check the value of `train_valid`. If `train_valid` is 1, then check `train_taken`. If `train_taken` is 1, increment the counter (up to a maximum of 3). If `train_taken` is 0, decrement the counter (down to a minimum of 0). If `train_valid` is 0, keep the counter unchanged.

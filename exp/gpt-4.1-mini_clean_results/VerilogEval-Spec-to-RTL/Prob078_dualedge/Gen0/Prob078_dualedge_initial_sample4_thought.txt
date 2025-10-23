@@ -1,0 +1,31 @@
+To implement a dual-edge triggered flip-flop using only positive-edge triggered flip-flops (since dual-edge FFs are not directly supported), we can use two positive-edge triggered flip-flops that sample the data on opposite edges of the clock by using the clock and its complement. Then, by combining their outputs appropriately, we can generate an output that updates on both edges.
+
+Specifically:
+- Use one positive-edge triggered flip-flop clocked by clk (captures d at posedge)
+- Use another positive-edge triggered flip-flop clocked by ~clk (captures d at negedge of clk)
+- Then, use a multiplexer or some logic to output the sampled value depending on the clock edge.
+  
+However, since FPGA flip-flops cannot be clocked by inverted clocks easily (as it is generally discouraged), we can implement the negedge sampling flip-flop using a clock domain crossing technique:
+
+A common method is to use a double-frequency clock or to split the data path.
+
+But a simpler approach is:
+
+- Register 1 (Q1) samples d at posedge clk
+- Register 2 (Q2) samples d at posedge ~clk (implemented as posedge of inverted clk)
+
+Then, use a multiplexer selecting Q1 when clk=1 and Q2 when clk=0. This gives effectively an output updated on both edges.
+
+Since some FPGA tools may allow the second flip-flop to be clocked by inverted clk, or we can use the same clock but delayed to sample the opposite edge.
+
+Another approach is to use a flip-flop on the clock and a flip-flop on the clock delayed by half a period (using a generated clock or an enable signal), but for simplicity, we'll use the inverted clock as the clock for the second flip-flop.
+
+Finally, output q is selected as:
+
+ q = clk ? Q1 : Q2;
+
+This method provides functional dual-edge triggered behavior.
+
+This is a classic approach to emulate dual-edge flip-flops in FPGA.
+
+Note: In synthesis, the inverted clk is automatically handled properly.

@@ -1,0 +1,6 @@
+Implement a sequential IEEE-754 single-precision floating-point multiplier using a 3-state pipeline controlled by a 3-bit counter. 
+In the first cycle, extract input fields, handle special cases (NaN, infinity, zero), and prepare mantissas with implicit leading bits. 
+In the second cycle, perform the 24x24 bit mantissa multiplication and calculate the exponent sum minus bias. Normalize the product by checking the top bits to decide if a shift is needed, shifting accordingly. 
+In the third cycle, perform rounding to nearest even using guard, round, and sticky bits, adjust exponent if rounding causes overflow in mantissa, and finalize exponent handling (overflow, underflow). 
+Pack the output sign, exponent, and mantissa into IEEE-754 format, taking care of special cases. Use conditional static part-selects (no variable part-selects) by branching based on the normalization shift. Maintain all state in registers updated on clock edges synchronized with the counter. 
+This design avoids illegal variable range selections by explicitly writing two branches with fixed index ranges for different normalization outcomes. It uses explicit zero and one hot flags for special cases and accounts for all standard IEEE-754 multiplication rules.

@@ -1,0 +1,15 @@
+To fix the issues in the original implementation while maintaining the same functionality, we'll make these key changes:
+
+1. Proper initialization: Reset both the previous input register and captured bits to ensure clean startup.
+
+2. Correct timing: First use the previous input for edge detection, then update it for the next cycle. This ensures we're comparing the correct values.
+
+3. Simplified logic: Keep the same falling edge detection (prev_in & ~in) but ensure it's computed with the right timing.
+
+4. Persistent capture: Maintain the OR operation to keep detected edges until reset.
+
+The refactored version:
+- Uses proper reset for all registers
+- Maintains correct timing by evaluating edge detection before updating prev_in
+- Keeps the same capture behavior
+- Uses blocking assignments for clarity in the sequence

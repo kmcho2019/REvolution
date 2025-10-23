@@ -1,0 +1,7 @@
+Use a shift register that shifts the incoming serial bit into the MSB position so that the first received bit ends up at dout_parallel[7] and the last at dout_parallel[0]. 
+
+Maintain a 4-bit counter to count the number of valid serial bits received. On every clock with din_valid asserted, shift din_serial into the MSB of the shift register and increment the counter.
+
+When the counter reaches 8 (all bits received), latch the shift register to dout_parallel, assert dout_valid for one cycle, and reset the counter to zero for the next data word.
+
+This approach cleanly separates counting and shifting, ensures one-cycle dout_valid pulse exactly after 8 bits, and follows synchronous reset and clocking rules.

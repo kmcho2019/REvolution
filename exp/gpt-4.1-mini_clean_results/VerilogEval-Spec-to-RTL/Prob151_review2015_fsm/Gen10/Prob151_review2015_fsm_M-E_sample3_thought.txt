@@ -1,0 +1,6 @@
+Implement the FSM using a one-hot encoding style for clarity and simplicity of next state logic.  
+Use a single shift register to capture the pattern bits as they arrive, shifting in the serial data bit each cycle during the search phase to detect the 1101 pattern.  
+Once the pattern is detected, assert shift_ena and count exactly four cycles using a 3-bit counter to enable shifting in duration bits.  
+After shifting, transition to the counting state where the FSM waits for the done_counting signal, then assert done and wait for ack before resetting.  
+All sequential logic is triggered on posedge clk with synchronous active high reset.  
+Derive outputs directly from the one-hot state bits for easy and glitch-free output decoding.

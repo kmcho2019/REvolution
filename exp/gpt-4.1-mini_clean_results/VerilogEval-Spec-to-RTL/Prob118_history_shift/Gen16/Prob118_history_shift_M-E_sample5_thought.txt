@@ -1,0 +1,9 @@
+I will implement the 32-bit global history shift register using a two-step approach with a small internal state machine encoded by a sequential process. Instead of directly shifting the register on each predict_valid, I will maintain a "base history" register that reflects the confirmed history excluding the youngest branch bit, and a separate 1-bit register holding the youngest branch bit.
+
+When predict_valid is asserted (and no misprediction), the youngest bit register is updated with predict_taken, and the base history is shifted left by one bit, pushing out the oldest bit. This separates the youngest bit from the older bits explicitly, which may allow simpler updates and easier rollback.
+
+Upon train_mispredicted, I will combine train_history (31 bits) with train_taken (1 bit) to reload base history and youngest bit registers accordingly. This design modularizes the history and could improve clarity and facilitate pipelining or partial updates.
+
+The asynchronous reset clears both registers to zero. The output predict_history concatenates the youngest bit with the base history appropriately, ensuring predict_history[0] is the youngest branch. Priority is given to misprediction rollback over prediction shift, per requirements.
+
+This architectural partition separates the youngest bit from the rest of the history, potentially aiding debugging, partial updates, or extensions like multi-bit shifts or parallel updates in future. It is still fully synchronous with asynchronous reset.

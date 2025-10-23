@@ -1,0 +1,15 @@
+To optimize the FSM for better power, performance, and area (PPA), I will apply the following enhancements:
+
+1. Use one-hot encoding instead of binary encoding for the states. While this increases the number of flip-flops, one-hot FSMs typically yield faster combinational logic since next-state decoding is simpler and logic depth is reduced, improving timing.
+
+2. Optimize next-state logic to use simple AND/OR gates with one-hot states, which reduces glitches and switching, thus lowering power.
+
+3. Register the MATCH output synchronously with the clock (instead of purely combinational Mealy output). This can reduce glitches on MATCH and improve timing at the expense of one clock cycle latency, which is typically acceptable in pattern detection circuits.
+
+4. Use non-blocking assignments consistently, and synchronous reset only on clock edge to simplify synthesis and timing.
+
+5. Add comments for clarity and better maintainability.
+
+This one-hot encoding approach sacrifices a few flip-flops (6 bits vs 3 bits), but should improve maximum frequency and reduce glitches/power overall. Registering MATCH output reduces glitching and ensures stable output on CLK rising edge.
+
+This design maintains continuous and overlapping detection of the pattern "10011" with looped detection capability as required.

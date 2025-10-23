@@ -1,0 +1,21 @@
+To optimize the existing LIFObuffer design for better power, performance, and area (PPA), the following improvements are made:
+
+1. **SP Width Optimization:** Since SP ranges from 0 to 4, 3 bits are required but only values 0-4 are valid. By using a 3-bit register but adding boundary checks carefully, we maintain clarity while allowing synthesis to optimize.
+
+2. **Simplify SP Arithmetic:** Replace explicit +1/-1 arithmetic with increment/decrement operators to reduce combinational logic complexity.
+
+3. **Use a single always_ff block for sequential logic:** Combine stack_mem updates and SP/dataOut updates to reduce clock domain crossings and register fanout.
+
+4. **Register Stack Memory Writes Only When Needed:** Write stack_mem only on push, no clearing on pop to reduce switching.
+
+5. **Use parameter for STACK_DEPTH:** Makes code scalable and easier to maintain.
+
+6. **Use localparams for SP_EMPTY and SP_FULL:** Improve readability and make control signals cleaner.
+
+7. **DataOut Update Only On Pop:** Keep dataOut stable when not popping.
+
+8. **Reset Implementation:** Zero all stack_mem entries during reset to avoid undefined states.
+
+9. **Avoid redundant next_dataOut signal:** Directly assign dataOut on pop in the sequential block for simplicity.
+
+These changes reduce combinational path delays in the next state logic, minimize switching activity by writing stack memory only on push, and improve readability and maintainability. The code remains fully functional and synthesizable.

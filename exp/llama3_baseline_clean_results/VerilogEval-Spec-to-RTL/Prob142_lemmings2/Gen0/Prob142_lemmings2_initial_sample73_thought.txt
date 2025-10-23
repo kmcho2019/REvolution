@@ -1,0 +1,12 @@
+To implement this finite state machine, we can define four states: 
+- walking_left: The Lemming is walking to the left.
+- walking_right: The Lemming is walking to the right.
+- falling_left: The Lemming is falling and was walking to the left before.
+- falling_right: The Lemming is falling and was walking to the right before.
+
+We start in the walking_left state. When the ground disappears, we transition to the falling_left or falling_right state, depending on the current walking direction. 
+When the ground reappears, we transition back to the walking_left or walking_right state, depending on the direction before the fall. 
+When the Lemming is bumped on the left or right, it will switch direction. However, if the Lemming is currently falling, the bump does not affect the walking direction.
+
+We use a Moore state machine, meaning that the outputs are a function of the current state. 
+The state register will be updated on the positive edge of the clock.

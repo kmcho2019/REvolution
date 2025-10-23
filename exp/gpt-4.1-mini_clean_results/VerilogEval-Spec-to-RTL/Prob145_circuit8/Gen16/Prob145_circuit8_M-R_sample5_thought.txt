@@ -1,0 +1,11 @@
+Refactor the design by separating state holding and output logic. Use two flip-flops for p and q updated on the positive clock edge, but compute their next states combinationally using an always @* block. Outputs p and q remain registered signals updated on clock edges, matching the waveform's sequential nature.
+
+This structure:
+- Introduces separate state registers (p and q).
+- Defines combinational logic for next state (p_next, q_next).
+- Updates state on the positive edge of the clock.
+- Initializes outputs to 0 at start (matching stable initial state after reset).
+- Avoids mixing output and state assignment in one always block, improving clarity.
+- The state transitions reflect the given waveform logic by decoding (p,q) and input a.
+
+This approach matches the original FSM logic but improves readability and aligns better with standard FSM design styles, potentially making timing and output behaviors clearer and easier to modify if needed.

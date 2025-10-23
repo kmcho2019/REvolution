@@ -1,0 +1,11 @@
+Optimization Strategy:
+1. Power Reduction: Add an enable signal to gate the output when not in use, reducing dynamic power consumption
+2. Area Optimization: Replace the memory array with a case statement since we only use 4 specific locations (0-3)
+3. Maintain Performance: Keep the combinational read operation for zero-cycle latency
+4. Default Handling: Provide a defined default value (16'h0000) for uninitialized addresses to ensure predictable behavior
+
+The case statement implementation will:
+- Eliminate the memory array storage overhead
+- Provide faster access through direct decoding
+- Make the initialization more explicit in the code
+- Maintain the same functionality while improving PPA

@@ -1,0 +1,13 @@
+Since the shifts are only by 1 or 8 bits and in fixed directions, and the right shift is arithmetic, the shift operations can be implemented by simple concatenations rather than using large shift operators. This reduces combinational complexity.
+
+We can precompute four possible shifted results using simple wiring:
+- Left shift by 1: drop MSB, append 0 at LSB
+- Left shift by 8: drop top 8 bits, append 8 zeros
+- Arithmetic right shift by 1: replicate MSB, then drop LSB
+- Arithmetic right shift by 8: replicate MSB 8 times, then drop lower 8 bits
+
+Then select the final shift output with a 2-level mux controlled by amount[1] and amount[0]. This avoids complex shift logic and large 64-bit shift operators.
+
+On clock edge, if load is high, load data; else if ena is high, update q with the selected shift output; else hold q.
+
+This simple, structural approach reduces mux and shift operator complexity and improves clarity.

@@ -1,0 +1,8 @@
+To ensure both simulation and synthesis have consistent and known startup behavior, introduce an explicit synchronous active-high reset input to initialize the output register q to zero. This approach eliminates reliance on initial blocks, which synthesis tools may ignore, and guarantees that q is properly reset after reset is asserted. This method improves correctness and avoids simulation vs. synthesis mismatches. 
+
+For better PPA:
+- Performance: Simple synchronous reset on 8 flip-flops has minimal impact.
+- Power: Reset logic adds minimal overhead.
+- Area: Small extra logic for reset signal.
+
+This is a common, standard approach to initialize registers safely and robustly in synthesis and simulation.

@@ -1,0 +1,7 @@
+Simplify the fixed-point subtractor by leveraging the fact that inputs and outputs are in standard two's complement format. Since subtraction with signed fixed-point numbers is naturally handled by two's complement arithmetic, directly performing `c = a - b` provides the correct signed result with correct fractional precision. 
+
+To handle the zero edge case where the result might be zero but with a sign bit of 1 due to two's complement representation, explicitly detect zero and force the sign bit to 0.
+
+This approach removes the need for sign and magnitude extraction, manual addition or subtraction of magnitudes, and explicit sign reconstruction. The fixed-point precision is inherently preserved as all bits are uniformly processed.
+
+The module uses a combinational always block to perform the subtraction, detect zero, and set the output accordingly. This simplifies synthesis and maintains correctness and precision.

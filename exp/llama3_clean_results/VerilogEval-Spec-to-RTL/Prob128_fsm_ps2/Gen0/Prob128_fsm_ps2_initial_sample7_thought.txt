@@ -1,0 +1,11 @@
+To solve this problem, we can design a finite state machine (FSM) with the following states:
+1. IDLE: Initial state where the module is waiting for a byte with in[3]=1.
+2. BYTE1: First byte of the message has been received.
+3. BYTE2: Second byte of the message has been received.
+4. BYTE3: Third byte of the message has been received.
+
+The FSM will start in the IDLE state and transition to BYTE1 when it receives a byte with in[3]=1. It will then transition to BYTE2 and BYTE3 after receiving the next two bytes, regardless of their values. Once it reaches the BYTE3 state, it will signal 'done' in the next clock cycle and then return to the IDLE state to wait for the next message.
+
+We will use a counter to keep track of the number of bytes received after seeing a byte with in[3]=1. The counter will be reset to 0 when the FSM is in the IDLE state or when it transitions from BYTE3 back to IDLE.
+
+In the Verilog code, we will use an enumeration to represent the states of the FSM. The 'done' signal will be asserted when the FSM is in the BYTE3 state.

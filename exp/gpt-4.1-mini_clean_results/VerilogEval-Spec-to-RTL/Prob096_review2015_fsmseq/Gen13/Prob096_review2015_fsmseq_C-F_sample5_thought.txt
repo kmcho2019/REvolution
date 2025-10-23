@@ -1,0 +1,10 @@
+Fuse the compact 3-bit binary encoding from both examples for area and clarity with a synchronous reset and positive edge clock, but enhance the power efficiency by integrating the clock enable gating directly into the state register update condition to reduce logic fanout and critical path delay. Implement purely combinational next-state logic with an explicit default state to ensure robustness. Also, derive the output combinationally from the current state for glitch-free Moore FSM output.
+
+To further optimize power and performance:
+- Combine the clock enable logic with the synchronous reset path by gating state updates only when not in the final detected state.
+- Avoid separate always blocks for clock enable and next-state logic, thus simplifying control logic and minimizing combinational fanout.
+- Use non-blocking assignments consistently.
+- Keep state definitions readable and maintainable with localparams.
+- Maintain the sticky final detected state that keeps output asserted until reset.
+
+This fusion leverages area-compact encoding and clear FSM design, minimizes toggling after detection with integrated gating, and ensures stable output assertion, balancing power, performance, and area optimally.

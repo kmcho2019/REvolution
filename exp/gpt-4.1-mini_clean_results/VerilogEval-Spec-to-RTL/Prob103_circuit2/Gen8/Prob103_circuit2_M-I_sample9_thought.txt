@@ -1,0 +1,9 @@
+The output q implements even parity for inputs a, b, c, d using a 4-input XNOR chain. The current solution is already minimal in logic depth and area since parity functions inherently require XOR/XNOR operations. However, we can slightly improve power by restructuring the logic to balance the gate tree, avoiding a long chain of XNORs which could create a longer critical path and potentially more switching.
+
+To optimize PPA:
+- Restructure the logic as XOR of pairs and then XNOR the results:
+  q = ~((a ^ b) ^ (c ^ d))
+This breaks the XNOR chain into balanced XOR pairs, potentially improving timing and reducing dynamic power.
+- This balanced approach reduces logic depth and may help synthesis to map to more efficient hardware.
+
+Overall, the function is unchanged, but the balanced structure can yield better PPA without increasing area.

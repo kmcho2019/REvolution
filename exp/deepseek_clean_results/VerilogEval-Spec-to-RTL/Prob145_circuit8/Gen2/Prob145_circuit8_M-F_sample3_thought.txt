@@ -1,0 +1,10 @@
+After analyzing the feedback and waveform more carefully, here's the corrected approach:
+1. p should be set high immediately when we see two consecutive a=1 on clock edges (current and previous)
+2. q should be set high one cycle after p has been high for two consecutive cycles
+3. Reset should occur immediately when a=1 during non-clock edges, clearing all state
+
+Key changes needed:
+- Use a 1-bit register to store previous a value (instead of 2-bit shift register)
+- p should be set when current a=1 AND previous a=1
+- q should be set when previous p was high AND p is currently high
+- Reset should be synchronous to negedge clock but clear all state immediately

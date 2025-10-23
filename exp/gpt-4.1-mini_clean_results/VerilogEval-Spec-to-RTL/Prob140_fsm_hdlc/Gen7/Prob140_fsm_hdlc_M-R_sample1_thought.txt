@@ -1,0 +1,10 @@
+Refactor the Moore FSM by separating the input-dependent detection logic from the registered state outputs to correctly delay output signals by one clock cycle as required.
+
+- Use a registered state variable `state` and a combinational `next_state` for transitions.
+- Detect the conditions (disc, flag, err) immediately from the *current* state and current input and register these detection signals (disc_d, flag_d, err_d) to produce the outputs in the *next* clock cycle.
+- Outputs (disc, flag, err) are then assigned synchronously from these detection registers, ensuring they assert for exactly one cycle after the condition was detected.
+- This approach respects the Moore FSM principle (outputs depend only on state), but delays outputs correctly by explicitly registering detection signals derived combinationally from state and input.
+- Reset synchronously to state S0 and clear outputs.
+- Keep the same state encoding and transitions for clarity.
+
+This modification fixes the timing issue in the original design while keeping the FSM logic straightforward.

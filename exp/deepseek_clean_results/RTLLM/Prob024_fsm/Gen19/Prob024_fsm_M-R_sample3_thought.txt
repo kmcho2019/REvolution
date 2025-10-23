@@ -1,0 +1,13 @@
+Refactoring Strategy:
+1. State Encoding: Maintain the same 2-bit encoding but represent states as one-hot for potentially better synthesis optimization
+2. Output Logic: Make MATCH purely combinational (true Mealy) to remove output register latency
+3. State Transitions: Use continuous assignments for next_state logic instead of always block
+4. Reset Handling: Keep synchronous reset but simplify state initialization
+5. Continuous Detection: Use the same immediate restart after match but implement with assign statements
+
+Key Changes:
+- One-hot state encoding for potential synthesis benefits
+- Pure combinational output for zero-cycle latency
+- Next state logic implemented with continuous assignments
+- More compact state transition expressions
+- Maintains all functional requirements while being more streamlined

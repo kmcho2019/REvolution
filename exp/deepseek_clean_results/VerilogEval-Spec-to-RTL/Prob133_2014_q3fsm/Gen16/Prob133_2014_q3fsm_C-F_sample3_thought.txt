@@ -1,0 +1,15 @@
+Fusion Strategy:
+1. State Encoding: Maintain minimal 1-bit encoding (A/B) for area efficiency
+2. Counting Mechanism: Use a 2-bit cycle counter (modulo-3) and a 2-bit ones counter for efficient counting
+3. Window Tracking: Evaluate output when cycle_count wraps (like Example 1) but with optimized counting logic
+4. Output Logic: Make output purely combinational with direct comparison (Example 1 approach)
+5. Power Optimization: Only update counters when in state B (Example 2) and only increment ones_count when w=1
+6. Reset Logic: Clear all counters when in state A or during reset
+7. Critical Path: Simplify by removing unnecessary registers and using direct comparisons
+
+Key Improvements:
+- Combines the efficient counting from Example 1 with the clean state machine structure of Example 2
+- Optimizes power by minimizing unnecessary updates (only count when w=1)
+- Simplifies output logic with direct comparison
+- Maintains minimal state encoding for area efficiency
+- Reduces critical path by making output logic purely combinational

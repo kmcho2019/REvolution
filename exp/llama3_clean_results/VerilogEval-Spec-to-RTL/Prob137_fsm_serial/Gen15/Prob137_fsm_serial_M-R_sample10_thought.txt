@@ -1,0 +1,11 @@
+To refactor the provided code, we will first simplify the state machine by removing unnecessary states and transitions. The existing design uses a 3-bit state register to encode the three states: IDLE, RECEIVE, and ERROR. However, upon closer inspection, we can see that the ERROR state can be eliminated by modifying the RECEIVE state to handle the case when the stop bit is incorrect. 
+
+We will also use a more efficient state transition scheme to reduce the number of operations performed within the always block. This could involve using a single always block to handle all the logic, reducing the size of the shift register, and implementing a more efficient state machine encoding.
+
+To further optimize the design, we can use a 4-bit counter to keep track of the number of bits received and to determine when to check the stop bit. The counter will be used to shift the incoming bits into the shift register.
+
+We will use a 9-bit shift register to collect the start bit, 8 data bits, and the stop bit will be checked separately. This approach simplifies the logic and reduces the number of states required.
+
+The FSM will be designed to reset the 'done' signal in the same always block as the rest of the logic to avoid any potential synchronization issues.
+
+To improve the PPA metrics, we will consider using non-blocking assignments for sequential logic, minimizing the switching activity within the shift register and state machine, and applying clock gating to disable the clock signal when the module is idle.

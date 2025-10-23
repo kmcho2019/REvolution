@@ -1,0 +1,12 @@
+To implement the TopModule, we can use a finite state machine (FSM) to manage the different states of the timer. The FSM will have states for searching for the start pattern, shifting in the delay, counting, and waiting for acknowledgement.
+
+1.  We will start in the "IDLE" state where the module searches for the input pattern (1101) on the data pin. Once the pattern is detected, we shift into the "SHIFT" state.
+2.  In the "SHIFT" state, we shift in the next 4 bits from the data pin to determine the delay duration.
+3.  After the delay is received, we enter the "COUNTING" state where we start counting for (delay + 1) * 1000 clock cycles. We will also output the current remaining time on the count[3:0] pin.
+4.  Once the counting is done, we enter the "DONE" state where we assert the done signal to notify the user. We then wait for the ack signal to be high before resetting to the "IDLE" state.
+
+We will use registers to store the current state, the delay, and the count. We will also use a counter to keep track of the number of clock cycles.
+
+To implement the counting functionality, we can use a counter that increments every clock cycle. We will also use a comparator to check if the count has reached the desired value.
+
+To implement the waiting for acknowledgement functionality, we can use a simple if statement to check if the ack signal is high. If it is, we reset the state machine to the "IDLE" state.

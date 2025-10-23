@@ -1,0 +1,13 @@
+Novel Architecture: Pre-computed Next-State Logic
+1. Instead of using a simple incrementer, pre-compute all possible next states in combinational logic
+2. Use a multiplexer to select between:
+   - Reset value (0)
+   - Current state (when paused)
+   - Next count value (when enabled)
+3. Implement the next-state logic as a simple lookup table for values 0-11
+4. This approach:
+   - Eliminates the adder from the critical path
+   - Makes timing more predictable
+   - Allows easier pipelining if needed
+   - Explicitly handles the wrap-around case
+5. The design remains synchronous and maintains all required functionality

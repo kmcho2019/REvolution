@@ -1,0 +1,7 @@
+Instead of using borrow lookahead subtraction logic, I will implement the comparator by cascading 1-bit comparison blocks for each bit, starting from the MSB to LSB. Each 1-bit comparator compares the corresponding bits and takes into account the result of higher significance bits to decide the final output.
+
+For each bit position, three signals are generated: bit_greater, bit_equal, bit_less. Then the outputs from the most significant bit comparator are combined with the lower bits by propagating equality conditions.
+
+This bit-level hierarchical comparison ensures clear priority from the most significant bit down to the least significant bit, reflecting natural magnitude comparison. The outputs A_greater, A_equal, and A_less will be mutually exclusive by construction.
+
+This architecture uses purely combinational logic with assign statements, no subtraction or borrow logic. It also clearly separates the comparison by bits, making debugging and extension easier.

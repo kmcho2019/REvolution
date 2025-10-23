@@ -1,0 +1,13 @@
+To implement the given Karnaugh map, we need to analyze the truth table and derive the Boolean expression. The Karnaugh map shows output '1' for specific combinations of inputs a, b, c, d. We can group the '1's in the map to find a minimized Boolean expression. 
+
+Looking at the map:
+1. The top-left 1's (cd=00, ab=00 and 01) can be covered by ~c & ~d & ~b
+2. The top-right 1 (cd=00, ab=10) is ~c & ~d & a & ~b
+3. The middle-left 1's (cd=01, ab=00 and 10) can be ~c & d & ~a
+4. The middle-right 1 (cd=01, ab=10) is ~c & d & a & ~b
+5. The bottom-middle 1's (cd=11, ab=01 and 10) can be c & d & (a ^ b)
+6. The bottom-left 1 (cd=10, ab=00) is c & ~d & ~a & ~b
+7. The bottom-middle 1 (cd=10, ab=01) is c & ~d & ~a & b
+
+After combining terms, the simplified expression is:
+out = (~c & ~d) | (~c & ~a) | (c & d & (a ^ b)) | (c & ~d & ~a)

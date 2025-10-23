@@ -1,0 +1,9 @@
+I will implement the Mealy FSM using binary state encoding with minimal states representing how many bits of the sequence "10011" have been matched. Instead of one-hot encoding, binary encoding reduces the number of flip-flops and might save area and power at the expense of slightly more complex combinational logic. 
+
+The FSM transitions through 6 states (0 to 5), where each state represents the number of matched bits so far: state 0 means no bits matched, state 1 means matched first '1', ..., and state 5 means full sequence matched. On each clock cycle, the FSM moves to the next appropriate state based on input IN, potentially rolling back to earlier states if overlap of partial patterns is detected. 
+
+The output MATCH is a Mealy output asserted combinationally when the current state is 4 (matched first four bits "1001") and the current input bit is '1', thereby completing the full pattern "10011".
+
+This design allows for continuous input and overlapping detection by carefully defining transitions to states representing the longest valid prefix matched so far. The reset synchronously clears the FSM state. The MATCH output is combinationally generated from state and input for minimal latency.
+
+This binary-encoded FSM thus balances efficient resource usage and straightforward Mealy behavior, and is easy to expand or modify for other patterns.

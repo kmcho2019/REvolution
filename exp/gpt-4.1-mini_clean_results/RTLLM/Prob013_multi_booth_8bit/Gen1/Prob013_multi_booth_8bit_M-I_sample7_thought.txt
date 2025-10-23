@@ -1,0 +1,25 @@
+The provided solution is a simple bit-by-bit multiplier, not a true Radix-4 Booth multiplier. Radix-4 Booth multiplies by examining two bits of the multiplier plus an extra bit (overlapping triples) and encoding them into one of five operations: +2x, +1x, 0, -1x, or -2x multiplicand. This reduces the number of cycles approximately by half compared to the original bit-by-bit approach.
+
+To implement a correct 8-bit Radix-4 Booth multiplier:
+
+1. Extend the multiplier (b) with an extra LSB zero bit for proper Booth encoding (i.e., 9 bits total).
+2. Use a 5-bit counter since the radix-4 approach processes 2 bits per cycle for 4 iterations (8 bits total).
+3. On reset:
+   - Load multiplicand (a) sign-extended to 17 bits (to accommodate additions and shifts).
+   - Load multiplier (b) sign-extended to 9 bits with appended zero bit.
+   - Initialize product to zero, counter to zero, ready to zero.
+4. On each clock cycle while counter < 4:
+   - Extract the 3-bit booth code: multiplier[2*counter +1 : 2*counter -1] (bits overlap)
+   - Decode booth code to decide which multiples of multiplicand to add or subtract (0, ±1x, ±2x).
+   - Shift partial product right by 2 bits (since radix-4 reduces multiplier bits by 2 per cycle).
+   - Accumulate the partial product according to the booth encoded value.
+5. After 4 cycles (processing 8 bits), assert ready and output the product.
+
+This algorithm reduces cycle count from 16 to 4, improving speed, power, and area. The product width is 16 bits, so internal product register will be wider (e.g. 18 bits) to hold intermediate signed additions and shifting.
+
+We will implement this fully synchronous with positive edge clock and asynchronous reset.
+
+Key points:
+- Use non-blocking assignments.
+- Use sign-extended arithmetic and careful handling of signed multiplication partial results.
+- Output final 16-bit product after ready goes high.

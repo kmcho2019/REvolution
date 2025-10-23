@@ -1,0 +1,24 @@
+The current implementation is functionally correct, utilizing the standard approach for an adder-subtractor by inverting b and adding the do_sub as carry-in to handle subtraction. However, it can be slightly optimized for performance and power by registering the output and zero flag. This prevents glitches on combinational outputs and stabilizes timing, which can improve timing and reduce dynamic power consumption due to output signal transitions.
+
+Additionally, instead of a separate adder module, the computation can be directly embedded in TopModule using continuous assignments for combinational signals feeding registered outputs. This removes a module instance boundary, reducing logic depth and possibly area. Using a registered output and zero flag also helps with synchronizing downstream logic and reducing glitches.
+
+Thus, the improved design:
+- Computes the adder-subtract combinationally in intermediate wires
+- Registers the outputs and zero flag on the clock (adding a clk input)
+- Eliminates extra module instantiation to reduce logic overhead
+
+If synchronous outputs are not allowed, keeping the outputs combinational but assigning zero flag using continuous assignment is an alternative, but typically registers improve PPA in FPGA/ASIC flows.
+
+Since the original spec and example did not specify a clock, an alternative improvement is to fix the bug and keep outputs combinational but compute zero flag correctly and assign both outputs in one always_comb block to avoid latches and glitches.
+
+Here, I improve by:
+- Removing the case statement to a single expression: out = a + (do_sub ? ~b : b) + do_sub;
+- Explicitly assigning result_is_zero with else clause to avoid latches
+- Using a single always_comb block for clarity and proper assignments
+This approach reduces logic and guarantees proper zero flag generation without glitches.
+
+This keeps it combinational and fixes the original bug and coding style issues.
+
+No additional clock needed, since original did not have it.
+
+This is the optimal fix to the problem while maintaining original interface and minimal logic.

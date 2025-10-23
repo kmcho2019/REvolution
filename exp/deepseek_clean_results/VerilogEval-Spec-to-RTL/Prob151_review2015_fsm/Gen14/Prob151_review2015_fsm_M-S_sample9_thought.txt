@@ -1,0 +1,25 @@
+Simplified Design Approach:
+
+1. State Machine Simplification:
+- Use simple binary state encoding instead of one-hot
+- Reduce to 4 clear states: IDLE, SHIFT, COUNT, DONE
+- Remove separate pattern register and shift counter
+
+2. Pattern Detection:
+- Track pattern using a 4-bit shift register
+- Clear only when leaving IDLE state
+
+3. Shift Control:
+- Use state duration to naturally count 4 cycles in SHIFT state
+- No need for separate counter
+
+4. Output Logic:
+- Directly map outputs to states
+- Simple combinational assignments
+
+Key Simplifications:
+- Eliminated one-hot encoding complexity
+- Removed separate shift counter
+- Simplified pattern detection logic
+- Reduced register usage
+- Maintained same functionality with cleaner structure

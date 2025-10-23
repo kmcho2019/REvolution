@@ -1,0 +1,22 @@
+To achieve fractional frequency division by 3.5, I will use a time-division approach based on a single synchronous counter running on the input clock's positive edge, cycling through 7 states (0 to 6) representing the multiplied division period (7 input clock cycles = 3.5 output clock cycles).
+
+The output clock will toggle at specific counter values to produce the required uneven half-periods:
+
+- The output clock period is 7 input clock cycles, so half periods are either 3 or 4 input clock cycles.
+- To approximate a 50% duty cycle on average, the output clock will be high for 4 input clocks and low for 3 input clocks.
+  
+Implementation details:
+- Use a 3-bit counter counting 0 to 6.
+- Toggle the output clock at counts 0 and 4.
+- Output clock is low at count 0, goes high at count 0 (toggle), remains high until count 4, then toggles low.
+- This results in a clock that is high for 4 cycles and low for 3 cycles, with a period of 7 input clocks.
+  
+To improve duty cycle and smoothness, employ double-edge clocking by creating two clocks:
+- One toggles at counts 0 and 4 on posedge clk.
+- Another toggles similarly but shifted by half a clock period by toggling on negedge clk at the shifted counts.
+  
+Finally, OR these two clocks to generate the fractional clock with an effective half-cycle phase shift, producing a 3.5 division with reduced duty cycle distortion and smoother edges.
+
+This method avoids asynchronous resets, uses a single synchronous counter on posedge clk, and derives the phase-shifted clock using negedge clk toggling logic with enable signals driven by the posedge counter state, guaranteeing phase alignment and avoiding counters running independently on different clock edges.
+
+The design is fully synchronous and phase-aligned, ensuring stable and glitch-free fractional division output.

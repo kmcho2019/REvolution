@@ -1,0 +1,18 @@
+The waveform shows that the circuit behaves as a 2-bit shift-register-like sequential circuit with these characteristics:
+
+- Initially, p and q are undefined.
+- On the first rising clock edge, both p and q go to 0.
+- On rising clock edges, p updates based on the current 'a' and previous q value.
+- On falling clock edges, q updates based on the previous p value.
+- Specifically:
+  - At rising edge: p <= a OR q (p becomes 1 if either a=1 or q=1)
+  - At falling edge: q <= p (q captures p)
+  
+This explains the output behavior:
+- p can become 1 if either input a or q is 1 at posedge.
+- q then latches p at negedge, propagating the state to the next cycle.
+- This makes p responsive both to input a and the stored bit q, while q simply follows p delayed by half a clock cycle.
+  
+This interpretation is consistent with the timing and values in the waveform, which was not captured by the previous code that forced p=0 when q=0. Instead, p should combine 'a' and 'q' using OR.
+
+Implementing this with two always blocks triggered by posedge and negedge clock, with initial reset to zero, will match the waveform closely.

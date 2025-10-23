@@ -1,0 +1,10 @@
+The idea is to design a barrel shifter module that takes an 8-bit input and shifts it based on a 3-bit control signal. The control signal determines the amount of shift in stages (1, 2, or 4 positions) using 2-to-1 multiplexers. The multiplexers select between the shifted input and the original input at each stage, effectively achieving the desired shift.
+
+To achieve this, the design will be modular, with a submodule `mux2X1` for the 2-to-1 multiplexers. The main `barrel_shifter` module will instantiate `mux2X1` modules as needed for each bit position to perform the shifting.
+
+The shifting logic will be based on the control signal bits:
+- `ctrl[2]`: Shift by 4 positions if high.
+- `ctrl[1]`: Shift by 2 positions if high, after any shift by 4.
+- `ctrl[0]`: Shift by 1 position if high, after any shifts by 4 and 2.
+
+The output of each stage will be the input to the next stage, allowing the shifts to be cumulative.

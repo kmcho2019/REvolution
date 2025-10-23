@@ -1,0 +1,7 @@
+Refactor the FSM to integrate the next state and output logic into a single always_comb block instead of using a function for next state. The state register remains a separate always block with asynchronous negative-edge reset.
+
+This approach consolidates next state and output computations together, simplifying the control flow and reducing the number of constructs (no function needed). The output z is registered (Mealy output) within the same always_comb block that calculates next state, making all combinational logic explicit in one place.
+
+This style can improve readability for some designers by co-locating next state and output logic, while keeping the asynchronous reset and positive-edge clock triggering for sequential state updates unchanged.
+
+The FSM still uses 3 states, recognizes overlapping "101" sequences, and asserts z when the pattern is detected.

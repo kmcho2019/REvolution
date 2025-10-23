@@ -1,0 +1,29 @@
+module parallel2serial (
+    input        clk,
+    input        rst_n,
+    input  [3:0] d,
+    output reg   valid_out,
+    output      dout
+);
+
+    reg [1:0] cnt;
+
+    // Output bit is selected based on counter: MSB first (cnt=0)
+    assign dout = d[3 - cnt];
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            cnt       <= 2'b00;
+            valid_out <= 1'b0;
+        end else begin
+            if (cnt == 2'd3)
+                cnt <= 2'b00;
+            else
+                cnt <= cnt + 1'b1;
+
+            // valid_out is high only when outputting the MSB (start of new data)
+            valid_out <= (cnt == 2'd0);
+        end
+    end
+
+endmodule

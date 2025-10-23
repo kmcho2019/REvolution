@@ -1,0 +1,10 @@
+To improve PPA while preserving correctness and synthesis friendliness, replace the explicit ripple-carry implementation with direct use of Verilog’s built-in addition and subtraction operators combined with a conditional operand for subtraction.
+
+Key improvements:
+- Use `{do_sub ? -b : b}` to let the synthesizer infer a more optimal adder-subtractor implementation (e.g., carry-lookahead or carry-save).
+- Retain single combinational always block with blocking assignments for clarity.
+- Compute zero flag via reduction NOR on the output to correctly detect zero.
+- Avoid explicit loops and carry signals, which reduce area and power and improve timing due to better mapping to dedicated hardware.
+- Maintain all output registers as reg and update in always @(*) block to keep original interface semantics.
+
+This approach leverages synthesis tool capabilities for optimal adder-subtractor generation, leading to smaller area, lower power, and better timing, especially for small 8-bit widths.

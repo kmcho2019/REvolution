@@ -1,0 +1,14 @@
+A different approach would be to implement the Karnaugh map using a hierarchical structure that breaks down the problem into smaller, more manageable parts. We'll:
+
+1. First decode the x[3:4] and x[1:2] pairs separately
+2. Then use these decoded signals to implement the Karnaugh map through a priority encoder-like structure
+3. Take advantage of don't-care conditions to simplify the logic
+
+The key observations from the map:
+- When x[3] is 1, f is mostly 1 (except when x[3:4]=10 and x[1:2]=11)
+- When x[3] is 0, f depends on specific combinations of other bits
+- We can use the don't-cares to our advantage in the x[3:4]=00 case
+
+The logic can be expressed as:
+f = x[3] ? ~(x[4] & ~x[1] & x[2]) : 
+     (x[4] & x[1] & x[2]) | (~x[4] & ~x[1] & ~x[2]);

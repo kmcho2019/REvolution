@@ -1,0 +1,12 @@
+The original design is fundamentally correct, but it contains illegal Verilog syntax: variable declarations inside procedural blocks, which cause compilation failures.
+
+To fix this:
+- Move all local variables used in procedural blocks to module-level declarations to comply with Verilog syntax.
+- Ensure the sign-extension and partial remainder width are handled correctly with explicit bit widths.
+- Simplify partial remainder update logic to avoid unnecessary shifting confusion.
+- Make the combinational calculation clearer by defining a separate combinational block and using module-level regs for intermediate variables.
+- Ensure res_valid remains asserted until a new operation starts (for handshaking).
+- Remove redundant signals and comments to improve readability.
+- Keep the original radix-2 non-restoring division algorithm intact and the interface unchanged.
+
+These fixes improve code clarity and correctness, enabling synthesis and simulation. The final module cleanly handles signed and unsigned division, outputs remainder in the upper 8 bits and quotient in lower 8 bits, and asserts res_valid appropriately.

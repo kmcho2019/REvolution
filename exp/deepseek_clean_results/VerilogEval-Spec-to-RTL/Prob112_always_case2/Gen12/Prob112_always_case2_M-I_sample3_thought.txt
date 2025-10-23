@@ -1,0 +1,11 @@
+To optimize the priority encoder further, I'll implement these improvements:
+
+1. **Simpler Logic Structure**: Replace the arithmetic-based mask generation with direct priority encoding logic using a case statement on the input bits themselves. This eliminates the need for the `in & ~(in-1)` operation, reducing both power and area.
+
+2. **Efficient Priority Encoding**: Use a priority if-else structure that naturally implements the priority encoding behavior without any intermediate computations. This matches well with how synthesis tools optimize priority logic.
+
+3. **Default Handling**: Maintain the same behavior for all-zero input case while making it implicit in the priority structure.
+
+4. **Direct Output Assignment**: Assign the output directly based on input patterns, which should result in simpler combinational logic.
+
+This approach should maintain the same functionality while potentially improving power and area metrics, especially since the current implementation already has excellent timing (wns/tns = 0).

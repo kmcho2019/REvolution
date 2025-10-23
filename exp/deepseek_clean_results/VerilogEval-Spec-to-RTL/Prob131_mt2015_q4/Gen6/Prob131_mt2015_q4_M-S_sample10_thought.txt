@@ -1,0 +1,5 @@
+The solution can be significantly simplified by:
+1. Recognizing that ModuleA's output (x & ~y) and ModuleB's output (x ~^ y) can be computed once and reused
+2. Observing that the final logic (OR of a1_out and b1_out) XOR (AND of a2_out and b2_out) is redundant since all instances receive the same inputs
+3. The entire logic reduces to: z = ((x & ~y) | ~(x ^ y)) ^ ((x & ~y) & ~(x ^ y))
+4. Further simplifying this expression using Boolean algebra reveals it's equivalent to just ~y

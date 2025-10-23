@@ -1,0 +1,9 @@
+The functionality can be simplified by directly assigning motor and ringer outputs based on the ring and vibrate_mode inputs. Since only one of the outputs can be active at a time when ring is high, a simple ternary expression can be used for one output and the other output defined as its complement masked by ring. This removes the need for two separate AND gates and an inverter, reducing logic to a single comparator and AND gate.
+
+Specifically:
+- motor = ring & vibrate_mode
+- ringer = ring & ~vibrate_mode (which is equivalent to ring & !vibrate_mode)
+
+Alternatively, ringer can be assigned as ring & ~vibrate_mode, but to minimize logic further, assign motor as ring & vibrate_mode and ringer as ring & ~vibrate_mode.
+
+Since the original solution is already minimal, the simplest implementation is the original two assign statements without any extra comments or wires.

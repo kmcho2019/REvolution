@@ -1,0 +1,9 @@
+To implement the next-state logic for signals Y2 and Y4, corresponding to y[1] and y[3] respectively, we need to analyze the state machine transitions. Since we are using one-hot encoding, each state is represented by a unique bit being set to 1 while all others are 0. We will inspect the transitions to derive the logic equations for Y2 and Y4. Y2 corresponds to state B, and Y4 corresponds to state D. We will look at all transitions that lead to states B and D.
+
+For Y2 (state B), we see transitions from A (0) --1--> A and B (0) --0--> C do not affect Y2. However, transitions A (0) --1--> A indirectly show that if in A and w=1, we stay in A, but this doesn't affect Y2 directly since A's one-hot is y[0]. Relevant transitions for setting Y2 (moving to B) are when we are in A and w=0, or other states that might transition to B indirectly. Given the one-hot encoding and the state machine, Y2 will be set when we are in state A and w=0.
+
+For Y4 (state D), we look at transitions leading to D. These are B (0) --1--> D, C (0) --1--> D, D (0) --1--> A (does not directly set D but indicates D can move to A), E (1) --1--> D, and F (1) --1--> D. The logic for Y4 will depend on these conditions.
+
+By inspection, the logic for Y2 can be simplified as it is primarily dependent on being in state A and the value of w. For Y4, it will depend on various current states and the value of w.
+
+Given the one-hot encoding, the next-state logic can be directly derived from the transitions that lead to the setting of y[1] and y[3].

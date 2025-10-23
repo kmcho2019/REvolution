@@ -1,0 +1,29 @@
+Novel Architectural Idea:
+
+1. Truth Table Analysis:
+   - Output=1 cases: 2(0010), 7(0111), 15(1111)
+   - Output=0 cases: 0-1,4-6,9-10,13-14
+   - Don't-cares: 3,8,11,12 (can be used for optimization)
+
+2. Pattern Recognition Approach:
+   - Observe that all output=1 cases have c=1 (common pattern)
+   - For output=1, we need either:
+     * Case 2: ~a & ~b & ~d (when c=1)
+     * Case 7: ~a & b & d (when c=1)
+     * Case 15: a & b & d (when c=1)
+   - This suggests c is a key signal that can be factored out
+
+3. Optimized SOP:
+   - Factor out c: out_sop = c & [(~a & ~b & ~d) | (~a & b & d) | (a & b & d)]
+   - Further simplify the bracketed expression using Boolean algebra
+
+4. Optimized POS:
+   - Instead of traditional POS, implement using De Morgan's theorem on SOP
+   - First create SOP of inverted function (where output=0)
+   - Then invert the entire expression to get POS form
+   - This guarantees minimal POS implementation
+
+5. Implementation:
+   - SOP: Use factored form with c as common term
+   - POS: Implement inverted SOP then invert output
+   - Both forms now correctly implement the truth table

@@ -1,0 +1,23 @@
+The current implementation is functionally correct but can be optimized for better PPA. Here's my improvement strategy:
+
+1. Clock Gating:
+   - Add clock gating for the shift register to reduce dynamic power when not shifting
+   - This will significantly reduce power consumption during idle periods
+
+2. Mux Optimization:
+   - Implement the 8:1 mux using a binary tree structure for better area and timing
+   - This reduces fanout and improves critical path
+
+3. Shift Register Optimization:
+   - Use parameterized width for potential reuse
+   - Keep the efficient concatenation-based shifting
+
+4. Power Optimization:
+   - Add explicit power optimization attributes
+   - Use don't-touch to preserve optimizations
+
+Benefits:
+- Reduced power consumption through clock gating
+- Improved timing with binary mux structure
+- Maintained area efficiency
+- Better modularity with parameterized shift register

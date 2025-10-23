@@ -1,0 +1,17 @@
+Refactoring Strategy:
+1. Maintain the same decade counter functionality (0-9 count)
+2. Use continuous assignment (assign) instead of always block for the combinational logic
+3. Keep synchronous reset but implement it with a separate always block
+4. Split the design into:
+   - Combinational next state logic using assign
+   - Sequential state update using always block
+5. Benefits:
+   - Clear separation of combinational and sequential logic
+   - Easier to add additional combinational logic if needed
+   - Maintains same efficient terminal count detection (q[3] & q[0])
+   - Same minimal hardware usage
+
+Key Changes:
+- next_q calculation moved to continuous assignment
+- Sequential logic simplified to just the register update
+- Reset handling remains synchronous and high priority

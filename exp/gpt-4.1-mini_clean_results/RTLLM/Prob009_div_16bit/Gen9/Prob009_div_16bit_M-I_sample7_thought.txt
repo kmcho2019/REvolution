@@ -1,0 +1,12 @@
+Improve the original combinational 16-bit by 8-bit divider by:
+
+- Eliminating the explicit input latching always block and directly using inputs in the combinational division block, reducing netlist size and simplifying logic.
+- Using non-blocking assignments in combinational always blocks is not recommended, so keep blocking assignments for simulation accuracy.
+- Retain the restoring division approach, but minimize bit width manipulations and carefully size remainder and divisor registers.
+- Keep the divisor extended to 9 bits and remainder as 9 bits for correct comparison.
+- Compact the logic by removing redundant registers and unnecessary zero-extensions (output remainder will be zero-extended implicitly on assignment).
+- Add comments for clarity.
+- Overall, this should reduce area and possibly power by simplifying logic and netlist.
+- The single always block combinational approach will improve synthesis efficiency, and inputs being directly referenced reduces overhead.
+
+This yields cleaner and slightly more optimal code for PPA while maintaining full combinational functionality.

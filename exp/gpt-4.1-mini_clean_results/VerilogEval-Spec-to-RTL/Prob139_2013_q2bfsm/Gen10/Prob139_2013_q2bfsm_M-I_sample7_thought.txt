@@ -1,0 +1,35 @@
+Improve correctness by refining state transitions and precise timing of outputs:
+
+1. Clarify the timing and sampling of inputs (x, y) and outputs (f, g) by ensuring all sampling and output assertions occur synchronously on the clock edge, avoiding combinational dependencies in pattern detection.
+
+2. Use a clear shift register update on the clock edge. Store the x samples sequentially on each clock, then check the pattern in the next cycle, avoiding "look-ahead" checks in combinational logic.
+
+3. Insert an explicit "F_PULSE" state after reset is deasserted to produce f=1 for exactly one cycle, before moving to pattern detection.
+
+4. When the pattern 1,0,1 is detected in the shift register (oldest to newest bit order), move to a "G_PULSE" state that sets g=1 on the following clock cycle (instead of going directly to Y_MONITOR with g=1), thereby precisely meeting the requirement that g=1 is asserted the cycle after detecting the pattern.
+
+5. Then enter Y_MONITOR state to monitor y for up to 2 cycles while maintaining g=1. If y=1 within these cycles, transition to G_ON_PERM (g=1 permanently). Otherwise, transition to G_OFF_PERM (g=0 permanently).
+
+6. Reset clears all state and counters.
+
+7. Outputs f and g are Moore outputs solely dependent on the current state.
+
+This design cleanly sequences the output pulses and input pattern detections to precisely meet timing requirements, avoids combinational pattern checks that cause misalignment, and clearly separates the output pulse assertions (f and g).
+
+State machine states:
+
+- IDLE: waiting for reset deassertion
+
+- F_PULSE: f=1 one clock cycle after reset release
+
+- PATTERN_WAIT: shift in x samples each clock, looking for pattern 1,0,1
+
+- G_PULSE: g=1 for one clock cycle immediately after pattern detection
+
+- Y_MONITOR: g=1 while monitoring y input for at most two clocks
+
+- G_ON_PERM: g=1 permanently (until reset)
+
+- G_OFF_PERM: g=0 permanently (until reset)
+
+Implement all sequential logic triggered on positive edge of clk with synchronous active low reset.

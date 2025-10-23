@@ -1,0 +1,18 @@
+Implement a dual-edge triggered flip-flop using a single positive-edge triggered flip-flop combined with a toggle flip-flop and some simple logic. The key insight is to sample the input on the positive edge and then generate an internal toggle signal that toggles on the negative edge by using a delayed clock inverted internally.
+
+Since negedge-triggered flip-flops are not allowed, we use a positive-edge flip-flop clocked by the inverted clock to simulate negative-edge capture.
+
+The overall design consists of:
+- A master flip-flop capturing `d` at the positive edge of `clk`.
+- A slave flip-flop clocked on the inverted `clk` capturing the master's output.
+- An XOR gate combining the outputs of these two flip-flops, producing the final output `q`.
+
+This XOR output toggles on both edges, effectively creating dual-edge behavior while using only positive-edge flip-flops.
+
+This technique:
+- Uses only positive-edge triggered flip-flops, complying with FPGA constraints.
+- Eliminates level-sensitive latches and multiplexers.
+- Minimizes glitches by relying on register outputs and simple combinational logic.
+- Potentially reduces area and power compared to having two full flip-flops and a latch mux.
+
+This approach is a classic way to build a dual-edge triggered flip-flop in FPGAs.

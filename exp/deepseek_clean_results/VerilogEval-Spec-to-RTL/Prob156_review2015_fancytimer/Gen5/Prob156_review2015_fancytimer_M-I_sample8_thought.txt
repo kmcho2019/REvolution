@@ -1,0 +1,23 @@
+The key issues in the original solution stem from incorrect cycle counting and state transition timing. Here's my improved strategy:
+
+1. **Precise Cycle Counting**: Implement exact (delay+1)*1000 cycle counting by:
+   - Using a 10-bit counter (0-999) for the 1000-cycle periods
+   - Properly initializing counters when entering RUN state
+   - Ensuring accurate transition after final count
+
+2. **Robust State Machine**:
+   - Clear pattern register when leaving IDLE state
+   - Properly synchronize delay capture in CAPTURE state
+   - Add explicit state transition conditions
+
+3. **Output Timing**:
+   - Ensure count updates only at start of each 1000-cycle period
+   - Maintain done signal until proper acknowledgment
+   - Clear outputs appropriately during reset
+
+4. **Optimizations**:
+   - Combine related operations in state transitions
+   - Simplify counter comparisons
+   - Remove redundant assignments
+
+The improved version maintains the same interface while fixing timing issues and making the implementation more robust.

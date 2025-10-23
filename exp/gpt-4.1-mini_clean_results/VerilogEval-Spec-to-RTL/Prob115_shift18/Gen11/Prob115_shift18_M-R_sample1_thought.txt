@@ -1,0 +1,9 @@
+Refactor by separating the synchronous register update from the combinational shift logic, implementing the shift operation as a purely combinational function block that takes the current register value and control inputs and outputs the shifted value. This shift function will handle the direction and amount, performing arithmetic right shifts with sign extension and left shifts accordingly.
+
+The output 'q' will be registered using an always block triggered by clk, updating on load or shift enable, else holding the current value.
+
+This approach improves code modularity, enhances readability by isolating shift logic, and uses explicit combinational function or always_comb block instead of multiple intermediate wires. The combinational shift logic will use a case statement for clarity.
+
+Also, the shift amount and direction will be decoded once to drive the combinational shift, avoiding multiple separate wires.
+
+This refactoring keeps the same PPA profile but improves clarity and maintainability.

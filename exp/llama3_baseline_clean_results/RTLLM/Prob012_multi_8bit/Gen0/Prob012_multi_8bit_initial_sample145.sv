@@ -1,0 +1,15 @@
+module multi_8bit(
+    input [7:0] A,
+    input [7:0] B,
+    output reg [15:0] product
+);
+
+    always @(*) begin
+        product = 0;
+        for (int i = 0; i < 8; i++) begin
+            if (B[i])
+                product = product + (A << i);
+        end
+    end
+
+endmodule

@@ -1,0 +1,14 @@
+Refactored design approach:
+1. Convert the sequential logic to a more explicit state machine with clear states (IDLE, LOAD, CALC, DONE)
+2. Replace the counter-based approach with a state machine for better readability and control
+3. Use continuous assignments for outputs where possible
+4. Simplify the shift-and-add logic by pre-calculating all possible shifted versions of breg
+5. Make done flag purely combinational based on current state
+6. Remove redundant registers and simplify control logic
+
+Key improvements:
+- Explicit state machine makes behavior clearer
+- Continuous assignments reduce unnecessary always blocks
+- Pre-calculated shifts eliminate variable shifters in critical path
+- Simplified control flow with state transitions
+- Reduced register usage by combining some operations

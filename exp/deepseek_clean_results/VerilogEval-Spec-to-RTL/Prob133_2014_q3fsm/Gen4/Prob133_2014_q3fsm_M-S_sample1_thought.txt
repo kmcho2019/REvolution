@@ -1,0 +1,14 @@
+Simplified approach:
+1. Use only 2 states (A and B) as specified
+2. Track w values in a 3-bit shift register continuously in state B
+3. Use a 2-bit counter to track window position (0-2)
+4. When counter reaches 2 (completing a window), check if exactly two 1's are in the shift register
+5. Output z=1 in the next cycle if condition met, else z=0
+6. Reset all registers when in state A or global reset
+
+Key simplifications:
+- Eliminated intermediate signals (window_done, eval_now)
+- Directly use counter value to trigger evaluation
+- Simplified pattern matching using bit count
+- Reduced number of always blocks
+- Maintained same functionality with cleaner implementation

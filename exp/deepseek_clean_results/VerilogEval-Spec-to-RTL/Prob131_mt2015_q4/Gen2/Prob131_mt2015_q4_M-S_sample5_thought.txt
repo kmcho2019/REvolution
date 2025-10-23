@@ -1,0 +1,8 @@
+To simplify the solution while maintaining functionality:
+1. Observe that the final output z is (a_out | b_out) ^ (a_out & b_out), which is equivalent to a_out ^ b_out
+2. ModuleA implements (x^y) & x which simplifies to x & ~y
+3. ModuleB implements ~(x^y) which is x XNOR y
+4. The entire logic can be reduced to a single XOR operation between the simplified ModuleA and ModuleB outputs
+5. Further optimization: implement all logic directly in the top module without submodules
+6. Final output z = (x & ~y) ^ ~(x ^ y)
+7. This can be simplified to z = ~(x | y) using Boolean algebra

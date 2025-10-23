@@ -1,0 +1,75 @@
+module parallel2serial (
+    input wire clk,
+    input wire rst_n,
+    input wire [3:0] d,
+    output reg valid_out,
+    output reg dout
+);
+
+    // FSM states
+    typedef enum logic [1:0] {
+        IDLE,
+        BIT3,
+        BIT2,
+        BIT1
+    } state_t;
+
+    state_t current_state, next_state;
+    reg [3:0] data_latch;
+
+    // State transition logic
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            current_state <= IDLE;
+            data_latch <= 4'b0;
+        end else begin
+            current_state <= next_state;
+            if (current_state == IDLE) begin
+                data_latch <= d;
+            end
+        end
+    end
+
+    // Next state logic
+    always_comb begin
+        case (current_state)
+            IDLE: next_state = BIT3;
+            BIT3: next_state = BIT2;
+            BIT2: next_state = BIT1;
+            BIT1: next_state = BIT3;
+            default: next_state = IDLE;
+        endcase
+    end
+
+    // Output logic
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            valid_out <= 1'b0;
+            dout <= 1'b0;
+        end else begin
+            case (current_state)
+                IDLE: begin
+                    valid_out <= 1'b1;
+                    dout <= data_latch[3];
+                end
+                BIT3: begin
+                    valid_out <= 1'b1;
+                    dout <= data_latch[3];
+                end
+                BIT2: begin
+                    valid_out <= 1'b0;
+                    dout <= data_latch[2];
+                end
+                BIT1: begin
+                    valid_out <= 1'b0;
+                    dout <= data_latch[1];
+                end
+                default: begin
+                    valid_out <= 1'b0;
+                    dout <= 1'b0;
+                end
+            endcase
+        end
+    end
+
+endmodule

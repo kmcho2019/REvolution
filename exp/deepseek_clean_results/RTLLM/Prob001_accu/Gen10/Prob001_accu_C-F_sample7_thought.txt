@@ -1,0 +1,20 @@
+Fusion Strategy:
+1. Performance Optimization:
+   - Use simple binary counter (2-bit) for clear terminal count detection (count == 2'b11)
+   - Keep accumulator width at 10 bits to handle worst-case sum (1020)
+   - Maintain single-cycle operation without pipelining for simplicity
+
+2. Power Optimization:
+   - Gate the accumulator update with valid_in to prevent unnecessary switching
+   - Only update output registers when needed (every 4th input)
+
+3. Area Optimization:
+   - Use minimal 2-bit binary counter
+   - Share accumulator register with output register (mutually exclusive usage)
+   - Simplify control logic by removing Gray code complexity
+
+Key Improvements:
+- Clear binary counting for better timing and simpler logic
+- Reduced power through valid_in gating
+- Minimal area with shared registers and simple control
+- Maintains single-cycle throughput while meeting timing

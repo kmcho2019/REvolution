@@ -1,0 +1,5 @@
+Refactor the Moore FSM to use an explicit two-bit one-hot style state encoding where each state is represented by a separate bit, and use combinational always block for next state and output logic, keeping asynchronous reset in the sequential block.
+
+Here, states A and B are represented as two separate one-hot bits in a reg [1:0]. Next state and output are determined in an always @(*) block based on current state and input. The asynchronous reset sets the state directly to B (one-hot encoded).
+
+This style improves readability of FSM by clearly separating states and allows for easier extension to multiple states if needed.

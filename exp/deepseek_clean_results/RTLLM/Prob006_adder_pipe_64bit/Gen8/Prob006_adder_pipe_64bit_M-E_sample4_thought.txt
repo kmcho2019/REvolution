@@ -1,0 +1,17 @@
+Novel Architecture Idea: Hybrid Carry-Select and Ripple-Carry Pipeline
+
+This design combines the benefits of carry-select and ripple-carry adders in a pipelined structure. The key innovations are:
+
+1. Hierarchical Segmentation: Divide the 64-bit addition into 4 segments (16+16+16+16 bits) with carry-select between segments
+2. Two-Phase Pipeline: 
+   - Phase 1: Compute all segment sums in parallel (both carry=0 and carry=1 cases)
+   - Phase 2: Select correct results based on actual carry propagation
+3. Smart Carry Resolution: Use carry-lookahead logic only between segments to minimize critical path
+4. Efficient Enable Pipeline: Matches the 2-cycle latency with proper synchronization
+
+Advantages:
+- Reduced critical path compared to pure ripple-carry
+- Balanced pipeline stages
+- Lower area than full carry-select
+- Maintains simple control flow
+- Better timing closure potential

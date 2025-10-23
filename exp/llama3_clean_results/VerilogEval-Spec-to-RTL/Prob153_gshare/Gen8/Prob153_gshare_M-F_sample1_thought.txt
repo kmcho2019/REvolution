@@ -1,0 +1,15 @@
+To fix the existing code, we need to address the issues identified in the feedback. Here's a step-by-step approach to improve the design:
+
+1.  **Prioritize Training over Prediction**: To ensure that training takes precedence over prediction, we will update the history register only when training is valid and the branch is mispredicted. When both prediction and training occur in the same cycle, the training operation should take precedence.
+
+2.  **Correctly Update the History Register**: We will update the history register based on the correct branch direction, considering both prediction and training. The history register should reflect the actual branch outcomes.
+
+3.  **Use Blocking Assignments for Combinational Logic**: We will replace non-blocking assignments (<=) with blocking assignments (=) for combinational logic to avoid unexpected behavior. However, in this case, we need to maintain the non-blocking assignments for the sequential logic to ensure that the updates are done at the positive edge of the clock.
+
+4.  **Implement Saturating Counter Logic Correctly**: We will modify the saturating counter logic to handle intermediate counter values correctly. The PHT should be updated accurately based on the actual branch outcomes.
+
+5.  **Handle Asynchronous Reset Correctly**: We will modify the code to handle the asynchronous reset correctly. The reset condition should be checked at the beginning of the always block, and the reset should be applied immediately.
+
+6.  **Optimize PPA Metrics**: After addressing the functional errors, we can explore optimizations to improve the PPA metrics, such as reducing the number of sequential elements, improving the logic structure to reduce switching activity, and using more efficient data structures for the PHT.
+
+By addressing these issues and optimizing the design, we can improve the overall performance and efficiency of the gshare branch predictor.

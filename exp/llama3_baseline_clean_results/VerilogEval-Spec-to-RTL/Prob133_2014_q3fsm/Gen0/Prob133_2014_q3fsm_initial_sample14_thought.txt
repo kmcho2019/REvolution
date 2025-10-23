@@ -1,0 +1,9 @@
+To implement the TopModule with the specified interface and behavior, we can use a finite state machine (FSM) with a minimum number of states. We will use two states: A and B. State A is the reset state, and state B is the state where we examine the input w.
+
+When in state A, the FSM checks the input s. If s = 0, the FSM stays in state A. If s = 1, the FSM transitions to state B.
+
+In state B, we need to examine the input w for the next three clock cycles. To keep track of the number of clock cycles and the number of times w = 1, we can use two counters: a cycle counter and a w_counter. The cycle counter will count from 0 to 2, and the w_counter will count the number of times w = 1 during these three clock cycles.
+
+After the three clock cycles, we can set the output z to 1 if w_counter = 2, and to 0 otherwise. Then, we can reset the counters and start the process again.
+
+We will use a 2-bit register to store the state (A or B) and two 2-bit registers to store the cycle counter and the w_counter. We will use a 1-bit register to store the output z.

@@ -1,0 +1,14 @@
+I will fuse the clear and simple digit-separated registers approach of Example 1 with the carry-aware incremental style of Example 2 to create a design that balances clarity, modularity, and timing efficiency.
+
+The design uses four 4-bit registers for the BCD digits to keep straightforward digit access and reset logic. The enable signals are combinational and indicate when each upper digit should increment, just like both examples.
+
+For increment logic, I will implement a sequential carry propagation inside the clocked always block similar to Example 2 but directly working with the separate digit registers, avoiding the full 16-bit concatenation inside the always block. This reduces the size of combinational logic for each digit's increment step and breaks the carry chain into smaller steps, improving timing.
+
+This fusion:
+- maintains the simple, readable structure from Example 1,
+- employs carry propagation with intermediate carry signals for clarity and timing gains from Example 2,
+- and avoids unnecessary recomputation by gating increments using enable signals derived from digit values,
+- while ensuring synchronous active-high reset,
+- and minimal area and power by only updating digits when needed.
+
+This strategy produces a clean, efficient 4-digit BCD counter with correct enable outputs, good timing, and optimized power.

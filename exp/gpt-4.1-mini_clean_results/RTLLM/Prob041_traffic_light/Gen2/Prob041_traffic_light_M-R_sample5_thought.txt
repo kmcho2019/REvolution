@@ -1,0 +1,7 @@
+Refactor by separating state and timer management for clarity:  
+Use an explicit timer register that reloads based on state and transitions only when the timer reaches zero.  
+Implement the pedestrian button logic as a one-shot effect to avoid retriggering shortening the green timer continuously. This is done by detecting the rising edge of pass_request internally and applying the shortening only once per green cycle.  
+Use synchronous reset and update outputs combinationally from state for clean logic.  
+Avoid using previous signal storage for outputs; outputs derive directly from current state.  
+Use nonblocking assignments to update state, timer, and a flag that records if green time has been shortened in the current green cycle.  
+This structure clearly isolates control logic, output logic, and timer updates, making the design more robust and readable.

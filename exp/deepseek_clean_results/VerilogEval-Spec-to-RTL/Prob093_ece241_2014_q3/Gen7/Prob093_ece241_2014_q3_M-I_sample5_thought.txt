@@ -1,0 +1,19 @@
+To correctly implement the Karnaugh map using minimal multiplexers:
+
+1. Analyze each mux_in output based on the K-map:
+   - mux_in[0] (ab=00): 0 when cd=00, 1 otherwise → equivalent to c OR d
+   - mux_in[1] (ab=01): Always 0 → can be hardwired
+   - mux_in[2] (ab=11): 1 when cd=11, 0 otherwise → equivalent to c AND d
+   - mux_in[3] (ab=10): 0 when cd=01, 1 otherwise → equivalent to ~(c & ~d)
+
+2. Implementation strategy:
+   - mux_in[0] can be implemented with a simple OR operation
+   - mux_in[1] is constant 0
+   - mux_in[2] requires a single AND operation
+   - mux_in[3] can be implemented with a 2-to-1 mux selecting between 1 and ~d based on c
+
+3. Optimization:
+   - Only one 2-to-1 mux needed (for mux_in[3])
+   - Other outputs use simple logic operations
+   - Total gates: 1 OR, 1 AND, 1 NOT (for ~d), and 1 2-to-1 mux
+   - This matches all K-map requirements precisely

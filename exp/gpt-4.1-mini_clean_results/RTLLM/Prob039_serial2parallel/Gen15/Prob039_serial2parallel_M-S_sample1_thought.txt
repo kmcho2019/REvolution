@@ -1,0 +1,11 @@
+Implement a shift register that shifts left, inserting each new serial bit at the least significant bit (LSB). We use a 4-bit counter to count the number of valid bits received. When the count reaches 7 (after receiving 8 bits), we output the 8-bit parallel data and assert dout_valid for one clock cycle.
+
+Shifting left and inserting the new bit at LSB makes it natural to map the first serial bit received to the MSB of the output (as the first bit received ends up shifted into the MSB position after 8 cycles).
+
+This approach simplifies the logic: 
+- shift_reg shifts left by one,
+- new bit goes into LSB,
+- counter increments,
+- when counter hits 7, output parallel data and set dout_valid.
+
+No complicated non-blocking assignment dependency for the counter check; the counter increment and comparison are straightforward and clear.

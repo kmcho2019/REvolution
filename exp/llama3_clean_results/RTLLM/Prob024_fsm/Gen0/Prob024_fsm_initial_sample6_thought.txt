@@ -1,0 +1,11 @@
+To implement the Mealy FSM detection circuit, we need to define the states and their transitions based on the input sequence. Since we are looking for the sequence 10011, we can break it down into states that represent the progression through this sequence. We start in an idle state and move to subsequent states as we detect each bit of the sequence. If at any point we receive an incorrect bit, we reset to the idle state. The MATCH signal is set to 1 when we successfully reach the end of the sequence.
+
+Here's a step-by-step breakdown:
+1. **Idle State**: The initial state where we wait for the first '1'.
+2. **State 1**: After detecting the first '1', we move here and wait for the first '0'.
+3. **State 2**: After the first '0', we move here and wait for the second '0'.
+4. **State 3**: After the second '0', we move here and wait for the first '1' of the pair.
+5. **State 4**: After the first '1' of the pair, we move here and wait for the second '1'.
+6. **Match State**: Upon detecting the second '1', we set MATCH to 1.
+
+We use a parameterized enum to define these states, and a case statement within a always_ff block to handle the state transitions and output logic based on the current state and input.

@@ -1,0 +1,5 @@
+To improve synthesis compatibility and avoid reliance on inferred latches that map to unknown library cells, I will explicitly model the D latch using an always block sensitive to the enable signal and the data input, effectively describing level-sensitive behavior. I will keep using blocking assignments (=) for latch inference, as it's the common practice. To help synthesis tools better infer the latch, I will restrict the sensitivity list to (ena or d), matching the latch's level-sensitive enable behavior, making the intent clearer and avoiding unnecessary sensitivity to other signals which can confuse synthesis.
+
+This approach preserves the latch behavior but improves synthesis reliability by explicitly defining the latch's transparent conditions and minimizing the sensitivity list. This technique reduces tool ambiguity, improves timing and area optimizations, and prevents unintended combinational inference.
+
+The improved code explicitly controls latch transparency and hold behavior without relying on the catch-all (*) sensitivity list, enhancing overall synthesis and post-synthesis verification quality.

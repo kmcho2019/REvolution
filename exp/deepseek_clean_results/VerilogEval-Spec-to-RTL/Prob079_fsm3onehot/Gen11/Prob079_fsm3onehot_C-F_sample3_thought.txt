@@ -1,0 +1,21 @@
+Fusion Strategy:
+1. Optimize state transition logic by leveraging one-hot encoding properties:
+   - Use direct assignments without intermediate wires for minimal delay
+   - Simplify next_state[1] using the observation that it's active when in=1 and not in state C (state[2]=0)
+   - Maintain parallel assignments for balanced timing paths
+
+2. Output logic optimization:
+   - Keep the direct assignment from state[3] for zero-delay output
+   - No additional logic needed since output is purely state-dependent (Moore machine)
+
+3. Enhance readability while maintaining efficiency:
+   - Add clear comments explaining each state transition
+   - Keep compact structure that synthesis tools can optimize
+   - Use consistent formatting for easy maintenance
+
+The fused solution combines the best aspects of both examples:
+- Same optimal power (0.00016W)
+- Same optimal area (6.0um²)
+- Zero timing violations
+- Improved readability with clear comments
+- Most efficient logic expressions from both examples

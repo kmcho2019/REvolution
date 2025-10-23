@@ -1,0 +1,18 @@
+To implement the 32-bit carry-lookahead adder, we first need to design a 4-bit or 16-bit carry-lookahead adder block, and then use instances of this block to build the 32-bit adder. We'll choose to implement a 16-bit CLA block for better hierarchy and reuse. 
+
+The key components of the CLA architecture include:
+1. The generate (G) and propagate (P) logic for each bit position.
+2. The carry (C) generation logic that uses G and P to calculate the carry for each stage.
+3. The sum (S) calculation logic that uses the inputs, the generated carry, and the propagate signals.
+
+For a 16-bit CLA, we will:
+- Calculate G and P for each bit position from the inputs A and B.
+- Use these G and P signals to calculate the carry for each bit position.
+- Finally, calculate the sum S for each bit position using the carry and the inputs.
+
+To build the 32-bit CLA, we will:
+- Use two instances of the 16-bit CLA.
+- Connect the carry-out of the first 16-bit CLA instance to the carry-in of the second 16-bit CLA instance.
+- Ensure proper alignment and handling of the input and output signals.
+
+The 16-bit CLA module will be named 'cla_16bit', and the top-level 32-bit adder module will be named 'adder_32bit'.

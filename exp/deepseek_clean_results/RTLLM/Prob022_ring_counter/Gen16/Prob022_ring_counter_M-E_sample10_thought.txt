@@ -1,0 +1,16 @@
+Here's a novel approach using a circular shift register with a parallel load capability:
+1. Instead of using concatenation for the wrap-around, we'll use a multiplexer-based approach
+2. The design maintains a single 8-bit register for the state
+3. Each bit position has its own next-state logic that selects either:
+   - The previous bit (for normal shifting)
+   - The MSB (for the LSB's input)
+   - The reset value (when reset is active)
+4. This approach provides better tool compatibility while maintaining the one-hot property
+5. The implementation is more explicit about the bit transitions, making it easier to understand and modify
+
+Advantages:
+- No array concatenation operations that might cause tool issues
+- Explicit bit-level control for better debugging
+- Maintains all original specifications
+- Easily extensible to different counter widths
+- Clear relationship between hardware and code

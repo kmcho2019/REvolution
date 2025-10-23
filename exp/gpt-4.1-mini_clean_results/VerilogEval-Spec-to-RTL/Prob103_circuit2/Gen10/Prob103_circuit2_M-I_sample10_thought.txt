@@ -1,0 +1,23 @@
+The function implemented corresponds to the even parity of the inputs a, b, c, and d, as the output is '1' when the number of input '1's is even, and '0' otherwise.
+
+The current solution uses an XOR chain followed by an inversion (~(a ^ b ^ c ^ d)), which is minimal and simple.
+
+To optimize power, area, or delay further at the RTL level is challenging since this is already minimal logic.
+
+However, for better performance, one small improvement is to replace the 4-input XOR with a two-level XOR to exploit balanced gate delays:
+
+q = ~((a ^ b) ^ (c ^ d));
+
+This balances the XOR tree into two 2-input XORs feeding another 2-input XOR, potentially improving timing by reducing XOR fanin and depth.
+
+At the code level, this is expressed as:
+
+assign q = ~((a ^ b) ^ (c ^ d));
+
+This may also help some synthesis tools to infer a balanced XOR tree and reduce delay.
+
+Area and power are likely similar or marginally better with this balanced XOR structure.
+
+Thus, the small but practical improvement is to balance XOR operations to potentially improve delay while maintaining minimal area and power.
+
+No new wires are introduced to keep code simple.

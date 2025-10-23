@@ -1,0 +1,17 @@
+To create a superior solution by fusing the best ideas from both examples, the strategy is:
+
+1. Use the clear separation of combinational next state logic from sequential state register update (from Example 2) to enhance modularity and readability.
+
+2. Preserve the asynchronous reset as required but initialize both the state and output signals on reset, ensuring the output corresponds exactly to the current state at all times (from Example 1).
+
+3. Drive the output register synchronously from the state register, ensuring the Moore machine behavior is strictly followed and improving timing predictability (output depends only on registered state, not next_state).
+
+4. Use simple state encoding so the output can be directly assigned from the state bit, minimizing combinational logic and simplifying output logic.
+
+5. Keep the output as a registered signal rather than a combinational wire to reduce glitches and improve power and timing.
+
+6. Avoid duplicating next_state logic by computing it in one combinational block and updating state/output in the sequential block.
+
+This fusion keeps the FSM minimal and clean like Example 2 but uses the registered output style and reset handling of Example 1 to optimize timing and glitch power. It also maintains strict Moore semantics and asynchronous reset behavior as specified.
+
+This approach yields a clean, efficient, low-glitch, and easily synthesizable FSM with minimal state encoding and a robust reset/output scheme.

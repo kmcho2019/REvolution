@@ -1,0 +1,9 @@
+To improve the existing solution, we need to address the functionality issue pointed out in the feedback. The main goal is to ensure that once a bit in `out_reg` is set to 1 (indicating a detected transition from 1 to 0 in the corresponding bit of the input `in`), it remains set until the reset signal is applied. This requires modifying the logic inside the `always @(posedge clk)` block to maintain the state of `out_reg` bits once they are set.
+
+Additionally, for optimization, we should aim to minimize the combinational logic depth and reduce the switching activity, which can help in improving the Power, Performance, and Area (PPA) metrics of the design.
+
+One approach to achieve this is by using a single `always` block that handles both the detection of transitions and the maintenance of the output state. This can be done by checking for the reset condition first and then updating `out_reg` based on the detection of transitions from 1 to 0 in the input `in`. If a transition is detected, the corresponding bit in `out_reg` should be set to 1; otherwise, it should retain its previous value unless reset.
+
+For PPA optimization, minimizing the use of loops and conditional statements within the `always` block can help reduce the combinational path delay, thus potentially improving performance. Additionally, ensuring that the design only updates registers and signals when necessary can help in reducing power consumption by minimizing switching activity.
+
+To implement this improvement strategy efficiently, we will maintain the use of a `prev_in` register to store the previous state of the input, which allows for straightforward transition detection. We will also ensure that the logic for updating `out_reg` is concise and efficient, minimizing unnecessary updates and maintaining the set state until reset.

@@ -1,0 +1,7 @@
+To implement the gshare branch predictor, we will first define the module interface and the internal signals. We will use a 7-bit global branch history register and a 128-entry table of two-bit saturating counters. The index of the table will be calculated by hashing the 7-bit pc and the 7-bit global history using xor. 
+
+We will have two main processes: one for predictions and one for training. When a prediction is requested, the branch predictor produces the predicted branch direction and updates the branch history register at the next positive clock edge. When a training is requested, the branch predictor updates the pattern history table (PHT) to train the branch predictor to predict the branch more accurately next time. If the branch being trained is mispredicted, the branch history register is recovered to the state immediately after the mispredicting branch completes execution.
+
+We will use a case statement to handle the different states of the saturating counters and update the counters accordingly. We will also handle the case when training and prediction of the same PHT entry happen at the same time, where the prediction sees the PHT state before training.
+
+We will use always blocks to define the combinational and sequential logic. We will use a reset statement to initialize the module when the reset signal is high.

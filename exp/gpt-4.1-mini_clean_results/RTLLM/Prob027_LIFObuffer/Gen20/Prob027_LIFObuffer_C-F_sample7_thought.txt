@@ -1,0 +1,15 @@
+Fuse the best features of both examples by:
+
+- Using a single synchronous always @(posedge Clk) block for SP, stack_mem, and dataOut updates for clean, synthesis-friendly RTL.
+- Employing a 3-bit SP counting down from 4 (empty) to 0 (full), where push decrements SP and writes at SP-1, and pop reads at SP then increments SP.
+- Introducing explicit push and pop enable signals gated by EN, RW, and SP limits to minimize unnecessary toggling and improve power efficiency.
+- Computing next_SP combinationally outside the clocked process for cleaner timing and logic separation.
+- Updating dataOut only on pop operations to avoid unnecessary switching.
+- Writing stack_mem only on push; skipping clearing on pop to save power.
+- Resetting SP to 4, dataOut to zero, and clearing stack_mem via a for-loop during synchronous reset for a clean initialization.
+- Deriving EMPTY and FULL flags combinationally from SP for immediate status.
+- Using non-blocking assignments consistently for sequential logic to ensure simulation and synthesis clarity.
+- Adding detailed comments for clarity, maintainability, and code self-documentation.
+- Maintaining the simple structure and minimal resource usage from both designs, ensuring good timing, power, and area metrics.
+
+This fusion achieves the best of both worlds: clear and efficient RTL, low power consumption, and straightforward verification and synthesis.

@@ -1,0 +1,18 @@
+To properly implement TopModule based on the feedback, we need to:
+
+1. Make each TopModule instance handle only one specific bit position (0, 1, or 2)
+2. Remove the combined logic for all bits and focus on the operation for each specific bit:
+   - Bit 0: XOR of q[1] and q[2]
+   - Bit 1: Pass-through of q[0]
+   - Bit 2: Pass-through of current value
+3. Simplify the interface to only include necessary inputs for each bit position
+4. Implement clean muxing between load value (r_in) and operation result
+5. Use proper flip-flop storage for the selected value
+
+Key changes:
+- Each instance will be specialized for its bit position
+- Inputs will be tailored to each bit's needs:
+  - Bit 0 needs q1 and q2 for XOR
+  - Bit 1 needs q0
+  - Bit 2 needs no additional inputs
+- Mux directly selects between load and operation without circular dependencies

@@ -1,0 +1,11 @@
+To simplify the pulse detection module while maintaining functionality:
+1. Use a 2-bit shift register to track the last two values of data_in
+2. Detect the pulse when we see "010" pattern (current=0, previous=1, pre_previous=0)
+3. Output data_out is 1 only when this exact pattern is detected
+4. This eliminates the need for explicit state machine and reduces to simple pattern matching
+
+Key benefits:
+- Fewer registers (2-bit shift register vs 2-bit state)
+- Simpler logic without state transitions
+- Same functionality: detects 0->1->0 pattern
+- Output timing matches requirements (asserts at end of pulse)

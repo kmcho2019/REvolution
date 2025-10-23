@@ -1,0 +1,8 @@
+To improve synthesis compatibility and avoid unrecognized latch cell inference, I will revise the latch implementation by:
+
+- Using blocking assignments (`=`) inside the always block instead of nonblocking (`<=`), which is the recommended style for level-sensitive latches.
+- Keeping the sensitivity list explicit on `ena` and `d` to model the latch behavior.
+- Omitting the else branch so the latch holds its previous value when `ena` is low.
+- This style is widely recognized by synthesis tools including Yosys and leads to inference of simple latch primitives without reliance on unknown cell types.
+
+This change maintains the intended D latch functionality, ensures better synthesis support, and avoids problematic cell inference like `DLH_X1` in Yosys.

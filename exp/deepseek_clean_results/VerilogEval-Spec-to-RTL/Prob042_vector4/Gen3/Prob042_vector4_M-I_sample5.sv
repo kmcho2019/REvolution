@@ -1,0 +1,10 @@
+module TopModule #(
+    parameter INPUT_WIDTH = 8,
+    parameter OUTPUT_WIDTH = 32
+) (
+    input  [INPUT_WIDTH-1:0] in,
+    output [OUTPUT_WIDTH-1:0] out
+);
+    // Sign-extend input by replicating MSB and concatenating original input
+    assign out = { {(OUTPUT_WIDTH-INPUT_WIDTH){in[INPUT_WIDTH-1]}}, in };
+endmodule

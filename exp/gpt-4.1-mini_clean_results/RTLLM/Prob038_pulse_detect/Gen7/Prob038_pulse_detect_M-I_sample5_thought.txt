@@ -1,0 +1,15 @@
+The original code does not explicitly track the initial 0 state before the pulse and might misdetect pulses if data_in starts at 1 or if pulses are not cleanly separated by zeros. To precisely detect a pulse defined as a 0→1→0 sequence in 3 consecutive cycles, the FSM should have four states: 
+- IDLE (waiting for 0 to start),
+- WAIT_HIGH (received 0, waiting for 1),
+- WAIT_LOW (received 1 after initial 0, waiting for 0),
+- PULSE_END (output pulse detected).
+
+This ensures the pulse strictly follows 0→1→0 pattern. The output data_out asserts only on the cycle when the last 0 of the pulse is detected.
+
+To optimize for PPA:
+- Use a Moore FSM where output depends only on the state, reducing glitches.
+- Use parameterized states and combine next_state and output logic in one combinational always block.
+- Keep synchronous state and output update for reliable timing.
+- Keep logic minimal with clear state transitions and outputs.
+
+This approach is fully correct and improves robustness and clarity.

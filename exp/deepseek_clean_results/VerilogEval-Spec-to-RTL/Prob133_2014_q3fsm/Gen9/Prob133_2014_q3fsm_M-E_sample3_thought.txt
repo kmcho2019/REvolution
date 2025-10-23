@@ -1,0 +1,20 @@
+Novel Architecture Idea:
+1. Shift Register Approach:
+   - Instead of counting 1's, store the last 3 w values in a shift register
+   - This eliminates the need for an adder/counter and associated logic
+   - Makes the "exactly two 1's" condition trivial to check (just pattern matching)
+
+2. State Machine Simplification:
+   - Maintain the same 2-state design (A and B)
+   - In state B, use the shift register to track the window
+   - Output z is simply a pattern match on the stored bits
+
+3. Timing Benefits:
+   - No arithmetic operations needed - just shifting and comparison
+   - Output generation is purely combinational logic on stored values
+   - Critical path reduced to just register-to-register timing
+
+4. Power Benefits:
+   - Only the shift register updates each cycle in state B
+   - No arithmetic logic switching unnecessarily
+   - Simple pattern matching consumes less power than counting

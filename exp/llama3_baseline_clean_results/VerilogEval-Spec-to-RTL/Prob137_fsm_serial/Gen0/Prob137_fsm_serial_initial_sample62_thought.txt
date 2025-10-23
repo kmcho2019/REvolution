@@ -1,0 +1,10 @@
+The design of the TopModule can be approached as a finite state machine (FSM) with several states to track the progress of receiving a byte. The states can be defined as follows: 
+- IDLE: Initial state, waiting for a start bit.
+- START_BIT: Found a start bit, transitioning to receiving data bits.
+- DATA_BITS: Receiving data bits, will transition to STOP_BIT state after 8 bits.
+- STOP_BIT: Waiting for the stop bit to verify the byte.
+- DONE: Successfully received a byte and verified the stop bit.
+
+The FSM will also need a counter to keep track of the number of data bits received and a register to store the received data. 
+To implement this in Verilog, we can use a parameterized case statement to define the states and use a binary encoding for the states. We can also use a shift register to receive the data bits. 
+We will use an always @(posedge clk) block to update the state and data register based on the current state and input.

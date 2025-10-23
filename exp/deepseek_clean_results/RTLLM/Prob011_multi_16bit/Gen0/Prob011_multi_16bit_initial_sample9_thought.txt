@@ -1,0 +1,17 @@
+The design implements a 16-bit unsigned multiplier using shift-and-add algorithm. Here's the thought process:
+1. Use a counter (i) to track the current bit position being processed (0-16)
+2. On reset or when not started, initialize all registers
+3. When start is asserted:
+   - Load input operands into areg and breg
+   - For each bit position (0-15):
+     * If the current bit in areg is 1, add shifted breg to the accumulator
+     * Shift breg left by 1 bit for next iteration
+4. The done flag is set when all 16 bits are processed (i=16)
+5. The output is registered to maintain synchronous behavior
+
+The implementation uses:
+- 16-bit areg to hold multiplicand
+- 16-bit breg to hold multiplier (shifted each cycle)
+- 32-bit yout_r as accumulator
+- 5-bit counter i (0-16)
+- done_r flag to indicate completion

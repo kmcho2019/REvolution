@@ -1,0 +1,20 @@
+Improved Design Strategy:
+
+1. Truth Table Analysis:
+   - Output=1 cases: 2(0010), 7(0111), 15(1111)
+   - Output=0 cases: 0(0000),1(0001),4(0100),5(0101),6(0110),9(1001),10(1010),13(1101),14(1110)
+
+2. SOP Optimization:
+   - Include all minterms for output=1 cases
+   - Simplified form: (~a&~b&c&~d) | (~a&b&c&d) | (a&b&c&d)
+   - Further simplification: (~a&~b&c&~d) | (b&c&d) since (a&b&c&d) is subset of (b&c&d)
+
+3. POS Optimization:
+   - Create maxterms for all output=0 cases
+   - Apply Boolean algebra to minimize
+   - Final POS: (a|b|c) & (a|~b|c) & (~a|b|d) & (~a|~b|c|d) & (~a|~b|c|~d)
+
+4. Implementation:
+   - Use direct assignment for both forms
+   - Maintain minimal gate count
+   - Ensure all specified cases are covered

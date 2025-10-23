@@ -1,0 +1,10 @@
+To fuse the best ideas from both examples, the design will:
+
+1. Separate the sampling of the previous input (`prev_in`) and the edge detection output (`pedge`) into two distinct always blocks for clarity, improved timing, and maintainability.
+2. Use a combinational wire for edge detection (`edge_detect` = (~prev_in) & in) to clearly separate combinational and sequential logic, enhancing readability and enabling synthesis optimizations.
+3. Register `prev_in` and `pedge` independently on the clock's positive edge to explicitly pipeline signals, minimizing combinational logic between registers and supporting high-frequency operation.
+4. This separation removes any potential ordering dependency in one always block and leverages the pipeline staging principle for clearer timing and logic separation.
+5. The output pulse `pedge` will be asserted exactly one cycle after the 0-to-1 transition on each bit, meeting all specification requirements.
+6. Optionally, include a clock enable signal to reduce unnecessary toggling on the `prev_in` register if `in` doesn't change between cycles (commented out for simplicity), which can reduce power if desired.
+
+This fusion ensures clean timing semantics, clear data flow, and optimal PPA characteristics while maintaining simplicity and correctness.

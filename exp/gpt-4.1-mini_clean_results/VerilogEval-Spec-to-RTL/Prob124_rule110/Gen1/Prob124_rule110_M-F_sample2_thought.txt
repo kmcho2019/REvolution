@@ -1,0 +1,11 @@
+To fix the synthesis issues, declare all required registers outside the always block at module scope. Avoid declaring local regs inside the sequential block. Keep the for-loop inside the clocked always block since the loop indices are constants, which should synthesize as a fully unrolled hardware loop in most tools.
+
+To avoid variable indexing issues, explicitly compute the 3-bit index as a wire and use it to select the bit from the rule constant.
+
+All registers (next_q, left, center, right) should be declared outside. The combinational next state logic remains inside the synchronous block.
+
+This approach preserves the original logic, maintains synthesizability, and avoids local reg declarations inside the procedural block, which was the root cause of the synthesis failure.
+
+No generate block is needed because the loop is a fixed-size simple iteration updating a vector register.
+
+The boundary conditions and rule lookup stay the same, ensuring functional correctness.

@@ -1,0 +1,16 @@
+The key requirements are:
+1. Detect 1→0 transitions on each bit
+2. Once detected, maintain output as 1 until reset
+3. Reset should clear all captured transitions
+
+Refactoring approach:
+1. Use two registers: one for previous input (prev_in) and one to store captured edges (captured)
+2. Detect falling edges by comparing current input with previous (prev_in & ~in)
+3. Combine new detections with existing captures using OR operation
+4. Clear captured register on reset
+5. Output comes directly from captured register
+
+This maintains the same functionality but:
+- Separates edge detection from state storage
+- Uses clearer signal naming
+- Follows more standard sequential design patterns

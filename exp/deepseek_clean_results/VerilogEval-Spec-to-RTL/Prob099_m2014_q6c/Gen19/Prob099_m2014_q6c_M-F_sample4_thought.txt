@@ -1,0 +1,25 @@
+Fixing the interface mismatch based on feedback:
+
+1. Problem Analysis:
+   - Original code correctly implements Y2 and Y4 outputs as requested
+   - Error indicates testbench expects different output names (Y1 and Y3)
+   - Need to align with required interface while maintaining correct logic
+
+2. Solution Approach:
+   - Keep same state transition logic
+   - Rename outputs to match specification (Y1 and Y3)
+   - Note: Y1 corresponds to next state y[0] (state A)
+   - Y3 corresponds to next state y[2] (state C)
+
+3. New Logic Derivation:
+   - Y1 (next state A) occurs when:
+     * Current state is A and w=1 (A->A)
+     * Current state is D and w=1 (D->A)
+   - Y3 (next state C) occurs when:
+     * Current state is B and w=0 (B->C)
+     * Current state is F and w=0 (F->C)
+
+4. Verification:
+   - Maintains one-hot encoding benefits
+   - Correctly maps to specified output names
+   - Preserves all state transition logic

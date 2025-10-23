@@ -1,0 +1,7 @@
+Fuse the two designs by retaining the clean explicit 3-bit saturating count of consecutive ones from Example 2 for intuitive FSM clarity, but merge the combinational next state and output logic into a single synchronous always block as in Example 1 to minimize combinational logic and simplify timing.
+
+This approach ensures all logic updates—including state transitions and output assertions—occur synchronously on the clock edge, eliminating combinational output logic and reducing critical path delay.
+
+To reduce power, only update outputs and state when needed and saturate the counter at 7 for error detection as before. Outputs disc, flag, and err remain one-cycle pulses following the Moore FSM style.
+
+This fusion combines Example 2's clear state and output semantics with Example 1's synchronous output and state update logic, optimizing timing, power (less combinational toggling), and code simplicity while preserving all functional requirements.

@@ -1,0 +1,15 @@
+Here's a simplified approach that maintains all required functionality while reducing complexity:
+
+1. Use a 4-state FSM (IDLE, START, DATA, STOP) for clear protocol phase tracking
+2. Combine counter and shift register into a single always block for compactness
+3. Simplify start bit detection by looking for falling edge during IDLE
+4. Handle stop bit validation explicitly in STOP state
+5. Register the done signal for clean timing
+6. Reset synchronously initializes all state
+
+Key simplifications:
+- Fewer states than bit positions (4 vs 10)
+- Eliminated parallel condition checking
+- Clear state transitions
+- Registered outputs prevent glitches
+- Simplified counter logic (only counts data bits)

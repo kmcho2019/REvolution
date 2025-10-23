@@ -1,0 +1,7 @@
+To solve this problem, we need to analyze the given simulation waveforms to understand the behavior of the sequential circuit. The output `p` seems to be dependent on the current state and the input `a`, while the output `q` seems to be dependent on the previous state of `p` and `q`. 
+
+From the waveforms, we can observe that `p` is high when `a` is high and `clock` is high, and it remains high until `clock` goes low. On the other hand, `q` seems to be a delayed version of `p`. When `p` goes high, `q` remains low until `clock` goes low, and then it goes high. 
+
+This behavior can be implemented using a sequential circuit with two flip-flops: one for `p` and one for `q`. The `p` flip-flop can be implemented as a simple D flip-flop with `a` as the input and `clock` as the clock. The `q` flip-flop can be implemented as a D flip-flop with the output of the `p` flip-flop as the input and `clock` as the clock, but with an additional condition to check if `clock` is low. 
+
+However, upon closer inspection, it seems that `p` and `q` can be implemented using a simpler approach. `p` is high when `a` is high and `clock` is high, and `q` is high when `p` was high in the previous cycle. This can be implemented using a single D flip-flop for `q` and a simple AND gate for `p`.

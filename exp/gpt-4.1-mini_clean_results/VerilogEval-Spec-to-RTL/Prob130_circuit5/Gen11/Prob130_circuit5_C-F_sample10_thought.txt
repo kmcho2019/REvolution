@@ -1,0 +1,9 @@
+Fuse the clarity and synthesis-friendly case selection of Example 1 with the compact vectorization idea of Example 2, but avoid the variable shift operation that could degrade timing and increase switching power.
+
+Specifically, use the vector concatenation of the four inputs (b, e, a, d) and select the correct 4-bit group using an explicit case statement on c's lower two bits, gated by a range check (c < 4). For c >= 4, output 4'hF.
+
+This merges Example 2's structured input grouping with Example 1's explicit, low-complexity multiplexing logic, optimizing area and power by removing the barrel shifter from the shift operation, and enhancing performance through a clean combinational case structure.
+
+The output remains combinational and minimal logic depth is ensured by straightforward case selection on c[1:0], supported by a simple range gate on c.
+
+This solution is fully functionally correct per the waveform, has low switching activity, minimal logic levels, and a small footprint.

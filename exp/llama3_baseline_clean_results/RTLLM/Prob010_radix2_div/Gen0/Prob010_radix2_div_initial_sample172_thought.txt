@@ -1,0 +1,13 @@
+To implement the simplified radix-2 divider, we need to consider several key steps and signals:
+1. **Operation Start**: When `opn_valid` is high and `res_valid` is low, the module starts by saving the inputs (`dividend` and `divisor`) and initializing necessary registers.
+2. **Signed vs. Unsigned**: Determine whether the operation is signed or unsigned based on the `sign` input and handle the inputs accordingly.
+3. **Division Process**: Perform the radix-2 division by iteratively shifting and subtracting the divisor from the dividend, updating the quotient and remainder at each step.
+4. **Result Validity**: Manage `res_valid` to indicate when the result is ready and valid for consumption.
+
+The division process will involve:
+- Initializing a shift register `SR` with the absolute value of the `dividend` shifted left by one bit.
+- Using `NEG_DIVISOR` as the negated absolute value of the `divisor` for subtraction.
+- Incrementing a counter `cnt` and updating `SR` based on the subtraction result at each step.
+- Once the division is complete (i.e., `cnt` reaches 8), setting `res_valid` high to indicate the result is ready.
+
+We also need to consider the reset logic (`rst`) to ensure the module can be properly initialized or reset.

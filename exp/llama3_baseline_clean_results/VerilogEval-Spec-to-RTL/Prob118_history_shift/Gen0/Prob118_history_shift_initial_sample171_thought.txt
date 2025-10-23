@@ -1,0 +1,7 @@
+To implement the TopModule, we need to consider the following steps:
+1. Initialize the predict_history register to zero on asynchronous reset (areset).
+2. On the positive edge of the clock (clk), check if a misprediction occurred (train_mispredicted = 1).
+   If so, load the predict_history register with the corrected history.
+3. If no misprediction occurred, check if a prediction is valid (predict_valid = 1).
+   If so, shift in the predicted branch direction (predict_taken) into the predict_history register.
+4. If neither a misprediction nor a prediction occurs, the predict_history register remains unchanged.

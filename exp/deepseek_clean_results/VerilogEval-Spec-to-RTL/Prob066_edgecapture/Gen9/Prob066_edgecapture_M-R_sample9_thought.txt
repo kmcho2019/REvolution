@@ -1,0 +1,22 @@
+Refactored approach using purely sequential logic for reliable edge detection:
+
+1. **Proper Timing Alignment**:
+   - Use two stages of registers to store input history (prev_in and prev_prev_in)
+   - Detect falling edges by comparing two consecutive registered values
+   - Ensures all comparisons are between properly synchronized values
+
+2. **Simplified State Management**:
+   - Single always block for all sequential elements
+   - Clear separation between input history tracking and capture logic
+   - Reset properly initializes all state
+
+3. **Correct Edge Detection**:
+   - Falling edge = prev_prev_in was 1 AND prev_in is 0
+   - Uses only registered values from consecutive cycles
+   - Eliminates timing issues from combinational comparisons
+
+Key improvements:
+- Guaranteed correct edge detection timing
+- No race conditions between combinational and sequential logic
+- Clearer state progression
+- Maintains same functionality with more reliable implementation

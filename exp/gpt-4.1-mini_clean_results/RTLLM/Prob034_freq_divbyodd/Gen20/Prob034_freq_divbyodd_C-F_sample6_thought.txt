@@ -1,0 +1,12 @@
+To create a superior odd-frequency divider, I will fuse the strengths of both examples as follows:
+
+- Use a single counter clocked on the positive edge for simplicity and better timing closure (Example 1 strength).
+- Generate clk_div1 (positive-edge toggled) on count == 0 or HALF_DIV to produce toggling that approximates 50% duty cycle.
+- For the negative edge domain (clk_div2), instead of maintaining a full delayed counter register or running a separate counter (which complicates timing), I will use a small 1-bit toggle pulse latch updated at posedge clk to indicate when toggling is needed on negedge clk, reducing area and power.
+- This toggle pulse is a registered version of the toggle condition (count == 0 or HALF_DIV), sampled on negedge clk for clk_div2 toggling, avoiding glitches and long timing paths by minimal handshake.
+- Combine clk_div1 and clk_div2 using an OR gate for the final divided output.
+- Use asynchronous active-low reset to initialize all registers.
+- Include a compile-time oddness check via $error.
+- Use minimal counter width with $clog2(NUM_DIV).
+- This fusion reduces the two full counters in Example 2 to one counter plus a toggle pulse latch, improving area and timing while preserving the nice toggling scheme from both examples.
+- Avoid glitches by using toggling at well-defined counter values, keeping logic clean.

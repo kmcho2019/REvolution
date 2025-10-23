@@ -1,0 +1,15 @@
+To simplify the FSM while maintaining functionality, I'll make these key changes:
+
+1. Reduce the number of states by combining sequence detection into a single state with a shift register to track the 1-0-1 pattern.
+
+2. Simplify the timeout logic by using a single counter that checks both y and timeout conditions in parallel.
+
+3. Remove the intermediate STATE_B since it's not necessary - we can generate the f pulse directly in STATE_A.
+
+4. Use a more straightforward state encoding with only 4 states instead of 7.
+
+The simplified FSM will:
+- Pulse f=1 immediately after reset
+- Use a 3-bit shift register to detect the 1-0-1 sequence
+- Monitor y for 2 cycles after g is set
+- Transition to a final state where g remains constant

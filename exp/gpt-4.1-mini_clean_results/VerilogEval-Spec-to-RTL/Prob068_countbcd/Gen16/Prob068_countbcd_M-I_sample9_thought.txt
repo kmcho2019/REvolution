@@ -1,0 +1,9 @@
+To improve PPA, I will restructure the increment logic to minimize the carry chain's combinational delay by calculating carry signals in parallel before updating digits. This breaks the long nested if-else chain into combinational logic that generates carry flags ahead, reducing critical path delay and improving maximum frequency.
+
+Additionally, I'll register the enable signals (ena) synchronously to avoid combinational switching on every cycle and reduce power. The ena bits will indicate when the next digit should increment on the following clock cycle, thus avoiding glitching from combinational dependencies.
+
+Using this approach, all digit increments and carry computations happen within one clock cycle, but with simpler combinational logic between registers, improving timing and potentially reducing power due to less glitching on ena.
+
+The reset remains synchronous and active-high.
+
+This balanced strategy enhances performance by parallelizing carry logic and reduces power by registering enable signals without adding complexity or area.

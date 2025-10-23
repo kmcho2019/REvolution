@@ -1,0 +1,7 @@
+To fix the mismatches and improve synthesis compatibility, I will add an explicit synchronous reset input (`rst`) to initialize the flip-flops to zero, as the problem states they start cleared before the machine begins. This reset signal will be active high and synchronous with the clock. It ensures that the flip-flops have a defined initial state both in simulation and synthesis, eliminating undefined behavior causing the mismatches.
+
+The reset will be included as an input port, and within the always block triggered on the clock's positive edge, if `rst` is asserted, all flip-flops are set to zero synchronously; otherwise, they update per the logic.
+
+This approach respects the problem's requirements and makes the design synthesizable, simulation-accurate, and functionally correct.
+
+All other combinational and sequential logic remains the same, with explicit intermediate wires for clarity and correct signal naming.

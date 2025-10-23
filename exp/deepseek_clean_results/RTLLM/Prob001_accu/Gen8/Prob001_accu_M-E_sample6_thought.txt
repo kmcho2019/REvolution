@@ -1,0 +1,12 @@
+Novel Architecture Idea:
+1. Instead of sequential accumulation, use a 4-stage shift register to store the last 4 inputs
+2. Perform parallel addition of all 4 values when the shift register is full
+3. This eliminates the long combinational adder chain from the critical path
+4. Use a circular buffer pointer instead of a counter to track valid inputs
+5. Power optimization by only updating the shift register when valid_in is high
+
+Key Advantages:
+- Better timing: Parallel addition reduces critical path
+- Lower power: Only shift register updates when valid_in is high
+- Simpler control logic: No need for complex counter comparisons
+- Scalable: Easily extendable to larger accumulation windows

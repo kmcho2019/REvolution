@@ -1,0 +1,10 @@
+To improve the design for better PPA while preserving functionality, separate combinational next-state and output logic from the sequential state register update. This allows synthesis tools to better optimize timing by generating output combinationally from current state and input, reducing output latency. Also, keep the asynchronous reset only on the state register for clean reset behavior, and implement output as a combinational signal assigned continuously rather than registered. This reduces flip-flop usage and simplifies output timing.
+
+Key improvements:
+- One always_ff block for state update with asynchronous reset.
+- Output z as continuous assignment based on current state and input (Moore output).
+- Next state logic is combinational.
+- This approach reduces output latency (no clocked output), possibly improving critical path.
+- Maintains minimal area and power footprint.
+
+The machine still resets asynchronously, processes input on posedge clk, and output reflects 2's complement logic combinationally.

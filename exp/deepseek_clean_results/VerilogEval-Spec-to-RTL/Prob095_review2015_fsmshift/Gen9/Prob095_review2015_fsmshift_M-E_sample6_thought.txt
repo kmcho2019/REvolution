@@ -1,0 +1,13 @@
+New approach using a finite state machine with explicit states:
+1. Implement two states: ACTIVE (shifting enabled) and IDLE (shifting disabled)
+2. Use a 2-bit cycle counter to count exactly 4 cycles in ACTIVE state
+3. On reset, transition to ACTIVE state and reset counter
+4. In ACTIVE state, increment counter each cycle until reaching 3, then transition to IDLE
+5. shift_ena is only high in ACTIVE state
+6. Once in IDLE state, remain there until next reset
+
+Key advantages:
+- Clear state separation between active and idle periods
+- Explicit counting of exactly 4 cycles
+- Simple state transitions
+- Meets all requirements precisely

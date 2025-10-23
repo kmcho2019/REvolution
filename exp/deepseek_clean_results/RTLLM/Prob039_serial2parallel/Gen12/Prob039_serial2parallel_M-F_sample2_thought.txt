@@ -1,0 +1,11 @@
+Corrected approach addressing counter and timing issues:
+1. Modify counter to count 0-7 (3 bits sufficient) for proper 8-bit collection
+2. Shift new bits into dout_parallel only when counter is 0-6
+3. On the 7th count (counter==7), capture the final bit and assert dout_valid
+4. Reset counter after completing 8 bits (when counter==7)
+5. Key improvements:
+   - Proper timing for 8-bit collection (0-7 counts)
+   - dout_valid asserts exactly when 8 bits are ready
+   - Clear state transition logic
+   - Maintains MSB-first ordering
+   - More efficient 3-bit counter

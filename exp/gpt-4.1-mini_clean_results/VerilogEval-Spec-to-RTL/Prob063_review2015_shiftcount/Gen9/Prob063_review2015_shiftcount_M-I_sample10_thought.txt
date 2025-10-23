@@ -1,0 +1,9 @@
+To optimize for better power and timing while keeping area minimal, I will simplify the logic by merging the next-state calculation into a single always @(posedge clk) block using non-blocking assignments. This removes the combinational next_q register and the associated multiplexing logic, reducing critical path delay.
+
+Since shift_ena and count_ena are never asserted simultaneously in the intended use case, I will check shift_ena first, then count_ena, else hold the current value. This avoids explicit combinational mux and arithmetic logic outside the clocked process, thus reducing logic levels in the critical path and possibly improving timing.
+
+Also, by avoiding the intermediate next_q signal, the design uses fewer registers and less combinational logic, likely saving some area and power. The logic is simpler and may reduce glitches.
+
+No clock gating is added here as it may complicate the design and is out of scope for this simple module, but this approach inherently disables toggling when neither enable is asserted.
+
+This simplification improves timing by removing the combinational subtractor multiplexer and also helps reduce power by minimizing toggling and logic depth.

@@ -1,0 +1,22 @@
+The problem states the flip-flops "are initially reset to zero before the machine begins" but does not specify any reset input or asynchronous reset behavior. The previous implementation introduced an internal asynchronous reset driven by an initial block, which is not synthesizable and can cause simulation mismatches.
+
+To fix this, I will remove the internal asynchronous reset and initial block completely. Instead, I will rely on the implicit initialization of flip-flops to zero at power-up, which is typical in FPGA/ASIC synthesis and simulation semantics.
+
+If required by simulation, the testbench can handle initialization or reset externally. The module will just implement the flip-flops triggered on the positive edge of the clock, updating their state based on the logic described.
+
+The combinational inputs to the flip-flops remain unchanged:  
+- XOR input: x ^ q_xor  
+- AND input: x & (~q_and)  
+- OR input: x | (~q_or)  
+
+The output z is the NOR of the three flip-flop outputs.
+
+This approach strictly follows the problem requirements and avoids the previous asynchronous reset artifact causing simulation mismatches.
+
+Summary of changes:  
+- Remove asynchronous reset and initial block  
+- Use flip-flops without reset, updated at posedge clk  
+- Keep combinational logic as before  
+- Assume flip-flops power-up at zero for correct initial state  
+
+This ensures correct synthesis and simulation behavior aligned with problem description.

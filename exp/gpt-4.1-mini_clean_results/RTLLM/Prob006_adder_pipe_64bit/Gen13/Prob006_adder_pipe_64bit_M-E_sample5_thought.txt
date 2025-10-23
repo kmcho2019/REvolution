@@ -1,0 +1,22 @@
+To implement a 64-bit pipelined ripple carry adder differently, I propose a fine-grain pipeline approach using a 1-bit full adder stage per pipeline stage, resulting in a 64-stage pipeline. Each pipeline stage adds one bit of the operands with the carry input from the previous stage, registering the sum bit and carry out. This transforms the ripple carry addition into a deeply pipelined operation, where each clock cycle moves the carry and partial sum forward by one bit.
+
+Advantages:
+- Fine-grained pipeline with minimal combinational delay per stage.
+- Each pipeline stage registers the sum bit and carry bit, synchronizing computation and carry propagation fully.
+- The final 65-bit sum is assembled by concatenating all pipeline stage sum bits and the last carry-out, all stored in registers.
+
+Implementation details:
+- Each pipeline stage consists of:
+  - Input registers for operand bits A and B for the current bit.
+  - Input carry from previous stage.
+  - Full adder combinational logic to generate sum and carry-out.
+  - Registers to store sum bit and carry-out for the next stage.
+- The enable signal i_en is pipelined through 65 stages (including the carry out register stage), so o_en asserts when the final result is valid.
+- The output is registered and valid when o_en=1, synchronized to clk.
+- As this is a purely pipelined architecture with 64 stages, latency is 64 clock cycles.
+
+This is conceptually different from chunk-based ripple carry, trading latency for fine granularity and maximum clock frequency.
+
+The module will declare arrays of registers for the pipeline storing sums, carries, operand bits, and enables.
+
+The code below fully implements this idea with clear synchronous logic.

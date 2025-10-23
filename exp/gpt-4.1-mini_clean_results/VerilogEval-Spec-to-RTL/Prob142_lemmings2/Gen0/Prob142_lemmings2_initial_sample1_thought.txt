@@ -1,0 +1,15 @@
+Implement a Moore FSM with three states:
+- WALK_LEFT: walk_left=1, walk_right=0, aaah=0
+- WALK_RIGHT: walk_left=0, walk_right=1, aaah=0
+- FALLING: walk_left and walk_right remain as before falling, aaah=1
+
+Transitions:
+- On reset, go to WALK_LEFT.
+- From WALK states, if ground=0, transition to FALLING, preserving direction.
+- While FALLING, if ground=1, return to previous walking direction.
+- From WALK states, if bumped on left or right (including both), switch directions.
+- Bumps have no effect in FALLING state.
+
+The FSM outputs depend only on the current state (Moore). Store walking direction in the state or a register. Use a register to hold direction during FALLING.
+
+Implement asynchronous reset triggered on posedge of areset.

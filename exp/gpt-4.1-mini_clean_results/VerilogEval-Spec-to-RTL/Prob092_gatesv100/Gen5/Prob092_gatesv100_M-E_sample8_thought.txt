@@ -1,0 +1,7 @@
+Implement the solution using generate loops for each output to explicitly handle neighbor logic bit-by-bit, emphasizing clarity in neighbor relations rather than vector slicing. 
+
+- For `out_both`: use a generate loop from 0 to 98 to assign `out_both[i] = in[i] & in[i+1]`, and set `out_both[99]` to zero explicitly.
+- For `out_any`: use a generate loop from 1 to 99 to assign `out_any[i] = in[i] | in[i-1]`, and set `out_any[0]` to zero explicitly.
+- For `out_different`: handle the wrap-around neighbor bit by bit within the generate loop from 0 to 99, where `out_different[i] = in[i] ^ in[(i+1)%100]`. This avoids vector rotations and shows explicit wrap-around calculation.
+  
+This approach prioritizes structural clarity and explicit bitwise neighbor handling with generate loops, which may be more suitable for educational or certain synthesis tool preferences, trading off some compactness for readability and explicit boundary handling.

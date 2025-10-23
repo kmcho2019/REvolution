@@ -1,0 +1,7 @@
+Instead of using a single vector register to implement the 4-stage shift register, this design uses four individual D flip-flops instantiated explicitly as separate registers, each holding one bit of the shift register stage. This approach offers maximal visibility of each stage, which can be beneficial for testability or debugging.
+
+Each DFF is implemented inside a synchronous always block triggered on the positive clock edge with an active-low synchronous reset. The shift register behavior is implemented by connecting each stage's input to the previous stage's output, with the first stage taking the external input.
+
+Finally, the output port "out" is driven by the last flip-flop's stored bit.
+
+This modular, fully unrolled design gives clear visibility to each register stage and is easy to trace signals through the pipeline stages. It may use slightly more resources than vectorized registers but offers clear structural clarity. This also avoids any concatenation operations, which might be helpful for certain flows or tools. The reset scheme remains synchronous and active-low as required.

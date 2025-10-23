@@ -1,0 +1,11 @@
+Refactor the 4-bit LFSR by separating the register update logic and the feedback calculation into distinct always blocks for clarity, using a combinational always block for feedback calculation instead of a continuous assignment.
+
+Additionally, implement the synchronous reset and shifting in a single always block that updates the LFSR state on the rising clock edge.
+
+This approach:
+- Makes the feedback calculation explicitly combinational inside an always block, which can aid readability and synthesis tools that handle sequential and combinational logic separately.
+- Maintains a synchronous active-high reset.
+- Preserves the logic of feedback = inversion of XOR of bits 3 and 2.
+- Uses a temporary register for feedback calculation before applying it in the shift operation.
+
+The functionality remains the same, but the structure is more modular and typical in RTL designs with clear separation of combinational and sequential logic.

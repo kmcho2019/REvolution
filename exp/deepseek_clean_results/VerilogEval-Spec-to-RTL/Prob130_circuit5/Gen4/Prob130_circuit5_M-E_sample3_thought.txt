@@ -1,0 +1,14 @@
+Here's a novel approach using a bitwise selection technique instead of a traditional case statement:
+
+1. **Key Idea**: Instead of using a case statement, we'll implement the selection logic using bitwise operations and masking. This approach can potentially reduce the multiplexer hierarchy and improve timing.
+
+2. **Implementation Strategy**:
+   - Create selection masks based on the lower 2 bits of 'c' (since we only need to distinguish between 4 cases)
+   - Use these masks to select between the four possible outputs (b, e, a, d)
+   - For values of 'c' where the upper bits are set (≥4), we'll force the output to 'f' using a simple OR reduction
+
+3. **Advantages**:
+   - Eliminates the need for a full case statement decoder
+   - Uses parallel bitwise operations that may synthesize more efficiently
+   - The 'f' output case is handled with a simple check rather than a default case
+   - Potentially better for timing as the selection logic is more parallelized

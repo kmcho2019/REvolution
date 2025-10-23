@@ -1,0 +1,9 @@
+Refactor the design by separating the shift register and counter logic for clarity and making `dout_parallel` output directly from the shift register. Instead of updating `dout_parallel` inside the counting condition, latch the output only when the 8 bits are fully received by using the counter terminal count. Use a synchronous register to hold `dout_valid` as a one-cycle pulse asserted exactly when 8 bits are collected. This approach reduces potential mismatch between the shift register and output data and avoids re-constructing the shifted data in the same clock cycle.
+
+Structure:
+- On each rising edge with `din_valid`, shift `din_serial` into a shift register from MSB towards LSB.
+- Increment a 4-bit counter each time a bit is shifted in.
+- When the counter reaches 7 (meaning 8 bits collected since counting from 0), capture the shift register content into `dout_parallel` and assert `dout_valid` for one clock cycle.
+- Use reset logic for `shift_reg`, `bit_count`, `dout_parallel`, and `dout_valid`.
+
+This synchronous, clean pipeline avoids mixed blocking/non-blocking assignment ambiguity and ensures proper timing of output valid signals.

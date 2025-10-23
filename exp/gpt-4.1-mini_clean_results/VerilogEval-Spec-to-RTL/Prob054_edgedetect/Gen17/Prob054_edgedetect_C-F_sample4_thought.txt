@@ -1,0 +1,12 @@
+Fuse the two examples by keeping a single register for the previous input only (like Example 1) to minimize registers and area, while computing the positive edge detection combinationally as in Example 2, making the output a registered signal updated synchronously on the clock edge to ensure clean timing and one-cycle delayed output.
+
+This merges the minimal register count and clear synchronous logic of Example 1 with the clean separation of combinational edge detection in Example 2, improving readability and potentially timing by having pedge assigned from a registered combinational signal.
+
+Specifically:
+- Use one register prev_in to store previous input.
+- Use a wire pos_edge to compute (~prev_in) & in combinationally.
+- On the clock edge, update prev_in and assign pedge <= pos_edge.
+- This ensures pedge changes exactly one clock after a 0-to-1 input transition on each bit.
+- This reduces area and power by eliminating the extra current_in register, while maintaining clean logic separation and synchronous output.
+
+This fusion preserves functionality, reduces power and area, and is straightforward for synthesis and timing.

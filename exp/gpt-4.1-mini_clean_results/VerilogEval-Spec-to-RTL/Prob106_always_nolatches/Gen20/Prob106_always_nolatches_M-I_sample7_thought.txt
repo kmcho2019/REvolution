@@ -1,0 +1,11 @@
+To optimize for better power, performance, and area while maintaining functional correctness, I will replace the combinational always block with continuous assignments. Since all outputs are one-bit and mutually exclusive, continuous assignments with boolean expressions will reduce logic levels and simplify synthesis. This approach eliminates the need for reg types and an always block, potentially reducing synthesis overhead and improving timing.
+
+The new design will:
+- Use wire outputs driven by direct comparisons.
+- Check prefix byte (scancode[15:8]) and lower byte (scancode[7:0]) in a straightforward way.
+- Assert only the matching output high, others low, ensuring mutual exclusivity.
+- Avoid extra intermediate wires if not necessary, keeping code compact.
+- Maintain clarity with simple one-line assignments per output.
+- Reduce switching by outputs driven only on exact matches (no overlapping).
+
+This change should slightly reduce logic depth, improve area by avoiding reg allocation, and decrease power by simpler combinational logic.

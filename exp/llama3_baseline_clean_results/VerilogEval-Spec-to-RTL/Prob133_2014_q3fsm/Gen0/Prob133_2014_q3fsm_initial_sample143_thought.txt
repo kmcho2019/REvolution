@@ -1,0 +1,10 @@
+To implement the described finite state machine (FSM) in the TopModule, we will define a minimal set of states necessary to capture the behavior. The FSM starts in state A and moves to state B when s = 1. In state B, we need to monitor w for the next three clock cycles. This means we need to keep track of the number of times w = 1 during these cycles and then decide the output z based on this count. We can achieve this by adding states that count the occurrences of w = 1. Since we're checking for exactly two occurrences of w = 1 in a 3-cycle window, we need states to keep track of the count (0, 1, or 2 occurrences) and also consider the timing of these occurrences.
+
+We can simplify the state machine by realizing that once in state B, the FSM only cares about the count of w = 1 in the next three cycles, not the specific order. Thus, we don't necessarily need separate states for each possible sequence of w, but rather a way to keep track of the count of w = 1 over these cycles.
+
+The states could be as follows:
+- State A: Initial state where s = 0 keeps the FSM in this state, and s = 1 transitions it to state B.
+- State B: Start counting w = 1 occurrences.
+- Since we are looking for exactly two w = 1 occurrences in any 3-cycle window after entering state B, and we need to set z = 1 in the cycle following the third cycle of the window if the condition is met, we can implement this logic without needing explicit states for counting but by using counters and conditional logic within the always block.
+
+We can use a 2-bit counter to keep track of the current cycle within the 3-cycle window and another variable to count the occurrences of w = 1. When the counter reaches 3 (indicating the end of the window), we check the count of w = 1 and set z accordingly for the next cycle.

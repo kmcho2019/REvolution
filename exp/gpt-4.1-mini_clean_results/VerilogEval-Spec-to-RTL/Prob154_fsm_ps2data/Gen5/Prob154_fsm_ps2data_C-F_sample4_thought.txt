@@ -1,0 +1,7 @@
+Fuse the strengths of both example solutions by maintaining a clean, minimal 2-bit binary FSM for simple and area-efficient state encoding while enhancing power efficiency by introducing clock enables for byte registers, updating them only when needed. 
+- Only evaluate in[3] in IDLE state to reduce unnecessary toggling.
+- Register done as a single-cycle pulse aligned precisely on the cycle immediately after receiving the third byte.
+- Compute out_bytes combinationally from byte registers and current input in the done cycle to minimize register toggling and reduce power.
+- Use a registered state machine with synchronous active-high reset.
+- Assign outputs only once per clock cycle with nonblocking assignments.
+- This method balances functional correctness, timing (done asserted immediately after byte3 is latched), and reduced switching activity to improve power without increasing area or hurting performance.

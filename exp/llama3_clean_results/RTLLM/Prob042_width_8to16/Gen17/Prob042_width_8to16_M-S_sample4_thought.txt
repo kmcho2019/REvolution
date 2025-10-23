@@ -1,0 +1,10 @@
+To simplify the data width conversion circuit, we can eliminate the need for explicit FIFO management by utilizing a more straightforward approach. This can be achieved by using two registers to temporarily store the incoming 8-bit data. 
+
+The new architecture includes:
+1. **Data Registers:** Use two registers, `data_lock` and `data_in_reg`, to store the incoming 8-bit data.
+2. **Valid Flag:** Introduce a `valid_lock` flag to track the validity of the data stored in `data_lock`.
+3. **Data Width Conversion:** When both `data_lock` and `data_in_reg` contain valid data, concatenate these elements to form a 16-bit output data and assert the `valid_out` signal.
+4. **Simplified State Management:** Utilize the `valid_lock` flag to simplify the state management, eliminating the need for explicit counters or complex flag management.
+5. **Output Generation:** Use a separate always block or combinational logic to generate the `valid_out` signal, ensuring it is asserted only when the output data is valid and ready.
+
+This architectural change enhances the design's simplicity by reducing the complexity of the control logic and improving the overall readability of the code.

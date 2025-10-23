@@ -1,0 +1,21 @@
+Novel Architecture: Radix-4 Booth Pipelined Multiplier
+1. Radix-4 Booth Encoding:
+   - Encodes multiplier bits in groups of 3 (overlapping) to reduce partial products by half
+   - Generates partial products of 0, ±1x, ±2x multiplicand
+   - Reduces adder stages and improves timing
+
+2. Optimized 3-Stage Pipeline:
+   - Stage 1: Input registration and Booth encoding
+   - Stage 2: Partial product generation and first-level compression
+   - Stage 3: Final addition and result registration
+   - Fewer stages than conventional designs for better throughput
+
+3. Efficient Enable Propagation:
+   - Shift register tracks valid data through pipeline
+   - Output gating when disabled to save power
+   - Early termination when disabled
+
+4. Power Optimization:
+   - Operand isolation when disabled
+   - Zero partial products when not enabled
+   - Gated clock enable signals

@@ -1,0 +1,26 @@
+To fix the FSM and output timing issues:
+
+- Sample input x continuously from the moment reset is deasserted, not only in state C. Use a 3-bit shift register always shifted on each clock after reset to detect the pattern 1-0-1 on successive cycles. This prevents missing early samples and aligns with the pattern detection specification.
+
+- Modify states to reflect the output timing accurately:  
+  - State A: reset active.  
+  - State B: first cycle after reset, output f=1 for one cycle.  
+  - State C: start monitoring x pattern with the shift register already updated; remain here until pattern detected.  
+  - State D: on the clock cycle *after* pattern is detected (i.e., next cycle after leaving C), set g=1 for one cycle.  
+  - State E: monitor input y for up to two cycles while maintaining g=1. If y=1 detected within two cycles, stay in E with permanent g=1; else transition to F.  
+  - State F: permanent g=0 state after y timeout until reset.
+
+- Adjust the y_counter to count from 0 to 1 (2 clock cycles total) to match "at most two clock cycles" for detecting y=1. Increment on each cycle in E, not D.
+
+- Outputs f and g are synchronous (registered) signals driven from states:  
+  - f=1 only in state B (one cycle after reset deasserted).  
+  - g=1 during states D and E.  
+  - g=0 elsewhere (including F).
+
+- Keep the shift register always shifting x after reset deasserted, so pattern detection can be checked combinationally each clock.
+
+- Use a simple one-hot FSM style for clarity.
+
+- Implement all sequential logic in a single always_ff block triggered on posedge clk, with synchronous active-low reset.
+
+This fixes timing mismatches, ensures pattern detection accuracy, aligns output timing precisely to the spec, and respects the two-cycle y-monitoring window.

@@ -1,0 +1,16 @@
+Here's a novel approach using a circular shift register with integrated decoding logic:
+
+1. Instead of a traditional linear shift register, implement a circular shift register where the output can be tapped at any position without a separate multiplexer.
+
+2. The key innovation is using a barrel shifter-style approach where the shift register contents are rotated based on the ABC inputs, and we always output the first bit (Q[0]).
+
+3. This eliminates the need for a separate 8:1 multiplexer by:
+   - Dynamically rotating the shift register contents so the desired bit is always in Q[0]
+   - The rotation amount is controlled by the ABC inputs (3-bit value)
+   - Z simply outputs Q[0] after rotation
+
+4. Benefits:
+   - Reduced logic since we combine shifting and selection into one operation
+   - Potential power savings since only the rotation logic is active during reads
+   - Interesting tradeoff between shift complexity and mux elimination
+   - Novel use of circular shifting for memory addressing

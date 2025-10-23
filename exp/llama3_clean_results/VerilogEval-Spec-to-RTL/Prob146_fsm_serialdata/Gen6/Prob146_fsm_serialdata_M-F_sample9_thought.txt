@@ -1,0 +1,17 @@
+The existing code has several issues that need to be addressed. First, the 'done' signal is only asserted when the stop bit is received and the state is 'WaitStop'. However, the 'done' signal should be asserted when a complete byte has been received, including the start bit, data bits, and stop bit. 
+
+To fix this issue, we need to update the 'done' signal assignment to assert it when the state is 'WaitStop' and the stop bit has been received.
+
+Another issue with the code is the way the received data byte is being constructed and output. The 'data_byte' register is being assigned the value of the shift register in the 'WaitStop' state, but this assignment only occurs when the stop bit is received. 
+
+To fix this issue, we need to update the 'out_byte' assignment to use the 'data_byte' register instead of assigning it directly from the shift register.
+
+Additionally, we need to ensure that the 'data_byte' register is being updated correctly. In the 'Receive' state, the current bit is being shifted into the shift register, but the shift register is not being used to construct the output data byte.
+
+To fix this issue, we need to update the 'data_byte' register in the 'Receive' state by shifting in the current bit.
+
+We also need to ensure that the start bit is being handled correctly. The start bit should be checked in the 'Idle' state, and if it is 0, the state should transition to 'Receive'.
+
+Finally, we need to optimize the code for better PPA by removing unnecessary variables and logic, and simplifying the state machine structure.
+
+We can achieve this by removing the 'bit_counter' register and using a simpler state machine structure.

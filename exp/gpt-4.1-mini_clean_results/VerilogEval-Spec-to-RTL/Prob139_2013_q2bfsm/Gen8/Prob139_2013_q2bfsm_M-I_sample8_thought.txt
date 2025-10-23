@@ -1,0 +1,24 @@
+The main issues causing output mismatches are slight off-by-one errors in timing the f pulse after reset release and in monitoring y within exactly two clock cycles. To fix these:
+
+1. For f output after reset release:
+   - Currently, the FSM moves immediately from reset state (S_A) to f-pulse state (S_B) once resetn deasserts, asserting f=1 immediately.
+   - The spec says "after the next clock edge" following resetn deassertion, f=1 for one cycle.
+   - To strictly meet this, we separate detection of resetn deassertion and the f pulse: stay in S_A while resetn=0; upon resetn=1, move to an intermediate state S_WAIT (waiting one cycle), then move to S_B to assert f=1 for one clock cycle.
+   
+2. For y monitoring in S_MON:
+   - The monitoring window is "within at most two clock cycles."
+   - The original code counts from mon_cnt=0 and transitions to g=0 at mon_cnt==1, which only allows effectively one full cycle of monitoring after the pattern completes.
+   - To allow two full cycles, use a 2-bit counter starting from 0 and move to g=0 after mon_cnt reaches 2.
+   - This means if y is not detected at cycles 0 or 1, then at mon_cnt==2, transition to g=0.
+   
+3. Add a new state S_WAIT to handle the "one clock cycle after reset release before f=1" requirement.
+
+4. Maintain Moore outputs for stable timing.
+
+5. The sequence detection remains as before, as it correctly detects the 1-0-1 pattern.
+
+This modification strictly aligns with the spec's timing requirements and removes off-by-one errors, eliminating the mismatches on outputs f and g.
+
+The FSM uses 4-bit state encoding to keep states distinct and easy to follow; since the size is small, the slight increase in bits is negligible for PPA.
+
+Overall, the design is a clean, correct implementation meeting all timing constraints with minimal logic and registers.

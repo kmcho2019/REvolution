@@ -1,0 +1,7 @@
+To avoid the unsupported SystemVerilog enum type and explicit casting issues, I will refactor the FSM to use plain `reg` for states represented as bits (0 and 1). The state will be a 1-bit register where 0 = IDLE and 1 = ENABLE. The next state logic and outputs will be coded directly with bits instead of enums.
+
+Also, I will simplify the counter handling by only decrementing the count while in ENABLE state. On synchronous reset, the state is set to ENABLE and the counter to 4. After counting down to 0, the FSM stays in IDLE forever with shift_ena low.
+
+The output shift_ena will be assigned combinationally as the state bit.
+
+This approach uses standard Verilog constructs, ensuring compatibility and removing the need for enums or typedefs.

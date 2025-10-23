@@ -1,0 +1,16 @@
+Here's a novel approach using a shift register and edge detection:
+
+1. Instead of a traditional state machine, we'll use a 3-bit shift register to track the last three samples of data_in
+2. We'll detect both rising and falling edges separately
+3. The pulse is detected when we have:
+   - A rising edge (0->1) two cycles ago
+   - data_in was high one cycle ago
+   - A falling edge (1->0) in the current cycle
+4. This approach is more robust against glitches and easier to verify
+5. The output is purely combinational based on the shift register contents
+
+Advantages:
+- No explicit state machine to manage
+- Clear relationship between input pattern and output
+- Easily extensible to detect different pulse patterns
+- Lower latency as output appears immediately when pattern matches

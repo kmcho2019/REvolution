@@ -1,0 +1,9 @@
+The previous solution attempts to initialize flip-flops using an internal synchronous reset triggered only on the first clock cycle via a flag. However, this approach may cause flip-flops to start in unknown states during simulation and cause output mismatches.
+
+To ensure the flip-flops start at zero immediately at simulation time zero and also be implemented in hardware with clear initial states, we will use Verilog's explicit register initialization in the declaration (`reg ff = 0;`). This is supported by most synthesis tools and simulators and guarantees the registers start at zero before any clock edge.
+
+This simple approach removes the need for an internal reset signal or additional logic, minimizing area and power (no extra control logic). It also prevents startup unknowns, so simulation matches expected behavior immediately.
+
+The combinational logic and flip-flop update remain unchanged, preserving functional correctness. Using nonblocking assignments for flip-flops and assigning combinational wires with continuous assignments ensures best practice.
+
+This solution is minimal, synthesizable, clear, and resolves the initial state mismatch problems without increasing complexity.

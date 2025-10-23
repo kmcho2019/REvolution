@@ -1,0 +1,13 @@
+To implement the 4-bit shift register as described, we'll use a combination of sequential logic and conditional statements to handle the different input signals (areset, load, ena) and their effects on the output q. 
+
+1. We'll start by declaring the output q as a reg type, since it will be assigned a value in a procedural block. We'll also declare an internal variable to hold the current state of the shift register.
+
+2. The areset signal will be used to reset the shift register to zero when it's asserted high. This will be an asynchronous reset, meaning it doesn't rely on the clock signal.
+
+3. Inside the always block (which is sensitive to the positive edge of the clock), we'll check for the load signal. If load is asserted high, we'll load the data directly into the shift register.
+
+4. If load is not asserted, we'll then check the ena signal. If ena is high, we'll perform a right shift operation on the current state of the shift register.
+
+5. Finally, we'll assign the current state of the shift register to the output q.
+
+This approach ensures that the module behaves according to the specified requirements, with the load input taking priority over the ena input when both are asserted.

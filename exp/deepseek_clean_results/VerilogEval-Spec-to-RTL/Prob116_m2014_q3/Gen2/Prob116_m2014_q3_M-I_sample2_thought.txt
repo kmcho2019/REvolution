@@ -1,0 +1,19 @@
+To correctly implement the Karnaugh map, I'll first establish the proper variable mapping:
+- Rows: x[3]x[0] (as x[3]x[4] in the problem)
+- Columns: x[2]x[1] (as x[1]x[2] in the problem)
+
+Analyzing the Karnaugh map:
+1. Essential prime implicants (must include):
+   - x[3]x[0]=11 covers two 1's (x[2]x[1]=00 and 01)
+   - x[3]x[0]=10 covers two 1's (x[2]x[1]=00 and 01)
+   - x[3]x[0]=01 with x[2]x[1]=11 covers one 1
+
+2. Don't-care conditions can be used to:
+   - Merge x[3]x[0]=11 and 10 when x[2]x[1]=00 or 01
+   - Simplify the x[3]x[0]=01 case
+
+Simplified expression:
+f = (x[3] & ~x[2]) |  // Covers both x[3]x[0]=11 and 10 when x[2]=0
+    (~x[3] & x[0] & x[2] & x[1])  // Specific case for x[3]x[0]=01, x[2]x[1]=11
+
+This uses fewer gates while correctly implementing all required outputs and optimally using don't-cares.

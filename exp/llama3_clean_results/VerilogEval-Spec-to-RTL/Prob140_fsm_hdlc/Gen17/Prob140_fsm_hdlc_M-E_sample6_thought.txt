@@ -1,0 +1,9 @@
+To tackle the HDLC framing problem with a novel architectural idea, we will design a solution that leverages a hybrid approach combining the efficiency of a counter-based system for tracking consecutive ones with the clarity of a state machine for managing the protocol's flags and error conditions. This design aims to minimize the number of states and transitions, reducing the complexity and potentially the area and power requirements.
+
+1. **Counter-Based Approach for Consecutive Ones**: Implement a counter that increments with each incoming '1' and resets with a '0'. This will simplify the detection of consecutive ones.
+
+2. **State Machine for Flag and Error Management**: Use a minimal state machine to manage the detection of the flag pattern (01111110) and error conditions (7 or more consecutive ones). This state machine will be triggered based on the counter's value.
+
+3. **Simplified Logic for Outputs**: Use combinational logic to generate the outputs (disc, flag, err) based on the state machine's state and the counter's value, ensuring that each output is asserted for a complete cycle after the condition is met.
+
+By combining these elements, we aim to create a design that is both efficient in terms of area and power consumption and straightforward to implement and understand.

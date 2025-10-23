@@ -1,0 +1,24 @@
+Correct Implementation Strategy:
+1. For mux_in[0] (ab=00):
+   - K-map shows: 0 (cd=00), 1 (01), 1 (11), 0 (10)
+   - This matches d when c=0, and ~d when c=1
+   - Can be implemented as: (c ? ~d : d)
+
+2. For mux_in[1] (ab=01):
+   - Always 0 as per K-map
+   - Simple constant assignment
+
+3. For mux_in[2] (ab=11):
+   - Only 1 when cd=11 (c AND d)
+   - Correct as is
+
+4. For mux_in[3] (ab=10):
+   - K-map shows: 1 (00), 0 (01), 1 (11), 1 (10)
+   - This matches ~d OR c, except cd=01 which should be 0
+   - Can be implemented as: ~d | (c & ~(c & ~d)) which simplifies to ~d | c
+
+Key Insights:
+1. mux_in[0] requires conditional logic based on c
+2. mux_in[3] can be simplified to ~d | c as the cd=01 case is already handled by ~d
+3. No need for additional gates beyond the minimal required
+4. All implementations use only the inputs c and d

@@ -1,0 +1,14 @@
+To optimize the Lemming state machine for better PPA metrics:
+1. Merge direction into state encoding to eliminate the separate dir register
+2. Use one-hot encoding for better timing (3 states = 3 bits)
+3. Add clock gating for direction changes when not in WALK state
+4. Simplify output logic by directly decoding state
+5. Maintain priority order (fall > dig > bump) in state transitions
+6. Optimize state encoding to minimize transitions
+7. Reduce combinational logic depth for better timing
+
+Key improvements:
+- Eliminate dir register by encoding direction in state (saves area)
+- One-hot encoding improves timing at small area cost
+- Clock gating reduces power for direction changes
+- Simplified output logic maintains clarity

@@ -1,0 +1,12 @@
+Simplified Design Approach:
+1. State Reduction: Eliminate the ERROR state since we can handle invalid stop bits by staying in STOP state until we see a '1' (idle condition).
+2. Counter Optimization: Use a 3-bit counter but simplify the comparison logic by checking when bit_count reaches 7 (all bits received).
+3. Shift Register: Keep the efficient right-shift implementation for LSB-first reception.
+4. Done Signal: Generate it only in STOP state when we see a valid stop bit (1).
+5. Reset Handling: Maintain synchronous reset for all registers.
+6. State Transitions:
+   - IDLE: Wait for start bit (0)
+   - RECEIVE: Collect 8 data bits
+   - STOP: Check stop bit and output data if valid
+
+This simplification removes redundant states and logic while maintaining all required functionality.

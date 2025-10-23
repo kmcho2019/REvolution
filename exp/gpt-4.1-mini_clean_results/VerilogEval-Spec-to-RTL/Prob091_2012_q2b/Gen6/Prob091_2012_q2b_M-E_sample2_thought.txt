@@ -1,0 +1,3 @@
+Use a combinational always block with casez to explicitly enumerate state transitions and outputs Y1 and Y3. This approach leverages the fact that exactly one bit in y is high (one-hot), so we can match each active state. Inside the always block, for each state we decode next-state bits, and assign Y1 and Y3 accordingly. This approach centralizes the next-state logic and is highly readable. Since Y1 and Y3 are next-state inputs for y[1] and y[3], we look at transitions leading to states B and D respectively.
+
+This method avoids small gate modules and intermediate wires, reduces netlist size, and suits FSM behavior description directly. It also allows easy extension or modification of logic by updating the case statement.

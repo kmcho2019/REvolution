@@ -1,0 +1,16 @@
+To implement the frequency divider that divides the input clock frequency by fractional values (3.5x), we will use the double-edge clocking technique. This involves counting clock cycles and generating an intermediate divided clock signal. We will use a counter to cycle through 7 clock cycles, generating two uneven clock periods. Then, we will phase-shift these divided clocks and logically OR them to produce the final fractional divided clock output. We will use Verilog's built-in timing control and logical operators to achieve this functionality.
+
+We need to define the parameters for the division, including the number of clock cycles (MUL2_DIV_CLK) and the widths of the counters. The main components will include a clock counter, a phase-shifting mechanism, and a logical OR operation. The module should be initialized with an active low reset signal.
+
+To handle the fractional division, we will create an intermediate clock that represents the divided frequency. This involves toggling the clock at specific intervals based on the division factor. For a 3.5x division, we divide the clock into two periods: one with 4 source clock cycles and another with 3 source clock cycles. By phase-shifting and OR-ing these periods, we achieve a smooth fractional clock output.
+
+We will use the following signals:
+- `clk`: Input clock signal
+- `rst_n`: Active low reset signal
+- `clk_div`: Fractionally divided clock output
+- `cnt`: Counter for clock cycles
+- `phase_clk1` and `phase_clk2`: Phase-shifted clocks
+- `div_clk_int1` and `div_clk_int2`: Intermediate divided clocks
+- `MUL2_DIV_CLK`: Parameter for the number of clock cycles
+
+We will implement the module using always blocks for the counter, phase-shifting, and OR operation, ensuring the correct timing and functionality for the fractional frequency division.

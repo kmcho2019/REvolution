@@ -1,0 +1,13 @@
+To improve the existing design for better power, area, and timing, we can exploit the fact that anyedge output is valid only one cycle after the edge occurs. We can store only the previous input and compute the XOR combinationally, then register the result into anyedge. This will reduce one register stage at the output, potentially reducing latency and power by avoiding registering both the input and output. However, since anyedge must be synchronous, we still register the XOR output, but by rearranging the order, we can pipeline the registers optimally.
+
+Additionally, to reduce glitching and power, we can gate updates to the prev_in register only when the input changes, minimizing unnecessary toggling in the stored register. This can reduce dynamic power, especially if the input is mostly static.
+
+Hence, the improved design uses:
+
+1. A register prev_in to store the previous cycle's input only when input changes.
+2. A registered anyedge output to capture XOR between current input and prev_in.
+3. Conditional update of prev_in to reduce power.
+
+This retains the synchronous design with minimal logic and registers but reduces toggling and improves power metrics while potentially slightly improving timing by limiting register toggling.
+
+If the synthesis tool is smart, this conditional register update will optimize well, otherwise synthesis pragmas or explicit clock gating might be used at the system level for further improvements, but here we keep it RTL only.

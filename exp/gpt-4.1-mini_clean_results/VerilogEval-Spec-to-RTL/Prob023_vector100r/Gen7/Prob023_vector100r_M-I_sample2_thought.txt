@@ -1,0 +1,10 @@
+To optimize the PPA further, explicitly instantiate the bit reversal as a parallel wiring assignment using a generate-for loop without a function call. This structural approach enables synthesis tools to clearly recognize the direct bit permutation, potentially improving timing and area by reducing combinational logic inference overhead.
+
+Specifically:
+- Replace the function-based reversal with a generate loop that assigns each bit of the output from the corresponding reversed input bit.
+- This avoids the implicit loop within a function and expresses the reversal structurally as direct wiring.
+- This can improve synthesis quality (timing and area) by clarifying the intent as simple wire re-mapping.
+- Keep the code parameterized for reusability.
+- The TopModule instantiates the improved BitRevN with N=100 as before.
+
+This modification is functionally equivalent but should yield better synthesis results and possibly reduce power by avoiding longer combinational paths and inferred multiplexers or complex logic.

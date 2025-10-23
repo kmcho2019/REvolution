@@ -1,0 +1,21 @@
+Here's a novel approach using a hierarchical state machine with parallel pattern detection:
+
+1. Pattern Detection:
+   - Use a separate always block to continuously track the last 4 bits of input data
+   - This runs in parallel with the main FSM, reducing complexity
+
+2. State Machine Design:
+   - Implement a 4-state machine (IDLE, SHIFT, COUNT, DONE)
+   - Use a down counter for shift cycles (more intuitive than up counter)
+   - Clear pattern register only when returning to IDLE state
+
+3. Output Control:
+   - Generate outputs combinatorially based on current state
+   - This separates state transitions from output generation
+   - Prevents output glitches during state transitions
+
+4. Key Improvements:
+   - Pattern detection is continuous and independent of FSM state
+   - Shift counter starts at 3 and counts down to 0
+   - Outputs are cleanly generated without overrides
+   - Clear state transitions with proper timing

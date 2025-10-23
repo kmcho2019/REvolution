@@ -1,0 +1,35 @@
+The main functional bug in the provided solution lies in the timing and update of the output `z` and the counting logic. Specifically, the count of `w=1` samples for the three-cycle window and the delayed assertion of `z` are not perfectly aligned, causing output mismatches.
+
+To fix this:
+
+1. Separate combinational next-state and output logic from sequential updates clearly, avoiding complex expressions inside the sequential always block that mix state updates and output calculations.
+
+2. Maintain a register `count` that accumulates the number of `w=1` in the current 3-cycle sampling window.
+
+3. Introduce a register `z_reg` that stores the output `z` value to be asserted in the *cycle immediately following* the three sample cycles.
+
+4. Update `z_reg` synchronously at the end of the third sampling cycle (state B2) based on the final count.
+
+5. Assert output `z` from `z_reg` on every clock cycle.
+
+6. Reset `count` at the start of a new sampling window (state B0).
+
+7. Handle reset synchronously and consistently reset all registers.
+
+8. Keep FSM states minimal: A (waiting for s=1), and B0, B1, B2 for the 3 sample cycles.
+
+This structure cleanly aligns the counting of `w=1` samples during B0-B2 and asserts the `z` output precisely in the cycle after B2, i.e., in B0 of the next group, avoiding any off-by-one timing errors.
+
+For improved PPA:
+
+- Use non-blocking assignments consistently.
+
+- Keep the FSM simple with a 2-bit state encoding.
+
+- Use small bit-width counters (2 bits for count).
+
+- Separate combinational next-state logic for clarity and better synthesis.
+
+- Output `z` driven only by a register updated synchronously, reducing glitches.
+
+This clean separation enhances simulation correctness, timing clarity, and synthesis quality.

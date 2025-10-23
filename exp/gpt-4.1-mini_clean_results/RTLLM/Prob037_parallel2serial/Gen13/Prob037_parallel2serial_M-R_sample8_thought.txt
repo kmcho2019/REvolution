@@ -1,0 +1,7 @@
+Refactor the design by introducing a shift register to hold the parallel input `d` at the start of serialization and shift out the MSB each clock cycle. The counter counts from 0 to 3, tracking how many bits have been output. `valid_out` is asserted only when the first bit (MSB) is output, i.e., when `cnt` is zero. On reset, clear registers. On the last bit output (`cnt == 3`), reload the shift register with the new input data and reset the counter.
+
+This structure separates the data storage from the input port, reduces glitching on `dout` caused by combinational indexing of asynchronous input `d`, and uses synchronous logic to control output, making the output stable and predictable.
+
+The data register shifts left by one bit each cycle, making MSB always available at `data[3]` as output. Counter increments each clock, resetting after 3. The `valid_out` signal is asserted only during the MSB output cycle (cnt == 0).
+
+This design keeps the functional behavior while changing the control structure to a shift register-based serializer, which can be more robust and might better optimize timing and power depending on synthesis.

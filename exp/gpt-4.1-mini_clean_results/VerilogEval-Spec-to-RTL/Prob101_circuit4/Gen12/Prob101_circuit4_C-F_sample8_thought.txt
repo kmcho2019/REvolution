@@ -1,0 +1,13 @@
+The waveform shows q = 1 whenever either b or c is high, regardless of a and d. The best solution balances clarity, modularity, and minimal overhead. From the examples:
+
+- Example 1 uses buffers plus an OR gate, showing modular gate-level design but adds unnecessary buffer modules increasing area and power.
+- Example 2 uses a single OR gate module without buffers, cleaner but still introduces a separate module which might be unnecessary for such simple logic.
+
+Fusion strategy:
+- Implement q = b | c directly in TopModule using a continuous assignment without extra modules.
+- Retain the full interface including inputs a and d for compatibility.
+- This inline combinational approach minimizes area and power overhead by avoiding any extra gate or module instantiations.
+- It also maintains excellent performance (minimal logic depth).
+- This approach is simplest, cleanest, and most resource-efficient for this trivial combinational logic.
+
+Thus, the final design is a single TopModule with an assign statement implementing q = b | c combinationally.

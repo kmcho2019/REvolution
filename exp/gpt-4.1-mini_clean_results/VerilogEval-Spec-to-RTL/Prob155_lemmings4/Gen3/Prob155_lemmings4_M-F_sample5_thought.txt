@@ -1,0 +1,20 @@
+The bug is in how the direction is updated on bumps during walking. The spec requires:
+
+- If bumped on the left (bump_left=1), direction should be set to right (dir=1).
+- If bumped on the right (bump_right=1), direction should be set to left (dir=0).
+- If bumped on both sides simultaneously, still switch directions (toggle dir).
+
+The original code toggled direction for any bump, which causes incorrect behavior for bump_right-only events.
+
+To fix this, in MODE_WALK when bumps occur:
+
+- If both bump_left and bump_right are high, toggle direction.
+- Else if bump_left only, set direction to right (dir=1).
+- Else if bump_right only, set direction to left (dir=0).
+- Otherwise, keep direction unchanged.
+
+All other FSM logic and fall_counter handling remain the same, respecting the precedence of fall > dig > bump.
+
+This ensures walking direction outputs (walk_left, walk_right) correctly reflect the spec on bumps, eliminating mismatches.
+
+Outputs remain Moore style based on current mode and direction.

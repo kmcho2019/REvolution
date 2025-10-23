@@ -1,0 +1,7 @@
+The TopModule will use a finite state machine (FSM) to detect the start and stop bits, and collect the 8 data bits in between. The FSM will have the following states: 
+- IDLE: Wait for the start bit (0) to arrive.
+- START_BIT: Verify that the start bit has been received, then proceed to receive the 8 data bits.
+- DATA_BITS: Collect the 8 data bits.
+- STOP_BIT: Verify that the stop bit (1) has been received after the 8 data bits.
+When the FSM is in the STOP_BIT state and the stop bit is received, it will assert the 'done' signal and output the received byte on 'out_byte'.
+We will use a counter to count the number of data bits received so far.

@@ -1,0 +1,9 @@
+To solve this problem, we can design a finite state machine (FSM) with the following states:
+1. IDLE: In this state, we discard the input bytes until we find a byte with in[3] = 1.
+2. BYTE1: Once we find a byte with in[3] = 1, we enter this state and store the byte as the first byte of the message.
+3. BYTE2: In this state, we store the input byte as the second byte of the message.
+4. BYTE3: In this state, we store the input byte as the third byte of the message and assert the done signal in the next cycle.
+
+We will use a 2-bit state variable to represent the four states (00, 01, 10, 11). We will also use three 8-bit registers to store the three bytes of the message.
+
+The reset signal will be used to reset the state machine to the IDLE state and clear the registers.

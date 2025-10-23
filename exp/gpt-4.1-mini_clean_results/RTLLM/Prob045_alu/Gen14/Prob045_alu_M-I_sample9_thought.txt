@@ -1,0 +1,12 @@
+The original solution correctly implements the ALU functionality, but to optimize PPA (power, performance, area), we can:
+
+1. Avoid computing carry and overflow for operations where they don't apply to reduce switching and simplify logic.
+2. Replace the initial blanket default assignments in the always block with operation-specific assignments to reduce unnecessary toggling.
+3. Implement the LUI operation correctly as per MIPS ISA by loading the immediate in the upper 16 bits and zeros in lower 16 bits (r = {b[15:0], 16'b0};), assuming the input 'b' is the immediate for LUI (typical for ALU usage).
+4. Use nonblocking assignments in the always_comb for clarity and potential synthesis optimization.
+5. Set `flag` to '0' by default to improve synthesis friendliness and avoid 'z'.
+6. Use unsigned comparison for SLTU and signed for SLT directly, avoiding unnecessary signed casting on operands except where needed.
+7. Use a separate wire for addition/subtraction results to minimize long combinational paths and clearly separate carry/overflow logic.
+8. Provide clear comments and organize the code for maintainability.
+
+These changes aim to reduce switching activity, simplify logic for unused flags per operation, and correctly implement LUI consistent with MIPS ISA, resulting in better power, area, and timing metrics.

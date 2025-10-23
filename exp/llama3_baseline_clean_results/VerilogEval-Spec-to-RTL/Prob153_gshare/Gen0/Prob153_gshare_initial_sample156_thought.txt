@@ -1,0 +1,7 @@
+To implement the TopModule, we will first define the internal signals and variables needed for the branch predictor. We will use a 7-bit global branch history register and a 128-entry table of two-bit saturating counters. The index into the counter table will be calculated by hashing the 7-bit pc and 7-bit global history using XOR. 
+
+We will then implement the prediction logic, which will produce the predicted branch direction and state of the branch history register used to make the prediction. 
+
+Next, we will implement the training logic, which will update the pattern history table (PHT) to train the branch predictor to predict the branch more accurately next time. If the branch being trained is mispredicted, we will also recover the branch history register to the state immediately after the mispredicting branch completes execution.
+
+We will use a clock-edge triggered process to update the internal state of the branch predictor, including the branch history register and the PHT.

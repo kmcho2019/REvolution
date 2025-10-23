@@ -1,0 +1,13 @@
+The original design uses an always block for updating the register and a generate-for loop with a function for combinational next state calculation. To refactor while keeping the core idea (using zero-padded extended vector for neighborhood extraction), we will:
+
+1. Implement the combinational next state logic entirely using continuous assignments without a function or generate block, by using vector operations and bitwise logic directly.
+
+2. Create the left, center, and right neighborhood vectors by shifting the extended vector appropriately.
+
+3. Compute the entire next state vector `next_q` by applying the Rule 110 logic element-wise via bitwise operations on these vectors.
+
+4. Keep the register update in an always block on clk posedge, loading `data` if `load` is high, else updating with `next_q`.
+
+This approach eliminates the explicit generate loop and function calls, making the next state calculation fully vectorized and potentially clearer and more efficient for synthesis. It also maintains the zero-padded boundaries to handle edge conditions cleanly.
+
+This is a fresh structural refactor that achieves the same behavior but with a different style focusing on vectorized operations and avoiding generate constructs.

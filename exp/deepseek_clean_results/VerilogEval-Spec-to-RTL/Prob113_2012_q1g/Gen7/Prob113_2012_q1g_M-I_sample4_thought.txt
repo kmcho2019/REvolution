@@ -1,0 +1,13 @@
+To correctly implement the given Karnaugh map, we need to:
+1. Identify all minterms where f=1 from the K-map:
+   - 0000, 0010 (top-left and top-right when x[3:2]=00)
+   - 1100, 1101, 1111 (left and middle when x[3:2]=11)
+   - 1000, 1001, 1010 (left, middle, and right when x[3:2]=10)
+
+2. Create product terms that cover these minterms without overlapping with 0-cells:
+   - For x[3:2]=00: ~x[3]&~x[2]&~x[1]&~x[0] (0000) + ~x[3]&~x[2]&x[1]&~x[0] (0010)
+   - For x[3:2]=11: x[3]&x[2]&~x[1]&~x[0] (1100) + x[3]&x[2]&~x[1]&x[0] (1101) + x[3]&x[2]&x[1]&x[0] (1111)
+   - For x[3:2]=10: x[3]&~x[2]&~x[1]&~x[0] (1000) + x[3]&~x[2]&~x[1]&x[0] (1001) + x[3]&~x[2]&x[1]&~x[0] (1010)
+
+3. Combine these terms with OR operations to get the final output
+4. This ensures all 1-cells are covered while maintaining correct 0-cells

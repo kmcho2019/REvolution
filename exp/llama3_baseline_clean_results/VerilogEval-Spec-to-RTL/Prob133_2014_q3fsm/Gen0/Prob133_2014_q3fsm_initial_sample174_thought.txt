@@ -1,0 +1,21 @@
+To implement the described finite state machine (FSM) in the TopModule, we can approach it by defining the necessary states and transitions based on the inputs s and w. 
+
+1. We start in state A. While in state A, if s = 0, we remain in state A. If s = 1, we transition to state B.
+2. In state B, we examine w over the next three clock cycles to determine the output z. 
+   - If w is 1 in exactly two of these cycles, then z = 1 in the following cycle.
+   - Otherwise, z = 0.
+3. Since the FSM continues checking w for the next three cycles after setting z, we essentially need to keep track of the number of times w = 1 over three consecutive cycles while in state B.
+
+To minimize the number of states, we can encode the information needed to track the behavior in state B within the state itself or use additional logic to simplify the state machine. One approach is to use a counter to track how many cycles have passed since entering state B and another counter or logic to track how many times w = 1 within those cycles.
+
+However, since we are looking to use as few states as possible, we can simplify by considering that once in state B, we only care about w and not about the state A conditions anymore. The critical part is to detect two w = 1 conditions within three consecutive cycles and set z accordingly in the cycle following those three cycles.
+
+A more detailed approach involves recognizing that we need at least one state to track the condition of having seen two w = 1s within the three cycles, and potentially another to handle the reset and initial condition. Given these constraints, we can actually encode the necessary behavior with a relatively simple state machine that directly implements the required logic without needing a large number of states.
+
+For simplicity and to meet the "as few states as possible" requirement, we can encode our FSM to have two main states: A (reset state) and B (the active state where we monitor w). The complexity of handling w over three cycles and determining z can be managed within the combinational logic that feeds into the state machine's next state and output logic.
+
+Thus, our thought process leads us to:
+- A simple two-state FSM (A and B) to manage the high-level state transitions based on s.
+- Combinational logic to handle the w input over three cycles and determine z based on the conditions specified.
+
+Given the constraints and requirements, the FSM can be significantly simplified by directly implementing the logic for monitoring w and setting z without explicitly encoding each step into separate states, focusing on minimizing the number of states required.

@@ -1,0 +1,17 @@
+To optimize for power and area, change the FSM state encoding from one-hot (3 flip-flops) to binary encoding (2 flip-flops). We only have four states (A, B, C, D), so 2 bits suffice. This reduces flip-flop count and switching activity, lowering power and area.
+
+Define states as:
+- A = 2'b00 (idle)
+- B = 2'b01 (grant device 0)
+- C = 2'b10 (grant device 1)
+- D = 2'b11 (grant device 2)
+
+The output logic g will be generated from the current state to assert only one grant bit at a time.
+
+The next state logic is updated accordingly:
+- In A (00), pick highest priority request device 0, then 1, then 2, else remain in A.
+- In grant states, hold grant if request asserted, else go back to A.
+
+Keep synchronous active-low reset initializing to state A.
+
+This binary encoding reduces flip-flops from 3 to 2 and likely improves power and area with only slight increase in next-state and output logic complexity.

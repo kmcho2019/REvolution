@@ -1,0 +1,11 @@
+To implement the finite-state machine that controls the timer, we can break down the desired behavior into several states:
+1. Idle state: Searching for the pattern 1101 on the data input.
+2. Shift state: After detecting the pattern, shift in 4 more bits by asserting shift_ena for exactly 4 clock cycles.
+3. Counting state: After shifting in the duration bits, assert counting to indicate the counters are running and wait for done_counting to be high.
+4. Done state: After the counters finish counting, assert done to notify the user and wait for the acknowledgement (ack) before resetting to the idle state.
+We will use a parameterized state machine with a 4-state FSM (one more than the number of distinct states because we are using a zero-based state encoding), encoded as follows:
+- 0: IDLE
+- 1: SHIFT
+- 2: COUNTING
+- 3: DONE
+The next state logic and output logic will be derived from the current state and input conditions.

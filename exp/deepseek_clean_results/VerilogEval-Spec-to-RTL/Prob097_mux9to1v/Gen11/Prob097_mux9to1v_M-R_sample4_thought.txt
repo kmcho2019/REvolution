@@ -1,0 +1,13 @@
+Refactoring Approach:
+1. Replace the hierarchical 2-to-1 mux tree with a single case statement for cleaner code and better synthesis optimization
+2. Move default case handling outside the bit-wise processing to avoid replication
+3. Use direct 16-bit operations instead of bit-wise processing to enable potential resource sharing
+4. Simplify the default case logic by checking if sel > 8 (more intuitive than checking sel[3] && |sel[2:0])
+5. Maintain pure combinational logic but with more concise syntax
+
+Key Benefits:
+- Single case statement allows synthesis tools to optimize the mux structure
+- Reduced intermediate wires and logic duplication
+- Clearer default case handling
+- Potential for better PPA due to simpler structure and reduced replication
+- More readable and maintainable code

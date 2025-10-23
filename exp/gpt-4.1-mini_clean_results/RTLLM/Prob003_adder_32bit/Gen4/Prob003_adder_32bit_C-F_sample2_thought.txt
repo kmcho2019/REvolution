@@ -1,0 +1,14 @@
+Fuse hierarchical carry-lookahead logic from Example 1 with the clear generate loop structure and group generate/propagate calculation from Example 2.
+
+Key enhancements:
+- Use zero-based indexing internally (like Example 1) for better synthesis friendliness and alignment with standard Verilog practices.
+- Implement a 16-bit CLA with full hierarchical carry lookahead using group generate/propagate signals at multiple levels, not just bitwise ripple carry. This shortens the carry propagation path drastically and improves timing.
+- Calculate group propagate and generate signals for 4-bit groups within the 16-bit block to build a multi-level carry-lookahead tree.
+- Compute carry signals for each bit directly from group-level propagate/generate to enable true parallel carry computation.
+- Use generate loops for concise and maintainable code to compute bitwise propagate/generate and sums.
+- The top module instantiates two 16-bit CLA blocks, connecting carry out of the lower block to carry in of the upper, handling the full 32-bit addition.
+- Outputs and inputs remapped properly between zero-based and 1-based indexing at module interface boundaries.
+
+This combined approach improves timing by reducing carry depth, maintains clear and maintainable code style, and aligns with synthesis tools for optimized PPA.
+
+The output code will be fully combinational, parameter-free, and structurally clean.

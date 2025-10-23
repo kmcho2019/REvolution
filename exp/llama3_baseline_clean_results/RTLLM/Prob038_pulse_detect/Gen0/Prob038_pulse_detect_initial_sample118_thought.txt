@@ -1,0 +1,13 @@
+To implement the pulse detection module, we'll design a finite state machine (FSM) with the following states:
+- Idle: The initial state where we wait for a rising edge (0 to 1) in the data_in signal.
+- High: The state after a rising edge is detected, where we wait for a falling edge (1 to 0).
+- Pulse_Detected: The state after a falling edge is detected, indicating the end of a pulse.
+We'll use a 2-bit register to represent these states. The data_out signal will be set to 1 only when we are in the Pulse_Detected state and the next clock cycle.
+
+We will use the following states:
+- Idle: 2'b00
+- High: 2'b01
+- Pulse_Detected: 2'b10
+- Data_out_high: 2'b11
+
+This approach ensures that data_out is set to 1 at the end of a pulse and returns to 0 until the next pulse is detected.

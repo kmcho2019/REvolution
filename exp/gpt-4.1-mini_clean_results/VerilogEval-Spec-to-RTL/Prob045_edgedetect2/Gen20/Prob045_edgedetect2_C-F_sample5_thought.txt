@@ -1,0 +1,11 @@
+To fuse the best ideas from both examples, we combine the clarity and modularity of separating the previous input storage and edge detection output registers (from Example 1) with the simplicity of computing the edge detection inline in a single always block (from Example 2). Specifically, we will:
+
+- Use two always blocks triggered on posedge clk: one to capture prev_in, and one to update anyedge.
+- Compute edge detection combinationally outside the always blocks using a wire XOR of current and previous input.
+- This retains clear separation of state registers (prev_in, anyedge) and combinational logic (edge_detect) for readability and good synthesis.
+- Using a wire for edge detection allows potentially better optimization by synthesis tools.
+- The output anyedge is registered one clock cycle after the edge occurs, as required.
+- This approach keeps the minimal logic and registers, preserving area efficiency.
+- It also provides good timing by eliminating combinational logic in the output register always block, since edge_detect is computed purely combinationally and stable at clk edge.
+
+This fusion strategy leverages the clarity and separation of signals in Example 1 with the simplicity and minimalism of Example 2, creating a clean, synthesizable, and high-performance design.

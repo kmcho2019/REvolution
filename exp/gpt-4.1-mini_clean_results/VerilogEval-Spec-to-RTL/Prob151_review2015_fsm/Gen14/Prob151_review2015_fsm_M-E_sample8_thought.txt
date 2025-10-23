@@ -1,0 +1,8 @@
+Use a Moore FSM with explicit separate states for pattern detection steps instead of encoding the pattern as progressive match states; implement a 4-bit shift register to capture the start pattern and later the delay value.  
+This shift register will serially collect bits from data, shifting in every clock cycle until the start pattern 1101 is detected.  
+Once detected, the FSM transitions to a dedicated SHIFT state to shift in exactly 4 additional bits, enabling shift_ena only during this period.  
+After shifting, the FSM asserts counting and waits for done_counting.  
+When done_counting is asserted, FSM asserts done until ack is received, then resets to initial pattern detection.  
+Using a shift register for pattern detection simplifies the state machine to fewer states, offloading pattern matching to simple shift and compare logic, potentially improving timing and simplifying FSM logic.  
+All registers reset synchronously on reset, all logic triggered on posedge clk.  
+Outputs are assigned by state and counters, minimizing glitches by registering outputs synchronously.

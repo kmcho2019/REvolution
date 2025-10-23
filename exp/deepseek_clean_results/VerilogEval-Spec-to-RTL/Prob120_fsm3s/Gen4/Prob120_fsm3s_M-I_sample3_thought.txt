@@ -1,0 +1,13 @@
+To optimize the Moore state machine for better PPA metrics:
+1. Change state encoding to Gray code to minimize bit transitions between consecutive states, improving timing
+2. Remove the default case since all states are explicitly covered, saving a small amount of area
+3. Keep the output logic simple and combinational as it's already optimal
+4. Maintain the same synchronous reset behavior
+5. The Gray coding will particularly help with the B↔D transitions which currently require two bit flips
+
+The Gray code mapping will be:
+A = 2'b00
+B = 2'b01
+C = 2'b11
+D = 2'b10
+This ensures only one bit changes between any consecutive states.

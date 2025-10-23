@@ -1,0 +1,17 @@
+Here's a novel approach using a hierarchical priority encoder structure:
+
+1. Instead of checking all bits simultaneously, we'll use a hierarchical comparison:
+   - First stage checks the high byte (0xE0) using a simple equality comparator
+   - Second stage uses a priority encoder for the low byte to detect arrow keys
+
+2. Key innovations:
+   - Uses a thermometer-coded priority scheme for the low byte comparisons
+   - Implements the output logic as a 4-bit one-hot decoder
+   - Reduces comparison logic by leveraging the known prefix
+   - Minimizes switching activity by checking the prefix first
+
+3. Benefits:
+   - Potentially lower power since invalid codes are rejected early
+   - More regular structure that may synthesize more efficiently
+   - Clear separation of prefix and keycode matching stages
+   - Outputs remain mutually exclusive by design

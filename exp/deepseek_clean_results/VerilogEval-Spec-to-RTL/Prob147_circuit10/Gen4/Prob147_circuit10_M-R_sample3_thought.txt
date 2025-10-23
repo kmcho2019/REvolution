@@ -1,0 +1,9 @@
+After carefully analyzing the waveform, I realize the circuit behaves as follows:
+1. The state flip-flop toggles when both a and b are high (a & b)
+2. The q output is high when:
+   - b is high and state is low (b & ~state), OR
+   - a is high and b is low (a & ~b)
+This can be implemented more cleanly by:
+1. Using a simple toggle flip-flop for state that only toggles when (a & b)
+2. Implementing q as purely combinational logic based on current inputs and state
+3. Removing unnecessary next_state logic since we only need to toggle

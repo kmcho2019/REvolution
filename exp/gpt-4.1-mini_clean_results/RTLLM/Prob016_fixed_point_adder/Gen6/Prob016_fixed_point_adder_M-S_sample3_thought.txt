@@ -1,0 +1,11 @@
+Simplify the fixed-point adder by directly performing two's complement addition without explicitly converting to sign-magnitude format. Since inputs are in two's complement fixed-point format, adding them directly yields the correct fixed-point sum.
+
+The only concern is to handle overflow gracefully, which is naturally handled by two's complement arithmetic in a fixed bit width.
+
+Thus, the module just adds the inputs as signed numbers (using signed addition) and outputs the lower N bits as the result.
+
+This approach eliminates the need for magnitude extraction, sign checks, and conditional operations, greatly simplifying the design while maintaining correct fixed-point behavior.
+
+The parameters Q and N remain for user clarity, but internally, addition is done simply.
+
+If overflow detection or saturation is needed, it can be added later, but the problem only specifies managing overflow by fitting the result within N bits, which two's complement addition inherently does.

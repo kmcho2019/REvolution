@@ -1,0 +1,13 @@
+To fix the existing Verilog code, we need to address the functional errors identified in the feedback. The primary issues are with the state machine's transition logic and output signal assignments. Here's a step-by-step approach to rectify these issues:
+
+1. **Handle simultaneous 'bump_left' and 'bump_right' assertions:** We need to modify the code to correctly update the walking direction when both 'bump_left' and 'bump_right' are asserted. This can be achieved by using an XOR operation to toggle the walking direction.
+
+2. **Correctly handle the 'fall_count' increment:** The 'fall_count' should only be incremented when the Lemming is in the FALL state and the ground is not present. We need to ensure that the 'fall_count' is reset when the Lemming hits the ground.
+
+3. **Handle the case where the Lemming is told to dig while falling or when there is no ground:** We need to add checks to ensure that the Lemming can only dig when it is in the WALK state and the ground is present.
+
+4. **Properly update the 'current_mode' signal:** We need to re-examine the code that updates the 'current_mode' signal to ensure that it correctly handles all possible cases, including simultaneous updates with other signals.
+
+5. **Review output signal assignments:** We need to review the output signal assignments in the 'always @(posedge clk)' block to ensure that they accurately reflect the current state of the Lemming.
+
+By addressing these issues, we can create a corrected Verilog code that accurately models the Lemmings finite state machine.

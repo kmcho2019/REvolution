@@ -1,0 +1,11 @@
+To improve synthesis compatibility and avoid reliance on a missing technology library latch primitive (DLH_X1), I'll implement the D latch purely in behavioral Verilog with an always block using non-blocking assignments and an explicit asynchronous reset-like structure (even if not required) to guide synthesis tools. However, since the problem states no reset, I'll keep it simple.
+
+A common reliable method for inferring a latch is to have the always block sensitive only to the enable signal and assign q based on d when enabled; otherwise, q holds. Using a nonblocking assignment ensures proper simulation and synthesis results. Also, using `always @(*)` with an if statement will infer a combinational block, so we must specifically limit sensitivity.
+
+Thus, the improved code:
+
+- Uses `always @(ena or d)` sensitivity (level-sensitive for latch).
+- Uses nonblocking assignment (`<=`) for q updates.
+- Ensures latch inference by assigning q only when ena is high; otherwise, q holds (no assignment).
+- Output declared as reg to hold state.
+- This style is compatible with synthesis tools like Yosys and avoids referencing unknown latch cells.

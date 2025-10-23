@@ -1,0 +1,9 @@
+Fuse the compact and efficient saturating counter logic from Example 1 with the clarity and modular combinational-next-state plus registered-output approach from Example 2:
+
+- Use a 3-bit saturating counter for counting consecutive ones (0 to 7), saturating at 7 to represent error.
+- Separate combinational logic calculates next counter and next outputs based on current counter and input, simplifying synthesis and improving readability.
+- Register outputs (disc, flag, err) synchronously as Moore outputs, asserted for one clock cycle after detecting the condition, ensuring glitch-free and properly delayed outputs.
+- The combinational logic uses minimal conditions with early saturation and simple comparisons.
+- Synchronous active-high reset initializes counter and outputs to known state (0).
+- This fusion achieves low-area and low-power by minimizing combinational complexity and toggling, while providing clean, maintainable, and easy-to-verify FSM structure.
+- Outputs disc, flag, err are asserted only when corresponding patterns occur in the input stream, delayed by one clock cycle.

@@ -1,0 +1,11 @@
+Improved odd frequency divider solution:
+1. Maintain the dual-counter approach but simplify the toggle logic
+2. Generate 50% duty cycle by:
+   - Toggling clk_div1 only at full counter wrap (NUM_DIV-1)
+   - Toggling clk_div2 at half-period offset (NUM_DIV-1)/2 + 1)
+3. Use XOR instead of OR for final output to maintain 50% duty cycle
+4. Optimize counter width calculation
+5. Add parameter validation to ensure NUM_DIV is odd and >=3
+6. Use non-blocking assignments for all sequential logic
+7. Reset both counters and clock dividers synchronously
+8. Simplify state machine by removing intermediate toggle points

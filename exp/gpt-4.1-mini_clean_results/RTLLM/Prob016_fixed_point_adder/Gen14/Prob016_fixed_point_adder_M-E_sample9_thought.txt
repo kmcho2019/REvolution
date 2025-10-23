@@ -1,0 +1,18 @@
+Implement the fixed_point_adder module by explicitly extracting the sign bit and magnitude of each input operand. Use conditional logic to differentiate two cases:
+
+1. When both inputs have the same sign, perform magnitude addition, and assign the common sign to the result.
+2. When the inputs have different signs, perform magnitude subtraction between the larger and smaller magnitude, and assign the sign of the larger magnitude operand to the result.
+
+To handle fixed-point representation, treat the entire N-bit input as a signed number but work internally with absolute values as unsigned magnitude vectors for addition and subtraction. Finally, reconstruct the result by combining the result sign bit with the computed magnitude.
+
+An internal register `res` stores the final N-bit result synchronously with combinational logic. Overflow is implicitly handled by limiting the magnitude width to N-1 bits and saturating or wrapping is not explicitly done; the MSB (sign bit) reflects sign and overflow is naturally constrained by the bit-width.
+
+This approach directly follows the problem statement, differentiating addition and subtraction by sign, working on magnitudes, and setting the sign of the output correctly.
+
+Advantages:
+- Explicit sign and magnitude processing.
+- Clear control flow for addition/subtraction based on sign bits.
+- Parameterized for bit width and fractional precision.
+
+Drawbacks:
+- Slightly more combinational logic than simple signed addition.

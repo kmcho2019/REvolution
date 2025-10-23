@@ -1,0 +1,11 @@
+To optimize the design for better PPA, I will minimize combinational logic delay in the next state calculation by avoiding the conditional operator in a combinational block and instead use an arithmetic expression that effectively implements increment/decrement with a single adder. 
+
+Specifically, by subtracting (up_down ? 0 : 1) and adding up_down, we can unify the logic into a single arithmetic operation: count + (up_down ? 1 : -1). This can be rewritten as count + {15'b0, up_down} - {15'b0, ~up_down} to avoid conditional branching and allow synthesis to infer a simple increment/decrement via arithmetic with minimal multiplexing.
+
+Also, I will move this calculation directly inside the synchronous always block to reduce pipeline stages and logic.
+
+This approach reduces the combinational path delay and might help the synthesis tool infer a more efficient carry chain adder for increment/decrement.
+
+The reset remains synchronous, and output is still a 16-bit register.
+
+This adjustment retains the same functionality but slightly improves timing and reduces logic complexity, potentially improving worst negative slack (wns) and overall area and power due to simpler combinational logic.

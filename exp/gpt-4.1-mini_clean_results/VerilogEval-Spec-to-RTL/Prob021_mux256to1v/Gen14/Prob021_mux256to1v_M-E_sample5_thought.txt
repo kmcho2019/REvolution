@@ -1,0 +1,5 @@
+Implement the 256-to-1, 4-bit multiplexer as a fully combinational module that directly indexes the input vector using the 8-bit selector without hierarchical submodules. 
+
+The key insight: since inputs are packed as 256 4-bit words in a 1024-bit vector, selecting one 4-bit group amounts to slicing `in[sel*4 +: 4]`. This direct indexing eliminates all hierarchical mux stages and intermediate wires, resulting in minimal logic, zero multiplexer tree delay, and minimal area/power overhead.
+
+This approach is concise, efficient, and synthesis-friendly, resulting in the simplest RTL for the required function.

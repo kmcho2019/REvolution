@@ -1,0 +1,14 @@
+Here's a refactored version maintaining the one-hot encoding concept but with improved clarity and correctness:
+
+1. Still use 4-bit one-hot encoding (0001, 0010, 0100, 1000) to represent the 4 active cycles
+2. On reset, initialize to 0001 (first cycle active)
+3. Each clock cycle, rotate left (0001→0010→0100→1000→0000)
+4. After reaching 1000, next state becomes 0000 (stays there until next reset)
+5. shift_ena is simply the OR of all state bits (high when any bit is set)
+6. Explicitly handle the transition from 1000 to 0000 to ensure exactly 4 cycles
+
+Key improvements:
+- Clear termination condition after 4 cycles
+- Explicit state transition for the final cycle
+- Maintains one-hot encoding benefits while fixing timing issues
+- More straightforward state progression

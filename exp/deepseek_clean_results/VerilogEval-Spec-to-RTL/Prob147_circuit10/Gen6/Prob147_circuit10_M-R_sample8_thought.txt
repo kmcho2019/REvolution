@@ -1,0 +1,17 @@
+After carefully analyzing the waveform behavior, I realize the original solution missed some key aspects:
+1. The state doesn't simply toggle on (a XOR b) - it's more complex
+2. The output q depends on both the state transition and input patterns
+
+New approach:
+1. State transitions occur when:
+   - b=1 while state=0 (rising edge of b in state 0)
+   - a=1 while state=1 (rising edge of a in state 1)
+2. Output q is:
+   - 1 when we have a state transition
+   - 0 otherwise
+This matches the waveform where q pulses high exactly when state changes.
+
+Implementation:
+- Use edge detection for a and b relative to state
+- Generate state transitions only on specific edge conditions
+- Make q directly reflect state transitions

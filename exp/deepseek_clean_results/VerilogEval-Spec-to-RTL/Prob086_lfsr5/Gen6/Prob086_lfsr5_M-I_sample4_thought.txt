@@ -1,0 +1,19 @@
+To optimize the LFSR design for better PPA metrics while maintaining functionality:
+
+1. Timing Improvement:
+   - The current negative WNS (-0.17ns) suggests the XOR operation is on the critical path
+   - We can pipeline the XOR operation by registering q[0] separately to break the critical path
+   - This adds one cycle of latency but improves timing
+
+2. Power Optimization:
+   - The current power is already good, but we can add clock gating for the q[0] register
+   - This reduces unnecessary switching when the LFSR is not changing
+
+3. Area Consideration:
+   - The additional register will slightly increase area, but the timing improvement justifies it
+   - The overall design remains compact with minimal logic
+
+4. Functionality:
+   - Maintain the same maximal-length sequence (2^5-1 states)
+   - Keep the same reset behavior (initialize to 5'b00001)
+   - Preserve the same tap positions (5 and 3)

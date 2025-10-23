@@ -1,0 +1,9 @@
+To refactor the given code, we can consider a different approach that achieves the same functionality but with a focus on simplification and readability. The existing code uses an always block to handle the counting logic based on the `up_down` signal and reset condition. However, we can achieve the same functionality by using a combination of combinatorial logic and a synchronous process. 
+
+First, let's calculate the next value of the counter based on the current value and the `up_down` signal. We will use a temporary variable `next_count` to store this next value. 
+
+Second, we apply the wrapping condition to `next_count`. If `next_count` exceeds the maximum value (65535), we reset it to 0, and if it goes below 0, we set it to the maximum value.
+
+Third, we use a synchronous process to update the `count` variable on the rising edge of the clock, considering the reset condition and the calculated `next_count` value.
+
+By structuring the code in this way, we aim to improve readability and potentially reduce the complexity of the combinatorial logic within the always block.

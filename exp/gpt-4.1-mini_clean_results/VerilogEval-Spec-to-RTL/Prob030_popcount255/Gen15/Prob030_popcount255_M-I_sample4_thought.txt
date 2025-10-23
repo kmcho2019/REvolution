@@ -1,0 +1,11 @@
+To optimize the original recursive popcount for better performance, power, and area:
+
+- Flatten the recursion by breaking the 255-bit input into more, smaller fixed-size blocks (e.g., 8 bits and one smaller block), instead of large 51-bit chunks. This enables uniform, parallel popcount8 blocks with well-balanced adder trees.
+- Use the structural popcount8 module for all 8-bit blocks, ensuring balanced, low-depth summation.
+- Sum all partial popcounts (32 groups of 8 bits + 1 group of 7 bits) using a balanced multi-level adder tree to minimize logic depth and reduce critical path.
+- Carefully size intermediate sums based on the max possible count in that stage (using $clog2).
+- This approach increases modularity and parallelism, reduces deep recursion and wide adders, improving timing and power by limiting switching activity and logic depth.
+- The final balanced adder tree structure reduces maximum combinational delay and area by using smaller adders at each level.
+- This design remains fully combinational and synthesizable without any control logic.
+
+Overall, this solution trades a slightly larger number of small popcount8 units for a flatter, more parallel architecture, optimizing PPA (performance, power, area).

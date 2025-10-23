@@ -1,0 +1,9 @@
+The current implementation is already quite efficient for this simple 2-state Moore machine, but we can make a few minor optimizations:
+
+1. **Remove Parameter Overhead**: Since we only have two states, we can use simple 1-bit encoding without parameters to reduce synthesis overhead.
+
+2. **Direct Output Assignment**: Instead of using a comparison operation for the output, we can directly assign the state bit since STATE_B=0 and STATE_A=1, and output is 1 in STATE_B (0) and 0 in STATE_A (1). This matches exactly with the inverted state bit.
+
+3. **Simpler State Transitions**: The state transitions can be expressed more concisely using a single conditional assignment.
+
+These changes will slightly reduce the logic complexity while maintaining the exact same functionality, potentially improving all PPA metrics marginally.

@@ -1,0 +1,5 @@
+Refactor the 64-bit subtractor by directly using the Verilog subtraction operator for clarity and synthesis optimization, since modern synthesis tools efficiently map subtraction to optimized hardware. For overflow detection, explicitly extract sign bits and implement the condition as combinational logic using boolean expressions.
+
+This approach removes the manual carry-lookahead adder implementation, reducing code complexity, intermediate signals, and potential logic depth. It leverages the built-in operator, which is often better optimized for PPA (performance, power, area). The overflow detection logic remains explicit and straightforward, improving readability while maintaining correctness.
+
+The module will be purely combinational, using continuous assignments without generate blocks. This structure simplifies maintenance and debugging without sacrificing functionality or performance.

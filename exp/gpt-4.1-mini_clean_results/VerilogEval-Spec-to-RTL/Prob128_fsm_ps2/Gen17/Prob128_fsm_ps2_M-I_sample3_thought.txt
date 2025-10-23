@@ -1,0 +1,5 @@
+To optimize the existing design for better PPA, I will introduce an explicit FSM with two states: IDLE and RECEIVING. This state encoding will clearly separate the message boundary detection and counting logic, reducing combinational logic complexity. The count register will only toggle when we are in RECEIVING state, minimizing unnecessary toggling. Additionally, done will be asserted immediately after the third byte is received, as before.
+
+I will encode the FSM states in one bit (IDLE=0, RECEIVING=1) for minimal area, and use synchronous reset. The count will count from 1 to 3 bytes (0 means no message), and the FSM will transit from IDLE to RECEIVING when in[3] = 1 (start byte). This explicit FSM approach reduces logic depth by separating state and counting, improving timing (better WNS). Also, count toggling is only done during message reception, reducing power.
+
+Overall, this approach improves timing by reducing critical path logic, lowers power by gating counter toggling more effectively, and keeps area minimal using simple 1-bit FSM and 2-bit counter.

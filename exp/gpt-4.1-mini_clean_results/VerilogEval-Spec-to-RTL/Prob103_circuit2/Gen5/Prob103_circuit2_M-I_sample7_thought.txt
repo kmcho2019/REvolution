@@ -1,0 +1,11 @@
+The function implemented is a 4-input even parity checker (XNOR of all inputs). The existing solution uses two intermediate XNORs then combines them with a final XNOR.
+
+To optimize for PPA (Power, Performance, Area), we can eliminate intermediate signals and express q directly using the Verilog reduction XOR operator.
+
+The parity function q = ~(a ^ b ^ c ^ d), which can be implemented as q = ~(^ {a,b,c,d}).
+
+This approach reduces the number of logic gates and wiring, potentially improving area and power while maintaining minimal delay.
+
+The continuous assignment is a single line with a reduction XOR and bitwise negation.
+
+This should yield the same correct output, with a simpler and potentially more efficient circuit.

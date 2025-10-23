@@ -1,0 +1,7 @@
+Implement the adder-subtractor by using Verilog's built-in arithmetic operators for clarity and synthesis efficiency. Perform subtraction by adding the two's complement of b when do_sub is asserted. The two's complement is formed by inverting b and adding 1, which is added implicitly by setting carry_in = do_sub. 
+
+Compute the result in a wider register (9 bits) to catch overflow and to keep the logic explicit and safe. Then assign the lower 8 bits to out. Calculate the zero flag by checking if all bits of the output are zero using the reduction NOR operator.
+
+This approach leverages synthesis tools' optimizations on the + operator, improves clarity, avoids manual ripple-carry logic, and fixes the zero flag bug by ensuring result_is_zero is set explicitly in all cases.
+
+All logic is inside one always @(*) block, using blocking assignments to avoid latches, and outputs remain reg as required.

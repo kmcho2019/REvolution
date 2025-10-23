@@ -1,0 +1,11 @@
+Based on the feedback, I will optimize the FSM encoding from one-hot (3 flip-flops) to binary (2 flip-flops) to reduce flip-flop count and area, potentially improving timing and power. The FSM states remain conceptually the same but encoded as 2-bit binary values:
+
+- IDLE = 2'b00
+- WAIT_HIGH = 2'b01
+- WAIT_LOW = 2'b10
+
+Also, to improve timing closure and avoid using combinational data_in directly in the output logic, I will register the input data_in (one cycle delayed) inside the sequential block. This ensures that data_out generation is based on stable, synchronous signals only.
+
+The output data_out is asserted for one cycle exactly when the pulse ends, i.e., on the falling edge of the pulse pattern (transition from WAIT_LOW to IDLE when data_in is 0).
+
+This approach minimizes flip-flops used for state encoding, registers input data_in for better timing, and maintains clean separation between combinational and sequential logic while fulfilling the functional requirements precisely.

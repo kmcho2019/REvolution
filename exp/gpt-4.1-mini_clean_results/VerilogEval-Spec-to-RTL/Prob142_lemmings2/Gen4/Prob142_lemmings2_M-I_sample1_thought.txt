@@ -1,0 +1,21 @@
+The main issue is improper handling of bump_left and bump_right inputs when walking. The specification says:
+
+- If bumped on the left (bump_left==1), the Lemming should switch to walk_right.
+- If bumped on the right (bump_right==1), the Lemming should switch to walk_left.
+- If bumped on both sides simultaneously, it should still switch directions (meaning to the opposite direction of current walking).
+
+Currently, the code lumps bump_left and bump_right together and switches directions unconditionally, causing incorrect direction changes when only one bump side is active.
+
+Improvement plan:
+- Explicitly check bump_left and bump_right separately when walking.
+- If bump_left=1, next state = WALK_RIGHT.
+- If bump_right=1, next state = WALK_LEFT.
+- If both are 1, switch to opposite direction of current state (meaning if currently WALK_LEFT, switch to WALK_RIGHT, and vice versa).
+- Also handle no bumps by staying in the current walking state.
+- Keep the rest of the logic unchanged: falling transitions on ground==0, falling ignores bumps, when ground==1 while falling resumes walking in stored direction.
+- Keep using Moore FSM style.
+- Maintain asynchronous active-high reset.
+- Direction 'dir' register stores direction only during falling state.
+- Separate combinational and sequential logic for clarity and correctness.
+
+This change ensures direction transitions match specification exactly, fixing walk_left and walk_right mismatches while preserving correct falling and aaah behavior.

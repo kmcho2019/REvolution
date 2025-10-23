@@ -1,0 +1,12 @@
+The simplified design maintains core functionality while reducing complexity through:
+1. Direct synchronous accumulation without intermediate combinational assignments
+2. Single always block handling both reset and accumulation
+3. Elimination of explicit next_acc calculation by performing operation directly in register update
+4. Removal of unnecessary 64-bit product wire since we only need lower 32 bits
+5. Same truncation behavior (implicit through register width)
+
+This approach reduces:
+- Number of internal signals from 3 to 1
+- Combinational logic paths
+- Register-to-register paths
+While maintaining identical functionality and timing characteristics.

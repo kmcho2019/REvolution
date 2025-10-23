@@ -1,0 +1,15 @@
+I will refactor the design to resolve the identified problems:
+
+- Use a clearer FSM with five states: IDLE (search pattern), LOAD_DELAY (shift in 4 delay bits MSB first), INIT_COUNT (initialize counters), COUNT (count down cycles), DONE (assert done, wait ack).
+- Implement pattern detection with a 4-bit shift register shifted in each clock in IDLE.
+- For delay loading, shift in bits MSB first by shifting delay_reg left and inserting data at LSB each cycle; count 4 bits loaded exactly.
+- Initialize segment_count synchronously at transition from LOAD_DELAY to INIT_COUNT as delay + 1.
+- Use a single always block for segment_count with clean sequential logic; decrement segment_count each time cycle_counter reaches 999.
+- Cycle counter counts 0..999 cycles per segment.
+- count output is segment_count during counting; others states assign to 0 to avoid 'x'.
+- Make all outputs synchronous and assign default values.
+- Remove multiple always blocks driving the same register.
+- Use explicit state encoding and clear transitions.
+- Use synchronous reset for all sequential registers.
+
+This will produce a simpler, clearer FSM and counter logic that meets the spec with correct timing and output behavior.

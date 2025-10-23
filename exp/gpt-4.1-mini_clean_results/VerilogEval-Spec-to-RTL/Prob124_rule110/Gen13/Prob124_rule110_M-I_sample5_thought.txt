@@ -1,0 +1,14 @@
+The original implementation uses fully combinational next-state logic for all 512 cells simultaneously, which leads to a large critical path and limits maximum clock frequency. To improve performance (timing) and potentially reduce power and area, I will introduce a pipelined architecture with two pipeline stages:
+
+1. Stage 1: Compute the extended vector with zero padding and buffer it in a register.
+2. Stage 2: Compute the next state based on the registered extended vector and update the output register.
+
+This splits the large combinational logic into two smaller combinational stages, effectively halving the combinational delay per cycle and enabling higher clock frequency.
+
+Additionally, I will avoid using a function inside a generate loop since some synthesis tools may better optimize explicit combinational logic assignments. Instead, I will encode Rule 110 logic explicitly in the assign statements.
+
+The load signal will be handled only in the output register stage: if load is asserted, we directly load the input data; otherwise, after the pipeline delay, we update q with the computed next state.
+
+This pipeline introduces a 1-cycle latency in reflecting loaded data into the output, which is generally acceptable in synchronous designs. This improves timing without changing the functional behavior of the cellular automaton.
+
+Overall, pipelining the combinational logic reduces the critical path delay, improves clock frequency, and lowers switching power by reducing glitch propagation depth.

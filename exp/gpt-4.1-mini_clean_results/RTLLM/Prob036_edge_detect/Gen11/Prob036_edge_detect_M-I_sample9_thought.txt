@@ -1,0 +1,12 @@
+The given solution already provides a minimal and efficient implementation, producing single-cycle synchronous pulses on rise and down signals right after detecting edges on input 'a'. To align strictly with the requirement that rise/down "will be set to 1 on the next clock when the corresponding edge appears, and then return to 0 until the corresponding edge appears again," we must ensure rise and down outputs are registered signals rather than purely combinational outputs. This prevents any glitching or asynchronous issues and makes outputs stable and synchronized.
+
+The improvement is to register the edge detection outputs (rise and down) so that rise/down assert for exactly one cycle following the clock after the edge is detected. This adds two output registers but keeps the design simple and robust, with no extra state machine.
+
+Benefits:
+- Eliminates combinational outputs driven directly from input and previous sample (which could have glitches).
+- Outputs are fully synchronous and stable.
+- Still minimal area increase (2 more flip-flops).
+- Power remains low.
+- Timing impact is minimal since it's simple registering logic.
+
+This improves design robustness and aligns outputs exactly with the clock cycle following an edge detection, satisfying the spec more precisely.

@@ -1,0 +1,11 @@
+Refactoring Strategy:
+1. Move the counter decrement logic to combinational always block for better timing
+2. Use a separate sequential always block just for the register update
+3. Implement zero detection once and reuse it for both counter control and tc output
+4. This separation allows the synthesis tool to better optimize each part independently
+
+Key Benefits:
+- Better timing: Critical path is split between combinational and sequential logic
+- Clearer structure: Separates combinational and sequential logic explicitly
+- Maintains same functionality while potentially improving PPA metrics
+- Still uses efficient NOR reduction for zero detection

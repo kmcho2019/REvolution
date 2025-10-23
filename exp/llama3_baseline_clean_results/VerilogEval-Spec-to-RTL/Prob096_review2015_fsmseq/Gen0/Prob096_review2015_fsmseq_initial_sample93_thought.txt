@@ -1,0 +1,11 @@
+To solve this problem, we can design a finite-state machine (FSM) that transitions through states based on the input bit stream. The FSM will have six states: idle, s1, s2, s3, s4, and found. Initially, the FSM is in the idle state. As it receives input bits, it transitions through states s1 to s4 if the input bits match the sequence 1101. Once it reaches the s4 state, it sets the start_shifting signal to 1 and transitions to the found state. In the found state, start_shifting remains 1 until the reset signal is asserted.
+
+The states can be represented as follows:
+- idle: waiting for the sequence to start
+- s1: received the first '1' in the sequence
+- s2: received the '1' followed by '1' in the sequence
+- s3: received the '1' followed by '1' and then '0' in the sequence
+- s4: received the '1' followed by '1', '0', and then '1' in the sequence (sequence found)
+- found: sequence found, start_shifting is 1 until reset
+
+The FSM will reset to the idle state when the reset signal is asserted.

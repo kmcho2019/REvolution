@@ -1,0 +1,12 @@
+Refactoring idea:
+
+To implement the triangle wave generator with a different structure while keeping the same functionality, use a single always block for synchronous updates of both "state" and "wave". Compute the next wave value combinationally based on the current state and current wave value, and update state and wave accordingly within one clocked process.
+
+This approach:
+- Consolidates all state and waveform updates into one always block triggered by clock and asynchronous reset.
+- Removes redundant assignments by directly updating wave and state simultaneously.
+- Uses a simple 1-bit "state" register indicating the direction: 0 for incrementing and 1 for decrementing.
+- Avoids separate blocks and intermediate combinational logic outside the always block.
+- Results in more compact and potentially more efficient logic with clear synchronous behavior.
+
+This alternative approach maintains the exact waveform and state transitions but uses a single always block and combinational next-state/next-wave calculations inside, enhancing readability and potentially improving synthesis results.

@@ -1,0 +1,5 @@
+To fix the syntax errors in the Stage 3 always block, all intermediate variables used for rounding calculations such as `mant_rounded`, `final_exp`, `final_sign`, and `final_mant` must be declared as registers at the module level rather than inside the always block. 
+
+Then, inside the always block, these declared registers can be assigned using non-blocking assignments to ensure synchronous behavior and proper synthesis. This approach respects Verilog syntax rules, prevents compile-time errors, and preserves functionality. 
+
+The rounding logic remains unchanged, but the variables are now properly scoped and declared. This correction enables the code to compile and simulate successfully without altering the logic or pipeline structure.

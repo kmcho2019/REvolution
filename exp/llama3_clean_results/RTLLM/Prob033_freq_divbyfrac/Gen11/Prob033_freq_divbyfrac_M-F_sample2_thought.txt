@@ -1,0 +1,9 @@
+To address the functional errors and improve the Power, Performance, and Area (PPA) metrics of the `freq_divbyfrac` module, a revised approach will be taken. The main focus will be on accurately implementing the fractional frequency division logic and optimizing the phase-shifting mechanism.
+
+The key components of this revised design include:
+1. **Fractional Frequency Divider**: A counter will be used to generate the divided clock signal, with a total count of `MUL2_DIV_CLK` (7 for 3.5x division). The counter will toggle the divided clock every 4 clock cycles, and then reset it for the remaining 3 clock cycles.
+2. **Phase-Shifting Logic**: To achieve the phase-shifting effect, two intermediate clock signals (`clk_div_int` and `clk_div_phase`) will be generated. The `clk_div_int` signal will be the divided clock itself, while the `clk_div_phase` signal will be a delayed version of `clk_div_int`, shifted by half a clock period.
+3. **Duty Cycle Correction**: To ensure a uniform duty cycle, the phase-shifted clock signals will be logically combined using an OR gate. This will guarantee that the final fractional divided clock output has a smooth and consistent period.
+4. **Clock Gating**: To optimize power consumption, clock gating techniques will be employed to reduce unnecessary transitions on the clock signals.
+
+The revised design aims to provide an accurate, efficient, and scalable implementation of the `freq_divbyfrac` module, addressing the issues identified in the previous attempts and ensuring the production of a smooth fractional clock output.

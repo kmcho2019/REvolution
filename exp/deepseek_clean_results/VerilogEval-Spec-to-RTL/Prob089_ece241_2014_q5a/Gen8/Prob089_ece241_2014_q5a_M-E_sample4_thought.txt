@@ -1,0 +1,16 @@
+Here's a novel approach using a shift register and flag-based control:
+
+1. Instead of a traditional state machine, we'll use a shift register to store the input bits until the first '1' is encountered
+2. A flag (seen_one) will track if we've seen the first '1'
+3. The output logic will:
+   - Pass through bits unchanged until first '1' is seen
+   - Invert all subsequent bits (including the first '1')
+4. The shift register allows us to:
+   - Process bits in a pipelined fashion
+   - Potentially handle multiple numbers in parallel (though not required here)
+   - Simplify the control logic to just the seen_one flag
+
+Key advantages:
+- More explicit tracking of when to start inverting
+- Easier to extend for pipelined processing
+- Clear separation between data storage and control logic

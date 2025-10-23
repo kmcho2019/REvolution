@@ -1,0 +1,10 @@
+This solution implements a 3:2 compressor-based population count using carry-save addition:
+1. First stage: Group bits into sets of 3 and use full adders (3:2 compressors) to generate sum and carry bits
+2. Second stage: Recursively apply the same compression to intermediate results
+3. Final stage: Use a conventional adder to combine the last sum and carry vectors
+4. Benefits:
+   - Reduces critical path by balancing the adder tree
+   - Minimizes intermediate bit growth
+   - Efficiently handles the 255-bit width (which divides evenly by 3)
+   - Scales well for large bit widths
+   - Naturally handles the 255-bit case (255 ÷ 3 = 85 exactly)

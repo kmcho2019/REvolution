@@ -1,0 +1,14 @@
+To simplify the 4-bit comparator design while maintaining functionality, I will eliminate the explicit borrow chain and subtraction bits. Instead, I'll use straightforward combinational logic directly based on the subtraction result using the Verilog subtraction operator. 
+
+Specifically:
+- Compute A - B in a 5-bit wire to detect borrow (sign bit).
+- If the MSB of the subtraction (borrow) is 1, then A < B.
+- If the subtraction result (lower 4 bits) is zero, then A == B.
+- Otherwise, A > B.
+
+This approach:
+- Removes bitwise borrow logic and generate loops, making the code more compact and readable.
+- Keeps the outputs mutually exclusive by priority checks.
+- Uses purely combinational logic with direct subtraction, which synthesis tools can optimize efficiently.
+
+Overall, this simplification trades explicit borrow generation for a clean arithmetic subtraction and simple conditional output assignment.

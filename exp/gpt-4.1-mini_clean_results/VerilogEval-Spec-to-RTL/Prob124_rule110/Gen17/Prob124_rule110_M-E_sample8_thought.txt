@@ -1,0 +1,7 @@
+Implement Rule 110 on 512 cells using a fully combinational approach for the next state logic, but instead of a monolithic 512-bit register, partition the state into 16 blocks of 32 bits each, each with its own smaller register. Each block's next state logic only handles 32 bits, but boundary bits require coordination with neighbor blocks. To handle the boundaries cleanly:
+
+- For each block, access the neighbor bit to the left from the previous block and to the right from the next block; for the first and last blocks use zero as out-of-bound neighbors.
+- This modular structure eases placement and routing.
+- The top module manages the synchronous load and clock, but the next state logic and registers are organized hierarchically.
+- Each 32-bit block module computes next state for its cells with input of its current state plus one bit from neighbors.
+- This approach improves scalability, allows potential pipelining, and enhances modularity, making the design easier to optimize and debug.

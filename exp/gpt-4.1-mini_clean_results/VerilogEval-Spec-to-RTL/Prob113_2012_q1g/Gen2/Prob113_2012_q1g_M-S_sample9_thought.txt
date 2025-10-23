@@ -1,0 +1,36 @@
+Simplify by directly implementing the function from the Karnaugh map using boolean logic expressions. Since the K-map groups are small, derive the logic terms manually.
+
+From the Karnaugh map:
+
+- Rows are indexed by x[2]x[3]
+- Columns by x[0]x[1]
+
+Map cells with value 1:
+
+Positions (row,col):
+00 00 (x=0000)
+00 10 (x=0010)
+11 00 (x=1100)
+11 01 (x=1101)
+11 11 (x=1111)
+10 00 (x=1000)
+10 01 (x=1001)
+10 10 (x=1010)
+
+Writing out minterms (x[3:0]) as (x3 x2 x1 x0):
+
+- 0000 → x3=0,x2=0,x1=0,x0=0
+- 0010 → x3=0,x2=0,x1=1,x0=0
+- 1000 → x3=1,x2=0,x1=0,x0=0
+- 1001 → x3=1,x2=0,x1=0,x0=1
+- 1010 → x3=1,x2=0,x1=1,x0=0
+- 1100 → x3=1,x2=1,x1=0,x0=0
+- 1101 → x3=1,x2=1,x1=0,x0=1
+- 1111 → x3=1,x2=1,x1=1,x0=1
+
+We can derive a simplified expression by inspecting patterns:
+
+- f=1 if x3=1 and (x2=0 or x1=0 or (x2=1 and x0=1 and x1=0)) 
+- or if x3=0 and x2=0 and (x1,x0) in {00,10}
+
+Alternatively, use sum of minterms:

@@ -1,0 +1,48 @@
+The waveform suggests that outputs p and q form a 2-bit state machine whose state transitions depend on the input a sampled on clock edges.
+
+Observing the pattern:
+
+- p and q change only at rising clock edges, except at initial times where outputs are unknown.
+- q follows p but with a delayed or state-dependent behavior, not just a simple one-cycle delay.
+- At some points, p and q are both '1', and at others, (p,q) form (0,0), (1,0), or (1,1), indicating 4 possible states.
+- The transitions hint that (p,q) act as a 2-bit state register updated synchronously on the rising clock edge, with next state logic determined by current state and input a.
+- At falling clock edges, outputs do not change; outputs hold steady.
+
+Therefore, I will model p and q as a 2-bit synchronous state register updated only on rising edges of clock. The next state logic will be derived from the waveform states at rising edges and input a.
+
+By analyzing some key points of waveform at rising edges:
+
+| time (ns) | clock | a | p | q | Interpretation |
+|-----------|--------|---|---|---|----------------|
+| 25        | 1      | 0 | 0 | x | initial p=0 q unknown|
+| 90        | 1      | 1 | 1 | 0 | p=1 q=0 on a=1, previous state (0,0)|
+| 115       | 0      | 0 | 1 | 1 | at falling clock, hold state (p=1 q=1)|
+| 145       | 1      | 0 | 0 | 1 | p=0 q=1 on a=0 (from prev state (1,1))|
+| 165       | 1      | 1 | 1 | 1 | p=1 q=1 on a=1 (from prev state (0,1))|
+
+From these points, we can build the state transition table:
+
+| Current (p q) | a | Next (p q) |
+|---------------|---|------------|
+| 0 0           | 0 | 0 0        |
+| 0 0           | 1 | 1 0        |
+| 1 0           | 0 | 0 0        |
+| 1 0           | 1 | 1 1        |
+| 1 1           | 0 | 0 1        |
+| 1 1           | 1 | 1 1        |
+| 0 1           | 0 | 0 0        |
+| 0 1           | 1 | 1 1        |
+
+This defines a Mealy/Moore style FSM with (p,q) as state bits.
+
+Implementing these next state transitions on rising clock edges, with asynchronous reset of outputs to unknown (x) is not synthesizable, so we avoid reset and let outputs start unknown naturally.
+
+This approach matches the waveform’s steady output on clock falling edges, with outputs updating only on rising edges.
+
+Hence, the module will have:
+
+- state registers p and q updated synchronously at posedge clock according to next state logic derived from current p, q, and input a.
+- no changes on negedge clock.
+- initial unknown (x) outputs until the first clock edge sets defined states.
+
+This should accurately replicate the waveform’s behavior.

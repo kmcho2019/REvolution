@@ -1,0 +1,16 @@
+To implement the next-state inputs Y1 and Y3 for the one-hot FSM, I will:
+
+- Directly derive Y1 and Y3 expressions by enumerating the transitions leading to states B and D.
+- For Y1 (input of y[1]), the only transition into B is from A (y[0]) when w=1, so Y1 = y[0] & w.
+- For Y3 (input of y[3]), transitions into D come from:
+  - B (y[1]) when w=0,
+  - C (y[2]) when w=0,
+  - E (y[4]) when w=0,
+  - F (y[5]) when w=0.
+  
+Thus, Y3 = (y[1] + y[2] + y[4] + y[5]) & ~w.
+
+- Implement these expressions explicitly without inverted signals precomputed.
+- Wrap the combinational next-state input logic in a dedicated module NextStateLogic for modularity.
+- TopModule simply instantiates NextStateLogic.
+- This approach prioritizes clarity and straightforward boolean derivation, which makes the code easy to maintain and verify.

@@ -1,0 +1,14 @@
+The existing design is functionally correct and efficient in terms of area and power for a sequential shift-and-add multiplier. The key critical path is the 32-bit adder, which is used every cycle to accumulate partial sums. Since the multiplier runs over 16 cycles, the throughput is inherently limited.
+
+To improve PPA (performance, power, area):
+1. **Performance:** The critical path is the 32-bit addition. Introducing a simple register stage for the accumulator output can help pipeline the addition and reduce combinational delay. This can be done by double-registering the output of the adder result to break the critical path. However, it adds one cycle latency but keeps throughput unchanged (still one multiplication per 16 cycles).
+2. **Power:** Clock gating the registers when idle reduces unnecessary toggling. We will add an enable signal derived from `start` and count status to enable register updates only during active multiplication cycles.
+3. **Area:** Minor area increase from the additional register stage but negligible compared to the added timing benefit.
+
+Summary of improvements:
+- Add an enable signal (`reg_en`) to activate registers only when multiplication is ongoing.
+- Pipeline the addition by splitting the adder and product register update into two steps: compute adder output combinationally, register the result on next clock.
+- Keep `done` signal generation logic as is but clear it on `!start`.
+- Maintain the overall state machine logic and counting.
+
+This results in improved timing by shortening the longest combinational path, reduced power by gating registers off when idle, with minimal area increase.

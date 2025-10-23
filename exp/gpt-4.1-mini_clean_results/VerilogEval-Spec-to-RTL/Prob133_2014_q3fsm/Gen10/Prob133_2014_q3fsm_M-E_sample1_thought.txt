@@ -1,0 +1,4 @@
+Implement the FSM using three states to explicitly track the counting of w inputs within the 3-cycle window for clearer state progression: 
+- State A: waiting for s=1 to start checking w.
+- State B0, B1, B2: representing the first, second, and third cycles of counting w.
+During states B0, B1, and B2, count the number of times w=1 using a 2-bit register. After B2, based on the count, assert z in the next clock cycle, then return to B0 for the next window. This design avoids packed accumulators and uses dedicated states to sequence the count, making FSM and logic simple and explicit. Output z is registered and asserted one cycle after counting completes. Reset synchronously initializes state and registers.

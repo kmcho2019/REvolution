@@ -1,0 +1,9 @@
+Implement the entire 512-cell Rule 110 automaton as a single 512-bit shift-register style design that updates all bits in parallel. Instead of partitioning into multiple blocks, use a fully combinational next-state calculation in one step:
+
+- Extend the 512-bit state vector by padding zeros at both ends to represent boundary conditions.
+- For each cell i (0 to 511), extract three bits: left (i+1), center (i), right (i-1), using the extended vector.
+- Compute the next state bit according to Rule 110 using a direct combinational boolean expression derived from the truth table.
+- Implement the next state logic in a generate loop for all 512 bits.
+- On each clock positive edge, load the input data if load is high, else update the register with the next state.
+- This monolithic approach simplifies neighbor access and reduces inter-block routing.
+- This design trades off modularity for simplicity and potentially better timing since no cross-module interconnect.

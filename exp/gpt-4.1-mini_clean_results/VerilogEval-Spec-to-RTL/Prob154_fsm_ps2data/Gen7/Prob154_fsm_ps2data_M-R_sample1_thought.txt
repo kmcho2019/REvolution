@@ -1,0 +1,7 @@
+Refactor the FSM implementation by splitting the design into a purely combinational next-state and output logic block plus sequential state and data registers. Use one-hot state encoding for clarity and potential synthesis benefits. Represent the done signal combinationally, asserted only in the cycle after the third byte is received, by detecting the current and next states. Use separate always blocks for state, data bytes, and output registers to better separate concerns.
+
+Implement data byte shifting as a 3-stage shift register that loads the first byte only when in[3]=1, then shifts subsequent bytes every cycle while in the message. This avoids explicit FSM cases updating bytes individually.
+
+Use continuous assignment for next_state and done combinational signals, and synchronous registers for state and byte storage, with synchronous reset.
+
+This structure enables easier reasoning about outputs and state transitions and keeps done valid exactly one cycle after receiving third byte. Also, it cleanly aligns out_bytes updates with done assertion.

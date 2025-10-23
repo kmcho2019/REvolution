@@ -1,0 +1,10 @@
+The original solution is functionally correct but has simulation ambiguity due to uninitialized flip-flop state. Since the problem specifies "no reset", we should maintain that constraint while making the design more robust. Here's the improvement strategy:
+
+1. Keep the same basic structure (XOR + DFF feedback)
+2. Use a power-up initial value for the flip-flop (0) to ensure deterministic simulation behavior
+3. This is done by explicitly initializing the reg declaration
+4. The initialization is synthesis-friendly as most FPGAs/ASICs will power up registers to 0 by default
+5. Maintains identical hardware footprint (1 LUT + 1 FF)
+6. Improves simulation predictability without adding reset logic
+
+This change ensures the design behaves consistently in both simulation and hardware while strictly adhering to the interface requirements.

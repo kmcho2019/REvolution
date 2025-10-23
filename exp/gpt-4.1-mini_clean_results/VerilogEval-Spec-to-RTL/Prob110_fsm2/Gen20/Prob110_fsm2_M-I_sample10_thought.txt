@@ -1,0 +1,13 @@
+To improve the PPA (Performance, Power, Area) of the FSM, we can optimize the next state logic by using a simple case statement instead of nested ternary operators. A case statement can synthesize into a cleaner multiplexer structure, potentially reducing logic depth and improving timing.
+
+Also, we can explicitly declare the state register as a 1-bit reg, but that's already done.
+
+For power, we keep the asynchronous reset as is; gating the clock or adding enable logic might save toggling but adds area and complexity, likely not worth it for a single-bit FSM.
+
+The output is directly driven by the state (Moore machine), which is minimal and efficient.
+
+Thus, the main optimization is to rewrite next state logic using an always_comb block with a case statement, which should improve the synthesis tool's ability to optimize.
+
+We keep the asynchronous reset and sequential block unchanged.
+
+This small change should yield slight improvements in timing and possibly area.

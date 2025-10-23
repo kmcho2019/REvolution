@@ -1,0 +1,14 @@
+A novel approach to implementing the finite state machine for detecting message boundaries in a PS/2 mouse protocol byte stream involves utilizing a combination of shift registers and a counter. The idea is to continuously shift the incoming bytes into a shift register, while also maintaining a counter to track the number of bytes that have been received since the last byte with in[3] = 1 was detected.
+
+This approach allows for the efficient detection of the message boundaries by continuously checking the incoming bytes for the specific condition (in[3] = 1) that marks the start of a new message. Once a byte with in[3] = 1 is detected, the counter is reset, and the FSM starts counting the number of subsequent bytes received.
+
+The main components of this architecture include:
+- A shift register to store the incoming bytes.
+- A counter to track the number of bytes received since the last byte with in[3] = 1.
+- Combinational logic to check for the condition in[3] = 1 in the incoming byte and to generate the 'done' signal when three bytes have been received.
+
+The FSM will operate as follows:
+- On every clock cycle, the incoming byte is shifted into the shift register.
+- The counter is reset whenever a byte with in[3] = 1 is detected.
+- The counter is incremented every clock cycle.
+- The 'done' signal is asserted when the counter reaches 3, indicating that three bytes have been received since the last byte with in[3] = 1.

@@ -1,0 +1,8 @@
+To optimize the design for better PPA (Power, Performance, Area), I will implement the lookup table as a packed constant vector and use a bit-slice extraction instead of an array of registers/wires. This can help synthesis tools infer a ROM or combinational logic more efficiently, potentially reducing area and power by eliminating the array indexing overhead.
+
+Specifically:
+- Define a single packed vector containing all 8 16-bit values concatenated.
+- Use slicing and shifting to select the desired 16-bit word corresponding to the input 'a'.
+- Keep the implementation purely combinational with no always block or reg type.
+
+This approach simplifies the RTL and assists synthesis in efficiently mapping the lookup table, potentially improving area and power metrics without affecting functionality or timing.

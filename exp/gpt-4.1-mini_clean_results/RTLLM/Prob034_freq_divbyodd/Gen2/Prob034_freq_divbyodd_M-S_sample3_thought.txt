@@ -1,0 +1,7 @@
+For an odd frequency divider, a simple and reliable method is to toggle the output clock once every NUM_DIV input clock edges. Since NUM_DIV is odd, toggling the output every NUM_DIV input clocks results in a divided frequency of clk/NUM_DIV and a 50% duty cycle approximately.
+
+We can implement a single counter that counts input clock edges up to NUM_DIV-1, then resets and toggles the output clock. This removes the complexity of separate counters and toggles on positive and negative edges.
+
+This approach uses only the positive edge of clk, simplifying the design, while still producing a stable, glitch-free divided clock at an odd division ratio.
+
+The reset synchronously initializes the counter and output clock to zero.

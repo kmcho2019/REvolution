@@ -1,0 +1,25 @@
+Simplified approach:
+
+1. Truth table analysis:
+   - Output is 1 only for inputs: 2 (0010), 7 (0111), 15 (1111)
+   - Output is 0 for specified cases (0,1,4,5,6,9,10,13,14)
+   - Don't-cares: 3,8,11,12 (can be used for optimization)
+
+2. SOP simplification:
+   - Identify common patterns in true cases:
+     - For 2: ~a & ~b & c & ~d
+     - For 7: ~a & b & c & d
+     - For 15: a & b & c & d
+   - No further simplification possible without violating requirements
+
+3. POS simplification:
+   - Find minimal covering of false cases (0,1,4,5,6,9,10,13,14)
+   - Use don't-cares to minimize terms
+   - Key observations:
+     - All false cases have either ~c or (~b & ~d) or (b & ~c & d)
+   - Create minimal product of sums covering these conditions
+
+4. Implementation:
+   - Directly implement the minimal SOP and POS forms
+   - Keep expressions simple and readable
+   - Ensure all specified cases are covered correctly

@@ -1,0 +1,16 @@
+Simplification Strategy:
+1. Output Logic Simplification:
+   - Since we're using one-hot encoding, we can directly use state bits for outputs where possible
+   - 'done' and 'counting' can directly map to their respective state bits
+   - 'shift_ena' can be expressed as a range check on the B states (B0-B3)
+
+2. Next State Logic Simplification:
+   - Each next state signal only needs to check the current state and transition conditions
+   - Remove intermediate wires where direct assignment is clearer
+   - Leverage one-hot property to simplify conditions
+
+Key Changes:
+- Direct state bit usage for outputs where possible
+- Simplified shift_ena to a range check
+- Removed intermediate wires for next-state logic where not needed
+- Maintained exact same functionality with cleaner implementation

@@ -1,0 +1,7 @@
+To simplify while maintaining functionality:
+1. Remove the separate prev_in register since we can compare current input with previous output state
+2. Use the output register itself to track detected edges - if a bit is already set (1), keep it set
+3. Only check for new falling edges on bits that aren't already set
+4. This reduces registers from 64 bits (prev_in + out) to just 32 bits (out)
+5. Reset behavior remains the same (clear all bits)
+6. Still meets all requirements with simpler logic and fewer resources

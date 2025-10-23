@@ -1,0 +1,13 @@
+Fuse the clarity and reset handling of Example 1 with the clock enable gating and optimized toggle detection of Example 2 to achieve a clean, efficient design.
+
+Key fusion points:
+- Use an active-high synchronous reset for clear initialization as in Example 1.
+- Implement clock enable gating to disable counting and toggling when freq is zero, preventing unnecessary switching and saving power.
+- Simplify toggle detection by comparing count to (freq - 1), as originally specified, which avoids the 9-bit adder and reduces critical path delay.
+- Avoid resetting count to zero when clock enable is false; instead, hold count steady to minimize switching power.
+- Retain a single always block with non-blocking assignments for best synthesis and timing results.
+- Ensure the output wave toggles precisely when count reaches freq-1.
+- Handle the zero-frequency edge case gracefully by holding the output stable.
+- Keep only the necessary ports and registers (clk, rst, freq, wave_out, count) to maintain minimal area.
+
+This design fuses the best timing, power, and area optimizations from both examples into a straightforward, synthesizable module meeting all given specs.

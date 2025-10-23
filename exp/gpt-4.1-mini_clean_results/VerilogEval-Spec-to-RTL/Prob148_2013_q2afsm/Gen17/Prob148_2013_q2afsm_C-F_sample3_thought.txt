@@ -1,0 +1,27 @@
+Fuse the simplicity and minimal flip-flop usage of 2-bit binary state encoding (Example 2) with the direct output assignment style from 3-bit one-hot states (Example 1), by encoding the four FSM states as a 3-bit one-hot with a dedicated bit for each state including the idle state.
+
+Use a 4-bit one-hot state register to fully separate states and include an explicit idle bit to improve synthesis tool FSM recognition and glitch avoidance (for clarity), but only 4 flip-flops which remains minimal.
+
+Encode states as: 
+- A = 4'b0001 (bit0) idle
+- B = 4'b0010 (bit1) grant device 0
+- C = 4'b0100 (bit2) grant device 1
+- D = 4'b1000 (bit3) grant device 2
+
+This clear one-hot with idle state encoded as one bit improves timing by avoiding the zero vector state used in Example 1, which can cause glitches or complications in some tools.
+
+Maintain explicit synchronous active-low reset to the idle state.
+
+Use an always block for next state with priority logic like in Example 1 for clarity and correctness.
+
+Drive grants (g[2:0]) directly from the state bits (B, C, D bits) using simple continuous assignments, eliminating output logic complexity.
+
+This fusion:
+- Minimizes flip-flops to 4 bits, slightly more than Example 2’s 2 bits but gains glitch-free one-hot benefits.
+- Outputs are simple assignments with no extra logic.
+- Priority and next state logic is explicit and straightforward.
+- Synchronous reset to a valid one-hot state, improving tool recognition and synthesis results.
+- Improves power and timing by removing zero vector as a valid state and using one-hot encoding.
+- Maintains clear and maintainable code with separate always blocks.
+
+Overall this approach balances area, timing, power, and clarity better than either example alone.

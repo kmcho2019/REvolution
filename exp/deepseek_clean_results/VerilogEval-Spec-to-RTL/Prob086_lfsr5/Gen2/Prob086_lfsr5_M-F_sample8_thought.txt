@@ -1,0 +1,8 @@
+To correctly implement a 5-bit maximal-length Galois LFSR with taps at positions 5 and 3 (1-based indexing), we need to:
+1. Understand that Verilog uses 0-based indexing, so tap positions 5 and 3 correspond to q[4] and q[2] respectively
+2. Implement the feedback mechanism where:
+   - Each tap position XORs its current value with the LSB (q[0])
+   - Non-tap positions simply shift right
+3. Ensure the reset initializes to 1 (5'b00001) as specified
+4. The feedback polynomial should be x^5 + x^3 + 1 for maximal length
+5. The LSB (q[0]) is always shifted in from q[1], while other bits either shift or XOR based on tap positions

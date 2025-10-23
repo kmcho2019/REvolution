@@ -1,0 +1,15 @@
+To simplify the next-state logic for y[1], we can:
+1. Analyze when y[1] should be 1 in the next state based on current state and input
+2. Observe that y[1] is set to 1 in next state only in these cases:
+   - From state B (001) when w=1 (goes to D)
+   - From state C (010) when w=1 (goes to D)
+   - From state E (100) when w=1 (goes to D)
+   - From state F (101) when w=1 (goes to D)
+3. Notice that in all these cases, the next state is D (011) where y[1]=1
+4. The pattern shows y[1] is set when either:
+   - Current state is B/C and w=1, OR
+   - Current state is E/F and w=1
+5. This can be simplified to: y1_next = (in states B/C/E/F) AND w
+
+Final simplified logic:
+y1_next = (~y[2] & (y[0] | y[1]) & w) | (y[2] & w)

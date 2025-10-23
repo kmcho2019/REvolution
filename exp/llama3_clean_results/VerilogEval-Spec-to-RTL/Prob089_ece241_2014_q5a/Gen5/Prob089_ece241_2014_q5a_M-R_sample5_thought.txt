@@ -1,0 +1,15 @@
+To refactor the existing Verilog code for the serial 2's complementer Moore state machine, we will consider an alternative structure that simplifies the logic and improves synthesizability. 
+
+One approach is to utilize a more straightforward state machine that directly toggles the 'z' output based on the input 'x' and the state of 'first_one_seen'. We can achieve this by employing a combinational logic assignment for 'z' and utilizing a single always block for the sequential logic of 'first_one_seen'.
+
+The key improvements include:
+
+1. **Simplifying the sequential logic**: By using a single always block for 'first_one_seen', we can clarify the state machine's behavior and reduce potential issues with asynchronous reset handling.
+
+2. **Combinational logic for 'z'**: Assigning 'z' using combinational logic can minimize unnecessary switching activity and potentially reduce power consumption.
+
+3. **Improved handling of reset**: Ensuring that the state machine properly stops and starts with the assertion and de-assertion of the reset signal is crucial. We will focus on achieving a clean and synchronous reset behavior.
+
+4. **Reducing complexity**: Simplifying the overall logic structure can make the design more area-efficient and easier to understand, which is beneficial for maintenance and further optimizations.
+
+By implementing these improvements, we can create a refactored version of the code that maintains the required functionality while potentially offering better performance, power consumption, and area efficiency.

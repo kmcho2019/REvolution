@@ -1,0 +1,19 @@
+Implement the serial byte receiver FSM using a one-hot state encoding with five states to explicitly represent idle, start bit verification, bit reception, stop bit verification, and error recovery. Use a shift register that shifts right, inserting the incoming bit into the most significant bit position (MSB first insertion), and then reverse the bits when outputting if needed, or shift left to insert at LSB for direct LSB-first storage. Here, to stay consistent with LSB-first reception, shift left and insert at LSB.
+
+The FSM transitions on clock edges, with all sequential logic driven by a positive clock edge and synchronous reset.
+
+Done output is generated as a registered one-cycle pulse after a successful stop bit is detected.
+
+To make the design modular and more explicit, separate the start bit sampling state so we validate the start bit over one clock cycle before proceeding to reception, increasing robustness to glitches.
+
+Add an error recovery state that waits for the line to return to idle (logic 1) before starting a new reception cycle.
+
+Use non-blocking assignments everywhere and clear counters and shift registers explicitly in the appropriate states.
+
+This architecture improves clarity by explicitly handling the start bit check as a separate state and making error recovery explicit. One-hot encoding eases timing at the expense of a few extra flip-flops, which is acceptable for a small FSM.
+
+The done pulse is synchronized with the stop bit detection, only asserted when stop bit is correct.
+
+The bit counter counts from 0 to 7, representing data bits received, and the shift register accumulates bits LSB-first by shifting left and inserting the new bit at LSB.
+
+Overall, this design prioritizes clarity, explicit state handling, and easy timing closure.

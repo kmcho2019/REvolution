@@ -1,0 +1,7 @@
+To optimize the PPA metrics, we should:
+1. Replace the for-loop with direct indexing using the sel input to select the appropriate 4-bit slice. This eliminates unnecessary comparisons and reduces combinational logic depth.
+2. Remove the default assignment since all cases are covered by the direct selection.
+3. Use the part-select operator (+:) which is efficiently supported by synthesis tools for creating multiplexers.
+4. This approach will reduce area by eliminating redundant logic, improve timing by creating a simpler multiplexer structure, and lower power by reducing switching activity.
+
+The direct indexing approach is more hardware-friendly as it maps directly to the underlying multiplexer structure that synthesis tools can optimize effectively.

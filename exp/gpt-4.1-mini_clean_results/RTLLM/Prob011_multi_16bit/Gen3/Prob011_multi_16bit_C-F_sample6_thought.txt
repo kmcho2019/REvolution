@@ -1,0 +1,11 @@
+Fuse strengths of both examples: Use the first example's method of shifting the multiplicand (areg) right and shifting the multiplier (breg) left each cycle, accumulating partial products when the LSB of areg is 1. This approach avoids wide variable left-shifts and large dynamic shifters seen in the original description, and keeps the addition path consistent.
+
+From the second example, adopt the done flag logic: done asserted when i == 16, cleared at i == 17 or when start is low. This cleanly reflects multiplication completion and reset.
+
+Also, incorporate logic to avoid unnecessary register updates and additions when start is not active, thus reducing power by gating operations with start.
+
+Use a 5-bit counter i for shift count (0 to 17), load registers at i=0, perform 16 accumulation cycles for i=1 to 16, done asserted at i=16, done cleared at i=17 or when !start.
+
+Overall, this fused design ensures simple control, minimal wide variable shifting, efficient done flag handling, and reduces toggling by conditioning operations on start and i ranges.
+
+This yields a clean, efficient shift-and-accumulate multiplier with good PPA balance.

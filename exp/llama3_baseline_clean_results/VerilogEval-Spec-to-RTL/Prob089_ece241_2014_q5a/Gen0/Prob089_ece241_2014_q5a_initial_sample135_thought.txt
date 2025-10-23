@@ -1,0 +1,5 @@
+To implement the one-input one-output serial 2's complementer Moore state machine, we need to keep track of the current state (which bit position we are at), the current sign bit, and the running sum. We start by initializing all states and variables at reset. When the reset is released, we enter the "wait" state. Once in this state, for each input bit (x), we shift the current sum and add the new bit, and update the sign bit if necessary. When the reset is asserted again, we stop the conversion. We can use a simple FSM with states to track the conversion process. 
+The states could be: 
+- idle: Initial state when reset is high. 
+- wait: The main state where the 2's complement is calculated. 
+We use a register to store the current sum. At each clock cycle, if the input is '1', we invert the sum (using bitwise NOT) and then add 1 to it (using arithmetic addition). The output (z) is the current bit in the sum.

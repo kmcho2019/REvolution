@@ -1,0 +1,23 @@
+To fix the issues in the current implementation, I'll make the following improvements:
+
+1. **Single-cycle f pulse**: Ensure f=1 for exactly one cycle after reset by:
+   - Adding a dedicated STATE_F_PULSE that immediately transitions to STATE_WAIT_X
+   - Setting f only in STATE_F_PULSE
+
+2. **Accurate sequence detection**: 
+   - Use a 3-bit shift register updated every cycle
+   - Only check for 1-0-1 pattern in STATE_WAIT_X
+
+3. **Proper timeout counting**:
+   - Use a 2-bit counter to accurately count 2 clock cycles
+   - Reset counter when entering STATE_WAIT_Y
+
+4. **Clear permanent state handling**:
+   - Store whether y was detected in STATE_WAIT_Y
+   - Set g permanently based on this stored value in STATE_PERM
+
+5. **Output stability**:
+   - Ensure outputs maintain their values correctly in each state
+   - Clear outputs during reset
+
+The improved design will have precise timing and correct state transitions while maintaining all specifications.

@@ -1,0 +1,7 @@
+Fuse the concise and clear vector indexing style from Example 2 with the neighbor direction clarifications from Example 1. Use vector operations where possible for compactness, and explicitly assign bits with zero where neighbor bits don't exist. Also, clarify neighbor relationships:
+
+- For out_both, since the neighbor is to the left (higher index), bits 0..2 use in[i] & in[i+1], and out_both[3] = 0.
+- For out_any, since the neighbor is to the right (lower index), bits 1..3 use in[i] | in[i-1], and out_any[0] = 0.
+- For out_different, use wrap-around XOR with left neighbor (higher index), so out_different[i] = in[i] ^ in[(i+1) mod 4].
+
+This fusion keeps clarity, correctness, and minimal logic for power and area, with a compact, readable assignment style.

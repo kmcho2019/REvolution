@@ -1,0 +1,5 @@
+To implement the specified finite state machine (FSM), we can break down the problem into several states and transition conditions. The FSM starts in state A when the reset is asserted. Once the reset is de-asserted, it transitions to state B, where it sets output f to 1 for one clock cycle. Then, it moves to state C, where it monitors the x input for the sequence 1, 0, 1. After detecting this sequence, it transitions to state D, where it sets output g to 1 and monitors the y input. If y becomes 1 within two clock cycles, the FSM stays in state D; otherwise, it transitions to state E, setting g to 0. The FSM remains in its current state (either D or E) until reset.
+
+We will use a parameterized enum to define the states of the FSM, which will make the code more readable and maintainable. We'll use a variable `current_state` to keep track of the current state and `next_state` to determine the next state based on the current state and inputs.
+
+To implement the sequential logic for detecting the x sequence and the y condition, we'll use additional variables to keep track of the sequence progress and the number of clock cycles since g was set to 1.

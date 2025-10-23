@@ -1,0 +1,9 @@
+To optimize the FSM for better power, performance, and area (PPA), we switch from one-hot to binary state encoding. This reduces flip-flop usage from 4 to 2 for the states, saving area. We keep the FSM logic straightforward to maintain good timing.
+
+We add a clock enable signal to the shift register and bit counter updates, so they only toggle in the RECEIVE state, reducing unnecessary switching and power.
+
+We move done generation to the sequential block and keep it asserted only for one cycle after a valid stop bit.
+
+The error recovery logic remains the same: waiting for a valid stop bit before returning to IDLE.
+
+Overall, this reduces area and power, while maintaining good timing and functionality.

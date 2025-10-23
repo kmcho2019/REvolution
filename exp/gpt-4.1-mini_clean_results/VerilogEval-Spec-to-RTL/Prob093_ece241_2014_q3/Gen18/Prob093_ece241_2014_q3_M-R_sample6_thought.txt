@@ -1,0 +1,25 @@
+The original solution is logically correct but uses ternary operators that may obscure clarity and contribute to errors in understanding or synthesis. To refactor, I will explicitly implement the internal 2-to-1 multiplexers as intermediate wires for each mux_in bit, showing how each mux_in output is built from constants and inputs c, d via 2-to-1 muxes.
+
+This approach improves readability by breaking down the logic into small mux instances explicitly and ensures adherence to the "only multiplexers" rule.
+
+For example, for mux_in[0]:
+
+- Use a 2-to-1 mux with selector c:
+  - If c=0, output d
+  - If c=1, output 1
+
+This is mux_in[0] = c ? 1 : d.
+
+Similarly, mux_in[3]:
+
+- Use 2-to-1 mux with selector d:
+  - If d=0, output 1
+  - If d=1, output c
+
+This is mux_in[3] = d ? c : 1.
+
+By defining intermediate wires for these 2-to-1 muxes, the design explicitly matches the concept of using multiplexers only and can be easier to verify and less prone to error.
+
+Also, define mux_in[1] and mux_in[2] similarly with explicit mux wiring.
+
+No always blocks are needed, only continuous assignments and intermediate mux wires.

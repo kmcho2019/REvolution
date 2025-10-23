@@ -1,0 +1,17 @@
+module comparator_4bit (
+    input [3:0] A,
+    input [3:0] B,
+    output A_greater,
+    output A_equal,
+    output A_less
+);
+
+    wire [4:0] diff = {1'b0, A} - {1'b0, B};
+    wire carry_out = diff[4];
+    wire zero_result = (diff[3:0] == 4'b0);
+
+    assign A_less = carry_out;
+    assign A_equal = zero_result;
+    assign A_greater = ~carry_out & ~zero_result;
+
+endmodule

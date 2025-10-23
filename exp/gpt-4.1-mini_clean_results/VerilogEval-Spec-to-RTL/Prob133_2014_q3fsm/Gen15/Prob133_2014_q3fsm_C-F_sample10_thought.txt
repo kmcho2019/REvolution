@@ -1,0 +1,23 @@
+Fuse the clarity and minimal state count from both examples while further reducing unnecessary toggling in state A to save power.
+
+Key ideas:
+- Two states: A and B.
+- In state A:
+  - Hold cycle counter and w_accum unchanged (don't reset every cycle), reducing switching and power.
+  - Keep z=0.
+  - Transition to B when s=1.
+- In state B:
+  - Use 2-bit counters cycle_cnt and w_accum.
+  - Accumulate w during three cycles (cycle_cnt 0 to 2).
+  - At cycle_cnt == 2, output z=1 if exactly two w=1 sampled (w_accum + w == 2), else z=0.
+  - Reset counters after 3 cycles.
+- Use synchronous reset.
+- Register output z for timing and to delay output by 1 cycle as required.
+- Update counters only in state B to reduce toggling.
+- Maintain a separate combinational next-state logic block for clarity.
+- This fusion yields minimal states, clear separation of combinational/sequential logic, reduced toggling in state A, and clean, maintainable code.
+
+Overall improvements:
+- Reduced unnecessary resets of counters in state A (power saving).
+- Clear combinational next-state logic for easy verification.
+- Registered output for timing and correctness.

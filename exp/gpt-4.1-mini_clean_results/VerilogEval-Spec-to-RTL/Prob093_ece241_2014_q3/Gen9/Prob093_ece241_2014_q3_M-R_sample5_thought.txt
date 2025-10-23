@@ -1,0 +1,13 @@
+Refactor the design to explicitly implement all needed intermediate NOT and AND signals using the mux2 primitives only, then combine them systematically to form the correct outputs for mux_in[3:0].
+
+- Keep the original approach of realizing NOT, AND, and OR by mux2 only.
+- Use assign statements for the outputs, leveraging the already instantiated mux2 gates to compute NOTs and ANDs.
+- Explicitly show the logic for each mux_in bit as a function of c and d per the K-map entries for ab = 00, 01, 11, 10.
+- Clarify the implementation of OR using the identity OR(x,y) = NOT(AND(NOT x, NOT y)) strictly through mux2 muxes.
+- Retain the modular mux2, but instantiate all intermediate signals for clarity and correctness.
+- Avoid direct logic operators like '!' or '&' in assign statements; rely solely on mux2 instances and their outputs.
+- Use only c and d as inputs; a and b are selectors of the external 4-to-1 mux (not part of TopModule).
+- mux_in[1] is always zero from the K-map, so just assign 0.
+- This approach guarantees a clear, stepwise derivation and correct functionality.
+
+This restructuring fixes any confusion with the logic gates and ensures correctness while staying within problem constraints.

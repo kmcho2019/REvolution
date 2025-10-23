@@ -1,0 +1,10 @@
+The current solution is already functionally correct and cleanly modular. To optimize PPA (power, performance, area), I will remove the separate nand4 module and implement the 4-input NAND gates directly using built-in 2-input NAND primitives, reflecting common 7420 internal structure as two levels of 2-input NAND gates. This structural refinement can enable better synthesis optimizations and mapping to actual 7420 gates or standard cells, potentially improving area and power by making gate hierarchy explicit.
+
+Specifically, each 4-input NAND will be implemented as NAND of two NANDs of two inputs each:
+
+- First level: nand gates of pairs (a,b) and (c,d)
+- Second level: nand gate of outputs of first level
+
+This mimics the classic 7420 internal gate structure, facilitating technology mapping.
+
+This also removes the explicit assign statement and module instantiation overhead, reducing hierarchy and possibly improving performance by flattening logic. This approach maintains clarity and correctness, while aiming for better area and power efficiency.

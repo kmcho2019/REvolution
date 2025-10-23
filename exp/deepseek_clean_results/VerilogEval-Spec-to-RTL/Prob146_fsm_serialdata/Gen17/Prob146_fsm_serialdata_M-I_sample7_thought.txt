@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Register next_state to break critical path
+   - Change shift direction to left-shift for simpler mux structure
+   - Reduce bit_count width to 2 bits (since we count to 7)
+
+2. Power Optimization:
+   - Add enable signals for shift register updates
+   - Make done signal a one-cycle pulse
+   - Simplify state machine by merging ERROR with IDLE
+
+3. Area Optimization:
+   - Use one-hot encoding for FSM states
+   - Remove redundant registers
+   - Simplify control logic
+
+The improved design will:
+- Use left-shifting for data collection (simpler mux structure)
+- Implement one-hot state encoding
+- Generate done as a pulse
+- Merge ERROR state functionality into IDLE
+- Add registered next_state to improve timing

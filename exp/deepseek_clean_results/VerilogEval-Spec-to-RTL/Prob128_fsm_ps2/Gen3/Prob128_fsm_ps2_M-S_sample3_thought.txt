@@ -1,0 +1,10 @@
+The solution can be further simplified by recognizing that:
+1. We only need to track when we've received exactly 3 bytes after a valid start
+2. The 'done' signal can be generated directly from the counter state
+3. The counter can be reset immediately after detecting the third byte, without waiting for the next cycle
+
+Key optimizations:
+- Remove the separate 'done' register and generate it combinatorially
+- Simplify counter logic by directly setting it to 0 after third byte
+- Combine all conditions into a single always block
+- Reduce state transitions to minimal necessary operations

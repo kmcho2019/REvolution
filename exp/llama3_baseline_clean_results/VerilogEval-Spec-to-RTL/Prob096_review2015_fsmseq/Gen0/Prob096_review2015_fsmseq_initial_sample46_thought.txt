@@ -1,0 +1,13 @@
+The problem can be solved using a finite-state machine (FSM) with five states: 
+Idle, S1, S2, S3, and Found. The FSM starts in the Idle state and transitions 
+to the next state based on the input data bit. When the sequence 1101 is detected, 
+the FSM transitions to the Found state and sets start_shifting to 1. The FSM remains 
+in the Found state until the reset signal is asserted. The reset signal is synchronous 
+and active high, which means it only affects the FSM on the positive edge of the clock.
+
+State transitions:
+- Idle: Initial state. When data is 1, transition to S1.
+- S1: When data is 1, transition to S2. When data is 0, transition back to Idle.
+- S2: When data is 0, transition to S3. When data is 1, transition back to S1.
+- S3: When data is 1, transition to Found. When data is 0, transition back to Idle.
+- Found: Final state. Set start_shifting to 1. Transition back to Idle when reset is 1.

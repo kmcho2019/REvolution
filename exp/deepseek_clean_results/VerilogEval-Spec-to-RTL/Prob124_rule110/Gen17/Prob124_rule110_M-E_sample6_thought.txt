@@ -1,0 +1,14 @@
+Novel Architectural Idea: 
+1. **Shift Register Approach**: Instead of using a generate block with parallel logic, implement the Rule 110 using a shift register approach with overlapping windows. This reduces the combinational logic depth by processing the automaton in stages.
+
+2. **Pipelined Processing**: Process the 512-bit state in 64-bit chunks (8 stages) with pipeline registers between stages. Each stage computes the next state for its 64-bit segment plus 2 boundary bits (1 from each neighbor).
+
+3. **Sliding Window**: Each pipeline stage uses a 66-bit window (64 bits + 1 boundary bit from each side) to compute the next state for its 64-bit segment. The boundary bits are properly handled by the adjacent stages.
+
+4. **Efficient Boundary Handling**: The first and last stages automatically handle the boundary conditions by fixing their external boundary bits to 0.
+
+Key Advantages:
+- Reduced combinational path length enables higher clock speeds
+- Better timing closure due to pipelining
+- More efficient resource utilization through sequential processing
+- Maintains the same functionality while improving timing metrics

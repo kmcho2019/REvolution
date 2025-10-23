@@ -1,0 +1,24 @@
+The FSM starts in state A, waiting for s=1 to move to state B. Once in B, it needs to examine w input for 3 consecutive clock cycles, counting how many times w=1 in those 3 cycles. Then in the next cycle after those 3 cycles, output z=1 if exactly two of those w inputs were 1, else z=0.
+
+To minimize states, we can have:
+- State A: wait for s=1
+- State B0, B1, B2: three sub-states representing the 1st, 2nd, and 3rd cycle of counting w's.
+- State Z: output cycle after counting, output z=1 or 0 depending on count.
+Then go back to B0 to start counting the next group of 3 w cycles.
+
+Alternatively, we can merge states and keep a counter of how many w=1 seen in three cycles, using a 2-bit counter. 
+
+State transitions:
+- A: if s=0 stay A, if s=1 move to B0
+- B0: count w, move to B1
+- B1: count w, move to B2
+- B2: count w, move to Z (output cycle)
+- Z: output z=1 if count==2 else 0, then go back to B0 for next 3 cycle window.
+
+Use a 2-bit reg to hold count of w=1 in 3 cycles.
+
+Reset sets FSM to A, clears count and output z=0.
+
+All logic synchronous on posedge clk, with synchronous reset.
+
+This design uses 5 states (A, B0, B1, B2, Z) and 2-bit count.

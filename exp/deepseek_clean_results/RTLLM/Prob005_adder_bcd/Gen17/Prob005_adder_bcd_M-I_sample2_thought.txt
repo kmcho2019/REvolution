@@ -1,0 +1,15 @@
+To optimize the BCD adder further, I'll implement these improvements:
+1. Replace the 5-bit comparator with more efficient logic using bit patterns
+2. Combine the correction adder with the initial sum using a single adder with muxed input
+3. Optimize carry generation using bitwise operations instead of comparison
+4. Use parallel prefix adder structure for faster carry propagation
+5. Minimize logic depth by pre-computing correction conditions
+
+Key optimizations:
+- The correction condition (sum > 9) can be detected by checking if either:
+  - The raw sum's MSB (bit 4) is set (sum ≥ 16)
+  - Bits 3 and 2 are both set (sum 12-15)
+  - Bit 3 and either bit 1 or 0 are set (sum 10-11)
+- This replaces the 5-bit comparator with simpler logic
+- The correction value (6) can be added through carry-in manipulation
+- Carry-out can be derived directly from the MSB and correction condition

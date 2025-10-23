@@ -1,0 +1,8 @@
+Implement the 4-bit comparator by performing a bitwise hierarchical comparison starting from the MSB down to the LSB, without explicitly modeling subtraction or borrow signals. At each bit, compare A[i] and B[i]: 
+- If A[i] > B[i], then A > B immediately.
+- If A[i] < B[i], then A < B immediately.
+- If A[i] == B[i], then continue comparing the next lower bit.
+
+This approach uses simple combinational logic with a priority encoder style to determine the result. Equality is determined if all bits are equal. This eliminates borrow chain computation and subtraction modeling and is purely combinational with early decision logic at the highest differing bit.
+
+Outputs are mutually exclusive and derived directly from the first differing bit in the comparison hierarchy. This style is clear, efficient, and easily scalable by extending the bit width in a similar pattern.

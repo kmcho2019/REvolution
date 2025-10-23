@@ -1,0 +1,18 @@
+After carefully analyzing the waveform, here's a simpler implementation:
+
+1. Key Observations:
+   - p simply follows input 'a' but only updates on positive clock edges
+   - q is set to 1 one cycle after p becomes 1 (delayed version of p)
+   - q resets to 0 when 'a' is 1 during a negative clock edge
+
+2. Simplified Approach:
+   - Remove unnecessary state tracking
+   - p directly follows 'a' at clock edges
+   - q tracks p with a one-cycle delay using a single flip-flop
+   - Clear q on negedge when 'a' is high
+
+3. Benefits:
+   - Fewer registers needed (only one for q's state)
+   - Clearer direct relationships between signals
+   - Maintains all waveform requirements
+   - Easier to understand and verify

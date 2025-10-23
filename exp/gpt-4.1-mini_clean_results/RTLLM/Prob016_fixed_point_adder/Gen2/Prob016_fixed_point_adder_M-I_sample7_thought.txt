@@ -1,0 +1,10 @@
+To optimize the given fixed_point_adder for better performance, power, and area, I will:
+1. Replace the `abs_val` function with a direct wire assignment using a conditional operator to reduce combinational delay and replication of logic.
+2. Compute only the necessary arithmetic operation (addition or subtraction) based on sign bits to reduce switching and dynamic power.
+3. Use signed arithmetic where possible by casting to signed types for direct comparison and addition/subtraction, simplifying magnitude and sign handling.
+4. Retain the single combinational block style with explicit dataflow for clear synthesis.
+5. Keep parameterization intact to maintain flexibility and avoid synthesis issues with testbench.
+6. Saturate only on positive overflow when adding same sign operands to avoid overflow beyond N bits.
+7. Ensure zero result sign is forced to positive.
+
+This should reduce critical path delay by removing the function call overhead, minimize unnecessary arithmetic operations, and simplify the logic to improve area and power metrics without changing functionality.

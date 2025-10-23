@@ -1,0 +1,15 @@
+The original implementation is already optimal in terms of simplicity, area, power, and performance by directly using the built-in XNOR operator with continuous assignment. The provided minor improvement of using ANSI-C style port declarations is kept as it aids readability without impacting PPA.
+
+To further optimize for PPA, no changes are necessary because:
+- The XNOR operator is a primitive operation that synthesis tools implement as a single gate.
+- Adding hierarchy with a submodule only adds overhead.
+- Using continuous assign is best for combinational logic.
+
+The only minor improvement is to remove commented-out code to keep the design clean and reduce any potential parsing or elaboration overhead, although this is very minor.
+
+Thus, the improvement strategy is to:
+- Keep direct continuous assignment of the XNOR for minimal logic and power.
+- Use ANSI-C style port declarations.
+- Remove commented code to keep the module clean and concise.
+
+This retains best PPA with clearer code.

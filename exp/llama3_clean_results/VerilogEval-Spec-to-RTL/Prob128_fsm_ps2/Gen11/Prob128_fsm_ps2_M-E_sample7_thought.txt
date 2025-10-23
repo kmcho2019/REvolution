@@ -1,0 +1,10 @@
+To implement a novel solution for the TopModule, we can employ a different architectural approach. One such approach involves using a counter-based mechanism to track the receipt of bytes within a message, instead of a traditional state machine. This counter can be incremented every time a byte is received, and reset whenever a new message is detected (i.e., when in[3] = 1). The 'done' signal can be asserted when the counter reaches 3, indicating that a complete message has been received.
+
+The new idea involves:
+
+1. Implementing a counter to track the number of bytes received since the last message detection.
+2. Resetting the counter whenever a new message is detected (in[3] = 1).
+3. Asserting the 'done' signal when the counter reaches 3.
+4. Using a separate signal to track whether a message is currently being received.
+
+This approach simplifies the design by eliminating the need for explicit states and state transitions, instead relying on the counter to track the progress of message reception.

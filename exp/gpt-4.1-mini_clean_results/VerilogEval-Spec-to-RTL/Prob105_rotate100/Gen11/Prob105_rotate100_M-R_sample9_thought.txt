@@ -1,0 +1,5 @@
+Refactor the design to use an always_comb (or always @*) block to compute the next value of the register q in a dedicated combinational block and then use a clocked always @(posedge clk) block that registers q only if an update is necessary (load is high or ena indicates rotation). This avoids updating q when no change occurs, effectively implementing a register enable signal to reduce unnecessary toggling.
+
+In this approach, the combinational logic separately computes the candidate next value based on load and rotation enables. The sequential block then conditionally updates q only when needed, minimizing power consumption due to unnecessary register updates.
+
+This structure preserves synchronous load and rotation behavior while adding an enable gating to reduce switching activity, improving power efficiency without affecting functionality.

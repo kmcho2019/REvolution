@@ -1,0 +1,24 @@
+After carefully re-examining the waveform, here's a new approach:
+
+1. Key Observations:
+- The state behaves like a toggle flip-flop with additional conditions
+- State changes occur when:
+  - a=1 and b=1 (toggle)
+  - a=0 and b=0 (reset)
+  - But only at specific times (not every occurrence)
+
+2. Output q Behavior:
+- q=1 when:
+  - state=0 and b=1
+  - state=1 and a=1
+- Otherwise q=0
+
+3. Novel Architecture Idea:
+- Implement a state machine with memory of previous inputs
+- Use the current state and inputs to determine next state
+- Output q is purely combinational based on current state and inputs
+
+Implementation Strategy:
+- Use a D flip-flop for state storage
+- Next state logic combines current state and inputs
+- Simple combinational logic for output q

@@ -1,0 +1,14 @@
+Here's a novel approach using a carry-skip adder architecture, which offers better performance than ripple-carry while maintaining reasonable area overhead for a 4-bit adder:
+
+1. **Carry-Skip Concept**: The carry-skip adder detects when the carry propagates through all bits (P0&P1&P2&P3=1) and skips the ripple-carry chain, directly passing the carry-in to carry-out.
+
+2. **Performance Benefit**: This reduces the worst-case delay from O(n) to O(√n) by skipping the ripple when possible, while keeping area overhead minimal for 4 bits.
+
+3. **Implementation Strategy**:
+   - Compute individual propagate (P) and generate (G) signals
+   - Implement the skip logic when all P bits are high
+   - Use this to potentially bypass the carry chain
+
+4. **Overflow Handling**: The final carry-out still serves as the overflow bit (sum[4])
+
+This provides a good middle ground between ripple-carry simplicity and more complex adders like carry-lookahead.

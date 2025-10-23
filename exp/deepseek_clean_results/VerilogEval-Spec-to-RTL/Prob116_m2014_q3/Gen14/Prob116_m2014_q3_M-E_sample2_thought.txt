@@ -1,0 +1,15 @@
+Here's a novel approach using a multiplexer-based implementation that leverages the don't-care conditions differently:
+
+Key Insights:
+1. The K-map shows that when x[3]x[4]=11 or 10, the output is mostly 1 (except one case)
+2. When x[3]x[4]=00 or 01, the output depends more on x[1]x[2]
+3. We can use x[3] and x[4] as select lines for a multiplexer that chooses between different logic blocks
+
+Novel Architecture:
+- Use x[3:2] as a 2-bit selector for a 4:1 mux
+- Each mux input implements a simplified version of the K-map for that x[3:2] case
+- This approach naturally handles don't-cares by choosing the simplest implementation for each quadrant
+- The implementation will use:
+  - 1 4:1 multiplexer
+  - 4 simple logic blocks (some just constants)
+  - Potentially better for certain FPGA architectures that have efficient mux primitives

@@ -1,0 +1,8 @@
+Refactor by explicitly separating the clock domains and using a MUX-based approach:
+- In clk_a domain, store data_in into data_reg only when data_en is asserted.
+- In clk_a domain, register data_en into en_data_reg.
+- In clk_b domain, create a two-stage shift register (en_clap_one, en_clap_two) to delay en_data_reg.
+- Use a multiplexer controlled by en_clap_two to select either the synchronized data_reg or retain the previous dataout.
+- Use blocking assignments in clk_b always blocks to ensure deterministic dataout update.
+- Reset handling uses asynchronous active low resets as requested.
+This structure directly reflects the problem requirements, making control flow clearer while maintaining the same behavior.

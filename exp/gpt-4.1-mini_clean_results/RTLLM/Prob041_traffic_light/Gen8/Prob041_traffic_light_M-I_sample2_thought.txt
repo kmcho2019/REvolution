@@ -1,0 +1,8 @@
+The original design is functionally correct and clear, but for better PPA we can make several optimizations:
+1. Timer width reduction: The maximum timer count is 60, so a 6-bit counter suffices (2^6=64), reducing flip-flops and logic area.
+2. Clock gating for the timer: Instead of decrementing the timer every clock cycle, decrement only when the timer is non-zero, reducing switching activity and dynamic power.
+3. Synchronize pass_request to avoid glitches, by registering it once on clk.
+4. Separate FSM state and timer counters clearly with non-blocking assignments for clarity and synthesis friendliness.
+5. Use localparams and enumerations consistently with minimal width encoding.
+6. Outputs as registered signals to avoid glitches (optional but often recommended in synchronous design).
+These improvements slightly increase code complexity but improve power and area by minimizing logic toggling and register count.

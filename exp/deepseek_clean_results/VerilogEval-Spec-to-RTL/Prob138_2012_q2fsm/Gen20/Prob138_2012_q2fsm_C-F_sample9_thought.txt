@@ -1,0 +1,25 @@
+Fusion Strategy:
+1. State Encoding: Combine Gray-like properties for sequential states (A-D) from Example 1 with direct output mapping (z=MSB) from both examples. Use:
+   - A=000, B=001, C=011, D=010 (single-bit transitions)
+   - E=110, F=100 (both have z=1, minimal transitions to/from D)
+
+2. State Transition Logic:
+   - Use case structure from Example 2 for readability
+   - Optimize D state transitions (critical path) with direct assignments
+   - Keep ternary operators for simple transitions (A-C) from Example 1
+   - Add default case from Example 1 for robustness
+
+3. Output Logic:
+   - Maintain direct bit check (current_state[2]) as most efficient
+   - E and F naturally set MSB=1 for z output
+
+4. Reset Handling:
+   - Use compact synchronous reset from Example 1
+   - Clear parameter definitions from Example 2
+
+Key Advantages:
+- Minimal Hamming distances for common transitions (B-C-D)
+- Single-bit output logic with no additional gates
+- Balanced critical paths in transition logic
+- Robust handling of undefined states
+- Optimal power efficiency from state encoding

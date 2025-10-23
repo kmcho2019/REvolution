@@ -1,0 +1,30 @@
+The original solution's combinational logic is correct for the given one-hot encoding and state transitions. However, it uses output port names Y1 and Y3, whereas the problem statement explicitly requires outputs named Y1 and Y3 (which matches the original problem statement and the example solution, so that part is correct).
+
+Re-examining the feedback, it appears there might be confusion about the port names: the problem statement requires outputs named Y1 and Y3 corresponding to y[1] and y[3], which the example solution correctly implements.
+
+Thus, the example solution is consistent with the problem statement. 
+
+To improve PPA (Power, Performance, Area), we can minimize the combinational logic expressions further. By looking carefully:
+
+- Y1 = y[0] & ~w
+- Y3 = w & (y[1] | y[2] | y[3] | y[4] | y[5])
+
+The second expression can be rewritten since y is one-hot: y[1] to y[5] represent states B-F. The OR of these bits is "not y[0]", since only one bit is set.
+
+So,
+
+Y3 = w & (y[1] | y[2] | y[3] | y[4] | y[5])  
+   = w & (~y[0])
+
+Using this can reduce gate count: just an inverter on y[0] and AND with w.
+
+This small change reduces logic complexity.
+
+Hence, optimized logic:
+
+- Y1 = y[0] & ~w
+- Y3 = w & ~y[0]
+
+This minimal expression yields the same behavior and reduces gate count.
+
+I will implement this optimization and keep comments clear.

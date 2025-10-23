@@ -1,0 +1,11 @@
+Instead of tracking the entire sequence history, we can use a counter to represent our progress through the "101" pattern. This approach:
+1. Uses only 3 states (IDLE, GOT1, GOT10) represented by a 2-bit counter
+2. Implements a Mealy machine where output depends on current state AND input
+3. Handles overlapping sequences naturally by allowing state transitions back to GOT1 when a new '1' is detected
+4. Uses clever state encoding to minimize logic:
+   - IDLE = 00
+   - GOT1 = 01 (first '1' detected)
+   - GOT10 = 10 ('1' followed by '0')
+5. Output is asserted only when in GOT10 state and current input is '1'
+6. Asynchronous reset initializes to IDLE state
+This approach minimizes state transitions and reduces power consumption compared to shift-register based solutions.

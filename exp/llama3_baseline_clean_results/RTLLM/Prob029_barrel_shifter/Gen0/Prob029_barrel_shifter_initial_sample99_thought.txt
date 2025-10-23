@@ -1,0 +1,9 @@
+The barrel shifter module is designed to efficiently rotate bits in an 8-bit input based on a 3-bit control signal. The control signal determines the amount of shift in the input, with each bit specifying a shift by 1, 2, or 4 positions. To achieve this, the design will use a series of 2-to-1 multiplexers to select between the shifted input and the original input at each stage of shifting.
+
+First, we define the 2-to-1 multiplexer submodule `mux2X1` that selects between two input values based on the `sel` signal. This submodule is crucial for implementing the shifting logic.
+
+Next, we use the `mux2X1` submodule in the `barrel_shifter` module to create stages of shifting. Each stage corresponds to a specific shift amount controlled by the `ctrl` signal bits. The shifting happens in a hierarchical manner, starting with the largest shift amount (4 positions) down to the smallest (1 position).
+
+The `barrel_shifter` module will take an 8-bit input `in` and a 3-bit control signal `ctrl`, and output the shifted result `out`. The control signal bits `ctrl[2]`, `ctrl[1]`, and `ctrl[0]` determine whether to shift the input by 4, 2, or 1 position(s), respectively.
+
+By cascading these multiplexers and controlling their select lines with the `ctrl` signal, we can efficiently implement the barrel shifter functionality.

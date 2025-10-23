@@ -1,0 +1,13 @@
+The existing design is functionally correct and uses minimal states. To optimize power and potentially area/timing, we can gate the updates of the cycle counter and w accumulator to happen only when needed in state B. This avoids unnecessary toggling in those registers when in state A or during cycles where counters are reset.
+
+Instead of always updating cycle_cnt and w_accum every clock cycle in state B, add an enable signal that is high only when updating is needed (i.e., when cycle_cnt < 2). On cycle_cnt == 2, counters reset to zero without counting next w input, so counters do not toggle unnecessarily.
+
+We will implement this enable gating by controlling the register updates via an enable signal rather than unconditional assignment of next values.
+
+This reduces switching in the counters and thus power consumption.
+
+We keep the 2-bit counters but remove unnecessary additions by accumulating w only when enabled, and resetting counters cleanly at window boundaries.
+
+Output z remains registered and is asserted for one cycle after each 3-cycle window with exactly two w=1 occurrences, as required.
+
+This small change keeps the FSM minimal, maintains the same critical path, but reduces power by minimizing register toggling, improving the reported power metric slightly without area or timing penalties.

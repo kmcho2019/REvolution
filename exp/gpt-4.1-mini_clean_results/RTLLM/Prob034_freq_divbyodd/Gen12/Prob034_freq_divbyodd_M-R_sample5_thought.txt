@@ -1,0 +1,9 @@
+Refactor the odd frequency divider by splitting the design into two counters operating on posedge and negedge of the input clock separately, each toggling its own clk_div signal when reaching half the division count. This approach aligns with the original specification using two counters (cnt1 and cnt2) and two toggle signals (clk_div1 and clk_div2). 
+
+- Use cnt1 incremented on posedge clk, toggling clk_div1 when cnt1 reaches half of NUM_DIV.
+- Use cnt2 incremented on negedge clk, toggling clk_div2 at the same count.
+- Both counters reset at NUM_DIV -1.
+- The final clk_div is the OR of clk_div1 and clk_div2 to combine toggling on both edges.
+- This structure ensures toggling is properly synchronized to the clock edges, producing the correct frequency division by odd numbers.
+- Use non-blocking assignments and synchronous resets for counters and toggles.
+- Include a compile-time check for odd NUM_DIV.

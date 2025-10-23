@@ -1,0 +1,11 @@
+To implement the TopModule as a Moore state machine, we first need to identify the different states the Lemming can be in: 
+1. Walking Left
+2. Walking Right
+3. Falling
+4. Digging
+We will use a 2-bit state variable to represent these states. 
+When the ground disappears (ground=0), the Lemming will transition from walking or digging to falling. 
+When the ground reappears (ground=1) and the Lemming is falling, it will resume walking in the same direction as before the fall. 
+When the Lemming is told to dig (dig=1) and it's walking on the ground, it will start digging. 
+The Lemming will continue digging until it reaches the other side (ground=0), at which point it will fall and then resume walking in its original direction when the ground reappears.
+Being bumped while falling or digging has no effect on the walking direction, and being told to dig when falling or when there is no ground is ignored.

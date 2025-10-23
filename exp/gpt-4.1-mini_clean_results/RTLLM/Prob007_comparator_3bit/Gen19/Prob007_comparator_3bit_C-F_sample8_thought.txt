@@ -1,0 +1,11 @@
+I will fuse the best ideas from both examples to create an optimal 3-bit comparator by:
+
+- Using bitwise XNOR operations for each bit to generate clear and efficient equality signals (eq_bit2, eq_bit1, eq_bit0).
+- Combining eq_bit2 and eq_bit1 into eq_21 to reuse this common intermediate signal in equality and greater-than logic, reducing redundancy.
+- Implementing overall equality as the AND of eq_21 and eq_bit0 for clear and minimal logic depth.
+- Expressing greater-than logic hierarchically from MSB to LSB, reusing eq_bit2 and eq_21 efficiently to keep logic shallow.
+- Deriving less-than as the complement of (A_greater or A_equal) to ensure mutual exclusivity and minimal logic.
+- Keeping all logic combinational with continuous assignments to optimize for synthesis tools and maintain readability.
+- Avoiding unnecessary intermediate signals while maintaining clarity and reusability.
+
+This fusion achieves a compact, low-latency, low-power, and easy-to-understand design with mutually exclusive outputs, suitable for efficient hardware implementation.

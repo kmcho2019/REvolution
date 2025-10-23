@@ -1,0 +1,19 @@
+Fusion Strategy:
+1. State Encoding: Maintain 2-bit encoding with clear state names (IDLE, RECEIVE, STOP, WAIT) for minimal area and readability
+2. Data Handling: Use efficient LSB-first reception with right-shift operation, but optimize power by only updating registers when in RECEIVE state
+3. Error Handling: Keep robust WAIT state from both examples to handle missing stop bits
+4. Done Logic: Implement clean one-cycle pulse from Example 2, with explicit default assignment
+5. Reset: Synchronous reset as specified in both examples
+6. Optimizations:
+   - Combine the cleaner state transition logic from Example 2 with the more efficient data handling from Example 1
+   - Add explicit default assignments for all registers to prevent latches
+   - Optimize power by minimizing unnecessary signal toggles
+   - Use direct bit_count comparison for simpler logic
+   - Maintain clear separation between sequential and combinational blocks
+
+Key Improvements:
+- Cleaner state machine structure than Example 1
+- More power-efficient than Example 2 by only updating registers when needed
+- Clearer default assignments than both examples
+- Robust error handling from both examples
+- Simplified done logic with one-cycle pulse

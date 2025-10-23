@@ -1,0 +1,13 @@
+To correct the functional issues, separate the combinational next-state logic from the registered output updates clearly.
+
+- Use one always block triggered on posedge clk/negedge rst_n to update registers: data_lock, flag, valid_out, data_out.
+- Use a combinational always block or combinational logic inside the clocked block to calculate next states/outputs from current inputs and state.
+- Do NOT register "next" signals separately inside the same clocked always block.
+- The output valid_out and data_out should be registered and only updated one clock cycle after receiving the second valid input.
+- On the arrival of the second valid input, store concatenated data into temporary registers and raise a signal to output in the next cycle.
+- Implement a simple two-stage pipeline:
+  * Stage 1: store first byte if flag=0 and valid_in=1.
+  * Stage 2: on receiving second byte when flag=1 and valid_in=1, latch concatenated data into output registers in next cycle and clear flag.
+- Use intermediate combinational signals inside the clock block to determine output updates.
+- Reset clears all registers and flags.
+This approach ensures clean separation of combinational and sequential logic, avoids combinational loops, and meets the timing requirements exactly.

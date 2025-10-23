@@ -1,0 +1,20 @@
+The original problem requires a 4-bit LFSR with synchronous active-high reset that initializes the register to zero, shifting left on each clock edge, and inserting an inverted XOR feedback (from bits out[3] and out[2]) at LSB.
+
+The example solution differs by using asynchronous active-low reset, right shift, non-inverted feedback, and a non-zero initial value, which diverges from the problem specification.
+
+To correct this:
+- Use synchronous active-high reset as specified.
+- Initialize the register to zero on reset.
+- Shift the register left by one bit on each clock edge.
+- Calculate feedback by XOR of out[3] and out[2], then invert it.
+- Insert the feedback at the LSB.
+- Output the current register value.
+- Use a single always block triggered on the rising clock edge.
+- Use a reg for output since the register state is stored internally.
+
+This aligns exactly with the problem description, avoids testbench mismatches (assuming testbench uses correct port names), and produces the desired pseudo-random sequence.
+
+Additional optimization:  
+Since the register is 4 bits, combinational feedback logic is trivial and will not impact PPA significantly; focusing on correctness is paramount here.
+
+This design will be simple, synthesizable, and meet all specs.

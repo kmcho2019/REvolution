@@ -1,0 +1,13 @@
+Here's a novel approach using a down-counter with parallel load capability:
+
+1. Instead of counting up, we'll use a down-counter initialized to 3 (binary 11) on reset
+2. The counter will decrement each cycle until it reaches 0
+3. shift_ena will be active when the counter is non-zero (3, 2, 1) and inactive at 0
+4. This gives us exactly 4 cycles of assertion (counts 3, 2, 1, 0) with the first cycle starting immediately after reset
+5. The counter will freeze at 0 until next reset
+
+Key advantages:
+- Immediate assertion on reset cycle
+- Clear 4-cycle window (counts 3→0 inclusive)
+- Simple comparison logic (counter != 0)
+- No need for additional state registers

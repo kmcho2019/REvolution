@@ -1,0 +1,18 @@
+Revised Lemming State Machine Design:
+
+1. **State Encoding**: Switch to binary encoding for simpler state management and to avoid one-hot issues
+2. **Priority Handling**: Restructure state transitions with explicit nested conditions to enforce fall > dig > bump priority
+3. **Direction Logic**: Separate direction tracking from state transitions to prevent race conditions
+4. **Fall Counter**: Correct the splatter condition to >=20 cycles and ensure proper reset behavior
+5. **State Transitions**: 
+   - Clearly define all possible transitions for each state
+   - Handle edge cases like simultaneous bumps and dig commands
+   - Maintain direction during falls and digs
+6. **Output Logic**: Simplify using continuous assignments based on current state
+
+Key Fixes:
+- Proper priority enforcement in state transitions
+- Correct direction handling during state changes
+- Accurate fall counter comparison
+- Complete state transition coverage
+- Clear separation of state and direction logic

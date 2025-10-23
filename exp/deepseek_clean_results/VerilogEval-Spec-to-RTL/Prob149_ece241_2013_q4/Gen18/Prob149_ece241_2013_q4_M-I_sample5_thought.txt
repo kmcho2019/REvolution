@@ -1,0 +1,26 @@
+Improvement Strategy:
+
+1. State Encoding Modification:
+   - Switch from one-hot to binary encoding that reflects water level hierarchy
+   - 00: Below s[0] (lowest)
+   - 01: Between s[1]-s[0]
+   - 10: Between s[2]-s[1]
+   - 11: Above s[2] (highest)
+
+2. Correct Rising Level Detection:
+   - Compare current and previous states numerically
+   - dfr asserted when new state is numerically less than previous state (since higher water levels have higher encoding)
+
+3. Output Logic Optimization:
+   - Simplify output generation using direct state mapping
+   - Remove default case since all states are explicitly covered
+
+4. Reset Handling:
+   - Maintain correct reset behavior (all outputs high)
+   - Clear prev_state on reset for consistent operation
+
+Key Benefits:
+- Correct dfr behavior through proper state comparison
+- More efficient encoding (2 bits vs 4 bits)
+- Clearer state hierarchy representation
+- Maintains all functional requirements

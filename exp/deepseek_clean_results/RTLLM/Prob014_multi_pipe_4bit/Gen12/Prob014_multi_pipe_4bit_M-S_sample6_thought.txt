@@ -1,0 +1,22 @@
+Simplified 4-bit Pipelined Multiplier Design:
+
+Key Simplifications:
+1. **Direct Partial Product Generation**: Generate all partial products in parallel rather than bit-serially
+2. **Two-Stage Pipeline**: First stage generates partial products, second stage accumulates them
+3. **Simple Accumulation**: Use straightforward addition rather than carry-save technique
+4. **Clear Timing**: Each pipeline stage takes exactly one clock cycle
+5. **Minimal Control Logic**: Eliminate complex cycle counting with simple register stages
+
+Operation Flow:
+1. First Stage (Cycle 1):
+   - Generate all 4 partial products (mul_a shifted by 0-3 bits)
+   - Mask each with corresponding mul_b bit
+   - Store in first pipeline register
+
+2. Second Stage (Cycle 2):
+   - Sum all partial products
+   - Store final result in output register
+
+Reset Behavior:
+- All registers clear to zero on active-low reset
+- Pipeline naturally refills after reset

@@ -1,0 +1,11 @@
+To improve the PPA (Power, Performance, Area) of the FSM logic:
+
+1. Replace explicit 3-bit equality comparisons (which synthesize to comparators) with encoded one-hot-style signals for states present in the FSM (since only 5 states are defined). This reduces the number of comparators.
+2. Compute next_state and output z signals from these simpler one-hot encoded signals.
+3. Use minimal boolean expressions for next state and output.
+4. For undefined states (101, 110, 111), output next state 000 to avoid glitches.
+5. This approach reduces complex comparators and results in smaller, faster, and lower power logic.
+6. The output Y0 remains next_state[0] as specified.
+7. The code stays combinational and synthesizable with no sequential elements as per spec.
+
+This method reduces area by eliminating multiple 3-bit comparators and can improve performance by reducing logic depth. Power is improved due to fewer toggling signals and simpler combinational logic.

@@ -1,0 +1,13 @@
+To simplify the gshare branch predictor while maintaining functionality:
+1. Keep the core components: 7-bit GHR and 128-entry PHT
+2. Remove the separate 'updated_counter' register since we can update PHT directly
+3. Simplify GHR update logic by combining training and prediction cases
+4. Maintain the same priority rules (training over prediction)
+5. Keep the same reset behavior
+6. Reduce redundant logic by directly using PHT values without intermediate storage
+
+Key simplifications:
+- Direct PHT updates without temporary counter
+- Combined GHR update logic
+- Removed unnecessary intermediate signals
+- Maintained same timing behavior (PHT updates on next cycle)

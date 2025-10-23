@@ -1,0 +1,41 @@
+module TopModule(
+    input clk,
+    input areset,
+    input in,
+    output reg out
+);
+
+// Define the states as binary values
+localparam A = 1'b0;
+localparam B = 1'b1;
+localparam C = 1'b2;
+localparam D = 1'b3;
+
+// State register
+reg [1:0] state;
+
+// Next state logic
+reg [1:0] next_state;
+always @(*) begin
+    case (state)
+        A: next_state = in ? B : A;
+        B: next_state = in ? B : C;
+        C: next_state = in ? D : A;
+        D: next_state = in ? B : C;
+        default: next_state = A;
+    endcase
+end
+
+// Output logic
+assign out = (state == D) ? 1 : 0;
+
+// Sequential logic for state transition
+always @(posedge clk or posedge areset) begin
+    if (areset) begin
+        state <= A;
+    end else begin
+        state <= next_state;
+    end
+end
+
+endmodule

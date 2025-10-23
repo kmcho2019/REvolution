@@ -1,0 +1,16 @@
+To fix the design, the main improvements are:
+1. Pipeline all data and control signals uniformly each clock cycle without conditional shifting. Each pipeline register shifts its content from the previous stage every cycle, ensuring continuous data flow.
+
+2. Store operand slices in pipeline registers that shift every cycle, so each stage always has the correct operand slices corresponding to its pipeline stage.
+
+3. Perform the addition per stage based on the pipelined operands and the carry from the previous stage, synchronized by the enable pipeline.
+
+4. Manage carry signals carefully, setting carry_in of stage 0 to zero only when new inputs arrive and letting carry propagate through the pipeline registers uniformly.
+
+5. Assemble the final 65-bit sum from all sum slices and the last carry using a combinational concatenation outside the clock domain to avoid sequential overwrites.
+
+6. Synchronize the output enable signal with the pipeline latency, reflecting when the output result is valid.
+
+In summary, the pipeline registers for operands, sums, carries, and enable shift every clock cycle. New inputs load at stage 0 when `i_en` is high. The carry-in at stage 0 resets to zero at the time of new input. The result is assembled combinationally from the pipeline registers when output enable is asserted.
+
+This approach resolves the data shifting, carry propagation, and result concatenation problems, yielding a clean, synchronous, and functionally correct pipelined ripple carry adder.

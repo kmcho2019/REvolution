@@ -1,0 +1,7 @@
+To refactor the ring counter implementation while maintaining the same functionality, we'll:
+1. Use a combinational always block for the next state logic
+2. Use a separate sequential always block for state registration
+3. Implement the rotation using bitwise operations that are more universally supported
+4. Keep the same reset behavior (initializing to 8'b0000_0001)
+
+This two-process approach separates the combinational and sequential logic, which is a more robust design pattern. The rotation is implemented by checking if we're at the MSB and either shifting left or wrapping around.

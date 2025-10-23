@@ -1,0 +1,11 @@
+To derive the next-state logic equations for Y1 (y[0]) and Y3 (y[2]), we first need to understand the transitions based on the current state (represented by y[5:0]) and the input w. Given the one-hot encoding, each state is uniquely represented by a single bit being '1' while the rest are '0'. We analyze the transitions from each state to determine when Y1 and Y3 should be '1' in the next state.
+
+- For Y1 (corresponding to state A), it should be '1' in the next state when the current state is D and w is '1', or when the current state is F and w is '0', considering the transitions D(0)--1-->A and F(1)--0-->C does not lead to A but E(1)--0-->E and E(1)--1-->D, D(0)--0-->F, F(1)--0-->C does not lead to A but C(0)--0-->E and C(0)--1-->D, D(0)--0-->F, F(1)--0-->C does not lead to A but C(0)--0-->E and E(1)--0-->E, D(0)--0-->F does lead to A when w is '1' at D.
+
+- For Y3 (corresponding to state C), it should be '1' in the next state when the current state is B and w is '0', considering the transition B(0)--0-->C.
+
+However, the question specifically asks for the implementation of next-state signals Y2 (y[1]) and Y4 (y[3]), corresponding to signals y[1] and y[3], which are related to states B and D, respectively.
+
+- For Y2 (corresponding to state B), it should be '1' in the next state when the current state is A and w is '0', given the transition A(0)--0-->B.
+
+- For Y4 (corresponding to state D), it should be '1' in the next state when the current state is B and w is '1' (B--1-->D), or when the current state is C and w is '1' (C--1-->D), or when the current state is E and w is '1' (E--1-->D), considering the respective transitions.

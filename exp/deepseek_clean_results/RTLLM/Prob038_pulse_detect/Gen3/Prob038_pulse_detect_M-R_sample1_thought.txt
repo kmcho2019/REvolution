@@ -1,0 +1,17 @@
+To properly detect the 3-cycle pulse (0->1->0), we need a 3-state FSM that tracks each phase of the pulse. Here's the improved approach:
+
+1. Use 3 states: 
+   - IDLE: waiting for initial 0
+   - GOT_0: saw first 0, waiting for 1
+   - GOT_1: saw 0->1, waiting for final 0
+
+2. State transitions:
+   - From IDLE: move to GOT_0 when input is 0
+   - From GOT_0: move to GOT_1 when input rises to 1
+   - From GOT_1: return to IDLE and pulse when input falls to 0
+
+3. Output generation:
+   - Only assert data_out when we complete the full sequence (in GOT_1 state and input falls to 0)
+   - Use continuous assignment for output to simplify logic
+
+This ensures we properly track all three phases of the pulse and generate the output at the correct cycle.

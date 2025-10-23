@@ -1,0 +1,9 @@
+To improve power and performance, I will implement a clock enable (count_en) signal that enables counting only when needed. Since the counter always counts every clock cycle, this doesn't reduce switching in the original design. To reduce power and possibly improve timing, the counter should update only when explicitly allowed (for example, on a separate enable signal). However, as there is no enable input in the original spec, I can introduce logic that prevents unnecessary toggling by avoiding redundant increments or decrements when the counter value is at its maximum (for increment) or zero (for decrement). This reduces switching at the boundaries by saturating the count, which can reduce power without changing the counter width or external behavior significantly.
+
+Also, I can change the increment/decrement expressions to use +1 or -1 constants directly, which synthesis tools usually optimize efficiently.
+
+Additionally, I'll keep the synchronous reset and non-blocking assignments for reliable behavior.
+
+This approach slightly sacrifices wrapping behavior but improves power (by reducing switching at boundaries) and may help timing slightly by limiting transitions on the MSBs.
+
+If strict wrap-around behavior is required, this can be toggled off, but the problem doesn't forbid saturating the count at boundaries.

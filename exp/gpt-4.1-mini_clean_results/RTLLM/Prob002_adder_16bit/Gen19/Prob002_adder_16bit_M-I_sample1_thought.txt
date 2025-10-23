@@ -1,0 +1,12 @@
+To improve the original 16-bit adder design for better PPA (performance, power, area), I will enhance the internal carry generation in the 8-bit adder to a full carry-lookahead style instead of ripple-carry for intermediate carries. This reduces carry propagation delay drastically, improving maximum operating frequency (performance).
+
+Key improvements:
+- Replace the ripple-carry internal carry computation with a hierarchical carry-lookahead logic for all internal carry signals.
+- Keep propagate (p) and generate (g) signals as before.
+- Use carry-lookahead equations to directly compute carries c[1] to c[7] from Cin, p, and g signals without rippling.
+- Retain the module hierarchy: two 8-bit adders instanced in the 16-bit adder.
+- This reduces the critical path in the 8-bit adder from 7 gates (ripple) to roughly 4 gate levels (lookahead), improving performance.
+- The additional logic gates for carry-lookahead is minimal and can slightly reduce glitches by reducing carry toggling on intermediate signals (power).
+- Area impact is minimal because carry-lookahead logic is quite compact and replaces longer ripple chain logic.
+
+This yields a cleaner, faster design with a better PPA balance while retaining readability and modularity.

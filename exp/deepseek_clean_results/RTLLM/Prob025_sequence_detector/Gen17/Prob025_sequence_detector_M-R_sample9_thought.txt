@@ -1,0 +1,12 @@
+I'll implement the sequence detector using a Mealy-style finite state machine (FSM) instead of the shift register approach. The key differences are:
+
+1. Explicit state encoding with named states (IDLE, S1, S2, S3, S4)
+2. Mealy machine outputs where sequence_detected depends on both current state and input
+3. State transitions based on exact bit pattern matching
+4. More efficient power usage since we only transition states when matching partial sequences
+
+Advantages:
+- More power efficient as it only changes state when matching partial sequences
+- Clear state transition diagram that's easier to verify
+- Eliminates the need for a 4-bit shift register
+- Output is generated combinationally based on current state and input

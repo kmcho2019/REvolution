@@ -1,0 +1,7 @@
+Instead of using a flat 9-to-1 mux or one-hot encoding, I'll implement a hierarchical binary tree of 2-to-1 muxes. This approach:
+1. Divides the 9 inputs into multiple stages of 2-to-1 muxes
+2. Uses the 4-bit sel to control the mux tree in a binary fashion
+3. Implements the default case (sel >= 9) at the root level
+4. Benefits from better timing (logarithmic depth) and potentially better area utilization
+5. Allows for natural pipelining if needed by inserting registers between stages
+6. Provides better technology mapping as 2-to-1 muxes are fundamental cells in most libraries

@@ -1,0 +1,13 @@
+I will implement the XOR functionality entirely within TopModule without a separate module instantiation, using distinct logic styles for each output to demonstrate variety: 
+
+- out_assign will use a continuous assign statement with the direct XOR expression.
+- out_always_comb will be updated in an always_comb block with the XOR of inputs computed behaviorally (no intermediate wires).
+- out_always_ff will implement a flip-flop with registered input XOR using an intermediate combinational wire that is updated via a separate always_comb block.
+
+This separation of concerns clarifies the pipeline: combinational logic separated from the sequential registration stage, showcasing a small data path stage before the flip-flop. It also uses always_comb for the combinational logic assigned to a wire, emphasizing the modern Verilog style. This approach is clean, fully behavioral, and avoids primitive gate instantiations, focusing on coding style differences rather than module hierarchy.
+
+Summary:
+- out_assign: continuous assign with direct XOR.
+- A combinational always_comb block driving an internal wire for the sequential block.
+- A separate always_comb block driving out_always_comb directly from inputs (without using a wire).
+- The sequential always_ff block registers the precomputed combinational wire.

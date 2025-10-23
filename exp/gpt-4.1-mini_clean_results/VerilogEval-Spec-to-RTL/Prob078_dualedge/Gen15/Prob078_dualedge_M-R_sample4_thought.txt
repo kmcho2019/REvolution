@@ -1,0 +1,7 @@
+Refactor the dual-edge triggered flip-flop by using two edge-triggered flip-flops as before, but replace the output latch with a continuous assignment that muxes the outputs based on the clock level. This removes the transparent latch and uses a simple combinational mux instead. Although this might slightly increase glitching compared to the latch, it simplifies the design by removing an always block and relies on continuous assignment. This also clarifies the logic separation: the dual-edge sampling is handled by the flip-flops, and the output selection is a pure combinational logic based on clk level.
+
+This approach:
+- Keeps dual flip-flops clocked on posedge and negedge.
+- Uses an assign statement to select q_pos when clk is high and q_neg when clk is low.
+- Removes the latch and its timing complexity.
+- Simplifies the code structure and may help synthesis tools optimize mux logic efficiently.

@@ -1,0 +1,9 @@
+To refactor the code, we can simplify the state machine by removing the pattern detection sub-state machine and instead using a single state machine with additional logic to detect the pattern. We can also use `assign` statements to simplify the combinational logic and reduce the number of `always` blocks.
+
+The refactored state machine will have the same four main states: `IDLE`, `SHIFT`, `COUNT`, and `WAIT_ACK`. However, instead of using a separate pattern detection sub-state machine, we will use a single `pattern` register to store the received pattern. We will then use combinational logic to check if the received pattern matches the expected pattern `1101`.
+
+In the `IDLE` state, we will check if the received pattern matches the expected pattern, and if so, transition to the `SHIFT` state. In the `SHIFT` state, we will assert the `shift_ena` signal for exactly 4 clock cycles and store the received data in the `duration` register. In the `COUNT` state, we will assert the `counting` signal and wait for the `done_counting` signal. In the `WAIT_ACK` state, we will assert the `done` signal and wait for the `ack` signal.
+
+We will use `assign` statements to simplify the combinational logic, such as the `shift_ena`, `counting`, and `done` signals. We will also use a single `always` block to update the state machine's state and registers.
+
+The refactored code will have a simpler structure and reduced complexity, making it easier to understand and maintain.

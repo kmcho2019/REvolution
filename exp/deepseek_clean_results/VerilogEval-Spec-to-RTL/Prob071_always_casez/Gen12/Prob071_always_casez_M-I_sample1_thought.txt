@@ -1,0 +1,21 @@
+To optimize this priority encoder further, I'll implement these improvements:
+
+1. **Single casez statement:** Replace the hierarchical nibble checks with a single 8-bit casez statement for better synthesis optimization and potentially reduced logic levels.
+
+2. **Remove redundant defaults:** Eliminate unnecessary default assignments since all cases are covered.
+
+3. **Direct pattern matching:** Use explicit bit patterns for all 8 possible positions plus the zero case.
+
+4. **Power optimization:** Maintain the early zero-check but simplify the remaining logic structure.
+
+Key benefits:
+- Reduced logic levels for better timing
+- Cleaner code with no redundant assignments
+- More efficient pattern matching
+- Maintains all functionality including zero-input case
+
+The new implementation will:
+1. First check for all zeros (power optimization)
+2. Use a single casez statement covering all 8 bits
+3. Prioritize LSB through pattern ordering
+4. Default to zero only in the all-zero case

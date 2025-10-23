@@ -1,0 +1,18 @@
+The current implementation is already quite efficient, but we can make slight improvements:
+
+1. State Encoding: Maintain binary encoding (0=left, 1=right) as it's optimal for 2 states.
+
+2. Next State Logic: Simplify further by using OR logic instead of XOR for direction change, which reduces gate count by eliminating the XOR gate while maintaining correct functionality.
+
+3. Output Logic: Keep direct assignments from state bit as it's already minimal.
+
+4. Reset Handling: Keep asynchronous reset for clean initialization.
+
+Key optimizations:
+- Replace XOR with OR-based direction change logic (saves 1 gate)
+- Maintain same state encoding and output logic
+- Results in slightly better area with identical timing and power
+- The OR logic works because:
+  - When walking left (state=0), bump_left causes direction change
+  - When walking right (state=1), bump_right causes direction change
+  - Simultaneous bumps still cause direction change

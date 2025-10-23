@@ -1,0 +1,17 @@
+To implement a 16-bit by 8-bit combinational divider following the given iterative approach, I propose the following architectural idea:
+
+- Represent the partial remainder as an 8-bit register (`rem`), initially zero.
+- Process dividend bits from MSB to LSB one-by-one.
+- For each step i (from 15 down to 0):
+  1. Concatenate the current remainder (`rem`) with the next dividend bit `A[i]`, forming a 9-bit value.
+  2. Compare this 9-bit value with the divisor (`B`):
+     - If greater or equal, subtract divisor from it, set quotient bit i to 1, and update remainder to the subtraction result (8 bits).
+     - Else, set quotient bit i to 0, and remainder = the 9-bit value truncated to 8 bits (the lower 8 bits).
+- After processing all bits, the quotient register holds the final 16-bit quotient, and the remainder register holds the 8-bit remainder.
+- Since the output `odd` is 16 bits, place the 8-bit remainder in the lower bits and zero the upper bits.
+- Inputs A and B are used directly (no input registers are needed for purely combinational logic).
+- Use a single combinational always block with a for-loop iterating from 15 down to 0 to do this in one clock-free step.
+- This approach exactly matches the problem description: extracting higher dividend bits equal to divisor width + 1, comparing, subtracting if possible, and concatenating remainder with the next dividend bit for the next iteration.
+- This clean approach is clear, uses no temporary big concatenated registers, and produces accurate quotient and remainder.
+
+This fully combinational solution is synthesizable and will generate the correct quotient and remainder as per the problem statement.

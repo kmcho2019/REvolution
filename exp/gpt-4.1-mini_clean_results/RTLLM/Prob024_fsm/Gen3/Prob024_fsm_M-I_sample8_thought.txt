@@ -1,0 +1,17 @@
+To optimize the existing Mealy FSM for better performance, power, and area (PPA) while maintaining correctness, I will perform the following improvements:
+
+1. **Optimize Next-State Logic**: Instead of using a case statement over the current state, I will encode the next state logic with explicit combinational conditions for clarity and possibly simplify logic synthesis, potentially reducing critical path delay.
+
+2. **Reduce State Bits**: The existing FSM uses 3 bits for 6 states, which is minimal. No further bit reduction is possible without increasing logic complexity, so I will keep 3 bits.
+
+3. **Simplify MATCH Generation**: Since MATCH is asserted only when the input completes the sequence at a specific state and input, I'll implement MATCH directly in the sequential block synchronously. This will allow registering MATCH and reduce glitches, lowering power and improving timing.
+
+4. **Use a Synchronous Reset**: Retain the synchronous reset for deterministic state initialization.
+
+5. **Add a Clock Enable Signal (CE)**: To potentially reduce switching if input doesn't change (not explicitly required here, but might reduce toggling). Since input changes on every clock in the example, CE is omitted as it's not specified.
+
+6. **Minimal Code Cleanup**: Add comments for clarity and use non-blocking assignments properly.
+
+These improvements keep the FSM functionally equivalent and might reduce combinational path lengths, lowering power and improving maximum frequency achievable in synthesis.
+
+Overall, I trade a slight increase in output latency (MATCH registered) for improved power and timing stability, which is often beneficial in synchronous designs.

@@ -1,0 +1,26 @@
+A novel approach is to use a two-dimensional FSM combining walking direction and mode in a single state variable with explicit states for each mode+direction combination, plus falling, digging, and splat modes without direction (or with direction stored separately).
+
+We define a state machine with these states:
+
+- WALK_LEFT
+- WALK_RIGHT
+- DIG_LEFT
+- DIG_RIGHT
+- FALL_LEFT
+- FALL_RIGHT
+- SPLAT
+
+This simplifies the handling of direction and mode in one state variable, so transitions naturally encode direction changes.
+
+Key ideas:
+
+1. Store all states in a single FSM state variable; no separate direction variable needed.
+2. Transitions on bump_left or bump_right from walking states invert direction by switching between WALK_LEFT and WALK_RIGHT.
+3. When falling, count fall time and splat if exceeding 20 cycles.
+4. When digging, keep digging state with direction, transition to falling if ground lost.
+5. Ignore bumps when not walking, or if ground is changing (detect ground transition by comparing current ground with a registered previous ground).
+6. Implement asynchronous reset to WALK_LEFT.
+7. Moore outputs are decoded from state.
+8. Register ground input to detect edges for bump ignoring.
+
+This approach provides clear state-to-output mapping and explicit direction handling inside states, which simplifies direction logic and bump handling.

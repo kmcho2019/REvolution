@@ -1,0 +1,21 @@
+To fuse the best ideas from both examples for an optimized 256-to-1 4-bit multiplexer:
+
+- From Example 1, the hierarchical approach reduces mux fan-in and can improve timing by breaking the large mux into smaller stages.
+- From Example 2, modular 16-to-1 mux blocks and structured slicing enable efficient reuse and clear coding style.
+
+My fusion strategy:
+
+1. Implement a 3-level hierarchical mux tree:
+   - First stage: sixteen 16-to-1 4-bit muxes selected by sel[3:0].
+   - Second stage: four 4-to-1 4-bit muxes selected by sel[5:4].
+   - Third (final) stage: one 4-to-1 4-bit mux selected by sel[7:6].
+
+2. This balances the mux fan-in and tree depth better than Example 2's two stages or Example 1's large 64-to-1 muxes, achieving a good trade-off between delay and area.
+
+3. Use parameterized small mux modules (16-to-1 and 4-to-1) with part-select slicing for clarity and synthesis friendliness.
+
+4. Use packed arrays and generate loops for clean code, but avoid intermediate unpacking of all inputs to reduce area and power. Instead, directly slice the input vector per mux.
+
+5. This hierarchy reduces mux input size per stage and mux stages depth, potentially improving timing and power, while maintaining modularity and clarity.
+
+The final design will be a three-level mux tree: 16x16-to-1 muxes → 4x4-to-1 muxes → 1x4-to-1 mux.

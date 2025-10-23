@@ -1,0 +1,14 @@
+Fuse the strong FSM structure and clean separation of input registering from Example 1 with the minimalistic and direct output logic of Example 2 to yield a design that is functionally correct, simple, and optimized for PPA. 
+
+Specifically:
+- Use a single-bit state register without typedef (Example 2) for minimal area and simple synthesis.
+- Register the input 'x' to reduce glitches and stabilize inputs like in Example 1.
+- Implement asynchronous reset on sequential registers.
+- Use Moore FSM style where output depends solely on the registered state and registered input.
+- Generate output z as x_reg XOR inversion_bit, where inversion_bit is 1 in the INVERT state and 0 otherwise, preserving two's complement logic.
+- Hold output low until first '1' bit appears by initializing state to COPY (0) and inversion_bit to 0; transition to INVERT (1) state when first '1' is seen.
+- Combine next state and inversion_bit logic in one always_comb block for clarity.
+- Register both the state and inversion_bit to preserve timing and stability.
+- Generate output combinationally from stable registered signals, minimizing glitches and toggling.
+
+This approach merges the input stability and proper FSM design of Example 1 with the minimalistic state encoding and output simplicity of Example 2, improving area and power by avoiding unnecessary complexity and improving timing by registering inputs and states, yet maintaining a Moore FSM for clean output logic.

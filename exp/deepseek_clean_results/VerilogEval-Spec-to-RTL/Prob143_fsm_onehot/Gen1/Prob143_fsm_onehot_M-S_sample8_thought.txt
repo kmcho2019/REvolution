@@ -1,0 +1,13 @@
+To simplify the solution while maintaining functionality, we can make the following optimizations:
+
+1. Combine the output logic into a single assignment per output, since outputs only depend on current state (S7-S9)
+2. Use a single always block with parallel state processing
+3. Eliminate redundant logic by recognizing that:
+   - Transition to S0 is common for most states when input is 0
+   - Transition to next state (S1-S9) only occurs when input is 1 for most states
+   - Outputs are only active in states S7-S9
+
+The simplified approach will:
+- Use bitwise OR operations to combine next state transitions
+- Use simple assignments for outputs based on current state
+- Maintain parallel processing of all possible active states

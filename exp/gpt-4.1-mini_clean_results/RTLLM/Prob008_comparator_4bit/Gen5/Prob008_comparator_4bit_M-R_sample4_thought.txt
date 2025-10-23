@@ -1,0 +1,10 @@
+Refactor the 4-bit comparator by explicitly computing a subtraction result and the borrow chain using a straightforward combinational always block for clarity, instead of the generate loop and multiple assigns. This approach consolidates the subtraction and borrow logic in one place, improving readability.
+
+I will implement the subtraction in a procedural block to generate the borrow chain and difference bits simultaneously. Then, I'll separately implement equality detection by checking if A equals B with bitwise XOR and reduction.
+
+Outputs remain mutually exclusive:
+- If borrow out from the MSB subtraction is 1, A < B.
+- If borrow out is 0 and inputs are equal, A == B.
+- Otherwise, A > B.
+
+This structure separates subtraction and comparison clearly and avoids the generate construct, favoring procedural combinational code for clarity, which can be more intuitive for some verification and debugging scenarios.

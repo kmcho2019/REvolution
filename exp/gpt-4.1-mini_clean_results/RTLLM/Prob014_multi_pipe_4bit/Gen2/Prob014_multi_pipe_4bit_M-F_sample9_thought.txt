@@ -1,0 +1,25 @@
+The main issue in the original design is that the final product output (`mul_out`) is assigned in the same always block and clock cycle as the computation of the final sum (`lvl2_sum`), but it captures the *previous* value of `lvl2_sum` due to non-blocking assignment semantics.
+
+To fix this, I will separate the final summation stage and output register stage into two distinct pipeline stages. This creates a proper 4-stage pipeline:
+
+1. **Stage 0:** Generate partial products combinationally from inputs.
+
+2. **Stage 1:** Register partial products.
+
+3. **Stage 2:** Sum partial products in pairs and register the sums.
+
+4. **Stage 3:** Sum the results of Stage 2 and register into an intermediate register.
+
+5. **Stage 4:** Register the final product output (`mul_out`).
+
+This fixes the timing issue by ensuring `mul_out` is always updated from a stable registered sum at the next clock cycle, eliminating latency mismatches.
+
+Additional improvements:
+
+- I split the final addition and output register into two always blocks with proper registers.
+
+- Keep synchronous active-low reset for all pipeline registers and output.
+
+- Maintain generality and readability for size=4 (default).
+
+This explicit 4-stage pipeline cleanly stages the additions and provides correct timing for `mul_out`.

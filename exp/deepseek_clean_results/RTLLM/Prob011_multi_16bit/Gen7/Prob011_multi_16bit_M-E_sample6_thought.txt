@@ -1,0 +1,12 @@
+This design implements a radix-4 Booth encoded multiplier with three pipeline stages:
+1. Booth Encoding Stage: Encodes the multiplier (bin) into Booth digits (-2, -1, 0, +1, +2)
+2. Partial Product Generation: Generates partial products based on Booth digits
+3. Wallace Tree Reduction: Uses 3:2 compressors to reduce partial products
+4. Final Addition: Performs the final addition of reduced terms
+
+Key innovations:
+- Radix-4 Booth encoding reduces number of partial products by half (from 16 to 8)
+- Pipelined implementation improves throughput
+- Wallace tree structure optimizes critical path
+- Early termination when multiplier is zero
+- Power-optimized clock gating for idle cycles

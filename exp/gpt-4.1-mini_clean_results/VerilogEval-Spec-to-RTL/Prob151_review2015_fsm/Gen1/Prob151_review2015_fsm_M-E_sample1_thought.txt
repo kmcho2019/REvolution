@@ -1,0 +1,13 @@
+Use a Moore FSM with five distinct states:
+- SEARCH0 to SEARCH3: represent progressive detection of the pattern "1101" on the serial data input.
+  Each SEARCH state corresponds to matching a certain prefix of the pattern, allowing continuous serial matching without missing overlapping bits.
+- SHIFT: after full pattern detected, assert shift_ena for exactly 4 cycles to shift delay bits.
+- COUNT: assert counting until done_counting goes high.
+- DONE: assert done until ack is received, then return to SEARCH0.
+
+This approach eliminates a separate pattern shift register by encoding pattern matching directly in states.  
+The FSM updates on each clock edge and synchronously resets to SEARCH0 state.
+
+A 2-bit counter tracks 4 cycles of SHIFT state (0 to 3).  
+Outputs are purely combinational based on current state for clear timing.  
+Pattern detection states update according to input data without separate shift register, enabling immediate recognition of overlapping patterns.

@@ -1,0 +1,13 @@
+Instead of the conventional right-shifting Galois LFSR, we can implement a left-shifting version that achieves the same maximal-length sequence but with a different bit arrangement:
+1. The feedback polynomial remains x^5 + x^3 + 1
+2. In this left-shifting configuration:
+   - The LSB (q[0]) gets feedback from taps at positions 0 and 2 (equivalent to original taps 5 and 3)
+   - All other bits simply shift left
+   - The feedback is calculated as q[4] XOR q[2]
+3. Reset still initializes to 5'b00001
+4. This produces the same sequence of states but in reverse order compared to the right-shifting version
+
+The key advantages are:
+- Same maximal-length properties (31 states)
+- Different physical implementation that might have better PPA characteristics
+- Demonstrates flexibility in LFSR implementation while maintaining mathematical equivalence

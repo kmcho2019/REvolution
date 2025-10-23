@@ -1,0 +1,17 @@
+The original design is a clean ripple carry adder using full adders instantiated in a generate loop. To improve PPA (performance, power, area), we can focus on reducing the carry propagation delay, which is the critical path in ripple carry adders.
+
+A practical optimization for 8-bit addition without significantly increasing area or complexity is to implement a carry lookahead adder (CLA) structure. This replaces the ripple carry chain with faster carry generate and propagate logic, reducing the critical path to logarithmic rather than linear.
+
+We will implement 1-bit full adders for sum and generate/propagate signals, then build a carry lookahead block that computes carry signals in parallel using those propagate and generate bits. The carry-in is used as initial carry. This reduces delay significantly while using slightly more logic but still reasonable area and power for 8 bits.
+
+Hence, the design uses:
+- bit-level generate (g) and propagate (p)
+- carry lookahead logic to compute carries: c1 to c8
+- sum bits computed from p XOR carry_in of that bit
+- carry out is the final carry
+
+This keeps the combinational logic style, no sequential elements, and remains modular and scalable.
+
+This change improves performance by cutting down carry delay from 8 ripple stages to a few logic levels of lookahead gates. Power might increase slightly due to extra logic, but is offset by faster computation and less glitching from ripple propagation. Area increase is moderate and acceptable for improved timing.
+
+This CLA implementation is common for small-width adders like 8-bit and better suited for performance-sensitive designs.

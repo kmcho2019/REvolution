@@ -1,0 +1,10 @@
+Improve the original fully combinational multiplier by implementing a sequential shift-and-add multiplier to reduce area and power significantly.
+
+Key improvements:
+- Use a clocked process that iterates over each bit of the multiplier, adding shifted multiplicand only when the current multiplier bit is 1.
+- Store the partial sum in a register, reducing combinational logic size and switching activity at any given moment.
+- This iterative approach uses a single adder instead of multiple adders in a balanced tree, greatly reducing area and dynamic power.
+- Introduce an enable and done output signal to control operation and indicate completion.
+- The module is purely sequential, requiring a clock and reset inputs.
+
+This tradeoff sacrifices latency and throughput for better area and power efficiency, which is often beneficial in ASIC or FPGA designs where a single multiplication per cycle is not required. It aligns well with the classic shift-and-add multiplier algorithm and meets the original problem requirements with enhanced PPA.

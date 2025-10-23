@@ -1,0 +1,16 @@
+To refactor the adder-subtractor with zero flag without using an always block for the output assignment, I will implement the entire logic using continuous assignments. 
+
+The idea is to:
+- Use wires for all intermediate and output signals.
+- Calculate the conditional inversion of b and carry bits similarly.
+- Use generate for the full adder chain.
+- Assign `out` and `result_is_zero` directly using continuous assignments.
+- Since outputs are reg in the original, I'll change their type to wire for direct assign, or alternatively, keep outputs as reg and use a small always block just for output register assignment, but the aim here is purely combinational with assign.
+
+To keep output ports as reg (for synthesis tool compatibility), I can use a small always block just for assigning the final outputs from wires. Alternatively, if the outputs can be wires, the design can be fully assign-based.
+
+Here, I will keep outputs as wires to show a fully continuous assignment style, improving combinational clarity and possibly allowing simpler synthesis optimization. Also, for zero detection, I will use a reduction NOR of the final sum instead of checking for zero via if statement.
+
+This style avoids always blocks altogether, makes logic purely structural and combinational, and uses assign statements only.
+
+This approach maintains all functional aspects, fixes the zero flag bug, and clarifies the design by using purely combinational assign statements.

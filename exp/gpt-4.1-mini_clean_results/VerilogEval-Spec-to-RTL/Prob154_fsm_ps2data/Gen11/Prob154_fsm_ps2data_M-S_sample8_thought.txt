@@ -1,0 +1,7 @@
+Use a minimal two-state FSM with states IDLE and READING and a 2-bit byte counter.  
+- In IDLE, wait for a byte with in[3] = 1; when found, store it as the first byte and move to READING with counter=1.  
+- In READING, shift in each new byte by shifting the 24-bit register left by 8 bits and inserting the new byte at the least significant byte position, increment counter.  
+- When counter reaches 3 (after receiving third byte), assert done for one cycle and output the 3-byte message, then return to IDLE.  
+- Use only a single always block triggered on clk posedge with synchronous active-high reset.  
+- Drive done low by default to simplify logic, and only assert done in the cycle immediately after the third byte is received.  
+- This straightforward approach balances simplicity and functionality with minimal logic.

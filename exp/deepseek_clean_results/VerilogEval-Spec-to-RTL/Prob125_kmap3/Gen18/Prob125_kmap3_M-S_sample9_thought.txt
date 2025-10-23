@@ -1,0 +1,12 @@
+To simplify the solution while maintaining functionality, I'll:
+1. Analyze the Karnaugh map to find a minimal sum-of-products expression
+2. Observe that when a=1, output is always 1 (matches first column of K-map)
+3. When a=0, output depends on c and b:
+   - For c=1: output is ~b (from K-map rows where a=0 and c=1)
+   - For c=0: output is 0 (from K-map rows where a=0 and c=0)
+4. This leads to a simpler expression: out = a | (c & ~b)
+5. Benefits:
+   - Reduced logic levels (OR + AND + NOT vs previous MUX chain)
+   - Fewer operations
+   - Clearer direct implementation of K-map
+   - Maintains all specified behavior while being more efficient

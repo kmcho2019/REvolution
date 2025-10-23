@@ -1,0 +1,17 @@
+Simplified floating-point multiplier design:
+1. Remove pipeline stages (counter) for single-cycle operation
+2. Combine special case detection and main logic
+3. Simplify rounding logic by using only guard and round bits
+4. Reduce internal register usage by computing values directly
+5. Maintain IEEE-754 compliance with proper handling of:
+   - Sign (XOR)
+   - Exponent (sum with bias adjustment)
+   - Mantissa (24x24 multiplication)
+   - Special cases (NaN, Inf, Zero)
+   - Normalization and rounding
+
+Key optimizations:
+- Single-cycle operation (no state machine)
+- Direct computation without intermediate registers
+- Simplified rounding (no sticky bit)
+- Compact special case handling

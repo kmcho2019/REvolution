@@ -1,0 +1,15 @@
+Improved State-Based Approach:
+1. Use a state machine to clearly track the data collection process
+2. Two states: WAIT_FIRST (waiting for first byte) and WAIT_SECOND (has first byte, waiting for second)
+3. Store first byte in a register when valid_in arrives in WAIT_FIRST state
+4. When second valid_in arrives in WAIT_SECOND state, concatenate and output
+5. Reset clears all registers and returns to WAIT_FIRST state
+6. Valid_out only asserted when both bytes are received
+7. More explicit control flow matches specification exactly
+
+Key Improvements:
+- Clear state machine makes behavior unambiguous
+- Properly handles cases where valid_in isn't consecutive
+- Only outputs when two valid bytes are collected
+- Simpler timing with single register stage
+- Lower power from reduced unnecessary toggling

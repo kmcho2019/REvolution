@@ -1,0 +1,7 @@
+The original implementation uses a case statement to select the output q based on c, which is clean and efficient. To improve power, I will reduce unnecessary switching on inputs that are not selected by gating them with one-hot decoded enables. This avoids data-dependent toggling on inputs that are not contributing to output q at any time, lowering dynamic power.
+
+To do this, I will decode c into one-hot signals and AND each input bus with the corresponding select line, then OR the results. For c>=4, q will be forced to 4'hF as before.
+
+This approach maintains combinational logic with minimal extra gates, keeps timing similar, and reduces switching on unused input buses, improving power with negligible area overhead.
+
+Performance and area should remain roughly the same, with potential power savings.

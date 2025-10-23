@@ -1,0 +1,14 @@
+To optimize the existing design for better PPA without altering functionality, simplify the multiplexer hierarchy by directly decoding the 2-bit 'amount' to a 4-way mux rather than two sequential 2-way muxes. This reduces combinational logic levels and can improve timing.
+
+Next, avoid computing all four shifted versions unconditionally every cycle. Since shifts only happen when 'ena' is high (and load is low), gate the shift computations with 'ena' to reduce switching and power consumption. When not shifting, the shifted output will just hold the previous value, so we can implement this via conditional combinational logic.
+
+Also, remove the redundant self-assignment (q <= q;) in the always block, as synthesis tools infer latch or hold behavior automatically.
+
+Finally, implement the shifted value selection by a single 4-way multiplexer based on 'amount', mapping each 2-bit value to the correct shifted output:
+
+- 2'b00: left shift by 1
+- 2'b01: left shift by 8
+- 2'b10: arithmetic right shift by 1
+- 2'b11: arithmetic right shift by 8
+
+This improves timing by reducing mux levels, reduces power by gating shifts with 'ena', and marginally reduces area by eliminating one mux stage and redundant logic. The design remains functionally identical and clean.

@@ -1,0 +1,12 @@
+Novel Architectural Idea:
+Instead of using pure combinational logic, let's implement a lookup table (LUT) based approach that encodes all state transitions. This method:
+1. Uses a 6-bit one-hot encoded current state and 1-bit input to form a 7-bit address
+2. Implements a compact ROM that stores the next state values
+3. Extracts Y1 and Y3 directly from the ROM output
+4. Benefits:
+   - Easier to modify state transitions (just update ROM contents)
+   - More scalable for larger state machines
+   - Potentially more power-efficient as it avoids combinatorial glitches
+   - Clear separation between control and data path
+
+The ROM will be implemented as a case statement that covers all possible transitions, with default cases for error handling.

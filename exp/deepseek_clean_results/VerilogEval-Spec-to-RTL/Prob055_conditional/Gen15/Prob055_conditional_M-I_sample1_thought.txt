@@ -1,0 +1,24 @@
+The current solution is correct but can be optimized further for better PPA metrics. Here's the improvement strategy:
+
+1. Timing Optimization:
+   - Remove the hierarchical module instantiation (Min2) to eliminate module call overhead
+   - Use direct nested ternary operators to reduce logic levels
+   - This reduces the critical path to just one level of comparison logic
+
+2. Area Optimization:
+   - Eliminate intermediate wires (min_ab, min_cd) by using direct comparisons
+   - Remove the Min2 module to save area from module instantiation overhead
+
+3. Power Optimization:
+   - Simplified logic reduces switching activity
+   - Fewer intermediate signals means less dynamic power consumption
+
+4. Maintainability:
+   - Keep the parameterized width for flexibility
+   - Use clear, commented expressions for readability
+
+The improved design will:
+- Use a single assign statement with nested comparisons
+- Eliminate all intermediate modules and wires
+- Maintain the same functionality with better PPA
+- Keep the parameterized width for reusability

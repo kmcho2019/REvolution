@@ -1,0 +1,12 @@
+The current solution is already optimal in terms of logic implementation, using just 2 OR gates and 1 AND gate (3 gates total). However, we can potentially improve PPA by:
+
+1. Using a single AOI (AND-OR-Invert) cell which combines the OR and AND operations into one compound gate, reducing:
+   - Area: From 3 gates to 1 compound gate
+   - Delay: Single gate delay instead of two-level logic
+   - Power: Reduced switching activity and capacitance
+
+The logic can be implemented as:
+q = (a OR b) AND (c OR d)
+This matches exactly with AOI21 gate functionality where:
+AOI21(A,B,C) = (A OR B) AND C
+We'll need to pre-compute (c OR d) and use it as the third input

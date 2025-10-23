@@ -1,0 +1,14 @@
+To solve this problem, we need to design a finite state machine (FSM) with the specified behavior. The FSM has two main states: A and B. In state A, it waits for the input s to become 1, at which point it transitions to state B. In state B, it examines the input w for the next three clock cycles. To keep track of the number of clock cycles and the value of w in each cycle, we can use a counter and a variable to store the number of times w is 1. We can then use this information to determine the value of the output z.
+
+We will use the following states:
+- State A: Initial state, waiting for s to become 1.
+- State B: Examining the value of w for the next three clock cycles.
+We will also use the following variables:
+- current_state: The current state of the FSM.
+- counter: A counter to keep track of the number of clock cycles in state B.
+- w_count: A variable to store the number of times w is 1 in the last three clock cycles.
+
+The FSM will work as follows:
+1. If the current state is A and s is 1, transition to state B and reset the counter and w_count.
+2. If the current state is B, increment the counter and check the value of w. If w is 1, increment w_count.
+3. If the counter is 3, check the value of w_count. If w_count is 2, set z to 1, otherwise set z to 0. Then, reset the counter and w_count.

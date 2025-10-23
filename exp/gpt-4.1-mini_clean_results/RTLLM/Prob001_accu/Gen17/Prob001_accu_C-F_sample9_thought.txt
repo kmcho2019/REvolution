@@ -1,0 +1,7 @@
+Fuse strengths by maintaining a clean single always block with synchronous reset and non-blocking assignments, ensuring predictable, glitch-free behavior. Use an enable signal derived from valid_in to update the accumulator and counter only when input data is valid, minimizing toggling and dynamic power consumption.
+
+Accumulate inputs progressively in a 10-bit accumulator; on the 4th valid input, add the current data_in to the accumulator, output the sum, and pulse valid_out for exactly one clock cycle. Reset accumulator and counter immediately after output to prepare for the next group of four inputs.
+
+Initialize valid_out to 0 at every clock cycle to guarantee a single-cycle pulse, and keep accumulator and count registers stable when valid_in is low, preventing unnecessary switching and reducing power. This design uses minimal 2-bit counter and 10-bit accumulator registers, achieving a good balance between area and performance.
+
+This fusion benefits from clear gating (enable), minimal switching, a simple state machine, and clean timing, improving power without sacrificing timing or area.

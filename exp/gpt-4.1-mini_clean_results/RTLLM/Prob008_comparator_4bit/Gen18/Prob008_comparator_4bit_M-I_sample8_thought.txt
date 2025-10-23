@@ -1,0 +1,15 @@
+The existing design is already efficient, clean, and synthesizes well with minimal depth logic and balanced equality checking. To further improve PPA subtly:
+
+1. Use a for-generate loop with vectors instead of individual wires for equality, generate, and propagate bits to improve code compactness and potentially help synthesis tool optimizations.
+
+2. Use a single intermediate wire vector for equality bits and borrow signals to better leverage synthesis optimization and reduce code verbosity.
+
+3. Compute the borrow_out signal as a prefix OR of generate and propagate terms using a simple loop and reduce explicit long expressions, which can help synthesis tools produce better balanced logic and possibly reduce area.
+
+4. Retain the balanced AND tree for equality bits but implement it using reduction operators for even clearer code and potential better synthesis.
+
+5. Confirm outputs remain mutually exclusive.
+
+These changes preserve the original logic but give the synthesis tool a more uniform and scalable structure that can slightly improve power and area by better signal sharing and logic balancing.
+
+Overall, the goal is small incremental optimization without changing the fundamental logic or timing-critical path.

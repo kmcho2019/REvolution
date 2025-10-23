@@ -1,0 +1,11 @@
+The original design uses one-hot encoding with three flip-flops for four states, causing moderate area and power overhead, and slight timing pressure (WNS ~ -0.22 ns). To improve PPA, we can:
+
+- Use a 2-bit binary encoding for the four FSM states, reducing flip-flop count from 3 to 2.
+- This reduces area (fewer FFs) and switching power.
+- The priority logic can be implemented in a simple combinational block; although slightly more complex than one-hot, the smaller state register size benefits timing.
+- Output logic maps states to g outputs accordingly.
+- Keep synchronous active-low reset and posedge clock.
+- Use non-blocking assignments in sequential block and blocking in combinational block for clarity.
+- Ensure default states in combinational always block for safe synthesis.
+
+This approach is the minimal encoding FSM design that should reduce area and power, while potentially improving timing due to fewer flip-flops and simpler register outputs.

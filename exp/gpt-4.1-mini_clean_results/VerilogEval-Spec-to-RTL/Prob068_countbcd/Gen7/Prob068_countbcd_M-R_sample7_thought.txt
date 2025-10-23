@@ -1,0 +1,13 @@
+I will refactor the BCD counter by separating the counting logic for each digit into sequential always blocks that trigger only when their lower digit reaches 9, effectively implementing ripple-carry counters with individual enables generated from lower digit rollovers.
+
+This eliminates nested conditional increments within a single always block, potentially shortening the critical path as each digit increments only when enabled.
+
+The enables (ena) signals will be registered to align timing with the counter increments and avoid glitches.
+
+The ones digit counter increments every clock cycle unless reset. Each upper digit increments only when its enable is high, indicating a carry from the previous digit.
+
+This approach mimics a ripple carry counter architecture, which should improve timing by limiting combinational logic between flip-flops and reduce switching activity by gating increment operations per digit.
+
+Synchronous active-high reset clears all digits and enables.
+
+This modular approach preserves functionality while improving performance and power characteristics through distributed and conditional increment logic.

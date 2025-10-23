@@ -1,0 +1,18 @@
+I'll refactor the code to use a more explicit state transition structure while maintaining the same functionality. The key changes are:
+
+1. State Transition Logic:
+   - Replace the individual assign statements with a single always_comb block for clearer state transition visibility
+   - Use casez for one-hot state decoding which is more readable for FSM implementations
+   - Group related transitions together for better maintainability
+
+2. Output Logic:
+   - Keep outputs as continuous assignments but make their derivation more explicit
+   - Use state bit checks directly in output logic for clarity
+   - Maintain the same optimization for shift_ena using OR reduction
+
+3. Structural Improvements:
+   - Make the state transition priorities more explicit
+   - Keep the same efficient one-hot encoding but with more readable structure
+   - Remove any potential redundancy in state decoding
+
+The refactored version maintains the same PPA characteristics while improving readability and maintainability.

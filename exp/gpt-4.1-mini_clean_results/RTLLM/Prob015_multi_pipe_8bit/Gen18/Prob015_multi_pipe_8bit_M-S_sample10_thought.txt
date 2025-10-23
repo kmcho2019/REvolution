@@ -1,0 +1,8 @@
+Simplify the design by using only two pipeline stages for the multiplier:  
+1) Register inputs and input enable on clock edge; only sample inputs when enabled.  
+2) Compute partial products combinationally and accumulate them into a final product register on the next clock edge.  
+Use a 2-bit shift register for enable signal to track output validity.  
+This reduces pipeline depth and register usage, keeping the same functionality and timing, while simplifying control.  
+Output enable is derived from the MSB of the enable pipeline.  
+Multiplication is done by summing partial products generated from each bit of the multiplier masked by the multiplicand shifted accordingly.  
+Reset asynchronously clears all registers and outputs to zero.

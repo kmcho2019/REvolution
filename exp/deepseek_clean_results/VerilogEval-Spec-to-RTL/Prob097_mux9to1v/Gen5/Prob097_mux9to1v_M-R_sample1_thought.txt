@@ -1,0 +1,12 @@
+I'll refactor the solution to use continuous assignments (assign statements) instead of always blocks, which can lead to simpler and more direct hardware implementation. The key changes are:
+
+1. Replace the case statement with a ternary operator chain for the mux logic
+2. Remove the intermediate register since we can directly assign the output
+3. Maintain the same functionality where sel=0-8 selects a-i and sel=9-15 outputs all 1's
+4. This approach may result in slightly better synthesis as it's more explicit about the combinational logic
+
+The advantages of this approach are:
+- More concise code
+- Eliminates potential latch inference risks
+- Makes the combinational nature of the logic clearer
+- May lead to better synthesis optimization as the mux structure is more explicit

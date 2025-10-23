@@ -1,0 +1,7 @@
+To create a novel solution for the sequence detector, we can leverage the concept of using a shift register to store the recent input bits. By comparing the contents of the shift register with the desired sequence, we can determine if the sequence has been detected. This approach simplifies the state machine logic and allows for easy extension to longer sequences.
+
+The new architecture will utilize a 4-bit shift register, where each new input bit shifts the existing bits to the right, making room for the new bit at the leftmost position. This way, we can maintain a window of the last four input bits. We can then compare this window with the desired sequence (1001) using a simple combinational logic. If the contents of the shift register match the desired sequence, the sequence_detected signal is set high.
+
+This approach has the advantage of being highly scalable and easy to modify for detecting different sequences. It also reduces the complexity of the state machine, making the code more concise and easier to understand. Additionally, this design can be easily extended to detect longer sequences by increasing the size of the shift register.
+
+The reset behavior will be handled by resetting the shift register and the sequence_detected signal when the reset is active. This ensures that the sequence detector returns to its initial state, ready to start detecting the sequence from the beginning.

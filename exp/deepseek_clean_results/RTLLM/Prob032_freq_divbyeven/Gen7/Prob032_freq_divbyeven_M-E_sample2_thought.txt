@@ -1,0 +1,13 @@
+Here's a novel approach using a shift register instead of a traditional counter:
+1. Instead of counting clock cycles, we'll use a shift register that circulates a single '1' bit
+2. The shift register length is half of NUM_DIV (since we toggle on both rising and falling edges)
+3. The MSB of the shift register directly drives the clock divider output
+4. Reset initializes the shift register with a '1' in the LSB position
+5. This approach eliminates the need for comparison logic and reduces gate count
+6. The shift register naturally wraps around, simplifying the control logic
+
+Advantages:
+- No comparison operations needed (reduces critical path)
+- Simple, regular structure good for synthesis
+- Easily scales to large division ratios
+- Glitch-free output by design

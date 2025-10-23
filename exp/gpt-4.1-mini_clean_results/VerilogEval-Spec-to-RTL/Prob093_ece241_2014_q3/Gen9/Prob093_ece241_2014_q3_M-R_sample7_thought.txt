@@ -1,0 +1,23 @@
+The core concept remains to generate mux_in[3:0] outputs from inputs c and d using only 2-to-1 multiplexers inside TopModule, so that the external 4-to-1 mux with selectors a,b produces the desired K-map outputs.
+
+Refactor by explicitly defining functions for each mux_in bit as cascades of 2-to-1 muxes, avoiding direct logic expressions. Instead, use the mux2 module to create the required logic step-by-step, clarifying how the constants and inputs combine through mux2 instances.
+
+This approach makes the structure clearer and ensures minimal usage of 2-to-1 muxes:
+
+- mux_in[0] = f0 = K-map col ab=00 with c,d inputs:
+  Values: cd=00->0,01->1,11->1,10->1
+  We can implement as mux2 sel=d: if d=0 then f0=c else f0=1
+- mux_in[1] = f1 = ab=01:
+  Values all zero → wire tied to 0
+- mux_in[2] = f3 = ab=11:
+  Values: 00->0,01->0,11->1,10->0
+  This is c & d → implemented as mux2(sel=c, in0=0, in1=d)
+- mux_in[3] = f2 = ab=10:
+  Values: 00->1,01->0,11->1,10->1
+  Which is c + ~d:
+    Implement ~d as mux2(sel=d,in0=1,in1=0)
+    Then f2 = mux2(sel=d,in0=c,in1=1)
+
+Finally assign mux_in = {f2,f3,f1,f0} to correspond to ab={10,11,01,00} mapping.
+
+This refactor emphasizes building each function as a network of mux2 instances, no direct boolean operators, using assign statements for clarity.

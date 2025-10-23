@@ -1,0 +1,10 @@
+The original design uses a combinational always block with a case statement to output z=1 when x and y are equal, otherwise 0. While correct and clear, this approach compiles into a small multiplexer logic for the case statement, which is slightly more complex than a direct logic gate.
+
+To optimize for better performance, power, and area, the logic can be implemented using a simple continuous assignment with a single XNOR gate: z = ~(x ^ y). This is the minimal, canonical way to detect equality between two bits, synthesizing into a single XNOR gate with minimal area and power.
+
+This approach reduces gate count and eliminates the always block, reducing synthesis and simulation complexity. It also clearly expresses the logic intent, making the code concise and efficient.
+
+Summary of improvement strategy:
+- Replace the always @(*) case statement with a continuous assignment.
+- Use a direct XNOR operator for minimal logic.
+- Keep module interface unchanged.

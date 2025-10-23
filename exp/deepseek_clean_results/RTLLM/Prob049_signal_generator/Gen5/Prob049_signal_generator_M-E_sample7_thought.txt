@@ -1,0 +1,20 @@
+Novel Architecture: Bidirectional Shift Register with Pattern Replication
+
+Key Innovations:
+1. Instead of using arithmetic operations, we implement the triangle wave using a shift register that can shift both left and right
+2. The shift register is initialized with a single '1' in the LSB position (00001)
+3. Direction changes occur when the '1' reaches either end of the register
+4. This creates a natural triangle wave pattern without explicit counting
+5. Benefits:
+   - Eliminates arithmetic operations (no adders/subtractors)
+   - Simple boundary detection (just check MSB/LSB)
+   - Naturally scales to any bit width
+   - Power efficient as only one bit changes per cycle
+   - Minimal logic (just shift and direction control)
+
+Operation:
+- Reset: Initialize to 00001, direction = right (increment)
+- Normal operation:
+  - When '1' reaches MSB (10000), reverse direction
+  - When '1' reaches LSB (00001), reverse direction
+  - Output is the position of the '1' interpreted as unsigned value

@@ -1,0 +1,25 @@
+To fully meet the problem requirements, the fixed-point subtractor must explicitly handle the signs of the inputs and perform different operations depending on whether the signs are equal or different, while maintaining precision defined by parameters Q and N.
+
+Key points to address:
+
+1. Use the internal register `res` as requested, updated combinationally.
+2. Extract sign bits for `a` and `b`, and determine if they are the same or different.
+3. When signs are the same:
+   - Subtract `b` from `a` directly, preserving the sign of inputs.
+4. When signs differ:
+   - Add the absolute values.
+   - Determine result sign based on operand magnitudes.
+5. For signed magnitude manipulations:
+   - Extract absolute values by inverting and adding 1 when the sign bit is set (two's complement absolute value).
+6. After calculation, if the result is zero, explicitly clear the sign bit.
+7. Return `res` on output port `c`.
+
+This approach respects the problem's design for fixed-point arithmetic with sign and magnitude awareness, while still using two's complement arithmetic for absolute value extraction and operations.
+
+The combinational always block prevents latches; parameters define precision; the design is synthesizable and precise.
+
+The explicit sign handling meets the spec, addressing the previous simplistic solution's shortcomings.
+
+Note: This design assumes inputs `a` and `b` are in two's complement fixed-point format, with the MSB as the sign bit.
+
+This approach also ensures the output remains in the same fixed-point format with sign bit as MSB.

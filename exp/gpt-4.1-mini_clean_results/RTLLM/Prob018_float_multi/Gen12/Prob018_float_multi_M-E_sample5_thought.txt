@@ -1,0 +1,15 @@
+Implement a fully combinational 3-stage sequential IEEE-754 single-precision floating-point multiplier with minimal pipeline registers and built-in explicit state counter for multi-cycle sequencing. Instead of fully pipelined stages with extensive pipeline registers for all intermediate signals, use a simple FSM controlled by a 3-bit cycle counter that guides the operation through phases: input capture and decoding, mantissa multiplication and exponent addition, normalization and rounding, and final output assembly.
+
+Key innovations:
+- Use a single multiplier operation split over clock cycles controlled by the counter; multiplier itself can be combinational but outputs only latched at the right cycle.
+- Maintain minimal internal state: just mantissas, exponents, sign bits, product, rounding bits, and special flags.
+- Combine special case detection with the cycle counter steps to perform conditional flows.
+- Use direct bitwise operations to calculate sticky bits for rounding, minimizing logic depth.
+- Implement rounding logic and normalization within clocked steps controlled by the counter, minimizing combinational path.
+- Output final IEEE-754 formatted result on the last cycle.
+- Reset clears internal registers and counter.
+- This approach trades off latency (3-4 cycles per multiplication) for simplicity and potentially better timing by breaking combinational paths across cycles.
+- It avoids full pipelining and thus area overhead of multiple duplicated registers.
+- The module is easy to understand and verify, relying on explicit cycle control.
+
+This design fits well into sequential logic environments where throughput is less critical but timing and area are important, or where a minimal-control multi-cycle floating-point multiplier is preferred over fully pipelined multiplier arrays.

@@ -1,0 +1,14 @@
+A novel approach to achieve a fractional clock division by 3.5 uses a digital accumulator with phase incrementing. Instead of directly toggling clocks on rising and falling edges, we implement a phase accumulator that increments by a fractional amount on each input clock cycle. The output clock toggles whenever the accumulator overflows, generating a fractional divided clock with precise average frequency.
+
+For division by 3.5, the output frequency is `clk / 3.5 = clk * 2/7`. So, each input clock cycle, increment the phase accumulator by 2, modulo 7. Every time the accumulator wraps around, toggle the output clock. This produces a clock toggling every 3.5 input clock cycles on average.
+
+Key points:
+- Use a modulo-7 accumulator that increments by 2 every input clock.
+- Output clock toggles when accumulator overflows (wraps).
+- This yields a fractional divide by 3.5 (7/2).
+- The duty cycle tends to be balanced naturally due to toggling on accumulator wrap.
+- No need for double-edge counters or separate clocks.
+- Fully synchronous, single clock domain.
+- Reset initializes the accumulator and output clock.
+
+This accumulator-based approach ensures glitch-free, well-defined fractional frequency division without complex dual-edge logic or asynchronous clocks.

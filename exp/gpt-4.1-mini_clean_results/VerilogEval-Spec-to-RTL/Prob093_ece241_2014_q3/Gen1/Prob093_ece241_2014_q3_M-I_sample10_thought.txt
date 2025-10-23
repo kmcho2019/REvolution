@@ -1,0 +1,15 @@
+The previous solution assigned mux_in bits separately with a mixture of direct assignments and intermediate wires, and implemented NOT and 2-to-1 muxes using ternary operators. This led to simulation mismatches and unclear mux-only logic implementation.
+
+Improvement strategy:
+- Fully assign the output vector mux_in[3:0] in one statement to avoid partial assignments and simulation mismatches.
+- Implement all required logic functions using only 2-to-1 multiplexers (no direct logic gates like OR or AND) and a single 4-to-1 mux as per problem statement.
+- Implement NOT using a 2-to-1 mux.
+- Define a 2-to-1 mux module and instantiate it as needed to build all functions.
+- Use only inputs c and d to generate mux_in[3:0], representing the four inputs of the 4-to-1 mux with selector a,b outside the TopModule.
+- Derive minimal implementations for each mux_in bit strictly using 2-to-1 muxes controlled by c or d.
+- Finally, combine all mux_in bits into one bus assignment.
+
+This approach ensures:
+- Clean, synthesizable mux-only logic without inferred gates.
+- No partial or conflicting assignments to mux_in bits.
+- Clear mapping from K-map to multiplexers.

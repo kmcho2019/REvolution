@@ -1,0 +1,11 @@
+The current design is minimal and well-suited for robust edge detection with proper synchronization and single-cycle pulse outputs for rise and down signals. Given the already excellent timing and minimal area, optimization opportunities are limited without compromising metastability protection or functionality.
+
+However, we can slightly improve power by clock-gating the synchronizer flip-flops when input 'a' does not change, reducing unnecessary toggling. Since 'a' is slowly changing, this can save dynamic power by disabling the flip-flop updates unless a change is detected.
+
+We'll implement this by comparing the current sampled input 'a' with the last synchronized stage's value and only clock-enable the first flip-flop stage if they differ. The second flip-flop stage still clocks normally for timing consistency.
+
+This small change reduces toggle rate on the first stage flip-flop, improving power without affecting timing or functionality.
+
+The rise and down signals remain combinational and pulse only for one clock cycle as before, ensuring clarity and minimal area.
+
+This approach maintains full metastability protection, correct edge detection, and synchronous output pulses aligned to clk.

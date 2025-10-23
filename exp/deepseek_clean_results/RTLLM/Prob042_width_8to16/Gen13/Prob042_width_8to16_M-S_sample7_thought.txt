@@ -1,0 +1,13 @@
+Simplified State Machine Approach:
+1. Use a single state bit to track whether we have the first byte
+2. When first byte arrives (valid_in=1 and state=0), store it and set state=1
+3. When second byte arrives (valid_in=1 and state=1), concatenate with stored byte
+4. Output valid_out and data_out in the next cycle after receiving both bytes
+5. Clear state after output generation to start new pair
+6. All operations synchronized to clock edge with proper reset handling
+
+Key Simplifications:
+- Single state bit replaces multiple pipeline registers
+- Direct concatenation in output stage
+- Clear state transitions
+- Minimal control logic while meeting timing requirements

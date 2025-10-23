@@ -1,0 +1,12 @@
+To fix this module, we need to ensure shift_ena is asserted for exactly 4 clock cycles after reset. The key changes are:
+
+1. Use a 3-bit counter instead of 2-bit to properly count 4 cycles (0 to 3)
+2. Transition to IDLE state only after the 4th cycle (when counter reaches 3)
+3. Reset the counter properly when entering ACTIVE state
+4. Maintain the same state encoding and synchronous reset behavior
+
+The FSM will now:
+- Immediately enter ACTIVE state on reset
+- Count 4 cycles (0,1,2,3) while asserting shift_ena
+- Transition to IDLE after the 4th cycle (counter == 3)
+- Remain in IDLE until next reset

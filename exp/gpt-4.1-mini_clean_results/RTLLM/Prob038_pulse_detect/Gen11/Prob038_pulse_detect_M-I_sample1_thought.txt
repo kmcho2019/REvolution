@@ -1,0 +1,23 @@
+The original design is functionally correct and simple with a minimal FSM of three states and registered output to avoid glitches. However, we can optimize for slightly better performance and power by:
+
+1. Encoding the FSM with 1-bit state to reduce register usage since only two meaningful states (HIGH and not HIGH) are necessary to detect the 0->1->0 pulse.
+2. Use a single-bit state indicating whether we have seen a rising edge (data_in==1) awaiting the falling edge to detect the pulse.
+3. Perform pulse detection directly when the input falls from 1 to 0 while the state indicates "HIGH".
+4. Register the output data_out to avoid glitches.
+5. This reduces the FSM from 2 bits to 1 bit state, saves area, and simplifies the combinational logic, which can improve speed and reduce power.
+
+Overall, this approach keeps correct detection, lowers state register width and logic complexity, and keeps output registered for glitch-free operation.
+
+The states:
+- state = 0: waiting for rising edge
+- state = 1: seen rising edge, waiting for falling edge to complete pulse
+
+Transition:
+- state=0 & data_in=1 → state=1
+- state=1 & data_in=0 → pulse detected, state=0
+
+Otherwise remain in current state.
+
+The output data_out is asserted when the falling edge in state=1 is detected (pulse end).
+
+This optimizes area (fewer bits), power (less logic switching), and performance (simpler next state logic).

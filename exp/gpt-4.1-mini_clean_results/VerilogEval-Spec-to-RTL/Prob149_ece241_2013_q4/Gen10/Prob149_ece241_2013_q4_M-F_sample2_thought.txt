@@ -1,0 +1,11 @@
+Refine the water level detection logic to explicitly handle only the four valid sensor states described (000, 100, 110, 111). For any other sensor pattern, assume the closest valid state below it to avoid incorrect detection. This can be done by first checking the highest sensor s[2], then s[1], then s[0], reflecting water level from above down.
+
+To track rising water level reliably, store the previous sensor pattern instead of encoded levels and detect if the water level rises by comparing sensor patterns bitwise, treating the water level as a 3-bit binary number where higher bits set means higher level. Define water level ordinal values based on how many sensors are asserted from the highest: ABOVE(3), BETWEEN1(2), BETWEEN0(1), BELOW(0). Then detect rising when current level ordinal > previous level ordinal.
+
+Set nominal flow outputs according to the problem, based on the detected current water level ordinal.
+
+Open supplemental valve (dfr) only when rising level detected.
+
+On synchronous reset, set the system to BELOW state with all valves open.
+
+This approach ensures proper handling of unexpected sensor inputs by mapping them to closest valid levels, robust rising detection, and correct output logic matching the requirements.

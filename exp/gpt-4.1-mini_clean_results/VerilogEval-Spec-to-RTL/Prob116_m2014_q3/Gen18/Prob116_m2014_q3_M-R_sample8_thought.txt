@@ -1,0 +1,9 @@
+I will refactor the design by removing the Gray-to-binary conversion and instead use the input bits directly to index the K-map. Since the original K-map is given in terms of Gray-coded inputs for rows (x3,x4) and columns (x1,x2), I will directly map the 4-bit input to the output using a combinational LUT implemented by a lookup table encoded as a vector of 16 bits.
+
+This method avoids XOR gates, reducing switching activity and possibly area. The LUT vector will be ordered by the original input bits as the index, matching the original Gray-coded input order (x[3:0]) without conversion.
+
+Don't-care conditions will be set to zero for deterministic output.
+
+Output f will be assigned using a bit-select from the LUT vector, making the design purely combinational with minimal logic depth and no function or case statements.
+
+This approach improves clarity and can reduce delay and power while maintaining correctness.

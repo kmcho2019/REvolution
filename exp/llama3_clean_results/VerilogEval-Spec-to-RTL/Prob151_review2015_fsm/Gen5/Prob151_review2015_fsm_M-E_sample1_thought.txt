@@ -1,0 +1,7 @@
+To implement the timer finite-state machine, we will utilize a novel approach involving a hybrid state machine that combines the benefits of Mealy and Moore machines. This hybrid machine will have separate blocks for pattern detection, counter control, and acknowledgement handling, each with its own state machine. The pattern detection block will detect the '1101' sequence and generate a start signal for the counter control block. The counter control block will then assert the shift_ena signal for 4 clock cycles, store the duration value, and wait for the done_counting signal. The acknowledgement handling block will then assert the done signal and wait for the ack signal.
+
+This architecture allows for a more modular and scalable design, making it easier to modify and optimize the individual blocks as needed. The use of separate state machines for each block also reduces the complexity of the overall FSM, making it more efficient and easier to understand.
+
+The pattern detection block will use a simple serial shift register to detect the '1101' sequence. The counter control block will use a down counter to wait for the 4 clock cycles and a parallel-in serial-out shift register to store the duration value. The acknowledgement handling block will use a simple state machine to assert the done signal and wait for the ack signal.
+
+This novel architecture provides a more efficient and scalable solution for implementing the timer finite-state machine, and it can be easily optimized for power, performance, and area.

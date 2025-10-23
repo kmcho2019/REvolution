@@ -1,0 +1,7 @@
+A novel approach to detecting the sequence 1101 in an input bit stream involves utilizing a shift register to store the recent history of input bits. By comparing the contents of the shift register with the target sequence, the design can efficiently determine when the sequence has been detected. This method eliminates the need for an explicit finite-state machine, instead relying on the inherent shifting behavior of the register to track the input sequence.
+
+The key components of this design include a shift register of sufficient length to hold the target sequence (in this case, 4 bits), and a comparator to check if the contents of the shift register match the target sequence. Once a match is found, the `start_shifting` signal can be set high and maintained until the `reset` signal is asserted.
+
+This architecture is advantageous because it simplifies the logic required for sequence detection, potentially reducing area usage and improving performance. Additionally, it allows for easy modification to detect different sequences by simply changing the target sequence used in the comparator.
+
+The design should also include a mechanism to ensure that once the sequence is detected and `start_shifting` is set high, it remains high until the `reset` signal is asserted. This can be achieved by including a latch or flip-flop that is set when the sequence is detected and reset when the `reset` signal is asserted.

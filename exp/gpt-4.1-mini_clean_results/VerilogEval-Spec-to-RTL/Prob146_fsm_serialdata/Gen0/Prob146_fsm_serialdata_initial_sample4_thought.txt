@@ -1,0 +1,8 @@
+Implement a finite state machine with the following states: IDLE, START, DATA, STOP, and WAIT_STOP. 
+- In IDLE, wait for the start bit (input == 0).
+- On detecting start bit, move to DATA state to shift in 8 bits (LSB first).
+- After receiving 8 data bits, move to STOP state to check if stop bit == 1.
+- If stop bit is 1, output the byte on out_byte, assert done for one cycle, and go back to IDLE.
+- If stop bit is 0, move to WAIT_STOP state and wait until input is 1 (stop bit detected) before going back to IDLE.
+- Use synchronous active-high reset to initialize FSM and outputs.
+done is asserted for one clock cycle when a valid stop bit is detected.

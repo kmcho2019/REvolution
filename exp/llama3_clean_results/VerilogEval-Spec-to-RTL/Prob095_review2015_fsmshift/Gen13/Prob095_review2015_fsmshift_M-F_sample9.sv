@@ -1,0 +1,21 @@
+module TopModule(
+    input  logic clk,
+    input  logic reset,
+    output logic shift_ena
+);
+
+    logic [1:0] counter;
+
+    always_ff @(posedge clk) begin
+        if (reset) begin
+            counter <= 3; // Set counter to 3 to enable shift_ena for 4 cycles
+        end else if (counter > 0) begin
+            counter <= counter - 1;
+        end else begin
+            counter <= 0; // Explicitly keep counter at 0 when not resetting or counting down
+        end
+    end
+
+    assign shift_ena = (counter > 0)? 1'b1 : 1'b0;
+
+endmodule

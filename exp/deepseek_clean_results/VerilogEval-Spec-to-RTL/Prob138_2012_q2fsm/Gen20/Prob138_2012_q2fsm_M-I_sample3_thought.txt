@@ -1,0 +1,19 @@
+Improvement Strategy:
+1. State Encoding Optimization: Switch to one-hot encoding to reduce critical path delays (especially for D→F transition) since each state transition only requires changing one bit. This improves timing at the cost of slightly more area.
+
+2. Output Logic Optimization: Maintain z as a direct bit from state encoding (states E and F will have dedicated bits), eliminating combinational logic for output generation.
+
+3. Reset Handling: Keep compact synchronous reset but optimize register usage.
+
+4. Transition Logic: Use pure case statement for better synthesis predictability and potential tool optimizations.
+
+Key Benefits:
+- One-hot encoding reduces critical path from 2-bit to 1-bit changes
+- Maintains direct output assignment for zero-delay output
+- Simplified transition logic improves synthesis consistency
+- Better timing at cost of modest area increase (still better than reference)
+
+PPA Targets:
+- Reduce negative slack (tns/wns) to zero
+- Maintain power efficiency
+- Accept moderate area increase for timing gains

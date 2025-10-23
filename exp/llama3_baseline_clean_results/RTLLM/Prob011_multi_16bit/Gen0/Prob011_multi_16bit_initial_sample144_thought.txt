@@ -1,0 +1,13 @@
+To implement the unsigned 16-bit multiplier, we will use the following approach: 
+
+1. Initialize all the registers with reset values when the reset signal (rst_n) is low.
+2. On the positive edge of the clock signal (clk), update the shift count register (i) based on the start signal and the current value of the shift count register.
+3. Update the multiplication completion flag (done_r) based on the shift count register (i).
+4. Perform the shift and accumulate operation based on the start signal, the multiplicand register (areg), the multiplier register (breg), and the product register (yout_r).
+5. Assign the product output (yout) with the value of the product register (yout_r).
+
+The design will be implemented using a finite state machine (FSM) with two states: IDLE and RUNNING. 
+In the IDLE state, the module waits for the start signal to initiate the multiplication operation.
+In the RUNNING state, the module performs the shift and accumulate operation.
+
+The Verilog code will use always blocks to describe the behavior of the module at the positive edge of the clock signal (clk) and the falling edge of the reset signal (rst_n).

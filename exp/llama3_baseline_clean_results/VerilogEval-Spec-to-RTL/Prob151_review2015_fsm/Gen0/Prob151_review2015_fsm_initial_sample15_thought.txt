@@ -1,0 +1,15 @@
+The finite-state machine can be designed with the following states:
+- IDLE: Search for the pattern 1101
+- SHIFT: Shift in 4 more bits after the pattern is detected
+- COUNT: Wait for the counters to finish counting
+- DONE: Notify the user and wait for acknowledgment
+
+The state machine will transition between these states based on the input signals and the current state. 
+In the IDLE state, it will check for the pattern 1101. If the pattern is detected, it will move to the SHIFT state.
+In the SHIFT state, it will assert shift_ena for exactly 4 clock cycles and then move to the COUNT state.
+In the COUNT state, it will assert counting and wait for done_counting to be high. Once done_counting is high, it will move to the DONE state.
+In the DONE state, it will assert done and wait for ack to be high. Once ack is high, it will reset to the IDLE state.
+
+To implement this, we can use a finite-state machine with a current state and a next state. The next state will be determined based on the current state and the input signals.
+We will use a counter to count the number of clock cycles in the SHIFT state.
+We will use a shift register to store the input sequence and check for the pattern 1101.

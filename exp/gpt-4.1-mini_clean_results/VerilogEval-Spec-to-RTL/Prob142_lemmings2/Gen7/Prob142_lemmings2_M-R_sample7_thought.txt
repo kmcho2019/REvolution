@@ -1,0 +1,11 @@
+Refactor the FSM by using a single synchronous always block triggered only on clk (no async reset), and implement the asynchronous reset with a separate always block that directly sets the registers asynchronously. Also, split next-state logic computation into combinational logic for clearer separation of concerns.
+
+Specifically:
+- Use two registers: falling and direction.
+- Introduce combinational signals next_falling and next_direction.
+- The asynchronous reset is done with an always block on posedge areset, setting falling and direction immediately.
+- The main synchronous always block updates falling and direction on clk posedge.
+- The outputs remain combinational from the registered state.
+- This separation makes the design more modular, easier to modify, and can help synthesis tools optimize better.
+
+This approach is functionally equivalent but uses separate logic for async reset and next-state computation, increasing clarity and potentially improving timing by reducing the logic in the clocked block.

@@ -1,0 +1,10 @@
+Novel Architecture Idea:
+1. Instead of using a counter-based FSM, implement a shift register that stores the last 3 bytes
+2. Continuously check for the pattern where the oldest byte in the shift register has in[3]=1
+3. This approach naturally handles message boundaries by always looking for valid patterns in the stream
+4. Benefits:
+   - More robust against noise/errors in the stream
+   - Easier to extend for longer message patterns
+   - Can detect overlapping messages if needed
+   - Clear separation between data storage and pattern detection
+5. Implementation uses a 3-byte shift register and simple pattern matching logic

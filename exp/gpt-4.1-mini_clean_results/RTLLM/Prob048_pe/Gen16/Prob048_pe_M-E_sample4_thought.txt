@@ -1,0 +1,17 @@
+Implement a multiplying accumulator (MAC) using a 64-bit internal accumulator register to fully hold the intermediate results of the multiplication and accumulation without overflow or saturation.
+
+Key points of this approach:
+
+1. Use a 64-bit accumulator internally to store the full accumulation result, which prevents data loss from overflow and allows seamless accumulation of 32x32 bit multiplications.
+
+2. Output only the lower 32 bits of the accumulator to match the required output port width.
+
+3. Perform synchronous reset on the 64-bit register.
+
+4. Multiplication and accumulation are done in a single clock cycle with non-blocking assignments.
+
+5. This approach avoids saturation logic, trading off by providing the full precision in accumulation, useful in scenarios where overflow should not be masked but retained.
+
+6. This architecture allows extending the output width or further processing the high 32 bits if needed later.
+
+This design is simpler, more accurate in accumulation, and avoids saturation-related complexity, improving arithmetic correctness at the expense of output truncation. This tradeoff is often preferable in DSP and MAC units where full precision accumulation is critical.

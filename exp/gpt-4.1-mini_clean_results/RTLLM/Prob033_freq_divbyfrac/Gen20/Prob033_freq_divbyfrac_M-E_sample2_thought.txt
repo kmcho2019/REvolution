@@ -1,0 +1,37 @@
+To implement a fractional frequency divider by 3.5, a novel approach is to use a modulo-7 counter and generate the output clock by asserting a toggle signal on specific counts to produce two different half-period lengths alternately (4 and 3 clock cycles).
+
+This design uses a single clock domain and operates entirely on the rising edge of the input clock.
+
+Key idea:
+
+- Use a 3-bit counter (0 to 6) to define a 7-state cycle representing 7 input clock cycles.
+
+- The divided clock toggles at two distinct counts:
+
+  - Toggle at count 0 (start of cycle)
+
+  - Toggle at count 4 (to create uneven half-periods: one lasting 4 cycles, the other lasting 3 cycles)
+
+- This creates a waveform toggling every 4 and 3 input clocks alternately → frequency division by 3.5
+
+To improve duty cycle and smoothness, generate a phase-shifted clock by toggling the output half a clock cycle later using a fine-grained enable signal and a half-clock delay simulated with a small synchronizer (a flip-flop triggered on the next clk edge).
+
+Specifically:
+
+- Generate clk_div_pos toggling at counts 0 and 4 on clk rising edge.
+
+- Generate clk_div_neg toggling also at counts 0 and 4 but delayed by half a clock cycle via a clock enable (clk gated by clk inverted or delayed).
+
+- Finally, OR clk_div_pos and clk_div_neg for a more balanced output waveform approximating 3.5 division with improved duty cycle and reduced jitter.
+
+Implementation notes:
+
+- Use a simple clock gating technique or sample the toggling signal on inverted clock edge to approximate half clock period delay.
+
+- This method avoids the complexity of sampling counters on falling edges or asynchronous domains.
+
+- All logic runs on the input clock rising edge.
+
+- The output clk_div is the OR of two phase-shifted signals toggling in complementary fashion to yield a smooth fractional divided clock output.
+
+This is synthesis friendly, avoids asynchronous sampling, and gives a clean, stable fractional clock with a duty cycle close to 50% for the 3.5 division.

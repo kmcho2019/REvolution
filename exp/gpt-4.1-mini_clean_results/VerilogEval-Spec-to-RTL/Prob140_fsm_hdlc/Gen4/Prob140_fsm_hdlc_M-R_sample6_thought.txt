@@ -1,0 +1,19 @@
+Refactor the FSM to separate the detection logic from output signaling more explicitly. Use a simple counter to track the number of consecutive ones rather than enumerating states for each count. 
+
+The FSM will have a main state for counting ones (`COUNT`), an `OUTPUT` state for one-cycle output signaling (`disc`, `flag`, or `err`), and an `ERROR` state that stays until input zero is detected.
+
+- On input zero, reset the count.
+- On input one, increment the count.
+- When count reaches 5 and next input is zero, signal `disc` next cycle.
+- When count reaches 6 and next input is zero, signal `flag` next cycle.
+- When count reaches 7 or more, signal `err` starting next cycle, remain in `ERROR` state until input zero.
+
+The outputs `disc`, `flag`, and `err` are asserted for one clock cycle starting on the cycle after the condition is detected, ensuring outputs have correct timing.
+
+This approach simplifies state management, explicitly separates counting and output cycles, and makes output timing straightforward. The outputs are registered signals asserted in the output cycle, and the FSM resets to counting state after output cycle or after error is cleared.
+
+Use synchronous reset that brings the FSM and counters back to initial conditions.
+
+This design preserves Moore output behavior with registered outputs, but outputs assert in the output state for exactly one cycle.
+
+Overall, this provides clear logic separation, straightforward output timing, and simpler state encoding.

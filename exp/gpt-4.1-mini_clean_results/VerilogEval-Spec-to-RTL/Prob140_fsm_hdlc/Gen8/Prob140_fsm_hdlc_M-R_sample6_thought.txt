@@ -1,0 +1,5 @@
+Refactor the design by explicitly defining a Moore FSM with enumerated states that correspond to counts of consecutive ones (S0 to S6 plus an error state S7). Use an explicit state register and combinational next-state logic using a case statement. Outputs are determined solely by the state, making it a classic Moore FSM. 
+
+This separates state transition logic and output logic cleanly. Instead of separate output registers, use registered state outputs to drive disc, flag, and err signals synchronously. The synchronous reset sets the FSM to S0, representing no consecutive ones.
+
+This approach clarifies the FSM structure and output generation with standard FSM coding style, without using counters or intermediate next output registers. The outputs are asserted one clock cycle after the triggering input as required.

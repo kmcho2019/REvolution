@@ -1,0 +1,21 @@
+Re-examine the waveform to deduce a correct next state and output function. The state only changes on the rising edge of clk. Observing the state transitions:
+
+- State tends to stay the same when a=0 and b=0.
+- When b=1 and a=0, state tends to become 1.
+- When a=1 and b=1, state tends to reset to 0.
+- Sometimes with a=1 and b=0, state toggles or depends on previous state.
+
+A correct next_state can be formulated as:
+
+next_state = (state & ~(a & b)) | (~state & ~a & b)
+
+This means:
+- If currently in state=1 and a & b are not both 1, stay in 1.
+- If currently in state=0 and a=0 and b=1, then go to 1.
+- Else go to 0.
+
+Checking output q from waveform:
+- q is 1 when (state=1 & b=1) or (state=0 & a=1 & b=0).
+This matches the original q logic.
+
+Implementing this corrected next_state and keeping the q logic as before should fix the mismatches.

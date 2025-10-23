@@ -1,0 +1,27 @@
+The waveform suggests a sequential circuit that latches and holds states across clock cycles with some memory depending on input 'a'.
+
+Observations:
+- Outputs p and q are initially undefined.
+- On rising clock edges, p updates based on 'a' and previous states.
+- On falling clock edges, q updates based on p.
+- From the pattern at 90ns, 100ns, 110ns, p is set to 1 when 'a' is 1 and q is 0, and q latches p at falling edge.
+- At some points when q=1, p holds 1 or resets to 0 depending on a.
+- The outputs p and q essentially behave as a two-bit state machine.
+
+Novel approach:
+- Use a single process triggered on clock edges (posedge and negedge).
+- On posedge clock, update p based on the current a and current q.
+- On negedge clock, update q to latch the previous p.
+- Initialize p and q to unknown (x) to reflect initial waveform undefined.
+- After first posedge clock (starting at 25ns), p=0 and q=x.
+- On posedge:
+  - If q==0, p <= a.
+  - If q==1, p <= p (hold its previous value) if a=0; if a=1, p <= 1.
+- On negedge:
+  - q <= p.
+
+This preserves timing between p and q in the waveform and their dependency.
+
+Implement initial block with 'x' using Verilog 4-state logic, then the two always blocks for posedge and negedge.
+
+This will match the waveform's behavior and transitions.

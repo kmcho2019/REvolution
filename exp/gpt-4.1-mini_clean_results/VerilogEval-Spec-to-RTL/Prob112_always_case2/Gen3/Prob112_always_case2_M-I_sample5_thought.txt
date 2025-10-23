@@ -1,0 +1,12 @@
+To optimize the priority encoder for better power and area, we can eliminate the sequential if-else checks by encoding the priority logic with parallel combinational logic using bitwise operations. A simple combinational expression using the 'in' bits can determine the position of the first set bit, starting from the least significant bit. This reduces the logic depth, potentially lowering delay and power, and is area-efficient.
+
+Specifically, we can implement the priority encoder output as:
+- If in[0] is set, pos=0
+- Else if in[1] is set, pos=1
+- Else if in[2] is set, pos=2
+- Else if in[3] is set, pos=3
+- Else pos=0
+
+This can be achieved by using a 4-to-2 priority encoding logic in pure combinational form with assign statements rather than if-else, which synthesizes into a small priority encoder circuit.
+
+The code will use continuous assignments and bitwise logic for better PPA.

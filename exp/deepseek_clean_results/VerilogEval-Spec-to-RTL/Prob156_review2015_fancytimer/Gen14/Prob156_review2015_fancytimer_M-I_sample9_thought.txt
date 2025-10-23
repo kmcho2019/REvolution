@@ -1,0 +1,20 @@
+The key issues in the original implementation stem from cycle counting inaccuracies and state transition timing. Here's the improved strategy:
+
+1. **Precise Cycle Counting**: 
+   - Use a 10-bit counter (0-999) for the 1000-cycle periods
+   - Decrement the main counter only after completing a full 1000 cycles
+   - Initialize counters properly when entering COUNTING state
+
+2. **Correct Pattern Detection**:
+   - Shift pattern bits on every clock cycle in IDLE state
+   - Only transition to CAPTURE state when exact pattern is detected
+
+3. **Accurate State Transitions**:
+   - Clear transition conditions between all states
+   - Proper handling of ack signal in DONE state
+
+4. **Optimized Output Timing**:
+   - Update count output synchronously with counter changes
+   - Maintain correct counting/done signals throughout
+
+The improved version ensures exact cycle counts and proper state transitions while maintaining all specified functionality.

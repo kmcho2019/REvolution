@@ -1,0 +1,11 @@
+The task is to generate a 25-bit output vector representing pairwise equality comparisons among five 1-bit inputs (a, b, c, d, e). The output is structured as a 5x5 matrix in the output vector, where each bit represents the equality (1 if equal, 0 otherwise) of the two inputs in that row and column. For example, out[24] compares 'a' and 'a', out[23] compares 'a' and 'b', ..., out[0] compares 'e' and 'e'.
+
+We need to assign bits in such a way that out[5*(4-i) + (4-j)] = (input_i == input_j), where i and j index the inputs (0 for a to 4 for e), and the output vector starts from the comparison of a-a at bit 24 down to e-e at bit 0.
+
+Since the example shows out[24] = ~a ^ a, which is equal to 1'b1 (always 1), this matches equality. We'll implement the output bits by using equality checks (==) between each pair of inputs, and pack them in the output vector accordingly.
+
+Index mapping (row i from 0 to 4 for a to e, column j from 0 to 4 for a to e):
+
+out[24] = (a == a), out[23] = (a == b), ..., out[0] = (e == e)
+
+This can be done with nested generate loops or just explicitly assigning each bit for clarity.

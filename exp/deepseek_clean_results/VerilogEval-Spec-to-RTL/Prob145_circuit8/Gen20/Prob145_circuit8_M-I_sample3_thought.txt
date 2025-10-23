@@ -1,0 +1,17 @@
+Key observations from the waveform:
+1. p behavior:
+   - Only changes on rising clock edges
+   - Becomes 1 when clock is high AND a is high AND there was no a=1 in the previous cycle
+   - Stays 1 for exactly one clock cycle when conditions are met
+
+2. q behavior:
+   - Changes on falling clock edges
+   - Becomes 1 one full cycle after p was 1
+   - Stays 1 until the next p pulse occurs
+
+Implementation strategy:
+- Use edge detection for input 'a' to identify new pulses
+- Track previous 'a' value to detect rising edges
+- p is set on rising clock edges when conditions are met
+- q is set on falling clock edges based on previous p value
+- Need to store state between clock edges for proper timing

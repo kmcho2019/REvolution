@@ -1,0 +1,8 @@
+Refactor the implementation by expressing the logic in terms of an explicit intermediate wire for the negated x3 signal, and then combine conditions for f using these intermediate signals. This keeps the logic the same but structures it with named wires to enhance readability and modularity without changing behavior.
+
+Specifically:
+- Define wire nx3 = ~x3;
+- Use nx3 in one product term and x3 in another.
+- Assign f as the OR of these two intermediate terms.
+
+This approach uses continuous assignments and does not use an always block, consistent with the original combinational intent.

@@ -1,0 +1,12 @@
+To implement a novel architectural idea for detecting any edge in an 8-bit input vector, we can utilize a pipelined approach combined with a simple edge detection mechanism. The idea involves splitting the edge detection process into two stages: 
+
+1. **Differential Stage**: This stage calculates the difference between the current input and the previous input. This difference will be used in the next stage to detect edges.
+2. **Edge Detection Stage**: This stage analyzes the differences calculated in the previous stage and sets the corresponding output bit to 1 if an edge is detected.
+
+This approach can potentially improve performance by allowing the design to operate at a higher clock frequency due to the reduced combinational logic depth in each stage. Additionally, it allows for easier expansion to handle larger input vectors, as each stage can be independently optimized.
+
+The differential stage will calculate the XOR of the current input and the previous input, similar to the original approach, but this calculation will be done in a separate stage to reduce the combinational logic depth.
+
+The edge detection stage will then use the result from the differential stage to set the output bits accordingly. This stage will be triggered by the clock edge, ensuring that the output is updated correctly based on the edge detection.
+
+This novel architecture focuses on breaking down the edge detection process into simpler, more manageable parts, which can potentially lead to improvements in timing, power consumption, and area efficiency, depending on the specific implementation and technology used.

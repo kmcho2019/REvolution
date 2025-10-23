@@ -1,0 +1,7 @@
+To simplify the solution, we can analyze the logic for determining the flow rate based on the water level sensors and look for patterns that can be generalized. We notice that the conditions for setting `fr2`, `fr1`, and `fr0` are directly related to the current state of the water level sensors `s`. 
+
+For `dfr`, we need to detect if the water level has increased since the last clock cycle. This can be done by comparing the current state of `s` with the previous state `prev_s`. If `s` is greater than `prev_s` (in terms of the number of bits set), we should set `dfr` to `1'b1`. 
+
+This approach simplifies the conditional logic, making it easier to understand and maintain. By focusing on the comparison between the current and previous states of the sensors, we can accurately determine when to open the supplemental flow valve.
+
+Additionally, we should maintain the reset logic to ensure that the state machine resets to a known state when the `reset` signal is asserted.

@@ -1,0 +1,9 @@
+The existing code implements a finite state machine (FSM) with three states: SEARCH, BYTE1, and BYTE2. It uses two `always` blocks, one for combinational logic and one for sequential logic, to manage the state transitions and signal the receipt of a complete message. To refactor this code, we can simplify the state machine by using a single `always` block for both combinational and sequential logic, and utilize `assign` statements for simpler signal assignments.
+
+Our approach will involve:
+1. Merging the `always_comb` and `always_ff` blocks into a single `always_ff` block to manage both combinational and sequential logic. This simplification reduces the overall complexity of the code.
+2. Using `assign` statements for signals that can be directly assigned without the need for conditional statements within the `always` block. This includes the `done` signal, which can be directly assigned based on the current state.
+3. Simplifying the state machine's conditional statements to directly update the `state` and `done` signals within the `always_ff` block. This eliminates the need for intermediate signals like `next_state` and `next_msg_received`.
+4. Maintaining the same functionality and timing as the original code to ensure that the refactored version works correctly.
+
+By restructuring the code in this manner, we aim to simplify the logic, reduce the number of lines, and potentially improve the overall readability and maintainability of the code without altering its functionality.

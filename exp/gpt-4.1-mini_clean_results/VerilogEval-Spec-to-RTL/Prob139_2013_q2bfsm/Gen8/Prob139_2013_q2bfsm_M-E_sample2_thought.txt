@@ -1,0 +1,31 @@
+Use a layered FSM approach with three phases clearly separated:
+
+1. After synchronous active-low reset release, assert output f=1 for one cycle (phase 1).
+
+2. Then enter a pattern detection phase where we watch the input x for the exact sequence 1,0,1 over three consecutive clock cycles. To do this robustly, store the last three x inputs in a shift register and compare.
+
+3. When the pattern is detected, set g=1 and enter a monitoring phase for y lasting up to two cycles. Use a counter to count these cycles.
+
+4. If y==1 at any cycle during monitoring, latch g=1 permanently; else if two cycles elapse without y=1, set g=0 permanently.
+
+This approach uses a main FSM with the following states:
+- IDLE: after reset, waiting for reset release.
+- F_PULSE: output f=1 for one cycle.
+- PATTERN_WAIT: shift in x values each clock, compare last three for pattern.
+- Y_MONITOR: g=1, monitor y for up to 2 cycles.
+- G_ON_PERM: g=1 permanently.
+- G_OFF_PERM: g=0 permanently.
+
+Use a 3-bit shift register to store the last 3 samples of x (x_shift). At every clock in PATTERN_WAIT, shift in x.
+
+When x_shift == 3'b101, move to Y_MONITOR.
+
+The outputs f and g are Moore outputs based solely on state.
+
+Reset sets FSM to IDLE, clears counters and shift register.
+
+This scheme cleanly separates concerns, uses a simple pattern match via shift register, and ensures outputs and counters are updated synchronously. It avoids complex internal pattern-step states and overlapping detection since the shift register inherently manages overlapping sequences.
+
+Because outputs depend only on the state, glitches are minimized.
+
+This method is conceptually simpler, easy to verify, and stable for simulation.

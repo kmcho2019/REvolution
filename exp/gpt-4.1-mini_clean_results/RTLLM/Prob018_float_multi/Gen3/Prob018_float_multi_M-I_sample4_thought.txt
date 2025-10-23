@@ -1,0 +1,11 @@
+Improve correctness and clarity by fixing the rounding logic to correctly implement round-to-nearest-even with proper use of the mantissa LSB before rounding. Correct mantissa normalization to handle denormals and double-normalization if needed by checking leading bits beyond just one shift. Adjust exponent width and maintain consistent width as 10 bits for z_exponent to match problem description. Add sticky bit accumulation properly from shifted out bits.
+
+Implement a multi-step normalization: if the product top bit is zero, shift left until the leading bit is 1, adjusting the exponent accordingly (up to two shifts needed since 24x24 multiplication). This ensures full normalization for denormals and subnormals.
+
+Improve rounding step by capturing guard, round, and sticky bits carefully from the normalized mantissa bits. Use a nonblocking assignment carefully and correctly calculate rounding increment with proper LSB bit.
+
+Support subnormal results in case of exponent underflow by right-shifting mantissa accordingly instead of zeroing immediately.
+
+Use consistent registered signals for all intermediate values and keep FSM and pipeline steps as in the original design.
+
+This approach fixes known corner cases for IEEE 754 multiplication, correctly normalizes the mantissa product, properly applies rounding, handles exponent overflow and underflow, supports subnormal outputs, and maintains clarity and timing correctness.

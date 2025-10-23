@@ -1,0 +1,15 @@
+The function f can be realized using a combination of XOR and AND gates based on the truth table. Observing the table, f is high in these cases:
+- When x3=0 and x2=1 (irrespective of x1)
+- When x3=1 and x1=1 but not when x2=1 at the same time with x3=1.
+
+Rearranging terms, f equals (x2 & ~x3) | (x3 & x1).
+
+To create a different architecture, I will implement this function using a lookup table approach inside combinational logic with a 3-bit vector as index. Instead of a direct Boolean expression, I define a local parameter vector representing f for all 8 combinations of inputs.
+
+This uses a 3-bit vector {x3, x2, x1} as the index to a 8-bit LUT, and output f is the corresponding bit from the LUT.
+
+This architectural choice is functionally equivalent but shifts the design to a LUT style, which can be a primitive block in FPGA or synthesized efficiently in ASIC flow with a decoder and ROM cell. This approach also illustrates an alternative style suitable for reconfigurable or memory-based logic implementations.
+
+The LUT is:
+index (x3 x2 x1): f
+000:0, 001:0, 010:1, 011:1, 100:0, 101:1, 110:0, 111:1

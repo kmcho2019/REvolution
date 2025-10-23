@@ -1,0 +1,6 @@
+To implement the TopModule, we need to follow these steps:
+1. Create a 7-bit global branch history register and a 128-entry table of two-bit saturating counters.
+2. Implement the prediction logic, which hashes the 7-bit pc and 7-bit global history using xor to get a 7-bit index, and uses this index to access the saturating counters table.
+3. Implement the training logic, which updates the saturating counters table and the global branch history register based on the training inputs.
+4. Handle the case where both training and prediction occur in the same cycle, giving precedence to training.
+5. Ensure that the prediction sees the PHT state before training if training and prediction of the same PHT entry happen at the same time.

@@ -1,0 +1,9 @@
+To implement the TopModule with the given interface, we will first design the architecture of the gshare branch predictor. The predictor will consist of a 7-bit global branch history register, a 128-entry table of two-bit saturating counters (Pattern History Table or PHT), and logic to hash the 7-bit pc and 7-bit global history into a 7-bit index.
+
+When a prediction is requested, the current state of the global branch history register and the corresponding PHT entry will be used to make the prediction. The global branch history register will then be updated at the next positive clock edge.
+
+When training for a branch is requested, the PHT entry corresponding to the given pc and branch history register value will be updated to reflect the actual branch outcome. If the branch was mispredicted, the global branch history register will also be recovered to the state immediately after the mispredicting branch completes execution.
+
+To handle the case where training and prediction of the same PHT entry happen at the same time, the prediction will see the PHT state before training, and the training will modify the PHT state at the next positive clock edge.
+
+The module will be implemented using Verilog, with the necessary logic to handle the prediction and training requests, update the PHT and global branch history register, and handle the asynchronous active-high reset.

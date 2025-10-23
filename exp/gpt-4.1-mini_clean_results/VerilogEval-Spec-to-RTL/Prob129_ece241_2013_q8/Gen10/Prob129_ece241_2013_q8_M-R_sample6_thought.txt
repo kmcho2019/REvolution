@@ -1,0 +1,11 @@
+To refactor the FSM implementation while keeping the core functionality, I will:
+
+- Implement the state register separately as before with asynchronous negative-edge reset.
+- Use combinational functions to determine the next state and output based on current state and input, instead of a single always block.
+- Drive the output z through a continuous assignment (`assign`) to clearly separate output logic from state transition logic.
+- Use a case statement inside a combinational function for next state logic to maintain clarity.
+- This modular approach improves code readability and clearly distinguishes state progression and output logic, while functionally equivalent.
+
+This alternative style is often preferred in some design flows to ease analysis and verification, and the use of continuous assignment for output z can help synthesis tools optimize output timing.
+
+The FSM states and behavior remain unchanged, ensuring correct sequence detection "101" with overlapping sequences.

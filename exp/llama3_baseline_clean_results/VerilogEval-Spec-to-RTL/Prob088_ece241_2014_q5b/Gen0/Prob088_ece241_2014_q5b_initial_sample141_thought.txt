@@ -1,0 +1,12 @@
+To implement the Mealy finite-state machine as a one-hot encoded FSM, we first identify the states as A and B. In one-hot encoding, each state is represented by a unique binary vector where only one bit is '1' (hot) and all others are '0'. Here, we can represent A as 2'b01 and B as 2'b10. The machine starts in state A, which means the initial state should be 2'b01. 
+
+The state transitions are as follows: 
+- From A (2'b01) to itself if x = 0, 
+- From A to B (2'b10) if x = 1, 
+- From B to itself if x = 0 or x = 1. 
+
+The output z is determined by the current state and input x: 
+- In state A, z = x, 
+- In state B, z is the inverse of x.
+
+To implement this in Verilog, we use a reg variable to hold the current state and another reg variable for the next state. We decode the current state and input to determine the next state and the output. The state is updated on the positive edge of the clock, and we include an asynchronous active-high reset to set the state back to A (2'b01) when areset is high.

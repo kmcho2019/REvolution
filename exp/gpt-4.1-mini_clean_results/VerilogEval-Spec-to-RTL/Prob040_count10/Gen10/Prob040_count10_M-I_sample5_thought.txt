@@ -1,0 +1,12 @@
+The original design is clean and functionally optimal for a simple decade counter. To optimize for better power and possibly reduce area slightly, I will introduce a clock enable (ce) signal inside the always block that disables counting when the counter reaches 9, so the counter resets to 0 on the next cycle instead of incrementing further. This saves toggling bits on cycles when the count wraps around.
+
+While clock gating is the best power optimization, it depends on external control signals and is environment specific. Here, an internal clock enable avoids unnecessary increment operations on the wrap-around cycle, potentially reducing switching.
+
+To optimize timing (reduce critical path), the comparison remains but is done once per cycle; keeping the comparison as q == 4'd9 is straightforward and minimal.
+
+This modification will keep the counter logic simple, synchronous, and synchronous reset intact.
+
+Overall:
+- Introduce internal clock enable logic to reduce toggling at wrap-around.
+- Maintain synchronous reset.
+- Keep single always block and non-blocking assignments.

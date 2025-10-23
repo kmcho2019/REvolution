@@ -1,0 +1,8 @@
+Refactor the decade counter into a Mealy-style finite state machine (FSM) by explicitly defining the next state logic combinationally with an `assign` statement, and update the state register (`q`) synchronously on the clock edge. The reset remains synchronous active-high, resetting the counter to 1.
+
+Key changes:
+1. Use a separate combinational `next_q` signal to hold the next counter value.
+2. Implement the terminal count check with a numeric comparison (`q == 4'd10`), which is simple and clear, letting synthesis tools optimize it efficiently.
+3. Use non-blocking assignment only inside the sequential always block for updating `q`.
+4. This structure separates combinational and sequential logic clearly, improving readability and possibly aiding synthesis optimizations.
+5. Maintain the count from 1 through 10, wrapping back to 1 after 10, as required.

@@ -1,0 +1,11 @@
+To optimize the design for better PPA, I will implement the following improvements:
+
+1. Use a `case` statement for next_state logic instead of nested ternary operators, which can synthesize into cleaner, less glitchy combinational logic, potentially reducing power and improving timing.
+
+2. Incorporate the output `z` as a simple combinational function directly related to the state encoding, avoiding multiple comparisons by using state bits to decode output.
+
+3. Encode the states in a way that groups the 'z=1' states (E=4 and F=5) together so that the most significant bit of the state can directly serve as `z`. Since E=4(100) and F=5(101) both have MSB=1, `z = state[2]` reduces logic and glitches.
+
+4. Keep synchronous reset and state register update logic as is for robustness.
+
+This approach reduces combinational logic complexity, logic transitions, and potentially area and power while preserving functionality and improving timing by simplifying next_state and output logic.

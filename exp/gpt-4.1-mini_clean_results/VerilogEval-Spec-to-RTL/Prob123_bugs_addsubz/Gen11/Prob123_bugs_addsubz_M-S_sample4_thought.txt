@@ -1,0 +1,8 @@
+To simplify the design while maintaining correct functionality, I will:
+
+- Use the built-in '+' operator with a conditional subtraction approach by adding `a` and either `b` or `-b` depending on `do_sub`.
+- Implement subtraction as addition with two's complement: `a + (~b + 1)` when `do_sub` is high.
+- Calculate the zero flag using a straightforward reduction NOR of the output.
+- Use a single always_comb (or always @(*) in Verilog 2001) block with simple if-else logic to assign `out` and `result_is_zero`.
+- Keep `out` and `result_is_zero` as regs as per the original interface.
+- This reduces complexity by relying on synthesis tools to handle addition/subtraction efficiently without explicit carry logic, while preserving clarity and correctness.

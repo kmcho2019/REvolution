@@ -1,0 +1,5 @@
+Refactor by separating the state register (q) from the next-state combinational logic entirely, using an explicit combinational always block to compute the next state on any input change (data or q). Implement the load function by selecting the source of the next state with a mux before registering it. Represent the 16x16 grid as a 2D reg array for clarity inside sequential logic, and use functions to compute wrapped indices and neighbor sums to improve code modularity and readability.
+
+This approach uses an explicit combinational block for the next state to avoid multiple nested generate loops, replacing them with a clear double nested for-loop and function calls for wrap-around indexing and neighbor sum calculation. The design maintains synchronous updates at the clock edge and synchronous loading, but makes combinational next state calculation more structured and succinct.
+
+This refactoring improves readability, helps debug and modify neighbor sums more easily, and clarifies load vs update multiplexing. It also centralizes wrapping logic in a function, making it easier to change grid size if needed, and reduces repeated arithmetic for wrapping indices.

@@ -1,0 +1,44 @@
+The existing solution correctly derives each mux input line (mux_in[3:0]) using only 2-to-1 multiplexers to implement NOT, AND, and OR gates, producing logic that matches the K-map columns for fixed a,b selectors. The mapping between ab and mux_in bits is correct. 
+
+Since the code logically matches the K-map, the likely reason for simulation mismatches is unnecessary complexity or subtle glitches caused by using many mux-based gates.
+
+To improve power, performance, and area (PPA), we can:
+
+- Simplify the logic expressions for mux_in lines to minimize gate usage.
+- Implement NOT gates using only mux2 modules but reduce their usage.
+- Share intermediate signals if any appear multiple times.
+- Replace NOT gate with direct assign statements for better synthesis (if allowed) since only multiplexers are allowed for logic gates.
+- Simplify mux2 usage: for example, for NOT gate, using mux2 with inputs 1 and 0 is fine but we can ensure correct signal names and fewer instantiations.
+- Replace or_gate and and_gate modules with direct mux2 usage inside TopModule to reduce module instantiations.
+- Since the problem explicitly forbids other gates, but allows as many 2-to-1 muxes as needed, but fewer is better.
+- Implement all gates inline with mux2, no intermediate modules to reduce overhead.
+- Confirm the bit order mapping with the problem: mux_in[0] = ab=00, mux_in[1] = ab=01, mux_in[2] = ab=11, mux_in[3] = ab=10.
+
+The final code uses only mux2 modules, fewer overall modules, and clearer assignments.
+
+Function simplifications:
+
+- f0 = c + d (OR)
+- f1 = 0
+- f2 = c & d (AND)
+- f3 = c + ~d (OR with NOT d)
+
+Implementation plan for NOT d:
+
+- not_d = mux2(sel=d, in0=1, in1=0)
+
+For OR gates:
+
+- OR(x,y) = mux2(sel=x, in0=y, in1=1)
+
+For AND gates:
+
+- AND(x,y) = mux2(sel=x, in0=0, in1=y)
+
+We'll directly instantiate mux2 muxes inline in TopModule without separate modules for AND/OR/NOT.
+
+This reduces code complexity and improves clarity and possibly synthesis optimization.
+
+The final mux_in vector will be assigned as {f3,f2,f1,f0} per mapping.
+
+This solution ensures correctness, minimal mux usage, and respects problem constraints.

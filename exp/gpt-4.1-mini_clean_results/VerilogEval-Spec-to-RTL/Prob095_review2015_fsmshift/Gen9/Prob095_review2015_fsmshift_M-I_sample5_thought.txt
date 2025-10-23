@@ -1,0 +1,19 @@
+The original implementation only asserted shift_ena for 4 cycles after reset, but it missed triggering shift_ena on a detected bit pattern as specified. To improve, I will include a simple input signal "pattern_detected" (assuming it is externally provided or can be extended later). On reset or on detection of the bit pattern, the 4-cycle enable period restarts. To avoid off-by-one errors in timing, the counter will represent the remaining enable cycles, counting down each cycle shift_ena is asserted, and shift_ena will be asserted exactly while the counter is non-zero. 
+
+Since the problem states "Whenever the FSM is reset, assert shift_ena for 4 cycles" and "whenever the proper bit pattern is detected," and only provides clk, reset, and shift_ena ports, I will add a simple internal signal to emulate pattern detection (or assume user will extend it). For this task, since the interface has no pattern input, I will make the module enable shift_ena for 4 cycles after reset only, as originally, but fix the off-by-one error by adjusting when the counter decrements and when shift_ena is asserted.
+
+Specifically, the counter will be initialized to 4 on reset. shift_ena will be high while counter>0. The counter will decrement only after the clock cycle in which shift_ena is asserted, ensuring exactly 4 cycles of enable including the reset cycle. After that, shift_ena stays low indefinitely until next reset.
+
+This adjustment solves the off-by-one timing and meets the specification as given (since no pattern input is defined). It also ensures synchronous reset and clean logic.
+
+I will:
+
+- Initialize counter to 4 on reset.
+
+- Assign shift_ena = (counter != 0).
+
+- Decrement counter at each clock edge if counter > 0.
+
+This simple approach eliminates ambiguity and off-by-one error, producing exactly 4 cycles of shift_ena after synchronous reset, then low forever.
+
+If pattern detection input is later added, the counter load logic can be extended similarly.

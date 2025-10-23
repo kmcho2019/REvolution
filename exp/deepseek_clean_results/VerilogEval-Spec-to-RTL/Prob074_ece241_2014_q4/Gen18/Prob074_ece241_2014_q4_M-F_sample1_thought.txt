@@ -1,0 +1,17 @@
+To address the synthesis issues while maintaining the same functionality, we need to make the following improvements:
+
+1. Replace initial values with explicit synchronous reset: Instead of using initial values in reg declarations (which may not synthesize reliably), we'll implement a synchronous reset mechanism.
+
+2. Simplify feedback paths: The XOR feedback path is particularly tricky for synthesis. We'll maintain the same logic but ensure it's implemented in a way that's more synthesis-friendly.
+
+3. Separate combinational and sequential logic clearly: This helps synthesis tools better understand the design intent.
+
+4. Use standard synthesis patterns: All flip-flops will use the same reset pattern and non-blocking assignments.
+
+5. Maintain the same gate functionality: The XOR, AND, and OR gates with their respective feedback paths will remain functionally identical.
+
+The key changes are:
+- Adding a synchronous reset signal
+- Removing initial values in favor of reset logic
+- Keeping the same gate implementations but with more explicit structure
+- Ensuring all flip-flops are properly reset to 0

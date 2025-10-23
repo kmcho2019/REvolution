@@ -1,0 +1,9 @@
+To implement the gshare branch predictor, we need to create a module with two main components: a 7-bit global branch history register and a 128-entry table of two-bit saturating counters. 
+
+We will use the 7-bit pc and the 7-bit global history to generate a 7-bit index via XOR hashing, which will be used to access the pattern history table (PHT). 
+
+When a prediction is requested, we use the current state of the branch history register and the given pc to generate the index, and then use the corresponding counter value in the PHT to determine the predicted branch direction. 
+
+When training is requested, we update the counter value in the PHT based on the actual branch outcome and whether it was a misprediction. If it was a misprediction, we also recover the branch history register to the state immediately after the mispredicting branch completes execution.
+
+We need to handle the case where training and prediction of the same PHT entry happen at the same time, making sure that the prediction sees the PHT state before training.

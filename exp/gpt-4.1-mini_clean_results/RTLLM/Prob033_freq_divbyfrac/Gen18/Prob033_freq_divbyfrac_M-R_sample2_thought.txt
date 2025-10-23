@@ -1,0 +1,9 @@
+Refactor the fractional divider by explicitly implementing double-edge clocking: use two counters running on the positive and negative edges of the clock, each generating pulses with different counts (4 and 3 cycles respectively) to create uneven half periods.
+
+- The posedge-driven counter counts from 0 to 3 (4 cycles), producing a pulse signal `clk_div_pos`.
+- The negedge-driven counter counts from 0 to 2 (3 cycles), producing a pulse signal `clk_div_neg`.
+- Both pulse signals are combined with a logical OR to produce the final clock output, achieving a 3.5x division (7 cycles total).
+
+This approach directly implements the double-edge clocking technique as required, with clean separation of positive and negative edge logic, avoiding any complicated phase shift approximations. The design will reset counters synchronously on posedge to avoid glitches, and the outputs will be registered to maintain signal integrity. This structure ensures a smooth fractional clock output with balanced timing and proper duty cycle.
+
+This matches the problem specification exactly: counts 4 and 3 clock cycles on posedge and negedge, combined to form the fractional clock, using double-edge triggering for the half-cycle phase shift.

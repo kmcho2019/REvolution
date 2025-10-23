@@ -1,0 +1,13 @@
+To model the Lemmings' behavior using a Moore state machine, we'll need to define states for walking left, walking right, falling, and digging. The state machine will transition between these states based on the inputs (bump_left, bump_right, ground, dig) and current state. 
+
+We can use two variables to track the current state and direction. The current state can be one of idle (initial state, which transitions to walking left after reset), walking, falling, or digging. The direction can be either left or right.
+
+On the positive edge of the clock, we'll evaluate the current state and inputs to determine the next state and direction. 
+
+If the current state is walking and the Lemming is bumped, it will switch direction. If there's no ground, it will start falling. If it's told to dig and there's ground, it will start digging.
+
+If the current state is falling, it will continue falling until it hits the ground again, at which point it will resume walking in its previous direction.
+
+If the current state is digging, it will continue digging until there's no ground, at which point it will start falling.
+
+We'll also need to handle the asynchronous reset signal (areset) to reset the state machine to walk left.

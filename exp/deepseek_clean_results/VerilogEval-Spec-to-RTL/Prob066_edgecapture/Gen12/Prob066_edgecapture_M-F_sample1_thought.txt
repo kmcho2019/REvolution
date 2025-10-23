@@ -1,0 +1,14 @@
+The key issue is the timing of edge detection - we need to compare the current input with the input from the previous cycle, not the stored value from the current cycle. Here's the corrected approach:
+
+1. **Proper Edge Timing**: We need to compare the current input (in) with the input from exactly one cycle ago. This requires storing the input value at each clock edge before it changes.
+
+2. **Immediate Comparison**: The falling edge detection (1→0 transition) should be done by comparing the stored previous value with the current input value in the same cycle.
+
+3. **Sticky Capture**: Once a falling edge is detected on any bit, that bit's output should remain high until reset, as specified.
+
+4. **Reset Handling**: Maintain synchronous reset functionality to clear all registers.
+
+The fix involves:
+- Properly sequencing the input storage and comparison
+- Maintaining the same sticky capture behavior
+- Ensuring the edge detection happens at the correct cycle boundaries

@@ -1,0 +1,12 @@
+Here's a novel approach using a priority encoder concept:
+
+1. Instead of decoding all inputs separately, we'll treat the problem as a priority encoding where certain input combinations take precedence over others.
+2. The key observation is that the output is primarily 0 only in specific cases (ab=01, ab=00 with cd=00/01, or cd=01 with any ab)
+3. We can implement this as:
+   - Default output is 1 (covering most cases)
+   - Override to 0 only when:
+     * cd=01 (highest priority)
+     * OR (cd=00 AND ab is not 10/11)
+     * OR (cd=1x AND ab=01)
+4. This approach minimizes logic by focusing on the exceptions rather than enumerating all cases
+5. The don't-cares are used to maximize the default 1 case

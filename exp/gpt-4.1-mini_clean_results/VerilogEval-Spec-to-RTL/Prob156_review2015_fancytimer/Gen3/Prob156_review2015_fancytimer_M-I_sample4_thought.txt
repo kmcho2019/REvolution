@@ -1,0 +1,27 @@
+Fix the core functional issues:
+1. Correct the delay bit shifting to properly load the 4-bit delay input MSB first. The spec says "MSB first", so we must shift delay_reg left and insert new bits at the LSB side, as was done, but let's clarify and confirm the usage carefully. The original code was correct in shifting delay_reg left and adding data at LSB, so no change is needed there. The main confusion was in the feedback, but this is correct for MSB first serial input.
+2. Fix the off-by-one error in timer counting:
+   - The timer must count exactly (delay+1)*1000 cycles.
+   - The original code transitions to DONE when tick_counter == 0 and cycle_counter == 999, meaning it counts one extra cycle.
+   - To fix, we will count the cycle_counter from 0 to 999, decrement tick_counter at cycle_counter==999 if tick_counter > 0, and when tick_counter == 0 after decrement, we immediately transition to DONE state without counting further cycles.
+   - Thus, when tick_counter reaches 0, we stop counting further cycles and assert done right away.
+3. Adjust the output `count` so it represents the remaining time as specified:
+   - count output equals the current remaining delay count.
+   - Remain stable for 1000 cycles for each count value (delay, delay-1,...0).
+   - Implement output count = tick_counter - 1 during counting because tick_counter counts from delay+1 down to 0, but the displayed remaining count should show delay first and count down to zero.
+   - When tick_counter == 0, count is zero for 1000 cycles.
+4. Minor cleanups:
+   - Do not change pattern_shift during LOAD_DELAY, COUNTING, or DONE states as per spec.
+   - Keep outputs well-defined at all times.
+   - Reset outputs at reset appropriately.
+5. Improve FSM style by using a separate output logic block for outputs for cleaner separation.
+6. Use SystemVerilog enums and nonblocking assignments consistently.
+
+This approach fixes the timing and counting issues precisely to meet the spec. It keeps a simple FSM for clarity and correctness.
+
+---
+
+Additional PPA improvements (optional):
+- Gate pattern_shift updates only in IDLE to save power.
+- Combine counting logic carefully for clarity.
+- Use explicit signal names and comments for maintainability.

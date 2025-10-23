@@ -1,0 +1,22 @@
+Fusion Strategy:
+1. Timing Optimization:
+   - Use Example 2's approach of separate always blocks for each counter to reduce combinatorial depth
+   - Keep Example 1's direct BCD counters for seconds and minutes (simpler than decoding)
+   - Adopt Example 2's single hour counter (1-12) with BCD decoding for cleaner hour logic
+
+2. Power Optimization:
+   - Use Example 2's gated rollover signals (sec_rollover, min_rollover)
+   - Keep Example 1's PM toggle logic but move it to hour counter block
+   - Maintain Example 2's ena-gated computations
+
+3. Area Optimization:
+   - Use Example 1's direct BCD counters for seconds/minutes (no conversion needed)
+   - Use Example 2's single hour counter with BCD decoding (saves registers)
+   - Share common BCD increment patterns between seconds and minutes
+
+Key Improvements:
+- Combined direct BCD counters for seconds/minutes with single hour counter
+- Optimized rollover logic with gated signals
+- Clean separation of counter logic blocks
+- Efficient PM toggling only on hour changes
+- Reduced comparison operations through range checks

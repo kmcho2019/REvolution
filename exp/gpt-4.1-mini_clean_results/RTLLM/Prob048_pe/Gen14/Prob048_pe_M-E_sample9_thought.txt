@@ -1,0 +1,9 @@
+Implement the multiplying accumulator by splitting the 64-bit accumulation into two 32-bit halves to reduce combinational path delay. The partial sum will be stored in two 32-bit registers: one for the lower half and one for the upper half. Multiplying two 32-bit operands yields a 64-bit product which will be split into lower and upper 32-bit parts. 
+
+In each clock cycle, the lower half of the product is added to the lower accumulator half with carry generation. Then the upper half accumulator adds the upper half of the product plus the carry from the lower half addition. This architecture avoids a full 64-bit adder in one stage, instead uses two 32-bit adders and a carry propagate between them, reducing the critical path length.
+
+The output `c` provides the lower 32 bits of the accumulated sum (the lower half accumulator register).
+
+Reset synchronously clears both accumulators to zero.
+
+This two-stage addition pipeline within a single clock cycle improves timing, separates the addition logic, and can be further optimized or pipelined if desired.

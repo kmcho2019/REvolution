@@ -1,0 +1,13 @@
+Novel Architectural Idea:
+Instead of using direct bit concatenation or generate loops, we'll implement the bit reversal using a lookup table (LUT) approach. This method:
+1. Pre-computes all possible 8-bit reversed patterns (256 entries)
+2. Uses the input as an address to select the pre-reversed output
+3. Offers constant-time operation regardless of bit width
+4. Can be efficiently implemented using a case statement
+5. Provides potential power savings since only one output transition occurs per input change
+
+Advantages:
+- Deterministic timing (single level of logic)
+- No bit-position dependencies
+- Easily synthesizable to ROM-like structures
+- Scales well to wider buses (though storage grows exponentially)

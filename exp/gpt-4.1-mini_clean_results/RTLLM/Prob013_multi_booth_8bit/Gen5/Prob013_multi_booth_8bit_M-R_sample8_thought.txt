@@ -1,0 +1,11 @@
+Refactor the original design into a synchronous finite state machine (FSM) with three states: IDLE, CALC, and DONE. This structure clarifies operation phases and aids synthesis tools by avoiding complex variable shifts inside sequential logic.
+
+- On reset, the multiplier and multiplicand registers are loaded with sign-extended inputs.
+- The FSM enters CALC state and iterates 16 cycles using a counter.
+- On each CALC cycle:
+  - Instead of shifting multiplicand by variable amount, keep it fixed.
+  - Use a partial product register to accumulate results.
+  - For each cycle, examine the corresponding multiplier bit and conditionally add the multiplicand shifted by current counter (via a combinational fixed shift before sequential addition).
+- After all bits are processed, output the product and assert ready signal.
+- This approach avoids variable shifts inside always block by computing shifted multiplicand outside the sequential block.
+- The FSM structure cleanly separates initialization, calculation, and completion phases, improving readability and synthesis friendliness.

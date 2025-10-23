@@ -1,0 +1,7 @@
+A different architectural approach is to implement the Karnaugh map function using a small combinational lookup table (LUT) approach via a case statement. Here, instead of directly writing a boolean expression, I decode the 4-bit input into explicit 16 cases (all possible inputs). This method ensures a fully accurate function implementation directly from the truth table, is very readable, and easy to verify or modify.
+
+This approach trades off minimal gate-level logic for simplicity and explicitness, which can help during debugging or when integrating with FPGA LUTs or ROM-based implementations. Although it may have slightly higher area or power due to enumerating all cases, it allows straightforward extension or adaptation.
+
+Moreover, this new design uses a combinational always block with a case statement assigning the output, differing completely from the previous continuous assignment style. This structural difference can be beneficial for certain synthesis tools or target technologies.
+
+Hence, the new idea is to map the function explicitly via a case statement over the 16 input combinations derived from the Karnaugh map.

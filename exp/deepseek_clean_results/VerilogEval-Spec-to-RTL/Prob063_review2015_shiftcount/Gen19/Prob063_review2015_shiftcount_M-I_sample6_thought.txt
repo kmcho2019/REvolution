@@ -1,0 +1,15 @@
+Improvement strategy based on PPA metrics:
+1. Timing Optimization: The current design has a negative WNS (-0.28ns). To improve timing:
+   - Break the decrement operation into smaller steps using carry-lookahead logic
+   - Use parallel prefix computation for the decrementer to reduce critical path
+2. Power Optimization:
+   - Add explicit "else" case to prevent unnecessary transitions
+   - Use clock gating for the hold state when neither operation is active
+3. Area Optimization:
+   - Maintain the current simple structure as area is already minimal
+   - Avoid adding complex logic that would increase area
+
+Key changes:
+- Implement a faster decrement operation using carry-save logic
+- Explicit hold state to optimize power
+- Maintain clean, readable structure while improving timing

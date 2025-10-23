@@ -1,0 +1,9 @@
+Refactor the radix-2 divider to a clean multi-cycle synchronous design with a minimal FSM using explicit states IDLE, RUN, and DONE to control operation flow.  
+Declare all intermediate signals and registers at module scope to avoid illegal in-block declarations.  
+Perform the shift, subtract, and decision logic combinationally with separate signals and update registers synchronously on clock edges.  
+Use a 4-bit counter to track iteration count from 0 to 8 for the division cycles.  
+On start (opn_valid & idle), latch inputs, convert to unsigned magnitude if signed, and initialize the shift register (SR) holding remainder and quotient bits.  
+During RUN state, at each clock cycle perform shift-left on SR, subtract divisor magnitude from remainder portion, and update SR accordingly based on borrow.  
+When count reaches 8, go to DONE state where final quotient and remainder are sign-corrected and output is marked valid.  
+On reset or new operation, clear outputs and states.  
+This clean FSM approach clarifies operation phases, eliminates in-block variable declarations, and simplifies synthesis and simulation.

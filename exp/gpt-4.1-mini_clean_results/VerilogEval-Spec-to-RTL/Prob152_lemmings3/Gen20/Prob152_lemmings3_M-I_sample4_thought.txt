@@ -1,0 +1,5 @@
+To improve PPA (timing, power, and area), I will simplify the state encoding by separating direction and mode bits more explicitly, reducing combinational logic depth and state logic complexity. Instead of combining digging into the state as a separate bit, I will encode the FSM in 4 states to directly represent walking left, walking right, falling left, and falling right, with an additional digging flag as a separate flip-flop. This keeps the FSM smaller and makes direction changes and mode transitions clearer and more direct, reducing logic complexity and toggle rates.
+
+The digging flag will be stored in a single register updated only when conditions allow (ground and walking), minimizing toggles. The direction and mode bits will be stored in a 2-bit state register. The logic prioritizes falling over digging and digging over bump direction switching, maintaining the Moore FSM structure with asynchronous reset.
+
+This approach reduces the state register width from 3 to 2 bits plus a separate digging bit, simplifying next-state logic and output decoding, potentially improving timing and power while keeping the design fully compliant and correct.

@@ -1,0 +1,7 @@
+To implement the TopModule, we need to create a four-bit shift register that can also act as a down counter. The module will have two modes of operation: shifting and counting. When shift_ena is 1, the module will shift in the data from the most significant bit (MSB) to the least significant bit (LSB). When count_ena is 1, the module will decrement the number currently in the shift register. Since the system never uses both shift_ena and count_ena together, we don't need to worry about prioritizing one over the other.
+
+We can use a 4-bit register to store the current value, and use the clk signal to trigger the update of the register. We will also need to use conditional statements to determine whether to shift or decrement the value based on the shift_ena and count_ena signals.
+
+To shift the data in, we will use a concatenation operation to create a new value with the incoming data as the MSB and the current value shifted one bit to the right. To decrement the value, we will use an arithmetic subtraction operation.
+
+We will use a sequential always block to update the register on the positive edge of the clock.

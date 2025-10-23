@@ -1,0 +1,18 @@
+I will implement the timer as a simple finite state machine with four states: SEARCH, LOAD_DELAY, COUNT, and DONE_WAIT_ACK.
+
+- In SEARCH state, a 4-bit shift register tracks incoming bits to detect the start pattern 1101.
+- Upon detecting 1101, the FSM transitions to LOAD_DELAY to serially shift in 4 bits (MSB first) into delay_reg.
+- After loading delay_reg, the FSM goes to COUNT state, where it counts clock cycles.
+  The count target is (delay + 1) * 1000 cycles.
+- To output the current remaining count on count[3:0], I will use a cycle_counter and a separate down-counter that decreases every 1000 cycles.
+- This down-counter starts at delay and decrements each 1000 cycles until it reaches zero.
+- While counting, counting=1, done=0, and count outputs the current down-counter value.
+- When done, FSM moves to DONE_WAIT_ACK state, asserts done=1, counting=0, and waits for ack=1.
+- When ack=1, FSM returns to SEARCH state and clears registers.
+
+All operations are fully synchronous with clk and synchronous reset.
+
+This approach is straightforward, clean, and avoids complex division by 1000 by using a clock cycle counter and a separate down-counter.
+The MSB-first shifting of delay bits is explicit, and the output count matches the current delay segment.
+
+This design cleanly separates pattern detection, delay loading, counting, and done/ack waiting.

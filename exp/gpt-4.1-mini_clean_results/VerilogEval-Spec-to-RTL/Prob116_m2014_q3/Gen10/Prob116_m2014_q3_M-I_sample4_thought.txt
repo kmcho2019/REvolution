@@ -1,0 +1,41 @@
+The main issue is the incorrect mapping of input bits to the Karnaugh map variables, causing mismatched minterms. The problem states inputs x[3:0] correspond to x1 through x4 in order: x[0] = x1, x[1] = x2, x[2] = x3, x[3] = x4. The Karnaugh map rows are indexed by x3x4 (so row = x[2]x[3]) and columns by x1x2 (column = x[0]x[1]). To avoid confusion, I will rename and map bits explicitly following this indexing.
+
+After mapping, I will write the Karnaugh map cells as per the problem's table:
+
+Rows (x4x3): x4 = x[3], x3 = x[2]
+Cols (x1x2): x1 = x[0], x2 = x[1]
+
+K-map (rows x4x3, cols x1x2):
+
+        00  01  11  10
+00(d) | d | 0 | d | d |  (x4=0,x3=0)
+01    | 0 | d | 1 | 0 |  (x4=0,x3=1)
+11    | 1 | 1 | d | d |  (x4=1,x3=1)
+10    | 1 | 1 | 0 | d |  (x4=1,x3=0)
+
+I will treat don't-cares (d) as beneficial for simplification.
+
+Next, identify 1s and cover them with minimal terms:
+
+1) Cells with '1' at (x4,x3,x1,x2):
+ - (0,1,1,1): ~x4 & x3 & x1 & x2
+ - (1,1,0,0): x4 & x3 & ~x1 & ~x2
+ - (1,1,0,1): x4 & x3 & ~x1 & x2
+ - (1,0,0,0): x4 & ~x3 & ~x1 & ~x2
+ - (1,0,0,1): x4 & ~x3 & ~x1 & x2
+
+By grouping:
+
+- For row 11 (x4=1,x3=1) columns 00 and 01: x4 & x3 & ~x1 (since x2=0 or 1)
+- For row 10 (x4=1,x3=0) columns 00 and 01: x4 & ~x3 & ~x1 (x2=0 or 1)
+- For cell (0,1,1,1): ~x4 & x3 & x1 & x2
+
+Thus, minimized expression is:
+
+f = (x4 & x3 & ~x1) | (x4 & ~x3 & ~x1) | (~x4 & x3 & x1 & x2);
+
+This expression covers all 1s in the map considering don't-cares as 0 or ignored.
+
+This clear mapping and minimal expression will be implemented as a continuous assignment.
+
+This fixes the bit mapping and includes all necessary minterms for correctness.

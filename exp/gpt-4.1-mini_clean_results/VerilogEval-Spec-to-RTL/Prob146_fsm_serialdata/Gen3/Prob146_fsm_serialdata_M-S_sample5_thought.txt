@@ -1,0 +1,12 @@
+To simplify the design while maintaining correct functionality, I will reduce the number of states by merging the STOP and WAIT_STOP states into a single STOP state that handles stop bit checking and waiting for a valid stop bit. This eliminates one state and the associated transitions.
+
+In this simpler FSM:
+- IDLE waits for the start bit (0).
+- RECEIVE shifts in 8 data bits LSB first.
+- STOP checks for the stop bit (1); if correct, asserts done and outputs the byte; if incorrect, it stays in STOP waiting for a stop bit.
+
+This reduces state encoding complexity from 2 bits to 2 bits still but with fewer states and transitions, making the logic simpler. Done is asserted for one cycle on valid stop bit detection, and out_byte is updated accordingly.
+
+I will also remove clock enables and keep straightforward synchronous updates to registers for clarity and minimal logic.
+
+This approach retains the core functionality and timing (pos. edge triggered), while being easier to understand and implement.

@@ -1,0 +1,5 @@
+To avoid multiple conflicting assignments to individual bits of the output register within the same always block, we can treat the output `out` as a whole 8-bit register and update it using a single nonblocking assignment each clock cycle.
+
+At reset, assign `out` directly to 8'b00000001. On each clock's rising edge, perform a circular left shift on `out`. Specifically, shift `out` left by one bit and place the original MSB into the LSB position, thus rotating the single '1' bit through all positions in the 8-bit vector.
+
+This approach maintains the ring counter behavior, ensures only one bit is high at any time, and avoids individual bit assignments inside loops, which is better supported by synthesis and simulation tools.

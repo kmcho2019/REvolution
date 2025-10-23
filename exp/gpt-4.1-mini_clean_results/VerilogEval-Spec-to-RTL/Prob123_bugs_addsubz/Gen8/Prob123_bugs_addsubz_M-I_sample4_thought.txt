@@ -1,0 +1,12 @@
+To optimize the existing design for better power, performance, and area while maintaining correctness:
+
+- Remove the explicit ripple-carry adder implementation and use the built-in + operator for addition and subtraction. Modern synthesis tools map the + operator efficiently to carry chains or dedicated hardware, often yielding better PPA than manually coded carry chains.
+- Keep the conditional inversion of B via XOR with do_sub to implement subtraction as addition of two's complement.
+- Use a single 9-bit addition (a + b_xor + do_sub) to capture the carry-out cleanly if needed in future extensions, though here carry-out is unused.
+- Replace the reg output with wire assigned outside always block for combinational clarity.
+- Use continuous assignments instead of always blocks to reduce inferred logic and avoid reg usage for outputs.
+- Compute the zero flag efficiently with reduction NOR (~|sum).
+- This reduces area by avoiding extra carry wires, reduces power by simpler combinational logic, and improves performance by leveraging optimized adders in synthesis.
+- This also cleans up the code for readability and simpler synthesis.
+
+This improves power from 0.00559 to potentially lower, reduces area by removing explicit carry wires, and may improve timing due to better adder mapping.

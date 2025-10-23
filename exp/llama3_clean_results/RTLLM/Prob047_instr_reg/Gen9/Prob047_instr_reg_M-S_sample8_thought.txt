@@ -1,0 +1,9 @@
+To simplify the existing solution, we will focus on reducing complexity while maintaining the required functionality. The current design uses a single 8-bit register and direct assignments for output logic, which is a good starting point for simplification.
+
+The always block contains a conditional statement that checks for the fetch signal being either 2'b01 or 2'b10. This can be simplified by using a single condition that checks if fetch is not equal to 2'b00, assuming that the other values (2'b11) are not used or are don't care conditions.
+
+The output logic for ad2 can be simplified by directly assigning data when fetch is 2'b10, and 8'd0 otherwise. However, since we aim for minimal switching activity and the current implementation already uses a conditional expression for ad2, we will reassess this logic.
+
+We will maintain the use of a single 8-bit register to store instructions and the direct assignments for output logic to ensure simplicity and optimization. The reset logic will remain unchanged, as it is already straightforward.
+
+The goal is to minimize the number of conditional expressions and simplify the combinational logic to reduce area consumption and potentially lower power consumption by minimizing switching activity.

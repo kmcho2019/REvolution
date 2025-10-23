@@ -1,0 +1,14 @@
+Here's a novel approach using a logarithmic priority encoder that reduces the critical path by using parallel comparisons and a binary tree structure:
+
+1. Instead of checking bits sequentially, we'll divide the problem hierarchically:
+   - First check which nibble (4-bit group) contains the first '1'
+   - Then within the selected nibble, find the exact bit position
+2. This approach:
+   - Reduces the critical path from O(n) to O(log n)
+   - Enables parallel evaluation of conditions
+   - Uses simpler comparison logic that may map better to FPGA/ASIC primitives
+3. The implementation uses:
+   - Parallel nibble detection (MSB and LSB nibbles)
+   - Hierarchical selection of the correct nibble
+   - Final bit position calculation within the selected nibble
+4. Default case (all zeros) is handled explicitly

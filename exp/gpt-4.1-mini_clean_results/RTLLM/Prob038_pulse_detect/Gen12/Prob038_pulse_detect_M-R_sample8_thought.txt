@@ -1,0 +1,5 @@
+Refactor the design by separating the shift register update and the output logic. Use a register to store the last two samples of data_in, updated on each clock edge, and implement the output pulse detection using a combinational assign statement instead of inside the always block. This separates the sequential logic (shift register) from combinational logic (pulse detection), enhancing clarity and modularity.
+
+The output data_out will be a registered output that is set according to the combinational pulse detection signal, and then cleared on the next clock cycle. This preserves the single-cycle pulse behavior at the end of the detected pulse.
+
+This approach retains the same core detection logic (detecting pattern 0-1-0 over three cycles) but uses a cleaner separation of combinational and sequential logic with an explicit pulse signal for clarity.

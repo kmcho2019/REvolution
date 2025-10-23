@@ -1,0 +1,17 @@
+Instead of a conventional FSM with multiple states, implement a three-stage pipeline approach with separate counters and flags:
+
+1. Idle Stage: The module waits for the start bit (0). Upon detecting it, it moves to the receiving stage.
+
+2. Data Reception Stage: Shift in all 8 bits on each clock cycle. Use a shift register that shifts the incoming bit into bit 0 to maintain LSB-first order. A separate 3-bit bit counter tracks the number of bits received.
+
+3. Stop Bit Verification Stage: On the next clock cycle after receiving 8 data bits, sample the stop bit. If it is '1', the done signal pulses high for one cycle indicating successful byte reception. If the stop bit is '0', the module stays in an error recovery loop waiting for the line to become '1' again (valid stop bit), discarding further bits until then.
+
+The FSM is encoded with a few local parameters for clarity but with a simpler and more pipelined approach:
+
+- Use non-blocking assignments for sequential logic clarity.
+
+- done signal is asserted synchronously for a single clock cycle immediately after a valid stop bit is detected.
+
+- On reset, all registers and counters are cleared.
+
+This approach separates concerns cleanly, making timing easier and the done pulse aligned precisely after reception, while the recovery logic prevents false starts after framing errors.

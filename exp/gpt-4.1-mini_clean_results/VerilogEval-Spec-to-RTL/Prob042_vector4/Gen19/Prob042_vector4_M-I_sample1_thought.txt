@@ -1,0 +1,7 @@
+The existing solution is already minimal and efficient for sign extension using replication and concatenation. To further optimize PPA, especially power, a subtle improvement is to declare the output as signed and perform an explicit signed assignment, leveraging Verilog's native sign extension on assignment. This lets synthesis tools potentially optimize the sign extension without explicitly replicating bits, possibly reducing logic and power consumption.
+
+Also, marking the input and output as signed types clarifies intent and may help synthesis with arithmetic optimizations. Since the output is wider than the input, assigning a signed 8-bit input to a signed 32-bit output triggers native sign extension automatically.
+
+This approach avoids explicit replication and concatenation, relying on the language's semantics for sign extension, which can reduce net toggling and simplify logic, thus improving power and area without affecting performance.
+
+The module remains fully combinational, with a single assign statement, preserving clarity and simplicity.

@@ -1,0 +1,9 @@
+Refactor the FSM to use one synchronous always block for all state and data updates, avoiding multiple always blocks driving the same registers. 
+Use a separate combinational always block for next_state logic, but carefully align pattern detection timing by checking the pattern after shifting in the current bit.
+To ensure correct pattern detection, update the shift register first each clock cycle, then in the same cycle check for the pattern in the next_state logic.
+During READ_DELAY, shift in delay bits MSB-first into delay_reg and count bits read properly. Initialize count_reg from delay_reg once all delay bits are read, right at the transition to COUNT state.
+The counting logic increments a 10-bit cycle counter each clock until 999, then decrements count_reg by 1 until 0. The count output mirrors count_reg during counting.
+When counting finishes, go to DONE state asserting done. Wait for ack to return to SEARCH.
+Use synchronous active-high reset to initialize registers.
+Avoid conflicting assignments by consolidating all sequential logic into a single always block.
+Set outputs to '0' or 'x' explicitly when don't care.

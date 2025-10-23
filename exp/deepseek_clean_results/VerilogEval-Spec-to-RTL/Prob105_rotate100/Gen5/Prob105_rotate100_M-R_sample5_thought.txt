@@ -1,0 +1,15 @@
+Refactoring Approach:
+1. Use continuous assignment with ternary operators instead of always block for more concise combinational logic
+2. Separate the rotation logic into two parallel paths (left and right) for better readability
+3. Use a single multiplexer structure to select between load, left rotate, right rotate, or hold
+4. Maintain synchronous behavior by registering the output
+5. The structure will be:
+   - Compute next state for all cases in parallel
+   - Select the appropriate next state based on control signals
+   - Register the selected value on clock edge
+
+Benefits:
+- More explicit data flow
+- Parallel computation of all possible next states
+- Clearer separation of control and data paths
+- Potentially better for synthesis optimization

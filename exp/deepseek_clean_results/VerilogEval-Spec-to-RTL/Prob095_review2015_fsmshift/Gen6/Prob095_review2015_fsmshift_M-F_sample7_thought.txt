@@ -1,0 +1,13 @@
+To fix the implementation based on the feedback:
+1. Increase counter width to 3 bits to properly count 4 cycles (0-3)
+2. Assert shift_ena immediately upon reset and maintain it for 4 cycles
+3. After 4 cycles, keep shift_ena low indefinitely until next reset
+4. Reset should synchronously initialize the counter to 0
+5. Counter should increment every cycle until it reaches 3 (4 cycles total)
+6. Once counter reaches 3, it should stop incrementing to save power
+
+Key changes from previous version:
+- 3-bit counter (though we only use values 0-3)
+- shift_ena is high when counter < 4 (0-3)
+- Clearer state transition logic
+- Proper handling of reset condition

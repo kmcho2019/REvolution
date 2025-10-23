@@ -1,0 +1,10 @@
+The finite state machine will have several states to handle the different stages of receiving a byte. 
+It starts in an IDLE state, waiting for the start bit (0) to be detected. 
+When the start bit is detected, it transitions to the DATA state, where it will collect 8 data bits.
+After collecting all 8 data bits, it transitions to the STOP state, where it waits for the stop bit (1).
+If the stop bit is correctly received, it transitions back to the IDLE state, and asserts the done signal.
+If the stop bit is not received, it stays in the STOP state until a stop bit is detected.
+It also needs to handle the case where the serial input is interrupted, by returning to the IDLE state when a stop bit is detected.
+The FSM will use a counter to keep track of the number of data bits received.
+The out_byte output will be updated each clock cycle in the DATA state, shifting in the new bit.
+The reset signal will be used to reset the FSM to the IDLE state.

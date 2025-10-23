@@ -1,0 +1,11 @@
+The feedback highlights that initial blocks for register initialization are often ignored by synthesis tools, leading to undefined startup states in hardware and potential mismatch in post-synthesis simulation.
+
+To fix this, I will add a synchronous reset input to the module to ensure the 8-bit output register `q` is initialized to zero reliably in hardware. This reset will be active high and synchronous to the clock. When reset is asserted, `q` is cleared; otherwise, it captures input `d` on the clock’s positive edge.
+
+This approach guarantees a known initial state in both simulation and hardware and improves robustness. Since the original problem statement didn't include a reset signal, I will add it explicitly as it is critical for hardware initialization.
+
+If a reset input is not desired in the interface, a solution is impossible for hardware; however, since synthesis is the target, including a reset is standard practice.
+
+The non-blocking assignments ensure correct sequential behavior, and the synchronous reset avoids asynchronous glitches.
+
+No other changes are needed for functionality or PPA tradeoffs.

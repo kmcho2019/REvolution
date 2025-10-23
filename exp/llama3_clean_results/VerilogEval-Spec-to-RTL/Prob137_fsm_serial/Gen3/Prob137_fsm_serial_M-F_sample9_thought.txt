@@ -1,0 +1,9 @@
+To fix the code, we need to address the issues with the `dataCnt` register and how it's used to index the `data` register. We will use a 3-bit counter for `dataCnt` because 2^3 = 8, which will allow us to correctly count and capture each of the 8 data bits.
+
+Since we are sending the least significant bit first, we will start from the least significant bit (bit 0) and move towards the most significant bit (bit 7) as we capture the data bits. We will use a shift register approach to store the incoming data bits, which will simplify the data storage logic and reduce the number of assignments.
+
+We will also correct the logic for checking the stop bit and asserting the `done` signal. The `done` signal should be asserted only when a complete byte (start bit, 8 data bits, and stop bit) is correctly received.
+
+Additionally, we will remove any unnecessary logic and simplify the FSM to make it more efficient and easier to understand. We will use a single `always_ff` block to update the state and data registers, and remove the `always_comb` block to avoid conflicts with the `done` assignment.
+
+We will also add input validation and error handling to make the code more robust. This could include checking for invalid input sequences or handling cases where the input stream is corrupted.

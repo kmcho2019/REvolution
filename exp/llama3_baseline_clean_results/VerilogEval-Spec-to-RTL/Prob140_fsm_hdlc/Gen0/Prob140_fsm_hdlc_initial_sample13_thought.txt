@@ -1,0 +1,7 @@
+To solve this problem, we will design a Moore-type finite state machine (FSM) in Verilog. The FSM will have states to track the number of consecutive 1s received and to identify the sequences that indicate frame boundaries or errors. The states will be:
+- S0: Initial state or reset state, assuming the previous input was 0.
+- S1 to S5: States for counting consecutive 1s from 1 to 5.
+- S6: State for detecting the flag sequence (01111110) or the discard sequence (0111110).
+- S7: State for error detection (7 or more consecutive 1s).
+
+The FSM will transition between these states based on the input bit and the current state. When a specific sequence is detected, the corresponding output (disc, flag, or err) will be asserted for one clock cycle.

@@ -1,0 +1,10 @@
+Fuse the best ideas from both examples for an optimized design:
+
+- Use only two states: A and B, as minimal state count is required.
+- In state A, avoid resetting cycle and w_count registers every cycle to reduce toggling and save power. Instead, reset them only on reset or when leaving state A.
+- In state B, accumulate w samples and count cycles over 3 clock cycles using 2-bit counters.
+- Use addition of w_count + w on cycle 2 for the output condition, like Example 1 and 2, but factor in timing by doing the addition only when needed.
+- Use synchronous reset and all non-blocking assignments consistently.
+- Update output z only when needed: set z=0 in state A and in cycles 0 and 1 of state B; set z to the comparison result only at cycle 2 in state B.
+- Keep state encoding simple.
+- This fusion reduces unnecessary register toggling in state A and keeps the logic simple and timing-friendly, improving power without sacrificing performance or area.

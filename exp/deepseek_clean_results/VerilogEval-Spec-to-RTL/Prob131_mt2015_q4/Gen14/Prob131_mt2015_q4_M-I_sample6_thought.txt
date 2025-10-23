@@ -1,0 +1,19 @@
+Optimization Strategy:
+1. Boolean Simplification: Recognize that the original function can be simplified further by analyzing the truth table and combining operations
+2. Gate-Level Optimization: Replace discrete modules with direct logic implementation to reduce hierarchy overhead
+3. Power Optimization: Use inverted signals where possible to reduce switching activity
+4. Area Reduction: Implement using minimal gates by combining operations
+5. Timing Improvement: Flatten the design to reduce propagation delay
+
+Key Insights:
+- The original implementation uses separate modules for A and B functions
+- The top-level XOR can be merged with the internal logic
+- The function can be expressed as z = (x&~y) ^ ~(x^y) which simplifies to z = ~y
+- This surprising simplification means the entire circuit can be replaced with a single inverter
+
+Final Implementation:
+- Single NOT gate implementation for optimal PPA
+- Eliminates all intermediate logic and modules
+- Reduces area to minimum possible (1 gate)
+- Minimizes power consumption (only 1 gate switching)
+- Perfect timing (single gate delay)

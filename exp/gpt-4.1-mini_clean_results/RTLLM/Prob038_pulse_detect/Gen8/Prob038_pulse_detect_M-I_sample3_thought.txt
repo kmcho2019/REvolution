@@ -1,0 +1,13 @@
+The original design uses a 3-bit shift register and compares it every cycle to detect the "010" pulse pattern. Although simple and effective, it updates shift_reg and data_out every clock cycle, causing unnecessary switching and power consumption even when data_in is stable.
+
+To optimize for power and performance, I propose using a finite state machine (FSM) that explicitly tracks the pulse detection stages (waiting for rising edge and falling edge). The FSM only transitions when relevant edges on data_in occur, reducing unnecessary toggling. This approach reduces switching activity in data_out and internal states, beneficial for power. It also simplifies logic by focusing on edges rather than continuous pattern matching.
+
+The FSM states:
+
+- IDLE: Waiting for data_in to go high (0->1)
+- WAIT_FALL: After detecting rising edge, wait for data_in to go low (1->0)
+- PULSE_DETECTED: Output pulse detected signal (data_out=1 for one cycle), then return to IDLE.
+
+This implementation sets data_out to 1 only at the cycle when the falling edge completes the pulse, else 0. It is more power efficient while keeping minimal latency and area.
+
+This state machine also handles glitches or longer pulses gracefully by strictly defining transitions, preventing false triggers on noisy inputs.

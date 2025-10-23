@@ -1,0 +1,24 @@
+Implement a fractional frequency divider by 3.5 using a phase accumulator method combined with double-edge sampling of the input clock to achieve half-integer division.
+
+Concept:
+- The division ratio is N = 7/2 = 3.5.
+- Use a phase accumulator that increments by a fixed phase step every half clock cycle (sampled on posedge and negedge).
+- The phase accumulator is a fixed-point counter with enough bits (e.g., 4 bits or more).
+- Each half clock edge, increment the accumulator by a phase increment corresponding to half the input clock period times the division ratio denominator, ensuring the output toggles at the right time to create 3.5 division.
+- Generate the output clock by toggling its value when the accumulator's MSB (or a threshold bit) toggles.
+- Sample on both edges and toggle output when accumulator crosses half the range, effectively producing a clock at input frequency divided by 3.5, with a smooth duty cycle and uniform period.
+- The output clock is generated synchronously on both clock edges, using an internal register clocked on posedge and negedge.
+- Use a dual-edge clocking technique: instantiate an always block triggered on both posedge and negedge to update the accumulator and output clock, ensuring the output clock frequency is half the input clock frequency times the division factor.
+
+This approach creates a fractional frequency divider by modulating the phase accumulator on both edges, producing a clock output with an effective frequency of clk/(3.5) without glitches or asynchronous issues.
+
+Advantages:
+- Single clock domain (clk) with double-edge triggered always block.
+- No crossing of clock domains, so no metastability.
+- Precise fractional frequency by phase accumulator method.
+- Smooth duty cycle and uniform output frequency.
+
+Implementation details:
+- Use a 4-bit accumulator that accumulates a phase increment each half clock edge.
+- Phase increment = 2^(accum_width) / (division_factor * 2) because sampling twice per clock cycle.
+- Toggle output clock when the MSB of accumulator changes state.

@@ -1,0 +1,12 @@
+Novel Architectural Idea:
+1. Instead of using a counter-based approach, implement a shift register to track the last three bytes received
+2. Use a parallel detection scheme where we continuously check if the oldest byte in the shift register has in[3]=1
+3. This allows for immediate detection of message boundaries without explicit state tracking
+4. The shift register naturally handles the 3-byte window, making the design more robust to timing variations
+5. Done signal is generated combinatorially when the shift register contains a complete message
+
+Advantages:
+- Eliminates explicit state machine logic
+- Naturally handles continuous byte streams
+- Parallel checking simplifies control logic
+- Potentially better timing as detection is spread across cycles

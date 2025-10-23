@@ -1,0 +1,11 @@
+To optimize the design for better PPA, unify the shift logic for left and right shifts into a single barrel shifter structure controlled by direction and amount signals. This reduces duplicated shift logic and mux overhead.
+
+Use a two-level multiplexing approach: first shift by 1 bit or 8 bits (left or right), then select between these shifted results based on the amount bits. This can be done using a minimal multiplexer tree rather than separate wires for each shift amount.
+
+Implement the arithmetic right shift sign extension once, by replicating the sign bit by the shift amount, thus minimizing redundant replication. Also, replace multiple ternary operators with explicit shift amounts and direction.
+
+Use continuous assignments and simple muxing to reduce combinational depth and switching activity.
+
+Keep synchronous load and enable logic intact, only shifting when enabled and loading when load is asserted.
+
+This approach reduces combinational logic, mux levels, and redundant sign extension, improving timing, reducing area, and lowering power.

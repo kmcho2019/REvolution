@@ -1,0 +1,11 @@
+Fuse the best ideas from both examples by implementing a dual-port RAM with these key attributes:
+- Parameterized WIDTH and DEPTH for scalability.
+- Use $clog2(DEPTH) for minimal address width precision.
+- RAM array declared as reg [WIDTH-1:0] RAM [0:DEPTH-1], depth=8, width=6.
+- Synchronous reset with a for-loop to initialize entire RAM to zero on negedge rst_n synchronously (on posedge clk), ensuring known power-up state and ASIC/FPGA compatibility.
+- Synchronous write operation gated by write_en on posedge clk.
+- Combinational read output gated by read_en to allow simultaneous read and write at different addresses and zero-latency read.
+- Output zero when read_en is low to avoid output glitches and invalid data.
+- Use non-blocking assignments inside clocked always block for clean and synthesizable sequential logic.
+- Keep code clean and readable for maintainability.
+- This fusion balances robust initialization, low latency read, simultaneous read/write, and power-aware output gating, resulting in a clean and efficient dual-port RAM implementation.

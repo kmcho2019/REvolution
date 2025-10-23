@@ -1,0 +1,11 @@
+The original solution correctly instantiates `mux2X1` modules in a generate loop, reflecting the stagewise shifting of the barrel shifter. The reported error is an environment-level issue, likely caused by multiple definitions of `mux2X1`. To prevent this, a good practice is to embed the `mux2X1` functionality directly inside the `barrel_shifter` module as an internal function or use a single parameterized multiplexer function, avoiding separate module declaration.
+
+For better performance and area (PPA) optimization, using assign statements directly instead of explicit mux module instantiation can reduce complexity and synthesis overhead, as synthesis tools optimize simple multiplexers well.
+
+Therefore, the improved solution:
+- Removes the explicit `mux2X1` submodule and replaces it with inline ternary operators.
+- Uses a procedural generate loop with continuous assignments for each stage.
+- Keeps the three-stage shifting by 4, 2, and 1 controlled by ctrl bits.
+- Maintains the clarity of the pipeline stages for easy understanding.
+
+This approach reduces module hierarchy, avoids naming conflicts, and allows synthesis tools to optimally map multiplexers, improving PPA and easing integration.

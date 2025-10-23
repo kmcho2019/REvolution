@@ -1,0 +1,17 @@
+module TopModule (
+    input clk,
+    input L,
+    input q_in,
+    input r_in,
+    output reg Q
+);
+
+initial begin
+    Q = 0;
+end
+
+always @(posedge clk) begin
+    Q <= L ? r_in : q_in;
+end
+
+endmodule

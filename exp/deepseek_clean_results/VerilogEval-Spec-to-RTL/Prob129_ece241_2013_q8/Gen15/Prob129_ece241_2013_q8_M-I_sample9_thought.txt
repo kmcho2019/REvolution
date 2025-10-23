@@ -1,0 +1,13 @@
+The existing solution is already quite efficient, but we can make slight improvements to optimize PPA further:
+
+1. **Performance:** The current design has a critical path of 0.14ns. We can potentially reduce this by simplifying the output logic even further by making it purely combinational based on the current and previous inputs.
+
+2. **Power:** We can reduce power by minimizing the switching activity in the history register. Since we only need to detect "101", we can optimize the state transitions to only update when relevant bits are received.
+
+3. **Area:** The design is already minimal, but we can ensure the synthesis tool optimizes it further by using a one-hot encoding for the states (though with only 3 states, this might not make a significant difference).
+
+The improved version will:
+- Use a 3-state FSM (S0, S1, S2) to explicitly track progress in the sequence
+- Make output purely combinational based on current state and input
+- Maintain asynchronous reset functionality
+- Keep the Mealy-type behavior where output depends on current state and input

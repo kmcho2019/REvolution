@@ -1,0 +1,17 @@
+module TopModule(
+    input  d,
+    input  ena,
+    output q
+);
+
+reg q_reg;
+
+always @(d, ena) begin
+    if (ena) begin
+        q_reg = d;
+    end
+end
+
+assign q = q_reg;
+
+endmodule

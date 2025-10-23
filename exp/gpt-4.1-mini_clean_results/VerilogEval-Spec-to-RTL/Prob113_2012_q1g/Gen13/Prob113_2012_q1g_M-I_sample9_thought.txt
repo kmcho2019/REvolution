@@ -1,0 +1,35 @@
+The original solution is correct and fairly optimized in terms of logic levels and gate count. The main cost is the four-input AND term which covers a single minterm (1111). Since this minterm is isolated, it must be explicitly included.
+
+To optimize for better PPA:
+
+- The original solution decomposed the 4-input AND into two 2-input AND gates combined by an AND gate, which is good for gate fan-in.
+- However, the first product term (~x3 & ~x1) and the second (x2 & ~x0) cover all other minterms except the one at 1111.
+- We can check for further factoring between terms:
+  f = (~x3 & ~x1) | (x2 & ~x0) | (x3 & x2 & x1 & x0)
+
+- Notice that the last term includes (x2 & x1 & x0 & x3).
+- Since the second term covers (x2 & ~x0), we can consider replacing the last term by (x3 & x1 & x0 & x2) or try to factor x2 out:
+
+    f = (~x3 & ~x1) | x2 & (~x0 | x3 & x1 & x0)
+
+- We can implement (~x0 | x3 & x1 & x0) as (~x0 + x3 & x1 & x0).
+
+- To reduce logic, implement this as:
+
+    temp = x3 & x1 & x0
+    f = (~x3 & ~x1) | (x2 & (~x0 | temp))
+
+- This reduces the four-input AND to a three-input AND combined with an OR, which may reduce complexity.
+
+- Further, the OR inside the parenthesis is a 3-input OR considering ~x0 (inverted x0) and the temp AND gate.
+
+- Also, reuse complemented signals as much as possible to minimize inverters.
+
+This approach results in fewer literal counts in large AND gates and may improve power and area by lowering fan-in gates and shared inverted signals.
+
+In summary:
+- Use existing inverted signals.
+- Implement the logic as described above to minimize high-fan-in AND gates.
+- This slightly rearranged expression keeps logic depth at two, suitable for fast combinational logic.
+
+This change is expected to slightly improve power and area while maintaining minimal logic depth.

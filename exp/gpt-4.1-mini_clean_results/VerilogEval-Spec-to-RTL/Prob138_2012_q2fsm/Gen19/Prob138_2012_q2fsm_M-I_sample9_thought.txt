@@ -1,0 +1,9 @@
+To improve the PPA metrics, I will remove the conditional state update gating (`state_update_en`) from the sequential block. While it saves dynamic toggling, the comparator adds delay and power overhead that may offset the gains. Updating state on every clock cycle simplifies the critical path and reduces clock-to-Q delay, improving performance and potentially lowering power.
+
+I will keep the synchronous active-high reset and separate always blocks for state register and next-state logic as before, preserving clarity and correctness.
+
+For output `z`, I will retain the continuous assignment, which is simple and efficient.
+
+The 3-bit binary encoding is area efficient for six states; this is kept unchanged.
+
+This simplification should enhance maximum frequency and slightly reduce power by removing the comparator, at a minor cost of toggling the state register when not changing states. Overall, this is a balanced tradeoff improving performance and potentially lowering total power.

@@ -1,0 +1,16 @@
+The original solution had two main issues:
+1. SystemVerilog constructs not supported by the target toolchain
+2. Incorrect state machine logic for message detection
+
+Improvement strategy:
+1. Replace SystemVerilog constructs with standard Verilog equivalents
+2. Fix the state machine logic to:
+   - Properly wait for 3 bytes (including the start byte)
+   - Correctly assert 'done' after the third byte
+   - Handle back-to-back messages properly
+3. Simplify state transitions by:
+   - Using a counter to track bytes in message
+   - Clearer state transition conditions
+4. Ensure reset properly initializes all state
+
+The improved solution uses a 2-bit counter to track position in message (0=waiting for start, 1=second byte, 2=third byte) and asserts 'done' when counter reaches 2 and a new byte arrives.

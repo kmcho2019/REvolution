@@ -1,0 +1,13 @@
+To improve PPA (performance, power, area), I will eliminate the for-loop and case statement in the combinational always block, replacing it with parallel logic assignments that directly compute each next_state bit from the current state bits and input. This will remove the loop overhead and reduce the complexity of multiple drivers on the next_state bits.
+
+Because the state machine is one-hot encoded and the transitions are simple and fixed, each next_state bit can be expressed as an OR of input-conditional AND of current state bits. This enables efficient logic synthesis with fewer gates and less switching.
+
+I will:
+
+- Write each next_state bit as a sum of products of current state bits and input/inverted input signals, explicitly from the FSM transitions.
+- Keep output logic the same but clean up the mask constants for clarity.
+- Use continuous assignments instead of a combinational always block for next_state and outputs to further simplify and make logic explicit.
+- This approach avoids multiple drivers for next_state bits, producing simpler, faster, and lower power logic.
+- Supports multiple active states (multi-hot) naturally by ORing all possible transitions leading to each next state.
+
+Overall, this improves performance by eliminating loop and conditional assignments, reduces switching and area by removing overlapping multiple drivers, and keeps the module combinational and synthesizable.

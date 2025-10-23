@@ -1,0 +1,9 @@
+To improve PPA (performance, power, and area) on the existing ripple-carry 4-bit adder, we can replace the chain of individual full adders with a single 4-bit adder implemented using the Verilog "+" operator. This approach will likely lead to better synthesis optimization because modern tools recognize the "+" operator and can generate carry-lookahead logic or other efficient adder implementations internally.
+
+- Using a behavioral adder reduces the explicit carry chain and logic gates at the RTL level.
+- This generally improves timing by allowing the synthesizer to optimize for faster carry propagation.
+- Power and area can also be reduced due to more compact, optimized implementation.
+- The overflow bit is directly taken as the 5th bit of the 5-bit sum.
+- This approach maintains functional correctness but improves overall PPA by leveraging synthesis tool optimization.
+
+Thus, I will implement the TopModule using a single continuous assignment of the sum as `x + y`, generating a 5-bit sum including overflow, eliminating explicit full adder module instantiations.

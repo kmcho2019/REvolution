@@ -1,0 +1,9 @@
+To improve power and timing from the given design, I will implement clock-enable gated counters for cycle_cnt and w_accum so that these registers only update when in state B. This prevents unnecessary toggling during state A and when counters are reset.
+
+Additionally, instead of adding w each cycle, I will accumulate w by incrementing w_accum only when w=1, avoiding extra addition complexity.
+
+I will keep the FSM two-state minimal, use synchronous reset, and register the output z with a one-cycle delay after the 3-cycle counting window as required.
+
+This approach reduces switching activity in registers, slightly simplifies combinational logic, and may improve timing by reducing critical paths involving addition and comparison. The area is maintained low by minimal registers and state bits, and power is improved by gating counter updates.
+
+Overall, this optimization enhances power and timing with no functional changes.

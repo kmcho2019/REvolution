@@ -1,0 +1,17 @@
+The main problem is that the COUNT state's cycle and block counters are not properly initialized at the state transition because the design checks the current state rather than the state change. To fix this:
+
+- Keep a register `state` and also a `prev_state` to detect state transitions.
+- On the rising edge of the clock, detect when state changes to COUNT.
+- On entering COUNT, initialize `block_cnt` to `delay + 1` and `cycle_cnt` to 0.
+- Then implement counting logic properly: increment cycle_cnt each clock, and when it reaches 999, reset to 0 and decrement block_cnt.
+- Update `count` output accordingly.
+- Keep the other logic mostly unchanged.
+
+This correction ensures proper initialization and counting behavior.
+
+Also minor cleanup:  
+- During LOAD, pattern_shift should freeze (not shift).  
+- When in DONE state, keep registers stable until ack resets FSM.  
+- Use synchronous reset everywhere.
+
+This fix preserves clarity, correctness, and simplicity.

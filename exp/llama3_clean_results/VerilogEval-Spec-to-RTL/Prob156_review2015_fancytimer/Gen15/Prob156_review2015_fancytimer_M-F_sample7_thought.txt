@@ -1,0 +1,13 @@
+To address the issues in the original code, we need to modify the state transitions, delay handling, and output signal handling.
+
+1. **Correct delay shifting**: The code should have a separate state to handle the delay shifting. This state should shift in 4 bits from the data input and store them in the delay register.
+
+2. **Accurate counting**: The COUNTING state should decrement the counter every clock cycle and update the remaining time every 1000 cycles.
+
+3. **Proper state transitions**: The state machine should transition from the IDLE state to the DELAY_SHIFT state when the pattern 1101 is detected. After shifting in the delay, the state machine should transition to the COUNTING state. Once the count is finished, the state machine should transition to the DONE_STATE.
+
+4. **Output signal handling**: The count output signal should be updated to reflect the remaining time when the state is COUNTING. The counting and done signals should be properly reset when the count is finished.
+
+5. **State machine optimization**: To improve the design's PPA metrics, potential optimizations could include reducing the number of states, using more efficient counter implementations, and applying power-saving techniques.
+
+By implementing these changes, we can create a more efficient and accurate design that meets the requirements of the problem.

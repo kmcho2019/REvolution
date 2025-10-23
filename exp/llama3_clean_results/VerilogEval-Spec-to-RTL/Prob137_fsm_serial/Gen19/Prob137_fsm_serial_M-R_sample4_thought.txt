@@ -1,0 +1,7 @@
+To refactor the existing code, we can simplify the state machine by using a different structure. We can use a single state variable to represent the current state of the FSM, and use a combinational logic to determine the next state. We can also use a separate counter to keep track of the number of bits received, and use it to determine when to check the stop bit.
+
+We can use a 3-state FSM: IDLE, RECEIVE, and WAIT_STOP. The IDLE state will wait for the start bit, the RECEIVE state will collect the incoming bits, and the WAIT_STOP state will wait for a stop bit when the previous stop bit was incorrect.
+
+We can use a shift register to collect the incoming bits, and use a separate flag to indicate when the start bit has been detected. We can also use a done signal to indicate when a byte has been correctly received.
+
+To optimize the code, we can use a single always block to handle all the logic, and use assign statements to simplify the combinational logic. We can also use a more efficient state machine encoding to reduce the combinational logic depth.

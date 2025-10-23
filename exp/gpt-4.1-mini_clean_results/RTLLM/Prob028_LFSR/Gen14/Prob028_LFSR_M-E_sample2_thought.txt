@@ -1,0 +1,35 @@
+To provide a novel architectural idea for the 4-bit LFSR, instead of the standard single shift register with a feedback bit inserted at the LSB, we will implement the LFSR as a Galois configuration.
+
+In the Galois LFSR, the feedback is applied through XOR gates to specific bits in the register during each clock cycle, rather than calculating feedback first and then shifting.
+
+For a 4-bit Galois LFSR with taps at bits 4 and 3 (corresponding to out[3] and out[2]), the feedback signal is taken from the MSB (bit 3). This bit is used to XOR specific bits on the next clock cycle.
+
+Advantages:
+- Galois LFSRs typically have less combinational delay as feedback is spread over taps rather than centralized.
+- Potentially more efficient for hardware implementation.
+
+Implementation details:
+- On the rising edge of the clock:
+  - If reset, initialize the register to a non-zero seed (e.g., 4'b0001) to avoid lock-up.
+  - Else:
+    - Shift bits left by one position.
+    - For tap bits, if the MSB was 1, invert the tapped bit.
+- Specifically, taps at bit 2 and bit 3:
+  - The new out[3] <= out[2]
+  - The new out[2] <= out[1] XOR feedback (which is MSB)
+  - The new out[1] <= out[0] XOR feedback (if tapped, but in the example only bit 2)
+  - The new out[0] <= feedback
+
+However, for a 4-bit maximal length LFSR with taps at bits 4 and 3, the standard taps are at bit 4 and bit 3. So the Galois taps are at bit 3 and bit 2 zero-based indexing. 
+
+Based on polynomial x^4 + x^3 + 1, the Galois configuration updates bits as:
+- bit 3 <= bit 2
+- bit 2 <= bit 1 XOR bit 3_old
+- bit 1 <= bit 0
+- bit 0 <= bit 3_old
+
+Implementing this will produce a maximal length sequence, and the feedback is intrinsic without needing inversion.
+
+This approach differs from the Fibonacci style LFSR and is a novel architectural variation.
+
+We'll implement this logic with a synchronous reset and demonstrate it with a testbench running multiple cycles, checking that the zero state does not occur.

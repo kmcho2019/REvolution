@@ -1,0 +1,23 @@
+The fundamental problem is that `prev_level` is updated at the same clock edge as `prev_s`, meaning `prev_level` reflects the level decoded from the already updated `prev_s`, losing the information of the level *before* the sensor change.
+
+To fix this, I will separate the update of `prev_level` and `prev_s` so that:
+
+- On detecting a sensor change, first latch the current `prev_s` into an intermediate register (or directly decode its level) to capture the level before the new sensor input is registered.
+- Then, on the next clock cycle, update `prev_s` to the new sensor inputs.
+
+This two-stage update ensures `prev_level` holds the level before the last sensor change, and `prev_s` always holds the sensor state *after* the last sensor change.
+
+I will implement this by:
+
+- Adding an intermediate register `next_s` to hold the current input sensor on sensor change.
+- When `s != prev_s`, load `next_s` with the new `s`, but update `prev_s` only in the next cycle.
+- In the cycle the sensor change is detected, update `prev_level` using `prev_s` (which still holds the old sensor state).
+- Then, in the following cycle, update `prev_s` to `next_s`, completing the update of the current sensor state.
+
+This delay maintains the proper history: the previous level corresponds to the sensor state before the last change.
+
+Outputs remain combinationally derived from the current input sensor `s` (not stored `prev_s`), ensuring responsive and accurate flow rate outputs. The supplemental valve (`dfr`) opens only if current decoded level is higher than `prev_level`.
+
+Reset clears everything to the lowest level (all valves asserted).
+
+This approach fixes the race condition and aligns the previous level tracking with the problem requirements.

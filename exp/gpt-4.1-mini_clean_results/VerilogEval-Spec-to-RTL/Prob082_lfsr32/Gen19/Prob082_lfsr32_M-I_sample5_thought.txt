@@ -1,0 +1,11 @@
+To optimize PPA while maintaining functional correctness, explicitly implement the Galois LFSR logic as a chain of conditional XOR operations per bit rather than a vector-wide XOR operation. This reduces the XOR logic depth and can lower delay (improving timing). It also reduces switching activity and logic replication from the bitwise mask, benefiting power.
+
+The strategy:
+- Use synchronous reset to 32'h1 as before.
+- At each clock, shift right by one bit.
+- For tap bits, XOR the input with the feedback bit q[0]; for non-tap bits, just shift right.
+- Since the taps are at bits 31, 21, 1, and 0, the feedback bit q[0] is XORed into those positions after shifting.
+- Implement this with combinational assignments for next state bits.
+- This approach creates simpler XOR gate implementations and can reduce both timing and power.
+
+This explicit bit-wise feedback implementation will likely improve the critical path delay (better WNS), potentially reduce power by eliminating the replicated mask, and can also slightly reduce area by avoiding extra XOR logic for a large mask.

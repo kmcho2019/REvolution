@@ -1,0 +1,14 @@
+To fix the original implementation, remove illegal declarations inside the always block. Instead, compute feedback and next state combinationally before the clock edge inside the always block by using local variables or temporary registers. Since Verilog does not support variables declared inside always blocks, declare `fb` and `next_q` as reg variables at the module scope or use intermediate variables directly.
+
+Use 0-based indexing for taps: bits 31, 21, 1, and 0 correspond to 32, 22, 2, and 1 respectively.
+
+For a 32-bit Galois LFSR shifting right:  
+- For each bit i > 0, if bit i is a tap, next_q[i] = q[i-1] ^ fb; else next_q[i] = q[i-1].  
+- For bit 0 (LSB), next_q[0] = q[1] (shifting in bit 1, no XOR).  
+- Feedback fb is the old LSB (q[0]).
+
+Implement feedback as a wire assigned from q[0], compute next_q combinationally inside the always block using a for-loop, which reduces error-prone manual assignment. This also improves readability and is synthesis-friendly.
+
+Use synchronous active-high reset to set q to 32'h1.
+
+This approach fixes syntax errors, ensures correct functionality, and improves maintainability without changing LFSR characteristics.

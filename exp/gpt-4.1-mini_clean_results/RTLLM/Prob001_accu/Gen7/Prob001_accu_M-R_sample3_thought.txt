@@ -1,0 +1,7 @@
+Refactor the design using a small FSM approach with two states: IDLE and ACCUM. 
+- When valid_in is asserted, transition to ACCUM and start accumulating data_in values.
+- Use a 3-bit counter to count the number of valid inputs accumulated.
+- On each valid_in, accumulate data_in into a register.
+- When the counter reaches 4, output the result, assert valid_out for one cycle, then reset accumulator and counter and go back to IDLE.
+- Use combinational logic for next state and outputs, but all registers update on posedge clk.
+This approach separates state transitions from accumulation logic and clearly defines output timing without double addition in one cycle.

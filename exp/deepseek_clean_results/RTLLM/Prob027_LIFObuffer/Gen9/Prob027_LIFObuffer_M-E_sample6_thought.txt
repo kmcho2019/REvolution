@@ -1,0 +1,14 @@
+Novel Architecture: Circular Buffer with Dual Pointers
+1. Instead of a traditional stack pointer, use separate read and write pointers that wrap around (circular buffer style)
+2. Implement a "virtual full" state to distinguish between full and empty conditions when pointers are equal
+3. Use gray code encoding for pointers to reduce power consumption during pointer updates
+4. Implement combinational flag logic for EMPTY/FULL to improve timing
+5. Add a "last operation" register to track whether the previous operation was read or write (helps determine full/empty state)
+6. Optimize memory writes to only occur during actual push operations
+
+Key Advantages:
+- Better timing due to combinational flags
+- Lower power from gray-coded pointers
+- More efficient memory utilization
+- Clear distinction between full/empty states
+- Easier scalability for larger buffers

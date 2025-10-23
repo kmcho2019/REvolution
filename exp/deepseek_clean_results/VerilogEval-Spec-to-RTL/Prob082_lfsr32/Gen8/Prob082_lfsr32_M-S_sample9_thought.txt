@@ -1,0 +1,9 @@
+To simplify the 32-bit Galois LFSR implementation:
+1. Keep the same basic structure with synchronous reset to 32'h1
+2. Instead of handling each bit range separately, use a single always block with:
+   - Direct assignment for MSB (q[31]) from feedback (q[0])
+   - Concise XOR operations for tap positions (31,21,1,0)
+   - Default right-shift for non-tap positions
+3. This reduces the number of explicit bit-range assignments while maintaining the same functionality
+4. The feedback (q[0]) is still used for all XOR operations
+5. The simplified version has fewer lines of code but identical behavior

@@ -1,0 +1,12 @@
+Refactor the design by embedding the inversion directly in the data path before feeding it into a simple positive edge-triggered D flip-flop, rather than inverting inside the flip-flop sequential block. This way, the flip-flop stores the inverted input, and the output 'q' is directly the flip-flop output without inversion.
+
+Specifically:
+
+- Use an always block only for the flip-flop storing a 'reg q_reg'.
+- Compute the inverted input with a continuous assignment.
+- At each positive clock edge, latch the inverted input into 'q_reg'.
+- Output 'q' as 'q_reg'.
+
+This approach maintains the same functional behavior (q = stored inversion of input 'a') but structurally separates combinational inversion and sequential storage. It shows a different RTL style while preserving the same waveform behavior.
+
+This refactoring also reduces module hierarchy by removing the separate DFF module and keeps the inversion combinational, which might help in some synthesis flows.

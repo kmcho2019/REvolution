@@ -1,0 +1,11 @@
+The original FSM and design are fundamentally correct and efficient. Given the feedback, no functional errors exist, and the design is minimal and clear. To align fully with the user's request:
+
+- Keep the FSM as is (four states with binary encoding).
+- Implement the synchronous logic and output inside a single always block triggered by clk and rst_n to ensure registered outputs.
+- Move data_out assignment into the sequential always block so that output is registered and changes synchronously with the clock. This is generally preferred for timing closure and clean synthesis.
+- Keep combinational logic for next state calculation separately.
+- Make sure all state transitions and output assignments are properly synchronized and stable.
+
+This approach retains the original good FSM logic but produces a cleaner synchronous design where data_out is registered, which is typical in FPGA/ASIC design for output signals. The pulse is detected exactly at the cycle when the pattern "0->1->0" completes and data_out pulses for one cycle, then returns to zero until the next pulse.
+
+Hence, the main fix is registering data_out inside the sequential block rather than in combinational logic, improving timing and design style without changing behavior.

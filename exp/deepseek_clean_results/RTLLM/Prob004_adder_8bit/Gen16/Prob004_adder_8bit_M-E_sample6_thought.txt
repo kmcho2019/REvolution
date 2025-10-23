@@ -1,0 +1,15 @@
+Novel Architecture Idea: Carry-Skip Adder with Variable Block Size
+
+Key Concepts:
+1. Divide the 8-bit adder into variable-sized blocks (3-2-3 pattern) to optimize carry propagation
+2. Implement carry-skip logic between blocks to bypass ripple-carry when possible
+3. Use smaller ripple-carry adders within each block
+4. Skip logic detects when all bits in a block would propagate carry (P = AND of individual propagate signals)
+5. When P is true for a block, carry skips directly to next block
+
+Advantages:
+- Faster than pure ripple-carry (average case improvement)
+- Simpler than full carry-lookahead
+- Balanced block sizes for optimal skip probability
+- Maintains combinational nature
+- Better timing than ripple-carry while using less area than full lookahead

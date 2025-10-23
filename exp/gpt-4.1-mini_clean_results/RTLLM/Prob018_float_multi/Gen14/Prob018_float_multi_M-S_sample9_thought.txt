@@ -1,0 +1,16 @@
+Simplify the floating-point multiplier by implementing a small multi-cycle FSM using a 3-bit counter to step through extraction, multiplication, normalization, rounding, and output assembly sequentially over multiple clock cycles. 
+
+This approach breaks down complex combinational logic into smaller pieces per cycle, reducing combinational path length and easing synthesis. Use registers for internal signals updated at each step.
+
+Key steps:
+
+1. On reset, clear counter and output.
+2. At cycle 1, extract signs, exponents, mantissas, and detect special cases.
+3. At cycle 2, multiply mantissas and add exponents adjusting bias.
+4. At cycle 3, normalize the product and adjust exponent.
+5. At cycle 4, perform rounding and finalize exponent and mantissa.
+6. At cycle 5, handle special cases, set the output and hold until reset or new inputs.
+
+This design trades latency for simpler logic per cycle and registers internal states, making the critical path shorter per clock cycle and easier to meet timing, suitable for low-to-medium frequency and resource-limited designs.
+
+It maintains full IEEE-754 compliance including NaN, infinity, zero, denormal handling, normalization, rounding to nearest even, overflow/underflow detection, and correct sign calculation.

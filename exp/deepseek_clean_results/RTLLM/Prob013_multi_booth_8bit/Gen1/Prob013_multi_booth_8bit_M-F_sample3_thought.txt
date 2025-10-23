@@ -1,0 +1,14 @@
+Here's the corrected design approach for the Radix-4 Booth multiplier:
+
+1. Sign-extension: Properly extend both 8-bit inputs to 16 bits for correct handling of negative numbers
+2. Counter logic: Use a 3-bit counter (0-4) since Radix-4 requires n/2 iterations (4 for 8-bit)
+3. Booth encoding: Examine 3 bits (current pair + previous LSB) to determine operation:
+   - 000/111: No operation
+   - 001/010: Add multiplicand
+   - 011: Add 2*multiplicand
+   - 100: Subtract 2*multiplicand
+   - 101/110: Subtract multiplicand
+4. Arithmetic operations: Properly handle sign during additions/subtractions
+5. Shifting: Perform arithmetic right shift of combined product and multiplier
+6. Completion: Set ready signal after 4 iterations (counter == 4)
+7. Reset: Initialize all registers and signals properly

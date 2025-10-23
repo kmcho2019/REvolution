@@ -1,0 +1,10 @@
+To improve the original design's PPA (performance, power, area), I will optimize carry propagation by computing all digit increments in parallel rather than sequential nested if-else. This reduces the critical path by removing the carry chain delay through multiple digits within one clock cycle.
+
+Specifically:
+- Use a carry-lookahead style where each digit's next value and carry-out are computed combinationally based on current digits and previous carry.
+- Maintain a synchronous reset and synchronous update on the positive clock edge with non-blocking assignments.
+- Generate enable signals based on the carry-outs, making them simple combinational logic signals.
+- This approach reduces combinational logic depth, improving timing.
+- Power is improved as the logic toggling for carry is parallel and simpler.
+- Area might slightly increase due to combinational carry signals but trade-off is better timing.
+- The 16-bit output is concatenated from the four digits as before.

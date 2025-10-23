@@ -1,0 +1,14 @@
+To improve synthesis reliability while maintaining the same functionality, I'll make these key changes:
+
+1. Replace the explicit state machine with a flag-based approach using a single register to track if we have the first byte
+2. Use non-blocking assignments consistently for all sequential logic
+3. Separate the combinational and sequential logic more clearly
+4. Use a single always block for sequential elements to avoid potential synthesis issues
+5. Maintain the same data ordering and timing behavior
+
+The new implementation will:
+- Use a 'has_first_byte' flag instead of explicit states
+- Still properly handle reset conditions
+- Maintain the same output timing (valid_out only when both bytes received)
+- Keep the first byte as MSB in the output
+- Be more synthesis-friendly while functionally equivalent

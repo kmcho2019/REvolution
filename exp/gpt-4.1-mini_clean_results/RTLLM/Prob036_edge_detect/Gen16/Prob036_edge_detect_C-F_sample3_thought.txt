@@ -1,0 +1,11 @@
+Fuse the best ideas from both examples by implementing a fully synchronous edge detector with registered outputs to ensure glitch-free, stable signals that remain asserted for exactly one clock cycle immediately after the detected edge, fully meeting the requirement.
+
+Key points in fusion:
+- Register previous input 'a' to detect edges synchronously.
+- Detect edges by comparing registered previous 'a' and current 'a'.
+- Instead of combinational outputs directly from these signals, register 'rise' and 'down' outputs so they remain stable throughout the clock cycle and precisely one cycle wide.
+- Use non-blocking assignments consistently in sequential always blocks.
+- Maintain asynchronous active-low reset for immediate and known initialization.
+- Add detailed comments for clarity.
+- This guarantees that 'rise' and 'down' outputs are aligned to the clock domain with no glitches and exactly one-cycle pulse width, fulfilling the specification that "rise or down will be set to 1 on the next clock when the corresponding edge appears, and then return to 0 until the corresponding edge appears again."
+- This approach retains minimal area and power by only adding two output registers and one input history register, a minor overhead compared to output stability benefits.

@@ -1,0 +1,11 @@
+To simplify the solution while maintaining functionality, we can:
+1. Reduce the number of states by combining ERROR and STOP states since they both wait for a stop bit (1)
+2. Eliminate the separate next_state logic by combining it with the state transition logic
+3. Use a single always block for both state transition and data handling
+4. Simplify the bit counter to just track when we've received all 8 bits
+5. Maintain the same functionality: detect start bit, collect 8 bits LSB first, verify stop bit
+
+The simplified FSM will have just 3 states:
+1. IDLE - waiting for start bit
+2. RECEIVE - collecting 8 data bits
+3. WAIT_STOP - waiting for stop bit (handles both success and error cases)

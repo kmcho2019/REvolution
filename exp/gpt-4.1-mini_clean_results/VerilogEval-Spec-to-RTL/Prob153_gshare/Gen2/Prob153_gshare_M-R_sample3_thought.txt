@@ -1,0 +1,9 @@
+Refactor the design to explicitly separate combinational and sequential logic, improving clarity and correctness:
+
+- Implement the PHT as a synchronous RAM array updated only on training cycles.
+- Use combinational logic for prediction: compute index by XORing the current GHR and predict_pc, read the PHT entry combinationally, and determine predict_taken.
+- Register the prediction outcome and the GHR used for the prediction in dedicated pipeline registers to ensure stable outputs aligned with clock edges.
+- Update the GHR only on the positive clock edge, giving training (mispredicted) updates priority over prediction updates, recovering the GHR from train_history if mispredicted, otherwise shifting in the predicted taken bit from the previous cycle.
+- By pipelining the prediction outputs (taken and history), we ensure outputs correspond exactly to the PHT state and GHR used for prediction, removing ambiguity about history timing.
+- On asynchronous reset, initialize the PHT entries to weakly not taken and clear the GHR.
+- This approach cleanly distinguishes between combinational indexing and sequential update, improving readability and potentially fixing subtle timing mismatches from the original design.

@@ -1,0 +1,17 @@
+The floating-point multiplier follows IEEE 754 single-precision format (32-bit) which consists of:
+1 sign bit, 8 exponent bits, and 23 mantissa bits (with implicit leading 1).
+
+Key steps:
+1. Extract sign, exponent, and mantissa from inputs
+2. Handle special cases (NaN, infinity, zero)
+3. Add exponents and XOR signs
+4. Multiply mantissas (24-bit x 24-bit → 48-bit product)
+5. Normalize result (shift left if MSB=0)
+6. Round to nearest even
+7. Handle overflow/underflow
+8. Combine sign, exponent, mantissa into final result
+
+The implementation uses a 3-cycle pipeline:
+Cycle 1: Input processing and special case detection
+Cycle 2: Mantissa multiplication
+Cycle 3: Normalization and rounding

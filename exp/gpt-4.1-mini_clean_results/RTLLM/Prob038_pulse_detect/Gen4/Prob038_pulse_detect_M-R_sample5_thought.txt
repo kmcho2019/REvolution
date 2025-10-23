@@ -1,0 +1,16 @@
+Refactor the design by implementing a simple finite state machine (FSM) to explicitly track the pulse detection states instead of relying on delayed input registers. The FSM will have four states representing the progress of the 0->1->0 pattern detection:
+
+- IDLE: waiting for a rising edge (data_in=0 to 1)
+- HIGH: detected rising edge, waiting for falling edge (data_in=1)
+- FALLING: detected falling edge after rising, pulse detected at this step
+- WAIT: output a pulse for one cycle, then return to IDLE
+
+This FSM approach clearly separates the pulse detection logic and output generation. It uses a state register and combinational logic for next state and output. The output `data_out` is asserted only on the cycle the pulse completes (falling edge after rising).
+
+Advantages:
+- Clear state-based logic improving readability.
+- Avoids using multiple delayed registers; only one current input sampled.
+- Use synchronous reset and non-blocking assignments.
+- Output is registered and synchronized with state transitions.
+
+This approach maintains the same functional behavior, producing `data_out`=1 only when the input undergoes the 0->1->0 pattern over three cycles.

@@ -1,0 +1,5 @@
+I will refactor the sequence detector by implementing a Moore FSM with encoded states as a 3-bit binary number instead of one-hot encoding, which saves resources. The state transitions and output will be registered synchronously with an active-low asynchronous reset (`reset_n`), conforming to the problem statement. 
+
+Instead of separating next state logic and state register, I will use a single always block triggered on clock or asynchronous reset for clarity and responsiveness to reset. The output `sequence_detected` will be a registered output, asserted only in the final detection state.
+
+This structure aligns with the problem requirements (port names and reset polarity), provides clear asynchronous reset behavior, and maintains overlap detection for the sequence "1001".

@@ -1,0 +1,31 @@
+Revised Design Strategy:
+
+1. Truth Table Re-examination:
+   - Confirmed output=1 cases: 2(0010), 7(0111), 15(1111)
+   - Confirmed output=0 cases: 0(0000),1(0001),4(0100),5(0101),6(0110),9(1001),10(1010),13(1101),14(1110)
+   - Don't-cares: 3(0011),8(1000),11(1011),12(1100)
+
+2. SOP Correction:
+   - Keep original minterms for 2,7,15
+   - Don't-cares can be used to potentially simplify but won't affect functionality
+   - No changes needed as original SOP correctly implements the required functionality
+
+3. POS Correction:
+   - Need to properly cover all 0-cases (9 cases)
+   - Create maxterms for each 0-case and simplify:
+     * 0: (a|b|c|d)
+     * 1: (a|b|c|~d)
+     * 4: (a|~b|c|d)
+     * 5: (a|~b|c|~d)
+     * 6: (a|~b|~c|d)
+     * 9: (~a|b|c|~d)
+     * 10: (~a|b|~c|d)
+     * 13: (~a|~b|c|~d)
+     * 14: (~a|~b|~c|d)
+   - After Karnaugh map simplification, minimal POS is:
+     (a | c) & (a | ~b | d) & (~a | b | c) & (~a | ~b | ~c | d)
+
+4. Implementation:
+   - SOP remains unchanged as it was correct
+   - POS now properly implements all required 0-cases
+   - Both forms now correctly match the truth table requirements

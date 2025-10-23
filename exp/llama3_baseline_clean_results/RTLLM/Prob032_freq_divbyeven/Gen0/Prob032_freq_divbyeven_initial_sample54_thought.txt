@@ -1,0 +1,8 @@
+To implement the frequency divider module `freq_diveven` in Verilog, we need to follow these steps:
+- Define the module with input ports `clk` and `rst_n`, and output port `clk_div`.
+- Declare a parameter `NUM_DIV` to specify the division factor, ensuring it's an even number.
+- Implement a 4-bit counter `cnt` to track the number of clock cycles.
+- Use an if-else statement within a clocked always block to control the behavior of the counter and `clk_div` based on the reset signal and the counter value.
+- At each positive edge of `clk`, if `rst_n` is high and the counter is less than half of `NUM_DIV - 1`, increment the counter without changing `clk_div`.
+- When the counter reaches half of `NUM_DIV - 1`, reset the counter to zero and toggle `clk_div`.
+- Ensure the counter and `clk_div` are initialized to zero when `rst_n` is low.

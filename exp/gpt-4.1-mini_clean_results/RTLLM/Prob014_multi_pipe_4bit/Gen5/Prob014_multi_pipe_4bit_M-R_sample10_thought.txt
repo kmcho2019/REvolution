@@ -1,0 +1,23 @@
+Refactor the design to clearly separate the stages and use combinational logic for partial product generation, followed by pipeline registers for storing intermediate results.
+
+1. **Stage 0 (Input Registering):** Register inputs mul_a and mul_b, and extend mul_a by concatenating size zero bits at the MSB side. This stage stabilizes inputs for further pipeline stages.
+
+2. **Stage 1 (Partial Product Generation):** Use a generate block with combinational assign statements to compute partial products based on registered multiplier bits and extended multiplicand from Stage 0. These partial products are combinational outputs derived from registered inputs.
+
+3. **Register Partial Products:** Use a pipeline register stage to latch these partial products on the clock edge.
+
+4. **Stage 2 (Summation and Output Registering):** Sum the registered partial products in a sequential always block and register the final output.
+
+This design avoids the race condition in the original code by separating input registering, combinational partial product generation, and pipeline registers. It also allows scalability in the summation by using a generate loop or a for-loop to sum partial products dynamically.
+
+The asynchronous active-low reset is used consistently to initialize all registers.
+
+This approach adheres to the requirement of two-level pipelining, with partial products computed combinationally from registered inputs and then registered, and the final summation registered as the output.
+
+The pipeline stages are:
+
+- Stage 0: Register inputs (mul_a, mul_b) and extend mul_a.
+- Stage 1: Generate partial products combinationally and register them.
+- Stage 2: Sum registered partial products and register the output.
+
+This ensures stable and correct data propagation through the pipeline with proper timing.

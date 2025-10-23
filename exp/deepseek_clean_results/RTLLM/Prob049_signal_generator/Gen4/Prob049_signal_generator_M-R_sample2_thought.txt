@@ -1,0 +1,11 @@
+To properly implement the specified triangle wave generator, I'll:
+1. Use a proper state machine with explicit state register as required
+2. Maintain separate always blocks for state transition and output logic
+3. Implement clear boundary detection at 0 and 31
+4. Use non-blocking assignments for proper synchronous behavior
+5. Keep the same reset behavior (active-low synchronous reset)
+
+The state machine will have two states:
+- STATE_UP (0): incrementing waveform
+- STATE_DOWN (1): decrementing waveform
+Transitions occur at boundaries (0 → STATE_UP, 31 → STATE_DOWN)

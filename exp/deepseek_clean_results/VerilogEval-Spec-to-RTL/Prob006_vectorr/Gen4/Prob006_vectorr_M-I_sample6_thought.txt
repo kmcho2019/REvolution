@@ -1,0 +1,14 @@
+The current implementation is already efficient, but we can make it more scalable and maintainable while preserving the excellent PPA metrics. Here's the improvement strategy:
+
+1. Use a for-loop instead of explicit bit assignments to:
+   - Make the code more concise and scalable for different bit widths
+   - Potentially help synthesis tools optimize routing
+   - Reduce the chance of human error in manual bit mapping
+
+2. Parameterize the width to make the module reusable while maintaining minimal area impact
+
+3. Keep the combinational logic style (always_comb) to preserve the zero timing violations
+
+4. Maintain registered outputs to prevent unnecessary toggling and reduce dynamic power
+
+The improved version will have identical functionality but be more maintainable and scalable.

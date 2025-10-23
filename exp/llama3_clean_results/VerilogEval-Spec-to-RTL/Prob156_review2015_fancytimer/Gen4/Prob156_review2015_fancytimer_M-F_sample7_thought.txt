@@ -1,0 +1,17 @@
+To fix the existing Verilog code, we need to address the several issues mentioned in the feedback. 
+
+Firstly, we need to handle the case where the pattern is not '1101' correctly in the IDLE state. This can be done by adding an else clause to reset the pattern when it does not match '1101'.
+
+Secondly, in the SHIFT state, we should only increment the cycle count when a valid bit is being shifted in. We can achieve this by resetting the cycle count when the pattern does not match '1101' and only incrementing it when the pattern matches.
+
+Thirdly, we need to correctly decrement the remaining time in the COUNT state. We can do this by using a separate register to keep track of the current delay value and decrementing it every 1000 cycles.
+
+Fourthly, in the DONE state, we need to correctly reset all the necessary registers when the acknowledgement is received. This includes resetting the state, counting output, done output, pattern, delay, cycle count, and remaining time.
+
+Lastly, we need to correct the assignment of the 'count' output. Instead of using the integer division of the remaining time by 1000, we can use the current delay value.
+
+To improve the design for better Power, Performance, and Area (PPA) metrics, we can consider using a single state machine to handle all the states, minimizing the number of registers used, and optimizing the counting logic.
+
+We will use a single variable `delay` to keep track of the delay value during the COUNT state, and a single variable `count` to output the current remaining time. We will also use a separate counter `cycle_count` to count the 1000 cycles.
+
+The new code will be more efficient, accurate, and reliable, with improved PPA metrics. It will correctly implement the timer functionality, with accurate counting and display of the remaining time.

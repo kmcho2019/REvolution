@@ -1,0 +1,14 @@
+Simplification Approach:
+1. Eliminate separate phase counter by using w_history bits as implicit phase indicator
+2. Remove continuous assignments and combine all logic into a single always block
+3. Simplify state transitions with direct assignments
+4. Calculate popcount only when needed (at phase 2)
+5. Reduce register usage by making w_history update conditional
+6. Maintain same functionality with fewer lines of code and simpler logic
+
+Key Changes:
+- No separate phase counter needed (w_history length indicates phase)
+- All logic in one always block for clarity
+- Popcount calculated only at the end of each 3-cycle window
+- Reduced switching activity by updating w_history only when in state B
+- Same minimal state machine with improved efficiency

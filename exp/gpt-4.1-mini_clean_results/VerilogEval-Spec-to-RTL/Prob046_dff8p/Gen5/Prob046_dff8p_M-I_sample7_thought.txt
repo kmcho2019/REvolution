@@ -1,0 +1,7 @@
+To optimize the design for better area and potentially power, consolidate the eight individual D flip-flops into a single 8-bit register with a negative edge-triggered always block implementing synchronous reset. This reduces module instantiations and routing overhead compared to eight separate instances.
+
+Use a localparam for the reset constant 8'h34 to enable better synthesis optimization and constant propagation instead of a wire. This also simplifies the code.
+
+The always block will trigger on negedge clk, and synchronously reset q to 0x34 if reset is asserted; otherwise, load d. This vectorized approach reduces area and interconnect complexity while maintaining correct functionality and timing.
+
+This design keeps the synchronous reset active high and negative edge clock triggering per specification but improves PPA by leveraging synthesis tools' ability to handle multi-bit registers more efficiently than multiple scalar flip-flops.

@@ -1,0 +1,10 @@
+Improvement Strategy:
+1. **Output Logic Optimization**: The current output logic uses a comparison operation. Since the output is only 1 in state D, we can directly assign the MSB of the state as the output (D=2'b11), making the output equal to state[1] & state[0]. This reduces logic complexity.
+
+2. **State Transition Simplification**: The current case statement is already optimal, but we can make it more readable by using a truth-table style assignment for next_state that combines all transitions in one expression using bitwise operations.
+
+3. **Default Case Removal**: Since all 2-bit state combinations are valid (00-11), the default case can be safely removed to save minimal area without affecting functionality.
+
+4. **Parameter Naming**: Keep the named parameters for readability but make them localparam for better synthesis optimization.
+
+These changes should slightly improve area and power while maintaining the same timing performance.

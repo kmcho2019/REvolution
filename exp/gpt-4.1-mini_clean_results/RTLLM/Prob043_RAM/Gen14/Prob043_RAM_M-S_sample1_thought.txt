@@ -1,0 +1,9 @@
+To simplify the dual-port RAM design, I will keep the key functional requirements but reduce complexity by:
+
+- Using fixed-size arrays and address widths directly from DEPTH (3 bits for address since DEPTH=8).
+- Implementing synchronous write with synchronous reset clearing the RAM.
+- Implementing synchronous read registered output, which simplifies timing and synthesis.
+- Removing unnecessary for loop initialization by using an asynchronous reset on read_data register and resetting RAM entries via write operation when write_en is low (instead, just clearing RAM on reset using a simple loop).
+- Avoiding combinational read logic to keep the code straightforward and easily synthesizable.
+
+This simpler approach keeps read/write simultaneity, clear reset behavior, and easily understandable code with minimal logic.

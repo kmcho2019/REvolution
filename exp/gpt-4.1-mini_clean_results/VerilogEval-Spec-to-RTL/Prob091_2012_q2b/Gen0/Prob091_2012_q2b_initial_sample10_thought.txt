@@ -1,0 +1,23 @@
+We have a one-hot encoded FSM with states A to F assigned to y[0] to y[5]. The transitions depend on input w. For each state (indicated by a single bit in y), we determine the next states according to the transition table.
+
+We need to implement outputs Y1 and Y3, which are the inputs to the flip-flops for states B and D (y[1] and y[3]), i.e., the next state bits for states B and D.
+
+By inspecting the FSM:
+
+- Y1 = next state B input = 1 when:
+  - From A: if w=1, next state B → A is y[0], so y[0] & w
+  - From no other states lead to B
+
+So,
+Y1 = y[0] & w
+
+- Y3 = next state D input = 1 when:
+  - From B: if w=0, next state D → y[1] & ~w
+  - From C: if w=0, next state D → y[2] & ~w
+  - From E: if w=0, next state D → y[4] & ~w
+  - From F: if w=0, next state D → y[5] & ~w
+
+So,
+Y3 = (y[1] | y[2] | y[4] | y[5]) & ~w
+
+This directly produces the inputs to the flip-flops for B and D states.

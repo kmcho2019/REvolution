@@ -1,0 +1,11 @@
+The original design uses a standard conditional XOR with the tap mask based on the LSB feedback bit, which is quite efficient and clean. To improve PPA, I will adopt a purely combinational calculation of the next state before the clock edge, which can help synthesis tools optimize the critical path better by separating combinational logic from sequential registers. This can reduce the sequential logic complexity and potentially improve timing (WNS, TNS). 
+
+The combinational next state logic computes:
+- feedback = q[0]
+- next_q = (q >> 1) ^ (feedback ? TAP_MASK : 0)
+
+Then the always block just registers next_q or reset synchronously. This approach can help the synthesis tool optimize the critical path by moving XOR and shifting to combinational logic outside the register update.
+
+In addition, I will explicitly declare the TAP_MASK bits with a comment on the bit positions (1-based), which enhances readability without changing logic.
+
+This restructuring should retain functionality and possibly improve timing by clearly delineating combinational and sequential parts, allowing the tool to pipeline or optimize logic better, with no area or power penalty expected.

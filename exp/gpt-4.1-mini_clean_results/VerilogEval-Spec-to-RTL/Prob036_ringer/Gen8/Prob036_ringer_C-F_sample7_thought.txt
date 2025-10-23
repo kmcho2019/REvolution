@@ -1,0 +1,13 @@
+Both examples use minimal combinational logic implementing mutual exclusion between ringer and motor outputs using the ring signal and vibrate_mode as conditions. The logic is already simple and optimal: ringer = ring & ~vibrate_mode; motor = ring & vibrate_mode.
+
+The fusion strategy is to keep this optimal logic but enhance clarity and potential synthesis efficiency by explicitly introducing a shared intermediate signal `ring_enable` (from Example 1) to indicate when the phone should respond (ring=1), while leveraging the direct combinational AND assignments (from Example 2) for outputs.
+
+This provides a clean separation of concerns:
+- `ring_enable` captures the gating condition,
+- `vibrate_mode` selects which output is enabled.
+
+This structure may help synthesis tools optimize inverter sharing and reduce redundant logic better than assigning directly without intermediate signals. It also improves readability and maintainability, making the function of each term clearer.
+
+No sequential logic or delays are added, preserving minimal critical path and low power usage.
+
+Hence, this fusion retains the minimal logic count, mutual exclusivity, clear signal flow, and good potential for synthesis optimization.

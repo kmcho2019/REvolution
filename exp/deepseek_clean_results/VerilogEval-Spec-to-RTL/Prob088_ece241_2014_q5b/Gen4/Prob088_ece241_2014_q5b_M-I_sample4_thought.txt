@@ -1,0 +1,23 @@
+To optimize the solution further while maintaining one-hot encoding, I'll focus on:
+
+1. Output Logic Optimization:
+   - Replace the ternary operator with XOR (^) which is more hardware-efficient
+   - z = state_B ^ x matches the truth table perfectly (same as state_B ? ~x : x)
+
+2. Next State Logic Simplification:
+   - The current OR operation can be maintained as it's already minimal
+   - Keep the "once in B, stay in B" behavior with state_B | (~state_B & x)
+
+3. Power Optimization:
+   - The XOR gate for output should reduce switching power compared to a mux
+   - Maintain single flip-flop design for minimal area and power
+
+4. Timing Improvement:
+   - XOR gate has similar delay to a mux, but simpler routing
+   - Keep the short critical path from state to output
+
+Key Benefits:
+- Maintains exact same functionality
+- Slightly better power profile due to XOR vs mux
+- Potentially better area utilization
+- Maintains clean one-hot encoding

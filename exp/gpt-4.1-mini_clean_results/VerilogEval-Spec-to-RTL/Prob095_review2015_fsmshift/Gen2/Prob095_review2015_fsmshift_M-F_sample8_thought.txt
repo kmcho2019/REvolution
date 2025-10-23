@@ -1,0 +1,7 @@
+The original code correctly asserts shift_ena for 4 cycles after synchronous reset but lacks the pattern detection logic to trigger shift_ena similarly on pattern detection. Since no pattern input was initially defined, we first add an input port named 'pattern_detected' (1-bit) to signal when the proper bit pattern is detected externally.
+
+To handle both reset and pattern detection triggers, we implement a simple FSM with two main states: IDLE and SHIFT_ENA. On synchronous reset, the FSM enters SHIFT_ENA state and enables shifting for 4 cycles. When 'pattern_detected' signal goes high in IDLE state, we also start the 4-cycle enable period.
+
+A 3-bit counter counts the 4 cycles while shift_ena is asserted. After 4 cycles, the FSM returns to IDLE state with shift_ena deasserted until the next trigger.
+
+This design ensures shift_ena is asserted for exactly 4 cycles on reset and on each detection event, fulfilling the full requirement.

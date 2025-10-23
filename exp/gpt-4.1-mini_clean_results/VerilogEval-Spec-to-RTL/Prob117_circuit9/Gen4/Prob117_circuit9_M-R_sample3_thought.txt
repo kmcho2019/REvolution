@@ -1,0 +1,5 @@
+Refactor the design by separating the next-state logic into a combinational function and updating the register q on the clock edge. Use a localparam to represent the modulo-7 next value calculation based on the current q, avoiding the explicit case statement inside the always block.
+
+This approach uses a combinational always block to calculate next_q and a clocked always block to update q, improving clarity and potentially easing synthesis optimizations. This also explicitly recovers from invalid q values by forcing q to 4.
+
+No direct arithmetic modulo operator is used, but a lookup table via a small combinational block is retained, ensuring logic simplicity and avoiding complex modulo computations.

@@ -1,0 +1,14 @@
+Fuse the structured clarity and separated combinational next-state logic from Example 1 with the concise, all-in-one synchronous update style from Example 2. Use a 3-bit saturating counter for consecutive ones (0 to 7) to track state.
+
+Implement next state and output signals in a combinational block for clear separation of combinational and sequential logic, improving readability and easing timing optimization. Register all outputs and the state count synchronously on the clock edge with a synchronous active-high reset.
+
+Outputs (disc, flag, err) are one-cycle pulses asserted on the cycle after detecting respective patterns, as a Moore FSM requires. Saturate count at 7 to signal error state and avoid unnecessary toggling beyond that.
+
+This fusion yields a design with:
+- Explicit combinational next-state and output generation (Example 1 strength)
+- Simple, minimal counter state encoding (both examples)
+- Clear, synchronous registered outputs and state updates (both)
+- Minimal and precise conditions to assert disc, flag, and err, reducing glitch and power
+- Good timing separation and modularity enabling better synthesis optimization
+
+Overall, this solution blends clarity, functional correctness, low power, and good timing characteristics better than each example alone.

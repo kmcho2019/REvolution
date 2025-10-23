@@ -1,0 +1,7 @@
+Refactor the 16-bit CLA block to implement the carry signals in a hierarchical fashion using 4-bit CLA blocks internally. This reduces the linear carry chain inside the 16-bit block by grouping bits into 4-bit sub-blocks, calculating their group propagate and generate signals, and then combining these to form the higher-level carries. This hierarchical approach retains the CLA architecture and reduces critical path delay within the 16-bit block. The overall 32-bit adder still instantiates two 16-bit blocks as before.
+
+The implementation will define a parameterized 4-bit CLA block with inputs and outputs similarly structured. Then, inside the 16-bit block, four 4-bit CLA blocks are instantiated, their group signals combined to compute carries between them, and sums computed accordingly. This hierarchical method eliminates the bitwise carry chain and uses propagate/generate signals at 4-bit granularity to compute carries more efficiently.
+
+The top-level 32-bit module remains almost the same, connecting two 16-bit blocks in sequence.
+
+This refactoring improves timing performance inside the 16-bit block by reducing carry propagation steps, while maintaining the carry-lookahead design principle and overall code clarity.

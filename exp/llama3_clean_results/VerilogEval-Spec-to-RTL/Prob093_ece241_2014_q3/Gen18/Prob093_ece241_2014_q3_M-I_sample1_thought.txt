@@ -1,0 +1,15 @@
+To improve the solution, I will first correctly identify the logic for each bit of the `mux_in` vector based on the given Karnaugh map and then use 2-to-1 multiplexers to realize this logic. 
+
+The Karnaugh map is as follows:
+      ab
+  cd  00  01  11  10
+  00 | 0 | 0 | 0 | 1 |
+  01 | 1 | 0 | 0 | 0 |
+  11 | 1 | 0 | 1 | 1 |
+  10 | 1 | 0 | 0 | 1 |
+
+We can see that mux_in[0] should be d (since the only 1 in the ab = 00 column is when cd = 10), mux_in[1] should be c and not d (since the only 1 in the ab = 01 column is when cd = 01), mux_in[2] should be c and d (since the 1 in the ab = 11 column is when cd = 11), and mux_in[3] should be c (since there are two 1s in the ab = 10 column, when cd = 10 and cd = 11). 
+
+Using 2-to-1 multiplexers to implement this logic will allow us to minimize the number of gates used, as required by the problem.
+
+To optimize the solution for better PPA (Power, Performance, Area), we will aim to reduce the number of logic gates used, which in turn reduces the area and power consumption, and potentially improves performance.

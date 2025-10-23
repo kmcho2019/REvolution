@@ -1,0 +1,5 @@
+Refactor the design by replacing the recursive generate-based instantiation with a purely combinational function that computes the population count in a balanced-tree style. This approach avoids module instantiation overhead and makes the logic more explicit and compact. The function recursively splits the input vector and sums partial counts using Verilog function calls and local variables.
+
+For the base case (≤17 bits), implement the popcount17 logic directly inside the function without a separate module. This keeps all logic within one function and module, improving readability and potentially synthesis efficiency.
+
+The TopModule will directly call this function to compute the 8-bit population count from the 255-bit input. This approach preserves the original balanced summation tree, but expresses it in a single function with explicit recursion instead of generate and multiple module instantiations.

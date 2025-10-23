@@ -1,0 +1,5 @@
+To address the issues raised in the feedback, we need to incorporate a flip-flop into the TopModule design. The idea is to use the `L` signal to control whether the output `Q` is updated with the value from `r_in` or if it retains its previous value based on `q_in`. The `clk` signal should be used to synchronize the update of `Q` to ensure that it changes only on the rising edge of the clock. 
+
+This can be achieved by using an `always` block that is sensitive to the `posedge` of the clock signal `clk`. Inside this block, we check the value of `L`. If `L` is asserted, we update `Q` with the value of `r_in`; otherwise, we update `Q` with the value of `q_in`. This ensures that `Q` is updated based on the current state of `L` and the input values, and it does so in a synchronous manner with respect to the clock signal.
+
+By adding this sequential logic element (the flip-flop), we ensure that `Q` is a registered value that changes only on the rising edge of the clock, which should match the expected behavior of the submodule in the context of the full_module.

@@ -1,0 +1,12 @@
+To address the issues highlighted in the feedback, a revised approach to the finite state machine (FSM) is necessary. The main corrections include:
+1. **Proper Stop Bit Verification**: After receiving 8 data bits, the FSM should verify that the next bit is a stop bit (1). If it's not, the FSM should wait until it encounters a stop bit before transitioning back to the IDLE state.
+2. **Correct Assertion of Done Signal**: The `done` signal should be asserted when a valid stop bit is detected after the 8 data bits, indicating a complete and correctly received byte.
+3. **Handling Incorrect Stop Bits**: If an incorrect stop bit is encountered after the 8 data bits, the FSM should wait for a stop bit before attempting to receive the next byte.
+4. **Improving State Transitions**: Ensure that state transitions are correctly handled, especially when moving from the RECEIVE state back to the IDLE state, either after successfully receiving a byte or encountering an incorrect stop bit.
+
+The revised FSM will operate as follows:
+- **IDLE State**: Wait for a start bit (0) to transition to the START state.
+- **START State**: Immediately move to the RECEIVE state to start accumulating data bits.
+- **RECEIVE State**: Use a bit counter to track the number of data bits received. Once 8 bits are received, check the next bit for the stop bit. If it's a '1', assert `done`, update `out_byte`, and transition back to the IDLE state. If it's not a '1', wait for a '1' (stop bit) before transitioning back to the IDLE state.
+
+By addressing these points, the FSM should correctly identify received bytes, handle incorrect stop bits, and maintain a simple, efficient architecture.

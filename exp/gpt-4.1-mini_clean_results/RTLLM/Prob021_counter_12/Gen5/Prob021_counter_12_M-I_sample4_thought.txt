@@ -1,0 +1,7 @@
+To improve the original design for better performance and power without risking clock glitches, I will avoid manual clock gating. Instead, I will use a single always block triggered by the clock and asynchronous reset, and gate counting internally with the `valid_count` enable signal. This approach ensures glitch-free clocking and improves timing closure.
+
+The counter increments only when `valid_count` is high; otherwise, it holds its value, effectively pausing the count. When reset is active (low), the counter resets to zero. Upon reaching the terminal count (11), the counter wraps back to zero on the next increment.
+
+This synchronous enable strategy is synthesis-friendly and can allow tools to infer proper clock gating if supported. This improves PPA (performance, power, area) by avoiding glitches, minimizing switching when paused, and maintaining simple logic.
+
+No additional complex structures are introduced, so area overhead is minimal, and the approach yields better timing and power efficiency compared to naive clock gating.

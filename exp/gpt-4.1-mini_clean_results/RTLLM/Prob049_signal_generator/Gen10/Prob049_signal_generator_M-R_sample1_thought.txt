@@ -1,0 +1,7 @@
+Refactor the design by separating the next-state and next-wave logic into combinational always blocks, and update the state and wave registers synchronously in one always block. This approach clarifies the separation of combinational and sequential logic, improves readability, and is a common style in FSM design.
+
+The state register will explicitly represent the direction (0 for increment, 1 for decrement). The next_wave and next_state signals will be computed combinationally based on the current wave and state. Then, on the clock edge, state and wave update to these next values.
+
+This also avoids conditional assignments inside the main always block, simplifying debugging and potential formal verification. The behavior remains exactly the same, producing a triangle wave cycling between 0 and 31.
+
+This structure is a good practice for FSM and sequential logic design, providing clear state and output update separation.

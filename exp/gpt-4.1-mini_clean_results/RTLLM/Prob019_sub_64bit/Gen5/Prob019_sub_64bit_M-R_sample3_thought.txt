@@ -1,0 +1,7 @@
+Refactor the 64-bit subtractor to use direct vector subtraction with continuous assignments instead of chaining 1-bit subtractors. This relies on built-in binary subtraction operators to perform the subtraction more succinctly and is typically optimized by synthesis tools.
+
+Overflow detection logic remains the same: compare the sign bits of A, B, and the result to detect overflow.
+
+This approach simplifies the code by removing explicit borrow propagation, reducing verbosity while preserving functionality. It also typically enables the synthesis tool to optimize borrow/carry chains internally, potentially improving timing and area.
+
+The entire subtraction is a single assign statement, and the overflow is a simple combinational expression.

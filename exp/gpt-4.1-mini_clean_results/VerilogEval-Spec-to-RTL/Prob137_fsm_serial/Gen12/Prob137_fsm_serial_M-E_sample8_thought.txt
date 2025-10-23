@@ -1,0 +1,11 @@
+Use a Mealy-type FSM with explicit start bit detection, a data bit counter, and a shift register loaded LSB-first by shifting left and inserting the incoming bit into bit 0 position. The FSM states are IDLE, RECEIVE, and WAIT_STOP. 
+
+- IDLE: Wait for start bit (0).
+- RECEIVE: Receive 8 data bits, shifting each bit into the LSB side (shift left, insert new bit into LSB) to accumulate data in LSB-first order.
+- WAIT_STOP: Check for the stop bit (1). If stop bit is correct, assert done as a combinational pulse (based on state and input) in the same cycle. If stop bit missing, stay in WAIT_STOP until stop bit is observed.
+
+A combinational done output asserted when stop bit is correct (Mealy-style output), avoiding a registered done pulse and allowing done to go high immediately on stop bit detection. The synchronous reset initializes FSM and registers.
+
+This approach shifts the bits with the MSB side moving left and new bit into LSB, which matches LSB first order naturally. The FSM states are fewer (3 states) and simple, reducing complexity. Using a Mealy FSM reduces latency for done pulse.
+
+This solution differs from the previous Moore FSM and uses different shift direction and output pulse style.

@@ -1,0 +1,9 @@
+To refactor the provided code, we can utilize a different approach for implementing the DFFs. Instead of using an `always` block to handle the flip-flop's logic, we can leverage the implicit edge-sensitive behavior of the non-blocking assignment (`<=`) in combination with a sensitivity list that includes the negative edge of the clock and the reset signal. However, to fully exploit the structural benefits, we'll also explore using a more direct, combinational logic approach where possible, while maintaining the sequential behavior required by the DFFs.
+
+The core idea revolves around using the `assign` statement for combinational logic where applicable and minimizing the use of `always` blocks to only where sequential behavior is strictly necessary, such as in the case of the D flip-flops. This can help in simplifying the code structure and potentially improving synthesis results in terms of area and performance.
+
+Given the nature of the DFF module, which requires sequential behavior, we cannot directly apply `assign` statements to replace the `always` block for the DFF's internal logic. However, we can explore a different structuring of the logic to potentially make it more synthesis-friendly.
+
+One key aspect to consider is the reset value. The current implementation requires each DFF to be reset to a specific value from the `reset_values` vector. This functionality is already efficiently handled within the `always` block of the DFF module. The refactoring effort should focus on maintaining this functionality while exploring alternative structural implementations that might offer better PPA metrics.
+
+In the refactored version, we aim to maintain the same functionality and interface while potentially improving the design's efficiency and PPA metrics. We will focus on ensuring the logic for the DFFs is as straightforward and synthesis-friendly as possible, considering the constraints and requirements provided.

@@ -1,0 +1,13 @@
+The provided Verilog code effectively implements a dual-edge triggered flip-flop using two single-edge triggered flip-flops and a multiplexer to select between them based on the clock edge. However, to optimize this design for better PPA (Power, Performance, Area) metrics, we should focus on minimizing the switching activity and reducing the combinational logic.
+
+One approach to reduce switching activity is to minimize the number of times the `q_pos` and `q_neg` registers are updated. We can achieve this by only updating these registers when the input `d` has changed. This can be done by adding a comparison between the current value of `d` and the previous value of `d`, and only updating the registers when they are different.
+
+To reduce the combinational logic, we can consider removing the multiplexer and instead use a single register to store the output of the dual-edge triggered flip-flop. This can be achieved by using a single always block that updates the output register on both rising and falling edges of the clock.
+
+However, since FPGAs do not support dual-edge triggered flip-flops, we need to use two separate always blocks for rising and falling edges. We can use a single register to store the output, but we need to use two separate always blocks to update this register on both rising and falling edges.
+
+Another optimization is to consider using a more efficient implementation of the multiplexer. Instead of using a ternary operator to select between `q_pos` and `q_neg` based on the clock edge, we can use a simple AND-OR logic to achieve the same result.
+
+In terms of power consumption, we can consider using clock gating to reduce the switching activity of the clock signal. However, this may require additional logic to generate the gated clock signal, which could potentially increase the area of the design.
+
+In terms of area optimization, we can consider using a more compact implementation of the dual-edge triggered flip-flop. One possible approach is to use a single register to store both `q_pos` and `q_neg`, and use a single always block to update this register on both rising and falling edges. However, this may require additional logic to select between `q_pos` and `q_neg` based on the clock edge.

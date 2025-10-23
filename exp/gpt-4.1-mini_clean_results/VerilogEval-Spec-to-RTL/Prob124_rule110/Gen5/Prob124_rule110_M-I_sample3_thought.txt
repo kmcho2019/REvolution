@@ -1,0 +1,15 @@
+To optimize for performance and power, I will reduce the long combinational path by pipelining the next state computation. Instead of computing all 512 next states purely combinationally and updating at once, I will add a register stage that holds the intermediate next states before updating q. This halves the combinational path delay and improves timing (lower critical path), allowing a higher clock frequency.
+
+Additionally, the combinational logic is simple and compact (3-bit pattern indexing an 8-bit constant), so no complex re-architecture is needed. The pipeline register will also help reduce glitches and switching activity, aiding power reduction.
+
+Area increases slightly due to the extra registers, but this tradeoff is acceptable for better PPA.
+
+Implementation details:
+- Compute next_q combinationally from current q.
+- Add a pipeline register next_q_reg to hold the computed next state.
+- On each clock, if load=1, load q from data and clear next_q_reg to zeros (or hold q).
+- Else if load=0, advance pipeline: next_q_reg <= next_q; q <= next_q_reg;
+
+This two-stage pipeline splits the combinational logic and register update, reducing maximum delay per stage.
+
+Boundary conditions and rule lookup remain unchanged.

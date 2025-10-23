@@ -1,0 +1,21 @@
+To implement the Lemming machine as a Moore state machine, we need to define the states and transitions based on the given conditions. The states will be:
+- walking_left: The Lemming is walking to the left.
+- walking_right: The Lemming is walking to the right.
+- falling: The Lemming is falling due to lack of ground.
+- digging: The Lemming is digging.
+We will use a Moore state machine because the outputs (walk_left, walk_right, aaah, digging) are dependent only on the current state.
+
+The transition logic will be as follows:
+- When ground=0, the Lemming will transition to the falling state, regardless of the current state (except when already falling).
+- When in the walking_left or walking_right state and dig=1 and ground=1, the Lemming will transition to the digging state.
+- When in the walking_left state and bump_right=1 (or bump_left=1 and bump_right=1), the Lemming will transition to the walking_right state. When in the walking_right state and bump_left=1 (or bump_left=1 and bump_right=1), the Lemming will transition to the walking_left state.
+- When in the digging state and ground=0, the Lemming will transition to the falling state.
+- When in the falling state and ground=1, the Lemming will transition back to the state it was in before falling.
+
+The output logic will be as follows:
+- walk_left will be 1 when the current state is walking_left.
+- walk_right will be 1 when the current state is walking_right.
+- aaah will be 1 when the current state is falling.
+- digging will be 1 when the current state is digging.
+
+We will use an always_ff block to implement the sequential logic and an always_comb block to implement the combinational logic.

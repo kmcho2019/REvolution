@@ -1,0 +1,22 @@
+To improve synthesis performance and timing while maintaining the same functionality, I will reduce the combinational logic depth and complexity in the next state calculation.
+
+The original code uses a combinational block with a large for-loop to calculate next_state bit-by-bit, creating a long combinational path, which can hinder timing and cause tool struggles.
+
+My approach:
+- Use a registered pipeline stage: store current state q, and compute next_state in a combinational way but carefully structured to avoid large logic chains.
+- Instead of computing each bit separately in a for-loop inside an always @* block, I will compute next_state by performing two right and left shifts on q padded with zeros and XOR them. This leverages wide vector operations which are well optimized in synthesis tools.
+- Specifically:
+  - Left neighbors vector = {q[510:0], 1'b0} (shift q left by 1 bit with zero boundary on right)
+  - Right neighbors vector = {1'b0, q[511:1]} (shift q right by 1 bit with zero boundary on left)
+- The next state is XOR of these two vectors.
+- This approach results in only two vector shifts and one XOR of 512 bits, which synthesis tools optimize efficiently using balanced XOR trees.
+- The load logic remains the same.
+
+This solution improves timing and synthesis by:
+- Limiting combinational depth to two vector shifts + one XOR.
+- Reducing large for-loop in combinational logic.
+- Using vector operations instead of bitwise loops improves tool optimization.
+
+It also simplifies the RTL code, making it easier to maintain and verify.
+
+The design still adheres to Rule 90 logic with zero boundary conditions and meets all problem requirements.

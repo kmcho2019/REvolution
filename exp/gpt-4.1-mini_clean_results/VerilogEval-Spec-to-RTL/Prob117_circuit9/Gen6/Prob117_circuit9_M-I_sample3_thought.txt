@@ -1,0 +1,13 @@
+Optimize the design by replacing the case statement with arithmetic modulo-7 counting using addition and a conditional wrap-around check. This reduces combinational logic complexity, improving timing and area.
+
+Specifically, when a=1, hold q=4 as before. When a=0, increment q by 1 modulo 7, with the sequence starting at 4. Because the values cycle through 4..6 then 0..3, the modulo-7 increment can be done by adding 1 and wrapping from 6 to 0, then mapping 0..3 correctly.
+
+To simplify, treat q as modulo-7 encoded numbers from 0 to 6 (interpreted as q modulo 7), with 4 representing initial count.
+
+Use simple arithmetic plus minimal conditional logic for wrap-around: if q==6 then next is 0, else q+1.
+
+This approach removes the case statement and enables easier synthesis of the modulo counter, reducing area and delay.
+
+Also, implement q as reg [2:0] without reset, matching initial unknown state.
+
+This results in cleaner and more efficient hardware implementation.

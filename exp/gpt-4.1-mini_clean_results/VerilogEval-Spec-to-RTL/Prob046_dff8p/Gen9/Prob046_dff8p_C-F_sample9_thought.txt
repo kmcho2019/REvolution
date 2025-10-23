@@ -1,0 +1,10 @@
+Fuse the modularity and clarity of separate DFF instances (from Example 1) with the area and power optimization of embedding the reset value constant inside the DFF itself (from Example 2). Instead of passing reset_val bit-by-bit as an input, parameterize each DFF with its reset bit so that reset bits are hardcoded in the module and don't toggle as inputs, reducing interconnect power and area.
+
+To further optimize, implement the synchronous reset logic directly in each DFF triggered on negedge clk, keeping the reset synchronous and active-high per spec. Use a generate loop for eight instances for scalability and clear structure.
+
+This approach merges:
+- The embedded reset constant to minimize toggling and wiring,
+- The negative-edge triggered synchronous reset DFF structure,
+- The modular instantiation style for clarity and maintainability.
+
+This results in a clean, power- and area-optimized design with no extra input wiring for reset_val.

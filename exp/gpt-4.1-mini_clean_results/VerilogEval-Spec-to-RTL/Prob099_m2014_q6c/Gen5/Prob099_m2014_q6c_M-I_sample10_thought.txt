@@ -1,0 +1,5 @@
+The original solution correctly derived the combinational logic for next-state signals of states B (y[1]) and D (y[3]) but named the outputs as Y1 and Y3 instead of Y2 and Y4 as required. To fix the interface mismatch, we will rename the outputs to Y2 (for next B) and Y4 (for next D).
+
+Additionally, the logic can be slightly optimized by noting that Y4 is asserted when w=1 and the current state is B, C, D, E, or F. We can simplify this by excluding A (y[0]) only, so Y4 = w & (y[1] | y[2] | y[3] | y[4] | y[5]). 
+
+The final implementation maintains simple combinational logic to minimize delay and area.

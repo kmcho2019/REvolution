@@ -1,0 +1,20 @@
+The fusion strategy is to combine the clarity and simplicity of the single generate loop from Example 1 with the straightforward indexing and input packing from Example 2. 
+
+- From Example 1, we keep the single flat for-generate loop (idx=0 to 24) for simplicity and clean indexing.
+- From Example 2, we use the packed input vector and clean formula for output bit indexing: out[24 - idx].
+- We explicitly compute row (i) and column (j) from idx using integer division and modulo to improve readability.
+- We leverage the symmetry to remove redundant calculations by only computing for i ≤ j (upper triangular matrix and diagonal) and mirror the results for i > j. This halves the number of XNOR gates and saves area and power.
+- The output bit assignment must still cover all 25 bits, so for i > j we assign out bit by reusing the computed bit from the symmetric pair (j, i).
+- This approach retains combinational logic simplicity, improves area and power by halving gate count, and keeps code readability high.
+- All computations remain in combinational logic without clocks for low latency.
+- This fusion yields a minimal and efficient implementation meeting the exact output ordering and correctness criteria.
+
+In summary:
+- Pack inputs into a vector.
+- Use a single generate loop over 25 bits.
+- Calculate i and j from idx.
+- For i ≤ j, compute out bit as XNOR.
+- For i > j, assign out bit from symmetric pair (j, i).
+- Assign all output bits accordingly.
+
+This design balances minimal logic with clean code and meets all spec requirements.

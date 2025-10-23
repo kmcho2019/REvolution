@@ -1,0 +1,24 @@
+The original design is clear and correct, but the fully combinational next state logic for all 512 cells creates a long critical path and high power consumption due to wide bitwise operations every cycle.
+
+To improve PPA, we can:
+- Pipeline the next state calculation by splitting the next state logic into two stages:
+  1. Compute partial intermediate signals (e.g., left, center, right bits) registered at the first pipeline stage.
+  2. Compute next state from registered signals at the second stage.
+  
+This approach reduces the logic depth per clock cycle, improving timing (higher clock frequency).
+
+- Reduce switching power by clock gating the first pipeline register stage with the load signal, so the pipeline only updates when load is low (i.e., when advancing the automaton).
+- Keep the load operation synchronous and instant to avoid latency in loading new data.
+
+Pipeline registers introduce a one-cycle latency in the state update, but the problem does not prohibit this and clock gating reduces toggling when not evolving.
+
+In summary:
+- Stage 0: Register the current q into a pipeline register (with zero padding), gated by load.
+- Stage 1: Compute next_q from stage 0 registered data.
+- Final: Update q on clock edge by either loading data or updating with stage 1 result.
+
+This pipelining halves logic depth per cycle, aiding timing, and gating reduces power.
+
+The zero-padding for boundary conditions remains the same for clarity and correctness.
+
+This approach improves PPA while preserving functional correctness and the synchronous load interface.

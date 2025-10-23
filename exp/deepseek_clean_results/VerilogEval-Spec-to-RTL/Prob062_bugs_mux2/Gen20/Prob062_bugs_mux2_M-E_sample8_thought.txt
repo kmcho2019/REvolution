@@ -1,0 +1,14 @@
+Here's an innovative approach using a bitwise operation with masking:
+1. Instead of using traditional mux structures, we'll leverage bitwise operations
+2. Create a mask where all bits are equal to the sel signal (0 or 1)
+3. Use this mask to select between inputs a and b through logical operations
+4. The mask is created by replicating the sel bit 8 times
+5. The output is computed as (a & ~mask) | (b & mask)
+6. This approach minimizes control logic and leverages parallel bitwise operations
+
+Advantages:
+- Single vectorized operation instead of bit-by-bit selection
+- Efficient use of bitwise operators that map well to hardware
+- Clear mathematical relationship between inputs and output
+- Easily scalable to any bit width
+- Potentially better PPA due to reduced control overhead

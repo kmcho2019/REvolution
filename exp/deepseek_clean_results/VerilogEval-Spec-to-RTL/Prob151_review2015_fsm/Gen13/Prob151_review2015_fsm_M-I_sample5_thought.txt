@@ -1,0 +1,13 @@
+Improvement strategy:
+1. Fix pattern detection: Only check for 1101 in IDLE state and only update shift register when needed
+2. Precise shift counting: Ensure shift_ena is exactly 4 cycles by counting 0-3 and transitioning at count=3
+3. Clear state transitions: Make transitions explicit and properly timed
+4. Output alignment: Ensure outputs match exactly with specified behavior
+5. Reset handling: Properly initialize all registers on reset
+
+Key changes:
+- Separate shift register update logic to only shift during SHIFT state
+- Fix shift counter to count exactly 4 cycles (0-3)
+- Add explicit state transition conditions
+- Maintain outputs only during required states
+- Clearer reset handling

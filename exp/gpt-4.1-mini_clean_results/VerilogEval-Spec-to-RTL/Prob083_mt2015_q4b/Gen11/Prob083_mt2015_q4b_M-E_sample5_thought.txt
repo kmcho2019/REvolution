@@ -1,0 +1,9 @@
+Instead of using a direct combinational expression, I will implement the output z using a small two-bit finite state machine (FSM) that tracks the recent history of inputs x and y. The FSM will output z=1 when the input vector (x,y) matches 00 or 11, as seen in the waveform, and output 0 otherwise. 
+
+The FSM has four states, each encoding the last input combination (x,y). On each input change, the FSM updates the state, and the output z is generated based on the state value: z=1 if state is 00 or 11, else 0.
+
+This solution uses registered logic for the state encoding and output, which differs from purely combinational designs and may help in applications where input changes are synchronized and state tracking is needed. This approach introduces sequential logic and output latency of one clock cycle but matches the waveform output for given inputs.
+
+For demonstration, I will add a clock input and synchronous reset, so the module is self-contained and the output z changes in sync with the clock. The waveform times can be considered multiples of clock periods.
+
+This approach showcases a novel architectural implementation through an FSM with registered outputs instead of a combinational function.

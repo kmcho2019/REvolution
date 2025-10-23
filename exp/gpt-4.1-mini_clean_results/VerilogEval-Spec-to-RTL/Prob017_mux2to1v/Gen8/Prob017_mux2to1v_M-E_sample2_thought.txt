@@ -1,0 +1,10 @@
+Instead of splitting the 100-bit input vectors into fixed-width chunks and instantiating multiple smaller mux modules, this approach uses a fully vectorized, single-level conditional operator on the entire 100-bit bus directly within the TopModule. This results in a very straightforward, flat design without any additional submodules or generate constructs. 
+
+Using a single continuous assignment with a vectorized conditional expression simplifies the logic and potentially enables synthesis tools to optimize the mux as one large vector operation. This can improve timing by eliminating hierarchical boundaries and reduce area slightly by avoiding the overhead of multiple module instantiations. Power might also benefit from simpler routing of a single vectorized mux.
+
+This approach suits designs where hierarchy is not mandatory and the synthesis tool efficiently handles large vector muxes. It prioritizes simplicity, concise RTL, and potentially better PPA by leveraging tool optimizations on a single combinational statement.
+
+Summary:
+- Single continuous vectorized 2-to-1 mux assignment for all 100 bits in one line.
+- No submodules or generate blocks.
+- Flat and straightforward design improves maintainability and potentially PPA.

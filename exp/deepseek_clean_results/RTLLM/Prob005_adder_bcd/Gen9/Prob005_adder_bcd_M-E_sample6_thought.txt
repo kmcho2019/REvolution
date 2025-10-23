@@ -1,0 +1,19 @@
+Novel Architectural Idea: Predictive BCD Correction with Early Carry Detection
+
+Key Innovations:
+1. Predictive Correction: Instead of detecting overflow after addition, we predict the need for correction during the addition phase itself by analyzing input patterns
+2. Early Carry Detection: We compute potential carry conditions in parallel with the main addition
+3. Dual-Path Addition: Maintain both possible sums (with and without +6 correction) simultaneously
+4. Conditional Selection: Use the predicted correction signal to select between the two sum paths
+
+Advantages:
+- Reduced critical path by performing correction prediction in parallel with addition
+- Eliminates the need for post-addition overflow detection logic
+- More balanced timing between sum computation and correction selection
+- Potential for better power efficiency due to reduced glitching
+
+Implementation Approach:
+1. Compute both possible sums (raw sum and sum+6) in parallel
+2. Generate correction prediction signal based on input digit ranges
+3. Use prediction to select correct sum path
+4. Generate carry-out based on both input digits and correction prediction

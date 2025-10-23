@@ -1,0 +1,16 @@
+Here's a novel approach using a shift register with embedded state information:
+
+1. Instead of a traditional state machine, we'll use a 3-bit shift register that tracks message progress
+2. Each bit position represents a byte in the message (bit[0]=byte1, bit[1]=byte2, bit[2]=byte3)
+3. The shift register is filled from right to left as bytes are received
+4. A special "marker" pattern (100) indicates when to check for in[3]=1
+5. This eliminates explicit state transitions and combines state tracking with byte counting
+6. The done signal is generated when the shift register reaches '111'
+7. Reset clears the shift register to '100' (ready to detect first byte)
+
+Advantages:
+- Combines state tracking and byte counting in single register
+- Fewer conditional transitions than traditional FSM
+- Power efficient - only shifts when needed
+- Simple done generation (just AND all bits)
+- Easily extensible if message length changes

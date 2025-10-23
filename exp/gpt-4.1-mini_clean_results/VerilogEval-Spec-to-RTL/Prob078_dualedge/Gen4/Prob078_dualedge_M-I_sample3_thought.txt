@@ -1,0 +1,10 @@
+To optimize the original dual-edge flip-flop design for better PPA, we will reduce power and area by replacing the output continuous mux with a transparent latch controlled by the clock signal. This latch will hold the output from one of the two flip-flops depending on the clock level, eliminating the dynamic mux toggling and its glitches.
+
+Specifically:
+- Use two flip-flops: one triggered on the positive edge, the other on the negative edge, as before.
+- Instead of a continuous assignment mux on the output, use a clock-controlled transparent latch that samples the proper flip-flop output depending on clk level.
+- This approach reduces glitches and switching power caused by the combinational mux.
+- The latch will have lower area and power than the continuous mux logic.
+- Timing remains manageable since latch transparency matches clock phase, and setup/hold are respected by design.
+
+This strategy improves power by reducing switching on the output logic, lowers glitching, and modestly reduces area by removing the combinational mux in favor of a simpler latch. Performance impact is minimal or slightly improved due to reduced mux delay and cleaner timing of the latch stage.

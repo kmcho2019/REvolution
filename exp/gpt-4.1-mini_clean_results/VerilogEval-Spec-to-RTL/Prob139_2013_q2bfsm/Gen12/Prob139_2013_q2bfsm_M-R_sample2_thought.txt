@@ -1,0 +1,7 @@
+Refactor the FSM to use explicit enumerated state encoding with clearly named parameters, and split the design into three always blocks: one for synchronous state and registers update with synchronous active low reset, one combinational block for next-state logic, and one combinational block for output logic (Moore outputs). Replace the 3-bit shift register for x inputs by a dedicated 2-bit register for the last two x samples and combine with current x input to form the pattern for detection, ensuring the pattern '101' is detected on current and previous two cycles precisely.
+
+Implement the y-monitoring counter to count 0,1,2 cycles exactly, and transit on the 2nd cycle if no y=1 is detected, matching "at most two cycles" counting precisely.
+
+Use explicit reset state name STATE_A for clarity and maintain outputs f and g as Moore outputs derived solely from the current state, reducing timing ambiguity.
+
+This design style clearly separates combinational and sequential logic, uses consistent state encoding (binary, not one-hot), and ensures pattern detection and output timing matches specification exactly, avoiding off-by-one errors and aligning all events with clock edges.

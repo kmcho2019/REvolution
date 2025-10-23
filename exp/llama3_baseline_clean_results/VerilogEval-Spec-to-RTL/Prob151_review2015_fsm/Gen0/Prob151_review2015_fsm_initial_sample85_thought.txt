@@ -1,0 +1,6 @@
+To implement the timer finite-state machine, we'll design a state machine that moves through several states based on the inputs and internal conditions. The states will be: 
+- IDLE: The initial state where the state machine waits for the pattern 1101 to be detected.
+- SHIFT: After detecting the pattern, the state machine enters this state, where it shifts in 4 more bits by asserting shift_ena for exactly 4 clock cycles.
+- COUNTING: After shifting, the state machine waits for the counters to finish counting by asserting counting and waiting for done_counting.
+- DONE: Once the counters are done, the state machine asserts done to notify the user and waits for ack before returning to IDLE.
+We will use a counter to keep track of the number of clock cycles in the SHIFT state.

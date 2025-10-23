@@ -1,0 +1,14 @@
+To implement a Mealy FSM that detects the sequence "10011" in a continuous input stream, we need to:
+1. Define states representing the progress in detecting the sequence
+2. Transition between states based on the current state and input
+3. Output MATCH=1 only when the last '1' of "10011" is detected
+4. Handle reset to initialize the FSM
+5. Support continuous detection by allowing the FSM to restart detection after a complete match
+
+The states will be:
+- IDLE: Initial state, waiting for first '1'
+- S1: Received '1'
+- S10: Received '10'
+- S100: Received '100'
+- S1001: Received '1001'
+On receiving the next '1' in S1001 state, we output MATCH=1 and transition to S1 (to detect overlapping sequences)

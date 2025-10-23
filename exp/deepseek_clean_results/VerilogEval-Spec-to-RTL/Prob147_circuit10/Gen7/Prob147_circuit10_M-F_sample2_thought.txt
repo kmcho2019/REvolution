@@ -1,0 +1,21 @@
+After carefully re-examining the waveform and feedback, I realize the correct behavior is more complex than initially thought. The key observations are:
+
+1. State transitions occur when:
+   - a=1 and b=1: toggle state (as before)
+   - a=1 and b=0: set state to 0
+   - a=0 and b=1: set state to 1
+
+2. Output q is:
+   - 1 when (state=0 and b=1) or (state=1 and b=0)
+   - 0 otherwise
+
+This matches the XOR behavior (q = state ^ b) but with more complex state transition rules. The state acts as a memory that's set based on specific input combinations.
+
+New approach:
+1. State transitions:
+   - On posedge clk, update state based on current a and b
+   - Follow the specific transition rules observed in the waveform
+2. Output q:
+   - Maintain XOR logic since it matches the output behavior
+3. Initial state:
+   - Start with state=0 as shown in the waveform

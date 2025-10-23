@@ -1,0 +1,20 @@
+To optimize the PPA (Power, Performance, Area) metrics of the minimum-finding module, I'll implement the following improvements:
+
+1. Performance Optimization:
+   - Use a balanced comparison tree structure to reduce critical path
+   - Break the operation into two stages with intermediate registers (pipelining)
+   - This allows higher clock frequencies by reducing combinational delay
+
+2. Power Optimization:
+   - Only perform comparisons when inputs change (using clock gating)
+   - Eliminate redundant comparisons by storing intermediate results
+
+3. Area Optimization:
+   - Share comparison resources between stages
+   - Use registered outputs to reduce glitching power
+
+The new design will:
+- First find min(a,b) and min(c,d) in parallel
+- Register these intermediate results
+- Then find the final min between the two intermediate results
+- Use clock gating to only update when inputs change

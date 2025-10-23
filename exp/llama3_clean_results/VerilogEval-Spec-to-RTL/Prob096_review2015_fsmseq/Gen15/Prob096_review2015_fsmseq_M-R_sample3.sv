@@ -1,0 +1,53 @@
+module TopModule(
+    input clk,
+    input reset,
+    input data,
+    output reg start_shifting
+);
+
+reg [3:0] state;
+
+always @(posedge clk) begin
+    if(reset) begin
+        state <= 4'b0000;
+        start_shifting <= 0;
+    end else begin
+        case(state)
+            4'b0000: begin
+                if(data == 1'b1) begin
+                    state <= 4'b0001;
+                end else begin
+                    state <= 4'b0000;
+                end
+            end
+            4'b0001: begin
+                if(data == 1'b1) begin
+                    state <= 4'b0011;
+                end else begin
+                    state <= 4'b0000;
+                end
+            end
+            4'b0011: begin
+                if(data == 1'b0) begin
+                    state <= 4'b0110;
+                end else begin
+                    state <= 4'b0011;
+                end
+            end
+            4'b0110: begin
+                if(data == 1'b1) begin
+                    state <= 4'b1101;
+                    start_shifting <= 1;
+                end else begin
+                    state <= 4'b0000;
+                end
+            end
+            4'b1101: begin
+                state <= 4'b1101;
+            end
+            default: state <= 4'b0000;
+        endcase
+    end
+end
+
+endmodule

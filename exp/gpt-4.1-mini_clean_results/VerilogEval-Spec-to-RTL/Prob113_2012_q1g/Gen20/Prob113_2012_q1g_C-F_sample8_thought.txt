@@ -1,0 +1,20 @@
+I will fuse the best ideas from both examples to produce a minimal and efficient solution that balances clarity and gate count:
+
+- Use the simplified and mathematically proven minimal expression:
+  f = ~x3 & (~x1 | (x2 & ~x0)) | x3 & x2 & (~x0 | x1)
+
+- Share complemented signals only when used multiple times. 
+  Here, nx3 is used twice (in two AND terms), so keep it.
+  nx1 and nx0 are used twice each, so define them as wires for reuse.
+
+- Inline smaller or single-use expressions to reduce wires and area:
+  However, nx3, nx1, and nx0 appear in multiple places, so keep them as shared signals.
+
+- Keep intermediate terms clear for readability and synthesis optimization:
+  Define termA = (~x1 | (x2 & ~x0))
+  Define termB = (~x0 | x1)
+  Then f = nx3 & termA | x3 & x2 & termB
+
+- This approach minimizes redundant logic, leverages common subexpression sharing, and keeps combinational depth low.
+
+This fusion yields a compact, readable, and efficient Verilog module with optimal PPA metrics.

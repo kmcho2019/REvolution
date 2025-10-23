@@ -1,0 +1,23 @@
+Improvement Strategy:
+
+The original 4-stage pipeline float_multi is functionally correct and well-structured, but the main timing bottleneck and power hotspot is the combinational 24x24 multiplier computed every clock cycle in stage 3.
+
+To improve Power, Performance, and Area (PPA), I will:
+
+1. Further pipeline the multiplier by inserting a registered pipeline stage for the multiplier inputs and outputs to isolate the multiplier latency, effectively making it a 5-stage pipeline. This reduces the critical path delay of the multiplier and subsequent normalization, increasing the maximum clock frequency.
+
+2. Use non-blocking assignments consistently and split the always block into multiple smaller always blocks to improve synthesis and timing clarity.
+
+3. Optimize sticky bit calculation by splitting the OR reduction hierarchically to reduce fan-in.
+
+4. Maintain IEEE-754 compliance by preserving the handling of special cases (NaN, Inf, Zero), normalization, rounding, overflow, and underflow.
+
+5. Keep exponent as 10-bit for safe overflow detection but use narrower widths where possible.
+
+6. Add clock enables for pipeline registers, allowing potential gating if integrated later.
+
+7. Overall, balance pipeline stage workloads better and isolate the multiplier stage cleanly to improve timing and reduce power consumption due to toggling in long combinational paths.
+
+The interface and functional behavior remain unchanged, but latency increases from 4 to 5 cycles for better timing closure.
+
+This approach should improve maximum frequency, reduce dynamic power, and possibly reduce area by better mapping multiplier to DSP blocks or vendor primitives.

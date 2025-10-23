@@ -1,0 +1,13 @@
+Novel Architecture Idea:
+1. Use a shift register approach instead of explicit state machine for more compact design
+2. Implement a two-stage pipeline to naturally handle the timing requirements
+3. First stage captures and holds the first byte when valid_in arrives
+4. Second stage performs concatenation and generates outputs on next clock edge
+5. Valid_out is generated only when both bytes are present in pipeline
+6. Reset clears all registers synchronously
+
+Key Advantages:
+- Pipeline naturally enforces the "next cycle" output requirement
+- Shift register approach simplifies control logic
+- Explicit separation of data capture and output generation stages
+- More efficient use of registers compared to state machine approach

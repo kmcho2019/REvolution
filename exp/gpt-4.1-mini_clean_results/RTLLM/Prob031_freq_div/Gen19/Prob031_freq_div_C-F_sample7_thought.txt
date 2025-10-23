@@ -1,0 +1,11 @@
+Fuse the modular next-state combinational logic from Example 2 with the single synchronous always block and explicit toggling style from Example 1. 
+
+Strategy:
+1. Use a single always block triggered on posedge CLK_in or posedge RST for all sequential updates, simplifying clock domain management.
+2. Use separate combinational blocks calculating next-state signals for counters and clocks for better readability and formal clarity.
+3. Maintain explicit counters and toggle points exactly as in Example 1 to keep minimal counter widths and clear thresholds.
+4. Toggle CLK_50 directly every clock cycle inside the sequential block for minimal latency and area.
+5. Parameterize toggle thresholds for easy modifications.
+6. Use non-blocking assignments in the sequential block to avoid race conditions.
+
+This combination brings the clarity and formal verifiability of Example 2’s next-state logic, the compactness and simplicity of Example 1’s single sequential block, and keeps all counters optimally sized with clear toggling. It results in a clean, maintainable, and efficient frequency divider design.

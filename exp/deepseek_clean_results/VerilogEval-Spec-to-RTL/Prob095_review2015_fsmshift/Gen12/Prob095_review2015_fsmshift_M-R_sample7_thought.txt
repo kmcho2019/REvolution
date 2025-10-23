@@ -1,0 +1,17 @@
+Refactored design with improved timing:
+1. Keep the shift register concept but modify the initialization and output logic
+2. Initialize shift register to 4'b1110 (instead of 4'b1111) to ensure:
+   - shift_ena is high immediately after reset (cycle 0)
+   - Exactly 4 cycles of shift_ena (cycles 0-3)
+3. Shift in zeros from the right as before
+4. The output is now OR of all shift register bits:
+   - This gives '1' when any bit is '1' (first 4 cycles)
+   - Automatically goes to '0' when all bits are '0'
+5. Reset behavior:
+   - Synchronously loads 4'b1110
+   - First shift creates 4'b1100, then 4'b1000, then 4'b0000
+6. Advantages:
+   - Maintains simple shift register approach
+   - Corrects timing to match specification
+   - Uses OR operation for clean output generation
+   - Still avoids complex arithmetic

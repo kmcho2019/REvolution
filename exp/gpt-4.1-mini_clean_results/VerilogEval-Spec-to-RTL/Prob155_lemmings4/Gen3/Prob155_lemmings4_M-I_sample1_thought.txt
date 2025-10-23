@@ -1,0 +1,38 @@
+The original solution is structurally correct and implements the described FSM faithfully. However, the main issue causing functional mismatches on walk_left and walk_right outputs stems from the bump ignoring logic relative to ground transitions.
+
+To fix this, I will:
+
+1. Improve the bump ignoring logic to precisely match the spec:  
+   - Bumps are ignored only during *falling* or *digging* modes, *or* during the exact cycle when ground transitions (1→0 or 0→1).  
+   - The original code ignores bumps if ground_falling_start or ground_reappear are true, which is correct, but the timing of ground_d update can cause bumps to be incorrectly ignored or accepted.
+
+2. To ensure correct timing, ground_d must be updated *after* the combinational logic reads ground and ground_d. Since synchronous registers update at clock edge, this is ensured, but we must carefully gate bump effects only during cycles where ground transitions actually happen.
+
+3. The solution is to treat bumps as "ignored" in the *same cycle* as ground transitions only. Since ground_d is the previous clock's ground, ground_falling_start and ground_reappear are asserted *exactly* during the clock cycle when the transition happens. This is correct; no change needed here.
+
+4. However, since bump signals are synchronous inputs sampled on the clock, the original code's logic should hold. Still, to be absolutely sure, we must check the order of conditions in the WALK state:
+
+   - Check for ground == 1  
+   - If dig is asserted, start digging  
+   - Else if bumps not ignored and (bump_left or bump_right), flip direction  
+   - Else walk same direction
+
+   This is consistent with spec and original code.
+
+5. Potential subtle bug: the condition "bumps_ignored" includes ground_falling_start and ground_reappear unconditionally, even if the mode is WALK. According to spec, bumps during these transitions are ignored, but if these transitions do *not* coincide with walk mode (e.g., already falling), bumps should be ignored too. The original code lumps all these into one signal, which is correct.
+
+6. After careful review, the original logic seems correct; so the mismatch may be due to fall_timer starting at 1 instead of 0 on falling start. This could lead to off-by-one splat detection. Initialize fall_timer to 0 on fall start instead.
+
+7. Simplify and clarify the code by:  
+   - Separating detection of bump_ignore in WALK mode only to reduce confusion.  
+   - Ensuring fall_timer saturates at 31, but resets to 0 when entering fall (not 1).
+
+8. Add comments to clarify precedence and conditions for easier maintenance.
+
+9. Keep the enum for modes and direction register as is, since minimal bits are used.
+
+10. Moore output logic remains the same.
+
+This results in a minor but important functional fix for fall_timer initialization and explicit bump ignore gating, ensuring direction switches correctly on bumps only when allowed. This will resolve the mismatches on walk_left and walk_right outputs and maintain the existing correct aaah and digging outputs.
+
+No additional area or power penalty incurred; the FSM remains minimal and clean.

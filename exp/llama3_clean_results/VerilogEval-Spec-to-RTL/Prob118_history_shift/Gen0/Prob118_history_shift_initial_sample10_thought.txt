@@ -1,0 +1,12 @@
+The TopModule will implement a 32-bit global history shift register with 
+support for rolling back state in response to a pipeline flush caused by 
+a branch misprediction. To achieve this, we will use a 32-bit register 
+to store the history and update it based on the input signals. On every 
+clock cycle, we will check if areset is asserted and reset the history 
+register to zero if it is. If areset is not asserted, we will then check 
+if a misprediction occurred (train_mispredicted = 1) and update the 
+history register accordingly. If no misprediction occurred, we will then 
+check if a prediction is being made (predict_valid = 1) and update the 
+history register by shifting in the predicted branch direction. 
+Finally, we will assign the value of the history register to the 
+predict_history output.

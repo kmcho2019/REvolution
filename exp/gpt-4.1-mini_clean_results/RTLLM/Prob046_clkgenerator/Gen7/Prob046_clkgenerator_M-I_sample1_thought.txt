@@ -1,0 +1,9 @@
+The original approach is standard for testbench clock generation using a delay-based always block. However, it can be improved for clarity and to avoid potential simulator issues by explicitly separating initialization and toggling logic and ensuring the clk signal starts at 0 deterministically.
+
+A cleaner and commonly used method is to use an initial block with an infinite forever loop that toggles clk every half PERIOD. This avoids an always block with no sensitivity list (which is legal but sometimes flagged) and keeps the code clear for simulation purposes.
+
+Since this module is mainly for simulation/testbench use and not for synthesis, the delay-based toggling is appropriate.
+
+Additionally, I will add comments for clarity.
+
+This solution ensures stable, periodic toggling, avoids simulation issues, and matches common verification practices.

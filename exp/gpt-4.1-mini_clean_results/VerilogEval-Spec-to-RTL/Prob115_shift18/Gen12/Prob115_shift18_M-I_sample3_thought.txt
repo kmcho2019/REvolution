@@ -1,0 +1,19 @@
+To improve the initial design's timing, power, and area metrics, we will optimize the shift operations and muxing structure. Since shifts are by fixed amounts (1 or 8 bits) and directions (left or arithmetic right), we can implement these shifts using simple concatenation and slicing instead of variable shifts, which synthesis tools might implement as expensive barrel shifters.
+
+For example:
+- Shift left by 1 bit: concatenate q[62:0] and 1'b0
+- Shift left by 8 bits: concatenate q[55:0] and 8'b0
+- Arithmetic right shift by 1 bit: concatenate msb and q[63:1]
+- Arithmetic right shift by 8 bits: concatenate 8 copies of msb and q[63:8]
+
+This removes large 64-bit variable shifters.
+
+Additionally, we replace the nested conditional operator muxing with a single case statement inside a combinational always block to reduce mux levels and improve synthesis optimization.
+
+By doing so, we reduce the critical path muxing, limit switching activity by controlling when shifts happen, and lower logic complexity and area.
+
+These optimizations should improve timing slack (reduce negative slack), reduce power consumption, and slightly reduce area while maintaining correctness.
+
+The synchronous load and enable logic remain unchanged.
+
+Final code includes comments to clarify each step.

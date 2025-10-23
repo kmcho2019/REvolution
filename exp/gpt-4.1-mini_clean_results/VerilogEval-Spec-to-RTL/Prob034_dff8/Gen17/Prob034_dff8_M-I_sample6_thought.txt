@@ -1,0 +1,11 @@
+The original solution is functionally correct and minimal for an 8-bit register of D flip-flops. However, to improve power efficiency (especially if input `d` doesn't change often), we can add clock enable logic so that the register only updates when the new input `d` differs from the current output `q`. This avoids unnecessary toggling of the flip-flops and thus reduces dynamic power consumption without affecting functionality.
+
+The modification is simple: add an enable signal that compares `d` and `q`, and use it to gate the loading of `q`. This does not increase area significantly and is a common low-power optimization.
+
+If power is a priority and logic overhead minimal, this solution is better. Performance and area remain largely unchanged, while power is reduced when input is stable.
+
+Note that this is a typical and acceptable design pattern for clock enable usage, and synthesis tools handle it efficiently.
+
+Also, for clearer simulation results and known initial state, I will initialize `q` to zero using a reset input. However, since reset is not specified, I will add an initial block setting `q` to zero to avoid unknown initial states during simulation only.
+
+This preserves the original interface while improving power and simulation predictability.

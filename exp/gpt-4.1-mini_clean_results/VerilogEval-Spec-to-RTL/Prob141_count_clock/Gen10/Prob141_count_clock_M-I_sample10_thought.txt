@@ -1,0 +1,15 @@
+To optimize the given 12-hour BCD clock for better PPA, the main goals are reducing combinational logic depth and minimizing switching activity while preserving correct behavior:
+
+1. Combine the seconds and minutes counters into a single always block triggered on the clock edge with enable gating. This reduces the number of clocked blocks and logic complexity.
+
+2. Implement the hour counter as a 4-bit binary counter with a simpler condition to toggle PM and roll hours from 12 to 1.
+
+3. Use only non-blocking assignments in sequential always blocks to ensure synthesis-friendly behavior.
+
+4. Use registered outputs instead of combinational assignments for hour BCD conversion, thus avoiding combinational logic during critical timing paths and reducing switching.
+
+5. Gate all counters and the hour update by ena so registers toggle only when needed.
+
+6. Simplify and unify the rollover conditions and minimize redundant comparisons.
+
+These steps should reduce combinational logic depth, minimize toggling on non-enabled cycles, improve timing slack, and reduce power and area with little to no impact on functionality.

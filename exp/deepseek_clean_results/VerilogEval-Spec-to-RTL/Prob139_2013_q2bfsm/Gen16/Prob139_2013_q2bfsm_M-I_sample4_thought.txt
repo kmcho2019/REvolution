@@ -1,0 +1,25 @@
+To fix the issues in the original solution, I'll implement the following improvements:
+
+1. **Proper Initial Pulse**: Ensure f=1 for exactly one cycle after reset by adding a dedicated state for this purpose.
+
+2. **Correct Permanent Behavior**: 
+   - Once g becomes 1 permanently, it should stay 1 until reset
+   - Once g becomes 0 permanently, it should stay 0 until reset
+   - This requires separate tracking of the permanent state
+
+3. **Accurate Timeout Logic**:
+   - Only count timeout cycles when in MONITOR_Y state
+   - Stop counting once y=1 is detected or timeout occurs
+
+4. **Terminal States**:
+   - After determining g's permanent state, the FSM should stay in a terminal state
+   - Only reset can take it out of terminal states
+
+5. **Simplified State Machine**:
+   - Reduce states to only necessary ones: RESET, PULSE_F, WAIT_FOR_PATTERN, MONITOR_Y, G_PERMANENT_HIGH, G_PERMANENT_LOW
+
+Key improvements:
+- Clear separation between temporary and permanent behaviors
+- Proper terminal state handling
+- Accurate timeout counting
+- Simplified state transitions

@@ -1,0 +1,7 @@
+To implement the TopModule, we can use a different approach by utilizing two separate registers: one for storing the data to be loaded and another for the shift register itself. This approach can simplify the logic and potentially improve performance.
+
+The idea is to have two always blocks: one for handling the asynchronous reset and loading the data into a temporary register (`temp_data`), and another for handling the enable signal and shifting the contents of the shift register (`q`).
+
+When the load signal is high, the data is loaded into `temp_data`. On the next clock edge, if the enable signal is not high, the contents of `temp_data` are transferred to `q`. If the enable signal is high, the contents of `q` are shifted right instead.
+
+This architecture allows for a cleaner separation of the load and enable logic, potentially making it easier to optimize and improve performance.

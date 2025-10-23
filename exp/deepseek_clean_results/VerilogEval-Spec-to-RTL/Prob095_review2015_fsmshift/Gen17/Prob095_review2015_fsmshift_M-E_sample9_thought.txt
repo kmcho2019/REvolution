@@ -1,0 +1,17 @@
+Novel approach using a state machine with explicit cycle counting:
+1. Instead of a counter, use a 4-state FSM to precisely control the 4-cycle enable period
+2. States:
+   - RESET: Initial state, asserts shift_ena
+   - CYCLE1: First cycle after reset
+   - CYCLE2: Second cycle
+   - CYCLE3: Third cycle
+   - DONE: Final state (holds forever)
+3. Benefits:
+   - Explicit state tracking ensures exactly 4 cycles of shift_ena
+   - No counter overflow/underflow issues
+   - Clear state transitions make timing obvious
+   - Easily extensible if requirements change
+4. Reset behavior:
+   - Immediately enters RESET state
+   - Progresses through each cycle state
+   - Locks in DONE state until next reset

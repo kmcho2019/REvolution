@@ -1,0 +1,12 @@
+To improve the previous design while preserving the core concept of fractional division by 3.5 using double-edge clocking, we can refactor the implementation to:
+
+- Use a synchronous counter clocked only on the positive edge of `clk` with asynchronous reset.
+- Derive both clk_intA and clk_intB as purely combinational signals from the counter value, avoiding register delays and ensuring synchronous timing.
+- Generate clk_intB_phase_shift by registering clk_intB on the negative edge of clk, realizing a clean half-cycle phase shift.
+- Create the final output `clk_div` by OR-ing the stable clk_intA and the phase-shifted clk_intB.
+- Ensure no register signal in clk_intA or clk_intB to avoid timing skew; only clk_intB_phase_shift is registered on negedge clk.
+- This approach preserves the fractional division ratio while improving timing consistency and reducing glitches caused by asynchronous or uneven updates.
+
+The key change is to keep clk_intA and clk_intB combinational and synchronous, sampled values only on posedge clk, and phase shift clk_intB only by the negedge register to maintain clean edges.
+
+This structure provides a robust and glitch-free fractional divide-by-3.5 clock output.

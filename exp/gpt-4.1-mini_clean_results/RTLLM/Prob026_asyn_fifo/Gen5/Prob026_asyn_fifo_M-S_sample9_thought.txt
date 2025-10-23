@@ -1,0 +1,14 @@
+Implement an asynchronous FIFO with parameterizable WIDTH and DEPTH using Gray-coded pointers for safe crossing of asynchronous clocks. The FIFO uses a dual-port RAM submodule with independent read and write clocks.
+
+Key points of the simplified design:
+- Use binary pointers internally and convert to Gray code for synchronization.
+- Synchronize read pointer into write clock domain and write pointer into read clock domain using two-stage flip-flop synchronizers.
+- Detect full condition by comparing the next write pointer Gray code with the read pointer Gray code synchronized into write clock domain, based on the specified full condition.
+- Detect empty condition by comparing the read pointer Gray code with the write pointer Gray code synchronized into read clock domain.
+- Use lower bits of the binary pointers as RAM addresses.
+- Write pointer increments only if not full and winc asserted.
+- Read pointer increments only if not empty and rinc asserted.
+- Register the read data on the read clock when read enable is active.
+- Maintain a clean and modular structure without extra functions or submodules except the synchronizer and RAM modules.
+- Keep parameterization of WIDTH and DEPTH.
+- Gray code width = PTR_WIDTH + 1 for full/empty detection; address width = PTR_WIDTH.

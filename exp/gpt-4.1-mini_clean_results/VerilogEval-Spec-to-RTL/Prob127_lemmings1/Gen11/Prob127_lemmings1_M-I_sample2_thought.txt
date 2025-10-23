@@ -1,0 +1,66 @@
+To optimize the original design for better PPA, replace the multi-branch if-else next state logic with a single compact boolean expression for next_state. This reduces combinational logic depth and improves timing (lower TNS/WNS) by minimizing gate levels. Keep the asynchronous positive-edge reset for state initialization as required.
+
+Specifically, the next state equation can be simplified by noting that bump_left alone or bump_left & bump_right together cause walking right, except when both bumps occur, which toggles state. This can be expressed as:
+
+next_state = (bump_left & ~bump_right) | (bump_left & bump_right & ~state) | (~bump_left & bump_right & 1'b0) // simplified as just the two terms
+
+But since bump_right alone causes walk_left (state=0), the full compact expression is:
+
+next_state = (bump_left & ~bump_right) | (bump_left & bump_right & ~state)
+
+However, this misses the bump_right-only case, so we incorporate it explicitly:
+
+- When bumped on right only: next_state=0 (walk_left)
+- When bumped on left only: next_state=1 (walk_right)
+- When both bumps: next_state = ~state (toggle)
+- Otherwise: next_state = state (hold)
+
+Expressed as a boolean expression:
+
+next_state = (bump_left & ~bump_right) | (bump_left & bump_right & ~state)
+
+If bump_right only, next_state=0, so that part can be incorporated as
+
+next_state = (bump_left & ~bump_right) | (bump_left & bump_right & ~state) | ( ~bump_left & bump_right & 1'b0)
+
+which simplifies to just the first two terms because bump_right-only corresponds to 0.
+
+To properly implement all cases in one expression:
+
+next_state = (bump_left & ~bump_right) | (bump_left & bump_right & ~state);
+
+But this misses bump_right-only => walk_left=0.
+
+So, better is:
+
+next_state = (bump_left & ~bump_right) | (bump_left & bump_right & ~state) | (~bump_left & bump_right & 1'b0);
+
+Which is effectively:
+
+next_state = (bump_left & ~bump_right) | (bump_left & bump_right & ~state);
+
+And if bump_right only, next_state=0 (walk_left).
+
+Hence the logic for bump_right-only is next_state=0, which matches walk_left state.
+
+So the final concise expression is:
+
+next_state = (bump_left & ~bump_right) | (bump_left & bump_right & ~state);
+
+When bump_left=0 and bump_right=1, next_state=0, correctly.
+
+When bump_left=0 and bump_right=0, next_state=state (need to handle hold).
+
+Therefore, to hold state when no bump, next_state should equal state when (bump_left==0 and bump_right==0). Since in expression above next_state=0 when no bumps, which breaks hold.
+
+Hence, we add an or condition for no bumps:
+
+next_state = ((bump_left & ~bump_right) | (bump_left & bump_right & ~state)) | (~bump_left & ~bump_right & state);
+
+This equation handles all cases, replacing the if-else with a single assignment.
+
+This reduces logic levels and uses a direct boolean formula.
+
+The rest of the design stays the same, with outputs directly from state.
+
+This simple modification can improve timing and reduce power by minimizing logic levels.

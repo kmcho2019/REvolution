@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Simplify the output logic by making MATCH purely combinational (true Mealy machine) to eliminate the registered output delay
+   - Balance state transition logic by merging similar conditions
+   - Add pipeline register for IN to improve setup time
+
+2. Power Optimization:
+   - Remove unnecessary registered output to reduce switching activity
+   - Add input change detection to prevent unnecessary state transitions
+   - Use Gray coding for state encoding to minimize bit transitions
+
+3. Area Optimization:
+   - Maintain compact 2-bit state encoding
+   - Simplify next state logic by combining similar transitions
+   - Remove redundant default case
+
+Key Improvements:
+- Pure Mealy output for immediate response (0-cycle latency)
+- Gray-coded states for reduced power
+- Simplified transition logic
+- Better timing with input pipeline
+- Maintains all functionality while improving PPA

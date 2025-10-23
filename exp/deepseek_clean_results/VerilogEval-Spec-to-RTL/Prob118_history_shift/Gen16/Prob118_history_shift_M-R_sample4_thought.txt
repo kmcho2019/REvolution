@@ -1,0 +1,14 @@
+Refactoring Approach:
+1. Replace the sequential always block with continuous assignments for combinational logic
+2. Use a clocked always block only for the register updates
+3. Separate the next-state logic from the register updates
+4. Maintain the same priority scheme (misprediction > prediction)
+5. Keep the power optimization by only updating shadow_history during predictions
+6. Make the state transitions more explicit by calculating next_history separately
+
+Key Changes:
+- Combinational logic moved to continuous assignments
+- Register updates remain in a single always block
+- Next-state calculation is now explicit and separated
+- Same functionality but with clearer separation of combinational and sequential logic
+- More modular structure that could be easier to optimize in synthesis

@@ -1,0 +1,23 @@
+To improve the design for better Power, Performance, and Area (PPA), I focus on reducing power and area without harming performance:
+
+1. **Remove the expensive 64-bit comparator for update_en**:
+   - The existing design prevents toggling when the state does not change by comparing q_out and next_state on every clock, but this comparator itself consumes significant power and area.
+   - Since the Rule 90 operation will always produce changing patterns unless stable, this optimization often yields diminishing returns relative to comparator cost.
+   - Removing update_en simplifies the clock enable logic and timing paths, improving frequency and reducing power consumed by comparison logic.
+
+2. **Directly compute next_state with fixed boundary zeros, avoid extra boundary wires**:
+   - Instead of passing boundary bits through wires and logic, hardcode left boundary for first bit = 0 and right boundary for last bit = 0 directly in the logic.
+   - This simplifies wiring, reduces area and slight performance benefit by removing extra signal routing.
+
+3. **Keep modular 64-bit blocks for manageable synthesis and maintainability**:
+   - Use non-blocking assignments consistently.
+   - Compute next_state as XOR of neighbors with boundary conditions applied inline, no clock gating.
+
+4. **Simplify and flatten boundary connections between blocks**:
+   - Use internal wiring to pass boundary bits without redundant signals.
+
+Overall, these changes remove the update_en comparator overhead and reduce wiring complexity, which should improve timing and lower power while slightly reducing area. The design remains fully functional and correct per Rule 90.
+
+No clock gating or enable logic: registers update on every clock cycle either loading data or next_state directly.
+
+This tradeoff yields a cleaner and more efficient design.

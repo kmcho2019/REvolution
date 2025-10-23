@@ -1,0 +1,7 @@
+Refactor the design by separating the multiplication and accumulation stages for clearer structure: compute the product combinationally using an assign statement, and perform accumulation inside an always block with synchronous reset.
+
+Instead of saturating on overflow, allow wrap-around (modular addition) to simplify logic as the original specification did not mention saturation. The output 'c' is still a registered 32-bit accumulator updated on the clock's positive edge or reset synchronously.
+
+This restructuring clarifies the dataflow: multiplication as combinational logic and accumulation as sequential logic, making the design easier to understand and potentially simplifying synthesis. The absence of saturation logic reduces critical path delay and resource usage.
+
+The output 'c' remains a 32-bit register, updated by adding the full 32-bit product (lower bits of 64-bit multiplication) every cycle, with synchronous reset clearing it to zero.

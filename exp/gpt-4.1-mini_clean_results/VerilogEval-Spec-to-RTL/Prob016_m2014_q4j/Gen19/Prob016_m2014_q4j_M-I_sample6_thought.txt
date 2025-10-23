@@ -1,0 +1,11 @@
+The previous solution uses full adders instantiated in a generate loop combined with carry-lookahead logic. While correct and modular, it has some redundant logic (fa_cout wires) and some carry calculation is still sequential, limiting maximum speed. For a 4-bit adder, this is not a big problem but can be optimized.
+
+Improvement strategy:
+- Remove the redundant carry-out outputs from the FullAdder instances since the carry-lookahead logic already computes carries.
+- Directly calculate sum bits in TopModule using the generate, propagate, and carry signals instead of instantiating full adders. This reduces area and power by eliminating the module overhead.
+- Keep carry-lookahead logic for fast carry computation.
+- The sum bit calculation is sum[i] = p[i] ^ c[i], where p[i] = x[i]^y[i].
+- This reduces logic levels and simplifies the design while maintaining correctness.
+- The final carry-out is c[4] as before.
+
+This approach reduces area and power, and improves timing by removing redundant logic and module overhead, thus optimizing the PPA metrics.

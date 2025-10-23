@@ -1,0 +1,10 @@
+To improve robustness and clearly separate the input collection and output generation stages, I will implement a simple two-state FSM with explicit states: IDLE (waiting for first byte) and WAIT_SECOND (first byte stored, waiting for second byte). 
+
+- On the first valid_in in IDLE, store data_in in data_lock and go to WAIT_SECOND.
+- On the second valid_in in WAIT_SECOND, concatenate data_lock and data_in to prepare output data, and move to OUTPUT state.
+- Introduce a separate OUTPUT state where valid_out and data_out are asserted for one clock cycle.
+- After OUTPUT state, return to IDLE for next pair.
+
+This approach cleanly pipelines the valid and data signals, avoiding combinational or reset-related glitches and aligning output timing precisely one clock after the second valid input, as specified. The FSM also clearly defines when and how flags and registers update, helping simulation and synthesis tools better understand the behavior and improving code readability and maintainability.
+
+Note: We use synchronous reset and update all registers on posedge clk. valid_out is a one-cycle pulse aligned to output data availability.

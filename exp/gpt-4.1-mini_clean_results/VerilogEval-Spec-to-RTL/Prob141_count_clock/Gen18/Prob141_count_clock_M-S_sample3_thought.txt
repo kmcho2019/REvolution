@@ -1,0 +1,8 @@
+Simplify by using fully BCD-coded counters for hours, minutes, and seconds to avoid binary-to-BCD conversion, and keep all increments in a single always block for clarity and reduced combinational logic:
+
+- Represent hours directly as two BCD digits (hh_tens and hh_units), limiting hours to 01-12.
+- Increment seconds and minutes as BCD counters with rollover logic embedded in sequential logic gated by ena.
+- On minute rollover, increment hour BCD counter and toggle pm when hour rolls from 11 to 12.
+- Use a single always @(posedge clk) block for all synchronous logic with prioritized synchronous reset.
+- Outputs directly driven by BCD digit registers concatenated.
+- This reduces combinational next-state logic, removes the hour conversion function, and centralizes logic for easier understanding and potentially better synthesis.

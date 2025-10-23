@@ -1,0 +1,17 @@
+The goal remains to implement the four functions mux_in[3:0], each depending on inputs c and d, so that when selected by {a,b} through a single 4-to-1 mux outside TopModule, the overall function matches the K-map.
+
+We keep the use of only 2-to-1 muxes (mux2) to build these functions without using any logic gates directly.
+
+Refactor by expressing each mux_in[i] as a conditional operator (ternary) assignment for clarity and simplicity, then replace these with calls to mux2 modules, keeping the code purely structural.
+
+This will make the logic more readable and easier to verify. We'll explicitly show intermediate signals for NOT and AND, using mux2 modules as inverters and combiners.
+
+All signals will be wires assigned via mux2 instances. This avoids mixing assign and module instances in complicated ways, and clarifies the logic.
+
+We do not define a and b inside TopModule since they are mux selectors outside, so mux_in outputs depend only on c and d.
+
+Finally, we assign mux_in as {f3,f2,f1,f0} corresponding to ab=10,11,01,00 respectively, matching the given map.
+
+The K-map rows correspond to c,d values, so we implement each mux_in[i] as a function of c,d from the K-map entries using mux2 modules, respecting only mux2 and no logic gates.
+
+This structure preserves original logic, but provides a clearer and more modular code style.

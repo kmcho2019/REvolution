@@ -1,0 +1,18 @@
+Improvement strategy:
+1. Fix pattern detection by properly clearing pattern_reg when entering SHIFT state
+2. Correct shift counter to count exactly 4 cycles (0-3) with proper reset
+3. Ensure strict state transition conditions:
+   - Only transition to SHIFT when full pattern is detected
+   - Stay in SHIFT for exactly 4 cycles
+   - Only leave COUNT when done_counting is high
+   - Only leave DONE when ack is high
+4. Simplify output logic to be purely combinational
+5. Add clear reset conditions for all registers
+6. Optimize state encoding for minimal logic
+
+Key improvements:
+- Correct pattern detection timing
+- Precise 4-cycle shift duration
+- Strict state transition conditions
+- Clear reset behavior
+- Maintained simple output logic

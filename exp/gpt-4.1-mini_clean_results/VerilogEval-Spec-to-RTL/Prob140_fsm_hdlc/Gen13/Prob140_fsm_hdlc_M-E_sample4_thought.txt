@@ -1,0 +1,5 @@
+Implement the FSM by explicitly coding states representing the count of consecutive 1s (from 0 to 6) as separate enumerated states. Transition through these states on input bits, incrementing the count on each 1 and resetting to zero on 0. When a zero is received after five consecutive ones, assert `disc`; after six consecutive ones followed by zero, assert `flag`; and when transitioning into a hypothetical seventh consecutive one state, assert `err`. 
+
+This FSM is a classic Moore machine, where outputs depend solely on the current state, not the input. Outputs are registered and asserted for exactly one clock cycle after the detection condition, as required. This design uses an enumerated type with parameterized states and a clean case-based next-state logic, enhancing readability and maintainability compared to counting registers.
+
+The synchronous reset initializes the FSM to state zero, corresponding to no previous consecutive ones, behaving as if the previous bit were zero.

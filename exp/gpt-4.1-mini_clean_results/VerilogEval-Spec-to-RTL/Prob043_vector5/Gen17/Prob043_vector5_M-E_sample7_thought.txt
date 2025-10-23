@@ -1,0 +1,9 @@
+Use a combinational procedural block that computes the 25 bits of the output vector by explicitly enumerating each pairwise comparison in a flattened loop. Instead of nested loops, represent the five inputs as an array of bits and use a single loop from 0 to 24 to compute each output bit by decoding the index into a pair of input indices (i,j). Compute i and j from the loop index so that out[24] compares a and a, out[23] compares a and b, ..., out[0] compares e and e. This avoids nested generate blocks and localparams, making the indexing arithmetic explicit and the code easy to follow.
+
+Steps:
+- Store inputs in a 5-element reg array.
+- Use a for loop to compute each out bit combinationally.
+- For each k from 0 to 24, calculate i = k / 5 and j = k % 5.
+- out[24-k] = inputs[i] ~^ inputs[j].
+
+This approach is a clear combinational always_comb block implementation that simplifies indexing and makes the logic explicit in one block.

@@ -1,0 +1,13 @@
+After carefully analyzing the waveform, I realize the behavior is more complex than initially thought. The key observations are:
+
+1. p becomes 1 when 'a' is 1 at a positive clock edge and stays 1 until the next positive edge (regardless of 'a')
+2. q becomes 1 only after p has been 1 at a positive edge and stays 1 until the next positive edge
+3. Both outputs maintain their values between clock edges and only change at positive edges
+
+The refactored solution uses:
+- Two flip-flops to store the current state of p and q
+- Combinational logic to determine next state based on current state and input
+- Output assignments directly from the flip-flops
+- All state changes synchronized to positive clock edges
+
+This approach better matches the waveform by explicitly maintaining state between clock edges.

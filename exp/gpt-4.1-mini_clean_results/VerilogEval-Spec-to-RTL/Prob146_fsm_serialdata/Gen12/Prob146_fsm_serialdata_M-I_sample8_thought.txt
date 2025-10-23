@@ -1,0 +1,11 @@
+To optimize the original design for better performance, power, and area, the strategy is:
+
+1. Introduce synchronous enable signals for bit counter and data shift register so they only update during READ_BITS, minimizing unnecessary toggling.
+2. Separate the done pulse generation into a dedicated register driven by a simple condition at CHECK_STOP, simplifying output logic and potentially improving timing.
+3. Use one-hot encoding for FSM states to improve timing by reducing combinational next-state decoding complexity.
+4. Simplify combinational logic for next-state and outputs, explicitly gating register updates.
+5. Keep the FSM states and transitions explicit for clarity, with minimal extra logic.
+6. Retain the synchronous active-high reset.
+7. Ensure done pulses only one cycle when stop bit is valid, and hold output byte stable until next valid done.
+
+These improvements reduce switching activity outside READ_BITS, simplify logic paths, and should improve the critical path slack and power consumption without changing functionality.

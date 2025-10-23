@@ -1,0 +1,14 @@
+Fusion Strategy:
+1. Maintain synchronous design (from Example 2) to avoid clock gating issues
+2. Keep efficient wrap-around logic (from Example 1) but implement it synchronously
+3. Combine the power optimization ideas:
+   - Use valid_count as synchronous enable (from Example 2)
+   - Keep the simple pattern matching for wrap-around (from Example 1)
+4. Use synchronous reset for consistent timing (from Example 2)
+5. Optimize the increment logic by letting synthesis tool handle it
+
+Key Improvements:
+- Better timing than Example 1 by removing gated clock
+- More explicit wrap-around than Example 2 for clarity
+- Maintains low power by not updating when valid_count=0
+- Clean, synchronous design that's easy to verify

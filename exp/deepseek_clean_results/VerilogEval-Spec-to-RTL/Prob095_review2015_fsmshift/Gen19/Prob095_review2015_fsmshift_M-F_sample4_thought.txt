@@ -1,0 +1,10 @@
+Corrected approach:
+1. Need to count exactly 4 cycles (0-3) after reset
+2. Use a 2-bit counter (sufficient for 0-3 count)
+3. shift_ena should be high when counter is 0,1,2, or 3 (first 4 cycles)
+4. After counter reaches 3, it should stop incrementing
+5. Reset should synchronously reset counter to 0 and start the count
+6. Key fixes from feedback:
+   - Change comparison to (counter <= 2'd3) to cover all 4 cycles
+   - Keep counter width at 2 bits (optimal for 4 cycles)
+   - Ensure shift_ena stays low after 4 cycles until next reset

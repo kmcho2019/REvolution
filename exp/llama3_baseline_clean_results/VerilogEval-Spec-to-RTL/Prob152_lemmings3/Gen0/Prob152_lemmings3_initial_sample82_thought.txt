@@ -1,0 +1,24 @@
+To implement the Lemming state machine, we can define four states: 
+1. idle_left (initial state) - walking left
+2. idle_right - walking right
+3. digging - Lemming is digging
+4. falling - Lemming is falling
+
+When the ground disappears, the Lemming enters the falling state. 
+When the ground reappears, the Lemming exits the falling state and resumes its previous direction.
+
+We can use a finite state machine (FSM) to model these states and transitions. 
+The next state logic can be derived from the current state and the input signals.
+
+In the idle_left and idle_right states, we check for bumps, dig signals, and ground conditions. 
+If a bump is detected, we switch the direction. 
+If the dig signal is high and the ground is present, we enter the digging state. 
+If the ground disappears, we enter the falling state.
+
+In the digging state, we continue digging until the ground disappears. 
+When the ground disappears, we enter the falling state.
+
+In the falling state, we wait for the ground to reappear. 
+When the ground reappears, we exit the falling state and resume the previous direction.
+
+We use a 2-bit signal to keep track of the current state and the previous direction.

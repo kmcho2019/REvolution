@@ -1,0 +1,13 @@
+I'll implement a one-hot encoded FSM with these innovations:
+1. One-hot encoding (6 states = 6 bits) for better timing and simpler decoding
+2. Output z is embedded directly in the state encoding (bit 6 indicates z)
+3. Combined state transition and output logic in a single always block
+4. State transitions use parallel bit operations instead of case statements
+5. Reset initializes to state A (000001) with z=0
+
+Key advantages:
+- One-hot provides better timing (only one bit changes per transition)
+- Output logic is trivial (just check MSB)
+- Parallel bit operations are efficient for one-hot
+- Reduced logic levels compared to binary encoding
+- Clear physical meaning for each state bit

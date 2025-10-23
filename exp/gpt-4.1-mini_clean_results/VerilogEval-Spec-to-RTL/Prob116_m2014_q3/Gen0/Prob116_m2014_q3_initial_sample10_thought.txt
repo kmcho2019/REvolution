@@ -1,0 +1,52 @@
+The module takes a 4-bit input x, where we interpret x as x[3:0]. The Karnaugh map is arranged with the row variables x[3]x[4] and column variables x[1]x[2]. However, since x is 4 bits, and the problem states the input as "input x (4 bits)", likely x = {x[3], x[2], x[1], x[0]} (0-based). The Karnaugh map is given in terms of x[1], x[2], x[3], x[4] (1-based). 
+
+To map correctly:
+
+- Let's define inputs as x[3], x[2], x[1], x[0]
+- The Karnaugh map references x[1], x[2], x[3], x[4]. Since x is 4 bits, I will interpret x[3:0] as x[4], x[3], x[2], x[1] respectively for mapping convenience.
+
+So, x[0] = x1, x[1] = x2, x[2] = x3, x[3] = x4.
+
+The Karnaugh map rows are indexed by x[3]x[4] = x3 x4
+
+Columns by x[1]x[2] = x1 x2
+
+Rearranged, rows: x[2]x[3] (bits 2 and 3)
+
+Columns: x[0]x[1] (bits 0 and 1)
+
+We will index the rows by x[3], x[2] (MSB to LSB) and columns by x[1], x[0].
+
+Mapping the Karnaugh map accordingly:
+
+Rows (x3 x4) → x[3] x[2], columns (x1 x2) → x[1] x[0]
+
+We can create a 4x4 truth table for f(x):
+
+Indices in terms of {x[3], x[2], x[1], x[0]}:
+
+row = x[3]x[2], col = x[1]x[0]
+
+We fill in according to the table (d = don't care):
+
+Row\Col: 00  01  11  10
+
+00: d  0  d  d
+
+01: 0  d  1  0
+
+11: 1  1  d  d
+
+10: 1  1  0  d
+
+We can write the truth table for f for each 4-bit input:
+
+For each 4-bit input = x[3] x[2] x[1] x[0]:
+
+- If d (don't care) → can assign 0 or 1 to simplify
+
+We will assign 0 for don't cares for ease.
+
+Generate a logic expression from the truth table or implement as a combinational case statement.
+
+We'll implement the function as a combinational logic with a case statement on x and assign f accordingly.

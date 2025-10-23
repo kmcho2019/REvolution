@@ -1,0 +1,23 @@
+Improvement Strategy:
+
+1. Timing Optimization:
+   - Break down the 3-level mux into parallel paths to reduce critical path
+   - Pre-compute potential update values to minimize logic depth
+   - Use simpler bit operations instead of full concatenation where possible
+
+2. Power Optimization:
+   - Add clock gating for prediction updates to reduce unnecessary switching
+   - Split the register into segments to minimize toggling of unused bits
+   - Use enable-based updates to prevent redundant writes
+
+3. Area Optimization:
+   - Simplify reset implementation by using synchronous reset for upper bits
+   - Reduce mux width for bits that don't need full multiplexing
+   - Optimize shift operation by using partial updates
+
+Key Changes:
+- Separate update logic for misprediction and prediction paths
+- Clock gating for prediction updates
+- Reduced-width muxes for upper bits
+- Synchronous reset for upper 16 bits
+- Pre-computed update values

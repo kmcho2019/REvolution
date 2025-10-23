@@ -1,0 +1,14 @@
+Novel Architectural Idea:
+1. Instead of individual flip-flops or a flat 16-bit register, implement a hierarchical structure with two 8-bit registers (one per byte)
+2. Use a shared enable decoder to generate byte write signals
+3. Implement the registers using always blocks with case-based enable control
+4. Key advantages:
+   - Reduced enable logic duplication
+   - Clear byte-boundary separation in RTL
+   - Potential for better synthesis optimization of byte-wide operations
+   - Easier to extend to wider data paths
+   - More natural mapping to FPGA or ASIC memory structures
+5. Maintains all required functionality:
+   - Synchronous active-low reset
+   - Byte-level enable control
+   - Positive edge clock triggering

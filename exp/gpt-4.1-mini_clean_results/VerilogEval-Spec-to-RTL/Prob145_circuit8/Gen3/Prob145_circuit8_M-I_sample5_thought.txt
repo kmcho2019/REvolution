@@ -1,0 +1,29 @@
+The previous design attempted to generate 'p' as a rising edge detector of 'a' sampled at clock's rising edge, and 'q' as a latch set by 'p' and asynchronously reset when clock=0 and a=1. However, the use of an always block sensitive to both posedge and negedge clock caused problems and is not synthesizable or reliable for sequential logic.
+
+Improvement strategy:
+
+1. Implement all sequential logic synchronously on the rising edge of clock only to avoid dual-edge sensitivity issues.
+
+2. Use registers to store delayed versions of 'a' to detect edges or patterns within the clock domain.
+
+3. For 'p':
+   From the waveform, 'p' is 1 at clock rising edge if 'a' is 1 on that edge and either:
+   - For example, 'p' is set to 1 on clock rising edge when 'a' is 1 and 'q' is 0 (observing transition points).
+   Observing the data:
+   - At time 90ns (clock=1,a=1), p=1 and q=0
+   - Later at time 165ns (clock=1,a=1), p=1 and q=1
+   So 'p' is simply 'a' sampled at rising edge, except when 'q' is 0, it sets p=1 when a=1.
+   Thus, 'p' can be approximated as p <= a & (~q) | a & q (just 'a').
+   Since 'p' only pulses at clock rising edges when 'a' is high, it can be assigned as p <= a.
+
+4. For 'q':
+   From waveform, 'q' sets to 1 once 'p' goes to 1 (q <= q | p).
+   'q' resets to 0 when clock=0 and a=1 (based on time 115-140ns and after 175ns).
+
+   Since we cannot sample clock level at posedge clock directly, we add a small synchronizer register for 'clock' (clock_d) to detect falling edges and use combinational logic to generate synchronous reset on next posedge clock.
+
+5. Implement a synchronous reset for 'q' that triggers at the next posedge clock after detecting clock=0 and a=1.
+
+6. Initialize 'p' and 'q' to unknown ('x') by not adding an explicit reset.
+
+This approach uses only one always @(posedge clock) block, making design synchronous and synthesizable, matching waveform behavior.

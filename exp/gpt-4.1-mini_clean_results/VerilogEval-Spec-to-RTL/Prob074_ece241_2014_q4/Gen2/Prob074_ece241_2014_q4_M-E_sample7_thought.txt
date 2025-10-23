@@ -1,0 +1,15 @@
+I will implement the FSM using explicit D flip-flop registers initialized to zero with a synchronous reset signal derived from an internal power-on reset generator. Instead of feeding each D input from a gate combining x and its own flip-flop output or complement, I will:
+
+- Create three registers q_xor, q_and, q_or starting at zero (using a synchronous reset counter).
+- For each clock cycle, calculate the D input for each flip-flop as follows:
+  - For the XOR flip-flop: D = x XOR q_xor (second input is the flip-flop output itself).
+  - For the AND flip-flop: D = x AND (~q_and) (second input is complement of its output).
+  - For the OR flip-flop: D = x OR (~q_or) (second input is complement of its output).
+
+- Then register these D inputs on the positive clock edge.
+
+- The output z is the NOR of the three flip-flop outputs, as specified.
+
+To provide a clean reset on startup without an external reset input, I will implement a 2-bit reset counter that generates a synchronous reset signal active for the first 3 clock cycles. This will ensure all flip-flops start at zero deterministically.
+
+This approach is structurally similar but differs in details: a shorter reset duration, explicit synchronous reset logic, and careful naming/organization for clarity. It meets all specification requirements in a concise and clean manner.

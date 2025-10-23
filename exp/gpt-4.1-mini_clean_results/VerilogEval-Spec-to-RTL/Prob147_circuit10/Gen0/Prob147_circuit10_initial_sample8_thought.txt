@@ -1,0 +1,25 @@
+The circuit contains one bit of memory (state) updated on the positive edge of clk. The output q is combinational logic of inputs a, b, and the current state. 
+
+From the waveform, we observe:
+- At time 15ns (clk posedge), state=0 (initially unknown, but assume reset 0)
+- q = 0 at time 15ns
+- At 45ns (clk posedge) when a=0, b=1, state=0 => q=1
+- At 55ns (clk posedge) a=1,b=0,state=0 => q=1
+- At 65ns (clk posedge) a=1,b=1,state=0 => q=0
+- At 75ns (clk posedge) a=0,b=0,state=1 => q=1
+- At 95ns (clk posedge) a=1,b=1,state=1 => q=1
+- At 115ns (clk posedge) a=1,b=0,state=1 => q=0
+- At 125ns (clk posedge) a=0,b=1,state=1 => q=0
+- At 135ns (clk posedge) a=0,b=0,state=1 => q=1
+
+The state updates with q at every clk posedge.
+
+By analyzing, q appears to be the next state which depends on a, b, and current state:
+
+q = ( (~state) & ( (b & ~a) | (~b & a) ) ) | ( state & ( (a & b) | (~a & ~b) ) )
+
+This represents a state machine where state toggles based on inputs a, b.
+
+Implement state flip-flop updated with q, output q combinationally, and output state as stored flip-flop.
+
+Initialize state to 0.

@@ -1,0 +1,15 @@
+To avoid the one-cycle delay in shift_ena assertion caused by separate always blocks, I will combine the output assignment with the counter update logic in a single synchronous always block. 
+
+Within the always block triggered on the posedge clk, the counter will be updated and shift_ena will be assigned immediately based on the new counter value. This guarantees that shift_ena reflects the current state of the counter without delay.
+
+Alternatively, I can keep the counter update in the always block but assign shift_ena combinationally as a continuous assignment driven by the current counter value. This also ensures shift_ena is always consistent with the counter.
+
+I will implement the second approach: use a synchronous always block for counter update and a continuous assignment for shift_ena, removing the race between sequential always blocks.
+
+This approach preserves the original functionality:
+- On synchronous reset, load counter with 4.
+- Each cycle decrement counter until zero.
+- shift_ena is high whenever counter is non-zero.
+- After 4 cycles, shift_ena deasserts until next reset.
+
+This method fixes the timing mismatch with minimal structural change.

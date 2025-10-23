@@ -1,0 +1,11 @@
+To create a superior 3-bit comparator, we combine the clear hierarchical structure and minimal depth from both examples while leveraging the explicit per-bit equality detection from Example 1, which aids readability and synthesis optimization.
+
+Fusion strategy:
+- Use explicit per-bit equality signals via XNOR (~(A[i] ^ B[i])) for clear, granular equality detection.
+- Define the overall equality as the AND of per-bit equalities.
+- Implement the greater-than logic hierarchically with parallel ORs for each bit priority level, reusing the per-bit equality signals to maintain minimal logic levels and avoid nested ternary operators.
+- Derive the less-than signal simply as the negation of both A_equal and A_greater, guaranteeing mutual exclusivity.
+- Use minimal intermediate wires to keep the design clean and synthesis-friendly.
+- This fusion ensures clear timing paths, low power due to mutual exclusivity and minimal toggling, and compact area with straightforward combinational logic.
+
+The design is fully combinational, easy to understand, and synthesizes efficiently with balanced tradeoffs for performance, power, and area.

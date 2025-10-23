@@ -1,0 +1,33 @@
+Refine the FSM and counting logic to exactly meet the timing requirements and eliminate off-by-one errors:
+
+- Keep the same 5-state FSM structure: IDLE (search for pattern), LOAD_DELAY (load 4 bits MSB first), SETUP_COUNT (initialize counters), COUNTING, DONE.
+
+- Pattern detection: Shift pattern_shift left each cycle in IDLE, insert new data bit at LSB, detect pattern "1101" (MSB first). Once detected, move to LOAD_DELAY.
+
+- In LOAD_DELAY, shift delay bits MSB first into delay_reg. After 4 bits loaded, go to SETUP_COUNT.
+
+- SETUP_COUNT initializes segment_count = delay_reg (not delay_reg + 1), cycle_counter = 0. Because the count output must reflect the remaining time and each "segment" lasts 1000 cycles, and timer counts exactly (delay + 1)*1000 cycles, treat segment_count as delay+1 segments total. To avoid confusion, store delay+1 in segment_count here.
+
+- COUNTING: cycle_counter counts 0..999 to represent 1000 cycles per segment. On cycle_counter reaching 999, reset cycle_counter to 0 and decrement segment_count.
+
+- Output `count` is segment_count - 1 because at start segment_count holds delay+1; for the first 1000 cycles count should be delay, next 1000 cycles delay-1, etc., down to zero.
+
+- When segment_count decrements from 1 to 0 after completing its 1000 cycles, counting is finished.
+
+- Transition to DONE when segment_count reaches zero and the last 1000 cycle block is complete.
+
+- Assert done in DONE state, wait for ack input.
+
+- After ack, return to IDLE.
+
+- During LOAD_DELAY, IDLE, DONE: inputs are ignored except to detect pattern or ack.
+
+- Avoid assigning '4'bxxxx' for outputs; instead assign zeros or fixed values to avoid synthesis issues.
+
+- Reset all registers synchronously with active-high reset.
+
+This approach clarifies the counting intervals and outputs, aligns the counting precisely to (delay+1)*1000 cycles, and fixes off-by-one timing errors by managing segment_count and cycle_counter carefully and outputting count as segment_count - 1 during counting.
+
+Additionally, reset pattern_shift on entering LOAD_DELAY to avoid stale matches and avoid using "don't care" outputs for synthesis compatibility.
+
+This design should meet specification exactly with correct timing and outputs.

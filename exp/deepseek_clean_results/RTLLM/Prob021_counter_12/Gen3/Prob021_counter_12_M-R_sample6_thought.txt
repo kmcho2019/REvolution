@@ -1,0 +1,13 @@
+I'll refactor the counter design with these key changes:
+1. Replace the clock gating with a synchronous enable approach (better for timing/power)
+2. Use a continuous assignment for the next state logic
+3. Move the counter logic to a single always block with clear state transitions
+4. Use a wire for next_state calculation to simplify the always block
+5. Maintain the same parameterized max count value
+
+Benefits of this approach:
+- Eliminates potential glitches from clock gating
+- Separates combinational and sequential logic cleanly
+- Makes the state transitions more explicit
+- Reduces area by removing the gated clock logic
+- Improves timing predictability with synchronous enable

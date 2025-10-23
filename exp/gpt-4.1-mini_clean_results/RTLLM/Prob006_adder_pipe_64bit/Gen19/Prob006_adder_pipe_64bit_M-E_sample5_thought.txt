@@ -1,0 +1,7 @@
+Implement a fine-grained 8-stage pipeline where each stage adds 8 bits of the inputs plus a carry-in. Each pipeline stage stores its 8-bit slice of operands and a registered carry-in from the previous stage. On each clock cycle, the stage adds its slice operands plus carry-in, producing an 8-bit sum and a carry-out. Both sum and carry-out are registered and passed to the next stage. 
+
+The enable signal i_en is registered and propagated through the pipeline to generate o_en synchronized with the final sum output. The final result assembles all 8-bit sums plus the last carry-out into a 65-bit result.
+
+This approach reduces the logic delay per stage (8-bit adder per pipeline stage), allowing higher clock frequency and steady data throughput with one addition per cycle after pipeline fill. It uses more pipeline stages but simpler logic and clearer carry propagation via registered signals.
+
+The pipeline registers the operands slices and carry signals stage-by-stage, ensuring proper synchronization and timing. The output enable o_en signals when the result is valid, synchronized with the pipelined addition output.

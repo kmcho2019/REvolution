@@ -1,0 +1,23 @@
+Improved design strategy for 3.5x fractional frequency divider:
+
+1. Correct counter implementation:
+   - Single-edge counting (posedge only) to maintain proper timing
+   - 7-state counter (0-6) for 3.5x division ratio
+   - Clear reset behavior
+
+2. Precise phase generation:
+   - First phase (4 cycles high): counter values 0-3
+   - Second phase (3 cycles high): counter values 4-6
+   - Phase shift achieved by starting second phase at counter=4
+
+3. Duty cycle correction:
+   - Use XOR instead of OR to combine phases
+   - This creates clean transitions and proper duty cycle
+   - Eliminates continuous high output issues
+
+4. Optimization benefits:
+   - Correct frequency division ratio (3.5x)
+   - Proper 50% duty cycle output
+   - Minimal logic resources
+   - Clear and maintainable implementation
+   - No glitches in output clock

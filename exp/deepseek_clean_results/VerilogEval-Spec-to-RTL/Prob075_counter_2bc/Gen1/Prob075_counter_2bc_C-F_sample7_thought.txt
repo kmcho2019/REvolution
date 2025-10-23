@@ -1,0 +1,13 @@
+The fusion strategy combines the best aspects of both examples while addressing their optimization opportunities:
+
+1. Maintain the clean asynchronous reset implementation from both examples (setting to 2'b01)
+2. Keep the efficient saturation logic using ternary operators, but simplify the comparisons by:
+   - Using bitwise checks for max/min values (counter[1]&counter[0] for max, ~|counter for min)
+3. Optimize power by:
+   - Keeping the train_valid gating which prevents unnecessary updates
+   - Using simpler saturation checks to reduce switching activity
+4. Improve timing by:
+   - Simplifying the saturation logic to reduce critical path
+   - Maintaining the straightforward sequential design
+
+The new implementation will use bitwise operations for saturation checks instead of equality comparisons, which should reduce logic depth and improve timing while maintaining the same functionality.

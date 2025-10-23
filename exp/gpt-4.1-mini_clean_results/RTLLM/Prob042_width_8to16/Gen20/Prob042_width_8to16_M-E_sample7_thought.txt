@@ -1,0 +1,12 @@
+Implement a two-stage buffering and output pipeline to separate data collection from output generation, ensuring valid_out and data_out are produced exactly one cycle after the second input arrives.
+
+- Use a register `first_byte` to store the first valid 8-bit input.
+- Use a flag `has_first` to indicate if the first byte has been received.
+- When the second valid input arrives, concatenate `first_byte` (high bits) and current `data_in` (low bits) and store this concatenated data into a pipeline register `out_data_stage`.
+- At the same time, set a pipeline flag `out_valid_stage` to indicate that valid output is ready on the next clock cycle.
+- On the next clock cycle, transfer `out_data_stage` to the output register `data_out` and `out_valid_stage` to `valid_out`.
+- Clear `has_first` after the second byte arrives to prepare for the next pair.
+- If only one byte arrives and no second byte yet, do not assert valid_out or data_out.
+- Reset all registers and flags synchronously on reset.
+  
+This approach creates a clean pipeline: data capture stage and output stage with one-cycle latency after receiving the second input. The outputs are registered and valid_out aligns correctly with data_out.

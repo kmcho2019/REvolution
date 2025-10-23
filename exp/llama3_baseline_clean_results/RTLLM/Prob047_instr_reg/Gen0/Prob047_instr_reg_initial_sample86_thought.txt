@@ -1,0 +1,5 @@
+The instruction register module, instr_reg, is designed to capture and process CPU instructions from different sources. It has two 8-bit registers, ins_p1 and ins_p2, to store instructions. The module uses a clock signal for synchronization, an active low reset signal for initialization, a control signal to determine the source of the instruction, and an 8-bit data input to fetch the instruction. The outputs are the high 3 bits of the instruction (opcode), the low 5 bits of the instruction (register address), and the full 8-bit data from the second source. 
+The module operates as follows: 
+- On the rising edge of the clock, it checks the reset signal. If it's low, the module resets both registers to zero.
+- Based on the fetch control signal, it either loads the instruction into ins_p1, ins_p2, or retains the previous values.
+- The outputs are derived from the stored instructions: ins is the high 3 bits of the instruction in ins_p1, ad1 is the low 5 bits of the instruction in ins_p1, and ad2 is the full 8-bit data from ins_p2.

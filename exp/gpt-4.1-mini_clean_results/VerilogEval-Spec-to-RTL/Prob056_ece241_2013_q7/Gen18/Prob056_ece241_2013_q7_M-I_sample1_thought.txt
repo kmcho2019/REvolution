@@ -1,0 +1,21 @@
+The existing design is already very efficient for such a small JK flip-flop: the combinational next-state logic and the sequential update are cleanly separated, and the logic expression is minimal.
+
+To improve PPA marginally:
+
+- **Performance**: The critical path is through the next-state combinational logic. By rewriting the next state equation in terms of J, K, and Q to an equivalent but slightly different minimal form, we can potentially aid some synthesis tools. The canonical JK next state is: Q_next = J*~Q + ~K*Q.
+
+- **Power**: The original uses a wire assignment, which creates a combinational net that toggles whenever inputs change. To reduce switching, register-based (clocked) implementations or data gating can be used, but that's out of scope here. However, using always_comb (or always @(*) in Verilog) for the next state logic might offer more explicit intent to synthesis tools and help with glitch reduction.
+
+- **Area**: The design uses one flip-flop and minimal logic gates. No area reduction is possible in such a simple function.
+
+Improvement strategy:
+
+- Replace the combinational assign with a combinational always block for next state logic. This can allow easier insertion of additional logic or constraints later, and some synthesis tools might optimize better for area or glitch power.
+
+- Use nonblocking assignment only in sequential always block, blocking assignment in combinational always block, following best practices.
+
+- Add default values in combinational logic block to avoid inferred latches in more complex cases (although here, all cases are covered).
+
+This is primarily a coding style improvement to align with modern best practices and potentially reduce glitches and improve synthesis results slightly, even if PPA changes will be minor.
+
+The behavior remains identical.

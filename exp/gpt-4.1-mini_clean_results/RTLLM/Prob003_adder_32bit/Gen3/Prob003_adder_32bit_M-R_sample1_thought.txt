@@ -1,0 +1,9 @@
+Refactoring the original design, I will keep the hierarchical structure of the 32-bit adder composed of two 16-bit CLA modules but implement the 16-bit CLA block using vectorized carry computation with prefix operators. Instead of individually assigning each carry with a chain of assignments, I'll compute all carries in a single generate block with a loop and vectorized wire declarations to improve readability and compactness.
+
+The generate and propagate signals will still be computed bitwise, but the carry calculation will be done with a for-generate loop producing all carry signals at once without explicit repetitive assign statements.
+
+Sum bits will be assigned similarly using a loop.
+
+This refactor keeps the functional behavior identical but makes the code more concise and scalable by leveraging generate loops for carries. The top 32-bit adder module remains unchanged conceptually, still instantiating two 16-bit CLA blocks.
+
+This approach improves code maintainability and clarity while preserving the original architecture and correctness.

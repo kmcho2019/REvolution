@@ -1,0 +1,12 @@
+To simplify the IEEE-754 single-precision floating-point multiplier while maintaining full functionality, the design will be flattened into a single always block synchronized on clk and rst, without pipelining stages. This removes pipeline registers and stage separation to reduce code complexity and signal propagation.
+
+Key simplifications:
+- Extract sign, exponent, and mantissa immediately after reset or on input change.
+- Handle special cases (NaN, Inf, zero) combinationally in the same clock cycle.
+- Perform mantissa multiplication using a 24x24 combinational multiply.
+- Normalize the product by shifting if the upper bit is set.
+- Apply IEEE 754 rounding to nearest even using guard, round, and sticky bits.
+- Handle exponent overflow and underflow.
+- Assemble the final 32-bit IEEE float output.
+
+This single-cycle approach reduces internal registers, eliminates multi-stage control signals, and simplifies the sticky bit calculation by OR'ing lower bits directly. Though it may limit clock frequency due to longer combinational paths, it is easier to understand and verify. This design suits scenarios prioritizing simplicity and correctness over maximum throughput or frequency.

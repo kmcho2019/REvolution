@@ -1,0 +1,10 @@
+Refactor the frequency divider by still using two counters incremented on posedge and negedge of the clock to track half cycles, but improve code clarity and structure:
+
+- Use separate always blocks for posedge and negedge clk to update cnt1 and cnt2 respectively.
+- Use registers clk_div1 and clk_div2 toggled when each counter reaches half of NUM_DIV.
+- Compute clk_div as the OR of clk_div1 and clk_div2 via a continuous assign statement.
+- Use synchronous reset inside both always blocks for clean initialization.
+- Parameterize NUM_DIV with a compile-time oddness check.
+- Avoid glitches by updating clk_div as a combinational signal from registered clk_div1 and clk_div2.
+- Use minimal counter widths based on $clog2(NUM_DIV).
+This structure closely follows the problem's original description but improves modularity and avoids mixing posedge and negedge logic in the same always block.

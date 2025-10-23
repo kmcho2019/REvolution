@@ -1,0 +1,23 @@
+Implement a dual-GHR approach with separate "speculative" and "committed" global history registers (GHRs) to cleanly separate prediction and training timing.
+
+- The "speculative GHR" holds the history used for predictions and updates with predicted directions when predict_valid is asserted. It is updated immediately at the clock edge after prediction, reflecting the pipeline fetch stage view.
+
+- The "committed GHR" holds the known correct history and is updated only on training inputs, reflecting the processor's architectural state after branch resolution.
+
+- The Pattern History Table (PHT) is updated at the clock edge using the training interface and the committed GHR.
+
+- For predictions, the index to PHT is computed by XORing the speculative GHR with the predict_pc; the prediction outputs reflect the PHT state at the current cycle and speculative GHR before update.
+
+- For training, the update index is train_pc XOR train_history (train_history corresponds to the GHR at branch resolution, not speculative GHR), and PHT updates accordingly.
+
+- When a misprediction is trained (train_mispredicted=1), the committed GHR recovers to the train_history value, correcting the architectural history; simultaneously, the speculative GHR is also forced to this recovered history, thus rolling back speculative updates that followed the misprediction.
+
+- When training and prediction happen simultaneously, training and misprediction recovery take precedence, resetting the speculative GHR to the recovered committed state so that any prediction in the same cycle uses the correct GHR state after recovery.
+
+- Prediction outputs are registered at clock edge when predict_valid is asserted to hold stable outputs across cycles when predict_valid is low.
+
+- Reset asynchronously initializes all registers and PHT to weakly not taken.
+
+This separation simplifies timing: speculative GHR drives predictions, committed GHR is authoritative for training updates; misprediction resets synchronize both GHRs to maintain correctness. The PHT is only updated by training at clock edge, so prediction reading it combinationally sees old state if training happens simultaneously.
+
+This approach matches the desired timing semantics, prevents glitches, and cleanly prioritizes training over prediction for GHR updates.

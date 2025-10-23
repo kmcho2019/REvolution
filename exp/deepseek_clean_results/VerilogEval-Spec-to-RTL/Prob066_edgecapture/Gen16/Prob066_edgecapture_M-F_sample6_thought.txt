@@ -1,0 +1,19 @@
+Revised approach to fix timing issues in falling edge detection:
+
+1. The core problem is the race condition between register updates and combinational logic evaluation
+2. Solution involves restructuring the pipeline to:
+   - First register captures current input (in_reg)
+   - Second register captures previous input (prev_in)
+3. Falling edge detection now compares:
+   - Previous cycle value (prev_in) from register
+   - Current cycle value (in_reg) from register
+4. Key improvements:
+   - All comparisons use properly registered values
+   - No combinational paths from primary inputs
+   - Clear two-stage synchronization
+5. Output logic remains the same (holds detected edges until reset)
+6. Timing benefits:
+   - Proper setup/hold times maintained
+   - No race conditions
+   - Fully synchronous design
+7. The falling edge detection now correctly occurs one cycle after the actual transition

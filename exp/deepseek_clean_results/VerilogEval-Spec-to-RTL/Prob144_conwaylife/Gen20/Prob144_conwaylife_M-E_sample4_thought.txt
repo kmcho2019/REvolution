@@ -1,0 +1,23 @@
+Novel Architecture: "Row-Parallel Neighbor Counting with Shared Summation"
+
+Key Innovations:
+1. Row-Parallel Processing:
+   - Process all cells in a row simultaneously by pre-computing neighbor sums for the entire row
+   - Share intermediate summation results between adjacent cells to minimize redundant calculations
+
+2. Optimized Neighbor Counting:
+   - Use a sliding window approach for neighbor counts
+   - Calculate column sums once per column and reuse them for all rows
+   - Implement carry-save addition with 3:2 compressors for efficient counting
+
+3. Memory-Efficient State Update:
+   - Store current and next states in separate registers
+   - Use a ping-pong buffer technique to eliminate the need for stability flags
+   - Update all cells unconditionally but with optimized next-state logic
+
+4. Toroidal Wrapping Optimization:
+   - Pre-compute wrapped indices using circular buffers
+   - Use shift registers for efficient neighbor access
+   - Implement wrap-around logic at the row/column level rather than per-cell
+
+This approach reduces critical path by parallelizing row computations and sharing summation logic, while maintaining clean hierarchical organization.

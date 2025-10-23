@@ -1,0 +1,9 @@
+Refactor the FSM and datapath to separate state update, done signal generation, and out_bytes storage into clearer blocks with improved style:
+
+- Use an enumerated FSM with localparam and a state register.
+- Drive the done signal combinationally based on state and transition, making done high one cycle after the third byte is captured without explicitly assigning it in the sequential block.
+- Capture input bytes into separate registers for each byte stage, then combine them into out_bytes continuously via concatenation.
+- This makes the datapath cleaner and output generation explicit.
+- Synchronous reset still resets states and byte registers.
+- The done signal is asserted combinationally based on the state machine's current and next state transition.
+- This restructuring enhances clarity and separates combinational and sequential logic for better synthesis and timing.

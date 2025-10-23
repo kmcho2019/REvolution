@@ -1,0 +1,12 @@
+To improve PPA, I will optimize next-state combinational logic by encoding states as one-hot rather than binary, which can simplify next-state decoding and reduce logic depth for speed, although it may increase area slightly. However, since we have only four states, one-hot encoding uses just 4 bits and can speed up critical paths because next state logic reduces to simple gating (AND/OR).
+
+I will implement the FSM as follows:
+- Use one-hot state encoding with 4-bit reg (state bits A-D).
+- Synchronous reset initializes state to A.
+- Next state logic uses combinational always block with simple AND/OR logic to determine the next state bits.
+- Output is 1 only in state D (one-hot encoded).
+- This structure reduces boolean expression complexity in next-state logic, improving timing and potentially lowering power by reducing gate toggling depth.
+- The synchronous reset and clocked state update remain standard.
+- One-hot encoding often allows easier gate-level optimization by synthesis tools for speed-critical designs.
+
+This approach balances slight area increase for improved timing and simpler next-state logic, which should improve negative slack and potentially reduce power through less complex combinational logic paths.

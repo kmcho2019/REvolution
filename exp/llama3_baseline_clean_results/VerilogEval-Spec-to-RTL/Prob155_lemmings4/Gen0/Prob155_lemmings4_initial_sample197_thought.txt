@@ -1,0 +1,17 @@
+To solve this problem, we need to design a finite state machine that can model the behavior of a Lemming in the game Lemmings. The Lemming can be in one of several states: walking left, walking right, falling, digging, or splattered. We need to define the transitions between these states based on the input signals and implement the output signals accordingly. We will use a Moore state machine, where the output signals are a function of the current state only.
+
+The states we will define are:
+- WALK_LEFT: The Lemming is walking to the left.
+- WALK_RIGHT: The Lemming is walking to the right.
+- FALLING: The Lemming is falling.
+- DIGGING: The Lemming is digging.
+- SPLATTERED: The Lemming has splattered and is no longer active.
+
+The transitions between states will be based on the input signals:
+- If the ground disappears (ground=0) while the Lemming is walking, it will start falling.
+- If the ground reappears (ground=1) while the Lemming is falling, it will resume walking in the same direction as before.
+- If the Lemming is told to dig (dig=1) while it is walking on ground, it will start digging.
+- If the Lemming is digging and the ground disappears, it will start falling.
+- If the Lemming falls for more than 20 clock cycles and then hits the ground, it will splatter.
+
+We will use a counter to keep track of the number of clock cycles the Lemming has been falling.

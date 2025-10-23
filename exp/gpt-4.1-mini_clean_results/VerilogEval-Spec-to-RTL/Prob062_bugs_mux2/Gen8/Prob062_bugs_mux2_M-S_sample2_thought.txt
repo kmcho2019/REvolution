@@ -1,0 +1,5 @@
+The root cause of the bug is that the output `out` is declared as a 1-bit output but is assigned expressions involving 8-bit vectors `a` and `b`, causing a width mismatch.
+
+To fix this, simply declare `out` as an 8-bit output, matching the widths of `a` and `b`. Then use a clean 2-to-1 mux to assign `out` to `a` when `sel` is 0, and to `b` when `sel` is 1.
+
+This keeps the design simple, correct, and synthesizable.

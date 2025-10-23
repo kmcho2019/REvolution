@@ -1,0 +1,20 @@
+Based on the feedback, the main improvements focus on:
+
+1. Ensuring parameterized module works correctly with parameters `N` and `Q` by standard Verilog parameter passing conventions.
+2. Simplifying the design by avoiding explicit absolute value conversions and sign-magnitude arithmetic since inputs and outputs are signed two's complement. Using direct signed arithmetic operations leverages Verilog's native handling of sign and overflow.
+3. Re-implementing the logic so that:
+   - When the signs of inputs are the same, do signed addition directly.
+   - When signs differ, compute signed subtraction properly.
+4. Handling overflow by saturating the result to max/min values appropriately.
+5. Using only combinational logic inside an always @(*) block, and avoiding functions for better synthesis compatibility.
+6. Keeping the inputs and outputs declared as signed `[N-1:0]` so the fixed-point format with `Q` fractional bits is maintained implicitly, without special adjustments inside the adder.
+7. The sign of the result is inherent in the signed arithmetic result, so no manual sign reconstruction is needed.
+8. Saturation is implemented by comparing the computed result to the representable range and clamping if it exceeds.
+
+This approach greatly simplifies the implementation, improves synthesis friendliness, and ensures parameter handling is clean.
+
+Note: Since the fixed-point format is a two's complement signed number with `Q` fractional bits, addition is just signed addition. No separate sign/magnitude conversion is necessary.
+
+The only subtlety is overflow detection and saturation to max/min values. For an N-bit two's complement number, the max positive value is `2^(N-1)-1` and min negative is `-2^(N-1)`.
+
+In summary, this fixed-point adder is implemented with parameterized signed inputs and outputs, direct signed addition/subtraction, and saturation logic, removing manual absolute value and sign manipulations.

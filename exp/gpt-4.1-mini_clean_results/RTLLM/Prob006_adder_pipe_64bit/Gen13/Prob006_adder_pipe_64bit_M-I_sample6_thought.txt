@@ -1,0 +1,21 @@
+To improve the provided 64-bit pipelined ripple carry adder solution, I will:
+
+1. Correct the pipeline register loading for operand slices. The current code reassigns entire operand slices every cycle for stages 1 to 7, which causes incorrect pipeline behavior. Instead, input operands should be loaded into stage 0 only when i_en is asserted and then propagated through the pipeline registers on each clock edge, simulating pipeline data flow.
+
+2. Adjust the carry and enable pipeline registers to shift one stage per cycle, matching sum pipeline progression.
+
+3. Assemble the result in a single concatenation using a generate loop for clarity and scalability.
+
+4. Make the pipeline stages clearer, such that each stage registers:
+   - Operand slices (adda, addb)
+   - Sum output (8-bit)
+   - Carry out (1-bit)
+   - Enable flag
+
+5. Overall, the pipeline stages propagate the input operands, propagate the carry signal through the stages, compute partial sums, and finally output the full 65-bit sum with the output enable.
+
+This approach yields a correct, fully synchronous pipeline for the 64-bit ripple carry adder with 8 pipeline stages (8 bits each), where the result and enable output are correctly synchronized to the clock and reset.
+
+This fixes the original issue of improperly updating operand pipeline registers and ensures correct sequential operation of the pipeline.
+
+The code remains synthesizable, clear, and efficiently implemented.

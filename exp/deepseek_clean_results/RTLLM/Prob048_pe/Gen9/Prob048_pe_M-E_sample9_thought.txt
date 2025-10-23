@@ -1,0 +1,12 @@
+The new design employs a dual-register accumulation scheme with carry-save optimization:
+1. Split the 32-bit accumulation into two 16-bit halves (low and high) with separate registers
+2. Use carry-save addition for the high half to break the critical path
+3. Implement ripple-carry addition only in the low half
+4. Use a conditional carry propagation scheme that only updates the full sum every N cycles
+5. Add operand gating to prevent unnecessary switching during idle cycles
+
+This approach provides:
+- Better timing: The 16x16 multipliers and split adders reduce critical path
+- Lower power: Carry-save reduces switching activity
+- Same functionality: Final result remains mathematically equivalent
+- Scalability: Easy to extend to pipelined versions

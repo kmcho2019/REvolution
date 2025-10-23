@@ -1,0 +1,15 @@
+Novel architectural idea: Distributed Counter with Predictive Rollover
+
+This design introduces several innovative features:
+1. Predictive rollover detection - calculates next state values before they're needed
+2. Distributed counting logic - each time unit (sec/min/hour) has its own dedicated counter
+3. Early rollover signaling - generates enable signals one cycle before actual rollover
+4. Power-optimized updates - only the necessary counters are updated each cycle
+5. Pre-computed next values - reduces critical path by calculating next states in parallel
+
+Key benefits:
+- Reduced critical path by parallelizing rollover calculations
+- Lower power consumption through conditional updates
+- Clearer timing relationships between counters
+- Easier timing closure with distributed logic
+- Better scalability for additional time units

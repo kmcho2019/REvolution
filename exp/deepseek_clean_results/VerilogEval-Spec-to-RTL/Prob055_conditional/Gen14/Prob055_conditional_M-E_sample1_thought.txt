@@ -1,0 +1,13 @@
+Here's a novel approach using a parallel comparison tree with early termination detection:
+
+1. Instead of hierarchical comparisons, we'll perform all possible pairwise comparisons in parallel (6 total for 4 inputs)
+2. Each input will have a "is_min" flag that starts as 1 (potential minimum)
+3. For each comparison, if an input is greater than another, its "is_min" flag is cleared
+4. The minimum value is selected from the input whose "is_min" flag remains set
+5. This approach:
+   - Performs all comparisons in a single clock cycle
+   - Uses parallel processing for maximum speed
+   - Naturally handles ties (will select first input in case of tie)
+   - Scales well to more inputs (though requires more comparators)
+   - Has excellent timing characteristics since all comparisons happen in parallel
+   - The final selection is just a multiplexer operation

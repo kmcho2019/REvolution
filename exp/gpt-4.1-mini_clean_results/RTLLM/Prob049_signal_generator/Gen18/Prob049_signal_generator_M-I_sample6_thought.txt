@@ -1,0 +1,11 @@
+Improvement strategy:
+
+To optimize for performance, power, and area, merge the two always blocks into a single synchronous block handling both state and wave updates to minimize register-to-register delays and reduce logic duplication. Also, remove redundant assignments that hold the wave register at boundary values by structuring the logic such that wave only updates when needed, avoiding unnecessary toggling.
+
+Use a simple if-else logic with minimal comparisons to update state and wave simultaneously on the clock edge.
+
+This will reduce critical path delay (better timing), reduce switching activity (better power), and shrink gate count (better area) while preserving functionality.
+
+The asynchronous reset remains unchanged.
+
+This single-block design is concise and efficient, suitable for synthesis and timing closure.

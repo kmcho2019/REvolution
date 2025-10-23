@@ -1,0 +1,9 @@
+To optimize for power and potentially timing without affecting area or functionality, I will implement clock enables to gate updates of the FSM state and data registers only when needed. Specifically, state updates only occur if the input byte is valid for progression (in[3]=1 in WAIT_SYNC state, or always in BYTE2 and BYTE3 states), which reduces toggling in WAIT_SYNC when input bytes are discarded.
+
+Similarly, byte registers and out_bytes will be updated only when needed, minimizing unnecessary toggling. The done signal will be registered and only asserted for one cycle immediately after the third byte is loaded, reducing dynamic power on the done output.
+
+This gating reduces switching activity on internal registers and output signals, lowering dynamic power. Also, by not updating state and registers when waiting in WAIT_SYNC with invalid bytes, switching toggling is reduced. This does not increase the critical path since clock enables are simple control signals, and output timing remains the same.
+
+The FSM encoding remains 2-bit binary for minimal area. Synchronous reset and positive-edge clocking are maintained as required.
+
+Overall, the modifications maintain full functionality but improve power consumption and may enhance timing margin.

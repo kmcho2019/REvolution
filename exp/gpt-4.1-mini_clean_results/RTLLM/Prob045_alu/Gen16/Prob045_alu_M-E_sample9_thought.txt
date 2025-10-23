@@ -1,0 +1,13 @@
+Implement the ALU by splitting the operations into three main functional groups to simplify logic and clearly separate concerns: arithmetic (ADD, SUB, ADDU, SUBU), logical (AND, OR, XOR, NOR), and shift operations (SLL, SRL, SRA, SLLV, SRLV, SRAV), plus special operations (SLT, SLTU, LUI).
+
+Use separate intermediate result wires for each group and select the final output using a multiplexer-like approach based on the opcode category. This modular approach improves readability, eases debugging, and can help synthesis tools optimize each group separately.
+
+Calculate carry and overflow flags only in arithmetic operations, set to zero elsewhere. Compute flag only for SLT and SLTU. zero and negative are continuous assignments on the final result.
+
+Implement shifts with proper signedness for arithmetic shifts, and use the correct shamt for fixed or variable shifts.
+
+For LUI, conform to MIPS ISA by setting the upper 16 bits of result to b[15:0] shifted left by 16 bits, lower 16 bits zero (not a).
+
+Provide a default zero output for undefined opcodes to avoid 'z' and latch conditions.
+
+This architecture isolates operation groups, allowing clearer, more maintainable and synthesizable code.

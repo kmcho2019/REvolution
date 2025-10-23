@@ -1,0 +1,7 @@
+To optimize the design for better performance and area, merge the output logic into the state and inversion_bit register block to reduce sequential elements and critical path length. Instead of registering z separately, compute z combinationally from the registered inversion_bit and input x. This eliminates one register stage for output and reduces clock-to-output delay, thus improving timing (tns, wns).
+
+This remains a Moore FSM because the output depends solely on the current registered state (inversion_bit), and we are only removing the registered output stage in favor of combinational output logic derived from the registered state and input.
+
+The asynchronous reset and state transition logic remain unchanged for correct functionality and behavior.
+
+This approach maintains minimal logic, reduces sequential logic usage, and shortens data path delay, improving overall PPA without affecting correctness.

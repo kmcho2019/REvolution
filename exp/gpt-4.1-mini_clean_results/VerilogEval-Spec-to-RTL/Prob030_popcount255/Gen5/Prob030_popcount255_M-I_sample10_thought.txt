@@ -1,0 +1,9 @@
+To optimize the given popcount design for better performance, power, and area (PPA), I will:
+
+1. Reduce bit-width over-provisioning in intermediate sums by computing exact required bit widths at each stage, thus minimizing unnecessary toggling and area.
+2. Replace the 17-bit popcount units with a more regular hierarchical popcount implementation using fixed 4-bit popcount units that sum directly to 5-bit partial sums and then combined in a balanced tree, removing the function call to simplify synthesis.
+3. Implement the top-level summation with a balanced tree and use carry-save adder (CSA) style summation in the intermediate stages to reduce long carry propagation paths and improve timing.
+4. Use generate blocks for clarity but ensure all bit widths are minimal and no zero extension of wider buses.
+5. Overall, keep the entire design combinational but balanced and bit-width optimized for less area and power, with potentially better timing by reducing critical path length with CSA-like intermediate addition.
+
+This approach keeps modularity, clarity, and synthesis friendliness while reducing excess logic and toggling. The final output stays 8 bits, which is sufficient for counting up to 255 ones.

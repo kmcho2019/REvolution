@@ -1,0 +1,14 @@
+Improvement Strategy:
+1. Pipeline the final adder stage to break the critical path and improve timing
+2. Implement clock gating for partial products when multiplier bits are zero to reduce power
+3. Reduce en_pipeline to 2 bits since we only need 3 pipeline stages (input, intermediate sum, final sum)
+4. Add output enable gating to prevent unnecessary toggles
+5. Use resource sharing for the adder tree to reduce area
+6. Optimize partial product storage by using packed arrays
+
+Key Changes:
+- Split the final addition into two pipeline stages
+- Add clock gating control signals
+- Reduce pipeline control registers
+- Implement output enable gating
+- Use a more compact partial product representation

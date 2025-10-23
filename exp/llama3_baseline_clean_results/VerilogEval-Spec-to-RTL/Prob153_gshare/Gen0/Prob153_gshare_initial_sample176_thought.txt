@@ -1,0 +1,9 @@
+The TopModule should have a 7-bit global branch history register that gets updated based on the prediction made. This register is used to make predictions for branches. The module should also have a 128-entry table of two-bit saturating counters, indexed by a 7-bit value obtained by hashing the current pc and global branch history using xor. 
+
+The prediction interface should take in the current pc and output the predicted branch direction and the current state of the branch history register. 
+
+The training interface should take in the actual branch outcome and whether the branch was a misprediction, and update the pattern history table (PHT) accordingly. 
+
+If a misprediction occurs, the branch history register should be recovered to its state immediately after the mispredicting branch completes execution.
+
+All updates should occur on the positive edge of the clock, and the reset should be asynchronous active-high.

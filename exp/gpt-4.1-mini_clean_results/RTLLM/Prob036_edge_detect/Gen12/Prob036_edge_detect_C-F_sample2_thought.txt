@@ -1,0 +1,12 @@
+Both examples use a single registered version of input 'a' to detect edges via combinational logic producing single-cycle pulses synchronized to clk. The first example uses output ports as wires driven combinationally, while the second also uses combinational outputs but with a different register name. 
+
+To fuse the best ideas: 
+
+1. Use a registered version of 'a' to avoid metastability and synchronize input to clk domain.
+2. Generate 'rise' and 'down' as combinational wires derived from the registered 'a' and current 'a'.
+3. Use non-blocking assignments in the sequential always block.
+4. Use the rst_n to initialize the register to a known state (0).
+5. Keep the output signals as wires for minimal latency and glitch-free single-cycle pulses.
+6. Keep the code clean and minimal to improve readability and synthesis optimizations.
+
+This fusion takes the clarity and minimalism from both examples, ensures synchronous detection, and generates outputs exactly one clock cycle after the edges with one flip-flop and simple logic. This achieves the design goal optimally in terms of performance, power, and area.

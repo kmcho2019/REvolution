@@ -1,0 +1,12 @@
+The original design correctly detects falling edges and latches them, but it can miss a falling edge immediately after reset due to `delayed_in` being cleared to zero at reset. This initial zero state means that if the input bit is 1 right after reset, the falling edge from 1 to 0 on the next cycle will be missed.
+
+To fix this, initialize `delayed_in` at reset with the current input value `in`, so that the first comparison after reset is valid and any falling edges right after reset can be detected properly. This maintains the synchronous reset and logic simplicity.
+
+For power optimization, add a clock enable signal for the `out` register update. Update `out` only when a new falling edge is detected (when `(delayed_in & ~in)` has any set bit) to reduce toggling in `out`. This reduces dynamic power by avoiding unnecessary register updates.
+
+The improved design therefore:
+- Initializes `delayed_in` with `in` at reset.
+- Updates `out` only when new falling edges occur.
+- Maintains synchronous reset and single clock domain.
+
+This addresses the initial missing edge problem and optimizes power without impacting performance or area significantly.

@@ -1,0 +1,13 @@
+Simplification Strategy:
+1. Reduce state machine to just 2 states: waiting for start byte (IDLE) and counting message bytes (COUNTING)
+2. Use a 2-bit counter to track position within message (0-2)
+3. Combine state and counter into a single 3-bit register for compact representation
+4. Generate done signal directly when counter reaches 2
+5. Simplify reset handling with single initialization
+
+Key Benefits:
+- Fewer states (2 instead of 3)
+- Clear separation between idle and counting phases
+- Direct counter-based approach for byte counting
+- Minimal comparisons for state transitions
+- Single always block for clean implementation

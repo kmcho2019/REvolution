@@ -1,0 +1,13 @@
+To improve the given design for better power, performance, and area (PPA) while keeping its correctness and simplicity, I will:
+
+1. Keep synchronous reset and synchronous write to ensure deterministic behavior.
+2. Change the RAM array initialization on reset to use an initial block for synthesis-friendly memory initialization (many ASIC/FPGA tools support initial values for small RAMs), thereby removing the large reset loop that toggles all memory entries, reducing power and area.
+3. Keep read as synchronous registered output instead of combinational to avoid glitches on read_data and reduce output toggling, which lowers dynamic power and improves timing closure.
+4. Use minimal address width calculated by $clog2(DEPTH).
+5. Ensure read_data is cleared to zero when read_en is low, avoiding unknown data output.
+6. Keep separate always blocks for write and read for clarity.
+7. Add comments for clarity and maintain parameterization.
+
+This approach reduces power by eliminating the synchronous full memory reset and stabilizing the read data through registered output, improving timing and power by minimizing glitches and output toggling. Using initial block for RAM init is generally supported for small RAMs in synthesis tools, especially for FPGA or ASIC flows targeting simple RAMs. It also reduces the logic needed during reset, improving area. The synchronous read register adds one clock cycle latency to reads but gains improved signal integrity and timing.
+
+Overall, this modification balances PPA improvements while preserving functionality and clarity.

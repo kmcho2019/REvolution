@@ -1,0 +1,19 @@
+module TopModule (
+    input clk,
+    input reset,
+    output shift_ena
+);
+
+    reg [1:0] cycle_count;
+
+    assign shift_ena = (reset || (cycle_count < 2'd3));
+
+    always @(posedge clk) begin
+        if (reset) begin
+            cycle_count <= 2'd0;
+        end else if (cycle_count < 2'd3) begin
+            cycle_count <= cycle_count + 1;
+        end
+    end
+
+endmodule

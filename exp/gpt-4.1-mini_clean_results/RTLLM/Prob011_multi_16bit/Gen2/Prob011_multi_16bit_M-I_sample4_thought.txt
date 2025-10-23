@@ -1,0 +1,11 @@
+To optimize the design for better timing, power, and area, reduce the wide dynamic shift and large adder usage by shifting the multiplier register (`breg`) right each cycle instead of shifting the multiplier left by `(i-1)` during accumulation. This approach serially accumulates partial products bit-by-bit, avoiding a wide dynamic shifter and large addition path. 
+
+Specifically:
+- Load `areg` and `breg` at the start.
+- For each bit position from 0 to 15:
+  - If the least significant bit (LSB) of `areg` is 1, add `breg` to the product accumulator.
+  - Shift `areg` right by 1 to process next bit.
+  - Shift `breg` left by 1 to align for next bit multiplication.
+- Use a simple 5-bit counter `i` to control the steps.
+- The done signal is asserted when all bits have been processed.
+- This approach minimizes large combinational shifts and adders, improving timing and reducing area and power.

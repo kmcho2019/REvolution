@@ -1,0 +1,20 @@
+The current implementation is correct but can be optimized for better PPA (Power, Performance, Area). Here's the improvement strategy:
+
+1. Boolean Simplification:
+   - Simplify (~a & b) | (a & b) to just 'b' (absorption law)
+   - Simplify (a & b) | (a & ~b) to just 'a' (absorption law)
+   - This reduces logic complexity and gate count
+
+2. Output Polarity:
+   - Maintain the same output polarity (active-high) to avoid adding inverters
+   - Keep the structure of identifying when output is 0 and inverting
+
+3. Implementation Benefits:
+   - Reduced gate count from simplification
+   - Lower power consumption due to fewer switching nodes
+   - Same timing characteristics (still single-level OR of AND terms)
+   - Smaller area due to simpler logic
+
+4. Verification:
+   - The simplified logic still covers all cases where output should be 0
+   - All other cases will correctly output 1

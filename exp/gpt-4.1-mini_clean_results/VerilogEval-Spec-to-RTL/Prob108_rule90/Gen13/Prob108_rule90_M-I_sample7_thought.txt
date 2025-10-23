@@ -1,0 +1,14 @@
+To improve PPA, I will implement a simple clock enable (ce) signal to prevent updating the state when the state does not change, reducing unnecessary toggles and dynamic power. This can be done by comparing the next_state with the current q_out and enabling the register update only when load is asserted or when next_state differs from q_out.
+
+While this adds a comparison, it significantly reduces switching activity during steady states, lowering power consumption.
+
+To reduce area and combinational complexity from multiple comparisons (64-bit per block), I will:
+
+- Use a single OR-reduction of bitwise XOR of q_out and next_state to generate ce.
+- Implement the design with 8 blocks of 64 bits each, as before.
+- Maintain clean boundary handling with zero padding on the ends.
+- Keep non-blocking assignments and synchronous design style.
+
+This approach balances power savings with moderate area increase due to comparator logic and slight performance impact from ce gating.
+
+Overall, this design should reduce power significantly, with minimal area overhead and no impact on functional correctness.

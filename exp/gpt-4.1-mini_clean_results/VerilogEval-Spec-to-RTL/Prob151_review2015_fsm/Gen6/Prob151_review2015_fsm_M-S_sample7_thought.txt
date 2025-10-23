@@ -1,0 +1,8 @@
+Implement a simple Moore FSM with four states representing searching for the start pattern, shifting in 4 bits, waiting for counting to finish, and waiting for user acknowledgment. Use a small 4-bit shift register to detect the pattern 1101 by shifting in `data` every clock cycle while in the SEARCH state. Once detected, assert `shift_ena` for exactly 4 cycles using a simple counter, then assert `counting` until `done_counting` is high, then assert `done` until `ack` is high to return to SEARCH.
+
+Keep the design straightforward:
+- Shift register updates only in SEARCH state for pattern detection.
+- Counter for shift cycles only counts during SHIFT state.
+- All outputs are Moore type, derived from the current state.
+- Synchronous reset initializes all registers and state.
+This reduces complexity while meeting all requirements clearly and reliably.

@@ -1,0 +1,5 @@
+To implement the required finite state machine, we can use a minimal number of states by considering the functionality required in each state. The FSM needs to transition from state A to state B when s = 1. Once in state B, it needs to count the number of clock cycles where w = 1 over a 3-cycle window. This can be achieved by maintaining a counter for the number of w = 1 occurrences and a state variable to track the current state within the 3-cycle window. We can encode state B into sub-states B1, B2, and B3 to track the progression through the 3-cycle window.
+
+To minimize the number of states while achieving the required functionality, we can use a single state variable (e.g., current_state) with values representing states A, B1, B2, and B3. The reset input will be used to reset the FSM to state A.
+
+For the output z, we need to check if w = 1 exactly twice in the 3-cycle window. This condition can be checked at the end of the 3-cycle window (in state B3), and if met, z should be set to 1 in the next clock cycle before resetting the counter and moving back to state B1 for the next window.

@@ -1,0 +1,16 @@
+Novel approach using dual-stage edge detection with immediate capture:
+
+1. **Dual-Stage History**: Maintain two stages of history (prev1_in and prev2_in) to properly align the edge detection timing. This ensures we compare the correct consecutive values.
+
+2. **Correct Edge Alignment**: By comparing prev1_in (cycle N-1) with prev2_in (cycle N-2), we get properly aligned edge detection without pipeline delays. The current input (in) is stored as prev1_in, while prev1_in moves to prev2_in.
+
+3. **Immediate Capture**: The falling edge detection (prev2_in & ~prev1_in) happens in the same cycle the transition is observed in the pipeline, ensuring no missed transitions.
+
+4. **Efficient Sticky Logic**: The capture register uses simple OR logic to maintain state until reset, minimizing gate count while meeting requirements.
+
+Advantages:
+- Correct timing alignment for edge detection
+- No missed transitions due to pipeline effects
+- Still maintains minimal storage (only two 32-bit registers)
+- Clear synchronous behavior
+- Maintains parallel processing for all bits

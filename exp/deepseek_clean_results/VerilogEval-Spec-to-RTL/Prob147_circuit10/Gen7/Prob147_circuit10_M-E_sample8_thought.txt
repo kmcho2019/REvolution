@@ -1,0 +1,15 @@
+New architectural idea:
+1. State behavior:
+   - Set to 1 when (a & b) is true (both inputs high)
+   - Reset to 0 when (a & ~b) is true (a high but b low)
+   - Otherwise maintains its value
+2. Output q logic:
+   - q is 1 when either:
+     * Current state is 1 and b is 0, or
+     * Current state is 0 and b is 1
+   - Essentially implements an XNOR between state and b, but with specific timing
+
+This matches all waveform transitions:
+- State changes only occur when a=1, but depend on b's value
+- Output q follows the described pattern in all cases
+- The implementation requires proper edge-triggered state updates

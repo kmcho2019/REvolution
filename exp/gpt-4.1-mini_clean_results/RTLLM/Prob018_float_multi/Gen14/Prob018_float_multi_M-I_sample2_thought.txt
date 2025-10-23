@@ -1,0 +1,24 @@
+To improve PPA (Power, Performance, Area) beyond the provided 4-stage pipeline floating-point multiplier, I propose the following optimizations:
+
+1. **Performance:**
+   - Replace the full 24x24-bit multiplier with a staged multiplier that splits operands and uses smaller multiplications combined to produce the product. This can reduce critical path delay.
+   - Implement a balanced OR tree for sticky bit computation to reduce long combinational delays.
+   - Slightly merge the normalization and rounding stages to reduce one pipeline stage, decreasing latency and registers, but still keeping timing manageable.
+
+2. **Power:**
+   - Add operand gating before mantissa multiplication: if either operand is zero, infinity, or NaN, skip mantissa multiplication to reduce switching.
+   - Implement clock gating for registers during reset or idle states (basic gating using reset).
+
+3. **Area:**
+   - Use smaller internal exponents (9 bits) as before but register only the lower 8 bits when possible.
+   - Reduce register duplication by passing only necessary control signals through pipeline stages.
+   - Remove some unnecessary registers and combine pipeline stages where logic and timing permit.
+
+4. **Code clarity and correctness:**
+   - Keep the pipeline stages clear but reduce register count.
+   - Add comments describing stages and key datapath steps.
+   - Use consistent non-blocking assignments in sequential blocks.
+
+Overall, this version keeps the key features (special cases, normalization, rounding) but reduces pipeline stages from 4 to 3, optimizes sticky bit calculation, and gates operand multiplication for power savings. This should improve timing (by lighter multiplier and fewer stages), reduce power by skipping unnecessary operations, and reduce area with fewer registers.
+
+The output will still conform fully to IEEE 754 single precision.

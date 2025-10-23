@@ -1,0 +1,15 @@
+Fix the FSM by adjusting the shift register update and pattern detection timing to correctly detect the 1,0,1 sequence without delay:
+
+1. Perform the x shift update at the clock edge, and base the pattern detection on the updated shift register in the combinational logic for next state, not on the combination of old shift and current x input.
+
+2. Introduce a temporary variable representing the next shift register value (`next_x_shift`) computed as `{x_shift[1:0], x}`.
+
+3. Use this updated `next_x_shift` for pattern detection in the combinational next-state logic.
+
+4. Adjust the y monitoring counter to allow full two cycles after pattern detection to detect y=1 by checking for `y_count == 2` before deciding to move to G_OFF_PERM, instead of `y_count == 1`.
+
+5. Maintain synchronous active low reset behavior unchanged.
+
+6. Ensure Moore output logic remains consistent with the states.
+
+These corrections will align input sampling, pattern detection, and output timing to the problem specification, eliminating output mismatches.

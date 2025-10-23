@@ -1,0 +1,27 @@
+To fix the reported issues, implement the following changes:
+
+1. **Correct bit shifting direction for LSB first:**  
+   Shift the shift_reg left by 1 bit on each new bit arrival and place the new bit into the LSB (bit 0). This preserves the LSB-first order correctly.  
+   Use: `shift_reg <= {in, shift_reg[7:1]};` is currently shifting in MSB, so reverse: `shift_reg <= {in, shift_reg[7:1]};` actually puts input at MSB, so instead do:  
+   `shift_reg <= {in, shift_reg[7:1]};` is MSB insert. Instead, to get LSB-first, shift left and insert new bit at LSB:  
+   `shift_reg <= {shift_reg[6:0], in};`
+
+2. **Synchronous, one-cycle done pulse:**  
+   'done' should be registered, not combinational. Create a reg done_reg, assigned inside the sequential block. Set done_reg high for one clock cycle exactly when the FSM sees the stop bit = 1 in the CHECK_STOP state (meaning a valid byte received). Clear done_reg otherwise. Output done_reg on done port.  
+   
+3. **Align state transition with bit_count:**  
+   Increment bit_count on each bit received. Transition from RECEIVE state to CHECK_STOP when bit_count reaches 7 (after receiving 8 bits total). Ensure done assertion timing matches this transition.
+
+4. **Simplify FSM and signal updates into a single always block:**  
+   Handle state transitions, counters, shift register, and done_reg inside one always @(posedge clk) block. Reset logic sets all to defaults.
+
+This fixes timing and logic errors related to done generation and data bit shifting, making the FSM meet spec exactly.
+
+The resulting code will:
+- Detect start bit (0) from idle (line high)
+- Receive 8 data bits LSB first (shift left, input at LSB)
+- Check stop bit (should be 1)
+- Assert done for one clock cycle if stop bit correct
+- Wait for stop bit if wrong, then resume detection
+
+This design uses a 2-bit state encoding for clarity and less resource usage.

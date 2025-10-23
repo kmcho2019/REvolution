@@ -1,0 +1,19 @@
+module TopModule (
+    input  [15:0] scancode,
+    output        left,
+    output        down,
+    output        right,
+    output        up
+);
+
+    // Check prefix byte == 0xE0
+    wire prefix_match = (scancode[15:8] == 8'hE0);
+    wire [7:0] keycode = scancode[7:0];
+
+    // Direct combinational assignments for each arrow key output
+    assign left  = prefix_match && (keycode == 8'h6B);
+    assign down  = prefix_match && (keycode == 8'h72);
+    assign right = prefix_match && (keycode == 8'h74);
+    assign up    = prefix_match && (keycode == 8'h75);
+
+endmodule

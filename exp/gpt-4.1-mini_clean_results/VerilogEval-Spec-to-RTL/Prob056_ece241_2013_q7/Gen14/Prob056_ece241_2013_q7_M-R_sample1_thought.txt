@@ -1,0 +1,17 @@
+I will refactor the JK flip-flop implementation by embedding the next-state logic directly inside the sequential always block without using a separate combinational wire. This changes the structure by removing the intermediate Q_next signal and implements the JK truth table with an if-else style conditional inside the clocked block.
+
+Specifically, the new approach will explicitly check the conditions of J and K inputs in a priority fashion at the positive clock edge:
+- If J=0 and K=0, hold Q.
+- Else if J=0 and K=1, reset Q.
+- Else if J=1 and K=0, set Q.
+- Else (J=1 and K=1), toggle Q.
+
+This explicit conditional approach within the synchronous block improves readability in terms of state updates and removes the combinational logic outside the always block. It may also be slightly more intuitive for someone tracing the state transitions directly in the clocked domain.
+
+This restructuring keeps the minimal logic and synchronous semantics intact, ensuring correct JK behavior with clean synthesis results and without additional signals.
+
+Thus, the refactored module:
+- Uses only one always @(posedge clk) block with conditional statements.
+- Removes the intermediate combinational wire Q_next.
+- Retains the exact JK truth table behavior.
+- Maintains a simple and clear code structure.

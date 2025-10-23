@@ -1,0 +1,5 @@
+The existing design is already minimal and clear, with a case statement for next_state and simple logic for output. To improve PPA, we can convert the always block combinational logic for next_state into purely concurrent continuous assignments with Boolean expressions derived from the state and input. This can reduce logic depth and eliminate the case decoding overhead, possibly reducing power and area. 
+
+We derive next_state bits explicitly as functions of current state bits and input, which also can help synthesis to perform Boolean optimizations. The output remains the same direct comparison.
+
+This approach removes the always block and replaces it with parallel assign statements, improving the potential for logic sharing and reducing switching activity in FPGAs or ASIC standard cells.

@@ -1,0 +1,12 @@
+To implement the Mealy-type finite state machine that recognizes the sequence "101" on the input signal x, we will define three states: S0 (initial state), S1 (seen '1'), and S2 (seen '10'). The state machine will transition between these states based on the input x and assert the output z to logic-1 when the "101" sequence is detected. We will use a negative edge triggered asynchronous reset to reset the state machine.
+
+The state transitions will be as follows:
+- From S0 to S1 when x is '1'.
+- From S1 to S2 when x is '0'.
+- From S2 to S0 when x is not '1' (i.e., x is '0').
+- From S2 to S1 when x is '1', indicating a new sequence "101" could start.
+- From S0 to S0 when x is '0'.
+- From S1 to S0 when x is '0'.
+- The output z will be asserted to logic-1 when the current state is S2 and x is '1', indicating the sequence "101" has been detected.
+
+The reset logic will set the current state to S0 when aresetn is '0', regardless of the current state or clock.

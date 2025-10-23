@@ -1,0 +1,23 @@
+To meet the problem requirements strictly, including the internal counter and cycle-by-cycle operation, and to handle all IEEE 754 special cases with proper normalization, rounding, and gradual underflow, I will implement a multi-cycle design controlled by a 3-bit counter. The process will be:
+
+- Cycle 0: Reset or idle, waiting for inputs.
+- Cycle 1: Extract sign, exponent, mantissa; detect special cases.
+- Cycle 2: Multiply mantissas, add exponents, combine signs.
+- Cycle 3: Normalize and adjust exponent accordingly.
+- Cycle 4: Perform rounding (round-to-nearest-even) with guard, round, sticky bits.
+- Cycle 5: Final adjustments, handle overflow, underflow, and special cases; prepare output.
+- Cycle 6: Output the result, hold until reset or new input.
+
+This pipeline-like staged approach fits the internal signals and counter requirement, and allows stable registered outputs.
+
+Additionally, the design will handle gradual underflow producing subnormal numbers if exponent after rounding underflows but is still >= -23 (mantissa bits), otherwise zero.
+
+Sticky bit calculation will be exact. Sign will be registered and synchronized.
+
+This approach splits the complexity into well-defined steps improving timing and correctness, and is fully synchronous.
+
+I will define all internal regs for intermediate states and properly implement each stage per the IEEE 754 single-precision multiplication rules, carefully adjusting exponent biases and rounding to nearest even.
+
+Reset sets counter and output zero.
+
+This design fully matches the problem description and is robust for all corner cases.

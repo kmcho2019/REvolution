@@ -1,0 +1,9 @@
+Instead of an FSM that tracks edges explicitly, this design uses a 3-bit shift register to sample the recent history of data_in over three clock cycles. By shifting in the current data_in at each clock and checking for the pattern "010" in the shift register, we detect the pulse pattern defined as data_in changing from 0 to 1 to 0 over three cycles.
+
+The output data_out is asserted high for one cycle exactly when the shift register matches "010," indicating the end of the pulse (the last '0' in the pattern). This approach is pattern-based rather than edge-based and is simple and effective.
+
+This architecture is straightforward, has minimal state overhead, and can easily be extended for detecting longer or more complex pulse patterns. It provides a clear and direct correlation between the input signal history and the pulse detection output.
+
+To prevent multiple assertions for a single pulse (if data_in holds low after the pulse), no additional latch is needed because the pattern "010" only occurs on the cycle where data_in drops to zero after a single high pulse.
+
+Reset initializes the shift register to zeros to avoid false detection on startup.

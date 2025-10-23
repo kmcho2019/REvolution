@@ -1,0 +1,7 @@
+To implement a novel architectural solution, we can approach the problem from a different perspective by using a more hierarchical state machine design. This involves breaking down the Lemming's behavior into smaller, more manageable states, and then using a higher-level state machine to control these states.
+
+The key idea is to separate the "walking" and "falling" behaviors into distinct sub-state machines. The "walking" sub-state machine will handle the direction changes based on bumps, while the "falling" sub-state machine will simply wait for the ground to reappear. A higher-level state machine will then manage the transitions between these sub-states based on the presence or absence of the ground.
+
+This hierarchical approach can simplify the overall design, making it easier to understand, modify, and optimize. It also allows for potential reuse of sub-state machines in other parts of the design, should similar behaviors be needed elsewhere.
+
+By structuring the design in this way, we can also more easily apply optimizations such as clock gating to the sub-state machines that do not need to switch every clock cycle, thus reducing power consumption.

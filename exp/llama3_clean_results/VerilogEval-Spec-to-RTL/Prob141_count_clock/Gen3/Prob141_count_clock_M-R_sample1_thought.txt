@@ -1,0 +1,13 @@
+The existing design can be refactored to improve its clarity, efficiency, and accuracy. The primary goal is to simplify the conditional logic, eliminate redundant operations, and ensure correct reset and counting functionalities. 
+
+1. **Reset and Initialization**: The reset logic should be simplified to directly set the internal counters and outputs to their initial values, considering the 12-hour format and BCD representation.
+
+2. **Counting Logic**: A cleaner approach to the counting logic is to use a hierarchical structure, where each time component (seconds, minutes, hours) is incremented based on its own wrap-around condition, with the next component being updated only when the current one wraps around.
+
+3. **BCD Conversion**: Simplify the BCD conversion by directly using the internal counters for minutes and seconds, as they are already in a format that can be easily converted to BCD by prepending zeros. For hours, a direct assignment based on the internal hour counter can be used, considering the 12-hour format.
+
+4. **State Machine**: Instead of using multiple `always` blocks for different operations, the entire logic can be encapsulated within a single `always` block that handles both the counting and the BCD conversion based on the state of the clock.
+
+5. **PM Indicator**: The PM indicator should toggle when the hour transitions from 11 (PM) to 0 (AM), simplifying the logic for handling AM/PM.
+
+6. **PPA Optimization**: The refactored design should aim to minimize the number of logic gates and reduce power consumption by eliminating unnecessary operations and simplifying the conditional statements.

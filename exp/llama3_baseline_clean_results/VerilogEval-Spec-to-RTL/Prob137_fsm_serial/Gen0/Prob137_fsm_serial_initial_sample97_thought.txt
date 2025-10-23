@@ -1,0 +1,17 @@
+To solve this problem, we will implement a finite state machine (FSM) with the following states:
+1. IDLE: Initial state where the FSM waits for the start bit.
+2. START: State where the FSM checks if the start bit is 0.
+3. DATA: State where the FSM collects the 8 data bits.
+4. STOP: State where the FSM checks if the stop bit is 1.
+5. ERROR: State where the FSM waits for a stop bit if the stop bit verification fails.
+
+We will use counters and flags to keep track of the current state, the number of data bits received, and the validity of the stop bit.
+
+We will use the following signals:
+- `state`: The current state of the FSM (IDLE, START, DATA, STOP, ERROR).
+- `data`: The received data bits.
+- `data_valid`: Flag indicating if the received data is valid.
+- `bit_count`: Counter for the number of data bits received.
+- `done`: Output signal indicating that a valid byte has been received.
+
+We will use a case statement to handle the different states and transitions.

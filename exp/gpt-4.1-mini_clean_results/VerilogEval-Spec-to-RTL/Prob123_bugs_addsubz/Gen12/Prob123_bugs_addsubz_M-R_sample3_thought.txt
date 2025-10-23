@@ -1,0 +1,5 @@
+Refactor the adder-subtractor by implementing the entire logic in continuous assignments instead of using an always block for outputs. Replace the explicit full adder carry chain with Verilog’s built-in '+' operator on the conditioned operands (XORed with do_sub and with do_sub added as carry-in), leveraging synthesis tools to infer the adder efficiently.
+
+Use wire outputs for `out` and `result_is_zero` to simplify the code and improve readability, since the module is purely combinational. The zero flag is computed by a reduction NOR (~|out), ensuring correct zero detection.
+
+This refactoring keeps the same functionality and conditional subtraction but uses a cleaner, more concise, and idiomatic Verilog style, which synthesis tools can optimize well. It also removes the explicit carry and generate blocks, replacing them with built-in addition, improving maintainability and brevity without losing clarity or correctness.

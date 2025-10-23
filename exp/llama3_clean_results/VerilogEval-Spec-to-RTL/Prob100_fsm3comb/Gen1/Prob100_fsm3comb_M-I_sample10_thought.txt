@@ -1,0 +1,13 @@
+The given solution is a straightforward implementation of the Moore state machine using a case statement. To optimize it for better PPA metrics, we can consider several strategies. 
+
+Firstly, for **Performance (Timing)**, the current design already uses a combinational logic approach with an always block sensitive to all inputs, which is efficient for small state machines. However, we can further optimize the handling of the default state to minimize additional logic that could impact timing.
+
+Secondly, for **Power**, given that the current design's power consumption is already very low, we might not be able to significantly reduce it further without compromising performance or functionality. Nevertheless, we can aim to minimize switching activity by ensuring that the state transitions are as efficient as possible, though this may be limited by the state machine's structure.
+
+Lastly, for **Area**, the current implementation's area usage is relatively low. To further reduce area, we could explore alternative state encoding schemes or logic structures that might be more compact, though this should be balanced against potential impacts on performance or power consumption.
+
+Given these considerations, our improvement strategy will focus on refining the existing implementation to minimize unnecessary logic and optimize state transitions, while ensuring that the design remains straightforward and easy to understand.
+
+One approach is to explicitly define the output logic outside the case statement where possible, since the output is the same for multiple states, and only use the case statement for determining the next state. This can simplify the logic and potentially reduce area and power consumption.
+
+Another optimization could involve ensuring that the default state handling is as minimalistic as possible, avoiding the introduction of unnecessary logic that could increase area or power consumption.

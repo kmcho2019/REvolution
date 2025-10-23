@@ -1,0 +1,8 @@
+To implement the sequence detector, we will use a finite state machine (FSM) with four states: IDLE, S1, S2, S3, and S4. The FSM transitions through these states based on the input data_in signal. On each clock cycle, the detector checks for a match of the specific sequence 1001. The state machine starts in the IDLE state, waiting for the first bit of the sequence. When the sequence is detected, the sequence_detected output is set high. The reset signal reset_n is used to reset the state machine to the IDLE state when it is asserted low. 
+The state transitions will be as follows:
+- IDLE state: If data_in is 1, move to S1 state. Otherwise, stay in IDLE state.
+- S1 state: If data_in is 0, move to S2 state. Otherwise, move back to IDLE state.
+- S2 state: If data_in is 0, move to S3 state. Otherwise, move back to IDLE state.
+- S3 state: If data_in is 1, move to S4 state. Otherwise, move back to IDLE state.
+- S4 state: The sequence is detected, so set sequence_detected high. On the next clock cycle, move back to IDLE state.
+We will use a parameterized always block to implement the FSM, which allows us to easily define the state transitions based on the current state and input data.

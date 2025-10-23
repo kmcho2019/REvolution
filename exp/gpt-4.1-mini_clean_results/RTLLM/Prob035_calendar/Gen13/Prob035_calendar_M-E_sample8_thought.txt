@@ -1,0 +1,15 @@
+I will implement the perpetual calendar using a single always block that updates all three counters atomically to simplify timing and ensure synchronization between seconds, minutes, and hours. This approach minimizes potential glitches and ensures consistent rollover behavior.
+
+The counters will be updated on every positive clock edge or reset. On reset, all counters go to zero.
+
+For incrementing:
+- Seconds increment every cycle.
+- When seconds reach 59 and wrap to 0, minutes increment.
+- When minutes reach 59 and seconds reach 59 (right before wrapping), hours increment.
+- Hours wrap from 23 back to 0.
+
+All counters are synchronous and updated together to guarantee consistent time state each cycle.
+
+Although this increases combinational logic in one block, it simplifies the logic path and eases verification since all counters change simultaneously. Using blocking assignments within the always block is avoided to maintain proper sequential semantics.
+
+The outputs are 6-bit for Hours (allowing 0-23), Mins (0-59), and Secs (0-59) as requested.

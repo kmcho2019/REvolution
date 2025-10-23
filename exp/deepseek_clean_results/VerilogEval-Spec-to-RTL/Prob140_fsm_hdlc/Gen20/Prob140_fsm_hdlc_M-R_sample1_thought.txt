@@ -1,0 +1,26 @@
+To refactor the solution while maintaining the same core functionality, I'll make these key changes:
+
+1. State Representation:
+   - Replace the counter with explicit state encoding using a parameterized state machine
+   - This makes the design more readable and potentially more synthesis-friendly
+
+2. Output Logic:
+   - Move output generation to continuous assignments (assign statements)
+   - This separates combinational logic from sequential elements
+   - Makes timing paths more explicit
+
+3. Optimization:
+   - Use one-hot encoding for states (better for FPGAs)
+   - Group related states together for simpler transitions
+   - Remove redundant comparisons by leveraging state information
+
+4. Structure:
+   - Split into two always blocks (state transition and output register)
+   - This follows standard FSM design patterns
+   - Makes the design more modular and easier to debug
+
+The refactored version maintains the same behavior but with:
+- Clearer state transitions
+- Explicit output generation logic
+- Better separation of combinational and sequential logic
+- Potential for better synthesis optimization

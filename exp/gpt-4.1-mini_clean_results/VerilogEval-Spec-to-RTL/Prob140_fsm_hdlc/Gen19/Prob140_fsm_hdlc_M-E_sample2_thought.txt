@@ -1,0 +1,14 @@
+Implement a Moore FSM with explicit states representing the count of consecutive 1s from 0 to 7+, encoding each as a unique state. This approach uses one-hot or binary encoded states for clarity and direct mapping of conditions, improving traceability of the protocol logic.
+
+On each clock, the FSM transitions based on the input bit:
+
+- On input 1, move to the next higher state (counting consecutive ones), saturating at an error state for 7 or more ones.
+- On input 0, transition back to zero count state, but check the previous count to determine if disc (after exactly 5 ones), flag (after 6 ones), or no output is asserted.
+
+The outputs disc, flag, err are purely functions of the current state (Moore machine) without combinational output logic based on input. They are asserted for one clock cycle immediately after state transition to states corresponding to disc, flag, or err conditions.
+
+This explicit state machine improves readability and debugging, allows direct synthesis-friendly FSM implementation, and separates counting logic from output logic. It provides deterministic outputs aligned with HDLC framing rules and cleanly handles reset to zero-count state.
+
+The synchronous reset initializes the FSM to zero ones count state (equivalent to previous zero input).
+
+This design trades a few more states for clarity, correctness, and simpler combinational logic, potentially reducing glitches on outputs.

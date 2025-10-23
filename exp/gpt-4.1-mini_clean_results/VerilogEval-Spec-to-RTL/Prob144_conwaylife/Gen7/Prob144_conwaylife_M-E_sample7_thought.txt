@@ -1,0 +1,12 @@
+A different architectural approach is to implement the grid as a 16x16 memory array of bits and compute the next state in a pipelined manner over multiple clock cycles instead of computing all cells combinationally in one cycle.
+
+Specifically:
+- Use a row and column counter to iterate over each cell sequentially, processing one cell per clock cycle.
+- On load: synchronously load the entire 256-bit input into q.
+- When not loading, in each clock cycle, compute the next state of a single cell by counting its neighbors using wraparound logic.
+- Store the computed next state bit into a temporary 256-bit register (next_q).
+- After processing all 256 cells (16x16), update q with next_q.
+- This approach reduces combinational complexity to just one cell's neighbors per clock cycle, improving timing and reducing area and power consumption.
+- The outputs update once every 256 cycles, so a state counter and a ready flag can be maintained.
+
+This serialized approach is conceptually simpler in combinational logic, trades throughput for improved PPA, and is a distinct design from the fully combinational update approach.

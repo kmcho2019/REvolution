@@ -1,0 +1,19 @@
+To fix the code based on the feedback, we need to address the issues of using the genvar "i" outside of the generate block and the logical error in calculating the final product.
+
+Our approach will be to calculate the partial products within the generate block and then sum them up using a separate always block. We will use two levels of registers to store the intermediate values and control the multiplication process.
+
+Here's a step-by-step breakdown of our fix:
+
+1. Extend the input signals by adding "size" number of zero bits at the most significant bit positions.
+2. Use a generate block to create separate wires for each partial product.
+3. Use these partial products to calculate the intermediate sum.
+4. Use a separate always block to update the intermediate sum register.
+5. Use another always block to update the final product register.
+
+By doing this, we can avoid the issue of using the genvar "i" outside of the generate block and correctly calculate the final product.
+
+We will also use a separate wire to calculate the sum of the partial products, and then use this sum to update the intermediate sum register. This will ensure that the final product is calculated correctly.
+
+We will use two levels of registers, `reg1` and `reg2`, to store the intermediate values. The first always block will update `reg1` with the sum of the partial products, and the second always block will update `reg2` with the value of `reg1`.
+
+This approach will ensure that the final product is calculated correctly and that the code is free from errors.

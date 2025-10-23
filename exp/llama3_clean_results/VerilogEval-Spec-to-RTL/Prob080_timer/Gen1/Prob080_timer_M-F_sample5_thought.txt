@@ -1,0 +1,5 @@
+To correct the functionality of the TopModule, we need to adjust the logic for handling the 'tc' signal when the internal counter reaches 0. The 'tc' signal should remain asserted once the counter reaches 0 until the counter is reloaded with a new value. This means that when 'load' is 0 and 'count' is 0, 'tc_reg' should not be de-asserted. Instead, it should remain in its current state (i.e., asserted) until 'load' becomes 1, at which point 'tc_reg' should be de-asserted and the counter should be reloaded.
+
+We will modify the always block to reflect this change. When 'load' is 1, 'count' will be loaded with 'data', and 'tc_reg' will be de-asserted. When 'load' is 0, if 'count' is greater than 0, 'count' will decrement by 1, and 'tc_reg' will remain de-asserted. However, if 'count' is 0, 'tc_reg' will be asserted, and it will remain asserted on subsequent clock cycles until 'load' becomes 1 again.
+
+This adjustment ensures that once the internal counter reaches 0, the 'tc' signal will remain asserted until the counter is reloaded, aligning with the desired functionality.

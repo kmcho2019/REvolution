@@ -1,0 +1,13 @@
+Simplify the FSM by using a single enumerated state register representing all major modes with direction encoded as a separate 1-bit register. This separates concerns and reduces bit-width of combined state. Use a single synchronous reset for simplicity (or keep async if strictly required).
+
+Use fewer nested conditions by applying priority explicitly: falling > digging > bump in walking. Represent bump handling with a single combined signal. Use a simple saturating counter for fall duration in a straightforward manner.
+
+Keep Moore style output logic directly derived from current states and direction bits.
+
+This separation improves readability and modularity, making the code more concise while preserving functionality. The finite states become WALK, FALL, DIG, SPLAT. Direction is separate.
+
+Avoid encoding states and direction together, thus simpler assignment statements and less packed bit manipulation.
+
+Handle asynchronous reset directly in sequential always block.
+
+This approach reduces combinational logic complexity, improves clarity, and maintains the full specified behavior.

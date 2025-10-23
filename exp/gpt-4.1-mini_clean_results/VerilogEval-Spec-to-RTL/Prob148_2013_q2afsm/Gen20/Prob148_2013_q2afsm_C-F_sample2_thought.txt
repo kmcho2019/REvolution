@@ -1,0 +1,12 @@
+Fuse the clarity and simplicity of one-hot state encoding from both examples with explicit state names using `localparam` for better readability and maintainability. Keep the synchronous active-low reset and separate always blocks for state flip-flops and next-state logic for good design practice.
+
+Prioritize requests (r[0] > r[1] > r[2]) in the idle state, transitioning to the corresponding grant state (B, C, or D). Stay in the grant state as long as the associated request remains asserted; otherwise, return to idle (A). The output grant signals g are directly assigned from the one-hot state bits, enabling simple combinational logic.
+
+Use non-blocking assignments in sequential logic and blocking assignments in combinational logic, following best practices. This design maintains a clean, readable FSM structure, ease of debugging, and minimal logic on outputs while leveraging explicit state encoding for better code clarity.
+
+This fusion retains the advantages:
+- Clear and easy to maintain state encoding with symbolic names
+- Simple and fast next-state logic reflecting priority
+- Direct mapping of states to grant outputs
+- Proper synchronous active-low reset
+- Separate always blocks for sequential and combinational logic

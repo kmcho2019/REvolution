@@ -1,0 +1,11 @@
+To improve timing, power, and area efficiency over the ripple borrow chain architecture, we will eliminate the segmented ripple subtractors and instead perform the subtraction directly using the Verilog built-in 64-bit arithmetic operator. This approach lets synthesis tools infer optimized carry-lookahead or carry-select subtractors, which significantly reduces the critical path and area compared to ripple borrow chains.
+
+For overflow detection, we keep the same logic comparing sign bits of inputs and result. We explicitly cast inputs to signed 64-bit to make the intent clear and help synthesis tools optimize the arithmetic and overflow check.
+
+This fully combinational approach minimizes net count, reduces switching on intermediate borrow signals, and leverages synthesis tools' arithmetic optimizations for better power and area.
+
+Summary of improvements:
+- Use one 64-bit subtract operator instead of segmented ripple.
+- Rely on signed arithmetic for clarity and efficient synthesis.
+- Keep overflow detection logic as before.
+- Result is directly assigned; no extra modules or borrow signals.

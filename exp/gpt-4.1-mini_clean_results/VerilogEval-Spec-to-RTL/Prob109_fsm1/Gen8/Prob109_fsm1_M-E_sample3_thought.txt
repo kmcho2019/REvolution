@@ -1,0 +1,13 @@
+An alternative architectural approach is to implement the FSM using a one-hot style encoding, where each state is represented by one bit explicitly: one flip-flop for state A and one flip-flop for state B. Since there are only two states, this is effectively a 2-bit register with only one bit set at a time.
+
+The FSM transitions will be defined as follows:
+- From state B (bit 1 set), if input is 0, transition to A (bit 0 set); if input is 1, remain in B.
+- From state A (bit 0 set), if input is 0, transition to B (bit 1 set); if input is 1, remain in A.
+
+We use asynchronous reset to set the FSM to state B by setting the B bit flip-flop and clearing A.
+
+The output can be taken directly from the bit representing state B since the output is '1' only in state B.
+
+This approach uses two flip-flops, but makes the logic very explicit and modular. The output assignment becomes straightforward: output = state_B.
+
+This style can also simplify some tools' optimizations and enhance readability for designs emphasizing explicit state encoding rather than packed state bits.

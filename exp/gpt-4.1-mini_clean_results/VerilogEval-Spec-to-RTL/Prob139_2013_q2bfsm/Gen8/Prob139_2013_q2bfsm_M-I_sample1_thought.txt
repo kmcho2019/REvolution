@@ -1,0 +1,18 @@
+To fix the remaining timing and output mismatches, the following refined approach is applied:
+
+- Keep the FSM Moore style, outputs depend only on current state.
+- Use synchronous active-low reset properly to initialize state and counters.
+- Explicitly separate the update of counters and state transitions to avoid off-by-one cycle errors:
+  - Update counters based on current state and inputs before the next state transition decision.
+  - Use a small pattern_step FSM that handles overlapping occurrences of the `1,0,1` sequence robustly.
+- Refine the `y` monitoring logic to guarantee `g` is set to 1 exactly when the pattern is matched (immediately on the next cycle), and maintain `g=1` during the `y` monitoring window.
+- Transition to permanent states only after the monitoring window, ensuring detection of `y=1` within at most two cycles.
+- Simplify next state logic by strictly basing it on current state, inputs, and counters updated in the sequential block.
+- The output `f` pulse lasts exactly one cycle immediately after resetn is de-asserted and next clock edge.
+- The outputs `f` and `g` clearly correspond to specific states:
+  - `f=1` only during `F_PULSE` state (one cycle).
+  - `g=1` during `G_ON_MONITOR_Y` and `G_ON_PERM`.
+- Ensure counters (`pattern_step` and `y_count`) update before next state decisions in the always_ff block to avoid timing mismatches.
+- The transitions and counters are thus tightly coupled and unambiguous, guaranteeing correct output timing.
+
+This approach resolves the prior issues with misaligned pulses and incorrect pattern detection timing.

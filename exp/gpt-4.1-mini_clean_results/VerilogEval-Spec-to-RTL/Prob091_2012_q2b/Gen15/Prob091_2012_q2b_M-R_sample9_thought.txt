@@ -1,0 +1,15 @@
+Refactor the design by implementing the next-state logic directly inside the TopModule using continuous assignments without an intermediate submodule. Compute Y1 and Y3 outputs from the inputs y and w in one place for simplicity and clarity. Additionally, rewrite the Y3 expression using NAND and NOR logic to reduce the number of inversions and make the logic more compact:
+
+- Y1 remains y[0] & w because it directly represents the transition from A to B.
+
+- For Y3, recall that Y3 is the input to y[3] (state D). From the FSM, D can be reached from B or C or F with input 0 or 1 depending on the current state and input w. Inspecting transitions to D:
+
+  - From B (y[1]) with w=0
+  - From C (y[2]) with w=0
+  - From F (y[5]) with w=0
+
+  So, Y3 = (~w) & (y[1] | y[2] | y[5])
+
+Using this positive logic expression instead of negated y[0] and y[3] inputs avoids multiple negations and may improve PPA. This is a different but functionally equivalent expression found by analyzing the FSM transitions. The outputs are assigned in a straightforward manner without a separate module.
+
+This approach simplifies the hierarchy, potentially improving synthesis and readability, and uses a more explicit expression for Y3, possibly improving power and area.

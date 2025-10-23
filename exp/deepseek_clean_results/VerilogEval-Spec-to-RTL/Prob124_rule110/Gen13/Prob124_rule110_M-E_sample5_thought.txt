@@ -1,0 +1,16 @@
+Novel Shift Register Architecture:
+1. **Shift Register Core**: Instead of parallel computation, use a 3-bit shift register to scan through the array, processing one triplet (left, center, right) at a time. This reduces area by reusing logic.
+
+2. **Pipelined Processing**: Implement a 2-stage pipeline where:
+   - Stage 1: Load current state into shift register
+   - Stage 2: Compute next state using Rule 110 logic
+
+3. **Boundary Handling**: Use a rotating shift register with explicit boundary bits (0) inserted at the ends.
+
+4. **Efficient State Update**: Only update one bit per cycle, reducing switching activity and power consumption.
+
+Key Advantages:
+- Significant area reduction (only 3 flip-flops + control logic vs 512 parallel units)
+- Lower power due to reduced switching activity
+- Scalable to larger arrays without area penalty
+- Maintains same functionality as parallel implementation

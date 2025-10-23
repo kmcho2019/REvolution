@@ -1,0 +1,11 @@
+To fix the supplemental flow valve (dfr) assertion logic, we must ensure the previous water level state is accurately stored and compared with the current decoded water level from the previous clock cycle, not the same cycle.
+
+The main problem was that `prev_state` and `decoded_level` were effectively from the same cycle because `decoded_level` is combinational and `prev_state` is updated at the clock edge simultaneously. To fix this, we explicitly register `decoded_level` into a `current_state` on the rising clock edge, then update `prev_state` from the old `current_state`. This way, `prev_state` always holds the water level from the previous cycle.
+
+Thus, the `dfr` output can be derived by comparing `current_state` (just registered this cycle) with `prev_state` (registered last cycle). This ensures a clean, synchronous detection of water level rising transitions.
+
+Additionally, the decoding logic is simplified by treating only four valid sensor patterns, assigning a default to BELOW for any unexpected input, as before.
+
+Finally, all outputs are synchronous, updated on the rising edge with non-blocking assignments for clear timing behavior.
+
+This approach stabilizes the dfr output behavior and aligns it with the problem's requirements for supplemental flow valve control.

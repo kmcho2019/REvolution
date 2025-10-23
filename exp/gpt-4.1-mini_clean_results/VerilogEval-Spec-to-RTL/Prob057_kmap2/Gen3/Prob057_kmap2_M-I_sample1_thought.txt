@@ -1,0 +1,17 @@
+The current solution is functionally correct and relatively optimized, but further improvements to PPA can be made by factoring out common sub-expressions to reduce redundant OR gates and minimize switching activity.
+
+Key observations for factoring:
+- (~a | ~b) and (a | b) appear multiple times; define these as common wires to avoid duplicative logic.
+- The expression (~c & ~d & (~a | ~b)) can be written as (~c & ~d & na_or_nb), where na_or_nb = ~a | ~b.
+- Similarly, (c & d & (a | b)) can use a_or_b = a | b.
+- The term (~c & d & ~b) and (c & ~d & ~a) do not share much commonality but use the inverted inputs.
+- Define inverted inputs once to save repeated inversion.
+
+By sharing the common wires na_or_nb and a_or_b, we reduce gate count and switching on OR gates. This leads to fewer gates, less toggling, and potentially reduced dynamic power and area, while timing remains very favorable due to simple combinational paths.
+
+Thus, the improved design:
+- Define inverted inputs na, nb, nc, nd.
+- Define common wires na_or_nb and a_or_b.
+- Use these in the main expression.
+
+This reduces total logic needed for the OR gates and reduces power consumption and area with no impact on timing.

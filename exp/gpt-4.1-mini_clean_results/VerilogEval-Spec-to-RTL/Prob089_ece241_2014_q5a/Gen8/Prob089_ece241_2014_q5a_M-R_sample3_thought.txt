@@ -1,0 +1,13 @@
+Refactor the FSM to use a one-hot encoded state with explicit separate registers for the current state bits, and implement the output logic with a registered output z updated on the clock edge to strictly preserve Moore behavior.
+
+Use two state bits (s0, s1) for S0 and S1. The next state logic and state register update happen on the clock and async reset as before.
+
+Instead of combinational always blocks for next_state and output, use continuous assignments for next_state signals derived from the current state and registered input x_reg, and update the output register z synchronously in the clocked process.
+
+Also register the input x at the clock edge for synchronization. The Moore output z depends only on the current state and the registered input.
+
+This restructuring uses bit-vector style for state, continuous assignments for next state logic, and a single clocked always block for state, input, and output registers, improving clarity by consolidating sequential logic and separating combinational next state logic.
+
+The asynchronous reset remains active high and asynchronous, clearing state bits, input register, and output register.
+
+This alternate style still implements the same FSM logic and Moore output but with a different structure for maintainability and readability.

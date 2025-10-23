@@ -1,0 +1,11 @@
+To properly implement the specified behavior while addressing the reset issue, I'll make these key changes:
+
+1. **Remove explicit reset**: Since the problem states flip-flops are initially reset to zero before operation begins, we can rely on initial values in simulation and let synthesis tools handle power-up states.
+
+2. **Use blocking assignments**: For this simple sequential logic, we can use a single always block with non-blocking assignments for the flip-flops.
+
+3. **Simplify structure**: Keep the same gate logic but implement it more directly in the always block.
+
+4. **Maintain same functionality**: The XOR, AND, and OR gates will still feed into their respective flip-flops, with the NOR output as specified.
+
+The key improvement is removing the problematic constant reset while maintaining the same logical behavior. Flip-flops will initialize to 0 at start (as per Verilog simulation rules) and then operate normally on clock edges.

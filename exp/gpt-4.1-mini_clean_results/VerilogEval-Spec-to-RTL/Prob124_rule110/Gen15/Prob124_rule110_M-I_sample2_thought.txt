@@ -1,0 +1,9 @@
+To improve the PPA, I aim to reduce the critical path and logic complexity by implementing a small lookup table (ROM) for the Rule 110 transition logic. Instead of using direct combinational logic for each cell, I encode the next state for each possible 3-bit neighborhood (left-center-right) into a 8-bit constant, effectively making the next state a simple indexed lookup. This reduces the gate levels and simplifies combinational logic for each cell.
+
+Additionally, I will break the wire assignments into smaller parts to reduce fanout and encourage synthesis optimization. The synchronous load and register update remain as is to maintain correct and efficient state loading and update.
+
+This approach trades a small amount of area for better timing by reducing the logic depth and complexity per bit, potentially improving max frequency while maintaining the same functional behavior and boundary conditions.
+
+Boundary conditions are still explicitly zero at the edges.
+
+This LUT-based approach is a well-known technique to optimize cellular automaton implementations.

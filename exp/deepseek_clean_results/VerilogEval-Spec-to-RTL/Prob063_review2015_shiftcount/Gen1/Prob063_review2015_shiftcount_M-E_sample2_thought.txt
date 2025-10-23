@@ -1,0 +1,7 @@
+Here's a novel approach using a multiplexer-based design with separate shift and count logic paths. The key idea is to:
+1. Generate both possible next states in parallel (shifted value and decremented value)
+2. Use the enable signals to select which path to take through a multiplexer
+3. This avoids priority issues since the mux selection is mutually exclusive by design
+4. For the shift operation, implement true MSB-first (left shift) by placing new data at LSB and shifting existing bits left
+5. The count operation remains a simple decrement
+6. All operations are synchronized to the positive clock edge

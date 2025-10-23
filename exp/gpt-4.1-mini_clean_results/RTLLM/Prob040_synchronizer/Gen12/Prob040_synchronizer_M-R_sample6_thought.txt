@@ -1,0 +1,6 @@
+Refactor the synchronizer by separating the clock domain crossing logic from the data storage logic using asynchronous FIFOs style approach: 
+- Keep the data_reg and en_data_reg update on clk_a domain using an always block.
+- Implement the two-stage synchronizer of en_data_reg into clk_b domain using shift registers with nonblocking assignments in an always block.
+- Use a combinational MUX controlled by en_clap_two to select between retaining previous dataout or updating it with data_reg.
+- Update dataout register only when enabled, otherwise keep previous value.
+- This approach separates data and control synchronization clearly and uses a combinational assign statement for muxing, providing clean separation of concerns.

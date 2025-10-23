@@ -1,0 +1,21 @@
+The waveform suggests a 2-bit sequential system with outputs p and q forming the state bits, but the previous state transition logic does not fully match the observed behavior.
+
+Key observations:
+- p and q are initially unknown (x).
+- q remains x until after the first clock cycle with clock=1 and a=0.
+- p updates at rising clock edges when a=1; q updates on falling clock edges, seemingly following p.
+- The waveform shows q is updated on the falling clock edge, not the rising edge, whereas p updates on the rising edge.
+- This suggests a two-register design where p is updated on posedge clock and q on negedge clock, both depending on current inputs and states.
+- On posedge clock with a=1, p is set to 1; on posedge clock with a=0, p is set to 0 or retains value per waveform.
+- On negedge clock, q follows p's value with some logic: q updates to p's previous value.
+- The outputs p and q can be modeled as two D flip-flops, with p updated on posedge and q updated on negedge, with q receiving the previous p value.
+- Implement initial unknown states for p and q to reflect the waveform.
+- The input 'a' influences p's update on the posedge clock, while q latches p's previous value on negedge clock.
+
+This approach fits the asynchronous update pattern in the waveform:
+- p changes at posedge clock based on a.
+- q updates at negedge clock, taking p's value.
+
+Hence, implement p as a positive edge triggered D flip-flop with input a, and q as a negative edge triggered D flip-flop with input p.
+
+This matches the waveform timings and state transitions observed.

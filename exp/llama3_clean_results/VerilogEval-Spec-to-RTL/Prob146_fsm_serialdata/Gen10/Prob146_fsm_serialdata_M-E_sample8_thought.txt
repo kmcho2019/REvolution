@@ -1,0 +1,15 @@
+To implement a novel architectural idea for the serial communication protocol receiver, we can utilize a combination of counters, registers, and finite state machine (FSM) logic. The key components of this new approach include:
+1. A 2-bit FSM to manage the states: IDLE, START, and RECEIVE. This FSM will control the flow of the receiver.
+2. A bit counter to track the number of bits received during the RECEIVE state.
+3. A shift register to accumulate the incoming data bits.
+4. A comparator to verify the stop bit after receiving 8 data bits.
+5. A synchronous reset to initialize all components when the `reset` signal is asserted.
+
+The receiver will operate as follows:
+- In the IDLE state, wait for a start bit (0) to transition to the START state.
+- In the START state, move immediately to the RECEIVE state to start accumulating data bits.
+- In the RECEIVE state, use the bit counter to track the number of bits received. After 8 bits, check the stop bit.
+- If the stop bit is correct (1), assert the `done` signal and update the `out_byte` output with the received data.
+- If the stop bit is incorrect, wait for a stop bit (1) before returning to the IDLE state to attempt to receive the next byte.
+
+This approach ensures that the receiver accurately identifies correctly received bytes, handles incorrect stop bits by waiting for a valid stop bit, and maintains a simple, efficient architecture.

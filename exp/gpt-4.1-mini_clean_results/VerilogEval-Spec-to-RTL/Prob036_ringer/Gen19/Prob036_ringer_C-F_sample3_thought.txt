@@ -1,0 +1,14 @@
+The best solution fuses the direct combinational gating of ring with vibrate_mode (from Example 1) and the clear one-hot output encoding concept from Example 2. 
+
+From Example 1, we keep the efficient power-saving gating that prevents toggling when ring=0, by ANDing ring with each output signal. This ensures no output switching unless an incoming call is present.
+
+From Example 2, we incorporate the explicit mutually-exclusive one-hot logic by introducing an intermediate wire that encodes the mutually exclusive outputs but without using a reg or always block, keeping it purely combinational.
+
+Our fusion uses a small 2-bit combinational wire assigned with a single expression combining ring and vibrate_mode to encode outputs, and then ANDs them with ring again to gate toggling.
+
+This yields:
+- Power efficiency from gating outputs with ring.
+- Clear and scalable logic using one-hot encoding that avoids inversion duplication by reusing one signal and its inverse.
+- Minimal gate usage by sharing inversion internally.
+
+This combination ensures minimal toggling, no redundant registers, and logically clean mutually exclusive outputs with minimal gates, improving power and area while maintaining zero latency and full functionality.

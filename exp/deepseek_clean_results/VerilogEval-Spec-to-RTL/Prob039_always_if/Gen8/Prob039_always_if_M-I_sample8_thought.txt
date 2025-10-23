@@ -1,0 +1,12 @@
+The current solution is correct but can be optimized for better PPA (Power, Performance, Area) by:
+
+1. **Area Reduction**: Eliminate the submodule hierarchy since this is a simple design, reducing hierarchical overhead.
+2. **Power Optimization**: Keep only one mux implementation if both outputs aren't strictly needed (assuming they serve the same purpose).
+3. **Performance Maintenance**: Keep the shared selection logic to prevent duplication.
+4. **Simplification**: Use direct implementation in TopModule since the functionality is simple enough to not warrant submodules.
+
+Improved strategy:
+- Flatten the hierarchy into a single module
+- Keep both implementations (assign and always) as required by the spec
+- Maintain shared selection logic
+- Use simpler coding style for small modules

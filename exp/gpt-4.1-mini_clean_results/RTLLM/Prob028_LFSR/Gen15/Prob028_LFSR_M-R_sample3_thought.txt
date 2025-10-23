@@ -1,0 +1,7 @@
+Refactor the LFSR to use a single 4-bit register updated synchronously via a shifting concatenation operation, where the feedback bit is computed as the inverted XOR of out[3] and out[2]. Instead of updating each bit individually in always block, compute the feedback combinationally and update the entire 4-bit register at once. On reset, initialize to a non-zero seed to avoid zero-lock state.
+
+This approach simplifies the code by utilizing concatenation for shift and feedback insertion, maintaining the original logic but improving readability and compactness.
+
+A fully synchronous always block handles reset and updates, with feedback computed in a separate wire outside the always block.
+
+The testbench remains self-contained and uses clean signal declarations and proper port connections to avoid width or assignment issues.

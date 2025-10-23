@@ -1,0 +1,25 @@
+After carefully analyzing the Karnaugh map, we can see that each mux_in output corresponds to a column in the map (selected by ab). For each mux_in, we need to implement exactly what's shown in its column of the K-map:
+
+1. mux_in[0] (ab=00): 
+   - 0 when cd=00
+   - 1 when cd=01,11,10
+   - This is equivalent to ~(c=0 AND d=0) or simply c OR d
+
+2. mux_in[1] (ab=01):
+   - Always 0 (all entries are 0)
+   - Can be hardwired to 0
+
+3. mux_in[2] (ab=11):
+   - 1 only when cd=11
+   - Implement as c AND d
+
+4. mux_in[3] (ab=10):
+   - 1 when cd=00,10,11
+   - 0 when cd=01
+   - This is equivalent to ~d OR c (since 00 is ~c & ~d, 10 is ~c & d, 11 is c & d)
+
+The minimal implementation requires:
+- mux_in[0]: OR of c and d
+- mux_in[1]: constant 0
+- mux_in[2]: AND of c and d
+- mux_in[3]: OR of c and ~d

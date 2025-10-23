@@ -1,0 +1,7 @@
+To improve timing and potentially reduce critical path delay, we separate the counters for seconds, minutes, and hours into distinct always blocks. Each counter increments only when the lower counter overflows, thus breaking the long combinational chain present in the original single always block. This staged increment approach reduces maximum combinational delay, enabling higher clock frequencies (better timing).
+
+We keep synchronous reset with priority. The enable is gated appropriately at each stage to avoid unnecessary toggles.
+
+Hours remain binary internally, toggling PM only on rollover from 11 to 12. Outputs are continuously assigned in BCD as before. This preserves area and power efficiency.
+
+This approach improves timing by pipelining carry signals across clock cycles, trading minimal latency (one clock cycle delay in propagating increments) for better clock frequency potential.

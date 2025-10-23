@@ -1,0 +1,20 @@
+Simplified Design Approach:
+1. State Tracking:
+   - Use a 4-bit shift register to directly track the last 4 bits of input
+   - This eliminates the need for complex parallel comparison logic
+   - Detection becomes a simple equality check against 4'b1101
+
+2. Output Logic:
+   - Maintain a found register that latches when sequence is detected
+   - Directly output the found register value
+   - No need for additional combinational logic
+
+3. Reset Behavior:
+   - Clear both shift register and found register on reset
+   - Stop shifting once sequence is found (power optimization)
+
+Key Simplifications:
+- Single 4-bit shift register replaces 3-bit register + complex comparisons
+- Simple equality check replaces multi-part parallel comparison
+- Reduced logic complexity while maintaining same functionality
+- Still meets all original requirements

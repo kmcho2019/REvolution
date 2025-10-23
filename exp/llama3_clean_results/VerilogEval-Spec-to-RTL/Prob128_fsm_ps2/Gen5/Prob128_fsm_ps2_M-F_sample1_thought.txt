@@ -1,0 +1,16 @@
+To address the issues highlighted in the feedback, a revised approach is necessary. The core idea is to maintain the simplicity of the state machine while ensuring correct handling of the reset condition, state transitions, and the assertion of the `done` signal.
+
+The first step is to correctly implement the reset condition. This involves not only resetting the `byte_count` but also ensuring that the `done` signal is deasserted upon reset. This can be achieved by adding a reset condition to the combinational logic that assigns `done`.
+
+Next, the state machine's transition logic needs refinement. Instead of directly transitioning based on `in[3]`, the logic should ensure that each byte is correctly processed before moving to the next state. This means the FSM should only increment the `byte_count` when a valid byte is received, which is indicated by `in[3]` being `1` for the first byte of a message.
+
+Finally, the `done` signal should be asserted in the cycle immediately after the third byte of a message is received. This can be achieved by checking the `byte_count` in the combinational logic and asserting `done` when the count indicates that the third byte has been processed.
+
+To implement these changes, the code can utilize a single `always_ff` block for sequential logic and maintain the `always_comb` block for combinational logic, ensuring that the `done` signal is correctly asserted based on the state of the FSM. Additionally, the reset condition should be applied to both the sequential and combinational logic to ensure a clean start upon reset.
+
+The revised state machine conditions will be:
+- If the current state is IDLE and `in[3] = 1`, then the state transitions to BYTE1.
+- If the current state is BYTE1 or BYTE2, the state increments the `byte_count` upon receiving a new byte.
+- If the current state is BYTE3, the `done` signal is asserted, and the state resets to IDLE upon the next clock cycle.
+
+By implementing these changes, the revised code should correctly identify message boundaries in a continuous byte stream according to the PS/2 mouse protocol and assert the `done` signal appropriately.

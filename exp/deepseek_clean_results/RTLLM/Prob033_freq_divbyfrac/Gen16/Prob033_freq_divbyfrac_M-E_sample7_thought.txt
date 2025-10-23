@@ -1,0 +1,24 @@
+Novel approach using dual-edge triggered pulse generation with dynamic period adjustment:
+
+1. Core Concept:
+- Instead of traditional phase shifting, implement a dynamic period adjustment technique
+- Generate pulses at both positive and negative edges of the input clock
+- Combine these pulses to create the fractional division effect
+
+2. Implementation Strategy:
+- Use two separate counters: one for positive edge, one for negative edge
+- Create a base 7-cycle period (for 3.5x division)
+- Generate short pulses at specific counter values
+- Combine pulses from both edges to form the output clock
+
+3. Key Advantages:
+- Eliminates complex phase alignment issues
+- Provides precise control over pulse timing
+- Naturally handles the fractional division through edge interleaving
+- Produces a clean 50% duty cycle output
+
+4. Technical Details:
+- Positive edge counter generates pulses at count 0 and 4
+- Negative edge counter generates pulses at count 2 and 6
+- Combined pulses create uniform 3.5x divided clock
+- Reset synchronizes both counters to maintain phase relationship

@@ -1,0 +1,10 @@
+To solve this problem, we will implement a finite state machine (FSM) with the following states:
+- IDLE: The initial state where we wait for the first byte of a message (in[3]=1) to arrive.
+- BYTE1: The state after the first byte has been received, we wait for the second byte.
+- BYTE2: The state after the second byte has been received, we wait for the third byte.
+- DONE: A temporary state to signal the receipt of a complete message.
+
+When the FSM is in the IDLE state, it will discard all bytes until it sees one with in[3]=1, at which point it will transition to the BYTE1 state.
+After receiving the first byte, it will wait for two more bytes, transitioning to BYTE2 and then DONE states.
+In the DONE state, the 'done' output will be set high to signal the receipt of a complete message.
+The FSM will reset to the IDLE state whenever the 'reset' input is high.

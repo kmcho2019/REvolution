@@ -1,0 +1,11 @@
+Implement the 3.5x fractional clock divider using a dual-edge counter and two toggle signals to create two out-of-phase clocks toggled on opposite edges of the input clock.
+
+- Use a 3-bit counter cycling through 0 to 6 (total 7 cycles).
+- On the rising edge of clk, toggle the first output clock (clk_rise) at count values 3 and 6 (high interval = 4 cycles, low interval = 3 cycles).
+- On the falling edge of clk, toggle the second output clock (clk_fall) at count values 3 and 6 as well.
+- Since clk_fall toggles on the falling edge, it is naturally phase shifted by half a clock period relative to clk_rise.
+- OR clk_rise and clk_fall to generate clk_div with uniform half-cycle spacing, achieving a 3.5 division with balanced duty cycle.
+- Reset synchronously at rst_n to ensure known startup states.
+- This approach leverages double-edge clocking without complex delays or XOR approximations, providing a clean and glitch-free fractional divided clock.
+
+This method is synthesizable on FPGAs and many ASIC flows that support double-edge triggered logic or can be adapted using input buffers with both edges or DDR techniques. It directly implements the fractional division principle with accurate phase shifts.

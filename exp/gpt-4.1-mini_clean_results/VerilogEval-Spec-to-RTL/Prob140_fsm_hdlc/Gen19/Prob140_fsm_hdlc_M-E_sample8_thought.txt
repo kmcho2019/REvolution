@@ -1,0 +1,11 @@
+Use an explicit Moore finite state machine with states corresponding to the count of consecutive ones seen so far, plus error and reset states. On each clock edge, transition based on the input bit and current state. Outputs (disc, flag, err) are purely a function of the current state, asserted for one cycle immediately after the triggering input pattern is observed.
+
+Specifically:
+- Define states IDLE (count=0), ONE, TWO, THREE, FOUR, FIVE, SIX, ERROR.
+- On input=1, transition to the next count state, saturating at ERROR if 7+ consecutive ones.
+- On input=0, if we are in FIVE, signal disc next cycle; if SIX, signal flag next cycle; and reset to IDLE.
+- If input=1 while in SIX (7 ones), move to ERROR and assert err.
+- Remain in ERROR until reset.
+- This FSM approach makes transitions and outputs explicit and clear, isolating error and output signaling.
+
+This design provides clearer state-based control and easier extensibility while precisely implementing the required one-cycle delayed Moore outputs.

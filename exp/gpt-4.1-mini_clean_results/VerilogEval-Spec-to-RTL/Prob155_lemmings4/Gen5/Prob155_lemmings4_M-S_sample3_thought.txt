@@ -1,0 +1,12 @@
+Simplify the FSM by keeping the same four modes (walk, fall, dig, splat) but reduce logic complexity by:
+
+- Using explicit priority in next state logic with simple if-else ladder instead of case.
+- Handle bump direction changes with compact logic:
+  - If both bump_left and bump_right: toggle dir
+  - Else if bump_left only: dir=1 (right)
+  - Else if bump_right only: dir=0 (left)
+- Keep fall_counter as 5 bits with saturating increment only in fall mode.
+- Combine direction update and mode transition logic clearly in priority order: fall > dig > bump.
+- Moore outputs remain the same.
+- Maintain asynchronous posedge reset setting initial state to walk left.
+- This approach reduces nested case and complex branches for easier synthesis, keeping all functionality intact.

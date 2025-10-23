@@ -1,0 +1,13 @@
+To implement the Lemmings' behavior using a Moore state machine, we can define the states as follows:
+- WALK_LEFT: The Lemming is walking left.
+- WALK_RIGHT: The Lemming is walking right.
+- FALLING: The Lemming is falling.
+- DIGGING_LEFT: The Lemming is digging to the left.
+- DIGGING_RIGHT: The Lemming is digging to the right.
+The transitions between these states will be based on the input signals. We will use a combinational logic block to determine the next state based on the current state and the input signals. The output signals (walk_left, walk_right, aaah, digging) will be generated based on the current state.
+
+When the ground disappears (ground=0), the Lemming will switch to the FALLING state from any other state. When the ground reappears (ground=1), the Lemming will switch to the WALK_LEFT or WALK_RIGHT state depending on its previous walking direction.
+
+When the Lemming is told to dig (dig=1), it will switch to the DIGGING_LEFT or DIGGING_RIGHT state depending on its current walking direction. It will continue digging until it reaches the other side (ground=0), at which point it will switch to the FALLING state.
+
+Being bumped while falling or digging will not affect the walking direction, and being told to dig when falling or when there is no ground will be ignored.

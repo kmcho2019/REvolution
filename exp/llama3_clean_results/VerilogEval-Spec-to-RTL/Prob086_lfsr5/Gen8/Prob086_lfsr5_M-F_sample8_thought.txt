@@ -1,0 +1,7 @@
+To fix the provided code, we need to address two main issues. Firstly, the reset functionality should set the LSB (q_reg[0]) to 1 instead of the MSB. This is because the problem statement specifies that the active-high synchronous reset should reset the LFSR output to 1. 
+
+Secondly, the calculation of the new MSB should correctly implement the 5-bit maximal-length Galois LFSR with taps at positions 5 and 3. Since the taps are at positions 5 and 3, and considering 0-indexing, the taps should be at positions 4 and 2. The correct calculation for the new MSB should be `q_reg[4] ^ q_reg[2] ^ q_reg[0]`. 
+
+The bits should then be shifted to the right, with the new MSB being the result of the XOR operation. 
+
+The correct implementation should ensure that the LFSR cycles through 2**n-1 states before repeating, where n is the number of bits in the LFSR. In this case, n = 5, so the LFSR should cycle through 2**5-1 = 31 states.

@@ -1,0 +1,29 @@
+The original design concept is valid, but using a negative-edge triggered flip-flop for phase shifting `clk_div_even` introduces timing uncertainty and potential glitches, especially during reset and initial cycles.
+
+To improve:
+
+1. **Use a double counter approach with clock enables**:  
+   Instead of sampling `clk_div_even` on the negative edge, we split the 7-cycle period into two phases (4 and 3 counts) and generate two pulse trains on the positive edge only, but phase shifted by half a clock cycle using clock enable signals derived from the counter.
+
+2. **Implement half-cycle phase shift via clock enables and simple toggling**:  
+   We'll create two intermediate clock signals toggled on edges determined by the counter. One toggles after 4 cycles, another toggles after 3 cycles, but offset in time by counting properly.
+
+3. **Use synchronous reset and carefully sequence the toggles**:  
+   This avoids asynchronous glitches and aligns outputs on positive edges only.
+
+4. **Generate two clocks (`clk_div_odd` and `clk_div_even`) with toggle events spaced unevenly**:  
+   The `clk_div_even` toggles every 4 cycles (high period), and the `clk_div_odd` toggles every 3 cycles, but delayed by half a clock, effectively generating a 3.5 division when OR-ed.
+
+5. **OR the two clocks to get the fractional divided output with uniform period and balanced duty cycle**.
+
+This method removes negative-edge flip-flops, reduces glitch chances, ensures synchronization and initialization, and better matches expected testbench behavior.
+
+In summary, the approach is:
+
+- One counter modulo 7 cycles (0..6).
+- On count 0 and 4, toggle `clk_div_even`.
+- On count 3 and 6, toggle `clk_div_odd`.
+- Initialize toggles on reset.
+- The OR of these two signals produces the fractional clock.
+
+This method fully uses positive edge clocking, ensures synchronous reset, and achieves the fractional division 3.5 with duty cycle and phase correction.

@@ -1,0 +1,15 @@
+Refactor the 3-bit comparator by computing a single 3-bit comparison result vector representing the relationship between each bit of A and B. Use bitwise comparisons and a priority encoder-like approach in combinational logic to set outputs directly, without intermediate equality signals.
+
+Specifically:
+
+- Create a vector `cmp_vec` where each bit indicates whether A's bit is greater than B's corresponding bit at that position (MSB to LSB).
+- Similarly, create a vector `eq_vec` where each bit is 1 if bits are equal at that position.
+- The comparator output logic will check from MSB down to LSB:
+  - If a bit of A is greater than B, then A_greater is asserted.
+  - Else if the bit is less, then A_less is asserted.
+  - Else continue to the next bit.
+- If all bits are equal, assert A_equal.
+- Use assign statements to implement all logic combinationally.
+- This approach uses vectorized logic and avoids individual intermediate wires for equality per bit, emphasizing a data-driven style.
+
+This restructuring maintains the same logical function but presents the design as a priority-based bitwise comparison chain, improving readability and offering a different structural perspective.

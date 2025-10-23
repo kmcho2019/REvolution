@@ -1,0 +1,11 @@
+Novel Architectural Idea: 
+1. **Lookup Table Approach**: Instead of using case statements, implement the state transitions and outputs using a 4-entry lookup table (LUT) that encodes all possible transitions. Each entry corresponds to a current state and contains the next state for both input values (0 and 1).
+2. **Compact Encoding**: Store both possible next states (for in=0 and in=1) in a single 4-bit value per state, then select the appropriate 2 bits based on the input.
+3. **Output Logic**: Maintain the simple output logic that only depends on the current state.
+4. **Benefits**: This approach eliminates branching logic (case statements) which can improve timing predictability. The LUT can be efficiently implemented in FPGA LUT resources or ASIC standard cells.
+
+Implementation Details:
+- Create a 4x4 bit LUT where each row represents a state (A-D)
+- Each row stores {next_state_in1, next_state_in0} (4 bits total)
+- Use the current state to select the row, then use input to select between the two 2-bit next states
+- Output remains simple comparison with state D

@@ -1,0 +1,9 @@
+Since the functionality is a simple D flip-flop triggered on the positive clock edge, but we want a different structural approach, we can implement it using a behavioral always block directly within TopModule without creating a separate DFF module.
+
+We'll declare the output q as a reg type in TopModule and update it on the positive edge of clk with a nonblocking assignment. This removes the need for an explicit DFF submodule and merges the flip-flop functionality directly in the top module.
+
+This refactoring keeps the same sequential logic but presents a more compact, flat design structure that is common in small designs.
+
+We will declare q as reg since it holds state updated on clock edge. This approach is typical and synthesizable. This change is syntactically different, yet functionally identical to the original.
+
+No synthesis directives are added, trusting tool default register inference. This also slightly simplifies the code.

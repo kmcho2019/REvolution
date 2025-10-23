@@ -1,0 +1,79 @@
+To implement the given 4-variable function f(a,b,c,d) using a single 4-to-1 multiplexer with select lines {a,b} and four 1-bit inputs mux_in[3:0] that depend only on c and d, we first interpret the problem correctly:
+
+- The final output is f(a,b,c,d) = the output of a 4-to-1 mux with select = {a,b} and inputs = mux_in[3:0].
+- Each mux_in[i] implements the function f(a=i's binary, b=i's binary, c, d), i.e., f when a,b are fixed and c,d vary.
+- Since TopModule only has inputs c,d and outputs mux_in, the functions mux_in[i] depend solely on c,d.
+- The problem states to implement mux_in[i] using only 2-to-1 multiplexers (mux2) and constants (no logic gates).
+- Also, we can implement NOT using mux2: NOT(x) = mux2(sel=x, in0=1, in1=0).
+- AND and OR can be implemented via mux2 as follows:
+  - AND(x,y) = mux2(sel=x, in0=0, in1=y)
+  - OR(x,y) = mux2(sel=x, in0=y, in1=1)
+
+Step 1: Extract the 4 functions for mux_in[i] from the Karnaugh map:
+
+Given K-map (cd rows, ab columns) where ab selects column and cd selects row:
+
+      ab
+  cd  00  01  11  10
+  00 | 0 | 0 | 0 | 1 |
+  01 | 1 | 0 | 0 | 0 |
+  11 | 1 | 0 | 1 | 1 |
+  10 | 1 | 0 | 0 | 1 |
+
+Then for each ab (mux_in index), the function of c,d (rows) is:
+
+- ab=00 (mux_in[0]):
+  cd=00=0
+  cd=01=1
+  cd=11=1
+  cd=10=1
+  So f00 = 1 for cd in {01,10,11} and 0 for 00
+  Equivalently, f00 = d + c d' = d + c(~d)
+
+- ab=01 (mux_in[1]):
+  all zero => f01 = 0
+
+- ab=11 (mux_in[2]):
+  cd=00=0
+  cd=01=0
+  cd=11=1
+  cd=10=0
+  So f11 = c & d
+
+- ab=10 (mux_in[3]):
+  cd=00=1
+  cd=01=0
+  cd=11=1
+  cd=10=1
+  f10 = c + (~c & ~d)
+
+Step 2: Implement each mux_in[i] using only mux2 and constants:
+
+Implement NOT c and NOT d first:
+
+not_c = mux2(sel=c, in0=1, in1=0)
+not_d = mux2(sel=d, in0=1, in1=0)
+
+Implement f00 = d + c(~d):
+
+- (~d) = not_d
+- c & ~d = AND(c, not_d) = mux2(c, 0, not_d)
+- f00 = d + c~d = OR(d, c~d) = mux2(d, c_notd, 1)
+
+Implement f01 = 0 (constant 0)
+
+Implement f11 = c & d = mux2(c, 0, d)
+
+Implement f10 = c + (~c & ~d):
+
+- ~c = not_c
+- ~c & ~d = mux2(not_c, 0, not_d)
+- f10 = OR(c, ~c & ~d) = mux2(c, notc_and_notd, 1)
+
+Step 3: Wire these up and assign mux_in as mux_in[3:0] = {f10, f11, f01, f00}
+
+This arrangement respects the problem's requirement that mux_in[0] corresponds to ab=00, mux_in[1] to ab=01, mux_in[2] to ab=11, mux_in[3] to ab=10.
+
+The design strictly uses only mux2 modules and constants, implementing NOT, AND, OR accordingly.
+
+This solution also matches the Karnaugh map exactly.

@@ -1,0 +1,11 @@
+To refactor this code while maintaining the same functionality, I'll make the following changes:
+
+1. State Encoding: Keep the parameterized states for readability but use one-hot encoding for potential power savings in larger FSMs (though not critical here).
+
+2. State Transition Logic: Replace the combinational always block with continuous assignments (assign statements) for each state bit, which can sometimes lead to simpler synthesis results.
+
+3. Output Logic: Keep the simple combinational output but express it purely in terms of state bits without the parameter comparison.
+
+4. Synchronous Reset: Maintain the same reset behavior but express the state transitions more directly in the sequential block.
+
+The key difference is moving from a case statement to direct assignment expressions for the next state logic, which can sometimes result in more optimized hardware depending on the synthesis tool.

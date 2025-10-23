@@ -1,0 +1,17 @@
+The design implements a 16-bit unsigned multiplier using shift-and-add method. Here's the conceptual breakdown:
+1. Control Logic: 
+   - Uses a counter (i) to track multiplication steps (0-16)
+   - Reset clears all registers and counters
+   - Start signal initiates multiplication when i=0
+   - Done flag set when i=16 (completed all bits)
+
+2. Data Path:
+   - Registers store multiplicand (areg), multiplier (breg), and product (yout_r)
+   - On each clock cycle (when active):
+     * If i=0: Load input operands
+     * For i=1-16: Check current bit of multiplier and accumulate shifted multiplicand
+     * Shift multiplicand left each cycle (equivalent to ×2)
+
+3. Output:
+   - Final product available when done=1
+   - 32-bit output since 16×16 multiplication can produce 32-bit result

@@ -1,0 +1,9 @@
+Fuse the semantic clarity and synthesis friendliness of the direct equality operator (A == B) with the explicit bitwise XNOR and reduction AND expression to explicitly reveal the underlying logic to synthesis tools and aid in potential gate-level optimizations. 
+
+The direct equality operator clearly conveys the intent of the design, allowing synthesis tools to infer an optimal comparator cell if available. The bitwise XNOR and reduction AND approach explicitly shows the minimal logic structure, serving as a strong hint for power- and area-aware synthesis.
+
+Implement both expressions and combine them with a simple redundancy check (logical AND), so synthesis tools can pick the best inferred logic during optimization. 
+
+This fusion leverages semantic clarity, explicit gate-level logic, and synthesis flexibility, improving the chance of achieving minimal power, area, and delay while maintaining very clear, compact RTL.
+
+Hence, implement `z = (A == B) & &(~(A ^ B));` which is logically redundant but pragmatically advantageous for synthesis and verification.

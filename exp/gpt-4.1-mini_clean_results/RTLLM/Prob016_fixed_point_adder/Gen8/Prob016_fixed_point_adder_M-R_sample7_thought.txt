@@ -1,0 +1,10 @@
+Refactor the fixed-point adder by replacing the combinational always block and internal reg `res` with purely combinational continuous assignments using wires. Perform all computations with intermediate wires, then compose the final result by concatenation. This approach improves clarity, removes the need for a procedural block, and enhances synthesis friendliness. 
+
+The core logic remains the same:
+- Extract sign and magnitude by converting inputs to sign-magnitude form.
+- If signs match, add magnitudes, sign stays the same.
+- If signs differ, subtract smaller magnitude from larger, sign from the operand with larger magnitude.
+- Zero magnitude result forces positive zero sign.
+- The result fits into N bits with the sign bit at MSB.
+
+Using continuous assignments ensures no inferred latches or flip-flops, and the code is purely combinational. This style also better supports parameterized modules and eases parameter passing during instantiation.

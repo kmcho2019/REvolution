@@ -1,0 +1,9 @@
+To solve this problem, we need to create a state machine that determines the flow rate based on the water level and the previous sensor state. We can use a 3-bit input `s` to represent the current water level and a variable to track the previous state. The output flow rates (`fr2`, `fr1`, `fr0`, and `dfr`) will be determined based on the current water level and the previous state. We will use an active-high synchronous reset to reset the state machine to a state equivalent to a low water level.
+
+The state machine will have the following states:
+- Above s[2]: No flow rate
+- Between s[2] and s[1]: Nominal flow rate (fr0)
+- Between s[1] and s[0]: Nominal flow rate (fr0, fr1)
+- Below s[0]: Maximum flow rate (fr0, fr1, fr2)
+
+We will use a variable `prev_state` to track the previous state of the sensors.

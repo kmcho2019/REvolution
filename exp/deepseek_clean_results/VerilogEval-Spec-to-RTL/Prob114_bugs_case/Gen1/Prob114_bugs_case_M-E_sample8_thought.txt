@@ -1,0 +1,7 @@
+A novel approach would be to implement the scancode recognition using a content-addressable memory (CAM) style comparison. Instead of a case statement, we'll use parallel comparators for each valid scancode and then encode the match results into the output. This approach is more scalable if we need to add more scancodes later and can potentially be optimized better by synthesis tools for area and power.
+
+The design will:
+1. Create 10 parallel comparators checking against each valid scancode
+2. Generate a 10-bit vector indicating which scancode matched (if any)
+3. Use priority encoding to convert the match vector to a 4-bit output
+4. Generate the valid signal by OR-ing all match bits

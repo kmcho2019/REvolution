@@ -1,0 +1,17 @@
+Fuse the explicit clarity and minimal combinational depth of Example 1’s direct bitwise logic with the maintainability and scalability of Example 2’s loop-based multiple-active-state support.
+
+Specifically:
+- Precompute the next state transitions for each state-input combination as wires to keep combinational logic flat and synthesis-friendly.
+- Use bitwise OR reduction across all active current states to combine transitions, supporting multi-hot current state inputs.
+- Use a generate-for loop to compute each next_state bit as a combinational OR of all contributing state bits and input conditions. This keeps logic explicit, reduces the complexity of large OR chains, and supports multiple active current states without priority or sequential logic.
+- Compute outputs as masked OR-reduction on current state, preserving the efficient mask approach from both examples.
+- This hybrid approach avoids large explicit OR lists in code while maintaining short logic levels by using generate-for and local combinational signals.
+- The code remains fully combinational, synthesizable, and clear, optimized for timing and area, and power by minimizing logic depth and fan-in.
+
+Overall, this balanced fusion yields:
+- Explicit combinational logic with flat topology for fast synthesis and good timing.
+- Simple support for multiple active states via combining per-state transitions.
+- Clear, maintainable code structure with generate-for loops and localparams.
+- Efficient output generation via masked OR reductions.
+
+This approach leverages the best of both examples, combining clarity, scalability, and synthesis-friendly combinational logic for optimal PPA.

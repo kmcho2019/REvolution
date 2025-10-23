@@ -1,0 +1,9 @@
+To implement the unsigned 16-bit multiplier using shift and accumulate operations, we will create a module named 'multi_16bit'. This module will have input ports for the clock signal, reset signal, start signal, multiplicand, and multiplier. The output ports will be for the product and a completion flag. 
+
+We will use a shift count register (i) to keep track of the current shift position. If the reset signal is low, the shift count register will be reset to 0. If the start signal is active and the shift count is less than 17, the shift count will increment by 1. If the start signal is inactive, the shift count will be reset to 0.
+
+For the multiplication completion flag, we will check if the shift count is equal to 16 (indicating completion of the multiplication operation) and set the flag accordingly.
+
+In the shift and accumulate operation, if the reset signal is low, the multiplicand register, multiplier register, and product register will be reset to 0. If the start signal is active, the module will start the multiplication operation. When the shift count is 0, the multiplicand and multiplier will be stored in the respective registers. For shift counts greater than 0 and less than 17, if the bit at position i-1 in the multiplicand register is high, the product register will accumulate the shifted value of the multiplier register.
+
+Finally, the product output will be assigned the value of the product register.

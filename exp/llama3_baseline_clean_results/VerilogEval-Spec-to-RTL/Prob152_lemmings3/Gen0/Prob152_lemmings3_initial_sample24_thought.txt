@@ -1,0 +1,17 @@
+To implement the Lemming machine as a Moore state machine, we need to define the states and the transitions between them. The states can be represented as follows: 
+- walking_left: The Lemming is walking left.
+- walking_right: The Lemming is walking right.
+- falling: The Lemming is falling.
+- digging: The Lemming is digging.
+
+The transitions between states can be described as follows:
+- If the Lemming is walking left and it is bumped on the left, it transitions to walking right.
+- If the Lemming is walking right and it is bumped on the right, it transitions to walking left.
+- If the Lemming is walking left or walking right and the ground disappears, it transitions to falling.
+- If the Lemming is falling and the ground reappears, it transitions back to its previous walking state (left or right).
+- If the Lemming is walking left or walking right and it is told to dig, it transitions to digging.
+- If the Lemming is digging and it reaches the other side (ground disappears), it transitions to falling, and then to its original walking state when the ground reappears.
+
+We will use a 2-bit signal, `state`, to represent the current state of the Lemming. We will also use two additional signals, `walk_dir` and `prev_walk_dir`, to keep track of the current walking direction and the previous walking direction, respectively. The `walk_dir` signal will be used to determine the output values of `walk_left` and `walk_right`. The `prev_walk_dir` signal will be used to restore the previous walking direction when the Lemming transitions from falling or digging back to walking.
+
+We will use a case statement to determine the next state based on the current state and the input values.

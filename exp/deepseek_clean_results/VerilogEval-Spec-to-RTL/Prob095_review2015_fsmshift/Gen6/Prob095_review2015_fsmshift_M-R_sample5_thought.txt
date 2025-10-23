@@ -1,0 +1,15 @@
+The refactored solution maintains the same core concept of counting 4 cycles after reset, but implements it with these improvements:
+
+1. Use a 2-bit counter to track cycles (0-3) for 4 cycles total
+2. Make shift_ena purely combinational based on counter state
+3. Reset synchronously clears the counter
+4. Counter increments each cycle until it reaches 3 (binary 11)
+5. shift_ena is active when counter hasn't reached 3 yet
+6. Remove the direct reset dependency from shift_ena assignment
+
+Key changes from original:
+- Simplified state tracking to just the counter
+- Made shift_ena purely dependent on counter state
+- More explicit cycle counting (0-3 for 4 cycles)
+- Cleaner separation of sequential and combinational logic
+- Matches spec exactly (4 cycles including reset cycle)

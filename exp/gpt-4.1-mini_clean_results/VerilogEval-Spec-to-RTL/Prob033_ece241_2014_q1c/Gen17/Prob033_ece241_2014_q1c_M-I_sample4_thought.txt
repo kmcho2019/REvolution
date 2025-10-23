@@ -1,0 +1,13 @@
+The original design uses a basic ripple-carry form of CLA logic, which has a linear carry propagation delay. To optimize for better PPA (power, performance, area), I will implement a true carry lookahead adder (CLA) by computing group generate (G) and propagate (P) signals for halves of the adder, allowing parallel carry computation and reducing carry delay significantly.
+
+Key improvements:
+- Use hierarchical carry lookahead: divide the 8-bit adder into two 4-bit blocks, each with their own group generate and propagate signals.
+- Compute carry signals at block level to reduce carry chain length.
+- This reduces the critical path delay of the carry chain.
+- Maintain explicit propagate, generate, and carry signals for transparency.
+- Keep combinational-only logic to minimize latency.
+- Use minimal wires and avoid unnecessary signals to reduce area and power.
+
+The overflow detection remains the XOR of carry into and carry out of the MSB as it is correct for 2's complement addition.
+
+This optimized design will improve timing (reduce WNS and TNS) while also potentially reducing power and area due to less fanout and shorter carry paths.

@@ -1,0 +1,5 @@
+The original design is correct and functional, but we can optimize it by reducing the timer width from 8 bits to 7 bits since the maximum count is 60 (which fits in 6 bits, but using 7 bits for safety and simpler comparison is fine). This reduces area slightly.  
+We can also enable the timer decrement only when the timer is nonzero and the FSM is in an active state (green, yellow, red), avoiding unnecessary toggling during idle or state transitions.  
+Additionally, the shortening flag (ped_shortened) update can be streamlined and combined with state transitions to reduce toggling.  
+Lastly, we will replace some combinational assignments with registered outputs to reduce glitching and improve power and timing by registering outputs.  
+Overall, these changes reduce power by minimizing switching activity, reduce area by using fewer bits and registers, and maintain or improve timing due to simpler combinational logic and registered outputs.

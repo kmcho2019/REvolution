@@ -1,0 +1,19 @@
+Refactoring Approach: Simplified Multiplexer Structure with Direct Selection
+
+1. **Key Changes**:
+   - Replace the parallel masking approach with a direct 4:1 multiplexer structure
+   - Use c[1:0] directly as select lines for the multiplexer
+   - Simplify the default case handling by checking c[3:2] separately
+   - Combine the selection and default logic in a single expression
+
+2. **Improvements**:
+   - Reduced logic depth by eliminating the intermediate valid_selection signal
+   - More straightforward implementation using case-like selection
+   - Better readability while maintaining the same functionality
+   - Potentially better synthesis results due to simpler structure
+
+3. **Implementation**:
+   - Use a ternary operator chain for the multiplexer
+   - Check c[3:2] first to determine if we're in default case
+   - For valid cases, select input based on c[1:0]
+   - Output '1111' for invalid cases (c >= 4)

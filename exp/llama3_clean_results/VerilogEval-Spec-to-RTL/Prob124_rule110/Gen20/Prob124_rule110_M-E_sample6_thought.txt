@@ -1,0 +1,7 @@
+A novel approach to implement the Rule 110 cellular automaton involves utilizing a lookup table (LUT) to store the next state values for all possible combinations of left, center, and right neighbors. This approach takes advantage of the fact that the next state of each cell depends only on its neighbors and itself.
+
+The idea is to create a 2-input LUT for each cell, where the inputs are the 2-bit value representing the left and right neighbors, and the center cell's value, and the output is the next state of the center cell. However, since we need to account for the center cell's value as well, we can actually use a 3-input LUT, but for simplicity and reducing the number of required LUTs, we can create two separate LUTs for each possible value of the center cell (0 or 1).
+
+This approach simplifies the combinational logic and reduces the chance of errors. Additionally, it allows for easy modification of the Rule 110 logic, if needed, by simply updating the LUT values.
+
+To handle boundary conditions, we can explicitly set the left neighbor to 0 when `i` is 0 and the right neighbor to 0 when `i` is 511. This ensures that the computation of `next_state` correctly accounts for the boundaries.

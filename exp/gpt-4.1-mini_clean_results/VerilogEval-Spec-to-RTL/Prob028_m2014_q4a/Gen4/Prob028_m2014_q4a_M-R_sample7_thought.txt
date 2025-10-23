@@ -1,0 +1,3 @@
+Refactor the D latch implementation to a level-sensitive latch inferred by an always block triggered on changes in `ena` or `d`. Use a nonblocking assignment inside this always block so synthesis tools clearly recognize the latch inference: when `ena` is high, the latch is transparent and `q` follows `d`; when `ena` is low, `q` holds its previous value. This is a common and widely supported style for synthesizable latches.
+
+Declare `q` as a reg and connect it directly to the output. Avoid combinational always blocks with feedback assignments; instead, rely on the level-sensitive latch behavior implied by the clock-enable style sensitivity list. This will enhance synthesis compatibility while preserving the functionality.

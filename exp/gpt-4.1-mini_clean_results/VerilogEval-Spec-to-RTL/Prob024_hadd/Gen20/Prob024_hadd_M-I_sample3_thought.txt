@@ -1,0 +1,24 @@
+To improve power while maintaining the NAND-only structural approach, we can reduce gate count by implementing the carry output directly using the NAND gate outputs without an extra gate. Since carry is a simple AND of a and b, and NAND2 gate's output is ~(a&b), we can invert this with a single NAND gate tied together (already done). However, to reduce power further, we can directly derive carry from the NAND gate output with less toggling by rearranging logic or by using fewer gates.
+
+An efficient method is to generate the sum as XOR of a and b using 4 NAND gates (the minimal NAND-based XOR gate design), and generate carry as ~(~(a & b)) which is NAND2(a,b) followed by NAND2 of that output with itself (an inverter).
+
+Given the original uses 5 NAND gates, we can reduce it to 4 by reusing gates smartly:
+
+- Use 2 NAND gates to generate intermediate signals
+- Use the 3rd and 4th NAND gate to generate sum and carry
+
+But the half adder minimal NAND implementation requires at least 4 NAND gates for sum and 2 NAND gates for carry, total 6.
+
+Alternatively, since the power is dominated by the inverter NAND gate on carry, we can replace carry with a simple wire AND gate made from NAND by reusing existing signals instead of creating a separate NAND gate for inverter. For instance, generate carry as NAND(NAND(a,b), NAND(a,b)) is mandatory for AND from NAND gates.
+
+Hence, the original design is already minimal in NAND gate count for sum and carry.
+
+Therefore, the best power improvement is achieved by simplifying sum logic using XOR built from NAND gates, possibly sharing intermediate signals if possible. The sum XOR can be built in 4 NAND gates, and carry needs 2 NAND gates total (one for NAND and one for inverter), so total 6 NAND gates minimally.
+
+The original solution uses 5 NAND gates total, so it is already optimized in gate count.
+
+Thus, the only minor improvement is to rename gates for clarity and remove redundant wires to simplify logic and reduce routing.
+
+Hence, I will keep the design essentially the same but clean up naming and remove the duplicate NAND for carry inverter by implementing the inverter explicitly to optimize gate reusability, making sure to comment each step clearly.
+
+This keeps power minimal with no extra gates and the same low delay and area.

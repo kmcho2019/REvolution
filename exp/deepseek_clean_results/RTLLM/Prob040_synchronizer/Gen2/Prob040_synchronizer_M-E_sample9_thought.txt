@@ -1,0 +1,15 @@
+This design implements a novel request-acknowledge handshake protocol for clock domain crossing:
+1. Instead of simple enable synchronization, we use a 4-phase handshake (req/ack) for robust data transfer
+2. The clk_a domain generates a request when data_en is high
+3. The clk_b domain synchronizes the request and sends back an acknowledge
+4. Data is only transferred when both request and acknowledge are aligned
+5. Includes a feedback path to prevent new requests until current transfer completes
+6. Uses gray coding for the handshake signals to prevent metastability
+7. Implements a data valid signal to ensure clean output transitions
+
+Key advantages:
+- More robust synchronization with explicit handshaking
+- Prevents data corruption during unstable periods
+- Clear separation of control and data paths
+- Better handling of clock domain timing variations
+- Lower probability of metastability compared to simple flop chains

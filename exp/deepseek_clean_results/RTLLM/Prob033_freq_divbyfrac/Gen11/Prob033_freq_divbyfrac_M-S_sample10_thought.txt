@@ -1,0 +1,22 @@
+Simplified design approach for 3.5x fractional divider:
+
+1. Maintain the fundamental 7-cycle period (0-6) for accurate division
+2. Generate two complementary clock phases:
+   - Phase A: High for first 3.5 cycles (0 to mid-cycle 3)
+   - Phase B: High for last 3.5 cycles (mid-cycle 4 to 7)
+3. Simplified phase generation:
+   - Use positive edge for both phases with proper counter conditions
+   - Eliminate negative edge triggering to reduce complexity
+4. Optimized phase combination:
+   - Simple OR logic for final output
+   - Reduced register usage
+5. Clean reset implementation:
+   - Single always block for counter and phases
+   - Clear all states on reset
+
+Key simplifications:
+- Single clock edge operation (positive edge only)
+- Combined counter and phase generation logic
+- Reduced number of always blocks
+- Maintains accurate 3.5x division ratio
+- Preserves duty cycle requirements

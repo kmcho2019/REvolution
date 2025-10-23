@@ -1,0 +1,24 @@
+Revised design approach for robust 3.5x fractional divider:
+
+1. Precise Phase Calculation:
+   - Implement true half-period phase shift by tracking counter state on both clock edges
+   - Use modulo arithmetic to maintain correct phase relationship throughout division cycle
+
+2. Dynamic Threshold Adjustment:
+   - Replace fixed comparison values with calculated thresholds based on current counter state
+   - Ensure proper overlap between phase-shifted clocks to maintain duty cycle
+
+3. Reset Synchronization:
+   - Add output register to prevent glitches during reset
+   - Ensure clean startup with all clocks properly initialized
+
+4. Waveform Generation:
+   - Generate base clock with 4-cycle high, 3-cycle low pattern
+   - Create phase-shifted version offset by exactly 3.5 cycles (half period)
+   - Combine using OR operation while maintaining proper timing
+
+Key improvements:
+- True dynamic phase shifting
+- Correct fractional division pattern
+- Glitch-free output
+- Synthesizable implementation

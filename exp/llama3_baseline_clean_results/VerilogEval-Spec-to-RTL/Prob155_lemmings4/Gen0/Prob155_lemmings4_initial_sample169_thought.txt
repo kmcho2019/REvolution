@@ -1,0 +1,14 @@
+To model the Lemmings' behavior using a finite state machine, we need to identify the different states the Lemming can be in and the transitions between these states. The states are: walking left, walking right, falling, digging, and splattered. We also need to keep track of the direction the Lemming was walking before it started falling or digging, so it can resume walking in that direction when it hits the ground or finishes digging. Additionally, we need to count the number of clock cycles the Lemming has been falling to determine if it should splatter when it hits the ground.
+
+We will use a Moore state machine, where the outputs are a function of the current state. The state machine will have the following states:
+- WALK_LEFT: The Lemming is walking left.
+- WALK_RIGHT: The Lemming is walking right.
+- FALLING: The Lemming is falling.
+- DIGGING: The Lemming is digging.
+- SPLATTERED: The Lemming has splattered and is no longer active.
+
+The state machine will transition between these states based on the input signals. For example, if the Lemming is walking left and it hits an obstacle on the left, it will transition to the walking right state. If the Lemming is walking and the ground disappears, it will transition to the falling state. If the Lemming is digging and the ground disappears, it will transition to the falling state. If the Lemming has been falling for more than 20 clock cycles and it hits the ground, it will transition to the splattered state.
+
+We will use a counter to keep track of the number of clock cycles the Lemming has been falling. When the Lemming hits the ground after falling, we will check the counter to see if it should splatter.
+
+We will also use a variable to keep track of the direction the Lemming was walking before it started falling or digging, so it can resume walking in that direction when it hits the ground or finishes digging.

@@ -1,0 +1,27 @@
+Novel Rotating Shift Register Approach:
+
+1. **Pattern Generation**:
+   - Use a 7-bit shift register (for 3.5x division) that rotates a specific pattern
+   - Pattern alternates between 4 active cycles and 3 inactive cycles (1000100)
+
+2. **Double-Edge Sampling**:
+   - Sample the shift register on both clock edges to achieve half-cycle precision
+   - Maintain two parallel shift registers for phase alignment
+
+3. **Dynamic Pattern Rotation**:
+   - Rotate the pattern by 1 bit every full clock cycle
+   - This creates the necessary phase relationship between the two edges
+
+4. **Output Combination**:
+   - Combine the sampled values from both edges using OR logic
+   - This produces the fractional division effect with proper duty cycle
+
+5. **Reset Synchronization**:
+   - Initialize the shift register to a known pattern
+   - Ensure immediate valid output after reset release
+
+Key Advantages:
+- Eliminates complex counter logic
+- Naturally maintains phase relationship through bit rotation
+- Simple implementation with predictable timing
+- Easily scalable to other fractional divisions

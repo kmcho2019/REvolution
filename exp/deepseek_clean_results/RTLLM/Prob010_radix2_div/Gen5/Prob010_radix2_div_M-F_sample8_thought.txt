@@ -1,0 +1,19 @@
+Fix Strategy:
+1. The primary issue is a port name mismatch between the module and testbench
+2. The module declares "res_valid" while testbench expects "res_ready"
+3. Solution options:
+   a) Change module to use "res_ready" instead of "res_valid"
+   b) Keep "res_valid" and modify testbench
+4. Choosing option a) since it's more semantically correct - "ready" better indicates result availability
+5. Also fixing minor issues:
+   - Proper initialization of shift register
+   - Correct counter comparison (cnt == 7 vs cnt == 8)
+   - Clearer state transitions
+6. Maintain all original functionality while fixing interface issues
+
+Key Changes:
+- Rename res_valid to res_ready
+- Fix counter comparison logic
+- Improve shift register initialization
+- Maintain same division algorithm and sign handling
+- Keep same state machine structure

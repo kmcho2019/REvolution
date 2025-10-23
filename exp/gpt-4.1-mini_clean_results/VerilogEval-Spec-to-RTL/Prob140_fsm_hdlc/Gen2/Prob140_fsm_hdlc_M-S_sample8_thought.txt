@@ -1,0 +1,14 @@
+We can simplify the FSM by using a single 3-bit counter to count consecutive ones up to 7 (with 7 as error). The state simply tracks the count of consecutive ones.
+
+On each input bit:
+- If the input is 1 and count < 7, increment count.
+- If input is 0, reset count to 0.
+
+Outputs are asserted one cycle after detection:
+- When count == 5 and input == 0, discard the zero (disc).
+- When count == 6 and input == 0, flag the frame boundary (flag).
+- When count == 7 and input == 1, error (err).
+
+To generate outputs one cycle after detection, register flags `disc_next`, `flag_next`, and `err_next` in combinational logic, and assign outputs synchronously on clock.
+
+This approach removes the complex case statement and uses a simple count variable with minimal state logic. It retains all functionality and synchronous output timing requirements.

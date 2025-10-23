@@ -1,0 +1,17 @@
+To optimize the original 32-bit CLA adder, the key improvement is to implement a proper carry-lookahead logic within the 16-bit CLA blocks rather than simple ripple carry style carry propagation. This can be achieved by partitioning each 16-bit block into four 4-bit CLA sub-blocks.
+
+Each 4-bit CLA sub-block will generate its own group propagate (P_group) and generate (G_group) signals. Then a 4-bit carry-lookahead logic computes the carries into each 4-bit group, enabling O(log n) carry computation inside each 16-bit block. This hierarchical approach reduces carry chain delay dramatically compared to the original ripple carry inside the 16-bit block.
+
+At the 32-bit top level, instantiate two such 16-bit hierarchical CLA blocks. The carry-out from the lower 16-bit block becomes carry-in to the upper 16-bit block, as before.
+
+The internal indexing will still map [32:1] inputs to zero-based [31:0] vectors for simplicity.
+
+This design improves timing significantly due to faster carry generation and reduces switching activity on internal carry signals, potentially lowering power. The additional logic for group propagate/generate signals is a modest area increase but justified by the timing gain.
+
+Overall, the updated design:
+- Implements hierarchical 4-bit CLA blocks inside each 16-bit CLA block.
+- Uses proper group generate and propagate signals.
+- Maintains clean modularity for code clarity and reuse.
+- Maintains same top-level interface with [32:1] indexing.
+
+This approach combines moderate area increase with notable performance and power benefits, improving PPA metrics meaningfully.

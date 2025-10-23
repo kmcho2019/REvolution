@@ -1,0 +1,11 @@
+Implement the 12-hour clock by creating separate always blocks for each digit: seconds units, seconds tens, minutes units, minutes tens, and hours in BCD directly (two digits for hours as well), avoiding binary-to-BCD conversion. Each digit counts individually with rollover conditions causing increment in the next digit.
+
+Use a hierarchical ripple carry style counting structure synchronized to the single enable pulse per second. The PM bit toggles precisely when hour increments from 11 to 12.
+
+Use synchronous reset to initialize to 12:00:00 AM (hours=12, minutes=0, seconds=0, pm=0).
+
+This modular approach isolates the counting logic for each digit, simplifying the design and reducing combinational complexity inside any single always block. It avoids runtime binary-to-BCD conversion, improving timing and reducing combinational logic.
+
+Each digit uses non-blocking assignments and only updates on enable to reduce toggling. Outputs are assigned directly from registers without extra combinational logic.
+
+This approach also improves readability and makes verification straightforward, while maintaining all requirements.

@@ -1,0 +1,18 @@
+Novel Architecture: Pipelined Dual-Path Multiplier with Early Special Case Detection
+
+Key Innovations:
+1. Dual-Path Processing: Separate paths for special cases (NaN, Inf, Zero) and normal operations to reduce critical path
+2. Early Special Case Detection: Identify special cases in the first cycle to bypass normal computation
+3. 4-Stage Pipeline: 
+   - Stage 1: Input decode and special case detection
+   - Stage 2: Exponent processing and mantissa alignment
+   - Stage 3: Mantissa multiplication (split into upper/lower halves)
+   - Stage 4: Normalization and rounding
+4. Predictive Exponent Handling: Pre-compute possible exponent adjustments to reduce final stage logic
+5. Guarded Multiplier: Only enable full multiplier when needed (non-special cases)
+
+Advantages:
+- Reduced critical path through pipelining
+- Power savings from early termination of special cases
+- Better timing closure with distributed computation
+- More efficient resource utilization

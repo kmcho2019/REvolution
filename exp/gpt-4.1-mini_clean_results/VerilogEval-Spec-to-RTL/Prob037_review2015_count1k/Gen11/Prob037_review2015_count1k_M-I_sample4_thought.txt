@@ -1,0 +1,11 @@
+To improve PPA, reduce comparator complexity by replacing the equality check with a simpler less-than comparison, which often maps to faster logic. Instead of checking q == MAX_COUNT, use q < MAX_COUNT to decide whether to increment or reset. This avoids a wide equality comparator and replaces it with a simpler carry-lookahead addition and a less-than comparison.
+
+Also, rewrite the counting logic with a conditional (ternary) operator to enable more compact synthesized logic.
+
+The synchronous reset remains the same for clarity. This modification simplifies the critical path, potentially reducing the worst negative slack (wns) and total negative slack (tns), while keeping the design behavior identical.
+
+Summary:
+- Replace equality comparator with less-than comparator.
+- Use ternary operator for compact increment/reset logic.
+- Maintain synchronous active-high reset and 10-bit output.
+This approach aims for better timing and slightly lower power while preserving functionality.

@@ -1,0 +1,5 @@
+Refactor the design by splitting the enable synchronization into a dedicated two-flip-flop synchronizer module instantiated in the clk_b domain to improve modularity and clarity.  
+Use an asynchronous reset with synchronous resets where appropriate to simplify the clock domain registers.  
+Replace the conditional always block that updates data_reg and en_data_reg with a clock-enabled register update based on data_en to explicitly control when data is latched.  
+Use a MUX in a combinational always block to select between current dataout and synchronized data_reg, driven by the synchronized enable signal, then register the result on clk_b.  
+This structure increases readability, separates domain crossing synchronization clearly, and keeps all functional requirements intact.

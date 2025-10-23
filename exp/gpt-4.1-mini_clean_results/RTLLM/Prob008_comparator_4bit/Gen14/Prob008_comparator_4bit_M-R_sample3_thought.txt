@@ -1,0 +1,8 @@
+Refactor the 4-bit comparator to use direct bitwise XOR/XNOR for equality checks and implement borrow logic using a generate-for loop to build the borrow chain dynamically. This approach avoids explicitly naming each borrow signal, making the code more scalable and concise while preserving the borrow chain logic. The equality signal will be computed as a single reduction of all XNOR bits with the ^ reduction operator complemented.
+
+Outputs remain mutually exclusive by defining:
+- A_less from the final borrow out,
+- A_equal from all bits equality,
+- A_greater as the remaining case.
+
+This structural change improves code maintainability and clarity without changing the logic or timing characteristics.

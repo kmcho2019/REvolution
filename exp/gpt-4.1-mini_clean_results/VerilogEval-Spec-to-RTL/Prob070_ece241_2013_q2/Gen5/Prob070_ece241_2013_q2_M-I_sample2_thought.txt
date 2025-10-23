@@ -1,0 +1,34 @@
+Re-derive the minimal sum-of-products (SOP) and minimal product-of-sums (POS) expressions carefully from the given minterms and maxterms, ensuring all variables are correctly included and no oversimplification occurs. 
+
+Inputs a,b,c,d represent a 4-bit number with 'a' as the MSB and 'd' as the LSB:
+- Numbers where output=1: 2(0010),7(0111),15(1111)
+- Numbers where output=0: 0,1,4,5,6,9,10,13,14
+- Inputs 3,8,11,12 never appear (don't-cares)
+
+1) For SOP (out_sop): Write minterms for 2,7,15, and simplify with don't-cares (3,8,11,12) to get minimal SOP.
+2) For POS (out_pos): Write maxterms for output=0 numbers and simplify using don't-cares to get minimal POS.
+
+Step-by-step:
+- Minterms (output=1): 2(0010),7(0111),15(1111)
+- Don't-cares: 3(0011),8(1000),11(1011),12(1100)
+
+Use Karnaugh maps or Quine-McCluskey for simplification:
+
+SOP minterms + don't-cares can merge:
+- Minterm 2 (0010) and don't-care 3 (0011) combine to cover '00 1 x' => ~a & ~b & c
+- Minterm 7 (0111) and minterm 15 (1111) and don't-care 11(1011) & 12(1100) can help simplify.
+
+Final SOP minimal expression:
+out_sop = (~a & ~b & c) | (b & c & d)
+
+For POS (zeros):
+Numbers: 0(0000),1(0001),4(0100),5(0101),6(0110),9(1001),10(1010),13(1101),14(1110)
+
+After minimization with don't-cares, minimal POS becomes:
+out_pos = (a + b + ~c + d) & (~a + b + c + ~d) & (a + ~b + c + ~d)
+
+This covers all maxterms and excludes don't-cares.
+
+Implement these expressions using continuous assignments and full inclusion of inputs.
+
+This approach ensures exact minimal expressions for the problem conditions, resolving the previous errors caused by ignoring variables or incorrect merges.

@@ -1,0 +1,18 @@
+A novel architectural idea is to use a simple 5-bit shift register to detect the start pattern "1101" and then immediately switch to loading the 4-bit delay value MSB first. This approach uses a single shift register of 9 bits total: first 4 bits for pattern detection, next 4 bits for delay loading, and one extra bit as a flag to separate phases. 
+
+The state machine will have three states:
+- IDLE: Shift in data continuously, checking the lower 4 bits of the 9-bit shift register for the start pattern "1101".
+- LOAD_DELAY: Shift in 4 delay bits MSB first, storing in the upper bits of the shift register.
+- COUNTING: Use two counters — one for counting (delay+1) countdown steps, and one subcounter for 1000 clock cycles each. Output the current count as the countdown value.
+- DONE: Assert done, wait for ack before returning to IDLE.
+
+Key points:
+- The 9-bit shift register shifts in one bit per clock when in IDLE or LOAD_DELAY.
+- After loading delay, extract the delay value from the shift register.
+- Counting runs for (delay+1)*1000 cycles using the subcounter and the countdown counter.
+- The count output shows the current countdown value (remaining time units).
+- Counting output is asserted only in COUNTING state.
+- Done is asserted only in DONE state.
+- Synchronous reset initializes all registers.
+
+This compact design simplifies control and integrates pattern detection and delay loading in one register, minimizing logic and state transitions.

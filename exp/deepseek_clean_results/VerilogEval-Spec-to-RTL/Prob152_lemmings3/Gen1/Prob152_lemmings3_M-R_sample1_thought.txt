@@ -1,0 +1,16 @@
+To improve the implementation, I'll restructure the state machine to make the priority rules more explicit and simplify the output logic. Key changes:
+
+1. Use a more compact state encoding with fewer states by tracking direction separately from action (walk/fall/dig)
+2. Make priority rules explicit with nested conditionals
+3. Separate direction state from action state for cleaner transitions
+4. Use continuous assignments for outputs to make them more directly tied to states
+
+The new state encoding will be:
+- DIR_LEFT (0) or DIR_RIGHT (1) for direction
+- ACTION_WALK (0), ACTION_FALL (1), or ACTION_DIG (2) for current action
+
+This reduces the number of states from 6 to 2*3=6 but makes the transitions clearer by separating concerns. The priority rules become:
+1. If ground=0: fall (highest priority)
+2. Else if dig=1 and walking: dig
+3. Else if bumped: change direction
+4. Else continue current action

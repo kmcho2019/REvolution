@@ -1,0 +1,22 @@
+To improve the PPA (power, performance, area) of the given design while maintaining correctness and one-hot encoding, we can simplify the next_state logic by factoring common terms and using fewer OR gates with large fan-in.
+
+For example:
+- next_state[1] is currently `in & (state[0] | state[1] | state[3])` which is a 3-input OR.
+  We can express this as `(in & state[0]) | (in & state[1]) | (in & state[3])`, but that's equivalent. Instead, we can factor the in input at the top level which is already done.
+
+Alternatively, we can use some auxiliary wires to group the states to reduce gate fan-in.
+
+Since the output is only high in state D (state[3]), output logic is already minimal.
+
+No major simplification is apparent beyond the original. However, the code readability can be improved by using a small combinational always block and casez statements or if-else, which synthesis tools can optimize efficiently.
+
+Also, to reduce the number of signals switching simultaneously, we can split the next state logic into fewer expressions by reusing terms (like `AorC = state[0] | state[2]`), which can help tools reduce gates and switching activity.
+
+Implementing next_state as one-hot encoded bits assigned by intermediate wires for clarity and potential logic reuse can reduce area and power.
+
+Therefore, the improvement plan:
+- Use intermediate signals for common terms.
+- Implement combinational logic in continuous assignments for clarity.
+- Keep the output logic as is.
+
+This can lead to a slight reduction in power and area due to simpler logic expressions and possibly better mapping by synthesis tools.

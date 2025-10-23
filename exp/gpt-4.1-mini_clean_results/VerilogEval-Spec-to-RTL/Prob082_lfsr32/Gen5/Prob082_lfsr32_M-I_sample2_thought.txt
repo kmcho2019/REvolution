@@ -1,0 +1,13 @@
+The existing design is already efficient and clean, using a single right shift and conditional XOR with the TAP_MASK masked by q[0]. To optimize for better power and timing (PPA), we can reduce toggling by minimizing the XOR gates switching when q[0] is zero and simplifying logic further. 
+
+A way to do this is to implement the LFSR as a shift register where the next MSB bit is computed first as the XOR of q[0] and q[31], then other bits are shifted with conditional XORs at the tapped positions. This avoids applying a broad XOR mask on all bits simultaneously, potentially reducing switching activity and improving timing by localizing XOR gates instead of a big wide XOR. 
+
+In this "conditional Galois" approach, each tapped bit position toggles based on q[0], while non-tapped bits just shift. It preserves the same LFSR polynomial and behavior. The synchronous reset remains as before. 
+
+This approach may reduce gate switching on non-tapped bits, potentially improving power and slightly improving timing by localizing combinational logic depth. Area should be similar or slightly less since fewer wide XORs are needed.
+
+We will write the shift update explicitly for each bit, unrolling the logic, which can help synthesis tools optimize better. This is a classical Galois LFSR update style.
+
+The taps at bit positions 32, 22, 2, and 1 translate to bits 31, 21, 1, and 0 zero-based in Verilog. The MSB next bit is XOR(q[0], q[31]). Bits 30 down to 22 shift from q[31:23] (no tap). Bit 21 toggles XOR with q[0]. Bits 20 down to 2 shift from q[21:3]. Bit 1 toggles XOR with q[0]. Bit 0 toggles XOR with q[0].
+
+This design explicitly enumerates all 32 bits' next values and should optimize power by limiting XOR toggling to tapped positions only.

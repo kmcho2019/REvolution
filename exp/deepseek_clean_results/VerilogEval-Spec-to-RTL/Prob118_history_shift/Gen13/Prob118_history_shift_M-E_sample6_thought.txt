@@ -1,0 +1,19 @@
+Novel Dual-Buffer Architecture with Speculative Updates:
+
+1. Key Idea:
+   - Maintain two history buffers: one for committed state (safe_history) and one for speculative updates (spec_history)
+   - The committed buffer only updates on mispredictions or resets
+   - The speculative buffer tracks all predictions
+   - This eliminates the need for rollback logic since we always have the correct committed state
+
+2. Advantages:
+   - Reduced critical path: No need for complex rollback muxing
+   - Better timing: Speculative updates happen in parallel with committed updates
+   - Clean separation of concerns: Speculative path doesn't affect committed state
+   - Power savings: Only update committed buffer when necessary
+
+3. Implementation:
+   - Use a simple 2:1 mux to select between buffers for output
+   - On misprediction, overwrite spec_history with committed state + actual taken
+   - Reset clears both buffers
+   - Output follows spec_history for predictions

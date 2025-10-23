@@ -1,0 +1,8 @@
+This time, instead of using a multi-state FSM, I will implement pulse detection by capturing a small sliding window of the last three sampled values of data_in. By comparing these three consecutive samples, we can directly detect the pattern "0 -> 1 -> 0" that defines a pulse.
+
+Specifically:
+- At every clock cycle, shift in the current data_in value into a 3-bit shift register holding {oldest, middle, newest}.
+- When the last three samples equal 3'b010, we assert data_out for one clock cycle.
+- data_out is thus a combinational result derived from the shift register, registered on the clock edge to generate a clean synchronous pulse.
+
+This approach is simple, requires minimal state tracking, and relies on pattern matching on a small history buffer. It also guarantees output pulse is asserted exactly once at the end of the pulse and aligns well with synchronous design principles.

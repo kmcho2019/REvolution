@@ -1,0 +1,17 @@
+To implement the Lemmings' behavior, we'll design a Moore state machine with the following states:
+- WALK_LEFT: the Lemming is walking to the left
+- WALK_RIGHT: the Lemming is walking to the right
+- FALLING: the Lemming is falling
+- DIGGING: the Lemming is digging
+
+We'll use areset to asynchronously reset the state machine to the WALK_LEFT state.
+
+On each positive edge of the clock, we'll check the current state and inputs to determine the next state and outputs.
+- If the Lemming is walking and ground=0, it will fall.
+- If the Lemming is falling and ground=1, it will resume walking in the same direction as before the fall.
+- If the Lemming is walking and dig=1, it will start digging.
+- If the Lemming is digging and ground=0, it will fall and then resume walking in the original direction once it hits ground again.
+- If the Lemming is walking and bump_left=1 or bump_right=1, it will switch directions.
+- If the Lemming is walking and bump_left=1 and bump_right=1, it will still switch directions.
+
+We'll use the current state and inputs to determine the outputs: walk_left, walk_right, aaah, and digging.

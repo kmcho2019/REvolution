@@ -1,0 +1,16 @@
+Refactor the design to fix the off-by-one timing error and simplify control by using a single FSM with clear state transitions and cycle counting.
+
+Key changes:
+- Represent states as localparam for clarity.
+- Use a 4-bit shift register for pattern detection, updated combinationally each cycle from previous value and input data, but only updated when in SEARCH state to prevent unintended shifting.
+- After detecting the pattern 1101, transition to LOAD_DELAY state to shift in delay bits MSB first. Use a separate delay shift register and a counter for number of bits loaded.
+- Once delay bits are fully loaded (4 bits), load the segment_count with the delay value (not delay+1), and set a separate count_down flag to indicate that the countdown must be done for (delay+1) segments.
+- Use a 10-bit cycle_counter to count clock cycles within each 1000-cycle segment (0 to 999).
+- Use segment_count to track remaining 1000-cycle segments; initially equals delay; countdown down to zero.
+- Output 'count' corresponds to segment_count while counting, as required.
+- When segment_count counts down from delay to 0, each held for 1000 cycles, total cycles counted are (delay+1)*1000.
+- When cycle_counter reaches 999, decrement segment_count. When segment_count == 0 and cycle_counter == 999, transition to DONE_WAIT_ACK.
+- WAIT_ACK state asserts done and waits for ack input before restarting search.
+- Use synchronous reset and synchronous state and counters updates in a single always block.
+- Keep outputs assigned from registers.
+- This structure ensures no off-by-one errors, clear timing alignment, and well-defined states.

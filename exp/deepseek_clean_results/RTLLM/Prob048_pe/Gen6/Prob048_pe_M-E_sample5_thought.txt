@@ -1,0 +1,15 @@
+Here's a novel architectural approach for the 32-bit MAC PE:
+
+1. **Pipelined Multiplier-Accumulator**: Split the operation into two pipeline stages to improve timing:
+   - Stage 1: Perform the multiplication (a * b)
+   - Stage 2: Perform the accumulation (c + product)
+
+2. **Registered Inputs**: Add input registers to improve timing and reduce glitches in the multiplier
+
+3. **Overflow Protection**: Instead of simple truncation, implement saturation logic to handle overflow cases
+
+4. **Power Optimization**: Add an enable signal that can freeze the accumulator when needed
+
+5. **Reset Synchronization**: Use a proper reset synchronizer for more reliable operation
+
+This design achieves better timing at the cost of one extra cycle latency, while providing more robust operation through overflow protection.

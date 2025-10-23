@@ -1,0 +1,24 @@
+The problem is to detect when the 4-bit input {a,b,c,d} equals decimal 2, 7, or 15, outputting 1, and output 0 for specified other values.
+
+Decimal inputs in binary (a=MSB, d=LSB):
+- 2 = 0 0 1 0  -> ~a & ~b & c & ~d
+- 7 = 0 1 1 1  -> ~a & b & c & d
+- 15= 1 1 1 1  -> a & b & c & d
+
+These minterms have no common factors except c. Including only common factor c is not enough to separate out unwanted values.
+
+Minimal SOP is simply the sum of these three minterms:
+out_sop = (~a & ~b & c & ~d) + (~a & b & c & d) + (a & b & c & d)
+
+Minimal POS can be derived from zeros at 0,1,4,5,6,9,10,13,14 and don't-cares at 3,8,11,12.
+
+From K-map analysis, minimal POS is:
+out_pos = (a + b + ~d) & (a + ~c + d) & (~a + ~b + c)
+
+This matches the original minimal POS.
+
+To simplify further:
+- Keep SOP as sum of the three minterms (no further reduction without including undesired outputs).
+- Implement POS as given.
+
+This is the simplest correct implementation with clear terms and minimal complexity.

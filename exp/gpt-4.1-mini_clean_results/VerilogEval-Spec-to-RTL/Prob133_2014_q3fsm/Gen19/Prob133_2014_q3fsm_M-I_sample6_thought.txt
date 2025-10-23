@@ -1,0 +1,11 @@
+To improve the given design's PPA (performance, power, and area), focus on:
+
+1. Performance: Reduce combinational logic complexity in the critical path by precomputing additions and outputs in registers, thereby simplifying the next state logic.
+2. Power: Instead of resetting cnt_accum to zero outside state B (which causes unnecessary toggling), hold its value stable by gating the update with a clock enable, avoiding extra switching.
+3. Area: The current 1-bit state and 4-bit packed counters are minimal; no changes needed here.
+4. Output timing: Convert the Mealy-style immediate z output to registered output z updated at the clock edge after the 3rd cycle. This stabilizes timing and eases synthesis tools.
+5. Maintain synchronous reset and use non-blocking assignments properly.
+
+In summary, add an explicit z output register updated only when ready, remove unnecessary resets to zero for cnt_accum outside state B, and simplify combinational logic by moving additions to registers. This trades a slightly more complex state logic for better timing and power.
+
+The new approach keeps the FSM states A and B, but counters and accumulators update only in B with enable; output z is updated in a registered manner on the cycle following the 3rd sample. This reduces toggling and critical path delay.

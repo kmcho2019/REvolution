@@ -1,0 +1,9 @@
+Implement the 256-to-1 4-bit multiplexer using a binary tree of 2-to-1 4-bit multiplexers, exploiting a recursive structure. This approach builds the large mux by progressively combining pairs of inputs, each stage reducing the number of inputs by half, until a single 4-bit output remains. Each stage uses one bit of the select input to control 2-to-1 muxes, with the least significant select bit controlling the first level, and the most significant select bit controlling the last level. This method is highly regular and can be efficiently mapped to hardware mux trees, balancing logic depth across stages and avoiding flat large multiplexers or large indexed part-selects. It also structures the design for clear pipelining or optimization.
+
+The steps are:
+1. Store inputs as 256 4-bit elements.
+2. Build a generate-based binary mux tree of 8 stages (log2(256)) with 2-to-1 4-bit muxes.
+3. Each stage uses one bit of sel, from LSB to MSB, to select inputs at that stage.
+4. The final output is from the last stage.
+
+This approach differs from a flat indexed mux or hierarchical large muxes by explicitly building the mux as a balanced tree of small muxes, improving regularity, predictable timing, and possibly easier physical synthesis optimization.

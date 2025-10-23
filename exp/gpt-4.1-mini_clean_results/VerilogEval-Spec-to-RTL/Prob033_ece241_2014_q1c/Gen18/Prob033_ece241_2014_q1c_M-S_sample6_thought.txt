@@ -1,0 +1,15 @@
+To simplify the design, I will implement the 8-bit adder and overflow detection directly in a single module without separate parameterizable components or explicit carry vector signals.
+
+The addition can be done by using Verilog's built-in addition operator, which inherently performs 2's complement addition and outputs an 8-bit sum plus a carry-out bit if assigned to a wider wire.
+
+Overflow detection for signed 8-bit numbers occurs when the carry into the sign bit and carry out of the sign bit differ. Alternatively, overflow can be detected by checking if the sign bits of the inputs are the same but differ from the sum's sign bit.
+
+Here I use the simpler signed overflow detection method:
+
+- overflow = (a[7] == b[7]) && (s[7] != a[7])
+
+This check is easy, requires no extra carry signals, and is commonly used for signed overflow detection.
+
+This approach eliminates the need for explicit carry calculations or separate modules, greatly simplifying the code while maintaining correct functionality.
+
+Thus, the entire functionality is condensed into a concise single module with straightforward combinational logic.

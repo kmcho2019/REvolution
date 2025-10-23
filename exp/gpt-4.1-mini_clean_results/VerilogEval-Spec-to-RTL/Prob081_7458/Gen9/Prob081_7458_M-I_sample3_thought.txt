@@ -1,0 +1,9 @@
+The existing implementation uses parameterized modules for AND gates which adds module instantiation overhead and intermediate signals. Given the fixed and small input sizes for each AND gate (2 or 3 inputs), directly implementing the AND gates with assign statements will reduce both area and power by eliminating the overhead of module instances and vector handling. This also simplifies the design and should maintain optimal performance due to minimal logic depth.
+
+The improvement strategy:
+- Remove the AndGateN module entirely.
+- Implement each AND gate directly using simple assign statements.
+- Use intermediate wires for clarity but only as needed.
+- Combine the AND outputs with OR using direct assign statements.
+
+This reduces logic complexity, area, and dynamic power while keeping code readable and functionally equivalent.

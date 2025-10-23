@@ -1,0 +1,19 @@
+The multiplier uses 4-bit inputs extended by 4 zero bits at MSB to become 8-bit, but since partial products only shift by up to size-1, zero extension effectively ensures that shifts don't overflow the product width.
+
+For each bit of mul_b (size=4), partial products are generated: if mul_b[i]==1, partial product = mul_a shifted left by i; else zero.
+
+In the pipeline, two levels of registers store intermediate sums:
+
+- Level 1 registers accumulate partial products in pairs (e.g., p0+p1 and p2+p3).
+
+- Level 2 register sums the outputs of level 1 registers.
+
+All registers update on clock's positive edge or rst_n's falling edge.
+
+On reset (rst_n=0), all registers and output zero.
+
+On normal operation, pipeline adds partial products over two clock cycles.
+
+Output mul_out is updated with final product from level 2 register.
+
+This matches the described pipeline multiplier with 2 levels of registers and the generate block for partial product creation.

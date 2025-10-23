@@ -1,0 +1,15 @@
+Implement a true Radix-4 Booth multiplier for two 8-bit inputs to produce a 16-bit product. Radix-4 processes two bits of the multiplier at a time, reducing the iteration count roughly by half compared to bit-serial (radix-2) methods.
+
+Key ideas:
+- Extend inputs to 9 bits (extra LSB zero) to enable 3-bit overlapping groups for Booth encoding.
+- Process the multiplier in 4 iterations, each handling 2 multiplier bits (3 bits per iteration: current two bits plus one overlapping bit).
+- Use a 3-bit Booth encoding slice each iteration to determine the partial product multiple (-2, -1, 0, +1, +2) of the multiplicand.
+- Accumulate partial products shifted accordingly to build the final product.
+- Use synchronous logic with a 3-bit counter counting from 0 to 3.
+- On reset, latch inputs and clear registers.
+- On each clock cycle, compute partial product from Booth encoding, shift and add to accumulator.
+- When all 4 iterations complete, set ready signal.
+- Implement sign extension and two's complement properly for negative multiples.
+- This architecture achieves multiplication in 4 clock cycles plus 1 cycle for reset/init, reducing latency and leveraging Radix-4 Booth encoding.
+
+The design outputs a 16-bit signed product and a ready flag once done.

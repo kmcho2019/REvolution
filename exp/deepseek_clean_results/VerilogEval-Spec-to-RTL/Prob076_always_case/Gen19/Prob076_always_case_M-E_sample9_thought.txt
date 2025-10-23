@@ -1,0 +1,6 @@
+I'll implement a hierarchical multiplexer approach that:
+1. First uses a 3-to-1 mux to select between three pairs of data inputs (data0/data1, data2/data3, data4/data5) based on sel[2:1]
+2. Then uses a final 2-to-1 mux to select between the outputs of the first stage based on sel[0]
+3. Includes logic to force output to zero when sel is invalid (>5)
+
+This approach reduces the fan-in of each multiplexing stage, which can improve timing and area efficiency. The hierarchical structure naturally breaks down the 6-to-1 selection into smaller, more manageable multiplexers that can be better optimized by synthesis tools.

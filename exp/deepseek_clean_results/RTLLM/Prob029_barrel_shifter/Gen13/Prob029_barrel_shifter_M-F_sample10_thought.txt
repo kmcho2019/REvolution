@@ -1,0 +1,12 @@
+Here's the corrected approach for the barrel shifter:
+
+1. The key issue was with the nested ternary operators causing syntax errors and improper shifting behavior
+2. New approach uses separate stages for each shift amount (4, 2, 1) with intermediate signals
+3. Each stage is controlled independently by its corresponding control bit
+4. The shifts are implemented as follows:
+   - First stage: 4-bit rotation if ctrl[2] is set
+   - Second stage: 2-bit rotation if ctrl[1] is set (operates on result from first stage)
+   - Third stage: 1-bit rotation if ctrl[0] is set (operates on result from second stage)
+5. This cascaded approach ensures proper shifting behavior while maintaining clean syntax
+6. Each rotation is implemented using concatenation of the appropriate bits
+7. The final output comes from the last stage

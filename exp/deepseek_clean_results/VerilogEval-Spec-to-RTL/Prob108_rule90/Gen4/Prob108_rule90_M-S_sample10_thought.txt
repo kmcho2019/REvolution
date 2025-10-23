@@ -1,0 +1,15 @@
+To simplify the implementation while maintaining correct Rule 90 functionality:
+
+1. Remove unnecessary pipeline stages - Rule 90 only needs one step of combinatorial logic between registers
+2. Correct boundary handling:
+   - Leftmost cell (q[0]) should XOR with right neighbor and 0 (left boundary)
+   - Rightmost cell (q[511]) should XOR with left neighbor and 0 (right boundary)
+3. Use a single always block for combinatorial next-state logic
+4. Use another always block for sequential state update
+5. Maintain the same interface and functionality but with simpler, more direct implementation
+
+Key simplifications:
+- Eliminate all intermediate pipeline registers
+- Direct combinatorial calculation of next state
+- Proper boundary condition handling
+- Single clock cycle latency

@@ -1,0 +1,11 @@
+To improve the PPA of the given 12-hour BCD clock, the strategy focuses on reducing combinational logic depth in the counters and minimizing switching activity when "ena" is low. 
+
+Key improvements:
+1. Implement synchronous counters with clock enables gated by "ena", so registers only update when necessary, reducing switching power.
+2. Replace the combinational increment logic for seconds and minutes with synchronous counters that increment only on "ena". This removes combinational multiplexer logic on next-state signals.
+3. For hour counting, keep the internal binary counter but update it only on clock enable to minimize toggling.
+4. Eliminate the separate always @* block for output conversion by registering outputs directly or by combinational assignment outside clocked block to minimize logic depth.
+5. Implement a single process with hierarchical enable logic for counters to avoid combinational propagation through multiple nested ternaries.
+6. Use clear and minimal logic for pm toggling only on hour roll-over from 11 to 12.
+
+This approach reduces combinational logic on critical paths, lowers unnecessary toggling when not enabled, and improves timing slack while maintaining functional correctness.

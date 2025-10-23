@@ -1,0 +1,10 @@
+We can simplify the next state logic by directly encoding the transitions with simple conditionals inside the always block. Since the state flips when both bumps occur, moves right if bump_left is asserted, and moves left if bump_right is asserted, we can prioritize these conditions without needing complex expressions.
+
+Specifically:
+
+- If bump_left and bump_right are both 1, toggle state.
+- Else if bump_left is 1, set state to 1 (walk right).
+- Else if bump_right is 1, set state to 0 (walk left).
+- Else hold state.
+
+This direct if-else ordering reduces complexity and maintains correctness while preserving asynchronous reset and Moore FSM behavior.

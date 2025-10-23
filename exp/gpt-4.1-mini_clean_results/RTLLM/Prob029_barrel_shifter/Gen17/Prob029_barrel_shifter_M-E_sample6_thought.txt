@@ -1,0 +1,10 @@
+Implement the barrel shifter using explicit instantiations of 2-to-1 multiplexers (mux2X1) for each bit and stage, reflecting the problem's structural requirements. The shifter performs a left rotate by 1, 2, or 4 bits controlled by each bit of the 3-bit `ctrl` signal.
+
+The approach:
+- Create a `mux2X1` module selecting one of two inputs based on `sel`.
+- For each of the 3 stages (shift by 4, shift by 2, shift by 1), instantiate eight muxes to select each output bit.
+- At each stage, mux inputs are chosen between the unshifted and shifted bit (rotated left) of the intermediate value from the previous stage.
+- The `sel` signal at each stage corresponds to a bit in `ctrl`: `ctrl[2]` for 4-bit shift, `ctrl[1]` for 2-bit shift, `ctrl[0]` for 1-bit shift.
+- The output of the last stage is the final rotated output.
+
+This fine-grained mux-based structural design aligns with the problem description and demonstrates explicit hardware composition.

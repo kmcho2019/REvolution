@@ -1,0 +1,7 @@
+Refactor the design by separating the combinational next-state and next-wave logic from the sequential update logic. Use a synchronous always block only to register the next values of wave and state, while computing next_wave and next_state combinationally outside the sequential block. This approach clarifies the design by explicitly showing state transitions and wave updates as combinational functions of current state and wave, improving readability and easing formal verification.
+
+Also, use a 1-bit state as direction indicator, same as before. The waveform increment/decrement decisions are kept identical but moved into combinational logic. This separation adheres to common finite state machine design practices (next state logic + state register), making the code structure modular and clear.
+
+Use a minimal always block triggered on posedge clk and negedge rst_n for synchronous reset and register updates, and a combinational always_comb block (or always @(*) in pure Verilog) for next state calculation. The output wave is still registered.
+
+This does not change functionality but improves code modularity and ease of understanding, with explicit separation of combinational and sequential parts.

@@ -1,0 +1,10 @@
+Implement the 4-bit BCD adder by first performing a binary addition of inputs A, B, and Cin resulting in a 5-bit sum. Then detect if correction is needed by checking two conditions: either if the 4-bit raw sum is greater than 9 or if there is a carry from the 4-bit addition. To detect sum > 9, compare bits using a simple priority encoder logic rather than a direct comparator.
+
+Once correction is detected, add 6 (0110) to the lower 4 bits using a dedicated 4-bit adder instantiated from a simple ripple carry adder sub-module. This modular approach improves clarity and reusability. The final carry out is the carry of this correction addition or the initial carry out, whichever is high.
+
+This approach trades some additional modules (a small ripple carry adder) for code clarity and modularity. The correction detection is concise and leverages common logic, while the correction addition uses a straightforward ripple carry adder submodule.
+
+Advantages:
+- Modularity and clarity via a separate 4-bit ripple carry adder for correction
+- Explicit and clear correction detection logic
+- Final carry combines both initial sum carry and correction carry ensuring correctness

@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. Remove input buffering since it's unnecessary for this small design and adds overhead
+2. Simplify Y3 logic by directly implementing the conditions where D state is entered (from B, C, E, or F with w=0)
+3. Use more concise expressions while maintaining clarity
+4. Keep the one-hot encoding benefits without extra gates
+
+Key Observations:
+- Y1 only depends on being in state A (y[0]) and w=1
+- Y3 is set when:
+  * In state B/C/E/F (y[1], y[2], y[4], y[5]) AND w=0
+  * But not when already in D (y[3]) or A (y[0])
+- Can express Y3 directly as (y[1]|y[2]|y[4]|y[5]) & ~w

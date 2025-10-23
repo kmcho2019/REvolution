@@ -1,0 +1,7 @@
+To solve this problem, we will design a finite state machine (FSM) that can handle the different states of the timer. The states can be broken down into the following:
+1. IDLE: The initial state where the FSM looks for the pattern 1101 in the input data.
+2. SHIFT: After detecting the pattern 1101, the FSM shifts in the next 4 bits to determine the delay duration.
+3. COUNT: The FSM starts counting down from the delay value for (delay + 1) * 1000 clock cycles.
+4. DONE: After the countdown is complete, the FSM asserts the done signal and waits for the ack signal to reset.
+
+We will use a 4-bit counter to store the remaining delay value and another 4-bit counter to display the current count. A 12-bit counter will be used to count the clock cycles during the countdown.

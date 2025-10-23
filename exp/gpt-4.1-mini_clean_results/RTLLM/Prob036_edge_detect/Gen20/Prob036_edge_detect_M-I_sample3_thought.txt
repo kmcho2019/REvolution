@@ -1,0 +1,12 @@
+The original design is already minimal and efficient: it uses a single flip-flop for previous 'a' value, and combinational logic for generating edge pulses that last exactly one clock cycle, synchronized to clk as required.
+
+Potential improvement lies in using a synchronous reset instead of asynchronous to reduce complexity and improve timing, since asynchronous resets can add delay or extra routing burden on some ASIC/FPGA flows. This change can slightly improve performance and power without impacting functionality.
+
+No other optimizations are necessary because:
+- The combinational logic is minimal (only two gates).
+- The register toggles only on input changes which are slow, so power is low.
+- The area is minimal.
+
+Hence, switching to synchronous reset will enhance PPA subtly without complicating the design.
+
+Additionally, adding a comment on synchronous reset and behavior clarifies design intentions for maintainability.

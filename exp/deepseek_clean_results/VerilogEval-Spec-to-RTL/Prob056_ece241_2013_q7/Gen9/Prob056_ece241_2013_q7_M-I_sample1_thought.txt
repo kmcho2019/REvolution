@@ -1,0 +1,11 @@
+To optimize the JK flip-flop implementation, I'll focus on improving the combinational logic for better timing and area efficiency while maintaining the same functionality. The current implementation uses three AND-OR terms which can be simplified. Here's the optimization strategy:
+
+1. Simplify the combinational logic using XOR operations which are more efficient in hardware
+2. Reduce the number of logic levels to improve timing (critical path)
+3. Maintain the same sequential behavior with edge-triggered flip-flop
+4. The new logic will be: Q_next = (j ^ k) ? (j) : (j & k) ^ Q_reg
+   - When j and k are different, output follows j
+   - When j and k are same, toggle if both are 1, else maintain state
+5. This reduces the logic to one XOR, one MUX, and one AND operation
+
+This should improve timing (reduce wns/tns) while potentially reducing area and maintaining similar power characteristics.

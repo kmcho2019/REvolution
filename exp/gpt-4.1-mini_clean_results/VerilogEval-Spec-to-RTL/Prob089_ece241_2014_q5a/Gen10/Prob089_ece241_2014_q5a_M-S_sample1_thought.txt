@@ -1,0 +1,12 @@
+Simplify the design by merging the next_state logic into the state register update and removing the separate next_state signal. Also, avoid registering the input separately by directly using the input in output logic since the Moore output can depend only on the current state.
+
+Use the two states:
+
+- S0: output input bit x directly, transition to S1 on input 1
+- S1: output inverted input bit x
+
+Implement the state register with asynchronous reset and state transition inside a single always block.
+
+Output z is combinational logic depending only on state and input x.
+
+This reduces the complexity by eliminating the separate next_state register and input register, while still maintaining the Moore FSM behavior and correct functionality.

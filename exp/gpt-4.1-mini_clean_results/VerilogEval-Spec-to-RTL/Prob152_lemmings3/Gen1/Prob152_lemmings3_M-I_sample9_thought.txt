@@ -1,0 +1,40 @@
+The original design implements the required Moore FSM with states WALK_LEFT, WALK_RIGHT, and FALLING, plus a digging flag. The outputs are derived from state and digging_reg. The main correctness concern is subtle handling of digging_reg and saved_dir during transitions, especially on bumps and digging start, which can affect walk_left and walk_right outputs.
+
+To improve correctness and PPA:
+
+1. Separate the notion of "current walking direction" from "state" to avoid confusion. The walking direction is naturally represented by WALK_LEFT and WALK_RIGHT states, so saved_dir is only needed to remember the direction during FALLING.
+
+2. Track digging explicitly as a separate state, merging digging into WALK_LEFT_DIG and WALK_RIGHT_DIG. This clarifies outputs and transitions because digging is a distinct state.
+
+3. This gives us five states:
+   - WALK_LEFT
+   - WALK_RIGHT
+   - DIG_LEFT
+   - DIG_RIGHT
+   - FALLING
+
+4. This simplifies output logic as outputs map clearly to states.
+
+5. State transitions respect precedence: falling > digging > direction switching.
+
+6. On falling, remember the last walking direction (left or right) in saved_dir (1-bit reg) for recovery.
+
+7. Asynchronous reset sets state to WALK_LEFT and saved_dir=0.
+
+8. On each cycle, based on inputs and current state:
+   - If falling and ground=1, recover to saved_dir walking state.
+   - If walking or digging and ground=0, fall.
+   - If walking and dig=1, start digging.
+   - If walking and bumped, switch walking direction.
+   - If digging and ground=0, fall.
+   - Else stay in current state.
+
+9. By encoding digging into states, no separate digging flag is needed, simplifying design and outputs.
+
+10. This reduces logic complexity, helps prevent glitches in digging flag, and improves clarity and power since only state is updated.
+
+11. saved_dir only changes when entering falling and remains stable to restore direction after fall.
+
+This design is clearer, more maintainable, and outputs are purely a function of state, making a true Moore FSM.
+
+We implement the FSM accordingly with five states and a saved_dir register.

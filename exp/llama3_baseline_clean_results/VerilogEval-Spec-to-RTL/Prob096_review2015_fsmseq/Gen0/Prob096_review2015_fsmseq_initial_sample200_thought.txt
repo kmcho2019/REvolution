@@ -1,0 +1,8 @@
+To solve this problem, we will design a finite-state machine (FSM) that checks for the sequence 1101 in the input bit stream. The FSM will have states that correspond to each prefix of the target sequence. We will use a 4-state FSM: 
+- S0: Initial state, no bits matched yet
+- S1: One '1' matched
+- S2: Two '1's matched (or one '1' and one '0' in the wrong order, but we only care about the correct sequence)
+- S3: Three bits '110' matched
+- S4: The sequence '1101' has been found
+
+When the FSM reaches S4, it will set the start_shifting signal to 1 and remain in that state until a reset occurs. The FSM will transition between states based on the input data, and will reset to S0 when the reset signal is high.

@@ -1,0 +1,9 @@
+To implement the 100-bit left/right rotator, we need to create a module that can handle the synchronous load and left/right enable. The module should have an internal register to store the current state of the rotator. 
+
+The load signal should be used to update the internal register with the input data when it is high. 
+
+The ena signal should be used to determine the direction of rotation. If ena is 2'b01, the rotator should rotate right by one bit. If ena is 2'b10, the rotator should rotate left by one bit. If ena is 2'b00 or 2'b11, the rotator should not rotate.
+
+To perform the rotation, we need to use the concatenation operator to create the new state of the rotator. For a right rotation, we need to concatenate the last bit of the current state with the rest of the current state (excluding the last bit). For a left rotation, we need to concatenate the current state (excluding the first bit) with the first bit of the current state.
+
+We should use a case statement to handle the different values of the ena signal and perform the corresponding rotation.

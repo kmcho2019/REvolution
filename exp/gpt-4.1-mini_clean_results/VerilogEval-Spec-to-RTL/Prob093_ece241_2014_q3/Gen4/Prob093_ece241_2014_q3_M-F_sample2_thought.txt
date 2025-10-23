@@ -1,0 +1,61 @@
+The TopModule must produce a 4-bit output mux_in, where each bit corresponds to the function value for a fixed (a,b) = 00, 01, 11, 10 for all (c,d) input combinations.
+
+Since inputs are only c and d, and the outputs are mux_in[3:0], each mux_in bit represents a logic function of (c,d) for a fixed (a,b) combination.
+
+Given the K-map:
+
+        ab
+    cd  00  01  11  10
+    00 | 0 | 0 | 0 | 1 |
+    01 | 1 | 0 | 0 | 0 |
+    11 | 1 | 0 | 1 | 1 |
+    10 | 1 | 0 | 0 | 1 |
+
+For each ab:
+
+- mux_in[0] (ab=00 column) = function of c,d with truth table:
+  cd=00->0, 01->1, 11->1, 10->1
+- mux_in[1] (ab=01 column) = always 0
+- mux_in[2] (ab=11 column) = cd=00->0, 01->0, 11->1, 10->0
+- mux_in[3] (ab=10 column) = cd=00->1, 01->0, 11->1, 10->1
+
+We must implement each mux_in[x] as a function of c and d only, using only multiplexers, meaning using conditional (?:) operators or nested 2:1 muxes.
+
+Since all mux_in[x] depend only on c,d, and mux_in is output, the module is combinational with inputs c,d, outputs mux_in[3:0].
+
+We do not use other logic gates. We can implement functions like AND, OR, NOT with 2:1 muxes:
+
+- NOT x = mux(x, 1'b0, 1'b1) = x ? 0 : 1
+- AND(a,b) = mux(a, b, 0) = a ? b : 0
+- OR(a,b) = mux(a, 1, b) = a ? 1 : b
+
+So, implement the minimal expressions for mux_in[x] using muxes and multiplexers only.
+
+Summary of expressions:
+
+- mux_in[0]: 1 for cd=01,11,10, 0 at 00
+  Truth table: cd=00(0),01(1),11(1),10(1)
+  Expression: mux_in[0] = c | d; (since when c=1 or d=1, output=1, else 0)
+
+- mux_in[1]: always 0
+
+- mux_in[2]: only 1 when c=1 and d=1; else 0
+  mux_in[2] = c & d;
+
+- mux_in[3]: cd=00(1),01(0),11(1),10(1)
+  Expression: 1 when cd!=01, 0 when cd=01
+  This is equivalent to ~(c==0 & d==1) = ~(~c & d) = c | ~d
+
+  Using mux only: ~d = d ? 0 : 1
+  So mux_in[3] = c | ~d = mux(c,1,b), where b=~d
+
+Implement all mux_in[x] using only ?: (mux) operators without any logic gates.
+
+Final plan:
+
+assign mux_in[0] = c ? 1'b1 : d;          // c | d
+assign mux_in[1] = 1'b0;
+assign mux_in[2] = c ? d : 1'b0;          // c & d
+assign mux_in[3] = c ? 1'b1 : (d ? 1'b0 : 1'b1); // c | ~d
+
+This satisfies all conditions, uses only multiplexers (?:), and is functionally correct.

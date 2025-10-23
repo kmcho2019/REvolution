@@ -1,0 +1,9 @@
+To further optimize for power and timing while maintaining area, implement clock gating explicitly using a clock enable (ce) signal to halt counting during reset without toggling the register unnecessarily. This reduces dynamic power by preventing needless toggles in the counter flip-flops.
+
+Also, slightly simplify the terminal count detection by recognizing that counting is linear from 1 to 10 and wrapping after 10, so use a straightforward comparator.
+
+The synchronous reset remains active-high, setting counter to 1.
+
+Using a clean non-blocking always block with the clock enable to keep toggling minimal and improve overall timing and power metrics.
+
+This strategy avoids gating the clock itself (which can be unsafe in some flows) but uses a clock enable, a best practice for reducing switching activity in FPGA and ASIC environments.

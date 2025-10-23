@@ -1,0 +1,7 @@
+Use a simple shift-left approach with an 8-bit shift register that shifts in serial data at LSB side when din_valid is asserted, placing the newest bit at the least significant bit. To meet the MSB-to-LSB order requirement in output, the bits must be reversed before output. So internally, we accumulate bits LSB-first (shifting left), then after receiving 8 bits, output the reversed bits in dout_parallel.
+
+Maintain a 4-bit counter to count the number of valid input bits received. When the count reaches 8, assert dout_valid for one cycle and output the reversed shift register content as dout_parallel.
+
+This approach differs from Example 1 by shifting left and then reversing bits at output, rather than shifting right and inserting at MSB. It separates input data accumulation from output formatting, making the design conceptually different.
+
+All registers are synchronously reset with active low rst_n.

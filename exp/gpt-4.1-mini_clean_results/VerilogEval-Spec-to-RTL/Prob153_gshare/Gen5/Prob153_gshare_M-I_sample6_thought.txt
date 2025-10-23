@@ -1,0 +1,25 @@
+The main cause of the mismatch errors is the subtle timing of when the prediction outputs (`predict_taken`, `predict_history`) are latched and when the GHR is updated on prediction.
+
+To fix this, the key idea is:
+
+- The prediction outputs should reflect the PHT state and GHR used *at the moment of prediction*, i.e., before the GHR is updated for that prediction.
+- The update of the GHR on prediction must shift in the predicted bit output at *that* cycle, not a prediction taken bit latched from the same cycle (which would cause a one-cycle delay).
+- Therefore, we compute the predicted taken bit combinationally and output it immediately (or latch it on predict_valid), and use that combinational predicted bit to update the GHR in the *same* clock cycle.
+- Since both prediction output and GHR update depend on the same combinational predicted bit, we introduce a combinational intermediate signal `predict_taken_next`.
+- On clock edge, if `predict_valid` is asserted and training mispredict is not asserted, we update GHR by shifting in `predict_taken_next` (the combinational predicted bit).
+- On the other hand, if `train_valid` and `train_mispredicted` are asserted, the GHR is restored to `train_history` with priority.
+- Prediction outputs (`predict_taken_reg` and `predict_history_reg`) are latched from the current PHT and current GHR *before* the GHR update, ensuring outputs correspond to the prediction made at this cycle.
+- This approach aligns with the problem statement: prediction sees old PHT and old GHR state; then GHR is updated by the predicted outcome; training updates PHT and if mispredicted, restores GHR.
+- We use non-blocking assignments in the clocked always block for all sequential updates and combinational logic outside.
+- The PHT remains unchanged from the original design.
+- This fix removes timing mismatch between the latched predicted bit and the updated GHR, correcting the predict_taken and predict_history mismatches.
+
+Additionally, for optimization:
+
+- We keep the PHT as a reg array (128 x 2 bits).
+- Use a localparam for weakly not taken state for clarity.
+- Function to saturate counters remains.
+- The indexing remains 7-bit XOR of PC and GHR.
+- No extra pipelining or complexity added, favoring clear timing and correctness.
+
+This corrected timing and priority logic will fix the mismatch problem, ensuring outputs are stable and consistent with the prediction used to update the GHR.

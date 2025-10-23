@@ -1,0 +1,11 @@
+A novel approach is to implement the square wave generator using a countdown timer rather than an up-counter. Instead of counting up to freq-1, we initialize a countdown register with freq on each toggle event and decrement it every clock cycle. When the countdown reaches zero, we toggle the output and reload the countdown with freq again.
+
+This approach has the following benefits:
+1. The countdown method simplifies the comparison: just check if countdown == 0.
+2. It provides a clear timing interval defined by freq cycles.
+3. Avoids needing to compute freq-1 explicitly.
+4. We add synchronous active-high reset to initialize registers.
+5. The output toggles at intervals defined by freq, with freq=0 treated as no toggling (wave_out held steady).
+6. Internally, when freq=0, we hold countdown at 0 and wave_out steady to avoid spurious toggling.
+
+This countdown timer style is intuitive and can be easily extended for other waveform shapes or duty cycle adjustments if needed.

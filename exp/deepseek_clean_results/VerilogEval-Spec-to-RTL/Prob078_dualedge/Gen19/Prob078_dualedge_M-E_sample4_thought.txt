@@ -1,0 +1,22 @@
+Novel Clock Domain Crossing Approach for Dual-Edge Triggering:
+
+1. Core Concept:
+   - Instead of using two flip-flops, create a clock domain crossing system
+   - Generate a double-rate clock (2x_clk) from the original clock
+   - Sample the input data at twice the frequency
+
+2. Implementation Strategy:
+   - Use a PLL/clock divider to create the 2x clock (for simulation, we'll model it behaviorally)
+   - Implement a single flip-flop running at double frequency
+   - The double-rate sampling naturally captures both edges of original clock
+
+3. Advantages:
+   - Uses only one flip-flop instead of two
+   - More elegant solution conceptually
+   - Easier to constrain timing since there's no combinational output path
+   - Naturally synchronizes data on both edges
+
+4. Considerations:
+   - Requires clock generation logic (simple for simulation)
+   - In real implementation, would need proper clock tree synthesis
+   - Eliminates potential glitches from output mux in previous solution

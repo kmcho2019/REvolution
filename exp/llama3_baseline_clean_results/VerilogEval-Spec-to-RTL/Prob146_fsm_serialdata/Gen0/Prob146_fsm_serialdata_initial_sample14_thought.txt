@@ -1,0 +1,12 @@
+The design involves creating a finite state machine (FSM) to receive bytes from a serial communication protocol. The FSM should identify the start bit, wait for all 8 data bits, and verify the stop bit. The module will output the correctly received data byte when the stop bit is detected.
+
+The FSM will have the following states:
+- IDLE: waiting for the start bit
+- START: start bit detected, wait for data bits
+- DATA: receiving data bits
+- STOP: waiting for the stop bit
+- DONE: stop bit detected, output data byte and assert done signal
+
+The FSM will also need to handle the case where the stop bit does not appear when expected. In this case, it will wait until it finds a stop bit before attempting to receive the next byte.
+
+The module will also include an active-high synchronous reset to reset the FSM to the IDLE state.

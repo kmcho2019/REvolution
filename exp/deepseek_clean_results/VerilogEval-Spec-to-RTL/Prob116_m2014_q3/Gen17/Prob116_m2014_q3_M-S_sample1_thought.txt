@@ -1,0 +1,11 @@
+To simplify the solution while maintaining functionality, I'll:
+
+1. Use continuous assignment instead of structural gates for cleaner code
+2. Directly implement the logic function from the K-map without intermediate wires
+3. Optimize the expression by observing that:
+   - When x[3]x[4] is 11 or 10, f is mostly 1 except for one case
+   - When x[3]x[4] is 01, f is 1 only when x[1]x[2] is 11
+   - When x[3]x[4] is 00, f can be set to 0 (taking advantage of don't-cares)
+
+The simplified logic is:
+f = (x[3] & ~x[4]) | (x[3] & x[1]) | (~x[4] & x[1] & x[2])

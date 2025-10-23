@@ -1,0 +1,11 @@
+The current solution has a timing issue where transition detection is misaligned by one cycle. To fix this, we need to:
+1. Properly align the transition detection by comparing the current input with the previous cycle's input
+2. Use a two-stage pipeline to correctly capture the previous value before comparison
+3. Maintain the captured state by OR-ing new detections with existing state
+4. Clear everything synchronously on reset
+
+The improved design will:
+- Use two registers to properly pipeline the input values (prev_in and prev_in_delayed)
+- Compare prev_in_delayed (t-1) with prev_in (t) to detect 1->0 transitions
+- Accumulate detected transitions in captured_state
+- Reset all registers synchronously

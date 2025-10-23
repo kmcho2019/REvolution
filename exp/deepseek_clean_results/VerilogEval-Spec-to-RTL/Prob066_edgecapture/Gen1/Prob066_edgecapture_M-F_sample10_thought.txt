@@ -1,0 +1,11 @@
+To fix the transition detection logic, we need to:
+1. Properly capture the previous input value before comparing with current input
+2. Ensure the comparison uses the correct previous value (from cycle N) and current value (from cycle N+1)
+3. Maintain the latch behavior where detected transitions remain set until reset
+
+Key changes:
+- Separate the previous value storage from the edge detection logic
+- Use the stored previous value (from previous cycle) for comparison
+- Keep the non-blocking assignments to maintain proper synchronous behavior
+- The edge detection now correctly identifies 1→0 transitions by comparing the stored previous value with current input
+- The output register still maintains its set-until-reset behavior

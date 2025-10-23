@@ -1,0 +1,10 @@
+Here's a novel approach using a lookup table (LUT) based implementation for sign extension. While unconventional for this simple operation, it demonstrates an alternative architectural concept:
+
+1. Instead of direct bit replication, we'll use the MSB to select between two pre-computed patterns:
+   - When MSB=0: 24'b0 concatenated with input
+   - When MSB=1: 24'b1 concatenated with input
+2. This approach mimics a 2:1 multiplexer at the bit pattern level
+3. The implementation uses a conditional operator to select between the two patterns
+4. While less efficient than direct replication, it shows an alternative way to think about sign extension as pattern selection
+
+This method could be more extensible in cases where the extension pattern isn't purely replicated bits, though for this specific case it's less optimal than the standard solution.

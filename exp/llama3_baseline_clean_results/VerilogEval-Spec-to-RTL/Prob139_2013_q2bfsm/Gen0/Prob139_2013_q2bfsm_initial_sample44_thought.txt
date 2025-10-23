@@ -1,0 +1,11 @@
+To implement the TopModule, we can design a finite state machine (FSM) with several states that capture the behavior described in the problem. The FSM will have states for the initial state A, the state where f is set to 1, the state where x is monitored for the sequence 1, 0, 1, the state where g is set to 1 and y is monitored, and the final states where g is permanently set to 1 or 0 based on the value of y. We will use a synchronous reset to ensure that the FSM returns to the initial state A when resetn is asserted.
+
+The FSM will have the following states:
+- State A: Initial state, f = 0, g = 0
+- State B: Set f to 1 for one clock cycle
+- State C: Monitor x for the sequence 1, 0, 1
+- State D: Set g to 1 and monitor y
+- State E: Permanent state where g = 1
+- State F: Permanent state where g = 0
+
+We will use a 3-bit state variable to encode these six states. The next state logic will be designed based on the current state and the inputs x and y. The output logic will be designed based on the current state.

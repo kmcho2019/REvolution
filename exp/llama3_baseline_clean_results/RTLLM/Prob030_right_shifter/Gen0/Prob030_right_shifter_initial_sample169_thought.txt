@@ -1,0 +1,9 @@
+To implement the right shifter module in Verilog, we start by defining the module with its inputs and outputs. The module has a clock input (clk) for synchronous operation, an input signal (d) that will be right-shifted into the register, and an output signal (q) that represents the result of the right shift operation. 
+
+Inside the module, we define an 8-bit register (q) and initialize it to 0 using the initial statement. We then use a always block that is triggered on the rising edge of the clock to update the value of q. 
+
+On each rising edge of the clock, the module shifts the contents of the q register to the right by one bit using the >> operator and assigns the new input bit (d) to the most significant position of the register.
+
+However, the given approach to directly shift and assign within the same statement won't work as expected because in Verilog, you can't directly manipulate individual bits of a reg during an assignment in the way it was described. 
+
+Instead, we will achieve this by first shifting the register and then assigning the input signal to the most significant bit of the register. This can be done by first shifting the register (q) to the right by one bit and then assigning the input signal (d) to the most significant bit of the shifted register.

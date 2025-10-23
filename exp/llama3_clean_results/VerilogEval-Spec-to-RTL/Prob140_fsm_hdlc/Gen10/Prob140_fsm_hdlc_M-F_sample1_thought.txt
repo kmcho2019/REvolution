@@ -1,0 +1,16 @@
+To correctly implement the HDLC framing decoder as a Moore-type finite state machine, we should reconsider the approach based on the provided feedback. The main issues with the previous implementation include not properly tracking the sequence of inputs and not correctly handling the conditions for flag, discard, and error signals.
+
+A revised approach involves using a combination of counters and state machines to track the consecutive ones and identify the sequences. The state machine should have states to track the number of consecutive ones and to identify when a flag, discard, or error condition has occurred.
+
+The design should include the following states:
+- A reset state that behaves as though the previous input were 0.
+- A state to count the consecutive ones.
+- A state to check for the flag condition (01111110).
+- A state to check for the discard condition (5 consecutive ones followed by a zero).
+- A state to signal an error (7 or more consecutive ones).
+
+The output signals (flag, discard, err) should be generated based on the current state of the state machine.
+
+To implement this, we can use a finite state machine (FSM) with the aforementioned states. The FSM will transition between states based on the current input and the previous state. The output signals will be asserted based on the current state of the FSM.
+
+This approach ensures that the FSM correctly tracks the sequence of inputs and only asserts the outputs when the correct sequence has been detected.

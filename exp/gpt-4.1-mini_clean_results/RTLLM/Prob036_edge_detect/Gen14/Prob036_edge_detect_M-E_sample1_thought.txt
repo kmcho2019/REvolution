@@ -1,0 +1,9 @@
+Instead of simply registering the previous value of 'a' and using combinational logic to detect edges, this design uses a two-stage synchronizer for signal 'a' to robustly capture its transitions and avoid metastability issues if 'a' is asynchronous or slow-changing.
+
+We store 'a' into a two-flip-flop shift register (a_d1 and a_d2) clocked by clk. Edge detection is then performed by comparing these two delayed versions: when a_d2 is 0 and a_d1 is 1, it indicates a rising edge happened one clock earlier; when a_d2 is 1 and a_d1 is 0, a falling edge happened one clock earlier.
+
+To generate one-cycle pulse outputs 'rise' and 'down', a small FSM toggles a flag whenever an edge is detected and outputs a pulse only once per edge event. The outputs are thus aligned to clk and last exactly one cycle.
+
+This two-stage synchronizer architecture increases robustness against asynchronous or glitchy inputs, and the FSM logic ensures clean one-shot pulses without glitches or double counts. The reset clears all state synchronously.
+
+Overall, this approach trades a bit of latency and registers for higher robustness and clean edge pulse generation.

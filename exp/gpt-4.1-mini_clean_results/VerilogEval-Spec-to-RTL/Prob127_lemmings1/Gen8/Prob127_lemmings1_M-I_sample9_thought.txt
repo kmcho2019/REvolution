@@ -1,0 +1,18 @@
+Optimize the FSM for slightly better timing and power by rewriting the next state logic as a simple boolean expression instead of if-else statements:
+
+- The state toggles if both bumps are high: next_state = state ^ (bump_left & bump_right)
+- If only bump_left is asserted (and bump_right is low), force state to 1 (walk_right)
+- If only bump_right is asserted (and bump_left is low), force state to 0 (walk_left)
+- Otherwise, hold current state
+
+Expressed compactly:
+next_state = (bump_left & bump_right) ? ~state :
+             bump_left ? 1 :
+             bump_right ? 0 :
+             state;
+
+Replacing the if-else with a conditional expression may reduce combinational path complexity and improve synthesis.
+
+Retain the asynchronous reset and Moore outputs as before.
+
+This minor refactor slightly reduces logic depth and toggling by avoiding multiple if conditions, potentially improving timing and power with no area overhead.

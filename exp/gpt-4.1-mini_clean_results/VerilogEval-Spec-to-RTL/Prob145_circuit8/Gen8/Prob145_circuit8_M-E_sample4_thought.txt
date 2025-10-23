@@ -1,0 +1,20 @@
+Analyze the waveform to infer the sequential behavior: p and q start undefined, become zero after the first rising clock edge with a=0, and then p sometimes sets to 1 when a=1 at clock edges, while q seems to lag p by some cycles, becoming 1 only after p has been 1 for some time.
+
+A new approach is to model p as a flip-flop that sets when input a is 1 at the rising clock edge, but remains set until cleared under a certain condition (such as when a=0 and q=1), representing a latch-like behavior influenced by a and q. Meanwhile, q acts as a delayed version of p but updates only when clock=0, effectively updating on the falling edge or asynchronously based on p.
+
+Since the clock is synchronous only on rising edge, but output q updates mostly in clock=0 phases in the waveform, implement q as a register updated asynchronously (using clock and/or p and a) or as a flip-flop triggered on the falling edge of clock, capturing the previous p state.
+
+Therefore, the architecture is:
+
+- p is a positive-edge clocked flip-flop:
+    - if a=1, p is set to 1
+    - else if a=0 and q=1, p clears to 0
+    - else p holds its value
+
+- q is a negative-edge clocked flip-flop that captures the current p value, acting as a 1-clock-cycle delayed p, but with negative-edge triggering.
+
+This dual-edge approach matches the waveform patterns where q changes on falling edges, and p changes on rising edges influenced by a and q.
+
+Initialize p and q to zero to match first stable outputs.
+
+This novel approach exploits dual-edge clocking and feedback between p and q to replicate the given waveform behavior.

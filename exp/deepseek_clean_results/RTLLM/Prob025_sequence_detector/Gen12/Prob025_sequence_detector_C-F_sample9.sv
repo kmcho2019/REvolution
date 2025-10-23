@@ -1,0 +1,22 @@
+module sequence_detector (
+    input clk,
+    input reset_n,
+    input data_in,
+    output reg sequence_detected
+);
+
+reg [2:0] shift_reg;  // Stores last 3 bits (positions 2:0)
+
+// Shift register update
+always @(posedge clk or negedge reset_n) begin
+    if (!reset_n) begin
+        shift_reg <= 3'b0;
+        sequence_detected <= 1'b0;
+    end else begin
+        shift_reg <= {shift_reg[1:0], data_in};
+        // Pattern detection: shift_reg has "100" and new bit is "1"
+        sequence_detected <= (shift_reg == 3'b100) & data_in;
+    end
+end
+
+endmodule

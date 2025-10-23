@@ -1,0 +1,9 @@
+To improve the existing design for better power and area efficiency, eliminate the verbose case statement by implementing a modulo-7 counter for the sequence when `a` is low, leveraging arithmetic operations instead of explicit state enumeration. This reduces combinational logic complexity. Since `q` cycles through values 4,5,6,0,1,2,3 then back to 4, the arithmetic can be managed by incrementing `q` modulo 7 with a shifted base.
+
+When `a` is high, `q` is forced to 4 every clock cycle, effectively serving as a synchronous reset/load to state 4.
+
+This approach reduces logic area, simplifies next state calculation, and may slightly reduce power by using an incrementer instead of case logic, while maintaining the same timing behavior.
+
+Also, to minimize toggling when output does not change, update `q` only if next state differs from current state.
+
+The output register remains sequential and updated on the rising edge of `clk`.

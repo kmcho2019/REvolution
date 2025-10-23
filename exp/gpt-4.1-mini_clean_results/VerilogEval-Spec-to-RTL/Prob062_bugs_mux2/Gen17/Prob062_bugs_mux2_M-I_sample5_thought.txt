@@ -1,0 +1,9 @@
+The root cause of the bug is the output width mismatch: inputs `a` and `b` are 8 bits wide, but output `out` is a single bit. The original code attempts bitwise operations between 8-bit vectors and a scalar output, causing incorrect synthesis and simulation results.
+
+To fix this, the output must be changed to 8 bits wide (`output [7:0] out`) to match the inputs. Then the mux can be cleanly implemented using a continuous assignment with a ternary operator, which is concise and efficient in hardware (better PPA than an always block or case).
+
+This corrected interface and implementation will ensure the mux selects the entire 8-bit input vector based on `sel` and outputs the selected 8-bit vector on `out` without ambiguity or mismatch.
+
+Hence, the solution is:
+- Change output port to 8 bits wide.
+- Use continuous assignment with ternary operator for clarity and efficiency.

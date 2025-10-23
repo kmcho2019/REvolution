@@ -1,0 +1,22 @@
+The original solution has several flaws in state transitions and output generation. Here's the improved strategy:
+
+1. Proper State Counting:
+   - Need states to track 1 through 6 consecutive 1s (plus idle state)
+   - This ensures accurate counting before generating outputs
+
+2. Correct Output Logic:
+   - disc: after exactly 5 consecutive 1s followed by 0
+   - flag: after exactly 6 consecutive 1s followed by 0
+   - err: after 7 or more consecutive 1s
+
+3. Moore Machine Implementation:
+   - Outputs depend only on current state
+   - Outputs registered to appear one cycle after condition
+
+4. State Encoding:
+   - Use one-hot encoding for better timing
+   - 7 states: IDLE, ONE_1, TWO_1, THREE_1, FOUR_1, FIVE_1, SIX_1
+
+5. Reset Behavior:
+   - Returns to IDLE state (previous input treated as 0)
+   - Clears all outputs

@@ -1,0 +1,9 @@
+To improve the PPA (timing, power, and area) while keeping the design clear and maintainable, I will integrate the combinational logic directly into the always block without the intermediate wire. This reduces signal routing overhead and allows synthesis tools to better optimize logic and registers as a single unit.
+
+The characteristic equation remains the same for minimal logic and correct behavior: Q_next = (J & ~Q) | (~K & Q).
+
+This approach keeps minimal combinational logic, reduces net count, and maintains synchronous, non-blocking assignment for proper flip-flop inference. It also avoids unnecessary combinational nets that could add routing delay or power.
+
+Overall, this small simplification can yield slightly improved timing and area, while power benefits from reduced signal toggling through minimal intermediate signals.
+
+No functional changes are made, only stylistic and structural for PPA gains.

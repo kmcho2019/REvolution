@@ -1,0 +1,9 @@
+I'll refactor the code to use a single always block for all 8 bits instead of using two separate registers. The key changes are:
+
+1. Use a single 8-bit register to store the previous input value (prev_in)
+2. Detect edges by comparing current input with previous input directly
+3. This reduces the number of flip-flops by half while maintaining the same functionality
+4. The edge detection now happens immediately after the transition (1 cycle latency) rather than waiting for 2 cycles
+5. The output is registered to ensure clean timing
+
+This approach maintains the same positive edge detection behavior but with simpler logic and reduced area.

@@ -1,0 +1,10 @@
+To optimize the original 12-hour BCD clock design for better PPA (performance, power, area) while preserving its functionality, I will:
+
+- Replace the division/modulo by 10 in BCD conversion with simple combinational subtract and compare logic to generate tens and units digits, reducing area and delay.
+- Remove the combinational always @(*) block for BCD outputs and instead update the BCD outputs synchronously only when counters change (on ena), reducing unnecessary switching and saving power.
+- Implement combinational logic for hour BCD digit conversion using simple comparison and subtraction.
+- Flatten nested if-else logic for incrementing counters to reduce critical path complexity.
+- Keep synchronous reset with highest priority.
+- Use non-blocking assignments properly.
+  
+These changes aim to reduce combinational complexity on the critical path, minimize switching power by avoiding combinational conversions every clock, and reduce area by avoiding division/modulo operators.

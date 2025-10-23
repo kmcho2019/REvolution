@@ -1,0 +1,14 @@
+Refactoring the FSM by using a Moore style approach with registered outputs simplifies the logic and separates state and output clearly. Instead of a Mealy output depending combinationally on input and state, MATCH will be asserted in the registered state representing full detection. This makes output timing more predictable and typically results in less glitching. 
+
+I will also replace the combinational always block for next state with a purely combinational function for clarity and modularity. The state transition logic will be moved to a separate function, and next_state will be assigned by this function combinationally. 
+
+This approach uses a Moore FSM with synchronous MATCH output and synchronous reset. It explicitly registers MATCH, which goes high one cycle after the last matching input bit, due to synchronization, but ensures output stability.
+
+Key changes:
+- Use function for next state computation.
+- Separate combinational next state logic from sequential state update.
+- Register output MATCH to eliminate Mealy output glitches.
+- Moore output asserted in the match state (where the last input was 1 and pattern matched).
+- Maintain the same 3-bit state encoding for minimal flip-flops and clarity.
+
+This structure improves output timing stability and code modularity while preserving the core detection functionality.

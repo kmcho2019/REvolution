@@ -1,0 +1,17 @@
+Novel Architecture Idea:
+1. State Encoding: Use 2-bit encoding to represent states (A, B, and two additional states for tracking)
+2. Bitmask Matching: Instead of counting 1s, store the 3-bit window pattern and compare against valid patterns (011, 101, 110)
+3. Pattern Recognition: Use combinational logic to detect any of the valid patterns
+4. State Machine: 
+   - State A: Wait for s=1
+   - State B: First cycle of window
+   - State C: Second cycle of window
+   - State D: Third cycle of window (evaluation point)
+5. Output Logic: Set z=1 when in state D and the stored pattern matches any valid pattern
+6. Reset Handling: Synchronous reset to state A
+
+Advantages:
+- Eliminates adder for counting ones
+- Uses simple pattern matching instead of arithmetic
+- Clear state progression through window cycles
+- Easily extensible to other pattern matching requirements

@@ -1,0 +1,13 @@
+Novel Architecture Idea:
+1. Shift Register Approach: Instead of storing bytes in separate registers, use a 24-bit shift register that shifts in new bytes from the left. This reduces register count and simplifies byte concatenation.
+2. State Tracking: Maintain a 2-bit counter to track which byte we're currently receiving (0=waiting, 1=first byte, 2=second byte, 3=third byte).
+3. Early Done Detection: The done signal can be generated combinatorially when the counter reaches 3, eliminating the need for an extra state.
+4. Reset Handling: Clear both the shift register and counter on reset, with outputs going to don't-care.
+5. Power Optimization: The shift register only updates when we're actively receiving bytes (counter > 0).
+
+Key Advantages:
+- Reduced register count (single 24-bit register instead of multiple byte registers)
+- Simplified byte concatenation through shifting
+- Combinatorial done signal reduces latency
+- Clear state tracking with minimal logic
+- Efficient power usage during idle periods

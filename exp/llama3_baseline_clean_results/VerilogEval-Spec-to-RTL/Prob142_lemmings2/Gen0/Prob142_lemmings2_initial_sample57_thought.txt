@@ -1,0 +1,16 @@
+The design of the TopModule will be based on a Moore state machine with four states: walking_left, walking_right, falling, and reset. The state machine will transition between these states based on the input signals. When the Lemming is walking left or right, it will change direction if it receives a bump signal on the opposite side. If the ground disappears, the Lemming will transition to the falling state and say "aaah!". When the ground reappears, the Lemming will resume walking in the same direction as before the fall. The asynchronous reset signal will reset the state machine to the walking_left state.
+
+The state machine will use two bits to represent the four states. The output signals walk_left, walk_right, and aaah will be determined by the current state and the input signals. 
+
+The state machine will use the following state encoding:
+- walking_left: 00
+- walking_right: 01
+- falling: 10
+- reset: 11 (but this will be immediately followed by walking_left due to areset)
+However, to make the transition logic simpler, we can also encode the current direction (left or right) as a separate signal, and only use one bit for the state (walking or falling).
+
+So we will use:
+- state: 0 for walking, 1 for falling
+- direction: 0 for left, 1 for right
+
+We will then use a combination of the state and direction to generate the output signals.

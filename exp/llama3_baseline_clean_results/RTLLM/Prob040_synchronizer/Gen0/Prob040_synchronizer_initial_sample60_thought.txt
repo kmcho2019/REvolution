@@ -1,0 +1,9 @@
+The problem can be solved by designing a multi-bit MUX-based synchronizer module in Verilog. The synchronizer will have two clocks, clk_a and clk_b, where data_in is synchronized with clk_a and data_en is synchronized with clk_a as well. data_en is delayed by two clock cycles of clk_b before it is used to enable the output dataout. The output dataout is synchronized with clk_b.
+
+To implement this, we need to design the following components:
+- Data Register: A 4-bit register to store the input data signal, data_in.
+- Enable Data Register: A 1-bit register to store the input enable signal, data_en.
+- Enable Control Registers: Two 1-bit registers, en_clap_one and en_clap_two, to control the selection of the input data.
+- Output Assignment: Assign the output data value based on the control signal en_clap_two.
+
+The synchronizer module will be designed using these components, with the data_in remaining constant during the period when data_en is high, and data_en being high for at least 3 clk_b clock cycles.

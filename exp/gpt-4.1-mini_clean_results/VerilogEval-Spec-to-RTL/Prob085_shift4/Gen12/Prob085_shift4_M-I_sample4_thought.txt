@@ -1,0 +1,5 @@
+To improve PPA from the given solution, we aim to reduce the switching activity and logic depth while maintaining the same functionality and asynchronous reset. Since load and enable are mutually prioritized, we can gate the state update only when load or enable is asserted, reducing unnecessary toggling of q. This can be done by checking if load or enable is asserted before updating q, and otherwise holding its value without re-assigning, which might help synthesis tools optimize power by lowering switching.
+
+Additionally, to aid timing, explicitly define the shift right operation using concatenation with q[3:1], avoiding any internal mux or intermediate variables. Since asynchronous reset can cause timing penalties, here we keep it as is because the spec requires asynchronous positive edge triggered reset; modifying it would change behavior.
+
+Thus, the optimization focuses on reducing unnecessary register toggling by assigning q only when needed and leveraging synthesis-friendly coding style. This often leads to lower power and better timing results.

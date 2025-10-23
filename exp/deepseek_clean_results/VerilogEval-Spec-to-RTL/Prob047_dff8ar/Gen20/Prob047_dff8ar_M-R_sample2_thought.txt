@@ -1,0 +1,13 @@
+Refactoring approach:
+1. Instead of using a separate parameterized DFF module, implement the flip-flops directly in TopModule
+2. Use an always block with vector operations for all 8 bits simultaneously
+3. Maintain the same functionality (positive edge triggered with async reset)
+4. Keep the reset value as 0 for all bits
+5. Simplify hierarchy by eliminating the sub-module while keeping the same behavior
+
+Key changes:
+- Eliminates module hierarchy for potential synthesis optimization
+- Uses direct vector register implementation
+- Maintains identical timing characteristics
+- Same power characteristics since the underlying flip-flop implementation remains
+- May offer slight area optimization by removing module boundaries

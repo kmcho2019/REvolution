@@ -1,0 +1,11 @@
+Implement the 64-bit subtractor using direct binary subtraction with a ripple borrow approach, but with a twist: use a fully combinational subtractor composed of a chain of 64 one-bit subtractor units. Each 1-bit subtractor computes difference and borrow-out from the two input bits and borrow-in.
+
+This approach:
+- Simple and straightforward ripple borrow subtractor (not carry-lookahead).
+- Each 1-bit subtractor outputs difference and borrow-out, which feeds into next bit.
+- Combine the 64 difference bits for the final 64-bit result.
+- Overflow detection based on the sign bits of A, B, and result, exactly as requested.
+- The borrow propagation chain is the critical path, which can be optimized later by pipelining or parallelism, but the code remains clean and direct.
+- The 1-bit subtractor module is reusable and simple.
+
+This architecture offers clarity and a classic subtractor design contrasting with the CLA-based design in the prior example.

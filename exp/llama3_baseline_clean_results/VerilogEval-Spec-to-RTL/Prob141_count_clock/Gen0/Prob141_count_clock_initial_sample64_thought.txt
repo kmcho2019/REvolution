@@ -1,0 +1,7 @@
+To implement the 12-hour clock module, we need to design a set of counters for hours, minutes, and seconds, each with a BCD representation. We will use three counters: hours (hh), minutes (mm), and seconds (ss). Each counter will have its own 8-bit BCD representation, which will allow us to display the time in a 12-hour format. 
+
+The module will have an enable signal (ena) that pulses once per second to increment the counters. The reset signal will reset the counters to "12:00 AM" when asserted. The pm signal will be asserted when the time is in PM, otherwise it will be AM. 
+
+We will use a finite state machine or a sequence of conditional statements to control the increment of the counters. When the seconds counter reaches 59, it will reset to 0 and the minutes counter will increment. When the minutes counter reaches 59, it will reset to 0 and the hours counter will increment. When the hours counter reaches 12, it will reset to 1 and the pm signal will toggle. 
+
+We will also need to handle the wraparound of the hours counter when it reaches 12:59:59 PM. In this case, the counters will reset to "01:00:00 AM".

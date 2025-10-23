@@ -1,0 +1,11 @@
+I will implement a frequency divider by an odd number NUM_DIV using a symmetrical two-phase counter approach. Instead of two separate counters for rising and falling edges, I will use a single up/down counter that counts from 0 up to NUM_DIV-1, then back down to 0, creating a triangular counting waveform with a period twice NUM_DIV. This approach naturally generates a clock with a duty cycle close to 50% for odd divisors.
+
+Specifically:
+- The counter increments on each clock edge (posedge).
+- When the counter reaches NUM_DIV-1, it reverses counting direction (starts counting down).
+- When the counter reaches 0, it reverses direction (starts counting up).
+- The divided clock output toggles when the counter hits 0 on counting up and hits NUM_DIV-1 on counting down, producing evenly spaced edges and a symmetric waveform.
+- This approach avoids relying on both clock edges and complex toggling, instead using a simple state machine with one counter and direction flag.
+- Active low reset asynchronously clears the counter and output.
+- Parameter NUM_DIV is required to be odd.
+- The clock division ratio is exactly NUM_DIV, with improved duty cycle compared to conventional odd division methods.

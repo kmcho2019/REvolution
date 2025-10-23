@@ -1,0 +1,25 @@
+To improve the original design's Power, Performance, and Area (PPA), I will optimize as follows:
+
+1. **Remove the expensive 64-bit comparator for update_en:**  
+   The original design saves power by gating updates if the new state equals the old state, but this requires a wide 64-bit comparator each clock cycle, which adds significant power and delay. Instead, always update the registers on every clock cycle except when loading, which simplifies logic, reduces power overhead from the comparator, and improves timing.
+
+2. **Merge the boundary wiring and block logic into a single always block per block:**  
+   This avoids separate combinational wires for neighbors and uses local variables to compute next state bits efficiently.
+
+3. **Use a single generate loop for the whole 512-bit array:**  
+   Instead of splitting into 8x64 blocks, implement the entire 512-bit Rule 90 state with one register and one combinational next-state logic. This removes overhead of multiple modules and connections.
+
+4. **Use bit-slicing and vectorized operations to compute next state:**  
+   Since Rule 90's next state for each bit is the XOR of its two neighbors, we can efficiently compute the next state vector as:  
+   `next_state = (q << 1) ^ (q >> 1)`, with the boundary bits zero-padded as required.
+
+This single 512-bit register approach with simple shift-and-XOR next state calculation will reduce area (one register instead of 8 blocks), improve performance (combinational logic is a single shift+XOR), and reduce power (no comparators, simpler control). The load input is still respected for asynchronous initialization.
+
+Overall, this approach is cleaner, smaller, faster, and uses less power.
+
+Note:  
+- The left boundary q[-1] and right boundary q[512] are zero, so shifting inserts zero bits.  
+- On load, we update the entire state with input data.  
+- On normal clock cycles, the next state is computed as `(q << 1) ^ (q >> 1)` and registered.
+
+This is a classic and optimal implementation of Rule 90 cellular automaton.

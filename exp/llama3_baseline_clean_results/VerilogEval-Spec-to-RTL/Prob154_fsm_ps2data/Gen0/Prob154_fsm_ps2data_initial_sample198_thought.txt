@@ -1,0 +1,15 @@
+To implement the TopModule, we need to design a finite state machine that can identify the message boundaries in the input byte stream. The algorithm requires us to discard bytes until we see one with in[3]=1, then assume that this is byte 1 of a message, and signal the receipt of a message once all 3 bytes have been received. 
+
+The state machine should have at least 4 states: IDLE (discarding bytes), BYTE_1, BYTE_2, and BYTE_3. The state transitions should be based on the current state and the input byte. 
+
+When the state machine is in IDLE state and receives a byte with in[3]=1, it transitions to BYTE_1 state and records the input byte. 
+
+In BYTE_1 state, it records the next input byte and transitions to BYTE_2 state. 
+
+In BYTE_2 state, it records the next input byte and transitions to BYTE_3 state. 
+
+In BYTE_3 state, it signals the receipt of a message (done) and outputs the recorded 3 bytes (out_bytes). 
+
+After signaling the receipt of a message, the state machine transitions back to IDLE state. 
+
+The reset signal is used to reset the state machine to IDLE state.

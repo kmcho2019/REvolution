@@ -1,0 +1,19 @@
+To implement the given Karnaugh map, we first need to understand the pattern and identify the minterms (rows where the output is 1). We then express the output 'out' as the sum of these minterms using logical OR operations.
+
+Looking at the Karnaugh map:
+- When c = 0 and d = 0, out is 1 when a = 0 and b = 1, or a = 1 and b = 0.
+- When c = 0 and d = 1, out is 1 when a = 0 and b = 0, or a = 1 and b = 1.
+- When c = 1 and d = 1, out is 1 when a = 0 and b = 1, or a = 1 and b = 0.
+- When c = 1 and d = 0, out is 1 when a = 0 and b = 0, or a = 1 and b = 1.
+
+This translates to the following expression:
+out = (c'd'ab') + (c'd'a'b) + (cd'ab') + (cdab) + (c'da'b) + (c'dab) + (cda'b) + (cd'a'b)
+
+However, this expression simplifies as per the Karnaugh map to:
+out = (c'd'a'b') + (c'd'ab) + (cd'ab') + (cdab) + (c'dab') + (c'da'b) + (cda'b) + (cd'a'b)
+
+But considering the minimized form and considering the Karnaugh map provided, a simpler, more direct expression considering the patterns can be derived:
+out = (c'd'a'b') + (c'dab) + (cd'a'b') + (cdab) 
+
+Which simplifies further based on the map:
+out = (~c & ~d & ~a & b) | (~c & ~d & a & b) | (c & ~d & ~a & b) | (c & d & a & b)

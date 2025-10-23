@@ -1,0 +1,7 @@
+Refactor the hierarchical 256-to-1 4-bit mux to use continuous assignments (`assign`) instead of combinational `always` blocks with case statements. 
+
+- Keep the same three-stage hierarchy for clarity and modularity.
+- Implement the 16-to-1 and 4-to-1 muxes using `assign` statements that leverage arithmetic indexed slicing, avoiding explicit case statements.
+- Use packed arrays of wires for intermediate stage outputs for cleaner wiring.
+- This structure preserves the modular design and hierarchical benefits but uses combinational assignment to potentially improve synthesis optimization and reduce inferred logic complexity.
+- This approach simplifies the mux logic descriptions and might yield better PPA by allowing synthesis tools to optimize multiplexers more effectively.

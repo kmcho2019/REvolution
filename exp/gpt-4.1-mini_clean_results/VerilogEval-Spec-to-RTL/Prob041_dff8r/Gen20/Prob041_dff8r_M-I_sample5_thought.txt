@@ -1,0 +1,11 @@
+Since the enable signal is permanently tied high in the original design, the enable logic in the DFF module is redundant and adds unnecessary complexity, potentially increasing area and dynamic power due to extra logic gates.
+
+To optimize for better power and area without affecting performance or functionality, I will remove the enable input from the DFF module entirely and instantiate a simple vector D flip-flop register with synchronous active-high reset. This reduces logic overhead, simplifies clock gating, and allows synthesis tools to better optimize the register.
+
+The improved design maintains the single always block for all bits triggered on the positive edge of clk and synchronous reset, keeping the code clean and efficient. This should reduce area and dynamic power while preserving the same functional behavior.
+
+This strategy:
+- Removes unused enable logic to reduce area and switching power.
+- Simplifies code, improving readability and maintainability.
+- Keeps a vectorized register to optimize resource usage.
+- Retains synchronous active-high reset and positive edge clocking.

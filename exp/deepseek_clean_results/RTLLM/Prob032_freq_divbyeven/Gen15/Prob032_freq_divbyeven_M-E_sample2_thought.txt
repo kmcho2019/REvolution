@@ -1,0 +1,17 @@
+Novel architectural approach:
+1. Instead of using a traditional counter, implement a shift register-based approach for frequency division
+2. The shift register length equals half the division factor (NUM_DIV/2)
+3. A single '1' circulates through the shift register, creating the divided clock
+4. Output clock toggles when the '1' reaches the end of the shift register
+5. Advantages:
+   - Eliminates comparison logic (reduces critical path)
+   - Naturally enforces even division (structure guarantees 50% duty cycle)
+   - Power-efficient as only one bit changes per cycle
+   - Scales well with larger division factors
+
+Key features:
+- Shift register implementation ensures glitch-free operation
+- No arithmetic operations needed during normal operation
+- Parameter validation ensures even division factor
+- Reset initializes the shift register to known state
+- Output toggles exactly when the circulating bit wraps around

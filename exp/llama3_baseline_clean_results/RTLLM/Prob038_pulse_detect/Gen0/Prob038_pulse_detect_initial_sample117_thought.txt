@@ -1,0 +1,8 @@
+To solve this problem, we need to design a finite state machine (FSM) that detects pulses in the input signal data_in. The FSM should have states to track the current state of the pulse detection process. The states can be defined as follows: 
+- IDLE: Initial state, waiting for the start of a pulse (data_in = 1).
+- PULSE_1: First state of the pulse, data_in has just become 1.
+- PULSE_0: Second state of the pulse, data_in has just become 0 after being 1.
+- END_PULSE: Final state of the pulse, data_in is 0 after being 1 and then 0.
+When a pulse is detected (i.e., data_in changes from 0 to 1 and then back to 0), the output data_out should be set to 1 for one clock cycle. The FSM should then return to the IDLE state, waiting for the next pulse.
+
+We can implement this FSM using a case statement inside an always block, sensitive to the positive edge of the clk signal and the negative edge of the rst_n signal. We will use a register 'state' to keep track of the current state of the FSM.

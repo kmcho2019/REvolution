@@ -1,0 +1,20 @@
+Simplified 3.5x fractional divider design:
+
+1. Core Concept:
+   - Alternate between 4 and 3 clock cycles for high/low periods
+   - Use a 3-bit counter to track 7 states (for 3.5x division)
+   - Generate base clock (high for 4 cycles, low for 3)
+   - Create phase-shifted version (delayed by half cycle)
+   - Combine both clocks with OR operation
+
+2. Simplifications:
+   - Remove complex state machine - simple counter suffices
+   - Generate phase shift using negedge flop
+   - Directly assign clock outputs based on counter value
+   - Eliminate intermediate registers where possible
+
+3. Key Improvements:
+   - Reduced logic complexity
+   - Clearer relationship between counter and output
+   - Maintains correct 3.5x division ratio
+   - Proper duty cycle through simple counter control

@@ -1,0 +1,9 @@
+To solve this problem, we can design a finite state machine (FSM) with multiple states to track the sequence of inputs and control the outputs accordingly. The FSM will have the following states:
+- State A: Initial state when reset is asserted.
+- State B: Sets output f to 1 for one clock cycle after reset is de-asserted.
+- State C: Waits for the sequence of x inputs (1, 0, 1) to occur.
+- State D: Sets output g to 1 and waits for y input to be 1 within two clock cycles.
+- State E: Maintains g = 1 permanently if y becomes 1 within two clock cycles.
+- State F: Sets g = 0 permanently if y does not become 1 within two clock cycles.
+
+We will use a 3-bit state register to represent these 6 states. The FSM will transition between states based on the current state, input values, and clock edges. We will also use a counter to keep track of the number of clock cycles in certain states.

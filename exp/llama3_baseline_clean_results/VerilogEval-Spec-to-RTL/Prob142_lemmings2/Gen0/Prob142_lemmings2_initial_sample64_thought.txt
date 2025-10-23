@@ -1,0 +1,13 @@
+To implement the Lemming behavior using a Moore state machine, we can identify the following states: 
+- walking left (WL)
+- walking right (WR)
+- falling (F)
+
+The state transitions can be determined as follows:
+- If the current state is WL and bump_left is 1, transition to WR.
+- If the current state is WL and bump_right is 0 and ground is 0, transition to F.
+- If the current state is WR and bump_right is 1, transition to WL.
+- If the current state is WR and bump_left is 0 and ground is 0, transition to F.
+- If the current state is F and ground is 1, transition to the previous walking state.
+
+We will use an enum to represent the states and a 2-bit state register to store the current state.

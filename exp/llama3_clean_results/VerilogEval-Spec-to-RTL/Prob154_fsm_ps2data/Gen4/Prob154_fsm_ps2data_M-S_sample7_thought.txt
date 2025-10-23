@@ -1,0 +1,9 @@
+To simplify the given Verilog code, we can utilize a more straightforward approach for implementing the finite state machine (FSM) and the datapath. We can maintain a simple 2-bit register `byte_count` to keep track of the current state. 
+
+When `byte_count` equals 0, we are in the idle state, waiting for the first byte with `in[3]` equal to 1. When `byte_count` equals 1, we have received the first byte and are waiting for the second byte. When `byte_count` equals 2, we have received the second byte and are waiting for the third byte. When we receive the third byte, we assert the `done` signal and reset `byte_count` to 0.
+
+To simplify the logic, we can use a simple `if-else` statement to determine the next state and update the `out_bytes` register accordingly. We can directly drive the `done` signal based on the current state.
+
+We also need to handle the reset condition, where we set `byte_count` to 0, `out_bytes` to 0, and `done` to 0.
+
+By simplifying the logic and reducing the number of always blocks, we can improve the readability and maintainability of the code while maintaining the same functionality.

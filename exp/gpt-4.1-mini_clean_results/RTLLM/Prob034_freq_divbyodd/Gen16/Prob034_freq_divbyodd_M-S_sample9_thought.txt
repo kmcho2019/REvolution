@@ -1,0 +1,11 @@
+To simplify the odd frequency divider design while maintaining correct functionality:
+
+- Use two separate counters (cnt1 and cnt2) running on positive and negative edges respectively, each counting up to NUM_DIV - 1.
+- Toggle clk_div1 when cnt1 reaches HALF_DIV, and similarly toggle clk_div2 when cnt2 reaches HALF_DIV.
+- Initialize counters and clk_div signals to zero on active low reset.
+- Generate clk_div as the OR of clk_div1 and clk_div2, capturing both clock edges.
+- This approach avoids the delayed counter and multiple set/reset logic; instead relies on toggle at specific counts for simplicity.
+- Keep asynchronous active-low reset and parameterized odd divisor check with minimal logic.
+- Use $clog2 for counter width.
+
+This simplified design reduces the number of registers and logic from the previous solution and eases understanding while preserving the odd division function.

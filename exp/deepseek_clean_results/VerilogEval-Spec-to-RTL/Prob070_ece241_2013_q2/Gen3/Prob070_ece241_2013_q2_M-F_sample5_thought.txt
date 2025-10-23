@@ -1,0 +1,18 @@
+To fix the implementation, I'll:
+1. Carefully reconstruct the truth table based on problem requirements:
+   - Output 1 cases: 2 (0010), 7 (0111), 15 (1111)
+   - Output 0 cases: 0 (0000), 1 (0001), 4 (0100), 5 (0101), 6 (0110), 9 (1001), 10 (1010), 13 (1101), 14 (1110)
+   - Don't care cases: 3,8,11,12
+
+2. For out_sop (Sum of Products):
+   - Directly implement the minterms for output 1 cases
+   - All other cases will automatically be 0 (including don't cares)
+   - Expression: (~a & b & ~c & ~d) | (~a & b & c & d) | (a & b & c & d)
+
+3. For out_pos (Product of Sums):
+   - First identify all maxterms where output is 0
+   - Convert to POS form by ANDing the OR of complemented inputs for each maxterm
+   - Simplify using don't cares where possible
+   - Final expression: (a | b | ~d) & (a | ~b | c) & (~a | b | ~c | d)
+
+4. Verify both forms cover all required cases and don't conflict with don't cares

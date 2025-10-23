@@ -1,0 +1,14 @@
+To correct the existing code, we first need to address the issue with the `out[i]` being reset to 0 when `in[i]` transitions from 0 to 1. This can be fixed by removing the line that resets `out[i]` to 0, as once `out[i]` is set to 1, it should remain 1 until the reset signal is asserted. 
+
+Next, to correctly capture the transition from 1 to 0 in the input signal, we need to compare the current input with the previous input. However, since `prev_in` is updated within the same `always` block, we need to ensure that the comparison is done with the correct previous state of `in`. This can be achieved by using the value of `prev_in` before it is updated in the same clock cycle.
+
+To simplify the logic and ensure correct timing, we can remove the unnecessary `else if` condition and only update `out[i]` when the transition from 1 to 0 is detected. We should also use non-blocking assignments for updating registers to ensure correct timing.
+
+Finally, to improve the code, we should maintain the current state of `out` and update it only when necessary, which in this case is when a transition from 1 to 0 is detected in the input signal.
+
+Therefore, the corrected code should:
+
+1. Remove the unnecessary reset of `out[i]` to 0.
+2. Correctly compare the current state of `in` with its previous state to detect transitions.
+3. Use non-blocking assignments for updating registers.
+4. Minimize unnecessary operations to improve PPA.

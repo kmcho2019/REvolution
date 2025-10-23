@@ -1,0 +1,5 @@
+Refactor the design by combining the reset conditions into synchronous resets only (on CLK_in posedge) to simplify the sensitivity lists and improve synthesis friendliness. Instead of toggling outputs directly in counters, use counters to count half periods, and generate output clocks by comparing counters with thresholds and using simple toggle registers updated only when counters hit limits.
+
+Also, pack the counters and outputs update in a single always block for each clock output for code compactness. This approach also improves readability by grouping each frequency divider logic clearly, still using non-blocking assignments for sequential logic. The 50MHz clock generation remains a simple toggle every cycle, but implemented consistently with others.
+
+This structure avoids asynchronous resets and organizes the code for better clarity and consistent reset strategy, which can be easier for tools to optimize and verify.

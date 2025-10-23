@@ -1,0 +1,15 @@
+Use a single always block triggered on the clock and asynchronous reset. Store the PHT entries in a 128-entry reg array, initialized to weakly not taken.
+
+Maintain a single committed global history register (ghr) representing the branch outcomes after training recovery. On prediction, compute the index as predict_pc XOR current ghr, read the saturating counter for prediction, and immediately latch the current ghr and prediction output to registers for stable outputs next cycle.
+
+At the clock edge, first update the PHT if training is valid, using train_pc XOR train_history, saturating towards train_taken. If training indicates a misprediction, restore ghr to train_history (the committed history after that branch). Otherwise, update ghr by shifting in the actual train_taken.
+
+If training is not valid or no misprediction, and prediction is valid, update ghr by shifting in the predicted bit.
+
+This ensures that if training with misprediction and prediction happen together, training's ghr update takes precedence because assignments in the always block are handled sequentially with non-blocking semantics; by prioritizing training first in the code, the prediction update won't override a training misprediction recovery.
+
+For outputs, the latched prediction_taken and predict_history registers output the prediction results corresponding exactly to the prediction query in the previous cycle (one cycle latency), consistent with the problem statement.
+
+This simple approach respects all specification constraints and eliminates conflicting multiple ghr updates on the same clock edge by ordering them and using if-else logic.
+
+Initialization on reset clears ghr and sets all PHT entries weakly not taken (01).

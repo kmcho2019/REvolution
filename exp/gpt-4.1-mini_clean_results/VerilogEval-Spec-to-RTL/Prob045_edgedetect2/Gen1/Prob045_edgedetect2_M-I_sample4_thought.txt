@@ -1,0 +1,9 @@
+The issue in the original solution arises because the non-blocking assignments all update simultaneously on the clock edge, causing the 'anyedge' output to lag the detected edge by two cycles instead of one. To fix this, we can pipeline the signals with two registers: one to hold the current edge detection and another to hold the edge detection from the previous cycle, which is output as 'anyedge'. This creates a one-cycle delay between detecting an edge and asserting the output, matching the problem requirement precisely. The update order is:
+
+1. Calculate edge_detected = prev_in ^ in (current edges).
+2. Store the previous cycle's edge_detected in delayed_edge_detected.
+3. Output anyedge = delayed_edge_detected.
+
+This ensures 'anyedge' reflects edges detected exactly one cycle earlier.
+
+This method cleanly separates edge detection and output timing, maintains synchronous design, and matches the required output timing accurately.

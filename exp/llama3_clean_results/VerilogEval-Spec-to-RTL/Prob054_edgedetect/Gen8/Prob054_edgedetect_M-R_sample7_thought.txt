@@ -1,0 +1,9 @@
+To refactor the provided code, we can aim to reduce the number of registers used and simplify the logic while maintaining the same functionality. One approach is to eliminate the `prev_in` register and directly use the `pedge_reg` to store the previous input values. This approach requires adjusting the logic to correctly calculate the positive edge detection without explicitly storing the previous input state. However, upon closer inspection, this simplification might not be directly feasible without introducing additional combinational logic.
+
+Another approach to refactoring is to maintain the existing register structure but simplify the logic inside the `always` block. Given that the current implementation already uses a straightforward bitwise AND operation combined with negation to detect positive edges, simplification in this area might be minimal.
+
+Instead, we can consider an alternative structure that uses a single `always` block to update both the `prev_in` and `pedge` signals directly, potentially simplifying the code by reducing the number of lines and making the intent clearer. However, this would essentially replicate the existing logic in a slightly rearranged form.
+
+A more significant refactoring could involve using `assign` statements for the combinational logic parts of the design, potentially improving readability and synthesis outcomes by making the distinction between combinational and sequential logic more explicit. However, given the sequential nature of the positive edge detection logic, which inherently requires the use of registers to track state changes over time, a complete elimination of `always` blocks in favor of `assign` statements is not feasible.
+
+Thus, our refactoring will focus on minor optimizations and ensuring the code is as clear and maintainable as possible, given the core logic requirements.

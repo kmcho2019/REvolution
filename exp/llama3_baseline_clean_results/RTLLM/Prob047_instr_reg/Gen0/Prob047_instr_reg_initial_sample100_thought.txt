@@ -1,0 +1,7 @@
+To design the instruction register module (instr_reg), we'll first define the module with the specified input and output ports. We'll then declare two 8-bit registers (ins_p1 and ins_p2) to store instructions from different sources. 
+
+Based on the rising edge of the clock (clk) and the reset (rst) signal, we'll implement the reset functionality to initialize both registers to zero when rst is low. 
+
+Next, we'll use the fetch signal to determine which register to update with the incoming instruction from the data input. If fetch is 2'b01, we'll update ins_p1; if fetch is 2'b10, we'll update ins_p2. 
+
+Finally, we'll derive the outputs ins, ad1, and ad2 from the stored instructions. The ins output will be the high 3 bits of the instruction in ins_p1, ad1 will be the low 5 bits of the instruction in ins_p1, and ad2 will be the full 8-bit data from ins_p2.

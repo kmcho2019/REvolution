@@ -1,0 +1,17 @@
+To implement the Lemmings' behavior, we need a finite state machine that can handle multiple states and transitions. The states can be represented as follows:
+- WALK_LEFT: The Lemming is walking left.
+- WALK_RIGHT: The Lemming is walking right.
+- FALLING: The Lemming is falling.
+- DIGGING: The Lemming is digging.
+- SPLATTERED: The Lemming has splattered and will not move anymore.
+
+The state machine will transition between these states based on the input signals. We will use a Moore state machine, where the outputs are a function of the current state.
+
+The state machine will have the following transitions:
+- From WALK_LEFT or WALK_RIGHT to FALLING: When ground=0.
+- From FALLING to WALK_LEFT or WALK_RIGHT: When ground=1, and the Lemming has not splattered.
+- From WALK_LEFT or WALK_RIGHT to DIGGING: When dig=1 and ground=1.
+- From DIGGING to FALLING: When ground=0.
+- From FALLING to SPLATTERED: When ground=1 and the Lemming has been falling for more than 20 clock cycles.
+
+We will also need a counter to keep track of the number of clock cycles the Lemming has been falling.

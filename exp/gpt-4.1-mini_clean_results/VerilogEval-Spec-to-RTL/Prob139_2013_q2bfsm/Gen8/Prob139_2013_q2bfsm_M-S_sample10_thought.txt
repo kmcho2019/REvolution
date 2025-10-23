@@ -1,0 +1,12 @@
+Implement a Moore FSM with clearly defined states and synchronous active-low reset. Use simple binary encoding for states and perform all logic in a single always block triggered on the clock. Store outputs as registered signals depending only on the current state to avoid glitches and timing issues.
+
+Steps:
+- On reset (resetn=0), go to state A and clear outputs.
+- When resetn goes high, move from A to B on next clock cycle, and pulse f=1 for exactly one cycle.
+- Then enter state C to monitor the last three x inputs using a small shift register (3 bits).
+- When the sequence 101 is detected, move to state D and assert g=1.
+- In state D, count up to two cycles while watching y; if y=1 within these two cycles, move to state E and hold g=1 forever.
+- Else, after two cycles without y=1, move to state F and hold g=0 forever.
+- From states E and F, remain until reset.
+  
+This structure is straightforward, uses simple counters and shift registers updated synchronously, and outputs depend only on the current state, ensuring proper timing and easy verification.

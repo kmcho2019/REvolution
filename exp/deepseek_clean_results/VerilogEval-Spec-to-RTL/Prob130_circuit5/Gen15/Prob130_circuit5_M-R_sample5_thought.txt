@@ -1,0 +1,18 @@
+Refactoring Approach: Simplified Multiplexer Structure with Direct Selection
+
+1. **Key Changes**:
+   - Replace the parallel masking approach with a direct 4:1 multiplexer structure
+   - Use c[1:0] directly as select lines for the multiplexer
+   - Simplify the default case handling by checking c[3:2] separately
+   - Combine the valid selection and output logic into a single expression
+
+2. **Improvements**:
+   - Reduced logic depth by eliminating the intermediate valid_selection signal
+   - More straightforward implementation using ternary operators
+   - Better readability while maintaining the same functionality
+   - Potentially better synthesis results as this maps directly to standard cell multiplexers
+
+3. **Implementation**:
+   - Use nested ternary operators to implement the 4:1 mux
+   - Check c[3:2] first to determine if we should use the mux or output all 1's
+   - The mux selection is based directly on c[1:0] without additional masking

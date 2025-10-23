@@ -1,0 +1,13 @@
+To improve the PPA of the provided one-hot FSM combinational logic, we can simplify the next-state expressions to reduce logic depth and gate count. For instance, the S_next expression is somewhat complex with several ORs; by grouping terms and leveraging mutual exclusivity, we can rewrite it with fewer terms. Also, consolidate repeated expressions like (S & ~d) and (S1 & ~d) in S_next to a single combined term (S | S1) & ~d.
+
+Similarly, for the S11_next term, since both (S1 & d) and (S11 & d) lead to S11, we can simplify it to (S1 | S11) & d. This reduction shrinks logic and levels of gates.
+
+For the Wait_next, note that (Count & done_counting) and (Wait & ~ack) are mutually exclusive because Count and Wait are distinct one-hot states, so the OR is just a direct sum.
+
+We keep outputs as before, but we also combine shift_ena assignment to a single term: (B0 | B1 | B2 | B3).
+
+Overall, these minor Boolean algebra simplifications reduce gate count and potentially improve timing and area without altering functionality or output semantics.
+
+We retain the same structure: a single 10-bit next_state vector representing the next state one-hot encoding, and output signals derived from current state or next_state bits.
+
+This approach offers optimized combinational logic for PPA improvement while maintaining clear and maintainable code.

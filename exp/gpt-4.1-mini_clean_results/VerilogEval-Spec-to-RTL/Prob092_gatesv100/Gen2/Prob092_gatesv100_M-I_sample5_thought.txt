@@ -1,0 +1,7 @@
+Optimize the implementation by eliminating generate loops and instead using vector slicing and concatenation for assignments. This simplifies the code and enables the synthesis tool to better optimize logic sharing and reduce redundant gates. Specifically:
+
+- For out_both, assign bits [98:0] by bitwise AND of in[98:0] and in[99:1], and explicitly set bit 99 to zero.
+- For out_any, assign bits [99:1] by bitwise OR of in[99:1] and in[98:0], and explicitly set bit 0 to zero.
+- For out_different, assign bits [98:0] by bitwise XOR of in[98:0] and in[99:1], and handle wrap-around for bit 99 by XOR of in[99] and in[0].
+
+This approach reduces the amount of explicit logic instantiations and encourages better vectorized implementation, potentially improving area and power with no timing penalty.

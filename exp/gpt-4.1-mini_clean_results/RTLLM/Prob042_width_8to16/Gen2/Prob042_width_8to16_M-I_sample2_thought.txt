@@ -1,0 +1,11 @@
+To correctly implement the 8-bit to 16-bit data width conversion with the required timing:
+
+- Use a flag to track when the first 8-bit input is stored.
+- When a valid input arrives and the flag is clear, store it in an 8-bit register and set the flag.
+- When a valid input arrives and the flag is set, store the second 8-bit input and prepare to output the concatenated 16-bit data in the *next* clock cycle.
+- Introduce pipeline registers for the output valid signal and the concatenated data, so outputs are generated *one clock cycle after* receiving the second valid input.
+- On reset, clear all registers.
+- Remove unused or redundant registers to simplify the design.
+- By using non-blocking assignments carefully, ensure proper sequencing and timing.
+
+This approach aligns precisely with the problem's requirement of generating valid_out and data_out *one clock cycle after* the second input arrives, and only after two inputs are received.

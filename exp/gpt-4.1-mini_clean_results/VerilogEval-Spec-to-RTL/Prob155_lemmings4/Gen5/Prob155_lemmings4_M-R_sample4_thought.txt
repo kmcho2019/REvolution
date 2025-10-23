@@ -1,0 +1,7 @@
+Refactor the FSM by splitting the state register update and the next-state logic into separate always blocks for clarity, using explicit enums for states and directions for readability.  
+Implement combinational next state and outputs in a separate always block using if-else priority statements to better reflect fall > dig > bump priority.  
+Use synchronous reset (reset synchronized to clk) for consistent behavior in FPGA-style designs.  
+Use packed struct-like enums for states and directions to improve code clarity.  
+Keep outputs as Moore outputs (dependent only on state and direction).  
+Keep fall_timer update logic in a separate always block triggered only in fall state, simplifying logic and avoiding unnecessary updates.  
+This restructuring improves maintainability and makes priorities explicit, with no change to functionality.

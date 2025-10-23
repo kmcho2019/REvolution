@@ -1,0 +1,12 @@
+Implement the dual-port RAM with an asynchronous read port and a synchronous write port, featuring a parameterized address width derived from DEPTH, and a synchronous active-low reset that initializes the RAM array via an explicit initialization block.
+
+Key points of this approach:
+1. Use a combinational asynchronous read: read_data always reflects the content at read_addr when read_en is high, else zero.
+2. Write operation is synchronous on posedge clk and gated by write_en.
+3. Use a synchronous reset for clearing the RAM, performed in a separate always block to improve clarity and prevent mixing reset and write logic.
+4. Avoid resetting the read_data register; instead, read_data is a wire derived directly from RAM array content or zeros.
+5. This approach supports simultaneous read/write with separate ports: reading asynchronously from RAM and writing synchronously.
+6. Use a generate block for the reset initialization, improving code clarity and easing synthesis mapping.
+7. Provide comments clarifying behavior and module ports.
+
+This design trades a synchronous reset that initializes RAM asynchronously (outside of clock domain) for clarity and uses asynchronous read for zero-latency reads with a controlled read_en gating.

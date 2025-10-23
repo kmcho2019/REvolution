@@ -1,0 +1,15 @@
+This implementation uses a bit-serial approach with carry-save arithmetic for efficient multiplication:
+
+1. Instead of processing all bits in parallel, we process one multiplier bit per clock cycle
+2. Uses a carry-save accumulator to avoid carry propagation delays during intermediate steps
+3. Each cycle:
+   - Examines current multiplier bit (LSB first)
+   - If set, adds multiplicand (properly shifted) to accumulator
+   - Right-shifts multiplier to process next bit
+   - Left-shifts multiplicand for next position
+4. Final cycle converts carry-save form to binary result
+5. Advantages:
+   - Reduced area compared to parallel implementations
+   - Regular structure suitable for pipelining
+   - Efficient carry handling during intermediate steps
+   - Flexible timing (can be made synchronous with clock)

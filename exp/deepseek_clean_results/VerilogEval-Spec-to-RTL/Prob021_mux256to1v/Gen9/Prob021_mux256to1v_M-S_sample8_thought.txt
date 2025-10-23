@@ -1,0 +1,8 @@
+The current solution is already quite optimal, using a direct part-select operation with index calculation. However, we can make it slightly more readable by using a shift operation instead of multiplication for the index calculation, which is semantically equivalent but might be more intuitive for some readers. The shift operation (sel << 2) is equivalent to multiplying by 4, and both operations will synthesize to the same hardware in modern tools.
+
+Key simplifications:
+1. Replace multiplication with shift operation for clarity
+2. Maintain the same efficient part-select operation (+:)
+3. Keep the same compact module structure
+
+This change doesn't affect functionality or performance, but makes the code slightly more readable by using a bit shift instead of multiplication for the address calculation.

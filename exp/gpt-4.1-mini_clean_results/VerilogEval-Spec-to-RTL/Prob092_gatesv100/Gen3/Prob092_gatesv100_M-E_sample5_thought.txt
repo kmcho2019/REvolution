@@ -1,0 +1,7 @@
+Instead of using direct bit slicing, use a generate loop to explicitly handle each bit individually. This allows inserting conditional logic and clearly handles boundary conditions within the loop, improving readability and modularity. We will:
+
+- For out_both: For bits 0 to 98, assign as AND of in[i] and in[i+1]. Set bit 99 to zero explicitly.
+- For out_any: For bits 1 to 99, assign as OR of in[i] and in[i-1]. Set bit 0 to zero explicitly.
+- For out_different: Use a wrap-around neighbor by comparing each bit in[i] with its left neighbor in[(i+1)%100]. Implement this in the loop, and handle the wrap-around naturally inside the loop.
+
+This approach trades off a bit more verbose code for explicit clarity and potentially easier synthesis mapping on tools that benefit from loop constructs.

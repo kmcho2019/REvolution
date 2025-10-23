@@ -1,0 +1,10 @@
+Refactoring the original design, I will keep the core concept of borrow generate and propagate signals for borrow detection and bitwise equality for equality detection but:
+
+1. Replace the generate loop for bitwise equality with straightforward continuous assignments using bitwise XNOR operator (^~), which synthesizes to XNOR gates directly. This simplifies code and improves readability.
+2. Implement borrow logic calculation in a more compact expression using a function that models borrow lookahead, making it clearer and reusable.
+3. Use intermediate wires for borrow chain stages with a simple for-generate loop for borrow propagation signals to illustrate another structural style.
+4. Explicitly show the borrow chain as a recursive propagate-generate borrow calculation rather than fully expanded expressions.
+5. Maintain balanced logic but with clearer hierarchical borrow calculation for easier scaling.
+6. Outputs remain mutually exclusive, with A_less = borrow out, A_equal from overall equality, and A_greater as neither less nor equal.
+
+This refactor showcases alternative style using functions and simpler equality logic without generate, and structured borrow calculation via looped stages, which is another clear combinational style maintaining the original functionality.

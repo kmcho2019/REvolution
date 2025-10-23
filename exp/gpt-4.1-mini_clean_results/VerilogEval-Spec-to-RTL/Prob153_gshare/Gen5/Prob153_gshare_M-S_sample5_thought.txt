@@ -1,0 +1,22 @@
+Implement a 7-bit gshare branch predictor with a 128-entry 2-bit saturating counter PHT and a 7-bit global history register (GHR).
+
+- Maintain two copies of the GHR:
+  - `ghr_spec`: speculative history used for prediction, updated after prediction (unless a misprediction training happens)
+  - `ghr_commit`: committed history updated on training if no misprediction
+
+- On prediction (predict_valid):
+  - Compute index = predict_pc ^ ghr_spec
+  - Read PHT entry combinationally
+  - Output predicted taken bit (MSB of counter) and the current ghr_spec *before* updating
+  - After clock edge, update `ghr_spec` by shifting in the predicted taken bit only if no misprediction training this cycle
+
+- On training (train_valid):
+  - Update PHT entry indexed by train_pc ^ train_history with taken outcome
+  - If mispredicted, restore `ghr_spec` to train_history to recover speculative history
+  - Else update committed GHR by shifting in train_taken
+
+- Prediction outputs are registered to keep stable outputs aligned with cycle timing.
+
+- Prioritize training misprediction recovery over speculative GHR updates on the same cycle.
+
+This simplified approach removes redundant variables and complex functions, performs PHT update directly, and carefully sequences updates to ensure outputs correspond to predictor states at prediction request time.

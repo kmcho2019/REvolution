@@ -1,0 +1,15 @@
+I will design a Mealy-style FSM where the done signal is asserted combinationally in the cycle after receiving the third byte, not registered. This way, done is a one-cycle pulse generated purely from state and input conditions, potentially improving timing and reducing output glitching.
+
+To keep the design neat, I will use a 3-bit counter for the byte index, starting from 0 when synchronizing on a byte with in[3]=1. The counter increments each cycle until three bytes are captured. The bytes will be stored in a 24-bit shift register, shifting in the new byte each cycle starting from the first synchronized byte.
+
+Outputs:
+- out_bytes will be updated every cycle after the first valid byte is latched, reflecting the latest three bytes collected.
+- done will be combinationally asserted only when the counter equals 3 (meaning three bytes are received) and the FSM is in the message receiving state.
+
+This approach:
+- Uses a single shift register for bytes, simplifying storage and potentially saving area.
+- Generates done combinationally, ensuring minimal latency and glitch risk.
+- Uses a simple counter-based FSM for synchronization and counting, avoiding explicit enumerated states and making next-state logic straightforward.
+- Keeps reset synchronous and active high.
+
+Overall, this architecture simplifies control, provides clear output timing, and can be efficient in area and power.

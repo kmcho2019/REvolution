@@ -1,0 +1,20 @@
+Improvement strategy:
+1. Problem analysis:
+   - Current implementation asserts shift_ena for 5 cycles (1111 → 1110 → 1100 → 1000 → 0000)
+   - Need exactly 4 cycles of assertion (including reset cycle)
+
+2. Solution approach:
+   - Initialize shift register to 4'b1110 instead of 4'b1111
+   - This ensures exactly 4 cycles of assertion:
+     - Cycle 0 (reset): 1110 (shift_ena = 1)
+     - Cycle 1: 1100 (shift_ena = 1)
+     - Cycle 2: 1000 (shift_ena = 1)
+     - Cycle 3: 0000 (shift_ena = 0)
+   - Maintain same shift register structure for simplicity
+   - No additional logic needed beyond reset initialization change
+
+3. Benefits:
+   - Exactly meets timing requirement (4 cycles)
+   - Minimal area impact (same register size)
+   - Maintains clean, simple design
+   - Correct behavior for repeated resets

@@ -1,0 +1,5 @@
+Refactor the design by implementing the 8-bit shift register as a single 8-bit vector `reg [7:0] Q` instead of individual flip-flops. On each positive clock edge with `enable` high, shift the register right and insert `S` into the MSB (Q[7]). This simplifies the shift logic, reduces code size, and helps synthesis tools optimize timing and area.
+
+For output selection, use vector indexing with a 3-bit concatenated address `{A,B,C}` to directly index into `Q`. This eliminates the explicit multiplexer case statement, letting synthesis infer an optimized multiplexing structure automatically.
+
+The refactoring keeps the functional behavior unchanged but improves code clarity, maintainability, and potentially synthesis quality.

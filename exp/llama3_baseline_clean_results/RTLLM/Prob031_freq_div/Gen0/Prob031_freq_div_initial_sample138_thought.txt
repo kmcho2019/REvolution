@@ -1,0 +1,11 @@
+To implement the frequency divider, we will use three counters to divide the input clock frequency. 
+We will first generate CLK_50 by toggling its value on every positive edge of CLK_in or RST, 
+if RST is not active. Then we will generate CLK_10 by using a counter cnt_10 to count the number of 
+CLK_in cycles and toggling CLK_10 when the counter reaches a value of 9 (5 is for divide by 10, 
+but since we are generating the clock at every rising edge, the total number of cycles is 10, 
+so we count to 9 and then toggle). 
+Finally, we will generate CLK_1 by using another counter cnt_100 to count the number of 
+CLK_in cycles and toggling CLK_1 when the counter reaches a value of 99 (100 is for divide by 100, 
+but since we are generating the clock at every rising edge, the total number of cycles is 100, 
+so we count to 99 and then toggle).
+We will also handle the reset condition where the counters and the clocks are reset when RST is active.

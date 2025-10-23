@@ -1,0 +1,5 @@
+To improve PPA, reduce combinational logic delay by minimizing the number of conditions evaluated in the shift mux. Instead of multiple ternary operators, use a case statement inside a combinational always block to decode shift amounts, which often yields better-optimized logic in synthesis. This may also improve power by reducing glitching in the combinational path. Further, replace the replicated bit concatenation with direct shift operations using arithmetic right shift operators where supported, which can be more optimal in modern synthesis tools.
+
+Also, implement clock gating for the register clock input, enabling clock only when load or ena is asserted, reducing unnecessary toggling and power consumption. This can be done using an enable gated clock buffer or via an enable signal inside the always block with clock gating logic if the environment supports it.
+
+Overall, the design remains functionally equivalent but is organized to reduce logic complexity and switching activity, improving timing and power. Area impact should be minimal or slightly improved due to simpler combinational logic.

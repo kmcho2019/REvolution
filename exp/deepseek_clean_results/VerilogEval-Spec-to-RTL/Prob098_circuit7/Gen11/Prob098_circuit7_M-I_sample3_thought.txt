@@ -1,0 +1,14 @@
+The current implementation correctly follows the waveform behavior but has room for PPA optimization. My improvement strategy:
+
+1. Power Optimization: The output toggles every clock cycle when input 'a' changes, causing unnecessary switching. We can reduce power by only updating 'q' when 'a' actually changes from its previous value.
+
+2. Area Optimization: While the current area is minimal, we can maintain it by using a simple register to store the previous 'a' value for comparison.
+
+3. Performance: The timing is already optimal (0ns violations), so we'll maintain the same clock edge triggering.
+
+The improved solution will:
+- Reduce switching activity (lower power)
+- Maintain same area (5.0 um²)
+- Keep perfect timing (0ns violations)
+- Still match the waveform behavior exactly
+- Use non-blocking assignments for clean sequential logic

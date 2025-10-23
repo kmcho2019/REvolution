@@ -1,0 +1,11 @@
+To implement the Lemming state machine, we can use a novel architectural idea that utilizes a hybrid approach combining both Mealy and Moore machine concepts. We will break down the state machine into two main components: a Mealy machine for handling the walking direction and a Moore machine for managing the overall state of the Lemming.
+
+The Mealy machine will receive the bump left and right signals as inputs and update the walking direction accordingly. This machine will also handle the case when the Lemming is bumped while falling or digging.
+
+The Moore machine will receive the outputs from the Mealy machine, as well as the ground, dig, and fall counter signals, to determine the next state of the Lemming. This machine will handle the state transitions, including the transition from the WALKING state to the FALLING state when the ground disappears, and the transition from the FALLING state to the WALKING state when the ground reappears.
+
+To improve the design, we will use a one-hot encoding scheme for the state machine, which will simplify the state transition logic and reduce the complexity of the design. We will also use a separate module to handle the fall counter, which will make the design more modular and easier to understand.
+
+Additionally, we will use a robust approach to handle the asynchronous reset by using a separate always block to reset the state machine, ensuring that the reset occurs as soon as the reset signal is asserted, regardless of the clock edge.
+
+The output logic will be implemented using a combination of the Mealy and Moore machine outputs, ensuring that the output signals are correctly updated based on the current state and inputs.

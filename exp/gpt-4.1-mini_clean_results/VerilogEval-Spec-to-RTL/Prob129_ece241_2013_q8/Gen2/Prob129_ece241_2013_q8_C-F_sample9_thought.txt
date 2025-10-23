@@ -1,0 +1,14 @@
+Fuse the strengths of both examples by using typedef enum for better readability and maintainability (from Example 2) and the clean, clear combinational next-state and output logic structure (from Example 1). Maintain a 3-state Mealy FSM with states encoding the progress through "101", output z asserted combinationally when detecting the pattern. Implement the asynchronous negative edge reset on the state register triggered at clock's positive edge.
+
+Use blocking assignments in combinational always block for clarity and synthesis friendliness. Use localparam to define the states with typedef enum for clear, portable syntax. Keep the next_state and output logic in the same always_comb block for efficiency and minimal logic depth, as both examples do.
+
+This fusion improves readability and synthesis quality while preserving minimal area and good performance. Also, explicitly define the bit-width of the state register to 2 bits for clarity and synthesis tools.
+
+This design ensures overlapping sequences are recognized and the output z pulses high exactly when "101" is detected.
+
+In summary:
+- Use typedef enum logic [1:0] for states
+- Combinational always block for next_state and z
+- Sequential always block for state register with async negative edge reset
+- Mealy output asserted in combinational block based on current state and input
+- Clear, minimal logic for PPA optimization

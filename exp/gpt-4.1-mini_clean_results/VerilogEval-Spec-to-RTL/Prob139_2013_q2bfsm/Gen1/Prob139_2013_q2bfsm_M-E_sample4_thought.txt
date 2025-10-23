@@ -1,0 +1,24 @@
+Implement the FSM using an explicit sequence detector submodule for the pattern 1-0-1 on input x, combined with a main controller FSM.
+
+Key differences from the original approach:
+- Use a Mealy-style sequence detector for detecting the pattern 101 on x, which outputs a detection pulse one cycle after full pattern matched.
+- Main FSM states:
+  - S_RESET: stays here while resetn=0.
+  - S_F_PULSE: after resetn=1, output f=1 for one cycle.
+  - S_WAIT_G: wait until the sequence detector signals detection of pattern 101 on x; then output g=1 for one cycle.
+  - S_MONITOR_Y: keep g=1; monitor y for at most two cycles.
+    - If y=1 detected within two cycles, stay forever with g=1.
+    - Else after two cycles, go to S_G0_PERM.
+  - S_G0_PERM: output g=0 forever until reset.
+
+Advantages:
+- Clean separation of pattern detection and output control.
+- Sequence detector produces a pulse for pattern detection, easing main FSM logic.
+- Timing of f and g signals controlled clearly on dedicated states.
+- y monitoring uses a counter and clear transitions.
+
+All logic synchronous with positive clock edge; resetn synchronous active low.
+
+Outputs f and g are registered.
+
+This modular approach clarifies design and ensures correct timing and functional behavior.

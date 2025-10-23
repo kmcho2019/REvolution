@@ -1,0 +1,11 @@
+To improve PPA (Performance, Power, Area) based on the existing metrics and given the design simplicity, minor refinements can be applied to reduce logic switching and simplify control signals:
+
+- Use ternary operator in the next-state combinational logic instead of case statement to reduce the logic level slightly, which may improve timing.
+- Inline the output signal assignment in the always block as a registered output (Moore output is combinational but making it registered can sometimes improve timing by balancing pipeline stages).
+- Implement synchronous reset instead of asynchronous reset if timing violations are observed due to asynchronous reset timing paths; however, the problem states asynchronous active-high reset, so keep that.
+- Minimize toggling by adding explicit state encoding and minimizing transitions.
+- Since the output is determined solely by the state, register it in the same clock domain, making it a registered output. This may add one cycle latency but improves output timing and glitch avoidance, trading off a small latency.
+- Use non-blocking assignments consistently and avoid default case if not needed.
+- Since only two states exist, keep encoding 1-bit to minimize area.
+
+These changes slightly modify the design, prioritizing timing and glitch reduction over minimal latency, still conforming to the problem statement. The asynchronous reset remains as requested.

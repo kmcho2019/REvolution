@@ -1,0 +1,24 @@
+To implement the Lemming behavior, we need a finite state machine (FSM) with multiple states and transitions. The key states are:
+1. WALK_LEFT - walking left
+2. WALK_RIGHT - walking right
+3. FALLING - falling when ground=0
+4. DIGGING - digging when dig=1 and ground=1
+5. SPLATTERED - after falling for >20 cycles and hitting ground
+
+The FSM must track:
+- Current direction (left/right)
+- Fall duration counter
+- Current state
+
+Priority of actions:
+1. Falling has highest priority
+2. Digging comes next
+3. Direction switching is lowest priority
+
+Transitions:
+- Reset starts in WALK_LEFT
+- Walking states switch direction on bumps
+- Walking states transition to FALLING when ground=0
+- Walking states transition to DIGGING when dig=1 (if ground=1)
+- FALLING state counts cycles and transitions to SPLATTERED if >20 cycles when ground returns
+- DIGGING state transitions to FALLING when ground=0

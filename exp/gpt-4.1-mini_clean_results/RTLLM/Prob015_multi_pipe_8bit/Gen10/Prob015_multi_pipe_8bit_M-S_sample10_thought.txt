@@ -1,0 +1,8 @@
+Implement a straightforward 3-stage pipeline unsigned 8-bit multiplier with input sampling, partial product generation, and accumulation stages.  
+- Stage 1: Sample inputs and enable signal on clock edge if mul_en_in is active.  
+- Stage 2: Generate and register partial products sum in one step (add all shifted multiplicand masked by multiplier bits).  
+- Stage 3: Register final product sum.  
+Enable signals are pipelined alongside data to track valid outputs.  
+Output enable and product valid only when the enable pipeline's MSB is set.  
+Registers hold their values (no reset to zero except on async reset) to reduce unnecessary toggling.  
+This keeps the pipeline depth at 3 stages with simple summations for easy timing and minimal complexity, fulfilling the requirements while simplifying the previous design.

@@ -1,0 +1,7 @@
+To optimize the calendar module for better PPA (power, performance, and area), separate the counters into three always blocks, each responsible for one time unit (Secs, Mins, Hours) to reduce logic depth and combinational path delay. This approach enables each unit to update independently and only when necessary, reducing switching activity and critical path length.
+
+Implement the seconds counter to increment every clock cycle, rolling over from 59 to 0. The minutes counter only increments when seconds roll over from 59 to 0, and the hours counter increments only when both minutes and seconds roll over from 59 to 0. This staged counting reduces unnecessary toggling on minutes and hours, improving power efficiency.
+
+Additionally, keep the Hours width as 6 bits (instead of 5) for output consistency as requested, though only values 0-23 are used, which does not impact area significantly but meets spec strictly. Use nonblocking assignments in all always blocks and synchronous reset.
+
+This modular and staged counting improves timing by simplifying each always block's combinational logic and can reduce power by limiting toggling to rollover events only.

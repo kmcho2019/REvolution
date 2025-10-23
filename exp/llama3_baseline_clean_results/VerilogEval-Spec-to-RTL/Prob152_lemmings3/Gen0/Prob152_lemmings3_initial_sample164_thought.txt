@@ -1,0 +1,15 @@
+To implement the Lemmings' behavior as a finite state machine, we will use a Moore machine with the following states:
+- IDLE_LEFT: initial state, walking left
+- IDLE_RIGHT: walking right
+- FALLING: Lemming is falling
+- DIGGING: Lemming is digging
+- DIGGING_LEFT: Lemming is digging and was walking left
+- DIGGING_RIGHT: Lemming is digging and was walking right
+
+The machine will transition between these states based on the input signals (bump_left, bump_right, ground, dig).
+When ground=0, the machine will transition from IDLE states to FALLING.
+When dig=1 and ground=1, the machine will transition from IDLE states to DIGGING states.
+When bump_left or bump_right is 1, the machine will switch the walking direction.
+The aaah signal will be 1 when the machine is in the FALLING state.
+The digging signal will be 1 when the machine is in the DIGGING states.
+The walk_left and walk_right signals will be determined based on the current state and the previous walking direction.

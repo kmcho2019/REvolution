@@ -1,0 +1,11 @@
+To simplify the next-state logic for y[1], we'll:
+1. Identify all cases where y[1] should be 1 in the next state by examining the state transitions
+2. Notice that y[1] is 1 in states D(011), E(100), and F(101)
+3. Derive the minimal conditions for next_y1 to be 1:
+   - From any state to D (011) when w=1 (y[1]=1 in next state)
+   - From D (011) to F (101) when w=0 (y[1]=1 in next state)
+   - From E (100) to E (100) when w=0 (y[1]=1 in next state)
+4. Simplify to: next_y1 = (w & (y[0] | y[1]&~y[2])) | (~w & y[1])
+5. Output Y1 remains directly connected to y[1]
+
+This covers all required transitions more efficiently with fewer terms.

@@ -1,0 +1,10 @@
+To improve PPA (performance, power, area) from the original design, I will optimize carry propagation logic and enable signal generation:
+
+- Replace nested if-else sequential digit incrementing with a more parallel approach using a ripple carry chain with explicit intermediate carry wires, minimizing combinational depth inside the clocked block. This reduces critical path delay and potentially increases clock frequency.
+- Calculate next digit values and carries combinationally outside the sequential block to allow better logic optimization.
+- Only update digits sequentially in the always block based on the precomputed carry chain results, removing nested ifs and minimizing switching activity inside the clocked block.
+- Implement enable signals as combinational expressions indicating when each digit increments (i.e., on the rollover of the prior digit), keeping their generation simple and power efficient.
+- Keep the design compact with a single 16-bit register for digits.
+- Use synchronous active-high reset and posedge clk.
+
+This approach should reduce critical path delays, lower switching activity, and simplify control logic, enhancing timing and slightly saving power while maintaining a small area footprint.

@@ -1,0 +1,13 @@
+Key improvements and correct behavior implementation:
+1. p directly follows 'a' on rising clock edges when q is 0
+2. q becomes 1 in the cycle after p was 1 (one-cycle delayed version of p)
+3. Both p and q reset when 'a' is high during the clock low phase
+4. Removed the unnecessary a_sampled register since we can directly use 'a'
+5. Simplified state machine with clear conditions for each state transition
+6. All state changes now occur synchronously on clock edges to avoid timing issues
+
+Behavior matches waveform precisely:
+- p updates immediately with 'a' when q=0 (90ns, 100ns, 110ns)
+- q follows p with one cycle delay (115ns)
+- Both reset when 'a' is high during clock low (175ns)
+- Proper initialization ensures clean startup

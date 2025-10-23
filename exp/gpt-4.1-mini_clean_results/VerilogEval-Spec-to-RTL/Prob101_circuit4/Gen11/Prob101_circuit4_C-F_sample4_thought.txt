@@ -1,0 +1,8 @@
+The waveform clearly indicates q = b | c, independent of a and d. Both example implementations are functionally correct: one uses a direct structural OR gate, the other uses De Morgan’s theorem with multiple gate modules. To fuse the best aspects:
+
+- Use a clean, single-line continuous assignment for q = b | c to minimize area and power by removing extra module hierarchies and intermediate nets.
+- Declare output q as wire (default) to emphasize combinational logic.
+- Avoid separate module instantiations or always blocks to keep the design minimal and synthesis-friendly.
+- This approach keeps the logic at gate-level minimal, ensures best PPA metrics (lowest area and power), and highest clarity.
+
+Thus, the fusion strategy is to implement the OR function directly and simply in a concise assign statement within the TopModule, maintaining structural clarity by avoiding unnecessary hierarchy and gates.

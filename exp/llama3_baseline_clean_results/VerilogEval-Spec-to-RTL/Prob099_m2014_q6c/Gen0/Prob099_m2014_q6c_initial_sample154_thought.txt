@@ -1,0 +1,7 @@
+To implement the state machine, we need to derive the logic equations for the next-state signals Y2 and Y4, which correspond to signals y[1] and y[3], respectively. We can do this by analyzing the state transitions and identifying the conditions under which each state is entered. 
+
+For Y2 (y[1]), state B is entered from state A when w is 0. Therefore, Y2 is 1 when the current state is A and w is 0, or when the current state is already B and w is 1 (to stay in state B), or when the current state is C and w is 0 (to transition from C to B is not possible, but we need to consider the transition from D to B is not possible, however, from F to C to B is possible, and C to D and F to D and D to B is possible). Similarly, for Y4 (y[3]), state D is entered from states B, C, E, or F. We can derive the logic equations based on these conditions.
+
+The logic equation for Y2 can be derived as follows: Y2 = (y[0] & ~w) | (y[1] & w) | (y[5] & ~w & ~y[2] & ~y[3] & ~y[4]).
+
+The logic equation for Y4 can be derived as follows: Y4 = (y[1] & ~w) | (y[2] & ~w) | (y[4] & w) | (y[5] & w & ~y[2] & ~y[1] & ~y[0]).

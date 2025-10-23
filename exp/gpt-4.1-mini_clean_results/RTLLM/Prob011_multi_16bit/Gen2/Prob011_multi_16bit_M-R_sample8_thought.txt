@@ -1,0 +1,10 @@
+Refactor the design to use a finite state machine (FSM) with three states: IDLE, CALC, DONE, simplifying control flow and explicitly managing operations per state.  
+Implement the shift count (i) as a counter enabled only during CALC state to precisely track multiplication steps.  
+Use a separate register to hold the current bit being checked (bit selector), updating the partial product only when that bit is high.  
+Avoid dynamic variable shifts of the entire multiplier by shifting the multiplier left by 1 each cycle and adding it conditionally (classic shift-and-add multiplier approach), which results in a more hardware-friendly iterative shift-add process.  
+Use a 16-bit multiplicand register, a 32-bit accumulator register, and a 16-bit shifted multiplier register for partial product additions.  
+Combine asynchronous active-low reset with synchronous FSM and registers updates, improving clarity and synthesis results.  
+Generate done flag synchronously when multiplication is completed.  
+Output the product directly from the accumulator register.  
+
+This approach reduces the wide dynamic shifts in each cycle, localizes shifting to registers, clarifies control through FSM states, and offers improved synthesis results with potentially better timing and lower power consumption.

@@ -1,0 +1,9 @@
+To improve PPA, especially timing and power, I will convert the FSM from binary encoding to one-hot encoding. One-hot encoding typically reduces combinational path delays because each state corresponds to a single flip-flop being high, and next state logic is simpler and faster, improving WNS and TNS. Though this increases area slightly (more flip-flops), the FSM here has only 7 states, so the area increase is minimal and acceptable.
+
+I will also register outputs to reduce glitches and dynamic power from combinational output logic. By making outputs synchronous (registered on clk), output transitions align with clock edges, reducing glitches and dynamic power.
+
+I will keep the 2-bit shift counter with gated increment only in the SHIFT state, as before, for clarity and low toggle rate.
+
+Separating combinational next state and output logic clearly from sequential always blocks improves readability and synthesis friendliness.
+
+This improved FSM design uses one-hot encoding for states, registers outputs, and maintains functionality and 4-cycle shift enable counting exactly. This should yield better timing (lower combinational complexity), less glitching power, and minor area increase acceptable for such a small FSM.

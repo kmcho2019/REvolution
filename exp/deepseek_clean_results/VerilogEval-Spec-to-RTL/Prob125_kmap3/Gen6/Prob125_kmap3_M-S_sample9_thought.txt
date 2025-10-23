@@ -1,0 +1,7 @@
+After analyzing the Karnaugh map and the feedback, I propose a more optimized solution that:
+1. Recognizes that when c=1, output is 0 only when ab=01 (a=0 and b=1)
+2. When c=0, output is 1 only when a=1 and d=0 (cd=00)
+3. Combines these observations into a single expression using minimal logic
+4. Eliminates separate inverters by using the input signals directly where possible
+The optimized logic is: out = (c & (a | ~b)) | (~c & a & ~d)
+This reduces area by sharing the ~b and ~d operations and minimizes power by reducing unnecessary transitions

@@ -1,0 +1,9 @@
+Fuse the strengths of both examples by using synchronous reset and updating the accumulator and counter only on valid_in to reduce toggling, as in Example 2, while using the clear and immediate valid_out pulse and explicit accumulator reset logic from Example 1 to ensure clean one-cycle valid_out assertion.
+
+Additionally, avoid redundant registers like sum_reg from Example 2, minimizing area and power. Use non-blocking assignments for safe synchronous logic.
+
+The accumulator and counter reset immediately after outputting the sum, and valid_out pulses for exactly one cycle. This yields minimal toggling, clean timing, and reduced area, combining the clarity and correctness of Example 1 with the power-aware and synchronous approach of Example 2.
+
+All operations are synchronized to the positive clock edge with synchronous reset, which improves timing closure. Valid_out is cleared by default each cycle to ensure one-cycle pulse behavior. The design uses a 2-bit counter and a 10-bit accumulator, properly sized for four 8-bit inputs summed (max 1020).
+
+This fusion optimizes power, performance, and area (PPA) with minimal complexity, clean code, and correct functionality.

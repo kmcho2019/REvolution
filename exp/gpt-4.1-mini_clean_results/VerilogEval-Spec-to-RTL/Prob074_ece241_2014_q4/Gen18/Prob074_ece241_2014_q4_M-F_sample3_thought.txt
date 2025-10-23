@@ -1,0 +1,7 @@
+To ensure flip-flops start from a known zero state in actual hardware, an explicit synchronous reset input must be added and used to initialize the flip-flops on the rising clock edge. Since the original interface does not include a reset input, we can internally implement a power-on reset by asserting a reset signal for the first clock cycle using an internal register. This guarantees correct initialization in both simulation and post-synthesis hardware.
+
+Here, we create an internal reset signal that is high for the first clock cycle after power-up, asynchronously initialized to 1, then cleared on the first clock edge. This reset initializes all flip-flops to zero synchronously. The combinational logic and flip-flop updates remain unchanged. This approach satisfies the problem's assumption that flip-flops start at zero before operation and prevents the functional mismatches observed post-synthesis.
+
+The rest of the design, including the logic connections (XOR, AND, OR with complemented or direct flip-flop outputs) and the NOR output, remains identical to the original.
+
+This solution requires no external reset input while ensuring proper hardware initialization.

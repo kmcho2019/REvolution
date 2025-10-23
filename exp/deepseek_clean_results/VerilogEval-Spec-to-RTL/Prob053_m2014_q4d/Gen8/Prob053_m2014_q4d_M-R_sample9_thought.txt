@@ -1,0 +1,12 @@
+To address the synthesis issues while maintaining the same functionality, we'll refactor the design with these key changes:
+
+1. Replace the initial block with a synchronous reset-like mechanism using the first clock edge
+2. Use continuous assignments for combinational logic (XOR)
+3. Keep the flip-flop structure but make it self-initializing
+4. The design will:
+   - Start in a known state (0) after the first clock edge
+   - Maintain identical behavior to the original after initialization
+   - Be fully synthesizable
+   - Avoid any simulation/synthesis mismatches
+5. The feedback path remains identical (out -> XOR -> flip-flop)
+6. Uses non-blocking assignment for proper sequential behavior

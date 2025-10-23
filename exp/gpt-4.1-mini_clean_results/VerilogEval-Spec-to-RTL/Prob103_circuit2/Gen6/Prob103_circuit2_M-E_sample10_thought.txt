@@ -1,0 +1,9 @@
+Analyze the waveform to understand the logic function implemented. Observing the output q against inputs a, b, c, d, it matches the XNOR of the 4 inputs, i.e., q is 1 when the number of ones in inputs is even. Instead of using XOR or XNOR gates directly, implement the parity function using a combination of AND, OR, and NOT gates arranged as a parity checker.
+
+The idea is to enumerate all input combinations that yield q=1 and create a sum-of-products expression for q. Since q=1 when the number of inputs at logic 1 is even (0, 2, or 4), build the logic as a sum of three terms corresponding to these cases:
+
+- All zeros: ~a & ~b & ~c & ~d
+- Exactly two inputs are 1: sum of all 6 possible pairs
+- All ones: a & b & c & d
+
+This leads to a sum-of-products implementation which uses AND and OR gates and does not rely on XOR. This method may increase gate count but is a structurally different design and suitable if XOR gates are unavailable or undesirable.

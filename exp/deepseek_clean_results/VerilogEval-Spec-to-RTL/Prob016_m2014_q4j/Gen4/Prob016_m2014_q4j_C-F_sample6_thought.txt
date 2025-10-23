@@ -1,0 +1,15 @@
+After analyzing both examples, here's my optimized fusion strategy:
+
+1. **Simplification**: For a 4-bit adder, a ripple-carry structure is sufficient and more area/power efficient than carry-select, while maintaining acceptable performance. The carry-select approach in both examples adds unnecessary complexity for just 4 bits.
+
+2. **Hierarchy Optimization**: Keep the modular FullAdder component for clarity, but flatten the TwoBitAdder into the main module to reduce hierarchy overhead and enable better synthesis optimization.
+
+3. **Direct Implementation**: Implement a straightforward 4-bit ripple-carry adder using four FullAdders chained together. This provides:
+   - Minimal area (no duplicated logic)
+   - Lower power (no unnecessary parallel computations)
+   - Simple, clean design that's easy to verify
+   - Still acceptable timing for 4-bit operations
+
+4. **Output Handling**: Properly extend the sum to 5 bits to include the final carry-out as the overflow bit.
+
+This approach combines the clarity of hierarchical design from Example 1 with the simplicity of direct implementation, while optimizing for PPA by avoiding unnecessary parallel computations.

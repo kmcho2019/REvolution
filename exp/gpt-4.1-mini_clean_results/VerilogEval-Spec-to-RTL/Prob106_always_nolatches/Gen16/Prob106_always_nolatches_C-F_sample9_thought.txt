@@ -1,0 +1,14 @@
+I will fuse the best qualities of both examples to achieve a clean, synthesis-friendly, and minimal combinational decoder for PS/2 arrow key scancodes.
+
+Fusion strategy:
+- Use a single always_comb (always @*) block with blocking assignments for clarity and correctness.
+- Assign all outputs to zero at the beginning to prevent latches and reduce switching noise.
+- Use a wire for prefix_match (scancode[15:8] == 8'hE0) and a wire for keycode (scancode[7:0]) to improve readability and synthesis optimization.
+- Use a case statement on the lower byte (keycode) only if prefix_match is true, ensuring minimal logic depth.
+- The case statement encodes exactly the four arrow keys one-hot, leaving outputs zero otherwise.
+- Maintain outputs as reg to be assigned inside the always block; this approach is compatible with synthesis and simulation.
+- This approach guarantees mutual exclusivity of outputs, zero outputs for unmatched scancodes, and minimizes logic area and power.
+- Avoid redundant default cases inside the case statement since outputs are zeroed upfront.
+- Keep the code succinct, well commented, and structured for easy maintenance or extension.
+
+This fusion combines clarity, low power, minimal area, and good timing with synthesis friendliness.

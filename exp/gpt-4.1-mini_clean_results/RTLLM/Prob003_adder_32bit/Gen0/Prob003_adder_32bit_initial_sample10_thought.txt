@@ -1,0 +1,11 @@
+To design a 32-bit carry-lookahead adder (CLA), I will build a hierarchical structure using 16-bit CLA blocks. First, I'll implement a 16-bit CLA block that takes two 16-bit inputs and a carry-in, and outputs a 16-bit sum and a carry-out. This 16-bit CLA will internally generate propagate and generate signals, compute carries, and produce the sum bits in parallel.
+
+Then, the 32-bit adder top module will instantiate two 16-bit CLA blocks:
+- The lower 16-bit CLA takes the lower 16 bits of A and B, with carry-in = 0.
+- The upper 16-bit CLA takes the upper 16 bits of A and B, with carry-in connected to the carry-out of the lower 16-bit CLA.
+
+This hierarchical approach simplifies design and improves modularity.
+
+The inputs and outputs are specified as [32:1], so the slicing and wiring will respect that indexing.
+
+Note: Since input/output indices are [32:1], the least significant bit is index 1 and most significant is index 32.

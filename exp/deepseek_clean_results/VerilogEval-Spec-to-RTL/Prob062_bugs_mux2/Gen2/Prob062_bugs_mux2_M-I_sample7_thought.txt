@@ -1,0 +1,13 @@
+The original bug was indeed the bit-width mismatch between the 8-bit inputs and 1-bit output. The solution correctly fixed this by making the output 8-bit. However, the testbench revealed another issue with the handling of undefined select signals.
+
+Improvement strategy:
+1. Keep the 8-bit output width
+2. Remove the default case to maintain output unchanged when sel is undefined (x or z)
+3. Use simpler continuous assignment instead of always block for better PPA (smaller area, faster)
+4. The ternary operator is actually optimal for 2:1 muxes in Verilog
+5. Let undefined sel propagate naturally (output becomes x when sel is x/z)
+
+This gives us:
+- Correct functionality for all sel cases
+- Optimal PPA (smallest possible implementation)
+- Natural handling of undefined states

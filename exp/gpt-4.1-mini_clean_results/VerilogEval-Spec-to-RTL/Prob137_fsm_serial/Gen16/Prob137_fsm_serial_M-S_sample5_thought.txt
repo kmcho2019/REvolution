@@ -1,0 +1,5 @@
+Use a single always block triggered on the positive clock edge with synchronous reset, combining state transitions and outputs for simplicity. Encode states using three meaningful states: IDLE (waiting for start bit), RECEIVE (collecting 8 bits), and WAIT_STOP (verifying stop bit or waiting for a valid stop bit if error).
+
+Count received bits during RECEIVE state. On receiving 8 bits, check the stop bit; if valid, assert done for one cycle and return to IDLE; else transition to WAIT_STOP until a valid stop bit is seen, then return to IDLE. Reset counters only when starting new reception. Avoid separate combinational logic blocks for next state and outputs to reduce complexity while preserving functionality.
+
+This approach simplifies state management and logic without changing functionality.

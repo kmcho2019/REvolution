@@ -1,0 +1,13 @@
+The original design is functionally correct with a synchronous reset initializing the LFSR to a non-zero seed to avoid lock-up in the zero state. 
+
+To improve PPA (Power, Performance, Area):
+- Use minimal logic by making feedback a wire assigned with the minimal logic expression.
+- Use a parameterized reset seed for flexibility and ease of reuse.
+- Avoid unnecessary inversion if it doesn't affect the maximal length sequence property. Since the problem statement specifies feedback as inverted XOR, we keep the inversion.
+- Declare the output as reg since it is driven in a sequential block.
+- Keep synchronous reset for better synthesis and timing closure.
+- Ensure feedback logic is optimized by the synthesis tool (no redundant logic).
+
+No asynchronous reset is used as synchronous reset aligns with best practices in many designs.
+
+The improved code is clean, parameterized, and efficient for synthesis and simulation.

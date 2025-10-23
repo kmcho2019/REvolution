@@ -1,0 +1,23 @@
+I will fuse the best ideas from both examples to create a clean, efficient, and well-structured 8-bit Radix-4 Booth multiplier.
+
+Fusion strategy:
+- Use a simple FSM with three states (IDLE, RUN, DONE) from Example 1 for clear control and ready signaling.
+- Use signed 9-bit inputs (with sign extension) for multiplicand and multiplier, and extend multiplier with one extra LSB bit for Booth recoding, as both examples do.
+- Perform radix-4 Booth recoding using a combinational case statement for the current 3-bit window of multiplier (bits [2:0]) to generate a partial product.
+- Accumulate the partial product into an 18-bit signed accumulator shifted by 2*step, just like Example 1 (which has a neater partial product handling).
+- Shift multiplier arithmetic right by 2 bits each cycle.
+- The step counter counts from 0 to 4 (five steps) since radix-4 multiplication of 8 bits requires 5 cycles.
+- On reset, load inputs and initialize; on completion assert 'rdy' and output the lower 16 bits of the accumulator.
+- Separate combinational Booth recoding logic from sequential logic to improve clarity and timing.
+- Use non-blocking assignments inside the sequential block.
+- Keep code compatible with Verilog-2001 (no SystemVerilog types).
+- Maintain stable outputs and states after multiplication done until next reset.
+
+This design benefits from:
+- Clear separation of FSM states and combinational logic (good for synthesis and verification).
+- Radix-4 Booth algorithm applied in 5 cycles (efficient).
+- Sign extension handled properly for signed multiplication.
+- Ready signaling indicating completion.
+- Minimal state logic, efficient area and reasonable power.
+
+Overall, the design merges the structured FSM control and clean combinational Booth partial product logic of Example 1 with the concise and cycle-reduced radix-4 handling from Example 2.

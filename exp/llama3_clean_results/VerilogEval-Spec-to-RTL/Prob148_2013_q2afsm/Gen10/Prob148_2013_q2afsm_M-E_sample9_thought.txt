@@ -1,0 +1,13 @@
+To implement the given Finite State Machine (FSM) with a novel architectural idea, we can utilize a priority encoder to determine the next state directly from the input signals `r`. This approach simplifies the state transition logic and reduces the need for explicit case statements or complex combinational logic.
+
+The main idea is to encode the input signals `r` into a priority-based signal that directly determines the next state. Since device 0 has the highest priority, followed by device 1, and then device 2, we can use a priority encoder to generate a 2-bit signal that represents the highest priority device requesting access.
+
+We will use the following state encoding:
+- A: 2'b00
+- B: 2'b01 (grant to device 0)
+- C: 2'b10 (grant to device 1)
+- D: 2'b11 (grant to device 2)
+
+The outputs `g` can be described using continuous assignment statements based on the current state. For the next state logic, we will utilize a combination of the priority encoder and a simple always block to manage the state transitions.
+
+This approach simplifies the code, reduces the complexity of the combinational logic, and makes the state transitions more straightforward.

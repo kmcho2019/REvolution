@@ -1,0 +1,10 @@
+Instead of using a traditional shift register, we can implement a circular buffer with a write pointer. This approach:
+1. Uses a fixed register array and moves only the pointer
+2. Eliminates the need for bit shifting operations
+3. Reduces power consumption by minimizing bit toggles
+4. Provides the same functionality with potentially better timing
+
+The implementation tracks the current position with a 3-bit pointer. On each clock, we:
+- Store the input in the current position
+- Decrement the pointer (wrapping around)
+- Output is always the concatenation of all bits in order

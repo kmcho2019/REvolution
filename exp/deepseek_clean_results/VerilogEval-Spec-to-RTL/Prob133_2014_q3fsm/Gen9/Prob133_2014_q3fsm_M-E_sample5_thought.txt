@@ -1,0 +1,14 @@
+Novel Architecture Idea:
+1. State Representation: Use 2 states (A/B) with binary encoding
+2. Window Tracking: Implement a 3-bit shift register for w values
+3. Counting Mechanism: Use a 2-bit saturating counter that:
+   - Increments when w=1 and counter < 3
+   - Decrements when w=0 and counter > 0
+4. Edge Detection: Detect when exactly 2 cycles have passed in state B
+5. Output Logic: z=1 when counter=2 at the window boundary
+6. Key Benefits:
+   - Eliminates explicit pattern matching
+   - Counter naturally tracks the "net" number of 1's
+   - Only requires simple arithmetic operations
+   - More efficient than storing all 3 bits when counting is the goal
+   - Reduced combinational logic compared to pattern matching

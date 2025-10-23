@@ -1,0 +1,8 @@
+Refactor the radix-2 divider by separating combinational calculations from sequential logic to avoid illegal variable declarations inside always blocks.  
+Use a combinational always block or continuous assignments to compute the subtraction and next shift register value based on the current SR and divisor.  
+In the sequential always block, update the state, counter, and SR with pre-computed next values on the clock edge.  
+Implement a clean FSM with IDLE, DIVIDE, DONE states where:  
+- In IDLE, latch inputs and prepare absolute values and sign flags.  
+- In DIVIDE, iterate 8 times, each time computing the next SR via combinational logic: shift left, attempt subtraction, and set quotient bit accordingly.  
+- In DONE, assert res_valid and output final signed corrected quotient and remainder.  
+This approach cleanly separates combinational and sequential logic, adheres to Verilog syntax rules, and preserves the original division algorithm behavior.

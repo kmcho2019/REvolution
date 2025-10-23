@@ -1,0 +1,15 @@
+To simplify the implementation while maintaining correctness, we'll:
+
+1. Analyze the Karnaugh map to identify essential prime implicants
+2. Group the 1s and don't-cares to form the largest possible groups
+3. Derive minimal logic expressions for each case
+
+Key observations:
+- When x[3]=1 (bottom two rows), f is 1 except when x[4]=1 and x[1:2]=01
+- When x[3]=0 (top two rows), f is 0 except when:
+  - x[4]=0 and x[1:2]=01
+  - x[4]=1 and x[1:2]=11
+
+This leads to a simpler expression:
+f = x[3] ? ~(x[4] & ~x[1] & x[2]) : 
+     (~x[4] & ~x[1] & x[2]) | (x[4] & x[1] & x[2]);

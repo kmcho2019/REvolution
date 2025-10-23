@@ -1,0 +1,23 @@
+Refactoring Approach:
+
+1. State Storage Simplification:
+   - Eliminate redundant current_state register since q already holds the state
+   - Directly use q for neighbor calculations to reduce register usage
+
+2. Boundary Handling Optimization:
+   - Pre-calculate extended state with boundary zeros (q_ext) to simplify neighbor selection
+   - This avoids conditional logic in the generate block
+
+3. Next State Calculation:
+   - Use continuous assignment for next_state calculation
+   - Implement neighbor XOR using bitwise operations on shifted versions of q_ext
+
+4. Clocked Update:
+   - Keep synchronous update but simplify to single conditional
+   - Use non-blocking assignment for proper sequential behavior
+
+Benefits:
+- Reduced register usage by eliminating current_state
+- Simplified neighbor selection with pre-extended state
+- Cleaner implementation with continuous assignments
+- Maintains same functionality with improved readability

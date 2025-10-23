@@ -1,0 +1,11 @@
+The given solution already provides a minimal and efficient implementation for this one-bit Moore FSM using a compact XOR-based next-state logic. The asynchronous reset and output logic are straightforward and optimal.
+
+To further optimize PPA, a slight restructuring can be done by explicitly writing next-state combinational logic using a simple conditional expression instead of XOR, which might synthesize slightly better depending on the synthesis tool heuristics. This avoids inversion operations and may produce simpler gates with fewer transitions, potentially reducing power. The asynchronous reset is preserved.
+
+Also, declaring the state parameter with meaningful enumeration and ensuring the output is registered (Moore FSM output) might marginally improve timing by clearly separating combinational and sequential logic stages and making the design explicit for synthesis. The overhead is negligible as output is one bit.
+
+In summary:
+- Replace XOR-based next-state update with explicit conditional logic.
+- Register the output to clarify Moore output behavior.
+- Keep async reset and single flip-flop state encoding.
+These small changes can yield a slightly better power and timing profile without area increase.

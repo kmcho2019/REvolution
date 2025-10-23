@@ -1,0 +1,13 @@
+Fusion strategy to deliver a superior dual-port RAM design:
+
+- Use parameterized DEPTH and WIDTH with address widths derived by $clog2(DEPTH) for correct sizing and scalability.
+- Implement the RAM array as reg [WIDTH-1:0] RAM [0:DEPTH-1] to reflect the given size (8 entries, 6 bits each).
+- Apply synchronous reset to initialize RAM content to zeros using a for loop inside the posedge clk always block triggered by !rst_n, ensuring deterministic initialization in ASIC flows where initial blocks may be unsupported.
+- Synchronous reset of RAM takes priority at reset, then write operations gated by write_en.
+- Use combinational read output that is gated by read_en to output RAM[read_addr], or zero if read_en is low. This gives zero-latency reads and reduces toggling when read_en is inactive, saving power.
+- Do not register read_data on clock to reduce output latency and keep the design clean and minimal.
+- Keep write synchronous and gated by write_en on posedge clk for reliable and standard write operation.
+- Provide clean, readable, and synthesis-friendly code with comments.
+- This design combines Example 1's synchronous reset and gated combinational read with Example 2's use of $clog2 for addressing and synchronous write, achieving deterministic reset, zero-latency gated reads, and clean modularity. 
+
+This fusion ensures reset clears all RAM locations synchronously, supports simultaneous read/write, and reduces toggling power by gating read output with read_en, while supporting synthesis on ASIC and FPGA flows.

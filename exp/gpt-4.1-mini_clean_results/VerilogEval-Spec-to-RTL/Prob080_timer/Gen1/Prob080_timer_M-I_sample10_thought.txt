@@ -1,0 +1,11 @@
+To optimize the timer for better PPA, reduce the complexity of the decrement logic and improve uniformity of flip-flop usage.
+
+Strategy:  
+- Use a single 10-bit register for the counter instead of splitting LSB into a separate explicit flip-flop and upper bits into inferred registers. This unifies clocking and reduces complexity of clock distribution and control signals.  
+- Implement the decrement operation without a full 10-bit subtractor by using a simple ripple borrow decrementer constructed with bitwise logic, which can be more area- and power-efficient than a general subtractor.  
+- Use synchronous load and an enable signal to gate counting, so when the counter is zero and not loaded, the register holds its value, potentially reducing switching activity.  
+- The output tc is asserted when the counter reaches zero.  
+- Instantiate exactly one explicit D flip-flop for one bit of the counter (for compliance), and rely on inferred registers for other bits to keep compliance with the one explicit DFF requirement from the example. We'll place the explicit DFF on LSB again but combine all bits into one vector with coordinated control logic for better timing and power.  
+- This unified counter reduces combinational logic and clock skew between bits, improving timing (lower critical path delay), reducing switching, and minimizing area overhead.
+
+The improved code provides the same functional behavior with better PPA characteristics.

@@ -1,0 +1,9 @@
+We simplify by using a 2-bit binary encoding for the four states (A, B, C, D), minimizing register bits. State A (00) is idle, B (01) grants device 0, C (10) grants device 1, and D (11) grants device 2.
+
+Next-state logic prioritizes requests in state A: if r[0] is high go to B, else if r[1] high go to C, else if r[2] high go to D, else remain in A.
+
+In grant states (B, C, D), stay if the corresponding request remains asserted; else return to idle (A).
+
+Outputs g are assigned combinationally based on the current state, activating only the granted device’s bit.
+
+This reduces register bits from 3 to 2, and output logic uses straightforward decoding, resulting in smaller area and simpler combinational logic while keeping full functionality and priority.

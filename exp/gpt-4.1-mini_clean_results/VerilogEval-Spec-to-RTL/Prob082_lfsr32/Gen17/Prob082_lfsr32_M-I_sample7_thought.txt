@@ -1,0 +1,15 @@
+To optimize the original 32-bit Galois LFSR implementation for better Power, Performance, and Area (PPA), the strategy is:
+
+1. Performance: The critical path involves the XOR of selected tap bits with the shifted register value. Instead of XOR-ing the entire register with a full 32-bit mask, calculate the feedback bit first, then selectively XOR only the tap bits with the feedback. This reduces logic complexity and switching.
+
+2. Power: By computing feedback only once and applying XOR only to tap bits, unnecessary toggling on non-tap bits is avoided. This reduces dynamic power caused by switching in bits that are merely shifted.
+
+3. Area: Avoid a wide 32-bit XOR operation. Use combinational logic to compute next state bits explicitly, especially at tap positions, to simplify synthesis and logic utilization.
+
+Implementation:  
+- Compute feedback as the XOR of q[0] and all tap bits shifted in the previous cycle (which is just q[0] because of Galois structure).  
+- For each bit, assign q[i] <= q[i+1] XOR (feedback if tap at position i+1 else 0).  
+- This is a classic Galois LFSR structure where only tapped bits are XORed with feedback, non-tap bits just shifted.  
+- Use synchronous reset to 32'h1.
+
+This method reduces logic depth and switching, improving both timing and power, with minor or no area increase.

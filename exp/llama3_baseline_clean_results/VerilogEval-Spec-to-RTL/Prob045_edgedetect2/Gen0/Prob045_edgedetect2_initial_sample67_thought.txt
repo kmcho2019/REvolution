@@ -1,0 +1,5 @@
+To implement the TopModule, we can use a combination of sequential logic (registers) and combinatorial logic (bit-wise XOR operation) to detect any edge transition in the input signal. Here's the approach:
+1. Store the current input value in a register, say `prev_in`, on every positive clock edge.
+2. Compare the stored previous input value (`prev_in`) with the current input value (`in`) using a bitwise XOR operation to detect any edge transitions.
+3. The result of the XOR operation will be 1 where an edge transition has occurred and 0 otherwise. This result will be used as the output `anyedge`.
+However, since we want the output `anyedge` to be set to 1 the cycle after the input bit has a transition, we need to use another register, say `edge_detected`, to store the result of the XOR operation and output it on the next clock cycle.

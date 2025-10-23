@@ -1,0 +1,13 @@
+I will refactor the design by using a Mealy FSM style where the done output is generated combinationally based on current state and input, avoiding the explicit done register update inside the sequential block. The state register remains synchronous.
+
+I will also use a shift-register style approach for capturing bytes to compactly store the 3-byte message in a single 24-bit register shifting in the new byte every time a byte is accepted.
+
+The state machine will be encoded as a 2-bit binary state machine with states IDLE (waiting for sync byte), BYTE2, BYTE3.
+
+The done signal will be asserted one cycle immediately after receiving the third byte, generated combinationally by detecting the transition into IDLE from BYTE3.
+
+This structure reduces explicit done register logic and groups the message capture logic into a single shift register updated only on valid byte acceptance, simplifying and centralizing the datapath. This may improve readability and possibly synthesis results by cleanly separating state, output and data path logic.
+
+Synchronous reset remains, and all sequential logic triggered on the positive edge of clk. The output out_bytes is valid only when done is asserted.
+
+This approach keeps the same functionality and timing as original but with a different architectural style.

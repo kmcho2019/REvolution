@@ -1,0 +1,13 @@
+To optimize the PPA metrics, I'll implement the following improvements:
+
+1. Reduce latency by using single-stage edge detection (current vs previous input) instead of two-stage
+2. Maintain the same functionality of detecting 0->1 transitions
+3. Reduce area by eliminating one of the registers (prev_prev_in)
+4. Keep the simple combinational logic for edge detection
+5. The power should improve since we're reducing the number of toggling flip-flops by half
+
+The new implementation will:
+- Use only one 8-bit register to store the previous input
+- Detect edges by comparing current input with previous input
+- Output the edge detection in the same clock cycle as the transition
+- Maintain the same interface and functionality

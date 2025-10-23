@@ -1,0 +1,11 @@
+Implement the FSM using a one-hot encoding scheme, where each state is represented by a single bit in a 5-bit register. This simplifies next state logic because each next state corresponds to a specific bit set high, reducing combinational logic complexity and potentially improving timing.
+
+Use a synchronous active-high reset to initialize the FSM to state S0 (one-hot: 00001).
+
+Since the output z is high for states S3 and S4, output can be driven directly from the one-hot state bits for those states, enabling zero-latency output logic.
+
+The next state logic will be implemented with combinational assignments using the one-hot encoded current state and input x.
+
+This approach trades a few more flip-flops for simpler and faster next-state decoding and immediate output generation, which can benefit high-frequency designs. The output z will be a wire driven by the OR of the state bits for S3 and S4.
+
+This design is fully synchronous, modular, and efficient for timing, while maintaining clarity and easily supporting future expansion.

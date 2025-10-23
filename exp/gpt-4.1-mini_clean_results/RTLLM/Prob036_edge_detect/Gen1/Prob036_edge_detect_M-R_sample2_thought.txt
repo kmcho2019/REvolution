@@ -1,0 +1,7 @@
+Refactor the edge detection by separating the synchronization and edge detection logic. Use a two-stage shift register to synchronize the input signal 'a' to the clock domain. Then derive the rising and falling edges from the difference between these two synchronized signals. Instead of holding rise and down signals until the next edge, generate a pulse that is set to 1 only on the clock cycle immediately following the edge detection, then automatically clears to 0 on the next cycle. This simplifies the logic and avoids explicitly storing the output signals, matching the common pulse generation style for edges.
+
+Use combinational logic for edge detection outputs and registers only for input synchronization. This approach also avoids latch inference and enhances clarity, producing single-cycle pulse outputs aligned to the clock.
+
+On reset, clear the synchronization registers.
+
+This method retains the requirement that rise/down signals are asserted on the clock cycle immediately after the corresponding edge, but instead of holding high until the next edge, they produce one-cycle pulses for cleaner design and potentially lower power.

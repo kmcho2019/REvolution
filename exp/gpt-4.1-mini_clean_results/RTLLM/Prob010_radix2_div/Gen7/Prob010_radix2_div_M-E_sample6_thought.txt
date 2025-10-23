@@ -1,0 +1,12 @@
+Implement a radix-2 divider using a shift-subtract approach with a simple FSM, but differ from the previous design by:
+
+- Using a single 17-bit shift register to hold both remainder and quotient during the division process.
+- Shift the register left by 1 each cycle, then subtract divisor if possible.
+- Use separate signals to track the sign of inputs and apply sign correction once the division completes.
+- Perform all internal operations as unsigned with absolute values, and apply sign to the outputs at the end.
+- The remainder is stored in the upper bits, quotient in the lower bits of the 17-bit register during calculation.
+- The counter counts from 0 to 8, corresponding to the 8 bits of division.
+- When opn_valid is asserted and module is idle, inputs and initial values are latched.
+- The design supports synchronous reset and produces res_valid when division finishes.
+- The output packs remainder in upper 8 bits and quotient in lower 8 bits.
+- This design favors a clean datapath and FSM with well-defined signals for clarity and easy timing closure.

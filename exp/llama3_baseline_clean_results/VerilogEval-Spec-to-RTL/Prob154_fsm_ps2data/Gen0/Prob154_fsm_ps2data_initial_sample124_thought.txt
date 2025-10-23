@@ -1,0 +1,9 @@
+To implement the required functionality, we can design a finite state machine (FSM) with two states: IDLE and RECEIVE. The FSM starts in the IDLE state. When a byte with in[3]=1 is received, the FSM transitions to the RECEIVE state and starts storing the received bytes. The FSM remains in the RECEIVE state until three bytes have been received. After receiving the third byte, the FSM signals done and outputs the 24-bit message. The FSM then returns to the IDLE state, waiting for the next byte with in[3]=1.
+
+We will use a counter to keep track of the number of bytes received. We will also use a shift register to store the received bytes.
+
+In the IDLE state, the counter is reset to 0, and the shift register is cleared.
+
+In the RECEIVE state, the counter is incremented for each received byte, and the shift register is updated with the new byte.
+
+When the counter reaches 3, the FSM signals done, and the shift register is output as the 24-bit message.

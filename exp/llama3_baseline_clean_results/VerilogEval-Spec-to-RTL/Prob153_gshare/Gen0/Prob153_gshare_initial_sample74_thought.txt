@@ -1,0 +1,9 @@
+The gshare branch predictor can be implemented using a finite state machine (FSM) that maintains the global branch history register and updates it based on the prediction interface and training interface. 
+
+The FSM has two main components: the prediction logic and the training logic. 
+
+The prediction logic takes the current PC and global branch history register value, hashes them into a 7-bit index, and uses this index to access the 128-entry pattern history table (PHT). The PHT entry is a two-bit saturating counter that determines the predicted branch direction. 
+
+The training logic updates the PHT entry based on the actual branch outcome and whether the branch was a misprediction. If the branch was a misprediction, the global branch history register is recovered to the state immediately after the mispredicting branch completes execution. 
+
+The FSM also handles the case where training and prediction of the same PHT entry occur at the same time, ensuring that the prediction sees the PHT state before training and that training takes precedence over prediction when modifying the global branch history register.

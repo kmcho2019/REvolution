@@ -1,0 +1,15 @@
+To fix the implementation, we need to address the timing and priority issues identified in the feedback:
+
+1. **GHR Update Priority**: Ensure training (especially mispredictions) takes absolute precedence over predictions. The current mux structure is correct but we'll verify the timing.
+
+2. **PHT Update Timing**: Maintain that predictions always see the PHT state before any training updates. This is already handled by the sequential nature of the PHT updates.
+
+3. **Misprediction Handling**: The GHR recovery should use the provided train_history directly when there's a misprediction, shifted by the actual outcome.
+
+4. **Prediction Output Timing**: Ensure predict_history output reflects the GHR state used for the current prediction, not the next state.
+
+Key changes:
+- Separate GHR update logic more clearly
+- Ensure predict_history shows current GHR state
+- Verify training updates don't affect current prediction
+- Maintain proper reset behavior

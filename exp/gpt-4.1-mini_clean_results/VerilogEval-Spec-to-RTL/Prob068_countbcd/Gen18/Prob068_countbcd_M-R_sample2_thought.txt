@@ -1,0 +1,7 @@
+I will refactor the design by breaking the BCD increment logic into combinational logic outside the synchronous block using separate wires for each digit's next value and carry signals. This makes the increment logic more transparent and easier to synthesize with shorter combinational paths.
+
+The counter state register will still be updated synchronously on clock edges or reset. The carry and digit increments are computed via combinational assignments, enabling simpler data flow without nested if-else inside a function.
+
+The enable signals are derived similarly, indicating when the lower digits are 9 to propagate increment to the next digit.
+
+This structure separates the combinational increment logic from the sequential storage, which could improve timing and clarity.

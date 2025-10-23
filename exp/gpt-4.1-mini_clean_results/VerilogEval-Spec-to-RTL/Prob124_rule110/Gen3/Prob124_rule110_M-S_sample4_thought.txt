@@ -1,0 +1,5 @@
+Simplify the module by avoiding the generate loop and explicitly writing the entire next_state logic with simple bitwise operations on shifted versions of q. Since the boundaries are zero, we can create left and right shifted vectors padded with zero bits at the edges. Then compute the next state vector in a fully vectorized way using the boolean formula of Rule 110:
+
+next = (~left & center) | (center ^ right)
+
+This eliminates the generate loop, resulting in cleaner and more compact code with identical functionality. The load and clocked update remain unchanged. The approach leverages vector concatenations and bitwise operators for succinctness and clarity.

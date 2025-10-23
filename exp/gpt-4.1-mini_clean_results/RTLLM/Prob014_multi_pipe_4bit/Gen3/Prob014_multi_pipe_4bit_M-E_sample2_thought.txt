@@ -1,0 +1,10 @@
+I will implement a 4-bit unsigned multiplier using a two-stage pipeline where the first stage generates all partial products for each bit of the multiplier and registers them, and the second stage adds these partial products together using a binary tree adder structure with pipeline registers after each addition level.
+
+Architectural idea:
+- Inputs mul_a and mul_b are zero-extended by size bits at MSB, resulting in 8-bit extended multiplicand.
+- Partial products are generated combinationally for each bit of mul_b as either shifted ext_mul_a or zero.
+- All partial products are stored in the first pipeline register stage to hold stable intermediate values.
+- Second pipeline stage sums the partial products in a balanced manner: first sums pairs of partial products, registers the sums, then sums the results to produce final product output.
+- The pipeline latency is 2 cycles (one for storing partial products, one for summing).
+- Reset is synchronous active low (reset logic applies on rising clock edge when rst_n==0), which is more synthesis friendly.
+- This design efficiently pipelines the multiplication and uses registers for intermediate values as required.

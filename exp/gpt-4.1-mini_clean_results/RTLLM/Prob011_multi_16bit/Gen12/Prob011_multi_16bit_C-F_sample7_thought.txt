@@ -1,0 +1,25 @@
+Fusion strategy:
+
+1. From Example 1:
+   - Use a well-structured shift-and-accumulate approach with separate multiplicand (areg) and multiplier (breg) registers.
+   - Maintain a clear 5-bit counter (i) and done flag logic.
+   - Perform the addition combinationally and register results only when needed.
+   - Use synchronous reset and stable registers to reduce glitches.
+   - Avoid resetting registers unnecessarily when start is deasserted to reduce toggling.
+
+2. From Example 2:
+   - Implement clock-enable gating on the addition and product register updates to avoid unnecessary 32-bit additions and updates when the corresponding multiplicand bit is zero.
+   - Use simple FSM to manage states (IDLE/BUSY) for clearer control.
+   - Load multiplicand and multiplier only once per operation, and keep registers stable otherwise.
+   - Combine shifts and addition so that the product register only updates when addition is required, else just shifts.
+   - Use done signal cleanly tied to the counter and state.
+
+Fusion synthesis:
+- Use Example 1’s detailed and fine-grained register structure (areg for multiplicand shifting right, breg for multiplier shifting left), which is more canonical and straightforward for shift-and-add multipliers.
+- Use Example 2’s clock enable gating on addition and register updates to reduce power by not updating product register when addition is unnecessary.
+- Use a state signal for better control of start and busy phases.
+- Ensure done signal is generated synchronously when multiplication completes.
+- Avoid resetting registers on start deassertion to reduce unnecessary switching.
+- Maintain synchronous active-low reset for consistency.
+
+This design yields a clean, efficient, and power-optimized shift-and-accumulate multiplier with clear FSM control, reduced toggling on product register, and minimal combinational logic per cycle, balancing power, performance, and area.

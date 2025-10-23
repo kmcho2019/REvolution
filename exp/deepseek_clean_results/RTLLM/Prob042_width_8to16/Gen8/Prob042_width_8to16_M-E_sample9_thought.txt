@@ -1,0 +1,16 @@
+Here's a novel pipelined approach with shift register implementation:
+
+1. **Shift Register Core**: Instead of using a state machine, implement a 16-bit shift register that shifts in 8-bit chunks. This provides natural storage for incoming bytes.
+
+2. **Fill Counter**: Use a 1-bit counter to track whether we have the first byte (0) or second byte (1). This replaces explicit state encoding.
+
+3. **Pipelined Output**: The output registers are updated one cycle after the second byte is received, meeting the timing requirement.
+
+4. **Efficient Storage**: The shift register serves both as temporary storage and output buffer, reducing register count.
+
+Key advantages:
+- Eliminates explicit state machine logic
+- Uses hardware more efficiently with shift register
+- Naturally handles the one-cycle delay requirement
+- Clear progression from input to output
+- Easily extensible for different width conversions

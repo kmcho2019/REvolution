@@ -1,0 +1,7 @@
+A novel architectural idea for the TopModule is to use a counter-based approach to track the receipt of message bytes. Instead of using a finite state machine with multiple states, a single counter can be used to keep track of the number of bytes received. This approach simplifies the logic and reduces the number of states, making it more efficient in terms of area and power consumption.
+
+The counter will be incremented each time a byte is received, and when the counter reaches 3, it signals that a complete message has been received. The message bytes can be stored in a single 24-bit register, and the counter can be used to determine which byte to store in the register.
+
+To further optimize the design, the counter and the 24-bit register can be reset on the positive edge of the reset signal. This ensures that the module is properly initialized after a reset.
+
+The done signal can be generated using a simple comparison between the counter value and the expected value of 3. When the counter reaches 3, the done signal is asserted, indicating that a complete message has been received.

@@ -1,0 +1,7 @@
+To implement the perpetual calendar module in Verilog, we'll follow the given specifications. The module will have three always blocks to handle the seconds, minutes, and hours. Each block will trigger on the positive edge of the clock signal or the positive edge of the reset signal. Within these blocks, we'll implement the logic to increment or wrap around the seconds, minutes, and hours values based on the given conditions.
+
+For the seconds block, we'll check if the reset signal is active or if the seconds value is 59. If the reset is active, we set seconds to 0. If seconds is 59, we wrap it around to 0. Otherwise, we increment seconds by 1.
+
+For the minutes block, we'll first check if the reset signal is active. If it is, we set minutes to 0. Then, we check if both minutes and seconds are 59. If they are, we wrap minutes around to 0. If only seconds is 59, we increment minutes by 1. Otherwise, minutes remains unchanged.
+
+For the hours block, we'll again check if the reset signal is active. If it is, we set hours to 0. Then, we check if hours, minutes, and seconds are all at their maximum (23, 59, 59). If they are, we wrap hours around to 0. If minutes and seconds are both 59, we increment hours by 1. Otherwise, hours remains unchanged.

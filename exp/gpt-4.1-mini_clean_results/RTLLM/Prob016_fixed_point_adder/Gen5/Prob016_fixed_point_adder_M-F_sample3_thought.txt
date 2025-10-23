@@ -1,0 +1,11 @@
+The original fixed_point_adder module correctly implements fixed-point addition with overflow detection and saturation. The issues reported are due to incorrect or missing parameter passing in module instantiations (outside this module). To make the module more robust and easier to use without instantiation errors, we should:
+
+1. Provide default values for parameters Q and N to enable instantiation without explicit parameter specification.
+2. Improve code style slightly by declaring `res` before the always block.
+3. Use a single always_comb block to drive both `res` and output `c` to avoid confusion.
+4. Document the module interface clearly.
+5. Add an example instantiation snippet (commented) showing how to specify parameters.
+
+This ensures the module can be used both with default parameters and with explicit overrides. It also clarifies usage for integrators, avoiding elaboration errors related to missing parameters.
+
+No change to the core addition and saturation logic is needed.

@@ -1,0 +1,11 @@
+Implement the calendar using three separate always blocks: one for seconds, one for minutes, and one for hours. Each block triggers on posedge CLK or posedge RST. 
+
+- The seconds block increments Secs from 0 to 59, wrapping around to 0 on 59 or reset.
+- The minutes block increments Mins only when seconds wrap from 59 to 0; minutes wrap from 59 to 0 on reset or when seconds roll over and minutes hit 59.
+- The hours block increments Hours only when both minutes and seconds wrap from 59 to 0; hours wrap from 23 to 0 on reset or at full day rollover.
+
+This modular approach reduces combinational logic depth per always block and eases timing constraints. Using separate always blocks for each time unit separates their state machines. Use nonblocking assignments and appropriate conditions to keep counters in sync and increment correctly.
+
+Assign output widths as required: Hours 6-bit to match output spec (though 5 bits suffice to hold 0-23), Mins and Secs as 6-bit.
+
+This design clearly separates counter responsibilities and handles wrap-around cleanly.

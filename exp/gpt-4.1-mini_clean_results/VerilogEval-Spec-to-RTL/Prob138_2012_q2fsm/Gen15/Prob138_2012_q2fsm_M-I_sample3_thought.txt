@@ -1,0 +1,9 @@
+To improve the PPA metrics, I will remove the conditional state update based on `state_update_en` to eliminate the comparator in the clock path, which should improve timing (lower clock-to-Q delay and higher max frequency) and potentially reduce power by simplifying clocked logic. Although this removes the state update gating that reduces toggling, the simplified clocked process is typically faster and may yield a better overall tradeoff.
+
+I will keep the 3-bit binary state encoding for area efficiency and maintain the separation of combinational next-state logic and sequential state register logic for clarity and synthesis friendliness.
+
+The synchronous reset will remain active-high and synchronous on the positive clock edge as required.
+
+I will keep the FSM output `z` as a continuous assignment based on state comparison, which is both area- and power-efficient.
+
+This approach reduces clock path complexity and should improve performance with a slight possible impact on power; overall, it is a good tradeoff for better PPA.

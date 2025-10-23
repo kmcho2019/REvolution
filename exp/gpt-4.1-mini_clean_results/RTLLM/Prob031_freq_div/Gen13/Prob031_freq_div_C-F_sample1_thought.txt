@@ -1,0 +1,13 @@
+Fuse the best features of both examples by using separate always blocks for each output clock to fully isolate their toggle paths and minimize critical path fanout and timing complexity. Specifically:
+
+- Use one always block for CLK_50 toggling every clock cycle.
+- Use separate always blocks for CLK_10 and CLK_1 counters and toggling to isolate their slower toggles.
+- This modular separation enables better timing closure by reducing logic fanout and dependencies.
+- Use minimal width counters with clear count boundaries.
+- Keep asynchronous active-high reset for immediate reset response.
+- Use non-blocking assignments consistently.
+- Add comments clarifying count-to-toggle mapping for readability.
+- The design is fully synchronous except reset, with counters incrementing and toggles updating on clock edges, ensuring clean synchronous behavior.
+- This fusion balances modularity, readability, area efficiency, and timing optimization better than the single or two-block approaches.
+
+This approach also simplifies debugging and future maintenance since each frequency divider is independently handled.

@@ -1,0 +1,9 @@
+To solve this problem, we will design a finite state machine (FSM) with the following states:
+1. IDLE: The initial state, waiting for the start bit.
+2. START: The start bit has been detected, and we are now waiting for the 8 data bits.
+3. DATA: We are currently receiving the 8 data bits.
+4. STOP: We have received the 8 data bits and are now waiting for the stop bit.
+
+The FSM will transition between these states based on the input bit stream and the current state. We will also use a counter to keep track of the number of data bits received. Once a complete byte has been received (start bit, 8 data bits, and stop bit), the 'done' signal will be asserted for one clock cycle.
+
+The FSM will also handle the case where the stop bit does not appear when expected. In this case, the FSM will wait until a stop bit is received before attempting to receive the next byte.

@@ -1,0 +1,8 @@
+The original solution is functionally correct but fails simulation due to undefined initial state of the flip-flop. Since the problem specifies no reset, we should:
+1. Keep the core functionality identical (XOR feedback with DFF)
+2. Add an initial value assignment for simulation purposes only (using `initial` block)
+3. Use synthesis pragmas to ensure this doesn't affect implementation
+4. This maintains the specified behavior while making simulation predictable
+5. No PPA impact on actual hardware as initial blocks are ignored during synthesis
+
+The improvement makes the module more robust for verification while strictly adhering to the problem constraints (no reset). The simulation will now match expected behavior from first clock cycle.

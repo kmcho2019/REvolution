@@ -1,0 +1,23 @@
+The finite-state machine (FSM) will be implemented using a Moore machine, where the output depends only on the current state. The states can be defined as follows:
+- IDLE: The initial state where the FSM searches for the start pattern (1101).
+- SHIFT: After detecting the start pattern, the FSM shifts in 4 more bits.
+- COUNT: The FSM waits for the counters to finish counting.
+- DONE: The FSM notifies the user and waits for acknowledgment.
+The next state logic will be based on the current state and the input signals. The output logic will be based on the current state.
+
+The states will be encoded using binary numbers, with each state having a unique binary code. 
+For example: 
+- IDLE = 2'b00
+- SHIFT = 2'b01
+- COUNT = 2'b10
+- DONE = 2'b11
+
+The sequence detection will be done using a shift register. When the sequence is detected, the FSM transitions to the SHIFT state.
+
+In the SHIFT state, the FSM asserts shift_ena and waits for 4 clock cycles. After that, it transitions to the COUNT state.
+
+In the COUNT state, the FSM asserts counting and waits for done_counting. When done_counting is high, the FSM transitions to the DONE state.
+
+In the DONE state, the FSM asserts done and waits for ack. When ack is high, the FSM transitions back to the IDLE state.
+
+The reset signal will reset the FSM to the IDLE state.

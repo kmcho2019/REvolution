@@ -1,0 +1,13 @@
+The original Mealy FSM solution is already efficient and detects the sequence with minimal latency. However, we can improve the clarity of the FSM state encoding by using fewer bits (2 bits suffice for 4 states), rename states more clearly, and add comments for better readability. Also, ensure the reset is asynchronous active-low as requested.
+
+The original used 3 bits for states but only needed 4 states (IDLE, S1, S10, S100). Using 2-bit states reduces flip-flop usage slightly.
+
+Additionally, to save power and optimize timing, use blocking assignments in combinational always blocks, and non-blocking in sequential blocks consistently.
+
+We keep the Mealy output assertion combinationally, ensuring the sequence_detected signal is a one-clock-cycle pulse right when the last bit of sequence arrives.
+
+The FSM naturally handles overlapping sequences by design.
+
+No functional change; just code style, encoding, and clarity improvements for slightly better PPA.
+
+We keep the port name `reset_n` as specified.

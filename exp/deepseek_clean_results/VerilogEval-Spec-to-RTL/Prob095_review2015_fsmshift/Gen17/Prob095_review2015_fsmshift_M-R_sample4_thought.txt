@@ -1,0 +1,11 @@
+Refactored approach maintaining the counter-based concept but with improved clarity:
+1. Use a 3-bit counter to properly count 4 cycles (values 0-3)
+2. Eliminate the separate 'done' flag by using counter value as state indicator
+3. Make shift_ena directly dependent on counter value (active when counter < 4)
+4. Reset behavior remains synchronous but counter now properly counts all 4 cycles
+5. Key improvements:
+   - Correct cycle count with 3-bit counter (though only 2 bits needed for 0-3)
+   - Simplified state tracking by removing done flag
+   - Direct combinatorial assignment for shift_ena
+   - Clearer relationship between counter and enable signal
+   - More efficient implementation (2-bit counter sufficient)

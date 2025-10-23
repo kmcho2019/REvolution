@@ -1,0 +1,9 @@
+I will implement the arbiter FSM with a one-hot encoded state machine, using four flip-flops each representing one state (A, B, C, D). One-hot encoding simplifies next-state logic and can improve timing at the cost of a few more flip-flops, but given only four states, this overhead is minimal.
+
+The next state logic will be computed using combinational logic that directly sets the next one-hot state based on current state and input requests with priority encoding (r[0] > r[1] > r[2]). This method eliminates the need for a binary-encoded priority multiplexer.
+
+The grant output signals are directly derived from the one-hot states B, C, and D, making the output logic trivial and glitch-free.
+
+The synchronous active-low reset will set the state to A, all others zero.
+
+This architecture provides clear and straightforward FSM next-state logic, potentially faster transition and simplified synthesis, with clean output decoding.

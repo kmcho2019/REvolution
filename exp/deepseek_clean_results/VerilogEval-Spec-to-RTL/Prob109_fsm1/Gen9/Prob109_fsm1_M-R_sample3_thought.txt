@@ -1,0 +1,23 @@
+Refactoring approach:
+
+1. State Representation:
+   - Keep binary encoding (0=A, 1=B) but represent it as a wire instead of reg
+   - Use continuous assignment for both state and output
+
+2. Next State Logic:
+   - Maintain the efficient XOR logic but implement it purely with assign statements
+   - Use a combinational feedback loop for the state
+
+3. Reset Handling:
+   - Implement asynchronous reset using a mux at the state assignment
+   - This eliminates the need for an always block while maintaining functionality
+
+4. Output Logic:
+   - Keep direct state-to-output mapping
+   - Now implemented through continuous assignment
+
+Key benefits:
+- Pure combinational/continuous assignment style
+- Eliminates procedural blocks while maintaining same functionality
+- Same efficient logic but different coding style
+- Maintains all PPA advantages of original solution

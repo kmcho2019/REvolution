@@ -1,0 +1,9 @@
+My novel approach uses a hierarchical state encoding that combines one-hot with state grouping to reduce logic complexity. The key innovations are:
+
+1. Group states into categories (Start, Shift, Count, Wait) to simplify transition logic
+2. Use a hybrid encoding where the MSB indicates the group, and lower bits handle intra-group states
+3. Implement next-state logic using priority encoders for group transitions
+4. Use parallel output generation based on both current state and next-state
+5. Optimize for minimal fanout in critical paths by separating transition conditions
+
+This approach reduces the combinatorial logic depth compared to pure one-hot while maintaining the benefits of easy state decoding. The grouping also makes the state machine more maintainable as related states are logically organized.

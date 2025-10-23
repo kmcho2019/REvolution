@@ -1,0 +1,14 @@
+To simplify the design further while maintaining functionality:
+1. Use a 2-bit counter to track valid inputs (0-3)
+2. Accumulate inputs in a 10-bit register (8-bit inputs can sum up to 1020 max)
+3. On the 4th valid input (count==3):
+   - Output the accumulated sum
+   - Pulse valid_out for one cycle
+   - Reset accumulator and counter
+4. Keep all other behavior identical but with minimal logic
+
+Key simplifications:
+- Single always block for all sequential logic
+- Direct accumulation without intermediate registers
+- Simple counter-based control
+- Minimal state tracking

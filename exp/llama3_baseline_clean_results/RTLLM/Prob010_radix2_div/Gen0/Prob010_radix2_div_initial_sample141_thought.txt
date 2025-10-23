@@ -1,0 +1,14 @@
+To design the radix2_div module, we need to implement a simplified radix-2 divider that supports both signed and unsigned division operations on 8-bit integers. The module will accept a dividend, a divisor, and a control signal to indicate whether the operation is signed or unsigned. We'll use a shift register to store the intermediate results and update it based on the subtraction result of the divisor from the dividend. We'll also use a counter to keep track of the division process. The result will be a 16-bit value containing the quotient and the remainder. We'll handle the reset signal to initialize the module and the res_valid signal to indicate when the result is ready.
+
+Here's a step-by-step breakdown:
+
+1. Initialize the shift register SR with the absolute value of the dividend shifted left by one bit.
+2. Set NEG_DIVISOR to the negated absolute value of the divisor.
+3. Set the counter cnt to 1 and start_cnt to 1 to begin the division process.
+4. Perform the division process based on the subtraction result of NEG_DIVISOR from SR.
+5. Update SR by shifting left and inserting the carry-out based on the subtraction result.
+6. Repeat steps 4 and 5 until the counter cnt reaches 8.
+7. Update the result with the final remainder and quotient.
+8. Set res_valid to indicate that the result is ready.
+
+To handle signed division, we'll use the sign signal to determine whether to perform signed or unsigned division.

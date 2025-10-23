@@ -1,0 +1,11 @@
+Instead of just delaying the input signal once and comparing the current and previous values, this design uses a two-stage shift register to delay the input 'a' by two clock cycles. By comparing the two delayed signals, we can detect edges with a cycle latency of one clock cycle, and then latch the detected edge in a simple stateful way to ensure rise or down outputs remain asserted for exactly one clock cycle after the edge is detected.
+
+The idea is:
+- Use two flip-flops to shift the input 'a', obtaining a_d1 (1-cycle delayed) and a_d2 (2-cycle delayed).
+- Detect edges by comparing a_d1 and a_d2.
+- When an edge is detected, set rise or down registers to 1.
+- rise and down outputs are registered signals that stay high for exactly one clock cycle after detection and then clear automatically.
+- This approach adds a minimal pipeline stage and state, which can improve timing and provides a clear pulse-generation mechanism, avoiding purely combinational outputs.
+
+The reset is synchronous active low to simplify timing and synthesis.  
+This design is fully synchronous and meets the requirement of one clock-cycle output pulse synchronized to clk.

@@ -1,0 +1,19 @@
+To optimize the ROM module for better PPA (Power, Performance, Area) metrics while maintaining functionality:
+
+1. **Power Optimization**:
+   - Add an enable signal to gate the output when not in use, reducing dynamic power consumption
+   - Keep the output at 0 when disabled to prevent unnecessary toggling
+
+2. **Area Optimization**:
+   - Replace the 256x16 memory array with a case statement since only 4 locations are initialized
+   - Case statement will synthesize more efficiently for small ROMs
+   - Remove unused memory array to save area
+
+3. **Performance**:
+   - Maintain combinational read path for fastest access
+   - Case statement provides direct decoding without memory overhead
+
+4. **Functionality**:
+   - Preserve same behavior for addresses 0-3
+   - Default to 0 for other addresses (better than 'x' for practical use)
+   - Add enable functionality for power control

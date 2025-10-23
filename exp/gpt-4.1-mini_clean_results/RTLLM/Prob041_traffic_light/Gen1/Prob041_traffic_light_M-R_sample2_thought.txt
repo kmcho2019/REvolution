@@ -1,0 +1,10 @@
+Refactor the design to rely solely on the FSM state for timing control and counter initialization, avoiding edge detection on outputs.  
+Use a Moore FSM with clear state transitions and explicit state durations defined as parameters.  
+On state entry, load the counter with the state's duration:  
+- s3_green = 60 cycles  
+- s2_yellow = 5 cycles  
+- s1_red = 10 cycles  
+Handle the pedestrian pass_request inside the green state only: if pass_request occurs and remaining green time is > 10, shorten counter to 10.  
+Use a simple synchronous process for counter decrement and state transitions when the counter expires.  
+Drive the outputs combinationally based on the current state, no extra registers for outputs needed.  
+This avoids complex edge detection and output tracking, simplifies the design, and strictly respects the timing requirements.

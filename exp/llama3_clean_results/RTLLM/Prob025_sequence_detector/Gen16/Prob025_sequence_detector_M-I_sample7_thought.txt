@@ -1,0 +1,29 @@
+To improve the provided sequence detector module, we should focus on optimizing its Power, Performance, and Area (PPA) metrics while ensuring it correctly detects the desired sequence 1001. 
+
+First, we analyze the current implementation and identify potential areas for improvement. The module uses a 4-bit shift register to store the input data stream and a comparator to check for the desired sequence. 
+
+For performance optimization, we can improve the timing by re-organizing the logic to reduce the number of operations performed in a single clock cycle. However, the current implementation is relatively straightforward and efficient.
+
+Regarding power consumption, we can reduce the switching activity by ensuring that the shift register and comparator logic are only updated when necessary. The current implementation already achieves this by only updating the shift register on the positive edge of the clock.
+
+In terms of area, the use of a 4-bit shift register and a comparator does consume some area. However, given the requirements of the sequence detector, these components are necessary.
+
+To optimize the PPA metrics, we can consider the following strategies:
+1.  **State Machine Optimization**: The current implementation uses a straightforward state machine with four states (IDLE, S1, S2, S3, S4). We can explore more efficient state machine encodings or minimize the number of transitions between states.
+2.  **Minimizing Transitions**: By analyzing the sequence detection logic, we can minimize the number of transitions between states, reducing the switching activity and power consumption.
+3.  **Logic Reduction**: We can attempt to simplify the logic used for sequence detection, potentially reducing the area and power consumption.
+
+Considering these strategies, we will focus on optimizing the state machine and minimizing transitions to improve the PPA metrics.
+
+The provided solution already implements a correct sequence detection logic. However, we can improve it by explicitly defining the states and their transitions, ensuring a more efficient state machine implementation.
+
+We will define the states as follows:
+-   IDLE: The initial state, waiting for the start of the sequence.
+-   S1: The first bit of the desired sequence (1) is detected.
+-   S2: The second bit of the desired sequence (0) is detected.
+-   S3: The third bit of the desired sequence (0) is detected.
+-   S4: The fourth bit of the desired sequence (1) is detected.
+
+The sequence detector will transition between these states based on the input data stream, and the `sequence_detected` output will be set high when the complete sequence is detected.
+
+Here is the improved code:

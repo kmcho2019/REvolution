@@ -1,0 +1,13 @@
+Use a three-bit shift register in state B to capture the last three w inputs. After the third sample, count the number of ones in the shift register by summing its bits combinationally. If exactly two bits are set, assert z=1 for one cycle after the sampling window.
+
+The FSM will have three states: 
+- A: wait for s=1 to transition to B
+- B0, B1, B2: three substates in state B, representing which cycle of w sampling is currently being recorded.
+
+This allows a compact state encoding with only two extra states to track the cycle count instead of separate counters.
+
+Output z is asserted only one cycle after the third sample, based on the count of ones in the shift register.
+
+This approach avoids explicit w counters and addition of w_count+w each cycle, simplifying combinational logic.
+
+All logic is synchronous on posedge clk with synchronous reset.

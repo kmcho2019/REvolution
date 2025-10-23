@@ -1,0 +1,7 @@
+Simplify the FSM by using a 3-bit shift register to keep track of the last six input bits, detecting patterns by checking the shift register content. On each clock, shift in the new bit and check for the relevant patterns:
+
+- disc: when the pattern ends with "111110" (five ones followed by zero),
+- flag: when the pattern matches the HDLC flag "0111110" (six bits with five ones in the middle),
+- err: when seven or more consecutive ones occur.
+
+This removes explicit state counting and comparison logic, relying on pattern matching in the shift register. Outputs are registered and asserted for one cycle after detection. Reset initializes the shift register to zeros (previous bit zero). This approach maintains functionality and simplifies state logic.

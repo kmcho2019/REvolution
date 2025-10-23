@@ -1,0 +1,19 @@
+Refactored approach with proper falling edge detection:
+
+1. Maintain the same interface and functionality: detect 1->0 transitions on each bit
+2. Key improvements:
+   - Explicitly track previous input state for accurate edge detection
+   - Use separate always blocks for sequential and combinational logic
+   - Clearer edge detection using proper comparison between current and previous states
+3. Falling edge detection:
+   - Store previous input in a register
+   - Compare current input with previous input
+   - Set output when previous=1 and current=0
+4. Output logic:
+   - Once set, output remains high until reset
+   - Reset clears all outputs synchronously
+5. Benefits:
+   - Accurate edge detection without false positives
+   - Clear separation of sequential and combinational logic
+   - Maintains synchronous design principles
+   - Easier to understand and verify

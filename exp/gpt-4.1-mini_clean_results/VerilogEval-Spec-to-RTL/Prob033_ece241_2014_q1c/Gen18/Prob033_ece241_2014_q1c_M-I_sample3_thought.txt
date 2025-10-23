@@ -1,0 +1,11 @@
+To improve the given design for better performance, power, and area (PPA), the primary opportunity is to reduce carry propagation delay and logic duplication by implementing a full 8-bit carry-lookahead adder (CLA) instead of two 4-bit CLAs chained by carry-out/carry-in signals.
+
+The main improvements are:
+1. Use a single 8-bit CLA block that calculates propagate and generate signals for all bits.
+2. Compute carries for all 8 bits in parallel using carry-lookahead logic, which reduces carry chain delay and increases maximum operating frequency.
+3. Compute the sum bits directly from the propagate signals and carries.
+4. Compute overflow as the XOR of carry into MSB (bit 7) and carry out of MSB (bit 7), consistent with signed overflow detection.
+5. This will slightly increase combinational logic complexity, but significantly reduce critical path delay and potentially area by removing duplicated logic and inter-block carry chaining.
+6. Power should improve as well due to shorter logic paths and reduced glitching from the ripple carry chain.
+
+Overall, this 8-bit CLA module combines all 8 bits in one block, producing the sum and overflow in a more efficient way while maintaining code clarity and modularity.

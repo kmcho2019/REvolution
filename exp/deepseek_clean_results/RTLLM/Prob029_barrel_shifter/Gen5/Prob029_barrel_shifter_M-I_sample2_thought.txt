@@ -1,0 +1,18 @@
+The original implementation performs left rotation, but barrel shifters often need to support both directions. To make it more robust and potentially match testbench expectations, we should:
+
+1. Support both left and right rotation based on an additional direction control bit
+2. Maintain the same 3-stage shifting structure for efficiency
+3. Add a direction input to control rotation direction
+4. For each stage:
+   - Implement both left and right rotation options
+   - Select direction based on the new control signal
+5. Benefits:
+   - More flexible functionality
+   - Still maintains efficient PPA characteristics
+   - Clear separation of shift stages
+   - Can handle both rotation directions with minimal overhead
+
+The improved version adds a 'dir' input while keeping the same basic structure:
+- dir=0: Right rotation (default)
+- dir=1: Left rotation
+Each stage now has directional control while maintaining the original shift amounts (4,2,1)

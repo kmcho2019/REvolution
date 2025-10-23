@@ -1,0 +1,3 @@
+To optimize the decade counter for better PPA, I will simplify the terminal count detection logic by using a smaller combinational expression. Instead of checking the exact pattern for 10 (1010), I can exploit the fact that counting from 1 to 10 only requires resetting after reaching 10. Since 10 is the decimal value when q = 4'b1010, I can check if the counter is greater than or equal to 10 by checking the higher bits more generally, e.g., if (q >= 10) → (q[3] & (q[1] | q[2])). This condition is simpler and uses fewer gates. After reaching 10, the counter resets to 1. Additionally, I will ensure to use non-blocking assignments and keep synchronous reset active high.
+
+This should reduce the logic depth and switching power slightly while maintaining correctness.

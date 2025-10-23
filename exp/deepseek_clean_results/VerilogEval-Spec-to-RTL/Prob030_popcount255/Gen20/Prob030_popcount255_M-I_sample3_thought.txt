@@ -1,0 +1,19 @@
+To optimize the population count circuit for better PPA (Power, Performance, Area), I'll implement these improvements:
+
+1. **Balanced Adder Tree**: Replace the long chain of additions with a balanced binary tree structure to reduce critical path depth and improve timing.
+
+2. **Optimized Group Counting**: 
+   - Use 5-bit counters for each 8-bit group (since max count per group is 8)
+   - For the last 7-bit group, still use 5-bit counter (max count is 7)
+   - This reduces intermediate storage requirements
+
+3. **Efficient Final Summation**:
+   - Implement the final sum using a hierarchical adder tree
+   - First sum pairs of group counts, then pairs of those sums, etc.
+   - This reduces the critical path from O(n) to O(log n)
+
+4. **Power Optimization**:
+   - The balanced structure naturally reduces switching activity
+   - Smaller intermediate counters reduce power consumption
+
+This approach maintains the same functionality while improving timing (performance), reducing area (smaller counters), and potentially lowering power consumption.

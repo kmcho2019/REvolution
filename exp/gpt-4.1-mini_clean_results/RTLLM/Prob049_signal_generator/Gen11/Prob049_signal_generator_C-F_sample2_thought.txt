@@ -1,0 +1,12 @@
+Fuse the clean, explicit state-machine style from Example 2 with the next_wave combinational logic approach from Example 1 to improve clarity and timing.
+
+1. Use a single-bit state register indicating increment (0) or decrement (1) mode.
+2. Compute next_wave combinationally using a dedicated always_comb block, clearly separating next_wave logic from sequential state/wave updates.
+3. Update wave and state synchronously on posedge clk or negedge rst_n, with asynchronous active-low reset.
+4. On reset, initialize wave and state to zero.
+5. On normal operation, assign wave <= next_wave unconditionally each cycle, preventing redundant conditional assignments and ensuring predictable wave updates every cycle.
+6. Update state only when wave hits bounds (0 or 31), toggling the state to reverse the direction.
+7. Add comments to clarify behavior.
+8. This approach reduces glitches by ensuring wave updates every cycle, and state toggling happens only at bounds, improving power and timing.
+9. Keeping asynchronous reset aligns with requirements and aids fast reset response.
+10. Overall, this design combines semantic clarity, structured logic separation, and efficient hardware implementation, providing better maintainability, performance, and power compared to the examples.

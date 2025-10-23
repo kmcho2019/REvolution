@@ -1,0 +1,26 @@
+module TopModule (
+    input clk,
+    input reset,
+    output shift_ena
+);
+
+    reg [1:0] counter;
+    reg done;
+
+    // shift_ena is high only during initial 4 cycles after reset
+    assign shift_ena = ~done & (counter <= 2'd3);
+
+    always @(posedge clk) begin
+        if (reset) begin
+            counter <= 2'd0;
+            done <= 1'b0;
+        end else if (~done) begin
+            if (counter < 2'd3) begin
+                counter <= counter + 1;
+            end else begin
+                done <= 1'b1;
+            end
+        end
+    end
+
+endmodule

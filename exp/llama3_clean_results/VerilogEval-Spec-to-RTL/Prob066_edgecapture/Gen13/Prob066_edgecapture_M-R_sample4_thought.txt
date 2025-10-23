@@ -1,0 +1,9 @@
+To refactor the existing code, we'll focus on maintaining the state of `out` across clock cycles once it's set due to a transition. The key insight is that we need to update `out` only when a transition is detected or when the reset is asserted. Otherwise, `out` should retain its previous value.
+
+One approach to simplify the logic is to use a combinational logic block to detect transitions and then use a sequential block to update `out` based on these transitions and the reset signal. However, since `out` needs to retain its state, we'll stick with a sequential approach but structure it to minimize unnecessary updates.
+
+The refactored code will introduce a non-blocking assignment to `out` within the `always` block to ensure that once a bit in `out` is set, it remains set until reset, without needing to constantly re-evaluate the condition for setting `out[i]`. This approach maintains the simplicity and readability of the original code while ensuring the correct functionality.
+
+Moreover, we'll explicitly handle the case where `out[i]` is already set, to avoid unnecessary re-assignments, thus optimizing the logic for setting `out[i]`.
+
+The core idea revolves around ensuring that `out` maintains its state across clock cycles unless a reset occurs, which requires a careful examination of how `out` is updated in relation to the input transitions and the reset signal.

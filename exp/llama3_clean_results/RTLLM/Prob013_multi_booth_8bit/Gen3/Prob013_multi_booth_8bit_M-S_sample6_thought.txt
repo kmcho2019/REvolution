@@ -1,0 +1,11 @@
+To simplify the existing solution, we should focus on reducing unnecessary complexity while maintaining the core functionality of the Booth algorithm. The main simplification lies in handling the reset and clock edge conditions explicitly and improving the design for better synthesizability. 
+
+The key simplification involves checking the counter (ctr) before performing the left shift on the multiplicand and checking the current bit of the multiplier. This ensures that we do not attempt to access the multiplier beyond its bounds, which could simplify the synthesis process and improve the overall design.
+
+Additionally, we should aim to minimize unnecessary operations within a single clock cycle. The logic for the multiplication process, including the accumulation of the product (p) and the left shift of the multiplicand, should be optimized for better synthesizability and performance.
+
+To further simplify the design, we can explicitly separate the logic for reset and clock edge conditions, ensuring that the reset condition is checked before the clock edge in the `always` block. This should improve the design's compatibility with the synthesis tool and reduce potential issues during post-synthesis functional verification.
+
+We will maintain two 16-bit registers, `multiplier` and `multiplicand`, to hold the input values and perform the multiplication. A 5-bit counter `ctr` will track the number of clock cycles, ensuring that we do not exceed the bounds of the multiplier.
+
+By simplifying the logic, handling the reset and clock edge conditions explicitly, and optimizing the multiplication process, we can create a more efficient and synthesizable design for the 8-bit Radix-4 Booth multiplier.

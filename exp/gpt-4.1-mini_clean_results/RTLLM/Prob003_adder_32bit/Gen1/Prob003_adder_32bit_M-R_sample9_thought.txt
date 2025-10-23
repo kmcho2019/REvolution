@@ -1,0 +1,9 @@
+Refactor the 16-bit CLA module to use hierarchical 4-bit group propagate and generate signals, which improves readability and scalability, while maintaining the same carry-lookahead principles. Instead of enumerating all carry terms explicitly for each bit, we compute propagate/generate for 4-bit groups first, then use these group signals to compute carries more systematically. This reduces the complexity of carry logic expressions and can lead to more efficient hardware synthesis.
+
+In the 32-bit top module, keep the same structure instantiating two 16-bit CLA blocks with carry chaining.
+
+Use continuous assignments (`assign`) for all combinational logic to ensure clean and synthesizable code without any procedural blocks.
+
+This restructuring keeps the hierarchical CLA architecture but makes the carry computation logic cleaner and modular, leveraging 4-bit sub-blocks inside the 16-bit CLA block.
+
+Bit indexing uses [16:1] and [32:1] as requested.

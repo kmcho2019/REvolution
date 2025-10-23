@@ -1,0 +1,13 @@
+The given solution is correct but needs optimization for better PPA metrics. To optimize the design for performance, power, and area, we can consider several improvements. 
+
+For performance, we can use a lookup table or a more structured state machine encoding to reduce the critical path delay. However, since the current implementation is already using a case statement, which is a good way to implement a finite state machine in Verilog, we might not be able to improve the performance significantly.
+
+For power, we can reduce switching activity by using a more stable encoding for the state machine or implementing techniques like clock gating. However, since the current implementation is already using a simple binary encoding for the state machine and the output z is only assigned when necessary, we might not be able to improve the power consumption significantly.
+
+For area, we can reduce the number of logic gates required by using a more efficient implementation of the state machine. We can also consider using a reset signal or a power-on reset mechanism to avoid the need for a separate initial block to initialize the state.
+
+Additionally, we can consider using non-blocking assignments (`<=`) instead of blocking assignments (`=`) to avoid unnecessary glitches in the combinational logic. We can also consider using a more efficient way to generate the output signal z.
+
+In the provided code, the initial block is used to initialize the state. However, in a real-world design, it's more common to use a reset signal to initialize the state. We can modify the code to use a reset signal instead of an initial block.
+
+We can also consider using a more efficient way to assign the output Y0. Instead of using a separate assign statement, we can assign Y0 directly in the always block where nextState is assigned.

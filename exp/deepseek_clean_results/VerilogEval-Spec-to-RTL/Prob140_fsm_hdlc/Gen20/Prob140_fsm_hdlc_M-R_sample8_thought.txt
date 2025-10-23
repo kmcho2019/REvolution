@@ -1,0 +1,22 @@
+Refactoring Strategy:
+1. State Machine Optimization:
+   - Reduce state encoding to 5 states (S0-S4 + error) since we only need to count up to 5 consecutive 1s
+   - Use one-hot encoding for potentially better timing and simpler decoding
+   - Combine S6 and S7 into a single error state (S_ERR)
+
+2. Output Logic:
+   - Move to continuous assignments for simpler combinational logic
+   - Remove redundant comparisons by leveraging one-hot state encoding
+   - Generate outputs directly from state and input without registers
+
+3. Timing Improvement:
+   - Simplify state transition logic with direct assignments
+   - Remove sequential output registers since spec allows combinational outputs
+   - Eliminate unnecessary comparators by using state bits directly
+
+Key Changes:
+- More compact state representation (5 states instead of 8)
+- One-hot encoding for potentially better timing
+- Combinational outputs for reduced latency
+- Simplified state transition logic
+- Error state consolidation

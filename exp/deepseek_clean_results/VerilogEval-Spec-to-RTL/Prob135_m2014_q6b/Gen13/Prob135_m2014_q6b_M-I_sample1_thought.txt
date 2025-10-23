@@ -1,0 +1,19 @@
+To correctly implement the next-state logic for y[1], we need to:
+
+1. Analyze all transitions where y[1] becomes 1 in the next state:
+   - From B (001) to D (011) when w=1
+   - From C (010) to D (011) when w=1
+   - From D (011) to F (101) when w=0
+   - From E (100) to D (011) when w=1
+   - From F (101) to D (011) when w=1
+
+2. Note that y[1] is part of both D (011) and F (101) state codes:
+   - D is represented by y[1]=1 (011)
+   - F is represented by y[1]=0 (101) but transitions to D set y[1]=1
+
+3. Implement the logic by:
+   - Using the current state bits (y[2:0]) and input (w)
+   - Creating terms for each case where y[1] should be 1 in next state
+   - Simplifying the logic by combining similar conditions
+
+The improved solution will precisely match the state machine's requirements for y[1] transitions.

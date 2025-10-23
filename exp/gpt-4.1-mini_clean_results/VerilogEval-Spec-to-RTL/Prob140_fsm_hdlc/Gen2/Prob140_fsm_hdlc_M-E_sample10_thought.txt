@@ -1,0 +1,14 @@
+Instead of enumerating each count of consecutive ones as a separate state, this design will track the count of consecutive ones in a 3-bit counter (0 to 7+). The FSM will be a Moore machine with states representing the general context: IDLE (no ones), COUNT (counting ones), DISC (discard zero after 5 ones), FLAG (flag after 6 ones), and ERR (error after 7+ ones). 
+
+Transitions occur based on input bit and count value:
+- When input is 0, the counter resets to 0 and state goes to IDLE.
+- When input is 1, the counter increments.
+- On input 0 after exactly 5 ones, go to DISC state asserting disc for one cycle.
+- On input 0 after exactly 6 ones, go to FLAG state asserting flag for one cycle.
+- When count reaches 7 or more, immediately go to ERR state asserting err output continuously until input goes back to 0.
+
+Outputs are Moore type asserted for one full cycle starting the cycle after the detection. This approach decouples count logic from output states, reducing number of states, and makes it easier to extend or modify. The main complexity is in synchronizing the count and states, but it simplifies transitions and output logic.
+
+The reset state is IDLE with count zero, behaving as if previous input was zero.
+
+This implementation uses a 3-bit register for count, plus a few FSM states, making it efficient and easy to understand.

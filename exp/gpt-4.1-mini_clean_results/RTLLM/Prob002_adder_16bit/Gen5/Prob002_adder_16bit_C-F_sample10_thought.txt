@@ -1,0 +1,8 @@
+Fuse the modular clarity and fine-grained carry ripple stages of the 4-bit adder hierarchy (Example 1) with the balanced bit-width and carry vector correctness of the 8-bit adder (Example 2).
+
+Strategy:
+1. Design a robust 8-bit ripple carry adder module (`adder_8bit`) using a 9-bit carry vector with clear, scalable generate loops and carry propagation logic.
+2. Build the 16-bit adder by instantiating two `adder_8bit` modules, chaining their carry correctly to reduce carry propagation stages compared to four 4-bit blocks, thus improving timing.
+3. Retain the simplicity and structural clarity of ripple carry logic without overly complex carry-lookahead logic, making the design straightforward for synthesis and verification.
+4. This fusion leverages the better balance of delay and modularity from 8-bit sub-adders while maintaining clean code and reliable carry handling.
+5. The design is purely combinational, suitable for synthesizable RTL with good readability, and provides a better area and power tradeoff than 4-bit segmented design.

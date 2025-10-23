@@ -1,0 +1,8 @@
+To implement the timer control finite-state machine, we can break down the functionality into several states: 
+- IDLE: Searching for the start pattern (1101) on the data input pin.
+- SHIFT: After detecting the pattern, assert shift_ena for 4 clock cycles to shift in duration bits.
+- COUNT: Wait for counters to finish counting after shifting in duration bits.
+- DONE: Assert done after counters finish and wait for ack from the user.
+- RESET: Synchronous reset to IDLE state when reset is high.
+
+We'll use a state register to keep track of the current state and control logic to determine the next state based on the current state and input signals.

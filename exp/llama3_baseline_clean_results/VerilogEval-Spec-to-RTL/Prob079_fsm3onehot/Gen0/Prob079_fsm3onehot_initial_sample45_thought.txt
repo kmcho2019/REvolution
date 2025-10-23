@@ -1,0 +1,23 @@
+To implement the state transition table and output logic for the Moore state machine, we first need to derive the logic equations for the next state and output based on the current state and input. We'll use the one-hot encoding provided to simplify the logic.
+
+For the next state, we consider each state individually and how it transitions to the next state based on the input. For the output, we look at the current state to determine the output value.
+
+Given the one-hot encoding:
+- A = 4'b0001
+- B = 4'b0010
+- C = 4'b0100
+- D = 4'b1000
+
+We can derive the next state and output logic equations by inspection.
+
+Next State Logic:
+- From A (4'b0001), if in=0, next state is A (4'b0001), if in=1, next state is B (4'b0010).
+- From B (4'b0010), if in=0, next state is C (4'b0100), if in=1, next state is B (4'b0010).
+- From C (4'b0100), if in=0, next state is A (4'b0001), if in=1, next state is D (4'b1000).
+- From D (4'b1000), if in=0, next state is C (4'b0100), if in=1, next state is B (4'b0010).
+
+Output Logic:
+- For states A, B, and C, output is 0.
+- For state D, output is 1.
+
+We implement these logic equations using Verilog, focusing on the combinational logic portion.

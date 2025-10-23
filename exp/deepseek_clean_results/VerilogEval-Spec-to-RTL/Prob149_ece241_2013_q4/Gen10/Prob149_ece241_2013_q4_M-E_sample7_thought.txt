@@ -1,0 +1,17 @@
+My novel approach uses a parallel decision structure with direct sensor edge detection, eliminating the need for explicit state variables. The key innovations are:
+
+1. **Direct Edge Processing**: Instead of a state machine, we process sensor edges directly to determine water movement direction.
+
+2. **Parallel Output Logic**:
+   - Nominal flows are determined by current sensor readings
+   - Supplemental flow (dfr) is determined by both current sensors and recent transition history
+
+3. **Transition History Tracking**: Uses a 1-bit register to remember if the last transition was rising, allowing immediate response to level changes.
+
+4. **Reset Integration**: Reset forces all outputs active while maintaining clean transition to normal operation.
+
+This architecture offers:
+- Faster response to level changes (no state machine propagation delay)
+- Simpler verification (direct mapping from sensors to outputs)
+- Reduced logic complexity (no state encoding/decoding)
+- Clear separation between steady-state and transitional behavior

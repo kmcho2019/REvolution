@@ -1,0 +1,14 @@
+To improve the previous design's performance and power, I will split the addition of partial products into two pipeline stages instead of summing all partial products in one stage. This reduces the critical path delay by performing pairwise addition of partial products in the first stage and then summing those results in the second stage.
+
+Also, I will keep the active-low asynchronous reset for compatibility but register outputs only on clock edges to minimize glitching.
+
+Summary of improvements:
+- Stage 1: Compute and register partial products for each bit of mul_b.
+- Stage 2: Add partial products in pairs, register partial sums.
+- Stage 3: Add the two partial sums and register the final product output.
+- This three-stage pipeline reduces combinational delay per stage, improving max clock frequency.
+- Maintain parameterized size and product width for scalability.
+- Keep zero-extension of mul_a at MSB.
+- Use blocking assignments inside combinational parts if needed, but all registered logic uses non-blocking assignments.
+
+This improves timing by shortening critical path in each clock cycle and reduces switching activity by only updating necessary registers. The tradeoff is an additional pipeline stage and latency but better performance and power efficiency.

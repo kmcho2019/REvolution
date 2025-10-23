@@ -1,0 +1,12 @@
+Fuse the best ideas from both examples by using two edge-triggered flip-flops—one positive-edge and one negative-edge triggered—to capture data on both clock edges, and then select the output using a combinational 2-to-1 mux controlled by the clock level (clk). This approach avoids illegal sensitivity lists and latches, keeps the design fully synthesizable and FPGA-friendly, and leverages simple combinational logic to select the correct sampled value.
+
+To improve upon both examples:
+
+- Use consistent naming and minimal, clean code for clarity.
+- The combinational mux controlled by clk directly selects which flip-flop output to drive on q, minimizing mux delay and glitches (though glitches can be reduced by ensuring minimal routing delays).
+- Both flip-flops sample the same data input 'd', ensuring that data is captured on both clock edges.
+- Remove any extra always blocks (e.g., latches) that may complicate timing or increase power.
+- Optionally add a pipeline register on output if a registered output is required, but here we keep it purely combinational for immediate dual-edge emulation.
+- This fusion balances simplicity, clarity, synthesize-ability, minimal area, and correct dual-edge function.
+
+Overall, this solution is synthesis-friendly, clean, easy to understand, and effective for FPGA implementations needing dual-edge triggered flip-flop behavior without unsupported constructs.

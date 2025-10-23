@@ -1,0 +1,7 @@
+To simplify the instruction register module, we can eliminate unnecessary complexity while maintaining its core functionality. The original design incorporates a dual-buffer approach with a built-in instruction decoder and clock gating. However, for a basic instruction register, we can focus on the essential requirements: storing instructions from different sources and extracting relevant information.
+
+We can simplify the design by removing the instruction decoder and focusing solely on storing the instructions in two 8-bit registers (ins_p1 and ins_p2) based on the fetch signal. The outputs ins, ad1, and ad2 can be derived directly from these registers without the need for additional decoding logic. This approach reduces the combinational logic complexity and potentially minimizes area usage and power consumption.
+
+The control logic can be streamlined to manage the registers based on the fetch signal and the clock. On the rising edge of the clock, if the reset signal is low, both registers are initialized to zero. Otherwise, the registers are updated according to the fetch signal. If fetch is 2'b01, the instruction is stored in ins_p1. If fetch is 2'b10, the instruction is stored in ins_p2. This simplified control structure reduces the overall complexity of the module.
+
+By focusing on the essential functionality and removing unnecessary components, the simplified design aims to maintain the required functionality while improving PPA metrics through reduced complexity.

@@ -1,0 +1,7 @@
+Refactored approach using a more direct multiplexer implementation:
+1. Instead of concatenating all inputs into a wide bus, we'll use a direct 4:1 mux structure
+2. The selection will still be based on the lower 2 bits of 'c'
+3. For invalid cases (c >=4), we'll force output to 'f' by making it the default case
+4. This eliminates the need for masking logic and reduces the bus width
+5. The implementation will be more straightforward and likely more area-efficient
+6. Power consumption should improve as we're not maintaining a wide intermediate bus

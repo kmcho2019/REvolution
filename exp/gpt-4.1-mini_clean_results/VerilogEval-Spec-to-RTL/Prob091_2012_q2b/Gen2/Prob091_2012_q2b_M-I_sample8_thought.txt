@@ -1,0 +1,15 @@
+The original implementation is already minimal and correctly captures the FSM transition logic for Y1 and Y3. The logic expressions are simple AND-OR structures on a one-hot encoded state vector, resulting in minimal combinational complexity.
+
+However, to optimize slightly for power and area, we can:
+
+1. Reduce the number of OR gates by reusing intermediate signals or minimizing the number of operations.
+2. Consider that y[4] and y[5] are adjacent bits and can be combined using a wire to reduce repeated OR operations.
+3. Since the OR of y[1], y[2], y[4], y[5] appears only once, we can factor it to reduce fanout and simplify the logic.
+
+This won’t affect timing significantly as the original code is already minimal, but it can slightly reduce switching power by minimizing internal node toggling and possibly reduce area by fewer gates.
+
+Therefore, define an internal wire for the OR of these bits for Y3. This makes the code clearer and easier for synthesis to optimize.
+
+No changes to the logic equations since they are already minimal and correct.
+
+This approach is a modest optimization for power and area while maintaining performance and readability.

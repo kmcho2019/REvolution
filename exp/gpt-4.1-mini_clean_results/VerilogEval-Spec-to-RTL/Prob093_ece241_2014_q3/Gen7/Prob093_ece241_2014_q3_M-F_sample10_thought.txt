@@ -1,0 +1,11 @@
+To fix the previous design, we must:
+
+- Include inputs `a` and `b` in the module interface, since they select the output of the external 4-to-1 mux connected to `mux_in`.
+- Implement `mux_in[3:0]` as four signals, each corresponding to one column of the K-map indexed by `ab=00, 01, 11, 10`.
+- The 4-to-1 mux outside TopModule uses inputs `{a,b}` as selectors and chooses the output from `mux_in[{b,a}]` (assuming `a` is LSB, `b` MSB as per problem statement).
+- Use only multiplexers inside TopModule (1 4-to-1 mux outside, and 2-to-1 muxes inside) to implement the functions corresponding to each `mux_in` bit.
+- Derive each mux_in bit as a function of `c` and `d` only (since a,b are selectors of external mux).
+- Each function is deduced from the K-map column for the corresponding `ab` value.
+- Implement the logic for each mux_in bit using minimal 2-to-1 muxes (using the Verilog ternary operator).
+- The final interface matches problem specification: inputs a,b,c,d, outputs mux_in[3:0].
+- This ensures the external 4-to-1 mux with selector {a,b} selects the correct output implementing the K-map.

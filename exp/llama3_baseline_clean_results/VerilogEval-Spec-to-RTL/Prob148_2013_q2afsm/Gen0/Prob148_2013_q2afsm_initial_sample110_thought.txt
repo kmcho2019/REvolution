@@ -1,0 +1,15 @@
+To implement the given FSM, we need to define the states, their corresponding output values, and the transition logic between these states based on the input requests. We'll use four states: A (for idle), B (for granting device 0), C (for granting device 1), and D (not explicitly mentioned in transitions but included for completeness as per the state diagram description, though in this case, it seems to have the same behavior as A when r0=0, r1=0, r2=0). 
+
+We will use an always block for the combinational logic that determines the next state based on the current state and inputs, and another always block for the sequential logic that updates the current state. The outputs can be determined through continuous assignment or within the state logic; we'll use continuous assignment for simplicity since the output values are directly dependent on the current state.
+
+For state encoding, let's assign A=00, B=01, C=10, and D=11. However, since D seems to mirror A's behavior when no requests are present and transitions directly from A when r2=1 without any specification of its g output, we might handle it similarly to A or assign it a distinct behavior if needed based on further clarification. 
+
+Given the priority scheme and the transitions:
+- A stays in A if no requests.
+- A transitions to B if r0=1 (highest priority).
+- A transitions to C if r0=0 and r1=1.
+- A transitions to D if r0=0, r1=0, and r2=1, though the diagram's mention of D is somewhat ambiguous, we'll treat it similarly to A for simplicity.
+- B stays in B if r0=1, otherwise goes back to A.
+- C stays in C if r1=1, otherwise goes back to A.
+
+We'll need to use these rules to define our next state logic and output logic.

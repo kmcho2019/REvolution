@@ -1,0 +1,20 @@
+Here's a novel approach using a priority encoder with bitwise operations:
+
+1. Instead of treating 'c' as a selector, we'll implement a priority-based selection:
+   - If c is exactly 0, select b
+   - Else if c is exactly 1, select e
+   - Else if c is exactly 2, select a
+   - Else if c is exactly 3, select d
+   - Else (all other cases), output 0xF
+
+2. The implementation uses parallel equality comparators and a priority tree:
+   - Four 4-bit equality comparators check c against 0,1,2,3
+   - Results are OR-reduced to single bits
+   - A priority encoder selects the first matching case
+   - Final output is selected using bitwise AND with the match signals
+
+3. Advantages of this approach:
+   - No shifting operations needed
+   - Clear priority structure makes timing predictable
+   - Each comparison is independent, enabling potential parallel evaluation
+   - Easy to modify priority order if requirements change

@@ -1,0 +1,14 @@
+Novel Architectural Idea:
+1. Instead of processing all 512 bits in parallel each cycle, implement a serial processing approach with a sliding window
+2. Use a 3-bit shift register to track the current cell and its neighbors (left, center, right)
+3. Process one cell per clock cycle, rotating through all 512 cells in sequence
+4. Maintain a counter to track the current position being processed
+5. Store the next state in a separate register to avoid read-write conflicts
+6. When not loading, update one cell per cycle using the Rule 90 XOR logic
+7. This reduces area and power at the cost of requiring 512 cycles for a complete update
+
+Advantages:
+- Significant reduction in combinational logic (only 1 XOR gate needed)
+- Lower power consumption due to reduced switching activity
+- Smaller area footprint
+- Easier timing closure with shorter critical paths

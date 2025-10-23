@@ -1,0 +1,7 @@
+To improve the solution, we need to ensure that once a transition from 1 to 0 is detected, the corresponding output bit remains high until a reset is applied. This can be achieved by modifying the logic for updating the `out_reg` to not only set the bit to 1 when a transition is detected but also to retain the state of the bit once it's set to 1. 
+
+One way to optimize this is to use a non-blocking assignment (`<=`) within the always block to update the `out_reg` based on the current state and input. However, to ensure that once an output bit is set, it remains set until reset, we should only explicitly reset the bits of `out_reg` when the `reset` signal is high, and otherwise, only update the bits of `out_reg` when a transition is detected. 
+
+Another optimization could involve reducing the complexity of the combinatorial logic within the sequential block, ensuring that the register updates are as straightforward as possible to minimize area and power consumption.
+
+Moreover, considering the need for better PPA (Power, Performance, Area), using a single register for both tracking the previous state and the output simplifies the design and reduces the area. However, for clarity and to stick strictly to the requirements, we'll maintain separate registers for the state and output but ensure the logic is optimized for detection and retention of the transition state.

@@ -1,0 +1,13 @@
+Here's a novel approach using a circular shift register with explicit state tracking:
+1. Instead of using concatenation for wrap-around, we'll use a conditional shift
+2. Maintain the one-hot property by explicitly checking the MSB position
+3. Use a synchronous reset for consistent timing
+4. The shift operation becomes: if MSB is set, reset to LSB; else normal left shift
+5. This avoids tool-specific concatenation issues while maintaining clean logic
+
+Advantages:
+- Tool-agnostic implementation
+- Explicit state transition logic
+- Maintains all original specifications
+- Clear, readable implementation
+- Efficient synthesis (single register set)

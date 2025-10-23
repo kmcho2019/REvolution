@@ -1,0 +1,7 @@
+To simplify the design while maintaining functionality, I will:
+
+- Remove the modular 64-bit block division and implement the entire 512-bit Rule 90 automaton in one module directly.
+- Compute the next state for all 512 cells using combinational logic with simple boundary conditions (0 at both ends).
+- Use a single always block triggered on the positive clock edge that either loads the input data when 'load' is high or updates the state to the next computed state.
+- Avoid any intermediate wires for boundaries or multi-block connections.
+- This reduces code complexity, improves readability, and keeps the same synchronous behavior with no performance optimizations but still functional and easy to understand.

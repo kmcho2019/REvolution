@@ -1,0 +1,15 @@
+Use an enumerated state machine with named states WALK_LEFT and WALK_RIGHT, encoded as 1-bit values for clarity. Implement the asynchronous reset as active high, setting the state to WALK_LEFT.
+
+Separate the FSM into three always blocks for modular clarity:
+- One asynchronous reset and state update block on clk and areset.
+- One combinational block for next state logic using explicit if-else conditions for readability.
+- One combinational block for outputs as functions of the state.
+
+In the next state logic, prioritize bump inputs such that if bumped on either side (or both), the lemming reverses direction accordingly:
+- If bump_left is high (regardless of bump_right), next state is WALK_RIGHT.
+- Else if bump_right is high (and bump_left is low), next state is WALK_LEFT.
+- Otherwise, maintain current state.
+
+Outputs are a one-hot encoding: walk_left = 1 if in WALK_LEFT, walk_right = 1 if in WALK_RIGHT.
+
+This structure enhances readability and maintainability while still meeting the asynchronous reset and Moore FSM criteria.

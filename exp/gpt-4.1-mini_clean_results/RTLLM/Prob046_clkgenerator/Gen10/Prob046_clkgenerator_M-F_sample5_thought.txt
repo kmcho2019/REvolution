@@ -1,0 +1,7 @@
+To improve compatibility and avoid potential issues with real-valued delays and an always block without sensitivity list, we will use an initial block with a forever loop. This style is widely supported in simulation environments for clock generation and avoids ambiguity in delay modeling.
+
+We keep the `timescale` directive for clarity of time units. We will calculate half_period as an integer by dividing PERIOD by 2 and handle cases where PERIOD might be odd by rounding down, which is acceptable for most clock generators.
+
+The clock signal is initialized to 0, and then toggled every half_period using `#(half_period)` delay inside a forever loop.
+
+This approach avoids real delays, uses integer delay values, and remains compatible with common simulators and testbench expectations.

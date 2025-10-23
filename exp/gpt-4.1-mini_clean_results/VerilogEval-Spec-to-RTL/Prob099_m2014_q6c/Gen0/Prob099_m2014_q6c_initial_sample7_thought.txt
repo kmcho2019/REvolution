@@ -1,0 +1,41 @@
+The module is a state machine using one-hot encoding with states A to F mapped onto y[5:0]. We are given a state transition diagram with transitions depending on input w (0 or 1).
+
+We need to implement two next-state signals: Y1 corresponds to y[1] (state B), and Y3 corresponds to y[3] (state D).
+
+Since the encoding is one-hot, each bit of y represents whether the state is active. The next state bits depend on current state and input w.
+
+By inspection of transitions:
+
+Y1 corresponds to state B (y[1]) next signal.
+
+We need to find under which conditions the machine goes to B next:
+
+- From A (y[0]): A --0--> B, so if y[0] = 1 and w=0, next B is 1
+- From other states, none goes to B directly
+
+So,
+
+Y1 = (y[0] & ~w)
+
+Similarly, Y3 corresponds to state D (y[3]) next signal.
+
+From the transitions:
+
+- From B (y[1]): B --1--> D, so (y[1] & w)
+- From C (y[2]): C --1--> D, so (y[2] & w)
+- From E (y[4]): E --1--> D, so (y[4] & w)
+- From F (y[5]): F --1--> D, so (y[5] & w)
+
+No other transitions go to D.
+
+Therefore,
+
+Y3 = (y[1] & w) | (y[2] & w) | (y[4] & w) | (y[5] & w)
+
+which simplifies to w & (y[1] | y[2] | y[4] | y[5])
+
+The module will have inputs y[5:0] and w, outputs Y1 and Y3, and implement the above logic equations.
+
+Note: The problem says to implement Y1 and Y3 (next state signals corresponding to y[1] and y[3] bits).
+
+We assume the next state signals are combinational outputs.

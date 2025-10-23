@@ -1,0 +1,32 @@
+A different approach to modeling the Lemming FSM is to explicitly separate the direction and falling status into two independent registers rather than encoding them together in a single state vector. The FSM is still Moore, and outputs depend solely on the current state.
+
+We keep:
+- A 1-bit direction register: 0 for left, 1 for right.
+- A 1-bit falling register: 0 for walking, 1 for falling.
+
+The transitions are as follows:
+
+- On asynchronous reset, direction = 0 (left), falling = 0 (walking).
+
+- If falling = 0 (walking):
+  - If ground=0, falling becomes 1 (start falling), direction unchanged.
+  - If bumped on left or right (either or both), direction flips:
+    - direction <= ~direction
+  - Otherwise, direction unchanged.
+
+- If falling = 1 (falling):
+  - If ground=1, falling becomes 0 (stop falling, resume walking).
+  - Bumps have no effect on direction while falling.
+
+Outputs:
+- aaah = falling.
+- walk_left = ~falling & ~direction
+- walk_right = ~falling & direction
+
+This approach simplifies the FSM because the two state bits are decoupled and updated independently, which can simplify the logic and make it easier to understand. It also guarantees bump inputs are ignored while falling and direction is preserved through falling.
+
+The asynchronous reset resets both direction and falling to default values.
+
+This modular design might also help synthesis tools by reducing dependencies between signals and can be easily modified or extended.
+
+All logic triggered at positive clock edge with asynchronous posedge reset.

@@ -1,0 +1,16 @@
+Model the Lemming's behavior as a single 3-bit state encoding that combines both direction and activity states, reducing register complexity. Use one hot encoding for direction bits to make output assignments straightforward: two direction bits (walk_left, walk_right) mutually exclusive, plus two activity states (digging and falling) represented by separate flags within the 3-bit state.
+
+On each clock edge (with async reset), update the state according to inputs and current state:
+
+- If reset, initialize to walking left state.
+- If falling, remain falling until ground returns, then resume previous walking direction.
+- If digging, remain digging until ground is lost, then switch to falling.
+- When walking on ground, respond to dig input by switching to digging.
+- When walking on ground, bumps immediately switch walking direction.
+- Ignore bump inputs during falling or digging states.
+- Falling has highest priority, then digging, then bump-induced direction switch.
+- Ground loss triggers falling immediately, regardless of other inputs.
+
+By encoding direction as part of the state (walk_left = 3'b001, walk_right = 3'b010) and using separate states for digging and falling, we simplify combinational output logic.
+
+This design uses one state register with explicit state names, no separate direction register, and direct transitions between states, making the FSM easier to implement and verify.

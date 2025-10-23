@@ -1,0 +1,3 @@
+Simplify by encoding the water level as a 2-bit state derived from sensors, stored in a register. On each clock, update the current water level and keep the previous water level to detect upward transitions. The dfr output is asserted whenever the current level is higher than the previous level, held for as long as the condition is true (not just a pulse). The nominal flow outputs are combinationally derived from the current level per specification.
+
+On reset, initialize the level to BELOW_S0 and assert all outputs high. This approach removes the need for pulse generation logic and uses straightforward comparison to control dfr, resulting in simpler, cleaner, and correct code.

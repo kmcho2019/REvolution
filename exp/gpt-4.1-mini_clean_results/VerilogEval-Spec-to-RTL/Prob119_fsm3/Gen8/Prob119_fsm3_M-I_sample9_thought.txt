@@ -1,0 +1,19 @@
+To optimize the given Moore FSM for better PPA (timing, power, and area), I will:
+
+- Switch the state encoding from binary (2-bit) to one-hot encoding. One-hot encoding simplifies the next state logic because each state corresponds to a single flip-flop, potentially reducing combinational logic delay and improving timing (negative slack).
+
+- Using one-hot encoding also simplifies decoding for output logic and may reduce glitching, hence reducing power.
+
+- Implement the asynchronous reset in the same way (pos. edge triggered), but applied to each state flip-flop individually.
+
+- Keep separate always blocks for next state logic and output logic for clarity and clean synthesis.
+
+- Use nonblocking assignments in sequential always blocks.
+
+- Since one-hot uses 4 flip-flops for 4 states (vs. 2 bits for binary), area increases slightly, but the tradeoff is often favorable for timing and power.
+
+- This approach improves timing slack (WNS and TNS) and can reduce switching activity in combinational logic.
+
+- Output assignment remains Moore style and simple.
+
+Thus, the tradeoff favors improved timing and power with a minor area increase, consistent with typical PPA tradeoffs in FSM design.

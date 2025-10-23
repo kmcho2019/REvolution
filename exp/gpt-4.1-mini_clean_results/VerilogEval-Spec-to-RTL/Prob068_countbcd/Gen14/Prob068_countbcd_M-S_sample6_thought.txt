@@ -1,0 +1,7 @@
+To simplify the design, I will consolidate the increment and carry logic by using a single 16-bit packed register `q` to hold all digits, and sequentially increment the ones digit. Then, if a digit rolls over from 9 to 0, the next digit will be incremented accordingly. 
+
+For enable signals, I will generate them combinationally by comparing relevant digits to 9 and chaining enables, but only as simple equalities without nested enable conditions.
+
+This removes nested if-else structures by incrementing digits and handling carry in a straightforward loop-like manner inside the always block, using non-blocking assignments, and leverages packed indexing for outputs.
+
+This approach reduces complexity and size, retains all functionality, and keeps clean synchronous reset and enable outputs.

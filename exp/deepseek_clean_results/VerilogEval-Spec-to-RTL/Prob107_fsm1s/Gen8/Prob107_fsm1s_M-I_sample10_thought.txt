@@ -1,0 +1,9 @@
+The current implementation is already quite efficient, but we can make slight optimizations:
+1. Use a more efficient state encoding (0=B, 1=A) that directly maps to output
+2. Simplify the state transition logic by observing patterns:
+   - State flips when in=0, stays when in=1
+   - This can be expressed as: next_state = state ^ ~in
+3. Maintain synchronous reset behavior
+4. Keep output directly derived from state (inverted)
+
+This reduces the logic to a single XOR operation for state transitions while maintaining identical functionality.

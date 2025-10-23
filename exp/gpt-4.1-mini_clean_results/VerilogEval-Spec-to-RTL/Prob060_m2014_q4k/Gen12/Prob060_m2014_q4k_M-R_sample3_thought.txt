@@ -1,0 +1,9 @@
+I will refactor the design to use a single always block that implements the entire 4-bit shift register as a vector register instead of chaining individual DFF modules. This approach is more compact and typical in RTL design for shift registers.
+
+Key points:
+- Use a 4-bit register to hold the shift register state.
+- On each rising clock edge, if resetn is low, reset the shift register to 0.
+- Otherwise, shift left by one bit and load the input bit at LSB.
+- Assign the MSB of the shift register to the output.
+- This approach retains the synchronous active-low reset.
+- The design is more concise and uses one always block rather than multiple modules.

@@ -1,0 +1,18 @@
+To implement the 8-bit to 16-bit width converter, we can use a simple two-stage buffer approach with a toggle flag to track whether the first 8-bit data has arrived and is waiting for the second. Specifically:
+
+- Maintain a register `data_lock` to store the first valid input data.
+- Use a 1-bit `has_data` flag to indicate whether `data_lock` holds a pending first input.
+- When a valid input arrives:
+  - If `has_data` is 0 (no first byte stored), store the input in `data_lock` and set `has_data`=1.
+  - Else (already have first byte), concatenate `data_lock` and current input into a temporary 16-bit register `concat_data`.
+    - Then set output registers `data_out` and `valid_out` to produce output on the *next* clock cycle.
+    - Reset `has_data` to 0 to be ready for new first input.
+- The output `valid_out` and `data_out` should be registered signals asserted one clock cycle *after* receiving the second valid input.
+- We implement a pipeline register `output_valid` and `output_data` which latches `concat_data` and asserts valid_out for exactly one cycle.
+- On reset, all registers clear.
+- This approach uses simple flags and registers without a state machine, making the design minimal and easy to follow.
+- The design guarantees that:
+  - The first 8-bit input waits in `data_lock`.
+  - The second 8-bit input triggers concatenation.
+  - Valid output and data are generated in the *following* clock cycle, enabling stable detection downstream.
+- This also handles consecutive streams of input data continuously.

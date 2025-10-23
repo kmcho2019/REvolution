@@ -1,0 +1,15 @@
+To improve the branch predictor's accuracy and efficiency, we can implement a hybrid approach that combines the gshare predictor with a secondary predictor based on a simple last-n-branches (LNB) history. The LNB predictor keeps track of the outcomes of the last few branches and uses this information to bias the gshare predictor's decisions.
+
+The new architectural idea involves the following components:
+
+1. **Gshare Predictor**: This remains the primary predictor, using the 7-bit pc and 7-bit global history to index into the pattern history table (PHT) of 128 two-bit saturating counters.
+2. **Last-N-Branches (LNB) Predictor**: This secondary predictor maintains a buffer of the outcomes (taken or not taken) of the last N branches. When a new branch prediction is requested, the LNB predictor checks if the current branch's pc is present in its buffer. If it is, the LNB predictor biases the gshare predictor's decision based on the recorded outcome of the last occurrence of this branch.
+3. **History Management Unit (HMU)**: This unit is responsible for updating the global branch history register and the LNB buffer. When a branch is executed and its outcome is known, the HMU updates the global history register and the LNB buffer accordingly.
+
+This hybrid approach allows the predictor to benefit from both the global history (via the gshare predictor) and the local branch behavior (via the LNB predictor), potentially leading to improved prediction accuracy.
+
+Additionally, to enhance performance and reduce power consumption, the design can be optimized by:
+
+- Using a small, fast cache for the PHT to reduce access latency.
+- Implementing the LNB predictor as a small, fully associative cache to facilitate fast lookups.
+- Optimizing the HMU to minimize the number of updates to the global history register and the LNB buffer, reducing switching activity and thus power consumption.

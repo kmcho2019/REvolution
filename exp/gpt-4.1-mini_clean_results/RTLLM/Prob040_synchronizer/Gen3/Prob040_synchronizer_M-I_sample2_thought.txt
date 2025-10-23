@@ -1,0 +1,11 @@
+The original design is correct and well-structured, but power can be improved by preventing unnecessary register toggling when data_en is low or stable. Since data_en is low most of the time and data_in changes infrequently, adding enable gating to the clk_a domain registers (data_reg and en_data_reg) will reduce switching and thus power. Similarly, in clk_b domain, en_clap_one and en_clap_two only need to update when en_data_reg changes. However, as en_data_reg is asynchronous to clk_b, gating these registers could risk metastability or timing issues.
+
+To keep safe, apply enable gating only on the clk_a side registers because data_in and data_en are synchronous to clk_a. This reduces toggling without metastability risks. Keep clk_b domain registers free running for robust synchronization.
+
+For reset consistency, keep asynchronous reset on clk_a domain (as requested) and synchronous reset on clk_b domain (to align with the clock and avoid reset related timing issues).
+
+This results in slightly more power-efficient operation with minimal or no area penalty and no impact on latency or correctness.
+
+The updated code adds enable conditions on clk_a domain always blocks to update registers only when data_en is high. The clk_b domain logic remains unchanged to ensure metastability robustness.
+
+This optimization reduces unnecessary switching in clk_a domain flip-flops during idle data_en intervals.

@@ -1,0 +1,14 @@
+To implement the given Mealy finite-state machine as a 2's complementer using one-hot encoding, we first need to understand the states and transitions. There are two states: A and B. The machine starts in state A. From A, if x=0, it stays in A and outputs z=0. If x=1, it moves to state B and outputs z=1. From state B, regardless of the value of x, it stays in state B but outputs z based on the value of x.
+
+Given the one-hot encoding scheme, each state will be represented by a unique bit being high while the others are low. Here, since we only have two states, we can represent state A with "10" and state B with "01", but for simplicity and sticking to the one-hot principle where only one bit is high at any time, we'll use A as "1" (implying the bit for A is high) and B as "10" is not necessary, so we simply use "1" for A and "10" doesn't apply, we use a single bit "1" for state A and another bit for B, so effectively A="10" becomes A="1" and B="01" in a two-bit representation where only one bit can be high at a time. This description initially incorrectly proposed using two bits for a two-state machine; correctly, we use one bit per state, but for clarity in explanation: let's correctly define A as '1' (which in binary is just "1", implying the second bit is not needed but for one-hot with more states, each would have its unique bit set).
+
+Thus, for our implementation:
+- We define the states using one-hot encoding. Since we have two states, we'll use two bits but only one is ever high at a time.
+- We implement the state machine's logic based on the current state and input x to determine the next state and output z.
+- We use a reset to asynchronously set the machine back to state A.
+
+So, our Verilog module will have:
+- An asynchronous reset that sets the state back to A.
+- A combinational logic block that determines the next state based on the current state and input x.
+- A sequential logic block that updates the state on the positive edge of the clock.
+- An output logic block that determines z based on the current state and x.

@@ -1,0 +1,7 @@
+The TopModule will contain a 4-digit BCD counter. To implement this, we will use a combination of sequential logic (registers) to store the current count and combinational logic to generate the next state. The counter will be divided into four parts: the ones, tens, hundreds, and thousands places. Each place will be represented by a 4-bit binary number, allowing it to represent the digits 0-9. The enable signals (ena) will be used to control when each place should be incremented.
+
+We will first create a always block that checks for the rising edge of the clock and the active high reset signal. If the reset signal is high, the counter will be reset to 0. Otherwise, the counter will be updated based on the current state.
+
+To update the counter, we will first check if the ones place should be incremented (i.e., the enable signal for the ones place is high). If it should be incremented, we will add 1 to the ones place. If the result is greater than 9, we will set the ones place to 0 and increment the tens place. We will repeat this process for the tens, hundreds, and thousands places.
+
+The enable signals will be generated based on the current state of the counter. For example, the tens place should be incremented when the ones place wraps around from 9 to 0. Similarly, the hundreds place should be incremented when the tens place wraps around, and the thousands place should be incremented when the hundreds place wraps around.

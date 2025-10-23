@@ -1,0 +1,17 @@
+To maximize synthesis compatibility and avoid potential tool issues with signed wires and continuous assignments directly driving signed outputs, revise the design by:
+
+1. Declaring inputs and outputs as unsigned vectors to avoid tool issues with signed ports while internally managing signed arithmetic explicitly.
+
+2. Internally sign-extending inputs to signed wider wires before performing subtraction, to ensure signed arithmetic is correct and synthesis-friendly.
+
+3. Using an internal signed intermediate result with one extra bit to handle possible overflow.
+
+4. Assigning the final result back to output as unsigned after clipping to N bits, carefully setting the sign bit.
+
+5. Explicitly handling the zero-result case by forcing output to all zeros with sign bit zero.
+
+6. Keep parameters Q and N as before for fixed-point precision.
+
+7. Maintain a simple combinational implementation using an always_comb block to compute the result for better control and clarity.
+
+This approach ensures that the inputs and outputs are unsigned vectors, commonly well-supported by synthesis tools, while the signed subtraction logic is handled internally. It preserves the fixed-point semantics and sign handling without relying on direct signed I/O ports, mitigating synthesis tool issues related to signed port handling.

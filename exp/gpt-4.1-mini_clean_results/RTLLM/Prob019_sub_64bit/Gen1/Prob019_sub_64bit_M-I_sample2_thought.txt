@@ -1,0 +1,13 @@
+The original subtractor is already straightforward and functional, but slight improvements can be made for better synthesis optimization and possibly lower power and area:
+
+1. Use a wire intermediate signal for subtraction to clearly separate subtraction and overflow logic.
+2. Use a localparam for the sign bit index to enhance code readability and easy modification.
+3. Replace the subtraction operator with an explicit adder of A + (~B + 1) might allow better control for synthesis tools, though modern tools optimize subtraction similarly.
+4. Use continuous assignment and minimal signals for simple, clean code.
+5. Ensure all signals are wires to support combinational synthesis efficiently.
+
+These changes may improve clarity and potentially allow synthesis tools to better optimize the adder and overflow detection logic for lower area and power while maintaining timing.
+
+In addition, the overflow detection logic is already optimal: checking when the sign of A differs from B and result sign differs from A.
+
+Overall, the core arithmetic is inherently combinational and minimal. Improvements mainly target synthesis friendliness and code clarity.

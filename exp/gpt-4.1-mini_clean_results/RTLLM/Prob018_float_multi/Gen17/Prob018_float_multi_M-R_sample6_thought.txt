@@ -1,0 +1,19 @@
+I will refactor the float_multi module by splitting the logic into a small FSM with explicit states rather than using a counter and case statement. I will separate the input decoding (state DECODE), multiplication and exponent adjustment (state MULTIPLY), normalization and rounding preparation (state NORMALIZE), and final rounding and special cases output (state ROUND_OUTPUT).
+
+Also, instead of accumulating all operations in one always block, I will use a combination of combinational assigns for basic extractions and flags, and a sequential always block for state transitions and registering intermediate results. This reduces mixing combinational and sequential logic in one block and clarifies data flow.
+
+The mantissa multiplication is done inside the MULTIPLY state, and normalization with guard/round/sticky extraction is done in the NORMALIZE state, followed by rounding and special case handling in the ROUND_OUTPUT state.
+
+This clear FSM state approach improves readability and modularity and separates combinational extraction from sequential registering. I will keep the 3-stage pipeline but change state names and flow, maintain all IEEE-754 handling, and use explicit named states with a parameterized state encoding.
+
+This approach helps to understand each stage clearly, improves synthesis flow, and can make debugging easier.
+
+I will keep 10-bit exponents internally and 48-bit product. The rounding logic is the same but done in a distinct state.
+
+Inputs are registered at decode stage; outputs registered at the end; internal signals are registered sequentially per stage.
+
+The final result is output on the clock after ROUND_OUTPUT state completes.
+
+Reset clears state to DECODE and zeros outputs and registers.
+
+This modular FSM approach satisfies the problem and is functionally equivalent but with clearer state machine style.

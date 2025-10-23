@@ -1,0 +1,11 @@
+To implement a 64-bit Johnson counter, we need to consider its operation based on the least significant bit (Q[0]). When Q[0] is 0, the counter increments by shifting the current value one bit to the right and setting the most significant bit (Q[63]) to 1. When Q[0] is 1, the counter decrements by shifting the current value one bit to the right and setting the most significant bit (Q[63]) to 0. This process continues, and the counter wraps around to its initial state (0000...0) after reaching the maximum count.
+
+We'll use a synchronous reset to initialize the counter. The counter value (Q) is updated on every rising edge of the clock signal (clk) or the falling edge of the reset signal (rst_n).
+
+Here are the key points:
+1. Detect the least significant bit (Q[0]) of the counter value.
+2. Update the counter value based on the least significant bit.
+3. Handle the reset condition to initialize the counter.
+4. Ensure proper synchronization with the clock signal.
+
+The Johnson counter's operation can be described using a simple state machine that checks the least significant bit and updates the counter accordingly. This can be implemented in Verilog using a combination of bitwise operations and conditional statements.

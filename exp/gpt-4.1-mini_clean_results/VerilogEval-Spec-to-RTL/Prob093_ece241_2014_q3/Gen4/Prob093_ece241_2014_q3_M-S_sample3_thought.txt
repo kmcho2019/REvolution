@@ -1,0 +1,34 @@
+The problem requires creating a 4-to-1 MUX selected by inputs a,b, with inputs mux_in[3:0]. Each mux_in[i] corresponds to the function values at fixed (a,b)=i, dependent only on c,d.
+
+We must implement mux_in[3:0] as functions of c and d, using only 2-to-1 multiplexers (no other logic gates). Each mux_in[i] is thus a 2-variable function f(c,d).
+
+From the Karnaugh map, group outputs for each ab value (00,01,11,10):
+
+- ab=00 (mux_in[0]): output map over cd:
+  cd=00->0, 01->1, 11->1, 10->1
+- ab=01 (mux_in[1]): all zeros
+- ab=11 (mux_in[2]): outputs at cd=00->0,01->0,11->1,10->0
+- ab=10 (mux_in[3]): outputs at cd=00->1,01->0,11->1,10->1
+
+Implement each function by expressing it as nested 2-to-1 muxes using c and d as selectors/inputs.
+
+For example:
+- mux_in[0]: f0 = (~c & d) | (c & 1) = c ? 1 : d (mux2 with select c, inputs d and 1)
+- mux_in[1]: always 0
+- mux_in[2]: f2 = c & d (mux2 with select c, inputs 0 and d)
+- mux_in[3]: f3 = ~c & (~d) | c & 1 = c ? 1 : (~d)
+  Implement ~d as mux2 select d, inputs 1 and 0.
+
+Thus, to keep to mux-only logic:
+- Implement not_d = d ? 0 :1 (mux2)
+- Use only mux2 to create all functions.
+
+This approach is minimal, simple, uses only mux2s, and matches the K-map correctly.
+
+We do not need to use a and b internally since they are mux selectors outside this module. We only generate mux_in signals for the external 4-to-1 mux.
+
+Hence the simplified implementation:
+- No a,b inputs needed inside this module (only c,d inputs and mux_in outputs)
+- Each mux_in[i] is implemented as mux2s on c and d only.
+
+This keeps the design minimal and fully meets requirements.

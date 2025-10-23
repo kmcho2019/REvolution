@@ -1,0 +1,9 @@
+To optimize the design for better power, performance, and area (PPA), I will consolidate the 8 individual flip-flops into a single 8-bit register with a synchronous active-high reset triggered on the negative clock edge. This reduces the overhead of instantiating multiple modules and simplifies the wiring of the reset value.
+
+This approach keeps the functionality intact (negative-edge triggered, synchronous reset to 0x34) but minimizes area by using a single register. It also reduces switching activity by updating the entire register in one clock cycle rather than multiple separate flip-flops.
+
+Using a single always block for all bits enables more efficient synthesis and potentially better timing optimization. It simplifies the code and avoids per-bit reset value wiring overhead.
+
+The reset value 0x34 is directly assigned on reset, and on non-reset cycles, the input d bus loads into the q register on the negative edge of clk.
+
+This maintains the original design intent with improved PPA characteristics.

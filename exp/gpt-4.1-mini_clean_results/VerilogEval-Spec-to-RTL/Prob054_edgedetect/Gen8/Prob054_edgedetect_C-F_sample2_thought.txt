@@ -1,0 +1,9 @@
+Fuse the best aspects of both examples to create a clear, efficient, and minimal design: 
+- Use two always blocks to explicitly separate sequential stages for clarity and easier timing closure.
+- First always block captures the previous input into a register (prev_in) on the rising clock edge.
+- A purely combinational wire detects positive edges bitwise as (~prev_in & in).
+- Second always block registers this edge detection into pedge, outputting the pulse exactly one cycle after the 0->1 transition.
+- This approach makes the combinational edge detection logic explicit and separates input sampling and output generation clearly, enhancing readability, timing predictability, and debugging ease.
+- Registers are only two 8-bit registers, keeping area minimal.
+- The edge detection is combinational and simple, keeping critical path short.
+- This fusion maximizes design clarity and synthesis friendliness while retaining minimal logic and resources.

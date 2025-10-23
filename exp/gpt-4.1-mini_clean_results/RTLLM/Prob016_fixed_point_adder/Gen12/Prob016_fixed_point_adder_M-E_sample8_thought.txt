@@ -1,0 +1,33 @@
+Implement the fixed-point adder by explicitly converting the two's complement inputs into sign-magnitude form internally, then performing magnitude addition or subtraction based on sign comparison, and finally reconstructing the result back into two's complement form.
+
+Specifically:
+
+1. Extract sign bits (MSB) of inputs `a` and `b`.
+
+2. Convert `a` and `b` to their magnitudes by taking two's complement if negative.
+
+3. If the signs are the same:
+   - Add magnitudes.
+   - Result sign = input sign.
+   - Saturate if addition overflow occurs (magnitude exceeds max positive value).
+
+4. If signs differ:
+   - Compare magnitudes.
+   - Subtract smaller magnitude from larger magnitude.
+   - Result sign = sign of operand with larger magnitude.
+   - If result magnitude is zero, sign = 0.
+   - No overflow possible here but check for zero.
+
+5. Convert result sign and magnitude back to two's complement form.
+
+6. Use a register `res` to hold final result `c`.
+
+7. Ensure fractional precision Q is consistent by performing arithmetic on full N bits and treating the number as fixed-point with Q fractional bits (implicitly handled since all arithmetic is done on integers with same Q).
+
+8. Handle overflow on magnitude addition by saturating result to maximum or minimum fixed-point value.
+
+This explicit sign-magnitude approach reflects classical fixed-point addition and clearly demonstrates sign and magnitude handling, suitable for educational or architectural clarity purposes. It also meets the problem requirements for internal register `res` and fixed precision.
+
+The design uses combinational logic inside an always_comb block and updates the register `res` accordingly. The output `c` is assigned from `res`.
+
+This approach differs from direct two's complement addition by explicitly handling signs and magnitudes and managing overflow in magnitude domain.

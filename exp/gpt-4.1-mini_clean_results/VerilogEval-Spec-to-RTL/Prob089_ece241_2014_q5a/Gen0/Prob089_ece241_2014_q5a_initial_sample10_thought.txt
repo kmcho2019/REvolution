@@ -1,0 +1,25 @@
+To implement a serial 2's complementer as a Moore machine, we need to produce the 2's complement of the input bit stream, starting from the LSB.
+
+The 2's complement can be computed by:
+- Scanning input bits from LSB to MSB.
+- Copying bits unchanged until the first '1' is encountered.
+- Then inverting all subsequent bits.
+
+Thus, the state machine has two states:
+- STATE_COPY: output = input bit, until first '1' bit is seen.
+- STATE_INVERT: output = inverted input bits after the first '1'.
+
+On reset (asynchronous, active high), the state machine resets to STATE_COPY. 
+
+Output 'z' depends only on the current state and input (Moore machine output depends on the current state only, so output is associated with state):
+
+- In STATE_COPY, output = input bit.
+- In STATE_INVERT, output = ~input bit.
+
+Because it's a Moore machine, output depends only on state; however, since output depends on input in each cycle, the output logic is combinational with respect to state and input.
+
+We implement an asynchronous reset with always block sensitive to posedge clk and posedge areset.
+
+The circuit processes one bit per clock cycle, outputting the corresponding 2's complement bit serially.
+
+The module interface is as specified.

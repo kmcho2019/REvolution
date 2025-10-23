@@ -1,0 +1,13 @@
+Novel Architectural Idea:
+1. Use a shift register approach instead of state machine for simpler control logic
+2. Implement a two-stage pipeline to naturally handle the data concatenation
+3. Use a "ready" signal to indicate when the first byte has been captured
+4. Eliminate explicit state encoding by using data presence as state indicator
+5. Leverage register enable signals for power optimization
+
+Key Features:
+- Shift register stores first byte when valid_in arrives
+- Output register captures concatenated data when second byte arrives
+- Valid_out generated combinatorially from input sequence
+- No explicit state machine - simpler control logic
+- Same timing behavior but with different implementation approach

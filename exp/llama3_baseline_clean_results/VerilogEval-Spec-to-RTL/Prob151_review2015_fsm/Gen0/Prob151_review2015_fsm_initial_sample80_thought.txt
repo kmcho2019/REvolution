@@ -1,0 +1,8 @@
+To implement the finite-state machine that controls the timer, we can design a Moore machine with six states: Idle, PatternDetected, Shifting, WaitingCounters, Done, and AckWait. 
+- The Idle state is the initial state where the machine searches for the pattern 1101.
+- The PatternDetected state is entered when the pattern 1101 is detected, and the machine shifts in 4 more bits.
+- The Shifting state is where the machine asserts shift_ena for 4 clock cycles.
+- The WaitingCounters state is where the machine waits for the counters to finish counting.
+- The Done state is where the machine asserts done and waits for the user to acknowledge.
+- The AckWait state is a transient state that allows the machine to reset after the user acknowledges.
+We can use a counter to keep track of the number of bits shifted in the Shifting state.

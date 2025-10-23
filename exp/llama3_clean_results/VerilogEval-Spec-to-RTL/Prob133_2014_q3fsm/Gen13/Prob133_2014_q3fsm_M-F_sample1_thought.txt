@@ -1,0 +1,9 @@
+To address the issues in the provided code, we need to simplify the state machine and ensure that the output 'z' is correctly set based on the value of 'w' during the checking state. We can achieve this by using a single 'always' block and explicitly handling the state transitions and output assignments. 
+
+We will introduce a new state, STATE_B_CHECK, to handle the checking of 'w' for three clock cycles. In this state, we will increment a counter 'cycle_count' and count the number of times 'w' is 1. After three clock cycles, we will set the output 'z' to 1 if 'w_count' is exactly 2, and then reset 'w_count' and 'cycle_count'. We will also reset 'z' to 0 when the FSM is not in the checking state or when 'w_count' is not exactly 2.
+
+To handle the case when 's' becomes 0 after the FSM has transitioned to state B, we will introduce a new state, STATE_B, which will be entered when 's' is 1. In this state, we will start the checking of 'w' by setting 'cycle_count' to 1 and 'w_count' to 0.
+
+We will use a two-state FSM: STATE_A and STATE_B_CHECK. STATE_A is the reset state, and STATE_B_CHECK is the state where we check the value of 'w' for three clock cycles.
+
+By using a single 'always' block and explicitly handling the state transitions and output assignments, we can simplify the code and ensure that the output 'z' is correctly set based on the value of 'w'.

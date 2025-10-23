@@ -1,0 +1,7 @@
+To fuse the best ideas from both examples, I will implement a compact and efficient priority encoder using a single always @(*) block with a casez statement that directly encodes the input vector’s first set bit from LSB to MSB.
+
+This approach blends the hierarchical binary search logic's performance benefits with the succinctness of the casez priority encoding style. The casez will synthesize to efficient priority encoder hardware, reducing logic depth and potential glitching by avoiding multiple nested if-else checks. It also inherently prioritizes lower indices, matching the specification.
+
+Additionally, I will explicitly assign pos=0 for the zero input case to comply with the requirement. This method is synthesizable, clean, and will yield better PPA metrics by allowing synthesis tools to optimize the priority encoding logic straightforwardly.
+
+This fusion balances readability, speed, power, and area improvements by utilizing Verilog’s priority encoding capabilities and avoiding long conditional chains, while retaining explicit clarity and correctness.

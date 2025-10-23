@@ -1,0 +1,22 @@
+Fix the direction-switching logic in walking states by explicitly checking bump_left and bump_right separately to set the walking direction correctly. According to the spec:
+
+- If bumped on the left (bump_left=1), switch to walking right.
+- If bumped on the right (bump_right=1), switch to walking left.
+
+When both bumps are asserted, still switch direction appropriately. Therefore, in walking left state:
+
+- If bump_left is asserted (regardless of bump_right), switch to walking right.
+- Else if bump_right is asserted (and bump_left not), switch to walking left.
+
+Similarly for walking right state:
+
+- If bump_right is asserted (regardless of bump_left), switch to walking left.
+- Else if bump_left is asserted (and bump_right not), switch to walking right.
+
+This priority ensures that bump signals are respected properly.
+
+Retain the rest of the FSM logic unchanged, as it matches the problem description and was verified correct.
+
+Also keep fall timer logic and splat conditions as before.
+
+This fix should resolve the incorrect walking direction after bumps and correct mismatches in walk_left and walk_right signals.

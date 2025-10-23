@@ -1,0 +1,12 @@
+After carefully re-examining the waveform, I propose a different approach:
+
+1. Output p acts as a synchronous detector - it goes high only when 'a' is high at the positive clock edge, and stays high until the next positive edge.
+
+2. Output q is a delayed version of p, but with a full cycle delay. This requires storing p's value for an entire cycle before outputting it to q.
+
+3. The key insight is to use two registers:
+   - First register captures 'a' at positive edges for p
+   - Second register captures p's value at the next positive edge for q
+   This creates a proper one-cycle delay between p and q.
+
+This approach avoids edge-triggered race conditions by using only positive edge triggering and properly pipelining the signals.

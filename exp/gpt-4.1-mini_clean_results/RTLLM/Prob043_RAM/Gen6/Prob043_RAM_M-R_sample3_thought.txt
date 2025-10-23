@@ -1,0 +1,10 @@
+To refactor the design while preserving functionality, I will combine the synchronous reset and write operations in one always block but move the RAM initialization into a separate initial block for synthesis-supported initialization (many tools support this for small memories). This avoids clearing RAM on reset every time, which can reduce switching activity and simplify reset logic.
+
+Additionally, I will implement the read operation as a registered output driven by a clocked process gated by read_en, rather than combinational logic. This change introduces one-cycle read latency but improves timing by removing combinational path from RAM array to output and reducing glitches on read_data output.
+
+This structure separates initialization, write, and read logic distinctly:
+- RAM initialized at elaboration time.
+- Writes synchronized to clk with enable.
+- Reads synchronous with enable, output data registered for timing stability.
+
+This approach balances timing and power, better supporting practical FPGA/ASIC RAM inference with registered output.

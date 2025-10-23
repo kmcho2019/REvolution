@@ -1,0 +1,11 @@
+To simplify the existing solution, we can focus on reducing the complexity of the state machine and its transitions. 
+
+One approach is to eliminate the `WAIT_STOP` state and handle the stop bit check directly in the `RECEIVE` state. This simplification reduces the number of states and transitions, making the design more straightforward.
+
+Additionally, we can simplify the counter logic by using a single variable to keep track of the number of bits received, eliminating the need for a separate `bit_count` register.
+
+We can also reduce the number of operations performed within a clock cycle by only updating the `data` register when a new bit is received and the stop bit is correct.
+
+To further simplify the design, we can use a single `always_ff` block to handle all sequential logic, reducing the complexity of the code.
+
+Finally, we can remove unnecessary variables and signals, such as the `done` signal, and instead use a single output signal to indicate when a byte has been correctly received.

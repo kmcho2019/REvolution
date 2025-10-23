@@ -1,0 +1,9 @@
+The existing code implements a finite state machine to model the behavior of a Lemming in a 2D world. To refactor this code, we can simplify the state machine by removing the 'next_state' variable and directly updating the 'state' variable in the sequential logic. We can also use 'assign' statements for the output logic to improve readability and maintainability.
+
+One approach is to encode the states as 2-bit values, where the first bit represents the direction (0 for left, 1 for right) and the second bit represents the state (0 for walking, 1 for falling). This encoding simplifies the state transition logic and reduces the number of conditions to check.
+
+We will also handle the 'bump_left' and 'bump_right' signals when the Lemming is in the 'Falling' state by adding a separate condition to ignore these signals when the Lemming is falling. This can be achieved by using a separate variable to track the previous direction and updating it only when the Lemming is walking.
+
+To improve the code structure, we will separate the state transition logic into two 'always' blocks: one for the state updates and another for the output logic. This separation makes it easier to understand and maintain the code.
+
+Overall, the refactored code will have a more modular structure, improved readability, and reduced complexity, making it easier to maintain and optimize.

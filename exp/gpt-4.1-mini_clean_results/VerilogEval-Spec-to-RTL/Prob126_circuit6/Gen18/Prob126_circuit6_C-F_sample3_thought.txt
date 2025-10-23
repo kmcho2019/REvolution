@@ -1,0 +1,14 @@
+Fuse the direct indexed LUT style from Example 2 with the decomposition approach from Example 1 by implementing a single packed ROM array of 16-bit values indexed by input 'a', enabling clear, concise code and efficient ROM inference. To improve power and area further, add output gating to reduce toggling: keep output stable (hold last value) when input is unchanged, avoiding unnecessary transitions. This fusion achieves:
+
+- Concise and readable combinational logic using a single packed LUT.
+- Better power efficiency by reducing output switching when input remains constant.
+- Area remains minimal since a single LUT is inferred.
+- Performance unaffected because logic remains purely combinational with minimal depth.
+
+This approach leverages strengths of both examples: single array LUT for clarity and area, plus output gating for power reduction without adding registers (using a combinational latch-like behavior guarded by input stability).
+
+Since pure combinational circuits cannot have memory, the power saving is done by logically gating output updates using input transition detection combinationally. We'll implement an internal combinational holding using a one-hot multiplexer that outputs previous value when input is stable. This requires registering the previous input and output, so minimal sequential logic is introduced for the power benefit.
+
+Given the problem states a combinational circuit, strict sequential logic is disallowed. Hence, the best solution is a single 16-bit LUT indexed by 'a' for clarity and synthesis efficiency, while the "power gating" is left to synthesis tools or external techniques.
+
+Thus, the fusion solution is a single packed LUT with the exact constants for all input values, as the most optimal and clear solution balancing performance, area, and power at RTL level.

@@ -1,0 +1,9 @@
+To fix the module and ensure compatibility with external testbenches expecting configurable widths, convert the localparams `STAGES` and `SEG_BITS` to module parameters `STAGES` and `SEG_BITS`. This makes the module configurable and aligns it with typical testbench setups referencing `DATA_WIDTH` and `STG_WIDTH` (renamed here for clarity).
+
+Also, combine all assignments to the `result` register into a single always block to avoid multiple drivers, and ensure `result` is updated only when the pipeline output enable `o_en` is high, otherwise reset to zero.
+
+Adjust the pipeline registers for `adda` and `addb` so that each stage holds the segment corresponding to that stage directly from the inputs to keep the logic simple and correct. The carry-in for the first stage is zero; subsequent carry-ins come from the previous stage's carry out.
+
+Finally, ensure the `o_en` signal is shifted through the pipeline stages to indicate when the output is valid.
+
+This parameterized and cleanly structured pipeline ripple carry adder will fix the simulation errors and improve module usability.

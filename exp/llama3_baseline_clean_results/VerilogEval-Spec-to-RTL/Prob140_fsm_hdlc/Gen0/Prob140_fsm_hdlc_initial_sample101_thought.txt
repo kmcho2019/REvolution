@@ -1,0 +1,11 @@
+To solve this problem, we need to design a Moore-type finite state machine (FSM) that can recognize the specified sequences. The FSM will have several states to track the number of consecutive 1s and 0s. 
+
+1. The FSM starts in a reset state, where it assumes the previous input was 0.
+2. When a 1 is encountered, the FSM moves to a state that counts the number of consecutive 1s.
+3. If 5 consecutive 1s are encountered, the FSM moves to a state where it checks for a 0 (to detect the stuffed bit) or a 1 (to detect the flag sequence).
+4. If a 0 is encountered after 5 consecutive 1s, the FSM asserts the disc signal and resets the counter.
+5. If a 1 is encountered after 5 consecutive 1s, the FSM checks for another 1. If it's a 1, the FSM asserts the flag signal. If it's a 0, the FSM resets the counter.
+6. If 7 or more consecutive 1s are encountered, the FSM asserts the err signal and stays in an error state until the sequence is broken.
+7. The FSM uses the reset signal to return to the initial state.
+
+The FSM can be implemented using a combination of always blocks and if-else statements to handle the different states and transitions.

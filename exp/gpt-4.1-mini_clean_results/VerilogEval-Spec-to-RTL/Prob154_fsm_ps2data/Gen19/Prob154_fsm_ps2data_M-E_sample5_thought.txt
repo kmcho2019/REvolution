@@ -1,0 +1,11 @@
+Implement the FSM as a 3-state Moore machine using one-hot encoding to simplify state decoding logic and reduce potential critical path delays. Instead of partially updating the output register in multiple cycles, use a 3-stage shift register to store incoming bytes after detecting the sync byte (with in[3]=1). On receiving the third byte, output the combined 24-bit message and assert done for one cycle.
+
+The datapath:
+- Use a shift register that shifts in each received byte once sync is found.
+- The FSM states are: IDLE (searching for sync byte), COLLECT_2 (second byte), COLLECT_3 (third byte).
+- The done output is asserted in the cycle after the third byte is loaded.
+- Synchronous active-high reset clears state and outputs.
+- One-hot encoding can allow for simpler combinational logic and potentially better timing.
+- Using a shift register reduces gating and glitching on out_bytes and done signals.
+
+This architecture minimizes combinational logic complexity and can improve timing and power by concentrating updates into a consistent shift operation rather than selective partial register writes.

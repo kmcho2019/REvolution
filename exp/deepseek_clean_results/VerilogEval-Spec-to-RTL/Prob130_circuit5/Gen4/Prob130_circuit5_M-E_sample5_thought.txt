@@ -1,0 +1,12 @@
+Here's a novel approach using a lookup table (LUT) implemented as a memory array. The key idea is to:
+1. Treat the 4-bit 'c' input as an address into a 16-entry memory
+2. Each memory location stores a 2-bit selector code that determines which input to route to the output
+3. For addresses 0-3, we store selector codes for b, e, a, d respectively
+4. For addresses 4-15, we store a special code that forces all output bits high
+5. Use a small decoder to convert the 2-bit selector into the actual output
+
+This approach is interesting because:
+- It separates the control logic (selector decoding) from data routing
+- The LUT can be easily modified if selection criteria changes
+- In some technologies, small memories can be more area-efficient than equivalent logic
+- The design scales well if more inputs or selection cases are added

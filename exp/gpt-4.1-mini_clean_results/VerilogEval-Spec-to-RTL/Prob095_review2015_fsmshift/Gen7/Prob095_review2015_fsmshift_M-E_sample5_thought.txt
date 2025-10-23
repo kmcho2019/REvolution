@@ -1,0 +1,9 @@
+I will implement a 2-bit saturating counter that counts down from 4 to 0, driven directly by the reset signal and clock.
+
+- On synchronous reset (active high), the counter is loaded with 4.
+- On every clock cycle, if the counter is non-zero, decrement it by 1.
+- Assert shift_ena when the counter is non-zero, deassert otherwise.
+- This approach avoids explicit FSM states and uses just a down-counter to track how many cycles remain to enable shifting.
+- Because reset synchronously loads 4, shift_ena will be asserted immediately after reset is released for exactly 4 cycles, then 0 forever until next reset.
+
+This simple counter-centric design ensures precise 4-cycle pulse of shift_ena starting immediately after synchronous reset.

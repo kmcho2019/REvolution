@@ -1,0 +1,13 @@
+Implement the 64-bit subtractor using a single-level ripple borrow subtractor architecture that explicitly computes borrows instead of converting subtraction into addition. This will showcase an alternative to carry-lookahead addition.
+
+Key ideas:
+- Perform subtraction bit-by-bit from LSB to MSB, tracking borrow out of each bit.
+- Each bit's difference = A_bit - B_bit - borrow_in.
+- Borrow out is 1 if subtraction cannot be done without borrowing, i.e., if A_bit < B_bit + borrow_in.
+- Use a chain of borrow signals (borrow ripple) from LSB to MSB.
+- This structure is simple and clearly illustrates borrow generation and propagation.
+- Detect overflow for signed 64-bit subtraction by checking sign bits of A, B, and result:
+  Overflow occurs when:
+  - A positive A minus a negative B produces a negative result (positive overflow).
+  - A negative A minus a positive B produces a positive result (negative overflow).
+- This borrow-based subtraction is structurally different from the addition-based subtractor with CLA blocks.

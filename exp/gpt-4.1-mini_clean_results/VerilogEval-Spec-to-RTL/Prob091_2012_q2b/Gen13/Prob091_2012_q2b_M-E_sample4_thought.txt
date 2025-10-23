@@ -1,0 +1,15 @@
+Instead of directly implementing the next state input logic with simple gates, I will create a decoder module that identifies the current state based on the one-hot encoding of y, making the design easier to extend and understand. The decoder will output six signals representing states A-F. Then, I will write combinational logic for Y1 and Y3 using these decoded states and the input w.
+
+This approach modularizes the state decoding from the next state logic, improving readability and maintainability, especially for larger FSMs. It also clearly separates the one-hot encoding interpretation from the combinational output logic.
+
+The output logic will follow the FSM transitions:
+
+- Y1 (input to y[1], state B flip-flop) is high when from state A (y[0]) with w=1.
+- Y3 (input to y[3], state D flip-flop) is high when from states B or C with w=0, or from D with w=0, or from E with w=0, or from F with w=0 (per FSM).
+
+Specifically:
+
+- Y3 = (~w) & (B | C | D | E | F)
+- Y1 = w & A
+
+This matches the FSM transition conditions and explicitly uses decoded states.

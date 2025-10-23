@@ -1,0 +1,7 @@
+The design of the radix-2 divider involves several key components and steps. First, we need to handle the input validation and reset logic. When a valid operation is requested (opn_valid is high and res_valid is low), we initialize our internal registers and counters. We use a shift register (SR) to hold the dividend and an 8-bit register to hold the divisor. The dividend is shifted left by one bit and its absolute value is taken. The divisor is also taken in absolute value and its negation is computed. A counter (cnt) is used to keep track of the division steps, which should run for 8 steps (for an 8-bit divisor). 
+
+In each division step, we check if the shifted dividend (in SR) is greater than or equal to the divisor. If it is, we subtract the divisor from the dividend and record a quotient bit as 1; otherwise, the quotient bit is 0. The result of the subtraction is then shifted left, and the next bit of the dividend is brought in. This process repeats until all bits of the dividend have been processed, at which point the final remainder and quotient are available. 
+
+The quotient and remainder are then outputted when the division process is complete (i.e., when cnt reaches 8), and we manage the output validity signal (res_valid) based on the reset signal, the counter, and whether the result has been consumed.
+
+We will use Verilog's synthesizable constructs, including always blocks, if-else statements, and non-blocking assignments to implement the synchronous logic of the divider.

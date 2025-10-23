@@ -1,0 +1,10 @@
+To create a Verilog module named freq_divbyfrac that performs fractional frequency division by 3.5x, we'll employ the double-edge clocking technique. This involves generating two intermediate clocks with uneven periods and then phase-shifting them. The main components of the design will include a counter to track clock cycles, logic to generate the uneven clock periods, a mechanism to phase-shift these clocks, and a final stage to combine them into the output clock signal with a uniform period.
+
+The module will have two inputs: clk (the input clock signal) and rst_n (an active-low reset signal). The output will be clk_div, the fractionally divided clock signal. The design will utilize parameters for better flexibility and readability, such as MUL2_DIV_CLK, which is set to 7 for achieving a 3.5x division.
+
+Key steps in the implementation include:
+1. Initialize a counter to track the input clock cycles.
+2. Based on the counter value, generate two uneven clock periods (one with 4 source clock cycles and the other with 3 source clock cycles).
+3. Phase-shift these clocks by half a clock period to create delayed and advanced versions.
+4. Logically OR the phase-shifted clocks to produce the final output clock signal with a uniform period.
+5. Implement an active-low reset to initialize the module as needed.

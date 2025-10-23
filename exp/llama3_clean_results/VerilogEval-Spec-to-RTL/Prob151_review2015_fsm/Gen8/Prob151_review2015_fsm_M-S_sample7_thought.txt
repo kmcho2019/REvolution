@@ -1,0 +1,13 @@
+To simplify the given solution, I propose using a single state machine with a minimal number of states to control the timer. The state machine will have the following states: IDLE, PATTERN_DETECT, SHIFT, COUNT, and WAIT_ACK.
+
+In the IDLE state, the state machine will check for the pattern (1101) in the incoming data. Once the pattern is detected, the state machine will transition to the SHIFT state.
+
+In the SHIFT state, the state machine will assert the 'shift_ena' signal for exactly 4 clock cycles to shift in the duration value.
+
+After shifting, the state machine will transition to the COUNT state and assert the 'counting' signal, waiting for the 'done_counting' signal.
+
+Once the 'done_counting' signal is asserted, the state machine will transition to the WAIT_ACK state, assert the 'done' signal, and wait for the 'ack' signal.
+
+By using a single state machine with a minimal number of states, the design can be simplified and the complexity reduced. The use of a single always block will also reduce the area consumption and power consumption.
+
+The state machine transitions will be implemented using a case statement, and the output signals will be controlled based on the current state.

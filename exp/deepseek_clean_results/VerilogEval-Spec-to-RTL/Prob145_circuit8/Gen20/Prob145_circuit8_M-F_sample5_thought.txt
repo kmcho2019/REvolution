@@ -1,0 +1,19 @@
+After carefully analyzing the waveform and feedback, here's the corrected approach:
+
+1. Key Observations:
+   - p is high only when 'a' is high during a clock edge, but only after some initial condition is met (after q first goes high)
+   - q acts as an enable signal that starts the p behavior
+   - q becomes high when p has been high for a certain pattern (3 consecutive cycles)
+   - q resets when 'a' is high without clock (at 175ns)
+
+2. State Machine Design:
+   - Need a counter to track consecutive p=1 events
+   - q is set when counter reaches threshold (3)
+   - p is only active when q is set and a is high during clock
+   - Reset condition based on a without clock
+
+3. Implementation:
+   - Use a 2-bit counter for tracking consecutive p=1
+   - q is set when counter reaches 3
+   - p follows a & clock only when q is set
+   - Reset counter when a is high without clock

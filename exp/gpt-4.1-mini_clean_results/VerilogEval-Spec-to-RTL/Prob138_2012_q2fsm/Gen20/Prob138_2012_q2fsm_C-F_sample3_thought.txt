@@ -1,0 +1,11 @@
+To fuse the strengths of both examples, I will:
+
+- Use clear symbolic localparams for state encoding to improve readability and maintainability.
+- Use separate always blocks for synchronous state update and combinational next-state logic, as required.
+- Use a case statement (from Example 1) for clearer, parallel next-state decisions that synthesize well and improve timing over cascading if-else.
+- Update the state register unconditionally each clock cycle (no clock gating) to minimize gating complexity and improve timing (from Example 1).
+- Implement the output z as a minimal combinational expression based on state bits (from Example 1) rather than equality checks, which reduces combinational logic depth and improves PPA.
+- Ensure synchronous active-high reset on the positive clock edge is cleanly implemented.
+- Keep the code concise yet readable by combining these best practices.
+
+This fusion balances clarity, synthesis friendliness, and optimal PPA by combining explicit symbolic state names, clear case-based next-state logic, efficient output encoding, and a clean synchronous reset scheme.

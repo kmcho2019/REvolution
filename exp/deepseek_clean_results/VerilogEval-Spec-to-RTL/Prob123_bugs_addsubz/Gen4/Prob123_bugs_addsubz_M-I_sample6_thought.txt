@@ -1,0 +1,14 @@
+The current solution works correctly but can be optimized for better PPA. Here's the improvement strategy:
+
+1. Zero Flag Optimization:
+   - Instead of comparing all bits to zero after the arithmetic operation, we can compute the zero flag in parallel with the arithmetic operation by OR-reducing the result bits and inverting.
+   - This reduces the critical path since zero detection happens concurrently with the arithmetic operation.
+
+2. Arithmetic Operation Optimization:
+   - Use a single adder for both addition and subtraction by conditionally inverting 'b' and setting the carry-in based on 'do_sub'.
+   - This reduces area by sharing the adder between both operations.
+
+3. Output Assignment:
+   - Combine the arithmetic and zero flag assignments in a single always block for better synthesis optimization.
+
+These changes should reduce area and power while maintaining or improving timing.

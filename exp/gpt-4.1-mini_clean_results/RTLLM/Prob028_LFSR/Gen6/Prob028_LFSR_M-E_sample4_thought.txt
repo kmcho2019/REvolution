@@ -1,0 +1,9 @@
+Instead of a simple shift register with feedback inserted at LSB, I will implement the 4-bit LFSR using a parallel load and feedback computation approach: on each clock, the new state is computed from the XOR of taps, and the entire register is updated simultaneously using combinational logic for feedback bits.
+
+This approach treats the LFSR as a next-state machine with explicit feedback logic for each bit, avoiding direct bit shifting and giving clear visibility into the new state derivation. The feedback is still based on XOR of taps from the current state, but I will implement all four next bits explicitly.
+
+This design uses synchronous active-high reset initializing the LFSR to a nonzero seed (4'b1001) to avoid lockup in all-zero state.
+
+Output is a registered 4-bit vector representing the current LFSR state.
+
+This architectural approach can be easily generalized to wider LFSRs and provides a clean, fully synchronous design.

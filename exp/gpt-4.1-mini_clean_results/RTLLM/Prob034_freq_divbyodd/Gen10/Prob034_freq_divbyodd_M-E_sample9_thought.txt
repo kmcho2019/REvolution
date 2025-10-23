@@ -1,0 +1,12 @@
+I will implement the frequency divider for an odd divisor NUM_DIV using a single counter and a state machine that generates a clock output with a duty cycle close to 50%. 
+
+The main idea is:
+
+- Use a single counter counting from 0 to NUM_DIV-1 on the positive edge.
+- Use a state flip-flop clk_div toggled at two specific counts to create the output clock edges.
+- The toggling points are chosen such that the output clock has a high time and low time differing by only one clock cycle, enabling an almost 50% duty cycle even for odd division.
+- Specifically, toggle clk_div at counts (NUM_DIV-1)/2 and NUM_DIV-1.
+- Reset initializes the counter and output clock.
+- This method requires only one always block and no logic on the negative edge, simplifying timing and power.
+- The output clk_div frequency is clk frequency divided by NUM_DIV, suitable for any odd NUM_DIV.
+- A compile-time check ensures NUM_DIV is odd.

@@ -1,0 +1,33 @@
+To fix the FSM and ensure correct timing and counting, redesign the FSM with two states: A (waiting for s=1) and B (sampling w three times and then outputting z).
+
+In state B, maintain a 3-cycle sampling window. Use a 2-bit counter `sample_cnt` from 0 to 2 for the three samples. At each clock in B, increment `sample_cnt` and accumulate `count_w` if w=1.
+
+After exactly three samples (`sample_cnt` reaches 2), transition to an output phase where output z is asserted based on the stored `count_w` from these three samples, and reset counters to start the next sampling window in the following cycle.
+
+To ensure output z appears *one cycle after* sampling 3 w inputs, introduce a third implicit phase within state B by controlling when to output z:
+
+- When `sample_cnt` == 0 or 1: sample w, accumulate count_w, output z=0
+- When `sample_cnt` == 2: sample w, accumulate count_w, but do not output z yet
+- On the *next* clock (sample_cnt wraps to 0), output z = 1 if count_w + current w == 2, else 0. Then reset counters and start new counting
+
+However, this complicates logic, so instead, split B into two substates or use an additional variable `output_enable` or `z_pending` to delay z by one cycle after collecting three samples.
+
+Implement as:
+
+- State A: wait for s=1
+
+- State B: sample w and count for 3 cycles, increment sample_cnt, accumulate count_w
+
+- When sample_cnt == 3 (after 3 samples), latch count_w to a stable register and set z_pending flag
+
+- Next cycle, while z_pending is set, output z = (count_w == 2), then clear counters and z_pending
+
+- Repeat sampling in B for next 3 cycles
+
+This approach keeps FSM simpler, using only two states (A and B), with an internal flag and registers controlling the output timing exactly as required.
+
+Counters reset at start of each sampling window to prevent carryover.
+
+All operations are synchronous on clock rising edge with synchronous active-high reset.
+
+This method cleanly separates sampling and output timing, avoids off-by-one errors, and ensures z asserted exactly one cycle after 3 w samples are taken.

@@ -1,0 +1,10 @@
+Fuse the best ideas from both examples by combining hierarchical OR grouping for the most complex next_state[0] signal to reduce fan-in and improve timing, while using flat, direct combinational assignments for other next_state bits to keep minimal logic depth and simplicity. For the outputs, use concise bitmasking for clean and efficient logic.
+
+Specifically:
+- Implement next_state[0] with balanced hierarchical OR groups of states transitioning to S0 on input 0, reducing large fan-in and enhancing timing and power.
+- For next_state[1] through next_state[9], use direct OR of all contributing states and input conditions in explicit combinational expressions as in the second example, keeping logic minimal and synthesis-friendly.
+- Use localparam bitmasks and bitwise AND and reduction OR for output signals to maintain clean and compact output logic.
+- Maintain support for multiple simultaneous active states by processing each active state combinationally.
+- This fusion yields optimized performance by limiting large fan-in logic on the critical next_state[0] path, reduces area by avoiding unnecessarily complex expressions for other next_state bits, and keeps output logic minimal and clear.
+
+This approach balances timing, power, and area optimally given the FSM structure and one-hot encoding.

@@ -1,0 +1,9 @@
+Implement the Lemming FSM with separate state bits for direction and falling, but use two separate flip-flops rather than packing them into a single vector. Handle asynchronous reset separately for each flip-flop, ensuring clear modular logic.
+
+Use a combinational always block to determine the next value of direction and falling states individually, using explicit condition checks with priority on ground and bump signals as per spec.
+
+Outputs will be combinationally derived from these two bits, making the design structurally simple and easy to understand. This dual-flip-flop approach makes it straightforward to observe and debug each part of the state and highlights their independent behavior.
+
+Also, implement synchronous updates on clk with asynchronous active-high reset areset, following the requirements.
+
+This approach differs architecturally by not encoding the two states into a vector and instead managing them as two separate registers updated with straightforward logic, improving clarity and maintainability.

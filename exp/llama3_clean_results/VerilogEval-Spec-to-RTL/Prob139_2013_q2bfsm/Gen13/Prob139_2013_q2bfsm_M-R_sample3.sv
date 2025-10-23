@@ -1,0 +1,79 @@
+module TopModule (
+    input clk,
+    input resetn,
+    input x,
+    input y,
+    output reg f,
+    output reg g
+);
+
+// Define the main states
+enum logic [1:0] {
+    Initialization,
+    XSeq1,
+    XSeq2,
+    XSeq3,
+    YMonitor1,
+    YMonitor2,
+    FinalStateG1,
+    FinalStateG0
+} state;
+
+always @(posedge clk) begin
+    if (!resetn) begin
+        state <= Initialization;
+        f <= 0;
+        g <= 0;
+    end else begin
+        case (state)
+            Initialization: begin
+                f <= 1;
+                state <= XSeq1;
+            end
+            XSeq1: begin
+                if (x) begin
+                    state <= XSeq2;
+                end else begin
+                    state <= XSeq1;
+                end
+                f <= 0; // Reset f after one cycle
+            end
+            XSeq2: begin
+                if (!x) begin
+                    state <= XSeq3;
+                end else begin
+                    state <= XSeq1;
+                end
+            end
+            XSeq3: begin
+                if (x) begin
+                    state <= YMonitor1;
+                end else begin
+                    state <= XSeq1;
+                end
+            end
+            YMonitor1: begin
+                if (y) begin
+                    state <= FinalStateG1;
+                    g <= 1;
+                end else begin
+                    state <= YMonitor2;
+                end
+            end
+            YMonitor2: begin
+                if (y) begin
+                    state <= FinalStateG1;
+                    g <= 1;
+                end else begin
+                    state <= FinalStateG0;
+                    g <= 0;
+                end
+            end
+            FinalStateG1, FinalStateG0: begin
+                // No action, g is already set
+            end
+        endcase
+    end
+end
+
+endmodule

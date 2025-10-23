@@ -1,0 +1,9 @@
+To implement the gshare branch predictor, we'll create a module named TopModule with the given interface. The module will have two main components: a 7-bit global branch history register and a 128-entry table of two-bit saturating counters.
+
+For the prediction interface, when predict_valid is high, the module will use the pc and global history to generate a 7-bit index by hashing (using xor) the pc and global history. This index will be used to access the saturating counter table, and the predicted branch direction will be determined based on the counter value. The global history register will be updated at the next positive clock edge for the predicted branch.
+
+For the training interface, when train_valid is high, the module will update the saturating counter table based on the actual branch outcome and whether the branch was a misprediction. If the branch was a misprediction, the global history register will be recovered to the state immediately after the mispredicting branch completes execution.
+
+To handle the case where training and prediction occur in the same cycle, training will take precedence, and the global history register will be updated accordingly.
+
+The module will also be reset asynchronously when areset is high, which will reset the global history register and the saturating counter table.

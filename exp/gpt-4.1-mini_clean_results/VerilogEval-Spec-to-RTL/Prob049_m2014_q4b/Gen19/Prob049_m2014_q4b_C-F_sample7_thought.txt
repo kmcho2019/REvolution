@@ -1,0 +1,14 @@
+Fuse the modularity and clear asynchronous reset handling from both examples by implementing a single well-structured DFF_AsyncReset submodule that explicitly declares the asynchronous reset as a separate internal wire for clarity. Prioritize asynchronous reset within the always block triggered by posedge clk or posedge async_reset to maintain correct reset behavior.
+
+Enhance the design by adding parameterization for the reset value (default zero) to increase reusability without complexity, allowing easy future extension to reset to logic 1 if needed.
+
+Within TopModule, instantiate this parameterized submodule directly with a simple interface, maintaining clean hierarchy and code clarity.
+
+This approach combines:
+- The modular reuse and maintainability benefits.
+- Explicit and clear asynchronous reset signaling.
+- Slightly enhanced flexibility via parameterization.
+- Minimalistic and clean RTL coding style.
+- No extra unnecessary signals beyond clarity-driven async_reset wire.
+
+This fusion improves design quality and future extensibility without compromising simplicity, timing, or area, fulfilling the original specification with a robust, clean, and flexible implementation.

@@ -1,0 +1,15 @@
+Implement a true Radix-4 Booth multiplier for 8-bit inputs. Key improvements:
+
+- Use Booth encoding on 3 bits of the multiplier at a time (overlapping groups), reducing cycle count to 4 iterations (since 8 bits / 2 = 4).
+- Use signed 17-bit multiplicand and extended multiplier register (17 bits) by appending a zero bit (multiplier[0:8] plus one appended zero) to facilitate 3-bit group encoding.
+- Maintain a 25-bit accumulator (to hold partial sums with shifts) that accumulates the partial products, shifted by 2 bits each cycle.
+- On each cycle:
+  - Examine 3 bits (multiplier portion) to determine operation: +0, +1, +2, -1, -2 multiples of multiplicand.
+  - Add/subtract the appropriate multiple of multiplicand.
+  - Arithmetic right shift the multiplier group by 2 bits (implemented by shifting the multiplier register).
+- Use a counter to run 4 cycles (for 8 bits processed 2 bits at a time).
+- Output the lower 16 bits of accumulator as product.
+- Signal ready when done.
+- No variable shifts inside sequential blocks; all shift amounts fixed.
+- Clean synchronous logic with synchronous reset.
+- This approach matches radix-4 Booth algorithm and reduces cycles and complexity.

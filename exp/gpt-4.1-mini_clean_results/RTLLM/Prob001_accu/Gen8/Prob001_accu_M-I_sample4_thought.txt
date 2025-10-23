@@ -1,0 +1,5 @@
+Optimize the original design by removing the redundant final_sum register to reduce area and dynamic power. Assign data_out directly only when four valid inputs accumulate, preventing unnecessary toggling. Also, make valid_out a combinational signal generated only when count reaches 3 and valid_in is high, ensuring it pulses exactly one cycle without requiring explicit reset each cycle, further reducing toggling power.
+
+Keep the accumulator and count updated only when valid_in is asserted to minimize toggling when idle. Use synchronous active-low reset for clean initialization.
+
+This simplification reduces register count and toggling, minimizing power and area without adding complexity or pipelining, preserving timing and functional correctness.

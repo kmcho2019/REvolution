@@ -1,0 +1,10 @@
+To refactor the given Verilog code, we can simplify the state machine by removing the 'direction' variable and directly using the 'bump_left' and 'bump_right' inputs to switch the state between '2'b00' (Walking Left) and '2'b01' (Walking Right). We can also use a single 'always' block to handle both the state transitions and the output signal assignments. Additionally, we can use 'assign' statements to directly assign the output signals based on the current state, which can simplify the code and reduce the number of combinational logic gates required.
+
+We will maintain the same state encoding as before:
+- Walking Left (WL): 2'b00
+- Walking Right (WR): 2'b01
+- Falling (F): 2'b10
+
+The state machine will transition to the 'Falling' state when the 'ground' input is low, and will resume the previous walking direction when the 'ground' input becomes high again. The 'bump_left' and 'bump_right' inputs will be used to switch the walking direction, but will be ignored when the Lemming is falling.
+
+By simplifying the state machine and removing unnecessary variables, we can reduce the complexity of the code and improve its readability.

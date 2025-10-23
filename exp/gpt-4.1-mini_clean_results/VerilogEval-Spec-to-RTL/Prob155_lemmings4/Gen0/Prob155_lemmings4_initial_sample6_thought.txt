@@ -1,0 +1,39 @@
+Design a Moore FSM with these states:
+- WALK_LEFT
+- WALK_RIGHT
+- FALL_LEFT
+- FALL_RIGHT
+- DIG_LEFT
+- DIG_RIGHT
+- SPLAT (dead state, no outputs)
+
+State transitions:
+- On areset: reset to WALK_LEFT.
+- Walking states (walk_left or walk_right) transition based on bump inputs:
+  - If ground=0, transition to FALL_* (preserving direction).
+  - Else if dig=1, transition to DIG_*.
+  - Else if bump_left or bump_right (or both), switch walking directions.
+- Falling states:
+  - If ground=0, stay falling and increment fall counter.
+  - If ground=1, if fall_counter > 20, go to SPLAT; else go back to WALK_* in original direction and reset counter.
+- Digging states:
+  - If ground=1, keep digging.
+  - If ground=0, start falling in same direction, reset fall counter.
+- SPLAT state is terminal with all outputs zero.
+
+Outputs are combinational and depend only on state:
+- walk_left=1 in WALK_LEFT.
+- walk_right=1 in WALK_RIGHT.
+- aaah=1 in FALL states.
+- digging=1 in DIG states.
+- all zero in SPLAT.
+
+The fall counter counts cycles in falling states only.
+
+Since the design is a Moore FSM, outputs depend only on state. All transitions happen on posedge clk, with asynchronous posedge areset.
+
+Implement the FSM with an enumerated type for states and a 5-bit fall counter (to count up to >20). Reset counter on non-falling states or reset.
+
+No bump effect during falling or digging.
+
+In states where multiple conditions are true, precedence order: fall > dig > bump.

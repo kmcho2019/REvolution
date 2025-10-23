@@ -1,0 +1,24 @@
+The provided solution is a basic implementation of the required finite state machine. To improve it, we will first ensure that it correctly identifies the message boundaries and outputs the 24-bit message. 
+
+Upon reviewing the code, we notice that the state machine has three states: 2'b00, 2'b01, and 2'b10. The machine starts in state 2'b00 and waits for an input byte with in[3] = 1. Once such a byte is received, it transitions to state 2'b01 and stores the byte in the most significant 8 bits of out_bytes. 
+
+In state 2'b01, the machine stores the next input byte in the middle 8 bits of out_bytes and then transitions to state 2'b10. In state 2'b10, the machine stores the next input byte in the least significant 8 bits of out_bytes and then transitions back to state 2'b00, signaling that a message has been received (done = 1).
+
+The provided code seems to be almost correct, but it does not handle the reset signal correctly. The reset signal is active high, so we should set the state to 2'b00 and reset the out_bytes and done signals when reset is high. 
+
+To optimize the solution for better PPA, we can use clock gating to reduce power consumption. Clock gating involves disabling the clock signal to parts of the design that are not being used, which can help reduce power consumption.
+
+We will also use non-blocking assignments to prevent race conditions and improve the overall timing performance.
+
+In terms of area optimization, we will minimize the amount of logic required to implement the design. This can be achieved by using more efficient state machine encodings or reducing the number of registers required.
+
+Based on the provided PPA metrics, the design has a timing constraint of -5.38 ns, which is negative and indicates a potential timing issue. The power consumption is 0.0235 W, and the area usage is 230.0. To optimize the design, we will focus on improving the timing performance and reducing power consumption.
+
+Our improvement strategy will be to:
+
+1. Correct the reset logic to ensure that the state machine is properly reset when the reset signal is high.
+2. Use clock gating to reduce power consumption.
+3. Use non-blocking assignments to prevent race conditions and improve timing performance.
+4. Minimize the amount of logic required to implement the design to reduce area usage.
+
+By applying these optimizations, we expect to improve the overall PPA performance of the design while preserving its functionality.

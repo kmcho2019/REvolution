@@ -1,0 +1,11 @@
+The original solution correctly implements a radix-2 non-restoring division algorithm for signed/unsigned 8-bit inputs with a 16-bit output result, using an FSM with IDLE, RUN, and FINISH states. The main issue was the illegal declaration of variables inside the always block, causing compilation errors.
+
+Improvement strategy:
+1. Move all intermediate variables (like `pr_shifted_tmp`, `pr_next`, `next_qbit`, etc.) to module-level reg or wire declarations.
+2. Keep the main always block purely synchronous and non-blocking, avoid mixing combinational logic inside it.
+3. Use combinational always block or continuous assignments for intermediate calculations in the RUN and FINISH states.
+4. This separation of combinational and sequential logic will improve code clarity, ensure synthesis-friendly design, and fix compilation errors.
+5. Minor code clean-up: clarify naming, comments, and remove unused or redundant regs.
+6. The algorithm and FSM remain unchanged to meet functionality and timing requirements.
+
+The updated design will be fully synthesizable, error-free, and preserve the original radix-2 non-restoring division logic with sign handling and result formatting.

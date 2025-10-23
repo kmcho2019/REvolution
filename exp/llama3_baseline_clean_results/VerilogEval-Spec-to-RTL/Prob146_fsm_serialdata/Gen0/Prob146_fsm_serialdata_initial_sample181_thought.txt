@@ -1,0 +1,9 @@
+To implement this finite state machine, we need to design a state machine with the following states:
+1. IDLE: Waiting for the start bit.
+2. START: Received start bit, waiting for data bits.
+3. DATA: Receiving data bits.
+4. STOP: Waiting for the stop bit.
+
+The FSM will transition between these states based on the input bit and the current state. When the FSM receives a start bit, it will enter the DATA state and start shifting in the data bits. After receiving 8 data bits, it will enter the STOP state and check the stop bit. If the stop bit is correct, it will assert the done signal and output the received byte. If the stop bit is incorrect, it will wait until a stop bit is received before attempting to receive the next byte.
+
+We will use a counter to keep track of the number of data bits received. The FSM will also need to handle the case where the stop bit is not received, in which case it will wait until a stop bit is received before attempting to receive the next byte.

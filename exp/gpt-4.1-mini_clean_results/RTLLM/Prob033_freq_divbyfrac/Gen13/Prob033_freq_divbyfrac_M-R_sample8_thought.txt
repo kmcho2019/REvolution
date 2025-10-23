@@ -1,0 +1,10 @@
+To improve the design and avoid timing ambiguity from sampling counters across clock edges, we'll refactor to use a single synchronous counter running on the rising edge, and generate two internal clocks derived directly from this counter without crossing clock domain boundaries. 
+
+- Use a 3-bit counter counting from 0 to 6 on the rising edge.
+- Create clk_intA as high for counts 0-3 (4 cycles), low otherwise.
+- Create clk_intB as high for counts 3-5 (3 cycles), low otherwise.
+- Instead of updating clk_intB on the falling edge, implement it combinationally as a function of the current counter value with a phase offset introduced by a half-cycle delay using a simple register triggered on the falling edge clock. This approach avoids metastability by not sampling counters on falling edge but generates clk_intB as a registered half-cycle delayed version of clk_intA.
+- We create clk_intA from the rising edge counter, and clk_intB is clk_intA delayed by half cycle using the falling edge clock.
+- Finally, OR clk_intA and clk_intB to get the fractional clock output.
+
+This method uses double-edge clocking to generate a half-cycle phase-shifted version of clk_intA, avoiding complex cross-edge counter sampling and eliminating overlap issues, resulting in a smooth 3.5 division fractional output clock with good duty cycle and timing.

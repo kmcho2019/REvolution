@@ -1,0 +1,20 @@
+Here's a novel approach using a hierarchical state machine with parallel state tracking:
+
+1. Separate the direction state from the action state completely, using two independent state machines that run in parallel:
+   - Action FSM: tracks walking/falling/digging (3 states)
+   - Direction FSM: tracks left/right movement (2 states)
+
+2. Use a priority encoder to handle input conditions in the correct order:
+   - Falling has highest priority (ground=0)
+   - Then digging (dig=1 when on ground)
+   - Finally direction changes (bump signals)
+
+3. Implement a "falling edge detector" for ground signal to precisely capture transitions
+
+4. Use registered outputs to improve timing
+
+This architecture provides:
+- Clear separation of concerns
+- Better timing due to parallel state evaluation
+- More precise edge detection
+- Easier to modify/extend individual behaviors

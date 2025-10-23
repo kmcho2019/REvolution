@@ -1,0 +1,8 @@
+Fuse the modular BCD incrementing logic for seconds and minutes from Example 1, which is clear and minimizes combinational complexity, with the binary hour counter and simple hour-to-BCD conversion from Example 2 for efficient hour increment and PM toggling.  
+- Use separate 4-bit BCD digits for seconds and minutes with clean increment and rollover functions for clarity and minimized complexity.  
+- Maintain an internal 4-bit binary hour counter (1 to 12) that increments simply on minute rollover from 59 to 00, reducing combinational complexity for hours and simplifying AM/PM toggling.  
+- Toggle PM only on hour increment from 11 to 12, using simple logic.  
+- Use synchronous reset and all updates triggered on posedge clk, with `ena` gating the increments.  
+- Combinationally convert binary hour to BCD output for hh, keeping outputs consistent and clear for downstream.  
+- By combining the robust seconds/minutes BCD counting from Example 1 with the efficient binary hour counter from Example 2, the design improves timing by reducing hour increment complexity, reduces power by gating increments carefully, and maintains area efficiency with minimal combinational logic depth.  
+- The code keeps modular increment functions and clean next-state logic to maintain readability and synthesis friendliness.

@@ -1,0 +1,27 @@
+Here's the corrected approach addressing all feedback issues:
+
+1. **Pattern Detection Fix**:
+   - Use separate 4-bit shift registers for pattern (1101) and delay capture
+   - Add explicit state for delay capture (CAPTURE_DELAY)
+   - Properly count all 4 delay bits using a 3-bit counter
+
+2. **Cycle Counting Correction**:
+   - Implement accurate (delay_val+1)*1000 cycle counting
+   - Use two counters: one for 1000-cycle periods, one for delay periods
+   - Maintain correct count output throughout counting phase
+
+3. **State Machine Enhancement**:
+   - Add explicit CAPTURE_DELAY state
+   - Clear delay capture after pattern detection
+   - Proper state transitions with correct timing
+
+4. **Output Timing Fix**:
+   - Ensure done asserts only after full count completion
+   - Maintain count output validity during counting phase
+   - Proper ack handling in DONE state
+
+Key improvements:
+- Correct bit capture with proper counters
+- Accurate cycle counting implementation
+- Clear state transitions with proper timing
+- Valid outputs throughout operation

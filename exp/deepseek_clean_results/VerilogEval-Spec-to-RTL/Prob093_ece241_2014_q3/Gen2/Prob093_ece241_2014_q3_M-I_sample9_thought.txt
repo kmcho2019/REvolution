@@ -1,0 +1,21 @@
+To correctly implement the Karnaugh map, we need to carefully analyze each column (ab combination) and determine the exact output pattern based on cd inputs:
+
+1. mux_in[0] (ab=00):
+   - K-map shows outputs: 0 (cd=00), 1 (cd=01), 1 (cd=11), 1 (cd=10)
+   - This is equivalent to NOT(c AND NOT d) → ~(c & ~d)
+   - Can be implemented with one 2-to-1 mux selecting based on c, with inputs 1 and ~d
+
+2. mux_in[1] (ab=01):
+   - Always 0 → Constant 0 (correct in original)
+
+3. mux_in[2] (ab=11):
+   - K-map shows outputs: 0 (cd=00), 0 (cd=01), 1 (cd=11), 0 (cd=10)
+   - This is exactly c AND d → c & d
+   - Can be implemented with one 2-to-1 mux selecting based on c, with inputs 0 and d
+
+4. mux_in[3] (ab=10):
+   - K-map shows outputs: 1 (cd=00), 0 (cd=01), 1 (cd=11), 1 (cd=10)
+   - This is equivalent to NOT d OR c → ~d | c
+   - Can be implemented with two 2-to-1 muxes: first create ~d, then OR with c
+
+This implementation uses a total of 4 2-to-1 muxes (same as original) but correctly implements all K-map requirements.

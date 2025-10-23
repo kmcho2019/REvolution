@@ -1,0 +1,7 @@
+To combine the best ideas from both examples, I will implement the 100-bit 2-to-1 mux by instantiating a parameterized small mux module that handles 20-bit slices, splitting the 100-bit input into 5 chunks (100 = 5 * 20). 
+
+This fusion balances modularity and hierarchy depth (fewer instances than the 4-bit mux approach, which has 25 instances, reducing instance overhead and area) while still avoiding a single massive 100-bit wide mux (which might complicate routing or slow down timing). 
+
+Using 20-bit chunks leverages good maintainability and readability by using parameterized small muxes with generate-for, while enabling synthesis tools to optimize at a manageable granularity, potentially improving power and performance over multiple smaller muxes and over one large mux.
+
+Overall, the new design reduces instance count and hierarchy depth compared to the 4-bit version, and avoids a flat single 100-bit mux, achieving a good tradeoff between modularity, synthesis friendliness, and PPA metrics.

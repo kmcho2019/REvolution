@@ -1,0 +1,7 @@
+The primary issue is that the testbench or instantiation expects a port named `res_ready` which is missing in the module. To fix this, we add an output port `res_ready` to the module interface, which indicates the module is ready to accept a new operation request. This port is commonly used alongside `opn_valid` and `res_valid` in handshake protocols.
+
+The `res_ready` signal should be asserted when the module is in the IDLE state and not currently processing a division, signaling it is ready to accept new inputs.
+
+No internal logic changes are needed beyond adding this port and driving it appropriately.
+
+This fix ensures interface consistency with the testbench, allowing synthesis and simulation elaboration to succeed.

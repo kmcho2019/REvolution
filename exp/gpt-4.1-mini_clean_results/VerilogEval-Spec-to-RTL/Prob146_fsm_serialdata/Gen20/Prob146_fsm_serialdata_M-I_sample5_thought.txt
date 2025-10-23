@@ -1,0 +1,23 @@
+To optimize the existing design for better PPA (performance, power, area), focus on:
+
+1. **Clock enable gating:** Update shift register and bit counter only in the RECEIVE state to reduce switching power.
+
+2. **Simplify shift direction:** Since the data is LSB first, shift the register left by one and input the serial bit at bit 0, which is more intuitive and can reduce logic complexity.
+
+3. **Use binary state encoding instead of one-hot:** With 4 states, 2 bits suffice, reducing flip-flop count and area, while combinational next-state logic remains straightforward.
+
+4. **Generate `done` as a one-cycle pulse only during stop bit detection, driven by a flag rather than inside the state machine’s sequential block, minimizing toggling.
+
+5. **Hold outputs stable outside `done` pulse to reduce toggling.
+
+6. **Reset signals synchronously.
+
+The resulting design reduces flip-flop count (binary encoding), reduces toggling on shift register and done signal, and simplifies shift logic. This should lead to lower power and area with similar or better timing.
+
+The FSM states are encoded as IDLE=2'b00, RECEIVE=2'b01, CHECK_STOP=2'b10, RECOVER=2'b11.
+
+Shift operation: shift_reg <= {in, shift_reg[7:1]} replaced by shift_reg <= {shift_reg[6:0], in} to capture LSB first at bit 0.
+
+The done pulse is generated combinationally when a valid stop bit is detected and registered for one cycle.
+
+This keeps all functional requirements intact, while improving PPA metrics.

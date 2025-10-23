@@ -1,0 +1,8 @@
+To optimize PPA further while maintaining clarity and correctness:
+
+- Combine the boundary bit assignments into the vector operations with masking to reduce separate assignment statements, potentially enabling the synthesizer to optimize better.
+- Use bitwise operations and shifting to express out_both and out_any as single expressions, avoiding explicit slice assignments.
+- For out_both: out_both[i] = in[i] & in[i+1], with out_both[99] = 0 means we can shift in left by 1 and AND with in, and mask out the MSB.
+- For out_any: out_any[i] = in[i] | in[i-1], with out_any[0] = 0 means shift in right by 1 and OR with in, then mask out LSB.
+- For out_different, keep the XOR with the wrapped input as before for minimal logic.
+- This approach reduces the number of operations, simplifying the logic and may improve synthesis results in terms of area and power by enabling better resource sharing and simpler logic cones.

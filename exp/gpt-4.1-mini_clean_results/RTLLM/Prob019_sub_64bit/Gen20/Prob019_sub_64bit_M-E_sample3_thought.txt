@@ -1,0 +1,19 @@
+Implement the 64-bit subtractor using the Verilog built-in subtraction operator for clean, concise, and synthesis-efficient code, combined with explicit overflow detection logic.
+
+The subtraction is done in a single continuous assignment:
+    result = A - B;
+
+Overflow detection is explicitly computed by:
+- Checking the sign bits of A, B, and result.
+- Using the known overflow conditions for signed subtraction:
+    - Positive overflow occurs when A is positive and B is negative but result is negative.
+    - Negative overflow occurs when A is negative and B is positive but result is positive.
+
+This approach relies on the synthesis tool’s optimized arithmetic operators, which tend to produce better area and performance than manual ripple-carry implementations.
+
+This method also eliminates the need for manually managing carry bits or complex generate loops, making the design simpler and more readable.
+
+Key points:
+- Use built-in subtraction operator for efficient arithmetic.
+- Compute overflow via combinational logic on sign bits.
+- Entire design is combinational, no clocking or state.

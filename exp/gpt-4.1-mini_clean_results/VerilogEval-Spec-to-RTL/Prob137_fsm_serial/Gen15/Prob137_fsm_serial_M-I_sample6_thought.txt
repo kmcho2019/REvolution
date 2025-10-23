@@ -1,0 +1,13 @@
+To improve PPA from the existing binary-encoded FSM design, switch the FSM state encoding from binary to one-hot encoding. Although binary encoding uses fewer flip-flops, one-hot encoding simplifies next-state logic, potentially improving timing (reducing critical path delay) due to simpler logic and fewer logic levels.
+
+In this design, the FSM has only 4 states, so one-hot encoding will use 4 bits for state, which is reasonable.
+
+Additionally, the done signal should be registered only in the CHECK_STOP state with minimal logic, and the shift register update remains a simple shift right with MSB input.
+
+Also, consolidate the bit counter increment and reset logic carefully, keep synchronous reset active high.
+
+This restructuring trades a slightly larger area (more flip-flops) for better timing (lower WNS) and possibly lower power due to simpler combinational logic.
+
+This change can improve clock period (eff_clk_period) and worst negative slack (wns) by simplifying combinational next state logic, which is usually the critical path in FSM designs.
+
+All other logic remains the same to maintain correctness.

@@ -1,0 +1,14 @@
+Implement the combinational next-state and output logic using decoded one-hot current states but instead of grouping all conditions for each next state in separate expressions, encode the transitions as separate terms then OR them for clarity and potential optimization.
+
+Specifically:
+- Explicitly define each transition term according to the state diagram.
+- For example, next S state is reached from S & ~d, S1 & ~d, S110 & ~d, and Wait & ack, so define each condition separately, then OR.
+- Next S1 state only from S & d.
+- B3 next only from B2.
+- Count next from B3 or Count & ~done_counting.
+- Wait next from Count & done_counting or Wait & ~ack.
+- For outputs, define as per Moore machine directly from the current state signals.
+- This method may help synthesis tools find common sub-expressions and optimize better.
+- The style improves readability and maintainability while keeping logic explicit and straightforward.
+
+This provides an alternative clear design perspective, while fully meeting requirements.

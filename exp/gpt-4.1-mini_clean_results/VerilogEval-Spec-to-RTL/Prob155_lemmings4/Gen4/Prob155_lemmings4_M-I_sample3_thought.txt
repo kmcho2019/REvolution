@@ -1,0 +1,17 @@
+To improve the existing design for better PPA, focus on simplifying combinational logic, reducing toggling, and potentially improving timing without sacrificing clarity or correctness.
+
+1. Combine bump logic fully by using a single bump signal instead of separate bump_left and bump_right checks after combining. Direction toggling can be handled uniformly: any bump switches direction, no need to check each separately since bumping on either or both sides causes direction flip.
+
+2. Remove redundant assignments in next state logic, especially repeated assignment of next_state and next_dir, to simplify logic synthesis.
+
+3. Use a saturating increment for fall_count directly using simple min function rather than conditional expression, helping synthesis tools optimize.
+
+4. Since asynchronous reset is required, keep it but isolate its logic to reduce fanout.
+
+5. Change the always @(*) next state logic to use a priority if-else style for clearer and potentially lower logic depth.
+
+6. Minor restructuring to ensure signals only change when needed, to reduce unnecessary toggling.
+
+These changes will reduce critical path logic, simplify toggling by handling bumps more uniformly, and keep the FSM Moore style. The fall counter logic becomes simpler and the bump processing is minimal, which should reduce power and improve timing.
+
+The behavior and interfaces remain identical, preserving correctness.

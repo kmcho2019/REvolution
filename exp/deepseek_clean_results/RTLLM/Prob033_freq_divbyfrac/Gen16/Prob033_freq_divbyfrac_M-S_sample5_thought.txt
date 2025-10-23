@@ -1,0 +1,17 @@
+Simplified design approach for 3.5x fractional divider:
+
+1. Core concept remains counting 7 cycles (0-6) for 3.5x division
+2. Key simplifications:
+   - Use single counter (0-6) for both phases
+   - Generate phase A directly from counter (high for first 4 cycles)
+   - Generate phase B as inverted and half-cycle delayed version
+   - Combine phases with OR gate for final output
+3. Advantages:
+   - Eliminates secondary counter
+   - Uses simple inversion for phase generation
+   - Maintains correct duty cycle through complementary phases
+   - Fewer registers and simpler logic
+4. Behavior:
+   - Original clock period = T
+   - Divided clock period = 3.5T (4T high + 3T low pattern)
+   - Phase shift ensures smooth transitions

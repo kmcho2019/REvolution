@@ -1,0 +1,6 @@
+I will simplify the design by removing the modular 64-bit blocks and implementing the entire 512-bit state and Rule 90 logic in one single always block. This reduces the code complexity and removes the inter-block boundary wiring.
+
+- On each positive clock edge, if load is high, the entire 512-bit state will be loaded from data.
+- Otherwise, the next state is computed by taking XOR of left and right neighbors, with zero boundary conditions (left of q[0] and right of q[511] are zero).
+- The next state for each bit i is simply q[i-1] ^ q[i+1], with edge bits using zero for out-of-range neighbors.
+- This straightforward approach keeps the design simple and functionally equivalent, though it uses a single large register and combinational logic, which may impact timing but reduces structural complexity and improves clarity.

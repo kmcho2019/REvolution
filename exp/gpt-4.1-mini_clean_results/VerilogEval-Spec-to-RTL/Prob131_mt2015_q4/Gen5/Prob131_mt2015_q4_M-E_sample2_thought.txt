@@ -1,0 +1,10 @@
+Instead of instantiating modules A and B separately and combining their outputs with logic gates, this new solution will encapsulate the logic of A and B inside dedicated submodules that compute both outputs simultaneously as a 2-bit bus. Then, in the top-level module, we instantiate two such combined modules, each producing a 2-bit output (bit 0: A output, bit 1: B output). This allows us to treat each pair as a single entity, reducing wiring complexity.
+
+Following the original connection scheme:
+- First combined module's outputs go into a 2-input OR gate applied bitwise across the A and B outputs (resulting in two bits).
+- Second combined module's outputs go into a 2-input AND gate applied bitwise.
+- Finally, the two bits resulting from OR and AND are XORed bitwise, and then combined with a bitwise OR reduction to get the final single output z.
+
+This approach unifies A and B logic, leverages vector signals, and shows modular design thinking with vector operations. It’s novel because it treats the pairings as 2-bit buses and applies gate operations bitwise before reducing to a scalar output.
+
+This is a clean and scalable design that matches the original logic, uses two pairs of combined modules as required, and offers clear mapping between functional blocks.

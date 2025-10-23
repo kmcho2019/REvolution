@@ -1,0 +1,21 @@
+To simplify the solution while maintaining functionality:
+
+1. Remove redundant registers:
+   - The current solution uses both 'current_state' and 'q' registers which store identical values
+   - We can eliminate 'current_state' and use 'q' directly
+
+2. Simplify boundary handling:
+   - Instead of using generate blocks, handle boundary cases directly in the always block
+   - Use concatenation with zeros for boundary conditions
+
+3. Combine logic:
+   - Calculate next state directly in the always block
+   - Use conditional operator for boundary cells
+   - For middle cells, use simple XOR of neighbors
+
+This simplified version:
+- Maintains identical functionality
+- Reduces register usage by 50%
+- Eliminates generate block overhead
+- Keeps clean synchronous update
+- Still handles boundary conditions properly

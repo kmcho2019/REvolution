@@ -1,0 +1,21 @@
+Novel Architecture: Parallel Prefix Adder with Early Zero Detection
+
+1. Core Idea:
+   - Use a parallel prefix adder structure (Kogge-Stone) for both addition and subtraction
+   - Implement subtraction by pre-inverting 'b' and setting carry-in when do_sub=1
+   - Perform zero detection in parallel with the addition using bitwise operations
+
+2. Key Innovations:
+   - Early zero detection by computing OR reduction of intermediate sums
+   - Shared logic between adder and zero detection paths
+   - Bitwise operations allow for better synthesis optimization
+
+3. Benefits:
+   - Potentially better timing due to parallel computation
+   - Reduced power from shared logic paths
+   - More regular structure for better physical implementation
+
+4. Implementation Details:
+   - Generate and propagate terms computed first
+   - Final sum computed through prefix tree
+   - Zero flag derived from NOR reduction of final sum

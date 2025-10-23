@@ -1,0 +1,16 @@
+This solution implements the FSM using a bit-sliced architecture where each state bit is computed independently:
+
+1. **Bit-Sliced Design**: Each bit of the next state (Y0, Y1, Y2) is computed by dedicated logic that only looks at the relevant bits of the current state and inputs. This parallelizes the state computation.
+
+2. **Output Optimization**: The z output is generated directly from the current state bits using minimal logic, recognizing that z=1 only in states 011 and 100.
+
+3. **State Encoding Insight**: By analyzing the state transitions, we notice:
+   - Y0 depends mainly on x and y[1]
+   - Y1 is only set in specific cases (state 100 with x=0)
+   - Y2 is only set when transitioning from state 001 with x=1
+
+4. **Advantages**:
+   - Parallel computation of state bits reduces critical path
+   - Each bit's logic is simplified by focusing only on relevant conditions
+   - No need for full state decoding
+   - Naturally maps to standard cell libraries

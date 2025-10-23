@@ -1,0 +1,8 @@
+Implement a hierarchical popcount by grouping the 255 input bits into 32 groups of 8 bits each (except the last group which has 7 bits).  
+Use a small parallel popcount8 module for each 8-bit group to produce 4-bit counts. For the last 7-bit group, use a variant popcount7 module (7 bits input), padded to 8 bits for reuse.  
+Sum all 32 partial counts using a multi-level adder tree explicitly implemented with generate loops.  
+At each level of the adder tree, sum pairs of partial sums until only one sum remains.  
+This fully flattened, balanced adder tree approach avoids recursion and module instantiation overhead and allows clear pipelining or parallelism extensions later.  
+Explicit adder tree addition ensures predictable and structured synthesis, and the fully parallel base popcount modules minimize critical path at the bit counting step.  
+The output is 8 bits wide, as max count is 255.  
+This approach is different architecturally from the recursive solution: it's a flat hierarchy with uniform group sizes, simple partial popcounts, and an explicit balanced adder tree, maximizing parallelism and structural clarity.

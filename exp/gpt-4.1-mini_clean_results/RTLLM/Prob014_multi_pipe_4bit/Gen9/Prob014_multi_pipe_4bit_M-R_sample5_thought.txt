@@ -1,0 +1,32 @@
+Refactor the pipeline multiplier by explicitly defining two pipeline stages:
+
+- Stage 1: Register all partial products individually after combinational partial product generation.
+- Stage 2: Register the sum of all partial products to get the final product.
+
+The addition of partial products is done combinationally by summing all registered partial products together in stage 2 input logic, then the sum is registered in stage 2 registers.
+
+This approach maintains the two-level register pipeline:
+
+1. Registers at the outputs of partial product generation (stage 1 registers).
+2. Registers at the sum output (stage 2 registers).
+
+The output `mul_out` is directly registered from the stage 2 sum register.
+
+This removes the extra addition stage from the original design (which had a three-stage pipeline) and replaces it with a two-stage pipeline with intermediate register sets.
+
+Use non-blocking assignments in always blocks with asynchronous reset.
+
+Use wires and assign statements for partial product generation, and only registers for pipelining.
+
+This will improve timing, reduce latency to two clock cycles, and keep the design structurally simple and scalable.
+
+Also, separate the pipeline registers clearly:
+
+- stage1_pp: pipeline registers for partial products (array of registers).
+- stage2_sum: pipeline register for sum of all partial products.
+
+This matches the requirement of two pipeline levels and aligns with the original multiplication and extension requirements.
+
+Finally, keep input zero-extension to `2*size` bits and perform shifts on the extended multiplicand.
+
+This structure will help the user to clearly understand pipeline stages, timings, and facilitate easier verification.

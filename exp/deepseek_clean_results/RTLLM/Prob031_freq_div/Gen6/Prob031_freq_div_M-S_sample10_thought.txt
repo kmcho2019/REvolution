@@ -1,0 +1,6 @@
+To simplify the frequency divider while maintaining functionality:
+1. Keep the CLK_50 as a simple toggle flip-flop (most efficient implementation)
+2. For CLK_10, we can use the same approach but reduce counter size since we only need to count to 4 (3 bits sufficient)
+3. For CLK_1, observe that it's exactly 10x slower than CLK_10, so we can derive it from CLK_10's counter instead of using a separate large counter
+4. Use a single always block for compactness since timing isn't critical for this application
+5. Maintain synchronous reset for all outputs

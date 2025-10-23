@@ -1,0 +1,9 @@
+Refactor the FSM by explicitly defining a two-bit state encoding using a localparam for clarity, separating state and output registers. Use a synchronous reset style with asynchronous assertion by first capturing reset in a separate signal if needed or simply keep asynchronous reset in the sequential block. Use assign statements for output logic since it's a Moore FSM output solely based on the current state. This approach improves readability, scalability, and follows a classic FSM design pattern with separate state and output logic.
+
+Specifically:
+- Define states OFF=1'b0 and ON=1'b1 using localparams.
+- Use a reg state for the current state.
+- Use combinational logic in always @(*) for next state computation.
+- Use assign to drive output from current state.
+- Use always @(posedge clk or posedge areset) for state register with asynchronous reset.
+- This separates state register and output combinational logic cleanly, aids scaling, and is another canonical FSM style.

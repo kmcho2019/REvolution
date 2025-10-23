@@ -1,0 +1,5 @@
+To refactor the provided code, we will focus on simplifying the finite state machine (FSM) and reducing the number of combinational logic blocks. We can achieve this by using a single counter to keep track of the number of bytes received after a message start byte is detected. The 'done' signal can be asserted when the counter reaches 3, indicating that a full message has been received. 
+
+We will also remove the unnecessary `next_state`, `next_byte_count`, and `next_msg_received` signals, and instead use a single `always_ff` block to update the state and counter. The `always_comb` block will be replaced with an `assign` statement to simplify the code and reduce the number of combinational logic blocks.
+
+Additionally, we will use a single variable `msg_start` to indicate when a message start byte is detected, and use this variable to control the counter and the assertion of the 'done' signal.

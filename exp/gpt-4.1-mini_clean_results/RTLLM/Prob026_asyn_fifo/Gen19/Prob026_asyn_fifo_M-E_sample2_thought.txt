@@ -1,0 +1,16 @@
+Implement an asynchronous FIFO using a dual-port RAM submodule with parameterizable depth and width. The depth must be a power of two for simpler address wrapping and Gray code conversions. 
+
+Instead of using separate buffer registers for pointer synchronization, employ two-stage synchronizer flip-flops directly inside the FIFO module for both the read pointer in the write clock domain and the write pointer in the read clock domain. 
+
+Use Gray code for the pointers to reduce metastability and glitch issues during crossing clock domains. The pointers are one bit wider than the address to detect the full condition.
+
+The full and empty conditions are detected based on the classic Gray code pointer comparisons:
+
+- FIFO empty when synchronized write pointer equals read pointer.
+- FIFO full when write pointer's MSB and next MSB differ from synchronized read pointer's MSB and next MSB, but lower bits are equal (classic "wrap-around" full condition).
+
+The write and read controllers increment the binary pointers on write and read increments, convert them to Gray, and synchronize the opposite pointer before generating status flags.
+
+The dual-port RAM has separate clocks for write and read, write enable, and addresses. Read data is registered on the read clock domain.
+
+This design encapsulates all logic neatly, uses clean pointer synchronization internally, and follows robust asynchronous FIFO design principles.

@@ -1,0 +1,19 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Replace the 3-input adder with a balanced adder tree (1-bit + 1-bit first, then sum with last bit)
+   - Simplify phase comparison by checking only the LSB when phase==0 (since phase cycles 0,1,2)
+
+2. Power Optimization:
+   - Gate the w_history updates to only occur in state B
+   - Compute popcount only when needed (at phase transition points)
+
+3. Area Optimization:
+   - Keep 1-bit state encoding (already optimal)
+   - Maintain 2-bit phase counter (simpler than trying to encode 3 states in 1 bit)
+   - Use direct comparison for popcount rather than adder
+
+Key Changes:
+1. Balanced adder tree for popcount
+2. Phase comparison optimization
+3. Conditional w_history updates
+4. More efficient output logic

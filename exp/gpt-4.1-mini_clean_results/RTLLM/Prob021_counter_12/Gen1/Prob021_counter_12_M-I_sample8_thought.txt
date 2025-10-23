@@ -1,0 +1,10 @@
+To improve PPA based on the previous design and metrics, the main opportunity lies in reducing power and potentially improving timing by implementing clock gating. By gating the clock with the valid_count signal, the counter flip-flops toggle only when counting is enabled, reducing switching power.
+
+Additionally, replacing the explicit equality comparison "out == 4'd11" with a comparison based on the next count value or using carry-out detection can slightly optimize logic and area. However, given the small size of the counter, the power gain from clock gating will be more significant.
+
+Therefore, the improvement strategy includes:
+1. Adding an enabled clock derived from gating clk with valid_count.
+2. Using synchronous reset (to avoid asynchronous reset that can impact timing).
+3. Updating the counter logic accordingly.
+
+This approach reduces power by preventing unnecessary toggles during paused count periods and potentially improves timing by reducing combinational logic on the critical path.

@@ -1,0 +1,9 @@
+Refactor the design by explicitly forming a 4-bit vector from inputs and using a case statement inside a combinational always block to determine outputs, based on decimal values corresponding to input combinations. This makes the logic clearer and fully controlled, avoiding any ambiguity in expression minimization or mistakes.
+
+We list input values for which output=1 (2,7,15), output=0 (0,1,4,5,6,9,10,13,14), and mark the never-occurring inputs (3,8,11,12) as 'x' (don't care) or default.
+
+For out_sop, replicate the minimal SOP logic with direct bit patterns via the case statement.
+
+For out_pos, instead of relying on potentially incorrect minimal POS expression, generate the output by checking the input against these values directly; out_pos is the complement of the output zeros' product of sums, so here output is high only for 2,7,15.
+
+This approach avoids minimization errors, ensures correctness, and meets the original problem requirements.

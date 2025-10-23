@@ -1,0 +1,10 @@
+To implement the decade counter differently, I'll use a one-hot encoding scheme where each count value (0-9) is represented by a unique bit in a 10-bit register. This approach has these advantages:
+1. Simple state transitions - just shift left with wrap-around
+2. No need for comparators or adders in the critical path
+3. Natural glitch-free outputs
+4. Reset simply sets the first bit high
+The implementation will:
+1. Use a 10-bit one-hot register
+2. Shift left on each clock (with wrap-around)
+3. Encode the position of the '1' to get the 4-bit count value
+4. Handle synchronous reset by setting to initial state

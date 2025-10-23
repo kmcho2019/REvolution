@@ -1,0 +1,13 @@
+The main issue with the original code is the multiple drivers for the same net, which is not allowed in Verilog. To refactor this code, we can use a different structure that avoids this issue. One approach is to use a sequential logic design, where we update the temp_remainder register in a sequential manner, avoiding multiple drivers. 
+
+We can achieve this by using an always block with a combinational logic that updates the temp_remainder register at each step of the division process. We will use a temporary register to store the current dividend and update it at each step.
+
+The core idea remains the same: compare the higher bits of the dividend with the divisor, update the quotient and remainder accordingly, and shift the dividend to the right. We will repeat this process until all bits of the dividend have been processed.
+
+To implement this, we can use a temporary register to store the current dividend and update it at each step of the division process. We will also use a temporary register to store the current quotient and update it at each step.
+
+We will use two always blocks, one to update the values of the registers and another to perform the division operation. The first always block will be a combinational block triggered by any change in the input values A and B. It will update the values of two registers, a_reg and b_reg, with the values of A and B, respectively.
+
+The second always block will also be a combinational block triggered by any change in the input values A and B. It will perform the division operation using the values stored in the registers a_reg and b_reg.
+
+We will use assign statements to connect the output of the module to the result and remainder registers.

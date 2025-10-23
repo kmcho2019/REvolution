@@ -1,0 +1,8 @@
+This new architecture implements each flip-flop independently with its own enable logic, providing:
+1. Finer-grained control over individual bits while maintaining byte-level enables
+2. Potential for better power gating at bit-level precision
+3. More flexible modification options for future enhancements
+4. Clear visibility into each bit's behavior during simulation/debug
+5. Better utilization of modern FPGA/ASIC architectures that favor distributed registers
+
+The design uses generate blocks to instantiate 16 individual DFFs, with enable logic derived from the byteena signals combined with their position in the byte. This maintains the byte-level control while allowing for future bit-level modifications if needed.

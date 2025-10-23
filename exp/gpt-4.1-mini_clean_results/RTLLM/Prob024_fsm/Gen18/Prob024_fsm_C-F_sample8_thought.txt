@@ -1,0 +1,11 @@
+To fuse the best ideas of both examples for an optimized Mealy FSM detecting sequence "10011":
+
+- Use a binary-encoded FSM for area efficiency (3-bit state to encode 5 states) rather than one-hot to reduce flip-flop count and switching activity, lowering power and area.
+- Implement next-state logic with clear combinational case statements for synthesis-friendly, fast, and readable logic (from Example 2).
+- Introduce a registered state updated synchronously with CLK and synchronous reset for robust and clean design.
+- Generate MATCH as a Mealy output combinationally from current state and input, enabling immediate detection without extra latency.
+- To incorporate the overlapping detection robustness from Example 1, ensure the transitions accommodate overlapping matches by carefully defining transitions, which is already done correctly in Example 2.
+- Add comments to clarify states and transitions for maintainability.
+- Use non-blocking assignments in sequential blocks and blocking assignments in combinational blocks to ensure proper coding style.
+  
+This fusion achieves area savings from binary encoding, timing friendliness from clear next-state logic, power efficiency with fewer flip-flops toggling, and correctness with overlapping pattern detection intact.

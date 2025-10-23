@@ -1,0 +1,49 @@
+Design a Moore finite state machine with the following states:
+- WALK_LEFT
+- WALK_RIGHT
+- FALL_LEFT
+- FALL_RIGHT
+- DIG_LEFT
+- DIG_RIGHT
+- SPLATTER (terminal state)
+
+The outputs walk_left, walk_right, aaah, and digging depend solely on the current state.
+
+Transition logic:
+- On reset, go to WALK_LEFT.
+
+- From WALK_LEFT or WALK_RIGHT:
+  * If ground=0, start falling in current direction (FALL_LEFT or FALL_RIGHT), reset fall_counter.
+  * Else if dig=1 and ground=1, start digging in current direction (DIG_LEFT or DIG_RIGHT).
+  * Else if bump_left or bump_right, switch directions accordingly. If bumped on both sides, still switch directions.
+  * Otherwise remain walking in the same direction.
+
+- From FALL_LEFT or FALL_RIGHT:
+  * Increment fall_counter.
+  * If ground=1:
+    - If fall_counter > 20, go to SPLATTER.
+    - Else go back to WALK_LEFT or WALK_RIGHT depending on direction.
+  * Else remain falling.
+
+- From DIG_LEFT or DIG_RIGHT:
+  * If ground=0, start falling in the same direction, reset fall_counter.
+  * Else if dig=0 or bump input is ignored during digging.
+  * Otherwise continue digging.
+
+- SPLATTER state is terminal (all outputs 0).
+
+Implement the fall counter as a 5-bit register counting clock cycles in falling states.
+
+Since the FSM is Moore, outputs depend on the state only.
+
+Asynchronous positive-edge reset sets the FSM to WALK_LEFT state.
+
+All logic synchronous with posedge clk.
+
+Bumping has no effect during fall or dig.
+
+If both bump_left and bump_right happen during walking, switch direction.
+
+Fall has highest priority, then dig, then switching directions.
+
+Handle all state and output updates accordingly.

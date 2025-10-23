@@ -1,0 +1,7 @@
+The original implementation uses the direct equality operator (==) which is already minimal, clear, and synthesizes to an optimal small comparator. The reported PPA metrics show zero timing slack (tns=0, wns=0), near-zero effective clock period (combinational logic), very low power, and minimal area (5.0 um²). Given this, there's virtually no room to optimize timing or area as the logic is already a minimal 2-bit equality comparator.
+
+To slightly improve power and potentially area, we can explicitly implement the equality using XNOR gates and an AND gate. This explicit approach can help synthesis tools identify and map the logic to optimal primitives (like XNOR and AND gates), possibly leading to minor improvements in power or area by better gate-level optimization and reducing any overhead the equality operator might introduce in some synthesis flows.
+
+This approach still preserves clarity and functionality while hinting to the synthesis tool the exact gate-level structure expected. The PPA impact is likely marginal but could further reduce switching activity by avoiding any overhead of the '==' operator encoding.
+
+Therefore, the improvement strategy is to rewrite the equality using basic gate primitives (bitwise XNOR and reduction AND) which often leads to better power and area in practical flows, especially for small comparators.

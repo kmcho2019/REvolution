@@ -1,0 +1,13 @@
+Implement the LIFO buffer using a one-hot encoded stack pointer to represent the top-of-stack position, which simplifies boundary detection for empty and full conditions. The pointer is a 5-bit vector where each bit corresponds to a stack position: bit 4 set indicates empty (no elements), bits 0 to 3 correspond to stack entries occupied.
+
+On write (push), the pointer shifts right (towards lower bits), placing dataIn in the new top location; on read (pop), it shifts left (towards higher bits), outputting data at the current top.
+
+This approach eliminates arithmetic on the stack pointer and makes EMPTY and FULL signals straightforward to decode from the one-hot pointer bits.
+
+Also, store data in a 4-element array indexed by pointer position, updated on push.
+
+The dataOut register updates synchronously on pop, and on reset, the entire pointer is set to empty (only bit 4 high) and stack memory cleared.
+
+This design supports synchronized reset, EN gating, and prevents invalid push when full or pop when empty.
+
+This pointer encoding simplifies pointer management, eases verification, and is novel compared to the decrementing/incrementing stack pointer approach.

@@ -1,0 +1,13 @@
+To optimize the original edge detection design for better power and area while maintaining the required functionality and timing, we can:
+
+1. Replace the always block with an asynchronous reset by a synchronous reset, reducing asynchronous reset gating logic and improving timing and power on some processes.
+
+2. Convert output signals rise and down to registered outputs, rather than purely combinational outputs derived from a delayed signal. This can improve timing by reducing combinational fanout and glitches, at a small cost of an additional register stage.
+
+3. Use non-blocking assignments consistently to ensure proper sequential semantics and synthesis.
+
+4. Keep minimal logic and registers—only one flip-flop for storing previous input and two output registers for rise and down pulses.
+
+This approach keeps the design clean and clock synchronous, which is generally favored for better timing closure and power gating opportunities. It also guarantees that rise and down signals are stable and glitch-free for the entire clock cycle, which might help downstream logic.
+
+Given the original design already has excellent timing and low power, these adjustments provide a balanced refinement rather than a radical change.

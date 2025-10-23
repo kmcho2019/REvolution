@@ -1,0 +1,9 @@
+Refactor the FSM to use a two-bit binary encoding for the four states (A=00, B=01, C=10, D=11) instead of one-hot. This reduces state register width from 3 to 2 bits, minimizing flip-flops. 
+
+Implement the output logic `g` with a continuous assign statement based on the state for clarity and simplicity.
+
+Use a combinational always block for next state logic with a case statement, explicitly encoding state transitions with priority to r[0], then r[1], then r[2].
+
+Retain synchronous active-low reset in the sequential always block.
+
+This approach keeps the priority logic and grant assignment intact while reducing flip-flop count and decoupling output from state register bits, which is a common encoding style improving synthesis and debugging.

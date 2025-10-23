@@ -1,0 +1,18 @@
+The current implementation is already quite efficient, but we can make some targeted improvements for better PPA:
+
+1. Timing Optimization:
+   - The critical path is the combinational logic for z. We can pipeline this by registering the output, which would allow higher clock frequencies at the cost of 1 cycle latency.
+
+2. Power Optimization:
+   - Add clock gating to reduce dynamic power when input x is stable for multiple cycles.
+   - Use enable-triggered flip-flops to prevent unnecessary toggling.
+
+3. Area Optimization:
+   - The current design uses minimal flip-flops (2). We can't reduce this further while maintaining functionality.
+   - We can optimize the combinational logic by using a more compact expression.
+
+Key changes:
+- Add output register for timing improvement
+- Implement clock gating for power reduction
+- Simplify combinational logic
+- Maintain same functionality with overlapping sequence detection

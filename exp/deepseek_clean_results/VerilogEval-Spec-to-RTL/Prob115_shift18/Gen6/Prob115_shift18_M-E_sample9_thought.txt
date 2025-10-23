@@ -1,0 +1,15 @@
+Novel Architectural Idea:
+1. Dynamic Shift Computation: Instead of pre-computing all shift possibilities, compute shifts on-demand based on the amount signal to save power and reduce unnecessary switching activity.
+2. Multi-stage Shift Logic: Implement shifts using a logarithmic approach where:
+   - 1-bit shifts are handled directly
+   - 8-bit shifts are broken down into three 1-bit shifts (since 8 = 2^3)
+3. Selective Sign Extension: Only perform sign extension during right shifts when needed, using the MSB of the current value.
+4. Optimized Load Path: Separate the load path from shift logic to minimize critical path during load operations.
+5. Clock-Gating: Use ena signal to gate the shift computation logic when not needed.
+
+Key Innovations:
+- On-demand shift computation reduces power consumption
+- Logarithmic shift decomposition simplifies 8-bit shift implementation
+- Dynamic sign extension minimizes unnecessary logic activation
+- Separate load path improves timing
+- Clock-gating aware design for power efficiency

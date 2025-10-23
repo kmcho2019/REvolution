@@ -1,0 +1,24 @@
+Novel Architectural Idea: Barrel Shifter with Dynamic Sign Extension
+
+1. **Core Concept**:
+   - Implement a true barrel shifter that can handle all shift operations in a unified way
+   - Use arithmetic right shift with dynamic sign extension that only activates during right shifts
+   - Optimize the shift amount decoding to minimize control logic
+
+2. **Key Innovations**:
+   - Unified shift direction handling with a single multiplexer tree
+   - Dynamic sign extension that only replicates MSB when needed
+   - Pre-decoded shift amounts for cleaner implementation
+   - Combined load/shift enable logic to reduce control complexity
+
+3. **Advantages**:
+   - More efficient hardware utilization compared to parallel shift paths
+   - Cleaner separation of control and data paths
+   - Better scalability for different shift amounts
+   - Reduced power consumption through selective sign extension
+
+4. **Implementation Details**:
+   - Use a 4:1 multiplexer for shift amount selection
+   - Implement sign extension only in the right shift paths
+   - Combine load and shift operations in the same control path
+   - Use parameterized shift amounts for flexibility

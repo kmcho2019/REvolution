@@ -1,0 +1,9 @@
+The new architectural idea involves utilizing a handshake protocol between the two clock domains to synchronize the data transfer. This approach ensures that the data is transferred only when both clock domains are ready, reducing the need for complex enable signal propagation and control logic.
+
+The design includes two main components: a clock domain crossing (CDC) module and a data synchronizer module. The CDC module is responsible for generating a handshake signal that indicates when the data is ready to be transferred from the clk_a domain to the clk_b domain. The data synchronizer module uses this handshake signal to transfer the data and ensure that it is properly synchronized with the clk_b clock.
+
+This approach simplifies the design, reduces the number of registers required, and minimizes the complexity of the control logic. Additionally, it provides a clear and well-defined protocol for data transfer between the two clock domains, making it easier to verify and debug the design.
+
+The handshake protocol works as follows: when the data_en signal is high, the CDC module generates a request signal that is propagated to the clk_b domain. The data synchronizer module then checks the request signal and the data_reg value. If both are valid, it generates an acknowledge signal that is propagated back to the CDC module, indicating that the data has been successfully transferred. The CDC module then clears the request signal, and the process repeats when new data is available.
+
+This approach ensures that the data is transferred only when both clock domains are ready, reducing the risk of metastability and ensuring that the data is properly synchronized with the clk_b clock.

@@ -1,0 +1,8 @@
+The design involves a finite-state machine (FSM) that controls the timer. The FSM will have several states: 
+- IDLE: This is the initial state where the FSM waits for the start sequence (1101) to be detected.
+- SHIFT: After detecting the start sequence, the FSM shifts in 4 more bits to determine the duration.
+- COUNT: After shifting in the duration, the FSM waits for the counters to finish counting.
+- DONE: After the counters finish counting, the FSM notifies the user and waits for an acknowledgement.
+- RESET: This is the state where the FSM resets and begins searching for the next occurrence of the start sequence.
+
+The state transitions will be based on the current state, the input data, and the done_counting and ack signals.

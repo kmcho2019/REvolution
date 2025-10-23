@@ -1,0 +1,14 @@
+Refactored approach:
+1. Maintain the same 2-state FSM (A and B) but implement state transitions using continuous assignments
+2. Use sequential always block only for register updates
+3. Move combinational logic (state transition, output) to assign statements
+4. Simplify window tracking by using a modulo-3 counter
+5. Evaluate window condition one cycle after counter wraps (when pos_cnt==0)
+6. Keep shift register for w values but update evaluation timing
+
+Key improvements:
+- Separated combinational and sequential logic clearly
+- State transition logic moved to assign statement
+- Output z generation is now purely combinational
+- Window evaluation happens at correct cycle (after 3 samples)
+- Reduced register usage by making some signals combinational

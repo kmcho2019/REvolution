@@ -1,0 +1,13 @@
+Fuse the clarity, explicit state naming, and comprehensive next-state handling from Example 1 with the clean structure and slight simplifications from Example 2 by:
+
+- Keeping the 2-bit state encoding (falling bit and direction bit) with clear localparam names.
+- Using a single always @(*) block for next-state logic with default hold assignment for safety and clarity.
+- Simplifying bump handling by using explicit bump signals and maintaining the priority: both bumps flip direction, single bumps set direction accordingly.
+- Ignoring bumps during falling or during transitions involving ground changes, strictly following the spec.
+- Using asynchronous active-high reset to initialize to WALK_LEFT (falling=0, direction=0).
+- Decoding Moore outputs directly from state bits for glitch-free, minimal combinational logic.
+- Adding concise comments explaining key logic points.
+- Removing unused signals to reduce logic.
+- Prioritizing clarity, correctness, and minimal logic for synthesis and verification ease.
+
+This fusion yields a robust, readable, and optimal Moore FSM implementation that respects all requirements and produces well-structured, maintainable RTL with excellent PPA characteristics.

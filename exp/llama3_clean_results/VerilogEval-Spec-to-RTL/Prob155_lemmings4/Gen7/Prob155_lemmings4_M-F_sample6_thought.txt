@@ -1,0 +1,15 @@
+To fix the code, we need to address the issues mentioned in the feedback. 
+
+Firstly, we need to update the walking direction logic to correctly handle the case where both `bump_left` and `bump_right` are high at the same time. We can achieve this by using a separate variable to track the walking direction and updating it accordingly.
+
+Secondly, we need to correct the digging logic. When `dig` is high, we should set the `digging` signal to 1 and update the state to a new state, say `DIGGING`. We should also handle the case where the Lemming is digging and the ground disappears.
+
+Thirdly, we need to update the `fall_counter` variable correctly in all cases. We should increment the counter when the Lemming is in the `FALLING` state and reset it when the Lemming lands.
+
+Fourthly, we need to correct the `aaah` signal logic. We should set the `aaah` signal to 1 when the Lemming is in the `FALLING` state and reset it when the Lemming lands.
+
+Lastly, we need to handle the case where the Lemming is in the `SPLATTERED` state correctly. We should set all output signals to 0 in this state.
+
+To optimize the code for power, performance, and area, we can minimize the number of combinational logic gates and reduce the number of clock cycles required to perform each operation. We can achieve this by using a single always block to update the state and output signals, and by using a single variable to track the walking direction.
+
+We can also use a more efficient encoding scheme, such as one-hot encoding, to reduce the number of logic levels and improve performance.

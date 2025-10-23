@@ -1,0 +1,15 @@
+To optimize for power and area while maintaining the exact output order, we can leverage the fact that XNOR is symmetric: ~(x ^ y) = ~(y ^ x). Since the output vector includes both out[i,j] and out[j,i], these pairs are redundant computations.
+
+We can compute only the upper triangle (including diagonal) once, store these results in wires, and then assign the lower triangle elements by reusing these computed signals, thereby reducing total logic gates.
+
+This approach reduces the number of XOR+NOT computations from 25 down to 15 (the number of unique pairs with repetition in a 5x5 matrix). Reusing signals lowers area and switching power.
+
+Although it requires indexing to map outputs properly, careful explicit assignments ensure the output bit ordering is preserved as specified.
+
+Hence, the main strategy is:
+1. Pack inputs into a vector.
+2. Generate a 2D wire array to hold unique comparisons (i <= j).
+3. Assign symmetric pairs in out from these wires.
+4. This reuses computations, reduces gate count and power.
+
+This trades off a bit of code complexity for better PPA, satisfying the requirement.

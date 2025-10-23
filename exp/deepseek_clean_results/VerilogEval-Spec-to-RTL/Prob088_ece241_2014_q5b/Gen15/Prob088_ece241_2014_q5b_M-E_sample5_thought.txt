@@ -1,0 +1,18 @@
+Novel Architecture Idea: State Transition Lookup Table (LUT) Approach
+
+1. Key Innovation:
+   - Replace traditional state transition logic with a compact lookup table
+   - Encode all possible transitions in a 4-bit LUT (2 states × 2 inputs)
+   - This eliminates combinational logic delays by using direct table lookup
+
+2. Advantages:
+   - Faster timing: Single LUT access replaces multiple logic gates
+   - Lower power: Only the active state bit changes, reducing switching
+   - Simpler verification: State transitions are explicitly enumerated
+   - Easier modification: Changing FSM behavior only requires LUT update
+
+3. Implementation Details:
+   - Use a 4-bit LUT to encode next state for all (current_state, input) combinations
+   - Output is derived directly from current state and input (Mealy machine)
+   - Maintain one-hot encoding for state representation
+   - Asynchronous reset initializes to state A

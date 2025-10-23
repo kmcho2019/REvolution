@@ -1,0 +1,8 @@
+Refactor the combinational logic by explicitly decoding the cd inputs into four one-hot signals using a small combinational decoder, then combine these signals with the appropriate logic on a,b. This approach structures the code to first represent the row selection via cd and then combine with column conditions from a,b. This separation enhances readability and modularity without changing the logic function.
+
+Specifically:
+- Decode cd into four wires: cd_00, cd_01, cd_11, cd_10.
+- For each cd case, define the condition on a,b that produces output=1 according to the K-map.
+- Finally, OR all these conditions to produce out.
+
+This structure avoids sharing intermediate signals but improves clarity by associating logic directly with each cd row, making maintenance and modification simpler.

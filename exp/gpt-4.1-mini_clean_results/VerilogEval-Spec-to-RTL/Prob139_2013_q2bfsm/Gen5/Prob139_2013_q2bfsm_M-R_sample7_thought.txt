@@ -1,0 +1,11 @@
+Refactor the FSM to a single always block synchronous with clk for all state transitions and outputs, making outputs purely Moore (dependent only on current state). Implement the sequence detector as part of the state machine encoding rather than separate seq_step, by defining explicit states for partial sequence matches (IDLE, F_PULSE, WAIT_1, WAIT_10, WAIT_101, G_MONITOR, G_ON, G_OFF). This removes the asynchronous `seq_step` logic and makes state transitions and outputs explicit and well-timed.
+
+The f output will be assigned high only in the F_PULSE state to produce a one-cycle pulse exactly after reset release.
+
+For detecting the pattern 1,0,1 on x, define separate states that represent how much of the sequence has matched, advancing or resetting on each clock.
+
+The y monitor will use a 2-bit counter in G_MONITOR state, counting up to two cycles. If y=1 detected within these cycles, transition to G_ON; else after 2 cycles transition to G_OFF.
+
+All registers including outputs will update synchronously in one always block for clean, glitch-free implementation and easier timing reasoning.
+
+This approach improves clarity, timing correctness, and makes outputs strictly Moore with no combinational dependencies on next_state.

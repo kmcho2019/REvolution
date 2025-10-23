@@ -1,0 +1,30 @@
+The primary issue was the incorrect interpretation of input bit order: 'a' is the least significant bit (LSB) and 'd' the most significant bit (MSB), contrary to the initial assumption. This must be corrected when packing inputs into a 4-bit vector.
+
+We will define the input vector as `{d, c, b, a}` with 'a' as bit 0 and 'd' as bit 3. This way, the decimal values map correctly to input patterns.
+
+Next, since the problem requests minimal sum-of-products (SOP) for out_sop and minimal product-of-sums (POS) for out_pos, we must derive simplified expressions for both based on the specified output conditions.
+
+1. List all minterms where output=1 (for out_sop): decimal 2, 7, 15  
+2. List all maxterms where output=0 (for out_pos): decimal 0,1,4,5,6,9,10,13,14
+
+Inputs 3,8,11,12 never occur, so they can be treated as don't cares for simplification.
+
+Using Karnaugh maps or Boolean algebra for these terms (with `a` as LSB):
+
+- For out_sop (minimal SOP):  
+  The minimal SOP covers only minterms 2,7,15 with don't cares elsewhere, yielding:  
+  out_sop = d·c·b + d·c·a + d·b·a'  
+  or in terms of inputs:  
+  - d*c*b  
+  - d*c*a  
+  - d*b*~a
+
+- For out_pos (minimal POS):  
+  The minimal POS covers zeros listed, yielding:  
+  out_pos = (a + c + d) · (a + b' + d) · (a' + b + c')  
+
+Thus, we explicitly implement these minimal expressions.
+
+This approach respects the original problem constraints, correctly interprets input bit order, and produces both minimal SOP and POS implementations.
+
+The code assigns the inputs with correct bit order, uses continuous assignments, and comments the derived expressions for clarity.

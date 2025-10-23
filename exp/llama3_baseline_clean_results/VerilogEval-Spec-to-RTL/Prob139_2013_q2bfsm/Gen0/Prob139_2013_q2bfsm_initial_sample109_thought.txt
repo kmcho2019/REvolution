@@ -1,0 +1,10 @@
+To solve this problem, we'll design a finite state machine (FSM) that adheres to the specified behavior. The FSM will have several states to track the sequence of inputs and control the outputs accordingly. 
+
+1. **State A (Reset State):** The FSM starts in this state when resetn is low. It stays here until resetn is high.
+2. **State B (Set f):** After resetn is de-asserted, the FSM moves to this state on the next clock edge, sets f to 1, and stays for one clock cycle.
+3. **State C (Monitor x):** After setting f to 1, the FSM enters this state to monitor the x input for the sequence 1, 0, 1.
+4. **State D (Set g and Monitor y):** Once the x sequence is detected, the FSM moves to this state, sets g to 1, and monitors y for two clock cycles.
+5. **State E (g=1 Permanently):** If y becomes 1 within two clock cycles in State D, the FSM moves here and keeps g=1.
+6. **State F (g=0 Permanently):** If y does not become 1 within two clock cycles in State D, the FSM moves here and keeps g=0.
+
+The FSM will transition between these states based on the current state, the values of x and y, and the resetn signal.

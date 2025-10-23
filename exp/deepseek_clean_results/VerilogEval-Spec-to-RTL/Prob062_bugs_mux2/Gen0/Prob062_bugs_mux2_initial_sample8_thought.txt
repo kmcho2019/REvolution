@@ -1,0 +1,5 @@
+The bug in the original implementation is that it performs bitwise operations between a single-bit 'sel' and 8-bit inputs 'a' and 'b', then ORs the results. This will only work for the LSB of the inputs. To properly implement an 8-bit 2-to-1 mux, we need to either:
+1. Replicate the sel bit to match the width of a and b, or
+2. Use a conditional operator that properly handles the width mismatch.
+
+I'll use the conditional operator approach as it's more concise and clearly expresses the multiplexer functionality.

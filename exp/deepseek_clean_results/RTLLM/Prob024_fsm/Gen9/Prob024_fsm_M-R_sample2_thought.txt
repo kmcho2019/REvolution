@@ -1,0 +1,23 @@
+To refactor this FSM implementation while maintaining identical functionality, I'll make these key changes:
+
+1. State Representation:
+   - Keep binary state encoding but represent states as explicit parameters
+   - Use separate always blocks for state transition and output logic
+
+2. Output Generation:
+   - Make MATCH a combinational output using assign statement
+   - This maintains the Mealy machine behavior where output depends on current state and input
+
+3. State Transition Logic:
+   - Use a single always block for state transitions
+   - Keep synchronous reset but simplify the reset condition
+
+4. Structure:
+   - Separate next state logic from state register
+   - Make output logic purely combinational
+
+Key improvements:
+- More modular structure with clear separation of combinational and sequential logic
+- Combinational output reduces latency (output appears in same cycle as input)
+- Simplified state transition logic
+- Easier to modify output behavior independently of state transitions

@@ -1,0 +1,28 @@
+Fusion Strategy:
+1. **State Transition Logic Optimization**:
+   - Adopt the sticky state_B implementation from Example 2 (state_B | (state_A & x)) for simpler logic
+   - Keep the clear state_A transition logic (state_A & ~x) from both examples
+   - This combination reduces critical path while maintaining correct functionality
+
+2. **Output Logic**:
+   - Maintain the optimal output logic (z = state_A ? x : ~x) from both examples
+   - This provides the most direct implementation of the Mealy output requirements
+
+3. **Reset and Clocking**:
+   - Preserve the asynchronous reset functionality as specified
+   - Use positive edge-triggered flip-flops for state transitions
+
+4. **Power Optimization**:
+   - The sticky state_B implementation naturally minimizes unnecessary transitions
+   - Output logic only depends on current state and input, reducing switching activity
+
+5. **Area Efficiency**:
+   - Use minimal one-hot encoding (2 flip-flops)
+   - Simplified combinational logic reduces gate count
+   - Clear separation between combinational and sequential logic
+
+Key Advantages:
+- Combines the simplest state transition logic from both examples
+- Maintains optimal output generation
+- Preserves all specified functionality
+- Better PPA characteristics through logic simplification

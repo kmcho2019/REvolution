@@ -1,0 +1,32 @@
+To solve this problem, we can analyze the input conditions that generate a logic-1 and find the minimum sum-of-products (SOP) and product-of-sums (POS) forms.
+
+For the sum-of-products form, we need to find the minterms that correspond to the input conditions 2, 7, and 15. The binary representation of these numbers is 0010, 0111, and 1111, respectively. We can then write the SOP form as a OR of these minterms.
+
+For the product-of-sums form, we need to find the maxterms that correspond to the input conditions 0, 1, 4, 5, 6, 9, 10, 13, and 14. The binary representation of these numbers is 0000, 0001, 0100, 0101, 0110, 1001, 1010, 1101, and 1110, respectively. We can then write the POS form as an AND of these maxterms.
+
+The SOP form can be obtained using K-maps or by inspection. By inspection, the SOP form is:
+a'b'c'd + a'bc'd + a'bcd + ab'c'd + a'bcd + abcd
+
+The POS form can also be obtained using K-maps or by inspection. By inspection, the POS form is:
+(a + b + c + d')(a + b + c'd)(a + b'c + d)(a + b'c'd)(a'b + c + d)(a'b + c'd)(a'c + b + d)(a'c + b'd)
+
+However, we should simplify the expressions to get the minimum SOP and POS forms.
+
+Simplifying the SOP form:
+(a'b'c'd + a'bc'd) + (a'bcd + ab'c'd) + a'bcd + abcd
+= a'c'd(b' + b) + ac'd(b' + b) + a'bcd + abcd
+= a'c'd + ac'd + a'bcd + abcd
+= c'd(a' + a) + a'bcd + abcd
+= c'd + a'bcd + abcd
+= c'd + abcd
+
+Simplifying the POS form:
+We can use the same logic as above to simplify the POS form.
+After simplification, we get:
+(a + b + c + d')(a + c + d)(b + c + d)
+However, to get this simplified form, we can observe that all the maxterms have at least two variables that are complemented (i.e., 0). Therefore, we can combine two maxterms at a time by looking for common factors, until we get the simplified POS form.
+
+After simplification, we get:
+out_sop = c'd + abcd
+out_pos = (a + b + c + d')(a + c + d)(b + c + d)
+We can now write the Verilog code to implement the TopModule.

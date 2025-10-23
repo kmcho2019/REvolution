@@ -1,0 +1,25 @@
+To optimize the original design for better power and performance, I propose the following improvements:
+
+1. Minimize unnecessary toggling in registers:
+   - Shift and accumulate operations only when the start signal is active and the multiplication is in progress (i between 1 and 16).
+   - Avoid shifting breg_ext on every cycle; instead, keep breg fixed and shift the partial product via a shifted adder operand or by shifting the multiplicand right.
+
+2. Simplify shift and accumulate by examining LSB of the multiplicand (areg) each cycle, shifting areg right at each step:
+   - At cycle 0, load inputs and clear accumulator.
+   - For i = 1 to 16, if areg[0] is set, accumulate breg shifted by (i-1).
+   - This involves a variable shift of breg which is more complex; instead, shift breg left by (i-1) and add if areg[i-1] is set as per original spec.
+
+3. However, variable left shifting of breg each cycle can increase critical path and switching. To avoid this:
+   - Precompute shifted breg each cycle as a wire.
+   - Since only one bit is processed per cycle, only one shifted version of breg is needed.
+
+4. Use a simple counter i and process bits of multiplicand one by one without shifting areg:
+   - Store multiplicand in a register (areg).
+   - On each cycle i from 1 to 16, check bit i-1 of areg.
+   - If bit is 1, add breg shifted left by i-1 to yout_r.
+
+5. This removes the need to shift areg and breg registers every cycle, reducing toggling and improving timing.
+
+6. Use a 5-bit counter to track cycles from 0 to 17 as required. The done flag logic remains unchanged.
+
+Summary: The key is to avoid shifting registers and instead shift the multiplier operand logically during addition. This reduces power consumption and improves timing by limiting register toggling and shortening critical paths.

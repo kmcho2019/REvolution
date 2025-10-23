@@ -1,0 +1,9 @@
+To implement the barrel shifter, we first need to define the `mux2X1` submodule, which is a 2-to-1 multiplexer. This submodule will have two 8-bit inputs (`a` and `b`), a 1-bit select signal (`sel`), and an 8-bit output (`out`). The `out` is assigned the value of `a` when `sel` is low and `b` when `sel` is high.
+
+For the `barrel_shifter` module, we'll use three stages of multiplexers to achieve the shifting. The first stage shifts the input by 4 positions if `ctrl[2]` is high, the second stage shifts the result by 2 positions if `ctrl[1]` is high, and the third stage shifts the result by 1 position if `ctrl[0]` is high.
+
+Each stage of shifting is achieved by using the `mux2X1` submodule, where one input is the original (or previously shifted) input and the other input is the shifted version of it. The shifting is done by wiring the bits of the input in the desired shift positions.
+
+To shift by 4 positions, for example, we connect the bits of the input such that `in[3:0]` is connected to `out[7:4]` and `in[7:4]` is connected to `out[3:0]`, effectively rotating the bits.
+
+This approach allows for an efficient and scalable implementation of the barrel shifter using multiplexers.

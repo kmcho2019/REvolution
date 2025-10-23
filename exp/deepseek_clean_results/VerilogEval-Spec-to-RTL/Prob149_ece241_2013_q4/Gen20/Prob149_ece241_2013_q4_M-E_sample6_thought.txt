@@ -1,0 +1,27 @@
+Novel Approach: Hierarchical Priority Encoder with Edge-Aware Flow Control
+
+1. Core Concept:
+   - Replace state machine with priority encoder for direct level detection
+   - Use separate logic for nominal flow (fr) and supplemental flow (dfr)
+   - Implement edge detection only for relevant transitions
+
+2. Key Innovations:
+   - Priority encoder determines current water level (4 possible states)
+   - Edge detection focuses only on s[0] transitions (critical for dfr)
+   - Explicit output generation based on both current level and transition direction
+
+3. Advantages:
+   - More direct mapping from sensors to outputs
+   - Clear separation of level detection and flow control
+   - Reduced complexity in transition handling
+   - More efficient implementation
+
+4. Flow Control Logic:
+   - fr outputs follow simple combinatorial logic based on level
+   - dfr activates only when water was below current level
+   - Reset forces maximum flow condition
+
+5. Transition Handling:
+   - Only track s[0] history for critical low-level detection
+   - Rising edge of s[0] triggers supplemental flow
+   - Falling edge ignored (system naturally reduces flow)

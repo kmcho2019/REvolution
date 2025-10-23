@@ -1,0 +1,5 @@
+To improve PPA metrics, update the design to use a synchronous toggling approach for wave_out, avoiding combinational output logic dependent on freq and count. The count increments only when freq is non-zero, reducing unnecessary toggling and power. When count reaches freq-1, wave_out toggles synchronously on the clock edge. This eliminates complex combinational comparisons and glitches, improving timing and reducing power.
+
+Registering wave_out also improves timing closure by removing combinational paths on the output. Using an 8-bit counter with gating based on freq avoids wasteful counting when freq=0, further saving power.
+
+Overall, the design preserves original functionality (wave_out toggles at frequency controlled by freq) but shifts from combinational output to registered toggling logic, which is more efficient in timing and power, and potentially reduces area by simplifying combinational logic.

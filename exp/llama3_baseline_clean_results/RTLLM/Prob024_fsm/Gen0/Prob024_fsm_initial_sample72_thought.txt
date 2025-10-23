@@ -1,0 +1,10 @@
+To implement the Mealy FSM detection circuit, we can define the states as follows:
+- S0: Initial state, waiting for the first '1'.
+- S1: Received the first '1', waiting for the first '0'.
+- S2: Received the first '0', waiting for the second '0'.
+- S3: Received the second '0', waiting for the first '1' in the second sequence.
+- S4: Received the first '1' in the second sequence, waiting for the second '1' in the second sequence.
+
+When the FSM is in state S4 and receives the second '1', it sets the MATCH signal to '1'. In all other states and input combinations, the MATCH signal remains '0'. We use a reset signal RST to initialize the FSM to state S0 and set the MATCH signal to '0' when the reset is active.
+
+The detection circuit should operate synchronously with the clock signal CLK. We'll use a case statement to handle the state transitions based on the current state and input signal. We'll also ensure that the circuit can handle continuous input and loop detection by correctly transitioning between states based on the input sequence.

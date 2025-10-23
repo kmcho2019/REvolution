@@ -1,0 +1,23 @@
+The improved ALU implementation focuses on PPA optimization while maintaining full functionality:
+
+1. Performance:
+   - Pipelined the adder/subtractor path by splitting into two stages
+   - Simplified overflow detection logic using XOR patterns
+   - Reduced critical path by moving flag calculation to dedicated comparators
+
+2. Power:
+   - Added operation-specific enable signals to gate unused logic
+   - Implemented clock gating for shift operations when not needed
+   - Reduced redundant calculations in flag generation
+
+3. Area:
+   - Consolidated shift operations using a shared barrel shifter
+   - Shared comparator logic between SLT and SLTU
+   - Removed unnecessary intermediate signals
+
+Key improvements:
+- Two-stage pipelined adder/subtractor
+- Shared barrel shifter for all shift operations
+- Optimized flag generation logic
+- Operation-specific clock gating
+- Reduced combinatorial paths

@@ -1,0 +1,20 @@
+To accurately implement a fractional frequency divider by 3.5 using double-edge clocking and phase-shifted clocks, we can use the following strategy:
+
+1. Create a 3.5 division by generating two clock signals:
+   - One toggles every 4 input clock cycles (long period)
+   - The other toggles every 3 input clock cycles (short period)
+   Together, these produce an averaged frequency of clk/3.5.
+
+2. Generate these clocks on both the rising and falling edges of the input clock (double-edge clocking):
+   - Use separate counters triggered on posedge clk and negedge clk.
+   - The "long" clock toggles on a 4-cycle count.
+   - The "short" clock toggles on a 3-cycle count.
+
+3. Phase-shift the two intermediate divided clocks by half a clock period relative to each other due to triggering on opposite edges.
+
+4. Finally, logically OR these two clocks to form the output clk_div:
+   - The OR operation fills in the "gaps" in duty cycle and creates a more uniform output clock at frequency clk/3.5.
+
+5. Use synchronous reset for clean initialization.
+
+This approach leverages dual-edge counters without needing complex delay elements or PLLs, and yields a fractional division with an improved duty cycle and stable output frequency.

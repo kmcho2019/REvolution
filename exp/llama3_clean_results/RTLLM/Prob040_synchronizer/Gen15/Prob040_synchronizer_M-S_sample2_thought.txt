@@ -1,0 +1,7 @@
+The multi-bit MUX-based synchronizer can be simplified by directly using the data enable signal (data_en) and a double-flop synchronization technique. The design will include two main components: data register (data_reg) to store the input data and enable control registers (en_clap_one and en_clap_two) to control the data transfer.
+
+The data register (data_reg) will be updated on the positive edge of clock signal A (clk_a) when the data enable signal (data_en) is active. The enable control registers (en_clap_one and en_clap_two) will be updated on the positive edge of clock signal B (clk_b), with en_clap_one capturing the value of data_en and en_clap_two capturing the previous value of en_clap_one.
+
+The output data (dataout) will be assigned on the positive edge of clock signal B (clk_b) when en_clap_two is active, ensuring that the data is transferred from the source clock domain (clk_a) to the destination clock domain (clk_b) only when the enable signal is active for at least two clock cycles of clk_b.
+
+This simplified design maintains the functionality of the original solution while reducing complexity by eliminating unnecessary registers and logic.

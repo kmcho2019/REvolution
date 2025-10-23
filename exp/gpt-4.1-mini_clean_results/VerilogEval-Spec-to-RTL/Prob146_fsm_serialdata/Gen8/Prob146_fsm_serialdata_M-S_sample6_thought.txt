@@ -1,0 +1,11 @@
+Simplify the FSM by reducing the number of states from four to three: IDLE, RECEIVE, and ERROR_WAIT. The ERROR_WAIT state will handle waiting for the line to go back to idle (logic 1) after a stop bit error.
+
+Combine the STOP state functionality into the RECEIVE state by checking the stop bit immediately after receiving 8 data bits, thus eliminating a separate STOP state.
+
+Use a single always block for both state and data updates to simplify the design, while still maintaining synchronous reset.
+
+Shift in bits by assigning the input to the MSB and shifting existing bits right, preserving LSB-first order with fewer lines.
+
+Assert the done signal only for one clock cycle immediately after a valid stop bit is detected.
+
+This simplification reduces complexity, state transitions, and logic while preserving correct byte reception and error handling.

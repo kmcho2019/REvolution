@@ -1,0 +1,7 @@
+To refactor the code, we will restructure the finite state machine (FSM) to improve its readability and functionality. The core idea remains the same: we need to detect a sequence of 1, 0, 1 on the 'x' input and then monitor the 'y' input for a 1 within two clock cycles after setting 'g' to 1.
+
+We can simplify the state machine by reducing the number of states and using a more straightforward approach to sequence detection. Instead of using a counter for 'x', we can use a shift register to store the last two values of 'x'. This will allow us to easily detect the sequence 1, 0, 1.
+
+In STATE_D, we can simplify the handling of 'y' by using a single-bit flag to indicate whether 'y' has been seen within two clock cycles after setting 'g' to 1. If 'y' is seen within this time, we set the flag and keep 'g' at 1 permanently.
+
+We will also use `assign` statements to simplify the combinational logic and reduce the amount of code in the `always` block.

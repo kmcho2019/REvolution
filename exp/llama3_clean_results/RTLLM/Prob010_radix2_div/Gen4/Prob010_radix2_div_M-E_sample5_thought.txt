@@ -1,0 +1,18 @@
+To design a simplified radix-2 divider for 8-bit signed or unsigned integers, we can adopt a novel architectural approach that incorporates a hybrid of sequential and combinational logic. The idea is to break down the division process into smaller, more manageable steps, utilizing a finite state machine (FSM) to control the sequence of operations.
+
+The divider will operate as follows:
+
+1.  **Initialization**: Upon receiving a valid operation request (opn_valid high), the module saves the dividend and divisor values. It then determines whether the operation is signed or unsigned based on the 'sign' input.
+2.  **Division Process**: The module uses a FSM to control the division process. The FSM has three main states: idle, divide, and complete.
+    *   **Idle State**: The module waits for a valid operation request. Once received, it transitions to the divide state.
+    *   **Divide State**: The module performs the division using a radix-2 algorithm. It iteratively subtracts the divisor from the dividend, shifting the result left by one bit and inserting the borrow (or carry) from the subtraction into the least significant bit of the result.
+    *   **Complete State**: After completing the division, the module updates the result register with the quotient and remainder. It then sets the result valid (res_valid) signal high to indicate that the result is ready.
+3.  **Result Formatting**: The final result is formatted as a 16-bit value, with the remainder in the upper 8 bits and the quotient in the lower 8 bits.
+
+To improve the design, we can incorporate the following optimizations:
+
+*   Use a pipelined architecture to improve performance by allowing the module to process new inputs while still completing the division for previous inputs.
+*   Implement a variable-latency divider to reduce the average latency of the division operation.
+*   Utilize a more efficient radix-2 algorithm, such as the "restoring" or "non-restoring" division methods, to minimize the number of iterations required for the division process.
+
+By adopting this novel architectural approach, we can create a simplified radix-2 divider that is efficient, scalable, and suitable for a wide range of applications.

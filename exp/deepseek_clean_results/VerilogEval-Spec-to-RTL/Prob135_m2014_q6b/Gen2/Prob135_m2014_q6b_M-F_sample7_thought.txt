@@ -1,0 +1,33 @@
+To correctly implement the next-state logic for y[1], we need to carefully analyze each state transition and ensure the logic properly reflects the state machine behavior. Here's the corrected approach:
+
+1. State B (001):
+   - w=0 → C (010): y[1]=1 (transition to C)
+   - w=1 → D (011): y[1] remains 1 (but D already has y[1]=1)
+   - Only need to consider w=0 case since both transitions result in y[1]=1
+
+2. State C (010):
+   - w=0 → E (100): y[1]=0 (transition to E)
+   - w=1 → D (011): y[1]=1 (transition to D)
+   - Need to include both cases with proper conditions
+
+3. State D (011):
+   - w=0 → F (101): y[1]=0 (transition to F)
+   - w=1 → A (000): y[1]=0 (transition to A)
+   - Need to include both cases where y[1] becomes 0
+
+4. State E (100):
+   - w=0 → E (100): y[1] remains 0 (self-transition)
+   - w=1 → D (011): y[1]=1 (transition to D)
+   - Only need to consider w=1 case since self-transition doesn't change y[1]
+
+5. State F (101):
+   - w=0 → C (010): y[1]=1 (transition to C)
+   - w=1 → D (011): y[1]=1 (transition to D)
+   - Both cases result in y[1]=1, but need to verify state F condition
+
+Key corrections:
+1. Properly handle all transitions where y[1] changes
+2. Include all necessary conditions for each state transition
+3. Ensure we don't miss any cases where y[1] should be 0
+4. Maintain correct state encoding (y[2:0] for states A-F)
+5. Keep output assignment Y1 = y[1] as specified

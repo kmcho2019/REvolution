@@ -1,0 +1,11 @@
+The feedback points out that the testbench or external environment is referencing a non-existent port `res_ready` instead of the correct output port `res_valid` as defined in the module. Since the problem description explicitly requires the output port name `res_valid`, no change is needed in the module port names themselves. Instead, to avoid confusion and to fully meet expectations, ensure that the port naming in the module strictly matches the problem description, which uses `res_valid`. No other port named `res_ready` should be declared.
+
+Therefore, the fix is to keep the output as `res_valid` (not `res_ready`), consistent with the problem description, and the user or testbench must connect to `res_valid` accordingly. In addition, the radix-2 division logic is improved for clarity and correctness in shifting and subtraction by following the original division algorithm described.
+
+I will provide a clean, corrected implementation that:
+- Keeps `res_valid` as the output port.
+- Implements the radix-2 division using a 17-bit shift register, partial remainder and quotient extraction.
+- Supports signed and unsigned division with proper sign handling for quotient and remainder.
+- Follows the operation start, division process, and result validity as described.
+
+This should pass interface checks and be functionally correct.

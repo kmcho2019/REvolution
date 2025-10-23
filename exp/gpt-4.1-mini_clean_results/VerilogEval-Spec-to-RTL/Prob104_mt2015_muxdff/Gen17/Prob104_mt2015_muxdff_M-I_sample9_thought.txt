@@ -1,0 +1,9 @@
+To correctly implement TopModule as a reusable submodule for each flip-flop in full_module, the combinational logic determining the next state in the non-load condition must be separated and applied outside TopModule. TopModule should be a simple D flip-flop with load-enable mux that picks between loading r_in or using the next state input q_in.
+
+Since full_module’s non-load next state involves multiple bits and bitwise XOR, the external logic should compute each flip-flop’s next q_in input before passing it to the instantiated TopModule.
+
+Therefore, the improved TopModule remains a load-enabled D flip-flop with mux, but its interface is minimal and clean, focusing only on loading either r_in or q_in on clk's rising edge. This design is synthesizable, clean, and modular.
+
+No internal combinational logic beyond muxing is needed in TopModule, preserving modularity and simplifying hierarchy.
+
+This approach matches the original full_module's functionality when the calling module computes the proper q_in values. This is the correct abstraction for hierarchical design.

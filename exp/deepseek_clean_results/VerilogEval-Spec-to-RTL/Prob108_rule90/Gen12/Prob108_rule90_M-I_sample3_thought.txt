@@ -1,0 +1,13 @@
+Improvement Strategy:
+1. Correct neighbor selection by properly indexing the extended q vector (q_ext)
+2. For cell i (0-511):
+   - Left neighbor should be q_ext[i] (which is q[i-1] or 0 for boundary)
+   - Right neighbor should be q_ext[i+2] (which is q[i+1] or 0 for boundary)
+3. Maintain the same boundary conditions (q_ext[0] and q_ext[513] as 0)
+4. Keep the parallel XOR computation for all cells
+5. Preserve the clean clocked behavior with load functionality
+
+Key Changes:
+- Fix the neighbor indexing in the generate block
+- Ensure q_ext properly represents {0, q, 0} with correct bit widths
+- Maintain efficient parallel computation while fixing the Rule 90 logic

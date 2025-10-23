@@ -1,0 +1,26 @@
+The waveform shows that the output q is 1 when the number of '1' inputs among a, b, c, d is even, i.e., q is the even parity of the inputs. Both prior examples correctly implement even parity:
+
+- Example 1 uses the reduction XNOR operator (~^) chained over all inputs, which directly computes even parity in a concise and synthesis-friendly way.
+- Example 2 uses a balanced XOR tree followed by a negation, which is functionally the same but introduces an explicit inversion.
+
+The fusion strategy to create a superior solution is to leverage the clarity and minimalism of the reduction XNOR (~^) operator from Example 1, since it expresses even parity directly and maps well to hardware with minimal gate depth and toggling.
+
+At the same time, the balanced XOR tree from Example 2 shows an explicit decomposition that may be beneficial if synthesis tools prefer balanced trees for performance.
+
+To get the best of both:
+
+- Use the reduction XOR operator (^) over all inputs combined with a negation (~) in a single assign statement, but internally implement a balanced XOR expression to help synthesis optimize the critical path.
+- Or keep the direct reduction XNOR (~^) for clarity and minimalism because modern synthesis tools handle it well and it's likely optimal in PPA metrics.
+  
+Given modern synthesis tools handle reduction operators well, the direct reduction XNOR (~^) operator is the best choice overall for minimal area, low power, and optimal performance.
+
+Hence, the superior solution is a single-line assign statement using the reduction XNOR operator on all inputs, combining the minimalism of Example 1 and the clarity of Example 2 without extra logic.
+
+This solution is functionally equivalent to both prior examples, more concise, has minimal gate levels, low toggle rate (because it is a parity signal), and is highly portable and readable.
+
+Thus, implement:
+  assign q = ~^(a, b, c, d);
+
+which means q is 1 when there is an even number of ones among inputs a,b,c,d.
+
+This approach fuses the strengths by using the simplest and most synthesis-friendly construct for parity, avoiding explicit inversions or intermediate wires, and balancing area, power, and performance efficiently.

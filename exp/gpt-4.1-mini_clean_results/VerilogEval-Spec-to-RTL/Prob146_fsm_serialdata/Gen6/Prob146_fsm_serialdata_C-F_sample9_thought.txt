@@ -1,0 +1,12 @@
+Combine the Moore FSM clarity and output timing from Example 1 with the straightforward state naming and bit counting from Example 2 for better readability and robustness.
+
+- Use explicit state registers and next-state combinational logic as in Example 1.
+- Keep the four states: IDLE (wait for start bit), RECEIVE (collect 8 data bits), STOP_WAIT (verify stop bit), and ERROR_WAIT (wait for valid stop bit after an error).
+- Implement synchronous reset and outputs updated on clock edge.
+- Use LSB-first data shifting by shifting left and inserting the new bit at LSB.
+- Assert done for exactly one cycle immediately after a valid stop bit, with out_byte valid then.
+- In ERROR_WAIT, wait for stop bit = 1 before returning to IDLE, no done asserted in error recovery.
+- Use a 3-bit bit counter (0 to 7) for clarity.
+- Reset bit counter and data_shift in IDLE.
+- Provide clear code comments and minimize combinational logic delays by separating next_state and output logic.
+This fusion leverages Example 1's timing-correct Moore FSM and Example 2's simplicity, ensuring correctness, clarity, and clean output timing.

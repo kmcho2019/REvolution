@@ -1,0 +1,10 @@
+The original implementation is already minimal and functionally correct, producing three XOR outputs in different styles. To improve PPA (Power, Performance, Area):
+
+- We can reduce redundant XOR computations by computing a single XOR result internally and then assigning it to all outputs appropriately. This saves on area and potentially power as the synthesis tool can share logic instead of duplicating XOR gates.
+- Specifically, use an internal wire for the XOR of a and b, drive out_assign and out_always_comb from this wire, and on the clock edge, register this internal wire into out_always_ff.
+- This avoids duplicated XOR expressions while preserving all functionality.
+- The combinational always block can be replaced by continuous assignment to reduce complexity, or kept for educational clarity.
+- However, since out_always_comb is required to be from a combinational always block, keep it as is, but drive it from the internal wire to avoid re-computation.
+- This minor refactoring improves area and power by logic sharing without altering functionality or timing.
+
+Overall, the optimization strategy is to share the XOR logic internally and have outputs driven from that shared result.

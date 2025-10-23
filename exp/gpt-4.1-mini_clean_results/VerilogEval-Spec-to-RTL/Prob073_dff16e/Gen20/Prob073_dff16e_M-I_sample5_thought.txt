@@ -1,0 +1,5 @@
+To optimize the original design for better performance, power, and area, I will precompute byte masks once outside the always block and reuse them, avoiding repeated mask computations with shifts and concatenations inside the clocked logic. This reduces combinational logic depth and switching activity within the clock domain.
+
+Instead of shifting the masked upper byte or using concatenations repeatedly, I'll generate two 16-bit masks that directly correspond to the upper and lower bytes. These masks will be combined with the input data and current state to produce the next state. This approach simplifies the logic driving the flip-flops and reduces redundant operations, lowering the critical path delay and gate count.
+
+The synchronous active-low reset and positive edge clocking remain as specified, ensuring correct functionality while improving PPA.

@@ -1,0 +1,9 @@
+Here's a novel approach using a shift register and edge detection:
+1. Instead of using a counter, we'll use a 10-bit shift register to capture the entire frame (start + 8 data + stop bits)
+2. Detect the falling edge of 'in' to identify start bits (transition from idle 1 to start 0)
+3. Shift in bits until we've collected 10 bits (full frame)
+4. Verify the frame format: start bit is 0, stop bit is 1
+5. Assert 'done' only when a complete valid frame is received
+6. Use edge detection to avoid missing start bits during reception
+7. Reset clears the shift register and returns to idle state
+This approach simplifies state management by treating the reception as a continuous shift operation with format validation at the end.

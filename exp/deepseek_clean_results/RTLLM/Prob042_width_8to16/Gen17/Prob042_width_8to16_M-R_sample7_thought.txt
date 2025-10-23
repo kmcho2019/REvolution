@@ -1,0 +1,12 @@
+Refactoring Strategy:
+1. Simplified State Machine: Use a single-bit state register to track whether we have the first byte, eliminating the need for separate flags and next_* registers.
+2. Direct Output Assignment: Remove the intermediate next_* registers and assign outputs directly in the always block for clearer timing.
+3. Combinational Logic: Use continuous assignments for outputs where possible to make the data path more transparent.
+4. Synchronous Reset: Maintain synchronous reset for better synthesis consistency.
+5. Clear Timing: Ensure outputs appear exactly one cycle after receiving the second byte, matching requirements precisely.
+
+Key Changes:
+- Single state bit replaces multiple control signals
+- Direct output assignment without pipeline registers
+- Simplified control logic
+- Maintains same functionality with clearer timing

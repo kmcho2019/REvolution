@@ -1,0 +1,7 @@
+Fuse the best ideas of both examples to create a clean, minimal FSM that tracks message byte count with a 2-bit counter, asserts done exactly one cycle after receiving the third byte (count == 2), and resets count afterward. Use synchronous reset, non-blocking assignments consistently, and clear default done de-assertion every cycle to avoid glitches. 
+
+Enhance power efficiency by enabling counter updates only when necessary: either when waiting for a start byte (in[3]=1) or during an active message (count != 0). This reduces unnecessary toggling of count and done registers.
+
+To improve clarity and potentially timing, assign done only once per cycle at the end of the clocked always block based on a detected condition (third byte received), avoiding multiple assignments. This keeps done logic clean and synthesis-friendly.
+
+This fused solution balances minimal area (2-bit counter + done reg), good power gating (via enable signal), synchronous reset, and simple timing with a single always block, making it superior in PPA and readability.

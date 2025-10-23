@@ -1,0 +1,11 @@
+To improve the existing solution, our strategy involves optimizing the Power, Performance, and Area (PPA) metrics. Given the current design's simplicity and functionality, we will refine the clock management, reduce switching activity, and apply logic minimization techniques. 
+
+Firstly, we observe that the current implementation uses a single 8-bit register `instr_reg` but the requirements specify two 8-bit registers `ins_p1` and `ins_p2` to store instructions from different sources. We will revise the design to include these two registers.
+
+For performance optimization, we ensure proper synchronization of the clock signal and consider techniques to minimize the critical path delay. Since the outputs `ins`, `ad1`, and `ad2` are derived directly from the registers `ins_p1` and `data`, we will maintain this direct derivation to avoid introducing additional combinational logic that could increase the critical path delay.
+
+To optimize power consumption, we aim to reduce unnecessary switching activity. We will use the `fetch` signal to conditionally update the registers and derive the outputs, minimizing switching when the `fetch` signal is not active.
+
+In terms of area optimization, we will maintain the use of two 8-bit registers as required, and simplify the output logic to reduce area consumption. We will directly assign the high 3 bits of `ins_p1` to `ins` and the low 5 bits of `ins_p1` to `ad1`. For `ad2`, we will directly assign `data` when `fetch` is `2'b10`, and 8'd0 otherwise.
+
+Additionally, considering the provided PPA metrics, we observe that the area and power consumption are relatively low, indicating the design is already quite efficient. Thus, our focus will be on fine-tuning these aspects while ensuring the design remains functionally correct and adheres to good HDL practices.

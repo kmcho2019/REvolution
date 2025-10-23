@@ -1,0 +1,18 @@
+To fix the issues identified in the feedback, I'll make these key improvements:
+
+1. Reset Handling: Ensure proper initialization of all state elements including PHT and GHR. The PHT will be initialized to 2'b01 (weakly taken) as this is a common default.
+
+2. Prediction Output: Fix the predict_taken output to properly handle non-prediction cycles by making it purely combinational based on current state.
+
+3. GHR Update Priority: Clearly establish training precedence over prediction when both occur simultaneously, with misprediction recovery having highest priority.
+
+4. PHT Timing: Ensure predictions always see the PHT state before any training updates in the same cycle, as specified.
+
+5. Output Consistency: Make predict_history always reflect the current GHR state, not affected by pending updates.
+
+Main changes:
+- Clear reset initialization values
+- Simplified output assignments without default values
+- Explicit priority in GHR updates
+- Maintained PHT update timing requirements
+- Removed unnecessary default assignments

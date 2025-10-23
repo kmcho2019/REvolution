@@ -1,0 +1,17 @@
+Innovative Approach:
+1. **Priority Encoding**: Instead of pure one-hot decoding, we'll use priority encoding to determine state transitions. This reduces the number of conditions needed for each output.
+
+2. **Output Logic Optimization**:
+   - For Y1 (B state): Only needs to activate when in A state (y[0]) and w=1
+   - For Y3 (D state): Can be expressed as "not in A/D and w=0" using a priority scheme where higher states suppress lower ones
+
+3. **Key Insight**:
+   - The FSM has a natural priority order (A→B→C→E and A→B→D→F)
+   - We can leverage this to simplify the transition logic
+   - This approach reduces gate count while maintaining one-hot properties
+
+4. **Benefits**:
+   - Fewer logic levels than standard one-hot implementation
+   - Maintains clear state separation
+   - Naturally prevents illegal states
+   - More scalable for larger FSMs

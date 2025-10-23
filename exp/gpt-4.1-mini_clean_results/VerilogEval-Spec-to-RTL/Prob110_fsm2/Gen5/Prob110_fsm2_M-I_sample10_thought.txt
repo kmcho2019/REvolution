@@ -1,0 +1,7 @@
+Optimize the original Moore FSM by registering the output directly from the state register, eliminating the separate combinational output logic block. Since the output is a direct function of the state, this reduces combinational toggling and power, improving efficiency. 
+
+Keep the asynchronous active-high reset unchanged per specification. Use non-blocking assignments in the sequential block for both state and output to maintain synchronous output updates, preserving Moore machine behavior. 
+
+This simplifies the design by removing an always @(*) block for output, resulting in slightly reduced area and power while maintaining performance. The registered output also reduces glitches and unnecessary switching on the output line. The next state logic remains clean and explicit with safe defaults for robustness.
+
+Overall, this strategy balances clarity, power efficiency, and synthesis friendliness with minimal code change.

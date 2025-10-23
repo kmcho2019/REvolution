@@ -1,0 +1,21 @@
+The key issues in the original design stem from improper pipeline staging and timing. Here's the improved approach:
+
+1. **Proper Pipeline Staging**:
+   - Stage 1: Register inputs and calculate pp0/pp1
+   - Stage 2: Register pp0+pp1 and calculate pp2/pp3
+   - Stage 3: Register pp2+pp3 and final sum
+
+2. **Timing Fixes**:
+   - All calculations use registered values from previous stage
+   - Each pipeline stage takes exactly one clock cycle
+   - Clear separation between combinational and registered logic
+
+3. **Structural Changes**:
+   - Use assign for combinational logic
+   - Explicit registers for pipeline stages
+   - Clean separation between pipeline stages
+
+4. **Optimizations**:
+   - Minimize combinational paths between registers
+   - Balanced pipeline stages for better timing
+   - Clear data flow through pipeline

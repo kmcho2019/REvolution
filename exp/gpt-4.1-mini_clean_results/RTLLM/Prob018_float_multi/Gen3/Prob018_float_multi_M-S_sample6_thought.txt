@@ -1,0 +1,14 @@
+Implement a simplified multi-cycle IEEE-754 single-precision floating-point multiplier with a small 4-step FSM, synchronizing each step to the clock and using a fully combinational 24x24-bit multiplier in one cycle to reduce complexity.
+
+Key points:
+- Step 0 (IDLE): On reset or new inputs, extract sign, exponent, mantissa with implicit leading bit.
+- Step 1 (CHECK): Handle special cases (NaN, Inf, zero) and set output early if needed.
+- Step 2 (MULTIPLY): Perform one-cycle 24x24 multiplication of mantissas, add exponents minus bias, compute sign.
+- Step 3 (NORMALIZE_ROUND): Normalize the product (shift if needed), perform round-to-nearest-even based on guard, round, sticky bits, and adjust exponent accordingly.
+- Step 4 (OUTPUT): Check for overflow, underflow, and assemble final IEEE-754 result.
+
+This approach uses a single cycle for mantissa multiplication to reduce state complexity and avoid sequential multiplier logic, yet remains multi-cycle overall with clear state transitions and registers to hold intermediate data.
+
+The internal signals specified (counter, mantissas, exponents, signs, product, rounding bits) are used as registers synchronized by clock, matching the problem statement.
+
+This design balances simplicity and correctness, suitable for FPGA or ASIC implementation where one-cycle 24x24 multiplication is feasible.

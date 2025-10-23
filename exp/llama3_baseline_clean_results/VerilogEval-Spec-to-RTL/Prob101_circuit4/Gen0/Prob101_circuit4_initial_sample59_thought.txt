@@ -1,0 +1,13 @@
+Based on the given simulation waveforms, we can observe the output 'q' is set to 1 whenever 'b' or 'c' is 1, regardless of the values of 'a' and 'd'. However, when both 'b' and 'c' are 0, 'q' is 1 only if 'a' is 1 and 'd' is 1, or if 'a' is 0. This suggests a combination of OR and AND operations to implement the circuit. 
+We can start by checking if 'a' is 0, in which case 'q' is 1 if 'b' or 'c' is 1, or if 'd' is 1. If 'a' is 1, then 'q' is 1 if 'b' or 'c' is 1.
+The final equation for 'q' can be derived as follows: q = (a && b) || (a && c) || (!a && (b || c || d)) || (a && !b && !c && d).
+However, upon closer inspection of the provided table, we can simplify this by considering the effect of 'b' and 'c' first, and then the effect of 'a' and 'd'.
+From the table, we see 'q' is always 1 when 'b' is 1, regardless of other inputs. Also, 'q' is 1 when 'c' is 1, regardless of 'b', but only when 'a' is not 1 or 'd' is 1.
+Upon reevaluation, the truth table suggests that 'q' will be 1 in all cases where 'b' is 1, and also when 'b' is 0 but 'c' is 1 (regardless of 'a' and 'd'), and when 'b' and 'c' are 0, 'q' is 1 if 'a' is 0 or 'd' is 1.
+Simplifying, 'q' is 1 if 'b' is 1 or if 'c' is 1 (since these conditions override 'a' and 'd'), and if both 'b' and 'c' are 0, then 'q' can still be 1 if either 'a' is 0 or 'd' is 1.
+However, this simplification does not fully capture the relationship as described in the initial analysis.
+Upon further review, considering 'b' or 'c' being 1 always results in 'q' being 1, we should focus on the condition when both 'b' and 'c' are 0. 
+In such cases, 'q' is 0 only when 'a' is 1 and 'd' is 0. 
+This implies the simplified condition could be derived by focusing on when 'q' should be 0, which only happens when 'a' is 1 and both 'b' and 'c' are 0, and 'd' is 0.
+Hence, 'q' is 0 when 'a' is 1 and 'b', 'c', 'd' are all 0. In all other cases, 'q' is 1.
+This leads to the equation q = !(a && !b && !c && !d).

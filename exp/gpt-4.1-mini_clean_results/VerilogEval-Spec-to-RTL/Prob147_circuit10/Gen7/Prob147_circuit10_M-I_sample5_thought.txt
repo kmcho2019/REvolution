@@ -1,0 +1,15 @@
+To accurately replicate the waveform, I analyzed the state transitions and output q based on inputs and current state:
+
+- The state holds its value when b=0, i.e., no change.
+- When b=1 and a=0, the state sets to 1.
+- When b=1 and a=1, the state toggles.
+
+Output q matches the next state except that when b=1 and a=1, q is always the complement of the new state, implying q = ~next_state in this case; otherwise q=next_state.
+
+This can be summarized as:
+- next_state = b ? (a ? ~state : 1'b1) : state;
+- q = b & a ? ~next_state : next_state;
+
+To avoid undefined initial state, I include an asynchronous reset (optional) or initialize state to 0. Since the waveform starts at unknown state, it's reasonable to initialize to 0 for synthesis.
+
+This corrects output q behavior and matches the waveform in all transitions.

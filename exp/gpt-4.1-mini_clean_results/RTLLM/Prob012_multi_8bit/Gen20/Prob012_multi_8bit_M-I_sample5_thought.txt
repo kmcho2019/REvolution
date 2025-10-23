@@ -1,0 +1,16 @@
+The original design uses a combinational balanced adder tree summing all partial products in parallel. While this gives good performance, it may have relatively high power consumption due to all partial products and adders switching simultaneously, and moderate area due to the multiple 16-bit adders.
+
+To optimize for better PPA, I propose implementing an iterative shift-and-add multiplier using a sequential process with a clock and enable signal. This will reduce power consumption since only one addition and shift happens per clock cycle, reducing switching activity. It also significantly reduces combinational complexity and area, as only a single adder and shifter are needed, reusing hardware across cycles.
+
+The trade-off is latency: the multiplication takes 8 clock cycles, but this approach is typical for area- and power-constrained designs. We will add synchronous reset and a start signal to begin multiplication, producing a valid product output when done.
+
+If purely combinational logic is needed, this iterative design may not apply. But since the original solution was purely combinational and relatively high in power and area, this sequential approach offers significant PPA advantages, especially for FPGA/ASIC designs where area and power matter.
+
+Inputs:
+- Add start and clk signals
+- Inputs A and B are latched at start
+Outputs:
+- product: 16-bit output valid when done
+- done: output flag indicating multiplication finished
+
+This is a classic shift-and-add multiplier FSM with 8-bit operands.

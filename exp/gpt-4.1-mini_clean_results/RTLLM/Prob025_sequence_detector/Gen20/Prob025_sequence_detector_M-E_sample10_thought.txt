@@ -1,0 +1,13 @@
+I will implement a Mealy-type sequence detector for "1001" using a one-hot encoded FSM with 5 states to simplify decoding and speed up transitions. Unlike the Moore FSM, the output signal here is combinational and asserted immediately when the last bit of the sequence is detected, enabling faster detection response. 
+
+This design will:
+
+- Use synchronous active-high reset for familiarity and easier integration in some designs.
+- Use one-hot encoding (5 flip-flops, each state represented by a single bit) to reduce combinational logic depth and improve timing.
+- Combine state and output logic in a single always block, with next state and output signals calculated combinationally and registered synchronously.
+- Detect overlapping sequences by careful transitions, allowing immediate restart detection without missing any pattern occurrences.
+- Generate the output as a Mealy signal which asserts sequence_detected immediately on the clock cycle when the last bit arrives, removing the need for a separate output state.
+- Keep the code fully synchronous with non-blocking assignments for reliability and synthesis friendliness.
+- Provide well-commented, clear logic to ensure maintainability and straightforward verification.
+
+This approach benefits timing due to simpler next-state decoding and immediate output assertion, and provides a different architectural style from the given Moore example.

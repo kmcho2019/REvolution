@@ -1,0 +1,21 @@
+The key to correctly dividing a clock by an odd number using two toggles on opposite clock edges is to toggle the output clock signals at the correct counter values, so their combined output forms a clean divided clock with the exact frequency and a balanced duty cycle.
+
+To fix the original approach:
+
+1. Correct the toggle conditions:  
+   For an odd divisor NUM_DIV, the half period is (NUM_DIV - 1) / 2.  
+   Each of clk_div1 and clk_div2 should toggle exactly once per full division period, with toggling points carefully spaced.
+
+2. Simplify toggling logic:  
+   Instead of toggling at counter == HALF, toggle when counters reach (NUM_DIV - 1) / 2 (half period) and at the end of the counting cycle (NUM_DIV - 1). This ensures the divided clocks have the correct phase offset.
+
+3. Adjust the counters:  
+   Each counter counts from 0 to NUM_DIV - 1, resetting afterwards. The toggles happen at half and full count points for clk_div1 and clk_div2 respectively, but staggered to produce a continuous divided clock with 50% duty cycle as close as possible.
+
+4. Ensure clk_div1 toggles on rising edge at half count, clk_div2 toggles on falling edge at half count, and both reset synchronously.
+
+5. This refined toggle scheme provides a clock output with frequency divided by the odd NUM_DIV and a duty cycle close to 50%.
+
+6. Maintain synchronous resets and nonblocking assignments.
+
+Overall, the revised code improves timing accuracy and waveform correctness for the odd division by using toggle points at half and full counts in a complementary fashion on opposite edges.

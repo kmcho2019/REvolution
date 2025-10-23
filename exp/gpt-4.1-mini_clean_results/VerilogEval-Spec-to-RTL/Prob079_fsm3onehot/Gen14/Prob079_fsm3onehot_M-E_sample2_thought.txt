@@ -1,0 +1,9 @@
+To create a different architectural approach for this combinational Moore FSM logic, encode the next_state outputs using separate decoders for each current state combined with the input signal. 
+
+The idea is to explicitly use separate combinational logic blocks (using case statements implemented as combinational always blocks) for each next state bit. This makes the design structurally resemble a "decoder style" FSM combinational block where each next state bit is driven by a mini decoder for the current state/input conditions that activate that bit.
+
+By doing this, we improve readability by grouping conditions by each next_state bit separately, explicitly enumerating the state/input combinations using case statements, instead of long Boolean expressions. This alternative style is easily extensible and visually groups logic per output bit rather than a flat Boolean expression.
+
+Additionally, implement the output as a case expression for state, making it clear that output is only '1' when the state is D (4'b1000). This approach explicitly models the FSM decoding in a manner similar to classic FSM design textbooks.
+
+This method differs substantially from the simple direct Boolean equations and will aid designers who prefer case-based explicit conditional logic.

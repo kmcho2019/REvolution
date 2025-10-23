@@ -1,0 +1,9 @@
+To improve the original design's PPA metrics, focus on reducing switching activity and critical path delay. Since rotation is conditional and a load operation completely overrides rotation, we can split the enable logic into separate clock enables for the rotation and the load to minimize unnecessary updates. This can be achieved by using clock gating primitives or inferred clock enables in FPGA/ASIC tools, but here we demonstrate a simple gating approach with an intermediate signal to reduce toggling.
+
+Moreover, we restructure the rotation logic to avoid redundant assignments by assigning q only when load or rotation enable is active; otherwise, maintain the current value to reduce toggling in flip-flops.
+
+To lower the critical path delay, although full rotation concatenation is inherently wide, explicitly encoding the rotation direction inside a minimal case reduces muxing complexity. We avoid using q <= q assignment in default; instead, rely on conditional assignment within the always block to prevent inferred latches or redundant toggling.
+
+Finally, ensuring the design is clean and synthesizable with minimal control signals toggling will help tools perform better clock gating and optimization, improving power and timing.
+
+This approach enhances power by minimizing switching when no load or rotation is requested, reduces the critical path by minimizing muxing, and maintains functionality and clarity.

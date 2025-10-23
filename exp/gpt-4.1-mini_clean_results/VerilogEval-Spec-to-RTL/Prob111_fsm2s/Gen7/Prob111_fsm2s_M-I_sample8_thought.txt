@@ -1,0 +1,9 @@
+The initial design is already very optimal for such a simple two-state Moore FSM in terms of performance, power, and area: it uses a single bit for state encoding, minimal combinational logic, and a synchronous reset. However, slight improvements can be made to reduce glitching on combinational signals, which can indirectly reduce power consumption.
+
+One common technique is to use a registered output rather than combinational logic for the Moore output. This stores the output in a flip-flop, ensuring stable outputs without glitches and reducing dynamic power consumption caused by output toggling in combinational logic.
+
+Given that the output is strictly a function of state, we add an output register updated at clock edge, making the output a registered Moore output. This adds one flip-flop but can reduce power and improve timing stability, often desirable in FPGA or ASIC design flows.
+
+All other logic is kept minimal and synchronous reset remains active high and synchronous. This adjustment is a good trade-off for stable outputs and slight power improvement at the cost of a single flip-flop, which is negligible here.
+
+Hence, the improvement strategy is to register the Moore output rather than drive it directly from combinational state logic.

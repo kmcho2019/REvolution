@@ -1,0 +1,12 @@
+The existing design is already optimal in terms of logic simplicity and area for this problem. Given that the design is purely combinational and minimal, there is little room for improvement at the RTL level to reduce power or area significantly. 
+
+However, a minor improvement is to avoid creating separate intermediate wires since these consume some minor overhead and the synthesis tool can optimize direct expressions just as well. Directly assign the outputs based on minimal logic expressions, reducing net count and possibly marginally improving area and power.
+
+Also, we can slightly reduce the expression of fan by using the fact that heater and aircon are outputs and can be used directly in the fan logic, reducing redundant logic.
+
+So, my strategy:
+- Remove intermediate signals and assign outputs directly.
+- Use outputs in the fan logic directly, avoiding duplicated signals.
+- Keep code combinational and simple.
+
+This should marginally improve area and power by reducing nets and logic duplication without changing functionality.

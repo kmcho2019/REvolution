@@ -1,0 +1,15 @@
+The original solution introduced an external synchronous reset input which was not part of the problem specification, causing simulation mismatches since the reset signal was floating and never driven.
+
+The problem states to assume the flip-flops are initially zero before the machine begins but does not provide a reset port. This can be modeled in Verilog by using an initial block to set the flip-flops' initial values to zero. Most simulators support this for simulation correctness, and FPGA tools infer initial flip-flop states as zero by default on many targets.
+
+Thus, to fix the issue without adding ports, I will:
+- Remove the external reset input.
+- Use an initial block to set flip-flops to zero for simulation.
+- Retain the rest of the logic as is.
+- Use positive edge clocked always block to update flip-flops.
+- Compute combinational logic as per the problem.
+- Assign output z as NOR of the three flip-flop outputs.
+
+This maintains correctness as specified, matches the problem interface exactly, and respects the "assume flip-flops start at zero" requirement in simulation without external reset signals. It also makes the design synthesis-friendly on modern FPGAs where flip-flop init is supported.
+
+No changes are made to combinational logic or flip-flop behavior beyond initialization. The design implements the specified FSM behavior faithfully.

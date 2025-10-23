@@ -1,0 +1,8 @@
+To address the simulation mismatch caused by undefined initial state, we need to initialize the flip-flop output to a known value. Since the problem doesn't specify a reset mechanism, we'll use an initial block to set the output to 0 at simulation start. This ensures:
+
+1. The flip-flop starts with a defined state (0)
+2. The XOR operation will produce deterministic results from the first clock cycle
+3. Maintains all original functionality (positive edge-triggered, no reset)
+4. Preserves the feedback loop where out(t) = in(t-1) XOR out(t-1)
+5. Only adds initialization without changing the core circuit behavior
+6. Matches testbench expectations by eliminating undefined 'x' states

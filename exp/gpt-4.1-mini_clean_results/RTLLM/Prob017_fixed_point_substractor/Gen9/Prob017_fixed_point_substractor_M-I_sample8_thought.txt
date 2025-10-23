@@ -1,0 +1,17 @@
+The original solution is clean and functionally correct by leveraging signed arithmetic for fixed-point subtraction, inherently handling sign and fractional bits. However, we can improve the design in the following ways to optimize for synthesis, power, and clarity:
+
+1. **Use a registered output (`res`) to store the subtraction result**: Although combinational logic is simpler, registering the result can improve timing and reduce glitches in synchronous designs.
+
+2. **Follow the problem statement strictly regarding internal register `res`**: Since it explicitly requests an internal register `res` to hold the result, it is best to implement this in a clocked always block, making `res` a registered output, then assign `c` from `res`. This also allows clear zero sign bit handling after computation.
+
+3. **Add a clock and synchronous reset input**: Since the problem does not specify clock or reset, we can implement this as a combinational subtractor with a register but driven by a clock signal. If no clock is allowed, `res` can be a register in a combinational always block (which some tools allow), but this is less common.
+
+4. **If synchronous design is undesired, implement a combinational always block with `res` declared as a reg and assign `c` from `res`**: This meets the problem requirement for an internal register and keeps the design purely combinational.
+
+5. **Explicit sign bit handling when result is zero**: After subtraction, if `res` is zero, clear the sign bit to zero explicitly.
+
+6. **Keep parameters defaulted** and use signed declarations to ensure tools treat values correctly.
+
+The final design is a purely combinational block with an internal register `res` to store subtraction result, explicit zero sign bit clearing, and output assignment. This approach respects the problem constraints and provides clear, synthesizable RTL.
+
+This provides better control over intermediate results, may improve timing, and aligns perfectly with the problem statement.

@@ -1,0 +1,13 @@
+I will implement a dual-edge triggered flip-flop using a single always block triggered only on the positive edge of the clock, together with an internal delayed version of the clock signal.
+
+The key idea is to sample the input `d` at both the positive edge and at the delayed falling edge by using a shifted clock signal generated inside the module. Because FPGAs do not allow always blocks sensitive to both edges, I will use an auxiliary clock derived from the original clock by inverting and delaying it slightly.
+
+This will be done by:
+
+- Using a two-stage shift register to create a delayed inverted clock internally.
+- Using a multiplexer and internal registers to latch `d` on both edges by synchronizing to these derived clock signals.
+- Combining the two sampled data points into one output through a simple register that updates on the positive edge only.
+
+This approach requires no negative-edge triggered flip-flops, only positive edge triggered ones, compatible with FPGA synthesis. It sacrifices a small amount of latency but avoids glitches and illegal sensitivity lists. This design leverages the clock domain crossing concept internally and uses minimal extra logic.
+
+This method is novel in explicitly creating a derived internal delayed clock and sampling the input on the effective "falling edge" by using the delayed clock, all inside positive-edge triggered flip-flops.

@@ -1,0 +1,12 @@
+Implement a three-state FSM that explicitly tracks each sampling cycle to keep the design conceptually simple and straightforward:
+
+- State A: wait for s=1, output z=0.
+- States B0, B1, B2: sample w on each clock cycle, accumulating the count of w=1.
+- After three samples (upon entering B2), compute if exactly two out of three w inputs were 1.
+- Output z=1 for one cycle right after the third sample if the condition is met, else z=0.
+- Then return to B0 to continue sampling the next window.
+- Use a 2-bit counter to keep count of w=1 occurrences.
+- Since the FSM counts precisely three cycles, states B0-B2 encode the current sampling cycle.
+- Synchronous reset active high.
+- All sequential logic at posedge clk.
+- This design uses more states but simplifies counter and accumulation logic, making it potentially easier to debug and verify.

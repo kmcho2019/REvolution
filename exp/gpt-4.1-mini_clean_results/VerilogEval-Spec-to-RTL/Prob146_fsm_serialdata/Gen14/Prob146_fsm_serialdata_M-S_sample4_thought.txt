@@ -1,0 +1,11 @@
+I will simplify the FSM by using localparam instead of typedef for states, reducing the state encoding to straightforward constants for clarity and easier synthesis.
+
+I will merge the data shift and bit counter updates into a single always block and remove redundant assignments in the default case.
+
+To simplify done logic, I will generate done as a combinational output asserted only when in STOP state with a correct stop bit, and latch out_byte synchronously on that condition.
+
+This reduces the number of always blocks and simplifies control signals, while keeping the synchronous reset, bit shifting of LSB first, and the wait-for-stop-bit recovery on stop bit error.
+
+The overall FSM remains the same: IDLE waits for start bit (0), RECEIVE shifts in 8 data bits LSB first, STOP verifies stop bit (1) or moves to WAIT_STOP to recover.
+
+This simplification improves readability and synthesis efficiency without changing behavior.

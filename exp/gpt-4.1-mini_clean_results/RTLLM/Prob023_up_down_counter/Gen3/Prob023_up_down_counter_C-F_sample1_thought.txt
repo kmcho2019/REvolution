@@ -1,0 +1,9 @@
+Fuse the best ideas by combining the clear separation of combinational and sequential logic from Example 2 with the internal enable gating from Example 1 to reduce unnecessary toggling and power. 
+
+- Use a combinational next_count signal computed as count ± 1 depending on up_down, which improves readability and synthesis friendliness.
+- Add an internal enable signal that disables counting when reset is asserted to reduce switching activity.
+- Keep the synchronous reset and update on the rising clock edge.
+- Use two's complement addition for decrement (adding 16'hFFFF) from Example 1 inside the combinational next_count computation to help synthesis tools optimize arithmetic.
+- This structure maintains clarity, supports easier timing optimization, and reduces dynamic power by gating updates during reset.
+
+This approach merges the clean separation of next_count logic with the low-power enable gating to achieve better overall PPA without sacrificing simplicity or functionality.

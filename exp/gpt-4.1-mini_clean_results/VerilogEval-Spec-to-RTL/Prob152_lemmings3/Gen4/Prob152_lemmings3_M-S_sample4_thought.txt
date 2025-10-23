@@ -1,0 +1,5 @@
+Simplify the FSM by encoding direction and activity into four states only: WALK_LEFT, WALK_RIGHT, FALLING, DIGGING. Use a single direction bit separate from the activity state to reduce states and complexity. The FSM tracks activity (walking, falling, digging) and direction independently. Transitions follow priority: if not ground → falling; else if dig and walking → digging; else if walking and appropriate bump → switch direction; else remain. Falling and digging ignore bumps and dig input.
+
+On reset, initialize to walking left. Outputs derived from activity and direction. This reduces the number of states and logic complexity while meeting all requirements. Moore output signals follow from current state and direction.
+
+The separation of direction from activity simplifies bump handling: bump_left only flips direction if walking left, bump_right only flips if walking right. This also eliminates redundant states and clarifies transition logic.

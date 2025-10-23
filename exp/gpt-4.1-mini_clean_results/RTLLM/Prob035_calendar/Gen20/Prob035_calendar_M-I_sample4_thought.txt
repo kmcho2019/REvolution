@@ -1,0 +1,10 @@
+To optimize the perpetual calendar for better PPA while maintaining clarity and correctness, I will merge the three always blocks into a single always block. This reduces interdependency delays and potentially improves timing by updating all counters synchronously within one clock edge, avoiding multi-cycle dependency on other counters' state. The combined block also simplifies enable logic, allowing counters to increment only when needed, thus reducing unnecessary toggling and lowering power. 
+
+The logic will:
+- Increment seconds every cycle, wrapping at 59.
+- Increment minutes only when seconds roll over from 59 to 0, wrapping minutes at 59.
+- Increment hours only when minutes and seconds both roll over from 59 to 0, wrapping hours at 23.
+
+Also, I will maintain the output widths as 6 bits for seconds and minutes (range 0-59) and 5 bits for hours (0-23), as this optimizes area. Using a single always block with non-blocking assignments preserves proper synchronous behavior and avoids inferred latches.
+
+This approach enhances timing by eliminating cross-block dependency and could reduce power due to fewer redundant signal toggles and simpler enable logic, while keeping area minimal.

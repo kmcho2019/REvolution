@@ -1,0 +1,12 @@
+Simplify the IEEE-754 single-precision floating-point multiplier by splitting the operation into a multi-cycle process controlled by a small 3-bit counter. This approach stages the workflow step-by-step across multiple clock cycles to reduce combinational path complexity per cycle and simplify control logic.
+
+Key ideas:
+- Use sequential steps: on different counter values, extract fields, multiply mantissas, normalize product, round, adjust exponent, and generate output.
+- Extract sign, exponent, mantissa in the first cycle, compute product in second cycle, normalize and round in third cycle.
+- Use 24-bit mantissas with implicit leading 1 for normals.
+- Handle special cases such as zero, infinity, and NaN explicitly at input processing.
+- Perform 24x24 multiplication with 50-bit product stored in a register.
+- Use simple round-to-nearest-even rounding with guard, round, sticky bits.
+- Adjust exponent for normalization shifts and rounding overflow.
+- On reset, clear counter and output.
+- This pipeline-like approach balances clock frequency and resource complexity.

@@ -1,0 +1,22 @@
+Refactored approach using a simpler and more direct edge detection method:
+
+1. **Simplified Edge Detection**:
+   - Use single register to store previous input value (prev_in)
+   - Detect falling edges by comparing current input with previous registered value
+   - Eliminates unnecessary extra register stage
+
+2. **Combined Logic**:
+   - Use continuous assignment for output (out) based on captured register
+   - Single always block for sequential logic
+   - Clear separation between edge detection and capture storage
+
+3. **Efficient Implementation**:
+   - Direct comparison between current and previous input
+   - Captured bits are set on falling edge and held until reset
+   - Maintains all original functionality with fewer registers
+
+Key improvements:
+- Correct timing for edge detection (compares consecutive cycles)
+- Reduced register usage
+- Clearer and more direct implementation
+- Maintains same capture behavior until reset

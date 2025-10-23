@@ -1,0 +1,15 @@
+Refactor the design by implementing a Mealy FSM using a one-hot style state machine with explicit state registers and clear input/output enables.
+
+Key changes:
+
+- Use a parameterized FSM with five states: IDLE (search pattern), LOAD (shift delay bits MSB first), COUNT (count down), DONE (wait for ack), and CLEAR (reset counters and signals).
+- Separate pattern detection from delay loading by keeping a 4-bit shift register updated only in IDLE; once the pattern is detected, transition to LOAD.
+- For delay load, shift bits left each clock, inserting new data bit into LSB, ensuring MSB-first loading (the first loaded bit ends up at MSB).
+- Initialize counting registers immediately on entering COUNT state, using a dedicated signal `start_count` derived from state transitions.
+- Implement a 10-bit cycle counter counting from 0 to 999; on cycle_counter terminal count, decrement a 4-bit tick counter initialized as delay+1.
+- Output `count` reflects the current tick count (remaining delay) during COUNT, held constant for each 1000-cycle interval.
+- Use synchronous reset active high.
+- Use explicit output assignments to minimize combinational logic and avoid race conditions.
+- This approach improves readability and correctness by explicitly tracking state transitions and loading order, ensuring proper timing and signal updates.
+
+This approach fixes previously observed issues with delay loading order and initialization timing while keeping the design modular and clear.

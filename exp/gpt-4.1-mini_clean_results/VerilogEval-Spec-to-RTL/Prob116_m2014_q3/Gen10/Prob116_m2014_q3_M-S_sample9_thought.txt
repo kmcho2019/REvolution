@@ -1,0 +1,22 @@
+To simplify the solution, we avoid explicit Gray-to-binary conversion and nested case statements by directly mapping the input x[3:0] (x4,x3,x2,x1) to minterms in the truth table. Since x is 4 bits, we can write a straightforward combinational logic expression for f by listing all input combinations that output 1, using the original K-map after translating Gray-coded coordinates to the corresponding x inputs.
+
+Alternatively, since the inputs are only 4 bits, we can enumerate all 16 possible input patterns and assign f=1 or 0 accordingly, treating don't-cares as 0. This is simplest and requires just a 16-entry lookup via a 16-bit constant mask indexed by x.
+
+This eliminates Gray-to-binary conversion and nested case logic, improving readability and synthesis efficiency.
+
+Steps:
+
+1. Map the Karnaugh map cell coordinates (Gray-coded) back to corresponding x inputs. The K-map indices correspond to:
+   - Row Gray bits: x3 x4
+   - Column Gray bits: x1 x2
+   Input vector is x[3]=x4, x[2]=x3, x[1]=x2, x[0]=x1.
+
+2. Construct a 16-bit vector with bit positions representing each input pattern from x=0 to 15.
+
+3. For each x in [0..15], determine f=1 or 0 from the K-map.
+
+4. Use simple combinational logic: f = LUT[x].
+
+This approach is concise, eliminates logic for Gray conversion, and perfectly implements the function.
+
+Note: Don't-cares are treated as 0 for simplicity.

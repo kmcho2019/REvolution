@@ -1,0 +1,13 @@
+To fuse the best ideas from both examples, we leverage the area and power efficiency of binary state encoding from Example 2, using a 2-bit state register, combined with the clean, combinational next-state logic style inspired by Example 1, but implemented inside an always block for clarity and synthesis friendliness. 
+
+We keep the synchronous active-low reset from both examples and maintain a clear priority-based state transition from idle (A) to grant states (B, C, D). The output is generated via continuous assignment based on state bits, as in Example 1, ensuring minimal logic and glitch risk, instead of a combinational always block. This improves output stability and potentially reduces power by preventing glitches.
+
+In summary:
+- Use 2-bit binary encoding to minimize flip-flop count and area.
+- Use a synchronous reset with always @(posedge clk).
+- Use an always @(*) block for next-state logic with case statements (for clarity).
+- Drive outputs g with continuous assignments decoding the current state, ensuring glitch-free outputs.
+- The state codes are: A=2'b00, B=2'b01, C=2'b10, D=2'b11, matching Example 2.
+- Maintain the priority r0 > r1 > r2 for grants in idle.
+
+This hybrid approach combines clarity, area efficiency, and reliable output signal generation.

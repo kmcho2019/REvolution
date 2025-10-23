@@ -1,0 +1,8 @@
+The original solution cleanly separated the two output logics into submodules, which aids clarity but introduces extra instantiation overhead. To optimize for better area and potentially slight power and timing improvement, flatten the logic into a single module using only assign statements and internal wires. This reduces hierarchy and unnecessary wire declarations.
+
+Specifically:
+- Use four internal wires for the four AND gates (two 3-input, two 2-input).
+- Assign p1y as OR of the two 3-input ANDs.
+- Assign p2y as OR of the two 2-input ANDs.
+
+This removes the module instantiations and simplifies logic, helping the synthesis tool map it more efficiently. Since all logic is simple combinational gates, this flattening has negligible impact on readability but improves area and power slightly due to less hierarchy and wiring overhead.

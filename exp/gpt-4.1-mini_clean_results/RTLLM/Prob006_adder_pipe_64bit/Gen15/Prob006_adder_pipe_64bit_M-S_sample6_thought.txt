@@ -1,0 +1,9 @@
+Simplify the pipelined 64-bit ripple carry adder by dividing the addition into 8 stages of 8 bits each, each stage registering its sum and carry out. Instead of storing full 64-bit inputs at each pipeline stage, only propagate partial sums and carries.
+
+On each clock cycle with enable, stage 0 adds bits [7:0] with carry in 0. On subsequent cycles, each stage adds its 8-bit slice plus carry from previous stage's carry register. Pipeline registers store partial sums and carries.
+
+The output is assembled from all 8 sum segments plus the final carry after 8 pipeline stages, with a delayed output enable.
+
+Reset clears all pipeline registers and outputs.
+
+This design reduces register usage and complexity by avoiding propagating full input operands through the pipeline, only partial sums and carries, and cleanly pipeline the carry ripple through 8 stages.

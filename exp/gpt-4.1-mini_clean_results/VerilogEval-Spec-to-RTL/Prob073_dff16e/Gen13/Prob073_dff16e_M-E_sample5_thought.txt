@@ -1,0 +1,7 @@
+Instead of using two separate 8-bit registers with conditional updates, I will implement a single 16-bit register and use byte-enable controlled write masking to selectively update bytes. The D flip-flops will all be clocked together on the positive edge of clk with synchronous active-low reset. 
+
+On each clock cycle, if reset is active, the entire 16-bit register resets to zero. Otherwise, the next state is calculated by combining the existing register bits and the new input data bits based on byteena. Specifically, for each byte, if the corresponding byteena bit is asserted, the register byte is updated from the input d; otherwise, the byte remains the same.
+
+This byte-wise masking approach keeps the register implementation simple (one 16-bit register) while achieving byte-level write enables. It can potentially reduce area by using a single register, and avoid extra registers and combinational concatenation. This design also guarantees glitch-free outputs since q is updated only synchronously.
+
+The synchronous reset clears the whole 16 bits simultaneously, keeping behavior straightforward.

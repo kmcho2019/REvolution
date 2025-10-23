@@ -1,0 +1,9 @@
+To improve the PPA metrics, I will focus on reducing the critical path delay and power consumption by simplifying and partially parallelizing the carry logic.
+
+Instead of deeply nested if-elses which create a sequential carry chain, I will use a ripple carry approach with intermediate signals that generate carry enables between digits. This allows synthesis tools to optimize carry chains better.
+
+I will separate the carry generation and digit increments in a way that reduces logic depth. Also, I will use non-blocking assignments carefully for all sequential logic.
+
+To reduce power, the digits only update when incremented, so I will only update digits that change. Enable signals will be updated combinationally based on carry propagation signals.
+
+This approach keeps synchronous reset and meets the interface requirements but reduces logic depth and switching activity, improving timing and potentially reducing power and area.

@@ -1,0 +1,15 @@
+The main problem lies in the timing of output assignment for dout_parallel. Since the shift_reg is updated with a non-blocking assignment, its new value is not available until after the always block completes. Therefore, using {din_serial, shift_reg[7:1]} to assign dout_parallel inside the same clock cycle does not reflect the fully updated shift register state.
+
+To fix this, we should first shift the data into shift_reg as usual. Then, when cnt reaches 7 (meaning the 8th bit has just been received and shift_reg contains the complete data), assign dout_parallel from shift_reg directly instead of recomputing the shifted value.
+
+This ensures the output parallel data corresponds exactly to the correctly shifted data stored in shift_reg.
+
+Implementation steps:
+- On din_valid high, shift in din_serial to the MSB of shift_reg and shift right by one bit.
+- Increment cnt from 0 to 7.
+- When cnt == 7 (all 8 bits received), assign dout_parallel <= shift_reg and dout_valid <= 1 in the same cycle.
+- Reset cnt to zero after outputting.
+- dout_valid is default low otherwise.
+- Use synchronous reset.
+
+This correction resolves the timing mismatch and allows dout_valid to properly assert, ensuring correct detection by downstream logic or testbench.

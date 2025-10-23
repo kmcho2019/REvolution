@@ -1,0 +1,10 @@
+The original design is fundamentally correct, detecting the 0→1→0 pulse pattern with a three-state FSM. The output data_out asserts one clock cycle at the end of the pulse upon the transition from S2 to S0.
+
+To clarify and slightly improve the code:
+- Keep the 2-bit state encoding as it is efficient and sufficient.
+- Use synchronous reset only (on posedge clk) to simplify timing (avoiding asynchronous reset).
+- Assign data_out within the clocked always block to keep synchronous logic and avoid glitches.
+- Preserve data_out assertion for one clock cycle only at the pulse end.
+- Minor code cleanup to improve readability and coding style.
+
+These changes maintain the functionality and meet the requirements, ensuring stable, glitch-free synchronous operation.

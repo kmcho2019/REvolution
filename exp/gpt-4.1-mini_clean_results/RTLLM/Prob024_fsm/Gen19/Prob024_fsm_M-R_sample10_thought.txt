@@ -1,0 +1,9 @@
+I will refactor the FSM by separating the state register update and the combinational next state calculation into distinct always blocks and using continuous assign statements for next state logic and MATCH output. This approach emphasizes a more modular and explicit structure:
+
+- Use a separate combinational always block to calculate next_state based on current state and input, without using a case statement but rather nested if-else conditions.
+- Use a continuous assign statement for the MATCH output reflecting Mealy behavior, asserted only on the final input bit of the sequence in the correct state.
+- Keep the synchronous state update in an always @(posedge CLK) block with synchronous reset.
+- The refactoring provides an alternate structural coding style that is still synthesizable, easy to verify, and clear in intent.
+- The FSM functionality, overlapping detection, and output assertion conditions remain unchanged, ensuring correctness.
+
+This code structure might improve readability and debugging for designers who prefer if-else logic over case statements and highlights the Mealy output generation cleanly.

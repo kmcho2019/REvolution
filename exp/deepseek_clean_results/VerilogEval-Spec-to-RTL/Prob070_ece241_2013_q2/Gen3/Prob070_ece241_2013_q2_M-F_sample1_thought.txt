@@ -1,0 +1,29 @@
+To fix the POS implementation, we need to properly derive the product-of-sums form from the truth table requirements:
+
+1. Truth Table Analysis:
+   - Output 1 cases: 2 (0010), 7 (0111), 15 (1111)
+   - Output 0 cases: 0 (0000), 1 (0001), 4 (0100), 5 (0101), 6 (0110), 9 (1001), 10 (1010), 13 (1101), 14 (1110)
+   - Don't-cares: 3,8,11,12
+
+2. POS Derivation:
+   - For each output 0 case, create a maxterm where variables are ORed (with inversion if input is 1)
+   - Then find the minimal product of these maxterms
+   - Using don't-cares to simplify where possible
+
+3. Correct POS Expression:
+   - From output 0 cases, we get maxterms:
+     - 0: a+b+c+d
+     - 1: a+b+c+d'
+     - 4: a+b'+c+d
+     - 5: a+b'+c+d'
+     - 6: a+b'+c'+d
+     - 9: a'+b+c'+d
+     - 10: a'+b+c+d'
+     - 13: a'+b'+c+d'
+     - 14: a'+b'+c'+d
+   - After minimization (using don't-cares where helpful):
+     - Final POS: (a+b)(a'+c)(b'+c+d)(b'+c'+d')
+
+4. Implementation:
+   - Keep the correct SOP implementation
+   - Replace the POS with the properly derived form

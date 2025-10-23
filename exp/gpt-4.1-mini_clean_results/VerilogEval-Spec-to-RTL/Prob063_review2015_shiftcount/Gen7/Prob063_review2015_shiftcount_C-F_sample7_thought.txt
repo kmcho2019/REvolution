@@ -1,0 +1,14 @@
+Combine the clarity of explicit next-state combinational logic from both examples with an improved, streamlined priority encoding that aligns exactly with the MSB-first shifting as per the spec (shift data into the MSB). The key difference is to shift the register right, inserting the data bit into the MSB, which truly reflects MSB-first shifting (previous examples shifted left and inserted data into LSB).
+
+Also, retain separation of combinational and sequential logic to ease synthesis and readability.
+
+This fusion:
+
+- Uses explicit `next_q` combinational logic with a clear priority: if shift_ena, do MSB-first shift right with `data` inserted at MSB;
+- else if count_ena, decrement the 4-bit value;
+- else retain the current state.
+- On clock edge, update `q` with `next_q`.
+  
+This approach fully respects the MSB-first shift direction, cleanly separates logic, and prioritizes shift over count, as the problem allows.
+
+This is superior by adhering precisely to the problem description (MSB-first input), improving semantic clarity, and maintaining synthesis-friendly structure.

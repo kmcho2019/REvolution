@@ -1,0 +1,11 @@
+To simplify the implementation while maintaining correct functionality:
+1. First, clarify the input mapping: The K-map shows x[3]x[4] vs x[1]x[2], but the interface specifies x[3:0]. We'll assume x[4] is a typo and use x[0] as the LSB (x[3:0] = {x[3],x[2],x[1],x[0]}).
+
+2. Analyze the K-map patterns:
+   - f=1 when (x[3] is high AND x[1] is low) OR (x[3] is low AND x[0] is high AND x[1] AND x[2] are high)
+   - This covers all required 1's while optimally using don't-cares
+
+3. The simplified expression is:
+   f = (x[3] & ~x[1]) | (~x[3] & x[0] & x[1] & x[2])
+
+This matches all specified output requirements while being minimal.

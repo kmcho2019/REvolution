@@ -1,0 +1,19 @@
+To design a novel sequence detector for the sequence "1001," I will implement a Mealy FSM instead of a Moore FSM. This means the output will be combinational and depends on both the current state and the input, allowing potentially faster and one-cycle output pulse without waiting for a state register update.
+
+The FSM will have the same five states as before (IDLE, S1, S2, S3, S4), but we can reduce S4 as it mainly signals the detection event.
+
+The key differences in this approach:
+
+1. Use a Mealy machine where the output `sequence_detected` is asserted combinationally based on the current state and input, producing a pulse at the exact clock cycle the last bit of the sequence is detected.
+
+2. Use a one-hot encoded state machine for better timing performance in FPGA/ASICs, where each state corresponds to one flip-flop, enabling simpler next-state logic with only AND/OR gates and less combinational depth.
+
+3. Use asynchronous active-low reset to immediately clear the state on reset, preferred in some design flows for faster reset response.
+
+4. Overlapping sequences are allowed by carefully designing transitions, so after detection, the FSM can move to a proper intermediate state if the sequence input bits can begin a new detection immediately.
+
+This Mealy+one-hot combination can yield lower latency detection with a smaller combinational delay for output and better timing performance, improving critical path timing.
+
+The output is not registered but combinational, so downstream logic can latch it if a registered output pulse is required. This reduces register count and power.
+
+This approach contrasts with the prior synchronous Moore FSM with registered outputs.

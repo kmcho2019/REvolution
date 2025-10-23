@@ -1,0 +1,11 @@
+Instead of directly using the input y bits for Y1 and Y3, the idea is to first generate intermediate signals representing which states are currently active and whether the input w is 0 or 1. Then use these intermediate signals to explicitly define the next-state logic for Y1 (state B) and Y3 (state D). This approach clarifies the FSM transitions, makes the code more readable, and could help future modifications or expansions.
+
+Specifically:
+- Define signals for current states A, B, C, D, E, F from y bits.
+- Define signals w0 = ~w and w1 = w.
+- Express Y1 (input for y[1], state B) as: From A(0) to B on w=1.
+  So, Y1 = A & w1.
+- Express Y3 (input for y[3], state D) as: From B(0), C(0), E(1), F(1) to D on w=0.
+  So, Y3 = (B | C | E | F) & w0.
+
+This approach makes the FSM transitions explicit and modular.

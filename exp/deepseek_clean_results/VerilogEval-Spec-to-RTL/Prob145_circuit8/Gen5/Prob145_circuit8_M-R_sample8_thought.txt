@@ -1,0 +1,12 @@
+After carefully analyzing the waveform again, I realize the behavior is more complex than a simple sequential assignment. The key observations are:
+
+1. Output p is high only when 'a' is high at a positive clock edge, but only after certain conditions (not every time)
+2. Output q becomes high one cycle after p was high, regardless of current 'a'
+3. Both outputs maintain their values until the next positive clock edge
+4. There's a clear state transition pattern where q follows p's previous state
+
+The refactored design will:
+1. Use continuous assignments for outputs to make the logic more explicit
+2. Implement a simple state machine with just one state bit (prev_p)
+3. Update state synchronously on clock edges
+4. Make the output logic more transparent by separating combinational and sequential parts

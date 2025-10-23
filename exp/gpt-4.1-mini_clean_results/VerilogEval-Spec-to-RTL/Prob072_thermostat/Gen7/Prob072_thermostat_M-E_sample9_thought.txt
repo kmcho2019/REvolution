@@ -1,0 +1,11 @@
+Instead of directly assigning heater and aircon based on mode and temperature conditions, I will implement an explicit state machine-like approach within combinational logic to distinguish four conditions:
+
+- Heating mode too cold: heater on, aircon off.
+- Cooling mode too hot: aircon on, heater off.
+- Otherwise: heater and aircon off.
+
+Then the fan is on if heater or aircon is on or fan_on is active.
+
+This alternative approach uses internal signals representing "heating required" and "cooling required" conditions, then assigns outputs accordingly. It structures the combinational logic more explicitly with intermediate signals, which can improve code clarity for debugging and potential future extension.
+
+This is architecturally distinct from the direct assignment approach and uses an explicit decision block style rather than simple boolean expressions.

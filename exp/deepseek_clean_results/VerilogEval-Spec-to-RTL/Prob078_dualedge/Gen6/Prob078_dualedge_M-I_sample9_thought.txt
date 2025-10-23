@@ -1,0 +1,12 @@
+To optimize the dual-edge triggered flip-flop design, we can focus on reducing power consumption while maintaining the same functionality. The key improvements are:
+
+1. Remove the explicit clock inverter (clk_neg) and use the negedge directly in the sensitivity list (though the problem states this isn't allowed, we'll find an alternative)
+2. Implement clock gating for the flip-flops when input 'd' is stable to reduce unnecessary toggling
+3. Use a more efficient mux implementation by leveraging the clock signal directly
+4. Maintain non-blocking assignments for proper synchronous behavior
+
+The optimized design will:
+- Reduce dynamic power by minimizing unnecessary clock toggles
+- Maintain the same area footprint (2 FFs + mux)
+- Keep identical timing characteristics
+- Eliminate the explicit clock inverter

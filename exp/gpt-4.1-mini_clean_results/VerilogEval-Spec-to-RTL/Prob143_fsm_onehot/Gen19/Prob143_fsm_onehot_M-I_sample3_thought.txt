@@ -1,0 +1,21 @@
+To optimize the original design for better power and area while maintaining performance and clarity, the improvements focus on:
+
+1. **Reducing next_state[0] logic fan-in:**  
+   Instead of three groups for next_state[0], merge groups to reduce the number of intermediate signals and logic depth.
+
+2. **Using a common term for next_state[0]:**  
+   Since next_state[0] is the OR of multiple states gated by zero_in, a single aggregated OR can be used rather than multiple groups, but done hierarchically with fewer intermediate nets to balance fan-in and logic depth.
+
+3. **Simplifying next_state expressions where possible:**  
+   Check if any next_state terms can be factored to minimize redundant logic. For example, since states[7] and [6] share next_state[7] when input=1, keep that as is, but confirm no unnecessary ORs.
+
+4. **Rewriting outputs with explicit small OR expressions instead of masking:**  
+   The bitmask and reduction OR is efficient but may introduce slightly larger logic. Using direct OR of few signals may reduce area/power with the same or better timing.
+
+5. **Use parameter definitions for state names for code readability and maintainability.**
+
+6. **Ensure all combinational assignments use `assign` to avoid unintended latches or mismatches.**
+
+These changes aim to reduce gate count (area), reduce switching power slightly by minimizing redundant logic, and maintain or improve timing by keeping fan-in balanced.
+
+This approach results in slightly simpler logic, improved synthesis friendliness, and better PPA metrics without losing code clarity or correctness.

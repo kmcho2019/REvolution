@@ -1,0 +1,7 @@
+To address the issue in the provided radix-2 divider code, we need to focus on the discrepancy between the port names used in the module definition and those potentially used in the testbench or instantiation. The error message indicates that a port named `res_ready` is being referenced, which does not exist in the module definition. Instead, the module uses `res_valid` to signal that the result is ready. 
+
+The fix involves ensuring that all port names used in the instantiation of the `radix2_div` module, including any testbench or higher-level modules, exactly match the port names defined in the module itself. This means replacing any references to `res_ready` with `res_valid` to maintain consistency.
+
+Additionally, we should review the module's logic to ensure it correctly handles the division process for both signed and unsigned integers. This includes verifying the initialization of the shift register, the updating of the quotient and remainder, and the management of the `res_valid` signal to accurately reflect when the result is ready for consumption.
+
+By correcting the port name discrepancy and confirming the logic's accuracy, we can ensure the radix-2 divider module functions as intended, providing reliable division operations for both signed and unsigned integers.

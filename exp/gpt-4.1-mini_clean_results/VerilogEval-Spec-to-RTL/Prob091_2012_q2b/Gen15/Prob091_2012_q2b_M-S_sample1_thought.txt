@@ -1,0 +1,9 @@
+By examining the FSM transitions and one-hot encoding, we see that the next-state input for y[1] (state B) is only active when in state A (y[0]) and input w=1, so Y1 = y[0] & w.
+
+For y[3] (state D), the next state logic is activated in cases where either from B, C, E, or F with w=0, or from D with w=0 or w=1 causing transitions into D. Checking the FSM shows that D is entered from B,C,E,F or back to A through D itself when w=0.
+
+Since y is one-hot, and only one bit is high, transitions to D occur when w=0 and the current state is not B (y[1]), C (y[2]), or E (y[4]) or F (y[5]). But the original solution used ~w & ~y[0] & ~y[3], which can be simplified by noting the next state D occurs when w=0 and not in states A or D. Therefore, we keep Y3 = ~w & ~y[0] & ~y[3] as minimal.
+
+However, further simplification is possible by recognizing that y[1], y[2], y[4], and y[5] are "don't care" for Y3, so Y3 depends only on ~w and ~y[0] and ~y[3]. Since this is already minimal, we can write direct assign statements without a separate module for compactness.
+
+Thus, the simplification involves removing the separate NextStateInput module and writing the two output logic expressions directly in TopModule using simple continuous assignments.

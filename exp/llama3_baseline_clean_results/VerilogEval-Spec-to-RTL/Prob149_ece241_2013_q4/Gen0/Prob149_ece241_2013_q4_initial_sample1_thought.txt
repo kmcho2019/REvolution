@@ -1,0 +1,9 @@
+To implement the TopModule, we will use a state machine that keeps track of the current water level and the previous water level. We will use the input signal 's' to determine the current water level. Based on the current water level and the previous water level, we will determine the flow rate. The flow rate will be controlled by the output signals 'fr2', 'fr1', 'fr0', and 'dfr'. We will use an active-high synchronous reset to reset the state machine to the initial state.
+
+We can use a 2-bit state register to keep track of the previous water level. The state machine will have the following states:
+- State 0: All sensors are deasserted (previous water level was low)
+- State 1: Only sensor s[0] is asserted (previous water level was between s[1] and s[0])
+- State 2: Sensors s[0] and s[1] are asserted (previous water level was between s[2] and s[1])
+- State 3: All sensors are asserted (previous water level was above s[2])
+
+We will use a case statement to determine the next state and the output signals based on the current state and the input signal 's'.

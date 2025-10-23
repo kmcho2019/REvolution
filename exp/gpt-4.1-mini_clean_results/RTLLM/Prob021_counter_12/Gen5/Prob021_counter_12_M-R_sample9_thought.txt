@@ -1,0 +1,5 @@
+Refactor the counter design to use a synchronous reset and clock, keeping the clock clean (no gating), and implement counting control using an enable signal inside the always block. To maintain the core logic, use a combinational next-state logic approach where the next count value is computed in a separate always_comb block, and then registered on the positive clock edge with synchronous reset and enable.
+
+This approach clearly separates combinational next-state logic and sequential state update, improving readability, making timing closure easier, and avoiding clock gating pitfalls. The counter increments only when valid_count is high; otherwise, it holds its current value. Upon reaching 11, it wraps to 0. Reset (rst_n) is active low and synchronous.
+
+This structure is functionally equivalent to the original but uses a next-state logic style and synchronous reset, which is common in robust RTL designs.

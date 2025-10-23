@@ -1,0 +1,13 @@
+Implement a fixed-point subtractor explicitly separating sign and magnitude to handle the detailed sign and zero handling requirements.
+
+1. Extract sign bits and magnitude (absolute value) for inputs a and b.
+2. If signs are the same, perform magnitude subtraction; the result sign is the same as inputs.
+3. If signs differ, perform magnitude addition:
+   - The result sign is sign of the operand with larger magnitude.
+4. Use an internal register `res` to store the intermediate result.
+5. After computing the magnitude and sign, reassemble the signed fixed-point result in two's complement format.
+6. Explicitly detect zero result and force the sign bit to 0.
+7. This approach emulates sign/magnitude arithmetic with precise control over sign and zero handling, matching problem requirements.
+8. The output is registered for stable timing and synthesis friendliness.
+
+This design is combinational except for the registered output, aligning with typical design methodologies requiring registered outputs for timing closure.

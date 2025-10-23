@@ -1,0 +1,7 @@
+A novel approach is to use a counter-based FSM that tracks the progress through the sequence. Instead of storing previous bits, we'll use states to represent how much of the pattern we've seen so far. The key insight is that we only need to track partial matches:
+
+1. State S0: No relevant bits seen or reset state
+2. State S1: First '1' detected
+3. State S2: '10' detected (waiting for final '1')
+
+This approach minimizes state transitions while maintaining the Mealy property. The output z is asserted only when we're in state S2 and receive a '1', indicating completion of the "101" sequence. This method is more efficient than shift registers for longer patterns and clearly shows the sequence progression.

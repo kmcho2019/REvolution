@@ -1,0 +1,5 @@
+Refactor the FSM using a Moore FSM style with explicit next-state and output logic separated combinationally from state registers.  
+Use a single always_ff block for state and counters update on posedge clk with synchronous reset, and a separate always_comb block to compute next_state, next counters, and next output z.  
+Use a 2-bit cycle counter and 2-bit w counter as before, but update them with next_* signals.  
+Output z is registered but computed combinationally as z_next, updated one cycle after counting three w inputs.  
+This style improves clarity by cleanly separating sequential state updates from combinational next-state and output logic, making the FSM easier to understand and potentially synthesize with better timing and less glitches.

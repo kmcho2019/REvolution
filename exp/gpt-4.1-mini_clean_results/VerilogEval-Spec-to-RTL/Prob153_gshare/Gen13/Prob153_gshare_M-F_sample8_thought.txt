@@ -1,0 +1,23 @@
+To fix the functional mismatch issues, the key change is to properly capture and store the GHR value used for the prediction request at the time of the request, so that `predict_history` can output exactly the history that was used to compute the prediction index. This means latching `ghr` along with `predict_valid`, `predict_index`, and the predicted taken bit into registers on the clock edge.
+
+Specifically:
+
+- Add a register `predict_history_reg` to store the GHR used in the last prediction request.
+
+- On clock edge, when `predict_valid` is high, store `ghr` into `predict_history_reg`, alongside other prediction info.
+
+- `predict_taken` and `predict_history` outputs become purely combinational and reflect the last registered prediction request, i.e., the stored values from the last clock.
+
+- The prediction request combinational output for the *current* prediction remains combinationally derived from current `ghr` and PHT for immediate response, but the outputs tied to the registered prediction info are the signals to the rest of the processor.
+
+- The `predict_taken_reg` and `predict_history_reg` are used to update the `ghr` in the next cycle by shifting in the predicted taken bit.
+
+- Prioritize training misprediction recovery of `ghr` in the sequential block, as before.
+
+- The PHT update on training remains unchanged.
+
+- This ensures the prediction outputs reflect the state of the predictor exactly at prediction time (using the latched GHR), and that the GHR update for prediction uses the predicted bit from that prediction request (not from current combinational signals).
+
+- The reset behavior and initialization remain the same.
+
+This approach fully aligns the outputs `predict_taken` and `predict_history` with the historical GHR and prediction value that were used to index the PHT, eliminating timing mismatches and following the design spec.

@@ -1,0 +1,8 @@
+The output q can be implemented as the output of a combinational decoder that maps the 3-bit input 'a' to the 16-bit output as a fixed ROM lookup table. To create a different architectural approach, instead of using a flat LUT or two smaller LUTs, I will implement the ROM as a single case statement inside a combinational always block. This case-based lookup mimics a ROM without explicit array storage. It is straightforward, easily synthesizable, and often produces optimized combinational logic in synthesis tools. The case statement directly maps each input value to the corresponding 16-bit constant output derived from the waveform.
+
+This approach also makes it trivial to extend or modify outputs if necessary and avoids multiple wire declarations.
+
+Implementation steps:
+- Use an always_comb block triggered by input 'a'.
+- Use a case statement to assign the output 'q' according to the input 'a' values 0 to 7.
+- For all other inputs (like unknown or unused values), assign q to zero or default value.

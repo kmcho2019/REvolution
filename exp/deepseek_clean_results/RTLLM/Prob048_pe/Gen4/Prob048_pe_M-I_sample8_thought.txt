@@ -1,0 +1,12 @@
+Improvement Strategy:
+1. Pipelining: Split the MAC operation into two stages (multiply and accumulate) to improve timing
+2. Power Optimization: Remove redundant operand isolation logic since reset already handles clearing
+3. Area Reduction: Use 32-bit multiplication directly since we only need 32-bit result
+4. Timing Optimization: Register intermediate multiplication result to break critical path
+5. Reset Simplification: Use synchronous reset only on accumulator register
+
+Key Changes:
+- Added pipeline register for multiplication result
+- Removed unnecessary 64-bit product and truncation
+- Simplified reset logic
+- Maintained same functionality with better timing characteristics

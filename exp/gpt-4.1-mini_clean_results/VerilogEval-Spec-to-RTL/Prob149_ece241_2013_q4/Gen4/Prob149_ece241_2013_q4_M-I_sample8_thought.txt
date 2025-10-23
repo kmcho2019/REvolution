@@ -1,0 +1,15 @@
+To correctly detect rising water levels and assert the supplemental flow valve (dfr), rely on an explicit ordering of water levels defined by state encoding (BELOW=0, BETWEEN_1_0=1, BETWEEN_2_1=2, ABOVE=3) and assert dfr only when the current state is strictly greater than the previous state. This monotonic ordering matches the water level from lowest to highest.
+
+To ensure robust transitions and to avoid ambiguity from invalid or unexpected sensor patterns, revise the decode_region function to map any partial or unexpected sensor pattern into the closest valid state by checking sensor bits in descending order, prioritizing higher water levels first. This avoids inconsistent or fuzzy transitions.
+
+Ensure the synchronous reset properly initializes both current and previous states to BELOW with all flow valves asserted (fr0, fr1, fr2, and dfr = 1).
+
+Also, keep the output combinational logic simple and clearly match the nominal flow valve states according to the problem table.
+
+This design guarantees that:
+- The state encoding is monotonic and consistent for dfr comparison.
+- The supplemental valve opens only when level rises (current > previous).
+- Reset state corresponds to lowest water level (BELOW) with all valves open.
+- Sensor decoding handles all possible input patterns robustly by prioritizing highest water levels first.
+
+This approach resolves the main issue with incorrect dfr signaling while preserving original output logic.

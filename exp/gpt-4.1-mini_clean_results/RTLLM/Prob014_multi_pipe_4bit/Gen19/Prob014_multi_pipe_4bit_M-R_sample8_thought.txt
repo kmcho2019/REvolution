@@ -1,0 +1,11 @@
+Refactor the 4-bit pipeline multiplier by clearly separating pipeline stages with synchronous registers using only positive clock edge-triggered always blocks with synchronous active-low reset, removing asynchronous reset from the always block sensitivity lists.
+
+- Inputs are extended synchronously into pipeline registers.
+- Stage 1 pipeline registers capture the partial products generated combinationally from inputs.
+- Stage 2 pipeline registers sum pairs of partial products synchronously.
+- Final output register sums the Stage 2 sums synchronously and outputs the result.
+- Use packed arrays of wires and registers compatible with plain Verilog by declaring 2D reg arrays carefully.
+- Avoid asynchronous reset by using synchronous reset inside always @(posedge clk) blocks, which is better for synthesis and simulation consistency.
+- Remove multiple always blocks sensitive to both clk and negedge rst_n to avoid race conditions.
+- Register input operands to stabilize input during multiplication pipeline.
+- This approach keeps the original pipeline structure and data flow but implements synchronous reset and simpler, safer clock domain crossing.

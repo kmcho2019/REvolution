@@ -1,0 +1,7 @@
+The issue with the provided code lies in the timing of the calculation of the output 'z'. The current implementation calculates 'z' continuously, which can cause mismatches because the registered states 'xor_q', 'and_q', and 'or_q' are updated at the positive edge of the clock. 
+
+To fix this, we need to ensure that the calculation of 'z' is done at the same time as the update of the registered states, i.e., at the positive edge of the clock. 
+
+One possible solution is to move the calculation of 'z' inside the same always block where the registered states are updated. This way, 'z' will be calculated immediately after the registered states are updated, ensuring that 'z' reflects the correct state of the system.
+
+Additionally, to improve the PPA metrics, we can consider using a single always block for both sequential and combinational logic related to 'z', which would help in reducing the switching activity and thus power consumption.

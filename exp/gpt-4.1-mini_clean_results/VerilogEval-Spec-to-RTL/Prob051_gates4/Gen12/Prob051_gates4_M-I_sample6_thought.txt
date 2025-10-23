@@ -1,0 +1,17 @@
+The original design is already minimal and optimal for a 4-input AND/OR/XOR combinational logic block using reduction operators. Given the extremely low area (16.0 um²) and power (0.000691 W) metrics with zero timing slack, there is little room for meaningful RTL-level PPA improvement.
+
+However, for a slight enhancement in power and area in an ASIC flow, we can:
+
+- Use an explicit wire declaration for intermediate signals if beneficial for the synthesis tool.
+- Use a generate block to break down the XOR operation into pairwise XORs, potentially helping some tools create better balanced XOR trees with minimal area and delay.
+- Keep parameterization for scalability.
+- Add the "wire" keyword explicitly for clarity (although optional).
+- Optionally apply synthesis attributes to encourage tool optimizations, but this depends on the environment and is often tool-specific.
+
+Overall, the impact will be minimal, but a balanced XOR tree can marginally improve delay and power for XOR in some flows by avoiding a four-input XOR gate implementation and replacing it with three 2-input XOR gates.
+
+Therefore, the improvement strategy focuses on explicitly implementing the XOR as a balanced tree while keeping AND and OR as reductions for minimal logic.
+
+No registers or additional stages are introduced to maintain combinational minimal delay.
+
+This approach might improve critical path delay for the XOR output without increasing area or power substantially.

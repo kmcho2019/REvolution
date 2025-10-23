@@ -1,0 +1,11 @@
+I will refactor the FSM to use a one-hot encoding for the states instead of 3-bit binary, which can simplify next-state logic and may improve timing at the expense of a few extra flip-flops. 
+
+The state register will be a one-hot encoded 6-bit vector, where only one bit is '1' at any time corresponding to the current state. The synchronous reset will initialize state A (bit 0).
+
+Next-state logic will be implemented using continuous assignments that directly compute next state bits from the current state bits and input `w`. This approach removes the combinational `always` block and avoids the need for a `next_state` register.
+
+The state update will remain synchronous on the positive clock edge with synchronous active-high reset.
+
+The output `z` will be a combinational OR of the bits representing states E and F.
+
+This refactoring emphasizes clearer and potentially faster next-state decoding through one-hot encoding and leverages continuous assignments for next-state logic. It also eliminates the conditional state update logic, ensuring state updates every clock cycle for simpler timing.

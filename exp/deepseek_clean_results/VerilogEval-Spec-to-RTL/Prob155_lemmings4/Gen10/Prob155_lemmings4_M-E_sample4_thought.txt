@@ -1,0 +1,33 @@
+Novel Lemming State Machine Architecture:
+
+1. Hierarchical State Design:
+   - Split into two state machines: Main Activity and Direction
+   - Main Activity: WALK, DIG, FALL, SPLAT (mutually exclusive)
+   - Direction: LEFT, RIGHT (independent of activity)
+
+2. Event-Driven Priority System:
+   - Implement priority encoder for events:
+     1. Falling (ground=0)
+     2. Digging (dig=1 & ground=1)
+     3. Bumping (bump_left/right)
+   - Clear priority handling without complex nested conditions
+
+3. Fall Duration Tracking:
+   - Separate counter for fall duration
+   - Reset when not falling
+   - Only check splatter condition when ground returns
+
+4. Direction Persistence:
+   - Direction preserved during FALL/DIG states
+   - Only updated during WALK state when bumped
+
+5. Output Generation:
+   - Activity outputs derived from Main Activity state
+   - Direction outputs derived from Direction state
+   - Clean separation of concerns
+
+Key Advantages:
+- Clear separation of activity and direction logic
+- Explicit priority handling
+- More maintainable state transitions
+- Better matches problem requirements

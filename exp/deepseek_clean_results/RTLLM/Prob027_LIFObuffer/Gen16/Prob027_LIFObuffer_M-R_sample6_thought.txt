@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. Convert registered outputs to combinational where possible for better timing
+2. Replace the empty_flag register with combinational logic to reduce area
+3. Simplify stack pointer arithmetic by using pre-computed next_SP values
+4. Use continuous assignments for flag generation instead of registered logic
+5. Restructure the control logic to be more explicit about state transitions
+6. Maintain the same functionality while improving timing and area
+
+Key Changes:
+1. EMPTY flag is now purely combinational (SP == 0)
+2. Stack pointer updates use explicit next state logic
+3. Memory writes are gated by valid operations only
+4. Output data is registered but with clearer update conditions
+5. Reduced register usage by eliminating empty_flag

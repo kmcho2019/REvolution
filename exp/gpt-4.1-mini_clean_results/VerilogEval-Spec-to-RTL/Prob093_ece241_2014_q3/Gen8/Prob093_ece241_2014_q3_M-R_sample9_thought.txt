@@ -1,0 +1,13 @@
+Refactor the implementation to use straightforward combinational assign statements for each mux input signal, expressing each function directly as a combination of 2-to-1 multiplexers (mux2to1) and constants, but using fewer intermediate signals and more direct wiring.
+
+This refactoring simplifies the wiring and removes unnecessary intermediate wires (such as not_d), instead embedding their functionality inline within the mux2to1 connections.
+
+Each function is carefully derived from the K-map to correctly reflect the required outputs for each combination of c and d.
+
+We keep the same approach of using mux2to1 to implement AND, OR, and NOT logic, but structure the code with direct instantiations and assign statements without extra intermediate steps, improving clarity and compactness.
+
+This also better aligns each mux input with the corresponding K-map column for ab = 00, 01, 11, 10.
+
+The main idea: implement each function as a cascade of mux2to1s where needed, but connect them directly in the assign statements.
+
+The final mux_in is assigned accordingly.

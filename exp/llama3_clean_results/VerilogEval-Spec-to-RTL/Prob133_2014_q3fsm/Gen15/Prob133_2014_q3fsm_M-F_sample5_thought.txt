@@ -1,0 +1,9 @@
+To address the issues pointed out in the feedback, we need to refine the logic for STATE_B to correctly count the occurrences of w = 1 over the next three clock cycles. This involves resetting the w_count variable at the beginning of each 3-clock cycle and ensuring it accurately reflects the number of times w is high during these cycles. Additionally, we need to adjust the handling of the cycle_count variable to correctly transition between states and ensure that the output z is set based on the count of w being high after the full 3-clock cycle.
+
+We will maintain the same overall structure of the finite state machine, with states STATE_A, STATE_B, and STATE_OUTPUT. The key improvement will be in how we manage the counting of w occurrences and the cycle count within STATE_B, ensuring a correct transition to STATE_OUTPUT only after the full 3-clock cycle has been completed.
+
+The logic for resetting w_count and cycle_count at appropriate times needs to be corrected. Specifically, w_count should be reset to 0 at the beginning of each 3-clock cycle (i.e., when transitioning from STATE_A to STATE_B or from STATE_OUTPUT back to STATE_B), and cycle_count should be incremented each clock cycle in STATE_B, with the state transitioning to STATE_OUTPUT only when cycle_count reaches 3.
+
+In STATE_OUTPUT, the logic for setting z based on w_count is correct, but it should be ensured that this state is reached and exited correctly based on the cycle_count and the reset of variables for the next iteration.
+
+Lastly, considering the synchronous reset, we need to ensure that all variables are correctly reset to their initial values when the reset signal is high, maintaining the design's functionality and correct operation after reset.

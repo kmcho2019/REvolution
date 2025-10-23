@@ -1,0 +1,18 @@
+Implement a gshare branch predictor with a clear separation of speculative and committed states using a pipeline-style staging of outputs to precisely capture the predictor state at prediction time. The idea is:
+
+- Maintain a committed global history register (GHR) updated only on confirmed outcomes (training without misprediction).
+- Maintain a speculative GHR used to make predictions and updated speculatively after each prediction.
+- When a prediction request arrives, produce prediction outputs combinationally from the current speculative GHR and PHT state.
+- The outputs `predict_taken` and `predict_history` are registered to hold stable values and reflect exactly the state of the GHR and PHT when the prediction was made.
+- On the rising clock edge, first update the PHT with the training information (if any).
+- If there is a misprediction indicated by training, rollback speculative GHR to the provided committed GHR snapshot (train_history).
+- If there is a training update without misprediction, update the committed GHR by shifting in the actual branch result; also, update speculative GHR to match committed GHR, discarding speculative history.
+- If there is no training or misprediction recovery, update speculative GHR by shifting in the predicted outcome just made.
+- Output registers only update when `predict_valid` is asserted, otherwise outputs hold steady to avoid glitching.
+- Ensure the prediction outputs reflect the PHT and GHR *before* any update occurs at the clock edge.
+- To guarantee the outputs correspond to the prediction state before updates, we latch them *at the clock edge* using signals computed *before* the update logic.
+- Handle priority cleanly: training misprediction recovery > training update > prediction update.
+- Carefully handle the case when training and prediction happen simultaneously.
+- This method avoids double registering or complex stall logic, ensuring outputs correctly reflect the prediction cycle state.
+
+This approach keeps state machines simple, leverages synchronous registers for output stability, and guarantees outputs match the predictor state at prediction time exactly.

@@ -1,0 +1,12 @@
+To improve PPA, particularly area and power, we can leverage the fact that a 4-input NAND gate can be implemented as a single gate in many standard cell libraries, but since this is a pure RTL description, we can reduce logic levels and gate count by using a behavioral approach with a single NAND4 primitive-like module.
+
+However, the initial solution already uses a 4-input NAND primitive which is minimal in logic and clear in intent.
+
+To optimize further, we can:
+
+1. Avoid a separate nand4 module and instead use built-in Verilog reduction operators, which synthesis tools can map directly to efficient gates.
+2. Use a single line assign with reduction NAND (~&) operator to implement the NAND function compactly.
+3. This reduces code verbosity and potentially synthesis complexity while preserving clarity.
+4. The assign statements directly use the ~& operator, which is a Verilog reduction NAND, equivalent to NAND of all inputs, enabling the synthesizer to infer minimal gates.
+
+This should slightly improve synthesis efficiency by letting the tool infer optimized NAND gates directly without module overhead, potentially improving area and power, while not harming timing.

@@ -1,0 +1,11 @@
+Fuse the clear case statement style and safe default assignments for next state from Example 2 with the minimal-area 2-bit localparam encoding and the direct Mealy output logic style from Example 1 to ensure minimal combinational delay and optimal synthesis results. Keep the output logic purely combinational and simple (assigning z directly from the Mealy condition without unnecessary defaults inside an always block) to reduce logic levels and ensure minimal latency on the output. Preserve the asynchronous negative-edge reset triggered on the clock's positive edge as in both examples for fast, reliable reset. This fusion yields a highly synthesis-friendly, compact, and clean three-state Mealy FSM that detects "101" with overlapping sequence support, minimal area, and good timing.
+
+In brief:
+
+- Use `case` with default next_state = current state for clear and latch-free next-state logic.
+- Mealy output logic implemented as a simple combinational assignment expression (from Example 1) for minimal latency and clean synthesis.
+- Keep 2-bit localparam state encoding.
+- Asynchronous negative-edge reset on the posedge clock.
+- Overlapping detection by returning to S_1 on detection.
+
+This approach merges the clarity and safe coding style of Example 2 with the minimal latency output logic and slightly better PPA traits of Example 1.

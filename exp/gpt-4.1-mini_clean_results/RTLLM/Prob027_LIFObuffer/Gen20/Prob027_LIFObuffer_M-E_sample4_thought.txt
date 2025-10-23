@@ -1,0 +1,12 @@
+A different architectural approach is to use the stack pointer (SP) counting upward from 0 (empty) to 4 (full). The stack pointer indicates the number of valid entries currently stored.
+
+- On a push (write, RW=0), if not full, store dataIn at stack_mem[SP], then increment SP.
+- On a pop (read, RW=1), if not empty, decrement SP, then output the data from stack_mem[SP].
+- This eliminates the need for subtracting in the push indexing and ensures indexing always uses SP directly.
+- Reset sets SP to 0 and clears the stack memory and dataOut.
+- The EMPTY flag is when SP==0; FULL is when SP==4.
+- On clock enable and reset, synchronous operations update SP and stack_mem accordingly.
+- dataOut updates only on pop to reduce toggling.
+- This scheme is intuitive and often easier to verify.
+
+This design uses non-blocking assignments and a straightforward pointer scheme, improving code clarity and potentially timing by avoiding subtraction in the index calculation.

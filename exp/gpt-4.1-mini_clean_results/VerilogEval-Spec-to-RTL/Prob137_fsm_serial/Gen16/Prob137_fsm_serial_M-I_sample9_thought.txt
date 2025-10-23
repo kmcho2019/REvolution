@@ -1,0 +1,11 @@
+To optimize the design for better power and timing without sacrificing clarity or functionality, implement clock gating on the shift register and bit counter updates so they only toggle during the RECEIVE state when necessary. This reduces unnecessary switching in other states, lowering dynamic power. 
+
+Also, keep the done signal registered and asserted for one clock cycle on successful stop bit detection to maintain timing cleanliness.
+
+No change to FSM states or encoding to keep minimal area and simple control.
+
+Maintain synchronous reset only at the sequential block for reliable startup.
+
+This selective enable approach for shift register and counter updates reduces toggling and can marginally improve timing by lowering capacitance switching, aiding both power and timing metrics.
+
+Overall, the design is already efficient and minimal; this fine-grained clock gating is a common low-overhead optimization for serial FSMs with shift registers.

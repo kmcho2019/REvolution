@@ -1,0 +1,5 @@
+Refactor the design by separating the multiplication and accumulation operations into two stages using a simple two-stage pipeline. First, register the product of 'a' and 'b' in a product register at the rising edge of clk, then accumulate this registered product to the accumulator register 'c' in the next cycle. This reduces the combinational path delay within one clock cycle, potentially improving timing and maximum frequency. The reset remains synchronous and clears both registers.
+
+The output 'c' holds the accumulated value. Saturation on overflow is maintained by checking the 33-bit addition result before storing back to 'c'. The product register and accumulation logic are separated so the multiplier output is stable when added to the accumulator.
+
+This structure uses two always blocks for pipelining and removes combinational addition before the always block, which can simplify timing and synthesis. It also explicitly pipelines the multiply-accumulate operation, improving overall design robustness while maintaining the original functionality.

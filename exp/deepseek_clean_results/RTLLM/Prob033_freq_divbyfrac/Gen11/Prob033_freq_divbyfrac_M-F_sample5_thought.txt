@@ -1,0 +1,23 @@
+Revised Implementation with Correct Phase Shifting:
+
+1. **Core Problem Identification**:
+   - Previous implementation failed to properly create the half-cycle phase shift needed for fractional division
+   - Simple counter delay doesn't achieve the required phase relationship
+
+2. **New Approach**:
+   - Generate two independent clock signals with proper phase relationship
+   - First clock (clk_a) uses positive edge with 4:3 duty cycle
+   - Second clock (clk_b) uses negative edge with same 4:3 duty cycle but offset by half cycle
+   - Combine using OR to create uniform 3.5x divided clock
+
+3. **Key Improvements**:
+   - Separate counters for each phase to maintain correct timing
+   - Proper half-cycle phase shift achieved by using opposite clock edges
+   - Cleaner state machine implementation
+   - Guaranteed uniform output period through correct phase combination
+
+4. **Implementation Details**:
+   - Two 3-bit counters running on opposite clock edges
+   - Identical counting pattern (0-6) for both phases
+   - Same 4:3 duty cycle generation for both clocks
+   - OR combination creates properly spaced output transitions

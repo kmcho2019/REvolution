@@ -1,0 +1,13 @@
+The current implementation uses addition and comparison to detect even parity, which is not the most efficient approach. We can optimize this by:
+
+1. Using XOR gates to directly compute parity, which is more efficient for this purpose
+2. The parity of N bits can be computed by XOR'ing all bits together
+3. Odd parity would be (a ^ b ^ c ^ d)
+4. We want even parity, so we invert the result
+5. This reduces the logic depth from adder+comparator to just XOR gates
+6. This approach will improve all PPA metrics:
+   - Performance: Shorter critical path (just 2 XOR levels)
+   - Power: Fewer gates switching
+   - Area: Fewer gates needed (only 3 XOR gates)
+
+The XOR-based parity checker is the canonical implementation for this function and will be optimal in all aspects.

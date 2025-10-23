@@ -1,0 +1,14 @@
+The original solution uses a separate 2-to-1 multiplexer module to implement the function f = (x3 & x1) | (~x3 & x2), which matches the truth table perfectly. While this is functionally correct and modular, it adds a small overhead for the MUX instantiation and gates.
+
+To optimize for power and area, I will remove the explicit MUX module and implement the boolean function directly using simple combinational logic (AND, OR, and NOT). This removes the need for module instantiation and can be mapped efficiently by synthesis tools into minimal logic, reducing gate count and possibly switching power.
+
+The direct equation based on the truth table is:
+  f = (x3 & x1) | (~x3 & x2)
+
+This is the simplest minimal sum-of-products expression for the function.
+
+This approach yields the same functionality with potentially lower area and power and minimal critical path delay since it is just one OR gate and two AND gates with one inverter.
+
+Hence, the improvement is to implement this direct boolean expression inside TopModule without any submodule.
+
+This maintains perfect functionality while enhancing PPA metrics.

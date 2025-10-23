@@ -1,0 +1,11 @@
+Create a hybrid design that maintains the simplicity and optimality of a direct continuous assignment for minimal power and area, while also preserving modularity and clarity by defining a minimal, inline-able wire primitive module inside TopModule. This approach exposes the wire function as a distinct unit for clarity and potential future reuse or extension, but ensures the synthesis tool can optimize it away easily, matching the performance and area of a direct wire.
+
+Concretely:
+- Define a local (inside TopModule) simple wire-pass-through module that uses a continuous assignment.
+- Instantiate this local module inside TopModule, passing the input to output.
+- The local module is non-parameterized for simplicity since width=1.
+- This maintains modular clarity without external hierarchy or overhead.
+- Synthesis will flatten the hierarchy, yielding optimal PPA similar to a direct assign.
+- Keeps the door open for expanding the primitive if needed, preserving future flexibility.
+
+This fusion combines Example 1’s modularity with Example 2’s minimalism by having the module encapsulated inside TopModule and minimizing parameterization and hierarchy overhead.

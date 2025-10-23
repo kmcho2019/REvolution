@@ -1,0 +1,25 @@
+Improvement Strategy:
+
+1. Pattern Detection:
+- Make pattern detection immediate by checking the shifted value in the same cycle
+- Clear pattern_reg synchronously on reset to ensure clean state
+
+2. Shift Control:
+- Maintain precise 4-cycle shift_ena assertion
+- Use shift_count to track exactly 4 cycles (0-3)
+- Transition to COUNT state immediately after 4th shift
+
+3. State Machine Optimization:
+- Simplify state transitions with clear conditions
+- Ensure outputs are only active in their respective states
+- Add default case for robustness
+
+4. Timing Alignment:
+- Ensure state transitions align with clock edges
+- Make outputs purely combinatorial for immediate response
+
+Key Improvements:
+- Immediate pattern detection by checking {pattern_reg[2:0], data}
+- Precise 4-cycle shift control
+- Clean state transitions with proper synchronization
+- Clear output assignments tied directly to states

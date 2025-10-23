@@ -1,0 +1,15 @@
+Novel Architecture: Dual-Stage Synchronization with Data Hold
+1. Instead of synchronizing just the enable signal, synchronize both data and enable across domains
+2. First stage synchronizes data_in to clk_b domain when data_en is detected
+3. Second stage holds the synchronized data until the enable propagation completes
+4. Uses a handshake-like mechanism where data is only updated when both:
+   - New data is available (data_en synchronized)
+   - Previous data has been successfully captured
+5. This provides better metastability protection for both data and control paths
+6. Reset handling remains independent per clock domain
+
+Key Advantages:
+- More robust synchronization with data+control path protection
+- Clear data validity signaling through the handshake mechanism
+- Maintains low power by only updating when necessary
+- Still meets all timing requirements given the slow data rate

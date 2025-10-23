@@ -1,0 +1,15 @@
+Novel approach using a hierarchical state machine with precise timing control:
+1. Pattern detection uses a parallel state machine that validates bits in sequence
+2. Implement a dedicated 4-bit shift register with enable for delay capture
+3. Use a two-level counter system:
+   - Outer counter tracks (delay+1) chunks
+   - Inner counter counts 1000 cycles per chunk
+4. Derive count output from the outer counter value directly
+5. Optimized state transitions with minimal states but clear separation of concerns
+6. Explicit cycle counting with precise termination conditions
+
+Key innovations:
+- Parallel pattern validation avoids shift register comparison
+- Separate shift register with enable ensures exact 4-bit capture
+- Two-level counting provides natural count output without division
+- Clear state separation between detection, capture, counting, and completion

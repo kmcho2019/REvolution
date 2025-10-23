@@ -1,0 +1,11 @@
+To improve the existing solution, we will focus on simplifying the logic within the always block to reduce power consumption and area while maintaining or improving the timing performance. 
+
+First, we observe that the detector is only set to 1 when the input x is 1 and the detector is 0. After the detector is set to 1, it remains 1 regardless of the input x. This means that once the first 1 is encountered in the input sequence, the detector remains active for all subsequent inputs. 
+
+Second, when the detector is 0, the output z is directly dependent on the input x (z = x), but once the detector is 1, the output z becomes the inverse of the input x (z = ~x). 
+
+Given this observation, we can simplify the logic by eliminating the need for a separate detector variable and instead directly determine the output z based on whether we have seen a 1 in the input sequence before. 
+
+This approach reduces the complexity of the combinational logic and potentially decreases the area and power consumption. Additionally, the simplified logic might also improve the timing performance due to fewer conditional checks and signal propagations.
+
+To further optimize for PPA metrics, we will ensure that all non-blocking assignments are used within the always block to avoid race conditions and ensure sequential logic synthesis correctly.

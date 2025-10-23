@@ -1,0 +1,12 @@
+Here's a novel approach using a thermometer-style encoding scheme combined with priority masking:
+
+1. Instead of finding the rightmost 1, we'll process bits from left to right (MSB to LSB) to naturally implement priority
+2. Create a "mask" that propagates the first found 1 to lower bits
+3. Use this mask to isolate only the highest priority 1 bit
+4. Encode the position directly from this isolated bit
+
+Key advantages:
+- Eliminates the need for arithmetic operations like addition
+- Uses simple AND/OR logic with clear priority flow
+- Naturally handles the all-zero case
+- Potentially better timing as it avoids the adder in the critical path

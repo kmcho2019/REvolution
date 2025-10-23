@@ -1,0 +1,12 @@
+Use a 4-entry circular buffer (ring buffer) with a 2-bit pointer tracking the "top" of the stack. Instead of counting from empty=4 down to 0, we keep a pointer that increments modulo 4 on push and decrements modulo 4 on pop.
+
+- On write (push), if not full, store dataIn at the current pointer position, then increment the pointer (wrap around).
+- On read (pop), if not empty, decrement the pointer (wrap around) first, then output the data at the new pointer position.
+- The count of elements is maintained separately (2 bits enough for 0 to 4 entries).
+- EMPTY when count==0, FULL when count==4.
+- On reset, count=0, pointer=0, memory cleared.
+- This approach simplifies pointer arithmetic, avoids subtraction with SP, and uses modulo-4 pointer with wrap-around for natural circular indexing.
+- dataOut updates only on pop to minimize toggling.
+- All operations gated by EN.
+- Synchronous reset.
+- The circular buffer architecture is often used in FIFO designs but is less typical for LIFO; adapting it as a LIFO by controlling pointer movement cleverly allows minimal logic for push/pop addressing.

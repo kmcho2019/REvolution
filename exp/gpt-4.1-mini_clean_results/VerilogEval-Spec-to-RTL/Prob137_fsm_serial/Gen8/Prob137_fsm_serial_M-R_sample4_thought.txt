@@ -1,0 +1,9 @@
+Refactor the FSM by splitting combinational next-state and output logic into separate always_comb blocks and using a binary-encoded state machine instead of one-hot encoding. This reduces flip-flop count and can simplify next-state logic. Implement done as a registered pulse asserted only during the clock cycle when the stop bit is verified, but separate done register update from state transitions for clearer timing and modularity.
+
+Use an enumerated type for states (IDLE=0, RECEIVE=1, CHECK_STOP=2, WAIT_STOP=3) and keep the shift register and bit counter logic in separate always blocks for better modularity and easier timing optimization.
+
+Keep the data shifted into the LSB first by shifting shift_reg right and loading the new bit into the MSB. This makes shift operation consistent and intuitive.
+
+Use synchronous reset and synchronous state transitions and register updates as before.
+
+This restructuring improves clarity by separating FSM control logic and datapath logic, reduces area by using binary encoding, and can improve timing by minimizing the size and complexity of the combinational always blocks.

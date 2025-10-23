@@ -1,0 +1,12 @@
+Fuse the strengths of both examples by implementing a hierarchical, balanced popcount design that splits the 255-bit input into fifteen 17-bit chunks (like Example 2) for manageable complexity and clear data flow. Use the explicit parallel adder tree structure of Example 2 for the 17-bit popcount modules to optimize clarity and timing within each chunk.
+
+Then, instead of manually summing the partial counts with verbose wires (Example 2), implement a parameterized recursive popcount adder tree module (from Example 1) that can sum the array of partial 6-bit counts in a clean, scalable, and balanced fashion. This recursive summation module will recursively combine partial sums, ensuring a well-balanced addition tree that improves timing and maintainability.
+
+The overall fusion gives:
+- Within-chunk popcount done explicitly and efficiently (Example 2 style).
+- Top-level summation of partial counts using a clean recursive parameterized popcount tree (Example 1 style).
+- All combinational logic with continuous assignments.
+- Balanced adder trees at both chunk and top-level sum stages for good PPA.
+- Reduced code verbosity and improved maintainability via parameterized recursion in top-level summation.
+
+This solution combines the best clarity and performance approaches from both examples.

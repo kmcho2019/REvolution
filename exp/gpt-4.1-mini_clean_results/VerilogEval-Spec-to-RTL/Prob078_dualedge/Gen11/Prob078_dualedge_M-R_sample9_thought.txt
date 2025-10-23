@@ -1,0 +1,7 @@
+To refactor the dual-edge triggered flip-flop, I will replace the parameterized EdgeFF module with two separate explicitly named modules: PosEdgeFF and NegEdgeFF. Each uses a standard always block on the respective clock edge. Instead of using a continuous assign mux based on clk, I will use an always_comb block for the output mux to better illustrate combinational logic and reduce potential glitches by making the mux output combinational and explicitly sensitive to all inputs.
+
+This restructuring enhances code clarity by explicitly naming the edge-triggered FF modules rather than using a parameter and generate, which can help with readability and debugging. Using always_comb for output mux ensures clean combinational logic inference.
+
+The core behavior remains identical: two single-edge FFs sampling on opposite clock edges, and output selected based on clock level, implementing dual-edge triggering. The design stays fully synthesizable for FPGAs.
+
+No inverted clock signals are created; non-blocking assignments are maintained for FFs to keep proper timing behavior.

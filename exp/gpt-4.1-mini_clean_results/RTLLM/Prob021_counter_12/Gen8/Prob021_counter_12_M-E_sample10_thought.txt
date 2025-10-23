@@ -1,0 +1,7 @@
+Implement a 4-bit counter using a synchronous active-low reset and the always_ff style for clarity. Instead of checking the terminal count by bitwise operations, use a simple numerical comparison (out == 11) to detect the wrap-around condition. 
+
+Introduce an internal enable signal derived from valid_count and (out != 11) to control whether the counter increments or resets on the next clock cycle. When out reaches 11 and valid_count is high, reset to zero; otherwise, increment if counting is enabled.
+
+Pause counting (hold current value) when valid_count is low, thus avoiding unnecessary toggling. This approach uses explicit state update logic that is easy to follow, cleanly separating the wrap-around reset condition from the increment logic.
+
+This alternative method favors readability and straightforward arithmetic comparison, which synthesis tools often optimize well, and makes the counting logic explicit and modular.

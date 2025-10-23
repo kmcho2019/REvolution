@@ -1,0 +1,12 @@
+Implement the width conversion using a two-state finite state machine (FSM) that explicitly tracks when the first byte is captured and when the second byte arrives to form the output. On reset, the FSM starts in the IDLE state. When a valid_in arrives, capture the byte in a register and transition to WAIT_FOR_SECOND state. In WAIT_FOR_SECOND state, upon the next valid_in, concatenate the stored byte and the new input, then assert valid_out and data_out in the next clock cycle. The output registers valid_out and data_out are registered, meaning output is generated one cycle after second data input is received. This FSM approach cleanly organizes control, minimizes toggling by only updating output registers when valid output is present, and ensures stable reset behavior.
+
+Key points:
+- FSM with two states: IDLE and WAIT_FOR_SECOND
+- Capture first byte and store in data_lock in IDLE state upon valid_in
+- In WAIT_FOR_SECOND, on valid_in, concatenate and prepare output
+- valid_out and data_out registered and asserted only when output is ready
+- On reset, clear all registers and set state to IDLE
+- Maintain synchronous logic with asynchronous reset
+- Avoid unnecessary toggling by updating valid_out only when data is ready
+
+This method improves clarity, control, and synthesis friendliness by explicitly defining state transitions and output timing.

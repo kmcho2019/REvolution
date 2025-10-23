@@ -1,0 +1,15 @@
+Novel Architecture Idea: Shift Register with State Tracking
+1. Instead of using separate registers for each byte, use a 24-bit shift register that shifts in new bytes
+2. Track the message reception state with a simple counter rather than explicit states
+3. Use the counter to determine when to:
+   - Start capturing (when in[3] is detected)
+   - Continue shifting (while counter < 3)
+   - Output the message (when counter reaches 3)
+4. Reset the counter and shift register when not in message reception mode
+5. This approach minimizes state transitions and reduces control logic complexity
+
+Advantages:
+- Single shift register reduces area compared to separate byte registers
+- Counter-based approach simplifies state management
+- Natural byte ordering in the shift register (newest byte in LSBs)
+- Efficient reset handling by clearing both counter and shift register

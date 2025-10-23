@@ -1,0 +1,13 @@
+Here's a novel approach using a shift register and a counter-based state machine:
+
+1. Use a 16-bit shift register to accumulate input bytes
+2. Implement a 2-bit counter to track byte positions (0=empty, 1=first byte, 2=ready to output)
+3. Shift register loads new bytes from the left (MSB side)
+4. When counter reaches 2, output is valid and counter resets
+5. Reset clears all registers and counter
+6. Advantages:
+   - No explicit flag needed (counter serves dual purpose)
+   - Shift register naturally handles byte ordering
+   - Easily extensible to different width conversions
+   - Clear state progression via counter
+   - Output generation is precisely timed

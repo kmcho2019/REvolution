@@ -1,0 +1,7 @@
+To improve power and glitch reduction, capture the input data into an internal 4-bit register at the start of the serialization cycle (when counter is 0), so that output data is stable and does not glitch due to changes on the input `d` during serialization. This also ensures the output only depends on a registered value, minimizing toggling.
+
+We keep the 2-bit counter from 0 to 3 to select bits from the registered data from MSB to LSB, asserting `valid_out` when the MSB bit is output (cnt == 0). The counter increments on each clock cycle, and resets synchronously.
+
+This approach reduces dynamic power from input glitches propagating, stabilizes output data, and maintains minimal area overhead with just one 4-bit register for data storage.
+
+The counter and valid_out logic are updated accordingly, ensuring `valid_out` goes high only on the MSB output cycle, and the output bit is selected from the registered data, not directly from input `d`.

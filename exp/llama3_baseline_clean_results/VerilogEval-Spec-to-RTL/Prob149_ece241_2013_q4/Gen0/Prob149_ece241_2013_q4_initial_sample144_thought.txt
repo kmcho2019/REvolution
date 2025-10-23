@@ -1,0 +1,11 @@
+To implement the TopModule, we need to design a finite state machine (FSM) that monitors the water level sensors and controls the flow rate accordingly. The FSM will have several states corresponding to the different water levels. We will use the sensor inputs to determine the current state and update the flow rate outputs based on the nominal flow rate table and the sensor change history. The FSM will also be reset to a state equivalent to a low water level when the reset signal is asserted.
+
+The main states of the FSM will be:
+- STATE_BELOW_S0: Water level is below the lowest sensor s[0]
+- STATE_BELOW_S1: Water level is between the lowest sensor s[0] and the middle sensor s[1]
+- STATE_BELOW_S2: Water level is between the middle sensor s[1] and the highest sensor s[2]
+- STATE_ABOVE_S2: Water level is above the highest sensor s[2]
+
+We will also use a variable to track the previous sensor state to determine if the water level is rising or falling.
+
+The flow rate outputs will be updated based on the current state and the sensor change history.

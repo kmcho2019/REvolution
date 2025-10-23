@@ -1,0 +1,12 @@
+Instead of the conventional approach of storing just the previous cycle's value, we can implement a shift register that tracks the last N states of each bit. This allows for more sophisticated edge detection patterns if needed in the future. For this specific requirement (0->1 transition), we only need to look at the last two states, but the architecture is easily extensible.
+
+Key advantages:
+1. Modular design using parameterized shift depth
+2. Can be easily extended to detect more complex patterns (like 0->1->0)
+3. Clear separation of history tracking and pattern detection
+4. Potential for shared shift registers if detecting patterns across bits
+
+The implementation uses:
+1. A shift register array to maintain history
+2. Simple combinational logic for pattern matching
+3. Fully synchronous operation

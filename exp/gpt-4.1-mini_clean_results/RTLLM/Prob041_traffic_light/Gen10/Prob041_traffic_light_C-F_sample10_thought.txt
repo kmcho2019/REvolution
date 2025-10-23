@@ -1,0 +1,12 @@
+Fuse the robust state and timer management of Example 1 with the clean clock gating and simplified combinational logic of Example 2 to build an optimized FSM for the traffic light controller.
+
+Key points of fusion:
+- Use explicit next_state and next_timer combinational logic, as in Example 2, for clarity and synthesis friendliness.
+- Keep a single flag (ped_shortened) to ensure pedestrian shortening applies only once per green phase, from Example 1, but update it only on clock edge to reduce toggling.
+- Introduce clock enable for timer decrement only when timer > 0, preventing unnecessary toggling, inspired by Example 2.
+- Drive outputs from registered state for glitch reduction, as in both examples.
+- Use binary state encoding with parameters for readability and area efficiency.
+- On reset, initialize to RED state with full red duration and reset ped_shortened flag.
+- Pedestrian button shortens green timer to 10 only if remaining green time is greater than 10 and shortening not yet applied.
+
+This fusion achieves clear timing behavior, minimal logic switching, and proper single shortening per green phase, improving power and timing without increasing area.

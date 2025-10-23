@@ -1,0 +1,5 @@
+I will fix the bug by using the standard two's complement subtraction approach: when do_sub is set, I will invert the B input bits, add 1 (through the carry-in), and then add to A. This can be implemented by using a single adder with B XORed with do_sub, and the carry-in set to do_sub. This removes the need for a case statement and ensures the correct result for addition and subtraction.
+
+For the zero flag, instead of assigning it only when ~out (which caused a latch because the else branch is missing), I will always assign the zero flag by checking if the output is zero using the reduction NOR operator (~|out). Both out and result_is_zero will be assigned in the always block to avoid inferred latches.
+
+This approach is compact, efficient, synthesizable, and correct.

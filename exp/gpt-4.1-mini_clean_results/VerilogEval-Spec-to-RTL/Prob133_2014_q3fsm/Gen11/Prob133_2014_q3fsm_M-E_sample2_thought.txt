@@ -1,0 +1,6 @@
+Use a Moore FSM with four states: A (reset/wait), B0, B1, B2 to represent the three consecutive cycles of w observation.
+- In state A, wait for s=1 to move to B0.
+- In B0, B1, B2 record w values and count how many times w=1 using a 2-bit accumulator.
+- After B2 (third cycle), output z=1 in the next cycle (state A) only if exactly two of the three w inputs were 1.
+- Then return to B0 for the next 3-cycle window.
+This approach models the FSM explicitly with four states and a 2-bit w_counter register. The output z is registered and updated only once per three-cycle window, ensuring precise timing and simple state transitions. It avoids packing counters, keeping the design straightforward, with a clean separation of counting logic and output generation.

@@ -1,0 +1,20 @@
+To simplify the solution while maintaining functionality, we can analyze the Karnaugh map differently to find a more compact Boolean expression. Here's the approach:
+
+1. K-map Analysis:
+   - Instead of looking at all 0s, we'll look for patterns in the 1s which might yield a simpler expression
+   - Notice that the output is 1 when:
+     - (a=0 and b=0) except when (c=1 and d=1)
+     - (a=1 and b=1) except when (c=0 and d=0)
+     - (a=0 and b=1 and c=0 and d=1) is already covered above
+     - (a=1 and b=0 and c=1 and d=0) is already covered above
+
+2. Simplified Expression:
+   - out = (!a & !b & !(c & d)) | (a & b & !(!c & !d)) | (!a & b & !c & d) | (a & !b & c & !d)
+   - This can be further simplified to:
+     out = (!a & !b & !(c & d)) | (a & b & (c | d)) | (!a & b & !c & d) | (a & !b & c & !d)
+
+3. Implementation Benefits:
+   - Fewer terms than the original solution
+   - More balanced logic structure
+   - Potentially better synthesis results
+   - Clear relationship to the original K-map

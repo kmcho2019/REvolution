@@ -1,0 +1,24 @@
+To address the feedback and fix the fractional divider by 3.5 implementation:
+
+1. **Synchronous Reset Only:**  
+   Use synchronous reset on all flip-flops to avoid asynchronous phase mismatch between `clk_pos` and `clk_neg`.
+
+2. **Align Initial Conditions:**  
+   Initialize `clk_pos` and `clk_neg` both to 0 on reset to start the output clock low, avoiding phase ambiguity and ensuring the first toggle transitions occur cleanly and predictably.
+
+3. **Refine Toggle Timing:**  
+   Keep toggle points of `clk_pos` on posedge clk at counts 0 and 4 (splitting the 7-cycle period into 4 and 3 clock cycles).  
+   Instead of triggering `clk_neg` toggles asynchronously on negedge clk, synchronize `clk_neg` toggling using the negedge clock but controlled by the current value of the counter sampled on posedge.  
+   To avoid asynchronous reset, use a flip-flop that samples toggle conditions on posedge clk and applies them on negedge clk, or better, run the negedge clocked flip-flop with synchronous reset and enable, controlled by a pulse derived from the counter sampled at posedge clk.
+
+4. **Stable Toggle Requests for clk_neg:**  
+   Create a toggle request signal for `clk_neg` on posedge clk when `cnt` is 3 or 6, then transfer this request safely to negedge clk domain for toggling. This prevents glitches and aligns toggle timing properly.
+
+5. **Avoid glitches on OR:**  
+   By ensuring both `clk_pos` and `clk_neg` are well-synchronized with proper initial states and toggle timings, OR'ing them yields a clean fractional clock with near 50% duty cycle.
+
+6. **Counter and Toggle Logic:**  
+   Keep the counter logic unchanged for 7 counts (0 to 6), wrapping around.  
+   This ensures the total period consists of 7 input clocks, representing 3.5 output cycles.
+
+This fix ensures no asynchronous resets, clean initial conditions, and synchronized toggle requests that align with clock edges, producing the desired fractional clock with minimal glitches and correct timing.

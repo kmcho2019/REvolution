@@ -1,0 +1,13 @@
+Novel Architecture: Phase Accumulator Square Wave Generator
+1. Core Concept: Use a phase accumulator to track waveform position instead of simple counting
+2. Frequency Control: Implement frequency tuning word (FTW) calculation for precise frequency control
+3. Output Generation: Use the MSB of the accumulator as the square wave output (natural square wave generation)
+4. Advantages:
+   - Linear frequency control (output freq = (FTW * clk_freq)/2^N)
+   - No explicit comparison operations needed (reduces critical path)
+   - Natural glitch-free frequency changes
+   - Easily extendable to other waveform types
+5. Optimization:
+   - Remove explicit comparison logic by using accumulator overflow
+   - Single register implementation reduces area
+   - Continuous operation without special cases

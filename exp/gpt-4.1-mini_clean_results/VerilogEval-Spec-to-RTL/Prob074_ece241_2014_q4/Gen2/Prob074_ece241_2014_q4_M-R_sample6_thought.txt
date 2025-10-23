@@ -1,0 +1,15 @@
+To improve clarity, correctness, and initialization, we separate combinational logic from sequential logic more explicitly.
+
+We first store the three flip-flop states in registers, initialized via a synchronous reset triggered by a power-on reset counter. This ensures proper startup initialization without an asynchronous reset or initial block.
+
+Next, we compute the inputs to each flip-flop's D input via `assign` statements for combinational clarity:
+
+- D_xor = x XOR q_xor
+- D_and = x AND (NOT q_and)
+- D_or  = x OR  (NOT q_or)
+
+Then, on each rising clock edge, if reset is active, we clear all flip-flops to zero; otherwise, we update the flip-flops with the corresponding D inputs.
+
+Finally, output `z` is the three-input NOR of the flip-flop outputs, implemented as an assign statement.
+
+This refactoring keeps combinational and sequential logic clearly separated, maintains the requested FSM behavior, and ensures all flip-flops initialize properly at startup with no ambiguity or subtle race conditions.

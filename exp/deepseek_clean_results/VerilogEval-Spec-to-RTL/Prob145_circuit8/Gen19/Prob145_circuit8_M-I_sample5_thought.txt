@@ -1,0 +1,11 @@
+Key insights from the waveform:
+1. p is a sampled version of 'a' but only on certain clock edges
+2. q follows p with a 1-cycle delay, but only after p has been 1 at least once
+3. The system resets when 'a' is 1 during a low clock phase after q has been 1
+
+Improved design approach:
+1. Use a 2-bit state machine to track the system state (IDLE, ACTIVE, HOLD)
+2. Sample 'a' only on rising clock edges when in ACTIVE state
+3. Generate q as a delayed version of p, but only after entering HOLD state
+4. Implement reset condition synchronously for better timing
+5. Remove mixed clock-edge sensitivity for more reliable operation

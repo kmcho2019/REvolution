@@ -1,0 +1,9 @@
+Refactor the 16-bit CLA module to use zero-based indexing ([15:0]) to align with standard Verilog style, simplifying indexing and improving tool friendliness. Implement full hierarchical carry-lookahead logic within the 16-bit block using group propagate/generate signals to truly realize carry-lookahead, rather than the sequential OR/AND approach. This is done by computing carry signals based on generate and propagate chains in a recursive manner.
+
+The top module remains as two instances of the 16-bit CLA block, now updated to the zero-based interface and using the hierarchical carry-lookahead.
+
+This restructuring enhances clarity, synthesis optimization, and better models the classic CLA behavior without changing the module interface too much at top-level except for signal indices (remapped inside the modules).
+
+Also, the sum calculation uses vector operations instead of generate loops to make the code concise and idiomatic.
+
+This design remains combinational and parameterizable, adhering to best Verilog practices.

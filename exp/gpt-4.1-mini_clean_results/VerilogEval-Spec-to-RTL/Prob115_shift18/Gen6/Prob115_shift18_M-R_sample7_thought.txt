@@ -1,0 +1,8 @@
+Refactor the design to use a combinational always block to determine the next value of the shift register (`next_q`), then update the register `q` synchronously at the clock edge. This separates combinational logic from sequential logic clearly and allows us to use if-else case statements inside the combinational block for clarity.
+
+The approach:
+- Compute `next_q` based on `load`, `ena`, and `amount`.
+- Use a single always @(*) block for combinational logic to select between load and shifting.
+- Use a separate always @(posedge clk) block to update `q`.
+- For shifting, use case statements on `amount` to select the shift operation.
+- This structure makes the design more explicit and easy to read, helps synthesis tools infer clear muxes and registers, and keeps the logic modular.

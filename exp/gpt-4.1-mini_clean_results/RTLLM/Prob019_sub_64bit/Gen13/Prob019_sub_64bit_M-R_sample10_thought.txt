@@ -1,0 +1,11 @@
+Refactor the 64-bit subtractor to use a single continuous assignment for subtraction and borrow detection instead of chaining two 32-bit ripple borrow subtractors. Perform the full 64-bit subtraction with a simple `assign` statement using Verilog arithmetic, relying on the fact that Verilog supports wide arithmetic operations naturally.
+
+For borrow/overflow detection:
+- Since Verilog subtraction yields the correct 2's complement result, borrow (or underflow) can be inferred from overflow conditions.
+- Use the provided overflow detection logic directly by comparing sign bits of A, B, and result without explicitly computing borrow signals.
+  
+This approach simplifies the design by removing the explicit borrow chain and uses built-in arithmetic, improving readability and likely synthesis results. The module remains purely combinational with no internal modules, making it easy to maintain and understand while maintaining the same functional behavior.
+
+The overflow detection logic remains unchanged since it correctly reflects 2's complement overflow rules.
+
+This refactoring reduces code size, removes the need for additional 32-bit subtractor modules, and leverages Verilog's native support for wide arithmetic operators.

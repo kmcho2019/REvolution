@@ -1,0 +1,20 @@
+To optimize the PPA metrics while maintaining functionality, I'll implement the following improvements:
+
+1. Timing Optimization:
+- Break down 8-bit shifts into sequential 1-bit shifts (8 cycles) to reduce critical path
+- This trades off some throughput for better timing closure
+
+2. Power Optimization:
+- Add enable gating for shift amount logic to prevent unnecessary switching
+- Use a counter-based approach for multi-bit shifts to reduce redundant operations
+
+3. Area Optimization:
+- Remove parallel shift paths and implement sequential shifting
+- Share common shift logic between operations
+- Use a state machine to handle multi-cycle shifts
+
+The improved design will:
+- Use a 3-bit counter for 8-bit shifts
+- Implement a simple state machine to track multi-cycle shifts
+- Gate shift operations when not enabled
+- Maintain arithmetic right shift behavior by preserving sign bit

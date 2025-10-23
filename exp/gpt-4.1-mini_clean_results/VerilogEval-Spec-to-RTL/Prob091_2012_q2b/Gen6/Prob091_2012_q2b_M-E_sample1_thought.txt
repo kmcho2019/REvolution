@@ -1,0 +1,9 @@
+A different architectural approach is to implement the output logic as a combinational always block that explicitly encodes the next-state conditions using case statements and bitwise logic on the one-hot encoded state vector. This approach avoids instantiating gate modules and instead uses a single always_comb block for clarity and direct mapping to logic.
+
+We note:
+- Y1 (next input for y[1]) is high only when current state is A (y[0]) and w=1.
+- Y3 (next input for y[3]) is high when current state is any of B(y[1]), C(y[2]), E(y[4]), F(y[5]) and w=0.
+
+By using a combinational always block, this solution is modular and readable, maintains a structural style through clear state bit checks, and avoids intermediate signals and gates. It also eases extension if more states or outputs are added.
+
+This style resembles behavioral RTL with combinational logic but still explicitly uses the one-hot state bits in conditions.

@@ -1,0 +1,11 @@
+Analyzing the waveform, it appears that output p updates only on rising clock edges and reflects a state that changes only when input 'a' is high at that clock edge, otherwise p holds its previous value. Output q updates on falling edges and holds the previous p value latched at the most recent falling edge. 
+
+In other words:
+- p acts as a latch for 'a' but only updates on rising edges when 'a' is 1; if 'a' is 0, p remains unchanged at the rising clock edge.
+- q updates at falling edges, capturing the current p value at the falling edge, thus q holds a delayed version of p, changing only on falling edges.
+
+This behavior can be implemented with two registers, both initialized to zero:
+- On posedge clock, if a=1 then p <= 1 else p holds.
+- On negedge clock, q <= p.
+
+This approach respects the waveform pattern where p only sets on a=1 at rising clock edges and q captures p on falling edges.

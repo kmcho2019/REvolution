@@ -1,0 +1,7 @@
+Simplify by encoding water level directly from sensor inputs using explicit pattern matching per problem spec. Use a simple reg to store previous_level updated synchronously when sensor input changes, and compare current and previous levels to generate dfr.
+
+Keep nominal flow outputs combinational based on current level decoding, per table. At reset, initialize previous and current level to BELOW_S0 and assert all flow outputs including dfr.
+
+Avoid typedef and functions for simplicity: implement decoding inline with if-else for clarity. Use non-blocking assignments in sequential always block to properly track levels and dfr.
+
+This clean, straightforward approach reduces complexity, ensures correct decoding, and cleanly separates level tracking from output logic.

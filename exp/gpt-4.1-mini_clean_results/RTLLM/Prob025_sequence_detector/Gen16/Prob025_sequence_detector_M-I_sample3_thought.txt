@@ -1,0 +1,7 @@
+To optimize the sequence detector FSM for better performance and maintain low power and area, I will apply a one-hot state encoding, which simplifies the combinational next-state logic and can reduce critical path delay at the cost of slightly more flip-flops. Given only 4 states, this overhead is minimal.
+
+Also, I will simplify the output logic by making `sequence_detected` combinational from the next state, so it asserts immediately when the sequence completes without extra clock cycle latency. This approach can improve detection timing and slightly reduce power since no register update is needed for the output.
+
+The reset will remain synchronous active-low as specified.
+
+Overall, this strategy aims to reduce combinational logic complexity, potentially improve timing (reduce WNS), and lower power by removing output flip-flop, while keeping area impact minimal due to the small FSM size.

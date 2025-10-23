@@ -1,0 +1,12 @@
+Novel approach: Instead of using cascaded conditional shifts, implement a parallel multiplexer-based barrel shifter that directly selects the appropriate shifted version based on the control signal. This approach:
+1. Pre-computes all possible shift variations (0-7 positions) in parallel
+2. Uses the 3-bit control signal as a direct selector for the output
+3. Eliminates intermediate stages for potentially better timing
+4. Uses a single large multiplexer (8:1) implemented via a case statement
+5. Maintains right rotation to match common barrel shifter conventions
+
+Key advantages:
+- Single-stage selection logic instead of cascaded shifts
+- Clear mapping between control value and shift amount
+- Easier to verify as each control value directly corresponds to a shift amount
+- More typical barrel shifter implementation pattern

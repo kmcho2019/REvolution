@@ -1,0 +1,15 @@
+To solve this problem, we need to design a Mealy Finite State Machine (FSM) that can detect a specific sequence of input bits (10011) and produce an output signal (MATCH) that is high when the sequence is detected and low otherwise. The FSM should support continuous input and loop detection, meaning it should be able to detect the sequence even if it appears multiple times in the input stream.
+
+The approach will be to define the states of the FSM based on the input sequence. We will have one state for each position in the sequence plus an initial state. Each state will check the current input bit and transition to the next state if the bit matches the expected value in the sequence. If the input bit does not match, it will reset to the initial state. When the FSM reaches the final state (i.e., it has detected the entire sequence), it will set the MATCH output to 1.
+
+We will use a parameterized approach to define the states, making it easier to modify the sequence if needed in the future.
+
+The FSM states will be defined as follows:
+- S0: Initial state
+- S1: First '1' detected
+- S2: First '0' detected after '1'
+- S3: Second '0' detected
+- S4: First '1' detected after '00'
+- S5: Second '1' detected (sequence complete)
+
+Transitions between these states are based on the current input (IN) and the current state. The MATCH signal is set to 1 when the FSM is in the S5 state.

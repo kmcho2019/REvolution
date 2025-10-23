@@ -1,0 +1,13 @@
+To improve PPA, simplify the next-state logic by flattening the nested conditionals and explicitly encoding only the four necessary states: walking left, walking right, falling left, and falling right, with digging handled as a flag separate from mode and direction.
+
+Use a 2-bit state for direction and mode (2 bits: direction and mode) and a separate digging bit register. This reduces the state register size from 3 bits to 3 bits total but splits them into two registers (one 2-bit for direction/mode and one 1-bit for digging). This separation allows simpler next-state logic and output decoding.
+
+Moreover, by separating digging as a register updated only on valid conditions, the critical path logic simplifies, potentially improving timing and power.
+
+Also, remove unused states (no combined falling+digging state), as the spec says digging stops when falling starts.
+
+Outputs become simpler, directly mapped from the direction, mode, and digging signals.
+
+Finally, use blocking assignments in the combinational logic for clarity and synchronous logic for registers. Maintain asynchronous reset.
+
+This approach simplifies FSM encoding, reduces logic complexity, and should improve timing and power efficiency without changing functional behavior.

@@ -1,0 +1,16 @@
+To simplify the solution while maintaining correctness, we can:
+
+1. Observe that y[1] is simply the second bit of the state encoding
+2. Notice that y[1] is 0 for states A (000) and B (001), and 1 for all other states (C,D,E,F)
+3. The next value of y[1] depends only on:
+   - Current state (y)
+   - Input w
+   - And follows these rules:
+     * From A: stays 0 (goes to A or B)
+     * From B: becomes 1 (goes to C or D)
+     * From C: stays 1 (goes to D or E)
+     * From D: becomes 0 if w=1 (to A), stays 1 if w=0 (to F)
+     * From E: stays 1 (goes to D or E)
+     * From F: becomes 0 if w=0 (to C), stays 1 if w=1 (to D)
+
+This can be implemented with a simple case statement that directly encodes these rules.

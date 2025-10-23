@@ -1,0 +1,11 @@
+Combine the strong domain separation and asynchronous reset in clk_a domain from Example 2 with the explicit two-stage synchronization of enable in clk_b domain from Example 1 for clarity and safe clock domain crossing. 
+
+In clk_a domain, asynchronously reset and latch data_in into data_reg only when data_en is high, reducing unnecessary toggling. Also latch data_en into en_reg in clk_a domain only (to synchronize stable enable value). 
+
+In clk_b domain, implement a clean two-flip-flop synchronizer for en_reg, with asynchronous reset to quickly reset registers (matching clk_a style), ensuring prompt reset and clean synchronization. Use a third flip-flop stage as a stable enable latch to further reduce glitches and metastability risk.
+
+Update output dataout only when the delayed enable (after 3 stages of synchronization) is asserted; otherwise, hold previous value. This delay satisfies the requirement of data_en delayed two cycles, and the third stage acts as a stable enable latch to ensure glitch-free output switching.
+
+Avoid redundant else statements on dataout to allow synthesis tools better optimization. This fusion achieves robust reset behavior in both domains, minimal toggling by gating updates, glitch-free and stable output synchronization, and clear code structure for maintainability and power optimization.
+
+This design respects the problem constraints, minimizes power by updating data_reg only when data_en is high, provides safe enable synchronization across clock domains with sufficient delay, and ensures output dataout is stable and valid relative to clk_b domain.

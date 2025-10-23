@@ -1,0 +1,11 @@
+To improve timing (tns and wns) and reduce switching power, I will separate the combinational next-state logic from the sequential state and output register updates. This avoids mixing outputs and state transitions in one always block, easing synthesis optimization and potentially shortening the critical path.
+
+I will implement a standard two-process FSM: one combinational block to compute next state and outputs based on current state and inputs, and one sequential block updating state and outputs on posedge clk with synchronous reset.
+
+To reduce toggling of the done signal, it will be asserted only for one cycle when a valid stop bit is detected and held low otherwise, without unnecessary resets every cycle.
+
+The shift register update will remain in the sequential process, but I'll use a simpler shift approach with an enable signal to minimize unnecessary changes outside the RECEIVE state.
+
+State encoding remains binary for area efficiency; the combinational logic separation typically improves timing without area penalty.
+
+These refinements should improve timing slack and reduce power by limiting unnecessary output toggling and making the FSM easier to optimize.

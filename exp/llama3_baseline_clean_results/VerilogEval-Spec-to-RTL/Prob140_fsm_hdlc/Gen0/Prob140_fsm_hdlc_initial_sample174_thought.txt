@@ -1,0 +1,10 @@
+To solve this problem, we can create a Moore-type finite state machine (FSM) with several states to recognize the desired sequences. The states will track the number of consecutive 1s and the presence of a flag or discard condition. The FSM will have a reset state and states to handle the detection of 5 consecutive 1s, 6 consecutive 1s, and 7 or more consecutive 1s.
+
+- The FSM starts in a reset state, which behaves as though the previous input were 0.
+- When a '1' is detected, it transitions to a state counting consecutive 1s.
+- If 5 consecutive 1s are detected, it sets a flag to discard the next bit.
+- If 6 consecutive 1s are detected, it signals the beginning/end of a frame.
+- If 7 or more consecutive 1s are detected, it signals an error.
+- The FSM stays in the error state until the error condition is cleared.
+- The FSM also needs to handle the case when a '0' is detected after a sequence of 1s, resetting the count of consecutive 1s.
+- The output signals (disc, flag, err) are asserted based on the current state of the FSM.

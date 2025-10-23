@@ -1,0 +1,11 @@
+I will fuse the strengths of both examples by implementing the decade counter with these optimizations:
+
+- Use a synchronous active-high reset to set q to 1.
+- Implement combinational next-state logic like Example 1 to separate combinational and sequential logic, improving clarity and synthesis results.
+- Detect the terminal count 10 (binary 1010) with bitwise logic (q[3] & ~q[2] & q[1] & ~q[0]) for a simple, low-area comparator.
+- Add a count_enable signal (count_enable = ~reset) to avoid unnecessary toggling of the counter output during reset cycles, reducing dynamic power.
+- Use non-blocking assignments and clear, minimal logic for good synthesis outcomes.
+- The counter increments by 1 until reaching 10, then wraps to 1, ensuring the count sequence 1 through 10 inclusive.
+- This fusion leverages the clarity and modularity of Example 1’s next-state logic, the minimal bitwise detection from Example 2, and power-saving count gating.
+
+This solution balances clarity, power efficiency, and synthesis friendliness, achieving improved PPA metrics.

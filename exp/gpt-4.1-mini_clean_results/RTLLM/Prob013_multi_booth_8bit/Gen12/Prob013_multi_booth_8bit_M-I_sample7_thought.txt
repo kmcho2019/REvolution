@@ -1,0 +1,11 @@
+To optimize the given Radix-4 Booth multiplier for better performance, power, and area (PPA):
+
+- Precompute multiplicand, +multiplicand, and +2*multiplicand at reset to avoid repeated shifts and sign-extensions during each cycle, reducing dynamic power and combinational complexity.
+- Use a single signed 32-bit accumulator for the partial product sum, as before.
+- Simplify the partial product generation by referencing the precomputed values rather than recalculating shifts each cycle.
+- Keep the multiplier extended by one bit at reset and only shift the product accumulator as needed, avoiding shifting the multiplicand each cycle.
+- Use a 4-bit counter for 8 iterations.
+- Maintain the ready signal and synchronous reset as before.
+- Keep the code clean and synthesizable for RTL.
+
+This approach reduces the number of runtime arithmetic operations, decreases switching, and reduces the critical path due to fewer shifts and negations in the critical loop, improving overall PPA while preserving correctness.

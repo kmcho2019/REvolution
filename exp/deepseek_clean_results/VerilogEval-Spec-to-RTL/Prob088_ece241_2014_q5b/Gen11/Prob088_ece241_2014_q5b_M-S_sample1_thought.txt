@@ -1,0 +1,11 @@
+Simplification Strategy:
+1. **State Representation**: Since this is a one-hot FSM with only two states, we can represent them with a single register (state_A), as state_B is always the complement of state_A.
+2. **State Transition**: The FSM only transitions from A to B when x=1, and stays in B forever. This can be implemented by simply latching the first x=1 occurrence.
+3. **Output Logic**: The output z is x in state A and ~x in state B, which can be expressed as z = state_A ? x : ~x.
+4. **Reset Handling**: Asynchronous reset initializes to state A (state_A=1).
+
+Key Simplifications:
+- Eliminated the state_B register since it's redundant (always !state_A)
+- Simplified state transition to a single condition (x && state_A)
+- Maintained the same output logic which is already optimal
+- Reduced register count from 2 to 1 while preserving functionality

@@ -1,0 +1,8 @@
+To optimize the PPA (performance, power, area), replace the two equality comparisons with a single arithmetic comparator implemented as a simple subtraction to detect terminal count. Checking if q == MAX_COUNT can be done by checking if (q - MAX_COUNT) == 0, which synthesis tools usually optimize well into efficient comparators or subtractors. This should reduce combinational logic depth and might improve timing (WNS), potentially lowering power.
+
+Additionally, replace the separate upper and lower bit comparisons with one comparator signal: (q == MAX_COUNT). This simplifies the logic and removes redundant bitwise equality gates, likely reducing area and power. Keep the synchronous active-high reset and increment logic unchanged for clear, maintainable design.
+
+Summary of changes:
+- Replace partial bit equalities with q == MAX_COUNT comparator.
+- Retain synchronous reset and increment logic.
+- This simplification leverages synthesis optimization and reduces combinational gate count, improving PPA.

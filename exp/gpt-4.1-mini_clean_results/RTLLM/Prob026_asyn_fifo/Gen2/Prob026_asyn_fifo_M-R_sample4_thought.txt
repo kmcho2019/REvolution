@@ -1,0 +1,13 @@
+Refactor the asynchronous FIFO design by restructuring the pointer management and synchronizers into separate always blocks and using combinational logic with assigns for Gray code conversions and full/empty conditions. Instead of storing Gray pointers in registers updated with non-blocking assignments, calculate Gray codes combinationally from binary pointers, which are updated in clocked always blocks.
+
+Separate the synchronization of pointers into distinct always blocks with non-blocking registers to clearly separate clock domains.
+
+Use combinational continuous assignments for full and empty detection logic for clarity and to reduce flip-flops.
+
+This approach keeps the FIFO functionality and pointer logic unchanged but clarifies the separation between sequential and combinational logic, removes storing Gray codes in registers explicitly, and improves readability and modularity.
+
+Also, the dual_port_RAM submodule remains the same, and all signals connect as per original requirements.
+
+This version uses fewer registers for Gray codes and relies on combinational conversion, which is synthesizable and common practice.
+
+Overall the code is clearer and still meets the design requirements.

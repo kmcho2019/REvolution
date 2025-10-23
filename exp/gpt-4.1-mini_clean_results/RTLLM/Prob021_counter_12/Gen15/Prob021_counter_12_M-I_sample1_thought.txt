@@ -1,0 +1,7 @@
+To optimize the existing counter design for better PPA, I will simplify the terminal count detection by replacing the explicit bitwise logic with a direct equality comparison `(out == 4'd11)`. Modern synthesis tools typically optimize equality checks efficiently, potentially reducing area and power from redundant logic and toggling.
+
+I will maintain the modularity and clarity by keeping the combinational next-state block separate, preserving easy maintenance. The synchronous active-low reset and non-blocking assignments remain unchanged to ensure robust timing and correct functional behavior.
+
+I will also ensure the counter explicitly holds its current value when `valid_count` is low to reduce unnecessary toggling, thus potentially lowering dynamic power.
+
+This approach simplifies the terminal count logic while retaining all other design benefits, likely improving power and area metrics without affecting timing adversely.

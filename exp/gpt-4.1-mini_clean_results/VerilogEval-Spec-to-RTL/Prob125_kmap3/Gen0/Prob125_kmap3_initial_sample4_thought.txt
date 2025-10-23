@@ -1,0 +1,80 @@
+First, map the Karnaugh map to the variables a,b,c,d. According to the K-map, 'd' is don't-care and can be chosen to simplify the expression. Using the K-map, find a minimal logic expression for out in terms of a,b,c,d.
+
+Mapping the K-map:
+
+Rows: cd = 00, 01, 11, 10
+Columns: ab = 01, 00, 10, 11
+
+So the positions are (cd, ab):
+
+(00,01) = d (don't care)
+(00,00) = 0
+(00,10) = 1
+(00,11) = 1
+
+(01,01) = 0
+(01,00) = 0
+(01,10) = d
+(01,11) = d
+
+(11,01) = 0
+(11,00) = 1
+(11,10) = 1
+(11,11) = 1
+
+(10,01) = 0
+(10,00) = 1
+(10,10) = 1
+(10,11) = 1
+
+Rewrite with variables:
+
+ab: 00=a=0,b=0; 01=0,1; 10=1,0; 11=1,1
+
+cd: 00=c=0,d=0; 01=0,1; 11=1,1; 10=1,0
+
+Let's assign bits:
+
+Positions:
+
+1) cd=00 (c=0,d=0)
+ab=01 (a=0,b=1) -> d (don't care)
+ab=00 (0,0) -> 0
+ab=10 (1,0) ->1
+ab=11 (1,1) ->1
+
+2) cd=01 (0,1)
+ab=01(0,1) ->0
+ab=00(0,0)->0
+ab=10(1,0)-> d
+ab=11(1,1)-> d
+
+3) cd=11(1,1)
+ab=01(0,1)->0
+ab=00(0,0)->1
+ab=10(1,0)->1
+ab=11(1,1)->1
+
+4) cd=10(1,0)
+ab=01(0,1)->0
+ab=00(0,0)->1
+ab=10(1,0)->1
+ab=11(1,1)->1
+
+Simplify the K-map using don't cares to cover more ones.
+
+Observing the map, many ones in bottom two rows and last two columns.
+
+From this we can derive a simplified expression, for instance:
+
+out = b & c | a & c | a & d | c & d
+
+Or after some minimization:
+
+out = c & (a | b | d) | a & d
+
+We can write the final expression as:
+
+out = c & (a | b | d) | a & d
+
+Let's implement that.

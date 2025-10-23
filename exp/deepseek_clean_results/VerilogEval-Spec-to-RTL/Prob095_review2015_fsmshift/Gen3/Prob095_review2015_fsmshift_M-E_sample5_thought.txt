@@ -1,0 +1,18 @@
+Here's a novel approach using a shift register instead of a counter to control the shift_ena signal:
+
+1. Use a 4-bit shift register initialized to '1111' on reset
+2. Each clock cycle, shift right with a '0' input
+3. OR all bits of the shift register to generate shift_ena
+4. This creates exactly 4 cycles of shift_ena after reset:
+   - First cycle: 1111 (shift_ena = 1)
+   - Second: 0111 (shift_ena = 1)
+   - Third: 0011 (shift_ena = 1)
+   - Fourth: 0001 (shift_ena = 1)
+   - Fifth: 0000 (shift_ena = 0)
+5. The shift register holds its value until next reset
+
+Benefits:
+- No need for explicit counting logic
+- Simple shift operation with fixed pattern
+- Naturally produces exactly 4 enable pulses
+- Easy to verify timing visually

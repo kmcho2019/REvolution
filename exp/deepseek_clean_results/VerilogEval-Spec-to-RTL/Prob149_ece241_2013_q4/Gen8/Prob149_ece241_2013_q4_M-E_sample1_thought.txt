@@ -1,0 +1,15 @@
+Here's a novel approach using a priority encoder and history tracking:
+
+1. Instead of a traditional state machine, use a priority encoder to directly determine the current water level from sensor inputs
+2. Maintain a 2-bit history register to track the previous water level
+3. Use combinational logic to generate outputs based on:
+   - Current water level (from priority encoder)
+   - Previous water level (from history register)
+4. Implement a "rising edge" detector for dfr by comparing current and previous levels
+5. Reset initializes to lowest level with all outputs active
+
+Key innovations:
+- Eliminates explicit state machine in favor of direct sensor decoding
+- Uses priority encoding for efficient level detection
+- History tracking is simpler than full state machine
+- Output logic is purely combinational based on current and previous levels

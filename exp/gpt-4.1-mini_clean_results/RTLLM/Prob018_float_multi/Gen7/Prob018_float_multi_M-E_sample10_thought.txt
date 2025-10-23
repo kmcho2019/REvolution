@@ -1,0 +1,9 @@
+Implement a fully combinational IEEE-754 single-precision floating-point multiplier with a single-cycle latency, controlled and synchronized by clk and rst signals. The design extracts sign, exponent, and mantissa, handles all special cases (NaN, infinity, zero, subnormals) immediately, performs mantissa multiplication (24x24), and exponent adjustment combinationally. Normalization and rounding use the standard round-to-nearest-even mode.
+
+To avoid pipeline stages and complicated state machines, internal registers hold intermediate values only for input capturing and final output register, making timing critical but reducing control overhead and pipeline latency.
+
+Special cases are resolved first to shortcut normal multiplication. Mantissa multiplication produces a 48-bit product to capture full precision, which is normalized by shifting right if the top bit is zero, adjusting the exponent accordingly. Rounding is performed by examining guard, round, and sticky bits.
+
+Final overflow and underflow are handled by saturating to infinity or zero respectively. The result is stored in an output register 'z' at each clock cycle (on clk, if not in reset). The module includes a 3-bit counter that can be used externally to track operation cycles but internally keeps combinational logic straightforward.
+
+This design trades off latency for simplicity and a clean combinational datapath, suitable for FPGAs/ASICs where multi-cycle latency or pipeline register overhead is undesirable or not feasible.

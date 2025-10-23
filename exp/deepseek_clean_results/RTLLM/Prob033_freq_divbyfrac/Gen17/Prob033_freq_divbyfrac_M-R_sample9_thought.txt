@@ -1,0 +1,32 @@
+Refactored Fractional Divider Design:
+
+1. Simplified Phase Generation:
+   - Generate both phases directly from counter values using continuous assignments
+   - Eliminate separate always blocks for phase generation
+
+2. Improved Phase Alignment:
+   - Create phase_a directly from counter (high for first 4 cycles)
+   - Create phase_b as inverted and shifted version (high for last 3 cycles)
+   - Use XOR operation for phase combination to ensure proper edges
+
+3. Optimized Counter Logic:
+   - Maintain same 7-cycle counter (0-6)
+   - Remove intermediate synchronization flip-flops
+   - Generate output directly from counter states
+
+4. Enhanced Reset Handling:
+   - Clear all signals synchronously
+   - Ensure clean startup with all phases low
+
+Key Improvements:
+- Reduced sequential elements by using combinational logic
+- More precise phase alignment through direct counter decoding
+- Simplified output generation while maintaining correct timing
+- Maintained exact same 3.5x division ratio
+- Preserved 50% duty cycle requirement
+
+Advantages:
+- More efficient implementation
+- Clearer phase relationship
+- Reduced potential for timing issues
+- Easier to verify and maintain

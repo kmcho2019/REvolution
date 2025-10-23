@@ -1,0 +1,12 @@
+Since the original requirement is to produce a clock signal toggling at regular intervals defined by the PERIOD parameter and with no input clock specified, the solution must rely on simulation constructs (i.e., initial block with delays) because purely hardware-synthesizable logic cannot generate timing without a reference clock.
+
+A novel architectural idea is to use an initial block with a forever loop that toggles the clock output every half PERIOD units of simulation time using a non-blocking assignment. This method works purely in simulation to create a periodic clock waveform.
+
+This module will:
+- Declare clk as a reg output.
+- Initialize clk to 0 in the initial block.
+- Use a forever loop that toggles clk every PERIOD/2 time units using `#(PERIOD/2)` delay.
+- Avoid any input ports, matching the specification.
+- The parameter PERIOD will be used as simulation time units for toggling, e.g. 10 means toggle every 5 time units.
+
+This design is non-synthesizable, purely for testbenches and simulation, perfectly matching the problem description.

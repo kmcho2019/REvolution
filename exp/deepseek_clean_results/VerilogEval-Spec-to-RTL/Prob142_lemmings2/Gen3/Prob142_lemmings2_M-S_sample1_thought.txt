@@ -1,0 +1,13 @@
+The original solution uses two registers (walking_dir and falling) and complex conditional logic. We can simplify this by:
+1. Using only three states: LEFT, RIGHT, and FALLING
+2. Encoding states with 2 bits for clarity
+3. Simplifying transition logic by:
+   - Only checking bumps when in LEFT/RIGHT states with ground=1
+   - Transitioning to FALLING immediately when ground=0
+   - Returning to previous direction when ground returns
+4. Outputs are directly derived from current state
+
+This reduces complexity by:
+- Eliminating separate direction and falling flags
+- Making state transitions more straightforward
+- Reducing conditional logic depth

@@ -1,0 +1,5 @@
+Instead of shifting the input S into Q[0] and shifting the rest of the register to the left, this design will implement the shift register as a chain of D flip-flops, but will shift the bits towards Q[7] (MSB) rather than towards Q[0]. That is, at each clock edge when enable is high, Q[i+1] <= Q[i], and Q[0] <= S. This is just reversing the shift direction from the usual approach.
+
+To implement the random access 8-to-1 multiplexer for output Z, rather than using vector indexing, use a one-hot decoded multiplexer: decode {A,B,C} into a one-hot 8-bit signal that enables only one bit of Q to drive Z via a parallel mux. This explicit decoding approach shows a clear demux + mux structure, which can be beneficial for understanding and potential pipelining extensions.
+
+This approach shows an alternate shifting direction and a different multiplexer implementation style, fulfilling the problem but using different architecture and code style.

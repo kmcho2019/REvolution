@@ -1,0 +1,7 @@
+To optimize the FSM for better power, performance, and area (PPA), I will switch the state encoding from binary (3 bits) to one-hot encoding. One-hot encoding uses more flip-flops but simplifies next-state logic, as each state is represented by a single bit, which reduces combinational logic complexity and can improve timing.
+
+Also, I will rewrite the next-state logic with a `case` statement for clarity and better synthesis optimization. For output `z`, since it is high only in states E and F, the output logic becomes a simple OR of these one-hot state bits.
+
+The reset remains synchronous and active-high, initializing to state A. This approach trades off some area (due to one-hot encoding) but typically improves timing and can reduce power by simpler combinational paths.
+
+Overall, one-hot FSM encoding with a `case` next state is a widely-used technique to optimize FSMs for speed and power.

@@ -1,0 +1,8 @@
+Instead of explicitly enumerating each next-state assignment, build next-state signals for B and D (Y1 and Y3 outputs) by analyzing which current states and input w transitions lead to states B and D, respectively. For one-hot encoding, next-state signals for B (y[1]) and D (y[3]) are high if current state is among those that transition to B or D with input w.
+
+Thus, derive Y1 and Y3 by ORing conditions that yield next B and next D:
+
+- Next B (Y1) happens only from A with w=0.
+- Next D (Y3) happens from B(w=1), C(w=1), D(w=1), E(w=1), F(w=1).
+
+This approach avoids defining full next-state vectors, focusing only on the outputs of interest, resulting in a minimal and clear logic implementation.

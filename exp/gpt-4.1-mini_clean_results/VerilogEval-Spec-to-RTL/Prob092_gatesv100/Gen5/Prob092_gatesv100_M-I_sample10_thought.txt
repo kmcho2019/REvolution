@@ -1,0 +1,17 @@
+To optimize the original code for better power and area without altering functionality, I focus on reducing signal toggling and redundant computations.
+
+- Currently, out_both and out_any each use two separate vector slices; however, by exploiting the fact that `in` is used twice with shifted indices, we can precompute intermediate signals for left and right neighbors to share computations.
+
+- For out_both: it depends on bits [i] and [i+1]. Precompute `in_left = in[99:1]`, then AND with `in[98:0]`.
+
+- For out_any: it depends on bits [i] and [i-1]. Precompute `in_right = in[98:0]`, then OR with `in[99:1]`.
+
+- For out_different: keep the same wrap-around XOR with rotated input, since this is already optimal.
+
+- Using intermediate wires reduces the number of bit slicing operations and may help synthesis optimize the design further, potentially reducing area and dynamic power by less internal buffering or duplicated logic.
+
+- Additionally, marking the module as purely combinational by avoiding unnecessary variables or blocking assignments (already done) is maintained.
+
+This micro-optimization is subtle but aligns with best practices to help synthesis engines reuse signals and minimize logic replication, improving PPA slightly.
+
+The main functional logic and boundary conditions remain the same.

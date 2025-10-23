@@ -1,0 +1,16 @@
+The key issues from feedback require these fixes:
+
+1. **Accurate Level Detection**: Need precise pattern matching for sensor combinations to correctly identify water levels. Must handle all possible sensor patterns explicitly.
+
+2. **Correct Output Mapping**: Need to exactly match the problem's truth table for fr2, fr1, fr0 outputs in each level. Below s[0] should assert all outputs (including dfr).
+
+3. **Proper Transition Detection**: Need to track previous level to detect only the immediate level change (not just any increase).
+
+4. **Reset Initialization**: Reset should set both current and previous levels to BELOW_S0 state.
+
+New approach:
+- Use explicit case statement for level detection
+- Track previous_level for accurate transition detection
+- Simplify output logic to directly match truth table
+- Make dfr depend on both level increase AND not being in highest level
+- Ensure reset properly initializes all state

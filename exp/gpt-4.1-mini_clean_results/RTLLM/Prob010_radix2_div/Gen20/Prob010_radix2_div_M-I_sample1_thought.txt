@@ -1,0 +1,30 @@
+The main issue with the provided solution is incorrect initialization of the shift register (SR), which should load the absolute value of the dividend shifted left by 1 bit (to accommodate the quotient build-up and remainder tracking), not just loaded directly without shift. Also, the width of the remainder and quotient bits in SR and their exact mapping must be consistent.
+
+Key improvements:
+
+1. **Shift Register Initialization:**  
+   Initialize SR as {8'd0, abs_dividend, 1'b0}, making it 17 bits: upper 9 bits remainder (initialized to 0), lower 8 bits quotient = abs_dividend, plus 1 zero bit as LSB. This allows a clean iterative shift-left operation with quotient bit shifted in LSB each cycle.
+
+2. **Subtraction Sign Handling:**  
+   The remainder is 9 bits (with an extra bit for subtraction sign detection). We perform subtraction as a 10-bit operation, zero-extending both remainder and divisor properly.
+
+3. **Shift and Update Logic:**  
+   In each iteration, after subtraction, we shift the SR left by one bit and insert quotient bit at LSB (1 if remainder >= divisor after subtraction, else 0), ensuring the quotient accumulates properly.
+
+4. **Final Result Extraction:**  
+   After 8 cycles, quotient is in SR[7:0], remainder in SR[16:8]. The remainder is 9 bits but the top bit is sign extension, so take 8 bits SR[16:9] as remainder (sign-extended correctly). 
+
+5. **Signed Correction:**  
+   If signed operation, apply the sign correction to quotient and remainder at the end.
+
+6. **Division by Zero:**  
+   Saturate quotient to 0xFF and remainder to dividend (with sign considered).
+
+7. **State Machine and Handshaking:**  
+   Use a three-state FSM (IDLE, BUSY, DONE) with res_ready handshake as requested.
+
+This corrected and clarified implementation should pass verification and provide correct signed/unsigned radix-2 division on 8-bit operands with iterative approach.
+
+Additionally, I remove the 'res_ready' input from the problem statement since it's not listed, and instead manage res_valid solely based on internal state and opn_valid, per the original spec. The user’s problem description does not mention a res_ready input.
+
+Therefore, I will implement the module without res_ready, controlling res_valid and start via opn_valid and internal counter as described.

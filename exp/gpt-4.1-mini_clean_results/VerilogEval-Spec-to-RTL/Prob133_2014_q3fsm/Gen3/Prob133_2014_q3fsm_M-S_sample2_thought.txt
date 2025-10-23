@@ -1,0 +1,7 @@
+Use a simple FSM with states A, B0, B1, B2, where A waits for s=1, and B0-B2 sample w over three cycles. Use a small counter to track how many times w=1 during these three cycles. Output z in the cycle immediately following the three samples, based on whether the count equals 2. 
+
+To reduce complexity, keep the output z as a registered signal updated only after the third sample cycle. Reset count at B0 and accumulate at B0-B2. After B2, calculate z and output it in the next cycle (which is B0 again). This delays z output by one cycle after sampling, as required.
+
+All state and outputs update synchronously on the positive clock edge with synchronous reset. The logic is straightforward and minimal without extra temporary registers.
+
+This approach maintains correct timing and functionality with minimal states and logic.

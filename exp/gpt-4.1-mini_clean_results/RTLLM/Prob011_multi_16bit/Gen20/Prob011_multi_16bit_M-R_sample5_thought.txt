@@ -1,0 +1,9 @@
+Refactor the design by explicitly separating the control counter and the data path registers, and use an enable signal driven by a simple state machine with two states (IDLE, RUNNING). 
+
+Instead of packing multiplier bits in the product register, keep multiplier and partial product separate for clarity. Use an always block for control (counter and done flag) and another always block for the shift-and-add data path. 
+
+Control signals and next-state logic are computed combinationally, making the FSM and enable signal clear and concise. This approach improves code readability and modularity without changing the algorithm.
+
+The done flag is asserted exactly when the counter reaches 16, and cleared on reset or start deassertion. Registers are synchronous with asynchronous reset. The multiplier bits shift right every cycle, the multiplicand is added conditionally based on the LSB of the multiplier register.
+
+This structural separation enhances clarity of control vs datapath and simplifies debugging or future enhancements.

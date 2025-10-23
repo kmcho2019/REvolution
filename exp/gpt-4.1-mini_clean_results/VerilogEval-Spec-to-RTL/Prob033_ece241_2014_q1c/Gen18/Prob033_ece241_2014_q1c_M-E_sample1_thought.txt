@@ -1,0 +1,12 @@
+Implement the 8-bit adder using two 4-bit ripple-carry adders chained together, with the overflow detected from the sign bits of inputs and output. This approach segments the addition into two stages, reducing carry chain length compared to a pure 8-bit ripple adder while avoiding complex CLA logic. Overflow is computed by checking if the sign bits of a and b are the same but differ from the sum sign bit, which is a classic and robust overflow condition for two's complement addition.
+
+This design uses simple 4-bit adders with carry propagation between them and a clean modular structure, enabling clear hierarchy and easy modification or extension. The overflow detection logic is separate and straightforward.
+
+Thus, the architecture consists of:
+
+- A 4-bit ripple carry adder module (Add4bit) with carry input and carry output
+- TopModule instantiates two Add4bit modules: lower 4 bits and upper 4 bits
+- Connect carry-out of lower 4-bit adder to carry-in of upper 4-bit adder
+- Compute overflow as (a[7] == b[7]) & (s[7] != a[7])
+
+This method achieves modularity, moderate carry latency, and simple overflow logic.

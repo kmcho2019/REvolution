@@ -1,0 +1,5 @@
+Refactor the multiplier by implementing a clear finite state machine (FSM) with three states: IDLE, RUN, and DONE. This makes the control flow explicit, improving readability and modularity. Use separate registers for multiplicand (areg), multiplier (breg), a 5-bit counter (i) for shift steps, and an accumulator (yout_r) for the product. 
+
+At IDLE, wait for the start signal; on start, latch inputs into registers and transition to RUN. In RUN, for each cycle from i=0 to 15, check the LSB of breg to conditionally add ain shifted by i to yout_r, then shift breg right by 1 and increment i. When i reaches 16, assert done flag and go to DONE state. On next cycle or reset, return to IDLE.
+
+Use synchronous reset and non-blocking assignments, separate combinational output assignments, and avoid packing multiplier and product in a single register to reduce logic complexity. This approach clarifies the control signals and data path and matches the requested behavior with explicit done signaling.

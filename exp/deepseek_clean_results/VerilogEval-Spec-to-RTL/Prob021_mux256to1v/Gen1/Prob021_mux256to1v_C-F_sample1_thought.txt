@@ -1,0 +1,15 @@
+To create an optimized solution, I'll combine the best aspects of both examples while addressing their PPA limitations:
+
+1. **Selection Logic Optimization**:
+   - Replace the multiplication (`sel*4`) with a left shift (`sel<<2`) which is more hardware-efficient
+   - Maintain the clean part-select (`+:` operator) approach from both examples
+
+2. **Structural Optimization**:
+   - Keep the single-level multiplexing for simplicity (since timing is already good)
+   - The shift operation should reduce critical path compared to multiplication
+
+3. **Power/Area Consideration**:
+   - While we can't reduce the input width (1024 bits is required), the shift operation may lead to slightly better power/area
+   - The implementation remains straightforward for synthesis tools to optimize
+
+The fused solution maintains the elegant one-line assignment but uses the more efficient shift operation for address calculation.

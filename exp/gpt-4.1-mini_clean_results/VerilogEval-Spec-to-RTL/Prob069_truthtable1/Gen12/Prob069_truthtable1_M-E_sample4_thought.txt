@@ -1,0 +1,19 @@
+This time, I will implement the function f by using a small combinational multiplexer tree that combines conditions differently.
+
+From the truth table, f can also be expressed by selecting between two functions based on x1:
+
+- When x1=0: f = x3 & 0 + x2 & 1 = x2 & ~x3
+- When x1=1: f = x3 | x2 (from truth table rows with x1=1)
+
+To capture this, I use a 2:1 MUX controlled by x1:
+
+- If x1=0: output = ~x3 & x2
+- If x1=1: output = x3 | x2
+
+The output of this MUX is f.
+
+For novelty, I will build a custom 2:1 mux module that selects between two inputs based on the select signal, built from basic gates (AND, OR, NOT) to show structural design.
+
+Then, the TopModule will instantiate basic gates for the minterms and the mux, connecting them accordingly.
+
+This approach contrasts with the previous solution by using a multiplexer structure with custom gate-level implementation, emphasizing hierarchical design with gate primitives rather than assign statements.

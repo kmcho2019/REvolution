@@ -1,0 +1,15 @@
+Instead of using borrow lookahead logic from subtraction, this design uses direct bitwise comparison starting from the MSB down to LSB to determine the relation between A and B. The idea is:
+
+- Compare each bit from the most significant bit (bit 3) to the least significant bit (bit 0).
+- At each bit position, if A[i] > B[i], then A > B regardless of lower bits.
+- If A[i] < B[i], then A < B.
+- If A[i] == B[i], continue checking the next bit.
+- If all bits are equal, then A == B.
+
+This approach implements a priority encoder-like structure with a combinational logic tree to determine the first bit where A and B differ, deciding the output accordingly.
+
+This avoids borrow and generate/propagate signals and is conceptually simpler, relying on bitwise greater-than and less-than checks cascaded with equality checks.
+
+The outputs remain mutually exclusive, and the logic is purely combinational.
+
+This method also matches intuitive binary magnitude comparison and may synthesize well with priority mux or chained comparators.

@@ -1,0 +1,12 @@
+The original solution is functionally correct and efficient, implementing a Mealy FSM with minimal states and asynchronous active-low reset. The output is asserted combinationally, resulting in minimal latency.
+
+To optimize further for better Power, Performance, and Area (PPA):
+
+- Keep the FSM simple with minimal states and combinational output.
+- Make the asynchronous reset synchronous to reduce complexity in synthesis and improve timing and power (asynchronous resets can increase power consumption and complicate timing).
+- Use one-hot encoding for states if targeting FPGAs, but since area is also a concern, keep binary encoding (3 bits) for smaller logic.
+- Remove redundant state names and use a consistent naming convention for clarity.
+- Drive `sequence_detected` as a registered output, asserted for one clock cycle only on detection, to reduce glitches.
+- Also, add comments to clarify transition and output conditions for maintainability.
+
+This improved version uses a synchronous active-low reset, registers output, and keeps the FSM and logic minimal, yielding better PPA without functional change.

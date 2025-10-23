@@ -1,0 +1,11 @@
+Refactor the FSM by separating the state type and direction into two registers: a 2-bit state_type (walking, falling, digging) and a 1-bit direction. This simplifies state encoding and improves clarity.
+
+Use combinational assigns for next state logic rather than a large always block. Also, create explicit signals for the conditions: falling, digging, and bump events.
+
+Handle the asynchronous reset on both state_type and direction separately.
+
+Maintain prev_ground as a registered signal for edge detection.
+
+Outputs are assigned combinationally from the current state and direction.
+
+This modular approach can enhance readability and might help synthesis tools optimize better, while preserving the exact original FSM behavior and priorities.

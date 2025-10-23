@@ -1,0 +1,3 @@
+To solve this problem, we need to design a finite state machine (FSM) that can identify the start of a message by checking the input byte stream for a byte with in[3]=1. Once such a byte is found, it should capture the next two bytes and signal the receipt of a message by asserting the done signal. The out_bytes should be valid whenever the done signal is asserted. The FSM should reset when the reset signal is high.
+
+We can design the FSM with three states: IDLE, BYTE1, and BYTE2. In the IDLE state, we check for the start byte. When we find it, we move to the BYTE1 state and capture the first byte. Then, we move to the BYTE2 state and capture the next two bytes. After capturing all three bytes, we assert the done signal and output the 24-bit message.

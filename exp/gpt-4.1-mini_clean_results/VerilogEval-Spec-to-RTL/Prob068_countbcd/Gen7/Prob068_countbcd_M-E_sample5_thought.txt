@@ -1,0 +1,7 @@
+I will implement the 4-digit BCD counter using a ripple carry approach, but with a twist: the counter will update digits one at a time in a priority sequence each clock cycle, controlled by enable signals that are registered and delayed by one clock cycle to reduce combinational complexity and improve timing. 
+
+Specifically, I'll maintain separate 4-bit registers for each digit to clearly separate the logic and allow easier manipulation. On each clock edge, the ones digit increments unconditionally; if it rolls over (from 9 to 0), it asserts an internal carry to enable incrementing the tens digit on the next cycle. The enable signals for tens, hundreds, and thousands digits will be registered enables derived from the previous carry, effectively pipelining carry propagation one clock cycle per digit. This breaks the long carry chain into shorter steps and reduces combinational delay per cycle.
+
+The ena output signals will indicate when each higher digit is enabled to increment, reflecting the registered enable signals. The reset synchronously clears all digits and disables all enables.
+
+This pipelined ripple approach trades off increment latency (it takes up to 4 cycles to ripple all carries) for improved timing and simpler combinational logic, with clear and gated enables preventing unnecessary digit increments, reducing power. The separate digit registers simplify the carry detection and incrementation logic without nested combinational functions.

@@ -1,0 +1,21 @@
+Simplify the design by directly encoding the required decimal matches in a compact expression without explicitly writing all minterms or maxterms. Since only three input patterns produce output 1 (2,7,15), and specific zeros are defined, and others never occur, we can treat invalid inputs as don't cares and simplify.
+
+Using the input vector as a 4-bit number (a,b,c,d) with 'a' as MSB, create a small logic that checks these values:
+
+- out_sop = 1 when input equals 2, 7, or 15
+- out_pos = complement of zeros: 0,1,4,5,6,9,10,13,14
+
+We can implement `out_sop` by comparing inputs to those three numbers directly using equality checks (compact and clear) or a case statement.
+
+For POS, since it's the complement of zeros, just invert the SOP expression that covers these zeros, or simply take complement of the out_sop for all other inputs except the invalids.
+
+Because invalid inputs never occur, logic can be simplified to:
+
+- out_sop = (input == 2) | (input ==7) | (input == 15)
+- out_pos = !out_sop (since only those inputs generate 1, zeros otherwise)
+
+This drastically reduces complexity and avoids Karnaugh map complexities.
+
+We implement inputs as a 4-bit vector for convenience. The code uses continuous assignments for combinational outputs.
+
+This approach satisfies the requirements while being minimal and clear.

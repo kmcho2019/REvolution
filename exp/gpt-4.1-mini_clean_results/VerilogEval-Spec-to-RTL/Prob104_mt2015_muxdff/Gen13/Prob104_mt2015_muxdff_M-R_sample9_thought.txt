@@ -1,0 +1,5 @@
+Refactor the TopModule by implementing the output Q as a reg updated on the rising edge of clk, but instead of using a wire mux_out, use a continuous assignment for the next state value and then latch it in the always block. Alternatively, implement the mux logic inside a separate function for clarity and reuse.
+
+This approach separates the mux combinational logic from the sequential logic in a function, providing better code modularity and potentially easing formal verification or synthesis optimizations. The function returns the next state based on L, q_in, and r_in, and the always block simply updates Q with that value on clk's rising edge.
+
+This structurally differs from the previous mux wire and combinational assign, while maintaining the same behavior.

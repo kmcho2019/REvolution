@@ -1,0 +1,13 @@
+Simplified Design Idea:
+1. Use a Moore FSM with minimal states (4 instead of 5) by combining DONE and WAIT_ACK
+2. Remove separate shift counter - use state duration to control shift_ena
+3. Simplify pattern detection by shifting continuously and checking in IDLE state
+4. Make outputs directly dependent on current state
+5. Reduce registers by eliminating pattern_reg and shift_count
+
+Key Simplifications:
+- Fewer states by combining done notification and ack wait
+- No need for explicit shift counter - fixed 4-cycle SHIFT state handles this
+- Continuous pattern shifting simplifies detection logic
+- Outputs directly derived from state
+- Fewer registers overall

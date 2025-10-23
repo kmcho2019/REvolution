@@ -1,0 +1,8 @@
+To create a novel solution, we can utilize a counter-based approach instead of a traditional finite state machine (FSM). The idea revolves around maintaining a counter that tracks the number of bytes received since the last message boundary was detected. When a byte with in[3]=1 is encountered, we reset the counter and start counting from 0, assuming this byte is the start of a new message. We continue incrementing the counter as each new byte is received. Once the counter reaches 2 (indicating we've received 3 bytes in total), we assert the 'done' signal in the next cycle, signaling the receipt of a complete message. This approach simplifies the state machine logic and potentially reduces the area and power consumption.
+
+Key aspects of this novel approach include:
+1. Utilizing a counter to track the byte sequence.
+2. Asserting 'done' when the counter reaches 2, indicating the end of a 3-byte message.
+3. Implementing a simple combinatorial logic to control the counter and the 'done' signal assertion.
+
+This counter-based approach is expected to offer better performance and area efficiency compared to traditional FSM implementations, especially for designs where the message length is fixed and known beforehand.

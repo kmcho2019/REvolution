@@ -1,0 +1,17 @@
+Here's a novel approach using a hierarchical state machine with separate control for direction and falling states:
+
+1. Use two separate state machines that interact:
+   - A direction FSM (left/right) that only changes when on ground
+   - A falling FSM (grounded/falling) that controls the aaah output
+
+2. Key innovations:
+   - Direction state is preserved during falls
+   - Bump inputs only affect direction when grounded
+   - Clean separation of concerns between movement and falling logic
+   - Uses one-hot encoding for states for potentially better timing
+
+3. Benefits:
+   - More modular design that's easier to extend
+   - Clear separation of movement and physics logic
+   - Direction changes are completely isolated from falling state
+   - Reset logic is straightforward and clean

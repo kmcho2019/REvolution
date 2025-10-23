@@ -1,0 +1,7 @@
+The original design correctly detects falling edges by comparing the previous input to the current input and captures them in the output until reset. However, the main issue comes from initializing `prev_in` to zero on reset, which can cause false detection on the first cycle after reset if the input bits are initially high (1), leading to unexpected falling edges when `prev_in` transitions from 0 to the actual input.
+
+To fix this, on reset we should initialize `prev_in` to the current input value instead of zero, so no spurious edge detection happens on the first cycle after reset. This ensures `falling_edge = prev_in & ~in` starts with `prev_in == in` right after reset, so no false detections occur immediately.
+
+The rest of the logic remains the same: detect falling edges combinationally, update output by OR-ing with newly detected edges, and clear output on synchronous reset.
+
+This adjustment aligns the design's initial state with the input signal and matches expected simulation behavior, avoiding spurious outputs due to initial conditions.

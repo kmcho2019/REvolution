@@ -1,0 +1,11 @@
+To strictly follow the original problem description, I will implement two separate counters: cnt1 increments on the positive edge of clk, cnt2 increments on the negative edge. Both count modulo NUM_DIV.
+
+Two clock divider outputs clk_div1 and clk_div2 toggle when their respective counters reach HALF_DIV (NUM_DIV / 2), producing half-cycle pulses on each edge.
+
+The final output clk_div is the OR of clk_div1 and clk_div2, ensuring the output frequency is divided by the odd NUM_DIV with correct timing and duty cycle.
+
+Resetting asynchronously on rst_n (active low) initializes counters and outputs.
+
+This matches the specification and guarantees an accurate frequency division by odd numbers with proper edge alignment.
+
+The implementation will include a compile-time check for odd NUM_DIV and parameterizable divisor.

@@ -1,0 +1,10 @@
+Implement a simple Moore FSM with a compact set of states that directly reflect the specification. Use a shift register to track the last three samples of x, updated at each clock after reset is released. After reset is de-asserted, the FSM outputs f=1 for one cycle. Then it monitors the x input for the sequence 1-0-1 using the shift register. Once detected, the FSM sets g=1 and begins monitoring y for up to two cycles. If y is 1 within those two cycles, g remains 1 forever; otherwise, g is cleared to 0 forever. Outputs f and g depend only on the current state (Moore outputs). All logic is synchronous with a single always @(posedge clk) block and a synchronous active low reset. The FSM states are minimal:
+
+- A_RESET: reset state
+- PULSE_F: f=1 for one cycle right after reset is released
+- WAIT_PATTERN: monitoring x sequence 1-0-1
+- MONITOR_Y: g=1, wait up to 2 cycles for y=1
+- HOLD_G1: g=1 forever until reset
+- HOLD_G0: g=0 forever until reset
+
+This approach minimizes complexity and off-by-one errors by clearly defining when outputs update (based on current state), and updating inputs and counters synchronously inside the clocked always block.

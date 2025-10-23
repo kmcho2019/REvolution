@@ -1,0 +1,13 @@
+Fuse the clarity and separate combinational block approach from Example 1 with the efficient in-sequential accumulation and output computation from Example 2. Specifically:
+
+- Use two states (A and B) encoded in 1 bit for minimal area.
+- In state A, wait for s=1, reset counters and output z.
+- In state B, use an enable signal so counters update only in B to reduce toggling in state A.
+- Perform accumulation and cycle counting inside the sequential always block, reducing combinational logic depth.
+- Generate z synchronously at the end of each 3-cycle window, setting z=1 only if exactly two w=1's occurred.
+- Maintain a simple combinational block to define next_state only, improving timing by separating combinational and sequential logic clearly.
+- Hold output stable except when updating to minimize switching.
+- Assign defaults in combinational logic to avoid latches and glitches.
+- This fusion keeps the timing advantage of simple logic inside the sequential block while preserving the structured FSM style for easy synthesis and debugging.
+
+Overall, this yields a clean, minimal, power-efficient, and well-timed FSM design.

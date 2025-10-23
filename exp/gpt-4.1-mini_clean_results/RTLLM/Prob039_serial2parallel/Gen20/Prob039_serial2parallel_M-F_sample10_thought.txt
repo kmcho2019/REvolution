@@ -1,0 +1,14 @@
+The issue arises because the output `dout_parallel` is formed by combining the previous cycle's partially updated `data_reg` and the current `din_serial` bit without fully updating `data_reg` first. This causes timing inconsistencies and incorrect data latching.
+
+To fix this, update `data_reg` with the current `din_serial` bit on each valid input first, then, when the count reaches 7 (i.e., after storing the last bit), assign `data_reg` directly to `dout_parallel`. This way, `data_reg` always holds the complete 8-bit data.
+
+The process is:
+- On each valid input, store `din_serial` at bit position `7 - cnt`.
+- Increment the counter.
+- When the counter reaches 7, latch the full `data_reg` to `dout_parallel` and assert `dout_valid` for one clock cycle.
+- Reset the counter after receiving 8 bits.
+- Clear `dout_valid` at other times.
+
+This ensures all bits are stored before output and avoids mixing partial updates in a single clock cycle.
+
+Also, use only non-blocking assignments inside the sequential always block for proper synchronous behavior.

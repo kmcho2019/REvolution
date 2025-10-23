@@ -1,0 +1,17 @@
+To optimize the FSM for better PPA, I will apply the following improvements:
+
+1. Use a 2-bit state encoding with a one-hot style approach by assigning each state a unique 2-bit code to reduce register bits from 3 to 2, since only six states are present but actually 4 bits suffice to encode 6 states. However, 2 bits cannot encode all six states uniquely. Alternatively, use 3 bits but optimize the encoding to minimize bit toggling by using Gray code or a balanced encoding.
+
+2. Notice from the state transitions and output requirements that output `z` is only 1 for states E and F. I can encode states E and F as 3'b011 and 3'b010, so that the LSB or middle bit (bit 1) can be used as `z`. This reduces output logic complexity and may reduce glitches.
+
+3. Implement the next state logic using if-else to possibly get simpler synthesized logic compared to case, since only few conditions depend on input w and current state.
+
+4. Replace the explicit always block for output `z` with a continuous assignment for combinational clarity and lower power.
+
+5. Use synchronous reset and non-blocking assignments to preserve correct coding style.
+
+6. The goal is to improve timing and reduce switching by using simpler logic expressions and fewer state bits.
+
+Given the complexity and the fact that 6 states require at least 3 bits, but output depends only on which states are E or F, encoding them to share a single bit that indicates `z` is optimal. We also simplify the next state logic with if-else chains.
+
+This approach should reduce logic levels in the next_state combinational block, reduce glitches in output, and slightly improve timing and power while keeping area minimal.

@@ -1,0 +1,12 @@
+Improvement Strategy:
+1. Simplify Counter Logic: Remove unnecessary gray code conversion to reduce complexity and improve timing
+2. Optimize Frequency Handling: Treat freq=0 as max frequency (continuous toggle) by making count=0 a special case
+3. Reduce Register Usage: Use single counter register instead of two (count and gray_count)
+4. Critical Path Optimization: Simplify comparison logic by using down-counter with implicit zero detection
+5. Power Optimization: Minimize switching activity by only updating wave_out when needed
+
+Key Changes:
+- Remove gray code related logic entirely
+- Implement simple down-counter with synchronous reset
+- Optimize freq=0 handling by making it a special case in reset logic
+- Simplify output toggle to only occur at count rollover

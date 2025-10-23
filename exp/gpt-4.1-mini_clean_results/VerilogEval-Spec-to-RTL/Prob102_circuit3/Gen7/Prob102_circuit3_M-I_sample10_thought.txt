@@ -1,0 +1,13 @@
+The current implementation is already minimal and matches the observed truth table exactly: q = (a|b) & (c|d). This expression is simple and has minimal logic depth, ensuring optimal performance and area for a 4-input combinational function.
+
+To potentially improve power, we can rewrite the expression using only NAND gates by applying De Morgan's law, since NAND gates generally consume less power and have good driving capability in CMOS processes. The equivalent NAND form is q = NAND(NAND(a,a), NAND(b,b)) AND NAND(NAND(c,c), NAND(d,d)), but this expands gate count.
+
+However, given the simplicity and minimal gate count of the original expression, the best practical improvement is to keep it as is for minimal depth and area.
+
+Thus, no meaningful PPA improvement is achievable beyond the current minimal implementation. The initial solution is already optimal.
+
+Therefore, I will keep the same logic but provide an explicit always_comb block for better synthesis friendliness, especially in more complex flows, though synthesis tools treat continuous assignments similarly.
+
+This explicit combinational block makes the design's intent clear and helps when further modifying the logic in the future.
+
+Final: maintain the same logic with explicit combinational always block.

@@ -1,0 +1,12 @@
+The original solution uses a 9-bit shift register SR (remainder + quotient bits) and performs subtraction on 9 bits each cycle. This is functionally correct but can be further optimized for performance and clarity:
+
+1. Use separate registers for remainder and quotient to simplify arithmetic and reduce shifting complexity.
+2. Implement the subtraction on 9-bit remainder extended with one bit and divisor shifted accordingly, but keep quotient in a separate register.
+3. Replace signed/unsigned absolute value computations with simpler unsigned values and sign flags.
+4. Use a single always block with well-defined state machine and counters.
+5. Avoid repeated sign-correction each cycle—do it once after division is done.
+6. Use fewer intermediate signals and avoid wide vectors when unnecessary to reduce area and increase synthesis friendliness.
+7. Remove 9-bit NEG_DIVISOR; instead, negate the divisor during subtraction using two's complement on the fly.
+8. Keep res_valid asserted only one cycle after done and until new operation starts, minimizing contention and glitches.
+
+This improved design separates the remainder and quotient registers, maintains clean control FSM, and applies sign correction only once after completion, improving clarity and potentially reducing combinational logic depth and area.

@@ -1,0 +1,10 @@
+The original FSM solution is functionally correct and clean, but can be optimized for improved area and power efficiency by:
+
+- Using one-hot encoding for states, which often results in simpler and faster next state logic and easier synthesis for small FSMs.
+- Simplifying the state transitions and output logic by combining output assertion directly with a specific state.
+- Avoiding the use of typedef and enum (which may not be supported in all Verilog tools) for better portability and potentially smaller gate count.
+- Using a single register for state and directly encoding each state as a separate bit to minimize logic.
+
+This approach keeps the FSM concept, but re-encodes states as one-hot signals and simplifies the logic to reduce gate usage and switching, benefiting PPA.
+
+The resulting code is functionally identical but optimized for implementation.

@@ -1,0 +1,16 @@
+The simplified solution focuses on directly mapping sensor states to outputs while maintaining proper reset behavior:
+
+1. Key Simplifications:
+   - Remove the previous state tracking since dfr can be determined from current state alone (not needed per spec)
+   - Use simple combinatorial logic for outputs based on sensor states
+   - Implement synchronous reset properly by registering outputs
+
+2. Output Logic:
+   - fr2: active only when all sensors are off (below s[0])
+   - fr1: active when at or below s[1] (s[2] is off)
+   - fr0: active when any sensor is on (water not at highest level)
+   - dfr: always 0 in this simplified version (removed supplemental flow)
+
+3. Reset Behavior:
+   - All outputs high when reset is active
+   - Synchronous reset implementation

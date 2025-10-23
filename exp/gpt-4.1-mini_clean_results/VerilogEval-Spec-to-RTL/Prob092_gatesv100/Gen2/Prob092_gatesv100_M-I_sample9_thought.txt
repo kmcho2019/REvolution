@@ -1,0 +1,15 @@
+To optimize for better PPA, I will eliminate the for loops and the modulo operator by using vector operations and explicit indexing:
+
+1. For out_both:
+   - Assign out_both[98:0] = in[98:0] & in[99:1].
+   - Set out_both[99] = 0.
+
+2. For out_any:
+   - Assign out_any[99:1] = in[99:1] | in[98:0].
+   - Set out_any[0] = 0.
+
+3. For out_different:
+   - For bits [98:0], out_different[i] = in[i] ^ in[i+1].
+   - For bit 99, out_different[99] = in[99] ^ in[0].
+
+This approach removes the combinational always block and replaces it with continuous assignments that are easier for synthesis tools to optimize, leading to reduced area, lower power, and better timing. The modulo operation is replaced with explicit wrap-around at bit 99, making the hardware simpler and faster.

@@ -1,0 +1,11 @@
+The feedback reveals two main issues that need to be addressed:
+
+1. **Correct Transition Detection**: Instead of using a two-stage pipeline, we should directly compare the current input with the previous input stored in a single register. This ensures we're detecting transitions between consecutive cycles accurately.
+
+2. **Simplified State Capture**: The captured state should be set whenever a 1->0 transition is detected and remain set until reset. We can achieve this by OR-ing the current captured state with newly detected transitions.
+
+The fixed design will:
+- Use a single register to store the previous input value
+- Compare current input with previous input to detect 1->0 transitions
+- Maintain the captured state by OR-ing new detections with existing state
+- Clear everything on reset

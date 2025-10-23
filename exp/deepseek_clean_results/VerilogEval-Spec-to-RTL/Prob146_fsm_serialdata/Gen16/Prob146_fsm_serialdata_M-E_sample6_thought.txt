@@ -1,0 +1,11 @@
+Instead of using a traditional FSM with separate states for each phase, we can implement a more efficient design using:
+1. A shift register that loads in parallel when a complete byte is received
+2. A down counter that counts bits and detects completion
+3. A status register that tracks the protocol phases
+
+Key innovations:
+- Combines IDLE and ERROR states by using the counter value as a state indicator
+- Uses parallel load for the output register to reduce critical path
+- Implements early termination when stop bit is invalid
+- Minimizes state transitions by using counter as part of state logic
+- Optimizes power by gating shift operations when not needed

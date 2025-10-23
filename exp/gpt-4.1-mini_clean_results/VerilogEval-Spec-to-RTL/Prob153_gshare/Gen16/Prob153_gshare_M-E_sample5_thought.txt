@@ -1,0 +1,33 @@
+I will implement a gshare predictor using a dual-port-like approach with separate registers for prediction and training to avoid contention and timing hazards.
+
+Key novel idea:
+- Maintain two 7-bit global history registers: 
+  - ghr_pred: used for predictions and updated only on successful predictions (i.e., predict_valid without simultaneous misprediction training).
+  - ghr_train: reflects the recovered history after training a mispredicted branch, used exclusively to restore history on mispredict and keep training consistent.
+
+- Use a 128-entry PHT implemented as a single-port synchronous RAM modeled with a reg array.
+- To resolve single-port RAM conflict between training (write) and prediction (read) in the same cycle:
+  - On the clock edge, update PHT from training input if train_valid is asserted.
+  - Read PHT combinationally using ghr_pred and predict_pc for prediction.
+  
+- Prediction interface:
+  - When predict_valid is asserted, compute index = predict_pc XOR ghr_pred.
+  - Output predict_taken from MSB of the 2-bit saturating counter at that index.
+  - Output predict_history = ghr_pred (the history used for prediction).
+  - Update ghr_pred on next clock edge by shifting in predicted bit *only if* no training misprediction occurs this cycle.
+
+- Training interface:
+  - When train_valid is asserted:
+    - Update PHT at (train_pc XOR train_history) with saturating update based on train_taken.
+    - If train_mispredicted is true, restore ghr_pred to train_history (the recovered history), overriding any prediction update.
+    - Also update ghr_train to train_history to keep consistent recovery history.
+    
+- Priority:
+  - When both predict_valid and train_valid with mispredict occur in the same cycle, training takes precedence: ghr_pred is restored to train_history.
+  - When train_valid without mispredict and predict_valid occur simultaneously, update PHT and ghr_pred accordingly, with training updating PHT and ghr_pred updated with predicted bit after clock edge.
+
+This design cleanly separates history registers for prediction and training recovery, avoids direct read/write conflicts by relying on a synchronous RAM model and updates history registers with clear priority logic.
+
+The combinational outputs reflect the state before clock edge updates, consistent with spec.
+
+This novel dual-history approach simplifies misprediction recovery and avoids update race conditions.

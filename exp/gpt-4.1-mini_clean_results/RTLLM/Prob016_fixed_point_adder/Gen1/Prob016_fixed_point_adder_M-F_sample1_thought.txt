@@ -1,0 +1,13 @@
+To fix the syntax errors, all `wire` and `reg` declarations must be moved outside the always block, at the module level. Inside the always block, only procedural assignments to declared regs can occur. Also, instead of declaring `wire` variables inside the always block, assign sign bits to procedural variables declared outside. We keep the absolute value computations and sign comparisons outside the always block or as functions, so we can call them inside the always block with clean syntax. The result register `res` remains a reg declared at the module level and is assigned inside the always block.
+
+For sign handling, since inputs are in two's complement form, taking absolute values and performing add/sub based on signs is sufficient. The final output `c` is assigned inside the always block after properly forming the result with correct sign.
+
+Overall, the fix involves:
+- Moving all variable declarations outside the always block.
+- Only doing procedural assignments to `reg` variables inside always.
+- Properly calling functions for absolute value and absolute comparison.
+- Keeping sign variables as `reg` assigned from inputs at combinational logic start.
+- Assigning final output `c` inside the always block.
+- Ensuring the res register is assigned with correct logic.
+
+This will remove syntax errors and produce the expected fixed-point adder with correct sign-aware addition/subtraction.

@@ -1,0 +1,11 @@
+The TopModule can be designed as a finite state machine (FSM) with several states to handle the reception of bytes from the serial stream. The states will include an idle state, a start state, data states to collect the 8 bits of the byte, and a stop state to verify the stop bit. The FSM will transition between these states based on the input bit and the current state. 
+
+1. The FSM starts in the idle state, waiting for a start bit (0).
+2. Upon detecting a start bit, it transitions to the first data state to begin collecting the byte.
+3. In each data state, it collects one bit of the byte (from the least significant bit to the most significant bit).
+4. After collecting all 8 bits, it transitions to the stop state to verify the stop bit.
+5. If the stop bit is correct (1), it asserts the done signal and outputs the received byte.
+6. If the stop bit is not correct, it waits for a stop bit (1) to be detected before returning to the idle state.
+7. The FSM includes an active-high synchronous reset to return to the idle state when reset is asserted.
+
+The FSM will also need to handle the case where it is currently receiving a byte but the reset is asserted. In this case, it should immediately return to the idle state.

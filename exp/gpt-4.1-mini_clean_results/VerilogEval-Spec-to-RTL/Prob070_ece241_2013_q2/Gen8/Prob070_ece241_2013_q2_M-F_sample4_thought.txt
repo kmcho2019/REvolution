@@ -1,0 +1,26 @@
+First, clearly map inputs a,b,c,d to a 4-bit number with a as MSB and d as LSB.
+
+1. Identify minterms for output=1:
+   - 2 (0010): ~a & ~b &  c & ~d
+   - 7 (0111): ~a &  b &  c &  d
+   - 15(1111):  a &  b &  c &  d
+2. These minterms cannot be grouped by ignoring 'a' because minterm 7 and 15 differ in 'a', and no other minterms cover these combinations.
+   So the minimal SOP is exactly the sum of these three minterms:
+   out_sop = (~a & ~b & c & ~d) | (~a & b & c & d) | (a & b & c & d);
+
+3. Identify maxterms for output=0 (0,1,4,5,6,9,10,13,14):
+   - Each maxterm is the OR of literals where each literal is complemented if corresponding bit in input=1
+   - For example, for 0(0000): maxterm = a + b + c + d
+   - For 1(0001): a + b + c + ~d
+   - For 4(0100): a + ~b + c + d
+   - and so on.
+
+4. Check that the list of maxterms for zeros covers all zero cases and is correct.
+
+5. The problem states inputs 3,8,11,12 never occur; so we ignore them in expressions.
+
+6. The minimal POS expression is the product of all these maxterms explicitly, as found from K-map grouping or directly from zeros.
+
+7. Implement both out_sop and out_pos exactly from the expressions derived, with no grouping mistakes.
+
+This fix guarantees correctness in both SOP and POS forms without incorrect grouping or omitted literals.

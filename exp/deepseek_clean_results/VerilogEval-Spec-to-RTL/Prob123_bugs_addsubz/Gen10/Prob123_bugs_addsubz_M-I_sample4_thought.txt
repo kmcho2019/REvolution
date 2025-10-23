@@ -1,0 +1,15 @@
+The current solution is correct but can be optimized for better PPA. Here's the improvement strategy:
+
+1. Timing Optimization: The critical path includes the 2's complement operation and adder. We can reduce this by:
+   - Using a dedicated subtractor path instead of conditional 2's complement
+   - This eliminates the need for the mux and increment operation in the critical path
+
+2. Power Optimization:
+   - Use separate add and subtract operations to reduce unnecessary toggling
+   - The zero flag can be generated directly from the operation result without additional logic
+
+3. Area Optimization:
+   - While we're adding a subtractor, modern synthesis tools can optimize this well
+   - The zero detection remains efficient with reduction NOR
+
+This approach should improve timing by reducing the critical path length while maintaining similar area and potentially reducing power consumption.

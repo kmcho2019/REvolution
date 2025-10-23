@@ -1,0 +1,14 @@
+To optimize the LFSR implementation for better PPA metrics:
+1. Balance the XOR operations to reduce the critical path by:
+   - Pre-computing the common q[0] XOR term once
+   - Using this pre-computed value for all tap positions
+2. Simplify the concatenation structure by:
+   - Grouping adjacent bits that don't require XOR
+   - Making the tap positions more explicit
+3. Optimize the reset logic by:
+   - Moving it to a separate always block condition
+   - Reducing the multiplexer size
+4. Maintain the same functionality while potentially improving:
+   - Timing by reducing XOR fanout
+   - Power by reducing switching activity
+   - Area by simplifying the combinational logic

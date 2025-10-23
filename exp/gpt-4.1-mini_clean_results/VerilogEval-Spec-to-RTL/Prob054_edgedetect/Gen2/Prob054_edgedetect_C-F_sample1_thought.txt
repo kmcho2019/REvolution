@@ -1,0 +1,20 @@
+Both examples use the common technique of storing the previous input value and detecting 0-to-1 transitions by comparing the previous and current inputs. Example 1 assigns `pedge` based on a delayed input (`in_d`), causing `pedge` to be assigned the transition condition one cycle *after* the actual 0-to-1 transition, which means `pedge` output is delayed by one extra cycle beyond the requirement. Example 2 directly compares `prev_in` to `in` and assigns `pedge` in the same clock cycle, meeting the requirement that `pedge` signals the 0->1 transition one cycle after it occurs.
+
+The goal is to produce `pedge` asserted exactly one clock cycle after the 0->1 transition for each bit. Since the input changes at a clock edge, the *transition* occurs between two clock edges. Detecting it at the clock edge after the transition means capturing the previous input and comparing to the current input, as done in Example 2.
+
+Therefore, the best solution is to:
+- Register the previous input vector.
+- At each clock edge, detect transitions from previous=0 to current=1 bits.
+- Assign the detection directly to `pedge` in the same clock edge.
+
+This approach has minimal latency (one cycle after transition), minimal registers (only one previous-input register and the registered output `pedge`), and simple combinational logic.
+
+To slightly improve power and area beyond the examples:
+- Use a single always block to update both `prev_in` and `pedge` with non-blocking assignments for synchronous logic clarity.
+- Optionally, initialize `prev_in` to zero to avoid unknown states at reset (if asynchronous reset is not given, at least specify initial conditions).
+
+This fusion combines Example 2's timing correctness and minimal latency with Example 1's clear style and power/area minimality.
+
+No extra delay registers or complex gating are necessary here.
+
+This design cleanly meets the requirement that `pedge` is asserted *exactly* one cycle after the input bit transitions from 0 to 1.

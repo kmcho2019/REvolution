@@ -1,0 +1,21 @@
+To fix the functional mismatches, the next state logic must explicitly consider the current state along with inputs a and b, since the waveform shows that state transitions depend on all three signals, not just inputs.
+
+Analyzing the waveform transitions:
+- When a=0 and b=0, the state remains unchanged.
+- When a=0 and b=1, state transitions to 1.
+- When a=1 and b=0, state transitions to 0.
+- When a=1 and b=1, state toggles state.
+
+This pattern fits the following logic for next_state:
+- If (a=0, b=0): next_state = state (hold)
+- If (a=0, b=1): next_state = 1
+- If (a=1, b=0): next_state = 0
+- If (a=1, b=1): next_state = ~state (toggle)
+
+Implement this logic explicitly and separately from the sequential block, then update the registered state on the posedge clk.
+
+Output q is just the current state.
+
+Initialize state to 0.
+
+This approach accurately reflects the waveform behavior and should remove the mismatches.

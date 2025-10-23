@@ -1,0 +1,11 @@
+Instead of using an explicit state register to track increment or decrement mode, use a direction bit that directly controls whether the wave value increments or decrements each clock cycle. The direction flips automatically when wave reaches either boundary (0 or 31). This avoids a case statement with two states and leverages conditional direction toggling, simplifying control logic.
+
+The waveform generation logic:
+- On reset, wave is 0 and direction is increment (1).
+- On each clock edge, wave is updated by adding +1 or -1 depending on direction.
+- When wave reaches the upper bound (31), direction flips to decrement (0).
+- When wave reaches the lower bound (0), direction flips to increment (1).
+
+This design removes the explicit state case structure, uses only a direction bit, and a single update statement for wave, thus simplifying control and potentially improving synthesis optimization opportunities. The waveform still cycles between 0 and 31 cleanly.
+
+The always block is triggered on posedge clk or negedge rst_n with synchronous logic for direction and wave update.

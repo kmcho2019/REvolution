@@ -1,0 +1,15 @@
+To address the issues in the provided Verilog code, a comprehensive revision is required. The state machine needs to be redesigned to correctly capture all the states and transitions as described in the problem statement. This includes accurately implementing the walking, falling, digging, and splattering behaviors, along with their respective conditions and transitions.
+
+1. **State Encoding:** A more detailed state encoding is necessary. Instead of using just 2 bits, we can use 3 bits to encode the states: walking left (3'd0), walking right (3'd1), falling (3'd2), digging (3'd3), and splattered (3'd4). This encoding allows for a clear distinction between each state.
+
+2. **State Transitions:** The state transitions must be revised to align with the problem description. This includes handling bumps, ground conditions, digging commands, and the fall counter. For example, when `bump_left` is high and the Lemming is walking right, it should transition to walking left, and vice versa.
+
+3. **Digging Condition:** The condition for digging should be refined to only allow digging when the Lemming is walking on the ground and not falling. This can be achieved by adding a check for the current state being either walking left or right.
+
+4. **Fall Counter and Splatter Condition:** The logic for the fall counter and splattering needs to be adjusted. The fall counter should increment when the Lemming is in the falling state, and the splatter condition should be checked when the Lemming transitions from falling to walking (upon hitting the ground).
+
+5. **Sequential Logic:** The sequential logic block should be updated to reflect the new state transitions and conditions. This includes handling the asynchronous reset and ensuring that all possible states and transitions are correctly implemented.
+
+6. **Output Signals:** The output signals (`walk_left`, `walk_right`, `aaah`, `digging`) should be assigned based on the current state, ensuring that they accurately reflect the Lemming's behavior.
+
+By addressing these areas, the revised code should accurately model the behavior of the Lemmings as described in the problem statement.

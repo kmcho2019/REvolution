@@ -1,0 +1,11 @@
+The original implementation pre-computed all possible rotations and used a case statement to select the result. While functional, this approach consumes more area than necessary. We can optimize this by:
+1. Using continuous assignments (assign statements) instead of an always block for better synthesis
+2. Implementing the rotation in stages as specified in the problem description (4, 2, 1 positions)
+3. Using bitwise operations to perform the shifts more efficiently
+4. Eliminating the array storage of all possible rotations
+
+The new approach will:
+- First apply the 4-bit shift if ctrl[2] is set
+- Then apply the 2-bit shift to the intermediate result if ctrl[1] is set
+- Finally apply the 1-bit shift if ctrl[0] is set
+This matches the problem description exactly while being more area-efficient.

@@ -1,0 +1,10 @@
+To refactor the existing code for the right_shifter module, we can maintain the core functionality of shifting the input `d` into the most significant position of the register `q` and then shifting the contents of `q` to the right by one bit on each rising edge of the clock. However, instead of using an always block to update `q` directly, we can utilize a different approach that separates the computation of the next state of `q` and its update.
+
+One way to refactor the code is to use a combination of continuous assignments and a clocked always block but in a manner that is modular and easy to understand. We can define the next state of `q` using a continuous assignment, taking into account the shift operation and the insertion of the new input `d`. Then, we can use a clocked always block to update `q` with this next state on every rising edge of the clock.
+
+The key steps in this refactoring include:
+1. Defining the next state of `q` using a continuous assignment that incorporates the right shift operation and the insertion of `d` into the most significant position.
+2. Using a clocked always block to update `q` with the computed next state.
+3. Initializing `q` to a known value to avoid any undefined behavior.
+
+By structuring the code in this way, we can maintain the efficiency and simplicity of the original design while potentially improving readability and maintainability.

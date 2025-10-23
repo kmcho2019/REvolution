@@ -1,0 +1,8 @@
+To implement Rule 90 cellular automaton, we need to:
+1. Create a 512-bit register to store the current state (q)
+2. On each clock edge:
+   - If load is high, load data into q
+   - Else, compute next state where each bit is XOR of its left and right neighbors
+3. Handle boundary conditions by treating q[-1] and q[512] as 0
+4. The next state computation can be done in parallel for all bits using:
+   next_q[i] = q[i-1] ^ q[i+1] for i=0 to 511, with boundary bits treated as 0

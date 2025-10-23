@@ -1,0 +1,9 @@
+Implement the FSM using one-hot encoding for states, which simplifies next-state logic and output decoding at the cost of more flip-flops (4 flip-flops for 4 states). 
+
+- Define four one-hot encoded states: A=0001, B=0010, C=0100, D=1000.
+- Use a synchronous active-low reset.
+- Use separate always blocks for state registers and combinational next-state logic.
+- In next-state logic, explicitly check each state's conditions and implement priority in state A by nested if-else, granting to r[0], then r[1], then r[2].
+- In grant states (B, C, D), remain in the grant state as long as the corresponding r[i] remains asserted; otherwise, transition back to A.
+- Outputs g[i] are driven by the one-hot encoded state signals directly using simple combinational assignments for clarity.
+- This approach trades minimal FF count for simpler next-state and output logic, potentially improving timing due to less encoding/decoding overhead.

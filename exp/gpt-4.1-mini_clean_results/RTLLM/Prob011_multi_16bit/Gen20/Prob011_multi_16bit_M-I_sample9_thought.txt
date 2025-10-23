@@ -1,0 +1,14 @@
+To optimize the original FSM-based 16-bit multiplier for better PPA:
+
+- Remove the explicit states LOAD and DONE to reduce FSM complexity by merging their functionality into two main states: IDLE and MULTIPLY.
+- Use an explicit 5-bit cycle counter (0 to 16) to control operation progress and done flag, avoiding a separate done register by generating done combinationally from the counter.
+- Load the multiplicand and multiplier registers at the rising edge of start signal only once, avoiding repeated register updates on every clock.
+- Replace shift of the multiplicand by treating it as a fixed operand and instead shift the multiplier in the product register to reduce toggling of the multiplicand register.
+- Use a 32-bit shift register (product register) initialized with the multiplier value in its lower 16 bits, and shift it right each cycle to align the bits for checking and accumulation.
+- Perform addition (accumulate) of the multiplicand shifted appropriately into the product register only when the LSB of the product register is 1.
+- Use clock enables (implicit by checking state and counters) to avoid toggling registers unnecessarily when idle.
+- Avoid resetting registers unnecessarily; hold them stable when not active.
+- Generate done flag combinationally as (count == 16).
+- This approach reduces the number of registers shifting each cycle, reduces the critical path to a single adder + shift per cycle, and reduces overall toggling.
+- Keep all registers synchronous with active-low reset, using non-blocking assignments.
+This design improves clarity, reduces register toggling (thus saving power), and simplifies FSM logic, potentially improving frequency and reducing area.

@@ -1,0 +1,19 @@
+To optimize the FSM for better PPA metrics while maintaining functionality:
+
+1. **Performance Improvement**:
+   - Move output logic (z) into the sequential block to reduce combinational path length
+   - This eliminates the separate combinational path for z calculation
+
+2. **Power Optimization**:
+   - Keep binary encoding (most area-efficient for 3 states)
+   - Maintain simple state transitions to minimize switching activity
+
+3. **Area Optimization**:
+   - The current 2-bit encoding is already optimal for 3 states
+   - Keep minimal logic by combining state and output updates in one always block
+
+The improved version will:
+- Have output registered with the state
+- Maintain the same state encoding
+- Reduce critical path by eliminating combinational output logic
+- Keep the same basic state transition logic

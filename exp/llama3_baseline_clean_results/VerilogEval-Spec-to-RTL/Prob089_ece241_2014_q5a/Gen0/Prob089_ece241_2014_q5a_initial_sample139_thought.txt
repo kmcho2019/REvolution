@@ -1,0 +1,8 @@
+To implement the one-input one-output serial 2's complementer Moore state machine, we can use a finite state machine (FSM) with two states: idle and running. 
+When the reset is asserted, the FSM stays in the idle state. When the reset is released, it transitions to the running state. 
+In the running state, we accumulate the input bits in a register and invert and add one to the result when the most significant bit (MSB) is received, which is indicated by the next reset assertion.
+However, since the length of the input number is arbitrary, we cannot determine the MSB directly. 
+Instead, we will keep accumulating the input bits and generate the 2's complement by inverting the accumulated bits and adding one when the reset is asserted again.
+To achieve this, we will use a flip-flop to store the current bit of the result and a register to accumulate the input bits. 
+When the reset is asserted again, we will invert the accumulated bits, add one, and output the result bit by bit.
+We will also use a flag to track whether the FSM is in the running state or not.

@@ -1,0 +1,23 @@
+Novel Architecture Idea:
+1. Unified Counter Approach:
+   - Use a single 17-bit counter to track total seconds since midnight (0-43199)
+   - This eliminates cascaded counter dependencies and reduces combinatorial paths
+   - The counter naturally rolls over at 12 hours (43200 seconds)
+
+2. Time Decoding Logic:
+   - Extract hours, minutes, seconds through division/modulo operations
+   - Convert to BCD format in a single step using optimized arithmetic
+   - Generate PM signal based on the half-day boundary (21600 seconds)
+
+3. Optimizations:
+   - Use power-of-two scaling for efficient division (shift operations)
+   - Implement modulo operations using bit masking
+   - Pipeline the decoding logic to improve timing
+   - Use synchronous reset for all registers
+
+Advantages:
+- Single counter reduces register count and simplifies control logic
+- No cascaded enable signals - cleaner timing paths
+- Natural rollover behavior without complex condition checking
+- Easier to verify correct time transitions
+- More scalable for future modifications

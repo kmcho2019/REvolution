@@ -1,0 +1,14 @@
+The existing design is clear and functionally correct, using one-hot encoding for simplicity. However, one-hot FSMs, while fast, use more flip-flops, which can increase power and area slightly. Also, the next-state logic implemented as a function may add extra combinational delay.
+
+To optimize for Power, Performance, and Area (PPA), we can:
+
+1. Use binary encoding instead of one-hot to reduce flip-flop count from 3 to 2 bits.
+2. Implement the next-state logic combinationally within an always_comb block, avoiding the function overhead.
+3. Make the output registered to avoid glitches and improve timing predictability.
+4. Use synchronous reset instead of asynchronous reset to reduce asynchronous power and better align with synchronous design flows.
+
+This reduces flip-flop count, potentially lowers dynamic power, and can improve synthesis optimizations. Registering the output stabilizes output timing and avoids combinational glitches.
+
+The FSM states encode the detection of the pulse pattern 0→1→0, and data_out is asserted at the cycle when the pulse ends.
+
+This approach keeps the design simple, efficient, and better aligned with typical synchronous ASIC/FPGA design methodologies.

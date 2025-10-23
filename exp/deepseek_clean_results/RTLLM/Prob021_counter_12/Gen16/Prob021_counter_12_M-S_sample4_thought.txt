@@ -1,0 +1,6 @@
+The previous implementation uses an unnecessarily complex one-hot state machine for a simple 12-state counter. We can simplify this significantly by using a standard 4-bit binary counter approach. The counter will:
+1. Reset to 0 when rst_n is low
+2. Increment on each clock edge when valid_count is high
+3. Automatically wrap around from 11 (4'b1011) back to 0
+4. Hold its value when valid_count is low
+This approach uses minimal hardware (just 4 flip-flops) and simple combinational logic, making it more efficient in terms of area, power, and timing.

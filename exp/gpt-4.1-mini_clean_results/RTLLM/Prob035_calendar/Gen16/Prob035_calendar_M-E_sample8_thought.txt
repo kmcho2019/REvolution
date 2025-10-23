@@ -1,0 +1,11 @@
+Implement the calendar using three separate always blocks as specified, each responsible for updating seconds, minutes, and hours independently but synchronized on the same clock and reset.
+
+- The seconds always block increments seconds every clock cycle, resetting to 0 upon reaching 59.
+- The minutes always block increments minutes only when seconds roll over from 59 to 0, resetting to 0 when both minutes and seconds reach 59.
+- The hours always block increments hours only when minutes and seconds both roll over from 59 to 0, resetting to 0 when hours reach 23.
+
+This modular approach matches the problem specification and clearly separates concerns. Although multiple always blocks could introduce small timing overhead due to inter-block dependencies, it provides clear clock-domain logic and easier debug/maintenance.
+
+Using non-blocking assignments ensures sequential logic behavior. The outputs have widths as requested: 6 bits for hours (even though 5 bits suffice) to meet the exact problem requirement. Each always block is sensitive to posedge CLK and posedge RST for synchronous reset.
+
+This design directly follows the problem instructions for separate always blocks and controlled counting with cascaded increments.

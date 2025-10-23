@@ -1,0 +1,10 @@
+The problem can be solved by implementing a state machine that monitors the sensor inputs and adjusts the flow rate accordingly. We can use a simple combinational logic to determine the nominal flow rate based on the sensor inputs. To handle the case where the water level is increasing, we can add an additional input to the state machine that tracks the previous sensor state. This will allow us to determine if the water level is increasing or decreasing. We can use a simple synchronous reset to reset the state machine to the initial state.
+
+The state machine will have the following states:
+- S_RESET: This is the reset state, where all sensors are considered not asserted, and all four outputs are asserted.
+- S_ABOVE_S2: This state is entered when the water level is above the highest sensor s[2].
+- S_BETWEEN_S2_S1: This state is entered when the water level is between the highest sensor s[2] and the middle sensor s[1].
+- S_BETWEEN_S1_S0: This state is entered when the water level is between the middle sensor s[1] and the lowest sensor s[0].
+- S_BELOW_S0: This state is entered when the water level is below the lowest sensor s[0].
+
+The state machine will transition between these states based on the sensor inputs and the previous sensor state.

@@ -1,0 +1,19 @@
+To fix the issues in the original solution, we need to:
+
+1. **Correct Counting Duration**: Initialize periods_left with the fully captured delay_val (4 bits) after the CAPTURE state completes. This ensures we count exactly (delay_val+1)*1000 cycles.
+
+2. **Precise Cycle Counting**: Maintain the count output stable for each 1000-cycle period by only updating it when we decrement periods_left (every 1000 cycles).
+
+3. **Proper State Transitions**: Ensure the FSM transitions at the correct cycle counts:
+   - From CAPTURE to COUNTING after capturing all 4 delay bits
+   - From COUNTING to DONE only after completing the final period (when periods_left reaches 0)
+
+4. **Output Timing**: Align counting and done signals precisely with the state machine's operation.
+
+5. **Reset Behavior**: Ensure all registers are properly initialized on reset.
+
+The improved design will:
+- Use a single always block for clean state transitions
+- Maintain accurate cycle counting with separate counters for periods and cycles
+- Keep outputs stable during counting periods
+- Properly handle the done/acknowledge sequence

@@ -1,0 +1,12 @@
+Refactoring idea: Use continuous assignments (assign statements) instead of an always block. This approach:
+1. Eliminates the need for default assignments since each output is independently defined
+2. Makes the code more concise and easier to understand
+3. Potentially reduces power by only evaluating each output when relevant bits change
+4. Maintains parallel evaluation of all outputs for good timing
+5. Uses direct bit comparisons which may synthesize more efficiently
+
+The key changes are:
+- Replace the always block with four parallel assign statements
+- Each output directly checks its specific condition
+- No need for explicit defaults as unassigned cases remain 0
+- Maintains the same scancode matching logic but in a more distributed fashion

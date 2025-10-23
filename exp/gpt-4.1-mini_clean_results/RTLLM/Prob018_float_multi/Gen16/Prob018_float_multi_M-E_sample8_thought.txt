@@ -1,0 +1,31 @@
+New Architectural Idea:
+
+To implement an IEEE-754 single-precision floating-point multiplier with a novel architecture, I propose a fully combinational approach with a single cycle latency (no pipelining), but using a carefully modularized structure inside the always block. This approach targets simplicity and ease of formal verification rather than high throughput, suitable for designs where a single-cycle multiplier is acceptable.
+
+Key points of this approach:
+
+1. Fully combinational logic for multiplier output computed on the rising edge of clk, controlled by rst.
+2. Extract sign, exponent, mantissa immediately.
+3. Handle all special cases explicitly: zero, infinity, NaN, denormal.
+4. Multiply mantissas as 24x24 bit unsigned integers (including the implicit leading bit for normalized numbers, or zero for denormals).
+5. Adjust exponent sum carefully, considering bias and normalization shifts.
+6. Normalize the product mantissa depending on the top bits of the product.
+7. Compute rounding bits (guard, round, sticky) from the lower bits of the product.
+8. Round using round-to-nearest-even.
+9. Handle overflow and underflow by saturating to infinity or zero respectively.
+10. Provide the output as a synchronous register updated each clock.
+
+Advantages:
+
+- Single-cycle latency and simple control.
+- Clear and understandable state machine: effectively combinational calculation each clock.
+- No pipeline registers or counters needed, minimizing register overhead.
+- Easier to debug and verify, suitable for a smaller-scale or control-centric design.
+
+Drawbacks:
+
+- Likely longer critical path than pipelined versions, so lower max frequency.
+- Higher power consumption due to no clock gating or pipelining.
+- No throughput improvement via pipelining.
+
+Overall, this architecture offers a clean and educational demonstration of IEEE-754 multiplication with correctness as priority.

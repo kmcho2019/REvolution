@@ -1,0 +1,14 @@
+Simplified approach:
+1. Maintain the same 2-state FSM (A and B)
+2. Use a 2-bit counter to track the 3-cycle window (0-1-2)
+3. Count the number of '1's in w during the window using a 2-bit accumulator
+4. Generate z one cycle after the window completes (when counter wraps)
+5. Reset all tracking logic when in state A
+6. Combine state transition and output logic in sequential block for simplicity
+
+Key simplifications:
+- Eliminated separate w_history shift register
+- Combined counting and window tracking into single counter
+- Simplified output logic by evaluating immediately after window
+- Reduced number of registers and signals
+- Maintained same functionality with fewer components

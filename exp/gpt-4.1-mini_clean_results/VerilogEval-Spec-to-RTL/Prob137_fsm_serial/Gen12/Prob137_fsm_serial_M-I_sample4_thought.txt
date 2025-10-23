@@ -1,0 +1,22 @@
+To optimize the design for better Power, Performance, and Area (PPA) while maintaining correctness, I will apply the following improvements:
+
+1. **Power Optimization:**
+   - Update the shift register and bit counter only during the RECEIVE state. This avoids unnecessary toggling of these registers when idle, in CHECK_STOP, or WAIT_STOP states, reducing dynamic power.
+   - Similarly, avoid resetting bit_count and shift_reg unnecessarily every cycle; only reset when transitioning to IDLE state to reduce switching.
+   
+2. **FSM Encoding:**
+   - Maintain the compact 2-bit encoding since the FSM is small; one-hot may increase area without significant gain for this case.
+   
+3. **Code Clarity and Synthesis Friendliness:**
+   - Use non-blocking assignments consistently in sequential block.
+   - Keep combinational next_state logic clean.
+   
+4. **Output 'done' Pulse:**
+   - Keep it as a registered pulse asserted only one clock cycle immediately when the stop bit is validated.
+   
+5. **Summary:**
+   - These changes minimize toggling on registers outside necessary states, reducing power.
+   - Performance should be slightly improved by reducing unnecessary register updates.
+   - Area remains minimal.
+
+This approach retains the synchronous reset and correct protocol handling while reducing toggling and improving synthesis friendliness for better PPA.

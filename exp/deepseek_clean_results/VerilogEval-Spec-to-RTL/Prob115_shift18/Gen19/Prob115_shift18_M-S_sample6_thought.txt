@@ -1,0 +1,22 @@
+Simplification Strategy:
+1. **Reduce Control Logic**:
+   - Use a single case statement for all shift operations instead of nested if-else
+   - Combine direction and amount selection into one decode step
+
+2. **Minimize Signal Transitions**:
+   - Remove intermediate next_q signal and compute directly in clocked block
+   - Only perform shift calculations when enabled (ena=1)
+
+3. **Simplify Arithmetic Shift**:
+   - Implement right shifts using concatenation with sign bit replication
+   - Left shifts use simple concatenation with zeros
+
+4. **Optimize Register Update**:
+   - Handle load and shift operations in priority order
+   - Default case maintains current value when no operation is needed
+
+Key Simplifications:
+- Eliminated separate combinational always block
+- Reduced control logic to single case statement
+- Removed unnecessary intermediate signals
+- Maintained all functionality with cleaner structure

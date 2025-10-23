@@ -1,0 +1,19 @@
+Refactoring the counter design using continuous assignments and combinational logic for the next state calculation:
+
+1. Key Changes:
+- Separate the next state logic from the sequential element
+- Use continuous assignment for the next state calculation
+- Keep the register update in a single always block
+- Remove clock gating to maintain synchronous design practices
+
+2. Benefits:
+- Clear separation of combinational and sequential logic
+- More predictable synthesis results (no clock gating)
+- Easier timing analysis with explicit next state logic
+- Maintains same functionality with reset and enable control
+
+3. Implementation Approach:
+- Create a wire for next_out that calculates the next counter value
+- The always block only handles the register update
+- Reset remains asynchronous for immediate response
+- Enable (valid_count) gates the counter increment

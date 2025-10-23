@@ -1,0 +1,14 @@
+Instead of using a state machine, we can implement this using a counter that tracks the message assembly progress:
+1. Use a 2-bit counter to track which byte we're currently receiving (0=waiting, 1=first byte, 2=second byte, 3=third byte)
+2. Store each byte in a separate register when received (byte1, byte2, byte3)
+3. The counter increments when:
+   - We're in state 0 and in[3]=1 (start new message)
+   - We're in states 1 or 2 (continue message)
+4. When counter wraps from 3 to 0, we assert done and output the concatenated bytes
+5. Reset clears all registers and sets counter to 0
+
+Advantages:
+- Eliminates FSM state transitions
+- Parallel storage avoids shift operations
+- Simpler control logic
+- More direct mapping to hardware

@@ -1,0 +1,19 @@
+To solve this problem, we can analyze the given Moore state machine and derive the next-state logic equations and output logic equations using the provided one-hot encoding. We can then implement the combinational logic portion of the state machine in Verilog.
+
+First, let's analyze the state transitions and output logic. Based on the given diagram, we can derive the following next-state logic equations:
+
+- From state S: if d = 0, stay in S; if d = 1, go to S1
+- From state S1: if d = 0, go to S; if d = 1, go to S11
+- From state S11: if d = 0, go to S110; if d = 1, stay in S11
+- From state S110: if d = 0, go to S; if d = 1, go to B0
+- From state B0, B1, B2, B3: always go to the next state in sequence (B0 -> B1 -> B2 -> B3 -> Count)
+- From state Count: if done_counting = 0, stay in Count; if done_counting = 1, go to Wait
+- From state Wait: if ack = 0, stay in Wait; if ack = 1, go to S
+
+We can also derive the output logic equations:
+
+- shift_ena: 1 in states B0, B1, B2, B3
+- counting: 1 in state Count
+- done: 1 in state Wait
+
+Now, we can implement the combinational logic portion of the state machine in Verilog.

@@ -1,0 +1,9 @@
+Analyze the waveform shows that q updates on the rising edge of clk and holds its value until the next rising edge. The output q behaves as a latch of the previous value of (~a) on the rising clock edge, but to vary the implementation, I will use an explicit internal register to hold the previous state and drive q from this register.
+
+Specifically, on each positive clock edge, q <= ~a;
+
+This implementation avoids a separate DFF module, integrates the flip-flop in the TopModule, and directly assigns q in a registered process. This maintains the same functional behavior but changes the architecture for variety.
+
+Also, initialize q to 0 on reset. Since no reset input is given, leave q uninitialized, as in the original waveform.
+
+This approach simplifies the design by integrating the flip-flop directly in the top module without a separate component, which can be advantageous for small designs.

@@ -1,0 +1,23 @@
+The key fix is to strictly follow the algorithm as described: at each step, extract the top bits of the current remainder (which initially holds the upper bits of the dividend) matching the divisor width (8 bits), compare them directly with the divisor, and update quotient and remainder accordingly.
+
+To implement this combinationally:
+- Use a 24-bit variable holding the shifting working dividend + remainder portion:
+  Start by left-shifting the dividend by 8 bits to position the highest 8 bits in the remainder portion.
+- For 16 iterations (one per quotient bit):
+  1. Extract the top 8 bits (bits [23:16]) as the current remainder candidate.
+  2. Compare to divisor; if >= divisor and divisor != 0:
+     - Subtract divisor from the remainder candidate.
+     - Set quotient bit to 1.
+  3. Else quotient bit is 0.
+  4. Shift the entire 24-bit working register left by 1, bringing down the next dividend bit.
+  
+After all 16 iterations, the quotient bits are set, and the top 8 bits (bits [23:16]) of the working register contain the final remainder.
+
+This approach exactly models the division process described:
+- Remainder starts as the upper bits of the dividend.
+- At each step, remainder (8 bits) is compared to divisor.
+- Quotient bits are formed one by one.
+- The remainder is updated accordingly.
+- The next dividend bit is shifted in after each step.
+
+Using this method ensures correct bit alignment and consistent updating of remainder and quotient, resolving the indexing and bit manipulation issues in the original attempt.

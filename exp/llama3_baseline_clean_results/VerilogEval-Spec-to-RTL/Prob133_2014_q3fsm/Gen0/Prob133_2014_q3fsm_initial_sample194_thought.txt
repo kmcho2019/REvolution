@@ -1,0 +1,12 @@
+To implement this finite state machine, we can use a Moore machine with a few states. 
+We start in state A. When s becomes 1, we move to state B. In state B, we examine the value of w over the next three clock cycles. 
+We can use a counter to keep track of the number of clock cycles since we entered state B, and a register to keep track of the number of times w is 1 in these cycles. 
+If w is 1 exactly twice, we set z to 1 in the following clock cycle. Otherwise, z is 0. 
+To minimize the number of states, we can use state B to count the clock cycles and the number of times w is 1, and use the same state to set z based on the count of w. 
+We can also add a reset state to handle the reset input.
+
+The states of the FSM can be:
+- State A: initial state, wait for s = 1
+- State B: count w = 1 over the next three clock cycles
+
+The output z is determined by the count of w in state B.

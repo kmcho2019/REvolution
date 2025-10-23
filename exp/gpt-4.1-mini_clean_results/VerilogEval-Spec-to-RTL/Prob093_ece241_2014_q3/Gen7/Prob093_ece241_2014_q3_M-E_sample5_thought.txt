@@ -1,0 +1,42 @@
+The problem requires implementing a 4-variable function f(a,b,c,d) using a single 4-to-1 multiplexer with selector inputs a and b, and four inputs mux_in[3:0], each being a function of c and d only.
+
+Since the top-level module only knows c and d, it must compute the four mux inputs (mux_in[0], mux_in[1], mux_in[2], mux_in[3]) corresponding to ab = 00, 01, 11, 10 columns of the K-map.
+
+The key idea is to partition the K-map by fixing a,b and derive each mux input as a function of c,d.
+
+From the K-map:
+
+- For ab=00 (mux_in[0]), output vector by cd = 00:0, 01:1, 11:1, 10:1  
+  Expression: f_0(c,d) = (c & d) + (~c & d) + (c & ~d) = d + c (since c + d covers all cases except 00)  
+  So f_0 = c + d.
+
+- For ab=01 (mux_in[1]), output vector = 00:0, 01:0, 11:0, 10:0  
+  So f_1 = 0.
+
+- For ab=11 (mux_in[2]), output vector = 00:0, 01:0, 11:1, 10:0  
+  So f_2 = c & d.
+
+- For ab=10 (mux_in[3]), output vector = 00:1, 01:0, 11:1, 10:1  
+  Using K-map, minimize f_3 = (c & ~d) + (c & d) + (~c & ~d) = c + ~d.
+
+We are allowed only 2-to-1 multiplexers and constants to implement these functions.
+
+Implementation plan using 2-to-1 multiplexers (mux2to1):
+
+- f_0 = c + d = d ? 1 : c = mux2to1(sel=d, in0=c, in1=1)
+
+- f_1 = 0 (constant 0)
+
+- f_2 = c & d = d ? c : 0 = mux2to1(sel=d, in0=0, in1=c)
+
+- f_3 = c + ~d
+
+  Since ~d = d ? 0 : 1 = mux2to1(sel=d, in0=1, in1=0)
+
+  Then c + ~d = c ? 1 : ~d = mux2to1(sel=c, in0=not_d, in1=1)
+
+Final outputs: mux_in = {f_3, f_2, f_1, f_0}
+
+This method uses only the allowed muxes, minimal complexity, and clearly separates concerns.
+
+This matches the problem constraints perfectly.

@@ -1,0 +1,10 @@
+Fuse the two example solutions by combining their strengths:
+- Use a single always block triggered on posedge clk and negedge rst_n to simplify control logic and synthesis.
+- Use asynchronous active-low reset as required.
+- Register delayed input 'a_d' at the start of the block to ensure edge detection uses stable previous value.
+- Use non-blocking assignments consistently for all registers.
+- Clear the output signals 'rise' and 'down' by default each cycle inside the sequential block.
+- Detect edges by comparing current input 'a' and delayed 'a_d'.
+- Set 'rise' or 'down' to 1 for exactly one clock cycle immediately after detecting edges.
+- This approach keeps minimal logic and registers, synchronizes outputs with clock, and provides clean, clear, and efficient code suited for synthesis.
+- Avoid asynchronous reset for outputs individually; reset all regs in the same always block to help timing.

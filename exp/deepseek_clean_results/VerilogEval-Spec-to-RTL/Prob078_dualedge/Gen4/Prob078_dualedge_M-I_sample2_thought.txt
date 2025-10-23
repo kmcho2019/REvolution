@@ -1,0 +1,12 @@
+The current implementation is functionally correct but has room for optimization in power and timing. Here's the improvement strategy:
+
+1. **Clock Gating**: Add clock gating to reduce power by disabling the inactive flip-flop when it's not needed. The positive edge FF only needs to be active when clock is high, and negative edge FF when clock is low.
+
+2. **Output Register**: Add a final output register to break the combinational path from clock to output, improving timing.
+
+3. **Resource Sharing**: Use the same clock signal for both gating logic to minimize additional clock routing.
+
+This optimized version will:
+- Reduce power by preventing unnecessary toggling
+- Improve timing by registering the output
+- Maintain the same functionality while being more efficient

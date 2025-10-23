@@ -1,0 +1,12 @@
+The problem can be solved using a Moore state machine with two states: walking left and walking right. We also need to keep track of the current direction when the Lemming is falling. We will use two states for walking (left and right) and one state for falling. The state machine will be triggered by the positive edge of the clock and will be reset asynchronously when areset is high.
+
+The states are:
+- LEFT: Walking left
+- RIGHT: Walking right
+- FALL: Falling
+
+The state machine will transition from LEFT to RIGHT when bump_left is high, and from RIGHT to LEFT when bump_right is high. It will also transition to FALL when ground is low.
+
+When the Lemming is in the FALL state, it will say "aaah!" (set aaah to 1) and will not change direction until the ground reappears (ground is high). When the ground reappears, the state machine will transition back to the previous walking state.
+
+The outputs walk_left, walk_right, and aaah will be set based on the current state.

@@ -1,0 +1,9 @@
+To implement the two-bit saturating counter in the TopModule, we need to follow these steps:
+1. Initialize the counter to a default state (2'b01) when the asynchronous reset (areset) is asserted.
+2. When the clock (clk) rises and areset is not asserted, check the value of train_valid.
+3. If train_valid is 1, check the value of train_taken.
+4. If train_taken is 1, increment the counter by 1 unless it has already reached its maximum value (3 or 2'b11).
+5. If train_taken is 0, decrement the counter by 1 unless it has already reached its minimum value (0 or 2'b00).
+6. If train_valid is 0, do not modify the counter value.
+7. Update the state output with the current counter value.
+We will use an always block to describe the sequential behavior of the counter.

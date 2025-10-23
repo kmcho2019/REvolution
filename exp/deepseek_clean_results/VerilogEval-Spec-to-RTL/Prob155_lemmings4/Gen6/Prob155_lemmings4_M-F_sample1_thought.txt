@@ -1,0 +1,29 @@
+Revised Lemming State Machine Design:
+
+1. Priority Handling:
+   - Implement strict priority: fall > dig > bump
+   - Check ground condition first in walking states
+   - Only consider dig input when ground is stable
+   - Process bump inputs only when no higher priority conditions exist
+
+2. State Transitions:
+   - Separate falling logic completely from walking/digging
+   - Track original direction during falling/digging
+   - Ensure proper fall counter operation (only increment when ground=0)
+
+3. Edge Cases:
+   - Handle simultaneous inputs correctly
+   - Prevent state changes during falling/digging unless ground changes
+   - Properly implement splat condition (after 20+ cycles of falling)
+
+4. Output Logic:
+   - Maintain Moore-style outputs (dependent only on current state)
+   - Ensure all outputs are zero in SPLAT state
+   - Clear outputs during falling regardless of previous state
+
+Key Improvements:
+- Correct priority implementation
+- Proper fall counter management
+- Robust handling of edge cases
+- Clear state transition conditions
+- Maintained all functional requirements

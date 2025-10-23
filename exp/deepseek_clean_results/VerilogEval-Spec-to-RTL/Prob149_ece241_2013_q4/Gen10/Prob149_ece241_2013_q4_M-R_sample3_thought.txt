@@ -1,0 +1,11 @@
+Here's a refactored version that maintains the same core logic but uses continuous assignments and explicit transition detection:
+
+1. Instead of using procedural blocks for outputs, we'll use continuous assignments (assign statements) for all outputs
+2. The zone detection remains combinational but is now split into separate wires for clarity
+3. Transition detection is made explicit with a dedicated wire that identifies rising water levels
+4. The supplemental flow (dfr) logic is corrected to trigger when:
+   - Current zone is numerically higher than previous (water rising)
+   - Or when in the lowest zone (below s[0])
+5. Reset handling remains synchronous but is now more clearly separated from normal operation
+
+This version eliminates all procedural output assignments while maintaining identical functionality, making the code more declarative and potentially easier to optimize during synthesis.

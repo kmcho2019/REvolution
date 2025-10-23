@@ -1,0 +1,13 @@
+The key improvements needed are:
+1. Fix pattern detection to properly recognize the full 1101 sequence only when complete
+2. Ensure shift_ena is only active for exactly 4 cycles after pattern detection
+3. Maintain proper state sequencing with clear transitions
+4. Reset pattern register when leaving IDLE state to prevent false detections
+5. Optimize state encoding for better synthesis results
+
+Improvement strategy:
+1. Use edge-triggered pattern detection that only checks when full pattern is available
+2. Implement precise 4-cycle shift counter with proper reset
+3. Clear pattern register when transitioning out of IDLE state
+4. Use one-hot encoding for potentially better synthesis results
+5. Add explicit default case for robustness

@@ -1,0 +1,5 @@
+To simplify the design, keep just one 32-bit register `prev_in` to hold the previous cycle input. On each clock edge, synchronously reset `prev_in` and `out` to zero when `reset` is high. Otherwise, update `out` by OR'ing its current value with the bits that transitioned from 1 to 0 (`prev_in & ~in`). Then update `prev_in` with the current `in`.
+
+This straightforward approach uses minimal state and logic, no intermediate wires, and clean non-blocking assignments. It maintains functionality by latching any detected falling edges until reset. The synchronous reset and registers keep timing simple and predictable.
+
+This is the simplest form that achieves the capture of falling edges across 32 bits with minimal complexity.

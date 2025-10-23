@@ -1,0 +1,12 @@
+To optimize the original 16-bit adder design for better performance and area without significantly increasing power, I will replace the ripple carry logic in the 8-bit adder with a carry lookahead adder (CLA) structure. This improves the critical path delay by computing carry signals in parallel rather than serially rippling through each bit, thus increasing maximum operating frequency.
+
+The carry lookahead logic uses generate and propagate signals to efficiently compute carry outputs for all bits simultaneously via hierarchical equations. The sum is then computed based on these carries.
+
+The 16-bit adder hierarchy remains the same, instantiating two 8-bit CLAs in series. The lower 8-bit CLA outputs a carry that becomes the carry-in to the upper 8-bit CLA.
+
+This approach achieves better timing (lower critical path delay) with a modest area increase compared to ripple carry adders and keeps power reasonable by avoiding excessive gating or complex structures.
+
+Overall improvements:
+- Replace ripple carry in 8-bit adder with carry lookahead logic.
+- Maintain modularity and hierarchical instantiation.
+- Use generate-for loop only for sum assignment since carry logic is now parallel.

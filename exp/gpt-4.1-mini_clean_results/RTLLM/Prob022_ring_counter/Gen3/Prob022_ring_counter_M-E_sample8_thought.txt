@@ -1,0 +1,12 @@
+To avoid the issues with assigning individual bits of the same vector separately, I propose to store the ring counter state as an integer index (0 to 7) representing the position of the '1' bit. On each clock cycle, this index increments modulo 8 to cycle through positions. The 8-bit output is then generated combinationally by decoding this index into a one-hot vector with only the bit at the current index set to 1.
+
+This approach:
+- Uses a small integer register for state, simplifying the state update logic.
+- Generates the one-hot output combinationally, avoiding complex bit manipulations on vectors within the sequential block.
+- Ensures clean, synthesizable code with no conflicting vector assignments.
+
+Hence:
+- Use a 3-bit register `pos` to hold current position of the '1' bit.
+- On reset, set `pos` to 0.
+- On each clock, increment `pos` modulo 8.
+- Assign `out` as (1 << pos) combinationally.

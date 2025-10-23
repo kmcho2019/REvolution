@@ -1,0 +1,16 @@
+To improve the existing solution, we will first address the issue of assigning to unresolved wires by properly defining the logic for the `clk_div` signal. The current implementation has redundant or incomplete conditions in the state machine and counter logic, which need to be refined to accurately implement the fractional frequency division by 3.5x.
+
+We will simplify the state machine by explicitly defining the states for generating the 4-cycle and 3-cycle divided clock signals, ensuring a smooth transition between these states based on the counter value. The counter will be used to track the clock cycles, and its value will determine when to generate the divided clock signals.
+
+To achieve the fractional frequency division, we will utilize the double-edge clocking technique. This involves generating phase-shifted versions of the divided clock signals and logically OR-ing them to produce the final fractional divided clock output. The phase-shifting logic will be implemented using a separate module or combinational logic to improve readability and maintainability.
+
+We will also optimize the code for better PPA (Power, Performance, Area) metrics by minimizing redundant logic, reducing the number of flip-flops, and improving the combinational logic. This will involve using `assign` statements for combinational logic where applicable, clearly separating the sequential logic from the combinational logic.
+
+To further optimize the design, we will consider the following strategies:
+
+1.  Minimize the number of states in the state machine to reduce the area and power consumption.
+2.  Use a single counter to track the clock cycles, eliminating the need for multiple counters or complex logic.
+3.  Implement the phase-shifting logic using a simple and efficient combinational circuit.
+4.  Ensure that the sequential logic is properly synchronized with the combinational logic to avoid potential timing issues.
+
+By implementing these improvements, we can create a more efficient, scalable, and reliable design for the frequency divider that meets the required specifications.

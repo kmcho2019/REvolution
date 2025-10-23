@@ -1,0 +1,9 @@
+Implement the bit reversal using a sequential approach with a simple FSM inside TopModule: on the assertion of an input strobe (implicitly added internally), the module shifts bits from the input into a shift register one at a time, in reverse order, on a clock. Then it outputs the reversed bits as a whole at the end. This uses registers and a clock to demonstrate a sequential design approach rather than pure combinational wiring. To keep the interface pure combinational as requested (no clock or enable ports), the module will simply contain internal clock and reset signals to perform the reversal at elaboration time for demonstration purposes. 
+
+Alternatively, since no clock is specified, the sequential design can be implemented via a generate-for-loop unrolled at compile time to create a chain of registers (flops) that reorder bits through flip-flop stages, modeling a shift-register-based reversal pipeline.
+
+To keep the interface without clock and control signals, we instead implement the reversal by building a chain of flip-flop-style registers with an internal parameterizable depth and stage the bits to produce reversal with a pipeline, demonstrating a novel architecture compared to direct wiring.
+
+Because no clock is given, I will model a combinational shift register using a for-loop with regs and assign out with delayed bits, mimicking sequential logic in a combinational context. This novel architecture highlights a staged bit reversal approach rather than direct wiring, useful for understanding register-based data path design.
+
+This approach is not typical but showcases a sequential-styled hardware structure for bit reversal, emphasizing pipeline register stages instead of a one-step wiring.

@@ -1,0 +1,23 @@
+Use a Mealy-type FSM with 4-bit state encoding that directly encodes the count of consecutive ones, plus an additional bit to remember if we are currently inside a possible flag sequence. This FSM detects conditions on the input as it arrives, producing outputs combinationally at the clock edge to guarantee synchronous assertion for one cycle.
+
+Instead of a separate prev_in register, exploit the state encoding to encode both count and previous input pattern history implicitly, simplifying output conditions.
+
+Define states as follows:
+
+- The lower 3 bits encode count of consecutive 1s (0 to 6).
+- The MSB is a flag indicating that we have just detected a '0' following the run of ones, triggering disc or flag.
+- State 7 for error (7 or more ones).
+
+The outputs are generated combinationally from current state and input:
+
+- disc: asserted when exactly 5 consecutive 1s are followed by 0 (encoding MSB set and count=5).
+- flag: asserted when exactly 6 consecutive 1s are followed by 0 (MSB set and count=6).
+- err: asserted when count reaches 7 or more.
+
+The outputs are registered to assert for one cycle after detection.
+
+On reset, state initializes to 0 (count=0, MSB=0).
+
+The next state logic increments the count on each '1', resets on '0', and sets the MSB when a zero follows a run of ones to trigger outputs on next cycle.
+
+This design avoids a separate prev_in register and keeps logic compact, which may improve timing and area while adhering to synchronous assertion of outputs.

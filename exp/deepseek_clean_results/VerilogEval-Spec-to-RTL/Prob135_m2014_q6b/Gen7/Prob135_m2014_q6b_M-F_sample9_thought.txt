@@ -1,0 +1,24 @@
+After carefully analyzing the feedback and the state machine transitions, here's the corrected approach for y[1] next-state logic:
+
+1. State A (000): y[1] remains 0 regardless of input
+2. State B (001):
+   - w=0: transition to C (010) → y[1] becomes 1
+   - w=1: transition to D (011) → y[1] becomes 1
+3. State C (010):
+   - w=0: transition to E (100) → y[1] becomes 0
+   - w=1: transition to D (011) → y[1] becomes 1
+4. State D (011):
+   - w=0: transition to F (101) → y[1] becomes 0
+   - w=1: transition to A (000) → y[1] becomes 0
+5. State E (100):
+   - w=0: stay in E → y[1] remains 0
+   - w=1: transition to D (011) → y[1] becomes 1
+6. State F (101):
+   - w=0: transition to C (010) → y[1] becomes 1
+   - w=1: transition to D (011) → y[1] becomes 1
+
+The corrected logic expression must:
+- Include all state transitions
+- Properly handle cases where y[1] should be 0
+- Account for both input conditions (w=0 and w=1)
+- Maintain y[1] value when staying in the same state

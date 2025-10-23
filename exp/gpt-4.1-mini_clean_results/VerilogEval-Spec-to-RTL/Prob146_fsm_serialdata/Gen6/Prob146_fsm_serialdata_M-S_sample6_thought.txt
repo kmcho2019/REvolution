@@ -1,0 +1,5 @@
+Simplify the FSM by using a single always block with synchronous reset, combining state update, bit counter, shift register, and output logic. Use a clear enumerated state encoding with 4 states (IDLE, RECEIVE, STOP, WAIT_STOP). Shift data bits directly by inserting the serial input at the MSB, shifting right so that the LSB ends up in bit 0 after 8 cycles, since the protocol sends LSB first. Use the bit counter to track received bits.
+
+Assert done and load out_byte only for one cycle when a valid stop bit is detected. If the stop bit is invalid, transition to WAIT_STOP until the line returns high.
+
+This approach reduces the number of always blocks and removes separate next-state logic by merging everything into one synchronous block, making it easier to read and synthesize while maintaining the required behavior.

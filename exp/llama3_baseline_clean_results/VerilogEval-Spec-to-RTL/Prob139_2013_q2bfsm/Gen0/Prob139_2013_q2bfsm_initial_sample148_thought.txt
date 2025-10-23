@@ -1,0 +1,9 @@
+To implement the TopModule, we need to design a finite state machine (FSM) that follows the specified behavior. The FSM will have several states to track the sequence of x and y inputs and the corresponding outputs f and g. 
+
+1. State A (initial state): Stay in this state as long as resetn is asserted. 
+2. State B: Set output f to 1 for one clock cycle after resetn is de-asserted. 
+3. State C: Monitor the x input for the sequence 1, 0, 1 in three successive clock cycles.
+4. State D: Set output g to 1 and monitor the y input. If y becomes 1 within at most two clock cycles, stay in this state and maintain g = 1. Otherwise, transition to state E.
+5. State E: Set output g to 0 permanently until reset.
+
+We can use a 3-bit state variable to represent these five states. The FSM will use a combination of conditional statements and sequential logic to transition between states based on the input values and the current state.

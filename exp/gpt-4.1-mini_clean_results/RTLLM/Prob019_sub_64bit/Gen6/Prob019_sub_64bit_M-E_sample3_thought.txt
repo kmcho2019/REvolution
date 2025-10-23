@@ -1,0 +1,12 @@
+I will implement the 64-bit subtractor as a single wide subtractor using the built-in Verilog arithmetic operator for clarity and simplicity. To detect overflow correctly for signed subtraction, I will apply the classic overflow detection logic for subtraction, which can be expressed as:
+
+overflow = (sign_A != sign_B) && (sign_result != sign_A)
+
+This single-step subtraction and direct overflow detection allows minimizing latency, area, and complexity compared to segmented or multi-stage subtractors.
+
+The module will:
+- Perform A - B directly using the subtraction operator.
+- Use the top bit (sign bit) of inputs and result for overflow detection.
+- Output the 64-bit subtraction result and the overflow flag.
+
+This approach is optimal in terms of design simplicity, potentially leading to minimal delay and small area, and is easy to verify. It also matches the requirement to detect overflow for high precision signed subtraction.

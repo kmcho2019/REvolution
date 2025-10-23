@@ -1,0 +1,11 @@
+To improve the PPA metrics, I will optimize the design by reducing the complexity of the combinational logic that selects the shifted value. Instead of using multiple ternary operators which may lead to a larger multiplexer and longer critical path, I will split the shift direction and amount decoding into smaller steps using one-hot decoding and multiplexers.
+
+Specifically:
+- Use a one-hot encoding of the amount input to create four shift candidates (shift-left-1, shift-left-8, shift-right-1, shift-right-8).
+- Select the appropriate shifted result via a 4-to-1 multiplexer.
+- This reduces the size and complexity of the multiplexing logic, potentially improving timing.
+- Keep synchronous load and enable behavior intact.
+- The shift operations remain simple concatenations with zeros or replicated sign bits to maintain low power and area.
+- This approach also improves code readability and may help synthesis tools optimize better.
+
+No additional clock gating or pipelining is added since the user did not specify latency or gating requirements.

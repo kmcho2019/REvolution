@@ -1,0 +1,9 @@
+Refactor the original generate-for loop continuous assignments into a single continuous assignment with a vector slicing and concatenation expression. Instead of using a generate loop to assign each bit individually, use a single assign statement where the output is assigned as the input vector indexed with a range reversed via a for-generate style pattern expressed compactly with Verilog's indexing. Since Verilog doesn't support variable step indexing in ranges, use the built-in function to reverse the bits.
+
+To implement bit reversal without a generate loop, write a function that returns the reversed vector by iterating over bits, then use a continuous assignment outside of always blocks.
+
+This approach makes the code concise and still synthesizable, maintaining combinational logic without a loop of continuous assignments.
+
+The parameterized BitRevN module remains, but now it uses a function internally to produce reversed bits, then the output is driven by a single assign statement to the function's return value. TopModule instantiates BitRevN with N=100.
+
+This refactoring improves compactness while keeping clarity and modularity, and still produces efficient hardware.

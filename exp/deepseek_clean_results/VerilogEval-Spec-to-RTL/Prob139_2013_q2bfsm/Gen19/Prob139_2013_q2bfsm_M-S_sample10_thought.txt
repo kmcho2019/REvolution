@@ -1,0 +1,15 @@
+Simplified solution approach:
+1. Use only 3 states: IDLE (reset state), DETECT (monitoring x for 101 pattern), and FINAL (permanent output state)
+2. Track x input sequence with a 3-bit shift register
+3. Use a 1-bit counter for the 2-cycle y monitoring window
+4. Generate outputs combinatorially based on current state and conditions
+5. Simplify state transitions:
+   - IDLE → DETECT on reset deassertion (with f pulse)
+   - DETECT → FINAL when 101 pattern is found and y condition met
+   - FINAL state persists until reset
+
+Key simplifications:
+- Reduced from 5 to 3 states
+- Removed intermediate states (F_PULSE, WAIT_X)
+- Simplified timeout logic to single bit
+- Clearer output generation

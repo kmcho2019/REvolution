@@ -1,0 +1,9 @@
+The existing design uses a single register to store data from either fetch source 1 or 2. However, the problem explicitly states two separate registers ins_p1 and ins_p2 to hold instructions from different sources. To strictly match the requirements, we should implement two distinct 8-bit registers, ins_p1 and ins_p2, each updated independently based on fetch signals.
+
+For better timing and power:
+- Keep ins_p1 and ins_p2 as separate registers to allow parallel updates.
+- Add clock gating to update registers only when needed, reducing unnecessary toggling.
+- Register outputs ins, ad1, and ad2 to reduce combinational fanout and improve timing.
+- Use synchronous active low reset for better synthesis compatibility.
+
+This approach strictly complies with the specification and improves PPA by reducing unnecessary switching and output glitches through output registering.

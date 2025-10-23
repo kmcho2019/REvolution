@@ -1,0 +1,20 @@
+Instead of using separate counters for each frequency, use a single larger counter that increments every clock cycle. Then, derive each output clock by comparing the counter value against preset thresholds corresponding to half periods of each desired frequency.
+
+For each output clock, the output toggles when the counter reaches its respective toggle count (half the division factor), then resets or continues counting up. This method reduces the number of counters from 3 to 1 and centralizes counting logic.
+
+Implementation details:
+- Use a single 7-bit counter (since max count is 50 for 1MHz).
+- On each clock cycle, increment the counter.
+- When counter reaches the max toggle count for a frequency, toggle that clock and reset the counter or clear corresponding sub counters.
+- To handle multiple frequencies with different toggle points, use separate toggle conditions checked on the same counter.
+- For proper timing, the counter cycles modulo the LCM of all frequencies or simply modulo the largest toggle count * 2.
+
+In this design:
+- The largest half period is 50 (for 1MHz), so counter counts 0 to 99.
+- On counts corresponding to half period of 50, toggle CLK_1.
+- On counts corresponding to half period of 5, toggle CLK_10.
+- On counts corresponding to half period of 1, toggle CLK_50.
+
+The counter runs from 0 to 99 and resets, toggling the clocks at the defined points.
+
+This approach centralizes counting, reduces state elements, and uses combinational logic to determine toggling conditions.

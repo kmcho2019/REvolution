@@ -1,0 +1,10 @@
+The existing implementation is functionally correct, but we can optimize it to improve PPA metrics by reducing combinational logic depth and switching activity.
+
+Improvement strategy:
+- Replace the per-bit XOR updates with a single masked XOR operation for the feedback bits. This reduces logic complexity and fanout by doing one XOR instead of multiple.
+- The feedback mask for taps at bits 32, 22, 2, and 1 is 32'h80400003 (bits 31, 21, 1, and 0 set).
+- Shift q right by 1, XOR the feedback bit replicated by the mask to generate the next state.
+- This single XOR and shift operation lowers the logic depth and can reduce critical path delay, improving timing.
+- Since the feedback mask is fixed, this is a clean, synthesizable implementation, using bitwise operators efficiently.
+- Keep the synchronous reset and interface unchanged.
+- This approach reduces switching power as it minimizes multiple individual XOR operations.

@@ -1,0 +1,21 @@
+The given design is functionally good and efficient for a shift-and-accumulate multiplier, but can be optimized for power and timing:
+
+1. Instead of right shifting the product and conditionally adding a shifted multiplicand, follow the original problem statement's approach that checks each bit of the multiplicand and accumulates the appropriately shifted multiplier. This maintains the problem description.
+
+2. Use a counter `i` to track which bit of the multiplicand is being processed. On each cycle where start is active and i < 17, check bit `i-1` of `areg` (the multiplicand register). If it is 1, accumulate `breg << (i-1)` to the product register.
+
+3. Load `areg` and `breg` only once when `i == 0` and `start` is asserted.
+
+4. Reset the product, multiplicand, and multiplier registers on reset or when start is deasserted.
+
+5. Generate the `done` signal when `i` reaches 16.
+
+6. Using this straightforward shift-and-add method reduces the complexity of the addition in each clock cycle and eases timing by doing a single conditional addition without complicated shifting on the product itself.
+
+7. Use synchronous logic with non-blocking assignments and an active-low reset as specified.
+
+This approach sticks tightly to the specification, ensuring correctness and modest complexity. It also should improve timing compared to the original right-shift and add-on-the-fly method because it does not perform a 32-bit right-shift plus addition in the same clock cycle, reducing critical path.
+
+The `done` signal is generated as described, set when `i==16` and reset at `i==17`.
+
+Thus, the design balances clarity, correctness, and PPA.

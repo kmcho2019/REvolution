@@ -1,0 +1,11 @@
+Simplify the fixed-point adder by performing direct two's complement addition since fixed-point numbers in two's complement format naturally support addition and subtraction.
+
+- Instead of manually computing magnitudes and sign bits, directly add inputs `a` and `b` as signed numbers.
+- Since the inputs and output are fixed-point two's complement with parameters for width (N) and fractional bits (Q), standard binary addition suffices.
+- Use a wider register to hold the sum to detect overflow if needed (but no explicit saturation required as per spec).
+- Assign the truncated N-bit result to the output.
+- This approach greatly reduces logic, avoids sign/magnitude conversion, and leverages the natural fixed-point two's complement behavior.
+- The Q parameter is maintained for consistency but does not affect addition logic directly.
+- Overflow is implicitly managed by truncation of the result to N bits, as typical in fixed-point arithmetic.
+
+This solution is minimal, clean, and functionally equivalent, fully compliant with the problem's specifications.

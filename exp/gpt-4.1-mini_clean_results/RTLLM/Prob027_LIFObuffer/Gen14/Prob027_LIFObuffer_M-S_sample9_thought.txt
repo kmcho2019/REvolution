@@ -1,0 +1,11 @@
+Simplify the LIFO buffer by using the stack pointer (SP) as an index to the top element (0 to 3) instead of counting entries, to directly track the next free location.
+
+- Initialize SP to 0 on reset (empty stack).
+- FULL when SP == 4, EMPTY when SP == 0.
+- On push (RW=0) if not full, store dataIn at stack_mem[SP], then increment SP.
+- On pop (RW=1) if not empty, decrement SP, then output stack_mem[SP].
+- Clear stack on reset by zeroing SP and dataOut; no need to clear entire memory array as entries get overwritten.
+- Use only non-blocking assignments inside the clocked process.
+- Compute EMPTY and FULL combinationally from SP.
+- Gate operations by EN.
+This simplifies pointer management by treating SP as a pointer to the next free slot and reduces reset complexity by not clearing the entire stack memory.

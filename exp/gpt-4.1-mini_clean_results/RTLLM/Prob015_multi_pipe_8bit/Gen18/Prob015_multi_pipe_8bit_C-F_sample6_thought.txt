@@ -1,0 +1,16 @@
+Fuse the two examples by implementing a three-stage pipeline that balances performance, power, and area. 
+
+Stage 1: Register inputs and input enable signal, updating inputs only when enabled to minimize unnecessary switching.
+
+Stage 2: Generate and register partial products individually—each partial product is a shifted multiplicand masked by the multiplier bit. Registering partial products isolates the combinational addition logic to the next stage, shortening the critical path.
+
+Stage 3: Sum the registered partial products using a combinational adder and register the final product and output enable. This distributes addition delay over pipeline stages and reduces the critical path compared to summing all partial products at once in combinational logic directly after inputs.
+
+Maintain the enable pipeline synchronously through all stages to track data validity and gate the output product accordingly.
+
+This approach leverages:
+- From Example 1: Partial product generation conditional on enable and multiplier bits.
+- From Example 2: Enable pipelining and gating output with enable.
+- Improvement: Adding an intermediate register stage for partial products reduces combinational delay for large adder trees, improving timing without substantially increasing area.
+
+Overall, this design improves timing by distributing addition over multiple pipeline registers, reduces switching by gating input register updates on enable, and cleanly propagates enable signals through the pipeline.

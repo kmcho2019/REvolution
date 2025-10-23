@@ -1,0 +1,7 @@
+The current implementation uses a procedural always block with a registered output, which is functionally correct but suboptimal for a simple combinational AND gate. To optimize for better PPA (Power, Performance, Area), we should:
+1. Remove the unnecessary register declaration (output reg) since this is purely combinational logic
+2. Use a continuous assignment instead of an always block to:
+   - Reduce simulation overhead
+   - Eliminate potential latch inference
+   - Make the design more straightforward for synthesis tools
+3. This change will maintain identical functionality while improving all PPA metrics slightly

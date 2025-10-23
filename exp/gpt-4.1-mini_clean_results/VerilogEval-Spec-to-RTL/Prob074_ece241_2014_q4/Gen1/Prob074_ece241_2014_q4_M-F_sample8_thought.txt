@@ -1,0 +1,7 @@
+To fix the problem of initial state mismatch and enable synthesis tools to properly initialize flip-flops, add an explicit synchronous reset input to the module. Since the problem states "flip-flops are initially reset to zero before the machine begins," the simplest fix is to add a synchronous reset input `rst` that when asserted resets all flip-flops to zero at the next clock edge.
+
+This reset input can be used in simulation and by any testbench to guarantee known initial states, ensuring that the functional behavior matches expectations. This avoids using non-synthesizable initial blocks for register initialization.
+
+The rest of the logic stays the same: D inputs are computed by the specified gates and fed to flip-flops; output `z` is the NOR of all flip-flop outputs.
+
+This change improves synthesis and verification compatibility without altering the FSM logic.

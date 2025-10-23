@@ -1,0 +1,5 @@
+Simplify the design by removing the custom BCD conversion functions and instead implement direct counting in BCD for seconds and minutes using two separate 4-bit counters for tens and units digits. For the hours counter, use a 4-bit binary counter 1-12 and convert it to BCD using simple conditional logic directly in the output assignment. This avoids subtraction and shifts for BCD conversion, simplifying combinational logic and improving clarity.
+
+The counters for seconds and minutes count 0-9 in the units digit, and on overflow increment the tens digit 0-5. Hours count 1-12 in binary internally, with the pm signal toggled at the rollover from 11 to 12. Reset synchronously sets time to 12:00:00 AM.
+
+This approach balances simplicity, clarity, and functional correctness without complex functions or arithmetic, and keeps all counting and pm update logic in a single always block. The output assignments are straightforward, just concatenating tens and units digits for seconds and minutes. The hour output is converted to BCD in a simple combinational block, minimizing combinational path complexity.

@@ -1,0 +1,17 @@
+Implement an unsigned 16-bit multiplier using an iterative shift-and-add approach but with a different control flow and architecture to clearly separate the control FSM and datapath, and minimize register toggling by updating accumulators only when needed.
+
+Key points:
+- Use a state machine with two states: IDLE and CALC.
+- On start signal in IDLE, load inputs into registers and clear product and bit count.
+- In CALC, process one bit per clock cycle for 16 cycles:
+  - Check LSB of multiplier register, if 1, add multiplicand shifted appropriately to accumulator.
+  - Shift multiplier right by 1.
+  - Increment bit count.
+- Once 16 bits processed, assert done, and go back to IDLE.
+- On reset, clear all registers and outputs.
+- This approach uses a dedicated bit counter separate from a general 5-bit counter.
+- The multiplicand is kept static; multiplier shifts right each cycle.
+- Accumulator holds the intermediate product.
+- This approach avoids shifting multiplicand or building a wide shifted multiplier register.
+- Use synchronous active-low reset.
+- This architecture eases understanding, potentially lower switching by not shifting multiplicand or large registers unnecessarily.

@@ -1,0 +1,7 @@
+The core issue with the original implementation is the potential for glitches during clock transitions when selecting between the positive and negative edge-triggered flip-flops. To solve this, we can:
+1. Still use two separate flip-flops (positive and negative edge-triggered)
+2. But instead of directly muxing their outputs based on the clock state, we'll:
+   - Register the clock signal to create a delayed version
+   - Use this delayed clock to safely select between the flip-flop outputs
+   - This ensures the mux selection changes only after the flip-flops have stabilized
+3. The delayed clock acts as a synchronization signal to prevent glitches during transitions

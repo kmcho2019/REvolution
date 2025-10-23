@@ -1,0 +1,6 @@
+Implement a straightforward radix-2 divider using a simple synchronous process with a 4-bit counter from 0 to 8 cycles.  
+At start (opn_valid & !res_valid), latch inputs and convert to unsigned magnitude if signed. Initialize the 17-bit shift register SR with the dividend magnitude shifted left (remainder bits zero).  
+In each cycle, shift SR left by one, subtract divisor magnitude from the remainder part, and update remainder and quotient bits based on subtraction borrow.  
+After 8 iterations, sign-correct the quotient and remainder if signed operation, then set res_valid and output the combined 16-bit {remainder, quotient}.  
+Reset clears all registers and output signals.  
+Keep the design minimal by avoiding an explicit FSM and using a simple count-based control, handling division sequentially with clear, compact logic.

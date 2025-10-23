@@ -1,0 +1,8 @@
+To implement the finite-state machine (FSM) that controls the timer, we can design a state machine with the following states: 
+- IDLE: The initial state where the FSM searches for the pattern 1101.
+- SHIFT: After detecting the pattern, the FSM shifts in 4 more bits to determine the duration to delay.
+- COUNT: The FSM waits for the counters to finish counting.
+- DONE: The FSM notifies the user that the timer has timed out and waits for the user to acknowledge.
+We will use a 4-bit serial shift register to store the incoming data and compare it with the pattern 1101.
+The FSM will also have a counter to count the number of clock cycles after the pattern is detected to determine when to stop shifting in data.
+The FSM will use the done_counting and ack inputs to transition between the COUNT and DONE states.

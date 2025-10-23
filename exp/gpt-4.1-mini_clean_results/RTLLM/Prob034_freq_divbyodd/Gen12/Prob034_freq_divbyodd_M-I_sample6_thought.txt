@@ -1,0 +1,14 @@
+Implement the frequency divider by splitting the counting over two separate counters: cnt1 counting on the rising edge and cnt2 counting on the falling edge of the input clock. Each counter counts up to NUM_DIV-1.
+
+On the rising edge, increment cnt1; on the falling edge, increment cnt2. When each counter reaches half of NUM_DIV (rounded down), toggle its respective clock divider output (clk_div1 or clk_div2). This approach ensures each toggler is aligned to a distinct clock edge, maintaining a balanced output duty cycle even with odd divisors.
+
+The final output clk_div is the logical OR of clk_div1 and clk_div2, combining the toggles from both clock edges to form a frequency divided clock with improved duty cycle symmetry.
+
+An asynchronous active-low reset (rst_n) initializes all counters and clock outputs.
+
+To ensure robustness:
+- Add a compile-time assertion to confirm NUM_DIV is odd.
+- Use localparams for constants.
+- Synchronize toggle points carefully to avoid glitches.
+
+This matches the problem's original requirements exactly, leveraging dual counters and dual toggles on separate clock edges to produce a clean divided clock for odd division factors.

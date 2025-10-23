@@ -1,0 +1,9 @@
+Instead of using a case statement, we can exploit the one-hot encoding to:
+1. Compute each bit of next_state independently based on current state and input
+2. For each next_state bit:
+   - State A (bit 0): active when (current A & ~in) OR (current C & ~in)
+   - State B (bit 1): active when (current A & in) OR (current B & in) OR (current D & in)
+   - State C (bit 2): active when (current B & ~in) OR (current D & ~in)
+   - State D (bit 3): active when (current C & in)
+3. Output remains simply the MSB of current state
+This approach eliminates the case statement and may result in more balanced logic paths

@@ -1,0 +1,18 @@
+Observing the waveform closely reveals that the outputs p and q behave as follows:
+
+- p and q are unknown at the beginning (clock=0).
+- When clock goes high, p initializes to 0, q remains unknown until the next clock edge.
+- Once stable, p acts like a latch set by input 'a' synchronously on clock edges: when clock is high and 'a' is 1, p becomes 1; if 'a' is 0, p resets to 0.
+- q follows p but only updates on the falling edge of the clock, essentially capturing p's value at clock falling edges.
+- Between clock edges, q holds its value, resulting in the delayed response seen in the waveform.
+
+Hence, the circuit can be modeled as:
+
+- p updates on rising clock edge: p <= a
+- q updates on falling clock edge: q <= p
+
+This dual-edge triggered scheme explains the waveform pattern where p changes on rising clock edge according to input 'a', and q changes on falling clock edge to follow p, creating a one-half clock cycle delay.
+
+Implementing this with sequential logic on both edges of the clock (posedge and negedge) and initial unknown states matches the waveform exactly.
+
+This architectural approach is novel compared to the earlier FSM approach, and matches all waveform transitions, including the delayed update of q.

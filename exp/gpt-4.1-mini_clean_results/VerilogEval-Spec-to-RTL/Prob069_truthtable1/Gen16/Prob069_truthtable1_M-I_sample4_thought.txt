@@ -1,0 +1,12 @@
+The original design is modular and clear but uses multiple small gate-level modules which add overhead in area and power. To optimize for better PPA (power, performance, area), the function can be implemented using a single continuous assignment without explicit gate instantiations.
+
+The function from the truth table simplifies to:
+  f = (~x3 & x2) | (x3 & x1)
+
+This can be directly coded as a single assign statement, allowing synthesis tools to perform technology-dependent optimization and share internal logic efficiently.
+
+This approach reduces area by avoiding overhead from multiple module instantiations and reduces power by minimizing net switching and interconnect. Performance also improves due to fewer gate delays and simpler structure.
+
+Hence, I will implement TopModule with a single combinational assign statement expressing the minimized logic function.
+
+This yields a cleaner, smaller, and more efficient implementation while preserving correctness.

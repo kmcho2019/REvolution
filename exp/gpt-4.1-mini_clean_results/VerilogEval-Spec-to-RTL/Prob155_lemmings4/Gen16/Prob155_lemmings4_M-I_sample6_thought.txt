@@ -1,0 +1,7 @@
+To improve PPA from the previous solution, I will apply the following optimizations: 
+1. Gate the fall_timer counter so it only updates in the FALL state to reduce unnecessary toggling and switching power. I will use an explicit enable for the fall_timer increment logic.
+2. Simplify the direction update logic by combining bump conditions into a single expression, reducing logic complexity and area.
+3. Retain the asynchronous reset and Moore FSM structure for clarity and correctness.
+4. Keep 2-bit state encoding as it balances area and performance well for this simple FSM.
+5. Saturate the fall_timer at 20 directly to avoid extra logic and keep it minimal width (5 bits still).
+These small changes can reduce dynamic power by cutting switching activity on the counter and reduce combinational logic depth in direction update, improving timing and area slightly without changing functionality.

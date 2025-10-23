@@ -1,0 +1,12 @@
+To implement a 32-bit Galois LFSR with taps at positions 32, 22, 2, and 1 (1-based indexing):
+1. Use a 32-bit register 'q' to store the current state
+2. On each clock edge:
+   - If reset is high, load 32'h1 into the register
+   - Else:
+     a. Perform a right shift operation (q >> 1)
+     b. For each tap position (converted to 0-based: 31,21,1,0):
+        - XOR the tap bit with the LSB (q[0])
+        - Store the result back in the tap position
+     c. The MSB (new bit) comes from the LSB (q[0])
+3. This approach properly implements the Galois configuration where each tap is independently XORed with the output bit
+4. The shifting and XOR operations are done in parallel for all tap positions

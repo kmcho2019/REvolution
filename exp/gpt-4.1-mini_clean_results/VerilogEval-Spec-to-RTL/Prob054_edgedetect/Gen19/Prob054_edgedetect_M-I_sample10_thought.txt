@@ -1,0 +1,11 @@
+To improve PPA while maintaining clarity, we can combine prev_in and pedge registers into one storage by exploiting the fact that pedge is always (~prev_in) & in from the previous cycle. However, since pedge must be registered outputs and available one cycle after the transition, we need at least one register to store prev_in.
+
+To optimize, minimize the logic depth and ensure non-blocking assignments are kept for proper timing. The current design is already optimal in logic and area.
+
+For a slight power improvement, we can add clock enable logic to update prev_in only when input changes to reduce toggling, but since input can change every cycle, this might have limited effect.
+
+Thus, we keep the same structure but write the code with minimal logic, ensuring synthesis tools can optimize it well.
+
+In summary, the original design is near optimal. We keep the same structure but use a clock enable signal that checks if any bit changed from prev_in to reduce unnecessary updates, which may reduce power.
+
+Note: The benefit depends on input activity and tool optimizations, but it is a minor, safe change.

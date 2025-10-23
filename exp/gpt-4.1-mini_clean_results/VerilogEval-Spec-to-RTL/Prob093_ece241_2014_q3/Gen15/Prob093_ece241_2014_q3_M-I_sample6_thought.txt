@@ -1,0 +1,50 @@
+The previous implementation uses negation (~d), which is not allowed since only multiplexers are permitted. To adhere strictly to using only multiplexers, we must express all signals solely as mux selections between constants or inputs without any logic operations like NOT.
+
+We treat each mux_in bit as the output of a 2-to-1 mux (ternary operator) where the selector is one input (either c or d), selecting between constants or the other input.
+
+Let's analyze each mux_in bit by its Karnaugh map column (ab values) for cd combinations:
+
+ab=00 (mux_in[0]):
+cd = 00 01 11 10 → 0 1 1 1
+When c=0: outputs 0 (d=0) or 1 (d=1) → output equals d
+When c=1: outputs always 1
+Therefore, mux_in[0] = c ? 1 : d
+
+ab=01 (mux_in[1]):
+cd = 0 0 0 0
+Always 0
+
+ab=11 (mux_in[2]):
+cd = 0 0 1 0
+Outputs 1 only when c=1 and d=1
+Equivalent to c AND d
+Since no AND gates allowed, implement using mux:
+If c=0 → 0
+If c=1 → d
+mux_in[2] = c ? d : 0
+
+ab=10 (mux_in[3]):
+cd = 1 0 1 1
+Outputs 0 only when c=0, d=1
+Try to express mux_in[3] as mux with selector c:
+If c=0 → output equals ~d (not allowed)
+Alternative: use d as selector with mux:
+If d=0 → output 1
+If d=1 → output c
+So mux_in[3] = d ? c : 1
+This uses only multiplexers and no inversion.
+
+This expression matches the truth table:
+- d=0: output 1 regardless of c
+- d=1: output c
+
+Summarizing final assignments with only muxes and no negations:
+
+- mux_in[0] = c ? 1 : d
+- mux_in[1] = 0
+- mux_in[2] = c ? d : 0
+- mux_in[3] = d ? c : 1
+
+This satisfies the Karnaugh map and uses only 2-to-1 mux implementations with ternary operators, no logic gates like NOT or AND.
+
+Hence, it complies fully with the problem constraints.

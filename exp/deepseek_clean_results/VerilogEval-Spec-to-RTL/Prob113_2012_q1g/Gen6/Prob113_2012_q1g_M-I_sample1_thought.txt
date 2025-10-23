@@ -1,0 +1,25 @@
+To correctly implement the given Karnaugh map, I'll follow these steps:
+
+1. Carefully extract all minterms where f=1 from the Karnaugh map:
+   - 0000 (x3=0,x2=0,x1=0,x0=0)
+   - 0010 (x3=0,x2=0,x1=1,x0=0)
+   - 1000 (x3=1,x2=0,x1=0,x0=0)
+   - 1001 (x3=1,x2=0,x1=0,x0=1)
+   - 1010 (x3=1,x2=0,x1=1,x0=0)
+   - 1100 (x3=1,x2=1,x1=0,x0=0)
+   - 1101 (x3=1,x2=1,x1=0,x0=1)
+   - 1110 (x3=1,x2=1,x1=1,x0=0)
+
+2. Identify optimal groupings to minimize the logic:
+   - Group 1: ~x3 & ~x2 & ~x0 (covers 0000, 0010)
+   - Group 2: x3 & ~x2 & ~x1 (covers 1000, 1001)
+   - Group 3: x3 & ~x2 & x1 & ~x0 (1010)
+   - Group 4: x3 & x2 & ~x1 (covers 1100, 1101)
+   - Group 5: x3 & x2 & x1 & ~x0 (1110)
+
+3. The simplified Boolean expression becomes:
+   f = (~x3 & ~x2 & ~x0) | 
+       (x3 & ~x2 & ~x1) | 
+       (x3 & ~x2 & x1 & ~x0) | 
+       (x3 & x2 & ~x1) | 
+       (x3 & x2 & x1 & ~x0)

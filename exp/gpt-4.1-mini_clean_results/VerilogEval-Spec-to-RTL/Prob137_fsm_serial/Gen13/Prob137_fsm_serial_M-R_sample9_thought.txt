@@ -1,0 +1,7 @@
+Refactor the FSM to use one-hot encoding instead of binary encoding for states, which can simplify next state and output logic by directly mapping each state to a flip-flop.  
+Implement the FSM next state logic and output signals using continuous assignments (`assign`) for combinational parts, while keeping only state and registers updated on clock edges in sequential blocks.  
+Use a registered `done` signal that asserts for one clock cycle upon valid stop bit detection, but generate it from combinational logic combined with the current state and inputs, assigned to a registered output.  
+Shift in data bits by shifting right and inserting the new bit at MSB to contrast with original left shift, demonstrating an alternative LSB-first data capture method.  
+Reset counters and shift registers synchronously, but only when entering or leaving certain states, minimizing redundant resets and potentially reducing toggling.  
+Keep WAIT_STOP state to robustly handle framing errors by waiting for a valid stop bit before accepting the next byte.  
+This refactor demonstrates a different FSM encoding style and use of combinational assignments to compute next state and done signals, while preserving the core functionality and timing behavior.

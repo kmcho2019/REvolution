@@ -1,0 +1,10 @@
+Fuse the best ideas from both examples by implementing a balanced 4-stage pipeline for the 8-bit unsigned multiplier: 
+1. Input registers and enable pipeline (4 stages) to safely latch inputs and propagate enable.  
+2. Generate partial products combinationally as shifted versions of multiplicand masked by multiplier bits.  
+3. Break down the summation of partial products into two pipeline stages to reduce combinational path and improve max frequency:  
+   - Stage 1: sum partial products in pairs (4 additions) and register the intermediate sums.  
+   - Stage 2: sum the intermediate sums pairwise (2 additions), register these again.  
+4. Final stage: sum the two partial sums to produce the final product, register output.  
+The output enable signal is propagated through the 4-stage shift register to align with the product valid signal.
+
+This fusion reduces the critical path by splitting wide additions into smaller groups pipelined over multiple cycles while maintaining a manageable pipeline depth. It also registers intermediate sums to reduce glitching and switching, which improves power. The enable pipeline and conditional input register updates ensure inputs are sampled only when valid and product output only asserted when the pipeline output is valid. The design balances throughput and latency with practical PPA improvements.

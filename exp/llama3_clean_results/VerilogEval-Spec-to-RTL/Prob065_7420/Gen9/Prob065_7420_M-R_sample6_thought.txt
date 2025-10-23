@@ -1,0 +1,7 @@
+To refactor the existing code, we will focus on simplifying the design while maintaining its functionality. The core idea of implementing two 4-input NAND gates remains the same. However, we will restructure the code to use a single `assign` statement for each output, eliminating the need for the `NAND4` module. This approach reduces the complexity of the design and makes it more concise.
+
+The original code uses a modular approach with the `NAND4` module, which is instantiated twice in the `TopModule`. While this approach is clear and maintainable, it introduces additional hierarchy that might not be necessary for such a simple functionality. By directly implementing the NAND gate logic within the `TopModule`, we can reduce the design's complexity and potentially improve its synthesizability.
+
+The NAND gate logic is straightforward and can be directly expressed using the bitwise operators available in Verilog. Given that the inputs are already defined as single bits, we can use the `&` operator for bitwise AND and the `~` operator for bitwise NOT to implement the NAND operation.
+
+This refactoring aims to improve the design's readability and synthesizability by reducing the number of modules and directly expressing the required logic. While the functional behavior remains unchanged, the simplified structure might lead to slightly improved Power, Performance, and Area (PPA) metrics due to reduced overhead from module instantiations.

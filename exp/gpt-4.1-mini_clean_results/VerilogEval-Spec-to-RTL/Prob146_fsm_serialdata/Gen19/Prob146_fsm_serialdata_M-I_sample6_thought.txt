@@ -1,0 +1,15 @@
+To optimize the existing design for better power, performance, and area (PPA), we can make the following enhancements while preserving the functional correctness:
+
+1. **Shift Register Update Optimization**: Instead of shifting right and inserting the input at MSB, shift left and insert at LSB. This matches the serial protocol which sends LSB first and simplifies the shift register logic, reducing critical path delay.
+
+2. **Enable Shift and Bit Counter Updates Only When Required**: Further gate the shift register and bit counter update with an explicit enable signal, preventing unnecessary toggling.
+
+3. **Simplify Done Signal Logic**: Generate the done signal as a pulse only in the cycle the stop bit is validated, avoiding setting it in multiple places.
+
+4. **FSM Encoding and State Logic**: Maintain the 2-bit binary state encoding for area efficiency and simplicity.
+
+5. **Single always block for synchronous logic**: Keep all sequential logic in one always block triggered on posedge clk for clarity and synthesis friendliness.
+
+6. **Reset Logic**: Use synchronous active-high reset to initialize all registers.
+
+These improvements can reduce the combinational logic depth in the data path (especially in shifting), reduce toggling power by enabling shift registers only during READ_BITS, and keep done pulses clean and one-cycle only, improving timing and power.

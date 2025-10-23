@@ -1,0 +1,15 @@
+Fuse strengths of both solutions for an optimal FSM:
+
+- Use a single-bit state with 0 = WALK_LEFT and 1 = WALK_RIGHT for simplicity and minimal area.
+- Implement asynchronous positive-edge reset to WALK_LEFT as specified.
+- On clock edge, update state based on bump inputs:
+  - If both bumps active, toggle state (direction).
+  - Else if bumped left only, go to WALK_RIGHT (state=1).
+  - Else if bumped right only, go to WALK_LEFT (state=0).
+  - Else hold state.
+- Derive outputs walk_left and walk_right directly from state and its complement to reduce redundant logic.
+- Use a compact priority combinational assignment with minimal case statements for next state logic to enhance performance and reduce combinational depth.
+- Retain clear Moore output style by assigning outputs as combinational signals derived from the registered state.
+- Avoid redundant condition checks by ordering conditions properly and using straightforward logic.
+
+This fusion results in minimal area, low power by reduced logic toggling, and high performance through simple next-state combinational logic with a single FSM register.

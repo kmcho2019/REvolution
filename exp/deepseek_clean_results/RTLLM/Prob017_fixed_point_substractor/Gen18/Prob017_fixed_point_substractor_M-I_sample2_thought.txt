@@ -1,0 +1,27 @@
+Improvement Strategy:
+
+1. Problem Analysis:
+   - Current implementation uses ripple-carry adder which has O(N) delay
+   - Zero detection happens after full addition, adding extra logic
+   - Overflow detection is calculated but unused
+   - Parameters Q and N are declared but Q isn't utilized
+
+2. Key Improvements:
+   - Replace ripple-carry with carry-select adder for better performance
+   - Integrate zero detection into the addition process
+   - Remove unused overflow logic to save area
+   - Optimize parameter usage by removing unused Q
+   - Use hierarchical carry computation to reduce critical path
+
+3. Implementation Approach:
+   - Implement 4-bit carry-select blocks for balanced PPA
+   - Compute zero flag in parallel with addition
+   - Simplify parameter list to only essential N
+   - Use block-level generate statements for cleaner code
+   - Maintain two's complement subtraction core logic
+
+4. PPA Benefits:
+   - Performance: Carry-select reduces critical path to O(N/4)
+   - Power: Blocks can be gated when not needed
+   - Area: More efficient than ripple-carry while not as large as full prefix
+   - Clarity: Cleaner parameter interface and block structure

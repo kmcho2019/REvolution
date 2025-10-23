@@ -1,0 +1,19 @@
+To implement the Lemming's behavior, we can design a Moore state machine with three states: walking left, walking right, and falling. The state machine will switch between walking left and right based on the bump_left and bump_right inputs. When the ground input becomes 0, the state machine will transition to the falling state and remain there until the ground input becomes 1 again. During the falling state, the walking direction will be preserved. We will use a 2-bit state variable to encode the three states.
+
+We will use the following state encoding:
+- State 0: Walking left
+- State 1: Walking right
+- State 2: Falling
+
+The state machine will be reset to the walking left state when the areset input is asserted.
+
+We will use the following logic to determine the next state:
+- If the current state is walking left and bump_left is 1, or bump_right is 0 and bump_left is 0, the next state will be walking right.
+- If the current state is walking right and bump_right is 1, or bump_left is 0 and bump_right is 0, the next state will be walking left.
+- If the ground input becomes 0, the next state will be falling.
+- If the current state is falling and the ground input becomes 1, the next state will be the previous walking state.
+
+We will use the following logic to determine the output signals:
+- walk_left will be 1 when the current state is walking left.
+- walk_right will be 1 when the current state is walking right.
+- aaah will be 1 when the current state is falling.

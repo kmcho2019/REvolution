@@ -1,0 +1,5 @@
+Refactor the design by separating the detection of falling edges and the output register update. Use a combinational wire to detect the falling edges by comparing the current and previous inputs. Implement a synchronous process to update both the previous input register and the output register. This makes the design clearer by isolating the edge detection logic combinationally and the state update sequentially.
+
+On reset, clear the output and initialize the previous input to zero to maintain consistent reset behavior. This slight change from initializing prev_in with the input on reset might improve synthesis tool compatibility.
+
+This structure keeps the core logic intact but clarifies the data flow, which may help with synthesis and post-synthesis simulation mismatches.

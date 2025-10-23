@@ -1,0 +1,7 @@
+To improve the existing solution, we will design a more modular and scalable architecture for the 12-hour clock. Our approach involves separating the clock's functionality into smaller, more manageable modules. We will create a `bcd_counter` module that can be reused for hours, minutes, and seconds, each with its own set of constraints (e.g., 00-59 for minutes and seconds, 01-12 for hours). This modular design simplifies the overall logic and makes the code more readable and maintainable.
+
+We will also introduce a separate `am_pm_controller` module to handle the AM/PM logic, ensuring that it accurately reflects the hour. This module will receive the hour value as input and output the corresponding AM/PM signal.
+
+To handle the reset functionality, we will use a synchronous reset that affects all modules simultaneously, ensuring that the entire clock is reset to "12:00:00 AM" when the reset signal is high. The `ena` signal will be used to increment the time counters.
+
+By structuring the design in this modular fashion, we can better manage the complexity of the clock's logic, making it easier to identify and correct any issues that arise during simulation or testing.

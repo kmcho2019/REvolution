@@ -1,0 +1,10 @@
+To refactor the JK flip-flop implementation, I will replace the synchronous always block with an explicit register assignment using a procedural block that directly handles the flip-flop logic within the always block triggered by the clock. Instead of using combinational logic outside the always block with an intermediate wire `Q_next`, I will encode the JK truth table using an if-else or case statement inside the sequential block.
+
+This approach explicitly enumerates the JK input conditions for the next state within the clocked block, making the state transitions explicit and self-contained. It improves readability by embedding the JK state transition truth table logic inside the clocked process rather than in a combinational assign outside.
+
+This does not change the functionality or the minimal logic but offers a structural style variation that some designers prefer for direct state update clarity.
+
+Advantages:
+- Single always block for sequential logic encapsulates all next state logic.
+- No intermediate wires; logic is directly visible in the sequential block.
+- Easier for some to follow the JK behavior state transitions inside the clocked process.

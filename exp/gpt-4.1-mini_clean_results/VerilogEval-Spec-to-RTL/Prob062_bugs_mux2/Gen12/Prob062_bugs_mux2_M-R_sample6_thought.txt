@@ -1,0 +1,5 @@
+Since the output is declared as a 1-bit scalar, but inputs `a` and `b` are 8-bit vectors, the output should be a 1-bit value derived from either `a` or `b` based on `sel`. The original buggy code attempts bitwise AND/OR which is invalid for scalars combined with vectors.
+
+To keep `out` scalar, I will explicitly select one 8-bit vector based on `sel` and reduce it to 1 bit using a bitwise OR reduction. This matches the original interface: output is a single bit representing if any bit of the selected input is high.
+
+I will implement this using continuous assignments with reduction operators and a conditional operator to clearly show the selection and reduction steps without changing the interface.

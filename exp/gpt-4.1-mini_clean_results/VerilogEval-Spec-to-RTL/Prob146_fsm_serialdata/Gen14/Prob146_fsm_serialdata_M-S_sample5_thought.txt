@@ -1,0 +1,11 @@
+I will simplify the FSM by using localparam for state encoding instead of typedef enums for clearer and more traditional style. The FSM will have three states: IDLE (waiting for start bit), RECEIVE (shifting in 8 data bits), and STOP (checking stop bit and signaling done).
+
+I will consolidate the bit counter and shift register updates in a single always block triggered on the clock edge with synchronous reset, eliminating redundant assignments.
+
+The done signal will be a single-cycle pulse asserted only when the stop bit is correct.
+
+If the stop bit is incorrect, the FSM will stay in STOP state until it detects a stop bit (line goes high), avoiding an extra WAIT_STOP state.
+
+The data bits will be shifted in least-significant-bit first by shifting data right and placing the input bit into the MSB.
+
+This approach reduces the number of states and complexity while preserving functionality and readability.

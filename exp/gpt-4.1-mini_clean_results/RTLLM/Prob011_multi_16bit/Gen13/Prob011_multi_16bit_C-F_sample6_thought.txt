@@ -1,0 +1,11 @@
+Fuse the best from both examples:
+
+- Use the explicit shift count register (5-bit counter `i`) and done flag control from Example 1, ensuring clear and straightforward FSM behavior with done asserted exactly at shift 16 and cleared at 17 or reset.
+- Employ the shift-and-accumulate scheme of Example 1: shifting multiplicand right and multiplier left each cycle, accumulating partial sums, which avoids wide dynamic shifting and large adders each cycle.
+- Integrate Example 2’s power optimization by gating the 32-bit addition and product register updates only when the current multiplicand LSB is 1, reducing toggling and dynamic power without extra complexity.
+- Keep the multiplicand and multiplier registers loaded once at start (when `i==0`), then process each bit for `i` in [1..16].
+- Use synchronous reset and non-blocking assignments for clear timing.
+- The done flag is managed exactly as in Example 1, indicating operation complete precisely and cleanly.
+- This fusion provides a clear FSM and datapath separation, reduces unnecessary toggling on product register updates and adder usage, and avoids wide shifters by smart shifting of multiplicand and multiplier registers.
+
+The result is a power-efficient, area-efficient, and timing-friendly 16-bit unsigned multiplier using shift-and-accumulate.

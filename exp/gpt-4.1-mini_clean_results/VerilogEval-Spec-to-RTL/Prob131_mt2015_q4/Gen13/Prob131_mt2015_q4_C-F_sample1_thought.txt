@@ -1,0 +1,20 @@
+To fuse the best ideas from both examples:
+
+- From Example 1: sharing the intermediate xor_xy signal to avoid redundant XOR computations, reducing area and power; parameterizing modules A and B to accept precomputed xor_xy or related signals.
+- From Example 2: clear, explicit wiring and module interfaces, avoiding hidden side effects and making the design easy to understand and maintain.
+
+Strategy:
+1. Compute xor_xy once at top-level and share it with all submodules.
+2. Use clean module interfaces for A and B; A takes x and xor_xy, B takes xor_xy.
+3. Instantiate two pairs (A,B) as required, connecting their outputs explicitly to OR and AND gates.
+4. Finally XOR the outputs of these gates for the final output.
+5. Use explicit wire declarations and assign statements to clarify signal flow.
+6. Additionally, share the inverted xor_xy signal for B modules to reduce duplicate inverters and switching power.
+
+This fusion results in:
+- Clear and maintainable code with explicit wiring.
+- Reduced logic duplication by sharing xor_xy and its inverse.
+- Modular hierarchy that meets the problem spec exactly (2 A and 2 B submodules).
+- Optimized power and area due to shared intermediate signals and minimized inversion logic.
+
+The design balances clarity, modularity, and efficiency.

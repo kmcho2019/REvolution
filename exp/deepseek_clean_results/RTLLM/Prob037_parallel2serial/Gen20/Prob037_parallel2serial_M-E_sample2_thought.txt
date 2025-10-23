@@ -1,0 +1,12 @@
+Novel Architecture Idea:
+1. State Machine Approach: Implement a 4-state FSM (IDLE, BIT0, BIT1, BIT2) to explicitly track which bit is being output
+2. Parallel Load Optimization: Only load new parallel data when transitioning from BIT2 back to BIT0 state
+3. Direct Bit Selection: Instead of shifting, use the state to directly select which bit to output (reduces unnecessary shifting operations)
+4. Early Valid Generation: Generate valid_out one cycle before actual data output to allow downstream logic more setup time
+5. Power Optimization: Minimize register toggling by only updating necessary bits in each state
+
+Key Advantages:
+- Clear state transitions make timing easier to analyze
+- Eliminates shift operations, reducing dynamic power
+- Early valid signal helps with timing closure
+- More explicit control flow than counter-based approaches

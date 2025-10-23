@@ -1,0 +1,21 @@
+// Refactored TopModule with 8 D flip-flops and active high asynchronous reset
+module TopModule(
+    input           clk,
+    input           areset,
+    input   [7:0]   d,
+    output  [7:0]   q
+);
+
+    reg [7:0] q_reg = 8'b0; // Initialize with reset value
+
+    always @(posedge clk or posedge areset) begin
+        if (areset) begin
+            q_reg <= 8'b0; // Asynchronous reset condition
+        end else begin
+            q_reg <= d; // Clock edge condition
+        end
+    end
+
+    assign q = q_reg;
+
+endmodule

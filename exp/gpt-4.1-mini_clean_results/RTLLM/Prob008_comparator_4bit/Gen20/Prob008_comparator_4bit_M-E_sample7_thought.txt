@@ -1,0 +1,10 @@
+Implement a 4-bit comparator using parallel bitwise comparison logic instead of a ripple borrow chain.
+
+- For each bit from MSB to LSB, create signals indicating if A[i] > B[i], A[i] == B[i], or A[i] < B[i].
+- Use a priority encoder style approach: The most significant bit where A and B differ determines the comparison result.
+- Combine the per-bit signals to generate final outputs:
+  - A_greater is true if at the highest bit where A and B differ, A[i] > B[i].
+  - A_less is true if at the highest differing bit A[i] < B[i].
+  - A_equal is true if all bits are equal.
+- This removes the subtraction/borrow logic and uses straightforward combinational logic to determine comparison, potentially improving timing by avoiding carry/borrow chains.
+- The outputs are mutually exclusive by construction.

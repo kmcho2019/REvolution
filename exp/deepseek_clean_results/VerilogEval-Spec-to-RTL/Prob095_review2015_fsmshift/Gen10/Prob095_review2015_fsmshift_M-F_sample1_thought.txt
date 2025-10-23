@@ -1,0 +1,12 @@
+Revised approach addressing the reset timing issue:
+1. The key insight is that shift_ena should be asserted immediately when reset is detected, not on the next cycle
+2. We'll modify the state machine to enter S_CYC1 directly during reset (same cycle)
+3. This ensures the first shift_ena pulse occurs immediately with reset
+4. Subsequent state transitions will then count exactly 4 cycles (including the reset cycle)
+5. The output logic remains simple - active for all states except DONE
+6. This matches the requirement of "whenever the FSM is reset, assert shift_ena for 4 cycles"
+
+Key changes:
+- Remove S_RESET state since we want immediate action
+- Start counting from first cycle of reset
+- Maintain same state progression but with corrected timing

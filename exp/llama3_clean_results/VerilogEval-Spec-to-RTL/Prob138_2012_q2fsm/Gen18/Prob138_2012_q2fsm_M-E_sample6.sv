@@ -1,0 +1,31 @@
+module TopModule(
+    input  clk,
+    input  reset,
+    input  w,
+    output z
+);
+
+reg [2:0] state_count;
+reg [2:0] next_state_count;
+
+// Counter to track the current state
+always @ (posedge clk) begin
+    if (reset) begin
+        state_count <= 3'b000; // Reset to state A
+    end else begin
+        case (state_count)
+            3'b000: state_count <= w ? 3'b001 : 3'b000; // State A
+            3'b001: state_count <= w ? 3'b010 : 3'b011; // State B
+            3'b010: state_count <= w ? 3'b100 : 3'b011; // State C
+            3'b011: state_count <= w ? 3'b101 : 3'b000; // State D
+            3'b100: state_count <= w ? 3'b100 : 3'b011; // State E
+            3'b101: state_count <= w ? 3'b010 : 3'b011; // State F
+            default: state_count <= 3'b000; // Default to state A
+        endcase
+    end
+end
+
+// Output z
+assign z = state_count[2]; // z is high when state is E or F
+
+endmodule

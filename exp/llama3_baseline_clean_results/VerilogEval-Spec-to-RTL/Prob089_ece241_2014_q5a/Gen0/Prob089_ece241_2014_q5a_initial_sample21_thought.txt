@@ -1,0 +1,11 @@
+To implement a one-input one-output serial 2's complementer Moore state machine, we need to design a finite state machine (FSM) that keeps track of the input bits and produces the 2's complement output. 
+
+The FSM will have two states: Idle and Running. The Idle state will be the initial state when the reset is asserted, and the Running state will be entered when the reset is released. In the Running state, the FSM will keep track of the input bits and produce the 2's complement output. 
+
+The 2's complement of a binary number is obtained by inverting all the bits and then adding 1. Since the input is a series of bits, we will keep track of the inverted bits and then add 1 at the end.
+
+We will use a flag to indicate whether we are in the process of calculating the 2's complement (i.e., whether we have seen at least one '1' in the input). Once we see a '1' in the input, we set the flag and start inverting all subsequent bits. 
+
+Finally, we will also keep track of whether we have seen at least one '1' in the input. If we have seen a '1' and we see another '1', we will assert the output.
+
+To implement this FSM, we can use a Verilog module with two always blocks: one for combinational logic and one for sequential logic.

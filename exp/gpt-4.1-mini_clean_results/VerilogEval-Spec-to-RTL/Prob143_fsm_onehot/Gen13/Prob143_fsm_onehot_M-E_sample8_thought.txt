@@ -1,0 +1,9 @@
+This design encodes the next_state and output logic using a priority-encoded combinational approach that treats the current state vector as a "set" of active states and computes next_state as the union of all possible transitions triggered by the input. 
+
+Instead of grouping states by outputs or transitions directly, it builds next_state by ORing together all states that transition to each next state from any active current state and the input. This creates a fully combinational, one-hot next_state vector that accumulates transitions from all current states simultaneously.
+
+Outputs are decoded from the current states by OR'ing states that have nonzero output values.
+
+This method avoids large fan-in OR gates by computing each next_state bit as a direct OR of only the contributing states, keeping the logic simple and fully parallel.
+
+This approach is easy to maintain and extend, fully supports multiple active current states, and is optimized for clarity and straightforward synthesis.

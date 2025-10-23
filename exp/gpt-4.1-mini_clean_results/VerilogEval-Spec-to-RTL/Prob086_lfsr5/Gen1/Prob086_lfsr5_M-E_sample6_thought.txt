@@ -1,0 +1,14 @@
+Use an intermediate wire to compute the feedback bit as XOR of tapped bits and the output bit q[0]. Perform next-state logic with a temporary register to hold the new state. At each positive edge of clk, update q synchronously: on reset set q to 1, else assign q to the computed next state.
+
+Specifically:
+- Compute feedback = q[0]
+- Since taps are at bits 5 and 3 (bits 4 and 2 zero-indexed), for the Galois LFSR shifting right:
+  - q[0] <= q[1]
+  - q[1] <= q[2]
+  - q[2] <= q[3] XOR feedback
+  - q[3] <= q[4]
+  - q[4] <= feedback XOR q[2] (using previous q[2] value, so calculate carefully)
+  
+To avoid reading updated q[2] and q[3] within the same clock cycle, first compute next_q as a separate 5-bit register using current q, then assign next_q to q at clock edge.
+
+This approach cleanly separates combinational logic for next state from sequential logic updating state.

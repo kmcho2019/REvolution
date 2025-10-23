@@ -1,0 +1,16 @@
+Novel Barrel Rotation Architecture:
+1. Instead of using a case statement, pre-compute all possible rotation outcomes in parallel
+2. Use a 4:1 multiplexer to select between:
+   - No rotation (hold current value)
+   - Right rotation
+   - Left rotation
+   - Load value
+3. This approach eliminates sequential decision-making logic and makes all rotation paths equally timing-balanced
+4. The parallel computation allows for potential pipelining opportunities
+5. The mux select is derived from a combination of load and ena signals
+
+Key advantages:
+- All rotation paths are computed in parallel, improving timing consistency
+- Simplified control logic by encoding all operations in mux select
+- More scalable for wider datapaths
+- Easier to pipeline if needed

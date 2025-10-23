@@ -1,0 +1,26 @@
+Optimized Fusion Strategy:
+1. **Critical Path Optimization**:
+   - Combine parallel shift computation (Ex1) with barrel shifter structure (Ex2)
+   - Use separate pre-computed shift paths for left/right shifts to reduce mux depth
+   - Implement hierarchical shift selection to balance logic depth
+
+2. **Power Optimization**:
+   - Maintain 'do_shift' gating (Ex1) but optimize with conditional sign extension
+   - Implement explicit clock gating for register updates
+   - Only compute sign extension when right shifting
+
+3. **Area Optimization**:
+   - Share sign extension logic between 1-bit and 8-bit right shifts
+   - Use minimal left shift logic (Ex1) combined with efficient right shift (Ex2)
+   - Optimize multiplexer structure to reduce redundant logic
+
+4. **Timing Closure**:
+   - Flatten control logic using case statements for better synthesis
+   - Balance shift computation paths
+   - Use simple arithmetic for shift amount selection
+
+Key Innovations:
+- Conditional sign extension only during right shifts
+- Optimized multiplexer structure with balanced paths
+- Shared shift logic with minimal redundancy
+- Clean hierarchical control flow

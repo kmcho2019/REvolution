@@ -1,0 +1,10 @@
+Create a clean, efficient, and synthesizable dual-port RAM with these design choices:
+
+- Parameterize WIDTH=6 and DEPTH=8, using minimal address width with $clog2(DEPTH) for optimized area and timing.
+- Use a synchronous reset (active low) to deterministically initialize the RAM array to zero on reset, ensuring reliable power-up state suitable for ASIC and FPGA designs.
+- Implement synchronous write operations triggered on posedge clk and gated by write_en.
+- Implement combinational read logic gated by read_en to produce zero output when disabled, yielding zero-latency reads and reducing unnecessary toggling to save power.
+- Avoid registering read_data to minimize read latency and reduce clock domain toggling.
+- Use an integer for-loop inside the clocked always block for memory reset initialization, which is synthesizable and clear.
+- Keep the code clean, fully parameterized, and well-commented for clarity.
+- This fusion balances deterministic reset behavior, minimal read latency, power efficiency via output gating, and area optimization by using minimal address width and straightforward RAM array declaration.

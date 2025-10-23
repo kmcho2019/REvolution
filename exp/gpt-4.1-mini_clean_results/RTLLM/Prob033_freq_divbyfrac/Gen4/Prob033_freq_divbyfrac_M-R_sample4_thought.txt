@@ -1,0 +1,8 @@
+Refactor by using separate registers for the positive-edge and negative-edge sampled clocks with explicit clock enables for better control. Instead of sampling the entire `clk_div_pos` at negedge clk, we create a dedicated shift register that updates at negedge to generate the half-period shifted version, which ensures the phase shift is accurately realized.
+
+Implementation steps:
+- Use a 3-bit counter counting from 0 to 6 on posedge clk.
+- Generate `clk_div_pos` as before (high for counts 0-3, low for 4-6).
+- Create a negative-edge sampled register `clk_div_neg` that captures the `clk_div_pos` value at negedge clk but using an intermediate register to avoid glitches.
+- Produce final output by OR-ing the two clock signals.
+- The clearer separation of sampling and logic should improve timing alignment and simulate the desired fractional division correctly.

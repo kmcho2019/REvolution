@@ -1,0 +1,11 @@
+To improve PPA, we reduce combinational logic complexity and toggle rate by separating output z generation from cycle counting logic. Specifically:
+
+- Keep a simple 2-bit cycle counter (0 to 2) and 2-bit w accumulator updated only in state B.
+- Instead of computing z combinationally in the same always block, register an intermediate signal that flags when exactly two w's are detected after three cycles. Then register z in the next cycle. This reduces combinational path length and eases timing.
+- Simplify addition by incrementing w_accum by w (1-bit) only when counting, ensuring minimal combinational addition complexity.
+- Maintain synchronous reset and minimal state encoding (1-bit).
+- Ensure counters and accumulators are reset or held appropriately to reduce unnecessary toggling.
+- Output z is registered one cycle after the 3-cycle window to follow requirement and provide a clean timing boundary.
+- This approach reduces critical path through complex add+compare+output logic in one cycle, improving timing and power efficiency with minimal area change.
+
+Overall, the improved design trades a cycle delay on output assertion for improved timing and lower toggle rates, which is usually favorable for PPA.

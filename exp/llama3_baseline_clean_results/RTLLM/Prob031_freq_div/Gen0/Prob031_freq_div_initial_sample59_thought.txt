@@ -1,0 +1,5 @@
+To implement the frequency divider module, we need to use three counters to divide the input clock frequency. 
+For CLK_50, we simply toggle its value on every positive edge of CLK_in, effectively dividing the input clock frequency by 2.
+For CLK_10, we use a counter cnt_10 to count the number of clock cycles and toggle CLK_10 when cnt_10 reaches 4, effectively dividing the input clock frequency by 10 (since 100MHz / 10 = 10MHz and 100 / 10 = 10, but we are using a 4 cycle counter with a clock that is already divided by 2.5 for a 100/5 division ratio, however we will still use a simple 10 cycle counter to get 100/10).
+For CLK_1, we use a counter cnt_100 to count the number of clock cycles and toggle CLK_1 when cnt_100 reaches 49 (this isn't correct and we need a 100 cycle counter), effectively dividing the input clock frequency by 100.
+We also need to handle the reset signal RST to reset the counters and output clock signals when RST is active.

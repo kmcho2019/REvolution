@@ -1,0 +1,19 @@
+After analyzing the waveform and the feedback, here's a refactored approach that maintains the same core idea but with a cleaner implementation:
+
+1. Key Improvements:
+   - Use a simpler 2-state machine (IDLE/ACTIVE) instead of 3 states
+   - Generate outputs synchronously using clocked always blocks
+   - Remove the problematic combinational clock mixing
+   - Implement q as a simple 1-cycle delayed version of p
+   - Add proper reset condition detection without race conditions
+
+2. New Structure:
+   - Single always block for state transitions (synchronous to clock)
+   - Separate always blocks for p and q generation
+   - Use registered outputs for clean timing
+   - Simplified state transition logic based only on 'a' input
+
+3. Behavioral Match:
+   - p samples 'a' only on certain clock edges
+   - q follows p with 1-cycle delay
+   - System resets when specific conditions are met

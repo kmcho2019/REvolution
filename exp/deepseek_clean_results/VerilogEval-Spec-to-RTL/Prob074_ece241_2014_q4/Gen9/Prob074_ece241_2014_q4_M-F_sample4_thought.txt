@@ -1,0 +1,11 @@
+To fix the design, I'll make these key improvements:
+1. Explicitly initialize all flip-flops to zero at power-on using an asynchronous reset (though the problem states they're initially zero, this makes it more robust)
+2. Keep the clear separation between combinational and sequential logic
+3. Ensure the feedback paths are correctly implemented:
+   - XOR gate gets its own flip-flop output
+   - AND gate gets complemented flip-flop output
+   - OR gate gets complemented flip-flop output
+4. Maintain the 3-input NOR output structure
+5. Use non-blocking assignments for all flip-flop updates to ensure proper synchronous behavior
+
+The main change is adding explicit reset handling while keeping the core logic identical, as the original implementation was actually correct in terms of functionality but might have had timing/synchronization issues.

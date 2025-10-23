@@ -1,0 +1,7 @@
+Fuse the clear separation of combinational next-state calculation from the sequential register update (from Example 2) with the explicit power-saving practice of avoiding unnecessary register toggling when no rotation or load occurs (from Example 1). 
+
+Implement a combinational block computing next_q based on load and ena, using concise slicing and concatenation for rotation. In the clocked block, update q only if load is high or ena requests rotation (ena=01 or 10), otherwise hold the register value, preventing redundant toggling and reducing dynamic power.
+
+This fusion combines the readability and synthesis friendliness of separated next-state logic with the power efficiency of conditional register updates. It maintains full synchronous semantics and correctness for the 100-bit rotation, supports easy scalability, and aligns with good design practice for timing, power, and area.
+
+Additional comments improve clarity, and the coding style adheres to concise and maintainable Verilog for large vector operations. No extra pipeline stages or complex barrel shifter logic are introduced to keep latency minimal.

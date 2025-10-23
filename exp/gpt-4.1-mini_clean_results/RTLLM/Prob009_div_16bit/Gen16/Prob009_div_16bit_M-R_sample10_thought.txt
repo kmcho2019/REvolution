@@ -1,0 +1,5 @@
+Refactor the design by removing the first always block that redundantly latches inputs combinationally, instead directly using inputs A and B in the division logic. Implement the division operation inside a single combinational always block that iteratively computes the quotient and remainder by simulating the long division process step by step, storing intermediate remainders and quotient bits in local variables.
+
+This version uses local variables inside one always block, avoiding reg arrays and multiple procedural assignments, which should improve clarity and synthesis friendliness. Using local variables makes it easier for synthesis tools to optimize the combinational path. The remainder is kept as a 9-bit register to capture the carry bit during subtraction, and after finishing all bits, the final quotient and remainder outputs are assigned.
+
+This keeps the fundamental algorithm intact (extract high bits, compare, subtract if possible, shift in next dividend bit, repeat) while simplifying the code structure and potentially improving synthesis results and readability by eliminating unnecessary intermediate registers and multiple always blocks.

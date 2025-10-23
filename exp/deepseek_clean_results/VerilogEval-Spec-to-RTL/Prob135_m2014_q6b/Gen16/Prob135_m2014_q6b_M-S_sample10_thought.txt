@@ -1,0 +1,17 @@
+To simplify the next-state logic for y[1], we should:
+
+1. Focus only on transitions where y[1] becomes 1 in the next state
+2. From the state diagram, these occur in four cases:
+   - B->C when w=0 (y=001, w=0)
+   - Any state->D when w=1 (D has y[1]=1)
+   - D->F when w=0 (F has y[1]=0, but this is a don't-care since we only set y[1]=1)
+   - F->C when w=0 (y=101, w=0)
+
+3. Notice that D (011) is the only state where y[1]=1 in next state when w=1
+4. For w=0 cases, only B->C and F->C transitions set y[1]=1
+5. Can express this with simple conditions on current state and w
+
+Simplified logic:
+- y[1] becomes 1 when:
+  - w=1 and next state is D (from any state)
+  - w=0 and (current state is B or F)

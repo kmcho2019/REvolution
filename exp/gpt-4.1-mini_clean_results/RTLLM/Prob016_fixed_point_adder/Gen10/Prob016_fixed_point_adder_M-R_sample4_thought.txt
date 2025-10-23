@@ -1,0 +1,12 @@
+Refactor the fixed-point adder module to explicitly separate sign extraction, absolute value calculation, magnitude comparison, and result composition using intermediate wires and combinational logic with continuous assignments only. 
+
+Instead of directly using conditional operators in a nested fashion, break down the logic into clear, named intermediate steps:
+
+- Compute absolute values of inputs using two's complement conversion when negative.
+- Determine if signs are equal or different.
+- When signs equal, sum absolute values.
+- When signs differ, subtract smaller from larger absolute value and select sign of operand with greater magnitude or zero sign if result zero.
+- Convert the resulting magnitude and sign back to two's complement form.
+- Output is assigned directly from these combinational steps without registers.
+
+This improves clarity by delineating each sub-step explicitly, makes the design easier to follow, and ensures combinational behavior with no internal state or always blocks.

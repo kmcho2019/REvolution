@@ -1,0 +1,10 @@
+Simplify the multi-bit MUX-based synchronizer by removing the two-stage data synchronizer and directly using data_reg from clk_a domain after it's delayed and gated by the enable control registers in clk_b domain. Since data_en remains high for at least 3 clk_b cycles and data_in changes infrequently, a direct register transfer with enable filtering via two flip-flops in clk_b domain (en_clap_one, en_clap_two) is sufficient to safely update dataout.
+
+Specifically:
+- Keep data_reg and en_data_reg updating synchronously on clk_a domain with asynchronous reset arstn.
+- On clk_b domain, use two flip-flops en_clap_one and en_clap_two to delay and synchronize en_data_reg.
+- On clk_b domain, update dataout on posedge clk_b and brstn with reset. When en_clap_two is high, load data_reg value; otherwise hold previous value.
+- No multi-bit synchronizer for data_reg is used, reducing register count and complexity.
+- The design relies on the problem constraints that data_en is stable for at least 3 clk_b cycles and data_in changes slowly to avoid metastability or data corruption.
+
+This approach matches the original specification, reduces register count and latency, and maintains reliable synchronization through enable gating.

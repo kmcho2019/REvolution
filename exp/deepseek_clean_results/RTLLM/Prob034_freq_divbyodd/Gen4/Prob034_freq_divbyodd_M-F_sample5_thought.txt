@@ -1,0 +1,23 @@
+After analyzing the feedback, here's the corrected approach:
+
+1. **Synchronized Counters**: Both counters (posedge and negedge) should start at 0 to maintain proper phase alignment. The previous offset caused misalignment.
+
+2. **Revised Toggle Logic**: 
+   - Toggle on both threshold crossing (NUM_DIV/2) and counter wrap (NUM_DIV-1)
+   - This ensures precise 50% duty cycle for odd divisions
+   - Use integer division which automatically floors for odd numbers
+
+3. **Phase Alignment**:
+   - Positive edge divider toggles on positive clock edges
+   - Negative edge divider toggles on negative clock edges
+   - Both follow identical counting patterns but offset by half a cycle
+
+4. **Reset Behavior**:
+   - Clear both counters and divider outputs synchronously
+   - Ensure clean startup state
+
+5. **Output Combination**:
+   - OR operation works correctly when both dividers are properly aligned
+   - Creates clean transitions at the correct points
+
+The key insight is maintaining perfect symmetry between the two divider paths while ensuring their phase relationship creates the correct odd division ratio when combined.

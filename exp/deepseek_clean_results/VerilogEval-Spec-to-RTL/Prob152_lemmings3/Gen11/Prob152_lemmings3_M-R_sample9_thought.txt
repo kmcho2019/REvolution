@@ -1,0 +1,14 @@
+Refactoring approach:
+1. Convert the state machine to use one-hot encoding for better timing and power characteristics
+2. Separate the direction logic into its own always block to reduce critical path
+3. Use continuous assignments for state transitions to potentially improve synthesis
+4. Make outputs purely combinatorial based on state and direction
+5. Maintain the same priority order (fall > dig > bump) but implement it through parallel checks
+6. Use explicit state names for better readability
+7. Keep asynchronous reset functionality
+
+Key improvements:
+- One-hot encoding reduces state transition glitches
+- Separated direction logic may improve timing
+- Continuous assignments can help synthesis tools optimize better
+- Maintains same functionality while potentially improving PPA

@@ -1,0 +1,21 @@
+Analyze the waveform to deduce the sequential logic: `state` is a 1-bit memory element updated on each rising clock edge, and `q` is a combinational output depending on the current inputs `a`, `b` and the stored `state`. 
+
+From the waveform, we notice:
+- `state` changes only on rising edges of `clk`.
+- When `a`=0 and `b`=1, `q` tends to be 1, especially if `state`=0.
+- `state` appears to toggle or reset based on certain input combinations.
+- `q` looks like the result of `a` XOR (`state` AND `b`) or a related function.
+- The state update logic can be derived as: 
+   next_state = (state AND (NOT b)) OR (b AND (NOT a)).
+
+This logic means:
+- If `b`=0, state retains itself.
+- If `b`=1 and `a`=0, state goes to 1.
+- Otherwise, state goes to 0.
+
+The output `q` can be defined as `(a & ~state) | (b & state)` which matches the observed waveform patterns.
+
+Hence, implement a synchronous state machine with:
+- Next state logic depending on `a`, `b`, and `state`.
+- Output `q` as a combinational function of inputs and `state`.
+This design uses one flip-flop for `state` and produces `q` combinationally, reflecting the sequential behavior seen in the waveform.

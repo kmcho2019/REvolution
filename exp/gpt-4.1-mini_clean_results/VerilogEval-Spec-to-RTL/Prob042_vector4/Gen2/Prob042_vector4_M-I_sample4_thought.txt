@@ -1,0 +1,14 @@
+The original design is already minimal and optimal in terms of performance, power, and area for the given simple combinational sign-extension. The use of the replication operator and concatenation is the canonical, most compact way to sign-extend a smaller signed value to a larger one in Verilog. There is no sequential logic or complex combinational logic to optimize.
+
+One minor possible improvement for area and synthesis efficiency is to declare the output as a signed type and let the synthesis tool perform the sign extension automatically. This allows removing the explicit replication and concatenation, potentially enabling synthesis tools to use implicit sign extension optimizations or type-based optimizations internally. This can save gates for the replicated wires and slightly reduce area or power. 
+
+Hence, by declaring the input and output as signed vectors and simply assigning output = input;, the sign-extension will be inferred by synthesis tools, yielding equivalent functionality with possibly smaller area and equal or better PPA metrics.
+
+This approach is cleaner and leverages language semantics rather than explicit bit manipulation.
+
+To summarize:
+- Declare input and output as signed
+- Assign output = in (implicit sign extension by Verilog semantics)
+- Remove replication and explicit concatenation
+
+This will produce an equivalent sign-extended output while potentially improving area and power slightly.

@@ -1,0 +1,19 @@
+To implement the state output logic for the given finite-state machine, 
+we need to analyze the state transitions based on the input 'w'. 
+Since a one-hot code is used for state assignment, each state is represented 
+by a unique 6-bit binary code. The output signals Y1 and Y3 are the inputs 
+to state flip-flops y[1] and y[3] respectively.
+
+From the state transition diagram, we can see that state A (000001) 
+transitions to state B (000010) when 'w' is 1, and stays in state A when 'w' is 0.
+State B transitions to state C (000100) when 'w' is 1, and transitions to state D (001000) when 'w' is 0.
+State C transitions to state E (010000) when 'w' is 1, and transitions to state D when 'w' is 0.
+State D transitions to state F (100000) when 'w' is 1, and transitions to state A when 'w' is 0.
+State E stays in state E when 'w' is 1, and transitions to state D when 'w' is 0.
+State F transitions to state C when 'w' is 1, and transitions to state D when 'w' is 0.
+
+Now, let's analyze the output signals Y1 and Y3:
+- Y1 is the input to state flip-flop y[1], which is 1 in states B and D.
+- Y3 is the input to state flip-flop y[3], which is 1 in state D.
+
+We can derive the implementation by inspection based on these observations.

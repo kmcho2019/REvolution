@@ -1,0 +1,13 @@
+To optimize the given FSM for better PPA (power, performance, area), I will:
+
+- Convert the asynchronous reset to synchronous reset to improve timing closure, reducing the complexity of asynchronous reset flip-flops and potentially improving clock timing (WNS/TNS).
+- Implement the state transition logic using a case statement instead of multiple if-else branches for potentially simpler synthesized combinational logic and better readability.
+- Remove redundant localparam constants since the encoding is trivial and constants are not reused widely; this slightly reduces code overhead.
+- Keep the 2-bit state encoding for minimal area.
+- Maintain Moore output assignments as combinational assignments for simplicity and minimal glitches.
+- Preserve ignoring bumps during falling by controlling state transitions carefully.
+- Overall, the synchronous reset and case-based next state logic can improve the critical path and synthesis tool optimization, potentially improving power and timing.
+
+This approach balances clear logic, simple state machine, and better timing with a synchronous reset, which is usually preferred in ASIC/FPGA design.
+
+Note: The original behavior is strictly maintained, only reset type and next state logic style are changed.

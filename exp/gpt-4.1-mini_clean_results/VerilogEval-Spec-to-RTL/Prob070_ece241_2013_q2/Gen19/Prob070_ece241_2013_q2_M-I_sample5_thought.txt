@@ -1,0 +1,36 @@
+First, clarify the bit ordering of inputs. The problem states inputs are a,b,c,d as bits, with the example for 7 being a=0,b=1,c=1,d=1, which implies 'a' is MSB and 'd' is LSB, consistent with vector {a,b,c,d}.
+
+Next, explicitly list out which input values correspond to logic-1 outputs (2,7,15), and logic-0 outputs (0,1,4,5,6,9,10,13,14), and treat 3,8,11,12 as don't-cares.
+
+Construct a Karnaugh map or use boolean algebra to minimize the output for out_sop (sum of products):
+
+- Ones: 2(0010), 7(0111), 15(1111)
+- Don't-cares: 3(0011), 8(1000), 11(1011), 12(1100)
+
+Use these to minimize:
+
+Group 1: 7(0111), 15(1111) and don't-cares 11(1011),12(1100) enable grouping:
+
+- a=1,b=1,c=1,d=1 (15)
+- a=0,b=1,c=1,d=1 (7)
+- 11 and 12 help group these into b&c&d
+
+Group 2: 2(0010) and 3(0011) don't-care help to simplify the first term.
+
+Final minimal SOP is:
+
+out_sop = (b & c & d) | (~a & ~b & c & ~d)
+
+Similarly, for out_pos (product of sums), which is complement of out_sop.
+
+Derived minimal POS expression:
+
+out_pos = (a + b + ~c + d) & (a + ~b + c + d) & (~a + b + c + ~d)
+
+This matches the original POS but the SOP can be simplified as above.
+
+Implement both with correct input ordering and minimal expressions.
+
+The difference is recognizing that the two minterms 7 and 15 plus don't-cares 11,12 allow grouping into b&c&d, reducing the SOP.
+
+Final implementation uses the minimal SOP and POS forms with consistent input ordering.

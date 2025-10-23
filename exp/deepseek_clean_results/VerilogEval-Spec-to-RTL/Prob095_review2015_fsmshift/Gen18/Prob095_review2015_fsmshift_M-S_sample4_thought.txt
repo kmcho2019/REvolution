@@ -1,0 +1,13 @@
+Simplified solution approach:
+1. Use a 2-bit counter to track cycles (0-3) since we only need to count 4 cycles
+2. shift_ena should be active when counter is less than 4 (0-3)
+3. On reset, initialize counter to 0
+4. Increment counter each cycle until it reaches 3, then stop counting
+5. No need for a separate "done" flag - counter value itself indicates completion
+6. shift_ena is simply the NOR of the counter bits (active when counter < 3)
+7. After 4 cycles (counter=3), shift_ena stays low as counter stops incrementing
+
+Key simplifications:
+- Eliminated done flag
+- Simpler shift_ena logic
+- Still meets all requirements with minimal state

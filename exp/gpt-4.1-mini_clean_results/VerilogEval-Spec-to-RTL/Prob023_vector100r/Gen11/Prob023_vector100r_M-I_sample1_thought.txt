@@ -1,0 +1,5 @@
+To optimize the design for better PPA (Power, Performance, Area), replace the function-based bit reversal with an explicit generate-for loop that assigns each output bit directly to the corresponding reversed input bit. This approach maps clearly to pure wiring without additional logic, allowing synthesis tools to produce minimal routing and avoid any inferred multiplexers or logic gates that may arise from functions with loops.
+
+This explicit wiring style should improve area by ensuring direct bit-to-bit connections, reduce power by avoiding unnecessary logic, and maintain zero timing slack since it's purely combinational wire routing. The generate loop is synthesizable and clear, providing easy readability and modularity.
+
+Thus, implement the BitRevN module with a generate-for block assigning each bit of 'out' to the reversed bit of 'in'. Then instantiate this module in TopModule for 100 bits.

@@ -1,0 +1,7 @@
+Instead of a single large 256-to-1 mux, we'll implement a two-level hierarchical structure:
+1. First level: 16x 16-to-1 muxes (each selecting one bit from a 16-bit chunk)
+2. Second level: 1x 16-to-1 mux (selecting from the first level outputs)
+This reduces the maximum fan-in from 256 to 16, improving timing. The 8-bit sel is split into:
+- Upper 4 bits for the second level selection
+- Lower 4 bits for each first level selection
+This approach balances the load and reduces critical path delay.

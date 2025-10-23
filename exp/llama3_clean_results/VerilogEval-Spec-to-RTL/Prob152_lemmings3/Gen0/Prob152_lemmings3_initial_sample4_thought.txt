@@ -1,0 +1,18 @@
+To model the behavior of the Lemming using a finite state machine, we can break down its states into walking left, walking right, falling, and digging. We will use a Moore state machine, where the outputs are a function of the current state only. The states can be defined as follows:
+
+- WALK_LEFT: The Lemming is walking left.
+- WALK_RIGHT: The Lemming is walking right.
+- FALLING: The Lemming is falling.
+- DIGGING: The Lemming is digging.
+
+We will use an enumeration to represent these states in the Verilog code.
+
+The transition between states will be based on the inputs: bump_left, bump_right, ground, and dig. 
+
+- If the Lemming is walking and hits an obstacle (bump_left or bump_right), it will switch directions.
+- If the Lemming is walking and the ground disappears (ground=0), it will start falling.
+- If the Lemming is walking on ground and is told to dig (dig=1), it will start digging.
+- If the Lemming is falling and hits the ground again (ground=1), it will resume walking in the same direction as before the fall.
+- If the Lemming is digging and reaches the other side (ground=0), it will fall and then continue walking in its original direction once it hits ground again.
+
+We will use a case statement to handle the state transitions and output logic.

@@ -1,0 +1,9 @@
+To refactor the triangle wave generator with the same functionality but a different structure, I will implement a Moore-style finite state machine with a separate combinational always block to determine next state and next wave value, and a sequential always block to update state and wave on the clock edge. This separation of combinational logic (next state, next wave) from sequential state updates enhances code clarity and makes the state machine behavior explicit.
+
+Specifically:
+- Define registers for current state and current wave.
+- Use a combinational always @* block to compute next state and next wave based on current state and wave.
+- Use a sequential always @(posedge clk or negedge rst_n) block to update current state and wave with their respective next values.
+- This structure contrasts with the original design, which merged next state and next wave calculation inside the sequential block.
+
+This design style is often used in finite state machines to separate combinational next-state logic from sequential state registers, improving readability and easier modification or extension.

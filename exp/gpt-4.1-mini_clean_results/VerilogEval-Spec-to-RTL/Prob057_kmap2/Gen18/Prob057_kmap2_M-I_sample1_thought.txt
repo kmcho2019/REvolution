@@ -1,0 +1,26 @@
+To improve PPA, I will further factor the logic expression to reduce gate count and fan-in, aiming to minimize switching activity (power) and area while preserving minimal delay (performance). 
+
+From the original expression:
+out = (nc & nd & (na | nb)) | (nc & d & nb) | (c & nd & na) | (c & d & (a | b))
+
+I will group terms by c and nc to factor common signals:
+
+out = nc & ((nd & (na | nb)) | (d & nb)) | c & ((nd & na) | (d & (a | b)))
+
+Then factor inside each parenthesis for fewer gates:
+
+For nc part:
+(nd & (na | nb)) | (d & nb) = nb & (d | nd) | nd & na
+Since d | nd = 1, so nb & 1 = nb, so nc & (nb | nd & na)
+
+For c part:
+(nd & na) | (d & (a | b))  (cannot simplify further)
+
+So final expression:
+out = nc & (nb | (nd & na)) | c & ((nd & na) | (d & (a | b)))
+
+This reduces OR gate fan-in and shared signals, and reduces an OR gate level since d|nd = 1. This can reduce switching activity and area.
+
+Implementing this logic uses fewer complex gates and reduces gate inputs, helping overall PPA.
+
+Also, reuse inversions and common signals.

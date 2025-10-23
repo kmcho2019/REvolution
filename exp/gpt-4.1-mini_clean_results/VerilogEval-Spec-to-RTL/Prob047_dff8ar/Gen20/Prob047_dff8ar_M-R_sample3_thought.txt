@@ -1,0 +1,7 @@
+Refactor by breaking the 8-bit asynchronous reset D flip-flop vector into an array of individual single-bit D flip-flop modules. Each flip-flop has its own asynchronous reset and clock input. Then, instantiate 8 of these single-bit modules inside TopModule and connect them to the corresponding bits of input/output vectors. This approach enhances modularity by isolating each bit's logic explicitly, potentially improving testability and ease of modification for each bit independently.
+
+In this structure:
+- Define a single-bit D flip-flop with async reset.
+- Instantiate 8 such DFFs inside TopModule using a generate block.
+- Use reg type for outputs inside DFF module and connect through port declarations.
+- This also provides a clear visual map of per-bit flip-flops with asynchronous reset.

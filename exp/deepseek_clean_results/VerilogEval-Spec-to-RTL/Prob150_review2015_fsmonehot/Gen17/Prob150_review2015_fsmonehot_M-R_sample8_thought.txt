@@ -1,0 +1,19 @@
+Refactoring Approach:
+1. Direct State Bit Usage:
+   - Eliminate intermediate state group signals (is_pattern, is_shifting, is_control) since one-hot encoding allows direct state bit usage
+   - This reduces logic depth and area by removing unnecessary OR operations
+
+2. Output Logic Simplification:
+   - Keep output logic as simple direct assignments from state bits
+   - Maintain the Moore machine property where outputs depend only on current state
+
+3. Next-State Logic Restructuring:
+   - Reorganize transition conditions to use direct state bit comparisons
+   - Group similar conditions to share common terms where possible
+   - Use ternary operators for compact representation while maintaining readability
+
+Key Improvements:
+- Removes redundant state group detection logic
+- Maintains same functionality with fewer logic levels
+- More direct mapping between state bits and outputs
+- Cleaner separation between state transition and output logic

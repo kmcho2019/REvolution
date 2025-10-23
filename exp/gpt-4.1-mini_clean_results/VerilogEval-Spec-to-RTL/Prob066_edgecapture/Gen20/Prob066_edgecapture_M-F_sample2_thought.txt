@@ -1,0 +1,11 @@
+To fix the functional mismatch issues, I will remove the `prev_valid` flag entirely. Instead, I will initialize `prev_in` to all 1's upon reset. This initialization ensures that the first input sampled after reset is correctly compared against a known `prev_in` value of all ones, so any bit that goes from 1 to 0 in the first cycle after reset will be detected correctly.
+
+This approach eliminates the gating that previously prevented falling edge detection on the first clock cycle after reset.
+
+The synchronous reset will still clear the output latch `out` and reset `prev_in` to all 1's, guaranteeing predictable behavior.
+
+All sequential logic is triggered on the positive edge of the clock, and the falling edge detector and output latch are implemented with non-blocking assignments to avoid race conditions.
+
+This solution captures all falling edges from 1 to 0 of each bit, preserving the "captured" bits in `out` until the reset clears them.
+
+This correction addresses the functional problems, ensuring no falling edges are missed immediately after reset while preserving clean, efficient synthesis.

@@ -1,0 +1,13 @@
+Novel Architecture Features:
+1. Early Normalization Pipeline: Normalize mantissa products in parallel with exponent calculation to reduce critical path
+2. Parallel Special Case Detection: Dedicated combinatorial logic for special cases that bypasses the main pipeline
+3. Two-Stage Rounding: First stage handles obvious cases, second stage handles tie-breaking
+4. Exponent Pre-Adjustment: Adjust exponents before multiplication to simplify overflow detection
+5. Optimized Multiplier: Split 24x24 multiplication into four 12x12 multiplications with carry-save addition
+
+Key Innovations:
+- Special cases are detected and processed in parallel with normal operations
+- Normalization starts as soon as partial products are available
+- Two-cycle rounding reduces timing pressure
+- Exponent pre-processing simplifies overflow logic
+- Multiplier decomposition improves timing and area

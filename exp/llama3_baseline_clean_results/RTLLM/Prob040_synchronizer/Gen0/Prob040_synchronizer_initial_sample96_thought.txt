@@ -1,0 +1,11 @@
+The problem requires implementing a multi-bit MUX-based synchronizer in Verilog, ensuring data_in is constant during data_en is high and synchronized with a minimum of 3 clk_b clock cycles. The synchronizer should handle data change frequency of data_in being very low, with at least 10 clk_b clock cycles between changes. Two separate clocks, clk_a and clk_b, manage different components of the synchronizer, with clk_b introducing a two-cycle delay on the enable signal data_en. The output, dataout, refers to clk_b. 
+
+To solve this, we'll design a module named 'synchronizer' with input ports for clk_a, clk_b, arstn, brstn, data_in, and data_en, and an output port for dataout. 
+
+Key components include:
+1. Data Register (data_reg): Updated on the positive edge of clk_a or the falling edge of arstn, storing the input data signal data_in.
+2. Enable Data Register (en_data_reg): Updated similarly to data_reg but stores the input enable signal data_en.
+3. Enable Control Registers (en_clap_one and en_clap_two): Updated on the positive edge of clk_b or the falling edge of brstn, controlling the selection of input data with a two-clock cycle delay.
+4. Output Assignment: Based on en_clap_two and brstn, assigns dataout the value of data_reg when en_clap_two is active and brstn is high, or retains its previous value.
+
+This design ensures synchronization and proper handling of the input data signal under the specified conditions.

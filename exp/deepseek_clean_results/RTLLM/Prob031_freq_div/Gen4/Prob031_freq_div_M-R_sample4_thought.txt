@@ -1,0 +1,11 @@
+Refactored design approach:
+1. Use continuous assignments (assign) for CLK_50 instead of sequential logic since it's a simple toggle
+2. Combine all counters into a single 7-bit counter (enough for 100 division) and derive all outputs from it
+3. Use comparator logic to generate the divided clocks based on counter values
+4. Maintain synchronous reset behavior for all outputs
+
+Benefits:
+- Reduced sequential logic (only one counter instead of three)
+- Clear relationship between counter values and output clocks
+- Still maintains fully synchronous design
+- Easier to modify division ratios if needed

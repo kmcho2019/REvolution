@@ -1,0 +1,33 @@
+The original implementation uses three gates: two OR gates and one AND gate. We can explore if the logic can be re-expressed to reduce gate count or levels, or rearranged to optimize for power or area without affecting delay.
+
+Logic is q = (a OR b) AND (c OR d).
+
+Re-expressing the logic with minimal gates:
+
+- The original is minimal in logical terms. Any optimization would be technology-specific.
+
+- Using NAND/NOR gates or AOI/OAI gates might reduce transistor count or power in some libraries but may increase delay.
+
+- Another option is to use De Morgan's theorem: q = !(!(a|b) + !(c|d)) but that adds inverters and increases complexity.
+
+Thus, the original logic is already optimal in terms of gate count and depth.
+
+However, we can improve power by gating the inputs 'c' and 'd' only when (a OR b) is true, i.e., disabling switching on c/d when a=b=0, since then q=0 regardless of c and d.
+
+Implementing: q = (a | b) & (c | d)
+
+We can do:
+
+wire ab = a | b;
+
+assign q = ab & (c | d);
+
+This can be further expressed by using a two-level OR-AND gate:
+
+Use intermediate signals to avoid redundant logic in large combinational blocks in bigger circuits (here it's trivial).
+
+This won't change PPA substantially but is a clean style.
+
+In summary, the original logic is minimal and optimal. No change to the logic, just keep it clean and explicit.
+
+Hence, provide the same logic with intermediate wires to possibly improve synthesis clarity.

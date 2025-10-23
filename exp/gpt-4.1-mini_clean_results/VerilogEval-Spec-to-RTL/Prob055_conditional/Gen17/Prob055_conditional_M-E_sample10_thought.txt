@@ -1,0 +1,9 @@
+I will implement the TopModule without using any submodules like min2. Instead, I will use a single always_comb (always @(*) in Verilog) block that sequentially compares all four inputs with an internal temporary variable to find the minimum. This approach reduces module hierarchy and can be simpler for small data widths. The procedure will be:
+
+- Initialize a temporary register with input 'a'.
+- Compare 'b' to this temporary minimum; update if 'b' is smaller.
+- Compare 'c' to the updated minimum; update if 'c' is smaller.
+- Compare 'd' to the updated minimum; update if 'd' is smaller.
+- Assign the final value to output 'min'.
+
+This method is straightforward, easy to understand, and synthesizes efficiently since it's purely combinational logic. It also avoids extra wires and module instantiations, making it lean and compact. This style is often preferred in cases with few inputs as it offers direct control flow and clear logic without the overhead of multiple submodules.

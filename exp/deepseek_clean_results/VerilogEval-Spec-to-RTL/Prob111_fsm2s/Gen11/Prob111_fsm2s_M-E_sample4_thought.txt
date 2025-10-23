@@ -1,0 +1,12 @@
+This implementation uses a 2-bit shift register where the current state is represented by the LSB. The key innovation is:
+1. We use a 2-bit register where bits represent [next_state, current_state]
+2. The shift operation naturally moves next_state to current_state
+3. The feedback logic calculates next_state based on current_state and inputs
+4. Output is simply the current_state bit
+5. Reset clears both bits to 0 (OFF state)
+
+This approach has several advantages:
+- The state transition is pipelined (next_state is pre-calculated)
+- The shift operation provides implicit state storage
+- The feedback logic is simple and direct
+- Easily extendable to more complex state machines

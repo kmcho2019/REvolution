@@ -1,0 +1,10 @@
+Alternative approach using binary state encoding and optimized output logic:
+1. Instead of one-hot, use binary encoding (0=A, 1=B) to reduce flip-flop count
+2. Combine state transition and output logic into more efficient expressions
+3. Leverage the observation that state B is absorbing (never transitions back to A)
+4. Optimize output logic by noting z is x's complement in state A and x's inverse in state B
+
+Key insights:
+- State transitions can be simplified to: next_state = current_state | (current_state==A & x)
+- Output z can be expressed as: x ^ current_state (XOR operation)
+- This reduces logic gates and improves PPA metrics

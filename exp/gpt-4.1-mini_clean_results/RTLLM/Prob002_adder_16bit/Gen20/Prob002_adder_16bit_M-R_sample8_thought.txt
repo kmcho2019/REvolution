@@ -1,0 +1,5 @@
+Refactor the 16-bit adder by explicitly instantiating two 8-bit ripple carry adders and connecting their carry signals, instead of using a fully parameterized bit-level ripple carry adder. 
+
+This approach modularizes the design as originally requested, by making a dedicated 8-bit adder module and instantiating it twice for the lower and upper 8-bit halves of the 16-bit input operands.
+
+Each 8-bit adder will use continuous assignments for sum and carry, and the carry-out of the lower 8-bit adder feeds into the carry-in of the upper 8-bit adder. This better reflects the original requirement for multiple small bit-width adder instantiations while maintaining the ripple carry logic in combinational logic.

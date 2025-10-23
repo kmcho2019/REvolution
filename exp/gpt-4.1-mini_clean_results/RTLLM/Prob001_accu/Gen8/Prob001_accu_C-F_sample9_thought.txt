@@ -1,0 +1,7 @@
+Combine the clean logic and immediate valid_out pulse from Example 1 with the synchronous reset and minimal toggling approach of Example 2.
+
+Use a 2-bit counter and 10-bit accumulator sized for summing four 8-bit inputs. Update accumulator and counter only when valid_in is asserted, reducing unnecessary switching. Clear valid_out at the start of each clock cycle to ensure a single-cycle pulse. On the 4th valid input (count == 3), output the sum plus current input, pulse valid_out for one cycle, then reset accumulator and counter synchronously.
+
+Additionally, add an enable signal to the accumulator and counter registers, gated by valid_in, to further reduce toggling when no valid data is present. This helps power efficiency without complicating timing.
+
+This fusion keeps the code simple and synchronous, with clear non-blocking assignments and a small critical path. It avoids unnecessary toggling of registers when no input is valid, offers clean one-cycle valid_out pulses, and ensures the accumulator resets immediately after output, preserving functional correctness with a minimal area footprint.

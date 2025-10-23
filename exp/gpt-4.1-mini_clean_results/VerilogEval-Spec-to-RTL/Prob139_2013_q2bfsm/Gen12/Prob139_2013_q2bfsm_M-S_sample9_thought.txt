@@ -1,0 +1,11 @@
+Simplify the FSM by using parameter-defined state encodings with plain reg types instead of enums, to avoid potential tool issues. Reduce the number of states by merging some monitoring steps where possible. Maintain the required synchronous active-low reset. Implement a Moore FSM with outputs based only on the current state for stability. Use the following states:
+
+- A: reset state, outputs f=0,g=0
+- B: one-cycle f=1 pulse immediately after reset deassertion
+- C0, C1, C2: track the pattern 1,0,1 on x input stepwise
+- D: one-cycle g=1 pulse after pattern detection
+- E0, E1: monitor y input for two cycles with g=1
+- F: permanent g=1 if y=1 detected within two cycles
+- G: permanent g=0 if y=1 not detected within two cycles
+
+This reduces complexity, avoids enums, and still meets the problem requirements.

@@ -1,0 +1,28 @@
+Novel Architecture: Split-Precision MAC with Dynamic Scaling
+
+Key Innovations:
+1. Split-Precision Computation:
+   - Break 32-bit multiply into two 16-bit segments (high and low)
+   - Compute partial products separately
+   - Accumulate with proper bit alignment
+
+2. Dynamic Scaling:
+   - Detect input magnitude to skip unnecessary computations
+   - Scale down computation when inputs are small
+   - Preserve full precision only when needed
+
+3. Power Optimization:
+   - Clock gating for inactive segments
+   - Operand isolation for zero inputs
+   - Early termination for trivial cases
+
+4. Timing Optimization:
+   - Parallel computation of segments
+   - Balanced pipeline stages
+   - Carry-select adder for final accumulation
+
+Implementation Benefits:
+- Reduced switching activity for power savings
+- Shorter critical paths through segmentation
+- Maintains full precision when required
+- Better PPA tradeoffs than conventional MAC

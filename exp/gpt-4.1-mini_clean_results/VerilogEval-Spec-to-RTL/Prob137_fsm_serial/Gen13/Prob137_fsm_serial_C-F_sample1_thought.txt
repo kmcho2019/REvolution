@@ -1,0 +1,9 @@
+Fuse the two FSM designs to leverage their clarity and efficiency: use a Moore FSM with a binary-encoded 2-bit state, defining the four states as IDLE (waiting for start bit 0), RECEIVE (collecting 8 data bits with LSB first), CHECK_STOP (verifying the stop bit 1 and signaling done), and WAIT_STOP (recovering on framing errors by waiting for stop bit 1).
+
+Incorporate synchronous reset and update done as a single-cycle pulse only in the CHECK_STOP state on a valid stop bit. Shift data bits right with the incoming bit in MSB to preserve LSB-first order. 
+
+Combine state transition and output logic within a single always block for simplicity, while still separating combinational next-state logic to clearly define transitions.
+
+Add minimal resetting of counters and shift register to avoid redundant toggles and reduce switching activity.
+
+This design merges the robust error recovery and done signaling from example 2 with the area-efficient single always block and clear state encoding of example 1, aiming for optimal PPA balance.

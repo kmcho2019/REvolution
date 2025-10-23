@@ -1,0 +1,10 @@
+I will implement the odd frequency divider using a two-phase pulse generation approach:
+
+- Use a single modulo-N counter clocked on the rising edge of `clk`, counting from 0 to NUM_DIV-1.
+- Generate two pulses of one clk cycle duration each: one pulse at count 0 (pulse_a), and another at count HALF_DIV (pulse_b).
+- Combine these two pulses to create a pulse train with NUM_DIV cycles spacing.
+- Use these pulses to toggle the output clock (clk_div), thereby dividing the frequency by NUM_DIV.
+- This approach generates a duty cycle close to 50%, because the output toggles twice every NUM_DIV input clock cycles, evenly spaced by HALF_DIV.
+- The output clock toggling is driven solely on the rising edge, avoiding multi-domain synchronization complexity and simplifying timing.
+- Use synchronous active-low reset and parameter check for NUM_DIV oddness at compile time.
+- This design reduces complexity by not requiring negative edge toggling or delayed counters, improving timing and power.

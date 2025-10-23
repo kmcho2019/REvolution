@@ -1,0 +1,10 @@
+To implement the Mealy FSM detection circuit, we need to identify the states through which the circuit passes based on the input sequence 10011. The circuit can be in one of six states: Idle, S1, S2, S3, S4, or S5, where each state S1 to S5 corresponds to having seen the corresponding number of bits in the sequence 10011 so far.
+
+1. **Idle State**: This is the initial state and the state to which the FSM returns after it has matched the sequence or when it is reset.
+2. **S1 to S5 States**: Each state represents the number of bits of the target sequence (10011) that have been matched so far.
+
+The transition between these states is determined by the current state and the input signal IN. When the FSM is in a state and the input matches the next expected bit in the sequence, it moves to the next state. If the input does not match, it either stays in the same state (if the input could still be part of the sequence from the beginning) or goes back to a previous state if necessary, but for this specific problem, it will reset back to the Idle state if the sequence is not matched at any point.
+
+The MATCH signal is set to 1 when the FSM reaches the S5 state (meaning it has matched the entire sequence 10011) and is 0 otherwise.
+
+The FSM will be designed using a synchronous approach, where state transitions occur on the positive edge of the clock signal CLK, and the output is updated based on the current state and input. The reset signal RST will be used to initialize the FSM to the Idle state.

@@ -1,0 +1,38 @@
+The original solution is functionally correct and derives the next-state logic for y[1] using explicit minterms. However, the expression can be optimized to reduce gate count and switching activity, thereby improving power and area metrics.
+
+Improvement strategy:
+1. Analyze the y1_next logic on a Karnaugh map or boolean simplification tool to find a more compact sum-of-products or product-of-sums form.
+2. Factor the expression to share common terms and reduce literal count.
+3. Since states A-F only use y[2], y[1], y[0], and input w, we can rewrite the expression to reduce the number of AND gates and inputs per gate.
+4. Simplify and reorganize logic to minimize dependency on w to reduce switching.
+
+A simplified approach is:
+- Observe that y1_next is 1 for:
+  - State B (001) regardless of w
+  - State C (010) if w=1
+  - State E (100) if w=1
+  - State F (101) regardless of w
+
+- Factor grouping states B and F (where w doesn't matter):
+  ( (~y2 & ~y1 & y0) | (y2 & ~y1 & y0) ) = (~y1 & y0)
+
+- For states C and E, both require w=1, which correspond to:
+  (~y2 & y1 & ~y0 & w) + (y2 & ~y1 & ~y0 & w)
+  
+  Factor w:
+  w & ( (~y2 & y1 & ~y0) + (y2 & ~y1 & ~y0) )
+  
+- The combined terms inside parentheses can be seen as:
+  ~y0 & ( (~y2 & y1) + (y2 & ~y1) )
+  
+- Expression (~y2 & y1) + (y2 & ~y1) is XOR of y2 and y1.
+  
+So final expression:
+
+y1_next = (~y1 & y0) | (w & ~y0 & (y2 ^ y1))
+
+This expression uses fewer literals, no explicit equalities, and requires only one XOR gate besides AND/OR gates, which should reduce area and switching activity.
+
+This expression is more compact, simpler, and better for PPA.
+
+Implement this optimized logic for y1_next and assign Y1 accordingly.

@@ -1,0 +1,19 @@
+module TopModule (
+    input clk,
+    input areset,
+    input in,
+    output out
+);
+
+    reg state;
+    
+    always @(posedge clk or posedge areset) begin
+        if (areset)
+            state <= 1'b1;  // Reset to state B
+        else if (~in)       // Toggle state only when input is 0
+            state <= state ^ 1'b1;
+    end
+    
+    assign out = state;  // Output is directly the state value
+    
+endmodule

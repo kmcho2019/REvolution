@@ -1,0 +1,7 @@
+Instead of computing the next state for all 512 cells in full parallel combinational logic, implement a two-stage pipeline approach where the first stage stores the current state in a shift register array and the second stage computes the next state serially over 512 clock cycles, producing the new 512-bit state in a separate register. On each rising clock edge, if load is asserted, load the input data directly into the shift register to initialize. Otherwise, step through all cells one by one across multiple cycles.
+
+We maintain an index counter that iterates from 0 to 511, selecting the three neighboring bits (left, center, right) by tapping the shift register content appropriately with zero-padded boundaries. At each clock cycle (except when loading), we compute and shift out one next state bit into a shift-out register. Once 512 cycles elapse, the shift-out register replaces the main state register q.
+
+This architecture reduces combinational complexity per cycle (only one cell's next state computed), trades throughput (512 cycles per generation) for area and power efficiency, and allows easy debug of cell updates. The top-level output q is updated only at the end of the 512-cycle step, ensuring correctness.
+
+Thus, the module behaves as a pipelined, iterative Rule 110 state update engine with a load interface, preserving the 512-bit width but updating state incrementally. This is a fresh architectural take distinct from the original fully-parallel approach.

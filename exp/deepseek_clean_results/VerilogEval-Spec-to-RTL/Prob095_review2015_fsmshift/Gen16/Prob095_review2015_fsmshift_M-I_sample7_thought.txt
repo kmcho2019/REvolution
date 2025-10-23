@@ -1,0 +1,13 @@
+The improved solution should:
+1. Use a 2-bit counter but adjust the comparison to properly count 4 cycles
+2. Initialize counter to 0 on reset and count up to 3 (4 cycles total)
+3. Assert shift_ena when counter <= 3 (values 0,1,2,3)
+4. Keep shift_ena low after counter reaches 3 until next reset
+5. Maintain synchronous design with clean reset behavior
+
+Key improvements:
+1. Correct cycle counting by adjusting the comparison operator
+2. Still uses minimal hardware (2-bit counter)
+3. Guaranteed exactly 4 cycles of shift_ena after reset
+4. Clear state transitions with no ambiguity
+5. Efficient implementation with no unnecessary hardware

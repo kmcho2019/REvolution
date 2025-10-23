@@ -1,0 +1,10 @@
+The original design is functionally correct but uses separate enable signals for registers, which may add extra combinational logic and switching activity, affecting power and possibly timing. Also, the timer counts down every clock cycle without gating, which may be unnecessary since traffic light timing is slow.
+
+To improve PPA:
+- Combine enable signals into a single synchronous update for state, timer, and flag registers to simplify control logic and reduce toggling.
+- Introduce a simple clock enable signal that gates timer countdown and state transitions only when needed, thus reducing switching activity.
+- Synchronize pass_request input to avoid glitches triggering repeated shortenings.
+- Keep FSM and timer logic clear and straightforward, avoiding redundant comparisons.
+- Maintain parameterized timing for easier scaling and clarity.
+
+This approach reduces toggle rates on registers, simplifies logic, and maintains functional correctness, improving power and potentially timing/area by minimizing unnecessary logic and switching.

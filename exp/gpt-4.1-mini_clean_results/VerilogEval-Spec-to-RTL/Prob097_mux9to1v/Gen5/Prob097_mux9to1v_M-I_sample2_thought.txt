@@ -1,0 +1,7 @@
+To improve power and area efficiency, we can implement the 9-to-1 multiplexer by generating one-hot enable signals from the 4-bit selector for valid select values 0 to 8, and then AND each input with its corresponding enable. If `sel` is out of range (9 to 15), none of the enables are active, and we directly drive the output to all ones. This approach reduces the complexity of a wide multiplexer into simpler decode and bitwise AND operations plus a final OR, potentially leading to better synthesis results in area and power, since each input vector is gated separately. It also avoids the implicit large mux inference and can be more friendly for synthesis tools.
+
+This method still uses combinational logic, meets the functionality, and likely improves PPA by reducing mux complexity and enabling better local optimization and signal gating.
+
+Additionally, explicit `sel` range check and decoder improves clarity and prevents possible ambiguous default case logic synthesis.
+
+The output assignment is thus: if sel in [0..8], out = OR of (input_i AND enable_i), else out = all ones.

@@ -1,0 +1,9 @@
+To optimize the 4-bit comparator for better power and area while maintaining correctness and combinational logic constraints, focus on:
+
+- Simplifying the equality check by directly using bitwise XNOR followed by an AND reduction instead of the equality comparison expression.
+- Implementing the borrow chain with the standard full subtractor borrow formula: borrow_out = (~A & B) | ((~A ^ B) & borrow_in) for clearer and possibly more optimized logic.
+- Avoid calculating difference bits, as they are unused in output decision, reducing logic.
+- Assign outputs based on the borrow chain and equality signal with mutually exclusive encoding.
+- Keep the design fully combinational and scalable.
+
+These changes reduce redundant logic (no diff vector), clarify borrow generation, and simplify equality checking, leading to potentially reduced area and power.

@@ -1,0 +1,12 @@
+Implement the 8-bit barrel shifter by explicitly building three sets of 8 multiplexers (using the provided mux2X1 module) for each shift stage (4, 2, 1 positions). 
+
+At each stage:
+- Use the mux2X1 to select between the current bit or the bit rotated left by the stage's shift amount.
+- The select line for all muxes in the stage is the corresponding ctrl bit (ctrl[2], ctrl[1], ctrl[0]).
+- Each stage takes the output of the previous stage as input, effectively cascading the shifts.
+
+This approach structurally follows the problem's requirement to use mux2X1 modules, clearly showing how the control signals select rotated inputs. It is fully combinational, modular, and synthesizable.
+
+We first define a mux2X1 module, then instantiate 8 muxes per stage. The first stage shifts by 4 bits, the second by 2, and the third by 1 bit based on ctrl bits. The final output after stage 3 is assigned to out.
+
+This design cleanly models the barrel shifter using 2-to-1 muxes, making it suitable for gate-level synthesis and demonstrating how multiplexers implement conditional rotations.

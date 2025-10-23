@@ -1,0 +1,17 @@
+Implement the fixed-point adder using direct two's complement arithmetic with sign extension to N+1 bits to detect overflow cleanly. 
+
+Idea:
+- Extend both inputs to N+1 bits by sign-extending the MSB (sign bit).
+- Perform addition or subtraction depending on the sign bits of inputs:
+  - If signs are equal, add directly.
+  - If signs differ, subtract smaller magnitude operand from larger one.
+- Use the extended width result to detect overflow and to avoid losing bits during operations.
+- The result is then truncated back to N bits, preserving fixed-point format.
+- Use an always_comb block with an internal register res to store the result before assigning it to output.
+- Since inputs are signed fixed-point numbers in two's complement, we can rely on signed arithmetic and only need to convert inputs to signed type for arithmetic.
+- This approach uses the parameterized widths and does not require explicit absolute value computations (avoiding twos_complement and abs_val functions).
+- Overflow will wrap naturally due to truncation, consistent with problem statement.
+- Sign handling is inherently managed by two's complement addition and subtraction.
+- The code is clear, synthesizable, and efficient.
+
+This is a more straightforward arithmetic approach leveraging signed arithmetic and sign extension to cleanly implement the fixed-point adder as required.

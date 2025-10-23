@@ -1,0 +1,14 @@
+To solve this problem, we need to design a finite state machine (FSM) that can identify the start bit, receive the 8 data bits, and verify the stop bit. The FSM should have the following states:
+- IDLE: Initial state where the line is idle and we are waiting for a start bit.
+- START: State where we have detected a start bit and are waiting for the data bits.
+- DATA: State where we are receiving the data bits.
+- STOP: State where we are waiting for the stop bit.
+We will use a counter to keep track of the number of data bits received. When we receive a stop bit, we will assert the done signal and output the received data byte.
+
+The FSM will transition between states based on the following conditions:
+- IDLE to START: When the input is 0 (start bit).
+- START to DATA: When the input is 1 (end of start bit) and we have a valid start bit.
+- DATA to DATA: When we have not received all 8 data bits.
+- DATA to STOP: When we have received all 8 data bits.
+- STOP to IDLE: When the input is 1 (stop bit) and the stop bit is valid.
+- STOP to STOP: When the input is not 1 (stop bit) and we wait until we find a stop bit.

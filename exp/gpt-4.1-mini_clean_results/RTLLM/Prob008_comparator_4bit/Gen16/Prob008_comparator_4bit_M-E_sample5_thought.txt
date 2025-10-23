@@ -1,0 +1,14 @@
+Implement a 4-bit comparator by breaking down the comparison into per-bit decisions, starting from the most significant bit (MSB) to the least significant bit (LSB). At each bit, determine if A[i] > B[i], A[i] == B[i], or A[i] < B[i]. Use these results to create a cascading priority encoder that outputs the final result as soon as a difference is detected, otherwise declares equality.
+
+Specifically:
+- Generate signals for each bit:
+  - a_gt_b[i] = A[i] & ~B[i]
+  - a_eq_b[i] = ~(A[i] ^ B[i])
+  - a_lt_b[i] = ~A[i] & B[i]
+- Then chain them from MSB to LSB:
+  - If at the highest bit where a difference occurs, output the corresponding comparison (greater or less).
+  - If all bits equal, output equality.
+  
+This approach avoids subtractor-style borrow propagation and instead uses parallel bitwise comparators with priority encoding, potentially reducing logic depth and improving timing.
+
+Outputs are mutually exclusive and purely combinational.

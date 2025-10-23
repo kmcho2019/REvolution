@@ -1,0 +1,22 @@
+Corrected Design Strategy:
+
+1. Truth Table Analysis:
+   - Output=1 cases: 2(0010), 7(0111), 15(1111)
+   - Output=0 cases: 0(0000),1(0001),4(0100),5(0101),6(0110),9(1001),10(1010),13(1101),14(1110)
+   - Don't-cares: 3,8,11,12
+
+2. SOP Implementation Fix:
+   - Keep original minterms for 1-output cases (2,7,15)
+   - All other cases (including don't-cares) should default to 0
+   - No need to explicitly handle don't-cares in SOP since they won't occur
+
+3. POS Implementation Fix:
+   - For each 0-output case, create a maxterm where the output would be forced to 0
+   - Each maxterm is an OR of complemented inputs (where input is 1 in the case)
+   - Combine all maxterms with AND
+   - Don't-cares can be ignored in POS as they won't affect the specified 0-output cases
+
+4. Verification:
+   - SOP will output 1 only for 2,7,15
+   - POS will output 0 for all specified 0-cases
+   - Both outputs will be consistent for all valid input combinations

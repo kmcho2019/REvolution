@@ -1,0 +1,16 @@
+Here's a novel approach using a multiplexer tree structure that leverages the don't-care conditions to optimize the logic:
+
+1. Key Insight: The output depends primarily on 'a' and 'c' with 'b' playing a secondary role
+2. Novel Structure:
+   - First level mux selects between c=0 and c=1 cases
+   - For c=0: Output is simply 'a' (from K-map observation)
+   - For c=1: Use a second mux to handle the b-dependence
+3. Optimization:
+   - Exploit don't-cares in the c=1 case to simplify the b logic
+   - When a=1, output is always 1 regardless of b (from K-map)
+   - When a=0, output equals ~b
+4. Benefits:
+   - Clear hierarchical structure
+   - Efficient use of don't-cares
+   - Only requires 2 muxes and 1 NOT gate
+   - Natural implementation using ternary operators

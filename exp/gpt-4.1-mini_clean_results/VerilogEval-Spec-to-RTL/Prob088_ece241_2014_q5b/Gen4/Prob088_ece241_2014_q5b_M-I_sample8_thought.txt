@@ -1,0 +1,14 @@
+The existing design is already minimal with a 1-bit state encoding for the two states and uses asynchronous active-high reset as specified. However, since the original problem requested a one-hot encoding and the existing design uses binary encoding, to strictly meet the specification we must use one-hot encoding for two states.
+
+To optimize PPA while fulfilling the one-hot encoding and asynchronous reset requirements, I will:
+- Implement one-hot encoding with two flip-flops.
+- Use a two-bit reg for state (one-hot: state[0]=A, state[1]=B).
+- Keep asynchronous active-high reset to state A (state[0]=1, state[1]=0).
+- Simplify next state logic: state A transitions to state B if x=1; state B loops on itself.
+- Output logic is Mealy: depends on state and input x.
+- Use nonblocking assignments in sequential logic.
+- Reduce combinational logic by leveraging simple assignments with bitwise operations.
+
+This strictly adheres to the problem statement while maintaining simplicity. This will likely increase area minimally (due to two flip-flops) but meet the specification. The logic is very simple and should provide good timing and low power due to minimal toggling.
+
+Thus, the improvement is restoring strict one-hot encoding while keeping the logic optimized and clean.

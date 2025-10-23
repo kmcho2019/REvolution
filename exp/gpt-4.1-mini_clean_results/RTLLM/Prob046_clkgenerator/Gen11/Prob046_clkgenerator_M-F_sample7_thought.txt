@@ -1,0 +1,5 @@
+To address the feedback and ensure robust simulation behavior, convert the clock generation process from an initial block with a forever loop to an always block that toggles clk every PERIOD/2 time units. Using an always block provides a more standard, continuous procedural block for clock generation and aligns better with simulation tools and testbench expectations.
+
+The clk output is declared as reg and initialized to 0 in an initial block (to guarantee a defined start state). Then, an always block waits #(PERIOD/2) and toggles clk indefinitely, producing a clean, periodic square wave.
+
+This approach is more compatible with typical testbenches and avoids potential simulation issues related to initial block timing semantics, ensuring the generated clock meets the required timing and toggling behavior.

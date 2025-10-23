@@ -1,0 +1,9 @@
+To simplify the 32-bit carry-lookahead adder design while maintaining functionality, I will implement a straightforward hierarchical structure: the top 32-bit adder instantiates two 16-bit CLA modules connected via carry-in/carry-out.
+
+For the 16-bit CLA module, instead of generating carries using loops and intermediate vectors, I will directly use a generate and propagate pair per bit, then compute the carry for each bit explicitly with simpler logic without internal hierarchical groupings.
+
+This approach reduces structural complexity and keeps the module easy to understand and verify, while still following carry-lookahead principles at the bit level (each carry depends on the propagate/generate of its bit and carry-in). It won't fully optimize timing like a more advanced hierarchical CLA, but significantly simplifies the code.
+
+The sum bits are computed as usual by XOR of propagate and carry-in. The top-level module simply connects two 16-bit blocks with carry propagation.
+
+This balances simplicity and clarity without changing the interface or overall behavior.

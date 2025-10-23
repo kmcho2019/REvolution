@@ -1,0 +1,12 @@
+Implement a synchronous radix-2 divider with a small state machine controlling the division process. The module handles signed and unsigned division by first extracting absolute values of inputs and sign flags, then performing 8 iterations of subtraction and shifting on a 17-bit shift register which contains the partial remainder and quotient.
+
+Key differences in this design:
+- Use an explicit FSM with states IDLE, DIVIDE, DONE for better clarity.
+- Separate registers for quotient and remainder during computation.
+- After the division is complete, adjust quotient and remainder signs according to input signs.
+- When opn_valid is asserted and the module is idle, inputs are latched and division starts.
+- Output res_valid is asserted only when the result is ready.
+- Handles division by zero by outputting zero quotient and dividend as remainder.
+- The remainder is placed in upper 8 bits, quotient in lower 8 bits of the 16-bit result.
+
+This approach makes control flow explicit, eases debug and clarity while meeting the specification.

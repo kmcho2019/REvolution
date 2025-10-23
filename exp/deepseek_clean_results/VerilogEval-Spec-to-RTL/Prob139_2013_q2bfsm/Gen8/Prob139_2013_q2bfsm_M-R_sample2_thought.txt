@@ -1,0 +1,15 @@
+Here's a refactored version that maintains the same core functionality but with these key changes:
+
+1. **Separate Output Logic**: Use continuous assignments (`assign`) for outputs f and g to separate them from state transitions
+2. **Explicit State Encoding**: Use named parameters for clearer state definitions
+3. **Simplified Sequence Detection**: Keep the x_history shift register but make the sequence check more explicit
+4. **Clear Permanent State Handling**: Once in the final state (STATE_D), outputs are locked until reset
+5. **Timeout Counter**: Use a separate register for timeout tracking with clearer conditions
+
+The state machine now has:
+- STATE_A: Initial reset state
+- STATE_B: Single-cycle f pulse state
+- STATE_C: Monitoring x for 1-0-1 sequence
+- STATE_D: Final state (g locked based on y detection)
+
+Outputs are now combinational based on state and internal signals.

@@ -1,0 +1,7 @@
+Refactor the counter design into a two-process state machine style: one combinational block calculates the next state based on the current count and control signals, and one sequential block updates the state on the clock edge. This makes the design explicitly separate combinational next-state logic and synchronous state update logic.
+
+Use a simple equality check (out == 4'd11) for terminal count detection to simplify logic and potentially improve timing and power.
+
+In this structure, the sequential always block handles reset and state update, while the combinational always block determines the next count value based on valid_count and terminal count conditions.
+
+This style is highly readable, commonly used for counters, and easy to extend or modify while preserving all required functionality.

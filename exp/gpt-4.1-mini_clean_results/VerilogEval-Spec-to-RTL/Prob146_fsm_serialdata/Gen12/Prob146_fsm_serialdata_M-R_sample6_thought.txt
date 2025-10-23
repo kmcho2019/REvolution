@@ -1,0 +1,15 @@
+Refactor the FSM to use binary state encoding instead of one-hot to reduce flip-flop count and power consumption. Implement the FSM next-state logic and output logic combinationally with `assign` statements, separating state registers and outputs clearly.
+
+Use a single sequential always block for state, bit counter, shift register, and outputs with synchronous reset.
+
+Use a localparam with binary encoding for the four states: IDLE=2'b00, RECEIVE=2'b01, STOP=2'b10, ERROR_WAIT=2'b11.
+
+Implement the done signal as a registered pulse asserted only for one cycle when stop bit is valid.
+
+In RECEIVE state, shift in bits LSB first using shift_reg <= {in, shift_reg[7:1]}.
+
+If stop bit invalid, move to ERROR_WAIT and wait until line returns to idle (in == 1) before restarting.
+
+This binary-encoded FSM reduces area and power by using fewer flip-flops for state and simpler next-state logic. Using `assign` for next_state and done combinationally improves clarity.
+
+The synchronous reset clears all registers and outputs. The interface remains the same and the functional behavior is preserved.

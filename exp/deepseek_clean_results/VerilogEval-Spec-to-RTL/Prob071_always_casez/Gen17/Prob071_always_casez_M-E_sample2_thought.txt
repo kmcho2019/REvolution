@@ -1,0 +1,20 @@
+Here's a novel approach using a logarithmic search pattern with parallel comparators:
+
+1. Instead of linear or binary tree search, we'll use a parallel comparison technique that:
+   - Creates 8 parallel comparators checking each bit position
+   - Each comparator checks if its bit is the first '1' by verifying:
+     * Its own bit is set
+     * All lower bits are zero
+   - Uses a priority encoder to select the highest priority match
+
+2. Advantages:
+   - Parallel evaluation reduces critical path compared to nested conditionals
+   - Simple to understand and modify
+   - Scales well to wider inputs
+   - Naturally implements the priority encoding requirement
+   - Synthesizes to efficient multiplexer logic
+
+3. Implementation:
+   - Generate match signals for each bit position
+   - Use a case statement to select the first matching position
+   - Default to 0 if no matches found

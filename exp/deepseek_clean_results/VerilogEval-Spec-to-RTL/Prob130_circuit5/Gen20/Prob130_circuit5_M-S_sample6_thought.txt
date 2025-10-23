@@ -1,0 +1,15 @@
+Simplified approach using a single multiplexer:
+
+1. **Key Insight**: The waveform shows that q selects between b, e, a, d based on c's value (0-3), and defaults to all 1s (f) otherwise. This is a classic multiplexer use case.
+
+2. **Optimizations**:
+   - Replace parallel condition checks with a single 4:1 mux for values 0-3
+   - Use a simple default case (4'b1111) when c > 3
+   - Eliminate redundant masking logic by directly selecting inputs
+   - Reduce gate count by using built-in mux behavior
+
+3. **Benefits**:
+   - Single selection structure instead of parallel paths
+   - Clearer and more maintainable code
+   - Better timing with single mux delay
+   - Reduced power from eliminated redundant logic

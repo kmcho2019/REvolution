@@ -1,0 +1,19 @@
+Novel Approach: Using 2-to-1 Multiplexers to Generate Each mux_in Bit
+
+Instead of directly implementing the logic for each mux_in bit, we'll use a hierarchical approach with 2-to-1 multiplexers to build each output bit. This approach:
+1. For mux_in[0] (ab=00):
+   - When c=0: Output should be 0 (cd=00) or d (cd=01)
+   - When c=1: Output should be d (cd=11) or 1 (cd=10)
+   - Use d as selector for the second level
+
+2. For mux_in[1] (ab=01): Always 0
+
+3. For mux_in[2] (ab=11):
+   - Simply AND of c and d
+
+4. For mux_in[3] (ab=10):
+   - When d=0: Output should be 1 (cd=00,10)
+   - When d=1: Output should be 0 (cd=01) or c (cd=11)
+   - Use c as selector for the second level
+
+This approach uses exactly four 2-to-1 multiplexers (one for each non-constant output) while maintaining correct functionality.

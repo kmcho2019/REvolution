@@ -1,0 +1,21 @@
+The problem's Karnaugh map labels rows by x[2]x[3] and columns by x[0]x[1], which is non-standard since x[3] is usually the most significant bit. We must interpret the input x's bits accordingly: rows = {x[2], x[3]}, columns = {x[0], x[1]}. This means the row index is formed by x[2] as MSB and x[3] as LSB; similarly, the column index is x[0] as MSB and x[1] as LSB.
+
+To find the minterms where f=1, for each cell (row, col) in the K-map, we form x as {x[3], x[2], x[1], x[0]} bits in order. Since rows are x[2]x[3], x[2] is more significant than x[3] in the row index, but the actual input vector order is fixed as x[3], x[2], x[1], x[0]. So we must reverse row bits to map properly.
+
+Instead, write a concise boolean expression from the K-map or directly implement logic by re-mapping the bits to proper inputs for combinational logic.
+
+Alternatively, implement a case statement or truth table using the given K-map and correct bit indexing.
+
+Finally, to optimize for PPA, use boolean expressions to simplify the function instead of enumerating minterms.
+
+Steps:
+
+1. Define variables for row and column indices as per problem: row = {x[2], x[3]}, col = {x[0], x[1]}.
+
+2. Use these to index the Karnaugh map and extract f values.
+
+3. Generate sum of products for f=1 cells accordingly.
+
+4. Simplify the expression if possible.
+
+The final implementation will use proper bit indexing and a concise assign statement implementing the corrected function.

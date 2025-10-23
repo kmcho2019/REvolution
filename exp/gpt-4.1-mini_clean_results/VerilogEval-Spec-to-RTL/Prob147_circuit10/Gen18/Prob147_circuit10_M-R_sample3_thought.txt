@@ -1,0 +1,5 @@
+Refactor the design by separating the next state logic and output calculation into explicit combinational always blocks instead of continuous assignments. Keep the same logic:
+- next_state = state ^ (b & ~a)
+- q = (state & ~a) | b
+
+Use a procedural block to compute next_state and q based on current inputs and state, then update state on the clock's rising edge. This approach improves clarity and modularity, making it explicit which logic is combinational and which is sequential, while preserving the original functionality.

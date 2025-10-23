@@ -1,0 +1,13 @@
+To address the issues while maintaining a 2-stage pipeline multiplier with intermediate registers:
+
+- Follow the problem's requirement strictly: extend inputs by padding 'size' zeros at the MSB side of multiplicand (`ext_mul_a = {{size{1'b0}}, mul_a}`).
+- Generate partial products combinationally using a generate block. For each bit i in `mul_b`, partial product = ext_mul_a shifted left by i if mul_b[i] is 1, else 0.
+- Stage 1 pipeline registers hold the registered inputs and partial products from combinational logic.
+- Stage 2 pipeline registers sum all stage 1 partial products combinationally and register the final product.
+- Use combinational logic (assign) to sum the partial products before registering in stage 2, avoiding iterative non-blocking sum issues.
+- Reset all pipeline registers and outputs to zero on active-low reset.
+- Use arrays for partial products and a for-generate loop for scalability.
+- The pipeline latency is exactly two cycles: input -> partial products registered -> sum of partial products registered -> output.
+- This approach correctly aligns partial products, accumulates sums without overwriting in always blocks, and respects the specified input extension.
+
+This cleanly solves the previously described functional errors and provides a robust, synthesizable design.

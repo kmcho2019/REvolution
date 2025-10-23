@@ -1,0 +1,26 @@
+Simplification Strategy:
+1. State Management:
+   - Keep minimal 2-state FSM (A/B) with simple transition logic
+   - Remove redundant next_state wire by directly assigning in always block
+
+2. Phase Counting:
+   - Simplify phase counter to just track when we're at phase 0 (start of 3-cycle window)
+   - Replace 2-bit counter with single-bit toggle (reduces area)
+
+3. w History:
+   - Keep 3-bit shift register but update only in state B
+   - Remove explicit reset of w_history in state A (not necessary)
+
+4. Popcount Calculation:
+   - Keep simple adder but remove intermediate wire
+   - Calculate directly in output assignment
+
+5. Output Logic:
+   - Combine all conditions in a single expression
+   - Remove phase comparison optimization since we're using single-bit toggle
+
+Key Simplifications:
+- Reduced phase tracking to single bit
+- Eliminated intermediate wires
+- Simplified state transition logic
+- Maintained same functionality with less logic

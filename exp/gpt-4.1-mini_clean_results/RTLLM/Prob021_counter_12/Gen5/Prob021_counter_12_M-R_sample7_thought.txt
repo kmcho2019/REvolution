@@ -1,0 +1,5 @@
+The original code uses a gated clock to enable counting only when valid_count is high. However, gating clocks at RTL can lead to timing issues and clock skew. To improve timing closure and maintain clean clocking, I will refactor the counter to use the input clock directly and incorporate an enable signal inside the always block.
+
+The counter will increment only when valid_count is asserted; otherwise, it holds its current value. Reset remains asynchronous and active low. The counting logic is done in a synchronous process triggered on the positive edge of clk or negative edge of rst_n.
+
+This approach keeps the counting control clean, avoids clock gating at RTL, and maintains functionality while improving timing and reliability.

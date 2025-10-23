@@ -1,0 +1,7 @@
+To implement the state output logic for the given finite-state machine, we need to derive the logic for the next state (Y1 and Y3) based on the current state and input w. Given the one-hot encoding, each state is represented by a single '1' in the 6-bit vector y[5:0]. We'll examine the transitions to determine when Y1 and Y3 should be set.
+
+For Y1, which corresponds to state B, we need to consider transitions to state B. State B is reached from state A when w is '1'. Therefore, Y1 should be '1' when the current state is A and w is '1'.
+
+For Y3, which corresponds to state D, we need to consider transitions to state D. State D is reached from states B and C when w is '0', and from states E and F when w is '0'. Additionally, state D is also reached from state E when w is '1' is not a direct condition for D, but E remains in E when w is '1', and D is reached from E when w is '0'. Therefore, Y3 should be '1' when the current state is B or C and w is '0', or when the current state is E and w is '0'.
+
+We can now implement this logic using Verilog.

@@ -1,0 +1,11 @@
+Implement the FSM with a minimalist single always block synchronous design using a single state register encoded as 3-bit binary to handle all phases: IDLE, START, DATA, STOP, and ERROR. Use a bit counter to count received data bits, and a small shift register to accumulate data bits LSB first (by shifting left and inserting new bits at LSB). 
+
+Detect the start bit (0) to move from IDLE to DATA reception. After receiving 8 data bits, transition to STOP state and check for the stop bit (1). If stop bit correct, assert done output high for exactly one clock cycle, then return to IDLE. 
+
+If stop bit incorrect, transition to ERROR state and remain there until line returns to idle (logic 1), indicating the stop bit is observed. Then go back to IDLE to wait for next start bit. 
+
+done signal will be a one-clock-cycle pulse generated synchronously in the STOP state when stop bit is correct.
+
+This approach uses a small number of states to simplify control, uses left-shifting to clearly align with LSB-first reception (inserting incoming bit at LSB), and a single always @(posedge clk) block for all synchronous logic including output done generation and state transitions, improving simplicity and ensuring glitch-free outputs.
+
+Synchronous active-high reset sets FSM to IDLE and clears counters and registers. This design favors simplicity and clarity while meeting all requirements.

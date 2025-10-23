@@ -1,0 +1,13 @@
+Novel Architectural Idea:
+Instead of using a traditional shift register approach, we'll implement a state machine that tracks the sequence detection progress. This approach:
+1. Uses only 4 states to track partial matches (0, 1, 11, 110)
+2. Transitions to a final "found" state when the complete sequence (1101) is detected
+3. Eliminates the need for a shift register, reducing area
+4. Has a more deterministic timing path since it's state-based rather than data-dependent
+5. Naturally stops processing after detection, saving power
+
+Key Advantages:
+- Fewer flip-flops needed (only state registers vs shift register)
+- Clear state transitions make timing analysis easier
+- Power efficient as it stops processing after detection
+- More scalable for longer sequences

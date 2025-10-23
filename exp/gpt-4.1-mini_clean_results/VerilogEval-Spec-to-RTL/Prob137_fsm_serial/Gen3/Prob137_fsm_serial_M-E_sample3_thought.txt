@@ -1,0 +1,20 @@
+A novel architectural idea is to implement a small counter-based bit sampler FSM with explicit bit timing control and separation of bit sampling from state transitions. The FSM has four states:
+
+- IDLE: Wait for line to go low, indicating the start bit. Stay here while line is idle (high).
+- START: Confirm the start bit by sampling after half a bit time (to avoid noise/glitches). If line still low, proceed.
+- DATA: Sample 8 data bits on each bit time boundary, shifting bits into a shift register from LSB upwards (i.e., shift left and place new bit at LSB).
+- STOP: Sample the stop bit at bit time boundary. If stop bit is high, assert `done` for one clock cycle, then go back to IDLE. If stop bit is low (invalid), remain in STOP state until a high stop bit is received.
+
+To implement bit timing, assume the `clk` is a system clock much faster than bit rate, and we have a parameter BIT_PERIOD to define bit time in clock cycles.
+
+A free-running bit timer counts clock cycles within the bit period and triggers sampling at the right time.
+
+This approach makes the FSM robust against glitches by confirming start bit and sampling data at correct timing. The done signal is asserted synchronously for one clock cycle after detecting a valid stop bit.
+
+This design uses a counter to track bits received and a sampling timer for bit timing.
+
+Advantages:
+- Clean separation of timing and bit reception.
+- Correct LSB-first data shift.
+- Proper start bit confirmation.
+- Done pulse synchronized and precisely timed.

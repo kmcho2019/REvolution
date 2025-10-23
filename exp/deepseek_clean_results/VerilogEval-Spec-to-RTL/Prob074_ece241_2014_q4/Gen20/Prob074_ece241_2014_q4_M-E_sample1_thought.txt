@@ -1,0 +1,16 @@
+Here's a novel architectural approach that avoids initialization issues while maintaining the specified behavior:
+
+1. Instead of using initial blocks, implement a power-on reset mechanism using a startup counter
+2. Use a 2-bit counter to generate an internal reset signal for the first 3 clock cycles
+3. The counter will automatically clear all flip-flops at startup
+4. After reset period, normal operation begins with all flip-flops properly initialized
+5. Maintain the same gate connections but with guaranteed initialization
+6. Add pipeline registers for the gate outputs to improve timing
+7. Use explicit wire declarations for better readability
+8. Implement the three-input NOR using a structural approach for clarity
+
+Key innovations:
+- Self-resetting mechanism ensures reliable initialization
+- Pipeline registers improve timing characteristics
+- Structural NOR implementation makes the design more explicit
+- No reliance on initial blocks that may have synthesis issues

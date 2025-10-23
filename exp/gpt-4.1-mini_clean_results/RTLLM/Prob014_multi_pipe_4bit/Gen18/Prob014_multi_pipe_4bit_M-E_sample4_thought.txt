@@ -1,0 +1,23 @@
+New Architectural Idea:
+
+Implement a 2-stage pipelined 4-bit unsigned multiplier by splitting the multiplication and addition into two pipeline stages in a sequential manner instead of fully parallel partial product generation. This architecture performs accumulation of partial products sequentially in pipeline stage 1, and final output register update in pipeline stage 2.
+
+Key points:
+- Inputs mul_a and mul_b are zero-extended on MSB side as requested.
+- Pipeline stage 1:
+  - For each bit of mul_b (multiplier), compute a shifted partial product if mul_b bit is 1.
+  - Accumulate these partial products over several clock cycles with an internal counter (0 to size-1).
+  - At each clock, take one partial product and add it to a running sum register (stage 1 register).
+- Pipeline stage 2:
+  - The accumulated sum from stage 1 is registered at the next clock (stage 2 register).
+  - Output mul_out is updated with this registered final product.
+- Control signals:
+  - An internal counter controls which bit of mul_b is processed each clock cycle.
+  - On reset, all registers and counter are cleared.
+- This design uses two levels of registers:
+  1. Accumulator register holding intermediate sum after each partial product addition.
+  2. Output register holding final product after all partial products are added.
+- Latency is size+1 cycles (5 cycles for size=4): 4 cycles to accumulate partial products, 1 cycle to register output.
+- This sequential accumulation with pipelined output allows a simpler datapath without large combinational adders and a balanced pipeline.
+
+This new approach shows a pipelined sequential multiplier that is different from fully parallel partial product addition and registers all partial products, meeting the problem requirements of two levels of registers controlling the multiplication process.

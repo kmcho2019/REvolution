@@ -1,0 +1,5 @@
+Refactor the design by using a single register `q` to hold the state and explicitly computing the next state combinationally in a separate wire vector `next_state`. Instead of a generate loop, use a for-loop inside a combinational always block to build the next state vector bitwise, which can enhance readability for some. Then update the state in a single always_ff block triggered on the positive clock edge.
+
+Additionally, this refactor avoids generate blocks and uses procedural code to compute next states, emphasizing clarity and direct control flow. The load input asynchronously loads the input data when high, else the next state is applied.
+
+The boundary conditions remain zero for cells outside the range, handled with conditional checks in the procedural loop. This structural style is more similar to behavioral modeling while still synthesizable, and can ease debugging or modification.

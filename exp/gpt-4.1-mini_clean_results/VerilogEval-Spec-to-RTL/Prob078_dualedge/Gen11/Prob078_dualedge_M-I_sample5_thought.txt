@@ -1,0 +1,12 @@
+To optimize the existing dual-edge triggered flip-flop design for better performance and power, I will:
+
+- Replace the output multiplexer that selects between the positive and negative edge sampled values based on the clock level, which can cause timing critical paths and glitches, with a dedicated clock-domain crossing approach.
+- Use a small synchronizer-based approach, sampling the negative edge data into a register clocked by the positive edge clock, effectively creating a single clock domain.
+- Then, implement a dual-edge FF by combining the positive edge sample and the synchronized negative edge sample using a simple mux driven by a one-cycle delayed clock signal, avoiding mux selection directly on clk.
+- This reduces glitches and mux timing critical paths by not using clk directly as the mux select.
+- Also, by synchronizing the negedge FF output into the posedge clock domain, we have a cleaner timing domain and lower chances of glitches.
+- The result is a slightly increased latency (1 cycle), but better timing and power characteristics.
+- This approach still uses two single-edge FFs (FPGA-friendly) and a small synchronizer, maintaining synthesis friendliness.
+- Non-blocking assignments and clear naming ensure clean RTL.
+
+This balances timing, power, and area better for typical FPGA implementations.

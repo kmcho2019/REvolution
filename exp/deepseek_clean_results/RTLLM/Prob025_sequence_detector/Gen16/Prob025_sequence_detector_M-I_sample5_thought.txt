@@ -1,0 +1,14 @@
+The current implementation is already quite efficient, but we can make some targeted improvements based on the PPA metrics:
+
+1. Timing Improvement: The negative WNS (-0.13) indicates slight timing violation. We can pipeline the detection logic by adding a register stage for the output signal to improve timing closure.
+
+2. Power Optimization: Since the shift register updates every cycle, we can add clock gating to freeze the register when no new data is expected (though this would require an additional enable signal).
+
+3. Area Optimization: The area is already minimal, but we can explore using a more compact state machine representation if the sequence becomes more complex.
+
+Key improvements in this version:
+- Added output register to pipeline the detection signal
+- Maintained the efficient shift-register approach
+- Kept the simple combinational matching logic
+- Improved timing without significantly increasing area
+- Still handles overlapping sequences naturally

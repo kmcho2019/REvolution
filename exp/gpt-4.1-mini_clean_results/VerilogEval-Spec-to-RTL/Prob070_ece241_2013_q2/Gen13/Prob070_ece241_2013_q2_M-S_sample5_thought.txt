@@ -1,0 +1,10 @@
+The problem is to detect if the 4-bit input number is 2, 7, or 15, outputting 1, else 0 for given inputs. Since only three input combinations yield 1, and some inputs never occur (3,8,11,12), we can implement the logic simply by directly matching those three cases.
+
+To simplify:
+
+- Treat inputs as a 4-bit vector with a as MSB and d as LSB: value = {a,b,c,d}.
+- For out_sop, just OR the three minterms explicitly matching 2, 7, and 15.
+- For out_pos, write the minimal product-of-sums that cover zeros. But given simplicity, just use the complement of out_sop and handle don't cares implicitly.
+- The logic will be clean, easily verified, and minimal.
+
+This approach avoids potential errors from complicated minimization and treats "never occur" inputs as don't cares (no need to explicitly optimize for them here). Direct minterm matching for out_sop ensures correctness, and out_pos can be derived as the complement of out_sop for the known input domain.

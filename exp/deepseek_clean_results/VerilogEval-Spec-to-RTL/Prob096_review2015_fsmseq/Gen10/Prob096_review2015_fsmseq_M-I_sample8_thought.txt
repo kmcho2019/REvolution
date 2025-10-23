@@ -1,0 +1,7 @@
+Optimization strategy based on PPA metrics:
+1. Timing: Replace shift register with explicit state machine to reduce comparator complexity
+2. Power: Add clock gating for state registers when pattern is found
+3. Area: Use minimal 4-state encoding (2 bits) for the FSM
+4. Maintain same functionality with synchronous reset and pattern detection
+
+The improved solution uses a Moore FSM with 4 states representing the progress in detecting "1101". This eliminates the 4-bit shift register and reduces the comparison logic to simple state transitions. The start_shifting signal becomes a direct output of the final state.

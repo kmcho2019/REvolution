@@ -1,0 +1,7 @@
+To solve this problem, we can implement a finite-state machine (FSM) with states that track the progression of the sequence 1101. The FSM will transition through states as it receives input bits that match the sequence, and once the sequence is fully matched, it will set the start_shifting output to 1. We will use a reset signal that is active high and synchronous, meaning it will only take effect on the positive edge of the clock. The states can be defined as follows: 
+- S0: Initial state, expecting the first '1'
+- S1: First '1' received, expecting '1'
+- S2: Second '1' received, expecting '0'
+- S3: '0' received, expecting '1'
+- S4: Sequence matched, set start_shifting to 1
+We will also need to handle the reset condition, which should return the FSM to the S0 state.

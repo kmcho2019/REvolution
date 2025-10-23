@@ -1,0 +1,31 @@
+The previous solution correctly encodes water level regions and nominal flow rates and asserts outputs accordingly. The main issue is the assignment of `dfr` and the handling of ambiguous sensor states. 
+
+To improve correctness and robustness:
+
+1. **Refine `get_region` Function:**  
+   Instead of assuming any non-explicit sensor combination is below the lowest sensor, decode the water level based purely on the count of asserted sensors because the sensors are placed vertically and water levels correspond to how many sensors are submerged:
+   - If all three sensors asserted (3'b111), level is ABOVE s[2] (region=3).
+   - If exactly two highest sensors asserted (s[1], s[0] = 1, s[2] = 0) → BETWEEN s[2] and s[1] (region=2).
+   - If only the lowest sensor asserted (s[0] = 1, s[1] = 0, s[2] = 0) → BETWEEN s[1] and s[0] (region=1).
+   - If no sensors asserted → BELOW s[0] (region=0).
+   
+   If any other sensor combination (like 3'b101 or 3'b110) appears (which should not ideally happen), map it to the closest valid region by counting how many sensors asserted from the bottom. This prevents glitches or ambiguous inputs causing erratic behavior.
+
+2. **Stable Region Encoding Using Number of Sensors Asserted:**  
+   A simple way is to count how many sensors are asserted (`num_sensors = s[0] + s[1] + s[2]`) and then map to region:
+   - 3 sensors → REGION_ABOVE (3)
+   - 2 sensors → BETWEEN s[2] and s[1] (2)
+   - 1 sensor  → BETWEEN s[1] and s[0] (1)
+   - 0 sensors → BELOW (0)
+   
+   This approach aligns with physical sensor arrangement and simplifies region determination.
+
+3. **dfr Logic:**  
+   The `dfr` signal is asserted if the current region is greater than the previous region, indicating the water level rose past a sensor. By improving region stability, `dfr` assertion will be more accurate.
+
+4. **Reset Behavior:**  
+   Reset initializes `prev_region` to BELOW (0) and all flows to maximum (fr0, fr1, fr2, dfr = 1).
+
+This approach improves input handling robustness, avoids ambiguous sensor state mapping, and ensures correct dfr assertion.
+
+Finally, keep the outputs assigned combinationally in the synchronous process for easy timing and simple logic.

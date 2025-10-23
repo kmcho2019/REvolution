@@ -1,0 +1,11 @@
+I will refactor the design to a purely combinational assign-based implementation instead of using an always block and a case statement. This simplifies the code by directly mapping the 4-bit input `x` to the output `f` using a combinational lookup through a parameterized ROM-like approach.
+
+Because the Karnaugh map references inputs as x[3]x[4] for the row, but only x[3:0] exist, I'll interpret x[4] as x[0] (to fit the 4-bit input). Thus, the row index is {x[3], x[0]} and the column index is {x[1], x[2]}.
+
+Using these indexes, I will create a 4x4 truth table corresponding to the K-map values, where don't-cares ('d') are assigned to 0 for simplicity.
+
+By concatenating row and column bits as `{x[3], x[0], x[1], x[2]}`, we get a 4-bit index for a 16-entry truth table.
+
+Then, I'll implement the function as an assign statement that indexes a parameterized 16-bit vector representing the function values for all input combinations.
+
+This approach avoids always blocks, reg types, and case statements, while keeping the logic straightforward and easy to verify against the K-map.

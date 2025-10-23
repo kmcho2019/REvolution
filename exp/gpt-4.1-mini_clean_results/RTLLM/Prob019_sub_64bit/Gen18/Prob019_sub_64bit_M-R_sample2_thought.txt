@@ -1,0 +1,5 @@
+Refactor the 64-bit subtractor by eliminating the segmented 16-bit subtractor blocks and the ripple borrow chain. Instead, implement the subtraction in a single 64-bit subtraction operation using Verilog's built-in arithmetic operators. This simplifies the design, reduces internal signals, and removes the sequential borrow chaining, potentially improving synthesis optimization and reducing area.
+
+For overflow detection, keep the same logic using the sign bits of inputs and the result, which can be done directly on the 64-bit result. The design remains combinational using continuous assignments only (no always blocks), improving clarity and easing synthesis.
+
+This approach leverages Verilog's native operators for subtraction and overflow detection in a clean, concise, and synthesis-friendly manner without changing the arithmetic semantics or output behavior.

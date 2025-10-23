@@ -1,0 +1,22 @@
+The original solution is fundamentally correct and cleanly separates the committed global history (`ghr_reg`) from the speculative history (`ghr_spec`), ensuring prediction outputs use the stable committed history as required.
+
+However, the main subtlety is ensuring that the speculative history update on prediction uses the *committed* history at prediction time, not the previously updated speculative history. Using `ghr_spec` in the update expression causes an off-by-one cycle delay in the global history shift chain.
+
+To fix this, update `ghr_spec` on prediction as:
+- `ghr_spec <= {ghr_reg[5:0], predicted_bit};`
+
+instead of
+
+- `ghr_spec <= {ghr_spec[5:0], predicted_bit};`
+
+This change means the speculative global history update is always derived from the last *committed* global history (stable during the cycle and used for prediction), ensuring correct one-cycle shift semantics with no lag or off-by-one error.
+
+Other logic remains unchanged:
+- Training updates PHT at clock edge with saturating counters.
+- Training misprediction recovery of global history has priority over prediction update.
+- On reset, PHT initialized to weakly not taken (01).
+- Prediction output uses committed history and PHT state before training update.
+
+This fix aligns the `predict_history` output with the exact global history state used to index the PHT for prediction, preserving timing correctness and matching the spec precisely.
+
+This approach requires minimal code change but resolves timing and state mismatches without increasing area or complexity.

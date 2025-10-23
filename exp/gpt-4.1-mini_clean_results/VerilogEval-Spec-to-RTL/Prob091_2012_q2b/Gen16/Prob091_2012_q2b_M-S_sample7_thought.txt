@@ -1,0 +1,6 @@
+By analyzing the next-state logic expressions for Y1 (input to y[1]) and Y3 (input to y[3]), we can combine the logic directly inside TopModule without a separate module, reducing hierarchy and simplifying the design. 
+
+- Y1 corresponds to the input of flip-flop y[1] (state B). From the FSM, y[1] is set on the transition from A (y[0]) when w=1, so Y1 = y[0] & w.
+- Y3 corresponds to the input of flip-flop y[3] (state D). From the FSM transitions, D is reached from either B (y[1]), C (y[2]), E (y[4]), or F (y[5]) when w=0. Since y is one-hot, y[1] | y[2] | y[4] | y[5] represents these states, so Y3 = ~w & (y[1] | y[2] | y[4] | y[5]).
+
+This approach removes the negations inside Y3, leading to a straightforward AND-OR expression without NOR, simplifying the logic gates needed while maintaining correct FSM behavior.

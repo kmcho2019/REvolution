@@ -1,0 +1,14 @@
+The provided design correctly implements a fully pipelined 64-bit ripple carry adder with one pipeline stage per bit, but it uses reg arrays, which some tools may not synthesize well or may reduce readability. Also, the input enable signal (i_en) should only be sampled once per addition, and the carry_pipeline[0] should be set at the first valid input stage, not every cycle, to avoid overwriting during pipeline draining.
+
+To improve the design:
+1. Replace reg arrays with packed vectors for carry and sum pipelines to improve tool compatibility and code clarity.
+2. Register the inputs (adda, addb) on i_en assertion to hold consistent inputs per addition, avoiding data glitches during pipeline traversal.
+3. Implement a shift-register for the carry signals as a vector and similarly for the sum bits.
+4. Use a 65-bit vector for final sum accumulation for clarity.
+5. Maintain the pipelined i_en shifting to generate o_en properly.
+6. Add comments for clarity and maintain synchronous reset.
+7. Make sure that carry_pipeline[0] is zeroed only at input capture (when i_en is high), avoiding resets on every cycle.
+
+This improves synthesis friendliness and code readability, while preserving fully pipelined architecture and latency.
+
+Latency is 64 cycles; throughput is one addition per cycle.

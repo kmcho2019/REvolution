@@ -1,0 +1,5 @@
+To improve power and performance, I will avoid unnecessary updates to the counter when it is already zero and load is not asserted. Specifically, I will add an enable signal that is high only when the counter should actually update (load=1 or counter!=0). When this enable is low, the counter keeps its value without toggling, reducing switching activity and power. This also simplifies the logic for synthesis, potentially improving timing.
+
+The decrement logic stays the same but is only applied when enabled. The counter remains stable otherwise.
+
+This approach respects the single 10-bit D flip-flop constraint, as only one register stores the counter, and adds a small combinational enable signal to gate updates. The terminal count output is unchanged. This should reduce power and may improve WNS/TNS by reducing toggling and switching in the register.

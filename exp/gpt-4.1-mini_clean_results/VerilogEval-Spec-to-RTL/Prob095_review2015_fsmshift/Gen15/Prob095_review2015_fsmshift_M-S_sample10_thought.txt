@@ -1,0 +1,7 @@
+Since the requirement is to assert shift_ena for exactly 4 clock cycles after a synchronous active-high reset and then keep it low forever, we can simplify the design by using a small counter that starts counting down from 4 after reset is released.
+
+To ensure shift_ena is asserted for 4 cycles *after* reset is deasserted (not including the reset cycle itself), we will start the counter when reset transitions from high to low synchronously. We use a 2-bit counter to count 4 cycles (values 3 down to 0).
+
+shift_ena is asserted while the counter is non-zero.
+
+This removes any complexity of pattern detection or FSMs, matches the requirement, and makes timing clearer: shift_ena enables only after reset is released for 4 cycles.

@@ -1,0 +1,9 @@
+The original implementation sets the counter to 4 on synchronous reset and decrements it each clock cycle. However, this causes shift_ena to be asserted for 4 cycles *after* the reset cycle, missing assertion during the reset clock cycle itself. To have shift_ena asserted for exactly 4 clock cycles including the reset cycle, the counter should count the *remaining* enable cycles starting at 3 after reset (or equivalently count down from 3 to 0).
+
+By changing the counter initialization to 3 and asserting shift_ena while counter is not zero or equal to zero on the current cycle, we ensure shift_ena is asserted exactly for 4 cycles including the reset cycle.
+
+We can simplify the code by eliminating the combinational next_counter signal and compute the counter decrement inline. This reduces complexity and improves synthesis results (area and power). Using a 3-bit counter remains suitable for counting from 3 down to 0.
+
+Thus, on the cycle of synchronous reset, counter is loaded to 3, so shift_ena=1. On following cycles, counter decrements until it reaches 0, then shift_ena=0 forever until next reset.
+
+This approach cleanly meets the requirement without off-by-one errors.

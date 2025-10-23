@@ -1,0 +1,14 @@
+To address the task, we can design a finite state machine (FSM) that uses a simpler and more efficient approach. The idea is to track the sequence of bits and recognize the specific patterns as per the HDLC framing rules. We can define states for the initial condition, the sequence of ones, the flag condition, and the error condition.
+
+The states can be defined as follows:
+- S0: Initial state, expecting a '0' or a sequence of bits that doesn't match any pattern.
+- S1: One '1' received, waiting for more '1's or a '0' to reset.
+- S2: Two '1's received, continuing to count '1's.
+- S3: Three '1's received, getting closer to a potential flag.
+- S4: Four '1's received, one more '1' could indicate a flag or an error.
+- S5: Five '1's received, the next bit determines if it's a flag or a discard bit.
+- S6: Six '1's received, check if the next bit is a '0' for a flag or another '1' for an error.
+
+Using this approach, we can simplify the state machine transitions and reduce the complexity of the next state logic. The output signals (`disc`, `flag`, `err`) can be generated based on the current state and the next input bit.
+
+This design should provide a more efficient and accurate implementation of the HDLC framing state machine, addressing the issues found in the previous code.

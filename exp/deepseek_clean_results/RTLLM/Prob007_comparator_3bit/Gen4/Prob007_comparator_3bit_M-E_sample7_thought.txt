@@ -1,0 +1,17 @@
+This innovative design breaks down the 3-bit comparison into bit-slice units that generate local comparison results, then combines them hierarchically. Each bit slice computes:
+1. Local equality (P)
+2. Local greater-than (G)
+3. Local less-than (L)
+
+The hierarchical combination follows these rules:
+- Equality propagates only if all bits are equal (P_total = P2 & P1 & P0)
+- Greater-than propagates if either:
+  - Current bit is greater and higher bits are equal, or
+  - Higher bits are already greater
+- Less-than follows similar propagation rules
+
+This approach offers:
+1. Better timing for wide comparators (scalable beyond 3 bits)
+2. Clear propagation of comparison results from MSB to LSB
+3. Modular design that's easy to extend
+4. Potential area savings through shared propagate logic

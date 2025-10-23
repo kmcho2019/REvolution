@@ -1,0 +1,10 @@
+Refactor the fractional divider by using a single main counter running at the input clock's rising edge and generating two internal clock phases: one aligned with the rising edge (`clk_pos`) and another delayed logically by half a clock cycle (`clk_neg`), implemented as a register toggled on the falling edge. This preserves the half-clock phase shift without independent counters that can get out of sync. 
+
+Specifically:
+- Use a 3-bit counter counting from 0 to 6 (7 states) on posedge clk.
+- Generate `clk_pos` as high for counts 0..3 (4 cycles) and low for counts 4..6 (3 cycles).
+- Use a flip-flop toggled on negedge clk as `clk_neg`, which samples the next state of `clk_pos`, thus creating a delayed version approximating a half-clock phase shift.
+- Combine `clk_pos` and `clk_neg` by OR to form the final fractional clock.
+- Synchronize all registers to the same asynchronous reset.
+  
+This approach eliminates the asynchronous dual counters and phase misalignment, ensures clean half-clock phase shift, and better duty cycle control, while maintaining the conceptual double-edge clocking to achieve fractional division.

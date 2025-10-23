@@ -1,0 +1,5 @@
+The new idea is to implement a finite state machine that utilizes a counter to track the number of bytes received. The FSM will have two main states: 'IDLE' and 'RECEIVING'. In the 'IDLE' state, the FSM will wait for a byte with 'in[3] = 1' to start receiving a message. Once a message is started, the FSM will transition to the 'RECEIVING' state and use a counter to track the number of bytes received. After receiving three bytes, the FSM will transition back to the 'IDLE' state and assert the 'done' signal.
+
+To simplify the output logic, we will use a shift register to store the received bytes. The shift register will be updated on each clock cycle when the FSM is in the 'RECEIVING' state. This way, we can easily extract the first, second, and third bytes from the shift register when the FSM transitions back to the 'IDLE' state.
+
+The use of a counter and a shift register will simplify the state machine logic and the output logic, making it easier to implement and understand the design.

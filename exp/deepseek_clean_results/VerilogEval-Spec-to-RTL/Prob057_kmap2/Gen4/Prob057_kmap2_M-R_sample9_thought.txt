@@ -1,0 +1,18 @@
+The original implementation uses a case statement inside an always block, which is clear but can be refactored to use continuous assignments for potentially better readability and synthesis results. Here's the refactoring approach:
+
+1. Boolean Equation Derivation:
+   - Analyze the Karnaugh map to derive a minimized Boolean expression
+   - Identify prime implicants and essential prime implicants
+   - The output is 0 in specific cases, so we can express the output as the negation of those cases
+
+2. Implementation Strategy:
+   - Use continuous assignments (assign statements) instead of procedural blocks
+   - Express the logic as a direct Boolean equation derived from the K-map
+   - Group terms to minimize the number of operations
+   - The equation will be: out = ~(cases where output is 0)
+
+3. Benefits:
+   - More direct mapping to hardware (potentially better synthesis)
+   - Eliminates the need for a procedural block
+   - Clear representation of the logic function
+   - May result in slightly better PPA due to more direct implementation

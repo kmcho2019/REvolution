@@ -1,0 +1,9 @@
+Combine the modularity and hierarchical structure of Example 1 with the elegant zero-padding and uniform neighbor extraction of Example 2 to achieve a balanced design:
+
+- Partition the 512-bit cellular array into 16 blocks of 32 bits to keep per-block logic manageable, improving scalability and modular synthesis.
+- For each block, extend its 32-bit current state with one zero bit on each side (total 34 bits) to simplify neighbor handling without cross-block combinational logic or conditional boundaries.
+- To get the neighbor bits adjacent to each block's edges (beyond the 32 bits), use direct inputs from adjacent blocks' boundary bits, supplied via registered outputs in TopModule. For the first and last blocks, pad with zero neighbors.
+- This avoids combinational fanout and wire delays from connecting neighbor bits across blocks combinationally.
+- Each block computes its next state fully combinationally from its extended 34-bit vector and registers it synchronously.
+- TopModule holds the global state as an array of 16 32-bit registers; at each clock, on load it loads the input data, else it captures the blocks' outputs.
+- This fusion minimizes combinational wiring between blocks, ensures uniform boundary handling with zero-padding in each block, and keeps the large state modular and easier to optimize, debug, and potentially pipeline.

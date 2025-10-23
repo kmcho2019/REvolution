@@ -1,0 +1,10 @@
+To fix the timing and correctness issues:
+
+- Sample data bits in RECEIVE by shifting left and inserting the new input bit at the LSB, preserving the LSB-first protocol naturally.
+- After receiving 8 data bits, transition to a new STOP_BIT state to sample the stop bit at the next clock cycle, ensuring proper timing separation between data bits and stop bit.
+- Assert 'done' high for one cycle immediately after confirming the stop bit is correct (logic 1).
+- If the stop bit is incorrect, transition to WAIT_STOP and remain there until a stop bit (1) is detected.
+- Reset bit_count and shift_reg only in IDLE and WAIT_STOP states.
+- Use synchronous reset and non-blocking assignments consistently.
+- The FSM states will be: IDLE (waiting for start bit), RECEIVE (receiving 8 bits), STOP_BIT (checking stop bit), and WAIT_STOP (waiting for valid stop bit if error).
+This approach clearly separates data bit reception and stop bit validation, improving timing clarity and correctness.

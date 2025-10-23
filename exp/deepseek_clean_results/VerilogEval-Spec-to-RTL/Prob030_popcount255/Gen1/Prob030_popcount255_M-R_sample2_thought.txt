@@ -1,0 +1,13 @@
+To improve the population count implementation while maintaining the hierarchical approach, we'll make these key changes:
+
+1. Use more efficient bit groupings - count 1s in 8-bit chunks (31 groups of 8 bits + 1 group of 7 bits) since 255 = 31*8 + 7
+2. Properly size intermediate sums - early stages need fewer bits (e.g., 4 bits for 8-bit counts)
+3. Implement a balanced binary tree for summation to ensure all counts are included exactly once
+4. Use a clean hierarchical structure with proper bit-widths at each stage
+5. Handle the partial group (7 bits) separately and combine it correctly
+
+The new approach will:
+1. First count 1s in each 8-bit segment (4-bit results)
+2. Sum these counts in pairs (5-bit results)
+3. Continue summing hierarchically with proper bit growth
+4. Finally add the partial group count

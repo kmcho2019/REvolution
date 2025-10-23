@@ -1,0 +1,22 @@
+Corrected Design Strategy:
+
+1. Truth Table Analysis:
+   - Output=1 cases (minterms): 2(0010), 7(0111), 15(1111)
+   - Output=0 cases (maxterms): 0(0000), 1(0001), 4(0100), 5(0101), 6(0110), 9(1001), 10(1010), 13(1101), 14(1110)
+   - Don't-cares: 3,8,11,12 (can be used for optimization)
+
+2. SOP Correction:
+   - Must include all minterms where output=1
+   - No simplification possible as minterms don't share common patterns
+   - Keep original minterms: ~a~bc~d (2), ~abcd (7), abcd (15)
+
+3. POS Correction:
+   - Must include all maxterms where output=0
+   - Convert each output=0 case to a sum term (OR of complemented inputs)
+   - 0: (a|b|c|d), 1: (a|b|c|~d), 4: (a|~b|c|d), 5: (a|~b|c|~d), 6: (a|~b|~c|d), 9: (~a|b|c|~d), 10: (~a|b|~c|d), 13: (~a|~b|c|~d), 14: (~a|~b|~c|d)
+   - No obvious simplification, so must include all maxterms
+
+4. Implementation:
+   - SOP remains same as before (correct)
+   - POS must include all maxterms explicitly
+   - Both forms now correctly handle all specified cases

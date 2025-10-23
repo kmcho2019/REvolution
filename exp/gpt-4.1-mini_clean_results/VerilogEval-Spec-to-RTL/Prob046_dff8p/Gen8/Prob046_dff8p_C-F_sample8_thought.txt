@@ -1,0 +1,16 @@
+Fuse the modular clarity and explicit bit-level DFF instantiation of Example 2 with the clean synchronous reset handling and minimal area of Example 1 by implementing a parameterized DFF module with synchronous reset triggered on negedge clk that directly loads the reset value bits. Instead of resetting all flip-flops to zero or using a mux on the input, each DFF will synchronously reset to its respective bit of the constant reset value. 
+
+Strategy:
+- Create a single-bit DFF module with synchronous active-high reset triggered on negedge clk, parameterized with a reset value bit.
+- This allows each flip-flop to load its own reset bit directly on reset without input muxing or ignoring the reset signal.
+- Instantiate eight such DFFs in TopModule in a generate loop, passing corresponding bits of the reset constant 0x34.
+- This retains the modularity and scalability of bit-level DFFs.
+- Avoids input mux and unused reset ports, reducing power and area.
+- Keeps the design fully synchronous, deterministic, and clear.
+
+Benefits:
+- Each flip-flop manages its reset behavior internally, no external muxes on data path.
+- Reduced power by avoiding combinational mux switching during reset.
+- Clear, scalable, and easy-to-modify reset values per bit.
+- Simple, clean synchronous reset logic maximizes synthesis friendliness.
+- The negedge clock requirement is preserved.

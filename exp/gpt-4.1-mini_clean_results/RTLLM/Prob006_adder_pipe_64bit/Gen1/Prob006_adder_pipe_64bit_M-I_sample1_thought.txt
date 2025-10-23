@@ -1,0 +1,17 @@
+The previous design correctly implements a 64-bit ripple carry adder pipelined in four 16-bit stages, but it combines combinational addition and register updates in a single always block triggered on posedge clk and asynchronous reset. This leads to an inferred multi-cycle combinational addition within one clock edge, which is not optimal or synthesizable as a true pipeline.
+
+To improve the design for better PPA (Performance, Power, Area), the addition of each pipeline stage should be separated into combinational logic that computes the sum and carry-out from the pipeline registers, then in the next clock cycle, these results are stored into pipeline registers. This two-step approach clarifies the pipeline behavior, improving timing (faster clock rates), reducing glitching and power.
+
+Also, explicitly defining parameters for STAGE_WIDTH and STAGES makes the module more flexible and testbench friendly.
+
+Hence, the improved design:
+
+- Introduces parameters STAGE_WIDTH=16 and STAGES=4.
+- Uses separate pipeline registers to hold operands, sums, carry-in, and carries between stages.
+- For each stage, a combinational always @* block computes sum and carry-out.
+- The sequential always @(posedge clk or negedge rst_n) registers these computed sums, carry-outs, and enables.
+- The input operands and enable are also registered.
+- The output enable is delayed along the pipeline stages.
+- The final output result is assembled from the pipeline sum registers and the final carry-out register.
+- The carry-in for stage 0 is zero.
+- This architecture enables a real 4-stage pipeline, each stage performs a 16-bit addition and passes carry to the next stage on the next clock cycle, supporting maximum throughput and clock frequency.

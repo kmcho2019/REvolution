@@ -1,0 +1,7 @@
+To optimize PPA for this simple two-state Moore FSM, we can reduce redundant state updates by updating the state register only when a state change is necessary. This can reduce power by minimizing unnecessary toggling of the state bit. We do this by computing a next_state signal combinationally and only assigning it to state if it differs, otherwise keeping the current state. This may slightly increase combinational logic but helps reduce switching in the state register.
+
+Also, the output depends only on state, so keeping that direct assignment is optimal.
+
+Since the FSM is small, using a one-bit register remains optimal for area and timing.
+
+This approach maintains synchronous reset and clocked state updates, with minimal complexity increase.

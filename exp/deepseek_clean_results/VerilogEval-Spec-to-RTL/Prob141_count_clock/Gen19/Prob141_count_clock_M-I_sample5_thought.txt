@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Flatten the rollover logic by computing sec_rollover and min_rollover in parallel
+   - Replace hour BCD conversion with direct BCD counting to eliminate comparators
+   - Pre-compute rollover conditions to break dependency chain
+
+2. Power Optimization:
+   - Add enable gating to hour counter to prevent unnecessary toggles
+   - Simplify PM toggle logic to only update when needed
+
+3. Area Optimization:
+   - Merge hour counter into BCD format directly
+   - Share common BCD increment logic between all counters
+   - Remove redundant comparators in hour conversion
+
+Key Changes:
+- Direct BCD counting for hours (eliminates conversion logic)
+- Parallel rollover computation
+- Enhanced clock gating
+- Simplified PM toggle logic

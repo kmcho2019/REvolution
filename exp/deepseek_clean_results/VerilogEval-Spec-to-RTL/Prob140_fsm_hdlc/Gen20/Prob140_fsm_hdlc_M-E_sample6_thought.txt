@@ -1,0 +1,24 @@
+Novel Architecture Idea:
+1. Shift Register Approach:
+   - Use a 7-bit shift register to track the last 7 bits received
+   - This provides direct visibility into the bit patterns we need to detect
+   - Eliminates the need for a counter and complex state transitions
+
+2. Pattern Matching:
+   - Implement parallel comparators for the three target patterns:
+     * "0111110" (discard)
+     * "01111110" (flag)
+     * "01111111" (error)
+   - Each pattern can be detected in a single cycle
+
+3. Output Generation:
+   - Use registered outputs for clean timing
+   - Implement priority encoding (error > flag > discard) since patterns overlap
+   - Only update outputs when patterns are matched
+
+Advantages:
+- No counter overflow concerns
+- Direct pattern matching is more intuitive
+- Easier to extend for longer patterns if needed
+- Parallel detection reduces critical path
+- Clear separation between pattern storage and detection logic

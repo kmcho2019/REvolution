@@ -1,0 +1,17 @@
+This design implements a radix-4 Booth encoded multiplier for 16-bit unsigned numbers. The key innovations are:
+1. Uses Booth encoding to reduce the number of required addition operations from 16 to 9 (worst case)
+2. Implements a state machine for better control flow
+3. Optimized datapath with pre-computed partial products
+4. Pipelined accumulation for better timing
+
+The operation follows this sequence:
+- IDLE: Waits for start signal
+- LOAD: Loads operands and initializes registers
+- BOOTH: Generates Booth encoded digits (3 bits at a time)
+- ACCUM: Accumulates partial products
+- DONE: Finalizes result and asserts done flag
+
+This approach reduces the critical path by:
+1. Using radix-4 processing (3 bits at a time)
+2. Pre-computing all possible partial products
+3. Implementing a clean pipeline stage between Booth encoding and accumulation

@@ -1,0 +1,20 @@
+Novel Architecture: Dual-Counter Approach with Phase Detection
+
+1. Core Concept:
+   - Instead of using a direction flag, implement two counters:
+     * up_counter: Counts from 0 to 31 (incrementing)
+     * down_counter: Counts from 31 to 0 (decrementing)
+   - Use a phase detector to switch between counters at boundaries
+   - Output multiplexer selects active counter based on phase
+
+2. Advantages:
+   - Eliminates arithmetic operations (simple counters only)
+   - Reduces critical path by separating increment/decrement paths
+   - Phase switching happens only every 32 cycles
+   - Clean boundary detection without comparators
+
+3. Optimizations:
+   - Shared reset logic for both counters
+   - Phase flip-flop only toggles at boundaries
+   - No complex combinational logic in datapath
+   - Minimal power consumption during steady-state counting

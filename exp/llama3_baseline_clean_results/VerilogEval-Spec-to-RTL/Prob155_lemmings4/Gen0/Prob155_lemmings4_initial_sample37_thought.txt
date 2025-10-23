@@ -1,0 +1,17 @@
+To implement the Lemming behavior as a Moore state machine, we need to identify the different states and transitions between them. The states are: walking left, walking right, falling, digging, and splattered. 
+
+We will use two state variables to keep track of the current state and direction: `state` and `direction`. The `state` variable will have five possible values: `WALKING`, `FALLING`, `DIGGING`, `SPLATTERED`, and `RESET`. The `direction` variable will have two possible values: `LEFT` and `RIGHT`.
+
+The state machine will start in the `WALKING` state with the `direction` set to `LEFT` after an asynchronous reset. The `WALKING` state will have two sub-states to keep track of the current direction.
+
+Transitions between states will be based on the input signals `bump_left`, `bump_right`, `ground`, `dig`, and the current state and direction.
+
+When the Lemming is in the `WALKING` state, it will switch direction if it receives a `bump_left` or `bump_right` signal. If the `ground` signal is low, it will transition to the `FALLING` state. If the `dig` signal is high, it will transition to the `DIGGING` state.
+
+In the `FALLING` state, the Lemming will continue to fall until the `ground` signal is high again. If it falls for more than 20 clock cycles, it will transition to the `SPLATTERED` state. Otherwise, it will transition back to the `WALKING` state with the same direction.
+
+In the `DIGGING` state, the Lemming will continue to dig until the `ground` signal is low, at which point it will transition to the `FALLING` state.
+
+In the `SPLATTERED` state, the Lemming will stop walking, falling, and digging, and all output signals will be set to 0.
+
+We will use a counter to keep track of the number of clock cycles the Lemming has been falling.

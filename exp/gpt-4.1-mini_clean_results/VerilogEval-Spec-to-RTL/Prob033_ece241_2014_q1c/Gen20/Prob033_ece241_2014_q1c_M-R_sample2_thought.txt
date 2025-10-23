@@ -1,0 +1,5 @@
+Refactor the design to eliminate the separate carry chain calculation inside TopModule and reuse the internal carry signals from the adder module to detect overflow. To achieve this, modify the NBitCLAAdder module to expose the entire carry vector as an output, providing the carries into and out of each bit position. Then, in TopModule, instantiate NBitCLAAdder and use the carry signals at the MSB boundary directly to compute overflow without redundant carry computations or separate functions.
+
+This approach reduces redundant logic, shares generate/propagate signals, and simplifies overflow detection by using an expanded carry output bus from the adder, improving area and power while maintaining clarity and timing.
+
+The carry vector width is (WIDTH+1) with c[0] = cin, and c[8] = carry out of MSB, so overflow = carry into MSB (c[7]) XOR carry out MSB (c[8]).

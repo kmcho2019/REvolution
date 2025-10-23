@@ -1,0 +1,15 @@
+Novel Architectural Idea: State Encoding with Output Prediction
+1. Key Insight:
+   - Instead of tracking both states separately (one-hot), we can use a single state register that implicitly encodes the output prediction
+   - The output z can be derived directly from the state transition condition, eliminating separate output logic
+
+2. Implementation Approach:
+   - Use a single state register that represents whether we're in "complement mode" (state_B)
+   - The output z is simply the XOR of input x with the current state
+   - State transitions become simpler: enter complement mode on first x=1, stay there forever
+
+3. Advantages:
+   - Reduced register count (1 bit instead of 2 for one-hot)
+   - Simpler combinational logic (just XOR for output)
+   - Maintains correct Mealy behavior with output dependent on current state and input
+   - Still meets all functional requirements with less hardware

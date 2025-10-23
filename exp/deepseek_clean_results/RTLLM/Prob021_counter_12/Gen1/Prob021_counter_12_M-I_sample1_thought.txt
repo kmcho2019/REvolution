@@ -1,0 +1,15 @@
+The original implementation is functionally correct but shows minor timing violations (negative WNS). To optimize PPA:
+
+1. Timing Improvement:
+- Pre-compute the terminal count (tc) signal combinationally to reduce critical path
+- This avoids the comparator in the synchronous path
+
+2. Power Optimization:
+- Maintain clock gating through valid_count (already implemented)
+- No additional power savings needed for this simple design
+
+3. Area Optimization:
+- The design is already minimal (44um²)
+- Could use gray coding but not worth complexity for 4-bit counter
+
+The improved version uses a pre-computed terminal count signal to reduce the critical path while maintaining all functionality.

@@ -1,0 +1,15 @@
+The original solution had a timing mismatch in the falling edge detection by comparing non-consecutive cycles. Here's the improved approach:
+
+1. **Single-Stage Pipeline**: We only need to store the input from the previous cycle (prev_in) to compare with the current input (in) for proper falling edge detection.
+
+2. **Consecutive Cycle Comparison**: Falling edges are detected by comparing the current input with the immediately previous input (in & ~prev_in), ensuring we only capture transitions between consecutive cycles.
+
+3. **Simpler Logic**: This eliminates one pipeline stage, reducing area and power while maintaining correct functionality.
+
+4. **Sticky Capture**: The detected edges are still OR'ed with the current capture value to maintain the sticky behavior until reset.
+
+Key improvements:
+- Correct falling edge detection between consecutive cycles
+- Reduced register count (from 3 to 2)
+- Simpler combinational logic
+- Maintains all required functionality

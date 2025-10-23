@@ -1,0 +1,9 @@
+Implement a traffic light controller using a binary-encoded FSM with four states encoded in a 2-bit register. The states are: idle (initial), red, green, yellow. Use a countdown timer to manage each state's duration. On reset, start in idle which immediately transitions to red state with red time loaded. 
+
+Use a separate combinational block to determine next state and next count value based on current state, count, and pedestrian button press. For green state, if the pedestrian button is pressed and remaining green time is more than 10, shorten it to 10; otherwise, maintain the original green duration. For other states, use fixed durations. 
+
+The outputs red, yellow, green are assigned based on the current state register combinationally. This binary FSM approach reduces flip-flop usage compared to one-hot. The counter counts down every clock cycle until zero, then triggers state transitions.
+
+Maintain previous output registers for red, yellow, green signals to align outputs with synchronous clock edges, ensuring glitch-free transitions and stable outputs.
+
+This architecture cleanly separates combinational logic for next state and next count from the sequential state and count registers, simplifying timing and improving modularity.

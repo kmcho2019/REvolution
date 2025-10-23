@@ -1,0 +1,11 @@
+Instead of splitting the 512-cell Rule 90 automaton into multiple blocks, I will implement it as a single 512-bit shift register with combinational logic to compute the next state in one cycle. To handle boundary conditions, I will pad the 512-bit state with two zero bits at the ends (virtual q[-1] = 0 and q[512] = 0) by concatenating zeros before and after q.
+
+For each cell i, next_state[i] = q[i-1] XOR q[i+1], where out-of-bound neighbors are zero.
+
+To avoid large fanout or long combinational paths from full shifts, I will implement the next state calculation using a single generate loop, computing each bit with XOR of its neighbors.
+
+Sequential logic on posedge clk will either load the new 512-bit data when load is high, or update q to next_state on each clock cycle.
+
+This approach is simple and clear, uses only one register of 512 bits, and a combinational 512-bit wide next_state vector computed from current q with zero boundary assumptions. It avoids complexity and overhead of block division and inter-block signals.
+
+The code will be fully self-contained and straightforward for synthesis.

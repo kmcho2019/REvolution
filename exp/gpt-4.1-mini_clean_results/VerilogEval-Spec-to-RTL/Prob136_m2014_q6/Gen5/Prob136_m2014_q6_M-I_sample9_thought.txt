@@ -1,0 +1,5 @@
+To improve PPA, I will switch from a 3-bit binary state encoding to a 1-hot state encoding using six flip-flops—one per state. This generally reduces the combinational complexity of next-state logic, potentially improving timing (higher fmax) at the cost of increased flip-flop count. Given the FSM has only six states, the area increase is minor, and the simplified next-state logic can reduce switching power and combinational delay. 
+
+Additionally, I will separate output logic from next-state logic to clarify the design and minimize glitches on z. The reset will asynchronously initialize the FSM to state A. The output z is 1 when in states E or F, and 0 otherwise.
+
+This should yield better timing (lower combinational depth), reduced power from simpler combinational logic, and only slightly larger area due to extra registers.

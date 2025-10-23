@@ -1,0 +1,11 @@
+To improve the PPA (timing, power, and area) beyond the given solution, I will merge the three always blocks into a single always block to minimize logic duplication and reduce flip-flop instantiations and mux complexity on resets and enables. This also reduces the total logic depth and helps with timing.
+
+Inside this block, I will update seconds every cycle, and increment minutes and hours conditionally based on seconds and minutes wrapping. This avoids separate always blocks for minutes and hours that react on the same signals, improving clock-to-Q paths and reducing combinational logic depth.
+
+I will also replace equality checks with simpler combinational signals for rollover conditions, reducing redundant evaluations.
+
+Using a single always block with properly ordered statements will optimize synthesis for power and area as fewer registers and less complex reset multiplexing are required. This can slightly improve WNS and TNS and reduce dynamic power.
+
+I will keep outputs width as specified: Hours 6-bit to match user's requirement, even though 5 bits suffice, to strictly follow instructions.
+
+The reset remains asynchronous (posedge RST), as requested, ensuring immediate clearing of counters.

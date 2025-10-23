@@ -1,0 +1,12 @@
+To implement the required behavior, we use a small FSM with two states: IDLE and SHIFT_EN.
+
+- On synchronous reset, the FSM transitions to SHIFT_EN state and a 4-cycle shift enable counter is loaded.
+- While in SHIFT_EN, shift_ena is asserted, and the counter counts down each clock cycle.
+- When the counter reaches zero, FSM moves back to IDLE state and shift_ena is deasserted permanently.
+- In IDLE state, shift_ena remains low until the next reset.
+
+This approach cleanly separates states and uses a down-counter for cycle counting. The synchronous reset causes an immediate state change on the rising clock edge, ensuring shift_ena is asserted on the next cycle *after* reset is processed.
+
+No pattern detection logic is included because it was not specified in inputs. This strictly satisfies the reset-driven 4-cycle enable requirement.
+
+This FSM-style design is robust, clearly describes the intended behavior, and avoids any off-by-one issues on assertion timing.

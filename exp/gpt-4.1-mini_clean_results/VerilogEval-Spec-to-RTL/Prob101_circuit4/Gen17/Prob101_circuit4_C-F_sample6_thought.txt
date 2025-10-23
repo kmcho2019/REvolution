@@ -1,0 +1,15 @@
+The waveform and both examples show that output q is simply b OR c, independent of a and d.
+
+From Example 1: The direct use of a simple 2-input OR gate module (OrGate2) gives clear structural modularity but includes extra module overhead.
+
+From Example 2: Using a 4-to-1 MUX to implement the OR function shows a flexible structural approach but at the cost of extra area and delay.
+
+To fuse the best of both:
+
+- Use direct continuous assignment (`assign`) in TopModule for minimal area and power, removing the overhead of separate gate or MUX modules.
+
+- Retain clarity and simplicity by keeping the logic expression explicit and readable, without redundant hierarchy.
+
+- Ignore inputs a and d as they do not affect q.
+
+This fusion achieves optimal PPA by flattening hierarchy and providing a minimal, clean implementation of q = b | c, preserving correctness and improving power and area over both examples.

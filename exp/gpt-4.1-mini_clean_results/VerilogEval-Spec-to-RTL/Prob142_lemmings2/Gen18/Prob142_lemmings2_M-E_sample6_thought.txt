@@ -1,0 +1,11 @@
+Implement the FSM using an explicit three-state encoding scheme instead of encoding falling and direction bits. Define three states: WALK_LEFT, WALK_RIGHT, and FALL. The direction is tracked by a separate single-bit register that holds the last walking direction before falling. This separates concerns clearly:
+
+- The FSM has three states instead of four.
+- Direction bit register keeps track of current walking direction.
+- On ground=0, transition to FALL state (aaah=1).
+- On ground=1 from FALL, return to walking state using stored direction.
+- While walking, bumps immediately switch direction.
+- Ignore bumps during FALL.
+- Asynchronous reset forces walk left state and direction left.
+
+This architecture emphasizes explicit state transitions and direction register separation for clarity and simplicity. Moore outputs depend on the state and direction register. This approach is functionally equivalent but structurally different and modular.

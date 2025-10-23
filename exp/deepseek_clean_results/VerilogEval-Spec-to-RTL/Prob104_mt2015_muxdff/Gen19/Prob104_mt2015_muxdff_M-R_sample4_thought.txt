@@ -1,0 +1,12 @@
+The refactored version maintains the same functionality but uses continuous assignment for the mux logic while keeping the sequential element (flip-flop) in an always block. This separates the combinational and sequential logic more explicitly.
+
+Key changes:
+1. Replace the ternary operator in the always block with a wire assignment
+2. Use an intermediate wire for the mux output
+3. The flip-flop simply samples this mux output
+
+This approach makes the design more modular by clearly separating:
+- The combinational mux logic (now using assign)
+- The sequential flip-flop (still in always block)
+
+The behavior remains identical - Q still gets r_in when L is high and q_in when L is low, just implemented with cleaner separation of combinational and sequential logic.

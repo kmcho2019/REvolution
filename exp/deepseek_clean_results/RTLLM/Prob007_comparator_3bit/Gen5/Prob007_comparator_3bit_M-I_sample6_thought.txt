@@ -1,0 +1,14 @@
+Optimization Strategy:
+1. Directly implement A_less comparison to reduce logic levels and improve timing
+2. Maintain the hierarchical bit-wise comparison for readability and scalability
+3. Use parallel comparison for all outputs to eliminate dependency chains
+4. Keep the mutual exclusivity property by construction
+5. Optimize gate-level implementation by:
+   - Using XNOR for equality checks (already optimal)
+   - Using AND-NOT for greater/less comparisons
+   - Avoiding redundant logic by not deriving A_less from other outputs
+
+The improved version will have:
+- Equal timing paths for all outputs (2 logic levels max)
+- Reduced power by eliminating intermediate signals
+- Slightly better area by sharing some common terms

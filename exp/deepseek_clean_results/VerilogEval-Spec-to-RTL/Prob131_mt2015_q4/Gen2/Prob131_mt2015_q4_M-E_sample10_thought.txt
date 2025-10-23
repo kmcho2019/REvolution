@@ -1,0 +1,9 @@
+Instead of using separate instances of Module A and B, we can:
+1. Recognize that Module B implements an XNOR function (z = ~(x^y))
+2. Combine the logic operations at the top level by:
+   - Computing the XOR and XNOR results once and reusing them
+   - Using the XOR result for both Module A operations (since Module A is (x^y)&x)
+   - Using the XNOR result for both Module B operations
+3. This reduces redundant logic computations and minimizes the number of gates
+4. The final output is computed by (xor_result | xnor_result) ^ (xor_result & xnor_result)
+   which simplifies to xor_result ^ xnor_result due to Boolean algebra properties

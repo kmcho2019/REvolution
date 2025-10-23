@@ -1,0 +1,12 @@
+The original solution has a fundamental timing issue in edge detection. To fix this, we need to:
+1. Compare the current input with the immediately previous value
+2. Detect falling edges synchronously with the clock
+3. Use the current input value directly in the comparison
+4. Maintain the latch behavior where detected edges remain set until reset
+
+Key improvements:
+- Use a single register to store the previous input (prev_in)
+- Perform edge detection by comparing current input with prev_in
+- Set output bits immediately when falling edges are detected
+- Clear all outputs synchronously on reset
+- This ensures correct timing of edge detection without missing transitions

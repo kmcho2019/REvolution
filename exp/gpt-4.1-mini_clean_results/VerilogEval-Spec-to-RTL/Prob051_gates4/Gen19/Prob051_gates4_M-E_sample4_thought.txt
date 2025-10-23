@@ -1,0 +1,13 @@
+Instead of instantiating multiple balanced two-level gate trees separately, create a single pipeline stage that calculates pairwise intermediate results for AND, OR, and XOR simultaneously on the inputs. Then combine these intermediates to produce the final outputs. This approach reuses partial computations and structurally groups all gate types in parallel for better clarity and potential resource sharing in hardware.
+
+Concretely:
+- Compute and0 = in[0] & in[1], and1 = in[2] & in[3]
+- Compute or0  = in[0] | in[1], or1  = in[2] | in[3]
+- Compute xor0 = in[0] ^ in[1], xor1 = in[2] ^ in[3]
+
+Then
+- out_and = and0 & and1
+- out_or  = or0  | or1
+- out_xor = xor0 ^ xor1
+
+This modular decomposition reduces redundant wiring and facilitates a uniform gate-level structure without parameterization. It’s clear and efficient while providing a compact and explicit combinational network. This design is easily synthesizable and may benefit from balanced logic and shared partial computation concepts.

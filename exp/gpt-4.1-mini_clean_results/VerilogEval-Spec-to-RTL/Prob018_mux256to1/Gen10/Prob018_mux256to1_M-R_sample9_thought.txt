@@ -1,0 +1,8 @@
+Refactor the hierarchical 256-to-1 mux by using a single parameterized 8-to-1 multiplexer module that can be instantiated at multiple levels with generate loops. Instead of defining a separate 4-to-1 mux module, use the same 8-to-1 module for all levels but select only the needed bits by zero-padding the inputs for the last stage. This eliminates the need for multiple mux types and simplifies the code.
+
+Implement all multiplexing using combinational continuous assignments (`assign`) without `always` blocks, retaining the three-level mux tree:
+- Level 0: 32 instances of 8-to-1 mux selecting bits within 8-bit chunks using sel[2:0].
+- Level 1: 4 instances of 8-to-1 mux selecting among 8 outputs using sel[5:3].
+- Level 2: 1 instance of 8-to-1 mux with unused inputs tied to zero, selecting among 4 inputs using sel[7:6].
+
+This refactoring improves modularity and code reuse by using a single mux module with parameterized input width and selection bits, and uses continuous assignments throughout to make the design simple, clear, and synthesis-friendly.

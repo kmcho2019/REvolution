@@ -1,0 +1,7 @@
+The existing hierarchical solution correctly reverses the 100-bit input vector using multiple small modules, but this introduces additional logic depth, routing complexity, and potential power overhead.
+
+To optimize for better performance, power, and area (PPA), I will flatten the design by implementing the full 100-bit reversal with a single continuous assign statement. This approach eliminates intermediate wiring and module instantiations, reduces logic duplication, and allows synthesis tools to optimize the reversal efficiently.
+
+The single assignment will directly map each output bit to its corresponding reversed input bit, i.e., out[i] = in[99 - i], for i in 0 to 99.
+
+This simple, combinational assignment reduces area and switching activity, likely improves timing by reducing logic depth, and simplifies the design for better power efficiency.

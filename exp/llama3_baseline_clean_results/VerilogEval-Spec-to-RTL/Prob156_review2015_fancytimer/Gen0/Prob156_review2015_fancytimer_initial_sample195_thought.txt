@@ -1,0 +1,7 @@
+To implement the TopModule, we need to design a finite state machine (FSM) that can detect the input pattern 1101, shift in the delay bits, count down the delay, and then notify the user. The FSM will have several states: IDLE (searching for the pattern), SHIFT_DELAY (shifting in the delay bits), COUNTING (counting down the delay), and DONE (waiting for the user to acknowledge the timer).
+
+The circuit will use a counter to keep track of the remaining time and a register to store the delay value. When the circuit is counting, it will output the current remaining time on the count output.
+
+We will also use a shift register to shift in the delay bits. The state machine will transition from IDLE to SHIFT_DELAY when the pattern 1101 is detected, and then from SHIFT_DELAY to COUNTING after the delay bits have been shifted in. The circuit will then count down the delay and assert the done output when the count reaches 0.
+
+Finally, the circuit will wait for the user to acknowledge the timer by asserting the ack input, and then reset to the IDLE state to start searching for the next occurrence of the start sequence.

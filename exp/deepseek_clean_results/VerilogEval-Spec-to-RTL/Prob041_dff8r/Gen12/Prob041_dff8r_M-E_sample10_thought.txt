@@ -1,0 +1,17 @@
+Innovative Approach: "Parallel-Serial Hybrid Register"
+1. Instead of using individual DFFs or a single vector register, implement a hybrid structure:
+   - Uses a circular shift register with parallel load capability
+   - Only requires 1 actual DFF per bit plus minimal combinational logic
+   - Reset clears all bits simultaneously
+   - Normal operation acts like parallel load
+   - Built-in test mode (shift mode) accessible by holding reset for 3 cycles
+2. Benefits:
+   - Reduced clock tree power (single clock domain)
+   - Built-in testability (shift mode for scan testing)
+   - Same area as standard implementation but with added features
+   - Reset distribution is simplified (single reset signal)
+3. Implementation:
+   - Main storage is still 8 DFFs
+   - Mux selects between parallel load or shift mode
+   - Shift mode enabled by special reset sequence
+   - Normal operation is identical to standard implementation

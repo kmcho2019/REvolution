@@ -1,0 +1,18 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Replace the 3-bit popcount adder with a lookup table (LUT) since we only need to detect exactly two 1's
+   - Simplify phase comparison by checking only the LSB (phase[0]) since we only care when phase wraps around (phase==0)
+
+2. Power Optimization:
+   - Gate the w_history updates to only occur when in state B
+   - Only compute popcount when needed (at phase==0)
+
+3. Area Optimization:
+   - Use one-hot encoding for the phase counter (3 flip-flops instead of 2-bit binary)
+   - Eliminate the separate popcount adder by using direct pattern matching
+
+Key Changes:
+- New popcount detection using pattern matching (011, 101, 110)
+- Phase counter simplified to single-bit wrap signal
+- Reduced redundant computations
+- More efficient state encoding

@@ -1,0 +1,9 @@
+To optimize the existing design for better PPA, I will keep the same clean, modular, and parameterized structure but improve power by adding a clock enable (ce) input that only updates the output register when data changes or when the reset is active. This prevents unnecessary toggling in the register, reducing dynamic power. 
+
+Since the specification does not mention a clock enable input, I will internally compare current output and input data to gate register updates. This data-change-aware clock enable is a common technique to reduce switching without requiring external control signals.
+
+Area and performance should remain unaffected or slightly improved because the added comparison logic is minimal compared to an 8-bit register, and the register itself updates fewer bits each cycle on average.
+
+The asynchronous reset remains active high and asynchronous to the clock as required.
+
+Hence, the improved design keeps modularity, synthesis friendliness, and adds data-dependent clock enable for power optimization.

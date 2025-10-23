@@ -1,0 +1,30 @@
+From the waveform, the outputs p and q depend on previous states and input a sampled on clock edges. The outputs p and q update only on the rising clock edges.
+
+- Initially p and q are unknown.
+- On the first rising clock with a=0, p=0, q is unknown (x).
+- When clock is low and a changes, p and q hold their values.
+- On rising clock edges:
+  - If q=0, then p is set to input a, q remains 0.
+  - If q=1, then p is set to input a, q stays 1.
+- On falling clock edges:
+  - p and q do not change.
+- At time 115ns and after, q becomes 1 on falling edge and remains 1.
+- After that, on rising edges, p follows input a when q=1, and q stays 1.
+- On the falling edges q toggles to 0 when p=1 and a=1?
+  Actually q changes from 1 to 0 at 175ns falling edge when a=1. But at 180ns q=0 and p=0.
+
+From this data, the simplest consistent implementation is:
+- Registers p and q updated on rising clock edge.
+- q set to 1 when p and a are both 1 on rising edge.
+- On falling edge q resets to 0.
+- p copies input a on rising edge.
+This matches most waveform behavior:
+- On rising edge p = a
+- On rising edge if p and a =1 then q=1 else q remains previous
+- On falling edge q reset to 0
+
+Since the waveform is not fully deterministic, this solution fits well with the given data.
+
+We'll implement with a positive edge clock process updating p and q. Additionally, on negative clock edge, q is cleared.
+
+The q is a state that remains 1 after detecting p=a=1 at rising edge, and clears at falling edge.

@@ -1,0 +1,12 @@
+Refactor the 16-bit CLA module to explicitly compute block-level propagate (P) and generate (G) signals hierarchically, enabling a faster carry computation that doesn't rely on a linear chain of carries. Use a carry-lookahead generator for carries within the 16-bit block based on group propagate/generate signals for 4-bit sub-blocks.
+
+Specifically:
+- Divide the 16 bits into four 4-bit groups.
+- Compute propagate and generate signals for each group.
+- Use these group signals to compute carries for the groups directly, reducing carry chain length.
+- Then, within each 4-bit group, compute carries sequentially but only within 4 bits, significantly reducing delay compared to the entire 16-bit ripple.
+- Sum bits and final carry-out are generated accordingly.
+
+At the top 32-bit module, instantiate two such 16-bit CLA blocks in series with carry chaining.
+
+This structure preserves the CLA functionality but with a hierarchical carry lookahead logic inside the 16-bit blocks, improving speed and maintaining clean combinational logic using only assign statements and generate blocks.

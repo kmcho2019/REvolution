@@ -1,0 +1,5 @@
+To implement the TopModule, we need to use a 32-bit register to store the branch history. When a prediction is made, we shift in the prediction result from the LSB side. When a misprediction occurs, we load the history register with the correct history after the mispredicted branch. We need to handle the case where both a prediction and a misprediction occur at the same time, and give precedence to the misprediction. We also need to implement an asynchronous reset to reset the history register to zero when areset is asserted.
+
+We can use a single 32-bit reg to store the branch history. When predict_valid is asserted, we shift in predict_taken from the LSB side. When train_mispredicted is asserted, we load the history register with train_history concatenated with train_taken. If both predict_valid and train_mispredicted are asserted at the same time, we load the history register with train_history concatenated with train_taken, effectively overriding the prediction.
+
+We can use an always block to describe the sequential logic of the module, and use a conditional statement to handle the different cases.

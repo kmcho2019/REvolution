@@ -1,0 +1,9 @@
+Refactor the 32-bit CLA adder by explicitly computing the carry signals using hierarchical carry-lookahead logic within the 16-bit block, and propagate the carry-out from the lower 16-bit block to the upper 16-bit block by pre-computing propagate and generate signals for each block.
+
+Inside each 16-bit CLA block, implement the carry-lookahead logic explicitly by grouping bits into 4-bit blocks, computing group propagate and generate signals, then combining these to generate the carry vector.
+
+At the top 32-bit level, compute the two 16-bit blocks’ group propagate and generate signals to produce the carry-in for the upper block using the block-level CLA logic.
+
+This refactor uses continuous assignments for all logic, no always blocks, a hierarchical CLA structure inside 16-bit blocks, and an additional carry-lookahead step between the two 16-bit blocks for improved timing and clarity. The bit ordering is preserved.
+
+This structure improves modularity and allows faster carry computation across the 32 bits compared to simple ripple chaining of two 16-bit blocks.

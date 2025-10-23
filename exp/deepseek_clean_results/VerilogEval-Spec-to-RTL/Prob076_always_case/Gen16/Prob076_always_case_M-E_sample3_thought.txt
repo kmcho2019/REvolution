@@ -1,0 +1,9 @@
+Here's a novel approach using a lookup table (LUT) style implementation with bitwise operations:
+
+1. **LUT Concept**: Instead of a traditional case statement, we'll use the sel input to generate enable signals for each data input.
+2. **Bitwise Selection**: For each bit position (0-3), we'll OR together the corresponding bits from all data inputs, masked by their selection enable signals.
+3. **Efficient Enable Generation**: Create enable signals using equality comparators (sel == N) for each valid selection.
+4. **Zero Output Handling**: Invalid selections (6-7) will naturally result in zero output since none of the enable signals will be active.
+5. **Parallel Processing**: All bit positions are processed independently in parallel, which may lead to better synthesis optimization.
+
+This approach may offer better power efficiency since only the selected data path is active, and could potentially reduce area by sharing common enable logic across all bits.

@@ -1,0 +1,17 @@
+The existing design implements the correct function q = (a | b) & (c | d), which matches the waveform exactly with minimal gates and levels. The logic is already minimal in terms of area and delay.
+
+To further optimize power and area, I can consider De Morgan's laws to transform the logic into NAND/NOR-based expressions, which often map more efficiently onto CMOS gates, reducing transistor count and potentially power.
+
+For example, the expression can be rewritten as:
+  q = (a | b) & (c | d)
+    = ¬(¬(a | b) | ¬(c | d))   (using De Morgan)
+    = ¬((¬a & ¬b) | (¬c & ¬d))
+
+This translates to:
+  q = nand(nand(a, a), nand(b, b)) nanded with nand(nand(c, c), nand(d, d)) via NOR
+
+But that may increase complexity.
+
+Alternatively, since (a | b) and (c | d) are simple ORs feeding an AND, it is best to keep the direct expression as is. The original version is already minimal, and modern synthesis tools efficiently optimize this straightforward logic.
+
+Thus, I will keep the direct assign statement for best PPA while making the code concise and clear. No further optimization will yield significant improvement without changing the logic or given constraints.

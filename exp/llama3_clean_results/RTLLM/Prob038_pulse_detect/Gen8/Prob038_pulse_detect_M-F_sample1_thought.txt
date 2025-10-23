@@ -1,0 +1,7 @@
+To accurately detect pulses in the input signal `data_in`, we need to redesign the state machine to correctly identify the sequence of 0 to 1 to 0 within 3 cycles. This involves explicitly tracking the current state of the pulse detection process, including the initial 0, the rising edge (0 to 1), and the falling edge (1 to 0).
+
+We will implement a finite state machine (FSM) with specific states to represent each phase of the pulse sequence. The states will be: IDLE (initial state, waiting for the rising edge), RISING (detected the rising edge, waiting for the peak), PEAK (detected the peak, waiting for the falling edge), and FALLING (detected the falling edge, verifying if it's a valid pulse).
+
+The FSM will transition between these states based on the current state and the value of `data_in`. When a valid pulse is detected (i.e., the sequence 0 to 1 to 0 within 3 cycles), the output `data_out` will be set to 1 at the end of the pulse and then reset to 0 until another pulse is detected.
+
+This approach ensures that the pulse detection logic is accurately implemented, aligning with the problem statement's requirements.

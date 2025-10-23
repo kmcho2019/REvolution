@@ -1,0 +1,24 @@
+The original design correctly implements the barrel shifter using mux2X1 modules for each bit and each shift stage. To improve PPA (power, performance, area), the main gain can be achieved by reducing the number of multiplexers instantiated.
+
+Instead of using one mux per bit per stage, we can perform shifts via wiring and only use muxes where needed, or use conditional operators that synthesis tools translate efficiently, reducing mux instances.
+
+However, the problem explicitly requires using mux2X1 modules for each bit at each stage. So, keeping that requirement, an optimization is to reduce redundant indexing and simplify the modulo operations to avoid synthesis tool warnings and improve synthesis results.
+
+Also, we can implement the mux2X1 as a parameterized single-bit module, as in the original design, but clarify the code with inline comments explaining the rotate-left indexing and use `+` followed by `% 8` carefully.
+
+Additionally, we can combine the three shift stages in one generate block for more clarity, but it is acceptable to keep stages separate.
+
+For PPA:
+- Use wire arrays rather than regs where possible.
+- Use localparams for shift amounts.
+- Avoid modulus operator inside generate by precomputing the indices with localparam arrays or generate-time constants.
+
+However, Verilog generate loops can handle modulo with `%` since it's constant and small.
+
+Summary of improvements:
+- Keep the structure as is (3 stages with mux2X1 instantiations).
+- Add localparam for shift amounts.
+- Add comments on index calculation.
+- Explicitly name mux instances to help synthesis.
+- Use indexing carefully to ensure clarity.
+This approach retains modularity, clarity, and good mapping to hardware, while being slightly more readable and synthesizable.

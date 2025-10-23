@@ -1,0 +1,10 @@
+Implement the FSM using three registers to hold the flip-flop states, initializing them to zero via an explicit synchronous reset input. Since no external reset is allowed, model a reset sequence internally using a 2-bit counter to generate a reset signal active only for the first two clock cycles. This method guarantees proper reset in synthesis and simulation.
+
+Compute each flip-flop's next state sequentially in a single always block triggered by the positive clock edge. For each flip-flop D input, the logic is:
+- XOR gate: D = x XOR current q_xor
+- AND gate: D = x AND NOT current q_and
+- OR gate:  D = x OR NOT current q_or
+
+Update all flip-flops synchronously on each clock. The output z is continuously assigned as the NOR of the three flip-flop outputs.
+
+This approach avoids combinational loops by computing next state values solely from current flip-flop outputs and input x, and ensures initial flip-flop states to zero by a well-defined internal reset sequence.

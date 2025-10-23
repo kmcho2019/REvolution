@@ -1,0 +1,17 @@
+To improve PPA metrics while maintaining the same functionality, I'll make these key changes:
+
+1. **State Machine Optimization**:
+   - Switch to one-hot encoding (4 bits) for better timing performance
+   - Eliminate the ERROR state by handling invalid stop bits in the STOP state itself
+   - Combine state transition and output logic into a single always block
+
+2. **Power Reduction**:
+   - Only update the shift register when in RECEIVE state
+   - Make 'done' a pulse signal that only asserts for one cycle
+   - Use registered outputs to reduce glitching
+
+3. **Area Reduction**:
+   - Remove the separate shift_reg and out_byte registers by using the same storage
+   - Optimize bit counting by using a simpler decrement approach
+
+The new design will maintain the same protocol behavior but with better timing characteristics and lower power consumption.

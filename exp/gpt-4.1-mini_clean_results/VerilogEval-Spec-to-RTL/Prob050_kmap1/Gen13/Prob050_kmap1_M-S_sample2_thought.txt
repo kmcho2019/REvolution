@@ -1,0 +1,19 @@
+The logic function corresponds to out = a + b·c (since for a=0 and bc=00 output=0, otherwise 1). This can be derived from the Karnaugh map:
+
+Given the map:
+          a
+   bc   0   1
+   00 | 0 | 1 |
+   01 | 1 | 1 |
+   11 | 1 | 1 |
+   10 | 1 | 1 |
+
+We notice that when a=1, output=1 regardless of bc, and when a=0, output=1 if b·c=1 (except at bc=00). Therefore the function simplifies to:
+
+out = a + b·c
+
+This expression has fewer gates than the previous OR of three inputs and is more accurate to the map.
+
+Implementation wise, using assign with built-in operators is simpler, minimal, and synthesizable.
+
+This solution reduces gate count, complexity, and maintains correctness.

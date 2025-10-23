@@ -1,0 +1,25 @@
+The previous implementation incorrectly assumed that the term b&c&d covers both 7 (0111) and 15 (1111), but since 15 has 'a' = 1, the logic should explicitly include 'a' for 15. Hence, the minimal SOP must be:
+
+out_sop = (~a & ~b & c & ~d) + (~a & b & c & d) + (a & b & c & d)
+
+This correctly covers 2, 7, and 15.
+
+For the POS form, from Karnaugh map or Boolean algebra, the minimal POS expression is:
+
+out_pos = (a + b + d)(a + c + d)(~a + ~b + c + ~d)
+
+which corresponds to the three maxterms covering zeros.
+
+To improve clarity and correctness:
+
+- Use continuous assignment with intermediate signals for inverted inputs.
+
+- Implement both minimal SOP and POS exactly as deduced.
+
+- Use 'assign' rather than always blocks for simpler combinational logic.
+
+- Keep all signals wires since outputs are purely combinational.
+
+This approach ensures exact logical coverage, correctness, and easy synthesis.
+
+Additionally, include a basic testbench (optional) to verify correctness if needed.

@@ -1,0 +1,17 @@
+Fuse the best aspects of both examples by implementing a single 4:1 combinational multiplexer for shift selection, avoiding computation of unnecessary shifts and minimizing mux fanout.
+
+Strategy:
+
+1. Precompute only the four shift variants (shift left by 1 and 8 bits, arithmetic shift right by 1 and 8 bits) using efficient concatenations without arithmetic shift operators.
+
+2. Use a single 4:1 mux based on the full 2-bit amount signal to select the correct shifted value, rather than hierarchical muxes or computing and masking shifts based on direction bits. This reduces mux complexity and logic depth.
+
+3. Compute all four shifted versions combinationally each cycle for simplicity; while this causes some switching, it keeps timing predictable and logic balanced. The mux is smaller (4:1) and simpler than chained 2:1 muxes.
+
+4. Implement the synchronous load and enable logic cleanly in the sequential block.
+
+5. This design is concise, well-structured, and provides good PPA balance: minimal mux layers improve performance, direct concatenations reduce area, and switching activity is acceptable given predictable logic.
+
+6. For possible future power optimization, gating the computation of shift variants or clock gating could be added, but the current approach maintains clarity and synthesis friendliness.
+
+Overall, this fusion optimally balances performance, area, and power by merging clarity and efficient muxing from Example 1 with the straightforward shift computations of Example 2.

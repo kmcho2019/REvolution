@@ -1,0 +1,12 @@
+The key innovation is to process the grid in a systolic manner, where neighbor information propagates through the grid in a wave-like fashion. This approach:
+1. Divides the 16x16 grid into 16 processing elements (PEs), each handling one row
+2. Each PE processes its row while receiving neighbor information from adjacent rows
+3. Implements a 3-stage pipeline for each PE to calculate neighbor counts
+4. Uses shift registers to efficiently handle the toroidal wrap-around
+5. Employs a novel "neighbor accumulation" technique where counts propagate diagonally
+
+Benefits:
+- Reduced critical path by pipelining neighbor calculations
+- Efficient handling of wrap-around through shift register chains
+- Lower power consumption by only activating relevant PEs each cycle
+- Better area utilization through shared resources in each PE

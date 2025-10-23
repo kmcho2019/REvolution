@@ -1,0 +1,172 @@
+The given K-map function can be directly implemented with a minimized boolean expression derived from the Karnaugh map, avoiding the intermediate decomposition and multiplexing. 
+
+First, note the variables: inputs a, b, c, d, each 1 bit.
+
+We analyze the K-map as:
+
+              ab
+       00  01  11  10
+cd 00 | 1 | 1 | 0 | 1 |
+cd 01 | 1 | 0 | 0 | 1 |
+cd 11 | 0 | 1 | 1 | 1 |
+cd 10 | 1 | 1 | 0 | 0 |
+
+From the K-map, we can try to find prime implicants directly.
+
+Group1: All cells where output=1 that share common variables.
+
+- Column ab=00 (a=0,b=0) has 1s for cd=00,01,10
+- Row cd=00 (c=0,d=0) has 1s in ab=00,01,10
+
+Finding implicants:
+
+- (c'd')a'b' covers cells (cd=00, ab=00)
+- But we want simplification:
+
+Let's try to find a minimal SOP form using the K-map or by examining minterms with output=1:
+
+List minterms (with output=1):
+
+cd ab output=1 for these combinations:
+
+(00)(00) = c'd' a'b' => m0
+
+(00)(01) = c'd' a'b => m1
+
+(00)(10) = c'd' ab' => m2
+
+(01)(00) = c'd a'b' => m4
+
+(01)(10) = c'd ab' => m6
+
+(10)(00) = cd' a'b' => m8
+
+(10)(01) = cd' a'b => m9
+
+(11)(01) = cd a'b => m13
+
+(11)(10) = cd ab' => m14
+
+(11)(11) = cd ab => m15
+
+(10)(11) = cd' ab => m11 (output=0 actually; check K-map: 10 11 is 0, no)
+
+Check these:
+
+m0=1, m1=1, m2=1, m4=1, m6=1, m8=1, m9=1, m13=1, m14=1, m15=1
+
+So minterms with output=1 are: 0,1,2,4,6,8,9,13,14,15
+
+Now, group minterms into implicants:
+
+- The column ab=00 (a=0,b=0): minterms 0,4,8 (c,d vary). Corresponds to a'b'
+
+- The row cd=11 (c=1,d=1): minterms 13,14,15 (a,b vary) except 11 is zero, so:
+
+    - m13 (cd=11, ab=01) = c d a' b
+
+    - m14 (cd=11, ab=10) = c d a b'
+
+    - m15 (cd=11, ab=11) = c d a b
+
+We can group m14 and m15 as c d a (b + b') = c d a
+
+Group m13 standalone as c d a' b
+
+- The column ab=01 (a=0,b=1): minterms 1,9,13
+
+But m5, m7 zero.
+
+m1 (c'd' a'b), m9 (c d' a'b), m13 (c d a'b)
+
+Group them together:
+
+a'b c' + a'b c d' + a'b c d = a'b (c' + c d' + c d) = a'b (c' + c (d' + d)) = a'b (c' + c) = a'b
+
+- The column ab=10 (a=1,b=0): minterms 2,6,14
+
+m2 (c'd' ab'), m6 (c'd ab'), m14 (c d ab')
+
+Group them:
+
+a b' (c'd' + c'd + c d) = a b' (d' (c' + c) + c d) = a b' (d' + c d)
+
+Simplify d' + c d = d' + c d = d' + c d = (from consensus) = d' + c d
+
+No further simplification.
+
+Thus, a b' (d' + c d)
+
+Now combine the implicants:
+
+out = a'b' + a'b + a b'(d' + c d) + c d a' b + c d a
+
+Simplify a'b' + a'b = a' (b' + b) = a'
+
+Thus,
+
+out = a' + a b' (d' + c d) + c d a' b + c d a
+
+Observe c d a' b + c d a = c d (a' b + a) = c d (a' b + a)
+
+But a' b + a = a + b a' = a + b a'
+
+Check if it's equivalent to a + b
+
+a + b a' = (a + b)(a + a') = (a + b)1 = a + b
+
+So c d (a + b)
+
+Hence,
+
+out = a' + a b' (d' + c d) + c d (a + b)
+
+Try to simplify a b' (d' + c d):
+
+d' + c d = d' + c d = 1 if d' or c d is 1
+
+Rewrite:
+
+a b' (d' + c d) = a b' d' + a b' c d
+
+So:
+
+out = a' + a b' d' + a b' c d + c d (a + b)
+
+Now group terms containing c d:
+
+a b' c d + c d a + c d b = c d (a b' + a + b)
+
+Note a b' + a = a (b' + 1) = a
+
+So c d (a + b)
+
+Wait, this is same as previous step.
+
+But we already had c d (a + b) as a term.
+
+Thus, "a b' c d" is included in c d a + c d b terms? No, we must be careful.
+
+Since c d a + c d b = c d (a + b)
+
+But we have a b' c d separately
+
+Since a b' c d is subset of c d a? No, because c d a is a&c&d, regardless of b; a b' c d is a&~b&c&d, which is a subset of c d a.
+
+Therefore, a b' c d term is covered by c d a term.
+
+So a b' c d can be omitted as it's redundant.
+
+Therefore,
+
+out = a' + a b' d' + c d (a + b)
+
+Final simplified expression:
+
+out = ~a + a & ~b & ~d + c & d & (a + b)
+
+This expression has only three terms and is simpler than the previous mux approach.
+
+We can implement this directly with three ANDs and two ORs, plus input negations.
+
+This greatly reduces complexity and gate count.

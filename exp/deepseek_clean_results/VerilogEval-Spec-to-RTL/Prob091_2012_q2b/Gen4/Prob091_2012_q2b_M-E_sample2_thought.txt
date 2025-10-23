@@ -1,0 +1,16 @@
+Here's a novel approach using a priority encoder concept for one-hot states:
+
+1. Instead of treating each state bit independently, we can leverage the fact that in one-hot encoding, only one bit is active at a time. This allows us to implement the logic more efficiently by considering the state transitions as a priority encoding problem.
+
+2. For Y1 (next state for y[1]):
+   - Only transitions from state A (y[0]) when w=1
+   - Can be implemented as a simple AND of y[0] and w
+
+3. For Y3 (next state for y[3]):
+   - Instead of checking all possible source states (B, C, E, F), we can observe that:
+     - Any state except A and D will transition to D when w=0
+     - This can be expressed as: if we're not in A or D, and w=0, then transition to D
+   - Using one-hot properties: ~(y[0] | y[3]) detects "not A and not D"
+   - Then AND with ~w to get the condition for transitioning to D
+
+This approach reduces the logic complexity by treating the state encoding as a whole rather than individual bits, while maintaining correctness through the one-hot encoding properties.

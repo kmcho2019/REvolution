@@ -1,0 +1,11 @@
+Instead of using borrow lookahead logic or subtractor-based logic, this design compares the inputs bit-by-bit from the most significant bit (MSB) down to the least significant bit (LSB) using simple combinational comparators per bit. 
+
+For each bit position, three signals indicate whether A > B, A = B, or A < B for that bit. Then, cascading the comparison results from MSB to LSB, we determine the final comparison result.
+
+The logic proceeds as follows:
+- At the MSB, compare bits: if A[3] > B[3], output A_greater=1; else if less, A_less=1; else equal and check next bit.
+- Proceed to bit 2 if equal at bit 3; similarly for bits 1 and 0.
+- If all bits equal, A_equal=1.
+- Outputs are mutually exclusive.
+
+This design uses multi-level priority logic rather than subtractor or borrow logic, which is conceptually simple and maps efficiently to combinational gates, suitable for small bit widths. It is fully combinational and cleanly structured.

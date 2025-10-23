@@ -1,0 +1,18 @@
+Instead of implementing separate combinational outputs directly from the states as in the example, this design will use a compact one-hot next-state decoder matrix approach. We observe that Y1 and Y3 correspond to the next-state inputs for y[1] (B) and y[3] (D).
+
+We can construct a generic next-state decoder for these two states by checking which current states and inputs lead to B and D according to the FSM:
+
+- Next state B (y[1]) input is asserted if current state is A (y[0]) and w=1
+- Next state D (y[3]) input is asserted if current state is either B (y[1]) with w=0, or C (y[2]) with w=0, or D (y[3]) with w=0, or E (y[4]) with w=0, or F (y[5]) with w=0
+
+Thus, for Y1:
+Y1 = y[0] & w
+
+For Y3:
+Y3 = w' & (y[1] | y[2] | y[3] | y[4] | y[5])
+
+This differs from the prior solution by explicitly showing the sum-of-products structure for Y3, making it easier to read and modify for larger FSMs or synthesis tools. This method uses OR gates to combine all states that transition into D when w=0.
+
+This solution also favors modularity, as the next-state input logic is computed combinationally inside the main module without an extra submodule, simplifying hierarchy.
+
+No inversion sharing is done; instead, we use simple OR and AND with inverted w input, improving clarity at minor cost of gates.

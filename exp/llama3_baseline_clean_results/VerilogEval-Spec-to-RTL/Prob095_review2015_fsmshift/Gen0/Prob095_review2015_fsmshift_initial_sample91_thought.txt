@@ -1,0 +1,5 @@
+To solve this problem, we can implement a finite state machine (FSM) with two states: an idle state and a shift state. In the idle state, we will check for the proper bit pattern (which is not specified in the problem, so we'll assume it's a simple condition), and if the pattern is detected, we transition to the shift state. In the shift state, we will assert shift_ena for 4 clock cycles. When the FSM is reset, we transition to the shift state immediately, and after 4 clock cycles, we go back to the idle state and assert shift_ena to 0.
+
+We can use a counter to keep track of the number of clock cycles we've been in the shift state. Once the counter reaches 4, we can transition back to the idle state. 
+
+The reset should be active high and synchronous, meaning it only affects the FSM on the positive edge of the clock.

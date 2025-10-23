@@ -1,0 +1,14 @@
+Here's a novel approach using a shift register-based sequence detector and a timer-based y monitor:
+
+1. **Shift Register for x Pattern**: Instead of tracking states for the 1-0-1 sequence, use a 3-bit shift register to detect the pattern directly.
+2. **Timer for y Monitoring**: Implement a 2-cycle timer using a counter to track the y input within the required window.
+3. **Output Control Logic**: Use simple combinational logic for outputs:
+   - f is high for exactly one cycle after reset
+   - g is controlled by the sequence detection and y monitoring results
+4. **State Machine Simplification**: Reduce to just 3 states (IDLE, ACTIVE, DONE) since most logic can be handled by the shift register and timer.
+
+Key advantages:
+- Eliminates complex state transitions for sequence detection
+- Uses hardware efficiently with shift registers and counters
+- Clear separation of timing and pattern detection logic
+- Easier to verify and debug

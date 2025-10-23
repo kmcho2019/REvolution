@@ -1,0 +1,33 @@
+To fix the functional correctness issues and strictly follow the spec's timing and priority rules, we must carefully manage the GHR updates and the predict_history output:
+
+- Maintain a 7-bit speculative GHR register updated on every clock edge according to these priorities:
+
+  1. On `train_valid` && `train_mispredicted`: Recover GHR to `train_history` immediately (highest priority). This reflects history after pipeline flush.
+
+  2. Else if `predict_valid` && not misprediction training in the same cycle: Update GHR with predicted bit from PHT at index `predict_pc ^ ghr`.
+
+  3. Otherwise, keep GHR unchanged.
+
+- Only update the PHT entry (saturating counter) on clock edge if `train_valid` is asserted (with or without misprediction).
+
+- Combinationally read the PHT entries to ensure prediction sees PHT state before training updates.
+
+- To produce correct `predict_history` output matching the history used at prediction time (before update), latch the GHR value *combinationally* at the time of prediction request (`predict_valid`), i.e., capture `ghr` in a pipeline register for `predict_history` output on next cycle. This ensures `predict_history` corresponds to the GHR value used to make the prediction.
+
+- This staging aligns with pipeline timing and prevents mismatches caused by the direct use of current GHR after update.
+
+- On asynchronous reset, initialize GHR and PHT entries properly.
+
+This approach ensures:
+
+- Training with misprediction recovers the history (and overrides any prediction update).
+
+- Prediction updates the history speculatively only when no misprediction recovery occurs.
+
+- The `predict_history` output reflects the history value when prediction was issued.
+
+- Prediction output is asserted only when `predict_valid` is high.
+
+- PHT updates occur at clock edges on training requests.
+
+This explicit staging and priority logic aligns exactly with the problem spec and timing diagram, resolving all correctness issues and mismatches.

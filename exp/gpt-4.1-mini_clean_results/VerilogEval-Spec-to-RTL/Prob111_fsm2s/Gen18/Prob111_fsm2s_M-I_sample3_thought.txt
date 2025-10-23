@@ -1,0 +1,7 @@
+The original code uses a conditional state update (`if (state != next_state)`) which can reduce power by minimizing register toggles but may introduce additional logic and possible timing complexity. To optimize for better overall PPA (power, performance, area), removing this conditional update simplifies the sequential logic, potentially improving timing by reducing setup/hold complexity and improving worst negative slack (WNS) and total negative slack (TNS). The power increase from more toggling is likely minimal since the FSM transitions are sparse.
+
+Other than that, the code is already clean and minimal, with clear state encoding and Moore output. Keeping synchronous reset is necessary per spec. The combinational next state logic remains the same for clarity and synthesis friendliness.
+
+Thus, the main change is to remove the conditional update, always updating the state register to next_state at each clock edge unless reset is active. This also aligns with common FSM coding style and may simplify synthesis mapping.
+
+This change improves timing predictability and may slightly increase toggling power, but given the simple FSM and low toggle rate, this tradeoff usually results in better overall PPA.

@@ -1,0 +1,21 @@
+The existing solution correctly implements an 8-bit adder-subtractor with an explicit ripple carry logic and uses a reduction NOR for zero detection, which is functionally sound.
+
+To optimize for better PPA (power, performance, area):
+
+1. **Performance:** Ripple carry chain has inherent delay. For 8 bits, this is minimal, but we can improve slightly by using Verilog's built-in addition operator with conditional inversion and a carry-in rather than manual full adders, leveraging optimized synthesis for the adder.
+
+2. **Area:** Using built-in operators usually results in smaller area after synthesis since synthesis tools infer optimized adders.
+
+3. **Power:** Minimizing explicit intermediate signals and logic lowers toggle rates and dynamic power.
+
+4. **Code Simplicity:** Replacing the ripple carry chain with `out = a + (do_sub ? ~b : b) + do_sub;` uses the standard two's complement subtraction approach, which the original buggy code missed due to zero flag logic.
+
+5. **Zero flag:** Use the concise reduction NOR (`~|out`) for zero detection.
+
+This approach balances synthesis tool optimization and code clarity while improving performance and area versus a manual full adder chain.
+
+Note: This matches a classical subtractor style: To subtract, invert B and add 1 (carry-in), else just add normally.
+
+This fix solves the original bug and is more efficient than the manual ripple carry implementation.
+
+Therefore, I will implement this improved design.

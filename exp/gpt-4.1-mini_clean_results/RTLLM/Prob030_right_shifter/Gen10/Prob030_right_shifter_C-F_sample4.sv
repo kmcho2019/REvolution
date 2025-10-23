@@ -1,0 +1,12 @@
+module right_shifter (
+    input wire clk,
+    input wire d,
+    output reg [7:0] q
+);
+
+initial q = 8'b0;
+
+always @(posedge clk) 
+    q <= {d, q[7:1]};
+
+endmodule

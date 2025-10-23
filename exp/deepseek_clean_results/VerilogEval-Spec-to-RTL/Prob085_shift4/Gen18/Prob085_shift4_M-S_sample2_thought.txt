@@ -1,0 +1,13 @@
+Simplified Design Approach:
+1. Remove unnecessary dual-edge triggering and output buffering since the spec only requires positive edge triggering
+2. Eliminate separate next_q register by moving logic directly into sequential block
+3. Simplify control logic using priority if-else structure instead of case statement
+4. Handle reset purely asynchronously in the sequential block
+5. Implement shift operation directly in the sequential block
+6. Maintain clear priority: reset > load > shift
+
+Benefits:
+- Reduced area by eliminating redundant registers and logic
+- Improved timing by simplifying critical path
+- Lower power consumption by removing unnecessary switching
+- Maintains all required functionality

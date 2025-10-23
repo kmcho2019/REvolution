@@ -1,0 +1,29 @@
+The main issues identified are related to incorrect toggle timing and synchronization between the two counters and their respective clock divider outputs.
+
+To fix this:
+
+- Instead of toggling clk_div1 and clk_div2 only at half count, toggle them at precise counts to correctly split the odd divisor period into two halves: one for positive edge (cnt1) and one for negative edge (cnt2).
+
+- For an odd divisor NUM_DIV, toggling at counts HALF and NUM_DIV - 1 for each counter is essential to produce a symmetrical output waveform.
+
+- Each counter counts from 0 up to NUM_DIV - 1.
+
+- At count HALF (floor(NUM_DIV/2)), toggle the output clk_div1 or clk_div2 to mark the half-period edge.
+
+- At count NUM_DIV - 1, toggle again and reset the counter, completing the full period cycle for that half of the clock.
+
+- This ensures the toggling happens twice per full division period on each half clock, producing an accurate frequency division and near 50% duty cycle.
+
+- By toggling on both HALF and NUM_DIV - 1 counts for each counter, we achieve balanced edge placement.
+
+- Combining clk_div1 and clk_div2 with an OR is valid since each output toggles at alternate halves of the period, producing the full divided clock.
+
+- Use synchronous reset as per the original design (async reset for counters and outputs).
+
+- Ensure counters increment and toggle outputs before reset at NUM_DIV -1.
+
+- This approach aligns both counters and clock outputs properly, fixing the timing and synchronization problems causing waveform mismatches.
+
+- Maintain compile-time odd number check.
+
+This corrects the toggle timing and synchronization, addressing the previous issues and ensuring the divided clock output matches the expected waveform and frequency division.

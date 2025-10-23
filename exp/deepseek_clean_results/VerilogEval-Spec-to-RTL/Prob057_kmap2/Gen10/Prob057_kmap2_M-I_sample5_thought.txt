@@ -1,0 +1,14 @@
+To optimize the implementation, we'll derive a minimized Boolean expression from the Karnaugh map. The K-map shows clear groupings that can be expressed with fewer logic operations:
+
+1. Identify prime implicants:
+   - Group of 1s covering cd=00, ab=00/01/10 (terms: ~c&~d&~a + ~c&~d&~b + ~c&~d&a)
+   - Group covering cd=00/10, ab=00/01 (terms: ~d&~a&~b + ~d&a&~b)
+   - Group covering cd=11, ab=01/11/10 (terms: c&d&~a&b + c&d&a&b + c&d&a&~b)
+   - Isolated 1 at cd=10, ab=01 (term: c&~d&~a&b)
+
+2. Combine these groupings to form a minimized expression:
+   out = (~c&~d) | (~d&~b) | (c&d&(~a|b)) | (c&~d&~a&b)
+
+3. This expression uses fewer operations than the case statement implementation while maintaining the exact same functionality.
+
+4. The optimized version should reduce area and power while maintaining good timing characteristics.

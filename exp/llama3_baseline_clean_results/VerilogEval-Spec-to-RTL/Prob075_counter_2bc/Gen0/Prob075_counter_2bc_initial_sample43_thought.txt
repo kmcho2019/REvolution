@@ -1,0 +1,5 @@
+The design idea is to implement a two-bit saturating counter with asynchronous reset. The counter will increment when both train_valid and train_taken are high, and decrement when train_valid is high but train_taken is low. When train_valid is low, the counter will retain its current value. The counter will also be reset to 2'b01 when areset is asserted.
+
+To implement this, we can use a two-bit register to store the counter value. We'll use an if-else statement inside a clocked always block to check the values of train_valid and train_taken, and update the counter accordingly. We'll also use an asynchronous reset to reset the counter to 2'b01 when areset is high.
+
+We'll use a case statement or conditional statements to handle the saturating logic of the counter, ensuring it doesn't exceed the maximum value of 3 (2'b11) or go below the minimum value of 0 (2'b00).

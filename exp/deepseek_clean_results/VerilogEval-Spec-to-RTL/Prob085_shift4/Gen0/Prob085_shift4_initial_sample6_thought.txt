@@ -1,0 +1,6 @@
+The design requires a 4-bit shift register with three control signals: asynchronous reset (areset), synchronous load (load), and shift enable (ena). The priority is given to load over ena when both are active. Here's the approach:
+1. Use always block triggered by posedge clk or posedge areset for sequential logic
+2. For areset (highest priority), set all bits to 0 asynchronously
+3. For load (next priority), load the input data
+4. For ena (lowest priority), perform right shift (with 0 shifted in)
+5. Default case maintains current value

@@ -1,0 +1,26 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Implement a barrel shifter structure with logarithmic stages to reduce critical path
+   - Break down 100-bit rotation into smaller, parallel operations
+   - Use carry-save style rotation to minimize mux depth
+
+2. Power Optimization:
+   - Add clock gating for the no-rotation case (ena=00/11)
+   - Implement conditional computation of rotation values
+   - Reduce unnecessary switching activity
+
+3. Area Optimization:
+   - Share logic between left and right rotation cases
+   - Use more efficient mux structures
+   - Optimize register usage
+
+4. Maintainability:
+   - Keep clear code structure
+   - Add comments for complex operations
+   - Use meaningful signal names
+
+Key Changes:
+- Implement logarithmic rotation using 6 stages (since 2^6=64 < 100 < 128=2^7)
+- Add clock gating control
+- Optimize mux structure for better PPA
+- Maintain same functionality while improving metrics

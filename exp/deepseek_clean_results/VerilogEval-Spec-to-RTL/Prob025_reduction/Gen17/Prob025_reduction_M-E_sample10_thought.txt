@@ -1,0 +1,12 @@
+Here's a novel approach using a lookup table (LUT) for parity calculation. Instead of computing the parity dynamically, we'll pre-compute all possible 8-bit input combinations (256 total) and store their parity bits in a 256-bit vector. The input byte serves as an index into this vector to retrieve the pre-computed parity bit.
+
+Advantages:
+1. Constant-time lookup regardless of input pattern
+2. No gate delays from XOR trees
+3. Potential area savings in some FPGA architectures where LUTs are native resources
+4. Interesting alternative approach that demonstrates ROM-based computation
+
+Implementation:
+1. Create a 256-bit vector where each bit represents the parity for its index
+2. Use the 8-bit input as an index into this vector
+3. Output the selected bit as the parity

@@ -1,0 +1,12 @@
+The new design implements the 2-bit saturating counter using arithmetic operations and saturation checks:
+1. Uses a single adder/subtractor unit with saturation logic
+2. Implements the counter as a signed operation for simpler boundary checks
+3. Combines the train_valid and train_taken signals into a single control signal (-1, 0, +1)
+4. Uses parallel saturation checks to prevent overflow/underflow
+5. Maintains the same reset behavior (2'b01)
+
+Key advantages:
+- Fewer logic levels than case statement approach
+- More compact arithmetic implementation
+- Reduced switching activity when near saturation points
+- Easier to extend to wider counters if needed

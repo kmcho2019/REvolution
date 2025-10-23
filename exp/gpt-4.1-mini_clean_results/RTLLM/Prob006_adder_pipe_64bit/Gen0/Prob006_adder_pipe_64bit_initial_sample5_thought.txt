@@ -1,0 +1,11 @@
+To implement a 64-bit ripple carry adder with pipelined registers, I will split the 64-bit addition into multiple pipeline stages, each handling a part of the addition and its carry propagation. For example, splitting into 4 stages of 16 bits each is a common approach. Each stage will compute a 16-bit sum and produce a carry-out, which will be passed as carry-in to the next stage on the next clock cycle.
+
+Pipeline registers will hold the partial sums and carry signals, as well as the synchronized enable signals to indicate when the partial sums are valid. The output result will be assembled from all pipeline stages after all stages have processed the inputs, i.e., after 4 clock cycles of latency.
+
+The module will have:
+- Input registers to capture adda, addb and i_en on a clock edge when rst_n is high.
+- Stage registers to hold partial sums and carry signals.
+- Pipeline registers to hold the partial carry and sums for each stage.
+- The output enable (o_en) is asserted after all stages finish.
+
+This approach ensures a fully pipelined 64-bit addition with a 4-stage pipeline, and the result is available in 4 cycles after i_en is high.

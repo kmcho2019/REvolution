@@ -1,0 +1,27 @@
+Fusion Strategy:
+1. **Critical Path Optimization**:
+   - Combine the explicit shift operations from Example 2 with the structured control flow from Example 1
+   - Use direct shift operators for left shifts and concatenation for arithmetic right shifts
+   - Flatten the control logic to minimize multiplexer depth
+
+2. **Power Efficiency**:
+   - Gate shift computations with 'ena' signal to prevent unnecessary switching
+   - Compute only the required shift operation based on 'amount'
+   - Maintain clean priority structure (load > ena > hold)
+
+3. **Area Optimization**:
+   - Share sign extension logic between 1-bit and 8-bit right shifts
+   - Use compact Verilog operators for left shifts
+   - Eliminate redundant calculations by computing shifts only when needed
+
+4. **Readability & Synthesis**:
+   - Keep continuous assignments for combinational logic
+   - Maintain clear priority handling
+   - Use direct shift operations for better synthesis results
+
+Key Improvements:
+- Gated shift computations to reduce power
+- Shared sign extension logic for right shifts
+- Flattened control structure with minimal mux levels
+- Direct shift operators for efficient implementation
+- Clear priority handling (load > ena > hold)

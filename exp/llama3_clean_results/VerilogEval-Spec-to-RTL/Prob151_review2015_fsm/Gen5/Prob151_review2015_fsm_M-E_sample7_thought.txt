@@ -1,0 +1,15 @@
+To address the issues in the original implementation and provide a new solution, I propose a novel architectural approach for the finite-state machine. The key idea is to use a more structured and modular design, separating the concerns of pattern detection, shifting, counting, and acknowledgment into distinct modules or states. This approach allows for a clearer and more maintainable implementation.
+
+The proposed architecture includes the following components:
+
+1. **Pattern Detector**: This module is responsible for detecting the pattern 1101 in the input data stream. It can be implemented using a simple shift register and comparator.
+
+2. **Shifter**: Once the pattern is detected, this module shifts in the next 4 bits from the input data stream. It can be implemented using a counter and a shift register.
+
+3. **Counter Controller**: This module controls the counting process based on the shifted-in value. It asserts the `counting` signal and waits for the `done_counting` signal from the counters.
+
+4. **Acknowledgment Handler**: After the counting is done, this module asserts the `done` signal and waits for the `ack` signal from the user.
+
+By modularizing the design into these components, we can ensure that each part of the finite-state machine is correctly implemented and easier to test and debug.
+
+Additionally, to optimize for PPA (Power, Performance, and Area), we will use efficient coding practices such as minimizing unnecessary signal assignments, using one-hot encoding for states where applicable, and ensuring that the clocking scheme is optimized for performance.

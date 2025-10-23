@@ -1,0 +1,7 @@
+To correctly implement the frequency divider that divides the input clock frequency by an odd number, we need to revisit the logic for generating the divided clock output. The key concept is to utilize two counters, cnt1 and cnt2, to track the rising and falling edges of the clock, and two separate clock dividers, clk_div1 and clk_div2, for positive and negative edges of the clock, respectively. 
+
+We will initialize the counters and the clock divider outputs with the active low reset signal rst_n. The counters will count up to NUM_DIV - 1. The clock dividers, clk_div1 and clk_div2, will be toggled when the counters reach half of NUM_DIV.
+
+The final divided clock output, clk_div, will be derived by logically OR-ing clk_div1 and clk_div2 to account for both clock edges. This approach ensures that the input clock frequency is correctly divided by the odd divisor value defined by the parameter NUM_DIV.
+
+To implement this, we will use four reg variables: cnt1 and cnt2 for the counters, and clk_div1 and clk_div2 for the clock dividers. Two always blocks will be used to update the counters and the clock dividers based on the input clock and the reset signal. The divided clock output will then be assigned to the output port by logically OR-ing clk_div1 and clk_div2.

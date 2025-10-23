@@ -1,0 +1,40 @@
+The function outputs logic-1 for decimal inputs 2 (0010), 7 (0111), and 15 (1111) where inputs are (a,b,c,d) with a as MSB and d as LSB.
+
+To simplify:
+
+- Express the function as a sum of minterms for out_sop, which is minimal and clear for only three minterms.
+
+- For out_pos (product of sums), take the complement of out_sop and factor it to get minimal product-of-sums expression.
+
+Using Karnaugh Map or boolean simplification:
+
+Minterms:
+- 2:  0 0 1 0 => ~a & ~b & c & ~d
+- 7:  0 1 1 1 => ~a &  b & c &  d
+- 15: 1 1 1 1 =>  a &  b & c &  d
+
+Sum: M2 + M7 + M15
+
+Complement is zero at these minterms; so maxterms cover rest.
+
+From minimal POS after simplification:
+
+out_pos = c & (b + a) & (b + ~a)  // minimal product-of-sums form.
+
+This POS is smaller and easier to implement than the previous 3 maxterms product.
+
+Verify logic:
+
+- For inputs 2,7,15, out_pos=1
+
+- For inputs where output=0, out_pos=0
+
+This matches function.
+
+Therefore:
+
+- Use direct SOP with minterms for out_sop.
+
+- Use minimal POS: c & (b + a) & (b + ~a) for out_pos.
+
+This reduces complexity and maintains correctness.

@@ -1,0 +1,13 @@
+Novel Architectural Idea:
+1. Instead of using a conventional saturating counter with explicit state transitions, implement a bit-serial approach where each bit is updated independently
+2. Use two separate 1-bit counters (MSB and LSB) that can be toggled based on the training inputs
+3. The MSB and LSB counters will have their own update logic, allowing for potential power savings when only one bit needs to change
+4. Implement a "carry" mechanism between the bits to maintain proper counting behavior
+5. Use XOR-based toggling for bit updates which can be more area-efficient than multiplexers
+6. The reset state (01) is achieved by setting MSB=0 and LSB=1
+
+Key Advantages:
+- Potential area savings from simpler bit-level operations
+- Power savings when only one bit needs toggling
+- More granular control over counter behavior
+- Novel approach that differs from standard implementations

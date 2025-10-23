@@ -1,0 +1,9 @@
+To improve PPA over the initial one-hot FSM design, I will:
+
+- Use a 2-bit binary encoded FSM instead of one-hot to reduce area.
+- Implement a simple shift register for the 3-byte message to reduce complex selective assignments and routing in out_bytes.
+- Generate done as a one-cycle pulse right after the third byte is received.
+- Use synchronous reset as specified.
+- Ensure out_bytes is updated only when bytes are valid, minimizing toggling.
+- Keep the FSM and datapath logic simple and sequential, improving timing.
+- This reduces flip-flop count, mux complexity, and switching activity while maintaining correctness.

@@ -1,0 +1,10 @@
+Refactor the fixed-point adder to use an always_comb procedural block with internal signed registers for intermediate computation. This improves readability by explicitly storing intermediate signed values and the final result in registers, as requested.
+
+Key changes:
+- Use internal signed reg types (`a_s`, `b_s`, `a_abs`, `b_abs`, `res`).
+- Perform signed arithmetic inside an always_comb block to clearly separate combinational logic.
+- Maintain parameterization and fixed-point interpretation with consistent bit widths.
+- Assign the internal result register `res` to the output port `c` at the end.
+- This structure satisfies the original problem's request for internal registers and matches the arithmetic semantics.
+
+This style balances clarity and synthesis friendliness while preserving the original functional intent.

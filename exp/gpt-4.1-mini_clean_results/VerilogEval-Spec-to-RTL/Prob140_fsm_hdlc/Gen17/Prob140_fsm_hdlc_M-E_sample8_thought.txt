@@ -1,0 +1,12 @@
+Use a one-hot encoding FSM with 8 states representing the count of consecutive ones from 0 to 7+. This makes next state and output logic simple and fast.  
+Keep synchronous reset that clears state to S0 (no consecutive ones).  
+Maintain only the FSM state register (one-hot) and a simple combinational output logic based solely on the current state and current input, eliminating the need for a prev_in register.  
+Detect the patterns as follows:
+- disc: occurs when the FSM was in state S5 (five consecutive ones), input is 0 → need to discard the zero stuffed after five ones.  
+- flag: occurs when FSM was in S6 (six consecutive ones), input is 0 → the flag byte 01111110 detected.  
+- err: active whenever FSM transitions into S7 (seven or more ones).  
+
+Outputs are generated one cycle late by registering combinational signals derived from the FSM state and current input.  
+Next state logic is implemented as a combinational if-else chain decoding the one-hot current state and input.  
+This approach simplifies output generation and benefits from the easy decoding of one-hot states.  
+Avoiding prev_in reduces state dependencies and may improve timing and power at the cost of slightly more flip-flops for one-hot encoding.

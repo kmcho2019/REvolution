@@ -1,0 +1,22 @@
+To fuse the best ideas from both examples and improve the design:
+
+- Strictly adhere to one-hot encoding as required, using two flip-flops, one for each state (A and B). This matches the problem specification exactly and keeps output and state decoding very simple.
+- Use combinational assignments for next state logic outside always blocks to enhance clarity and optimization, as shown in both examples.
+- Implement asynchronous active-high reset correctly, resetting to state A.
+- Simplify next state logic for better readability and minimal logic, specifically:
+  - next_A = state_A & ~x
+  - next_B = state_B | (state_A & x)
+- For output z, instead of a conditional expression, directly implement the Mealy output as a simple Boolean expression derived from the states and input x. 
+  The Mealy output is:
+    z = (state_A & x) | (state_B & ~x)
+  This explicitly combines both states with input conditions, possibly synthesizing to fewer gates than a ternary operator, potentially enhancing timing and power.
+- Retain all other good structural choices, including asynchronous reset and clean combinational logic separation.
+
+This fusion yields:
+- Correct one-hot state encoding.
+- Clean and efficient combinational logic.
+- Possibly simpler and more explicit output logic.
+- Proper asynchronous reset.
+- Clear code style for maintainability and synthesis friendliness.
+
+Overall, the design meets all specs and optimizes output logic further compared to example 2.

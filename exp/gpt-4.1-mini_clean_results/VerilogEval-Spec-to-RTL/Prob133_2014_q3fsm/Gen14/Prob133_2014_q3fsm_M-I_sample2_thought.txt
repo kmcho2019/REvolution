@@ -1,0 +1,7 @@
+Optimize the FSM by splitting the 4-bit packed register into separate cycle counter and w accumulator registers to simplify combinational logic and enable finer clock enables, reducing toggling and power.
+
+Use an explicit clock enable signal for the counters, active only in state B, so registers only toggle when needed. Increment cycle counter and add w in separate simple increments instead of combined 4-bit arithmetic, reducing logic complexity and potentially improving timing.
+
+Maintain synchronous reset and output z update with one-cycle delay after counting 3 cycles. Keep minimal two states (A, B) and clean next-state logic.
+
+This separation and clock enable gating reduce switching in state A, simplify arithmetic, and may improve area and timing by having smaller, simpler adders and less combinational fanout, with minor code complexity increase but better PPA.

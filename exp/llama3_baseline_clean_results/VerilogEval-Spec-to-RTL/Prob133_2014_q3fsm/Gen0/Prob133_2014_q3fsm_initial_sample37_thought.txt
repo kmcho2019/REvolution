@@ -1,0 +1,13 @@
+To implement the finite state machine (FSM) described, we can use a minimal number of states by carefully designing the state transitions and the logic for output z. The FSM starts in state A and moves to state B when s = 1. Once in state B, we need to count the number of clock cycles where w = 1 over a 3-cycle window. We can achieve this by using a counter that counts the number of times w is high in a 3-clock cycle window. If the count is exactly 2 at the end of the 3rd cycle, we set z to 1; otherwise, z is 0. This requires a counter and some logic to control the state transitions and output z based on the counter's value. Since we need to remember the state (A or B) and the count of w = 1 over 3 cycles, we can use two states (A and B) and a counter.
+
+State A: Wait for s = 1 to move to state B.
+State B: Count w = 1 over 3 clock cycles. If count is 2 after 3 cycles, set z = 1 in the next cycle.
+
+We use a 2-bit counter to keep track of the number of w = 1 occurrences over the 3-clock cycle window. The counter resets every 3 cycles.
+
+The FSM's operation can be summarized as follows:
+1. Start in state A.
+2. Stay in A until s = 1, then move to B.
+3. In state B, count the occurrences of w = 1 over 3 cycles using a 2-bit counter.
+4. After 3 cycles, check the counter value. If it's 2 (indicating two w = 1 occurrences), set z = 1 in the next cycle. Otherwise, set z = 0.
+5. Repeat step 3 and 4 continuously while in state B.

@@ -1,0 +1,7 @@
+Simplify the FSM by encoding the mode and direction in a single 3-bit state register where two bits encode mode (walk, dig, fall, splat) and one bit encodes direction (0=left, 1=right). This unifies state and direction update logic.
+
+Use a single synchronous reset for clarity (still asynchronous asserted). Increment fall timer only in fall mode, reset it elsewhere. Combine direction updates on bump signals into one simple conditional. Prioritize conditions fall > dig > bump within the walking mode.
+
+Make outputs depend only on the mode bits, ignoring direction except for walk outputs.
+
+This reduces the number of separate registers and simplifies next-state logic, while maintaining the same functionality.

@@ -1,0 +1,9 @@
+Refactor the implementation by separating the state register and combinational logic explicitly at the TopModule level, avoiding internal state storage inside the Rule90Block64 module. Use purely combinational modules to compute the next state for each 64-bit block based on current states and neighbors, then update a single 512-bit register at the top. This approach provides a flat architecture where the entire 512-bit state is stored in one register at the TopModule level and next states are computed combinationally from it. This reduces the number of registers (one centralized state register) and can improve clarity by decoupling state storage and next-state logic. It also leverages assign statements for next state computations, removing always blocks from the smaller block modules. Boundaries are handled similarly with zero padding. The load signal directly loads the input data into the state register. This explicit separation clarifies data flow and timing.
+
+This structure:
+- Uses a single 512-bit register q_reg at TopModule for state storage.
+- Computes next state combinationally using 8 instances of Rule90Block64Next combinational modules.
+- The combinational modules take a 64-bit slice of q_reg plus neighbor bits from adjacent blocks, then output next 64-bit next state slice.
+- On clock posedge, q_reg updates with either load data or next state.
+- Output q is driven by q_reg.
+- This allows clearer pipelining and easier logic simulation.

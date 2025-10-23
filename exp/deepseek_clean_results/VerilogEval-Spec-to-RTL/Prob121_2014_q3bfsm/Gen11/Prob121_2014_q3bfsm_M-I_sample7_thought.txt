@@ -1,0 +1,22 @@
+To optimize the FSM implementation for better PPA (Power, Performance, Area) metrics, I'll implement the following improvements:
+
+1. **State Encoding Optimization**:
+   - Use one-hot encoding (5 bits for 5 states) instead of binary encoding to potentially improve timing by reducing state decoding logic complexity
+   - This trades slightly more area for potentially better performance
+
+2. **Output Logic Optimization**:
+   - Replace the combinational output logic with registered output to potentially improve timing
+   - This adds one cycle of latency but can help meet tighter timing constraints
+
+3. **Power Optimization**:
+   - Add clock gating enable logic to reduce dynamic power when the state isn't changing
+   - This adds minimal area overhead while reducing switching activity
+
+4. **Synthesis-Friendly Coding**:
+   - Use explicit parameter definitions for states to make the code more maintainable
+   - Use casez for one-hot decoding which is more synthesis-friendly
+
+The trade-offs are:
+- Slightly increased area for one-hot encoding
+- One cycle latency for registered output
+- Minimal additional logic for clock gating

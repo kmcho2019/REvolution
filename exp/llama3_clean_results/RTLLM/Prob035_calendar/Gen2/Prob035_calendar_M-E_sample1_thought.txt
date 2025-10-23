@@ -1,0 +1,7 @@
+To develop a novel architectural solution for the perpetual calendar module, we can leverage a finite state machine (FSM) approach. The idea is to encode the seconds, minutes, and hours into a single state variable and use a transition table to manage the progression of time. This approach can potentially reduce the complexity of the combinational logic and minimize the area usage.
+
+The FSM will have a total of 86,400 states (60 seconds * 60 minutes * 24 hours), but we can encode these states efficiently using a smaller number of bits. We will use a 17-bit state variable to represent the current time, where the lower 6 bits represent the seconds, the next 6 bits represent the minutes, and the upper 5 bits represent the hours.
+
+The transition table will be implemented using a single always block that updates the state variable based on the current state and the clock signal. We will use a simple counter-like mechanism to increment the seconds, minutes, and hours, and wrap around to zero when the maximum value is reached.
+
+This approach has the potential to reduce power consumption by minimizing the switching activity and reducing the complexity of the combinational logic. Additionally, the use of a single state variable and a simple transition table can lead to a more area-efficient implementation.

@@ -1,0 +1,12 @@
+This design fuses the clarity and small logic footprint of a direct case-based multiplexer (Example 1) with the compact indexing concept from the concatenated vector approach (Example 2), but optimized for simplicity, area, and power. We implement a combinational multiplexer that uses the input c to select among b, e, a, d, or a constant 4'hF without multiplication. To minimize area and power, we replace the multiplication with an explicit shift operator for indexing within a concatenated 20-bit vector, just as Example 2 did, but explicitly using shifts to guide synthesis tools efficiently.
+
+Unlike Example 2, we add a clamp to ensure c is within 0..4 for indexing, avoiding out-of-bound selections and unnecessary logic. Unlike Example 1, we avoid an always block and use a continuous assignment, enabling simpler hardware and potentially better synthesis results.
+
+This fusion produces:
+- Readable code that clearly shows c-based selection logic.
+- No always block, hence less complexity and possibly smaller area.
+- Simple use of shift instead of multiplication for the dynamic bit slice.
+- The constant output 4'hF for c ≥ 4 directly implemented via index clamping.
+- Minimal switching on inputs by using a compact concatenation and mux.
+
+Overall, this design balances PPA tradeoffs by combining the multiplexer clarity of Example 1 with the compact vector indexing and shift operator efficiency of Example 2.

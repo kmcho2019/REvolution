@@ -1,0 +1,53 @@
+module TopModule(
+    input clk,
+    input in,
+    input reset,
+    output reg [7:0] out_byte,
+    output reg done
+);
+
+reg [2:0] state;
+reg [2:0] bit_pos;
+
+always @(posedge clk or posedge reset) begin
+    if (reset) begin
+        state <= 0; // IDLE
+        bit_pos <= 0;
+        done <= 0;
+        out_byte <= 8'b0;
+    end
+    else begin
+        case(state)
+            0: begin // IDLE
+                if (!in) begin
+                    state <= 1; // START
+                end
+            end
+            1: begin // START
+                state <= 2; // DATA
+            end
+            2: begin // DATA
+                out_byte[bit_pos] <= in;
+                bit_pos <= bit_pos + 1;
+                if (bit_pos == 7) begin
+                    state <= 3; // STOP
+                end
+            end
+            3: begin // STOP
+                if (in) begin
+                    done <= 1;
+                    state <= 0; // IDLE
+                    bit_pos <= 0;
+                end
+                else begin
+                    // Wait for stop bit
+                end
+            end
+        endcase
+        if (state!= 3) begin
+            done <= 0;
+        end
+    end
+end
+
+endmodule

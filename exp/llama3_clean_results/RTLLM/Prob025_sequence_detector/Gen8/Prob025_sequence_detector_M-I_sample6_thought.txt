@@ -1,0 +1,9 @@
+To improve the sequence detector module, we should focus on enhancing its internal logic for sequence detection. The current implementation uses a shift register, which is a straightforward approach but may not be the most efficient for all scenarios. A finite state machine (FSM) can be a more optimal solution for detecting a specific sequence, especially when the sequence length is fixed. By defining states for each position in the sequence and transitioning between these states based on the input data, we can accurately detect the sequence with minimal hardware resources.
+
+Improvement Strategy:
+1. **Finite State Machine (FSM) Implementation**: Replace the shift register approach with an FSM that has states corresponding to each bit position in the desired sequence (1001). This includes an initial state (IDLE), three intermediate states (S1, S2, S3), and a final state (S4) that signals the detection of the sequence.
+2. **State Transition Logic**: Implement the logic for transitioning between states based on the input data. For example, from IDLE, if the input is '1', move to S1; from S1, if the input is '0', move to S2, and so on, until reaching S4 when the sequence is fully detected.
+3. **Sequence Detection Output**: Set the `sequence_detected` output high when the FSM reaches the final state (S4), indicating that the sequence has been detected.
+4. **Reset Handling**: Ensure that the FSM returns to the IDLE state upon reset, which allows the detector to start over.
+
+By adopting an FSM approach, the sequence detector becomes more scalable and efficient, especially for longer sequences or more complex detection rules. This method also facilitates easy modification if the target sequence needs to be changed.

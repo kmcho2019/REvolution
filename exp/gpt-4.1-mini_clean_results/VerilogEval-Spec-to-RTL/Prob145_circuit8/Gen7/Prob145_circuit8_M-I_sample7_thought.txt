@@ -1,0 +1,37 @@
+Analyzing the waveform and comments, the circuit behavior is more complex than a direct mapping of 'a' to 'p' on clock edges. The outputs 'p' and 'q' appear to form a state machine with memory of past inputs and clock edges:
+
+- At the rising edge of the clock, when 'a' is 1, 'p' is set to 1; if 'a' is 0, 'p' may remain set or reset depending on previous states.
+- The output 'q' updates on the falling edge of the clock, reflecting the prior state of 'p'.
+- There is also evidence that 'p' holds its state unless reset by conditions involving 'a' and clock.
+- On reset (initial), outputs are unknown (x), so no asynchronous reset is used.
+- The outputs suggest 'p' is a register that sets on rising edge when 'a' is high, resets when 'a' is low for some cycles, and 'q' is a delayed version of 'p' updated on the falling edge.
+
+Therefore, implement a dual-edge sequential circuit:
+
+- On rising edge: if 'a' = 1, set p=1; else p=0.
+- On falling edge: capture p into q.
+
+This is similar to the original example, but since that failed, we improve by initializing p and q on first rising edge, and carefully separating logic to avoid race conditions.
+
+A better approach is to store p in a register updated on the posedge of clock conditioned on 'a' as enable, and q updated on negedge of clock sampling p.
+
+To avoid metastability and improve design style, implement a single clock edge design with both outputs updated on posedge, using additional logic to replicate the behavior seen in the waveform.
+
+Alternatively, implement a two-stage flip-flop with a register clocked on posedge updating p from 'a', and another register clocked on negedge updating q from p, mimicking the waveform.
+
+Considering the requirement and waveform, the best match is:
+
+- p = p_next updated on rising clock edge as p_next = a ? 1 : 0;
+- q updated on falling clock edge as previous p.
+
+This was the initial approach but may fail due to simulation race conditions.
+
+To fix, add a small internal register for p_next so that q samples the previous stable p.
+
+Hence, implement:
+
+- Register p updated on rising edge based on input 'a'.
+- Register q updated on falling edge from registered p.
+- Initialize p and q to zero at start to avoid x states after simulation begins.
+
+This will cleanly match the waveform behavior and avoid race conditions.

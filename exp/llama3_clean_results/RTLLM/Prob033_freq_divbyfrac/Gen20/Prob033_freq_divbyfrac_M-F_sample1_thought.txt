@@ -1,0 +1,19 @@
+To correct the existing design and achieve the fractional frequency division of 3.5x, we need to fundamentally restructure the approach to generating the divided clock signal. The main idea is to alternate between two different clock periods for the divided clock: one that is 4 cycles long (long pulse) and another that is 3 cycles long (short pulse). This alternation will effectively divide the input clock frequency by 3.5.
+
+To implement this, we can use a state machine that cycles through the two states: the long pulse state and the short pulse state. The state machine will ensure that we correctly switch between these states to achieve the fractional division.
+
+Additionally, to achieve a smooth clock output, we should ensure that the transition from one state to another is handled correctly. This includes updating the divided clock signal (`clk_div`) based on whether we are currently in a long or short pulse state.
+
+The logic for generating the divided clock signal should consider the current state and the counter value within that state. This will allow us to correctly generate the long and short pulses that, when combined, give us a 3.5x division of the input clock frequency.
+
+In terms of phase-shifting, we can use a simpler approach by generating the phase-shifted version of the divided clock signal based on the state transitions. This will ensure that the output clock has a consistent duty cycle.
+
+To minimize the complexity and improve the PPA (Power, Performance, Area), we should aim to reduce the number of logic gates and flip-flops required for the implementation. This can be achieved by using efficient counter and state machine logic, and ensuring that the phase-shifting is implemented in a way that requires minimal additional hardware.
+
+The corrected design involves:
+1. Implementing a state machine to alternate between the long pulse and short pulse states.
+2. Using a counter within each state to determine when to assert or deassert the divided clock signal.
+3. Generating the phase-shifted divided clock signal based on the state transitions.
+4. Assigning the final divided clock output based on the state and the counter value.
+
+This approach ensures that the design accurately achieves the required fractional frequency division while minimizing complexity and optimizing for better PPA.

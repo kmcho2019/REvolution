@@ -1,0 +1,12 @@
+To simplify the serial byte receiver FSM while maintaining functionality:
+1. Remove the ERROR state - we can handle missing stop bits by staying in STOP state until we find one
+2. Combine state transition and data processing into a single always block for clarity
+3. Simplify bit counting by using a 3-bit counter that naturally overflows after 8 bits
+4. Eliminate the next_state register by directly assigning state transitions
+5. Make done signal purely combinational based on current state and input
+
+Key simplifications:
+- Reduced from 4 states to 3 (IDLE, RECEIVE, STOP)
+- Single always block for both state and data
+- Simpler stop bit handling without dedicated ERROR state
+- More straightforward bit counting

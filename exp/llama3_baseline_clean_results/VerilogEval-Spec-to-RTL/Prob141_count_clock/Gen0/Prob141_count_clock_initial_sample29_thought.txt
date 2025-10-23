@@ -1,0 +1,11 @@
+To implement the TopModule, we will design a set of counters for hours, minutes, and seconds, each with their respective enable conditions to handle the 12-hour clock logic. 
+
+1. The seconds counter (ss) will increment every time ena is high, and will reset to 0 when it reaches 60 (00 in BCD).
+2. The minutes counter (mm) will increment when ss rolls over from 59 to 00, and will reset to 0 when it reaches 60.
+3. The hours counter (hh) will increment when mm rolls over from 59 to 00, and will reset to 1 when it reaches 13 (since the clock is 12-hour format).
+
+We will also implement a pm indicator, which will toggle when the hours counter rolls over from 12 to 1.
+
+To handle the reset, we will add a synchronous reset condition to each counter, which will reset the counter to its initial state when the reset signal is high.
+
+We will use Verilog's always block to define the combinational and sequential logic, and we will use non-blocking assignments to update the counter values.

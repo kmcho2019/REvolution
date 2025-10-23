@@ -1,0 +1,9 @@
+The module only needs combinational logic for next-state signals and outputs based on the current one-hot encoded state and inputs. The next-state signals to output are B3_next, S_next, S1_next, Count_next, Wait_next. 
+
+We can directly derive each next-state output from the current state bits and inputs, combining conditions with OR, and we only need to output those specific next states.
+
+Intermediate states like S11, S110, B0, B1, B2 do not need dedicated outputs; they can be handled internally in the expressions.
+
+Outputs done, counting, shift_ena are asserted when in Wait, Count, and B0-B3 states respectively.
+
+This approach reduces intermediate signals and keeps the code clean and concise.

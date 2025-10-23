@@ -1,0 +1,11 @@
+To implement the Mealy FSM detection circuit, we need to design a finite state machine that can detect the input sequence '10011' and output '1' when the sequence is detected, while continuously checking for the sequence in the input stream. The FSM will have multiple states to track the progression of the input sequence. We will use a reset signal to initialize the FSM to its starting state.
+
+The states can be defined as follows:
+- S0: Initial state, waiting for the first '1'.
+- S1: First '1' detected, waiting for '0'.
+- S2: First '0' detected, waiting for second '0'.
+- S3: Second '0' detected, waiting for '1'.
+- S4: First '1' after '00' detected, waiting for final '1'.
+- S5: Final '1' detected, sequence '10011' matched.
+
+Transitions between these states will be based on the current state and the input value. The output 'MATCH' will be set to '1' when the FSM is in state S5, indicating the sequence has been detected.

@@ -1,0 +1,5 @@
+Since a D flip-flop inherently requires sequential logic, it cannot be correctly implemented using a pure combinational statement like `assign`. However, we can integrate the flip-flop functionality directly into the TopModule without a separate submodule, making the code more compact. Using an internal reg for q and assigning it to the output as a wire simplifies the design. This avoids a separate instantiation and demonstrates a different structural approach.
+
+Thus, the flip-flop is implemented with an always block inside TopModule, with q internally defined as a reg, but exposed as a wire output by continuous assignment. This refactoring keeps the behavior identical but changes the code organization and clarifies the role of the output signal as driven by a register.
+
+This approach keeps the interface unchanged, avoids any synthesis directives, uses standard nonblocking assignment, and keeps the design minimal while providing a different code structure from the original example.

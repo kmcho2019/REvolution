@@ -1,0 +1,9 @@
+Simplified approach using single counter with dual-edge triggering:
+1. Use a single 3-bit counter to count 7 clock cycles (0-6) for 3.5x division
+2. Generate two intermediate clocks:
+   - clk_a: Toggles every 3.5 input cycles (on counter values 0 and 3)
+   - clk_b: Phase-shifted version of clk_a (toggles on counter values 4 and 0)
+3. Combine these clocks using OR operation to create the final divided clock
+4. The counter increments on both clock edges for precise timing
+5. Reset initializes all signals to known states
+This approach eliminates separate counters and complex edge detection logic while maintaining the correct fractional division ratio.

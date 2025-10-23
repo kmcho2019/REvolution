@@ -1,0 +1,14 @@
+To implement a novel solution for the HDLC framing protocol, we can utilize a hierarchical finite state machine (FSM) with multiple levels of abstraction. The key idea is to design a two-level FSM: a high-level FSM that handles the overall state transitions and a low-level FSM that handles the specific sequences.
+
+We can define the high-level states as follows:
+
+- IDLE: The initial state where the FSM waits for the start of a sequence.
+- SEQUENCE: The state where the FSM is currently processing a sequence of ones.
+- FLAG: The state where the FSM has detected a flag sequence (01111110).
+- ERROR: The state where the FSM has detected an error sequence (7 or more consecutive ones).
+
+The low-level FSM can be implemented as a simple counter that tracks the number of consecutive ones. This counter can be used to determine when to transition between the high-level states.
+
+By using this hierarchical approach, we can simplify the logic and improve the readability of the code. Additionally, this approach allows for easy modification and extension of the FSM to handle more complex sequences.
+
+To improve the overall efficiency and accuracy of the solution, we should aim to minimize the number of states and transitions in the FSM, reducing the complexity of the logic and making it easier to understand and maintain.

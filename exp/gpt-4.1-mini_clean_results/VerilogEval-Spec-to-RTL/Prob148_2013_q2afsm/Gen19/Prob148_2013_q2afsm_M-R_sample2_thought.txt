@@ -1,0 +1,9 @@
+Refactor the FSM using binary state encoding with explicit state parameters rather than one-hot encoding. Use a parameterized state encoding for the four states: A, B, C, D as 2-bit states. Implement the next-state logic and outputs as combinational `always @(*)` blocks, and keep the state register in a synchronous always block with the active-low reset. Outputs `g` are assigned based on state inside an always block.
+
+This approach:
+- Reduces flip-flop count from 3 to 2 bits.
+- Uses a clean case statement for next-state logic.
+- Clearly separates combinational logic for next state and output.
+- Keeps synchronous reset and positive edge clock triggering.
+- Maintains priority scheme and output behavior identical to original.
+- Uses blocking assignments in combinational always blocks and non-blocking in sequential always block per best practices.

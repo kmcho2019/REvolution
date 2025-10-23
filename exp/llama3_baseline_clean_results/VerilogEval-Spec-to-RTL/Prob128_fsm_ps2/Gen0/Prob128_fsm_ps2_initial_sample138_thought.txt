@@ -1,0 +1,7 @@
+To implement the TopModule, we can design a finite state machine (FSM) with the following states:
+- IDLE: The initial state where the FSM waits for a byte with in[3]=1 to start a new message.
+- BYTE_1: The state after receiving the first byte of a message.
+- BYTE_2: The state after receiving the second byte of a message.
+- DONE: Not a state in the classical sense but rather a condition that is met when the FSM is in BYTE_2 and the next byte is received.
+
+The FSM will transition from IDLE to BYTE_1 when a byte with in[3]=1 is received. It will then transition from BYTE_1 to BYTE_2 after receiving the next byte, and from BYTE_2 to BYTE_1 after receiving the third byte of a message, signaling done in the same cycle.

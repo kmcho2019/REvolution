@@ -1,0 +1,13 @@
+Key improvements:
+1. Continuous pattern detection - Check for 1101 pattern in all states except when actively shifting or counting
+2. Precise shift control - Use a 3-bit counter to clearly track 4 shift cycles (0-3)
+3. Clear state transitions - Explicit conditions for each state transition
+4. Reset synchronization - Ensure all registers are properly initialized
+5. Output alignment - Outputs directly reflect current state with proper timing
+
+State Machine Behavior:
+- IDLE: Wait for 1101 pattern (continuously checking)
+- SHIFT: Enable shift for exactly 4 cycles (using clear counter)
+- COUNT: Wait for done_counting (from datapath)
+- DONE: Assert done until ack received
+- Return to IDLE only after ack

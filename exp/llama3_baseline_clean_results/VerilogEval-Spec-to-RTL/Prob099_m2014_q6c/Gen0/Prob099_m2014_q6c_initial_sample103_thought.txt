@@ -1,0 +1,17 @@
+To implement the state machine, we need to first understand the state transitions and then derive the logic equations for the next-state signals Y1 and Y3. Since we are using a one-hot encoding, each state is represented by a unique binary code. We can then use these codes to determine the next state based on the current state and input w.
+
+From the given state machine, we can see that:
+- State A (000001) transitions to state B (000010) when w = 0, and stays in state A when w = 1.
+- State B (000010) transitions to state C (000100) when w = 0, and transitions to state D (001000) when w = 1.
+- State C (000100) transitions to state E (010000) when w = 0, and transitions to state D (001000) when w = 1.
+- State D (001000) transitions to state F (100000) when w = 0, and transitions to state A (000001) when w = 1.
+- State E (010000) stays in state E when w = 0, and transitions to state D (001000) when w = 1.
+- State F (100000) transitions to state C (000100) when w = 0, and transitions to state D (001000) when w = 1.
+
+We are interested in the next-state signals Y1 and Y3, which correspond to y[1] and y[3] respectively. These signals are high when the next state is B (000010) and D (001000) respectively.
+
+By inspection, we can derive the logic equations for Y1 and Y3 as follows:
+- Y1 (next state B) is high when the current state is A (000001) and w = 0, or when the current state is F (100000) and w = 1.
+- Y3 (next state D) is high when the current state is B (000010) and w = 1, or when the current state is C (000100) and w = 1, or when the current state is E (010000) and w = 1, or when the current state is D (001000) and w = 0, or when the current state is F (100000) and w = 1.
+
+These logic equations can be implemented using Verilog.

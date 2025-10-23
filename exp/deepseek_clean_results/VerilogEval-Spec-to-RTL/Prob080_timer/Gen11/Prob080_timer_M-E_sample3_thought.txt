@@ -1,0 +1,12 @@
+Instead of using a conventional binary down-counter, we can implement a shift register-based approach that:
+1. Uses a 10-bit shift register to represent the count value
+2. Shifts right with a '1' fill to implement the countdown
+3. Detects terminal count when the LSB becomes '1' (after shifting)
+4. Loads data directly into the shift register when load=1
+5. Stops shifting when all bits are '1' (equivalent to zero in this encoding)
+
+Benefits:
+- Eliminates the need for a subtractor, using simple shift operations instead
+- Terminal count detection only requires checking the LSB
+- Maintains single DFF requirement (the shift register)
+- Naturally stops counting when "zero" is reached

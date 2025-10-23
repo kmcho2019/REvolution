@@ -1,0 +1,13 @@
+The main issue in the given solution is the incorrect declaration of `zero_detect` as a wire while it is assigned inside an always block, which is illegal in Verilog. Changing `zero_detect` to a reg fixes the code.
+
+For optimization, to improve performance, power, and area (PPA), the zero detection can be done outside the always block as a wire using a reduction OR operator, avoiding the need for a reg and extra logic inside the always block. This also simplifies the always block and ensures clearer combinational logic.
+
+Additional minor improvements:
+- Move zero detection outside the always block using `wire zero_detect = (mag_res == 0);` or equivalently `wire zero_detect = ~|mag_res;`.
+- Remove the redundant precomputed a_gt_b since a_ge_b and a_gt_b differ only by equality; the code only needs a_ge_b.
+- Use blocking assignments in always @* for cleaner synthesis.
+- Add comments for clarity.
+- Explicitly declare `c` as reg as it's assigned in always block.
+- Ensure consistent formatting.
+
+The resulting code remains fully parameterized, synthesizable, and optimized for better clarity and minimal logic with proper sign and zero handling.

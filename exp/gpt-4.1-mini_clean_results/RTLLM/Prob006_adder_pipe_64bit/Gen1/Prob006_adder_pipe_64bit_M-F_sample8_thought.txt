@@ -1,0 +1,9 @@
+To fix the integration issue, I will parameterize the module with `DATA_WIDTH` (64 bits) and `STG_WIDTH` (bits per pipeline stage, e.g., 8 bits). This matches the testbench expectations and improves reusability. I will derive the number of stages (`STAGES`) from these parameters. 
+
+I will also fix the concatenation of the output `result` by correctly ordering all sum segments from MSB to LSB along with the final carry out. The indexing in the previous code was incorrect (repeated index and wrong order).
+
+The pipeline registers for operands and enables will be arrays indexed by stage number. Carry propagation and sum calculation will be done stage-wise with registered carries.
+
+The enable signal `i_en` will be pipelined accordingly to generate the output enable `o_en`. The result is output in a pipelined manner, available when the last stage enable is asserted.
+
+This approach matches the testbench parameters, supports pipelining, and fixes functional errors, enabling proper simulation and synthesis.

@@ -1,0 +1,11 @@
+The original design correctly computes the next state for all 512 cells in parallel, but this parallelism creates a long combinational path and significant wiring, impacting timing and power.
+
+To optimize for better PPA, we can partition the 512 cells into smaller blocks (e.g., 64 blocks of 8 cells) and compute their next states in parallel but reduce the overall combinational logic depth by using pipeline registers. This introduces a one-cycle pipeline stage for the next state computation, improving timing (reducing critical path) at the cost of a single clock cycle delay in output update (generally acceptable in synchronous designs).
+
+Additionally, we replace the function with a small LUT implemented as a case statement to minimize combinational logic for each cell. This also helps synthesis tools optimize area and power better.
+
+For boundaries between blocks, since each block is small, we handle boundary cells' neighbor lookups carefully by passing the required neighbor bits between blocks via registers at pipeline stage boundary. This avoids large fanout of the entire 512-bit bus.
+
+We keep synchronous load logic unchanged.
+
+This pipelined approach balances combinational logic delay and area by segmenting the update logic while keeping fully parallel operation per clock cycle after initial pipeline latency. This will improve timing slack (WNS), reduce dynamic power by shortening critical path and switching windows, and slightly increase area due to added pipeline registers, but overall improves PPA tradeoff significantly.

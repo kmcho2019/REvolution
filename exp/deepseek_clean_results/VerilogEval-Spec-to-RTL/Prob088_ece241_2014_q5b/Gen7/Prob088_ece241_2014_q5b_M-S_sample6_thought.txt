@@ -1,0 +1,10 @@
+The FSM can be simplified by recognizing that:
+1. State B is absorbing (once entered, never left)
+2. Output z is simply x when in state A, and ~x when in state B
+3. We only need to track whether we're in state B (since state A is just !state_B)
+
+This allows us to:
+- Reduce the state representation to a single bit (state_B)
+- Simplify next state logic to just state_B | (state_A & x)
+- Simplify output logic to x ^ state_B (XOR operation)
+- Maintain same functionality with fewer gates and registers

@@ -1,0 +1,16 @@
+Corrected approach for odd frequency division:
+1. Follow the original specification precisely using two separate counters
+2. cnt1 counts positive edges, cnt2 counts negative edges
+3. Each counter counts up to NUM_DIV-1
+4. Generate clk_div1 from cnt1 (toggling at (NUM_DIV-1)/2)
+5. Generate clk_div2 from cnt2 (toggling at (NUM_DIV-1)/2)
+6. Combine both clocks using OR operation for final output
+7. Maintain proper reset behavior for all signals
+8. Ensure parameter validation for odd division factor
+
+Key corrections:
+- Reintroduce separate counters for pos/neg edges
+- Generate intermediate clock signals as specified
+- Properly combine clocks with OR operation
+- Clear counter reset and toggle conditions
+- Maintain 50% duty cycle through proper toggling

@@ -1,0 +1,9 @@
+To refactor the given code while maintaining its functionality, we can explore alternative structures that might offer improvements in terms of Power, Performance, and Area (PPA) metrics. One approach is to restructure the state machine using a different encoding or logic implementation that could potentially reduce switching activity, combinational logic complexity, or both.
+
+A key insight into refactoring this design is recognizing that the detector and z signals can be handled using a simpler combinational logic approach once the initial condition (i.e., the first '1' bit in the input sequence) is detected. This suggests that we might simplify the sequential logic and focus on optimizing the combinational logic for efficiency.
+
+One potential refactoring involves using an explicit state variable to track whether we've started seeing the input bits that require 2's complement inversion. This state can be used to simplify the logic for generating the z output, potentially reducing the area and power consumption by minimizing the complexity of the combinational logic.
+
+Another consideration is to ensure that the asynchronous reset is properly synchronized with the clock edge to avoid any potential timing issues or metastability. However, given the current implementation already accounts for this by using the `posedge` sensitivity list for both `clk` and `areset`, we can maintain this approach to ensure robustness.
+
+By focusing on these aspects, we can aim to improve the PPA metrics of the design without altering its fundamental functionality as a serial 2's complementer.

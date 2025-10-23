@@ -1,0 +1,14 @@
+The original solution is conceptually correct but can be optimized for better power and area efficiency while maintaining the same functionality. Here's the improved strategy:
+
+1. Replace one-hot encoding with a simple 2-bit counter (more area efficient)
+2. Use a counter to track cycles (0-3) instead of state bits
+3. Clear counter on reset and increment each cycle until reaching 3
+4. Generate shift_ena when counter value is less than 4
+5. This reduces flip-flop count from 4 to 2 while maintaining same behavior
+6. Simplified logic with direct comparison for shift_ena generation
+
+Benefits:
+- 50% reduction in state storage (2 bits vs 4)
+- Simpler comparison logic for shift_ena
+- Maintains exact same timing behavior (4 cycles after reset)
+- Lower power consumption due to reduced switching activity

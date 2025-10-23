@@ -1,0 +1,13 @@
+To optimize the PPA metrics, we should:
+1. Extract the minimal SOP (Sum of Products) form from the Karnaugh map to reduce logic complexity
+2. Implement the logic directly using minimized boolean expressions rather than hierarchical muxes
+3. Share common sub-expressions where possible to reduce area
+4. Structure the logic to minimize critical path delay
+
+The K-map shows:
+- out = ~a~b~c~d + ~a~b~cd + ~a~bcd + ~ab~c~d + ~abcd + a~b~c~d + a~b~cd + ab~cd + abc~d
+- After minimization: out = ~a~b + ~a~d + ~b~c + ~cd + b~c~d + a~b~c
+
+This can be further optimized by factoring common terms:
+- out = ~a(~b + ~d) + ~c(~b + d + ~d) + b~c~d + a~b~c
+- Final simplified form: out = ~a(~b + ~d) + ~c + b~c~d

@@ -1,0 +1,13 @@
+To improve the PPA metrics of the existing 32-bit Galois LFSR implementation, I will optimize the logic to reduce switching activity and area while maintaining the same functionality.
+
+Key changes:
+- Instead of XORing the entire 32-bit vector with the broadcasted feedback bit masked by TAP_MASK, I will update the shift register bitwise with only the tapped bits XORed with the feedback bit.
+- This reduces toggling to only the bits affected by taps, lowering dynamic power.
+- Use a wire for the feedback bit to cleanly separate combinational logic from sequential logic.
+- Unroll bit assignments inside the always block explicitly for clarity and improved synthesis optimization.
+- This approach avoids large 32-bit XOR operations and helps synthesis tools minimize the XOR network for the few tapped bits.
+- Maintain synchronous active-high reset and clock posedge triggering.
+- By updating each bit individually, only necessary XOR logic is instantiated, improving area and timing by reducing fanout of the feedback bit.
+- This approach is still fully synthesizable and matches the Galois LFSR behavior exactly.
+
+Overall, this method trades off some code compactness for better PPA by limiting switching and logic complexity, which is beneficial for high-performance or low-power applications.

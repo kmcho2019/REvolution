@@ -1,0 +1,13 @@
+Here's a novel approach using a hierarchical multiplexer structure that directly selects the rotated output based on the combined control signals, rather than using staged shifts. This implementation:
+
+1. Uses a single 8-to-1 multiplexer for each output bit, selecting from all possible rotated positions
+2. Pre-computes all possible rotation patterns (0-7 positions) in parallel
+3. Uses the 3-bit control signal to select the appropriate rotation amount
+4. Eliminates intermediate stages, providing a more direct implementation
+5. Offers better timing characteristics as all paths are equal length
+
+The key advantages are:
+- Single-cycle operation regardless of rotation amount
+- Clear relationship between control inputs and rotation amount
+- Easier to verify as each control value directly maps to a specific rotation
+- Symmetrical implementation for all bits

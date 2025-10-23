@@ -1,0 +1,17 @@
+Refactor the FSM with a one-hot style encoding and clearer separate registers for pattern detection and delay bit capture. Instead of reusing a single shift register for pattern detection and delay bits, use two distinct registers to avoid overwriting issues.
+
+Use a 4-bit shift register for detecting the 4-bit start pattern `1101`. When detected, move to the delay shift-in state.
+
+For delay input, use a separate 4-bit shift register to shift in exactly 4 bits MSB first.
+
+Once delay is captured, latch it to a delay register and start counting. Use a 12-bit cycle counter for counting 1000 cycles per tick and a 4-bit down counter for the delay ticks.
+
+In the counting state, the output `count` reflects the current remaining delay tick, and `counting` is asserted.
+
+When done counting, assert `done` and wait for `ack` to restart.
+
+Avoid using '4'bxxxx' which is non-synthesizable; assign `count` to zero or previous safe value during idle/done.
+
+Make sure to update all registers synchronously on the rising clock edge with synchronous reset.
+
+This restructuring improves clarity, timing, and state separation, reducing off-by-one errors and unintended signal overwrites.

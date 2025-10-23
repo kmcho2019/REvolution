@@ -1,0 +1,13 @@
+Novel Architecture Idea:
+1. Time-Sliced Priority: Implement a rotating priority scheme where the highest priority rotates among devices each cycle when in idle state (A). This provides fairness while maintaining priority when grants are active.
+2. Compact State Encoding: Use 2-bit state encoding with a separate grant tracking register to minimize flip-flop usage.
+3. Dynamic Priority: The priority encoder considers both the current requests and the rotating priority pointer.
+4. Output Optimization: Use combinational logic for outputs to minimize clock-to-q delay.
+5. Reset Handling: Maintain synchronous active-low reset into idle state.
+
+Advantages:
+- Fairness through rotating priority prevents starvation of lower priority devices
+- Reduced state encoding bits (2-bit + 1 grant tracker)
+- Efficient priority resolution with dynamic rotation
+- Minimal output logic delay
+- Lower power due to reduced state transitions

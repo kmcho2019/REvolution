@@ -1,0 +1,5 @@
+Refactor the design by removing the explicit clock enable signal and instead implement the synchronous reset and data load logic directly inside the negedge-triggered always block with a conditional ternary operator style assignment. This keeps the functionality but simplifies the control logic by integrating the reset and data load conditions into a single assignment, removing the need for an explicit ce signal.
+
+The idea is to preserve the synchronous reset to 0x34 and update q only on the negative edge of clk. The flip-flop updates q with RESET_VAL on reset, or d otherwise. To reduce toggling, the code won't use an explicit clock enable; however, this is a straightforward approach preferred for clarity and compactness.
+
+This refactoring provides equivalent functionality with a simpler always block structure and no extra combinational enable logic.

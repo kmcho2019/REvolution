@@ -1,0 +1,7 @@
+Implement an asynchronous FIFO with parameterizable WIDTH and DEPTH using Gray-coded pointers to handle synchronization between write and read clock domains. The FIFO consists of:
+1. A dual-port RAM submodule for data storage, with independent read and write ports.
+2. Write and read pointer controllers that increment pointers in binary and convert to Gray code.
+3. Synchronizers that transfer the write pointer to the read clock domain and the read pointer to the write clock domain using two-stage flip-flops.
+4. Full and empty flag logic based on comparisons of Gray-coded pointers, detecting wrap-around conditions.
+Pointers use Gray code, with pointer addresses mapped using the lower bits of the binary pointers to address the RAM. This approach avoids metastability issues in asynchronous domain crossings.
+The FIFO asserts 'wfull' when the FIFO is full, and 'rempty' when empty, and only writes or reads data when appropriate. The module uses separate resets and clocks for write and read sides.

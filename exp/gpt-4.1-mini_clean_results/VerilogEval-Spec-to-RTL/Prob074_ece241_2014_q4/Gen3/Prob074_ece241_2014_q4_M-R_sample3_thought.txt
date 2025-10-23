@@ -1,0 +1,11 @@
+Refactor the design by consolidating the flip-flop outputs into a single 3-bit state register rather than three separate 1-bit flip-flops. Use continuous assignments to define the next state combinationally from the current state and input `x`. The next state bits correspond to the outputs of the XOR, AND, and OR gates with the specified second inputs.
+
+Then, on the positive edge of `clk`, update the state register with the next state.
+
+Finally, define `z` as the NOR of all three bits of the current state, implemented by negating the bitwise OR of the state bits.
+
+This approach keeps the original logic and initial conditions conceptually the same but uses a more compact and clear state representation, and separates the combinational next-state logic from the sequential update clearly.
+
+We still use an `initial` block to set the initial state to zero for simulation, matching the original request. This style is easier to extend into a full FSM style and often clearer for synthesis tools.
+
+No external reset is added, keeping the interface unchanged.

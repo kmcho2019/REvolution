@@ -1,0 +1,13 @@
+The original code correctly identifies the minimal sum-of-products (SOP) expression for the output being high on inputs 2, 7, and 15. However, the minimal product-of-sums (POS) expression for the output being high on the complementary inputs (0,1,4,5,6,9,10,13,14) was incorrectly derived, leading to mismatches.
+
+To refactor and improve clarity and correctness:
+
+1. Use a 4-bit vector formed from the inputs as a number for clarity.
+2. Implement the SOP expression directly as a combination of equality checks or bits, matching the minimal terms.
+3. Derive the POS expression as the complement of the SOP, then minimize it logically.
+4. Express both outputs purely with `assign` statements for combinational clarity.
+5. Present the minimal POS expression carefully, ensuring the logic covers the correct zero minterms.
+
+By expressing out_sop as the OR of the three minterms directly and defining out_pos as the complement of out_sop using a minimized POS from zeros explicitly, we ensure correctness. This structure also enhances readability and avoids confusion over bit orders or partial overlaps.
+
+The refactored module uses direct bitwise assignments and clearer intermediate wires for improved maintainability.

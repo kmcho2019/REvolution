@@ -1,0 +1,27 @@
+A novel approach is to implement the function f using a priority encoder style logic. From the truth table, f is '1' under these conditions:
+
+- x2=1 and x1=0 or 1, except when x3=1 & x2=1 & x1=0 (which is 0),
+- or x1=1 and either x3=1 or x2=0 or 1 (varies).
+
+Instead of direct expression, we can use a small 3-to-1 multiplexer with select signals derived from inputs to cover mutually exclusive minterms:
+
+- Let the select signal be a 2-bit vector made from {x3, x2}.
+- For each 2-bit select value:
+  - 00: output is 0 (from the truth table when x3=0, x2=0)
+  - 01: output is x1 (when x3=0, x2=1)
+  - 10: output is x1 (when x3=1, x2=0)
+  - 11: output is x1 (when x3=1, x2=1)
+
+This way, f depends on x1 for select codes except for 00 where f=0. The logic reduces to:
+
+If (x3, x2) == 00 => f=0 else f = x1
+
+We can implement this using a 4-to-1 mux with inputs assigned as above or as a combination of logic gates:
+
+f = (x3 | x2) & x1
+
+This is minimal and matches the table perfectly.
+
+Hence, the TopModule will implement f = (x3 OR x2) AND x1 using gate-level instantiations, highlighting the efficient and minimal gate usage contrasting with previous solutions.
+
+This design reduces logic depth, area, and power while maintaining clarity and correctness.

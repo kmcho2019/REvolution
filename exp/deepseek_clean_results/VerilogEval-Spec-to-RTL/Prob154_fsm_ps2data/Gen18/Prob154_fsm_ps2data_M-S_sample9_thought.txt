@@ -1,0 +1,12 @@
+Simplified Design Approach:
+1. State Machine: Use a simple 2-bit counter to track byte positions (0=waiting, 1=first byte, 2=second byte)
+2. Data Capture: Store incoming bytes in a shift register format, shifting left by 8 bits each time a new byte is captured
+3. Output Control: Only update output registers when all 3 bytes are received (state=2)
+4. Reset: Synchronous reset clears all registers
+5. Power Optimization: Only update registers when actually capturing data (not in idle state)
+
+Key Simplifications:
+- Eliminated separate state names in favor of simple counter
+- Combined byte storage into a single shift operation
+- Reduced register updates by only writing during valid captures
+- Simplified output assignment to single operation

@@ -1,0 +1,9 @@
+I'll refactor the code by implementing the state machine using purely combinational logic with a single `assign` statement for both the state transition and output logic. This approach:
+
+1. Eliminates the explicit state register by using the output itself as the state representation
+2. Uses a combinational feedback loop where the output is both the current state and the Moore output
+3. Maintains the same behavior but with a more compact implementation
+4. Still respects synchronous reset by using the clock edge to update the state
+5. Reduces the number of signals and registers while keeping the same functionality
+
+The key insight is that since the output directly represents the state (1 for B, 0 for A), we can use it as both the state storage and output. The next state logic remains the same but operates on the output signal directly.

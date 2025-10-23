@@ -1,0 +1,9 @@
+The provided simulation waveforms indicate that the circuit is a sequential circuit, with outputs p and q depending on the current state and inputs. 
+
+When the clock signal is low (0), the outputs p and q are either both 0 or both 1. When the clock signal is high (1), output p follows the input a, and output q seems to be a delayed version of p.
+
+However, there are some cases where the outputs do not follow this simple relationship. For example, at 115ns, 120ns, 125ns, 130ns, 135ns, and 140ns, output p is 1, but output q is also 1, regardless of the input a. 
+
+A closer look reveals that when the clock is high and the input a is 1, output p is 1. When the clock is low, output p is 0. Output q is 1 when the clock is low and was previously high with input a being 1. 
+
+Therefore, the circuit can be implemented using two D flip-flops. The first flip-flop (for output p) will be clocked by the clock signal and have the input a as its D input. The second flip-flop (for output q) will also be clocked by the clock signal but will have the output of the first flip-flop as its D input.

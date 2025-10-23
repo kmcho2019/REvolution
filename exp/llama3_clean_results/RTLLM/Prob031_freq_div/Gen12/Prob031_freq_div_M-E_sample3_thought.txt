@@ -1,0 +1,7 @@
+A novel architectural idea for the frequency divider is to utilize a single, large counter that can be divided into separate sections, each responsible for generating a specific output clock frequency. This approach eliminates the need for multiple counters and separate always blocks, simplifying the design and reducing area consumption.
+
+The counter will have a length that allows it to divide the input clock frequency by the desired factors (2, 10, and 100). We can use a 7-bit counter (2^7 = 128), as it can divide the input clock frequency by 2, 10 (approximately, by dividing by 8 and then adding an additional 2/8 factor), and 100 (approximately, by dividing by 64 and then adding an additional 36/64 factor).
+
+By using a single counter, we can generate all three output clock frequencies in a single always block, reducing the complexity and area consumption of the design. The output clock signals will be generated based on the current value of the counter, with each signal being toggled at the corresponding divide factor.
+
+This approach provides a more efficient and scalable solution, as it reduces the number of combinational logic levels and utilizes a single counter to generate all output clock frequencies.

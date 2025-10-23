@@ -1,0 +1,14 @@
+Novel Architecture: Hierarchical Counter with Pre-computed Rollover
+1. Instead of cascaded rollover conditions, use a hierarchical counter structure where each stage is conditionally enabled
+2. Pre-compute all rollover conditions in combinational logic before the sequential block
+3. Implement a unified state update mechanism using a single always block
+4. Use explicit enable signals for each counter stage (sec_en, min_en, hour_en)
+5. Optimize bit widths: 6 bits for sec/min (0-59), 5 bits for hours (0-23)
+6. Zero-extension handled at output port declaration
+
+Key Advantages:
+- Eliminates timing dependencies between rollover conditions
+- Clear separation of combinational and sequential logic
+- Enables better synthesis optimization through explicit enable signals
+- More scalable for future extensions (like day/month counters)
+- Reduced glitching power due to pre-computed enables

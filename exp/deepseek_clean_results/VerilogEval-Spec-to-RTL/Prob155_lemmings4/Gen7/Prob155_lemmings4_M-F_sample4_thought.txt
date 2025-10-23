@@ -1,0 +1,29 @@
+Revised Lemming State Machine Design:
+
+1. Strict Priority Enforcement:
+   - Fall condition (ground=0) checked first in all walking/digging states
+   - Dig condition only evaluated if ground=1
+   - Bump conditions only considered when neither falling nor digging
+
+2. Improved State Management:
+   - Single direction register updated only during walking state transitions
+   - Clear separation between walking/digging states and falling state
+   - Explicit handling of digging persistence until ground disappears
+
+3. Robust Fall Counter:
+   - Counter increments only when in FALL state and ground=0
+   - Proper splat condition when ground reappears after >20 cycles
+   - Counter reset when leaving FALL state
+
+4. Output Logic:
+   - Pure Moore outputs based only on current state
+   - All outputs zero in SPLAT state
+   - Correct aaah output during falling
+   - Proper digging output during digging states
+
+Key Fixes:
+- Correct priority ordering in state transitions
+- Single source of truth for direction tracking
+- Proper fall counter management
+- Explicit handling of all edge cases
+- Clear state transition conditions

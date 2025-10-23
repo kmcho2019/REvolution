@@ -1,0 +1,13 @@
+The current shift register implementation is already quite efficient, but we can make a few targeted improvements:
+
+1. **Output Registering**: Adding a registered output stage will improve timing by breaking the combinational path from input to output, potentially allowing higher clock frequencies.
+
+2. **State Encoding**: While the shift register approach is compact, a one-hot encoded FSM might offer better timing in some technologies since each state transition depends on fewer logic levels.
+
+3. **Reset Optimization**: The asynchronous reset is correctly implemented, but we can ensure all registers are properly initialized.
+
+The improved version will use a one-hot encoded FSM with 3 states (IDLE, GOT1, GOT10) and a registered output. This provides:
+- Clear state transitions that are easier to verify
+- Potentially better timing due to simpler next-state logic
+- Registered output for better timing closure
+- Maintains the Mealy behavior by checking current input for output generation

@@ -1,0 +1,15 @@
+Implement a clean FSM with four states: PATTERN_DETECT, LOAD_DELAY, COUNTING, and DONE.
+
+- PATTERN_DETECT: Shift in data bit every clock to detect pattern 1101; when matched, transition to LOAD_DELAY.
+- LOAD_DELAY: Shift in 4 delay bits MSB first. Use a 3-bit counter (0..3) to track bits shifted. When done, latch delay and transition to COUNTING.
+- COUNTING: Count (delay+1)*1000 cycles by using two counters:
+   - A 4-bit block counter counting down from (delay+1) to 0; each block represents 1000 cycles.
+   - A 10-bit cycle counter counting down from 999 to 0 for each block.
+- The output count shows the current remaining delay block (from delay down to 0) and holds it stable for 1000 cycles.
+- When counting finishes, move to DONE state.
+- DONE: Assert done output, wait for ack input to return to PATTERN_DETECT.
+- Synchronous reset initializes all registers and FSM to PATTERN_DETECT.
+- Update all registers in a single always block to avoid multiple drivers.
+- Use simple clean logic with no overlapping counters or duplicated logic.
+- When not counting, count output is zero (don't-care).
+- Pattern detector stops shifting once pattern detected until next reset.

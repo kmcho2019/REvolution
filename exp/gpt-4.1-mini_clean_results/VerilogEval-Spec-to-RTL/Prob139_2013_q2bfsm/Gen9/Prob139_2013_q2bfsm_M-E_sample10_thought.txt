@@ -1,0 +1,16 @@
+Implement the FSM using a Mealy-style approach with clearly separated combinational and sequential logic. Use a one-hot or binary encoding for states. Instead of shifting a register for x, store the previous two x inputs in registers and compare the triple x sequence each clock cycle. Similarly, use a small counter for the y timeout.
+
+Key features of this design:
+- A synchronous active-low reset resets the FSM and all counters.
+- Use a separate always block for state transition (combinational) and for state update (sequential).
+- Store previous two x inputs in registers to detect the pattern 1-0-1 on three successive clocks.
+- When resetn goes high, transition from A to B, pulse f=1 in B for one cycle.
+- From B move to C: monitor x input sequence by checking x_reg2,x_reg1,x.
+- Upon detecting 1-0-1 pattern, move to D, assert g=1.
+- In D, start a two-cycle timer waiting for y=1. If y=1 within 2 cycles, move to E and hold g=1 forever; else move to F and hold g=0 forever.
+- In states E and F, stay until reset.
+- Outputs depend on current state and y monitoring counter (Moore outputs).
+  
+This approach avoids timing mismatches between shift registers and combinational next state logic by explicitly storing previous x samples and comparing them in the combinational block, making the sequence detection immediate after receiving x input. The y timer and outputs are managed synchronously and clearly.
+
+Overall, this structure is clean, easy to verify, and should produce correct output timing.

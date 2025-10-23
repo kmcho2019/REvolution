@@ -1,0 +1,27 @@
+To fix the functional issues and achieve precise timing and correct output behavior without division or multiplication by 1000, the design should be changed to:
+
+1. Use two counters:
+   - A 10-bit cycle counter counting clock cycles from 0 to 999 to represent 1000 cycles per "tick".
+   - A 4-bit tick counter counting down the remaining ticks from delay_reg down to 0.
+
+2. The delay duration is `(delay + 1)` ticks of 1000 cycles each.
+
+3. Upon finishing counting 1000 cycles, decrement the tick counter by one.
+
+4. The `count` output reflects the current tick counter value, stable for each 1000-cycle interval.
+
+5. When the tick counter reaches zero and cycle counter finishes 999, the counting completes.
+
+6. Avoid complex arithmetic like division or multiplication by 1000, just simple increment and compare.
+
+7. Pattern detection and delay loading remain MSB-first shifting.
+
+8. During counting, no inputs affect the internal state (ignore data input).
+
+9. After counting finishes, assert `done` and wait for `ack` before returning to search state.
+
+This approach yields cycle-accurate timing, stable outputs per tick, and synthesizable logic.
+
+Also, properly initialize outputs and registers on reset, and keep synchronous reset.
+
+This design clearly matches the problem requirements and avoids the synthesis and simulation issues with division and multiplication by 1000.

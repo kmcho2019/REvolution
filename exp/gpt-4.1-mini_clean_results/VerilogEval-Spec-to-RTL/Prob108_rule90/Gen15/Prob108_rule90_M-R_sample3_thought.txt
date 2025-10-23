@@ -1,0 +1,17 @@
+Refactor the design by keeping the same modular block partitioning but replacing the registered output inside each block with a separate state register in the top module, and move the next state combinational logic out of the block module into the top module. 
+
+The Rule90Block64 becomes purely combinational logic that takes current q_in and boundary inputs and produces next_state_out. The state storage (register) is then moved to TopModule, which holds the entire 512-bit state register q_reg.
+
+On each clock cycle:
+- If load is asserted, load q_reg with data.
+- Else, update q_reg with the concatenation of all next_state blocks computed combinationally.
+
+This separation:
+- Simplifies the blocks to purely combinational function units.
+- Centralizes state update and registers in TopModule.
+- Allows better control of clock domain and load behavior.
+- Enables easier pipelining or hierarchical optimizations later.
+
+The boundary signals between blocks are also computed in TopModule by slicing q_reg appropriately. This approach uses assign statements for next_state calculation and one always block for state register update.
+
+All logic remains identical functionally but structure is more top-down, separating state storage and combinational neighbor logic explicitly.

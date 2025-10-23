@@ -1,0 +1,5 @@
+To fix the issues pointed out, we need to ensure the previous input state (`prev_in`) properly reflects the current input signal right after reset. Instead of setting `prev_in` to all zeros on reset—which might not match the actual input values and cause spurious or missed detections—we should initialize `prev_in` to the current input `in` synchronously during reset. This captures the real input state at the reset cycle and avoids false 1->0 detections in the following cycle.
+
+By doing this, the detection logic `out <= out | (prev_in & ~in);` will correctly identify only actual falling edges after reset. The synchronous reset remains active-high and clears the output latch. No other changes are required as input synchronization and edge detection are handled by sampling inputs on the clock edge.
+
+This approach aligns `prev_in` initialization with the real input, improving functional correctness and eliminating simulation mismatches.

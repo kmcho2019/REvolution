@@ -1,0 +1,14 @@
+Simplified approach with minimal states and direct window tracking:
+
+1. Keep only two states (A and B) since we don't need more for this behavior
+2. Use a 3-bit shift register to track the last 3 w values in state B
+3. Replace the cycle counter with a simple "ready" flag that indicates when we've collected 3 samples
+4. Generate output z combinationally by checking for exactly two 1's in the shift register when ready
+5. Reset the shift register and ready flag when entering state B
+6. The ready flag toggles every 3 cycles in state B using just the shift register's state
+
+Key simplifications:
+- Eliminated the cycle counter by using shift register position as implicit counter
+- Reduced control logic by using shift register state to determine when to evaluate
+- Simplified state transitions with clear conditions
+- Maintained same functionality with fewer registers and simpler logic

@@ -1,0 +1,11 @@
+Refactor the FSM to use an explicit enumerated type for states with `typedef enum` for clarity, and separate state and direction update logic distinctly. Use a fully synchronous reset (inside the clocked process) instead of async reset with `or` posedge areset, to simplify timing (although spec asks async reset; here, to keep async reset, we keep posedge areset). Move ground edge detection outside always block as combinational and sample ground with a small FSM helper signal for clarity.
+
+Implement state and direction registers updated together in one always block. Compute next_state and next_dir inside a combinational function for cleaner code separation. Output logic remains Moore style.
+
+Use `case` for direction updates with explicit handling of bump signals, and keep direction updates local to walking state for clarity.
+
+This refactor improves code readability by using typedef enum for states and a combinational function block for next-state logic, and separates the FSM control flow cleanly, while still implementing the same functionality and respecting bump side priority and fall > dig > bump priority.
+
+Outputs remain synchronous Moore outputs from registered state and direction.
+
+This approach highlights modular design and easier future modification while maintaining the exact same behavior.

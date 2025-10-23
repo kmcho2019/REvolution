@@ -1,0 +1,13 @@
+Here's a novel approach using a shift register to track the last three bytes received:
+1. Maintain a 3-byte shift register that stores incoming bytes
+2. When a new byte arrives, shift it into the register
+3. Continuously monitor the oldest byte in the register (byte[2][3])
+4. When byte[2][3] is 1, we know we have a complete 3-byte message in the register
+5. Assert 'done' in the cycle after detecting this condition
+6. Reset clears the shift register
+
+This approach:
+- Eliminates explicit state tracking
+- Uses physical storage to detect message boundaries
+- Naturally handles overlapping messages
+- Simplifies timing as we just need to check one bit position

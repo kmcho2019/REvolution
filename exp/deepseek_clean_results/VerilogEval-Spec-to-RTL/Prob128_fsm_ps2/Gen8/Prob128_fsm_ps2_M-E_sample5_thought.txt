@@ -1,0 +1,13 @@
+Novel Architecture Idea:
+1. Shift Register Approach: Instead of using a counter, maintain a 3-byte shift register to track the last 3 received bytes
+2. Parallel Boundary Check: Check all 3 possible message start positions in parallel each cycle
+3. Early Detection: Identify valid message boundaries as soon as they occur in the stream
+4. Efficient Validation: Use combinational logic to validate message patterns without explicit state tracking
+5. Reset Handling: Clear the shift register on reset and wait for new valid start byte
+
+Key Advantages:
+- Eliminates explicit state machine logic
+- Naturally handles overlapping message detection
+- Parallel checking reduces latency in boundary detection
+- Simple shift operation each cycle
+- Easily extensible to longer message patterns if needed

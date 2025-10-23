@@ -1,0 +1,5 @@
+To optimize PPA, simplify and reduce redundant logic in the next_state assignments. Specifically, next_state[2] currently has (S11 & d) | (S11 & ~d) which is always S11, so replace it directly with S11 to eliminate redundant logic and reduce switching. Also, next_state[3], [4], [5], [6] are intermediate states not directly output, so instead of assigning them as part of a 10-bit vector, define individual wires only when necessary to clarify logic and avoid unnecessary wide vectors. This reduces gate count and fanout. Keep the code structure clear for maintainability but improve area and power by simplifying conditions and removing redundant terms.
+
+Also, explicitly note that next_state[7] (B3_next) comes only from B2, so no inputs needed. The shift_ena output is from B0 to B3 and is kept as is.
+
+These small logic simplifications reduce gate count, switching activity, and improve timing slightly without altering functionality.

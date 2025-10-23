@@ -1,0 +1,15 @@
+Fusion Strategy:
+1. State Encoding: Use 2-bit encoding (from Example 1) for area efficiency while maintaining clear state transitions.
+2. Shift Register: Keep the efficient right-shift implementation (from both examples) for LSB-first reception.
+3. Done Signal: Use Example 2's approach of asserting done only in STOP state when valid, reducing unnecessary toggling.
+4. Error Handling: Adopt Example 1's simpler ERROR state that waits for stop bit without additional logic.
+5. Reset Logic: Combine both examples' synchronous reset approach for consistency.
+6. Bit Counting: Use Example 2's direct comparison (bit_count == 7) for clarity after counting up from 0.
+
+Optimizations:
+1. Combine state transition logic into single always block (reduces area)
+2. Use count-up approach for bit counting (simpler comparison)
+3. Minimize state transitions for power efficiency
+4. Only update shift register during RECEIVE state
+5. Clear done signal immediately after assertion
+6. Ensure out_byte is only updated on valid stop bit

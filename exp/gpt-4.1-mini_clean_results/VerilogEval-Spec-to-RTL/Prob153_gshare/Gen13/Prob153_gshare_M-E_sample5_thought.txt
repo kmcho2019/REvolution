@@ -1,0 +1,28 @@
+Implement a dual-history register scheme to precisely align prediction outputs with the corresponding GHR state used for indexing, ensuring output correctness and timing adherence:
+
+- Maintain two GHR registers:
+  1. `ghr_committed`: The committed global history reflecting the actual branch outcomes after training.
+  2. `ghr_predict`: The speculative global history reflecting prediction updates, used to update history on predictions before training feedback arrives.
+
+- On a prediction request (predict_valid):
+  - Compute the index using `predict_pc XOR ghr_predict`.
+  - Output the prediction taken decision based on the PHT entry at that index.
+  - Output the speculative history `ghr_predict` as `predict_history` because this is the exact state used for that prediction.
+  - Update `ghr_predict` to incorporate the predicted bit by shifting left and inserting the predicted bit at LSB (speculative update).
+
+- On a training request (train_valid):
+  - Update the PHT entry indexed by `train_pc XOR train_history` using saturating counters based on `train_taken`.
+  - If the branch was mispredicted (`train_mispredicted`), recover the speculative history `ghr_predict` to the committed history state after that branch (`train_history`).
+  - Also update the committed history register `ghr_committed` with the new outcome (shift in `train_taken`).
+  
+- At reset:
+  - Initialize all PHT counters to weakly not taken.
+  - Clear both `ghr_committed` and `ghr_predict` to zero.
+
+- The advantage of this approach is that the speculative history (`ghr_predict`) accurately tracks the prediction pipeline and can be corrected upon training feedback without corrupting the committed global history used as ground truth.
+
+- Predictions are combinational based on `ghr_predict` and `predict_pc`, requiring no input registering; outputs are stable and correspond exactly to the history used.
+
+- Training updates and misprediction recovery happen synchronously at the clock edge, correcting the speculative history.
+
+- This architecture cleanly separates speculative prediction state from committed ground truth, avoiding output mismatches and ensuring correct, consistent predictions and history reporting as per requirements.

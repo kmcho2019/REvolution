@@ -1,0 +1,31 @@
+module TopModule (
+    input  clk,
+    input  x,
+    output z
+);
+
+    reg q_xor, q_and, q_or;
+
+    // Initialize flip-flops to zero before simulation begins
+    initial begin
+        q_xor = 1'b0;
+        q_and = 1'b0;
+        q_or  = 1'b0;
+    end
+
+    // Combinational logic for D inputs
+    wire d_xor = x ^ q_xor;
+    wire d_and = x & (~q_and);
+    wire d_or  = x | (~q_or);
+
+    // Sequential logic: update flip-flops on positive clock edge
+    always @(posedge clk) begin
+        q_xor <= d_xor;
+        q_and <= d_and;
+        q_or  <= d_or;
+    end
+
+    // Output is NOR of the three flip-flop outputs
+    assign z = ~(q_xor | q_and | q_or);
+
+endmodule

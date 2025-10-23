@@ -1,0 +1,11 @@
+To address the existing issues and improve the design, a novel approach would be to utilize a counter-based design with a separate reset counter. This design will consist of two main components: a reset counter and a shift enable logic. The reset counter will count the number of clock cycles since the last reset and assert the shift enable signal for exactly 4 clock cycles after the reset. This approach ensures that the shift register is enabled for the required number of cycles without relying on a finite state machine.
+
+The reset counter will be reset to 0 when the reset signal is asserted and will increment on every positive edge of the clock signal. The shift enable signal will be asserted when the reset counter is greater than 0 and less than or equal to 4. This ensures that the shift register is enabled for exactly 4 clock cycles after the reset.
+
+To optimize the design for better performance, area, and power consumption, the following strategies can be employed:
+
+1.  Use a single `always_ff` block for updating the reset counter, reducing the complexity of the combinational logic.
+2.  Utilize a simple conditional statement to assert the shift enable signal, minimizing the area consumption.
+3.  Ensure that the reset counter is reset to 0 when the reset signal is asserted, preventing any potential issues with the counter's initial value.
+
+By implementing this novel approach, the design will accurately assert the shift enable signal for exactly 4 clock cycles after the reset signal is asserted, while also improving the module's performance, area, and power consumption.

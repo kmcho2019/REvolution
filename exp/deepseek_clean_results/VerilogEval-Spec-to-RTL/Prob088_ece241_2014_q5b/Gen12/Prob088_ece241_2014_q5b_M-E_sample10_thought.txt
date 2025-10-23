@@ -1,0 +1,14 @@
+Novel Architectural Idea:
+1. **State Encoding**: Instead of traditional one-hot encoding, use a "dual-edge" state representation where the state is represented by the last transition edge (0->1 or 1->0) of input x. This leverages the inherent behavior of the 2's complementer which toggles output at specific input transitions.
+
+2. **Transition Detection**: Implement edge detection on input x to trigger state changes. This makes the state machine more event-driven and closely tied to the actual input changes that matter for the functionality.
+
+3. **Output Generation**: The output z can be directly derived from the detected edges and current state, eliminating separate state variables. This reduces the sequential elements needed.
+
+4. **Reset Handling**: Maintain asynchronous reset to initialize the state machine to the starting condition (equivalent to state A).
+
+Key Advantages:
+- More efficient implementation by focusing on relevant input transitions
+- Reduced state representation (only need to track last significant transition)
+- Potential for lower power consumption due to reduced switching activity
+- Maintains correct Mealy machine behavior with output depending on current state and input

@@ -1,0 +1,9 @@
+The current implementation is already quite efficient for a 4-bit priority encoder, but we can make a few targeted improvements:
+
+1. Use an always_comb block instead of always @(*) for better synthesis intent clarity
+2. Simplify the case statement by directly using the input bits as the selector
+3. Remove the redundant default case since we initialize pos as 0
+4. Use localparam for position values to improve readability and maintainability
+5. The synthesis tool might optimize this slightly better with these changes
+
+These changes maintain the same functionality while potentially offering minor PPA improvements through clearer synthesis intent and slightly reduced logic complexity.

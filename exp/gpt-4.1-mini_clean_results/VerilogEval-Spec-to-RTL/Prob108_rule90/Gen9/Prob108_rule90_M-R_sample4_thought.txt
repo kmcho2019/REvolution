@@ -1,0 +1,5 @@
+Refactor by separating the combinational next state logic entirely from the sequential state update. Implement the next state logic as pure combinational `assign` statements in the TopModule, calculating the next state for all 512 bits at once using explicit neighbor references (zero at boundaries). The TopModule holds the 512-bit state register updated on the clock edge or loaded from input data. This flattens hierarchy, simplifies module count, and makes the neighbor logic transparent in one place.
+
+This approach reduces module instantiation overhead, potentially eases synthesis optimizations, and makes it easier to add clock enable or other control signals later. It also emphasizes a clean separation of combinational and sequential logic—`q` is a registered output, and `next_state` is purely combinational. The neighbor logic is expressed as vector slicing and bitwise XORs, with explicit zero padding on boundaries.
+
+This refactoring keeps the core Rule 90 logic intact while simplifying module structure and potentially improving clarity and routing by avoiding cross-module boundary signals.

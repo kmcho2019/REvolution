@@ -1,0 +1,9 @@
+Fuse the two example designs by consolidating the byte-enable logic into a single masked assignment that combines both bytes. This reduces conditional logic duplication and helps synthesis tools optimize mux and enable signals. Maintain synchronous active-low reset and positive-edge clock triggering for all flip-flops.
+
+Specifically, create a 16-bit mask from byteena that zeroes out bytes not enabled, then compute the next q as:
+- reset to 0 when resetn is low
+- else update only enabled bytes from d, preserving the others
+
+This approach keeps the design clean and idiomatic while potentially improving area by reducing conditional branches and power by minimizing toggling only to the enabled bits in a single assignment. Timing remains favorable due to simple mux inference and minimal combinational logic.
+
+Overall, this solution merges the clarity and modularity of byte enables in the first example with the slight area and power optimization from the single combined mask assignment strategy, improving maintainability and synthesis results.

@@ -1,0 +1,14 @@
+Simplification Strategy:
+1. Stack Pointer: Use a 3-bit pointer (0-4) to track both position and empty/full states in one variable
+2. Flag Generation: Derive EMPTY/FULL directly from pointer value (0=empty, 4=full)
+3. Memory Operations: Only update memory during valid writes, don't clear on reads
+4. Reset Logic: Simple reset to empty state (pointer=0)
+5. Operation Validation: Single always block with clear priority order (reset > enable > operations)
+6. Output: Register dataOut only during valid reads
+
+Key Improvements:
+1. Single pointer variable replaces SP + empty_state
+2. Simpler flag logic with direct pointer comparison
+3. Reduced control complexity with linear pointer
+4. Fewer registers overall
+5. Clearer state transitions

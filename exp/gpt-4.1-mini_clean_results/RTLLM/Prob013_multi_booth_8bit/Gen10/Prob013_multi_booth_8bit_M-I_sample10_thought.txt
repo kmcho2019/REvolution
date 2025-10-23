@@ -1,0 +1,23 @@
+The initial implementation is functional but does not implement Radix-4 Booth encoding as requested; it instead performs a bit-serial radix-2 multiplication.
+
+To properly implement an 8-bit Radix-4 Booth multiplier, the algorithm processes two bits of the multiplier plus one overlapping bit (3 bits) at each step, reducing iterations roughly to half (from 16 to 4 or 5 steps).
+
+Improvement strategy:
+1. Implement Radix-4 Booth recoding of the multiplier on-the-fly using a 3-bit window [multiplier bits (2*i+1), (2*i), (2*i-1)], with the least significant bit beyond the multiplier assumed zero.
+2. Perform 5 iterations (because 8 bits => ceil(8/2) = 4, plus possible extension to 5 due to encoding).
+3. Based on the 3-bit recoding, determine the multiplicand multiple to add to the partial product. The multiples can be: 0, ±1×multiplicand, ±2×multiplicand.
+4. Use signed 16-bit registers for product and multiplicand, ensuring sign extension of inputs.
+5. Use synchronous reset and clock.
+6. The counter will count from 0 to 4 (5 steps).
+7. The product register shifts right by 2 bits each step (or shifts left after addition depending on implementation) to account for the two bits processed per iteration.
+8. At the end of 5 cycles, output the product and assert ready.
+
+This approach reduces the number of cycles, provides a true Radix-4 implementation, and maintains synchronous design with a clear FSM.
+
+Note: To simplify hardware and code:
+- We'll concatenate multiplier with one zero bit at LSB to form a 9-bit multiplier register for easy recoding.
+- The partial product will be held in a signed 17-bit register (to hold overflow) during accumulation, finally truncated to 16 bits for output.
+- The multiplicand is sign-extended to 16 bits.
+- All additions are signed.
+
+This implementation optimizes performance by halving cycles, reduces power by fewer steps, and is algorithmically correct for Radix-4 Booth.

@@ -1,0 +1,15 @@
+1. The waveform shows that:
+   - p is high only when both clock and a are high
+   - q changes state when p is high and clock is low
+   - Both outputs reset to 0 when a goes high during low clock phase
+
+2. Key improvements needed:
+   - p should be a combinational AND of clock and a (not sequential)
+   - q should toggle only when p is high during low clock phase
+   - Need to detect when a goes high during low clock for reset
+
+3. Implementation strategy:
+   - Make p purely combinational (clock & a)
+   - Use clock low phase to sample p for q toggling
+   - Add reset condition when a rises during low clock
+   - Use non-blocking assignments for sequential elements

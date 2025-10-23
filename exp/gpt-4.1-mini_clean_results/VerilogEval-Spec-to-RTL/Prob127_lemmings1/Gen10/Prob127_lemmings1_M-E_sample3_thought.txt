@@ -1,0 +1,5 @@
+Implement the Lemmings FSM as a single always block with asynchronous positive-edge reset, combining state register update and output logic together. Use one-bit state with an enumerated parameter for clarity. Instead of a separate next_state combinational block, directly compute the next state within the clocked process using nonblocking assignments, based on bump inputs. This reduces the number of always blocks from two to one while keeping the design synchronous and the outputs registered (Moore outputs). 
+
+The outputs (walk_left and walk_right) are declared as reg and updated in the clocked block together with the state to fully model a Moore FSM where outputs depend only on current state. This style emphasizes output stability by registering outputs along with state and eliminates separate combinational output logic. The asynchronous positive-edge reset sets the initial state and outputs to walk_left.
+
+This approach trades some minimal increase in sequential logic (registered outputs) for a simpler code structure and a fully registered FSM, which can enhance output timing predictability and glitch immunity in some physical implementations.

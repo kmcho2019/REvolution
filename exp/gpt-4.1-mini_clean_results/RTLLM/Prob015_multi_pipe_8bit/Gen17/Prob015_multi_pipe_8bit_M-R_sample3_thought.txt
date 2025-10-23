@@ -1,0 +1,10 @@
+Refactor the design by implementing a three-stage pipeline explicitly for partial product accumulation rather than summing all partial products combinationally in one step.  
+Use registers to store intermediate sums at each pipeline stage, thereby splitting the long addition into smaller steps.  
+Also, propagate the enable signal through the pipeline stages synchronously and gate input registers with `mul_en_in`.  
+Use explicit stage registers for partial products and sums, reducing the combinational critical path and improving timing while maintaining the same input/output handshake protocol.  
+This approach keeps the input register stage, a two-stage pipeline for summation, and an output register stage for the final product.  
+All pipeline registers update on positive clock edge with asynchronous active-low reset.  
+Use continuous assignments for partial product generation and explicit always blocks for pipeline registers.  
+This increases pipeline depth slightly but shortens the combinational path per stage.  
+Enable signal is pipelined as a shift register to maintain synchronization and output validity.  
+Output multiplexer disables product when output enable is low.

@@ -1,0 +1,42 @@
+The original code computes all partial products, stores them in stage 1 registers, and then sums all four partial products combinationally in stage 2 before registering the final sum and output. This violates the requirement for a two-level register pipeline accumulating intermediate sums stepwise. The problem specifically wants two levels of registers that store intermediate sums and control the multiplication process, i.e., pipelined addition of partial products across cycles.
+
+Improvement strategy:
+
+- Use two pipeline stages of registers to accumulate partial sums:
+  - Stage 1 registers: store the partial products (as in original).
+  - Stage 2 registers: accumulate the partial sums one by one over multiple cycles.
+  
+- Since this is a 4-bit multiplier with 4 partial products, we can pipeline the addition of partial products across 2 cycles in stage 2 registers:
+  - On the first cycle of stage 2, add stage1_pp0 and stage1_pp1 and store the result in stage2_sum.
+  - On the next cycle, add stage2_sum and stage1_pp2, and store again.
+  - On the last cycle, add stage2_sum and stage1_pp3.
+  
+- Since the problem states "two levels of registers", and no explicit control signals for cycle-by-cycle operations, we will interpret it as:
+  - Stage 1 registers hold partial products (all 4).
+  - Stage 2 registers will accumulate partial sums over 3 clock cycles, outputting the final product after that.
+
+- We need a small FSM or counter to step through the partial sums accumulation over the three cycles after loading inputs.
+
+- Inputs are latched every cycle, so the multiplier can work continuously with latency 4 cycles (1 stage 1 + 3 cycles accumulation at stage 2).
+
+- Use a 2-bit counter to select which partial product to add in each stage 2 cycle:
+  - count 0: stage2_sum = stage1_pp0 + stage1_pp1
+  - count 1: stage2_sum = previous stage2_sum + stage1_pp2
+  - count 2: stage2_sum = previous stage2_sum + stage1_pp3
+  - count 3: output mul_out = stage2_sum (final product)
+
+- After count 3, go back to count 0 and process the next multiplication inputs.
+
+- Reset clears all registers.
+
+- This meets the "two levels of registers" requirement (stage 1 partial products, stage 2 accumulators) and pipelines the addition process properly.
+
+- For inputs extension, keep the same: pad multiplicand with 'size' zeros on MSB side.
+
+- The overall latency is 4 cycles, but multiplier throughput is one result per cycle after pipeline fill.
+
+- The design uses internal counter to control accumulation sequence. This is consistent with "control the multiplication process" in the problem description.
+
+- The output mul_out updates at the end of accumulation.
+
+This design fully matches the problem statement's pipeline and register usage requirements.

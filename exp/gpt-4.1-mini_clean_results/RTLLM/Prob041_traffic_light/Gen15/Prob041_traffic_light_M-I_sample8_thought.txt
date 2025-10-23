@@ -1,0 +1,12 @@
+To optimize the given design for better power, performance, and area (PPA), I focus on the following improvements while maintaining functionality and clarity:
+
+1. Reduce timer bit-width to 6 bits since the max timer value is 60 (fits in 6 bits), saving some register area and logic.
+2. Replace the ped_shortened flag with combinational logic by comparing timer with SHORT_GREEN and pass_request, removing one register.
+3. Use one-hot encoding for states (3 bits), which can simplify next-state logic and reduce combinational logic depth, improving timing on FPGA and some ASIC flows.
+4. Decrement timer only when timer>0 and when state is active (to reduce toggling).
+5. Encode the outputs combinationally from the state register, minimizing registers and glitches.
+6. Keep asynchronous reset and synchronous state/timer update for responsiveness and clean timing.
+
+These changes reduce register count (eliminating ped_shortened), simplify combinational logic, reduce width of counters, and possibly improve timing and power by less switching. The timer enable only active when timer>0 avoids toggling when timer is zero.
+
+Overall, this improves the PPA with minimal complexity increase.

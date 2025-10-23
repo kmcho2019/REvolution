@@ -1,0 +1,5 @@
+To refactor the existing code, we can consider using a different structure that still implements a 6-to-1 multiplexer but potentially improves the PPA metrics. One alternative is to use the `assign` statement along with a conditional operator to directly assign the output based on the select input. This approach eliminates the need for an `always` block and a `case` statement, potentially leading to better synthesis results in terms of area and performance.
+
+The core idea remains the same: when the select input `sel` is between 0 and 5, choose the corresponding data input; otherwise, output 0. However, by using a combination of conditional operators (`?:`), we can express this logic in a more compact form directly in an `assign` statement.
+
+This refactoring aims to improve readability and potentially leverage synthesis tool optimizations that might be more effective with a simpler, more direct assignment statement. Additionally, removing the `always` block and the `case` statement might slightly improve simulation speed and reduce the area, depending on the synthesis tool and target technology.

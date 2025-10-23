@@ -1,0 +1,7 @@
+I will implement the FSM using one-hot encoding with four states to simplify the state transitions and make the done pulse generation explicit and easy to control. The four states will be: IDLE (waiting for in[3]=1), BYTE1 (first byte accepted), BYTE2 (second byte accepted), and DONE (third byte accepted, pulse done asserted). 
+
+The bytes will be stored in three 8-bit registers, shifting the message bytes forward as each new byte arrives after synchronization. The DONE state will last exactly one clock cycle to pulse the done output and output the concatenated bytes in the required order (byte1 highest, byte3 lowest). 
+
+Using one-hot FSM increases flip-flop count slightly, but simplifies next-state logic and output logic, making the design very clear and potentially easier to time. The done signal is generated only in the DONE state, and the output out_bytes is registered only when done is asserted, reducing spurious toggling on out_bytes.
+
+The reset is synchronous active-high, clearing all registers and returning to IDLE. This design structure cleanly separates state register, next state logic, and outputs and uses non-blocking assignments for safe synthesis and simulation.

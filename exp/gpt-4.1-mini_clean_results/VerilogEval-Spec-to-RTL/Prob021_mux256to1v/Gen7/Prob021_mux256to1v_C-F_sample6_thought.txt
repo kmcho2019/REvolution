@@ -1,0 +1,13 @@
+Fuse the clarity, simplicity, and power/area efficiency of direct indexed slicing from Example 1's feedback with the hierarchical conceptual clarity from Example 2 by implementing a pure combinational solution using a single continuous assignment with a calculated bit offset.
+
+Avoid intermediate unpacking arrays or multiple always blocks to reduce power and area. Instead, directly compute the 4-bit slice from the 1024-bit input using `sel*4` as the offset, leveraging Verilog's indexed part-select for synthesizable, optimized hardware.
+
+This direct indexing minimizes logic depth, switching activity, and wiring overhead, improving performance and reducing power/area compared to both examples, while preserving perfect functional correctness.
+
+Thus, we:
+
+- Use no generate or always blocks.
+- Directly select the 4-bit slice from `in` based on `sel`.
+- Use a wire output driven by a continuous assignment.
+
+This solution is clean, minimal, and synthesis-friendly with the best PPA.

@@ -1,0 +1,9 @@
+Refactor by merging the two sequential always blocks into one, registering previous input and detected edges in the same clock cycle to reduce the number of always blocks and improve code compactness while maintaining functionality.
+
+Use a single always block triggered on the clock's rising edge to:
+- Update prev_in with the current input
+- Update pedge with the detected 0-to-1 transitions by comparing current input with prev_in
+
+Eliminate the separate combinational assign by embedding edge detection combinational logic inside the always block using nonblocking assignments and bitwise operations.
+
+This approach keeps the synchronous design style clean, reduces code fragmentation, and still delays the edge detection output by one cycle. It also avoids combinational outputs, maintaining timing predictability and synthesis friendliness.

@@ -1,0 +1,14 @@
+The original design cleanly implements the FSM logic using combinational always block and direct assignments for outputs. Given the small FSM with only 5 states (less than 8 possible 3-bit states), one optimization is to use a simple LUT (lookup table) approach with a single always_comb block to assign both next state and output z, reducing redundant logic and improving synthesis efficiency.
+
+Since input y represents the present state directly, there's no internal state register needed. We can merge next_state and output logic into a single combinational block, and also express z as a direct comparison within that block. This may reduce logic duplication.
+
+We can store the next state and z together in one reg of 4 bits, where the MSB is z and the lower 3 bits are next_state. This reduces separate logic assignments and eases implementation in hardware, potentially improving area and power.
+
+Y0 remains the LSB of next_state.
+
+Overall improvements:
+- Use a single combinational block to output next_state and z
+- Combine assignments to reduce logic duplication
+- Keep output z derived from current state as specified
+- Use case statement for clarity and synthesis friendliness
+- Avoid multiple continuous assignments for outputs

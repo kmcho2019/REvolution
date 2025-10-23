@@ -1,0 +1,19 @@
+Here's a novel approach using a toggle-based state machine with edge detection:
+
+1. Instead of directly computing next_state based on inputs, we'll use the inputs to trigger state toggles
+2. The state toggles when:
+   - Both inputs are high (a & b) - acts as a set condition
+   - Both inputs are low (~a & ~b) - acts as a reset condition
+3. The output q is computed as:
+   - When state is 1: q = a ~^ b (XNOR)
+   - When state is 0: q = a ^ b (XOR)
+4. This implementation reduces logic levels by:
+   - Using simple edge detection for state transitions
+   - Combining XOR/XNOR operations efficiently
+   - Eliminating nested conditional operators
+
+Key advantages:
+- Fewer logic levels for next_state calculation
+- Clear separation of state transition conditions
+- More efficient output computation
+- Better timing characteristics

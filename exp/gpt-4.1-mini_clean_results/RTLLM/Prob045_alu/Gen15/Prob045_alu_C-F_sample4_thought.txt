@@ -1,0 +1,12 @@
+Fuse the best aspects of both examples for a clean, efficient, and robust ALU design: 
+- Use a single combinational always block with blocking assignments for clarity.
+- Assign default zero values to all outputs at the start to prevent latches.
+- For arithmetic operations, compute carry and overflow only when relevant; keep them zero otherwise to reduce unnecessary toggling and power.
+- Implement the LUI operation correctly with immediate placed in upper 16 bits and lower 16 bits zero.
+- Calculate zero and negative flags as continuous assignments for cleaner and more synthesis-friendly logic.
+- Implement flag as a clean logic signal (0 or 1), set only for SLT and SLTU.
+- Use signed casting only where necessary (SLT, SLTU, SRA and SRAV).
+- Use parameterized opcodes for maintainability.
+- Ensure shifts use 5-bit amounts, deriving from relevant inputs (a[4:0] or fixed shamt).
+- Default undefined operations result to zero to avoid 'z' states.
+This fusion produces a balanced ALU with good clarity, correctness, and reasonable power, performance, and area.

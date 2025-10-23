@@ -1,0 +1,12 @@
+To improve PPA over the original modular implementation, I will optimize the design by fully unrolling the 512-bit Rule 90 update logic into a single always block rather than breaking it into 8 separate 64-bit blocks. This will eliminate the boundary signal dependencies and inter-block routing, reducing combinational and wiring overhead.
+
+Key improvements:
+- Implement a single 512-bit wide register for q.
+- Compute next_state of all 512 bits in combinational logic without module hierarchy.
+- For each bit i, next_state[i] = q[i-1] ^ q[i+1], with boundary bits q[-1] and q[512] = 0.
+- On each clock, load data when load asserted, else update q <= next_state.
+- This removes cross-block wiring and intermediate signals, improving timing.
+- The flattened combinational XOR logic will be wide but shallow and simple, improving timing and area.
+- Power remains similar but toggle activity is natural and clock gating would add overhead for this simple update.
+
+Overall, this single-block flat implementation should yield better timing due to no block boundary dependencies and potentially smaller area and power due to reduced routing and fewer nets.

@@ -1,0 +1,9 @@
+To implement the specified finite state machine (FSM), we can break down its behavior into several states and transitions based on the input conditions. The states can be defined as follows:
+- State A: The initial state where the FSM stays when the reset is asserted. It transitions to state B when the reset is de-asserted.
+- State B: Sets output f to 1 for one clock cycle, then transitions to state C.
+- State C: Monitors input x for the sequence 1, 0, 1. Once this sequence is detected, it transitions to state D.
+- State D: Sets output g to 1 and monitors input y for a 1 within two clock cycles. If y becomes 1 within this time, it transitions to state E. If y does not become 1 within two clock cycles, it transitions to state F.
+- State E: Maintains g = 1 permanently until reset.
+- State F: Maintains g = 0 permanently until reset.
+
+The transitions and output settings will be implemented using Verilog, utilizing an enumeration for the states and a case statement to handle the transitions and output logic.

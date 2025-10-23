@@ -1,0 +1,20 @@
+The main problem is the timing misalignment of prediction outputs and GHR updates. According to the problem spec, when predict_valid=1 in a cycle, the prediction outputs (predict_taken and predict_history) correspond to the current cycle's GHR and PHT read (using pc XOR GHR). Then, at the next clock edge, the GHR is updated by shifting in the predicted taken bit from this prediction.
+
+Currently, the prediction outputs are delayed by one cycle relative to predict_valid, causing mismatch with expectations. To fix this, the prediction outputs must be combinationally generated in the same cycle predict_valid=1 using the current GHR and PHT values.
+
+However, since PHT is modeled as synchronous RAM, the read data is only valid on the next cycle after supplying the address. To avoid this read latency, we can model the PHT as a reg array that is asynchronously read combinationally by indexing directly with pc XOR GHR. This is allowed in Verilog simulation and matches the problem's description of indexing via XOR.
+
+For training updates, we write to the PHT on the clock edge, updating the counter. If a training and prediction happen at the same cycle for the same PHT entry, prediction sees old PHT state (before training), matching the requirement.
+
+To implement the above correctly:
+
+- Make the PHT a reg array with asynchronous read (index combinationally pc XOR GHR).
+- Generate the predicted_taken and predict_history outputs combinationally on predict_valid=1, or hold previous outputs if predict_valid=0.
+- Update the GHR at the clock edge with priority given to training misprediction recovery, else shift in the predicted taken bit generated combinationally in the same cycle if predict_valid=1.
+- Update the PHT at clock edge on train_valid.
+
+This approach removes prediction output latency, ensures correct output timing, matches the problem spec, and resolves the mismatch in testbench verification.
+
+Initialize PHT entries to weakly not taken (2'b01) and initialize GHR and outputs on reset as before.
+
+This fix respects the requirement for prediction output timing, synchronous PHT update, and GHR recovery priority.

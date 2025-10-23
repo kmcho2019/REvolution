@@ -1,0 +1,8 @@
+To solve this problem, I will design a finite state machine (FSM) with the following states:
+- IDLE: The initial state where the module waits for a start bit (0) to begin receiving a byte.
+- RECV_BYTE: Once a start bit is detected, the FSM enters this state to receive the 8 data bits.
+- VERIFY_STOP: After receiving the 8 data bits, the FSM enters this state to verify the stop bit (1).
+The FSM will use a counter to keep track of the number of bits received in the RECV_BYTE state.
+When the stop bit is verified, the FSM will assert the 'done' signal and output the received byte.
+If the stop bit does not appear when expected, the FSM will wait until it finds a stop bit before attempting to receive the next byte.
+The module will also include a synchronous reset that resets the FSM to the IDLE state when asserted.

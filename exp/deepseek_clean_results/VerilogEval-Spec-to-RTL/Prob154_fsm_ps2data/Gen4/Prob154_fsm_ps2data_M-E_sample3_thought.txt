@@ -1,0 +1,13 @@
+New architecture idea:
+1. Use a 24-bit shift register to capture incoming bytes sequentially
+2. Implement a 3-stage pipeline to track valid bytes
+3. Detect the start condition (in[3]=1) using edge detection
+4. Use a simple counter to track valid byte count
+5. Output the shift register contents when 3 valid bytes are received
+
+Key advantages:
+- Shift register naturally handles byte ordering
+- Pipeline stages simplify state tracking
+- Edge detection ensures clean start condition
+- Minimal control logic reduces area
+- Output is always valid during 'done' cycle

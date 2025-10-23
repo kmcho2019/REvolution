@@ -1,0 +1,30 @@
+Analyze the input combinations and output values to find the logic expression for q. 
+From the waveform table, q is 1 in some cases and 0 in others. Writing q=1 rows:
+
+a b c d | q
+0 0 0 0 = 1
+0 0 1 1 = 1
+0 1 0 1 = 1
+0 1 1 0 = 1
+1 0 0 1 = 1
+1 0 1 0 = 1
+1 1 0 0 = 1
+1 1 1 1 = 1
+
+Look for pattern: q is 1 when the number of inputs that are 1 is even (0,2, or 4)
+
+Counting ones in each case q=1:
+0 0 0 0 -> 0 ones (even)
+0 0 1 1 -> 2 ones (even)
+0 1 0 1 -> 2 ones (even)
+0 1 1 0 -> 2 ones (even)
+1 0 0 1 -> 2 ones (even)
+1 0 1 0 -> 2 ones (even)
+1 1 0 0 -> 2 ones (even)
+1 1 1 1 -> 4 ones (even)
+
+q=0 when number of ones is odd.
+
+This corresponds to the even parity function over inputs a,b,c,d. So q = ~(a ^ b ^ c ^ d).
+
+Implement q as the negated XOR of all inputs.

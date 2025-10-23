@@ -1,0 +1,13 @@
+Implement the radix-2 division as a purely sequential process using a simple iterative shift-subtract approach on a single large shift register. Upon opn_valid, latch inputs and preprocess for signed division by taking absolute values and recording the sign of inputs. The division logic uses a 17-bit shift register containing the remainder (MSBs) and quotient (LSBs). 
+
+At each clock cycle during division, the partial remainder is shifted left by 1, the next quotient bit is determined by subtracting the divisor from the remainder, and quotient bit set accordingly. The process repeats for 8 cycles.
+
+Once complete, if the operation is signed, apply sign correction to quotient and remainder.
+
+To comply exactly with the spec, use:
+- A "start" signal derived from opn_valid and res_valid to control process start.
+- Internal counters to track iteration.
+- Output res_valid asserted when division done.
+- Result: upper 8 bits remainder, lower 8 bits quotient.
+
+This design minimizes state complexity by folding operation flow into an explicit start signal and a division-active flag, and uses combinational subtraction to decide quotient bit each cycle. It handles division-by-zero gracefully by returning zero quotient and original dividend as remainder.

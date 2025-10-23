@@ -1,0 +1,21 @@
+Refactoring Strategy:
+1. State Machine Conversion:
+   - Replace binary counter with explicit state machine (IDLE, ACCUM1, ACCUM2, ACCUM3)
+   - Makes state transitions more readable and explicit
+   - Easier to modify behavior for different accumulation counts
+
+2. Output Logic Separation:
+   - Move valid_out generation to combinational logic
+   - Reduce register load by making it purely combinational
+   - Keep data_out registered for clean timing
+
+3. Accumulation Optimization:
+   - Use always block for sequential logic only
+   - Move adder logic into the state machine
+   - Clearer data flow visibility
+
+Key Benefits:
+- More maintainable state machine approach
+- Reduced register usage (valid_out now combinational)
+- Clearer separation of combinational and sequential logic
+- Same functionality with improved readability

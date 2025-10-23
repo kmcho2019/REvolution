@@ -1,0 +1,21 @@
+To solve this problem, we need to analyze the given Karnaugh map and determine the required input values for each of the four inputs of the 4-to-1 multiplexer. 
+
+Looking at the Karnaugh map, we can see that the output for each input combination of 'c' and 'd' is as follows:
+- For cd = 00, the output for each 'ab' combination is [0, 0, 0, 1].
+- For cd = 01, the output for each 'ab' combination is [1, 0, 0, 0].
+- For cd = 11, the output for each 'ab' combination is [1, 0, 1, 1].
+- For cd = 10, the output for each 'ab' combination is [1, 0, 0, 1].
+
+Now, let's find the values for mux_in[3:0] for each 'cd' combination:
+- mux_in[0] (ab = 00): [0, 1, 1, 1]
+- mux_in[1] (ab = 01): [0, 0, 0, 0]
+- mux_in[2] (ab = 11): [0, 0, 1, 1]
+- mux_in[3] (ab = 10): [1, 0, 0, 1]
+
+Notice that we can obtain these values using 2-to-1 multiplexers with 'c' and 'd' as inputs. 
+Specifically, mux_in[0] can be implemented as d, 
+mux_in[1] is always 0, 
+mux_in[2] can be implemented as d, 
+and mux_in[3] can be implemented as c.
+
+This can be implemented in Verilog by assigning the corresponding values to the outputs mux_in[3:0] based on the inputs 'c' and 'd'.

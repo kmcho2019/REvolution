@@ -1,0 +1,17 @@
+Refactor the fixed-point subtractor to explicitly handle the sign and magnitude of inputs to implement the detailed logic for same-sign and different-sign subtraction, instead of relying on direct signed subtraction. This clarifies the arithmetic steps and explicitly models the described behavior:
+
+1. Extract sign bits and absolute magnitudes of inputs.
+
+2. For same sign inputs, perform magnitude subtraction; result sign matches inputs.
+
+3. For different signs, perform magnitude addition; result sign depends on which magnitude is greater.
+
+4. Handle zero result by explicitly zeroing the sign bit.
+
+5. Use continuous assignments and wires for purely combinational logic, improving clarity and synthesis friendliness.
+
+This approach explicitly models the problem statement's logic rather than using built-in signed subtraction, making the arithmetic transparent and the sign management explicit.
+
+The fractional precision Q is preserved by treating the entire N-bit values consistently as fixed-point two's complement numbers, where Q fractional bits are included. The code does not separately manipulate fractional bits but respects fixed-point representation.
+
+This implementation may use more logic but provides clear visibility into the arithmetic process, which might aid debugging and meet specific tool or coding style requirements.

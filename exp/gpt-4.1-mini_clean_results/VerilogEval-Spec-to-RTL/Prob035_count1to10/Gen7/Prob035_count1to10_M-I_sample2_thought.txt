@@ -1,0 +1,9 @@
+To improve PPA, I will optimize the increment operation and the detection of decimal 10 by using a combinational logic that directly produces the next count, avoiding a full 4-bit addition. Instead of a generic adder, I will implement a simple incrementer using bitwise logic that typically has less delay and area. 
+
+For detecting count == 10 (decimal 1010), I'll keep the minimal bitwise condition as it is already efficient. I will also use a one-hot style encoding internally for count states 1-10, which can reduce switching on some bits, but since output q is 4-bit binary, that may complicate output logic. Instead, I will keep binary count but optimize the incrementer.
+
+The next_q calculation will be done by explicitly coding the increment logic for a 4-bit number, exploiting the fact we count only from 1 to 10. When count reaches 10, next count resets to 1, else increment by 1.
+
+This removes the adder and reduces the critical path and area. The synchronous reset remains active high. Non-blocking assignments remain used for clean sequential logic.
+
+Overall, the changes reduce combinational logic delay and area by avoiding a generic 4-bit adder, resulting in better clock frequency and smaller area with negligible power impact.

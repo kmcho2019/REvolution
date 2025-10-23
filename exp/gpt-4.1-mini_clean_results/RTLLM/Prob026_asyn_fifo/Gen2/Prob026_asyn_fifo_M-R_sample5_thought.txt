@@ -1,0 +1,15 @@
+To refactor the asynchronous FIFO design while keeping the same core functionality, I will:
+
+- Separate combinational logic from sequential logic by using `assign` statements where possible (e.g., for Gray code conversions).
+- Use nonblocking assignments for sequential pointer registers but reorganize the pointer update logic to be more modular and clearer.
+- Implement synchronizers using separate always blocks with clear signals.
+- Derive full and empty flags via combinational logic with assigned wires rather than inside always blocks.
+- Keep the dual-port RAM instantiation and the parameterization unchanged.
+- Provide explicit modules for binary-to-gray and gray-to-binary conversions as functions but use continuous assignment for their outputs.
+  
+This approach improves clarity and readability and better separates combinational and sequential logic, which is a common professional style for synchronous FIFO designs.
+
+The FIFO will still:
+- Use Gray code pointers for safe cross-domain synchronization.
+- Synchronize read pointer into write clock domain and write pointer into read clock domain.
+- Use Gray pointer comparison logic for full/empty detection.

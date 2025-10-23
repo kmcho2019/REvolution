@@ -1,0 +1,9 @@
+The original FSM is already minimal and well-structured, but we can enhance PPA by simplifying the next-state logic using a truth-table-based approach with less branching, which may reduce combinational logic depth. Also, replace the multiple if-else statements in next-state logic with a case statement on state for better synthesis optimization.
+
+For output logic, since z is a Mealy output depending on state and input, keep it combinational but use concise assignments.
+
+Additionally, keep asynchronous negative-edge reset as specified. Use blocking assignments in combinational blocks and nonblocking in sequential block for good practice and synthesis friendliness.
+
+The state encoding remains 2-bit minimal, but explicitly initialize all states in case default paths. This improves synthesis and timing closure.
+
+Overall, the changes simplify combinational logic and make state and output logic more explicit for synthesis, potentially improving timing (WNS), area, and power slightly without changing functionality.

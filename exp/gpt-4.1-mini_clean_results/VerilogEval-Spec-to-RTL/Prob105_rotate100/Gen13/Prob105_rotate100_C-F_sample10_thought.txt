@@ -1,0 +1,15 @@
+Fuse the clarity and explicit bitwise rotation loop from Example 2 with the concise conditional assignment style from Example 1 to balance readability, synthesis friendliness, and efficiency. 
+
+Use a temporary reg next_q to hold the rotated or loaded value; assign q once per clock cycle, minimizing toggling by not updating when no rotation or load is requested.
+
+Use bit-slicing and concatenation for rotation to reduce complexity and improve timing and area compared to loop-based per-bit assignment, as in Example 1, but keep the explicit load priority and controlled enable conditions from Example 2.
+
+This fusion:
+- Prioritizes synchronous load,
+- Implements rotation only when ena is 01 (right) or 10 (left),
+- Otherwise holds q,
+- Uses clear conditional logic for maintainability,
+- Minimizes register toggling,
+- Combines synthesis-friendly vector operations with explicit flow.
+
+Thus, it leverages the best of both worlds for performance, area, power, and clarity.

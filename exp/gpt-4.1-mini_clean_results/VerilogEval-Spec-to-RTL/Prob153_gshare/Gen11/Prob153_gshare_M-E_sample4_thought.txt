@@ -1,0 +1,21 @@
+I will implement the gshare predictor using two separate global history registers: one "prediction_ghr" that is used for combinational prediction outputs and updated only on the clock edge after a prediction, and one "committed_ghr" that reflects the branch history after training updates (including misprediction recovery).
+
+The predictor works as follows:
+
+- On a predict_valid cycle, we compute predict_index by XORing predict_pc with prediction_ghr and read the PHT entry for prediction. We output predict_taken and output the current prediction_ghr as predict_history.
+
+- On the next clock edge, if predict_valid and not preempted by a misprediction training in the same cycle, we update prediction_ghr by shifting in the predicted outcome bit.
+
+- When train_valid is asserted, we update the PHT entry at the train_index (train_pc XOR train_history) based on train_taken, saturating counters accordingly.
+
+- If the training is for a mispredicted branch (train_mispredicted), we update both committed_ghr and prediction_ghr to the train_history value provided, effectively restoring the history after pipeline flush.
+
+- This dual-GHR design cleanly separates the history seen by the prediction interface (to maintain stable prediction outputs unaffected by concurrent training), and the history after training updates including mispredict flush recovery.
+
+- Because updates to prediction_ghr and committed_ghr happen in one clock edge synchronous block with proper priority (train mispredict recovery > predict update), the output predict_history always shows the pre-update prediction_ghr used to make the prediction, satisfying the spec.
+
+- All reads from PHT are combinational. PHT updates happen at clock edge on training.
+
+- Initial states are all zeros for GHRs and weakly not taken for PHT.
+
+This architecture avoids timing conflicts or ambiguity on GHR updates when prediction and training happen in the same cycle, properly giving training priority, and ensuring prediction outputs reflect history before any update from training or prediction.

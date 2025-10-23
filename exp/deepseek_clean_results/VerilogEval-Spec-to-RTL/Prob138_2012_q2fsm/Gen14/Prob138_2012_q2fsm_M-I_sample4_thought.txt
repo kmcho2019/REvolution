@@ -1,0 +1,25 @@
+Improvement Strategy:
+1. State Encoding Optimization: Maintain the current Gray-like encoding but adjust to make E and F adjacent (E:100, F:110) to reduce transitions between these output-producing states. This reduces switching power when alternating between E and F.
+
+2. State Transition Logic: 
+   - Flatten the nested if-else in state D to a single ternary operation for better timing
+   - Reorder states in case statement to group commonly transitioned states together
+   - Use parallel case synthesis directive to potentially improve synthesis results
+
+3. Output Logic: 
+   - Keep the simple bit check but verify it still works with new encoding
+   - Consider making output registered if timing is critical
+
+4. Reset Handling: 
+   - Keep synchronous reset but ensure it's properly constrained in synthesis
+
+5. Power Optimization:
+   - Add explicit clock gating conditions for stable states
+   - Consider adding a power-aware default case that goes to lowest-power state (A)
+
+Key Improvements:
+- Better state adjacency for output states reduces switching power
+- Flattened logic in state D improves timing
+- Case statement optimizations help synthesis
+- Maintains all robustness features
+- Potentially better PPA through these changes

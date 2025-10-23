@@ -1,0 +1,5 @@
+To improve the PPA of the existing 12-hour clock module, we can reduce the combinational logic depth inside the single always block that updates all counters and the PM flag by splitting the counters into a chain of sequential blocks. Specifically, we separate the seconds, minutes, and hours increments into three always blocks with registers for carry signals, thus pipelining the carry propagation and shortening the critical path. Each counter increments only on the carry from the previous counter, which should allow higher clock frequency.
+
+Also, by using explicit carry signals registered at each clock cycle rather than relying on nested combinational conditions, we reduce logic depth. This separation may slightly increase area due to extra registers but will improve timing and power due to shorter logic paths and fewer simultaneous toggles. We keep internal representation the same (binary hour counter with BCD output conversion) for area efficiency.
+
+This modular approach maintains synchronous reset priority, preserves correctness, and simplifies enable gating, while improving timing and potentially power consumption by reducing glitching and logic depth.

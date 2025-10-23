@@ -1,0 +1,6 @@
+Use vector slicing and concatenation to handle neighbor relationships more compactly:  
+- For out_both, create a vector shifted left by one (zero-padded on LSB), AND it with the original input; since in[3] has no left neighbor, out_both[3]=0.  
+- For out_any, create a vector shifted right by one (zero-padded on MSB), OR it with original input; since in[0] has no right neighbor, out_any[0]=0.  
+- For out_different, rotate the input vector left by one (wrap-around) and XOR with the original input. This naturally handles the wrap-around neighbor to the left for each bit.
+
+This approach leverages vector operations to minimize explicit bit-by-bit assignments and uses rotation for wrap-around neighbor computation.

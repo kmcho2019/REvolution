@@ -1,0 +1,14 @@
+Optimization strategy:
+1. Maintain the efficient binary state encoding (1-bit) since we only have two states
+2. Simplify the state transition logic by recognizing the output is identical to the state
+3. Use direct assignment for the output to eliminate any extra combinational logic
+4. Keep synchronous reset for predictable behavior
+5. Optimize the state transition logic to use minimal gates:
+   - When in OFF state: transition to ON only if j=1
+   - When in ON state: transition to OFF only if k=1
+   - This can be expressed as a simple XOR pattern with the current state
+
+The improvements maintain the same functionality while potentially reducing:
+- Gate count by eliminating redundant logic
+- Power consumption by minimizing switching activity
+- Critical path by simplifying the state transition logic

@@ -1,0 +1,27 @@
+The original design is logically correct and cleanly implements radix-2 division with signed/unsigned support, properly managing the FSM, counters, and shift register. The main improvements revolve around optimizing for PPA (Power, Performance, Area) while preserving correctness and clarity:
+
+1. Reduce combinational logic width and complexity:
+   - Use an 8-bit remainder and quotient as specified, but avoid unnecessary widening beyond 9 bits.
+   - Combine sign correction logic into the sequential block at division completion to reduce complex combinational logic.
+
+2. Improve timing and registers:
+   - Register key intermediate signals to reduce combinational path length.
+   - Make `res_valid` a registered pulse that stays asserted until the user resets or consumes the result.
+
+3. Use a clear FSM with three states: IDLE, DIVIDE, and DONE, instead of just two, for better flow control and clear res_valid assertion.
+
+4. Eliminate redundant negations and intermediate signals:
+   - Compute absolute values once and hold them.
+   - Perform subtraction using simple 9-bit operation to detect borrow.
+
+5. Document and simplify variable naming for clarity:
+   - E.g., remainder is always 8 bits in SR[15:8].
+   - Quotient is 8 bits in SR[7:0].
+
+6. Handle divisor == 0 by stalling or producing zero result (optional).
+
+7. Make the design fully synchronous with all outputs registered.
+
+This results in a more robust, PPA-optimized design that is suitable for synthesis with a clean and clear interface.
+
+Overall, the code will maintain the radix-2 division core approach, with improved FSM, registered outputs, and clearer separation of logic.

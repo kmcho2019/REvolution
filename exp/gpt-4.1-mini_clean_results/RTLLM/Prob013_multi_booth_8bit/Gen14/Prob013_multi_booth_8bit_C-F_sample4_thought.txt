@@ -1,0 +1,15 @@
+Fuse the structured FSM and clear datapath updates from Example 2 with the explicit control signals and well-defined states from Example 1 for modularity, clarity, and maintainability.
+
+- Use three states: IDLE (wait for reset release), LOAD (load sign-extended inputs), and RUN (perform multiplication cycles), then DONE (indicate completion).
+- Separate combinational control logic to generate control signals (load, add_enable, shift) from the FSM state.
+- Use signed 16-bit registers for multiplicand, multiplier, and product.
+- Perform radix-2 shift-and-add multiplication over 16 cycles, where in each cycle:
+  - If the current multiplier bit is 1, add multiplicand to product.
+  - Left shift multiplicand by 1 to align with the current bit position.
+- Update registers synchronously with nonblocking assignments, controlled by signals.
+- Set ready signal (rdy) only in DONE state.
+- Keep outputs (product and ready) registered.
+- On reset, initialize everything properly.
+- Keep the FSM and datapath logic clean and separated for easy debugging and potential enhancements.
+
+This approach leverages Example 2's clear synchronous design and Example 1's control signal generation, ensuring clean control and datapath separation, facilitating easier verification and possible future radix-4 extension.

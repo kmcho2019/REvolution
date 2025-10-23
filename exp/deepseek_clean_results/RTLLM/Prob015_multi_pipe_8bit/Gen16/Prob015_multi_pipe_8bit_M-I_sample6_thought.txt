@@ -1,0 +1,23 @@
+Based on the PPA metrics and feedback, here's my improvement strategy:
+
+1. **Timing Optimization**:
+   - Simplify clock gating to use only the input enable signal (mul_en_in) to reduce critical path
+   - Precompute shifted versions of multiplicand to speed up partial product generation
+   - Balance pipeline stages by moving some combinational logic between stages
+
+2. **Power Optimization**:
+   - Implement output register gating using the final enable signal
+   - Remove redundant combinational output assignment block
+   - Optimize operand isolation logic
+
+3. **Area Optimization**:
+   - Merge partial product sum registers into a register array
+   - Simplify enable signal propagation using a shift register
+   - Reduce intermediate sum register widths where possible
+
+Key improvements:
+- Simplified clock gating using only mul_en_in
+- Precomputed shifted multiplicand values
+- Output register directly gated by enable
+- More compact register organization
+- Maintains same functionality with better PPA

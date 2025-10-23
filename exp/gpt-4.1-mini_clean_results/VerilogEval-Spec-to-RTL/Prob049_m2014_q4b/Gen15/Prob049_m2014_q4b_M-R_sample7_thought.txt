@@ -1,0 +1,17 @@
+Refactor by implementing the asynchronous reset D flip-flop with an explicit asynchronous reset signal driving the register initialization outside of the always block that captures data on the clock edge. Use a separate asynchronous reset signal combined with a synchronous data latch inside an always block triggered only by posedge clk. This is achieved by using a reset signal to force q to 0 asynchronously via a reset signal in a separate always block or by using a non-blocking reset style in an always_ff block (SystemVerilog), but since the problem is Verilog, I will emulate this behavior by using a combination of assign and always blocks.
+
+Alternatively, implement the asynchronous reset by using a mux selecting between 0 and d, controlled by ar, and clock the output into q on clk's positive edge, while asynchronously clearing q to 0 by driving q with a reset wire asynchronously. But asynchronous reset cannot be done purely with assign.
+
+Since pure assign cannot do asynchronous reset, the common alternative is to use a procedural continuous assignment using a combination of always blocks with different sensitivities.
+
+For a structural different approach, I will implement the asynchronous reset DFF using a latch inside the always block, but controlled in a different way: Use an always block triggered by posedge clk or posedge ar, but instead of an if-else ladder, I will implement the reset first as a conditional continuous assignment, then the data capture in another always block, to show a different code structure. Or implement the asynchronous reset behavior with a primitive or gate instantiation.
+
+Because the requirement is to have a different structure but same behavior, and no additional primitives or features are allowed, the best way is to place the asynchronous reset outside the data capture always block by combining assign and always blocks.
+
+Hence, I'll declare q as reg, define a wire reset_n = ~ar, and use assign to asynchronously drive q to 0 when ar is high, otherwise let the flip flop latch d on clk posedge. This is tricky, but a well-known pattern is to use an always block with posedge clk for data and a separate always block with ar for reset.
+
+Therefore, I implement two always blocks: one triggered on posedge ar, which sets q to 0 asynchronously, and another on posedge clk, which captures d if ar is not asserted.
+
+This refactors the logic into two always blocks, separating reset and data capture.
+
+TopModule instantiates this directly without submodule to differ from example.

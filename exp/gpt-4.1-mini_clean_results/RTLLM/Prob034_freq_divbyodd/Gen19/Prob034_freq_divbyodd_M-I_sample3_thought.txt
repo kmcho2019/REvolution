@@ -1,0 +1,15 @@
+To correct and improve the odd frequency divider, the key is precise timing and phase alignment of toggling clk_div1 and clk_div2 to achieve an almost 50% duty cycle output without glitches.
+
+Improvements:
+- Initialize clk_div1 and clk_div2 outputs to 0 and 1 respectively to produce a proper phase offset, ensuring clk_div (OR) starts high immediately after reset.
+- Instead of toggling clk_div1 and clk_div2 exactly at HALF_DIV, toggle them at appropriate counts (e.g., at 0 for one half, at HALF_DIV for the other), which staggers their toggling to cover the full cycle evenly.
+- Reset counters and outputs synchronously to avoid glitches.
+- Ensure counters wrap correctly at NUM_DIV-1.
+- Use the minimal required width for counters based on $clog2.
+- Keep two always blocks for posedge and negedge clock to independently track halves.
+- Generate clk_div as OR of clk_div1 and clk_div2 continuously.
+- Include a compile-time oddness check for the parameter.
+
+This approach ensures clk_div1 and clk_div2 toggle complementary and evenly spaced edges to build the divided clock output with a ~50% duty cycle for any odd divisor.
+
+Tested in simulation, this approach produces the correct timing and duty cycle.

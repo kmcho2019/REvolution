@@ -1,0 +1,11 @@
+To improve the existing solution, we should focus on addressing the functional errors that caused the simulation mismatches. The main issue is that the `seq_found` signal is not being properly reset when the `reset` signal is asserted. Once `seq_found` is set to 1, it should remain 1 until the `reset` signal is asserted. We can achieve this by ensuring that the `seq_found` signal is reset only when the `reset` signal is high and that once `seq_found` is set, it remains high until reset.
+
+Additionally, to optimize the design for better PPA (Power, Performance, and Area), we should consider minimizing switching activity, reducing logic complexity, and optimizing the state machine implementation.
+
+One approach is to simplify the state machine logic and ensure proper reset behavior. We can maintain a shift register to track the incoming bits and check for the sequence '1101'. Once the sequence is detected, we set `seq_found` to 1, and this value should persist until the `reset` signal is asserted.
+
+To minimize switching activity and reduce power consumption, we should avoid unnecessary transitions in the signals. Ensuring that the logic for handling `seq_found` and `start_shifting` is correctly implemented will help minimize unnecessary transitions.
+
+In terms of area optimization, the current design is relatively simple and uses a minimal number of flip-flops. However, further optimization could involve using more efficient logic structures or state encoding techniques if necessary.
+
+Overall, the strategy involves fixing the functional error related to the `seq_found` signal's reset behavior, ensuring proper state machine operation, and applying optimizations for better PPA metrics where applicable.

@@ -1,0 +1,16 @@
+The original solution had two main issues in the next-state logic:
+1. S1_next missed the transition from S11 when d=1 (should stay in S11)
+2. Wait_next had timing/condition issues during Count to Wait transition
+
+Improvement strategy:
+1. Add the missing S11->S11 transition condition to S1_next
+2. Keep Wait_next simple as it only depends on Count state and done_counting
+3. Optimize the logic by:
+   - Grouping related state transitions
+   - Using more efficient logical expressions
+   - Maintaining clear one-hot encoding
+
+The improved solution will:
+- Correct all functional issues
+- Maintain the same output behavior
+- Use slightly more optimized logic expressions

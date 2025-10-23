@@ -1,0 +1,26 @@
+Revised Lemming State Machine Design:
+
+1. Direction Switching Fix:
+   - Changed bump handling to be direction-specific (bump_left makes it walk right, bump_right makes it walk left)
+   - Maintained priority: fall > dig > bump
+
+2. Fall/Dig Priority Implementation:
+   - Explicitly check for fall condition first in all walking/digging states
+   - Then check for dig input (only if ground=1)
+   - Finally handle bumps (only if neither falling nor digging)
+
+3. Digging State Enhancement:
+   - Digging continues until ground is lost
+   - Added transition back to walking when dig=0 (but still maintain priority rules)
+
+4. Fall Counter Correction:
+   - Counter increments only when in FALL state and ground=0
+   - Properly resets when leaving FALL state
+   - Splatter condition checked when ground reappears
+
+5. Output Logic:
+   - Maintained Moore machine properties
+   - Added SPLAT state outputs (all zeros)
+   - Clear separation between state conditions
+
+The revised design strictly follows the problem's priority rules and corrects all identified issues from the feedback.

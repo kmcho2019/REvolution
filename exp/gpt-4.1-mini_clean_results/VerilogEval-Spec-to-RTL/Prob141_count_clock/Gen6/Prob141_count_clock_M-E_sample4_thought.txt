@@ -1,0 +1,7 @@
+Implement a 12-hour clock by maintaining all time digits (hours, minutes, seconds) as single binary counters internally, then convert to BCD only for output.  
+- Use binary counters for seconds (0-59), minutes (0-59), and hours (1-12), plus a PM bit.  
+- Increment seconds binary counter on ena pulse. Upon rollover, increment minutes and then hours accordingly.  
+- Hours counter wraps from 12 to 1 and toggles PM.  
+- On synchronous reset, set to 12:00:00 AM.  
+- Use a combinational function to convert the binary counters to BCD digits for outputs hh, mm, ss.  
+This design reduces combinational complexity in the clocked always block (simple binary increments and comparisons), isolating the BCD conversion to a purely combinational, straightforward block. This approach simplifies timing and reduces nesting of conditions, likely improving performance and reducing area.

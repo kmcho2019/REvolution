@@ -1,0 +1,27 @@
+Revised design approach addressing feedback issues:
+
+1. **Pattern Detection Fix**:
+   - Maintain pattern register continuously in IDLE state
+   - Only clear pattern when starting new detection (after ack)
+   - Ensure full 4-bit pattern is matched before transition
+
+2. **Shift Cycle Precision**:
+   - Start counting shift cycles immediately in SHIFT state
+   - Maintain shift_ena for exactly 4 cycles (count 0 to 3)
+   - Transition to COUNTING after 4th cycle (count == 3)
+
+3. **State Transition Timing**:
+   - Hold DONE state until ack is received
+   - Ensure all state transitions occur at correct clock edges
+   - Clear shift counter when leaving SHIFT state
+
+4. **Output Alignment**:
+   - Keep combinational output assignments
+   - Verify outputs match exactly with state transitions
+   - Ensure no premature output deassertions
+
+Key improvements:
+- Correct pattern detection with proper register handling
+- Precise 4-cycle shift control
+- Strict adherence to state transition requirements
+- Maintained simple output mapping to states

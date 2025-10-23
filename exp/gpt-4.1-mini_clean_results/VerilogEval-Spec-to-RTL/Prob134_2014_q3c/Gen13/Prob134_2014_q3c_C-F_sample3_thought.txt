@@ -1,0 +1,9 @@
+To fuse the best ideas from both examples, we combine the modularity and clarity of the function-based next-state and output generation (Example 1) with the efficient explicit decoding and direct Boolean expressions for next state bits and output (Example 2).
+
+Specifically, we:
+- Use functions for next state and output z to preserve modularity and easy verification.
+- Implement next state functions by decomposing the returned 3-bit vector into individual bit expressions derived from minimal Boolean expressions as per Example 2, thus avoiding repeated case comparisons inside functions.
+- This provides both concise logic and ease of extension.
+- We handle invalid present states gracefully by defaulting next state and output.
+- Keep outputs purely combinational, no registers, since the FSM state is externally supplied.
+- Overall, this approach ensures clean, maintainable, low-power and potentially lower-area logic by using simplified logic equations for next state bits inside the function, while keeping the interface straightforward.

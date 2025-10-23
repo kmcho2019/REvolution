@@ -1,0 +1,17 @@
+To address synthesis issues related to arrays of registers and improve tool compatibility, we flatten the arrays of partial product registers into individual register vectors, declared separately with generate blocks. This avoids using unpacked register arrays and loop-based register assignments inside always blocks, which can be problematic for some synthesis tools.
+
+We keep the two-stage pipeline:
+- Stage 1: combinational generation of partial products, then individually registered partial products and inputs on clk.
+- Stage 2: combinational summation of the registered partial products, followed by registering the final product output.
+
+We implement the summation combinationally in a simple for loop inside an always_comb block and store the sum in a register at stage 2.
+
+Reset remains asynchronous active-low.
+
+We keep the parameter "size" with a default of 4.
+
+This structure is synthesizable by all common tools (including Yosys) and respects the requested design: pipelined multiplication with intermediate registers for partial products, a two-stage pipeline, and proper reset handling.
+
+No arrays of registers are used; instead, each partial product register is a separate register declared via generate.
+
+This resolves synthesis tool compatibility and parameter usage issues from the feedback.

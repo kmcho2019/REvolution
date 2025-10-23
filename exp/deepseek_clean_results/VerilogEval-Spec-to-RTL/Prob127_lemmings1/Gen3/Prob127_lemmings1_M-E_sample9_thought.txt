@@ -1,0 +1,14 @@
+Here's a novel approach that uses a different state encoding and transition logic:
+
+1. **State Representation**: Instead of using separate states for left/right, we'll use a single bit to represent direction (0=left, 1=right). This is similar to the original but we'll implement the transitions differently.
+
+2. **Transition Logic**: Rather than a case statement, we'll use arithmetic operations to determine the next state:
+   - When walking left (state=0): next_state = bump_left ? 1 : 0
+   - When walking right (state=1): next_state = bump_right ? 0 : 1
+   - This can be expressed as: next_state = state ^ (bump_left & ~state) ^ (bump_right & state)
+
+3. **Output Generation**: We'll derive the outputs directly from the state bit using simple assignments.
+
+4. **Reset Handling**: Maintain asynchronous reset to initialize to walking left (state=0).
+
+This approach eliminates the case statement and uses bitwise operations for state transitions, which might synthesize differently in some technologies. The arithmetic expression for next_state is mathematically equivalent to the case-based approach but may offer different optimization opportunities.

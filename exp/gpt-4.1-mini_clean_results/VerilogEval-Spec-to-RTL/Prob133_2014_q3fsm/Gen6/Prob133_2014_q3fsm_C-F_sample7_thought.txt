@@ -1,0 +1,12 @@
+Fuse the clarity and power-saving of Example 1 with the clean separation of combinational and sequential logic from Example 2:
+
+- Use two states (A and B), with A waiting for s=1.
+- In B, use a 2-bit cycle counter (0..2) and a 2-bit w_count accumulator.
+- Accumulate w counts synchronously during each of the three sampling cycles.
+- After the third cycle (cycle_count == 2), in the *next* clock cycle output z=1 if exactly two w=1's were sampled; otherwise, z=0. This one-cycle delay cleanly separates sampling and output pulse.
+- Reset counters only when transitioning back to A or after output pulse to minimize toggling and power consumption.
+- Implement synchronous reset active high.
+- Separate combinational next-state and counter calculation from sequential register updates for cleaner timing and maintainability.
+- Maintain minimal state and counters for small area and low complexity.
+
+This fusion yields a well-structured FSM that balances minimal states, minimal toggling, and clear timing of output z, achieving an optimal tradeoff in performance, power, and area.

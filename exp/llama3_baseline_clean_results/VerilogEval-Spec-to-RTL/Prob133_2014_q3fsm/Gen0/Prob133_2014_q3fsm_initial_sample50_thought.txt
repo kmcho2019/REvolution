@@ -1,0 +1,7 @@
+To implement the desired finite state machine (FSM) with as few states as possible, we can utilize a combination of states and counters to track the number of clock cycles where w = 1 in the three-clock cycle window after entering state B. 
+
+The FSM will have at least two main states: A (the reset state) and B (the state where it examines w). When in state A, the FSM will transition to state B upon s = 1. 
+
+Once in state B, instead of having multiple states for each of the three clock cycles, we can use a counter to keep track of the number of clock cycles elapsed since entering state B. We also need a counter or a flag to track the number of times w = 1 during these three clock cycles.
+
+When the counter for clock cycles reaches 3, we check the number of times w = 1. If it is exactly 2, we set z to 1 in the following clock cycle; otherwise, z is 0. Then, the process resets, and the FSM continues checking w for the next three clock cycles.

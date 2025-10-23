@@ -1,0 +1,16 @@
+The primary issue in the original design is that the counter reload depends on detecting output signal changes by comparing the current and previous outputs updated within the same clock cycle, which fails to detect state transitions properly. This causes the counter not to reload correctly, breaking the timing for each traffic light state.
+
+To fix this, I will:
+
+- Use the previous **state** (not outputs) to detect state transitions for counter reload. This is more reliable and straightforward.
+- Move the previous state register update to the clocked process so that at each clock edge we can detect if the state has changed.
+- Implement the pedestrian button logic clearly: only during green state, if `pass_request` is asserted and the remaining green time is greater than 10, shorten it to 10. Otherwise, keep counting down as usual.
+- Correct timing values per problem: red = 10 clocks, yellow = 5 clocks, green = 60 clocks.
+- Make sure all registers are initialized on reset.
+- Assign output signals directly based on current state (Moore FSM).
+- Output the current count on the `clock` port.
+- Keep the design synchronous and simple for ease of verification and synthesis.
+
+This approach simplifies the reload condition to rely solely on state transitions, making counter management clearer and robust. Pedestrian logic is implemented only in green state, modifying countdown if needed.
+
+Overall, these changes should correct the functional errors and ensure the traffic light cycles correctly with proper timing and pedestrian button shortening.

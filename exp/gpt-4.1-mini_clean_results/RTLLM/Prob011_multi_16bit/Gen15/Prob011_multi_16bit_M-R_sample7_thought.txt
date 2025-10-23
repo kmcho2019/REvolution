@@ -1,0 +1,9 @@
+To refactor the multiplier while keeping the same shift-and-accumulate approach, I will remove the explicit FSM and instead control the operation purely via the shift count register (i). The start signal will trigger loading of the multiplicand and multiplier into registers, and the multiplication proceeds while i < 16. 
+
+At each cycle, if the current bit of the multiplicand is 1, add the shifted multiplier to the product. The multiplier will be shifted left as the count increments (since the shifted amount equals i). 
+
+The done signal is derived directly from the count reaching 16. This approach simplifies control logic, avoids a dedicated state register, and uses only registers for i, multiplicand, multiplier, and product.
+
+Reset conditions clear all registers. Start resets i and loads inputs. Multiplication proceeds automatically based on i and done.
+
+This structure uses synchronous logic and a simple counter to control accumulation, making the implementation more straightforward while maintaining the required functionality.

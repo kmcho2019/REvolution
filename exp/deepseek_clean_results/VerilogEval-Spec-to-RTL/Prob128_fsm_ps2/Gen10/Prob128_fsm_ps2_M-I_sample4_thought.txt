@@ -1,0 +1,18 @@
+To optimize the PPA metrics while maintaining correctness, I'll implement these improvements:
+
+1. **Timing Optimization**:
+   - Register the `done` signal calculation one cycle earlier to reduce critical path
+   - Replace ternary operator with simple increment and wrap-around logic
+
+2. **Power Optimization**:
+   - Only evaluate the `done` condition when `cnt` actually changes
+   - Gate the `done` signal to only update when needed
+
+3. **Area Optimization**:
+   - Maintain the minimal 2-bit counter but simplify its update logic
+   - Remove redundant comparisons by tracking state transitions more efficiently
+
+Key changes:
+- Pre-calculate `done` based on current state rather than next state
+- Simplify counter increment logic to use direct addition with wrap-around
+- Reduce unnecessary signal toggles by gating comparisons

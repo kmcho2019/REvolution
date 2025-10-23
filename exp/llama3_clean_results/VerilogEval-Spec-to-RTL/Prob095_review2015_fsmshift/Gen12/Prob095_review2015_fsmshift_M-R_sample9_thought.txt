@@ -1,0 +1,7 @@
+To refactor the existing code, we can simplify the logic by using a single `always_ff` block for sequential logic and remove the unnecessary conditional statement for resetting the counter. We can also define an enumeration for the states of the state machine to improve readability and maintainability.
+
+We can create two states: `IDLE` and `SHIFTING`. When the reset signal is asserted, the state machine transitions to the `SHIFTING` state and starts a counter. The `shift_ena` signal is asserted during the `SHIFTING` state. After 4 clock cycles, the state machine transitions back to the `IDLE` state, and the `shift_ena` signal is deasserted.
+
+By using a state machine approach, we can easily extend the functionality of the module to detect the proper bit pattern and assert the `shift_ena` signal accordingly.
+
+In the refactored code, we use an `enum` to define the states, which improves the readability and maintainability of the code. We also use a single `always_ff` block to update the state and the counter, which simplifies the logic and reduces the number of conditional statements.

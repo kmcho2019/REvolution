@@ -1,0 +1,21 @@
+Here's a novel state machine-based approach that differs from the shift register solution:
+
+1. State Machine Design:
+   - Use a 3-state FSM to track the pulse progression
+   - States: IDLE (wait for first 0), SAW_0 (saw first 0), SAW_1 (saw subsequent 1)
+   - Transition between states based on data_in value
+
+2. Output Generation:
+   - Output is only high when we complete the 0->1->0 sequence
+   - This happens when we're in SAW_1 state and see a 0 input
+
+3. Advantages:
+   - More explicit state tracking than shift register
+   - Easier to modify for different sequence lengths
+   - Clear state transitions that match the problem description
+   - Lower power since only relevant state transitions occur
+
+4. Synchronization:
+   - Still includes input synchronization
+   - State transitions are fully synchronous
+   - Reset puts FSM back to initial state

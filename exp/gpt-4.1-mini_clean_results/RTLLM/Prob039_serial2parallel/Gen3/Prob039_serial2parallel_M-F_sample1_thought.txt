@@ -1,0 +1,15 @@
+The main issue is the timing of when dout_parallel and dout_valid are updated relative to cnt and shift_reg updates. Since both cnt and shift_reg are updated on the same clock edge, using cnt == 7 inside the same always block to output data based on the just updated shift_reg can cause glitches or timing mismatches.
+
+To fix this, we should first shift in the new bit and increment cnt on din_valid. When cnt reaches 7 (indicating the eighth bit is just shifted in), we output the shift register (which now holds all 8 bits) and assert dout_valid for one clock cycle. The key is to update dout_parallel and dout_valid in the same clock cycle after shift_reg and cnt have been updated.
+
+To do this cleanly, we can implement the logic so that on each din_valid:
+- shift_reg shifts left by 1, inserting din_serial at LSB
+- cnt increments
+
+Then, if cnt == 7 (meaning 8 bits collected), we set dout_parallel to shift_reg and assert dout_valid for that cycle, then reset cnt to zero to start a new frame.
+
+Also, dout_valid must be asserted for exactly one clock cycle when 8 bits are collected.
+
+We will reset all registers synchronously on rst_n low.
+
+This approach ensures the serial data is collected MSB-first as required (the first received bit ends up at bit 7), and dout_valid pulses high for one cycle at data ready.

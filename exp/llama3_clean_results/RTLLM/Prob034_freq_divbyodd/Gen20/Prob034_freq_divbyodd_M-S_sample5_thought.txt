@@ -1,0 +1,7 @@
+To simplify the frequency divider module `freq_divbyodd`, we can utilize a single counter and a single internal clock divider. This approach involves counting the total number of clock cycles and toggling the divided clock output when the counter reaches half of the desired division factor for both positive and negative edges of the clock. 
+
+The key idea is to use a single counter `cnt` that counts up to `NUM_DIV - 1`, and then toggles the internal clock dividers `clk_div1` and `clk_div2` when the counter reaches half of `NUM_DIV`. The final divided clock output `clk_div` is derived by logically OR-ing `clk_div1` and `clk_div2`. 
+
+The use of a single counter and two internal clock dividers reduces the complexity of the design and minimizes area and power consumption. Additionally, the reset logic can be simplified to initialize the counter and the internal clock dividers when the active low reset signal `rst_n` is asserted.
+
+This simplified approach provides an efficient and straightforward way to divide the input clock frequency by an odd number, while maintaining the required functionality.

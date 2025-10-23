@@ -1,0 +1,18 @@
+Revised design approach:
+
+1. For out_sop (Sum-of-Products):
+   - Keep the original minterms for 2,7,15 (0010, 0111, 1111)
+   - Ensure all other specified false cases (0,1,4,5,6,9,10,13,14) don't trigger output
+   - Don't cares (3,8,11,12) can remain unspecified (optimal for SOP)
+
+2. For out_pos (Product-of-Sums):
+   - Create maxterms that cover all false cases (0,1,4,5,6,9,10,13,14)
+   - Each maxterm should ensure output is 0 for its covered cases
+   - Need 4 maxterms to cover all false cases without overlap
+   - Don't cares (3,8,11,12) can remain unspecified (optimal for POS)
+
+3. Verification:
+   - SOP will correctly output 1 only for 2,7,15
+   - POS will correctly output 0 for all specified false cases
+   - Both forms will have arbitrary output for don't cares
+   - All specified cases are now properly handled

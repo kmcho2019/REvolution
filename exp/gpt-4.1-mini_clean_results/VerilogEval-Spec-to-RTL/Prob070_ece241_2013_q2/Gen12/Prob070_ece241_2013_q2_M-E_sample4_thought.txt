@@ -1,0 +1,16 @@
+Instead of directly expressing the logic as minterms or maxterms, we can use a binary-to-decimal conversion approach by interpreting the inputs a,b,c,d as a 4-bit number (a as MSB, d as LSB) and then use a simple combinational comparator module or a case statement to detect the required numbers 2,7,15 for out_sop and 0,1,4,5,6,9,10,13,14 for out_pos.
+
+To keep it fully combinational and synthesizable:
+- Concatenate inputs into a 4-bit bus `in_val = {a,b,c,d}`.
+- Use a case statement or combinational logic to detect whether `in_val` is one of the "set" numbers for out_sop or one of the "zero" numbers for out_pos.
+- For inputs never occurring (3,8,11,12), output don't cares can be assigned as 0 or 1 as needed.
+- This approach is easy to understand, easy to maintain, and guarantees correctness because the logic is explicitly enumerated.
+- We also implement minimal combinational logic and do not rely on guessing minimal SOP or POS from K-maps manually.
+
+Thus, the module will:
+- Assemble inputs into a bus.
+- Use continuous assignments with multiple OR-ed conditions checking the 4-bit input value.
+- out_sop = 1 if in_val == 2,7 or 15.
+- out_pos = 1 if in_val == 0,1,4,5,6,9,10,13,14.
+
+This is a clean approach that fulfills the problem specification and avoids the pitfalls of incorrect minimal expressions.

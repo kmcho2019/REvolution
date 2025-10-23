@@ -1,0 +1,29 @@
+Reviewing the current optimized logic expression (a & ~c) | (c & (~b | a)), it already minimizes gate count by factoring terms involving 'c'. However, examining the Karnaugh map more closely shows we can further reduce the logic by leveraging the don't-care conditions (d) to simplify groups in the K-map.
+
+Specifically, looking at the Karnaugh map:
+
+          ab
+cd   01  00  10  11
+00 | d | 0 | 1 | 1 |
+01 | 0 | 0 | d | d |
+11 | 0 | 1 | 1 | 1 |
+10 | 0 | 1 | 1 | 1 |
+
+If we treat 'd' as 1 for simplification, the map becomes:
+
+          ab
+cd   01  00  10  11
+00 | 1 | 0 | 1 | 1 |
+01 | 0 | 0 | 1 | 1 |
+11 | 0 | 1 | 1 | 1 |
+10 | 0 | 1 | 1 | 1 |
+
+From this adjusted map, a simpler minimal expression is:
+
+out = c | (a & ~b)
+
+This is because when c=1, output is 1 regardless of other inputs (covers many 1's), and when c=0, output is 1 only if a=1 and b=0.
+
+This new expression uses only one OR gate, one AND gate, and one NOT gate, which reduces gate count and potentially switching activity.
+
+This improves power and area further while maintaining functional correctness given the don't-care condition of 'd'.

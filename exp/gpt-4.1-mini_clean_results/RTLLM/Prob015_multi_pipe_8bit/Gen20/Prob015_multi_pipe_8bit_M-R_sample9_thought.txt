@@ -1,0 +1,12 @@
+Refactor by explicitly pipelining the partial product additions in two sequential stages to break the long combinational path, instead of summing all partial products combinationally in one go. This is achieved by:
+
+1) Using input registers and an enable pipeline to latch inputs and propagate valid signals.
+2) Generating partial products combinationally.
+3) Splitting the addition of the 8 partial products into two pipeline stages with registers:  
+   - Stage 1 sums partial_products[0..3] and partial_products[4..7] separately.  
+   - Stage 2 sums the two partial sums from stage 1 to produce the final product.
+4) Output stage register holds the final product synchronized with enable signal.
+5) Enable signals are pipelined through three flip-flops to track data validity aligned with pipeline stages.
+6) Use non-blocking assignments in sequential blocks and continuous assignments outside.
+
+This refactoring reduces critical path delay by pipelining partial sums, improving maximum clock frequency while preserving behavior. It maintains conditional input sampling on mul_en_in and gated output with mul_en_out. The code style remains clear and modular.

@@ -1,0 +1,76 @@
+module TopModule(
+    input clk,
+    input reset,
+    input s,
+    input w,
+    output reg z
+);
+
+// Define states
+localparam STATE_A = 1'b0;
+localparam STATE_B = 1'b1;
+
+reg state; // Current state
+reg [2:0] w_shift_reg; // Shift register to store last three values of 'w'
+reg [1:0] counter; // Counter to track the number of clock cycles since entering state B
+
+// Initialize state and counters
+initial begin
+    state = STATE_A;
+    w_shift_reg = 3'b000;
+    counter = 2'b00;
+    z = 0;
+end
+
+// Reset logic
+always @(posedge clk) begin
+    if(reset) begin
+        state <= STATE_A;
+        w_shift_reg <= 3'b000;
+        counter <= 2'b00;
+        z <= 0;
+    end
+end
+
+// State A logic
+always @(posedge clk) begin
+    if(state == STATE_A && s) begin
+        state <= STATE_B;
+        counter <= 2'b01;
+        w_shift_reg <= {w, 2'b00};
+    end
+    else if(state == STATE_A) begin
+        z <= 0;
+    end
+end
+
+// State B logic
+always @(posedge clk) begin
+    if(state == STATE_B) begin
+        // Shift in the current value of 'w'
+        w_shift_reg <= {w, w_shift_reg[2:1]};
+        // Increment the counter
+        counter <= counter + 1'b1;
+        
+        // Check if we have reached the end of the three clock cycles
+        if(counter == 2'b11) begin
+            // Count the number of '1's in the shift register
+            reg [1:0] ones;
+            assign ones = (w_shift_reg[2] ? 1 : 0) + (w_shift_reg[1] ? 1 : 0) + (w_shift_reg[0] ? 1 : 0);
+            // Check if exactly two of the last three 'w' values are '1'
+            if(ones == 2) begin
+                z <= 1;
+            end
+            else begin
+                z <= 0;
+            end
+            // Reset the counter
+            counter <= 2'b01;
+        end
+        else begin
+            z <= 0;
+        end
+    end
+end
+
+endmodule

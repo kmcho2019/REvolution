@@ -1,0 +1,9 @@
+The provided Verilog code implements a gshare branch predictor with a 7-bit pc and 7-bit global history. However, the simulation log indicates functional errors. To refactor the code, we can restructure the state machine to correctly update the 'global_history' and cache values based on the actual branch outcome.
+
+The key steps to refactor the design are:
+1. **Separate Combinational Logic from Sequential Logic**: Use `assign` statements for combinational logic and `always` blocks for sequential logic. This separation makes the code more readable and maintainable.
+2. **Use Registers to Store Intermediate Results**: Store intermediate results in registers to avoid race conditions and ensure that the predictor sees the correct state of 'global_history' before any updates due to training.
+3. **Prioritize Training Over Prediction**: When both training and prediction occur in the same cycle, prioritize training by updating 'global_history' based on training information.
+4. **Correct Saturation Logic for Counters**: Implement correct saturation logic for counters in the cache to prevent them from going out of bounds.
+
+By refactoring the code with these steps, we can improve the design of the gshare branch predictor and ensure it functions correctly.

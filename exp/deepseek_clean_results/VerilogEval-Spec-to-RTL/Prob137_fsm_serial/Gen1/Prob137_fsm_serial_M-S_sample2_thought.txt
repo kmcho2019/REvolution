@@ -1,0 +1,6 @@
+To simplify the byte receiver FSM while maintaining functionality:
+1. Reduce states to just IDLE and RECEIVING - we can track progress within RECEIVING state
+2. Use a 4-bit counter to track both data bits (0-7) and stop bit (8)
+3. Assert 'done' when counter reaches 9 (after 8 data bits + stop bit) and stop bit is valid
+4. Reset to IDLE on reset or if start bit is detected during reception (error recovery)
+5. Simplified logic with fewer state transitions and more counter-based control

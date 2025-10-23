@@ -1,0 +1,19 @@
+Instead of capturing data_in and data_en separately in the clk_a domain and then synchronizing data_en into clk_b domain, this design uses a handshake-style approach to transfer data from clk_a to clk_b domain.
+
+The idea:
+
+1. In clk_a domain, when data_en is asserted, latch data_in into a register (data_reg_a) and assert a pulse signal (send_data_a) for one clk_a cycle.
+
+2. The pulse send_data_a is then synchronized into clk_b domain via a 2-stage synchronizer (send_data_b_sync) to avoid metastability.
+
+3. In clk_b domain, detect the rising edge of synchronized send_data_b_sync to load the data from a clk_a domain register into a clk_b domain register (data_reg_b). Since data_in is stable during data_en, and data_en is active at least 3 clk_b cycles, this guarantees proper capture.
+
+4. The output dataout is driven by data_reg_b.
+
+5. Reset signals are handled asynchronously, data_reg_a and send_data_a reset on arstn, data_reg_b and synchronizers reset on brstn.
+
+This approach allows a pulse handshake to transfer data, avoiding direct data_en synchronization; instead, the pulse crossing acts as a valid signal to transfer data, reducing the need to hold enable signals across clock domains and simplifying control logic.
+
+This new synchronizer also decouples data and enable paths, minimizing chances of glitches and improving timing closure due to shorter control paths in clk_b domain.
+
+The design relies on stable input data_in during data_en asserted window, and the minimum intervals between changes (at least 10 clk_b cycles) provide sufficient time to transfer and latch data.

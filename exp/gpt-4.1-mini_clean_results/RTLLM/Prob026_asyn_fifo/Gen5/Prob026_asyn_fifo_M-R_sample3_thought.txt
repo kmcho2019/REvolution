@@ -1,0 +1,9 @@
+Refactor the asynchronous FIFO by:
+- Separating pointer update logic into combinational increment functions and registering results in clocked always blocks.
+- Implementing Gray code conversion as standalone functions used both for pointer updates and synchronization.
+- Using explicit two-stage synchronizers as separate always blocks for pointer crossing domains.
+- Generating full and empty flags by directly comparing Gray-coded pointers using assign statements.
+- Using assign statements for RAM addresses derived from binary pointers (lower bits).
+- Driving read data directly from RAM output registered on read clock with enable gating.
+- Keeping dual-port RAM as a separate module but instantiating it similarly.
+This structure improves modularity and clarity by isolating combinational logic and sequential logic, and removes interleaving of binary pointer increments and Gray conversions inside always blocks.

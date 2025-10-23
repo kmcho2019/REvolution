@@ -1,0 +1,12 @@
+Novel Architectural Idea: Parallel Segment Johnson Counter
+1. Instead of a single 64-bit shift register, divide into 8 parallel 8-bit Johnson counters
+2. Each segment operates independently but synchronously
+3. Add synchronization logic to maintain proper Johnson counter behavior across segments
+4. Benefits:
+   - Improved timing due to shorter critical paths (8-bit vs 64-bit)
+   - Potential power savings from reduced switching activity
+   - Better scalability for larger counters
+5. Implementation:
+   - Use generate blocks for parallel segments
+   - Add segment synchronization when crossing boundaries
+   - Maintain same external interface as original design

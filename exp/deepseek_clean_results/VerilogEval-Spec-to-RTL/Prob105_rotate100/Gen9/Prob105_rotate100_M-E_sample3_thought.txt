@@ -1,0 +1,12 @@
+Novel Architecture Idea:
+1. Instead of physically shifting bits, maintain a fixed register and use a 7-bit pointer (since 100 needs 7 bits) to track the rotation offset
+2. The pointer acts as a virtual starting point for the circular buffer
+3. For reads (q), we output the 100-bit window starting from the pointer position
+4. Benefits:
+   - Rotation becomes a simple pointer increment/decrement (O(1) operation)
+   - No physical bit shifting means lower dynamic power
+   - Load operation remains simple register write
+   - Scales better for larger registers (100+ bits)
+5. Tradeoffs:
+   - Slightly more complex output muxing
+   - Requires modulo arithmetic for pointer wrapping

@@ -1,0 +1,11 @@
+My novel approach uses a hierarchical state machine with three main states (WALKING, FALLING, DIGGING) and sub-states for direction (LEFT, RIGHT). This provides clearer separation of concerns and more straightforward transition logic. Key features:
+
+1. **Hierarchical States**: Main states handle the primary behaviors while sub-states manage direction, reducing redundant logic.
+
+2. **Explicit Priority Encoding**: The state transitions are structured to naturally implement the priority order (fall > dig > bump) through the order of condition checks.
+
+3. **Separate Fall Timer**: The timer is only active during falling and automatically resets when not falling.
+
+4. **Direction Preservation**: The walking direction is preserved in a register during falls and digs, ensuring correct behavior when resuming.
+
+5. **Clean Output Logic**: Outputs are directly derived from current state with minimal combinatorial logic.

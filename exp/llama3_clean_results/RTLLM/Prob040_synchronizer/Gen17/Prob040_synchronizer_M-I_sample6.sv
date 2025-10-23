@@ -1,0 +1,42 @@
+module synchronizer (
+    input clk_a,
+    input clk_b,
+    input arstn,
+    input brstn,
+    input [3:0] data_in,
+    input data_en,
+    output reg [3:0] dataout
+);
+
+reg [3:0] data_reg;
+reg en_reg;
+reg en_delay;
+
+always @(posedge clk_a or negedge arstn) begin
+    if (!arstn) begin
+        data_reg <= 4'd0;
+        en_reg <= 1'b0;
+    end else begin
+        data_reg <= data_in;
+        en_reg <= data_en;
+    end
+end
+
+always @(posedge clk_b or negedge brstn) begin
+    if (!brstn) begin
+        en_delay <= 1'b0;
+        dataout <= 4'd0;
+    end else begin
+        en_delay <= en_reg;
+        if (en_delay) begin
+            dataout <= data_reg;
+        end else begin
+            // Add a clock gating condition to reduce power consumption
+            if (!en_delay) begin
+                dataout <= dataout; // Hold the previous value
+            end
+        end
+    end
+end
+
+endmodule

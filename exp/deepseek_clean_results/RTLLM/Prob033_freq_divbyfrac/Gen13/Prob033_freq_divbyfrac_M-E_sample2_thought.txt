@@ -1,0 +1,20 @@
+Fractional Clock Division via Pulse Width Modulation:
+
+1. **Time-Interleaved Division**:
+   - Implement two parallel dividers with different integer division ratios (3x and 4x)
+   - Alternate between them using a state machine to achieve 3.5x average division
+
+2. **Precision Phase Blending**:
+   - Use a phase accumulator to track fractional timing
+   - Generate precisely timed pulses at both rising and falling edges
+   - Combine pulses using edge-sensitive flip-flops for clean transitions
+
+3. **Dynamic Ratio Control**:
+   - Maintain a modulo-7 counter (3+4) for cycle control
+   - Alternate between 3-cycle and 4-cycle periods
+   - Use clock gating for precise pulse generation
+
+4. **Jitter Reduction**:
+   - Implement digital delay lines for sub-cycle timing
+   - Use majority voting for glitch filtering
+   - Synchronize all transitions to input clock edges

@@ -1,0 +1,33 @@
+Revised Design Approach:
+
+1. **Clear State Separation**:
+   - Add explicit states for pattern detection (IDLE, PATTERN_MATCH)
+   - Separate delay capture (CAPTURE_DELAY) from counting (COUNTING)
+   - Ensure proper sequencing of operations
+
+2. **Accurate Pattern Detection**:
+   - Use a shift register to detect 1101 sequence first
+   - Only transition to delay capture after full pattern match
+   - Reset shift register after pattern match to capture delay bits cleanly
+
+3. **Correct Counter Logic**:
+   - Store delay value properly in captured_delay register
+   - Calculate counter value as (delay + 1) * 1000
+   - Use accurate countdown logic with proper initialization
+
+4. **Precise Count Output**:
+   - Calculate remaining time as (main_counter / 1000) - 1
+   - Ensure count output matches specification during counting phase
+   - Make count don't-care when not counting
+
+5. **Proper Ack Handling**:
+   - Only reset detection logic after ack is received
+   - Maintain done signal until properly acknowledged
+   - Ensure clean transition back to IDLE state
+
+Key Improvements:
+- Clear separation of pattern detection and delay capture phases
+- Accurate counter initialization and countdown
+- Correct remaining time calculation
+- Proper handling of ack signal
+- Maintained all required functionality

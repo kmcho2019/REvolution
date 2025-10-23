@@ -1,0 +1,14 @@
+Instead of explicitly storing the entire previous input vector, I will implement a shift-register style approach that stores each bit's previous state in a 1-bit register per bit. Then, the falling edge detection can be done by comparing each bit's stored previous value to the current input bit. When a falling edge (1->0) is detected on any bit, I will set a corresponding bit in a separate "latched" register that holds the captured falling edges indefinitely until reset.
+
+The design steps are:
+- Use a 32-bit register `prev_in` to store the previous clock cycle input bits.
+- On every clock edge, synchronously update `prev_in` to current input `in`.
+- Detect falling edges for bits where `prev_in` is 1 and current input bit is 0.
+- Maintain a 32-bit register `latched_falling` to store the detected falling edges.
+- When a falling edge is detected on a bit, set the corresponding bit in `latched_falling` to 1.
+- `latched_falling` retains its bits until the synchronous active-high reset is asserted, which clears all internal state and output.
+- Output `latched_falling` as the final output `out`.
+
+This approach differs architecturally by emphasizing the explicit previous state register and separate latch register, simplifying logic and avoiding combinational declarations inside always blocks. It cleanly separates detection and latching functions while meeting all requirements.
+
+The synchronous reset ensures the module can be cleared cleanly, and all logic is clocked on the positive edge as required.

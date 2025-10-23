@@ -1,0 +1,19 @@
+The Moore state machine can be implemented using one-hot encoding, where each state is represented by a unique binary code. The next-state logic can be derived by inspecting the state transition diagram and writing equations for each next-state signal. The output logic can also be derived by inspecting the state transition diagram and writing equations for each output signal.
+
+The state transition logic can be implemented using a combination of the current state and input signals. The output logic can be implemented using the current state.
+
+To generate the required signals, we need to create next-state logic equations and output logic equations based on the given one-hot encoding.
+
+Next-state logic equations:
+
+- S_next: current state is S and d = 0, or current state is S1 and d = 0, or current state is S110 and d = 0, or current state is Wait and ack = 1
+- S1_next: current state is S and d = 1
+- Count_next: current state is B3
+- Wait_next: current state is Count and done_counting = 1
+- B3_next: current state is B2
+
+Output logic equations:
+
+- done: current state is Wait
+- counting: current state is Count
+- shift_ena: current state is B0, B1, B2, or B3

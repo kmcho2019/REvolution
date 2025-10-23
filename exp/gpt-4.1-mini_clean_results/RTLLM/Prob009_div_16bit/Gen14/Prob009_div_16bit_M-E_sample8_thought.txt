@@ -1,0 +1,14 @@
+Implement a combinational 16-bit by 8-bit divider using two always blocks as requested: the first block captures inputs into registers, the second block performs a non-restoring division algorithm. Instead of simple shift-subtract, the non-restoring division logic works by conditionally adding or subtracting the divisor based on the sign of the current remainder, effectively processing all bits in a single combinational loop. This approach is less common than shift-subtract and can yield a different hardware structure.
+
+In detail:
+- The first always block simply captures inputs to a_reg and b_reg.
+- The second always block declares an extended remainder register with a signed bit, initialized to zero.
+- For each bit from MSB to LSB of the dividend, the remainder is shifted left and the next dividend bit concatenated in.
+- If the remainder is negative, add divisor; else subtract divisor.
+- Set quotient bit to 0 if remainder negative after operation, else 1.
+- At the end, if remainder is negative, add divisor back to finalize remainder.
+- Outputs are assigned from the computed quotient and the final positive remainder.
+- This method ensures remainder is always positive at the end without extra subtraction steps.
+- Quotient and remainder outputs are extended to 16 bits with high bits zero-padded in remainder as required.
+- Use reg types for outputs since assigned in always blocks.
+This gives a novel combinational divider architecture different from shift-subtract, illustrating an alternative approach.

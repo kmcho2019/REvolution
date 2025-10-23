@@ -1,0 +1,13 @@
+To create a superior solution, fuse the two-stage shifting approach from Example 1 with the selective minimal shift computations of Example 2 to optimize PPA:
+
+- Use a two-stage shift decomposition (shift by 8, then by 1) to reduce mux depth and balance timing.
+- However, only compute the needed shift paths based on direction and amount signals, minimizing redundant shift logic and reducing switching power.
+- For the left shift: stage 1 shift by 8 (or no shift), stage 2 shift by 1 (or no shift).
+- For the arithmetic right shift: stage 1 shift by 8 (or no shift, with sign extension), stage 2 shift by 1 (or no shift, with sign extension).
+- Use the amount bits as in Example 1 (amount[0] = shift_by_8, amount[1] = direction).
+- Compute partial shifts only for the selected direction, gating shift computations with direction signal to avoid unnecessary toggling.
+- Select between left and right shifted results with a final mux.
+- Use synchronous load and enable control as before.
+- This fusion keeps minimal combinational logic, reduces toggle rates, improves timing by using two-stage shifts, and is clear and easy to synthesize.
+
+The result combines the two-stage shifting's timing benefits with minimal power switching from selective shift computations, achieving a balanced, PPA-optimized arithmetic shift register.

@@ -1,0 +1,9 @@
+To provide a completely different approach, I will explicitly name each pairwise comparison bit in the 25-bit output vector according to a fixed 5x5 matrix order, where rows correspond to inputs a, b, c, d, e and columns to a, b, c, d, e respectively, with the top-left bit (MSB, out[24]) as (a,a), next (a,b) at out[23], continuing row-wise till (e,e) at out[0].
+
+Instead of using generate loops, I will construct a 5x5 reg array holding each comparison result using XNOR (bit equality) of each input pair, then flatten it into a 25-bit wire output by explicit concatenation of rows.
+
+This approach improves clarity by mapping each output bit explicitly and avoids generate constructs, showing a direct combinational logic expression style. It also simplifies debugging and modification because each output bit's origin is explicit.
+
+The XNOR operator `~^` is used to check equality of two bits. The flattening uses nested concatenations to produce the final output vector in the required order.
+
+This style is fully synthesizable, direct, and neatly documents the logic per pair.

@@ -1,0 +1,15 @@
+The original code incorrectly computed 'next_state' inside a clocked always block together with 'state', causing incorrect sequential behavior and timing mismatches for the output 'q'. To fix this, we separate the combinational logic for next_state from the sequential update of 'state'. 
+
+The correct and standard FSM design pattern is:
+
+- Compute next_state purely combinationally from current state and inputs.
+- On the clock's positive edge, update the state flip-flop with next_state.
+- The output 'q' should be the value of next_state (next output), as per the waveform, while 'state' is the registered current state.
+
+From the waveform analysis:
+- When state=0, next_state = (~a & b)
+- When state=1, next_state = ~(a & ~b)  (which is ! (a & ~b))
+
+Implementing next_state as combinational logic allows 'q' to reflect the immediate next_state based on current inputs and state, and state is updated synchronously.
+
+This approach fixes timing issues, ensures correct functionality, and matches the waveform. It also improves timing, power, and area by removing an unnecessary flip-flop (previously assigned to next_state) and uses simple combinational logic for next_state calculation.

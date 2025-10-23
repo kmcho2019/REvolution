@@ -1,0 +1,11 @@
+Fuse the hierarchical OR-tree approach for next_state[0] from Example 1 to reduce fan-in and enhance timing with the iterative loop approach from Example 2 for the remaining next_state bits to maintain clarity, scalability, and synthesis friendliness.
+
+Specifically:
+- Use intermediate wires grouped to implement next_state[0] transitions with balanced ORs, minimizing gate fan-in for the most complex next state (S0).
+- For next_state[1] through next_state[9], employ a combinational always block with a for-loop over active states and a case statement for concise, clear assignment, supporting multiple simultaneous active states naturally.
+- Calculate outputs out1 and out2 with efficient bitmasking and OR reduction for low power and area.
+- This fusion keeps the critical next_state[0] path optimized for timing while preserving maintainability and scalability for other states.
+- The approach minimizes logic depth and area by sharing next_state[0] logic and cleanly segregating complex next_state assignments.
+- All logic is purely combinational and compatible with one-hot encoding and multi-hot active states.
+
+Overall, this yields a design optimal for timing, power, and area, with superior readability and maintainability.

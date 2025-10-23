@@ -1,0 +1,11 @@
+To simplify the FSM while maintaining functionality:
+1. Remove the ERROR state since we can handle stop bit verification in the STOP state itself by staying there until we see a '1'
+2. Combine state transition and data processing into a single always block for clarity
+3. Use a simpler bit counter that resets automatically when leaving RECEIVING state
+4. Make done a direct combinational output based on current state and input
+
+Key simplifications:
+- Eliminate ERROR state by having STOP state wait for stop bit
+- Remove next_state logic by handling transitions directly in sequential block
+- Simplify counter management
+- Make done output combinational

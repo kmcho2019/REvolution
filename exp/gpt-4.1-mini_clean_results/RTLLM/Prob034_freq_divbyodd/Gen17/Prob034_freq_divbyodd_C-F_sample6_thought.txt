@@ -1,0 +1,13 @@
+To create a superior frequency divider for an odd divisor by fusing the best ideas from both examples, I will:
+
+- Use a single counter running on the positive edge of the clock counting modulo NUM_DIV.
+- Generate clk_div1 and clk_div2 on positive and negative edges respectively, but with explicit set/reset logic (not toggle) for cleaner, glitch-free outputs and better duty cycle accuracy.
+- Synchronize the counter value into the negedge domain via a delayed register updated on the positive edge to avoid metastability and timing issues.
+- Keep asynchronous active-low reset for all registers.
+- Use parameter checks to ensure NUM_DIV is odd at compile time.
+- Use minimal counter width with $clog2.
+- Combine clk_div1 and clk_div2 via logical OR to produce final clk_div output covering both clock edges.
+- This design reduces toggling activity by avoiding blind toggling and instead uses clear set/reset points, improving power efficiency.
+- The single counter and minimal flip-flops keep area low.
+- Combining explicit set/reset style with delayed counter for negedge domain minimizes timing complexity and enhances performance.
+- This fusion approach retains the simplicity of the single counter design, improves duty cycle control and glitch avoidance, and balances PPA optimally.

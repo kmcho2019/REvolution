@@ -1,0 +1,19 @@
+After carefully analyzing the waveform and the feedback, here's the correct implementation approach:
+
+1. Key Insights:
+   - Outputs only change on positive clock edges (sequential behavior)
+   - p directly follows 'a' when q is 0
+   - q becomes 1 in the next cycle after p was 1
+   - q resets to 0 when 'a' is 1 during a positive clock edge
+
+2. Corrected Implementation Strategy:
+   - Use single always block sensitive only to posedge clock
+   - Track previous p value to determine q transitions
+   - Clear q when a is 1 during clock edge
+   - Update p based on current a and q state
+
+3. Improvements:
+   - Proper edge-sensitive design
+   - Correct state transition logic
+   - Minimal registers (only need to store previous p)
+   - Matches all waveform requirements precisely

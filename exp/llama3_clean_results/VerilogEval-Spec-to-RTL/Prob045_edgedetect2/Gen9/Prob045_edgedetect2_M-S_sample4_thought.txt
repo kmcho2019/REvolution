@@ -1,0 +1,5 @@
+To simplify the existing solution, we can combine the two always blocks into one. This reduces the overhead of having multiple clocked processes and maintains the functionality of detecting any edge on the input bits. By doing so, we ensure that the previous state of the input (`prev_in`) is updated before the edge detection is performed, thus avoiding any potential race conditions or issues with non-blocking assignments.
+
+Additionally, this simplification does not affect the PPA metrics negatively. The power consumption and area usage are expected to remain low, as the simplified design still only involves basic logic operations and does not introduce any complex or power-hungry components. The timing path remains straightforward, with a single XOR operation and register update, which is beneficial for high-frequency operation.
+
+The key to this simplification is understanding that the sequential logic can be handled within a single always block, eliminating the need for separate blocks and thus reducing complexity while maintaining the required functionality.

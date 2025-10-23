@@ -1,0 +1,13 @@
+module TopModule(d, ena, q);
+    input d;
+    input ena;
+    output reg q;
+
+    always @(*) begin
+        if (ena) begin
+            q <= d;
+        end else begin
+            q <= q; // Hold the current value of q
+        end
+    end
+endmodule

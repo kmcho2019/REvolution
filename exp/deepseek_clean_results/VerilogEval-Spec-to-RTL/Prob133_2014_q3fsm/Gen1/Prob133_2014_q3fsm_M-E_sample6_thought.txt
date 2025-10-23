@@ -1,0 +1,17 @@
+Here's a novel approach using a different state encoding and output generation strategy:
+
+1. Instead of using a separate counter, we'll encode the state to represent both the current phase (A/B) and the counting progress (0-3 cycles)
+2. We'll use a 2-bit state register where:
+   - 00 = State A
+   - 01 = State B, cycle 1
+   - 10 = State B, cycle 2
+   - 11 = State B, cycle 3
+3. We'll track the count of 1's in w separately
+4. The output z will be generated combinatorially based on the stored count
+5. This eliminates the need for a separate shift register and reduces the state transitions
+
+Key advantages:
+- More compact state representation
+- Direct encoding of counting progress in state
+- Clear separation between counting and output generation
+- Fewer registers needed overall

@@ -1,0 +1,9 @@
+Refactor the FSM by separating the direction and state type as two distinct registers, which simplifies updates and clarifies the logic. Use a synchronous reset for both registers. The direction register is only updated during walking and bump conditions, and kept stable otherwise.
+
+Detect falling as a condition and represent walking, falling, digging as an enumerated state type. The direction and state type update logic are split into two always blocks: one for state type, one for direction.
+
+This approach reduces the width of the state register and clearly isolates direction changes, improving readability and modularity without changing behavior. The outputs remain combinational based on current state and direction.
+
+Also, store prev_ground as a registered signal updated every clock cycle to detect ground transitions.
+
+Use localparams to encode states and direction as separate signals to improve clarity.

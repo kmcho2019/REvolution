@@ -1,0 +1,15 @@
+To improve the PPA and timing of the original 3-stage pipeline design, the key bottleneck is the single-cycle combinational summation of all eight partial products, which leads to a long critical path and timing violations (WNS negative, long TNS). To fix this, I propose increasing the pipeline depth by splitting the summation of partial products into multiple pipeline stages using an adder tree structure. This reduces the combinational delay each cycle and improves max frequency.
+
+Specifically:
+- Use a 4-stage pipeline instead of 3.
+- Stage 1: Register inputs and generate partial products.
+- Stage 2: Sum partial products pairwise (4 sums).
+- Stage 3: Sum those sums pairwise (2 sums).
+- Stage 4: Final sum of last two sums and register output.
+- Propagate enable signals along the pipeline as a shift register to align timing.
+
+This approach reduces the combinational logic per stage from summing 8 operands at once to summing pairs of operands, improving timing and power due to shorter logic depth and less glitching. Partial sums are registered at each stage, lowering switching noise and improving power. The deeper pipeline will also improve achievable clock frequency (shorter clock period), reducing dynamic power at given frequencies.
+
+Area may increase slightly due to more registers and adders, but this is a good tradeoff for timing and power. Additionally, enable signals are gated appropriately to prevent unnecessary toggling when no valid input. 
+
+This design keeps the same functionality and timing behavior but with a cleaner, more balanced pipeline and better PPA.

@@ -1,0 +1,14 @@
+Here's a novel approach using a shift register instead of a counter:
+
+1. Use a 4-bit shift register initialized to 4'b1111 on reset
+2. On each clock cycle, shift in a 0 from the right
+3. The shift_ena output is the leftmost bit of the shift register
+4. This naturally creates exactly 4 cycles of shift_ena (one for each '1' in the initial pattern)
+5. After 4 shifts, the register becomes 4'b0000 and shift_ena stays 0
+6. Reset synchronously reloads the 4'b1111 pattern
+
+Advantages:
+- No explicit counting logic needed
+- Simple shift operation achieves the timing requirement
+- Clear visual representation of the 4-cycle enable period
+- Naturally stops asserting shift_ena after exactly 4 cycles

@@ -1,0 +1,8 @@
+The current solution can be simplified by:
+1. Removing the intermediate x_prev_prev register since we only need to track the last two bits (current and previous)
+2. Using a single state variable to track if we've seen "10" (state 1) or not (state 0)
+3. Making the output purely combinational based on current state and input
+4. Still maintaining Mealy-type behavior and overlapping sequence detection
+5. Keeping the negative-edge asynchronous reset
+
+This reduces the state tracking to just 1 bit while still correctly detecting "101" sequences.

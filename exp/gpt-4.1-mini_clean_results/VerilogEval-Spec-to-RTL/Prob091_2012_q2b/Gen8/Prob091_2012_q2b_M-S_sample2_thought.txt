@@ -1,0 +1,7 @@
+By directly assigning the outputs Y1 and Y3 in the TopModule using minimal logic expressions derived from the FSM transitions and one-hot state encoding, we can eliminate the extra module and further simplify the design. 
+
+Specifically:
+- Y1 = y[0] & w (since Y1 is the input to y[1], next state B is reached from A on input w=1)
+- Y3 = (~w) & ~(y[0] | y[3]) (since Y3 is input to y[3], next state D is reached from B or C or E or F on w=0)
+
+This maintains full functional correctness with simpler, more direct code.

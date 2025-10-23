@@ -1,0 +1,18 @@
+To correctly implement the next-state logic for y[1]:
+1. Analyze all state transitions where the next state has y[1]=1
+2. From the state machine:
+   - Next y[1] is 1 when transitioning to states E (100) or F (101)
+   - This occurs in these cases:
+     * From C (010) with w=0 → E (100)
+     * From D (011) with w=0 → F (101)
+     * From E (100) with w=0 → E (100) (stays)
+     * From B (001) with w=1 → D (011) (but D has y[1]=1)
+3. Also need to consider cases where y[1] becomes 0:
+   * From F (101) with w=0 → C (010)
+   * From B (001) with w=0 → C (010)
+4. The output Y1 is simply y[1] from current state
+
+Improved approach:
+- Create a truth table covering all state transitions
+- Implement minimal logic covering all cases where next y[1] should be 1
+- Ensure all other cases result in y[1]=0

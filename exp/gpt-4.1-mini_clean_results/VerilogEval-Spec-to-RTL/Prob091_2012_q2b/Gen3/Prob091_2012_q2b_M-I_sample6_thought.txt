@@ -1,0 +1,13 @@
+The original logic is already minimal for the given one-hot encoding. However, we can optimize power by reducing the input switching and gate fan-in on Y3. Instead of ORing four signals for Y3, we can group terms to reduce logic depth and gate input count.
+
+One optimization is to recognize that states B and C (y[1] and y[2]) and states E and F (y[4] and y[5]) appear together with the same condition (~w). So:
+
+Y3 = ((y[1] | y[2]) | (y[4] | y[5])) & ~w
+
+We can implement this with two smaller OR gates feeding into a third OR gate before AND with ~w. This structural grouping can help in actual hardware synthesis to reduce power by minimizing gate fan-in and switching activity.
+
+This optimization maintains the same logic function but provides the synthesis tool more opportunity to map the logic into smaller gates or balanced trees, improving area and power potentially without impacting performance.
+
+Y1 is already a single AND gate and cannot be optimized further.
+
+Hence, the improved code structurally groups Y3 inputs to reduce fan-in and switching.

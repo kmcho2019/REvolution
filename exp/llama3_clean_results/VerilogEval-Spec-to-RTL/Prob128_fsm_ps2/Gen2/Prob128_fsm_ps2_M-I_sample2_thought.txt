@@ -1,0 +1,13 @@
+To improve the given solution, we will redesign the finite state machine (FSM) to properly handle the detection of message boundaries and the signaling of received messages. The new approach will involve using a counter to keep track of the bytes received and checking the condition for each state transition. We will also modify the assignment of the 'done' signal to accurately reflect the receipt of a complete message. Additionally, we will optimize the code for better Power, Performance, and Area (PPA) by reducing the number of registers and using a more efficient state machine.
+
+The new FSM will have the following states:
+- IDLE: The initial state where the FSM waits for the first byte of a message with in[3]=1.
+- BYTE1: The state where the FSM has received the first byte of a message and waits for the second byte.
+- BYTE2: The state where the FSM has received the second byte of a message and waits for the third byte.
+- DONE: The state where the FSM has received a complete message and signals the 'done' signal.
+
+The FSM will transition from one state to the next based on the following conditions:
+- IDLE to BYTE1: in[3]=1
+- BYTE1 to BYTE2: always transition to the next state
+- BYTE2 to DONE: always transition to the next state
+- DONE to IDLE: always reset to the initial state and signal the 'done' signal

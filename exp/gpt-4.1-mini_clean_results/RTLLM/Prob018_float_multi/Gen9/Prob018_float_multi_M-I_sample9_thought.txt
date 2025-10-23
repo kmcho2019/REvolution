@@ -1,0 +1,27 @@
+To improve PPA (Performance, Power, Area) of the existing 32-bit IEEE-754 floating-point multiplier while preserving correctness and functionality, the main bottleneck is the 24x24-bit multiplier in a single cycle.
+
+Improvement strategy:
+
+1. Multi-cycle mantissa multiplication: 
+   - Replace the single-cycle 24x24 multiplier with a sequential multiplier that computes partial products over multiple cycles (e.g., a 3-cycle multiplier doing 8-bit chunks or a simple shift-and-add multiplier). 
+   - This reduces the critical path drastically, allowing a higher clock frequency and less power due to smaller combinational logic per cycle.
+
+2. Reduce register duplication:
+   - Eliminate redundant pipeline registers holding the product.
+   - Use fewer temporary registers by combining stages where possible.
+
+3. Optimize exponent width:
+   - Keep exponent width at 10 bits only when necessary (for overflow detection) but mostly use 9 bits where safe.
+
+4. Clock gating / enable signal:
+   - Add an enable signal that only advances the internal pipeline when a valid multiplication starts, minimizing switching.
+
+5. Simplify rounding logic with smaller combinational blocks to reduce delay.
+
+6. Keep the 4-cycle pipeline, but distribute multiplication across 2 cycles, to balance latency with frequency.
+
+Overall, the design changes focus on splitting the multiplier into partial computations over multiple cycles, significantly reducing the combinational delay in any single clock cycle, which improves WNS and thus performance. The area might increase a bit due to control logic but overall less pipeline register storage and lower toggle rates improve power. 
+
+The code below implements a sequential 24x24-bit multiplier over 2 cycles (processing 12 bits of multiplier operand at a time), integrated into the 4-cycle pipeline. Other stages remain mostly unchanged.
+
+This provides a practical trade-off of latency vs. clock frequency, thus improving PPA.

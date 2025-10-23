@@ -1,0 +1,10 @@
+Combine the modular next-state logic and explicit terminal count detection from Example 1 with the clean clocking and internal enable approach advised in Example 2. Instead of gating the clock externally, use the main clock with an enable controlled by `valid_count`. Keep active-low asynchronous reset to ensure proper reset response.
+
+Use an equality check `out == 4'd11` for terminal count detection to simplify logic and improve synthesis. The next state is computed combinationally and assigned to a register on clock edge with non-blocking assignments. This preserves clarity, modularity, and good synthesis results.
+
+This fusion strategy retains the clarity and separation of concerns from Example 1, while eliminating RTL clock gating from Example 2 for better timing and reliability. Using internal enable with clean clock edges reduces clock skew and potential glitches. The design thus optimizes power by reducing toggling when `valid_count` is low, maintains performance by clean clock usage, and keeps area minimal with simple equality comparisons.
+
+Overall, this approach improves PPA by:
+- Clean synchronous clocking with enable for power savings
+- Simple and clear combinational next state logic for easy understanding and synthesis
+- Equality comparison for terminal count detection to reduce logic complexity

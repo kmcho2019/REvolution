@@ -1,0 +1,12 @@
+Implement the FSM with a more granular state machine that explicitly represents each bit of the pattern detection. Instead of comparing a shift register directly to the pattern, create individual states representing partial pattern matches (e.g., matched '1', then '11', then '110', then '1101'). This allows precise detection without ambiguity or overlapping issues.
+
+Once the full pattern is matched, move to a dedicated SHIFT state that asserts shift_ena for exactly 4 cycles, counting them with a small counter. Then transition to COUNT state, asserting counting output until done_counting input is asserted. Then go to DONE state asserting done output until ack input is asserted. The synchronous reset forces FSM to initial state.
+
+All outputs are registered to change synchronously with state updates, ensuring outputs change only on clock edges for predictable timing. Using separate always blocks for state and outputs improves clarity. This approach avoids using combinational output assignments and reduces timing uncertainty. The pattern detection is implemented as a sequence of states, ensuring no pattern detection is missed or jumped.
+
+This state machine will have:
+- States: IDLE (waiting for first '1'), P1 (matched '1'), P11 (matched '11'), P110 (matched '110'), P1101 (matched '1101'), SHIFT, COUNT, DONE.
+
+State transitions depend on the input bit for pattern matching and on counters/signals for timer control phases.
+
+Outputs are registered and driven solely by the FSM state for consistent synchronous behavior.

@@ -1,0 +1,14 @@
+To improve power and timing while keeping area minimal, store the input parallel data `d` into an internal 4-bit register (`data`) only at the start of a new serialization cycle. This avoids combinational glitches on `dout` caused by direct indexing on `d` input, since `d` can change asynchronously relative to the clock. Then use a 2-bit counter `cnt` to index bits from `data` (MSB first), incrementing every clock cycle.
+
+`valid_out` should be asserted when outputting the MSB of the stored data (i.e., when `cnt == 0`). This ensures that `valid_out` marks the beginning of a new serialization cycle, consistent with the requirement.
+
+This approach combines:
+- Reduced switching on the output by isolating input data capture,
+- Stable and glitch-free output `dout`,
+- Simple control logic with a counter and a small data register,
+- `valid_out` asserted only on the first output bit,
+- Synchronous reset for timing consistency.
+
+By capturing `d` into `data` only at the last bit output cycle (i.e., when `cnt == 3`, before wrapping to 0), the design ensures the data for the next serialization is always stable and synchronous, minimizing glitches and improving timing and power compared to direct dynamic indexing on input.
+
+This balances power, performance, and area well.

@@ -1,0 +1,9 @@
+The original solution uses a multiplexer with two separate logic expressions. We can simplify this further by observing the pattern in the Karnaugh map:
+1. When c=1, output is 1 except when a=0 and b=1 (output 0)
+2. When c=0, output is equal to a (with don't-cares allowing this simplification)
+
+This can be implemented more directly by:
+- Using c as an enable signal
+- When c=1, output is (a OR ~b)
+- When c=0, output is a
+This collapses the mux into a single OR operation with c controlling whether ~b is considered

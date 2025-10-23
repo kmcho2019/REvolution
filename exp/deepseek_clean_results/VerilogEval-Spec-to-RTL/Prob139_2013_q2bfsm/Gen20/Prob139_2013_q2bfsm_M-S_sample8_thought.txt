@@ -1,0 +1,23 @@
+Here's a simplified approach that maintains all functionality while reducing complexity:
+
+1. **State Reduction**: Combine MONITOR_X and MONITOR_Y into a single monitoring state, using counters to track progress.
+
+2. **Pattern Matching**: Use a 3-bit shift register for x pattern detection (1-0-1).
+
+3. **Simplified Output Logic**:
+   - f is high only in PULSE_F state (one cycle after reset)
+   - g is set on cycle after pattern match and maintained based on y input
+
+4. **Efficient State Transitions**:
+   - Only 4 states needed (RESET, PULSE_F, MONITOR, FINAL)
+   - Final state holds g value permanently until reset
+
+5. **Counter Logic**:
+   - Single 2-bit counter tracks y monitoring cycles
+   - Reset counter when entering MONITOR state
+
+Key simplifications:
+- Fewer states (4 vs 6)
+- Combined monitoring logic
+- Clearer output generation
+- More efficient counter usage

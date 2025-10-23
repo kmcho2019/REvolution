@@ -1,0 +1,12 @@
+The current implementation is already quite efficient, but we can simplify it further by observing that:
+1. next_state[0] (A) is active when either:
+   - Current state is A (state[0]) and input is 0, or
+   - Current state is C (state[2]) and input is 0
+2. next_state[1] (B) is active when input is 1 and current state is not C (state[2])
+3. next_state[2] (C) is active when either:
+   - Current state is B (state[1]) and input is 0, or
+   - Current state is D (state[3]) and input is 0
+4. next_state[3] (D) is active when current state is C (state[2]) and input is 1
+5. Output is simply state[3] (D)
+
+The key simplification is recognizing that we can express the conditions more directly using the one-hot encoding properties, without any OR operations.

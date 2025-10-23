@@ -1,0 +1,5 @@
+Refactor the code by separating the combinational and sequential logic more cleanly. Use a continuous assignment (`assign`) for the multiplication product, and perform the saturation detection combinationally before the sequential update of the accumulator register. Instead of using an always block with non-blocking assignment for output `c`, directly connect `c` to the accumulator register.
+
+This structure improves clarity by isolating combinational calculations from state updates, making it easier for synthesis tools and readers to follow. The accumulator register update still occurs on the positive clock edge and synchronous reset, but the combinational logic is expressed purely outside of the always block. This also removes the unnecessary combinational always block for output `c` by making it a direct wire driven by the register, which is synthesizable and often preferred for clarity.
+
+The core functional behavior with saturation remains the same: multiply, detect overflow in 33-bit add, saturate if needed, accumulate otherwise.

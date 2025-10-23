@@ -1,0 +1,19 @@
+The FSM states are one-hot encoded in a 6-bit vector y. The output signals Y1 and Y3 correspond to the inputs of the state flip-flops for states B and D respectively, meaning Y1 is the next state's bit for B (y[1]) and Y3 is the next state's bit for D (y[3]).
+
+From the state transitions:
+- Y1 (input of flip-flop for state B) is high when next state is B.
+Looking at transitions leading to B:
+  - From A with input=1, next state is B (so y==A && input==1)
+No other transitions go to B.
+
+- Y3 (input of flip-flop for state D) is high when next state is D.
+Looking at transitions leading to D:
+  - From B with input=0, next state D
+  - From C with input=0, next state D
+  - From E with input=0, next state D
+  - From F with input=0, next state D
+So Y3 = (y==B && input==0) || (y==C && input==0) || (y==E && input==0) || (y==F && input==0)
+
+Since the current states correspond to bits in y, and the input to FSM is the signal w (assuming w is the input bit), the code will implement Y1 and Y3 as per above conditions.
+
+Note: input to the FSM transitions is the signal w.

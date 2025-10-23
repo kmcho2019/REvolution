@@ -1,0 +1,13 @@
+Here's a novel approach using a parallel load architecture with multiplexed operations:
+1. Instead of sequential shift/count operations, implement parallel paths
+2. Use a 4:1 mux to select between:
+   - Hold current value (neither enable)
+   - Shift operation (shift_ena)
+   - Count operation (count_ena)
+   - Simultaneous shift+count (undefined case)
+3. Pre-compute all possible next states in parallel
+4. This approach may improve timing by:
+   - Reducing critical path length (operations are parallel)
+   - Eliminating priority logic
+   - Potentially enabling better synthesis optimization
+5. The undefined case (both enables) will naturally select one path based on mux ordering

@@ -1,0 +1,7 @@
+Analyzing the waveform truth table shows that output q is 1 if and only if the total number of 1s among inputs a, b, c, d is even — i.e., an even parity function on four inputs.
+
+A novel way to implement this is to use the XOR reduction operator to count parity and then invert it for even parity. Instead of using pairwise XNORs, we will directly use the XOR reduction operator on the inputs and then invert the result.
+
+This approach is minimal and elegant: it uses a single assign statement and leverages Verilog's built-in reduction operators, which synthesis tools translate efficiently into XOR tree logic.
+
+In summary, q = ~(^({a, b, c, d})) meaning q is high when the XOR of all inputs is 0 (even parity), and low otherwise.

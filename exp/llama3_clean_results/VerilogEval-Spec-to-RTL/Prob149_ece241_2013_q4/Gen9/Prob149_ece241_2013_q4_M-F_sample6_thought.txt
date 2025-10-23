@@ -1,0 +1,11 @@
+To fix the code, we need to incorporate a mechanism to track the previous state of the sensors. We can achieve this by introducing a new variable 'prev_s' that stores the previous value of the sensor inputs. We will update 'prev_s' at every clock cycle, and then use it to determine the flow rate based on the current and previous sensor states.
+
+We will also introduce a new state machine that checks the current and previous sensor states to determine the flow rate. The state machine will have the following states:
+
+- If the water level is above the highest sensor, the flow rate should be zero.
+- If the water level is below the lowest sensor, the flow rate should be at maximum.
+- If the water level is between the sensors, we will check the previous sensor state to determine the flow rate.
+  - If the previous level was lower than the current level, we will increase the flow rate by opening the Supplemental flow valve (controlled by 'dfr').
+  - Otherwise, we will decrease the flow rate.
+
+By introducing the 'prev_s' variable and the state machine, we can ensure that the flow rate is correctly calculated based on the current and previous sensor states.

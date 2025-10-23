@@ -1,0 +1,11 @@
+To divide a clock by an odd number NUM_DIV and produce a nearly 50% duty cycle output, a common approach is to use a counter that counts from 0 to NUM_DIV-1, toggling the output clock when the counter reaches the midpoint (half of NUM_DIV, rounded down).
+
+Because NUM_DIV is odd, the "half" point is not exact, so the output clock's high and low durations will differ by one input clock cycle, but toggling at these points will keep the output frequency correct and duty cycle close to 50%.
+
+We can implement a synchronous counter that increments on every rising edge of the input clock and resets at NUM_DIV-1. When the counter reaches half_div (=(NUM_DIV-1)/2), toggle the clk_div output. When the counter reaches NUM_DIV-1, toggle clk_div again and reset counter to zero.
+
+This approach produces a clock with one half cycle of length half_div+1 and another half cycle of length NUM_DIV - (half_div+1), which differ by one input clock cycle, as expected for odd divisions.
+
+The reset is synchronous and active low; on reset, clk_div and counter are cleared.
+
+This single-counter toggle design is simpler and robust for odd divisors and doesn't require separate counters or separate edge clocks, avoiding metastability issues or glitches from combining edges.

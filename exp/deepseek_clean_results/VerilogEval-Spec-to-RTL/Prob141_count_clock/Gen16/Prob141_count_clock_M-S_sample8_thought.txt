@@ -1,0 +1,14 @@
+Simplified design approach:
+1. Use single always block for all counters to maintain clarity and reduce area
+2. Represent each time unit (ss, mm, hh) as 8-bit BCD values directly
+3. Simplify rollover conditions by using modular arithmetic
+4. Implement PM indicator as simple toggle at 11→12 transition
+5. Maintain synchronous reset with highest priority
+6. Only update counters when enabled (ena)
+
+Key simplifications:
+- Direct 8-bit BCD representation for all counters
+- Simplified hour counter with clear AM/PM transition
+- Reduced condition checks using modular arithmetic
+- Combined logic into single always block
+- Clear priority: reset > enable > counting

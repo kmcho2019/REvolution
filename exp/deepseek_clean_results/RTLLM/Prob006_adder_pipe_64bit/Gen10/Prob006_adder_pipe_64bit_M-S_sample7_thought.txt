@@ -1,0 +1,24 @@
+Simplified 64-bit Pipelined Adder Design:
+
+1. Core Concept:
+   - Maintain 3-stage pipeline but with equal 21-bit segments (last segment 22 bits)
+   - Simplified carry propagation using single-bit registers between stages
+   - Reduced register usage by only storing necessary partial sums
+
+2. Key Simplifications:
+   - Eliminate redundant operand registers (store only partial sums)
+   - Use single-bit carry registers between stages
+   - Simplified enable signal pipeline
+   - Directly combine partial sums in final stage
+
+3. Pipeline Stages:
+   - Stage 1: Bits 0-20 (21 bits) with initial carry=0
+   - Stage 2: Bits 21-41 (21 bits) with carry from stage 1
+   - Stage 3: Bits 42-63 (22 bits) with carry from stage 2
+   - Final result combines all partial sums
+
+4. Benefits:
+   - Fewer registers (no full operand storage)
+   - Clearer carry propagation
+   - Same 3-cycle latency
+   - Maintains full functionality

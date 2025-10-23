@@ -1,0 +1,13 @@
+To implement the state output logic for the given finite-state machine, we need to analyze the state transitions and derive the logic for the output signals Y1 and Y3. 
+
+For Y1, which is the input of state flip-flop y[1], we can observe from the state assignment that y[1] is high only in state B (000010). 
+Therefore, Y1 should be high when the current state is A and the input w is 0 (to stay in A), or when the current state is D and the input w is 0 (to go to A), or when the current state is B and the input w is 0 (to go to D), or when the current state is C and the input w is 0 (to go to D), or when the current state is E and the input w is 0 (to go to D), or when the current state is F and the input w is 0 (to go to D).
+
+For Y3, which is the input of state flip-flop y[3], we can observe from the state assignment that y[3] is high only in state D (001000). 
+Therefore, Y3 should be high when the current state is B and the input w is 0 (to go to D), or when the current state is C and the input w is 0 (to go to D), or when the current state is E and the input w is 0 (to go to D), or when the current state is F and the input w is 0 (to go to D), or when the current state is D and the input w is 0 (to stay in the same state group, but since D has y[3] as 1, the condition is included), or when the current state is A and the input w is 1 (to go to B and then to C and then to D).
+
+However, upon closer inspection and simplification based on the one-hot encoding provided and the transitions, we can directly express Y1 and Y3 using the given state encoding and transitions. 
+Y1 is true when the machine is in state B (y[1] is 1), and this can happen based on the initial conditions and transitions.
+Y3 is true when the machine is in state D (y[3] is 1), considering the transitions to and from D.
+
+Let's express these conditions using Verilog.

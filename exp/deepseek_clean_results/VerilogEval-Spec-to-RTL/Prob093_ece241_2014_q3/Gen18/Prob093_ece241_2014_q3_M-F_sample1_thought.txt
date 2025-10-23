@@ -1,0 +1,32 @@
+Revised Implementation Strategy:
+1. For mux_in[0] (ab=00):
+   - K-map shows: 0 when cd=00, else 1
+   - This is equivalent to NOR(c,d) = ~(c|d)
+   - Since we can't use logic gates, implement using a 2-to-1 mux:
+     - Select line: c
+     - When c=0: output ~d (gives 1 when d=0, 0 when d=1)
+     - When c=1: output 1 (since c=1 means we're not in cd=00 case)
+
+2. For mux_in[1] (ab=01):
+   - Always 0 (no change needed)
+
+3. For mux_in[2] (ab=11):
+   - 1 only when cd=11 (c AND d)
+   - Since we can't use AND gate, implement using a 2-to-1 mux:
+     - Select line: c
+     - When c=0: output 0
+     - When c=1: output d
+
+4. For mux_in[3] (ab=10):
+   - K-map shows: 1 when cd=00,10,11; 0 only when cd=01
+   - This is equivalent to ~(c & ~d) = ~c | d
+   - Implement using a 2-to-1 mux:
+     - Select line: c
+     - When c=0: output 1 (since ~c is 1)
+     - When c=1: output d (since we need 1 when d=1, 0 when d=0)
+
+This revised approach:
+- Uses three 2-to-1 multiplexers (for mux_in[0], mux_in[2], mux_in[3])
+- Uses one constant 0 (for mux_in[1])
+- Strictly follows the allowed components (only multiplexers)
+- Correctly implements all K-map requirements

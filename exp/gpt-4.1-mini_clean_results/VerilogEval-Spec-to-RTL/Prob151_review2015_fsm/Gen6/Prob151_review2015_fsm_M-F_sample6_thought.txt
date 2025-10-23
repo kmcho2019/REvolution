@@ -1,0 +1,11 @@
+To fix the timing mismatch in pattern detection and FSM state transitions, we should separate the pattern detection shift register update from the FSM state updates to align their timing correctly. The pattern should be detected based on the shift register content that reflects the current input bits *before* the FSM state update occurs on the clock edge. To achieve this, update the shift register on the rising clock edge, then use the registered shift register value as a stable signal for pattern detection in the combinational next-state logic of the FSM. 
+
+This way, when the pattern is detected, the FSM will transition immediately to the shift states on the next clock cycle, asserting `shift_ena` exactly for the next 4 cycles with proper alignment. 
+
+Also, outputs will be derived purely combinationally from the registered FSM state for glitch-free operation.
+
+Ensuring that the pattern detection looks at the updated shift register at the beginning of the clock cycle, and the state transitions based on that stable value, fixes the off-by-one cycle delay seen before.
+
+The rest of the FSM remains unchanged: after shifting 4 bits, it goes to COUNTING and waits for `done_counting`, then to DONE and waits for `ack`, then resets to IDLE.
+
+This approach aligns all signals and state changes correctly on the clock edges, fixing the prior timing issues and output mismatches.

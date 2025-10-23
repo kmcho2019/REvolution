@@ -1,0 +1,9 @@
+To refactor the given Verilog code, we can maintain the core functionality of the finite-state machine while simplifying the structure. One approach is to directly implement the next-state logic for Y1 and Y3 within the TopModule using assign statements, eliminating the need for separate modules. This refactoring reduces the complexity and hierarchical depth of the design.
+
+We'll analyze the logic expressions for Y1 and Y3 based on the one-hot encoding and state transitions provided. The output signal Y1 is the input of state flip-flop y[1], and Y3 is the input of state flip-flop y[3]. By directly implementing the next-state logic, we can ensure that the design accurately reflects the state transitions specified in the finite-state machine.
+
+Given the one-hot encoding and state transitions:
+- Y1 (next state of B) is set when the current state is A (y[0] = 1) and the input w = 1.
+- Y3 (next state of D) is set when the current state is not E or F (since for E and F, y[3] or y[5] = 1) and w = 0, or when the current state is B or C (y[1] or y[2] = 1) and w = 0.
+
+This refactoring maintains the same functionality as the original code but simplifies the design by eliminating the need for separate modules for each state's next-state logic.

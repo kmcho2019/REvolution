@@ -1,0 +1,16 @@
+Fuse the best ideas from both examples by implementing a three-stage pipeline that balances complexity, timing, and enable signal tracking:
+
+1. Stage 1: Register the inputs and the input enable signal into a 3-bit enable pipeline to track operation flow.
+2. Stage 2: Generate partial products by shifting the registered multiplicand according to the bits of the registered multiplier. This stage produces 8 partial 16-bit operands.
+3. Stage 3: Sum the partial products using a balanced two-level adder tree pipeline to reduce the critical path:
+   - Use intermediate pipeline registers to store half sums (e.g., sum pairs of partial products).
+   - Then add these half sums in the final pipeline stage.
+4. Update the output register with the final sum in stage 3.
+5. Drive the output enable from the MSB of the enable pipeline to accurately indicate valid output timing.
+6. Gate output with enable and reset output registers to zero on reset or when enable is not active.
+
+This approach reduces the combinational delay by splitting the addition into two pipeline stages (adder tree), preserves throughput with pipelining, and cleanly tracks enable signals. It trades minimal added registers for significantly improved timing and power benefits over a single-stage big adder.
+
+The partial sum additions are done in two pipeline stages with registers in between to break the long combinational path. The enable pipeline is extended to 4 bits to track input, first addition stage, second addition stage, and output enable stages. The design only updates registers when the respective enable pipeline bits are active, reducing toggling.
+
+This fusion combines Example 1’s 3-bit enable pipeline and clear stage separation with Example 2’s structured partial product generation, and enhances timing by adding one more pipeline stage for the final summation. This provides a good balance of area, power, and performance improvements.

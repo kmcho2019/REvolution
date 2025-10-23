@@ -1,0 +1,17 @@
+To optimize the original fully combinational 8-bit multiplier for better power, performance, and area (PPA), I will implement a sequential shift-and-add multiplier using a simple FSM and registers:
+
+- The module will use a clock and reset input, performing the multiplication iteratively over 8 cycles, adding the multiplicand to the product accumulator only when the current multiplier bit is set.
+- This avoids instantiating eight 16-bit adders and large combinational logic, reducing area and power due to reduced switching.
+- The sequential approach breaks down the multiplication process into smaller steps, improving the maximum clock frequency by removing a large combinational path.
+- The final product output will be valid after 8 cycles.
+- Inputs A and B will be latched at the start to prevent glitches during processing.
+- A ready signal or done signal could be added, but since the user did not specify it, I'll keep the interface minimal with clock, reset, inputs, and output product.
+- This shift-add implementation is a classic hardware-efficient multiplier, especially suitable for resource-constrained environments, trading latency for smaller area and lower power.
+
+Thus, the key changes:
+- Add clk and rst inputs
+- Use registers for product accumulator and multiplier register
+- Iteratively process each multiplier bit each clock cycle
+- Output product after completion
+
+This approach balances simplicity, significantly reduces combinational complexity, and optimizes PPA metrics compared to the original fully combinational approach.

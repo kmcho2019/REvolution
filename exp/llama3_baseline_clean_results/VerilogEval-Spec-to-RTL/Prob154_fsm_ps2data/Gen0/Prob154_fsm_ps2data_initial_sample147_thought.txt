@@ -1,0 +1,9 @@
+To implement the finite state machine (FSM) that searches for message boundaries in the input byte stream, we can define four states:
+1. IDLE: The initial state where the FSM waits for the first byte with in[3] = 1.
+2. BYTE1: The state where the FSM has received the first byte and waits for the second byte.
+3. BYTE2: The state where the FSM has received the second byte and waits for the third byte.
+4. DONE: The state where the FSM has received all three bytes and signals done.
+
+We can use a counter to keep track of the current byte number. When the FSM receives a byte with in[3] = 1, it transitions to the BYTE1 state and sets the counter to 1. In each subsequent state, the counter is incremented. When the counter reaches 3, the FSM transitions to the DONE state and signals done.
+
+We also need to shift the input bytes into a 24-bit register (out_bytes) as they are received. In the DONE state, the out_bytes register should contain the complete 3-byte message.

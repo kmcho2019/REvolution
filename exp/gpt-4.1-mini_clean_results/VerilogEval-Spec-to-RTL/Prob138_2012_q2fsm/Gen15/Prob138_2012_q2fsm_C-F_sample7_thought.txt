@@ -1,0 +1,7 @@
+Combine the clarity and area efficiency of binary state encoding from Example 2 with the simple, glitch-free synchronous reset and straightforward state update of Example 1. Use a 3-bit binary encoding for the six states to minimize flip-flop count and area. Implement synchronous active-high reset and positive-edge triggered state flip-flops in one always block without a conditional enable, ensuring simpler timing and avoiding potential clock gating overhead. Use a separate combinational always block with a case statement for next-state logic for clarity and ease of synthesis optimizations.
+
+For output logic, use a combinational always block assigning a registered output `z` for robustness against glitches, combining Example 1’s registered output style with Example 2’s minimal logic. This registered output improves signal integrity at the expense of one clock cycle latency, which is typically acceptable for Moore machine outputs.
+
+This fusion aims to balance area, timing, and power: area benefits from binary encoding; timing benefits from no enable gating in flip-flops and simple combinational logic; power is reasonable due to reduced flip-flops and the registered output that helps reduce glitches.
+
+Overall, this approach creates a clean, synthesizable FSM with good PPA characteristics while following the problem’s design constraints and style recommendations.

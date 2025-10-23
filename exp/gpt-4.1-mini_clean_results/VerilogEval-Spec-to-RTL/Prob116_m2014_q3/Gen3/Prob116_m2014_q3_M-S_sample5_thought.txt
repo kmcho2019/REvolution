@@ -1,0 +1,21 @@
+To simplify the implementation, first correctly interpret the Karnaugh map variables: the columns are x[1]x[2], the rows are x[3]x[0] (since x[4] does not exist). Using this mapping, convert each '1' entry in the Karnaugh map into corresponding minterms. The 'd' entries can be treated as zeros, so only include the minterms where the value is 1.
+
+Then sum the minterms and simplify the expression by factoring common terms:
+
+Ones in K-map at (row x[3]x[0], column x[1]x[2]):
+- (01,11): x3=0,x0=1,x1=1,x2=1 → 0111
+- (10,00): x3=1,x0=0,x1=0,x2=0 → 1000
+- (10,01): x3=1,x0=0,x1=0,x2=1 → 1001
+- (11,00): x3=1,x0=1,x1=0,x2=0 → 1100
+- (11,01): x3=1,x0=1,x1=0,x2=1 → 1101
+
+Sum these minterms and simplify to minimal product terms.
+
+Final simplified expression:
+
+f = (~x3 & x0 & x1 & x2) 
+  + (x3 & ~x1 & ~x2)
+
+This covers all the '1's in the K-map.
+
+This approach minimizes logic and code complexity while maintaining correctness.

@@ -1,0 +1,26 @@
+Simplified Radix-4 Booth Multiplier Design:
+
+1. Core Optimization:
+   - Remove explicit state machine (INIT/CALC/DONE) since we can track completion with counter
+   - Use single always block for cleaner implementation
+   - Maintain essential registers: multiplicand, multiplier, product
+
+2. Efficient Counting:
+   - Use 2-bit counter (iter_ctr) for 4 Radix-4 iterations (8 bits / 2 bits per iteration)
+   - Counter automatically handles completion when reaching 4 (100 in binary)
+
+3. Clean Booth Encoding:
+   - Direct case statement for Booth recoding (3-bit window)
+   - Simple arithmetic operations (shift and add/subtract)
+   - Proper sign extension handling
+
+4. Ready Signal:
+   - Set rdy when counter completes all iterations
+   - Automatically reset with global reset
+
+Key Simplifications:
+- Removed separate state machine logic
+- Reduced register count
+- Simplified control flow
+- Maintained correct Radix-4 operation
+- Kept essential timing with clocked always block

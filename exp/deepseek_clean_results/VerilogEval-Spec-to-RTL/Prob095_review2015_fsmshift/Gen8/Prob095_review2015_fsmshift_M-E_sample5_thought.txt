@@ -1,0 +1,8 @@
+New approach using a state machine with explicit cycle counting:
+1. Use a 3-bit counter to track cycles (0-4) since we need to count exactly 4 cycles
+2. Implement a simple state machine with two states: ACTIVE (shifting) and IDLE
+3. Enter ACTIVE state on reset and remain for exactly 4 cycles
+4. Transition to IDLE state after 4 cycles and stay there until next reset
+5. shift_ena is only high in ACTIVE state
+6. Counter increments each cycle in ACTIVE state and resets on state transition
+7. This approach clearly separates the timing control from the enable logic

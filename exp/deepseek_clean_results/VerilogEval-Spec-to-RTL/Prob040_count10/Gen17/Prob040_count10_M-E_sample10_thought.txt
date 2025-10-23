@@ -1,0 +1,18 @@
+Novel architectural idea:
+1. One-hot encoding approach: Instead of binary counting, use 10 flip-flops (one for each state) with only one active at any time
+2. Circular shift register implementation: Each clock cycle, the active bit shifts to the next position, creating a circular pattern
+3. Benefits:
+   - Simple state transition logic (just shift operation)
+   - No combinational logic for state decoding
+   - Natural terminal count detection (no comparators needed)
+   - Glitch-free outputs
+4. Implementation:
+   - Use 10-bit register for states
+   - Reset initializes to 0000000001
+   - Each clock shifts left with wrap-around
+   - Output q is encoded from the one-hot state
+
+Trade-offs:
+- Uses more flip-flops (10 vs 4 in binary implementation)
+- But eliminates all combinational logic for state transitions
+- Very predictable timing characteristics

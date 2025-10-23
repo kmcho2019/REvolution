@@ -1,0 +1,9 @@
+To implement a Mealy FSM that detects the sequence "10011", we need to track the input sequence through states. The FSM will have states representing the progress in matching the sequence. The output MATCH is 1 only when the last '1' of the sequence is detected (i.e., in state S4 with IN=1). The FSM should also handle continuous input and loop detection, meaning after a full match, it can start detecting the next sequence immediately.
+
+The states are:
+- S0: Initial/reset state
+- S1: Detected '1'
+- S2: Detected '10'
+- S3: Detected '100'
+- S4: Detected '1001'
+- On next clock edge with IN=1 in S4, output MATCH=1 and transition to S1 (to detect overlapping sequences)

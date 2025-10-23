@@ -1,0 +1,9 @@
+To fix the FSM, first ensure the pattern detection is done correctly and in sync with the data shifting. Instead of shifting `shift_reg` only in IDLE, shift it every clock cycle except when reset, so the pattern can be detected promptly. The pattern detection should be done on the updated shift_reg at each clock edge and transition to SHIFT state immediately upon detecting 1101.
+
+Next, in the SHIFT state, assert `shift_ena` for exactly 4 cycles by using a 2-bit counter that increments each clock in SHIFT and transitions to COUNTING after 4 cycles.
+
+Outputs (`shift_ena`, `counting`, `done`) should be registered (assigned in sequential always block) based on the current state to avoid glitches and mismatches.
+
+Also, reset the shift counter at appropriate times.
+
+This approach aligns data shifting, pattern detection, and FSM state transitions with the clock, ensuring correct timing and output assertion durations.

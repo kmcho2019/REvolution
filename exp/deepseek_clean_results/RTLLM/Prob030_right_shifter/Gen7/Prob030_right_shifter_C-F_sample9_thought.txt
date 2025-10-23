@@ -1,0 +1,19 @@
+Fusion Strategy:
+1. Timing Optimization:
+   - Use the concise concatenation-based shift from Example 2 ({d, q[7:1]}) which is more readable and potentially better optimized by synthesis tools
+   - Remove clock gating from Example 2 that was causing timing issues (wns -0.11ns)
+   - Keep the simple, direct approach from Example 1's architecture
+
+2. Power Optimization:
+   - Instead of clock gating (which hurt timing), add an enable signal that gates the data input
+   - This maintains low power while avoiding timing-critical clock gating logic
+
+3. Area Optimization:
+   - Remove initial block (like Example 2) for better synthesis flexibility
+   - Use minimal flip-flop implementation with clean shift operation
+
+Key Improvements:
+- Combines Example 1's timing-friendly architecture with Example 2's concise coding style
+- Replaces problematic clock gating with input gating
+- Maintains simple, efficient shift operation
+- Better balance between PPA metrics

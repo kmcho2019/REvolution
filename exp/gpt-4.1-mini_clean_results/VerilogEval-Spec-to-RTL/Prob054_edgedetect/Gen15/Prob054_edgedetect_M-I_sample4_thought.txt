@@ -1,0 +1,14 @@
+The original design is already quite optimal in terms of clarity and minimal resource usage. To improve PPA, especially power and area, we can reduce unnecessary toggling in the second register by updating 'pedge' only when an edge is detected. This can be achieved by adding an enable signal to the pedge register, so it only toggles when there's a positive edge to output. This reduces switching activity (improving power), and potentially reduces glitching, which can benefit timing and power.
+
+Area remains minimal, with two 8-bit registers. Timing may improve slightly due to reduced toggling in pedge register.
+
+Implementation:
+
+- Keep prev_in register updating every clock cycle as before.
+- Detect edges combinationally as (~prev_in & in).
+- Use an enable signal (edges != 0) to only update pedge when at least one bit changed from 0 to 1.
+- Otherwise, keep pedge stable, reducing switching.
+
+This does not violate the timing or correctness, but helps power due to fewer toggles in pedge register.
+
+No structural changes beyond that to keep design simple and maintain output timing.

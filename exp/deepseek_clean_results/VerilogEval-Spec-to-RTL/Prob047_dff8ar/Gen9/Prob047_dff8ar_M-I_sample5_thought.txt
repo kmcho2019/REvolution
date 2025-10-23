@@ -1,0 +1,11 @@
+Improvement strategy for better PPA (focusing on area reduction):
+1. Remove the hierarchical submodule (DFF_AR) and implement the flip-flops directly in TopModule to eliminate module instantiation overhead
+2. Use a single always block with vector operations instead of generate loop for more efficient synthesis
+3. Maintain the same functionality (8-bit register with async reset)
+4. Keep the clean positive-edge triggered design with async reset
+5. This approach should reduce area by:
+   - Eliminating module boundary overhead
+   - Allowing synthesis tools to optimize the register array more effectively
+   - Reducing hierarchical complexity
+
+The improved solution should maintain the same timing and power characteristics while reducing area.

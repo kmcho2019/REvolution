@@ -1,0 +1,7 @@
+To optimize the FSM for better Power, Performance, and Area (PPA), I will implement one-hot encoding instead of binary state encoding. One-hot encoding simplifies next-state decoding logic to mostly AND/OR gates, which often results in faster combinational paths and potentially reduced power due to fewer toggling bits in state register. 
+
+Though one-hot encoding uses more flip-flops, the FSM size (6 states) is small, so area increase is minimal and timing usually improves. Additionally, separating the output logic into a separate combinational block clarifies design and may help synthesis tools optimize output timing.
+
+Also, I will use non-blocking assignments in sequential blocks and blocking assignments in combinational blocks for clarity and best practices. The asynchronous reset will remain synchronous as originally specified.
+
+This change trades slightly higher area for better timing and possibly lower dynamic power due to simpler next-state logic and fewer glitches.

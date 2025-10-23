@@ -1,0 +1,17 @@
+To optimize the original FSM for better PPA, I will reduce the combinational logic levels by merging next_state and output logic into a single combinational always block. This can minimize redundant logic and potentially improve critical path timing.
+
+I will also simplify the output condition by integrating it into next state logic to avoid redundant comparisons. The output z will be driven directly from the state and input combination without separate always block.
+
+To further optimize power, I will use non-blocking assignments for state registers and blocking assignments for combinational logic, preserving consistent style.
+
+Area is already minimal with 2-bit encoding and 3 states; no change needed.
+
+For asynchronous negative edge reset, I keep it intact as required.
+
+The key improvements:
+- Combine next_state and output logic to reduce logic depth.
+- Initialize next_state and z in one place to avoid latches and redundant logic.
+- Maintain clear typedef enum for readability.
+- Keep code style consistent.
+
+This should yield slightly improved critical path delay and power due to simpler logic and fewer gates, while preserving the exact FSM behavior.

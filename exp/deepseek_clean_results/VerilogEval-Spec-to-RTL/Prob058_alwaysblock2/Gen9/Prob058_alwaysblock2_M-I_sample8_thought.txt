@@ -1,0 +1,23 @@
+To optimize this design for better PPA (Power, Performance, Area) metrics while maintaining functionality:
+
+1. **Power Optimization**:
+   - Remove redundant XOR computation by using a single assign statement for all combinational outputs
+   - This eliminates potential duplicate logic that synthesis might not optimize away
+
+2. **Area Optimization**:
+   - Explicitly share the XOR gate between all outputs
+   - Keep only essential registers (the sequential output needs its own flip-flop)
+
+3. **Performance Consideration**:
+   - Maintain minimal combinational path (just one XOR gate)
+   - Keep sequential path clean with direct flip-flop input
+
+4. **Readability Improvement**:
+   - Use more descriptive signal names
+   - Group related assignments
+
+The optimized version should:
+- Reduce power by eliminating redundant operations
+- Potentially reduce area through explicit sharing
+- Maintain same timing characteristics
+- Improve code clarity

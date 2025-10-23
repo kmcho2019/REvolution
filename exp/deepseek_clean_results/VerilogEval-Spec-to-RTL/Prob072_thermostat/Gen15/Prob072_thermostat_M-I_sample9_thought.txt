@@ -1,0 +1,6 @@
+The current solution is already quite optimal for PPA (Power, Performance, Area) given its simplicity. However, we can make one minor optimization:
+1. The fan logic uses an OR operation between three signals. We can optimize this by observing that heater and aircon are mutually exclusive (can't be on simultaneously due to mode control), so we can simplify the OR to just check if any of the three signals is high without worrying about gate-level optimizations.
+2. The current implementation uses minimal area (5 um^2) which is excellent, and timing is already optimal with 0ns slack.
+3. Power consumption is already very low (0.000153), but we can maintain the same functionality with identical PPA metrics.
+
+The optimization is more about code clarity than actual PPA improvement since the synthesis tool would likely produce the same netlist for both versions. The new version makes the mutual exclusivity of heater/aircon more explicit in the code structure.

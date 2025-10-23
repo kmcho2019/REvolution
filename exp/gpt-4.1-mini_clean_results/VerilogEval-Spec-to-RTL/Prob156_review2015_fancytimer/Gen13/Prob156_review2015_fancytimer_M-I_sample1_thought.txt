@@ -1,0 +1,17 @@
+To improve the solution for better PPA (power, performance, area) and clarity:
+
+1. Simplify the pattern detection shift register by shifting in MSB-first instead of LSB-first, making it consistent with the delay bits loading and easier to read and verify. The pattern 1101 is binary '1101' MSB first, so shifting in MSB first means after 4 bits are captured the register directly matches the pattern.
+
+2. Optimize the counting logic by using one counter for both the total cycles and the current "tick" count, avoiding separate counters for cycle_count and tick_count. Use a total cycle counter (e.g., 10-bit or wider) counting up to (delay+1)*1000, and derive the current count from it by integer division. This reduces registers and logic.
+
+3. Use a simple 1D shift register to load the delay bits MSB-first as currently done.
+
+4. Hold outputs stable and avoid redundant assignments in states.
+
+5. Use parameters and simple FSM style as before, maintaining compatibility with Verilog-2001.
+
+6. On reset, outputs should be properly initialized.
+
+7. Retain synchronous active-high reset and positive edge clock triggering.
+
+This approach reduces the number of registers, simplifies logic, and may improve timing by reducing combinational logic depth, especially removing the nested if statements on counters.

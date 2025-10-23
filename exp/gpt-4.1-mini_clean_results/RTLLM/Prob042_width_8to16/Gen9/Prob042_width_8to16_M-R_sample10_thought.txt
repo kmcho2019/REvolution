@@ -1,0 +1,9 @@
+Refactor the design by introducing an explicit finite state machine (FSM) with two states: WAIT_FIRST and WAIT_SECOND. In WAIT_FIRST, store the first valid 8-bit input; when the second valid input arrives, transition to WAIT_SECOND and store the second byte. In the next clock cycle (WAIT_SECOND state), output the concatenated 16-bit data and assert valid_out. Then return to WAIT_FIRST to await the next pair.
+
+Use separate registers to store the first byte and the second byte, plus a valid_out register. The valid_out and data_out signals are updated only in the WAIT_SECOND state, thus naturally implementing the required one cycle delay after receiving the second input.
+
+This clear FSM approach improves timing clarity and output generation logic, ensuring outputs are asserted only in the cycle after two valid inputs have arrived, as required. It also eliminates the previous timing ambiguity of updating data_out in the same cycle as the second input.
+
+Reset logic clears all registers and returns to WAIT_FIRST.
+
+This refactoring maintains the core functionality but structures it for better timing control and clearer logic separation.

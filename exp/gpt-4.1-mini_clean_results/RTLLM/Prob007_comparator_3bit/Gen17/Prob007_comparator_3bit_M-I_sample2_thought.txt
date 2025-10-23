@@ -1,0 +1,10 @@
+To improve PPA of the existing 3-bit comparator while keeping the outputs mutually exclusive and combinational, I will:
+
+- Simplify the equality check by using a reduction AND operator on bitwise XNOR of A and B: this reduces logic levels and switching activity.
+- Remove the intermediate equality signal eq_bit1 since it's only used once in the greater-than logic; inline the expression for eq_bit1 to slightly reduce net count.
+- Keep eq_bit2 as a wire for readability and slight reuse.
+- The greater-than logic remains hierarchical from MSB to LSB, using eq_bit2 and inline eq_bit1 to keep logic minimal.
+- Define less-than output as the logical negation of greater and equal to preserve mutual exclusivity.
+- These simplifications reduce gate count, potentially lower power, and keep the area minimal while maintaining clarity and synthesis friendliness.
+
+This yields a more compact and slightly faster 3-bit comparator with minimal and optimized combinational logic.

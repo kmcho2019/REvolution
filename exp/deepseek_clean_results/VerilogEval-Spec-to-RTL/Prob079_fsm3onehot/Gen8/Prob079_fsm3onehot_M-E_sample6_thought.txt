@@ -1,0 +1,17 @@
+Novel Architectural Idea:
+1. Leverage the symmetry in state transitions by observing that:
+   - States A and C both transition to A when in=0
+   - States B and D both transition to C when in=0
+   - States A and D both transition to B when in=1
+   - Only state C transitions to D when in=1
+
+2. Implement a priority-encoded state transition logic that:
+   - Uses a 2-level AND-OR structure for better timing
+   - Groups similar transitions to minimize logic gates
+   - Exploits the fact that only one state bit is active at a time
+
+3. Optimize output logic by:
+   - Using the natural one-hot property where output is simply the MSB
+   - Avoiding any additional gates for output generation
+
+This approach reduces gate count by sharing common transition patterns while maintaining clear state separation through one-hot encoding.

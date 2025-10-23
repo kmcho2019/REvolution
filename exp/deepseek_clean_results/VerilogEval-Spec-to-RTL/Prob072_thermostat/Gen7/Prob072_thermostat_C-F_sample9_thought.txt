@@ -1,0 +1,14 @@
+The fusion strategy combines the strengths of both examples while addressing their minor limitations:
+
+1. Maintain the clear separation of heater/aircon control from Example 2's explicit logic
+2. Adopt Example 1's observation about fan_on being an independent override
+3. Optimize the fan logic to reduce gate depth by:
+   - Making fan_on the primary condition (OR first)
+   - Then combining with heater/aircon (which are mutually exclusive)
+4. Ensure heater and aircon remain mutually exclusive through mode separation
+
+This results in:
+- Same functionality as both examples
+- Potentially better timing for fan output (shorter critical path)
+- Slightly reduced switching activity when fan_on is active
+- Maintains all excellent PPA characteristics

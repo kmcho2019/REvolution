@@ -1,0 +1,12 @@
+I will implement a fully pipelined 4-bit unsigned multiplier with two pipeline stages of registers for intermediate partial product sums.
+
+Architectural idea:
+- Inputs mul_a and mul_b (4 bits) are zero-extended to 8 bits by prefixing 4 zeros at MSB.
+- Partial products are generated for each bit of mul_b, each a shifted version of ext_mul_a or zero.
+- The first pipeline stage registers store the partial product corresponding to bits [0,1] summed, and bits [2,3] summed separately.
+- The second pipeline stage register adds the two sums from the first stage registers to produce the final output.
+- This approach divides partial products into two groups, sums within each group combinationally, registers results (stage 1), then adds these registers and registers again (stage 2).
+- The pipeline allows continuous multiplication every clock cycle after pipeline latency.
+- Reset is asynchronous active low and clears pipeline registers and output.
+
+This design meets all requirements, uses two levels of registers, avoids complex summation loops, and cleanly separates partial product summation stages. The code is clear, simple, and synthesizable.

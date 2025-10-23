@@ -1,0 +1,18 @@
+Implement combinational logic for next_state and output based on current one-hot encoded state and input 'in'.
+For each state bit, define next_state bits as follows:
+
+- next_state[0] (A): from A when in=0, from C when in=0
+- next_state[1] (B): from A when in=1, B when in=1, D when in=1
+- next_state[2] (C): from B when in=0, D when in=0
+- next_state[3] (D): from C when in=1
+
+Output is 1 only in state D, else 0.
+
+Use boolean expressions derived by inspection:
+
+next_state[0] = (state[0] & ~in) | (state[2] & ~in);
+next_state[1] = (state[0] & in) | (state[1] & in) | (state[3] & in);
+next_state[2] = (state[1] & ~in) | (state[3] & ~in);
+next_state[3] = state[2] & in;
+
+out = state[3];

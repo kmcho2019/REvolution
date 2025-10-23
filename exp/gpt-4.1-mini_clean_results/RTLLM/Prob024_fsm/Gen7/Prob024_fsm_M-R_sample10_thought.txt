@@ -1,0 +1,9 @@
+I will refactor the FSM by implementing the next state logic and output combinationally inside an always @(*) block using a case statement for clarity and ease of understanding. The state updates remain synchronous with the clock and reset.
+
+MATCH will be a registered output updated synchronously with the clock (Moore output style), but since the original requirement is Mealy, I will also add combinational MATCH logic that depends on both current state and input, ensuring MATCH asserts at the correct input transition.
+
+This separation of combinational logic (next_state, match_comb) and sequential logic (state and MATCH register) improves code readability and debuggability, making it easy to modify or extend FSM functionality. The code will maintain all previous functionality and support overlapping sequence detection.
+
+I will keep the same 3-bit binary state encoding but use a `case` statement to explicitly specify next states. MATCH will be asserted combinationally for Mealy behavior and also registered for stable output if desired.
+
+This approach enhances structural clarity while preserving the efficiency and correctness of the original design.

@@ -1,0 +1,11 @@
+module TopModule (
+    input  wire a,
+    input  wire b,
+    output wire sum,
+    output wire cout
+);
+
+assign sum = a ^ b;    // sum is XOR of inputs
+assign cout = a & b;   // cout is AND of inputs
+
+endmodule

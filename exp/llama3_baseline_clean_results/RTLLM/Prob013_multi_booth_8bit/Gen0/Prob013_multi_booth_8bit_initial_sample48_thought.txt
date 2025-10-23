@@ -1,0 +1,11 @@
+To design an 8-bit Radix-4 Booth multiplier, we first need to understand the Booth algorithm and its implementation in Verilog. The Booth algorithm is a method for multiplying two binary numbers using a series of additions and shifts. 
+
+The main idea is to use a counter (ctr) to iterate over the bits of the multiplier (b). On each iteration, the multiplicand (a) is left-shifted by 1 to simulate the Booth algorithm's shifting operation. If the current bit of the multiplier (b) is 1, the product (p) accumulates the value of the multiplicand (a).
+
+To handle the Radix-4 Booth multiplication, we need to consider two bits of the multiplier at a time. If the two bits are 01, we add the multiplicand (a) to the product (p) and then right-shift the multiplicand (a) by 1. If the two bits are 10, we subtract the multiplicand (a) from the product (p) and then right-shift the multiplicand (a) by 1. If the two bits are 11, we add the multiplicand (a) to the product (p) and then right-shift the multiplicand (a) by 2.
+
+However, since we are implementing an 8-bit Radix-4 Booth multiplier, we can simplify the process by treating the multiplier as a sign-magnitude number and using a 5-bit counter (ctr) to iterate over the bits of the multiplier.
+
+In Verilog, we can implement the multiplier using a state machine with two main states: an idle state and a multiplication state. The idle state waits for the reset signal to be asserted or the counter (ctr) to reach 16. The multiplication state performs the multiplication operation using the Booth algorithm.
+
+The module will use two 16-bit registers (multiplicand and multiplier) to store the inputs, a 16-bit register (p) to store the product, a 5-bit register (ctr) to store the counter, and a 1-bit register (rdy) to indicate the completion of the multiplication process.

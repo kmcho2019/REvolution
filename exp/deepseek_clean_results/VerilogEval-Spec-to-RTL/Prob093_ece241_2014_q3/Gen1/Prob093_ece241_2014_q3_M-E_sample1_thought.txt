@@ -1,0 +1,14 @@
+Here's a novel approach that minimizes multiplexer usage while still adhering to the constraints:
+
+1. Observation: The K-map shows that mux_in[1] is always 0, so we can hardwire it.
+2. For the other outputs, notice patterns:
+   - mux_in[0] is 1 when cd=01,11,10 → equivalent to ~(c & ~d)
+   - mux_in[2] is 1 only when cd=11 → c & d
+   - mux_in[3] is 1 when cd=00,11,10 → equivalent to ~d | (c & d)
+3. We can implement these using a clever arrangement of 2:1 muxes:
+   - Use c as the selector for most muxes since it appears in multiple terms
+   - For mux_in[0], we can use a mux that selects between d and 1 based on c
+   - For mux_in[2], we just need a mux that selects between 0 and d based on c
+   - For mux_in[3], we can use a mux that selects between ~d and 1 based on c
+4. This approach uses only three 2:1 muxes total (same as before but with different logic)
+5. The key innovation is recognizing that we can share the c selector across multiple muxes and leverage the inherent properties of muxes to implement the required logic.

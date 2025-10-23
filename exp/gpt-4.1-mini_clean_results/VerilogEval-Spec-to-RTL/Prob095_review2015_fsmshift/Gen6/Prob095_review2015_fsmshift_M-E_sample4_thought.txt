@@ -1,0 +1,10 @@
+I will implement a simple finite state machine (FSM) with two states: IDLE and ENABLE_SHIFT. 
+
+- On synchronous reset (active high), the FSM immediately enters ENABLE_SHIFT state and asserts shift_ena.
+- A separate 2-bit cycle counter increments on each clock cycle while in ENABLE_SHIFT.
+- When the cycle counter reaches 3 (meaning 4 clock cycles have passed since entering ENABLE_SHIFT, counting from 0 to 3), the FSM transitions back to IDLE and deasserts shift_ena.
+- In IDLE, shift_ena is 0 forever until the next reset.
+
+This FSM approach avoids off-by-one counter initialization issues by explicitly encoding enable duration as a state and cycle count, ensuring exactly 4 clock cycles of shift_ena asserted immediately after reset is released.
+
+All logic is synchronous on posedge clk; reset has priority and synchronously forces the FSM into the ENABLE_SHIFT state with counter reset to 0.

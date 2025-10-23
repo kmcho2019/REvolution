@@ -1,0 +1,11 @@
+The waveform reveals a more nuanced behavior:
+1. The state flip-flop toggles its value when both a and b are 1
+2. Otherwise, it retains its current value
+3. The output q is:
+   - 1 when (current state is 0 AND b is 1) OR (current state is 1 AND a is 1)
+   - 0 otherwise
+
+This explains all the edge cases in the waveform:
+- At 65ns: a=1,b=1 causes state to toggle from 0 to 1 (but q=0 because state was 0 and b=1 would normally make q=1, but a=1 overrides)
+- At 95ns: a=1,b=1 causes state to toggle from 0 to 1, then q=1 because state=1 and a=1
+- The output logic needs to consider both state and inputs in a more complex way

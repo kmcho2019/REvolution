@@ -1,0 +1,8 @@
+To improve the design and avoid potential race conditions with separate always blocks on opposite edges, 
+refactor the module to use a single clocking domain with registers updating synchronously on the positive edge of the clock. 
+
+The output 'p' captures input 'a' on the posedge clock, and 'q' captures the previous value of 'p' 
+(i.e., delayed by one clock cycle). This effectively models the two-flip-flop behavior but synchronously, 
+simplifying timing and matching the waveforms where 'q' follows the delayed 'p'.
+
+This also simplifies initialization by using a reset-like initial block for simulation purposes.

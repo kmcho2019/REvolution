@@ -1,0 +1,5 @@
+Instead of directly using a replication operator for sign extension, use a procedural always block with an intermediate register to explicitly assign the sign-extended output. This approach leverages procedural assignment for clarity and explicitly shows the bit-wise extension by setting the upper 24 bits to the sign bit and the lower 8 bits to the input, which can be helpful in some synthesis or debugging contexts.
+
+The module uses a reg for output and an always_comb block so it remains purely combinational. This changes the architecture from continuous assignment to procedural logic, which might help in tool flows that prefer explicit always blocks or register inference.
+
+Though functionally equivalent and with similar performance, this provides a novel structural perspective on the sign-extension implementation.

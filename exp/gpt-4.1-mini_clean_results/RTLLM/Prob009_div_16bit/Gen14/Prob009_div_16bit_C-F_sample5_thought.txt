@@ -1,0 +1,14 @@
+To fuse the strengths of both examples:
+
+- From Example 1: The structural clarity and efficient use of a generate loop for unrolled, stage-wise subtraction and quotient bit computation allows synthesis tools to clearly optimize and potentially share subtraction and comparison logic, improving maintainability and synthesis quality.
+- From Example 2: The explicit use of two combinational always blocks matches the problem requirement precisely, ensuring registers capture inputs and the division logic is implemented combinationally with for loops, aiding clarity for some synthesis tools.
+
+Fusion strategy:
+- Use the first always block to latch inputs into registers (a_reg and b_reg) combinationally as requested.
+- Use the second always block to perform the combinational division using a for loop (instead of generate), which eases debugging and synthesis while still keeping logic unrolled combinationally.
+- Internally implement the remainder stages as an array of 9-bit registers inside the always block, mimicking the stage-wise pipeline seen in Example 1, but combinationally calculated in a single always block loop.
+- Calculate each quotient bit as the result of the subtraction decision at each stage, storing quotient bits MSB first.
+- This approach meets the exact problem constraints (two combinational always blocks triggered by A and B), makes the logic explicit and easier to maintain than generate constructs, and benefits from the clarity of stage-wise remainder handling.
+- Output the quotient and zero-extend the remainder as 16-bit, consistent with the problem statement.
+
+This fusion preserves the well-structured iterative subtraction of Example 1 while respecting the requested use of always blocks in Example 2, delivering clarity, synthesis friendliness, and correctness.

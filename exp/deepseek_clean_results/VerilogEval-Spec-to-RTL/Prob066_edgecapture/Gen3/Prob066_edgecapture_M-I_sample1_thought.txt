@@ -1,0 +1,11 @@
+The original solution correctly detects 1->0 transitions and maintains them until reset, but we can optimize it further by:
+1. Removing redundant register (prev_in) by using non-blocking assignment
+2. Simplifying the edge detection logic
+3. Maintaining the same functionality with fewer operations
+4. Ensuring all transitions are properly captured until reset
+
+The improved version will:
+1. Directly compare current and previous input values
+2. Use bitwise OR to accumulate all detected transitions
+3. Clear only on reset as specified
+4. Reduce logic complexity while maintaining correct behavior

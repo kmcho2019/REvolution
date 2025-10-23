@@ -1,0 +1,37 @@
+The module must track the current water level using the sensor inputs s[2:0], which indicate which sensors are asserted. The flow rate outputs (fr0, fr1, fr2) correspond to nominal flow valves, and dfr corresponds to supplemental flow valve. The flow rate depends on the current water level and whether the water level is rising or falling, which can be inferred from comparing the current sensor state with the previous sensor state.
+
+I will implement a synchronous process that on each clock edge:
+- Captures the current sensor input s into a reg for previous comparison.
+- Uses the sensor inputs to decide the nominal flow outputs as per the table:
+  - All sensors asserted (111): no nominal flow outputs asserted.
+  - s[0], s[1] asserted only (110): fr0 asserted.
+  - s[0] only asserted (100): fr0 and fr1 asserted.
+  - None asserted (000): fr0, fr1, fr2 asserted.
+- For other combinations (e.g. 010, 001, 011, 101), map them according to the closest interpretation, but since sensors are vertically placed and should assert cumulatively from bottom to top, it's safe to assume only the four given states. If needed, ignore unexpected patterns or treat them as the closest lower level.
+- Determine if the water level has gone up by checking if the previous sensor pattern was strictly less than current in terms of sensor assertions. More exactly, if the current sensor number (level) is higher than the previous, then the water level is rising.
+- If rising, assert dfr (supplemental flow valve), else dfr is 0.
+- On reset, set outputs to represent the lowest water level state (no sensors asserted and all valves asserted).
+
+The key is to encode the sensor state to an integer level representing the water level, and compare previous and current levels to decide dfr.
+
+Since s is 3 bits representing sensors from bottom to top (s[0] bottom, s[2] top), water level can be decoded as the number of asserted sensors, since they are placed at 5 inch intervals, and the table reflects that levels correspond to sets of sensors asserted from bottom upwards.
+
+States:
+- 3 sensors asserted: level 3 (above s[2]) => no flow outputs asserted
+- 2 sensors asserted: level 2 (between s[2] and s[1]) => fr0
+- 1 sensor asserted: level 1 (between s[1] and s[0]) => fr0, fr1
+- 0 sensors asserted: level 0 (below s[0]) => fr0, fr1, fr2
+
+We'll count s bits to get level.
+
+On each clock:
+- compute current_level = count_ones(s)
+- compare previous_level and current_level
+- output flows based on current_level
+- dfr = (current_level > previous_level) ? 1 : 0
+
+On reset, set previous_level = 0, and outputs fr0=1, fr1=1, fr2=1, dfr=1.
+
+This approach meets the requirements.
+
+The final implementation will be synchronous with active-high reset.

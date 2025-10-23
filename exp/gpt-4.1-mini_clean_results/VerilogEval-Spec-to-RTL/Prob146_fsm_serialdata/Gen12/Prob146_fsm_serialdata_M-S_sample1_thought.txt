@@ -1,0 +1,7 @@
+Simplify the FSM to three states: IDLE, RECEIVING, and WAIT_STOP. Use a 2-bit binary encoding for states but collapse ERROR_WAIT into WAIT_STOP to handle error recovery more simply. Merge the STOP state and ERROR_WAIT functionality so that after receiving 8 bits, the FSM waits for a stop bit; if invalid, it stays in WAIT_STOP until a valid stop bit is detected.
+
+Use a 3-bit counter for bits received. Shift bits in LSB first using simple concatenation. Keep done asserted only for one cycle immediately after receiving a valid stop bit.
+
+Use synchronous reset to initialize registers. Reduce logic by combining the STOP and ERROR_WAIT states to simplify the next_state logic and remove the explicit ERROR_WAIT state.
+
+This approach reduces state complexity from 4 to 3 states, merging error recovery into the stop-waiting state, which simplifies the FSM and reduces the number of flip-flops and combinational logic while maintaining correct byte detection and error handling.

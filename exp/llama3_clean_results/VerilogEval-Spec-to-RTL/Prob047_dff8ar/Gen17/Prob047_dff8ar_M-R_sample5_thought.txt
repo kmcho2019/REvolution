@@ -1,0 +1,7 @@
+To refactor the given code, we can consider an alternative approach to implementing the 8 D flip-flops with active high asynchronous reset. The original design uses an `always` block to handle both the clock edge and asynchronous reset conditions. However, another way to achieve the same functionality is by using a combination of `assign` statements and individual D flip-flop modules.
+
+In this refactored design, we will create a separate module for a single D flip-flop with active high asynchronous reset. This module will then be instantiated 8 times within the TopModule to create the required 8-bit wide D flip-flop. Each D flip-flop module will handle its own reset condition and clock edge detection, providing a modular and potentially more scalable solution.
+
+The key benefits of this approach include improved readability, maintainability, and the possibility of easier optimization for area and power consumption. By breaking down the design into smaller, more manageable components, we can better analyze and optimize each part individually, potentially leading to improvements in the overall design's PPA metrics.
+
+Additionally, this modular approach can make it easier to apply clock gating or other power-saving techniques to each D flip-flop individually, which could further reduce power consumption. However, the actual impact on PPA metrics will depend on the specific implementation and the technology used for synthesis.

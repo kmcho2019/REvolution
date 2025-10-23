@@ -1,0 +1,27 @@
+Here's a novel approach using a hierarchical state machine with sub-states for more precise control:
+
+1. Pattern Detection:
+   - Use a separate 4-bit shift register specifically for pattern detection
+   - Only check for pattern match in the IDLE state
+
+2. Shift Control:
+   - Implement a dedicated shift counter with clear start/stop control
+   - Generate shift_ena only during active shifting phase
+
+3. State Management:
+   - Use a main state machine with explicit wait states
+   - Add intermediate states for clean transitions between major phases
+
+4. Output Control:
+   - Generate outputs combinatorially based on current state
+   - Ensure outputs are glitch-free and properly synchronized
+
+The hierarchical states are:
+- IDLE: Waiting for 1101 pattern
+- SHIFT_START: Transition state before shifting
+- SHIFT_ACTIVE: Actively shifting in duration bits (4 cycles)
+- COUNT_WAIT: Waiting for counter completion
+- DONE_ACTIVE: Timer completed, waiting for ack
+- DONE_RELEASE: Final state before returning to IDLE
+
+This provides cleaner transitions and better timing control.

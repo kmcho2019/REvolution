@@ -1,0 +1,11 @@
+To further optimize the Moore FSM implementation, I'll focus on these improvements:
+
+1. **State Encoding Optimization**: Use one-hot encoding (0001, 0010, 0100, 1000) instead of binary to potentially reduce combinational logic complexity and improve timing.
+
+2. **Output Logic Simplification**: Since we're using one-hot encoding, the output can be directly assigned from the D state bit, eliminating the need for any combinational logic.
+
+3. **Reset Optimization**: Maintain synchronous reset but initialize all state bits to 0 except the first one (state A).
+
+4. **Next-State Logic**: Simplify the combinational logic by taking advantage of one-hot properties where only one bit is active at a time.
+
+This approach should improve timing by reducing the combinational path between state registers, while potentially reducing power consumption due to simpler decoding logic.

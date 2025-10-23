@@ -1,0 +1,16 @@
+Revised solution for odd frequency divider:
+1. Maintain the dual-counter approach but simplify the toggle logic
+2. Each counter (posedge and negedge) should only toggle at the midpoint (NUM_DIV-1)/2
+3. Remove the redundant toggle at counter wrap-around (NUM_DIV-1)
+4. Ensure proper phase alignment between the two counters
+5. Keep the OR combination of both clocks to create the final output
+6. Maintain synchronous reset behavior
+7. Add parameter validation for odd numbers
+8. Use integer division for half-period calculation to ensure precision
+9. Initialize all registers properly on reset
+
+Key changes:
+- Simplified toggle logic to only occur at half-period
+- Removed double-toggle condition
+- Ensured proper phase alignment between posedge and negedge domains
+- Maintained 50% duty cycle through proper edge spacing

@@ -1,0 +1,5 @@
+To improve the original design for better PPA while maintaining the same functionality, I will implement clock gating using an explicit enable signal to reduce unnecessary toggling in registers when no computation is needed. Specifically, registers will update only when the multiplication is active (start asserted and shift count i between 0 and 16), reducing dynamic power. The addition to yout_r will only happen when the multiplicand bit is set; otherwise, yout_r holds its value without reloading it unnecessarily. I will remove redundant non-blocking assignments like yout_r <= yout_r, which cause extra toggling.
+
+Also, I will simplify the done flag logic by using a one-hot scheme: done is set exactly when i equals 16 and reset otherwise on next cycle or on reset, avoiding a separate cycle (i=17) to clear done and thus slightly reducing latency.
+
+These changes will reduce power consumption by minimizing needless register updates and potentially improve timing by reducing toggling and simplifying done logic. The design remains a straightforward shift-and-accumulate unsigned 16-bit multiplier following the original spec.

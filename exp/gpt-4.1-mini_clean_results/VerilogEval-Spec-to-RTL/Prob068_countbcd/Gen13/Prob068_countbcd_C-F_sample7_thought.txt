@@ -1,0 +1,20 @@
+I will fuse the best ideas from both examples to create a BCD counter with optimized timing, clarity, and concise carry handling.
+
+From Example 1, the key strength is the sequential handling of carry propagation inside a single always block using a packed 16-bit register and a dedicated increment function. This reduces area by using one register and encapsulates BCD digit increment logic cleanly. The enable signals are simple and directly tied to when a digit reaches 9, matching the carry condition.
+
+From Example 2, the advantage is the modular clarity of handling each digit as a separate 4-bit register and the straightforward nested if-else rollover logic. However, nested if-else in sequential logic may create longer critical paths.
+
+My fusion strategy is:
+- Use a single 16-bit register for the four BCD digits (like Example 1) to minimize registers and area.
+- Use a small BCD increment function for clarity and correctness.
+- Handle increment and carry propagation sequentially inside the always block like Example 1, but improve code readability by using local variables and clear carry propagation steps without deep nesting.
+- Generate ena signals combinationally exactly as in both examples, reflecting when each upper digit should increment (digit == 9).
+- Use non-blocking assignments properly.
+- Keep logic simple and easily synthesizable while ensuring the critical path is controlled by breaking carry with sequential steps.
+- This fusion yields a compact, efficient, and readable BCD counter with good PPA balance.
+
+The design ensures:
+- Compact state storage (single 16-bit register).
+- Clear and safe carry propagation in clocked logic.
+- Accurate enable outputs indicating when upper digits increment.
+- Synchronous active-high reset.

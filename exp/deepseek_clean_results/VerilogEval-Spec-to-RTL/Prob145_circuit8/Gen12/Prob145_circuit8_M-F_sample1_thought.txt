@@ -1,0 +1,19 @@
+After carefully analyzing the feedback and waveform patterns, here's the corrected approach:
+
+1. Key Behavioral Observations:
+   - p copies 'a' only at rising clock edges when q=0
+   - q becomes 1 only after p has been 1 for one full clock cycle (both edges)
+   - q resets to 0 when 'a' is high during a falling clock edge
+   - p stays 0 when q=1
+
+2. Corrected Implementation Strategy:
+   - Use two always blocks: one for synchronous behavior, one for asynchronous reset
+   - Track previous p value to detect full-cycle condition
+   - Implement proper edge-sensitive reset for q
+   - Maintain clean separation of synchronous and asynchronous behaviors
+
+3. State Management:
+   - p_next tracks the next value of p
+   - q_next tracks the next value of q
+   - prev_p stores p's value from previous cycle for full-cycle detection
+   - Reset condition occurs specifically at falling edge with a=1

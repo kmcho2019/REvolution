@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. Remove operand isolation logic since reset already clears the accumulator
+2. Eliminate the 64-bit product since we're only using the lower 32 bits
+3. Keep synchronous reset functionality
+4. Directly multiply and accumulate in 32-bit arithmetic
+5. Maintain clean register-based accumulation structure
+
+Key simplifications:
+- No need for 64-bit product if we accept potential overflow (matches original spec)
+- Remove unnecessary muxing logic for operand isolation
+- Simplified data path with direct 32-bit operations
+- Still maintains core MAC functionality

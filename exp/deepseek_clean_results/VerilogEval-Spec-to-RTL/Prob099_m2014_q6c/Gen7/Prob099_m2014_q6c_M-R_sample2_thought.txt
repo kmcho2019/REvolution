@@ -1,0 +1,13 @@
+Refactoring approach:
+1. Correct the output ports to Y1 and Y3 as specified
+2. Maintain one-hot state encoding (y[0]=A, y[1]=B, etc.)
+3. Y1 (next y[0]) should be active when:
+   - Current state is A and input w=1 (stay in A)
+   - Current state is D and input w=1 (transition to A)
+4. Y3 (next y[3]) should be active when:
+   - Current state is B and input w=1 (transition to D)
+   - Current state is C and input w=1 (transition to D)
+   - Current state is E and input w=1 (transition to D)
+   - Current state is F and input w=1 (transition to D)
+5. Use simple assign statements for combinational logic
+6. Keep the one-hot encoding assumption clear through signal names

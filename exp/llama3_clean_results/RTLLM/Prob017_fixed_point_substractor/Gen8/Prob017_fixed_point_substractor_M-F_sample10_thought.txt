@@ -1,0 +1,13 @@
+To address the issues in the original code, we first need to focus on synthesis and post-synthesis functional checks. The provided feedback suggests that while the code is functionally correct, it may not be optimized for synthesis. 
+
+One key area of improvement is in handling the result when it is zero. Instead of using an if statement to explicitly set the result to zero, we can directly assign the result of the subtraction operation to the output, ensuring that the zero case is inherently handled. This simplification can help in reducing the complexity of the design and potentially improve synthesis results.
+
+For performance optimization, the current implementation uses a direct subtraction, which is relatively efficient. However, we can further optimize the design by ensuring that the synthesis tool correctly optimizes the critical path through the module. This might involve reordering operations or applying specific synthesis directives, depending on the tool being used.
+
+In terms of area and power optimization, since the design is purely combinational and focuses on a straightforward subtraction operation, there are limited opportunities for optimization without compromising performance. However, ensuring that the design is correctly parameterized and that the synthesis tool is configured to optimize for area and power can help in achieving the best possible results.
+
+Given the feedback on synthesis failures, it's crucial to ensure that the module is correctly instantiated in the testbench, with parameters N and Q correctly passed to the module instance. This step is essential for successful synthesis and verification of the design.
+
+Finally, considering the use of signed arithmetic and the potential for higher switching activity due to conditional assignments, we can simplify the logic to reduce unnecessary transitions. However, given the nature of the subtraction operation, significant reductions in switching activity might be challenging without impacting performance.
+
+In summary, the fix involves simplifying the logic to directly handle the result of subtraction, ensuring correct parameter passing in the testbench, and optimizing the design for better synthesis results while maintaining the required functionality.

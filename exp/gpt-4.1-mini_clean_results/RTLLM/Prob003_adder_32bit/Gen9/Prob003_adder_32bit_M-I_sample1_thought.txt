@@ -1,0 +1,11 @@
+To improve PPA (performance, power, area), restructure the 16-bit CLA block to compute carry signals in a hierarchical manner using 4-bit CLA blocks internally. This creates a two-level CLA hierarchy: four 4-bit CLAs forming one 16-bit CLA. This approach reduces carry chain length and logic depth, improving timing and reducing glitching, which also helps power. Additionally, implement the 32-bit adder as two 16-bit CLA blocks (each internally hierarchical) to keep modularity.
+
+Within each 4-bit CLA block, compute group propagate and generate signals, and combine these for the 16-bit block carry calculation using 4-bit group signals. This method reduces the number of sequential carry calculations, reduces logic depth, and efficiently computes carries in parallel. This hierarchical structure is a classic carry-lookahead optimization.
+
+The propagate/generate signals and sums are calculated per bit. The top-level 16-bit CLA uses the 4-bit CLA group signals to generate intermediate carries for 4-bit blocks and then sums within those blocks. This hierarchy reduces complexity and gate count for carry logic.
+
+Overall, this hierarchical CLA improves timing by reducing carry logic depth, reduces switching activity (improving power), and reduces total logic gates and interconnects (saving area).
+
+The top-level 32-bit adder instantiates two such 16-bit hierarchical CLA blocks connected by carry-out of lower to carry-in of upper.
+
+The code below implements this hierarchical approach with clear module separation and correct port naming and indexing, complying with the original port order [N:1].

@@ -1,0 +1,18 @@
+To implement the given K-map using one external 4-to-1 multiplexer controlled by inputs `a` and `b`, the `TopModule` should output the four input signals `mux_in[3:0]` that depend only on inputs `c` and `d`.
+
+Each `mux_in[i]` corresponds to a fixed pair of `a,b` (00,01,11,10). For each such pair, the output is a function of `c` and `d` given by the respective column in the K-map.
+
+Since we are only allowed to use 2-to-1 multiplexers internally and no other gates, we implement each `mux_in[i]` as a small mux tree driven by `c` and `d`.
+
+The external 4-to-1 mux (not in this module) selects among these four signals using `a` and `b`.
+
+To simplify and minimize complexity, we:
+
+- Use only 2-to-1 multiplexers with selector `c` or `d`.
+- Use direct assignments when the function is constant.
+- Minimize the number of multiplexers by factoring functions as mux trees over `c` and `d`.
+- Provide a clean, readable implementation.
+
+This approach matches the problem statement exactly and generates the required inputs to the external 4-to-1 mux.
+
+Note: The order of bits in `mux_in` corresponds to `ab=00` -> `mux_in[0]`, `ab=01` -> `mux_in[1]`, `ab=11` -> `mux_in[2]`, `ab=10` -> `mux_in[3]`.

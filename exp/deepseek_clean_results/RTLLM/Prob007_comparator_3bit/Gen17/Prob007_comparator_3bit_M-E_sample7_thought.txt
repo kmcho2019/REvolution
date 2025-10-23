@@ -1,0 +1,21 @@
+Novel Architectural Idea: Bit-Parallel Magnitude Comparison with Shared Logic
+
+1. Instead of hierarchical bit comparison, perform all bit comparisons in parallel
+2. Generate three key signals for each bit position:
+   - Greater-than (G): A[i] > B[i]
+   - Equal (E): A[i] == B[i]
+   - Less-than (L): A[i] < B[i]
+3. Combine these signals using priority encoding:
+   - A > B if any G[i] is true and all higher bits are equal
+   - A < B if any L[i] is true and all higher bits are equal
+4. Optimizations:
+   - Shared XOR gates for equality detection
+   - Parallel processing of all bits for faster operation
+   - Minimal logic depth (2 levels) for all outputs
+   - Explicit mutual exclusion in output encoding
+
+Advantages:
+- Fully parallel processing for maximum speed
+- Clear separation of comparison logic
+- Balanced critical paths for all outputs
+- Easily scalable to wider comparators

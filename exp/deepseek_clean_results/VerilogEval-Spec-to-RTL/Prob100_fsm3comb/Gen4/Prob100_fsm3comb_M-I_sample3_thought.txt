@@ -1,0 +1,19 @@
+To optimize the Moore state machine implementation for better PPA (Power, Performance, Area), we can make the following improvements:
+
+1. **Performance:** 
+   - Separate the output logic from next state logic to reduce critical path
+   - Use parallel case evaluation by moving the input condition into the case statement itself
+
+2. **Power:**
+   - Maintain the same state encoding since the transitions don't show a clear pattern that would benefit from Gray coding
+   - Keep the output logic simple to minimize switching activity
+
+3. **Area:**
+   - Remove the default case since the state inputs are guaranteed to be valid (2'b00 to 2'b11)
+   - Use simpler boolean expressions where possible
+
+The improved design will:
+- Use separate always blocks for next_state and output logic
+- Combine state and input into a single case statement for more parallel evaluation
+- Eliminate unnecessary default case
+- Maintain the same functionality while potentially improving timing

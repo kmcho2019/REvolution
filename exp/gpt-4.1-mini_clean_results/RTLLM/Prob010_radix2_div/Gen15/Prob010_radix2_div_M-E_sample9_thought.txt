@@ -1,0 +1,9 @@
+Implement a radix-2 restoring division using a synchronous iterative approach with a simpler state machine: IDLE, DIVIDE, DONE.  
+On opn_valid assertion, latch the inputs and compute their absolute values if signed division is requested.  
+Use a 17-bit shift register SR to hold the partial remainder and quotient together. Initialize it with dividend_abs shifted left by 1 bit and quotient zero.  
+In each iteration, shift SR left by 1 bit, subtract divisor_abs from the partial remainder (top bits of SR).  
+If the subtraction is non-negative, update the partial remainder and set the least significant bit of quotient to 1; otherwise, restore the remainder and set quotient bit to 0.  
+Repeat for 8 cycles.  
+After completion, apply sign corrections to quotient and remainder based on original operand signs.  
+Output the 16-bit result with remainder in upper 8 bits and quotient in lower 8 bits, and assert res_valid for one cycle.  
+The module only uses synchronous logic with registers declared at module level and clean FSM transitions without combinational loops.

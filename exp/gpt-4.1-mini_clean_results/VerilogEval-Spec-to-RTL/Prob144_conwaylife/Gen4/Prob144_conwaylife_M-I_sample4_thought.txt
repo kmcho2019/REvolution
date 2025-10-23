@@ -1,0 +1,14 @@
+To improve PPA, reduce the large combinational logic computing all cells' next states in one cycle by processing only one cell per clock cycle instead of all 256 cells simultaneously. This transforms the design into a sequential pipeline updating the grid over 256 clock cycles, greatly shortening the combinational path, improving max frequency and power.
+
+Key points:
+- Introduce a 8-bit index (0 to 255) as a state machine pointer to process one cell per clock cycle.
+- On load, synchronously load the entire grid.
+- On normal operation, each clock cycle updates one cell's next state based on its neighbors read from the current grid.
+- Store the updated next grid in a separate register array or memory, so after 256 cycles, next grid fully computed.
+- At end of 256 cycles, replace current grid with next grid, and repeat.
+- This spreads the heavy neighbor counting logic over multiple cycles, improving timing and power by localizing switching to one cell update at a time.
+- Use simple bit slicing and wrapping via bit-masking for efficient indexing.
+- Output q updated only after a full 256-cell update cycle completes.
+- This method trades off latency (one full update takes 256 cycles) for improved timing, power, and area by reducing combinational complexity and logic duplication.
+
+This design approach is synthesis-friendly, keeps functional correctness, and greatly improves PPA metrics compared to the original fully combinational all-cell update.

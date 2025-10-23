@@ -1,0 +1,12 @@
+I will implement the accumulator using a shift-register-like approach for counting inputs instead of an explicit counter. Specifically, I will create a 4-bit shift register where each bit set indicates a valid input has been received. Once all four bits are set (i.e., after 4 valid inputs), the sum is output and valid_out is asserted for one cycle.
+
+This approach eliminates a binary counter and uses simpler shift-register logic, which might be beneficial in certain synthesis flows or when targeting LUT-based FPGAs.
+
+Key points:
+- Use a 10-bit accumulator register to sum the inputs.
+- Use a 4-bit shift register to track the number of valid inputs received.
+- When the shift register reaches 4 ones, output the sum and assert valid_out.
+- Reset accumulator and shift register after output.
+- valid_in gates updates, ensuring summation and shift register advance only with valid data.
+
+This architecture can reduce the complexity of counting logic and provides a novel way to track the input data count.

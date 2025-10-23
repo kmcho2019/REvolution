@@ -1,0 +1,21 @@
+To improve correctness and potentially fix the mismatches observed:
+
+1. **Separate prediction and training updates clearly, updating `ghr_spec` only on prediction and only when no training happens, with training taking precedence.**  
+2. **Drive `predict_taken` and `predict_history` combinationally from `ghr_spec` and the current PHT entry, ensuring outputs represent the exact speculative state used for prediction.**  
+3. **Implement saturating counter updates inline in the always block to avoid potential synthesis issues with function calls.**  
+4. **At reset, initialize PHT entries to weakly not taken (2'b01) and history registers to zero.**  
+5. **Use non-blocking assignments carefully to ensure ordering in sequential logic and avoid race conditions.**  
+6. **Explicitly gate updates so only the indexed PHT entries are modified, and others remain stable.**  
+7. **Maintain training precedence over prediction for updating `ghr_spec` to respect pipeline flush semantics.**
+
+These steps align with the spec and clarify timing and update logic, which should resolve the reported mismatches.
+
+For power, performance, and area (PPA) enhancements beyond correctness:
+
+- Keep the PHT as a register array for now but initialize with a generate loop for FPGA friendliness.
+- Inline saturating counter logic instead of functions.
+- Avoid unnecessary toggling by gating `ghr_spec` update to when `predict_valid && !train_valid`.
+- Output `predict_taken` only when `predict_valid` is asserted.
+- Minimize combinational logic complexity for better timing.
+
+This improved implementation should pass correctness and be synthesis friendly.

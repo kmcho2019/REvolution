@@ -1,0 +1,15 @@
+My novel approach uses a counter-based state machine that tracks consecutive 1s while maintaining the required detection logic. Here's the key insight:
+
+1. **Consecutive 1s Counter**: Maintain a 3-bit counter to track the number of consecutive 1s (0-7). This efficiently tracks the critical sequence lengths.
+
+2. **State Encoding**: Use distinct states to represent:
+   - Normal operation (after 0)
+   - Potential discard (after 5 consecutive 1s)
+   - Potential flag (after 6 consecutive 1s)
+   - Error state (7+ consecutive 1s)
+
+3. **Edge Detection**: Transition between states based on the counter value and current input, with outputs registered for proper timing.
+
+4. **Output Logic**: Generate outputs based on state transitions rather than direct pattern matching, making the FSM more robust to varying input sequences.
+
+This approach is more efficient than pattern matching as it requires fewer comparisons and scales better with longer sequences.

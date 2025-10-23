@@ -1,0 +1,35 @@
+To solve this problem, we first need to represent the given input conditions in a binary form and then find the minimum sum-of-products (SOP) and product-of-sums (POS) forms for the given truth table.
+
+From the problem statement, we know the conditions under which the output should be logic-1 (2, 7, 15) and logic-0 (0, 1, 4, 5, 6, 9, 10, 13, 14). The conditions for 3, 8, 11, and 12 are don't care.
+
+First, let's list the binary representations of the inputs that result in a logic-1 output:
+- 2: 0010
+- 7: 0111
+- 15: 1111
+
+And the inputs that result in a logic-0 output:
+- 0: 0000
+- 1: 0001
+- 4: 0100
+- 5: 0101
+- 6: 0110
+- 9: 1001
+- 10: 1010
+- 13: 1101
+- 14: 1110
+
+The SOP form will be the sum of the minterms that produce a logic-1 output.
+The POS form will be the product of the maxterms that produce a logic-0 output.
+
+For the SOP form, the minterms corresponding to the logic-1 outputs are:
+- For 2 (0010): $\overline{a} \cdot b \cdot \overline{c} \cdot \overline{d}$
+- For 7 (0111): $\overline{a} \cdot b \cdot c \cdot d$
+- For 15 (1111): $a \cdot b \cdot c \cdot d$
+
+For the POS form, we need to find the maxterms corresponding to the logic-0 outputs. However, we'll directly derive the POS from the given conditions for simplicity.
+
+Now, let's derive the minimum SOP and POS expressions:
+- Minimum SOP: $(\overline{a} \cdot b \cdot \overline{c} \cdot \overline{d}) + (\overline{a} \cdot b \cdot c \cdot d) + (a \cdot b \cdot c \cdot d)$
+- For POS, we consider the maxterms for 0, 1, 4, 5, 6, 9, 10, 13, 14, but it's more complex to directly write the POS form without K-map simplification. However, given the problem constraints and aiming for minimality, we'll consider the essential maxterms that cover all the 0 output conditions and ensure the don't care conditions are properly handled.
+
+To simplify, let's proceed to the Verilog implementation for both SOP and POS forms.

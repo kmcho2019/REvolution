@@ -1,0 +1,11 @@
+To implement the Mealy FSM detection circuit, we can use a finite state machine with six states: S0 (initial state), S1, S2, S3, S4, and S5. The state transitions are based on the input signal IN. We will use a synchronous reset (RST) to initialize the FSM to the S0 state. The output signal MATCH is 1 when the FSM is in the S5 state, indicating that the input sequence 10011 has been detected. We will also implement the FSM to support continuous input and loop detection.
+
+The state transitions can be defined as follows:
+- S0: If IN = 1, go to S1; otherwise, stay in S0.
+- S1: If IN = 0, go to S2; otherwise, go back to S1.
+- S2: If IN = 0, go to S3; otherwise, go back to S1.
+- S3: If IN = 1, go to S4; otherwise, go back to S1.
+- S4: If IN = 1, go to S5; otherwise, go back to S1.
+- S5: If IN = 1, stay in S5 and set MATCH = 1; otherwise, go back to S1.
+
+We will use a case statement to implement the state transitions and a binary encoding for the states.

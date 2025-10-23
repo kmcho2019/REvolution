@@ -1,0 +1,13 @@
+The original design is functionally correct but can be optimized for better timing and simpler logic. Key improvements:
+
+- Remove the combinational always block driving output `c`. Instead, directly assign `c` as a registered output updated in the synchronous always block alongside the accumulator `acc`. This reduces combinational output logic, improving timing.
+
+- Rename the internal accumulator register from `acc` to `c` to reflect the output register, eliminating the need for separate registers and continuous assignments.
+
+- Since the problem states output `c` as 32-bit and overflow truncation is acceptable, keep the truncation approach but remove explicit saturation logic. This reduces the critical path complexity by removing the overflow detection and saturation multiplexer.
+
+- Use synchronous active-high reset as specified, updating the register on positive edge of clk or rst (although in synthesis, reset is often synchronous; here we keep reset synchronous on clk with active high rst as per spec).
+
+- This yields a simpler, single register holding the accumulated value `c`, updated every clock cycle by adding the truncated 32-bit product. The multiplier and adder remain but are streamlined.
+
+This approach reduces logic levels, improves timing by cutting overflow detection logic, and simplifies the design. Power and area should be slightly reduced due to fewer gates and registers.

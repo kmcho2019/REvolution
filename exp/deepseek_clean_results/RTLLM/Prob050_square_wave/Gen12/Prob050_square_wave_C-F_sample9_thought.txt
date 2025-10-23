@@ -1,0 +1,21 @@
+Fusion Strategy:
+1. Timing Optimization:
+   - Adopt Example 1's continuous assignment for wave_out to eliminate sequential logic in output path
+   - Keep Example 2's single clock domain approach to avoid gated clock issues
+   - Use Example 1's down-counter approach for simpler comparison logic
+
+2. Power Optimization:
+   - Implement Example 2's freq=0 handling but without clock gating
+   - Maintain Example 1's efficient counter operation
+   - Add explicit power-saving when freq=0 by freezing all logic
+
+3. Area Optimization:
+   - Combine Example 1's compact counter with Example 2's clean state handling
+   - Eliminate redundant registers (like toggle_flag) by direct output assignment
+   - Use minimal bit-width counter based on frequency range
+
+Key Improvements:
+- Single always block for all sequential logic (cleaner than Example 1)
+- No clock gating (better than Example 2)
+- Down-counter with continuous output (best of both)
+- Efficient freq=0 handling without extra logic

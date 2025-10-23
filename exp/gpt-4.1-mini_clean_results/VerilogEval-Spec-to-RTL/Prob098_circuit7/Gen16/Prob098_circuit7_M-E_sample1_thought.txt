@@ -1,0 +1,15 @@
+The waveform shows that the output 'q' follows the inversion of the input 'a' sampled on the positive clock edge. When 'a' is 0 at the clock edge, 'q' becomes 1; when 'a' is 1, 'q' becomes 0.
+
+To implement this behavior differently than the previous inversion-before-DFF method, we can:
+- Use a positive-edge-triggered D flip-flop capturing the non-inverted 'a'.
+- Follow it by an asynchronous output inverter on the Q output.
+  
+However, to keep it purely sequential and no combinational inverter outside the DFF, we can implement the flip-flop with a Q-bar output, and then route Q-bar directly as output.
+
+Since typical RTL modeling doesn't expose Q-bar explicitly, we can build the sequential logic by using a DFF capturing the input directly, but output q as inverted stored value. This approach effectively stores a as is, but outputs the inverted stored bit.
+
+This solution differs architecturally: the flip-flop stores 'a' directly, but the output 'q' is inverted registered value, allowing separation of storage and output logic stages.
+
+This modular design clarifies the role of storage and output logic separately, possibly easing testing and debugging and provides a clean architectural difference from prior designs.
+
+This also uses a single always block for the flip-flop storage, and a simple assign for output inversion, separating sequential and combinational logic clearly.

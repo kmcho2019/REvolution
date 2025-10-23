@@ -1,0 +1,8 @@
+To simplify while maintaining functionality:
+1. Remove the separate prev_in register since we can directly compare current input with registered version
+2. Use a single register to both store the previous input and capture falling edges
+3. For each bit, detect falling edge when registered value is 1 and current input is 0
+4. Set the corresponding output bit on detection and keep it set until reset
+5. All operations remain synchronous to clock edge with synchronous reset
+
+This reduces the design to just one 32-bit register that serves both purposes, cutting the register count in half while preserving the same functionality.

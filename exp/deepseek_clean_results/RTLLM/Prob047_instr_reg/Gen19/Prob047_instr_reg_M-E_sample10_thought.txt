@@ -1,0 +1,24 @@
+Novel Architecture: Shift Register with Parallel Load
+1. Core Concept:
+   - Implement the instruction register as a shift register that can also parallel load
+   - This allows for potential future expansion to handle variable-length instructions
+   - The shift capability enables bit-level manipulation if needed
+
+2. Key Features:
+   - Single 16-bit register that stores both instruction parts (ins_p1 and ins_p2)
+   - Shift operation controlled by fetch signals
+   - Parallel load capability for efficient instruction capture
+   - Outputs remain directly tapped from specific bit positions
+
+3. Advantages:
+   - More flexible architecture for future extensions
+   - Reduced register count (single 16-bit reg vs two 8-bit regs)
+   - Potential power savings by avoiding separate register updates
+   - Maintains same interface and functionality
+
+4. Implementation Details:
+   - Use a 16-bit shift register with parallel load
+   - Fetch[1] shifts in new data to upper byte (ins_p2 equivalent)
+   - Fetch[0] shifts in new data to lower byte (ins_p1 equivalent)
+   - Outputs remain combinational taps into the register
+   - Reset clears entire register

@@ -1,0 +1,12 @@
+To improve the given right shifter design for better power and robustness while maintaining performance and area, I will add a synchronous active-high reset input to initialize the q register to zero rather than relying on the initial block. This is preferable for synthesis and hardware initialization, as many FPGA/ASIC flows do not support or guarantee initial blocks for registers.
+
+Also, I will add an enable signal that can be tied high by default but allows future gating for power saving if the system desires to stop shifting when not needed.
+
+Internally, I will keep the same concise assignment using concatenation for minimal logic and register load. The reset and enable signals provide better control for power and reliability without increasing area significantly. This method supports clear, synchronous reset initialization for robust operation and opens the door for power optimization via enable gating.
+
+The outputs remain driven by the registered internal q register. The interface adds reset and enable inputs.
+
+This approach leads to better PPA:
+- Power reduced by enabling clock gating (via enable).
+- Area unchanged, as reset and enable signals are standard flip-flop features.
+- Performance minimally affected, as reset and enable are common flip-flop inputs.

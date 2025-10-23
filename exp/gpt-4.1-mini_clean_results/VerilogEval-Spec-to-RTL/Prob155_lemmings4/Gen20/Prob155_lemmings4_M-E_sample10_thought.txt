@@ -1,0 +1,29 @@
+I will implement the Lemming FSM using separate one-hot encoded states for walking left, walking right, digging left, digging right, falling left, falling right, and splattered. This enables explicit tracking of direction and mode in the state encoding itself, removing separate direction registers and simplifying output logic.
+
+The states are:
+- WALK_L, WALK_R
+- DIG_L, DIG_R
+- FALL_L, FALL_R
+- SPLAT
+
+Transitions:
+- From walking states: if ground=0 → transition to falling (same direction); else if dig=1 → digging; else if bumped → switch walking direction; else remain walking.
+- From digging states: if ground=0 → falling same direction; else remain digging.
+- From falling states: increment fall timer; if ground=1, if fall time > 20 → splat; else → walk same direction.
+- From splat: remain splat forever.
+
+The fall timer counts only during falling states, resets otherwise.
+
+All outputs are directly derived from current state (Moore outputs), no separate direction signal.
+
+Asynchronous posedge reset sets state to WALK_L and fall_timer=0.
+
+This one-hot FSM style increases state bits but simplifies logic and makes outputs and transitions more intuitive. It also tightly couples direction and mode, so no direction confusion and bump handling is direct per mode.
+
+The fall timer is a saturating 5-bit counter counting up to 21. The splatter check is done only on landing.
+
+Bumps have no effect except in walking states.
+
+Priorities (fall > dig > bump) are handled in the state transitions explicitly.
+
+This design is fully Moore, easy to verify, and different in structure from prior solutions.

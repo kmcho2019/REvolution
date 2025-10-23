@@ -1,0 +1,15 @@
+To implement the finite-state machine for the timer, we can break it down into several states: 
+- IDLE: The initial state where the machine waits for the pattern 1101 to be detected.
+- SHIFT: After detecting the pattern, the machine shifts in 4 more bits to determine the duration.
+- COUNTING: The machine waits for the counters to finish counting.
+- DONE: The machine notifies the user that the timer has timed out and waits for acknowledgment.
+
+We can use a 4-state state machine, with the states encoded as follows: 
+- IDLE: 2'b00
+- SHIFT: 2'b01
+- COUNTING: 2'b10
+- DONE: 2'b11
+
+The state machine will transition between these states based on the input signals (data, done_counting, ack) and the current state.
+
+We will use a counter to keep track of the number of bits shifted in during the SHIFT state.

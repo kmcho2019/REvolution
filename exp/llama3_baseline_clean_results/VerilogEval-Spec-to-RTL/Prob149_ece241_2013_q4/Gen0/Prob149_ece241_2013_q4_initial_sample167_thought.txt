@@ -1,0 +1,15 @@
+To implement the TopModule, we need to design a state machine that monitors the water level sensors and controls the flow rate accordingly. We can achieve this by using a combination of combinational logic and sequential logic. 
+
+First, we need to decode the sensor inputs to determine the current water level. Then, we need to use the current water level and the previous water level to determine the flow rate. 
+
+We will use a two-bit register to store the previous water level, encoded as follows: 
+- 00: Below s[0]
+- 01: Between s[0] and s[1]
+- 10: Between s[1] and s[2]
+- 11: Above s[2]
+
+We will use this register to determine whether the water level is rising or falling, and adjust the flow rate accordingly.
+
+The flow rate will be controlled by three output signals: fr2, fr1, and fr0, which correspond to the Nominal flow valve, and one additional signal dfr, which controls the Supplemental flow valve.
+
+In case of a reset, we will set the previous water level to "Below s[0]" and assert all four output signals.

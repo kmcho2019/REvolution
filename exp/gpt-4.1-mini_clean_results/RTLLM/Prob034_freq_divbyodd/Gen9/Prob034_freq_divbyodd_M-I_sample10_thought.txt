@@ -1,0 +1,13 @@
+To improve the original freq_divbyodd module for better performance, power, and area:
+
+- Avoid dual-edge triggered flip-flops to reduce complexity and timing closure difficulties.
+- Use a single always block triggered on the positive edge only.
+- Implement a single counter counting from 0 to NUM_DIV-1.
+- Generate clk_div by setting it high for HALF_DIV+1 counts and low for HALF_DIV counts within the NUM_DIV cycle, ensuring a 50% ± 1 count duty cycle for odd divisors.
+- Use a combinational comparison and logic to set clk_div synchronously, eliminating clk_div1 and clk_div2 signals.
+- Keep the asynchronous active-low reset.
+- Parameter check for odd NUM_DIV is retained.
+- This approach reduces flip-flops by half, simplifies timing paths, and lowers dynamic power by using a single clock domain logic.
+- This single-edge approach is more likely to yield better timing results and reduce area and power consumption, while still correctly generating odd division clocks with reasonable duty cycle.
+
+This method aligns with common frequency division strategies for odd numbers in FPGA/ASIC design.

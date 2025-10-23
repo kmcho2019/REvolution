@@ -1,0 +1,7 @@
+The current solution already uses a minimal 2-bit shift register approach. To simplify further:
+1. We can eliminate the explicit state encoding since the shift register effectively represents our state
+2. The output z can be computed directly from the shift register contents and current input
+3. The asynchronous reset can be handled more efficiently by combining it with the clock edge trigger
+4. We can make the output purely combinational for minimal latency
+
+The simplest possible implementation maintains the 2-bit shift register but removes any unnecessary logic. The output z is simply when we have seen "10" (in history) and the current input is "1".

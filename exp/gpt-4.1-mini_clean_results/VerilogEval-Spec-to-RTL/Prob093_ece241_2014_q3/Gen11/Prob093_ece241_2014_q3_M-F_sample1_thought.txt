@@ -1,0 +1,55 @@
+The key problem was incorrect derivation of the functions f0..f3 from the Karnaugh map columns.
+
+Step 1: Recall the Karnaugh map:
+
+      ab
+  cd  00  01  11  10
+  00 | 0 | 0 | 0 | 1 |
+  01 | 1 | 0 | 0 | 0 |
+  11 | 1 | 0 | 1 | 1 |
+  10 | 1 | 0 | 0 | 1 |
+
+Columns correspond to ab = 00, 01, 11, 10 mapped to mux_in[0..3] respectively.
+
+Step 2: Extract each mux_in[i] as function of c and d by reading down columns (cd: 00,01,11,10):
+
+- mux_in[0] (ab=00):
+  cd=00:0
+  cd=01:1
+  cd=11:1
+  cd=10:1
+This function is 0 only at cd=00 (c=0,d=0), else 1.
+So f0 = c + d (since if c=1 or d=1 output=1; only 0 when c=0 and d=0)
+
+- mux_in[1] (ab=01):
+  All 0 → f1 = 0
+
+- mux_in[2] (ab=11):
+  cd=00:0
+  cd=01:0
+  cd=11:1
+  cd=10:0
+Only 1 when c=1 and d=1 → f2 = c & d
+
+- mux_in[3] (ab=10):
+  cd=00:1
+  cd=01:0
+  cd=11:1
+  cd=10:1
+Only 0 when cd=01 (c=0,d=1), else 1.
+So f3 = NOT (¬c AND d) = c + ¬d
+
+Step 3: Implement these functions using mux2-based NOT, AND, OR gates.
+
+- f0 = c + d
+- f1 = 0
+- f2 = c & d
+- f3 = c + not_d
+
+Step 4: Rewrite code using these corrected functions.
+
+Step 5: Keep the mux2, not_gate, and_gate, or_gate modules unchanged.
+
+Step 6: Assign mux_in with {f3,f2,f1,f0} according to ab indexing.
+
+This will correctly implement the specified K-map using the 4-to-1 multiplexer external to TopModule.

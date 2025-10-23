@@ -1,0 +1,7 @@
+Refactor the FSM by separating the next state logic into a separate combinational block with blocking assignments, and implement the bit counter increment and shift register update with an enable signal only in RECEIVE state to reduce toggling. Use a Moore FSM style where outputs depend only on the current state. 
+
+Replace the shift register's right shift with an explicit LSB-first shift using non-blocking assignments, and separate done and out_byte update logic for clarity.
+
+Use an enumerated typedef for FSM states to improve code readability and maintainability.
+
+This approach keeps the same functionality but modularizes state transition, output logic, and register updates, improving clarity and easing timing optimization by explicitly gating registers with enables.

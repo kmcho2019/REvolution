@@ -1,0 +1,22 @@
+Novel Architecture: Carry-Select Adder with Predictive Zero Flag
+
+1. Carry-Select Adder Core:
+   - Split the 8-bit addition into two 4-bit chunks
+   - Compute both possible results (with carry=0 and carry=1) for the upper nibble
+   - Select the correct result based on the actual carry from lower nibble
+   - This provides faster addition than ripple-carry while using modest area
+
+2. Early Zero Detection:
+   - Compute potential zero flags for both carry scenarios in parallel
+   - Combine with the actual carry to select the correct zero flag
+   - This eliminates the need for a separate zero-check after addition
+
+3. Subtraction Handling:
+   - For subtraction, pre-invert the input and add 1 via carry-in
+   - The same adder structure handles both operations efficiently
+
+Benefits:
+- Faster critical path due to parallel computation
+- Zero flag available immediately with result
+- Balanced logic depth for better timing
+- Modular structure scales well to wider buses

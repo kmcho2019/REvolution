@@ -1,0 +1,15 @@
+To fix the issues identified in the feedback, I'll implement these key improvements:
+
+1. **Direction Preservation**: Maintain direction consistently across all states by storing it separately and only updating during walking state. The direction persists through falling and digging states.
+
+2. **Strict Priority Enforcement**: Reorganize the state transition logic to strictly follow fall > dig > direction change priority in all cases, including edge conditions.
+
+3. **Fall Timer Handling**: Ensure the fall timer only increments during falling state and properly triggers splatter when exceeding 20 cycles upon ground contact.
+
+4. **State Transition Logic**: Refine transitions between states to properly handle all edge cases, including:
+   - Falling when ground disappears during walking or digging
+   - Resuming walking after falling with original direction
+   - Ignoring bumps during non-walking states
+   - Proper splatter condition checking
+
+5. **Output Synchronization**: Ensure outputs are properly synchronized with the current state and direction, with all outputs zero in splatter state.

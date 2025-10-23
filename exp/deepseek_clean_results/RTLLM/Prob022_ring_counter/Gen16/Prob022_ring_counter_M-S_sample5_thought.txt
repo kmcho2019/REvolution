@@ -1,0 +1,13 @@
+To simplify the ring counter implementation while maintaining functionality:
+
+1. Use a direct shift register approach with synchronous reset
+2. Initialize to 8'b00000001 on reset
+3. On each clock cycle, perform a left shift with wrap-around
+4. This eliminates the need for a separate position counter and decoder
+5. The output is purely sequential logic, avoiding combinational glitches
+
+The simplified approach:
+- Single 8-bit register for the state
+- Reset sets the LSB to 1
+- Each clock shifts left with MSB wrapping to LSB
+- No intermediate counters or decoders needed

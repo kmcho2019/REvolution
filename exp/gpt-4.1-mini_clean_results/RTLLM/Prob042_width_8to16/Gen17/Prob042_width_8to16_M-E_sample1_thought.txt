@@ -1,0 +1,11 @@
+Implement a shift-register style buffer and a counter to collect two consecutive valid 8-bit inputs before producing the 16-bit output and asserting valid_out. 
+
+Specifically:
+- Use an 8-bit register to temporarily hold the first valid input data.
+- Use a 1-bit flag to indicate whether the first data has been stored.
+- When a valid_in arrives:
+    - If no first data stored yet, save the input and set the flag.
+    - If first data already stored, combine it (high 8 bits) with the current input (low 8 bits), and load the combined value into data_out, asserting valid_out.
+- Since the output valid_out and data_out should appear in the next clock cycle after the second data input arrives, use pipeline registers to delay the concatenated data and valid signal by one clock cycle.
+- Reset clears all registers and flags.
+- This method avoids complicated FSMs by relying on a simple flag and pipelining output for proper timing.

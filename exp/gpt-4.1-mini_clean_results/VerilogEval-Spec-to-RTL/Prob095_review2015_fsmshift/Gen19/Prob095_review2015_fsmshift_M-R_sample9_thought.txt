@@ -1,0 +1,15 @@
+To refactor the original design while keeping the same functional behavior (assert shift_ena for exactly 4 cycles after synchronous reset), I will implement the logic as a small FSM with explicit states instead of a counter variable counting asserted cycles. 
+
+The FSM will have two states:
+- IDLE: shift_ena = 0, waiting for reset.
+- SHIFT_ACTIVE: shift_ena = 1, active for exactly 4 clock cycles after reset.
+
+The synchronous reset will immediately transition the FSM to SHIFT_ACTIVE and a 2-bit counter will count these 4 cycles. After counting 4 cycles, FSM returns to IDLE and shift_ena goes low.
+
+This state machine approach clarifies the timing and makes the enable logic explicit and cycle-precise. 
+
+Using a 2-bit counter counting 0 to 3 cycles in SHIFT_ACTIVE state ensures exact cycle control.
+
+The implementation uses synchronous reset and positive-edge clock triggering as required.
+
+This approach differs from the original counter-based design by using explicit states and separated counter logic, making the assertion interval cleaner and easy to verify.

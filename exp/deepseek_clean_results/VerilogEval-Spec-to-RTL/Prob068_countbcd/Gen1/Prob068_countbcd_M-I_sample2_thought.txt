@@ -1,0 +1,12 @@
+To fix the BCD counter implementation, we need to:
+1. Properly cascade the digit increments across clock cycles by using registered enable signals
+2. Store the current enable conditions in flip-flops to be used in the next cycle
+3. Maintain correct BCD counting behavior for all digits
+4. Ensure clean rollover from 9999 to 0000
+5. Simplify the logic by using a more structured approach
+
+Key improvements:
+- Use registered enable signals that propagate in the next cycle
+- Separate the digit increment logic into clear stages
+- Remove combinational dependencies within the same clock cycle
+- Maintain all digit values within valid BCD range (0-9)

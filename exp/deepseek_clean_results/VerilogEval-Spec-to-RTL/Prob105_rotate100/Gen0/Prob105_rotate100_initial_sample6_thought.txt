@@ -1,0 +1,8 @@
+To implement a 100-bit rotator with synchronous load and enable, we need to:
+1. Use a 100-bit register to store the current value (q)
+2. On each positive clock edge:
+   - If load is high, load data into the register
+   - Else if ena indicates rotation (01 for right, 10 for left), perform the rotation
+   - For right rotation (ena=01), shift right and bring the LSB to MSB
+   - For left rotation (ena=10), shift left and bring the MSB to LSB
+   - For other ena values, keep the register unchanged

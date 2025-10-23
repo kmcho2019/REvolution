@@ -1,0 +1,8 @@
+To implement the TopModule, we will use a finite state machine (FSM) with the following states:
+- IDLE: The initial state where we discard bytes until we see one with in[3]=1.
+- BYTE1: After seeing a byte with in[3]=1, we capture this byte and move to the next state.
+- BYTE2: We capture the next byte and move to the next state.
+- BYTE3: We capture the next byte and signal done in the next cycle.
+We will use a counter to keep track of the current byte and the input byte stream. 
+The datapath module will output the 24-bit message whenever a packet is received. 
+The FSM will reset to the IDLE state when the reset signal is asserted.

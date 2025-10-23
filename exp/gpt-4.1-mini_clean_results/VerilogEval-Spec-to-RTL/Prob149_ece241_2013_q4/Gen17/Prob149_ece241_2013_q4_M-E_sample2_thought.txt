@@ -1,0 +1,11 @@
+A clear and robust approach is to separately track the current and previous water levels in dedicated registers, updating them synchronously. At every clock, compare the previous and current water levels to detect an upward transition. If an upward transition is detected, assert the supplemental flow valve output (dfr) for exactly one clock cycle. 
+
+This can be done with a simple pulse generation scheme: dfr is asserted only on the cycle immediately following the detected upward transition. No combinational logic drives dfr directly from inputs, avoiding glitches. 
+
+Nominal flow valves (fr0, fr1, fr2) are derived purely combinationally from the current water level. 
+
+Additionally, the water level is decoded into one of four stable states from the three sensors using a clean priority encoder approach, ensuring only valid level states are tracked.
+
+On reset, initialize the water level to BELOW_S0 (lowest level) and assert all valve outputs including dfr, indicating maximum water flow.
+
+This architecture cleanly separates state storage, upward transition detection, pulse generation, and output decoding, improving timing and correctness for dfr while maintaining simple nominal flow control logic.

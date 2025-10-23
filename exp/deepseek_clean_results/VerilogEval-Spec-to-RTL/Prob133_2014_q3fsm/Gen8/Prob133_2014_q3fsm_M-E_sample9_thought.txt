@@ -1,0 +1,13 @@
+Novel approach: Sliding Window with Dynamic Counting
+1. Use just 2 states (A and B) as before, but implement a more efficient window tracking mechanism
+2. Instead of storing all 3 w values, maintain a running count of 1s in the current window
+3. Use a circular buffer pointer to track the oldest w value in the window
+4. When a new w arrives, subtract the oldest value and add the new one to maintain the count
+5. Eliminate the need for a full 3-bit shift register by only storing the oldest value
+6. Output z is generated when the window count equals 2, exactly one cycle after the window is complete
+
+Key advantages:
+- Reduced storage (only need to store oldest w value instead of all 3)
+- Immediate count update without waiting for full window
+- More efficient counting logic with single adder per cycle
+- Clear separation of state transition and counting logic

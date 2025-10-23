@@ -1,0 +1,5 @@
+Use a ROM-based approach to implement next state and output logic. Encode the 5-bit input formed by concatenating present state y[2:0] and input x as an address to a small ROM lookup table that outputs the next state Y[2:0] and output z. This approach simplifies logic by replacing conditionals with direct lookups and scales well for small FSMs. The output Y0 is then the LSB of next state from the ROM.
+
+We implement this by constructing a 32-entry ROM (5 bits address) where each entry holds a 4-bit vector: {z, Y2, Y1, Y0}. For addresses representing invalid states y=101,110,111, we assign next state 000 and output z=0 as default.
+
+This ROM approach trades logic complexity for a compact, simple memory table and eases modification or expansion of FSM. It also enables easy timing closure since it's a straightforward combinational memory lookup.

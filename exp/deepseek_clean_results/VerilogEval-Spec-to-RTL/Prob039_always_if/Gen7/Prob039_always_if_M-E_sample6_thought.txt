@@ -1,0 +1,15 @@
+Here's a novel approach using a hierarchical priority encoder style implementation:
+
+1. **Key Idea**: Instead of using traditional mux structures, implement the selection logic as a priority encoder where the selection signals (sel_b1, sel_b2) form a 2-bit priority code.
+2. **Innovation**:
+   - Use a 4-to-1 encoder to decode all possible combinations of sel_b1 and sel_b2
+   - Map the encoder outputs to select either 'a' or 'b' based on the truth table
+   - Implement this logic in both continuous assignment and procedural styles
+3. **Benefits**:
+   - More scalable for future expansion (easily extendable to more selection signals)
+   - Clear separation of selection decoding from data path
+   - Demonstrates an alternative approach to mux implementation
+4. **Implementation**:
+   - Create a selection decoder that outputs a 'select_b' signal
+   - Use this signal in both assign and always blocks
+   - The decoder truth table matches the requirement (b only when both sel_b1 and sel_b2 are true)

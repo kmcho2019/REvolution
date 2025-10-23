@@ -1,0 +1,7 @@
+A novel approach to designing the `instr_reg` module could involve utilizing a more modular and scalable architecture. Instead of using a single 16-bit register or two separate 8-bit registers, consider implementing a small, parameterizable instruction buffer using an array of registers. This buffer can be designed to handle instructions of varying lengths and can be easily extended or modified as needed.
+
+The idea is to create a register file with a fixed number of entries, each capable of storing an instruction. The `fetch` signal determines which entry to update with the incoming `data`. The outputs `ins`, `ad1`, and `ad2` are then derived from the appropriate entries in the buffer.
+
+This approach offers several benefits, including flexibility, scalability, and the potential for improved performance by allowing for parallel access to multiple instructions. It also facilitates the implementation of more complex instruction handling logic, such as instruction caching or prefetching, should such features be required in the future.
+
+To further enhance this design, consider incorporating a small state machine to manage the buffer, including handling reset conditions, buffer overflow, and potentially, instruction prioritization or scheduling mechanisms.

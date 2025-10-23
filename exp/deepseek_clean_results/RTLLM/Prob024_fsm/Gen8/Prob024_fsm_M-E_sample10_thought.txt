@@ -1,0 +1,18 @@
+Novel Architecture Idea: Shift Register with Parallel Comparator
+
+Instead of using a traditional FSM, this implementation uses:
+1. A 5-bit shift register to store the last 5 input bits
+2. A parallel comparator that checks for the "10011" pattern
+3. Edge detection to ensure output is only asserted on new matches
+
+Key Advantages:
+- Eliminates complex state transition logic
+- Naturally handles continuous input and loop detection
+- Output is purely combinational from the shift register
+- Easily extensible to longer patterns by increasing register size
+- Clear separation between storage and matching logic
+
+The shift register approach is particularly efficient for:
+- Fixed-length patterns (like our 5-bit case)
+- Situations where pattern might appear consecutively
+- Designs where timing is critical (no state transition delays)

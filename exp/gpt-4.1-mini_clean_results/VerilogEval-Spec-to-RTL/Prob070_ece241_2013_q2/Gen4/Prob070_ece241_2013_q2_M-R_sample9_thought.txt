@@ -1,0 +1,10 @@
+The original implementation used direct boolean expressions for minimal SOP and POS forms. To improve clarity and correctness, I will explicitly interpret the 4-bit input as a 4-bit number, then compare this number against the decimal values where output=1 (2,7,15) and 0 (0,1,4,5,6,9,10,13,14). The inputs 3,8,11,12 never occur and thus can be treated as don't cares, allowing us to use conditional comparisons directly.
+
+This approach explicitly handles the input as a 4-bit vector, making mapping unambiguous and avoiding errors from manual bitwise minterm expressions.
+
+- For out_sop: use a 4-bit wire representing {a,b,c,d}, and assign 1 if equal to 2, 7, or 15.
+- For out_pos: assign 0 for values 0,1,4,5,6,9,10,13,14, otherwise 1 (or similarly implement product-of-sums expression equivalently).
+
+This method is functionally equivalent but structurally clearer and less error-prone than directly writing minimal SOP/POS from minterm expansions.
+
+This structure also makes future maintenance and debugging easier.

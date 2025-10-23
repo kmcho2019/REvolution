@@ -1,0 +1,17 @@
+Implement the triangle wave generator using a direction signal that explicitly indicates whether the wave is currently incrementing or decrementing. The direction flips whenever the wave hits the boundaries 0 or 31.
+
+Use synchronous reset for simplicity and to avoid asynchronous reset complexities.
+
+In each clock cycle:
+- If direction is 0, increment wave by 1.
+- If direction is 1, decrement wave by 1.
+- When wave reaches 31, direction switches to decrement mode (1).
+- When wave reaches 0, direction switches to increment mode (0).
+
+This approach uses a 1-bit direction signal instead of a named "state", avoiding a separate case statement by employing simple if-else logic.
+
+The entire logic will be inside a single always block triggered on posedge clk or negedge rst_n to meet the spec.
+
+This design is conceptually simpler: just a wave register and a direction bit toggled at boundaries, no intermediate next_wave register.
+
+It provides clean and efficient implementation with minimal registers and combinational logic.

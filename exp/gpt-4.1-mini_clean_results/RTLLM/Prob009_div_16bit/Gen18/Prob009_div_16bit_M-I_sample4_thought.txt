@@ -1,0 +1,17 @@
+To optimize the original combinational divider for better PPA (Power, Performance, Area), the main focus is to reduce combinational logic depth and resource usage:
+
+1. Remove the first always block that just copies inputs into registers combinationally, as it does not help timing or structure; directly use inputs A and B in the division block.
+
+2. Replace the array of remainder stages with a single remainder register updated in each iteration within the combinational always block. This avoids multiple 9-bit registers and reduces area and complexity.
+
+3. Use a for-loop to iterate through dividend bits MSB-first, shift remainder, append current dividend bit, compare and subtract divisor if possible, and update quotient bit.
+
+4. By removing the intermediate arrays and combining operations, synthesis can better optimize subtraction and muxes, potentially sharing logic and reducing area and power.
+
+5. Keep the entire division combinational as required but keep code simpler and more synthesis-friendly.
+
+This simplification leads to a smaller combinational logic cone, less redundant storage, and potentially faster critical paths due to fewer intermediate signals and less complex combinational interconnect.
+
+The quotient is built from MSB down, remainder kept as an 8-bit value after all bits processed and zero-extended to 16 bits for output.
+
+This approach meets the problem specification but is cleaner, more compact, and more optimized for synthesis.

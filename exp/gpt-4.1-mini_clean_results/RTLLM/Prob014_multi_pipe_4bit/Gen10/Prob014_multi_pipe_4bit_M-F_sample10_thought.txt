@@ -1,0 +1,15 @@
+To fix the issues and improve the design based on the feedback:
+
+- Use synchronous reset instead of asynchronous reset for better timing and synthesis compatibility.
+- Declare and use the parameter `size` explicitly and consistently to avoid parameter elaboration issues.
+- Avoid using a large concatenated register to store all partial products; instead, use an array of registers, one per partial product. This improves clarity, synthesizability, and debugging.
+- Register each partial product individually in stage 1.
+- In stage 2, perform a combinational sum of the registered partial products and register the final sum output.
+- Maintain the two-level pipeline: stage 1 registers the partial products; stage 2 registers the sum (final product).
+- Keep the input extension as specified: extend inputs by `size` zeros at MSB before forming partial products.
+- Generate partial products combinationally from extended inputs and multiplier bits.
+- Ensure all registers reset synchronously on `rst_n` low.
+- The latency is two clock cycles: partial product registers first, then sum register and output.
+- This design is more modular, clearer, easier to synthesize, and avoids parameter issues.
+
+The improved code will match all requirements and should pass simulation and synthesis.

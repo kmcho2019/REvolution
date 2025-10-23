@@ -1,0 +1,11 @@
+The problem can be solved by implementing a state machine that controls the flow rate based on the water level and previous level. We will use the input 's' to determine the current water level and control the output flow rates 'fr2', 'fr1', 'fr0', and 'dfr' accordingly. We will also use the 'reset' signal to reset the state machine to its initial state.
+
+The state machine will have four states:
+1. Above s[2] (all sensors asserted, no flow rate)
+2. Between s[2] and s[1] (s[0] and s[1] asserted, nominal flow rate 'fr0')
+3. Between s[1] and s[0] (s[0] asserted, nominal flow rate 'fr0' and 'fr1')
+4. Below s[0] (no sensors asserted, maximum flow rate 'fr0', 'fr1', 'fr2')
+
+We will use the 's' input to determine the current state and control the output flow rates accordingly. We will also use a variable to keep track of the previous state to determine if the water level has increased or decreased.
+
+When the 'reset' signal is asserted, the state machine will be reset to its initial state, which is equivalent to the state when the water level is below s[0].

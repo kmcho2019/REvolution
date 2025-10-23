@@ -1,0 +1,5 @@
+Implement a 16-bit 4-digit BCD counter as a single register. On each clock cycle, increment the counter by one BCD count. To handle BCD incrementation, increment the ones digit, and if it overflows from 9 to 0, propagate carry to tens, then hundreds, then thousands, each digit rolling over after 9. The enable signals indicate when each upper digit increments, so generate these ena signals by detecting when the respective digit increments (i.e., when the digit rolls over causing the next digit to increment).
+
+This can be done in a straightforward synchronous always block with simple sequential logic and minimal internal signals. Keep the design simple by updating the entire 16-bit q register at once, extracting digits with shifts and masks when needed. Calculate ena signals based on whether the digit incremented in this cycle.
+
+This approach reduces complexity, avoids intermediate carry registers, and produces clean ena signals aligned with digit increments.

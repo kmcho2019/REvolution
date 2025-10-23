@@ -1,0 +1,11 @@
+Novel Approach: Hierarchical Counter with Carry Propagation
+1. Instead of a flat 10-bit counter, implement a hierarchical structure:
+   - Break the counter into two parts: a 3-bit "hundreds" counter (counts 0-9) and a 7-bit "units" counter (counts 0-99)
+   - The units counter increments every cycle
+   - The hundreds counter increments when units counter reaches 99
+2. Advantages:
+   - Natural terminal count detection (when both sub-counters reach max)
+   - Smaller comparators (7-bit and 3-bit vs 10-bit)
+   - Carry propagation between sub-counters is simpler than full 10-bit increment
+3. Reset behavior remains synchronous and resets both sub-counters
+4. Output is formed by concatenating the sub-counters (hundreds * 100 + units)

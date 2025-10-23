@@ -1,0 +1,13 @@
+To address the simulator limitation while maintaining the ring counter functionality, we'll:
+1. Use a 3-bit counter to track the position of the '1'
+2. Decode this position into a one-hot output
+3. Implement the counter with synchronous reset
+4. Increment the counter on each clock cycle, wrapping around after 7
+5. Use a case statement to convert the counter value to one-hot output
+6. This approach avoids direct array assignments that the simulator can't handle
+
+The benefits are:
+- Simulator compatibility (uses scalar counter and simple case statement)
+- Same functional behavior as original design
+- Potentially better PPA (smaller counter vs shift register)
+- Clear state encoding (3 bits vs 8)

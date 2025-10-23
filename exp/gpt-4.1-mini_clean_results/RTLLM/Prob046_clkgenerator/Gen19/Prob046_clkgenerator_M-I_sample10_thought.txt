@@ -1,0 +1,10 @@
+To make the clock generator synthesizable and hardware-realistic, the module must use an input reference clock rather than relying on behavioral delays and initial blocks. A counter driven by the input clock will divide down the frequency to generate the output clock signal. This approach is fully synthesizable and provides a stable, periodic clock output. The output toggles every half of the PERIOD in terms of input clock cycles. 
+
+Improvements include:
+- Adding a reference clock input.
+- Replacing the initial block and delay-based toggling with synchronous logic using a counter.
+- The PERIOD parameter now represents the division factor in terms of input clock cycles.
+- Using a counter with a width calculated from PERIOD to optimize area.
+- Reset is not specified, so clk output initializes at zero at power-up (via synthesis tools).
+
+This ensures synthesis compatibility while maintaining the intended functionality.

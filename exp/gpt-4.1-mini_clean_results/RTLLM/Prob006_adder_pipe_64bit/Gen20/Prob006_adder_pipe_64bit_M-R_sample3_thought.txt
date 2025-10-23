@@ -1,0 +1,9 @@
+Refactor the pipelined 64-bit ripple carry adder by removing the use of arrayed pipeline registers for operands and enables, and instead use stage-wise individual registers per pipeline stage to hold operands, enables, sum, and carries. Implement the pipeline entirely using non-blocking sequential registers to hold each pipeline stage’s inputs and outputs explicitly, and use continuous assignments for the stage partial sums and carry computations.
+
+This approach:
+- Removes the need for arrayed reg memories and uses simple reg signals per stage, improving clarity.
+- Uses explicit pipeline stages with one always block updating all stage registers in a single clock domain.
+- Uses combinational adders stage by stage for partial sums and carry-out.
+- Enables easier extension and debugging due to flat stage signals.
+- Assigns output `result` and `o_en` directly from the final pipeline stage registers.
+- Keeps the carry propagation and sum partitioning as per the original segmentation (16-bit stages).

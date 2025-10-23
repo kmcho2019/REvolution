@@ -1,0 +1,22 @@
+Fix Strategy:
+
+1. **State Transition Logic**: Keep the existing case statement but clarify that invalid sensor patterns (like 3'b010) are explicitly handled by defaulting to BELOW state, which is correct behavior.
+
+2. **Water Rising Detection**: 
+   - Compare current state with previous state (not next state) to properly detect rising water levels
+   - Move the comparison to combinational logic to ensure correct timing
+   - Only set dfr when we have a confirmed rising transition
+
+3. **Output Logic**:
+   - Maintain correct fr0, fr1, fr2 assignments as they were correct
+   - Ensure dfr is only set when water is actually rising (previous_state < current_state)
+
+4. **Timing Fixes**:
+   - Separate the water_rising calculation from the sequential block
+   - Register dfr output for clean timing
+
+Key Changes:
+- Fixed water rising detection by comparing current vs previous state
+- Moved water_rising to combinational logic
+- Maintained all correct output assignments
+- Kept robust handling of invalid sensor patterns

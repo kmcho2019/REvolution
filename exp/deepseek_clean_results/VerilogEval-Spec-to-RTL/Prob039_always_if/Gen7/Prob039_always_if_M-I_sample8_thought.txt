@@ -1,0 +1,23 @@
+The current solution is correct but can be optimized further for PPA (Power, Performance, Area):
+
+1. **Power Optimization**:
+   - Remove redundant mux implementations since both outputs (out_assign and out_always) serve identical functions
+   - Keep only one implementation style (assign preferred for combinational logic)
+
+2. **Area Optimization**:
+   - Eliminate sub-modules to reduce hierarchy overhead
+   - Implement selection logic and mux directly in TopModule
+
+3. **Performance**:
+   - Maintain the same critical path (AND gate + MUX)
+   - Keep the simple combinational structure for maximum speed
+
+4. **Implementation Choice**:
+   - Use assign statements for cleaner combinational logic
+   - Remove procedural always block since it's not needed when assign suffices
+
+The improved version will:
+- Reduce power by eliminating redundant logic
+- Save area by removing hierarchy
+- Maintain identical functionality
+- Keep the same performance characteristics

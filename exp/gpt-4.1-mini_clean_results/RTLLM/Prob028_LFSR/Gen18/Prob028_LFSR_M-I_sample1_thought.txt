@@ -1,0 +1,9 @@
+The original LFSR code is functionally correct but uses synchronous reset to zero, which results in a known all-zero lock state that an LFSR should avoid as it cannot escape zero state. To improve the LFSR behavior, initialize the register to a non-zero seed value (e.g., 4'b0001) on reset to ensure maximal length sequence generation. 
+
+Also, it’s beneficial to keep reset synchronous to avoid asynchronous reset complexity, but the initial value on reset must be non-zero. This avoids the invalid all-zero state and improves the pseudo-random sequence properties.
+
+Regarding code optimization, explicitly declaring the feedback as a wire improves readability but is optional. The logic remains simple and compact.
+
+This improved design ensures the LFSR always produces a maximal length pseudo-random sequence by avoiding lock at zero state. It is also synthesizable, minimal, and suitable for low area and power.
+
+No testbench is provided here, but this module interface remains the same, so the user should ensure proper testbench port widths and signal types.

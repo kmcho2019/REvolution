@@ -1,0 +1,7 @@
+To create a 64-bit pipelined ripple carry adder with multiple pipeline stages and registered stages, I will use an 8-stage pipeline, each stage handling 8 bits of the input operands. This finer granularity increases pipeline depth and throughput, enabling one addition every clock after pipeline fill.
+
+Each stage adds its corresponding 8-bit slices of `adda` and `addb` plus a carry-in from the previous stage. The carry-out is registered and forwarded to the next stage.
+
+The input enable `i_en` is pipelined through 8 registers to generate the output enable `o_en`, indicating when the final 65-bit sum result is valid.
+
+This 8-stage pipeline balances latency and frequency by splitting the 64-bit addition into small parts with registered carry and sum outputs at each stage.

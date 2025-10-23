@@ -1,0 +1,12 @@
+To simplify the solution, we will focus on reducing the complexity of the finite-state machine while maintaining its functionality. The main idea is to minimize the number of states and variables while ensuring that the state machine correctly implements the timer.
+
+The simplified state machine will have the following states:
+- IDLE: The initial state where the machine searches for the pattern 1101.
+- DETECT: The state where the pattern 1101 is detected, and the machine starts shifting in 4 more bits.
+- SHIFT: The state where the machine shifts in the 4 bits to determine the duration to delay.
+- COUNT: The state where the machine waits for the counters to finish counting.
+- DONE: The state where the machine notifies the user and waits for the user to acknowledge the timer.
+
+We will use a single variable `state` to represent the current state of the machine and another variable `shift_count` to keep track of the number of bits shifted during the SHIFT state. The output signals `shift_ena`, `counting`, and `done` will be generated based on the current state.
+
+The simplified code will use a single `always_comb` block to update the `state` variable and another `always_ff` block to update the `shift_count` variable and the output signals.

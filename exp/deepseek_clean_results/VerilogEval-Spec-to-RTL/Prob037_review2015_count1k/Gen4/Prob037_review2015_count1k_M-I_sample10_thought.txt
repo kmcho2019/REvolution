@@ -1,0 +1,10 @@
+To improve the PPA metrics, particularly timing (WNS), I'll implement the following optimizations:
+1. Pre-compute the terminal count (999) comparison to reduce critical path
+2. Use a registered terminal count signal to break the comparison chain
+3. Maintain the synchronous reset but optimize its implementation
+4. Keep the counter width at 10 bits (0-999) as required
+
+This approach will:
+- Reduce the critical path by moving the comparison logic to a separate always block
+- Potentially improve timing by reducing combinational logic in the main counter path
+- Maintain the same functionality while being more synthesis-friendly

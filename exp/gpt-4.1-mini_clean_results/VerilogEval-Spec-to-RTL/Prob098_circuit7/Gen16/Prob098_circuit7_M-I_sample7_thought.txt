@@ -1,0 +1,17 @@
+The observed waveform shows that q is the previous value of the inverse of 'a' sampled on the positive clock edge. The initial solution implements q as q <= ~a on posedge clk.
+
+To optimize for PPA, instead of using a separate inversion operation inside the flip-flop, we can directly use the negative edge-triggered D flip-flop capturing 'a'. Because sampling inverted input at posedge is equivalent to sampling non-inverted input at negedge, this allows elimination of explicit inversion.
+
+Thus, we implement q as the value of 'a' captured at the negative edge of clk.
+
+This reduces logic complexity (no internal inverter), and can improve power and area by avoiding explicit combinational inversion, leveraging flip-flop behavior instead.
+
+Functionally:
+
+- At posedge clk: q(n) = ~a(n-1)
+
+- Equivalently, at negedge clk: q(n) = a(n)
+
+Since our output q is updated at posedge, the negative edge triggered DFF on 'a' stores the delayed value correctly.
+
+Hence, using negative edge triggered flip-flop on 'a' instead of posedge on ~a simplifies the design and improves PPA.

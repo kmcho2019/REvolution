@@ -1,0 +1,5 @@
+Refactor the original subtract-by-10 correction logic into a cleaner structure by performing the initial 5-bit addition to get raw_sum, then detect if correction is needed using the same logic. Instead of a custom subtractor for (sum - 10), add 6 (binary 0110) when correction is needed to correct the sum, which is a standard approach in BCD addition. 
+
+This uses a simple 4-bit adder for correction, implemented by standard binary addition with a 4-bit carry, which is more straightforward and efficient for synthesis. The corrected sum is then selected based on the correction condition. This approach reduces logic complexity, eases synthesis optimization, and likely improves timing and area due to simpler carry logic rather than ripple borrow subtraction.
+
+This implementation uses only continuous assignments with no explicit intermediate borrow logic. It maintains the same functional behavior, outputs corrected BCD sum, and asserts carry-out when the sum exceeds 9.

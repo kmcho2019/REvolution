@@ -1,0 +1,33 @@
+Improved Lemming State Machine Strategy:
+
+1. State Refinement:
+   - Split WALK into WALK_LEFT and WALK_RIGHT for clearer direction tracking
+   - Keep DIG, FALL, and SPLAT states
+   - Eliminate separate direction register to prevent sync issues
+
+2. Priority Enforcement:
+   - Explicit fall condition checking before other actions
+   - Dig only when stable on ground
+   - Direction changes only in walking states
+
+3. Fall Counter Enhancement:
+   - Reset counter when leaving FALL state
+   - Clear comparison at exactly 20 cycles
+   - Only check splatter when ground returns
+
+4. Input Handling:
+   - Properly ignore bumps during DIG/FALL
+   - Validate dig input only in walking states
+   - Synchronous handling of all edge cases
+
+5. Output Optimization:
+   - Direct state-based outputs
+   - Minimal combinatorial logic
+   - Clear terminal state behavior
+
+Key Improvements:
+- More explicit state transitions
+- Better input validation
+- Correct priority handling
+- Simplified direction management
+- Robust fall counting

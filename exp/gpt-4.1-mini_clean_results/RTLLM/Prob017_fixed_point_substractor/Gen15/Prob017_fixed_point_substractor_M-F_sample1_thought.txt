@@ -1,0 +1,12 @@
+The original implementation is functionally correct and efficient, performing direct signed subtraction and clearing the sign bit explicitly when the result is zero, which matches the fixed-point subtraction requirements. The main feedback involves ensuring clean separation of synthesis and simulation/testbench code to avoid elaboration errors and improper parameter passing during synthesis.
+
+To fix these issues and improve clarity:
+1. Keep the subtractor module as purely combinational using continuous assignment with signed inputs/outputs.
+2. Remove the internal `res` register since it is unnecessary.
+3. Clearly separate testbench code within `ifdef SIM` directives so synthesis tools ignore it.
+4. Properly parameterize the testbench and pass parameters when instantiating the DUT.
+5. Document parameters and port widths for clarity.
+6. Provide clean real-to-fixed and fixed-to-real conversion functions in the testbench to aid verification.
+7. This results in a clean, synthesizable subtractor with a simulation-only testbench that does not interfere with synthesis.
+
+This approach maintains the original design's low area, low power, and performance efficiency while eliminating elaboration and synthesis errors due to testbench interference or missing parameter passing.

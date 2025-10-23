@@ -1,0 +1,9 @@
+To correctly map the serial bits from MSB to LSB in dout_parallel, shift the register left on each valid input, inserting the new bit into the LSB. After receiving 8 bits, dout_parallel will have the first serial bit at bit 7 (MSB) and the last at bit 0 (LSB), matching the requirement.
+
+Specifically:
+- Use a shift register that shifts left (`shift_reg <= {shift_reg[6:0], din_serial}`) so the first bit goes to MSB.
+- Keep a 4-bit counter to count received bits.
+- When counter reaches 7 (after 8 bits), output the shift register as dout_parallel and set dout_valid for one clock cycle.
+- Reset logic clears registers and output signals asynchronously with active-low reset.
+
+This maintains a simple synchronous design, ensures correct bit ordering in the parallel output, and provides a single-cycle valid pulse exactly when 8 bits are received.

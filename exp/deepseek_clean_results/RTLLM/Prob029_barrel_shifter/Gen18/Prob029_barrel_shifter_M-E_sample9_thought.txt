@@ -1,0 +1,13 @@
+Novel approach using a crossbar switch architecture:
+1. Instead of traditional cascaded shifting, implement a full crossbar switch that can route any input bit to any output position
+2. Use the control signals to configure the crossbar connections for rotation
+3. Each output bit is selected from one of 8 possible input bits through an 8:1 multiplexer
+4. The selection pattern creates a rotated version of the input based on the control signals
+5. The rotation amount is determined by combining the control bits in a priority-encoded fashion (4-shift takes precedence over 2-shift which takes precedence over 1-shift)
+
+Advantages:
+- Single-stage routing eliminates propagation delays through multiple shift stages
+- Symmetrical structure that's easily scalable to larger bit widths
+- Clear mapping between control signals and routing configuration
+- Maintains true rotation behavior without bit loss
+- Naturally implements the independent control bit behavior specified in the problem

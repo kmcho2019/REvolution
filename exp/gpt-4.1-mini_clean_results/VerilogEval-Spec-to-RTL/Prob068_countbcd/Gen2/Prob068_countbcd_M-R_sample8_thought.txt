@@ -1,0 +1,5 @@
+To fix the carry timing and enable issues, separate the next-state logic from the registers and compute carries based on next-state values rather than current-state values. Specifically, compute the increment conditions combinationally using temporary next-digit variables, so that increments and rollovers propagate correctly within the same clock cycle.
+
+Inside the clocked always block, update digits using these computed next values. After that, synchronously assign the enable signals based on whether each digit increments on this cycle. This approach ensures carry ripple and enable signals align precisely with the digit increments.
+
+This restructuring uses combinational logic to determine next digit values and enables, and synchronous logic only to update state and outputs, avoiding mixing combinational and sequential logic improperly.

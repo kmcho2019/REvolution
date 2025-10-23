@@ -1,0 +1,9 @@
+Refactor the design by splitting the counting and toggling logic into two separate always blocks triggered on the posedge and negedge of clk, respectively. 
+
+Each block will have its own counter (cnt1 for posedge, cnt2 for negedge), counting from 0 up to NUM_DIV -1. When each counter reaches the halfway point ((NUM_DIV - 1) / 2), the respective clock divider output (clk_div1 or clk_div2) toggles, creating two signals toggling at half intervals offset by half a clock cycle.
+
+The final divided clock output clk_div is obtained by OR-ing clk_div1 and clk_div2, effectively combining toggles from both clock edges to form a frequency division by an odd number with a near 50% duty cycle.
+
+Reset asynchronously clears counters and clock dividers.
+
+This approach matches the original requirement explicitly, is synthesizable, and avoids glitches by separating posedge and negedge logic clearly.

@@ -1,0 +1,10 @@
+Refactor the design to use a generate block to instantiate eight individual 1-bit D flip-flops with asynchronous active-high reset instead of a vectorized register. This approach breaks down the 8-bit register into separate 1-bit flip-flops, improving clarity on how each bit is handled independently.
+
+Key points:
+- Implement a single-bit DFF with async reset module.
+- Use a generate-for loop inside TopModule to instantiate eight DFFs, connecting each bit of input and output.
+- Retain the asynchronous active-high reset triggered on the positive clock edge.
+- This modular bit-wise approach enhances readability and can aid debugging or future per-bit customization.
+- Use non-blocking assignments in the always block for correctness.
+
+This refactoring keeps functional equivalence while showcasing a different design style that leverages generate constructs and scalar flip-flop instantiation.

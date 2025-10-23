@@ -1,0 +1,9 @@
+Implement a Moore FSM with explicit state encoding for counting consecutive ones and detecting the required patterns. Define states representing counts of consecutive 1s from zero up to seven or more to track the sequence. On reset, start from state S0 (no consecutive ones).
+
+For each input bit:
+- If the bit is 1, transition to the next state with an incremented consecutive 1s count, saturating at an error state if count exceeds 6.
+- If the bit is 0, transition back to S0 after producing outputs based on the prior state count.
+
+Outputs (disc, flag, err) are asserted for one cycle following the detection event, as Moore outputs derived solely from the current state.
+
+This explicit FSM with enumerated states improves clarity of state transitions, eases debugging and state visualization, and ensures all outputs are registered synchronously. Using enumerated states avoids arithmetic on counters, potentially simplifying synthesis and making the state transitions and output logic straightforward.

@@ -1,0 +1,5 @@
+Refactor the combinational next-state and output logic by first extracting the current state one-hot bits into local wires, then explicitly define next-state one-hot signals for all states as wires. Instead of assigning each *next-state* output individually with complex expressions, build the entire next-state vector (`next_state[9:0]`) using separate wire assignments for each bit, expressing the next state transitions compactly with concise boolean expressions. Finally, assign the requested single-bit outputs (like `S_next`, `B3_next`) directly from bits of this `next_state` vector.
+
+This approach centralizes the next-state vector construction, improves readability by making the encoding and transitions more uniform, and reduces repetitive code. Moore output signals are also assigned from current state bits directly.
+
+No sequential logic is introduced, only combinational next-state and output logic is expressed with wire assignments and simple bit indexing.

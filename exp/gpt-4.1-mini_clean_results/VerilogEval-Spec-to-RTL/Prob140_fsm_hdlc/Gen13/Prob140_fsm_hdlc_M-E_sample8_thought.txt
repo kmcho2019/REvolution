@@ -1,0 +1,5 @@
+Use a Moore FSM with explicit states representing the count of consecutive ones from 0 to 6, plus separate error and discard states. The FSM transitions on each input bit: from state 0 (no ones) to state 1 on input=1, or remain on state 0 on input=0. On each subsequent 1, increment the consecutive ones count state. If input=0 after exactly 5 consecutive ones, output `disc` next cycle; after 6 consecutive ones followed by 0, output `flag`; if a 7th consecutive one occurs, transition to an error state asserting `err` until reset.
+
+Outputs `disc`, `flag`, and `err` are asserted for one full cycle after detecting the relevant input patterns, synchronized with the clock. This FSM explicitly encodes the consecutive ones count as states, separating the output signals cleanly and using a stable, readable state machine approach different from a numeric counter.
+
+The reset synchronously moves the FSM to state ZERO (as if previous input was 0). This architectural approach leverages clear state names for readability and a Moore FSM style with output depending on state only.

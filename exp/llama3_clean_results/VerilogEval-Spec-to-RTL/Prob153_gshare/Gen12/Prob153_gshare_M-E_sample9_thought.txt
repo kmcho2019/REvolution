@@ -1,0 +1,13 @@
+To create a novel architectural idea for the branch predictor, we can use a hybrid approach that combines the benefits of both gshare and bimodal branch predictors. 
+
+1. **Hybrid Branch Predictor Architecture**: Our new architecture will use a combination of a global history register and a bimodal predictor table. The global history register will be used to index into the bimodal predictor table, which will store the prediction outcomes for each branch instruction.
+
+2. **Bimodal Predictor Table**: The bimodal predictor table will be a 128-entry table, where each entry will store a 2-bit saturating counter. The counter will be updated based on the actual branch outcome, with the goal of predicting the branch direction more accurately.
+
+3. **Global History Register Update Logic**: The global history register will be updated based on the prediction outcome and the actual branch outcome. If the prediction is correct, the global history register will be updated with the new branch outcome. If the prediction is incorrect, the global history register will be recovered to the state immediately after the mispredicting branch completes execution.
+
+4. **Prediction Logic**: When a prediction is requested, the global history register will be used to index into the bimodal predictor table. The prediction outcome will be determined based on the value of the saturating counter in the table.
+
+5. **Training Logic**: When training is requested, the bimodal predictor table will be updated based on the actual branch outcome. If the branch is mispredicted, the global history register will be recovered to the state immediately after the mispredicting branch completes execution.
+
+By using a hybrid approach that combines the benefits of both gshare and bimodal branch predictors, we can create a more accurate and efficient branch predictor.

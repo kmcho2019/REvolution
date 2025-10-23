@@ -1,0 +1,5 @@
+Refactor the pipeline multiplier to use a deeper pipeline with three stages to reduce the critical path and improve timing. 
+Stage 1 registers inputs and enable. 
+Stage 2 computes all partial products and stores them in registers (breaking combinational partial product generation from final sum). 
+Stage 3 accumulates partial sums by using a tree adder structure split into two steps: summing pairs of partial products, then summing those results, all registered to balance delay. 
+This design reduces combinational delay by balancing addition over multiple cycles with pipeline registers, while still correctly propagating enables and outputting the final product gated by the output enable.

@@ -1,0 +1,23 @@
+The original solution has the right concept but needs refinement for proper timing alignment. Here's my improved strategy:
+
+1. Precise Edge Alignment:
+   - Calculate exact toggle points for both positive and negative edge dividers
+   - Ensure clk_div2 starts half a cycle later than clk_div1 for proper phase alignment
+
+2. Simplified Toggle Logic:
+   - Use single toggle condition at (NUM_DIV-1)/2 for each divider
+   - Remove redundant toggle at NUM_DIV-1 to prevent double-toggling
+
+3. Optimized Counter Width:
+   - Use minimum required bits for counters to save area
+   - Explicitly size counters based on NUM_DIV parameter
+
+4. Clear Reset Behavior:
+   - Maintain synchronous reset for both counters and dividers
+   - Initialize all registers to known states
+
+5. Duty Cycle Correction:
+   - The OR operation will naturally create 50% duty cycle when the two dividers are properly phase-shifted
+   - No additional logic needed for duty cycle adjustment
+
+The improved version maintains the same interface but provides more reliable operation through precise timing control.

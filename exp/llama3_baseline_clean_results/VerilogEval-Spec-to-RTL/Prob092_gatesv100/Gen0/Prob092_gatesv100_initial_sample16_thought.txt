@@ -1,0 +1,9 @@
+To implement the TopModule, we need to create three separate output vectors: out_both, out_any, and out_different. 
+
+For out_both, we can iterate through the input vector from right to left (i.e., from in[99] to in[0]) and check if the current bit and its neighbor to the left are both '1'. If they are, we set the corresponding bit in out_both to '1'. Since in[99] has no neighbor to the left, we set out_both[99] to '0'.
+
+For out_any, we can iterate through the input vector from left to right (i.e., from in[0] to in[99]) and check if the current bit or its neighbor to the right is '1'. If either of them is '1', we set the corresponding bit in out_any to '1'. Since in[0] has no neighbor to the right, we set out_any[0] to '0'.
+
+For out_different, we can iterate through the input vector and check if the current bit is different from its neighbor to the left. We treat the vector as wrapping around, so in[99]'s neighbor to the left is in[0]. If the current bit is different from its neighbor, we set the corresponding bit in out_different to '1'.
+
+We can implement this logic using Verilog's always block and bitwise operations.

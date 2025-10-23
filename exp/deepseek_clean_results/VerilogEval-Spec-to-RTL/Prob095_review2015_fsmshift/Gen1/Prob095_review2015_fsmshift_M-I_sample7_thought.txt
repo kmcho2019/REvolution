@@ -1,0 +1,12 @@
+To correctly implement the 4-cycle shift enable, we need to:
+1. Use a proper 2-bit counter that counts from 0 to 3 (4 cycles)
+2. Keep shift_ena asserted during all counting cycles
+3. Transition to IDLE only after the 4th cycle completes
+4. Reset should immediately start the 4-cycle sequence again
+
+Key improvements:
+- Counter now properly counts 4 cycles (0-3)
+- State transition occurs after counter reaches 3 (4th cycle)
+- Clearer state machine with explicit transitions
+- More robust counter handling
+- Same efficient 1-bit state encoding

@@ -1,0 +1,7 @@
+Refactor the design into a proper Moore FSM with explicit states representing the count of consecutive ones (0 to 7), encoding each state distinctly rather than using a numeric count register. Use an enumerated state type for clarity. The FSM transitions on 'in' signal and resets synchronously.
+
+Outputs (disc, flag, err) are registered and depend only on the current state (Moore outputs), asserted in the cycle after the pattern is detected.
+
+This approach highlights the FSM nature of the problem and separates state transitions and output logic clearly. It also enhances readability and maintainability by naming states explicitly.
+
+The synchronous reset and output register update remain, ensuring outputs are asserted for a full cycle after detection, consistent with the original design.

@@ -1,0 +1,19 @@
+To combine the best of both examples, we fuse their key advantages:
+
+- From Example 1:  
+  The explicit Gray-to-binary conversion ensures correct addressing of the Karnaugh map cells according to the Gray-coded axes, preserving logical clarity and correctness.
+
+- From Example 2:  
+  The explicit bit remapping to form a single 4-bit address directly from input bits avoids confusion on bit ordering and simplifies the implementation by using a single-case lookup.
+
+Fusion strategy:  
+1. Use the Gray-to-binary decoding on rows and columns from Example 1 for conceptual correctness, but then flatten and reorder these decoded bits to form a straightforward 4-bit case selector, like in Example 2.  
+2. Incorporate the Karnaugh map values exactly as in Example 1 (treating don't-cares as zeros for simplicity).  
+3. Implement the output using a combinational always block and a single-case statement indexed by the fused, decoded input.  
+4. Use named intermediate wires for clarity and maintainability.  
+
+This fusion preserves correctness via Gray-to-binary decoding while simplifying addressing and lookup. The code is clean, explicitly handles input bit mappings, and avoids nested case statements by a single, flat case lookup. This improves readability and synthesis tool friendliness.
+
+Optionally, after verification, logic minimization could be applied, but correctness and clarity come first here.
+
+This design is fully combinational, has no inferred latches, and is structured for easy verification and potential future optimizations.

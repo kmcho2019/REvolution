@@ -1,0 +1,9 @@
+The JK flip-flop can be implemented with even simpler logic by observing:
+1. When J and K are different (J XOR K = 1), Q takes J's value
+2. When J and K are same (J XOR K = 0), Q toggles if both are 1, or holds if both are 0
+3. This can be expressed as: Q_next = (j ^ k) ? j : (j ^ Q_reg)
+
+But we can simplify further by recognizing that when J=K=1, Q toggles (Q_next = ~Q_reg), and when J=K=0, Q holds (Q_next = Q_reg). So the entire logic can be reduced to:
+Q_next = j ? (k ? ~Q_reg : 1) : (k ? 0 : Q_reg)
+
+This uses only basic conditional operators without any XOR gates, potentially reducing gate count.

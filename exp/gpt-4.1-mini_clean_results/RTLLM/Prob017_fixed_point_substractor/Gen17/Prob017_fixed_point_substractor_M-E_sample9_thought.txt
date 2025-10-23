@@ -1,0 +1,15 @@
+To precisely implement fixed-point subtraction with explicit sign and magnitude handling, I will:
+
+- Treat inputs `a` and `b` as signed fixed-point numbers in two's complement format.
+- Extract sign bits (`sign_a` and `sign_b`), and absolute magnitudes (`mag_a`, `mag_b`) by taking two's complement of negative inputs.
+- Implement logic for subtraction based on the signs:
+  - If signs are the same, perform magnitude subtraction (`mag_a - mag_b`), and assign result sign as the common sign.
+  - If signs differ, perform magnitude addition (`mag_a + mag_b`), and assign result sign according to which magnitude is greater.
+- Handle zero result explicitly by clearing the sign bit.
+- Assemble the signed magnitude result back into two's complement format.
+- Use parameters `N` and `Q` to represent total bits and fractional bits.
+- This architecture is more transparent, explicitly distinguishes sign and magnitude, and follows the problem statement strictly.
+- Implement all logic combinationally inside a single always block to ensure synthesizability.
+- The output is driven by a register `res`, which is then assigned to output `c`.
+
+This design provides clear control over sign and magnitude arithmetic, aligns with fixed-point representation, and matches the required behavior.

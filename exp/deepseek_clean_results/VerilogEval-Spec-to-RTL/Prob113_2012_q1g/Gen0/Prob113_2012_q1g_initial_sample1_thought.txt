@@ -1,0 +1,13 @@
+To implement the function f from the given Karnaugh map, we need to analyze the map and derive the minimal sum-of-products (SOP) expression. The Karnaugh map shows output '1's at specific combinations of the 4-bit input x[3:0]. 
+
+Looking at the map:
+1. For x[3:2]=00: f=1 when x[1:0]=00 or 10
+2. For x[3:2]=01: f=0 always
+3. For x[3:2]=11: f=1 when x[1:0]=00, 01, or 11
+4. For x[3:2]=10: f=1 when x[1:0]=00, 01, or 10
+
+The minimal SOP expression is:
+f = (~x[3] & ~x[2] & ~x[1] & ~x[0]) | (~x[3] & ~x[2] & x[1] & ~x[0]) | (x[3] & x[2] & ~x[1] & ~x[0]) | (x[3] & x[2] & ~x[1] & x[0]) | (x[3] & x[2] & x[1] & x[0]) | (x[3] & ~x[2] & ~x[1] & ~x[0]) | (x[3] & ~x[2] & ~x[1] & x[0]) | (x[3] & ~x[2] & x[1] & ~x[0])
+
+This can be simplified to:
+f = (~x[3] & ~x[2] & ~x[0]) | (~x[3] & ~x[2] & x[1] & ~x[0]) | (x[3] & x[2] & ~x[1]) | (x[3] & x[2] & x[0]) | (x[3] & ~x[2] & ~x[1]) | (x[3] & ~x[2] & x[0])

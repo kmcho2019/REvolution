@@ -1,0 +1,11 @@
+To simplify the design while maintaining the required functionality, we use a shift register that shifts bits in from the MSB side on each valid serial input. The serial bit `din_serial` is placed into the MSB position, and existing bits shift down toward the LSB. A 4-bit counter increments with every valid bit and resets after 8 bits are received.
+
+When the counter reaches 7, it indicates the current bit is the 8th, so the complete 8-bit parallel data is ready. At that time, we output the parallel data and assert `dout_valid` for one clock cycle.
+
+This synchronous design uses non-blocking assignments, a single always block triggered on `posedge clk` and asynchronous active-low reset `rst_n`. The logic is straightforward and avoids any unnecessary intermediate signals.
+
+The counter counts from 0 to 7 (8 counts total). The shift register holds bits with the earliest bit in MSB, matching the requirement that `dout_parallel` puts the first received bit at MSB and the last at LSB.
+
+`dout_valid` is cleared by default each cycle and only asserted when 8 bits are assembled.
+
+This minimal and clear design ensures functional correctness without extra complexity.

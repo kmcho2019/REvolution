@@ -1,0 +1,15 @@
+Novel Architecture Idea:
+1. Instead of a traditional shift register, implement a 4-position circular buffer with a write pointer
+2. Use pointer arithmetic to simulate shifting:
+   - On shift (ena), decrement the pointer (with wrap-around)
+   - On load, reset pointer to MSB position
+3. Output is always the 4 bits starting from current pointer position
+4. Benefits:
+   - Reduced switching activity (only pointer changes during shifts)
+   - Constant access time regardless of shift distance
+   - Power savings since only pointer bits toggle during shifts
+   - Maintains same interface and functionality
+5. Special Cases:
+   - Reset clears both buffer and pointer
+   - Load writes all positions and resets pointer
+   - Shift moves pointer without data movement

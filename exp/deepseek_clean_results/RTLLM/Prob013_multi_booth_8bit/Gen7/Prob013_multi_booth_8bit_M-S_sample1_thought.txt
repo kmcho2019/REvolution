@@ -1,0 +1,24 @@
+Simplified Radix-4 Booth Multiplier Design:
+
+1. Corrected Implementation Approach:
+   - Use 3-bit counter (for 4 iterations) as Radix-4 only needs n/2 steps
+   - Properly examine 3 bits for Booth encoding (multiplier[2:0])
+   - Maintain 16-bit operations throughout for correct sign extension
+
+2. Streamlined Operation:
+   - Single always block handles all synchronous operations
+   - Counter tracks 4 iterations (0-3) for 8-bit multiplication
+   - Ready signal activates after counter completes
+
+3. Efficient Arithmetic:
+   - Correct Radix-4 Booth encoding (3-bit examination)
+   - Multiplicand shifts by 2 bits per iteration
+   - Multiplier arithmetic right shifts by 2 bits
+   - Simplified case statement for all possible encodings
+
+Key Improvements:
+- Proper Radix-4 implementation (3-bit examination)
+- Correct shift amounts (2 bits for both multiplicand and multiplier)
+- Fixed iteration count (4 steps for 8-bit)
+- Maintained 16-bit operations for sign extension
+- Simplified control flow with direct counter

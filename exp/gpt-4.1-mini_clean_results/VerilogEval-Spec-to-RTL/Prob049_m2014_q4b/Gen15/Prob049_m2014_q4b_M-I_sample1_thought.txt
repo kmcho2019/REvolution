@@ -1,0 +1,10 @@
+To optimize the existing asynchronous reset D flip-flop for improved PPA, I focus on reducing unnecessary switching and area without changing functional behavior. Since asynchronous resets tend to consume power due to toggling, one power optimization is to synchronize the reset input internally if a slight delay in reset response is acceptable. However, the problem specification explicitly asks for asynchronous reset, so I must keep that behavior.
+
+Instead, I will:
+- Retain the asynchronous reset but add a synchronous enable signal gating the clock to reduce switching when reset is inactive and data input is stable. This can reduce dynamic power by preventing needless clock toggling.
+- Implement clock gating carefully to avoid timing or functionality hazards, using a simple enable signal.
+- Keep the code clear and synthesis-friendly, using a local clock enable rather than explicit clock gating cells.
+- Since the original design is minimal, gains are marginal but can improve power consumption slightly without increasing area meaningfully.
+- I will also ensure that the output q is declared as reg and that the sensitivity list and assignment style remain appropriate for synthesis.
+
+This results in a positive-edge triggered D flip-flop with asynchronous reset and a simple clock gating enable that disables clock toggling when not needed, improving power efficiency while preserving function and area.

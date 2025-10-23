@@ -1,0 +1,7 @@
+Implement a fully pipelined 64-bit ripple carry adder with 64 pipeline stages, each stage performing 1-bit addition. Each stage holds its operand bits and carry-in bit in registers, calculates a sum bit and passes carry-out to the next stage in the next clock cycle. This 1-bit-per-stage pipeline maximizes throughput and evenly distributes addition delay across clock cycles.
+
+The input operands (adda and addb) and the input enable (i_en) are shifted through pipeline registers aligned per bit. Carry is propagated stepwise in the pipeline stages. The output result assembles all sum bits plus final carry-out from the last stage, delayed by 64 cycles relative to i_en.
+
+The output enable (o_en) is similarly delayed through a 65-bit shift register indicating when the output sum is valid.
+
+This fine-grained pipeline is costly in latency but ideal for a streaming environment needing one-bit additions per cycle with maximal clock frequency and throughput.

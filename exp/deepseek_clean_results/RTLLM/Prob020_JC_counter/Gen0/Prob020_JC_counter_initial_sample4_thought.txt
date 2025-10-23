@@ -1,0 +1,8 @@
+The Johnson counter is a twisted ring counter where the inverted output of the last stage is fed back to the input of the first stage. For a 64-bit Johnson counter:
+1. On reset (rst_n low), all bits are cleared to 0.
+2. On each clock edge:
+   - If Q[0] is 0 (counting up phase), shift right and set MSB to 1
+   - If Q[0] is 1 (counting down phase), shift right and set MSB to 0
+3. The counter cycles through 128 states (2*64) before repeating.
+
+The implementation uses a 64-bit register with synchronous reset and a simple shift operation with conditional MSB setting based on LSB value.

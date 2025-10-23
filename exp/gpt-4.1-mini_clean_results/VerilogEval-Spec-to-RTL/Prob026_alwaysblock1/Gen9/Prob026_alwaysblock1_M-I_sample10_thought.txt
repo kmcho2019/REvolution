@@ -1,0 +1,9 @@
+The original implementation is already minimal and correctly implements the AND gate using both an assign statement and a combinational always block. However, to optimize for Power, Performance, and Area (PPA), we can reduce redundancy by sharing the AND gate output internally, and then driving the two outputs from the same wire. This approach reduces duplication of AND logic and thus can save area and power, and potentially improve timing slightly by synthesizing a single AND gate.
+
+We will:
+- Compute the AND of `a` and `b` once in an internal wire.
+- Assign this wire to `out_assign` directly.
+- Use a combinational always block to assign the same wire's value to `out_alwaysblock`.
+- This keeps the interface and requirements intact, but leverages internal sharing of logic.
+
+This will reduce area and power usage slightly while maintaining the same timing and clean logic style.

@@ -1,0 +1,21 @@
+I will fuse the strengths of both example solutions to produce an optimized FSM design.
+
+From Example 1:
+- The one-hot encoding simplifies decoding and can potentially improve timing by reducing logic depth.
+- The outputs are registered and synchronous, reducing glitches and improving power consumption by avoiding combinational glitches on the grants.
+
+From Example 2:
+- The code is clean, minimal, and uses binary encoding which is area-efficient.
+- Next-state and output logic are simple and easy to read.
+
+Fusion strategy:
+- Use one-hot encoding (4 flip-flops for 4 states) to improve timing and simplify next-state logic.
+- Keep synchronous active-low reset and register state transitions on posedge clk.
+- Register outputs (g) to reduce glitches and dynamic power.
+- Use a clear separation of always blocks for state register, next state logic, and output logic.
+- Implement next state logic with simple priority encoding and preserve priority scheme.
+- Output logic driven synchronously from registered state for glitch-free grants.
+
+This yields a clean, glitch-free, and timing-friendly FSM with a modest area cost due to one-hot encoding, which is acceptable for many FPGA/ASIC scenarios where timing and power are critical. The code will be clearly structured for maintainability and efficiency.
+
+This approach combines Example 1’s one-hot registered output strength with Example 2’s clean, minimal next-state logic style.

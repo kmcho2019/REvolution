@@ -1,0 +1,31 @@
+To combine the best ideas from both examples, the key is to implement the logic out = in1 & ~in2 with a minimal gate count and better area/power efficiency. Both examples use explicit NOT and AND gate instantiations, which is clear and functionally correct.
+
+The feedback indicates that using a single NAND gate with one input inverted internally would be more area and power efficient, as it merges inversion and AND logic into one gate, reducing gate count from two to one. This optimizes PPA without changing functionality.
+
+However, Verilog does not have a primitive AND gate with an internal bubble on a specific input, but NAND naturally implements AND with a bubble on one input if the output is inverted. Since we want AND with an inverted input, we can use a NAND gate on (in1, in2) followed by a NOT to correct the inversion.
+
+But that adds a gate, so not area saving.
+
+Alternatively, using a NAND gate with the in2 input inverted internally (bubble on input2) would require technology-specific cell or complex gate instantiation.
+
+In pure Verilog, the closest straightforward solution is to instantiate a NAND gate, taking (in1 and in2), and then invert its output. This translates to out = ~(in1 & in2) inverted -> out = in1 & ~in2 after adjusting the logic.
+
+But this is out = ~(in1 & in2) inverted is just in1 & in2, so this doesn't help.
+
+Another approach is to recognize that out = in1 & ~in2 is equivalent to out = nand(in1, in2) & in1 (complex), not simpler.
+
+Therefore, the minimal implementation is the explicit NOT then AND as in the examples.
+
+Thus, the fusion strategy is:
+
+- Use explicit gate instantiations to clearly show the inversion bubble on in2 and the AND gate as in both examples for clarity and good mapping.
+
+- Use descriptive, consistent naming for nets and gate instances.
+
+- Keep minimal and clean code with no extra signals.
+
+- This approach best balances clarity, functional correctness, and ease of technology mapping.
+
+Hence, final solution is instantiating a NOT gate to invert in2, then an AND gate to combine in1 and inverted in2 for out.
+
+This is the best fusion of the two examples.

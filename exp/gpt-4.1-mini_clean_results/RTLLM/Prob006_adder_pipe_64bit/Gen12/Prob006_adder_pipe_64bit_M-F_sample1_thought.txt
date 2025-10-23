@@ -1,0 +1,16 @@
+The main issue is declaring an array of regs (`temp_sum`) inside the always block, which is illegal in Verilog. To fix this, I will:
+
+1. Move all register declarations (including temporary sum registers) to the module scope.
+
+2. Use combinational wires or reg variables declared outside the always block to hold intermediate sums.
+
+3. Since the summation logic uses previous cycle registered values, and the carry ripple propagates through pipeline stages over multiple clock cycles, I will:
+   - Store operand slices and carry_in registers per stage.
+   - Perform the addition at each clock edge, registering the sum and the carry_out.
+   - Shift the enable signal through pipeline stages accordingly.
+
+4. The carry_out of each stage feeds the carry_in of the next stage in the next clock cycle.
+
+5. Finally, when the data reaches the last stage, assemble the full 65-bit sum and set the output enable signal.
+
+By defining all registers and wires at module scope and using sequential assignments only, the code will be syntactically correct and functionally valid, implementing a pipelined 64-bit ripple carry adder with 8 stages of 8 bits each.

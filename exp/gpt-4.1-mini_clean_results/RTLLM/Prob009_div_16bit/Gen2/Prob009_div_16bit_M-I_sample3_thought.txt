@@ -1,0 +1,25 @@
+The previous approach incorrectly used the upper 8 bits of the remainder for comparison, leading to wrong quotient and remainder values. To fix this, the division must be done as described:
+
+- At each step, extract the upper 8 bits of the current partial dividend/remainder (which starts as zero).
+- Compare these bits with the divisor:
+  - If greater or equal, set the corresponding quotient bit to 1 and update the remainder by subtracting the divisor from those upper bits.
+  - Otherwise, set the quotient bit to 0 and leave the remainder as is.
+- Concatenate the new remainder with the next dividend bit, shifting in bits from the dividend starting from the most significant bit to the least significant bit.
+  
+This can be implemented with a 24-bit register that holds the concatenation of the current remainder and remaining dividend bits (initially the dividend left-padded), shifting and subtracting step by step.
+
+The algorithm is:
+
+1. Initialize a 24-bit register `temp` as {8'd0, dividend[15:0]}.
+2. For i from 15 down to 0:
+   - Extract upper 8 bits of `temp[23:16]`.
+   - If these bits >= divisor, subtract divisor from these upper bits and set quotient bit i to 1.
+   - Otherwise, quotient bit i is 0.
+   - Shift `temp` left by 1 bit, bringing in the next dividend bit each iteration (already included in temp).
+3. After 16 iterations, the lower 16 bits of `temp` represent the remainder.
+
+This approach aligns with classical non-restoring division and uses only combinational logic.
+
+The module keeps the first always block latching inputs combinationally as per requirement, and the second block performs the division combinationally.
+
+This correction ensures correct quotient and remainder calculation in pure combinational logic.

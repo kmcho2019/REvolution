@@ -1,0 +1,20 @@
+To optimize the design for better PPA (Power, Performance, Area) metrics while maintaining functionality:
+
+1. **Performance Improvement**:
+   - The negative WNS indicates timing violations in the shift register path
+   - Replace the linear shift register with a circular buffer implementation to break the long combinational path
+   - This reduces the critical path from O(n) to O(1) for shift operations
+
+2. **Power Optimization**:
+   - Add clock gating to the shift register to prevent unnecessary toggling when enable=0
+   - This reduces dynamic power consumption during idle periods
+
+3. **Area Optimization**:
+   - Keep the efficient direct array indexing for the mux
+   - The circular buffer implementation doesn't require additional area compared to the shift register
+
+The improved design should:
+- Maintain the same functionality
+- Improve timing closure (reduce WNS violation)
+- Reduce power consumption
+- Keep area similar or better

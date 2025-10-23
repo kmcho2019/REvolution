@@ -1,0 +1,10 @@
+To improve PPA, the approach is to reduce combinational complexity and toggle rates, especially for the hour counter and the BCD to binary conversions:
+
+- Store hours directly as two BCD digits rather than a binary number to eliminate the bin_to_bcd_hour conversion logic and reduce combinational overhead on outputs.
+- Increment BCD hours directly in the sequential block only when minutes roll over from 59 to 00, carefully handling the 12-hour wrap (01-12).
+- Combine seconds and minutes increments into a single always block with enable gating to reduce the number of combinational blocks and possible unnecessary toggling.
+- Use enable gating to update registers only when required to minimize switching.
+- Update pm toggling logic by detecting hour wrap from 11 to 12 in BCD.
+- Implement synchronous reset with priority.
+- Reduce combinational logic complexity by merging next state logic into clocked processes and only combinational minimal BCD increment functions.
+This reduces logic area by removing bin_to_bcd_hour, cuts power by gating updates, and improves timing by limiting logic depth in combinational paths.

@@ -1,0 +1,22 @@
+Implement a 2-stage pipeline multiplier with clean separation of stages and stable data flow.
+
+Stage 1:
+- Register inputs (mul_a and mul_b).
+- Generate partial products combinationally from the registered inputs.
+- Store partial products in an array of registers.
+
+Stage 2:
+- Sum all partial products stored in stage 1 registers.
+- Register the final sum as output.
+
+Key points:
+- Extend mul_a and mul_b by adding 'size' zeros at MSB side before partial product generation.
+- Partial products are generated as: if mul_b[i] == 1, then partial product = (extended mul_a) << i; else 0.
+- Use a generate block for partial products.
+- Use two always blocks: one for stage 1 registers and another for stage 2 registers and output.
+- Both blocks sensitive to clk and rst_n (active low reset).
+- On reset, clear all registers to zero.
+- Pipeline latency is two clock cycles: input registration -> partial product registration -> sum registration -> output.
+- This structure ensures stable pipelining and correct synchronization of data.
+
+This approach clearly separates combinational and sequential logic and avoids data dependency issues observed in the previous code.

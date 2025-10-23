@@ -1,0 +1,9 @@
+The original design uses a 3-bit index and a shift operation to generate the one-hot output, which is elegant and synthesizable in most tools. However, the reported tool error indicates that the simulator does not support the vector shift or entire vector assignment in this form.
+
+To address this, I will avoid the direct vector shift operation. Instead, I will store the current one-hot pattern directly in an 8-bit register 'out'. On reset, 'out' will be set to 8'b00000001, and on each clock cycle, 'out' will be rotated left by one bit, effectively shifting the '1' to the next position cyclically.
+
+This approach is fully synthesizable, simple, and does not require a separate index. It also avoids using a shift by a variable index in a continuous assignment, thus compatible with limited simulators and synthesis tools.
+
+The output 'out' will be registered and updated inside a synchronous always block, triggered on the clock edge or asynchronous reset.
+
+This solution maintains the correct ring counter behavior: exactly one bit set at any time, rotating through the 8 bits cyclically, and reset to LSB on reset.

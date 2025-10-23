@@ -1,0 +1,13 @@
+To implement the TopModule, we can break down the problem into several steps:
+- First, detect the input pattern 1101 on the data input.
+- Once the pattern is detected, shift in the next 4 bits to determine the duration of the timer delay.
+- Then, count for exactly (delay[3:0] + 1) * 1000 clock cycles and output the current remaining time.
+- After the count is finished, assert the done signal to notify the user and wait for the ack signal to be asserted before resetting.
+
+We will use a finite state machine (FSM) to manage the different states of the module. The states can be:
+- IDLE: searching for the input pattern 1101.
+- SHIFT: shifting in the next 4 bits to determine the duration.
+- COUNT: counting for the specified number of clock cycles.
+- DONE: asserting the done signal and waiting for the ack signal.
+
+We will use a counter to keep track of the remaining time and a variable to store the duration of the timer delay.

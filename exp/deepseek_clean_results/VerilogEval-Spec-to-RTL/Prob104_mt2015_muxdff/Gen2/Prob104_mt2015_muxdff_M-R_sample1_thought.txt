@@ -1,0 +1,6 @@
+The original implementation uses a combinational mux followed by a synchronous flip-flop. We can refactor this to:
+1. Move the mux logic inside the always block to make the selection synchronous
+2. This ensures the mux output is sampled exactly at the clock edge
+3. The functionality remains identical but the timing is more predictable
+4. We'll use non-blocking assignment for the flip-flop to maintain proper synchronous behavior
+5. This change might help with the single mismatch by ensuring the mux selection is stable at clock edges

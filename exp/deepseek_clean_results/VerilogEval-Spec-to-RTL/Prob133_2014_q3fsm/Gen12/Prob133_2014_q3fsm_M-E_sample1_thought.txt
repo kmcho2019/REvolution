@@ -1,0 +1,15 @@
+Novel approach using sliding window and parallel counting:
+1. Use a 2-state FSM (A and B) with state transitions based on s
+2. Implement a 3-bit shift register for w values that updates every cycle in state B
+3. Instead of counting 1s in the window each cycle, maintain a running count:
+   - Subtract the outgoing bit (oldest in window)
+   - Add the incoming bit (newest in window)
+4. Use this running count to determine when exactly two 1s are present
+5. Output z is registered and set when the count equals 2 at the window boundary
+6. Eliminate the need for a separate position counter by using the shift register's behavior
+
+Key advantages:
+- More efficient counting logic (only 1 adder/subtractor per cycle)
+- No need for modulo counters
+- Output is registered for better timing
+- Reduced logic depth compared to full parallel counting

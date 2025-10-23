@@ -1,0 +1,19 @@
+To implement a Mealy FSM detection circuit, we can use a finite state machine with states representing the different stages of the input sequence. The circuit will have five states: S0 (initial state), S1 (after detecting the first '1'), S2 (after detecting the first '0' after '1'), S3 (after detecting the second '0' after '1'), S4 (after detecting the third '1' after '1'), and S5 (after detecting the fourth '1' after '1'). 
+
+We use a case statement to handle the different states and their corresponding next states based on the input IN. 
+
+When the FSM reaches S5, the MATCH output is set to 1, indicating that the sequence 10011 has been detected. 
+
+The FSM resets to S0 whenever the RST signal is active or when an invalid sequence is detected.
+
+We use a always @ (posedge CLK or posedge RST) block to handle the synchronous operation of the FSM, with the RST signal taking priority.
+
+We declare the state variable (current_state) as reg [2:0] to represent the five states (S0 to S4) and initialize it to S0.
+
+We use a parameter to define the different states for better readability and maintainability of the code.
+
+We use a case statement inside the always block to determine the next state based on the current state and the input IN.
+
+We use an if statement to check if the RST signal is active, and if so, we reset the current_state to S0 and set MATCH to 0.
+
+We use another if statement to set the MATCH output to 1 when the FSM reaches S5.

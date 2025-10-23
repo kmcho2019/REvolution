@@ -1,0 +1,12 @@
+Refactor the original design by eliminating the explicit next_state register and combining the FSM state update and input sampling into a single always block. Use a separate combinational block for output generation from the registered state and input.
+
+The main changes:
+- Remove the separate next_state signal and implement the state update logic inside the sequential always block directly.
+- Keep the input sampled in a register x_reg.
+- Implement the output logic in a separate combinational block using a simple case statement.
+- Use nonblocking assignments consistently in sequential logic.
+- Keep the asynchronous reset behavior the same.
+
+This structure simplifies state management by avoiding an intermediate next_state variable, improving code readability without changing the behavior or timing. The outputs remain purely Moore-type, depending only on registered state and input.
+
+The approach maintains clear separation between sequential state updates and combinational output, fulfilling the original requirements with a different coding style.

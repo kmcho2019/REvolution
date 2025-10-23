@@ -1,0 +1,23 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the 24x24 multiplier into 2 stages (partial products and final addition)
+   - Move rounding logic to a separate stage to reduce critical path
+   - Use one-hot encoding for state machine to improve FSM timing
+
+2. Power Optimization:
+   - Add clock gating for the product register when not in multiply state
+   - Use carry-save adder for rounding increment to reduce switching activity
+   - Optimize exponent handling to use minimal bits
+
+3. Area Optimization:
+   - Reduce product register to 47 bits (24x24 needs only 47 bits max)
+   - Share special case detection logic between states
+   - Simplify exponent overflow detection logic
+
+Key Changes:
+- 2-stage pipelined multiplier
+- Separate rounding stage
+- Clock gating for large registers
+- Optimized bit widths
+- One-hot state encoding
+- Carry-save rounding adder

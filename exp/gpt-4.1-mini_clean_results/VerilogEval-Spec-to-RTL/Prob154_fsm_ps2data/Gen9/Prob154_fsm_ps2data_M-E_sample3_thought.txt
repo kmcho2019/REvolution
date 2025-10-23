@@ -1,0 +1,8 @@
+Implement a three-state FSM with explicit states: IDLE, BYTE2, and BYTE3.  
+In IDLE, discard bytes until detecting in[3] = 1; then store byte 1 and move to BYTE2.  
+In BYTE2, store byte 2 and move to BYTE3.  
+In BYTE3, store byte 3, assemble the 24-bit message, assert done for one cycle, then return to IDLE.  
+Use a three-register shift buffer to hold incoming bytes as the message is assembled in order.  
+The done signal is asserted simultaneously with out_bytes update in the BYTE3 state.  
+Reset synchronously clears state, out_bytes, done, and buffer.  
+This approach explicitly models the states for clarity and allows straightforward extension if needed.

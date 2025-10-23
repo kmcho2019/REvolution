@@ -1,0 +1,15 @@
+The current implementation is already quite efficient, but we can make some micro-optimizations to further improve PPA:
+
+1. Remove the intermediate 'equal' wire since it's only used once - this saves a wire and reduces switching power.
+
+2. Combine the borrow generation and equality check into a single expression for A_greater to potentially share some logic.
+
+3. Maintain the mutually exclusive property by construction to prevent any glitches.
+
+4. The borrow signal (A < B) and equality check (A == B) will remain parallel operations, preserving timing characteristics.
+
+These changes will:
+- Slightly reduce power by eliminating one wire
+- Potentially save a few gates in the A_greater logic
+- Maintain the same excellent timing characteristics
+- Keep the area advantage while possibly reducing it further

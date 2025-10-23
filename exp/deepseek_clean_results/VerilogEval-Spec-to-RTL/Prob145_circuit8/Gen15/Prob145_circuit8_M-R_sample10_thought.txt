@@ -1,0 +1,20 @@
+After analyzing the waveform and the issues in the previous implementation, here's a cleaner approach:
+
+1. Key Observations:
+   - p follows input 'a' when q is 0 (sampled at rising clock edge)
+   - q becomes 1 when p was high for a full clock cycle
+   - q resets to 0 when 'a' is high during a falling edge
+   - p stays 0 when q is 1
+
+2. Refactoring Strategy:
+   - Use separate always blocks for rising and falling edge behaviors
+   - Implement p as a simple flip-flop that samples 'a' when q=0
+   - Track p's state across both edges to determine when to set q
+   - Use a registered version of p (p_prev) to detect full-cycle high
+   - Clear q synchronously when 'a' is high at falling edge
+
+3. New Structure:
+   - Rising edge block handles p sampling and q setting
+   - Falling edge block handles q clearing condition
+   - p_prev tracks p's state at falling edge
+   - Clean separation of synchronous behaviors

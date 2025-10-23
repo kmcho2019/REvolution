@@ -1,0 +1,14 @@
+The waveform reveals a more complex state machine behavior where:
+1. State transitions occur when (a XOR b) is true, but only under certain conditions
+2. The output q depends on both the current state and inputs in a specific way:
+   - When a=0, q equals b when state=1
+   - When a=1, q equals NOT b when state=1
+   - Otherwise q equals state
+
+Implementation approach:
+1. Use a flip-flop to store the state
+2. State updates when (a XOR b) is true at clock edge
+3. Output q is a combinational function of state, a, and b:
+   - q = (state & (a ^ b)) | (~state & b) when a=0
+   - q = (state & ~b) | (~state & b) when a=1
+4. Simplify output logic to: q = state ? (a ^ b) : b

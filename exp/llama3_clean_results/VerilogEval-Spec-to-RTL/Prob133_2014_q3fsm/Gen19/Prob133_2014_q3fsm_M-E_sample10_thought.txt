@@ -1,0 +1,11 @@
+A novel architectural idea to implement the specified finite state machine (FSM) is to use a counter-based approach. The FSM will start in state A and move to state B when the input 's' becomes 1. Once in state B, the FSM will count the number of clock cycles and check the input 'w' for exactly two '1's in a window of three clock cycles. 
+
+To achieve this, we can use a counter to track the number of clock cycles since the FSM entered state B. We can also use a separate counter to track the number of '1's in the last three 'w' values. 
+
+However, instead of using a shift register to store the last three 'w' values, we can use a single variable to store the count of '1's in the last three clock cycles. This variable will be incremented when 'w' is 1 and decremented when a '0' is encountered after three clock cycles. 
+
+This approach simplifies the logic and reduces the number of variables required to implement the FSM. The output 'z' will be set to 1 when exactly two '1's are detected in the last three clock cycles and 0 otherwise.
+
+The state machine will be implemented using two states: STATE_A and STATE_B. The transition from STATE_A to STATE_B will be based on the input 's', and the FSM will remain in STATE_B until the reset signal is asserted.
+
+This approach ensures a more efficient implementation of the FSM, reducing the number of flip-flops and combinational logic required, thus improving the Power, Performance, and Area (PPA) metrics.

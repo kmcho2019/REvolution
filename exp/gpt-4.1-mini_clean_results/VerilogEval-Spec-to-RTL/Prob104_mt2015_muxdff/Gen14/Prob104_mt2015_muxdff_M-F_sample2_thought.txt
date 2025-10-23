@@ -1,0 +1,11 @@
+The key fix is to recognize that the combinational logic producing q_in must be computed outside the TopModule, since each TopModule instance only contains a single flip-flop and a 2:1 multiplexer to select between loading r_in or the feedback q_in. The TopModule itself must only implement the mux and the flip-flop.
+
+To clarify this, the TopModule's inputs are clk, L (load enable), q_in (the combinational logic input from other flip-flops), and r_in (the load value bit). Inside TopModule, the mux selects between r_in (load) and q_in (feedback), and the flip-flop samples this on the clock edge.
+
+Hence, the module should contain a mux implemented as a simple assign or ternary operator (combinational logic), and the flip-flop should register the mux output on posedge clk. The output Q is a reg updated every clock edge.
+
+This approach avoids unnecessary functions inside the sequential block and clearly separates mux logic from the flip-flop register. The combinational logic that computes q_in must be wired externally when instantiating the TopModule thrice, exactly as in full_module.
+
+This corrects the previous misconception that q_in itself must be muxed or transformed inside the module. Instead, q_in is already the combinational mux output from other flip-flops.
+
+This structure preserves the hierarchical design, correctly modeling the flip-flop with load multiplexing and enabling proper instantiations in full_module.

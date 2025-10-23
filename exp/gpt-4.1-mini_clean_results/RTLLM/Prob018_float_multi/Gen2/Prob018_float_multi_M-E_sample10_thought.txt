@@ -1,0 +1,25 @@
+Implement a combinational multi-cycle IEEE 754 single-precision floating-point multiplier using a finite-state machine (FSM) with a 5-step process synchronized by the clock, avoiding a large 24x24 multiplier in a single cycle.
+
+Architecture:
+- Step 0: On reset or start, extract sign, exponent, mantissa (including implicit leading 1 for normalized numbers).
+- Step 1: Handle special cases (NaN, Inf, zero), set flags for these to bypass the multiplier.
+- Step 2: Perform partial 24x24 multiplication using a sequential shift-add multiplier over multiple clock cycles (e.g., 24 cycles). This saves area and reduces critical path by spreading multiplication over multiple cycles.
+- Step 3: Normalize and adjust exponent based on multiplication result, detect if normalization shifts needed.
+- Step 4: Perform rounding with guard, round, sticky bits and adjust the exponent if rounding causes mantissa overflow.
+- Step 5: Final output assembly with overflow and underflow handling.
+
+Key benefits:
+- Area reduction by implementing multiplier as sequential shift-add logic instead of a fully combinational 24x24 multiplier.
+- Critical path reduced due to breaking multiplication into clocked iterative steps.
+- Clear FSM control to coordinate multi-step operation.
+- Output produced after a fixed latency of ~30 cycles.
+
+Internal signals:
+- A 5-state FSM (IDLE, CHECK_SPECIALS, MULTIPLY, NORMALIZE, ROUND, OUTPUT).
+- Shift registers for multiplicand and multiplier mantissas.
+- Accumulator for product.
+- Registers for exponents and signs.
+- Rounding bits are derived from product bits before final shift.
+- Counter for multiplication cycles.
+
+This approach targets area-efficient designs where multiplier latency is acceptable and critical path delay is minimized by serialization of multiplication.

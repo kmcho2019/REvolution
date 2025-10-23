@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. **Timing Optimization**:
+   - Replace case statement with arithmetic operations (+1/-1) and saturation checks to reduce logic depth
+   - This simplifies the critical path by using direct arithmetic rather than full decoding
+
+2. **Power Optimization**:
+   - Add clock gating for the state register when train_valid=0 to prevent unnecessary toggles
+   - This reduces dynamic power by only clocking when needed
+
+3. **Area Optimization**:
+   - Merge combinational and sequential logic into a single always_ff block
+   - This allows synthesis tools to better optimize the combined logic
+
+4. **Maintainability**:
+   - Keep the localparam definitions for readability
+   - Use explicit saturation checks for clarity
+
+Key Changes:
+- Arithmetic-based state transitions with saturation
+- Clock gating implementation
+- Single always block for better synthesis optimization
+- Maintain same functionality but with improved PPA

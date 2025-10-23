@@ -1,0 +1,7 @@
+The main issue with the current implementation is that it resets 'start_shifting' to 0 on every clock cycle if the sequence '1101' is not detected. To address this issue, we need to modify the logic so that 'start_shifting' remains 1 once it is set, until 'reset' is asserted.
+
+One approach to achieve this is to use a separate state variable to track whether the sequence '1101' has been detected. When the sequence is detected, this state variable is set to 1 and remains 1 until 'reset' is asserted. The 'start_shifting' signal can then be directly derived from this state variable.
+
+Additionally, we can optimize the sequence detection logic to reduce the number of comparisons and improve the overall efficiency of the design.
+
+Another optimization strategy is to minimize the number of flops and logic gates used in the design, which can help reduce the area and power consumption.

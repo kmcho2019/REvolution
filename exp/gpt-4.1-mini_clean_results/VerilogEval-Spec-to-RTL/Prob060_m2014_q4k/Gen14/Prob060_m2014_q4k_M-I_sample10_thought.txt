@@ -1,0 +1,12 @@
+To improve the existing design for better power and area while maintaining correctness:
+
+- Integrate the ShiftReg logic directly into TopModule to remove one module instantiation, potentially reducing synthesis overhead and area slightly.
+- Fix the parameter WIDTH to 4 since the design is fixed width, allowing synthesis tools to optimize better.
+- Use a single always block with synchronous active-low reset and non-blocking assignments as before for clarity and timing.
+- Add clock enable (clk_en) logic to prevent shifting if input 'in' is stable (no change). This can reduce toggling and save dynamic power if input 'in' changes infrequently.
+- Alternatively, if such clock gating is not allowed at RTL, keep logic simple and rely on synthesis for clock gating.
+- Since no explicit clock enable input is provided, implement input-change detection internally and only shift when input changes, reducing toggling.
+- This approach trades a little combinational logic for dynamic power savings, which is worthwhile for low toggle rates on 'in'.
+- Keep the interface as required.
+
+Overall, the design remains simple, synchronous, and uses a 4-bit vector register with synchronous reset, but includes input-change detection for conditional shifting to save power.

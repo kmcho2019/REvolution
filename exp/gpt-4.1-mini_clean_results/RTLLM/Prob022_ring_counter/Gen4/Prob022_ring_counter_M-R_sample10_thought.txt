@@ -1,0 +1,10 @@
+The issue is the toolchain does not support the concatenation `{out[6:0], out[7]}` or slicing in the non-blocking assignment. To avoid this, we can implement the ring counter behavior using a simple shift register with explicit bit manipulation.
+
+Instead of rotating via slicing, we can treat the `out` register as an 8-bit shift register with wrap-around implemented by checking the MSB bit before the shift. On each clock edge, if not reset:
+
+- If the MSB bit (out[7]) is 1, then the next `out` becomes `8'b00000001`.
+- Otherwise, shift left by 1 (`out <= out << 1`).
+
+This simulates the rotation without using concatenation or slicing. The reset initializes `out` to `8'b00000001` as before.
+
+This method avoids the unsupported concatenation and slicing and keeps the single active bit rotating through `out`.

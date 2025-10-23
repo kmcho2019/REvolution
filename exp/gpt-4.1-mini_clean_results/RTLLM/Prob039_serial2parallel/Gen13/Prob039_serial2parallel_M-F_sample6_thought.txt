@@ -1,0 +1,7 @@
+To comply with the specification that the first serial input bit is placed at the most significant bit (MSB) of the parallel output and subsequent bits fill toward the least significant bit (LSB), we need to shift the register to the right and insert the new bit at the MSB side. Thus, on each valid input, shift the current register right by one and assign the incoming serial bit to the MSB position. This way, after receiving 8 bits, the shift register holds the bits in the correct MSB-first order.
+
+Use a 4-bit counter to count from 0 to 7, indicating how many bits have been received. When the counter reaches 7 (meaning 8 bits received), output the current shift register value to `dout_parallel` and assert `dout_valid` for one clock cycle. Otherwise, `dout_valid` remains low.
+
+All registers and outputs are synchronously reset on the active-low reset signal.
+
+This design meets the problem requirement exactly and is fully synchronous and minimal.

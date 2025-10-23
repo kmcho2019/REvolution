@@ -1,0 +1,14 @@
+Since only next_y1 depends on states B, C, E, and F and input w, and output Y1 = next_y1, we can directly express next_y1 using y bits without decoding all intermediate signals separately. Noting the states for which next_y1=1 or equals w, we can simplify the logic to a minimal expression directly from y and w.
+
+Specifically:
+
+- States with next_y1=1 regardless of w: B(001), F(101)
+- States with next_y1 = w: C(010), E(100)
+
+We can detect B and F as (y[1:0] == 01) with y[2] = 0 or 1, and detect C and E as states where y[1] != y[0] and y[2] differs accordingly. However, a simpler approach is to write next_y1 as:
+
+next_y1 = ( (y == 3'b001) || (y == 3'b101) ) || ( w && ( (y == 3'b010) || (y == 3'b100) ) )
+
+Implementing these comparisons directly with simple logic will reduce gate count and complexity.
+
+This eliminates separate intermediate wires and leverages direct comparisons with minimal logic.

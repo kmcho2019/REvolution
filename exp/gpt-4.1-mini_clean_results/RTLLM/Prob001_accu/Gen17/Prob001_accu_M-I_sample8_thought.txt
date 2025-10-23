@@ -1,0 +1,9 @@
+To optimize the existing design for better PPA (power, performance, area), I will explicitly use clock enable signals to prevent unnecessary toggling of the accumulator and counter registers when valid_in is low, reducing dynamic power consumption. This is slightly better than just gating logic with conditional statements, as synthesis tools can implement clock gating cells more effectively with an enable signal.
+
+Additionally, I will split the output stage: on the 4th valid input, the accumulator is updated with data_in and the sum is saved in a separate output register on the next cycle, ensuring a short critical path for combinational logic inside the always block. This helps improve max frequency by decoupling accumulation and output.
+
+Reset remains synchronous and active low, clearing all registers on reset.
+
+The output valid_out remains asserted for a single cycle aligned with when data_out is valid.
+
+This approach lowers toggle rate on registers, reduces critical path delay by pipelining output register assignment, and keeps area minimal by using simple registers and adders.

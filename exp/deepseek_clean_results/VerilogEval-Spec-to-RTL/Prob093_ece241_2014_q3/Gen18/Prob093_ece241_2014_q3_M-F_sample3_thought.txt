@@ -1,0 +1,44 @@
+Correct Implementation Approach:
+1. For mux_in[0] (ab=00):
+   - K-map shows: 0 (cd=00), 1 (cd=01), 1 (cd=11), 1 (cd=10)
+   - This is equivalent to d (1 when d=1) except for cd=00
+   - Actually matches exactly d, since cd=00 is 0 when d=0
+
+2. For mux_in[1] (ab=01):
+   - All zeros in K-map - correct as is
+
+3. For mux_in[2] (ab=11):
+   - K-map shows: 0 (cd=00), 0 (cd=01), 1 (cd=11), 0 (cd=10)
+   - This is exactly c & d (only 1 when both c and d are 1) - correct
+
+4. For mux_in[3] (ab=10):
+   - K-map shows: 1 (cd=00), 0 (cd=01), 1 (cd=11), 1 (cd=10)
+   - This is ~d | (c & d) which is ~d | c
+   - Wait no - looking carefully:
+     - 1 when cd=00 (~c & ~d)
+     - 1 when cd=11 (c & d)
+     - 1 when cd=10 (c & ~d)
+     - So this is ~d | (c & d) which is correct
+
+The feedback seems incorrect - the original implementation was actually correct. The K-map shows:
+- For mux_in[0] (ab=00):
+  - cd=00: 0 (d=0)
+  - cd=01: 1 (d=1)
+  - cd=11: 1 (d=1)
+  - cd=10: 1 (d=0 but c=1) - this is the discrepancy
+  - Actually the K-map shows 1 for cd=10 in ab=00, which contradicts d=0
+  - Need to make it 1 for cd=00,01,11,10 except cd=01 is 0 in K-map
+  - Wait no - looking at original K-map:
+    ab=00:
+    cd=00: 0
+    cd=01: 1
+    cd=11: 1
+    cd=10: 1
+    So d is correct (1 when d=1, plus cd=10 is 1 when d=0 but c=1)
+    Need to implement: d | (~d & c)
+
+Final corrected implementation:
+- mux_in[0] = d | (~d & c)
+- mux_in[1] = 0
+- mux_in[2] = c & d
+- mux_in[3] = ~d | c

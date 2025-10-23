@@ -1,0 +1,24 @@
+To fix the implementation, we must precisely follow the given division method:
+
+1. Use two always blocks as specified:
+   - The first always block stores stable copies of inputs A and B into registers a_reg and b_reg.
+   - The second always block performs the division using these stable registers.
+
+2. The division algorithm:
+   - Start with the highest 8 bits of a_reg as the initial remainder segment.
+   - For each bit of the remaining dividend (from bit 7 down to 0), concatenate this remainder segment (8 bits) with the next dividend bit to form a 9-bit value.
+   - Compare the 8 MSBs (the remainder segment) with b_reg (the divisor). 
+     - If the remainder segment >= b_reg, subtract b_reg, set the quotient bit to 1.
+     - Otherwise, quotient bit = 0.
+   - Shift the remainder accordingly by concatenating the difference with the next dividend bit.
+   - Repeat until all bits of the dividend are processed.
+
+3. Store quotient bits in the result register and the final remainder in odd.
+
+4. This logic precisely matches the problem description: extracting an 8-bit segment from dividend, comparing with divisor, conditionally subtracting, setting quotient bit, and concatenating remainder with next bit.
+
+5. The key fix is to correctly maintain and update an 8-bit remainder segment per iteration, and shift in new dividend bits stepwise.
+
+6. The division is combinational; both always blocks use the @(*) sensitivity list to ensure outputs update with inputs.
+
+This approach respects the design's requirement of two always blocks, uses stable copies of inputs, and implements the repeated comparison and subtraction on 8-bit segments matching the divisor's width.

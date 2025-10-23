@@ -1,0 +1,5 @@
+Refactor the design into a small FSM with two states: IDLE and SHIFTING. Use a shift counter that counts down from 4 to 0 when shifting is enabled. On synchronous reset, transition immediately to SHIFTING state with the counter loaded to 4, enabling shift_ena. When the counter reaches zero, return to IDLE and disable shift_ena.
+
+Implement the FSM in a synchronous always block with registered state, counter, and output signals. Derive shift_ena directly from the state (SHIFTING) to simplify logic. This approach clearly separates control states, improves readability, and allows straightforward future extension (e.g., adding pattern detection to trigger SHIFTING).
+
+This method maintains the same core functionality of enabling shift_ena for exactly 4 clock cycles after reset, but structures the design as a proper FSM with explicit states, improving maintainability and clarity.

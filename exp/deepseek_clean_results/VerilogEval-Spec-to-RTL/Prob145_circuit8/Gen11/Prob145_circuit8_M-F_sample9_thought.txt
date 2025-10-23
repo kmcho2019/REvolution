@@ -1,0 +1,16 @@
+1. Correct Behavior Analysis:
+   - p should be high only when 'a' is high at the positive clock edge (edge-sensitive)
+   - q should be high one clock cycle after p was high (delayed version of p)
+   - Both outputs are synchronous to the clock edge
+
+2. Fix Strategy:
+   - Make p capture 'a' only at positive clock edges (edge-triggered)
+   - Implement q as a one-cycle delayed version of p
+   - Use non-blocking assignments for proper sequential behavior
+   - Single always block for clean implementation
+
+3. Advantages:
+   - Correctly models edge-sensitive behavior seen in waveforms
+   - Properly implements the one-cycle delay between p and q
+   - Matches all waveform transitions precisely
+   - Simple and clear state tracking

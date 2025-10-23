@@ -1,0 +1,13 @@
+To improve the FSM design for better performance, power, and area while maintaining functional correctness:
+
+1. Separate next_state logic and output logic: Use one combinational always block to determine next_state and another purely combinational block for MATCH output. This reduces combinational path complexity and glitch potential.
+
+2. Register MATCH output: Make MATCH synchronous to CLK with asynchronous reset to reduce glitches and minimize power by avoiding combinational toggling of output.
+
+3. Simplify state transitions and use localparam for state encoding for better tool support and minimal overhead.
+
+4. Carefully define state transitions to ensure proper overlap detection and correct sequence detection.
+
+5. Optimize conditional logic in next_state to avoid redundant conditions and improve synthesis quality.
+
+This approach yields a clean two-process FSM with registered outputs, typically better for timing and power without sacrificing functionality.

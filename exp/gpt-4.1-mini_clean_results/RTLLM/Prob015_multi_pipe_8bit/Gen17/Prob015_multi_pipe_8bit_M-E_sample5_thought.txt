@@ -1,0 +1,8 @@
+Implement an 8-bit unsigned multiplier using a deeper 4-stage pipeline that gradually accumulates partial products in registers to reduce combinational path delay. The pipeline stages are:
+
+1. Input stage: latch inputs and input enable.
+2. Partial product generation: generate all 8 partial products (each partial product is mul_a shifted and masked by one bit of mul_b).
+3. Partial sum accumulation: use a balanced adder tree over two cycles, splitting the sum into two pipeline registers: first summing pairs of partial products, then summing those intermediate sums.
+4. Final output stage: register the final product and propagate the enable.
+
+This architecture reduces the critical path by pipelining the accumulation of partial products stepwise. It also pipelines the enable signal through a 4-bit shift register to synchronize output validity. The output is zero when not valid. This approach balances throughput and timing by spreading additions over several cycles, improving clock frequency and reducing power glitches by registering partial sums.

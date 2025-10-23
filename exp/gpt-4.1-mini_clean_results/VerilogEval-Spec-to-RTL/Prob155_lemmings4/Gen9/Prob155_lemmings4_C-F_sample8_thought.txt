@@ -1,0 +1,15 @@
+Fuse the best elements of both solutions by keeping the single packed 3-bit state+direction register for compactness and simple sequential logic, while further improving clarity and timing by separating direction from the main state bits internally in the combinational logic (but keeping packed register for state+dir storage).
+
+Retain the clear priority in transitions: fall > dig > bump (only when walking), and the precise bump direction logic: bump both flips direction, bump left sets walk right, bump right sets walk left.
+
+Improve readability and potentially timing by explicitly naming and separating state, dir, and using nonblocking assignments in sequential always block with asynchronous posedge reset.
+
+Make fall_count saturating with minimal logic, and keep it only updating during fall.
+
+Ensure that bumps and dig are ignored during fall and dig states.
+
+Outputs are purely Moore (combinational based on current state and direction).
+
+This fusion preserves the compact encoding and FSM clarity from Example 1 with the exact bump handling from Example 2, while explicitly separating direction in next-state logic for better potential synthesis optimization and timing.
+
+The design uses clear default assignments to minimize unnecessary toggles and conditional assignments only where needed, following the spec exactly. This provides a well-structured, efficient, and easy-to-verify FSM.

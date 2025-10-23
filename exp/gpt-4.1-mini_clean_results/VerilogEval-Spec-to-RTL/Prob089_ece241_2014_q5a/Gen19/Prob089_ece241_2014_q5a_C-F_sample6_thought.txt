@@ -1,0 +1,7 @@
+Fuse the modular clarity and explicit FSM state encoding from Example 1 with the compactness and minimalistic logic of Example 2. Use two separate registers: one to sample input 'x' and one for FSM state with meaningful symbolic names (BEFORE_CARRY and AFTER_CARRY) to aid readability and maintainability.
+
+Sample input 'x' only when not in asynchronous reset to reduce unnecessary toggling. Update the state register on each clock edge with asynchronous reset, transitioning from BEFORE_CARRY to AFTER_CARRY upon sampling the first '1'.
+
+Implement Moore output logic combinationally as z = x_reg when in BEFORE_CARRY and z = ~x_reg in AFTER_CARRY, preserving the correct 2's complement output behavior.
+
+This fusion maintains the robust asynchronous reset handling and clear FSM structure of Example 1, while adopting the minimal combinational complexity and efficient state update logic of Example 2. It also reduces unnecessary toggling on input sampling by enabling sampling only during normal operation, improving power efficiency. The code is clean, synthesizable, and optimized for PPA with just two 1-bit registers and simple logic.

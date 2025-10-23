@@ -1,0 +1,26 @@
+New approach: Instead of treating each mux_in bit separately, let's analyze the K-map column-wise (by ab combinations) and find minimal expressions for each case:
+
+1. For ab=00 (mux_in[0]):
+   - Output is 1 only when cd=10 (c=1,d=0)
+   - Can be implemented as c & ~d
+
+2. For ab=01 (mux_in[1]):
+   - Always 0 (no logic needed)
+
+3. For ab=11 (mux_in[3]):
+   - Output is 1 when cd=00,11,10 (c=0,d=0 or c=1,d=1 or c=1,d=0)
+   - This simplifies to ~c | d (implication)
+
+4. For ab=10 (mux_in[2]):
+   - Output is 1 when cd=00,11,10
+   - Same as mux_in[3] case
+
+Implementation strategy:
+1. Use c and d directly for mux_in[0] (AND of c and ~d)
+2. Hardwire mux_in[1] to 0
+3. Use the same logic (~c | d) for both mux_in[2] and mux_in[3]
+4. Implement ~c | d using a 2-to-1 mux with c as select:
+   - When c=0: output 1 (~c)
+   - When c=1: output d
+
+This uses only two 2-to-1 muxes (one for the OR operation and one for the AND operation) while perfectly matching the K-map.

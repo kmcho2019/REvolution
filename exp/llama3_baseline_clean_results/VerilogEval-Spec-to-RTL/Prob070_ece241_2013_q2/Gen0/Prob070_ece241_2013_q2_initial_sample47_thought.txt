@@ -1,0 +1,23 @@
+To solve this problem, we first need to determine the binary representations of the input conditions that produce a logic-1 output. For the given problem, these are 2 (0010), 7 (0111), and 15 (1111). We then find the minimum sum-of-products (SOP) form for these conditions. For the product-of-sums (POS) form, we'll consider the conditions that produce a logic-0 output and then find the minimum POS form.
+
+The SOP form can be found by directly expressing the conditions for logic-1 outputs as a sum of minterms. For the POS form, we look for the maximum sum of maxterms that cover all the zero conditions, then take the complement to get the POS form.
+
+Let's analyze the conditions:
+- The output is 1 when the inputs represent 2, 7, or 15.
+- The binary representations are: 
+  - 2: 0010
+  - 7: 0111
+  - 15: 1111
+
+For SOP, the expression will be the sum of the minterms representing these conditions:
+- Minterm for 2 (0010) is \(\overline{a} \cdot b \cdot \overline{c} \cdot \overline{d}\)
+- Minterm for 7 (0111) is \(\overline{a} \cdot b \cdot c \cdot d\)
+- Minterm for 15 (1111) is \(a \cdot b \cdot c \cdot d\)
+
+The SOP expression is: \(\overline{a} \cdot b \cdot \overline{c} \cdot \overline{d} + \overline{a} \cdot b \cdot c \cdot d + a \cdot b \cdot c \cdot d\)
+
+For POS, considering the conditions that produce a logic-0 output, we look for patterns that cover all these conditions with the fewest number of maxterms.
+
+The zero conditions are: 0, 1, 4, 5, 6, 9, 10, 13, 14.
+
+However, to simplify the explanation and follow the requirement for a direct code implementation, let's implement the SOP and POS logic directly in Verilog. We will use the minterms for SOP and deduce the POS form by considering the complementary conditions.

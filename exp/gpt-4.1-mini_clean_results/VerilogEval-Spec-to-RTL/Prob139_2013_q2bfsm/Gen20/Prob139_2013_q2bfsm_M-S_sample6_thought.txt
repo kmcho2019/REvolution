@@ -1,0 +1,24 @@
+To simplify while preserving functionality:
+
+- Use a clear, small state machine with well-defined states:
+  A: reset state
+  B: pulse f=1 once after reset
+  C: monitor x input pattern 1-0-1 using a 3-bit shift register updated every clock
+  D: pulse g=1 for one cycle after pattern detected
+  E: hold g=1 and monitor y for up to two cycles
+  F: permanent g=1
+  G: permanent g=0
+
+- Update x_shift every clock cycle (not only in state C) for simplicity.
+
+- Count y cycles in E with a 2-bit counter, increment each cycle y is 0, reset if y=1.
+
+- Outputs are assigned based on current state synchronously in the always block.
+
+- Use synchronous active-low reset to initialize state and outputs.
+
+- Keep state transitions straightforward, updating next_state combinationally using current state and inputs.
+
+- Avoid using outputs or signals based on next_state inside clocked always block; instead, use current state for output logic.
+
+This reduces complexity by making the data path and control flow consistent and easier to follow.

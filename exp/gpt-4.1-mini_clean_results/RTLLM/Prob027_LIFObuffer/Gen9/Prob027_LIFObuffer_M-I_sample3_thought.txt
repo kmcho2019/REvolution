@@ -1,0 +1,29 @@
+To optimize the existing LIFObuffer for better PPA, I will focus on the following:
+
+1. Simplify and stabilize the stack pointer updates to reduce glitching and timing delays.  
+   Instead of using SP as a descending pointer from 4 down to 0, I will redefine SP to point to the current top index (0 to 3 when not empty), and use a separate counter "count" to track the number of stored elements. This avoids arithmetic on SP for every push/pop and simplifies memory indexing.
+
+2. Avoid arithmetic expressions like `SP - 1` inside memory indexing on the clock edge, which can cause longer combinational paths.
+
+3. Change EMPTY and FULL flags to be combinational outputs derived from count, which simplifies flag logic.
+
+4. Remove the loop clearing of stack memory on reset — since data is invalid when empty, clearing memory is not mandatory and reduces reset complexity.
+
+5. Only update the stack memory and SP/count on valid operations gated by EN and RW to reduce toggling.
+
+6. Use synchronous reset with non-blocking assignments to ensure timing clarity.
+
+7. Keep `dataOut` registered and updated only on pop operations.
+
+Overall, this approach results in simpler and more stable pointer management, reduced combinational logic inside clocked blocks, fewer toggle events, and less reset overhead, thereby improving timing and power without adding extra area.
+
+The stack will be implemented as follows:
+- A 4-bit wide, 4-entry stack_mem array.
+- A 3-bit "count" from 0 (empty) to 4 (full).
+- A 2-bit SP pointer that points to the top element index when count > 0.
+- On push (write): if not full, write at stack_mem[count], increment count.
+- On pop (read): if not empty, read from stack_mem[count-1], decrement count.
+- EMPTY = (count == 0)
+- FULL = (count == 4)
+
+This simplifies the design and avoids pointer arithmetic complexities.

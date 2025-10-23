@@ -1,0 +1,10 @@
+The original implementation uses Verilog's built-in reduction operators, which synthesis tools typically optimize well. However, for very large input widths (100 bits), direct reduction operators might synthesize into a large fan-in gate with high delay and power.
+
+To improve PPA, we can implement a hierarchical reduction tree approach for each output. This method reduces the fan-in per gate and enables more balanced logic trees, potentially improving timing and power at the cost of some additional area and code complexity.
+
+We will:
+- Partition the 100-bit input into smaller groups (e.g., 10 groups of 10 bits).
+- Compute partial reductions (AND, OR, XOR) in each group.
+- Then reduce these partial results down hierarchically until a single output remains for each function.
+
+This hierarchical structure can help synthesis tools map the logic into balanced trees, improving timing and power without changing functionality.

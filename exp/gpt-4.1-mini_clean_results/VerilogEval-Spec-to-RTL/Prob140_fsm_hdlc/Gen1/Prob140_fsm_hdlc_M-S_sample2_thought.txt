@@ -1,0 +1,15 @@
+Use a simple Moore FSM with states counting consecutive ones from 0 to 6. Outputs depend only on the current state to keep it Moore. On each clock cycle:
+
+- If input is 0, go back to state 0.
+- If input is 1, increment state count of consecutive ones (max 6).
+- If in state 5 and input 0 arrives, next cycle disc=1.
+- If in state 6 and input 0 arrives, next cycle flag=1.
+- If in state 6 and input 1 arrives, err=1 immediately (7 or more ones).
+
+To assert disc and flag outputs one cycle *after* the pattern detection, add two 1-bit registers to latch disc and flag outputs for one cycle when the FSM returns to state 0 after detecting the patterns.
+
+err is asserted immediately during seven or more consecutive ones in the current cycle (state 6 and input=1).
+
+Reset sets state to 0 and clears outputs.
+
+This approach uses only Moore outputs (based on state and internal latches) and one synchronous cycle delay for disc and flag, matching the requirement and simplifying logic.

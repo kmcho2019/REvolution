@@ -1,0 +1,9 @@
+Fuse the best of both examples by capturing data_in and data_en in clk_a domain with gating to reduce toggling (as in Example 1). Then pass data_en through a two-stage synchronizer in clk_b domain to safely cross domains and detect its rising edge for precise timing of data capture. Instead of blindly double synchronizing the entire data bus in clk_b domain (as in Example 2), we synchronize only the enable and then use that rising edge pulse to load the already stable data_reg into a clk_b domain register. This avoids metastability on multi-bit data signals while ensuring data is stable and valid (since data_en is high for multiple clk_b cycles and data_in is stable during data_en high). The output register dataout updates only on this pulse, holding its value otherwise. This reduces register count and switching activity compared to Example 2, improves power by gating data_reg updates in clk_a domain, and ensures glitch-free and robust synchronization. We also remove redundant holds (like "dataout <= dataout") and use clear reset policies for all registers. This combination optimizes for power, area, and timing.
+
+Summary:
+- Capture data_in & data_en in clk_a domain; update data_reg only when data_en is high.
+- Transfer data_en through 2 flip-flop synchronizer in clk_b domain.
+- Detect rising edge of synchronized enable to generate pulse.
+- On pulse, latch data_reg (from clk_a domain) into clk_b domain data_hold.
+- Output dataout registers data_hold; holds value when no pulse.
+- Reset signals handled asynchronously and properly.

@@ -1,0 +1,18 @@
+Refactor the gshare predictor by splitting combinational and sequential logic more clearly and ensuring outputs reflect the predictor state *before* any updates at the current clock edge.
+
+- Maintain a single speculative GHR register updated on clock edge.
+- Perform the prediction entirely combinationally using the *current* `ghr_spec`.
+- Output prediction results and history *directly* from the combinational logic, and register them separately to hold stable outputs.
+- Update `ghr_spec` on clock edge:
+  - If training with misprediction, restore `ghr_spec` to training history (priority).
+  - Else if prediction valid, shift in predicted bit.
+  - Else hold.
+- Update PHT synchronously on clock edge during training.
+- Use synchronous RAM style for PHT with registered read:
+  - Register PHT read address at clock edge, read data out the next cycle.
+  - This models synchronous RAM read latency, removing combinational read ambiguity.
+- To deliver prediction outputs in the same cycle of prediction request:
+  - Pipeline prediction request inputs and GHR register accordingly.
+  - The output `predict_taken` and `predict_history` are registered versions of combinational prediction on *previous* cycle's address and GHR to reflect correct timing.
+  
+This refactoring matches typical hardware design and the problem's timing requirements more precisely and avoids outputs showing updated GHR too early.

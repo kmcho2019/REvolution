@@ -1,0 +1,13 @@
+The key insight is that with one-hot encoding, we can leverage the fact that only one state bit is active at any time. This allows us to simplify the next state logic by:
+1. Recognizing that each next state bit only depends on specific current states
+2. Eliminating redundant checks since other state bits are guaranteed to be 0
+3. Directly mapping the state transitions from the table to minimal expressions
+
+For output logic, since it's a Moore machine, we can simply output the D state bit directly.
+
+Simplifications:
+- next_state[0] only comes from A or C when in=0
+- next_state[1] comes from A, B, or D when in=1 (but D is already covered by state[3])
+- next_state[2] comes from B or D when in=0
+- next_state[3] only comes from C when in=1
+- Output is simply state[3]

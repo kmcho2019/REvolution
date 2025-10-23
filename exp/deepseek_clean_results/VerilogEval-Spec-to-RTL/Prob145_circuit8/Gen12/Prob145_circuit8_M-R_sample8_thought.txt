@@ -1,0 +1,18 @@
+After carefully re-examining the waveform, here's a more accurate implementation approach:
+
+1. Key observations:
+   - p acts as a synchronous latch of 'a' during clock high phases, but only when previous conditions are met
+   - q follows p with a one-clock-cycle delay during clock low phases
+   - Both outputs clear when 'a' is 0 during a clock low phase, but independently
+
+2. Refactoring strategy:
+   - Use a state machine approach with clock phase tracking
+   - Implement p as a registered value that updates only when specific conditions are met
+   - Implement q as a delayed version of p that updates on falling edges
+   - Separate the clear conditions for p and q to match waveform behavior
+
+3. Implementation improvements:
+   - Use a state variable to track clock phases
+   - Implement edge-sensitive behavior for both outputs
+   - Maintain independent control of p and q clearing
+   - Ensure proper sequencing between p and q updates

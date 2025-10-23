@@ -1,0 +1,3 @@
+To simplify the design while preserving functionality, we can keep the same approach but avoid storing the entire previous input vector. Instead, store only the bits where the input was previously '1'. Since we only need to detect falling edges (1 to 0 transitions), we track which bits were previously high. On each clock, if reset is active, clear outputs and the previous state. Otherwise, detect falling edges by checking bits that were previously high but are now low, and OR them into the output register to capture the event permanently.
+
+This keeps the design minimal and clear by directly storing the prior high bits and detecting falling edges from them without extra combinational signals or intermediate wires.

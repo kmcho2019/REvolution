@@ -1,0 +1,26 @@
+Refactored Design Strategy:
+
+1. Truth Table Re-analysis:
+   - Keep same minterms (2,7,15) and maxterms (0,1,4,5,6,9,10,13,14)
+   - Don't-cares remain (3,8,11,12) but will be used more carefully
+
+2. Improved SOP Form:
+   - Original minterms: 2(~a~bc~d), 7(~abcd), 15(abcd)
+   - Don't-care 3(~a~bcd) can help simplify term 2 to ~a~bc (covers both 2 and 3)
+   - Don't-care 11(~ab~cd) doesn't help with 7, so keep original ~abcd term
+   - Final SOP: ~a~bc + ~abcd + abcd
+
+3. Improved POS Form:
+   - Original maxterms cover all output=0 cases
+   - Group maxterms by similar patterns:
+     * 0,1: (a|b|c|d) & (a|b|c|~d)
+     * 4,5: (a|~b|c)
+     * 6: (a|~b|~c)
+     * 9,10: (~a|b|d)
+     * 13,14: (~a|~b|d)
+   - No don't-cares used in POS to avoid incorrect coverage
+
+4. Implementation Changes:
+   - Use more precise SOP terms that don't over-cover
+   - POS implementation uses exact maxterms without don't-care optimization
+   - Both forms now strictly match required functionality

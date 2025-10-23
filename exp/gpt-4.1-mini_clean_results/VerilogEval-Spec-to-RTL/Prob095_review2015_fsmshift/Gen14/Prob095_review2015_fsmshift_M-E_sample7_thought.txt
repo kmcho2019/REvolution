@@ -1,0 +1,7 @@
+Implement a 3-bit shift enable counter that starts counting down from 4 immediately on the first rising clock edge after reset is deasserted. Since the problem specifies no external input to trigger the shift enable except reset, the module will assert shift_ena for exactly 4 clock cycles immediately after reset (which is synchronous and active high), and then never assert shift_ena again until another reset.
+
+To do this, create a 3-bit counter that loads 4 when reset is asserted, but holds its value when reset is not asserted. On the next clock cycles after reset deassertion, the counter decrements until zero, with shift_ena asserted whenever counter > 0.
+
+This design avoids any extra inputs and provides the required behavior: on synchronous reset, start a 4-cycle shift enable pulse, then keep shift_ena low until next reset.
+
+All sequential logic triggers on posedge clk with synchronous reset.

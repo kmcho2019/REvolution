@@ -1,0 +1,10 @@
+To solve this problem, we can design a Mealy-type finite state machine (FSM) with three states. Let's denote the states as S0 (initial state), S1, and S2. The FSM will transition through these states based on the input signal x and recognize the sequence "101". The output signal z will be asserted when the sequence is detected.
+
+Here's the state transition and output logic:
+- In state S0, if x is 1, transition to S1.
+- In state S1, if x is 0, transition to S2. If x is 1, stay in S1.
+- In state S2, if x is 1, assert z (since the sequence "101" is detected) and transition to S1. If x is 0, transition to S0.
+
+The FSM will have an asynchronous reset that resets the state to S0 when aresetn is 0.
+
+We will use a 2-bit vector (2 bits are required to represent 3 states) to represent the current state and a case statement to implement the state transitions and output logic.

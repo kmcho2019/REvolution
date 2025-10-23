@@ -1,0 +1,7 @@
+The original solution separately decodes states B, C, E, and F and combines them with w to get next_y1. Since the output Y1 equals next_y1 and is defined as y[1]'s next state bit, we can simplify by directly expressing next_y1 in terms of y bits and w without defining intermediate signals. 
+
+Noting the pattern, next_y1 = (~y2 & ~y1 & y0) | (y2 & ~y1 & y0) | ((~y2 & y1 & ~y0 | y2 & ~y1 & ~y0) & w)
+
+We can combine terms and implement this logic directly as a single expression, avoiding intermediate wires for state decoding, thus reducing code size and logic complexity.
+
+Output Y1 is assigned to this simplified expression, maintaining the exact functionality.

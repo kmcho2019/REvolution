@@ -1,0 +1,15 @@
+The current NAND-only implementation is already quite efficient, but we can explore a different approach that might offer better PPA by:
+1. Observing the truth table shows that f is true when:
+   - x2 is true and x3 is false (rows 3,4), OR
+   - x1 is true and x3 is true (rows 6,8)
+2. This can be expressed as: f = (~x3 & x2) | (x3 & x1)
+3. This direct implementation uses fewer gates (2 ANDs and 1 OR) compared to the NAND-only version (3 NANDs)
+4. In many standard cell libraries, this implementation may have better PPA since:
+   - It uses fewer gates overall
+   - The critical path is still just 2 levels (AND followed by OR)
+   - The OR gate can be efficiently implemented in CMOS
+
+This change should:
+- Reduce area by using fewer gates
+- Potentially improve speed due to shorter critical path
+- Maintain or reduce power consumption

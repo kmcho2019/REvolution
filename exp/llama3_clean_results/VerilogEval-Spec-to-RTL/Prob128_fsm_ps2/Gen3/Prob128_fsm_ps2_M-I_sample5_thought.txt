@@ -1,0 +1,11 @@
+The provided solution has a logical error in the state transition logic and the 'done' signal assertion. To improve the solution, we need to correct the state transition logic to accurately detect message boundaries based on the PS/2 mouse protocol. 
+
+We will modify the state transition logic to only transition from the idle state (state 0) to the first byte state (state 1) when a byte with in[3]=1 is received. Then, we will transition from state 1 to state 2, and from state 2 to state 3, regardless of the input. 
+
+The 'done' signal will be asserted in the cycle immediately after the third byte is received, which corresponds to the state 3. After asserting the 'done' signal, we will transition back to the idle state (state 0).
+
+To optimize the design for better PPA metrics, we will use a 2-bit counter to keep track of the number of bytes received after seeing a byte with in[3]=1. This will reduce the number of states and transitions in the FSM.
+
+Additionally, we will use non-blocking assignments in the always_ff block to avoid potential issues with timing and clock skew.
+
+To further optimize the design, we can consider using asynchronous reset to reduce power consumption. However, this may require additional logic to ensure correct reset behavior.

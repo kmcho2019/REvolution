@@ -1,0 +1,14 @@
+Simplify the original fully combinational design by using a multi-cycle approach controlled by a small state machine using the 3-bit counter. 
+
+Key points:
+- On reset, counter=0.
+- Cycle 1: extract fields, detect special cases, prepare mantissas and exponents.
+- Cycle 2: multiply mantissas and compute preliminary exponent and sign.
+- Cycle 3: normalize, round, adjust exponent, handle overflow/underflow, generate output.
+- This divides complex logic over multiple cycles reducing combinational path delay per cycle.
+- Use internal regs to hold intermediate values like mantissas, exponent, product, rounding bits.
+- Keep the IEEE-754 special case handling logic straightforward, same as before but spread over cycles.
+- Output is registered at the last cycle.
+- This approach reduces instantaneous combinational logic and allows easier timing closure, with latency of 3 clock cycles.
+
+This multi-cycle controlled approach balances complexity and functionality with a simple counter-based control and registers holding intermediate results.

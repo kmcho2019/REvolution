@@ -1,0 +1,11 @@
+The key issue is the interpretation of the asynchronous reset as "positive edge triggered asynchronous resetting," which is unusual since asynchronous resets are typically level-sensitive. The existing code uses a level-sensitive asynchronous reset (`posedge areset` in sensitivity list), which resets whenever `areset` is high, not only on its positive edge. If the testbench expects a reset that triggers only on the rising edge (a pulse), the design needs to model reset as an asynchronous pulse-triggered event, i.e., reset the state only on the *rising edge* of `areset`.
+
+To fix this, I will:
+
+- Implement a flip-flop for `areset` to detect the rising edge of `areset`.
+- Use an internal signal to represent the reset pulse when a rising edge on `areset` is detected.
+- Use this reset pulse as a synchronous reset input in the state register always block, removing asynchronous reset from sensitivity list. This aligns the reset behavior with the stated requirement of "positive edge triggered asynchronous resetting" in the problem.
+- This preserves correct state initialization on reset pulse while avoiding continuous reset assertion.
+- Keep the rest of the FSM logic unchanged since it correctly implements the state transitions and outputs.
+  
+This approach models the reset as an asynchronous event (rising edge of `areset`), but applies it synchronously in the FSM to avoid metastability or glitches, matching the requirement. This subtlety is often important in hardware designs where resets are pulses rather than level asserts.

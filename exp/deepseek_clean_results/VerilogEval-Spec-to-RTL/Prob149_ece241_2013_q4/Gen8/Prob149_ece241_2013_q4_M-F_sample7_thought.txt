@@ -1,0 +1,22 @@
+The key improvements needed are:
+
+1. **Reset Implementation**: Make reset truly synchronous and ensure it properly initializes all outputs to 1 (as specified for long-term low water level).
+
+2. **Sensor State Handling**: 
+   - Properly decode all sensor combinations (only 4 valid patterns)
+   - Explicitly handle invalid sensor patterns by maintaining current state
+
+3. **Rising Edge Detection**:
+   - Store previous sensor state
+   - Detect rising level by comparing current and previous states
+   - Only activate dfr when water level is rising and not at highest level
+
+4. **Output Logic**:
+   - Separate combinational logic for nominal flow rates
+   - Clear mapping between sensor states and output patterns
+   - Ensure dfr is only active during rising transitions
+
+5. **State Management**:
+   - Remove unnecessary state encoding
+   - Directly use sensor inputs to determine outputs
+   - Maintain clean separation between sequential and combinational logic

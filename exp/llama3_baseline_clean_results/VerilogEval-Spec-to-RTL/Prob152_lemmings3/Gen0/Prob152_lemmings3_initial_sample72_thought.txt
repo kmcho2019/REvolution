@@ -1,0 +1,9 @@
+To implement the TopModule as a Moore state machine, we first need to define the states and transitions based on the given behavior. The Lemming can be in one of the following states: walking left, walking right, falling, or digging. 
+
+When the Lemming is walking, it can switch directions if it hits an obstacle (bump_left or bump_right). If the ground disappears, it starts falling. While falling, being bumped does not affect the walking direction. 
+
+The Lemming can start digging if it is currently walking on the ground and dig=1. It continues digging until it reaches the other side (ground=0), at which point it falls and then continues walking in its original direction once it hits the ground again.
+
+The state machine will have four states: IDLE_LEFT (initial state, walking left), IDLE_RIGHT (walking right), FALLING, and DIGGING. The transitions between these states will be based on the input signals (bump_left, bump_right, ground, dig).
+
+We will use a positive edge-triggered asynchronous reset (areset) to reset the state machine to the initial state (IDLE_LEFT).

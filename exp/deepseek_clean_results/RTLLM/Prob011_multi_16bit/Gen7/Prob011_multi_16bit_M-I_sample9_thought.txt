@@ -1,0 +1,23 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the accumulator addition by splitting into two stages (CALC1 and CALC2)
+   - Use one-hot encoding for state machine to reduce decoding delay
+   - Increase count width to 5 bits to properly handle 16 iterations
+
+2. Power Optimization:
+   - Add clock gating for shifted_b calculation
+   - Implement output register with enable to prevent unnecessary switching
+   - Use state-aware computation gating
+
+3. Area Optimization:
+   - Reduce shifter width from 32-bit to 17-bit (16-bit + 1 extra)
+   - Simplify state machine logic
+   - Remove redundant registers
+
+Key Changes:
+- Two-stage pipelined accumulation
+- Proper 5-bit counter
+- Optimized shifter
+- Clock gating implementation
+- Output register with enable
+- One-hot state encoding

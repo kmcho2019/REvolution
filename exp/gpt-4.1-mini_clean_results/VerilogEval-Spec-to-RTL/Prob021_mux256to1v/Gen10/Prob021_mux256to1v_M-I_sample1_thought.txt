@@ -1,0 +1,23 @@
+The original design uses a 2-level hierarchy with 16-to-1 multiplexers to build the 256-to-1 4-bit mux. While modular and clear, a 2-level mux tree with 16-to-1 muxes at each stage leads to a relatively large mux input fan-in per module and a 2-level critical path, which may impact timing and power.
+
+To optimize for better power and performance (PPA), I propose to:
+
+1. Use smaller 4-to-1 4-bit multiplexers as building blocks instead of 16-to-1 muxes. This reduces mux input fan-in, which can reduce delay and power in synthesis.
+2. Build a 4-level mux tree because 4^4 = 256:
+   - Level 1: 64 x 4-to-1 muxes selecting among 4 inputs each (4 * 64 = 256 inputs)
+   - Level 2: 16 x 4-to-1 muxes selecting among outputs of Level 1
+   - Level 3: 4 x 4-to-1 muxes selecting among outputs of Level 2
+   - Level 4: 1 x 4-to-1 mux selecting among outputs of Level 3 to produce final output
+3. Partition the 8-bit sel into four 2-bit slices corresponding to each level's mux selector:
+   - sel[1:0] for level 1
+   - sel[3:2] for level 2
+   - sel[5:4] for level 3
+   - sel[7:6] for level 4
+4. The smaller mux size reduces combinational complexity, potentially improving delay and power.
+5. Although this introduces more hierarchy levels (and thus potentially more mux stages in critical path), smaller input fan-in muxes are generally more efficient and easier for synthesis to optimize.
+6. The module will remain fully combinational with no registers for simplicity.
+7. Use a parameterized 4-to-1 4-bit mux submodule for reuse and clarity.
+
+This hierarchical approach balances fan-in per mux and depth of the mux tree, likely reducing total gate count and power consumption while maintaining reasonable timing.
+
+I will implement the parameterized 4-to-1 4-bit mux and instantiate the mux tree accordingly.

@@ -1,0 +1,13 @@
+To simplify the solution, we should re-examine the Karnaugh map and focus on creating a more direct mapping between the inputs 'cd' and the outputs 'mux_in'. 
+
+The main idea is to use the conditional operator (?:) in Verilog to implement the logic directly from the Karnaugh map. 
+
+For 'ab' equal to '00', the output should be '1' when 'cd' is '10', and '0' otherwise. This can be achieved with the expression 'cd == 2'b10 ? 1 : 0'.
+
+For 'ab' equal to '01', the output should always be '0'.
+
+For 'ab' equal to '11', the output should be '1' when 'cd' is '01', '11', or '10', and '0' otherwise. This can be achieved with the expression 'cd != 2'b00 ? 1 : 0'.
+
+For 'ab' equal to '10', the output should be '1' when 'cd' is '10' or '11', and '0' otherwise. This can be achieved with the expression 'cd[1] ? 1 : 0'.
+
+We can use these expressions to assign the values to 'mux_in' directly.

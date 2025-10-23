@@ -1,0 +1,5 @@
+To optimize power and area slightly, the 100-bit mux can be partitioned into smaller 10-bit chunks and muxed individually using generate blocks. This can sometimes enable the synthesis tool to perform better resource sharing or optimizations at smaller granularities. Additionally, implementing the mux using bitwise operations can help tools recognize simpler multiplexing logic. 
+
+However, given the simple nature of this module and the current good metrics, the impact may be minimal. Still, generating smaller mux blocks makes the design more modular and could aid in incremental compilation or partial re-synthesis in some flows.
+
+I will implement a generate loop to mux 10 10-bit segments instead of a full 100-bit mux at once. This could marginally improve timing by breaking up the long vector into smaller parts and may yield better area or power by enabling the tool to optimize at a finer granularity.

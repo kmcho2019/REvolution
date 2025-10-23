@@ -1,0 +1,3 @@
+We can simplify the design by merging both edge-triggered flip-flops into a single module with a parameter or unified always block. However, since Verilog does not allow dual-edge sensitivity, the cleanest way is to use a single always block triggered on posedge clk that updates an internal register with the current 'd' and, simultaneously, a negative-edge triggered register capturing the data as well.
+
+Then, the output can be assigned to the register whose clock edge just passed using a simple mux controlled by clk level. For simplicity and reduced module count, implement both flip-flops inside the top module as separate registers clocked on posedge and negedge respectively. This reduces hierarchy and code size while maintaining functionality.

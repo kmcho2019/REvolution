@@ -1,0 +1,11 @@
+The original design is modular and clean, with two 8-bit ripple carry adders cascaded to form a 16-bit adder. While functionally correct, the ripple carry approach causes carry propagation delay through all bits, limiting the maximum frequency.
+
+Improvement strategy:  
+- Implement a carry lookahead adder (CLA) inside the 8-bit adder to reduce the carry propagation delay within the block. This will significantly improve timing by computing carries in parallel rather than ripple.  
+- Maintain the modular hierarchy: keep two 8-bit adders instantiated inside the 16-bit adder. This keeps area manageable and code reusable.  
+- Use vector assignments for sum bits to reduce verbosity without losing clarity.  
+- The carry lookahead logic will generate all internal carry signals simultaneously, improving speed.  
+- This change improves the critical path from linear (ripple) to logarithmic within the 8-bit adder and will positively impact overall 16-bit adder delay and power.  
+- Keep input/output ports and naming consistent for compatibility.  
+
+Overall, by enhancing the 8-bit adder with carry lookahead, the 16-bit adder's performance will be improved with minimal area overhead while maintaining modularity and clarity.

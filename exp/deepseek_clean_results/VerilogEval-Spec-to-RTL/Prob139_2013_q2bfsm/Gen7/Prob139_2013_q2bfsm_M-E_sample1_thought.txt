@@ -1,0 +1,11 @@
+My novel approach uses a combination of shift registers and counters to implement the sequence detection and timeout logic more efficiently. Here's the key innovation:
+
+1. **Shift Register for Sequence Detection**: Instead of using states to detect the 1-0-1 sequence, I'll use a 3-bit shift register that tracks the last three values of x. This simplifies the sequence detection to a simple pattern match.
+
+2. **Smart Counter for Timeout**: For the y monitoring phase, I'll use a 2-bit counter that automatically times out after exactly two cycles if y doesn't become 1. This eliminates the need for complex state transitions.
+
+3. **Output Control Logic**: The outputs f and g will be controlled by dedicated flags that are set/cleared based on the current operation phase (reset pulse, sequence detection, or y monitoring).
+
+4. **State Machine Simplification**: The FSM will have only three states: RESET, ACTIVE, and FINAL. The shift register and counter handle the detailed timing requirements.
+
+This architecture reduces the state machine complexity while maintaining precise timing control through the shift register and counter.

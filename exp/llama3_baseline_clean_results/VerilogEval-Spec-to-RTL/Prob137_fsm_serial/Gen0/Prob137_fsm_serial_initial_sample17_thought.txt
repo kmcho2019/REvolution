@@ -1,0 +1,8 @@
+To solve this problem, we can design a finite state machine (FSM) with the following states:
+1. IDLE: The initial state where the FSM waits for a start bit (0).
+2. START: After detecting a start bit, the FSM transitions to this state and starts counting the data bits.
+3. DATA: The FSM stays in this state for 8 clock cycles, collecting the data bits.
+4. STOP: After collecting all data bits, the FSM transitions to this state to verify the stop bit (1).
+If the stop bit is valid, the FSM goes back to IDLE; otherwise, it stays in STOP until a valid stop bit is received.
+
+We'll use a counter to keep track of the data bits and a flag to indicate when a byte is received.

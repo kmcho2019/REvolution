@@ -1,0 +1,16 @@
+To implement a Mealy FSM that detects the sequence "10011" in a continuous bit stream, we need to:
+1. Define states representing the progress through the sequence (S0 to S5)
+2. Transition between states based on the current state and input
+3. Output MATCH=1 only when we reach the final state (S5) with the correct input
+4. Handle reset to return to initial state (S0)
+5. Support overlapping sequences (after a match, we can immediately start detecting the next sequence)
+
+The FSM will have these states:
+- S0: Initial state (no match)
+- S1: Received '1'
+- S2: Received '10'
+- S3: Received '100'
+- S4: Received '1001'
+- S5: Received '10011' (output MATCH=1 here)
+
+On each clock edge, we check the input and transition states accordingly.

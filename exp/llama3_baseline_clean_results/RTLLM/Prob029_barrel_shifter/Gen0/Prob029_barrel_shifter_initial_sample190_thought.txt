@@ -1,0 +1,5 @@
+To implement the barrel shifter module, we first need to define the submodule `mux2X1` that selects between two inputs based on a select signal. Then, we use these multiplexers in stages to achieve the desired shifts based on the control signal. The shifts are performed in a hierarchical manner, starting with the largest shift amount (4 positions) down to the smallest (1 position). Each stage's output is used as the input for the next stage if further shifting is required.
+
+The top-level module, `barrel_shifter`, will instantiate the necessary `mux2X1` submodules and connect them according to the shifting logic determined by the `ctrl` signal. This approach allows for efficient rotation of the input bits in a way that minimizes the number of operations and logic gates required.
+
+We will use Verilog's built-in bitwise operators and the conditional operator (`?:`) to simplify the implementation of the `mux2X1` submodule, making it easier to understand and maintain.

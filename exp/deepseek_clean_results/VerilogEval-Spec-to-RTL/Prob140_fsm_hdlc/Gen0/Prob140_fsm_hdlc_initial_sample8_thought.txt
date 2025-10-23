@@ -1,0 +1,14 @@
+To implement the HDLC framing decoder, we'll need a Moore FSM that tracks consecutive 1s and detects the specific patterns. The FSM will have states representing:
+1. Initial state (after reset or 0 input)
+2. States for counting consecutive 1s (1 to 7+)
+3. Special states for flag and error detection
+
+The FSM transitions between states based on the input bit:
+- On 0: Reset to initial state
+- On 1: Progress through counting states
+At each state, we'll check if we've reached:
+- 5 consecutive 1s followed by 0 (discard case)
+- 6 consecutive 1s followed by 0 (flag case)
+- 7+ consecutive 1s (error case)
+
+Outputs are generated based on current state and will be registered to ensure they last one full cycle.

@@ -1,0 +1,20 @@
+Refactored approach with improved edge detection and state maintenance:
+
+1. **Separate Edge Detection Logic**:
+   - Use continuous assignment for falling edge detection (prev_in & ~in)
+   - Makes the edge detection explicit and combinational
+
+2. **Independent Bit Capture**:
+   - Each bit maintains its own captured state
+   - Uses bitwise OR to combine new detections with existing captures
+   - Ensures bits don't interfere with each other
+
+3. **Clear Initialization**:
+   - Explicit reset handling for both registers
+   - Prevents false detections at startup
+
+Key improvements:
+- More modular structure with separate edge detection and capture logic
+- Proper per-bit isolation in the capture register
+- Clearer initialization behavior
+- Maintains same functionality but with better structure

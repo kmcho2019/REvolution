@@ -1,0 +1,24 @@
+The original design is already efficient, with a single 10-bit register, combinational decrement, and zero detection. To improve PPA:
+
+1. **Performance:**  
+   - Reduce critical path by removing the subtraction when counter=1, since decrementing zero is not needed.  
+   - Compute next counter value with logic that avoids subtractor delay if counter is zero or one.
+
+2. **Power:**  
+   - More aggressive clock gating: enable the register only when load=1 or counter>1 (not just counter!=0), because decrementing from 1 to 0 changes the counter but from 0 it should not. This prevents unnecessary toggling at terminal count zero.
+
+3. **Area:**  
+   - Replace the subtract operation with a decrementer based on simple combinational logic, using logic to clear counter to zero once it reaches zero.
+
+Implementation:  
+- Generate next_counter by:  
+  - If load=1, next_counter = data  
+  - Else if counter > 0, next_counter = counter - 1  
+  - Else, next_counter = counter (zero)  
+
+- Clock enable = load | (counter > 0)  
+- This stops toggling once counter=0 and load=0.  
+
+This reduces switching activity and critical path delay, improving power and timing with minimal area impact. The zero detection uses a NOR of bits, minimal area.
+
+The module still uses a single D flip-flop (the 10-bit counter register).

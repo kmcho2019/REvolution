@@ -1,0 +1,13 @@
+The original hierarchical 4-to-1 mux tree is clear and modular but introduces multiple mux stages, increasing combinational delay, area, and dynamic power due to gate switching at each level.
+
+To optimize for better power, performance, and area (PPA), I will leverage Verilog's built-in indexed vector select: out = in[sel]. This single line combinational assignment directly selects the required input bit indexed by sel. Modern synthesis tools map this construct to highly optimized mux structures, often better than manually built mux trees.
+
+Advantages:
+- Performance: Single-level mux reduces critical path delay.
+- Power: Reduces switching nodes and gates compared to multi-level mux trees.
+- Area: No extra intermediate signals or mux instances, lowering gate count and routing complexity.
+- Simplicity: Cleaner, easier to maintain, and synthesis-friendly code.
+
+This approach is the best PPA trade-off for a purely combinational 256-to-1 mux with a vector input.
+
+The module interface remains the same. The entire functionality is implemented with one simple assign statement.

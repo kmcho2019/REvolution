@@ -1,0 +1,13 @@
+Fuse the advantages of both examples by using a binary-encoded 3-bit FSM to minimize area and simplify combinational logic, combined with the clear, glitch-free done signal pulse of example 1.
+
+Implement the shift register as a right shift inserting new bits into the MSB so that LSB-first serial data is accumulated correctly (shift_reg[0] holds LSB), which is more intuitive and common for serial protocols.
+
+Enable the shift register and bit counter only during the RECEIVE state to reduce switching power.
+
+Assert done synchronously for exactly one clock cycle in the CHECK_STOP state only when a valid stop bit (1) is detected, preventing glitches.
+
+Use synchronous active-high reset to initialize all state and registers.
+
+Maintain the WAIT_STOP state to handle framing errors by waiting for the line to go idle (1) before returning to IDLE.
+
+Overall, this approach balances area efficiency (binary FSM), power optimization (enable gating for shift/count), timing clarity (done pulse), and correctness (shift direction and state transitions).

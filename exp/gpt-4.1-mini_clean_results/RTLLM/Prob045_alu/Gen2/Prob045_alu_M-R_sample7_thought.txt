@@ -1,0 +1,9 @@
+Refactor the ALU to use continuous assignments (`assign`) and intermediate wires for the result and flags, eliminating the combinational always blocks. This approach leverages structural logic and reduces sequential blocks, potentially improving synthesis clarity and enabling better optimization. 
+
+Key points:
+- Compute all intermediate arithmetic and logic results upfront using wires.
+- Use combinational ternary operators (?:) and case statements inside a function or generate block to select the final result and flags based on `aluc`.
+- Derive carry and overflow flags directly from arithmetic results without always blocks.
+- Implement the `flag` output combinationally, setting it for SLT/SLTU and 0 otherwise (no high impedance).
+- Compute `zero` and `negative` flags as continuous assignments.
+- By removing the always block, the design relies on pure combinational logic expressed with assignments, which might reduce inferred latches and improve timing.

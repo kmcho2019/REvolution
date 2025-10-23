@@ -1,0 +1,9 @@
+To fix the simulation mismatches and ensure correct functionality, the key change is to assign the output register `out` on every clock cycle, regardless of whether a new falling edge was detected. This avoids inferred latches or incomplete assignments in simulation.
+
+Specifically, inside the `always` block, after reset, we always update `out` as the OR of the previous `out` and the newly detected falling edges (`falling_edge`), ensuring that once a bit is set it remains set until reset.
+
+Also, the initialization of `prev_in` on reset to zero is acceptable, as the detection logic only captures falling edges going forward.
+
+This approach keeps the original design intent intact but makes the sequential logic fully specified every cycle, improving simulation reliability and synthesis results.
+
+Overall, the updated design captures the 1-to-0 transitions per bit, sets the output bits permanently until reset, and ensures proper register assignments every cycle.

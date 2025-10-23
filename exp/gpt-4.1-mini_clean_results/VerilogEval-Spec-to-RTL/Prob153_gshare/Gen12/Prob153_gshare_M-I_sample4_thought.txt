@@ -1,0 +1,25 @@
+To fix the mismatches and strictly follow the spec timing, I will keep the dual-GHR approach but explicitly separate the "prediction_ghr" used for indexing during prediction (which must not change during the cycle) and "committed_ghr" that reflects the real global history after training and misprediction recovery.
+
+Key improvements and clarifications:
+
+- The `predict_history` output will always be the `prediction_ghr` value *before* updating in the cycle, exactly as used for the prediction index. This satisfies the timing spec that the output history matches the index used.
+
+- Prediction outputs and train inputs can come simultaneously. Training has priority to update GHR if mispredict. So at clock edge:
+
+    - If mispredict training valid, GHRs recover to `train_history` (flush recovery).
+
+    - Else if prediction valid (and no flush), update `prediction_ghr` by shifting in predicted outcome.
+
+    - Always update `committed_ghr` to reflect the last correct history after training or recovery.
+
+- The pattern history table (PHT) reads are purely combinational and indexed by XOR of PC and *the history at prediction time* (`prediction_ghr`).
+
+- Training updates the PHT at clock edge, based on `train_pc ^ train_history`. This means the PHT entry updated corresponds exactly to the history known at training time, matching the real past.
+
+- Since prediction output reads the PHT before training updates, the prediction always sees old counter state, matching the spec's timing diagram.
+
+- Use a temporary variable for new GHRs to make priority explicit and avoid glitches.
+
+- Initialize PHT entries to weakly not taken (WN = 2'b01).
+
+This design preserves the exact timing and precedence required, eliminates ambiguity or race conditions, and makes the prediction outputs and history output stable and consistent with their PHT access and updates. This should fix the mismatches seen previously.

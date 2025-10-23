@@ -1,0 +1,15 @@
+Novel Approach:
+1. Instead of deriving Boolean expressions directly, let's implement the K-map using a hierarchical multiplexer structure.
+2. For each mux_in[x], we'll use 2-to-1 multiplexers to select between possible values based on the K-map patterns.
+3. Key observations:
+   - mux_in[1] is always 0 (no logic needed)
+   - mux_in[0] and mux_in[3] have similar patterns (mostly 1s with some exceptions)
+   - mux_in[2] is simply c & d
+4. Implementation strategy:
+   - mux_in[0]: Use d to select between ~c (when d=0) and 1 (when d=1)
+   - mux_in[3]: Use d to select between 1 (when d=0) and c (when d=1)
+   - This captures all required cases while minimizing hardware
+5. Benefits:
+   - Uses only 3 multiplexers (2 for mux_in[0], 1 for mux_in[3])
+   - Maintains correct functionality for all cases
+   - Novel approach compared to direct Boolean implementation

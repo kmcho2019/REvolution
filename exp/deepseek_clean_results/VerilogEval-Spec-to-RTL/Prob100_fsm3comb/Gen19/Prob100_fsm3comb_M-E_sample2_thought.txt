@@ -1,0 +1,12 @@
+Novel Architecture Idea: Bit-Sliced State Transition
+Instead of using a traditional case statement, we can implement the state transitions using bit-sliced logic that treats each state bit independently. This approach:
+1. Decomposes the 2-bit state into individual bits (state[1] and state[0])
+2. Computes each next_state bit separately using Boolean expressions derived from the state table
+3. Uses the same output logic (state == D) but calculates it using the state bits directly
+4. Eliminates the need for a case statement, potentially reducing area
+
+The key insight is that we can express each next_state bit as a function of current state bits and input:
+- next_state[1] = (state == C & ~in) | (state == D & ~in)
+- next_state[0] = (state == A & in) | (state == B & in) | (state == D & in)
+
+This approach may offer better optimization opportunities for synthesis tools as it breaks down the problem into smaller, independent logic blocks.

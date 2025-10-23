@@ -1,0 +1,25 @@
+The original design uses a one-hot encoding with 3 flip-flops to represent 4 states, which simplifies output logic but uses more registers and potentially increases power and area. The timing slack is slightly negative, likely due to the one-hot combinational logic and priority checks.
+
+To optimize PPA, I'll switch the FSM to a binary-encoded 2-bit state representation for the 4 states:
+- 2'b00 = A (idle)
+- 2'b01 = B (grant device 0)
+- 2'b10 = C (grant device 1)
+- 2'b11 = D (grant device 2)
+
+This reduces flip-flop count from 3 to 2, decreasing area and power. It also reduces combinational logic complexity, which can help timing.
+
+For output logic, since only one device is granted at a time, assign g accordingly:
+- g = 3'b001 in B
+- g = 3'b010 in C
+- g = 3'b100 in D
+- g = 3'b000 in A
+
+Implement synchronous active-low reset to state A.
+
+Next state logic:
+- From A: priority check on requests r[0], r[1], r[2], go to corresponding grant state; else remain in A.
+- From grant states: stay if respective request remains asserted; else go to A.
+
+Use separate always blocks for next state logic (combinational) and state register (sequential). Use non-blocking assignments in sequential block and blocking in combinational block.
+
+This encoding reduces register and combinational logic count, improving power, area, and timing while preserving functionality.

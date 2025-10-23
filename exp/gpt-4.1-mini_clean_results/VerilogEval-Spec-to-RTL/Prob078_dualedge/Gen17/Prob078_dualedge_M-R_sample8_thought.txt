@@ -1,0 +1,8 @@
+Refactor the dual-edge flip-flop by using two independent positive-edge triggered flip-flops clocked by the main clock and its inverted form generated internally through a clock enable signal. Instead of using explicit negedge sensitivity, generate a derived clock enable signal that pulses on the negative edge. This is done by sampling the inverted clock on the positive edge, creating a valid enable for the "negative edge" flip-flop without using negedge sensitivity. The outputs of these flip-flops are then muxed continuously by the clock level.
+
+This approach avoids negative-edge sensitivity and explicit negedge clocks, uses only positive edge-triggered flip-flops (fully FPGA friendly), and replaces the separate negedge flip-flop by a posedge triggered FF with a clock enable toggled appropriately. The design is synthesizable, reduces explicit negedge constructs, and keeps the functional behavior intact.
+
+In summary:
+- Replace negedge FF with posedge FF clocked by clk but enabled only on negative edge detected through sampling.
+- Keep posedge FF as is.
+- Continuous assignment mux output based on clock level.

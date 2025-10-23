@@ -1,0 +1,13 @@
+To design a superior dual-edge triggered flip-flop that fuses the best ideas from both examples:
+
+- Use two flip-flops: one positive-edge triggered, one negative-edge triggered, ensuring correct dual-edge sampling of input `d`.
+- Replace the continuous combinational mux selecting `q_pos` or `q_neg` with a stable transparent latch controlled by clock level, as in Example 1, to reduce glitches and switching noise on output.
+- Implement the transparent latch with simple level-sensitive behavior on the clock signal:
+  - When clk=1, latch transparently passes `q_pos` to output.
+  - When clk=0, latch transparently passes `q_neg` to output.
+- This latch-based muxing avoids the glitch and power penalties of purely combinational mux controlled by asynchronous signals.
+- Maintain simple, synthesizable, and modular code structure for FPGA friendliness.
+- Use non-blocking assignments and clear module separation for maintainability.
+- This fusion approach combines the glitch-minimizing latch mux of Example 1 with the clean structural clarity and simplicity of Example 2, balancing performance, power, and area optimally.
+
+This design will produce a dual-edge triggered flip-flop behavior without using illegal sensitivity lists or complex delay elements, with reduced glitching and power compared to a purely combinational mux.

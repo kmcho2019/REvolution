@@ -1,0 +1,14 @@
+Fuse the best ideas from both examples by keeping the clean, synthesis-friendly continuous assignment from the reg array for combinational read output, using a wire output port (no reg) to improve timing and simplify logic. 
+
+Additionally, enhance the design by using synthesis attributes to explicitly guide the tool to infer a ROM implemented in block RAM (or dedicated ROM macros) when supported, improving area and power efficiency without changing functional behavior.
+
+Maintain the initial block to initialize meaningful data only for addresses 0 through 3, allowing uninitialized locations to default to zero (which synthesis tools usually infer efficiently).
+
+Add a vendor-neutral memory attribute (* rom_style = "block" *) which many synthesis tools recognize to optimize ROM implementation as block RAM or ROM macros, lowering power and area further while preserving combinational read behavior.
+
+This fusion improves:
+- Performance by enabling optimized memory inference rather than LUT-based distributed memory.
+- Power by leveraging dedicated memory blocks optimized for read-only use.
+- Area by using efficient block ROM macros instead of LUTs or large distributed arrays.
+
+This design remains fully combinational, read-only, simple to understand, and synthesizable, maximizing PPA benefits through synthesis directives and clean RTL idioms.

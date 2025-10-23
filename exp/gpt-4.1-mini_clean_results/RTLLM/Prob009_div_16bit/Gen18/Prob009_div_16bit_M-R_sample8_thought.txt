@@ -1,0 +1,8 @@
+Refactor the design to implement the same 16-bit by 8-bit division algorithm using sequential logic with a simple FSM inside a single always block. 
+- Use registers to hold intermediate remainder and quotient during the iterative division process.
+- Use a counter to track the iteration step from MSB to LSB.
+- Perform one subtract and comparison per clock cycle to build the quotient and remainder step-by-step.
+- This sequential approach reduces the combinational logic depth drastically, improving timing and power.
+- Add a start and done signal (internally generated) to indicate division completion; outputs latch the final quotient and remainder.
+- The inputs are synchronously loaded into internal registers for stability during division.
+- This approach contrasts the original fully combinational unrolled method, trading off latency for better PPA.

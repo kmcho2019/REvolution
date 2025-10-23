@@ -1,0 +1,13 @@
+To solve this problem, we need to design a finite state machine (FSM) that can track the current state of the water level based on the sensor inputs and the previous state. The FSM will then use this information to determine the correct output for the flow rate valves. 
+
+We can start by defining the states of the FSM based on the water level. The states will be:
+- Above s[2]: all sensors asserted
+- Between s[2] and s[1]: s[0] and s[1] asserted
+- Between s[1] and s[0]: s[0] asserted
+- Below s[0]: no sensors asserted
+
+We also need to consider the previous state of the FSM to determine if the water level is rising or falling. If the water level is rising, we need to open the supplemental flow valve.
+
+We can use a combinational logic to determine the output of the FSM based on the current state and the previous state.
+
+We also need to include an active-high synchronous reset that resets the state machine to a state equivalent to if the water level had been low for a long time.

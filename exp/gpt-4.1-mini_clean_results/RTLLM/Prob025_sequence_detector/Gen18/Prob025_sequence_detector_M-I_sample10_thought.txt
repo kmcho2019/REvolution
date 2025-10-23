@@ -1,0 +1,26 @@
+To optimize the sequence detector FSM for better PPA, I will apply the following improvements:
+
+1. **State Encoding Optimization:**
+   - Use binary encoding with 3 bits as before, but encode states to minimize combinational transitions and logic.
+   - Reassign states to minimize bit toggling (e.g., Gray code-like transitions if possible).
+
+2. **Separate Output Logic as Combinational:**
+   - Instead of updating `sequence_detected` only on state transitions, derive it combinationally from the current state. 
+   - This may improve timing by reducing the critical path through the sequential logic.
+
+3. **Use a Moore FSM with registered state and combinational output:**
+   - Keeps output stable and glitch-free, but makes output update faster and simplifies timing.
+
+4. **Minimize next-state logic complexity:**
+   - Simplify next_state transitions and avoid redundant conditions.
+   - Use blocking assignments carefully in combinational always block.
+
+5. **Make reset synchronous and active low as before for consistent timing and synthesis support.**
+
+6. **Add one-hot style output detection signal combinationally to decouple output timing from next_state logic.**
+
+These changes will reduce combinational logic in the critical path, potentially improve timing (lower WNS), reduce power by minimizing logic toggling, and keep area about the same or slightly improved.
+
+I will keep the same state names but assign states explicitly to 3-bit values optimized for minimal bit changes between consecutive states.
+
+Overall, the design remains synthesizable and robust for sequence detection with overlapping sequences.

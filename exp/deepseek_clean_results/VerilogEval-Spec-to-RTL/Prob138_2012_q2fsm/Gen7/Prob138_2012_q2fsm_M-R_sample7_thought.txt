@@ -1,0 +1,16 @@
+I'll refactor the solution with these key changes:
+
+1. State Encoding: Switch to one-hot encoding (6 bits for 6 states) which often yields better timing in FPGAs due to simpler decoding logic.
+
+2. Output Logic: Keep z as a direct bit from the state encoding (now using one-hot's property where E and F will have dedicated bits).
+
+3. State Transitions: Restructure the state machine to use continuous assignments for next_state logic instead of a case statement, making the transitions more explicit.
+
+4. Reset Handling: Maintain synchronous reset but initialize all one-hot bits to 0 except state A.
+
+Key advantages:
+- One-hot typically has better timing as only one bit changes per transition
+- Each state's transition logic becomes independent and parallel
+- Output z can be directly assigned from the state bits
+- Clear mapping between state and its encoding
+- Maintains synchronous reset behavior

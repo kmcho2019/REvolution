@@ -1,0 +1,21 @@
+I'll refactor the solution to use a more explicit state machine representation while maintaining the same functionality. Key changes:
+
+1. State Encoding:
+   - Replace the counter with explicit named states (IDLE, COUNT1, COUNT2,...)
+   - This makes the design more readable and maintainable
+   - Still uses minimal state encoding (only 8 states needed)
+
+2. Output Generation:
+   - Move output logic to continuous assignments (assign statements)
+   - This separates state transition logic from output generation
+   - Makes timing paths clearer to synthesis tools
+
+3. Reset Handling:
+   - Maintain synchronous reset behavior
+   - Initialize to IDLE state (equivalent to count=0)
+
+4. Advantages:
+   - More explicit state transitions (easier to modify/extend)
+   - Clear separation of state and output logic
+   - Still maintains Moore machine properties
+   - Potentially better for synthesis optimization

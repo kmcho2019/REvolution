@@ -1,0 +1,22 @@
+Design a multi-bit synchronizer using a handshake-like flip-flop toggle approach to minimize metastability and reduce direct data crossing delay:
+
+1. clk_a domain:
+   - Use an asynchronous reset (arstn) to clear all registers.
+   - On every clk_a rising edge, when data_en is high, latch data_in into a data_reg and toggle a data_toggle bit to signal new data available.
+   - Latch data_en into en_data_reg for stable reference.
+
+2. clk_b domain:
+   - Asynchronously reset (brstn).
+   - Synchronize the data_toggle signal from clk_a domain to clk_b domain through a 2-flip-flop synchronizer (toggle_sync_1 and toggle_sync_2).
+   - Compare toggle_sync_1 and toggle_sync_2 to detect toggle edges (new data arrival).
+   - When a toggle edge is detected, latch the current data_reg from clk_a domain via a MUX-based selector that captures stable data (using a data latch register).
+   - Also synchronize data_en through a similar 2-flip-flop synchronizer chain (en_clap_one, en_clap_two) to enable output updating only when data_en is confirmed synchronized.
+   - Output dataout updates only when both data_en is synchronized and a new toggle event is detected.
+
+This method avoids directly crossing multi-bit data through clock domains by using a toggle handshake signal and only updating output on data toggle detection, increasing robustness and reducing complexity.
+
+All registers use non-blocking assignments and asynchronous active-low resets as required.
+
+The output dataout holds its value until new valid data is synchronized and enabled.
+
+This architecture improves domain crossing robustness by encoding data availability as a toggle bit, rather than relying only on enable signal delays, and avoids timing uncertainty from data_en gating alone.

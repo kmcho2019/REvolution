@@ -1,0 +1,6 @@
+To implement the finite-state machine that controls the timer, we need to design a state machine with several states: IDLE, SHIFT, COUNTING, and DONE. 
+The IDLE state is the initial state where the state machine waits for the pattern 1101 to be detected. 
+Once the pattern is detected, the state machine transitions to the SHIFT state where it asserts shift_ena for exactly 4 clock cycles to shift in the duration. 
+After that, it transitions to the COUNTING state where it asserts counting and waits until done_counting is high. 
+Finally, it transitions to the DONE state where it asserts done and waits until ack is high before being reset to the IDLE state.
+We will use a 2-bit or 3-bit or 4-bit state variable (depending on the number of states) to represent the current state, and use a 2-bit counter to count the number of clock cycles in the SHIFT state.

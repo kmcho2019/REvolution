@@ -1,0 +1,13 @@
+To implement the Mealy FSM detection circuit, we can define the states as follows: 
+- IDLE: The initial state where we start looking for the sequence 10011.
+- S1: State after detecting the first '1'.
+- S2: State after detecting the first '0' after S1.
+- S3: State after detecting the second '0' after S2.
+- S4: State after detecting the '1' after S3.
+- S5: State after detecting the second '1' after S4, which is also the final state where we set MATCH to 1.
+
+We use a parameter to define the number of states in the FSM. The current state and next state are represented by 'current_state' and 'next_state' respectively, both being of type 'state'.
+
+We use a case statement inside the always block to determine the next state based on the current state and the input 'IN'. If 'RST' is active, we reset the FSM to the IDLE state.
+
+For the output 'MATCH', we set it to 1 when we are in state S5 and 'IN' is 1; otherwise, it is 0.

@@ -1,0 +1,18 @@
+Based on the feedback, I'll implement the following fixes:
+
+1. **Shift Direction**: Make the rotation direction explicit as right rotation (lower bits move right) since this is more common for barrel shifters.
+
+2. **Shift Logic Correction**: 
+   - Fix the bit selection ranges to properly handle wrap-around for all shift amounts (1, 2, 4)
+   - Ensure the concatenation correctly preserves all bits during rotation
+   - Use proper bit-width calculations to avoid overlap issues
+
+3. **Control Signal Handling**: 
+   - Maintain the independent shift stages (4, 2, 1) as originally designed
+   - Each stage's shift is controlled by its respective ctrl bit
+   - The shifts are cumulative (pipelined) through the stages
+
+4. **Implementation Improvements**:
+   - Use clearer variable names to indicate right rotation
+   - Add comments to explain the rotation logic
+   - Keep the modular design but fix the shift module implementation

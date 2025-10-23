@@ -1,0 +1,8 @@
+Simplified approach using a single register with conditional updates:
+1. Use only one 32-bit history register to store the current state
+2. On misprediction (highest priority), reconstruct history directly from train_history and train_taken
+3. On prediction (lower priority), shift in predict_taken
+4. Eliminate shadow_history since we can directly use train_history for rollback
+5. Maintain same functionality with reduced area and power
+6. Reset clears the single register
+7. Output directly connects to the history register

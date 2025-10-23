@@ -1,0 +1,13 @@
+Refactor the FSM into a fully Moore-style FSM with separate combinational logic for next state and output, and a synchronous state register with synchronous active-low reset.
+
+Key points of refactoring:
+- Use one register `state` updated on clock edge with synchronous reset.
+- Use separate combinational blocks for next_state logic and output logic.
+- Introduce a dedicated shift register for `x` pattern detection that shifts only in state C.
+- Use a 2-bit `y_count` counter only in state E to count up to 2 cycles.
+- Correct the y detection timing by allowing y to be detected within 2 full cycles (count from 0 to 1 then to 2, and at count 2 decide).
+- Generate output signals purely combinationally based on the current state (Moore outputs).
+- Avoid updating outputs directly in the sequential block, eliminating one cycle delay issues.
+- Keep registers and counters updated in the sequential block synchronized with state transitions.
+  
+This will ensure outputs update correctly aligned with states and timing constraints and fixes the off-by-one error in y_count and unnecessary x shifting beyond state C.

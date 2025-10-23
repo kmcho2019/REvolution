@@ -1,0 +1,18 @@
+Here's a novel approach using a circular shift register concept to handle the neighbor relationships more elegantly:
+
+1. Instead of direct bitwise operations, we'll create shifted versions of the input vector:
+   - left_shifted: each bit's left neighbor (with wrap-around)
+   - right_shifted: each bit's right neighbor (with wrap-around)
+
+2. For out_both:
+   - Use the left_shifted vector to check current bit AND left neighbor
+   - Mask the MSB since it's irrelevant
+
+3. For out_any:
+   - Use the right_shifted vector to check current bit OR right neighbor
+   - Mask the LSB since it's irrelevant
+
+4. For out_different:
+   - Simply XOR the input with left_shifted vector for wrap-around difference
+
+This approach centralizes the neighbor relationships into shifted vectors, making the logic more modular and potentially more readable. The wrap-around is handled naturally by the circular shift.

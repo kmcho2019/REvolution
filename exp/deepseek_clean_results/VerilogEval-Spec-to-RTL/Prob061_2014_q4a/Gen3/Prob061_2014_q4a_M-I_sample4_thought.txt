@@ -1,0 +1,17 @@
+The original solution is functionally correct but shows a slight timing violation (-0.22ns slack). To improve PPA:
+
+1. Timing Optimization:
+   - The negative slack suggests the critical path is too long. Since this is a simple flip-flop with mux, the issue might be in synthesis constraints.
+   - We can explicitly specify a faster flip-flop type if the technology library supports it.
+
+2. Power Optimization:
+   - Add clock gating when neither L nor E is active for multiple cycles (though this requires system knowledge)
+   - Since we don't have system context, we'll focus on making the control logic more efficient
+
+3. Area Optimization:
+   - The design is already minimal, but we can ensure the mux logic is optimally synthesized by using a case statement instead of if-else
+
+The improved version will:
+- Use case statement for cleaner priority logic
+- Add synthesis directives for better optimization
+- Maintain all functionality while potentially improving timing

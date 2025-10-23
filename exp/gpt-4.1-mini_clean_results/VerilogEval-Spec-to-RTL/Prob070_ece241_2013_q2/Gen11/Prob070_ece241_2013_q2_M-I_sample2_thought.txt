@@ -1,0 +1,15 @@
+The original out_sop mistakenly covered minterms 4, 7, and 15 instead of 2, 7, and 15, causing incorrect output values. To correct this, the out_sop should be the OR of minterms for decimal 2 (0010), 7 (0111), and 15 (1111):
+
+- 2 = ~a & ~b & c & ~d
+- 7 = ~a & b & c & d
+- 15 = a & b & c & d
+
+For out_pos, it must be the product of sums covering zeros 0,1,4,5,6,9,10,13,14. By mapping these zeros to maxterms and minimizing, the final minimal POS expression is:
+
+out_pos = (a + b + c + d) & (a + ~b + d) & (~a + c + d) & (~a + b + ~c)
+
+This expression covers all zeros properly.
+
+The improved design explicitly assigns out_sop and out_pos using these corrected minimal forms for functional correctness and efficient hardware mapping. No additional modules or complex logic needed.
+
+This will fix the functional bug and maintain optimal PPA.

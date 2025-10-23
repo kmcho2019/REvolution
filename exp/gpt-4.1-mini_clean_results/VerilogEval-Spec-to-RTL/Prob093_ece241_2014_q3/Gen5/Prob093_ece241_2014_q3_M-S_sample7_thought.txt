@@ -1,0 +1,17 @@
+The problem requires implementing the 4 mux inputs (mux_in[3:0]) to a 4-to-1 multiplexer selected by {a,b}, such that the overall circuit implements the K-map. We only use inputs c and d inside TopModule to generate mux_in.
+
+Given the K-map and the required mapping of mux_in[i] to ab (column selector), the simplest approach is to explicitly assign each mux_in[i] as a function of c and d that matches the corresponding column:
+
+From the K-map (rows = cd, cols = ab):
+
+ab=00 (mux_in[0]): outputs at cd=00:0, 01:1, 11:1, 10:1 → This is d OR c
+
+ab=01 (mux_in[1]): always 0
+
+ab=11 (mux_in[2]): outputs 0,0,1,0 → c AND d
+
+ab=10 (mux_in[3]): outputs 1,0,1,1 → (NOT d) OR (c AND d) → Simplifies to ~d + (c&d) = ~d + c*d
+
+These expressions are straightforward and require no nested multiplexers inside TopModule. Since the final multiplexing happens outside TopModule via a 4-to-1 mux with selectors a and b, TopModule only needs to produce the 4 mux inputs.
+
+This approach reduces complexity and directly reflects the K-map columns, meeting the requirement with minimum logic.

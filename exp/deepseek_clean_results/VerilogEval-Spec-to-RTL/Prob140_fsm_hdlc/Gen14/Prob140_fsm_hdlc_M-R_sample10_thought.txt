@@ -1,0 +1,22 @@
+I'll refactor the solution using a more explicit state machine approach while maintaining the same functionality. Here's the thought process:
+
+1. State Encoding:
+   - Instead of a counter, use named states to make the design more readable and maintainable
+   - Each state represents the count of consecutive 1s seen (similar to the counter approach)
+
+2. Output Logic:
+   - Move output generation to continuous assignments (assign statements)
+   - This makes the outputs purely combinational based on current state and input
+   - Maintains Moore machine properties (outputs depend only on state)
+
+3. State Transitions:
+   - Explicitly define state transitions in the always block
+   - Reset initializes to S0 (no consecutive 1s seen)
+   - Clear state (S0) when seeing a 0
+   - Increment state when seeing consecutive 1s
+
+4. Benefits:
+   - More readable state machine representation
+   - Clear separation of state transitions and output logic
+   - Easier to modify/extend if requirements change
+   - Same timing characteristics as original

@@ -1,0 +1,8 @@
+To implement the serial input data accumulation module, we need to consider the following steps:
+1. Initialize a counter to track the number of valid input data received.
+2. When valid_in is 1, accumulate the input data_in into a running sum.
+3. Once four valid input data have been accumulated, output the sum as data_out and set valid_out to 1 for one cycle.
+4. Reset the accumulator and counter after outputting the sum.
+5. Use an active-low reset signal (rst_n) to reset the module when necessary.
+
+We can achieve this using a finite state machine (FSM) with two states: IDLE and ACCUMULATE. The IDLE state waits for valid_in to be 1, then transitions to the ACCUMULATE state. In the ACCUMULATE state, we accumulate the input data and increment the counter. When the counter reaches 4, we output the sum and reset the accumulator and counter.

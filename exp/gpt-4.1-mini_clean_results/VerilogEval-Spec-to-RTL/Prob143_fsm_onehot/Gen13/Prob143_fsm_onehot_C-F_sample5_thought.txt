@@ -1,0 +1,9 @@
+Fuse the explicit, flat combinational assignments for each next_state bit from Example 1 with the per-active-state combinational aggregation approach from Example 2 to achieve both synthesis-friendly clarity and minimal logic depth.
+
+Specifically:
+- Implement next_state[0] with a balanced hierarchical OR of all states that transition to S0 on input 0, reducing fan-in and improving timing and power.
+- For next_state[1] through next_state[9], generate next_state signals inside an always_comb block with a for-loop iterating over each active state bit from the input 'state'. For each active state, set next_state bits according to the FSM transitions using a simple case statement.
+- This loop approach naturally supports multiple active states combinationally and avoids complex large ORs for other bits, yielding smaller combinational logic trees.
+- Outputs (out1, out2) are derived by concise bitmasking and OR reductions of the input 'state' vector, ensuring minimal logic and efficient synthesis.
+- Use blocking assignments in the combinational always block to ensure clarity and correctness.
+- This fusion combines Example 1’s optimized next_state[0] fan-in reduction with Example 2’s scalable and maintainable per-active-state logic for other bits, achieving a balanced design that optimizes timing, area, power, and code clarity.

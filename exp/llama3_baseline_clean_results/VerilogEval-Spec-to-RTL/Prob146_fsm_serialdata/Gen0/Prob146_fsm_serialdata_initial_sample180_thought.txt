@@ -1,0 +1,13 @@
+To solve this problem, we can implement a finite state machine (FSM) that transitions through several states based on the input bit stream. The states can be: 
+- Idle: waiting for the start bit (0) to arrive
+- Start: start bit received, waiting for the data bits
+- Data: receiving the data bits (8 bits in total, least significant bit first)
+- Stop: stop bit expected, verifying if it is correct (1)
+
+We will use an 8-bit shift register to store the received data bits. When the stop bit is verified, we will output the received data byte and assert the done signal.
+
+We will also use a counter to keep track of the number of data bits received. When the counter reaches 8, we will transition to the Stop state.
+
+If the stop bit does not appear when expected, we will transition back to the Idle state and wait for the next start bit.
+
+The active-high synchronous reset will reset the FSM to the Idle state and clear the shift register and counter.

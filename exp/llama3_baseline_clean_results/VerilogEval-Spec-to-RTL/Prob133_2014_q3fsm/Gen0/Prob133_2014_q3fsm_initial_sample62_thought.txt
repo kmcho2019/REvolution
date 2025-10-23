@@ -1,0 +1,7 @@
+To solve this problem, we will design a finite state machine (FSM) with the minimum number of states required to implement the given functionality. The FSM will start in state A and move to state B when s = 1. In state B, we will count the number of clock cycles where w = 1. We can achieve this by using two states (B1, B2, B3) to keep track of the number of clock cycles and an additional state (C) to generate the output z. However, to use as few states as possible, we can design the FSM with just two states (A and B) and some internal counters or logic to keep track of the clock cycles and the value of w.
+
+The state A will serve as the reset state, and the state B will handle the logic for examining the input w. In state B, we will use an internal counter to keep track of the number of clock cycles where w = 1. This can be achieved by using a 2-bit counter to count the number of w = 1 occurrences in a 3-clock cycle window.
+
+When the FSM is in state B, if the counter value equals 2 (i.e., exactly two w = 1 occurrences), we will set the output z to 1 in the next clock cycle. Otherwise, z will be 0.
+
+To implement this logic, we will use two registers: one for the current state and another for the counter. The reset signal will be used to initialize the state and the counter.

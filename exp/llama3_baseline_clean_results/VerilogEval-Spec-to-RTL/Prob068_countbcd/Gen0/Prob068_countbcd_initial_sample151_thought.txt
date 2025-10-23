@@ -1,0 +1,19 @@
+The TopModule will be designed as a 4-digit BCD counter with enable signals for the upper three digits. It will have a synchronous active-high reset and will operate on the positive edge of the clock. 
+
+The counter will consist of four 4-bit BCD counters, with each digit being encoded using 4 bits (q[3:0], q[7:4], q[11:8], q[15:12]). 
+
+The enable signals (ena) will be used to control the incrementing of the upper three digits. 
+
+Here's a step-by-step breakdown:
+
+1. Initialize all digits to 0 when reset is high.
+2. On the positive edge of the clock, check the current state of the digits.
+3. If the ones digit is not equal to 9, increment it and do not increment the upper digits.
+4. If the ones digit is equal to 9, reset it to 0 and check the tens digit. If the tens digit is not equal to 9, increment it and set the enable signal for the hundreds and thousands digits to 0.
+5. If the tens digit is equal to 9, reset it to 0 and check the hundreds digit. If the hundreds digit is not equal to 9, increment it and set the enable signal for the thousands digit to 0.
+6. If the hundreds digit is equal to 9, reset it to 0 and check the thousands digit. If the thousands digit is not equal to 9, increment it.
+
+The enable signals will be set based on these conditions:
+- ena[0] will be set when the ones digit is equal to 9.
+- ena[1] will be set when the tens digit is equal to 9 and the ones digit is equal to 9.
+- ena[2] will be set when the hundreds digit is equal to 9 and the tens and ones digits are equal to 9.

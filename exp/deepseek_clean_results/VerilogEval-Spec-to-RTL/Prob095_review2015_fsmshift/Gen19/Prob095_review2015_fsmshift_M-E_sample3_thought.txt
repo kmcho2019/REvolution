@@ -1,0 +1,19 @@
+New approach using a down counter:
+1. Problem analysis:
+   - Need exactly 4 cycles of shift_ena assertion after reset
+   - Current shift register approach has timing issues
+   - Counter-based solution can provide precise cycle counting
+
+2. Solution approach:
+   - Use a 2-bit counter to count from 3 down to 0 (4 cycles)
+   - Initialize counter to 3 on reset
+   - Decrement counter each clock cycle while not zero
+   - Assert shift_ena when counter is non-zero
+   - Clear counter when it reaches zero (stops counting)
+
+3. Benefits:
+   - Precise cycle counting (exactly 4 cycles)
+   - Simple and clear implementation
+   - Easy to verify timing
+   - Minimal hardware requirements (just 2 flip-flops)
+   - Maintains clean synchronous design

@@ -1,0 +1,9 @@
+The original implementation uses an always block with a non-blocking assignment to register q with the inverted input a on each positive edge of clk. As a refactor, we can explicitly separate the data path and the flip-flop by introducing an intermediate wire that is the inverted input, and then register this wire on the rising clock edge.
+
+This keeps the core functionality unchanged (q samples ~a at each clock), but improves code modularity and clarity by clearly showing combinational and sequential parts separately.
+
+We declare an intermediate wire `inv_a` as the inversion of `a`, then on each posedge clk, assign `q` the value of `inv_a`.
+
+This approach may help in synthesis tools to recognize the combinational and sequential boundaries clearly.
+
+The module interface and functionality remain the same.

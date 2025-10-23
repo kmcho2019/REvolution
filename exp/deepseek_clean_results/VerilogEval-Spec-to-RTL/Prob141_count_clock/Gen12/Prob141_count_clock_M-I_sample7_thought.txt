@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Simplify PM toggle logic by checking only the hour value before increment
+   - Break dependency chain by making enable signals independent where possible
+   - Use parallel comparisons for BCD rollover conditions
+
+2. Power Optimization:
+   - Split BCD registers into separate nibbles to minimize unnecessary switching
+   - Gate PM register updates to only occur during hour increments
+   - Use bitwise operations for BCD increments where possible
+
+3. Area Optimization:
+   - Share BCD increment logic between all counters using functions
+   - Combine tens and ones digit comparisons into single operations
+   - Simplify hour counter special cases using modular arithmetic
+
+Key Changes:
+- Separate tens and ones registers for BCD digits
+- Optimized PM toggle logic with reduced conditionals
+- Shared BCD increment function
+- Independent enable signal generation
+- Reduced register updates through nibble-level control

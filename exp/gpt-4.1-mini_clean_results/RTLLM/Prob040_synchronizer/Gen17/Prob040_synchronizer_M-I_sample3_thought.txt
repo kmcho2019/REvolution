@@ -1,0 +1,9 @@
+To improve the original design for better Power, Performance, and Area (PPA), I will integrate the two-stage enable synchronizer directly into the main module instead of using a separate module. This reduces module overhead and inter-module routing delay, improving timing and area slightly.
+
+I will add enable gating to the data_reg and en_data_reg updates in clk_a domain to avoid unnecessary toggling when data_en is low (stable data_in assumed). Similarly, in clk_b domain, the output register update will be gated by the synchronized enable signals to avoid unnecessary toggling and dynamic power waste.
+
+The enable synchronization is performed by two flip-flops (en_clap_one and en_clap_two) clocked by clk_b with async reset, as requested.
+
+By keeping the asynchronous resets, ensuring signals update only when required, and collapsing the enable synchronizer into the main module, the design will be simpler, reduce toggle rates, and have slightly better timing and area without affecting functional correctness.
+
+All other functionality and the MUX-based output assignment remain unchanged.

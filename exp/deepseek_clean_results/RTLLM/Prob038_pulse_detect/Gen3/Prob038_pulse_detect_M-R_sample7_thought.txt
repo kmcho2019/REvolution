@@ -1,0 +1,15 @@
+To improve the pulse detection while maintaining the same functionality, I'll refactor the code with these key changes:
+
+1. State Machine Approach: Replace the shift register with explicit state tracking using a 2-bit state register. This makes the design more readable and easier to verify.
+
+2. Combinational Output: Use an assign statement for data_out to separate combinational logic from sequential logic, following better coding practices.
+
+3. Clear State Transitions: Define states explicitly for each phase of pulse detection:
+   - IDLE: Waiting for first 0
+   - GOT_0: Received first 0, waiting for 1
+   - GOT_01: Received 01, waiting for 0
+   - PULSE_DETECTED: Final state that triggers output
+
+4. Reset Handling: Maintain synchronous reset for consistent behavior across technologies.
+
+This approach provides better visibility into the detection process while maintaining the same cycle-accurate behavior as the original.

@@ -1,0 +1,9 @@
+Implement the outputs using purely continuous assignments and bitwise vector operations to fully leverage Verilog's vector processing capability. 
+
+For out_both, use bitwise AND of in[3:1] and in[2:0], assigning 0 to out_both[3] since it has no left neighbor.
+
+For out_any, use bitwise OR of in[3:1] and in[2:0], assigning 0 to out_any[0] since it has no right neighbor.
+
+For out_different, construct a rotated version of 'in' to the left by one bit (to represent the left neighbor with wrap-around) by concatenation, then XOR element-wise with 'in'.
+
+This approach achieves compact, efficient, and parallel logic with minimal code and no loops, suitable for direct hardware mapping with minimal overhead.

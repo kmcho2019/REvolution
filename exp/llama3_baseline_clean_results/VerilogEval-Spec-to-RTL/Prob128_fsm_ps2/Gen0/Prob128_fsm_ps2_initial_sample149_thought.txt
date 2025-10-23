@@ -1,0 +1,7 @@
+To solve this problem, we can implement a finite state machine (FSM) in the TopModule that searches for message boundaries in the input byte stream. The FSM will have four states: 
+1. IDLE: The initial state where the FSM waits for a byte with in[3]=1 to start a new message.
+2. BYTE1: The state where the FSM has received the first byte of a message and waits for the second byte.
+3. BYTE2: The state where the FSM has received the second byte of a message and waits for the third byte.
+4. DONE: The state where the FSM signals the receipt of a message after receiving all three bytes.
+
+The FSM will transition from IDLE to BYTE1 when it receives a byte with in[3]=1. It will then transition from BYTE1 to BYTE2 and from BYTE2 to DONE after receiving the second and third bytes, respectively. After signaling done, the FSM will reset to the IDLE state. The FSM will also reset to the IDLE state when the reset signal is high.

@@ -1,0 +1,37 @@
+Analyzing the waveform, we observe:
+
+- Initially (clock=0), outputs p and q are unknown, as expected due to no reset.
+- On the first clock high period with a=0, p=0 and q=don't care (x).
+- After clock goes low, q is set to 0.
+- At some later times, p becomes 1 when a=1 and q=0 or 1; q then follows p with some delay.
+- At clock=0 periods, p and q become stable and sometimes hold 1.
+- At clock rising edges, p and q update based on a and their previous values.
+
+This suggests a 2-bit state machine with states {p,q}, updated on clock edges depending on input a and previous state.
+
+From the waveforms, the following logic can be inferred for updates at clock rising edges:
+
+- p_next = a | p  (p latches or is set by a)
+- q_next = p      (q follows p with one clock cycle delay)
+
+This matches the observation that p becomes 1 whenever a=1 or previously p=1, and q is a delayed version of p.
+
+To implement this cleanly and synthesize-friendly, we:
+- Use a 2-bit register for state = {p,q}
+- At each rising edge of clock, update p and q:
+    p <= a | p;
+    q <= p;
+
+- No asynchronous reset is needed to preserve unknown initial states.
+- Outputs driven directly from state.
+
+This design produces the waveform behavior observed:
+- p sets when a=1 and stays set until cleared by the absence of input a (or by design).
+- q follows p with one clock cycle delay.
+- The unknown state at the start is natural without reset.
+
+This logic fits the data better than the previous "p = a & q" and "q = p".
+
+Implementing this, we get matching behavior with fewer glitches and clean synthesis.
+
+Thus, the improvement is revising the state transition logic based on waveform inference to "p_next = a | p" and "q_next = p".

@@ -1,0 +1,16 @@
+To fix the TopModule implementation, we need to:
+
+1. Clearly separate the logic for each bit position (0, 1, 2) since they have different behaviors
+2. Remove the combinational loop by using only input values for calculations
+3. Simplify the interface by making each instance responsible for its specific bit operation
+4. Implement proper muxing between load and operation modes
+5. Ensure correct connections between instances by passing required neighboring bits
+
+Key changes:
+- Each instance will handle one specific bit position (0, 1, or 2)
+- The operation for each bit is clearly defined:
+  * Bit 0: q[1] ^ q[2]
+  * Bit 1: q[0]
+  * Bit 2: q[2] (pass-through)
+- Mux logic selects between load value (r_in) and operation result
+- Flip-flop stores the selected value on clock edge

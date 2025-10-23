@@ -1,0 +1,33 @@
+Implement the division using a combinational approach that mimics the non-restoring division algorithm focusing on the problem's request:
+
+- Use an internal register wide enough to hold an extended remainder (e.g., 24 bits) to accommodate concatenations.
+
+- Initialize the remainder with the highest 8 bits of the dividend (since divisor is 8 bits), matching the bit-width of the divisor.
+
+- For each of the 16 bits of the dividend:
+
+  1. Compare the current remainder (top 8 bits) with divisor B.
+
+  2. If remainder >= B, subtract divisor from those top 8 bits and set the corresponding quotient bit.
+
+  3. Else, quotient bit is zero.
+
+  4. Shift the remainder left by 1 bit and bring in the next dividend bit at the LSB of the remainder.
+
+- The quotient bits are collected MSB to LSB.
+
+- At the end, remainder register contains the final remainder aligned to 8 bits (lower bits), zero-extend it to 16 bits.
+
+- Use two always blocks as specified:
+
+  1. First always block latches inputs A and B into registers a_reg and b_reg.
+
+  2. Second always block performs the combinational division logic using a_reg and b_reg.
+
+This method strictly follows the requirement of first latching inputs, then computing the division in combinational logic, and aligns with the problem's detailed steps of comparing the highest bits of the remainder with divisor and concatenating the remainder with the next dividend bit.
+
+The wider remainder (24 bits) facilitates easy shifting and manipulation while matching divisor width.
+
+The quotient is built bit-by-bit in the loop, indexing from 15 down to 0.
+
+This approach ensures a clear and novel implementation distinct from the previous example, while fulfilling the problem requirements.

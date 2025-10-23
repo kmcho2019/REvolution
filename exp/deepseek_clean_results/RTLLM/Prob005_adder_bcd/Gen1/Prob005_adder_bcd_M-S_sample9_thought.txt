@@ -1,0 +1,12 @@
+To simplify the BCD adder while maintaining functionality:
+1. Perform 4-bit binary addition of A, B, and Cin (result may be up to 19)
+2. Detect if correction is needed by checking either:
+   - The sum is >9 (using bit pattern detection: if MSB is set OR sum[3] AND (sum[2] OR sum[1]))
+   - There's a carry out from the addition (sum[4])
+3. If correction needed, add 6 and set Cout
+4. Otherwise, pass through the sum and clear Cout
+
+Key optimizations:
+- Replace >9 comparison with simple bit pattern check
+- Use 4-bit operations where possible
+- Combine correction logic more efficiently

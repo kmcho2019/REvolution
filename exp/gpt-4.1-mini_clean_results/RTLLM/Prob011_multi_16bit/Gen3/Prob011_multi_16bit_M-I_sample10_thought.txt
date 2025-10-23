@@ -1,0 +1,10 @@
+To optimize the given 16-bit shift-and-accumulate multiplier for better power, performance, and area (PPA), the improvements focus on minimizing unnecessary toggling and reducing combinational logic within the sequential blocks.
+
+Key enhancements include:
+1. Introducing enable signals in registers (areg, breg, yout_r) to update only when necessary, avoiding unnecessary toggling and reducing dynamic power.
+2. Pre-check the bit of areg before adding shifted breg to avoid unnecessary addition and large shifts when the bit is 0, reducing combinational switching.
+3. Move the shifted value computation into a local wire to cleanly separate combinational logic from sequential logic, helping synthesis optimize the data path.
+4. Keep the shift count (i) and done flag logic as before, since they are simple and minimal in power.
+5. Ensure non-blocking assignments with minimal dependencies to improve timing and reduce critical path delays.
+
+These changes help the multiplier operate more efficiently by avoiding unnecessary register updates and combinational calculations, reducing power and improving maximum clock frequency without changing the fundamental algorithm or latency.

@@ -1,0 +1,12 @@
+The problem describes a state machine that controls the flow rate of water into a reservoir based on the level of water as detected by three sensors. The state machine should have an active-high synchronous reset that resets it to a state equivalent to a low water level. We can implement this state machine using a combinational logic circuit that takes the current sensor readings and the previous sensor change as inputs. The state machine should assert the nominal flow rate inputs (fr0, fr1, fr2) based on the current sensor readings and the supplemental flow rate input (dfr) based on the previous sensor change.
+
+We will use the sensor inputs s[2:0] to determine the current state of the water level. We will use a variable to keep track of the previous sensor change. The state machine will be reset to a state equivalent to a low water level (no sensors asserted, and all four outputs asserted) when the reset signal is high.
+
+The state machine will have the following states:
+
+- Above s[2]: No sensors asserted, no flow rate inputs asserted.
+- Between s[2] and s[1]: s[0] and s[1] asserted, fr0 asserted.
+- Between s[1] and s[0]: s[0] asserted, fr0 and fr1 asserted.
+- Below s[0]: No sensors asserted, fr0, fr1, and fr2 asserted.
+
+The state machine will also consider the previous sensor change to determine the supplemental flow rate input (dfr).

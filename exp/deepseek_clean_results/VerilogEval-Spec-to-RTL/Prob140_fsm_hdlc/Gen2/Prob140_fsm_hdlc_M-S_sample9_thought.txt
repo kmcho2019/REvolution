@@ -1,0 +1,10 @@
+To simplify the HDLC framing decoder while maintaining correct functionality:
+1. Use a counter to track consecutive 1s (0-6)
+2. Reset counter on 0 or reset
+3. Generate outputs based on counter value and current input:
+   - disc: when we've seen 5 consecutive 1s (count=5) and next bit is 0
+   - flag: when we've seen 6 consecutive 1s (count=6) and next bit is 0
+   - err: when counter reaches 6 (7+ consecutive 1s)
+4. Make outputs purely combinational to simplify timing
+5. Reset puts FSM in state equivalent to having seen a 0
+This approach maintains correct behavior with simpler logic and clearer conditions.

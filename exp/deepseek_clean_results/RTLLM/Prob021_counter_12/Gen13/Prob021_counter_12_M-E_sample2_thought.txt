@@ -1,0 +1,13 @@
+Here's a novel approach using a shift register-based counter with parallel load capability. The key innovations are:
+
+1. Instead of a traditional binary counter, we use a shift register that rotates left on each valid count.
+2. The shift register is pre-loaded with a pattern that has exactly one '1' bit (0001), and rotates to create a thermometer-like count.
+3. When the '1' bit reaches the end (1000), we detect this and reset to 0001.
+4. We then use a priority encoder to convert this pattern to a binary count value (0-11).
+
+Advantages:
+- Eliminates the need for explicit comparison with 11
+- Shift operations are typically very efficient in hardware
+- The priority encoder can be optimized for speed
+- Naturally handles the wrap-around condition
+- Power efficient as only one bit toggles per count (except during wrap)

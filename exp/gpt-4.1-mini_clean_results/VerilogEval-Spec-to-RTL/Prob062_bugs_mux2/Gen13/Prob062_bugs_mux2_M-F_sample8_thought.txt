@@ -1,0 +1,3 @@
+The original bug stems from the output `out` being declared as a single bit, while `a` and `b` are 8-bit buses. To correctly implement an 8-bit 2-to-1 mux, the output `out` must be declared as an 8-bit bus to match the width of inputs `a` and `b`. Then, the selection logic can be implemented by directly choosing between the entire 8-bit inputs based on `sel`.
+
+This can be cleanly done using a continuous assignment with the conditional operator (`?:`) that picks either `a` or `b` entirely, matching the width of `out`. This preserves the intended 8-bit functionality and fixes the width mismatch error, ensuring correct multiplexing of all bits.

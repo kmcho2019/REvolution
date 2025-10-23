@@ -1,0 +1,18 @@
+To refactor this implementation while maintaining the same core functionality, we'll make the following improvements:
+
+1. Correct the input bit mapping:
+   - Assume x[4] was a typo and use x[0] instead (since Verilog vectors typically start at 0)
+   - Maintain the K-map structure with {x[3],x[0]} as rows and {x[1],x[2]} as columns
+
+2. Simplify the logic expression:
+   - Analyze the K-map to derive a minimal sum-of-products expression
+   - Group the 1s in the K-map to find essential prime implicants
+   - Optimize don't-care conditions to simplify the logic
+
+3. Use a cleaner implementation:
+   - Replace the nested ternary operators with a single Boolean expression
+   - Make the code more readable and maintainable
+   - Ensure all specified K-map entries are correctly implemented
+
+The optimized logic expression derived from the K-map is:
+f = x[3]·~x[1] + x[0]·x[1]·x[2] + x[3]·x[0]·~x[2]

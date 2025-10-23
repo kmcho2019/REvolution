@@ -1,0 +1,11 @@
+The current solution is already quite efficient, but we can make some micro-optimizations to potentially improve PPA metrics further:
+
+1. **Fan Logic Optimization**: The fan output can be simplified by recognizing that heater and aircon are mutually exclusive (can't both be on at the same time). This allows us to use an XOR instead of OR for the first part of the fan logic.
+
+2. **Signal Sharing**: We can compute the inverted mode signal once and reuse it, potentially saving an inverter.
+
+3. **Operator Strength Reduction**: Replace the AND operations with multiplication-style operators which might synthesize more efficiently in some technologies.
+
+4. **Output Gating**: Add explicit conditions to ensure outputs are off when not needed, preventing any potential glitches.
+
+These optimizations should maintain the same functionality while potentially reducing area and power slightly.

@@ -1,0 +1,11 @@
+To optimize the FSM for better performance, power, and area, I will simplify the sequential logic by removing the conditional update of the state register. This eliminates the need for comparing next_state and current state, reducing combinational logic and possible timing overhead on the clock path. Flip-flops naturally suppress toggling when data does not change, so explicit gating is usually unnecessary and may hinder timing.
+
+Additionally, I will switch to one-hot encoding since the number of states (6) is small, which often yields faster state decoding and simpler next-state logic at the expense of a few more flip-flops. One-hot encoding can help critical path timing by reducing multiplexing complexity.
+
+Output logic remains a continuous assignment, which is efficient.
+
+Overall, these changes aim to:
+- Reduce sequential logic complexity and improve timing.
+- Potentially reduce power by avoiding extra comparison logic.
+- Slightly increase area due to one-hot encoding but gain in timing.
+- Keep clear separation of sequential and combinational logic.

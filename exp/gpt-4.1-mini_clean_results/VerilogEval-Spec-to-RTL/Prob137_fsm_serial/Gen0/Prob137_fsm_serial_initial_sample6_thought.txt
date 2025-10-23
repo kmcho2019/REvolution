@@ -1,0 +1,10 @@
+Implement a finite state machine (FSM) with states IDLE, START, DATA, STOP, and WAIT_STOP. 
+- IDLE: Wait for the start bit (0).
+- START: Confirm the start bit.
+- DATA: Shift in 8 data bits, LSB first.
+- STOP: Check the stop bit (1). If correct, assert done for one clock cycle; otherwise, go to WAIT_STOP.
+- WAIT_STOP: Wait for a correct stop bit (1) to resume IDLE.
+
+Use a 4-bit counter to track the number of data bits received. The `done` output is asserted for one clock cycle when a full byte is correctly received (start bit, 8 data bits, correct stop bit).
+
+Synchronous active-high reset will set FSM to IDLE, clear counters, and `done`.

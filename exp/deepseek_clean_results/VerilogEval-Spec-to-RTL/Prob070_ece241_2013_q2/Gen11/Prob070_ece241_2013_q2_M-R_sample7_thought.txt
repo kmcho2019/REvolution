@@ -1,0 +1,26 @@
+Refactored approach using minimal Boolean expressions:
+
+1. For out_sop (Sum of Products):
+   - Identify minterms where output is 1 (2,7,15)
+   - Convert to canonical SOP: (¬a¬bc¬d) + (¬abcd) + (abcd)
+   - Minimize using Boolean algebra/K-map:
+     - 2 (0010) cannot be combined
+     - 7 (0111) and 15 (1111) share abc → d can be don't-care
+     - Final SOP: (¬a¬bc¬d) + (abc)
+
+2. For out_pos (Product of Sums):
+   - Identify maxterms where output is 0 (0,1,4,5,6,9,10,13,14)
+   - Convert to canonical POS and minimize:
+     - Group adjacent zeros in K-map
+     - Final POS: (a+b+c)(a+¬b+c)(¬a+b+¬c)
+
+3. Implementation:
+   - Use continuous assignments (assign) for combinational logic
+   - Explicitly show the minimized forms
+   - Don't-cares are naturally optimized in the expressions
+
+Advantages:
+  - Matches exact minimal forms required
+  - More efficient than case statement
+  - Clearly shows the logic optimization
+  - Properly utilizes don't-care conditions

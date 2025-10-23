@@ -1,0 +1,9 @@
+To implement the TopModule, we need to design a finite state machine (FSM) that will search for message boundaries in the input byte stream. The FSM should discard bytes until it sees one with in[3]=1, then assume this is byte 1 of a message, and signal the receipt of a message once all 3 bytes have been received.
+
+We can define the following states for the FSM:
+- IDLE: The initial state where the FSM waits for a byte with in[3]=1.
+- BYTE1: The state where the FSM has received the first byte of a message.
+- BYTE2: The state where the FSM has received the second byte of a message.
+- DONE: The state where the FSM has received all 3 bytes of a message and signals done.
+
+We also need to implement a datapath module that will output the 24-bit message whenever a packet is received. The datapath module will store the received bytes in a register and output the 24-bit message when the FSM is in the DONE state.

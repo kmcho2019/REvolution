@@ -1,0 +1,10 @@
+To improve synthesis friendliness and meet the timing requirement that valid_out and data_out are produced one cycle after receiving two valid inputs, implement a clean two-state FSM with registered state and outputs. Store the first input data in a register when received. On the second valid input, store the second data and generate the concatenated 16-bit data and valid_out signals in the next clock cycle.
+
+Key improvements:
+1. Move all state and data updates into the clocked always block with clear, non-conditional register updates to avoid unintended latches.
+2. Separate combinational next-state logic and sequential state updates cleanly.
+3. Register the output data and valid signal separately in the clocked process to guarantee proper timing alignment.
+4. Ensure that valid_out and data_out assert only one clock cycle after the second input is sampled, as required.
+5. Avoid resetting outputs to zero combinationally every cycle; instead maintain registered outputs until next valid data.
+
+This clear FSM approach with registered outputs improves synthesis results, avoids glitches, and strictly adheres to timing specifications.

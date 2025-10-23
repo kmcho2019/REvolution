@@ -1,0 +1,16 @@
+This implementation uses a sequential shift-and-add approach with a finite state machine (FSM) to:
+1. Process one multiplier bit per clock cycle
+2. Use a single adder and shift register to minimize hardware
+3. Accumulate results in a product register
+4. Complete in 8 clock cycles
+
+Key advantages:
+- Significant power savings by only activating necessary hardware each cycle
+- Reduced area from sharing a single adder
+- Scalable to wider multipliers with minimal hardware increase
+- Clear timing closure with predictable 8-cycle latency
+
+The FSM has three states:
+1. IDLE: Wait for start signal (implied by input change)
+2. CALC: Perform shift-and-add operations
+3. DONE: Hold final result until new inputs

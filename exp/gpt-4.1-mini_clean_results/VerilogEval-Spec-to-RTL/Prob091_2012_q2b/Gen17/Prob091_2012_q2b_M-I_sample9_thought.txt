@@ -1,0 +1,13 @@
+The existing design is minimal and functionally correct, but the output Y3 expression involves triple AND with inverted inputs, which could be simplified for slightly reduced power and area. We can directly implement Y3 using the original FSM transitions by expressing it as the OR of the states that cause transition to D on w=0 (i.e., from states B, C, E, F). 
+
+From the FSM, D is entered from B, C, E, and F when w=0. So Y3 input is high when w=0 and current state is one of these four states.
+
+So Y3 = ~w & (y[1] | y[2] | y[4] | y[5])
+
+This expression is more straightforward than the previous De Morgan form, reducing the number of inverted inputs on Y3 and potentially lowering glitching and power.
+
+Y1 remains as y[0] & w.
+
+This approach simplifies Y3 logic, reduces inverters, and keeps the design modular.
+
+We keep the same module structure for clarity and scalability.

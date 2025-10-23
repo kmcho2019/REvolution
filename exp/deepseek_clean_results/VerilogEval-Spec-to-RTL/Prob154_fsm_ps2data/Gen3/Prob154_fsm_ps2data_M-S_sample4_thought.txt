@@ -1,0 +1,13 @@
+Simplified Design Approach:
+1. State Management: Use a simple 2-bit counter to track message bytes (0=waiting, 1=first byte, 2=second byte)
+2. Data Collection: Shift incoming bytes directly into a 24-bit register (no separate byte storage)
+3. Output Timing: Set done signal only when third byte is received (next cycle after third byte)
+4. Reset Handling: Synchronous reset clears all registers
+5. Optimization: Remove default case since counter naturally wraps around
+
+Key Simplifications:
+- Single always block for all sequential logic
+- Direct byte shifting into output register
+- Minimal state tracking (just 2-bit counter)
+- No unnecessary conditional assignments
+- Clean reset behavior

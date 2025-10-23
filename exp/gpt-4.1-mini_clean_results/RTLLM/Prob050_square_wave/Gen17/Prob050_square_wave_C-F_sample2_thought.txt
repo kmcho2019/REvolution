@@ -1,0 +1,17 @@
+Fuse the two approaches by maintaining a counter-based toggling method to ensure a clean, registered square wave output with minimal combinational logic on the output path, while also gating counting and toggling when freq=0 to reduce power.
+
+Specifically:
+
+1. Use an 8-bit counter incremented synchronously only when freq is non-zero, preventing unnecessary toggling and switching when freq=0.
+
+2. Compare count with (freq - 1) to decide when to toggle wave_out, matching the user's specification exactly.
+
+3. Keep wave_out as a register updated synchronously on the clock edge to avoid combinational glitches and improve timing.
+
+4. Use non-blocking assignments and a single always block to maintain clarity and synthesis efficiency.
+
+5. Eliminate combinational wave_out assignment, thus improving timing by reducing critical paths on output.
+
+6. Add a synchronous reset for robustness, initializing the output and counter.
+
+This design combines the power gating and direct toggling simplicity from Example 1 with the clean sequential output from Example 2, producing a power-efficient, timing-friendly square wave generator with exact frequency control.

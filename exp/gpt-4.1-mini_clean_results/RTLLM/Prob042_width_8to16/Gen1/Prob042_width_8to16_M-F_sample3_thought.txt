@@ -1,0 +1,5 @@
+To fix the issues identified in the feedback, explicitly implement a simple 2-state FSM to manage data reception and output timing. The FSM states are WAIT_FIRST (waiting for the first valid input) and WAIT_SECOND (waiting for the second valid input). When the first valid input arrives, store it and move to WAIT_SECOND state. When the second valid input arrives, capture it, but output valid_out and data_out only in the next clock cycle, ensuring proper timing and alignment.
+
+Use separate pipeline registers to hold the concatenated data and valid_out signals to guarantee the "next clock cycle after two data inputs" behavior. Reset all registers and states properly on reset. This FSM approach removes ambiguity related to flag timing and ensures synthesizable, glitch-free logic that passes post-synthesis verification.
+
+By sequencing valid_out and data_out with a one-cycle delay after the second valid input, the design strictly meets the timing requirement. This approach also improves code clarity and synthesizability.

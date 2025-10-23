@@ -1,0 +1,29 @@
+Revised Design Approach:
+
+1. **Accurate Pattern Detection**:
+   - Implement a 4-bit shift register to detect the exact "1101" sequence
+   - Only transition to capture state when full pattern is matched
+
+2. **Precise Cycle Counting**:
+   - Use a single 16-bit counter for simplicity and accuracy
+   - Initialize counter to (delay_value + 1) * 1000 - 1 (for proper cycle count)
+   - Decrement counter each cycle until reaching zero
+
+3. **Count Output Timing**:
+   - Calculate count value based on remaining cycles divided by 1000
+   - Update count output synchronously with counter decrement
+
+4. **State Machine Improvements**:
+   - Add explicit state for pattern confirmation
+   - Ensure clean transitions between states
+   - Properly handle ack signal in WAIT_ACK state
+
+5. **Reset Behavior**:
+   - Clear all registers on reset
+   - Return to IDLE state immediately
+
+Key Fixes:
+- Correct pattern detection logic to avoid false positives
+- Accurate counter initialization and decrement
+- Proper count value calculation
+- Synchronized state transitions

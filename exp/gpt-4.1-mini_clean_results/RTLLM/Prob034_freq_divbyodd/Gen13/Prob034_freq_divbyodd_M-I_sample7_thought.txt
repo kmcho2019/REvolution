@@ -1,0 +1,15 @@
+To improve the PPA of the original odd-frequency divider design, I will focus on:
+
+- Removing the negedge clock domain to simplify timing closure and reduce power consumption. Instead, I will generate both toggling signals on the positive clock edge, using a combinational signal to approximate the half-period delay.
+
+- Use a single counter and two registers (clk_div1, clk_div2) toggled at different counts on the positive edge to emulate the two-edge toggling logic, thus eliminating the need for clock domain crossing and reducing flip-flops.
+
+- Generate clk_div2 by delaying the toggle by one clock cycle, implementing the effect of negedge toggling without actual negedge logic.
+
+- Maintain the OR combination to produce clk_div.
+
+- Keep the asynchronous active-low reset.
+
+- Retain the compile-time odd number check.
+
+This approach reduces logic complexity, removes negedge flip-flops, and uses only positive edge clocking to improve timing and power while preserving the desired odd division functionality.

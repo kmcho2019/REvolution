@@ -1,0 +1,15 @@
+To correctly implement the specified logic functions with minimal complexity:
+
+1. For out_sop (Sum of Products):
+   - Minterms for output=1: 2 (0010), 7 (0111), 15 (1111)
+   - Direct implementation without minimization: (~a & ~b & c & ~d) | (~a & b & c & d) | (a & b & c & d)
+   - Simplified by factoring: c & [(~a & ~b & ~d) | (b & d & (~a | a))]
+   - Final minimal SOP: c & ((~a & ~b & ~d) | (b & d))
+
+2. For out_pos (Product of Sums):
+   - Maxterms for output=0: 0,1,4,5,6,9,10,13,14
+   - Direct implementation would be too complex
+   - Instead, implement as complement of SOP for output=0 cases
+   - Final minimal POS: ~(~c | (a & b & ~d) | (~b & d) | (b & ~d))
+
+3. Implementation uses minimal logical operations while maintaining correctness

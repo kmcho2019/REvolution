@@ -1,0 +1,7 @@
+To improve the fractional frequency divider implementation while maintaining the same core concept:
+1. Replace the sequential always blocks with combinational logic using assign statements for better clarity and direct control
+2. Use a single 3-bit counter that increments on both clock edges (double-edge counting) to achieve the half-cycle precision
+3. Generate the divided clock directly from the counter value comparisons
+4. Implement the phase shift by comparing counter values at different thresholds
+5. The OR combination remains but with properly aligned signals
+This approach eliminates the potential race conditions between positive and negative edge triggered flops while maintaining the same functionality. The counter now effectively counts at double the clock rate, providing finer granularity for the fractional division.

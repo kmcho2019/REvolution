@@ -1,0 +1,11 @@
+To implement the TopModule, we can use a finite state machine (FSM) that keeps track of the current water level and the previous water level. Based on the sensor inputs and the previous state, the FSM will determine the output flow rates.
+
+We can define the states as follows:
+- State 0: Water level is below the lowest sensor (no sensors asserted)
+- State 1: Water level is between the lowest and middle sensors (only s[0] asserted)
+- State 2: Water level is between the middle and highest sensors (s[0] and s[1] asserted)
+- State 3: Water level is above the highest sensor (all sensors asserted)
+
+When the FSM is in a state, it will check the current sensor inputs and the previous state to determine the output flow rates. If the sensor inputs indicate a higher water level than the previous state, the Supplemental flow valve (dfr) will be opened. The nominal flow rates will be determined based on the current state.
+
+On reset, the FSM will be reset to State 0, with all four outputs asserted.

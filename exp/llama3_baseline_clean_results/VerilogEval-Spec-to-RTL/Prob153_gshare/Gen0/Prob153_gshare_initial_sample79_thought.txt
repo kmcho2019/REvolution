@@ -1,0 +1,18 @@
+To implement the TopModule, we will first design the necessary components:
+1. A 7-bit global branch history register to keep track of the branch history.
+2. A 128-entry table of two-bit saturating counters (Pattern History Table, PHT) to store the prediction history.
+3. A prediction logic to produce the predicted branch direction based on the current PC and branch history.
+4. A training logic to update the PHT and recover the branch history register when a misprediction occurs.
+
+The prediction logic will work as follows: 
+- When predict_valid is high, the module will calculate the index for the PHT using the XOR of the 7-bit PC and the 7-bit global branch history.
+- The module will then use this index to access the corresponding entry in the PHT.
+- If the value of the PHT entry is 2 or 3 (i.e., the counter is set to strongly taken), the module will predict that the branch is taken.
+- Otherwise, the module will predict that the branch is not taken.
+- The module will also update the global branch history register at the next positive clock edge.
+
+The training logic will work as follows:
+- When train_valid is high, the module will calculate the index for the PHT using the XOR of the 7-bit train_pc and the 7-bit train_history.
+- If the branch was taken and the corresponding PHT entry is not already at its maximum value (3), the module will increment the counter at the next positive clock edge.
+- If the branch was not taken and the corresponding PHT entry is not already at its minimum value (0), the module will decrement the counter at the next positive clock edge.
+- If the branch was mispredicted, the module will recover the global branch history register to its state immediately after the mispredicting branch completes execution.

@@ -1,0 +1,5 @@
+Refactor the design by implementing the Moore FSM with explicit one-hot style states encoded as individual bits rather than enumerated types. Separate the state register and the inversion bit into two flip-flops directly controlled by next-state combinational logic. Use two always_ff blocks: one for state and inversion_bit registers with asynchronous reset, and one separate input synchronizer for 'x'. Drive output 'z' directly from the registered inversion_bit and registered input 'x_reg' via a combinational assign statement.
+
+The next-state and inversion_bit logic is expressed combinationally with clear Boolean expressions instead of a case statement, simplifying the logic and potentially reducing synthesis complexity. This approach removes the enum and case constructs, replacing them with explicit signals and logical expressions, maintaining the same functionality but improving clarity and possibly synthesis result.
+
+This restructuring also clarifies the states as explicit bits, which can help synthesis tools optimize and potentially reduce logic, while the logic remains intuitive and easy to verify.

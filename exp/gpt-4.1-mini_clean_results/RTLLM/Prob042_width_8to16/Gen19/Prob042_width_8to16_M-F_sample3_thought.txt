@@ -1,0 +1,12 @@
+To fix the timing and valid signal assertion, the key is to separate the capture of the concatenated data from the assertion of the output valid signal, ensuring valid_out is asserted exactly one clock cycle after two valid inputs have been received and concatenated.
+
+The main fix involves removing the unconditional clearing of `valid_out_pipe` at each clock cycle. Instead, `valid_out_pipe` and `data_out_pipe` should only update when the second valid input arrives, holding their values until they propagate to the outputs in the next cycle. This ensures `valid_out` stays asserted for a full cycle without glitches.
+
+The updated design uses:
+
+- `first_data` and `first_data_valid` to store the first 8-bit input and its validity.
+- When the second valid input arrives, concatenate and store into `data_out_pipe` and assert `valid_out_pipe`.
+- `data_out` and `valid_out` registers capture these pipeline signals on every clock to produce the outputs delayed by exactly one cycle.
+- This approach handles any timing between valid_in pulses and guarantees `valid_out` is synchronized properly without being prematurely cleared.
+
+This fixes corner cases and simulation failures while keeping the original interface and functionality intact.

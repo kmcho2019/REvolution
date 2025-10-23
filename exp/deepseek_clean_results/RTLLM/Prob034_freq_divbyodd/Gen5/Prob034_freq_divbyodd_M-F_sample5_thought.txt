@@ -1,0 +1,9 @@
+Corrected odd frequency divider approach:
+1. Use two separate counters (cnt1 for posedge, cnt2 for negedge) to track both clock edges
+2. Each counter counts up to NUM_DIV-1 (odd number)
+3. Generate two intermediate clocks (clk_div1 on posedge, clk_div2 on negedge)
+4. Toggle each intermediate clock when counter reaches (NUM_DIV-1)/2
+5. Combine the two intermediate clocks with OR operation for final output
+6. Reset initializes both counters and intermediate clocks
+7. This ensures proper 50% duty cycle by utilizing both clock edges
+8. Maintains exact odd division ratio as required

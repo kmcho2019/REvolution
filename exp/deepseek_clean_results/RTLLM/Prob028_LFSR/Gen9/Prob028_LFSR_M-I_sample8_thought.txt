@@ -1,0 +1,15 @@
+The original LFSR module is functionally correct but can be optimized for better Power, Performance, and Area (PPA) metrics. Here are the key improvements:
+
+1. Remove the intermediate feedback wire to reduce routing resources
+2. Combine the feedback calculation directly into the shift operation
+3. Use a more optimal reset value (4'b0001) to avoid locking at all-zeros state
+4. Maintain the same clock and reset behavior
+5. Keep the same feedback polynomial (XOR of bits 3 and 2, inverted)
+6. Use concise but clear comments
+
+These changes will:
+- Reduce logic levels by eliminating the separate feedback wire
+- Improve timing by combining operations
+- Prevent the all-zero lock state with better initialization
+- Maintain the same pseudo-random sequence properties
+- Keep the same interface for compatibility

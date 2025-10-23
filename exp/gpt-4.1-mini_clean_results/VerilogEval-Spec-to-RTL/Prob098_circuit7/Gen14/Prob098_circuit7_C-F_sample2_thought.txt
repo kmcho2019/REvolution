@@ -1,0 +1,11 @@
+To produce a superior solution, we fuse the best ideas of both examples by:
+
+- Maintaining a modular DFF module for clarity, reuse, and good coding style.
+- Keeping combinational logic separate and explicit by inverting input 'a' in a wire outside the DFF.
+- Inlining the inversion directly into the wire driving DFF input without an extra named wire to reduce minor routing overhead, thus slightly improving timing and area.
+- Avoiding parameterization or embedding inversion inside the DFF to keep the module reusable and simple.
+- Using non-blocking assignment in the flip-flop always block for correct sequential semantics.
+- The design captures the negation of 'a' registered at the rising clock edge, matching the waveform precisely.
+- This fusion ensures minimal critical path (just one inverter plus one flip-flop), clean hierarchy, and easy maintenance while optimizing for power, performance, and area.
+
+In summary, the design explicitly shows the inversion combinationally, uses a simple DFF module, and avoids unnecessary wires or complexity, yielding a very clean, minimal, and efficient RTL.

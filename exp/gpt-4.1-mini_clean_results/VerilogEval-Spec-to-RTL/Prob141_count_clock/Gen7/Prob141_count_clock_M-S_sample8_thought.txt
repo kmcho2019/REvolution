@@ -1,0 +1,7 @@
+Simplify the hour counter by encoding the hour as a single 4-bit value representing 1-12 decimal and incrementing it as a binary number with rollover at 12 to 1.  
+Convert the hour value to BCD outputs using simple combinational logic to separate tens and units digits (tens digit is 1 only for hours >= 10, else 0).  
+Keep seconds and minutes as two separate BCD digits each with straightforward rollover logic.  
+Update pm flag whenever hour rolls over from 11 to 12 (before increment).  
+This reduces special-case conditions and nested ifs, making the hour counting logic cleaner and easier to follow without losing functionality.  
+Retain synchronous reset and enable gating on clock increments.  
+Keep outputs driven by registers to avoid glitches.

@@ -1,0 +1,16 @@
+To improve PPA based on the given metrics and suggestions, I will optimize the state encoding by using a one-hot encoding scheme, which often leads to faster next-state decoding and simpler logic at the expense of more flip-flops. Since there are only six states, one-hot encoding will use 6 bits for state, allowing very simple combinational next-state logic as one-hot transitions can be implemented with minimal gating.
+
+Advantages of this approach:
+1. Next state logic becomes simple AND/OR gates with minimal multiplexing, improving timing (lower worst negative slack).
+2. Output z can be directly assigned as OR of state bits representing states E and F, simplifying output logic.
+3. Power may slightly increase due to more flip-flops but may be offset by reduced logic depth and switching activity in combinational logic.
+4. Area might increase slightly due to additional flip-flops, but synthesis tools often optimize these small FSMs well.
+
+Implementation plan:
+- One-hot encode states as six single bits.
+- Use synchronous reset to initialize state to A.
+- Implement next state logic as combinational always block with direct assignments to next state bits.
+- Use non-blocking assignments for state update.
+- Output z is 1 if state E or F bit is set.
+
+This approach aims to reduce logic depth in next-state logic, improving timing and possibly power due to simpler combinational paths.

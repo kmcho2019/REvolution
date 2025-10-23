@@ -1,0 +1,15 @@
+Here's a novel approach using a shift register with overlapping windows to compute Rule 110 more efficiently:
+
+1. **Windowed Processing**: Instead of processing each bit individually, we'll use a sliding 3-bit window to compute the next state for all bits in parallel. This reduces redundant neighbor calculations.
+
+2. **Precompute Patterns**: We'll precompute all possible 3-bit patterns (8 total) and their Rule 110 outcomes using a lookup table implemented as a case statement.
+
+3. **Efficient Boundary Handling**: By treating the boundary bits separately, we can simplify the main processing logic while still maintaining correct behavior at the edges.
+
+4. **Parallel Computation**: The windowed approach allows us to compute all next states in a single clock cycle while minimizing logic duplication.
+
+Key advantages:
+- Reduced logic duplication compared to per-bit processing
+- Clear separation of boundary and core logic
+- Efficient pattern matching using case statements
+- Maintains single-cycle computation

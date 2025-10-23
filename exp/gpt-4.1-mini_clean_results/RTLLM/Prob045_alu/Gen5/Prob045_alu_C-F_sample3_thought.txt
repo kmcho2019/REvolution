@@ -1,0 +1,19 @@
+I will fuse the two example solutions to combine their best traits:
+
+1. From Example 1, I adopt the shared adder/subtractor logic with a clean separate carry_in and b_operand wiring to reduce redundant addition and subtraction logic, improving area and power efficiency.
+
+2. From Example 2, I take the simple and clean always block structure with a single case statement keyed on the opcode, and I will maintain explicit signedness casts and straightforward assignments for clarity and readability.
+
+3. Instead of tri-state 'z' for the flag output (which is discouraged in synthesis and routing), I will drive flag as 1 for SLT/SLTU when true, 0 otherwise (no high-impedance), improving synthesis friendliness.
+
+4. I will explicitly default all outputs at the beginning of the always block to safe values to avoid inferred latches, as done in Example 2, but still handle carry and overflow only for add/sub operations as in Example 1.
+
+5. I will compute all bitwise operations, shifts, and LUI eagerly in wires like Example 1 to reuse logic but only select the result in the always block.
+
+6. I will carefully compute overflow only for signed ADD and SUB operations, carry only for unsigned adds and subs, and zero and negative flags combinationally outside the always block as wires, avoiding unnecessary toggling.
+
+7. Shifts use consistent signed arithmetic shifts and immediate or variable amounts using a single 'shamt' wire.
+
+8. Zero and negative flags will be wires computed from 'r' to minimize register toggling and prevent hazards.
+
+This fusion yields a clean, well-structured, synthesis-friendly ALU implementation with reduced area and power while maintaining full functionality and clarity.

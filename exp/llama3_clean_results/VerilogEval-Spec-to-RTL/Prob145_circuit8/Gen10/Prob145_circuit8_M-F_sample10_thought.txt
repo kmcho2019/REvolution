@@ -1,0 +1,18 @@
+To address the issues mentioned in the feedback, we need to re-examine the state machine transitions and output assignments. The goal is to create a sequential circuit that accurately replicates the behavior described in the simulation waveforms. 
+
+A more accurate approach would be to use a single-clock design and define the state machine transitions based on the conditions specified in the problem description. We can use a 2-bit state register to represent the different states of the circuit. 
+
+The states can be defined as follows: 
+- State 0: idle (initial state)
+- State 1: set_p (when 'a' is 1 and the clock is high)
+- State 2: set_q (when 'p' is 1)
+
+The transitions between these states can be designed as follows:
+- When 'a' is 0 and the clock is high, 'p' is set to 0.
+- When 'a' is 1 and the clock is high, 'p' is set to 1, and the state transitions to set_p.
+- When 'p' is 1 and 'a' is 0, 'q' is set to 1.
+- When 'a' is 0 and 'q' is 1, the state transitions to idle, and 'q' remains 1.
+
+By using a single-clock design and carefully defining the state machine transitions, we can avoid potential race conditions and ensure that the output assignments align with the problem description's expected behavior.
+
+In terms of PPA optimizations, the simplified state machine and single-clock design should reduce the number of logic gates used to implement the output assignments, thereby minimizing the area and potentially improving performance.

@@ -1,0 +1,7 @@
+The original solution uses a modular gate-level design that implements AND with two NAND gates, ensuring clarity and modularity but incurring extra gate delay, power, and area overhead.
+
+To optimize for power and area without sacrificing correctness, I will simplify the design by directly implementing the AND function using a continuous assign statement in the TopModule, eliminating the intermediate AndGate module and reducing gate count from two to one. This reduces switching activity and wiring, improving power and area metrics.
+
+This approach keeps the design purely combinational and straightforward, making it synthesis-friendly and minimal in resources. Performance remains optimal since a single gate-level delay is less than or equal to the two NAND gates previously used. This refinement is preferred for trivial combinational logic like a single AND.
+
+Hence, I trade off modular hierarchy for better PPA metrics, which is justified by the simplicity of the function.

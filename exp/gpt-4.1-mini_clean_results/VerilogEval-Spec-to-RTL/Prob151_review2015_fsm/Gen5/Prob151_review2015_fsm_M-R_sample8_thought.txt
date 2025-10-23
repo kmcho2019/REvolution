@@ -1,0 +1,10 @@
+Refactor the FSM using one-hot encoding for clarity and simplify the control signals by separating combinational and sequential logic more distinctly. 
+
+- Always shift `shift_reg` on every clock cycle, independent of state, to keep pattern detection timing consistent.
+- Use one-hot states to easily drive outputs as simple combinational assignments.
+- Use a separate shift counter that increments only when in SHIFT state, with next state logic dependent on its completion.
+- Outputs are assigned combinationally from the current state (Moore outputs), ensuring zero-cycle latency on outputs at state boundaries.
+- Synchronize all logic on the positive clock edge with synchronous reset.
+- This approach aligns data sampling, pattern detection, and FSM transitions cleanly, removing subtle timing mismatch and making output timings precise and consistent.
+
+This design is functionally equivalent but better structured for timing correctness and easier to verify.

@@ -1,0 +1,17 @@
+To optimize the PPA metrics further, I'll implement these improvements:
+
+1. Switch to binary encoding (3 bits for 6 states) to:
+   - Reduce area by using fewer flip-flops (3 vs 6)
+   - Maintain reasonable timing as decoding logic remains simple
+   - Potentially reduce power due to fewer state bits
+
+2. Keep the output logic simple by directly decoding from state values
+   - E and F states directly map to z=1 (states 4 and 5 in binary)
+
+3. Optimize the state transition logic by:
+   - Using a more compact case statement
+   - Grouping similar transitions to minimize logic
+
+4. Remove the parallel_case pragma since binary encoding makes it unnecessary
+
+This should improve area significantly while maintaining comparable timing and potentially reducing power.

@@ -1,0 +1,14 @@
+Simplification Strategy:
+1. State Reduction: Keep only 2 states (A/B) as they're essential
+2. Counter Optimization: Use a 2-bit counter (0-2) to track 3-cycle windows
+3. Shift Register: Maintain 3-bit shift register for w history
+4. Output Logic: Compute ones count directly in combinational logic
+5. Evaluation Timing: Trigger output when counter wraps around (cycle_count==2)
+6. Reset Handling: Keep synchronous reset for consistency
+
+Key Simplifications:
+- Remove evaluation_flag register (use counter directly)
+- Combine state and counter logic in single always block
+- Direct output assignment without intermediate registers
+- Minimal state encoding (1-bit)
+- Clear separation of combinational and sequential logic

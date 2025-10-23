@@ -1,0 +1,12 @@
+Novel Architecture Idea:
+1. Segmented History Register: Split the 7-bit GHR into two parts (3-bit recent + 4-bit older) to better capture both short-term and long-term patterns
+2. Banked PHT: Divide the PHT into 4 banks (32 entries each) accessed by different PC bits to reduce access conflicts
+3. Early Prediction: Compute prediction index in previous cycle to reduce critical path
+4. Lazy PHT Update: Only update PHT entries when they would actually change (not at saturation)
+5. History Shadow Register: Maintain a speculative GHR for predictions while training uses the committed GHR
+
+Key Benefits:
+- Reduced bank conflicts between prediction and training
+- Shorter critical path by pre-computing prediction index
+- Lower power from lazy updates and banked structure
+- Better pattern capture with segmented history

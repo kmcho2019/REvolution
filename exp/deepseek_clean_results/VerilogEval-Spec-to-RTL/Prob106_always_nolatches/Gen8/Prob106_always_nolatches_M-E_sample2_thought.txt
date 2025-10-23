@@ -1,0 +1,11 @@
+This solution implements a priority encoder that converts the scancode into a one-hot encoded representation of arrow keys. The key innovations are:
+
+1. Priority Encoding: Uses a cascaded priority structure that naturally handles the "anything else" case without explicit comparison.
+
+2. One-Hot Output: Directly generates the four output signals without intermediate logic, reducing propagation delay.
+
+3. Shared Prefix Optimization: First checks the extended key prefix (0xE0) before examining the lower byte, reducing comparison operations.
+
+4. Efficient Comparison: Uses bitwise equality checks that synthesize efficiently in hardware.
+
+The priority structure ensures only one output can be active at a time (mutual exclusivity) while maintaining minimal logic depth. This approach is particularly efficient for FPGA implementations where priority encoders map well to LUT structures.

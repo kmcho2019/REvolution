@@ -1,0 +1,9 @@
+Implement a finite state machine (FSM) with four states to detect the specific pulse pattern "0 -> 1 -> 0" over three clock cycles:
+- IDLE: waiting for a '0' as the start condition.
+- WAIT_FOR_HIGH: detected '0', now waiting for '1'.
+- WAIT_FOR_LOW: detected '1' following '0', now waiting for final '0'.
+- PULSE_DETECTED: pulse pattern detected, output data_out=1 for one cycle, then return to IDLE.
+
+This FSM explicitly tracks the sequence step-by-step, making it straightforward to understand and extend if needed. The output data_out is asserted only at the cycle when the last '0' of the pulse is detected, and reset on the next cycle.
+
+This approach differs from delay-line pattern detection by explicitly coding the pulse sequence logic via states, which can be easier to debug or modify for more complex patterns.

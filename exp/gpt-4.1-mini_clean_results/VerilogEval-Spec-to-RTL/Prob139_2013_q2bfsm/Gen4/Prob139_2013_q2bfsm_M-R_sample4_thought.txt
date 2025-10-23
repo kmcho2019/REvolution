@@ -1,0 +1,11 @@
+Refactor the FSM to use a Moore machine style with separate combinational next-state and output logic and synchronous state updates, but drive outputs purely combinationally from the current state. This avoids off-by-one delays in outputs registered on clock edges. 
+
+Use a one-hot style counting for the sequence detection steps to make transitions clearer, and explicitly track how many cycles the FSM has spent in the `D` state (monitoring `y`) with a cycle counter that increments starting from 1, resetting on entry to `D`. This helps clearly check the "within two clock cycles" condition.
+
+Instead of outputting `f` and `g` registered, drive outputs combinationally based on state, ensuring immediate and consistent output timing.
+
+The synchronous reset active low is maintained.
+
+Also, improve the sequence detection states to explicitly encode the progress in the pattern 1,0,1 for clarity.
+
+This should fix timing misalignments with outputs relative to state transitions and simplify the code for maintainability and clarity, while preserving the original logic and behavior.

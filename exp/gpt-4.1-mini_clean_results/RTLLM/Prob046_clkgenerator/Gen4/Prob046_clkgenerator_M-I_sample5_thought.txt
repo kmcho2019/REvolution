@@ -1,0 +1,7 @@
+To make the clock generator synthesizable and practical for real hardware, we need to base the generated clock on a stable input reference clock rather than using simulation delays and initial blocks. The improved design includes an input clock (`clk_in`) and a parameter `PERIOD` representing the number of input clock cycles for a full output clock period.
+
+We implement a counter that increments on the rising edge of `clk_in`. When the counter reaches half of `PERIOD`, the output clock toggles, and the counter resets. This produces a clock with a frequency divided by `PERIOD` from the input clock.
+
+This design is fully synthesizable, avoids non-synthesizable constructs like initial blocks and delays, and is suitable for FPGA/ASIC implementations. The output clock `clk` is synchronous to `clk_in` and has a 50% duty cycle (when `PERIOD` is even). If `PERIOD` is odd, the duty cycle may not be exact but still periodic.
+
+This approach aligns with standard clock divider designs.

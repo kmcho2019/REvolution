@@ -1,0 +1,18 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Combine state transition and output logic into a single XOR operation to reduce critical path
+   - Eliminate intermediate next_state logic by directly computing state transition
+
+2. Power Optimization:
+   - Reduce switching activity by making state transitions only when necessary
+   - Use XOR-based logic which typically has lower power consumption
+
+3. Area Optimization:
+   - Replace two separate combinational logic blocks with a single XOR gate
+   - Maintain single flip-flop implementation
+
+Key Changes:
+- State transition now directly computed as state_A & ~x
+- Output z computed as state_A ^ x (XOR operation)
+- Reduced gate count while maintaining functionality
+- Maintained one-hot encoding and asynchronous reset

@@ -1,0 +1,20 @@
+Novel Architectural Idea:
+1. State Machine Approach:
+   - Implement a simple state machine with 7 states (0-6)
+   - Use 'a' as a control signal to either hold state (when high) or progress through states (when low)
+   - Eliminate arithmetic operations by using direct state transitions
+
+2. Encoding Optimization:
+   - Use one-hot encoding for states to simplify transition logic
+   - Each state corresponds directly to the output value
+   - State transitions become simple bit shifts when counting
+
+3. Power Gating:
+   - Completely disable state transitions when 'a' is high
+   - Only enable state register updates when counting is needed
+
+Key Benefits:
+- No arithmetic operations needed (simpler logic)
+- Clear separation between hold and count modes
+- One-hot encoding makes state transitions trivial
+- Lower power consumption due to gated transitions

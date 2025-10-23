@@ -1,0 +1,11 @@
+The given FSM is already well optimized for area and power with a minimal 3-bit encoding and clean next state logic. To improve PPA further, particularly aiming for better timing and possibly lower power, I will:
+
+- Replace the case statement with a pure combinational logic implementation using if-else to create a more balanced combinational path which can sometimes help timing in synthesis.
+- Use one-hot encoding for states instead of binary encoding, as one-hot FSMs typically have faster next-state decoding at the cost of area, but here it might help timing given the short critical path requirement.
+- Implement registered output MATCH (Mealy output derived from registered state and current input) with a minimal pipeline stage to reduce glitches and ensure output timing, which may help timing closure.
+- Implement synchronous reset and non-blocking assignments consistently.
+- Add a clock enable signal to avoid unnecessary state transitions when input IN does not affect the FSM, reducing switching activity and dynamic power.
+
+This trade-off slightly increases area (due to one-hot encoding) but targets better clock frequency and potentially better power due to clock gating. The FSM logic and overlap detection remain identical.
+
+Overall, this should improve WNS and reduce dynamic power at high frequency by lowering switching on state registers and output.

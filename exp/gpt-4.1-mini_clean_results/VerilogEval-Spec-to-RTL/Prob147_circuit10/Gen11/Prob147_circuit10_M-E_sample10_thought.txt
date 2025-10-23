@@ -1,0 +1,26 @@
+Re-examining the waveform reveals a pattern where 'state' is the stored bit updated on each clock edge, and 'q' is a combinational output depending on 'state', 'a', and 'b'.
+
+Key observations from waveform:
+- 'state' remains stable unless a specific condition involving inputs 'a' and 'b' occurs.
+- When 'b' is 1 and 'a' is 0, the output 'q' is 1 and 'state' is set to 1 on the next clock.
+- When 'b' and 'a' are both 1, the output 'q' resets to 0 and 'state' resets to 0.
+- When 'b' is 0, 'state' holds its previous value and 'q' appears to be just 'state'.
+- Also, when 'a' is 1 and 'b' is 0, 'q' and 'state' remain unchanged.
+
+From this, a novel approach is:
+
+- Let q = (state AND NOT(b)) OR (NOT state AND b AND NOT a)
+  That is, q is 1 if state is 1 and b=0, or if state is 0 and b=1 and a=0.
+- The next state is assigned the value of q at the clock edge.
+- This matches the waveform that 'q' is combinational and depends on inputs and current state, while state is updated to q.
+
+This architecture captures the sequential behavior: 
+- If b=0, state remains the same (because q=state).
+- If b=1 and a=0, q=1 regardless of state, causing state to move to 1.
+- If b=1 and a=1, q=0, resetting state to 0.
+
+This is a classic conditional latch driven by 'a' and 'b', with 'state' holding last q.
+
+Implement this as combinational q, with flip-flop state updated by q on posedge clk. Initialize state to 0 for correct startup.
+
+This design matches the observed waveforms and provides the correct outputs for given inputs.

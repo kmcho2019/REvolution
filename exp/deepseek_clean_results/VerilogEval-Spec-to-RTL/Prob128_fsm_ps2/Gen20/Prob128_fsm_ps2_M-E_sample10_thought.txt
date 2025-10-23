@@ -1,0 +1,12 @@
+Instead of using a simple state machine, we can implement a circular buffer that stores the last 3 bytes received. The key insight is that we can continuously check for message validity by examining the buffer contents. Here's how it works:
+
+1. Maintain a 3-byte circular buffer that shifts in new bytes
+2. Keep a write pointer that cycles through 0-2
+3. After each byte is written, check if the byte at (pointer-2 mod 3) has in[3]=1
+4. If true, we have a complete message and can assert 'done'
+
+Advantages:
+- Always maintains last 3 bytes, allowing immediate detection of message boundaries
+- No explicit state tracking needed beyond the pointer
+- Can be easily extended to detect corrupted messages by checking all 3 bytes
+- More robust against noise as it continuously verifies message structure

@@ -1,0 +1,9 @@
+Refactor the 64-bit pipelined ripple carry adder by removing array-style pipeline registers and instead use flattened registers for pipeline stages. Use combinational `assign` for partial stage sums and carries, and sequential always blocks to register intermediate sums, carries, and enables for pipelining. This avoids multi-dimensional reg arrays and simplifies simulation.
+
+Pipeline will be 4 stages of 16 bits each; at each stage, add 16-bit slices of operands plus carry-in. Registers hold the intermediate partial sums and carries for the next stage.
+
+Synchronize the input operands and enable signal through pipeline registers. Update output result and output enable after the last stage.
+
+This approach uses parameterized widths but defines `parameter` so that overriding is possible if needed, and uses straightforward register declarations indexed by stage number to hold data for each pipeline stage. The combinational sums use `assign` statements for clarity.
+
+This structure keeps the same functionality but with simpler and clearer code organization.

@@ -1,0 +1,9 @@
+Implement the 32-bit Galois LFSR shifting right with taps at bits 31, 21, 1, and 0 (0-based).  
+On each clock edge: if reset is high, set q to 1; else:  
+- Compute feedback bit fb = q[0].  
+- Shift q right by 1 bit.  
+- For each tap bit, XOR the corresponding bit with fb after shifting.  
+Because it is a Galois LFSR, we only modify bits that are taps: next_q[i] = q[i-1] ^ fb if tap, else q[i-1].  
+We can implement this without loops, explicitly assigning bits for clarity, or just use a wire for feedback and assign next q combinationally.  
+Use nonblocking assignments and synchronous reset.  
+This approach keeps the code simple, readable, and efficient.

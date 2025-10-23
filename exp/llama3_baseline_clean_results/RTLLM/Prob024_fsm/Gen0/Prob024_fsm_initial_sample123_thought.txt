@@ -1,0 +1,9 @@
+To design a Mealy FSM detection circuit in Verilog, we first need to identify the states and transitions based on the input sequence. The sequence we are looking to detect is '10011'. This means our FSM needs to track the progression of inputs to match this sequence. 
+
+We'll define states for each position in the sequence plus an initial state (or idle state). So, we have states for '1', '10', '100', '1001', and '10011'. When the sequence is fully matched, the output 'MATCH' should be high at the same time as the last '1' in the sequence is input.
+
+For implementation, we use a parameter to define the number of states in the FSM and an enum to name each state for clarity. The current state and next state are declared as reg of the type of the enum. 
+
+We use a case statement inside a always block (which is sensitive to the positive edge of the clock and the reset signal) to implement the state transitions based on the current state and the input. When the FSM reaches the final state ('10011'), we set the output 'MATCH' to 1; otherwise, it remains 0.
+
+Reset logic is also crucial as it needs to initialize the FSM to its starting state ('IDLE') whenever the reset signal 'RST' is active, setting 'MATCH' to 0.

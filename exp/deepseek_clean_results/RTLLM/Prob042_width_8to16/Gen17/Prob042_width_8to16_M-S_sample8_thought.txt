@@ -1,0 +1,14 @@
+Simplified State Machine Approach:
+1. Eliminate explicit state machine and enum declaration to reduce complexity
+2. Use a single-bit flag to track whether we have the first byte
+3. Store first byte in a register when flag is low and valid_in is high
+4. When flag is high and valid_in is high, concatenate stored byte with new byte and output
+5. Reset clears all registers and flag
+6. Output valid only when both bytes are received (flag transitions from high to low)
+
+Key Simplifications:
+- Removed enum and explicit state machine
+- Single-bit flag replaces state variable
+- Same functionality with less code
+- More straightforward for synthesis tools
+- Maintains identical timing behavior

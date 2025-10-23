@@ -1,0 +1,5 @@
+Instead of implementing the 2-to-1 multiplexer as 100 independent 1-bit muxes or using a single vector select, this design divides the 100-bit inputs into 10 chunks of 10 bits each. Each chunk is then multiplexed using a 10-bit wide 2-to-1 mux. This hierarchical chunking approach balances between flat and fully bitwise implementations, potentially aiding synthesis by promoting moderate logic chunking which can enhance routability and pipeline insertion if needed later.
+
+The TopModule instantiates 10 small 10-bit multiplexers and concatenates their outputs to form the final 100-bit output. This architectural idea can simplify layout and potentially improve modularity, testability, and synthesis tool guidance by limiting the mux size.
+
+This approach is still purely combinational and maintains zero latency while providing a neat modular structure.

@@ -1,0 +1,14 @@
+Novel Architecture: State Machine with Pre-computation
+1. Instead of cascaded counters, use a state machine with 4 states (IDLE, SEC_INC, MIN_INC, HOUR_INC)
+2. Pre-compute all next values in combinational logic before the clock edge
+3. Use a single always block for both sequential and combinational logic
+4. Implement a "tick" signal that pulses every second for better power management
+5. Use parameterized constants for maximum values
+6. Optimize bit widths with exact requirements (5 bits for hours, 6 bits for others)
+
+Key Advantages:
+- Eliminates long combinational paths from cascaded rollovers
+- Pre-computation allows for better timing closure
+- State machine makes the control flow explicit and verifiable
+- Tick signal enables clock gating opportunities
+- Parameterization makes the design more flexible

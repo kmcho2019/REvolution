@@ -1,0 +1,14 @@
+Fuse the best ideas by preserving a clean, straightforward 2D-to-1D indexing approach with wrap-around modulo implemented efficiently using bit masking (since 16 is 2^4, wrap_index can be simplified with a 4-bit mask instead of if-else). Use the nested loops for clarity and full combinational next state calculation, but replace multiplication (nr*WIDTH) with bit shifts to reduce area and improve timing.
+
+Keep the combinational next state calculation in one always_comb block, with blocking assignments for clear combinational logic and no latch risk.
+
+Also, declare q as reg for sequential update, load synchronously handled.
+
+This fusion results in a clean, efficient, and more synthesis-friendly implementation, improving area and potentially timing, while fully maintaining functionality and readability.
+
+Key improvements:
+- wrap_index implemented as simple 4-bit masking
+- Replace nr*WIDTH with (nr << 4) for indexing
+- Maintain nested loops for neighbor counting
+- Use proper blocking assignments in combinational always block
+- Synchronous load and state update on posedge clk

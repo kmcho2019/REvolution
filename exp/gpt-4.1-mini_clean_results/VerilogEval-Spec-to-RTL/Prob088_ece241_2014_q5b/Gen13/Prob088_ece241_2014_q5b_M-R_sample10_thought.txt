@@ -1,0 +1,7 @@
+Refactor the FSM by representing the one-hot states using a single 2-bit register instead of two separate registers. Use parameter definitions for state encodings to improve readability. Implement the next state logic and output logic using combinational always blocks with case statements instead of direct boolean expressions. Keep the asynchronous reset logic in the sequential block triggered by clk and areset.
+
+This approach keeps the one-hot encoding, but centralizes the state vector into one register for cleaner state updates. Using case statements enhances clarity in state transitions and output definitions. The output remains Mealy-style (depending on current state and input), but is computed inside a combinational always block. This structure makes the FSM style more explicit and scalable.
+
+The asynchronous reset remains active-high and async, meeting specs.
+
+This refactoring reorganizes the code without changing functionality but improves modularity and future extensibility.

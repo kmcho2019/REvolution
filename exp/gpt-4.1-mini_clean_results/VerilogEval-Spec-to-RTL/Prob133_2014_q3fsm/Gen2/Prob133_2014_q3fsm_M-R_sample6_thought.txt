@@ -1,0 +1,19 @@
+Refactor the FSM to clearly separate the sampling and output phases using a small state machine with three states:
+
+- State A: Wait for s=1 to start sampling
+- State B: Sample w for three consecutive clock cycles, counting the number of times w=1
+- State C: Output z=1 if count_w == 2, else 0; then return to state B to start a new 3-cycle sampling window
+
+This explicit state separation avoids confusion with cycle counters and output timing.
+
+Implementation details:
+- Use a 2-bit sample counter to count 3 samples in state B.
+- In state B, accumulate count_w for each w=1 sample.
+- When 3 samples are done, transition to state C.
+- In state C, assert z according to count_w and then clear counters and return to B for the next window.
+- State A only reacts to s and resets counters and output.
+- Synchronous reset initializes the FSM in state A.
+- All sequential logic triggered on posedge clk.
+- Output z is registered in state C only.
+- Use enumerated states for clarity.
+- This clean state-based approach removes ambiguity and off-by-one errors.

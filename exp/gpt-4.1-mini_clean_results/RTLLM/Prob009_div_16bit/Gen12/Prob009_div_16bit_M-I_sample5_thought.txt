@@ -1,0 +1,21 @@
+The original design correctly implements the 16-bit by 8-bit division combinationally using a shift-subtract approach with a generate loop, but the code has a small inefficiency in the ordering of quotient bits and some minor redundant zero extension on remainder output.
+
+To improve PPA (Power, Performance, Area):
+
+1. **Quotient bit ordering fix**: In the original code, quotient_bits are generated per iteration with index `[15 - i]`, but then assembled incorrectly by assigning `quotient_vector[i] = quotient_bits[i]`. This mismatches the bit positions and can confuse synthesis and reduce optimization opportunities.
+
+2. **Avoid intermediate registers a_reg, b_reg**: Since the problem states combinational logic, we can directly use inputs A and B without "registering" them in combinational always blocks, eliminating unnecessary logic and reducing toggling power and area.
+
+3. **Use localparams for widths and constants**: This improves readability and may help synthesis tools.
+
+4. **Correct remainder zero extension**: The remainder is 8-bit wide after the division steps; zero-extend properly to 16-bit output.
+
+5. **Simplify wire declarations**: Instead of using arrays of wires for quotient_bits, define a single 16-bit wire and assign bits directly, improving clarity.
+
+6. **Consolidate generate loops**: Combine quotient bit assignment inside the same generate loop as remainder calculation for better code locality and possible synthesis optimization.
+
+7. **Commenting and clarity**: Add clearer comments for easier maintenance.
+
+These changes won't dramatically improve timing because of inherent data dependency in shift-subtract division, but will slightly reduce area and power by removing unnecessary signals and improving clarity for synthesis optimization.
+
+Below is the improved and corrected code implementing these suggestions.

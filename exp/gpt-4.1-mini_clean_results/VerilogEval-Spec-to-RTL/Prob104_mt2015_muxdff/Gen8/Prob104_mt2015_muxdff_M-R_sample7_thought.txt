@@ -1,0 +1,7 @@
+Refactor the module by splitting the functionality into two parts: a 2:1 multiplexer as a continuous assignment, and a flip-flop that captures the selected input on the rising edge of the clock. This separates combinational and sequential logic explicitly, improving clarity and potentially easing synthesis optimizations.
+
+In this design:
+- Use a wire `mux_out` to select between `r_in` and `q_in` based on `L`.
+- Use an always block to capture `mux_out` into `Q` at the rising edge of `clk`.
+
+This keeps the same behavior but makes the mux operation explicit combinational logic before the flip-flop, conforming to good design practices.

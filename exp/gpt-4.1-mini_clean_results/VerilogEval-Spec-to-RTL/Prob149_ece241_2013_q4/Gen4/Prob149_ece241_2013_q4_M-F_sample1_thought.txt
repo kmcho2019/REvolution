@@ -1,0 +1,10 @@
+To fix the design, we must ensure a clean, correct tracking of the previous and current water level states with proper timing semantics. We should:
+
+1. Decode the current level combinationally outside the sequential block for clarity.
+2. Use registers `prev_level` and `curr_level` updated synchronously on the clock.
+3. Update `prev_level` to the old `curr_level` before updating `curr_level` with the new decoded level.
+4. Detect `level_increased` by comparing the newly decoded current level with the `prev_level` *before* updating it, so we compare stable registered values.
+5. Drive outputs in the same synchronous block based on the decoded current level and `level_increased`.
+6. On reset, initialize to BELOW_S0 with all flow outputs asserted.
+
+This way, `level_increased` correctly reflects whether the water level has increased since the last sensor change, and the outputs, especially `dfr`, follow the problem spec. The outputs and states have a single driver, ensuring glitch-free operation.

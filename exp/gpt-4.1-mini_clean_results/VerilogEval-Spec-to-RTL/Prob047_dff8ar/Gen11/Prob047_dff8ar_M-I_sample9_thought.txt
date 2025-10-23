@@ -1,0 +1,7 @@
+To improve PPA, replace the asynchronous reset with a synchronous reset while preserving the active-high reset functionality. Synchronous resets typically yield better timing closure and lower glitching power because reset is synchronized to the clock domain. This also reduces the complexity of the flip-flops and eases synthesis optimization, potentially lowering area and power. 
+
+Since the spec requires asynchronous reset, but PPA can be improved significantly by synchronous reset, I will keep asynchronous reset but convert the reset logic to a minimal structure by using a single always block with an asynchronous reset. However, I can reduce power by splitting the asynchronous reset off only to the flip-flops, minimizing fanout and optimizing code for synthesis.
+
+Also, I can flatten the design by removing the submodule and directly instantiate the 8-bit register in TopModule for less hierarchy overhead. Non-blocking assignments and vectorized register remain for clear and compact code.
+
+This approach keeps the asynchronous reset but avoids extra submodule instantiation, improving area and power slightly, and keeps the design clean and easy to synthesize.

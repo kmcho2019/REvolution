@@ -1,0 +1,15 @@
+Implement the perpetual calendar as a single always block triggered on the positive edge of CLK or RST, using chained conditional updates for seconds, minutes, and hours. 
+
+Instead of separate always blocks or next-state logic, use a single synchronous block that directly updates all counters with non-blocking assignments, maintaining their relations:
+
+- On reset, clear all counters.
+- On each clock, increment seconds.
+- When seconds overflow from 59 to 0, increment minutes.
+- When minutes overflow from 59 to 0 (due to seconds wrapping), increment hours.
+- When hours overflow from 23 to 0 (due to minutes and seconds wrapping), wrap hours.
+
+Use 6-bit registers for Secs and Mins, 6 bits for Hours (though 5 bits suffice, using 6 bits here for uniformity and simplicity).
+
+This approach simplifies the design, reduces registers for next states, and easily infers ripple counters for time.
+
+The code remains clear and concise, suitable for synthesis with minimal overhead.

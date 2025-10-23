@@ -1,0 +1,10 @@
+To implement the finite state machine, we will use the following states: 
+IDLE (waiting for start bit), START (found start bit, waiting for data bits), 
+DATA (receiving data bits), STOP (waiting for stop bit), and ERROR (stop bit not found, waiting for stop bit). 
+The state machine will transition between these states based on the input bit and the current state. 
+When in the IDLE state, it will transition to the START state if the input bit is 0 (start bit). 
+In the START state, it will transition to the DATA state. 
+In the DATA state, it will stay in this state for 8 clock cycles, and then transition to the STOP state. 
+In the STOP state, it will transition to the IDLE state if the input bit is 1 (stop bit), otherwise it will transition to the ERROR state. 
+In the ERROR state, it will stay in this state until the input bit is 1 (stop bit), and then it will transition to the IDLE state. 
+The 'done' output will be asserted when the state machine is in the IDLE state and the previous state was the STOP state.

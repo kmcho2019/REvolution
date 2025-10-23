@@ -1,0 +1,8 @@
+The current implementation can be optimized by using direct part-select indexing instead of a for-loop. This approach will:
+1. Eliminate the unnecessary default assignment
+2. Reduce the combinational logic depth by directly selecting the required 4-bit slice
+3. Minimize switching activity by only evaluating the selected slice
+4. Potentially reduce area by allowing synthesis tools to implement a more efficient multiplexer structure
+5. Improve timing by creating a simpler path from sel to out
+
+The direct indexing approach uses Verilog's part-select operator with a variable base (sel*4) and fixed width (4 bits), which is well-supported by synthesis tools and typically results in optimal multiplexer implementations.

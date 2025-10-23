@@ -1,0 +1,17 @@
+Fuse the best elements from both examples to produce a clean, efficient, and robust FSM that decodes serial bytes with start bit (0), 8 data bits (LSB first), and stop bit (1). 
+
+Use a 2-bit binary-encoded FSM with four states (IDLE, RECEIVE, CHECK_STOP, WAIT_STOP) clearly separating framing error recovery. Implement next-state logic combinationally and state plus counters sequentially for clarity and good synthesis.
+
+Adopt the LSB-first shift direction from Example 2 (`shift_reg <= {in, shift_reg[7:1]}`), which directly places the first received bit into bit 0, precisely matching the protocol semantics and making debug intuitive.
+
+Generate the `done` output as a registered, synchronous one-cycle pulse asserted only on valid stop bit detection, preventing glitches.
+
+Reset the bit counter and shift register only in IDLE and WAIT_STOP states, minimizing toggling and power when not receiving data.
+
+Use non-blocking assignments throughout to avoid race conditions and ensure clean timing.
+
+This fusion leverages the clear state separation, robust framing error handling, and power-aware reset strategy from Example 1 and the intuitively correct shift direction and synchronous done pulse generation from Example 2.
+
+The design is minimal, low area, and power efficient, suitable for most synthesis and timing goals without unnecessary complexity.
+
+Additional minor style improvements include consistent naming, spacing, and comments for clarity.

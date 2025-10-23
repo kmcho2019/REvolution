@@ -1,0 +1,21 @@
+After carefully analyzing the feedback and re-examining the waveform, here's the corrected approach:
+
+1. Key Insights:
+   - p should only update on rising clock edges
+   - p follows 'a' only when q=0
+   - q becomes 1 in the cycle after p was 1 (seen at 115ns)
+   - q resets to 0 immediately when 'a' is high during clock low phase (seen at 175ns)
+   - p must remain 0 when q=1 regardless of 'a' input
+
+2. Fixes Implemented:
+   - Made q update synchronously with p to avoid timing issues
+   - Added proper condition for q to set based on previous p value
+   - Implemented immediate clear of q when 'a' is high during clock low
+   - Ensured all state transitions happen at appropriate clock edges
+
+3. New State Logic:
+   - p updates to 'a' only when q=0 and on rising edge
+   - q updates on rising edge based on:
+     - Previous p value (sets q)
+     - Current 'a' during low phase (clears q)
+   - Removed separate negedge block to avoid race conditions

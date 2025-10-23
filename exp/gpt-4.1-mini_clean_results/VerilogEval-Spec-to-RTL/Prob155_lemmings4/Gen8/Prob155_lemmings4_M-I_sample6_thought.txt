@@ -1,0 +1,12 @@
+To improve the PPA of the original design while preserving functionality, the following strategies are applied:
+
+- Use one-hot encoding for the FSM states (walk, dig, fall, splat) to simplify next-state logic and reduce critical path delay.
+- Implement clock gating for the fall_timer register to avoid unnecessary toggling and dynamic power when not falling.
+- Reduce combinational logic complexity by explicitly handling bump conditions with simple logic instead of nested if-else.
+- Avoid redundant assignments in next-state logic by grouping common cases.
+- Retain direction register update only when changed to minimize switching.
+- Simplify fall_timer increment saturation logic with minimal conditions.
+- Maintain a clean separation between combinational and sequential logic for easier synthesis and optimization.
+- Maintain Moore machine style by generating outputs solely from registered state and direction.
+
+These improvements aim to reduce the worst slack (timing) by decreasing logic levels, reduce power by gating the fall timer, and maintain or slightly reduce area by simplifying logic expressions.

@@ -1,0 +1,12 @@
+Use a simple radix-2 iterative divider with a single shift register holding combined remainder and quotient bits. The division proceeds over 8 cycles controlled by a counter. 
+
+Key novel ideas:  
+- Use a combined 9-bit remainder register and 8-bit quotient register separately for clarity.  
+- On start, take absolute values if signed operation, determine quotient and remainder signs.  
+- At each iteration, shift left remainder+quotient, subtract divisor, and update quotient bit based on subtraction sign.  
+- After 8 iterations, adjust signs of quotient and remainder if signed operation.  
+- Output the result with remainder in upper 8 bits and quotient in lower 8 bits, with `res_valid` indicating ready.  
+- State machine with three states: IDLE, DIVIDE, DONE for better clarity and control.  
+- Separate combinational logic for subtraction to avoid complex mixed assignments.
+
+This architecture is easy to follow, fully synchronous, suitable for synthesis, and supports signed and unsigned division properly.

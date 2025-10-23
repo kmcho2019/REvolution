@@ -1,0 +1,35 @@
+To provide a completely new and different solution, I will implement the function using a 3-to-1 multiplexer approach that directly uses the inputs as select lines and data inputs, exploiting the given truth table mapping.
+
+Analyzing the truth table, we can encode the function as a 3-input MUX where the select lines are x3 and x2 combined, and the data inputs depend on x1.
+
+From the truth table:
+
+For each combination of (x3, x2):
+- 00: f = 0 (for both x1=0 and 1)
+- 01: f = 1 (for both x1=0 and 1)
+- 10: f = x1 (0 or 1)
+- 11: f = x1
+
+Hence, we can see f equals:
+
+- If (x3,x2) == 00: 0
+- If (x3,x2) == 01: 1
+- If (x3,x2) == 10 or 11: x1
+
+Thus, the function can be implemented as a 4-to-1 multiplexer, with select lines {x3, x2} and data inputs:
+
+D0 = 0 (for 00)
+D1 = 1 (for 01)
+D2 = x1 (for 10)
+D3 = x1 (for 11)
+
+This approach uses a single 4-to-1 multiplexer module and minimal logic.
+
+The module hierarchy will be:
+
+- MUX4to1 module: a 4-input 1-output multiplexer
+- TopModule: instantiates MUX4to1 with select={x3,x2} and inputs {0,1,x1,x1}
+
+This design demonstrates a novel approach by leveraging multiplexing to implement the function efficiently with minimal logic and depth, emphasizing modular reuse and simplicity.
+
+This contrasts with the previous AND/OR/NOT gate-based solution.

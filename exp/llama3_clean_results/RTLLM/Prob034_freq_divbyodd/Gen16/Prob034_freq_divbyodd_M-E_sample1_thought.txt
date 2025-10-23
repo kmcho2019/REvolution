@@ -1,0 +1,5 @@
+The new architectural idea for the frequency divider is to use a single counter and a state machine to generate the divided clock output. The counter will count up to the divisor value (NUM_DIV) on each clock cycle, and the state machine will toggle the divided clock signal when the counter reaches half of NUM_DIV on the rising edge and when it reaches NUM_DIV on the falling edge. This approach simplifies the design and reduces the number of flip-flops required.
+
+The state machine will have two states: IDLE and DIVIDED. In the IDLE state, the counter will count up to half of NUM_DIV, and when it reaches half of NUM_DIV, the state machine will transition to the DIVIDED state and toggle the divided clock signal. In the DIVIDED state, the counter will continue to count up to NUM_DIV, and when it reaches NUM_DIV, the state machine will transition back to the IDLE state and reset the counter.
+
+This approach ensures that the divided clock signal is toggled at the correct frequency and accounts for both rising and falling edges of the clock. The use of a state machine simplifies the design and reduces the number of combinational gates required.

@@ -1,0 +1,11 @@
+To simplify the serial byte receiver FSM, we can:
+1. Eliminate the ERROR state by handling missing stop bits in the STOP state itself
+2. Reduce bit_count to 2 bits by counting from 0-7 (8 cycles) instead of comparing to 7
+3. Combine state transition and data processing into a single always block for clarity
+4. Use simpler state encoding (IDLE=0, RECEIVE=1, STOP=2)
+
+Key simplifications:
+- Remove ERROR state and handle stop bit wait in STOP state
+- Simplify bit counting logic
+- Reduce state encoding bits
+- Maintain same functionality with fewer states and simpler logic

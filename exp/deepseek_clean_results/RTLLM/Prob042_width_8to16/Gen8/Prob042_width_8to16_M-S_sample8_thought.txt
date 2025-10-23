@@ -1,0 +1,16 @@
+Simplified Design Strategy:
+1. Use a single 8-bit register to store the first byte when it arrives
+2. Use a 1-bit flag to track if we have a stored byte waiting
+3. When next valid input arrives:
+   - If we have a stored byte: combine it with new byte to form 16-bit output
+   - Clear the stored byte flag and assert valid_out
+   - Otherwise: store the new byte and set the flag
+4. Reset clears all registers synchronously
+5. Output is registered (meets timing requirement of next cycle output)
+
+Key Simplifications:
+- Removed redundant registers (only need 8-bit storage + 1-bit flag)
+- Direct combinatorial output generation
+- Clear synchronous reset
+- Minimal control logic (simple if-else structure)
+- Output timing matches requirements (registered output)

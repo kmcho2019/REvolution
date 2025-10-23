@@ -1,0 +1,183 @@
+We want to implement the K-map function F(c,d,a,b) using a 4-to-1 mux with selector inputs a and b, where the inputs to the 4-to-1 mux are mux_in[3:0]. The 4-to-1 mux outputs mux_in[{b,a}] (assuming a is MSB, b LSB, based on the problem statement it seems ab are selectors of the 4-to-1 mux, so ab=00 → mux_in[0], ab=01 → mux_in[1], ab=11 → mux_in[2], ab=10 → mux_in[3]).
+
+We want to use only multiplexers (one 4-to-1 mux and as many 2-to-1 muxes as needed, minimizing their number) to implement the whole K-map function. Our task is to output the 4 inputs to the 4-to-1 mux (mux_in[3:0]) as functions of c and d, implemented only using 2-to-1 muxes and inputs c,d, constants 0 or 1.
+
+First, let's analyze the K-map:
+
+        ab
+    cd  00  01  11  10
+    00 | 0 | 0 | 0 | 1 |
+    01 | 1 | 0 | 0 | 0 |
+    11 | 1 | 0 | 1 | 1 |
+    10 | 1 | 0 | 0 | 1 |
+
+Rows are cd: 00, 01, 11, 10 (top to bottom),
+columns are ab: 00, 01, 11, 10 (left to right)
+
+For fixed ab, the 4-to-1 mux inputs mux_in[i] must produce the output of the function for all cd.
+
+So:
+
+- mux_in[0] corresponds to ab=00, outputs for cd:
+
+    cd=00: 0
+    cd=01: 1
+    cd=11: 1
+    cd=10: 1
+
+  Thus, mux_in[0] = function f0(c,d)
+
+- mux_in[1] corresponds to ab=01:
+
+    cd=00: 0
+    cd=01: 0
+    cd=11: 0
+    cd=10: 0
+
+  mux_in[1] = 0
+
+- mux_in[2] corresponds to ab=11:
+
+    cd=00: 0
+    cd=01: 0
+    cd=11: 1
+    cd=10: 0
+
+  mux_in[2] = f2(c,d)
+
+- mux_in[3] corresponds to ab=10:
+
+    cd=00:1
+    cd=01:0
+    cd=11:1
+    cd=10:1
+
+  mux_in[3] = f3(c,d)
+
+Now we simplify each mux_in[i]:
+
+1) mux_in[0]:
+
+cd | output
+00 | 0
+01 | 1
+11 | 1
+10 | 1
+
+cd bits: c d
+
+Let's see if we can write mux_in[0] as a function of c,d using only 2-to-1 muxes (mux selector and inputs).
+
+Looking at the values:
+
+When c=0, d=0 → 0  
+c=0, d=1 → 1  
+c=1, d=1 → 1  
+c=1, d=0 → 1
+
+This is the function: mux_in[0] = c + d
+
+We can implement c + d using a 2-to-1 mux with d as selector: output = c when d=0, output=1 when d=1. Since 1 is constant high, and we're allowed constants, this is possible.
+
+So mux_in[0] = MUX(d, c, 1)
+
+2) mux_in[1] = 0
+
+Just constant 0.
+
+3) mux_in[2]:
+
+cd | output
+00 | 0
+01 | 0
+11 | 1
+10 | 0
+
+So only when c=1,d=1 output=1.
+
+This is just c & d, but we can't use AND gates, only muxes.
+
+We can implement c & d using a 2-to-1 mux:
+
+For example, output = MUX(c, 0, d)  
+If c=0 → output=0  
+If c=1 → output=d
+
+Yes, this equals c & d.
+
+So mux_in[2] = MUX(c, 0, d)
+
+4) mux_in[3]:
+
+cd | output
+00 |1
+01 |0
+11 |1
+10 |1
+
+Let's write the truth:
+
+c d | out
+0 0 | 1
+0 1 | 0
+1 1 | 1
+1 0 | 1
+
+Try to write this function.
+
+Observe output:
+
+- when c=0, d=0 output=1  
+- when c=0, d=1 output=0  
+- when c=1, output=1 regardless of d
+
+Rewrite:
+
+When c=1 → output=1  
+When c=0 → output = not d
+
+So output = c + not d
+
+Again, no gates, but can we implement c + not d with muxes and constants?
+
+not d is inversion of d, we can implement not d as a mux with d as selector: MUX(d, 1, 0) outputs 0 when d=1, 1 when d=0.
+
+Then:
+
+output = MUX(c, not d, 1)
+
+Select c: if c=0 → output=not d; if c=1 → output=1
+
+So:
+
+- First implement not d = MUX(d, 1, 0)  
+- Then output = MUX(c, not d, 1)
+
+Finally, we output mux_in[3] = output.
+
+Summary:
+
+mux_in[0] = MUX(d, c, 1)  
+mux_in[1] = 0  
+mux_in[2] = MUX(c, 0, d)  
+mux_in[3] = MUX(c, not d, 1), where not d = MUX(d, 1, 0)
+
+We implement all mux_in[] using 2-to-1 muxes and constants.
+
+Now we implement this in Verilog.
+
+No gates, only muxes are allowed. Since the language Verilog can describe the muxes, we can instantiate them as per the behavior or write ternary expressions mimicking muxes.
+
+We'll define a 2-to-1 mux function or module for clarity.
+
+The code will have inputs c,d and outputs mux_in[3:0].
+
+We implement:
+
+- not_d = MUX(d, 1, 0) = (d == 0) ? 1 : 0  
+- mux_in[0] = MUX(d, c, 1) = (d == 0) ? c : 1  
+- mux_in[1] = 0  
+- mux_in[2] = MUX(c, 0, d) = (c == 0) ? 0 : d  
+- mux_in[3] = MUX(c, not_d, 1) = (c == 0) ? not_d : 1
+
+Finally, this satisfies the requirement: only one 4-to-1 mux external to the module with selector inputs a,b, and the 4 mux inputs mux_in[3:0] are implemented as described.

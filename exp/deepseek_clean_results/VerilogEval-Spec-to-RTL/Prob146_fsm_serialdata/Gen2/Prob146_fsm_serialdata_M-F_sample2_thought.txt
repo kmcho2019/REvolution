@@ -1,0 +1,10 @@
+To address the feedback, I'll redesign the FSM with clearer state separation and more robust control logic:
+
+1. **State Expansion**: Use 3 distinct states (IDLE, RECEIVING, STOP) to explicitly track protocol phases
+2. **Bit Counter**: Reset counter at start bit and count through 8 data bits
+3. **Stop Bit Handling**: Add explicit STOP state to verify stop bit before completing
+4. **Done Signal**: Generate done only after successful stop bit verification
+5. **Reset Handling**: Ensure all registers are properly initialized on reset
+6. **Stuck Recovery**: Maintain ACTIVE state until proper stop bit is seen, then transition back to IDLE
+
+The key improvement is making the state machine explicitly model each protocol phase while maintaining the original shift register approach for data collection.

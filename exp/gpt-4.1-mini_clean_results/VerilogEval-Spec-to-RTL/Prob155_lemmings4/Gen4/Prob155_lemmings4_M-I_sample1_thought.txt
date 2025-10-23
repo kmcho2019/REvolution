@@ -1,0 +1,17 @@
+To improve PPA (Timing, Power, Area) without changing the functional behaviour, I will:
+
+1. Flatten and simplify the next state logic by removing redundant assignments and explicitly encoding priorities with if-else rather than case statements. This can improve combinational logic synthesis and timing.
+
+2. Use one-hot encoding for the FSM modes. One-hot FSMs often synthesize faster and smaller in FPGA or ASIC by reducing decoding logic.
+
+3. Replace the saturating fall_timer increment with a conditional increment and clamp using min(fall_timer+1, 21). Since splat threshold is >20, counting only up to 21 is enough, reducing logic.
+
+4. Register inputs (bump_left, bump_right, ground, dig) once on clk to reduce glitches and power from asynchronous inputs causing spurious transitions.
+
+5. Remove any redundant resetting of fall_timer to zero in states where it's unused by properly controlling its updates.
+
+These combined changes simplify logic, reduce glitches, and can improve timing and power while maintaining the exact original functionality and asynchronous reset behavior.
+
+The asynchronous reset is kept for the main registers (mode, direction, fall_timer). Outputs remain Moore style.
+
+This improved design should lead to faster clock period, lower power, and possibly smaller area due to simpler logic and one-hot encoding.

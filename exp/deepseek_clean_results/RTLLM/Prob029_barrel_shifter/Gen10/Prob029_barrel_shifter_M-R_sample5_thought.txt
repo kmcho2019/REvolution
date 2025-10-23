@@ -1,0 +1,16 @@
+The issue with the original implementation is that it doesn't combine multiple shift operations when multiple control bits are set. We need to implement a true barrel shifter where shifts are cumulative. Here's the improved approach:
+
+1. Perform shifts in stages where each stage corresponds to a control bit
+2. First stage shifts by 4 if ctrl[2] is set
+3. Second stage takes the first stage output and shifts by 2 if ctrl[1] is set
+4. Final stage takes the second stage output and shifts by 1 if ctrl[0] is set
+5. Use continuous assignments with explicit intermediate results
+6. Maintain right rotation behavior as specified
+7. All shifts are cumulative - multiple control bits can be active simultaneously
+
+This implementation will:
+- Correctly handle all combinations of control bits
+- Maintain the same 3-level mux structure
+- Be more explicit about the cumulative nature of the shifts
+- Keep the efficient combinational logic style
+- Match the original specification perfectly

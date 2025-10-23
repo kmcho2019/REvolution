@@ -1,0 +1,12 @@
+Refactor the comparator_4bit by avoiding generate loops and expressing all bitwise operations explicitly to increase code readability and make synthesis tool optimizations more transparent. Instead of using generate blocks for per-bit equality, borrow generate and propagate, explicitly define them as simple assign statements for each bit. Also, the borrow out logic will be directly expanded without intermediate signals for clarity.
+
+The equality check can be kept as a reduction AND of bitwise XNOR of inputs, but instead of storing in eq_bits array, assign them directly to wires eq0 to eq3. Similarly, borrow generate and propagate signals are explicitly declared as single-bit wires.
+
+This structure makes the code easier to trace signal-by-signal, facilitates debug and learning, and retains all the combinational borrow-lookahead and equality logic.
+
+Outputs remain mutually exclusive:
+- A_less: asserted when borrow_out is 1,
+- A_equal: asserted when all bits equal,
+- A_greater: asserted otherwise (not borrow_out and not all_equal).
+
+No procedural or sequential blocks used, preserving purely combinational logic.

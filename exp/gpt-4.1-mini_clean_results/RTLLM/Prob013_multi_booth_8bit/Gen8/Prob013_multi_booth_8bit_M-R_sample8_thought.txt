@@ -1,0 +1,13 @@
+Refactor the Radix-4 Booth multiplier by explicitly implementing the Radix-4 Booth algorithm that processes two bits of the multiplier at a time, reducing the number of iterations from 16 to 8. 
+
+Key points of refactoring:
+1. Use a small state machine with states: IDLE, CALC, DONE.
+2. On reset, load the multiplicand and multiplier sign-extended, initialize partial product.
+3. Implement the Booth recoding logic by examining 3 bits each cycle (multiplier bits at current position and one extra bit).
+4. Use combinational logic for generating the partial multiple to add or subtract from the product (including 0, ±M, ±2M) based on Booth encoding.
+5. Shift the product and multiplier registers accordingly each cycle.
+6. After 8 iterations, set ready and output the product.
+7. Use non-blocking assignments in sequential always blocks and keep combinational logic in separate always @* blocks for clarity.
+8. The product output is registered at the end, and ready indicates completion.
+
+This approach follows the Radix-4 Booth algorithm more accurately, doubling throughput by processing two multiplier bits per cycle, leading to fewer cycles (8 instead of 16), and a cleaner state machine implementation.

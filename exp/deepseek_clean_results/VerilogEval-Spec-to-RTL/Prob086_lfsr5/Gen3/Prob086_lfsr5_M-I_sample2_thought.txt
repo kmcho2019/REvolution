@@ -1,0 +1,11 @@
+The original solution had incorrect feedback logic for the Galois LFSR. To fix this:
+1. For a 5-bit maximal-length Galois LFSR with taps at positions 5 and 3 (1-based), the correct feedback polynomial is x^5 + x^3 + 1
+2. In 0-based indexing, this means:
+   - Tap at position 4 (1-based 5) should feed into position 0 (LSB)
+   - Tap at position 2 (1-based 3) should be XORed with the output
+3. The correct implementation should:
+   - XOR q[4] with q[0] for the new LSB (next_q[0])
+   - XOR q[2] with q[0] for next_q[2]
+   - Other bits shift right normally
+4. Maintain synchronous reset to 1 (5'b00001)
+5. Use combinational logic for next state calculation

@@ -1,0 +1,8 @@
+The simplest approach is to directly compare the full 16-bit scancode against each of the four arrow key patterns and set the corresponding output. We can:
+
+1. Remove the intermediate check for 0xE0 prefix since we're doing full 16-bit comparisons anyway
+2. Use simple parallel equality comparisons for each arrow key
+3. Set default outputs to 0 at declaration to avoid needing a separate default block
+4. Make the outputs wire type instead of reg since we're using continuous assignments
+
+This reduces the logic to just four comparators and removes the case statement overhead while maintaining the same functionality.

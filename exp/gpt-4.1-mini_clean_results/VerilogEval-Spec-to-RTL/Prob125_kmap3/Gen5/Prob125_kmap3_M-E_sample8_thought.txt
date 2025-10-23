@@ -1,0 +1,15 @@
+Instead of directly using the minimized sum-of-products expression, we can implement the logic by decomposing the Karnaugh map into a combination of multiplexers and simple gates.
+
+Since d is don't-care, we can use a 2:1 multiplexer controlled by 'a' to select between two functions depending on whether a=0 or a=1.
+
+- When a=1, the output is 1 for all cases (looking at the map, all entries with a=1 (where a is MSB of ab) are 1 except some don't cares, so we can treat output as 1).
+
+- When a=0, the output depends only on b and c (specifically, out= c & ~b).
+
+This approach uses a multiplexer to choose between constant 1 (if a=1) or c & ~b (if a=0).
+
+This may provide a novel architectural style different from direct SOP expression, useful in designs where multiplexers are more efficient or preferred.
+
+This modular approach can also be extended or modified easily for larger designs.
+
+The implementation will use bitwise logic for the function c & ~b and a ternary operator for the mux controlled by 'a'.

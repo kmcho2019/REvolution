@@ -1,0 +1,9 @@
+To implement a 32-bit Galois LFSR with specified taps:
+1. Use a 32-bit register (q) that shifts right on each clock cycle
+2. For taps at positions 32, 22, 2, and 1:
+   - XOR the current LSB (q[0]) with the tap bits
+   - The result becomes the new MSB (q[31])
+   - Other bits simply shift right
+3. Implement synchronous reset that sets q to 32'h1
+4. All other bits shift normally (q[i] <= q[i-1])
+5. The taps correspond to bits q[31], q[21], q[1], and q[0] (since Verilog uses 0-based indexing)

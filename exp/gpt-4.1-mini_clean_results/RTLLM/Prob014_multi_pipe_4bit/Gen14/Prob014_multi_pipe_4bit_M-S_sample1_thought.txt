@@ -1,0 +1,9 @@
+Simplify the pipeline multiplier by reducing explicit multiple registers and sums. Use a single register stage to store the combined sum of all partial products, computed combinationally from the inputs extended as specified.
+
+Implement two register stages: 
+- Stage 1 registers to store the combined sum of all partial products.
+- Stage 2 register to store the final product output.
+
+Generate partial products using a generate-for loop to produce each shifted partial product based on multiplier bits, summing all partial products combinationally into one wire. On clock edge, stage 1 register stores this sum, then on the next clock edge stage 2 register outputs the result.
+
+This approach keeps the two-level pipeline, extends inputs as required, and simplifies the design by avoiding multiple separate partial product registers, thus reducing complexity but maintaining the pipeline behavior and correct multiplication.

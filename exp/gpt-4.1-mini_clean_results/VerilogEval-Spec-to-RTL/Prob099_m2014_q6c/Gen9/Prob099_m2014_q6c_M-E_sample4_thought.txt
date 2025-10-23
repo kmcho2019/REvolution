@@ -1,0 +1,17 @@
+Instead of explicitly enumerating each transition, I will use combinational logic that directly computes the next-state bits Y2 and Y4 from the current one-hot state vector y and the input w. Since the encoding is one-hot and only one bit in y is asserted at a time, the next-state bits can be written as OR combinations of products of the current state bits and w or its complement, following the state transition diagram. This approach simplifies the logic expressions for Y2 and Y4, focusing only on those two outputs, without deriving all next state bits.
+
+For Y2 (next state bit corresponding to y[1] - state B), by inspection from the transitions:
+- Next state B occurs only from A on input 0
+- So Y2 = A & ~w
+
+For Y4 (next state bit corresponding to y[3] - state D):
+- Next state D occurs from multiple states on input 1:
+  - From B on 1: B & w
+  - From C on 1: C & w
+  - From E on 1: E & w
+  - From F on 1: F & w
+- So Y4 = w & (B | C | E | F)
+
+Thus, the module simply implements these two equations directly using input signals and combinational logic.
+
+This is a minimal and clear logic-only solution, defining only the required outputs and no unnecessary logic.

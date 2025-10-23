@@ -1,0 +1,14 @@
+The current implementation is already quite optimized, but we can make some minor improvements focusing on power and area optimization:
+
+1. Power Optimization:
+- Further reduce switching activity by simplifying the next_state[1] logic
+- Leverage one-hot encoding properties more aggressively to minimize logic operations
+
+2. Area Optimization:
+- Simplify the next_state[2] logic by recognizing it can be expressed as ~in & (state[1] | state[3])
+- Maintain minimal output logic while ensuring correct functionality
+
+Key improvements:
+- Simplified next_state[1] logic to use only state[0] and state[1] (since in one-hot, state[3] is already excluded when state[0] or state[1] is active)
+- Maintained all other optimizations from the current solution
+- All assignments remain simple and use minimal logic operations

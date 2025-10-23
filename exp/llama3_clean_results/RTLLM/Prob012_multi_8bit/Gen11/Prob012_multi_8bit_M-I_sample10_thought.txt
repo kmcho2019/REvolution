@@ -1,0 +1,16 @@
+To improve the given solution, we will manually implement the shift-and-add method for the 8-bit multiplication. This approach involves iterating through each bit of the multiplier (B), and for each set bit, adding the multiplicand (A) shifted by the corresponding position to the product. This manual implementation could potentially offer better performance, power efficiency, and area usage compared to relying on the built-in multiplication operator, especially if the synthesis tool does not optimize the multiplication operation efficiently.
+
+The strategy involves using a combinational logic approach, where the multiplication is performed in a single clock cycle without the need for sequential logic or explicit clocking. This is feasible for an 8-bit multiplier, given the limited number of operations required.
+
+To optimize for PPA metrics:
+- **Performance (Timing):** By manually implementing the shift-and-add method, we can potentially reduce the timing delay associated with the multiplication operation, as the synthesis tool may not always optimize the '*' operator for the best timing.
+- **Power:** The manual implementation could lead to reduced power consumption if it results in fewer logic gates being used or if it allows for more efficient placement and routing during synthesis.
+- **Area:** Implementing the multiplier using shift-and-add could also lead to area efficiency, especially if the design can be optimized to use fewer resources than the synthesized version of the '*' operator.
+
+The key steps in the improved solution include:
+1. Initializing the product to zero.
+2. Iterating through each bit of the multiplier (B).
+3. For each bit set in B, adding the multiplicand (A) shifted by the corresponding position to the product.
+4. Assigning the final product to the output port.
+
+This approach will be implemented in Verilog, ensuring that the code is synthesizable and optimized for digital logic implementation.

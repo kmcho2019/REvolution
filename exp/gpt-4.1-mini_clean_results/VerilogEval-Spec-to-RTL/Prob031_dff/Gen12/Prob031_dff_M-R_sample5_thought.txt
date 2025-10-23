@@ -1,0 +1,5 @@
+I will refactor the design by eliminating the separate DFF module and implementing the D flip-flop behavior directly inside TopModule using an always block with a nonblocking assignment triggered on the positive clock edge. This makes the design more compact by removing hierarchy while preserving the synchronous operation and correct DFF semantics.
+
+Instead of instantiating a submodule, the output q will be declared as reg and assigned inside an always @(posedge clk) block directly in TopModule. This approach retains synthesis-friendly style and clear sequential behavior without introducing combinational logic or altering timing.
+
+This refactor simplifies the design hierarchy, which can be beneficial in very small designs for ease of understanding or simulation, while maintaining exact functional equivalence and synthesis optimization. It demonstrates a direct RTL style for a simple D flip-flop.

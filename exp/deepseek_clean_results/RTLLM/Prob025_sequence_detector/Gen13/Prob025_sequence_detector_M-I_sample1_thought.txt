@@ -1,0 +1,15 @@
+To optimize the PPA metrics, I'll implement the following improvements:
+
+1. State Machine Optimization: Replace the shift register with a minimal state machine (Mealy machine) to reduce area and power. This eliminates the 4-bit register and replaces it with 2 flip-flops (4 states).
+
+2. Early Termination: Add logic to reset the state machine when an invalid bit is detected, preventing unnecessary state transitions and reducing power.
+
+3. Output Optimization: The sequence_detected output is now purely combinatorial from the state machine, reducing critical path compared to the 4-input AND gate.
+
+4. Clock Gating: Add conditional state updates to prevent unnecessary transitions when the input doesn't affect the sequence detection.
+
+These changes should:
+- Reduce area by using fewer flip-flops (2 vs 4)
+- Improve timing by simplifying the critical path
+- Lower power by reducing unnecessary transitions
+- Maintain the same functionality

@@ -1,0 +1,5 @@
+The existing ripple toggle counter is already compact and power-efficient, but the critical path includes multiple XOR and AND operations on the same clock edge, potentially limiting max frequency (tns, wns). To improve performance without sacrificing power or area, I will implement a simple synchronous binary counter using an incrementer (q + 1), which is well-optimized by synthesis tools and often yields better timing due to parallel addition logic instead of cascading XOR/ANDs. 
+
+This approach replaces the ripple toggle logic with a straightforward increment, which reduces the critical combinational path. Synthesis tools usually map addition to fast carry-chains in FPGAs/ASICs, improving clock frequency (lower tns and wns). Power impact should be minimal because toggling is unavoidable for counting. Area will be similar or slightly increased but within reasonable bounds for 4-bit logic.
+
+Thus, the strategy is to replace the ripple toggle style with a synchronous binary adder counter plus synchronous reset, keeping the design simple, clean, and synthesizable with improved timing characteristics.

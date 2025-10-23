@@ -1,0 +1,11 @@
+Represent the input as a 4-bit vector {a,b,c,d} with a as MSB. The output should be 1 for decimal inputs 2 (0010), 7 (0111), and 15 (1111), and 0 for specified zeros. The unused inputs (3,8,11,12) are treated as don't-cares for simplification.
+
+For out_sop (sum-of-products), express as the OR of minterms for 2,7,15 directly:
+- 2 (0 0 1 0) => ~a & ~b & c & ~d
+- 7 (0 1 1 1) => ~a & b & c & d
+- 15 (1 1 1 1) => a & b & c & d
+
+For out_pos (product-of-sums), it is the complement of zeros. Using the zeros and don't-cares, minimal POS is:
+- (a + b + ~c) & (a + ~b + d) & (~a + b + c + ~d)
+
+These minimal expressions directly represent the logic without extra terms, simplifying implementation while meeting the problem requirements.

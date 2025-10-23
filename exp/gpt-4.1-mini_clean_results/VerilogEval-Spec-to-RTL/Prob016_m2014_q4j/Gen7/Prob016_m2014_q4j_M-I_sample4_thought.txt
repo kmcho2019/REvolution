@@ -1,0 +1,12 @@
+The original design uses a ripple-carry full adder chain, which is straightforward and efficient for 4-bit addition but has carry propagation delay that might impact performance slightly. Given the small bit width (4 bits), the performance impact is minimal, and the power and area are already optimized and low.
+
+To improve PPA subtly without changing the fundamental structure, we can:
+
+1. Reduce the number of full adder instances by implementing a 4-bit carry look-ahead adder (CLA). This will improve performance by reducing carry propagation delay.
+2. Implement the sum and carry calculations combinationally using carry look-ahead logic rather than chaining full adders.
+3. Keep the design fully combinational and synthesizable with minimal area overhead, potentially trading a small area increase for better timing (zero WNS is reported but can improve worst-case delay).
+4. Power consumption will be similar or slightly higher due to additional logic but should be acceptable.
+
+This CLA approach uses generate and propagate signals to calculate carries in parallel, reducing delay. The design will still produce a 5-bit sum including the final carry-out as overflow.
+
+Thus, the improvement strategy is to replace ripple-carry full adder chain with a small 4-bit CLA structure for better timing and maintain low area and power.

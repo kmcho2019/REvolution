@@ -1,0 +1,52 @@
+The given SOP expression for out_sop is already minimal and correct: it precisely matches the three minterms (2, 7, 15).
+
+The reported issue lies in the out_pos expression, which should be the minimal Product-of-Sums (POS) form implementing the same function (out_sop). The previous POS formula is incorrect, causing mismatches.
+
+To fix this, I will:
+
+1. Confirm the SOP expression correctness (already done).
+
+2. Use the complement of the SOP minterms to generate the set of zero minterms (where output=0):
+
+   Zeros at decimal: 0,1,4,5,6,9,10,13,14
+
+3. Include don't cares (3,8,11,12) to simplify the expression.
+
+4. Use Karnaugh map or boolean algebra to find the minimal POS.
+
+5. Explicitly derive POS terms covering zeros with don't cares to get the minimal POS expression.
+
+6. Implement out_pos directly using that minimal POS expression.
+
+Alternatively, because out_pos is the complement of out_sop, we can write:
+
+    out_pos = ~out_sop
+
+and then derive a minimal POS expression by taking the complement of the SOP terms (De Morgan’s laws).
+
+Performing De Morgan on SOP:
+
+    out_sop = m2 + m7 + m15
+    out_pos = ~(m2 + m7 + m15) = ~m2 * ~m7 * ~m15
+
+Where m2 corresponds to ~a & ~b &  c & ~d,
+      m7 corresponds to ~a &  b &  c &  d,
+      m15 corresponds to  a &  b &  c &  d.
+
+Negating each minterm:
+
+    ~m2 = a + b + ~c + d
+    ~m7 = a + ~b + ~c + ~d
+    ~m15 = ~a + ~b + ~c + ~d
+
+So:
+
+    out_pos = (a + b + ~c + d) & (a + ~b + ~c + ~d) & (~a + ~b + ~c + ~d)
+
+This is a valid minimal POS expression, different from the previous faulty one.
+
+Implementing this corrected POS should fix the mismatches.
+
+Thus, the improvement is to fix the POS expression based on proper De Morgan transformation of the SOP minterms.
+
+Finally, keep code style clean and consistent.

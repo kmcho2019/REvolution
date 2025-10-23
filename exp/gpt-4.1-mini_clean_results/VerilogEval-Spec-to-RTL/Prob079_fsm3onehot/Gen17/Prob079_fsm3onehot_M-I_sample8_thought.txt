@@ -1,0 +1,9 @@
+To optimize the PPA, I aim to reduce logic complexity and switching activity by factoring next_state equations to minimize the number of terms and gate inputs. Since one-hot encoding is fixed, I'll simplify the OR expressions by extracting common sub-expressions, and reduce the number of input signals combined per gate. This reduces gate count and potentially lowers power due to less switching. Specifically:
+
+- For next_state[1] = in & (A | B | D), factor as in & ((A | B) | D) and reuse intermediate signals.
+- For next_state[0] = ~in & (A | C), next_state[2] = ~in & (B | D), next_state[3] = in & C, share common signals where possible.
+- This also improves readability and may help synthesis tools optimize better.
+
+The output remains simply assigned as D, which is minimal.
+
+Thus, the main improvement is factoring expressions with intermediate wires for shared terms to reduce gate input fan-ins and logic duplication.

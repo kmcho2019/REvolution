@@ -1,0 +1,11 @@
+Here's a novel approach using shift registers and combinational logic to compute the required outputs:
+
+1. For out_both: Instead of direct bitwise AND, we'll use a right-shifted version of the input and AND it with the original. This creates a parallel comparison between each bit and its left neighbor.
+
+2. For out_any: Similarly, we'll use a left-shifted version of the input and OR it with the original to check if either the current bit or its right neighbor is 1.
+
+3. For out_different: We'll implement the wrap-around by rotating the input right by 1 bit and XORing with the original input. This gives us the difference between each bit and its left neighbor with circular behavior.
+
+4. We'll use explicit masking to handle the don't-care bits, setting them to 0 for cleaner synthesis results.
+
+This approach emphasizes the shift-based nature of the neighbor comparisons, making the design intent very clear while maintaining efficiency.

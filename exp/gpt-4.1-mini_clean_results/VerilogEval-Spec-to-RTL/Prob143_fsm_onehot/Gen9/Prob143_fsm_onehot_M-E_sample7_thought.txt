@@ -1,0 +1,13 @@
+Instead of individually assigning each next state based on separate expressions, the design can utilize vectorized operations combined with intermediate signals representing the transitions from each state. By encoding each state's possible next states and input conditions as bit vectors, the module can compute next_state as a bitwise OR of all possible transitions enabled by the current input and the currently active states.
+
+For outputs, since only S7, S8, and S9 have nonzero outputs, these can be computed by masking the current state vector and combining with the defined output values.
+
+This approach reduces the explicit repetitive assignments by leveraging vector logic and bitwise operations, making the design more compact and easy to maintain, while still being purely combinational and supporting multi-hot inputs.
+
+The key steps are:
+- Define vectors representing the "next state enable" for each possible next state on input 0 and input 1.
+- Use bitwise AND and OR operations with the current state vector and input to accumulate next_state.
+- Compute outputs from the current state vector masked by their output masks and combined with the respective output values.
+- This keeps combinational depth low, with only bitwise operations, and supports multiple active states cleanly.
+
+This novel vectorized approach is less verbose but fully synthesizable and clear, emphasizing modularity and scalability for FSMs using one-hot encoding with multi-hot current states.

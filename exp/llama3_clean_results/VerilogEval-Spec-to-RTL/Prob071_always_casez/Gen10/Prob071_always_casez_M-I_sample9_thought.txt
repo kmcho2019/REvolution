@@ -1,0 +1,9 @@
+To improve the existing priority encoder solution, we will focus on optimizing it for better PPA (Power, Performance, Area) metrics. Given the current implementation and its metrics, the strategy involves simplifying the logic to reduce area and power consumption while maintaining or improving performance.
+
+One approach to optimize the existing solution is to utilize a more compact and efficient way of determining the position of the first '1' bit in the input vector. The current implementation uses a series of conditional statements to check each bit of the input vector in ascending order, which results in a straightforward but possibly not the most area-efficient implementation.
+
+A more efficient approach is to use the `$clog2` function, which calculates the ceiling of the logarithm base 2 of a given number. This function can directly provide the position of the most significant '1' bit in the binary representation of the input number. However, since we are interested in the first '1' bit (which corresponds to the least significant '1' bit in terms of priority encoding), and `$clog2` gives us the position of the most significant '1' bit, we can use this function to simplify the logic.
+
+To achieve this, we recognize that `$clog2` returns the position of the most significant '1' bit, starting from 0 for the least significant bit. Since we are working with an 8-bit input and want to report the position of the first '1' bit encountered from the least significant bit, we can directly use `$clog2` on the input vector `in` without needing to explicitly check each bit. This approach simplifies the logic and potentially reduces area and power consumption.
+
+The optimization strategy involves replacing the series of conditional assignments with a single statement using `$clog2`, thus reducing the complexity of the combinational logic. This should result in a more compact and potentially faster implementation, improving the PPA metrics.

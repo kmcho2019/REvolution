@@ -1,0 +1,21 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Break down the critical path by separating the reset logic from the update logic
+   - Use a dedicated always block for reset to reduce mux complexity
+   - Simplify the shift operation to single-bit shift with explicit enable
+
+2. Power Optimization:
+   - Add explicit hold condition to prevent unnecessary register updates
+   - Use clock gating for the shift operation when possible
+   - Minimize switching activity by only updating when needed
+
+3. Area Optimization:
+   - Remove redundant logic paths
+   - Use simpler mux structures for the update cases
+   - Consider the actual usage pattern (mostly single-bit shifts)
+
+Key Changes:
+- Separate reset logic into its own always block
+- Add explicit hold condition
+- Simplify update logic with priority encoder
+- Optimize mux structure for better timing

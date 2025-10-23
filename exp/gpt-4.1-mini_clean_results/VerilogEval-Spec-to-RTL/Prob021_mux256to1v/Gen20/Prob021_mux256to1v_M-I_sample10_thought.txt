@@ -1,0 +1,5 @@
+To optimize for Power, Performance, and Area (PPA), simplify the entire design by removing the hierarchical mux tree and directly extracting the 4-bit output slice from the 1024-bit input vector using the 8-bit selector as an index. Since the 256 4-bit inputs are packed contiguously, we can calculate the starting bit position by sel * 4 and select bits [start + 3 : start]. This approach eliminates all intermediate mux instances, intermediate wiring, and reduces logic to a simple bit-slice, which synthesis tools implement as an efficient multiplexer or wiring. This reduces area, power, and critical path delay substantially while maintaining the same functionality.
+
+No clock or flip-flops are needed since it’s a combinational multiplexer. The output is just a continuous assignment.
+
+This approach also simplifies the code and ensures easy extensibility and readability.

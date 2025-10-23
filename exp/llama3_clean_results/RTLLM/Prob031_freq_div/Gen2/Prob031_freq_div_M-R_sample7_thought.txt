@@ -1,0 +1,7 @@
+To refactor the given Verilog code for a frequency divider, we can utilize a different structure that focuses on using combinational logic and sequential assignments. Instead of using a single `always` block with a complex set of conditional statements, we can break down the logic into separate components.
+
+One approach is to use three separate counters for dividing the input clock frequency, and then use these counters to directly control the output clock signals. We can use a state machine or simple combinational logic to update the counters and toggle the output clock signals.
+
+For the 50MHz output clock signal, we can simply use a counter that increments on every positive edge of the input clock and toggles the signal every other edge. For the 10MHz and 1MHz output clock signals, we can use counters that count the number of positive edges of the input clock and toggle the signals when the counters reach the desired values (4 for 10MHz and 49 for 1MHz).
+
+We will also use `always` blocks with `posedge` and `negedge` sensitivity to handle the counters and output clock signals separately. This approach can improve the readability of the code and reduce the complexity of the conditional statements.

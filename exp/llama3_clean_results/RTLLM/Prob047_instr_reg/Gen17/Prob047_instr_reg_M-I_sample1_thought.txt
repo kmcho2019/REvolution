@@ -1,0 +1,8 @@
+To improve the provided solution, we will focus on optimizing the Power, Performance, and Area (PPA) metrics. The current implementation has a power consumption of 0.00446, an area of 90.0, and zero timing violations (tns and wns). 
+
+Our improvement strategy involves:
+1. **Reducing Power Consumption**: We will minimize unnecessary switching activity within the module. This can be achieved by adding a latch or a buffer to reduce the switching activity on the signals `ins_p1` and `ins_p2`. Additionally, ensuring that the signals `ins`, `ad1`, and `ad2` are only updated when necessary can help reduce power consumption.
+2. **Optimizing Performance**: We will re-examine the clock gating logic to minimize its impact on the critical path. Instead of conditionally generating the clock signal, we can use the `fetch` signal to enable or disable the registers. This approach might reduce the additional delay introduced by the clock gating logic.
+3. **Minimizing Area**: We will explore the possibility of using a single register with a more complex addressing scheme to store both instructions, potentially reducing the overall area requirement. However, this approach might increase the complexity of the design and could negatively impact performance. Therefore, we will focus on optimizing the existing two-register architecture.
+
+To implement these improvements, we will modify the clock gating strategy, add a latch to reduce switching activity, and optimize the combinational logic for output assignments.

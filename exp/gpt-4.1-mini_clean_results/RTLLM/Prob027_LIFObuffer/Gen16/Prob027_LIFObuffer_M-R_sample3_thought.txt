@@ -1,0 +1,10 @@
+Refactor the design by separating combinational logic from sequential logic more explicitly, using intermediate signals for next-state and next-dataOut values. Compute the next stack pointer and dataOut combinationally, then update them synchronously on the clock edge. Also, implement stack_mem updates using an indexed write enable approach, avoiding loop-based clearing at reset by asynchronous reset of stack_mem entries using a generate-for block and always blocks per entry (if supported), else clear synchronously but distinctly. This approach improves clarity by isolating data path calculations and state updates, and better aligns with RTL coding styles that emphasize separation of combinational and sequential logic. The EMPTY and FULL flags remain combinational. The push and pop operations control write enables and addresses explicitly.
+
+This refactoring maintains the original functional behavior but improves modularity and can ease formal verification and testbench integration by having clear next-state logic.
+
+Key points:
+- Use a combinational always_comb or assign statements for next_SP and next_dataOut.
+- Use one always_ff block for SP and dataOut update.
+- Use a separate always_ff block per stack_mem entry for write enable, controlled by push_op and address.
+- Reset clears SP and dataOut, and clears stack_mem entries via synchronous reset.
+- Maintain EN gating in all operations.

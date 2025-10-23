@@ -1,0 +1,11 @@
+The novel architectural idea for this problem involves utilizing a pipeline-based approach instead of a traditional finite state machine (FSM). This pipeline will have three stages: Byte Detection, Byte Shifting, and Output Formation. 
+
+In the Byte Detection stage, the design checks for the condition in[3] = 1 and asserts a signal to indicate the start of a message. 
+
+The Byte Shifting stage shifts the input bytes to form the 24-bit output word (out_bytes). This stage ensures that the bytes are aligned correctly based on their position in the message.
+
+The Output Formation stage is responsible for asserting the done signal and presenting the 24-bit output word (out_bytes) when all three bytes of a message have been received.
+
+This pipeline-based approach allows for a more modular and scalable design, making it easier to add or modify functionality as needed. Additionally, it can potentially improve performance by allowing for more concurrent operation within the pipeline stages.
+
+To further optimize the design, we will use a simple counter to keep track of the number of bytes received since the start of a message, eliminating the need for explicit state encoding.

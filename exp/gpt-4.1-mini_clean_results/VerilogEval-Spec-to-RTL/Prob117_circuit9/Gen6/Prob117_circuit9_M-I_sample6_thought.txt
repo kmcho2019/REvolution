@@ -1,0 +1,7 @@
+To optimize for better PPA (Timing, Power, and Area), I will simplify the next-state logic by using arithmetic modulo addition instead of a case statement, which reduces combinational logic depth and complexity. Also, I will replace the if-else with a simple mux using the 'a' signal, enabling direct assignment of next state. This eliminates the explicit case statement and reduces logic levels for next_q calculation.
+
+Since the counter wraps modulo 7, we can implement increment by (q + 1) % 7 using simple addition and comparison, which is straightforward and minimal.
+
+To reduce power, I'll register the input 'a' to synchronize it, preventing glitches from asynchronous input changes affecting combinational logic. This input registering helps reduce unnecessary toggling of next_q.
+
+Overall, these changes will lead to a simpler, smaller combinational logic block with potentially better timing due to less logic depth and lower power from reduced glitches, while keeping the same functionality.

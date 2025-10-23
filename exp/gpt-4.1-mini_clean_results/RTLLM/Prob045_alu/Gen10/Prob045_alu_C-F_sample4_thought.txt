@@ -1,0 +1,16 @@
+Fuse the strengths of both examples for a superior ALU:
+
+- Use a combinational always block with a case statement for clarity and conditional computations to reduce unnecessary toggling, as in Example 2.
+- Share a single 33-bit adder/subtractor unit for ADD/ADDU/SUB/SUBU, avoiding duplicate arithmetic hardware, like in Example 2.
+- Compute carry and overflow only for arithmetic operations, gating other instructions to reduce power, from both examples.
+- Drive the flag output as 0 (not high impedance) when not used, for synthesis friendliness, from Example 2.
+- Use signed and unsigned comparisons only when needed, but compute them upfront to keep code readable as in Example 1, but gate flag assignment.
+- Implement shift operations consistently using variable shift amounts derived from the correct operand, as both do, favoring explicit shamt extraction.
+- Use a function or separate combinational assignments for operation result selection to improve modularity and help synthesis tools, taking inspiration from Example 1's clear operation mapping, but integrate it inside the always block for conditional logic.
+- Ensure LUI concatenates the lower 16 bits of ‘a’ shifted left by 16 bits (common MIPS behavior), consistent with Example 2 and typical MIPS ISA.
+- Zero and negative flags always derived from final result ‘r’.
+- For carry and overflow, carefully define their behavior: carry as carry-out for ADD/ADDU; for SUB/SUBU, define carry as borrow flag (borrow not occur) to match MIPS semantics.
+- Use signed arithmetic and comparisons where appropriate.
+- For default case, set outputs to zero to avoid X or Z states.
+
+This hybrid approach yields a clean, efficient, and synthesis-friendly ALU implementation with good modularity, power gating, shared arithmetic resources, and correct flag generation.

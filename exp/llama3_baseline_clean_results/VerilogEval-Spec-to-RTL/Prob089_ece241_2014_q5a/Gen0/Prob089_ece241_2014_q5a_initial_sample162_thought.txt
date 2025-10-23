@@ -1,0 +1,9 @@
+To implement the serial 2's complementer Moore state machine, we need to consider two main states: an initial state where we accumulate the input bits to form the original number and a second state where we output the 2's complement. Since the machine will accept input numbers of arbitrary length, we need to implement a mechanism to determine when the input is finished. This can be done by using an internal flag that is set when the reset is released and cleared when the reset is asserted again.
+
+Upon reset release, the machine starts accumulating the input bits. It maintains a running sum of the input bits, considering the first bit as the least significant bit. When the reset is asserted again, the machine stops accumulating input bits and starts outputting the 2's complement of the accumulated number from the most significant bit to the least significant bit.
+
+The 2's complement can be obtained by inverting all the bits and adding 1. Since this is a serial input, we can achieve this by keeping track of whether we have seen a '1' in the input sequence and if so, we simply invert the input bits and add '1' to the last bit. If we haven't seen a '1', the 2's complement will be all zeros.
+
+However, for simplicity and to handle numbers of arbitrary length, we can implement the machine to directly calculate the 2's complement as it receives the input bits and store this in an internal register. When the reset is asserted, we start shifting out the bits of the stored 2's complement from the most significant bit.
+
+Given the arbitrary length and the need to handle the 2's complement, we will utilize a register to hold the current number and another to hold the 2's complement. When reset is released, we start shifting in the input bits into the register, and when reset is asserted, we start shifting out the bits of the 2's complement from the most significant bit.

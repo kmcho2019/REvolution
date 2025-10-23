@@ -1,0 +1,7 @@
+The original code implements a gshare branch predictor using a combination of sequential and combinatorial logic. To refactor this code, we can separate the sequential and combinatorial logic into distinct blocks, improving readability and maintainability. The main changes include:
+1. **Separate Combinational Logic**: Move the combinational logic for calculating `predict_index`, `train_index`, `predict_taken`, and the updates to `new_global_history` and `new_cache` into separate `always` blocks or use `assign` statements where possible.
+2. **Simplify Sequential Logic**: Focus the sequential logic on updating the state variables `global_history` and `cache`, ensuring that the updates are correctly synchronized.
+3. **Use Blocking Assignments**: Ensure that blocking assignments (`=`) are used where necessary to guarantee immediate updates to variables within the same clock cycle.
+4. **Improve Readability**: Structure the code to clearly separate different logical functions, making it easier to understand and maintain.
+
+By structuring the code in this way, we can improve readability, reduce the complexity of the sequential logic, and potentially reduce the risk of errors due to race conditions or incorrect synchronization.

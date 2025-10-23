@@ -1,0 +1,11 @@
+To optimize the existing design for better PPA while preserving functionality and asynchronous reset:
+
+- Replace the combinational always block for output 'z' with a continuous assignment to reduce synthesis overhead and improve timing.
+- Combine input sampling and state into a single always block with nonblocking assignments, keeping asynchronous reset.
+- Remove the registered input (x_reg) and use the raw input 'x' directly in the state transition logic; however, since 'x' can be asynchronous and might cause glitches, keep x registered but only update it when state transitions occur, reducing unnecessary toggles.
+- Implement clock gating internally to update x_reg only when state is WAIT_FOR_ONE to reduce switching and power.
+- Use localparam for states and ensure synthesis-friendly coding.
+- Use simple logic expressions for output assignment.
+- Maintain asynchronous reset and nonblocking assignments for clean design.
+
+These changes aim to reduce the number of registers toggling unnecessarily, simplify output logic, and achieve better power and timing results without losing correctness.

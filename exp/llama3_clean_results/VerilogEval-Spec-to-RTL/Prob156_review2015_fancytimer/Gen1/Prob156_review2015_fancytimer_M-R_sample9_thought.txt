@@ -1,0 +1,5 @@
+The original code has several issues with the state machine's handling of the delay value and the counting mechanism. To refactor the code, we will restructure the state machine to correctly implement the delay value and the counting for (delay + 1) * 1000 clock cycles. We will use a different approach to update the state and outputs, using combinational logic to assign the next state and outputs based on the current state and inputs.
+
+The new code will use a 2-bit state variable to represent the four states: waiting, shifting, counting, and done. The waiting state will shift in the start pattern 1101 and then transition to the shifting state. The shifting state will shift in the 4-bit delay value and then transition to the counting state. The counting state will count down the delay value and transition to the done state when the count reaches 0. The done state will assert the done signal and wait for the ack signal before transitioning back to the waiting state.
+
+We will also use a separate counter to count the clock cycles and a separate register to store the remaining time.

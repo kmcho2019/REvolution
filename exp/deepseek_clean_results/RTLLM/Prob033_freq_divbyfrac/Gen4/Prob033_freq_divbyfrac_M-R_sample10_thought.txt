@@ -1,0 +1,19 @@
+To improve the fractional frequency divider implementation while maintaining the 3.5x division ratio:
+
+1. Keep the 7-cycle counter but implement it with a more explicit state machine approach
+2. Generate the divided clock using continuous assignments for better clarity
+3. Create two separate phase counters:
+   - pos_phase: counts on positive edges (0-6)
+   - neg_phase: counts on negative edges (0-6) for half-cycle delay
+4. Define clock generation logic:
+   - clk_pos high when pos_phase < 4 (4 cycles)
+   - clk_neg high when neg_phase < 3 (3 cycles)
+5. Combine phases with OR operation
+6. Maintain synchronous reset for clean initialization
+
+Key improvements:
+- Explicit state counting on both edges
+- Clear separation of phase generation
+- More readable assignment-based implementation
+- Maintains correct 4:3 duty cycle ratio
+- Proper half-cycle phase relationship

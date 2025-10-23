@@ -1,0 +1,11 @@
+Implement separate BCD counters for seconds, minutes, and hours directly, eliminating the need for binary-to-BCD conversion logic. Each counter will count in valid BCD digits, handling digit rollovers naturally (e.g., seconds units count 0-9, tens 0-5). This simplifies combinational logic as the outputs are directly available in BCD form.
+
+The seconds and minutes will be two cascaded BCD digits: units (0-9) and tens (0-5). For the hours, a BCD counter will count from 1 to 12, with special logic handling the roll-over from 12 back to 1 and toggling the pm flag accordingly.
+
+Reset synchronously sets the clock to "12:00 AM" (hours = 12, minutes = 00, seconds = 00, pm = 0).
+
+The enable signal triggers the count increments once per second. On each increment, seconds units increment; if overflow, seconds tens increment; if overflow, minutes units increment, and so forth, cascading as per clock logic.
+
+This direct BCD counting reduces combinational logic complexity for output conversion, improving timing. The hour counting is carefully handled to respect 12-hour format and toggle AM/PM on wrap-around from 11 to 12. All logic is synchronous on the rising clock edge, with reset prioritized.
+
+Outputs are directly driven from the BCD counter registers. This design favors clarity, modularity, and direct representation, avoiding conversion overhead.

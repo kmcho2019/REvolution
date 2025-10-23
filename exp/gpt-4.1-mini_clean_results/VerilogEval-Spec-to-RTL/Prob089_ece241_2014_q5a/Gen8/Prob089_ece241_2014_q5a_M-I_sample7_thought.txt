@@ -1,0 +1,13 @@
+To optimize the design for better performance, power, and area (PPA), we can remove the separate input register `x_reg` and use the raw input `x` directly in the FSM logic and output. This reduces the number of flip-flops by one, lowering area and dynamic power due to fewer toggles. We keep the asynchronous reset for the FSM registers as required.
+
+Additionally, we eliminate the separate `inversion_bit` register by encoding it implicitly as the FSM state value itself: the two states are COPY (0) and INVERT (1), with inversion_bit = state. This removes one register and simplifies logic.
+
+The combinational next-state logic uses the current input `x` directly, which slightly increases combinational path but reduces flip-flop overhead and improves latency by eliminating the input synchronization stage.
+
+Output `z` is combinational, computed as `x ^ state` (since inversion_bit equals state). This keeps Moore FSM style (output depends only on state and input).
+
+We maintain full combinational coverage to ensure safe synthesis, and keep the asynchronous reset logic.
+
+Overall, these changes reduce flip-flop count from 3 to 2, decrease power and area, and improve latency (no input register delay). Using the input `x` directly assumes stable input timing relative to `clk` and no metastability issues, which fits the problem statement.
+
+This approach keeps the FSM clean, Moore-typed, minimal, and efficient.

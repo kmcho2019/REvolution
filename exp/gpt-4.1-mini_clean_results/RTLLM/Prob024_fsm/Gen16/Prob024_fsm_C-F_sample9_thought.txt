@@ -1,0 +1,11 @@
+Fuse the strengths of both solutions by using a binary-encoded Mealy FSM (from Example 2) to minimize flip-flop count and reduce area/power, combined with the clear and structured synchronous reset and separated combinational next-state logic style (from Example 1).
+
+Specifically:
+- Use 3-bit binary state encoding to track the prefix matched states.
+- Implement next-state logic with an always_comb block for readability and easy debugging.
+- Keep synchronous reset and state update in a single always_ff block.
+- Implement MATCH as a pure combinational Mealy output that asserts on the final input bit ('1' at the last state).
+- Carefully design next states to support continuous and overlapping detection of "10011".
+- Ensure clean separation of combinational and sequential blocks for synthesis friendliness and maintainability.
+
+This fusion balances area and power benefits of binary encoding with the clarity and reset discipline of the first example's style. It yields a clean, efficient, and easy-to-modify FSM that asserts MATCH precisely when the sequence "10011" is detected, supporting overlapping sequences.

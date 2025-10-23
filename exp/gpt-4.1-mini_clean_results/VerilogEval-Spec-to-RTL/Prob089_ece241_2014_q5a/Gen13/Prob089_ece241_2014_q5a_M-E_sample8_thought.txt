@@ -1,0 +1,13 @@
+Implement the 2's complementer FSM using a Mealy machine style to produce output directly based on the current state and current input bit (x) without storing the input in a separate register. 
+
+The idea is:
+- Use a single-bit state indicating whether the carry of the +1 addition has been consumed.
+- Initially, the FSM is in state CARRY (meaning the +1 must still be added).
+- Before the first '1' is encountered (lowest 1-bit in input), output is equal to the input bit (just copy the LSB bits until the first 1).
+- Upon seeing the first '1' bit, output '1' and move to NO_CARRY state.
+- After the carry is consumed, all subsequent bits are inverted.
+- Reset asynchronously sets state back to CARRY.
+- Output (z) is generated combinationally from current state and current input x.
+- State transitions occur on clock edges.
+
+This Mealy approach produces outputs with one cycle less latency and avoids storing input bits in registers, simplifying the datapath. The asynchronous reset ensures quick initialization. The design avoids separate input registers, potentially reducing area and power and simplifying timing paths.

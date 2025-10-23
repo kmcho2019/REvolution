@@ -1,0 +1,27 @@
+Fusion Strategy:
+1. State Management:
+   - Use minimal 1-bit state encoding (A/B) from both examples
+   - Combine the reset handling from Example 2 with the simple next_state logic from Example 1
+
+2. Phase Counting:
+   - Use the optimized phase comparison (~phase[0] & ~phase[1]) from Example 2 for better timing
+   - Keep the arithmetic phase counter from Example 1 but with reset handling from Example 2
+
+3. w History:
+   - Use shift register implementation from Example 1 (concise concatenation)
+   - Add conditional update only in state B from Example 2 for power savings
+
+4. Popcount Calculation:
+   - Use balanced adder tree from Example 2 for better timing
+   - Keep the calculation combinational but only used when needed
+
+5. Output Logic:
+   - Combine phase comparison optimization from Example 2 with state check
+   - Maintain clear output condition (popcount == 2'd2)
+
+Key Improvements:
+- Better timing with balanced adder
+- Lower power with conditional w_history updates
+- Clean reset handling
+- Optimized phase comparison
+- Minimal state transitions

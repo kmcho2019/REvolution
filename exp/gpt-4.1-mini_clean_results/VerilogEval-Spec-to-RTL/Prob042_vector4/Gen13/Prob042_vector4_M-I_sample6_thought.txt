@@ -1,0 +1,5 @@
+The original solution is already minimal and straightforward using a replication operator for sign extension. Given that the logic is a simple combinational assignment and the replication operator is well-supported by synthesis tools, no major performance or area improvements are possible in the Verilog code itself. However, a minor improvement is to explicitly declare the output as reg and perform the extension inside an always_comb block. This can sometimes improve synthesis tool inference for combinational logic, potentially helping PPA in some flows. Additionally, using an always_comb block can provide clearer intent for combinational logic. This is more of a style refinement than a major optimization.
+
+Also, to maintain minimal logic and avoid unnecessary inferred registers, the output can remain a wire with a continuous assignment, but since we want a slight potential PPA benefit, we will implement the always_comb approach.
+
+No additional logic is introduced, so timing and power remain optimal.

@@ -1,0 +1,16 @@
+The initial implementation is already minimal in terms of logic depth and gate count, as it implements a 4-input parity function with two XOR gates arranged in two stages. Given the area is already minimal and timing is optimal (0 delay), the main focus for PPA optimization is power reduction.
+
+To reduce dynamic power without sacrificing performance or area, we can try to gate the XOR operations conditionally or restructure the logic slightly. However, since all inputs affect the output in parity, gating cannot skip switching unless inputs are static, which is external to this module.
+
+Another subtle optimization is to reduce net switching by combining all inputs into one XOR expression directly, as modern synthesis tools may optimize it better than manually staged XOR wires. This removes intermediate nets and can reduce net capacitance and switching.
+
+Thus, the improvement is to directly implement the parity as a single continuous XOR operation: assign out = a ^ b ^ c ^ d;
+
+This small change can improve power by reducing net toggling and possibly save tiny area from fewer nets, without affecting logic depth or timing, as synthesis tools flatten XOR trees efficiently.
+
+Hence, the strategy is to:
+- Use a direct 4-input XOR expression instead of intermediate wires.
+- Rely on synthesis tool optimizations for XOR trees.
+- Remove explicit wires to reduce net switching power.
+
+This is a clean, minimal, synthesis-friendly design that may marginally improve power due to fewer nets switching.

@@ -1,0 +1,21 @@
+To implement the fixed-point subtractor with parameters Q and N, the module accepts two N-bit fixed-point inputs a and b, both in two's complement format. 
+
+We interpret the sign as the MSB (bit N-1). 
+
+The subtraction is performed according to these rules:
+- If a and b have the same sign, we subtract the magnitudes (absolute values) and set the sign same as the inputs.
+- If signs differ, we add the magnitudes and determine the sign based on which operand has the larger magnitude.
+
+To do this, we:
+- Extract sign bits.
+- Compute absolute values using two's complement if negative.
+- Based on signs, perform either subtraction or addition of magnitudes.
+- Assign sign to result accordingly.
+- Handle zero result explicitly: when the result magnitude is zero, set sign bit to 0.
+- Compose the final result by combining sign bit and magnitude.
+
+The internal register `res` stores the final result.
+
+This approach ensures precise fixed-point subtraction respecting the fixed fractional bits Q and total width N.
+
+No scaling or shifting is needed since inputs share the same fixed-point format.

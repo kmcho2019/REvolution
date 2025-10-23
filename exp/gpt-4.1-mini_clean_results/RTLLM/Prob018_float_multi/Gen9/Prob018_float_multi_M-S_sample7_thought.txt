@@ -1,0 +1,17 @@
+Implement a simplified IEEE-754 single-precision floating-point multiplier that performs all computations sequentially over multiple clock cycles using a small state machine driven by a 3-bit counter.  
+This approach splits the operation into these steps:
+
+1. Cycle 0: On reset, clear output and counter. At first cycle after reset, extract signs, exponents, mantissas of inputs with implicit leading 1 for normalized numbers, identify special cases.
+2. Cycle 1: Handle special cases (NaN, inf, zero). If normal, multiply mantissas (24x24=48 bits), compute sign XOR, and add exponents minus bias.
+3. Cycle 2: Normalize the product. If the highest bit (bit 47) is 1, shift right by 1 and increment exponent; otherwise, leave as is.
+4. Cycle 3: Extract guard, round, sticky bits; perform round-to-nearest-even on the mantissa and adjust exponent if rounding overflows.
+5. Cycle 4: Check for exponent overflow/underflow; assemble the final IEEE-754 output accordingly (inf, zero, normal), then output the result and hold.
+
+This multi-cycle approach with explicit counter and pipeline registers reduces combinational logic per clock cycle, simplifies timing and logic complexity, and eases synthesis while maintaining correctness and IEEE-754 compliance. It uses only registers and simple combinational logic per stage, avoiding complex wide multipliers in one cycle.
+
+All intermediate signals are registered. The counter controls the operation sequence.  
+Outputs update only when result is ready.
+
+This design balances hardware resource usage and latency, improving timing, power, and area compared to a full combinational single-cycle multiplier.
+
+The interface and internal signals follow the problem statement.

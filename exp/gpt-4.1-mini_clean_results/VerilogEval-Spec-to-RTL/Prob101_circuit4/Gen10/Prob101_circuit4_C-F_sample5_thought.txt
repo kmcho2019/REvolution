@@ -1,0 +1,13 @@
+From the waveform, the output q equals 1 whenever either b or c is high, independent of a and d. Both example solutions correctly implement q = b OR c using gate-level modules.
+
+Example 1 uses two buffer modules before the OR gate, which adds unnecessary hierarchy and increases area and power without improving clarity or functionality.
+
+Example 2 uses a simple structural instantiation of a 2-input OR gate on inputs b and c, which is concise and directly reflects the logic without redundant buffering.
+
+To fuse the best of both:
+
+- Avoid the redundant buffers from Example 1 to reduce area and power.
+- Retain the clear structural module OrGate2 from Example 2 to preserve hierarchical clarity and modular design.
+- Instantiate OrGate2 in TopModule connecting directly to inputs b and c, ignoring inputs a and d, which do not affect the output.
+
+This fusion keeps modularity and clear gate-level structure from Example 2, eliminating extra buffering from Example 1, thus reducing power and area while maintaining clarity and correctness.

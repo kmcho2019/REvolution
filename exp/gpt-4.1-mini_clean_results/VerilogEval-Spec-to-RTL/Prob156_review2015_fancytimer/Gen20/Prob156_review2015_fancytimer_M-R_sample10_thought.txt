@@ -1,0 +1,15 @@
+Refactor the design to strictly separate combinational next-state and output calculations from sequential state and output updates. Use separate registers for "next" values of outputs, and update outputs only in the sequential always block on the clock edge. Avoid assigning outputs in combinational blocks directly. This makes the design clear and synthesizable.
+
+Key points:
+- Use a 1-hot-like FSM with clear states.
+- Maintain registers for outputs (`count`, `counting`, `done`), and update them only on clock edge.
+- Calculate combinational `*_next` signals (including `count_next`, `counting_next`, `done_next`) in the combinational block.
+- Update pattern shift and delay registers on the clock edge.
+- Initialize `tick_counter` properly after delay bits are fully loaded (use registered `delay_reg` value).
+- Count 1000 cycles per tick using a 10-bit `cycle_counter`.
+- Decrement `tick_counter` after every 1000 cycles.
+- Output `count` reflects remaining ticks minus one during counting.
+- In DONE state, assert `done`, wait for `ack` to return to IDLE.
+- Reset synchronously resets state and outputs.
+
+This structure ensures stable, registered outputs updated synchronously, avoids conflicting assignments, and guarantees timing correctness and functional correctness.

@@ -1,0 +1,26 @@
+The initial approach set q equal to next_state, but the waveform shows q and state can differ, meaning q is not simply the next state. Instead, q must be derived as a combinational function of current inputs and current state, and state must be updated by a separate next_state logic.
+
+By carefully analyzing the waveform samples, we deduce:
+
+- The flip-flop state holds previous q.
+- At each clock edge, state updates based on inputs and current state.
+- The output q depends on both current inputs and current state, but is not identical to next_state.
+
+From waveforms, the transitions suggest:
+
+- q = (state & (~a | b)) | (~state & a & ~b)
+
+means when state is 1, q is high if (not a or b); else when state is 0, q is high only if a=1 and b=0.
+
+- next_state = q (the updated value stored)
+
+This matches the waveform where q differs from next_state due to combinational logic, but next_state (state) updates to q on clock edge.
+
+Thus, implement:
+
+- combinational q = (state & (~a | b)) | (~state & a & ~b)
+- state <= q at posedge clk
+
+This correction will produce q and state that follow the observed waveforms with zero mismatches.
+
+The improvement separates q from next_state, matching output and state behavior, and correctly models the sequential logic implied by the waveform.

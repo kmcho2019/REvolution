@@ -1,0 +1,17 @@
+To produce the three output vectors, I will employ a vector-rotation approach that aligns each bit with its neighbor, then perform bitwise operations.
+
+1. For out_both (both current bit and its left neighbor are '1'):
+   - Define the "left neighbor" as the bit with index (i+1).
+   - Create a rotated version of the input vector shifted left by 1 (wrap-around isn't needed here since out_both[99]=0).
+   - AND the input vector with this rotated vector shifted left by 1, then mask out bit 99 as zero.
+
+2. For out_any (any of the bit and its right neighbor is '1'):
+   - The "right neighbor" is bit (i-1).
+   - Rotate the input vector right by 1 (with zero padding since out_any[0]=0).
+   - OR the input vector with the right-rotated vector and set out_any[0]=0.
+
+3. For out_different (bit differs from its left neighbor, with wrap-around):
+   - Use a left-rotated version of the input vector (wrap-around).
+   - XOR the input vector with this rotated vector to highlight differences.
+
+This approach avoids explicit indexing and uses vector shifts and concatenations for clarity and correctness.

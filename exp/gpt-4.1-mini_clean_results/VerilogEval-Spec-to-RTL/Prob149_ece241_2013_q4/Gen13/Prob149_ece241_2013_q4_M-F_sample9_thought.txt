@@ -1,0 +1,11 @@
+The key fix is to properly compare the newly decoded water level (`new_level`) with the previous stable level *before* updating the stable level and previous level registers. This ensures that the `dfr` signal correctly reflects an upward transition of water level.
+
+To implement this:
+- Create a wire `new_level` from the sensor inputs.
+- In the clocked block, when a sensor change occurs (`new_level != stable_level`), compute `dfr` by comparing `new_level` with the current `stable_level` *before* updating `stable_level`.
+- Then update `prev_level` to the old `stable_level` and `stable_level` to `new_level`.
+- When there is no change, keep `dfr` steady.
+- On reset, set `stable_level` and `prev_level` to BELOW_S0 (lowest) and assert `dfr = 1` (all outputs open), representing a long low-level stable state.
+- Nominal flow outputs (`fr0`, `fr1`, `fr2`) are combinationally driven from `stable_level` as before.
+
+This sequencing avoids using updated stable levels prematurely and ensures `dfr` is high only when the level increases, matching spec and eliminating the large number of mismatches.

@@ -1,0 +1,14 @@
+Novel approach using hierarchical priority encoding:
+
+1. **Priority-Based Level Detection**: Instead of treating sensors equally, implement a priority encoder that identifies the highest active sensor. This naturally creates the water level zones we need (above s[2], between s[2]-s[1], etc.).
+
+2. **Level History Tracking**: Maintain a 2-bit register storing the previous water level zone (encoded) to detect transitions for dfr calculation.
+
+3. **Output Generation**:
+   - Use the current level zone to set nominal flow outputs (fr0, fr1, fr2)
+   - Compare current and previous zones to determine if water is rising (dfr)
+   - Implement truth tables for outputs based on level zones
+
+4. **Reset Handling**: Forces system into "below s[0]" state with all outputs high.
+
+This approach is more robust against sensor noise and clearly separates level detection from output generation.

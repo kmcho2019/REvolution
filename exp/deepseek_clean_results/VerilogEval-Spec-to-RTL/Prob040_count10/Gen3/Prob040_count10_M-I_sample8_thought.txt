@@ -1,0 +1,10 @@
+Improvement strategy based on PPA metrics:
+1. Timing Optimization: Register the terminal count detection to break the critical path. This will help meet timing constraints better by reducing combinatorial logic in the path.
+2. Power Optimization: Add clock gating when counter reaches 8 (1000) to reduce unnecessary switching in the last two cycles before reset.
+3. Area Optimization: Maintain the current minimal 4-bit register implementation while improving the other metrics.
+
+Key changes:
+- Add a registered terminal count signal to improve timing
+- Implement clock gating for power reduction when counter is 8 or 9
+- Keep the efficient terminal count detection (q[3] & q[0])
+- Maintain clean synchronous reset functionality

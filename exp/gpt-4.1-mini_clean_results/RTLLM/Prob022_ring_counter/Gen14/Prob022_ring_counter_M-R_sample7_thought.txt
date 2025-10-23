@@ -1,0 +1,5 @@
+Refactor the ring counter by representing the current position of the high bit as a 3-bit index instead of an 8-bit one-hot vector. Maintain a 3-bit counter that increments on each clock edge, wrapping from 7 back to 0. Then use a combinational assign statement that decodes this 3-bit index to a one-hot 8-bit output using a left shift of 1 by the index value. This reduces the register width and simplifies state management.
+
+On reset, the index is set to 0, which corresponds to the LSB being high in the output. On each clock edge, the index increments modulo 8. The output is combinationally derived from this index, ensuring a clean separation of sequential and combinational logic.
+
+This approach eliminates explicit shifting of a register holding the entire vector, replacing it with a simple counter and a one-hot decoder, improving clarity and potentially synthesis results.

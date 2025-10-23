@@ -1,0 +1,25 @@
+To fix the prediction output mismatches and timing issues, we must cleanly separate the prediction combinational logic, the sequential update of the PHT and GHR, and the registered output signals that reflect the prediction state used at prediction time.
+
+Key corrections:
+
+1. **Prediction outputs (`predict_taken` and `predict_history`) should be registered on the clock edge when `predict_valid` is asserted, capturing the GHR and PHT state *before* any updates. This ensures stable outputs that align with pipeline timing.**
+
+2. **The GHR update must happen after outputs are registered, and must prioritize `train_valid && train_mispredicted` recovery of history over prediction updates, as per spec.**
+
+3. **The PHT update happens only on training at the clock edge, using the `train_pc` and `train_history` inputs.**
+
+4. **During the combinational prediction, we should use the current GHR (before updates) and current PHT to produce the predicted taken bit. The prediction output registers capture this state on the clock edge.**
+
+5. **If training misprediction and prediction happen simultaneously, training takes precedence for GHR update, but the prediction output corresponds to the state before training update (i.e., outputs come from state *before* update).**
+
+By explicitly sequencing these steps and registering outputs in a single sequential block, the predictor behavior and outputs will correctly match the expected timing and logic, fixing the output mismatch and glitches reported.
+
+This means:
+
+- Use combinational logic only for determining the predicted taken bit from current GHR and PHT.
+
+- Register outputs (`predict_taken` and `predict_history`) at clock edge when `predict_valid`.
+
+- Update PHT and GHR sequentially, with GHR updates prioritized as specified.
+
+This architecture aligns precisely with the spec and avoids mixing combinational and sequential assignments on outputs.

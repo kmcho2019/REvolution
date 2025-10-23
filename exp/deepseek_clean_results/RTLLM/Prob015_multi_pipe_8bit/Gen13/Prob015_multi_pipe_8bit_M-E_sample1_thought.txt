@@ -1,0 +1,21 @@
+This design implements an 8-bit unsigned multiplier using a Wallace Tree architecture with 3-stage pipelining. The key innovations are:
+
+1. **Wallace Tree Compression**:
+   - Uses carry-save adders to efficiently compress partial products
+   - Reduces critical path compared to simple shift-and-add
+   - Naturally fits into pipeline stages
+
+2. **Optimized Pipeline Stages**:
+   - Stage 1: Partial product generation and initial compression
+   - Stage 2: Intermediate compression using 3:2 counters
+   - Stage 3: Final carry-propagate addition
+
+3. **Efficient Enable Handling**:
+   - Single enable signal propagates through pipeline
+   - Output gating when disabled
+
+4. **Resource Sharing**:
+   - Reuses compression logic between stages
+   - Minimizes register usage through careful staging
+
+The architecture provides better performance (especially timing) compared to traditional shift-and-add approaches while maintaining reasonable area overhead.

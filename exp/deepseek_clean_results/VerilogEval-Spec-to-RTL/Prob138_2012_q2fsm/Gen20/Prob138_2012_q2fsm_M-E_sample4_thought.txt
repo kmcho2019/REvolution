@@ -1,0 +1,14 @@
+Novel Architecture Idea:
+1. Decision Tree State Machine: Instead of using a traditional case statement, implement the state transitions as a binary decision tree. This can potentially reduce logic depth and improve timing.
+
+2. Output Encoding: Encode the states such that the output z is directly derived from the state value without additional logic. Use one-hot encoding where each state has a unique bit position, and z is simply the OR of the states that should output 1 (E and F).
+
+3. Parallel Transition Logic: Compute all possible next states in parallel and then select the correct one based on current state and input. This can help with timing by breaking long combinatorial paths.
+
+4. State Representation: Use 6-bit one-hot encoding for states (A-F) to make the output logic trivial and state transitions explicit.
+
+Key Advantages:
+- Decision tree structure may reduce critical path
+- One-hot encoding simplifies output logic
+- Parallel computation of transitions can help with timing
+- Explicit state representation makes the design more readable

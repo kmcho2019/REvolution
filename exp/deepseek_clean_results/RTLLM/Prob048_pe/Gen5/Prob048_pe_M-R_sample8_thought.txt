@@ -1,0 +1,8 @@
+The refactored design maintains the same MAC functionality but optimizes the implementation by:
+1. Moving the accumulation logic to a continuous assignment (assign) instead of an always block
+2. Using a temporary register to store the intermediate accumulated value
+3. Implementing synchronous reset through a mux in the assignment
+4. This approach may help with synthesis optimizations and timing closure since:
+   - The combinational path is more explicit
+   - The register update is separated from the arithmetic operations
+   - The design is more amenable to synthesis tool optimizations

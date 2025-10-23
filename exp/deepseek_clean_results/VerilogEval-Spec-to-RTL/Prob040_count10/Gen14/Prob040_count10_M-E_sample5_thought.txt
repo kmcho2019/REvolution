@@ -1,0 +1,13 @@
+Novel approach using a state machine with explicit state encoding:
+1. Instead of a binary counter, implement a 10-state finite state machine
+2. Each state directly represents a count value (0-9)
+3. Use one-hot encoding for state representation (10 flip-flops)
+4. Transition logic becomes simple shift register with wrap-around
+5. Reset initializes to first state (state0 = 0000000001)
+
+Advantages:
+- No combinational logic for terminal count detection
+- Simple transition logic (just shift operations)
+- Glitch-free outputs since each state has dedicated flip-flop
+- Constant-time state transitions regardless of current state
+- Easily extensible to non-binary counting sequences

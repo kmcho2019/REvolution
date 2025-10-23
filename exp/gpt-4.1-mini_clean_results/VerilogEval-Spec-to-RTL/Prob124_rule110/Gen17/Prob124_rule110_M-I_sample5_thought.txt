@@ -1,0 +1,27 @@
+The original design computes the entire 512-cell Rule 110 next state combinationally in one cycle by slicing an extended vector with zero-padding, which results in a large combinational path and a critical path delay impacting timing negatively.
+
+To improve timing (reduce the critical path length) and potentially reduce power, I will pipeline the next state computation into two pipeline stages within one clock cycle:
+
+1. Stage 1 (register): Latch the current state and create the extended vector with zero-padding.
+
+2. Stage 2 (register): Compute the next state from the extended vector.
+
+This two-stage pipeline breaks the long combinational path, halving the logic depth per cycle and enabling higher clock frequencies.
+
+This keeps the update rate of the full 512 cells per clock but reduces the critical path by registering intermediate signals.
+
+Since the input `q` must update at every clock cycle, this pipeline adds a latency of one cycle, which is generally acceptable for cellular automata.
+
+Power may also improve due to smaller combinational fanout and glitching reduction.
+
+The design keeps the same clean slicing and function abstraction, but adds intermediate registers for the extended vector and next state.
+
+The output `q` is taken after the second pipeline stage.
+
+If `load` is asserted, input data is directly loaded into `q` and the pipeline is reset to that input, ensuring correct synchronous loading.
+
+This approach balances timing, area (small increase from pipeline registers), and power.
+
+No large logic folding or selective updating is applied since all 512 cells update each cycle.
+
+This pipelined method is novel compared to the original single-cycle combinational design, addressing the reported critical path and timing issues while maintaining correctness.

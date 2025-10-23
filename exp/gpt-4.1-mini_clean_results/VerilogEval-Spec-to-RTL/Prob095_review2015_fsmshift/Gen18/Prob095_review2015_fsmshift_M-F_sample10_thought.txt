@@ -1,0 +1,17 @@
+To fix the off-by-one timing issue of shift_ena assertion after synchronous reset, I will adjust the counter and enable logic to assert shift_ena for exactly 4 clock cycles **after** reset is released.
+
+Specifically:
+
+- On synchronous reset, initialize the counter to zero and assert shift_ena immediately for the first cycle (to satisfy the requirement of asserting shift_ena *during* reset).
+- Then start counting the number of asserted cycles. The counter counts from 1 to 4 during which shift_ena remains asserted.
+- After 4 cycles of assertion (including the cycle during reset), shift_ena is deasserted and remains zero until next reset.
+  
+This means the counter counts the number of asserted cycles rather than counting down, which avoids off-by-one issues.
+
+Using a 3-bit counter, on reset counter is zero and shift_ena is 1. On next clock cycles, counter increments while counter < 4 and shift_ena=1; when counter == 4, shift_ena=0.
+
+This clear counting method avoids ambiguous inclusive/exclusive cycle counts, guaranteeing exactly 4 asserted cycles of shift_ena immediately following synchronous reset.
+
+Also, the code remains synchronous with positive edge clock and synchronous reset, matching specification and fixing timing mismatches.
+
+Since the problem only asks for reset behavior, the pattern detection input/FSM is not implemented here.

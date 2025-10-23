@@ -1,0 +1,24 @@
+To optimize for better PPA, replace the case statement with arithmetic modulo-7 increment logic since states cycle through 7 values (0 to 6) mapped onto output q in a shifted manner starting at 4. When a=1, q resets to 4; when a=0, q increments modulo 7 in the sequence 4->5->6->0->1->2->3->4.
+
+We map q values [4..6,0..3] to a 3-bit counter state from 0 to 6:
+Define an internal 3-bit counter state that represents (q + 3) mod 7:
+- If q=4, state=0
+- q=5 -> state=1
+- q=6 -> state=2
+- q=0 -> state=3
+- q=1 -> state=4
+- q=2 -> state=5
+- q=3 -> state=6
+
+On reset (a=1), state=0 (q=4).
+On enable (a=0), state = (state + 1) mod 7.
+
+Output q is computed as q = (state + 4) mod 7.
+
+This simplifies the next state logic to a 3-bit counter modulo 7 with an arithmetic increment and a mux for reset, removing the large case statement and simplifying combinational logic. This will reduce area and possibly improve timing.
+
+Also, we update q only on the clock's rising edge and avoid unnecessary combinational muxes outside the sequential block, improving power by eliminating unnecessary transitions.
+
+This arithmetic modulo-7 counter approach thus improves performance (less complex combinational logic), power (simpler logic, fewer glitches), and area (smaller logic).
+
+The code below implements this approach.

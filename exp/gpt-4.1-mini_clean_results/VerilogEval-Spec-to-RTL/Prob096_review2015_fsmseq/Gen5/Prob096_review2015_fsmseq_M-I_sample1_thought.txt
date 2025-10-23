@@ -1,0 +1,7 @@
+To improve the existing FSM for detecting "1101", I will use one-hot state encoding instead of binary encoding. One-hot encoding often allows simpler and faster next-state logic, which can improve timing (WNS and TNS), at the cost of slight area increase. However, since this FSM only has 5 states, the area overhead is minimal.
+
+One-hot encoding provides simpler combinational logic paths because each state bit represents exactly one state, enabling faster synthesis mapping and potentially better timing results. The next-state logic will be simpler, reducing combinational delay. The synchronous reset remains active high.
+
+start_shifting will be asserted when the FSM reaches the detected state, and held indefinitely until reset. The state transitions will be carefully written to maintain the same functionality and ensure the FSM continues to detect overlapping sequences.
+
+Overall, this tradeoff aims to reduce timing critical path delay and improve the worst negative slack (WNS) and total negative slack (TNS) metrics, while area increase remains modest given the small FSM size.

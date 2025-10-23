@@ -1,0 +1,9 @@
+Implement the Lemming FSM as a three-state machine with an explicit state enumeration to enhance clarity and extendibility: WALK_LEFT, WALK_RIGHT, and FALL. The FSM transitions as follows:
+
+- When grounded and walking (either left or right), bumps cause a switch to the opposite walking direction.
+- When ground disappears, transition to FALL state preserving current direction.
+- While falling, the direction is stored separately and bumps have no effect.
+- When ground reappears while falling, resume walking in the stored direction.
+- Asynchronous reset initializes to WALK_LEFT.
+
+Outputs are generated in a Moore style based on the current state and stored direction. This approach separates direction and state explicitly, avoids bit-packing for state, which can improve code readability and make FSM expansion easier. The direction register holds last walking direction even during falling, ensuring consistent outputs upon landing.

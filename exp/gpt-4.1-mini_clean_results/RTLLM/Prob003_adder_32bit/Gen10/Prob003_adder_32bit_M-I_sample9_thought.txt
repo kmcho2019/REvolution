@@ -1,0 +1,14 @@
+To improve the given 32-bit carry-lookahead adder, I will implement a hierarchical CLA architecture to reduce the critical path delay and enhance timing performance (improving WNS and TNS). Instead of computing carry signals sequentially for each bit in the 16-bit CLA, I will implement a two-level CLA structure inside the 16-bit block:
+
+1. Break the 16-bit block into four 4-bit groups.
+2. Compute group generate (Gg) and group propagate (Pg) for each 4-bit group.
+3. Compute carries at group boundaries using these group G and P signals.
+4. Compute internal carries within each 4-bit group using local generate and propagate signals.
+
+This hierarchical approach reduces the longest carry propagation path from linear (16) to a logarithmic pattern, improving timing.
+
+Then, at the 32-bit top level, keep the two 16-bit blocks connected by carry as before.
+
+This will marginally increase area but significantly improve timing without affecting power much, leading to a better overall PPA profile.
+
+The module interfaces remain the same, but the internal implementation of the 16-bit CLA block is optimized hierarchically.

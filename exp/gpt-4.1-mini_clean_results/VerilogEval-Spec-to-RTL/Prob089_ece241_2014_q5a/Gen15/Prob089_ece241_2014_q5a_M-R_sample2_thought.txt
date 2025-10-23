@@ -1,0 +1,10 @@
+Refactor the design to use a single always block with non-blocking assignments for both state and input registers, and implement the next state and output logic directly within combinational functions or continuous assignments.
+
+Key points:
+- Use a sequential always block for state and input capture on posedge clk or async reset.
+- Derive the next state with a combinational function for clarity and compactness.
+- Compute output z with a combinational assign based on the registered state and x_reg (purely Moore output).
+- Remove the separate next_state register, reducing registers count.
+- This maintains the same two-state Moore FSM behavior, with output based purely on registered signals, but structured differently for improved readability and succinctness.
+
+This approach keeps the FSM minimal, stable, and correct, but structures logic with separate combinational and sequential parts and uses assign statements instead of multiple always blocks.

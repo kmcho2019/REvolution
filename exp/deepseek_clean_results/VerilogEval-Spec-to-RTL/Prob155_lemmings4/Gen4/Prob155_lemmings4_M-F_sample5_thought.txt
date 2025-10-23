@@ -1,0 +1,28 @@
+To fix the Lemming state machine, we'll address each issue from the feedback:
+
+1. **Direction Change Handling**:
+   - Move direction flip to sequential logic to avoid race conditions
+   - Only change direction when in WALK state and not falling/digging
+
+2. **Fall Counter Logic**:
+   - Only increment counter when in FALL state and ground=0
+   - Reset counter when leaving FALL state or when ground=1
+
+3. **Priority Enforcement**:
+   - Explicitly check falling condition first in WALK state
+   - Then check digging condition
+   - Finally handle direction changes
+
+4. **Output Logic Simplification**:
+   - Remove redundant SPLAT checks since outputs are 0 in SPLAT state
+   - Make outputs purely dependent on current state
+
+5. **Digging State Transition**:
+   - Return to WALK if dig=0 while still on ground
+   - Fall if ground disappears while digging
+
+6. **SPLAT State**:
+   - Make it a terminal state (only reset can exit)
+   - All outputs forced to 0 in this state
+
+The fixed implementation maintains proper state transitions while strictly following the problem's priority rules.

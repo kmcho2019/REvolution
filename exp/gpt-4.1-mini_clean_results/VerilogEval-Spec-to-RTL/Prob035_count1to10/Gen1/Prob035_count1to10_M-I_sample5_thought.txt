@@ -1,0 +1,5 @@
+To optimize the design for better power and area, reduce unnecessary toggling in the counter bits. Since the counter counts from 1 to 10 (BCD range), using a Binary-Coded Decimal (BCD) counter with a 4-bit register and specialized counting logic can minimize switching activity in upper bits. Instead of incrementing by 1 and comparing to 10, implement BCD counting by rolling over after 10 directly, which limits toggling of the upper bits. This can slightly improve power.
+
+Also, explicitly defining the reset value and avoiding redundant comparisons by checking for the terminal count (10) and resetting accordingly can streamline the logic. The clock gating or power gating would require more infrastructure, so here we focus on minimizing toggling by changing the counting logic to a BCD-like counter that resets at 10.
+
+This will keep the interface and synchronous reset behavior unchanged.

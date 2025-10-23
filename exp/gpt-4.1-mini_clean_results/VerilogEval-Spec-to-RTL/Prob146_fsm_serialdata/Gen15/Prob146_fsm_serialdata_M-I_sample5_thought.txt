@@ -1,0 +1,13 @@
+To optimize the given UART receiver FSM for better PPA, the main improvement is reversing the shift direction so that the new serial bit (LSB first) is shifted into the least significant bit position rather than the MSB, simplifying the shift register logic and potentially improving timing and area. 
+
+Specifically, shift data_shift left by 1 bit and insert the new serial bit at LSB: data_shift <= {data_shift[6:0], in};
+
+This matches the protocol where least significant bit is sent first, making the shift register easier to understand and potentially less complex for synthesis.
+
+Additionally, consolidate bit_count reset logic so it only resets on reset or when entering READ_BITS (start bit detection), avoiding redundant resets and improving logic synthesis.
+
+Keep FSM encoding as is for minimal area.
+
+Maintain synchronous reset and one-cycle done pulse.
+
+This approach reduces complexity in shifting logic and potentially improves clock frequency and area with minor code tweaks.

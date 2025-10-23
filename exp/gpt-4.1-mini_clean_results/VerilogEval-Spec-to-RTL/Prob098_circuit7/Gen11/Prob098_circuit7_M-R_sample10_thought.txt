@@ -1,0 +1,10 @@
+The original design uses a separate DFF module to instantiate a flip-flop and feeds it the inverted input `a`. To refactor while keeping the core behavior, I will:
+
+- Remove the separate DFF module and implement the flip-flop behavior directly inside the TopModule using an always block triggered on the positive edge of clk.
+- Store the inverted value of `a` into a reg `q_reg` on every clock edge.
+- Drive the output `q` with a continuous assignment from the internal register.
+- This reduces the module hierarchy and simplifies the design while preserving the same functional behavior.
+- The inversion of `a` happens inside the clocked block, which ensures sequential sampling of `~a`.
+- This approach matches the same behavior but uses only one module and direct register assignment rather than a submodule.
+
+This refactoring maintains the same logic but reduces modular complexity and can make the RTL easier to analyze for small circuits.

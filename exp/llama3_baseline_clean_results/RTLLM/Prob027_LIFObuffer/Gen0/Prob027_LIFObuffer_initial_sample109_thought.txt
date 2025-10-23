@@ -1,0 +1,12 @@
+To implement the LIFO buffer (LIFObuffer) as per the given specifications, the following steps need to be taken:
+1. Define the module with the specified input and output ports.
+2. Initialize the stack pointer (SP) and the stack memory array (stack_mem) within the module.
+3. Implement the synchronous reset to clear the stack, set SP to 4 (indicating an empty buffer), and initialize all memory locations to 0 when the reset (Rst) signal is high.
+4. For a write operation (RW = 0), push data from dataIn onto the stack and decrement SP if the buffer is not full.
+5. For a read operation (RW = 1), pop data from the stack into dataOut, clear the corresponding stack memory, and increment SP if the buffer is not empty.
+6. Update the EMPTY and FULL flags based on the SP value: EMPTY when SP equals 4 (buffer is empty), FULL when SP equals 0 (buffer is full).
+
+The stack pointer will track the current position in the stack: 
+- SP = 4 indicates the buffer is empty.
+- SP = 0 indicates the buffer is full.
+- Incrementing SP during a read operation or decrementing it during a write operation will keep track of the stack's state.

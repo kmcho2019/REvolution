@@ -1,0 +1,9 @@
+Refactor the fixed-point adder to use continuous assignments and intermediate wires instead of an always block and registers. This eliminates the internal register `res` and makes the design purely combinational with `assign` statements. 
+
+Steps:
+1. Extract sign bits and compute absolute values with a function as before.
+2. Compare absolute values to decide between addition or subtraction.
+3. Use `wire` vectors to hold intermediate sums/differences with one extra bit for overflow prevention.
+4. Use nested ternary operators to assign the final result `c` directly, setting sign bit explicitly per the rules.
+5. Keep parameters `N` and `Q` and data widths consistent.
+6. This style is cleaner, easier to synthesize, and better suited for purely combinational logic.

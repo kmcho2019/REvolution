@@ -1,0 +1,18 @@
+To improve correctness and clarity, I will:
+
+- Introduce registered versions of `predict_valid` and `predict_pc` to avoid combinational path hazards and ensure prediction outputs correspond to stable inputs during the cycle.
+- Update the speculative global history (`ghr_spec`) on prediction using the *committed* history (`ghr_reg`) from the same cycle, preserving correct timing semantics.
+- On training with misprediction, recover the global history register (`ghr_spec`) to `train_history`, overriding the prediction update, ensuring priority of recovery.
+- On each clock edge, commit the speculative history to `ghr_reg`.
+- Prediction outputs (`predict_taken` and `predict_history`) use committed history (`ghr_reg`) and PHT entries *before* training update, fulfilling the spec that prediction sees the pre-training PHT state.
+- Use blocking assignments inside the always block for clarity of sequential logic, keeping update order consistent.
+- This ensures:
+  - Prediction output corresponds to inputs at the cycle and stable PHT/ghr states.
+  - Prediction updates speculative history based on committed history.
+  - Training updates PHT and recovers history with priority.
+  - Prediction and training to the same PHT entry in the same cycle behave per spec.
+- Initial reset initializes all PHT entries to weakly not taken, and clears histories.
+  
+This approach resolves timing subtlety of history chaining, properly aligns prediction and training updates, and guards against race conditions in the global history register, thus matching the specification behavior strictly.
+
+The code is fully synchronous, straightforward, and aligns with best practices for a gshare predictor with branch history recovery on misprediction.

@@ -1,0 +1,24 @@
+Use a Mealy FSM approach with explicit pattern and timing counters:
+
+1. Define states representing main phases:
+   - A_WAIT_RESET: stay here while resetn=0, outputs f=0,g=0.
+   - A_F_PULSE: On reset release, assert f=1 for exactly one cycle, g=0.
+   - B_PATTERN: Monitor x input for 3-cycle sliding window to detect pattern 1-0-1.
+   - C_G_PULSE: On detecting pattern, assert g=1 for one cycle, f=0.
+   - D_Y_MONITOR: Keep g=1 and monitor y input for up to 2 cycles. Use a cycle counter.
+   - E_G_ON_PERM: Keep g=1 permanently until reset.
+   - F_G_OFF_PERM: Keep g=0 permanently until reset.
+
+2. Instead of a 3-bit shift register, maintain an explicit 2-bit buffer for previous two x inputs and combine with current x to detect pattern "1,0,1".
+
+3. At each clock in B_PATTERN, update the buffer and check the pattern directly.
+
+4. Use a cycle counter in D_Y_MONITOR to count how many cycles y has been monitored since g=1 asserted.
+
+5. Transition to E_G_ON_PERM if y=1 within 2 cycles, or to F_G_OFF_PERM if timeout occurs.
+
+6. Outputs are mainly Moore outputs (dependent on state) except that pattern detection and y input monitoring happen inside state logic.
+
+7. All logic synchronous with positive edge clock and synchronous active low reset.
+
+This approach avoids using a shift register for pattern detection, instead explicitly tracking previous two x samples, simplifying pattern matching logic. It clearly separates output pulses and permanent states, satisfying the timing requirements precisely.

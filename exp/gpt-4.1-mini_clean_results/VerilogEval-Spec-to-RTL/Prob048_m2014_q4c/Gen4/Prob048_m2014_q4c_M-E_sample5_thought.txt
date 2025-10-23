@@ -1,0 +1,5 @@
+Instead of implementing a traditional D flip-flop with synchronous reset inside a single always block, we can split the reset and data updating logic into two separate always blocks. One always block will handle synchronous reset by forcing q to zero on the rising edge of clk when reset is asserted. The other block will update q from d only when reset is not active.
+
+This architectural style isolates reset and data logic, which can potentially improve timing by separating reset path and data path. Also, it can enhance readability and facilitate formal verification or synthesis tools in identifying reset behavior distinctly from normal data flow.
+
+The functionality remains the same: q is cleared synchronously on reset, otherwise it follows d on each clock edge.

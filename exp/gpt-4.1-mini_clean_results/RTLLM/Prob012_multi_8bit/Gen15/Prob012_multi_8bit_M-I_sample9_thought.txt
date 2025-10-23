@@ -1,0 +1,18 @@
+The original code implements an 8-bit multiplier using a fully combinational shift-and-add method via partial product generation and an adder tree. While this is straightforward and fast for a single combinational stage, it results in relatively high area and power usage due to eight 16-bit adders and all partial products computed in parallel.
+
+To optimize for better power and area without sacrificing correctness, I will implement an iterative shift-and-add multiplier using a sequential approach with a clock and reset signals. This significantly reduces hardware resources by using only one adder and an accumulator register, processing one bit of the multiplier per clock cycle. It also reduces switching activity as only one partial addition happens per cycle.
+
+Because the original spec only defines inputs/outputs and a combinational interface, I will slightly extend it to a synchronous design with a clock and synchronous reset and an output valid signal to indicate multiplication completion. This is standard practice for area and power efficient multiplication and typically more practical.
+
+If purely combinational output is required, then the previous combinational approach is optimal for speed but costly in area and power.
+
+Summary of improvements:
+- Use a sequential multiplier FSM with registers and a single adder.
+- One clock cycle per multiplier bit (8 cycles total).
+- Lower area (one adder instead of many).
+- Lower power due to less parallel switching.
+- Output valid signal to indicate when product is ready.
+
+This approach suits FPGA or ASIC implementations needing area/power optimization and is a classic implementation of shift-and-add multiplication.
+
+If strictly combinational output is needed, please indicate, but sequential is strongly preferred for PPA optimization.

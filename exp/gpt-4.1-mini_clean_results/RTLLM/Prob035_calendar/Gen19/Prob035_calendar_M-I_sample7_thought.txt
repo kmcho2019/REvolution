@@ -1,0 +1,10 @@
+To improve PPA from the original design:
+
+1. Combine the three counters into a single always block to reduce flip-flop instantiations and simplify clock gating.
+2. Use enable signals internally so counters only update when necessary, reducing switching and power.
+3. Use smaller-width counters and implement wrap-around using modulus logic rather than multiple comparisons for potentially better synthesis results.
+4. Use non-blocking assignments consistently.
+5. Optimize conditions to minimize the number of comparator gates and simplify the critical path.
+6. Provide comments for clarity.
+
+This combined approach reduces redundant clock edges on separate always blocks and enables the tool to optimize logic more efficiently, improving timing and reducing power. Area impact is expected to stay similar or improve slightly due to fewer always blocks and optimized counter logic.

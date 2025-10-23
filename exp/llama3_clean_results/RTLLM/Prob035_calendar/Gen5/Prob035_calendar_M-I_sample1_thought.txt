@@ -1,0 +1,8 @@
+To improve the given Verilog code for the perpetual calendar module based on its PPA metrics, the focus should be on reducing the critical path for better performance, minimizing switching activity for lower power consumption, and simplifying the logic for area reduction. The current implementation uses a single always block with nested if-else statements, which could lead to long critical paths and high switching activity.
+
+The improvement strategy involves:
+1. **Separating the always blocks**: Instead of a single always block, use separate always blocks for each time unit (seconds, minutes, hours). Each block will be triggered by the clock edge, reducing the complexity of the combinational logic within each block.
+2. **Simplifying the logic**: Replace nested if-else statements with direct updates of the time units based on their current state. Use arithmetic operations to increment the values, which might result in more area-efficient implementations after synthesis.
+3. **Optimizing the reset logic**: Minimize unnecessary switching of the reset signal by applying it directly to the relevant registers, reducing the area and power consumption.
+
+By implementing these improvements, the code should exhibit better PPA metrics, including reduced timing constraints, lower power consumption, and a more efficient area utilization.

@@ -1,0 +1,8 @@
+Refactor the Galois LFSR implementation by separating the combinational next state logic from the sequential register update. Use an intermediate wire vector to hold the next state computed using combinational logic with explicit XOR at tap positions. Then update the q register on the clock edge. This approach makes the design more modular and easier to analyze, synthesizes well, and is often preferred in coding style for sequential logic. Also, this maintains the synchronous active-high reset as before.
+
+The design steps:
+- Define a wire vector `next_q` for the next state.
+- Calculate feedback = q[0].
+- Shift q right by one bit for all bits, XORing feedback at tap positions (31, 21, 1, 0).
+- On clock edge, if reset active, q <= 1; else q <= next_q.
+This preserves the original logic, but improves code clarity and separation of combinational and sequential logic.

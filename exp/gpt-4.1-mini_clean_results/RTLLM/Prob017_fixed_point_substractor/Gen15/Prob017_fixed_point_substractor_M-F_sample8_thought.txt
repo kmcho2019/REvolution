@@ -1,0 +1,13 @@
+To fix the synthesis issues, simplify the design by leveraging the two's complement nature of inputs and outputs directly, without explicit sign and magnitude extraction. Since inputs and outputs are in signed two's complement fixed-point format, subtraction can be done directly using signed arithmetic, which is synthesis-friendly and precise for fixed-point arithmetic.
+
+To still handle the sign bit explicitly for zero results as required, check if the subtraction result is zero; if so, force the output's sign bit to zero.
+
+Thus:
+1. Declare inputs and outputs as signed.
+2. Perform direct subtraction using signed arithmetic.
+3. If result is zero, explicitly assign zero with sign bit zero.
+4. Otherwise, output the subtraction result as is.
+5. Keep Q parameter for fixed-point precision context, but it does not affect arithmetic logic.
+6. Use an always_comb (or always @(*) for compatibility) block with registered output res and assign to c.
+
+This approach removes sign/magnitude conversions and functions that cause synthesis issues, keeps the implementation clean, fully synthesis-compatible, and functionally correct per specification.

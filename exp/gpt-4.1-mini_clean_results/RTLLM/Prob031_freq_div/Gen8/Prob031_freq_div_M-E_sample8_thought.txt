@@ -1,0 +1,12 @@
+I will implement the frequency divider by using one main counter that counts input clock cycles from 0 to 99, leveraging it to generate all output clocks simultaneously.  
+CLK_50 toggles every 1 input cycle (divide by 2) — implemented by a simple flip-flop toggled every clock cycle.  
+CLK_10 toggles every 5 input cycles (divide by 10) — derived by checking the main counter modulo 10.  
+CLK_1 toggles every 50 input cycles (divide by 100) — derived by checking the main counter modulo 100.  
+
+This single-counter approach reduces hardware compared to using separate counters, optimizes area, and simplifies reset logic.  
+Using combinational conditions on the main counter allows toggling outputs only when the count hits specific values, reducing unnecessary toggling and power consumption on outputs.  
+All outputs toggle only when needed, synchronized to the input clock, providing glitch-free divided clocks.
+
+The reset will synchronously reset all outputs and the main counter to zero.
+
+This unified-counter approach offers a cleaner, resource-saving architecture that still meets timing and functionality requirements.

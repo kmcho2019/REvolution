@@ -1,0 +1,9 @@
+To fuse the best ideas from both examples, we combine the minimal and direct combinational logic from Example 1 with the explicit combinational block style from Example 2. We keep outputs as 'reg' to allow the use of an always_comb (or always @(*) in Verilog) block that cleanly expresses mutually exclusive output assignments and makes the design robust against glitches. Instead of nested ifs, we use straightforward conditional (ternary) expressions inside the always block to keep the logic simple and clear, thus helping synthesis tools optimize further. 
+
+This approach:
+- Preserves clear mutual exclusivity for ringer and motor, ensuring only one is active when ring=1.
+- Uses a combinational always block that synthesis tools understand well, allowing potential gate sharing and glitch reduction.
+- Keeps outputs as reg to match procedural assignments, improving readability and synthesis clarity.
+- Expresses the logic compactly for both area and power efficiency.
+
+Hence, the design achieves minimal logic, good readability, and is synthesis-friendly.

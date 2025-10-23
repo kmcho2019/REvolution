@@ -1,0 +1,11 @@
+Simplification Strategy:
+1. Remove redundant state logic by observing that state_B is simply the complement of state_A in this 2-state machine
+2. Use a single state register (state_A) since state_B can be derived from it
+3. Simplify output logic by directly implementing the Mealy machine behavior
+4. Maintain one-hot encoding by keeping state_A as the single state bit
+5. Reduce combinational logic by eliminating unnecessary intermediate wires
+
+Key Observations:
+- The machine only needs to track whether it's in state A or not (state_B = ~state_A)
+- Output z can be expressed directly as x XOR state_A
+- Next state logic for state_A is simply ~x when in state_A

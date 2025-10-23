@@ -1,0 +1,12 @@
+Fuse the strengths of both examples by separating input sampling, state update, and output generation into distinct always blocks to maximize clarity and timing robustness, while maintaining asynchronous reset and minimal state encoding.
+
+Key improvements:
+- Input x is sampled into x_reg in its own always block with async reset, ensuring input stability and decoupling input timing from FSM state updates.
+- State machine is updated in a separate always block asynchronously reset and triggered on posedge clk, using the registered input x_reg for stable transitions.
+- Output logic is purely combinational and depends only on the current state and the registered input, preserving the Moore FSM property and ensuring glitch-free output.
+- State encoding remains a single bit for area and power efficiency.
+- Using non-blocking assignments consistently avoids race conditions.
+- This modular approach eases timing analysis, reduces logic complexity per block, and improves power by minimizing combinational glitches.
+- The circuit accepts arbitrarily long input bit sequences, resets asynchronously, and outputs the correct serial 2's complement bits.
+
+This fusion combines example 1's well-commented, modular design with example 2's concise and efficient state update logic, creating a clean, robust, and optimally partitioned FSM that meets all specifications precisely.

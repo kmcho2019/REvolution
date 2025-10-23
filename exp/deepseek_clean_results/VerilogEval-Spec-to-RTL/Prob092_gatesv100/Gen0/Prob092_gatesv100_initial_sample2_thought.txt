@@ -1,0 +1,13 @@
+To implement the TopModule, we'll handle each output separately:
+
+1. For out_both:
+   - For bits 98:0, each bit is the AND of the current bit and its left neighbor (higher index)
+   - Bit 99 is always 0 as it has no left neighbor
+
+2. For out_any:
+   - For bits 99:1, each bit is the OR of the current bit and its right neighbor (lower index)
+   - Bit 0 is always 0 as it has no right neighbor
+
+3. For out_different:
+   - For bits 99:1, each bit is the XOR of the current bit and its left neighbor
+   - For bit 0, it's the XOR of in[0] and in[99] (wrapping around)

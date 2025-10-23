@@ -1,0 +1,10 @@
+Refactor the module by explicitly registering the current water level alongside the previous water level inside a synchronous always block with reset. This ensures outputs depend on registered stable states, avoiding glitches and transient inconsistencies.
+
+We will:
+- Register both `curr_level` and `prev_level` synchronously on clock with reset initializing both to "Below s[0]" state.
+- Use a combinational function to decode sensor inputs robustly, treating any unknown or unexpected sensor pattern as "Below s[0]".
+- Generate `dfr` by comparing registered levels inside always block.
+- Assign `fr0`, `fr1`, `fr2` outputs combinationally based on registered `curr_level`.
+- This approach guarantees outputs change synchronously with clock and reset, improving timing and simulation stability while keeping logic clear and self-contained.
+
+This fully synchronous approach aligns outputs and internal states, ensuring a predictable and reliable reset behavior and flow rate output.

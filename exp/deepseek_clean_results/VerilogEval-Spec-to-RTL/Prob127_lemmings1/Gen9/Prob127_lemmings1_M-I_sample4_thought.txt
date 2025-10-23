@@ -1,0 +1,15 @@
+The current implementation is already quite efficient, but we can make slight improvements to further optimize PPA:
+
+1. State Encoding: Maintain binary encoding (1-bit) as it's optimal for 2 states.
+
+2. Next State Logic: Simplify further by recognizing that bump_left and bump_right are mutually exclusive in normal operation (a lemming can't be bumped on both sides simultaneously while walking). We can use a priority encoder style logic.
+
+3. Output Logic: Keep direct assignments but use state value directly for minimal logic.
+
+4. Reset Handling: Keep asynchronous reset for clean initialization.
+
+Key optimizations:
+- Simplified next state logic using OR instead of XOR (saves 1 gate)
+- Direct state assignment for outputs (most efficient)
+- Maintain same reset behavior
+- Results in marginally better area/power with identical timing

@@ -1,0 +1,31 @@
+Corrected design approach for precise 3.5x fractional divider:
+
+1. Accurate cycle counting:
+   - Implement a 7-cycle counter (0-6) for proper 3.5x division
+   - Clear counter at 6 to maintain exact periodicity
+
+2. Deterministic phase generation:
+   - Phase A: High for first 4 cycles (0-3), low for next 3 (4-6)
+   - Phase B: 180° shifted version (high 3.5 cycles later)
+   - Remove random elements for reliable operation
+
+3. Proper phase shifting:
+   - Generate Phase A on positive edges
+   - Generate Phase B by tracking counter state on negative edges
+   - Phase B mirrors Phase A with half-period delay
+
+4. Duty cycle correction:
+   - Each phase has 50% duty cycle over full period
+   - Phases overlap to create continuous output
+
+5. Robust implementation:
+   - Separate positive/negative edge logic
+   - Clear reset conditions
+   - No combinational loops or glitches
+
+Key corrections:
+- Fixed counter range (0-6)
+- Removed non-deterministic random elements
+- Proper phase relationship (180° shift)
+- Accurate duty cycle control
+- Maintains exact 3.5x division ratio

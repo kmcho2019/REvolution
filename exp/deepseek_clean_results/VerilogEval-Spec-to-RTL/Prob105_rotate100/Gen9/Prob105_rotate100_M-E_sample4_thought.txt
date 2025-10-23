@@ -1,0 +1,16 @@
+Novel Approach: Parallel Rotation with Masked Selection
+1. Instead of using sequential case statements, pre-compute all possible rotation outcomes in parallel
+2. Use a 4:1 multiplexer to select between:
+   - No rotation (current value)
+   - Right rotation
+   - Left rotation
+   - No rotation (for ena=2'b11)
+3. This eliminates the priority logic of case statements and allows for more balanced timing paths
+4. The rotation operations are computed continuously, with the mux selecting the appropriate result
+5. Load operation remains synchronous and has highest priority
+
+Advantages:
+- More balanced timing paths due to parallel computation
+- Potentially better synthesis optimization with explicit mux structure
+- Clear separation of rotation computations from selection logic
+- Easier to pipeline if needed for higher frequency

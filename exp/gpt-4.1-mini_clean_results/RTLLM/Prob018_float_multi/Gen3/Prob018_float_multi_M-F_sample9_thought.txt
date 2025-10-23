@@ -1,0 +1,14 @@
+To fix the illegal variable declarations inside the always block, all intermediate variables used for rounding and assembling the output must be declared at the module scope. Then inside the always block, only assignments are made to these pre-declared registers. This ensures compliance with Verilog syntax rules.
+
+Specifically, move the following variables outside the procedural block:
+- mantissa_with_round (25 bits)
+- exp_with_round (9 bits)
+- final_mantissa (23 bits)
+
+Also, carefully sequence the assignments in STATE_OUTPUT such that these registers hold the intermediate results. This allows proper rounding, overflow/underflow handling, and output formatting without violating the language rules.
+
+This fix will keep the existing state machine and pipeline structure intact, preserve synthesis-friendly coding style, and ensure IEEE 754-compliant floating-point multiplication output.
+
+Additionally, ensure all combinational logic bits like round_up are also declared at module scope, and only assigned in sequential logic.
+
+The rest of the module remains the same.

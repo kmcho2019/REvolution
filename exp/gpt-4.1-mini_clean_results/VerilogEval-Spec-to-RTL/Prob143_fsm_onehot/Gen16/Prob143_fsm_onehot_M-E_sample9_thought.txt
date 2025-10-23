@@ -1,0 +1,7 @@
+Implement the combinational next state logic by decoding each active one-hot bit in the current state vector and generating its corresponding next state vector. Use a set of intermediate 10-bit vectors, each representing the next states from a single active current state. Then OR all these vectors together for the final next_state output. This fully supports multiple simultaneous active states naturally and modularly.
+
+For the outputs, apply a priority-encoded approach: since only S7 and S8 and S9 produce outputs, create bitwise masks for out1 and out2 by OR'ing the state bits that generate non-zero outputs. This approach ensures clarity and extensibility.
+
+This method is scalable and readable: adding states or changing transitions just requires updating the per-state "next vector" without changing the OR logic. It avoids large complex combinational expressions, easing synthesis and timing closure, and neatly separates the logic by state. Also, by working on entire 10-bit vectors, it leverages bitwise operations efficiently.
+
+Overall, this approach is a compositional, vectorized, and modular way to implement combinational next state logic for one-hot encoded FSMs with possibly multiple simultaneous active states.

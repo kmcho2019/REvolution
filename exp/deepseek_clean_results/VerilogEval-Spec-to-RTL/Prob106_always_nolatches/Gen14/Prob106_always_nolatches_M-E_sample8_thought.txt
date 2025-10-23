@@ -1,0 +1,12 @@
+Instead of continuously checking the entire 16-bit scancode, we can:
+1. Use a shift register to track the last two bytes received
+2. Implement edge detection to only process new complete scancodes
+3. Use a state machine to validate the scancode structure (0xE0 prefix)
+4. Output the arrow key status only when a valid new scancode is detected
+5. This reduces power by minimizing unnecessary comparisons and switching
+
+Key advantages:
+- Lower power: Only processes data when new bytes arrive
+- More robust: Validates scancode structure before decoding
+- Scalable: Easily extended for more key codes
+- Timing efficient: Parallel comparisons after validation

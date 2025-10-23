@@ -1,0 +1,5 @@
+Refactor the FSM using a binary-encoded state machine instead of one-hot to reduce flip-flop count and simplify the next-state logic.  
+Use a single always_ff block with synchronous reset and non-blocking assignments for both state and shift counter.  
+Implement the pattern detection using a small 2-bit shift register sampled from the input data, which simplifies the logic and avoids long case statements.  
+Derive outputs (shift_ena, counting, done) directly from the state encoding using continuous assignments for clarity and minimal logic.  
+This approach keeps the same behavior but reduces area and potentially power by using fewer flip-flops and simpler state transitions, while maintaining synchronous reset and positive edge clocking.

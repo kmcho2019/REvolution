@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. Remove intermediate wires for hierarchical comparison since 3-bit is small enough for direct comparison
+2. Use simple arithmetic comparison (A > B, A == B) and derive A_less from these
+3. Eliminate redundant equality checks by using direct bitwise comparison
+4. Maintain mutual exclusivity by construction
+5. Reduce gate count by leveraging Verilog's built-in comparison operators
+
+Key simplifications:
+- Direct use of > and == operators for cleaner code
+- A_less derived as !(A_greater || A_equal)
+- No need for bit-level operations since synthesis tools optimize well
+- Minimal signal declarations

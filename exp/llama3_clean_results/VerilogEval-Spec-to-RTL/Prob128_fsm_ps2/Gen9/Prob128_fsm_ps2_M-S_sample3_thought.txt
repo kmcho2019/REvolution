@@ -1,0 +1,9 @@
+To simplify the solution, we can focus on the essential functionality: detecting the message boundaries in the PS/2 mouse protocol byte stream and signaling 'done' after receiving three bytes, starting with a byte where in[3]=1. We can achieve this by using a simple counter to track the number of bytes received after encountering the first byte with in[3]=1. This approach eliminates the need for a complex state machine and reduces the overall complexity of the design.
+
+Here's a simplified thought process:
+
+1.  **Simplify the State Machine:** Replace the multi-state state machine with a simpler approach using a counter. When a byte with in[3]=1 is received, reset the counter to 0 and start counting. When the counter reaches 2 (indicating three bytes have been received), set the 'done' signal high.
+2.  **Remove Unnecessary Buffer:** Since we only need to keep track of the number of bytes received after the first byte with in[3]=1, we can eliminate the buffer array. This simplification reduces the area and improves the overall efficiency of the design.
+3.  **Improve Done Signal Generation:** To ensure the 'done' signal is generated correctly, we should assert it only when the counter reaches 2, indicating that three bytes have been received. In the next clock cycle, we reset the 'done' signal to low to prepare for the next message.
+
+By adopting this simplified approach, we can reduce the complexity of the design while maintaining its functionality.

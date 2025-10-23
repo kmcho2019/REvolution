@@ -1,0 +1,12 @@
+Simplify the FSM by using a straightforward state machine that directly sequences through the required steps:
+
+- State A (reset state): Wait for resetn de-assertion.
+- State B: On the cycle after reset de-asserted, assert f=1 for one cycle.
+- State C: Shift x inputs to detect pattern "101" using a 3-bit shift register.
+- State D: On pattern detection, set g=1 and start monitoring y for up to 2 cycles.
+- State E: If y=1 within 2 cycles, stay with g=1 permanently.
+- State F: Otherwise, clear g=0 permanently.
+
+Use a Moore FSM where outputs depend only on the current state. Use a shift register to track x and a counter for y monitoring. This reduces state complexity and avoids tricky timing issues by always updating registers on the clock edge, and using next-state logic that relies on current registered values, ensuring no off-by-one errors.
+
+Use synchronous active low reset, initialize all signals and registers on reset. Ensure that f and g outputs change exactly when required and remain stable otherwise.

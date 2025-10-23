@@ -1,0 +1,17 @@
+Re-examining the waveform, the outputs p and q both behave like a 2-bit shift register capturing the input 'a' synchronized with the clock edges but with distinct update edges: 
+
+- p updates on the rising edge of clock, capturing the current 'a'.
+- q updates on the falling edge of clock, capturing the previous value of p.
+
+This means p directly reflects the input 'a' sampled at the rising clock edge, and q holds p's value sampled at the previous rising edge but updated at the falling edge.
+
+There is no complex logic holding p at 1 once set; instead, p follows 'a' at the rising edge. Also, q effectively latches p at falling edges.
+
+Implementing this as two sequential processes:
+
+- On posedge clock, p <= a;
+- On negedge clock, q <= p;
+
+Initial values of p and q can be zero or 'x' (unknown) to match the waveform at simulation start.
+
+This approach aligns with the waveform where p changes to the value of a on rising clock edges and q changes to the previous p value on falling edges.

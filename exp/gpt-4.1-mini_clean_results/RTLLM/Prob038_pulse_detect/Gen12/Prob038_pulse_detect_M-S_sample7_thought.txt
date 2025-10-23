@@ -1,0 +1,9 @@
+Since the pulse is specifically defined as a 0->1->0 sequence over three cycles, we only need to remember the previous data_in value to detect when the middle '1' occurred and if the current data_in is 0 after that.
+
+We can store data_in delayed by one cycle in a single register. On each clock edge, we check if the previous data_in was 1 and the current data_in is 0, while the data_in two cycles ago was 0 (which can be tracked by checking the previous data_in before the 1). However, because we only need to know the pattern 0->1->0 on consecutive cycles, we can use a 2-bit shift register holding the last two data_in samples (like before), but we can simplify the output logic by directly assigning it as a combinational output based on the shifted values.
+
+This reduces the complexity to minimal sequential logic for shifting and a simple combinational comparison for pulse detection. It's as simple as possible for this pattern detection.
+
+Reset will clear the shift register and output.
+
+This matches the example exactly.

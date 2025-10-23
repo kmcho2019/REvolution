@@ -1,0 +1,9 @@
+The original implementation uses separate AND2 and OR2 gate modules and an explicit inverter wire to implement the function f = (~x3 & x2) | (x3 & x1). While modular and clear, this adds unnecessary module instantiations and wiring that slightly increase area and power.
+
+To optimize PPA, I will:
+- Replace all module instantiations with a single continuous assignment statement directly expressing the function f = (~x3 & x2) | (x3 & x1).
+- This reduces the gate count to a minimum and removes explicit intermediate signals.
+- The synthesis tool will infer minimal combinational logic gates, optimizing area and power.
+- The performance remains optimal since logic depth is unchanged.
+
+This improves area and power without affecting timing or readability, resulting in a compact and efficient combinational design.

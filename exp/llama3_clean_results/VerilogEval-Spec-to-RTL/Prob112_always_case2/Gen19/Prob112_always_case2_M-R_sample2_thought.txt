@@ -1,0 +1,9 @@
+To refactor the given Verilog code for the 4-bit priority encoder, we will use a combinational logic approach with a focus on optimizing the code structure for better readability and maintainability. The current implementation uses an `always` block to assign the output `pos` based on the position of the first '1' bit in the input vector `in`. Instead, we can utilize the `assign` statement along with logical operations to achieve the same functionality in a more concise manner. The idea is to directly assign the output `pos` based on the conditions that check for the first '1' bit in the input vector from the most significant bit (MSB) to the least significant bit (LSB).
+
+Additionally, we need to correct the encoding used in the original code to accurately represent the position of the first '1' bit. Since we are dealing with a 4-bit input vector, we can use a 2-bit output vector to represent the positions (0 to 3). The correct encoding should assign `2'b00` for the first position (LSB), `2'b01` for the second position, `2'b10` for the third position, and `2'b11` for the fourth position (MSB).
+
+We will use the following logical operations:
+- Check if the MSB (`in[3]`) is '1', then assign `2'b11` to `pos`.
+- If the MSB is not '1', check the next bit (`in[2]`), and if '1', assign `2'b10` to `pos`.
+- Continue this pattern for the remaining bits, checking `in[1]` and assigning `2'b01` if '1', and finally `in[0]` assigning `2'b00` if '1'.
+- If none of the bits are '1', `pos` should default to `2'b00`.

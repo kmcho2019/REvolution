@@ -1,0 +1,12 @@
+Refactor the design by removing the large combinational always block and instead compute the next state using continuous assignments with generate loops and helper functions for modular indexing and neighbor counting. This approach leverages assign statements and localfunctions, avoiding nested loops inside always blocks. 
+
+Key changes:
+- Use a 2D array representation internally for clarity.
+- Implement wrap-around indexing by masking low 4 bits since WIDTH=16 (mod 16).
+- Use a function to count neighbors for a given cell by summing the eight neighbors.
+- Use generate loops with assign statements to compute each cell's next state combinationally.
+- Combine all 256 cells' next states into a flat 256-bit vector.
+- Use a sequential always block only for registering q on clk, and loading data on load.
+- This structure improves synthesis friendliness by avoiding complex nested always blocks, reduces multipliers by using bit masks for wrapping, and makes neighbor counting explicit with small functions.
+
+Overall, the behavior is identical, but the structure is more modular and potentially better for synthesis and clarity.

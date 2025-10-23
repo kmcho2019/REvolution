@@ -1,0 +1,13 @@
+To improve PPA based on the given metrics, the FSM code is already clean and minimal. However, minor improvements can be made to reduce area and power by simplifying output logic and next state logic.
+
+Improvement strategies:
+1) Implement the output z as a registered output instead of combinational logic depending on the state. Registering outputs often helps timing by breaking critical paths, especially when outputs depend on multiple signals or comparisons.
+2) Slightly refactor next state logic to use default next_state assignment at the start of combinational block to avoid latches and ensure cleaner synthesis optimization.
+3) Use one-hot state encoding since there are only 5 states - one-hot encoding can reduce combinational complexity for next state logic, potentially improving timing and power.
+   - This would increase flip-flop count (5 FFs vs 3 FFs), but for small FSMs, the simplicity of logic often compensates for that.
+4) Maintain synchronous reset.
+5) Register output z synchronously on clock to reduce glitches and improve timing.
+
+These changes should slightly improve timing (reducing WNS), reduce glitching power on outputs, and keep area reasonable.
+
+The design tradeoff is a slight increase in FFs but improved timing and lower power on output and state transitions.

@@ -1,0 +1,7 @@
+To implement the Moore state machine described in the state transition table, we first need to encode the states. Since there are four states (A, B, C, D), we can use two bits to encode them (00, 01, 10, 11). We'll assign A to 00, B to 01, C to 10, and D to 11.
+
+The next state logic can be derived from the state transition table. For each current state and input combination, we determine the next state. 
+
+We'll use a case statement inside a always_ff block (which is triggered on the positive edge of the clock) to implement the next state logic. The always_ff block is also sensitive to the asynchronous reset signal, ensuring that when the reset is asserted, the state machine resets to state A (00) regardless of the clock.
+
+The output logic is straightforward since it's a Moore machine; the output depends only on the current state. For states A, B, and C, the output is 0, and for state D, the output is 1.

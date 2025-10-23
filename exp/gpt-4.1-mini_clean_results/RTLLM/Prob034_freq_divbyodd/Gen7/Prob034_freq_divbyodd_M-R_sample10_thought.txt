@@ -1,0 +1,11 @@
+To maintain the core approach of using two counters on opposite clock edges and toggling two divided clocks, I will refactor by using counters that count from 0 to NUM_DIV-1 and toggle clk_div1 or clk_div2 exactly when the counter reaches (NUM_DIV-1)/2 (the middle count), ensuring symmetry.
+
+Instead of toggling within the clock edge always blocks conditionally, I will first increment the counters and then compare to the half_div count to generate a toggle enable pulse. This pulse will drive toggling of clk_div1 and clk_div2 registers.
+
+Also, to ensure synchronous reset and stable initial conditions, I will initialize counters and outputs on reset and update toggles only on that enable pulse.
+
+Using this explicit toggle enable pulse aligns the toggling to the exact midpoint count, reducing timing ambiguity.
+
+Finally, clk_div is formed as the OR of clk_div1 and clk_div2, combining positive and negative edge toggled clocks for the proper odd division.
+
+This restructuring clarifies toggle timing, should correct phase issues, and preserves the original design intent.

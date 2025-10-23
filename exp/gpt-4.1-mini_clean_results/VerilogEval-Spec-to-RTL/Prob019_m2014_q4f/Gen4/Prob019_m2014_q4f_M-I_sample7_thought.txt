@@ -1,0 +1,20 @@
+The original design explicitly uses a NOT gate on in2 and then ANDs the output with in1. This directly represents the bubble but adds an inverter plus an AND gate, resulting in two gates.
+
+We can optimize area and power by using a single NAND gate, which is functionally equivalent to an AND gate with a bubble on one input: the NAND gate inverts the output of the AND operation. Since the bubble is on the input side of the AND gate, an AND gate with an inverted input is equivalent to NAND with the other input unchanged.
+
+Specifically:
+- AND(in1, ~in2) = NAND(in1, in2)
+
+So the circuit can be implemented as a single NAND gate on inputs (in1, in2).
+
+This reduces gate count from two to one, thereby improving area and power, and likely improves timing due to one less gate delay.
+
+For clarity, we can instantiate a NAND gate primitive, which explicitly shows the logic function without extra inverters, directly representing the bubble on the in2 input as a NAND.
+
+This implementation is faithful to the logical function and improves PPA metrics.
+
+Hence, improvement strategy:
+- Replace NOT + AND with a single NAND gate.
+- Explicitly instantiate NAND gate for clarity.
+
+This results in minimal delay, less power, and smaller area with the same functional behavior.

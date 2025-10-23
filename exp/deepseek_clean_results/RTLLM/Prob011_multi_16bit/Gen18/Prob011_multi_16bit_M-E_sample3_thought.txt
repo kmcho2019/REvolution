@@ -1,0 +1,13 @@
+This design implements a modified Booth's algorithm (radix-4) for unsigned multiplication, which reduces the number of required addition steps by half compared to the basic shift-add approach. Key features:
+1. Radix-4 Booth encoding groups multiplier bits in overlapping triplets
+2. Precomputes all possible multiplicand multiples (0, 1x, 2x)
+3. Uses a barrel shifter for efficient 1-bit or 2-bit shifts
+4. Implements a compact state machine for control
+5. Optimizes power by gating unused adder paths
+
+Advantages:
+- 50% fewer addition steps than naive approach
+- Balanced critical path with precomputed multiples
+- Lower power consumption through operand isolation
+- Smaller area than parallel shifters
+- Maintains single-cycle per step throughput

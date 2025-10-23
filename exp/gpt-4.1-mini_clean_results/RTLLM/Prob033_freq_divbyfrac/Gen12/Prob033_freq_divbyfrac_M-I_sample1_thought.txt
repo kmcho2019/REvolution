@@ -1,0 +1,15 @@
+The primary issues were that the output clock combined the two phase-shifted clocks using XOR instead of OR, which contradicts the problem statement and leads to incorrect waveforms. Also, the separate counters on posedge and negedge clocks correctly generate 4 and 3 cycle pulses but to produce a half-cycle phase shift, using posedge and negedge clocks naturally creates the required offset without extra delay elements.
+
+The improvement strategy is:
+
+1. Change the output clock combination from XOR to OR to match the specification and generate the fractional divide-by-3.5 frequency with a uniform period and balanced duty cycle.
+
+2. Keep the posedge and negedge FSMs as they are, because they implement the 4 and 3 cycle high/low durations properly, naturally phase shifted by half clock cycles via the use of posedge and negedge.
+
+3. Keep non-blocking assignments and synchronous reset to prevent glitches.
+
+4. Optionally, explicitly comment that the negedge FSM is phase shifted half-cycle from posedge FSM due to sampling on negedge.
+
+This fix ensures the output clock matches the problem description, producing a smooth fractional divided clock at clk/3.5 with approximate 50% duty cycle and stable operation.
+
+No major structural changes are needed beyond fixing the output logic.

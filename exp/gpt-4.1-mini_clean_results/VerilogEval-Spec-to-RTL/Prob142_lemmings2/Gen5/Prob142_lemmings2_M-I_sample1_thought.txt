@@ -1,0 +1,29 @@
+To correct and complete the solution:
+
+1. Use a 4-state FSM encoding to preserve walking direction during falling:
+   - WALK_LEFT  = 2'b00
+   - WALK_RIGHT = 2'b01
+   - FALLING_LEFT  = 2'b10  (falling but previously walking left)
+   - FALLING_RIGHT = 2'b11  (falling but previously walking right)
+
+2. On reset, state = WALK_LEFT.
+
+3. On walking states (WALK_LEFT or WALK_RIGHT):
+   - If ground lost (ground == 0 or ground_falling edge), transition to the corresponding FALLING state (FALLING_LEFT or FALLING_RIGHT).
+   - If bumped (bump_left or bump_right), flip direction immediately.
+   - Otherwise stay in current walking state.
+
+4. On falling states (FALLING_LEFT or FALLING_RIGHT):
+   - If ground regained (ground == 1 or ground_rising edge), transition back to corresponding walking state.
+   - Ignore bumps while falling.
+
+5. Outputs are pure functions of current state (Moore):
+   - walk_left = 1 for WALK_LEFT and FALLING_LEFT, 0 otherwise.
+   - walk_right = 1 for WALK_RIGHT and FALLING_RIGHT, 0 otherwise.
+   - aaah = 1 when in any falling state, 0 otherwise.
+
+6. Implement asynchronous reset correctly affecting state and a delayed ground register for edge detection.
+
+This ensures direction persistence through falling, correct reactions to bumps and ground changes, and proper output assignments per the spec.
+
+The design is efficient and clean with minimal state variables.

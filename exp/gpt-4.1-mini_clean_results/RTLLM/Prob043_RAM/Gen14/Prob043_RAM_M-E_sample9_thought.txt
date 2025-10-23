@@ -1,0 +1,11 @@
+I will implement a dual-port RAM with separate synchronous read and write processes, both operating on the positive clock edge and asynchronous active-low reset. The memory array will be sized exactly DEPTH=8 entries of WIDTH=6 bits each, with an explicit reg array.
+
+On reset, all memory locations will be cleared to zero using a for loop. Writes occur when write_en is high, writing write_data to write_addr synchronously.
+
+For reading, instead of a combinational read or fully registered output updated every clock, I will use a registered read data output updated only when read_en is high. When read_en is low, the output holds its previous value instead of zero, avoiding unnecessary switching and output glitches.
+
+This read approach implements a synchronous enable for reading data, which is beneficial for timing closure and power because output toggling is controlled. The read_addr input is sampled only when read_en is high, meaning no spurious reads or output changes occur when read_en is low.
+
+This design uses two always blocks both sensitive to posedge clk and negedge rst_n, separating write and read operations clearly for concurrency. It supports simultaneous read and write to different addresses, with read data output updated synchronously. The synchronous read with enable also allows predictable timing and easier timing analysis in FPGA/ASIC flows.
+
+Overall, this approach balances synchronous reset initialization, clear clocked read/write ports, and controlled output switching for power and timing reliability.

@@ -1,0 +1,15 @@
+I will implement the 5-bit maximal-length Galois LFSR using a parallel feedback computation with intermediate wires for clarity and modularity. 
+
+The architecture will have:
+- A separate combinational always block or continuous assignment to compute the next state bits before the clock edge.
+- An explicit feedback bit calculated from q[0] (LSB).
+- Tap bits at positions 5 (bit 4) and 3 (bit 2) will XOR with the feedback bit for the next state's corresponding bit.
+- The shift operation will be explicit, shifting right by one bit, with taps modifying those bits.
+- The synchronous reset will initialize the LFSR to 5'b00001.
+- Registers updated on the positive clock edge with non-blocking assignments.
+
+This approach separates combinational next-state logic from the sequential register update, making the design more readable, easier to verify, and potentially enabling more straightforward timing optimization by synthesis tools. The use of intermediate signals also makes debugging and modifications easier.
+
+The output port q is a reg and holds the current state.
+
+This is different from the previous approach, which combined everything inside one always block without explicit intermediate signals.

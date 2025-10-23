@@ -1,0 +1,12 @@
+To refactor the LFSR implementation while maintaining the same functionality:
+1. Use continuous assignments for combinational logic instead of procedural blocks
+2. Split the design into two parts:
+   - Combinational logic for the next state calculation
+   - Sequential logic for the register update
+3. The combinational part will:
+   - Calculate the feedback (XOR of taps at positions 5 and 3 with q[0])
+   - Generate the next state by concatenation and XOR operations
+4. The sequential part will:
+   - Handle the clocked register update
+   - Implement the synchronous reset
+5. This approach separates concerns and might offer better synthesis optimization

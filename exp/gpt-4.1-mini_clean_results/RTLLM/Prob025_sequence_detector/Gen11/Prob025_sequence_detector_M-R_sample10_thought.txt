@@ -1,0 +1,12 @@
+I will refactor the sequence detector by implementing the FSM using a Mealy machine style, where the output `sequence_detected` is asserted combinationally based on current state and input, instead of a registered Moore output. This allows the output to respond immediately to the detected sequence bit, potentially reducing latency by one clock cycle.
+
+Additionally, I will implement the next-state logic using combinational `assign` statements instead of an always block with case statements. The state register update and reset remain synchronous and active-low, but the combinational logic is explicitly separated. This provides clearer separation of sequential and combinational parts and can improve readability.
+
+The FSM states remain binary encoded but use localparam constants instead of typedef enum, improving compatibility across tools.
+
+This structure preserves functionality and overlap detection but differs structurally:
+- Mealy output `sequence_detected` combinationally asserted based on state and input
+- Next state logic expressed via combinational continuous assignments
+- State machine logic clearer and more explicit in separated blocks
+
+This refactoring may improve performance slightly by making output combinational and can ease formal verification and synthesis tool interpretation by explicitly separating combinational and sequential logic.

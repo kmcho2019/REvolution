@@ -1,0 +1,13 @@
+To create a superior solution that fuses the best ideas from both examples:
+
+- Use a two-state Moore FSM with clearly named states COPY and INVERT for readability.
+- Register the input bit each clock cycle (x_reg) to stabilize input data and ensure the output depends purely on registered signals and state, satisfying pure Moore FSM output requirements.
+- Implement combinational next_state logic separately for clarity and easier synthesis.
+- Use a clocked always block with asynchronous reset to update state, x_reg, and the output z synchronously.
+- Output z depends only on the current state and the registered input x_reg, ensuring stable, glitch-free Moore output.
+- This approach combines Example 1's explicit next state combinational logic and minimal, clear state encoding, with Example 2's registered input to decouple output logic from direct asynchronous input dependency.
+- The asynchronous reset clears state, x_reg, and output to zero immediately on assertion.
+- The FSM outputs input bits directly until the first '1' is detected, then outputs inverted bits, achieving correct serial 2's complement behavior.
+- The design balances clarity, timing robustness, and minimal register count while ensuring low area and power.
+
+Overall, this fusion yields a clean, efficient, purely Moore state machine with well-structured logic and stable output timing.

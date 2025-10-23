@@ -1,0 +1,12 @@
+Novel Architectural Idea: Pipelined Subtraction with Staged Overflow Detection
+
+1. Split the 64-bit subtraction into two 32-bit operations to reduce critical path
+2. First stage computes lower 32 bits and detects potential overflow conditions
+3. Second stage computes upper 32 bits with carry-in from first stage
+4. Overflow detection is performed in parallel with the arithmetic operations
+5. Uses carry-lookahead concept for faster propagation between stages
+6. Benefits:
+   - Better timing due to reduced combinatorial path
+   - More efficient overflow detection by breaking it into stages
+   - Potential for higher clock frequencies in pipelined implementations
+   - Clear separation of arithmetic and control logic

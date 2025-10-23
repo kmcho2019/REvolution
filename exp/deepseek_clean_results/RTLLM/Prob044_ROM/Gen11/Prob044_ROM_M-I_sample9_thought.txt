@@ -1,0 +1,16 @@
+Optimization Strategy:
+1. **Clock-Enabled Read Operation**: 
+   - Add a clock input and make the read operation synchronous to reduce unnecessary switching activity when address is stable
+   - This reduces dynamic power by only updating outputs on clock edges
+
+2. **Output Enable Control**:
+   - Add an output enable signal to tri-state the output when not in use
+   - Further reduces power by preventing unnecessary output switching
+
+3. **Memory Size Reduction**:
+   - Since only 4 locations are initialized, reduce memory depth to 16 (from 256) while maintaining 8-bit addressing
+   - This reduces area while keeping the same interface
+
+4. **Registered Output**:
+   - Register the output to improve timing in synchronous systems
+   - Helps meet timing constraints when integrated with other blocks

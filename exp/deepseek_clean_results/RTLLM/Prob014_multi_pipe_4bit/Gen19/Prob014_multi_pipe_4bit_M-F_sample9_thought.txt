@@ -1,0 +1,24 @@
+Corrected 4-bit Pipelined Multiplier Design:
+
+Key Fixes:
+1. **Proper Pipeline Register Implementation**: Converted combinational assignments to clocked registers for both pipeline stages
+2. **Synchronous Reset Consistency**: Applied uniform synchronous reset behavior across all registers
+3. **True Two-Stage Pipeline**: Implemented actual flip-flop stages for intermediate sums
+4. **Correct Timing Alignment**: Ensured partial products are properly staged through the pipeline
+
+Structural Improvements:
+- All pipeline registers now properly clocked with synchronous reset
+- Clear 2-stage pipeline with registered intermediate results
+- Maintained original partial product generation logic
+- Proper final output calculation from pipeline stages
+
+Operation Flow:
+1. Stage 1 (clocked):
+   - Calculate pp0 + pp1
+   - Register result (stage1_reg)
+2. Stage 2 (clocked):
+   - Calculate pp2 + pp3
+   - Register result (stage2_reg)
+3. Final Output (clocked):
+   - Sum stage1_reg + stage2_reg
+   - Register final product

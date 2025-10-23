@@ -1,0 +1,7 @@
+To refactor the provided Verilog code, we can simplify the logic and improve readability by separating the combinational and sequential logic more clearly. The core idea remains the same: implement a gshare branch predictor with a 7-bit global history register and a 128-entry table of two-bit saturating counters. However, we can use `assign` statements for continuous assignments and simplify the `always` blocks to focus on sequential updates.
+
+1. **Separate Combinational Logic**: Use `assign` statements for `predict_index`, `train_index`, `predict_taken_comb`, `predict_history_comb`, and the calculation of `new_global_history_predict` and `new_global_history_train`. This makes the code more readable and maintainable.
+2. **Simplify Sequential Logic**: Focus the `always` block on updating `global_history` and `cache` based on `train_valid` and `predict_valid` conditions. Use non-blocking assignments (`<=`) to ensure correct updates at the positive edge of the clock.
+3. **Improve Readability**: Structure the code to clearly separate the combinational logic from the sequential updates, and use comments to explain the purpose of each section.
+
+By refactoring the code in this manner, we can improve its readability, maintainability, and potentially reduce the risk of errors due to complex or hard-to-understand logic.

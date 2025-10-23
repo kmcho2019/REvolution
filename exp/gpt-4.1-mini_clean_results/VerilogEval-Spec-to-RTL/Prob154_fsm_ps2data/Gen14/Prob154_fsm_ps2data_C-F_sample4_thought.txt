@@ -1,0 +1,9 @@
+Combine the minimal 2-bit binary FSM and explicit byte-wise loading of Example 1 with the power-saving selective updates and done gating strategy of Example 2:
+
+- Use a 2-bit FSM counting bytes received (WAIT_SYNC, BYTE2, BYTE3).
+- Update only the relevant byte lanes in out_bytes during each byte reception to reduce toggling.
+- Drive done high for exactly one cycle immediately after the third byte, then low, avoiding redundant toggling.
+- Keep next_state combinational and minimal.
+- Ensure synchronous reset active high.
+- Maintain stable outputs outside done cycles (don't-care allowed per spec).
+- This fusion improves timing by explicit state encoding, reduces power by gating out_bytes partial loading and done signal, and keeps area minimal.

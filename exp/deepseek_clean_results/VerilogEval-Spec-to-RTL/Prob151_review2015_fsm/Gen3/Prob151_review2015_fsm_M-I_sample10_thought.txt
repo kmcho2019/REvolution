@@ -1,0 +1,24 @@
+The key issues in the original solution stem from incorrect pattern detection timing and state sequencing. Here's my improved strategy:
+
+1. Pattern Detection:
+   - Implement a proper shift register that only captures new data when in IDLE state
+   - Clear pattern register when leaving IDLE state to prevent false detections
+
+2. State Machine:
+   - Add explicit state transitions with proper conditions
+   - Ensure SHIFT state lasts exactly 4 cycles
+   - Properly sequence COUNTING and DONE states
+
+3. Output Control:
+   - Make outputs purely combinatorial based on current state
+   - Ensure outputs are only asserted in the correct states
+
+4. Reset Handling:
+   - Clear all registers on reset
+   - Ensure clean startup state
+
+The improved FSM will:
+- Only detect pattern in IDLE state
+- Maintain SHIFT for exactly 4 cycles
+- Properly wait for done_counting and ack signals
+- Clear pattern after detection to prevent retriggering

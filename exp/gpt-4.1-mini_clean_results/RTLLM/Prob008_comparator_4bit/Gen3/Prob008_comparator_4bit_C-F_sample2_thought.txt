@@ -1,0 +1,8 @@
+Fuse the clarity and correctness of Example 1's explicit borrow chain with Example 2's optimized equality check and simplified borrow generation logic. 
+
+Specifically:
+- Use Example 1's clean per-bit full subtractor borrow generation formula, which directly computes borrow_out[i+1] = (~A[i] & B[i]) | ((~A[i] | B[i]) & borrow[i]) for precise borrow propagation.
+- Adopt Example 2's equality detection separate from subtraction by performing a bitwise XNOR and reduction AND on inputs A and B, rather than relying on subtraction result.
+- Keep outputs mutually exclusive by defining A_less as borrow_out at MSB+1, A_equal as no borrow and inputs equal, and A_greater as no borrow and not equal.
+- Use a generate loop for per-bit borrow and diff calculation to enhance maintainability and scalability.
+- This fusion keeps the accurate borrow chain from Example 1, but simplifies equality detection and output logic from Example 2, minimizing logic depth and improving power and area by avoiding redundant subtraction for equality check.

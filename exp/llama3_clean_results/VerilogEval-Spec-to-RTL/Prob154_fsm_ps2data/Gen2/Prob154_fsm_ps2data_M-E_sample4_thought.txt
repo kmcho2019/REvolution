@@ -1,0 +1,5 @@
+To solve this problem, we can use a finite state machine (FSM) with a counter to keep track of the bytes received. The FSM will have four states: IDLE, BYTE1, BYTE2, and BYTE3. The IDLE state will be the initial state where the FSM will wait for a byte with in[3] = 1. Once such a byte is received, the FSM will transition to the BYTE1 state and store the byte in the out_bytes register. The FSM will then transition to the BYTE2 and BYTE3 states, storing the subsequent bytes in the out_bytes register. After receiving the third byte, the FSM will assert the done signal and transition back to the IDLE state.
+
+To implement this, we can use a 2-bit counter to keep track of the current state and a 24-bit register to store the out_bytes. We can also use a 1-bit signal to indicate when the done signal should be asserted.
+
+This approach is novel because it uses a counter to keep track of the states, rather than a one-hot encoding or a binary encoding. This approach also separates the state machine logic from the data storage logic, making the code more modular and easier to understand.

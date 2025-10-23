@@ -1,0 +1,12 @@
+Implement a fully BCD-based 12-hour clock where each time component (hours, minutes, seconds) is stored and incremented directly in BCD format. This approach keeps counting and output representation unified, eliminating the need for conversion functions.
+
+Use three separate BCD counters: seconds, minutes, and hours. For seconds and minutes, each counter consists of two 4-bit nibbles (tens and units). For the hour, since it ranges 1-12, use two BCD digits with special handling to roll from 12 back to 1.
+
+The counters increment on ena pulses and reset synchronously on reset.
+
+- For seconds and minutes: increment units digit; if it reaches 10, reset to 0 and increment tens digit; if tens digit reaches 6 (since max 59), reset to 0 and carry over.
+- For hours: increment units digit; if it reaches 10 or hour reaches 12, roll over to 1 with correct handling of tens digit. Toggle pm on rollover from 11 to 12.
+
+By incrementing BCD directly, the design is straightforward with simple carry logic, no binary-to-BCD conversions, and intuitive counting logic suited for a 12-hour clock.
+
+The output ports directly reflect the BCD counters, so no conversion logic is needed, reducing combinational complexity on outputs and improving timing. PM is toggled inside the hour increment logic. This design also uses a single always block for synchronous counting logic.

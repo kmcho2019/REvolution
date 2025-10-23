@@ -1,0 +1,9 @@
+To optimize the sequence detector FSM for better power, performance, and area (PPA), I will switch from one-hot encoding to binary state encoding, reducing the number of flip-flops from 5 to 3. This cuts down on area and dynamic power. 
+
+The FSM will use 3-bit state encoding with an enumerated localparam for readability. The next-state logic will be expressed clearly with a case statement, focusing on minimal combinational complexity.
+
+I will implement a synchronous active-low reset (consistent with the original reset semantics) and make all sequential logic use non-blocking assignments for best synthesis and timing practices.
+
+Output `sequence_detected` will be registered and asserted for exactly one clock cycle upon detection of the full sequence "1001".
+
+This approach decreases flip-flop count, reduces switching in state bits, simplifies next-state logic, and should improve the timing critical path and reduce power, while maintaining functional correctness.

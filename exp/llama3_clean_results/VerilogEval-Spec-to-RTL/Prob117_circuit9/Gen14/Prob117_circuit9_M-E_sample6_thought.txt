@@ -1,0 +1,10 @@
+A novel architectural idea for this problem is to utilize a finite state machine (FSM) that controls a counter. The FSM will have two main states: 'RESET' and 'INCREMENT'. When the input 'a' is high, the FSM will be in the 'RESET' state, and when 'a' is low, it will transition to the 'INCREMENT' state. The counter will be incremented in the 'INCREMENT' state until it reaches 6, at which point it will wrap around to 0. This approach allows for a clean separation of the control logic and the counter, making it easier to optimize and debug.
+
+To further optimize this design, we can use a one-hot encoding scheme for the FSM states, which can reduce the area usage and improve the timing performance. Additionally, we can use a binary counter, which is more efficient than a decimal counter.
+
+The FSM will have the following states:
+- 'RESET' (000): The counter is reset to 4 when 'a' is high.
+- 'INCREMENT' (001): The counter is incremented when 'a' is low.
+- 'OVERFLOW' (010): The counter wraps around to 0 when it reaches 6.
+
+The state transitions will be controlled by the input 'a' and the current state of the counter.

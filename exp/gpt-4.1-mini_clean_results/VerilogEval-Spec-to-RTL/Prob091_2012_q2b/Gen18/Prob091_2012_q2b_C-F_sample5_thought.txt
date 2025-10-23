@@ -1,0 +1,13 @@
+Fuse the clarity and modularity of both examples with the optimal minimal logic from Example 1, while incorporating the gate-level refinement in Example 2 for Y3.
+
+- Maintain a dedicated NextStateInput module to clearly separate next-state combinational logic from the top module.
+
+- Use Y1 = y[0] & w as a minimal, direct logic for the transition A->B.
+
+- For Y3, combine the minimal form from Example 1 (~w & ~(y[0] | y[3])) with the gate-level decomposition from Example 2 (~w & ~y[0] & ~y[3]) by implementing the latter as it may map better to NAND/NOR gates with less toggling.
+
+- Introduce local wires for signal inversions (w_n, y0_n, y3_n) to avoid repeated negations, reducing toggling and possibly power.
+
+- Provide detailed comments to explain equivalences and rationale.
+
+This fusion yields a minimal, power-aware, clear, and well-structured design that efficiently implements the FSM next-state inputs for y[1] and y[3].

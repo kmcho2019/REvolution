@@ -1,0 +1,18 @@
+Here's a simplified approach that maintains all required functionality:
+
+1. **State Machine**: Reduce to 5 states (IDLE, F_PULSE, MONITOR_X, MONITOR_Y, FINAL) instead of 6 by combining success/fail cases
+2. **Output Logic**: 
+   - Make f purely combinatorial for precise one-cycle pulse
+   - Simplify g output by using state directly
+3. **Sequence Detection**: 
+   - Use a 2-bit shift register for x (only need last 2 values with current x)
+   - Detect pattern when previous was '10' and current x is '1'
+4. **Timeout Logic**: 
+   - Use a single bit counter (since we only need 2 cycles)
+   - Eliminate separate pattern_detected register
+
+Key simplifications:
+- Fewer states
+- Less registers
+- More direct output logic
+- Same functionality with cleaner implementation

@@ -1,0 +1,11 @@
+To simplify the sequence detector while maintaining functionality:
+
+- Use a 3-bit binary FSM with states IDLE, S1, S2, S3, and S4 representing the progress of detecting "1001".
+- Use synchronous active-low reset to initialize the FSM.
+- Implement next state logic in a simple case statement with minimal conditional checks.
+- Generate the output `sequence_detected` as a registered Moore output that asserts only when entering the detection state S4.
+- Keep the output logic based on the registered state (not next_state) to reduce glitch potential and simplify the design.
+- Avoid unnecessary conditions and redundant comparisons in next-state transitions.
+- Keep state and output registered on posedge clk for stability and synthesis friendliness.
+
+This approach reduces combinational logic complexity, ensures clear and reliable operation, and maintains the correct detection behavior.

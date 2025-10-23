@@ -1,0 +1,16 @@
+To implement the next-state signals Y1 and Y3 for the given state machine with one-hot encoding, we'll focus on the state transitions that directly affect these specific bits. The key insight is that in one-hot encoding, each state is represented by a single bit, making the next-state logic simpler.
+
+For Y1 (next state y[1]):
+1. From state A (y[0]=1) and input w=0, transition to B (y[1]=1)
+2. From state D (y[3]=1) and input w=1, transition to A (y[0]=1) - but this doesn't affect Y1
+3. No other transitions affect Y1
+
+For Y3 (next state y[3]):
+1. From state B (y[1]=1) and input w=1, transition to D (y[3]=1)
+2. From state C (y[2]=1) and input w=1, transition to D (y[3]=1)
+3. From state E (y[4]=1) and input w=1, transition to D (y[3]=1)
+4. From state F (y[5]=1) and input w=1, transition to D (y[3]=1)
+
+This leads to simple equations:
+Y1 = y[0] & ~w
+Y3 = (y[1] | y[2] | y[4] | y[5]) & w

@@ -1,0 +1,11 @@
+Instead of instantiating gate modules explicitly, I will implement the next-state inputs Y1 and Y3 using combinational always blocks with a case statement that inspects the one-hot encoded current state bits and input w. This approach mimics a behavioral style FSM next-state logic without explicit gate-level instantiation.
+
+For Y1 (next input of y[1]), the only transition to B (y[1]) is from A (y[0]) when w=1, so Y1 = (y == 6'b000001) && w.
+
+For Y3 (next input of y[3]), transitions are from B (y[1]), C (y[2]), E (y[4]), F (y[5]) when w=0, so Y3 = ((y == 6'b000010) || (y == 6'b000100) || (y == 6'b010000) || (y == 6'b100000)) && ~w.
+
+This method uses a combinational process to express the exact conditions with explicit state comparisons, simplifying debugging and enhancing readability. It scales well when states are few and one-hot encoded.
+
+Since y is one-hot encoded, only one bit is high at a time, so we can check bits directly instead of comparing full vectors. Also, I will combine conditions logically without separate wires.
+
+This style may ease verification and formal analysis since logic is directly visible in the always block.

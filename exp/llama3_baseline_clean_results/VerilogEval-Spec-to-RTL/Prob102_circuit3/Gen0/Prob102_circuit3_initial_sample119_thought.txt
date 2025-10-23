@@ -1,0 +1,11 @@
+The given table represents a truth table for a combinational circuit. To determine what the circuit does, we can analyze the outputs for different input combinations.
+
+Upon inspection, it appears that the output q is 1 whenever there are at least two inputs that are 1. 
+
+We can implement this using a simple logical equation: q = (a & b) | (a & c) | (a & d) | (b & c) | (b & d) | (c & d).
+
+However, a more efficient implementation can be achieved using a simpler equation: q = (a | b) & (c | d) | (a | c) & (b | d).
+
+But looking at the waveform again, it can also be observed that q is 1 if there are two or more 1's among a, b, c, d or if a and d or b and d or c and d are both 1. 
+
+However, after retrying, we can notice the truth table can be represented by q = a | b | c | d when any of the inputs is high with d being high, so a more efficient and correct implementation would be q = (a & d) | (b & d) | (c & d) | (b & c) | (a & b) | (a & c).

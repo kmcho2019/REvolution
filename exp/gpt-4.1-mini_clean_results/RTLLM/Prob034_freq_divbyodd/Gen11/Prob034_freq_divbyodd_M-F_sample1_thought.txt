@@ -1,0 +1,19 @@
+To fix the frequency divider by an odd number, both counters and their respective toggling must be symmetric and consistent.
+
+Specifically:
+
+- Both counters should count up to NUM_DIV - 1 and reset.
+
+- clk_div1 toggles when cnt1 reaches HALF_COUNT on the positive clock edge.
+
+- clk_div2 toggles when cnt2 reaches HALF_COUNT on the negative clock edge.
+
+This symmetry ensures that each clk_div signal toggles at the midpoint of the counting period on their respective clock edges.
+
+By toggling both clk_div1 and clk_div2 at the half count (floor(NUM_DIV/2)), and resetting counters at NUM_DIV-1, the combined clk_div output (OR of clk_div1 and clk_div2) generates a clock that divides the input clock by the odd number with approximately a 50% duty cycle.
+
+Initialization of counters and clk_div signals occurs synchronously on reset.
+
+Additionally, the code includes a compile-time check for odd NUM_DIV.
+
+This approach fixes the mismatched toggle conditions and creates a stable, correct divided clock output.

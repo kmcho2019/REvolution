@@ -1,0 +1,11 @@
+To refactor the provided Verilog code, we'll focus on optimizing the structure for better performance, power, and area (PPA) metrics. One key idea is to eliminate unnecessary registers and use combinational logic more efficiently. 
+
+Since the current implementation uses two 32-bit registers (`history` and `temp_history`), but `temp_history` is not used, we can remove it to reduce area consumption. 
+
+Next, instead of using an `always` block to handle the sequential logic, we can use a more straightforward approach with non-blocking assignments (`<=`) to update the `history` register. This is crucial for avoiding race conditions and ensuring the design synthesizes efficiently.
+
+Moreover, we should ensure that the misprediction handling takes precedence over prediction updates when both occur simultaneously. The current implementation correctly prioritizes misprediction by checking `train_mispredicted` before `predict_valid`, which is in line with the requirement that pipeline flushes due to mispredictions should override prediction updates.
+
+To further optimize, consider leveraging the capabilities of modern synthesis tools by using a single 32-bit shift register with a reset mechanism, if supported. This could potentially yield better area results.
+
+The refactored code aims to improve PPA metrics by reducing unnecessary logic, simplifying the design, and utilizing more efficient updating mechanisms.

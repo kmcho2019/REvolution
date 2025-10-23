@@ -1,0 +1,17 @@
+This solution implements bit reversal using a pre-computed LUT pattern stored in a ROM. The key ideas are:
+
+1. Treat the input as an address to a 256-entry ROM (since input is 8-bit)
+2. Each ROM location contains its own bit-reversed value
+3. The output simply reads the ROM content at the input address
+4. The ROM is initialized with all possible reversed patterns during synthesis
+
+Advantages:
+- Constant time operation regardless of bit width (single lookup)
+- Easily scalable to larger bit widths (just need bigger ROM)
+- Clean separation of functionality (pattern generation vs lookup)
+- Potential power savings since only one memory access per operation
+
+Tradeoffs:
+- Uses more area than pure combinational logic
+- ROM initialization is static (can't change patterns at runtime)
+- May have slightly higher latency than direct wiring

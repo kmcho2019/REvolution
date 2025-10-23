@@ -1,0 +1,8 @@
+To implement this FSM, we'll need:
+1. A state machine with states: A (reset state), B (f=1 state), C (monitoring x for 1-0-1 pattern), D (g=1 state), E (g=0 state)
+2. In state A, wait for resetn to deassert, then transition to B
+3. In state B, set f=1 for one cycle then move to C
+4. In state C, monitor x for 1-0-1 pattern using a shift register, then move to D when detected
+5. In state D, monitor y for 1 within 2 cycles using a counter, moving to E if not found
+6. States D and E are permanent until reset
+7. All transitions happen on positive clock edges

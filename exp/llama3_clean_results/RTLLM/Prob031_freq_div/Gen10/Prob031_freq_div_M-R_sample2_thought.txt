@@ -1,0 +1,13 @@
+To refactor the given Verilog code for the frequency divider, we will stick to the original problem description but implement it using a different structure. The idea is to utilize separate counters for each output clock (`CLK_50`, `CLK_10`, and `CLK_1`) and employ a more modular approach by breaking down the logic into smaller, manageable blocks. This refactoring will enhance the code's readability, maintainability, and adherence to the problem requirements.
+
+We will maintain the same module name `freq_div` and keep the input and output ports unchanged. However, we will introduce three separate counters (`cnt_2`, `cnt_10`, and `cnt_100`) to manage the generation of `CLK_50`, `CLK_10`, and `CLK_1`, respectively.
+
+For `CLK_50`, we will toggle its value on every positive edge of `CLK_in` if `RST` is inactive, effectively dividing the input frequency by 2.
+
+For `CLK_10`, we will increment `cnt_10` on every positive edge of `CLK_in` and toggle `CLK_10` when `cnt_10` reaches 4, then reset `cnt_10` to 0.
+
+For `CLK_1`, we will increment `cnt_100` on every positive edge of `CLK_in` and toggle `CLK_1` when `cnt_100` reaches 49, then reset `cnt_100` to 0.
+
+In case of `RST` being active, all counters and output clocks will be reset to their initial states.
+
+This refactored code will strictly follow the problem description, ensuring that the frequency divider behaves as intended. We will utilize a more efficient coding style, reducing unnecessary complexity and improving overall performance.

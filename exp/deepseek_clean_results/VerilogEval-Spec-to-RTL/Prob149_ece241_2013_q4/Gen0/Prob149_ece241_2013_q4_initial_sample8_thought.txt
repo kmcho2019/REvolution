@@ -1,0 +1,11 @@
+To implement this water level control system, we need a state machine that tracks the current water level and the previous state to determine the flow rate outputs. The system has four main states based on the sensor inputs:
+1. ABOVE_S2: All sensors asserted (s[2:0] = 111) - no flow needed
+2. BETWEEN_S2_S1: s[1] and s[0] asserted (s[2:0] = 011) - nominal flow fr0
+3. BETWEEN_S1_S0: only s[0] asserted (s[2:0] = 001) - nominal flow fr0 and fr1
+4. BELOW_S0: no sensors asserted (s[2:0] = 000) - maximum flow (all outputs)
+
+We'll use sequential logic to:
+1. Register the current sensor state
+2. Determine the current water level state
+3. Track the previous state to determine if we need supplemental flow (dfr)
+4. Generate outputs based on current state and transition direction

@@ -1,0 +1,22 @@
+To optimize the design for better power, area, and possibly timing (PPA), a possible improvement is to use structural instantiation of the 7420 NAND gates from smaller NAND gates (e.g., 2-input NAND gates) only if it reduces gate fan-in or optimizes drive strength, but this usually increases area and delay.
+
+Given the simplicity of the problem (two independent 4-input NAND gates), the original implementation is already optimal in terms of logic depth and gate count. Using the built-in 4-input nand primitive ensures minimal delay and minimal area for a 4-input NAND function.
+
+However, one practical synthesis optimization is to provide explicit input buffering or signal grouping only if signals are from different clock domains or have different fanout requirements, which is not given here.
+
+To improve power slightly, we can reduce glitching and switching by inserting input latches or registering inputs if the environment supports it. But since the problem requires purely combinational NAND gates (7420 chip behavior), this would change the functionality and add latency, so it is not suitable here.
+
+Another minor improvement is to add parameters or `localparam` to clarify the number of inputs per gate for scalability or testing, but it does not improve PPA.
+
+Hence, the best PPA optimized solution remains to use the 4-input nand primitive exactly as in the original implementation.
+
+Therefore, no code changes will yield better PPA at the RTL level. The original code is already optimal.
+
+If any improvement, it would be stylistic, e.g., adding comments or specifying net types explicitly, but no logic or structural change.
+
+Thus, the improvement strategy is:
+- Keep the original approach using 4-input nand primitives.
+- Add comments for clarity.
+- Keep code minimal and directly mapping to the 7420 behavior.
+
+No code changes are necessary from a PPA perspective.

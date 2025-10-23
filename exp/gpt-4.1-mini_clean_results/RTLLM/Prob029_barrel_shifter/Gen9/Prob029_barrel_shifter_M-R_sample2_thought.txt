@@ -1,0 +1,5 @@
+Refactor the barrel shifter by consolidating all shifts into a single continuous assignment expression that calculates the total shift amount as the sum of the enabled shifts (4, 2, 1) from the control bits. Then perform a single rotate-left shift by that total amount in one step. This approach avoids multiple intermediate signals and stages, reduces logic depth and complexity, and makes the code clearer by directly expressing the net rotation.
+
+The rotation is performed by indexing the input bits with `(i + shift_amt) % 8`, where `shift_amt` is the sum of the shift increments controlled by `ctrl`. Since this is a purely combinational operation using arithmetic, it is succinct and easily scalable.
+
+This also implicitly implements the multiplexers as part of the rotate indexing, eliminating the need for explicit mux instantiations or generate loops.

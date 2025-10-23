@@ -1,0 +1,9 @@
+I'll refactor the priority encoder to use continuous assignments (assign statements) instead of an always block. This approach:
+
+1. Makes the code more concise for this simple combinational logic
+2. Removes the need for a procedural block (always @*)
+3. Uses a cascaded ternary operator to maintain the same priority encoding behavior
+4. Still properly handles the all-zero input case by defaulting to zero
+5. May result in slightly better synthesis optimization as it's a direct combinational mapping
+
+The ternary operators will check each bit in priority order (from LSB to MSB) and output the corresponding position. The final default case handles when all inputs are zero.

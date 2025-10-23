@@ -1,0 +1,10 @@
+To fix the issues identified in the feedback, we need to:
+1. Ensure shift_ena stays high for exactly 4 cycles after reset
+2. Properly manage the counter to count all 4 cycles (0 to 3) while in ACTIVE state
+3. Transition to IDLE only after completing all 4 cycles
+
+Key changes:
+- Keep shift_ena high during ACTIVE state (unchanged)
+- Modify counter logic to maintain ACTIVE state until counter reaches 3 (2'b11)
+- Transition to IDLE on the cycle after counter reaches 3
+- Reset behavior remains the same (immediately go to ACTIVE state and reset counter)

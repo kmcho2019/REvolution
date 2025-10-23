@@ -1,0 +1,15 @@
+To improve the given Verilog code, we can make the following changes:
+
+1. **Improve state machine implementation**: We can use a single state machine with four states: IDLE, SHIFT_PAT, SHIFT_COUNT, and DONE. The IDLE state will look for the start of the 1101 sequence, the SHIFT_PAT state will shift in the remaining bits of the pattern, the SHIFT_COUNT state will shift in the delay and count down, and the DONE state will wait for acknowledgement.
+
+2. **Correctly handle pattern detection**: We can use a separate register to store the pattern and compare it with the incoming data bits.
+
+3. **Correctly handle delay shifting**: We can use a separate counter to shift in the delay bits and update the `delay` register.
+
+4. **Simplify the counter logic**: We can use a single counter to keep track of the remaining time, eliminating the need for multiple counters and variables.
+
+5. **Simplify the `ack` signal handling**: We can remove the unnecessary `ack` signal handling in the IDLE state and only check for `ack` in the DONE state.
+
+6. **Optimize the code for better PPA**: We can optimize the code by reducing the number of combinational logic operations and improving the overall structure of the state machine.
+
+Here's the improved code:

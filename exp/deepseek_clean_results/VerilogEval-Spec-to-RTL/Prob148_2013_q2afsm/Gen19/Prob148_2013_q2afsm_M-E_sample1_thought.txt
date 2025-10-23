@@ -1,0 +1,13 @@
+Novel Architecture Idea:
+1. Use a minimal 2-bit binary state encoding (4 states) instead of one-hot to save area
+2. Implement a separate grant tracking register to maintain grant state independently of FSM transitions
+3. Use a priority encoder to handle concurrent requests efficiently
+4. Implement outputs through a combinational block that considers both current state and grant status
+5. Add explicit grant release conditions for cleaner state transitions
+
+Key Advantages:
+- Reduced state encoding bits (2 vs 3 in one-hot)
+- Clear separation between arbitration logic and grant maintenance
+- More flexible grant handling (can extend to more devices easily)
+- Better power efficiency due to binary state encoding
+- Explicit grant release conditions improve readability

@@ -1,0 +1,9 @@
+The Radix-4 Booth multiplier reduces the number of partial products by examining two bits of the multiplier at a time. Here's the design approach:
+1. Sign-extend both inputs to 16 bits for proper handling of negative numbers
+2. Use a 5-bit counter (0-15) to track 8 iterations (since we process 2 bits per iteration)
+3. In each iteration:
+   - Examine 3 bits of multiplier (current pair + previous LSB)
+   - Perform appropriate operation based on Booth encoding (add/subtract multiplicand or do nothing)
+   - Right shift the multiplier and arithmetic right shift the product
+4. Set ready signal when counter reaches 16
+5. Reset initializes all registers

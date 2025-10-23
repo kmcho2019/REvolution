@@ -1,0 +1,9 @@
+To optimize PPA, replace the hierarchical mux tree with a straightforward combinational case statement that selects the output based on sel. This reduces logic depth (improves performance), lowers power by minimizing intermediate signal switching, and reduces area by avoiding multiple intermediate wires and muxes.
+
+- Use a case statement within an always_comb block for clarity and synthesis efficiency.
+- For sel values 0 to 8, output the corresponding input.
+- For sel values 9 to 15, output all ones (16'hFFFF).
+- This flat mux approach maps efficiently to LUTs and minimizes logic levels.
+- The simpler structure improves timing (lower delay), lowers dynamic power, and reduces area compared to the hierarchical approach.
+
+This approach maintains functional correctness while achieving better power, performance, and area metrics.

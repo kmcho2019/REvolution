@@ -1,0 +1,10 @@
+Refactor the fixed_point_adder to a fully combinational logic style using continuous assignments and local parameters instead of an always block and internal reg variables. This makes the design cleaner and easier for synthesis tools to optimize.
+
+Key changes:
+- Compute signs and absolute values with functions outside of procedural blocks.
+- Use continuous assignments and ternary operators to handle conditional logic.
+- Calculate the absolute sum or difference using combinational expressions.
+- Compose the final result by applying the correct sign to the magnitude.
+- Provide explicit overflow handling by truncating or letting wrap-around occur naturally within the fixed N-bit width.
+
+This approach removes the procedural always block and registers, favoring combinational wires and assign statements, which can be simpler to analyze and synthesize. The logic and arithmetic remain functionally the same as before.

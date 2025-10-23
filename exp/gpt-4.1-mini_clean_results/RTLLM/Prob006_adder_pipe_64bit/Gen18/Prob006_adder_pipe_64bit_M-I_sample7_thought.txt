@@ -1,0 +1,17 @@
+The original design correctly implements an 8-stage pipelined ripple carry adder by slicing 64-bit inputs into eight 8-bit chunks and processing each in a pipeline stage. However, there is a functional flaw in how input operand slices are latched: all pipeline stages latch their slices simultaneously every clock cycle when i_en is high, which overwrites pipeline data and disrupts correct pipelining. Furthermore, the carry-in of zero is assigned at every clock cycle, rather than once when starting a new addition operation, potentially causing incorrect results when i_en is low. Also, the final result concatenation order is reversed, concatenating the most significant stage before the least significant, but with an inconsistent ordering of the least stage being appended last without indexing. This risks the output bits being ordered incorrectly.
+
+To correct and improve this:
+
+1. Properly register input operands only at stage 0 when i_en is asserted, and hold them stable through the pipeline stages without overwriting on subsequent cycles.
+
+2. Propagate the operand slices forward through pipeline stages by shifting pipeline registers each clock cycle rather than loading all at once.
+
+3. Set the initial carry-in to zero only when new input data is loaded (i.e., at stage 0 when i_en=1), otherwise propagate carry forward from previous stages.
+
+4. Maintain the enable pipeline registers as a shift register to track valid data through the pipeline correctly.
+
+5. Fix the final output concatenation order, assembling sum segments from least significant stage (stage 0) to most significant (stage 7), followed by the final carry-out MSB.
+
+6. Optimize carry pipeline and sum registers usage and ensure all registers reset properly.
+
+This will fix the functional errors and optimize the pipeline operation with correct data flow and timing, ensuring the module works as a proper pipelined 64-bit ripple carry adder.

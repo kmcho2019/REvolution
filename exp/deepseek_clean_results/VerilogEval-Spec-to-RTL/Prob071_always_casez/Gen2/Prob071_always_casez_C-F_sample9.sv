@@ -1,0 +1,20 @@
+module TopModule (
+    input [7:0] in,
+    output reg [2:0] pos
+);
+
+always @(*) begin
+    if (in == 8'b0) begin
+        pos = 3'd0;  // Handle all-zero case first
+    end
+    else if (in[0])   pos = 3'd0;
+    else if (in[1])   pos = 3'd1;
+    else if (in[2])   pos = 3'd2;
+    else if (in[3])   pos = 3'd3;
+    else if (in[4])   pos = 3'd4;
+    else if (in[5])   pos = 3'd5;
+    else if (in[6])   pos = 3'd6;
+    else              pos = 3'd7;  // in[7] must be 1 if we get here
+end
+
+endmodule

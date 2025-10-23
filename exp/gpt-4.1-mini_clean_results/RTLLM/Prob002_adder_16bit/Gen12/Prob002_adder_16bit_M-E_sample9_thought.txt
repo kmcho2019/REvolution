@@ -1,0 +1,9 @@
+I will implement the 16-bit adder by instantiating four 4-bit carry lookahead adders (CLAs), which offer a good tradeoff between speed and complexity. Each 4-bit CLA block efficiently computes sum and carry outputs using generate and propagate signals. The carry-out from one block feeds the carry-in of the next, chaining four blocks to create the full 16-bit adder. This hierarchical modular design improves performance over ripple carry adders by limiting carry chain length to 4 bits per block, reducing delay. 
+
+The 4-bit CLA will explicitly compute carries using carry-lookahead logic internally to achieve faster carry propagation within the block. This modular design enhances scalability, reuse, and clarity, making it easy to adapt to larger bit widths or integrate in larger systems. The top-level 16-bit adder simply wires the four 4-bit modules together, passing carry signals between them.
+
+This approach provides:
+- Modular design with 4-bit CLA building blocks.
+- Faster carry computation inside blocks with carry-lookahead logic.
+- Limited carry chaining between blocks (4 bits each).
+- Clean, scalable combinational implementation.

@@ -1,0 +1,7 @@
+Fuse the clarity and state-driven approach of Example 2 with the minimal cycle latency and direct count control of Example 1. Use a simple 2-bit byte counter (0 to 3) to track message progress, combining explicit count-driven datapath updates for clarity and minimal logic.  
+On reset, clear all registers synchronously.  
+When count=0, wait for a start byte with in[3]=1; if found, latch it as byte1 and increment count.  
+For count=1 and 2, latch bytes as byte2 and byte3 respectively, incrementing count.  
+When the third byte is latched (count==3), output the assembled message and assert done for exactly one cycle, then reset count to zero for next message.  
+This keeps the done assertion immediate and synchronous, reduces combinational concatenation delays by storing bytes separately and concatenating only when done asserted, and simplifies the FSM into a counter-like state machine, minimizing toggling and improving timing and power.  
+Maintain synchronous reset and positive edge clock triggering throughout.

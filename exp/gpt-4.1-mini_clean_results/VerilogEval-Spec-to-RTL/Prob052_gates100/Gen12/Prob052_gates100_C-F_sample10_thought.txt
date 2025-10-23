@@ -1,0 +1,18 @@
+To fuse the best ideas from both examples, we combine clarity, structured hierarchical reduction, and the efficiency of built-in reduction operators.
+
+From Example 1, we see a straightforward explicit loop-based reduction inside a combinational always block, showing clear stepwise aggregation, but it is less optimal for PPA.
+
+From Example 2, hierarchical grouping breaks the 100 inputs into manageable blocks (10 groups of 10), allowing a modular reduction approach which can reduce fan-in and improve timing and power.
+
+However, Example 2 uses registers and nested loops, which add area and complexity.
+
+Our fusion strategy:
+
+- Use hierarchical grouping as in Example 2 to partition the 100-bit input into 10 groups of 10 bits.
+- For each group, use Verilog’s built-in reduction operators (&, |, ^) for fast, clean partial reductions instead of manual loops.
+- Then, apply built-in reduction operators again on the 10 partial results to get the final output signals.
+- This approach blends hierarchical reduction for PPA benefits and built-in operators for synthesis efficiency.
+- Use continuous assignments for outputs instead of reg to emphasize combinational nature and allow straightforward synthesis.
+- The design will be clean, structurally hierarchical, minimal code, and optimized for synthesis tools.
+
+This fusion provides a balanced, optimized, and clear solution that is superior in PPA to either example alone.

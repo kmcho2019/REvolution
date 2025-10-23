@@ -1,0 +1,11 @@
+The state machine can be simplified further by recognizing that:
+1. The output is directly the inverse of the state when using binary encoding (B=0, A=1)
+2. We can eliminate the localparams since we're just using 0/1 for states
+3. The state transitions can be expressed as a simple boolean expression without a case statement
+4. The output logic can be directly assigned from the state bit
+
+Simplification approach:
+- Use single-bit state register (0=B, 1=A)
+- State transition is: next_state = (state & in) | (~state & ~in)
+- Output is simply ~state
+- Remove all unnecessary declarations and simplify logic

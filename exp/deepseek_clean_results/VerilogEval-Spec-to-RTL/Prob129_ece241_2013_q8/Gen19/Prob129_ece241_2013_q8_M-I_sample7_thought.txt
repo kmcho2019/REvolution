@@ -1,0 +1,13 @@
+The current shift register implementation is already quite efficient, but we can make some minor optimizations to further improve PPA:
+
+1. Remove one of the flip-flops by using the current input directly in the combinational logic
+2. This reduces the sequential elements from 2 to 1 while maintaining the same functionality
+3. The output logic becomes slightly more complex but still minimal
+4. The area should decrease due to fewer flip-flops
+5. Timing may improve slightly with one less flip-flop in the critical path
+6. Power should decrease due to reduced switching activity from fewer sequential elements
+
+The new approach stores just the previous value and checks for:
+- Previous value was '1' (stored in x_prev)
+- Current value is '0' (from input x)
+- Next value is '1' (from input x in next cycle)

@@ -1,0 +1,12 @@
+Novel Parallel Prefix Johnson Counter Architecture:
+1. Instead of sequential shifting, use a parallel prefix network to compute all bits simultaneously
+2. Each bit position calculates its next state based on the LSB (Q[0]) and its position
+3. For position i:
+   - If Q[0]==0 (increment phase): Q_next[i] = (i == 63) ? 1 : Q[i+1]
+   - If Q[0]==1 (decrement phase): Q_next[i] = (i == 63) ? 0 : Q[i+1]
+4. This approach:
+   - Eliminates the long combinational path of 64-bit shift
+   - Enables better pipelining opportunities
+   - Provides more balanced timing across all bits
+   - Can be optimized for power by gating computation when not needed
+5. Reset initializes to all zeros as before

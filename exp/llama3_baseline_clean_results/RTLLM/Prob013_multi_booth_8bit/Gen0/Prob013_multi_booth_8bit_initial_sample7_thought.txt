@@ -1,0 +1,12 @@
+To implement an 8-bit Radix-4 Booth multiplier, we will follow these steps:
+1. Initialize two 16-bit registers, multiplier and multiplicand, with the input values a and b, respectively. 
+   The register multiplier is initialized with the sign-extended value of the input a, while the multiplicand is initialized with the sign-extended value of the input b.
+2. On the positive edge of the clock signal (clk), check the value of the reset signal (reset).
+   If reset is high, reset the registers and the counter.
+   If reset is low, proceed with the multiplication process.
+3. In the multiplication process, use a 5-bit counter (ctr) to track the number of iterations.
+   In each iteration, check the current bit of the multiplier register.
+   If the current bit is 1, add the multiplicand to the product register.
+   Then, left-shift the multiplicand register by 1 bit to simulate the Booth algorithm's shifting operation.
+4. Increment the counter after each iteration.
+5. When the counter reaches 16, indicating the completion of the multiplication process, set the ready signal (rdy) to 1.

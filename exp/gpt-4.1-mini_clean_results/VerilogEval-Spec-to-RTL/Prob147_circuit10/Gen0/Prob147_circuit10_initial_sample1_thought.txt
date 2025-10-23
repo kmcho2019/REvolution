@@ -1,0 +1,21 @@
+The sequential circuit has one bit of state (flip-flop output `state`). The output `q` is combinational from current inputs `a`, `b` and state.
+
+From the waveform:
+- The state changes only on positive clock edges.
+- Initial state at the first positive edge (15ns) is 0.
+- `q` depends on `a`, `b`, and `state`.
+- At 45ns (clk posedge), state=0, a=0, b=1 -> q=1, so q = (b & ~state) | ... ?
+- At 65ns, a=1, b=1, state=0, q=0.
+- At 75ns, a=0, b=0, state=1, q=1.
+- The state next is equal to q of that cycle.
+- This suggests `state` stores previous q.
+- `q` behaves like `a XOR b XOR state`.
+  Checking:
+  - 45ns: a=0,b=1,state=0 -> q=1 (0 xor 1 xor 0 =1)
+  - 65ns: a=1,b=1,state=0 -> q=0 (1 xor 1 xor 0=0)
+  - 75ns: a=0,b=0,state=1 -> q=1 (0 xor 0 xor 1=1)
+  - 95ns: a=1,b=1,state=1 -> q=1 (1 xor 1 xor 1=1)
+- So q = a ^ b ^ state.
+- On each posedge clk, state <= q.
+
+Implement with a register state updated on posedge clk with q=a^b^state, and q output combinationally as a^b^state.

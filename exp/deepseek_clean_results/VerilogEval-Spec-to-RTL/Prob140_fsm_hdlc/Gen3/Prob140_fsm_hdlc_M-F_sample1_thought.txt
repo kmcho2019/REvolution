@@ -1,0 +1,16 @@
+Revised design strategy:
+1. Correct state encoding by using 4 bits to properly represent all 9 states (0-8)
+2. Fix state transitions to properly implement HDLC rules:
+   - After 5 ones (STATE_5), next state should be STATE_DISC if next bit is 1 (0111111)
+   - STATE_FLAG should only be reached after exactly 6 ones (0111110)
+   - STATE_ERR should be entered after 7+ ones (01111111...)
+3. Simplify output logic to be purely Moore-style (outputs depend only on current state)
+4. Ensure outputs are asserted for exactly one cycle after conditions occur
+5. Maintain proper reset behavior (initial state as if previous input was 0)
+
+Key improvements:
+- Proper state encoding with 4 bits
+- Correct state transitions for HDLC rules
+- Clean output generation based only on current state
+- One-cycle output pulses through registered outputs
+- Clear separation between state transition and output logic

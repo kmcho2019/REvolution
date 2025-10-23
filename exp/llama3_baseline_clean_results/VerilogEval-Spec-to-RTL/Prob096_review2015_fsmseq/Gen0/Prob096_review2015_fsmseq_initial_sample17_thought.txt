@@ -1,0 +1,10 @@
+To implement the TopModule, we will design a finite-state machine (FSM) with states that track the progression of the input sequence 1101. We can break down the sequence into smaller parts and assign a state for each part. The FSM will start in an idle state and transition through states as it detects the correct sequence. Once the entire sequence is detected, it will transition to a final state where start_shifting is set to 1. The FSM will remain in this state until reset is asserted.
+
+We can define the states as follows:
+- Idle: The initial state where the FSM waits for the first '1' of the sequence.
+- GotFirstOne: The state after the first '1' is detected, where the FSM waits for the second '1'.
+- GotSecondOne: The state after the second '1' is detected, where the FSM waits for the '0'.
+- GotZero: The state after the '0' is detected, where the FSM waits for the final '1'.
+- SequenceFound: The state where the entire sequence has been detected, and start_shifting is set to 1.
+
+The reset signal will be used to transition the FSM back to the idle state.

@@ -1,0 +1,11 @@
+Fuse the simplicity and minimal logic of the first example with the selective enable gating concept of the second to optimize power without adding combinational delay on the clock path.
+
+Instead of gating the entire flip-flop update with a combinational `enable` that depends on `q` (which can increase setup time), implement an internal register to hold the next state. Use combinational logic outside the clocked block to select the next value (`0` on reset, `d` otherwise). Then only update `q` on the clock edge if the next value differs from the current `q` or if reset is asserted.
+
+This avoids extra logic in the clock path (no combinational gate before clock edge), but still avoids toggling `q` unnecessarily because the clocked process assigns `q` only when reset or input changes. The asynchronous logic to determine next value is simple and clean. This strategy reduces unnecessary toggling (saving power), keeps the design minimal, and avoids additional setup timing burden.
+
+Overall:
+- Next state logic is combinational and simple: `next = r ? 0 : d`.
+- Clocked block only updates `q` when `next != q` or `r` is asserted.
+- Non-blocking assignments maintain proper sequential semantics.
+- Minimal combinational logic and no gate delays in clock-to-Q path.

@@ -1,0 +1,25 @@
+To correct the FSM behavior and match the specification exactly, the main improvements focus on:
+
+1. **Reset and f pulse timing**:  
+   Since resetn is a synchronous active low reset, the FSM should stay in STATE_A as long as resetn=0. Only *after* resetn=1 is sampled on a clock edge should the FSM move to STATE_B on the *next* clock cycle and output f=1 for one cycle. This means the FSM transition from STATE_A to STATE_B should occur one cycle *after* resetn deasserts, introducing a clear "reset released" detection stage.
+
+2. **Pattern detection for x=1,0,1**:  
+   We must ensure that the detection window only starts shifting x after we enter STATE_C, and that the first two bits shifted in STATE_C are allowed to fill before checking for pattern 101, so that the detection is on valid samples. We can implement a small sample counter (0 to 2) in STATE_C to delay pattern checking until we have at least 3 samples. After that, keep shifting and checking every cycle.
+
+3. **y monitoring timer correctness**:  
+   The problem states "within at most two clock cycles," so y can be sampled in the first or second cycle after pattern detection (STATE_E). Thus, y_timer should count 1 and 2 cycles in STATE_E; if y==1 anytime in these two cycles, go to permanent g=1; if after the second cycle (i.e., at count=2) no y=1, go to permanent g=0. We'll start y_timer at 1 on entry to STATE_E and count up, transitioning on timer==2.
+
+4. **Register resets and updates**:  
+   All registers (x_shift, counters) reset explicitly on resetn and also reset appropriately when transitioning into states that require them cleared, to avoid stale data.
+
+5. **FSM state transition logic**:  
+   Include a new intermediate STATE_B where f=1 exactly one cycle after reset release (after detecting resetn=1 for one clock), then move to STATE_C to monitor x.  
+   Within STATE_C, maintain a sample count to know when to start pattern checking.  
+   In STATE_E, use y_timer as explained to enforce the "at most two clock cycles" limit.
+
+6. **Moore output style**:  
+   All outputs depend only on the current state; outputs f and g are set accordingly, ensuring a one-cycle pulse for f and g as specified.
+
+This approach precisely sequences all steps according to the problem statement and removes off-by-one errors in timers and pattern detection, thereby fixing the timing mismatches seen in the original solution.
+
+Below is the improved and fully commented Verilog implementation.

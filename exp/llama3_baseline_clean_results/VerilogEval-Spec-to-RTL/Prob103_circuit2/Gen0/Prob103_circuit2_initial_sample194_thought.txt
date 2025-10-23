@@ -1,0 +1,24 @@
+To determine the functionality of the circuit, we need to analyze the provided simulation waveforms. We will use K-map (Karnaugh map) or any other suitable method to derive the logic expression from the given input-output pairs.
+
+From the given waveform, we can observe that output 'q' is 1 when the input combinations are:
+- 0000
+- 0011
+- 0110
+- 0111
+- 1000
+- 1001
+- 1010
+- 1111
+
+From this, we can derive the logic expression as:
+q = ~a~b~c~d + ~a~b~cd + ~ab~c~d + ~ab~cd + a~b~c~d + a~b~cd + ab~c~d + abc~d + abcd
+
+However, to simplify the expression, we can observe that q = 1 when either a, b, c, or d is not the same as the others. Therefore, we can also express the logic as:
+q = (a != b) || (b != c) || (c != d) || (d != a)
+
+However, for digital circuit implementation, we can't directly compare or use "!=" operator in Verilog for this kind of logic expression. Instead, we use bitwise operations like XOR to check if the bits are different.
+
+The simplified expression using XOR can be written as:
+q = (a ^ b) || (b ^ c) || (c ^ d) || (d ^ a)
+
+This logic can be implemented using XOR gates and OR gates in a digital circuit.

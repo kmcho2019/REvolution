@@ -1,0 +1,5 @@
+An alternative architectural approach is to use a small combinational FSM-style prioritization logic encoded in a case statement to decide which device to activate. Instead of directly assigning each output from input signals, the logic will determine a single "state" representing whether heating, cooling, or idle mode is active. Then outputs will be derived from this internal state plus the user fan request.
+
+This approach allows easier future expansion (e.g., adding more modes or hysteresis) and centralizes decision-making. It also makes the design more readable by grouping conditions. The fan control remains combinational, activated when heating or cooling is active or by user request.
+
+By implementing a local 2-bit state (IDLE, HEAT, COOL), the code enhances clarity at the cost of a few more signals, which is acceptable for a small module.

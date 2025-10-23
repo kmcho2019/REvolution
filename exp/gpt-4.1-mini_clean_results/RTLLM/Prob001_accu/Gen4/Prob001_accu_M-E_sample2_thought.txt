@@ -1,0 +1,11 @@
+Implement a design using a small FIFO-style shift register to collect four consecutive valid inputs, and then perform the accumulation only once at the 4th input arrival. This delays addition until all four inputs are collected, reducing addition operations from 4 increments to 1 per 4 inputs.
+
+Specifically, use a 4-element array to store the 8-bit inputs. On each valid_in, shift the new data into the array. When the 4th data arrives (counter reaches 3), sum all stored inputs in a combinational manner and output the result with a one-cycle valid_out pulse.
+
+This approach reduces toggle activity on the accumulator by avoiding repeated partial sums, only doing the addition once per 4 inputs. It also clearly separates data collection and accumulation phases.
+
+The counter tracks the number of collected inputs from 0 to 3. Reset and synchronous logic ensure clean timing. Data_out is 10 bits wide to accommodate max sum (4*255=1020).
+
+valid_out pulses for exactly one cycle after outputting the accumulated sum.
+
+This method avoids maintaining a running sum and minimizes additions, potentially improving power and timing.

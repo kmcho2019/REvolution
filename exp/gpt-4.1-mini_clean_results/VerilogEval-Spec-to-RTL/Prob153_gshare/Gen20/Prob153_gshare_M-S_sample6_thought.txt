@@ -1,0 +1,12 @@
+Implement the gshare predictor with a single always block and minimal intermediate signals. On reset, initialize the PHT and history registers.
+
+For each cycle:
+- If reset, clear everything.
+- If training valid, update PHT entry and update train_ghr:
+  - If mispredicted, recover train_ghr to train_history and also recover fetch_ghr (flush).
+  - Else shift in actual taken bit into train_ghr.
+- If predict valid and no flush this cycle, update fetch_ghr by shifting in predicted taken bit.
+
+Prediction output is combinationally read from PHT using predict_pc XOR fetch_ghr; also output the current fetch_ghr.
+
+This approach avoids declaring variables inside always blocks, reduces code complexity, and keeps the logic behavior as required.

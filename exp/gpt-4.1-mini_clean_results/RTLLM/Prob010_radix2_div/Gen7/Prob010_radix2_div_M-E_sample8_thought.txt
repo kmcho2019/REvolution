@@ -1,0 +1,9 @@
+Implement a straightforward radix-2 divider using a single synchronous always block with a simple FSM: IDLE and DIVIDE states.  
+When opn_valid is asserted and the module is idle, latch inputs and compute absolute values if signed.  
+Use a 17-bit shift register holding remainder (9 bits) and quotient (8 bits) with the dividend absolute value placed initially in the quotient portion, remainder cleared.  
+During each clock cycle in DIVIDE state, perform the following: shift left the SR by 1 bit, subtract divisor_abs from remainder portion, set quotient bit based on borrow from subtraction (if no borrow, quotient bit = 1, remainder updated to subtraction result; else quotient bit = 0, remainder unchanged).  
+Count 8 iterations, then transition to DONE state, where res_valid is asserted.  
+After DONE, apply sign correction combinationally for quotient and remainder before outputting.  
+The design simplifies control with two states, avoids complex enumerated types, and performs division in 8 cycles with a simple shift-subtract cycle.  
+Resets clear state and outputs. The result concatenates corrected remainder (upper 8 bits) and quotient (lower 8 bits).  
+This design is easy to understand, synthesizable, and fits problem specs.

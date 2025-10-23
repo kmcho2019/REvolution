@@ -1,0 +1,15 @@
+The original design is already minimal and efficient, performing a single-bit right shift and inserting the inverted LSB into the MSB position each clock cycle. This is the canonical way to implement a Johnson counter. Potential improvements for PPA could include:
+
+- Performance: The shift and inversion logic is minimal, so no simpler logic is possible. Introducing pipelining or breaking the register would increase latency and area, thus not beneficial here.
+- Power: To reduce toggling power, a simple clock enable can be introduced to halt counting when not required. However, as this was not specified, this improvement is outside the original problem scope.
+- Area: The current implementation uses only one 64-bit register and minimal combinational logic, so it is already minimal.
+
+Therefore, the best improvement within the problem scope is to explicitly mark the reset as synchronous to avoid asynchronous reset overhead, if the design environment allows, or at least keep the asynchronous reset but add a synthesis directive for flip-flop inference optimization. However, this changes functionality slightly (reset synchronous vs asynchronous).
+
+Since the spec requests asynchronous active-low reset, we will maintain that.
+
+Alternatively, for slight readability and maintainability improvement, we can declare the inverted bit in a wire and then assign Q on clock edges. However, this does not impact PPA.
+
+Hence, the original code is optimal given the requirements. I will maintain the same logic but add comments to improve readability and maintain synthesis friendliness.
+
+No functional or PPA improvement possible without changing spec or adding features (like clock gating), so final code will be the original with added comments for clarity.

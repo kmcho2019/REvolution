@@ -1,0 +1,14 @@
+To optimize the counter for better performance and area, replace the two-part comparator with a single equality check (q == MAX_COUNT). Modern synthesis tools handle simple equality comparators efficiently, likely resulting in lower logic depth and gate count than multiple partial comparators.
+
+This reduces combinational logic complexity and potentially improves timing (worst negative slack) and power by minimizing switching in multiple signals.
+
+The synchronous reset remains unchanged.
+
+This approach simplifies the terminal count check logic, helping synthesis optimize the comparator better for timing and power.
+
+The code remains clean and easy to read, maintaining parameterization for terminal count.
+
+Summary:
+- Use single equality check (q == MAX_COUNT) for terminal count detection.
+- Keep synchronous active-high reset.
+- Maintain 10-bit counter incrementing on each positive clock edge.

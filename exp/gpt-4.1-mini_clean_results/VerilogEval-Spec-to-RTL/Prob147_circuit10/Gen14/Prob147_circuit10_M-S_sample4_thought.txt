@@ -1,0 +1,16 @@
+Observing the waveform and the previous solution, the state only ever holds or toggles based on simple conditions on inputs a and b:
+
+- When a=0 and b=1, state becomes 1.
+- When a=1 and b=1, state becomes 0.
+- Otherwise, state remains the same.
+
+The output q matches the current state.
+
+This suggests a simplified design:
+
+- next_state = (b & ~a) | (state & ~(a & b))
+- output q = state
+
+This reduces q logic to just the stored state, which matches the waveform where q reflects the stored state value.
+
+Implementing this simpler logic exactly matches the waveform and reduces complexity.

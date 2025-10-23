@@ -1,0 +1,16 @@
+Refactor the design to use an explicit two-state finite state machine (FSM) to improve synthesis friendliness and clarity. 
+
+States:
+- IDLE: waiting for the first valid input. When valid_in arrives, store it and move to WAIT state.
+- WAIT: waiting for the second valid input. When it arrives, concatenate stored first byte (higher 8 bits) with current input (lower 8 bits), generate valid_out and data_out in the next clock cycle, then go back to IDLE.
+
+Use separate registers:
+- data_lock to hold first byte
+- state register for FSM
+- valid_out_reg and data_out_reg to output signals
+
+This makes it explicit when the first and second bytes are accepted and when output is generated, avoids conditional flags and implicit latches, and ensures all signals are registered properly on every clock edge or reset.
+
+valid_out and data_out are updated only in the cycle after the second input arrives, by latching concatenated data at the state transition from WAIT to IDLE.
+
+This structure is clearer, more synthesis friendly, and meets the timing and interface requirements.

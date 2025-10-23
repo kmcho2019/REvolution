@@ -1,0 +1,9 @@
+To implement the Lemmings behavior as a Moore state machine, we first need to define the states. Given the requirements, the Lemmings can be in one of three states: walking left, walking right, or falling. 
+
+The initial state should be walking left as per the requirement that the Lemming resets to walk left when areset is triggered.
+
+Transitions between states will be based on the input signals. The Lemming switches direction when it hits an obstacle (bump_left or bump_right). It falls when there is no ground (ground=0) and resumes walking in the previous direction when the ground reappears.
+
+The output signals walk_left, walk_right, and aaah will be determined by the current state of the Lemmings. When the Lemming is walking left, walk_left should be 1. When the Lemming is walking right, walk_right should be 1. When the Lemming is falling, aaah should be 1.
+
+To model this behavior in Verilog, we will use an enum to represent the states of the state machine and then use a case statement to determine the next state and the output values based on the current state and the input signals.

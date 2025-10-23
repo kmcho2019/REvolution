@@ -1,0 +1,29 @@
+The original minimal Boolean expression f = (~x3 & x2) | (x3 & x1) already provides a minimal two-level implementation with minimal gate count, leading to very good power, area, and delay. However, to further optimize power and area, especially for modern standard cell libraries, restructuring the logic to share sub-expressions or utilize more balanced logic could help.
+
+One approach is to factor the expression to reduce the number of logic gates or balance the path to reduce delay and dynamic power. For example, rewriting the expression as f = (x2 & ~x3) | (x3 & x1) is already optimal, but if the synthesis tool or technology favors NAND/NOR logic, applying De Morgan's law may help.
+
+Alternatively, creating a function using a 2-to-1 multiplexer style logic with x3 as a selector: if x3=0 then f = x2 else f = x1. But checking the truth table for this:
+
+- When x3=0, f= x2 but according to the table:
+  - x3=0,x2=0,x1=0 => f=0 (matches x2=0)
+  - x3=0,x2=1,x1=0 => f=1 (matches x2=1)
+  - x3=0,x2=1,x1=1 => f=1 (matches x2=1)
+  So when x3=0, f = x2 is correct.
+
+- When x3=1, f = x1:
+  - x3=1,x2=0,x1=0 => f=0 (matches x1=0)
+  - x3=1,x2=0,x1=1 => f=1 (matches x1=1)
+  - x3=1,x2=1,x1=0 => f=0 (matches x1=0)
+  - x3=1,x2=1,x1=1 => f=1 (matches x1=1)
+
+This matches the truth table perfectly.
+
+Thus, the function can be rewritten as f = x3 ? x1 : x2, i.e., f = (x3 & x1) | (~x3 & x2) which is the same expression.
+
+Implementation-wise, explicitly using a 2-to-1 multiplexer primitive (if available) or using a conditional operator can provide a logic style that tools may map efficiently into mux cells, reducing power and delay.
+
+Hence, changing the continuous assignment from a bitwise AND/OR to a ternary operator to hint mux-style implementation might slightly improve PPA.
+
+In summary, the functional behavior remains the same, but the new expression style may leverage technology muxes better, reducing gate count and transitions.
+
+No additional registers or wires are introduced, maintaining a simple combinational design.

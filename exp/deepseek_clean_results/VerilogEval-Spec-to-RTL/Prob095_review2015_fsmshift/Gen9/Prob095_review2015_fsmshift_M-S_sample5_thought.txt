@@ -1,0 +1,16 @@
+To simplify while maintaining correct functionality:
+
+1. Counter Initialization: Initialize counter to 3 (3'b011) to get exactly 4 cycles (counts 3→2→1→0).
+
+2. Reset Behavior: Combine reset and counter logic into a single always block with clear priority:
+   - On reset: initialize counter and set shift_ena
+   - Else: decrement counter while not zero
+   - shift_ena is simply the inverse of counter being zero
+
+3. Output Logic: Make shift_ena purely combinational based on counter state for simpler timing.
+
+Key simplifications:
+- Removes separate shift_ena register
+- Uses counter state directly for output
+- Clearer state transitions
+- Maintains exact 4-cycle requirement

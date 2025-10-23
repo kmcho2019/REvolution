@@ -1,0 +1,15 @@
+To optimize the design for better area and power efficiency, I will consolidate all counters into a single 7-bit counter counting from 0 to 99, since the largest division factor is 100. From this single counter, I will derive toggling signals for CLK_50, CLK_10, and CLK_1, by comparing the counter with specific values that mark half periods of the output clocks.
+
+This approach eliminates separate counters and reduces the overall flip-flop and combinational logic count. Also, I will use combinational comparisons within the always block to generate enable signals to toggle output clocks, improving synthesis optimization.
+
+Using a single counter means toggling output clocks at appropriate counts:
+
+- CLK_50 toggles every 1 count (half period = 1): toggle at count 0 and 1
+- CLK_10 toggles every 5 counts (half period = 5): toggle at count 4 and 9, etc.
+- CLK_1 toggles every 50 counts (half period = 50): toggle at count 49 and 99
+
+I will implement toggling at counts when counter equals the half period minus 1 to generate 50MHz, 10MHz, and 1MHz clocks.
+
+The reset will synchronously clear the counter and output clocks.
+
+This design trades slightly more complex logic per clock cycle for fewer registers and simpler control, improving area and power while maintaining correct functionality and duty cycle for each output clock.

@@ -1,0 +1,14 @@
+Novel Architectural Idea:
+1. Instead of using a traditional shift register approach, implement the LFSR using a circular buffer concept
+2. Use a rotating pointer to track the current "position" of the LFSR
+3. Store the LFSR state in a register and compute taps relative to the pointer
+4. This approach minimizes the number of physical shift operations
+5. Reset initializes both the state and pointer
+6. XOR operations are performed only when needed based on pointer position
+
+Key Benefits:
+- Reduced dynamic power due to fewer bit transitions
+- More efficient for large LFSRs as it avoids shifting all bits
+- Flexible tap configuration that can be changed without rewiring
+- Potential for better timing due to localized XOR operations
+- Interesting alternative to traditional implementations

@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. State Encoding: Keep 2-bit encoding but simplify state transitions by merging IDLE and ERROR states since they have similar behavior (both wait for start bit)
+2. Combinational Outputs: Move 'done' signal to combinational logic to reduce sequential elements and improve timing
+3. Shift Register: Maintain efficient right-shift but add an enable signal to reduce unnecessary power consumption
+4. Bit Counting: Replace 3-bit counter with direct comparison against state transitions
+5. Reset Logic: Keep synchronous reset but simplify initialization
+6. Error Handling: Remove dedicated ERROR state and handle stop bit verification within STOP state
+
+Key Changes:
+- Merged IDLE and ERROR states
+- Made 'done' purely combinational
+- Added shift register enable
+- Simplified bit counting logic
+- Reduced state machine complexity

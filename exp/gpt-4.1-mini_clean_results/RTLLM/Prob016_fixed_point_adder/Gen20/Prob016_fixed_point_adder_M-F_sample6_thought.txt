@@ -1,0 +1,16 @@
+To align strictly with the problem statement, the design must explicitly perform addition or subtraction based on the sign bits of inputs `a` and `b` rather than relying on two's complement addition directly.
+
+Key points and improvements in this version:
+- Inputs and outputs remain signed [N-1:0].
+- Use absolute values to perform addition or subtraction as described.
+- When signs match (both positive or both negative), add absolute values and set the result sign as their common sign.
+- When signs differ, perform absolute value subtraction: subtract smaller magnitude from larger magnitude and set the result sign accordingly.
+- Handle zero result in subtraction by setting sign bit to zero.
+- Use an internal register `res` to store intermediate result and assign to output `c`.
+- No explicit overflow detection or saturation since result fits in N bits if the input widths and arithmetic are consistent.
+- The sign extension in subtraction is carefully controlled.
+- The design uses combinational always block with blocking assignments for clarity and synthesis friendliness.
+- The module is fully parameterized; inputs, outputs and internal logic use parameters correctly.
+- The code is self-contained and aligns perfectly with the problem description, avoiding the simpler but less explicit direct two’s complement addition approach of the previous version.
+
+This approach correctly reflects fixed-point arithmetic for signed inputs with fractional precision and adheres exactly to the problem requirements.

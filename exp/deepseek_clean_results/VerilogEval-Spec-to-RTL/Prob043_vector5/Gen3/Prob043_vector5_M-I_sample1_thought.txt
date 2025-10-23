@@ -1,0 +1,19 @@
+The current implementation is already quite efficient, but we can make some micro-optimizations to potentially improve PPA further:
+
+1. **Constant Propagation**: 
+   - The self-comparisons (a==a, b==b, etc.) always evaluate to 1. We can hardcode these directly to 1'b1 instead of using XNOR gates.
+   - This saves area and reduces dynamic power since these bits never toggle.
+
+2. **Symmetric Comparison Sharing**:
+   - Comparisons like a==b and b==a are identical. We can compute each unique comparison once and reuse the result.
+   - This reduces the number of XNOR gates needed from 25 to 15 (for 5 inputs).
+
+3. **Output Organization**:
+   - Maintain the same output ordering for compatibility while implementing these optimizations.
+   - Group identical comparisons together to help synthesis tools recognize sharing opportunities.
+
+4. **Power Optimization**:
+   - By reducing the number of active gates, we lower both static and dynamic power consumption.
+   - The constant outputs help eliminate unnecessary switching activity.
+
+The improved version will maintain the same functionality while being more area and power efficient.

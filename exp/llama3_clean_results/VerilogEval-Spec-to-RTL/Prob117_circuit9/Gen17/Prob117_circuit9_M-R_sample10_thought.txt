@@ -1,0 +1,7 @@
+The original code uses a finite state machine (FSM) approach to implement the sequential logic. To refactor this code, we can maintain the core idea of the FSM but simplify the state transition logic by directly assigning the next state based on the current state and input `a`. Instead of using a case statement within an always block, we can use a conditional statement to determine the next state. This approach can make the code more concise and potentially easier to understand.
+
+The key insight here is to observe the pattern in the state transitions. When `a` is high, the next state is always 4. When `a` is low, the next state is the current state incremented by 1, wrapping around to 0 when the current state is 6. This pattern can be directly implemented using a conditional statement.
+
+By using a more straightforward conditional statement, the code becomes more readable and maintainable. Additionally, this approach avoids the need for an explicit case statement, which can make the code more flexible if the state machine needs to be modified in the future.
+
+The `always` block will still be triggered by the positive edge of the clock `clk`, ensuring that the state transitions occur synchronously with the clock.

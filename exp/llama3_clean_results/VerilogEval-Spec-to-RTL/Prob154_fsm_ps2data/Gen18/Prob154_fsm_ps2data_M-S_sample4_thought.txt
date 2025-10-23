@@ -1,0 +1,7 @@
+The existing solution uses a state machine with three states to track the reception of bytes and a counter `byte_count` to keep track of the current byte. The solution can be further simplified by reducing the number of states and utilizing the counter more efficiently.
+
+Instead of using a `case` statement for each state, we can directly update the `out_bytes` based on the current `byte_count` and assert `done` when `byte_count` reaches 2. We can also eliminate the need for a `default` state, as the `byte_count` will only take values 0, 1, or 2.
+
+Additionally, the `done` signal should be reset to 0 at the beginning of every cycle, except when the third byte is received, where it should be set to 1. This approach ensures that `done` is only asserted for one cycle after receiving the third byte.
+
+This simplified approach maintains the same functionality as the original solution but with reduced complexity and potentially improved PPA metrics.

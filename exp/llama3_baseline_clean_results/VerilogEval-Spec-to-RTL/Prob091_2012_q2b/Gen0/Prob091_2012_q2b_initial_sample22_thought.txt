@@ -1,0 +1,14 @@
+To implement the state output logic for the given finite-state machine, we can analyze the state transitions and derive the logic for the output signals Y1 and Y3. Since we're using a one-hot code, each state is represented by a single '1' bit in the y[5:0] vector.
+
+For Y1 (y[1]), it should be '1' when the next state is B or D. From the state transition diagram, we can see that:
+- B can be reached from A with w = 1 or from C with w = 0.
+- D can be reached from B with w = 0, from C with w = 0, from E with w = 0, or from F with w = 0.
+
+For Y3 (y[3]), it should be '1' when the next state is D. This can happen when:
+- B transitions to D with w = 0.
+- C transitions to D with w = 0.
+- E transitions to D with w = 0.
+- F transitions to D with w = 0.
+- D transitions to D itself is not possible as per the given state machine.
+
+By analyzing these conditions, we can write the Verilog code to implement the state output logic for Y1 and Y3.

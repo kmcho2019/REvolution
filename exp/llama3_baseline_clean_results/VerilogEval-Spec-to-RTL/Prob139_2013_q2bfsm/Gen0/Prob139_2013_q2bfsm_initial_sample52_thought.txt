@@ -1,0 +1,9 @@
+To implement this finite state machine (FSM), we need to break down the problem into smaller, manageable parts. The FSM has several distinct states and transitions based on input signals x and y. We can define an enumeration of states to clarify the design: 
+1. State A: The initial state where resetn is asserted.
+2. State B: The state where f is set to 1 for one clock cycle after resetn is de-asserted.
+3. State C: Monitoring the x input for the sequence 1, 0, 1.
+4. State D: Monitoring the y input after the x sequence has been detected.
+5. State E: The state where g is set to 1 permanently after y has been detected within two cycles.
+6. State F: The state where g is set to 0 permanently because y was not detected within two cycles.
+
+We will use a parameterized enum to define these states and implement a state machine with corresponding transitions based on the problem statement. We'll also use a counter to keep track of the number of cycles in states C and D to detect the specific sequences and time limits.

@@ -1,0 +1,12 @@
+I will combine the best aspects of both examples to create an optimized decade counter:
+
+- Use a synchronous active-high reset that sets the count to 1.
+- Detect terminal count 10 (binary 1010) with minimal bitwise logic `q[3] & ~q[2] & q[1] & ~q[0]` for minimal area and fast detection.
+- Introduce an explicit count_enable signal that is active only when not resetting, to reduce unnecessary toggling and dynamic power.
+- Use non-blocking assignments for correct synchronous behavior.
+- Keep the counter 4-bit wide as it covers 1 through 10.
+- Update the counter only when count_enable is high to reduce switching during reset or idle.
+- Wrap the count back to 1 upon reaching 10.
+- Use a minimal and clear structure to facilitate timing, power, and area optimization.
+
+This fusion uses the explicit enable from example 2 and the efficient combinational check for terminal count from example 1, adding a small optimization to avoid redundant evaluation during reset. This should yield an improved PPA solution with low logic depth, minimal switching, and clear functional behavior.

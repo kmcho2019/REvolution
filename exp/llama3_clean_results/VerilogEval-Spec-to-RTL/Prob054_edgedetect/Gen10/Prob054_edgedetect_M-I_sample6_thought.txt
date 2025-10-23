@@ -1,0 +1,15 @@
+The existing solution utilizes a shift register approach to detect positive edges in the input vector. However, upon reviewing the provided code, it appears that there's an opportunity to simplify and optimize the design.
+
+To improve the solution, we can adopt a more straightforward approach using a single register to store the previous state of the input vector. This approach eliminates the need for an array of shift registers, potentially reducing area consumption and power usage.
+
+We will implement the improved solution by introducing a single 8-bit register to store the previous state of the input vector. On each clock cycle, we will update the previous state register with the current input vector. We can then compare the current input vector with the previous state to detect positive edges.
+
+The comparison will be performed using a bitwise AND operation with the current input vector and the bitwise NOT of the previous state. This operation will produce an output vector where each bit is set to 1 only if the corresponding bit in the input vector has transitioned from 0 to 1.
+
+To optimize the design for better PPA metrics, we will focus on minimizing the area consumption and power usage while maintaining the required performance.
+
+In terms of area optimization, using a single register to store the previous state reduces the overall area consumption compared to the original shift register approach.
+
+For power optimization, we will ensure that the design only updates the previous state register on every clock cycle, which is necessary for the edge detection functionality. This approach avoids unnecessary switching activity and contributes to lower power consumption.
+
+Overall, the improved solution aims to provide a more efficient and optimized implementation of the TopModule, achieving better PPA metrics while maintaining the required functionality.

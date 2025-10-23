@@ -1,0 +1,12 @@
+Combine the best practices of both examples by using a continuous combinational assignment for the output (as a wire), which typically leads to better timing and cleaner synthesis. Also keep the initial block for fixed memory initialization of the first four entries, letting synthesis tools infer zeros for the rest for efficiency.
+
+Add a vendor-neutral synthesis attribute (* rom_style = "block" *) to encourage block RAM or dedicated ROM inference for better area and power, while maintaining functional clarity.
+
+This fusion yields a ROM that is:
+- Read-only and combinational with no unnecessary registers,
+- Clean and straightforward to understand,
+- Optimized for synthesis with explicit guidance for efficient memory implementation,
+- Initialized properly for a known subset of memory locations,
+- Synthesizable and easily portable.
+
+This approach leverages continuous assignment over always blocks to enhance synthesis friendliness and timing, plus the attribute improves area and power through memory inference, combining the clean coding style and synthesis benefits of both examples.

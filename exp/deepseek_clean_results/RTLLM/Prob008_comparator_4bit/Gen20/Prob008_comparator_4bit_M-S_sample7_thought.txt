@@ -1,0 +1,18 @@
+Simplified Design Approach:
+1. Remove intermediate signal generation (bit_gt, bit_eq) to reduce area
+2. Directly compute comparison results using built-in Verilog operators
+3. Leverage the fact that equality check is inherently parallel in hardware
+4. Use simple arithmetic comparison to determine greater/less cases
+5. Maintain mutual exclusivity through straightforward logic
+
+Key Simplifications:
+- Eliminate all intermediate wires
+- Use direct comparison operators (>, <, ==)
+- Simplify output logic by using the comparison results directly
+- Remove hierarchical comparison structure since modern synthesizers optimize this well
+
+Benefits:
+- Reduced area by eliminating intermediate signals
+- Cleaner, more readable code
+- Maintains same functionality with simpler implementation
+- Still achieves good PPA metrics due to Verilog operator optimization

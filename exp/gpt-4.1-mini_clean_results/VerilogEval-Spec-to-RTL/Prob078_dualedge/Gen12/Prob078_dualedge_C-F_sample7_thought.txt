@@ -1,0 +1,13 @@
+To design a superior dual-edge triggered flip-flop that merges the best aspects of both examples:
+
+- Use two separate flip-flops, one triggered on the positive edge and the other on the negative edge of clk, to capture input `d` on both edges.
+- Avoid illegal sensitivity lists by not using `@(posedge clk or negedge clk)`.
+- Replace the combinational mux selecting outputs with a stable transparent latch controlled by clock level (like in Example 1) to reduce glitches and dynamic switching on the output.
+- Implement the latch with blocking assignments inside an `always` block triggered on clk level and data changes to help synthesis tools infer a latch and avoid glitches.
+- Keep modular code by defining a parameterized EdgeFF module supporting posedge and negedge, improving maintainability and reducing redundancy.
+- This fusion balances glitch minimization, synthesis friendliness, modularity, and FPGA compatibility.
+- Use clear signal naming and comments for readability and future optimization.
+- The latch controlled by the clock level selects between positive and negative edge FF outputs, passing through the sampled data without glitches.
+- This approach yields a synthesizable, clean, and effective dual-edge flip-flop emulation for FPGAs.
+
+This final solution functionally behaves like a dual-edge triggered flip-flop while avoiding illegal sensitivity lists, reducing glitches and power, and maintaining concise, reusable code structure.

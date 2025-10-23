@@ -1,0 +1,5 @@
+The original hierarchical 2-bit mux structure is functionally correct but introduces unnecessary complexity and intermediate signals that could increase power and area without improving timing, as the selection signal is common and applies uniformly across all bits.
+
+To optimize for Power, Performance, and Area (PPA), replace the hierarchical structure with a direct, single-level vectorized 2-to-1 mux: `assign out = sel ? b : a;`. This reduces routing complexity, eliminates intermediate nets, and allows synthesis tools to implement an efficient wide mux, improving timing and reducing power/area consumption.
+
+This approach is simple, clear, and optimal for the given problem.

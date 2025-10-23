@@ -1,0 +1,7 @@
+To implement the fixed_point_subtractor module, we first need to understand the rules for fixed-point subtraction. The design must account for the sign of the input operands (a and b), the fractional and integer parts of these operands, and the precision defined by the parameters Q (number of fractional bits) and N (total number of bits). 
+
+We will implement the logic for same sign subtraction and different sign subtraction separately, considering the signs of a and b. For same sign subtraction, we directly subtract b from a. For different sign subtraction, we add the absolute values of a and b and then determine the sign of the result based on the relative magnitudes of a and b. We must also handle the edge case where the result is zero, ensuring the sign bit is set to 0.
+
+The Verilog implementation will use parameterized values for Q and N, allowing for flexibility in the fixed-point representation. The inputs a and b will be N-bit vectors, and the output c will also be an N-bit vector. An internal register res will be used to store the result of the subtraction operation.
+
+To handle the subtraction, we will use Verilog's arithmetic operators, taking care to maintain the fixed-point precision as defined by Q and N. Conditional statements (e.g., if-else) will be used to manage the different cases based on the signs of a and b.

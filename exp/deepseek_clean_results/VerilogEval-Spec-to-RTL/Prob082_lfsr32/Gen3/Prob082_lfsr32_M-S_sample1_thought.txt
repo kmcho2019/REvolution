@@ -1,0 +1,17 @@
+To simplify the Galois LFSR implementation while maintaining correct functionality:
+
+1. Correct Tap Interpretation:
+   - Understand that taps at positions 32, 22, 2, and 1 (1-indexed) translate to bits 31, 21, 1, and 0 in 0-indexing
+   - This matches the original solution's tap positions (but was incorrectly identified as a problem)
+
+2. Simplified Feedback Logic:
+   - The MSB (bit 31) is always q[0] XOR q[31]
+   - Tap bits (21, 1, 0) are their current value XOR q[0]
+   - All other bits simply shift right
+
+3. Optimized Implementation:
+   - Use a single always block with clear bit assignments
+   - Remove redundant XOR operations (q[0] ^ q[0] is indeed always 0, which is correct for LFSR)
+   - Keep synchronous reset to 32'h1
+
+The key insight is that the original tap positions were actually correct (just needed proper explanation), and the LFSR behavior is correct with the MSB feedback and tap XORs.

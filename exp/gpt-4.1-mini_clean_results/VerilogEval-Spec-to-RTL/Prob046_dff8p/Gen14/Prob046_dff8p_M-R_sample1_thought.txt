@@ -1,0 +1,8 @@
+Refactoring approach:
+- Instead of multiple always blocks inside a generate loop, use a single always block triggered on negedge clk.
+- Inside this always block, use a for loop to update each bit of the register.
+- Maintain the per-bit clock enable logic by checking if reset or input bit differs from current bit before updating.
+- This consolidates sequential logic into one always block, simplifying timing analysis and synthesis.
+- Reset remains synchronous active-high and sets q to 8'h34.
+- The interface and functionality remain the same.
+- This approach retains power optimization by gating updates at bit level but reduces code verbosity by avoiding generate and multiple always blocks.

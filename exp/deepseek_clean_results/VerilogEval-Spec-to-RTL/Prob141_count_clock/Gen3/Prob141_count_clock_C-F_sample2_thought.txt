@@ -1,0 +1,22 @@
+Fusion Strategy:
+1. From Example 1:
+   - Adopt the single 4-bit hour counter with BCD decoding (simpler logic)
+   - Use gated rollover signals (power efficient)
+   - Separate PM update logic (cleaner design)
+
+2. From Example 2:
+   - Keep the clear BCD counter structure for seconds/minutes
+   - Maintain the explicit rollover wire definitions (better readability)
+   - Use the simple hour counter reset to 12 (more intuitive)
+
+3. New Optimizations:
+   - Combine the best timing aspects: Example 1's flattened counter logic with Example 2's clear BCD structure
+   - Improve power by gating all counter logic with 'ena'
+   - Simplify hour BCD conversion by making it combinational
+   - Optimize PM toggle to only check at 11->12 transition
+
+Key Improvements:
+- Single hour counter with combinational BCD conversion (timing)
+- All rollover logic gated by 'ena' (power)
+- Clean separation of counter logic (maintainability)
+- Simplified PM toggle condition (area)

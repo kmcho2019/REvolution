@@ -1,0 +1,16 @@
+The original solution uses signed arithmetic and explicit sign/magnitude manipulations, which are functionally correct but potentially cause synthesis issues due to conditional signed negations and partial assignments that might create inferred latches or complex combinational paths.
+
+To improve this design, we will:
+- Fully parameterize the module to avoid reliance on external parameter declarations and prevent testbench parameter passing errors.
+- Remove any unnecessary intermediate signed variables to simplify the logic.
+- Use explicit unsigned comparisons to determine magnitude, then use simple multiplexers to select results rather than conditional signed negation, avoiding complex signed arithmetic inside combinational blocks.
+- Compute absolute values using simple conditional operators rather than two's complement manually.
+- Avoid using a separate `res_sign` reg to prevent inferred latches by assigning all signals in all branches.
+- Use purely combinational logic in an always_comb block (`always @*`), making it fully combinational and synthesis-friendly.
+- Assign the result `c` directly from the computed result register.
+- Since inputs and outputs are in two's complement fixed-point, and precision Q only affects interpretation and not internal addition, the code remains agnostic of Q but passes it for user clarity.
+- Overflow is naturally wrapped around by N-bit truncation.
+
+This strategy improves synthesis friendliness by simplifying signed/unsigned interactions, avoiding partial assignments, and cleanly separating magnitude comparison and addition/subtraction. It also prevents inferred latches and long combinational paths due to conditional negations.
+
+The final module is combinational and ready for integration with properly parameterized testbenches.

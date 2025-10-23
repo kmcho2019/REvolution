@@ -1,0 +1,11 @@
+The original design and logic of the barrel shifter and mux2X1 modules are correct and meet the functional requirements.
+
+The simulation error stems from the `mux2X1` module being defined multiple times in different compilation units or files, causing a redeclaration conflict.
+
+To fix this, I will remove the separate `mux2X1` module definition and instead implement the 2-to-1 multiplexer functionality inline within the generate loops using a conditional operator (ternary `? :`) expression.
+
+This preserves the intended multiplexing behavior without requiring a separate module, thus eliminating module redeclaration conflicts.
+
+The code still remains modular and readable by clearly separating each shift stage and applying the rotate-left shifts controlled by `ctrl[2:0]` accordingly.
+
+This approach keeps the barrel shifter fully functional and compatible with multi-file environments without requiring module sharing or imports.

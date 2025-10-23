@@ -1,0 +1,9 @@
+The original module has incomplete combinational logic in the always blocks, which can lead to inferred latches. To fix this while maintaining the same functionality:
+
+1. Convert to continuous assignments (assign statements) for simpler combinational logic
+2. Ensure all outputs are fully defined in all cases
+3. Remove unnecessary reg declarations since we're using continuous assignments
+4. Keep the same logical behavior:
+   - shut_off_computer = 1 when cpu_overheated, else 0
+   - keep_driving = 1 when not arrived AND gas tank not empty, else 0
+5. This approach is more concise and avoids potential latch inference

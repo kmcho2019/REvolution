@@ -1,0 +1,9 @@
+To optimize the perpetual calendar for better power, performance, and area (PPA), I will combine the three counters into a single always block. This reduces redundant clock domain logic and condition checks, lowering critical path delay and dynamic switching.
+
+The combined block updates seconds every clock, then increments minutes only when seconds wrap, and increments hours only when minutes and seconds wrap. This avoids multiple always blocks with overlapping conditions, enabling synthesis tools to better optimize logic.
+
+Also, I'll use minimal assignments per cycle to avoid unnecessary toggling, keeping non-blocking assignments and asynchronous reset as before.
+
+Hours remains 5 bits (0-23), Mins and Secs 6 bits (0-59) for area efficiency.
+
+This fused design balances clarity, correctness, and PPA improvements by reducing logic duplication, minimizing conditional evaluations, and decreasing switching activity.

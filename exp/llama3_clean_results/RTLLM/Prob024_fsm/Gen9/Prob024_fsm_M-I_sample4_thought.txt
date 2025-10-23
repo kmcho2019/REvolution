@@ -1,0 +1,25 @@
+To improve the provided Mealy FSM detection circuit, we can consider the following strategies:
+
+1.  **Optimize State Encoding**: Instead of using a 2-bit state register, we can use a 4-state machine to achieve this, where each state represents a specific position in the sequence.
+2.  **Improve Comparison Logic**: The current comparison logic checks the input bit at each state transition. We can simplify this by using a more efficient comparison method, such as checking only the necessary bits.
+3.  **Reduce Flip-Flops**: By using a more compact state encoding scheme, we can reduce the number of flip-flops required, which will help minimize area consumption.
+4.  **Simplify Reset Logic**: Instead of using a synchronous reset, we can use an asynchronous reset to simplify the reset logic and reduce timing overhead.
+5.  **Optimize State Transitions**: The current state machine transitions seem to be partially correct but may not cover all the conditions as specified in the problem description. We need to ensure that the state machine correctly handles continuous input and loop detection.
+
+The improved strategy involves:
+*   Using a 4-state machine to represent the sequence "10011", with each state corresponding to a specific position in the sequence.
+*   Implementing state transitions based on the input bit, with the MATCH signal asserted when the sequence is detected.
+*   Using a compact state encoding scheme to reduce the number of flip-flops required.
+*   Simplifying the reset logic to reduce timing overhead.
+*   Ensuring that the state machine correctly handles continuous input and loop detection.
+
+To optimize the design for better PPA (Power, Performance, and Area), we will focus on minimizing state encoding, optimizing comparison logic, reducing flip-flops, and simplifying reset logic. Additionally, we will ensure that the state machine transitions are correctly implemented to reduce power consumption and improve timing performance.
+
+The improved design will use a 3-state machine to detect the sequence "10011". The states will be encoded as follows:
+*   State 0: Initial state
+*   State 1: '1' detected
+*   State 2: '0' detected after '1'
+*   State 3: Second '0' detected
+*   State 4: First '1' detected after two '0's
+
+The state transitions will be implemented based on the input bit, and the MATCH signal will be asserted when the sequence is detected.

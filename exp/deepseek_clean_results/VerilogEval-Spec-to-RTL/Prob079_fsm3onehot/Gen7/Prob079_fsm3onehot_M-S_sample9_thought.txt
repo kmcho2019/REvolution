@@ -1,0 +1,21 @@
+The key insight is that with one-hot encoding, we can leverage the mutual exclusivity of states to simplify the logic. Each next state bit only needs to consider transitions from specific states, not all possible combinations. 
+
+For next_state:
+- State A (bit 0): Comes from A or C when in=0
+- State B (bit 1): Comes from A, B, or D when in=1 (but since it's one-hot, we can simplify to in & (state[0] | state[1] | state[3]))
+- State C (bit 2): Comes from B or D when in=0
+- State D (bit 3): Comes from C when in=1
+
+For output:
+- Simply output state D (bit 3)
+
+Further simplifications:
+1. next_state[1] can be just (in & ~state[2]) since when in=1:
+   - From A (state[0]): next_state[1] = 1
+   - From B (state[1]): next_state[1] = 1
+   - From D (state[3]): next_state[1] = 1
+   - From C (state[2]): next_state[1] = 0
+   So it's equivalent to in AND NOT state[2]
+
+2. All other next_state bits can be expressed with simple AND-OR logic
+3. Output is just state[3] with no logic needed

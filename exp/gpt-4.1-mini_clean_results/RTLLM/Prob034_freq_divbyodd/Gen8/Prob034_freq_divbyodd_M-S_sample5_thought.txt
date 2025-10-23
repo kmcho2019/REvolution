@@ -1,0 +1,11 @@
+To simplify the odd frequency divider, use a single counter that counts from 0 to NUM_DIV-1, toggling the output clock at half the period to create an approximate 50% duty cycle.
+
+Since NUM_DIV is odd, half the period is fractional. We'll toggle clk_div on two counts: at half_count (floor(NUM_DIV/2)) and at the terminal count (NUM_DIV-1), so the output toggles twice per full count cycle, producing the correct frequency division with an acceptable duty cycle.
+
+This approach removes the need for separate counters and flip-flops on positive and negative edges, simplifying the logic while maintaining correct odd division.
+
+On reset, initialize the counter and clk_div to zero.
+
+Also, include a compile-time check for odd NUM_DIV.
+
+The output clk_div is simply a register toggled twice per division cycle, driven by the posedge of clk.

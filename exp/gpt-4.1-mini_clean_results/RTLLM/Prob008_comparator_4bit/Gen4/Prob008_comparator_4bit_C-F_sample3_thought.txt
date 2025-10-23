@@ -1,0 +1,15 @@
+Fusion Strategy:
+
+- Adopt the standard full subtractor borrow generation formula from Example 1 and 2, which is clear and canonical: 
+  borrow_out = (~A & B) | ((~(A ^ B)) & borrow_in).
+- Use a generate loop to systematically implement the borrow chain, enhancing scalability and clarity.
+- For equality detection, use the efficient bitwise XNOR followed by an AND reduction to quickly detect exact equality of inputs.
+- Omit the diff wire from Example 1 since diff bits are not directly used for output generation, simplifying logic and saving area.
+- Ensure outputs are strictly mutually exclusive using the borrow chain output and equality signal:
+  - A_less = borrow from the MSB subtractor (borrow[3])
+  - A_equal = no borrow and all bits equal (eq_bits)
+  - A_greater = no borrow and not equal
+- Preserve purely combinational logic and simplicity for synthesis optimization.
+- This fusion results in a clean, maintainable, and efficient 4-bit comparator using subtractor borrow logic and straightforward equality checking.
+
+This combines the best clarity and correctness of the borrow chain from both examples, the efficient equality check, and minimal necessary signals to produce an optimal design for performance, area, and power.

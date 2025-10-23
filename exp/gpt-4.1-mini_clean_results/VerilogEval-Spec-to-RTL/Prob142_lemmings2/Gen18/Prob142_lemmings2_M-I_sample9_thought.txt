@@ -1,0 +1,12 @@
+To improve the original FSM design for better PPA (Timing, Power, and Area) while maintaining clarity and correctness:
+
+- Replace separate bump_left and bump_right conditions with a combined bump signal to reduce logic complexity; this enables simpler logic for bump detection.
+- Use a 2-bit state encoding as before but reorder states to enable simpler direction flip logic.
+- Implement next_state logic that prioritizes ground changes over bumps, as bumps during falling or ground transitions don't affect direction.
+- Use synchronous reset instead of asynchronous reset if the target allows, as synchronous reset can simplify timing and reduce routing complexity. However, since asynchronous reset is specified, keep it but try to minimize its impact by limiting logic in reset conditions.
+- Optimize combinational logic by using explicit and minimal conditions, avoiding redundant checks.
+- Add comments and maintain a clean style.
+- Moore output decoding remains minimal and efficient.
+- Avoid complex conditionals by logically combining bump signals and direction.
+
+This approach reduces logic gate usage and potential critical path length, leading to better timing, lower power, and slightly reduced area while preserving full functionality.

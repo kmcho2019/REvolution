@@ -1,0 +1,14 @@
+To implement the Lemmings' finite state machine, we need to consider the current state (walking left or right) and the inputs (bump_left, bump_right, ground) to determine the next state and the outputs (walk_left, walk_right, aaah). We will use a Moore state machine, where the outputs are determined solely by the current state.
+
+The states we need to consider are:
+- Walking left
+- Walking right
+- Falling
+
+We will use a 2-bit state variable to represent these three states, where state 2'b00 represents walking left, state 2'b01 represents walking right, and state 2'b10 represents falling.
+
+On the positive edge of the clock, we will check the current state and the inputs to determine the next state and the outputs.
+
+If the current state is walking left or right, we will check the bump_left and bump_right inputs to determine if the Lemming needs to change direction. If the ground input is 0, we will transition to the falling state.
+
+If the current state is falling, we will check the ground input to determine if the Lemming should resume walking. If the ground input is 1, we will transition back to the previous walking state.

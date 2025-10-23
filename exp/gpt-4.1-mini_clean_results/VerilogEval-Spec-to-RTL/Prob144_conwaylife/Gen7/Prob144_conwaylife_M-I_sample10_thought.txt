@@ -1,0 +1,15 @@
+To improve the PPA (performance, power, area) of the original solution, focus on reducing the large combinational logic and critical path of computing all neighbor sums for 256 cells in one cycle.
+
+Strategy:
+- Pipeline the neighbor counting and cell update over two clock cycles to reduce combinational delay.
+- On the first cycle, compute and store neighbor counts per cell using a separate register array.
+- On the second cycle, compute next cell states based on stored neighbor counts.
+- This halves the combinational complexity per cycle and improves timing.
+- Keep synchronous load behavior intact, which resets the pipeline and loads initial state directly.
+- Use a single dimension 256-element array for neighbor counts (4 bits per cell since max neighbors=8).
+- Use bit masking for wraparound as before.
+- This adds latency of one clock cycle but yields better timing and reduced power by splitting computations.
+- The design remains fully synthesizable and uses simple loops with bit-shift indexing.
+- Code clarity and modularity are retained.
+
+This staged approach reduces the long critical path and large fan-in combinational block of the original all-at-once neighbor calculation and update.

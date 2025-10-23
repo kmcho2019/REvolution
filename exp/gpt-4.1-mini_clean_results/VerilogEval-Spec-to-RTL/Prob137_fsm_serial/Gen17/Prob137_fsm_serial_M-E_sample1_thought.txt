@@ -1,0 +1,7 @@
+Use a one-hot encoded FSM with separate states for waiting for start bit, receiving each data bit individually, checking the stop bit, and handling error recovery. Instead of a shift register, accumulate the data bits by shifting left and OR'ing in the LSB first bit on each cycle in the RECEIVE states. This accumulates data naturally without bit indexing or counters, as each RECEIVE_N state represents the reception of bit N.
+
+Generate the done signal in the stop bit check state only when a valid stop bit is received. For framing errors, transition to an ERROR_WAIT state that waits until the line returns to idle (logic 1) before returning to wait for the start bit again.
+
+Implement synchronous reset and update FSM state and data accumulator only on the rising clock edge. The done output is a one-cycle pulse.
+
+This approach uses one-hot states to simplify next state logic and sequencing, and replaces a generic counter with explicit states for data bits, increasing FSM area slightly but improving readability and deterministic timing per bit reception. It naturally sequences through each data bit reception state, reducing counter logic and increasing control granularity.

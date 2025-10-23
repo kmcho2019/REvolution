@@ -1,0 +1,18 @@
+Novel Architectural Idea:
+1. Circular Buffer Approach:
+   - Instead of traditional shifting, implement a circular buffer with pointer arithmetic
+   - Uses a write pointer to track insertion position, eliminating the need for physical shifting
+
+2. Dual-Edge Triggering:
+   - Utilizes both clock edges to effectively double the throughput
+   - Even edges: Update pointer logic
+   - Odd edges: Update buffer contents
+
+3. Power Optimization:
+   - Implements bit-level clock gating - only the modified bit receives clock
+   - Uses gray coding for pointer updates to minimize switching activity
+
+4. Performance Benefits:
+   - Eliminates shift propagation delay
+   - Pointer arithmetic is faster than physical shifting
+   - Dual-edge operation improves throughput without increasing clock frequency

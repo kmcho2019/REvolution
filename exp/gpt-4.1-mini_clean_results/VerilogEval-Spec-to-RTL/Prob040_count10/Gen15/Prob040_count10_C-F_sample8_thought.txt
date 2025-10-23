@@ -1,0 +1,8 @@
+To create a superior decade counter solution, I will fuse the strengths of both examples by structuring the design with clear separation of combinational next-state logic and sequential state updates, while maintaining an explicit synchronous reset inside the always block for better timing and synthesis.
+
+- I will compute the next count value combinationally (as in Example 2) but will not embed the reset logic into the combinational logic. Instead, the synchronous reset will be handled first inside the always block (as in Example 1), improving timing by simplifying combinational paths.
+- To reduce switching activity and improve clarity, I will use a clock enable (ce) signal that is asserted only when not resetting and the counter is less than 9, as in Example 1. This avoids redundant increments and toggling when counting is not needed.
+- The always block will update the register on the clock edge, first checking reset, then whether counting is enabled to increment, else hold the value (or reset to zero on reaching 9). This keeps the logic minimal and efficient.
+- This fusion achieves a clean, modular design that minimizes combinational logic in the next-state path and enables more straightforward timing optimization while controlling power via clock enable gating.
+
+Overall, this design blends the modular next-state logic clarity from Example 2 with the clock enable power optimization and synchronous reset from Example 1 for an optimal PPA balance.

@@ -1,0 +1,16 @@
+Simplification Strategy:
+1. State Representation:
+   - Recognize this is effectively a toggle FSM that only needs to track whether we've seen the first '1'
+   - Can use a single bit state register (state_B) instead of one-hot encoding
+2. Logic Optimization:
+   - Next state is simply OR of current state or input x
+   - Output z is x when in initial state (A), otherwise ~x
+3. Structural Changes:
+   - Eliminate separate next_state wires by computing directly in always block
+   - Simplify output logic to depend only on state and x
+
+Key Benefits:
+1. Reduced state representation from 2 bits to 1 bit
+2. Fewer logic operations in next state calculation
+3. Maintains identical functionality with less hardware
+4. Should improve all PPA metrics (timing, power, area)

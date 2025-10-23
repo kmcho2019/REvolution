@@ -1,0 +1,27 @@
+Novel Architecture: Hybrid Carry-Select with Early Overflow Prediction
+
+Key Innovations:
+1. **Hybrid Carry-Select Structure**:
+   - Combines ripple-carry for lower 32 bits (lower power)
+   - Uses carry-select for upper 32 bits (better timing)
+   - Balances power and performance by processing MSBs faster
+
+2. **Early Overflow Prediction**:
+   - Parallel overflow detection using sign bit analysis
+   - Computes potential overflow cases before full subtraction completes
+   - Uses speculative carry generation for critical path reduction
+
+3. **Optimized Data Path**:
+   - Shared logic for both ripple and select paths
+   - Minimized wire routing between segments
+   - Pre-computed carry groups for select logic
+
+4. **Power Gating**:
+   - Dynamic disable of upper 32-bit logic when not needed
+   - Conditional carry propagation based on operand analysis
+
+Implementation Strategy:
+- Lower 32 bits: Simple ripple-carry adder with power optimization
+- Upper 32 bits: Carry-select with 8-bit blocks for better timing
+- Overflow: Computed in parallel using sign prediction
+- Result: Merged from both segments with carry propagation

@@ -1,0 +1,9 @@
+The existing code can be refactored by utilizing a counter that counts down from 3 (not 4) when the reset signal is asserted. This way, the counter will start counting down immediately after the reset, ensuring that the shift_ena signal is asserted for exactly 4 clock cycles. 
+
+Instead of using a separate always block for the counter, we can utilize the fact that Verilog allows us to use the 'or' operator to assign values to variables in a more concise way.
+
+However, since the `counter` is not an output and its value will not affect other modules directly, we can simply utilize `always_ff` and get rid of unnecessary `assign` statement.
+
+To simplify and optimize the code, we can remove the redundant comparisons in the if-else statement and use the counter value directly to control the shift_ena signal.
+
+This refactored code should provide the same functionality as the original code but with improved structure and conciseness.

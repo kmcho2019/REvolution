@@ -1,0 +1,13 @@
+Novel approach using a one-hot state machine:
+1. Use a 5-bit one-hot encoded state register (4 active states + idle state)
+2. Each bit represents a specific cycle count (0-3) or the idle state
+3. On reset, initialize to state 00001 (first active cycle)
+4. Rotate left through the one-hot states for 4 cycles (00001→00010→00100→01000)
+5. After 4 cycles, transition to idle state (10000) and stay there
+6. shift_ena is asserted for all states except idle
+7. Benefits:
+   - Clear state representation (each bit = specific cycle)
+   - No comparators needed (simple shift operations)
+   - Naturally limits to exactly 4 cycles
+   - Easy to extend if cycle count changes
+   - Glitch-free output by design

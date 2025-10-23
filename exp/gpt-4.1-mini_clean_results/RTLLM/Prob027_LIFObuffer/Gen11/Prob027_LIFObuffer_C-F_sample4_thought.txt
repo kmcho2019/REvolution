@@ -1,0 +1,7 @@
+Fuse the two example approaches by using a stack pointer (SP) that counts the current number of elements (0 to 4), similar to Example 2 for simpler pointer logic and flag generation. Implement a next-state combinational block like Example 1 to clearly separate pointer and control logic from synchronous updates, enabling cleaner handling of boundary conditions and reducing clock-edge complexity.
+
+For push (RW=0), if not full, store dataIn at SP and increment SP. For pop (RW=1), if not empty, decrement SP and output the element at SP-1. DataOut updates only on pop, minimizing toggling and potential timing hazards.
+
+On reset, clear stack and set SP to zero (empty). Generate EMPTY and FULL flags combinationally from SP.
+
+By separating next state logic and synchronous updates, we achieve clear, maintainable control flow with optimized timing and power. Avoid clearing stack entries on pop to save toggling power. This fusion approach provides clean design hierarchy, reduced critical paths, and explicit state management for robustness.

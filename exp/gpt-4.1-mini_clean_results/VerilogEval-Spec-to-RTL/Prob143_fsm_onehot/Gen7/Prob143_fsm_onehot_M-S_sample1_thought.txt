@@ -1,0 +1,11 @@
+The FSM next state and output logic can be simplified by removing unnecessary intermediate signals and merging terms directly, especially for next_state[0]. Since next_state[0] depends on many states transitioning to S0 on input 0, we can OR all those states together first, then AND with ~in once, avoiding redundant terms. For outputs, we unify the logic into straightforward ORs using masks consistently.
+
+This simplification reduces the number of signals, logic depth, and improves readability while preserving exact functional behavior and supporting multiple active states. It maintains full combinational logic suitable for synthesis and multiple simultaneous states.
+
+In summary:
+- Combine all states transitioning to S0 on zero input into a single OR.
+- AND that combined signal once with ~in for next_state[0].
+- Use consistent mask-based OR reduction for outputs.
+- Remove redundant wires and groupings.
+
+This yields a compact, easy-to-read, functionally equivalent FSM combinational logic.

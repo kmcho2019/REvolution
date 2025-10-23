@@ -1,0 +1,13 @@
+Novel Architecture Idea:
+1. Shift Register Approach: Instead of storing bytes in separate registers, use a 24-bit shift register that shifts in new bytes from the left. This reduces register count and simplifies data movement.
+2. State Tracking with Counter: Use a simple 2-bit counter to track which byte we're receiving (0=waiting, 1=first byte, 2=second, 3=third).
+3. Early Done Detection: Generate 'done' combinatorially when counter reaches 3, making it appear immediately in the same cycle as the third byte.
+4. Reset Optimization: Only clear the counter on reset, leaving shift register contents as don't-care until needed.
+5. Power Gating: The shift register only shifts when valid data is being received, reducing unnecessary switching.
+
+Advantages:
+- Reduced area from shared shift register
+- Simplified control logic with counter
+- Immediate done signal generation
+- Lower power from gated shifting
+- Clean reset handling

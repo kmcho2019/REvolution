@@ -1,0 +1,19 @@
+To improve the existing solution, we need to address the issues mentioned in the feedback. 
+
+Firstly, we need to modify the FSM to properly handle the case where the stop bit is incorrect. This can be achieved by adding a separate state to wait for a stop bit when the previous stop bit was incorrect.
+
+Secondly, we should optimize the counter and start detection flag reset logic to ensure continuous transmission without requiring a new start bit after every byte.
+
+Thirdly, we can remove the separate always block for resetting the 'done' signal and integrate it into the main always block.
+
+Lastly, to optimize the design for better power, performance, and area (PPA), we can consider reducing the size of the shift register, implementing a more efficient state machine encoding, or using a single always block to handle all the logic.
+
+The improved design will have the following states: IDLE, RECEIVE, and WAIT_STOP. The IDLE state will wait for the start bit, the RECEIVE state will collect the incoming bits, and the WAIT_STOP state will wait for a stop bit when the previous stop bit was incorrect.
+
+We will use a 9-bit shift register to collect the start bit, 8 data bits, and the stop bit will be checked separately. This approach simplifies the logic and reduces the number of states required.
+
+The counter will be used to keep track of the number of bits received and to determine when to check the stop bit.
+
+The FSM will be designed to reset the 'done' signal in the same always block as the rest of the logic to avoid any potential synchronization issues.
+
+To optimize the design for better PPA, we will consider using a single always block to handle all the logic, reducing the size of the shift register, and implementing a more efficient state machine encoding.

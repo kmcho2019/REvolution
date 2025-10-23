@@ -1,0 +1,13 @@
+To improve the original design's performance and reduce carry propagation delay, we implement a hierarchical carry-lookahead logic inside the 16-bit CLA block rather than a ripple carry style within the block. This is done by computing group generate and propagate signals for 4-bit groups, then combining them to compute carries in parallel.
+
+Specifically:
+- Divide the 16-bit block into four 4-bit groups.
+- Calculate generate and propagate at bit and group levels.
+- Compute carry signals for each bit using carry-lookahead equations.
+- This reduces carry computation delay within the 16-bit block, making it a true carry-lookahead adder.
+
+For the 32-bit adder, keep the two-level architecture using two 16-bit CLA blocks chained by carry-out of the lower to carry-in of the upper block.
+
+Also, fix the port naming as per the problem statement where inputs and outputs are [32:1], not [31:0] or [15:0]. This improves code clarity and matches specification.
+
+This approach yields better performance (lower delay), lowers power by parallelizing carry logic, and modestly reduces area by hierarchical carry computation.

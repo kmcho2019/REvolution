@@ -1,0 +1,7 @@
+The correct implementation should be a simple 2:1 multiplexer feeding into a D flip-flop, without any clock gating. The key points are:
+1. Remove the problematic clock gating logic entirely
+2. Use a standard synchronous design with the clock always active
+3. Implement a pure 2:1 mux that selects between r_in (when L=1) and q_in (when L=0)
+4. The flip-flop should update on every positive clock edge
+5. This matches the original full_module's behavior when instantiated three times
+6. The output Q simply reflects the flip-flop's current state

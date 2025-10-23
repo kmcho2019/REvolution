@@ -1,0 +1,19 @@
+The original design uses a straightforward pipelined architecture with a four-stage balanced adder tree, which already splits the addition of partial products into manageable stages, improving clock frequency.
+
+To further optimize for power and area, we can:
+
+1. Register inputs and enable only when mul_en_in is asserted, thus gating unnecessary toggling in input registers.
+2. Add clock gating to internal registers (partial products and sums) to avoid switching when no valid multiplication is active, reducing dynamic power.
+3. Replace combinational partial product generation using shift operators with conditional partial product registers clocked only on enable, to avoid unnecessary switching.
+4. Use local wires for combinational partial product generation inside clocked process for better synthesis power control.
+5. Simplify output mux to use a registered output enable and avoid combinational gating at output (to prevent glitches).
+6. Keep enable signal pipelined with the same stages to ensure output valid alignment.
+7. Keep the same pipeline depth for latency balancing and frequency but optimize switching with clock gating.
+
+This approach slightly increases code complexity but reduces unnecessary switching and power consumption while maintaining the same latency and throughput.
+
+The improved code implements internal clock gating by only updating pipeline registers when the enable is high, including the partial product registers and sum registers, preventing switching in idle cycles. The enable pipeline tracks valid data flow throughout all stages.
+
+Additionally, partial products are generated in combinational logic per cycle and only latched on the clock when mul_en_in is asserted, minimizing toggling.
+
+This should provide better power efficiency with minimal or no impact on timing and area.

@@ -1,0 +1,7 @@
+To implement the TopModule with a 32-bit Galois LFSR, we first need to understand the structure of the Galois LFSR. It has taps at bit positions 32, 22, 2, and 1, which means that the values at these positions will be XORed with the least significant bit (LSB) to generate the next state. We will use a 32-bit vector to represent the current state of the LFSR. 
+
+On every positive clock edge, if the reset signal is high, the LFSR should be reset to 32'h1. Otherwise, we shift the bits to the right, and for the positions with taps (32, 22, 2, and 1), we XOR the bit at that position with the LSB (q[0]) to get the new value. The new LSB will be the result of XORing the bits at positions 32, 22, 2, and 1.
+
+However, since Verilog does not support directly accessing bit positions greater than the size of the variable, we'll adjust our tap positions to match a 0-indexed 32-bit vector. This means our taps will effectively be at positions 31, 21, 1, and 0 (for a 0-indexed vector).
+
+We will use a always block to handle the sequential logic triggered on the positive edge of the clock. Inside this block, we'll first check for the reset condition. If the reset is high, we set q to 32'h1. If not, we proceed to calculate the new state based on the current state and the positions of the taps.

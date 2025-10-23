@@ -1,0 +1,9 @@
+The design requires a 32-bit shift register for branch history with two main operations:
+1. Normal prediction update: shift in predict_taken when predict_valid is high
+2. Misprediction recovery: restore history from train_history and append train_taken when train_mispredicted is high
+
+Key points:
+- Misprediction has higher priority than normal prediction
+- Asynchronous reset clears the history
+- Output predict_history always reflects current history register value
+- On misprediction, new history is {train_history[30:0], train_taken}

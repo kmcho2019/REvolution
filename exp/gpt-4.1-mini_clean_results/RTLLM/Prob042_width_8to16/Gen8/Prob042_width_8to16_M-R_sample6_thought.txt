@@ -1,0 +1,9 @@
+Refactor the design by implementing a clear 2-state FSM with explicit state registers and output registers. Use a simpler handshake approach by only sampling `data_in` on the rising edge of `valid_in` (detecting valid_in pulses) to prevent repeated latching when `valid_in` is held high.
+
+Store the first 8-bit data in a register on the first valid input, then wait for the second valid input to combine both into 16-bit data_out and assert valid_out for one cycle. Output signals are registered and asserted synchronously with the clock.
+
+This approach uses a rising edge detector for `valid_in` to reliably capture single data inputs even if `valid_in` pulses or remains high, eliminating the need for the `accept_next` flag and relying purely on edge detection, making the design robust.
+
+The output valid_out and data_out signals are updated one clock cycle after the second data is latched, complying with the requirement for one-cycle output latency.
+
+Reset clears all registers. This structure is clean, easy to understand and verify, and avoids corner cases from the previous design.

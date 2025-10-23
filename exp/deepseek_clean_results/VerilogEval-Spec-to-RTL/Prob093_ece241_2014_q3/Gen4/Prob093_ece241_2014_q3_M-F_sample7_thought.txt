@@ -1,0 +1,26 @@
+Correct approach: Let's carefully analyze the K-map column by column (for each ab combination) and determine the exact logic needed for each mux_in bit:
+
+1. For ab=00 (mux_in[0]):
+   - Output is 1 when cd=10 (c=1,d=0)
+   - This is exactly c & ~d
+
+2. For ab=01 (mux_in[1]):
+   - Output is 1 when cd=10 (c=1,d=0)
+   - Same as mux_in[0] case (c & ~d)
+
+3. For ab=11 (mux_in[3]):
+   - Output is 1 when cd=00,11,10 (c=0,d=0 or c=1,d=1 or c=1,d=0)
+   - This is ~c | d (same as before)
+
+4. For ab=10 (mux_in[2]):
+   - Output is 1 when cd=00,11,10
+   - Same as mux_in[3] case (~c | d)
+
+Implementation strategy:
+1. Create a shared c & ~d signal for mux_in[0] and mux_in[1]
+2. Create a shared ~c | d signal for mux_in[2] and mux_in[3]
+3. Implement both using 2-to-1 muxes:
+   - For c & ~d: select ~d when c=1, else 0
+   - For ~c | d: select d when c=1, else 1
+
+This correctly implements all K-map requirements using only two 2-to-1 muxes while properly connecting to the 4-to-1 mux.

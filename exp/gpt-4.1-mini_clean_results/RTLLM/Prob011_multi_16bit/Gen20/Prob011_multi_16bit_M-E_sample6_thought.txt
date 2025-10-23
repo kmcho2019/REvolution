@@ -1,0 +1,13 @@
+Implement a sequential 16-bit unsigned multiplier using a classic shift-and-add algorithm with an explicit finite state machine and a simple 5-bit counter to track the number of processed bits. Instead of iterating from the most significant bit or using the multiplicand bits to control additions, this approach uses the multiplier's least significant bit to decide when to add the multiplicand to the accumulator.
+
+The key difference is to shift the product register right on every cycle, but store the multiplicand in a separate 32-bit register aligned on the left. The product register holds both the partial sum and the multiplier bits initially.
+
+On each clock cycle (while enabled by the start signal and not done), if the LSB of the product register is 1, add the multiplicand to the high half of the product. Then shift the entire product right by one bit, shifting in zero at the MSB.
+
+A single FSM tracks IDLE and BUSY states. The done flag is asserted when the count reaches 16 (all bits processed). The module resets all registers synchronously with the active-low reset.
+
+This design is clean, fully synchronous, and uses a standard shift-add multiplier approach without using the multiplicand bits but the multiplier bits to decide additions, which is more typical.
+
+All data registers (product, multiplicand, counter) are 32-bit or 16-bit as appropriate, and the output is assigned from the product register.
+
+This approach provides a clear and robust sequential multiplier implementation suitable for synthesis and teaching, fully compatible with the required interface signals.

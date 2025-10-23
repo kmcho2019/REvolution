@@ -1,0 +1,13 @@
+Novel Architecture Idea: Carry-Select Adder with Early Overflow Detection
+1. Instead of traditional carry-lookahead, use carry-select adder structure for better area-time tradeoff
+2. Split the 8-bit addition into two 4-bit chunks (low and high nibbles)
+3. Compute both possible results for high nibble (with carry=0 and carry=1)
+4. Use the actual carry-out from low nibble to select correct high nibble result
+5. Implement early overflow detection by:
+   - Checking MSB sign bits of inputs and potential results
+   - Determining overflow condition before final result selection
+6. Benefits:
+   - Parallel computation reduces critical path
+   - Early overflow detection improves timing
+   - Modular structure is scalable
+   - Balanced area and performance

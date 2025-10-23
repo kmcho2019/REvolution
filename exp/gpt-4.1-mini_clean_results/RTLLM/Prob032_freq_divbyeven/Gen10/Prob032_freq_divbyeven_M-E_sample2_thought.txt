@@ -1,0 +1,15 @@
+An alternative approach to divide the clock by an even number is to use a modulo counter that counts from 0 up to NUM_DIV-1 and resets. The divided clock output toggles exactly when the counter reaches half the division period, producing a 50% duty cycle output clock.
+
+This approach uses a modulo-N counter (width adjusted via $clog2(NUM_DIV)) counting from 0 to NUM_DIV-1:
+- When counter hits NUM_DIV/2 - 1, toggle clk_div.
+- When counter reaches NUM_DIV-1, reset counter to zero.
+
+This guarantees the output clock toggles every half period (NUM_DIV/2 cycles), thus achieving the desired frequency division by an even number NUM_DIV.
+
+The benefit is a straightforward modulo counter that cycles fully from 0 to NUM_DIV-1, with clk_div toggling halfway through, which also ensures symmetrical output.
+
+The module includes:
+- A parameter NUM_DIV (even, >=2).
+- A counter width computed by $clog2(NUM_DIV).
+- An active-low asynchronous reset.
+- Proper parameter check at elaboration time.

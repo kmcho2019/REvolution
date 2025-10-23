@@ -1,0 +1,5 @@
+To simplify the implementation of the 8-bit ring counter, we can use bitwise operations to set the appropriate bit in the `out` register based on the `pos` value. This approach eliminates the need for a `case` statement and directly sets the bits of `out` to reflect the current state of the counter. 
+
+By using the left shift operator (`<<`) to shift 1 to the left by `pos` bits, we effectively set the bit corresponding to the current position to '1', and then assign the result to `out`. This method ensures that `out` always has exactly one bit set to '1', which shifts through the bits in a cyclic manner with each clock pulse.
+
+The simplified code focuses on initializing `pos` and `out` when reset is high, and then updating `pos` and `out` on each rising edge of the clock signal, using the modulus operator (`%`) to wrap `pos` around from 7 back to 0 after each complete cycle.

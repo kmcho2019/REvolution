@@ -1,0 +1,11 @@
+The main issue causing syntax errors was the declaration of wires and regs inside the clocked always block, which is illegal in Verilog. To fix this, all intermediate signals used in the sequential logic should be declared at the module level. 
+
+The subtraction and control logic will be split: intermediate combinational signals (like remainder_ext, sub, borrow) will be declared as wires outside the always block and assigned combinationally. The next state of the shift register (SR_next) will be a reg declared at module level, assigned inside the clocked always block using blocking assignments.
+
+This way, we separate combinational logic (assign statements for wires) and sequential logic (always @(posedge clk)) cleanly, respecting Verilog's variable scope rules.
+
+Additionally, we keep the division process logic consistent with the problem description: iterative radix-2 division for 8 cycles, supporting signed and unsigned division, sign correction after division, and proper res_valid signal handling.
+
+Special care is taken to handle division by zero and to initialize/reset all registers properly.
+
+This structure eliminates syntax errors and maintains the design's functional correctness.

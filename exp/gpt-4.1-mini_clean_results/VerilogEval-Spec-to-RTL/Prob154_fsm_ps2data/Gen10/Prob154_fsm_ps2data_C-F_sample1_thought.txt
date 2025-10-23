@@ -1,0 +1,7 @@
+Fuse the strengths of both examples by implementing a clean 2-bit FSM with explicit states WAIT_SYNC, BYTE2, and BYTE3 for clear control flow. Use load-enable signals for byte registers to minimize toggling and power, updating only when necessary. Update done and out_bytes exclusively on the cycle when the third byte arrives to reduce switching and stabilize outputs otherwise. Maintain synchronous active-high reset and non-blocking assignments for robust timing and clarity.
+
+Enhance power efficiency by ensuring that done and out_bytes registers update only when needed, holding their values otherwise to prevent unnecessary toggling. Keep next-state logic combinational, simple, and directly dependent on current state and input in[3] bit for minimal logic depth and good performance.
+
+Maintain the output byte ordering as specified: out_bytes[23:16] = byte1, [15:8] = byte2, [7:0] = byte3. Done is a one-cycle pulse synchronous to clk signaling message receipt.
+
+This fusion balances minimal register usage, clear FSM structure, power-aware datapath control, and clean timing, fulfilling all functional, timing, and power requirements optimally.

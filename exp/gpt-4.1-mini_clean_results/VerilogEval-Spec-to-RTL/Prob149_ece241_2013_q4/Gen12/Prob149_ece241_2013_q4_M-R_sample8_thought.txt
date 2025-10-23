@@ -1,0 +1,9 @@
+Refactor the design to improve clarity and correctness of the 'dfr' logic by explicitly registering the previous water level and detecting sensor changes in a streamlined manner.
+
+- Use a simple synchronous process to store the previous sensor input (`prev_s`) and previous water level (`prev_level`) at each clock.
+- Decode the current water level (`current_level`) combinationally from `s`.
+- On detecting any sensor change (`s != prev_s`), update the previous water level to the old current level.
+- Derive the 'dfr' output as a combinational comparison between the current water level and the previous water level recorded at the last sensor change (i.e., assert dfr if current level > previous level).
+- Make all outputs combinational based on the registered levels.
+- At synchronous reset, initialize to BELOW_S0 level with all outputs asserted, per spec.
+- This structure cleanly separates combinational decoding and synchronous storage, avoids timing ambiguities, and maintains the original behavior with a clearer and more maintainable code style.

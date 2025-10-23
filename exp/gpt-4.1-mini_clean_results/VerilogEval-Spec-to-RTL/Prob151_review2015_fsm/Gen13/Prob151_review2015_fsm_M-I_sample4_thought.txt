@@ -1,0 +1,9 @@
+To optimize the FSM for better PPA, I will:
+
+- Use one-hot state encoding instead of binary to simplify next-state combinational logic, reducing the logic depth and improving timing (better WNS and TNS).
+- Remove the shift_count register and replace it with a 2-bit shift_counter encoded as two flip-flops, clock-enabled only during shifting, reducing switching activity and power.
+- Only update the shift_counter when shifting, holding its value otherwise, thus saving toggling power.
+- Simplify pattern detection logic by moving pattern progress from state encoding to the FSM states directly without a separate data shift register.
+- Keep all outputs combinational from one-hot states, keeping outputs glitch-free and minimal logic.
+- Retain synchronous active-high reset.
+- Overall, this should reduce combinational complexity and power and improve timing by reducing critical paths and unnecessary toggling in counters.

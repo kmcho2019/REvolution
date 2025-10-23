@@ -1,0 +1,14 @@
+Fusion Strategy:
+1. For Y1: Both examples correctly implement the simple case where Y1 = y[0] & w. This is optimal and needs no change.
+
+2. For Y3: 
+   - Example 1 uses separate AND operations with ~w, which is less efficient.
+   - Example 2 factors out ~w, reducing gate count and power consumption.
+   - We'll adopt Example 2's approach for Y3 as it's more efficient.
+
+3. Additional Optimization:
+   - Since this is one-hot encoding, we know only one y[i] is active at a time.
+   - The OR operation (y[1] | y[2] | y[4] | y[5]) can be implemented as a simple wire OR since the terms are mutually exclusive.
+   - This maintains the same functionality while being conceptually cleaner.
+
+The fused solution combines Example 2's efficient factoring with the conceptual clarity of one-hot encoding properties.

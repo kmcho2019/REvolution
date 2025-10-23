@@ -1,0 +1,27 @@
+Enhanced Pulse Detection with 3-Cycle Validation
+
+1. Core Fixes:
+   - Expand shift register to 3 bits to track full 0->1->0 sequence
+   - Only assert data_out when seeing exact pattern 0->1->0 in last three cycles
+   - Maintain same output timing (assert on last 0 of the sequence)
+
+2. Improved Detection:
+   - shift_reg[2]: oldest sample (t-2)
+   - shift_reg[1]: middle sample (t-1)
+   - shift_reg[0]: newest sample (t)
+   - Pattern match when shift_reg == 3'b010
+
+3. Advantages:
+   - Guarantees full three-cycle validation
+   - No false positives from partial sequences
+   - Maintains simple shift register approach
+   - Clear timing relationship
+
+4. Reset Behavior:
+   - Initializes all registers to 0
+   - Ensures clean start state
+
+5. Edge Case Handling:
+   - Properly handles repeated pulses
+   - Correctly ignores incomplete sequences
+   - No glitches on output

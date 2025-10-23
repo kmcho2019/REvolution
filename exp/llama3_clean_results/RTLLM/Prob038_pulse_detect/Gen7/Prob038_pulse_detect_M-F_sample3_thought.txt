@@ -1,0 +1,11 @@
+To correct the pulse detection module, we need to focus on accurately identifying the sequence of a pulse (0 to 1 to 0) over three consecutive clock cycles. The current implementation has logical errors that prevent it from correctly detecting pulses.
+
+First, we should adjust the state machine transitions to ensure that it correctly identifies the start, peak, and end of a pulse. We need to introduce additional states to track the progression of the pulse accurately. 
+
+The initial state will be IDLE, waiting for the first 1 after a 0. Upon detecting this transition, we move to the RISING state. From RISING, if we encounter another 1, we move to the HIGH state, indicating the pulse has reached its peak. Then, from the HIGH state, if we encounter a 0, we move to the FALLING state and set data_out to 1, indicating the end of the pulse. 
+
+This approach ensures that data_out is set to 1 only when the pulse sequence is fully detected and it transitions back to 0 immediately after, regardless of how long data_in remains high.
+
+Additionally, to improve performance and reduce area, we will ensure that our state encoding is efficient and the logic for state transitions is optimized.
+
+To further optimize the module, we could consider clock gating for the state register to reduce power consumption when the module is not active. However, given the simplicity of the module and the constraints provided, our primary focus will be on ensuring the logic is correct and optimized without introducing unnecessary complexity.

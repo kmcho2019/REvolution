@@ -1,0 +1,11 @@
+To combine the strengths of both examples, I will implement the logic explicitly as an AND gate with an inverted input for clarity, but use a NAND gate primitive instead of separate inverter and AND gates. A NAND gate with inputs in1 and in2, and then inverting the output will produce (in1 & ~in2). However, since we only have one bubble on in2 input to the AND gate, this maps directly to a NAND gate with in2 inverted internally. Using a NAND gate with in2 inverted before the gate is equivalent to in1 & ~in2.
+
+Alternatively, because the desired function is out = in1 & ~in2, this can be realized by a NAND gate feeding an inverter or directly by a NAND gate with the correct input inversion if the synthesis tool supports it.
+
+To keep code simple and technology-independent, explicitly invert in2 as a wire, then feed it and in1 to an AND gate.
+
+This approach preserves readability and debugging ease from Example 2 and simplicity from Example 1.
+
+I will explicitly invert in2 using an intermediate wire (for clarity), then AND with in1, resulting in minimal gates, clear bubble indication, and straightforward code.
+
+This fusion avoids unnecessary gate duplication, keeps timing optimal, and is the best balance of clarity and minimalism.

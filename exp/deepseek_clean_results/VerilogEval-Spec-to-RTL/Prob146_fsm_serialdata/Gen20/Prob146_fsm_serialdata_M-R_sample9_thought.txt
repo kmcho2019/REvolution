@@ -1,0 +1,13 @@
+I'll refactor the solution with these key changes:
+1. Use continuous assignments for combinational logic where possible
+2. Simplify the state machine to 3 states (IDLE, RECEIVE, STOP) by merging ERROR handling into STOP state
+3. Make done a one-cycle pulse instead of maintained signal
+4. Use left-shift for data collection (more natural for LSB-first)
+5. Separate combinational and sequential logic clearly
+6. Add enable signals to reduce unnecessary switching
+
+The improved state machine flow:
+- IDLE: Wait for start bit (0)
+- RECEIVE: Collect 8 bits (left shift)
+- STOP: Check stop bit, return to IDLE (stays here if stop bit invalid)
+- Done pulses for one cycle when valid stop bit detected

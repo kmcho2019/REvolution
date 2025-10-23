@@ -1,0 +1,18 @@
+To improve the initial design for better performance and power efficiency, I will pipeline the multiply-accumulate operation by splitting it into two stages:
+
+1. First stage: Register inputs and compute the full 64-bit product in one clock cycle.
+2. Second stage: Accumulate the lower 32 bits of the product into the accumulator register.
+
+This breaks the long combinational path of multiplication plus addition into two shorter paths, enabling higher clock frequency (better WNS and TNS). It also allows clock gating on the multiplier inputs/registers to reduce switching power on unused cycles.
+
+Since the accumulator is 32-bit but the multiplication result is 64-bit, we only accumulate the lower 32 bits, as per original requirement. Overflow/saturation is removed to simplify logic and save area and power, assuming the application can tolerate wrap-around (the original spec did not mandate saturation).
+
+This pipeline approach reduces critical path delay significantly and lowers power by gating inputs after input registers. The overall latency increases by one cycle, which is acceptable for typical MAC PE pipelines.
+
+The improved module uses two always blocks for pipelining and registers to hold intermediate values:
+- Stage 1 registers inputs a, b and computes product.
+- Stage 2 accumulates product[31:0] to c.
+
+Reset is synchronous and clears the accumulator and pipeline registers.
+
+This design balances improved clock frequency and power with minimal area increase due to pipelining registers.

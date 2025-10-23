@@ -1,0 +1,28 @@
+Fusion Strategy:
+1. State Storage Optimization:
+   - Use a 3-bit shift register (from Example 1) to reduce area and power
+   - Maintain the 'found' register from both examples for clear state tracking
+
+2. Detection Logic:
+   - Implement parallel comparison (from Example 2) for better timing
+   - Combine with the efficient {shift_reg, data} comparison (from Example 1)
+   - This creates a hybrid approach that checks both partial and full patterns
+
+3. Power Optimization:
+   - Freeze shift register updates after detection (from both examples)
+   - This reduces unnecessary switching activity
+
+4. Timing Improvement:
+   - The parallel comparison of shift_reg[2:0] and data separately reduces critical path
+   - The 3-bit register reduces fan-out compared to 4-bit version
+
+5. Clean Implementation:
+   - Single always block for all sequential logic
+   - Direct assignment of output for minimal combinational logic
+
+Key Benefits:
+- Reduced area from 3-bit shift register vs 4-bit
+- Improved timing from parallel comparison approach
+- Lower power from minimized switching activity
+- Clear state tracking with 'found' register
+- Maintains all functional requirements

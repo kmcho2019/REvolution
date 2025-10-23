@@ -1,0 +1,21 @@
+The original code correctly implements a radix-4 Booth multiplier but the variable left shift by (2*cycle_cnt) in the critical path results in a large barrel shifter that affects timing and area. To fix this, I will restructure the design to eliminate the wide variable shift.
+
+Instead of shifting the partial product combinationally by a variable amount each cycle, I will use an accumulator register (`product`) and keep the partial products aligned by adding them to `product` directly, then shifting the product right (or left) each cycle accordingly.
+
+Since the Booth algorithm processes 2 bits per cycle (radix-4), there are 4 cycles for 8-bit operands. We can implement a shift-add architecture where the product register shifts right 2 bits each cycle, and we add the partial product aligned to the least significant bits.
+
+Specifically:
+
+- Keep `product` as a 34-bit signed register to hold intermediate results (to avoid overflow).
+- The multiplicand is sign-extended to 16 bits.
+- At each cycle, decode the current 3 Booth bits, generate partial product (multiplicand * factor).
+- Add partial product to the lower bits of `product` without any shifting.
+- Shift `product` right by 2 bits for the next cycle.
+- After 4 cycles (for 8-bit inputs), the product register holds the final result in its upper bits.
+- Output the lower 16 bits of `product` as the final product.
+
+This approach removes the costly variable shifter. The only shifting is a fixed 2-bit right shift of the product register per cycle, which is cheap in hardware.
+
+The reset logic and ready signal remain as before, with proper initialization and flags.
+
+This design improves timing and area while maintaining functionality and correctness.

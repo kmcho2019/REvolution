@@ -1,0 +1,13 @@
+The original design is correct and clean, but we can improve PPA by optimizing the FSM encoding and output logic:
+
+1. Use one-hot encoding for FSM states to simplify next-state decoding and reduce combinational logic depth. With 5 states, one-hot uses 5 flip-flops but simplifies logic, improving timing and potentially reducing power.
+
+2. Move the sequence_detected output generation from being combinational on next_state to a Moore output decoded purely from the registered current state. This change reduces glitches and dynamic switching power.
+
+3. Simplify next-state logic by using straightforward logic expressions from one-hot states, which can reduce LUT usage and improve performance.
+
+4. Keep synchronous active-low reset and register outputs for timing stability.
+
+This approach trades a slight increase in FF count for simpler combinational logic, better timing, and potentially lower dynamic power, as the output is registered and glitches are minimized.
+
+Overall, this one-hot FSM with registered Moore output is a classic, robust approach for sequence detectors needing reliable timing and clean outputs.

@@ -1,0 +1,1 @@
+The bug in the original code is that the 'result_is_zero' flag is only set when 'out' is zero, but it's not cleared when 'out' is non-zero. This creates a latch for 'result_is_zero', which is undesirable in combinational logic. The fix is to always assign a value to 'result_is_zero' in all cases, setting it to 1 when 'out' is zero and 0 otherwise.

@@ -1,0 +1,10 @@
+To design the finite state machine (FSM) for receiving bytes from a serial communication protocol, we can define several states to handle the start bit, data bits, and stop bit. The states can be: 
+- Idle: waiting for a start bit
+- Start: waiting for the first data bit after detecting a start bit
+- Data: collecting the 8 data bits
+- Stop: verifying the stop bit after collecting all data bits
+- Error: waiting for a stop bit when it doesn't appear after data bits
+
+We will use a counter to keep track of the number of data bits collected. When in the Data state, we shift the incoming bit into the out_byte register from the least significant bit (LSB) to the most significant bit (MSB). Once we've collected all 8 bits, we move to the Stop state to verify the stop bit. If the stop bit is correct, we assert done and move back to the Idle state. If the stop bit is incorrect, we move to the Error state and wait for a stop bit before returning to the Idle state.
+
+The FSM will have a synchronous reset that resets all states and registers to their initial values when reset is high.

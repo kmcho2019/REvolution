@@ -1,0 +1,7 @@
+Instead of sequentially accumulating inputs in one register, use a small shift-register approach to store the four valid 8-bit inputs as they arrive. Once four inputs are collected, sum them simultaneously with a combinational adder tree. Output the sum and assert valid_out for one cycle.
+
+This architecture decouples accumulation from the clock domain and limits the summation combinational logic to one clock cycle every four valid inputs, potentially improving timing by parallelizing the final addition. The storage elements are four 8-bit registers, and the sum outputs a 10-bit value as required.
+
+Reset clears the shift registers and counter. When valid_in is asserted, shift data_in into the register array and increment a 2-bit counter. When counter reaches 4, perform addition of all four stored inputs to produce data_out, assert valid_out, and reset the counter.
+
+This method gives a straightforward pipeline: data collection over four valid_in cycles, and a single-cycle combinational sum, yielding a clean output pulse and potentially better timing due to parallel addition.

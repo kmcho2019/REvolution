@@ -1,0 +1,13 @@
+Fix the delay bits loading to truly be MSB-first by shifting delay right and inserting new bits at the MSB (highest) position, so the first received bit becomes delay[3], second delay[2], etc. This respects the problem specification exactly.
+
+Remove the "-1" in the total_cycle initialization to count the full (delay+1)*1000 cycles without off-by-one error.
+
+Implement a cycle counter within each 1000-cycle segment to keep count stable over each 1000 clock cycles. Only decrement the delay step after 1000 cycles. This way, count output changes only every 1000 clock cycles, exactly as specified.
+
+Keep pattern_shift updated only in SEARCH state, ignore data input elsewhere.
+
+Use a single-cycle pulse on state transitions to clear registers to avoid glitches.
+
+Maintain synchronous reset and state update logic, and keep outputs registered to avoid glitches.
+
+This approach ensures proper MSB-first delay loading, precise timing, and count stability matching the specification exactly.

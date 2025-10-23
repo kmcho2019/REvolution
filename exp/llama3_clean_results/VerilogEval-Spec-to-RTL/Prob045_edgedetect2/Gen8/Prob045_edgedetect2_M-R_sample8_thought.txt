@@ -1,0 +1,5 @@
+To refactor the provided Verilog code, we can focus on restructuring the state machine and utilizing combinational logic more efficiently. One approach is to eliminate the need for the `always` block used for sequential logic by instead using a combination of registers and combinational logic. This can be achieved by assigning the edge detection output directly through a continuous assignment (`assign`) statement and utilizing the registered input for the previous state comparison.
+
+The key to this refactoring is recognizing that the edge detection logic (XOR operation between the current input and the previous input) can be implemented using combinational logic. The previous input state is still updated sequentially, but the detection of edges is done through continuous assignment, which simplifies the code and potentially improves its synthesizability.
+
+Additionally, we can maintain the initialization of the previous state register to ensure that the system starts with a known condition, which is essential for predictable behavior.

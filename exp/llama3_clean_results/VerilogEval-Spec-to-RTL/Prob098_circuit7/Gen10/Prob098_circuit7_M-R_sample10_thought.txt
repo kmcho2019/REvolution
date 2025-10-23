@@ -1,0 +1,7 @@
+The provided code implements a simple finite state machine (FSM) to control the output q based on the input a. To refactor this code, we can simplify the state transition logic and utilize a more straightforward approach to update the output q. Instead of using an enum for states, we can directly use the output q as the state variable since it only has two possible values: 0 and 1. This refactoring reduces the complexity of the code and makes it easier to understand and maintain.
+
+We will remove the need for an explicit state machine by directly assigning the value of q based on the current value of a and the previous value of q. This approach eliminates the need for separate state and next_state variables, making the code more compact.
+
+The refactored code will use a single always block that is sensitive to the positive edge of the clock. Inside this block, we will update the value of q based on the current value of a and the previous value of q. If a is high, q will be set to 0; otherwise, q will retain its previous value. This logic is equivalent to the original state machine but is implemented in a more straightforward manner.
+
+By removing the unnecessary complexity of the original state machine implementation, the refactored code is expected to have similar or slightly improved PPA metrics, especially in terms of area and power consumption, due to its simplified structure.

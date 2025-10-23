@@ -1,0 +1,9 @@
+The current solution is already quite efficient with better PPA metrics than the reference. However, we can make a few micro-optimizations:
+
+1. Remove the explicit state encoding since we're using a shift register approach
+2. Make the output purely combinational for minimal latency
+3. Simplify the reset logic by combining it with the clock edge trigger
+4. The shift register approach inherently handles overlapping sequences
+5. The output z is simply when we have "10" in history and current input is "1"
+
+The only potential improvement would be to make the output register-based to potentially improve timing at the cost of one cycle latency, but since the current timing is already better than reference, we'll keep it combinational.

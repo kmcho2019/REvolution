@@ -1,0 +1,14 @@
+Simplified design approach:
+1. Reduce state count by combining similar states where possible
+2. Use only 3 states to track consecutive 1s (0-2, 3-5, 6+)
+3. Output logic becomes purely combinational based on current state and input
+4. Reset initializes to "no 1s" state
+5. Key simplifications:
+   - STATE_0-5 collapsed into a counter (0-5)
+   - STATE_DISC handled implicitly by resetting counter after discard
+   - STATE_FLAG and STATE_ERR merged into single error state
+   - Outputs generated immediately when patterns detected (Mealy-style)
+
+New state representation:
+- state[1:0]: tracks consecutive 1 count (0-2)
+- state[2]: error state (1 when in error)

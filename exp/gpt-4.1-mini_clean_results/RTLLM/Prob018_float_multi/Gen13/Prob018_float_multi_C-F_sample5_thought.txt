@@ -1,0 +1,22 @@
+Fuse the best ideas from both examples by adopting a multi-cycle sequential design controlled by a 3-bit counter (like Example 1) for improved timing and area, while using clean, non-blocking assignments and better separation between combinational and sequential logic (as recommended in Example 1's feedback). 
+
+Key improvements over Example 1:
+- Replace the embedded sequential rounding logic that uses blocking assignments with a combinational rounding function or a separate combinational always block; this cleanly separates rounding calculation from clocked registers and avoids synthesis issues.
+- Tighten signal widths and consistently use non-blocking assignments in sequential always blocks to improve synthesis and timing.
+- Incorporate early special case detection to bypass unnecessary multiplication when possible (Example 2 style), but perform this in the sequential flow to maintain multi-cycle operation.
+- Maintain explicit multi-cycle sequencing with minimal pipeline registers, breaking down the multiplication and normalization into steps to reduce critical path delay.
+- Keep the 24x24 multiplier combinational but latch results after one cycle to reduce combinational depth per clock.
+- Include explicit sticky bit computation by OR-reduction of relevant bits.
+- Handle underflow and overflow cases explicitly, flushing to zero or infinity.
+- Ensure the output is stable until new input is captured.
+- Use synchronous reset for clean initialization.
+
+This fusion approach balances:
+- Reduced critical path per cycle from multi-cycle processing,
+- Cleaner non-blocking coding style and logic separation,
+- Efficient special case handling,
+- Minimal state registers and pipeline stages for area and power,
+- Correct IEEE 754 rounding and normalization with accurate guard/round/sticky bits,
+- Good modularity and ease of verification.
+
+This leads to a synthesizable, efficient, and maintainable float multiplier module suitable for timing-constrained environments with moderate throughput needs.

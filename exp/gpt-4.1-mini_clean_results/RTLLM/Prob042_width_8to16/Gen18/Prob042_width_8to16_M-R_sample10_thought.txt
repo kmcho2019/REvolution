@@ -1,0 +1,20 @@
+To refactor the design, I will maintain the core behavior but simplify the state machine to a two-state FSM:
+
+- STATE_IDLE: Waiting for the first valid input. On valid_in, store it and transition to STATE_WAIT_SECOND.
+- STATE_WAIT_SECOND: Waiting for the second valid input. On valid_in, capture the second data, prepare the output, assert valid_out for one cycle, and return to STATE_IDLE.
+
+This FSM has only two states, simplifying control logic.
+
+I will also separate the output data and valid_out register updates clearly:
+
+- data_lock holds the first 8-bit data.
+- Upon the second valid_in in STATE_WAIT_SECOND, capture the second 8-bit data_in, concatenate with data_lock to form data_out.
+- valid_out will be asserted for exactly one cycle on the clock cycle after the second valid input.
+- All registers update synchronously on posedge clk or asynchronously on negedge rst_n.
+- The valid_out and data_out signals are cleared on reset and otherwise only asserted for the output cycle.
+- Use non-blocking assignments consistently to avoid glitches.
+- The design ensures that if there is a single valid_in, output waits for the second valid_in before asserting valid_out and data_out.
+- The first arriving 8-bit data is placed in the higher 8 bits and the second data in the lower 8 bits of the 16-bit output.
+- The FSM transitions and outputs are clearly defined and protected against invalid input timing.
+
+This approach simplifies the design and makes the output timing and data concatenation clearer while matching all requirements.

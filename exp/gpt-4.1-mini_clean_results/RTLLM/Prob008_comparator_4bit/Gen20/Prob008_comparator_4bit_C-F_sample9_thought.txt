@@ -1,0 +1,26 @@
+To create a superior 4-bit comparator by fusing the best ideas from both examples, I will:
+
+1. Use bitwise XNOR (~^) for per-bit equality signals to improve clarity and synthesis friendliness, as done in both examples.
+
+2. Use borrow generate (g[i]) and propagate (p[i]) signals as in both examples, with p[i] = eq[i].
+
+3. Employ the hierarchical, factored borrow_out expression from Example 2:
+   borrow_out = g3 | (p3 & (g2 | (p2 & (g1 | (p1 & g0))))
+   This reduces gate count and logic depth compared to the fully expanded OR-AND form, optimizing power and area.
+
+4. Implement a balanced AND tree for equality checking (eq_01 & eq_23), which slightly improves logic depth and timing versus linear AND chains.
+
+5. Produce mutually exclusive outputs:
+   - A_less = borrow_out
+   - A_equal = equal_bits
+   - A_greater = ~(borrow_out | equal_bits)
+
+6. Keep all logic purely combinational with continuous assignments for clarity, good synthesis, and minimal latency.
+
+7. Additionally, for clarity and possible optimization, I will maintain explicit intermediate wires for each signal, favoring readability and synthesis tool optimizations.
+
+This fusion combines clarity, area/power efficiency, and performance with minimal logic depth, resulting in a clean, efficient 4-bit comparator suitable for synthesis targeting moderate or advanced technologies.
+
+No unnecessary logic is introduced, the signals are straightforward to understand, and mutual exclusivity is guaranteed.
+
+The code is self-contained and fully combinational, ready for synthesis and simulation.

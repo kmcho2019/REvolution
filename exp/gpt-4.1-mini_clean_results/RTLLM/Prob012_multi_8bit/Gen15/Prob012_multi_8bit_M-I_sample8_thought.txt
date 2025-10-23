@@ -1,0 +1,12 @@
+To improve the given combinational 8-bit multiplier's PPA without adding sequential complexity, I will optimize by implementing a simple iterative shift-and-add approach inside a combinational always block or a generate-for loop. This eliminates the costly balanced adder tree of multiple 16-bit adders, reducing area and power by summing partial products sequentially in a single accumulation variable rather than 8 parallel adders.
+
+The improved method:
+- Initialize a 16-bit product register to zero.
+- Iterate over each bit of B.
+- When B[i] is 1, add A shifted by i to the product accumulator.
+- This approach maintains full combinational logic but reduces the number and width of adders active simultaneously.
+- It produces functionally equivalent results with fewer operations happening in parallel, reducing switching activity and area.
+- The shift is done via shift-left operator on A, and addition is performed with a single 16-bit adder inside a for loop.
+- Since the for loop is unrolled during synthesis, the circuit remains purely combinational.
+
+This solution trades off some performance (longer critical path due to accumulation chain) for improved area and power efficiency, which is typical for simple shift-and-add multipliers.

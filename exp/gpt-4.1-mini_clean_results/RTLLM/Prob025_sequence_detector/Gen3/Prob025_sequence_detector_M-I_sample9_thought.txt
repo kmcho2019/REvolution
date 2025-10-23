@@ -1,0 +1,7 @@
+The original FSM design and reset handling are correct, but the feedback points out a port naming inconsistency ("reset_n" in module vs "rst_n" in testbench). To improve and avoid confusion, rename the reset signal to "rst_n" (commonly used) consistently in the module interface and internals.
+
+Additionally, optimize state encoding from 3-bit binary to 3-bit one-hot style with clearly separated states, which can improve synthesis and speed because state decoding logic is simpler. Also, separate the sequence_detected output logic from the state register update to ensure it is asserted for exactly one clock cycle when the sequence is detected.
+
+Finally, document the FSM transitions clearly and reset behavior for maintainability. This approach improves clarity, synthesis, and simulation interoperability without changing functional behavior.
+
+The module will use synchronous reset for simplicity in FPGA implementations, but can be modified back to asynchronous if needed.

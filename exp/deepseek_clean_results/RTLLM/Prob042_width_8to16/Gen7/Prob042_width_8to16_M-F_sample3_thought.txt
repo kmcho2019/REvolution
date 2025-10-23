@@ -1,0 +1,14 @@
+To address the synthesis issues while maintaining the same functionality, I'll make these improvements:
+
+1. Replace the implicit state detection (data_lock == 8'b0) with an explicit state flag for better synthesis reliability
+2. Maintain separate always blocks for reset and normal operation to improve timing closure
+3. Use non-blocking assignments consistently throughout
+4. Keep the same timing behavior where output is only valid after two valid inputs
+5. Ensure all registers are properly initialized on reset
+
+Key changes:
+- Added explicit 'has_first_byte' flag for clear state representation
+- Separated reset logic for better synthesis optimization
+- Maintained same cycle-accurate behavior
+- Improved readability with clear state transitions
+- More robust synthesis pattern with explicit control signals

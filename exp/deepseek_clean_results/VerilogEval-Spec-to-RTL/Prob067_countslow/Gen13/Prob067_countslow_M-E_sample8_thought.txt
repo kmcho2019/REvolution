@@ -1,0 +1,18 @@
+Novel Approach: One-Hot State Machine with Enable Gating
+1. Instead of a binary counter, implement the decade counter as a one-hot state machine (10 states)
+2. Each state directly represents one count value (0-9) with a single bit set
+3. Advantages:
+   - Simple state transitions (just shift left with wrap-around)
+   - No need for comparison logic to detect terminal count (state[9] directly indicates count=9)
+   - Natural power savings since only one flip-flop toggles per count
+   - Easy to decode outputs (q is just the lower 4 bits of state)
+4. Implementation:
+   - 10-bit one-hot state register
+   - Shift-left with wrap-around when enabled
+   - Synchronous reset to state 0 (1'b1 << 0)
+   - Output q is bits [3:0] of state (works because 9 is 1001 in binary)
+5. Benefits:
+   - No arithmetic operations needed
+   - Minimal combinational logic
+   - Natural power gating (only one bit changes per clock)
+   - Simple terminal count detection

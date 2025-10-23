@@ -1,0 +1,13 @@
+Refactor the FSM by explicitly separating state, direction, and outputs into clear combinational and sequential blocks without using typedef enum, to maximize clarity and synthesis friendliness.
+
+- Use parameter definitions for states for wider tool support.
+- Use a single always_ff block for state and direction updates.
+- Use combinational always_comb blocks for next_state and next_dir logic separately, improving readability.
+- Separate ground edge detection logic as signals updated inside always_ff.
+- Instead of holding previous ground in a register, implement a small 2-flip-flop synchronizer with a one-cycle delay to stabilize the ground signal.
+- The direction update occurs only in walking state when bumps occur and no ground transition this cycle.
+- Use explicit conditions reflecting priority: fall > dig > bump.
+- Outputs assigned via continuous assignments (Moore FSM).
+- This structure helps avoid subtle glitches by clarifying signal dependencies, avoids mixing multiple logic in one always block, and removes enum typedef complexity.
+
+This approach keeps the same behavior but may help synthesis tools and simulation match precisely, avoiding direction mismatches due to subtle timing issues or conditions overlapping in the previous code.

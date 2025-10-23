@@ -1,0 +1,12 @@
+To fix the timing mismatch in pattern detection and FSM transitions, we separate pattern detection logic from the main FSM state transitions. We implement the pattern detector as a purely combinational check on the current shift register contents updated at each clock edge before state transitions. This avoids the off-by-one delay caused by updating shift_reg and state simultaneously.
+
+Specifically:
+- Update the 4-bit shift register on each clock, always capturing the last 4 bits.
+- In the next state logic, detect the pattern (1101) from the *updated* shift register (i.e. consider shift_reg as the value after the clock edge).
+- Begin asserting shift_ena for 4 cycles explicitly counted by a small counter rather than multiple states SHIFT_0..SHIFT_3, simplifying the FSM.
+- Keep outputs purely combinational from the FSM state and counter values.
+- Wait in COUNTING state until done_counting asserted, then move to DONE.
+- In DONE, wait for ack, then return to IDLE and reset counters.
+- This approach fixes the delay mismatch, reduces state count improving area and clarity, and ensures outputs are asserted exactly as specified.
+
+The key is to read the updated shift_reg value for pattern detection *before* state transition decision and avoid reliance on delay due to sequential updates, aligning the FSM with the actual data timing.

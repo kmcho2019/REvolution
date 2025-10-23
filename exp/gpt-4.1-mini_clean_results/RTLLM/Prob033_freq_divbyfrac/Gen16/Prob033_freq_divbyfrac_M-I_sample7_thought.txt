@@ -1,0 +1,19 @@
+To improve the fractional frequency divider by 3.5 using double-edge clocking, the key is to ensure that toggling of the internal clocks (clk_intA and clk_intB) happens precisely with controlled timing and without glitches. The main issues in the prior design were due to direct conditional toggling on clock edges gated by enables derived from the same counter, which can cause uneven toggle timing and metastability.
+
+My strategy is:
+1. Use a single counter (0 to 6) incrementing on posedge clk with synchronous reset.
+2. Define two toggle pulses derived from this counter, one corresponding to a toggle event on the positive edge clock domain (clk_intA) and the other corresponding to a toggle event on the negative edge clock domain (clk_intB).
+3. Generate clk_intA as a toggle flip-flop updated on the positive clock edge when a toggle event pulse occurs.
+4. Generate clk_intB as a toggle flip-flop updated on the negative clock edge when a toggle event pulse occurs (delayed or aligned accordingly).
+5. Create toggle pulses based on the counter at precise counts so that clk_intA toggles 4 times per 7 input clock cycles and clk_intB toggles 3 times per 7 input clock cycles, offset to produce half-cycle phase difference.
+6. Ensure that the toggle pulses are one-clock-cycle wide pulses generated synchronously from the counter values.
+7. The output clk_div is OR of clk_intA and clk_intB, giving a fractional division by 3.5 with improved duty cycle and balanced edges.
+
+This approach reduces glitches and metastability by:
+- Avoiding gating clock edges with combinational enables.
+- Using one-hot toggle pulses derived from the counter.
+- Edge-aligned toggle flip-flops with well-defined toggle pulses.
+
+This results in a stable fractional clock output suitable for synthesis and timing closure.
+
+Additionally, I will add comments and keep the design straightforward and synthesizable.

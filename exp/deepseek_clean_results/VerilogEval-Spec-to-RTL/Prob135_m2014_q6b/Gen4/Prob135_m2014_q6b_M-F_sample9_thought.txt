@@ -1,0 +1,17 @@
+The feedback revealed that the main issue was with state E's transitions. The original code incorrectly set y[1] to 1 for E->E transition when it should maintain y[1]=1 (since E is state 100 and y[1] is already 0). 
+
+Key corrections needed:
+1. For state E (100):
+   - E->E should maintain y[1]=0 (current state value)
+   - E->D should set y[1]=1
+2. All other states were actually correct as per the feedback, but we should verify:
+   - State A: correct (both transitions keep y[1]=0)
+   - State B: correct (both transitions set y[1]=1)
+   - State C: correct (both transitions set y[1]=1)
+   - State D: correct (sets y[1] appropriately for both transitions)
+   - State F: correct (sets y[1] appropriately for both transitions)
+
+The fix involves:
+- Correcting state E's logic to properly handle both transitions
+- Keeping all other state transitions unchanged
+- Using the current state's y[1] value for E->E transition

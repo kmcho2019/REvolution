@@ -1,0 +1,14 @@
+To refactor while maintaining the same functionality, I'll make these structural changes:
+
+1. **Eliminate intermediate wire**: Instead of creating a separate `xor_ab` wire, compute the XOR directly in each output path. This gives the synthesizer more flexibility to optimize.
+
+2. **Combine assignments**: Since both combinational outputs perform the same function, we can assign them together in a single line.
+
+3. **Sequential logic**: Keep the flip-flop implementation but compute the XOR directly in the always block.
+
+Benefits:
+- Cleaner code with fewer intermediate signals
+- Gives synthesis tool more optimization freedom
+- Maintains identical functionality
+- Still achieves same PPA metrics
+- More straightforward to read and maintain

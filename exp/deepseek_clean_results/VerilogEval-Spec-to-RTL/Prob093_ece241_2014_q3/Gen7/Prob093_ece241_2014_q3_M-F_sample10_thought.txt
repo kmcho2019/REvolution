@@ -1,0 +1,21 @@
+To fix the implementation, we need to carefully match each mux_in output to its corresponding column in the K-map:
+
+1. Correct Analysis of K-map Columns:
+   - mux_in[0] (ab=00): 0,1,1,1 (for cd=00,01,11,10)
+     - This is equivalent to ~(c & ~d) or (c | d)
+   - mux_in[1] (ab=01): All zeros (correct in original)
+   - mux_in[2] (ab=11): 0,0,1,0 (correct as c & d in original)
+   - mux_in[3] (ab=10): 1,0,1,1
+     - This is equivalent to ~(~c & d) or (c | ~d)
+
+2. Implementation Strategy:
+   - For mux_in[0]: Implement as (c OR d) using a 2-to-1 mux
+   - For mux_in[1]: Keep as constant 0
+   - For mux_in[2]: Keep existing correct implementation (c AND d)
+   - For mux_in[3]: Implement as (c OR ~d) using a 2-to-1 mux
+
+3. Mux Usage:
+   - Total of 3 2-to-1 muxes (same count as before but correct functionality)
+   - One mux for OR operation in mux_in[0]
+   - One mux for AND operation in mux_in[2]
+   - One mux for OR operation in mux_in[3]

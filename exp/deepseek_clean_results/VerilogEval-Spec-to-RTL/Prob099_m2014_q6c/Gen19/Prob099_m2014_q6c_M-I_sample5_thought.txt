@@ -1,0 +1,14 @@
+Improvement strategy:
+1. The original solution correctly implements Y1 and Y3 but the testbench expects Y2 and Y4 as well
+2. Need to maintain the same efficient combinational logic approach but add the missing outputs
+3. For Y2 (next state C) and Y4 (next state E), derive logic equations similarly by inspection
+4. Keep the one-hot encoding benefits - each next state bit depends only on relevant current states
+5. Optimize logic by:
+   - Sharing common terms where possible
+   - Minimizing gate count
+   - Maintaining clear direct mapping from state diagram
+
+Key observations:
+- Y2 (C) comes from B with w=0 or F with w=0
+- Y4 (E) comes from C with w=0 or E with w=0 (stays)
+- No need to compute all next states, just the required outputs

@@ -1,0 +1,12 @@
+To optimize the design for better PPA metrics, I'll implement the following improvements:
+1. Remove the separate next_state register and use direct state updates to reduce area
+2. Simplify the state transition logic using arithmetic operations with saturation checks
+3. Add clock gating for the combinational logic when train_valid=0 to reduce power
+4. Eliminate the default case since it's never used
+5. Maintain the same functionality while reducing logic levels for better timing
+
+The improved version will:
+- Use arithmetic operations with explicit saturation checks (more compact than case statement)
+- Directly update state register without intermediate next_state
+- Keep the same asynchronous reset behavior
+- Reduce unnecessary switching when train_valid=0

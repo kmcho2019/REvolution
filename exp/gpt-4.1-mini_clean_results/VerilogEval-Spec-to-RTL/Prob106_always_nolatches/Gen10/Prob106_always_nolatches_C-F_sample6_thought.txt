@@ -1,0 +1,11 @@
+Fuse the clarity and minimal intermediate logic of Example 2 with the decoding efficiency of Example 1 by implementing a single combinational always block that first checks the prefix byte (8'hE0) and then decodes the keycode using a case statement directly into a one-hot 4-bit vector representing the arrow keys. This approach shares the prefix check once, uses a case statement to compactly decode the 8-bit keycode, and directly drives the outputs from the decoded one-hot signals without intermediate reg or multiple redundant equality comparisons.
+
+Advantages:
+- Only one prefix check (common to all cases)
+- Compact case statement for keycode decoding (easy to extend)
+- One-hot outputs derived from a small internal vector to minimize logic
+- Purely combinational with no unnecessary intermediate registers
+- Clear and maintainable structure with minimal power and area
+- Outputs driven directly from one-hot code to avoid repeated comparisons
+
+This fusion yields a clean, minimal, and efficient design that balances readability, area, power, and performance.

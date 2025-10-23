@@ -1,0 +1,13 @@
+Refactor the floating-point multiplier to a 3-stage pipeline with explicit stages and separated combinational and sequential logic to improve clarity and timing. 
+
+Key changes:
+- Use separate always blocks for pipeline register updates and combinational logic.
+- Extract input fields combinationally outside the clocked always block.
+- Implement pipeline stages explicitly with registers for inputs and intermediate results.
+- Perform special case detection combinationally.
+- Perform mantissa multiplication combinationally and register the product in stage 2.
+- Normalize and round the product in stage 3 combinationally; register results.
+- Use blocking assignments only in combinational blocks, non-blocking in sequential blocks.
+- Output result registered in the final pipeline stage.
+- Keep the 3-bit counter but only increment it sequentially without wrapping, reset on rst.
+This improves readability, separates data path and control logic, and potentially helps timing closure by clearly defining pipeline stages.

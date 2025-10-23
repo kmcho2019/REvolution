@@ -1,0 +1,12 @@
+To design an unsigned 8-bit multiplier using pipelining, we need to break down the multiplication process into stages and implement each stage as a separate component. The components will be connected in a way that data flows through them in a pipelined fashion, allowing the multiplier to process new inputs every clock cycle.
+
+The key components of the design are:
+
+1. Input Control: Samples the input enable signal (mul_en_in) and stores it in a register (mul_en_out_reg).
+2. Input Registers: Samples the input values (mul_a and mul_b) and stores them in registers (mul_a_reg and mul_b_reg).
+3. Partial Product Generation: Generates partial products by performing bitwise operations between the multiplicand (mul_a_reg) and the individual bits of the multiplier (mul_b_reg).
+4. Partial Sum Calculation: Performs addition operations on the partial products to calculate partial sums.
+5. Final Product Calculation: Sums up all the partial sums to obtain the final product.
+6. Output Assignment: Assigns the output product value (mul_out) based on the output enable signal (mul_en_out) and the value in the final product register (mul_out_reg).
+
+The pipelining will involve several stages, each of which will be triggered on the positive edge of the clock signal (clk). The design will also include an active-low reset signal (rst_n) to initialize the registers.

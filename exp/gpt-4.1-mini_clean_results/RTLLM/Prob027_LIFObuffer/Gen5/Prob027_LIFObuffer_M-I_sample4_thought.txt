@@ -1,0 +1,17 @@
+The current design is functionally correct and compact for a 4-entry 4-bit LIFO buffer. To further optimize for better power, performance, and area (PPA), I will:
+
+1. Simplify the reset logic by removing the for-loop inside the synchronous reset. The stack memory content upon reset is generally don't-care for functionality, especially since empty/full flags and SP fully define the buffer state. This reduces reset critical path and logic area.
+
+2. Implement a gated write-enable signal for stack_mem to avoid unnecessary writes, reducing dynamic power. Writes only happen on push (RW=0), EN=1, and when the buffer is not full.
+
+3. Cleanly separate the dataOut update for pop (RW=1) operations, updating it from the stack_mem with minimal timing dependency.
+
+4. Keep SP encoding as a simple binary counter (3 bits), counting the number of elements (0 to 4), with combinational flags EMPTY (SP==0) and FULL (SP==4).
+
+5. Use non-blocking assignments consistently and update SP before reading stack_mem on pop to ensure correct timing.
+
+6. Remove clearing of stack_mem on pop to reduce toggling.
+
+These changes simplify the design, reduce area by eliminating unneeded reset clearing, reduce power by gating memory writes, and maintain or improve timing by reducing logic on critical paths.
+
+This strategy balances all three PPA factors effectively for a small LIFO buffer.

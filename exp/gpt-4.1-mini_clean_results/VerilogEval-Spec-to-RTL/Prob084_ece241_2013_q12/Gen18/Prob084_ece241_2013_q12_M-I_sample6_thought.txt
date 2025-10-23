@@ -1,0 +1,7 @@
+To optimize power and area, eliminate the subtraction operation by changing the shift direction to left shift with MSB as Q[0], so that Q[0] corresponds directly to shift_reg[7]. Then the 3-bit ABC can be used directly to index the shift register without inversion, avoiding additional combinational logic. This reduces the multiplexer complexity and power consumption.
+
+To optimize timing, explicitly implement the 8-to-1 multiplexer with a case statement or logic instead of a variable part-select, which allows synthesis tools to generate optimized multiplexing logic and potentially reduces delay.
+
+Also, to potentially reduce power, keep the shift register flip-flops clock enabled only when enable is high, by gating the clock internally (or at least logically gating the shift operation), though actual clock gating is tool-dependent.
+
+This approach improves clarity, reduces combinational logic from subtraction, and helps the synthesis tool better optimize the multiplexer for PPA benefits.

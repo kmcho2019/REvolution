@@ -1,0 +1,18 @@
+Refactoring the counter design to use continuous assignments (assign) instead of procedural blocks (always) while maintaining the same functionality:
+
+1. Main Changes:
+- Replace the always block with continuous assignments
+- Use a combinational logic block to calculate next state
+- Register the output using a separate always block for the flip-flop
+
+2. Benefits:
+- Clear separation of combinational and sequential logic
+- More explicit data flow representation
+- Potentially better synthesis optimization as logic is more granular
+- Maintains same PPA characteristics while being more modular
+
+3. Implementation Details:
+- Create a wire for next_out that handles the counting logic
+- The flip-flop only handles state storage and reset
+- valid_count gates the counting operation explicitly in the combinational logic
+- Reset remains synchronous for better timing characteristics

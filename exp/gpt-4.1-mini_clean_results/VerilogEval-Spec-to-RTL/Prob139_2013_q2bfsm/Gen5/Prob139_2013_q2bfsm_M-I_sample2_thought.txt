@@ -1,0 +1,26 @@
+To correct the design and ensure correct timing and reliable sequence detection, we will:
+
+1. **Delay the 'f' pulse to exactly one clock cycle after reset de-assertion:**  
+   Introduce an explicit "wait_for_release" state after reset is released to register the de-assertion edge. This avoids combinational immediate transition from reset to pulse state. The FSM will stay in reset state while resetn=0. At the first clock with resetn=1, transition to WAIT_RELEASE, and then at the next clock transition to PULSEF asserting f=1 for one cycle exactly.
+
+2. **Implement a three-stage shift register to store the last three samples of 'x':**  
+   This way, we accurately detect the sequence 1,0,1 over three consecutive clock cycles. The FSM will continuously update the shift register in sequence detection states and detect the pattern in the stored register, ensuring correct sequence detection even if input changes mid-cycle.
+
+3. **Revise the sequence detection states to simplify to just one state (SEQ_DETECT) where the shift register is updated and pattern checked every clock:**  
+   This reduces complexity and risks of off-by-one errors. Once the pattern 1,0,1 is detected, transition to monitor y state.
+
+4. **Fix the monitor_y counter and transitions:**  
+   Use a counter that counts cycles from 0 up to 2 inclusive, monitoring y on each clock. If y=1 at any point during counting, transition to HOLD_G1. If counter reaches 2 with no y=1, transition to HOLD_G0.  
+   The counter increments only during monitor_y state, cleared elsewhere.
+
+5. **Make FSM outputs strictly Moore-style:**  
+   f=1 only in PULSEF state for one cycle, g=1 in MONITOR_Y and HOLD_G1 states, and g=0 in other states.
+
+This approach clarifies timing, eliminates sequence detection misalignment, and ensures outputs change on clock edges as required. It also simplifies the state machine and reduces error-prone combinational transitions.
+
+The key internal signals:
+- 3-bit shift register for x samples.
+- 2-bit monitor counter for y input.
+- One-hot state encoding for clarity and simple decoding.
+
+This corrected and simplified FSM should produce the correct waveforms for outputs f and g, matching the problem specification exactly.

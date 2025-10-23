@@ -1,0 +1,11 @@
+To fix the frequency divider module `freq_divbyodd`, we need to reevaluate the implementation of the counters and the clock dividers. The primary issue lies in the fact that the counters are being incremented on every edge of the clock, which does not align with the requirement of counting up to `NUM_DIV - 1`.
+
+A revised approach involves using a single counter that counts up to `NUM_DIV - 1` and toggles the clock dividers at this point. This ensures that the divided clock output is accurately generated.
+
+To optimize the counter width, we can use a logarithmic width calculation based on the value of `NUM_DIV`. This minimizes the area requirements for the counter.
+
+Additionally, we need to ensure that the logic for deriving the final divided clock output `clk_div` from `clk_div1` and `clk_div2` is correct. Since we are using a single counter, we can directly toggle `clk_div` when the counter reaches `NUM_DIV - 1`.
+
+The reset logic should remain the same, resetting the counter and the clock divider output when the active low reset signal `rst_n` is asserted.
+
+By addressing these issues, we can create a corrected implementation of the frequency divider module that accurately divides the input clock frequency by an odd number defined by the parameter `NUM_DIV`.

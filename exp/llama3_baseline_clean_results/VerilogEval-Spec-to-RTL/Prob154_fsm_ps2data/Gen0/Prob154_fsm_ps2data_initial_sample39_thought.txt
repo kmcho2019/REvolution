@@ -1,0 +1,11 @@
+To implement the TopModule, we need to design a finite state machine (FSM) with the following states:
+- IDLE: This is the initial state where the FSM discards bytes until it sees one with in[3] = 1.
+- BYTE1: In this state, the FSM has received the first byte of the message and is waiting for the second byte.
+- BYTE2: In this state, the FSM has received the second byte of the message and is waiting for the third byte.
+- DONE: In this state, the FSM has received all three bytes of the message and signals done.
+
+We also need to implement a datapath to store the received bytes and output them as a 24-bit message when the done signal is asserted.
+
+The reset signal is active high synchronous, so we need to ensure that the FSM resets to the IDLE state and the datapath is cleared when reset is high.
+
+The out_bytes signal needs to be valid whenever the done signal is asserted, and we don't care about its value at other times.

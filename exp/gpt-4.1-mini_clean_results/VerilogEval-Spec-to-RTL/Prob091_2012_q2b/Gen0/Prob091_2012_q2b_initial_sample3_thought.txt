@@ -1,0 +1,19 @@
+The module implements the state transition logic for a 6-state FSM with one-hot encoding in y[5:0]. The inputs are y[5:0] (state bits) and w (input bit). The outputs Y1 and Y3 correspond to the next-state inputs for y[1] (state B) and y[3] (state D) flip-flops, respectively.
+
+From the state transition diagram and one-hot encoding:
+- Y1 (next y[1], state B) = from A(0) to B on w=1 and from C(0) to B(never, no direct), from D(0) to B (no), from E(1) to B(no), from F(1) to B(no).
+Actually, transitions into state B only happen from state A with input w=1:
+A(0) --1--> B (so Y1 = y[0] & w).
+
+- Y3 (next y[3], state D) = 
+From B(0) --0--> D
+From C(0) --0--> D
+From E(1) --0--> D
+From F(1) --0--> D
+So Y3 is 1 if:
+(y[1] & ~w) OR (y[2] & ~w) OR (y[4] & ~w) OR (y[5] & ~w)
+= (~w) & (y[1] | y[2] | y[4] | y[5])
+
+So the implementation is:
+Y1 = y[0] & w;
+Y3 = (~w) & (y[1] | y[2] | y[4] | y[5]);

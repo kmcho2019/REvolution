@@ -1,0 +1,10 @@
+Fuse the strengths of both examples by retaining the two flip-flops triggered on opposite clock edges to achieve dual-edge sampling, while simplifying the output logic to a combinational mux controlled by the clock level.
+
+Key improvements in fusion:
+- Use a single parameterized flip-flop module with an edge select parameter (posedge or negedge) to reduce code redundancy.
+- Use continuous assignment for output multiplexing without any latch or extra always blocks, which improves readability and synthesis friendliness.
+- Keep output port as wire driven by the mux for clear combinational semantics.
+- This approach yields minimal resource usage (two FFs plus a mux), clear structure, and improved code maintainability.
+- By parameterizing edge selection in the flip-flop module, the design becomes cleaner and more scalable for any future changes.
+
+Overall, this solution achieves dual-edge triggering behavior in an FPGA-friendly manner with efficient, clean, and maintainable code.

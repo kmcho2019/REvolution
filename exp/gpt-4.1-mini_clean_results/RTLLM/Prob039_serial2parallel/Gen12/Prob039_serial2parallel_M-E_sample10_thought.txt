@@ -1,0 +1,9 @@
+Implement a simple synchronous design with a 4-bit counter that increments only when `din_valid` is asserted. Use an 8-bit shift register that shifts left by one bit on each valid input, inserting the new serial bit at the LSB (right side). Because the output requires the serial bits to be placed from MSB to LSB in the output, shifting left with the new bit at LSB accumulates the serial input MSB-first correctly when done.
+
+Once the counter reaches 8 (i.e., 8 bits received), latch the shift register contents to `dout_parallel` and assert `dout_valid` for exactly one clock cycle, then reset the counter to zero and clear `dout_valid`. The counter and shift register reset synchronously on `rst_n`.
+
+This design is straightforward: no FSM needed, just shift register + counter + valid output logic.  
+The shifting direction and input bit placement ensure the output aligns with the specification (MSB first in the serial data becomes MSB in parallel output).  
+This approach guarantees stable data capture and clear valid signaling, and aligns with the problem requirements to use a 4-bit counter and synchronous reset.
+
+The output `dout_valid` is a one-cycle pulse at the moment the 8th bit is accepted.

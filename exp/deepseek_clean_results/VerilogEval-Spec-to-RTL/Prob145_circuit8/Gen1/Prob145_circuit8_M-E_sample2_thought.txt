@@ -1,0 +1,11 @@
+Here's a novel approach using a state machine with two states:
+1. IDLE state: Outputs are 0, waits for clock high
+2. ACTIVE state: When clock is high, p follows input a, and q latches p's value when clock goes low
+
+The state transitions occur on clock edges:
+- Enter ACTIVE on positive clock edge
+- Return to IDLE on negative clock edge
+- In ACTIVE state, p = a (only when clock is high)
+- q captures p's value when leaving ACTIVE state (negative edge)
+
+This ensures all outputs are properly synchronized with clock edges and avoids any potential glitches that might occur with pure combinational logic.

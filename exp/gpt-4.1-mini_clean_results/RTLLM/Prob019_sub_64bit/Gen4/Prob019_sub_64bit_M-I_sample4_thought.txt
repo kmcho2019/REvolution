@@ -1,0 +1,12 @@
+The original solution correctly implements subtraction via a manual carry-lookahead adder and overflow detection, but it is somewhat verbose and likely less efficient in area and power due to the explicit bitwise carry chains and multiple intermediate nets.
+
+To optimize for better PPA while preserving correctness:
+- Use the built-in subtraction operator (`assign result = A - B;`), which synthesis tools optimize efficiently, producing fast, low-area hardware.
+- Keep overflow detection logic explicit and simple by checking the sign bits as required.
+- Remove explicit carry signals and propagate/generate arrays to reduce combinational logic complexity and switching activity.
+- This reduces gate count, wiring complexity, and switching, improving power and area, and typically yields equal or better timing.
+- The design remains purely combinational and self-contained.
+
+Thus, this is a classic and industry-standard approach for a 64-bit subtractor with overflow detection in Verilog.
+
+This approach trades manual pedagogical adder implementation for synthesis-friendly concise code with better PPA.

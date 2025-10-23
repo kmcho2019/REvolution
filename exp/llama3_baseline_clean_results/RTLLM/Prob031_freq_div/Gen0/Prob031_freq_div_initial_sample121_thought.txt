@@ -1,0 +1,6 @@
+The freq_div module is designed to divide the input clock frequency into three lower frequencies: 50MHz, 10MHz, and 1MHz. 
+To achieve this, we use three counters to control the output clocks. 
+For CLK_50, we simply toggle the signal on every positive edge of CLK_in, effectively dividing the frequency by 2. 
+For CLK_10, we use a counter to count up to 4 and then toggle the signal, dividing the frequency by 10 (since 100/10 = 10 and we're counting to 4 which is a factor of 10, but considering we're actually counting up to 5-1, it will work as 100/10).
+For CLK_1, we use a counter to count up to 49 and then toggle the signal, dividing the frequency by 100.
+We also implement a reset mechanism to set all output clocks to 0 and reset the counters when RST is active.

@@ -1,0 +1,5 @@
+Refactor the design by splitting the clk_a domain into two always blocks: one exclusively for data_reg sampling when data_en is asserted, and another for en_data_reg registering with asynchronous reset. This separates data and enable paths for clarity. 
+
+In the clk_b domain, implement a small FSM-like process with registers en_clap_one and en_clap_two updated sequentially, then use a combinational always block for dataout updating only when en_clap_two is asserted. This separates control signal synchronization and output assignment, enhancing readability without changing functionality.
+
+This approach uses the same registers but distinct always blocks for better modularity and easier maintenance while preserving proper synchronization, reset behavior, and conditional updates. It also avoids latching data_reg unnecessarily and cleanly decouples enable synchronization and data output logic.

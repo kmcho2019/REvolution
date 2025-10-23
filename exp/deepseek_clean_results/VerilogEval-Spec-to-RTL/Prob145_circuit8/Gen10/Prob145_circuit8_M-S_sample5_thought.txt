@@ -1,0 +1,19 @@
+After carefully analyzing the waveform, here's a simplified approach:
+
+1. Key Observations:
+   - p is a synchronous output that copies 'a' only at rising clock edges when q is 0
+   - q becomes 1 only after seeing p=1 for at least one cycle
+   - q resets to 0 when 'a' is high during a low clock phase
+   - p maintains its value until the next rising edge
+
+2. Simplified Architecture:
+   - Remove explicit state machine - track only q as a state bit
+   - p directly follows 'a' at rising edges when q=0
+   - q becomes 1 after seeing p=1 once
+   - Asynchronous reset of q when 'a' is high during clock low
+
+3. Implementation Details:
+   - Single always block for synchronous behavior
+   - Separate combinational logic for asynchronous reset
+   - Minimal state tracking (just q)
+   - Clear edge-triggered behavior

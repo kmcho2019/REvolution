@@ -1,0 +1,11 @@
+To simplify the Mealy FSM while maintaining functionality, we can:
+1. Reduce the number of states by recognizing that after S1001, we don't need a separate S10011 state since the output is purely combinational
+2. Make the output directly dependent on current state and input (true Mealy behavior)
+3. Eliminate redundant default cases since all states are explicitly covered
+4. Use simpler state encoding (binary is sufficient for this small FSM)
+5. Remove the next_state register since we can directly assign to current_state
+
+Key simplifications:
+- Combine S10011 state into the output logic when in S1001 state with IN=1
+- Direct state transitions without intermediate next_state variable
+- Simplified output logic that only checks for the final condition

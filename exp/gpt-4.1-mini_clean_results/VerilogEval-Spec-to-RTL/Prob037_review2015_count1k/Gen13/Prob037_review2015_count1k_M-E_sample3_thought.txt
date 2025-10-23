@@ -1,0 +1,9 @@
+Implement the counter as a synchronous 10-bit binary counter with a parameterized max count (999). Instead of a direct equality comparison to detect terminal count, use a carry ripple approach by counting up every clock cycle, and reset when the counter reaches 999 using a combinational comparison of all bits at once. 
+
+To reduce comparator complexity and provide a fresh approach, use an internal 10-bit register to hold the next counter value, computed as the current count plus one, and compare this "next value" with the terminal count (999). When next_count equals 1000 (i.e., the count reached max + 1), reset to 0.
+
+This method makes the counter roll over naturally and can provide synthesis tools opportunities for optimization because it combines counting and comparison cleanly.
+
+Also, implement synchronous active-high reset, and use non-blocking assignments for register updates. The output `q` is registered and updates every clock.
+
+This different approach differs from the original by using the "next_count" comparison instead of comparing the current count, giving a slightly different timing and structural logic which may synthesize into a different but functionally equivalent circuit.

@@ -1,0 +1,14 @@
+Refactoring strategy:
+1. Replace the procedural always block with continuous assignments for state transitions
+2. Use a wire to represent the next state logic
+3. Maintain synchronous reset by using a mux at the state register input
+4. Keep the output assignment direct from the state register
+5. The state transition logic remains identical in function but is expressed differently:
+   - Next state is current state XOR (k if in ON state, j if in OFF state)
+   - Reset forces next state to 0 (OFF)
+
+Benefits of this approach:
+- More explicit separation of combinational and sequential logic
+- Easier to add additional combinational logic if needed
+- Maintains same timing characteristics as original
+- Potentially clearer to some readers as it shows all logic paths explicitly

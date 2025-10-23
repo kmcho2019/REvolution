@@ -1,0 +1,18 @@
+Fusion strategy for superior 64-bit subtractor with overflow:
+
+- Use the segmentation of 64-bit operands into four 16-bit blocks (both examples) to keep the design manageable and support modular verification.
+- Implement each 16-bit block as a single unified 16-bit CLA subtractor rather than cascading two 8-bit blocks. This reduces internal inter-block carry latency and removes intermediate carry signals, improving performance and reducing area.
+- Inside the 16-bit CLA subtractor, implement full carry lookahead logic with group propagate and generate signals for fast carry computation, avoiding ripple style carry propagation.
+- Perform a single complement (~B) of each 16-bit input B once at the 16-bit block input, not inside smaller blocks, saving power by reducing redundant inversions.
+- Use a hierarchical CLA structure inside each 16-bit subtractor: bit-level propagate/generate to group-level propagate/generate and then carry computation, accelerating carry chain inside the block.
+- Chain the four 16-bit subtractors by a borrow ripple chain (borrow-out to borrow-in) for simplicity and acceptable latency across 64-bit operand.
+- Keep clean overflow detection logic at the top level, following standard signed subtraction overflow rules: (A_sign != B_sign) && (result_sign != A_sign).
+- This fusion balances the low latency carry path inside 16-bit blocks and limits the ripple borrow stages to four, which is shorter than eight or sixteen.
+- It also reduces area by sharing complemented B signals once per 16-bit block and eliminates intermediate signals between small 8-bit blocks.
+- The hierarchical 16-bit CLA subtractor is a best compromise between performance, power, and area for a 64-bit subtractor.
+
+Overall, this design advances over the previous examples by:
+- Faster carry generation in 16-bit blocks with full CLA,
+- Reduced logic duplication and power via one-time B complement per block,
+- Simpler inter-block borrow chaining,
+- Preserving modularity and easy overflow detection.

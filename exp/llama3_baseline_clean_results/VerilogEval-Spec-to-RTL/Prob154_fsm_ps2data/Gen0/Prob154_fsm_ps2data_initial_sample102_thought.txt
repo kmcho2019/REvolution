@@ -1,0 +1,9 @@
+To solve this problem, we need to implement a finite state machine (FSM) with the following states:
+1. Idle: This is the initial state where the FSM waits for the first byte of a message (i.e., the byte with in[3]=1).
+2. Byte1: This state is entered when the first byte of a message is received. The FSM then waits for the next two bytes.
+3. Byte2: This state is entered when the second byte of a message is received. The FSM then waits for the third byte.
+4. Byte3: This state is entered when the third byte of a message is received. The FSM then signals the receipt of a message and returns to the idle state.
+
+We also need to implement the datapath module that will output the 24-bit (3 byte) message whenever a packet is received. The datapath module should have registers to store the three bytes of the message.
+
+The reset signal should be used to reset the FSM and the datapath module to their initial states.

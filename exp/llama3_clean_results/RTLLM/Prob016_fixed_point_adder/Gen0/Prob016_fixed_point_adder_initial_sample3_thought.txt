@@ -1,0 +1,9 @@
+To implement the fixed-point adder module in Verilog, we'll first define the module parameters `Q` and `N`, which represent the number of fractional bits and the total number of bits, respectively. The inputs `a` and `b` will be N-bit vectors, and the output `c` will also be an N-bit vector. 
+
+For the absolute value addition, we compare the most significant bits (MSBs) of `a` and `b`. If they are the same, we add their absolute values. If they are different, we proceed with absolute value subtraction, comparing the magnitudes of `a` and `b` to determine the result and set the MSB accordingly.
+
+We'll utilize a temporary register `res` to store the result of the addition or subtraction. The precision is maintained by ensuring that all operations are performed within the N-bit range, considering both integer and fractional parts as specified by parameter `Q`.
+
+For overflow handling, we'll check the MSB of the result to ensure it fits within the N-bit range. If an overflow occurs, we'll clip the result to prevent it from exceeding the maximum N-bit value.
+
+To handle the fixed-point arithmetic, we don't need explicit casting or shifting in this context since Verilog will handle the bit-level operations as specified.

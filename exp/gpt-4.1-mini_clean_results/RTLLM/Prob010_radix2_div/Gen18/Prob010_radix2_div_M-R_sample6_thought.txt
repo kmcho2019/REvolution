@@ -1,0 +1,9 @@
+Refactor the radix-2 divider by using a more explicit FSM with three states: IDLE, DIVIDE, and DONE. Use a synchronous process for state transitions and counters, and combinational logic for next-state and intermediate calculations.
+
+Instead of packing remainder and quotient into a single shift register and modifying bits in a combinational block, separate the remainder register and quotient register clearly. Perform subtraction and decide quotient bits combinationally, then update registers on clock edges.
+
+Use signed/unsigned absolute value conversion outside the FSM to simplify signed handling.
+
+Output the result and res_valid only in DONE state, with sign correction applied just once after division ends.
+
+This structure improves readability, uses registers for remainder and quotient explicitly, and follows a cleaner FSM style with defined states and outputs registered synchronously.

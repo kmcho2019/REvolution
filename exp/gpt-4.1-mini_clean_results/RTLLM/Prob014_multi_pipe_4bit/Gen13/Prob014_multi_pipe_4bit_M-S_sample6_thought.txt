@@ -1,0 +1,11 @@
+Simplify the pipeline multiplier by:
+- Using two pipeline stages of registers as required: 
+  1) Register partial products (each partial product generated from multiplier bit and shifted multiplicand).
+  2) Register the sum of all partial products to produce final product output.
+- Instead of pairwise addition, sum all partial products directly in combinational logic between the two register stages.
+- This reduces complexity by avoiding multiple addition stages while maintaining correct pipelined behavior.
+- Inputs are zero-extended by 'size' bits at MSB as per spec.
+- Use generate blocks for partial product generation for scalability and clarity.
+- Use asynchronous active-low reset for all registers.
+
+This approach meets the spec with minimal logic and two pipeline levels, and is easy to understand and synthesize.

@@ -1,0 +1,11 @@
+The key issue is that toggling clk_div1 and clk_div2 twice per full counting cycle (at HALF_COUNT and at NUM_DIV - 1) causes the output clock to toggle twice per period, doubling the frequency instead of dividing it by the desired odd number.
+
+To fix this, each counter should toggle its corresponding clk_div signal only once per cycle, either at HALF_COUNT or at NUM_DIV - 1, but not both. Since NUM_DIV is odd, the half count is fractional (floor(NUM_DIV/2)), so toggling at HALF_COUNT on the positive edge and at NUM_DIV - 1 on the negative edge (or vice versa) divides the clock frequency correctly with better duty cycle approximation.
+
+Implement the toggle on cnt1 reaching HALF_COUNT on the positive edge clock, and toggle clk_div1; for cnt2, toggle clk_div2 when cnt2 reaches NUM_DIV - 1 on the negative edge clock. Each counter resets to zero after reaching NUM_DIV - 1.
+
+Finally, OR clk_div1 and clk_div2 to produce clk_div output.
+
+This approach ensures clk_div toggles once every NUM_DIV input clock cycles, producing a frequency divided by the odd number with improved duty cycle.
+
+Reset initializes counters and outputs to zero. The rest of the structure remains the same.

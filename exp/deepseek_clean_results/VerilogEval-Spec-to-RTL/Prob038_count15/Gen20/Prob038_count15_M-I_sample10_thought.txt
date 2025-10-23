@@ -1,0 +1,21 @@
+Improvement strategy based on PPA metrics:
+1. **Performance Optimization**:
+   - Replace ternary operator with XOR for next_count[1] to reduce critical path
+   - Implement carry chain structure for bits [3:2] instead of equality comparison
+   - Use simpler incrementer structure for all 4 bits to improve timing
+
+2. **Power Optimization**:
+   - Keep synchronous reset (good for power)
+   - Maintain binary counting (Gray code would require conversion logic)
+   - Simplify logic to reduce unnecessary toggles
+
+3. **Area Optimization**:
+   - Use unified increment logic for all bits
+   - Remove separate handling of different bit groups
+   - Simplify next state logic
+
+Key changes:
+- Single increment operation for all bits
+- Carry chain implementation
+- Cleaner state transition logic
+- Maintain same functionality with better PPA

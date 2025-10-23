@@ -1,0 +1,7 @@
+To optimize for power and area while maintaining performance, I will simplify the design by eliminating the explicit nand4 module and directly using the built-in Verilog NAND gate primitive (nand). The 7420 chip contains two independent 4-input NAND gates, so I can instantiate two nand gates with four inputs each using a continuous assignment with chained nand operations.
+
+Using the built-in nand gate primitive is typically recognized by synthesis tools and mapped directly to the optimal library cell, potentially reducing area and power compared to synthesized AND and NOT gates from assign statements.
+
+This approach reduces module overhead, might reduce logic levels slightly for better timing, and results in simpler, more synthesis-friendly code, enabling better PPA.
+
+Overall, the design is compact, clean, and optimal for mapping 7420's functionality directly to hardware NAND gates.

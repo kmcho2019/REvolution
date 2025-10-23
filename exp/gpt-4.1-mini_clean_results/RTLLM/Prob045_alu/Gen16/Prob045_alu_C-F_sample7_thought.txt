@@ -1,0 +1,14 @@
+Fuse the strengths of both examples by implementing a fully combinational ALU with clear, minimal intermediate signals and explicit control decoding to reduce redundant condition checks and improve power efficiency. Use continuous assignments for outputs to reduce registers and glitches, but retain a simple always_comb block to encapsulate complex operations like arithmetic with carry and overflow detection cleanly.
+
+- Use parameters to clearly define opcodes.
+- Calculate arithmetic results (add/sub) extended by one bit to detect carry/borrow.
+- Decode the opcode into one-hot signals once to reduce repeated equality comparisons.
+- Use signed casts only where necessary (SLT/SLTU and arithmetic overflow).
+- Compute shift amounts from a[4:0] once.
+- Assign flag only for SLT and SLTU; otherwise, drive zero to avoid high-Z.
+- Compute zero, negative flags directly from the result.
+- For LUI, use upper 16 bits of 'a' concatenated with zeros as specified.
+- Default output is zero instead of 'z' to improve synthesis and reliability.
+- This approach balances clarity, power efficiency, performance, and area by avoiding unnecessary multiple computation of the same conditions, reducing combinational logic fanout, and cleanly separating concerns.
+
+This fusion keeps the clarity and correctness of example 1 with the straightforward structure of example 2, yielding an optimized, easily synthesizable ALU.

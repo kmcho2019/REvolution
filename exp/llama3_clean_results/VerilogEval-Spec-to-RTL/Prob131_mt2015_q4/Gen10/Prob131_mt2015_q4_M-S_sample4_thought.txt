@@ -1,0 +1,13 @@
+To simplify the solution while maintaining its functionality, we can start by analyzing the logic implemented by the top-level module and the A and B submodules. 
+
+Module A implements the boolean function z = (x^y) & x. This can be understood as z being true only when x is true and either x or y (but not both) is true, which simplifies to z being true when x is true and y is false.
+
+Module B implements z = (x == y), which means z is true whenever x and y are equal.
+
+Considering the top-level module, it combines the outputs of two A modules and two B modules through an OR and an AND gate, respectively, and then combines these results with an XOR gate. 
+
+Given this, the solution can be simplified by directly implementing the required logic without needing to instantiate separate A and B modules. The key is to understand the combined effect of the A and B modules' logic on the final output z.
+
+The expression (a1_out | b1_out) ^ (a2_out & b2_out) can be simplified by analyzing the possible values of a1_out, b1_out, a2_out, and b2_out based on the inputs x and y. Since a1_out and a2_out are derived from the same logic (x & (x ^ y)), and b1_out and b2_out are derived from the equality of x and y, the combined logic can be directly implemented without the need for separate module instantiations.
+
+This approach simplifies the design, reduces the number of gates, and maintains the required functionality.

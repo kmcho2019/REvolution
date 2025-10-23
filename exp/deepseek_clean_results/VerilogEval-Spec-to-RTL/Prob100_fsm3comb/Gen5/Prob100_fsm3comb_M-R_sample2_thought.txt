@@ -1,0 +1,19 @@
+To refactor this code while maintaining the same functionality, I'll make the following changes:
+
+1. **Use continuous assignments (assign) instead of always blocks**:
+   - This will make the combinational logic more explicit and potentially easier to synthesize
+   - Each state transition condition can be expressed as a separate assign statement
+
+2. **Output logic simplification**:
+   - Keep the direct comparison for output generation since it's already optimal
+   - The output is simply a check if we're in state D (2'b11)
+
+3. **Next state logic**:
+   - Break down the case statement into individual conditions for each state
+   - Use ternary operators to select between in=0 and in=1 cases
+   - Combine these with OR operations based on the current state
+
+4. **Default handling**:
+   - Include a catch-all condition that defaults to state A (2'b00) if none of the valid states are active
+
+This approach makes the state transitions more explicit while maintaining the same logical behavior.

@@ -1,0 +1,9 @@
+To improve the solution, we need to address the functional errors identified in the analysis. The main issues lie in the STATE_B block, where the FSM should only examine the input 'w' and not consider 's', and in the way the cycle_counter and w_counter are updated. We also need to ensure that the output 'z' is set correctly, following the examination of 'w' for exactly three clock cycles.
+
+We can optimize the design by reducing the number of states and simplifying the state transitions. Instead of having separate states for STATE_C and STATE_D, we can combine their functionality into STATE_B. We can also remove the unnecessary state transitions and counter updates.
+
+To improve the PPA (Power, Performance, Area) metrics, we can use a single counter instead of separate cycle_counter and w_counter. This will reduce the area usage and power consumption of the design.
+
+The improved approach will be to use a single state, STATE_B, and a single counter, cycle_counter. We will increment cycle_counter every clock cycle, and when it reaches 3, we will set the output 'z' based on the value of w_counter and then reset the counters to prepare for the next examination of 'w'.
+
+By making these changes, we can ensure that the FSM correctly implements the required functionality, including setting the output 'z' to 1 when 'w' is 1 in exactly two of the next three clock cycles, while also improving the PPA metrics of the design.

@@ -1,0 +1,8 @@
+To improve the existing FSM design for better power and timing without increasing area, I will:
+
+- Register the output signal `out` to reduce glitches and dynamic power consumption, as the output is Moore-type and solely depends on state.
+- Combine next state and output combinational logic into one block to avoid redundant case statements, reducing logic duplication and possibly combinational depth.
+- Use explicit 2-bit state encoding (binary) as it is already area-efficient.
+- Maintain synchronous reset and sequential state update on the rising edge of clk.
+
+This approach reduces the number of combinational blocks, avoids glitching on the output by registering it, and slightly optimizes the combinational logic depth, which should improve both power and timing metrics while keeping area unchanged.

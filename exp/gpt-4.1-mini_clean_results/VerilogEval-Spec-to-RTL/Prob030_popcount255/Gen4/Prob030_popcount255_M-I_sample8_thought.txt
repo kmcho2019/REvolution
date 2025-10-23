@@ -1,0 +1,15 @@
+To improve PPA based on the given solution and metrics, focus on reducing area and power while maintaining or improving timing:
+
+1. Replace the wide explicit balanced adder tree summing 15 partial counts with a tree using carry-save adders (CSAs) to minimize long ripple carry chains and reduce critical path delay, power, and area.
+
+2. Use a 3:2 CSA (full adder) tree to reduce the 15 six-bit partial sums to two final sums, then do one final carry-propagate addition. This reduces the number of wide adders and the logic depth.
+
+3. Compress intermediate sums bit-widths to exactly what's needed (6 bits for partial counts, 8 bits max for sums), avoiding unnecessary bit growth.
+
+4. Keep the small popcount4 and popcount17 units as is since they are modular and efficient.
+
+5. The CSA tree approach typically reduces switching activity because carry bits are kept in carry-save form until the final stage, reducing toggling in long carry chains and improving timing.
+
+This will yield a more balanced and efficient summation tree with reduced area and power, better timing, and maintain modularity and clarity without generate loops.
+
+We'll implement the CSA tree explicitly in TopModule without generate loops, carefully wiring the CSA outputs to proceed through reduction stages, and finally do one ripple or carry-lookahead addition to get the final count.

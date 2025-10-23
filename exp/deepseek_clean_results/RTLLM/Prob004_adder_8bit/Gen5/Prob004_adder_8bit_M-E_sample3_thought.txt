@@ -1,0 +1,9 @@
+This implementation uses a 2-level hierarchical adder structure:
+1. First level: Two 4-bit ripple-carry adders working in parallel (one assuming carry-in=0, one assuming carry-in=1)
+2. Second level: A 4:1 mux that selects the correct sum based on the actual carry-out from the previous stage
+Key advantages:
+- Reduces critical path compared to pure ripple-carry (only 4 FA delays + mux delay)
+- More area-efficient than full carry-select (uses only 9 FAs instead of 16)
+- Maintains purely combinational logic
+- Scales better than pure ripple-carry for wider adders
+The design computes both possible sums in parallel, then selects the correct one once the carry is known.

@@ -1,0 +1,21 @@
+Improvement Strategy:
+1. State Encoding Optimization:
+   - Switch to one-hot encoding (3 bits) for states to reduce switching activity and improve timing
+   - This eliminates the need for binary-to-one-hot decoding in output logic
+
+2. Timing Optimization:
+   - Separate direction logic from state transitions to reduce critical path
+   - Simplify condition checks by prioritizing them in the correct order
+
+3. Power Optimization:
+   - Add clock gating for direction register during FALL and DIG states
+   - Use one-hot encoding to minimize state transition power
+
+4. Area Optimization:
+   - Keep minimal state representation while benefiting from one-hot advantages
+   - Simplify output logic by leveraging one-hot encoding
+
+5. Functional Improvements:
+   - Maintain clear priority: fall > dig > bump
+   - Ensure all edge cases are handled correctly
+   - Keep asynchronous reset functionality

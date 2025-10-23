@@ -1,0 +1,33 @@
+Revised Design Approach:
+
+1. **Accurate Pattern Detection**:
+   - Use a dedicated 4-bit shift register for pattern matching
+   - Only compare for 1101 when all 4 bits are filled
+   - Clear shift register after pattern match to prepare for delay capture
+
+2. **Correct Delay Capture**:
+   - Use a 3-bit counter (0-7) to track all 4 delay bits
+   - Store complete 4-bit delay value before starting counter
+   - Ensure proper sequencing between pattern match and delay capture
+
+3. **Precise Counter Logic**:
+   - Calculate exact cycle count as (delay + 1) * 1000
+   - Initialize main counter with correct value after full delay capture
+   - Implement accurate countdown with proper remaining time calculation
+
+4. **Fixed Output Behavior**:
+   - Output count = (main_counter / 1000) - 1 during counting phase
+   - Set count to don't-care (0) when not counting
+   - Maintain done signal until proper ack is received
+
+5. **Robust State Machine**:
+   - Clear state transitions with proper conditions
+   - Separate done assertion and ack handling
+   - Ensure clean return to IDLE state after completion
+
+Key Improvements:
+- Fixed pattern detection with proper shift register handling
+- Correct delay bit counting and storage
+- Accurate counter initialization and timing
+- Proper remaining time calculation
+- Reliable done/ack handshake

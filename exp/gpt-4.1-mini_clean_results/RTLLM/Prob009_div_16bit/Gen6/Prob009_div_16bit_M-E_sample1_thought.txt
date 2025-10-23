@@ -1,0 +1,27 @@
+I will implement a combinational 16-bit by 8-bit divider using two always blocks, fully combinational, but based on a bitwise division approach that processes one bit at a time from the most significant bit down to the least significant bit:
+
+1. First always block simply latches the inputs into registers `a_reg` and `b_reg`.
+
+2. Second always block:
+   - Initialize a temporary remainder register `tmp_rem` with zero.
+   - Initialize quotient to zero.
+   - Starting from the most significant bit (bit 15) of `a_reg`, for each bit down to 0:
+     - Shift `tmp_rem` left by 1 and bring in the current bit of `a_reg`.
+     - Compare `tmp_rem` with `b_reg`.
+     - If `tmp_rem >= b_reg`, subtract `b_reg` from `tmp_rem` and set the corresponding quotient bit to 1.
+     - Else, quotient bit is 0.
+   - This models the classical restoring division method in a purely combinational manner.
+
+3. The quotient is built from MSB (bit 15) down to LSB (bit 0) matching the dividend bit positions.
+
+4. The remainder is whatever is left in `tmp_rem` after processing all bits.
+
+5. The remainder is 8 bits wide (matching divisor width) zero-extended to 16 bits for output.
+
+6. This design respects the problem's constraints:
+   - Two combinational always blocks triggered by changes in inputs.
+   - Extracts bits from dividend sequentially to form remainder and quotient.
+   - Matches divisor bit width for comparisons and remainder register size.
+   - Does not handle divisor zero explicitly but assumes non-zero divisor as per problem statement.
+
+This method clearly and correctly performs the division operation without overlapping bits or indexing confusion and fulfills all requirements.

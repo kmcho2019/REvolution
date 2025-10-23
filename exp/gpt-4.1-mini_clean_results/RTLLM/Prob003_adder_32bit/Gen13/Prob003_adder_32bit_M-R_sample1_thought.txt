@@ -1,0 +1,16 @@
+Refactor the 16-bit CLA to explicitly implement hierarchical carry-lookahead logic using group propagate (P) and generate (G) signals for four 4-bit sub-blocks. This structure accelerates carry computation by calculating block-level carries in parallel rather than a simple ripple chain.
+
+In each 16-bit CLA block:
+- Compute per-bit propagate and generate signals.
+- Compute group propagate and generate signals for each 4-bit sub-block.
+- Use these group signals to compute carries into each 4-bit sub-block.
+- Within each 4-bit block, compute carry signals based on the incoming carry and the bit-level propagate/generate signals.
+- Compute sum bits from propagate and carry signals.
+
+At the 32-bit top level, instantiate two such 16-bit CLA blocks connected hierarchically as before.
+
+This hierarchical CLA design maintains modularity, improves timing by parallelizing carry computation, and retains clarity by using assign statements only without always blocks.
+
+The indexing mapping between [32:1] and internal [31:0] is preserved. The code structure emphasizes explicit carry-lookahead stages rather than a simple generate loop for carries.
+
+This approach reduces carry chain length and improves performance while keeping the design fully combinational and synthesizable.

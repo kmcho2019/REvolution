@@ -1,0 +1,10 @@
+To improve PPA (timing, power, and area) compared to the original design:
+
+- Use a one-hot FSM encoding to simplify state decoding and potentially improve timing by reducing logic levels in next state logic.
+- Implement clock enables for byte registers to reduce unnecessary toggling, updating bytes only when valid.
+- Register done only when asserted (done pulse one cycle) to reduce output toggling and dynamic power.
+- Register out_bytes only when done is asserted, holding previous value otherwise to save power and maintain stable outputs.
+- Separate combinational and sequential logic clearly, and use non-blocking assignments for registers.
+- Keep synchronous reset active high as required.
+- Maintain done asserted for exactly one clock cycle after the 3rd byte is received.
+- This fine-grained clock enable and FSM encoding approach should yield better timing by reducing logic depth and reduce power by minimizing register toggling, with negligible area overhead.

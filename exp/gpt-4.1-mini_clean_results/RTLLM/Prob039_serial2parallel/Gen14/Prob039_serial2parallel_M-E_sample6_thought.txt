@@ -1,0 +1,11 @@
+A new architectural approach is to use a shift register that shifts in the serial data from the MSB side on each valid input, so the first serial bit received becomes the MSB of the final parallel output.
+
+We'll use a 4-bit counter to count incoming valid serial bits from 0 to 7. When the counter reaches 7, the module will latch the shift register into the output register and assert dout_valid for one clock cycle.
+
+To decouple shifting and output, we'll store the shifted bits in a shift register, and when 8 bits have been received, we transfer this to the output register in the same cycle that dout_valid is asserted.
+
+The counter resets to zero after outputting data, allowing continuous data reception.
+
+This architecture ensures a fully synchronous design with clear and concise state transitions and timing, and the output is valid exactly one cycle after the 8th bit is received.
+
+Reset will clear all registers and signals asynchronously (active low) as specified.

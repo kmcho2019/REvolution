@@ -1,0 +1,21 @@
+To fix the design and ensure correct timing and outputs:
+
+- Keep a 4-bit shift register (`pattern_shift`) continuously updated every cycle in `IDLE` to detect the pattern `1101`.
+
+- When pattern is detected at the end of a cycle, transition to `READ_DELAY` state starting the next cycle.
+
+- In `READ_DELAY`, shift in exactly 4 bits MSB first; since the input bit corresponds to the current cycle, shift delay_reg left by one and input the current data bit at LSB, counting bits received precisely.
+
+- After the 4th delay bit is loaded, transition synchronously to `COUNT` state at the next clock cycle.
+
+- Initialize a single 15-bit `total_cycles` counter as `(delay + 1) * 1000` at the `COUNT` entry, and count down each clock cycle until zero.
+
+- Extract `count` output from the remaining 1000-cycle blocks: `count = total_cycles[14:10]`, which naturally reflects the remaining delay count, decrementing every 1000 cycles.
+
+- Output `counting` high during `COUNT` state.
+
+- When total_cycles reaches zero, transition to `DONE` state, assert `done` high, and wait for `ack` to return to `IDLE`.
+
+- Maintain synchronous reset behavior.
+
+This approach avoids nested counters and possible race conditions, aligns input sampling properly, and provides correct cycle count and outputs as specified.

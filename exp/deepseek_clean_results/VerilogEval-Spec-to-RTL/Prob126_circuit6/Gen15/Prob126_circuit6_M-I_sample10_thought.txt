@@ -1,0 +1,15 @@
+The current implementation already shows excellent PPA metrics, but we can explore further optimizations:
+
+1. **Power Optimization**: 
+   - Replace the ternary operator chain with a case statement. While functionally equivalent, synthesis tools often optimize case statements more efficiently for power in lookup-table scenarios.
+   - This might reduce the fan-out of the input 'a' and simplify the comparison logic.
+
+2. **Area Optimization**:
+   - The case statement approach might also lead to a more compact implementation as it clearly expresses the lookup table nature of the circuit.
+   - Synthesis tools can better recognize this as a simple ROM pattern.
+
+3. **Performance**:
+   - Maintain the combinational nature with zero clock period requirement.
+   - The case statement should not introduce any additional delay compared to the ternary operator chain.
+
+The improvement maintains the same functionality while potentially offering better PPA through more explicit pattern recognition by synthesis tools.

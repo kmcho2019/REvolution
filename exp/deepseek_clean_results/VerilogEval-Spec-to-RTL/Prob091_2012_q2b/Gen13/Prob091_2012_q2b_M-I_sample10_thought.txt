@@ -1,0 +1,10 @@
+Improvement Strategy:
+1. **Common Subexpression Sharing**: Both Y1 and Y3 use y[0] and w signals. We can precompute these common terms to reduce redundant logic.
+2. **Logic Simplification**: For Y3, we can express it as the NOR of y[0] and y[3] only when w=0, which matches the state machine requirements.
+3. **Gate-Level Optimization**: Use NAND/NOR gates where possible as they are typically more area-efficient in standard cell libraries.
+4. **Power Reduction**: Minimize switching activity by reducing the number of logic levels and gate counts.
+
+Key Observations:
+- Y1 only needs y[0] AND w
+- Y3 needs to be active (1) only when w=0 and we're transitioning to state D (from B or C or F)
+- The current implementation is already good, but we can make it slightly more efficient

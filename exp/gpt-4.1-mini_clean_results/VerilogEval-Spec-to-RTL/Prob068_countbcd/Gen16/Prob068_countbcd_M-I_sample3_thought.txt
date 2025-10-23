@@ -1,0 +1,15 @@
+To optimize the 4-digit BCD counter design for better PPA (power, performance, and area), I will:
+
+1. Simplify carry propagation logic to reduce critical path length by decoupling combinational carry calculation from the function calls, explicitly managing carries in a flatter structure without nested ternary operations.
+
+2. Replace function calls with direct combinational logic for increment and carry detection to reduce combinational logic depth and allow easier optimization by synthesis tools.
+
+3. Remove clock-enable gating on register updates, as the comparison logic adds combinational delay and power; modern synthesis tools often implement gating automatically or can better optimize straightforward logic.
+
+4. Optimize enable signals to correspond only to the three upper digits (tens, hundreds, thousands) as requested, so ena[2] for thousands, ena[1] for hundreds, and ena[0] for tens digit increments; omit ones digit enable to align exactly with spec.
+
+5. Make synchronous reset logic straightforward.
+
+6. Keep the design modular and clean but reduce unnecessary combinational logic layers to improve timing and power while maintaining area efficiency.
+
+This approach trades a slight increase in switching power due to removing clock gating for improved timing and simplified combinational paths, aiming to improve WNS and TNS while keeping area minimal.

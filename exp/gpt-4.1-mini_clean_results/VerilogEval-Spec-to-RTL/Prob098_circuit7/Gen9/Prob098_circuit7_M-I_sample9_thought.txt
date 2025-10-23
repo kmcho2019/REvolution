@@ -1,0 +1,9 @@
+The waveform indicates that q reflects the previous clock cycle's input 'a', but inverted. The original solution uses a flip-flop with inversion inside the sequential logic, which is fine but can introduce a slight delay through the inverter in the clock-to-Q path.
+
+To optimize for PPA:
+
+- Performance: Move inversion outside the flip-flop to reduce the critical path delay of the clock-to-Q. The flip-flop will just store 'a' directly; the output 'q' is the inverted registered value, implemented with a simple inverter on the output.
+- Power: By having the flip-flop store 'a' directly, we reduce switching inside the sequential element; inversion on output is purely combinational, which may reduce dynamic power inside flip-flop.
+- Area: Using a standard D flip-flop plus an inverter on output likely matches or improves area over inversion inside the flip-flop cell because inverter is a single gate and may be merged or optimized easily by synthesis.
+
+This approach balances delay and area well, and keeps the design simple and intuitive.

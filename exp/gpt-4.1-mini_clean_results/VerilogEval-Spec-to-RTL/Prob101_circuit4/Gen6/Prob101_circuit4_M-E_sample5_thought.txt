@@ -1,0 +1,7 @@
+Analyze the truth table to derive the logic expression for q. Observing the waveform, q is 1 whenever (b=1) or (c=1), except when a=0 and b=0 and c=0 (q=0), and also q=0 when a=1 and b=0 and c=0. The value of d does not affect the output when b or c are 1, but when b and c are 0, q=0 regardless of d.
+
+Another way to implement this is to use a 2-to-1 multiplexer structure controlled by a, choosing between q=0 and q=b OR c. This architecture splits the logic into two parts: when a=0, q = b OR c; when a=1, q = b OR c as well. From the table, when a=1 and b=c=0, q=0, so actually q is (b OR c) AND (~a OR a), meaning q = b OR c. So q is simply b OR c, same as previous.
+
+To differentiate from the simple OR gate, implement the logic using a small LUT-like structure using case statements to show a structural decision. Use a combinational always block with case statement on {a,b,c} to assign q, demonstrating an alternative design style.
+
+This solution provides the same functionality but uses an explicit case lookup approach instead of direct gate-level OR assignment.

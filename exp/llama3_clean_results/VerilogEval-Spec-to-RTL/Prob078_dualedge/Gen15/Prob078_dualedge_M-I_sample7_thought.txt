@@ -1,0 +1,13 @@
+The existing solution for the dual-edge triggered flip-flop is functionally correct and straightforward. However, to further improve the Power, Performance, and Area (PPA) metrics, we can consider a few optimizations.
+
+For performance, the existing design already minimizes the combinational logic delay by using a simple conditional operator (`?:`) to select the output based on the clock edge. Given the minimalistic nature of this logic, significant performance improvements may be challenging without altering the fundamental design approach.
+
+Regarding power consumption, the current design inherently involves triggering flip-flops on every clock edge, which contributes to higher power usage. However, for a dual-edge triggered functionality, this is unavoidable without fundamentally changing the design.
+
+For area optimization, the existing design uses two flip-flops and a small piece of combinational logic, resulting in a relatively low area usage. To further reduce area, we could consider using a single flip-flop and more complex combinational logic, but this might not yield significant improvements and could potentially impact performance.
+
+One potential improvement involves optimizing the combinational logic for output selection. Instead of using the conditional operator (`?:`), which might introduce a slight delay due to its combinational nature, we can use a multiplexer (mux) to select between `q_pos` and `q_neg` based on the clock level. This approach might offer a slightly more efficient implementation in terms of area and potentially power, depending on the FPGA's implementation specifics.
+
+To further optimize the design for better PPA metrics, we should also consider any specific FPGA architecture features that might allow for more efficient implementation of dual-edge triggered flip-flops. For instance, some FPGAs may offer specialized flip-flop configurations or clock management features that could be leveraged to reduce power consumption or improve timing performance.
+
+Overall, our improvement strategy involves examining the existing design's components, considering alternative implementations for the combinational logic, and looking into FPGA-specific features that might offer better PPA metrics for the dual-edge triggered functionality.

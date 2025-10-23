@@ -1,0 +1,5 @@
+To simplify the solution, we can directly update the output bits without needing an additional line to retain the current state of `out`. This simplification removes unnecessary complexity and potential issues with concurrent assignments within the same always block. We will use a non-blocking assignment (`<=`) to update `out` and `prev_in` to avoid any potential race conditions and to keep the logic straightforward.
+
+Additionally, recognizing that the `for` loop is actually beneficial for the intended function as it allows us to examine each bit of the input vector individually, we will retain this approach. The key simplification will be in how we update the `out` register, focusing on directly setting bits to 1 when the corresponding input bit transitions from 1 to 0, while ensuring that the bits remain set until a reset occurs.
+
+The logic for updating `out` can be simplified by removing the default retain statement and directly updating the bits as necessary within the loop. This approach maintains functionality while reducing the complexity of the code.

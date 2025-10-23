@@ -1,0 +1,10 @@
+The current solution uses two always blocks and updates the wave register every clock cycle, even when the wave value saturates at 0 or 31, causing unnecessary toggling and power consumption. To optimize for better power and timing:
+
+1. Combine the state (direction) and wave updates into a single always block to reduce redundant comparisons.
+2. Update the wave only when it is guaranteed to change (i.e., not at boundaries) to avoid unnecessary toggling.
+3. Simplify the logic for wave increment/decrement using a signed addition with direction signal converted appropriately, enabling the use of addition instead of conditional increments and decrements.
+4. Use a single state bit 'direction' to indicate increment (0) or decrement (1), and toggle it only at boundaries.
+5. This reduces the number of comparators and conditional operations, improving timing and power.
+6. Maintain active-low reset handling as required.
+
+This should reduce the overall logic complexity, toggle rate of wave and direction registers, and improve timing while maintaining functionality.

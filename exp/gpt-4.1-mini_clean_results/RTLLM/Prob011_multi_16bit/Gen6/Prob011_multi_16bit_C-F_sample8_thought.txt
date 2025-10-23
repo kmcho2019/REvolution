@@ -1,0 +1,16 @@
+Fuse the best aspects of both examples to create an efficient 16-bit unsigned multiplier using shift and accumulate with these improvements:
+
+- Use a 5-bit counter (i) from 0 to 17 controlling operation precisely.
+- At i=0, load multiplicand (areg) and multiplier (breg_ext) zero-extended to 32 bits.
+- For i=1 to 16, check LSB of areg; if set, add breg_ext to accumulator (yout_r).
+- Shift areg right and breg_ext left by one bit each cycle to align bits and partial sums.
+- Set done flag at cycle i=16 and clear at i=17, signaling multiplication completion cleanly.
+- When start is deasserted, reset all registers and counters to zero for a clean idle state.
+- To improve power and reduce unnecessary toggling:
+  - Update yout_r only when areg[0] is 1, avoiding needless rewrites.
+  - Update areg and breg_ext only when start is active and i is within operation cycles.
+- Use synchronous logic with asynchronous active-low reset (rst_n) as specified.
+- Keep clear signal naming and concise code structure.
+- This fusion minimizes large variable shifts, controls done timing explicitly, gates accumulation properly, and resets cleanly for best timing, power, and area balance.
+
+Overall, the design achieves controlled sequencing, minimized switching, clear done signaling, and efficient resource usage consistent with the specification.

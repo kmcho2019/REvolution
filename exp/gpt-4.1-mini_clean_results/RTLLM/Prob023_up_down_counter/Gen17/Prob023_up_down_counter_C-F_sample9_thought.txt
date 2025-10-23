@@ -1,0 +1,9 @@
+To create a superior solution by fusing the best ideas from the two examples:
+
+- Maintain a single always block triggered by the clock edge to keep the design simple and clean, avoiding unnecessary combinational always blocks that add to critical path delay.
+- Perform the increment/decrement operation directly inside the synchronous block, using a simple conditional operator to decide whether to add or subtract 1, avoiding extra combinational logic and reducing latency.
+- Keep synchronous reset logic for clean and deterministic behavior.
+- Use explicit width constants for increment and decrement to avoid synthesis warnings and ensure correct bit-width arithmetic.
+- This fusion reduces the critical path by removing the combinational block and avoiding the introduction of the intermediate `next_count` signal.
+- It also preserves the clarity and straightforwardness of the RTL, which leads to easier verification and synthesis.
+- Optionally, to further improve power, clock gating or enable signals could be considered, but since not in original spec, keep the design minimal and optimized for PPA.

@@ -1,0 +1,17 @@
+Instead of tracking walking direction and falling separately, we'll use a full state encoding with four distinct states:
+1. WALK_LEFT: walking left on ground
+2. WALK_RIGHT: walking right on ground
+3. FALL_LEFT: falling while previously walking left
+4. FALL_RIGHT: falling while previously walking right
+
+Key advantages:
+- Explicit state representation makes the design more intuitive and easier to verify
+- Each state directly maps to specific output conditions
+- State transitions are more straightforward with no need for separate direction tracking
+- Better matches the conceptual model of the problem domain
+
+The state machine will:
+- Transition between walking states based on bump inputs
+- Enter falling states when ground disappears
+- Return to previous walking state when ground reappears
+- Handle asynchronous reset cleanly

@@ -1,0 +1,12 @@
+To optimize the existing design for better power and area while maintaining performance, I will eliminate the procedural always block and replace it with purely combinational continuous assignments. This reduces flip-flop and mux logic inferred during synthesis. 
+
+I will implement next_state as a set of combinational logic expressions that OR together all possible ways each next state can be reached, based on active current states and input `in`. This approach removes the repeated if-conditions and incremental ORing inside the always block, allowing synthesis tools to optimize better by flattening and sharing logic.
+
+For outputs, the direct OR of corresponding state bits remains optimal and clear.
+
+This style generally leads to lower logic depth, less area due to logic sharing, and reduced dynamic power from more straightforward signal dependencies.
+
+In summary:
+- Replace procedural block with continuous assign for next_state.
+- Use logic expressions combining current states and input to determine each next state bit.
+- Keep outputs as direct OR of relevant states.

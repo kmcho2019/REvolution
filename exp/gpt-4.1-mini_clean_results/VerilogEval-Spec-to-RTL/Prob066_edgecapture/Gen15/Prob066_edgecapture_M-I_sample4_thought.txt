@@ -1,0 +1,10 @@
+The original design is fundamentally correct but can be improved for simulation correctness and better timing clarity by moving the falling edge detection inside the synchronous block. This avoids combinational logic dependent on registers updated only on clock edges, which can cause glitches or race conditions in simulation.
+
+Specifically:
+- Detect falling edges within the clocked always block using the current and previous input values.
+- Update the output register `out` each cycle by OR-ing the new falling edges with the previous `out`.
+- Synchronously reset both `prev_in` and `out` to zero.
+- This approach removes asynchronous combinational signals based on registers, improving simulation fidelity and potential synthesis quality.
+- The logic remains simple, area-efficient, and power-wise optimal given the functionality.
+  
+This design captures 1→0 transitions per bit on rising clock edges, latches them in `out`, and clears all state only on synchronous reset, meeting the specification and improving simulation and implementation robustness.

@@ -1,0 +1,9 @@
+To improve PPA, the following optimizations are implemented: 
+
+- Direction register updates only when the direction actually changes, preventing unnecessary toggles and saving dynamic power.
+- Fall timer increment gated explicitly by mode==FALL to reduce switching activity.
+- Use a combinational flag to indicate splat condition (fall_timer > 20) instead of a direct > comparison each cycle; this subtle change can help synthesis tools optimize better.
+- Simplify fall_timer saturation logic by limiting maximum count with a conditional increment, reducing comparator complexity.
+- Reorder bump handling logic so that when both bump_left and bump_right are 1, the direction toggles; else bump_left sets direction right; else bump_right sets direction left; else direction unchanged. This explicit priority may help synthesis.
+- Maintain clear separation of state and outputs for clarity and synthesis friendliness.
+These changes target small improvements in timing (by simplifying combinational logic) and power (by reducing toggling) while keeping area minimal and not changing FSM behavior.

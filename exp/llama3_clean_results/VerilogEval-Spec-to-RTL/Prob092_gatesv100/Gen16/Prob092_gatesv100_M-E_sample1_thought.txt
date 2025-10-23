@@ -1,0 +1,9 @@
+A novel approach to solve this problem would be to utilize a shift register to simplify the logic for calculating `out_both`, `out_any`, and `out_different`. 
+
+For `out_both`, instead of directly comparing each bit with its neighbor to the left, we can shift the input vector one bit to the right and then perform a bitwise AND operation between the shifted vector and the original input vector. This will give us the `out_both` vector, except for the most significant bit (MSB), which will be incorrect because there's no bit to the left of it. To correct the MSB, we simply set it to 0.
+
+For `out_any`, we can shift the input vector one bit to the left and then perform a bitwise OR operation between the shifted vector and the original input vector. However, this will give us an incorrect result for the least significant bit (LSB) because there's no bit to the right of it. To correct the LSB, we set it to 0.
+
+For `out_different`, we can use a similar shifting approach but utilize the XOR operation instead. To account for the wrap-around, we can concatenate the input vector with its first bit appended at the end (for a left shift) or its last bit prepended at the beginning (for a right shift), and then perform the XOR operation.
+
+This approach simplifies the logic and reduces the number of conditional statements, potentially leading to more efficient synthesis and better PPA metrics.

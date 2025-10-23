@@ -1,0 +1,11 @@
+The provided code attempts to capture transitions from 1 to 0 in the input signal 'in' and maintain the output 'out' bits high until reset. However, it fails to correctly implement this functionality due to issues with retaining the output state and handling the reset condition.
+
+To improve this solution, we can modify the logic within the for loop to correctly capture the transition from 1 to 0 and retain the output high until reset. 
+
+1. We initialize the `prev_in` register to all zeros.
+2. We modify the logic within the for loop to detect the falling edge and keep the output bit high once it's set, until the register is reset. 
+3. We ensure that each output bit remains high once a falling edge is detected for that bit.
+
+The key improvement is to maintain the state of 'out' bits once they are set due to a falling edge. This involves modifying the logic to set 'out[i]' to 1 only when a transition is detected, and otherwise, keeping its previous value, except when reset is applied.
+
+Additionally, to improve PPA (Power, Performance, Area), we can consider optimizations such as reducing the switching activity on the 'out' signal and internal signals like 'prev_in'. However, given the simplicity of the design and the small number of iterations in the loop, significant optimizations may not be feasible without compromising functionality.

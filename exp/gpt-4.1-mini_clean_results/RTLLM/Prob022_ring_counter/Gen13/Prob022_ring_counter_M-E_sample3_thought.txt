@@ -1,0 +1,5 @@
+Instead of directly rotating the output vector, I will maintain an internal 3-bit index register that tracks the position of the bit set high in the 8-bit output. On reset, this index is initialized to zero, corresponding to the LSB. On each clock edge, the index increments modulo 8, effectively cycling through positions 0 to 7.
+
+The output vector is generated combinationally by decoding this index to a one-hot encoded vector, where only the bit at the position indicated by the index is set to 1 and all others are 0.
+
+This approach separates the state (index) from the output vector, avoiding any concatenation or vector slicing assignments inside the sequential block. The state is a simple integer updated on clock edges, and the output is a purely combinational one-hot encoding of this state. This method is tool-friendly, clear, and meets all requirements for the ring counter behavior.

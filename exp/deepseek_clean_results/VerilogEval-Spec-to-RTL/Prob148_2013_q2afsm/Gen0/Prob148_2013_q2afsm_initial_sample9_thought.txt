@@ -1,0 +1,10 @@
+The problem requires implementing a priority-based arbiter FSM with 4 states (A, B, C, D) and 3 request inputs (r[2:0]). The FSM should:
+1. Stay in state A when no requests are active
+2. Transition to B (grant g0) if r0 is active (highest priority)
+3. Transition to C (grant g1) if r1 is active and r0 is not
+4. Transition to D (grant g2) if only r2 is active
+5. Maintain current grant state while request is active
+6. Return to A when request becomes inactive
+7. Use synchronous active-low reset to state A
+
+I'll use binary encoding for states and separate always blocks for state transitions and output logic.

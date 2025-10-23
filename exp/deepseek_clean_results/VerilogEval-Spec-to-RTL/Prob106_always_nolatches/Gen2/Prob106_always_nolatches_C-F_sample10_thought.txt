@@ -1,0 +1,13 @@
+The fusion strategy combines the strengths of both examples while addressing potential optimizations:
+
+1. Maintain the simple parallel comparison approach from both examples for clear functionality
+2. Optimize the comparison logic by recognizing that all valid scancodes share the same prefix (0xe0), allowing for a two-stage comparison:
+   - First check the high byte for 0xe0 (common to all arrow keys)
+   - Then compare only the low byte for specific arrow keys
+3. This reduces comparison complexity while maintaining the same functionality
+4. Keep outputs mutually exclusive as in both examples
+
+The optimized design will:
+- First verify if the high byte matches 0xe0 (reducing comparison width for most cases)
+- Only then compare the low byte against specific arrow key codes
+- Maintain minimal area and power while potentially improving timing

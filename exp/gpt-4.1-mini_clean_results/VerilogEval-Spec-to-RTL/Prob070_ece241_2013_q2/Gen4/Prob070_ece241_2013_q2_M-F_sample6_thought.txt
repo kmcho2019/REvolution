@@ -1,0 +1,34 @@
+The main problem is that the original code uses direct minterms for the SOP and simply negates SOP to get POS, ignoring the don't-care conditions. The inputs 3,8,11,12 never occur, so they can be treated as don't-cares during minimization, allowing simpler expressions.
+
+Step 1: Enumerate outputs for each input (a,b,c,d), considering 'a' as MSB and 'd' as LSB:
+- Outputs 1 for decimal: 2 (0010), 7 (0111), 15 (1111)
+- Outputs 0 for: 0,1,4,5,6,9,10,13,14
+- Don't-care inputs: 3,8,11,12
+
+Step 2: Use the don't-care inputs to minimize the SOP and POS forms properly.
+
+From the K-map or by applying Quine-McCluskey or Karnaugh map including don't-cares:
+
+Minimal SOP (sum-of-products):
+- (b & c & d) + (a & b & c & d) + (~a & ~b & c & ~d)
+Actually, the original SOP can be minimized to: 
+out_sop = (b & c & d) + (~a & ~b & c & ~d)
+
+because:
+- The terms 7(0111) and 15(1111) share (b & c & d) = 1 for both 0111 and 1111.
+- The term 2(0010) is (~a & ~b & c & ~d).
+
+Minimal POS (product-of-sums) form after considering don't-cares:
+out_pos = (a + b + ~c + d) * (a + ~b + ~c + ~d)
+
+This matches the zeros for required inputs.
+
+Step 3: Implement these minimized expressions accordingly.
+
+Step 4: Test via code to confirm logic correctness.
+
+Thus:
+- out_sop = (b & c & d) | (~a & ~b & c & ~d)
+- out_pos = (a + b + ~c + d) * (a + ~b + ~c + ~d)
+
+This satisfies minimal SOP and POS with don't-cares taken into account.

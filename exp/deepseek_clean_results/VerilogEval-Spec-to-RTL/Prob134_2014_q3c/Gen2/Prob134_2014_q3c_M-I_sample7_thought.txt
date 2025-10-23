@@ -1,0 +1,19 @@
+To optimize the FSM implementation for better PPA (Power, Performance, Area), I propose the following improvements:
+
+1. **Replace LUT with direct combinational logic**:
+   - Eliminate the memory array (LUT) and implement the state transitions and outputs directly using case statements
+   - This reduces area by removing the storage elements and simplifies the logic path
+
+2. **Simplify state encoding**:
+   - Keep the existing 3-bit encoding but optimize the logic for these specific states
+   - Remove unused state handling since they should never occur
+
+3. **Output optimization**:
+   - Compute Y0 directly from the next state logic rather than extracting it from a stored value
+   - Combine output logic with state transition logic for better optimization
+
+4. **Power reduction**:
+   - Smaller combinational logic will reduce switching power
+   - No unnecessary storage elements means less clock power consumption
+
+The improved version will be more efficient in both area and power while maintaining the same functionality and timing characteristics.

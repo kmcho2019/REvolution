@@ -1,0 +1,12 @@
+To fuse the best ideas from both examples, I will:
+
+1. Register the input signal 'a' to synchronize it to the clock domain and avoid metastability.
+2. Generate rising and falling edges by comparing the current and previous values of 'a' (i.e., a_reg and a).
+3. Unlike the examples which drive 'rise' and 'down' as combinational wires, I will register these outputs. This ensures:
+   - 'rise' and 'down' signals are asserted synchronously with the clock.
+   - They remain high for exactly one full clock cycle after the edge is detected, avoiding glitches.
+   - Better timing closure and output signal stability.
+4. On reset, initialize all registers to zero.
+5. Overall, this approach still uses minimal logic and registers (three flip-flops: one for input sampling and two for outputs), keeping the design clear, efficient, and robust.
+
+This fusion satisfies the requirement that rise and down signals are set to 1 on the clock following an edge and remain 1 for exactly one cycle, then return to 0 until the next edge appears. This matches the spec more strictly than combinational outputs in the examples.

@@ -1,0 +1,23 @@
+Refactoring Strategy:
+1. Replace the generate block with direct bitwise operations:
+   - Use concatenation for boundary handling ({1'b0, q[511:1]} for left neighbors)
+   - Compute next state in a single assign statement using XOR between shifted versions of q
+   - This eliminates the generate loop overhead and may help synthesis optimization
+
+2. Simplify the sequential logic:
+   - Keep the same clocked behavior but express it more concisely
+   - Use a continuous assign for the output to make it clearer that q is purely sequential
+
+3. Boundary Optimization:
+   - Handle boundaries through bit concatenation rather than conditional operators
+   - This creates a more regular structure that may map better to hardware
+
+4. Maintain same functionality:
+   - Ensure the refactored version still correctly implements Rule 90
+   - Keep the same interface and timing behavior
+
+The refactored version should:
+- Be functionally equivalent
+- Potentially improve PPA metrics through more regular structure
+- Be more concise and readable
+- Maintain full parallel computation

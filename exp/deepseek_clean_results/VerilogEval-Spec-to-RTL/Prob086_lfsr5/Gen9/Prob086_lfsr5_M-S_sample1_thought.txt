@@ -1,0 +1,11 @@
+To simplify the 5-bit maximal-length Galois LFSR implementation while maintaining functionality:
+1. The core functionality remains the same: taps at positions 5 and 3 (bits 4 and 2 in 0-based indexing)
+2. Instead of individual bit assignments, we can use a more compact concatenation approach
+3. The XOR operation for the tapped bit can be done inline in the concatenation
+4. Reset still initializes to 5'b00001
+5. The simplified version reduces the number of explicit assignments while maintaining identical behavior
+
+Key simplification:
+- Combine all bit assignments into a single concatenation operation
+- The tapped bit (q[2]) gets q[3] XOR q[0]
+- Other bits simply shift right with q[0] becoming the new MSB

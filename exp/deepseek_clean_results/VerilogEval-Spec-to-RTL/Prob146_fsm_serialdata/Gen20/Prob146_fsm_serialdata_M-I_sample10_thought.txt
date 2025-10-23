@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the output register update to break critical path in STOP state
+   - Simplify bit_count comparison by using LSB check (count down from 7 to 0)
+   
+2. Power Optimization:
+   - Add enable signal for shift register to prevent unnecessary updates
+   - Keep done signal as single-cycle pulse to minimize downstream toggling
+
+3. Area Optimization:
+   - Maintain 2-bit state encoding (already optimal)
+   - Keep 3-bit bit_count for clarity (small area impact)
+   - Remove ERROR state since error recovery isn't critical per problem statement
+
+Key Changes:
+1. Remove ERROR state - just wait for stop bit in RECEIVE state
+2. Add shift_enable signal to reduce power
+3. Pipeline output register update
+4. Simplify state transitions
+5. Maintain same functionality with better PPA

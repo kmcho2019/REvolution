@@ -1,0 +1,9 @@
+To create a superior counter design, I will fuse the best ideas from both examples:
+
+- Avoid gating the clock signal at the RTL level to prevent glitches, timing issues, and clock skew problems.
+- Use a synchronous reset (active low) and a clock enable approach inside the always block based on `valid_count`. This preserves timing closure and synthesis friendliness.
+- Keep the counter logic simple: increment the count on each clock cycle when `valid_count` is high, reset to 0 when count reaches 11, and hold value otherwise.
+- This approach reduces power by minimizing unnecessary toggles (via clock enable), maintains area efficiency, and improves performance by using clean clock and synchronous enable.
+- Use non-blocking assignments throughout for reliable simulation and synthesis.
+
+This fusion strategy combines robust design practices for timing and power while maintaining functional correctness and minimal area.

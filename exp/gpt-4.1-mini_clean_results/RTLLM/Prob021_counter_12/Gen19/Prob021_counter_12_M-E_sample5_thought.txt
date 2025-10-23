@@ -1,0 +1,7 @@
+Instead of using clock gating or a single always block with an enable, I will implement a two-stage counting architecture to separate counting control and state update, improving modularity and clarity.
+
+The first stage is a combinational next-count logic block that determines the next count value based on the current count and valid_count signal. This block outputs the next count value, which is then registered in a synchronous process with asynchronous reset.
+
+If valid_count is 0, the next count is the same as the current count, effectively pausing counting without gating the clock. When valid_count is 1, the count increments until reaching 11, after which it wraps to 0.
+
+This approach cleanly separates next-state logic from state update, which can ease formal verification and synthesis optimizations. It also avoids clock gating and relies on an enable-type mechanism via next-state logic, thus reducing potential clock-related issues while maintaining efficient power usage by freezing count value when paused.

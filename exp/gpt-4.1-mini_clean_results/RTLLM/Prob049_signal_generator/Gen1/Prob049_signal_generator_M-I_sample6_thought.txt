@@ -1,0 +1,7 @@
+The original design is functionally correct and straightforward. However, the state transition depends on the current value of 'wave' before increment/decrement, which can cause a one-clock-cycle delay in switching states and waveform direction. To optimize performance and timing, I propose calculating the next wave value and next state in combinational logic before updating the registers. This approach reduces the timing path because state transition and wave update decisions are made based on next-wave values, not the current ones, avoiding dependency on sequential updates within the same clock.
+
+Additionally, adding an enable-like signal internally to avoid unnecessary toggling could reduce dynamic power. But since the waveform is a continuous triangle wave, toggling every clock is expected.
+
+Thus, the main improvement is separating next-state and next-wave combinational logic from sequential register updates, improving timing and clarity without increasing area. The nonblocking assignments remain to ensure synchronous behavior, and asynchronous reset is preserved as specified.
+
+This approach improves the critical path delay and provides clean, easily synthesized logic for PPA optimization.

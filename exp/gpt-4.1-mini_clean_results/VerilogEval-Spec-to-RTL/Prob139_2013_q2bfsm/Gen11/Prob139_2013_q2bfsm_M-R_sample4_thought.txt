@@ -1,0 +1,24 @@
+Refactor the FSM to use a one-hot encoded state machine with explicit state flip-flops, separating the state registers, outputs, and counters clearly. Use an explicit shift register to capture x samples at each clock and check the pattern in the registered value (not the immediate concatenation).
+
+This avoids the off-by-one pattern detection problem by updating the shift register in sequential logic and evaluating pattern matching from the registered shift register value (which represents the last three x samples at the current clock).
+
+Use a y counter counting from 0 up to 2 inclusive, to allow "at most two clock cycles" delay for detecting y=1.
+
+Outputs f and g are Moore outputs assigned directly from state bits for clarity.
+
+Make the reset behavior explicit and synchronous active low on all registers.
+
+This structure improves clarity, timing correctness, and easier debugging. It removes combinational dependency on the next input x when checking the pattern, solving the timing misalignment.
+
+One-hot encoding states:  
+- A_IDLE = 7'b0000001  
+- A_F_PULSE = 7'b0000010  
+- A_PATTERN = 7'b0000100  
+- A_G_PULSE = 7'b0001000  
+- A_Y_MON = 7'b0010000  
+- A_G_ON = 7'b0100000  
+- A_G_OFF = 7'b1000000
+
+By using one-hot, output decoding is direct from state bits.
+
+The state transition logic updates states based on registered inputs and counters only, avoiding combinational pitfalls.

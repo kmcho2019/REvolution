@@ -1,0 +1,11 @@
+To improve PPA (performance, power, area) modestly from the existing compact and clean FSM design, focus on simplifying next_state logic to reduce logic levels and input toggling. One way is to precompute a single bump_signal indicating "any bump" and unify direction flipping logic to reduce multiple conditional branches on bump inputs.
+
+Also, remove redundant default next_state assignment by restructuring the combinational logic as a priority-based if-else cascade rather than a case statement, which typically results in simpler synthesized logic.
+
+Use intermediate wires for bump conditions to reduce logic toggling and gate transitions.
+
+Keep the same 3-bit state encoding and same overall priority order (fall > dig > bump) for clarity and maintainability.
+
+This approach will slightly reduce switching activity and logic complexity, improving timing and power with negligible area impact.
+
+The asynchronous reset and Moore output remain unchanged to preserve functionality.

@@ -1,0 +1,11 @@
+To optimize the existing 10-bit counter that counts from 0 to 999, I will simplify terminal count detection by replacing the partitioned comparator with a single arithmetic comparison (q == MAX_COUNT). This can reduce logic depth and simplify timing paths by avoiding multiple bitwise equality checks.
+
+Additionally, instead of comparing and then resetting, I will implement a rollover based on a subtraction and wrap around approach using an unsigned comparison, which synthesis tools typically optimize well.
+
+The reset remains synchronous active-high with non-blocking assignments.
+
+This approach should improve timing (reduce critical path length), maintain or slightly reduce area by simplifying the combinational logic, and possibly lower power by reducing toggling in complex comparator logic.
+
+No extra registers are added, keeping area low.
+
+The code is kept clean and parameterized for maintainability.

@@ -1,0 +1,10 @@
+Novel Architecture Idea:
+1. Parallel Window Processing: Instead of using a shift register to track w values over 3 cycles, we'll use three separate registers to capture w values in parallel during each evaluation window.
+2. Immediate Counting: We'll maintain a running count of '1's in the current window, updating it each cycle when in state B.
+3. State Machine Simplification: Only two states (A and B) are needed, with state B handling both the window collection and evaluation phases.
+4. Edge-Triggered Evaluation: The output z is generated combinatorially based on the current window count when cycle_count wraps around.
+5. Key Advantages:
+   - Eliminates the need for a shift register, reducing sequential elements
+   - Parallel counting reduces critical path compared to serial shift-and-count
+   - Clear separation between data collection and evaluation phases
+   - More efficient power usage as counting happens incrementally

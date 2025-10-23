@@ -1,0 +1,14 @@
+The original solution is functionally correct in detecting 1-to-0 transitions on each bit and latching them until reset. The main potential source of functional mismatches is the initialization of `prev_in` to zero on reset, which may cause missed or false detections immediately after reset if the input vector is not zero at that time.
+
+To fix this, I will initialize `prev_in` to the current input value `in` on reset, ensuring that no false edge detections occur right after reset, and the edge detection starts with a known valid previous state.
+
+This fix improves correctness without impacting power, performance, or area, as it only changes the reset behavior.
+
+The code remains a simple, synchronous, positive-edge triggered design with two 32-bit registers and minimal combinational logic.
+
+No further PPA optimizations are needed because the design is already simple and efficient.
+
+Summary:
+- On synchronous reset, set `prev_in <= in` instead of zero.
+- This prevents false detections after reset.
+- Keep the rest of the logic unchanged.

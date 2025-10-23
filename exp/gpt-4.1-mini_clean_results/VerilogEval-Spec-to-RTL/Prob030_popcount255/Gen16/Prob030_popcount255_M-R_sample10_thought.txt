@@ -1,0 +1,5 @@
+Refactor the popcount module to use a generate-for loop and a balanced adder tree structure explicitly. Instead of using a recursive module instantiation, implement the population count by iteratively reducing the input vector's bit width by summing pairs of bits or partial sums until only one final sum remains. This will be done using an array of wires to hold intermediate sums at each level, making the code easier to synthesize and potentially more efficient since it avoids recursive module instantiation overhead. Also use generate blocks for conditional hardware generation, ensuring standard Verilog syntax.
+
+The TopModule remains the same, instantiating the popcount with WIDTH=255. Output width remains 8 bits.
+
+This approach explicitly builds the adder tree level by level with combinational logic using assign statements, improving clarity and synthesis friendliness.

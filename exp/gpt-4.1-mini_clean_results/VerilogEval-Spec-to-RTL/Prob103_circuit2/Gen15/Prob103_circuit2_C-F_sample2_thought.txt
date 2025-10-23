@@ -1,0 +1,10 @@
+Both example solutions correctly implement the even parity function (XNOR of all inputs) to match the waveform. They differ slightly in style: one uses the reduction XOR operator with inversion, the other explicitly XORs all inputs then inverts.
+
+To fuse their strengths:
+- Use the reduction XOR operator `^` which is more concise and lets synthesis tools better optimize the multi-input XOR internally.
+- Apply inversion `~` to produce even parity output as required.
+- Keep the code simple and single-line combinational assignment for clarity and minimal gate count.
+- This approach maximizes synthesis freedom to optimize gate sizing and structure, potentially improving power, performance, and area (PPA) versus manually chaining XOR gates.
+- The resulting RTL is clear, concise, and the most synthesis-friendly for typical tools, representing a synthesis-optimized 4-input even parity generator.
+
+Hence, the final fused design is the direct, inverted reduction XOR expression `assign q = ~(^ {a,b,c,d});`.

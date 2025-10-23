@@ -1,0 +1,12 @@
+The current solution explicitly lists every transition as separate conditions combined with the input signal, which is clear but somewhat verbose.
+
+Since the state machine uses one-hot encoding and the transitions are all either to S0 on '0' input except some states where next transitions depend on '1', we can simplify the logic by directly using bitwise operations without repeating the state checks multiple times.
+
+To reduce complexity, I will:
+
+- Use bitwise AND of state and input signals to generate next_state signals in a straightforward manner.
+- Represent the transitions to S0 collectively for all states that go to S0 on input '0' by ORing their bits first.
+- For other next states, just assign the bits directly based on the input and state.
+- Keep output assignments as simple bitwise AND and reduction operations.
+
+This approach shortens the logic expressions without changing the functionality or output behavior.

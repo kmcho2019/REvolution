@@ -1,0 +1,17 @@
+The existing Verilog code models the behavior of Lemmings in a 2D world, but it has several functional errors and complexities. To simplify the solution, we can address the following key issues:
+
+1.  **State Transitions**: Simplify state transitions by removing redundant checks and handling edge cases explicitly. For example, instead of checking for `bump_left` and `bump_right` separately in each walking state, we can use a single conditional statement to handle bumps.
+
+2.  **Signal Handling**: Correctly handle the `dig` signal by checking if the Lemming is on the ground before starting to dig.
+
+3.  **Counter Reset**: Reset the `fall_counter` when the Lemming transitions from the `falling` state to a walking state after hitting the ground.
+
+4.  **Direction Tracking**: Update the `original_direction` variable correctly in all cases, including when the Lemming transitions from the `digging_state` to the `falling` state.
+
+5.  **Reset Handling**: Handle the `areset` signal by resetting the Lemming to the `walking_left` state, even if it is in the `splattered` state.
+
+By addressing these issues and simplifying the state transitions, signal handling, and counter reset, we can reduce the complexity of the code while maintaining its functionality.
+
+We will use a Moore state machine to model the behavior of Lemmings. The machine will have five states: `walking_left`, `walking_right`, `falling`, `digging`, and `splattered`. We will use a `fall_counter` to track the number of clock cycles the Lemming has been falling and an `original_direction` variable to store the direction the Lemming was walking before it started falling or digging.
+
+We will simplify the combinational logic for the outputs by using the `state` and `original_direction` variables to determine the values of `walk_left`, `walk_right`, `aaah`, and `digging`.

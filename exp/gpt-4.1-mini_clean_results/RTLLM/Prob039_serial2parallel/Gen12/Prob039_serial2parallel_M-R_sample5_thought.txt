@@ -1,0 +1,10 @@
+Refactor the design to use a simpler synchronous shift register and a 4-bit counter (cnt) as requested.  
+- On each rising edge, if din_valid is high, shift the input bit into an 8-bit register from MSB to LSB (left shift) and increment the counter.  
+- When the counter reaches 8 (i.e., after receiving 8 bits), latch the register to dout_parallel and assert dout_valid for one cycle.  
+- Use a single always block with synchronous reset and no FSM: this makes the design straightforward and easy to follow.  
+- dout_valid is a one-cycle pulse aligned with the clock where the 8th bit is received.  
+- This approach matches the problem specification directly, guarantees correct bit ordering, and uses a 4-bit counter as required.  
+- The module is reset synchronously with rst_n active low.  
+- No combinational assigns are used for shift_reg; all registers updated in a clocked always block ensuring synchronous behavior and no race conditions.
+
+This straightforward counter and shift register solution avoids complexity, guarantees correct timing, and fulfills all problem requirements.

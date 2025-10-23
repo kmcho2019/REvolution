@@ -1,0 +1,22 @@
+Novel Architectural Idea: "Predictive Direction Control"
+Instead of using a state machine to track direction changes, we can predict the next direction based on the current wave value. This eliminates the need for a separate state register and reduces the control logic complexity.
+
+Key Features:
+1. Direction Prediction:
+   - When wave is 0, we must increment (direction = +1)
+   - When wave is 31, we must decrement (direction = -1)
+   - Otherwise, continue current direction
+
+2. Arithmetic Optimization:
+   - Use a single adder/subtractor with direction control
+   - Direction is determined by MSB (wave[4]) and LSB (wave[0]) for boundary detection
+
+3. Boundary Handling:
+   - Detect boundaries using bit pattern matching
+   - 5'b00000 (0) → increment
+   - 5'b11111 (31) → decrement
+
+Advantages:
+- Eliminates state register → reduces area
+- Single arithmetic path → better timing
+- Simple boundary detection → lower power

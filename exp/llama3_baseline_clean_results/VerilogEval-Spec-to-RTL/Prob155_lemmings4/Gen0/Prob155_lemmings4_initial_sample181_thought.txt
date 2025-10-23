@@ -1,0 +1,15 @@
+To model the behavior of the Lemmings using a finite state machine, we can define several states:
+- IDLE_LEFT and IDLE_RIGHT: The Lemming is walking left or right on the ground.
+- FALLING: The Lemming is falling.
+- DIGGING: The Lemming is digging.
+- SPLATTERED: The Lemming has splattered and cannot move anymore.
+
+We will use a Moore state machine, where the output is determined by the current state.
+
+The state transitions are as follows:
+- IDLE_LEFT and IDLE_RIGHT: If ground=0, transition to FALLING. If dig=1, transition to DIGGING. If bump_left=1, transition to IDLE_RIGHT. If bump_right=1, transition to IDLE_LEFT.
+- FALLING: If ground=1 and the Lemming has been falling for more than 20 clock cycles, transition to SPLATTERED. If ground=1 and the Lemming has been falling for less than or equal to 20 clock cycles, transition to IDLE_LEFT or IDLE_RIGHT depending on the previous direction.
+- DIGGING: If ground=0, transition to FALLING.
+- SPLATTERED: Stay in this state forever.
+
+We will use a counter to count the number of clock cycles the Lemming has been falling.

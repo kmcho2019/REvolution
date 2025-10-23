@@ -1,0 +1,17 @@
+The novel architectural idea for a 32-bit floating-point multiplier is to employ a hybrid approach that combines the benefits of floating-point and fixed-point arithmetic. This approach, named "FloxFix," utilizes a hierarchical structure consisting of three primary modules: 
+
+1. **Input Encoder (IE):** This module is responsible for unpacking the input floating-point numbers and extracting their mantissas, exponents, and sign bits. The extracted components are then forwarded to the subsequent modules.
+
+2. **Fixed-Point Multiplier (FPM):** This module performs the multiplication of the mantissas in fixed-point arithmetic. To ensure accurate results, the FPM is designed to handle the multiplication of 24-bit mantissas with a sufficient number of fractional bits to accommodate the IEEE 754 single-precision format requirements.
+
+3. **Output Decoder (OD):** This module receives the product of the mantissas from the FPM, along with the exponents and sign bits from the IE. It then performs the necessary rounding, exponent adjustment, and encoding to produce the final result in the IEEE 754 single-precision floating-point format.
+
+The key innovations in this approach are:
+
+- **Hierarchical Structure:** By breaking down the floating-point multiplication into smaller, more manageable components, the design becomes more modular and easier to optimize.
+
+- **Fixed-Point Arithmetic:** Using fixed-point arithmetic for the mantissa multiplication simplifies the design and reduces the complexity associated with floating-point multiplication.
+
+- **Rounding and Exponent Adjustment:** The OD module is designed to handle the rounding and exponent adjustment, ensuring that the final result complies with the IEEE 754 standard.
+
+This novel approach offers several advantages, including improved performance, reduced area consumption, and enhanced power efficiency. The hierarchical structure and the use of fixed-point arithmetic enable easier optimization and scalability.

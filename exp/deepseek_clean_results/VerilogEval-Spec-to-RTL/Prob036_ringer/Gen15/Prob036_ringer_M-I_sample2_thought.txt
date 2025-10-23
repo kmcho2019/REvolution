@@ -1,0 +1,9 @@
+The current solution is already quite efficient, but we can make some minor improvements for better PPA:
+
+1. Use a single multiplexer structure instead of two AND gates to reduce area
+2. The outputs are mutually exclusive, so we can implement this as a 2:1 mux where:
+   - When vibrate_mode=1: motor = ring, ringer=0
+   - When vibrate_mode=0: ringer = ring, motor=0
+3. This reduces the gate count from 2 AND gates to 1 MUX + 1 AND (for the other output)
+4. The mux implementation may be more power efficient since only one path is active at a time
+5. Maintain the same functionality while potentially reducing both area and power

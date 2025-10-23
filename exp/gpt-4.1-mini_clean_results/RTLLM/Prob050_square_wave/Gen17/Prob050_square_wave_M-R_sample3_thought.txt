@@ -1,0 +1,5 @@
+Refactor the design to remove the combinational always block for wave_out and replace it with a continuously assigned signal using a wire. Implement the counter as a free-running 8-bit register incrementing every clock cycle or resetting on rst. Then assign wave_out as a wire that is high when the counter is less than half of freq, else low, similar to the original logic but more concise.
+
+This approach leverages continuous assignment for wave_out, which is synthesizable and commonly used for combinational outputs, reducing potential glitches from always blocks with sensitivity lists. It also avoids any synchronous reset logic for wave_out, minimizing register usage and making the design simpler.
+
+The synchronous reset affects only the counter register, ensuring stable startup. Since wave_out is derived combinationally from registered count and input freq, it has clean timing paths. This small structural change improves readability and synthesis friendliness without altering the functionality or output behavior.

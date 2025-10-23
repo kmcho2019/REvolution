@@ -1,0 +1,22 @@
+To fix the issues identified in the feedback, I'll make the following key improvements:
+
+1. **Reset Implementation**: Ensure the PHT is properly initialized to weakly taken (2'b10) during reset by:
+   - Removing the initial block (which is simulation-only)
+   - Making sure the reset logic fully initializes all state
+
+2. **GHR Update Priority**: Strictly implement the priority where:
+   - Training updates (especially mispredictions) take absolute precedence
+   - Prediction updates only occur when there's no training
+   - Mispredictions correctly restore the GHR from train_history
+
+3. **PHT Timing**: Maintain the requirement that:
+   - Predictions see the current PHT state
+   - Training updates only affect the next cycle
+
+4. **State Management**: Ensure all state updates (GHR and PHT) are properly synchronized to clock edges and reset
+
+The key changes will be:
+- Simplifying the reset logic to be more robust
+- Making GHR updates more explicit with clear priority
+- Ensuring PHT updates are properly timed
+- Removing simulation-only constructs

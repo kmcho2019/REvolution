@@ -1,0 +1,13 @@
+To address the issues in the original code, we need to re-evaluate the finite state machine (FSM) transitions and conditions. We will introduce a more robust state machine structure with clear transitions between the idle state, receiving state, and stop bit verification state.
+
+We will use an enumeration to define the states of the FSM, making the code more readable and maintainable. The states will be: IDLE, RECEIVING, and VERIFY_STOP.
+
+In the IDLE state, the FSM will wait for the start bit (in == 0) before transitioning to the RECEIVING state. In the RECEIVING state, the FSM will shift the received bits into the 'data' register and increment the 'bit_counter' until 8 bits have been received. Then, it will transition to the VERIFY_STOP state to check for the stop bit (in == 1).
+
+If the stop bit is valid, the FSM will assert 'done', update 'out_byte', and reset the 'bit_counter'. If the stop bit is not valid, the FSM will wait until a stop bit is received before returning to the IDLE state.
+
+We will use a separate register 'out_byte' to store the received data and update it only when the stop bit is valid. This will ensure that 'out_byte' always contains the correct data when 'done' is asserted.
+
+The 'data' register will be used to store the received bits, and it will be reset when the FSM returns to the IDLE state.
+
+By introducing a more robust state machine structure and clear transitions, we can ensure that the FSM correctly identifies the start and stop bits, receives the data bits, and updates the output signals 'out_byte' and 'done' accordingly.

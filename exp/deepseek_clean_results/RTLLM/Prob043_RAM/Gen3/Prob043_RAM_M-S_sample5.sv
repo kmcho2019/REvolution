@@ -1,0 +1,40 @@
+module RAM (
+    input clk,
+    input rst_n,
+    input write_en,
+    input [2:0] write_addr,
+    input [5:0] write_data,
+    input read_en,
+    input [2:0] read_addr,
+    output reg [5:0] read_data
+);
+
+    parameter WIDTH = 6;
+    parameter DEPTH = 8;
+    
+    // Memory array declaration and initialization
+    reg [WIDTH-1:0] mem [0:DEPTH-1];
+    initial begin
+        for (int i = 0; i < DEPTH; i++) begin
+            mem[i] = {WIDTH{1'b0}};
+        end
+    end
+    
+    // Write operation
+    always @(posedge clk) begin
+        if (write_en) begin
+            mem[write_addr] <= write_data;
+        end
+    end
+    
+    // Read operation
+    always @(posedge clk) begin
+        if (!rst_n) begin
+            read_data <= {WIDTH{1'b0}};
+        end
+        else if (read_en) begin
+            read_data <= mem[read_addr];
+        end
+    end
+
+endmodule

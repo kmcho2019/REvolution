@@ -1,0 +1,7 @@
+Fuse the clarity and clean separation of logic from Example 1 with the compact, single always block approach of Example 2 to improve timing and atomic updates, avoiding inter-always block timing dependencies. Use appropriately sized registers: 5 bits for Hours (0-23) and 6 bits for Mins and Secs (0-59) for minimal area.
+
+Maintain a single always block triggered on posedge CLK or posedge RST, ensuring synchronous reset and sequential logic with non-blocking assignments for reliable simulation and synthesis. Implement a straightforward cascading rollover: seconds increment every clock; when seconds wrap, minutes increment; when minutes wrap, hours increment.
+
+This approach eliminates possible glitches or race conditions in multi-block designs, simplifies control logic, and minimizes combinational complexity by using a clean nested if-else structure. It also allows for efficient synthesis with minimal area and good timing, as increments occur cleanly in a single cycle.
+
+Overall, this fusion yields a clear, compact, and efficient perpetual calendar module with well-sized outputs and robust behavior.

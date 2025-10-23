@@ -1,0 +1,14 @@
+The original code is functionally correct and meets the requirements for a fixed-point subtractor with precise sign handling and zero detection. The primary improvement is optimizing logic for better PPA and clarity while preserving full parameterization and correctness.
+
+Key improvements:
+- Use blocking assignments consistently in combinational always blocks to clarify intended behavior.
+- Combine zero detection with magnitude calculation for minimal logic and simpler code.
+- Use a single always_comb (or always @*) block for all combinational assignments to reduce inferred latch or registers.
+- Make output `c` a reg, declared explicitly.
+- Simplify sign handling by explicitly documenting logic.
+- Use explicit parentheses and spacing for readability.
+- Minimize internal registers where possible, keeping res_sign and mag_res as regs inside a single always block.
+- Ensure all signals are declared correctly and assigned exactly once to avoid synthesis tool confusion.
+- Comment on fractional bits parameter `Q` to note that the arithmetic is inherently correct for fixed-point because subtraction/addition in two’s complement binary directly handles fixed-point values.
+- Explicitly document the two's complement approach used for negative numbers.
+- The resulting code remains easily synthesizable, clean, and optimized for minimal combinational logic depth.

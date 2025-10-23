@@ -1,0 +1,12 @@
+Refactoring Strategy:
+1. Maintain identical functionality (positive edge-triggered DFF with async reset)
+2. Simplify the implementation by removing the unnecessary ar_sync register
+3. Use non-blocking assignments in a single always block for clean synthesis
+4. Keep the minimal structure while ensuring proper reset behavior
+5. Improve PPA by eliminating redundant logic (ar_sync)
+
+Key Changes:
+1. Remove the ar_sync register which served no functional purpose
+2. Keep the core always block with posedge triggers for clock and reset
+3. Directly control q output based on reset condition
+4. Maintain non-blocking assignments for proper flip-flop inference

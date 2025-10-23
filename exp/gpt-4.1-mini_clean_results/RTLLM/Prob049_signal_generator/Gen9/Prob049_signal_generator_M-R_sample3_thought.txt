@@ -1,0 +1,15 @@
+Refactoring idea:
+
+Merge the state and waveform update logic into a single always block triggered on posedge clk or negedge rst_n for simpler timing and cleaner implementation.
+
+Use a 1-bit state register to indicate direction: 0 for up, 1 for down.
+
+On reset, clear both wave and state.
+
+On each clock edge, update wave according to current state:
+- If state is 0 (increment), increment wave unless at max (31), then switch state to decrement.
+- If state is 1 (decrement), decrement wave unless at min (0), then switch state to increment.
+
+No explicit hold conditions are needed since the state switch occurs exactly when boundaries are reached, ensuring continuous triangle wave cycling.
+
+This combined approach reduces logic duplication and improves timing and area without changing functional behavior.

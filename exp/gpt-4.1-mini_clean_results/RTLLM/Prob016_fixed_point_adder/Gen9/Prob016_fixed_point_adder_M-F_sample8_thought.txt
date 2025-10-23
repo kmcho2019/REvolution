@@ -1,0 +1,17 @@
+The original module implementation correctly parameterizes `N` and `Q` and implements the fixed-point adder logic as requested. The main issue pointed out by the feedback is not in the internal logic, but the integration problem: when this module is instantiated in a testbench or higher-level design, the parameters `N` and `Q` must be explicitly passed or defaulted for elaboration to succeed.
+
+To fix this:
+
+1. Assign default values for `N` and `Q` in the module parameters to ensure that if the parameters are not explicitly overridden at instantiation, the module still has valid values, preventing elaboration errors.
+
+2. Remove any procedural assignments to the output port `c` directly. Instead, assign `c` with a continuous assignment (`assign`) or drive it from the internal register `res` at the end of combinational logic to avoid synthesis issues with blocking assignments to output ports.
+
+3. Use a single combinational always block with non-blocking assignments for registers or use a continuous assignment for outputs, following best practices.
+
+4. Optionally, define internal wider variables for addition and subtraction to capture overflow, but since the specification allows wrap-around behavior, `N`-bit width is sufficient.
+
+5. The corrected code keeps the same logic but assigns the output `c` through a continuous assignment from `res`.
+
+These changes ensure the module is synthesizable, has safe default parameters, and avoids synthesis issues when integrated, fulfilling the problem's requirements completely.
+
+This approach resolves the elaboration failure related to missing parameter specification and improves code synthesis friendliness.

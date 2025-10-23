@@ -1,0 +1,7 @@
+To create a novel solution, we can use a counter-based approach to implement the state machine. The idea is to use a counter that increments or decrements based on the input signals (bump_left and bump_right). The counter's value will determine the current state of the Lemming, with even values indicating walking left and odd values indicating walking right. This approach eliminates the need for a traditional finite state machine and provides a unique and efficient solution.
+
+We will use a 2-bit counter, allowing for two distinct states (walking left and walking right). The counter will be reset to a predefined value (e.g., 0) when the asynchronous reset signal (areset) is asserted. When the counter reaches its maximum value (3), it will wrap around to its minimum value (0), ensuring that the state machine remains in a valid state.
+
+The counter's value will be used to drive the output signals (walk_left and walk_right) directly, eliminating the need for a separate output logic block. This approach minimizes the number of logic gates required, reducing area consumption and potentially improving performance.
+
+To handle the case where both bump_left and bump_right are asserted simultaneously, we can use a simple combinational logic block to detect this condition and adjust the counter accordingly. This ensures that the state machine still switches directions correctly even when both input signals are asserted.

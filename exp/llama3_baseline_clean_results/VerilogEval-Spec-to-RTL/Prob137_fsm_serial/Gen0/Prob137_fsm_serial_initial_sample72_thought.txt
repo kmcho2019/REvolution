@@ -1,0 +1,8 @@
+The TopModule will be designed as a finite state machine (FSM) with the following states: 
+- Idle: waiting for the start bit (0) to begin receiving a byte.
+- Start: after detecting the start bit, waiting for the 8 data bits.
+- Data: receiving the 8 data bits.
+- Stop: after receiving the 8 data bits, waiting for the stop bit (1) to verify the byte.
+- Error: if the stop bit is not received when expected, waiting for a stop bit (1) before returning to the Idle state.
+The FSM will use a counter to keep track of the current data bit being received and a shift register to store the received data bits.
+When a byte is successfully received (start bit, 8 data bits, and stop bit), the done signal will be set high for one clock cycle.

@@ -1,0 +1,29 @@
+Fuse the first example's compact 3-bit explicit state encoding (direction + mode combined) with the second example's precise bump logic, which correctly handles bump_left, bump_right, and both bumps simultaneously during walking on stable ground.
+
+Use the state encoding from example 1:
+- bit2: digging flag
+- bit1: falling flag
+- bit0: direction (0=left,1=right)
+
+This allows simple output decoding by bitfields and keeps the state register minimal.
+
+Integrate bump logic from example 2 in the walking states (when neither falling nor digging), incorporating stable_ground detection to ignore bumps during ground transitions or falling/digging.
+
+Respect the priority:
+1. Fall (ground=0) always takes precedence.
+2. Then dig if dig=1 and walking on stable ground.
+3. Then bump-based direction switching only if walking on stable ground.
+
+Register previous ground to detect stable ground condition, as bumps don't change direction if ground just disappeared or reappeared, or while falling/digging.
+
+The asynchronous reset sets the state to walk left (000).
+
+This fusion ensures:
+- minimal state bits for area and output decoding simplicity,
+- correct bump direction handling to match spec,
+- correct priority ordering,
+- stable ground detection to filter bump effects,
+- clean next_state logic with reduced redundancy,
+- straightforward output assignments.
+
+This results in a well-balanced, optimized FSM with clear semantics.

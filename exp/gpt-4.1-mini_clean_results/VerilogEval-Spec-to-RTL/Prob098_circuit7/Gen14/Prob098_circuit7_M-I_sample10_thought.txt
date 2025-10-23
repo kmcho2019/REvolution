@@ -1,0 +1,13 @@
+The original design cleanly implements q as the registered inversion of input a on the clock's rising edge. It uses an explicit inverter feeding a D flip-flop, which is modular and clear. 
+
+To optimize for PPA:
+
+- Performance: Combining the inversion and the flip-flop into a single always block removes the separate combinational inverter, potentially reducing the critical path and delay by making the inversion part of the flip-flop input logic rather than a separate gate before the flip-flop.
+- Power: Removing the separate inverter gate reduces switching power and capacitance on the inverter output net.
+- Area: The inverter logic can be absorbed into the flip-flop's input mux or logic, saving gate count.
+
+This change simplifies the design by directly assigning q <= ~a at clock edge, eliminating the inverter wire and the separate combinational logic. It does not change the functionality but may improve timing and reduce area and power.
+
+Thus, the improved design merges combinational inversion into the sequential block, keeping a single module without an explicit separate inverter wire or a dedicated DFF module to slightly reduce hierarchy overhead.
+
+This leads to a minimal, synthesis-friendly, and PPA-optimized solution.

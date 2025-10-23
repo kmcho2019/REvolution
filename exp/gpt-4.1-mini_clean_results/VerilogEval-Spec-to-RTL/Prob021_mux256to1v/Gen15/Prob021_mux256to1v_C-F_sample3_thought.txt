@@ -1,0 +1,19 @@
+Fuse the hierarchical modularity and balanced tree structure of Example 1 with the generic, parameterized, and scalable style of Example 2.
+
+- Use a parameterized 4-to-1 4-bit mux module as in Example 1 for simplicity and low fan-in.
+- Implement a balanced 4-level mux tree of 4-to-1 muxes (like Example 1) for better fan-in control, timing, and power compared to the 3-level tree in Example 2 that uses 16-to-1 muxes.
+- Use parameterized generate loops and localparams for scalability and clarity (Example 2 style).
+- Apply arithmetic slicing and concatenation from both examples to connect stages efficiently.
+- Split the 8-bit selector into four 2-bit fields, each controlling one mux stage for consistent, balanced decoding.
+- This provides low fan-in muxes, balanced logic depth, and code reusability, blending Example 1's low fan-in stages with Example 2's generic coding style.
+- This fusion keeps the complexity manageable while optimizing for timing and power by minimizing mux input size and stages' fan-in.
+
+The hierarchy is:
+- Stage 1: 64 4-to-1 muxes select among 256 4-bit inputs grouped in 4s.
+- Stage 2: 16 4-to-1 muxes select among 64 stage1 outputs.
+- Stage 3: 4 4-to-1 muxes select among 16 stage2 outputs.
+- Stage 4: 1 4-to-1 mux selects among 4 stage3 outputs.
+
+Thus, 256 4-bit inputs are selected with 4 stages of 4-to-1 muxes, each stage controlled by 2 bits of sel, reducing mux fan-in and logic depth to optimize timing and power.
+
+The implementation uses a single reusable 4-to-1 4-bit mux module, hierarchical generate blocks, and clear input slicing, achieving a synthesis-friendly and scalable design.

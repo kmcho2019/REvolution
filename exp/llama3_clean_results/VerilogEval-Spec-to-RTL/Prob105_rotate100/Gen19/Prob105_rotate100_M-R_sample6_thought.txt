@@ -1,0 +1,9 @@
+The existing implementation uses a combinational logic approach within an `always` block to handle both the load and rotation operations. However, to refactor the code with a different structure, we can utilize a state machine approach or a more straightforward combinational logic approach using `assign` statements. 
+
+In this refactored version, we will use a combination of `assign` statements and `always` blocks to implement the 100-bit left/right rotator. The idea is to separate the logic for loading the data and rotating the bits into distinct parts of the code. 
+
+Firstly, we will use `assign` statements to create a combinational logic block that determines the next state of the `q_reg` register based on the current state, `load`, `ena`, and `data`. 
+
+Secondly, we will use an `always` block to update the `q_reg` register on every positive edge of the clock. 
+
+This approach allows for a cleaner separation of concerns and can potentially lead to better synthesis results, as the combinational logic can be optimized independently of the sequential logic.

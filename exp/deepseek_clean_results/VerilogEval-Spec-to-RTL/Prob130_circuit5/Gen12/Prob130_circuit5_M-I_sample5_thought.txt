@@ -1,0 +1,22 @@
+The current implementation works correctly but can be optimized for better PPA (Power, Performance, Area). Here's the improvement strategy:
+
+1. Performance Optimization:
+   - Replace the parallel AND-OR structure with a single case statement, which typically synthesizes to an optimized multiplexer
+   - This reduces logic depth and improves timing
+
+2. Power Optimization:
+   - Use a single case statement instead of separate selection signals to reduce switching activity
+   - Remove redundant signal replication ({4{select_x}}) which causes simultaneous switching
+
+3. Area Optimization:
+   - The case statement will synthesize to a more compact multiplexer structure
+   - Remove the need for separate comparison logic for each case
+
+4. Default Case Handling:
+   - Keep the simple (c > 3) check but integrate it into the case statement
+   - Use default assignment to optimize away unnecessary logic
+
+The improved version should have:
+- Better timing due to reduced logic depth
+- Lower power due to reduced switching activity
+- Smaller area due to more efficient multiplexer implementation

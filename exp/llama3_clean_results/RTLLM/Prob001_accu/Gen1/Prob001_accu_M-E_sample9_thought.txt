@@ -1,0 +1,15 @@
+To implement the accu module, we can utilize a pipelined architecture with a series of registers to store the input data. This approach will allow us to accumulate the data over four clock cycles and output the result at the end of the pipeline. The valid_in signal will be used to load the input data into the first stage of the pipeline, and the valid_out signal will be asserted when the accumulated result is output.
+
+The pipeline will consist of four stages, each with a register to store the accumulated sum and a register to store the current input data. The accumulated sum will be calculated by adding the current input data to the accumulated sum from the previous stage. The valid_out signal will be asserted when the accumulated sum from the last stage is output.
+
+This approach will allow us to achieve the desired functionality with a simple and efficient architecture. The use of a pipeline will also help to improve the performance of the module by allowing the input data to be processed in parallel.
+
+We will use a counter to track the number of valid inputs received and a register to store the accumulated sum. The valid_out signal will be asserted when the counter reaches four, and the accumulated sum will be output at this time. The reset signal (rst_n) will be used to initialize the module's state and accumulated sum when asserted low.
+
+The module's logic can be broken down into the following steps:
+
+1. Load the input data into the first stage of the pipeline when valid_in is asserted.
+2. Accumulate the input data over four clock cycles by adding the current input data to the accumulated sum from the previous stage.
+3. Output the accumulated sum and assert valid_out when the counter reaches four.
+4. Reset the counter and accumulated sum after outputting the result.
+5. Use the rst_n signal to reset the module's state and accumulated sum when asserted low.

@@ -1,0 +1,11 @@
+Fuse the clarity and explicit one-hot state representation from Example 1 with the minimal flip-flop usage approach of Example 2 by encoding states as a 2-bit one-hot vector but storing the states in a single 2-bit reg vector instead of two separate flip-flops. This keeps explicit one-hot encoding for two states (bit 0 = state A, bit 1 = state B) for clarity and synthesis friendliness, while enabling more concise code and potentially better power efficiency from grouped state registers.
+
+Maintain separate combinational blocks for next state and output to keep clarity and easy maintenance. Use non-blocking assignments in sequential always block and blocking assignments in combinational always blocks. Implement asynchronous active-high reset that sets state to A (one-hot encoding: 2'b01).
+
+This fusion preserves:
+- One-hot encoding of states in a single 2-bit register for area and power efficiency.
+- Clear separation of next state and output logic for maintainability.
+- Asynchronous reset and positive-edge clock triggering as required.
+- Explicit one-hot coding for synthesis tools and easier debugging.
+
+This balances the minimal area and power of Example 2 with the clear one-hot design style of Example 1.

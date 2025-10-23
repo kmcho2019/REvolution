@@ -1,0 +1,20 @@
+The original solution had two main issues:
+1. Incorrect output ports (Y2/Y4 instead of Y1/Y3 as specified)
+2. Module name mismatch (TopModule vs expected good1)
+
+Improvement strategy:
+1. Correct the output ports to match requirements (Y1/Y3)
+2. Maintain the one-hot state encoding
+3. Derive correct next-state logic for Y1 and Y3:
+   - Y1 (next state B) comes from state A (y[0]) when w=0
+   - Y3 (next state D) comes from:
+     * State B (y[1]) when w=1
+     * State C (y[2]) when w=1
+     * State D (y[3]) when w=1
+     * State E (y[4]) when w=1
+     * State F (y[5]) when w=1
+
+4. Optimize the logic by:
+   - Keeping Y1 simple (single source)
+   - Combining all D state sources for Y3
+   - Using minimal gates for implementation

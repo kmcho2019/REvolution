@@ -1,0 +1,14 @@
+Here's a novel approach using a lookup table (LUT) style implementation with a ROM-like structure:
+
+1. Instead of using comparators, we'll treat the scancode as an address into a virtual 64K-entry ROM
+2. Each ROM entry will be a 4-bit vector representing the arrow key states
+3. Only 4 specific addresses (scancodes) will have non-zero outputs
+4. This approach is more scalable if more keys need to be added later
+5. The implementation uses a case statement that mimics a sparse ROM lookup
+6. All invalid cases default to zero outputs, making the design safe
+
+Benefits:
+- Conceptually simple and easy to extend
+- No complex comparison logic needed
+- Clear mapping between scancodes and outputs
+- Efficient synthesis as modern tools optimize case statements well

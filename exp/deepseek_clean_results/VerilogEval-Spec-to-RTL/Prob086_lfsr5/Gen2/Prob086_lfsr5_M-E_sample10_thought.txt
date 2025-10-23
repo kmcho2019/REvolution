@@ -1,0 +1,8 @@
+Instead of the traditional serial shift implementation, we can compute all next state bits in parallel using a combinatorial approach. This might offer better timing characteristics since:
+1. All next state computations are done simultaneously rather than in a chain
+2. The XOR operation is isolated to just the tap positions
+3. The parallel computation may allow for better synthesis optimization
+4. Still maintains the same Galois LFSR functionality with taps at positions 5 and 3
+5. Reset behavior remains identical (initializes to 5'b00001)
+
+The key insight is that each bit's next state can be expressed directly as a function of the current state, without relying on the sequential shift operation. This might help with timing closure in some technologies.

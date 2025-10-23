@@ -1,0 +1,10 @@
+The original design uses a single register 'out' to encode both state and output, which is minimal and efficient. However, to improve timing (WNS and TNS of -0.19), we can separate the state register and the output logic, enabling a registered output with one cycle latency but potentially improving clock-to-output timing. This also helps produce glitch-free outputs and cleaner design scaling for future enhancements.
+
+Additionally, to reduce dynamic power slightly, we add clock enable logic to update the state register only when a transition is required. This will reduce unnecessary toggling when inputs do not trigger state transitions, thus lowering switching activity.
+
+These changes may add a little area and latency but improve timing and power, yielding better overall PPA.
+
+Summary of improvements:
+- Separate state register from output to reduce combinational fanout and glitches.
+- Add clock enable to update state only on transitions, reducing power.
+- Keep asynchronous active-high reset as specified.

@@ -1,0 +1,13 @@
+I will combine the balanced tree comparison strategy to minimize critical path delay with a fully combinational, wire-based implementation for minimal power and area overhead. Unlike Example 2, I will remove procedural registers and always blocks, using continuous assignments and intermediate wires for a fully combinational and hierarchical structure.
+
+Specifically:
+- Use a simple reusable min2 module to compute minimum of two inputs, ensuring modularity and potential for resource sharing.
+- Instantiate min2 twice for the first stage to find min_ab and min_cd.
+- Instantiate min2 once more to find the final min from min_ab and min_cd.
+- Assign the final minimum directly to the output port (defined as wire).
+  
+This approach:
+- Keeps the comparator tree balanced to minimize logic depth and critical path.
+- Uses purely combinational wire assignments to avoid unnecessary register toggling in combinational logic, improving power.
+- Leverages the min2 module for clarity, potential reuse, and concise code.
+- Avoids any procedural blocks, reducing area slightly by allowing synthesis tools to optimize pure combinational logic better.

@@ -1,0 +1,9 @@
+Refactor the module by implementing popcount17 using a straightforward summation of individual bits through a generate loop that accumulates in a single vector of partial sums, instead of multiple adder tree levels. This summation will use a for loop with a wider bit vector that progressively accumulates counts.
+
+At the top level, replace the multi-level balanced adder tree summation of partial counts with a single explicit summation using a for-generate loop that sums all 15 partial counts directly into a single 8-bit accumulator. This keeps combinational logic simple and flattens the summation structure.
+
+This approach trades some theoretical delay balance from a balanced tree for simpler code structure and easier modification. It avoids multiple nested arrays of intermediate sums by using direct accumulation in registers and wires, and uses assign statements and generate loops only.
+
+The core functionality and bit-width sizing remain the same, ensuring correctness and fitting within 8 bits for the final count.
+
+This refactoring highlights a different summation style (sequential accumulation in a vector) and a flat summation of partial results, improving code readability and maintainability.

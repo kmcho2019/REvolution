@@ -1,0 +1,7 @@
+To avoid the implicit combinational loop and improve synthesis clarity, I will separate the state register update and combinational logic distinctly. Instead of using a wire to compute next_state directly from the XOR of 'in' and 'state', I will compute the XOR inside the always block before assigning it to the state. This avoids having a feedback loop in combinational logic (which synthesis tools might struggle with).
+
+Concretely, I'll keep 'state' as a register holding the output. On each posedge clk, 'state' is updated to the XOR of the current 'in' and 'state'. The output 'out' is driven by 'state'. This structure makes the D flip-flop update logic explicit without combinational feedback outside the always block, potentially improving synthesis stability.
+
+No reset is introduced since the spec forbids it, but I'll include an initial block for simulation initialization as before.
+
+This approach preserves behavior exactly but avoids implicit combinational loops by making the combinational calculation part of sequential logic.

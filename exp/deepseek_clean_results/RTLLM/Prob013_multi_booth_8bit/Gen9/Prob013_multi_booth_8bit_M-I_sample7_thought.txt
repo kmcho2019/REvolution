@@ -1,0 +1,23 @@
+To correctly implement an 8-bit Radix-4 Booth multiplier, I'll address the issues in the previous implementation:
+
+1. **Proper State Machine**: Implement a 3-state machine (IDLE, CALC, DONE) with correct transitions based on a 5-bit counter for 16 steps (8 bits × 2 bits per Radix-4 step).
+
+2. **Accurate Booth Encoding**: 
+   - Use overlapping 3-bit groups for proper Radix-4 encoding
+   - Handle all 8 possible cases (including ±1×, ±2× multiplicand)
+   - Maintain proper sign extension throughout
+
+3. **Correct Accumulation**:
+   - Separate add and shift operations
+   - Use 17-bit accumulator (P_reg) for proper sign handling
+   - Shift by 2 bits per cycle (Radix-4)
+
+4. **Counter Logic**:
+   - 5-bit counter for 16 steps (0-15)
+   - Reset counter properly on reset
+
+5. **Output Handling**:
+   - Final product is 16 bits (truncate properly from 17-bit accumulator)
+   - Ready signal asserts when counter completes all steps
+
+The improved implementation will correctly follow the Booth algorithm while maintaining clean state transitions and proper timing.

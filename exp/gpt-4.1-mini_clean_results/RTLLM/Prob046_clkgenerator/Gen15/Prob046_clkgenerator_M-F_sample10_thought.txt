@@ -1,0 +1,18 @@
+To create a clock generator that is compatible with synthesis and simulation, avoid using an initial block with delays. Instead, use an always block triggered on a time-based event, like the posedge of a dummy signal, or more simply, a always block with a delay (#) statement that toggles the clock signal. 
+
+Since always blocks cannot have delays directly on the sensitivity list, but delays inside always blocks are allowed, we can implement a clock toggling using an always block with a forever loop containing delays.
+
+However, the best practice and commonly used method is to use an always block with a half period delay and toggle the clock in each iteration.
+
+This approach is synthesizable in some tools for testbench usage (or ignored by synthesis) and compatible with typical simulators, avoiding the issues of initial forever delay loops.
+
+In summary, to fix the original code:
+- Replace the initial block with an always block.
+- Use the half period delay inside the always block to toggle the clk.
+- Initialize clk to 0 in an initial block separately, or as a default value at declaration.
+- Keep PERIOD as a parameter.
+- Retain a delay-based clock suitable for testbench and simulation.
+
+This will yield a robust, synthesizable (or at least simulation-friendly) clock generator module.
+
+Note: For synthesis, such a clock generator module is usually not used; clocks come from PLLs or external sources. But for simulation or testbench, this is appropriate.

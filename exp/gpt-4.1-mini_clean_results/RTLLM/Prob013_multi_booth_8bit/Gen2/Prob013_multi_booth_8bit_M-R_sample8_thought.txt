@@ -1,0 +1,21 @@
+Refactoring the given Radix-4 Booth multiplier to use a finite state machine (FSM) structure will enhance clarity and modularity. Instead of directly coupling counting and computation in one always block, we will separate the control (state machine) from data path operations.
+
+Key refactor points:
+1. Use an FSM with states: IDLE, CALC, DONE.
+2. Use a synchronous reset to initialize registers.
+3. Load inputs and initialize registers in the IDLE state upon reset or start condition.
+4. In CALC state, process the multiplication step-by-step using radix-4 Booth encoding:
+   - Extract 3 bits per iteration from the extended multiplier.
+   - Compute the partial product add/subtract accordingly.
+   - Arithmetic right shift product by 2 bits.
+   - Increment the counter.
+5. When counter reaches 4 (processing 8 bits with radix-4), move to DONE state.
+6. In DONE state, assert ready, output the final product, and wait for reset.
+7. Use continuous assign for booth code extraction to simplify combinational logic.
+8. Keep inputs registered on reset to maintain stable starting inputs.
+9. Ensure multiplier is sign-extended properly before appending zero bit.
+10. Use non-blocking assignments inside clocked always block for proper sequential logic.
+
+This FSM approach improves readability, allows easier extension for handshaking if needed, and cleanly separates states, avoiding mixing control and datapath in one always block.
+
+The logic and arithmetic are identical to the original implementation, maintaining the radix-4 Booth algorithm's speedup and correctness.

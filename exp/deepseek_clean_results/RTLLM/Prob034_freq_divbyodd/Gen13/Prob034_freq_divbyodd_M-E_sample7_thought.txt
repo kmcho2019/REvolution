@@ -1,0 +1,16 @@
+Novel single-counter approach with duty cycle control:
+1. Use a single counter running at double the clock frequency (both edges)
+2. Count from 0 to (2*NUM_DIV)-1 to cover full odd division cycle
+3. Implement precise duty cycle control by:
+   - Setting output high when counter < NUM_DIV
+   - Setting output low when counter >= NUM_DIV
+4. This ensures exact 50% duty cycle for any odd division
+5. Reset initializes counter to 0 and output to 0
+6. Eliminates need for separate edge domains and clock combination logic
+
+Advantages:
+- Single counter simplifies design
+- Perfect 50% duty cycle guaranteed
+- No timing issues between edge domains
+- Easier to verify and maintain
+- Scales well for any odd division factor

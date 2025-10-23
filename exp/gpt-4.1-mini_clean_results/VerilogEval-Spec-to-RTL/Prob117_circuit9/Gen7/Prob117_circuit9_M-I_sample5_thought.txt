@@ -1,0 +1,15 @@
+To optimize the existing design for better power, performance, and area (PPA), the focus will be on reducing unnecessary toggling and simplifying logic:
+
+1. Remove the asynchronous reset since it wasn't specified and causes extra logic and potential glitches, thereby reducing area and power.
+
+2. Maintain the synchronous logic with non-blocking assignments for clarity and correct behavior.
+
+3. Avoid forcing q=4 every cycle when a=1, and instead only update q when it differs from the target value. This reduces switching power by preventing unnecessary toggles.
+
+4. Simplify the modulo-7 counter logic by using a ternary operator to wrap q at 6 back to 0, which synthesis tools optimize efficiently.
+
+5. Use localparam for constants (4 and 7) for readability and easier modification.
+
+6. Keep logic minimal and avoid extra inputs not requested.
+
+This approach should slightly reduce power consumption by gating updates and reduce area by removing reset logic and simplifying conditions. Performance should remain the same or slightly improve due to simpler logic.

@@ -1,0 +1,13 @@
+Simplified approach:
+1. Maintain the same 2-state FSM (A and B) with synchronous reset
+2. Use a 2-bit counter to track the 3-cycle window in state B
+3. Instead of storing all 3 w values, maintain a running count of 1s in the current window
+4. Output z is asserted one cycle after window completion (when counter wraps) if count equals 2
+5. Eliminate the w_history shift register by counting 1s on the fly
+
+Key simplifications:
+- Removed the 3-bit shift register (w_history)
+- Replaced with a 2-bit running counter for 1s
+- Output logic remains combinational but simpler
+- Fewer registers and less logic overall
+- Same functionality with reduced area

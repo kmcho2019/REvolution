@@ -1,0 +1,11 @@
+Refactor the pipelined 64-bit ripple carry adder by separating the combinational addition from the pipelined registers. The pipeline registers will hold operands and carry-in per stage, and the sum and carry-out will be calculated combinationally each cycle. This approach uses separate registers for operand slices and carries, and combinational logic for addition. The pipeline control signal (enable) is managed by a shift register.
+
+Each clock cycle, operand slices and carry-in registers are updated from the previous stage's registered results. The combinational adder computes sum and carry-out based on the registered inputs. The output result and enable signal are registered at the pipeline exit stage.
+
+This structure allows clean separation of combinational and sequential logic, easing timing analysis and enhancing clarity. No repeated addition inside `always` loops; instead, combinational adders between pipeline registers. The final output is assembled from pipelined sum slices and carry-out. This structure is robust, clear, and synthesizable.
+
+Key points:
+- Pipeline registers store inputs and carry-in for each stage
+- Addition is combinational: sum and carry-out computed from registered operands and carry-in
+- Enable is pipelined as shift register
+- Output assembled from pipelined sums and final carry-out, registered on clk

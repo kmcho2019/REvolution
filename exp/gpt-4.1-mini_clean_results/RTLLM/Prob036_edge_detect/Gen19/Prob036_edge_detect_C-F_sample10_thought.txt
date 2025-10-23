@@ -1,0 +1,6 @@
+To fuse the best ideas from both examples, we combine the robustness of a known reset state from Example 1 with the simplicity and minimal clock domain logic of Example 2. This means:  
+- Keep the asynchronous active-low reset (`rst_n`) to initialize the previous input state register, ensuring deterministic startup behavior.  
+- Use a single register to hold the previous sampled value of `a` to minimize area and power.  
+- Generate one-clock-cycle pulses for `rise` and `down` by comparing the current `a` and the previous stored value.  
+- Outputs `rise` and `down` are combinational but synchronized to clock through the registered `a_prev`, producing glitch-free pulses aligned with `clk`.  
+This fusion ensures clean, reliable edges with known initialization, minimal logic, and low power and area consumption.

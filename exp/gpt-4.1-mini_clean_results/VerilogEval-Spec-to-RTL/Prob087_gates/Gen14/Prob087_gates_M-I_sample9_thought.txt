@@ -1,0 +1,5 @@
+The initial implementation is already minimal and optimal in terms of logic complexity, area, and timing, as it uses simple bitwise operators directly. However, to further optimize for power, we can exploit the fact that some outputs are inversions of others (e.g., out_nand is the negation of out_and, out_nor is the negation of out_or, and out_xnor is the negation of out_xor). Instead of computing the gates independently, we can compute the positive forms once and generate their complements via inverters. This may slightly reduce switching activity and logic duplication in some synthesis tools by sharing logic signals, potentially reducing power and area. Although the difference is marginal for such small logic, this structural sharing is beneficial in larger designs and aligns with good design practices.
+
+We will implement three intermediate wires for and, or, and xor, and then produce the respective outputs and their inversions from these signals, including out_anotb computed separately.
+
+This approach keeps the design fully combinational, preserves zero timing delay, and slightly optimizes power and area by reusing logic internally.

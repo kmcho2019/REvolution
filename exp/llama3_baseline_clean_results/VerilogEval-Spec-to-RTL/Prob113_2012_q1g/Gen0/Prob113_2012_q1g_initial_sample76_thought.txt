@@ -1,0 +1,18 @@
+To implement the given function f in the TopModule, we first need to derive the logic expression from the provided Karnaugh map. The Karnaugh map represents a 4-variable function, where the inputs are x[3]x[2]x[1]x[0] and the output is f. By grouping adjacent 1's in the Karnaugh map, we can derive the minimized Boolean expression for f. Upon examining the map, the expression for f can be derived by considering all the cases where f equals 1.
+
+From the Karnaugh map, we can see that the output f is 1 for the following input combinations: 
+- x[3]x[2]x[1]x[0] = 0000
+- x[3]x[2]x[1]x[0] = 0010
+- x[3]x[2]x[1]x[0] = 1100
+- x[3]x[2]x[1]x[0] = 1110
+- x[3]x[2]x[1]x[0] = 1111
+- x[3]x[2]x[1]x[0] = 1010
+- x[3]x[2]x[1]x[0] = 1011
+
+By simplifying the Boolean expression using the Karnaugh map, we find that f can be expressed as the sum of products: 
+f = (x[3]'x[2]'x[1]'x[0]') + (x[3]'x[2]'x[1]x[0]) + (x[3]x[2]x[1]'x[0]') + (x[3]x[2]x[1]'x[0]) + (x[3]x[2]x[1]x[0]) + (x[3]x[2]'x[1]x[0]) + (x[3]x[2]'x[1]'x[0])
+
+However, a more compact form can be achieved by grouping terms appropriately in the Karnaugh map, which actually simplifies to:
+f = x[3]'x[2]' + x[3]x[2]x[1] + x[3]x[2]'x[0] + x[3]x[0]
+
+This can be implemented directly in Verilog as a logic expression within the TopModule.

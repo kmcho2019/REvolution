@@ -1,0 +1,11 @@
+To improve the existing correct design for better performance, power, and area (PPA), we can leverage Verilog's built-in arithmetic operators for addition and subtraction, which synthesis tools typically optimize efficiently using dedicated carry-chain hardware primitives. This approach removes explicit ripple carry logic and large for-loops, reducing area and power by minimizing generated gates and switching activity.
+
+Furthermore, computing the zero flag using the built-in reduction NOR operator (~|out) on the final output is concise and clear. The entire logic remains combinational, ensuring no implicit latches. We keep the output ports as reg because they are assigned in an always @(*) block.
+
+This refinement yields a simpler, cleaner, more synthesis-friendly design that will synthesize to better PPA metrics, especially for a small 8-bit adder/subtractor, while maintaining the same behavior and fixing the zero flag bug.
+
+In summary:
+- Replace explicit ripple carry with built-in + and - operators.
+- Compute zero flag using reduction NOR of output.
+- Use a single always @(*) block with blocking assignments.
+- Maintain interface and output regs for compatibility.

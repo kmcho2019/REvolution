@@ -1,0 +1,8 @@
+To fuse the best ideas from both examples, we keep the straightforward, clean combinational case statement mapping since it perfectly matches the waveform and ensures clarity and simplicity. 
+
+Enhancements include:
+- Using a continuous assignment with a combinational function or a wire vector instead of always block with reg, which can help synthesis tools better optimize for pure combinational logic.
+- Encoding the lookup table as a localparam array to aid readability, maintainability, and potentially help synthesis tools implement a ROM or LUT.
+- Adding a default case that outputs zero for undefined input, ensuring fully defined combinational logic.
+
+This approach retains clarity, improves maintainability by encapsulating the mapping in a single constant array, and lets synthesis tools infer the best hardware (multiplexer tree or ROM) for area and power efficiency. The module remains purely combinational, with no registers or latches inferred.

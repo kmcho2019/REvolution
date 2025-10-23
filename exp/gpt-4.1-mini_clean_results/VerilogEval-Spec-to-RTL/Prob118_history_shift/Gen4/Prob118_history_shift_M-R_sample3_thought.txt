@@ -1,0 +1,5 @@
+Refactor the design by separating the next state logic into a combinational always block and updating the state in a clocked always block.
+- Compute the next history value based on the priority: misprediction rollback > prediction shift > hold current state.
+- Use a combinational block to derive next_predict_history.
+- Update predict_history on the rising edge of clk or asynchronously reset on areset.
+This separation improves code clarity by isolating combinational logic from sequential updates, making the design easier to understand and maintain.

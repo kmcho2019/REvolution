@@ -1,0 +1,19 @@
+To implement all next-state signals (Y1-Y4) for the given state machine with one-hot encoding, we need to analyze all state transitions:
+
+For Y1 (y[1] in next state):
+- Only set when transitioning from A (y[0]) with w=0 to B (y[1])
+
+For Y2 (y[2] in next state):
+- From B (y[1]) with w=0 to C (y[2])
+- From C (y[2]) with w=0 to E (y[4]) → but E doesn't set Y2
+Only transition from B with w=0 sets Y2=1
+
+For Y3 (y[3] in next state):
+- From B (y[1]) with w=1 to D (y[3])
+- From C (y[2]) with w=1 to D (y[3])
+- From E (y[4]) with w=1 to D (y[3])
+- From F (y[5]) with w=1 to D (y[3])
+
+For Y4 (y[4] in next state):
+- From C (y[2]) with w=0 to E (y[4])
+- From E (y[4]) with w=0 stays in E (y[4])

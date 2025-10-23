@@ -1,0 +1,12 @@
+To improve PPA while maintaining functionality, I will pipeline the multiplication and normalization stages by introducing an additional pipeline stage between input latching and output generation. This splits the critical combinational path into two shorter paths, reducing the maximum delay per stage and improving frequency (better WNS). 
+
+Key changes:
+- Add a stage between input capture and output calculation, registering intermediate signals such as product, exponent sum, and sign.
+- Perform multiplication in stage 1, then normalization and rounding in stage 2.
+- This 3-stage pipeline (IDLE -> MUL -> NORM -> DONE) reduces combinational complexity per cycle.
+- Introduce clock gating: skip multiplication when special cases (zero, inf, NaN) detected to save power.
+- Optimize sticky bit calculation by using a hierarchical OR (not shown in code, but easily inferred by synthesis tools).
+- Keep state machine simple but pipeline extends latency from 2 cycles to 3 cycles, which is acceptable trade-off for better frequency.
+- Overall area remains similar, but improved timing and power.
+
+This approach balances timing, power, and area by reducing the critical path of the multiplier+normalization+rounding step while keeping the design clean and IEEE-754 compliant.

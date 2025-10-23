@@ -1,0 +1,18 @@
+Implement a Moore FSM with explicit and separate states reflecting each requirement step by step, using one-hot style states for clarity.
+
+Key ideas:
+- Use enumerated states for clarity, covering all intermediate steps explicitly: 
+  - RESET: stay while resetn=0
+  - F_PULSE: one cycle f=1 after reset de-assert
+  - WAIT_X1, WAIT_X0, WAIT_X2: track the pattern x=1, then x=0, then x=1 over consecutive cycles
+  - G_PULSE: one cycle g=1 after pattern detected
+  - Y_WAIT0, Y_WAIT1: monitor y for 2 cycles max while keeping g=1
+  - G_ON: maintain g=1 permanently
+  - G_OFF: maintain g=0 permanently
+- Update inputs sample-by-sample to match expected pattern steps, moving states only on positive edges.
+- Keep outputs as Moore outputs depending only on state (not directly on inputs).
+- Explicitly count cycles monitoring y with a 2-cycle counter using Y_WAIT0 and Y_WAIT1 states instead of a numeric counter.
+- Make reset synchronous and active low.
+- The pattern detection is done by going through WAIT_X1 (expect x=1), then WAIT_X0 (expect x=0), then WAIT_X2 (expect x=1).
+- This approach avoids shift registers and complex counters by state sequencing, improving clarity and ease of verification.
+- Outputs f and g asserted exactly in F_PULSE and G_PULSE (one cycle pulses), and held permanently in G_ON or G_OFF.

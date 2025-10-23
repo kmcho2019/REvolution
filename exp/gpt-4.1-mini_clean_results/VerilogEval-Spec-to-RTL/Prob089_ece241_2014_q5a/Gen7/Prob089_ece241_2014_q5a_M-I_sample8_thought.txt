@@ -1,0 +1,12 @@
+To optimize the design for better power and timing, I will introduce a clock enable (ce) signal that is active only when reset is deasserted. This allows gating the FSM and input sampling logic, preventing unnecessary toggling when reset is asserted, thereby reducing dynamic power.
+
+Additionally, I'll separate the input sampling and state update into two always blocks: one for sampling x into x_reg (with clock enable), and another for state update (also with clock enable). This separation improves timing by breaking the data dependency path and allows better synthesis optimization.
+
+The output logic remains combinational and purely Moore (dependent only on registered state and x_reg), preserving functionality.
+
+By doing so:
+- Power is reduced due to clock gating during reset.
+- Timing improves because the path from input sampling to state update is pipelined.
+- Area overhead is minimal, only one extra signal (ce).
+
+This maintains the original correct behavior, with a cleaner, more efficient implementation.

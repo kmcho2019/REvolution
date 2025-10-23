@@ -1,0 +1,10 @@
+The original solution correctly implements dual-edge triggering but has potential for PPA optimization. Here's the improved strategy:
+
+1. **Performance**: Register the mux output to break the critical path from clock to output, improving timing closure at higher frequencies.
+2. **Power**: Reduce switching activity by only updating the output register when needed (on clock edges).
+3. **Area**: Maintain the same basic structure since it's already minimal, but ensure optimal synthesis.
+
+The improved version adds an output register clocked on both edges (using the same dual-edge technique) to pipeline the output. This:
+- Improves timing by adding a pipeline stage
+- Reduces glitches on the output
+- Maintains the same functionality

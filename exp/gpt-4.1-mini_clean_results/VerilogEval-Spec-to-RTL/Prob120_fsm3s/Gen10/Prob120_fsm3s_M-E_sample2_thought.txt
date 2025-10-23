@@ -1,0 +1,7 @@
+To create a novel architectural approach for the Moore FSM, I will encode the four states using a one-hot scheme instead of binary encoding. This means each state is represented by a separate flip-flop, which can potentially increase maximum operating frequency by reducing decoding complexity and critical path length. 
+
+The one-hot FSM will use a 4-bit state register with only one bit set at a time corresponding to states A, B, C, or D. The next-state logic will be implemented using combinational logic with if-else conditions for clarity. The synchronous active high reset will set the FSM to the "A" state by setting only the A bit and clearing others.
+
+The Moore output depends only on the current state, so it will be driven combinationally by checking the "D" state flip-flop.
+
+This approach trades off area (more flip-flops) for potentially improved timing and simpler next state decoding, as each state bit directly indicates one state without encoding/decoding logic. This style is common in high-speed FSM design.

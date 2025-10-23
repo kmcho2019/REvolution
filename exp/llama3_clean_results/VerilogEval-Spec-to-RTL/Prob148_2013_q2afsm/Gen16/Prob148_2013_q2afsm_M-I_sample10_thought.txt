@@ -1,0 +1,14 @@
+To improve the given Verilog code for the FSM, we can focus on optimizing the combinational logic within the `always @(*)` block that determines `next_state`, simplifying the output logic, reducing power consumption, and minimizing area usage. 
+
+First, we analyze the state transitions and the conditions that lead to each state. This allows us to simplify the logic and potentially reduce the critical path delay. For instance, the current implementation uses ternary operators in the `next_state` logic, which could introduce delays. We can break down these expressions to reduce timing issues.
+
+Second, for power optimization, we should ensure that the output signals `g[0]`, `g[1]`, and `g[2]` are determined in a way that minimizes unnecessary transitions. Since the outputs directly depend on the current state, we can keep the current implementation but ensure that the state machine never enters an undefined state to prevent unnecessary switching.
+
+Lastly, for area optimization, we examine the synthesis report to identify opportunities for resource sharing or simplification of the combinational logic. The choice of using `reg [1:0]` for `state` and `next_state` seems appropriate, but we need to ensure the synthesis tool maps this to minimal hardware efficiently.
+
+Our improvement strategy involves:
+1. Simplifying the combinational logic for `next_state`.
+2. Ensuring the output logic for `g[0]`, `g[1]`, and `g[2]` is power-efficient.
+3. Minimizing area usage by optimizing resource allocation and ensuring the synthesis tool uses minimal hardware for the state machine.
+
+By focusing on these aspects, we can improve the PPA metrics of the given design.

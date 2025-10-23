@@ -1,0 +1,14 @@
+Simplification Strategy:
+1. State Transition Logic:
+   - Observe that next_state[1] can be simplified to just (in & (state[0] | state[1] | state[3])) since these are the only states that transition to B when in=1
+   - next_state[0] and next_state[2] can remain as is since they're already minimal
+   - next_state[3] remains unchanged as it's already minimal
+
+2. Output Logic:
+   - Keep state[3] as output since it's already optimal
+
+Key Improvements:
+- Reduced next_state[1] logic by combining all possible source states
+- Maintained all other minimal expressions
+- Preserved one-hot encoding benefits
+- Resulting in simpler overall logic with same functionality

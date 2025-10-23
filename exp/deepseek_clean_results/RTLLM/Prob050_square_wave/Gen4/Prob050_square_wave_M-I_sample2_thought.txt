@@ -1,0 +1,12 @@
+Improvement Strategy:
+1. Critical Path Optimization: Remove the freq==0 check from the clocked always block to reduce critical path delay
+2. Power Optimization: Use a down-counter with parallel load to minimize switching activity
+3. Area Optimization: Remove redundant logic by directly using freq value for counter reload
+4. Timing Improvement: Simplify comparison logic by using count==1 instead of count==0
+5. Startup Behavior: Maintain deterministic initial state while reducing initialization overhead
+
+Key Changes:
+- Move freq==0 check to combinational logic
+- Change counter to trigger toggle when count==1 (pre-decrement)
+- Simplify counter reload logic
+- Maintain same functionality with reduced logic depth

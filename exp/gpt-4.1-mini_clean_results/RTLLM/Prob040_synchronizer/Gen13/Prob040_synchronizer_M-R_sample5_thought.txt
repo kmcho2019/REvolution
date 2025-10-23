@@ -1,0 +1,9 @@
+Refactor the module to use a clock domain crossing FIFO-like handshake approach with combinational logic and separate always blocks to clarify data flow.
+
+- Keep clk_a domain registers for data_in and data_en capture.
+- Synchronize data_en from clk_a to clk_b domain via a two-stage synchronizer as before.
+- Use the synchronized enable signal in clk_b domain as a load signal for a data latch.
+- Instead of conditional updates of dataout inside the clk_b always block, use a simple MUX controlled by the synchronized enable to select between previous dataout and new data_reg.
+- Separate asynchronous resets from synchronous resets by using asynchronous reset inputs in always blocks as originally specified.
+- Use non-blocking assignments for all sequential logic consistently.
+- This restructuring explicitly divides the data capture, enable synchronization, and output selection stages to improve code readability and modularity, while maintaining the same functional behavior.

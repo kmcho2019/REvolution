@@ -1,0 +1,17 @@
+Refactor the FSM to separate state transition, output, and shift-register updates more clearly and explicitly.
+
+1. Implement a Moore FSM with states: IDLE, SHIFT, COUNTING, DONE.
+
+2. Update the shift register at each clock cycle synchronously (including in SHIFT), to reliably detect the pattern early and avoid timing issues.
+
+3. Detect the start pattern in the *next state* logic by checking the updated shift register value (after shifting in `data`), ensuring pattern detection aligns correctly with state transitions.
+
+4. Use a 2-bit counter for shift cycles (counts from 0 to 3) during SHIFT state, counting precisely 4 cycles.
+
+5. Outputs are synchronous and driven directly by registered state signals, avoiding combinational output based on state variables to prevent glitches.
+
+6. The entire FSM, shift register, and counter update inside a single always block triggered on the positive clock edge with synchronous reset, for simplicity and predictability.
+
+7. The next state is computed combinationally, based on the current state and next shift_reg value (since the shift is done every clock), plus the shift count and inputs.
+
+This approach cleanly sequences the detection, shifting, counting, and done-ack handshake phases with precise timing and guarantees the outputs are stable and glitch-free.

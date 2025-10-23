@@ -1,0 +1,13 @@
+Fusion Strategy:
+1. State Representation: Adopt the single state register approach from Example 1 (more area-efficient) while maintaining clear one-hot semantics
+2. Output Logic: Keep the simple combinational output from Example 1 (state_A ? x : ~x) which is minimal and clean
+3. Reset Handling: Maintain asynchronous active-high reset from both examples
+4. State Transition: Use the direct state transition logic from Example 1 (state_A & ~x) which is more efficient than Example 2's approach
+5. Power Optimization: Add clock gating awareness by making state transitions only when needed (x changes)
+
+Key Improvements:
+- Single state register reduces area and power vs Example 2's two registers
+- Clear one-hot semantics maintained through naming convention
+- Output logic remains minimal and combinational
+- State transitions only occur when x=0 in state A, reducing unnecessary switching
+- Asynchronous reset properly initializes to state A

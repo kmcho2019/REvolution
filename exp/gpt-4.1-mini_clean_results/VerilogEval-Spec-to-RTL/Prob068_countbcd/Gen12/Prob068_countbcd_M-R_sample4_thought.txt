@@ -1,0 +1,9 @@
+I will refactor the 4-digit BCD counter by splitting the counter digits into separate 4-bit registers instead of one 16-bit register, which makes the design more modular and structurally clear. Each digit will increment based on an enable signal, forming a ripple carry chain through sequential registers.
+
+- Use four separate 4-bit registers for digits: ones, tens, hundreds, thousands.
+- Generate enable signals sequentially from the rollover conditions, using registered enable signals to reduce combinational depth.
+- Use an always block for each digit increment, controlled by its enable and lower digit rollover, avoiding nested if-else for carry propagation.
+- The enables ena[2:0] are driven by the rollover events of the lower digits, synchronized to the clock to align with sequential updates.
+- Use a simple combinational function for BCD increment with carry to keep increments clear and concise.
+- Synchronous reset resets all digits and enables.
+- This restructuring reduces combinational critical paths inside a single always block, balancing logic between combinational and sequential blocks, and improving readability.

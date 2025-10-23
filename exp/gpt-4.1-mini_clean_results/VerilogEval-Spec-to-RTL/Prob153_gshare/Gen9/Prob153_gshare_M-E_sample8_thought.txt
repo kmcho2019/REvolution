@@ -1,0 +1,16 @@
+I will implement a single-stage combinational read of the Pattern History Table (PHT) and update the Global History Register (GHR) and PHT synchronously on the clock edge with clear priority rules.
+
+Key ideas:
+
+- The GHR is updated only on clock edges when either a prediction or a training occurs.
+- For prediction requests (`predict_valid`), the predictor immediately computes the PHT index as XOR of `predict_pc` and current GHR and outputs the prediction and history combinationally (no pipeline delays).
+- For training requests (`train_valid`), at the clock edge the PHT entry at `train_pc ^ train_history` is updated according to `train_taken`.
+- Also at the clock edge, if training requests a GHR restore due to misprediction (`train_mispredicted`), the GHR is restored from `train_history`.
+- Otherwise, if prediction was valid in that cycle and no training misprediction, update the GHR by shifting in the predicted taken bit.
+- If both training mispredict and prediction happen in the same clock, training mispredict takes priority to update the GHR.
+- The PHT is implemented as an array of 128 2-bit saturating counters.
+- Combinational logic determines the predicted taken bit and history output directly from current GHR and predict_pc.
+- The GHR updates synchronously only once per clock edge according to priority and input signals.
+- This design avoids complicated pipelines by making prediction combinational and training synchronous, simplifying timing and state coherence.
+
+This architecture cleanly separates combinational prediction outputs and synchronous updates, and uses immediate combinational prediction outputs consistent with current GHR. It meets the requirements and resolves timing mismatches by avoiding staged pipelines for prediction.

@@ -1,0 +1,41 @@
+The original solution is functionally correct for fixed-point addition with saturation handling. However, it does not explicitly separate sign logic and magnitude comparison as requested by the problem description, which requires:
+
+1. When MSBs (sign bits) of inputs are the same, add absolute values and set result MSB accordingly.
+
+2. When MSBs differ, subtract smaller absolute value from the larger one and set the result's sign accordingly.
+
+The original code instead performs signed addition directly, handling overflow with saturation but not following the stepwise absolute value logic stated.
+
+Improvement Strategy:
+
+- Implement the problem's specified logic precisely:
+
+  - Extract sign bits and magnitudes (absolute values) of inputs.
+
+  - If signs are equal, add magnitudes and assign the common sign to the result.
+
+  - If signs differ, subtract the smaller magnitude from the larger, set result sign to the sign of the operand with larger magnitude. If result is zero, sign bit is zero.
+
+- Manage result width carefully to prevent overflow on addition of magnitudes.
+
+- Saturate if the resulting magnitude exceeds the maximum representable magnitude (2^(N-1)-1).
+
+- Final result is formed by concatenating sign and magnitude appropriately.
+
+This approach avoids two's complement addition overflow ambiguities and matches the problem's intent to work on absolute values explicitly.
+
+This logic is slightly more complex but cleaner to understand and matches requirements exactly.
+
+Also, the `res` register is used internally as requested.
+
+The fractional bits `Q` are implicit in this fixed-point representation: inputs and outputs have same fixed-point format with Q fractional bits, so addition/subtraction is exact in fixed-point domain.
+
+No internal fractional scaling needed.
+
+We will use unsigned operations for magnitudes, signed bit for sign.
+
+Overflow handling here is saturation on max/min fixed-point values.
+
+Finally, make sure the module has default parameter values, so it can be instantiated without explicit parameters if desired.
+
+This matches the problem's instructions completely.

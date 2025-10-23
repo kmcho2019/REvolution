@@ -1,0 +1,5 @@
+To optimize the original design for better PPA (Power, Performance, Area), I will simplify the design by removing the explicit DFF module and instead use an inferred 4-bit shift register implemented as a register vector. This reduces area by avoiding module overhead and helps synthesis tools better optimize the flops. The synchronous active-low reset will be handled inside a single always block, making the design more compact and potentially improving timing due to fewer module boundaries.
+
+Power can be slightly improved by reducing unnecessary instantiations and simplifying logic, though no clock gating is introduced as no system-level conditions were provided. Performance is maintained because the critical path remains a single flop delay. The code is simpler and more readable while maintaining the same functionality.
+
+This approach leverages the synthesis tool's ability to optimize inferred registers and yields a clean, minimal RTL description.

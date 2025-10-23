@@ -1,0 +1,21 @@
+Fusion Strategy:
+1. **Y1 Implementation**: Both examples correctly implement Y1 as y[0] & w for the A→B transition. This is optimal and should be maintained.
+
+2. **Y3 Optimization**:
+   - Example 1 uses ~w & ~y[0] & ~y[3] (explicit AND of negations)
+   - Example 2 uses ~(w | y[0] | y[3]) (NOR implementation)
+   - The NOR implementation is superior because:
+     * Mathematically equivalent under one-hot encoding
+     * Uses fewer gates (1 NOR vs 1 OR + 1 NOT + 1 AND)
+     * Has shorter critical path (1 gate delay vs 3)
+     * More power-efficient due to reduced switching activity
+
+3. **Implementation Style**:
+   - Keep continuous assignments for clarity
+   - Maintain separate lines for Y1/Y3 for readability
+   - Preserve one-hot safety by only referencing individual state bits
+
+4. **Additional Considerations**:
+   - No common subexpressions to share in this small design
+   - The NOR implementation naturally handles the "not in A or D" condition
+   - The solution remains minimal while being optimal for all PPA metrics

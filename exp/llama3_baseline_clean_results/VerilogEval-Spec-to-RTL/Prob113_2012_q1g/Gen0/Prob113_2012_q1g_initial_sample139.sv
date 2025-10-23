@@ -1,0 +1,10 @@
+module TopModule(
+    input  [3:0] x,
+    output f
+);
+
+assign f = (x[0] == 0 && x[3] == 0) || 
+           (x[1] == 0 && x[2] == 1 && x[3] == 1) || 
+           (x[1] == 1 && x[2] == 1);
+
+endmodule

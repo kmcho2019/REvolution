@@ -1,0 +1,24 @@
+Implement a single-cycle combinational IEEE-754 floating-point multiplier with careful step-by-step logic inside a single always block triggered by clock and reset.
+
+This approach:
+- Extracts sign, exponent, and mantissa from inputs.
+- Handles special cases upfront: NaN, infinity, zero, denormals.
+- Uses 24-bit mantissas with implicit leading one for normals, or zero for zeros/denormals.
+- Performs 24x24 mantissa multiplication combinationally, resulting in 48-bit product.
+- Normalizes the product: if MSB=1 (bit 47) no shift, else shift left until MSB=1 or exponent underflows.
+- Adjusts exponent accordingly after normalization.
+- Implements round to nearest even with guard, round, sticky bits derived from product bits below the mantissa.
+- Handles overflow (sets to infinity) and underflow (sets to zero).
+- Constructs the final IEEE-754 single-precision result.
+- Outputs result in one cycle (no multi-cycle pipeline or counters).
+- Resets output to zero on reset.
+
+This design trades latency for simpler control and lower area by avoiding pipelining and counters, enabling use as a combinational block synchronized to clk.
+
+All steps are done inside a single always block triggered by clk and rst to make it synchronous.
+
+The module is named float_multi, ports as requested.
+
+Note: This approach is simpler and suits synthesis tools that can handle wide combinational logic in one cycle or have high-frequency clocks.
+
+Also, inputs and outputs are registered for timing stability.

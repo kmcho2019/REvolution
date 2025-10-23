@@ -1,0 +1,13 @@
+Novel Architectural Idea: State Transition Matrix Approach
+1. Instead of deriving each flip-flop input separately, implement a unified state transition matrix that calculates all next state bits in parallel
+2. For Y1 (y[1] input) and Y3 (y[3] input), extract only the relevant bits from this matrix
+3. Benefits:
+   - More scalable approach for larger state machines
+   - Clear mapping between state transitions and logic equations
+   - Easier to modify if state machine changes
+   - Potential for sharing common subexpressions
+4. Implementation:
+   - Create explicit equations for each state transition
+   - Combine using OR operations for one-hot encoding
+   - For Y1: transitions to state B (from A or F)
+   - For Y3: transitions to state D (from B, C, E, or F)

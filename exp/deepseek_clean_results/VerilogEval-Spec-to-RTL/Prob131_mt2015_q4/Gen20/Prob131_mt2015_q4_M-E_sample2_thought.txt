@@ -1,0 +1,19 @@
+Novel Time-Multiplexed Architecture:
+1. Key Insight:
+   - Both ModuleA and ModuleB can be implemented using similar XOR/XNOR logic
+   - Instead of instantiating separate modules, we can time-multiplex the operations
+
+2. Implementation Strategy:
+   - Use a 2-phase clock to alternate between ModuleA and ModuleB operations
+   - Store intermediate results in flip-flops
+   - Combine results in the final cycle using the required logic
+
+3. Benefits:
+   - 50% reduction in combinational logic (only one XOR/XNOR core needed)
+   - Sequential design allows for better clock gating opportunities
+   - Naturally pipelined structure improves timing
+
+4. Trade-offs:
+   - Requires clock signal (not in original spec)
+   - Adds 1 cycle latency
+   - Slightly more complex control logic

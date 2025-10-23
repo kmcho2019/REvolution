@@ -1,0 +1,5 @@
+To implement the TopModule, we need to design a set of counters for hours, minutes, and seconds. Since the clock is in 12-hour format, we need to consider AM/PM indication as well. The counters should be clocked by the fast-running clk and increment only when ena is high. The reset signal has higher priority and can reset the clock to "12:00 AM" at any time.
+
+We will use three separate counters for hours, minutes, and seconds, each with their own reset and increment logic. The hours counter will need to handle the 12-hour wraparound and AM/PM indication. The minutes and seconds counters will need to handle the 60-second wraparound.
+
+To implement the counters, we will use always blocks to describe the sequential logic. We will use non-blocking assignments to update the counter values to avoid race conditions. The reset logic will be implemented using an if-else statement inside the always block to give it higher priority over the increment logic.

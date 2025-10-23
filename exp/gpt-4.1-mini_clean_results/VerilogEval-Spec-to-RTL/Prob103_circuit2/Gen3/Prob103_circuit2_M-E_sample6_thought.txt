@@ -1,0 +1,8 @@
+Instead of directly implementing the parity as a four-input XNOR, decompose the parity calculation into hierarchical steps. First, calculate parity for pairs of inputs separately using XOR gates, then combine their results with another XOR gate and finally invert the output. This approach provides a clear architectural breakdown and can be useful in larger designs by promoting modular reuse and pipelining.
+
+Functionally, q is high when the total number of ones in inputs a,b,c,d is even. This can be achieved as:
+- p1 = a XOR b (parity of first pair)
+- p2 = c XOR d (parity of second pair)
+- q = NOT (p1 XOR p2) (overall parity evenness)
+
+This alternative structure clarifies the parity computation stages and allows better mapping on physical gates, potentially improving fan-in balancing and layout optimization.

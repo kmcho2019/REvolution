@@ -1,0 +1,11 @@
+The main issue with the original solution is the use of an initial block to set the initial value of 'out', which is not synthesizable and causes mismatch in hardware. The problem states no reset signal, so the initial state of the flip-flop is inherently unknown in hardware, which is acceptable and typical for designs without reset. To resolve this, we should remove the initial block and accept that 'out' will power up in an unknown state.
+
+To optimize for PPA:
+
+- Performance: The logic is minimal (XOR feeding D flip-flop), so no improvement needed.
+- Power: No change needed; minimal logic toggles.
+- Area: No unnecessary logic, minimal logic elements used.
+
+Thus, the improved solution removes the initial block for synthesis compatibility and leaves the logic unchanged, which is the cleanest way to address the issue per specification.
+
+This approach ensures that the design matches the functional specification without simulation-synthesis mismatch and remains minimal and efficient.

@@ -1,0 +1,5 @@
+The existing solution is already very efficient for a 4-bit priority encoder, but we can slightly optimize for area and power by removing explicit priority masking signals and directly encoding priority using a simple if-else ladder in a combinational always block. This avoids multiple AND gates and intermediate signals, thus potentially reducing gate count and switching activity. The combinational block with an always_comb (or always @*) block and if-else statements will synthesize into minimal priority logic with short critical path.
+
+This approach maintains correctness, ensures clear priority from LSB to MSB, and directly outputs the first set bit index or zero if none are set. It's a classic and compact priority encoder style that is synthesis-friendly and may yield small improvements in area and power over the explicit AND-based logic while preserving optimal timing for 4 bits.
+
+Hence, the improvement strategy is to use a combinational always block with priority if-else encoding instead of explicit priority signals with AND masking.

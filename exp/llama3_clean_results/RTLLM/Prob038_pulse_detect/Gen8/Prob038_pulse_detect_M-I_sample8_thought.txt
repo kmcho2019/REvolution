@@ -1,0 +1,9 @@
+To improve the given pulse detection module, we will refine the finite state machine (FSM) to accurately detect pulses and optimize the code for better power, performance, and area (PPA) metrics. 
+
+We will use a three-state FSM: Idle, High, and PulseEnd. The Idle state is the initial state, where we wait for the first rising edge (0 to 1) of the input signal `data_in`. Once a rising edge is detected, we transition to the High state. In the High state, we wait for the next falling edge (1 to 0) of `data_in`, indicating the end of a pulse. Upon detecting this falling edge, we transition to the PulseEnd state and set the `data_out` signal to 1, indicating the presence of a pulse. Finally, we transition back to the Idle state, resetting `data_out` to 0, regardless of the value of `data_in`.
+
+This approach ensures that `data_out` is set to 1 only after a complete pulse sequence (0-1-0) is detected and remains 1 for the entire clock cycle. It also allows for the detection of multiple pulses in quick succession.
+
+To optimize the code for better PPA metrics, we will use a one-hot encoding scheme for the state machine, which can reduce the number of logic gates required. Additionally, we will use a simple and efficient clock gating scheme to reduce power consumption during periods of inactivity.
+
+The improved code will include an `always` block sensitive to the positive edge of `clk` and the negative edge of `rst_n` to handle the state transitions and output logic. The state machine will be designed to reset to the Idle state upon `rst_n` going low. The `data_out` signal will be driven by a combinational logic that checks the current state of the FSM.

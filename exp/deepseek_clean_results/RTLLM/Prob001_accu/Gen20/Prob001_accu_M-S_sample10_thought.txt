@@ -1,0 +1,12 @@
+Simplified design approach:
+1. Use a single counter to track valid inputs (0-3)
+2. Accumulate input data only when valid_in is high
+3. Output accumulated sum and pulse valid_out when counter reaches 3
+4. Reset accumulator after output
+5. Combine combinational and sequential logic where possible to reduce complexity
+
+Key simplifications:
+- Eliminate separate next_* wires by moving logic directly into sequential block
+- Remove redundant assignments by handling accumulator reset in same block
+- Simplify counter logic by directly incrementing/reset in always block
+- Maintain same functionality with fewer registers and simpler control flow

@@ -1,0 +1,10 @@
+To fuse the best ideas from both examples:
+
+- Use the clear separation of next-state combinational logic from Example 1, which improves readability and enables easier logic optimizations by synthesis tools.
+- Use the concise ternary operator style for next-state selection from Example 2 to keep code compact.
+- Add an explicit clock enable (`ce`) to only update the register when load or rotation is needed, reducing unnecessary toggling and dynamic power.
+- Compute rotate left and rotate right data only when needed by gating those computations with enable signals, avoiding unnecessary switching on all 100 bits.
+- Keep the rotation logic in simple concatenations since the problem size is fixed and this method is straightforward and synthesizable.
+- Overall, this approach improves power by preventing needless toggling, preserves performance by clean next-state logic, and maintains area efficiency and code simplicity.
+
+This results in a robust, clean, and power-aware synchronous design that is easy to maintain and maps well to hardware.

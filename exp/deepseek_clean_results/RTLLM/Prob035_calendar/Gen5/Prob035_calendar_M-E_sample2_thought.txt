@@ -1,0 +1,27 @@
+Novel Architectural Idea: "Pipelined Rollover Detection with State Machine"
+
+Key Innovations:
+1. Three-stage pipelined rollover detection to break critical path
+   - Stage 1: Second rollover detection
+   - Stage 2: Minute rollover detection (using registered sec_rollover)
+   - Stage 3: Hour rollover detection (using registered min_rollover)
+
+2. Finite State Machine approach for timekeeping:
+   - IDLE: Normal counting
+   - SEC_ROLL: Handle second rollover
+   - MIN_ROLL: Handle minute rollover
+   - HOUR_ROLL: Handle hour rollover
+
+3. Registered rollover flags to improve timing:
+   - Each rollover condition is registered before being used
+   - Enables better timing closure at high frequencies
+
+4. Optimized bit-width handling:
+   - Hours stored as 5-bit internally (0-23)
+   - Zero-padded at output ports
+
+Benefits:
+- Improved clock frequency capability
+- Clear separation of timing domains
+- Better power efficiency through conditional evaluation
+- Maintains single always block simplicity

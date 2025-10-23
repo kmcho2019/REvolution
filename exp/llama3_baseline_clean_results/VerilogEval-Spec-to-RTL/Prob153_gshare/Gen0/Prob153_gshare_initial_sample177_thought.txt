@@ -1,0 +1,9 @@
+To implement the TopModule, we need to follow these steps:
+- Create a 7-bit global branch history register that is updated at the next positive clock edge when a branch prediction is requested.
+- Implement a 128-entry table of two-bit saturating counters, where each entry is accessed using a 7-bit index hashed from the 7-bit pc and 7-bit global history using XOR operation.
+- Update the pattern history table (PHT) based on the actual branch outcome and whether the branch was a misprediction when training is requested.
+- If the branch being trained is mispredicted, recover the branch history register to the state immediately after the mispredicting branch completes execution.
+- Handle the case where training for a misprediction and a prediction for a different instruction occur in the same cycle, giving precedence to training.
+- Ensure that training only modifies the PHT at the next positive clock edge, while predictions use the current PHT state.
+
+We will use Verilog's reg and wire data types to declare the registers and wires, and always blocks to describe the combinational and sequential logic. We will also use the posedge keyword to trigger the sequential logic at the positive edge of the clock.

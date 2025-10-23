@@ -1,0 +1,19 @@
+Combine the clean, latch-free, glitch-minimizing approach of Example 1 with the power and glitch advantages of Example 2’s latch-based output selection by implementing a simple register-based output synchronizer instead of a transparent latch or purely combinational mux.
+
+Use two flip-flops (one positive edge, one negative edge) to sample input d on both clock edges, as before.
+
+Instead of directly selecting output via combinational mux or latch, register the muxed output q in a single flip-flop clocked at the positive edge of clk to:
+- Avoid transparent latch timing complications.
+- Reduce glitches by holding q stable during clk transitions.
+- Keep only one output flip-flop to reduce switching on output q.
+- Maintain a fully synchronous, FPGA-friendly design with no latches or combinational mux glitches.
+- Achieve functionally dual-edge triggered output update on q with cleaner timing and lower glitching.
+
+This fusion approach leverages:
+- Dual-edge sampling of d,
+- Controlled output update synchronized to clk posedge,
+- Stable output register to reduce glitches and power,
+- Minimal area overhead (2 sampling FFs + 1 output FF),
+- Legal Verilog constructs without latches or illegal sensitivity lists.
+
+This design thus balances performance (clean timing path), power (reduced glitches), and area (minimal registers) better than prior versions.

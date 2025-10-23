@@ -1,0 +1,7 @@
+To improve synthesis friendliness and tool compatibility for the D latch, I'll change the always block to use a level-sensitive clocked style by using `always @(ena or d)` instead of `always @*`, ensuring explicit sensitivity to the latch control signals. Also, I'll use non-blocking assignments, which some tools prefer for sequential elements, even for level-sensitive latches.
+
+Additionally, I'll add an explicit `else` clause assigning `q` to itself to clearly indicate latch behavior, though this is optional. This explicit style helps synthesis tools correctly identify the latch without ambiguity.
+
+The initialization remains for simulation only.
+
+This style keeps the inferred latch behavior, enhances synthesis tool compatibility, and avoids referencing unknown library cells by writing a clear, straightforward latch inference code pattern.

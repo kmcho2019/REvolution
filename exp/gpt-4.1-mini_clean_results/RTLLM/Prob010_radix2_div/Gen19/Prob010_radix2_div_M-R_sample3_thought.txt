@@ -1,0 +1,14 @@
+To refactor the radix-2 divider implementation with the same core idea but a different structure, I will:
+
+- Use a simple FSM with states IDLE, DIVIDE, DONE to explicitly separate operation start, division process, and result output phases.
+- Store inputs and prepare absolute values at the start in the IDLE state.
+- Use combinational subtraction to test the partial remainder minus divisor at each clock cycle in the DIVIDE state.
+- Use a 17-bit shift register holding the partial remainder (9 bits) and quotient (8 bits).
+- Update shift register based on subtraction result by shifting left and inserting quotient bit accordingly.
+- After 8 iterations, move to DONE state where result_valid is asserted.
+- Implement sign correction for quotient and remainder after division completes.
+- Use non-blocking assignments within sequential logic and combinational logic for arithmetic operations where suitable.
+- Make the control signals clearer and avoid complex flag signals; use separate variables to improve readability.
+- This FSM structure enhances clarity of operation and state transitions, and simplifies managing result validity and operation start.
+
+This structured approach maintains the radix-2 algorithm and sign support, but organizes logic explicitly in a state machine form with clearer phase separation.

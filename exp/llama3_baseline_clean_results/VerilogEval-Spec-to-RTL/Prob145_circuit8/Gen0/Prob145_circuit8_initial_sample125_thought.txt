@@ -1,0 +1,12 @@
+To implement the sequential circuit described in the problem, we first analyze the simulation waveforms provided. The module TopModule has inputs 'clock' and 'a', and outputs 'p' and 'q'. 
+
+The behavior can be summarized as follows:
+- When 'clock' is 0, both 'p' and 'q' are 0, regardless of the value of 'a'.
+- When 'clock' is 1 and 'a' is 0, both 'p' and 'q' are 0.
+- When 'clock' is 1 and 'a' is 1, 'p' is 1 and 'q' is 0.
+
+From the waveforms, it appears that 'p' follows 'a' when 'clock' is 1, but 'p' is reset to 0 when 'clock' is 0. On the other hand, 'q' seems to be related to the state of 'p' and 'clock'. Specifically, 'q' is set to 1 when 'clock' is 0 and 'p' has been 1 in the previous 'clock' cycle. 
+
+Therefore, we can implement the TopModule using two registers: one to hold the value of 'p' and another to hold the value of 'q'. 'p' will be updated based on 'a' when 'clock' is 1. 'q' will be set to the value of 'p' when 'clock' goes from 1 to 0.
+
+We use a simple if-else statement to update the values of 'p' and 'q' at every positive edge of the 'clock'. We will initialize 'p' and 'q' to 0.

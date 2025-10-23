@@ -1,0 +1,11 @@
+Refactor the three-level hierarchical 256-to-1 4-bit mux to a single flat combinational assignment using a computed bit offset into the input vector. This approach leverages the fact that the input is a packed vector of 256 4-bit words, and the select input directly indexes which 4-bit slice to output.
+
+Advantages:
+- Simplifies the design by eliminating intermediate mux stages and wire arrays.
+- The design remains purely combinational with a single assign statement using part-select and scaled indexing.
+- Potentially reduces area and power by removing intermediate signals and mux module instantiations.
+- Tools can optimize the large mux as needed; the indexing expression is straightforward and clean.
+
+Although this approach may produce a large fan-in mux internally, synthesis tools often optimize such multiplexers effectively, especially with the clear indexing. It also provides the same functional behavior with much simpler code, which can improve readability and maintainability.
+
+This version keeps the core idea of mapping sel to 4-bit slices in `in`, but implements it in a direct, flat manner.

@@ -1,0 +1,9 @@
+To address the synthesizability issues and improve the overall design, we should break down the logic into separate always blocks for combinational and sequential logic. This will help in making the design more synthesis-friendly and potentially improve timing, power consumption, and area utilization. 
+
+Firstly, we introduce a register `data_lock` to store the first valid input data. A flag `data_lock_flag` is used to track whether the first data has been stored. 
+
+In the combinational logic block, we determine whether to update the `data_out` and `valid_out` based on the `data_lock_flag` and the current `valid_in`. If `data_lock_flag` is high and `valid_in` is high, it means we have both the first and second data, so we can concatenate them and assert `valid_out`.
+
+In the sequential logic block, we update the `data_lock`, `data_lock_flag`, `valid_out`, and `data_out` registers based on the current state and input conditions.
+
+This separation and the introduction of explicit flags for tracking the state of data locking should make the design more intuitive and easier to synthesize, addressing the issues raised by the feedback.

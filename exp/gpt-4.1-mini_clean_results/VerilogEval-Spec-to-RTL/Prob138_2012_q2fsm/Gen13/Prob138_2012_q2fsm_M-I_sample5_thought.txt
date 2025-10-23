@@ -1,0 +1,7 @@
+To improve the performance while keeping power and area close to the current design, I will remove the conditional update logic for the state register. This eliminates the `(next_state != state)` comparator inside the clocked block, reducing critical path delay and simplifying the sequential logic. The state register will update on every clock edge unless reset is asserted. This slightly increases toggling but can improve max frequency and timing closure.
+
+I will keep the same 3-bit binary encoding and separate always blocks for the state register and next-state combinational logic as before.
+
+For the output `z`, I will implement it as a simple combinational continuous assignment as it is minimal and efficient.
+
+This results in a simpler, faster FSM with minimal impact on power and area, improving overall PPA balance.

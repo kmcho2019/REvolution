@@ -1,0 +1,7 @@
+The data width conversion circuit will be implemented as a finite state machine (FSM) with two states: idle and pending. In the idle state, the circuit waits for the first valid input data. Once the first valid data is received, the circuit transitions to the pending state, where it waits for the second valid input data. After receiving the second valid data, the circuit concatenates the two input data and generates the valid output data and signal. The circuit will also include a flag signal to track whether the first valid data has been received.
+
+The circuit will be designed with a clocked process, where all operations are triggered on the positive edge of the clock signal. The reset signal will be used to clear the registers and initialize the circuit.
+
+The data_out register will be updated based on the current state and the validity of the input data. If the input data is valid and the flag signal is active, the data_out register will be updated by concatenating the contents of the data_lock register (8 bits) and the data_in register (8 bits) to form a 16-bit output.
+
+The valid_out signal will be generated when the data_out register is updated with valid data.

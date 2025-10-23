@@ -1,0 +1,9 @@
+The original design is already minimal and optimal for a 2-to-1 mux: it uses a single continuous assignment with a ternary operator, which synthesizes directly to one mux gate. There is no clock or complex logic, so performance (timing) is optimal. Power and area are minimal due to the single-gate implementation.
+
+To improve PPA, we can consider a gate-level structural description that explicitly instantiates a primitive 2-to-1 mux if the target technology library supports it, which can give the synthesis tool exact mapping guidance. This might reduce area or power slightly by ensuring the mux is inferred as a single gate rather than logic synthesized from ternary operators or LUTs.
+
+Alternatively, if explicit primitive gates are unavailable or the target is generic FPGA/ASIC, the original code is already optimal.
+
+Thus, I will provide an improved version using primitive gate-level mux (if available) or a conditional continuous assignment with a brief comment for clarity. This may slightly aid downstream tools by making intentions explicit.
+
+If no primitives, keep the original concise assign statement but with a comment explaining it maps to one mux gate. This will maintain clarity and optimality.

@@ -1,0 +1,15 @@
+To fix the timing issue, introduce a pipeline register stage that delays the output of valid_out and data_out by one clock cycle after the second valid input arrives.
+
+- Use a two-step process:
+  1. On the arrival of the second valid input (when flag == 1 and valid_in is asserted), latch the concatenated 16-bit data into an intermediate register (e.g., data_out_reg), and set a signal (e.g., valid_out_reg) indicating the output is ready.
+  2. On the next clock cycle, transfer the intermediate registers to the output ports valid_out and data_out.
+
+This ensures that valid_out and data_out are generated one cycle *after* the second input as required.
+
+Also, remove the unused `data_in_second` register and directly latch the second 8-bit input when valid_in is asserted with flag=1.
+
+Keep a flag to track whether the first 8-bit data has been stored, store the first data_in in data_lock, and clear flag when outputting.
+
+Reset all internal and output registers on reset.
+
+This approach guarantees timing correctness and reduces unnecessary registers.

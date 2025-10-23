@@ -1,0 +1,13 @@
+I will implement the K-map function as a small LUT (Look-Up Table) using a 4-bit input formed from the input bits {c,d,b,a} (or in the order that matches the K-map indexing), then directly assign the output by indexing into a 16-bit constant representing the truth table.
+
+Specifically:
+
+- Combine the inputs into a 4-bit address, consistent with the K-map axes: c and d form the row bits, a and b form the column bits (or vice versa, as per K-map).
+- The 16-bit LUT constant encodes the output for all input combinations.
+- The output is just the bit selected from the LUT by the input combination.
+- This approach is clean, very compact, and easily synthesizeable.
+- It replaces any complex expression with a direct LUT lookup, maximizing simplicity and clarity.
+- This also can easily be modified for parameterization or scaling.
+- The code has no submodules, purely combinational with a single assignment.
+
+This novel approach utilizes direct ROM-style implementation of logic functions, a technique often used in small logic blocks or FPGA LUT emulation.

@@ -1,0 +1,12 @@
+To optimize the design further based on the PPA metrics, I'll focus on reducing power and area while maintaining or improving timing:
+
+1. Reduce the shift register to 3 bits since we only need to track the last 3 bits plus current input for detection
+2. Make the shift register update conditional on not having found the pattern yet (clock gating equivalent)
+3. Simplify the detection logic by directly comparing the 3-bit history with "110" and current input with "1"
+4. Remove the separate 'found' register since the output can be directly derived from the detection logic
+
+These changes will:
+- Reduce area by using fewer flip-flops (3 vs 4)
+- Lower power by preventing unnecessary shift operations after detection
+- Maintain similar timing characteristics
+- Keep the same functionality while being more efficient

@@ -1,0 +1,10 @@
+Refactor the multiplier pipeline by explicitly pipelining partial product generation and accumulation across multiple stages, instead of summing all partial products combinationally at once. Use a 4-stage pipeline: 
+1) Input registers and enable shift register; 
+2) Generate partial products for each bit of multiplier (registered); 
+3) Pairwise summation of partial products in two pipeline registers to reduce combinational path length; 
+4) Final summation register stage for the product. 
+This breaks the long combinational addition chain into smaller additions over multiple clock cycles, improving timing and reducing critical path length.  
+Use registered partial products and sums rather than large combinational sums.  
+Enable signals propagate along pipeline stages via shift registers. 
+Outputs are zeroed when enable is not asserted.  
+This restructuring keeps the same latency but achieves better timing and possibly power due to reduced combinational logic depth and glitching.

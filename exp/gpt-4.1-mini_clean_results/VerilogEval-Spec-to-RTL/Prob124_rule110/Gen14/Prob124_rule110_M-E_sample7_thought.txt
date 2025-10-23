@@ -1,0 +1,17 @@
+Implement the 512-cell Rule 110 automaton using a two-stage pipeline approach to reduce the critical path delay and improve timing.
+
+Stage 1: On each clock edge, capture the input or current state into the internal register 'q'.
+
+Stage 2: Separately compute the next state combinationally from the current state stored in 'q', but instead of updating all cells simultaneously in one clock cycle, break the 512 cells into 4 groups of 128 cells each and update one group per clock cycle in a round-robin fashion. This means the complete next state update takes 4 cycles, updating one quarter of the cells at a time. Meanwhile, the rest of the cells remain stable.
+
+To maintain consistency, we buffer partial results in a separate register array and update 'q' for the corresponding segment each cycle.
+
+This method:
+
+- Significantly shortens the critical path by reducing combinational logic size per clock cycle to 128 cells instead of 512.
+- Lowers switching power by updating fewer bits simultaneously.
+- Avoids complex boundary condition logic by padding zeros at edges of each segment's neighborhood, carefully handling neighbors from the previous and next segment using registers.
+- Uses a rotating counter to select which segment to update each cycle.
+- Supports synchronous load to initialize the entire 512-cell state immediately.
+
+This segmented pipelining approach allows the rule 110 cellular automaton to advance 512 cells every 4 cycles while reducing timing pressure, improving overall performance and power, at the cost of a 4-cycle state update latency. The functionality remains equivalent to the original specification.

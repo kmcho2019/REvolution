@@ -1,0 +1,11 @@
+To address the issues identified in the feedback, the first step is to review the state transitions and ensure they are accurately implemented according to the problem statement. This involves checking the conditions under which the state machine moves from one state to another, particularly the transitions from IDLE_STATE to SHIFTING_STATE, from SHIFTING_STATE to COUNTING_STATE, from COUNTING_STATE to DONE_STATE, and from DONE_STATE back to IDLE_STATE.
+
+The next step is to correct the handling of the shift_counter. The shift_counter should be incremented every clock cycle when the state machine is in the SHIFTING_STATE, and it should be reset to 0 when the state machine transitions into the SHIFTING_STATE from IDLE_STATE. This ensures that shift_ena is asserted for exactly 4 clock cycles after the pattern 1101 is detected.
+
+Another critical aspect is ensuring that the output signals (shift_ena, counting, and done) are updated correctly based on the current state of the state machine. For instance, shift_ena should be high only when the state machine is in the SHIFTING_STATE and the shift_counter is less than 4. Similarly, counting should be high when the state machine is in the COUNTING_STATE, and done should be high when the state machine is in the DONE_STATE.
+
+Additionally, it is essential to synchronize the updates of the pattern_register with the clock signal to ensure that the input pattern is correctly detected.
+
+Finally, the code should be optimized for better readability and maintainability by using descriptive variable names and adding comments to explain the purpose of each section of the code.
+
+By addressing these areas, we aim to create a corrected and efficient state machine that accurately implements the required functionality.

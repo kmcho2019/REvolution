@@ -1,0 +1,10 @@
+Simplify the odd-frequency divider by using a single counter and two internal toggle registers, clk_div1 and clk_div2, toggled on the rising and falling edges of the input clock respectively.
+
+The approach:
+- Use one counter incremented on every rising edge of clk, counting from 0 to NUM_DIV-1.
+- On the rising edge, toggle clk_div1 when the counter reaches half the divisor.
+- On the falling edge, toggle clk_div2 when the counter reaches NUM_DIV-1 (right before reset).
+- The final output clk_div is the OR of clk_div1 and clk_div2, effectively combining positive and negative edge toggles to achieve the odd division.
+- This approach uses only one counter and two toggles aligned with clock edges, keeping the code simple yet adhering to the original intent of separate toggles on posedge and negedge.
+- Add an active low asynchronous reset to initialize all registers.
+- Include a compile-time check to ensure NUM_DIV is an odd number.

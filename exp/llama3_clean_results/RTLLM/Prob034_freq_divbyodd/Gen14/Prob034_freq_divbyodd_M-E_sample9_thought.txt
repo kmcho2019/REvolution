@@ -1,0 +1,13 @@
+To implement a frequency divider that divides the input clock frequency by an odd number, we can utilize a novel architectural approach involving a combination of counters and a state machine. 
+
+Our approach will involve three main components:
+
+1. **Edge Detection**: This component will detect the rising and falling edges of the input clock signal. Two separate counters, `cnt1` and `cnt2`, will be used to track the number of clock cycles since the last rising and falling edges, respectively.
+
+2. **State Machine**: This component will manage the state of the frequency divider based on the values of `cnt1` and `cnt2`. The state machine will have two states: `IDLE` and `DIVIDE`. In the `IDLE` state, the counters will be reset, and the divided clock output will be low. In the `DIVIDE` state, the counters will be incremented, and the divided clock output will be toggled when the counters reach half of the odd divisor value.
+
+3. **Divided Clock Generation**: This component will generate the divided clock output based on the state machine's output. The divided clock output will be logically OR-ed with the output of two separate clock dividers, `clk_div1` and `clk_div2`, which will be toggled when `cnt1` and `cnt2` reach half of the odd divisor value, respectively.
+
+The key to this design is the use of a state machine to manage the frequency divider's state and the separate counters to track the rising and falling edges of the input clock signal. This approach ensures that the divided clock output is correctly generated based on the input clock frequency and the odd divisor value.
+
+To implement this design, we will use a parameterizable Verilog module that takes the odd divisor `NUM_DIV` as an input. The module will calculate the half divisor value based on `NUM_DIV` and use it to drive the state machine and the counters.

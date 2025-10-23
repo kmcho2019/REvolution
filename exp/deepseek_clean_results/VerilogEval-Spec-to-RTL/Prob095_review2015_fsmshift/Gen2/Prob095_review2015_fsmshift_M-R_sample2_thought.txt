@@ -1,0 +1,14 @@
+To address the issues while maintaining the same core functionality, I'll refactor the solution with these improvements:
+
+1. Simplify the state machine to just track the counting period
+2. Use a down counter instead of up counter for clearer cycle counting
+3. Make shift_ena purely combinatorial based on counter value
+4. Ensure reset properly initializes the counter to 3 (for 4 cycles)
+5. Remove explicit state tracking since we only need to count cycles
+
+Key changes:
+- Replace state machine with simple counter
+- shift_ena is high when counter != 0
+- Counter decrements each cycle until it reaches 0
+- Reset loads counter with 3 (produces 4 cycles of shift_ena)
+- More straightforward implementation with same behavior

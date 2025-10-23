@@ -1,0 +1,16 @@
+A novel architectural idea for implementing the combinational circuit is to use a hierarchical approach with a main module (TopModule) that breaks down the logic into smaller sub-modules. Each sub-module will handle a specific part of the logic, making the overall design more modular, scalable, and easier to understand.
+
+The simulation waveforms show that the output q is 1 when either b or c is 1, or when a is 1. This can be broken down into two main cases: 
+
+1. When a is 1, q is 1 regardless of the values of b, c, and d. 
+2. When a is 0, q is the logical OR of b and c.
+
+We can create two separate modules: one for each case. The first module (Module_A) will handle the case when a is 1, and the second module (Module_B) will handle the case when a is 0.
+
+In Module_A, we can simply assign the output q to be 1 when a is 1, ignoring the values of b, c, and d.
+
+In Module_B, we can use an OR gate to compute the logical OR of b and c.
+
+Finally, in the TopModule, we can use a multiplexer to select the output from either Module_A or Module_B based on the value of a. When a is 1, we select the output from Module_A, and when a is 0, we select the output from Module_B.
+
+This hierarchical approach makes the design more modular and easier to understand, and it also allows for potential area and power savings by minimizing the number of gates required.

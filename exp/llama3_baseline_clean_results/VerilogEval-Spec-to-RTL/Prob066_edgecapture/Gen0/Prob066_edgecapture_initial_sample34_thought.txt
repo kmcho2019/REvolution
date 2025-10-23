@@ -1,0 +1,13 @@
+To implement the TopModule, we need to design a circuit that can detect the transition from 1 to 0 in the 32-bit input vector and capture this transition to produce an output. We will use a register to store the previous state of the input vector and then compare it with the current state to detect the transition. When a transition is detected, we will set the corresponding output bit to 1, and it will remain 1 until the register is reset.
+
+Here's the step-by-step approach:
+1. Create a register to store the previous state of the input vector.
+2. On the positive edge of the clock, update the previous state register with the current state of the input vector.
+3. Compare the previous state with the current state to detect the transition from 1 to 0.
+4. If a transition is detected, set the corresponding output bit to 1.
+5. If the reset signal is high, reset all output bits to 0.
+
+We will use the following Verilog constructs:
+- The `always` block to describe the sequential logic.
+- The `if` statement to check the reset condition and the transition detection.
+- The non-blocking assignment (`<=`) to update the registers.

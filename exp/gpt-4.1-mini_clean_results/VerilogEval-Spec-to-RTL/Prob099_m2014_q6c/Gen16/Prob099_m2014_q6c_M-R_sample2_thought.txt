@@ -1,0 +1,5 @@
+Refactor the design to use purely combinational logic with assign statements instead of an always block. Since the state encoding is one-hot, the next state bits can be derived by inspecting the current state bits and input w, directly expressing next state bits as combinational logic equations.
+
+This approach eliminates the procedural block and uses straightforward logic equations derived from the transitions, making the code concise and purely combinational. Then output Y2 and Y4 correspond to the next-state bits for states B (y[1]) and D (y[3]) respectively, matching the required port names. This also avoids explicit comparisons of the entire vector by using bit-level expressions.
+
+This style enhances clarity and may help synthesis tools optimize better since logic is expressed directly via assigns.

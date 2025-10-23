@@ -1,0 +1,11 @@
+To refactor the radix-2 divider and avoid issues seen in the previous implementation, I will:
+
+- Eliminate partial nonblocking assignments to parts of `shift_reg`. Instead, compute the entire next value of `shift_reg` combinationally and update it atomically on clock edge.
+- Replace the combinational always block that modifies `result` with a purely sequential assignment, making `result` a registered output updated only in the clocked process after division is done.
+- Remove the `res_ready` input since it was not specified originally and instead use `res_valid` logic controlled solely by `opn_valid` and internal states.
+- Use an explicit state machine with three states: IDLE, RUN, and DONE, as before, but update `count` and `shift_reg` in the RUN state carefully by computing next values with intermediate combinational signals.
+- Compute the trial subtraction and decide whether to keep the subtraction result or restore remainder in a combinational way before updating `shift_reg`.
+- Apply sign corrections sequentially at DONE state and store the final result in `result`.
+- Handle divide-by-zero explicitly at the start of RUN state and skip division iteration in that case, directly produce max quotient and dividend remainder.
+- Maintain input latching and absolute value calculation in the IDLE to RUN transition.
+- This structure avoids partial updates and conflicting assignments, uses a clearer, fully synchronous FSM with combinational next-state and data logic, thus improving simulation and synthesis robustness.

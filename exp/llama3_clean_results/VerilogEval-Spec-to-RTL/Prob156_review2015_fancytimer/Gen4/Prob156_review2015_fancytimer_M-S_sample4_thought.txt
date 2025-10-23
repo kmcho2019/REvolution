@@ -1,0 +1,15 @@
+To simplify the existing solution, we can merge some of the states in the finite state machine (FSM) and remove unnecessary variables. 
+
+The new FSM will consist of four main states: IDLE, DETECT, COUNT, and DONE.
+
+- The IDLE state will be responsible for detecting the start pattern '1101' in the input data.
+- Once the start pattern is detected, the FSM will transition to the DETECT state, which will then shift in the next 4 bits to determine the delay value.
+- After the delay value is shifted in, the FSM will transition to the COUNT state, where it will count down the delay value.
+- The COUNT state will utilize a separate counter to keep track of the clock cycles and will decrement the remaining time when the counter reaches 1000.
+- Finally, the DONE state will be responsible for asserting the done signal and waiting for the acknowledgment from the user.
+
+We can remove the SHIFT state and merge its functionality into the DETECT state, as the DETECT state already shifts in the delay value. 
+
+We can also remove the `shift_reg` and `data_shift_reg` variables, as they can be replaced with a single variable to store the current sequence of bits.
+
+This simplified solution will reduce the complexity of the code while maintaining its functionality.

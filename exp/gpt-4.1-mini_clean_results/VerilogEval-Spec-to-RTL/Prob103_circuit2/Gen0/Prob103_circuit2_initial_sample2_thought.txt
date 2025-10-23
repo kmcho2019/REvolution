@@ -1,0 +1,55 @@
+Analyze the given input and output patterns to determine the logic function.
+
+From the waveforms, we observe the 16 possible input combinations of a, b, c, d with output q.
+
+Group the input combinations by the 4-bit vector (abcd) and note q:
+
+abcd | q
+0000 1
+0001 0
+0010 0
+0011 1
+0100 0
+0101 1
+0110 1
+0111 0
+1000 0
+1001 1
+1010 1
+1011 0
+1100 1
+1101 0
+1110 0
+1111 1
+
+We want to find the boolean function q = f(a,b,c,d) that matches these outputs.
+
+Let's list the input conditions for which q=1:
+
+0000
+0011
+0101
+0110
+1001
+1010
+1100
+1111
+
+We can notice that q=1 when the number of 1's in abcd is even:
+
+Check the number of ones for each input where q=1:
+
+0000 -> 0 ones (even)
+0011 -> 2 ones (even)
+0101 -> 2 ones (even)
+0110 -> 2 ones (even)
+1001 -> 2 ones (even)
+1010 -> 2 ones (even)
+1100 -> 2 ones (even)
+1111 -> 4 ones (even)
+
+Indeed, q=1 if the parity of inputs is even.
+
+Therefore, q = ~(a ^ b ^ c ^ d), i.e. the even parity of the inputs.
+
+Implement the output as the negation of XOR of all inputs.

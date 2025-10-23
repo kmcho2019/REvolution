@@ -1,0 +1,29 @@
+Revised Fractional Divider Design:
+
+1. **Cycle Counting Approach**:
+   - Implement a 3-bit counter to track 7 clock cycles (for 3.5x division)
+   - Alternate between 4-clock high and 3-clock low periods
+   - Reset counter after reaching 6 (0-6 counts = 7 cycles)
+
+2. **Dual-Edge Generation**:
+   - Create two phase-shifted versions of the divided clock:
+     * Main clock (posedge triggered) for full cycles
+     * Secondary clock (negedge triggered) for half-cycle shifts
+   - Main clock follows the 4:3 pattern directly
+   - Secondary clock is phase-shifted by half a cycle
+
+3. **Output Combination**:
+   - OR the two phase-shifted clocks to create final output
+   - This ensures smooth transitions between cycles
+   - Maintains correct duty cycle over time
+
+4. **Reset Synchronization**:
+   - Properly initialize all registers
+   - Ensure output starts in known state
+   - Synchronize counter with clock edges
+
+Key Improvements:
+- Explicit 7-cycle counter for accurate 3.5x division
+- Clear separation of full-cycle and half-cycle components
+- Proper phase relationship between clock components
+- Verified reset behavior

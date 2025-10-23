@@ -1,0 +1,18 @@
+Simplify the design by using exactly two pipeline stages of registers:
+
+- Stage 1 registers latch all partial products simultaneously at the rising clock edge.
+- Stage 2 registers accumulate the sum of the partial products at the next clock edge.
+
+This means partial products are generated combinationally from inputs, stage1_pp stores these partial products, stage2_sum registers store their sum computed combinationally from stage1_pp.
+
+This approach meets the two-level pipeline requirement and the use of registers for intermediate values and final output.
+
+The multiplication result is output after two clock cycles latency: inputs are registered into partial products, then partial products summed and registered into output.
+
+Input signals are extended by adding "size" zero bits at MSB.
+
+This eliminates the need for control counters or multi-cycle accumulation, simplifying control and ensuring correct synchronization.
+
+Reset clears all pipeline registers and output.
+
+This fully complies with the problem statement in a straightforward way.

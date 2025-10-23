@@ -1,0 +1,9 @@
+Correct the shift direction so that incoming bits are shifted into the LSB of the shift register since the protocol sends LSB first. This means shifting the register left by one and inserting the new bit at bit 0: `shift_reg <= {in, shift_reg[7:1]};` is incorrect; it should be `shift_reg <= {in, shift_reg[7:1]};` reversed. Actually, to insert at LSB, shift left and insert new bit at LSB: `shift_reg <= {shift_reg[6:0], in};`.
+
+Also, keep the done signal asserted for exactly one clock cycle immediately after a valid stop bit is detected, clearing it otherwise.
+
+Ensure the bit counter counts received bits correctly (0 to 7 for 8 bits). Wait in STOP state until a valid stop bit (1) is received before returning to IDLE.
+
+Reset and initial conditions remain the same.
+
+These fixes will produce correct byte data with LSB first and proper done pulse timing.

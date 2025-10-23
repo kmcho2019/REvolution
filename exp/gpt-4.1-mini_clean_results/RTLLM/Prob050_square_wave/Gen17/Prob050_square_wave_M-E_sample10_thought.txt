@@ -1,0 +1,11 @@
+Instead of toggling the output when a counter reaches (freq-1), use a down-counter that reloads from freq on each zero, producing a toggle every time it counts down to zero. This removes the equality comparison and replaces it with a simple zero detection, which can be slightly faster and more power efficient.
+
+Also, to avoid toggling at freq=0 (which is invalid), clamp freq to minimum 1 internally.
+
+The design:
+- Use a countdown register 'count' that initializes to freq.
+- On each clk, decrement count.
+- When count reaches zero, reload count to freq and toggle wave_out.
+- Clamp freq input to min 1 to avoid zero or glitch conditions.
+
+This architecture simplifies the combinational logic (only zero detection), keeps counting logic simple, and produces the desired frequency controlled square wave output.

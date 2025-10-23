@@ -1,0 +1,13 @@
+The existing FSM implementation is clean and synthesizable with minimal logic, and the state encoding is compact (2-bit). However, we can optimize for better timing and power by adopting one-hot encoding of states, which simplifies the combinational next-state logic to simple AND/OR gates and can potentially reduce the critical path delay. One-hot encoding increases the number of state bits but generally allows faster clock frequencies because each state is represented by one flip-flop, reducing logic levels in the next state and output logic.
+
+Also, moving the Moore output logic from combinational continuous assignment to a registered output inside the sequential block ensures fully registered outputs, which enhances timing robustness and prevents glitches on the output line.
+
+Finally, using named states as single-bit registers improves readability and allows better synthesis optimization for one-hot FSMs. The synchronous active-high reset and positive clock edge triggering are maintained. This approach slightly increases area (due to more registers) but improves timing and power due to simpler combinational logic and glitch-free registered output.
+
+Hence, the optimization strategy is:
+- Use one-hot encoding for states (4 flip-flops).
+- Move output logic inside sequential block as a registered output.
+- Maintain synchronous reset and positive edge clocking.
+- Use simple combinational logic for next-state logic.
+
+This should improve the effective clock period and reduce glitches, aiding both timing and power metrics.

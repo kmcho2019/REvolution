@@ -1,0 +1,17 @@
+The TopModule can be implemented using a finite state machine (FSM) with several states: 
+(1) IDLE: searching for the pattern 1101, 
+(2) DELAY_LOADING: shifting in the next 4 bits to determine the duration, 
+(3) COUNTING: counting for the specified duration, 
+(4) DONE: waiting for the user to acknowledge the timer.
+
+In the IDLE state, the FSM shifts in the data bits and checks for the pattern 1101. 
+Once the pattern is detected, the FSM transitions to the DELAY_LOADING state. 
+In the DELAY_LOADING state, the FSM shifts in the next 4 bits to determine the duration. 
+After that, the FSM transitions to the COUNTING state. 
+In the COUNTING state, the FSM counts for the specified duration and outputs the remaining time. 
+After the counting is finished, the FSM transitions to the DONE state. 
+In the DONE state, the FSM asserts the done signal and waits for the user to acknowledge the timer by asserting the ack signal. 
+Once the ack signal is asserted, the FSM transitions back to the IDLE state.
+
+The counting can be implemented using a counter that increments every clock cycle. 
+The remaining time can be output by decrementing the delay value every 1000 clock cycles.

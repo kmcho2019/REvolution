@@ -1,0 +1,5 @@
+Refactor the popcount17 module to use a purely combinational parallel summation with explicit adders, avoiding the always block and for-loop. This can be done by grouping bits in small fixed-size chunks, using parallel addition trees to sum up all bits. For example, first sum bits in groups of 4 or 5 with partial adder results, then sum those partial sums in a tree structure. This approach makes the combinational logic more explicit, potentially improving synthesis results for timing and area.
+
+In TopModule, keep the hierarchical adder tree summation of partial counts but remove the generate loops for partial sums, instead implement each summation explicitly or using arrays with assign statements. This improves code readability and clearly shows the summation tree.
+
+Overall, the design remains modular and balanced, but the popcount17 explicitly uses parallel adders rather than a loop, enabling potentially better synthesis optimization and clearer hardware mapping.

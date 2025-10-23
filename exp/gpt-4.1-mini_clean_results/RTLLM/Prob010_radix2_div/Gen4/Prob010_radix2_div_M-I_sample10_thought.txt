@@ -1,0 +1,17 @@
+The original design uses a three-state FSM and separate remainder and quotient registers. While functionally correct, it has some issues:  
+- The subtraction result (`sub_result`) is computed combinationally, but assigned in a sequential block, which can cause mismatches or synthesis warnings.  
+- The remainder and quotient updates overlap sequentially with shifting and subtraction logic, causing some complexity in timing and assignment ordering.  
+- Sign adjustments are done only in the DONE state, which is good, but the remainder is 9 bits internally, and output remainder is 8 bits — careful with overflow or sign extension is needed.
+
+Improvements for better PPA and clarity:  
+- Combine remainder and quotient into a single shift register (SR) of 17 bits (9 bits remainder + 8 bits quotient) as stated in the original problem statement, simplifying shift operations.  
+- Perform subtraction and conditional update in a clear synchronous manner with minimal combinational dependencies.  
+- Manage a 4-bit counter for 8 cycles of division iterations.  
+- Properly handle divide by zero by outputting zero quotient and remainder (or all zero).  
+- Carefully handle sign of quotient and remainder at the end, applying two's complement if needed.  
+- Use synchronous reset and a simple FSM with explicit states.  
+- Manage res_valid signal strictly according to problem description.  
+
+This design uses a shift register SR initialized as {dividend_abs, 1'b0}, and subtracts NEG_DIVISOR shifted into remainder bits. On each iteration, if subtraction result is >=0, SR is updated with subtraction result and sets LSB quotient bit = 1; otherwise, SR shifted left with quotient bit 0. At the end, sign adjustments are applied, and result outputted as {remainder[16:9], quotient[7:0]}.
+
+This approach matches the problem description precisely, improving clarity and synthesis friendliness.

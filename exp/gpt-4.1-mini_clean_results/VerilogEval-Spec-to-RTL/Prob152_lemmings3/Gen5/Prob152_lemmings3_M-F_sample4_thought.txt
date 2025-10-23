@@ -1,0 +1,33 @@
+The original code almost correctly implements the FSM, but the bump logic and state transition timing need refinement to fully respect the spec's priority and timing rules.
+
+Key fixes:
+
+1. Ensure bump direction switching occurs *only* when currently walking *and* ground=1 (i.e., not falling or digging), and bump inputs do *not* affect direction if falling or digging.
+
+2. When ground drops (ground=0), the Lemming must enter falling state without changing direction, ignoring any bump inputs at that cycle, even if bump and ground change simultaneously. To guarantee this, bump-based direction switching should only occur if ground=1 in the current cycle and current state is WALKING.
+
+3. During digging, if ground disappears, transition immediately to falling, again ignoring bumps.
+
+4. In the combinational next-state logic, re-order the conditions explicitly following priority fall > dig > bump direction switch. Bump direction switching applies only in WALKING with ground=1.
+
+5. Clarify bump direction switch conditions: if bumped on left, direction must switch to right; if bumped on right, direction must switch to left; if both bumped, switch direction too.
+
+Hence the bump condition is:
+
+- If bump_left=1, direction becomes 1 (walk right)
+
+- Else if bump_right=1, direction becomes 0 (walk left)
+
+- Else direction unchanged
+
+This replaces the previous toggling (invert) logic which did not exactly match the spec.
+
+Implement the above logic carefully in next_direction to avoid glitches and simulation mismatches.
+
+With these fixes, the FSM meets all requirements, outputs are consistent with state/direction, and bump inputs are handled only in walking on ground state.
+
+Use a non-blocking assignment for state and direction registers with asynchronous reset.
+
+Outputs remain Moore-style derived solely from current state and direction.
+
+This ensures correct and robust behavior matching the Lemmings specification.

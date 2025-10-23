@@ -1,0 +1,15 @@
+To optimize the 100-bit rotator for better power and potentially timing, the main improvement is to add clock gating logic to avoid unnecessary register updates when no load or rotation occurs. Since the register only needs to update on load or rotation enable signals, gating the register write can reduce switching power significantly.
+
+Implementation:
+- Introduce an internal enable signal that is high only when load is asserted or ena is 2'b01 or 2'b10 (rotation directions).
+- Use this enable signal to conditionally update the register q.  
+- This can be done by enabling register updates only when needed; otherwise, hold q to avoid toggling.
+- This simple gating reduces the toggling inside the register cells and thus dynamic power.
+
+This change does not affect functionality and keeps the design simple. It can also improve timing by reducing switching noise. Area impact is minimal since only a small gating logic is added.
+
+Note: True clock gating would be done at the clock cell level, but here we emulate gating by not updating the register unnecessarily, which synthesis tools can optimize into clock gating or clock enable.
+
+No pipeline stages are added as rotation is a simple 1-bit shift, which is already fast.
+
+The main goal is to reduce switching power while preserving exact behavior.

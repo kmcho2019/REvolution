@@ -1,0 +1,14 @@
+The original design is correct and modular but can be optimized for better power and area without sacrificing speed significantly. 
+
+Improvement strategy:
+- Replace the two 32-bit CLA blocks with a single 64-bit CLA. This reduces duplicated logic and minimizes area by sharing propagate/generate and carry calculation logic across the full 64 bits.
+- Use hierarchical carry lookahead to keep timing efficient: first compute 4-bit group propagate and generate signals, then combine them to generate 16 group carries, and finally compute all 64 carries. This reduces critical path delay.
+- By using one unified 64-bit adder, we avoid the explicit carry chaining between two separate CLAs and reduce wiring complexity.
+- Overflow detection logic remains unchanged, minimal and efficient.
+- This redesign balances power reduction (fewer redundant blocks), area savings (one adder instead of two), and maintains timing performance with hierarchical carry lookahead.
+  
+The single 64-bit CLA with a 4-bit group granularity is a classic and scalable approach for 64-bit addition/subtraction.
+
+The subtraction is done as A + (~B) + 1, using the complemented B and cin=1.
+
+This approach will reduce the overall gate count, simplify carry logic, and therefore improve the PPA metrics compared to the two-32-bit CLA chaining solution.

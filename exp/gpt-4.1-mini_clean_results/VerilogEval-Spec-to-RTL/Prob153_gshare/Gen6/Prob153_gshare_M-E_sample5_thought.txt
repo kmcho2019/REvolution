@@ -1,0 +1,39 @@
+Implement the gshare predictor using a fully synchronous RAM approach with separate pipeline stages and explicit staging of all signals to precisely control prediction output timing and GHR updates.
+
+Key architectural changes:
+
+1. Prediction Interface:
+   - On predict_valid, compute index = predict_pc ^ current GHR.
+   - Perform synchronous read from PHT RAM with registered read address.
+   - Outputs are generated from the *previous* cycle's read data and address, ensuring prediction sees PHT content before any training writes in the current cycle.
+   - Latch and output the GHR value corresponding to the prediction request cycle.
+
+2. Training Interface:
+   - On train_valid, compute train_index = train_pc ^ train_history.
+   - Write PHT RAM entry synchronously on clock edge with saturating counter update.
+   - On train_mispredicted, recover GHR to train_history immediately (at clock edge).
+   - If no misprediction, update GHR by shifting in the *taken* bit from the previous prediction's output, but only if the prediction was valid (to ensure alignment).
+
+3. Global History Register (GHR):
+   - Hold current GHR value.
+   - On clock edge:
+       - If train_valid & train_mispredicted: restore GHR to train_history.
+       - Else if train_valid & !mispredicted: update GHR by shifting in previous prediction taken bit if prediction was valid; else hold.
+       - Else if predict_valid (previous cycle) only: update GHR by shifting in previous prediction taken bit.
+       - Else hold GHR.
+
+4. Pipeline registers for prediction:
+   - Register predict_valid, predict_pc, and computed index at prediction request cycle.
+   - Register PHT read data corresponding to indexed entry on next cycle.
+   - Prediction output (predict_taken, predict_history) is valid only when previous cycle had predict_valid.
+
+5. This staging ensures:
+   - Prediction outputs correspond to PHT state before training updates in current cycle.
+   - Training updates happen after prediction output is generated.
+   - GHR update logic respects precedence of training mispredictions.
+   - Prediction and training to the same PHT entry in the same cycle cause prediction to see old state.
+
+6. Initialization:
+   - On async reset, initialize PHT entries to weakly taken (2'b10) and GHR to 0.
+
+This approach cleanly separates prediction and training timing, uses explicit pipelining, and respects the priority and timing rules, avoiding ambiguous combinational reads and complex gating of registers. It simplifies reasoning about timing and aligns with common gshare predictor designs.

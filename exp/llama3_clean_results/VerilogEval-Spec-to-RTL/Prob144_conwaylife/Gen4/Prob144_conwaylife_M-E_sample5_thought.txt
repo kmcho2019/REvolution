@@ -1,0 +1,7 @@
+To implement the game logic, we can utilize a modular approach, where each cell in the grid is represented by a single module that encapsulates the logic for counting alive neighbours and updating the cell's state based on the game rules. This approach allows for a scalable and distributed implementation, where each cell operates independently, yet collectively, they form the grid and evolve according to the game's rules.
+
+We will define a `Cell` module that takes the current state of its neighbours, its own state, and the load signal as inputs. It then outputs its next state based on the game's rules. The `TopModule` will instantiate a 16x16 grid of these `Cell` modules, connecting each cell to its neighbours (including wrap-around connections for the toroidal grid) and managing the load signal.
+
+By using a modular approach, we can easily scale the grid size, modify the game rules, or add additional features to the game without significantly altering the overall architecture. This design also inherently supports parallelism, as each cell's update can be computed independently, which can be beneficial for large grids.
+
+The key challenges in this design include managing the connectivity between cells to ensure correct neighbour relationships, handling the load signal to initialize the grid state, and ensuring that the update logic for each cell adheres to the game's rules.

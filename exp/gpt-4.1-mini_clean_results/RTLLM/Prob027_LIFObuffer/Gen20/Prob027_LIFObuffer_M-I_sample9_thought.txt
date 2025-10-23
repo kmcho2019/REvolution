@@ -1,0 +1,17 @@
+To improve PPA (timing, power, and area) further from the existing good design:
+
+1. Reverse SP counting direction: count up from 0 (empty) to 4 (full). This avoids the subtraction (SP - 1) in push addressing, replacing it with simple use of SP as the index for pushing data, simplifying the combinational path and likely improving timing.
+
+2. Update dataOut only on pop operations to minimize switching.
+
+3. On reset, clear SP, dataOut, and stack_mem synchronously as before.
+
+4. Use simple combinational logic for push and pop enables, and update SP on push/pop.
+
+5. To reduce toggling and improve power, only write stack_mem on push operations and don't clear on pop.
+
+6. Flags EMPTY and FULL are directly derived from SP (0 empty, 4 full) with minimal combinational logic.
+
+7. Keep synchronous reset and enable gating as before.
+
+This approach reduces arithmetic in critical path, slightly reduces logic for push address computation, and maintains the original clean structure, improving timing (WNS, TNS) and possibly power with minimal area impact.

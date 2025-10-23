@@ -1,0 +1,23 @@
+The main improvement is to cleanly separate the combinational and sequential logic:
+
+- Move next_state logic to a combinational always block to avoid latches or unintended state assignments inside the sequential block.
+
+- Update state only on clock edge; next_state is purely combinational.
+
+- Compute output signals (output_valid_next and output_data_next) combinationally alongside next_state, then register them on the clock.
+
+- Reduce the output register pipeline from two stages to one stage, because a single-stage register after forming output data on the second valid input already achieves the requirement that valid_out and data_out appear one cycle after the second input arrives.
+
+- Reset all registers properly.
+
+This approach ensures correct and clean FSM implementation with proper timing of outputs, meets the one cycle output delay requirement, and reduces unnecessary registers for better PPA.
+
+The output valid_out and data_out go high in the cycle *after* receiving the second valid input, exactly as requested.
+
+The concatenation places the first input byte into the high 8 bits and the second input byte into the low 8 bits.
+
+If only one input arrives and no second input follows, output remains invalid until the second input arrives.
+
+This design is synchronous with asynchronous active-low reset.
+
+All signals and registers are properly sized and controlled.

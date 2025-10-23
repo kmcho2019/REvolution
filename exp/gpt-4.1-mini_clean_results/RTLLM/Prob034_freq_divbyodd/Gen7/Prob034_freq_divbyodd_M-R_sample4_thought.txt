@@ -1,0 +1,11 @@
+To refactor the frequency divider by an odd number with the same core concept of using two counters triggered on opposite clock edges, we can unify the counting logic into a single always block driven by the positive clock edge while capturing the negative edge events using an internal signal. 
+
+Instead of two counters operating independently on posedge and negedge, maintain a single counter that increments every half clock period. Achieve this by using both edges of the clock inside a single always block or by generating an internal "half_clk" signal toggled on negedge clk.
+
+Then toggle two clock dividers, clk_div1 and clk_div2, on specified counts within the same clock domain, avoiding asynchronous crossing issues and better aligning toggle timing.
+
+We can also replace explicit counters with counters incremented every half clock, and toggle clk_div1 and clk_div2 at counts corresponding to half and full cycles to ensure accurate phase and duty cycle.
+
+Finally, the output clk_div is the OR of clk_div1 and clk_div2, producing the odd-frequency divided clock with improved timing correctness and phase alignment.
+
+This approach simplifies the logic, removes asynchronous negedge counter, reduces phase misalignment, and improves reliability while maintaining the odd division requirement.

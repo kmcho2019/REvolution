@@ -1,0 +1,18 @@
+To optimize the Moore FSM for better PPA metrics while maintaining functionality:
+
+1. **Performance Improvement:** 
+   - Switch to one-hot encoding (4 bits) for faster state decoding and simpler output logic
+   - Register the output to break the combinational path from state to output
+
+2. **Power Optimization:**
+   - Use Gray-like state transitions where possible to minimize bit toggles
+   - Keep output registered to prevent unnecessary switching
+
+3. **Area Consideration:**
+   - One-hot encoding increases flip-flop count but simplifies combinational logic
+   - Output register adds one flip-flop but improves timing
+
+The improved design should:
+- Reduce critical path delay by simplifying state decoding
+- Maintain similar power consumption with smart state encoding
+- Accept slight area increase for better timing

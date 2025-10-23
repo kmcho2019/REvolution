@@ -1,0 +1,22 @@
+I will combine the clarity and synthesis friendliness of Example 2's explicit selection using conditional operators with Example 1's neat vector packing of inputs (b, e, a, d) into a single 16-bit vector to avoid repeating multiple ternary comparisons explicitly.
+
+Instead of the costly variable shift used in Example 1, I will use a small combinational multiplexer to select 4 bits from the packed vector based on c[1:0], but only if c < 4. If c >= 4, output 4'hF.
+
+This approach fuses:
+- Example 1's compactness by leveraging vector slicing and selecting via indexing,
+- Example 2's synthesis-friendly and clear conditional selection logic avoiding an expensive shift,
+- Minimal logic depth by restricting selection to only the needed input group,
+- Low switching activity by outputting a fixed constant for c≥4.
+
+It improves PPA by:
+- Reducing the complexity of a variable shift,
+- Maintaining simple combinational assignments,
+- Enhancing code clarity and maintainability.
+
+Hence, I will:
+- Pack inputs b, e, a, d into a 16-bit vector,
+- Use a 4-to-1 mux implemented by simple case statement or conditional expression on c[1:0],
+- Gate selection by c < 4 check,
+- Output 4'hF otherwise.
+
+This yields a concise, efficient, and clear design that is easy for synthesis tools to map into minimal muxes with no complex shift logic.

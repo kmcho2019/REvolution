@@ -1,0 +1,12 @@
+To fix the existing code, we need to ensure that `prev_in` holds the value of `in` from the previous clock cycle when detecting transitions. This involves rethinking how we update and use `prev_in` within the always block. 
+
+One approach is to update `prev_in` with the current value of `in` after we have checked for transitions, ensuring that `prev_in` always holds the previous state of `in` when the next clock cycle arrives. This requires reordering the operations within the always block.
+
+Another crucial aspect is maintaining the state of `out_reg` bits that have already been set to 1. This involves ensuring that once a bit in `out_reg` is set due to a detected transition, it remains set until a reset is applied.
+
+To achieve this, we will reorder the logic inside the always block:
+1. First, check for transitions by comparing the current state of `in` with `prev_in`, and update `out_reg` accordingly.
+2. Then, update `prev_in` with the current value of `in` to prepare for the next clock cycle.
+3. Ensure that the reset condition resets both `prev_in` and `out_reg` to maintain a clean state after a reset.
+
+This approach guarantees that `prev_in` correctly holds the previous state of `in` for transition detection and that `out_reg` maintains the state of detected transitions until a reset occurs.

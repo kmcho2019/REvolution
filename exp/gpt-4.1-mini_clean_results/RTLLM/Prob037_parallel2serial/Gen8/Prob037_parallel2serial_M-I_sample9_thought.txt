@@ -1,0 +1,10 @@
+To improve the given design for better power and timing, I will convert the asynchronous reset to a synchronous reset. This typically simplifies the reset path and can improve timing and reduce reset distribution complexity. Additionally, I will register the output bit (dout) instead of using a combinational mux indexed by cnt to reduce muxing delay on the output path, which can improve timing. By registering dout, the output is stable in the clock domain and avoids potential glitches from variable indexing.
+
+Since valid_out is asserted only for one clock cycle (when MSB is output), I will align dout and valid_out to be valid simultaneously, with dout registered on the clock edge.
+
+The logic of counting down the cnt from 3 to 0 remains the same, but the shift is done logically by the index rather than shifting data physically.
+
+These changes provide:
+- Synchronous reset for timing and implementation simplicity.
+- Registered output to reduce muxing delay and improve timing.
+- Maintained minimal switching on valid_out and dout for power efficiency.

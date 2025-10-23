@@ -1,0 +1,25 @@
+Simplified Design Approach:
+
+1. **Pattern Detection**:
+   - Use a 4-bit shift register to detect the 1101 pattern
+   - Clear pattern register only when leaving IDLE state
+
+2. **State Machine**:
+   - Use simple binary encoding (2 bits) for states
+   - Combine LOAD and COUNT states since they share similar timing
+   - Simplify state transitions to be more linear
+
+3. **Counter Logic**:
+   - Use a single 14-bit counter for both loading and counting
+   - Calculate remaining time by dividing counter value by 1000
+   - Generate done signal when counter reaches 0
+
+4. **Output Logic**:
+   - Make outputs directly dependent on state and counter
+   - Simplify count calculation by using bit selection from counter
+
+Key Simplifications:
+- Reduced state encoding from one-hot to binary
+- Merged LOAD and COUNT states
+- Simplified counter management
+- Removed intermediate registers where possible

@@ -1,0 +1,35 @@
+To fix the fractional frequency divider by 3.5 using double-edge clocking, the main issue is proper synchronization and alignment of the two phase signals `clk_div_pos` (posedge domain) and `clk_div_neg` (negedge domain).
+
+The prior design sampled the counter only at posedge clk for use on negedge clk, which caused timing misalignment and glitches. Since the input clock has a 50% duty cycle, the negedge occurs exactly halfway through the clock period. This allows us to use the same counter to generate two clock phases offset by half a clock period:
+
+- Use a 3-bit counter that counts 0 to 6 on posedge clk (7 counts total).
+- Generate `clk_div_pos` on the posedge domain high for counts 0 to 3 (4 cycles).
+- Generate `clk_div_neg` on the negedge domain high for counts 3 to 6 (4 cycles).
+
+But to properly generate `clk_div_neg`, instead of sampling the posedge counter asynchronously (which causes timing uncertainty), implement a dedicated counter update on negedge clk as well, offset by half a clock cycle. This can be achieved by clocking the same counter logic on both edges of clk, effectively creating a double-rate counter, or by generating a half-cycle delayed version of the count.
+
+A simpler and more reliable approach is to use the posedge clock counter to define `clk_div_pos` directly, and use a delayed or phase-shifted signal derived from this counter for `clk_div_neg`. Since the negedge is half a cycle later, we can use a register updated on negedge clk to create a phase-shifted version of the counter, ensuring correct alignment.
+
+So, the approach is:
+
+1. Use a 3-bit counter `cnt` counting 0..6 on posedge clk.
+
+2. Generate `clk_div_pos` = 1 when cnt in [0..3], else 0.
+
+3. Generate a "half-cycle delayed" count, `cnt_delayed`, by capturing `cnt` on negedge clk.
+
+4. Generate `clk_div_neg` = 1 when `cnt_delayed` in [3..6], else 0.
+
+5. Finally, OR `clk_div_pos` and `clk_div_neg` to create `clk_div`.
+
+This method guarantees that `clk_div_pos` is aligned with posedge counts and `clk_div_neg` is aligned with negedge counts offset by half a clock period, eliminating glitches and creating an output with nearly uniform pulse widths summing to a 3.5x division.
+
+Additional notes:
+
+- Reset synchronously clears counter and delayed counter.
+
+- All counters and registers are sized correctly.
+
+- The final output is a clean fractional division clock signal with 3.5x period.
+
+This fixes the synchronization issue and duty cycle imbalance present in the original implementation.

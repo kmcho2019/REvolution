@@ -1,0 +1,5 @@
+To implement the TopModule, we can design a finite state machine (FSM) that utilizes a counter to keep track of the number of bytes received after finding a byte with in[3]=1. The FSM will have two states: IDLE and RECEIVING. In the IDLE state, we discard bytes until we find one with in[3]=1. When we find such a byte, we transition to the RECEIVING state and start collecting bytes. The counter will be used to determine when we have received all three bytes of the message. Once all three bytes are collected, the FSM will signal done and output the 24-bit message.
+
+We will also use a shift register to store the received bytes. The shift register will be implemented using a 24-bit register, where the most significant 8 bits will store the first byte, the middle 8 bits will store the second byte, and the least significant 8 bits will store the third byte.
+
+To handle the reset signal, we will reset the FSM to the IDLE state, clear the counter, and reset the output.

@@ -1,0 +1,7 @@
+Refactor the design by implementing the 4-bit adder fully using assign statements for each sum bit and carry generation, avoiding instantiations of FullAdder modules and generate loops. This approach explicitly defines the carry chain signals with assign statements in a straightforward ripple-carry style.
+
+This refactor removes the modular FullAdder and the generate loop, instead directly coding the full-adder logic for each bit with simple expressions. The carry out from each bit is computed using the carry generate and propagate terms, and each sum bit is assigned from the XOR of inputs and carry-in.
+
+The final carry-out is assigned as the MSB of the sum to indicate overflow, maintaining the 5-bit sum output.
+
+This makes the code simpler and flat, easier to read for small-width adders, with explicit combinational logic and no module hierarchy, potentially reducing module instantiation overhead. The functional behavior remains exactly the same.

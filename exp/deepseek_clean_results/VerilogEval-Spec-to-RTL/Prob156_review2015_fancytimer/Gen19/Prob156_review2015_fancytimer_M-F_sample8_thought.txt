@@ -1,0 +1,23 @@
+The key issues in the previous implementation stem from incorrect sequencing of operations and improper state transitions. Here's the corrected approach:
+
+1. **Pattern Detection Fix**: Keep pattern_reg intact after detection until we've captured all delay bits. Only clear it when returning to IDLE state.
+
+2. **Delay Capture Correction**: 
+   - Shift data into delay_reg correctly by using the updated value
+   - Wait until all 4 delay bits are captured before proceeding to counting
+
+3. **Counting Logic Repair**:
+   - Initialize remaining_phases with the captured delay value only after full capture
+   - Properly handle the phase counting with accurate boundary conditions
+   - Ensure count output reflects remaining_phases correctly
+
+4. **Done Signal Timing**:
+   - Transition to DONE state only after all phases complete
+   - Clear done signal only after proper ack
+
+5. **State Machine Cleanup**:
+   - Ensure all state transitions happen at the right time
+   - Properly reset all registers
+   - Maintain correct sequencing of operations
+
+The fixed implementation will properly detect the pattern, capture the delay, count accurately, and handle the done/ack sequence correctly.

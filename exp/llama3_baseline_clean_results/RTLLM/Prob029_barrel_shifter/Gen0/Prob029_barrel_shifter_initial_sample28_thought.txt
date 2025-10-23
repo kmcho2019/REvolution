@@ -1,0 +1,5 @@
+To implement the barrel shifter, we first need to define the basic 2-to-1 multiplexer (`mux2X1`) that will be used in each stage of the shifter. This multiplexer takes two inputs (`in0` and `in1`) and a select signal (`sel`), and outputs `in0` when `sel` is 0 and `in1` when `sel` is 1.
+
+For the `barrel_shifter` module itself, we will implement three stages of shifting based on the `ctrl` signal. Each stage corresponds to a shift by 1, 2, or 4 positions, controlled by `ctrl[0]`, `ctrl[1]`, and `ctrl[2]`, respectively. The shifts are achieved by creating the appropriate shifted versions of the input and then using the `mux2X1` modules to select the correct bits for the output based on the `ctrl` signals.
+
+We will define the `mux2X1` submodule first and then use it within the `barrel_shifter` module to perform the shifting operations.

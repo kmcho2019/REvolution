@@ -1,0 +1,12 @@
+Simplified approach: Binary counter implementation
+1. Use a 4-bit binary counter since we only need to count from 0 to 9 (0-9 fits in 4 bits)
+2. Implement synchronous reset to clear the counter to 0
+3. Use slowena as an enable signal - only increment when enabled
+4. When counter reaches 9, wrap around to 0 on next enabled clock
+5. Directly output the counter value as q
+6. Advantages:
+   - Minimal state (4 bits vs 10 bits in one-hot)
+   - No need for complex state decoding
+   - More efficient in area and power
+   - Simpler timing paths
+7. The counter will automatically wrap from 9 (1001) to 0 (0000)

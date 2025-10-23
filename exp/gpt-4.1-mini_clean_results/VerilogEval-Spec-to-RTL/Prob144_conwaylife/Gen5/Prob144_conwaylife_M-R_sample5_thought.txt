@@ -1,0 +1,11 @@
+Refactor the design by decomposing the neighbor counting and next state computation into purely combinational `assign` statements instead of a large combinational always block. This allows synthesis tools to better optimize and pipeline the logic if needed. 
+
+Specifically, for each cell, compute neighbor indices (wrapping with mask) and sum neighbors via generated loops into a wire array of neighbor counts. Then compute next state based on neighbor counts and current cell value using a straightforward combinational expression.
+
+Keep the synchronous load and state update as a single clocked always block.
+
+This approach reduces complexity inside always blocks, helps synthesis tools better infer parallelism and simpler datapaths, and improves readability by separating combinational logic (assign) from sequential logic (always).
+
+Indexing with bit shifts remains for efficiency. Wrap-around uses masking. The 256-bit q register is updated each clock cycle with either loaded data or the computed next state vector from the combinational logic.
+
+This modular approach is functionally equivalent but typically results in better timing and possibly better area due to clearer dataflow.

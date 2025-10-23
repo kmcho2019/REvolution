@@ -1,0 +1,16 @@
+After carefully analyzing the waveform and the feedback, here's the improved approach:
+
+1. For output p:
+   - p should be set to the current value of 'a' at every positive clock edge when 'a' is high
+   - This is simpler than edge detection - just a synchronous capture of 'a' when clock rises
+
+2. For output q:
+   - q should be set to p's value at every negative clock edge
+   - However, q should be cleared if 'a' is low during the negative edge
+   - This creates a delayed version of p that's conditional on 'a'
+
+3. Implementation strategy:
+   - Remove the unnecessary prev_a register since we don't need edge detection
+   - Make p purely synchronous to positive clock edges
+   - Make q synchronous to negative clock edges with conditional behavior
+   - This matches all the waveform transitions precisely

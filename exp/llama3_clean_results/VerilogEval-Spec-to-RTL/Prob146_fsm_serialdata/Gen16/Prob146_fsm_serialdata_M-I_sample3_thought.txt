@@ -1,0 +1,11 @@
+To improve the provided code, we need to address the functional errors in the Finite State Machine (FSM) logic. We can achieve this by revising the state transitions to correctly handle the start bit, data bits, and stop bit. 
+
+The main improvement strategy is to simplify the code, reduce the number of logic operations, and ensure that the FSM logic is correctly implemented. 
+
+We will start by correcting the state transitions. The FSM should stay in the IDLE state until it detects a start bit (0). Once a start bit is detected, it should transition to the START state and then to the DATA state to receive the 8 data bits. After receiving the data bits, it should transition to the STOP state to verify the stop bit (1). If the stop bit is correct, it should assert the `done` signal and update the `out_byte` output. 
+
+Additionally, we will optimize the code for better PPA (Power, Performance, Area) by reducing the number of logic operations and improving the timing performance. We will use a single `always` block to handle both the sequential and combinational logic, reducing the number of times the `done` signal is assigned. 
+
+We will also improve the code by adding comments to explain the purpose of each section, making it easier for others to understand the code.
+
+The corrected FSM logic should handle the situation when the stop bit is not received as expected. According to the problem description, the FSM should wait until it finds a stop bit before attempting to receive the next byte.

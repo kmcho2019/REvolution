@@ -1,0 +1,19 @@
+The feedback highlights that the original implementation incorrectly transitions states and handles the first '1'. Here's the corrected approach:
+
+1. The state machine should have two states:
+   - STATE_PASS: Outputs input bits unchanged until first '1' is seen
+   - STATE_INVERT: Outputs inverted bits after (and including) first '1'
+
+2. Key corrections:
+   - Transition to STATE_INVERT only after seeing first '1' (next cycle)
+   - Maintain STATE_INVERT until reset
+   - Output logic remains Moore-style (based only on current state)
+
+3. Reset behavior:
+   - Immediately reset to STATE_PASS when areset is high
+   - Begin processing on next clock edge after reset release
+
+This ensures we:
+- Pass through all '0's before first '1'
+- Invert all bits starting from (and including) first '1'
+- Properly handle asynchronous reset

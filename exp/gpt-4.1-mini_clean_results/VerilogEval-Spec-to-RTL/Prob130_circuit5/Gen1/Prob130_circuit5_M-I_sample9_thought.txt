@@ -1,0 +1,6 @@
+To optimize the design for better power and area while preserving the same functionality, I will replace the case statement with a combinational assignment using a 4-input multiplexer style expression based on the lower two bits of input c, combined with a condition checking if c is less than 4. This avoids the default case logic in the case statement and may yield simpler mux logic after synthesis. This also reduces unnecessary decoding of the full 4-bit c input, improving timing and power slightly. The logic is:
+
+- If c < 4, q is selected from {b, e, a, d} indexed by c.
+- Else q = 4'hF.
+
+This leads to a priority expression rather than a full case, which is usually leaner in hardware for small muxes.

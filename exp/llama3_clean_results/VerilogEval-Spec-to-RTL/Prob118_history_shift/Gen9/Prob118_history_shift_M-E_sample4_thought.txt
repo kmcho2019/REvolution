@@ -1,0 +1,7 @@
+The goal is to design a new Verilog module that implements a 32-bit global history shift register with support for rolling back state in response to a pipeline flush caused by a branch misprediction. The new solution should introduce a novel architectural idea. 
+
+One novel approach is to utilize a dual-buffer scheme for the history register, where one buffer is used for storing the current branch history and the other buffer is used for updating the history based on the prediction and misprediction signals. This allows for a more streamlined update process and reduces the complexity of the conditional statements. 
+
+In this design, the `history_buffer` will hold the current branch history, and the `update_buffer` will store the updated history based on the prediction and misprediction signals. The `history_buffer` will be updated only when the `update_buffer` is valid, which reduces the switching activity of the `history_buffer` and improves power consumption. 
+
+Additionally, the `update_buffer` will be updated based on the prediction and misprediction signals, and its validity will be determined by the `predict_valid` and `train_mispredicted` signals. This approach simplifies the logic for updating the history register and reduces the complexity of the module.

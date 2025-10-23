@@ -1,0 +1,28 @@
+The main issues stem from the subtle timing mismatch between the history used for prediction indexing and the history used for GHR updates, especially when prediction and training happen in the same cycle.
+
+To fix this, the following approach is used:
+
+1. Use a single global history register `ghr` that represents the current speculative global history.
+
+2. On a prediction request (`predict_valid`), output:
+   - The current `ghr` as `predict_history` (the history used to make the prediction).
+   - The prediction made from the PHT entry indexed by `predict_pc ^ ghr`.
+   
+3. To update the GHR after prediction:
+   - Speculatively shift in the predicted bit derived from the PHT entry indexed by `predict_pc ^ ghr`.
+   - This update happens on the next clock edge and only if there is no training misprediction recovery.
+
+4. On a training request (`train_valid`):
+   - Update the PHT entry indexed by `train_pc ^ train_history` based on `train_taken`.
+   - If it's a misprediction (`train_mispredicted`), recover the `ghr` to the provided `train_history` instead of applying the speculative update.
+
+5. When prediction and training occur in the same cycle:
+   - Training's GHR recovery has priority over prediction's speculative update.
+   - The prediction uses `ghr` before update, thus matches the problem timing requirement.
+   - The PHT is read asynchronously, so prediction reads the old PHT value, while the training updates the PHT synchronously at the clock edge.
+
+6. Use separate combinational signals for predicted bits for GHR update and prediction output, ensuring no conflicts.
+
+7. Initialize the PHT and GHR to known values on asynchronous reset.
+
+This change ensures consistent indexing using the same global history (`ghr`) in prediction and GHR update logic, correct priority of updates, and clean separation of combinational and sequential logic, eliminating the timing mismatch and output mismatches.

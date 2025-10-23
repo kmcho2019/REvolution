@@ -1,0 +1,7 @@
+This design divides the input clock frequency by an even number NUM_DIV by generating a symmetric output clock with a 50% duty cycle. The approach splits the counting into two halves, counting up to NUM_DIV/2 cycles for each half period of the output clock.
+
+We use a 4-bit counter (`cnt`) that counts clock cycles from 0 up to (NUM_DIV/2 - 1). When the counter reaches this value, the output clock toggles and the counter resets to zero. This toggling on each half cycle generates a divided clock with frequency clk / NUM_DIV.
+
+This method ensures a 50% duty cycle regardless of NUM_DIV, as the output changes state exactly after half the division factor clock cycles. Reset initializes both the counter and output clock to zero.
+
+A compile-time assertion verifies NUM_DIV is even. The counter bit width is fixed at 4 bits since the problem specifies a 4-bit register. This limits NUM_DIV up to 32 (which covers typical use cases).

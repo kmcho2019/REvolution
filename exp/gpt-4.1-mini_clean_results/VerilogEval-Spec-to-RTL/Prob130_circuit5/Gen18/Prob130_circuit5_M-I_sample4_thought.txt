@@ -1,0 +1,12 @@
+The previous implementation uses gating and OR of all inputs combined with select signals, which is correct but introduces multiple AND gates and a wide OR, increasing area and power.
+
+To optimize for better PPA, I will implement the selection using a case statement, which synthesizers efficiently map to multiplexers. This reduces gate count and switching activity by avoiding unnecessary bitwise ANDs and ORs across all inputs.
+
+Specifically:
+- For c=0, output b
+- For c=1, output e
+- For c=2, output a
+- For c=3, output d
+- For c>3, output 4'hF
+
+This straightforward multiplexer implementation improves area and power, maintains zero timing overhead due to the combinational nature, and is easier for synthesis tools to optimize.

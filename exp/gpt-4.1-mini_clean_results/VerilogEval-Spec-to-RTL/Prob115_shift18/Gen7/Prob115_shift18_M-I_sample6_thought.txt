@@ -1,0 +1,15 @@
+To improve PPA (Performance, Power, Area), the main optimization is to avoid costly 64-bit wide combinational multiplexers and expensive barrel shifters implemented with shifts and concatenations inside combinational logic.
+
+We can optimize by implementing the shifts by 1 and 8 bits using simple wiring (bit-slices and concatenations) instead of the shift operator, which synthesis tools might turn into large multiplexers.
+
+Also, instead of computing all four shifted values (left/right by 1/8) and selecting between them combinationally, we can use a hierarchical or case-based approach inside the sequential always block. This trades off some combinational complexity for sequential logic complexity but reduces critical path and mux sizes.
+
+Specifically:
+- Implement shift-left by 1 and 8 by concatenations: shifting left by N bits is q << N = {q[63-N:0], N'b0}
+- Implement arithmetic right shifts by 1 and 8 by concatenations with sign-extension from the MSB.
+- Use a case statement inside the sequential always block (at clock) to directly select the shifted result based on amount instead of combinational muxing. This reduces large combinational muxes.
+- Maintain synchronous load and enable signals as before.
+
+This approach minimizes large combinational mux logic, reduces switching power by avoiding unnecessary wide combinational operations every cycle, and should improve timing by reducing critical path length and mux complexity.
+
+The code remains fully synthesizable and meets all functional specs.

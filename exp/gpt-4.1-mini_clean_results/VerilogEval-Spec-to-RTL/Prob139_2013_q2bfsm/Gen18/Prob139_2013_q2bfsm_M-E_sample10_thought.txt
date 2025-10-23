@@ -1,0 +1,13 @@
+Implement a Moore FSM with explicit states representing each phase of operation, including separate states for each step of detecting the '101' pattern on input x. 
+
+- Use a synchronous, active-low reset to initialize the FSM to state A.
+- After reset release, output f=1 for exactly one clock cycle (state B).
+- Implement the '101' pattern detection as a sequence of states: from waiting for x=1, then x=0, then x=1.
+- Once pattern detected, move to a state that asserts g=1 for one cycle (state E).
+- Then move to a state that holds g=1 and monitors y for up to two clock cycles:
+   - If y=1 detected within these two cycles, remain in a permanent g=1 state.
+   - Else move to a permanent g=0 state.
+- Outputs f and g depend solely on the current state (Moore outputs), eliminating combinational output logic and avoiding glitches.
+- All input sampling and state transitions occur synchronously on the clock edge.
+- This approach reduces complexity by encoding pattern detection in states, avoiding shift registers and counters for the x pattern.
+- Use a small counter for the two-cycle y monitoring window.

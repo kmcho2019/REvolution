@@ -1,0 +1,15 @@
+Implement a true Radix-4 Booth multiplier that processes two bits of the multiplier per cycle to reduce the iteration count to 4 cycles (for 8-bit operands), plus an initial load cycle.
+
+Key idea:
+- Extend the multiplier (b) by appending one bit (0) to LSB, forming 9 bits to handle Booth encoding.
+- Each cycle, examine 3 bits of the multiplier: current bit, one bit below, and one bit above, and determine the Booth encoding to decide partial product operation.
+- Partial products can be: 0, +multiplicand, +2*multiplicand, -multiplicand, -2*multiplicand.
+- The partial product is shifted accordingly (by 2*cycle index).
+- Accumulate partial products into a 17-bit signed accumulator to handle intermediate sums.
+- Use a 3-bit counter for 4 cycles.
+- After 4 cycles, output the 16-bit product (lowest 16 bits of accumulator).
+- The ready signal is asserted after processing is done.
+- On reset, initialize registers and latch inputs with sign-extension.
+- On each clock cycle, do the Booth decoding and accumulate partial products.
+- This reduces the number of clock cycles from 16 to 4, improving performance.
+- The design uses combinational Booth decoding logic and signed arithmetic for partial products.

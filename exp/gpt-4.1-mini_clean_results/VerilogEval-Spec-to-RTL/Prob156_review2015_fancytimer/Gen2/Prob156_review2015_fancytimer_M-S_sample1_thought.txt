@@ -1,0 +1,12 @@
+Implement a clear synchronous FSM with four states: SEARCH, LOAD_DELAY, COUNTING, DONE.
+
+- SEARCH: Shift in serial data into a 4-bit shift register each clock, look for pattern 1101. When found, transition to LOAD_DELAY.
+- LOAD_DELAY: Shift in 4 bits MSB first into delay_reg. After 4 bits loaded, initialize delay_counter = delay_reg + 1 (to account for counting (delay+1)*1000 cycles) and reset cycle_counter, then transition to COUNTING.
+- COUNTING: Count clock cycles in cycle_counter (0 to 999). On every 1000 cycles, decrement delay_counter. Output current delay_counter - 1 as count to match spec (since delay_counter counts from delay+1 down to 0, output counts down from delay to 0). When delay_counter reaches 0 and cycle_counter hits 999 (last 1000-cycle interval done), transition to DONE.
+- DONE: Assert done, wait for ack==1 to transition back to SEARCH.
+
+Data input is only sampled in SEARCH (pattern detection) and LOAD_DELAY (delay loading), ignored otherwise.
+
+All registers and outputs updated synchronously on positive clock edge with synchronous reset.
+
+This simple, single always block FSM with registers for state, pattern shift, delay bits, counters, and outputs ensures minimal complexity and clear timing without overlapping logic or race conditions.

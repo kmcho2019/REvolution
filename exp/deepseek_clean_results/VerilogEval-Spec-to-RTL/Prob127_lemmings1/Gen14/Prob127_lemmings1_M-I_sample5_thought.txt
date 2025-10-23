@@ -1,0 +1,15 @@
+The current implementation is already quite optimal for PPA, but we can make a few minor improvements:
+
+1. **Power Optimization**: 
+   - Use clock gating for the state register when neither bump_left nor bump_right is active to reduce dynamic power
+   - This will prevent unnecessary clock toggles when the state isn't changing
+
+2. **Area Optimization**:
+   - Remove the separate next_state wire and combine the logic directly in the always block
+   - This eliminates one multiplexer while maintaining the same functionality
+
+3. **Performance**:
+   - The critical path remains the same (still just a mux and register)
+   - The clock gating adds minimal overhead to the timing path
+
+The improved version will maintain all functional requirements while potentially reducing power consumption during idle periods.

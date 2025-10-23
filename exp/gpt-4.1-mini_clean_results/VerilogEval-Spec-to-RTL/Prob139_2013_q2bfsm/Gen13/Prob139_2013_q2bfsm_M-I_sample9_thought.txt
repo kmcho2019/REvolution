@@ -1,0 +1,24 @@
+The original FSM approach is conceptually sound but the mismatch on output g indicates subtle issues with pattern detection and output timing. To fix this and simplify debugging, I propose the following improvements:
+
+1. Simplify pattern detection by implementing a small shift register and a comparator to detect the pattern 1,0,1 explicitly, rather than using pattern_index states. This reduces complexity and corner-case mistakes.
+
+2. Use Moore outputs (outputs dependent only on state) rather than Mealy, to improve timing predictability. This means outputs f and g will be assigned based on state only, updated synchronously at the clock edge, removing combinational output logic.
+
+3. Clearly separate the states:
+
+   - IDLE: Wait for reset; f=0, g=0.
+   - PULSE_F: One cycle pulse of f=1.
+   - WAIT_PATTERN: Monitor x input; shift x into a 3-bit register each cycle. When pattern "101" is detected, move to SET_G.
+   - SET_G: One cycle pulse of g=1.
+   - MONITOR_Y_0: First cycle monitoring y with g=1.
+   - MONITOR_Y_1: Second cycle monitoring y with g=1.
+   - PERM_G_ON: g=1 permanently.
+   - PERM_G_OFF: g=0 permanently.
+
+4. Monitor y for at most 2 cycles while g=1. If y=1 detected at any cycle, transition to PERM_G_ON; else after two cycles, transition to PERM_G_OFF.
+
+5. Use synchronous, active-low reset that sets FSM to IDLE with outputs cleared.
+
+This approach eliminates the indirect pattern tracking with index states, simplifying correctness and fixing timing issues related to output g. The FSM is Moore type, so outputs are registered and stable during states, preventing glitches.
+
+This will fix the functional mismatch and provide a clean, maintainable design.

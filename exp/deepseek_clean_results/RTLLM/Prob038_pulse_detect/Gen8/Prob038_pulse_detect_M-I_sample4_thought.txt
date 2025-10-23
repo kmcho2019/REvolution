@@ -1,0 +1,8 @@
+The current implementation has a potential issue with false positives when detecting pulses. To improve it, we should:
+1. Use a proper state machine to explicitly track the pulse detection sequence
+2. Maintain three states: IDLE (waiting for first 0), GOT_0 (received first 0), GOT_01 (received 0->1)
+3. Only transition to next state when the exact sequence is matched
+4. Output is only asserted when we complete the full 0->1->0 sequence
+5. Reset properly initializes all states
+
+This ensures we only detect complete pulses and reject partial or incorrect sequences. The state machine approach is more robust than pattern matching with a shift register.

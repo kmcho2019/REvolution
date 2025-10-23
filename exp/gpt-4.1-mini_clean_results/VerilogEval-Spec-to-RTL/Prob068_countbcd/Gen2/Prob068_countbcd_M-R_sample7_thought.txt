@@ -1,0 +1,9 @@
+To fix the enable signal timing and avoid mixing combinational and sequential logic for ena, I will refactor the design so that:
+- All digits are stored in registers and updated synchronously on the clock.
+- The carry and enable signals are computed combinationally based on the current digit values before the clock edge.
+- The 3-bit output ena directly reflects the combinational carry signals indicating when the upper three digits should increment, i.e., when the previous digit rolls over.
+- No internal register is used for ena signals; instead, ena is a combinational output updated continuously.
+- The synchronous reset clears all digits to zero.
+This approach ensures ena outputs are stable, valid during the clock cycle, and aligned with the counting logic. It avoids enable registers that cause delays and timing mismatches.
+
+This refactor maintains the core carry-chain BCD counting logic but simplifies the enable signal generation and output timing.

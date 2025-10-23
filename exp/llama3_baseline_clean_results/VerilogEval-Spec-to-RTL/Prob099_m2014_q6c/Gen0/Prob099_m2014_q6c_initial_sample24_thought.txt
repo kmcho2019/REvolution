@@ -1,0 +1,25 @@
+To derive the logic equations for the next-state signals Y1 and Y3, 
+we need to analyze the state machine and identify the transitions that 
+set these signals to 1. Since we are using a one-hot encoding, each 
+state is represented by a single 1 in the y[5:0] vector.
+
+From the state machine, we can see that Y1 (y[0]) is 1 only in state A, 
+and Y3 (y[2]) is 1 only in state D.
+
+The next-state signal Y1 will be 1 if the current state is A and w is 1, 
+or if the current state is D and w is 1.
+
+The next-state signal Y3 will be 1 if the current state is B and w is 1, 
+or if the current state is C and w is 1, or if the current state is E and w is 1, 
+or if the current state is F and w is 0.
+
+By inspection, we can derive the following logic equations:
+
+Y1 = y[0] & w | y[3] & w 
+Y3 = y[1] & w | y[2] & w | y[4] & w | y[5] & ~w
+However, given the original prompt, Y1 corresponds to y[0] and Y3 corresponds to y[2].
+Hence,
+Y1 = y[0] & w | y[3] & w 
+Y3 = y[1] & w | y[4] & w 
+Since we are looking for equations for Y1 and Y3, which correspond to y[0] and y[2], 
+we will simplify these equations to represent next state logic for Y1 and Y3.

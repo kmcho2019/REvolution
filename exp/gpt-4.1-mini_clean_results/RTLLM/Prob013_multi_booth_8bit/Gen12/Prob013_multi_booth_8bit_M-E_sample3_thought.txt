@@ -1,0 +1,32 @@
+I will design a sequential 8-bit Radix-4 Booth multiplier with the following architectural approach:
+
+1. **Input registers and sign extension:** 
+   On reset, the inputs `a` (multiplicand) and `b` (multiplier) are sign-extended to 16-bit signed values and latched into internal registers.
+
+2. **Radix-4 Booth encoding:** 
+   The multiplier is augmented by one extra bit at the LSB (initially zero) for encoding 3 bits at a time. Since Radix-4 processes 2 bits per cycle, total 4 cycles needed (16 bits / 2).
+
+3. **Registers:**
+   - A 32-bit signed partial product register `product_reg`, initialized to zero.
+   - A 17-bit signed multiplicand register `multiplicand_reg`.
+   - A 17-bit signed multiplier register `multiplier_reg` with one extra LSB bit for Booth encoding.
+   - A 3-bit counter for the number of iterations (4 cycles).
+
+4. **Per cycle operations:**
+   - Extract current 3-bit window from multiplier bits `[1: -1]` (current bit, previous bit, and next bit for Booth encoding). Since we have multiplier extended by an extra LSB zero bit, bits `[2:0]` are used each cycle (shifted in each iteration).
+   - Decode the Booth operation to determine the multiple of multiplicand to add: 0, ±1, ±2.
+   - Add the decoded multiple (shifted accordingly) to the partial product.
+   - Arithmetic right-shift the combined `{product_reg, multiplier_reg}` by 2 bits to process next two multiplier bits.
+   - Increment counter.
+
+5. **Finish condition:**
+   After 4 cycles (processing 2 bits each), the 32-bit `product_reg` contains the final 16-bit product in lower 16 bits (or most significant 16 bits depending on implementation). The ready signal is asserted.
+
+6. **Novelty:**
+   - The product and multiplier are concatenated as a 49-bit register (32 + 17) shifted together for a clean, atomic operation.
+   - The multiplier register keeps the extended multiplier bits for Booth recoding.
+   - The multiplier is shifted right arithmetically by 2 bits with the product to maintain sign extension.
+   - The product output is driven only when ready signal is set, ensuring clean timing.
+   - The code is clean, modular, and synchronous with positive-edge clock and synchronous reset.
+
+This method efficiently implements 8-bit radix-4 Booth multiplication in 4 clock cycles plus one reset cycle, fulfilling the problem requirements with clear state management.

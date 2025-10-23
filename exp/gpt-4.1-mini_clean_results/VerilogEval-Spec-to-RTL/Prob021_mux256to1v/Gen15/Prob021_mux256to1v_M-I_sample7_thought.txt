@@ -1,0 +1,27 @@
+To improve PPA while maintaining correctness, I will flatten the multiplexer hierarchy from three levels to two levels. This reduces the logic depth and critical path delay, potentially improving timing (WNS) and reducing power by lowering logic toggling through fewer stages.
+
+The strategy is:
+
+- Stage 1: Implement sixteen 16-to-1 muxes (4-bit wide) controlled by sel[3:0] exactly as before.
+
+- Stage 2: Instead of two hierarchical mux levels, implement a single 16-to-1 mux (4-bit wide) controlled by sel[7:4] that selects among the 16 outputs of stage 1.
+
+This reduces the total number of mux stages from three to two, improving timing and potentially power.
+
+This design keeps the modular structure with parameterized mux modules for clarity and synthesis friendliness but optimizes mux hierarchy depth, resulting in better PPA.
+
+No large flat 256-to-1 mux is used, avoiding huge single-level mux complexity.
+
+The select signal usage:
+
+- sel[3:0]: stage 1 mux select (16-to-1)
+
+- sel[7:4]: stage 2 mux select (16-to-1)
+
+The 4 LSB bits select the 4-bit slice within 64-bit chunks; the 4 MSB bits select which 16-to-1 output to choose.
+
+This balanced 2-level hierarchy should yield lower area and power, and better timing than the original 3-level hierarchy.
+
+The code also maintains clear naming and indexing for synthesis and readability.
+
+In summary, the improved design is a 2-level mux tree with sixteen 16-to-1 muxes feeding into a single 16-to-1 mux, both 4-bit wide.

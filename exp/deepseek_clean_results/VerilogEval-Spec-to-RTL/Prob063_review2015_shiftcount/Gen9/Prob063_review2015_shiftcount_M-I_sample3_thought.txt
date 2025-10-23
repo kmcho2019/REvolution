@@ -1,0 +1,13 @@
+To optimize the design for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. Performance: Replace the ternary operator chain with a priority-encoded case statement in an always block to reduce the critical path. This eliminates the need for a continuous assignment and potential long combinational paths.
+
+2. Power: Move all logic into the always block to prevent unnecessary combinational evaluations when neither enable is active. This reduces switching activity.
+
+3. Area: While the current area is already small, we can ensure minimal logic by using simple arithmetic and bit operations directly in the always block.
+
+The improved design will:
+- Use a single always block for both combinational and sequential logic
+- Explicitly prioritize shift over count (though the spec says it doesn't matter)
+- Maintain the same functionality while potentially improving timing
+- Reduce power by eliminating redundant combinational evaluations

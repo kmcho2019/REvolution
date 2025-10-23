@@ -1,0 +1,7 @@
+A novel approach to designing the frequency divider module `freq_div` is to utilize three separate counters to track the number of input clock cycles for each output clock frequency. This approach allows for efficient generation of the divided clock frequencies by using the value of each counter to determine when to toggle each output clock.
+
+The key idea is to use a counter for each output clock frequency (`CLK_50`, `CLK_10`, and `CLK_1`) and increment each counter at every positive edge of the input clock `CLK_in`. When the counter value reaches the desired threshold (e.g., 1 for `CLK_50`, 10 for `CLK_10`, and 100 for `CLK_1`), the corresponding output clock is toggled.
+
+This approach simplifies the logic for generating the output clocks and allows for efficient implementation. Additionally, it provides flexibility in case the division factors need to be changed in the future.
+
+To further optimize the design, we can use a single process to update the counters and generate the output clocks, which reduces the overhead of multiple processes and improves the overall performance of the design.

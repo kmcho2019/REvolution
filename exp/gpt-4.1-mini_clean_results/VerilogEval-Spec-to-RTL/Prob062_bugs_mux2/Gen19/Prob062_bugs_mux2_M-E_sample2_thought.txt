@@ -1,0 +1,9 @@
+The original bug arises because the output is declared as a single bit while inputs are 8 bits wide, causing width mismatches and incorrect bitwise operations.
+
+To provide a novel architectural idea, I will implement the 8-bit 2-to-1 mux using a behavioral `always_comb` block with a for-loop to explicitly select each bit based on the select signal. This approach avoids any confusion about the bitwise operations and is easy to read and verify.
+
+Additionally, I will keep `out` as an 8-bit vector to correctly represent the 8-bit mux output.
+
+This explicit bit-by-bit mux implementation via a for-loop is functionally equivalent to the ternary operator but provides a structurally clear description that some synthesis tools or educational users might prefer.
+
+This method also clarifies the connection between select and output bits, which could help with debugging in complex scenarios or simulation testbenches expecting such a style.

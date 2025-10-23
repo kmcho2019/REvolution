@@ -1,0 +1,14 @@
+To create a superior solution, fuse the clarity and simplicity of the case statement in Example 1 with the vectorized concatenation and indexing idea from Example 2 to retain clear intent and concise code.
+
+The strategy:
+- Use a fixed 16-bit concatenation of inputs as {d, a, e, b}, where each is 4 bits.
+- Instead of a variable shift (which increases area and power), implement a direct 4-to-1 multiplexer using the lower 2 bits of `c`.
+- For `c` < 4, select the corresponding input using a simple case statement on `c[1:0]` (0 to 3).
+- For `c` >= 4, assign 4'hF.
+- This removes the barrel shifter overhead from Example 2 while maintaining its conceptual elegance.
+- Using the case statement on `c[1:0]` rather than the entire `c` reduces decoder complexity and makes the mux explicit, enabling better synthesis and PPA.
+- This approach is fully combinational, easy to understand, and synthesizes efficiently.
+
+This fusion keeps the clean mux structure with minimal logic, reducing switching activity and area compared to variable shift, while also avoiding multiple equality checks on full 4-bit `c`.
+
+The design meets the functionality inferred from simulation exactly and optimizes power, performance, and area.

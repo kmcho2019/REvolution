@@ -1,0 +1,16 @@
+Simplified Design Approach:
+1. State Encoding: Use 4 states to directly encode both behavior and direction, eliminating the separate direction register:
+   - WL: Walk Left
+   - WR: Walk Right
+   - FALL: Falling state (direction maintained implicitly)
+   - DIG: Digging state (direction maintained implicitly)
+
+2. Priority Handling: Implement fall > dig > bump priorities directly in state transitions.
+
+3. Output Logic: Make outputs purely dependent on current state.
+
+Key Simplifications:
+- Eliminated separate direction register by merging into state encoding
+- Reduced transition logic complexity by using explicit states
+- Simplified output logic by having direct state-to-output mapping
+- Maintained all functional requirements while reducing logic depth

@@ -1,0 +1,5 @@
+The original design is already minimal and efficient, using a single register to store the previous input and XOR to detect edges in parallel. To optimize further for power and performance, we can add clock gating to the prev_in register, so it only updates when the input vector changes. This avoids unnecessary register toggling and XOR computation when the input is stable, reducing switching power. 
+
+We implement clock gating by generating an enable signal that is high only when the input changes compared to prev_in. This enable signal gates the clock used for the prev_in register. The output anyedge still registers the XOR result but is gated internally by the same enable signal to prevent toggling when no change occurs. 
+
+This approach improves power by minimizing switching activity and can slightly improve timing by reducing unnecessary toggling in the sequential elements, especially if inputs are often stable for multiple cycles. Area overhead is minimal due to the small gating logic and can be justified by power gains.

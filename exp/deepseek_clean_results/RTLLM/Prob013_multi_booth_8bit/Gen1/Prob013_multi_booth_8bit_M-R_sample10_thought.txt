@@ -1,0 +1,14 @@
+I'll refactor the Radix-4 Booth multiplier using a state machine approach with explicit states for better clarity and control. Key improvements:
+
+1. Use a 3-state FSM (IDLE, COMPUTE, DONE) for clear operation phases
+2. Implement proper Radix-4 Booth encoding by examining 3 bits (current pair + previous bit)
+3. Maintain correct shifting and accumulation logic
+4. Use combinational logic for Booth encoding decisions
+5. Properly handle sign extension throughout the process
+6. Use a 2-bit counter (since 8 bits/2 bits per step = 4 steps)
+
+The state machine will:
+- Initialize on reset (IDLE)
+- Start computation on first clock (COMPUTE)
+- Perform 4 iterations of Booth encoding
+- Transition to DONE state when complete

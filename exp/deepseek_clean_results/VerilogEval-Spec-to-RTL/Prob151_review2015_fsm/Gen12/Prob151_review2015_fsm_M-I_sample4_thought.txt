@@ -1,0 +1,26 @@
+Improved solution strategy:
+
+1. Pattern Detection:
+- Maintain pattern register only in IDLE state
+- Clear pattern register only on reset or successful detection
+- Keep pattern register value until next reset or detection
+
+2. Shift Control:
+- Use dedicated shift counter (0-3) for precise 4-cycle control
+- Clear shift counter when leaving SHIFT state
+
+3. State Machine:
+- Maintain same 4 states (IDLE, SHIFT, COUNT, DONE)
+- Simplify state transitions with clear conditions
+- Ensure outputs align perfectly with state durations
+
+4. Timing Fixes:
+- Correct shift counter comparison (3'd3 for 4 cycles)
+- Maintain pattern register during SHIFT state
+- Properly sequence state transitions
+
+Key improvements:
+- Fixed pattern register handling
+- Precise 4-cycle shift control
+- Correct state transition timing
+- Clear output assignments

@@ -1,0 +1,30 @@
+This alternative asynchronous FIFO design uses a simplified, modular approach with explicit separation of functions and a slightly different Gray code pointer scheme.
+
+Key ideas:
+- Use parameterized depth and width, with PTR_WIDTH = $clog2(DEPTH).
+- Use binary pointers internally and convert to Gray code only for synchronization across clock domains.
+- Implement two separate binary pointers for write and read, each incremented in their clock domains on enable signals gated by not full/not empty.
+- Use two-stage synchronizers to transfer read pointer into write clock domain and write pointer into read clock domain.
+- Full condition: FIFO is full when the next write pointer equals the read pointer with MSB and the next MSB inverted — a classic asynchronous FIFO full detection.
+- Empty condition: FIFO is empty when read pointer equals the synchronized write pointer.
+- Addresses to RAM are lower PTR_WIDTH bits of binary pointers.
+- RAM is implemented as a dual-port synchronous RAM submodule with separate clocks and enables.
+- Outputs updated synchronously and latched for stability.
+- Clear modular code with functions for Gray/Binary conversion.
+
+This design differs by:
+- Using functions to convert pointers rather than direct assignments.
+- Using separate binary pointers with clean increment logic.
+- Latching read data only when read enable is asserted.
+- Adding comments for each step.
+- Using blocking assignment in functions and non-blocking in sequential logic.
+- Producing clear full and empty signals.
+
+The overall structure:
+- dual_port_RAM: same as a submodule with separate ports and clocks.
+- Write controller: increments write pointer on winc & not full.
+- Read controller: increments read pointer on rinc & not empty.
+- Synchronizers for pointers.
+- Logic for full and empty based on Gray code pointers.
+
+This results in a clean, synthesizable, fully parameterized asynchronous FIFO.

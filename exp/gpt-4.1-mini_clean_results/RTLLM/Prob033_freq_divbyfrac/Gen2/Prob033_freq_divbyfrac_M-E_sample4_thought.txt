@@ -1,0 +1,15 @@
+To achieve a fractional clock division by 3.5 with good duty cycle and uniform period using double-edge clocking, I propose a novel approach:
+
+- Use a modulo-7 counter that counts input clock cycles from 0 to 6 (total 7 cycles).
+- Generate two intermediate clocks:
+  1. `clk_phase0`: toggles at count = 3 and count = 6, driven by the positive edge of `clk`. This creates uneven high/low periods: high for 4 cycles, low for 3 cycles.
+  2. `clk_phase180`: toggles at count = 0 and count = 3, driven by the negative edge of `clk`. This clock is phase-shifted by half input clock period relative to `clk_phase0`.
+- OR these two clocks to generate `clk_div`.
+- The effect is a 3.5x frequency division:
+  - The base period is 7 input clocks.
+  - `clk_div` has transitions every ~3 or 4 input clocks, but with the two phase-shifted clocks combined, a balanced duty cycle and smooth fractional division clock is created.
+- Reset synchronously clears the counter and outputs.
+- Using separate toggling points and double-edge counting avoids the need for complex pulse density modulation or uneven toggle periods.
+- This approach matches the problem requirements and produces a clean fractional frequency output with good duty cycle.
+
+This architecture can be implemented with one 3-bit counter, flip-flops toggling on both clock edges, and OR logic to combine phases.

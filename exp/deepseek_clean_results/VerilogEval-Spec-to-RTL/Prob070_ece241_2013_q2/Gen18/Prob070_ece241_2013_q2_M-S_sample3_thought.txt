@@ -1,0 +1,19 @@
+Simplification strategy:
+
+1. For out_sop (Sum-of-Products):
+   - Directly implement the three required minterms (2,7,15)
+   - No simplification possible as each minterm is unique and essential
+   - Don't cares remain unconstrained (optimal for SOP)
+
+2. For out_pos (Product-of-Sums):
+   - Observe that all false cases share common patterns:
+     * When a=0, either b=0 or d=0 covers cases 0,1,4,5,6
+     * When a=1, specific patterns cover cases 9,10,13,14
+   - Can be reduced to just 3 terms covering all false cases
+   - Don't cares remain unconstrained (optimal for POS)
+
+3. Verification:
+   - SOP will correctly output 1 for 2,7,15 and 0 for specified false cases
+   - POS will correctly output 0 for all specified false cases
+   - Both forms will have arbitrary output for don't cares (3,8,11,12)
+   - Reduced complexity while maintaining full functionality

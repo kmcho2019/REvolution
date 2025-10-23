@@ -1,0 +1,14 @@
+To improve the provided Verilog code for a D latch using an always block, the main strategy will be to optimize it for better synthesizability and PPA (Power, Performance, and Area) metrics. This involves refining the sensitivity list to only include relevant inputs and utilizing non-blocking assignments within the always block to accurately model sequential behavior. The non-blocking assignment (`<=`) is particularly important for sequential logic, as it more accurately represents the behavior of hardware over time, potentially improving synthesizability and reducing area inefficiencies.
+
+Given that the original code failed post-synthesis functional checks due to synthesizability issues, the revised approach aims to address these concerns while maintaining the functionality of a D latch. The D latch's behavior should be such that when `ena` is high, `q` is updated with the value of `d`, and when `ena` is low, `q` retains its previous value.
+
+The main improvements are:
+1. **Specify Sensitivity List Precisely**: Instead of `always @(*)`, which makes the always block sensitive to all inputs and outputs, specify it as `always @(posedge ena or negedge ena or d)` to only trigger on changes to `ena` or `d`. However, for a latch, sensitivity to the positive edge of `ena` is crucial, so we focus on that.
+
+2. **Use Non-Blocking Assignments for Sequential Logic**: In the always block, use `q <= d;` instead of `q = d;` to model the sequential behavior more accurately. This change is critical for synthesizability and to ensure that the module behaves as expected in hardware.
+
+3. **Simplify Conditional Logic**: Since the latch should update `q` with `d` when `ena` is high and retain `q` when `ena` is low, the conditional logic can be simplified to directly reflect this behavior without unnecessary else clauses.
+
+4. **Edge-Sensitive Behavior**: To truly model a latch, the update should occur on the positive edge of `ena`, not just any change. Thus, the sensitivity list and conditional logic should reflect this.
+
+Here's the improved implementation:

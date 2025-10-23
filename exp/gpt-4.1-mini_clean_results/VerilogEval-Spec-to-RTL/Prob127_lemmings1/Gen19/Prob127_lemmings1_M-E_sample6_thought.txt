@@ -1,0 +1,13 @@
+I will implement the Lemmings FSM using one-hot encoding, which simplifies output logic because each state directly controls one output. There will be two one-hot state bits: walk_left and walk_right. 
+
+- On reset, walk_left is set to 1 and walk_right to 0.
+- On each clock edge, if a bump occurs (either bump_left or bump_right), the FSM flips states:
+  * If currently walking left and bumped left (or both), start walking right.
+  * If currently walking right and bumped right (or both), start walking left.
+- Since the problem states the Lemming should switch direction if bumped on either side or both sides, any bump causes flipping states regardless of which bump.
+
+This approach avoids next_state logic calculation by just toggling which one-hot bit is set on bumps. It also uses simple combinational logic for toggling, potentially reducing logic depth. The outputs map directly to the state bits, so the module is intuitive and synthesis-friendly.
+
+The asynchronous reset is positive edge triggered, resetting to walk_left active.
+
+This is a Moore FSM because outputs depend solely on the current state bits.

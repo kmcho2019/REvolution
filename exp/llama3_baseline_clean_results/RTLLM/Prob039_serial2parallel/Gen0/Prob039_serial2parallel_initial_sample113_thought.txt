@@ -1,0 +1,10 @@
+The serial2parallel module will be implemented as a synchronous design, operating on the rising edge of the clock signal "clk". It will use a 4-bit counter (cnt) to track the number of serial input data bits received. When the counter reaches 8, the dout_parallel output will be updated with the 8-bit data, and the dout_valid signal will be set to 1, indicating valid output data. The module will also have an internal 8-bit register (data_reg) to store the received serial data.
+
+Here's the step-by-step thought process:
+
+1. Initialize the counter (cnt) and the internal register (data_reg) on reset.
+2. On the rising edge of the clock signal, check if the input data is valid (din_valid).
+3. If the input data is valid, shift the internal register (data_reg) one bit to the left and add the new serial input data (din_serial) to the least significant bit.
+4. Increment the counter (cnt) for every valid input data.
+5. When the counter (cnt) reaches 8, update the dout_parallel output with the internal register (data_reg) and set the dout_valid signal to 1.
+6. After updating the output, reset the counter (cnt) and the internal register (data_reg) to prepare for the next set of input data.

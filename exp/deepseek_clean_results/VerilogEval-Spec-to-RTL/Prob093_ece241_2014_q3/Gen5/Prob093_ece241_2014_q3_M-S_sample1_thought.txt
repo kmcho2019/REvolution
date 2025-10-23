@@ -1,0 +1,15 @@
+To correctly implement the K-map with minimal multiplexers:
+
+1. Analyze each mux_in output based on the K-map columns:
+   - mux_in[0] (ab=00): Output is 0,1,1,1 → This is simply d OR (c AND d) which simplifies to d OR c
+   - mux_in[1] (ab=01): Always 0 → Direct assignment
+   - mux_in[2] (ab=11): Output is 0,0,1,0 → This is exactly c AND d
+   - mux_in[3] (ab=10): Output is 1,0,1,1 → This is NOT d OR c
+
+Key simplifications:
+1. mux_in[0] can be implemented as c OR d (no mux needed)
+2. mux_in[1] is constant 0 (no mux needed)
+3. mux_in[2] is c AND d (no mux needed)
+4. mux_in[3] can be implemented as NOT d OR c (using one 2-to-1 mux)
+
+Total: Only 1 2-to-1 multiplexer needed (for mux_in[3])

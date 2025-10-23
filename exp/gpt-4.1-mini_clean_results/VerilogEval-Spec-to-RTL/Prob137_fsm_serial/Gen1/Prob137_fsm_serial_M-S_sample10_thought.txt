@@ -1,0 +1,12 @@
+Use a straightforward FSM with states: IDLE (waiting for start bit), RECEIVE (receiving 8 data bits), CHECK_STOP (checking stop bit), and WAIT_STOP (if stop bit incorrect, wait for line to return to idle). 
+
+- In IDLE, wait for start bit (in=0).
+- When start detected, go to RECEIVE and count 8 bits.
+- After 8 bits received, go to CHECK_STOP to verify stop bit (in=1).
+- If stop bit is correct, assert done for one clock and go back to IDLE.
+- If stop bit is incorrect, go to WAIT_STOP and wait until line is idle (in=1) before returning to IDLE.
+- Reset synchronously to IDLE with counters and done cleared.
+
+All state transitions and counters increment on positive clock edge, done is asserted as a pulse for one cycle immediately after stop bit verification passes.
+
+This clean sequencing ensures done is generated correctly and timing of bit sampling matches the protocol.

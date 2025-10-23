@@ -1,0 +1,16 @@
+To address the synthesis issues while maintaining the correct functionality:
+
+1. The key problem is with the feedback paths through flip-flops during synthesis, particularly with complemented outputs. The synthesis tool is having trouble with the direct feedback structure.
+
+2. Solution: Break the feedback loops by adding intermediate flip-flops for the complemented signals. This makes the timing more explicit for the synthesis tool.
+
+3. Maintain the same logical behavior but implement it in a way that's more synthesis-friendly:
+   - Use separate flip-flops for the non-inverted and inverted feedback paths
+   - Keep all flip-flop updates synchronous with non-blocking assignments
+   - Ensure initial reset to 0 is properly handled
+
+4. The improved approach:
+   - Create dedicated flip-flops for each feedback path
+   - Separate the combinational logic cleanly
+   - Use explicit wire declarations for all connections
+   - Maintain the same overall functionality while being more robust for synthesis

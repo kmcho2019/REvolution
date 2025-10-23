@@ -1,0 +1,13 @@
+This design employs a shift-and-capture mechanism with these key features:
+1. Uses a 24-bit shift register that continuously shifts in new bytes
+2. Implements a parallel load when the start condition (in[3]=1) is detected
+3. Tracks message completion using a simple 2-bit counter
+4. Generates 'done' when counter reaches 3 (after third byte)
+5. Outputs the captured message immediately after completion
+6. Reset clears all registers and counters
+
+Advantages:
+- Eliminates complex state transitions by using shift register
+- Parallel load ensures correct byte ordering
+- Simple counter logic for message tracking
+- Minimal control logic reduces area

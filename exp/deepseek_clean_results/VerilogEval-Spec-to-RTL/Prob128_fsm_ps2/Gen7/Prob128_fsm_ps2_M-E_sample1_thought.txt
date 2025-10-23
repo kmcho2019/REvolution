@@ -1,0 +1,13 @@
+Here's a novel approach using a shift register to track the last three bytes and a separate state machine to validate message boundaries:
+
+1. Use a 24-bit shift register to store the last 3 bytes received
+2. Implement a state machine with 4 states: IDLE, BYTE1, BYTE2, BYTE3
+3. Transition between states only when we receive valid message bytes
+4. The 'done' signal is asserted when we reach BYTE3 state and the current byte completes the message
+5. Reset brings everything back to IDLE state
+
+Key advantages:
+- The shift register provides visibility into the complete message when done
+- State transitions are more explicit and verifiable
+- Easier to extend for message validation if needed
+- Clear separation between data storage and control logic

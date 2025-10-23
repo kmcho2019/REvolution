@@ -1,0 +1,6 @@
+To solve this problem, we can design a finite state machine (FSM) with four states: IDLE, BYTE1, BYTE2, and BYTE3. 
+In the IDLE state, we continuously check the input bytes until we find one with in[3] = 1, which marks the start of a message. 
+Once we find the start of a message, we transition to the BYTE1 state. 
+Then, we transition through BYTE2 and BYTE3 states as we receive each subsequent byte. 
+After receiving the third byte, we signal the receipt of a message by asserting the 'done' signal in the next clock cycle.
+We will also include a reset mechanism to return the FSM to the IDLE state when the reset signal is asserted.

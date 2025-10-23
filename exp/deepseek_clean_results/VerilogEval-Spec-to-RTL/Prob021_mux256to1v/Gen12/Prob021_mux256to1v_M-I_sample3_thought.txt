@@ -1,0 +1,13 @@
+To optimize the PPA metrics, we should:
+1. Replace the for-loop with direct part-select indexing which will:
+   - Reduce combinational path depth (better timing)
+   - Eliminate unnecessary comparison logic (lower power)
+   - Result in a more compact multiplexer structure (smaller area)
+2. Remove the default assignment since all cases are covered
+3. Use a continuous assignment instead of an always block for simpler logic
+
+The direct indexing approach (in[sel*4 +: 4]) is more efficient because:
+- It directly computes the slice position from sel
+- Synthesis tools can map this to optimal multiplexer structures
+- Eliminates the need for 256 parallel comparisons
+- Results in cleaner, more maintainable code

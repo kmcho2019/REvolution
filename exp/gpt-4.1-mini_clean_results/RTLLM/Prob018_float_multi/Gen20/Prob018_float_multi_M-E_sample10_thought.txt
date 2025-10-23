@@ -1,0 +1,25 @@
+I will design a fully combinational IEEE-754 single-precision floating-point multiplier that computes the result in one clock cycle. This approach is suitable for FPGA or ASIC designs targeting low latency. To manage complexity, I will modularize the operation:
+
+1. **Extraction & Preprocessing:** Extract sign, exponent, and mantissa (including handling denormals).
+
+2. **Special Case Detection:** Identify zero, infinity, NaN inputs early.
+
+3. **Mantissa Multiplication:** Use a 24x24 combinational multiplier to get a 48-bit product.
+
+4. **Normalization:** The product is normalized by checking the top bits; exponent is adjusted accordingly.
+
+5. **Rounding:** Implement round-to-nearest-even by examining guard, round, and sticky bits.
+
+6. **Exponent Adjustment & Saturation:** Check for overflow or underflow; produce zero, infinity, or normalized output as needed.
+
+Because the entire logic is combinational and synchronous only for input and output registers, internal intermediate signals are wires, not regs. The module uses an enable signal (implicit by clock) to latch input and output in registers.
+
+This method removes the multi-cycle FSM and pipeline registers, trading throughput for latency, which may suit certain designs requiring single-cycle IEEE floating-point multiplication with no latency or pipeline delay.
+
+The output is registered, synchronous with clk and rst for deterministic timing.
+
+This design fully conforms with IEEE-754, handles all special cases, and outputs a normalized, rounded result on each clock cycle.
+
+Internal signals use explicit widths, and arithmetic is carefully done with wider widths to avoid overflow. The rounding uses sticky bit accumulation with OR-reduction of all relevant bits.
+
+No cycle counter or FSM; all operations combinational inside the clocked block.

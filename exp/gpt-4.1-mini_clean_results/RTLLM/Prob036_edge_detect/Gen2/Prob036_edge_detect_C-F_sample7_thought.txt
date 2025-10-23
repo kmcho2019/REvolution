@@ -1,0 +1,19 @@
+Fuse the best ideas from both examples to create a robust edge detector with low latency, clean synchronous outputs, and metastability protection. 
+
+From Example 1: Use a two-flip-flop synchronizer to safely bring the asynchronous or slow-changing input 'a' into the clock domain, preventing metastability. This is critical if 'a' is asynchronous or crosses clock domains. Edge detection is done by comparing the last two synchronized samples.
+
+From Example 2: Drive 'rise' and 'down' as registered outputs to hold the pulse for exactly one clock cycle, ensuring synchronous timing of outputs and clear timing for downstream logic. This avoids combinational outputs which might create timing uncertainty or glitches on 'rise' and 'down'. 
+
+Implementation detail:  
+- Synchronize 'a' into clk domain with two flip-flops, named a_sync.  
+- Register outputs rise and down.  
+- At each clock edge, set rise to 1 if rising edge detected in synchronized input; otherwise 0. Similarly for down.  
+- Reset synchronizer and outputs on rst_n asserted low.
+
+This fusion yields a design that:  
+- Fully synchronizes input to avoid metastability (from Example 1).  
+- Produces registered synchronous one-cycle pulses for edges (from Example 2).  
+- Keeps logic minimal and clean.  
+- Ensures rise/down asserted one cycle after the actual edge detection in the input signal, consistent with the problem statement.
+
+Thus, the design takes the best metastability robustness from Ex1 and the clean synchronous output style from Ex2.

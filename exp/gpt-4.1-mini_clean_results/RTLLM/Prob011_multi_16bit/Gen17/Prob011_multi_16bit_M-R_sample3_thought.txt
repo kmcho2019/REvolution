@@ -1,0 +1,13 @@
+I will refactor the design to use a simpler and more explicit shift-and-accumulate approach controlled by a 5-bit counter (i) and internal registers for multiplicand, multiplier, and product, as described in the problem. The module will rely on synchronous logic with an asynchronous active-low reset, avoiding a separate FSM by controlling operation flow directly from the counter and start signals.
+
+Key changes:
+- Use a single counter register `i` that increments on start until 16, then stops.
+- On start at i=0, load multiplicand and multiplier into registers.
+- For 1 <= i <= 16, if the (i-1)th bit of multiplicand is set, add the multiplier shifted by (i-1) to the product.
+- Output `done` when i == 16.
+- Reset registers on rst_n deassertion.
+- Use registers and combinational logic for clarity, no state machine needed.
+- Use synchronous reset with sensitivity on clk and async reset signal.
+- Avoid complex FSM and next state logic for simplicity and readability.
+
+This matches the originally requested behavior and control signals, explicitly demonstrating the shift and accumulate multiplication process.

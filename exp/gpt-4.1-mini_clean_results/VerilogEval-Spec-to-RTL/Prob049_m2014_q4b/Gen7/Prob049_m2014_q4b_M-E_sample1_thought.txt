@@ -1,0 +1,10 @@
+A novel approach to implementing a D flip-flop with an asynchronous reset is to separate the asynchronous reset logic from the main data path by using a latch-based asynchronous reset detection stage. This approach uses an asynchronous reset latch that immediately forces the output low when reset is asserted, and a positive edge-triggered flip-flop to store data when reset is inactive. The asynchronous reset latch acts as a high-priority override to the flip-flop output, ensuring quick reset response.
+
+Specifically, the module will consist of:
+- An asynchronous reset latch that outputs the reset condition as a high-priority asynchronous signal.
+- A positive-edge triggered D flip-flop that captures data when reset is not asserted.
+- The output is driven by gating the flip-flop output with the asynchronous reset latch output, ensuring when reset is active output is forced low immediately.
+
+This approach can help reduce glitches on the output during reset transitions by isolating the asynchronous reset logic from the flip-flop data path and may reduce unnecessary toggling during reset.
+
+The implementation uses minimal logic but with a slightly different structure than the canonical always block with async reset in sensitivity list.

@@ -1,0 +1,13 @@
+Instead of using a single always block with priority logic, we can:
+1. Separate the control logic and data path
+2. Use a state machine to determine the operation (reset/load/shift/hold)
+3. Implement the data path with explicit multiplexers
+4. This approach makes the design more modular and potentially easier to optimize for PPA
+
+The state machine will have these states:
+- RESET: forces output to 0
+- LOAD: loads parallel data
+- SHIFT: performs right shift
+- HOLD: maintains current value
+
+Priority is still maintained (reset > load > shift) through state transitions.

@@ -1,0 +1,9 @@
+Refactor the pipelined 64-bit ripple carry adder by explicitly implementing eight 8-bit addition stages with registered sums and carries to form a pipeline. Instead of combining zero-padded vectors and single-bit carry with complicated concatenations, perform each stage's addition as a simple addition of an 8-bit operand plus the carry-in bit extended to 9 bits. We use the carry-out bit from the lower stage as the carry-in of the next stage.
+
+Pipeline registers capture sums and carry-outs per stage along with the enable signal pipeline to synchronize output validity. The final result and output enable are registered after the last stage to align timing.
+
+This approach ensures clean, synthesizable Verilog without syntax issues by avoiding ambiguous concatenations and using straightforward arithmetic. It also maintains explicit pipeline stages for clarity and timing control.
+
+We implement the pipeline registers in a single always block triggered by clk and async reset. The initial carry-in to stage 0 is zero on every valid input.
+
+Finally, the 65-bit result concatenates the last carry with all stage sums in order from MSB to LSB.

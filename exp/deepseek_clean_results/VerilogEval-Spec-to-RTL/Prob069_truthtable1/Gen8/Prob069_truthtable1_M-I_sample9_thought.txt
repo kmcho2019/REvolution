@@ -1,0 +1,10 @@
+The current NAND-only implementation is already quite efficient, but we can explore a different approach that might offer better PPA by:
+1. Observing that the truth table shows f is true when (x2=1 and x3=0) OR (x1=1 and x3=1)
+2. Implementing this with a more direct logic expression using standard gates
+3. Using an OR gate for the final output instead of a NAND gate, which might be more efficient in some libraries
+4. The new expression becomes: f = (x2 & ~x3) | (x1 & x3)
+
+This change could potentially:
+- Reduce the number of gate levels from 2 to 1 (if the library has compound gates)
+- Use more efficient standard cells from the library
+- Maintain the same logical function while potentially improving PPA

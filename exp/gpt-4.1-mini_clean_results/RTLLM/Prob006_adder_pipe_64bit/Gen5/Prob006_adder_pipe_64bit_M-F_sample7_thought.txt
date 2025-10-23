@@ -1,0 +1,11 @@
+The issue arises because the testbench expects the module to have parameters `DATA_WIDTH` and `STG_WIDTH`, allowing the testbench to configure operand widths and pipeline stage widths. Currently, the module uses localparams and has no parameters, causing incompatibility.
+
+To fix this, I will convert the `STAGE_WIDTH` and `DATA_WIDTH` (the total input bit width) into module parameters, defaulting to 64 bits for `DATA_WIDTH` and 16 bits for `STG_WIDTH` (stage width). The number of stages will be derived as `DATA_WIDTH / STG_WIDTH`. This makes the design flexible and testbench-compatible.
+
+The module name remains `adder_pipe_64bit` per requirements.
+
+The design still implements a pipelined ripple carry adder, splitting the addition into multiple stages (`NUM_STAGES = DATA_WIDTH / STG_WIDTH`), each adding `STG_WIDTH` bits plus carry-in, then registering results and carry-out. The enable signal propagates through a shift register matching pipeline latency, generating the output enable `o_en`.
+
+All registers and wire sizes will be updated based on the parameters. The sum and carry computations handle variable widths appropriately, and the final result concatenates the stage sums and the last carry-out to form a `[DATA_WIDTH:0]` bit output.
+
+The reset logic and synchronous updates remain intact. This parameterized design fixes the previous mismatch and complies with the testbench expectations.

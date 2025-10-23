@@ -1,0 +1,12 @@
+Innovative Approach: Circular Shift Register with Conditional Feedback
+1. Instead of a binary counter, use a 10-bit circular shift register where only one bit is '1' at any time (one-hot encoding)
+2. The '1' position represents the current count value (bit 0 = 0, bit 1 = 1, ..., bit 9 = 9)
+3. Implement shift operation when enabled (slowena=1)
+4. Use feedback to create circular behavior - when MSB is set, next cycle sets LSB
+5. Reset forces the pattern to 0000000001 (count=0)
+6. Advantages:
+   - Simple implementation with minimal combinational logic
+   - Natural decade counting behavior without explicit comparison
+   - Fast operation (single shift per cycle)
+   - Easy to decode output (just find the position of '1')
+7. Output conversion uses priority encoder to get 4-bit binary value

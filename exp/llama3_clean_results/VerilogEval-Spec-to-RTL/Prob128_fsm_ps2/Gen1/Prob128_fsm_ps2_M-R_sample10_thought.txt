@@ -1,0 +1,7 @@
+To refactor the provided Verilog code, we will maintain the same finite state machine (FSM) concept but implement it using a different structure. We will utilize a 2-bit counter to keep track of the number of bytes received after seeing a byte with in[3]=1. The counter will be reset to 0 when the FSM is in the IDLE state or when it transitions from the state where the third byte has been received back to IDLE.
+
+We will use an enumeration to represent the states of the FSM. However, instead of explicitly defining the states as IDLE, BYTE1, BYTE2, and BYTE3, we can simplify the design by using the counter value to determine the current state.
+
+We will use combinational logic to determine the next state and the 'done' signal based on the current state and the input byte stream. This approach allows us to simplify the code and reduce the number of state transitions.
+
+To generate the 'done' signal, we will use a separate register that is set to 1 when the third byte of a message is received and reset to 0 in the next clock cycle. This ensures that the 'done' signal is only asserted for one clock cycle after a complete message has been received.

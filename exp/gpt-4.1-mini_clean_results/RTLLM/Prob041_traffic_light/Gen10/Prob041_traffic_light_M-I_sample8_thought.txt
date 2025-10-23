@@ -1,0 +1,9 @@
+To optimize the existing traffic light FSM for better power and area efficiency while maintaining functionality and timing, I propose the following improvements:  
+1. Introduce an enable signal for the timer decrement so the counter only toggles when necessary, reducing dynamic power.  
+2. Replace the ped_shortened flag with a combinational condition based on timer and pass_request, removing one register and saving area.  
+3. Use one synchronous always block for state and timer update to reduce complexity and potential glitches.  
+4. Derive outputs combinationally from state only, avoiding redundant registers.  
+5. Keep the timer width at 7 bits for minimal area since max count is 60.  
+6. Remove unnecessary default assignments in combinational logic to help synthesis optimize better.  
+7. Use localparams with meaningful names to improve code readability and synthesis results.  
+This approach will reduce register count, reduce switching on the timer counter, and simplify logic, leading to better PPA without sacrificing correctness.

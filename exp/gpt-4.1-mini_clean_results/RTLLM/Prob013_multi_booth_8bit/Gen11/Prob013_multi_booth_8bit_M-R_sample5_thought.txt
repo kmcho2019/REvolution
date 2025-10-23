@@ -1,0 +1,19 @@
+The original design uses a single always block triggered on clk or reset, doing both reset initialization and iterative multiplication logic inside it. This causes synthesis issues (unknown modules) likely due to inferred latches or complex control paths in a single block.
+
+To fix this, I will refactor the design by splitting control and datapath logic clearly, and using a simple FSM with two states: IDLE (waiting for reset), and RUN (doing multiplication). The counter and registers will be updated on clk, reset handled synchronously for clarity.
+
+This also structures the multiplication process better, while maintaining the same simplified bit-by-bit approach (checking multiplier bits one by one, shifting multiplicand on each step). Although this is not radix-4 Booth encoding, it strictly follows the prompt’s stepwise method.
+
+Key changes:
+- Use a state machine with states IDLE and RUN.
+- On reset, initialize registers and set ready=0.
+- On entering RUN, do 16 cycles of checking multiplier bits and accumulating partial sums.
+- Use non-blocking assignments in synchronous always block.
+- Make all signals registered and fully assigned to avoid latch inference.
+- Keep multiplicand sign extended and shifted left each cycle.
+- Set ready high after completing 16 cycles.
+- Use separate always blocks for state/counter and data updates if needed for clarity.
+
+This clearer structure helps synthesis and simulation tools infer clean registers, avoids latch inference, and keeps the functional behavior intact.
+
+This refactoring does not implement radix-4 Booth encoding but respects the problem's original iteration and summation steps.

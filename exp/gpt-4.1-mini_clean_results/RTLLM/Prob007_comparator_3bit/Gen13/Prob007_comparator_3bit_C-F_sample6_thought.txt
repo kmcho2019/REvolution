@@ -1,0 +1,15 @@
+To create a superior 3-bit comparator, I will combine the strengths of both examples as follows:
+
+1. Use explicit bitwise XNOR for individual bit equality signals (eq_bit2, eq_bit1, eq_bit0) for clear logic and low gate count.
+
+2. Precompute combined equality signals (eq_21 = eq_bit2 & eq_bit1) for efficient reuse in both equality and greater-than logic, minimizing redundancy and gate count.
+
+3. Implement equality by combining all three bit equalities (eq_21 & eq_bit0), which is straightforward and synthesis-friendly.
+
+4. Implement the greater-than logic hierarchically from MSB to LSB, using the combined equalities to simplify and shorten logic expressions.
+
+5. Derive less-than as the mutual exclusivity condition (~A_greater & ~A_equal) ensuring outputs are mutually exclusive without extra logic.
+
+6. Maintain purely combinational logic with clear, readable assignments to facilitate EDA tool optimization.
+
+This fusion maximizes clarity, reduces logic redundancy, ensures minimum logic depth, and guarantees mutually exclusive outputs, resulting in an efficient, synthesis-friendly, and easy-to-understand 3-bit comparator.

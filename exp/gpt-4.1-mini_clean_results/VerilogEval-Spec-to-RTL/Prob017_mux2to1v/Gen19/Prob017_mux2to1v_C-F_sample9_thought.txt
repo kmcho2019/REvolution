@@ -1,0 +1,7 @@
+To fuse the best ideas from both examples, implement a hierarchical 2-to-1 multiplexer where the 100-bit inputs are split into 10 chunks of 10 bits each, similar to Example 1 to exploit modularity and potentially improve synthesis quality. However, instead of using a simple assign statement inside the chunk module (which is functionally correct but may limit synthesis optimization), implement each 10-bit chunk mux as a generate-for loop of bitwise ternary operators like in Example 2. This hybrid approach preserves chunk-level hierarchy to aid synthesis and routing, and uses fine-grained bitwise muxes inside chunks to let synthesis tools map small multiplexers efficiently.
+
+This fusion strategy encourages better resource sharing within each chunk, can reduce glitches and switching activity by localizing multiplexing logic, and maintains straightforward combinational paths for high performance. The modular chunk size (10 bits) is a good balance between flat 100-bit mux and 1-bit muxes in terms of area and power.
+
+Overall, the top module instantiates 10 chunk muxes; each chunk mux is a parameterized 10-bit mux module internally using a generate loop for fine-grained bit muxes.
+
+This approach maximizes synthesis friendliness and potential PPA improvements by combining hierarchical and fine-grained mux design strategies.

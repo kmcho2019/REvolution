@@ -1,0 +1,36 @@
+Corrected Pipeline Multiplier Design:
+
+Key Fixes and Improvements:
+1. **Proper Pipeline Synchronization**:
+   - Separate the pipeline into two distinct stages with clear boundaries
+   - First stage captures inputs and generates all shifted versions in parallel
+   - Second stage performs conditional accumulation over multiple cycles
+
+2. **Accurate Accumulation Logic**:
+   - Implement proper bit-serial accumulation with correct indexing
+   - Reset accumulator at the start of each new multiplication
+   - Use registered outputs for proper pipeline behavior
+
+3. **Fixed Control Logic**:
+   - Implement a proper state machine for the accumulation process
+   - Correctly handle the cycle counting and termination condition
+   - Ensure proper synchronization between pipeline stages
+
+4. **Reset Handling**:
+   - Clear all registers synchronously on reset
+   - Ensure new inputs are captured at the right pipeline stage
+
+Implementation Approach:
+1. First pipeline stage (input registration and shift generation):
+   - Register inputs on first cycle
+   - Generate all 4 shifted versions of multiplicand
+   - Pass these to second stage with proper timing
+
+2. Second pipeline stage (accumulation):
+   - Use a 2-bit counter to track accumulation steps
+   - Conditionally add shifted values based on multiplier bits
+   - Store final result in output register
+
+3. Output stage:
+   - Registered output for clean timing
+   - Proper reset behavior for all registers

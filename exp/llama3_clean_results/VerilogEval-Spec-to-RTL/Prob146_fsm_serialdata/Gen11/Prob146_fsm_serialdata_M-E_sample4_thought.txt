@@ -1,0 +1,16 @@
+To implement a novel architectural idea for the serial communication protocol receiver, we can utilize a pipelined approach with a focus on ensuring that the stop bit is correctly handled and the received data is accurately outputted. The key components of this new approach include:
+1. A 3-bit FSM to manage the states: IDLE, WAIT_START, and RECEIVE. This FSM will control the flow of the receiver.
+2. A shift register to accumulate the incoming data bits.
+3. A bit counter to track the number of bits received during the RECEIVE state.
+4. A stop bit detector to verify the stop bit after receiving 8 data bits.
+5. A data output register to hold the received data byte when the stop bit is correct.
+
+The receiver will operate as follows:
+- In the IDLE state, wait for a start bit (0) to transition to the WAIT_START state.
+- In the WAIT_START state, move to the RECEIVE state to start accumulating data bits.
+- In the RECEIVE state, use the bit counter to track the number of bits received. After 8 bits, check the stop bit.
+- If the stop bit is correct (1), assert the `done` signal and update the `out_byte` output with the received data.
+- If the stop bit is incorrect, remain in the RECEIVE state and continue to receive bits until a stop bit (1) is detected, then transition back to the IDLE state.
+- The `done` signal is asserted only when a correct stop bit is received, and the `out_byte` output is updated accordingly.
+
+This approach ensures that the receiver accurately identifies correctly received bytes, handles incorrect stop bits by waiting for a valid stop bit, and maintains a simple, efficient architecture.

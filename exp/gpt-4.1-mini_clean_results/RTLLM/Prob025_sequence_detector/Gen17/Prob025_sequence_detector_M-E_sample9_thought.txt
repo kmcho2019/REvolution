@@ -1,0 +1,7 @@
+I will implement the sequence detector using a Mealy FSM approach where the output sequence_detected is asserted combinationally during state transitions rather than registered after the full sequence is recognized. This provides immediate detection without a clock cycle delay.
+
+The FSM will use five states: IDLE, S1, S2, S3, and S4 (final detected state). Transitions depend on the current input bit and the current state, checking partial matches of the sequence "1001". Because the output is combinational, it can be asserted as soon as the last bit completes the sequence during a state transition.
+
+The FSM reset will be asynchronous and active low, setting the FSM back to IDLE. This allows immediate reset response.
+
+This approach differs from the previous synchronous, Moore style output by having a Mealy output (output depends on state and input) and asynchronous reset, providing immediate detection and responsiveness.

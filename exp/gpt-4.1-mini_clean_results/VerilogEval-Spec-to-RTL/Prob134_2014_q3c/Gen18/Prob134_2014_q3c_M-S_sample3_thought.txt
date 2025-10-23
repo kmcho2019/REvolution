@@ -1,0 +1,11 @@
+The original solution uses one-hot decoding with explicit equality checks, which adds comparators and intermediate signals. To simplify and reduce complexity:
+
+1. Directly implement the next state and output logic using a combinational case statement on the present state and input x, avoiding explicit one-hot decoding.
+
+2. Since the FSM states are only 5 valid codes (000, 001, 010, 011, 100), handle undefined states with a default case that assigns a safe default next state (e.g., 000).
+
+3. The next state and output z can be encoded directly in the case statement, reducing wires and logic depth.
+
+4. Assign Y0 as the LSB of the next state directly.
+
+This approach simplifies code and logic by removing extra decoding wires and reduces gate count while keeping the FSM behavior intact.

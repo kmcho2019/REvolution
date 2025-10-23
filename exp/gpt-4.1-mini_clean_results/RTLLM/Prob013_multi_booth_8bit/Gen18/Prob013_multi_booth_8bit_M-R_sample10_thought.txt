@@ -1,0 +1,16 @@
+Refactor the radix-4 Booth multiplier using a two-state FSM (IDLE and BUSY) to clearly separate the initialization phase and the iterative multiplication phase. Use a separate combinational function to decode the Booth operation and use non-blocking assignments consistently within a synchronous always block.
+
+At reset or in IDLE, initialize all registers and load sign-extended multiplicand and multiplier with an appended zero bit.
+
+When start (reset deasserted) and in IDLE, move to BUSY state and begin processing 4 cycles (since 8 bits / 2 bits per cycle).
+
+In the BUSY state, at each clock cycle:
+- Decode the next 3 bits of the multiplier extension.
+- Compute partial product via Booth encoding.
+- Accumulate partial product shifted by appropriate amount into an accumulator.
+- Shift multiplier extension right by 2 bits to prepare for next iteration.
+- Increment cycle counter.
+
+When 4 cycles are complete, output final product and assert ready.
+
+This FSM structure provides clearer operation phases, improves code readability, and makes ready signal generation explicit. Non-blocking assignments ensure proper synchronous behavior, and explicit states facilitate integration in a larger system.

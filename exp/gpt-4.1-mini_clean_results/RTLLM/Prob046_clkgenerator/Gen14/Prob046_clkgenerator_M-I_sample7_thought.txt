@@ -1,0 +1,7 @@
+The original design uses an `always` block with a delay statement but no event control, which is valid but can sometimes cause simulation issues due to how simulators schedule such processes. A more common and reliable way is to use an event-controlled always block: `always #(PERIOD/2) clk = ~clk;` which expresses the clock toggling in a single statement and is less prone to simulator scheduling ambiguities.
+
+Additionally, to ensure synthesis-friendly and clear timing, it's good to define `PERIOD` as an integer parameter and confirm that `PERIOD` is even to avoid issues with integer division truncation. I will keep the initialization in an initial block and make the toggle a single always block with delay control.
+
+Lastly, adding a timescale directive improves simulation clarity.
+
+This approach preserves the clean simulation clock generator, resolves the simulation failures, and provides a standard style for clock generation often seen in testbenches.

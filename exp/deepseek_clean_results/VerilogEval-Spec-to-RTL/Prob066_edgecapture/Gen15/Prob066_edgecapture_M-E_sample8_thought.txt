@@ -1,0 +1,16 @@
+New Approach: Parallel Edge Detectors with State Machines
+
+Instead of using a simple edge detection register, we'll implement:
+1. 32 independent single-bit state machines (one per input bit)
+2. Each state machine has 3 states:
+   - IDLE: waiting for input=1
+   - ARMED: input was 1 last cycle, watching for 0
+   - TRIGGERED: detected 1→0 transition (output=1 until reset)
+3. State transitions are synchronous and reset-controlled
+4. Output is simply the triggered state of each bit's state machine
+
+Benefits:
+- Explicit state tracking makes behavior more robust
+- Easier to verify and debug individual bit behavior
+- More modular design that could be scaled to wider buses
+- Clear separation between detection and output logic

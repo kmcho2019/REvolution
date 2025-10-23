@@ -1,0 +1,21 @@
+To implement a correct and simplified 8-bit Radix-4 Booth multiplier:
+
+1. Key Simplifications:
+   - Use a single always block for sequential logic
+   - Combine multiplier and multiplicand handling
+   - Implement proper Radix-4 Booth encoding with 2-bit shifts
+   - Remove combinational logic for product updates
+
+2. Radix-4 Implementation:
+   - Process 2 bits per cycle (reducing iterations to 4 for 8-bit)
+   - Maintain 9-bit multiplier register (8 bits + previous LSB)
+   - Use proper Booth encoding cases (0, ±1, ±2)
+
+3. Control Logic:
+   - Simple counter (3 bits for 4 iterations)
+   - Clear ready signal during computation
+   - Set ready when counter completes
+
+4. Reset Handling:
+   - Initialize all registers in reset condition
+   - Sign-extend inputs to 16 bits for proper arithmetic

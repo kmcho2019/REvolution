@@ -1,0 +1,12 @@
+To optimize the given design for better PPA (performance, power, and area), we will:
+
+- Represent the hour counter directly as BCD digits instead of a binary count with on-the-fly conversion. This avoids subtraction and conditional logic each cycle, reducing combinational delay and toggling in the hour output logic.
+- Optimize the next-state combinational logic by merging seconds and minutes increments into a single always block to simplify control logic and reduce logic duplication.
+- Implement clock gating by updating registers only when increments occur (i.e., enable gated at register level) to minimize unnecessary toggling.
+- Simplify the pm toggle condition by detecting hour rollover directly in BCD digits, reducing logic depth.
+- Convert the hour counting from binary (1-12) to BCD counting between "01" and "12" with clear rollovers, which is more area-friendly.
+- Remove the function bin_to_bcd_hour and use direct output from hour BCD registers.
+- Maintain synchronous reset priority.
+- Use one combinational block to generate next-state for all counters for simpler logic and better optimization by synthesis tools.
+
+These steps reduce combinational logic complexity and toggling, improving timing slack, lowering power, and saving area with a clean, clear design.

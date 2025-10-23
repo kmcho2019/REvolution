@@ -1,0 +1,10 @@
+After carefully analyzing the Karnaugh map, I notice that f is 1 in these key cases:
+1. When x[3] is 1 (rows 11 and 10) except when x[3:4]=10 and x[1:2]=10
+2. When x[3:4]=01 and x[1:2]=11
+
+We can simplify this to:
+f = x[3] OR (x[4] AND x[1] AND x[2])
+But we need to exclude the case where x[3:4]=10 and x[1:2]=10 where f is 0.
+
+However, since that case is marked as don't-care (d), we can choose to include it in our OR condition for simplicity. The minimal expression that covers all required 1s while using don't-cares optimally is:
+f = x[3] | (x[4] & x[1] & x[2])

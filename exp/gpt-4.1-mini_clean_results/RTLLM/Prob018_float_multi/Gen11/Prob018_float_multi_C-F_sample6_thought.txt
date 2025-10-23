@@ -1,0 +1,18 @@
+Fuse the best aspects of both examples to create a balanced, efficient, and clear IEEE-754 single-precision floating-point multiplier module with the following improvements:
+
+- Use a 3-cycle pipeline FSM as in Example 1 for clear state separation and better timing distribution.
+- Register inputs and special flags at IDLE (cycle 1).
+- Perform mantissa multiplication and exponent addition in CALC (cycle 2) and latch results to break combinational paths.
+- Perform normalization, rounding, exponent adjustment, and special case handling combinationally but controlled and registered at DONE (cycle 3).
+- Keep internal counters/state machine simple with explicit named states for clarity.
+- Implement round to nearest even correctly using guard, round, sticky bits.
+- Handle special cases (NaN, Inf, zero, Inf*0->NaN) explicitly at output stage.
+- Handle exponent overflow to infinity and underflow to zero (no subnormals).
+- Maintain explicit separation of sequential and combinational logic for maintainability.
+- Use 10-bit exponent internal to accommodate adjustments and detect overflow.
+- Register critical signals at each stage to reduce glitching and improve timing.
+- Minimize recalculations and redundant signals by storing important intermediates.
+- Use nonblocking assignments consistently in sequential logic.
+- The design becomes a clean, easy-to-synthesize pipeline that balances complexity, timing, and area.
+
+This fusion yields a maintainable and synthesizable design with good performance and clarity, merging the structured pipelined approach from Example 1 with the stepwise logic clarity and simpler FSM control of Example 2.

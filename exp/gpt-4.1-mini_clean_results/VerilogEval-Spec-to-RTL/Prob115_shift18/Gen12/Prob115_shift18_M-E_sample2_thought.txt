@@ -1,0 +1,5 @@
+Implement the shift operation using a two-stage barrel shifter approach to minimize redundant shift computations. First, conditionally shift by 8 bits (left or arithmetic right) if amount[0] is set, then conditionally shift by 1 bit (left or arithmetic right) if amount[1] is set. This serial composition reduces the need to calculate all four variants simultaneously. The shifting direction is encoded by amount[1], and amount[0] chooses between shifts of 1 and 8 bits respectively in each stage.
+
+In the synchronous always block, on load, data is loaded into the register; on ena, the register updates with the shifted value computed by chaining the two conditional shifts. This design reduces combinational logic redundancy, improves timing by lowering mux complexity, and can save power by computing only necessary shifts. 
+
+All shifts are performed by concatenation and sign extension for arithmetic right shifts.

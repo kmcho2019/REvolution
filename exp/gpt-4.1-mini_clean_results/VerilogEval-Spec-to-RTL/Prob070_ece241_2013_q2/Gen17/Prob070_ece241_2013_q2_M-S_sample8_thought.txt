@@ -1,0 +1,61 @@
+First, clarify the bit order to be consistent: inputs (a b c d) correspond to bits from MSB to LSB of a 4-bit number. The output should be 1 for decimal inputs 2, 7, and 15, and 0 for certain other numbers, with some inputs never occurring.
+
+Since the input combinations 3,8,11,12 never occur, those can be treated as don't cares for simplification.
+
+Listing minterms where output=1:
+- 2  = 0010
+- 7  = 0111
+- 15 = 1111
+
+List maxterms where output=0:
+- 0,1,4,5,6,9,10,13,14
+
+We want to produce minimal SOP and POS expressions.
+
+For SOP (sum of products), write minterms explicitly:
+
+- 2 = ~a & ~b & c & ~d
+- 7 = ~a & b & c & d
+- 15= a & b & c & d
+
+Try to group minterms 7 and 15:
+
+- Both have b=1, c=1, d=1, a varies -> combined term: b & c & d
+
+The 2 is isolated.
+
+So minimal SOP:
+out_sop = (~a & ~b & c & ~d) | (b & c & d)
+
+For POS (product of sums), zeros at 0,1,4,5,6,9,10,13,14.
+
+Write their sum terms (maxterms):
+
+0: 0000 -> (a + b + c + d)
+1: 0001 -> (a + b + c + ~d)
+4: 0100 -> (a + ~b + c + d)
+5: 0101 -> (a + ~b + c + ~d)
+6: 0110 -> (a + ~b + ~c + d)
+9: 1001 -> (~a + b + c + ~d)
+10:1010 -> (~a + b + ~c + d)
+13:1101 -> (~a + ~b + c + ~d)
+14:1110 -> (~a + ~b + ~c + d)
+
+Using these and the don't cares (3,8,11,12), we minimize the POS:
+
+Find prime implicants:
+
+- (a + c + d) covers multiple zeros.
+- (a + ~b + d) covers multiple zeros.
+- (~a + b + ~c) covers others.
+
+Hence minimal POS is:
+out_pos = (a + c + d) & (a + ~b + d) & (~a + b + ~c)
+
+This matches the previously derived expressions and is minimal and correct.
+
+Therefore, the simplest correct implementation uses the same expressions but written clearly.
+
+In Verilog, we implement these with assign statements.
+
+This matches required functionality while being as simple as possible.

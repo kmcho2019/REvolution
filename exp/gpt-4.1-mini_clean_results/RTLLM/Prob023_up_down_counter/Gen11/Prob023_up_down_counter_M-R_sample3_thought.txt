@@ -1,0 +1,5 @@
+Refactor the up_down_counter by separating the counting logic from the sequential always block. Use a combinational always block to calculate the next count value (`next_count`) based on the current `count` and `up_down` signals. Then, update the `count` register synchronously on the rising edge of the clock using this `next_count`. The reset remains synchronous and clears the counter to zero.
+
+This structure explicitly separates next-state logic from state updating, making the design easier to extend or modify (e.g., to add enable or load signals later). It also aligns well with classic finite state machine design styles. The counter still wraps naturally because of the 16-bit arithmetic. 
+
+By splitting logic, synthesis tools often infer the same hardware but the code readability and testability improve. This approach uses two always blocks rather than one, trading off slightly more code for conceptual clarity.

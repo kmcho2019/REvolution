@@ -1,0 +1,20 @@
+To correctly implement the Karnaugh map using multiplexers, we need to analyze each output bit (mux_in[3:0]) based on the cd inputs for each ab case:
+
+1. mux_in[0] (ab=00):
+   - 1 when cd=00 or cd=10 → (~c & ~d) | (c & ~d) → ~d
+
+2. mux_in[1] (ab=01):
+   - Always 0 → direct assignment
+
+3. mux_in[2] (ab=11):
+   - 1 when cd=00 or cd=11 → (~c & ~d) | (c & d) → c XNOR d
+
+4. mux_in[3] (ab=10):
+   - 1 when cd=00, 11, or 10 → (~c & ~d) | (c & d) | (c & ~d) → ~d | (c & d)
+
+Key simplifications:
+1. mux_in[0] simplifies to just ~d
+2. mux_in[1] remains constant 0
+3. mux_in[2] uses XNOR
+4. mux_in[3] can be implemented with OR and AND
+5. Total logic operations minimized while maintaining correctness

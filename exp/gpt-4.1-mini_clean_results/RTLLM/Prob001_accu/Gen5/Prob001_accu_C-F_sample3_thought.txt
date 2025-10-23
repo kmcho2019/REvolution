@@ -1,0 +1,12 @@
+Fusion strategy to create a superior solution:
+
+1. Use a synchronous active-low reset to ensure deterministic reset behavior.
+2. Compute the next accumulator value using a combinational wire (`acc_next`) for timing clarity and to offload addition from sequential logic.
+3. Update accumulator and count registers only when `valid_in` is asserted, reducing toggling and dynamic power.
+4. Output the accumulated sum and pulse `valid_out` high for exactly one cycle upon receiving the 4th valid input.
+5. Immediately reset accumulator and count on the same clock cycle after output, ensuring quick readiness for the next batch.
+6. Avoid redundant registers such as the unused `sum_reg` from the second example to save area and power.
+7. Default `valid_out` to 0 every cycle to guarantee a single-cycle pulse without added gating complexity.
+8. Keep the accumulator and counter minimal and sufficient (10-bit accumulator for max sum 1020, 2-bit counter for count up to 3).
+9. Use consistent non-blocking assignments inside the sequential always block for proper synchronous operation.
+10. The design is clean, minimal, power-efficient, and timing-friendly, combining the best practices from both examples.

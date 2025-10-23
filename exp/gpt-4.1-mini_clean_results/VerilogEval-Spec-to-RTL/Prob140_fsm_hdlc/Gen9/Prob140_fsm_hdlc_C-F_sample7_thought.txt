@@ -1,0 +1,14 @@
+Fuse the clarity and compactness of the 3-bit saturating counter approach (from Example 2) with the explicit FSM state distinction and Moore outputs structure of Example 1 to enhance readability and synthesis friendliness.
+
+Specifically, implement the main tracking of consecutive ones using a 3-bit counter saturated at 7, simplifying next-state logic and arithmetic operations. Instead of directly registering the outputs as in Example 2, produce them combinationally as signals derived from the counter and input, then register these outputs to ensure Moore-type behavior (outputs depend only on the current state) and meet the specification that outputs assert for one full clock cycle after condition detection.
+
+Include a small explicit "state" for output assertion to cleanly separate the output cycle from the counting cycle, similar to Example 1’s output states (SD, SF, SE). This prevents mixing output assertion with the counting logic and improves timing by isolating output logic.
+
+By combining these, the FSM logic remains simple and arithmetic-based, while output signaling is cleanly separated, maintaining good timing, power, and area efficiency, and making it easier to extend or debug.
+
+Summary of fusion strategy:
+- Use a 3-bit saturating counter as main FSM "state" encoding of consecutive ones count (0-7).
+- Add a small FSM with 4 states: Counting, DiscOut, FlagOut, ErrOut to register output pulses for exactly one cycle.
+- On detection condition from counter and input, transition from Counting to respective output states.
+- Output states hold outputs high for one cycle, then return to Counting with counter reset or maintained as needed.
+- Synchronous reset returns to Counting state with counter 0 and outputs low.

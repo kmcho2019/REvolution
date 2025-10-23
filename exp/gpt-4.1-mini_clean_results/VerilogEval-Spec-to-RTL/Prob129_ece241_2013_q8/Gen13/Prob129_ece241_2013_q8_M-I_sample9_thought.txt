@@ -1,0 +1,8 @@
+To improve PPA while keeping the design correct and readable, I will refactor the combinational logic to use a case statement for next-state logic, which synthesis tools often optimize better than if-else chains. Also, I will explicitly set default values for all outputs to avoid inferred latches. 
+
+I will maintain the same two-bit encoding for minimal area, as one-hot encoding would increase area. The output logic remains combinational and simple. This restructuring may slightly reduce logic depth and switching activity, marginally improving timing (tns, wns) and power. The asynchronous reset remains the same.
+
+Thus, the key changes are:
+- Use case statement in next state combinational block.
+- Explicit default assignments for next_state and z.
+- Keep Mealy output as is, asserted only on the transition detecting "101".

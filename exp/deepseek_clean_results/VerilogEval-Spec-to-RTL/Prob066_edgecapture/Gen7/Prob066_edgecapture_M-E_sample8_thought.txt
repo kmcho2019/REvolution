@@ -1,0 +1,9 @@
+New approach using parallel edge detectors with persistent capture:
+1. Instead of using a single previous value register, implement 32 independent edge detectors (one per bit)
+2. Each bit has its own flip-flop that gets set on 1->0 transition and stays set until reset
+3. Use a generate block to instantiate identical edge detectors for all 32 bits
+4. Each edge detector consists of:
+   - A history flip-flop to store the previous value
+   - Transition detection logic (previous=1 and current=0)
+   - A capture flip-flop that gets set on transition and only clears on reset
+5. This architecture provides clearer separation of concerns and more direct implementation of the "capture until reset" requirement

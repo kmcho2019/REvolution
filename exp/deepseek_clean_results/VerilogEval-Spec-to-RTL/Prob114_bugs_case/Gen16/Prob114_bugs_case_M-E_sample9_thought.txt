@@ -1,0 +1,19 @@
+Here's a novel approach using a content-addressable memory (CAM) style implementation:
+
+1. Instead of using a case statement or if-else chain, we'll implement a parallel matching scheme that:
+   - Creates a vector of match signals (one for each valid scancode)
+   - Uses these match signals to drive a priority encoder for the output
+   - Generates the valid signal as the OR of all match signals
+
+2. Key advantages:
+   - Truly parallel comparison (all codes checked simultaneously)
+   - Clear separation of matching and encoding logic
+   - Easily scalable to more codes
+   - Potentially better synthesis results as each comparison is independent
+   - More explicit about the matching process
+
+3. Implementation details:
+   - Create 10 parallel comparators (one per valid scancode)
+   - Use these match signals to index into a small ROM for output values
+   - OR all match signals for the valid output
+   - Default to 0 when no matches occur

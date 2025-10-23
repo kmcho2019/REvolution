@@ -1,0 +1,29 @@
+The original solution's concept is excellent, but it uses illegal integer variables and division in a synchronous always block for computing the count output. To fix this, move the division and subtraction operations to a combinational always block or continuous assignment outside the sequential block. Since division by 1000 is by a constant, replace division with a combinational arithmetic equivalent using a small FSM or arithmetic operations.
+
+For simplicity and clarity, implement a combinational function to calculate count = delay_reg - (cycle_counter / 1000) with saturation at 0. 
+
+To avoid costly division, use a small combinational logic: the cycle_counter is 14 bits with max 15999, dividing by 1000 yields a value between 0 and 15, so:
+
+count_val = delay_reg - (cycle_counter / 1000);
+
+We can compute the integer division by 1000 as:
+
+- cycle_counter[13:0] ranges 0..15999
+- Since 1000*16=16000, max div result is 15 or 16. So just compute div as:
+  div = cycle_counter / 1000;
+
+Implement division as a combinational "divider" function or use the Verilog "/" operator in a combinational always @* block. Since cycle_counter and delay_reg are regs, assign count in a combinational block from these signals. This keeps synthesis happy and avoids procedural int declarations inside clocked always.
+
+Also, to improve PPA, keep state encoding one-hot for simple state decoding and ensure registers and counters are properly sized.
+
+Thus, the improved code will have:
+
+- One-hot FSM with synchronous reset.
+- Pattern detection shift register.
+- Delay shift register loading MSB first.
+- Single 14-bit cycle counter.
+- Combinational always @* block to compute count output using division.
+- Synchronous output registers for counting and done.
+- Clear signal assignments with no illegal procedural integer usage.
+
+This will fix syntax errors and provide a synthesizable, clean design.

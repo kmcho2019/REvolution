@@ -1,0 +1,7 @@
+Refactor the design by splitting the functionality into two always blocks: one for accumulating data and counting valid inputs, and a second for generating the output data and valid_out pulse. Use a state machine style with explicit states to manage accumulation and output phases, improving readability and modularity. 
+
+Introduce a parameterized state enumeration for clarity: IDLE (waiting for valid_in), ACCUM (accumulating up to 4 data), and OUTPUT (outputting the accumulated sum). The count and accumulator are updated only during ACCUM state on valid_in.
+
+valid_out is generated as a pulse for one cycle in the OUTPUT state, after which the machine returns to IDLE.
+
+This approach separates input accumulation logic from output logic and uses synchronous reset cleanly. The design maintains the same interface and timing behavior but structures the logic in a more FSM-like manner.

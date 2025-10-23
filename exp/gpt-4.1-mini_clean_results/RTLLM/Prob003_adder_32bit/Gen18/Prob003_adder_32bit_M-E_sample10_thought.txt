@@ -1,0 +1,12 @@
+Design a fully hierarchical 32-bit carry-lookahead adder using four 8-bit CLA blocks combined with a 4-bit CLA at the block level to compute carries between the 8-bit blocks. Each 8-bit CLA computes its own per-bit generate and propagate signals and produces block-level generate and propagate outputs. Then, a small 4-bit CLA computes the carry-in to each 8-bit block based on these block-level signals.
+
+This approach:
+- Divides 32-bit addition into smaller manageable 8-bit blocks, each with fast carry-lookahead.
+- Uses a 4-bit CLA at the block level to generate carries between 8-bit blocks, creating a neat hierarchical structure.
+- Enables logarithmic carry propagation delay at both levels for efficient timing.
+- Maintains the external [32:1] indexing, internally uses zero-based indexing for logic.
+- Uses generate loops and blocking assignments inside combinational always blocks for clarity and synthesis friendliness.
+- The 8-bit CLA implements parallel carry computation using the classical CLA equations.
+- The block-level 4-bit CLA uses similar carry-lookahead logic to produce carries for the 8-bit blocks.
+
+This hierarchical carry-lookahead scheme improves timing by avoiding linear carry propagation beyond 8 bits and maintains modularity and readability.

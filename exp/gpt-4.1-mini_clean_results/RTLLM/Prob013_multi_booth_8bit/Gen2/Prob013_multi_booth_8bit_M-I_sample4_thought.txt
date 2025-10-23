@@ -1,0 +1,20 @@
+The original design attempted a radix-4 Booth multiplier for 8-bit inputs with 4 cycles, but it contained syntax errors and slight mismatches to the problem statement. To align fully with the problem description—which specifies a 16-cycle count and simple Booth encoding on each bit (radix-2 style)—we will implement a radix-2 Booth multiplier with an iterative approach over 16 clock cycles.
+
+The multiplier will:
+- Use a 5-bit counter to count from 0 to 16.
+- On reset, sign-extend inputs to 16 bits and initialize registers.
+- Each cycle will look at the current bit and the previous bit of the multiplier to decide whether to add, subtract, or do nothing with the multiplicand, shifted according to the current bit position.
+- Perform the addition/subtraction to the product register accordingly.
+- Shift the multiplier (or index) and increment the counter.
+- Once done (ctr==16), output the final product and set ready.
+
+This approach is simpler, matches the problem description, and uses only radix-2 Booth encoding with 16 cycles, which fits the provided spec exactly.
+
+Implementation details:
+- Use registers for product (signed 16 bits), multiplicand (signed 16 bits), multiplier (signed 17 bits with an appended zero bit for Booth's Q-1 bit).
+- On each cycle, check multiplier bits [ctr:ctr-1] to determine the booth operation (+multiplicand, -multiplicand, or 0).
+- Left-shift multiplicand accordingly (actually no shift needed in classic radix-2 Booth because addition occurs at bit ctr, so the product register accumulates partial results).
+- Increment counter.
+- When counter reaches 16, set ready and output product.
+
+This design is synthesizable, matches the specification, and resolves previous syntax and functional issues.

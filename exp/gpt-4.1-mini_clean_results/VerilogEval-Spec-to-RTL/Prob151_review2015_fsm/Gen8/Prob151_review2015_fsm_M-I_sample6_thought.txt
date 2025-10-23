@@ -1,0 +1,7 @@
+To optimize the FSM for better power and area, reduce the shift counter width from 3 bits to 2 bits since counting 0 to 3 requires only 2 bits. This reduces flip-flop usage and switching activity.
+
+Also, instead of resetting the sequence detector state to IDLE outside the ST_IDLE state every cycle—which causes unnecessary toggling—gate the sequence detector enable signal so that the seq_state register only updates in ST_IDLE and holds its value otherwise. This prevents repeated resetting and unnecessary transitions, reducing dynamic power.
+
+Keep the same state encoding and overall FSM functionality to maintain correct operation.
+
+These two changes minimize sequential logic toggling and slightly reduce area without affecting timing or functionality.

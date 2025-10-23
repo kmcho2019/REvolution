@@ -1,0 +1,13 @@
+To address the issues while maintaining the gshare predictor functionality, we'll:
+1. Separate PHT updates to occur only on clock edges (not immediately)
+2. Implement proper priority handling between training and prediction
+3. Use a shadow register for PHT updates to ensure training affects next cycle
+4. Maintain the XOR-based indexing and 2-bit saturating counters
+5. Keep the 7-bit GHR but improve its update logic
+6. Ensure training takes precedence over prediction in all cases
+
+Key changes:
+- Add shadow registers for pending PHT updates
+- Restructure GHR updates to strictly follow priority rules
+- Separate combinational and sequential logic more clearly
+- Maintain same interface but with corrected timing behavior

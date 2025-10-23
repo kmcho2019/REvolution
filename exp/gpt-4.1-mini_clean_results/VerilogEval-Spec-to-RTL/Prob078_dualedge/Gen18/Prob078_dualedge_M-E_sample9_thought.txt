@@ -1,0 +1,17 @@
+Implement a dual-edge triggered flip-flop by sampling the data only on the rising edge of a doubled-frequency clock generated internally from the input clock. 
+
+Concept:
+- Generate a local clock that toggles on both edges of the original clock using a simple toggle flip-flop or XOR gate logic.
+- Use this generated clock to trigger a standard positive edge flip-flop.
+- This effectively creates a flip-flop triggered on both edges of the original clock by sampling on every edge (now a single edge of the doubled clock).
+- This approach avoids illegal sensitivity lists and uses only legal constructs.
+- The doubled clock is generated synchronously, ensuring stable timing and clean clocking for the data latch.
+
+Advantages:
+- Uses only one flip-flop to store the output, saving area compared to using two flip-flops.
+- Clock doubling logic is simple and glitch-free if designed carefully.
+- No transparent latches or combinational multiplexers for output selection, simplifying timing analysis.
+
+Caveats:
+- The internal doubled clock toggles at twice the frequency; care must be taken in higher frequency designs.
+- The generated clock is derived from the input clock, so timing constraints should ensure correct behavior.

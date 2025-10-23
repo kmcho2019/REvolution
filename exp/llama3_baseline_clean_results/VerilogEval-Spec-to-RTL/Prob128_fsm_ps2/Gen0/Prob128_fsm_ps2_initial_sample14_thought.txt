@@ -1,0 +1,14 @@
+To implement the TopModule, we'll design a finite state machine (FSM) with the following states:
+1. IDLE: This is the initial state where the module waits for a byte with in[3]=1.
+2. BYTE1: Once a byte with in[3]=1 is received, the module transitions to this state, assuming it's the first byte of a message.
+3. BYTE2: After receiving the first byte, the module transitions to this state, waiting for the second byte of the message.
+4. BYTE3: After receiving the second byte, the module transitions to this state, waiting for the third byte of the message.
+The module will signal done in the cycle immediately after the third byte of each message was successfully received.
+
+The FSM will have the following transitions:
+- IDLE to BYTE1: When in[3]=1.
+- BYTE1 to BYTE2: On every clock cycle (since we assume the next byte is the second byte of the message).
+- BYTE2 to BYTE3: On every clock cycle (since we assume the next byte is the third byte of the message).
+- BYTE3 to IDLE: On every clock cycle, signaling done in the same cycle.
+
+The reset will be active high synchronous, resetting the FSM to the IDLE state.

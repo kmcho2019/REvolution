@@ -1,0 +1,11 @@
+To improve timing, power, and area (PPA) of the original ripple borrow 64-bit subtractor, replace the ripple chain of four 16-bit subtractors with a single, straightforward 64-bit subtraction using Verilog’s native subtraction operator. This reduces complexity, removes intermediate borrow signals, and allows synthesis tools to map the operation to optimized carry-lookahead or carry-select structures internally.
+
+For overflow detection, keep the existing sign-bit logic since it is minimal and effective.
+
+This approach significantly improves timing by eliminating the ripple borrow path, reduces area by avoiding multiple submodules and extra wires, and lowers power by minimizing toggling on intermediate signals.
+
+Hence:
+- Use a single 64-bit subtraction: `result = A - B;`
+- Detect overflow by sign analysis: overflow = (A[63] != B[63]) && (result[63] != A[63]);
+
+This solution is cleaner, more efficient, and synthesis-friendly while meeting the functional requirements.

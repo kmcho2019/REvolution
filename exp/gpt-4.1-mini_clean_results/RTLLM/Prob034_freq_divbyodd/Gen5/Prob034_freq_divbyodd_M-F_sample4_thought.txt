@@ -1,0 +1,25 @@
+To implement an odd frequency divider as specified, using two counters and two clock dividers toggled on positive and negative edges, we proceed as follows:
+
+- Use two counters, cnt1 and cnt2, both counting from 0 to NUM_DIV-1.
+
+- cnt1 increments on positive edges of clk; cnt2 increments on negative edges of clk.
+
+- Each counter toggles its respective output clock divider signal (clk_div1 for cnt1, clk_div2 for cnt2) when it reaches half of NUM_DIV rounded down (NUM_DIV/2). This is the "toggle point" for each half cycle.
+
+- Since NUM_DIV is odd, half is fractional; integer division truncates. For example, NUM_DIV=5, half = 2 (integer).
+
+- At the toggle count (half), toggle clk_div1 or clk_div2 and reset the counter to 0 to start counting for the next half cycle.
+
+- The final output clk_div is the logical OR of clk_div1 and clk_div2, which effectively merges the positive and negative edge toggled signals to produce an output clock with frequency divided by NUM_DIV and an approximate 50% duty cycle.
+
+- Asynchronous active-low reset initializes counters and outputs.
+
+- Include a compile-time check to ensure NUM_DIV is odd.
+
+- This approach handles odd NUM_DIV frequency division with better duty cycle than a single counter toggling only on positive edges.
+
+- Use synchronous logic with posedge clk for cnt1 and clk_div1, and negedge clk for cnt2 and clk_div2, as per the specification.
+
+- Implement the counters such that when they reach (NUM_DIV - 1), they reset to zero, toggling at half point for duty cycle.
+
+This design matches the problem statement and addresses the feedback by using two counters and two toggled signals on separate edges, combining them with OR for the output clock.

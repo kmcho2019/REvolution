@@ -1,0 +1,28 @@
+To implement the Lemming machine, we'll model it as a Moore state machine. 
+The states will be: 
+- walking_left: The Lemming is walking to the left.
+- walking_right: The Lemming is walking to the right.
+- falling: The Lemming is falling.
+- digging: The Lemming is digging.
+- splattered: The Lemming has splattered and is no longer moving.
+
+We'll use an enumeration to define these states. The outputs will depend 
+only on the current state.
+
+When the Lemming is walking and hits an obstacle (bump_left or bump_right), 
+it will switch directions. If it's walking and the ground disappears (ground=0), 
+it will start falling. If it's falling and the ground reappears (ground=1), 
+it will resume walking in the same direction as before the fall.
+
+When the Lemming is walking and is told to dig (dig=1), it will start digging. 
+It will continue digging until it reaches the other side (ground=0), at which 
+point it will start falling. Once it hits the ground again, it will resume 
+walking in the original direction.
+
+If the Lemming falls for more than 20 clock cycles before hitting the ground, 
+it will splatter. We'll use a counter to track the number of clock cycles 
+since the Lemming started falling.
+
+We'll also use a variable to store the original direction when the Lemming 
+starts falling or digging, so we can resume walking in that direction 
+when the ground reappears or when the Lemming reaches the other side.

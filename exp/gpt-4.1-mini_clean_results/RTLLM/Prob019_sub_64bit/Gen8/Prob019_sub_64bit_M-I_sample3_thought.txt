@@ -1,0 +1,15 @@
+To optimize the existing 64-bit subtractor with overflow detection for better performance, power, and area (PPA), the primary focus is on improving the carry-lookahead adder structure. The original implementation uses a simple bitwise carry chain which, although faster than ripple carry, still has a linear carry dependency which impacts delay and power.
+
+Improvement Strategy:
+- Partition the 64-bit adder into 8 blocks of 8 bits each.
+- Use 8-bit carry-lookahead adders (CLAs) as building blocks to generate block-level propagate and generate signals.
+- Implement a second-level carry-lookahead on these block signals to quickly determine carry-in for each 8-bit block, significantly reducing worst-case carry path length from 64 to 8.
+- This hierarchical CLA reduces carry chain length, improves maximum clock frequency, and reduces glitching and dynamic power by minimizing long carry chains.
+- The hierarchical structure also reduces fanout and routing complexity, hence saving area.
+- Maintain the same overflow detection logic based on input and output sign bits.
+
+This hierarchical CLA approach is a well-known practical design technique for large adders. It balances speed and complexity efficiently compared to a flat 64-bit CLA.
+
+We keep the top-level module the same but replace the flat 64-bit CLA with the hierarchical 8x8-bit CLA and a block-level carry lookahead generator. The overflow logic remains unchanged for correctness.
+
+This will yield an improved PPA while preserving functional correctness and clarity.

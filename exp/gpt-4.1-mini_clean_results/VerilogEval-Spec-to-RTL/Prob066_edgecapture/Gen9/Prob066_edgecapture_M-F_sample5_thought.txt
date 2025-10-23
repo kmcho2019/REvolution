@@ -1,0 +1,13 @@
+To fix the design, we need to ensure that `prev_in` is initialized to a known stable value during reset, rather than loading it directly from `in`. This avoids false falling edge detections immediately after reset, especially if `in` changes simultaneously with reset or is asynchronous.
+
+Setting `prev_in` to all ones (`32'hFFFFFFFF`) on reset is appropriate because no bits can transition from 1 to 0 on the first cycle after reset in this case (since `prev_in` is all ones and `out` is cleared). This prevents false captures immediately after reset.
+
+The sticky output logic `out <= out | (prev_in & ~in);` can remain as is, since it correctly accumulates falling edges. To improve synthesis friendliness, it is good practice to explicitly register both `prev_in` and `out` synchronously with the clock and reset.
+
+Thus, the key fix is: 
+- On reset, set `prev_in` to all ones.
+- Clear `out` to zero on reset.
+- On each clock cycle, capture falling edges from `prev_in & ~in` and update `out`.
+- Update `prev_in` to the current `in` for next cycle.
+
+This design maintains synchronous reset, stable initialization, and correct falling edge detection with sticky output, eliminating false detection right after reset and improving synthesis robustness.

@@ -1,0 +1,24 @@
+To optimize the existing FSM for better power and clarity while maintaining the same functionality:
+
+1. Reduce unnecessary toggling of `shift_reg` and `bit_count`:
+   - Only update `shift_reg` and `bit_count` in the RECEIVE state.
+   - Do not reset `shift_reg` and `bit_count` every cycle in IDLE, CHECK_STOP, or WAIT_STOP; instead reset only on reset and state transitions that logically require clearing.
+   - This reduces switching activity, lowering dynamic power.
+
+2. Align the bit-shifting direction with the LSB-first protocol more intuitively:
+   - Since the protocol sends LSB first, shift left and insert the new bit at LSB (bit 0).
+   - This clarifies the design intent and may marginally help synthesis.
+
+3. Use a single always_ff block for synchronous logic including state, registers, and output `done`.
+4. Keep combinational always_comb block for next_state and done_next logic separate.
+5. Maintain synchronous reset.
+
+These optimizations keep the FSM compact and correct but reduce dynamic power by avoiding unnecessary register toggling and improve code clarity.
+
+The done signal is asserted one clock cycle when the stop bit is detected correctly.
+
+The new shift direction means `shift_reg <= {shift_reg[6:0], in};`
+
+Only update `bit_count` and `shift_reg` in RECEIVE state, no resets elsewhere except on reset.
+
+This should slightly improve power and code readability.

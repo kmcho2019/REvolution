@@ -1,0 +1,10 @@
+To implement a fractional frequency divider by 3.5x using double-edge clocking, the idea is to create a repeating cycle of 7 input clock cycles, where the output clock stays high for 4 cycles and low for 3 cycles, resulting in a base division by 7. To achieve 3.5 division, we generate two phase-shifted versions of this divided clock: one directly from the rising edge of clk and the other from the falling edge (delayed by half a clk period). By OR-ing these two signals, the output frequency is effectively doubled, producing a clock with a period corresponding to 3.5 input clocks. 
+
+Implementation details:
+- Use a 3-bit counter to count from 0 to 6 (7 cycles).
+- On rising edge, generate clk_div_rise which is high for counts 0-3, low otherwise.
+- On falling edge, generate clk_div_fall which is high for counts 3-6, low otherwise (phase shifted by half clock).
+- clk_div is OR of clk_div_rise and clk_div_fall, giving a 3.5x division with balanced duty cycle.
+- rst_n resets counter and outputs.
+
+This approach achieves fractional division using uneven counts and double-edge clocking without complex PLLs.

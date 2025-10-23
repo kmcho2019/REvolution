@@ -1,0 +1,10 @@
+Refactor the design to store the input data `d` into an internal 4-bit register `data` at the start of each serialization cycle (when the counter resets). This approach decouples the output bit selection from the input data, reducing glitches and improving power efficiency. Use a synchronous counter `cnt` to track which bit to output next. The serial output `dout` is selected from the registered data using an index from MSB to LSB (`data[3 - cnt]`). 
+
+The valid signal `valid_out` is asserted only when outputting the MSB, i.e., when `cnt` is zero. The counter counts from 0 to 3, incrementing every clock cycle, and wraps back to 0 to start a new serialization cycle and capture new input data.
+
+This refactoring:
+- Registers the input data to avoid combinational glitches on output,
+- Keeps the indexing approach for simplicity,
+- Maintains valid_out assertion only on the first output bit,
+- Separates input capture and output selection clearly,
+- Uses non-blocking assignments and synchronous reset for proper timing.

@@ -1,0 +1,93 @@
+The main issue is a confusion between the Karnaugh map variable naming (x[1]x[2] and x[3]x[4]) and the Verilog input bits x[3:0]. The problem states x[1] and x[2] as the column bits, and x[3] and x[4] as the row bits, but our input vector only has bits x[3:0]. This probably means a 1-based indexing, so likely x[1] = x[0], x[2] = x[1], x[3] = x[2], and x[4] = x[3] (assuming the problem indexing is 1-based). 
+
+To correctly map the Karnaugh map to the input vector `x[3:0]` where `x[3]` is the MSB, and `x[0]` is the LSB, we assign:
+- Row bits = x[3]x[2]
+- Column bits = x[1]x[0]
+
+Therefore, for indexing the Karnaugh map:
+- Row = x[3:2]
+- Column = x[1:0]
+
+Now, the Karnaugh map given:
+
+            x[1]x[2]
+   x[3]x[4]  00  01  11  10
+     00     | d | 0 | d | d |
+     01     | 0 | d | 1 | 0 |
+     11     | 1 | 1 | d | d |
+     10     | 1 | 1 | 0 | d |
+
+Assuming (row,col) maps to bits as (x[3:2], x[1:0]):
+
+| Row (x[3:2]) | Col(x[1:0]) | f       |
+|--------------|-------------|---------|
+| 00 (0)       | 00 (0)      | d (0)   |
+| 00 (0)       | 01 (1)      | 0       |
+| 00 (0)       | 11 (3)      | d (0)   |
+| 00 (0)       | 10 (2)      | d (0)   |
+| 01 (1)       | 00 (0)      | 0       |
+| 01 (1)       | 01 (1)      | d (0)   |
+| 01 (1)       | 11 (3)      | 1       |
+| 01 (1)       | 10 (2)      | 0       |
+| 11 (3)       | 00 (0)      | 1       |
+| 11 (3)       | 01 (1)      | 1       |
+| 11 (3)       | 11 (3)      | d (0)   |
+| 11 (3)       | 10 (2)      | d (0)   |
+| 10 (2)       | 00 (0)      | 1       |
+| 10 (2)       | 01 (1)      | 1       |
+| 10 (2)       | 11 (3)      | 0       |
+| 10 (2)       | 10 (2)      | d (0)   |
+
+Construct the 16-bit truth table indexed by `x` (x[3:0]) from 0 to 15 (binary input), where the address is:
+- addr = {x[3:2], x[1:0]} (row concat column).
+
+Assign all don't cares as 0.
+
+Mapping:
+
+| x (binary) | row=x[3:2] | col=x[1:0] | f |
+|------------|------------|------------|---|
+| 0000 (0)   | 00         | 00         | 0 |
+| 0001 (1)   | 00         | 01         | 0 |
+| 0010 (2)   | 00         | 10         | 0 |
+| 0011 (3)   | 00         | 11         | 0 |
+| 0100 (4)   | 01         | 00         | 0 |
+| 0101 (5)   | 01         | 01         | 0 |
+| 0110 (6)   | 01         | 10         | 0 |
+| 0111 (7)   | 01         | 11         | 1 |
+| 1000 (8)   | 10         | 00         | 1 |
+| 1001 (9)   | 10         | 01         | 1 |
+| 1010 (10)  | 10         | 10         | 0 |
+| 1011 (11)  | 10         | 11         | 0 |
+| 1100 (12)  | 11         | 00         | 1 |
+| 1101 (13)  | 11         | 01         | 1 |
+| 1110 (14)  | 11         | 10         | 0 |
+| 1111 (15)  | 11         | 11         | 0 |
+
+From these values, the 16-bit truth table (bit 0 corresponds to input 0, bit 15 to input 15) is:
+
+bit: value
+0: 0
+1: 0
+2: 0
+3: 0
+4: 0
+5: 0
+6: 0
+7: 1
+8: 1
+9: 1
+10:0
+11:0
+12:1
+13:1
+14:0
+15:0
+
+This is binary: `0000_1100_1110_0000` or in hex `0x0CE0`.
+
+Finally, we implement `f = func_vec[x]` with:
+
+`localparam [15:0] func_vec = 16'b0000110011100000;`
+
+This direct indexing ensures the input bits are correctly matched to the Karnaugh map's row and column bits.

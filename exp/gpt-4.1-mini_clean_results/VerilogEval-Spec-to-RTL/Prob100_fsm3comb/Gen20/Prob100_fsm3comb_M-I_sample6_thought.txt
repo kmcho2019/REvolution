@@ -1,0 +1,13 @@
+To optimize the given implementation for better PPA, I will replace the always block with purely continuous assignments using ternary operators. This can reduce unnecessary overhead of an always block and potentially allow finer gate-level optimization by synthesis tools for simple combinational logic such as next_state logic. 
+
+Because the next_state logic is a straightforward mapping with only 4 possible current states, a combinational continuous assignment with a nested ternary operator will be more concise and can be synthesized efficiently.
+
+Also, the output logic will remain the minimal AND of state bits since it is already optimal.
+
+This approach reduces logic levels, potentially improves synthesis quality, and slightly decreases area and power by removing the always block and using purely combinational assign statements.
+
+Using localparams for state encoding is preserved for clarity and robustness.
+
+I will still include a default assignment in the nested ternary to ensure safe and deterministic behavior.
+
+Overall, the code will be more succinct and may yield slightly improved PPA without sacrificing readability.

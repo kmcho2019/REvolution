@@ -1,0 +1,24 @@
+Novel Approach: Bit-Sliced Conditional Selection with Early Termination
+
+1. **Core Idea**: 
+   - Implement a bit-sliced architecture where each output bit is computed independently
+   - Use a priority-encoded selection scheme that terminates early when a valid condition is found
+   - Leverage bitwise operations to minimize logic depth
+
+2. **Key Innovations**:
+   - Each output bit q[i] is computed separately for better timing balance
+   - Uses a cascaded conditional selection that stops evaluating once a valid condition is met
+   - Implements a "hot-one" encoding for the selection logic
+   - Optimizes for cases where c is small (0-3) which are more common
+
+3. **Advantages**:
+   - Better timing characteristics due to parallel bit processing
+   - Reduced switching activity since unused conditions aren't evaluated
+   - More efficient implementation in modern FPGAs/ASICs
+   - Scales well to wider bit widths if needed
+
+4. **Implementation**:
+   - For each bit position, implement a priority selector
+   - Check c[1:0] first for valid cases (0-3)
+   - Only check for invalid cases if none of the valid cases match
+   - Use bitwise masking for efficient implementation

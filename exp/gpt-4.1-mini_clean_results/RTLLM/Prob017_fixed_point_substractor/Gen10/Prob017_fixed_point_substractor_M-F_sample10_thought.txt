@@ -1,0 +1,28 @@
+To fix the synthesis issues, the design needs to avoid complex functions with variable slicing and signed operations inside functions, especially those returning narrower bit-widths.
+
+Instead, all computations should be expressed explicitly in the combinational always block with only bit-selects and simple arithmetic.
+
+Key changes:
+
+- Replace the `abs_mag` function with direct inline absolute value extraction: 
+  Use conditional operator and explicit subtraction or negation for two's complement numbers with full bit width.
+  
+- Avoid slicing in functions; perform sign and magnitude extraction explicitly using bit-slicing outside of functions.
+
+- Replace the `sign_mag_to_twos` function with direct two's complement conversion logic in the always block:
+  - For positive sign: assign magnitude with sign bit 0.
+  - For negative sign: perform two's complement on magnitude by negating the full two's complement number formed from sign bit zero and magnitude.
+
+- Use a single always_comb/always @* block for all combinational logic including output assignment `c`.
+
+- Use `reg` type for all intermediate variables and output since they are driven inside always block combinational logic.
+
+- Explicitly handle zero magnitude case by checking full magnitude and forcing sign bit zero.
+
+This approach is simpler, synthesis-friendly, and preserves all design semantics.
+
+The parameterization for N and Q remains the same.
+
+Testbench can remain unchanged (not included here per instruction).
+
+The design fully respects the problem requirements and should synthesize correctly now.

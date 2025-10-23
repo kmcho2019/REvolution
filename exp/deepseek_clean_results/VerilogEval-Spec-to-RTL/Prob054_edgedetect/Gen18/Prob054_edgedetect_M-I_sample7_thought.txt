@@ -1,0 +1,25 @@
+Based on the PPA metrics and feedback, here's my optimization strategy:
+
+1. Timing Improvement:
+   - Reduce critical path by combining the two registers into a single pipeline stage
+   - This trades off one cycle of latency for better timing closure
+   - The negative WNS (-0.11ns) suggests this small change could help
+
+2. Power Optimization:
+   - Add clock gating to the register when inputs are stable
+   - This reduces unnecessary toggling when inputs don't change
+
+3. Area Preservation:
+   - Maintain the current compact structure
+   - Keep using bitwise operations for efficiency
+
+4. Readability:
+   - Keep clear pattern matching (01 transition)
+   - Add comments explaining the single-stage approach
+
+The improved design will:
+- Use only one register stage (prev_in)
+- Compare current input with previous input directly
+- Add clock gating for power savings
+- Maintain the same area footprint
+- Potentially improve timing by reducing the critical path

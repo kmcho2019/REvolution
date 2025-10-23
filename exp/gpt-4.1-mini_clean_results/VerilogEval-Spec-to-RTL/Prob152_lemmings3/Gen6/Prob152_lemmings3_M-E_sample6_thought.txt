@@ -1,0 +1,9 @@
+Instead of a combined state encoding, model the direction and behavior as two separate one-bit state registers: one for direction (0=left, 1=right) and one for mode (00=walking, 01=falling, 10=digging). This simplifies the state machine to two registers, easing state decoding.
+
+Use a Moore FSM where behavior is encoded in a 2-bit mode register: walking, falling, digging; and direction is stored independently. Transitions only update mode or direction as needed, respecting the priority: falling > digging > bump-direction-change.
+
+Direction changes occur only in walking mode on bumps. Falling mode ignores bumps and resumes walking with previous direction when ground returns. Digging mode continues until ground lost, then goes to falling with same direction.
+
+Outputs are derived from mode and direction bits: walk_left/right from walking mode with direction; aaah from falling mode; digging from digging mode.
+
+This modular split reduces logic complexity in next state calculations and output decoding, making the FSM more readable and potentially more efficient. The async reset sets mode to walking and direction to left.

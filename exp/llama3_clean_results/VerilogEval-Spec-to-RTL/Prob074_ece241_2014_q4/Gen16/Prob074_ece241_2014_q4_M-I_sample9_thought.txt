@@ -1,0 +1,14 @@
+To improve the existing solution, we need to address the potential issue with the timing of calculating the output 'z'. The current implementation calculates 'z' continuously based on the registered states of the D flip-flops. However, the output 'z' should be updated only at the positive edge of the clock, after the D flip-flops have been updated.
+
+One way to correct this is to move the calculation of 'z' inside the same always block where the D flip-flops are updated. This ensures that 'z' is calculated using the updated values of the D flip-flops immediately after they are updated at the positive edge of the clock.
+
+Additionally, we can keep the combinational logic separate for clarity and maintainability, but we should ensure that 'z' is calculated based on the updated states of the flip-flops.
+
+For optimizing the design for better PPA (Power, Performance, and Area), we aim to minimize unnecessary switching activity and reduce the complexity of the combinational logic. Given the current design, we can see that the combinational logic is already quite simple and straightforward. Therefore, our main focus will be on ensuring the correct timing and minimizing any potential for unnecessary transitions in the output 'z'.
+
+The strategy for improvement involves:
+1. Correcting the timing of 'z' calculation to ensure it uses the updated D flip-flop states.
+2. Keeping the combinational logic for XOR, AND, and OR gates separate for clarity.
+3. Ensuring that the output 'z' is calculated only at the positive edge of the clock to prevent unnecessary transitions.
+
+By implementing these improvements, we can ensure that the design functions correctly and is optimized for better PPA.

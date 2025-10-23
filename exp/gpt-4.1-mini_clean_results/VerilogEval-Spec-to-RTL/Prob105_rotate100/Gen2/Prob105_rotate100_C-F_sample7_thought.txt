@@ -1,0 +1,15 @@
+Fuse the clarity and separation of combinational next-state logic from Example 2 with the careful explicit handling of unnecessary register toggling from Example 1 to minimize power by avoiding redundant updates.
+
+Implement the next-state logic combinationally: on load, next_q = data; on ena=01 rotate right; on ena=10 rotate left; else next_q = q (hold).
+
+Add a synchronous load and rotation enable condition to update q only when load is asserted or ena indicates a rotate (01 or 10). When no operation is needed (ena=00 or 11 and load=0), q is held without being reloaded, preventing unnecessary toggling.
+
+This reduces switching power by gating register updates at the clocked process level, while preserving the clean separation of combinational and sequential logic for better readability and maintainability.
+
+Rotation is done efficiently by concatenation, ensuring correct wrap-around of bits, as both examples demonstrated.
+
+No extra pipeline stages are introduced, maintaining minimal latency.
+
+This fusion keeps a single clocked always block for q update, and a combinational always block for next_q computation with explicit update control, balancing clarity, correctness, and low power.
+
+Comments clarify each step for maintainability.

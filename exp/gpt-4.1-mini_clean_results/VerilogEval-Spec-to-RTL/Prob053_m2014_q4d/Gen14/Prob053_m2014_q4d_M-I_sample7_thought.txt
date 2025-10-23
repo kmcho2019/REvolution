@@ -1,0 +1,12 @@
+To address the simulation mismatch due to uninitialized 'out' and potentially improve power and robustness, I will initialize 'out' to 0 at declaration. Initializing the flip-flop output helps simulation match expectations without affecting synthesis, as synthesis tools typically ignore initial values for FPGA or ASIC flows (some FPGAs can use initialization).
+
+For power, I can add a clock enable (ce) that only updates the flip-flop when the input 'in' differs from the current 'out'. This reduces switching activity when the output would not change, saving dynamic power.
+
+This optimization minimally impacts performance and area (only adds a comparator and ce gate), but can meaningfully reduce toggles on 'out' and the feedback XOR.
+
+Implementation:
+- Initialize 'out' to 0.
+- Add a comparator (in != out) as clock enable.
+- Flip-flop updates only if ce is high.
+
+This approach keeps the original logic intact but reduces unnecessary state changes and thus power, and fixes the simulation initialization issue.

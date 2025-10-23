@@ -1,0 +1,11 @@
+The provided solution has a few issues that need to be addressed to accurately implement the required behavior of the finite state machine (FSM). 
+
+Firstly, the current implementation of the 'w_count' register and its update logic does not correctly track the occurrences of 'w' = 1 over the three-cycle window. To fix this, 'w_count' should be used as a simple counter that increments whenever 'w' is 1 during the three-cycle window. 
+
+Secondly, the condition for setting 'z' high should be based on the total count of 'w' = 1 occurrences over the window, which is two in this case. 
+
+Lastly, the logic for handling the transition between the three-cycle windows needs to be revised to correctly reset the 'w_count' and determine the output 'z' based on the previous window's count.
+
+To optimize the solution, we can simplify the logic and reduce the number of signals needed. The 'state' variable can be maintained as a single bit, and the 'w_count' can be a 2-bit counter to track the occurrences of 'w' = 1 over the three-cycle window.
+
+To further optimize the solution for better PPA (Power, Performance, and Area), we should aim to minimize the number of flip-flops, combinational logic, and nets. This can be achieved by simplifying the state machine logic, reducing the number of signals, and using more efficient coding practices.

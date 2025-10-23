@@ -1,0 +1,19 @@
+Correct implementation based on K-map analysis:
+
+1. For mux_in[0] (ab=00):
+   - Output is 0 when cd=00, else 1 → equivalent to NOT (c NOR d) → (c OR d)
+
+2. For mux_in[1] (ab=01):
+   - Output is 1 only when cd=01 → equivalent to (~c AND d) (correct in original)
+
+3. For mux_in[2] (ab=11):
+   - Output is 0 when cd=00 or 01, else 1 → equivalent to (c OR d) AND (NOT (c AND ~d))
+
+4. For mux_in[3] (ab=10):
+   - Output is 0 only when cd=01 → equivalent to NOT (~c AND d) → (c OR ~d)
+
+Key corrections:
+- mux_in[0] needs to be OR instead of NOR
+- mux_in[2] needs more complex logic to match all cases
+- mux_in[3] was actually correct in original
+- All expressions can still be implemented with basic logic operations

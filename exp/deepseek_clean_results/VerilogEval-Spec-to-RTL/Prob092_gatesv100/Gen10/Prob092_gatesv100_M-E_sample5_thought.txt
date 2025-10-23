@@ -1,0 +1,20 @@
+Novel Architectural Idea:
+1. Bit-Sliced Processing:
+   - Divide the 100-bit input into configurable blocks (e.g., 10-bit slices)
+   - Process each block independently with local neighbor connections
+   - Edge cases handled within each block for better locality
+
+2. Parameterized Design:
+   - Make block size configurable via parameter
+   - Allows tuning for different PPA tradeoffs
+   - Easily scalable to different bit widths
+
+3. Hierarchical Edge Handling:
+   - Special handling for first/last bits of each block
+   - Maintains correct neighbor relationships across block boundaries
+   - Reduces long routing paths compared to monolithic design
+
+4. Optimized Wrap-Around:
+   - Implement circular buffer style processing for out_different
+   - Uses modular arithmetic for neighbor indexing
+   - More hardware-friendly than concatenation approach

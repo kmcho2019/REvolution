@@ -1,0 +1,16 @@
+I will implement a 64-bit ripple carry adder with a multi-stage pipeline to reduce latency compared to a fully bit-serial pipeline. Specifically, I will partition the 64-bit addition into 8 stages of 8 bits each. Each pipeline stage will perform an 8-bit addition with carry-in from the previous stage. This way, each stage computes 8 bits of sum plus a carry-out in one clock cycle.
+
+Pipeline registers will hold operands, intermediate carry signals, partial sums, and the enable flag. At each clock cycle, a new 8-bit stage of the addition is processed. The carry-out from stage N is fed into stage N+1 on the next cycle. After 8 stages (8 cycles), the full 64-bit sum plus carry-out (65 bits) is assembled from the partial sums and final carry-out.
+
+This architecture balances throughput (one addition every cycle after startup) and latency (8 cycles). The design uses arrays of registers for operands, carry, sum, and enable, clocked synchronously. The sum bits from each stage are stored in pipeline registers to assemble the full result at output.
+
+Key points:
+
+- 8 pipeline stages, each adds 8 bits plus carry-in
+- Pipeline registers for partial sums [7:0], carries, and enables
+- At each clock, stage N adds corresponding 8 bits of operands + carry-in from stage N-1
+- Input operands and i_en loaded into stage 0 registers
+- After 8 cycles, output valid with assembled 65-bit sum and o_en = 1
+- Reset clears pipeline registers and disables output
+
+This design is more practical and efficient than a fully bit-serial design, and uses smaller ripple adders internally.

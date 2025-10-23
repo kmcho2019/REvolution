@@ -1,0 +1,25 @@
+I will design the FSM using a classic Moore machine style with clear separation between state register, next state logic, and output logic. 
+
+Key points:
+- All outputs (f, g) depend solely on the current state.
+- The synchronous reset (active low) will force the FSM to state A and outputs f=0,g=0.
+- State A: Wait for reset release.
+- After reset release, one cycle in state F_PULSE, output f=1, g=0.
+- Then move to MONITOR_X where the FSM checks for the pattern 1,0,1 on input x.
+  - I'll keep an internal 2-bit pattern index counting how many bits of the pattern matched.
+  - Pattern: step 0 expect '1', step 1 expect '0', step 2 expect '1'.
+  - Upon mismatch, restart pattern detection from step 0 or step 1 if input is '1' (to handle overlaps).
+- When full pattern matched, transition to G_MONITOR_Y state, output g=1.
+- G_MONITOR_Y monitors y for at most 2 cycles:
+  - If y=1 within these 2 cycles, go to G_ON state (g=1 permanently).
+  - Else after 2 cycles, go to G_OFF state (g=0 permanently).
+- G_ON and G_OFF are terminal states until reset.
+
+Implementation details:
+- Use a synchronous state register and next state logic.
+- Use a pattern_match_index register updated synchronously only in MONITOR_X.
+- Use a y_counter register to count cycles monitoring y.
+- Outputs f and g depend purely on current state.
+- On reset asserted (resetn=0), clear all registers and go to state A.
+
+This approach cleanly separates concerns, ensures outputs are stable and synchronous, and uses minimal internal registers. It avoids combinational feedback loops by separating next state combinational logic from sequential updates. This will ensure correct timing and behavior.

@@ -1,0 +1,13 @@
+To design a Mealy FSM detection circuit in Verilog, we first need to identify the states required for the sequence detection. Since the sequence is 10011, we can break it down into states based on the input sequence. 
+
+State 0 (S0): Initial state, waiting for the first '1'.
+State 1 (S1): Received the first '1', waiting for the first '0'.
+State 2 (S2): Received the first '0', waiting for the second '0'.
+State 3 (S3): Received the second '0', waiting for the first '1' after the zeros.
+State 4 (S4): Received the first '1' after the zeros, waiting for the second '1'.
+
+The MATCH signal will be high only when we are in the state S4 and the input is '1'. 
+
+For the implementation, we use a always block to handle the state transitions and output logic. We check for the reset signal RST to initialize the FSM. Otherwise, on the positive edge of the clock signal CLK, we perform state transitions based on the current state and input signal IN. 
+
+To handle continuous input and loop detection, we ensure that the state machine can return to its initial state (S0) after a successful match or if the input sequence does not match the expected sequence at any point.

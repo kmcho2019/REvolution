@@ -1,0 +1,25 @@
+Refactored approach using continuous assignments and ternary operators:
+
+1. **Key Improvements**:
+   - Replace the always block with direct continuous assignments
+   - Use nested ternary operators to create a comparison tree
+   - Eliminate the temporary combined vector to reduce routing resources
+   - Remove the for-loop to potentially improve timing
+
+2. **Implementation Strategy**:
+   - First compare a and b to find the smaller of the two
+   - Compare c and d to find the smaller of those two
+   - Finally compare the two intermediate results to find the overall minimum
+   - All comparisons done in parallel rather than sequentially
+
+3. **Advantages**:
+   - More concise implementation using pure combinational logic
+   - Potentially better timing due to parallel comparisons
+   - Reduced area by eliminating the 32-bit combined vector
+   - Clearer data flow through explicit comparison hierarchy
+   - Maintains the same functionality while being more efficient
+
+4. **Considerations**:
+   - The ternary operator approach is well-supported by synthesis tools
+   - The structure naturally maps to a tree of comparators
+   - Power consumption may be slightly better due to reduced switching

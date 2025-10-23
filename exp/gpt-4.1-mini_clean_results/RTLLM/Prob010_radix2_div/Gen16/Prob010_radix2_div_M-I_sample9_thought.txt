@@ -1,0 +1,15 @@
+The original code's primary flaw is the declaration of new registers inside the always block, which is illegal in Verilog. To fix it, I will move the final_quotient and final_remainder registers to the module scope and use them properly within the always block.
+
+Additionally, I noticed a functional issue: the remainder update and quotient bit setting are not synchronized correctly because remainder is assigned twice in the same always block iteration, which leads to incorrect results due to non-blocking assignments.
+
+To fix this, I will:
+
+- Use temporary variables inside the always block (combinational vars) for intermediate calculations.
+- Carefully update remainder and quotient in a single step per iteration.
+- Initialize the dividend shift register properly to hold dividend bits for shifting into the remainder.
+- Manage signed division with proper absolute values and final sign corrections.
+- When divisor is zero, output quotient as 8'hFF and remainder as dividend, and finish immediately.
+
+This approach preserves the radix-2 division algorithm, removes syntax errors, and ensures functional correctness.
+
+I will also clean up some redundant code and add comments for clarity.

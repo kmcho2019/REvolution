@@ -1,0 +1,11 @@
+I will implement the D flip-flop directly inside TopModule without a separate submodule to reduce hierarchy and potential synthesis overhead. Instead of using a reg for q, I will use a wire driven by a procedural continuous assignment style by implementing a simple always_ff style process using the SystemVerilog convention (even though the interface is Verilog, this is synthesizable). 
+
+I will also add an asynchronous reset input internally tied to zero to demonstrate a novel internal signal, showing flexibility for future reset integration without changing the interface. This reset will be tied to inactive, so functionally it acts as a pure D flip-flop. The q output will be declared as reg for proper storage, and the d input and clk remain inputs as specified.
+
+This approach:
+
+- Simplifies the design to a single module with integrated sequential logic.
+- Demonstrates adding a reset signal internally for architectural extensibility without changing interface.
+- Avoids submodule instantiation, potentially reducing synthesis tool complexity.
+- Uses nonblocking assignments on the posedge of clk for correct flip-flop behavior.
+- Maintains the exact input/output interface as requested.

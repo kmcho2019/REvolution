@@ -1,0 +1,11 @@
+To address the issues in the original implementation, we'll refactor the code with these key changes:
+
+1. **Separate GHR Update Paths**: Use distinct assign statements for different GHR update scenarios (misprediction, normal training, prediction) to make priority handling clearer.
+
+2. **Explicit PHT Timing**: Maintain the PHT update timing by clearly separating the current prediction state from next-cycle training updates.
+
+3. **Simplified Counter Logic**: Implement the 2-bit saturating counter as a separate function for clarity.
+
+4. **Direct Misprediction Handling**: When a misprediction occurs, immediately override the GHR with the provided train_history shifted by the actual outcome.
+
+The refactored version will use more assign statements and fewer always blocks while maintaining the same functionality but with clearer timing relationships.

@@ -1,0 +1,9 @@
+To optimize PPA further, I will reduce switching activity by introducing a clock enable (ce) signal that enables the instruction register update only when fetch is valid (01 or 10). This avoids unnecessary toggling of the register and the 2-bit fetch state.
+
+Moreover, I will replace the 2-bit `last_fetch` register with a 1-bit flag `ins_p2_sel` to remember only if the last instruction came from source 2 (fetch=10). This reduces area by shrinking state storage and shortens the critical path by simplifying output muxing logic.
+
+The register will update only when `ce` is asserted, ensuring less switching and better power.
+
+Outputs remain combinationally extracted from the stored instruction.
+
+Overall, this approach balances low toggle rate, reduced register count, and simpler control logic for improved PPA.

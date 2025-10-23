@@ -1,0 +1,32 @@
+To implement the next-state logic for y[1] in the given state machine, we need to analyze the state transitions and determine when y[1] should be 1 in the next state. 
+
+The state encoding is:
+A: 000 (y=000)
+B: 001 (y=001)
+C: 010 (y=010)
+D: 011 (y=011)
+E: 100 (y=100)
+F: 101 (y=101)
+
+We need to find all transitions where the next state has y[1]=1. Looking at the state encodings, these are states C (010), D (011), and F (101). 
+
+From the transition table:
+- From B (001) with w=0: next state is C (y[1]=1)
+- From B (001) with w=1: next state is D (y[1]=1)
+- From C (010) with w=0: next state is E (y[1]=0)
+- From C (010) with w=1: next state is D (y[1]=1)
+- From D (011) with w=0: next state is F (y[1]=1)
+- From D (011) with w=1: next state is A (y[1]=0)
+- From E (100) with w=0: next state is E (y[1]=0)
+- From E (100) with w=1: next state is D (y[1]=1)
+- From F (101) with w=0: next state is C (y[1]=1)
+- From F (101) with w=1: next state is D (y[1]=1)
+
+The logic for y[1] in the next state should be 1 when:
+1. Current state is B (001) and w is 0 or 1 (next state C or D)
+2. Current state is C (010) and w is 1 (next state D)
+3. Current state is D (011) and w is 0 (next state F)
+4. Current state is E (100) and w is 1 (next state D)
+5. Current state is F (101) and w is 0 or 1 (next state C or D)
+
+We can implement this using combinational logic based on the current state (y) and input w.

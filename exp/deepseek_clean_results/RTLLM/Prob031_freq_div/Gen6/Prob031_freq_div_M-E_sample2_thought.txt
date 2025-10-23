@@ -1,0 +1,8 @@
+Here's a novel approach using a single shared counter and phase-aligned clock generation:
+1. Use a single 7-bit counter (0-99) that serves all three frequency divisions
+2. Generate CLK_50 by looking at the LSB (divide by 2)
+3. Generate CLK_10 by looking at counter[2:0] (divide by 10)
+4. Generate CLK_1 by looking at the full counter value (divide by 100)
+5. All outputs are phase-aligned to the counter rollover
+6. Implement synchronous reset with counter freeze during reset
+This approach reduces logic by sharing the counter and ensures phase alignment between outputs.

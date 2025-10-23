@@ -1,0 +1,16 @@
+To improve the original implementation, we focus on:
+
+1. Fixing some issues and clarifying handling of remainder sign:
+   - The original code took remainder as SR[16:9] (8 bits), but remainder in SR is stored as 9 bits in SR[16:8]. Only 8 bits go to output, so we take SR[16:9].
+   - Correcting remainder sign extension and ensuring remainder output is 8 bits.
+2. Simplify and make the division process consistent with the specification:
+   - The shift register SR should be 17 bits holding {remainder[8:0], quotient[7:0]} as per spec.
+   - Each clock cycle shifts left by one bit, subtracts the divisor from remainder portion.
+3. Use consistent signed absolute value calculations using arithmetic operations.
+4. Manage res_valid exactly as per spec: assert when done, clear on reset or new op.
+5. Rename state_t enum to avoid SystemVerilog-isms if only Verilog-2001 is used (but keep for clarity).
+6. Improve coding style with comments and clean separation of combinational and sequential logic.
+7. Ensure no synthesis or simulation issues, no mixed blocking/non-blocking in sequential blocks.
+8. Minor optimization: do absolute value calculation outside sequential block using intermediate signals for better pipelining.
+
+This refined code is synthesizable, supports signed and unsigned division on 8-bit inputs, producing quotient and remainder correctly, with a radix-2 iterative algorithm.

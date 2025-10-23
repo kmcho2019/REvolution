@@ -1,0 +1,13 @@
+To implement an 8-bit barrel shifter rotating left by 0 to 7 positions controlled by a 3-bit `ctrl` input, I will use a classic 3-stage design where each stage shifts by 1, 2, and 4 bits respectively.
+
+Each stage will be composed of 8 parallel 2-to-1 multiplexers, implemented using the required `mux2X1` submodule.
+
+- `mux2X1` selects between the bit shifted by the stage amount and the bit unchanged, controlled by the appropriate bit in `ctrl`.
+- The shifts are performed in the following order: stage 0 shifts by 1 bit if `ctrl[0]` is set, stage 1 by 2 bits if `ctrl[1]` is set, and stage 2 by 4 bits if `ctrl[2]` is set.
+- The output of one stage feeds into the next stage.
+- The mux selection signals (`sel`) are the respective `ctrl` bits.
+- To avoid modulo arithmetic, the indices for shifted bits are computed using bitwise wrapping: `(i + shift_amount) & 7`.
+- This design strictly follows the problem's requirement to use the explicit `mux2X1` module for each bit at every stage, ensuring compatibility with the testbench and synthesis tools.
+- The `mux2X1` module is defined once before the barrel_shifter module.
+
+This approach maintains modularity, readability, and matches the problem's implementation detail requirements.

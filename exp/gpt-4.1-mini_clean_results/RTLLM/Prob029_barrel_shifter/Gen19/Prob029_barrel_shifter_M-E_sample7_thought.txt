@@ -1,0 +1,12 @@
+Instead of performing the rotations in multiple stages with separate 2-to-1 mux arrays, we can implement the barrel shifter using a single combinational logic block with a hierarchical muxing approach based on the control bits. Each bit of the 3-bit control signal controls a stage that conditionally shifts the input by 1, 2, or 4 bits to the left using multiplexers implemented as `mux2X1` instances.
+
+The approach:
+- Start from the input and apply the shift by 1 bit controlled by ctrl[0].
+- Take the result and apply the shift by 2 bits controlled by ctrl[1].
+- Finally, apply the shift by 4 bits controlled by ctrl[2].
+  
+Each stage shifts the intermediate result left by the stage amount (1, 2, or 4) and selects between the shifted or unshifted intermediate result using an array of `mux2X1` modules.
+
+This way, the barrel shifter performs a rotate-left by the sum of shifts indicated by the control bits. The design remains fully structural with explicit `mux2X1` instances and avoids intermediate concatenations by expressing the rotation via bit indexing and mux selections.
+
+This approach is clear, modular, and ensures that all multiplexers are explicitly instantiated for each bit at every stage.

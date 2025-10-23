@@ -1,0 +1,13 @@
+Implement a fixed-point subtractor that explicitly separates the sign and magnitude components of the inputs to perform sign-aware subtraction per the specification.
+
+1. Extract sign bits from inputs `a` and `b`.
+2. Convert inputs to absolute values (magnitude) using two's complement if negative.
+3. Compare magnitudes for cases where signs differ to determine the result's sign.
+4. For same sign inputs, subtract magnitudes and retain input sign.
+5. For different signs, add magnitudes and assign the correct sign based on magnitude comparison.
+6. After computing the magnitude result, if result sign is negative, convert magnitude back to two's complement.
+7. Handle zero explicitly by setting the output to zero with sign bit zero.
+8. The Q parameter determines fixed-point precision but does not affect the logic as arithmetic is done on entire fixed-point numbers.
+9. Use combinational always block to implement the logic, storing result in a register `res` before assigning output `c`.
+
+This approach explicitly follows the problem's description for sign handling and magnitude operations, providing a clean, illustrative design of fixed-point subtraction with sign and magnitude decomposition.

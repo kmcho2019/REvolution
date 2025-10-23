@@ -1,0 +1,33 @@
+To correctly implement the combinational 16-bit division by an 8-bit divisor as described, we need a shift-and-compare approach resembling restoring division, but following the problem's specific method:
+
+- Inputs A (16-bit dividend) and B (8-bit divisor) are captured into internal registers a_reg and b_reg combinationally.
+
+- Then, in a separate combinational always block, we perform the division by iterating 16 times, once for each bit of the dividend, starting from the most significant bit.
+
+- We maintain a remainder register (initialized to zero). At each iteration:
+
+  - Shift remainder left by 1 and bring down the next highest bit from the dividend.
+
+  - Extract the upper bits of the current remainder corresponding to the divisor width (i.e., the top 8 bits of the remainder) and compare it with the divisor b_reg.
+
+  - If this extracted portion >= divisor, subtract the divisor shifted into that position from the remainder and set the current quotient bit to 1, else set it to 0.
+
+- The remainder after all iterations is output as the remainder.
+
+Key fixes based on feedback:
+
+1. Instead of always comparing remainder[15:8], we dynamically align divisor and subtraction to the position of the highest bits of the remainder (which effectively is managed by the shifting and bit-width).
+
+2. Since remainder is 16 bits and divisor 8 bits, at each iteration remainder’s top bits align naturally because remainder is shifted left and new bits of dividend are concatenated in MSB-first order.
+
+3. The subtraction of divisor should be direct: if (remainder[15:8] >= b_reg), subtract (b_reg << 8) from remainder; else do nothing.
+
+4. The quotient bits are set based on whether subtraction took place.
+
+5. Keep inputs registered in one always block (for clarity) and perform the division in a second always block combinationally.
+
+This approach correctly implements the problem's described process and uses two always blocks as requested.
+
+Note: The problem states the quotient and remainder outputs are 16 bits. The quotient accumulates one bit per iteration; the remainder holds final residual 16-bit value.
+
+This approach is a straightforward combinational restoring division matching problem requirements.

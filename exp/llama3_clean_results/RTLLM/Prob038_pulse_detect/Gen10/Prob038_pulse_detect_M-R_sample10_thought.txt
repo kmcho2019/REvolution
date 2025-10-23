@@ -1,0 +1,7 @@
+The existing pulse detection module can be refactored by utilizing a state machine approach with an enumerate type to improve code readability and maintainability. Instead of using a single-bit state register, we can define an enumeration that represents the different states of the pulse detection process. This approach allows for clearer and more intuitive state transitions.
+
+We'll define an enumeration `state_type` with states `IDLE`, `HIGH`, and `PULSE_END`. The `IDLE` state represents the initial state where the input signal `data_in` is 0. The `HIGH` state is entered when `data_in` transitions from 0 to 1. Finally, the `PULSE_END` state is reached when `data_in` transitions back from 1 to 0, marking the end of a pulse.
+
+The output `data_out` will be set to 1 only when the current state is `PULSE_END`, indicating the end of a pulse. This logic can be implemented using a continuous assignment.
+
+The refactored design aims to improve the readability and maintainability of the code while maintaining the same functionality as the original implementation.

@@ -1,0 +1,11 @@
+To create a novel architectural solution for the 12-hour clock with BCD counters for hours, minutes, and seconds, along with an AM/PM indicator, we can employ a state machine approach. This approach allows for a more modular and manageable design. We can define separate states for each hour, minute, and second, and use a finite state machine (FSM) to transition between these states.
+
+The FSM will have three main states: hour state, minute state, and second state. The hour state will handle the incrementing of hours, the minute state will handle the incrementing of minutes, and the second state will handle the incrementing of seconds. The FSM will also have a reset state to handle the reset functionality.
+
+We can use a 4-bit register to store the hour, a 6-bit register to store the minutes, and a 6-bit register to store the seconds. The AM/PM indicator can be handled using a separate register.
+
+The FSM will transition between states based on the enable signal and the current values of the hour, minute, and second registers. When the enable signal is high, the FSM will increment the second register. If the second register reaches 59, the FSM will reset the second register and increment the minute register. If the minute register reaches 59, the FSM will reset the minute register and increment the hour register. If the hour register reaches 12, the FSM will reset the hour register to 1 and toggle the AM/PM indicator.
+
+The reset functionality will be handled by resetting all registers to their initial values when the reset signal is high.
+
+This approach allows for a more efficient and scalable design, as it separates the logic for each state and allows for easy modification and extension of the design.

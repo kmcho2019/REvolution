@@ -1,0 +1,6 @@
+Fuse the two approaches by using a binary-encoded FSM with a minimal number of states (like Example 1) to reduce area, while removing the separate shift counter by expanding the SHIFT phase into sequential substates (like Example 2) to eliminate an extra register and simplify control logic.  
+Implement the 1101 pattern detection via sequential SEARCH states for clear, deterministic transitions without needing a separate data shift register, which reduces unnecessary toggling and power.  
+Use a single always_ff block with synchronous reset to update state, improving timing by avoiding separate combinational state assignments.  
+Derive outputs from state encoding using simple combinational assignments for clarity and minimal logic.  
+This fusion optimizes area by eliminating a counter, reduces power by minimizing toggling in data registers, and improves timing by simplifying next-state logic and keeping state transitions explicit and local.  
+Overall, the FSM cleanly sequences through SEARCH (pattern detection), SHIFT (four substates), COUNT, and DONE states, ensuring correct timing of shift_ena, counting, and done signals.

@@ -1,0 +1,22 @@
+Novel approach using a hybrid LUT/decoder design:
+
+1. Key Insight:
+   - Instead of traditional SOP/POS implementations, use a more efficient lookup-table approach that leverages the specific input conditions
+   - Since we know certain input combinations (3,8,11,12) never occur, we can treat them as don't-cares for optimization
+
+2. Optimized SOP:
+   - Notice that all true cases (2,7,15) have c=1 and d=1 for 7/15
+   - Can factor out common terms: (~a & ~b & c & ~d) OR (c & d & (~a & b OR a & b))
+   - This reduces to: (~a & ~b & c & ~d) | (c & d & b)
+
+3. Optimized POS:
+   - Observe that output is 0 when either:
+     - c=0 (for 0,1,4,5,6) OR
+     - a=1 with specific patterns (9,10,13,14)
+   - Can be expressed as: (c) & (a | patterns)
+   - Further refined by combining terms
+
+4. Implementation:
+   - Use these optimized Boolean expressions
+   - Takes advantage of don't-care conditions for minimization
+   - Results in significantly simpler logic than original solution

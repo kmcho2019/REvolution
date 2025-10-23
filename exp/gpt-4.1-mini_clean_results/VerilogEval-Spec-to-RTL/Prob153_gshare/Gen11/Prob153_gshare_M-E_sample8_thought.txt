@@ -1,0 +1,23 @@
+I will implement the gshare predictor using a dual-ported approach for the global history register (GHR) and the pattern history table (PHT) to carefully handle simultaneous prediction and training within the same cycle.
+
+Key idea:
+- Maintain the current GHR (`ghr_reg`) and a *pipeline register* (`ghr_pred`) that latches the GHR used for the most recent prediction output. This pipeline register captures the GHR state *at prediction request time*, so `predict_history` outputs the exact GHR used for prediction.
+
+- Compute prediction index and read PHT combinationally from `ghr_reg` and `predict_pc`.
+
+- Prediction outputs (`predict_taken`, `predict_history`) reflect the *latched* GHR (`ghr_pred`) and corresponding PHT entry, ensuring outputs correspond to the state at prediction request time, before any update.
+
+- Updates to PHT and GHR occur only on clock edge:
+  - Training updates the PHT entry addressed by `train_pc ^ train_history`.
+  - If training indicates a misprediction, recover GHR to `train_history`.
+  - Else if prediction valid (and no training misprediction), update GHR by shifting in predicted taken bit from previous prediction (stored in `pred_taken_next`).
+  
+- To handle simultaneous prediction and training:
+  - Priority is given to training recovery on misprediction for GHR update.
+  - Prediction uses the previous `ghr_reg` state and PHT state before any update, satisfying spec timing.
+
+- The predicted taken bit fed into the GHR update is stored in a register (`pred_taken_next`) updated on every prediction valid cycle, so that GHR updates with the *previous* prediction's taken bit, aligning with the pipeline behavior.
+
+- Initialize GHR and PHT on asynchronous reset.
+
+This structure cleanly decouples prediction output timing from GHR update timing, aligns outputs with the exact history state used for prediction, and respects training priority and timing, fully matching the spec requirements.

@@ -1,0 +1,15 @@
+The original expression can be simplified by factoring terms: next_y1 = (y0 & ~y1) | ((~y0) & (y1 | y2) & w).
+
+Notice that (y1 | y2) & w is only active when y0=0, so combining this and the first term with y0, we can rewrite as:
+
+next_y1 = y0 & ~y1 | (y1 | y2) & w & ~y0
+
+No further factoring reduces gate count significantly. However, since y0 and ~y0 are exclusive, we can write the expression in a more compact way:
+
+next_y1 = y0 & ~y1 | ((y1 | y2) & w & ~y0)
+
+This expression is already minimal and simple. So the simplest code is to directly assign this expression with minimal intermediate wires.
+
+The output Y1 is assigned the computed next_y1.
+
+This reduces code complexity by removing explicit declarations of intermediate wires and directly using bit extractions and expression in the assign statement.

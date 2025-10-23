@@ -1,0 +1,11 @@
+Refactor the design to use a two-stage pipeline with explicit registers for each stage, separating input capturing and output generation more cleanly. Replace some sequential always blocks with combinational assign statements to improve readability and potentially assist synthesis tools in optimization.
+
+Key changes:
+- Remove the explicit FSM and replace with a simple 2-cycle pipeline controlled by a counter.
+- Use nonblocking assignments only for registers updated on clock edges.
+- Use assign statements for all purely combinational logic including special case detection, sign/exponent/mantissa extraction, product calculation, normalization, rounding, and output assembly signals.
+- Use a dedicated counter register to control the pipeline stages and latch intermediate signals.
+- Register all intermediate signals for pipeline stage 1 to stage 2.
+- Output result after the second pipeline stage.
+- Handle special cases as combinational conditions and mux output accordingly at the end.
+- This structure improves timing by pipelining multiplication and normalization stages separately, potentially enabling higher clock frequency.

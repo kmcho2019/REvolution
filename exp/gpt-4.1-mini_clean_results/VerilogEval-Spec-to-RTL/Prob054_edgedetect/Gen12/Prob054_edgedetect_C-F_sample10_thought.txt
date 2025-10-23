@@ -1,0 +1,14 @@
+Fuse the strengths of both examples by simplifying storage to just one register holding the previous input vector (like Example 2) for area and power efficiency, while maintaining explicit separation of the combinational edge detection and registered output stage.
+
+Incorporate the idea of delaying the pedge output by one cycle after detection (from Example 2), ensuring pedge asserts exactly one clock cycle after the 0-to-1 transition. Use non-blocking assignments consistently and keep combinational logic simple (~prev_in & in).
+
+Additionally, enhance code readability and timing by isolating combinational edge detection in a wire and registering both previous input and pedge in separate always blocks, as in Example 2.
+
+This fusion yields:
+- Minimal register usage (only prev_in and pedge registers).
+- Clean, explicit, and modular logic with minimal combinational complexity.
+- Registered output to break combinational loops and improve timing.
+- Efficient power and area usage by not storing redundant bits.
+- Clear timing: pedge shows edges detected exactly one cycle before.
+
+This balanced approach combines the area/power advantage and simplicity of Example 2 with the conceptual clarity and pipelining discipline suggested in Example 1.

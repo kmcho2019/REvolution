@@ -1,0 +1,12 @@
+Refactor the fixed-point subtractor to explicitly separate sign and magnitude handling by decomposing the inputs into sign and magnitude components. Then, depending on the sign combination, either perform magnitude subtraction or addition and finally restore the sign. This approach explicitly follows the problem description for "Same Sign Subtraction" and "Different Sign Subtraction". Additionally, handle the zero-result case by forcing the sign bit to zero. 
+
+This method avoids relying purely on two's complement arithmetic and instead mimics manual fixed-point arithmetic with sign/magnitude considerations, making the logic explicit and potentially improving code clarity and testability. The entire logic will be combinational with no internal registers (using wires and continuous assignments). Parameterization is kept for total and fractional bits.
+
+Steps:
+- Extract sign and magnitude from inputs a and b.
+- If signs are equal, subtract magnitudes; output sign same as inputs.
+- If signs differ, add magnitudes; output sign determined by which operand is larger.
+- For zero result, force sign bit zero.
+- Combine sign and magnitude to form the result.
+
+This aligns with the problem's specification for handling subtraction with fixed-point signed numbers in a clear, stepwise manner.

@@ -1,0 +1,14 @@
+Here's a refactored version using a more arithmetic approach with explicit saturation checks instead of a state machine. This approach:
+
+1. Treats the counter as a numeric value rather than discrete states
+2. Uses continuous assignments for increment/decrement logic
+3. Explicitly checks for saturation before updating the counter
+4. Maintains the same reset behavior (weakly not-taken = 2'b01)
+5. Uses a single always block for sequential logic
+
+Key improvements:
+- Removes the case statement which might synthesize to more complex logic
+- Makes the saturation behavior more mathematically explicit
+- Potentially reduces logic depth by combining arithmetic operations
+- Eliminates the need for state encoding parameters
+- More directly expresses the counter behavior

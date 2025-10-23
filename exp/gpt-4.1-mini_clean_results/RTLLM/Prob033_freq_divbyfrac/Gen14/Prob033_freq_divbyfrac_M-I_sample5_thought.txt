@@ -1,0 +1,17 @@
+The original approach uses a single 3-bit counter triggered on both edges of `clk` and relies on the modulus operator `%` in a wire assignment, which is not synthesis-friendly. Moreover, using both posedge and negedge in the sensitivity list for a single counter can cause timing and synthesis issues.
+
+To improve the design:
+
+1. Use a free-running 4-bit counter clocked only on the positive edge of `clk` to count half cycles by internally toggling a `clk_2x` signal on every negedge. This creates an internal "double-frequency" clock within the module, enabling half-cycle resolution.
+
+2. Generate two signals shifted by half a clock period using this `clk_2x` signal and the counter.
+
+3. Implement modulo 7 counting logic using comparison instead of `%` operator to ensure synthesizability.
+
+4. Generate the two intermediate clock signals (`clk_out_posedge` and `clk_out_negedge`) based on the counter value, with the second signal offset by one count for the half-cycle phase shift.
+
+5. Use two always blocks: one for the `clk_2x` toggling at negedge, and one for the counter at `clk_2x` posedge, ensuring clean synchronous design.
+
+6. Finally, OR the two signals to produce the output.
+
+This approach cleanly separates the generation of a doubled clock and the fractional division logic, eliminates non-synthesizable operators, avoids dual-edge triggered counters, and improves robustness and synthesis friendliness.

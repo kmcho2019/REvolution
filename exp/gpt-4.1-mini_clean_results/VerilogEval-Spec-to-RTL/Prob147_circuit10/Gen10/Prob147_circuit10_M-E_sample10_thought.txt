@@ -1,0 +1,31 @@
+To decode the waveform behavior, note the following:
+
+- The state bit is 0 initially.
+- When b=0, the state tends to hold its value.
+- When b=1 and a=0, the output q becomes 1 if the state was 0, and remains 1 if the state was already 1.
+- When b=1 and a=1, the output q resets to 0, and state transitions seem to reset or toggle accordingly.
+
+Notice the output q is not simply equal to the state; q seems to be the next state value, or a function of the inputs and current state.
+
+A novel approach is to treat the flip-flop as storing 'state', and produce q as the combinational logic output derived from state, a, and b.
+
+By carefully extracting the behavior from the waveform:
+
+- Next state depends on current state, a and b.
+- q is equal to the next state.
+- The next state can be expressed as:
+
+  next_state = (b & (~a)) | (state & ~(b & a))
+
+This means:
+- If b=1 and a=0, next_state=1
+- If b=1 and a=1, next_state=0
+- If b=0, next_state=state (hold current)
+
+Thus, q = next_state.
+
+This matches the waveform: q shows the next state to be latched on clock edge.
+
+Implement this by computing next_state combinationally, assign q=next_state, and update state on posedge clk. Initialize state to 0.
+
+This architecture cleanly separates combinational output q from state, and matches the waveform behavior.

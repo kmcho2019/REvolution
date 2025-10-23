@@ -1,0 +1,15 @@
+Simplified design approach:
+1. Remove explicit overflow handling since fixed-point arithmetic naturally wraps around
+2. Eliminate intermediate wire declarations by combining expressions
+3. Simplify sign determination logic by using XOR for sign comparison
+4. Directly compute result without separate magnitude comparison when signs differ
+5. Use bitwise operations for more efficient sign handling
+6. Maintain same parameterized interface and core functionality
+7. Reduce logic stages by combining operations where possible
+
+Key simplifications:
+- Removed overflow saturation logic (letting it wrap naturally)
+- Combined magnitude comparison and operation selection
+- Reduced wire declarations by using direct expressions
+- Simplified sign logic using XOR and bitwise operations
+- Same fixed-point precision handling with parameters Q and N

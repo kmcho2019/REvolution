@@ -1,0 +1,13 @@
+To fuse the best ideas from both examples for an optimal solution:
+
+1. Retain the explicit combinational next-state logic with clear priority: load > rotate left > rotate right > hold. This keeps control clarity and eases synthesis optimization.
+
+2. Use direct bit-indexing with small concatenations in the combinational block to avoid long combinational paths and facilitate efficient mux synthesis.
+
+3. Introduce a local register enable signal (`reg_enable`) that is high only when load or a valid rotation occurs, implementing implicit clock gating to reduce toggling and power.
+
+4. Use a clocked always block with non-blocking assignment that updates q only when reg_enable is asserted, minimizing dynamic power during idle cycles.
+
+5. This approach reduces dynamic power (clock gating effect), improves performance (explicit mux logic helps synthesis tools optimize critical path), and maintains minimal area (simple muxing of bits rather than complex barrel shifters).
+
+Overall, the fused design combines power efficiency from gating, performance from clear combinational mux logic, and area efficiency by avoiding redundant or complex rotate logic, delivering a balanced superior solution.

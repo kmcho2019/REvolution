@@ -1,0 +1,19 @@
+The previous implementation correctly separated combinational prediction from sequential updates and gave training priority for GHR recovery. However, reading the PHT asynchronously from a reg array may cause simulation mismatches or synthesis issues in some tools. Also, registering the outputs only on predict_valid edges may cause output glitches or unstable outputs when predict_valid is low.
+
+To fix these issues and improve robustness:
+
+1. Implement a synchronous read for the PHT by registering the index on the clock edge when predict_valid is high, so the PHT output is stable and consistent with synchronous memory behavior.
+
+2. Store the PHT read data into a register on the clock edge, and generate prediction outputs from this registered data. This prevents combinational read hazards and aligns timing between PHT read and output.
+
+3. Always output valid prediction data; if predict_valid is low, outputs hold their previous values, ensuring stable outputs and meeting typical synchronous design expectations.
+
+4. GHR updates remain prioritized: if train_mispredicted, recover GHR from train_history; else if predict_valid, shift in the predicted taken bit from the registered PHT output.
+
+5. Update PHT only on the clock edge with train_valid, preserving the previous design's saturating counter update logic.
+
+This approach treats the PHT as a synchronous RAM, aligns timing of prediction and updates, prevents race conditions, and stabilizes outputs to match testbench expectations, thus fixing the timing and mismatch issues observed.
+
+Additional minor improvement: initialize PHT entries to weakly not taken (2'b01) for a reasonable startup state.
+
+Overall, this design fully respects the original specification and fixes simulation mismatches through synchronous PHT access and registered outputs.

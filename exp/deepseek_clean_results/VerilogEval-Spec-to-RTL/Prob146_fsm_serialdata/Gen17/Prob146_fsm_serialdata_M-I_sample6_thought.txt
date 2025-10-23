@@ -1,0 +1,22 @@
+To optimize the design for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. Performance:
+- Use one-hot encoding for state machine to simplify decoding logic and reduce critical path
+- Separate done signal generation to reduce timing pressure on state transitions
+- Simplify bit_count comparison by using a terminal count signal
+
+2. Power:
+- Add enable signals to reduce unnecessary register updates
+- Minimize switching activity in ERROR state by gating logic
+
+3. Area:
+- Optimize state encoding to use fewer bits while maintaining performance
+- Simplify shift register implementation by using direct assignment
+- Reduce bit_count width to exactly what's needed
+
+The improved design will:
+- Use 4 one-hot encoded states for simpler decoding
+- Add a recv_enable signal to gate shift register updates
+- Use a terminal_count signal for cleaner bit_count comparison
+- Separate done signal generation logic
+- Optimize register updates to only occur when needed

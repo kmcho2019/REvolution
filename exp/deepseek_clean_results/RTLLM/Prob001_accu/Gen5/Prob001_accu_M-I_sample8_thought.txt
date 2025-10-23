@@ -1,0 +1,10 @@
+To optimize the accumulator module for better PPA metrics, we'll implement these improvements:
+1. **Timing Optimization**: Replace the ripple-carry adder with a pipelined accumulator to break the critical path. We'll split the accumulation into two stages.
+2. **Power Optimization**: Add an enable signal to prevent unnecessary accumulator updates when valid_in is low.
+3. **Area Optimization**: Use a 1-bit counter instead of 2-bit since we only need to detect the 4th input, and optimize register widths where possible.
+
+The improved design will:
+- Use a 1-bit counter (toggle flip-flop) to count inputs
+- Implement a two-stage pipelined accumulator
+- Gate the accumulator updates with valid_in
+- Maintain the same functionality while improving PPA

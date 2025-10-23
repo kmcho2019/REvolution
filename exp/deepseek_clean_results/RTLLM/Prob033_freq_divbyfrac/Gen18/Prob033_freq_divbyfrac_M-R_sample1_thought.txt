@@ -1,0 +1,18 @@
+Refactored design for 3.5x fractional divider with improved structure:
+
+1. Core concept remains: Use 7-cycle counter (0-6) for 3.5x division
+2. Key changes:
+   - Replace sequential logic with combinational assignments where possible
+   - Explicit state machine for clearer cycle control
+   - Proper phase relationship using both edges
+   - Simplified clock generation logic
+3. New approach:
+   - Use continuous assignments for clock outputs
+   - State machine tracks current phase (long/short)
+   - Generate two 50% duty cycle clocks with 180° phase shift
+   - Combine with OR for final output
+4. Improvements:
+   - Clearer state transitions
+   - More precise phase control
+   - Reduced sequential logic
+   - Maintains same 3.5x division ratio

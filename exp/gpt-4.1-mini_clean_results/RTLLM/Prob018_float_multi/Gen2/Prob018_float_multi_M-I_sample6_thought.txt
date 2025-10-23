@@ -1,0 +1,13 @@
+To fix the subtle functional failures, I will improve the rounding and normalization logic and carefully handle mantissa overflow after rounding. Specifically:
+
+- Detect mantissa overflow after rounding correctly by checking if the 24-bit mantissa exceeds 24'hFFFFFF (all ones) or actually if it exceeds 24'hFFFFFF (which is max mantissa), the correct overflow check is if the mantissa >= 24'h1000000 (24 bits with a leading 1 beyond the mantissa range).
+- When mantissa overflows after rounding, shift mantissa right by 1 and increment exponent to maintain normalization.
+- Properly handle rounding bits and sticky bit extraction according to the normalization shift.
+- Keep the exponent width 9 bits internally but carefully assign only lower 8 bits to the output.
+- For underflow (rounded_exp <= 0), output zero since subnormal handling is complex, but explicitly comment this.
+- Ensure the code does not update registers combinationally but all inside the sequential block.
+- Improve readability by splitting rounding into a separate step.
+- Fix rounding increment bug by applying rounding increment only once.
+- Keep special case handling intact and carefully re-check conditions.
+
+This approach will make the design fully IEEE-754 compliant for normal, zero, infinity, and NaN cases, and improve rounding correctness and normalization, likely passing all tests without adding complexity or pipeline stages.

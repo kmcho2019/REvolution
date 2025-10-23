@@ -1,0 +1,9 @@
+To improve the pipelined 8-bit multiplier's performance and area, the summation of partial products will be split into multiple pipeline stages rather than a single large adder. This reduces the critical path delay, enabling a higher clock frequency. The design will have three pipeline stages:
+
+1. Stage 1: Capture inputs and generate partial products (shifted multiplicand masked by multiplier bits).
+2. Stage 2: Sum partial products in pairs, reducing eight partial products to four sums.
+3. Stage 3: Sum the four sums into the final product and register the output enable.
+
+This balanced pipeline reduces combinational logic per cycle, shortens critical paths, and improves max clock frequency (timing). We also maintain enable signal propagation through the pipeline for correct output validity. Registers update only when needed, avoiding unnecessary toggling for better power.
+
+The pipeline stages correspond to registers that delay partial sums and enable signals by one cycle each. Output is only asserted when the entire pipeline is valid. This multi-stage approach offers better timing closure with minimal area increase, providing a good balance between performance, power, and area.

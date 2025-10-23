@@ -1,0 +1,9 @@
+I will implement a 4-digit BCD counter as a single 16-bit register that increments by 1 every clock cycle. Instead of incrementing each digit separately with ripple carry, I will implement a single binary increment step followed by a combinational BCD correction that fixes invalid BCD digits (>9) by adding 6 (0x6) to each digit that overflows.
+
+This approach treats the entire 16-bit register as a packed BCD number, increments it like a binary number, then applies the BCD correction digit-by-digit. The correction ensures each 4-bit digit remains a valid BCD digit without nested ripple carry logic in the sequential block, improving timing.
+
+Enable signals are generated combinationally based on the carry-out from each digit's correction (indicating that digit was about to overflow), simplifying carry detection without cascading AND logic.
+
+Synchronous active-high reset initializes the count to zero.
+
+This architecture reduces carry propagation complexity and removes nested conditional increments, improving clock frequency potential and area efficiency while preserving a clean interface and straightforward enable logic.

@@ -1,0 +1,13 @@
+Fuse the two examples by adopting the intuitive stack pointer (SP) scheme from Example 2 where SP points to the next free slot (0=empty, 4=full) for clarity, while maintaining the separated always blocks for pointer and memory operations from Example 1 to reduce combinational dependencies and improve timing.
+
+In the first always block, update SP synchronously based on EN, RW, and boundary conditions, using non-blocking assignments to avoid race conditions.
+
+In the second always block, handle stack memory write on push and dataOut update on pop using the stable SP values, ensuring dataOut registers synchronously on pop.
+
+Combine the initialization of both SP and memory inside reset conditions for clean start.
+
+Drive EMPTY and FULL flags combinationally from SP for minimal toggle and power consumption.
+
+Avoid clearing stack memory on pop to reduce power. Also, use the SP encoding and arithmetic from Example 2 (0=empty to 4=full), but ensure indexing uses SP - 1 on push and SP - 1 on pop read, aligning with memory access locations.
+
+This fusion leverages intuitive pointer semantics, clean separation of control and memory logic, and power-efficient flag and memory handling, improving clarity, timing, and power efficiency.

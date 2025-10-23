@@ -1,0 +1,15 @@
+Fuse the clarity and simplicity of Example 1's separate `falling` and `direction` registers with the clean, enumerated state approach of Example 2. 
+
+Strategy:
+- Maintain `falling` as a separate 1-bit register indicating whether the Lemming is falling.
+- Maintain `direction` as a separate 1-bit register (0=left, 1=right) independent of the falling state, so direction is always remembered.
+- Use asynchronous reset (posedge areset) to initialize to walking left and not falling.
+- On each clock:
+  - If falling, remain falling until ground returns; `aaah`=1; bumps ignored.
+  - If walking and ground disappears, enter falling state but retain direction.
+  - If walking and ground present, bumps update direction: bump_left means go right, bump_right means go left; if both bumps present, flip direction.
+- Outputs are combinational based on `falling` and `direction`.
+- This approach isolates state and direction management, making bump logic explicit, avoids complex enum states, and reduces next_state combinational complexity, improving PPA metrics.
+- Keeps Moore FSM style and asynchronous reset as requested.
+
+This fusion combines Example 1's power and area efficiency with Example 2's clear state separation, yielding a clean, minimal, easy-to-understand FSM with good timing and power characteristics.

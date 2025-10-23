@@ -1,0 +1,13 @@
+To refactor the given code, we'll address the issues identified in the analysis and apply a different structure to improve the design. 
+1. We will modify the state machine to correctly verify the start bit before proceeding to the data bit counting state.
+2. In the STOP state, we will correctly handle the case where the stop bit is not received by resetting the dataBitCount and dataBits.
+3. We will set the byteReceived flag only when a complete byte has been correctly received.
+4. We will modify the code to correctly handle the requirement that the serial protocol sends the least significant bit first.
+
+The refactoring strategy will be:
+- Use a single always block for the entire state machine.
+- Implement the states as enumerated types for better readability.
+- Use a temporary variable to store the next state, reducing the complexity of the state transitions.
+- Use a separate variable to track the current bit position during data bit reception.
+- Clear the byteReceived flag when transitioning from the STOP state back to the IDLE state.
+- Use a combinational logic for the output 'done' assignment.

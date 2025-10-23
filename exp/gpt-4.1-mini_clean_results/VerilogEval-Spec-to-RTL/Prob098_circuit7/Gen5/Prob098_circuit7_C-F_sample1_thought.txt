@@ -1,0 +1,12 @@
+The waveform shows that q at the next clock edge equals the inverted value of input a at the current clock edge. Both example solutions correctly implement this behavior: Example 1 uses a separate DFF module with an explicit inverter in combinational logic; Example 2 uses a single always block with registered output and inversion inside. 
+
+Example 2 is more compact and power-efficient by embedding the inverter inside the sequential logic, avoiding any combinational logic at the output. Example 1 is more modular and clear by separating combinational and sequential logic, which can aid testability and reuse.
+
+To fuse the best of both, I will implement a separate DFF module with q as a registered output (non-blocking assignment) and perform the inversion inside the sequential block of the DFF module. This keeps modularity while also placing inversion inside sequential logic, thereby minimizing combinational paths and reducing power and timing overhead. The TopModule will instantiate this DFF and directly feed input a (not inverted) into it, relying on the DFF internal logic to invert the input at clock edges.
+
+This fusion combines:
+- Modular design (from Example 1)
+- Inversion inside the sequential block (from Example 2)
+- Clean registered output without combinational logic on q
+
+This yields minimal power usage and simple timing paths with clean separation of modules.

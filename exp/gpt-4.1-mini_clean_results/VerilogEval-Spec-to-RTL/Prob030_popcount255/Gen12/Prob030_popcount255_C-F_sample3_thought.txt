@@ -1,0 +1,11 @@
+Combine the recursive, parameterized approach of Example 1 with the structural, optimized popcount8 base module of Example 2 to create a highly efficient and scalable popcount design.
+
+Fusion strategy:
+- Use Example 1's clean recursive splitting and addition for arbitrary WIDTH with generate blocks for synthesis compatibility.
+- Incorporate Example 2's well-optimized, structural popcount8 module as the base case for WIDTH ≤ 8, ensuring better synthesis quality and timing on small segments.
+- Explicitly handle odd widths in recursion by splitting into halves and summing recursively.
+- Use generate-if blocks (instead of direct if statements) for clean elaboration and synthesis-friendly code.
+- Zero-pad input to popcount8 when WIDTH < 8, avoiding excess complexity.
+- Output width derived via $clog2(WIDTH+1), matching maximum count.
+- Avoid behavioral code inside the popcount module; all logic is structural and recursive, ensuring good synthesis and clarity.
+- This fusion maintains clarity, scalability, and structural efficiency, balancing timing, area, and power improvements.

@@ -1,0 +1,42 @@
+`timescale 1ns/1ps
+
+module TopModule(
+    input  clk,
+    input  reset,
+    input  in,
+    output reg out
+);
+
+// Enum for states to improve readability
+localparam STATE_A = 2'b00;
+localparam STATE_B = 2'b01;
+localparam STATE_C = 2'b10;
+localparam STATE_D = 2'b11;
+
+reg [1:0] state, next_state;
+
+initial state = STATE_A;
+
+always @(posedge clk) begin
+    if (reset) begin
+        state <= STATE_A;
+    end else begin
+        state <= next_state;
+    end
+end
+
+// Simplified next state logic
+always @(*) begin
+    case (state)
+        STATE_A: next_state = in? STATE_B : STATE_A;
+        STATE_B: next_state = in? STATE_B : STATE_C;
+        STATE_C: next_state = in? STATE_D : STATE_A;
+        STATE_D: next_state = in? STATE_B : STATE_C;
+        default: next_state = STATE_A;
+    endcase
+end
+
+// Direct assignment for output based on the state
+assign out = (state == STATE_D)? 1'b1 : 1'b0;
+
+endmodule

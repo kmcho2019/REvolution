@@ -1,0 +1,7 @@
+To refactor the given code, we can utilize a different approach to capture the transitions from 1 to 0 in the input signal. Instead of using a separate register `prev_in` to store the previous input state, we can directly compare the current input with the previous input within the `always` block. This approach simplifies the code and eliminates the need for an additional register.
+
+However, the key issue in the original code is that the output `out` is being cleared when the input bit remains 0 after a transition from 1 to 0. To fix this, we should only update `out` when a transition from 1 to 0 is detected or when the reset is active. In other cases, `out` should retain its previous state.
+
+We can achieve this by using a non-blocking assignment to set the bits of `out` to 1 when a transition from 1 to 0 is detected and use a reset condition to clear `out`. This ensures that `out` remains 1 until the register is reset.
+
+Additionally, to improve the design, we can use a more explicit way to describe the logic, making it easier to understand and maintain. We will use a temporary variable to store the previous input state, but we will also use a more straightforward logic expression to update `out`.

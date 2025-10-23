@@ -1,0 +1,11 @@
+Fuse the clarity and mutually exclusive enables approach of Example 2 with the power and timing optimizations from Example 1 by:
+
+- Defining mutually exclusive enables so shift and count are never both active, improving power efficiency.
+- Implementing a combinational always block for next_q to separate combinational logic and make timing clearer and optimization easier.
+- Implementing a synchronous reset-like initialization using a flip-flop state (init_done) to safely initialize q to zero at startup without relying on asynchronous reset or initial block, thereby reducing toggling after initialization.
+- Performing the decrement with addition of 4'b1111 (i.e., q - 1 modulo 16) for a potentially simpler carry chain implementation, minimizing logic depth and improving timing.
+- Using non-blocking assignments and separating combinational and sequential logic for clarity, maintainability, and synthesis friendliness.
+- Holding the current value of q when neither enable is asserted.
+- The initialization logic is active only once and then disabled, preventing extra toggling.
+  
+This fusion achieves the best PPA by reducing toggling during initialization, enforcing mutually exclusive enables, optimizing decrement operation, and preserving code clarity and synthesis friendliness.

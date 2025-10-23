@@ -1,0 +1,21 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the critical path by registering the XOR index computation
+   - Add output registers for prediction results to break long combinational paths
+   - Separate PHT access and update paths to reduce fanout
+
+2. Power Optimization:
+   - Add clock gating for PHT updates to reduce unnecessary switching
+   - Implement enable signals for XOR operations to prevent toggling when inactive
+   - Use gray coding for GHR updates to minimize bit transitions
+
+3. Area Optimization:
+   - Share XOR logic between prediction and training paths
+   - Optimize saturating counter update logic with more efficient encoding
+
+Key Changes:
+- Added pipeline registers for index computation
+- Implemented clock gating for PHT updates
+- Shared XOR logic between paths
+- Optimized GHR update logic
+- Maintained same functionality with improved PPA

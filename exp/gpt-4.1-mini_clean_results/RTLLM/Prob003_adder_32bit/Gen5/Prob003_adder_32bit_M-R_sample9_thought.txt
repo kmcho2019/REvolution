@@ -1,0 +1,11 @@
+Refactor the 32-bit CLA adder to use a more explicit hierarchical carry lookahead structure with separate generate and propagate group signals for each 16-bit block and explicitly compute the carry-in for the upper block from those group signals using continuous assignments only (no internal wires with recursive assignments). Instead of a single recursive prefix for G_block, compute it by explicitly building the carry lookahead tree using generate and propagate signals at a 4-bit granularity inside the 16-bit block. This breaks the group generate into smaller segments, which illustrates a more modular and parallel carry-lookahead logic and can be clearer for verification and synthesis.
+
+Key changes:
+- In cla_16bit, generate propagate and generate signals in 4-bit groups, then combine to get P_block and G_block.
+- Compute the carry signals using parallel prefix steps with explicitly assigned intermediate carry signals, rather than the recursive assignment gen_int.
+- Use only continuous assignments with intermediate wires; no procedural blocks.
+- Maintain the top-level 32-bit adder architecture with two 16-bit CLA instances but use the new cla_16bit structure.
+- Map input/output indexes similarly.
+This approach improves modularity and exposes the hierarchical CLA carry generation more clearly.
+
+The functionality remains the same but with clearer hierarchical signal decomposition and no recursive wire assignments.

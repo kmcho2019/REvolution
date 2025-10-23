@@ -1,0 +1,11 @@
+Simplify the FSM by combining WAIT_STOP and CHECK_STOP states into a single STOP_CHECK state with two sub-modes to reduce state complexity.
+
+Implement a small 4-state FSM: IDLE (waiting for start bit), RECEIVE (shifting in 8 data bits), STOP_CHECK (checking for stop bit, or waiting for it if invalid), and DONE (pulsing done signal for one clock cycle).
+
+Use a simple 3-bit bit counter and an 8-bit shift register that shifts bits in at LSB position (consistent with LSB-first serial data).
+
+Generate done signal synchronously for one cycle in the DONE state.
+
+Use binary encoding with fewer states and simpler combinational next state logic.
+
+This reduces state machine complexity and clarifies done pulse generation without losing functionality.

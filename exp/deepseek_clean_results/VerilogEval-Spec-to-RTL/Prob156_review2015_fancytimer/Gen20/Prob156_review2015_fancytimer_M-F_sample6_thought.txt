@@ -1,0 +1,23 @@
+Key Fixes Needed:
+1. **Accurate Cycle Counting**: Replace modulo operation with precise cycle counting using two counters:
+   - A main counter for total cycles (0 to (delay+1)*1000-1)
+   - A sub-counter for tracking 1000-cycle intervals
+
+2. **Proper State Transitions**:
+   - Ensure counting lasts exactly (delay+1)*1000 cycles
+   - Transition to DONE only after full duration
+
+3. **Count Output Logic**:
+   - Update count value every 1000 cycles
+   - Maintain correct value throughout each interval
+
+4. **Reset Handling**:
+   - Clear all counters and registers properly on reset
+
+Implementation Approach:
+1. Use separate registers for pattern detection (4 bits) and delay value (4 bits)
+2. Implement two-stage counting:
+   - 1000-cycle base counter (counts 0-999)
+   - Interval counter (counts delay down to 0)
+3. State machine remains simple but with precise timing control
+4. Output count reflects remaining intervals (delay_count)

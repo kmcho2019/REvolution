@@ -1,0 +1,9 @@
+The provided code implements a finite state machine (FSM) that searches for message boundaries in an input byte stream. The FSM has three states: waiting for the first byte, waiting for the second byte, and waiting for the third byte. The `byte_count` signal is used to track the current state. 
+
+To refactor this code, we can use a counter to track the number of bytes received instead of a binary encoded state machine. We can also use a more straightforward logic to update the `out_bytes` signal and to assert the `done` signal. 
+
+The main idea is to use a counter that increments every time a byte is received. When the counter reaches 3, it means that a message has been received and we assert the `done` signal. We can use a combinational logic to determine the next state based on the current state and the input signal. 
+
+Additionally, we can use an `always` block with a non-blocking assignment to update the `out_bytes` signal and the `done` signal. This approach is more straightforward and easier to understand than the original code.
+
+We will also use a more modular approach, separating the logic for the state machine, the `out_bytes` signal, and the `done` signal into different parts of the code. This makes the code more readable and easier to maintain.

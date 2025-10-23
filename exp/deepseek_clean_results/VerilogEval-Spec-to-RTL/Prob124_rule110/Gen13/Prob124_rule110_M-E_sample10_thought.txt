@@ -1,0 +1,16 @@
+Novel Architecture: Hierarchical Rule 110 with Boundary Pre-computation
+
+Key Innovations:
+1. **Hierarchical Neighborhood Processing**: Instead of processing each cell individually, we process cells in overlapping groups of 3 to share common neighbor computations. This reduces redundant logic.
+
+2. **Boundary Pre-computation**: Handle boundary conditions separately in dedicated registers rather than checking conditions for every cell. This eliminates 512 boundary condition checks.
+
+3. **Optimized Rule Logic**: Implement Rule 110 using a minimal 3-input LUT pattern that directly maps to hardware primitives.
+
+4. **Parallel Load Path**: Create a dedicated load path that bypasses the computation logic when loading, reducing unnecessary switching activity.
+
+Benefits:
+- Reduced logic depth by sharing neighbor computations
+- Eliminated boundary condition checks in the main datapath
+- More efficient mapping to FPGA/ASIC primitives
+- Lower power during load operations

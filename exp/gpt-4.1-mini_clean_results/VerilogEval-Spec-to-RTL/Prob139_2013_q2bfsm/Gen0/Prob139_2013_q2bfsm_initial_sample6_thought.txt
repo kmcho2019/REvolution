@@ -1,0 +1,27 @@
+Design an FSM with clearly defined states corresponding to the problem description:
+
+- State A: reset asserted, outputs f=0, g=0; stay here while resetn=0.
+- On resetn de-assertion, move to State B where f=1 for one cycle, then move to State C.
+- State C: Monitor x input to detect the sequence 1,0,1 over three successive clock cycles.
+  Use a small shift register or counters to detect this pattern.
+- When sequence detected, move to State D with g=1.
+- State D: Monitor y for up to two cycles.
+  If y=1 within these two cycles, maintain g=1 permanently (State E).
+  Otherwise, set g=0 permanently (State F).
+- States E and F are stable terminal states with g=1 and g=0, respectively, until reset.
+
+Implement synchronous reset and outputs updated on clock edges accordingly.
+
+Outputs:
+- f = 1 only during State B for one cycle.
+- g = 1 starting State D, maintained in E or cleared in F.
+
+Use a state machine coded via an enumerated type or localparams.
+
+Use a small register to track x pattern to detect 1,0,1 on successive clocks.
+
+Count cycles in State D to check if y=1 within 2 clocks.
+
+Synchronous reset is active low, so resetn=0 means reset asserted.
+
+Ensure outputs are updated synchronously.

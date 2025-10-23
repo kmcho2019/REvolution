@@ -1,0 +1,13 @@
+The refactored design maintains the same shift-and-add multiplication algorithm but implements it with:
+1. Fully combinational next-state and output logic using assign statements
+2. Simplified state encoding with just two states (IDLE and BUSY)
+3. Explicit shift register that tracks the current shift position
+4. More efficient done flag generation that doesn't need a separate DONE state
+5. Clear separation of combinational and sequential logic blocks
+
+Key improvements:
+- Reduced state machine complexity (2 states instead of 4)
+- More efficient shift implementation using a rotating mask
+- Done flag generated directly from counter value
+- All combinational logic moved to continuous assignments
+- Clearer data path with explicit registers

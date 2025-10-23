@@ -1,0 +1,22 @@
+Here's a novel approach using a Johnson counter with decode logic for counting to 12. This offers several advantages:
+
+1. Novel Architecture:
+   - Uses a 4-bit Johnson counter (ring counter with inverted feedback) that naturally cycles through 8 states
+   - Additional decode logic extends this to 12 states by skipping 4 unused states
+   - The Johnson counter's inherent glitch-free operation improves reliability
+
+2. Performance Benefits:
+   - Single-bit shifts are faster than binary increments
+   - Decode logic operates in parallel with the counter
+   - No carry propagation delay like in binary counters
+
+3. Power Advantages:
+   - Only one bit toggles per clock cycle (except during reset)
+   - Simplified decode logic reduces switching activity
+
+4. Area Efficiency:
+   - Johnson counter requires minimal sequential logic
+   - Decode logic is simple combinatorial gates
+   - No need for complex comparators or adders
+
+The key insight is that a 4-bit Johnson counter normally cycles through 8 states, but by carefully designing the decode logic, we can map this to our desired 12-count sequence while maintaining all the benefits of a Johnson counter.

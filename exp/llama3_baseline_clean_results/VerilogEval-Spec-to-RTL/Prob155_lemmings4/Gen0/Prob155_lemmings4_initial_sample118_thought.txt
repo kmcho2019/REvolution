@@ -1,0 +1,11 @@
+To solve this problem, we need to design a Moore state machine with the following states:
+- Walking left
+- Walking right
+- Falling
+- Digging
+- Splattered
+We also need to keep track of the direction the Lemming was walking before it fell or started digging, and the number of clock cycles it has been falling.
+
+The state machine will transition between these states based on the input signals. If the Lemming is walking and ground becomes 0, it will transition to the Falling state. If the Lemming is walking and dig becomes 1, it will transition to the Digging state. If the Lemming is falling and ground becomes 1, it will check if it has been falling for more than 20 clock cycles. If so, it will transition to the Splattered state. Otherwise, it will transition back to the Walking state.
+
+The outputs will be determined by the current state and the direction the Lemming was walking before it fell or started digging. If the Lemming is walking, walk_left or walk_right will be 1. If the Lemming is falling, aaah will be 1. If the Lemming is digging, digging will be 1.

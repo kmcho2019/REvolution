@@ -1,0 +1,22 @@
+Refactored Radix-4 Booth Multiplier Design:
+
+1. Structural Changes:
+   - Split combinational and sequential logic into separate always blocks
+   - Use explicit state machine (IDLE, CALC, DONE) for clearer control flow
+   - Move Booth encoding to combinational block for better timing
+
+2. Improved Data Path:
+   - Separate current operation calculation from register updates
+   - Pre-compute shifted multiplicand values (x1, x2)
+   - Use wire for next-state values before register assignment
+
+3. Optimized Control:
+   - Explicit state transitions with clear conditions
+   - Early ready signal generation in combinational logic
+   - Simplified counter with automatic wrap-around
+
+Key Benefits:
+- Better timing separation between combinational and sequential logic
+- More explicit state machine makes behavior clearer
+- Pre-computation reduces critical path in arithmetic operations
+- Maintains same Radix-4 Booth algorithm functionality

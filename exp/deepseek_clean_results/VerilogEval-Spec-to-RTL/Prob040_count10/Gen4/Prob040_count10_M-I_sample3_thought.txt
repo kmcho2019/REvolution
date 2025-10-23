@@ -1,0 +1,11 @@
+Optimization strategy based on PPA metrics:
+1. Timing Improvement: Simplify the terminal count detection by using a direct comparison (q == 4'b1001) instead of bitwise operations (q[3] & q[0]). This reduces the combinational logic depth.
+2. Power Optimization: Remove unnecessary intermediate wire declaration and combine the logic into the always block to reduce signal toggling.
+3. Area Optimization: Use simpler comparison logic that may synthesize to fewer gates. The direct equality check can be more efficiently implemented in standard cells.
+4. Maintain functionality: Keep synchronous reset and decade counting behavior unchanged.
+
+Key changes:
+- Replace bitwise terminal detection with direct comparison
+- Eliminate intermediate wire to reduce power
+- Combine next state logic into sequential block
+- Maintain same reset and counting behavior

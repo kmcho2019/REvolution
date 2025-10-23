@@ -1,0 +1,11 @@
+To simplify the implementation while maintaining correct functionality:
+1. Analyze the Karnaugh map to identify essential prime implicants
+2. Group adjacent 1's to find minimal cover:
+   - ~a~b covers all 1's in first two rows when ab=00 or 01
+   - ~a~d covers leftmost column (cd=00)
+   - ~b~c covers top-right corner (ab=10, cd=00,01)
+   - b~cd covers middle-right (ab=11, cd=01)
+   - abc~d covers bottom-right (ab=11, cd=10)
+3. Combine these terms with OR operations
+4. The minimal SOP form is: out = ~a~b + ~a~d + ~b~c + b~cd + abc~d
+This covers all 1's in the K-map without redundancy.

@@ -1,0 +1,19 @@
+The original solution's main flaw is in the pattern detection logic, where the duplicate condition prevents proper matching of the 1-0-1 sequence on input x. To fix this, I will rewrite the pattern_idx update logic to correctly track the 3-step pattern and allow overlapping matches. 
+
+A typical pattern matcher for "1 0 1" works like this:
+
+- At pattern_idx=0, wait for x=1 to move to pattern_idx=1.
+- At pattern_idx=1, wait for x=0 to move to pattern_idx=2; if x=1 stays at pattern_idx=1 (handle repeated 1).
+- At pattern_idx=2, wait for x=1 to move to pattern_idx=3 (pattern matched); else if x=1 move to pattern_idx=1 (restart from first 1); else reset to 0.
+
+This ensures overlapping patterns are detected.
+
+Also, I will separate pattern_idx update logic into a combinational always block for clarity and to ensure no latches or missed transitions. The sequential always block will simply register the next value.
+
+For y monitoring, keep existing logic with a counter up to 2 cycles, transitioning to permanent g=1 or g=0 states accordingly.
+
+Outputs remain purely Moore type, updated on clock edge based on state.
+
+This correction ensures reliable detection of the '1-0-1' pattern and proper timing of outputs f and g as per specification.
+
+This fixes the fundamental functional issue causing mismatches and leads to a correct FSM behavior while maintaining a concise and clear state machine.

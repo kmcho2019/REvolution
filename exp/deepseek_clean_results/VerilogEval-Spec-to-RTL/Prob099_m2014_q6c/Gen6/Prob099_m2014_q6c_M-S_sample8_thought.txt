@@ -1,0 +1,11 @@
+The key simplifications are:
+1. Focus only on implementing Y1 (next state A) and Y3 (next state D) as specified
+2. Recognize that Y1 only needs to be active in two cases (A->A and D->A)
+3. Recognize that Y3 is simply active whenever w=1 in states B, C, E, or F
+4. Use direct bitwise operations without parentheses since Verilog operator precedence makes them unnecessary
+5. Keep the one-hot encoding benefits by checking individual y bits
+
+The simplified implementation will:
+- Make Y1 just the OR of y[0]&w and y[3]&w
+- Make Y3 just w ANDed with the OR of states B,C,E,F (y[1], y[2], y[4], y[5])
+- Use minimal logical operations while maintaining correctness

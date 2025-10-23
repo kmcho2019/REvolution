@@ -1,0 +1,20 @@
+Simplify the FSM by focusing on clear states reflecting each functional phase and explicitly tracking progress:
+
+- Use a 4-state FSM: 
+  - A: Reset (f=0, g=0)
+  - B: Output f=1 for exactly one clock cycle right after reset is released
+  - C: Monitor x for the 101 pattern by tracking pattern progress with a 2-bit counter (0 to 3)
+  - D: Once pattern detected, set g=1 for one clock cycle, then move to E
+  - E: Monitor y for at most two cycles while g=1. If y=1 within two cycles, stay in a permanent "g=1" state F; else after two cycles, move to permanent "g=0" state G
+  - F: permanent g=1
+  - G: permanent g=0
+
+- Use a small pattern progress counter to track matching the 101 sequence step-by-step instead of shifting bits.
+
+- Use a separate y_timer counter limited to two cycles.
+
+- Outputs f and g are Moore style (purely combinational from states).
+
+- Reset is synchronous active low: when resetn=0, state is forced to A, counters cleared.
+
+This reduces complexity, avoids shift registers, and makes pattern detection and output timing explicit and simpler.

@@ -1,0 +1,27 @@
+The current design is functionally correct and cleanly implements an 8-bit Radix-4 Booth multiplier, but improvements can be made in terms of power, area, and timing (PPA):
+
+1. **Counter size and cycles:** The original problem statement mentioned a 5-bit counter counting up to 16, whereas radix-4 typically processes 2 bits per cycle, requiring only 4 cycles. However, following the problem's original approach (16 cycles) means treating the multiplier bit-by-bit, not radix-4. To exactly meet the problem's description, I will adapt the design accordingly, using a 5-bit counter and step-by-step bit processing.
+
+2. **Accumulator and registers width:** Since the final product is 16 bits and inputs are 8-bit signed, a 25-bit register is safe for accumulation (to cover max bit growth), but the original solution uses a 32-bit accumulator. To reduce area and power, I'll constrain to 24 bits (8 + 8 + 8 for partial sums), using appropriate sign extension. But to meet the problem statement exactly (simple shift and add per bit), the approach differs from radix-4.
+
+3. **Operation details:** The problem's reset block initializes:
+    - multiplier <= sign-extended 'a' (16-bit)
+    - multiplicand <= sign-extended 'b' (16-bit)
+   Then, for each clock cycle (ctr < 16), it:
+    - left-shifts multiplicand by 1 (simulate Booth algorithm's shifting)
+    - if multiplier[ctr] == 1, add multiplicand to product p
+
+This is different from radix-4 Booth algorithm and looks more like a shift-and-add multiply controlled by multiplier bits.
+
+4. **Proposed improvements:**
+   - Implement the exact problem requirements (5-bit counter counting to 16, multiplicand left-shift on each step)
+   - Use registers of minimal necessary size (16-bit multiplicand, 16-bit multiplier, 16-bit product)
+   - Use non-blocking assignments consistently
+   - Set ready flag at the end of 16 cycles
+   - Ensure correct reset behavior (product and ready flag zeroed/reset)
+   - Clear description and clean code
+   - Since the multiplicand is shifted left every cycle, and added conditionally, the process implements a form of multiplier-by-bit with partial sums shifted.
+
+5. **Note:** This design is not classic radix-4 Booth but aligns with the user's original problem description to avoid confusion.
+
+Thus, I will provide the improved and corrected code matching the problem statement exactly, focusing on clarity, minimal register widths, and precise control logic, ensuring timing and power optimizations by avoiding unnecessary wide accumulators and avoiding combinational complex decoding.

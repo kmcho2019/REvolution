@@ -1,0 +1,10 @@
+Simplify the 3-stage pipeline into a straightforward multi-cycle design controlled by a 3-bit counter. Each clock cycle advances the operation step-by-step:
+1. Cycle 0: Extract sign, exponent, mantissa and identify special cases.
+2. Cycle 1: Multiply mantissas, add exponents, combine signs, and prepare normalization.
+3. Cycle 2: Normalize the product, perform rounding, adjust exponent, handle overflow/underflow, and generate final output.
+
+This reduces complexity by removing pipelining and staging registers spread across cycles, uses fewer intermediate registers, and places the entire operation into a clear FSM-like sequence controlled by the counter.
+
+All data is registered at each cycle to keep timing manageable. Special cases (NaN, Inf, zero) are handled explicitly early, output is registered at the last cycle. This design trades throughput for simplicity: one multiply result every 3 cycles.
+
+This approach retains full IEEE-754 compliance, rounding to nearest even, and handles normalization and special cases properly, but is easier to understand and verify.

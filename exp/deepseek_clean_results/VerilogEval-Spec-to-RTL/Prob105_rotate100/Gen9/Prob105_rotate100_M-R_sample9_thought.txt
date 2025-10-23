@@ -1,0 +1,10 @@
+To refactor the rotator implementation while maintaining the same functionality:
+1. Use continuous assignments instead of procedural blocks for combinational logic
+2. Create separate wires for the rotated values (left and right)
+3. Use a multiplexer to select between:
+   - Load value (when load=1)
+   - Right rotated value (ena=2'b01)
+   - Left rotated value (ena=2'b10)
+   - Current value (default case)
+4. Register the output using a simple always block
+This approach separates the combinational logic from sequential elements, which can improve synthesis results and potentially help with timing closure.

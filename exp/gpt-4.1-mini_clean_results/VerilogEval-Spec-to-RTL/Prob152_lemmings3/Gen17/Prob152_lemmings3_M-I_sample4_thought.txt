@@ -1,0 +1,7 @@
+To optimize PPA, integrate digging into the 3-bit state encoding, combining direction, mode (walking/falling), and digging into a single state register. This reduces the number of flip-flops from three to one 3-bit register, simplifying sequential logic. Use explicit parameter definitions for all eight states for clarity.
+
+Refactor the next-state logic to flatten conditionals, reducing logic depth and making the priority fall > dig > bump direction switch explicit and simple. Direction flipping is handled by toggling the direction bit only when in walking mode and not digging.
+
+Outputs are directly decoded from the state bits, maintaining a pure Moore FSM. This approach reduces registers, combinational logic levels, and simplifies state updates, improving critical path and area while maintaining clear and maintainable code.
+
+Asynchronous reset is kept, Moore outputs aligned with states, and all functionality remains correct per specification.

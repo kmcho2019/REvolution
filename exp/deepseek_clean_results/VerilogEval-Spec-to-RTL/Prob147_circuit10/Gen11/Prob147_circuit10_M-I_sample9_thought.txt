@@ -1,0 +1,19 @@
+Corrected design approach:
+1. State behavior analysis:
+   - State changes only when a=1 AND b=1 at the clock edge
+   - State toggles in this condition (like a toggle flip-flop with enable)
+2. Output q logic:
+   - q = 1 when either:
+     * Current state is 1 AND b=0
+     * Current state is 0 AND a=1 AND b=1
+   - This matches all cases in the waveform
+3. Implementation:
+   - Single flip-flop for state storage
+   - State toggles only when both a and b are high at clock edge
+   - Output q uses combinational logic based on state and inputs
+
+Key improvements:
+- Correct state transition behavior (only on a=1 & b=1)
+- Accurate q output logic matching waveform
+- Still maintains minimal hardware requirements
+- Clear mapping to observed behavior

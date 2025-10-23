@@ -1,0 +1,7 @@
+To implement the dual-port RAM with the specified characteristics, we will create a Verilog module named RAM. This module will include two always blocks: one for handling write operations and another for handling read operations. 
+For the write operation, we will use an always block that triggers on the positive edge of the clock signal (posedge clk) or the negative edge of the reset signal (negedge rst_n). 
+Within this block, we first check for reset conditions and clear the RAM array if reset is asserted. If the write enable signal (write_en) is active, we write the provided data (write_data) to the RAM array at the address specified by write_addr. 
+For the read operation, we use another always block that triggers on the same conditions as the first block. 
+On reset, we clear the read_data register. If the read enable signal (read_en) is active, we assign the data from the RAM array at the address specified by read_addr to the read_data register. 
+If read_en is not active, we clear the read_data register to 0, ensuring that it does not hold stale data when not in use.
+We define parameters WIDTH and DEPTH to make the module's size flexible and easily adjustable.

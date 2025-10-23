@@ -1,0 +1,22 @@
+To correctly implement the Karnaugh map, I'll analyze it systematically:
+
+1. First, I'll ignore d (don't-care) and focus on a, b, c combinations:
+   - For c=0 (first row of K-map):
+     - ab=00: out=0
+     - ab=01: out=d (can choose 0)
+     - ab=10: out=1
+     - ab=11: out=1
+   - For c=1 (remaining rows):
+     - When ab=00: out=0 (from cd=01) or 1 (from cd=10/11) - but cd=01 shows 0, so we'll keep 0
+     - When ab=01: out=0 (from cd=00) or 1 (from cd=11/10) - we'll choose 1 for minimal logic
+     - When ab=10 or 11: out=1 in all cases
+
+2. The minimal logic expression that covers this is:
+   out = (~c & (a ^ b)) | (c & (a | b))
+   This works because:
+   - When c=0: output is 1 only when a≠b (XOR)
+   - When c=1: output is 1 when either a or b is 1
+
+3. We can further optimize by observing that (~c & (a ^ b)) | (c & (a | b)) is equivalent to:
+   out = (a | b) & (a | c | ~b)
+   But the first expression is simpler to implement.

@@ -1,0 +1,9 @@
+An alternative architectural idea is to separately track the previous input vector (delayed_in) and generate a falling edge detect vector every clock cycle as `falling_edge = delayed_in & ~in`. Instead of conditionally updating the output register only on detected falling edges, always update `out` by OR'ing it with the new falling edge vector every cycle. This simplifies the output update logic, avoiding conditional assignments and potential synthesis issues.
+
+Additionally, on synchronous reset, set both `delayed_in` and `out` to zero. This initialization ensures no false detection immediately after reset since the previous input starts as zero.
+
+This approach guarantees that once a bit in `out` is set due to a falling edge detection, it remains set until reset. It also avoids complex conditional logic and keeps the design simple, fully synchronous, and easy for synthesis tools.
+
+The power implication is minimal but the always-update style is more straightforward and may improve synthesis quality and timing. Area impact is negligible since only two 32-bit registers and bitwise logic are used.
+
+Overall, this method is a clean, standard practice for edge capture logic on vectors.

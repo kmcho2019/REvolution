@@ -1,0 +1,24 @@
+I will design a Mealy FSM that detects the sequence "10011" by explicitly defining states that represent the progress through the sequence. Instead of a simple numeric count of matched characters, I will encode states with meaningful names to improve readability and help understanding of transitions.
+
+The FSM will support overlapping matches by using prefix fallback on mismatch, allowing continuous detection on a single input stream.
+
+The MATCH output will be a Mealy output, asserted combinationally during the transition that completes the pattern.
+
+To improve robustness, the FSM will use a synchronous reset and update states only on the positive clock edge.
+
+The design will also explicitly separate the next-state logic and output logic in combinational always blocks to improve clarity and synthesis friendliness.
+
+States will be one-hot encoded to make state decoding and output logic simpler and potentially faster, although it uses more flip-flops.
+
+The states are:
+- S0: initial state, no match yet
+- S1: matched '1'
+- S2: matched '10'
+- S3: matched '100'
+- S4: matched '1001'
+
+From S4, if input is '1', the sequence "10011" is matched.
+
+On mismatch, we will fallback to the longest valid prefix that matches the input.
+
+This explicit approach gives a clear, easy to maintain FSM with direct overlapping detection support and a clean Mealy output.

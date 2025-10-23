@@ -1,0 +1,10 @@
+To fix the 16-bit divider implementation:
+1. Initialize remainder with full 16-bit dividend (A) since we need to process all bits
+2. Correct the bit processing order - start from MSB (bit 15) down to LSB (bit 0)
+3. Maintain proper 16-bit remainder handling:
+   - Compare upper 9 bits (remainder[15:7]) with divisor to ensure accurate comparison
+   - Shift remainder left by 1 bit each iteration
+   - Bring in next dividend bit from correct position
+4. Properly handle division by zero case by setting outputs to zero
+5. Ensure final remainder is properly masked to 16 bits
+6. Optimize the comparison logic to work with the correct bit widths

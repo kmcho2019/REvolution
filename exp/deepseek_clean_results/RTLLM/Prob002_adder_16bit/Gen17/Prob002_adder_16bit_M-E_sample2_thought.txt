@@ -1,0 +1,15 @@
+Novel Hybrid Carry-Select Adder Architecture:
+1. Divide the 16-bit adder into 4-bit chunks for better parallelism
+2. Implement each 4-bit chunk as a ripple-carry adder for simplicity
+3. Use carry-select technique between chunks to break the critical path
+4. The first 4-bit block computes both possible sums (Cin=0 and Cin=1)
+5. Subsequent blocks compute both possible sums in parallel
+6. Final output muxes select the correct sum based on actual carry propagation
+7. This provides partial lookahead benefits without full carry-lookahead complexity
+
+Key Advantages:
+- Reduced critical path compared to pure ripple-carry
+- Better timing than standard ripple-carry while maintaining reasonable area
+- Parallel computation of sum possibilities improves throughput
+- Modular structure allows easy parameterization
+- Balanced PPA tradeoff between pure ripple-carry and full carry-lookahead

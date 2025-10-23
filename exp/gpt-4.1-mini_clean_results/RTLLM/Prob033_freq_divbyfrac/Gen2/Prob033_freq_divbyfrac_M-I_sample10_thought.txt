@@ -1,0 +1,22 @@
+To correctly implement a fractional frequency divider by 3.5, we need to produce a clock with a period equal to 7 input clock cycles, alternating between 4 and 3 input clock cycles for high and low phases respectively. This alone can be done with a 3-bit counter and toggling a main divided clock at counts 3 and 6.
+
+The fractional division by 3.5 requires us to generate an output clock that toggles on both edges of the input clock (double-edge clocking) to achieve half-cycle phase shifts. A common approach is to generate two intermediate clocks:
+
+- clk_div_main: toggles at certain counts on the positive edge of clk
+- clk_div_shifted: toggles at different counts on the negative edge of clk
+
+The OR of these two clocks produces a clock output with a balanced duty cycle and the desired fractional division.
+
+Improvement strategy:
+- Add an always block triggered on negedge clk to create the phase shifted clock by toggling at counts 0 and 3.
+- Keep the main clock toggling on posedge clk at counts 3 and 6.
+- Use a shared counter updated only on posedge clk (to avoid metastability).
+- On negedge clk, use the current count value to decide when to toggle the phase shifted clock.
+- Combine clk_div_main and clk_div_shifted with OR to generate clk_div output.
+- Add asynchronous active-low reset to initialize all registers.
+
+This design utilizes true double-edge clocking with one flip-flop toggling on posedge and another on negedge clk, ensuring the output clk_div has a well balanced duty cycle and frequency clk/3.5.
+
+This approach is hardware-friendly, uses minimal logic, and properly synchronizes internal signals, giving a clean fractional frequency divider output.
+
+Final clk_div frequency is input clk divided by 3.5 with a roughly 50% duty cycle.

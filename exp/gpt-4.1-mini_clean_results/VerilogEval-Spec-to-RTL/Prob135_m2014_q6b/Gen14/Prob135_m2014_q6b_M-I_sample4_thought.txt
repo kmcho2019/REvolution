@@ -1,0 +1,15 @@
+The existing solution is already simple and minimal, but a slight optimization can be done by simplifying the Boolean expression further to reduce logic depth and the number of signals.
+
+The expression:
+next_y1 = (y0 & ~y1) | (~y0 & w & (y1 | y2))
+
+can be factored as:
+next_y1 = (y0 & ~y1) | (~y0 & w & (y1 | y2))
+
+Instead of creating separate signals for not_y0 and not_y1, we use bitwise negation directly inline to reduce net count and synthesis overhead.
+
+Also, we can reduce intermediate signals to a minimum to possibly reduce area and switching power, making the combinational logic more compact.
+
+This marginal simplification could reduce gate count and switching, which helps power and area without hurting performance.
+
+Output Y1 remains assigned as next_y1, consistent with the spec.

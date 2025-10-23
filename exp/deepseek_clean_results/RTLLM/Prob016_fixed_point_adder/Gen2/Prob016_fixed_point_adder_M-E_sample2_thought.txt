@@ -1,0 +1,10 @@
+Novel architectural idea: Instead of handling sign bits and magnitudes separately, we'll use a unified approach that:
+1. Treats the fixed-point numbers as signed values throughout the operation
+2. Uses the full N-bit width for all calculations
+3. Implements saturation arithmetic for overflow handling
+4. Simplifies the logic by:
+   - Performing direct signed addition/subtraction
+   - Detecting overflow by comparing the carry-in and carry-out of the MSB
+   - Using parameterized bit widths consistently
+5. Eliminates separate magnitude extraction and comparison logic
+6. Handles all cases (same sign, different signs, zero result) in a unified way

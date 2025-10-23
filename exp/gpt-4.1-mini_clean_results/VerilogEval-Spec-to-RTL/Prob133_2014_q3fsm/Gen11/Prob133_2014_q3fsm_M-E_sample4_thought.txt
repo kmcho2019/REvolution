@@ -1,0 +1,7 @@
+Implement a three-state FSM that separates the phases clearly: State A (wait for s=1), State B (collect exactly three w samples), and State C (output z based on the count of w=1 in the previous three cycles). 
+
+Use a 2-bit counter to count w samples collected in State B and a 2-bit accumulator to track the number of w=1 occurrences. After collecting three samples, transition to State C for one cycle to assert z if the count is exactly two, then return to State B to start a new window.
+
+This approach uses explicit states to clearly separate input sampling and output assertion, simplifies logic by handling z assertion in a dedicated state, and avoids packing counters into a single register for readability. All registers update synchronously with the clock and reset synchronously.
+
+This design keeps the FSM simple with three states, each with specific roles, preventing combinational complexity. The output z is registered in State C only, simplifying timing and preventing glitches. The counter and accumulator update only in State B, reducing toggling when not needed.

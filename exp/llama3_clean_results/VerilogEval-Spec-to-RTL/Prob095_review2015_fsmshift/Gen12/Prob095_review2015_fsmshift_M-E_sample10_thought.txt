@@ -1,0 +1,5 @@
+To address the issues in the original design, a novel approach can be taken by utilizing a counter-based state machine that directly controls the shift_ena signal. The main idea is to use a single counter that counts down from 4 when the reset signal is asserted. The shift_ena signal is then asserted for exactly 4 clock cycles, after which it remains low until the next reset. This approach eliminates the need for a separate state machine and reduces the complexity of the design.
+
+The counter will be reset to 4 when the reset signal is asserted, and it will decrement by 1 every clock cycle until it reaches 0. The shift_ena signal will be asserted as long as the counter is greater than 0. This ensures that the shift_ena signal is asserted for exactly 4 clock cycles after the reset signal is asserted.
+
+By using a counter-based approach, the design becomes more straightforward and easier to understand, making it less prone to errors. Additionally, this approach reduces the area usage and power consumption, as it eliminates the need for a separate state machine and reduces the number of logic gates required.

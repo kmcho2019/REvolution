@@ -1,0 +1,7 @@
+The original design uses a combined enable signal to reduce toggling but evaluates all cases every cycle in combinational logic. Since shift_ena and count_ena are never asserted simultaneously (by spec), we can use mutually exclusive gating to simplify next-state logic and avoid unnecessary computations, potentially improving power and timing.
+
+Specifically, we prioritize shift_ena over count_ena explicitly, then only evaluate either the shift or decrement path, otherwise hold state. This avoids adding a decrement adder every cycle, reducing switching.
+
+We also simplify the initialization by using an asynchronous reset input generated internally from a power-on reset signal, implemented with a reset synchronizer. This allows the register to start at zero immediately without toggling a flag. It removes the init_done flag and the logic tied to it, improving timing and reducing area/power overhead.
+
+Overall, this approach reduces switching activity (lower power), simplifies the critical path (potentially better timing), and removes redundant logic while preserving the original functionality.

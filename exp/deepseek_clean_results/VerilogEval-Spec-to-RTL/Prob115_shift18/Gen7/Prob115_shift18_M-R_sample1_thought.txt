@@ -1,0 +1,20 @@
+Here's an optimized refactoring of the barrel shifter design:
+
+1. Simplify control logic by:
+   - Directly using amount bits for mux selection
+   - Eliminating intermediate shift_amount calculation
+   - Pre-computing sign extension masks for right shifts
+
+2. Improve timing by:
+   - Using parallel shift operations
+   - Selecting results with a single level of muxing
+   - Removing the 7-bit shift_amount calculation
+
+3. Reduce power by:
+   - Only computing sign extension when needed
+   - Using bitwise operations instead of shifts where possible
+
+4. Maintain same functionality with:
+   - Synchronous load priority
+   - Arithmetic right shift behavior
+   - Configurable shift amounts

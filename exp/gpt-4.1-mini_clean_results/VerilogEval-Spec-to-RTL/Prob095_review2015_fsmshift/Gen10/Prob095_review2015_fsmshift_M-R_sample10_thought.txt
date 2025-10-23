@@ -1,0 +1,11 @@
+Refactor the FSM and counter logic to a straightforward counter-driven enable signal without explicitly encoding FSM states. Use a 3-bit down-counter initialized to 4 on reset. While the counter is non-zero, shift_ena is asserted; once it counts down to zero, shift_ena deasserts and stays low forever until next reset.
+
+Implement the counter and shift_ena as registered outputs updated synchronously on the positive clock edge:
+
+- On synchronous reset, load counter with 4 and assert shift_ena.
+- On each clock cycle, if counter != 0, decrement it by 1.
+- shift_ena is assigned as (counter != 0).
+
+This removes explicit FSM states, reduces complexity, and ensures exactly 4 cycles of shift_ena asserted after reset. The output timing is clear and tightly coupled to the counter value.
+
+This structure is simpler and less error-prone while meeting the problem requirements and can be extended later for pattern-detection-triggered enables by reloading the counter.

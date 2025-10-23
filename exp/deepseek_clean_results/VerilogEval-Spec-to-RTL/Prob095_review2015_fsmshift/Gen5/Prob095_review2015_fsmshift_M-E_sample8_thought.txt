@@ -1,0 +1,11 @@
+Here's a novel approach using a shift register instead of a counter to track the 4-cycle enable period:
+
+1. Shift Register Approach: Instead of using a counter, we'll use a 4-bit shift register initialized to '1111' on reset. Each clock cycle, we'll shift in a '0' from the right. This creates exactly 4 cycles where the leftmost bit is '1'.
+
+2. Immediate Response: The shift_ena directly follows the leftmost bit of the shift register, ensuring immediate assertion on reset.
+
+3. Precise Timing: The shift operation guarantees exactly 4 cycles of assertion as the '1's propagate through the register.
+
+4. Automatic Shutoff: After 4 shifts, the register becomes '0000' and stays that way until next reset.
+
+This method eliminates counter comparison logic and provides a simple, reliable way to generate exactly 4 enable pulses.

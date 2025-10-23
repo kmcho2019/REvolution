@@ -1,0 +1,8 @@
+To optimize the existing FSM design for better PPA (performance, power, and area), I will:
+1. Use one-hot encoding to reduce the complexity of next_state combinational logic and improve timing, as one-hot allows simpler decoding.
+2. Keep Mealy output logic combinational and assert MATCH only when the sequence "10011" is matched at the final input bit.
+3. Implement synchronous reset and use non-blocking assignments for sequential logic to maintain good timing behavior.
+4. Simplify next state transitions by using one-hot state bits directly, reducing combinational logic and improving area and power.
+5. Retain the Mealy FSM behavior with MATCH asserted at the same clock cycle when the last input bit is detected.
+
+This approach balances power reduction (due to simpler logic switching), improved performance (simpler next state logic), and potentially slightly increased area (because one-hot encoding uses more flip-flops but reduces logic depth).

@@ -1,0 +1,17 @@
+The key simplifications are:
+1. Remove the separate shift counter - we can use the pattern register's state to track shift cycles
+2. Simplify state encoding to binary for minimal logic
+3. Combine pattern detection and shift counting into a single register
+4. Make outputs directly dependent on state with no additional logic
+
+The FSM now has:
+- IDLE: Waits for 1101 pattern (using first 4 bits of pattern_reg)
+- SHIFT: Uses next 4 bits of pattern_reg (bits 4-7) as shift counter
+- COUNT: Waits for done_counting
+- DONE: Waits for ack
+
+Transitions occur when:
+- Pattern matches in IDLE
+- 4 shifts complete (pattern_reg[7:4] == 4'b1111)
+- done_counting asserted
+- ack received

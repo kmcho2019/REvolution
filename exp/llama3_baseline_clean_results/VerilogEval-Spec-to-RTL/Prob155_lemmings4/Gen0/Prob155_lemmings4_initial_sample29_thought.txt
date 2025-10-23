@@ -1,0 +1,16 @@
+The problem can be solved by implementing a Moore state machine with the following states:
+- IDLE_LEFT: The Lemming is walking left and is on the ground.
+- IDLE_RIGHT: The Lemming is walking right and is on the ground.
+- FALLING: The Lemming is falling.
+- DIGGING_LEFT: The Lemming is digging and was walking left before digging.
+- DIGGING_RIGHT: The Lemming is digging and was walking right before digging.
+- SPLATTERED: The Lemming has splattered and is no longer active.
+
+The state machine will transition between these states based on the inputs and the current state.
+When the ground disappears, the Lemming will transition to the FALLING state.
+When the Lemming hits the ground after falling, it will check the number of clock cycles it has been falling.
+If it has been falling for more than 20 clock cycles, it will transition to the SPLATTERED state.
+Otherwise, it will transition back to the IDLE_LEFT or IDLE_RIGHT state based on its previous direction.
+When the Lemming is told to dig, it will transition to the DIGGING_LEFT or DIGGING_RIGHT state based on its current direction.
+When the ground disappears while the Lemming is digging, it will transition to the FALLING state and then back to the IDLE_LEFT or IDLE_RIGHT state when the ground reappears.
+The state machine will also handle bumps and update the walking direction accordingly.

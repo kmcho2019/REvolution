@@ -1,0 +1,12 @@
+To optimize the FSM for better power and performance without increasing area, we can implement clock enable gating to the counters and w counting logic so that they toggle only when needed, i.e., only in state B. Also, we can hold output z registered and assert it only when required, preventing unnecessary toggling. 
+
+Since synchronous reset is active high, we keep it as is for simplicity. We will separate the output z register from the combinational next_z signal, using a single-cycle pulse when exactly two w=1's were counted. This avoids re-asserting z every cycle unnecessarily.
+
+We keep the FSM states minimal (2 states). Adding a clock enable gating signal for counter updates reduces toggling in state A, helping power and slight performance due to reduced switching.
+
+This approach maintains the original functionality and minimal area while reducing unnecessary state updates and output toggling, improving power and potentially timing.
+
+Key changes:
+- Add clock enable signals that update counters and output only in state B.
+- Register output z only when needed.
+- Keep counters unchanged in state A (do not reset every cycle) to reduce toggling.

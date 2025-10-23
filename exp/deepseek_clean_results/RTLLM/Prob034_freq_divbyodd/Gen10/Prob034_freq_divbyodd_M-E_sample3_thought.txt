@@ -1,0 +1,14 @@
+Novel architectural approach for odd frequency division with 50% duty cycle:
+1. Use a single counter that counts on both clock edges (dual-edge triggered)
+2. Implement a state machine that toggles output at specific counter values
+3. For odd division, the output toggles at (N-1)/2 and N-1 counts
+4. Use a toggle flip-flop to generate the final output
+5. The counter wraps around at N-1 counts
+6. Reset initializes the counter and output to known states
+
+Key advantages:
+- Single counter reduces logic complexity
+- True 50% duty cycle by toggling at precise mid-point
+- Works for any odd division factor
+- No need for separate positive/negative edge domains
+- More efficient implementation with fewer registers

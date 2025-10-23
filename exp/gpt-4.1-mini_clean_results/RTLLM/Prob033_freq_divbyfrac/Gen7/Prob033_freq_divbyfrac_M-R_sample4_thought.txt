@@ -1,0 +1,15 @@
+The original implementation uses two flip-flops toggled on posedge and negedge clk, combined via XOR, to produce fractional division by 3.5. However, the XOR causes phase mismatches and duty cycle distortion. Also, using negedge triggered toggling relying on the posedge counter value can cause timing issues.
+
+To address this, the design can be refactored by:
+1. Using a modulo-7 counter incremented on posedge clk, generating a one-hot decoded signal representing the count.
+2. Generating two intermediate clocks (`clk_div_1` and `clk_div_2`), each toggled on posedge clk at specified counts corresponding to 4-cycle and 3-cycle intervals, but phase-shifted by half a clock cycle by sampling one on posedge and the other on delayed clock edges simulated via generating one on posedge and the other on negedge.
+3. Instead of XOR, the outputs are combined by ORing the two phase-shifted clocks to get a final clock with a smooth fractional division and better duty cycle.
+4. The toggling signals are implemented as registers updated synchronously to avoid metastability.
+5. For negedge-triggered updates, a synchronized clock using an inverted clk with same counter values ensures stable toggling, or alternatively, keep all logic synchronous and generate phase shifts by delaying one of the toggles by half clock via internal logic.
+6. Initialize both intermediate clocks to zero on reset for known startup.
+
+This approach maintains the core idea of double-edge toggling with uneven periods (4 and 3 cycles), but restructures the toggling control logic to use synchronous assignments and OR combination, avoiding XOR phase issues.
+
+The final output clk_div will have a uniform period equal to 7 input clock cycles and approximately 50% duty cycle, resulting in a clean fractional divide-by-3.5 output clock.
+
+This structure is more robust, easier to simulate and synthesize, and provides clearer phase control.

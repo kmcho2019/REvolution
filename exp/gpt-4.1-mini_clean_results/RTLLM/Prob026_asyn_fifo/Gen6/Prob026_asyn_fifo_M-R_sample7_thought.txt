@@ -1,0 +1,10 @@
+I will refactor the asynchronous FIFO design by restructuring the pointer management and synchronization logic to reduce registers and use continuous assignments (`assign`) where possible. Instead of storing Gray pointers in registers updated inside always blocks, I will compute Gray pointers as combinational functions from binary pointers, which are still registered. The synchronization of the pointers across clock domains will be implemented with two-stage flip-flops as before but handled in separate always blocks. The full and empty signals will be generated using combinational logic from synchronized pointers rather than in clocked always blocks. 
+
+This approach keeps the same functional behavior and modular structure but simplifies pointer conversions, segregates combinational and sequential logic more clearly, and uses fewer always blocks for status signals. It also maintains parameterization for data width and depth, instantiates the dual-port RAM as a separate module, and ensures proper resets and pointer increments with respect to clock and reset signals.
+
+The main points:
+- Binary pointers registered on respective clock domains.
+- Gray pointers continuously derived from binary pointers.
+- Two-stage synchronizers implemented for crossing clock domains.
+- Full and empty flags are combinational outputs derived from synchronized Gray pointers.
+- Dual-port RAM instantiated as a submodule.

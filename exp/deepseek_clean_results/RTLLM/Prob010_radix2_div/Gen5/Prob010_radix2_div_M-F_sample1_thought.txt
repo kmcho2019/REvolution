@@ -1,0 +1,15 @@
+Fix Strategy:
+1. The primary issue is a port mismatch between the module and testbench - the testbench expects "res_ready" but the module has "res_valid"
+2. Since "res_valid" is the correct semantic output (indicating when result is valid), we should keep this naming
+3. The testbench needs to be modified to use "res_valid" instead of "res_ready"
+4. No other functional changes needed to the core divider logic
+5. Maintain all existing functionality including:
+   - Signed/unsigned operation support
+   - Division by zero handling
+   - Radix-2 division algorithm
+   - Proper state machine operation
+
+Key Changes:
+- Keep "res_valid" as output port
+- Ensure testbench uses "res_valid" instead of "res_ready"
+- All other logic remains unchanged

@@ -1,0 +1,9 @@
+The original design splits the 64-bit subtraction into two 32-bit ripple borrow subtractors, which is modular but suffers from linear borrow propagation delays in both halves, affecting timing and increasing power. To optimize for better PPA:
+
+1. Replace the ripple borrow subtractor with a single 64-bit subtractor implemented using the Verilog built-in subtraction operator. This approach leverages synthesis tools' optimized carry look-ahead or carry-select subtractors, reducing critical path delay and overall area.
+
+2. Keep overflow detection logic as is since it is already minimal and correct.
+
+3. Use purely combinational subtraction without explicit borrow chain logic, allowing the synthesis tool to handle carry propagation more efficiently.
+
+This change reduces complexity and borrow propagation stages, improving speed and lowering power and area while maintaining correct functionality and overflow detection.

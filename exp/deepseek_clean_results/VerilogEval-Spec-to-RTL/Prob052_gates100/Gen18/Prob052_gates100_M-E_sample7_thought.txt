@@ -1,0 +1,15 @@
+Novel Approach: Tree-Structured Parallel Reduction
+1. Instead of serial chains, implement a binary tree structure for each operation
+2. This reduces critical path depth from O(n) to O(log2n)
+3. Use recursive parameterized module instantiation to build the tree
+4. Each level of the tree combines pairs of inputs from the previous level
+5. For 100 inputs, we need 7 levels (since 2^7=128 > 100)
+6. Zero-pad inputs to next power of two (128) for uniform tree structure
+7. Maintain combinational nature while significantly improving timing
+
+Advantages:
+- Much better timing performance (7 levels vs 100 levels)
+- More balanced logic distribution
+- Easier to pipeline if needed
+- Scales better for larger input sizes
+- Clear hierarchical structure

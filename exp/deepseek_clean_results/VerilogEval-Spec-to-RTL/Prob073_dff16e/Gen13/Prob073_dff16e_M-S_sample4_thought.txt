@@ -1,0 +1,14 @@
+Simplified Approach:
+1. Eliminate the separate ByteRegister module to reduce hierarchy
+2. Implement the 16-bit register directly in TopModule with byte enables
+3. Use a single always block with conditional updates for each byte
+4. Maintain the same synchronous reset and clocking behavior
+5. Benefits:
+   - Fewer modules means less hierarchical overhead
+   - Simpler code structure while maintaining identical functionality
+   - Easier to understand at a glance
+   - Still clearly shows the byte-wise enable control
+6. Key Simplifications:
+   - Removed parameterization since we know the exact width needed
+   - Combined both byte registers into one block
+   - Reduced total lines of code while keeping same behavior

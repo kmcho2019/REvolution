@@ -1,0 +1,16 @@
+Improved solution addressing feedback:
+1. Key issue identified: potential race condition between counter reaching 3 and done flag setting
+2. Solution approach:
+   - Make shift_ena purely combinational based on counter value and done flag
+   - Ensure done flag is set one cycle after counter reaches 3
+   - This guarantees shift_ena is active for exactly 4 cycles (0-3)
+3. Timing improvements:
+   - Set done flag when counter would wrap (after 3)
+   - Clear shift_ena immediately when done is set
+4. Reset behavior:
+   - Reset clears counter and done flag
+   - First cycle after reset starts counting
+   - shift_ena active from cycle 0 to 3
+5. Verification:
+   - No race conditions since done is set after counter=3
+   - shift_ena deasserts precisely after 4 cycles

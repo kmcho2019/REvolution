@@ -1,0 +1,7 @@
+To create a robust clock generator that avoids using delays in an always block without sensitivity, I will implement a toggling mechanism using an always block sensitive to a dummy signal driven by an internal timer event generated from an initial block. This way, the toggling happens through an explicit event rather than a continuously running always block with delays, potentially improving simulation determinism.
+
+Specifically, I will use an internal integer variable as a countdown timer driven by a nonblocking procedural loop inside an initial block. The clock toggling will be synchronized with this timer event via an event control or a simple control signal toggled inside the initial block, which triggers the always block to toggle the clock.
+
+This event-driven approach keeps clock toggling synchronous and avoids ambiguous timing constructs, while still adhering to the problem's requirement for an initial clock state and toggling every half period.
+
+Additionally, the toggling will be made synthesizable by optionally including a dummy input clock for synthesis (parameterized), but since the problem only requires simulation behavior, it focuses on a controlled event-driven toggle rather than a delay-based always loop.

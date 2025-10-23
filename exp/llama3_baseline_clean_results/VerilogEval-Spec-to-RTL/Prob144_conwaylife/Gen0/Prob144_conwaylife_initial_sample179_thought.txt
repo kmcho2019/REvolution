@@ -1,0 +1,13 @@
+To implement the module TopModule, we will first design a function to count the number of neighbors for each cell in the 16x16 toroid grid. Then, we will create a logic block to update the cell state based on the number of neighbors. We will use a 256-bit register to store the current state of the game and update it at each clock cycle.
+
+We will define the neighbor count function as follows:
+- For each cell at position (i, j), we will count the number of neighbors by checking the eight adjacent cells: (i-1, j-1), (i-1, j), (i-1, j+1), (i, j-1), (i, j+1), (i+1, j-1), (i+1, j), and (i+1, j+1).
+- Since the grid is a toroid, we will use the modulo operator to wrap around the edges.
+
+Then, we will update the cell state based on the number of neighbors:
+- If the number of neighbors is 0 or 1, the cell becomes 0.
+- If the number of neighbors is 2, the cell state does not change.
+- If the number of neighbors is 3, the cell becomes 1.
+- If the number of neighbors is 4 or more, the cell becomes 0.
+
+We will use a clock edge detection to update the game state at each clock cycle. When the load signal is high, we will load the initial state into the game state register.

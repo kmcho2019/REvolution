@@ -1,0 +1,15 @@
+The key innovation in this solution is a two-level hierarchical state encoding scheme that:
+1. Groups states with similar behavior into categories
+2. Implements parallel transition logic for each category
+3. Uses priority encoders for efficient state resolution
+
+The architecture divides states into 4 categories:
+1. Reset states (S0)
+2. Counting states (S1-S4)
+3. Special states (S5-S6)
+4. Output states (S7-S9)
+
+Each category has its own optimized transition logic that operates in parallel. A priority encoder resolves the final next_state when multiple current states are active. This approach reduces fan-out and improves timing by:
+- Minimizing long combinatorial chains
+- Reducing the number of gates any single signal must drive
+- Enabling better logic sharing within categories

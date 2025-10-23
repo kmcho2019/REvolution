@@ -1,0 +1,43 @@
+To fix the issues, revise the design as follows:
+
+1. **Combine IDLE and START_DETECT:**  
+   Remove the separate IDLE state to simplify and avoid redundant resets. The FSM starts directly in START_DETECT after reset, ready to detect the pattern.
+
+2. **Pattern Detection Shift Direction and Timing:**  
+   The problem is ambiguous on pattern bit order but given delay bits are MSB first, and data is serial, treat pattern bits as arriving MSB first (first bit received is pattern[3]). So shift the pattern shift register left and insert new bit at LSB:  
+   `pattern_shift <= {pattern_shift[2:0], data};`  
+   This is correct; no change needed here.
+
+3. **Pattern Detection Timing:**  
+   To detect the pattern immediately when `pattern_shift` matches `4'b1101`, check the updated `pattern_shift` value in the same clock cycle after shifting in new data. Since all updates are synchronous, pattern detection happens on the shifted value, so transition on the *next* clock edge. This matches synchronous logic semantics.
+
+4. **Delay Bits Loading Order:**  
+   The delay bits shift in MSB first as required. Keep shifting left and adding data at LSB during DELAY_LOAD state. After 4 bits loaded, move to COUNT.
+
+5. **Counting Logic Fixes:**  
+   The biggest issue is making `count` stable for exactly 1000 cycles for each tick value. To fix this, update `count` only when `cycle_counter` resets (at cycle_counter == 999).  
+   Use a separate signal `current_tick` to hold the stable tick value for the current 1000-cycle interval.  
+   At the start of counting, initialize `tick_counter = delay+1` and `current_tick = delay`.  
+   Each 1000 cycles, decrement `tick_counter` by one (except when zero) and update `current_tick` accordingly.  
+   Assign `count = current_tick` for all 1000 cycles, ensuring stable display.
+
+6. **Single Always Block for Counting Counters:**  
+   Consolidate the counting counters (`cycle_counter`, `tick_counter`, `current_tick`) updates into one always block to avoid race conditions.
+
+7. **FSM States and Transitions:**  
+   Remove the IDLE state; FSM states are:  
+   - START_DETECT (searching for pattern)  
+   - DELAY_LOAD (loading 4-bit delay)  
+   - COUNT (countdown in ticks of 1000 cycles each)  
+   - WAIT_ACK (wait for ack to restart)  
+
+   The FSM transitions synchronously on clock edge, state updates happen after conditions checked.
+
+8. **Signal Outputs:**  
+   - When counting: `counting = 1`, `done = 0`, `count = current_tick`  
+   - When waiting ack: `counting = 0`, `done = 1`, `count` don't care (set 0)  
+   - When detecting/loading: `counting = 0`, `done = 0`, `count` don't care (set 0)  
+
+This ensures the required exact timing, stable count output per tick, and proper detection and acknowledgment.
+
+The code below applies these fixes and structures the FSM and counters accordingly.

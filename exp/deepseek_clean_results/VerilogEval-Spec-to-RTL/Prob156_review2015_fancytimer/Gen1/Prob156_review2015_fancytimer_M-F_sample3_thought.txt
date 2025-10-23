@@ -1,0 +1,21 @@
+To fix the implementation, we need to address the core issues identified in the feedback:
+
+1. **Cycle Counting Accuracy**: Implement a precise 1000-cycle counter that properly synchronizes with period decrements. We'll use a 10-bit counter (0-999) and decrement the period counter only when we complete a full 1000 cycles.
+
+2. **Delay Value Capture**: Ensure the 4-bit delay value is correctly captured after detecting the 1101 pattern. We'll use a separate counter to track how many delay bits we've read.
+
+3. **State Machine Timing**: 
+   - Properly transition from READ_DELAY to COUNTING only after all 4 delay bits are captured
+   - Transition to DONE state only when both period_counter reaches 0 AND we've completed the final 1000 cycles
+   - Hold in DONE state until ack is received
+
+4. **Output Signals**:
+   - Maintain correct 'count' output during COUNTING state
+   - Assert 'counting' only during active counting
+   - Assert 'done' only after counting completes and until acknowledged
+
+The key improvements are:
+- Precise cycle counting with proper rollover
+- Correct delay value capture timing
+- Accurate state transitions with proper conditions
+- Synchronized output signal generation

@@ -1,0 +1,7 @@
+The finite-state machine can be designed with five states: Idle, Pattern_Detected, Shift_Data, Wait_For_Counting, and Done. 
+The machine starts in the Idle state, where it checks for the pattern 1101. 
+Once the pattern is detected, it transitions to the Pattern_Detected state and asserts shift_ena for exactly 4 clock cycles. 
+After shifting in the data, it transitions to the Wait_For_Counting state, where it asserts counting and waits for the counters to finish counting. 
+Once the counters are done, it transitions to the Done state, where it asserts done and waits for the user to acknowledge the timer. 
+After the user acknowledges, it transitions back to the Idle state. 
+The machine also has a synchronous reset, which sets the state to Idle.

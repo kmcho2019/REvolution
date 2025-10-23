@@ -1,0 +1,21 @@
+The function implemented is correct, but there is room for optimization in the logic expression to reduce area and power while keeping timing unaffected.
+
+Improvement strategy:
+- Re-express the Karnaugh map minterms to get a minimal sum-of-products expression with fewer literals.
+- Identify prime implicants and cover all '1's with minimal literals and fewer terms.
+- Use common sub-expression elimination and factored forms to reduce gate count.
+- The Karnaugh map groups suggest that the function can be expressed as:
+  
+  f = (~x3 & ~x1) | (x2 & ( (~x3 & x1 & ~x0) | (x3 & (~x0 | (x1 & x0)) )) )
+  
+- The first term covers 4 minterms (those in rows with x3=0,x1=0).
+- The second term covers the rest, factored properly.
+- However, we can further simplify the second term by recognizing that (~x0 | (x1 & x0)) = ~x0 + x1 x0 = ~x0 + x1 x0 = (~x0 + x1) (since x1 x0 included in x1 + ~x0).
+- Hence, term3_part simplifies to (x1 | ~x0).
+- Final minimal expression:
+
+  f = (~x3 & ~x1) | (x2 & ( (~x3 & x1 & ~x0) | (x3 & (x1 | ~x0)) ))
+
+- This reduces logic complexity and literals.
+- Implement this with clean intermediate signals for readability and better synthesis.
+- This approach reduces number of gates, logic levels, and potentially switching power by minimizing toggling terms.

@@ -1,0 +1,17 @@
+Implement a simple synchronous 8-bit multiplier using a 16-cycle iterative process that mimics the described radix-2 Booth-like approach (as per problem instructions, though named radix-4). 
+
+On reset, sign-extend inputs to 16 bits and initialize registers:
+- multiplicand <= sign-extended b
+- multiplier <= sign-extended a
+- product <= 0
+- counter <= 0
+- ready <= 0
+
+At each clock cycle (if counter < 16):
+- If current multiplier bit is 1, add multiplicand to product
+- Shift multiplicand left by 1
+- Increment counter
+
+Once counter reaches 16, set ready = 1 and output product.
+
+Keep the design fully synchronous with only essential signals and no FSM, reducing complexity from multiple states and control signals to a straightforward counter-driven process. This simplification meets the problem requirements while making the code clearer and more compact.

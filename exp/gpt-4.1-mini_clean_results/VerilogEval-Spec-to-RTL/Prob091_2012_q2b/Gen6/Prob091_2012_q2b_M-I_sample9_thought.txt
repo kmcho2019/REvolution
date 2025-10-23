@@ -1,0 +1,13 @@
+The original implementation is correct and minimal. However, to slightly optimize power and area, we can reduce the number of OR terms in Y3 by using an intermediate wire and potentially using a more compact expression. The expression for Y3 is (~w) & (y[1] | y[2] | y[4] | y[5]). Grouping y[1] and y[2] and y[4] and y[5] as two groups to OR first might help synthesis tools better optimize.
+
+We can implement the OR of (y[1], y[2]) and (y[4], y[5]) separately, then OR their results. This has no logical change but might help synthesis and reduce switching if some inputs are stable.
+
+Alternatively, since y[3] is unused in this OR, and only these 4 bits, we keep the logic the same.
+
+Since the problem only asks to optimize PPA without changing the interface, this small structural change may slightly reduce switching and area by enabling better gate sharing.
+
+Also, using wire declarations for intermediate signals can make the code clearer for synthesis tools.
+
+No timing penalty is expected as the logic levels stay the same.
+
+Therefore, the improved code introduces intermediate wires for the OR terms in Y3 and keeps Y1 as is.

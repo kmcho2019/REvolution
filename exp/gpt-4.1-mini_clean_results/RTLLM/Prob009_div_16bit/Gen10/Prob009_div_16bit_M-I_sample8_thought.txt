@@ -1,0 +1,19 @@
+To optimize the original design for better PPA (power, performance, area) while maintaining a purely combinational approach with two always blocks, I will:
+
+1. Use two always blocks as requested:
+   - One to latch inputs A and B into internal registers (`a_reg`, `b_reg`) combinationally.
+   - Another combinational block that performs the division algorithm iteratively using a for-loop inside an always_comb block, to better reflect the specified style.
+
+2. Optimize data widths to avoid unnecessary 9-bit remainder signals; keep remainder bits properly sized (8-bit divisor width plus one carry bit).
+
+3. Use nonblocking assignments inside always_comb (in SystemVerilog this is allowed, but since problem states Verilog, I will use blocking assignments for combinational clarity).
+
+4. By moving to an iterative for-loop inside always block, we keep the logic clear and synthesis-friendly, making it easier for synthesis tools to optimize.
+
+5. This style reduces the explicit generate block overhead, which may marginally improve synthesis results and make critical path timing more visible.
+
+6. Since the user specifically requested two always blocks and to capture inputs in first always block, and division logic in second always block, I follow exactly this pattern.
+
+7. Finally, document intermediate signals and stages for clarity.
+
+The resulting code is still fully combinational but reflects the requested style and should have similar or better PPA by simplifying structure and avoiding multiple wire arrays and generate blocks.

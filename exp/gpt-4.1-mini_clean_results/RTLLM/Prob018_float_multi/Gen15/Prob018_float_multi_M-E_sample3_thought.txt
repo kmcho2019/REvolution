@@ -1,0 +1,17 @@
+I will design a fully combinational IEEE-754 single-precision floating-point multiplier with a simple sequential interface controlled by a 3-cycle counter. This approach avoids pipelining complexity by processing inputs and outputs across several clock cycles but performs the multiplication and normalization combinationally within a single cycle. 
+
+Key points:
+- Cycle 0: Extract fields and detect special cases.
+- Cycle 1: Perform multiplication, exponent calculation, and normalization.
+- Cycle 2: Handle rounding, special cases, and output final result.
+
+Architectural differences:
+- Use a straightforward 24x24 multiplier (implicit leading 1) instead of splitting.
+- Normalize the 48-bit product by checking the highest bit.
+- Implement round to nearest even rounding with guard, round, sticky bits.
+- Handle special cases (NaN, Inf, zero) and saturate exponent on overflow.
+- Use a 3-bit cycle counter to sequence operation steps.
+
+This design simplifies control and structure at the expense of throughput but enables clear separation of stages. All calculations except extraction and output formatting are done combinationally within a clock cycle, improving timing predictability.
+
+I will provide the complete Verilog code implementing this approach.

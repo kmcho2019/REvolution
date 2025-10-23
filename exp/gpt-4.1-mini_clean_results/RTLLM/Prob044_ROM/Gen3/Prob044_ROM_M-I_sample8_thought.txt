@@ -1,0 +1,5 @@
+To optimize the ROM for better power efficiency and maintain clean timing characteristics, I will implement synchronous reads with a clock input, so that the output updates only on a clock edge when the address changes, reducing continuous switching activity on the output. This approach sacrifices purely combinational behavior for improved power (less dynamic switching) and more robust timing (easier to meet timing constraints). 
+
+Additionally, I'll add a reset input to initialize the output to zero at reset for clarity. The memory initialization remains the same in the initial block.
+
+This approach balances timing closure and power efficiency, especially beneficial for large ROMs or higher frequency clocks. Area impact is minimal since registers are added for the output register. The synchronous read is a common industry practice for ROM blocks in ASIC and FPGA designs.

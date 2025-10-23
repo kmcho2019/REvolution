@@ -1,0 +1,9 @@
+To create a novel architectural solution for the 4-bit comparator module, we will leverage a binary subtraction approach, utilizing a 4-bit subtractor to compare the input operands A and B. The subtractor will perform the operation A - B, and based on the result and borrow flags, we will determine the comparison outputs (A_greater, A_equal, A_less).
+
+Our design strategy involves implementing a 1-bit full subtractor as a basic building block. This full subtractor will take two input bits (a, b) and a borrow_in signal, producing a difference output and a borrow_out signal. By cascading four instances of this 1-bit full subtractor, we can create a 4-bit subtractor that performs the binary subtraction A - B.
+
+The outputs of the 4-bit subtractor, specifically the result and the final borrow flag, will be used to determine the comparison results. If the result is zero and no borrow occurred, A is equal to B. If the result is positive (considering the final borrow flag), A is greater than B. Conversely, if the result indicates a negative outcome (with a borrow), A is less than B.
+
+To minimize area and improve performance, we will use a ripple-borrow subtractor architecture for the 4-bit subtractor. This approach, although not the fastest, offers simplicity and area efficiency, making it suitable for our novel comparator design.
+
+Our new solution focuses on simplicity, area efficiency, and ease of implementation, providing a straightforward and modular approach to designing the 4-bit comparator module.

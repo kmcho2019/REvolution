@@ -1,0 +1,11 @@
+Here's a novel approach using a two-stage pipeline for more precise edge detection:
+
+1. **Double Buffering**: Instead of storing just one previous value, we'll maintain two registers (prev1 and prev2) to create a pipeline of the last two input values. This gives us more precise control over timing.
+
+2. **Edge Detection Logic**: We'll detect falling edges by comparing the value two cycles ago (prev2) with the value one cycle ago (prev1). This ensures we're looking at consecutive cycles' values after they've properly propagated through the pipeline.
+
+3. **Sticky Capture with Priority**: The capture register will use an OR operation to maintain sticky behavior, but we'll implement it with a clear priority: new detections override the reset state but can't override existing captures until reset.
+
+4. **Reset Synchronization**: The reset will clear all registers, but we'll ensure the pipeline maintains proper timing even during reset conditions.
+
+This approach provides better timing isolation between stages and more reliable edge detection compared to the single-register solution.

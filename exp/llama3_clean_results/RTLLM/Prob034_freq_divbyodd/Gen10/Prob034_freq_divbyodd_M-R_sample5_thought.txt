@@ -1,0 +1,7 @@
+To refactor the given Verilog code for the frequency divider module `freq_divbyodd`, we will focus on improving its structure and functionality while maintaining the core idea of dividing the input clock frequency by an odd number defined by the parameter `NUM_DIV`. 
+
+The original code uses a single counter and internal clock divider logic that toggles at the midpoint of `NUM_DIV - 1`. However, this approach does not accurately account for both rising and falling edges of the input clock. 
+
+A refactored approach involves using two separate counters for rising and falling edges, each counting up to `NUM_DIV - 1`. We then use these counters to generate two clock dividers, `clk_div1` and `clk_div2`, which are toggled at half of `NUM_DIV` for positive and negative edges, respectively. The final divided clock output `clk_div` is derived by logically OR-ing `clk_div1` and `clk_div2`.
+
+This refactored implementation aims to improve the code's readability, maintainability, and functionality, ensuring correct clock division for both edge transitions.

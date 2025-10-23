@@ -1,0 +1,8 @@
+The TopModule can be designed using a finite state machine (FSM) with several states. 
+The FSM starts in an IDLE state where it continuously checks for the input pattern 1101. 
+Once the pattern is detected, it shifts in the next 4 bits to determine the delay. 
+Then it enters a COUNTING state where it counts down the delay for (delay + 1) * 1000 clock cycles. 
+After counting is finished, it enters a DONE state where it asserts the done signal and waits for the ack signal to be asserted. 
+Once the ack signal is asserted, it returns to the IDLE state. 
+The current remaining time is output on the count[3:0] pins during the COUNTING state. 
+All sequential logic is triggered on the positive edge of the clock.

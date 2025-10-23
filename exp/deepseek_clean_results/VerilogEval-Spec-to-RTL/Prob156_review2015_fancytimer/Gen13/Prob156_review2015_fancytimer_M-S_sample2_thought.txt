@@ -1,0 +1,23 @@
+Simplified Approach: Streamlined Timer with Clear State Transitions
+
+1. **State Machine Simplification**:
+   - Reduce to 3 clear states: IDLE (pattern detection), LOAD (duration capture), COUNT (timer operation)
+   - Eliminate unnecessary registers and combine logic where possible
+
+2. **Cycle Counting Optimization**:
+   - Use a single counter that counts down from (delay+1)*1000 cycles
+   - Derive count output directly from counter value (count = counter/1000 - 1)
+
+3. **Signal Generation**:
+   - Generate counting output directly from state
+   - Assert done only when counter reaches 0 and hold until ack
+
+4. **Reset Behavior**:
+   - Clear all registers on reset
+   - Return to IDLE state to restart pattern detection
+
+Key Simplifications:
+- Single counter for both timing and count output
+- Direct state-based output generation
+- Minimal register usage
+- Clear state transitions

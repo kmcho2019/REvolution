@@ -1,0 +1,11 @@
+To address the issues in the original code, we need to modify the delay handling and state transitions. 
+
+1. **Proper delay handling**: After detecting the pattern 1101, the circuit should wait for the full 4 bits of the delay to be shifted in before starting the count. This can be achieved by adding a separate state to handle the delay shifting.
+
+2. **Correct state transitions**: The state machine should be modified to properly handle the COUNTING state and the DONE_STATE. The COUNTING state should decrement the counter and update the remaining time, and the DONE_STATE should assert the done signal and wait for the ack signal.
+
+3. **Output signal handling**: The count signal should be set to the remaining time when the state is COUNTING, and it should be set to don't-care when the state is not COUNTING. The counting and done signals should be properly reset when the count is finished, and the done signal should be asserted when the count is finished.
+
+4. **Additional states for pattern detection and delay shifting**: We need to add separate states for pattern detection and delay shifting to ensure that the circuit properly handles the input pattern and delay.
+
+By implementing these changes, we can create a more efficient and accurate design that meets the requirements of the problem.

@@ -1,0 +1,24 @@
+The optimal fused solution combines the best aspects of both examples while addressing their minor weaknesses:
+
+1. State Representation:
+   - Use explicit state encoding (3 states) as required, rather than shift registers
+   - States represent: IDLE, GOT1, GOT10 (clear progression toward pattern)
+
+2. Reset Handling:
+   - Maintain negative-edge asynchronous reset from both examples
+   - Reset to IDLE state
+
+3. Pattern Detection:
+   - Mealy-type output (z) depends on current state AND input
+   - Direct pattern matching like Example 2 but with explicit states
+   - Enable overlapping sequences by proper state transitions
+
+4. Output Logic:
+   - Minimal combinational logic (similar to Example 2)
+   - Output asserted only when in GOT10 state and current input is 1
+
+Advantages over original solutions:
+- Explicit state machine (meets requirement of 3 states)
+- Clear state progression for maintainability
+- Maintains all PPA benefits of original solutions
+- More robust to future modifications than shift-register approach

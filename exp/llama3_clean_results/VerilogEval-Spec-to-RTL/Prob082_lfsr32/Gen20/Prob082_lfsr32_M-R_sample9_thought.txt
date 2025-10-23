@@ -1,0 +1,7 @@
+To refactor the code, we can simplify the implementation by using a more straightforward approach to update the state of the LFSR. We will use a non-blocking assignment (`<=`) within the `always` block to ensure that the new state of the LFSR is computed correctly. 
+
+The core idea remains the same: we need to update the state of the LFSR by shifting its current state to the right and XORing the corresponding bits with the LSB output bit (q[0]). 
+
+However, instead of using the expression `{q[30:0], (q[31] ^ q[21] ^ q[1] ^ q[0])}`, we can break it down into separate variables to improve readability and maintainability. 
+
+Additionally, we should ensure that the tap positions are correctly implemented, taking into account Verilog's zero-based indexing.

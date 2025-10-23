@@ -1,0 +1,5 @@
+The existing implementation correctly computes the even parity of the inputs by XORing all four inputs and then inverting the result. To optimize for better PPA, we can reduce the number of intermediate wires and perform the XOR operations directly in the output assignment without intermediate signals. This reduces area slightly by eliminating wire declarations and might slightly improve power due to fewer nets switching.
+
+Additionally, XOR gates can be implemented efficiently as a single 4-input XOR if the synthesis tool supports it, further reducing area and potentially improving performance by reducing gate levels. Since the logic is minimal and straightforward, no further optimization is needed.
+
+Therefore, I will implement the even parity output as a single line assign statement, using a combined XOR of all inputs inverted, eliminating intermediate wires.

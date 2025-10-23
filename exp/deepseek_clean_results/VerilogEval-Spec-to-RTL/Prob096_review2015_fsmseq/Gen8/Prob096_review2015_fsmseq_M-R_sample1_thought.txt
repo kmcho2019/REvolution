@@ -1,0 +1,8 @@
+I'll refactor the solution using a more explicit state machine approach while maintaining the same functionality. The key changes are:
+1. Replace the shift register with explicit state tracking
+2. Use a Moore FSM where each state represents progress in the sequence detection
+3. Move the pattern matching logic to combinational assignments
+4. Keep the same synchronous reset behavior
+5. Maintain the property that start_shifting stays high once set until reset
+
+This approach makes the sequence detection more explicit in the state transitions while potentially improving timing by breaking the comparison logic into smaller steps. The state machine will have 5 states: IDLE (waiting for first '1'), S1 (got '1'), S2 (got '11'), S3 (got '110'), and MATCH (found '1101').

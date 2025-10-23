@@ -1,0 +1,24 @@
+Implement a 4-bit unsigned multiplier with a two-stage pipeline strictly separating pipeline stages to ensure proper timing and data stability. 
+
+Stage 1:
+- Register inputs (extended multiplicand and multiplier).
+- Generate and register all partial products from the registered multiplier bits and multiplicand.
+This stage produces stable partial products at its output registers.
+
+Stage 2:
+- Add all partial products sequentially in a combinational adder tree, but register the sums in stage 2 registers.
+- Finally, output the sum of all partial products as the final product.
+
+This design guarantees:
+- Inputs registered first.
+- Partial products computed and registered in stage 1.
+- Sums computed from stable stage 1 outputs and registered in stage 2.
+- Output registered, providing a clean pipeline with two levels of registers for intermediate values.
+
+The input multiplicand is extended by concatenating zeros at the MSB side before registration.
+
+Use a generate block for partial product generation and arrays of registers for pipeline registers.
+
+This method cleanly isolates combinational partial product generation, pipelined storage of partial products, and a pipelined addition stage producing the final product output.
+
+This satisfies the requirement of two pipeline register stages controlling multiplication and intermediate storage.

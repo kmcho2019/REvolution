@@ -1,0 +1,17 @@
+The simplified solution maintains core functionality while reducing complexity:
+
+1. Key Simplifications:
+   - Remove explicit state machine by using current sensor readings only
+   - Implement direct combinatorial mapping from sensor states to outputs
+   - Keep dfr simple (always 0) since transition tracking adds complexity
+   - Maintain correct reset behavior
+
+2. Output Logic:
+   - fr2: active only when all sensors are off (below s[0])
+   - fr1: active when s[2] is off AND s[1] is off (below s[1])
+   - fr0: active when not in highest level (s[2] is off)
+   - dfr: set to 0 (simplified from transition tracking)
+
+3. Reset Behavior:
+   - All outputs high when reset is active (maximum flow)
+   - Synchronous reset implementation

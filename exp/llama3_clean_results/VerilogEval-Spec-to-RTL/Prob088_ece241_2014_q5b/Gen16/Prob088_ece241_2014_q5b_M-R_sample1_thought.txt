@@ -1,0 +1,9 @@
+To refactor the given code, we can consider simplifying the state machine logic and the output 'z' calculation. The current implementation uses a one-hot encoding scheme, which can be area-efficient but might not be the most efficient choice for this simple two-state machine. However, changing to a binary encoding might not significantly impact the area in this case due to the simplicity of the design.
+
+We can refactor the code to directly implement the Mealy machine's logic without explicitly defining states. Since the machine has only two states (A and B) and the output 'z' is directly dependent on the current state and input 'x', we can simplify the logic to reduce area and potentially improve performance.
+
+One approach is to use a single flip-flop to store the state and use combinational logic to determine the next state and the output 'z'. Given the simple transitions and output logic, this approach can simplify the design and potentially improve PPA metrics.
+
+We'll use a single reg variable 'state' to store the current state (0 for A, 1 for B) and use an always block to update 'state' based on the current 'state' and input 'x'. We'll also use an assign statement to directly calculate the output 'z' based on the current 'state' and input 'x', eliminating the need for a separate always block.
+
+By simplifying the logic and reducing the number of always blocks, we can potentially improve the design's area and performance while maintaining its functionality.

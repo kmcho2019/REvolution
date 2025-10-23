@@ -1,0 +1,7 @@
+To improve PPA while preserving correctness, we can simplify the next state logic by noticing that the next state always equals the current state if input is 1, and flips if input is 0. Since states A and B are encoded as 0 and 1, next_state can be calculated by XORing the current state with the negation of the input: next_state = state ^ (~in).
+
+This removes the case statement and conditional operator, simplifying the combinational logic and potentially reducing power and improving timing.
+
+The asynchronous reset and output assignment remain unchanged for clarity and minimal logic.
+
+This also slightly reduces area by removing the always block for next_state and the reg next_state signal entirely.

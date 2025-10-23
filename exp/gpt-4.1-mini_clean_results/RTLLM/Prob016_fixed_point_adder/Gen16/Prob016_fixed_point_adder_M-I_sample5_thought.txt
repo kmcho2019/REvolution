@@ -1,0 +1,17 @@
+To improve the provided solution, I will simplify and clarify the handling of signed fixed-point addition by leveraging Verilog's built-in signed arithmetic instead of manually extracting and manipulating absolute values. This approach avoids complex absolute value computations and conditional re-signing, which can introduce logic overhead and synthesis difficulties.
+
+My strategy is:
+
+- Declare inputs and outputs as signed vectors, reflecting the fixed-point two's complement representation naturally.
+- Perform a straightforward addition of the two signed inputs.
+- Truncate or saturate the result if necessary to fit into N bits (the problem does not specify saturation behavior, so we keep the lower N bits).
+- Since the addition of two N-bit signed numbers fits in N+1 bits, I will keep the result in N bits, assuming two's complement wrapping (overflow behavior consistent with Verilog signed addition).
+- This approach respects the fractional bits by keeping bit alignment and performing addition directly, as fixed-point addition is the same as integer addition on the underlying two's complement bits.
+- Internal registers like `res` will be declared combinationally (`wire`), simplifying design.
+- Parameters Q and N remain to allow flexible fractional bitwidth and total bitwidth configuration.
+
+This design leverages Verilog's signed arithmetic for correctness and synthesis friendliness, resulting in simpler, more efficient hardware.
+
+If overflow detection or saturation is desired, it could be added, but the problem only requests overflow to be "managed internally" by observing the MSB and ensuring the result fits within N bits.
+
+Hence, the improved design is simpler, more robust, synthesis friendly, and functionally equivalent.

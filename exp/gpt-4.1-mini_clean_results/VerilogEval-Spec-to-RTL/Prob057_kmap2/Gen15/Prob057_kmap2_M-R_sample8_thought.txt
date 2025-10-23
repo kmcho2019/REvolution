@@ -1,0 +1,14 @@
+Refactor the design by removing the ProductTerm submodule and instead implementing the K-map logic directly in TopModule using Boolean expressions derived from the Karnaugh map.
+
+This approach will:
+- Use simplified sum-of-products directly in assign statements.
+- Avoid equality comparisons and mask/value parameters, reducing logic overhead.
+- Explicitly write out product terms based on minterm or group simplification.
+- Enhance clarity by showing the explicit boolean formula without extra modules.
+- Keep the same logical functionality while optimizing for area and potential performance.
+
+The Boolean function is derived from grouping 1s in the K-map and can be expressed as:
+
+F = (~d & ~a) | (~c & ~b) | (c & d & (a | b))
+
+This directly matches the original groups in the previous modular design, but without ProductTerm complexity.

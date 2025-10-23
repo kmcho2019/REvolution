@@ -1,0 +1,15 @@
+Novel Architectural Idea: Barrel Shifter with Pre-computed Shift Amounts
+1. Instead of separate shift operations, implement a unified barrel shifter that can handle all shift amounts
+2. Pre-compute the effective shift amount and direction from the 'amount' input
+3. Use sign extension only when needed for right shifts
+4. Implement the barrel shifter using a hierarchical approach:
+   - First level handles byte (8-bit) shifts
+   - Second level handles single-bit shifts
+5. Use a single multiplexer to select between load, hold, or shifted value
+6. Optimize power by only computing shifts when 'ena' is active
+
+Key Advantages:
+- More scalable design that could easily support additional shift amounts
+- Potentially better timing due to hierarchical shift implementation
+- Reduced area through shared shift logic
+- Clear separation of control and datapath

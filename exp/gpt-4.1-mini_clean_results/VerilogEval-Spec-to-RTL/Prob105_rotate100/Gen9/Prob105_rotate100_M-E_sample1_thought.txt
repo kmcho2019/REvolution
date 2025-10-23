@@ -1,0 +1,5 @@
+Implement the 100-bit rotate register using a parallel multiplexing approach controlled by the ena signals to select between load, rotate-left, rotate-right, or hold states. Instead of using vector concatenations directly in the always block, precompute three candidate values: the load data, the left-rotated value, and the right-rotated value. Then select among them using a combinational mux before registering the result synchronously.
+
+This modularizes the logic and makes it explicit that the rotation is just data selection between shifted versions. It also clarifies that rotation is just a bit permutation of q. The actual rotation uses concatenation as before but done outside the sequential block.
+
+Finally, on the clock edge, assign q with the selected candidate value if load is high or ena requests rotation; otherwise hold q. This approach can also help synthesis tools optimize the multiplexers better by separating combinational rotation generation from register update.

@@ -1,0 +1,17 @@
+Fuse the continuous combinational output approach from Example 1 with the clock enable logic and exact counting to freq-1 from Example 2.
+
+- Use synchronous reset and an 8-bit counter counting from 0 to freq-1.
+- Implement a clock enable signal to freeze counting and toggling when freq=0, reducing power.
+- Instead of toggling wave_out on terminal count, generate wave_out as a registered output updated synchronously on clk.
+- Produce a registered wave_out signal derived by comparing count with freq/2, avoiding an explicit toggle and potentially reducing glitches.
+- This keeps wave_out as a reg for glitch-free output and aligns output changes cleanly on clk edges.
+- Retain the half-period comparison as in Example 1 but register wave_out output for stable timing and less dynamic power than a combinational assignment.
+- Using count < freq/2 for wave_out ensures the square wave’s high and low phases are balanced.
+- When freq=0, hold output low and stop counting.
+- This design minimizes combinational logic on the critical path (count increment and compare only) and lowers switching by gating counting.
+- The output timing is well-defined with minimal glitch potential.
+- This hybrid captures Example 2’s power saving and clean toggling with Example 1’s simplicity and glitch-free output generation.
+
+Overall, the design is both performant and power-efficient with a clean synchronous output register.
+
+Ports: clk, rst (sync active-high reset), freq, wave_out (reg).

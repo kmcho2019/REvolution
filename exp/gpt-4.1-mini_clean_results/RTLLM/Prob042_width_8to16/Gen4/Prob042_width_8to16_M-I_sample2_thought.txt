@@ -1,0 +1,24 @@
+To improve correctness and robustness, handle consecutive or irregular `valid_in` inputs with a simple two-state state machine that clearly tracks whether the first byte is stored or waiting for the second byte. This avoids repeated concatenation or data loss if `valid_in` remains asserted for multiple cycles.
+
+The steps are:
+
+1. Use an explicit state (`idle` and `wait_second`) to track whether the first 8-bit data has been latched.
+2. On receiving the first valid data (`valid_in` and state == idle), latch it into `data_lock` and move to `wait_second` state.
+3. On receiving the second valid data (when state == `wait_second` and `valid_in`), latch concatenated data into `data_out_next` and assert `valid_out_next`.
+4. Output `data_out_next` and `valid_out_next` on the next cycle as `data_out` and `valid_out`.
+5. Return to `idle` state after outputting data.
+6. When no input arrives, maintain the state without modifying registers.
+
+This approach makes the interface behavior deterministic and ensures the output is only asserted exactly one cycle after two inputs have arrived, no matter how long `valid_in` is asserted.
+
+This method improves the previous solution by:
+- Removing ambiguity when `valid_in` is asserted multiple cycles.
+- Ensuring no data overwrite or missing outputs.
+- Properly handling reset to start from the `idle` state.
+
+For power optimization:
+- Only update `data_lock` and `data_out_next` on valid input events.
+- Output registers (`data_out`, `valid_out`) update every cycle as needed.
+- The small FSM state encoding adds minimal overhead.
+
+The overall latency remains one clock cycle from the second input arrival to output valid assertion, as required.

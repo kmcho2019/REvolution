@@ -1,0 +1,19 @@
+Fusion Strategy:
+1. Maintain robust two-stage enable synchronization (from Example 2) for metastability protection
+2. Keep the simplified output logic (from Example 1) but with proper enable synchronization
+3. Combine the power-efficient update strategy (only update when needed) from both examples
+4. Use the more compact always block structure from Example 2
+5. Add explicit data register in clk_a domain (from problem description) for proper domain crossing
+
+Key Improvements:
+- Proper two-stage enable synchronization for reliability
+- Data capture only when synchronized enable is active
+- Separate clock domain handling for data and control signals
+- Minimal register updates for power efficiency
+- Clear reset handling for both domains
+
+Implementation Notes:
+- First stage registers data_in in clk_a domain
+- Second stage synchronizes enable to clk_b domain
+- Final stage captures data only when synchronized enable is active
+- All resets properly synchronized to their respective domains

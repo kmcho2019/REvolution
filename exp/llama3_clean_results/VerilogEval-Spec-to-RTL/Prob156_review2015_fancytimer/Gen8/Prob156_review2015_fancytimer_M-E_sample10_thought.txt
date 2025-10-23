@@ -1,0 +1,15 @@
+To implement the timer module, we can use a Finite State Machine (FSM) with five states: IDLE, PATTERN_DETECTION, DELAY_DETECTION, COUNTING, and WAIT_ACK. The FSM will transition between these states based on the input data and the current state.
+
+In the IDLE state, the module will check for the input pattern '1101' and transition to the PATTERN_DETECTION state when the pattern is detected.
+
+In the PATTERN_DETECTION state, the module will shift in the next 4 bits to determine the delay value and then transition to the DELAY_DETECTION state.
+
+In the DELAY_DETECTION state, the module will check if the delay value is valid (i.e., not more than 15) and then transition to the COUNTING state.
+
+In the COUNTING state, the module will count down from the delay value multiplied by 1000 and output the current remaining time. When the counter reaches 0, the module will transition to the WAIT_ACK state.
+
+In the WAIT_ACK state, the module will wait for the ack signal to be asserted before transitioning back to the IDLE state.
+
+We can use a combination of counters, registers, and logic gates to implement the necessary functionality for each state.
+
+To make the design more efficient, we can use a single counter to count down from the delay value multiplied by 1000, and use a separate register to store the current remaining time. This will eliminate the need for multiple counters and reduce the overall area and power consumption of the design.

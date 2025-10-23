@@ -1,0 +1,19 @@
+The current solution is already quite efficient with good PPA metrics, but we can make some targeted improvements:
+
+1. Power Optimization:
+   - Replace the parameterized NAND4 module with direct combinational logic to eliminate any potential overhead from module instantiation
+   - Use a single continuous assignment for each NAND gate to minimize switching activity
+
+2. Area Optimization:
+   - Remove the parameterization since it's not needed for this specific 7420 implementation
+   - Simplify the structure to only what's required by the spec
+
+3. Performance:
+   - Maintain the efficient ~& reduction operator implementation
+   - Keep the direct combinational paths for optimal timing
+
+Key Changes:
+- Eliminate the separate NAND4 module to reduce hierarchy overhead
+- Use direct continuous assignments for both NAND gates
+- Maintain the same logical functionality while reducing implementation overhead
+- Keep clear port naming for readability
