@@ -3,13 +3,39 @@
 
 # REvolution: An Evolutionary Framework for RTL Generation driven by Large Language Models
 
+
+**Authors**  
+Kyungjun Min\*, Kyumin Cho\*, Junhwan Jang, and Seokhyeong Kang
+
+**Affiliation**  
+Department of Electrical Engineering, Pohang University of Science and Technology (POSTECH)  
+Pohang, Republic of Korea  
+{kj.min, kmcho, jhjang17, shkang}@postech.ac.kr
+
+**Laboratory**  
+CAD & SoC Design Lab. (Advisor: Seokhyeong Kang), POSTECH, Republic of Korea  
+<http://csdl.postech.ac.kr/>
+
+\* These authors contributed equally to this work.
+
+**Acknowledgments**  
+This research was supported by the nanomaterials development program through the National Research Foundation of Korea (NRF) (2022M3H4A1A04096496) funded by the Ministry of Science and ICT, Korea, and by LX Semicon.
+
 -----
 
 ## 📜 Abstract
 
 
-Large Language Models (LLMs) are used for Register-Transfer Level (RTL) code generation, but they face two main challenges: functional correctness and Power, Performance, and Area (PPA) optimization. Iterative, feedback-based methods partially address these, but they are limited to local search, hindering the discovery of a global optimum. This paper introduces **REvolution**, a framework that combines Evolutionary Computation (EC) with LLMs for automatic RTL generation and optimization. REvolution evolves a population of candidates in parallel, each defined by a design strategy (Thought), RTL implementation (Code), and evaluation feedback. The framework includes a dual-population algorithm that divides candidates into Fail and Success groups for bug fixing and PPA optimization, respectively. An adaptive mechanism further improves search efficiency by dynamically adjusting the selection probability according to the success rates.
-Experiments on the VerilogEval and RTLLM benchmarks show that REvolution increased the initial pass rate of various LLMs by up to 24.0 percentage points. The DeepSeekV3 model achieved a final pass rate of 95.5\%, comparable to state-of-the-art results, without the need for separate training or domain-specific tools. Additionally, the generated RTL designs showed significant PPA improvements over reference designs. This work introduces a new RTL design paradigm by combining LLMs' generative capabilities with EC's broad search power, overcoming the local-search limitations of previous methods.
+Large Language Models (LLMs) are used for Register-Transfer Level (RTL) code generation, but they face two main challenges: functional correctness and Power, Performance, and Area (PPA) optimization. 
+Iterative, feedback-based methods partially address these, but they are limited to local search, hindering the discovery of a global optimum.
+This paper introduces REvolution, a framework that combines Evolutionary Computation (EC) with LLMs for automatic RTL generation and optimization. 
+REvolution evolves a population of candidates in parallel, each defined by a design strategy, RTL implementation, and evaluation feedback. 
+The framework includes a dual-population algorithm that divides candidates into Fail and Success groups for bug fixing and PPA optimization, respectively.
+An adaptive mechanism further improves search efficiency by dynamically adjusting the selection probability of each prompt strategy according to its success rate.
+Experiments on the VerilogEval and RTLLM benchmarks show that REvolution increased the initial pass rate of various LLMs by up to 24.0 percentage points. 
+The DeepSeekV3 model achieved a final pass rate of 95.5\%, comparable to state-of-the-art results, without the need for separate training or domain-specific tools. 
+Additionally, the generated RTL designs showed significant PPA improvements over reference designs. 
+This work introduces a new RTL design approach by combining LLMs' generative capabilities with EC's broad search power, overcoming the local-search limitations of previous methods.
 
 -----
 
@@ -27,6 +53,10 @@ The repository is organized as follows:
     - `evolutionary_report_generator.py`: Generates detailed reports from experiment logs.
   - `data/`: Contains benchmark problems (`bench/`) and the Process Design Kit (`pdk/`).
   - `exp/`: The default output directory for experimental results and logs.
+      - `./exp/llama3_clean_results/`: Results from the REvolution run using Llama-3.3-70B.
+      - `./exp/llama3_baseline_clean_results/`: Baseline results for Llama-3.3-70B (pass@200) without the evolutionary framework.
+      - `./exp/gpt-4.1-mini_clean_results/`: Results from the REvolution run using GPT-4.1-mini.
+      - `./exp/deepseek_clean_results/`: Results from the REvolution run using DeepSeek-V3-0324.
 -----
 
 ---
@@ -222,3 +252,12 @@ python3 scripts/plot_problem_pareto.py
 ```
 
 This script will generate the plots and save them in a newly created directory named `VerilogEval_Prob033_ece241_2014_q1c_plots`.
+
+### 📚 Cite this work
+```bibtex
+@inproceedings{min2026revolution,
+  title        = {REvolution: An Evolutionary Framework for RTL Generation driven by Large Language Models},
+  author       = {Kyungjun Min, Kyumin Cho, Junhwan Jang, and Seokhyeong Kang},
+  booktitle    = {31st Asia and South Pacific Design Automation Conference (ASP-DAC 2026)},
+  year         = {2026}
+}
