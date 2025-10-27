@@ -23,6 +23,24 @@ This research was supported by the nanomaterials development program through the
 
 -----
 
+## 📜 Paper & Citation
+
+This repository contains the official code for the paper **REvolution: An Evolutionary Framework for RTL Generation driven by Large Language Models**, accepted to ASP-DAC 2026.
+
+[![arXiv](https://img.shields.io/badge/arXiv-2510.21407-b31b1b.svg)](https://arxiv.org/abs/2510.21407)
+
+If you find this work useful, please cite our paper:
+```bibtex
+@inproceedings{min2026revolution,
+  title        = {REvolution: An Evolutionary Framework for RTL Generation driven by Large Language Models},
+  author       = {Kyungjun Min, Kyumin Cho, Junhwan Jang, and Seokhyeong Kang},
+  booktitle    = {31st Asia and South Pacific Design Automation Conference (ASP-DAC 2026)},
+  year         = {2026}
+}
+```
+
+-----
+
 ## 📜 Abstract
 
 
@@ -33,7 +51,7 @@ REvolution evolves a population of candidates in parallel, each defined by a des
 The framework includes a dual-population algorithm that divides candidates into Fail and Success groups for bug fixing and PPA optimization, respectively.
 An adaptive mechanism further improves search efficiency by dynamically adjusting the selection probability of each prompt strategy according to its success rate.
 Experiments on the VerilogEval and RTLLM benchmarks show that REvolution increased the initial pass rate of various LLMs by up to 24.0 percentage points. 
-The DeepSeekV3 model achieved a final pass rate of 95.5\%, comparable to state-of-the-art results, without the need for separate training or domain-specific tools. 
+The DeepSeek-V3 model achieved a final pass rate of 95.5\%, comparable to state-of-the-art results, without the need for separate training or domain-specific tools. 
 Additionally, the generated RTL designs showed significant PPA improvements over reference designs. 
 This work introduces a new RTL design approach by combining LLMs' generative capabilities with EC's broad search power, overcoming the local-search limitations of previous methods.
 
@@ -253,11 +271,7 @@ python3 scripts/plot_problem_pareto.py
 
 This script will generate the plots and save them in a newly created directory named `VerilogEval_Prob033_ece241_2014_q1c_plots`.
 
-### 📚 Cite this work
-```bibtex
-@inproceedings{min2026revolution,
-  title        = {REvolution: An Evolutionary Framework for RTL Generation driven by Large Language Models},
-  author       = {Kyungjun Min, Kyumin Cho, Junhwan Jang, and Seokhyeong Kang},
-  booktitle    = {31st Asia and South Pacific Design Automation Conference (ASP-DAC 2026)},
-  year         = {2026}
-}
+## 🔄 Changelog
+
+-   **aspdac2026-submission-v1.0.1** (October 27, 2025): Added link to the arXiv preprint and updated citation information in the README.
+-   **aspdac2026-submission** (October 25, 2025): Initial code release corresponding to the experiments in the ASP-DAC 2026 submission.
