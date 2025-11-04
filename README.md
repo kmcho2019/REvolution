@@ -149,8 +149,9 @@ Both `run_evolution.py` and `run_one_shot.py` accept a `--config path/to/config.
 Every run records the exact configuration that was used by writing `<timestamp>_config.yaml` next to the summary and log files under `exp/<model>/`. These snapshots merge the resolved arguments, the originating CLI invocation, and the on-disk config so experiments can be reproduced verbatim.
 
 #### Running CVDP Benchmarks
-**⚠️ CVDP support is experimental.**
-CVDP integration is currently tested only on the non-agentic, non-commercial subsets (`cid002`, `cid003`). Docker-based runs can behave differently from host runs. 
+> **⚠️ CVDP support is experimental.**
+> CVDP integration is currently tested only on the non-agentic, non-commercial subsets (`cid002`, `cid003`).
+> When running inside Docker, CVDP evaluations may encounter filesystem or dependency issues that do not appear in host runs.
 
 The script uses special logic to handle the CVDP benchmark. To run CVDP, you must include `cvdp` in the `--benchmarks` argument. This is due to the fact that CVDP benchmarks are based around `.jsonl` files while other benchmark files are based around simple text files. We currently only support non-agentic non-commercial subset of the CVDP benchmarks (`cid002`, `cid003`).
 - Running a batch (all problems in a category): To run all problems from the JSONL file that match one or more categories, use the --cvdp_categories flag.
@@ -170,7 +171,7 @@ python scripts/run_evolution.py \
   --cvdp_categories cid002 cid003 \
   --problems cvdp_copilot_64b66b_decoder_0001 cvdp_copilot_16qam_mapper_0001 \
   --model_name gpt-4.1-mini \
-  --num_workers 2
+  --num_workers 2 \
   --population_size 10 \
   --num_generations 5
 ```
