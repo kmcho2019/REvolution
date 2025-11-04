@@ -42,6 +42,8 @@ The `docs/` directory contains deeper dives:
      revolution-env
    ```
    The project is mounted at `/workspace` with all required EDA tools available.
+  
+(Note that CVDP evaluations that depend on Docker might cause issues with this setup.)
 
 ### Local development setup
 
@@ -68,6 +70,8 @@ export GEMINI_API_KEY="..."   # optional
 ```
 
 For a local vLLM server, ensure it is reachable at `http://localhost:8888/v1` (override with `--vllm_host` / `--vllm_port`) and no API key is required.
+Set `--api_backend` to `vllm` to use a local vLLM server.
+
 
 ## Running the Framework
 
@@ -80,11 +84,16 @@ This script distributes problems across worker processes and executes the full e
 - `--multiprocessing_mode`: `problem` (default) or `candidate` to switch between multi-problem and per-problem parallelism.
 - `--population_size`, `--num_generations`: evolutionary dynamics.
 - `--strategy_selection`: choose meta-strategy (`random`, `epsilon-greedy`, `ucb`).
-- `--generation_mode`: request whole-file or diff-based offspring generation.
-- `--population_pool_mode`: dual or single pool scheduling.
-- `--api_backend`, `--model_name`, `--vllm_host`, `--vllm_port`: LLM configuration.
+- `--generation_mode`: request whole-file or diff-based offspring generation. (`whole` mode works by generating entire snippets of code from scratch whereas `diff` mode is able to edit snippets of code with an editing format. Weaker models may have trouble adhering to `diff` mode formatting resulting errors and lower performance, `whole` mode is recommended for general purpose use.)
+- `--population_pool_mode`: dual or single pool scheduling. (`dual` mode is the default)
+- `--api_backend`: Specifies the API backend to use for LLM calls.
+  - Default: `openai`
+  - Choices: `openai`, `openrouter`, `deepseek`, `gemini`, `vllm`
+- `--model_name`: The specific model identifier to use (e.g., `gpt-4.1-mini`).
+- `--vllm_host`, `--vllm_port`: Specify host/port for a local vLLM server (only used if `--api_backend` is `vllm`).
 - `--evaluation_mode`: use `gen0` for the new latency-optimised initial-generation scorer or `standard` for full evolution.
 - `--cvdp_jsonl`, `--cvdp_categories`: enable CVDP dataset integration.
+- `--save_path`: override default run save path with a custom one, must be a full absolute path.
 
 Example (RTLLM + VerilogEval with OpenRouter):
 
@@ -104,7 +113,7 @@ Latency-only Gen0 sampling (no simulation or synthesis) for a single problem:
 ```bash
 python scripts/run_evolution.py \
   --benchmarks VerilogEval-Spec-to-RTL \
-  --problems Prob001_example \
+  --problems Prob001_zero \
   --evaluation_mode gen0 \
   --population_size 16 \
   --num_workers 1
@@ -115,7 +124,7 @@ Add `--gen0_evaluate_best` to run the same search but also execute the functiona
 ```bash
 python scripts/run_evolution.py \
   --benchmarks VerilogEval-Spec-to-RTL \
-  --problems Prob001_example \
+  --problems Prob001_zero \
   --evaluation_mode gen0 \
   --gen0_evaluate_best \
   --population_size 16
@@ -127,7 +136,7 @@ Custom prompt exploration without a benchmark folder is also supported. Provide 
 python scripts/run_evolution.py \
   --evaluation_mode gen0 \
   --gen0_prompt_file path/to/custom_prompt.txt \
-  --population_size 12 \
+  --population_size 16 \
   --model_name gpt-4.1-mini
 ```
 
@@ -138,6 +147,33 @@ The prompt name defaults to the file stem; override it with `--gen0_prompt_name`
 Both `run_evolution.py` and `run_one_shot.py` accept a `--config path/to/config.yaml` (or `.json`) flag. The file provides defaults for any CLI option and can contain only the parameters you wish to override; explicit CLI arguments always take precedence. Example templates live in `data/configs/` and mirror the available flags for each script.
 
 Every run records the exact configuration that was used by writing `<timestamp>_config.yaml` next to the summary and log files under `exp/<model>/`. These snapshots merge the resolved arguments, the originating CLI invocation, and the on-disk config so experiments can be reproduced verbatim.
+
+#### Running CVDP Benchmarks
+**⚠️ CVDP support is experimental.**
+CVDP integration is currently tested only on the non-agentic, non-commercial subsets (`cid002`, `cid003`). Docker-based runs can behave differently from host runs. 
+
+The script uses special logic to handle the CVDP benchmark. To run CVDP, you must include `cvdp` in the `--benchmarks` argument. This is due to the fact that CVDP benchmarks are based around `.jsonl` files while other benchmark files are based around simple text files. We currently only support non-agentic non-commercial subset of the CVDP benchmarks (`cid002`, `cid003`).
+- Running a batch (all problems in a category): To run all problems from the JSONL file that match one or more categories, use the --cvdp_categories flag.
+```bash
+# Run all CVDP problems matching the 'cid002' category
+python scripts/run_evolution.py \
+  --benchmarks cvdp \
+  --cvdp_categories cid002 \
+  --model_name gpt-4.1-mini \
+  --num_workers 10
+```
+- Running individual problems: To run one or more specific CVDP problems by their ID, provide them using the `--problems` argument.
+```bash
+# Run only two specific CVDP problem IDs
+python scripts/run_evolution.py \
+  --benchmarks cvdp \
+  --cvdp_categories cid002 cid003 \
+  --problems cvdp_copilot_64b66b_decoder_0001 cvdp_copilot_16qam_mapper_0001 \
+  --model_name gpt-4.1-mini \
+  --num_workers 2
+  --population_size 10 \
+  --num_generations 5
+```
 
 ### Single-shot baseline (`scripts/run_one_shot.py`)
 

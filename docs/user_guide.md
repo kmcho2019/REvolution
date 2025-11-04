@@ -87,7 +87,7 @@ Latency-optimised Gen0 sampling (no simulation or synthesis):
 ```bash
 python scripts/run_evolution.py \
   --benchmarks VerilogEval-Spec-to-RTL \
-  --problems Prob001_example \
+  --problems Prob001_zero \
   --evaluation_mode gen0 \
   --population_size 16 \
   --num_workers 1
