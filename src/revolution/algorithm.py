@@ -433,6 +433,9 @@ class EoHEngine:
             os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "prompts"
         )
         self.prompts = PromptStore(root_dir=os.path.abspath(pr_root), profile=prompt_profile)
+        # Debug PromptStore
+        print(f"[EoHEngine] Initialized PromptStore root_dir:{os.path.abspath(pr_root)}, profile:{prompt_profile}.")
+        print(f"[EoHEngine] Using PromptStore at root: {self.prompts.root_dir}, profile: {self.prompts.profile}")
 
 
     def load_problem_description(self) -> str:
@@ -976,26 +979,52 @@ class EoHEngine:
         feedback_request_candidates: list[Heuristic] = []
         feedback_requests: list[dict[str, str]] = []
 
+        # 1. Load raw templates
+        feedback_rtl_sys_prompt = self.prompts.read("feedback/system")
+        feedback_rtl_user_tpl = self.prompts.read("feedback/user")
+        
+        user_overrides: list[str] | None = [] if feedback_rtl_user_tpl else None
+
         for cand, feedback_payload in evaluated:
             if feedback_payload:
                 feedback_request_candidates.append(cand)
                 feedback_requests.append(feedback_payload)
+
+                # Apply safe_format using data from the feedback_payload
+                if feedback_rtl_user_tpl:
+                    formatted_prompt = safe_format(
+                        feedback_rtl_user_tpl,
+                        problem_def=feedback_payload.get("problem_def", ""),
+                        code=feedback_payload.get("code", ""),
+                        simulation_log=feedback_payload.get("simulation_log", "")
+                    )
+                    user_overrides.append(formatted_prompt)
 
         # Stage 3: Batch LLM Feedback Generation for all failures
         if feedback_requests:
             print(
                 f"Requesting LLM feedback for {len(feedback_request_candidates)} candidates (both failed and successful)..."
             )
-            feedback_rtl_sys_prompt = self.prompts.read("feedback/system")
-            feedback_rtl_user_prompt = self.prompts.read("feedback/user")
+
+            # Debug logs
+            print(f"[EoHEngine] Using feedback system prompt: {bool(feedback_rtl_sys_prompt)}")
+            print(f"[EoHEngine] Using feedback user template: {bool(feedback_rtl_user_tpl)}")
+
+            # Prepare system prompt list (same prompt for everyone)
+            system_overrides = (
+                [feedback_rtl_sys_prompt] * len(feedback_requests) 
+                if feedback_rtl_sys_prompt 
+                else None
+            )
+
             feedback_results = asyncio.run(
                 self.llm.generate_batch_feedback(
                     feedback_requests,
                     self.default_llm_temp,
                     self.default_llm_top_p,
                     self.default_llm_max_tokens,
-                    system_prompt_override=[feedback_rtl_sys_prompt] * len(feedback_requests) if feedback_rtl_sys_prompt else None,
-                    user_prompt_override=[feedback_rtl_user_prompt] * len(feedback_requests) if feedback_rtl_user_prompt else None,
+                    system_prompt_override=system_overrides,
+                    user_prompt_override=user_overrides,
                 )
             )
             for cand, feedback_data in zip(
@@ -3249,7 +3278,12 @@ class _NoOpSynthesisEvaluator:
 
 
 class Gen0LatencyEngine(EoHEngine):
-    """Generate Gen0 candidates, score via LLM feedback, and return the top option."""
+    """
+    Generate Gen0 candidates, score via LLM feedback, and return the top option.
+    Implements a minimal evolutionary engine that only performs the initial
+    candidate generation and LLM feedback scoring steps, without any evolution.
+    Used for BatchPick or gen0 mode runs where latency is critical.
+    """
 
     def __init__(
         self,
@@ -3311,14 +3345,14 @@ class Gen0LatencyEngine(EoHEngine):
         )
         if evaluate_best_candidate and self.custom_prompt_mode:
             print(
-                "Gen0 custom prompt mode detected; --gen0_evaluate_best is ignored because no benchmark artefacts exist."
+                "Gen0/BatchPick custom prompt mode detected; --gen0_evaluate_best is ignored because no benchmark artefacts exist."
             )
         self._provided_verilog_evaluator = verilog_evaluator
         self._provided_synthesis_evaluator = synthesis_evaluator
 
     def run(self) -> str:
         print(
-            f"--- Starting Gen0 Latency Run: Problem '{self.benchmark_name}/{self.problem_name}' ---"
+            f"--- Starting Gen0/BatchPick Latency Run: Problem '{self.benchmark_name}/{self.problem_name}' ---"
         )
         self.run_start_time = time.time()
         self.run_start_utc = datetime.datetime.now(datetime.timezone.utc)
@@ -3327,7 +3361,7 @@ class Gen0LatencyEngine(EoHEngine):
             candidates = self._generate_gen0_candidates()
             scored_candidates = self._score_candidates_via_feedback(candidates)
         except Exception as exc:
-            print(f"Gen0 latency run failed: {exc}")
+            print(f"Gen0/BatchPick latency run failed: {exc}")
             traceback.print_exc()
             return f"{self.problem_name},gen0_failed"
 
@@ -3656,8 +3690,18 @@ class Gen0LatencyEngine(EoHEngine):
         )
 
     def _generate_gen0_candidates(self) -> list[Heuristic]:
-        print(f"\n--- Generating Gen0 Candidates (Size: {self.population_size}) ---")
+        print(f"\n--- Generating Gen0/BatchPick Candidates (Size: {self.population_size}) ---")
         self.gen_start_time = time.time()
+
+        # Load system prompt via PromptStore (inherited from EoHEngine)
+        # Defaults to 'system/whole' if no profile override
+        gen_system_prompt = self._get_generation_system_prompt("whole")
+
+        # Debug logging for prompt mechanism
+        print(f"[Gen0/BatchPick] Using generation system prompt: {bool(gen_system_prompt)}")
+        if gen_system_prompt:
+             print(f"[Gen0/BatchPick] Prompt source: {self.prompts._abs_path_for('system/whole')}")
+        
         results_with_meta = asyncio.run(
             self.llm.generate_n_responses(
                 prompt=self.problem_description,
@@ -3666,7 +3710,7 @@ class Gen0LatencyEngine(EoHEngine):
                 top_p=self.default_llm_top_p,
                 max_tokens=self.default_llm_max_tokens,
                 generation_mode="whole",
-                system_prompt_override=self._get_generation_system_prompt("whole"),
+                system_prompt_override=gen_system_prompt,
             )
         )
 
@@ -3705,7 +3749,20 @@ class Gen0LatencyEngine(EoHEngine):
         if not candidates:
             return []
 
+        print(f"\n--- Scoring {len(candidates)} Candidates via LLM Feedback ---")
+
+        # 1. Load feedback prompts/prompt template via PromptStore
+        feedback_rtl_sys_prompt = self.prompts.read("feedback/system")
+        feedback_rtl_user_tpl = self.prompts.read("feedback/user")
+
+        # Debug logging
+        print(f"[Gen0/BatchPick] Using feedback system prompt: {bool(feedback_rtl_sys_prompt)}")
+        print(f"[Gen0/BatchPick] Using feedback user template: {bool(feedback_rtl_user_tpl)}")
+        if feedback_rtl_sys_prompt:
+             print(f"[Gen0/BatchPick] Feedback system prompt path: {self.prompts._abs_path_for('feedback/system')}")
+
         feedback_requests: list[dict[str, str]] = []
+        user_overrides: list[str] | None = [] if feedback_rtl_user_tpl else None
         for cand in candidates:
             simulation_log = (
                 "Latencymode: no simulation available. Provide quality estimate using heuristics."
@@ -3714,6 +3771,7 @@ class Gen0LatencyEngine(EoHEngine):
                 simulation_log = (
                     f"Candidate failed format parsing. Details: {cand.feedback}. Provide guidance and score despite format issue."
                 )
+            # Standard payload for the Interface (fallback data if needed)
             feedback_requests.append(
                 {
                     "problem_def": self.problem_description,
@@ -3721,14 +3779,34 @@ class Gen0LatencyEngine(EoHEngine):
                     "simulation_log": simulation_log,
                 }
             )
+
+            # 2. Apply safe_format if a custom template exists
+            if feedback_rtl_user_tpl:
+                formatted_prompt = safe_format(
+                    feedback_rtl_user_tpl,
+                    problem_def=self.problem_description,
+                    code=cand.code,
+                    simulation_log=simulation_log
+                )
+                user_overrides.append(formatted_prompt)
             cand.score = float("-inf")
 
+        # Prepare system prompt list (same prompt for everyone)
+        system_overrides = (
+            [feedback_rtl_sys_prompt] * len(feedback_requests) 
+            if feedback_rtl_sys_prompt 
+            else None
+        )
+
+        # 3. Pass the formatted overrides to the interface
         feedback_results = asyncio.run(
             self.llm.generate_batch_feedback(
                 feedback_requests,
                 self.default_llm_temp,
                 self.default_llm_top_p,
                 self.default_llm_max_tokens,
+                system_prompt_override=system_overrides,
+                user_prompt_override=user_overrides,
             )
         )
 

@@ -60,6 +60,17 @@ def run_problem_worker(args_tuple):
     custom_prompt_encoding = getattr(args, "gen0_prompt_encoding", "utf-8")
     custom_prompt_benchmark = getattr(args, "gen0_prompt_benchmark", None)
 
+    # --- Prompt Profile Configuration ---
+    # If the user provided a profile via CLI, use it.
+    # Custom prompt profile takes precedence over default behavior.
+    # Custom prompt profile can be added within data/prompts/{profile_name}/ directory. 
+    # Otherwise, fallback to specific defaults: 'batchpick' for Gen0, 'default' for others.
+    if args.prompt_profile:
+        target_prompt_profile = args.prompt_profile
+    else:
+        target_prompt_profile = "batchpick" if evaluation_mode == "gen0" else "default"
+
+
     # Redirect all output from this worker to the individual log file
     with StreamRedirector(filepath=individual_log_path):
         print(
@@ -125,8 +136,8 @@ def run_problem_worker(args_tuple):
                 default_llm_top_p=args.top_p,
                 default_llm_max_tokens=args.max_tokens,
                 require_strict_format=True,
-                prompt_profile="default",
-                prompt_root=None,
+                prompt_profile=target_prompt_profile,             # System prompt profile
+                prompt_root=None,                     # Use default prompt root (data/prompts/)                              
                 custom_prompt_path=(
                     custom_prompt_path
                     if custom_prompt_benchmark
@@ -156,6 +167,8 @@ def run_problem_worker(args_tuple):
                 ucb_c=args.ucb_c,
                 generation_mode=args.generation_mode,
                 population_pool_mode=args.population_pool_mode,
+                prompt_profile=target_prompt_profile,             # System prompt profile
+                prompt_root=None,                     # Use default prompt root (data/prompts/)  
                 candidate_workers=candidate_workers,
             )
         else: # None CVDP benchmarks (e.g. RTLLM, VerilogEval)
@@ -176,6 +189,8 @@ def run_problem_worker(args_tuple):
                 ucb_c=args.ucb_c,
                 generation_mode=args.generation_mode,
                 population_pool_mode=args.population_pool_mode,
+                prompt_profile=target_prompt_profile,             # System prompt profile
+                prompt_root=None,                     # Use default prompt root (data/prompts/)  
                 candidate_workers=candidate_workers,
             )
         result_str = eoh_engine.run()
@@ -390,6 +405,14 @@ def main():
         default=["cid002", "cid003"],
         help="CVDP category filter (default: cid002 cid003).",
     )
+    parser.add_argument(
+        "--prompt_profile",
+        type=str,
+        default=None,
+        help="Specify the system prompt profile (e.g. 'default', 'batchpick', etc.). "
+             "If not set, defaults to 'batchpick' for Gen0/BatchPick mode and 'default' for standard mode.",
+    )
+
 
     try:
         args, config_from_file, raw_argv = parse_args_with_config(
