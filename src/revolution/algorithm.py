@@ -3556,6 +3556,24 @@ class Gen0LatencyEngine(EoHEngine):
                 ref_sv,
                 output_directory=artefact_dir,
             )
+
+            # Parse stdout to confirm success even if exit code is 0
+            if sim_results.get("status") == "success":
+                output = sim_results.get("simulation_stdout", "")
+                
+                # Check 1: VerilogEval style "Mismatches: 0"
+                m_match = re.search(r"^Mismatches: (\d+)", output, re.M)
+                
+                # Check 2: RTLLM style "Your Design Passed"
+                is_functional_success = False
+                if (m_match and int(m_match.group(1)) == 0) or \
+                   "===========Your Design Passed===========" in output:
+                    is_functional_success = True
+                
+                if not is_functional_success:
+                    # Explicitly override status so the check below catches it
+                    sim_results["status"] = "functional_failure"
+
             simulation_summary = {
                 "status": sim_results.get("status"),
                 "log_file": sim_results.get("log_file_path"),
