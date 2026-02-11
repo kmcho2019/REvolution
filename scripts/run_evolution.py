@@ -271,14 +271,14 @@ def main():
     parser.add_argument(
         "--vllm_port",
         type=int,
-        default=8888,
-        help="Port for the vLLM OpenAI-compatible server.",
+        default=int(os.getenv("VLLM_PORT", "8888")),
+        help="Port for the vLLM OpenAI-compatible server. Defaults to VLLM_PORT or 8888.",
     )
     parser.add_argument(
         "--vllm_host",
         type=str,
-        default="localhost",
-        help="Hostname or IP for the vLLM OpenAI-compatible server.",
+        default=os.getenv("VLLM_HOST", "localhost"),
+        help="Hostname or IP for the vLLM OpenAI-compatible server. Defaults to VLLM_HOST or localhost.",
     )
     parser.add_argument(
         "--model_name",

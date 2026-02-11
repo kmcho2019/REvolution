@@ -1,0 +1,67 @@
+name: revolution-devcontainer
+
+services:
+  devcontainer:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/workspace:cached
+    working_dir: /workspace
+    command: sleep infinity
+    environment:
+      VLLM_HOST: ${VLLM_HOST:-vllm}
+      VLLM_PORT: ${VLLM_PORT:-8888}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - shared-vllm
+
+  vllm:
+    image: vllm/vllm-openai:latest
+    profiles: ["vllm"]
+    shm_size: "16gb"
+    ipc: host
+    environment:
+      HF_HOME: /data/hf
+      VLLM_MODEL: ${VLLM_MODEL:-}
+      VLLM_PORT: ${VLLM_PORT:-8888}
+      VLLM_TP_SIZE: ${VLLM_TP_SIZE:-1}
+      VLLM_MAX_MODEL_LEN: ${VLLM_MAX_MODEL_LEN:-}
+      VLLM_GPU_MEMORY_UTILIZATION: ${VLLM_GPU_MEMORY_UTILIZATION:-}
+      VLLM_MAX_NUM_SEQS: ${VLLM_MAX_NUM_SEQS:-}
+      VLLM_MAX_NUM_BATCHED_TOKENS: ${VLLM_MAX_NUM_BATCHED_TOKENS:-}
+      VLLM_EXTRA_ARGS: ${VLLM_EXTRA_ARGS:-}
+      VLLM_ATTENTION_BACKEND: ${VLLM_ATTENTION_BACKEND:-TRITON_ATTN_VLLM_V1}
+      HUGGING_FACE_HUB_TOKEN: ${HUGGING_FACE_HUB_TOKEN:-}
+    volumes:
+      - vllm_hf_cache:/data/hf
+      - ${VLLM_MODEL_DIR:-/tmp/vllm-models}:/models:ro
+    ports:
+      - "${VLLM_PORT:-8888}:${VLLM_PORT:-8888}"
+    entrypoint:
+      - /bin/bash
+      - -c
+    command:
+      - |
+        set -e
+        extra_args=""
+        if [[ -n "$${VLLM_MAX_MODEL_LEN:-}" ]]; then extra_args="$$extra_args --max-model-len $${VLLM_MAX_MODEL_LEN}"; fi
+        if [[ -n "$${VLLM_GPU_MEMORY_UTILIZATION:-}" ]]; then extra_args="$$extra_args --gpu-memory-utilization $${VLLM_GPU_MEMORY_UTILIZATION}"; fi
+        if [[ -n "$${VLLM_MAX_NUM_SEQS:-}" ]]; then extra_args="$$extra_args --max-num-seqs $${VLLM_MAX_NUM_SEQS}"; fi
+        if [[ -n "$${VLLM_MAX_NUM_BATCHED_TOKENS:-}" ]]; then extra_args="$$extra_args --max-num-batched-tokens $${VLLM_MAX_NUM_BATCHED_TOKENS}"; fi
+        exec vllm serve --model "$${VLLM_MODEL:-/models/model}" --host 0.0.0.0 --port "$${VLLM_PORT:-8888}" --tensor-parallel-size "$${VLLM_TP_SIZE:-1}" $$extra_args $${VLLM_EXTRA_ARGS:-}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: ["gpu"]
+    networks:
+      - shared-vllm
+
+volumes:
+  vllm_hf_cache:
+
+networks:
+  shared-vllm:
+    name: llm-evolegalizer-net

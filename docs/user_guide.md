@@ -38,6 +38,31 @@ export GEMINI_API_KEY="..."
 
 For local inference servers such as vLLM, ensure the server is reachable (`http://localhost:8888/v1` by default) and skip API keys.
 
+### 1.4 Devcontainer and shared vLLM compose (optional)
+
+REvolution's devcontainer now uses `.devcontainer/docker-compose.yml` and includes an optional `vllm` profile. The Compose network name matches the legalization reference setup (`llm-evolegalizer-net`), so one vLLM service can be shared across both repos.
+
+Typical flow:
+
+1. Reopen REvolution in container using `.devcontainer/devcontainer.json`.
+2. Optionally create `.devcontainer/.env` from `.devcontainer/.env.example` and set model-related values.
+3. Start vLLM from either repo:
+   ```bash
+   docker compose -f .devcontainer/docker-compose.yml --profile vllm up -d vllm
+   ```
+4. Use REvolution with vLLM:
+   ```bash
+   python scripts/run_evolution.py \
+     --api_backend vllm \
+     --vllm_host vllm \
+     --vllm_port 8888 \
+     --model_name /models/<model-directory>
+   ```
+
+If the vLLM server runs outside the shared Compose network, use `--vllm_host host.docker.internal` (or `172.17.0.1` on typical Linux bridge setups).
+
+The CLI defaults for `--vllm_host` and `--vllm_port` also read `VLLM_HOST` and `VLLM_PORT` from the environment.
+
 ## 2. Repository assets
 
 - `data/bench/<suite>/<problem>` holds the benchmark Verilog specs, testbenches, reference designs, and `synthesis_top_module_names.json` mapping required for synthesis.

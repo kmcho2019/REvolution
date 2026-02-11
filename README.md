@@ -45,6 +45,31 @@ The `docs/` directory contains deeper dives:
   
 (Note that CVDP evaluations that depend on Docker might cause issues with this setup.)
 
+### Devcontainer + optional shared vLLM Compose
+
+REvolution now ships a Compose-based devcontainer (`.devcontainer/docker-compose.yml`) with an optional `vllm` service profile.
+
+This is compatible with the LLM-EvoLegalizer devcontainer setup: both can join the same Docker network (`llm-evolegalizer-net`), so one vLLM server can be reused across both repositories.
+
+1. Open REvolution in VS Code and reopen in container using `.devcontainer/devcontainer.json`.
+2. Optional: configure vLLM launch variables by copying:
+   ```bash
+   cp .devcontainer/.env.example .devcontainer/.env
+   ```
+3. Start a shared vLLM service from either repo:
+   ```bash
+   docker compose -f .devcontainer/docker-compose.yml --profile vllm up -d vllm
+   ```
+4. From REvolution (inside devcontainer), target the server:
+   - If vLLM runs on the shared network: use `--vllm_host vllm`.
+   - If vLLM runs outside Compose: use `--vllm_host host.docker.internal` (or Linux bridge IP such as `172.17.0.1`).
+
+Quick check from inside the REvolution devcontainer:
+
+```bash
+curl http://vllm:8888/v1/models
+```
+
 ### Local development setup
 
 1. Install the external binaries and ensure they are on `PATH`:
@@ -69,8 +94,10 @@ export DEEPSEEK_API_KEY="..."
 export GEMINI_API_KEY="..."   # optional
 ```
 
-For a local vLLM server, ensure it is reachable at `http://localhost:8888/v1` (override with `--vllm_host` / `--vllm_port`) and no API key is required.
+For a local vLLM server, ensure it is reachable at `http://localhost:8888/v1` (or the shared compose hostname `http://vllm:8888/v1`) and no API key is required.
 Set `--api_backend` to `vllm` to use a local vLLM server.
+
+`scripts/run_evolution.py` and `scripts/run_one_shot.py` read `VLLM_HOST` and `VLLM_PORT` environment variables for default host/port values, so you can avoid repeating `--vllm_host`/`--vllm_port` in devcontainer sessions.
 
 
 ## Running the Framework
