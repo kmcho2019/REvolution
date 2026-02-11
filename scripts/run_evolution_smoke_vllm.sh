@@ -15,7 +15,8 @@ Description:
 Environment overrides:
   VLLM_HOST                 vLLM host (default: vllm)
   VLLM_PORT                 vLLM port (default: 8888)
-  SMOKE_MIN_MODEL_LEN       Required minimum served max_model_len (default: 128000, set 0 to disable)
+  SMOKE_MIN_MODEL_LEN       Required minimum served max_model_len (default: 128000, set 0 to disable).
+                            Supports raw integers or suffixes (k/m/g), e.g. 128k, 131072, 12800k.
   PYTHON_BIN                Python binary (default: <repo>/.venv/bin/python if present, else python3)
   SMOKE_PROBLEMS            Space-separated problem IDs (overrides suite defaults)
   SMOKE_POPULATION_SIZE     Population size (default: 2)
@@ -86,6 +87,30 @@ if ! command -v "${PYTHON_BIN}" >/dev/null 2>&1; then
   exit 1
 fi
 
+parse_model_len() {
+  local raw="$1"
+  local cleaned="${raw//_/}"
+  local base suffix multiplier
+
+  if [[ "${cleaned}" =~ ^[0-9]+$ ]]; then
+    echo "${cleaned}"
+    return 0
+  fi
+  if [[ "${cleaned}" =~ ^([0-9]+)([kKmMgG])$ ]]; then
+    base="${BASH_REMATCH[1]}"
+    suffix="${BASH_REMATCH[2]}"
+    case "${suffix}" in
+      k|K) multiplier=1000 ;;
+      m|M) multiplier=1000000 ;;
+      g|G) multiplier=1000000000 ;;
+      *) return 1 ;;
+    esac
+    echo $(( base * multiplier ))
+    return 0
+  fi
+  return 1
+}
+
 VLLM_HOST="${VLLM_HOST:-vllm}"
 VLLM_PORT="${VLLM_PORT:-8888}"
 MODEL_ENDPOINT="http://${VLLM_HOST}:${VLLM_PORT}/v1/models"
@@ -112,7 +137,12 @@ if [[ -z "${MODEL_NAME}" ]]; then
 fi
 
 MIN_MODEL_LEN="${SMOKE_MIN_MODEL_LEN:-128000}"
-if [[ "${MIN_MODEL_LEN}" =~ ^[0-9]+$ ]] && (( MIN_MODEL_LEN > 0 )); then
+MIN_MODEL_LEN_RAW="${MIN_MODEL_LEN}"
+if ! MIN_MODEL_LEN="$(parse_model_len "${MIN_MODEL_LEN_RAW}")"; then
+  echo "Warning: invalid SMOKE_MIN_MODEL_LEN='${MIN_MODEL_LEN_RAW}'. Disabling model-len gate." >&2
+  MIN_MODEL_LEN=0
+fi
+if (( MIN_MODEL_LEN > 0 )); then
   if [[ -z "${MODEL_MAX_LEN}" ]]; then
     echo "Warning: model '${MODEL_NAME}' did not report max_model_len; cannot verify >= ${MIN_MODEL_LEN}."
   elif [[ ! "${MODEL_MAX_LEN}" =~ ^[0-9]+$ ]]; then
@@ -195,7 +225,7 @@ echo "Detected model: ${MODEL_NAME}"
 if [[ -n "${MODEL_MAX_LEN}" ]]; then
   echo "Reported max_model_len: ${MODEL_MAX_LEN}"
 fi
-echo "Required min model len: ${MIN_MODEL_LEN}"
+echo "Required min model len: ${MIN_MODEL_LEN_RAW} (normalized=${MIN_MODEL_LEN})"
 echo "Suite: ${SUITE}"
 echo "Benchmarks: ${BENCHMARKS[*]}"
 echo "Problems: ${PROBLEMS[*]}"
