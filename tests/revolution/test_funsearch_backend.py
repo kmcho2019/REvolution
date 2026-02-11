@@ -180,6 +180,7 @@ def _make_backend(
     seed: int,
     include_suffix: bool = True,
     evaluator: _FakeCandidateEvaluator | None = None,
+    config_overrides: dict[str, object] | None = None,
 ):
     store = PromptStore(root_dir=str(tmp_path / "prompts"), profile="funsearch")
     _write_funsearch_prompts(store, include_suffix=include_suffix)
@@ -207,16 +208,21 @@ def _make_backend(
         generation_mode="whole",
         seed=seed,
     )
+    cfg_kwargs: dict[str, object] = {
+        "initial_population_size": 2,
+        "samples_per_prompt": 1,
+        "num_islands": 4,
+        "functions_per_prompt": 2,
+        "max_iterations": 2,
+        "max_evaluations": 6,
+        "strict_prompt_keys": True,
+        "score_reducer": "last_input",
+        "seed": seed,
+    }
+    if config_overrides:
+        cfg_kwargs.update(config_overrides)
     cfg = FunSearchBackendConfig(
-        initial_population_size=2,
-        samples_per_prompt=1,
-        num_islands=4,
-        functions_per_prompt=2,
-        max_iterations=2,
-        max_evaluations=6,
-        strict_prompt_keys=True,
-        score_reducer="fitness",
-        seed=seed,
+        **cfg_kwargs,
     )
     return FunSearchBackend(execution_context, services, cfg), artifact_writer
 
@@ -234,7 +240,8 @@ def test_funsearch_backend_run_writes_summary(tmp_path):
     assert result.best_code_path
     summary = json.loads(writer.paths.summary_path.read_text(encoding="utf-8"))
     assert summary["backend_name"] == "funsearch"
-    assert summary["backend_details"]["score_reducer"] == "fitness"
+    assert summary["backend_details"]["score_reducer"] == "last_input"
+    assert "fitness" in summary["backend_details"]["signature_keys"]
     assert summary["backend_details"]["feedback_policy"] == "off"
     assert summary["backend_details"]["evaluation_mode"] == "strict_ablation"
     assert summary["best_candidate"]["score"] is not None
@@ -271,3 +278,58 @@ def test_funsearch_backend_returns_failed_when_no_successful_candidate(tmp_path)
     assert result.status == "failed"
     summary = json.loads(writer.paths.summary_path.read_text(encoding="utf-8"))
     assert summary["best_candidate"]["status"] == "failed_syntax"
+
+
+def test_funsearch_signature_is_sorted_scores_vector(tmp_path):
+    backend, _ = _make_backend(tmp_path, seed=3)
+    signature = backend._cluster_signature(
+        {"syntax": 1.0, "fitness": -1.23456, "format": 1.0}
+    )
+    assert signature == (-1.235, 1.0, 1.0)
+
+
+def test_funsearch_scores_per_test_keeps_fitness_as_last_key(tmp_path):
+    backend, _ = _make_backend(tmp_path, seed=5)
+    evaluation = CandidateEvaluation(
+        status="success",
+        score=0.42,
+        stage_statuses={
+            "format": True,
+            "diff": True,
+            "syntax": True,
+            "functionality": True,
+            "synthesis": True,
+            "synthesis_functionality": True,
+            "ppa": True,
+        },
+        mismatch_count=0,
+        score_components={"area_improvement": 0.1, "power_improvement": 0.2},
+    )
+    scores = backend._build_scores_per_test(evaluation)
+    assert "score_component/area_improvement" in scores
+    assert "score_component/power_improvement" in scores
+    assert list(scores.keys())[-1] == "fitness"
+
+
+def test_funsearch_checks_island_reset_after_each_registration(tmp_path, monkeypatch):
+    backend, writer = _make_backend(
+        tmp_path,
+        seed=13,
+        config_overrides={
+            "initial_population_size": 2,
+            "samples_per_prompt": 2,
+            "max_iterations": 1,
+            "max_evaluations": 4,
+        },
+    )
+    reset_calls = 0
+
+    def _spy_reset() -> None:
+        nonlocal reset_calls
+        reset_calls += 1
+
+    monkeypatch.setattr(backend, "_reset_islands_if_needed", _spy_reset)
+    result = backend.run()
+    assert result.status == "success"
+    summary = json.loads(writer.paths.summary_path.read_text(encoding="utf-8"))
+    assert reset_calls == summary["total_candidates_generated"]

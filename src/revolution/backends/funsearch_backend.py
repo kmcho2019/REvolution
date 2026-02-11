@@ -62,7 +62,7 @@ class FunSearchBackendConfig:
     prompt_root: str | None = None
     strict_prompt_keys: bool = True
     allow_diff_mode: bool = False
-    score_reducer: str = "fitness"
+    score_reducer: str = "last_input"
     failed_candidate_bucket_score: float = -1e6
     feedback_policy: str = "off"
     feedback_sample_probability: float = 1.0
@@ -186,6 +186,7 @@ class FunSearchBackend(EvolutionBackend):
         }
         self._status_counts: dict[str, int] = {}
         self._prompt_cache: dict[str, str] = {}
+        self._signature_keys_seen: set[str] = set()
 
     @property
     def name(self) -> str:
@@ -310,33 +311,60 @@ class FunSearchBackend(EvolutionBackend):
             return True, "max_llm_tokens"
         return False, ""
 
-    def _reduce_score(self, evaluation_score: float, stage_scores: dict[str, float]) -> float:
+    def _build_scores_per_test(self, evaluation: CandidateEvaluation) -> dict[str, float]:
+        """Builds a deterministic score vector used for reducer + signature logic."""
+        scores_per_test: dict[str, float] = {
+            "format": float(evaluation.stage_statuses.get("format", False)),
+            "diff": float(evaluation.stage_statuses.get("diff", False)),
+            "syntax": float(evaluation.stage_statuses.get("syntax", False)),
+            "functionality": float(evaluation.stage_statuses.get("functionality", False)),
+            "synthesis": float(evaluation.stage_statuses.get("synthesis", False)),
+            "synthesis_functionality": float(
+                evaluation.stage_statuses.get("synthesis_functionality", False)
+            ),
+            "ppa": float(evaluation.stage_statuses.get("ppa", False)),
+        }
+        if evaluation.mismatch_count is not None:
+            scores_per_test["mismatch_pass"] = float(evaluation.mismatch_count == 0)
+        if evaluation.score_components:
+            for key in sorted(evaluation.score_components):
+                value = float(evaluation.score_components[key])
+                if not np.isfinite(value):
+                    value = self.config.failed_candidate_bucket_score
+                scores_per_test[f"score_component/{key}"] = value
+        fitness = (
+            float(evaluation.score)
+            if np.isfinite(evaluation.score)
+            else self.config.failed_candidate_bucket_score
+        )
+        # Keep the fitness field last to preserve the reference-style "last_input" reducer.
+        scores_per_test["fitness"] = fitness
+        return scores_per_test
+
+    def _reduce_score(self, evaluation_score: float, scores_per_test: dict[str, float]) -> float:
         reducer = self.config.score_reducer
         if reducer == "fitness":
-            return evaluation_score
+            return float(scores_per_test.get("fitness", evaluation_score))
         if reducer == "mean":
-            values = list(stage_scores.values())
+            values = list(scores_per_test.values())
             return float(np.mean(values)) if values else evaluation_score
         if reducer == "last_input":
-            if not stage_scores:
+            if not scores_per_test:
                 return evaluation_score
-            return float(list(stage_scores.values())[-1])
+            return float(list(scores_per_test.values())[-1])
         raise ValueError(
             f"Unsupported score reducer '{reducer}'. Expected one of: last_input, mean, fitness."
         )
 
-    def _cluster_signature(
-        self,
-        stage_statuses: dict[str, bool],
-        cluster_score: float,
-    ) -> tuple[float, ...]:
-        bucket = round(cluster_score, 3)
-        return (
-            float(stage_statuses.get("syntax", False)),
-            float(stage_statuses.get("functionality", False)),
-            float(stage_statuses.get("synthesis", False)),
-            float(bucket),
-        )
+    def _cluster_signature(self, scores_per_test: dict[str, float]) -> tuple[float, ...]:
+        # Match FunSearch's canonicalized signature style by sorting score keys.
+        signature = []
+        for key in sorted(scores_per_test):
+            value = scores_per_test[key]
+            if not np.isfinite(value):
+                value = self.config.failed_candidate_bucket_score
+            signature.append(round(float(value), 3))
+        return tuple(signature)
 
     def _register_candidate(self, candidate: FunSearchCandidate, island_id: int | None) -> None:
         if island_id is None:
@@ -532,21 +560,12 @@ class FunSearchBackend(EvolutionBackend):
         self._evaluations_done += 1
         self._record_status(evaluation.status)
 
-        stage_scores = {
-            "format": float(evaluation.stage_statuses.get("format", False)),
-            "syntax": float(evaluation.stage_statuses.get("syntax", False)),
-            "functionality": float(evaluation.stage_statuses.get("functionality", False)),
-            "synthesis": float(evaluation.stage_statuses.get("synthesis", False)),
-            "fitness": float(
-                evaluation.score
-                if np.isfinite(evaluation.score)
-                else self.config.failed_candidate_bucket_score
-            ),
-        }
-        reduced = self._reduce_score(float(evaluation.score), stage_scores)
+        scores_per_test = self._build_scores_per_test(evaluation)
+        self._signature_keys_seen.update(scores_per_test.keys())
+        reduced = self._reduce_score(float(evaluation.score), scores_per_test)
         if not np.isfinite(reduced):
             reduced = self.config.failed_candidate_bucket_score
-        signature = self._cluster_signature(evaluation.stage_statuses, reduced)
+        signature = self._cluster_signature(scores_per_test)
         candidate = FunSearchCandidate(
             id=str(uuid.uuid4()),
             generation=prepared.generation,
@@ -565,6 +584,7 @@ class FunSearchBackend(EvolutionBackend):
             parent_ids=prepared.parent_ids,
         )
         self._register_candidate(candidate, island_id=prepared.island_id)
+        self._reset_islands_if_needed()
         self._maybe_generate_feedback(candidate, evaluation.feedback_payload)
         return candidate
 
@@ -698,6 +718,7 @@ class FunSearchBackend(EvolutionBackend):
                 "samples_per_prompt": self.config.samples_per_prompt,
                 "reset_events": self._reset_events,
                 "score_reducer": self.config.score_reducer,
+                "signature_keys": sorted(self._signature_keys_seen),
                 "seed": self.config.seed,
                 "feedback_policy": self.config.feedback_policy,
                 "feedback_sample_probability": self.config.feedback_sample_probability,
@@ -878,7 +899,6 @@ class FunSearchBackend(EvolutionBackend):
                 llm_usage=usage,
                 runtime_seconds=time.time() - iteration_start,
             )
-            self._reset_islands_if_needed()
             exhausted, reason = self._check_budget_exhausted()
             if exhausted:
                 termination_reason = reason
