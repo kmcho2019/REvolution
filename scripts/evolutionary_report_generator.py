@@ -256,6 +256,18 @@ def generate_benchmark_report(
         f"- **Problems with PPA Improvement (Best Solution Compared to Reference):** {stats['ppa_improved_count']} / {total} ({calc_rate('ppa_improved_count'):.1f}%)",
     ]
 
+    if stats.get("backend_counts"):
+        md_content.extend(
+            [
+                "",
+                "### Backend Mix",
+                "| Backend | Problems |",
+                "|:---|---:|",
+            ]
+        )
+        for backend, count in sorted(stats["backend_counts"].items()):
+            md_content.append(f"| `{backend}` | {count} |")
+
     # --- Correctly build the PPA summary table ---
     md_content.append("")
     md_content.append("| PPA Metric | Average Improvement |")
@@ -371,11 +383,13 @@ def parse_generation_log_fallback(log_path: pathlib.Path) -> dict | None:
     summary_data = {
         "problem_name": problem_name,
         "benchmark_name": first_gen.get("benchmark_name", "N/A"),
+        "backend_name": first_gen.get("backend_name", "revolution"),
         "ref_ppa_metric": first_gen.get("ref_ppa_metric", {}),
         "total_runtime_seconds": 0,
         "total_llm_api_calls": 0,
         "total_llm_prompt_tokens": 0,
         "total_llm_completion_tokens": 0,
+        "accumulated_strategy_counts": defaultdict(int),
         "accumulated_strategy_counts:": defaultdict(int),
         "accumulated_strategy_rewards": defaultdict(lambda: defaultdict(int)),
     }
@@ -400,6 +414,7 @@ def parse_generation_log_fallback(log_path: pathlib.Path) -> dict | None:
         if "strategy_counts" in gen_data:
             for strategy, count in gen_data["strategy_counts"].items():
                 summary_data["accumulated_strategy_counts:"][strategy] += count
+                summary_data["accumulated_strategy_counts"][strategy] += count
 
         if "strategy_rewards" in gen_data:
             for pool_id, rewards in gen_data["strategy_rewards"].items():
@@ -447,6 +462,7 @@ def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
             "problem_results": [],
             "strategy_counts": defaultdict(int),
             "strategy_rewards": defaultdict(int),
+            "backend_counts": defaultdict(int),
         }
     )
 
@@ -488,9 +504,18 @@ def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
             # --- The rest of the processing logic is largely unchanged ---
             problem_name = data["problem_name"]
             benchmark_name = data["benchmark_name"]
+            backend_name = data.get("backend_name", "revolution")
             stats = benchmark_data[benchmark_name]
+            stats["backend_counts"][backend_name] += 1
 
             final_rates = data.get("accumulated_success_rates", {})
+            if not final_rates and "stage_success_rates" in data:
+                stage_rates = data.get("stage_success_rates", {})
+                final_rates = {
+                    "syntax": stage_rates.get("syntax", 0.0),
+                    "functionality": stage_rates.get("functionality", 0.0),
+                    "synthesis_ppa": stage_rates.get("synthesis", 0.0),
+                }
             stats["final_rates"]["syntax"].append(final_rates.get("syntax", 0.0))
             stats["final_rates"]["func"].append(final_rates.get("functionality", 0.0))
             stats["final_rates"]["synth"].append(final_rates.get("synthesis_ppa", 0.0))
@@ -589,7 +614,11 @@ def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
             if isinstance(avg_problem_improv, float) and avg_problem_improv > 0:
                 stats["ppa_improved_count"] += 1
 
-            for strategy, count in data.get("accumulated_strategy_counts:", {}).items():
+            strategy_counts = data.get(
+                "accumulated_strategy_counts",
+                data.get("accumulated_strategy_counts:", {}),
+            )
+            for strategy, count in strategy_counts.items():
                 stats["strategy_counts"][strategy] += count
             for pool in data.get("accumulated_strategy_rewards", {}).values():
                 for strategy, reward in pool.items():
