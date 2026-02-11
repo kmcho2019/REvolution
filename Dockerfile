@@ -107,8 +107,8 @@ RUN mkdir -p /workspace && chown -R $USERNAME:$USERNAME /workspace
 # 9. Set up the workspace
 WORKDIR /workspace
 
-# 10. Copy dependency definitions first to leverage Docker build cache
-COPY --chown=$USERNAME:$USERNAME pyproject.toml uv.lock ./
+# 10. Copy dependency definitions and python pin first to leverage Docker build cache
+COPY --chown=$USERNAME:$USERNAME pyproject.toml uv.lock .python-version ./
 
 # 11. Switch to the non-root user before installing python packages
 USER $USERNAME
