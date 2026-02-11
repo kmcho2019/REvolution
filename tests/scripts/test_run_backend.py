@@ -52,3 +52,9 @@ def test_backend_parser_accepts_funsearch_options():
     assert args.fs_num_islands == 8
     assert args.fs_score_reducer == "mean"
     assert args.fs_feedback_policy == "fail_only"
+
+
+def test_backend_parser_defaults_funsearch_reducer_to_last_input():
+    parser, _ = _build_parser()
+    args, _ = parser.parse_known_args(["--backend", "funsearch"])
+    assert args.fs_score_reducer == "last_input"

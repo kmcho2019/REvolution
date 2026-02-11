@@ -328,7 +328,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument(
         "--fs_score_reducer",
         type=str,
-        default="fitness",
+        default="last_input",
         choices=["last_input", "mean", "fitness"],
     )
     parser.add_argument("--fs_failed_candidate_bucket_score", type=float, default=-1e6)
