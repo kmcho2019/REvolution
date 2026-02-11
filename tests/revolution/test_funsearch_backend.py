@@ -114,6 +114,29 @@ class _FakeCandidateEvaluator:
         return [self.evaluate_candidate(item) for item in items]
 
 
+class _FakeFailingCandidateEvaluator(_FakeCandidateEvaluator):
+    def evaluate_candidate(self, item):
+        self.calls += 1
+        return CandidateEvaluation(
+            status="failed_syntax",
+            score=float("-inf"),
+            stage_statuses={
+                "format": True,
+                "diff": True,
+                "syntax": False,
+                "functionality": False,
+                "synthesis": False,
+                "synthesis_functionality": False,
+                "ppa": False,
+            },
+            feedback_payload={
+                "problem_def": "desc",
+                "code": item.code,
+                "simulation_log": "compile error",
+            },
+        )
+
+
 def _write_funsearch_prompts(store: PromptStore, *, include_suffix: bool = True) -> None:
     store.write("system/whole", "system whole")
     store.write("feedback/system", "feedback system")
@@ -152,7 +175,12 @@ def _make_problem_context(tmp_path: Path) -> ProblemContext:
     )
 
 
-def _make_backend(tmp_path: Path, seed: int, include_suffix: bool = True):
+def _make_backend(
+    tmp_path: Path,
+    seed: int,
+    include_suffix: bool = True,
+    evaluator: _FakeCandidateEvaluator | None = None,
+):
     store = PromptStore(root_dir=str(tmp_path / "prompts"), profile="funsearch")
     _write_funsearch_prompts(store, include_suffix=include_suffix)
     context = _make_problem_context(tmp_path)
@@ -168,7 +196,7 @@ def _make_backend(tmp_path: Path, seed: int, include_suffix: bool = True):
         synthesis_evaluator=MagicMock(),
         prompt_store=store,
         artifact_writer=artifact_writer,
-        candidate_evaluator=_FakeCandidateEvaluator(),
+        candidate_evaluator=evaluator or _FakeCandidateEvaluator(),
     )
     execution_context = BackendExecutionContext(
         backend_name="funsearch",
@@ -231,3 +259,15 @@ def test_funsearch_backend_reproducible_with_fixed_seed(tmp_path):
         == summary2["backend_details"]["cluster_counts_per_island"]
     )
     assert summary1["generation_statistics"][0]["success_rates"] == summary2["generation_statistics"][0]["success_rates"]
+
+
+def test_funsearch_backend_returns_failed_when_no_successful_candidate(tmp_path):
+    backend, writer = _make_backend(
+        tmp_path,
+        seed=9,
+        evaluator=_FakeFailingCandidateEvaluator(),
+    )
+    result = backend.run()
+    assert result.status == "failed"
+    summary = json.loads(writer.paths.summary_path.read_text(encoding="utf-8"))
+    assert summary["best_candidate"]["status"] == "failed_syntax"

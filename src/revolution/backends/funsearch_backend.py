@@ -889,13 +889,27 @@ class FunSearchBackend(EvolutionBackend):
         self._summary_cache = summary
         if self._best_candidate is not None:
             score = self._best_candidate.score
+            if self._best_candidate.status == "success":
+                result_str = (
+                    f"{self.context.problem_name},success,{self._best_candidate.code_file_path},N/A,{score}"
+                )
+                return BackendRunResult(
+                    backend_name=self.name,
+                    problem_name=self.context.problem_name,
+                    status="success",
+                    result_string=result_str,
+                    best_code_path=self._best_candidate.code_file_path,
+                    best_report_path=None,
+                    best_score=score,
+                    summary_path=summary_path,
+                )
             result_str = (
-                f"{self.context.problem_name},success,{self._best_candidate.code_file_path},N/A,{score}"
+                f"{self.context.problem_name},failed,{self._best_candidate.code_file_path},N/A,{score}"
             )
             return BackendRunResult(
                 backend_name=self.name,
                 problem_name=self.context.problem_name,
-                status="success",
+                status="failed",
                 result_string=result_str,
                 best_code_path=self._best_candidate.code_file_path,
                 best_report_path=None,
