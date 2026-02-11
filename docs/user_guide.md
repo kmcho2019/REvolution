@@ -71,7 +71,53 @@ The CLI defaults for `--vllm_host` and `--vllm_port` also read `VLLM_HOST` and `
 
 ## 3. Running experiments
 
-### 3.1 Evolutionary runs (`scripts/run_evolution.py`)
+### 3.1 Backend-selectable runs (`scripts/run_backend.py`)
+
+`run_backend.py` is the canonical runner for backend ablations. It supports:
+
+- `--backend revolution|funsearch`
+- shared model/benchmark options (`--benchmarks`, `--problems`, `--model_name`, `--api_backend`, `--save_path`, `--num_workers`)
+- backend-specific controls (`--population_size`, `--num_generations`, `--strategy_selection`, `--fs_*` FunSearch knobs)
+- deterministic run controls (`--seed` with per-worker derived seeds)
+
+By default outputs are isolated by backend under `<save_path>/<backend>/...` (`--backend_subdir` can be disabled if needed).
+
+Example (REvolution backend):
+
+```bash
+python scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks RTLLM \
+  --problems Prob001_accu \
+  --api_backend vllm \
+  --vllm_host vllm \
+  --vllm_port 8888 \
+  --model_name /models/openai-gpt-oss-120b \
+  --population_size 4 \
+  --num_generations 3
+```
+
+Example (FunSearch backend):
+
+```bash
+python scripts/run_backend.py \
+  --backend funsearch \
+  --benchmarks RTLLM \
+  --problems Prob001_accu \
+  --api_backend vllm \
+  --vllm_host vllm \
+  --vllm_port 8888 \
+  --model_name /models/openai-gpt-oss-120b \
+  --prompt_profile funsearch \
+  --fs_num_islands 8 \
+  --fs_functions_per_prompt 2 \
+  --fs_max_evaluations 64 \
+  --seed 42
+```
+
+`scripts/run_funsearch.py` is a convenience wrapper that injects `--backend funsearch`.
+
+### 3.2 Evolutionary runs (`scripts/run_evolution.py`)
 
 This script distributes problems across worker processes and executes the multi-generation loop.
 
@@ -149,7 +195,9 @@ The prompt file is read verbatim (UTF-8 by default) and becomes the `problem_des
 
 Every invocation writes `<timestamp>_config.yaml` next to the summary/log files in `exp/<model>/`. The snapshot records the merged argument set along with the originating CLI invocation and, when present, the config file contents. This makes it straightforward to re-run an experiment with identical settings.
 
-### 3.2 Baseline n-shot runs (`scripts/run_one_shot.py`)
+`run_evolution.py` remains backward-compatible. It now delegates to `run_backend.py` if called with `--backend funsearch`.
+
+### 3.3 Baseline n-shot runs (`scripts/run_one_shot.py`)
 
 Generates `--num_samples` candidates per problem, evaluates them once, and skips the evolutionary loop. CLI arguments mirror `run_evolution.py` with two differences:
 
@@ -166,7 +214,7 @@ python scripts/run_one_shot.py \
   --api_backend openai
 ```
 
-### 3.3 Output inspection
+### 3.4 Output inspection
 
 Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 
@@ -178,6 +226,9 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 ## 4. Utility scripts
 
 - `scripts/evolutionary_report_generator.py`: generate Markdown reports summarising a run (`--experiment_path path/to/exp/...`).
+- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown table (`--backend_run revolution=<path> --backend_run funsearch=<path>`).
+- `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch comparisons.
+- `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
 - `scripts/gen0_report_generator.py`: inspect `Gen0/best_candidate` snapshots, check syntax/simulation/synthesis status, and optionally export Markdown (`--save_markdown`).
 - `scripts/generate_cutoff_compile_result_variants.sh`: reproduce paper tables with a specified gate cutoff (`--gate 50` by default).
 - `scripts/generate_visualizations*.py` and `plot_problem_pareto.py`: create PPA scatter plots or aggregate charts.

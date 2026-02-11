@@ -102,6 +102,27 @@ Set `--api_backend` to `vllm` to use a local vLLM server.
 
 ## Running the Framework
 
+### Backend-selectable runner (`scripts/run_backend.py`)
+
+Use `run_backend.py` for REvolution-vs-FunSearch ablations:
+
+```bash
+python scripts/run_backend.py \
+  --backend funsearch \
+  --benchmarks RTLLM \
+  --problems Prob001_accu \
+  --api_backend vllm \
+  --vllm_host vllm \
+  --vllm_port 8888 \
+  --model_name /models/openai-gpt-oss-120b \
+  --prompt_profile funsearch \
+  --fs_max_evaluations 64 \
+  --seed 42
+```
+
+`scripts/run_funsearch.py` is a convenience wrapper for `run_backend.py --backend funsearch`.
+Use `scripts/backend_comparison_report.py` to combine multiple backend experiment roots into one markdown comparison table.
+
 ### Multi-problem evolution (`scripts/run_evolution.py`)
 
 This script distributes problems across worker processes and executes the full evolutionary loop. Key arguments:
@@ -171,7 +192,7 @@ The prompt name defaults to the file stem; override it with `--gen0_prompt_name`
 
 #### Configuration files
 
-Both `run_evolution.py` and `run_one_shot.py` accept a `--config path/to/config.yaml` (or `.json`) flag. The file provides defaults for any CLI option and can contain only the parameters you wish to override; explicit CLI arguments always take precedence. Example templates live in `data/configs/` and mirror the available flags for each script.
+`run_backend.py`, `run_evolution.py`, and `run_one_shot.py` accept a `--config path/to/config.yaml` (or `.json`) flag. The file provides defaults for any CLI option and can contain only the parameters you wish to override; explicit CLI arguments always take precedence. Example templates live in `data/configs/` and mirror the available flags for each script.
 
 Every run records the exact configuration that was used by writing `<timestamp>_config.yaml` next to the summary and log files under `exp/<model>/`. These snapshots merge the resolved arguments, the originating CLI invocation, and the on-disk config so experiments can be reproduced verbatim.
 

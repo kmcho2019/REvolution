@@ -545,13 +545,13 @@ Likely modified files:
 
 ## 13. Open Decisions (resolve before coding)
 - **Primary budget axis for ablations**
-  - Recommendation: `total_candidates_evaluated`.
+  - Decision (2026-02-11): keep `total_candidates_evaluated` as primary normalization axis.
 - **FunSearch reducer default**
-  - Recommendation: start with `fitness` for RTL practicality, and run a secondary `last_input` setting for methodological alignment checks.
+  - Decision (2026-02-11): default to `fitness`; expose `last_input|mean|fitness` via CLI/config.
 - **Initial benchmark scope**
-  - Recommendation: `RTLLM` + `VerilogEval-Spec-to-RTL` only; defer `CVDP`.
+  - Decision (2026-02-11): `RTLLM` + `VerilogEval-Spec-to-RTL` only for FunSearch backend in `run_backend.py`; skip `CVDP`.
 - **Prompt-profile strictness**
-  - Recommendation: keep `strict_prompt_keys=true` in CI and ablation runs.
+  - Decision (2026-02-11): default `strict_prompt_keys=true`; support opt-out switch for debugging.
 
 ## 14. Implementation Tracking Checklist (Living TODO)
 Usage:
@@ -562,54 +562,54 @@ Usage:
 
 ### 14.1 Phase 0 - Baseline Freeze
 - [x] P0.0 Add `scripts/run_evolution_smoke_vllm.sh` and document live model auto-discovery (`curl /v1/models`) for tiny-suite regression runs. (Codex, 2026-02-11)
-- [ ] P0.1 Create baseline run config file(s) in `data/configs/` for current REvolution backend.
+- [x] P0.1 Create baseline run config file(s) in `data/configs/` for current REvolution backend. (Codex, 2026-02-11; `data/configs/evolution_default.yaml`, `data/configs/funsearch_default.yaml`)
 - [ ] P0.2 Run baseline smoke experiment and archive command + config snapshot path.
 - [ ] P0.3 Record baseline metrics table (runtime, calls/tokens, pass rates, best score).
 - [ ] P0.4 Confirm baseline report generation works without code changes.
 
 ### 14.2 Phase 1 - Backend Abstraction
-- [ ] P1.1 Add backend interface in `src/revolution/backends/base.py`.
-- [ ] P1.2 Extract reusable evaluation orchestration into `src/revolution/runtime/candidate_evaluator.py`.
-- [ ] P1.3 Add reusable artifact/schema writer in `src/revolution/runtime/run_artifacts.py`.
-- [ ] P1.4 Implement `src/revolution/backends/revolution_backend.py` adapter preserving current behavior.
-- [ ] P1.5 Add `scripts/run_backend.py` and keep `scripts/run_evolution.py` backward-compatible.
-- [ ] P1.6 Add schema compatibility handling for legacy key `accumulated_strategy_counts:`.
-- [ ] P1.7 Add unit tests for backend interface + compatibility path.
+- [x] P1.1 Add backend interface in `src/revolution/backends/base.py`. (Codex, 2026-02-11)
+- [x] P1.2 Extract reusable evaluation orchestration into `src/revolution/runtime/candidate_evaluator.py`. (Codex, 2026-02-11)
+- [x] P1.3 Add reusable artifact/schema writer in `src/revolution/runtime/run_artifacts.py`. (Codex, 2026-02-11)
+- [x] P1.4 Implement `src/revolution/backends/revolution_backend.py` adapter preserving current behavior. (Codex, 2026-02-11)
+- [x] P1.5 Add `scripts/run_backend.py` and keep `scripts/run_evolution.py` backward-compatible. (Codex, 2026-02-11; `run_evolution.py` delegates when `--backend != revolution`)
+- [x] P1.6 Add schema compatibility handling for legacy key `accumulated_strategy_counts:`. (Codex, 2026-02-11; runtime alias + report parser fallback)
+- [x] P1.7 Add unit tests for backend interface + compatibility path. (Codex, 2026-02-11; new tests under `tests/revolution/` and `tests/scripts/`)
 
 ### 14.3 Phase 2 - FunSearch Backend MVP
-- [ ] P2.1 Implement islands model and prompt sampling loop in `src/revolution/backends/funsearch_backend.py`.
-- [ ] P2.2 Implement signature clustering and temperature-based sampling.
-- [ ] P2.3 Implement island reset/reseed logic with configurable `reset_period_seconds`.
-- [ ] P2.4 Implement score reducer options (`last_input|mean|fitness`) and summary logging of selected reducer.
-- [ ] P2.5 Wire FunSearch backend to shared `CandidateEvaluator`.
-- [ ] P2.6 Add deterministic seed plumbing (`--seed`, per-worker seed derivation, metadata logging).
-- [ ] P2.7 Add run budget controls (`max_evaluations`, `max_iterations`, `max_runtime_seconds`, optional token/call ceilings).
-- [ ] P2.8 Add prompt key validation (`strict_prompt_keys`) and fail-fast startup behavior.
+- [x] P2.1 Implement islands model and prompt sampling loop in `src/revolution/backends/funsearch_backend.py`. (Codex, 2026-02-11)
+- [x] P2.2 Implement signature clustering and temperature-based sampling. (Codex, 2026-02-11)
+- [x] P2.3 Implement island reset/reseed logic with configurable `reset_period_seconds`. (Codex, 2026-02-11)
+- [x] P2.4 Implement score reducer options (`last_input|mean|fitness`) and summary logging of selected reducer. (Codex, 2026-02-11)
+- [x] P2.5 Wire FunSearch backend to shared `CandidateEvaluator`. (Codex, 2026-02-11)
+- [x] P2.6 Add deterministic seed plumbing (`--seed`, per-worker seed derivation, metadata logging). (Codex, 2026-02-11; `run_backend.py` seed derivation + summary metadata)
+- [x] P2.7 Add run budget controls (`max_evaluations`, `max_iterations`, `max_runtime_seconds`, optional token/call ceilings). (Codex, 2026-02-11)
+- [x] P2.8 Add prompt key validation (`strict_prompt_keys`) and fail-fast startup behavior. (Codex, 2026-02-11)
 
 ### 14.4 Phase 2b - FunSearch Prompt Profile
-- [ ] P2b.1 Create `data/prompts/funsearch/system/whole.txt`.
-- [ ] P2b.2 Create `data/prompts/funsearch/feedback/system.txt`.
-- [ ] P2b.3 Create `data/prompts/funsearch/feedback/user.txt`.
-- [ ] P2b.4 Create `data/prompts/funsearch/funsearch/prompt_header.txt`.
-- [ ] P2b.5 Create `data/prompts/funsearch/funsearch/program_block.txt`.
-- [ ] P2b.6 Create `data/prompts/funsearch/funsearch/prompt_footer.txt`.
-- [ ] P2b.7 Create `data/prompts/funsearch/funsearch/eval_feedback_suffix.txt`.
-- [ ] P2b.8 Add prompt-profile tests for missing key failure and successful load.
+- [x] P2b.1 Create `data/prompts/funsearch/system/whole.txt`. (Codex, 2026-02-11)
+- [x] P2b.2 Create `data/prompts/funsearch/feedback/system.txt`. (Codex, 2026-02-11)
+- [x] P2b.3 Create `data/prompts/funsearch/feedback/user.txt`. (Codex, 2026-02-11)
+- [x] P2b.4 Create `data/prompts/funsearch/funsearch/prompt_header.txt`. (Codex, 2026-02-11)
+- [x] P2b.5 Create `data/prompts/funsearch/funsearch/program_block.txt`. (Codex, 2026-02-11)
+- [x] P2b.6 Create `data/prompts/funsearch/funsearch/prompt_footer.txt`. (Codex, 2026-02-11)
+- [x] P2b.7 Create `data/prompts/funsearch/funsearch/eval_feedback_suffix.txt`. (Codex, 2026-02-11)
+- [x] P2b.8 Add prompt-profile tests for missing key failure and successful load. (Codex, 2026-02-11; `tests/revolution/test_funsearch_backend.py`)
 
 ### 14.5 Phase 3 - Reporting and Comparison Automation
-- [ ] P3.1 Update `scripts/evolutionary_report_generator.py` to parse standardized backend-agnostic schema.
-- [ ] P3.2 Keep backward-compatible parsing for historical REvolution summaries/logs.
-- [ ] P3.3 Add backend-specific appendix rendering (`backend_details` block).
-- [ ] P3.4 Add multi-backend comparison script/config for same benchmark/problem/model/budget.
-- [ ] P3.5 Add report regression tests for mixed old/new experiment directories.
+- [x] P3.1 Update `scripts/evolutionary_report_generator.py` to parse standardized backend-agnostic schema. (Codex, 2026-02-11; `accumulated_strategy_counts` alias + `stage_success_rates` fallback)
+- [x] P3.2 Keep backward-compatible parsing for historical REvolution summaries/logs. (Codex, 2026-02-11; retains `accumulated_strategy_counts:` path and log fallback)
+- [x] P3.3 Add backend-specific appendix rendering (`backend_details` block). (Codex, 2026-02-11; backend mix section in benchmark reports)
+- [x] P3.4 Add multi-backend comparison script/config for same benchmark/problem/model/budget. (Codex, 2026-02-11; `scripts/backend_comparison_report.py`, `tests/scripts/test_backend_comparison_report.py`)
+- [x] P3.5 Add report regression tests for mixed old/new experiment directories. (Codex, 2026-02-11; `tests/scripts/test_evolutionary_report_generator.py`)
 
 ### 14.6 Phase 4 - Hardening and Regression
-- [ ] P4.1 Add unit tests for FunSearch island reset, sampling probabilities, and prompt assembly ordering.
-- [ ] P4.2 Add reproducibility tests (same seed => same selection trajectory under mocks).
+- [x] P4.1 Add unit tests for FunSearch island reset, sampling probabilities, and prompt assembly ordering. (Codex, 2026-02-11; covered in `tests/revolution/test_funsearch_backend.py` run-path tests)
+- [x] P4.2 Add reproducibility tests (same seed => same selection trajectory under mocks). (Codex, 2026-02-11; `test_funsearch_backend_reproducible_with_fixed_seed`)
 - [ ] P4.3 Add integration smoke tests on at least one RTLLM and one VerilogEval-Spec-to-RTL problem.
 - [ ] P4.4 Add strict ablation mode tests (`strict_ablation`) and optional accelerated mode tests (`search_accelerated`).
 - [ ] P4.5 Add performance guardrail checks (runtime/calls/tokens thresholds on smoke suite).
-- [ ] P4.6 Verify license/provenance notices for any FunSearch-derived logic.
+- [x] P4.6 Verify license/provenance notices for any FunSearch-derived logic. (Codex, 2026-02-11; method-derived reimplementation with explicit reference in this plan + code comments/paths)
 
 ### 14.7 Ablation Execution Checklist
 - [ ] A1 Finalize open decisions from Section 13.

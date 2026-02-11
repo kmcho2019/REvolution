@@ -18,22 +18,27 @@
 
 ## `src/revolution/`
 
-- `__init__.py`: package export surface, currently re-exports engine classes.
-- `algorithm.py`: main evolutionary driver:
-  - `Heuristic`, `EoHEngine`, `SingleShotEngine`, and `CVDPEngine`.
-  - Strategy definitions, prompt orchestration, evaluation loop, reinforcement logic, and diff handling.
-- `evaluation.py`: evaluation stack:
-  - `VerilogEvaluator`: Icarus Verilog compilation/simulation.
-  - `SynthesisEvaluator`: Yosys + OpenROAD PPA pipeline and post-synthesis regressions.
+- `__init__.py`: package export surface, re-exports engines plus backend/runtime abstractions.
+- `algorithm.py`: main evolutionary driver (`Heuristic`, `EoHEngine`, `SingleShotEngine`, `CVDPEngine`) with strategy and diff orchestration.
+- `backends/base.py`: backend interface (`EvolutionBackend`) and shared context/service dataclasses.
+- `backends/revolution_backend.py`: adapter around existing `EoHEngine` behavior.
+- `backends/funsearch_backend.py`: FunSearch-style RTL backend (islands, signature clusters, reset/reseed, budgeted loop).
+- `runtime/problem_context.py`: benchmark/problem path and metadata resolution.
+- `runtime/candidate_evaluator.py`: backend-agnostic format/syntax/functionality/synthesis/PPA evaluation orchestration.
+- `runtime/run_artifacts.py`: shared generation-log/summary writer plus legacy summary key alias support.
+- `evaluation.py`: evaluation stack (`VerilogEvaluator`, `SynthesisEvaluator`).
 - `llm.py`: unified async LLM client with retry/backoff, token tracking, and JSON parsing helpers.
 - `logging.py`: `EoHLogger` for JSONL generation logs, per-run summaries, and reward statistics.
 - `prompt_store.py`: filesystem-backed prompt templating system with concatenated bundle support and tolerant `safe_format`.
-- `configuration.py`: shared helpers for loading CLI configuration files, validating options, and recording run snapshots.
-- `utils.py`: utility helpers (e.g., `StreamRedirector` for redirecting worker stdout/stderr to files).
+- `configuration.py`: helpers for loading CLI config files, validating options, and recording run snapshots.
+- `utils.py`: utility helpers (for example `StreamRedirector`).
 
 ## `scripts/`
 
 - `run_evolution.py`: CLI entry point for multi-problem evolutionary runs with multiprocessing.
+- `run_backend.py`: canonical backend-selectable runner (`--backend revolution|funsearch`).
+- `run_funsearch.py`: convenience wrapper for `run_backend.py --backend funsearch`.
+- `backend_comparison_report.py`: side-by-side report generator across backend experiment roots.
 - `run_one_shot.py`: CLI for n-shot baselines that reuse the evaluation stack without evolution.
 - `run_test.sh`, `run_regression_test.sh`, `run_cvdp_test.sh`: shell wrappers for regression suites.
 - `generate_*`, `plot_problem_pareto.py`, `evolutionary_report_generator.py`: reporting and visualisation utilities.
