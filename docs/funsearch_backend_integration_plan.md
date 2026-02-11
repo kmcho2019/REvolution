@@ -311,6 +311,42 @@ Refactor `scripts/evolutionary_report_generator.py` into backend-agnostic mode:
 
 Keep legacy fields readable for historical runs.
 
+## 6.4 Immediate smoke-regression script (live vLLM)
+A reusable script is available now for low-cost regression checks while backend refactoring is in progress:
+- `scripts/run_evolution_smoke_vllm.sh`
+
+Script behavior:
+- queries `http://$VLLM_HOST:$VLLM_PORT/v1/models` with `curl` and auto-uses the first returned model id as `--model_name`,
+- defaults to `VLLM_HOST=vllm`, `VLLM_PORT=8888`,
+- validates the served `max_model_len` against `SMOKE_MIN_MODEL_LEN` (default `128000`) so long-context reasoning-model runs do not silently use a short window,
+- exports a placeholder `OPENAI_API_KEY` when unset so the OpenAI-compatible client can initialize against local vLLM,
+- runs `scripts/run_evolution.py` with small defaults (`population_size=2`, `num_generations=1`, `num_workers=1`),
+- fails with non-zero exit if summary statuses include `initialization_failed` or `run_failed`,
+- supports tiny suites:
+  - `--suite rtllm` -> `RTLLM/Prob001_accu`,
+  - `--suite verilogeval` (alias `verilogevalv2`) -> `VerilogEval-Spec-to-RTL/Prob001_zero`,
+  - `--suite mixed` (default) -> one problem from each benchmark.
+
+Quick usage:
+- `scripts/run_evolution_smoke_vllm.sh --dry-run`
+- `scripts/run_evolution_smoke_vllm.sh --suite mixed`
+- `SMOKE_PROBLEMS="Prob001_accu Prob002_adder_16bit" scripts/run_evolution_smoke_vllm.sh --suite rtllm`
+
+Observed environment check (2026-02-11):
+- endpoint: `http://vllm:8888/v1/models`
+- detected model id: `/models/openai-gpt-oss-120b`
+- reported `max_model_len`: `131072` (passes `>=128000` requirement)
+
+Long-context setup note:
+- for `gpt-oss-120b`, keep vLLM launch config at `--max-model-len 131072` (or higher),
+- if needed, override the smoke gate with:
+  - `SMOKE_MIN_MODEL_LEN=0` (disable check), or
+  - `SMOKE_MIN_MODEL_LEN=<target>` (custom minimum).
+
+Execution policy during integration:
+- use this smoke script before/after each phase PR to guard against regressions,
+- after `scripts/run_backend.py` is introduced, keep the same tiny-suite profile and mirror it for `--backend funsearch`.
+
 ## 7. Implementation Phases and Stage Gates
 
 ## Phase 0: Baseline freeze and instrumentation
@@ -379,6 +415,8 @@ Add tests for:
   - verify candidate flow through islands/clusters.
 - real evaluator smoke tests on tiny problem subset:
   - one problem per benchmark, low population/iterations.
+- CLI smoke runner coverage:
+  - keep `scripts/run_evolution_smoke_vllm.sh` green (at minimum `--dry-run`, and live run in environments with vLLM + toolchain).
 
 ## 8.3 Backward-compatibility regression
 - run current REvolution path and new backend adapter path on same seed/config,
@@ -475,6 +513,7 @@ Likely new files:
 - `src/revolution/runtime/candidate_evaluator.py`
 - `src/revolution/runtime/run_artifacts.py`
 - `scripts/run_backend.py`
+- `scripts/run_evolution_smoke_vllm.sh`
 - `tests/revolution/test_backends_base.py`
 - `tests/revolution/test_funsearch_backend.py`
 - `tests/scripts/test_run_backend.py`
@@ -522,6 +561,7 @@ Usage:
 - Optionally append `(owner, YYYY-MM-DD)` to completed items for auditability.
 
 ### 14.1 Phase 0 - Baseline Freeze
+- [x] P0.0 Add `scripts/run_evolution_smoke_vllm.sh` and document live model auto-discovery (`curl /v1/models`) for tiny-suite regression runs. (Codex, 2026-02-11)
 - [ ] P0.1 Create baseline run config file(s) in `data/configs/` for current REvolution backend.
 - [ ] P0.2 Run baseline smoke experiment and archive command + config snapshot path.
 - [ ] P0.3 Record baseline metrics table (runtime, calls/tokens, pass rates, best score).
