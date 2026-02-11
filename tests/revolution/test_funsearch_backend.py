@@ -72,6 +72,8 @@ class _FakeLLM:
 class _FakeCandidateEvaluator:
     def __init__(self):
         self.calls = 0
+        self.evaluation_mode = "strict_ablation"
+        self.accelerated_synthesis_top_k = 1
         self.ref_ppa_metrics = {
             "power": 1.0,
             "area": 100.0,
@@ -107,6 +109,9 @@ class _FakeCandidateEvaluator:
                 "simulation_log": "ok",
             },
         )
+
+    def evaluate_candidates(self, items, *, candidate_workers: int = 0):
+        return [self.evaluate_candidate(item) for item in items]
 
 
 def _write_funsearch_prompts(store: PromptStore, *, include_suffix: bool = True) -> None:
@@ -202,6 +207,8 @@ def test_funsearch_backend_run_writes_summary(tmp_path):
     summary = json.loads(writer.paths.summary_path.read_text(encoding="utf-8"))
     assert summary["backend_name"] == "funsearch"
     assert summary["backend_details"]["score_reducer"] == "fitness"
+    assert summary["backend_details"]["feedback_policy"] == "off"
+    assert summary["backend_details"]["evaluation_mode"] == "strict_ablation"
     assert summary["best_candidate"]["score"] is not None
     assert summary["accumulated_strategy_counts"] == {}
     assert "accumulated_strategy_counts:" in summary

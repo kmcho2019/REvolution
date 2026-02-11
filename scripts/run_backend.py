@@ -110,6 +110,8 @@ def _build_backend(
         problem_description=problem_context.problem_description,
         verilog_evaluator=verilog_evaluator,
         synthesis_evaluator=synthesis_evaluator,
+        evaluation_mode=args.evaluation_mode,
+        accelerated_synthesis_top_k=args.accelerated_synthesis_top_k,
     )
     services = BackendServices(
         llm=llm_interface,
@@ -154,6 +156,10 @@ def _build_backend(
             base_save_path=effective_save_path,
         )
 
+    feedback_policy = args.fs_feedback_policy
+    if args.fs_enable_feedback and feedback_policy == "off":
+        feedback_policy = "always"
+
     fs_cfg = FunSearchBackendConfig(
         initial_population_size=args.fs_initial_population_size,
         samples_per_prompt=args.fs_samples_per_prompt,
@@ -177,9 +183,10 @@ def _build_backend(
         allow_diff_mode=args.fs_allow_diff_mode,
         score_reducer=args.fs_score_reducer,
         failed_candidate_bucket_score=args.fs_failed_candidate_bucket_score,
-        enable_feedback=args.fs_enable_feedback,
+        feedback_policy=feedback_policy,
         feedback_sample_probability=args.fs_feedback_sample_probability,
         seed=task_seed,
+        candidate_workers=args.candidate_workers,
     )
     return FunSearchBackend(context=context, services=services, config=fs_cfg)
 
@@ -264,6 +271,19 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--save_path", type=str, default=os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "exp")))
     parser.add_argument("--num_workers", type=int, default=1)
     parser.add_argument("--candidate_workers", type=int, default=0)
+    parser.add_argument(
+        "--evaluation_mode",
+        type=str,
+        default="strict_ablation",
+        choices=["strict_ablation", "search_accelerated"],
+        help="Evaluation semantics. strict_ablation runs full syntax/functionality/synthesis on all candidates.",
+    )
+    parser.add_argument(
+        "--accelerated_synthesis_top_k",
+        type=int,
+        default=1,
+        help="For search_accelerated mode: synthesize only top-K functional candidates per batch (deterministic shortest-code policy).",
+    )
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--top_p", type=float, default=0.95)
     parser.add_argument("--max_tokens", type=int, default=2048)
@@ -312,6 +332,13 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         choices=["last_input", "mean", "fitness"],
     )
     parser.add_argument("--fs_failed_candidate_bucket_score", type=float, default=-1e6)
+    parser.add_argument(
+        "--fs_feedback_policy",
+        type=str,
+        default="off",
+        choices=["off", "fail_only", "always"],
+    )
+    # Backward-compatible alias from earlier integration iteration.
     parser.add_argument("--fs_enable_feedback", action="store_true")
     parser.add_argument("--fs_feedback_sample_probability", type=float, default=1.0)
     parser.add_argument("--fs_allow_diff_mode", action="store_true")

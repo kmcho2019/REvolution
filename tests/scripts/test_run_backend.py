@@ -34,12 +34,21 @@ def test_backend_parser_accepts_funsearch_options():
         [
             "--backend",
             "funsearch",
+            "--evaluation_mode",
+            "search_accelerated",
+            "--accelerated_synthesis_top_k",
+            "2",
             "--fs_num_islands",
             "8",
             "--fs_score_reducer",
             "mean",
+            "--fs_feedback_policy",
+            "fail_only",
         ]
     )
     assert args.backend == "funsearch"
+    assert args.evaluation_mode == "search_accelerated"
+    assert args.accelerated_synthesis_top_k == 2
     assert args.fs_num_islands == 8
     assert args.fs_score_reducer == "mean"
+    assert args.fs_feedback_policy == "fail_only"

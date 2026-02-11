@@ -1,7 +1,9 @@
 from revolution.runtime.candidate_evaluator import (
     CandidateEvaluation,
     CandidateEvaluator,
+    CandidateStatus,
     CandidateWorkItem,
+    EvaluationMode,
 )
 from revolution.runtime.problem_context import (
     ProblemContext,
@@ -15,7 +17,9 @@ __all__ = [
     "ArtifactWriter",
     "CandidateEvaluation",
     "CandidateEvaluator",
+    "CandidateStatus",
     "CandidateWorkItem",
+    "EvaluationMode",
     "ProblemContext",
     "add_legacy_strategy_key_alias",
     "default_benchmark_root",

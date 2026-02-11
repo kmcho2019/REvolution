@@ -16,8 +16,10 @@ class _FakeVerilogEvaluator:
 class _FakeSynthesisEvaluator:
     def __init__(self, result):
         self.result = result
+        self.calls = 0
 
     def evaluate(self, *args, **kwargs):
+        self.calls += 1
         return dict(self.result)
 
 
@@ -111,3 +113,79 @@ def test_candidate_evaluator_success_path(tmp_path):
     assert result.status == "success"
     assert result.stage_statuses["ppa"] is True
     assert result.score == pytest.approx(0.1)
+
+
+def test_candidate_evaluator_search_accelerated_throttles_synthesis(tmp_path):
+    context = _context(tmp_path)
+    synthesis = _FakeSynthesisEvaluator(
+        {
+            "synthesis_success": True,
+            "synthesis_functionality_success": True,
+            "ppa_success": True,
+            "ppa_metrics": {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
+        }
+    )
+    evaluator = CandidateEvaluator(
+        context=context,
+        problem_description="desc",
+        verilog_evaluator=_FakeVerilogEvaluator(
+            {
+                "status": "success",
+                "simulation_stdout": "Mismatches: 0\n",
+                "simulation_stderr": "",
+                "compilation_stderr": "",
+            }
+        ),
+        synthesis_evaluator=synthesis,
+        ref_ppa_metrics={"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
+        evaluation_mode="search_accelerated",
+        accelerated_synthesis_top_k=1,
+    )
+    results = evaluator.evaluate_candidates(
+        [
+            CandidateWorkItem(code="module this_is_a_much_longer_name; endmodule", code_file_path="long.sv"),
+            CandidateWorkItem(code="module s; endmodule", code_file_path="short.sv"),
+        ]
+    )
+    assert results[0].status == "skipped_synthesis"
+    assert results[0].synthesis_skipped is True
+    assert results[1].status == "success"
+    assert synthesis.calls == 1
+
+
+def test_candidate_evaluator_search_accelerated_top_k_zero_skips_all(tmp_path):
+    context = _context(tmp_path)
+    synthesis = _FakeSynthesisEvaluator({})
+    evaluator = CandidateEvaluator(
+        context=context,
+        problem_description="desc",
+        verilog_evaluator=_FakeVerilogEvaluator(
+            {
+                "status": "success",
+                "simulation_stdout": "Mismatches: 0\n",
+                "simulation_stderr": "",
+                "compilation_stderr": "",
+            }
+        ),
+        synthesis_evaluator=synthesis,
+        evaluation_mode="search_accelerated",
+        accelerated_synthesis_top_k=0,
+    )
+    result = evaluator.evaluate_candidate(
+        CandidateWorkItem(code="module m; endmodule", code_file_path="x.sv")
+    )
+    assert result.status == "skipped_synthesis"
+    assert result.synthesis_skipped is True
+    assert synthesis.calls == 0
+
+
+def test_candidate_evaluator_rejects_invalid_mode(tmp_path):
+    context = _context(tmp_path)
+    with pytest.raises(ValueError, match="evaluation_mode"):
+        CandidateEvaluator(
+            context=context,
+            problem_description="desc",
+            verilog_evaluator=_FakeVerilogEvaluator({"status": "success"}),
+            synthesis_evaluator=_FakeSynthesisEvaluator({}),
+            evaluation_mode="invalid-mode",
+        )

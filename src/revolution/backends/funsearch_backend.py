@@ -19,7 +19,7 @@ from revolution.backends.base import (
     EvolutionBackend,
 )
 from revolution.prompt_store import safe_format
-from revolution.runtime import CandidateEvaluator, CandidateWorkItem
+from revolution.runtime import CandidateEvaluation, CandidateEvaluator, CandidateWorkItem
 from revolution.runtime.run_artifacts import add_legacy_strategy_key_alias
 
 
@@ -64,9 +64,10 @@ class FunSearchBackendConfig:
     allow_diff_mode: bool = False
     score_reducer: str = "fitness"
     failed_candidate_bucket_score: float = -1e6
-    enable_feedback: bool = False
+    feedback_policy: str = "off"
     feedback_sample_probability: float = 1.0
     seed: int | None = None
+    candidate_workers: int = 0
 
 
 @dataclass
@@ -122,6 +123,17 @@ class _Island:
         if candidate.cluster_score > self.best_cluster_score:
             self.best_cluster_score = candidate.cluster_score
             self.best_candidate = candidate
+
+
+@dataclass
+class _PreparedCandidate:
+    generation: int
+    island_id: int | None
+    thought: str
+    code: str
+    initial_status: str
+    parent_ids: list[str]
+    code_file_path: str
 
 
 class FunSearchBackend(EvolutionBackend):
@@ -236,6 +248,11 @@ class FunSearchBackend(EvolutionBackend):
             raise ValueError(
                 "FunSearch backend v1 only supports whole generation mode. "
                 "Set --generation_mode whole or pass --allow_diff_mode."
+            )
+        if self.config.feedback_policy not in {"off", "fail_only", "always"}:
+            raise ValueError(
+                f"Unsupported feedback_policy '{self.config.feedback_policy}'. "
+                "Expected off, fail_only, or always."
             )
         self._validate_prompt_profile()
         random.seed(self.config.seed)
@@ -443,7 +460,9 @@ class FunSearchBackend(EvolutionBackend):
         Path(f"{base}_feedback.txt").write_text(output, encoding="utf-8")
 
     def _maybe_generate_feedback(self, candidate: FunSearchCandidate, payload: dict[str, str] | None) -> None:
-        if not self.config.enable_feedback or payload is None:
+        if self.config.feedback_policy == "off" or payload is None:
+            return
+        if self.config.feedback_policy == "fail_only" and candidate.status == "success":
             return
         if random.random() > self.config.feedback_sample_probability:
             return
@@ -477,7 +496,7 @@ class FunSearchBackend(EvolutionBackend):
         self._write_feedback_file(candidate.code_file_path, feedback)
         self._consume_llm_usage()
 
-    def _evaluate_and_register(
+    def _prepare_candidate(
         self,
         *,
         generation: int,
@@ -486,7 +505,7 @@ class FunSearchBackend(EvolutionBackend):
         code: str,
         initial_status: str,
         parent_ids: list[str],
-    ) -> FunSearchCandidate:
+    ) -> _PreparedCandidate:
         label = f"sample{self._evaluations_done + 1}_{uuid.uuid4().hex[:8]}_funsearch"
         code_path, _ = self.services.artifact_writer.write_candidate(
             generation=generation,
@@ -495,13 +514,21 @@ class FunSearchBackend(EvolutionBackend):
             thought=thought,
             metadata={"island_id": island_id, "parent_ids": parent_ids},
         )
-        work_item = CandidateWorkItem(
+        return _PreparedCandidate(
+            generation=generation,
+            island_id=island_id,
+            thought=thought,
             code=code,
-            code_file_path=code_path,
             initial_status=initial_status,
+            parent_ids=parent_ids,
+            code_file_path=code_path,
         )
-        assert self.services.candidate_evaluator is not None
-        evaluation = self.services.candidate_evaluator.evaluate_candidate(work_item)
+
+    def _finalize_candidate(
+        self,
+        prepared: _PreparedCandidate,
+        evaluation: CandidateEvaluation,
+    ) -> FunSearchCandidate:
         self._evaluations_done += 1
         self._record_status(evaluation.status)
 
@@ -522,24 +549,54 @@ class FunSearchBackend(EvolutionBackend):
         signature = self._cluster_signature(evaluation.stage_statuses, reduced)
         candidate = FunSearchCandidate(
             id=str(uuid.uuid4()),
-            generation=generation,
-            thought=thought,
-            code=code,
-            code_file_path=code_path,
+            generation=prepared.generation,
+            thought=prepared.thought,
+            code=prepared.code,
+            code_file_path=prepared.code_file_path,
             status=evaluation.status,
             score=float(evaluation.score),
             cluster_score=float(reduced),
             signature=signature,
-            island_id=island_id,
+            island_id=prepared.island_id,
             ppa_metrics=evaluation.ppa_metrics,
             feedback=str(evaluation.feedback_payload.get("simulation_log", ""))
             if evaluation.feedback_payload
             else "",
-            parent_ids=parent_ids,
+            parent_ids=prepared.parent_ids,
         )
-        self._register_candidate(candidate, island_id=island_id)
+        self._register_candidate(candidate, island_id=prepared.island_id)
         self._maybe_generate_feedback(candidate, evaluation.feedback_payload)
         return candidate
+
+    def _evaluate_and_register_batch(
+        self,
+        prepared_candidates: list[_PreparedCandidate],
+    ) -> list[FunSearchCandidate]:
+        if not prepared_candidates:
+            return []
+        work_item = CandidateWorkItem(
+            code=prepared_candidates[0].code,
+            code_file_path=prepared_candidates[0].code_file_path,
+            initial_status=prepared_candidates[0].initial_status,
+        )
+        assert self.services.candidate_evaluator is not None
+        items = [work_item]
+        for prepared in prepared_candidates[1:]:
+            items.append(
+                CandidateWorkItem(
+                    code=prepared.code,
+                    code_file_path=prepared.code_file_path,
+                    initial_status=prepared.initial_status,
+                )
+            )
+        evaluations = self.services.candidate_evaluator.evaluate_candidates(
+            items,
+            candidate_workers=max(0, self.config.candidate_workers),
+        )
+        return [
+            self._finalize_candidate(prepared, evaluation)
+            for prepared, evaluation in zip(prepared_candidates, evaluations)
+        ]
 
     def _reset_islands_if_needed(self) -> None:
         now = time.time()
@@ -642,6 +699,14 @@ class FunSearchBackend(EvolutionBackend):
                 "reset_events": self._reset_events,
                 "score_reducer": self.config.score_reducer,
                 "seed": self.config.seed,
+                "feedback_policy": self.config.feedback_policy,
+                "feedback_sample_probability": self.config.feedback_sample_probability,
+                "evaluation_mode": self.services.candidate_evaluator.evaluation_mode
+                if self.services.candidate_evaluator
+                else "strict_ablation",
+                "accelerated_synthesis_top_k": self.services.candidate_evaluator.accelerated_synthesis_top_k
+                if self.services.candidate_evaluator
+                else None,
                 "termination_reason": reason,
                 "island_best_scores": [island.best_cluster_score for island in self._islands],
                 "cluster_counts_per_island": [len(island.clusters) for island in self._islands],
@@ -699,6 +764,12 @@ class FunSearchBackend(EvolutionBackend):
                 "max_runtime_seconds": self.config.max_runtime_seconds,
                 "max_llm_calls": self.config.max_llm_calls,
                 "max_llm_tokens": self.config.max_llm_tokens,
+                "evaluation_mode": self.services.candidate_evaluator.evaluation_mode
+                if self.services.candidate_evaluator
+                else "strict_ablation",
+                "accelerated_synthesis_top_k": self.services.candidate_evaluator.accelerated_synthesis_top_k
+                if self.services.candidate_evaluator
+                else None,
             },
             "stage_success_rates": {
                 "format": 1.0 - (self._status_counts.get("failed_format", 0) / total),
@@ -736,19 +807,22 @@ class FunSearchBackend(EvolutionBackend):
             )
         )
         init_candidates: list[FunSearchCandidate] = []
+        prepared_initial: list[_PreparedCandidate] = []
         for thought, code, meta in initial:
             is_ok = bool(meta.get("format_ok", False))
             thought_text = thought or ""
             code_text = (code or meta.get("raw", "") or "").strip()
-            candidate = self._evaluate_and_register(
-                generation=0,
-                island_id=None,
-                thought=thought_text,
-                code=code_text,
-                initial_status="new" if is_ok else "failed_format",
-                parent_ids=[],
+            prepared_initial.append(
+                self._prepare_candidate(
+                    generation=0,
+                    island_id=None,
+                    thought=thought_text,
+                    code=code_text,
+                    initial_status="new" if is_ok else "failed_format",
+                    parent_ids=[],
+                )
             )
-            init_candidates.append(candidate)
+        init_candidates.extend(self._evaluate_and_register_batch(prepared_initial))
         init_usage = self._consume_llm_usage()
         self._log_generation(
             generation=0,
@@ -781,22 +855,22 @@ class FunSearchBackend(EvolutionBackend):
             )
             new_candidates: list[FunSearchCandidate] = []
             parent_ids = [candidate.id for candidate in sampled]
+            prepared_candidates: list[_PreparedCandidate] = []
             for thought, code, meta in generated:
                 is_ok = bool(meta.get("format_ok", False))
                 thought_text = thought or ""
                 code_text = (code or meta.get("raw", "") or "").strip()
-                candidate = self._evaluate_and_register(
-                    generation=self._iterations_done,
-                    island_id=chosen_island,
-                    thought=thought_text,
-                    code=code_text,
-                    initial_status="new" if is_ok else "failed_format",
-                    parent_ids=parent_ids,
+                prepared_candidates.append(
+                    self._prepare_candidate(
+                        generation=self._iterations_done,
+                        island_id=chosen_island,
+                        thought=thought_text,
+                        code=code_text,
+                        initial_status="new" if is_ok else "failed_format",
+                        parent_ids=parent_ids,
+                    )
                 )
-                new_candidates.append(candidate)
-                exhausted, reason = self._check_budget_exhausted()
-                if exhausted:
-                    break
+            new_candidates.extend(self._evaluate_and_register_batch(prepared_candidates))
             usage = self._consume_llm_usage()
             self._log_generation(
                 generation=self._iterations_done,

@@ -4,10 +4,30 @@ import re
 import os
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
+from enum import StrEnum
 from typing import Any
 
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
 from revolution.runtime.problem_context import ProblemContext, resolve_top_module_name
+
+
+class CandidateStatus(StrEnum):
+    FAILED_FORMAT = "failed_format"
+    FAILED_DIFF = "failed_diff"
+    FAILED_SYNTAX = "failed_syntax"
+    FAILED_FUNCTIONALITY = "failed_functionality"
+    FAILED_SYNTHESIS = "failed_synthesis"
+    FAILED_SYNTHESIS_FUNCTIONALITY = "failed_synthesis_functionality"
+    SKIPPED_SYNTHESIS = "skipped_synthesis"
+    SUCCESS = "success"
+
+
+class EvaluationMode(StrEnum):
+    STRICT_ABLATION = "strict_ablation"
+    SEARCH_ACCELERATED = "search_accelerated"
+
+
+_PRE_SYNTHESIS_STATUS = "_pre_synthesis_passed"
 
 
 @dataclass
@@ -26,6 +46,7 @@ class CandidateEvaluation:
     feedback_payload: dict[str, str] | None = None
     simulation_result: dict[str, Any] | None = None
     synthesis_result: dict[str, Any] | None = None
+    synthesis_skipped: bool = False
 
 
 @dataclass
@@ -51,6 +72,9 @@ class CandidateEvaluator:
         ref_ppa_metrics: dict[str, float] | None = None,
         *,
         failure_score: float = float("-inf"),
+        evaluation_mode: str = EvaluationMode.STRICT_ABLATION.value,
+        accelerated_synthesis_top_k: int | None = None,
+        accelerated_skip_score: float = 0.0,
     ) -> None:
         self.context = context
         self.problem_description = problem_description
@@ -59,6 +83,19 @@ class CandidateEvaluator:
         self.ref_ppa_metrics = ref_ppa_metrics or {}
         self.failure_score = failure_score
         self.top_module_name = resolve_top_module_name(context)
+        if evaluation_mode not in {
+            EvaluationMode.STRICT_ABLATION.value,
+            EvaluationMode.SEARCH_ACCELERATED.value,
+        }:
+            raise ValueError(
+                f"Unsupported evaluation_mode '{evaluation_mode}'. "
+                "Expected strict_ablation or search_accelerated."
+            )
+        if accelerated_synthesis_top_k is not None and accelerated_synthesis_top_k < 0:
+            raise ValueError("accelerated_synthesis_top_k must be >= 0 when provided.")
+        self.evaluation_mode = evaluation_mode
+        self.accelerated_synthesis_top_k = accelerated_synthesis_top_k
+        self.accelerated_skip_score = accelerated_skip_score
 
     def calculate_fitness_score(self, ppa_metrics: dict[str, float]) -> tuple[float, dict[str, float]]:
         """Compute REvolution fitness from candidate and reference PPA metrics."""
@@ -107,8 +144,8 @@ class CandidateEvaluator:
             "ppa": False,
         }
 
-    def evaluate_candidate(self, item: CandidateWorkItem) -> CandidateEvaluation:
-        """Run format/syntax/functionality/synthesis/PPA stages for one candidate."""
+    def _evaluate_pre_synthesis(self, item: CandidateWorkItem) -> CandidateEvaluation:
+        """Run format/syntax/functionality stages and return an intermediate result."""
         stages = self._base_stage_statuses()
         if item.initial_status == "failed_format":
             feedback_payload = {
@@ -117,7 +154,7 @@ class CandidateEvaluator:
                 "simulation_log": "Candidate failed format compliance checks.",
             }
             return CandidateEvaluation(
-                status="failed_format",
+                status=CandidateStatus.FAILED_FORMAT.value,
                 score=self.failure_score,
                 stage_statuses=stages,
                 feedback_payload=feedback_payload,
@@ -130,7 +167,7 @@ class CandidateEvaluator:
                 "simulation_log": "Candidate failed diff-application checks.",
             }
             return CandidateEvaluation(
-                status="failed_diff",
+                status=CandidateStatus.FAILED_DIFF.value,
                 score=self.failure_score,
                 stage_statuses=stages,
                 feedback_payload=feedback_payload,
@@ -153,7 +190,7 @@ class CandidateEvaluator:
                 ),
             }
             return CandidateEvaluation(
-                status="failed_syntax",
+                status=CandidateStatus.FAILED_SYNTAX.value,
                 score=self.failure_score,
                 stage_statuses=stages,
                 feedback_payload=feedback_payload,
@@ -179,7 +216,7 @@ class CandidateEvaluator:
                 ),
             }
             return CandidateEvaluation(
-                status="failed_functionality",
+                status=CandidateStatus.FAILED_FUNCTIONALITY.value,
                 score=self.failure_score,
                 stage_statuses=stages,
                 mismatch_count=mismatch_count,
@@ -188,6 +225,23 @@ class CandidateEvaluator:
             )
 
         stages["functionality"] = True
+        return CandidateEvaluation(
+            status=_PRE_SYNTHESIS_STATUS,
+            score=self.failure_score,
+            stage_statuses=stages,
+            mismatch_count=mismatch_count,
+            simulation_result=sim_results,
+        )
+
+    def _evaluate_synthesis(
+        self,
+        item: CandidateWorkItem,
+        pre_synthesis: CandidateEvaluation,
+    ) -> CandidateEvaluation:
+        stages = dict(pre_synthesis.stage_statuses)
+        sim_results = pre_synthesis.simulation_result
+        mismatch_count = pre_synthesis.mismatch_count
+
         report_base_path = item.code_file_path.rsplit(".", 1)[0]
         output_dir = os.path.dirname(item.code_file_path)
         synth_results = self.synthesis_evaluator.evaluate(
@@ -221,7 +275,7 @@ class CandidateEvaluator:
                 ),
             }
             return CandidateEvaluation(
-                status="success",
+                status=CandidateStatus.SUCCESS.value,
                 score=score,
                 stage_statuses=stages,
                 mismatch_count=mismatch_count,
@@ -236,19 +290,19 @@ class CandidateEvaluator:
             )
 
         if not synth_success:
-            status = "failed_synthesis"
+            status = CandidateStatus.FAILED_SYNTHESIS.value
             synthesis_log = (
                 "Functionality OK, but synthesis failed.\nLog:\n"
                 f"{synth_results.get('synthesis_log', 'N/A')}"
             )
         elif not post_synth_success:
-            status = "failed_synthesis_functionality"
+            status = CandidateStatus.FAILED_SYNTHESIS_FUNCTIONALITY.value
             synthesis_log = (
                 "Functionality OK, Synthesis OK, but Post-Synthesis Functional Check failed.\nLog:\n"
                 f"{synth_results.get('synthesis_log', 'N/A')}"
             )
         else:
-            status = "failed_synthesis"
+            status = CandidateStatus.FAILED_SYNTHESIS.value
             synthesis_log = (
                 "Synthesis or PPA failed.\nLog:\n"
                 f"{synth_results.get('synthesis_log', 'N/A')}"
@@ -275,6 +329,70 @@ class CandidateEvaluator:
             synthesis_result=synth_results,
         )
 
+    def _mark_synthesis_skipped(
+        self,
+        item: CandidateWorkItem,
+        pre_synthesis: CandidateEvaluation,
+    ) -> CandidateEvaluation:
+        feedback_payload = {
+            "problem_def": self.problem_description,
+            "code": item.code,
+            "simulation_log": (
+                "Functionality passed. Synthesis was intentionally skipped under "
+                "search_accelerated mode due to synthesis_top_k throttling."
+            ),
+        }
+        return CandidateEvaluation(
+            status=CandidateStatus.SKIPPED_SYNTHESIS.value,
+            score=self.accelerated_skip_score,
+            stage_statuses=dict(pre_synthesis.stage_statuses),
+            mismatch_count=pre_synthesis.mismatch_count,
+            feedback_payload=feedback_payload,
+            simulation_result=pre_synthesis.simulation_result,
+            synthesis_skipped=True,
+        )
+
+    def _evaluate_candidate_strict(self, item: CandidateWorkItem) -> CandidateEvaluation:
+        pre = self._evaluate_pre_synthesis(item)
+        if pre.status != _PRE_SYNTHESIS_STATUS:
+            return pre
+        return self._evaluate_synthesis(item, pre)
+
+    def evaluate_candidate(self, item: CandidateWorkItem) -> CandidateEvaluation:
+        """Run evaluation for one candidate using the configured evaluation mode."""
+        if self.evaluation_mode == EvaluationMode.STRICT_ABLATION.value:
+            return self._evaluate_candidate_strict(item)
+
+        pre = self._evaluate_pre_synthesis(item)
+        if pre.status != _PRE_SYNTHESIS_STATUS:
+            return pre
+        top_k = self.accelerated_synthesis_top_k
+        if top_k is not None and top_k <= 0:
+            return self._mark_synthesis_skipped(item, pre)
+        return self._evaluate_synthesis(item, pre)
+
+    def _select_synthesis_indices(
+        self,
+        items: list[CandidateWorkItem],
+        pre_results: list[CandidateEvaluation],
+    ) -> set[int]:
+        """Select which functionality-pass candidates should run synthesis in accelerated mode."""
+        functionality_pass_indices = [
+            idx for idx, result in enumerate(pre_results) if result.status == _PRE_SYNTHESIS_STATUS
+        ]
+        if not functionality_pass_indices:
+            return set()
+        top_k = self.accelerated_synthesis_top_k
+        if top_k is None:
+            return set(functionality_pass_indices)
+        if top_k <= 0:
+            return set()
+        if top_k >= len(functionality_pass_indices):
+            return set(functionality_pass_indices)
+        # Deterministic throttling policy: synthesize the shortest functional candidates first.
+        ranked = sorted(functionality_pass_indices, key=lambda idx: (len(items[idx].code), idx))
+        return set(ranked[:top_k])
+
     def evaluate_candidates(
         self,
         items: list[CandidateWorkItem],
@@ -282,8 +400,40 @@ class CandidateEvaluator:
         candidate_workers: int = 0,
     ) -> list[CandidateEvaluation]:
         """Evaluate a batch of candidates, optionally with thread parallelism."""
+        if self.evaluation_mode == EvaluationMode.STRICT_ABLATION.value:
+            if candidate_workers > 1:
+                with ThreadPoolExecutor(max_workers=candidate_workers) as executor:
+                    futures = [executor.submit(self._evaluate_candidate_strict, item) for item in items]
+                    return [future.result() for future in futures]
+            return [self._evaluate_candidate_strict(item) for item in items]
+
         if candidate_workers > 1:
             with ThreadPoolExecutor(max_workers=candidate_workers) as executor:
-                futures = [executor.submit(self.evaluate_candidate, item) for item in items]
-                return [future.result() for future in futures]
-        return [self.evaluate_candidate(item) for item in items]
+                pre_futures = [executor.submit(self._evaluate_pre_synthesis, item) for item in items]
+                pre_results = [future.result() for future in pre_futures]
+        else:
+            pre_results = [self._evaluate_pre_synthesis(item) for item in items]
+
+        synth_indices = self._select_synthesis_indices(items, pre_results)
+        final_results: list[CandidateEvaluation] = [CandidateEvaluation(status="", score=0.0, stage_statuses={}) for _ in items]
+
+        if candidate_workers > 1 and len(synth_indices) > 1:
+            with ThreadPoolExecutor(max_workers=candidate_workers) as executor:
+                synth_futures = {
+                    idx: executor.submit(self._evaluate_synthesis, items[idx], pre_results[idx])
+                    for idx in synth_indices
+                }
+                for idx in synth_indices:
+                    final_results[idx] = synth_futures[idx].result()
+        else:
+            for idx in synth_indices:
+                final_results[idx] = self._evaluate_synthesis(items[idx], pre_results[idx])
+
+        for idx, pre in enumerate(pre_results):
+            if pre.status != _PRE_SYNTHESIS_STATUS:
+                final_results[idx] = pre
+                continue
+            if idx in synth_indices:
+                continue
+            final_results[idx] = self._mark_synthesis_skipped(items[idx], pre)
+        return final_results
