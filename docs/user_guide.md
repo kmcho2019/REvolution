@@ -78,6 +78,9 @@ The CLI defaults for `--vllm_host` and `--vllm_port` also read `VLLM_HOST` and `
 - `--backend revolution|funsearch`
 - shared model/benchmark options (`--benchmarks`, `--problems`, `--model_name`, `--api_backend`, `--save_path`, `--num_workers`)
 - backend-specific controls (`--population_size`, `--num_generations`, `--strategy_selection`, `--fs_*` FunSearch knobs)
+- shared evaluation controls:
+  - `--evaluation_mode strict_ablation|search_accelerated`
+  - `--accelerated_synthesis_top_k <int>` (used in `search_accelerated`)
 - deterministic run controls (`--seed` with per-worker derived seeds)
 
 By default outputs are isolated by backend under `<save_path>/<backend>/...` (`--backend_subdir` can be disabled if needed).
@@ -116,6 +119,10 @@ python scripts/run_backend.py \
 ```
 
 `scripts/run_funsearch.py` is a convenience wrapper that injects `--backend funsearch`.
+
+FunSearch feedback controls:
+- `--fs_feedback_policy off|fail_only|always` (default `off`)
+- `--fs_feedback_sample_probability <0..1>`
 
 ### 3.2 Evolutionary runs (`scripts/run_evolution.py`)
 
@@ -227,6 +234,7 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 
 - `scripts/evolutionary_report_generator.py`: generate Markdown reports summarising a run (`--experiment_path path/to/exp/...`).
 - `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown table (`--backend_run revolution=<path> --backend_run funsearch=<path>`).
+- `scripts/run_backend_ablation.py`: one-command ablation sweep runner for REvolution/FunSearch plus optional comparison report generation, multi-seed loops (`--seeds`), strict fairness checks, and command validation via `--dry_run`.
 - `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch comparisons.
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
 - `scripts/gen0_report_generator.py`: inspect `Gen0/best_candidate` snapshots, check syntax/simulation/synthesis status, and optionally export Markdown (`--save_markdown`).

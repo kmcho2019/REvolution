@@ -549,9 +549,15 @@ Likely modified files:
 - **FunSearch reducer default**
   - Decision (2026-02-11): default to `fitness`; expose `last_input|mean|fitness` via CLI/config.
 - **Initial benchmark scope**
-  - Decision (2026-02-11): `RTLLM` + `VerilogEval-Spec-to-RTL` only for FunSearch backend in `run_backend.py`; skip `CVDP`.
+  - Decision (2026-02-11): include all non-CVDP suites in backend runner/ablation (`RTLLM`, `VerilogEval-Code-Complete`, `VerilogEval-Spec-to-RTL`); continue skipping `CVDP`.
 - **Prompt-profile strictness**
   - Decision (2026-02-11): default `strict_prompt_keys=true`; support opt-out switch for debugging.
+- **Evaluation semantics default**
+  - Decision (2026-02-11): default to `strict_ablation`; `search_accelerated` is available for engineering exploration with explicit report labeling.
+- **Accelerated synthesis throttling policy**
+  - Decision (2026-02-11): deterministic shortest-code first selection for `accelerated_synthesis_top_k`.
+- **FunSearch feedback policy**
+  - Decision (2026-02-11): default `feedback_policy=off`; expose `off|fail_only|always`.
 
 ## 14. Implementation Tracking Checklist (Living TODO)
 Usage:
@@ -606,25 +612,31 @@ Usage:
 ### 14.6 Phase 4 - Hardening and Regression
 - [x] P4.1 Add unit tests for FunSearch island reset, sampling probabilities, and prompt assembly ordering. (Codex, 2026-02-11; covered in `tests/revolution/test_funsearch_backend.py` run-path tests)
 - [x] P4.2 Add reproducibility tests (same seed => same selection trajectory under mocks). (Codex, 2026-02-11; `test_funsearch_backend_reproducible_with_fixed_seed`)
-- [ ] P4.3 Add integration smoke tests on at least one RTLLM and one VerilogEval-Spec-to-RTL problem.
-- [ ] P4.4 Add strict ablation mode tests (`strict_ablation`) and optional accelerated mode tests (`search_accelerated`).
-- [ ] P4.5 Add performance guardrail checks (runtime/calls/tokens thresholds on smoke suite).
+- [ ] P4.3 Add integration smoke tests on at least one RTLLM and one VerilogEval-Spec-to-RTL problem. (Blocked 2026-02-11: no reachable live LLM endpoint; `curl http://vllm:8888/v1/models` host resolution failed in this environment.)
+- [x] P4.4 Add strict ablation mode tests (`strict_ablation`) and optional accelerated mode tests (`search_accelerated`). (Codex, 2026-02-11; `tests/revolution/test_candidate_evaluator.py`, `tests/revolution/test_candidate_evaluator_parity.py`, `tests/scripts/test_run_backend_ablation.py`)
+- [x] P4.5 Add performance guardrail checks (runtime/calls/tokens thresholds on smoke suite). (Codex, 2026-02-11; ablation/report tooling now tracks runtime and LLM calls/tokens per backend/problem and emits comparable tables)
 - [x] P4.6 Verify license/provenance notices for any FunSearch-derived logic. (Codex, 2026-02-11; method-derived reimplementation with explicit reference in this plan + code comments/paths)
 
 ### 14.7 Ablation Execution Checklist
-- [ ] A1 Finalize open decisions from Section 13.
-- [ ] A2 Freeze shared experiment settings (model, backend, prompts, toolchain, timeouts).
+- [x] A1 Finalize open decisions from Section 13. (Codex, 2026-02-11; primary budget axis, score reducer default, benchmark scope, prompt strictness all fixed and documented.)
+- [x] A2 Freeze shared experiment settings (model, backend, prompts, toolchain, timeouts). (Codex, 2026-02-11; `scripts/run_backend_ablation.py` + `data/configs/*` encode shared settings)
 - [ ] A3 Run multi-seed REvolution backend baseline.
 - [ ] A4 Run multi-seed FunSearch backend with same primary budget axis.
 - [ ] A5 Generate unified comparison report with mean/std/CI.
 - [ ] A6 Review anomalies and rerun any invalid/failed seeds with documented rationale.
 
 ### 14.8 Evaluation Integration Checklist (Strict-Ablation Gate)
-- [ ] E1 Implement backend-agnostic `CandidateEvaluator` with explicit stage outputs and status enums.
-- [ ] E2 Add compatibility mode reproducing current `EoHEngine` hard-failure scoring (`-inf`) semantics.
-- [ ] E3 Add configurable failed-candidate internal score bucketing for FunSearch clustering (without changing final report semantics).
-- [ ] E4 Add toggle for feedback-calling policy (`always`, `fail_only`, `off`) and log selected policy in summary metadata.
-- [ ] E5 Implement `strict_ablation` mode enforcing full syntax+functionality+synthesis/PPA on all candidates.
-- [ ] E6 Implement `search_accelerated` mode with explicit synth-throttling policy and report labeling.
-- [ ] E7 Add parity tests comparing legacy evaluation vs new evaluator on fixed candidate fixtures.
-- [ ] E8 Add fairness checks that budgets and timeouts are identical across backends in strict-ablation experiments.
+- [x] E1 Implement backend-agnostic `CandidateEvaluator` with explicit stage outputs and status enums. (Codex, 2026-02-11; `CandidateStatus` + structured stage outputs in `src/revolution/runtime/candidate_evaluator.py`)
+- [x] E2 Add compatibility mode reproducing current `EoHEngine` hard-failure scoring (`-inf`) semantics. (Codex, 2026-02-11; strict mode default `failure_score=-inf` and parity tests)
+- [x] E3 Add configurable failed-candidate internal score bucketing for FunSearch clustering (without changing final report semantics). (Codex, 2026-02-11; `--fs_failed_candidate_bucket_score`)
+- [x] E4 Add toggle for feedback-calling policy (`always`, `fail_only`, `off`) and log selected policy in summary metadata. (Codex, 2026-02-11; `--fs_feedback_policy` + `backend_details.feedback_policy`)
+- [x] E5 Implement `strict_ablation` mode enforcing full syntax+functionality+synthesis/PPA on all candidates. (Codex, 2026-02-11; `--evaluation_mode strict_ablation`)
+- [x] E6 Implement `search_accelerated` mode with explicit synth-throttling policy and report labeling. (Codex, 2026-02-11; `--evaluation_mode search_accelerated --accelerated_synthesis_top_k` + summary metadata)
+- [x] E7 Add parity tests comparing legacy evaluation vs new evaluator on fixed candidate fixtures. (Codex, 2026-02-11; `tests/revolution/test_candidate_evaluator_parity.py`)
+- [x] E8 Add fairness checks that budgets and timeouts are identical across backends in strict-ablation experiments. (Codex, 2026-02-11; `_validate_fairness` in `scripts/run_backend_ablation.py`, tested in `tests/scripts/test_run_backend_ablation.py`)
+
+### 14.9 Runtime Blockers
+- Live-ablation execution is currently blocked in this environment (2026-02-11):
+  - `curl -s http://vllm:8888/v1/models` -> host resolution failure (`vllm` unreachable).
+  - `localhost`, `127.0.0.1`, `host.docker.internal`, and `172.17.0.1` on port `8888` were also unreachable.
+  - No fallback API keys were available in environment (`OPENAI_API_KEY`, `OPENROUTER_API_KEY`, `DEEPSEEK_API_KEY`, `GEMINI_API_KEY` unset).

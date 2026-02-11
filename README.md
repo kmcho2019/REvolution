@@ -122,6 +122,17 @@ python scripts/run_backend.py \
 
 `scripts/run_funsearch.py` is a convenience wrapper for `run_backend.py --backend funsearch`.
 Use `scripts/backend_comparison_report.py` to combine multiple backend experiment roots into one markdown comparison table.
+Use `scripts/run_backend_ablation.py` to launch both backends over shared benchmark suites and emit a comparison report automatically.
+
+`run_backend.py` strict/accelerated evaluation controls:
+- `--evaluation_mode strict_ablation|search_accelerated`:
+  - `strict_ablation` (default): full syntax + functionality + synthesis/PPA for every candidate.
+  - `search_accelerated`: runs syntax/functionality for all candidates and throttles synthesis.
+- `--accelerated_synthesis_top_k <int>`: in `search_accelerated`, only the top-K functional candidates per batch are synthesized (deterministic shortest-code policy).
+
+FunSearch feedback controls:
+- `--fs_feedback_policy off|fail_only|always` (default `off`).
+- `--fs_feedback_sample_probability <0..1>`.
 
 ### Multi-problem evolution (`scripts/run_evolution.py`)
 
@@ -195,6 +206,29 @@ The prompt name defaults to the file stem; override it with `--gen0_prompt_name`
 `run_backend.py`, `run_evolution.py`, and `run_one_shot.py` accept a `--config path/to/config.yaml` (or `.json`) flag. The file provides defaults for any CLI option and can contain only the parameters you wish to override; explicit CLI arguments always take precedence. Example templates live in `data/configs/` and mirror the available flags for each script.
 
 Every run records the exact configuration that was used by writing `<timestamp>_config.yaml` next to the summary and log files under `exp/<model>/`. These snapshots merge the resolved arguments, the originating CLI invocation, and the on-disk config so experiments can be reproduced verbatim.
+
+### Backend ablation orchestrator (`scripts/run_backend_ablation.py`)
+
+Example strict-ablation sweep across all non-CVDP suites, two seeds, and automatic report output:
+
+```bash
+python scripts/run_backend_ablation.py \
+  --api_backend vllm \
+  --vllm_host vllm \
+  --vllm_port 8888 \
+  --model_name /models/openai-gpt-oss-120b \
+  --evaluation_mode strict_ablation \
+  --max_evaluations 1 \
+  --seeds 42 43 \
+  --num_workers 8
+```
+
+The script enforces fairness checks before launching runs:
+- shared model/sampling/toolchain options must match across backends,
+- strict-ablation mode is required for comparison runs,
+- primary budget axis (`total_candidates_evaluated`) must match.
+
+Use `--dry_run` to validate and print all generated backend commands without executing live runs.
 
 #### Running CVDP Benchmarks
 > **⚠️ CVDP support is experimental.**

@@ -24,7 +24,7 @@
 - `backends/revolution_backend.py`: adapter around existing `EoHEngine` behavior.
 - `backends/funsearch_backend.py`: FunSearch-style RTL backend (islands, signature clusters, reset/reseed, budgeted loop).
 - `runtime/problem_context.py`: benchmark/problem path and metadata resolution.
-- `runtime/candidate_evaluator.py`: backend-agnostic format/syntax/functionality/synthesis/PPA evaluation orchestration.
+- `runtime/candidate_evaluator.py`: backend-agnostic format/syntax/functionality/synthesis/PPA evaluation orchestration with `strict_ablation` and `search_accelerated` modes.
 - `runtime/run_artifacts.py`: shared generation-log/summary writer plus legacy summary key alias support.
 - `evaluation.py`: evaluation stack (`VerilogEvaluator`, `SynthesisEvaluator`).
 - `llm.py`: unified async LLM client with retry/backoff, token tracking, and JSON parsing helpers.
@@ -38,7 +38,8 @@
 - `run_evolution.py`: CLI entry point for multi-problem evolutionary runs with multiprocessing.
 - `run_backend.py`: canonical backend-selectable runner (`--backend revolution|funsearch`).
 - `run_funsearch.py`: convenience wrapper for `run_backend.py --backend funsearch`.
-- `backend_comparison_report.py`: side-by-side report generator across backend experiment roots.
+- `run_backend_ablation.py`: ablation sweep orchestrator across both backends with multi-seed support and strict fairness checks.
+- `backend_comparison_report.py`: side-by-side + aggregate (mean/std/CI95) report generator across backend experiment roots.
 - `run_one_shot.py`: CLI for n-shot baselines that reuse the evaluation stack without evolution.
 - `run_test.sh`, `run_regression_test.sh`, `run_cvdp_test.sh`: shell wrappers for regression suites.
 - `generate_*`, `plot_problem_pareto.py`, `evolutionary_report_generator.py`: reporting and visualisation utilities.
