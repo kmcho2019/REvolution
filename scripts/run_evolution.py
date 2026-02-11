@@ -24,6 +24,7 @@ from revolution.llm import LLMInterface
 from revolution.utils import StreamRedirector
 from revolution.configuration import (
     ConfigError,
+    load_config_file,
     parse_args_with_config,
     snapshot_run_configuration,
 )
@@ -224,6 +225,38 @@ def run_indexed_problem_worker(indexed_task):
 
 def main():
     """Main function to parse arguments and orchestrate the evolutionary run."""
+    raw_argv = list(sys.argv[1:])
+    config_backend: str | None = None
+    config_has_funsearch_keys = False
+    if "--config" in raw_argv:
+        cfg_idx = raw_argv.index("--config")
+        if cfg_idx + 1 < len(raw_argv):
+            try:
+                cfg = load_config_file(raw_argv[cfg_idx + 1])
+                config_backend = cfg.get("backend")
+                config_has_funsearch_keys = any(
+                    str(key).startswith("fs_") for key in cfg.keys()
+                )
+            except Exception:
+                # Let the normal parser/config loader surface errors later.
+                pass
+    if "--backend" in raw_argv:
+        backend_idx = raw_argv.index("--backend")
+        if backend_idx + 1 >= len(raw_argv):
+            print("Missing value for --backend")
+            sys.exit(2)
+        backend_name = raw_argv[backend_idx + 1]
+        if backend_name != "revolution":
+            from run_backend import main as run_backend_main
+
+            raise SystemExit(run_backend_main(raw_argv))
+        # Preserve backward compatibility: ignore explicit '--backend revolution'.
+        del raw_argv[backend_idx : backend_idx + 2]
+    elif (config_backend and config_backend != "revolution") or config_has_funsearch_keys:
+        from run_backend import main as run_backend_main
+
+        raise SystemExit(run_backend_main(raw_argv))
+
     # Use argparse to make the script configurable
     config_parser = argparse.ArgumentParser(add_help=False)
     config_parser.add_argument(
@@ -416,7 +449,7 @@ def main():
 
     try:
         args, config_from_file, raw_argv = parse_args_with_config(
-            parser, config_parser
+            parser, config_parser, argv=raw_argv
         )
     except ConfigError as exc:
         print(f"Configuration error: {exc}")

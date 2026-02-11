@@ -3565,9 +3565,10 @@ class Gen0LatencyEngine(EoHEngine):
                 m_match = re.search(r"^Mismatches: (\d+)", output, re.M)
                 
                 # Check 2: RTLLM style "Your Design Passed"
-                is_functional_success = False
-                if (m_match and int(m_match.group(1)) == 0) or \
-                   "===========Your Design Passed===========" in output:
+                is_functional_success = True
+                if m_match:
+                    is_functional_success = int(m_match.group(1)) == 0
+                elif "===========Your Design Passed===========" in output:
                     is_functional_success = True
                 
                 if not is_functional_success:
