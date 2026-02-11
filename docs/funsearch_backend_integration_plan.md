@@ -64,6 +64,7 @@ so algorithmic differences are isolated.
 - Prompt construction in released code is versioned (`_v0`, `_v1`, ...), sorted by score ascending in prompt.
 - Evaluator rejects samples that call ancestor versions (`function_to_evolve_v*`).
 - Within-cluster short-program bias in released code uses fixed temperature `1.0` (no explicit `program_sampling_temperature` knob in upstream config).
+- Alignment update (2026-02-11): backend now derives cluster signatures from a sorted score-vector map (FunSearch-style `_get_signature` analogue), and reset checks run after each candidate registration (FunSearch-style `register_program` timing).
 
 These details should be mirrored intentionally (or documented as deliberate deviations) in the RTL backend.
 
@@ -548,7 +549,7 @@ Likely modified files:
 - **Primary budget axis for ablations**
   - Decision (2026-02-11): keep `total_candidates_evaluated` as primary normalization axis.
 - **FunSearch reducer default**
-  - Decision (2026-02-11): default to `fitness`; expose `last_input|mean|fitness` via CLI/config.
+  - Decision (2026-02-11): default to `last_input` for closer released-code compatibility; continue exposing `last_input|mean|fitness` via CLI/config.
 - **Initial benchmark scope**
   - Decision (2026-02-11): include all non-CVDP suites in backend runner/ablation (`RTLLM`, `VerilogEval-Code-Complete`, `VerilogEval-Spec-to-RTL`); continue skipping `CVDP`.
 - **Prompt-profile strictness**
@@ -594,6 +595,7 @@ Usage:
 - [x] P2.6 Add deterministic seed plumbing (`--seed`, per-worker seed derivation, metadata logging). (Codex, 2026-02-11; `run_backend.py` seed derivation + summary metadata)
 - [x] P2.7 Add run budget controls (`max_evaluations`, `max_iterations`, `max_runtime_seconds`, optional token/call ceilings). (Codex, 2026-02-11)
 - [x] P2.8 Add prompt key validation (`strict_prompt_keys`) and fail-fast startup behavior. (Codex, 2026-02-11)
+- [x] P2.9 Cross-check FunSearch backend mechanics against reference code/paper and align signature/reducer/reset behavior where feasible in RTL adaptation. (Codex, 2026-02-11; signature now uses sorted score-vector keys, reducer default set to `last_input`, and reset checks occur per candidate registration.)
 
 ### 14.4 Phase 2b - FunSearch Prompt Profile
 - [x] P2b.1 Create `data/prompts/funsearch/system/whole.txt`. (Codex, 2026-02-11)
