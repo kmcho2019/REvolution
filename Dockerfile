@@ -114,11 +114,14 @@ COPY --chown=$USERNAME:$USERNAME pyproject.toml uv.lock ./
 USER $USERNAME
 ENV PATH="/home/$USERNAME/.local/bin:${PATH}"
 
-# 12. Install Python dependencies using uv
-RUN uv sync
+# 12. Install third-party Python dependencies first for better layer caching
+RUN uv sync --frozen --no-install-project
 
 # 13. Copy the rest of the application source code
 COPY --chown=$USERNAME:$USERNAME . .
 
-# 14. Set the default command
+# 14. Install the local project after source files are available
+RUN uv sync --frozen
+
+# 15. Set the default command
 CMD ["/bin/bash"]
