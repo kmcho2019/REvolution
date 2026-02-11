@@ -569,9 +569,9 @@ Usage:
 ### 14.1 Phase 0 - Baseline Freeze
 - [x] P0.0 Add `scripts/run_evolution_smoke_vllm.sh` and document live model auto-discovery (`curl /v1/models`) for tiny-suite regression runs. (Codex, 2026-02-11)
 - [x] P0.1 Create baseline run config file(s) in `data/configs/` for current REvolution backend. (Codex, 2026-02-11; `data/configs/evolution_default.yaml`, `data/configs/funsearch_default.yaml`)
-- [ ] P0.2 Run baseline smoke experiment and archive command + config snapshot path.
-- [ ] P0.3 Record baseline metrics table (runtime, calls/tokens, pass rates, best score).
-- [ ] P0.4 Confirm baseline report generation works without code changes.
+- [ ] P0.2 Run baseline smoke experiment and archive command + config snapshot path. (Blocked 2026-02-11: no reachable live LLM endpoint in this environment.)
+- [ ] P0.3 Record baseline metrics table (runtime, calls/tokens, pass rates, best score). (Blocked 2026-02-11: depends on P0.2 live run artifacts.)
+- [ ] P0.4 Confirm baseline report generation works without code changes. (Blocked 2026-02-11: depends on P0.2 live run artifacts.)
 
 ### 14.2 Phase 1 - Backend Abstraction
 - [x] P1.1 Add backend interface in `src/revolution/backends/base.py`. (Codex, 2026-02-11)
@@ -620,10 +620,10 @@ Usage:
 ### 14.7 Ablation Execution Checklist
 - [x] A1 Finalize open decisions from Section 13. (Codex, 2026-02-11; primary budget axis, score reducer default, benchmark scope, prompt strictness all fixed and documented.)
 - [x] A2 Freeze shared experiment settings (model, backend, prompts, toolchain, timeouts). (Codex, 2026-02-11; `scripts/run_backend_ablation.py` + `data/configs/*` encode shared settings)
-- [ ] A3 Run multi-seed REvolution backend baseline.
-- [ ] A4 Run multi-seed FunSearch backend with same primary budget axis.
-- [ ] A5 Generate unified comparison report with mean/std/CI.
-- [ ] A6 Review anomalies and rerun any invalid/failed seeds with documented rationale.
+- [ ] A3 Run multi-seed REvolution backend baseline. (Blocked 2026-02-11: no reachable live LLM endpoint.)
+- [ ] A4 Run multi-seed FunSearch backend with same primary budget axis. (Blocked 2026-02-11: no reachable live LLM endpoint.)
+- [ ] A5 Generate unified comparison report with mean/std/CI. (Blocked 2026-02-11: depends on A3/A4 run outputs.)
+- [ ] A6 Review anomalies and rerun any invalid/failed seeds with documented rationale. (Blocked 2026-02-11: depends on A3/A4 run outputs.)
 
 ### 14.8 Evaluation Integration Checklist (Strict-Ablation Gate)
 - [x] E1 Implement backend-agnostic `CandidateEvaluator` with explicit stage outputs and status enums. (Codex, 2026-02-11; `CandidateStatus` + structured stage outputs in `src/revolution/runtime/candidate_evaluator.py`)
