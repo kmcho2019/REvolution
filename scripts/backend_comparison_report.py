@@ -1,5 +1,6 @@
 import argparse
 import json
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -15,6 +16,51 @@ class SummaryRow:
     best_score: float | None
     runtime_seconds: float
     llm_api_calls: int
+
+
+def _mean_std_ci95(values: list[float]) -> tuple[float, float, float]:
+    if not values:
+        return 0.0, 0.0, 0.0
+    n = len(values)
+    mean = sum(values) / n
+    if n < 2:
+        return mean, 0.0, 0.0
+    variance = sum((value - mean) ** 2 for value in values) / (n - 1)
+    std = math.sqrt(max(0.0, variance))
+    ci95 = 1.96 * std / math.sqrt(n)
+    return mean, std, ci95
+
+
+def _render_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: bool) -> list[str]:
+    grouped: dict[tuple[str, str], list[SummaryRow]] = {}
+    for row in rows:
+        key = (row.backend, row.benchmark if group_by_benchmark else "ALL")
+        grouped.setdefault(key, []).append(row)
+
+    heading = "## Aggregate Metrics by Backend and Benchmark" if group_by_benchmark else "## Aggregate Metrics by Backend (All Benchmarks)"
+    lines = [
+        heading,
+        "",
+        "| Backend | Benchmark | N | Func Mean | Func Std | Func CI95 | Synth Mean | Synth Std | Synth CI95 | Score Mean | Score Std | Score CI95 | Runtime Mean (s) | Runtime Std (s) | Runtime CI95 (s) | Calls Mean | Calls Std | Calls CI95 |",
+        "|:---|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    for (backend, benchmark), group in sorted(grouped.items()):
+        func_mean, func_std, func_ci = _mean_std_ci95([row.functionality_rate for row in group])
+        synth_mean, synth_std, synth_ci = _mean_std_ci95([row.synthesis_rate for row in group])
+        best_scores = [float(row.best_score) for row in group if row.best_score is not None]
+        score_mean, score_std, score_ci = _mean_std_ci95(best_scores) if best_scores else (0.0, 0.0, 0.0)
+        runtime_mean, runtime_std, runtime_ci = _mean_std_ci95([row.runtime_seconds for row in group])
+        calls_mean, calls_std, calls_ci = _mean_std_ci95([float(row.llm_api_calls) for row in group])
+        lines.append(
+            f"| `{backend}` | {benchmark} | {len(group)} | "
+            f"{func_mean:.3f} | {func_std:.3f} | {func_ci:.3f} | "
+            f"{synth_mean:.3f} | {synth_std:.3f} | {synth_ci:.3f} | "
+            f"{score_mean:.4f} | {score_std:.4f} | {score_ci:.4f} | "
+            f"{runtime_mean:.2f} | {runtime_std:.2f} | {runtime_ci:.2f} | "
+            f"{calls_mean:.2f} | {calls_std:.2f} | {calls_ci:.2f} |"
+        )
+    lines.append("")
+    return lines
 
 
 def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
@@ -51,6 +97,8 @@ def _render_markdown(rows: list[SummaryRow]) -> str:
     lines = [
         "# Backend Comparison Report",
         "",
+        "## Per-Problem Metrics",
+        "",
         "| Backend | Benchmark | Problem | Functionality Rate | Synthesis Rate | Best Score | Runtime (s) | LLM Calls |",
         "|:---|:---|:---|---:|---:|---:|---:|---:|",
     ]
@@ -61,6 +109,9 @@ def _render_markdown(rows: list[SummaryRow]) -> str:
             f"{row.functionality_rate:.3f} | {row.synthesis_rate:.3f} | {best_score} | "
             f"{row.runtime_seconds:.2f} | {row.llm_api_calls} |"
         )
+    lines.append("")
+    lines.extend(_render_aggregate_section(rows, group_by_benchmark=True))
+    lines.extend(_render_aggregate_section(rows, group_by_benchmark=False))
     return "\n".join(lines) + "\n"
 
 

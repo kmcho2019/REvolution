@@ -59,3 +59,4 @@ def test_backend_comparison_report_generates_markdown(tmp_path):
     assert "`revolution`" in text
     assert "`funsearch`" in text
     assert "Prob001" in text
+    assert "Aggregate Metrics by Backend and Benchmark" in text
