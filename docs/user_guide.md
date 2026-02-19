@@ -233,7 +233,7 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 ## 4. Utility scripts
 
 - `scripts/evolutionary_report_generator.py`: generate Markdown reports summarising a run (`--experiment_path path/to/exp/...`).
-- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown table (`--backend_run revolution=<path> --backend_run funsearch=<path>`).
+- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, and solved-only score/PPA deltas with regression checks (`--backend_run revolution=<path> --backend_run funsearch=<path>`).
 - `scripts/run_backend_ablation.py`: one-command ablation sweep runner for REvolution/FunSearch plus optional comparison report generation, multi-seed loops (`--seeds`), strict fairness checks, and command validation via `--dry_run`.
 - `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch comparisons.
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.

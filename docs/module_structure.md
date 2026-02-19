@@ -39,7 +39,7 @@
 - `run_backend.py`: canonical backend-selectable runner (`--backend revolution|funsearch`).
 - `run_funsearch.py`: convenience wrapper for `run_backend.py --backend funsearch`.
 - `run_backend_ablation.py`: ablation sweep orchestrator across both backends with multi-seed support and strict fairness checks.
-- `backend_comparison_report.py`: side-by-side + aggregate (mean/std/CI95) report generator across backend experiment roots.
+- `backend_comparison_report.py`: side-by-side + aggregate backend report generator across experiment roots with pass/fail emoji status, any-pass design counts, solved-only score/PPA summaries, and PPA regression counts.
 - `run_one_shot.py`: CLI for n-shot baselines that reuse the evaluation stack without evolution.
 - `run_test.sh`, `run_regression_test.sh`, `run_cvdp_test.sh`: shell wrappers for regression suites.
 - `generate_*`, `plot_problem_pareto.py`, `evolutionary_report_generator.py`: reporting and visualisation utilities.
