@@ -124,6 +124,18 @@ FunSearch feedback controls:
 - `--fs_feedback_policy off|fail_only|always` (default `off`)
 - `--fs_feedback_sample_probability <0..1>`
 
+#### 3.1.1 Ablation fairness controls (`scripts/run_backend_ablation.py`)
+
+Use `run_backend_ablation.py` when you need one-command REvolution vs FunSearch sweeps with explicit fairness normalization.
+
+- `--primary_budget_axis candidate_evaluations|llm_calls|dual_gate`
+  - default: `candidate_evaluations` (recommended for headline comparisons)
+- `--max_evaluations`: candidate budget per problem (primary in `candidate_evaluations`)
+- `--max_llm_calls_per_problem`: required for `llm_calls` and `dual_gate`
+- `--revolution_population_size` and `--funsearch_initial_population_size`: preferred schedule knobs used to derive exact candidate budgets
+
+The ablation runner propagates budget metadata to per-problem summaries (`run_budget.primary_budget_axis`, evaluation/call caps), which the backend comparison report consumes for fairness diagnostics.
+
 ### 3.2 Evolutionary runs (`scripts/run_evolution.py`)
 
 This script distributes problems across worker processes and executes the multi-generation loop.
@@ -233,8 +245,8 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 ## 4. Utility scripts
 
 - `scripts/evolutionary_report_generator.py`: generate Markdown reports summarising a run (`--experiment_path path/to/exp/...`).
-- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, and solved-only score/PPA deltas with regression checks (`--backend_run revolution=<path> --backend_run funsearch=<path>`).
-- `scripts/run_backend_ablation.py`: one-command ablation sweep runner for REvolution/FunSearch plus optional comparison report generation, multi-seed loops (`--seeds`), strict fairness checks, and command validation via `--dry_run`.
+- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, solved-only score/PPA deltas with regression checks, and budget/fairness diagnostics (`--backend_run revolution=<path> --backend_run funsearch=<path>`).
+- `scripts/run_backend_ablation.py`: one-command ablation sweep runner for REvolution/FunSearch plus optional comparison report generation, multi-seed loops (`--seeds`), strict fairness checks, selectable primary budget axis (`candidate_evaluations|llm_calls|dual_gate`), and command validation via `--dry_run`.
 - `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch comparisons.
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
 - `scripts/gen0_report_generator.py`: inspect `Gen0/best_candidate` snapshots, check syntax/simulation/synthesis status, and optionally export Markdown (`--save_markdown`).

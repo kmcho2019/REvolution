@@ -51,6 +51,13 @@ def test_backend_comparison_report_generates_markdown(tmp_path):
             "ref_ppa_metric": {"area": 100.0, "power": 1.0, "eff_clk_period": 1.0},
             "total_runtime_seconds": 2.0,
             "total_llm_api_calls": 3,
+            "total_llm_prompt_tokens": 30,
+            "total_llm_completion_tokens": 10,
+            "run_budget": {
+                "primary_budget_axis": "candidate_evaluations",
+                "max_evaluations": 10,
+                "max_llm_calls": 10,
+            },
         },
     )
     _write_summary(
@@ -68,6 +75,13 @@ def test_backend_comparison_report_generates_markdown(tmp_path):
             "ref_ppa_metric": {"area": 100.0, "power": 1.0, "eff_clk_period": 1.0},
             "total_runtime_seconds": 1.0,
             "total_llm_api_calls": 2,
+            "total_llm_prompt_tokens": 20,
+            "total_llm_completion_tokens": 10,
+            "run_budget": {
+                "primary_budget_axis": "candidate_evaluations",
+                "max_evaluations": 10,
+                "max_llm_calls": 10,
+            },
         },
     )
 
@@ -88,6 +102,8 @@ def test_backend_comparison_report_generates_markdown(tmp_path):
     assert "`funsearch`" in text
     assert "Prob001" in text
     assert "Legend: `✅` pass/improvement, `❌` fail/regression, `➖` neutral." in text
+    assert "Budget and Fairness Diagnostics" in text
+    assert "candidate_evaluations" in text
     assert "Aggregate Backend Metrics by Benchmark" in text
     assert "✅ Pass (100.0%)" in text
     assert "Score/PPA aggregate metrics exclude failed designs" in text
@@ -110,6 +126,12 @@ def test_backend_comparison_report_excludes_failed_designs_from_aggregates(tmp_p
             "ref_ppa_metric": {"area": 100.0, "power": 2.0, "eff_clk_period": 1.0},
             "total_runtime_seconds": 2.0,
             "total_llm_api_calls": 3,
+            "total_llm_prompt_tokens": 15,
+            "total_llm_completion_tokens": 5,
+            "run_budget": {
+                "primary_budget_axis": "candidate_evaluations",
+                "max_evaluations": 2,
+            },
         },
     )
     _write_summary(
@@ -124,6 +146,12 @@ def test_backend_comparison_report_excludes_failed_designs_from_aggregates(tmp_p
             "ref_ppa_metric": {"area": 100.0, "power": 2.0, "eff_clk_period": 1.0},
             "total_runtime_seconds": 5.0,
             "total_llm_api_calls": 7,
+            "total_llm_prompt_tokens": 70,
+            "total_llm_completion_tokens": 20,
+            "run_budget": {
+                "primary_budget_axis": "candidate_evaluations",
+                "max_evaluations": 2,
+            },
         },
     )
 

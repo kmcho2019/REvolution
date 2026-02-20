@@ -88,7 +88,24 @@ class RevolutionBackend(EvolutionBackend):
             return str(summary_path)
         payload = add_legacy_strategy_key_alias(payload)
         payload.setdefault("backend_name", self.name)
-        payload.setdefault("backend_details", {})
+        backend_details = payload.setdefault("backend_details", {})
+        backend_details.setdefault("population_size", self.config.population_size)
+        backend_details.setdefault("num_generations", self.config.num_generations)
+
+        metadata = self.context.metadata if isinstance(self.context.metadata, dict) else {}
+        run_budget = payload.setdefault("run_budget", {})
+        run_budget.setdefault("primary_budget_axis", metadata.get("primary_budget_axis"))
+        run_budget.setdefault(
+            "max_evaluations",
+            int(self.config.population_size * (self.config.num_generations + 1)),
+        )
+        run_budget.setdefault("max_llm_calls", metadata.get("max_llm_calls_per_problem"))
+        run_budget.setdefault("max_runtime_seconds", metadata.get("max_runtime_seconds"))
+        run_budget.setdefault("evaluation_mode", metadata.get("evaluation_mode"))
+        run_budget.setdefault(
+            "accelerated_synthesis_top_k",
+            metadata.get("accelerated_synthesis_top_k"),
+        )
         summary_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         return str(summary_path)
 

@@ -24,6 +24,11 @@ class SummaryRow:
     avg_ppa_improvement_pct: float | None
     runtime_seconds: float
     llm_api_calls: int
+    llm_prompt_tokens: int
+    llm_completion_tokens: int
+    primary_budget_axis: str | None
+    max_evaluations: int | None
+    max_llm_calls: int | None
 
 
 def _safe_float(value: Any) -> float | None:
@@ -41,6 +46,13 @@ def _safe_rate(value: Any) -> float:
     if parsed is None:
         return 0.0
     return max(0.0, parsed)
+
+
+def _safe_int(value: Any) -> int | None:
+    parsed = _safe_float(value)
+    if parsed is None:
+        return None
+    return int(parsed)
 
 
 def _metric_improvement_percent(new_value: Any, ref_value: Any) -> float | None:
@@ -135,6 +147,96 @@ def _format_regression_count(values: list[float]) -> str:
     return f"{emoji} {regressed}/{len(values)}"
 
 
+def _repo_root() -> Path:
+    return Path(__file__).resolve().parents[1]
+
+
+def _load_reference_ppa_metrics_from_bench(benchmark: str, problem: str) -> dict[str, float]:
+    path = _repo_root() / "data" / "bench" / benchmark / f"{problem}_ppa.txt"
+    if not path.is_file():
+        return {}
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if len(lines) < 2:
+        return {}
+    values = lines[1].split(",")
+    if len(values) < 5:
+        return {}
+    try:
+        tns = float(values[0])
+        wns = float(values[1])
+        eff_clk_period = float(values[2])
+        power = float(values[3])
+        area = float(values[4])
+    except ValueError:
+        return {}
+    if power == 0.0 or area == 0.0:
+        return {}
+    return {
+        "tns": tns,
+        "wns": wns,
+        "eff_clk_period": eff_clk_period,
+        "power": power,
+        "area": area,
+    }
+
+
+def _format_cap(values: list[int | None]) -> str:
+    finite_values = sorted({int(value) for value in values if value is not None})
+    if not finite_values:
+        return "N/A"
+    if len(finite_values) == 1:
+        return str(finite_values[0])
+    return f"mixed ({finite_values[0]}..{finite_values[-1]})"
+
+
+def _format_ratio(numerator: float, denominator: int) -> str:
+    if denominator <= 0:
+        return "N/A"
+    return f"{numerator / denominator:.2f}"
+
+
+def _render_budget_fairness_section(rows: list[SummaryRow]) -> list[str]:
+    grouped: dict[tuple[str, str], list[SummaryRow]] = {}
+    for row in rows:
+        grouped.setdefault((row.backend, row.benchmark), []).append(row)
+        grouped.setdefault((row.backend, "ALL"), []).append(row)
+
+    lines = [
+        "## Budget and Fairness Diagnostics",
+        "",
+        "| Backend | Benchmark | Primary Axis | Config Max Evals | Config Max LLM Calls | Avg LLM Calls / Design | Avg Tokens / Design | Calls / Func-Pass Design | Calls / Synth-Pass Design |",
+        "|:---|:---|:---|:---|:---|:---|:---|:---|:---|",
+    ]
+    for (backend, benchmark), group in sorted(grouped.items()):
+        func_any_pass = sum(1 for row in group if row.functionality_rate > 0)
+        synth_any_pass = sum(1 for row in group if row.synthesis_rate > 0)
+        total_calls = float(sum(row.llm_api_calls for row in group))
+        total_tokens = float(
+            sum(row.llm_prompt_tokens + row.llm_completion_tokens for row in group)
+        )
+        axis_values = sorted(
+            {
+                row.primary_budget_axis
+                for row in group
+                if row.primary_budget_axis and row.primary_budget_axis != "unspecified"
+            }
+        )
+        axis = axis_values[0] if len(axis_values) == 1 else (
+            "mixed" if axis_values else "unspecified"
+        )
+        lines.append(
+            f"| `{backend}` | {benchmark} | {axis} | "
+            f"{_format_cap([row.max_evaluations for row in group])} | "
+            f"{_format_cap([row.max_llm_calls for row in group])} | "
+            f"{_format_mean_ci([float(row.llm_api_calls) for row in group], precision=2)} | "
+            f"{_format_mean_ci([float(row.llm_prompt_tokens + row.llm_completion_tokens) for row in group], precision=2)} | "
+            f"{_format_ratio(total_calls, func_any_pass)} | "
+            f"{_format_ratio(total_calls, synth_any_pass)} |"
+        )
+    lines.append("")
+    return lines
+
+
 def _render_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: bool) -> list[str]:
     grouped: dict[tuple[str, str], list[SummaryRow]] = {}
     for row in rows:
@@ -225,9 +327,22 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
             if isinstance(final_ppa.get("best_metrics", {}), dict)
             else {}
         )
-        ref_metrics = (
-            payload.get("ref_ppa_metric", {})
-            if isinstance(payload.get("ref_ppa_metric", {}), dict)
+        benchmark_name = payload.get("benchmark_name", summary_path.parent.parent.name)
+        problem_name = payload.get(
+            "problem_name", summary_path.stem.replace("_summary", "")
+        )
+        ref_metrics = payload.get("ref_ppa_metric", {})
+        if not isinstance(ref_metrics, dict):
+            ref_metrics = {}
+        if not ref_metrics:
+            # Backfill legacy runs where reference PPA was not propagated into summaries.
+            ref_metrics = _load_reference_ppa_metrics_from_bench(
+                benchmark=benchmark_name,
+                problem=problem_name,
+            )
+        run_budget = (
+            payload.get("run_budget", {})
+            if isinstance(payload.get("run_budget", {}), dict)
             else {}
         )
         functionality_rate = _safe_rate(rates.get("functionality", 0.0))
@@ -270,8 +385,8 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
         rows.append(
             SummaryRow(
                 backend=backend,
-                benchmark=payload.get("benchmark_name", summary_path.parent.parent.name),
-                problem=payload.get("problem_name", summary_path.stem.replace("_summary", "")),
+                benchmark=benchmark_name,
+                problem=problem_name,
                 functionality_rate=functionality_rate,
                 synthesis_rate=synthesis_rate,
                 best_score=best_score,
@@ -282,6 +397,11 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
                 avg_ppa_improvement_pct=avg_ppa_improvement_pct,
                 runtime_seconds=float(payload.get("total_runtime_seconds", 0.0)),
                 llm_api_calls=int(payload.get("total_llm_api_calls", 0)),
+                llm_prompt_tokens=int(payload.get("total_llm_prompt_tokens", 0)),
+                llm_completion_tokens=int(payload.get("total_llm_completion_tokens", 0)),
+                primary_budget_axis=run_budget.get("primary_budget_axis"),
+                max_evaluations=_safe_int(run_budget.get("max_evaluations")),
+                max_llm_calls=_safe_int(run_budget.get("max_llm_calls")),
             )
         )
     return rows
@@ -294,11 +414,16 @@ def _render_markdown(rows: list[SummaryRow]) -> str:
         "Legend: `✅` pass/improvement, `❌` fail/regression, `➖` neutral.",
         "Score/PPA aggregate metrics exclude failed designs (no synthesis pass) and non-finite scores.",
         "",
+    ]
+    lines.extend(_render_budget_fairness_section(rows))
+    lines.extend(
+        [
         "## Per-Problem Metrics",
         "",
         "| Backend | Benchmark | Problem | Functionality | Synthesis | Score Delta vs Ref | PPA Delta (A/P/T) | Avg PPA Delta | Runtime (s) | LLM Calls |",
         "|:---|:---|:---|:---|:---|:---|:---|:---|---:|---:|",
-    ]
+        ]
+    )
     for row in sorted(rows, key=lambda item: (item.benchmark, item.problem, item.backend)):
         ppa_components = " / ".join(
             [

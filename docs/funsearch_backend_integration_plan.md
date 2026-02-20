@@ -476,6 +476,7 @@ For fair REvolution vs FunSearch backend comparison:
 
 Budget normalization requirement:
 - Since backend iteration semantics differ, normalize by one strict primary budget (`total_candidates_evaluated` recommended) and report secondary budgets (tokens/time/calls) as observed outcomes.
+- Implementation note (2026-02-20): `scripts/run_backend_ablation.py` now exposes `--primary_budget_axis {candidate_evaluations,llm_calls,dual_gate}` and propagates budget metadata into summary `run_budget` fields for downstream reporting diagnostics.
 
 Primary metrics:
 - functionality pass rate,
@@ -639,6 +640,8 @@ Usage:
 - [x] E6 Implement `search_accelerated` mode with explicit synth-throttling policy and report labeling. (Codex, 2026-02-11; `--evaluation_mode search_accelerated --accelerated_synthesis_top_k` + summary metadata)
 - [x] E7 Add parity tests comparing legacy evaluation vs new evaluator on fixed candidate fixtures. (Codex, 2026-02-11; `tests/revolution/test_candidate_evaluator_parity.py`)
 - [x] E8 Add fairness checks that budgets and timeouts are identical across backends in strict-ablation experiments. (Codex, 2026-02-11; `_validate_fairness` in `scripts/run_backend_ablation.py`, tested in `tests/scripts/test_run_backend_ablation.py`)
+- [x] E9 Propagate reference PPA metadata through backend runner/evaluator initialization to avoid empty `ref_ppa_metric` in FunSearch summaries. (Codex, 2026-02-20; `scripts/run_backend.py`, `src/revolution/backends/funsearch_backend.py`, `tests/revolution/test_funsearch_backend.py`)
+- [x] E10 Add selectable primary budget axis and explicit call-cap validation in ablation orchestration. (Codex, 2026-02-20; `scripts/run_backend_ablation.py`, `tests/scripts/test_run_backend_ablation.py`)
 
 ### 14.9 Runtime Blockers
 - Live-ablation execution is currently blocked in this environment (2026-02-11):

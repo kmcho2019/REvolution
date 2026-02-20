@@ -73,6 +73,38 @@ def _effective_save_path(args: argparse.Namespace) -> str:
     return args.save_path
 
 
+def _load_reference_ppa_metrics(problem_context) -> dict[str, float]:
+    ref_ppa_file = (
+        problem_context.benchmark_path / f"{problem_context.problem_name}_ppa.txt"
+    )
+    if not ref_ppa_file.is_file():
+        return {}
+
+    lines = ref_ppa_file.read_text(encoding="utf-8").splitlines()
+    if len(lines) < 2:
+        return {}
+    values = lines[1].split(",")
+    if len(values) < 5:
+        return {}
+    try:
+        tns = float(values[0])
+        wns = float(values[1])
+        eff_clk_period = float(values[2])
+        power = float(values[3])
+        area = float(values[4])
+    except ValueError:
+        return {}
+    if power == 0.0 or area == 0.0:
+        return {}
+    return {
+        "tns": tns,
+        "wns": wns,
+        "eff_clk_period": eff_clk_period,
+        "power": power,
+        "area": area,
+    }
+
+
 def _build_backend(
     args: argparse.Namespace,
     benchmark: str,
@@ -97,6 +129,7 @@ def _build_backend(
     synthesis_evaluator = SynthesisEvaluator()
 
     problem_context = load_problem_context(benchmark, problem)
+    ref_ppa_metrics = _load_reference_ppa_metrics(problem_context)
     prompt_store = PromptStore(root_dir=prompt_root, profile=prompt_profile)
     effective_save_path = _effective_save_path(args)
     artifact_writer = ArtifactWriter(
@@ -110,6 +143,7 @@ def _build_backend(
         problem_description=problem_context.problem_description,
         verilog_evaluator=verilog_evaluator,
         synthesis_evaluator=synthesis_evaluator,
+        ref_ppa_metrics=ref_ppa_metrics,
         evaluation_mode=args.evaluation_mode,
         accelerated_synthesis_top_k=args.accelerated_synthesis_top_k,
     )
@@ -129,7 +163,15 @@ def _build_backend(
         problem_context=problem_context,
         generation_mode=args.generation_mode,
         seed=task_seed,
-        metadata={"seed": task_seed},
+        metadata={
+            "seed": task_seed,
+            "primary_budget_axis": getattr(args, "primary_budget_axis", None),
+            "max_llm_calls_per_problem": getattr(
+                args, "max_llm_calls_per_problem", None
+            ),
+            "evaluation_mode": args.evaluation_mode,
+            "accelerated_synthesis_top_k": args.accelerated_synthesis_top_k,
+        },
     )
 
     if args.backend == "revolution":
@@ -297,6 +339,19 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         help="When true (default), writes backend outputs under <save_path>/<backend>/...",
     )
     parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument(
+        "--primary_budget_axis",
+        type=str,
+        default=None,
+        choices=["candidate_evaluations", "llm_calls", "dual_gate"],
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        "--max_llm_calls_per_problem",
+        type=int,
+        default=None,
+        help=argparse.SUPPRESS,
+    )
 
     # REvolution-specific
     parser.add_argument("--population_size", type=int, default=5)

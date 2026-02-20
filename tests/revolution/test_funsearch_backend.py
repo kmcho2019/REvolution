@@ -137,6 +137,12 @@ class _FakeFailingCandidateEvaluator(_FakeCandidateEvaluator):
         )
 
 
+class _FakeCandidateEvaluatorNoRef(_FakeCandidateEvaluator):
+    def __init__(self):
+        super().__init__()
+        self.ref_ppa_metrics = {}
+
+
 def _write_funsearch_prompts(store: PromptStore, *, include_suffix: bool = True) -> None:
     store.write("system/whole", "system whole")
     store.write("feedback/system", "feedback system")
@@ -160,9 +166,14 @@ def _make_problem_context(tmp_path: Path) -> ProblemContext:
     prompt = bench / "Prob001_prompt.txt"
     test_sv = bench / "Prob001_test.sv"
     ref_sv = bench / "Prob001_ref.sv"
+    ppa = bench / "Prob001_ppa.txt"
     prompt.write_text("build a module", encoding="utf-8")
     test_sv.write_text("module tb; endmodule\n", encoding="utf-8")
     ref_sv.write_text("module ref; endmodule\n", encoding="utf-8")
+    ppa.write_text(
+        "tns,wns,eff_clk_period,power,area\n-5.0,-0.4,0.7,0.05,100.0\n",
+        encoding="utf-8",
+    )
     return ProblemContext(
         benchmark_name="Bench",
         problem_name="Prob001",
@@ -247,6 +258,19 @@ def test_funsearch_backend_run_writes_summary(tmp_path):
     assert summary["best_candidate"]["score"] is not None
     assert summary["accumulated_strategy_counts"] == {}
     assert "accumulated_strategy_counts:" in summary
+
+
+def test_funsearch_backend_backfills_reference_ppa_when_evaluator_missing_ref(tmp_path):
+    backend, writer = _make_backend(
+        tmp_path,
+        seed=9,
+        evaluator=_FakeCandidateEvaluatorNoRef(),
+    )
+    result = backend.run()
+    assert result.status == "success"
+    summary = json.loads(writer.paths.summary_path.read_text(encoding="utf-8"))
+    assert summary["ref_ppa_metric"]["power"] == pytest.approx(0.05)
+    assert summary["backend_details"]["reference_ppa_available"] is True
 
 
 def test_funsearch_backend_reproducible_with_fixed_seed(tmp_path):

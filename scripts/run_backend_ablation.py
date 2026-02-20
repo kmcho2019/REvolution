@@ -11,6 +11,7 @@ from typing import Sequence
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+PRIMARY_BUDGET_AXES = ("candidate_evaluations", "llm_calls", "dual_gate")
 
 
 def _available_benchmarks() -> list[str]:
@@ -41,11 +42,49 @@ def _arg_value(cmd: Sequence[str], flag: str) -> str | None:
     return cmd[idx + 1]
 
 
+def _resolve_candidate_budget(
+    *,
+    primary_budget_axis: str,
+    max_evaluations: int,
+    max_llm_calls_per_problem: int | None,
+) -> int:
+    if primary_budget_axis == "candidate_evaluations":
+        return max(1, max_evaluations)
+    if max_llm_calls_per_problem is None or max_llm_calls_per_problem <= 0:
+        raise ValueError(
+            "--max_llm_calls_per_problem must be > 0 when using "
+            f"--primary_budget_axis={primary_budget_axis}."
+        )
+    if primary_budget_axis == "llm_calls":
+        return max(1, max_llm_calls_per_problem)
+    if primary_budget_axis == "dual_gate":
+        return max(1, min(max_evaluations, max_llm_calls_per_problem))
+    raise ValueError(
+        f"Unsupported primary budget axis '{primary_budget_axis}'. "
+        f"Expected one of: {', '.join(PRIMARY_BUDGET_AXES)}."
+    )
+
+
+def _derive_revolution_schedule(
+    *,
+    target_candidates: int,
+    preferred_population_size: int,
+) -> tuple[int, int]:
+    target = max(1, target_candidates)
+    preferred = max(1, preferred_population_size)
+    if target % preferred == 0:
+        return preferred, (target // preferred) - 1
+    # Keep exact candidate budget in non-divisible cases.
+    return target, 0
+
+
 def _validate_fairness(
     *,
     revolution_cmd: list[str],
     funsearch_cmd: list[str],
+    primary_budget_axis: str,
     primary_budget_candidates: int,
+    max_llm_calls_per_problem: int | None,
 ) -> None:
     shared_flags = [
         "--evaluation_mode",
@@ -82,14 +121,43 @@ def _validate_fairness(
             )
 
     rev_population = _arg_value(revolution_cmd, "--population_size")
+    rev_generations = _arg_value(revolution_cmd, "--num_generations")
     fs_max_evals = _arg_value(funsearch_cmd, "--fs_max_evaluations")
-    if rev_population is None or fs_max_evals is None:
+    if rev_population is None or rev_generations is None or fs_max_evals is None:
         raise ValueError("Missing primary budget flags in ablation commands.")
-    if int(rev_population) != primary_budget_candidates or int(fs_max_evals) != primary_budget_candidates:
+    rev_candidate_budget = int(rev_population) * (int(rev_generations) + 1)
+    fs_candidate_budget = int(fs_max_evals)
+    if (
+        rev_candidate_budget != primary_budget_candidates
+        or fs_candidate_budget != primary_budget_candidates
+    ):
         raise ValueError(
             "Primary budget mismatch: expected both backends to use "
             f"{primary_budget_candidates} candidate evaluations."
         )
+
+    rev_axis = _arg_value(revolution_cmd, "--primary_budget_axis")
+    fs_axis = _arg_value(funsearch_cmd, "--primary_budget_axis")
+    if rev_axis != primary_budget_axis or fs_axis != primary_budget_axis:
+        raise ValueError(
+            "Primary budget axis metadata mismatch between backend commands."
+        )
+
+    if primary_budget_axis in {"llm_calls", "dual_gate"}:
+        if max_llm_calls_per_problem is None or max_llm_calls_per_problem <= 0:
+            raise ValueError(
+                "max_llm_calls_per_problem must be set for llm_calls/dual_gate modes."
+            )
+        fs_max_llm_calls = _arg_value(funsearch_cmd, "--fs_max_llm_calls")
+        if fs_max_llm_calls is None or int(fs_max_llm_calls) != max_llm_calls_per_problem:
+            raise ValueError(
+                "FunSearch command must include --fs_max_llm_calls matching the configured cap."
+            )
+        if rev_candidate_budget > max_llm_calls_per_problem:
+            raise ValueError(
+                "Revolution candidate budget exceeds max_llm_calls_per_problem "
+                "under llm_calls/dual_gate fairness mode."
+            )
 
     if _arg_value(revolution_cmd, "--evaluation_mode") != "strict_ablation":
         raise ValueError("Ablation script requires strict_ablation mode for publishable comparison.")
@@ -136,6 +204,37 @@ def main() -> int:
         help="Primary budget axis: candidates evaluated per problem per backend.",
     )
     parser.add_argument(
+        "--primary_budget_axis",
+        type=str,
+        default="candidate_evaluations",
+        choices=list(PRIMARY_BUDGET_AXES),
+        help=(
+            "Fairness normalization axis. candidate_evaluations keeps the historical "
+            "protocol; llm_calls enforces comparable API-call caps; dual_gate applies both."
+        ),
+    )
+    parser.add_argument(
+        "--max_llm_calls_per_problem",
+        type=int,
+        default=None,
+        help=(
+            "Per-problem LLM-call cap used in llm_calls/dual_gate modes. "
+            "Ignored for candidate_evaluations mode."
+        ),
+    )
+    parser.add_argument(
+        "--revolution_population_size",
+        type=int,
+        default=10,
+        help="Preferred REvolution population size when deriving exact candidate budgets.",
+    )
+    parser.add_argument(
+        "--funsearch_initial_population_size",
+        type=int,
+        default=10,
+        help="Initial FunSearch population size before iterative sampling.",
+    )
+    parser.add_argument(
         "--run_report",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -152,6 +251,11 @@ def main() -> int:
     workers = _safe_workers(args.num_workers)
     save_root = args.save_root.resolve()
     save_root.mkdir(parents=True, exist_ok=True)
+    primary_budget_candidates = _resolve_candidate_budget(
+        primary_budget_axis=args.primary_budget_axis,
+        max_evaluations=max(1, args.max_evaluations),
+        max_llm_calls_per_problem=args.max_llm_calls_per_problem,
+    )
     common = [
         "--benchmarks",
         *args.benchmarks,
@@ -177,15 +281,22 @@ def main() -> int:
         str(args.top_p),
         "--max_tokens",
         str(args.max_tokens),
+        "--primary_budget_axis",
+        args.primary_budget_axis,
     ]
+    if args.max_llm_calls_per_problem is not None:
+        common.extend(
+            ["--max_llm_calls_per_problem", str(args.max_llm_calls_per_problem)]
+        )
 
     revolution_root = save_root / "revolution"
     funsearch_root = save_root / "funsearch"
     for seed in args.seeds:
         seed_tag = f"seed_{seed}"
-        # Budget-normalized by candidate evaluations.
-        rev_population_size = max(1, args.max_evaluations)
-        rev_generations = 0
+        rev_population_size, rev_generations = _derive_revolution_schedule(
+            target_candidates=primary_budget_candidates,
+            preferred_population_size=args.revolution_population_size,
+        )
         revolution_cmd = [
             sys.executable,
             "scripts/run_backend.py",
@@ -202,7 +313,11 @@ def main() -> int:
             *common,
         ]
 
-        fs_initial_population = max(1, args.max_evaluations)
+        fs_initial_population = max(
+            1,
+            min(args.funsearch_initial_population_size, primary_budget_candidates),
+        )
+        fs_iterations = max(0, primary_budget_candidates - fs_initial_population)
         funsearch_cmd = [
             sys.executable,
             "scripts/run_backend.py",
@@ -221,18 +336,31 @@ def main() -> int:
             "--fs_functions_per_prompt",
             "2",
             "--fs_max_evaluations",
-            str(args.max_evaluations),
+            str(primary_budget_candidates),
             "--fs_max_iterations",
-            str(args.max_evaluations),
+            str(fs_iterations),
             "--seed",
             str(seed),
             *common,
         ]
+        if args.primary_budget_axis in {"llm_calls", "dual_gate"}:
+            assert args.max_llm_calls_per_problem is not None
+            funsearch_cmd.extend(
+                ["--fs_max_llm_calls", str(max(1, args.max_llm_calls_per_problem))]
+            )
 
         _validate_fairness(
             revolution_cmd=revolution_cmd,
             funsearch_cmd=funsearch_cmd,
-            primary_budget_candidates=max(1, args.max_evaluations),
+            primary_budget_axis=args.primary_budget_axis,
+            primary_budget_candidates=primary_budget_candidates,
+            max_llm_calls_per_problem=args.max_llm_calls_per_problem,
+        )
+        print(
+            f"[ablation] seed={seed} axis={args.primary_budget_axis} "
+            f"candidate_budget={primary_budget_candidates} "
+            f"revolution(pop={rev_population_size}, gen={rev_generations}) "
+            f"funsearch(init={fs_initial_population}, iter={fs_iterations}, max_eval={primary_budget_candidates})"
         )
         if args.dry_run:
             print("\n[ablation] dry-run validated command:")

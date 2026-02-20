@@ -187,6 +187,7 @@ class FunSearchBackend(EvolutionBackend):
         self._status_counts: dict[str, int] = {}
         self._prompt_cache: dict[str, str] = {}
         self._signature_keys_seen: set[str] = set()
+        self._reference_ppa_available: bool = False
 
     @property
     def name(self) -> str:
@@ -271,6 +272,14 @@ class FunSearchBackend(EvolutionBackend):
                 synthesis_evaluator=self.services.synthesis_evaluator,
                 ref_ppa_metrics=ref_ppa,
             )
+        elif (
+            not getattr(self.services.candidate_evaluator, "ref_ppa_metrics", {})
+            and ref_ppa
+        ):
+            self.services.candidate_evaluator.ref_ppa_metrics = ref_ppa
+        self._reference_ppa_available = bool(
+            getattr(self.services.candidate_evaluator, "ref_ppa_metrics", {})
+        )
 
     def _consume_llm_usage(self) -> dict[str, int]:
         usage = asyncio.run(self.services.llm.get_and_reset_usage_stats())
@@ -728,6 +737,7 @@ class FunSearchBackend(EvolutionBackend):
                 "accelerated_synthesis_top_k": self.services.candidate_evaluator.accelerated_synthesis_top_k
                 if self.services.candidate_evaluator
                 else None,
+                "reference_ppa_available": self._reference_ppa_available,
                 "termination_reason": reason,
                 "island_best_scores": [island.best_cluster_score for island in self._islands],
                 "cluster_counts_per_island": [len(island.clusters) for island in self._islands],
@@ -780,6 +790,9 @@ class FunSearchBackend(EvolutionBackend):
             else [],
             "generation_statistics": self._generation_stats,
             "run_budget": {
+                "primary_budget_axis": self.context.metadata.get("primary_budget_axis")
+                if isinstance(self.context.metadata, dict)
+                else None,
                 "max_evaluations": self.config.max_evaluations,
                 "max_iterations": self.config.max_iterations,
                 "max_runtime_seconds": self.config.max_runtime_seconds,
