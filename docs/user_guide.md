@@ -216,6 +216,15 @@ Every invocation writes `<timestamp>_config.yaml` next to the summary/log files 
 
 `run_evolution.py` remains backward-compatible. It now delegates to `run_backend.py` if called with `--backend funsearch`.
 
+#### Archiving completed runs
+
+Use `scripts/archive_baseline.py` to package run outputs for long-term tracking and ablation bookkeeping.
+
+- Single-run example: `python scripts/archive_baseline.py --run-dir exp/<model> --archive-root baselines`
+- Ablation-root example: `python scripts/archive_baseline.py --run-dir exp/ablation/<run_id> --archive-root baselines`
+
+Each archive includes `manifest.json`, copied summary/report files, copied config snapshots, and `artifacts/raw_results.tar.xz`. The command is strict about reproducibility and fails if no `*_config.yaml|yml|json` snapshots are found under `--run-dir`.
+
 ### 3.3 Baseline n-shot runs (`scripts/run_one_shot.py`)
 
 Generates `--num_samples` candidates per problem, evaluates them once, and skips the evolutionary loop. CLI arguments mirror `run_evolution.py` with two differences:
@@ -249,6 +258,7 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/run_backend_ablation.py`: one-command ablation sweep runner for REvolution/FunSearch plus optional comparison report generation, multi-seed loops (`--seeds`), strict fairness checks, selectable primary budget axis (`candidate_evaluations|llm_calls|dual_gate`), and command validation via `--dry_run`.
 - `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch comparisons.
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
+- `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts).
 - `scripts/gen0_report_generator.py`: inspect `Gen0/best_candidate` snapshots, check syntax/simulation/synthesis status, and optionally export Markdown (`--save_markdown`).
 - `scripts/generate_cutoff_compile_result_variants.sh`: reproduce paper tables with a specified gate cutoff (`--gate 50` by default).
 - `scripts/generate_visualizations*.py` and `plot_problem_pareto.py`: create PPA scatter plots or aggregate charts.

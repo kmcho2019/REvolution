@@ -207,6 +207,32 @@ The prompt name defaults to the file stem; override it with `--gen0_prompt_name`
 
 Every run records the exact configuration that was used by writing `<timestamp>_config.yaml` next to the summary and log files under `exp/<model>/`. These snapshots merge the resolved arguments, the originating CLI invocation, and the on-disk config so experiments can be reproduced verbatim.
 
+### Archiving experiment runs (`scripts/archive_baseline.py`)
+
+Use `archive_baseline.py` to snapshot completed runs (single model runs or ablation roots) into `baselines/` with:
+- copied summary/report files,
+- copied run config snapshots (`*_config.yaml|yml|json`),
+- a compressed `raw_results.tar.xz`,
+- `manifest.json` metadata and archive index entries (`index.csv`, `index.jsonl`).
+
+Single-run archive example:
+
+```bash
+python scripts/archive_baseline.py \
+  --run-dir exp/stub-model \
+  --archive-root baselines
+```
+
+Ablation-root archive example:
+
+```bash
+python scripts/archive_baseline.py \
+  --run-dir exp/ablation/ablation_pop10_gen20_20260212_115506 \
+  --archive-root baselines
+```
+
+The script enforces reproducibility: it fails if no run config snapshots are found under `--run-dir`.
+
 ### Backend ablation orchestrator (`scripts/run_backend_ablation.py`)
 
 Example strict-ablation sweep across all non-CVDP suites, two seeds, and automatic report output:
@@ -282,6 +308,7 @@ Use `scripts/gen0_report_generator.py --experiment_path exp/<run>/<model>` to au
 
 - `scripts/evolutionary_report_generator.py`: turn a problem directory into a Markdown report with candidate-level PPA stats.
 - `scripts/gen0_report_generator.py`: scan `Gen0/best_candidate` snapshots and summarise syntax, simulation, and PPA outcomes (use `--save_markdown` to export a table).
+- `scripts/archive_baseline.py`: archive run roots into reproducible baseline packages with manifest, copied configs, summary files, and compressed artifacts.
 - `scripts/generate_cutoff_compile_result_variants.sh`: reproduce paper tables with a gate-count cutoff (default 50).
 - `scripts/generate_compiled_table.py` and friends: batch aggregations across experiments.
 - `scripts/plot_problem_pareto.py`: recreate the PPA scatter plots for selected problems.

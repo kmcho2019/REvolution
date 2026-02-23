@@ -41,6 +41,7 @@
 - `run_backend_ablation.py`: ablation sweep orchestrator across both backends with multi-seed support, strict fairness checks, and configurable budget-axis normalization (`candidate_evaluations`, `llm_calls`, `dual_gate`).
 - `backend_comparison_report.py`: side-by-side + aggregate backend report generator across experiment roots with pass/fail emoji status, any-pass design counts, solved-only score/PPA summaries, PPA regression counts, and budget/fairness diagnostics.
 - `run_one_shot.py`: CLI for n-shot baselines that reuse the evaluation stack without evolution.
+- `archive_baseline.py`: archive utility for run roots and ablation roots with manifest/index metadata, copied run configs, and compressed raw artifacts.
 - `run_test.sh`, `run_regression_test.sh`, `run_cvdp_test.sh`: shell wrappers for regression suites.
 - `generate_*`, `plot_problem_pareto.py`, `evolutionary_report_generator.py`: reporting and visualisation utilities.
 - `prompt_file_manager.py`: manage prompt bundle files and synchronise `data/prompts/`.
