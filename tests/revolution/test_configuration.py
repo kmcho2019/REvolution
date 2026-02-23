@@ -1,10 +1,12 @@
 import argparse
+from pathlib import Path
 
 import pytest
 import yaml
 
 from revolution.configuration import (
     ConfigError,
+    load_config_file,
     parse_args_with_config,
     snapshot_run_configuration,
 )
@@ -58,7 +60,25 @@ def test_parse_args_with_config_rejects_unknown_options(tmp_path):
         )
 
 
-def test_snapshot_run_configuration_writes_expected_yaml(tmp_path):
+def test_load_config_file_accepts_legacy_snapshot_format(tmp_path):
+    config_file = tmp_path / "legacy_snapshot.yaml"
+    config_file.write_text(
+        yaml.safe_dump(
+            {
+                "resolved_arguments": {"foo": 9, "bar": "legacy", "flag": True},
+                "command_line_arguments": ["--foo", "9"],
+                "config_file_values": {"foo": 9},
+            },
+            sort_keys=True,
+        ),
+        encoding="utf-8",
+    )
+
+    loaded = load_config_file(config_file)
+    assert loaded == {"foo": 9, "bar": "legacy", "flag": True}
+
+
+def test_snapshot_run_configuration_writes_runnable_and_meta_yaml(tmp_path):
     parser, config_parser = _build_parsers()
     config_file = tmp_path / "config.yaml"
     config_file.write_text("foo: 7\nbar: from-config\n", encoding="utf-8")
@@ -79,10 +99,79 @@ def test_snapshot_run_configuration_writes_expected_yaml(tmp_path):
 
     assert output_path.exists()
     data = yaml.safe_load(output_path.read_text(encoding="utf-8"))
+    meta_path = tmp_path / "snapshot_meta.yaml"
+    assert meta_path.exists()
+    meta = yaml.safe_load(meta_path.read_text(encoding="utf-8"))
 
-    assert data["resolved_arguments"]["foo"] == 7
-    assert data["resolved_arguments"]["bar"] == "from-config"
-    assert data["resolved_arguments"]["flag"] is False
-    assert data["config_file_values"] == config_values
-    assert data["config_file_path"].endswith("config.yaml")
-    assert data["command_line_arguments"] == ["--config", str(config_file)]
+    assert data["foo"] == 7
+    assert data["bar"] == "from-config"
+    assert data["flag"] is False
+    assert "resolved_arguments" not in data
+
+    assert meta["config_file_values"] == config_values
+    assert meta["config_file_path"].endswith("config.yaml")
+    assert meta["command_line_arguments"] == ["--config", str(config_file)]
+    assert meta["snapshot_format"] == "runnable_config_with_metadata_sidecar_v1"
+
+
+def test_generated_runnable_snapshot_is_reusable_as_config(tmp_path):
+    parser, config_parser = _build_parsers()
+    source_config = tmp_path / "source.yaml"
+    source_config.write_text("foo: 11\nbar: source\n", encoding="utf-8")
+
+    args, config_values, _ = parse_args_with_config(
+        parser,
+        config_parser,
+        ["--config", str(source_config)],
+    )
+    generated_config = tmp_path / "generated_config.yaml"
+    snapshot_run_configuration(
+        args,
+        generated_config,
+        config_from_file=config_values,
+        argv=["--config", str(source_config)],
+    )
+
+    rerun_args, _, _ = parse_args_with_config(
+        parser,
+        config_parser,
+        ["--config", str(generated_config)],
+    )
+    assert rerun_args.foo == 11
+    assert rerun_args.bar == "source"
+    assert rerun_args.flag is False
+
+
+def test_parse_args_with_config_coerces_typed_defaults(tmp_path):
+    config_parser = argparse.ArgumentParser(add_help=False)
+    config_parser.add_argument("--config", type=str)
+    parser = argparse.ArgumentParser(parents=[config_parser])
+    parser.add_argument("--save_root", type=Path, default=tmp_path / "default")
+    parser.add_argument("--seeds", nargs="+", type=int, default=[42])
+
+    config_file = tmp_path / "typed.yaml"
+    config_file.write_text(
+        "save_root: ./exp/my_ablation\nseeds:\n  - 7\n  - 8\n",
+        encoding="utf-8",
+    )
+    args, config_values, _ = parse_args_with_config(
+        parser,
+        config_parser,
+        ["--config", str(config_file)],
+    )
+    assert isinstance(args.save_root, Path)
+    assert args.save_root == Path("./exp/my_ablation")
+    assert args.seeds == [7, 8]
+    assert config_values["save_root"] == Path("./exp/my_ablation")
+
+
+def test_snapshot_run_configuration_filters_non_parser_keys(tmp_path):
+    args = argparse.Namespace(foo=1, bar="x", runtime_only_key="ignore")
+    output_path = tmp_path / "filtered.yaml"
+    snapshot_run_configuration(
+        args,
+        output_path,
+        allowed_keys={"foo", "bar"},
+    )
+    payload = yaml.safe_load(output_path.read_text(encoding="utf-8"))
+    assert payload == {"foo": 1, "bar": "x"}

@@ -1,5 +1,9 @@
 import sys
 from pathlib import Path
+from unittest import mock
+
+import yaml
+import pytest
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -10,9 +14,28 @@ from revolution.runtime.problem_context import ProblemContext  # noqa: E402
 from scripts.run_backend import (  # noqa: E402
     _build_parser,
     _derive_seed,
+    _effective_save_path,
     _load_reference_ppa_metrics,
     _resolve_prompt_profile,
+    main as run_backend_main,
 )
+
+
+@pytest.fixture
+def mocker(request):
+    """Local fallback for environments without pytest-mock."""
+
+    patchers = []
+
+    class _Mocker:
+        def patch(self, target: str, *args, **kwargs):
+            patcher = mock.patch(target, *args, **kwargs)
+            patchers.append(patcher)
+            return patcher.start()
+
+    instance = _Mocker()
+    request.addfinalizer(lambda: [patcher.stop() for patcher in reversed(patchers)])
+    return instance
 
 
 def test_derive_seed_is_stable():
@@ -66,6 +89,12 @@ def test_backend_parser_defaults_funsearch_reducer_to_last_input():
     assert args.fs_score_reducer == "last_input"
 
 
+def test_backend_parser_defaults_strategy_selection_to_ucb():
+    parser, _ = _build_parser()
+    args, _ = parser.parse_known_args([])
+    assert args.strategy_selection == "ucb"
+
+
 def test_load_reference_ppa_metrics_parses_reference_file(tmp_path):
     bench = tmp_path / "bench" / "Bench"
     bench.mkdir(parents=True, exist_ok=True)
@@ -91,3 +120,86 @@ def test_load_reference_ppa_metrics_parses_reference_file(tmp_path):
         "power": 0.05,
         "area": 100.0,
     }
+
+
+def test_run_backend_generated_config_roundtrip_and_edit(monkeypatch, tmp_path):
+    def fake_discover(args):
+        return [("RTLLM", "Prob001_accu", args)]
+
+    def fake_worker(payload):
+        benchmark, problem, args, _task_index = payload
+        model_name_cleaned = args.model_name.replace("/", "_")
+        problem_dir = (
+            Path(_effective_save_path(args))
+            / model_name_cleaned
+            / benchmark
+            / problem
+        )
+        problem_dir.mkdir(parents=True, exist_ok=True)
+        log_path = problem_dir / "problem_run.log"
+        log_path.write_text("fake worker log\n", encoding="utf-8")
+        return ("ok", str(log_path))
+
+    monkeypatch.setattr("scripts.run_backend._discover_tasks", fake_discover)
+    monkeypatch.setattr("scripts.run_backend.run_problem_worker", fake_worker)
+
+    save_path = tmp_path / "run_a"
+    rc = run_backend_main(
+        [
+            "--backend",
+            "revolution",
+            "--benchmarks",
+            "RTLLM",
+            "--problems",
+            "Prob001_accu",
+            "--api_backend",
+            "vllm",
+            "--model_name",
+            "stub-model",
+            "--save_path",
+            str(save_path),
+            "--num_workers",
+            "1",
+            "--population_size",
+            "2",
+            "--num_generations",
+            "1",
+        ]
+    )
+    assert rc == 0
+
+    model_root = save_path / "revolution" / "stub-model"
+    generated_configs = sorted(model_root.glob("*_revolution_config.yaml"))
+    assert generated_configs
+    generated_config = generated_configs[-1]
+    generated_payload = yaml.safe_load(generated_config.read_text(encoding="utf-8"))
+    assert generated_payload["save_path"] == str(save_path)
+    assert generated_payload["strategy_selection"] == "ucb"
+
+    generated_meta = generated_config.with_name(f"{generated_config.stem}_meta.yaml")
+    assert generated_meta.exists()
+    meta_payload = yaml.safe_load(generated_meta.read_text(encoding="utf-8"))
+    assert meta_payload["command_line_arguments"]
+
+    # Rerun using generated config directly.
+    rc_generated = run_backend_main(
+        ["--config", str(generated_config), "--num_workers", "1"]
+    )
+    assert rc_generated == 0
+
+    # Copy and edit generated config, then rerun with modified settings.
+    modified_config = tmp_path / "modified_backend_config.yaml"
+    modified_payload = dict(generated_payload)
+    modified_payload["save_path"] = str(tmp_path / "run_b")
+    modified_payload["population_size"] = 3
+    modified_config.write_text(
+        yaml.safe_dump(modified_payload, sort_keys=True),
+        encoding="utf-8",
+    )
+
+    rc_modified = run_backend_main(
+        ["--config", str(modified_config), "--num_workers", "1"]
+    )
+    assert rc_modified == 0
+    modified_model_root = tmp_path / "run_b" / "revolution" / "stub-model"
+    assert sorted(modified_model_root.glob("*_revolution_config.yaml"))

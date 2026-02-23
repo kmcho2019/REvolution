@@ -1,18 +1,37 @@
 import sys
 from pathlib import Path
+from unittest import mock
 
+import yaml
+import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-import pytest
-
 from scripts.run_backend_ablation import (  # noqa: E402
     _resolve_candidate_budget,
     _safe_workers,
     _validate_fairness,
+    main as run_backend_ablation_main,
 )
+
+
+@pytest.fixture
+def mocker(request):
+    """Local fallback for environments without pytest-mock."""
+
+    patchers = []
+
+    class _Mocker:
+        def patch(self, target: str, *args, **kwargs):
+            patcher = mock.patch(target, *args, **kwargs)
+            patchers.append(patcher)
+            return patcher.start()
+
+    instance = _Mocker()
+    request.addfinalizer(lambda: [patcher.stop() for patcher in reversed(patchers)])
+    return instance
 
 
 def test_safe_workers_bounds():
@@ -278,3 +297,81 @@ def test_validate_fairness_rejects_missing_fs_llm_cap_for_dual_gate():
             primary_budget_candidates=3,
             max_llm_calls_per_problem=3,
         )
+
+
+def test_ablation_main_writes_top_level_config_and_meta(tmp_path):
+    save_root = tmp_path / "ablation_run"
+    rc = run_backend_ablation_main(
+        [
+            "--benchmarks",
+            "RTLLM",
+            "--save_root",
+            str(save_root),
+            "--seeds",
+            "42",
+            "--max_evaluations",
+            "1",
+            "--dry_run",
+            "--no-run_report",
+        ]
+    )
+    assert rc == 0
+
+    top_configs = sorted(save_root.glob("*_ablation_config.yaml"))
+    assert top_configs
+    config_path = top_configs[-1]
+    payload = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    assert payload["save_root"] == str(save_root)
+    assert payload["benchmarks"] == ["RTLLM"]
+    assert payload["seeds"] == [42]
+
+    meta_path = config_path.with_name(f"{config_path.stem}_meta.yaml")
+    assert meta_path.exists()
+    meta_payload = yaml.safe_load(meta_path.read_text(encoding="utf-8"))
+    assert meta_payload["command_line_arguments"]
+
+
+def test_ablation_generated_config_roundtrip_and_edit(tmp_path):
+    save_root_a = tmp_path / "ablation_a"
+    rc = run_backend_ablation_main(
+        [
+            "--benchmarks",
+            "RTLLM",
+            "--save_root",
+            str(save_root_a),
+            "--seeds",
+            "42",
+            "--max_evaluations",
+            "1",
+            "--dry_run",
+            "--no-run_report",
+        ]
+    )
+    assert rc == 0
+    generated = sorted(save_root_a.glob("*_ablation_config.yaml"))
+    assert generated
+    generated_config = generated[-1]
+
+    # Rerun with generated config as input.
+    rc_generated = run_backend_ablation_main(
+        ["--config", str(generated_config), "--dry_run", "--no-run_report"]
+    )
+    assert rc_generated == 0
+
+    # Modify config and rerun with updated settings.
+    modified = tmp_path / "modified_ablation_config.yaml"
+    modified_payload = yaml.safe_load(generated_config.read_text(encoding="utf-8"))
+    modified_payload["save_root"] = str(tmp_path / "ablation_b")
+    modified_payload["seeds"] = [43]
+    modified_payload["max_evaluations"] = 2
+    modified.write_text(
+        yaml.safe_dump(modified_payload, sort_keys=True),
+        encoding="utf-8",
+    )
+
+    rc_modified = run_backend_ablation_main(
+        ["--config", str(modified), "--dry_run", "--no-run_report"]
+    )
+    assert rc_modified == 0
+    save_root_b = tmp_path / "ablation_b"
+    assert sorted(save_root_b.glob("*_ablation_config.yaml"))
