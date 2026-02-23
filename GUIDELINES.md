@@ -32,4 +32,29 @@
 ## Commit & Pull Request Guidelines
 - Follow the repository’s Conventional Commit pattern: `feat(scope): ...`, `fix(scope): ...`, `docs: ...`, `test(scope): ...`, `chore(scope): ...`.
 - Use clear scopes (for example: `gen0`, `llm`, `devcontainer`, `reporting`).
+- Prefer concise, imperative subjects and keep the first line under ~72 characters when possible.
+- Keep commit structure clean: `<type>(<scope>): <subject>` on line 1, one blank line, wrapped body text, optional labeled sections (`Tests:`, `Docs:`), and optional footers (`Signed-off-by:`).
+- In commit bodies, explain what changed and why; use short wrapped paragraphs or simple `- ` bullets for grouped changes.
+- Preferred message template:
+```text
+feat(reporting): add reproducible experiment archiving for run outputs
+
+Implement a repo-native archive utility for experiment tracking and
+reproducibility.
+
+Tests:
+- add tests/scripts/test_archive_baseline.py
+- validate single-run and ablation archive behavior
+
+Docs:
+- update README.md and docs/user_guide.md
+
+Signed-off-by: Name <email>
+```
+- Avoid malformed headers or spacing issues (for example `feat (reporting)`, missing `:`, double spaces, or inconsistent scope casing).
+- Before push/PR, review every new commit message:
+- Check message body exactly as stored: `git log --format=%B -n 1 <commit>`.
+- Check rendered commit metadata and spacing: `git show --pretty=fuller --no-patch <commit>`.
+- Check for malformed content: raw `\n`, missing blank lines, trailing spaces, bad indentation, or malformed `type(scope): subject`.
+- If reviewing a branch, run the same checks for each commit in `<base>..HEAD`.
 - PRs should include: purpose of change, impacted configs/commands, test evidence, and relevant output paths (for example `exp/<model>/...`) when experiment flow is affected.
