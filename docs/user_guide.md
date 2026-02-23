@@ -151,12 +151,13 @@ Essential arguments:
 - `--model_name <str>` / `--api_backend {openai,openrouter,deepseek,gemini,vllm}` / `--vllm_host <str>` / `--vllm_port <int>`: LLM configuration.
 - `--temperature`, `--top_p`, `--max_tokens`: sampling parameters forwarded to the LLM.
 - `--strategy_selection {random,epsilon-greedy,ucb}`: meta-strategy for picking genetic operators.
+  - default: `ucb`
 - `--epsilon`, `--ucb_c`: exploration constants used by the meta-strategies.
 - `--generation_mode {whole,diff}`: default offspring mode for successful parents. Failed parents always fall back to `whole`.
 - `--population_pool_mode {dual,single}`: dual maintains separate fail/success pools; single blends them but throttles fail-derived offspring once successes are available.
 - `--evaluation_mode {standard,gen0}`: switch between the full pipeline and the latency-only Gen0 scorer.
 - `--gen0_evaluate_best`: when used with `--evaluation_mode gen0`, replay the top-ranked candidate through the full functional testbench, synthesis, and OpenROAD PPA flow and store the logs under `Gen0/best_candidate/`.
-- `--cvdp_jsonl <path>` / `--cvdp_categories <list>`: enable CVDP dataset support (`bench/cvdp/...`).
+- `--cvdp_jsonl <path>` / `--cvdp_categories <list>` / `--cvdp_simulation_timeout_s <int>`: enable CVDP dataset support (`bench/cvdp/...`) and control pytest/cocotb timeout (default 120 seconds).
 
 Example (dual-pool UCB search):
 
@@ -212,7 +213,12 @@ The prompt file is read verbatim (UTF-8 by default) and becomes the `problem_des
 
 `scripts/run_evolution.py` accepts `--config path/to/settings.yaml` (or `.json`). The file can contain any subset of CLI options; unspecified values fall back to the parser defaults. When both a config file and explicit CLI switches are supplied, the CLI values win. Curated examples live under `data/configs/`—copy them as a starting point for reproducible experiment setups.
 
-Every invocation writes `<timestamp>_config.yaml` next to the summary/log files in `exp/<model>/`. The snapshot records the merged argument set along with the originating CLI invocation and, when present, the config file contents. This makes it straightforward to re-run an experiment with identical settings.
+Every invocation writes two files next to summary/log outputs in `exp/<model>/`:
+
+- `<timestamp>_config.yaml`: flat runnable arguments, directly reusable with `--config`.
+- `<timestamp>_config_meta.yaml`: metadata sidecar containing provenance details (originating CLI args, source config path, and source config values when present).
+
+Legacy nested snapshots that store fields under `resolved_arguments` are still accepted by `--config`.
 
 `run_evolution.py` remains backward-compatible. It now delegates to `run_backend.py` if called with `--backend funsearch`.
 
@@ -256,6 +262,7 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/evolutionary_report_generator.py`: generate Markdown reports summarising a run (`--experiment_path path/to/exp/...`).
 - `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, solved-only score/PPA deltas with regression checks, and budget/fairness diagnostics (`--backend_run revolution=<path> --backend_run funsearch=<path>`).
 - `scripts/run_backend_ablation.py`: one-command ablation sweep runner for REvolution/FunSearch plus optional comparison report generation, multi-seed loops (`--seeds`), strict fairness checks, selectable primary budget axis (`candidate_evaluations|llm_calls|dual_gate`), and command validation via `--dry_run`.
+  - Also writes top-level snapshots under `save_root` as `<timestamp>_ablation_config.yaml` and `<timestamp>_ablation_config_meta.yaml`.
 - `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch comparisons.
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
 - `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts).
@@ -273,6 +280,7 @@ All Python helper scripts accept `--help` to show the full argument list.
 - **LLM schema errors**: malformed JSON responses are stored with `_format_error.json` metadata inside the candidate directory. Inspect these files to adjust prompts or retry with a different model.
 - **Diff application failures**: candidates generated in diff mode create `<candidate>_diff_error.json` snapshots so you can review `search`/`replace` hunks.
 - **Synthesis timeouts**: `SynthesisEvaluator` writes timeout or crash information directly into the `_synthesis_report.rpt` file. Consider loosening the design constraints or increasing resources.
+- **CVDP harness timeouts**: `run_evolution.py` exposes `--cvdp_simulation_timeout_s` (default `120`) for cocotb/pytest harness execution.
 - **Token usage**: generation logs include per-generation token counts (`total_llm_*` fields), handy when budgeting API usage.
 
 ## 6. Testing and validation

@@ -603,7 +603,11 @@ Primary arguments:
 - `--model_name`, `--vllm_host`, `--vllm_port`
 - `--prompt_profile` (choose prompt profile)
 
-Supports YAML/JSON configs via `--config`. Each run writes a snapshot under `exp/<model>/<timestamp>_config.yaml`.
+Supports YAML/JSON configs via `--config`. Each run writes:
+- `exp/<model>/<timestamp>_config.yaml` (flat runnable config)
+- `exp/<model>/<timestamp>_config_meta.yaml` (provenance sidecar metadata)
+
+Legacy snapshots with `resolved_arguments` remain valid `--config` inputs.
 
 ### 12.2 `scripts/run_one_shot.py`
 

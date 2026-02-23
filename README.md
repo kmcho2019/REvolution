@@ -151,7 +151,7 @@ This script distributes problems across worker processes and executes the full e
 - `--model_name`: The specific model identifier to use (e.g., `gpt-4.1-mini`).
 - `--vllm_host`, `--vllm_port`: Specify host/port for a local vLLM server (only used if `--api_backend` is `vllm`).
 - `--evaluation_mode`: use `gen0` for the new latency-optimised initial-generation scorer or `standard` for full evolution.
-- `--cvdp_jsonl`, `--cvdp_categories`: enable CVDP dataset integration.
+- `--cvdp_jsonl`, `--cvdp_categories`, `--cvdp_simulation_timeout_s`: enable CVDP dataset integration and control pytest/cocotb timeout (default 120s).
 - `--save_path`: override default run save path with a custom one, must be a full absolute path.
 
 Example (RTLLM + VerilogEval with OpenRouter):
@@ -203,9 +203,13 @@ The prompt name defaults to the file stem; override it with `--gen0_prompt_name`
 
 #### Configuration files
 
-`run_backend.py`, `run_evolution.py`, and `run_one_shot.py` accept a `--config path/to/config.yaml` (or `.json`) flag. The file provides defaults for any CLI option and can contain only the parameters you wish to override; explicit CLI arguments always take precedence. Example templates live in `data/configs/` and mirror the available flags for each script.
+`run_backend.py`, `run_evolution.py`, `run_one_shot.py`, and `run_backend_ablation.py` accept a `--config path/to/config.yaml` (or `.json`) flag. The file provides defaults for any CLI option and can contain only the parameters you wish to override; explicit CLI arguments always take precedence. Example templates live in `data/configs/` and mirror the available flags for each script.
 
-Every run records the exact configuration that was used by writing `<timestamp>_config.yaml` next to the summary and log files under `exp/<model>/`. These snapshots merge the resolved arguments, the originating CLI invocation, and the on-disk config so experiments can be reproduced verbatim.
+Every run now records configuration in two files:
+- `<timestamp>_config.yaml`: flat runnable arguments (directly reusable with `--config`).
+- `<timestamp>_config_meta.yaml`: provenance metadata (originating CLI arguments, original config path, and source config values when present).
+
+Backward compatibility is preserved: legacy nested snapshots containing `resolved_arguments` are still accepted as config input.
 
 ### Archiving experiment runs (`scripts/archive_baseline.py`)
 
@@ -256,6 +260,10 @@ The script enforces fairness checks before launching runs:
 
 Use `--dry_run` to validate and print all generated backend commands without executing live runs.
 
+Each ablation invocation also writes top-level snapshots under `save_root`:
+- `<timestamp>_ablation_config.yaml`
+- `<timestamp>_ablation_config_meta.yaml`
+
 #### Running CVDP Benchmarks
 > **⚠️ CVDP support is experimental.**
 > CVDP integration is currently tested only on the non-agentic, non-commercial subsets (`cid002`, `cid003`).
@@ -278,6 +286,7 @@ python scripts/run_evolution.py \
   --benchmarks cvdp \
   --cvdp_categories cid002 cid003 \
   --problems cvdp_copilot_64b66b_decoder_0001 cvdp_copilot_16qam_mapper_0001 \
+  --cvdp_simulation_timeout_s 120 \
   --model_name gpt-4.1-mini \
   --num_workers 2 \
   --population_size 10 \

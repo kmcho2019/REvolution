@@ -30,7 +30,7 @@
 - `llm.py`: unified async LLM client with retry/backoff, token tracking, and JSON parsing helpers.
 - `logging.py`: `EoHLogger` for JSONL generation logs, per-run summaries, and reward statistics.
 - `prompt_store.py`: filesystem-backed prompt templating system with concatenated bundle support and tolerant `safe_format`.
-- `configuration.py`: helpers for loading CLI config files, validating options, and recording run snapshots.
+- `configuration.py`: helpers for loading CLI config files (including legacy snapshot compatibility), validating options, and recording runnable snapshot + metadata-sidecar files.
 - `utils.py`: utility helpers (for example `StreamRedirector`).
 
 ## `scripts/`
