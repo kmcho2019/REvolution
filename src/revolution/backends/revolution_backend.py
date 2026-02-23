@@ -22,7 +22,7 @@ class RevolutionBackendConfig:
     default_llm_temp: float = 1.0
     default_llm_top_p: float = 0.95
     default_llm_max_tokens: int = 2048
-    strategy_selection_method: str = "random"
+    strategy_selection_method: str = "ucb"
     epsilon: float = 0.1
     ucb_c: float = 2.0
     generation_mode: str = "whole"

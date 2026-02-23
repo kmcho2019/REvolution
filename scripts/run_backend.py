@@ -359,7 +359,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument(
         "--strategy_selection",
         type=str,
-        default="random",
+        default="ucb",
         choices=["random", "epsilon-greedy", "ucb"],
     )
     parser.add_argument("--epsilon", type=float, default=0.1)
@@ -454,11 +454,13 @@ def main(argv: list[str] | None = None) -> int:
     run_config_path = os.path.join(
         master_log_dir, f"{run_datetime}_{args.backend}_config.yaml"
     )
+    allowed_keys = {action.dest for action in parser._actions if action.dest != "help"}
     snapshot_run_configuration(
         args,
         run_config_path,
         config_from_file=config_from_file,
         argv=raw_argv,
+        allowed_keys=allowed_keys,
     )
 
     original_stdout = sys.stdout

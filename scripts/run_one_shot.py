@@ -322,11 +322,13 @@ def main():
         master_log_dir, f"{run_datetime}_summary_results.txt"
     )
     run_config_path = os.path.join(master_log_dir, f"{run_datetime}_config.yaml")
+    allowed_keys = {action.dest for action in parser._actions if action.dest != "help"}
     snapshot_run_configuration(
         args,
         run_config_path,
         config_from_file=config_from_file,
         argv=raw_argv,
+        allowed_keys=allowed_keys,
     )
 
     # Use a list to store results before writing to files

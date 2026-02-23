@@ -25,7 +25,7 @@ Environment overrides:
   SMOKE_MAX_TOKENS          LLM max tokens (default: 2048)
   SMOKE_TEMPERATURE         LLM temperature (default: 0.7)
   SMOKE_TOP_P               LLM top-p (default: 0.95)
-  SMOKE_STRATEGY_SELECTION  Meta-strategy (default: random)
+  SMOKE_STRATEGY_SELECTION  Meta-strategy (default: ucb)
   SMOKE_GENERATION_MODE     whole|diff (default: whole)
   SMOKE_POOL_MODE           dual|single (default: dual)
   SMOKE_SAVE_PATH           Base output directory (default: <repo>/exp/funsearch_backend_smoke)
@@ -192,7 +192,7 @@ NUM_WORKERS="${SMOKE_NUM_WORKERS:-1}"
 MAX_TOKENS="${SMOKE_MAX_TOKENS:-2048}"
 TEMPERATURE="${SMOKE_TEMPERATURE:-0.7}"
 TOP_P="${SMOKE_TOP_P:-0.95}"
-STRATEGY_SELECTION="${SMOKE_STRATEGY_SELECTION:-random}"
+STRATEGY_SELECTION="${SMOKE_STRATEGY_SELECTION:-ucb}"
 GENERATION_MODE="${SMOKE_GENERATION_MODE:-whole}"
 POOL_MODE="${SMOKE_POOL_MODE:-dual}"
 SAVE_ROOT="${SMOKE_SAVE_PATH:-${REPO_ROOT}/exp/funsearch_backend_smoke}"

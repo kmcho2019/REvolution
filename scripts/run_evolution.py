@@ -152,6 +152,7 @@ def run_problem_worker(args_tuple):
             eoh_engine = CVDPEngine(
                 cvdp_jsonl_path=args.cvdp_jsonl,
                 cvdp_id=problem,                         # 'problem' is the CVDP item id
+                simulation_timeout_s=args.cvdp_simulation_timeout_s,
                 problem_name=problem,                    # for logging/paths
                 benchmark_name=benchmark,
                 llm_interface=llm_interface,
@@ -351,7 +352,7 @@ def main():
     parser.add_argument(
         "--strategy_selection",
         type=str,
-        default="random",
+        default="ucb",
         choices=["random", "epsilon-greedy", "ucb"],
         help="The meta-strategy for selecting genetic operators.",
     )
@@ -431,6 +432,12 @@ def main():
         type=str,
         default=default_cvdp_jsonl,
         help="Path to the CVDP non-agentic, no-commercial JSONL file.",
+    )
+    parser.add_argument(
+        "--cvdp_simulation_timeout_s",
+        type=int,
+        default=120,
+        help="Timeout in seconds for CVDP pytest/cocotb harness execution (default: 120).",
     )
     parser.add_argument(
         "--cvdp_categories",
@@ -549,11 +556,13 @@ def main():
         master_log_dir, f"{run_datetime}_summary_results.txt"
     )
     run_config_path = os.path.join(master_log_dir, f"{run_datetime}_config.yaml")
+    allowed_keys = {action.dest for action in parser._actions if action.dest != "help"}
     snapshot_run_configuration(
         args,
         run_config_path,
         config_from_file=config_from_file,
         argv=raw_argv,
+        allowed_keys=allowed_keys,
     )
 
     # Use a list to store results before writing to files

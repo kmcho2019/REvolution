@@ -2,12 +2,23 @@
 from __future__ import annotations
 
 import argparse
+import datetime
 import multiprocessing
 import os
 import subprocess
 import sys
 from pathlib import Path
 from typing import Sequence
+
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+)
+
+from revolution.configuration import (  # noqa: E402
+    ConfigError,
+    parse_args_with_config,
+    snapshot_run_configuration,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -163,9 +174,17 @@ def _validate_fairness(
         raise ValueError("Ablation script requires strict_ablation mode for publishable comparison.")
 
 
-def main() -> int:
+def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
+    config_parser = argparse.ArgumentParser(add_help=False)
+    config_parser.add_argument(
+        "--config",
+        type=str,
+        help="Path to YAML/JSON config with default options.",
+    )
+
     parser = argparse.ArgumentParser(
-        description="Run backend ablation sweeps for REvolution vs FunSearch."
+        description="Run backend ablation sweeps for REvolution vs FunSearch.",
+        parents=[config_parser],
     )
     parser.add_argument(
         "--benchmarks",
@@ -246,11 +265,32 @@ def main() -> int:
         default=False,
         help="Print validated commands without executing backend runs.",
     )
-    args = parser.parse_args()
+    return parser, config_parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser, config_parser = _build_parser()
+    try:
+        args, config_from_file, raw_argv = parse_args_with_config(
+            parser, config_parser, argv=argv
+        )
+    except ConfigError as exc:
+        print(f"Configuration error: {exc}")
+        return 2
 
     workers = _safe_workers(args.num_workers)
     save_root = args.save_root.resolve()
     save_root.mkdir(parents=True, exist_ok=True)
+    run_datetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_config_path = save_root / f"{run_datetime}_ablation_config.yaml"
+    allowed_keys = {action.dest for action in parser._actions if action.dest != "help"}
+    snapshot_run_configuration(
+        args,
+        run_config_path,
+        config_from_file=config_from_file,
+        argv=raw_argv,
+        allowed_keys=allowed_keys,
+    )
     primary_budget_candidates = _resolve_candidate_budget(
         primary_budget_axis=args.primary_budget_axis,
         max_evaluations=max(1, args.max_evaluations),
