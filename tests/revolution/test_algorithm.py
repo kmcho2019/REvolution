@@ -160,10 +160,23 @@ def test_do_replace_unique(engine_for_utils):
     assert updated == "a\nX\nc\n"
 
 
-def test_do_replace_multiple_hits_replaces_best_match(engine_for_utils):
+def test_do_replace_multiple_hits_returns_none_for_ambiguous_hybrid(engine_for_utils):
     content = "foo\nbar\nfoo\n"
     result = engine_for_utils._do_replace(content, "foo\n", "X\n")
-    assert result == "X\nbar\nfoo\n"
+    assert result is None
+    assert engine_for_utils._last_replace_diagnostics["reason_code"] in {
+        "ambiguous_whitespace_match",
+        "ambiguous_fuzzy_match",
+        "search_not_found",
+    }
+
+
+def test_do_replace_multiple_hits_fails_under_strict_policy(engine_for_utils):
+    engine_for_utils.diff_apply_policy = "strict"
+    content = "foo\nbar\nfoo\n"
+    result = engine_for_utils._do_replace(content, "foo\n", "X\n")
+    assert result is None
+    assert engine_for_utils._last_replace_diagnostics["reason_code"] == "ambiguous_exact_match"
 
 
 def test_do_replace_not_found_returns_none(engine_for_utils):
@@ -214,6 +227,94 @@ def test_apply_diff_new_file_block(engine_for_utils):
     new_content = engine_for_utils._apply_diff(original, diff)
     # With empty SEARCH, new content is appended
     assert new_content.strip() == "module x; endmodule"
+
+
+def test_apply_diff_json_invalid_payload_sets_reason(engine_for_utils):
+    original = "module x; endmodule\n"
+    out = engine_for_utils._apply_diff(original, '{"format":"eoh_v1","mode":"diff","code":{"edits":[]}}')
+    assert out is None
+    assert engine_for_utils._last_diff_apply_diagnostics["reason_code"] == "invalid_json_diff"
+
+
+def test_apply_diff_json_target_file_mismatch_sets_reason(engine_for_utils):
+    original = "module x; endmodule\n"
+    payload = json.dumps(
+        {
+            "edits": [
+                {
+                    "file": "/tmp/not_target.sv",
+                    "hunks": [{"search": "module x; endmodule\n", "replace": "module y; endmodule\n"}],
+                }
+            ]
+        }
+    )
+    out = engine_for_utils._apply_diff(
+        original,
+        payload,
+        target_file_path="/tmp/target.sv",
+    )
+    assert out is None
+    assert engine_for_utils._last_diff_apply_diagnostics["reason_code"] == "target_file_not_found"
+
+
+def test_apply_diff_json_overlap_conflict_sets_reason(engine_for_utils):
+    original = "a\nb\nc\n"
+    payload = json.dumps(
+        {
+            "format": "eoh_v1",
+            "mode": "diff",
+            "code": {
+                "edits": [
+                    {
+                        "file": "/tmp/x.sv",
+                        "hunks": [
+                            {"search": "a\nb\n", "replace": "a\nB1\n"},
+                            {"search": "b\nc\n", "replace": "B2\nc\n"},
+                        ],
+                    }
+                ]
+            },
+        }
+    )
+    out = engine_for_utils._apply_diff(original, payload, target_file_path="/tmp/x.sv")
+    assert out is None
+    assert engine_for_utils._last_diff_apply_diagnostics["reason_code"] == "overlap_conflict"
+
+
+def test_apply_diff_legacy_delimiter_mismatch_sets_reason(engine_for_utils):
+    original = "module x; endmodule\n"
+    malformed = "/tmp/x.sv\n```\n<<<<<<< SEARCH\nmodule x; endmodule\n>>>>>>> REPLACE\n```\n"
+    out = engine_for_utils._apply_diff(original, malformed)
+    assert out is None
+    assert engine_for_utils._last_diff_apply_diagnostics["reason_code"] == "legacy_delimiter_mismatch"
+
+
+def test_do_replace_whitespace_normalized_phase(engine_for_utils):
+    content = "  assign y = a & b ;\n"
+    out = engine_for_utils._do_replace(content, "assign y = a & b;\n", "assign y = a ^ b;\n")
+    assert out is not None
+    assert "assign y = a ^ b;" in out
+    assert engine_for_utils._last_replace_diagnostics["phase"] == "whitespace_normalized"
+
+
+def test_build_prompt_request_sets_diff_token_budget(engine_for_utils):
+    engine_for_utils.diff_max_tokens = 777
+    req = engine_for_utils._build_prompt_request("hello", "diff", "sys")
+    assert req["generation_mode"] == "diff"
+    assert req["max_tokens"] == 777
+    assert req["system_prompt"] == "sys"
+
+
+def test_format_parent_for_prompt_uses_compact_placeholder(engine_for_utils):
+    parent = Heuristic("thought", "module x; endmodule\n", "feedback")
+    parent.ppa_success = True
+    parent.ppa_metrics = {"power": 1.0, "area": 2.0, "eff_clk_period": 3.0}
+
+    engine_for_utils.diff_compact_context = True
+    blob = engine_for_utils._format_parent_for_prompt(parent, include_code=False)
+    obj = json.loads(blob)
+    assert obj["code"] == "<omitted in compact diff context; see original_file>"
+    assert "ppa_metrics" in obj
 
 
 # ---------- File I/O helpers ---------------------------------------------------------
@@ -1030,6 +1131,193 @@ def test_initialize_population_diff_fallback_appends_raw_diff(mocker, tmp_path):
     code_path = candidate_dir / "code.sv"
     contents = code_path.read_text()
     assert bad_diff in contents
+
+
+def test_initialize_population_pads_missing_llm_results(mocker, tmp_path):
+    eng, llm = _mk_engine(mocker, tmp_path, pop_size=1)
+    mocker.patch.object(EoHEngine, "_copy_misc_files", return_value=None)
+
+    llm.generate_n_responses = mocker.AsyncMock(return_value=[])
+    llm.get_and_reset_usage_stats = mocker.AsyncMock(
+        return_value={
+            "api_calls": 0,
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "code_prompt_tokens": 0,
+            "code_completion_tokens": 0,
+            "feedback_prompt_tokens": 0,
+            "feedback_completion_tokens": 0,
+        }
+    )
+
+    captured = {}
+
+    def fake_eval(cands):
+        captured["cands"] = cands
+
+    mocker.patch.object(eng, "_evaluate_candidates", side_effect=fake_eval)
+    eng.logger = MagicMock()
+
+    eng.initialize_population()
+
+    assert "cands" in captured
+    assert len(captured["cands"]) == 1
+    assert captured["cands"][0].status == "failed_format"
+    assert len(eng.fail_pool) == 1
+
+
+def test_evolve_one_generation_uses_diff_for_fail_pool_when_configured(mocker, tmp_path):
+    eng, llm = _mk_engine(mocker, tmp_path, pop_size=1)
+    eng.generation_mode = "diff"
+    mocker.patch.object(EoHEngine, "_copy_misc_files", return_value=None)
+    eng.logger = MagicMock()
+
+    parent = Heuristic("t", "module parent; endmodule\n", "fb", status="failed_functionality")
+    parent_path = tmp_path / "parent_fail.sv"
+    parent_path.write_text("module parent; endmodule\n")
+    parent.code_file_path = str(parent_path)
+    parent.score = -float("inf")
+    eng.fail_pool = [parent]
+    eng.success_pool = []
+
+    mocker.patch.object(eng, "_select_strategy", return_value=("M-F", {"M-F": 1.0}))
+    diff_payload = json.dumps(
+        {
+            "format": "eoh_v1",
+            "mode": "diff",
+            "thought": "t",
+            "code": {
+                "edits": [
+                    {
+                        "file": str(parent_path),
+                        "hunks": [
+                            {
+                                "search": "module parent; endmodule\n",
+                                "replace": "module parent; /*mut*/ endmodule\n",
+                            }
+                        ],
+                    }
+                ]
+            },
+        }
+    )
+    llm.generate_batch_responses = mocker.AsyncMock(
+        return_value=[("th", diff_payload, {"format_ok": True, "error": None, "raw": diff_payload, "parsed_mode": "diff"})]
+    )
+    llm.get_and_reset_usage_stats = mocker.AsyncMock(
+        return_value={
+            "api_calls": 1,
+            "prompt_tokens": 10,
+            "completion_tokens": 20,
+            "code_prompt_tokens": 10,
+            "code_completion_tokens": 20,
+            "feedback_prompt_tokens": 0,
+            "feedback_completion_tokens": 0,
+        }
+    )
+
+    def fake_eval(cands):
+        for c in cands:
+            c.status = "failed_functionality"
+            c.score = -float("inf")
+
+    mocker.patch.object(eng, "_evaluate_candidates", side_effect=fake_eval)
+
+    eng.evolve_one_generation()
+
+    llm.generate_batch_responses.assert_awaited()
+    call_args, _ = llm.generate_batch_responses.await_args
+    requests = call_args[0]
+    assert requests
+    assert requests[0]["generation_mode"] == "diff"
+    assert requests[0]["max_tokens"] == eng.diff_max_tokens
+
+
+def test_evolve_one_generation_pads_missing_batch_results(mocker, tmp_path):
+    eng, llm = _mk_engine(mocker, tmp_path, pop_size=1)
+    eng.generation_mode = "whole"
+    eng.logger = MagicMock()
+    mocker.patch.object(EoHEngine, "_copy_misc_files", return_value=None)
+
+    parent = Heuristic("t", "module parent; endmodule\n", "fb", status="failed_functionality")
+    parent_path = tmp_path / "parent_missing.sv"
+    parent_path.write_text("module parent; endmodule\n")
+    parent.code_file_path = str(parent_path)
+    parent.score = -float("inf")
+    eng.fail_pool = [parent]
+    eng.success_pool = []
+
+    mocker.patch.object(eng, "_select_strategy", return_value=("M-F", {"M-F": 1.0}))
+    llm.generate_batch_responses = mocker.AsyncMock(return_value=[])
+    llm.get_and_reset_usage_stats = mocker.AsyncMock(
+        return_value={
+            "api_calls": 0,
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "code_prompt_tokens": 0,
+            "code_completion_tokens": 0,
+            "feedback_prompt_tokens": 0,
+            "feedback_completion_tokens": 0,
+        }
+    )
+
+    captured = {}
+
+    def fake_eval(cands):
+        captured["cands"] = cands
+
+    mocker.patch.object(eng, "_evaluate_candidates", side_effect=fake_eval)
+
+    eng.evolve_one_generation()
+
+    assert "cands" in captured
+    assert len(captured["cands"]) == 1
+    assert captured["cands"][0].status == "failed_format"
+
+
+def test_evolve_one_generation_marks_format_failures_with_resolved_mode(mocker, tmp_path):
+    eng, llm = _mk_engine(mocker, tmp_path, pop_size=1)
+    eng.generation_mode = "diff"
+    eng.logger = MagicMock()
+    mocker.patch.object(EoHEngine, "_copy_misc_files", return_value=None)
+
+    parent = Heuristic("t", "module parent; endmodule\n", "fb", status="failed_functionality")
+    parent_path = tmp_path / "parent_mode.sv"
+    parent_path.write_text("module parent; endmodule\n")
+    parent.code_file_path = str(parent_path)
+    parent.score = -float("inf")
+    eng.fail_pool = [parent]
+    eng.success_pool = []
+
+    mocker.patch.object(eng, "_select_strategy", return_value=("M-F", {"M-F": 1.0}))
+    llm.generate_batch_responses = mocker.AsyncMock(
+        return_value=[("bad", "NOT JSON", {"format_ok": False, "error": "strict-parse failed", "raw": "NOT JSON"})]
+    )
+    llm.get_and_reset_usage_stats = mocker.AsyncMock(
+        return_value={
+            "api_calls": 1,
+            "prompt_tokens": 1,
+            "completion_tokens": 1,
+            "code_prompt_tokens": 1,
+            "code_completion_tokens": 1,
+            "feedback_prompt_tokens": 0,
+            "feedback_completion_tokens": 0,
+        }
+    )
+
+    captured: dict[str, list[Heuristic]] = {}
+
+    def fake_eval(cands):
+        captured["cands"] = cands
+
+    mocker.patch.object(eng, "_evaluate_candidates", side_effect=fake_eval)
+
+    eng.evolve_one_generation()
+
+    assert "cands" in captured and captured["cands"]
+    cand = captured["cands"][0]
+    assert cand.status == "failed_format"
+    assert cand.generated_mode == "diff"
 
 
 def test_evolve_one_generation_updates_stats_and_pools(mocker, tmp_path):

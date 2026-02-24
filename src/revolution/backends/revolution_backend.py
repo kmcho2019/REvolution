@@ -27,6 +27,11 @@ class RevolutionBackendConfig:
     ucb_c: float = 2.0
     generation_mode: str = "whole"
     population_pool_mode: str = "dual"
+    diff_apply_policy: str = "hybrid"
+    diff_max_tokens: int = 1024
+    diff_compact_context: bool = True
+    diff_similarity_threshold: float = 0.86
+    diff_fuzzy_margin: float = 0.03
     require_strict_format: bool = True
     prompt_profile: str = "default"
     prompt_root: str | None = None
@@ -72,6 +77,11 @@ class RevolutionBackend(EvolutionBackend):
             ucb_c=self.config.ucb_c,
             generation_mode=self.config.generation_mode,  # type: ignore[arg-type]
             population_pool_mode=self.config.population_pool_mode,  # type: ignore[arg-type]
+            diff_apply_policy=self.config.diff_apply_policy,  # type: ignore[arg-type]
+            diff_max_tokens=self.config.diff_max_tokens,
+            diff_compact_context=self.config.diff_compact_context,
+            diff_similarity_threshold=self.config.diff_similarity_threshold,
+            diff_fuzzy_margin=self.config.diff_fuzzy_margin,
             require_strict_format=self.config.require_strict_format,
             prompt_profile=self.config.prompt_profile,
             prompt_root=self.config.prompt_root,

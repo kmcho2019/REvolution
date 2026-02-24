@@ -31,6 +31,7 @@ from revolution.llm import LLMInterface  # noqa: E402
 from revolution.prompt_store import PromptStore  # noqa: E402
 from revolution.runtime import ArtifactWriter, CandidateEvaluator, load_problem_context  # noqa: E402
 from revolution.utils import StreamRedirector  # noqa: E402
+from revolution.vllm_preflight import preflight_vllm_model  # noqa: E402
 
 
 def _derive_seed(base_seed: int | None, index: int) -> int | None:
@@ -186,6 +187,11 @@ def _build_backend(
             ucb_c=args.ucb_c,
             generation_mode=args.generation_mode,
             population_pool_mode=args.population_pool_mode,
+            diff_apply_policy=args.diff_apply_policy,
+            diff_max_tokens=args.diff_max_tokens,
+            diff_compact_context=args.diff_compact_context,
+            diff_similarity_threshold=args.diff_similarity_threshold,
+            diff_fuzzy_margin=args.diff_fuzzy_margin,
             require_strict_format=True,
             prompt_profile=prompt_profile,
             prompt_root=prompt_root,
@@ -309,6 +315,16 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         type=str,
         default=os.getenv("VLLM_HOST", "localhost"),
     )
+    parser.add_argument(
+        "--vllm_preflight_timeout_s",
+        type=float,
+        default=5.0,
+    )
+    parser.add_argument(
+        "--vllm_min_model_len",
+        type=int,
+        default=int(os.getenv("VLLM_MIN_MODEL_LEN", "128000")),
+    )
     parser.add_argument("--model_name", type=str, default="gpt-4.1-mini")
     parser.add_argument("--save_path", type=str, default=os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "exp")))
     parser.add_argument("--num_workers", type=int, default=1)
@@ -330,6 +346,20 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--top_p", type=float, default=0.95)
     parser.add_argument("--max_tokens", type=int, default=2048)
     parser.add_argument("--generation_mode", type=str, default="whole", choices=["whole", "diff"])
+    parser.add_argument(
+        "--diff_apply_policy",
+        type=str,
+        default="hybrid",
+        choices=["strict", "hybrid", "fuzzy"],
+    )
+    parser.add_argument("--diff_max_tokens", type=int, default=1024)
+    parser.add_argument(
+        "--diff_compact_context",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
+    parser.add_argument("--diff_similarity_threshold", type=float, default=0.86)
+    parser.add_argument("--diff_fuzzy_margin", type=float, default=0.03)
     parser.add_argument("--prompt_profile", type=str, default=None)
     parser.add_argument("--prompt_root", type=str, default=None)
     parser.add_argument(
@@ -433,6 +463,22 @@ def main(argv: list[str] | None = None) -> int:
     except ConfigError as exc:
         print(f"Configuration error: {exc}")
         return 2
+
+    if args.api_backend == "vllm":
+        preflight = preflight_vllm_model(
+            host=args.vllm_host,
+            port=args.vllm_port,
+            min_model_len=args.vllm_min_model_len,
+            timeout_s=args.vllm_preflight_timeout_s,
+        )
+        print(
+            f"[vLLM preflight] endpoint={preflight.get('endpoint')} "
+            f"model={preflight.get('model_id')} "
+            f"max_model_len={preflight.get('max_model_len')} "
+            f"min_required={args.vllm_min_model_len}"
+        )
+        if preflight.get("warning"):
+            print(f"[vLLM preflight] WARNING: {preflight['warning']}")
 
     tasks_to_run = _discover_tasks(args)
     if not tasks_to_run:

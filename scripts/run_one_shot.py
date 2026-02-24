@@ -17,6 +17,7 @@ from revolution.algorithm import SingleShotEngine
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
 from revolution.llm import LLMInterface
 from revolution.utils import StreamRedirector
+from revolution.vllm_preflight import preflight_vllm_model
 from revolution.configuration import (
     ConfigError,
     parse_args_with_config,
@@ -60,6 +61,8 @@ def run_problem_worker(args_tuple):
             api_key = os.getenv("DEEPSEEK_API_KEY")
         elif args.api_backend == "gemini":
             api_key = os.getenv("GEMINI_API_KEY")
+        elif args.api_backend == "vllm":
+            api_key = os.getenv("OPENAI_API_KEY") or "vllm-local-placeholder"
 
         if args.api_backend != "vllm":  # vllm does not require an API key
             if not api_key:
@@ -144,6 +147,8 @@ def run_indexed_problem_worker(indexed_task):
             api_key = os.getenv("DEEPSEEK_API_KEY")
         elif args.api_backend == "gemini":
             api_key = os.getenv("GEMINI_API_KEY")
+        elif args.api_backend == "vllm":
+            api_key = os.getenv("OPENAI_API_KEY") or "vllm-local-placeholder"
 
         if args.api_backend != "vllm":  # vllm does not require an API key
             if not api_key:
@@ -241,6 +246,18 @@ def main():
         help="Hostname or IP for the vLLM OpenAI-compatible server. Defaults to VLLM_HOST or localhost.",
     )
     parser.add_argument(
+        "--vllm_preflight_timeout_s",
+        type=float,
+        default=5.0,
+        help="Timeout (seconds) for vLLM /v1/models preflight checks.",
+    )
+    parser.add_argument(
+        "--vllm_min_model_len",
+        type=int,
+        default=int(os.getenv("VLLM_MIN_MODEL_LEN", "128000")),
+        help="Recommended minimum max_model_len for vLLM reasoning runs (warn-only gate).",
+    )
+    parser.add_argument(
         "--model_name",
         type=str,
         default="gpt-4.1-mini",
@@ -306,6 +323,21 @@ def main():
                     f"LLM Initialization Error: The environment variable '{required_key_var}' must be set for the '{args.api_backend}' backend."
                 )
                 exit(1)
+    else:
+        preflight = preflight_vllm_model(
+            host=args.vllm_host,
+            port=args.vllm_port,
+            min_model_len=args.vllm_min_model_len,
+            timeout_s=args.vllm_preflight_timeout_s,
+        )
+        print(
+            f"[vLLM preflight] endpoint={preflight.get('endpoint')} "
+            f"model={preflight.get('model_id')} "
+            f"max_model_len={preflight.get('max_model_len')} "
+            f"min_required={args.vllm_min_model_len}"
+        )
+        if preflight.get("warning"):
+            print(f"[vLLM preflight] WARNING: {preflight['warning']}")
 
     # Main execution block now handles comprehensive, aggregated logging
     # --- Task Preparation ---

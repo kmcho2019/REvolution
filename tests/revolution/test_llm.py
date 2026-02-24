@@ -88,6 +88,42 @@ async def test_generate_batch_responses_dispatches_individual_prompts(mocker):
     assert calls[0][2:] == (0.7, 0.9, 512)
 
 
+@pytest.mark.asyncio
+async def test_generate_batch_responses_honors_per_request_max_tokens(mocker):
+    llm = LLMInterface(api_key="fake")
+    calls = []
+
+    async def fake_generate(
+        prompt,
+        temperature,
+        top_p,
+        max_tokens,
+        generation_mode="whole",
+        system_prompt_override=None,
+    ):
+        calls.append((prompt, generation_mode, max_tokens))
+        return ("thought", "code", {"format_ok": True})
+
+    mocker.patch.object(
+        llm,
+        "generate_response",
+        side_effect=fake_generate,
+    )
+
+    prompts: list[LLMRequest] = [
+        {"prompt": "p1", "generation_mode": "whole"},
+        {"prompt": "p2", "generation_mode": "diff", "max_tokens": 123},
+    ]
+
+    await llm.generate_batch_responses(
+        prompts,
+        temperature=0.7,
+        top_p=0.9,
+        max_tokens=512,
+    )
+    assert calls == [("p1", "whole", 512), ("p2", "diff", 123)]
+
+
 # ---------------------------
 # Helpers
 # ---------------------------
@@ -303,7 +339,14 @@ async def test_generate_response_success_and_system_prompt_modes(mocker):
                     "format": "eoh_v1",
                     "mode": "diff",
                     "thought": "T2",
-                    "code": {"edits": []},
+                    "code": {
+                        "edits": [
+                            {
+                                "file": "mod.sv",
+                                "hunks": [{"search": "old\n", "replace": "new\n"}],
+                            }
+                        ]
+                    },
                 }
             )
         ]
@@ -311,10 +354,88 @@ async def test_generate_response_success_and_system_prompt_modes(mocker):
     create.side_effect = [completion2]  # next call
     t2, c2, meta2 = await llm.generate_response("p2", generation_mode="diff")
     assert t2 == "T2"
-    assert c2 == json.dumps({"edits": []}, separators=(",", ":"))
+    assert c2 == json.dumps(
+        {
+            "edits": [
+                {
+                    "file": "mod.sv",
+                    "hunks": [{"search": "old\n", "replace": "new\n"}],
+                }
+            ]
+        },
+        separators=(",", ":"),
+    )
     assert meta2["format_ok"] is True and meta2["parsed_mode"] == "diff"
     msgs2 = create.call_args.kwargs["messages"]
     assert "The search text must match the existing file content exactly" in msgs2[0]["content"]
+
+
+def test_strict_validate_rejects_empty_diff_edits_and_hunks():
+    llm = LLMInterface(api_key="k")
+    bad_empty_edits = json.dumps(
+        {
+            "format": "eoh_v1",
+            "mode": "diff",
+            "thought": "x",
+            "code": {"edits": []},
+        }
+    )
+    ok, _, err = llm._strict_validate_eoh(bad_empty_edits)
+    assert ok is False
+    assert "code.edits" in (err or "")
+
+    bad_empty_hunks = json.dumps(
+        {
+            "format": "eoh_v1",
+            "mode": "diff",
+            "thought": "x",
+            "code": {"edits": [{"file": "a.sv", "hunks": []}]},
+        }
+    )
+    ok2, _, err2 = llm._strict_validate_eoh(bad_empty_hunks)
+    assert ok2 is False
+    assert "hunks" in (err2 or "")
+
+
+def test_strict_validate_normalizes_top_level_edits_and_infers_diff_mode():
+    llm = LLMInterface(api_key="k")
+    payload = json.dumps(
+        {
+            "format": "eoh_v1",
+            "thought": "x",
+            "edits": [
+                {
+                    "file": "a.sv",
+                    "hunks": [{"search": "old\n", "replace": "new\n"}],
+                }
+            ],
+        }
+    )
+    ok, normalized, err = llm._strict_validate_eoh(payload)
+    assert ok is True, err
+    assert normalized["mode"] == "diff"
+    assert isinstance(normalized["code"], dict)
+    assert normalized["code"]["edits"][0]["file"] == "a.sv"
+
+
+def test_strict_validate_rejects_multi_file_diff_payload():
+    llm = LLMInterface(api_key="k")
+    payload = json.dumps(
+        {
+            "format": "eoh_v1",
+            "mode": "diff",
+            "thought": "x",
+            "code": {
+                "edits": [
+                    {"file": "a.sv", "hunks": [{"search": "a\n", "replace": "b\n"}]},
+                    {"file": "b.sv", "hunks": [{"search": "x\n", "replace": "y\n"}]},
+                ]
+            },
+        }
+    )
+    ok, _, err = llm._strict_validate_eoh(payload)
+    assert ok is False
+    assert "single-file diff expected" in (err or "")
 
 
 @pytest.mark.asyncio
@@ -335,6 +456,18 @@ async def test_generate_response_empty_content_then_success(mocker):
     assert (t, c) == ("A", "B")
     assert meta["format_ok"] is True
     assert create.await_count == 2  # retried once
+
+
+@pytest.mark.asyncio
+async def test_generate_response_empty_content_respects_empty_retry_budget(mocker):
+    empty = make_chat_completion(["  "])
+    create = patch_async_openai(mocker, [empty, empty, empty, empty])
+    llm = LLMInterface(api_key="k", max_retries=10, max_empty_response_attempts=2)
+    t, c, meta = await llm.generate_response("prompt")
+    assert (t, c) == (None, None)
+    assert meta["format_ok"] is False
+    assert meta["error"] == "empty-response-retries-exhausted"
+    assert create.await_count == 2
 
 
 @pytest.mark.asyncio
@@ -423,6 +556,19 @@ async def test_generate_n_responses_success_counts_and_parsing(mocker):
     assert stats["api_calls"] == n
     assert stats["prompt_tokens"] == 9
     assert stats["completion_tokens"] == 12
+
+
+@pytest.mark.asyncio
+async def test_generate_n_responses_keeps_empty_choice_as_failed_entry(mocker):
+    completion = make_chat_completion(["   "], prompt_tokens=2, completion_tokens=1)
+    patch_async_openai(mocker, completion)
+    llm = LLMInterface(api_key="k")
+    out = await llm.generate_n_responses("p", n=1)
+    assert len(out) == 1
+    t, c, meta = out[0]
+    assert t is None and c is None
+    assert meta["format_ok"] is False
+    assert meta["error"] == "empty-response"
 
 
 @pytest.mark.asyncio
