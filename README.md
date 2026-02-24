@@ -20,6 +20,7 @@
 The `docs/` directory contains deeper dives:
 
 - `docs/implementation_details.md` – architecture and component responsibilities.
+- `docs/diff_mode.md` – diff-mode schema, policies, diagnostics, and benchmark workflow.
 - `docs/module_structure.md` – file-by-file breakdown of the codebase.
 - `docs/method_interaction_and_evolutionary_loop.md` – data flow through the evolutionary loop.
 - `docs/user_guide.md` – setup, CLI usage, troubleshooting, and testing guidance.
@@ -98,6 +99,8 @@ For a local vLLM server, ensure it is reachable at `http://localhost:8888/v1` (o
 Set `--api_backend` to `vllm` to use a local vLLM server.
 
 `scripts/run_evolution.py` and `scripts/run_one_shot.py` read `VLLM_HOST` and `VLLM_PORT` environment variables for default host/port values, so you can avoid repeating `--vllm_host`/`--vllm_port` in devcontainer sessions.
+All primary runners (`run_evolution.py`, `run_backend.py`, `run_one_shot.py`) perform a lightweight vLLM `/v1/models` preflight and print the served `max_model_len`.
+Use `--vllm_min_model_len` (default `128000`) and `--vllm_preflight_timeout_s` to tune this gate. A failed preflight is reported as a warning and does not abort the run.
 
 
 ## Running the Framework
@@ -144,6 +147,10 @@ This script distributes problems across worker processes and executes the full e
 - `--population_size`, `--num_generations`: evolutionary dynamics.
 - `--strategy_selection`: choose meta-strategy (`random`, `epsilon-greedy`, `ucb`).
 - `--generation_mode`: request whole-file or diff-based offspring generation. (`whole` mode works by generating entire snippets of code from scratch whereas `diff` mode is able to edit snippets of code with an editing format. Weaker models may have trouble adhering to `diff` mode formatting resulting errors and lower performance, `whole` mode is recommended for general purpose use.)
+- `--diff_apply_policy`: diff matching strictness (`strict`, `hybrid`, `fuzzy`; default `hybrid`).
+- `--diff_max_tokens`: lower per-request generation cap for diff offspring (default `1024`).
+- `--diff_compact_context/--no-diff_compact_context`: control prompt context compaction in diff mode.
+- `--diff_similarity_threshold`, `--diff_fuzzy_margin`: fuzzy fallback controls for diff hunk matching.
 - `--population_pool_mode`: dual or single pool scheduling. (`dual` mode is the default)
 - `--api_backend`: Specifies the API backend to use for LLM calls.
   - Default: `openai`
@@ -236,6 +243,46 @@ python scripts/archive_baseline.py \
 ```
 
 The script enforces reproducibility: it fails if no run config snapshots are found under `--run-dir`.
+
+### Diff mode benchmark harness (`scripts/run_diff_mode_benchmark.py`)
+
+This script runs matched `whole` and `diff` experiments on hard tasks and writes:
+- `results.json`: aggregate token/runtime/pass-rate comparison.
+- `results.md`: markdown summary report.
+- `diff_failure_catalog.json`: grouped `*_diff_apply_error.json` reasons and examples.
+
+By default it runs the renewal-plan validation matrix with matched seeds:
+- RTLLM hard set (6): `Prob026_asyn_fifo`, `Prob033_freq_divbyfrac`, `Prob034_freq_divbyodd`, `Prob032_freq_divbyeven`, `Prob018_float_multi`, `Prob010_radix2_div`
+- VerilogEval-Spec-to-RTL hard set (6): `Prob149_ece241_2013_q4`, `Prob095_review2015_fsmshift`, `Prob099_m2014_q6c`, `Prob062_bugs_mux2`, `Prob155_lemmings4`, `Prob156_review2015_fancytimer`
+- CVDP medium set (6): deterministic `cid002/cid003` selection by largest prompt length (`input` field).
+
+Use `--selection_profile baseline_hard` to switch back to baseline-pass-rate-driven hard selection.
+
+Example:
+
+```bash
+python scripts/run_diff_mode_benchmark.py \
+  --model_name /models/openai-gpt-oss-120b \
+  --api_backend vllm \
+  --vllm_host vllm \
+  --vllm_port 8888 \
+  --seeds 1 2 \
+  --population_size 4 \
+  --num_generations 2
+```
+
+### Diff robustness diagnostics (`scripts/run_diff_mode_diagnostics.py`)
+
+Run repeated real-LLM stress checks over curated diff-failure cases (escaping, duplicate anchors, minimal context, long-file edits):
+
+```bash
+python scripts/run_diff_mode_diagnostics.py \
+  --model_name /models/openai-gpt-oss-120b \
+  --api_backend vllm \
+  --vllm_host vllm \
+  --vllm_port 8888 \
+  --repeat_per_case 3
+```
 
 ### Backend ablation orchestrator (`scripts/run_backend_ablation.py`)
 

@@ -62,6 +62,7 @@ Typical flow:
 If the vLLM server runs outside the shared Compose network, use `--vllm_host host.docker.internal` (or `172.17.0.1` on typical Linux bridge setups).
 
 The CLI defaults for `--vllm_host` and `--vllm_port` also read `VLLM_HOST` and `VLLM_PORT` from the environment.
+`run_evolution.py`, `run_backend.py`, and `run_one_shot.py` also perform a vLLM `/v1/models` preflight and report `max_model_len`. Use `--vllm_min_model_len` (default `128000`) and `--vllm_preflight_timeout_s` to tune this check.
 
 ## 2. Repository assets
 
@@ -154,6 +155,10 @@ Essential arguments:
   - default: `ucb`
 - `--epsilon`, `--ucb_c`: exploration constants used by the meta-strategies.
 - `--generation_mode {whole,diff}`: default offspring mode for successful parents. Failed parents always fall back to `whole`.
+- `--diff_apply_policy {strict,hybrid,fuzzy}`: diff matching policy (`hybrid` default).
+- `--diff_max_tokens <int>`: lower completion cap for diff requests (default `1024`).
+- `--diff_compact_context/--no-diff_compact_context`: include compact parent context in diff prompts.
+- `--diff_similarity_threshold <float>` / `--diff_fuzzy_margin <float>`: fuzzy fallback controls for ambiguous hunks.
 - `--population_pool_mode {dual,single}`: dual maintains separate fail/success pools; single blends them but throttles fail-derived offspring once successes are available.
 - `--evaluation_mode {standard,gen0}`: switch between the full pipeline and the latency-only Gen0 scorer.
 - `--gen0_evaluate_best`: when used with `--evaluation_mode gen0`, replay the top-ranked candidate through the full functional testbench, synthesis, and OpenROAD PPA flow and store the logs under `Gen0/best_candidate/`.
@@ -266,11 +271,45 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch comparisons.
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
 - `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts).
+- `scripts/run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with matched-seed runs (`--seeds`), fixed hard validation matrix defaults (RTLLM/VerilogEval/CVDP), aggregate token/runtime report output, and diff-failure catalogs.
+- `scripts/run_diff_mode_diagnostics.py`: real-LLM diff robustness diagnostics for parse/apply failure taxonomy over curated stress cases.
+- `scripts/run_diff_prompt_suite.py`: self-contained prompt-optimization suite for diff mode with per-run objective scoring and case-level hard-pass/safe-reject diagnostics.
+- `scripts/summarize_diff_prompt_suite.py`: cross-run leaderboard/report generator for prompt-suite outputs (`summary.md`, `summary.json`, and CSV exports for plotting).
 - `scripts/gen0_report_generator.py`: inspect `Gen0/best_candidate` snapshots, check syntax/simulation/synthesis status, and optionally export Markdown (`--save_markdown`).
 - `scripts/generate_cutoff_compile_result_variants.sh`: reproduce paper tables with a specified gate cutoff (`--gate 50` by default).
 - `scripts/generate_visualizations*.py` and `plot_problem_pareto.py`: create PPA scatter plots or aggregate charts.
 - `scripts/prompt_file_manager.py`: split and merge concatenated prompt bundles.
 - `scripts/run_test.sh`, `run_regression_test.sh`, `run_cvdp_test.sh`: convenience wrappers for curated benchmark subsets.
+
+Diff-mode benchmark example:
+
+```bash
+python scripts/run_diff_mode_benchmark.py \
+  --model_name /models/openai-gpt-oss-120b \
+  --api_backend vllm \
+  --vllm_host vllm \
+  --vllm_port 8888 \
+  --seeds 1 2
+```
+
+Diff diagnostics example:
+
+```bash
+python scripts/run_diff_mode_diagnostics.py \
+  --model_name /models/openai-gpt-oss-120b \
+  --api_backend vllm \
+  --vllm_host vllm \
+  --vllm_port 8888 \
+  --repeat_per_case 3
+```
+
+Diff prompt suite summarizer example:
+
+```bash
+python scripts/summarize_diff_prompt_suite.py \
+  --results_root exp/diff_prompt_suite \
+  --output_dir exp/diff_prompt_suite/summary
+```
 
 All Python helper scripts accept `--help` to show the full argument list.
 
@@ -278,7 +317,8 @@ All Python helper scripts accept `--help` to show the full argument list.
 
 - **Missing executables**: `VerilogEvaluator` and `SynthesisEvaluator` perform `shutil.which` checks at instantiation. If you encounter `FileNotFoundError`, verify that `iverilog`, `vvp`, `yosys`, and `openroad` are discoverable or pass absolute paths when constructing the engines manually.
 - **LLM schema errors**: malformed JSON responses are stored with `_format_error.json` metadata inside the candidate directory. Inspect these files to adjust prompts or retry with a different model.
-- **Diff application failures**: candidates generated in diff mode create `<candidate>_diff_error.json` snapshots so you can review `search`/`replace` hunks.
+- **Diff application failures**: candidates generated in diff mode create `<candidate>_diff_apply_error.json` snapshots with `reason_code`, phase diagnostics, and raw diff payload to speed up triage.
+- **Diff telemetry**: generation logs include `diff_phase_distribution_generation`, `failed_diff_reason_counts_generation`, and `tokens_per_successful_candidate_by_mode_generation` for rapid mode-level regression checks.
 - **Synthesis timeouts**: `SynthesisEvaluator` writes timeout or crash information directly into the `_synthesis_report.rpt` file. Consider loosening the design constraints or increasing resources.
 - **CVDP harness timeouts**: `run_evolution.py` exposes `--cvdp_simulation_timeout_s` (default `120`) for cocotb/pytest harness execution.
 - **Token usage**: generation logs include per-generation token counts (`total_llm_*` fields), handy when budgeting API usage.

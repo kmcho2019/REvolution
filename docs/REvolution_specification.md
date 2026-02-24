@@ -112,7 +112,9 @@ Key state stored on the engine:
 - Pools and population: `fail_pool`, `success_pool`, and `population` (single-pool mode).
 - Reference metrics: `ref_ppa_metrics` (from `<problem>_ppa.txt`).
 - Strategy stats: `fail_strategy_stats`, `success_strategy_stats` (`count` + `value` per strategy).
-- Diff controls: `diff_similarity_threshold`, `diff_length_scale`, `diff_allow_dots`.
+- Diff controls: `diff_apply_policy` (`strict|hybrid|fuzzy`), `diff_max_tokens`,
+  `diff_compact_context`, `diff_similarity_threshold`, `diff_fuzzy_margin`,
+  `diff_length_scale`, `diff_allow_dots`.
 - Single-pool controls: `single_fail_allocation_cap`, `single_success_weight_exp` (and `single_success_min_fraction`, currently unused).
 - Logger instance: `logger` (`EoHLogger`).
 - Prompt store: `prompts = PromptStore(...)`.
@@ -269,7 +271,8 @@ The system expects a **single JSON object**. Strict validation (when enabled) re
 
 Notes:
 
-- The implementation accepts "diff" where `code` is an object containing `edits`.
+- The parser normalizes tolerated variants into canonical form (`top-level edits`, inferred `mode`) before strict checks.
+- Strict diff validation expects single-file edit payloads (one `code.edits` entry).
 - If `require_strict_format=True` (default), any violation yields `failed_format` and skips evaluation.
 - `LLMInterface` also tries to recover from malformed JSON using `_extract_json_obj` and `_repair_json_like`.
 
@@ -285,14 +288,31 @@ Diff JSON (preferred):
 ]}
 ```
 
-Legacy diff format is also supported (SEARCH / REPLACE blocks). The diff applier:
+Legacy diff format is also supported (SEARCH / REPLACE blocks). The diff applier
+uses a deterministic pipeline:
 
-1) Tries exact match.
-2) Tolerates leading whitespace drift.
-3) Supports wildcard lines with `...` (if enabled).
-4) Falls back to fuzzy matching using `SequenceMatcher` with similarity threshold 0.80 and a sliding window scale of +/- 10% of the search length.
+1) strict exact unique matching
+2) whitespace-normalized line matching
+3) guarded fuzzy matching (with optional wildcard `...` support)
 
-If diff application fails, the candidate is marked `failed_diff`, and diagnostics are saved alongside `code.sv`.
+Fuzzy fallback is gated by:
+- threshold (`diff_similarity_threshold`, default `0.86`)
+- ambiguity margin (`diff_fuzzy_margin`, default `0.03`)
+- top-candidate score diagnostics (`best_ratio`, `second_ratio`, top windows)
+
+The `diff_apply_policy` controls strictness:
+- `strict`: exact unique matches only.
+- `hybrid`: exact -> whitespace-normalized -> guarded fuzzy.
+- `fuzzy`: same pipeline with permissive fallback intent.
+
+JSON diff application additionally enforces:
+- single-target-file edits (`multi_file_edit_not_allowed` on violations),
+- preflight exact-anchor overlap detection (`overlap_conflict`),
+- atomic in-order hunk application with per-hunk diagnostics.
+
+If diff application fails, the candidate is marked `failed_diff`, and diagnostics
+are saved alongside `code.sv` in `*_diff_apply_error.json` with structured
+`reason_code`, `reason`, `matching_policy`, `parent_sha256`, and per-hunk metadata.
 
 ---
 
@@ -330,8 +350,8 @@ exp/<model>/<benchmark>/<problem>/Gen0/<problem>_sample<idx>_initial/
 
 3) **Prompt construction**
    - Strategies map to prompt builders; prompt templates are pulled from `PromptStore`.
-   - Fail pool always uses `whole` mode.
-   - Success pool uses configured `generation_mode` (`whole` or `diff`).
+   - Post-Gen0 offspring generation uses configured `generation_mode` (`whole` or `diff`) for both fail and success pools.
+   - Gen0 initialization remains `whole` mode by design.
 
 4) **LLM batch generation**
    - `LLMInterface.generate_batch_responses` executes concurrent requests.
@@ -595,12 +615,17 @@ Primary arguments:
 - `--benchmarks`, `--problems`
 - `--population_size`, `--num_generations`
 - `--generation_mode {whole,diff}`
+- `--diff_apply_policy {strict,hybrid,fuzzy}`
+- `--diff_max_tokens`
+- `--diff_compact_context/--no-diff_compact_context`
+- `--diff_similarity_threshold`, `--diff_fuzzy_margin`
 - `--population_pool_mode {dual,single}`
 - `--strategy_selection {random,epsilon-greedy,ucb}`
 - `--evaluation_mode {standard,gen0}`
 - `--gen0_evaluate_best`, `--gen0_prompt_file`
 - `--api_backend {openai,openrouter,deepseek,gemini,vllm}`
 - `--model_name`, `--vllm_host`, `--vllm_port`
+- `--vllm_min_model_len`, `--vllm_preflight_timeout_s`
 - `--prompt_profile` (choose prompt profile)
 
 Supports YAML/JSON configs via `--config`. Each run writes:
@@ -617,6 +642,8 @@ Legacy snapshots with `resolved_arguments` remain valid `--config` inputs.
 ### 12.3 Reporting and Utilities
 
 - `scripts/evolutionary_report_generator.py`: summarises experiment results into Markdown tables.
+- `scripts/run_diff_mode_benchmark.py`: matched-seed whole-vs-diff benchmark harness (default 6/6/6 hard matrix + failure catalogs).
+- `scripts/run_diff_mode_diagnostics.py`: repeated real-LLM diff robustness diagnostics and parse/apply failure taxonomy.
 - `scripts/gen0_report_generator.py`: checks Gen0 best-candidate snapshots and optionally emits Markdown.
 - `scripts/plot_problem_pareto.py`: PPA scatter plots.
 - `scripts/prompt_file_manager.py`: manage concatenated prompt bundles.

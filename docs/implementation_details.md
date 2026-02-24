@@ -26,8 +26,10 @@ The main execution entry point is `EoHEngine.run()`:
 3. Each generation invokes `evolve_one_generation()`:
    - The engine decides how many offspring originate from fail versus success pools, respecting `population_pool_mode`.
    - `_select_strategy()` picks genetic operators (`M-F`, `M-S`, `M-E`, `M-R`, `M-I`, `C-F`) according to the configured meta-strategy (`random`, `epsilon-greedy`, `ucb`).
-   - Prompt payloads are assembled for each parent set. Prompts are mediated by `PromptStore` and always request “whole” generation for failed parents while respecting the configured `generation_mode` for successful ones.
-   - LLM responses are parsed. Whole-mode responses can be persisted directly; diff-mode responses feed `_apply_diff()` to patch parent code. Any formatting or diff-application error is captured as a failed candidate with supporting artefacts.
+   - Prompt payloads are assembled for each parent set. Prompts are mediated by `PromptStore`; Gen0 is always `whole`, while post-Gen0 offspring generation respects configured `generation_mode` for both fail and success parent pools.
+  - LLM responses are parsed. Whole-mode responses can be persisted directly; diff-mode responses feed `_apply_diff()` to patch parent code.
+  - Diff application is policy-driven (`strict`, `hybrid`, `fuzzy`) and records structured diagnostics (`reason_code`, per-hunk details, phase metadata) for every failed patch.
+  - Any formatting or diff-application error is captured as a failed candidate with supporting artefacts.
    - `_evaluate_candidates()` executes simulation and synthesis in two stages. Simulation failures are summarised and fed back through `LLMInterface.generate_batch_feedback()` for future prompts. Successful candidates continue to synthesis and PPA analysis. Scores are computed with `_calculate_fitness_score()` using relative improvements over reference metrics.
 4. Strategy rewards reinforce the meta-strategy statistics via a stochastic approximation update (`s["value"] = s["value"] + (reward - s["value"]) / s["count"]`), biasing future selections toward productive operators.
 5. The logger records per-generation summaries (`EoHLogger.log_generation`) and, at the end of the run, writes a final summary with the champion candidate and aggregated stats.
@@ -46,14 +48,15 @@ Fitness is defined as the negative relative PPA delta versus the reference desig
 
 `LLMInterface` wraps asynchronous OpenAI-compatible clients and consolidates retry logic, token accounting, and request batching. It supports OpenAI, OpenRouter, DeepSeek, Gemini, and local vLLM deployments. Responses must adhere to the `eoh_v1` JSON schema. When `require_strict_format` is enabled, malformed outputs are skipped and logged with context artefacts.
 
-Prompt construction is delegated to `PromptStore`. Templates live in `data/prompts/<profile>/...` and can be swapped by passing `prompt_profile` and `prompt_root` to the engine. Diff-mode prompts carry the base file contents and expected search strings so the model can emit structured edits that `_apply_diff()` can apply.
+Prompt construction is delegated to `PromptStore`. Templates live in `data/prompts/<profile>/...` and can be swapped by passing `prompt_profile` and `prompt_root` to the engine.
+Diff-mode prompts carry the base file contents and expected search strings so the model can emit structured edits that `_apply_diff()` can apply. To reduce token pressure, diff requests use an independent token budget (`diff_max_tokens`) and can omit duplicated parent code blocks via compact-context prompting (`diff_compact_context`).
 
 ## Logging and persistence
 
 The engine writes everything necessary to reproduce a candidate:
 
 - Generated code and thoughts under `exp/<model>/<benchmark>/<problem>/Gen<idx>/<problem_sample_strategy>/`, where each candidate folder is self-contained (code, thought, diff artefacts, feedback) to avoid collisions during parallel evaluation.
-- Simulation logs, synthesis reports, and diff application traces.
+- Simulation logs, synthesis reports, and diff application traces (`*_diff_apply_error.json` with reason codes and diagnostics).
 - JSONL generation logs with per-candidate metadata and strategy stats.
 - A final `<problem>_summary.json` containing aggregated metrics, champion details, reward histories, and token usage.
 
