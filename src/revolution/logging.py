@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime
 import json
 import os
+import re
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any, Literal
 
@@ -91,6 +92,12 @@ class EoHLogger:
         )
         self.total_diff_attempts: int = 0      # Track the number of diff attempts
         self.total_diff_failed: int = 0        # Track the number of failed diff attempts
+        self.total_candidates_by_mode: defaultdict[str, int] = defaultdict(int)
+        self.total_diff_failure_reason_counts: defaultdict[str, int] = defaultdict(int)
+        self.total_diff_phase_counts: defaultdict[str, int] = defaultdict(int)
+        self.total_successful_candidates_by_mode: defaultdict[str, int] = defaultdict(int)
+        self.total_llm_prompt_tokens_by_mode_estimate: defaultdict[str, int] = defaultdict(int)
+        self.total_llm_completion_tokens_by_mode_estimate: defaultdict[str, int] = defaultdict(int)
         self.strategy_counter: defaultdict[str, int] = defaultdict(
             int
         )  # Accumulated across generations, count of how many times each strategy was used
@@ -281,6 +288,26 @@ class EoHLogger:
         diff_attempts = sum(1 for c in candidates_this_gen if getattr(c, "generated_mode", None) == "diff")
         diff_failed   = sum(1 for c in candidates_this_gen if c.status == "failed_diff")
         diff_pass_rate = ( (diff_attempts - diff_failed) / diff_attempts ) if diff_attempts > 0 else None
+        mode_counts = defaultdict(int)
+        diff_failure_reason_counts = defaultdict(int)
+        diff_phase_counts = defaultdict(int)
+        success_counts_by_mode = defaultdict(int)
+        for c in candidates_this_gen:
+            mode_key = getattr(c, "generated_mode", None) or "unknown"
+            mode_counts[str(mode_key)] += 1
+            if c.status == "success":
+                success_counts_by_mode[str(mode_key)] += 1
+            if str(mode_key) == "diff":
+                phase = getattr(c, "diff_apply_phase", None) or "unknown"
+                diff_phase_counts[str(phase)] += 1
+            if c.status == "failed_diff":
+                reason = "unknown"
+                fb = c.feedback or ""
+                if isinstance(fb, str):
+                    m = re.search(r"DIFF_APPLY_ERROR\[(.*?)\]", fb)
+                    if m and m.group(1):
+                        reason = m.group(1)
+                diff_failure_reason_counts[reason] += 1
         # Status histogram for this generation
         status_counts = defaultdict(int)
         for c in candidates_this_gen:
@@ -397,7 +424,13 @@ class EoHLogger:
                 "attempts": diff_attempts,
                 "failed": diff_failed,
                 "pass_rate": diff_pass_rate,
+                "success_rate": diff_pass_rate,
             },
+            "failed_diff_reason_counts_generation": dict(diff_failure_reason_counts),
+            "diff_phase_distribution_generation": dict(diff_phase_counts),
+            "candidates_by_mode": dict(mode_counts),
+            "llm_tokens_by_mode_estimate": {},
+            "tokens_per_successful_candidate_by_mode_generation": {},
             "success_rates": {
                 "total_format": total_format_success / total_generated if total_generated else 0.0,
                 "total_diff":   total_diff_success / total_generated   if total_generated else 0.0,
@@ -416,6 +449,32 @@ class EoHLogger:
             "strategy_ppa": strategy_ppa_stats,
             "population_ppa_details": population_ppa,
         }
+
+        # Mode-level token estimates are proportional allocation by generated-candidate count.
+        if total_generated > 0:
+            for mode, count in mode_counts.items():
+                share = count / total_generated
+                prompt_est = int(round(llm_prompt_tokens * share))
+                completion_est = int(round(llm_completion_tokens * share))
+                log_entry["llm_tokens_by_mode_estimate"][mode] = {
+                    "prompt_tokens": prompt_est,
+                    "completion_tokens": completion_est,
+                }
+        for mode, success_count in success_counts_by_mode.items():
+            if success_count <= 0:
+                continue
+            token_data = log_entry["llm_tokens_by_mode_estimate"].get(
+                mode, {"prompt_tokens": 0, "completion_tokens": 0}
+            )
+            prompt_tokens_mode = int(token_data.get("prompt_tokens", 0))
+            completion_tokens_mode = int(token_data.get("completion_tokens", 0))
+            total_tokens_mode = prompt_tokens_mode + completion_tokens_mode
+            log_entry["tokens_per_successful_candidate_by_mode_generation"][mode] = {
+                "successful_candidates": success_count,
+                "prompt_tokens_per_success": prompt_tokens_mode / success_count,
+                "completion_tokens_per_success": completion_tokens_mode / success_count,
+                "total_tokens_per_success": total_tokens_mode / success_count,
+            }
 
         # 8. Write to file and update accumulators
         def numpy_converter(o):
@@ -438,6 +497,17 @@ class EoHLogger:
 
         self.total_diff_attempts += diff_attempts   
         self.total_diff_failed   += diff_failed    
+        for mode, count in mode_counts.items():
+            self.total_candidates_by_mode[mode] += count
+        for reason, count in diff_failure_reason_counts.items():
+            self.total_diff_failure_reason_counts[reason] += count
+        for phase, count in diff_phase_counts.items():
+            self.total_diff_phase_counts[phase] += count
+        for mode, count in success_counts_by_mode.items():
+            self.total_successful_candidates_by_mode[mode] += count
+        for mode, token_data in log_entry["llm_tokens_by_mode_estimate"].items():
+            self.total_llm_prompt_tokens_by_mode_estimate[mode] += int(token_data.get("prompt_tokens", 0))
+            self.total_llm_completion_tokens_by_mode_estimate[mode] += int(token_data.get("completion_tokens", 0))
 
         self.generation_stats_summary.append(
             {
@@ -559,6 +629,51 @@ class EoHLogger:
                     (self.total_diff_attempts - self.total_diff_failed) / self.total_diff_attempts
                     if self.total_diff_attempts > 0 else None
                 ),
+                "success_rate": (
+                    (self.total_diff_attempts - self.total_diff_failed) / self.total_diff_attempts
+                    if self.total_diff_attempts > 0 else None
+                ),
+            },
+            "accumulated_diff_failure_reason_counts": dict(self.total_diff_failure_reason_counts),
+            "accumulated_diff_phase_distribution": dict(self.total_diff_phase_counts),
+            "accumulated_candidates_by_mode": dict(self.total_candidates_by_mode),
+            "accumulated_llm_tokens_by_mode_estimate": {
+                mode: {
+                    "prompt_tokens": self.total_llm_prompt_tokens_by_mode_estimate.get(mode, 0),
+                    "completion_tokens": self.total_llm_completion_tokens_by_mode_estimate.get(mode, 0),
+                }
+                for mode in set(
+                    list(self.total_llm_prompt_tokens_by_mode_estimate.keys())
+                    + list(self.total_llm_completion_tokens_by_mode_estimate.keys())
+                )
+            },
+            "tokens_per_successful_candidate_by_mode": {
+                mode: {
+                    "successful_candidates": self.total_successful_candidates_by_mode.get(mode, 0),
+                    "prompt_tokens_per_success": (
+                        self.total_llm_prompt_tokens_by_mode_estimate.get(mode, 0)
+                        / self.total_successful_candidates_by_mode.get(mode, 1)
+                    ),
+                    "completion_tokens_per_success": (
+                        self.total_llm_completion_tokens_by_mode_estimate.get(mode, 0)
+                        / self.total_successful_candidates_by_mode.get(mode, 1)
+                    ),
+                    "total_tokens_per_success": (
+                        (
+                            self.total_llm_prompt_tokens_by_mode_estimate.get(mode, 0)
+                            + self.total_llm_completion_tokens_by_mode_estimate.get(mode, 0)
+                        )
+                        / self.total_successful_candidates_by_mode.get(mode, 1)
+                    ),
+                }
+                for mode in sorted(
+                    set(self.total_successful_candidates_by_mode.keys())
+                    & (
+                        set(self.total_llm_prompt_tokens_by_mode_estimate.keys())
+                        | set(self.total_llm_completion_tokens_by_mode_estimate.keys())
+                    )
+                )
+                if self.total_successful_candidates_by_mode.get(mode, 0) > 0
             },
             "accumulated_success_rates": acc_rates,
             "ref_ppa_metric": self.ref_ppa_metrics,

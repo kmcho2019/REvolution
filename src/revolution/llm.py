@@ -37,6 +37,7 @@ class LLMRequest(TypedDict):
     prompt: str
     generation_mode: NotRequired[Literal["whole", "diff"]]
     system_prompt: NotRequired[str]
+    max_tokens: NotRequired[int]
 
 
 class LLMInterface:
@@ -53,6 +54,7 @@ class LLMInterface:
         model_name: str = "gpt-3.5-turbo",
         api_backend: str = "openai",
         max_retries: int = 15,
+        max_empty_response_attempts: int = 2,
         base_delay: float = 2.0,
         port: int = 8000,
         vllm_host: str = "localhost",
@@ -78,6 +80,9 @@ class LLMInterface:
         self.api_backend: str = api_backend  # Backend API to use, e.g., "openai", "openrouter", "deepseek", etc.
         self.model_name: str = model_name
         self.max_retries: int = max_retries  # Maximum number of retries
+        self.max_empty_response_attempts: int = max(
+            1, int(max_empty_response_attempts)
+        )  # Prevent expensive retry storms on blank completions.
         self.base_delay: float = base_delay  # Base delay in seconds for backoff
 
         # Configure arguments for the AsyncOpenAI client based on the backend
@@ -128,6 +133,120 @@ class LLMInterface:
         self.lock: asyncio.Lock = (
             asyncio.Lock()
         )  # Make counter thread-safe with async calls
+
+    def _whole_system_prompt(self) -> str:
+        return (
+            "You are an expert Verilog design assistant. "
+            "Your role is to address Verilog-related problems posed by the user. "
+            "You MUST provide your response as a single JSON object for each problem.\n"
+            r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.\n'
+            "The JSON object must have four keys:\n"
+            '1. "format": "eoh_v1"\n'
+            '2. "mode": "whole"\n'
+            '3. "thought": A string containing your concise design idea or conceptual plan.\n'
+            '4. "code": A string containing the complete, runnable Verilog implementation of your thought.\n'
+            "Rules:\n"
+            "- The response must be valid JSON."
+            "- Escape newlines in strings as \n and double quotes as \" as required by JSON."
+            "- Do not include commentary outside the JSON.\n"
+            "Example format:\n"
+            '{\n'
+            '  "format": "eoh_v1",\n'
+            '  "mode": "whole",\n'
+            '  "thought": "My design plan is to use a finite state machine to control the traffic light sequence.",\n'
+            '  "code": "module traffic_light(...);\\n  // ... verilog code ...\\nendmodule"\n'
+            '}\n'
+        )
+
+    def _diff_system_prompt(self) -> str:
+        return (
+            "You are an expert Verilog design assistant that modifies code based on user requests.\n"
+            "You will be given the file path, the file content, and instructions for what to change.\n"
+            "Return exactly ONE JSON object and nothing else. Do not include Markdown code fences, backticks, or extra text.\n"
+            r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.\n'
+            "The JSON object must have four keys:\n"
+            '1. "format": "eoh_v1"\n'
+            '2. "mode": "diff"\n'
+            '3. "thought": A string containing your conceptual idea for the changes.\n'
+            "4) \"code\": An object describing edits with this schema:\n\n"
+            "\"code\": {\n"
+            "  \"edits\": [\n"
+            "    {\n"
+            "      \"file\": \"<path/to/file.sv>\",\n"
+            "      \"hunks\": [\n"
+            "        { \"search\": \"<exact text to match>\\n\", \"replace\": \"<replacement text>\\n\" }\n"
+            "      ]\n"
+            "    }\n"
+            "  ]\n"
+            "}\n\n"
+            "Rules:\n"
+            "- The response must be valid JSON (no Markdown, no backticks).\n"
+            "- Edit exactly ONE file unless the user explicitly requests multi-file edits.\n"
+            "- The search text must match the existing file content exactly (including whitespace and comments).\n"
+            "- Use concise, non-overlapping hunks.\n"
+            "- Use the smallest unique search anchors that still match exactly once.\n"
+            "- Prefer multiple small hunks over one very large hunk.\n"
+            "- Use an empty search only for append/new-file behavior.\n"
+            "- Escape newlines as \\n and quotes as needed.\n\n"
+            "Example:\n"
+            "{\n"
+            "  \"format\": \"eoh_v1\",\n"
+            "  \"mode\": \"diff\",\n"
+            "  \"thought\": \"Import math to support new calculations.\",\n"
+            "  \"code\": {\n"
+            "    \"edits\": [\n"
+            "      {\n"
+            "        \"file\": \"mathweb/flask/app.py\",\n"
+            "        \"hunks\": [\n"
+            "          {\n"
+            "            \"search\": \"from flask import Flask\\n\",\n"
+            "            \"replace\": \"import math\\nfrom flask import Flask\\n\"\n"
+            "          }\n"
+            "        ]\n"
+            "      }\n"
+            "    ]\n"
+            "  }\n"
+            "}\n"
+        )
+
+    def _normalize_eoh_payload(self, obj: dict[str, Any]) -> tuple[dict[str, Any], str | None]:
+        """
+        Normalize tolerated EOH variants into canonical shape without hiding
+        strict-schema errors.
+        Canonical target:
+          {"format":"eoh_v1", "mode":"whole|diff", "thought":str, "code":str|{"edits":[...]}}
+        """
+        if not isinstance(obj, dict):
+            return obj, "top-level is not an object"
+
+        normalized = dict(obj)
+        mode = normalized.get("mode")
+        code = normalized.get("code")
+
+        # Tolerate top-level edits for diff mode.
+        if code is None and isinstance(normalized.get("edits"), list):
+            code = {"edits": normalized["edits"]}
+            normalized["code"] = code
+
+        # Tolerate code as an edits list.
+        if isinstance(code, list):
+            code = {"edits": code}
+            normalized["code"] = code
+
+        # Infer mode when omitted and code shape is unambiguous.
+        if mode is None:
+            if isinstance(code, str):
+                mode = "whole"
+            elif isinstance(code, dict) and "edits" in code:
+                mode = "diff"
+            normalized["mode"] = mode
+
+        return normalized, None
+
+    def _build_system_prompt(self, generation_mode: Literal["whole", "diff"]) -> str:
+        if generation_mode == "diff":
+            return self._diff_system_prompt()
+        return self._whole_system_prompt()
 
     def set_debug(self, enabled: bool) -> None:
         """
@@ -472,24 +591,62 @@ class LLMInterface:
         if not isinstance(obj, dict):
             return False, {}, "top-level is not an object"
 
-        if obj.get("format") != "eoh_v1":
+        normalized_obj, norm_err = self._normalize_eoh_payload(obj)
+        if norm_err:
+            return False, {}, norm_err
+
+        if normalized_obj.get("format") != "eoh_v1":
             return False, {}, 'missing/invalid "format":"eoh_v1"'
 
-        mode = obj.get("mode")
+        mode = normalized_obj.get("mode")
         if mode not in ("whole", "diff"):
             return False, {}, 'missing/invalid "mode" ("whole"|"diff")'
 
-        thought = obj.get("thought")
+        thought = normalized_obj.get("thought")
         if not isinstance(thought, str) or not thought:
             return False, {}, 'missing/invalid "thought" (non-empty string required)'
 
-        code = obj.get("code")
+        code = normalized_obj.get("code")
         if mode == "whole":
             if not isinstance(code, str) or not code:
                 return False, {}, 'missing/invalid "code" (non-empty string required for whole)'
         else:  # diff
-            if not isinstance(code, dict) or "edits" not in code or not isinstance(code["edits"], list):
-                return False, {}, 'missing/invalid "code.edits" (list required for diff)'
+            if not isinstance(code, dict):
+                return False, {}, 'missing/invalid "code" (object required for diff)'
+            edits = code.get("edits")
+            if not isinstance(edits, list) or not edits:
+                return False, {}, 'missing/invalid "code.edits" (non-empty list required for diff)'
+            if len(edits) > 1:
+                return False, {}, 'invalid "code.edits" (single-file diff expected; received multiple edit blocks)'
+            edit_files: set[str] = set()
+            for edit_idx, edit in enumerate(edits):
+                if not isinstance(edit, dict):
+                    return False, {}, f'code.edits[{edit_idx}] must be an object'
+                file_path = edit.get("file")
+                if not isinstance(file_path, str) or not file_path.strip():
+                    return False, {}, f'code.edits[{edit_idx}].file must be a non-empty string'
+                edit_files.add(file_path.strip())
+                hunks = edit.get("hunks")
+                if not isinstance(hunks, list) or not hunks:
+                    return False, {}, f'code.edits[{edit_idx}].hunks must be a non-empty list'
+                seen_search_anchors: set[str] = set()
+                for hunk_idx, hunk in enumerate(hunks):
+                    if not isinstance(hunk, dict):
+                        return False, {}, f'code.edits[{edit_idx}].hunks[{hunk_idx}] must be an object'
+                    search = hunk.get("search")
+                    replace = hunk.get("replace")
+                    if not isinstance(search, str):
+                        return False, {}, f'code.edits[{edit_idx}].hunks[{hunk_idx}].search must be a string'
+                    if not isinstance(replace, str):
+                        return False, {}, f'code.edits[{edit_idx}].hunks[{hunk_idx}].replace must be a string'
+                    if not search and not replace:
+                        return False, {}, f'code.edits[{edit_idx}].hunks[{hunk_idx}] cannot have both empty search and replace'
+                    if search.strip():
+                        if search in seen_search_anchors:
+                            return False, {}, f'code.edits[{edit_idx}] contains duplicate non-empty search anchors; hunks must not overlap'
+                        seen_search_anchors.add(search)
+            if len(edit_files) > 1:
+                return False, {}, 'invalid "code.edits" (multi-file edits are not allowed in strict diff mode)'
 
         return True, {"mode": mode, "thought": thought, "code": code}, None
 
@@ -534,85 +691,9 @@ class LLMInterface:
         # print(f"Model: {self.model_name}, Temperature: {temperature}, Max Tokens: {max_tokens}, Top P: {top_p}")
 
         full_response_text = ""
+        empty_response_count = 0
 
-        system_prompt_content = ""
-        if generation_mode == "whole":
-            system_prompt_content = (
-                "You are an expert Verilog design assistant. "
-                "Your role is to address Verilog-related problems posed by the user. "
-                "You MUST provide your response as a single JSON object for each problem.\n"
-                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.\n'
-                "The JSON object must have four keys:\n"
-                '1. "format": "eoh_v1"\n'  # The format version of the response (The format version of the response currently eoh_v1)
-                '2. "mode": "whole"\n'  # The mode of generation (The mode of generation either whole or diff, currently whole)
-                '3. "thought": A string containing your concise design idea or conceptual plan.\n'
-                '4. "code": A string containing the complete, runnable Verilog implementation of your thought.\n'
-                "Rules:\n"
-                "- The response must be valid JSON."
-                "- Escape newlines in strings as \n and double quotes as \" as required by JSON."
-                "- Do not include commentary outside the JSON.\n"
-                "Example format:\n"
-                '{\n'
-                '  "format": "eoh_v1",\n'
-                '  "mode": "whole",\n'
-                '  "thought": "My design plan is to use a finite state machine to control the traffic light sequence.",\n'
-                '  "code": "module traffic_light(...);\\n  // ... verilog code ...\\nendmodule"\n'
-                '}\n'
-            )
-        else:  # diff mode
-            system_prompt_content = (
-                "You are an expert Verilog design assistant that modifies code based on user requests.\n"
-                "You will be given the file path, the file content, and instructions for what to change.\n"
-                "Return exactly ONE JSON object and nothing else. Do not include Markdown code fences, backticks, or extra text.\n"
-                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.\n'
-                "The JSON object must have four keys:\n"
-                '1. "format": "eoh_v1"\n'  # The format version of the response (The format version of the response currently eoh_v1)
-                '2. "mode": "diff"\n'  # The mode of generation (The mode of generation either whole or diff, currently diff)
-                '3. "thought": A string containing your conceptual idea for the changes.\n'
-                "4) \"code\": An object describing edits with this schema:\n\n"
-                "\"code\": {\n"
-                "  \"edits\": [\n"
-                "    {\n"
-                "      \"file\": \"<path/to/file.sv>\",\n"
-                "      \"hunks\": [\n"
-                "        { \"search\": \"<exact text to match>\\n\", \"replace\": \"<replacement text>\\n\" }\n"
-                "      ]\n"
-                "    }\n"
-                "  ]\n"
-                "}\n\n"
-                "Rules:\n"
-                "- The search text must match the existing file content exactly (including whitespace and comments).\n"
-                "- Use multiple hunks per file if needed.\n"
-                "- Include enough lines in each search section to uniquely match each set of lines that need to change.\n"
-                "- Keep search/replace hunks concise.\n"
-                "- Break large search/replace hunks into a series of smaller hunks that each change a small portion of the file.\n"
-                "- Include just the changing lines, and a few surrounding lines if needed for uniqueness.\n"
-                "- Do not include long runs of unchanging lines in search/replace hunks.\n"
-                "- To create a new file (e.g., from a Crossover strategy or initial generation), include an edit with an empty search: "
-                "{ \"file\": \"new_file.sv\", \"hunks\": [ { \"search\": \"\", \"replace\": \"<full file contents>\\n\" } ] }.\n"
-                "- Sometimes the file path may not be known, in which case you can use a placeholder like `new_file.sv`.\n"
-                "- The response must be valid JSON (no Markdown, no backticks).\n"
-                "- Escape newlines as \\n and quotes as needed.\n\n"
-                "Example:\n"
-                "{\n"
-                "  \"format\": \"eoh_v1\",\n"
-                "  \"mode\": \"diff\",\n"
-                "  \"thought\": \"Import math to support new calculations.\",\n"
-                "  \"code\": {\n"
-                "    \"edits\": [\n"
-                "      {\n"
-                "        \"file\": \"mathweb/flask/app.py\",\n"
-                "        \"hunks\": [\n"
-                "          {\n"
-                "            \"search\": \"from flask import Flask\\n\",\n"
-                "            \"replace\": \"import math\\nfrom flask import Flask\\n\"\n"
-                "          }\n"
-                "        ]\n"
-                "      }\n"
-                "    ]\n"
-                "  }\n"
-                "}\n"
-            )
+        system_prompt_content = self._build_system_prompt(generation_mode)
 
         # If system_prompt_override is provided, use it instead of the default
         if system_prompt_override:
@@ -669,18 +750,29 @@ class LLMInterface:
                         code_str = self._maybe_unescape_code(code) if isinstance(code, str) else json.dumps(code, separators=(",", ":"))
                         return thought, code_str, {"format_ok": True, "error": None, "raw": raw, "parsed_mode": mode}
 
-                    # fallback: lenient parse for convenience, but mark as error
-                    thought_loose, code_loose = self.parse_thought_and_code(raw)
-
-                    # If the response content is non-empty, return the leniently parsed values.
                     if raw:
+                        # fallback: lenient parse for convenience, but mark as error
+                        thought_loose, code_loose = self.parse_thought_and_code(raw)
                         return thought_loose, code_loose, {"format_ok": False, "error": f"strict-parse failed: {err}", "raw": raw, "parsed_mode": None}
 
-                    # If content is None or empty, we'll treat it as a retriable issue.
-                    # The code will fall through to the retry logic below.
+                    # Empty content: retry only a bounded number of times to avoid
+                    # spending excessive tokens with reasoning models that repeatedly
+                    # return blank assistant content.
+                    empty_response_count += 1
                     print(
                         f"Warning: Received empty response from API on attempt {attempt + 1}/{self.max_retries}."
                     )
+                    if empty_response_count >= self.max_empty_response_attempts:
+                        print(
+                            "Empty-response retry budget exhausted. Returning failure."
+                        )
+                        return None, None, {
+                            "format_ok": False,
+                            "error": "empty-response-retries-exhausted",
+                            "raw": "",
+                            "parsed_mode": None,
+                        }
+                    continue
 
                 except (
                     APIConnectionError,
@@ -759,84 +851,7 @@ class LLMInterface:
         """
         print(f"\n--- Sending Single-Prompt Batch Request for {n} responses ---")
 
-        system_prompt_content = ""
-        if generation_mode == "whole":
-            system_prompt_content = (
-                "You are an expert Verilog design assistant. "
-                "Your role is to address Verilog-related problems posed by the user. "
-                "You MUST provide your response as a single JSON object for each problem.\n"
-                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.\n'
-                "The JSON object must have four keys:\n"
-                '1. "format": "eoh_v1"\n'  # The format version of the response (The format version of the response currently eoh_v1)
-                '2. "mode": "whole"\n'  # The mode of generation (The mode of generation either whole or diff, currently whole)
-                '3. "thought": A string containing your concise design idea or conceptual plan.\n'
-                '4. "code": A string containing the complete, runnable Verilog implementation of your thought.\n'
-                "Rules:\n"
-                "- The response must be valid JSON."
-                "- Escape newlines in strings as \n and double quotes as \" as required by JSON."
-                "- Do not include commentary outside the JSON.\n"
-                "Example format:\n"
-                '{\n'
-                '  "format": "eoh_v1",\n'
-                '  "mode": "whole",\n'
-                '  "thought": "My design plan is to use a finite state machine to control the traffic light sequence.",\n'
-                '  "code": "module traffic_light(...);\\n  // ... verilog code ...\\nendmodule"\n'
-                '}\n'
-            )
-        else:  # diff mode
-            system_prompt_content = (
-                "You are an expert Verilog design assistant that modifies code based on user requests.\n"
-                "You will be given the file path, the file content, and instructions for what to change.\n"
-                "Return exactly ONE JSON object and nothing else. Do not include Markdown code fences, backticks, or extra text.\n"
-                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.\n'
-                "The JSON object must have four keys:\n"
-                '1. "format": "eoh_v1"\n'  # The format version of the response (The format version of the response currently eoh_v1)
-                '2. "mode": "diff"\n'  # The mode of generation (The mode of generation either whole or diff, currently diff)
-                '3. "thought": A string containing your conceptual idea for the changes.\n'
-                "4) \"code\": An object describing edits with this schema:\n\n"
-                "\"code\": {\n"
-                "  \"edits\": [\n"
-                "    {\n"
-                "      \"file\": \"<path/to/file.sv>\",\n"
-                "      \"hunks\": [\n"
-                "        { \"search\": \"<exact text to match>\\n\", \"replace\": \"<replacement text>\\n\" }\n"
-                "      ]\n"
-                "    }\n"
-                "  ]\n"
-                "}\n\n"
-                "Rules:\n"
-                "- The search text must match the existing file content exactly (including whitespace and comments).\n"
-                "- Use multiple hunks per file if needed.\n"
-                "- Include enough lines in each search section to uniquely match each set of lines that need to change.\n"
-                "- Keep search/replace hunks concise.\n"
-                "- Break large search/replace hunks into a series of smaller hunks that each change a small portion of the file.\n"
-                "- Include just the changing lines, and a few surrounding lines if needed for uniqueness.\n"
-                "- Do not include long runs of unchanging lines in search/replace hunks.\n"
-                "- To create a new file (e.g., from a Crossover strategy or initial generation), include an edit with an empty search: "
-                "{ \"file\": \"new_file.sv\", \"hunks\": [ { \"search\": \"\", \"replace\": \"<full file contents>\\n\" } ] }.\n"
-                "- Sometimes the file path may not be known, in which case you can use a placeholder like `new_file.sv`.\n"
-                "- The response must be valid JSON (no Markdown, no backticks).\n"
-                "- Escape newlines as \\n and quotes as needed.\n\n"
-                "Example:\n"
-                "{\n"
-                "  \"format\": \"eoh_v1\",\n"
-                "  \"mode\": \"diff\",\n"
-                "  \"thought\": \"Import math to support new calculations.\",\n"
-                "  \"code\": {\n"
-                "    \"edits\": [\n"
-                "      {\n"
-                "        \"file\": \"mathweb/flask/app.py\",\n"
-                "        \"hunks\": [\n"
-                "          {\n"
-                "            \"search\": \"from flask import Flask\\n\",\n"
-                "            \"replace\": \"import math\\nfrom flask import Flask\\n\"\n"
-                "          }\n"
-                "        ]\n"
-                "      }\n"
-                "    ]\n"
-                "  }\n"
-                "}\n"
-            )
+        system_prompt_content = self._build_system_prompt(generation_mode)
 
         # If system_prompt_override is provided, use it instead of the default
         if system_prompt_override:
@@ -902,10 +917,11 @@ class LLMInterface:
                                 code_str = self._maybe_unescape_code(code) if isinstance(code, str) else json.dumps(code, separators=(",", ":"))
                                 out.append((thought, code_str, {"format_ok": True, "error": None, "raw": raw, "parsed_mode": mode}))
                             else:
-                                # If content is not empty, add a failed response
                                 if raw:
                                     thought_loose, code_loose = self.parse_thought_and_code(raw)
                                     out.append((thought_loose, code_loose, {"format_ok": False, "error": f"strict-parse failed: {err}", "raw": raw, "parsed_mode": None}))
+                                else:
+                                    out.append((None, None, {"format_ok": False, "error": "empty-response", "raw": "", "parsed_mode": None}))
 
                         # Concurrently request the remaining responses.
                         num_remaining = n - len(out)
@@ -943,10 +959,11 @@ class LLMInterface:
                             code_str = self._maybe_unescape_code(code) if isinstance(code, str) else json.dumps(code, separators=(",", ":"))
                             out.append((thought, code_str, {"format_ok": True, "error": None, "raw": raw, "parsed_mode": mode}))
                         else:
-                            # If content is not empty, add a failed response
                             if raw:
                                 thought_loose, code_loose = self.parse_thought_and_code(raw)
                                 out.append((thought_loose, code_loose, {"format_ok": False, "error": f"strict-parse failed: {err}", "raw": raw, "parsed_mode": None}))
+                            else:
+                                out.append((None, None, {"format_ok": False, "error": "empty-response", "raw": "", "parsed_mode": None}))
                     return out
 
                 except BadRequestError as e:
@@ -1329,7 +1346,7 @@ class LLMInterface:
                 p["prompt"],
                 temperature,
                 top_p,
-                max_tokens,
+                p.get("max_tokens", max_tokens),
                 generation_mode=p.get("generation_mode", "whole"),
                 system_prompt_override=p.get(
                     "system_prompt"

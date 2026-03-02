@@ -4,6 +4,8 @@ import multiprocessing
 import os
 import sys
 import time
+import random
+import hashlib
 
 from tqdm import tqdm
 
@@ -22,6 +24,7 @@ from revolution.algorithm import EoHEngine, CVDPEngine, Gen0LatencyEngine
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
 from revolution.llm import LLMInterface
 from revolution.utils import StreamRedirector
+from revolution.vllm_preflight import preflight_vllm_model
 from revolution.configuration import (
     ConfigError,
     load_config_file,
@@ -41,6 +44,19 @@ def run_problem_worker(args_tuple):
     """
     # Unpack arguments
     benchmark, problem, args = args_tuple
+
+    # Optional deterministic seeding for reproducible whole-vs-diff comparisons.
+    base_seed = getattr(args, "seed", None)
+    if base_seed is not None:
+        seed_key = f"{base_seed}:{benchmark}:{problem}".encode("utf-8")
+        task_seed = int(hashlib.sha256(seed_key).hexdigest()[:8], 16)
+        random.seed(task_seed)
+        try:
+            import numpy as np
+
+            np.random.seed(task_seed % (2**32 - 1))
+        except Exception:
+            pass
 
     # Individual Log Setup
     model_name_cleaned = args.model_name.replace("/", "_")
@@ -77,6 +93,8 @@ def run_problem_worker(args_tuple):
         print(
             f"\n[Worker PID: {os.getpid()}] Starting problem: {benchmark}/{problem}\n"
         )
+        if base_seed is not None:
+            print(f"[Seed] base_seed={base_seed} task_seed={task_seed}")
 
         # Initialize objects within the worker process to avoid pickling issues
         # Determine the API key based on the selected backend
@@ -89,6 +107,9 @@ def run_problem_worker(args_tuple):
             api_key = os.getenv("DEEPSEEK_API_KEY")
         elif args.api_backend == "gemini":
             api_key = os.getenv("GEMINI_API_KEY")
+        elif args.api_backend == "vllm":
+            # OpenAI-compatible clients often still require a non-empty api_key argument.
+            api_key = os.getenv("OPENAI_API_KEY") or "vllm-local-placeholder"
 
 
         if args.api_backend != "vllm":  # vllm does not require an API key
@@ -169,6 +190,11 @@ def run_problem_worker(args_tuple):
                 ucb_c=args.ucb_c,
                 generation_mode=args.generation_mode,
                 population_pool_mode=args.population_pool_mode,
+                diff_apply_policy=args.diff_apply_policy,
+                diff_max_tokens=args.diff_max_tokens,
+                diff_compact_context=args.diff_compact_context,
+                diff_similarity_threshold=args.diff_similarity_threshold,
+                diff_fuzzy_margin=args.diff_fuzzy_margin,
                 prompt_profile=target_prompt_profile,             # System prompt profile
                 prompt_root=None,                     # Use default prompt root (data/prompts/)  
                 candidate_workers=candidate_workers,
@@ -191,6 +217,11 @@ def run_problem_worker(args_tuple):
                 ucb_c=args.ucb_c,
                 generation_mode=args.generation_mode,
                 population_pool_mode=args.population_pool_mode,
+                diff_apply_policy=args.diff_apply_policy,
+                diff_max_tokens=args.diff_max_tokens,
+                diff_compact_context=args.diff_compact_context,
+                diff_similarity_threshold=args.diff_similarity_threshold,
+                diff_fuzzy_margin=args.diff_fuzzy_margin,
                 prompt_profile=target_prompt_profile,             # System prompt profile
                 prompt_root=None,                     # Use default prompt root (data/prompts/)  
                 candidate_workers=candidate_workers,
@@ -315,6 +346,18 @@ def main():
         help="Hostname or IP for the vLLM OpenAI-compatible server. Defaults to VLLM_HOST or localhost.",
     )
     parser.add_argument(
+        "--vllm_preflight_timeout_s",
+        type=float,
+        default=5.0,
+        help="Timeout (seconds) for vLLM /v1/models preflight checks.",
+    )
+    parser.add_argument(
+        "--vllm_min_model_len",
+        type=int,
+        default=int(os.getenv("VLLM_MIN_MODEL_LEN", "128000")),
+        help="Recommended minimum max_model_len for vLLM reasoning runs (warn-only gate).",
+    )
+    parser.add_argument(
         "--model_name",
         type=str,
         default="gpt-4.1-mini",
@@ -350,6 +393,12 @@ def main():
     parser.add_argument("--top_p", type=float, default=0.95)
     parser.add_argument("--max_tokens", type=int, default=2048)
     parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Optional base seed for deterministic strategy/parent sampling per (benchmark, problem).",
+    )
+    parser.add_argument(
         "--strategy_selection",
         type=str,
         default="ucb",
@@ -376,6 +425,37 @@ def main():
         help="Mode of generation, either 'whole' (full code) or 'diff' (code diffs). "
         "In 'whole' mode, the entire code is generated. "
         "In 'diff' mode, only the differences from the original code are generated.",
+    )
+    parser.add_argument(
+        "--diff_apply_policy",
+        type=str,
+        default="hybrid",
+        choices=["strict", "hybrid", "fuzzy"],
+        help="Diff apply behavior: strict exact matching, hybrid strict+guarded-fuzzy, or fuzzy-first.",
+    )
+    parser.add_argument(
+        "--diff_max_tokens",
+        type=int,
+        default=1024,
+        help="Per-request max token budget used for diff-mode offspring generation.",
+    )
+    parser.add_argument(
+        "--diff_compact_context",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="When true, reduce duplicated parent-code context in diff prompts to save tokens.",
+    )
+    parser.add_argument(
+        "--diff_similarity_threshold",
+        type=float,
+        default=0.86,
+        help="Minimum fuzzy similarity threshold used by diff matching fallback.",
+    )
+    parser.add_argument(
+        "--diff_fuzzy_margin",
+        type=float,
+        default=0.03,
+        help="Required score gap between top fuzzy matches to avoid ambiguous diff application.",
     )
     parser.add_argument(
         "--population_pool_mode",
@@ -505,6 +585,22 @@ def main():
                     f"LLM Initialization Error: The environment variable '{required_key_var}' must be set for the '{args.api_backend}' backend."
                 )
                 exit(1)
+    else:
+        preflight = preflight_vllm_model(
+            host=args.vllm_host,
+            port=args.vllm_port,
+            min_model_len=args.vllm_min_model_len,
+            timeout_s=args.vllm_preflight_timeout_s,
+        )
+        endpoint = preflight.get("endpoint")
+        model_id = preflight.get("model_id")
+        max_len = preflight.get("max_model_len")
+        print(
+            f"[vLLM preflight] endpoint={endpoint} model={model_id} "
+            f"max_model_len={max_len} min_required={args.vllm_min_model_len}"
+        )
+        if preflight.get("warning"):
+            print(f"[vLLM preflight] WARNING: {preflight['warning']}")
 
     # --- Task helpers ---
     # >>> CVDP INTEGRATION: helper to read CVDP ids filtered by categories (case-insensitive)

@@ -95,6 +95,17 @@ def test_backend_parser_defaults_strategy_selection_to_ucb():
     assert args.strategy_selection == "ucb"
 
 
+def test_backend_parser_includes_diff_controls_and_vllm_threshold():
+    parser, _ = _build_parser()
+    args, _ = parser.parse_known_args([])
+    assert args.diff_apply_policy == "hybrid"
+    assert args.diff_max_tokens == 1024
+    assert args.diff_compact_context is True
+    assert args.diff_similarity_threshold == pytest.approx(0.86)
+    assert args.diff_fuzzy_margin == pytest.approx(0.03)
+    assert args.vllm_min_model_len == 128000
+
+
 def test_load_reference_ppa_metrics_parses_reference_file(tmp_path):
     bench = tmp_path / "bench" / "Bench"
     bench.mkdir(parents=True, exist_ok=True)
@@ -203,3 +214,73 @@ def test_run_backend_generated_config_roundtrip_and_edit(monkeypatch, tmp_path):
     assert rc_modified == 0
     modified_model_root = tmp_path / "run_b" / "revolution" / "stub-model"
     assert sorted(modified_model_root.glob("*_revolution_config.yaml"))
+
+
+def test_run_backend_calls_vllm_preflight_and_prints_warning(monkeypatch, tmp_path, capsys):
+    def fake_discover(args):
+        return [("RTLLM", "Prob001_accu", args)]
+
+    def fake_worker(payload):
+        benchmark, problem, args, _task_index = payload
+        model_name_cleaned = args.model_name.replace("/", "_")
+        problem_dir = (
+            Path(_effective_save_path(args))
+            / model_name_cleaned
+            / benchmark
+            / problem
+        )
+        problem_dir.mkdir(parents=True, exist_ok=True)
+        log_path = problem_dir / "problem_run.log"
+        log_path.write_text("fake worker log\n", encoding="utf-8")
+        return ("ok", str(log_path))
+
+    preflight_calls = []
+
+    def fake_preflight(host, port, min_model_len, timeout_s):
+        preflight_calls.append((host, port, min_model_len, timeout_s))
+        return {
+            "endpoint": "http://vllm:8888/v1/models",
+            "model_id": "m",
+            "max_model_len": 32000,
+            "warning": "short context",
+        }
+
+    monkeypatch.setattr("scripts.run_backend._discover_tasks", fake_discover)
+    monkeypatch.setattr("scripts.run_backend.run_problem_worker", fake_worker)
+    monkeypatch.setattr("scripts.run_backend.preflight_vllm_model", fake_preflight)
+
+    rc = run_backend_main(
+        [
+            "--backend",
+            "revolution",
+            "--benchmarks",
+            "RTLLM",
+            "--problems",
+            "Prob001_accu",
+            "--api_backend",
+            "vllm",
+            "--model_name",
+            "stub-model",
+            "--save_path",
+            str(tmp_path / "run"),
+            "--num_workers",
+            "1",
+            "--population_size",
+            "1",
+            "--num_generations",
+            "0",
+            "--vllm_host",
+            "vllm",
+            "--vllm_port",
+            "8888",
+            "--vllm_min_model_len",
+            "128000",
+            "--vllm_preflight_timeout_s",
+            "9",
+        ]
+    )
+    assert rc == 0
+    assert preflight_calls == [("vllm", 8888, 128000, 9.0)]
+    captured = capsys.readouterr()
+    assert "[vLLM preflight]" in captured.out
+    assert "WARNING: short context" in captured.out

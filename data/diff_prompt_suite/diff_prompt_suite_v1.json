@@ -1,0 +1,151 @@
+{
+  "suite_name": "diff_prompt_optimization_suite_v1",
+  "version": 1,
+  "description": "Self-contained stress suite for evaluating diff-mode prompting and diff-apply robustness on hard editing scenarios.",
+  "cases": [
+    {
+      "id": "quote_escape",
+      "description": "String quote escaping and literal replacement.",
+      "tags": ["escaping", "json", "format"],
+      "file_to_edit": "/tmp/suite_quote_escape.sv",
+      "original_file": "module quote_case;\n  string s = \"A\";\nendmodule\n",
+      "change_request": "Rename the string literal from A to AX while keeping Verilog syntax valid.",
+      "expected_behavior": "apply_success",
+      "must_contain": ["string s = \"AX\";"],
+      "must_not_contain": ["string s = \"A\";"],
+      "safe_reject_reason_codes": []
+    },
+    {
+      "id": "newline_reset_insert",
+      "description": "Add reset input and reset branch to existing always_ff block.",
+      "tags": ["newline", "escaping", "sequential"],
+      "file_to_edit": "/tmp/suite_newline_reset.sv",
+      "original_file": "module reset_case(input logic clk, input logic d, output logic q);\n  always_ff @(posedge clk) begin\n    q <= d;\n  end\nendmodule\n",
+      "change_request": "Add input rst and make reset synchronous active-high so q is set to 1'b0 when rst is asserted.",
+      "expected_behavior": "apply_success",
+      "must_contain": ["input logic rst", "if (rst)", "q <= 1'b0;"],
+      "must_not_contain": [],
+      "safe_reject_reason_codes": []
+    },
+    {
+      "id": "duplicate_anchor_disambiguated",
+      "description": "Change one of two similar always_ff blocks while preserving the other.",
+      "tags": ["duplicate-anchor", "disambiguation", "safety"],
+      "file_to_edit": "/tmp/suite_duplicate_disambiguated.sv",
+      "original_file": "module dup_case(input logic clk, input logic a, output logic y);\n  // TARGET_BLOCK\n  always_ff @(posedge clk) begin\n    y <= a;\n  end\n  // KEEP_BLOCK\n  always_ff @(posedge clk) begin\n    y <= a;\n  end\nendmodule\n",
+      "change_request": "Only in TARGET_BLOCK, change y <= a; to y <= ~a;. KEEP_BLOCK must remain unchanged.",
+      "expected_behavior": "apply_success",
+      "must_contain": ["// TARGET_BLOCK", "y <= ~a;", "// KEEP_BLOCK", "y <= a;"],
+      "must_not_contain": [],
+      "safe_reject_reason_codes": []
+    },
+    {
+      "id": "minimal_context_xor",
+      "description": "Minimal anchor edit from AND to XOR.",
+      "tags": ["minimal-context", "small-edit"],
+      "file_to_edit": "/tmp/suite_minimal_context.sv",
+      "original_file": "module min_case(input logic a, input logic b, output logic y);\n  assign y = a & b;\nendmodule\n",
+      "change_request": "Change the combinational logic from AND to XOR with minimal unique anchors.",
+      "expected_behavior": "apply_success",
+      "must_contain": ["assign y = a ^ b;"],
+      "must_not_contain": ["assign y = a & b;"],
+      "safe_reject_reason_codes": []
+    },
+    {
+      "id": "append_localparam",
+      "description": "Append content inside module scope.",
+      "tags": ["append", "empty-search", "module-scope"],
+      "file_to_edit": "/tmp/suite_append_localparam.sv",
+      "original_file": "module append_case;\nendmodule\n",
+      "change_request": "Append localparam int WIDTH = 8; inside the module body.",
+      "expected_behavior": "apply_success",
+      "must_contain": ["localparam int WIDTH = 8;"],
+      "must_not_contain": [],
+      "safe_reject_reason_codes": []
+    },
+    {
+      "id": "long_file_increment_step",
+      "description": "Long file edit requiring precise anchor selection.",
+      "tags": ["long-file", "scalability", "hard"],
+      "file_to_edit": "/tmp/suite_long_file_increment.sv",
+      "original_file": "module long_case(input logic clk, input logic rst_n);\n  logic [7:0] reg_0;\n  logic [7:0] reg_1;\n  logic [7:0] reg_2;\n  logic [7:0] reg_3;\n  logic [7:0] reg_4;\n  logic [7:0] reg_5;\n  logic [7:0] reg_6;\n  logic [7:0] reg_7;\n  logic [7:0] reg_8;\n  logic [7:0] reg_9;\n  logic [7:0] reg_10;\n  logic [7:0] reg_11;\n  logic [7:0] reg_12;\n  logic [7:0] reg_13;\n  logic [7:0] reg_14;\n  logic [7:0] reg_15;\n  logic [7:0] reg_16;\n  logic [7:0] reg_17;\n  logic [7:0] reg_18;\n  logic [7:0] reg_19;\n  logic [7:0] reg_20;\n  logic [7:0] reg_21;\n  logic [7:0] reg_22;\n  logic [7:0] reg_23;\n  logic [7:0] reg_24;\n  logic [7:0] reg_25;\n  logic [7:0] reg_26;\n  logic [7:0] reg_27;\n  logic [7:0] reg_28;\n  logic [7:0] reg_29;\n  logic [7:0] reg_30;\n  logic [7:0] reg_31;\n  always_ff @(posedge clk or negedge rst_n) begin\n    if (!rst_n) begin\n      reg_0 <= 8'h00;\n    end else begin\n      reg_0 <= reg_0 + 8'h01;\n    end\n  end\nendmodule\n",
+      "change_request": "Change the increment step from +1 to +2 while preserving all other lines.",
+      "expected_behavior": "apply_success",
+      "must_contain": ["reg_0 <= reg_0 + 8'h02;"],
+      "must_not_contain": ["reg_0 <= reg_0 + 8'h01;"],
+      "safe_reject_reason_codes": []
+    },
+    {
+      "id": "rtllm_fifo_param_update",
+      "description": "RTLLM-style asynchronous FIFO parameter scaling edit.",
+      "tags": ["rtllm", "fifo", "hard"],
+      "file_to_edit": "/tmp/suite_rtllm_fifo.sv",
+      "original_file": "module asyn_fifo #(\n  parameter int DATA_W = 8,\n  parameter int DEPTH = 16\n) (\n  input logic wr_clk,\n  input logic rd_clk,\n  input logic rst_n,\n  input logic wr_en,\n  input logic rd_en,\n  input logic [DATA_W-1:0] wr_data,\n  output logic [DATA_W-1:0] rd_data,\n  output logic full,\n  output logic empty\n);\n  localparam int ADDR_W = 4;\n  logic [ADDR_W:0] wr_ptr;\n  logic [ADDR_W:0] rd_ptr;\nendmodule\n",
+      "change_request": "Scale FIFO depth from 16 to 32 and update ADDR_W accordingly.",
+      "expected_behavior": "apply_success",
+      "must_contain": ["parameter int DEPTH = 32", "localparam int ADDR_W = 5;"],
+      "must_not_contain": ["parameter int DEPTH = 16", "localparam int ADDR_W = 4;"],
+      "safe_reject_reason_codes": []
+    },
+    {
+      "id": "rtllm_freq_divider_condition",
+      "description": "RTLLM-style frequency divider condition refinement.",
+      "tags": ["rtllm", "freq-divider", "control-logic"],
+      "file_to_edit": "/tmp/suite_rtllm_freq_divider.sv",
+      "original_file": "module freq_divbyodd #(parameter int DIV = 5) (\n  input logic clk,\n  input logic rst_n,\n  output logic clk_out\n);\n  logic [$clog2(DIV)-1:0] cnt;\n  always_ff @(posedge clk or negedge rst_n) begin\n    if (!rst_n) begin\n      cnt <= '0;\n      clk_out <= 1'b0;\n    end else begin\n      if (cnt == DIV-1) cnt <= '0;\n      else cnt <= cnt + 1'b1;\n      if (cnt == 0) clk_out <= ~clk_out;\n    end\n  end\nendmodule\n",
+      "change_request": "Toggle clk_out when cnt is 0 or DIV>>1 to improve duty-cycle behavior.",
+      "expected_behavior": "apply_success",
+      "must_contain": ["if (cnt == 0 || cnt == (DIV>>1)) clk_out <= ~clk_out;"],
+      "must_not_contain": ["if (cnt == 0) clk_out <= ~clk_out;"],
+      "safe_reject_reason_codes": []
+    },
+    {
+      "id": "rtllm_radix2_signed_mode_fix",
+      "description": "RTLLM-style radix2 divider control fix.",
+      "tags": ["rtllm", "radix2", "state-fix"],
+      "file_to_edit": "/tmp/suite_rtllm_radix2.sv",
+      "original_file": "module radix2_div(\n  input logic clk,\n  input logic rst_n,\n  input logic opn_valid,\n  input logic op_signed,\n  output logic done\n);\n  logic signed_mode;\n  always_ff @(posedge clk or negedge rst_n) begin\n    if (!rst_n) begin\n      signed_mode <= 1'b0;\n      done <= 1'b0;\n    end else begin\n      if (opn_valid) begin\n        signed_mode <= 1'b0;\n      end\n      done <= opn_valid;\n    end\n  end\nendmodule\n",
+      "change_request": "When opn_valid is high, latch signed_mode from op_signed instead of forcing 0.",
+      "expected_behavior": "apply_success",
+      "must_contain": ["signed_mode <= op_signed;"],
+      "must_not_contain": ["signed_mode <= 1'b0;"],
+      "safe_reject_reason_codes": []
+    },
+    {
+      "id": "cvdp_microcode_decode_extension",
+      "description": "CVDP-style controller decode extension.",
+      "tags": ["cvdp", "controller", "decode"],
+      "file_to_edit": "/tmp/suite_cvdp_microcode.sv",
+      "original_file": "module microcode_ctrl(input logic clk, input logic rst_n, input logic [3:0] opcode, output logic [1:0] state);\n  localparam logic [1:0] IDLE = 2'd0;\n  localparam logic [1:0] EXEC = 2'd1;\n  always_ff @(posedge clk or negedge rst_n) begin\n    if (!rst_n) state <= IDLE;\n    else begin\n      unique case (opcode)\n        4'h1: state <= EXEC;\n        default: state <= IDLE;\n      endcase\n    end\n  end\nendmodule\n",
+      "change_request": "Add explicit NOP decode for opcode 4'h0 that keeps state at IDLE.",
+      "expected_behavior": "apply_success",
+      "must_contain": ["4'h0: state <= IDLE;", "4'h1: state <= EXEC;"],
+      "must_not_contain": [],
+      "safe_reject_reason_codes": []
+    },
+    {
+      "id": "ambiguous_anchor_safe_behavior",
+      "description": "Intentionally ambiguous anchor scenario to reward safe rejection behavior.",
+      "tags": ["ambiguous", "safety", "fuzzy"],
+      "file_to_edit": "/tmp/suite_ambiguous_anchor.sv",
+      "original_file": "module amb_case(input logic a, input logic b, output logic y0, output logic y1);\n  assign y0 = a & b;\n  assign y1 = a & b;\nendmodule\n",
+      "change_request": "Change exactly one occurrence of `a & b` to `a | b` while using the smallest possible search anchor.",
+      "expected_behavior": "apply_or_safe_reject",
+      "must_contain": [],
+      "must_not_contain": [],
+      "safe_reject_reason_codes": ["ambiguous_fuzzy_match", "overlap_conflict", "no_match", "fuzzy_below_threshold"]
+    },
+    {
+      "id": "whitespace_normalization",
+      "description": "Whitespace-variant matching stress case.",
+      "tags": ["whitespace", "normalization", "hard"],
+      "file_to_edit": "/tmp/suite_whitespace.sv",
+      "original_file": "module ws_case(input logic a, input logic b, output logic y);\n\tassign y\t=\ta & b;\nendmodule\n",
+      "change_request": "Update the assign expression to OR while preserving module structure.",
+      "expected_behavior": "apply_success",
+      "must_contain": ["assign y", "a | b"],
+      "must_not_contain": ["a & b"],
+      "safe_reject_reason_codes": []
+    }
+  ]
+}

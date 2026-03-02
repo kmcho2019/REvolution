@@ -30,6 +30,7 @@
 - `llm.py`: unified async LLM client with retry/backoff, token tracking, and JSON parsing helpers.
 - `logging.py`: `EoHLogger` for JSONL generation logs, per-run summaries, and reward statistics.
 - `prompt_store.py`: filesystem-backed prompt templating system with concatenated bundle support and tolerant `safe_format`.
+- `vllm_preflight.py`: lightweight `/v1/models` preflight helpers for vLLM connectivity and `max_model_len` checks.
 - `configuration.py`: helpers for loading CLI config files (including legacy snapshot compatibility), validating options, and recording runnable snapshot + metadata-sidecar files.
 - `utils.py`: utility helpers (for example `StreamRedirector`).
 
@@ -42,6 +43,9 @@
 - `backend_comparison_report.py`: side-by-side + aggregate backend report generator across experiment roots with pass/fail emoji status, any-pass design counts, solved-only score/PPA summaries, PPA regression counts, and budget/fairness diagnostics.
 - `run_one_shot.py`: CLI for n-shot baselines that reuse the evaluation stack without evolution.
 - `archive_baseline.py`: archive utility for run roots and ablation roots with manifest/index metadata, copied run configs, and compressed raw artifacts.
+- `run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with hard-task selection, aggregate token/runtime comparisons, and diff failure catalog generation.
+- `run_diff_mode_diagnostics.py`: repeated real-LLM diff stress harness producing strict-parse/apply failure catalogs across curated edge cases, including worst-case failure sample retention.
+- `run_diff_prompt_optimization_loop.py`: prompt-candidate loop runner that calls `run_diff_prompt_suite.py` per candidate and ranks prompts by objective score.
 - `run_test.sh`, `run_regression_test.sh`, `run_cvdp_test.sh`: shell wrappers for regression suites.
 - `generate_*`, `plot_problem_pareto.py`, `evolutionary_report_generator.py`: reporting and visualisation utilities.
 - `prompt_file_manager.py`: manage prompt bundle files and synchronise `data/prompts/`.
@@ -52,6 +56,10 @@
 - `tests/revolution/test_algorithm.py`: unit tests for selection logic, diff application, and state transitions.
 - `tests/revolution/test_evaluation.py`: covers simulator/synthesiser wrappers using fixtures/mocks.
 - `tests/revolution/test_llm.py`: ensures JSON parsing, retry loops, and prompt handling behave as expected.
+- `tests/revolution/test_vllm_preflight.py`: validates vLLM preflight URL handling, metadata parsing, and warning logic.
+- `tests/scripts/test_run_diff_mode_benchmark.py`: validates hard-task selection and aggregate reporting helpers for whole-vs-diff benchmarks.
+- `tests/scripts/test_run_diff_mode_diagnostics.py`: validates diagnostics skip behavior and result aggregation paths.
+- `tests/scripts/test_run_diff_prompt_optimization_loop.py`: validates prompt-loop ranking and skipped-run handling.
 
 ## Generated artefacts
 
