@@ -112,3 +112,35 @@ def preflight_vllm_model(
         )
     return info
 
+
+def is_unreachable_preflight(info: dict[str, Any]) -> bool:
+    """
+    Return True when preflight indicates endpoint reachability failure.
+
+    This intentionally does not treat low max_model_len warnings as
+    unreachable because those cases still have a reachable endpoint and should
+    proceed unless caller decides otherwise.
+    """
+    if info.get("ok") is False:
+        return True
+
+    warning = str(info.get("warning") or "").lower()
+    if not warning:
+        return False
+
+    if "below recommended threshold" in warning:
+        return False
+
+    if info.get("model_id") is not None:
+        return False
+
+    markers = (
+        "unable to reach vllm",
+        "preflight failed",
+        "<urlopen error",
+        "connection refused",
+        "name or service not known",
+        "temporary failure in name resolution",
+        "timed out",
+    )
+    return any(marker in warning for marker in markers)

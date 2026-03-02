@@ -144,3 +144,35 @@ def test_summarize_ignores_skipped_runs(tmp_path):
     assert payload["runs_analyzed"] == 1
     assert payload["run_leaderboard"][0]["timestamp"] == "ok"
 
+
+def test_summarize_handles_all_skipped_runs(tmp_path):
+    from scripts import summarize_diff_prompt_suite as summary
+
+    root = tmp_path / "runs"
+    _write_result(
+        root / "skip1",
+        {
+            "timestamp": "skip1",
+            "status": "skipped_unreachable_vllm",
+            "warning": "conn refused",
+        },
+    )
+    _write_result(
+        root / "skip2",
+        {
+            "timestamp": "skip2",
+            "status": "skipped_unreachable_vllm",
+            "warning": "timeout",
+        },
+    )
+
+    payload = summary.summarize(root, root / "summary_out")
+    assert payload["runs_analyzed"] == 0
+    assert len(payload["skipped_runs"]) == 2
+
+    out = root / "summary_out"
+    assert (out / "summary.json").exists()
+    assert (out / "summary.md").exists()
+    assert (out / "runs.csv").exists()
+    md = (out / "summary.md").read_text(encoding="utf-8")
+    assert "No valid prompt-suite runs were available" in md

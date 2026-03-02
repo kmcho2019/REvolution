@@ -20,7 +20,7 @@ if str(SRC_ROOT) not in sys.path:
 from revolution.algorithm import EoHEngine  # noqa: E402
 from revolution.llm import LLMInterface  # noqa: E402
 from revolution.prompt_store import PromptStore  # noqa: E402
-from revolution.vllm_preflight import preflight_vllm_model  # noqa: E402
+from revolution.vllm_preflight import is_unreachable_preflight, preflight_vllm_model  # noqa: E402
 
 
 def _build_cases() -> list[dict[str, Any]]:
@@ -119,6 +119,79 @@ def _build_prompt(case: dict[str, Any]) -> str:
     )
 
 
+def _to_float(value: Any, default: float = 0.0) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _build_failure_examples(
+    attempts: list[dict[str, Any]],
+    *,
+    max_per_reason: int,
+) -> dict[str, list[dict[str, Any]]]:
+    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for rec in attempts:
+        if rec.get("apply_ok"):
+            continue
+        reason = str(rec.get("apply_reason_code") or "unknown")
+        grouped[reason].append(rec)
+
+    def _sort_key(rec: dict[str, Any]) -> tuple[Any, ...]:
+        reason = str(rec.get("apply_reason_code") or "unknown")
+        diag = rec.get("diagnostics") or {}
+        strict_error = str(rec.get("strict_error") or "")
+        raw_preview = str(rec.get("raw_preview") or "")
+
+        if reason == "ambiguous_fuzzy_match":
+            best = _to_float(diag.get("best_ratio"), 0.0)
+            second = _to_float(diag.get("second_ratio"), 0.0)
+            gap = best - second
+            # Smaller gap means more ambiguous and therefore "worse".
+            return (0, gap, -best, str(rec.get("case_id") or ""), int(rec.get("repeat_index") or 0))
+
+        if reason == "fuzzy_below_threshold":
+            best = _to_float(diag.get("best_ratio"), 0.0)
+            # Lower best ratio means further from threshold and therefore "worse".
+            return (1, best, str(rec.get("case_id") or ""), int(rec.get("repeat_index") or 0))
+
+        if reason == "strict_parse_error":
+            lower_err = strict_error.lower()
+            is_escape = ("escape" in lower_err) or ("invalid \\escape" in lower_err)
+            # Prioritize escaping failures and more informative/larger raw payload snippets.
+            return (2, 0 if is_escape else 1, -len(strict_error), -len(raw_preview), str(rec.get("case_id") or ""))
+
+        return (3, str(rec.get("case_id") or ""), int(rec.get("repeat_index") or 0))
+
+    out: dict[str, list[dict[str, Any]]] = {}
+    for reason in sorted(grouped):
+        chosen = sorted(grouped[reason], key=_sort_key)[: max(1, max_per_reason)]
+        rows: list[dict[str, Any]] = []
+        for rec in chosen:
+            diag = rec.get("diagnostics") or {}
+            top_candidates = diag.get("top_candidates")
+            if isinstance(top_candidates, list):
+                top_candidates = top_candidates[:3]
+            else:
+                top_candidates = None
+            rows.append(
+                {
+                    "case_id": rec.get("case_id"),
+                    "repeat_index": rec.get("repeat_index"),
+                    "apply_phase": rec.get("apply_phase"),
+                    "strict_error": rec.get("strict_error"),
+                    "reason": diag.get("reason"),
+                    "best_ratio": diag.get("best_ratio"),
+                    "second_ratio": diag.get("second_ratio"),
+                    "raw_preview": rec.get("raw_preview"),
+                    "top_candidates": top_candidates,
+                }
+            )
+        out[reason] = rows
+    return out
+
+
 def _render_report(output_path: Path, results: dict[str, Any]) -> None:
     summary = results["summary"]
     lines = [
@@ -152,6 +225,33 @@ def _render_report(output_path: Path, results: dict[str, Any]) -> None:
         for phase, count in summary["diff_phase_counts"].items():
             lines.append(f"- `{phase}`: {count}")
 
+    lines.extend(
+        [
+            "",
+            "## Worst-Case Failure Samples",
+            "",
+            "| Reason | Case | Repeat | Phase | Detail |",
+            "|:--|:--|--:|:--|:--|",
+        ]
+    )
+    failure_examples = summary.get("failure_examples", {}) or {}
+    if not failure_examples:
+        lines.append("| none | - | - | - | - |")
+    else:
+        for reason, rows in failure_examples.items():
+            for row in rows:
+                detail = (
+                    str(row.get("reason") or row.get("strict_error") or row.get("raw_preview") or "")
+                    .replace("\n", "\\n")
+                    .replace("|", "\\|")
+                )
+                if len(detail) > 120:
+                    detail = detail[:117] + "..."
+                lines.append(
+                    f"| `{reason}` | `{row.get('case_id')}` | {row.get('repeat_index')} | "
+                    f"`{row.get('apply_phase')}` | {detail or '-'} |"
+                )
+
     output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -176,7 +276,7 @@ def _build_parser() -> argparse.ArgumentParser:
         default=True,
         help="If vLLM preflight is unreachable, record a note and exit successfully.",
     )
-    parser.add_argument("--repeat_per_case", type=int, default=3)
+    parser.add_argument("--repeat_per_case", type=int, default=5)
     parser.add_argument(
         "--prompt_profile",
         type=str,
@@ -193,6 +293,12 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--top_p", type=float, default=0.95)
     parser.add_argument("--max_tokens", type=int, default=1024)
     parser.add_argument(
+        "--failure_examples_per_reason",
+        type=int,
+        default=5,
+        help="How many worst-case failure samples to keep per reason code.",
+    )
+    parser.add_argument(
         "--save_root",
         type=Path,
         default=PROJECT_ROOT / "exp/diff_mode_diagnostics",
@@ -202,6 +308,8 @@ def _build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = _build_parser().parse_args(argv)
+    if args.failure_examples_per_reason < 1:
+        raise ValueError("--failure_examples_per_reason must be >= 1")
 
     if args.api_backend == "vllm":
         preflight = preflight_vllm_model(
@@ -219,23 +327,25 @@ def main(argv: list[str] | None = None) -> int:
         warning = preflight.get("warning")
         if warning:
             print(f"[vLLM preflight] WARNING: {warning}")
-            if args.skip_if_unreachable and "Unable to reach vLLM" in warning:
-                ts = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
-                out_root = args.save_root / ts
-                out_root.mkdir(parents=True, exist_ok=True)
-                payload = {
-                    "timestamp": ts,
-                    "status": "skipped_unreachable_vllm",
-                    "warning": warning,
-                }
-                (out_root / "results.json").write_text(
-                    json.dumps(payload, indent=2), encoding="utf-8"
-                )
-                (out_root / "results.md").write_text(
-                    "# Diff Mode Diagnostics Report\n\n- Skipped: vLLM endpoint unreachable.\n",
-                    encoding="utf-8",
-                )
-                return 0
+        if args.skip_if_unreachable and is_unreachable_preflight(preflight):
+            ts = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
+            out_root = args.save_root / ts
+            out_root.mkdir(parents=True, exist_ok=True)
+            payload = {
+                "timestamp": ts,
+                "status": "skipped_unreachable_vllm",
+                "warning": warning or "vLLM preflight indicates endpoint is unreachable.",
+            }
+            (out_root / "results.json").write_text(
+                json.dumps(payload, indent=2), encoding="utf-8"
+            )
+            (out_root / "results.md").write_text(
+                "# Diff Mode Diagnostics Report\n\n- Skipped: vLLM endpoint unreachable.\n",
+                encoding="utf-8",
+            )
+            print(f"Results: {out_root / 'results.json'}")
+            print(f"Report: {out_root / 'results.md'}")
+            return 0
 
     api_key = None
     if args.api_backend == "openai":
@@ -301,6 +411,7 @@ def main(argv: list[str] | None = None) -> int:
                 "strict_error": meta.get("error"),
                 "parsed_mode": meta.get("parsed_mode"),
                 "thought_preview": (thought or "")[:160],
+                "raw_preview": (meta.get("raw") or "")[:260],
             }
             if rec["format_ok"]:
                 applied = applier._apply_diff(
@@ -332,6 +443,10 @@ def main(argv: list[str] | None = None) -> int:
         phase = rec.get("apply_phase")
         if phase:
             diff_phase_counts[str(phase)] += 1
+    failure_examples = _build_failure_examples(
+        attempts,
+        max_per_reason=args.failure_examples_per_reason,
+    )
 
     summary = {
         "total_attempts": total,
@@ -341,6 +456,8 @@ def main(argv: list[str] | None = None) -> int:
         "apply_ok_pct": (apply_ok / total * 100.0) if total else 0.0,
         "apply_fail_reason_counts": dict(sorted(apply_fail_reason_counts.items())),
         "diff_phase_counts": dict(sorted(diff_phase_counts.items())),
+        "failure_examples_per_reason": args.failure_examples_per_reason,
+        "failure_examples": failure_examples,
         "llm_usage": stats,
     }
 

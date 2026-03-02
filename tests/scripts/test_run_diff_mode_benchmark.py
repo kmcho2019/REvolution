@@ -322,3 +322,53 @@ def test_main_plan_default_rtllm_selection_uses_fixed_matrix(monkeypatch, tmp_pa
     assert "--problems" in first
     idx = first.index("--problems")
     assert first[idx + 1 : idx + 3] == ["Prob026_asyn_fifo", "Prob033_freq_divbyfrac"]
+
+
+def test_main_skip_if_unreachable_writes_skip_artifact(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        "scripts.run_diff_mode_benchmark.preflight_vllm_model",
+        lambda **_kwargs: {
+            "ok": False,
+            "endpoint": "http://vllm:8888/v1/models",
+            "model_id": None,
+            "max_model_len": None,
+            "warning": "vLLM preflight failed for http://vllm:8888/v1/models: timeout",
+        },
+    )
+    invoked = {"ran": False}
+
+    def _unexpected_run(*_args, **_kwargs):
+        invoked["ran"] = True
+        return 1
+
+    monkeypatch.setattr("scripts.run_diff_mode_benchmark._run_command", _unexpected_run)
+
+    rc = run_diff_mode_benchmark_main(
+        [
+            "--benchmarks",
+            "RTLLM",
+            "--model_name",
+            "m",
+            "--api_backend",
+            "vllm",
+            "--vllm_host",
+            "vllm",
+            "--vllm_port",
+            "8888",
+            "--skip_if_unreachable",
+            "--save_root",
+            str(tmp_path / "out"),
+            "--rtllm_count",
+            "1",
+            "--seeds",
+            "11",
+        ]
+    )
+    assert rc == 0
+    assert invoked["ran"] is False
+
+    result_files = sorted((tmp_path / "out").glob("*/results.json"))
+    assert result_files
+    payload = json.loads(result_files[-1].read_text(encoding="utf-8"))
+    assert payload["status"] == "skipped_unreachable_vllm"
+    assert payload["selected_problems"]["RTLLM"] == ["Prob026_asyn_fifo"]

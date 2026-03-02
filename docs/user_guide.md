@@ -271,10 +271,11 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch comparisons.
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
 - `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts).
-- `scripts/run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with matched-seed runs (`--seeds`), fixed hard validation matrix defaults (RTLLM/VerilogEval/CVDP), aggregate token/runtime report output, and diff-failure catalogs.
-- `scripts/run_diff_mode_diagnostics.py`: real-LLM diff robustness diagnostics for parse/apply failure taxonomy over curated stress cases.
+- `scripts/run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with matched-seed runs (`--seeds`), fixed hard validation matrix defaults (RTLLM/VerilogEval/CVDP), aggregate token/runtime report output, diff-failure catalogs, and optional `--skip_if_unreachable` fail-fast artifact mode for unstable vLLM connectivity.
+- `scripts/run_diff_mode_diagnostics.py`: real-LLM diff robustness diagnostics for parse/apply failure taxonomy over curated stress cases, with skip artifact support when vLLM is unreachable and worst-case failure sample retention per reason.
 - `scripts/run_diff_prompt_suite.py`: self-contained prompt-optimization suite for diff mode with per-run objective scoring and case-level hard-pass/safe-reject diagnostics.
-- `scripts/summarize_diff_prompt_suite.py`: cross-run leaderboard/report generator for prompt-suite outputs (`summary.md`, `summary.json`, and CSV exports for plotting).
+- `scripts/summarize_diff_prompt_suite.py`: cross-run leaderboard/report generator for prompt-suite outputs (`summary.md`, `summary.json`, and CSV exports for plotting); also emits explicit zero-run summaries when all inputs are skipped runs.
+- `scripts/run_diff_prompt_optimization_loop.py`: first prompt-search loop runner that evaluates multiple prompt candidates via `run_diff_prompt_suite.py` and ranks them by `summary.objective_score`.
 - `scripts/gen0_report_generator.py`: inspect `Gen0/best_candidate` snapshots, check syntax/simulation/synthesis status, and optionally export Markdown (`--save_markdown`).
 - `scripts/generate_cutoff_compile_result_variants.sh`: reproduce paper tables with a specified gate cutoff (`--gate 50` by default).
 - `scripts/generate_visualizations*.py` and `plot_problem_pareto.py`: create PPA scatter plots or aggregate charts.
@@ -289,7 +290,8 @@ python scripts/run_diff_mode_benchmark.py \
   --api_backend vllm \
   --vllm_host vllm \
   --vllm_port 8888 \
-  --seeds 1 2
+  --seeds 1 2 \
+  --skip_if_unreachable
 ```
 
 Diff diagnostics example:
@@ -300,7 +302,8 @@ python scripts/run_diff_mode_diagnostics.py \
   --api_backend vllm \
   --vllm_host vllm \
   --vllm_port 8888 \
-  --repeat_per_case 3
+  --repeat_per_case 5 \
+  --failure_examples_per_reason 5
 ```
 
 Diff prompt suite summarizer example:
@@ -309,6 +312,18 @@ Diff prompt suite summarizer example:
 python scripts/summarize_diff_prompt_suite.py \
   --results_root exp/diff_prompt_suite \
   --output_dir exp/diff_prompt_suite/summary
+```
+
+Diff prompt optimization loop example:
+
+```bash
+python scripts/run_diff_prompt_optimization_loop.py \
+  --model_name /models/openai-gpt-oss-120b \
+  --api_backend vllm \
+  --system_prompt_dir data/prompts/candidates \
+  --system_prompt_glob '*.txt' \
+  --repeat_per_case 3 \
+  --include_profile_prompt
 ```
 
 All Python helper scripts accept `--help` to show the full argument list.

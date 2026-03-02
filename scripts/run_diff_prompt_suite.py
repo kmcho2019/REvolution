@@ -22,7 +22,7 @@ if str(SRC_ROOT) not in sys.path:
 from revolution.algorithm import EoHEngine  # noqa: E402
 from revolution.llm import LLMInterface  # noqa: E402
 from revolution.prompt_store import PromptStore  # noqa: E402
-from revolution.vllm_preflight import preflight_vllm_model  # noqa: E402
+from revolution.vllm_preflight import is_unreachable_preflight, preflight_vllm_model  # noqa: E402
 
 
 DEFAULT_SUITE_FILE = PROJECT_ROOT / "data" / "diff_prompt_suite" / "diff_prompt_suite_v1.json"
@@ -499,8 +499,11 @@ def main(argv: list[str] | None = None) -> int:
         warning = preflight.get("warning")
         if warning:
             print(f"[vLLM preflight] WARNING: {warning}")
-            if args.skip_if_unreachable and "Unable to reach vLLM" in warning:
-                return _save_skip_artifact(save_root=args.save_root, warning=warning)
+        if args.skip_if_unreachable and is_unreachable_preflight(preflight):
+            return _save_skip_artifact(
+                save_root=args.save_root,
+                warning=warning or "vLLM preflight indicates endpoint is unreachable.",
+            )
 
     suite_payload = load_suite(args.suite_file.resolve())
     selected_cases = select_cases(

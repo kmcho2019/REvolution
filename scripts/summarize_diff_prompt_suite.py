@@ -75,6 +75,27 @@ def collect_runs(results_root: Path) -> list[dict[str, Any]]:
     return runs
 
 
+def collect_skipped_runs(results_root: Path) -> list[dict[str, str]]:
+    skipped: list[dict[str, str]] = []
+    for path in sorted(results_root.glob("*/results.json")):
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if not isinstance(payload, dict):
+            continue
+        if payload.get("status") != "skipped_unreachable_vllm":
+            continue
+        skipped.append(
+            {
+                "timestamp": str(payload.get("timestamp") or path.parent.name),
+                "run_path": str(path.parent.resolve()),
+                "warning": str(payload.get("warning", "")),
+            }
+        )
+    return skipped
+
+
 def aggregate_prompt_groups(runs: list[dict[str, Any]]) -> list[dict[str, Any]]:
     grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in runs:
@@ -267,8 +288,95 @@ def _write_case_matrix(path: Path, runs: list[dict[str, Any]]) -> None:
 
 def summarize(results_root: Path, output_dir: Path) -> dict[str, Any]:
     runs = collect_runs(results_root)
+    skipped_runs = collect_skipped_runs(results_root)
     if not runs:
-        raise ValueError(f"No valid diff prompt suite runs found under: {results_root}")
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        runs_fields = [
+            "timestamp",
+            "run_path",
+            "suite_name",
+            "model_name",
+            "api_backend",
+            "prompt_source",
+            "prompt_sha256",
+            "diff_apply_policy",
+            "objective_score",
+            "hard_pass_pct",
+            "format_ok_pct",
+            "apply_ok_pct",
+            "safe_reject_ok_pct",
+            "total_attempts",
+            "llm_prompt_tokens",
+            "llm_completion_tokens",
+            "llm_total_tokens",
+        ]
+        _write_csv(output_dir / "runs.csv", fieldnames=runs_fields, rows=[])
+        _write_csv(
+            output_dir / "prompt_groups.csv",
+            fieldnames=[
+                "prompt_sha256",
+                "runs",
+                "objective_score_avg",
+                "objective_score_best",
+                "hard_pass_pct_avg",
+                "hard_pass_pct_best",
+                "apply_ok_pct_avg",
+                "format_ok_pct_avg",
+                "best_run_path",
+                "prompt_source_example",
+            ],
+            rows=[],
+        )
+        _write_csv(
+            output_dir / "case_stats.csv",
+            fieldnames=[
+                "case_id",
+                "runs_present",
+                "attempts_total",
+                "hard_pass_rate_avg_pct",
+                "apply_ok_rate_avg_pct",
+                "safe_reject_rate_avg_pct",
+                "objective_score_avg",
+            ],
+            rows=[],
+        )
+        _write_csv(
+            output_dir / "case_matrix.csv",
+            fieldnames=["timestamp", "run_path", "prompt_sha256", "objective_score", "hard_pass_pct"],
+            rows=[],
+        )
+
+        summary_payload = {
+            "results_root": str(results_root.resolve()),
+            "runs_analyzed": 0,
+            "prompt_count": 0,
+            "best_run": None,
+            "run_leaderboard": [],
+            "prompt_leaderboard": [],
+            "case_stats": [],
+            "reason_code_counts": {},
+            "skipped_runs": skipped_runs,
+        }
+        (output_dir / "summary.json").write_text(json.dumps(summary_payload, indent=2), encoding="utf-8")
+        lines = [
+            "# Diff Prompt Suite Summary",
+            "",
+            "## Overview",
+            "",
+            "- Runs analyzed: **0**",
+            f"- Skipped runs: **{len(skipped_runs)}**",
+            "- No valid prompt-suite runs were available for leaderboard aggregation.",
+            "",
+        ]
+        if skipped_runs:
+            lines.append("## Skipped Runs")
+            lines.append("")
+            for row in skipped_runs:
+                lines.append(f"- `{row['timestamp']}`: {row['warning']}")
+            lines.append("")
+        (output_dir / "summary.md").write_text("\n".join(lines), encoding="utf-8")
+        return summary_payload
 
     ranked_runs = sorted(runs, key=lambda r: (-r["objective_score"], -r["hard_pass_pct"], r["timestamp"]))
     prompt_groups = aggregate_prompt_groups(runs)
@@ -345,6 +453,7 @@ def summarize(results_root: Path, output_dir: Path) -> dict[str, Any]:
         "prompt_leaderboard": prompt_groups,
         "case_stats": case_stats,
         "reason_code_counts": reason_counts,
+        "skipped_runs": skipped_runs,
     }
     (output_dir / "summary.json").write_text(json.dumps(summary_payload, indent=2), encoding="utf-8")
     _render_markdown(

@@ -19,7 +19,7 @@ SRC_ROOT = PROJECT_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from revolution.vllm_preflight import preflight_vllm_model  # noqa: E402
+from revolution.vllm_preflight import is_unreachable_preflight, preflight_vllm_model  # noqa: E402
 
 
 DEFAULT_BASELINE_REPORT = Path(
@@ -428,6 +428,45 @@ def _render_markdown_report(
     output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def _write_skip_artifact(
+    *,
+    out_root: Path,
+    warning: str,
+    selected: dict[str, list[str]],
+    seeds: list[int],
+    selection_profile: str,
+) -> int:
+    payload = {
+        "timestamp": out_root.name,
+        "status": "skipped_unreachable_vllm",
+        "warning": warning,
+        "seeds": seeds,
+        "selection_profile": selection_profile,
+        "selected_problems": selected,
+        "failures": [],
+        "whole": {},
+        "diff": {},
+        "comparison": {},
+        "diff_failure_catalog": {"counts": {}, "examples": {}},
+    }
+    (out_root / "results.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    (out_root / "results.md").write_text(
+        "\n".join(
+            [
+                "# Diff Mode Benchmark Report",
+                "",
+                "- Skipped: vLLM endpoint unreachable.",
+                f"- Warning: {warning}",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    print(f"Results: {out_root / 'results.json'}")
+    print(f"Markdown: {out_root / 'results.md'}")
+    return 0
+
+
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Benchmark whole vs diff mode on hard tasks and summarize token/runtime deltas.",
@@ -449,6 +488,12 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--vllm_port", type=int, default=int(os.getenv("VLLM_PORT", "8888")))
     parser.add_argument("--vllm_preflight_timeout_s", type=float, default=5.0)
     parser.add_argument("--vllm_min_model_len", type=int, default=int(os.getenv("VLLM_MIN_MODEL_LEN", "128000")))
+    parser.add_argument(
+        "--skip_if_unreachable",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="If vLLM preflight is unreachable, write a skip artifact and exit 0.",
+    )
 
     parser.add_argument("--save_root", type=Path, default=PROJECT_ROOT / "exp/diff_mode_benchmark")
     parser.add_argument("--baseline_report", type=Path, default=_default_baseline_report())
@@ -499,6 +544,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
 
+    preflight_warning: str | None = None
+    skip_due_to_unreachable = False
     if args.api_backend == "vllm":
         preflight = preflight_vllm_model(
             host=args.vllm_host,
@@ -512,8 +559,11 @@ def main(argv: list[str] | None = None) -> int:
             f"max_model_len={preflight.get('max_model_len')} "
             f"min_required={args.vllm_min_model_len}"
         )
-        if preflight.get("warning"):
-            print(f"[vLLM preflight] WARNING: {preflight['warning']}")
+        preflight_warning = preflight.get("warning")
+        if preflight_warning:
+            print(f"[vLLM preflight] WARNING: {preflight_warning}")
+        if args.skip_if_unreachable and is_unreachable_preflight(preflight):
+            skip_due_to_unreachable = True
 
     baseline_rows: dict[str, list[tuple[str, float]]] = {}
     if args.baseline_report:
@@ -576,6 +626,15 @@ def main(argv: list[str] | None = None) -> int:
     for bench, problems in selected.items():
         print(f"- {bench}: {len(problems)} problems")
     print(f"[seeds] {args.seeds}")
+
+    if skip_due_to_unreachable:
+        return _write_skip_artifact(
+            out_root=out_root,
+            warning=preflight_warning or "vLLM preflight indicates endpoint is unreachable.",
+            selected=selected,
+            seeds=list(args.seeds),
+            selection_profile=args.selection_profile,
+        )
 
     failures: list[dict[str, Any]] = []
 

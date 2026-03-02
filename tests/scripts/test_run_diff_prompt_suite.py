@@ -30,10 +30,11 @@ def test_main_skips_when_vllm_unreachable(monkeypatch, tmp_path):
         suite,
         "preflight_vllm_model",
         lambda **_kwargs: {
+            "ok": False,
             "endpoint": "http://vllm:8888/v1/models",
             "model_id": None,
             "max_model_len": None,
-            "warning": "Unable to reach vLLM at http://vllm:8888/v1/models: timeout",
+            "warning": "vLLM preflight failed for http://vllm:8888/v1/models: <urlopen error [Errno 111] Connection refused>",
         },
     )
 

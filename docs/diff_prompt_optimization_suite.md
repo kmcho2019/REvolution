@@ -153,6 +153,10 @@ The markdown summary includes:
 - case difficulty table with visual pass-rate bars
 - aggregated reason-code counts
 
+If all input runs are skipped (for example unreachable vLLM in CI), the
+summarizer now emits a valid zero-run `summary.json`/`summary.md` plus empty
+CSVs, rather than failing.
+
 ## Optimizer Integration
 
 You can treat:
@@ -167,6 +171,33 @@ Typical loop:
 3. Run `run_diff_prompt_suite.py --system_prompt_file <candidate>`.
 4. Read `results.json`.
 5. Feed `objective_score` and diagnostics back to optimizer.
+
+## First Optimization Loop Runner
+
+Use `scripts/run_diff_prompt_optimization_loop.py` to evaluate a batch of
+prompt candidates and generate a ranked leaderboard in one command.
+
+```bash
+python scripts/run_diff_prompt_optimization_loop.py \
+  --model_name /models/openai-gpt-oss-120b \
+  --api_backend vllm \
+  --system_prompt_dir data/prompts/candidates \
+  --system_prompt_glob '*.txt' \
+  --repeat_per_case 3 \
+  --include_profile_prompt
+```
+
+Outputs:
+
+- `results.json`: per-candidate run status and objective metrics
+- `results.md`: ranked candidate table and selected best prompt
+- candidate raw suite runs under `candidate_runs/`
+
+Latest live example:
+
+- `exp/diff_prompt_optimization_loop_premerge_multi/20260224_131426`
+- candidates: default profile + two file candidates
+- selected best: `cand_strict_anchor` (`objective_score=0.8833`, `hard_pass_pct=83.33%`)
 
 ## Notes
 

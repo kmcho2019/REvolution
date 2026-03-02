@@ -5,6 +5,7 @@ from urllib.error import URLError
 from revolution.vllm_preflight import (
     build_vllm_models_url,
     fetch_vllm_model_info,
+    is_unreachable_preflight,
     preflight_vllm_model,
 )
 
@@ -95,3 +96,24 @@ def test_preflight_vllm_model_flags_short_context(monkeypatch):
     assert out["meets_min_model_len"] is False
     assert "below recommended threshold" in (out["warning"] or "")
 
+
+def test_is_unreachable_preflight_true_on_transport_failures():
+    assert is_unreachable_preflight(
+        {
+            "ok": False,
+            "warning": "vLLM preflight failed for http://vllm:8888/v1/models: <urlopen error [Errno 111] Connection refused>",
+            "model_id": None,
+            "max_model_len": None,
+        }
+    )
+
+
+def test_is_unreachable_preflight_false_on_reachable_warnings():
+    assert not is_unreachable_preflight(
+        {
+            "ok": True,
+            "warning": "Served model max_model_len=64000 is below recommended threshold 128000.",
+            "model_id": "m",
+            "max_model_len": 64000,
+        }
+    )

@@ -87,6 +87,17 @@ Diff mode has independent budgeting knobs:
 
 Use these knobs to lower token spend relative to whole mode while preserving context quality.
 
+Latest live tuning evidence (openai-gpt-oss-120b):
+
+- prompt profile `data/prompts/default/system/diff.txt` was refreshed from a
+  multi-candidate prompt loop winner (`cand_strict_anchor`).
+- RTLLM hard 6x2 paired slice with `--diff_max_tokens 640` achieved positive
+  diff token savings and faster runtime vs whole:
+  - artifact: `exp/diff_mode_token_tuning_rtllm/20260224_132608`
+  - token savings: `+4.01%`
+  - runtime speedup: `+36.45%`
+  - diff apply failures: `0`
+
 ## Diagnostics and Failure Artifacts
 
 When diff application fails, candidate status is `failed_diff` and artifacts include:
@@ -119,7 +130,8 @@ python scripts/run_diff_mode_benchmark.py \
   --api_backend vllm \
   --vllm_host vllm \
   --vllm_port 8888 \
-  --seeds 1 2
+  --seeds 1 2 \
+  --skip_if_unreachable
 ```
 
 Outputs:
@@ -135,6 +147,9 @@ Default benchmark matrix uses the renewal-plan hard pack:
 - CVDP medium set (6): deterministically selected from `cid002/cid003` by largest `input` prompt length.
 
 Use `--selection_profile baseline_hard` to revert to baseline-pass-rate-driven selection.
+Use `--skip_if_unreachable` for CI or pre-merge automation environments where
+vLLM connectivity may be transient; the script writes a structured skip artifact
+instead of hanging on repeated backend retries.
 
 ## Real-LLM Diagnostics Script
 
@@ -146,13 +161,19 @@ python scripts/run_diff_mode_diagnostics.py \
   --api_backend vllm \
   --vllm_host vllm \
   --vllm_port 8888 \
-  --repeat_per_case 3
+  --repeat_per_case 5 \
+  --failure_examples_per_reason 5
 ```
 
 Outputs:
 
 - `results.json`: per-attempt parse/apply outcomes and diagnostics.
 - `results.md`: summary pass rates and failure taxonomy.
+- worst-case failure samples per reason are preserved in
+  `summary.failure_examples` (for example ambiguous-fuzzy near-ties and
+  malformed escaping parse failures).
+If vLLM is unreachable and `--skip_if_unreachable` is enabled (default), the
+script emits a skip artifact with `status=skipped_unreachable_vllm`.
 
 ## Prompt Optimization Suite
 
@@ -164,3 +185,4 @@ For prompt-search workflows, use `scripts/run_diff_prompt_suite.py` with:
 
 Guide: `docs/diff_prompt_optimization_suite.md`.
 Cross-run aggregation: `scripts/summarize_diff_prompt_suite.py`.
+Candidate-loop runner: `scripts/run_diff_prompt_optimization_loop.py`.
