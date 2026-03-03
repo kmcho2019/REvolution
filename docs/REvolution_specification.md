@@ -229,6 +229,8 @@ The typical execution path is `scripts/run_evolution.py`:
 
 For `scripts/run_one_shot.py`, the flow is identical except it always uses `SingleShotEngine` (no evolution) and skips LLM feedback generation in the evaluation loop.
 
+`scripts/run_backend.py` provides a backend-pluggable entrypoint for ablations. Current backend profiles are `revolution`, `funsearch`, and `eoh`. The EoH backend supports both whole and diff generation modes and can evaluate `cvdp` problems through a dedicated runtime evaluator (`revolution.runtime.cvdp_evaluator.CVDPEvaluator`) instead of the VerilogEval testbench flow.
+
 ---
 
 ## 4) Data Structures and Schemas

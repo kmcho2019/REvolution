@@ -76,13 +76,15 @@ The CLI defaults for `--vllm_host` and `--vllm_port` also read `VLLM_HOST` and `
 
 `run_backend.py` is the canonical runner for backend ablations. It supports:
 
-- `--backend revolution|funsearch`
+- `--backend revolution|funsearch|eoh`
 - shared model/benchmark options (`--benchmarks`, `--problems`, `--model_name`, `--api_backend`, `--save_path`, `--num_workers`)
-- backend-specific controls (`--population_size`, `--num_generations`, `--strategy_selection`, `--fs_*` FunSearch knobs)
+- backend-specific controls (`--population_size`, `--num_generations`, `--strategy_selection`, `--fs_*`, `--eoh_*`)
 - shared evaluation controls:
   - `--evaluation_mode strict_ablation|search_accelerated`
   - `--accelerated_synthesis_top_k <int>` (used in `search_accelerated`)
 - deterministic run controls (`--seed` with per-worker derived seeds)
+
+`cvdp` benchmark support in `run_backend.py` is currently enabled for `--backend eoh`.
 
 By default outputs are isolated by backend under `<save_path>/<backend>/...` (`--backend_subdir` can be disabled if needed).
 
@@ -121,19 +123,36 @@ python scripts/run_backend.py \
 
 `scripts/run_funsearch.py` is a convenience wrapper that injects `--backend funsearch`.
 
+Example (EoH backend):
+
+```bash
+python scripts/run_backend.py \
+  --backend eoh \
+  --benchmarks RTLLM \
+  --problems Prob001_accu \
+  --api_backend vllm \
+  --vllm_host vllm \
+  --vllm_port 8888 \
+  --model_name /models/openai-gpt-oss-120b \
+  --eoh_population_size 4 \
+  --eoh_num_generations 3 \
+  --eoh_operators e1 e2 m1 m2 m3 \
+  --generation_mode diff
+```
+
 FunSearch feedback controls:
 - `--fs_feedback_policy off|fail_only|always` (default `off`)
 - `--fs_feedback_sample_probability <0..1>`
 
 #### 3.1.1 Ablation fairness controls (`scripts/run_backend_ablation.py`)
 
-Use `run_backend_ablation.py` when you need one-command REvolution vs FunSearch sweeps with explicit fairness normalization.
+Use `run_backend_ablation.py` when you need one-command REvolution vs FunSearch vs EoH sweeps with explicit fairness normalization.
 
 - `--primary_budget_axis candidate_evaluations|llm_calls|dual_gate`
   - default: `candidate_evaluations` (recommended for headline comparisons)
 - `--max_evaluations`: candidate budget per problem (primary in `candidate_evaluations`)
 - `--max_llm_calls_per_problem`: required for `llm_calls` and `dual_gate`
-- `--revolution_population_size` and `--funsearch_initial_population_size`: preferred schedule knobs used to derive exact candidate budgets
+- `--revolution_population_size`, `--funsearch_initial_population_size`, `--eoh_population_size`, `--eoh_operators`: preferred schedule knobs used to derive candidate budgets
 
 The ablation runner propagates budget metadata to per-problem summaries (`run_budget.primary_budget_axis`, evaluation/call caps), which the backend comparison report consumes for fairness diagnostics.
 
@@ -225,7 +244,7 @@ Every invocation writes two files next to summary/log outputs in `exp/<model>/`:
 
 Legacy nested snapshots that store fields under `resolved_arguments` are still accepted by `--config`.
 
-`run_evolution.py` remains backward-compatible. It now delegates to `run_backend.py` if called with `--backend funsearch`.
+`run_evolution.py` remains backward-compatible. It delegates to `run_backend.py` when invoked with a non-`revolution` backend (for example `--backend funsearch` or `--backend eoh`).
 
 #### Archiving completed runs
 
@@ -265,10 +284,10 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 ## 4. Utility scripts
 
 - `scripts/evolutionary_report_generator.py`: generate Markdown reports summarising a run (`--experiment_path path/to/exp/...`).
-- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, solved-only score/PPA deltas with regression checks, and budget/fairness diagnostics (`--backend_run revolution=<path> --backend_run funsearch=<path>`).
-- `scripts/run_backend_ablation.py`: one-command ablation sweep runner for REvolution/FunSearch plus optional comparison report generation, multi-seed loops (`--seeds`), strict fairness checks, selectable primary budget axis (`candidate_evaluations|llm_calls|dual_gate`), and command validation via `--dry_run`.
+- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, solved-only score/PPA deltas with regression checks, and budget/fairness diagnostics (`--backend_run revolution=<path> --backend_run funsearch=<path> --backend_run eoh=<path>`).
+- `scripts/run_backend_ablation.py`: one-command ablation sweep runner for REvolution/FunSearch/EoH plus optional comparison report generation, multi-seed loops (`--seeds`), strict fairness checks, selectable primary budget axis (`candidate_evaluations|llm_calls|dual_gate`), and command validation via `--dry_run`.
   - Also writes top-level snapshots under `save_root` as `<timestamp>_ablation_config.yaml` and `<timestamp>_ablation_config_meta.yaml`.
-- `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch comparisons.
+- `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch/EoH comparisons.
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
 - `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts).
 - `scripts/run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with matched-seed runs (`--seeds`), fixed hard validation matrix defaults (RTLLM/VerilogEval/CVDP), aggregate token/runtime report output, diff-failure catalogs, and optional `--skip_if_unreachable` fail-fast artifact mode for unstable vLLM connectivity.
