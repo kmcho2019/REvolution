@@ -36,6 +36,14 @@ MIME_OVERRIDES = {
     ".gif": "image/gif",
     ".svg": "image/svg+xml",
 }
+ARTIFACT_MODE_FULL = "full"
+ARTIFACT_MODE_CANDIDATE_CORE = "candidate_core"
+ARTIFACT_MODE_CHOICES = [ARTIFACT_MODE_FULL, ARTIFACT_MODE_CANDIDATE_CORE]
+LEGACY_CANDIDATE_CODE_RE = re.compile(r"candidate_\d+(?:_[A-Za-z0-9.-]+)?\.(?:sv|v)$", re.IGNORECASE)
+LEGACY_CANDIDATE_THOUGHT_RE = re.compile(
+    r"candidate_\d+(?:_[A-Za-z0-9.-]+)?_thought\.txt$",
+    re.IGNORECASE,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -105,6 +113,16 @@ def parse_args() -> argparse.Namespace:
         help=(
             "Archive-relative directory to store copied plot/image assets and rewrite "
             "markdown image links (implies --no-embed-images). Example: plots"
+        ),
+    )
+    parser.add_argument(
+        "--artifact-mode",
+        choices=ARTIFACT_MODE_CHOICES,
+        default=ARTIFACT_MODE_FULL,
+        help=(
+            "Artifact packing mode. 'full' keeps existing behavior (all non-summary "
+            "raw outputs). 'candidate_core' keeps only candidate code/thought/feedback "
+            "files in artifacts/raw_results.tar.xz."
         ),
     )
     return parser.parse_args()
@@ -588,6 +606,27 @@ def _write_artifacts_tar(artifacts: Iterable[Path], run_dir: Path, destination: 
             tar.add(path, arcname=rel)
 
 
+def _is_candidate_core_artifact(path: Path) -> bool:
+    filename = path.name.lower()
+    if filename in {"code.sv", "code.v", "thought.txt"}:
+        return True
+    if filename.endswith("_feedback.txt"):
+        return True
+    if LEGACY_CANDIDATE_CODE_RE.fullmatch(filename):
+        return True
+    if LEGACY_CANDIDATE_THOUGHT_RE.fullmatch(filename):
+        return True
+    return False
+
+
+def _filter_artifacts_by_mode(artifacts: Iterable[Path], artifact_mode: str) -> list[Path]:
+    if artifact_mode == ARTIFACT_MODE_FULL:
+        return list(artifacts)
+    if artifact_mode == ARTIFACT_MODE_CANDIDATE_CORE:
+        return [path for path in artifacts if _is_candidate_core_artifact(path)]
+    raise ValueError(f"Unsupported artifact_mode: {artifact_mode}")
+
+
 def _sanitize_tag(tag: str | None) -> str:
     if not tag:
         return "unknown"
@@ -635,6 +674,8 @@ def _write_readme(readme_path: Path, manifest: dict[str, Any]) -> None:
         f"- Backend: {manifest.get('backend')}",
         f"- Plot format: {manifest.get('plot_format')}",
         f"- Image mode: {manifest.get('image_mode')}",
+        f"- Artifact mode: {manifest.get('artifact_mode')}",
+        f"- Artifact file count: {manifest.get('artifact_file_count')}",
         f"- Config snapshots: {manifest.get('config_snapshot_count', 0)}",
         f"- Model: {manifest.get('command_settings', {}).get('model_name')}",
         f"- Generations: {manifest.get('command_settings', {}).get('num_generations')}",
@@ -718,6 +759,7 @@ def archive_baseline(
     plot_assets_dir: str | None = None,
     plot_format: str = "png",
     regenerate_plots: bool = True,
+    artifact_mode: str = ARTIFACT_MODE_FULL,
 ) -> Path:
     run_dir = run_dir.resolve()
     archive_root = archive_root.resolve()
@@ -726,6 +768,11 @@ def archive_baseline(
     if embed_images and plot_assets_dir:
         raise ValueError(
             "plot_assets_dir cannot be used with embedded images; disable embedding first."
+        )
+    if artifact_mode not in ARTIFACT_MODE_CHOICES:
+        raise ValueError(
+            f"Unsupported artifact_mode: {artifact_mode}. "
+            f"Expected one of: {', '.join(ARTIFACT_MODE_CHOICES)}."
         )
     plot_assets_rel: Path | None = None
     if plot_assets_dir:
@@ -806,6 +853,7 @@ def archive_baseline(
         exclude_patterns,
         skip_roots=skip_roots,
     )
+    artifacts = _filter_artifacts_by_mode(artifacts, artifact_mode)
     artifacts_tar = archive_dir / "artifacts" / "raw_results.tar.xz"
     _write_artifacts_tar(artifacts, run_dir, artifacts_tar)
 
@@ -835,6 +883,8 @@ def archive_baseline(
         "summary_files": summary_info,
         "config_snapshots": config_info,
         "config_snapshot_count": len(config_info),
+        "artifact_mode": artifact_mode,
+        "artifact_file_count": len(artifacts),
         "artifacts_tar": str(artifacts_tar),
         "excluded_patterns": exclude_patterns,
     }
@@ -854,6 +904,8 @@ def archive_baseline(
         "max_tokens": command_settings.get("max_tokens") or "",
         "archive_type": archive_type,
         "config_snapshot_count": len(config_info),
+        "artifact_mode": artifact_mode,
+        "artifact_file_count": len(artifacts),
         "archive_dir": str(archive_dir),
         "run_dir": str(run_dir),
         "plot_format": plot_format,
@@ -884,6 +936,7 @@ def main() -> None:
         plot_assets_dir=args.plot_assets_dir,
         plot_format=args.plot_format,
         regenerate_plots=not args.no_regenerate_plots,
+        artifact_mode=args.artifact_mode,
     )
     print(f"Archive created at: {archive_dir}")
 
