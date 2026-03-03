@@ -49,6 +49,13 @@ Implementation has started and completed the core integration milestones.
   - `31 passed` across new/updated runtime/backend/script tests.
 - Command used:
   - `uv run --python 3.11 --with pytest --with pyyaml python -m pytest -q tests/revolution/test_diff_apply.py tests/revolution/test_eoh_backend.py tests/revolution/test_cvdp_evaluator.py tests/scripts/test_run_backend.py tests/scripts/test_run_backend_ablation.py`
+- Lint/type checks for added EoH integration code passed:
+  - `uv run --python 3.11 --with ruff ruff check scripts/run_backend.py scripts/run_backend_ablation.py src/revolution/backends/eoh_backend.py src/revolution/runtime/diff_apply.py src/revolution/runtime/cvdp_evaluator.py tests/revolution/test_diff_apply.py tests/revolution/test_cvdp_evaluator.py tests/revolution/test_eoh_backend.py tests/scripts/test_run_backend.py tests/scripts/test_run_backend_ablation.py`
+  - `uv run --python 3.11 --with ty ty check scripts/run_backend.py scripts/run_backend_ablation.py src/revolution/backends/eoh_backend.py src/revolution/runtime/diff_apply.py src/revolution/runtime/cvdp_evaluator.py`
+- Real-vLLM smoke runs completed against `http://host.docker.internal:8000/v1/models`:
+  - Detected model: `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b` (`max_model_len=131072`)
+  - Whole-mode smoke (`--max_tokens 128000`) passed on `VerilogEval-Spec-to-RTL/Prob001_zero`
+  - Diff-mode smoke (`--max_tokens 128000 --diff_max_tokens 128000`) passed with a confirmed `generated_mode="diff"` candidate in `Gen1`
 
 ## TODO List + Milestones
 - [x] Backend module + config
@@ -57,7 +64,7 @@ Implementation has started and completed the core integration milestones.
 - [x] CVDP evaluator extraction + integration
 - [x] run_backend + ablation script support
 - [x] unit tests
-- [ ] real‑LLM smoke tests
+- [x] real‑LLM smoke tests
 - [ ] full ablation sweep
 - [x] docs updates
 
