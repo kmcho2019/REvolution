@@ -492,8 +492,8 @@ def _write_summaries(
         dest = _summary_destination(path, run_dir, summaries_dir)
         dest.parent.mkdir(parents=True, exist_ok=True)
         content = path.read_text(encoding="utf-8")
-        embed_info = {"embedded": 0, "missing": []}
-        plot_info = {"rewritten": 0, "copied": 0, "missing": [], "copied_files": []}
+        embed_info: dict[str, Any] = {"embedded": 0, "missing": []}
+        plot_info: dict[str, Any] = {"rewritten": 0, "copied": 0, "missing": [], "copied_files": []}
         if embed_images and path.suffix.lower() == ".md":
             content, embed_info = _embed_images(content, path.parent)
         elif plot_assets_root is not None and path.suffix.lower() == ".md":
@@ -505,6 +505,9 @@ def _write_summaries(
                 plot_assets_root,
             )
         dest.write_text(content, encoding="utf-8")
+        missing_images = [str(item) for item in embed_info.get("missing", [])] + [
+            str(item) for item in plot_info.get("missing", [])
+        ]
         summary_info.append(
             {
                 "source": str(path),
@@ -513,7 +516,7 @@ def _write_summaries(
                 "rewritten_image_links": plot_info["rewritten"],
                 "copied_images": plot_info["copied"],
                 "copied_plot_files": plot_info["copied_files"],
-                "missing_images": list(embed_info["missing"]) + list(plot_info["missing"]),
+                "missing_images": missing_images,
             }
         )
     return summary_info
@@ -725,7 +728,7 @@ def _append_index_csv(index_path: Path, row: dict[str, Any], fieldnames: list[st
     if index_path.exists() and index_path.stat().st_size > 0:
         with index_path.open("r", newline="", encoding="utf-8") as handle:
             reader = csv.DictReader(handle)
-            existing_fields = reader.fieldnames or []
+            existing_fields = list(reader.fieldnames or [])
             rows = list(reader)
         merged_fields = _merge_index_fields(existing_fields, fieldnames)
         if merged_fields != existing_fields:
