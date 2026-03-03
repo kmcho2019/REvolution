@@ -5,6 +5,7 @@ from revolution.backends.base import (
     EvolutionBackend,
     RunBudget,
 )
+from revolution.backends.eoh_backend import EoHBackend, EoHBackendConfig
 from revolution.backends.funsearch_backend import FunSearchBackend, FunSearchBackendConfig
 from revolution.backends.revolution_backend import RevolutionBackend, RevolutionBackendConfig
 
@@ -12,6 +13,8 @@ __all__ = [
     "BackendExecutionContext",
     "BackendRunResult",
     "BackendServices",
+    "EoHBackend",
+    "EoHBackendConfig",
     "EvolutionBackend",
     "FunSearchBackend",
     "FunSearchBackendConfig",
