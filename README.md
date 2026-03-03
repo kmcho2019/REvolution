@@ -242,13 +242,21 @@ python scripts/archive_baseline.py \
   --archive-root baselines
 ```
 
-Storage-saving candidate-core archive mode (keeps only candidate code/thought/feedback in `raw_results.tar.xz` while preserving copied configs/summaries):
+Default candidate-core archive mode keeps only candidate code/thought/feedback in `raw_results.tar.xz` while preserving copied configs/summaries:
+
+```bash
+python scripts/archive_baseline.py \
+  --run-dir exp/stub-model \
+  --archive-root baselines
+```
+
+Optional full artifact mode (keeps all non-summary raw outputs):
 
 ```bash
 python scripts/archive_baseline.py \
   --run-dir exp/stub-model \
   --archive-root baselines \
-  --artifact-mode candidate_core
+  --artifact-mode full
 ```
 
 The script enforces reproducibility: it fails if no run config snapshots are found under `--run-dir`.

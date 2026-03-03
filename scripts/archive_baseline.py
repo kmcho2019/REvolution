@@ -118,11 +118,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--artifact-mode",
         choices=ARTIFACT_MODE_CHOICES,
-        default=ARTIFACT_MODE_FULL,
+        default=ARTIFACT_MODE_CANDIDATE_CORE,
         help=(
-            "Artifact packing mode. 'full' keeps existing behavior (all non-summary "
-            "raw outputs). 'candidate_core' keeps only candidate code/thought/feedback "
-            "files in artifacts/raw_results.tar.xz."
+            "Artifact packing mode. 'candidate_core' (default) keeps only candidate "
+            "code/thought/feedback files in artifacts/raw_results.tar.xz. Use 'full' "
+            "to keep all non-summary raw outputs."
         ),
     )
     return parser.parse_args()
@@ -759,7 +759,7 @@ def archive_baseline(
     plot_assets_dir: str | None = None,
     plot_format: str = "png",
     regenerate_plots: bool = True,
-    artifact_mode: str = ARTIFACT_MODE_FULL,
+    artifact_mode: str = ARTIFACT_MODE_CANDIDATE_CORE,
 ) -> Path:
     run_dir = run_dir.resolve()
     archive_root = archive_root.resolve()

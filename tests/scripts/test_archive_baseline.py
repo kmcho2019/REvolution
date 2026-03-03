@@ -225,6 +225,7 @@ def test_archive_excludes_cache_files_from_tar(tmp_path):
         archive_root=archive_root,
         embed_images=False,
         regenerate_plots=False,
+        artifact_mode="full",
     )
 
     tar_path = archive_dir / "artifacts" / "raw_results.tar.xz"
@@ -303,3 +304,28 @@ def test_archive_candidate_core_mode_limits_artifacts_tar(tmp_path):
     assert manifest["artifact_file_count"] == len(names)
     assert (archive_dir / "configs" / f"{run_started}_config.yaml").exists()
     assert (archive_dir / "summaries" / "OVERALL_EVOLUTIONARY_REPORT.md").exists()
+
+
+def test_archive_default_mode_is_candidate_core(tmp_path):
+    run_started = "20260223_080910"
+    run_dir = _make_single_run_tree(tmp_path, run_started=run_started)
+    _add_candidate_artifacts(run_dir)
+    archive_root = tmp_path / "archives"
+
+    archive_dir = archive_baseline(
+        run_dir=run_dir,
+        archive_root=archive_root,
+        embed_images=False,
+        regenerate_plots=False,
+    )
+
+    tar_path = archive_dir / "artifacts" / "raw_results.tar.xz"
+    with tarfile.open(tar_path, "r:xz") as handle:
+        names = sorted(handle.getnames())
+
+    assert "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/code.sv" in names
+    assert "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/thought.txt" in names
+    assert "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/code_feedback.txt" in names
+    assert "keep.txt" not in names
+    manifest = json.loads((archive_dir / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["artifact_mode"] == "candidate_core"
