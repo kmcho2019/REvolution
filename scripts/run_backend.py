@@ -5,7 +5,7 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import Any
+from typing import cast
 
 from tqdm import tqdm
 
@@ -154,11 +154,14 @@ def _build_backend(
             cvdp_record=record,
         )
         ref_ppa_metrics: dict[str, float] = {}
-        candidate_evaluator = CVDPEvaluator(
-            context=problem_context,
-            cvdp_jsonl_path=args.cvdp_jsonl,
-            cvdp_id=problem,
-            simulation_timeout_s=args.cvdp_simulation_timeout_s,
+        candidate_evaluator = cast(
+            CandidateEvaluator,
+            CVDPEvaluator(
+                context=problem_context,
+                cvdp_jsonl_path=args.cvdp_jsonl,
+                cvdp_id=problem,
+                simulation_timeout_s=args.cvdp_simulation_timeout_s,
+            ),
         )
     else:
         problem_context = load_problem_context(benchmark, problem)

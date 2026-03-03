@@ -16,6 +16,7 @@ from revolution.backends.base import (
     BackendServices,
     EvolutionBackend,
 )
+from revolution.llm import LLMRequest
 from revolution.prompt_store import safe_format
 from revolution.runtime import CandidateEvaluation, CandidateEvaluator, CandidateWorkItem
 from revolution.runtime.diff_apply import DiffApplyConfig, DiffApplier
@@ -777,17 +778,18 @@ class EoHBackend(EvolutionBackend):
             if batch_size <= 0:
                 break
 
-            requests: list[dict[str, Any]] = []
-            metadata: list[tuple[list[EoHCandidate], str, str]] = []
+            requests: list[LLMRequest] = []
+            metadata: list[tuple[list[EoHCandidate], Literal["whole", "diff"], str]] = []
             for _ in range(batch_size):
                 required_parents = self._required_parent_count(operator)
                 parents = self._sample_parents(required_parents)
                 if required_parents > 0 and len(parents) < required_parents:
                     continue
 
-                mode: Literal["whole", "diff"] = (
-                    "whole" if operator == "i1" else self.config.generation_mode
-                )
+                if operator == "i1":
+                    mode: Literal["whole", "diff"] = "whole"
+                else:
+                    mode = "diff" if self.config.generation_mode == "diff" else "whole"
                 prompt = self._build_prompt(operator=operator, mode=mode, parents=parents)
                 requests.append(
                     {
