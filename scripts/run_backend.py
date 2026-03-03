@@ -16,6 +16,8 @@ sys.path.insert(
 from revolution.backends import (  # noqa: E402
     BackendExecutionContext,
     BackendServices,
+    EoHBackend,
+    EoHBackendConfig,
     FunSearchBackend,
     FunSearchBackendConfig,
     RevolutionBackend,
@@ -29,7 +31,15 @@ from revolution.configuration import (  # noqa: E402
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator  # noqa: E402
 from revolution.llm import LLMInterface  # noqa: E402
 from revolution.prompt_store import PromptStore  # noqa: E402
-from revolution.runtime import ArtifactWriter, CandidateEvaluator, load_problem_context  # noqa: E402
+from revolution.runtime import (  # noqa: E402
+    ArtifactWriter,
+    CVDPEvaluator,
+    CandidateEvaluator,
+    build_cvdp_problem_context,
+    load_cvdp_record,
+    load_problem_context,
+    select_cvdp_ids,
+)
 from revolution.utils import StreamRedirector  # noqa: E402
 from revolution.vllm_preflight import preflight_vllm_model  # noqa: E402
 
@@ -65,6 +75,8 @@ def _resolve_prompt_profile(args: argparse.Namespace) -> str:
         return args.prompt_profile
     if args.backend == "funsearch":
         return "funsearch"
+    if args.backend == "eoh":
+        return "eoh"
     return "default"
 
 
@@ -129,8 +141,38 @@ def _build_backend(
     )
     synthesis_evaluator = SynthesisEvaluator()
 
-    problem_context = load_problem_context(benchmark, problem)
-    ref_ppa_metrics = _load_reference_ppa_metrics(problem_context)
+    if benchmark.lower() == "cvdp":
+        record = load_cvdp_record(args.cvdp_jsonl, problem)
+        if record is None:
+            raise FileNotFoundError(
+                f"CVDP id '{problem}' not found in JSONL '{args.cvdp_jsonl}'."
+            )
+        problem_context = build_cvdp_problem_context(
+            benchmark_name=benchmark,
+            cvdp_id=problem,
+            jsonl_path=args.cvdp_jsonl,
+            cvdp_record=record,
+        )
+        ref_ppa_metrics: dict[str, float] = {}
+        candidate_evaluator = CVDPEvaluator(
+            context=problem_context,
+            cvdp_jsonl_path=args.cvdp_jsonl,
+            cvdp_id=problem,
+            simulation_timeout_s=args.cvdp_simulation_timeout_s,
+        )
+    else:
+        problem_context = load_problem_context(benchmark, problem)
+        ref_ppa_metrics = _load_reference_ppa_metrics(problem_context)
+        candidate_evaluator = CandidateEvaluator(
+            context=problem_context,
+            problem_description=problem_context.problem_description,
+            verilog_evaluator=verilog_evaluator,
+            synthesis_evaluator=synthesis_evaluator,
+            ref_ppa_metrics=ref_ppa_metrics,
+            evaluation_mode=args.evaluation_mode,
+            accelerated_synthesis_top_k=args.accelerated_synthesis_top_k,
+        )
+
     prompt_store = PromptStore(root_dir=prompt_root, profile=prompt_profile)
     effective_save_path = _effective_save_path(args)
     artifact_writer = ArtifactWriter(
@@ -138,15 +180,6 @@ def _build_backend(
         model_name=args.model_name,
         benchmark_name=benchmark,
         problem_name=problem,
-    )
-    candidate_evaluator = CandidateEvaluator(
-        context=problem_context,
-        problem_description=problem_context.problem_description,
-        verilog_evaluator=verilog_evaluator,
-        synthesis_evaluator=synthesis_evaluator,
-        ref_ppa_metrics=ref_ppa_metrics,
-        evaluation_mode=args.evaluation_mode,
-        accelerated_synthesis_top_k=args.accelerated_synthesis_top_k,
     )
     services = BackendServices(
         llm=llm_interface,
@@ -172,6 +205,8 @@ def _build_backend(
             ),
             "evaluation_mode": args.evaluation_mode,
             "accelerated_synthesis_top_k": args.accelerated_synthesis_top_k,
+            "cvdp_jsonl": getattr(args, "cvdp_jsonl", None),
+            "cvdp_simulation_timeout_s": getattr(args, "cvdp_simulation_timeout_s", None),
         },
     )
 
@@ -203,6 +238,47 @@ def _build_backend(
             config=backend_cfg,
             base_save_path=effective_save_path,
         )
+
+    if args.backend == "eoh":
+        eoh_operators = tuple(str(op).lower() for op in args.eoh_operators)
+        eoh_population_size = max(1, int(args.eoh_population_size))
+        eoh_num_generations = max(0, int(args.eoh_num_generations))
+        eoh_max_evaluations = args.eoh_max_evaluations
+        if eoh_max_evaluations is None:
+            eoh_max_evaluations = (
+                2 * eoh_population_size
+                + eoh_num_generations * eoh_population_size * len(eoh_operators)
+            )
+        eoh_max_llm_calls = args.eoh_max_llm_calls
+        if eoh_max_llm_calls is None:
+            eoh_max_llm_calls = getattr(args, "max_llm_calls_per_problem", None)
+
+        eoh_cfg = EoHBackendConfig(
+            population_size=eoh_population_size,
+            num_generations=eoh_num_generations,
+            operators=eoh_operators,
+            parent_count=max(1, int(args.eoh_parent_count)),
+            selection_method=args.eoh_selection_method,
+            management_method=args.eoh_management_method,
+            generation_mode=args.generation_mode,
+            default_llm_temp=args.temperature,
+            default_llm_top_p=args.top_p,
+            default_llm_max_tokens=args.max_tokens,
+            diff_max_tokens=args.diff_max_tokens,
+            max_evaluations=eoh_max_evaluations,
+            max_llm_calls=eoh_max_llm_calls,
+            max_runtime_seconds=args.eoh_max_runtime_seconds,
+            max_llm_tokens=args.eoh_max_llm_tokens,
+            prompt_profile=prompt_profile,
+            prompt_root=prompt_root,
+            strict_prompt_keys=args.eoh_strict_prompt_keys,
+            seed=task_seed,
+            candidate_workers=args.candidate_workers,
+            diff_apply_policy=args.diff_apply_policy,
+            diff_similarity_threshold=args.diff_similarity_threshold,
+            diff_fuzzy_margin=args.diff_fuzzy_margin,
+        )
+        return EoHBackend(context=context, services=services, config=eoh_cfg)
 
     feedback_policy = args.fs_feedback_policy
     if args.fs_enable_feedback and feedback_policy == "off":
@@ -279,7 +355,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     )
 
     parser = argparse.ArgumentParser(
-        description="Run REvolution/FunSearch backends on benchmark problems.",
+        description="Run REvolution/FunSearch/EoH backends on benchmark problems.",
         parents=[config_parser],
     )
     benchmark_root = os.path.abspath(
@@ -291,7 +367,12 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         if os.path.isdir(os.path.join(benchmark_root, d))
     ]
 
-    parser.add_argument("--backend", type=str, default="revolution", choices=["revolution", "funsearch"])
+    parser.add_argument(
+        "--backend",
+        type=str,
+        default="revolution",
+        choices=["revolution", "funsearch", "eoh"],
+    )
     parser.add_argument(
         "--benchmarks",
         nargs="+",
@@ -382,6 +463,34 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         default=None,
         help=argparse.SUPPRESS,
     )
+    default_cvdp_jsonl = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "data",
+            "bench",
+            "cvdp",
+            "cvdp_v1.0.2_nonagentic_code_generation_no_commercial.jsonl",
+        )
+    )
+    parser.add_argument(
+        "--cvdp_jsonl",
+        type=str,
+        default=default_cvdp_jsonl,
+        help="Path to CVDP non-agentic JSONL dataset.",
+    )
+    parser.add_argument(
+        "--cvdp_categories",
+        nargs="+",
+        default=["cid002", "cid003"],
+        help="CVDP category filter used when benchmark includes cvdp.",
+    )
+    parser.add_argument(
+        "--cvdp_simulation_timeout_s",
+        type=int,
+        default=120,
+        help="Timeout in seconds for CVDP harness pytest execution.",
+    )
 
     # REvolution-specific
     parser.add_argument("--population_size", type=int, default=5)
@@ -428,6 +537,38 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--fs_feedback_sample_probability", type=float, default=1.0)
     parser.add_argument("--fs_allow_diff_mode", action="store_true")
     parser.add_argument("--fs_strict_prompt_keys", action=argparse.BooleanOptionalAction, default=True)
+
+    # EoH-specific
+    parser.add_argument("--eoh_population_size", type=int, default=5)
+    parser.add_argument("--eoh_num_generations", type=int, default=5)
+    parser.add_argument(
+        "--eoh_operators",
+        nargs="+",
+        default=["e1", "e2", "m1", "m2", "m3"],
+        help="EoH operator schedule per generation.",
+    )
+    parser.add_argument("--eoh_parent_count", type=int, default=2)
+    parser.add_argument(
+        "--eoh_selection_method",
+        type=str,
+        default="rank",
+        choices=["rank", "random", "tournament"],
+    )
+    parser.add_argument(
+        "--eoh_management_method",
+        type=str,
+        default="elitism",
+        choices=["elitism"],
+    )
+    parser.add_argument("--eoh_max_evaluations", type=int, default=None)
+    parser.add_argument("--eoh_max_llm_calls", type=int, default=None)
+    parser.add_argument("--eoh_max_llm_tokens", type=int, default=None)
+    parser.add_argument("--eoh_max_runtime_seconds", type=float, default=None)
+    parser.add_argument(
+        "--eoh_strict_prompt_keys",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
     return parser, config_parser
 
 
@@ -438,7 +579,25 @@ def _discover_tasks(args: argparse.Namespace) -> list[tuple[str, str, argparse.N
     tasks: list[tuple[str, str, argparse.Namespace]] = []
     for benchmark in args.benchmarks:
         if benchmark.lower() == "cvdp":
-            print(f"Skipping benchmark '{benchmark}' in run_backend.py (unsupported in backend runner).")
+            if args.backend != "eoh":
+                print(
+                    f"Skipping benchmark '{benchmark}' for backend '{args.backend}' "
+                    "(cvdp support is currently enabled for backend=eoh)."
+                )
+                continue
+            selected_ids = args.problems if args.problems else None
+            cvdp_ids = select_cvdp_ids(
+                args.cvdp_jsonl,
+                args.cvdp_categories,
+                selected_ids,
+            )
+            if not cvdp_ids:
+                print(
+                    f"[CVDP] No matching IDs found for categories={args.cvdp_categories}. Skipping."
+                )
+                continue
+            for cvdp_id in cvdp_ids:
+                tasks.append((benchmark, cvdp_id, args))
             continue
         benchmark_dir = os.path.join(benchmark_root, benchmark)
         problems_file = os.path.join(benchmark_dir, "problems.txt")

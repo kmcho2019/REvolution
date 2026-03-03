@@ -10,6 +10,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.run_backend_ablation import (  # noqa: E402
+    _derive_eoh_schedule,
     _resolve_candidate_budget,
     _safe_workers,
     _validate_fairness,
@@ -65,6 +66,18 @@ def test_resolve_candidate_budget_by_axis():
         )
         == 8
     )
+
+
+def test_derive_eoh_schedule_respects_formula():
+    pop, generations, estimated = _derive_eoh_schedule(
+        target_candidates=42,
+        preferred_population_size=4,
+        operators_count=5,
+    )
+    assert pop >= 1
+    assert generations >= 0
+    assert estimated == 2 * pop + generations * pop * 5
+    assert estimated >= 42
 
 
 def test_validate_fairness_accepts_matching_commands():
@@ -139,6 +152,7 @@ def test_validate_fairness_accepts_matching_commands():
     _validate_fairness(
         revolution_cmd=rev,
         funsearch_cmd=fs,
+        eoh_cmd=None,
         primary_budget_axis="candidate_evaluations",
         primary_budget_candidates=3,
         max_llm_calls_per_problem=None,
@@ -216,6 +230,7 @@ def test_validate_fairness_rejects_non_strict_mode():
         _validate_fairness(
             revolution_cmd=rev,
             funsearch_cmd=fs,
+            eoh_cmd=None,
             primary_budget_axis="candidate_evaluations",
             primary_budget_candidates=1,
             max_llm_calls_per_problem=None,
@@ -293,10 +308,126 @@ def test_validate_fairness_rejects_missing_fs_llm_cap_for_dual_gate():
         _validate_fairness(
             revolution_cmd=rev,
             funsearch_cmd=fs,
+            eoh_cmd=None,
             primary_budget_axis="dual_gate",
             primary_budget_candidates=3,
             max_llm_calls_per_problem=3,
         )
+
+
+def test_validate_fairness_accepts_eoh_command():
+    rev = [
+        "python",
+        "scripts/run_backend.py",
+        "--backend",
+        "revolution",
+        "--benchmarks",
+        "RTLLM",
+        "--api_backend",
+        "vllm",
+        "--vllm_host",
+        "vllm",
+        "--vllm_port",
+        "8888",
+        "--model_name",
+        "m",
+        "--num_workers",
+        "2",
+        "--temperature",
+        "0.7",
+        "--top_p",
+        "0.95",
+        "--max_tokens",
+        "512",
+        "--seed",
+        "42",
+        "--evaluation_mode",
+        "strict_ablation",
+        "--primary_budget_axis",
+        "candidate_evaluations",
+        "--population_size",
+        "3",
+        "--num_generations",
+        "0",
+    ]
+    fs = [
+        "python",
+        "scripts/run_backend.py",
+        "--backend",
+        "funsearch",
+        "--benchmarks",
+        "RTLLM",
+        "--api_backend",
+        "vllm",
+        "--vllm_host",
+        "vllm",
+        "--vllm_port",
+        "8888",
+        "--model_name",
+        "m",
+        "--num_workers",
+        "2",
+        "--temperature",
+        "0.7",
+        "--top_p",
+        "0.95",
+        "--max_tokens",
+        "512",
+        "--seed",
+        "42",
+        "--evaluation_mode",
+        "strict_ablation",
+        "--primary_budget_axis",
+        "candidate_evaluations",
+        "--fs_max_evaluations",
+        "3",
+    ]
+    eoh = [
+        "python",
+        "scripts/run_backend.py",
+        "--backend",
+        "eoh",
+        "--benchmarks",
+        "RTLLM",
+        "--api_backend",
+        "vllm",
+        "--vllm_host",
+        "vllm",
+        "--vllm_port",
+        "8888",
+        "--model_name",
+        "m",
+        "--num_workers",
+        "2",
+        "--temperature",
+        "0.7",
+        "--top_p",
+        "0.95",
+        "--max_tokens",
+        "512",
+        "--seed",
+        "42",
+        "--evaluation_mode",
+        "strict_ablation",
+        "--primary_budget_axis",
+        "candidate_evaluations",
+        "--eoh_population_size",
+        "1",
+        "--eoh_num_generations",
+        "1",
+        "--eoh_operators",
+        "e1",
+        "--eoh_max_evaluations",
+        "3",
+    ]
+    _validate_fairness(
+        revolution_cmd=rev,
+        funsearch_cmd=fs,
+        eoh_cmd=eoh,
+        primary_budget_axis="candidate_evaluations",
+        primary_budget_candidates=3,
+        max_llm_calls_per_problem=None,
+    )
 
 
 def test_ablation_main_writes_top_level_config_and_meta(tmp_path):

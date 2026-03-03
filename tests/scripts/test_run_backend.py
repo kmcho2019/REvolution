@@ -14,6 +14,7 @@ from revolution.runtime.problem_context import ProblemContext  # noqa: E402
 from scripts.run_backend import (  # noqa: E402
     _build_parser,
     _derive_seed,
+    _discover_tasks,
     _effective_save_path,
     _load_reference_ppa_metrics,
     _resolve_prompt_profile,
@@ -51,6 +52,8 @@ def test_prompt_profile_defaults_by_backend():
 
     args = Args()
     assert _resolve_prompt_profile(args) == "funsearch"
+    args.backend = "eoh"
+    assert _resolve_prompt_profile(args) == "eoh"
     args.backend = "revolution"
     assert _resolve_prompt_profile(args) == "default"
     args.prompt_profile = "custom"
@@ -87,6 +90,36 @@ def test_backend_parser_defaults_funsearch_reducer_to_last_input():
     parser, _ = _build_parser()
     args, _ = parser.parse_known_args(["--backend", "funsearch"])
     assert args.fs_score_reducer == "last_input"
+
+
+def test_backend_parser_accepts_eoh_options():
+    parser, _ = _build_parser()
+    args, _ = parser.parse_known_args(
+        [
+            "--backend",
+            "eoh",
+            "--generation_mode",
+            "diff",
+            "--eoh_population_size",
+            "6",
+            "--eoh_num_generations",
+            "2",
+            "--eoh_operators",
+            "e1",
+            "m1",
+            "--eoh_selection_method",
+            "tournament",
+            "--eoh_max_evaluations",
+            "20",
+        ]
+    )
+    assert args.backend == "eoh"
+    assert args.generation_mode == "diff"
+    assert args.eoh_population_size == 6
+    assert args.eoh_num_generations == 2
+    assert args.eoh_operators == ["e1", "m1"]
+    assert args.eoh_selection_method == "tournament"
+    assert args.eoh_max_evaluations == 20
 
 
 def test_backend_parser_defaults_strategy_selection_to_ucb():
@@ -131,6 +164,36 @@ def test_load_reference_ppa_metrics_parses_reference_file(tmp_path):
         "power": 0.05,
         "area": 100.0,
     }
+
+
+def test_discover_tasks_includes_cvdp_ids(tmp_path):
+    dataset = tmp_path / "cvdp.jsonl"
+    dataset.write_text(
+        "\n".join(
+            [
+                '{"id":"cvdp_a","categories":["cid002"],"input":{"prompt":"p"},"output":{"context":{"rtl/a.sv":""}},"harness":{"files":{}}}',
+                '{"id":"cvdp_b","categories":["cid003"],"input":{"prompt":"p"},"output":{"context":{"rtl/b.sv":""}},"harness":{"files":{}}}',
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    class Args:
+        backend = "eoh"
+        benchmarks = ["cvdp"]
+        problems = None
+        cvdp_jsonl = str(dataset)
+        cvdp_categories = ["cid003"]
+
+    args = Args()
+    tasks = _discover_tasks(args)
+    assert tasks
+    assert len(tasks) == 1
+    benchmark, problem, payload = tasks[0]
+    assert benchmark == "cvdp"
+    assert problem == "cvdp_b"
+    assert payload is args
 
 
 def test_run_backend_generated_config_roundtrip_and_edit(monkeypatch, tmp_path):

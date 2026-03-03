@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import math
 import multiprocessing
 import os
 import subprocess
@@ -89,10 +90,38 @@ def _derive_revolution_schedule(
     return target, 0
 
 
+def _derive_eoh_schedule(
+    *,
+    target_candidates: int,
+    preferred_population_size: int,
+    operators_count: int,
+) -> tuple[int, int, int]:
+    """
+    Solve EoH schedule against fairness budget:
+      budget = 2*pop + generations*pop*len(operators)
+    Returns (population_size, num_generations, estimated_candidates).
+    """
+    target = max(1, target_candidates)
+    ops = max(1, operators_count)
+    population = max(1, preferred_population_size)
+    if target < 2 * population:
+        population = max(1, target // 2)
+    base = 2 * population
+    if target <= base:
+        generations = 0
+    else:
+        generations = int(
+            math.ceil((target - base) / max(1, population * ops))
+        )
+    estimated = base + generations * population * ops
+    return population, generations, estimated
+
+
 def _validate_fairness(
     *,
     revolution_cmd: list[str],
     funsearch_cmd: list[str],
+    eoh_cmd: list[str] | None,
     primary_budget_axis: str,
     primary_budget_candidates: int,
     max_llm_calls_per_problem: int | None,
@@ -110,26 +139,32 @@ def _validate_fairness(
         "--max_tokens",
         "--seed",
     ]
+    comparisons: list[tuple[str, list[str]]] = [("funsearch", funsearch_cmd)]
+    if eoh_cmd is not None:
+        comparisons.append(("eoh", eoh_cmd))
+
     for flag in shared_flags:
         rev_value = _arg_value(revolution_cmd, flag)
-        fs_value = _arg_value(funsearch_cmd, flag)
-        if flag == "--benchmarks":
-            # Benchmarks is variadic; enforce by string slice equality.
-            rev_slice = " ".join(
-                revolution_cmd[revolution_cmd.index(flag) + 1 : revolution_cmd.index("--api_backend")]
-            )
-            fs_slice = " ".join(
-                funsearch_cmd[funsearch_cmd.index(flag) + 1 : funsearch_cmd.index("--api_backend")]
-            )
-            if rev_slice != fs_slice:
-                raise ValueError(
-                    f"Fairness check failed for {flag}: revolution='{rev_slice}' vs funsearch='{fs_slice}'"
+        for name, cmd in comparisons:
+            candidate_value = _arg_value(cmd, flag)
+            if flag == "--benchmarks":
+                rev_slice = " ".join(
+                    revolution_cmd[
+                        revolution_cmd.index(flag) + 1 : revolution_cmd.index("--api_backend")
+                    ]
                 )
-            continue
-        if rev_value != fs_value:
-            raise ValueError(
-                f"Fairness check failed for {flag}: revolution='{rev_value}' vs funsearch='{fs_value}'"
-            )
+                candidate_slice = " ".join(
+                    cmd[cmd.index(flag) + 1 : cmd.index("--api_backend")]
+                )
+                if rev_slice != candidate_slice:
+                    raise ValueError(
+                        f"Fairness check failed for {flag}: revolution='{rev_slice}' vs {name}='{candidate_slice}'"
+                    )
+                continue
+            if rev_value != candidate_value:
+                raise ValueError(
+                    f"Fairness check failed for {flag}: revolution='{rev_value}' vs {name}='{candidate_value}'"
+                )
 
     rev_population = _arg_value(revolution_cmd, "--population_size")
     rev_generations = _arg_value(revolution_cmd, "--num_generations")
@@ -138,10 +173,7 @@ def _validate_fairness(
         raise ValueError("Missing primary budget flags in ablation commands.")
     rev_candidate_budget = int(rev_population) * (int(rev_generations) + 1)
     fs_candidate_budget = int(fs_max_evals)
-    if (
-        rev_candidate_budget != primary_budget_candidates
-        or fs_candidate_budget != primary_budget_candidates
-    ):
+    if rev_candidate_budget != primary_budget_candidates or fs_candidate_budget != primary_budget_candidates:
         raise ValueError(
             "Primary budget mismatch: expected both backends to use "
             f"{primary_budget_candidates} candidate evaluations."
@@ -150,9 +182,40 @@ def _validate_fairness(
     rev_axis = _arg_value(revolution_cmd, "--primary_budget_axis")
     fs_axis = _arg_value(funsearch_cmd, "--primary_budget_axis")
     if rev_axis != primary_budget_axis or fs_axis != primary_budget_axis:
-        raise ValueError(
-            "Primary budget axis metadata mismatch between backend commands."
+        raise ValueError("Primary budget axis metadata mismatch between backend commands.")
+
+    if eoh_cmd is not None:
+        eoh_axis = _arg_value(eoh_cmd, "--primary_budget_axis")
+        if eoh_axis != primary_budget_axis:
+            raise ValueError("Primary budget axis metadata mismatch for EoH command.")
+        eoh_population = _arg_value(eoh_cmd, "--eoh_population_size")
+        eoh_generations = _arg_value(eoh_cmd, "--eoh_num_generations")
+        eoh_max_evaluations = _arg_value(eoh_cmd, "--eoh_max_evaluations")
+        if eoh_population is None or eoh_generations is None or eoh_max_evaluations is None:
+            raise ValueError("Missing EoH fairness flags in ablation commands.")
+        if int(eoh_max_evaluations) != primary_budget_candidates:
+            raise ValueError(
+                "EoH command must include --eoh_max_evaluations matching the primary budget."
+            )
+        try:
+            op_idx = eoh_cmd.index("--eoh_operators") + 1
+        except ValueError as exc:
+            raise ValueError("EoH command must include --eoh_operators.") from exc
+        operators: list[str] = []
+        while op_idx < len(eoh_cmd) and not eoh_cmd[op_idx].startswith("--"):
+            operators.append(eoh_cmd[op_idx])
+            op_idx += 1
+        if not operators:
+            raise ValueError("EoH command must specify at least one operator.")
+        eoh_estimated_budget = (
+            2 * int(eoh_population)
+            + int(eoh_generations) * int(eoh_population) * len(operators)
         )
+        effective_eoh_budget = min(eoh_estimated_budget, int(eoh_max_evaluations))
+        if effective_eoh_budget != primary_budget_candidates:
+            raise ValueError(
+                "EoH effective budget (min(schedule, max_evaluations)) must match the primary budget."
+            )
 
     if primary_budget_axis in {"llm_calls", "dual_gate"}:
         if max_llm_calls_per_problem is None or max_llm_calls_per_problem <= 0:
@@ -169,6 +232,12 @@ def _validate_fairness(
                 "Revolution candidate budget exceeds max_llm_calls_per_problem "
                 "under llm_calls/dual_gate fairness mode."
             )
+        if eoh_cmd is not None:
+            eoh_max_llm_calls = _arg_value(eoh_cmd, "--eoh_max_llm_calls")
+            if eoh_max_llm_calls is None or int(eoh_max_llm_calls) != max_llm_calls_per_problem:
+                raise ValueError(
+                    "EoH command must include --eoh_max_llm_calls matching the configured cap."
+                )
 
     if _arg_value(revolution_cmd, "--evaluation_mode") != "strict_ablation":
         raise ValueError("Ablation script requires strict_ablation mode for publishable comparison.")
@@ -183,7 +252,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     )
 
     parser = argparse.ArgumentParser(
-        description="Run backend ablation sweeps for REvolution vs FunSearch.",
+        description="Run backend ablation sweeps for REvolution vs FunSearch vs EoH.",
         parents=[config_parser],
     )
     parser.add_argument(
@@ -254,10 +323,22 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         help="Initial FunSearch population size before iterative sampling.",
     )
     parser.add_argument(
+        "--eoh_population_size",
+        type=int,
+        default=10,
+        help="Preferred EoH population size when deriving fairness schedules.",
+    )
+    parser.add_argument(
+        "--eoh_operators",
+        nargs="+",
+        default=["e1", "e2", "m1", "m2", "m3"],
+        help="Operators used per EoH generation in ablation runs.",
+    )
+    parser.add_argument(
         "--run_report",
         action=argparse.BooleanOptionalAction,
         default=True,
-        help="Generate backend comparison markdown after both runs.",
+        help="Generate backend comparison markdown after all backend runs.",
     )
     parser.add_argument(
         "--dry_run",
@@ -331,6 +412,7 @@ def main(argv: list[str] | None = None) -> int:
 
     revolution_root = save_root / "revolution"
     funsearch_root = save_root / "funsearch"
+    eoh_root = save_root / "eoh"
     for seed in args.seeds:
         seed_tag = f"seed_{seed}"
         rev_population_size, rev_generations = _derive_revolution_schedule(
@@ -389,9 +471,42 @@ def main(argv: list[str] | None = None) -> int:
                 ["--fs_max_llm_calls", str(max(1, args.max_llm_calls_per_problem))]
             )
 
+        eoh_population_size, eoh_generations, eoh_estimated_candidates = _derive_eoh_schedule(
+            target_candidates=primary_budget_candidates,
+            preferred_population_size=args.eoh_population_size,
+            operators_count=len(args.eoh_operators),
+        )
+        eoh_cmd = [
+            sys.executable,
+            "scripts/run_backend.py",
+            "--backend",
+            "eoh",
+            "--save_path",
+            str(eoh_root / seed_tag),
+            "--prompt_profile",
+            "eoh",
+            "--eoh_population_size",
+            str(eoh_population_size),
+            "--eoh_num_generations",
+            str(eoh_generations),
+            "--eoh_operators",
+            *[str(op).lower() for op in args.eoh_operators],
+            "--eoh_max_evaluations",
+            str(primary_budget_candidates),
+            "--seed",
+            str(seed),
+            *common,
+        ]
+        if args.primary_budget_axis in {"llm_calls", "dual_gate"}:
+            assert args.max_llm_calls_per_problem is not None
+            eoh_cmd.extend(
+                ["--eoh_max_llm_calls", str(max(1, args.max_llm_calls_per_problem))]
+            )
+
         _validate_fairness(
             revolution_cmd=revolution_cmd,
             funsearch_cmd=funsearch_cmd,
+            eoh_cmd=eoh_cmd,
             primary_budget_axis=args.primary_budget_axis,
             primary_budget_candidates=primary_budget_candidates,
             max_llm_calls_per_problem=args.max_llm_calls_per_problem,
@@ -400,15 +515,18 @@ def main(argv: list[str] | None = None) -> int:
             f"[ablation] seed={seed} axis={args.primary_budget_axis} "
             f"candidate_budget={primary_budget_candidates} "
             f"revolution(pop={rev_population_size}, gen={rev_generations}) "
-            f"funsearch(init={fs_initial_population}, iter={fs_iterations}, max_eval={primary_budget_candidates})"
+            f"funsearch(init={fs_initial_population}, iter={fs_iterations}, max_eval={primary_budget_candidates}) "
+            f"eoh(pop={eoh_population_size}, gen={eoh_generations}, est_eval={eoh_estimated_candidates}, max_eval={primary_budget_candidates})"
         )
         if args.dry_run:
             print("\n[ablation] dry-run validated command:")
             print("  " + " ".join(revolution_cmd))
             print("  " + " ".join(funsearch_cmd))
+            print("  " + " ".join(eoh_cmd))
         else:
             _run_cmd(revolution_cmd)
             _run_cmd(funsearch_cmd)
+            _run_cmd(eoh_cmd)
 
     if args.run_report and not args.dry_run:
         report_path = save_root / "backend_comparison.md"
@@ -419,6 +537,8 @@ def main(argv: list[str] | None = None) -> int:
             f"revolution={revolution_root}",
             "--backend_run",
             f"funsearch={funsearch_root}",
+            "--backend_run",
+            f"eoh={eoh_root}",
             "--output",
             str(report_path),
         ]
