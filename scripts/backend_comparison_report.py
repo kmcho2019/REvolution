@@ -147,6 +147,18 @@ def _format_regression_count(values: list[float]) -> str:
     return f"{emoji} {regressed}/{len(values)}"
 
 
+def _format_aggregate_ppa_deltas(
+    area_values: list[float], power_values: list[float], period_values: list[float]
+) -> str:
+    return " / ".join(
+        [
+            _format_mean_ci_percent(area_values, signed=True),
+            _format_mean_ci_percent(power_values, signed=True),
+            _format_mean_ci_percent(period_values, signed=True),
+        ]
+    )
+
+
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
 
@@ -251,8 +263,8 @@ def _render_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: boo
     lines = [
         heading,
         "",
-        "| Backend | Benchmark | Designs | Func Any-Pass | Synth Any-Pass | Func Pass@1 Mean | Synth Pass@1 Mean | Valid Score Designs | Avg Score Delta | Score Trend (✅/➖/❌) | Valid PPA Designs | Avg PPA Delta | PPA Trend (✅/➖/❌) | PPA Regressions (A/P/T) | Runtime Mean ± CI (s) | Calls Mean ± CI |",
-        "|:---|:---|---:|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|",
+        "| Backend | Benchmark | Designs | Func Any-Pass | Synth Any-Pass | Func Pass@1 Mean | Synth Pass@1 Mean | Valid Score Designs | Avg Score Delta | Score Trend (✅/➖/❌) | Valid PPA Designs | Avg PPA Delta | PPA Delta (A/P/T) | PPA Trend (✅/➖/❌) | PPA Regressions (A/P/T) | Runtime Mean ± CI (s) | Calls Mean ± CI |",
+        "|:---|:---|---:|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|",
     ]
     for (backend, benchmark), group in sorted(grouped.items()):
         func_any_pass = sum(1 for row in group if row.functionality_rate > 0)
@@ -297,6 +309,7 @@ def _render_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: boo
             f"{_format_trend_counts(score_values)} | "
             f"{len(avg_ppa_values)}/{len(group)} | "
             f"{_format_mean_ci_percent(avg_ppa_values, signed=True)} | "
+            f"{_format_aggregate_ppa_deltas(area_values, power_values, period_values)} | "
             f"{_format_trend_counts(avg_ppa_values)} | "
             f"A {_format_regression_count(area_values)} / P {_format_regression_count(power_values)} / T {_format_regression_count(period_values)} | "
             f"{_format_mean_ci(runtime_values, precision=2)} | "

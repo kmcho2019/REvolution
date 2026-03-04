@@ -40,7 +40,7 @@
 - `run_backend.py`: canonical backend-selectable runner (`--backend revolution|funsearch`).
 - `run_funsearch.py`: convenience wrapper for `run_backend.py --backend funsearch`.
 - `run_backend_ablation.py`: ablation sweep orchestrator across both backends with multi-seed support, strict fairness checks, and configurable budget-axis normalization (`candidate_evaluations`, `llm_calls`, `dual_gate`).
-- `backend_comparison_report.py`: side-by-side + aggregate backend report generator across experiment roots with pass/fail emoji status, any-pass design counts, solved-only score/PPA summaries, PPA regression counts, and budget/fairness diagnostics.
+- `backend_comparison_report.py`: side-by-side + aggregate backend report generator across experiment roots with pass/fail emoji status, any-pass design counts, solved-only score/PPA summaries (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`), PPA regression counts, and budget/fairness diagnostics.
 - `run_one_shot.py`: CLI for n-shot baselines that reuse the evaluation stack without evolution.
 - `archive_baseline.py`: archive utility for run roots and ablation roots with manifest/index metadata, copied run configs, and compressed raw artifacts.
 - `run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with hard-task selection, aggregate token/runtime comparisons, and diff failure catalog generation.

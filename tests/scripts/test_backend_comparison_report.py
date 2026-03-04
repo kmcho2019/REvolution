@@ -105,6 +105,7 @@ def test_backend_comparison_report_generates_markdown(tmp_path):
     assert "Budget and Fairness Diagnostics" in text
     assert "candidate_evaluations" in text
     assert "Aggregate Backend Metrics by Benchmark" in text
+    assert "Avg PPA Delta | PPA Delta (A/P/T) | PPA Trend (✅/➖/❌)" in text
     assert "✅ Pass (100.0%)" in text
     assert "Score/PPA aggregate metrics exclude failed designs" in text
 
@@ -175,4 +176,10 @@ def test_backend_comparison_report_excludes_failed_designs_from_aggregates(tmp_p
         if line.startswith("| `funsearch` | Bench | 2 |")
     )
     assert "| 1/2 | +20.00% ± 0.00% ✅ | ✅ 1 / ➖ 0 / ❌ 0 |" in agg_row
-    assert "| 1/2 | +10.00% ± 0.00% ✅ | ✅ 1 / ➖ 0 / ❌ 0 |" in agg_row
+    assert (
+        "| +10.00% ± 0.00% ✅ / +10.00% ± 0.00% ✅ / +10.00% ± 0.00% ✅ |" in agg_row
+    )
+    assert (
+        "| 1/2 | +10.00% ± 0.00% ✅ | +10.00% ± 0.00% ✅ / +10.00% ± 0.00% ✅ / "
+        "+10.00% ± 0.00% ✅ | ✅ 1 / ➖ 0 / ❌ 0 |" in agg_row
+    )
