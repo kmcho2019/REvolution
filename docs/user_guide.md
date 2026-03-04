@@ -252,8 +252,10 @@ Use `scripts/archive_baseline.py` to package run outputs for long-term tracking 
 
 - Single-run example: `python scripts/archive_baseline.py --run-dir exp/<model> --archive-root baselines`
 - Ablation-root example: `python scripts/archive_baseline.py --run-dir exp/ablation/<run_id> --archive-root baselines`
+- Default storage-saving example: `python scripts/archive_baseline.py --run-dir exp/<model> --archive-root baselines`
+- Full archive example: `python scripts/archive_baseline.py --run-dir exp/<model> --archive-root baselines --artifact-mode full`
 
-Each archive includes `manifest.json`, copied summary/report files, copied config snapshots, and `artifacts/raw_results.tar.xz`. The command is strict about reproducibility and fails if no `*_config.yaml|yml|json` snapshots are found under `--run-dir`.
+Each archive includes `manifest.json`, copied summary/report files, copied config snapshots, and `artifacts/raw_results.tar.xz`. The default `--artifact-mode candidate_core` keeps only candidate code/thought/feedback files in the tarball. Use `--artifact-mode full` for complete raw artifacts. The command is strict about reproducibility and fails if no `*_config.yaml|yml|json` snapshots are found under `--run-dir`.
 
 ### 3.3 Baseline n-shot runs (`scripts/run_one_shot.py`)
 

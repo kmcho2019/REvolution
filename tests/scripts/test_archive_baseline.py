@@ -102,6 +102,24 @@ def _make_ablation_tree(root: Path, *, run_started: str) -> Path:
     return run_dir
 
 
+def _add_candidate_artifacts(run_dir: Path) -> None:
+    modern_candidate = run_dir / "RTLLM" / "Prob001_accu" / "Gen0" / "Prob001_accu_sample1_initial"
+    _write_text(modern_candidate / "code.sv", "module code_mod; endmodule\n")
+    _write_text(modern_candidate / "thought.txt", "Use a two-stage pipeline.\n")
+    _write_text(
+        modern_candidate / "code_feedback.txt",
+        "Score: 7\nJustification: good\n\nANALYSIS:\nfeedback\n",
+    )
+    _write_text(modern_candidate / "candidate_simulation.log", "sim log\n")
+    _write_text(modern_candidate / "candidate_synthesis_report.rpt", "report\n")
+    _write_text(modern_candidate / "candidate_netlist.v", "module netlist; endmodule\n")
+
+    legacy_candidate = run_dir / "RTLLM" / "Prob001_accu" / "Gen1"
+    _write_text(legacy_candidate / "candidate_2.sv", "module legacy; endmodule\n")
+    _write_text(legacy_candidate / "candidate_2_thought.txt", "legacy thought\n")
+    _write_text(legacy_candidate / "candidate_2_feedback.txt", "legacy feedback\n")
+
+
 def test_archive_single_run_includes_configs_and_summaries(tmp_path):
     run_started = "20260223_010203"
     run_dir = _make_single_run_tree(tmp_path, run_started=run_started)
@@ -207,6 +225,7 @@ def test_archive_excludes_cache_files_from_tar(tmp_path):
         archive_root=archive_root,
         embed_images=False,
         regenerate_plots=False,
+        artifact_mode="full",
     )
 
     tar_path = archive_dir / "artifacts" / "raw_results.tar.xz"
@@ -236,8 +255,120 @@ def test_manifest_contains_required_fields(tmp_path):
         "summary_files",
         "config_snapshots",
         "config_snapshot_count",
+        "artifact_mode",
+        "artifact_file_count",
         "artifacts_tar",
     }
     assert required_keys.issubset(manifest)
     assert manifest["archive_version"] == 3
     assert manifest["config_snapshot_count"] > 0
+
+
+def test_archive_candidate_core_mode_limits_artifacts_tar(tmp_path):
+    run_started = "20260223_070809"
+    run_dir = _make_single_run_tree(tmp_path, run_started=run_started)
+    _add_candidate_artifacts(run_dir)
+    archive_root = tmp_path / "archives"
+
+    archive_dir = archive_baseline(
+        run_dir=run_dir,
+        archive_root=archive_root,
+        embed_images=False,
+        regenerate_plots=False,
+        artifact_mode="candidate_core",
+    )
+
+    tar_path = archive_dir / "artifacts" / "raw_results.tar.xz"
+    with tarfile.open(tar_path, "r:xz") as handle:
+        names = sorted(handle.getnames())
+
+    assert "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/code.sv" in names
+    assert "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/thought.txt" in names
+    assert "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/code_feedback.txt" in names
+    assert "RTLLM/Prob001_accu/Gen1/candidate_2.sv" in names
+    assert "RTLLM/Prob001_accu/Gen1/candidate_2_thought.txt" in names
+    assert "RTLLM/Prob001_accu/Gen1/candidate_2_feedback.txt" in names
+    assert "keep.txt" not in names
+    assert (
+        "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/candidate_simulation.log"
+        not in names
+    )
+    assert (
+        "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/candidate_synthesis_report.rpt"
+        not in names
+    )
+    assert "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/candidate_netlist.v" not in names
+
+    manifest = json.loads((archive_dir / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["artifact_mode"] == "candidate_core"
+    assert manifest["artifact_file_count"] == len(names)
+    assert (archive_dir / "configs" / f"{run_started}_config.yaml").exists()
+    assert (archive_dir / "summaries" / "OVERALL_EVOLUTIONARY_REPORT.md").exists()
+
+
+def test_archive_default_mode_is_candidate_core(tmp_path):
+    run_started = "20260223_080910"
+    run_dir = _make_single_run_tree(tmp_path, run_started=run_started)
+    _add_candidate_artifacts(run_dir)
+    archive_root = tmp_path / "archives"
+
+    archive_dir = archive_baseline(
+        run_dir=run_dir,
+        archive_root=archive_root,
+        embed_images=False,
+        regenerate_plots=False,
+    )
+
+    tar_path = archive_dir / "artifacts" / "raw_results.tar.xz"
+    with tarfile.open(tar_path, "r:xz") as handle:
+        names = sorted(handle.getnames())
+
+    assert "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/code.sv" in names
+    assert "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/thought.txt" in names
+    assert "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/code_feedback.txt" in names
+    assert "keep.txt" not in names
+    manifest = json.loads((archive_dir / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["artifact_mode"] == "candidate_core"
+
+
+def test_archive_full_mode_keeps_candidate_aux_artifacts(tmp_path):
+    run_started = "20260223_091011"
+    run_dir = _make_single_run_tree(tmp_path, run_started=run_started)
+    _add_candidate_artifacts(run_dir)
+    archive_root = tmp_path / "archives"
+
+    archive_dir = archive_baseline(
+        run_dir=run_dir,
+        archive_root=archive_root,
+        embed_images=False,
+        regenerate_plots=False,
+        artifact_mode="full",
+    )
+
+    tar_path = archive_dir / "artifacts" / "raw_results.tar.xz"
+    with tarfile.open(tar_path, "r:xz") as handle:
+        names = sorted(handle.getnames())
+
+    assert "keep.txt" in names
+    assert "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/candidate_simulation.log" in names
+    assert (
+        "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/candidate_synthesis_report.rpt"
+        in names
+    )
+    assert "RTLLM/Prob001_accu/Gen0/Prob001_accu_sample1_initial/candidate_netlist.v" in names
+    manifest = json.loads((archive_dir / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["artifact_mode"] == "full"
+    assert manifest["artifact_file_count"] == len(names)
+
+
+def test_archive_rejects_invalid_artifact_mode(tmp_path):
+    run_dir = _make_single_run_tree(tmp_path, run_started="20260223_101112")
+
+    with pytest.raises(ValueError, match="Unsupported artifact_mode"):
+        archive_baseline(
+            run_dir=run_dir,
+            archive_root=tmp_path / "archives",
+            embed_images=False,
+            regenerate_plots=False,
+            artifact_mode="not-a-mode",
+        )
