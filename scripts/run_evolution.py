@@ -13,9 +13,9 @@ from pathlib import Path
 
 
 # Ensure the src directory is in the Python path for imports
-sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-)
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if base_dir not in sys.path:
+    sys.path.append(base_dir)
 
 # Import the core logic from new src package
 from src.revolution.algorithm import EoHEngine, CVDPEngine, Gen0LatencyEngine, RealBenchEngine
@@ -28,7 +28,9 @@ from src.revolution.configuration import (
     parse_args_with_config,
     snapshot_run_configuration,
 )
+
 from data.bench.RealBench.benchmark_info import benchmark_info
+
 
 CUSTOM_PROMPT_BENCHMARK = "CustomPrompt"
 
@@ -93,11 +95,12 @@ def run_problem_worker(args_tuple):
 
 
         if args.api_backend != "vllm":  # vllm does not require an API key
-            if not api_key:
-                raise ValueError(
-                    f"API key for backend '{args.api_backend}' not found. "
-                    f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
-                )
+            if args.api_backend != "local":
+                if not api_key:
+                    raise ValueError(
+                        f"API key for backend '{args.api_backend}' not found. "
+                        f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
+                    )
         llm_interface = LLMInterface(
             api_key=api_key,
             model_name=args.model_name,
@@ -330,7 +333,7 @@ def main():
         "--api_backend",
         type=str,
         default="openai",
-        choices=["openai", "openrouter", "deepseek", "gemini", "vllm"],
+        choices=["openai", "openrouter", "deepseek", "gemini", "vllm", "local"],
         help="The API backend to use for LLM calls.",
     )
     parser.add_argument(
@@ -642,18 +645,15 @@ def main():
                             for system_dict in benchmark_info.values()
                             for module in system_dict.keys()
                         ]
-                        continue
-                    
-                    problems_file = os.path.join(benchmark_dir, "problems.txt")
-                    if not os.path.exists(problems_file):
-                        print(
-                            f"Warning: 'problems.txt' not found in {benchmark_dir}. Skipping."
-                        )
-                        continue                                  
-                    
-                
-                    with open(problems_file, "r") as f:
-                        all_problems = [line.strip() for line in f if line.strip()]
+                    else:
+                        problems_file = os.path.join(benchmark_dir, "problems.txt")
+                        if not os.path.exists(problems_file):
+                            print(
+                                f"Warning: 'problems.txt' not found in {benchmark_dir}. Skipping."
+                            )
+                            continue                                  
+                        with open(problems_file, "r") as f:
+                            all_problems = [line.strip() for line in f if line.strip()]
 
                     problems_to_process = args.problems if args.problems else all_problems
                     print(f"problems_to_process: {problems_to_process}\n")

@@ -3009,6 +3009,30 @@ class RealBenchEngine(EoHEngine):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def load_problem_description(self) -> str:
+        """
+        Load the text prompt ``/workspace/data/bench/RealBench/sdc/sd_bd/<problem>.md`` from the benchmark folder.
+
+        :return: The problem description text.
+        :rtype: str
+        """
+        system_name = self.problem_name.split("_")[0]
+        if system_name == "e203":
+            system_name = "e203_hbirdv2"
+        elif system_name == "sd":
+            system_name = "sdc"
+
+        prompt_path = os.path.join(
+            self.benchmark_path, system_name, self.problem_name,f"{self.problem_name}.md"
+        )
+        if os.path.exists(prompt_path):
+            with open(prompt_path, "r") as f:
+                return f.read().strip()
+        else:
+            raise FileNotFoundError(
+                f"Problem description file not found: {prompt_path}"
+            )
+
     def _evaluate_candidate_pipeline(
         self,
         cand: Heuristic,
@@ -3030,6 +3054,8 @@ class RealBenchEngine(EoHEngine):
         system_name = self.problem_name.split("_")[0]
         if system_name == "e203":
             system_name = "e203_hbirdv2"
+        elif system_name == "sd":
+            system_name = "sdc"
 
         syntax, semantic, syntax_err_msg, semantic_err_msg = self.evaluator.evaluate(
             cand.code, system_name, self.problem_name

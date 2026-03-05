@@ -392,7 +392,7 @@ def _mk_templates(root):
     (ref / "ref.yosys.tcl").write_text(
         "\n".join(
             [
-                "read_verilog __VERILOG_FILE__",
+                "__READ_VERILOG_FILES__",
                 "synth -top __MODULE_NAME__",
                 "write_verilog __OUTPUT_FILE__",
                 "set clk_ns __CLK_PERIOD__",
@@ -464,7 +464,7 @@ def test_create_yosys_and_openroad_scripts(tmp_path):
         output_file=str(tmp_path / "a.syn.v"),
     )
     ytxt = open(yosys, "r", encoding="utf-8").read()
-    assert "__VERILOG_FILE__" not in ytxt
+    assert "__READ_VERILOG_FILES__" not in ytxt
     assert "read_verilog" in ytxt and "write_verilog" in ytxt
     assert "set clk_ns 10.0" in ytxt  # 0.01 * 1000
 
@@ -692,7 +692,7 @@ def test_create_yosys_script_replacements(tmp_path):
     ref_tcl = os.path.join(se.ref_dir_path, "ref.yosys.tcl")
     with open(ref_tcl, "w") as f:
         f.write(
-            "__VERILOG_FILE__ __MODULE_NAME__ __OUTPUT_DIR__ __OUTPUT_FILE__ __REF_DIR__ __PDK_DIR__ __CLK_PERIOD__"
+            "__READ_VERILOG_FILES__ __MODULE_NAME__ __OUTPUT_DIR__ __OUTPUT_FILE__ __REF_DIR__ __PDK_DIR__ __CLK_PERIOD__"
         )
 
     out = se._create_yosys_script(

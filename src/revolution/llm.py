@@ -15,6 +15,9 @@ from openai import (
 )
 from openai.types.chat import ChatCompletion
 
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+
 
 # Define the precise shape of an LLM request dictionary
 class LLMRequest(TypedDict):
@@ -71,7 +74,8 @@ class LLMInterface:
                              api_backend is unsupported.
         """
         if not api_key and api_backend != "vllm":
-            raise ValueError("API key is required for LLMInterface initialization.")
+            if api_backend != "local":
+                raise ValueError("API key is required for LLMInterface initialization.")
 
         self.debug: bool = debug  # Store debug state
 
@@ -79,6 +83,33 @@ class LLMInterface:
         self.model_name: str = model_name
         self.max_retries: int = max_retries  # Maximum number of retries
         self.base_delay: float = base_delay  # Base delay in seconds for backoff
+
+        # --- 로컬 모델 로딩 로직 (추가) ---
+        self.local_pipeline = None
+        if api_backend == "local":
+            print(f"--- [LOCAL] Loading Model: {model_name} ---")
+            # 연우님이 생성하신 Python 3.11 환경에서 실행됩니다
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+            self.model = AutoModelForCausalLM.from_pretrained(
+                model_name,
+                device_map="auto", # csdlab 서버의 GPU를 자동으로 할당합니다
+                dtype=torch.float16,
+                trust_remote_code=True
+            )
+            self.local_pipeline = pipeline(
+                "text-generation",
+                model=self.model,
+                tokenizer=self.tokenizer
+            )
+            print("--- [LOCAL] Model Loaded Successfully ---")
+        # --------------------------------
+
+        self.client_args: dict[str, Any] = {
+            "api_key": api_key,
+            "timeout": 120.0 * 1000,
+        }
+
+
 
         # Configure arguments for the AsyncOpenAI client based on the backend
         self.client_args: dict[str, Any] = {
@@ -106,7 +137,8 @@ class LLMInterface:
                 self.client_args["base_url"] = base
             else:
                 self.client_args["base_url"] = f"http://{host}:{port}/v1"
-
+        elif api_backend == "local":
+            pass
         else:
             raise ValueError(
                 f"Unsupported API backend: '{api_backend}'. Choose from 'openai', 'openrouter', 'deepseek'."
@@ -618,6 +650,48 @@ class LLMInterface:
         if system_prompt_override:
             system_prompt_content = system_prompt_override
 
+        if self.api_backend == "local":
+            try:
+                # Transformers 파이프라인 형식에 맞게 메시지 구성
+                messages = [
+                    {"role": "system", "content": system_prompt_content},
+                    {"role": "user", "content": prompt},
+                ]
+                
+                # GPU 연산을 비동기 스레드에서 실행 (이벤트 루프 차단 방지)
+                outputs = await asyncio.to_thread(
+                    self.local_pipeline,
+                    messages,
+                    max_new_tokens=max_tokens,
+                    do_sample=True,
+                    temperature=temperature,
+                    top_p=top_p,
+                )
+                
+                # 모델 출력 텍스트 추출
+                raw = outputs[0]["generated_text"][-1]["content"].strip()
+
+                if self.debug:
+                    print(f"\n--- DEBUG: RAW LOCAL OUTPUT ---\n{raw}\n")
+
+                # 기존 검증 로직 활용
+                format_ok, payload, err = self._strict_validate_eoh(raw)
+                if format_ok:
+                    mode = payload["mode"]
+                    thought = (payload["thought"] or "").strip()
+                    code = payload["code"]
+                    code_str = self._maybe_unescape_code(code) if isinstance(code, str) else json.dumps(code, separators=(",", ":"))
+                    return thought, code_str, {"format_ok": True, "error": None, "raw": raw, "parsed_mode": mode}
+
+                # 실패 시 유연한 파싱 시도
+                thought_loose, code_loose = self.parse_thought_and_code(raw)
+                return thought_loose, code_loose, {"format_ok": False, "error": f"strict-parse failed: {err}", "raw": raw, "parsed_mode": None}
+
+            except Exception as e:
+                print(f"Local inference failed: {e}")
+                return None, None, {"format_ok": False, "error": f"local-error: {e}", "raw": "", "parsed_mode": None}
+
+
         # --- DEBUG: Print the final input prompts ---
         if self.debug:
             print("\n" + "=" * 80)
@@ -842,6 +916,22 @@ class LLMInterface:
         if system_prompt_override:
             system_prompt_content = system_prompt_override
 
+        if self.api_backend == "local":
+            results = []
+            print(f"--- [LOCAL] Generating {n} responses concurrently ---")
+            
+            # n개의 응답을 개별적으로 생성하도록 태스크 생성
+            tasks = [
+                self.generate_response(
+                    prompt, temperature, top_p, max_tokens, 
+                    generation_mode, system_prompt_override
+                ) for _ in range(n)
+            ]
+            
+            # 모든 태스크를 동시에 실행
+            results = await asyncio.gather(*tasks)
+            return results
+        
         # --- DEBUG: Print the final input prompts ---
         if self.debug:
             print("\n" + "=" * 80)
