@@ -3004,6 +3004,231 @@ class EoHEngine:
             print("No functionally correct and synthesizable solution found.")
             return f"{self.problem_name},failed"
 
+class RealBenchEngine(EoHEngine):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def _evaluate_candidate_pipeline(
+        self,
+        cand: Heuristic,
+        test_sv_file: str,
+        ref_sv_file: str | None,
+        top_module_name: str,
+    ) -> tuple[Heuristic, dict[str, str] | None]:
+        feedback_payload: dict[str, str] | None = None
+
+        if getattr(cand, "status", None) in ("failed_format", "failed_diff"):
+            cand.score = -float("inf")
+            feedback_payload = {
+                "problem_def": self.problem_description,
+                "code": cand.code,
+                "simulation_log": f"Candidate failed format or diff compliance checks. Status: {cand.status}",
+            }
+            return cand, feedback_payload
+
+        system_name = self.problem_name.split("_")[0]
+        if system_name == "e203":
+            system_name = "e203_hbirdv2"
+
+        syntax, semantic, syntax_err_msg, semantic_err_msg = self.evaluator.evaluate(
+            cand.code, system_name, self.problem_name
+        )
+
+        if syntax == 0:
+            cand.status = "failed_syntax"
+            cand.score = -float("inf")
+            feedback_payload = {
+                "problem_def": self.problem_description,
+                "code": cand.code,
+                "simulation_log": syntax_err_msg,
+            }
+            return cand, feedback_payload
+
+        elif semantic == 0:
+            cand.status = "failed_functionality"
+            cand.score = -float("inf")
+            log = (
+                f"Compilation Log:\n{syntax_err_msg}\n\n"
+                f"Simulation Log:\n{semantic_err_msg}"
+            )
+            feedback_payload = {
+                "problem_def": self.problem_description,
+                "code": cand.code,
+                "simulation_log": log,
+            }
+            return cand, feedback_payload
+
+        # Stage 2: Synthesis and PPA for functionally correct candidates
+        report_base_path = cand.code_file_path.rsplit(".", 1)[0]
+        output_dir = os.path.dirname(cand.code_file_path)
+        synth_results = self.synthesis_evaluator.evaluate(
+            cand.code_file_path,
+            self.problem_name,
+            top_module_name,
+            output_dir,
+            report_base_path,
+            self.evaluator,
+            test_sv_file,
+            ref_sv_file,
+        )
+
+        if (
+            synth_results["synthesis_success"]
+            and synth_results["synthesis_functionality_success"]
+            and synth_results["ppa_success"]
+        ):
+            cand.status = "success"
+            cand.synthesis_success = True
+            cand.synthesis_functionality = True
+            cand.ppa_success = True
+            cand.ppa_metrics = synth_results["ppa_metrics"]
+            cand.score = self._calculate_fitness_score(cand)
+            cand.feedback = (
+                "Functionality OK and Synthesis OK. Now focus on improving PPA metrics while "
+                "preserving functionality. PPA metrics (tns/wns/eff_clk_period: ns, power: W, area: um^2): "
+                f"{cand.ppa_metrics}, Reference PPA metrics: {self.ref_ppa_metrics},  PPA score: {cand.score:.4f}, "
+                "Try to improve PPA metrics further. If effective clockspeed is close to 0.0, than focus on improving area and power metrics."
+            )
+            feedback_payload = {
+                "problem_def": self.problem_description,
+                "code": cand.code,
+                "simulation_log": cand.feedback,
+            }
+        else:
+            cand.score = -float("inf")
+            cand.synthesis_success = synth_results["synthesis_success"]
+            cand.synthesis_functionality = synth_results[
+                "synthesis_functionality_success"
+            ]
+
+            if not synth_results["synthesis_success"]:
+                cand.status = "failed_synthesis"
+                log = (
+                    "Functionality OK, but synthesis failed.\nLog:\n"
+                    f"{synth_results.get('synthesis_log', 'N/A')}"
+                )
+            elif not synth_results["synthesis_functionality_success"]:
+                cand.status = "failed_synthesis_functionality"
+                log = (
+                    "Functionality OK, Synthesis OK, but Post-Synthesis Functional Check failed "
+                    "(Yosys have trouble synthesizing the implementation try to improve synthesizability).\nLog:\n"
+                    f"{synth_results.get('synthesis_log', 'N/A')}"
+                )
+            else:
+                cand.status = "failed_synthesis"
+                log = (
+                    "Synthesis or PPA failed.\nLog:\n"
+                    f"{synth_results.get('synthesis_log', 'N/A')}"
+                )
+
+            feedback_payload = {
+                "problem_def": self.problem_description,
+                "code": cand.code,
+                "simulation_log": log,
+            }
+
+        return cand, feedback_payload
+
+
+    def _evaluate_candidates(self, candidates_to_evaluate: list[Heuristic]) -> None:
+        """
+        Evaluates a list of new candidates through the full pipeline (syntax, func, synth).
+        Updates each candidate object with its final status, feedback, and score.
+
+        :param candidates_to_evaluate: List of Heuristic candidates to evaluate.
+        :type candidates_to_evaluate: list[Heuristic]
+
+        :return: None
+        :rtype: None
+        """
+        if not candidates_to_evaluate:
+            return
+
+        print(f"\n--- Evaluating {len(candidates_to_evaluate)} New Candidates ---")
+        test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_testbench.sv")
+        ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
+        top_module_name = self.problem_name
+
+        if self.parallelize_candidates:
+            with ThreadPoolExecutor(max_workers=self.candidate_workers) as executor:
+                results = [
+                    executor.submit(
+                        self._evaluate_candidate_pipeline,
+                        cand,
+                        test_sv_file,
+                        ref_sv_file,
+                        top_module_name,
+                    )
+                    for cand in candidates_to_evaluate
+                ]
+                evaluated = [future.result() for future in results]
+        else:
+            evaluated = [
+                self._evaluate_candidate_pipeline(
+                    cand, test_sv_file, ref_sv_file, top_module_name
+                )
+                for cand in candidates_to_evaluate
+            ]
+
+        feedback_request_candidates: list[Heuristic] = []
+        feedback_requests: list[dict[str, str]] = []
+
+        # 1. Load raw templates
+        feedback_rtl_sys_prompt = self.prompts.read("feedback/system")
+        feedback_rtl_user_tpl = self.prompts.read("feedback/user")
+        
+        user_overrides: list[str] | None = [] if feedback_rtl_user_tpl else None
+
+        for cand, feedback_payload in evaluated:
+            if feedback_payload:
+                feedback_request_candidates.append(cand)
+                feedback_requests.append(feedback_payload)
+
+                # Apply safe_format using data from the feedback_payload
+                if feedback_rtl_user_tpl:
+                    formatted_prompt = safe_format(
+                        feedback_rtl_user_tpl,
+                        problem_def=feedback_payload.get("problem_def", ""),
+                        code=feedback_payload.get("code", ""),
+                        simulation_log=feedback_payload.get("simulation_log", "")
+                    )
+                    user_overrides.append(formatted_prompt)
+
+        # Stage 3: Batch LLM Feedback Generation for all failures
+        if feedback_requests:
+            print(
+                f"Requesting LLM feedback for {len(feedback_request_candidates)} candidates (both failed and successful)..."
+            )
+
+            # Debug logs
+            print(f"[EoHEngine] Using feedback system prompt: {bool(feedback_rtl_sys_prompt)}")
+            print(f"[EoHEngine] Using feedback user template: {bool(feedback_rtl_user_tpl)}")
+
+            # Prepare system prompt list (same prompt for everyone)
+            system_overrides = (
+                [feedback_rtl_sys_prompt] * len(feedback_requests) 
+                if feedback_rtl_sys_prompt 
+                else None
+            )
+
+            feedback_results = asyncio.run(
+                self.llm.generate_batch_feedback(
+                    feedback_requests,
+                    self.default_llm_temp,
+                    self.default_llm_top_p,
+                    self.default_llm_max_tokens,
+                    system_prompt_override=system_overrides,
+                    user_prompt_override=user_overrides,
+                )
+            )
+            for cand, feedback_data in zip(
+                feedback_request_candidates, feedback_results
+            ):
+                cand.feedback = feedback_data.get(
+                    "analysis", "Feedback generation failed."
+                )
+                self._save_feedback_files(cand, feedback_data)
 
 class SingleShotEngine(EoHEngine):
     """
@@ -4240,3 +4465,5 @@ class CVDPEngine(EoHEngine):
 
         # NOTE: No synthesis/PPA step for CVDP yet. Still pending.
 # <<< CVDP INTEGRATION
+
+

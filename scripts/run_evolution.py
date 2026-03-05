@@ -14,20 +14,21 @@ from pathlib import Path
 
 # Ensure the src directory is in the Python path for imports
 sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 )
 
 # Import the core logic from new src package
-from revolution.algorithm import EoHEngine, CVDPEngine, Gen0LatencyEngine
-from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
-from revolution.llm import LLMInterface
-from revolution.utils import StreamRedirector
-from revolution.configuration import (
+from src.revolution.algorithm import EoHEngine, CVDPEngine, Gen0LatencyEngine, RealBenchEngine
+from src.revolution.evaluation import SynthesisEvaluator, VerilogEvaluator, VerilatorEvaluator, RealBenchSynthesis
+from src.revolution.llm import LLMInterface
+from src.revolution.utils import StreamRedirector
+from src.revolution.configuration import (
     ConfigError,
     load_config_file,
     parse_args_with_config,
     snapshot_run_configuration,
 )
+from data.bench.RealBench.benchmark_info import benchmark_info
 
 CUSTOM_PROMPT_BENCHMARK = "CustomPrompt"
 
@@ -108,18 +109,27 @@ def run_problem_worker(args_tuple):
         gen0_eval_best = getattr(args, "gen0_evaluate_best", False)
         if evaluation_mode == "gen0":
             if gen0_eval_best:
-                verilog_evaluator = VerilogEvaluator(
-                    iverilog_executable_path="iverilog", vvp_executable_path="vvp"
-                )
-                synthesis_evaluator = SynthesisEvaluator()
+                if benchmark.lower() == "realbench":
+                    verilog_evaluator = VerilatorEvaluator()
+                    synthesis_evaluator = RealBenchSynthesis()
+                else:
+                    verilog_evaluator = VerilogEvaluator(
+                        iverilog_executable_path="iverilog", vvp_executable_path="vvp"
+                    )
+                    synthesis_evaluator = SynthesisEvaluator()
             else:
                 verilog_evaluator = None
                 synthesis_evaluator = None
         else:
-            verilog_evaluator = VerilogEvaluator(
-                iverilog_executable_path="iverilog", vvp_executable_path="vvp"
-            )
-            synthesis_evaluator = SynthesisEvaluator()
+            if benchmark.lower() == "realbench":
+                    verilog_evaluator = VerilatorEvaluator()
+                    synthesis_evaluator = RealBenchSynthesis()
+            else: 
+                verilog_evaluator = VerilogEvaluator(
+                    iverilog_executable_path="iverilog", vvp_executable_path="vvp"
+                )
+                synthesis_evaluator = SynthesisEvaluator()
+
 
         # Choose engine based on benchmarks
         if evaluation_mode == "gen0":
@@ -172,6 +182,28 @@ def run_problem_worker(args_tuple):
                 prompt_root=None,                     # Use default prompt root (data/prompts/)  
                 candidate_workers=candidate_workers,
             )
+        elif benchmark.lower() == "realbench":
+            eoh_engine = RealBenchEngine(
+                problem_name=problem,
+                benchmark_name=benchmark,
+                llm_interface=llm_interface,
+                verilog_evaluator=verilog_evaluator,
+                synthesis_evaluator=synthesis_evaluator,
+                population_size=args.population_size,
+                num_generations=args.num_generations,
+                base_save_path=args.save_path,
+                default_llm_temp=args.temperature,
+                default_llm_top_p=args.top_p,
+                default_llm_max_tokens=args.max_tokens,
+                strategy_selection_method=args.strategy_selection,
+                epsilon=args.epsilon,
+                ucb_c=args.ucb_c,
+                generation_mode=args.generation_mode,
+                population_pool_mode=args.population_pool_mode,
+                prompt_profile=target_prompt_profile,             
+                prompt_root=None,                     
+                candidate_workers=candidate_workers,
+            )            
         else: # None CVDP benchmarks (e.g. RTLLM, VerilogEval)
             eoh_engine = EoHEngine(
                 problem_name=problem,
@@ -604,12 +636,22 @@ def main():
                         continue
 
                     # Non-CVDP flow: use problems.txt
+                    if benchmark.lower()=="realbench":
+                        all_problems = [
+                            module
+                            for system_dict in benchmark_info.values()
+                            for module in system_dict.keys()
+                        ]
+                        continue
+                    
                     problems_file = os.path.join(benchmark_dir, "problems.txt")
                     if not os.path.exists(problems_file):
                         print(
                             f"Warning: 'problems.txt' not found in {benchmark_dir}. Skipping."
                         )
-                        continue
+                        continue                                  
+                    
+                
                     with open(problems_file, "r") as f:
                         all_problems = [line.strip() for line in f if line.strip()]
 

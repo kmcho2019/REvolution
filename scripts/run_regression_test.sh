@@ -11,11 +11,11 @@ set -e # Exit immediately if a command fails
 
 
 # --- Configuration ---
-MODEL_NAME="/root/.cache/huggingface/models/openai-gpt-oss-120b" #"openrouter/horizon-alpha" #"/root/.cache/huggingface/models/Qwen3-Coder-30B-A3B-Instruct" #"google/gemini-2.5-flash-lite"
-BENCHMARKS="RTLLM VerilogEval-Spec-to-RTL"
+MODEL_NAME="deepseek-ai/deepseek-coder-1.3b-instruct" # "/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b" #"/root/.cache/huggingface/models/openai-gpt-oss-120b" #"openrouter/horizon-alpha" #"/root/.cache/huggingface/models/Qwen3-Coder-30B-A3B-Instruct" #"google/gemini-2.5-flash-lite"
+BENCHMARKS="RTLLM" # VerilogEval-Spec-to-RTL"
 PROBLEMS="Prob001_zero Prob010_mt2015_q4a Prob052_gates100 Prob068_countbcd Prob096_review2015_fsmseq Prob116_m2014_q3 Prob129_ece241_2013_q8 Prob001_accu Prob021_counter_12 Prob022_ring_counter"
-API_BACKEND="openrouter" # "vllm" #"openrouter"
-POP_SIZE=10
+API_BACKEND="vllm" # "vllm" #"openrouter"
+POP_SIZE=10 #10
 NUM_GEN=4
 NUM_WORKERS=10
 STRATEGY="ucb"

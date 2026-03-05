@@ -1,6 +1,6 @@
 yosys -import
 
-set VERILOG_FILE __VERILOG_FILE__
+#set VERILOG_FILE __VERILOG_FILE__
 set MODULE_NAME __MODULE_NAME__
 set OUTPUT_DIR __OUTPUT_DIR__
 set OUTPUT_FILE __OUTPUT_FILE__
@@ -13,7 +13,7 @@ set LATCH_MAP_FILE ${PDK_DIR}/cells_latch.v
 set ADDER_MAP_FILE ${PDK_DIR}/cells_adders.v
 
 # Read verilog files
-read_verilog -defer -sv $VERILOG_FILE
+__READ_VERILOG_FILES__
 
 # Read standard cells and macros as blackbox inputs
 read_liberty -lib ${LIBERTY_PATH}

@@ -3,8 +3,24 @@ import re
 import shutil
 import subprocess
 import traceback
-from typing import Any, Literal
+from typing import Any, Literal, Dict, Tuple #Dict, Tuple for RealBench
 
+#for RealBench
+import tempfile
+import json
+from tqdm import tqdm
+from joblib import Parallel, delayed
+import sys
+import numpy as np
+import itertools
+import argparse
+
+# Ensure the src directory is in the Python path for imports
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+)
+
+from data.bench.RealBench.benchmark_info import benchmark_info
 
 class VerilogEvaluator:
     """
@@ -732,11 +748,14 @@ class SynthesisEvaluator:
         """
         yosys_ref = os.path.join(self.ref_dir_path, "ref.yosys.tcl")
         yosys_gen = f"{output_directory}/{module_name}.yosys.tcl"
+        read_cmds = f"read_verilog {os.path.abspath(verilog_file)}\n" ## ref.yosys.tcl 수정했기 때문
 
+        
         with open(yosys_ref, "r") as infile:
             with open(yosys_gen, "w") as outfile:
                 text = infile.read()
-                text = text.replace("__VERILOG_FILE__", os.path.abspath(verilog_file))
+                #text = text.replace("__VERILOG_FILE__", os.path.abspath(verilog_file))
+                text = text.replace("__READ_VERILOG_FILES__", read_cmds) ## ref.yosys.tcl 수정했기 때문
                 text = text.replace(
                     "__MODULE_NAME__", module_name
                 )  # Reverted to using module_name directly as we now extract it from the Verilog file
@@ -849,3 +868,208 @@ class SynthesisEvaluator:
             "area": area,
             "report_path": ppa_path,
         }
+
+
+class VerilatorEvaluator:
+    """RealBench에서 사용하는 Verilator"""
+    def __init__(self, verilator_path: str = "verilator"):
+        self.verilator_path = verilator_path
+
+    def testbench_verification(self, gen_code: str, system_name: str, module_name: str) -> Dict[str, Any]:
+        """
+        인자로 받은 template_dir(검증 파일들이 있는 폴더)의 파일을 활용하여 시뮬레이션을 수행합니다.
+        
+        :param gen_code: LLM이 생성한 Verilog 코드
+        :param system_name: 모듈 이름 (파일명 결정에 사용)
+        :param module_name: 시스템 이름
+        """
+        current_file_path = os.path.abspath(__file__)
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_file_path)))
+        realbench_path = os.path.join(project_root, "data", "bench", "RealBench")
+        
+        template_dir = os.path.join(realbench_path, system_name, module_name, "verification")
+        with tempfile.TemporaryDirectory(dir=f"/run/user/{os.getuid()}") as temp_dir:
+            # prepare tempdir
+            os.system(f"cp {template_dir}/* {temp_dir}/")
+            top_filepath = os.path.join(temp_dir, f"{module_name}_top.sv")
+            assert os.path.exists(top_filepath)
+            os.system(f"rm {top_filepath}")
+            with open(top_filepath, "w") as f:
+                f.write(gen_code) # temp_dir에 top_filepath로 LLM generated 된 코드(gen_code)를 복사해서 넣음
+        
+        # verilator
+        syntax = -2
+        semantic = -2
+        syntax_err_msg = ""
+        semantic_err_msg = ""
+        ys_ret = subprocess.run(
+            f"cd {temp_dir} && make all",
+            shell=True,
+            timeout=5 * 60,
+            stderr=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+        )
+        if ys_ret.stderr:
+            err_msg = ys_ret.stderr.decode()
+            for line in err_msg.split('\n'):
+                if line.startswith(f"%Error") or line.startswith(f"%Warning"):
+                    syntax_err_msg += line
+                    syntax_err_msg += "\n"
+            syntax = 0
+            semantic = 0
+            return syntax, semantic, syntax_err_msg, semantic_err_msg
+
+        tb_msg = ys_ret.stdout.decode()
+        for line in tb_msg.split('\n'):
+            if "Hint: Output" in line and "no mismatches" in line:
+                continue
+            elif "Hint: Output" in line and "mismatches" in line:
+                semantic_err_msg += line[6:]
+                semantic_err_msg += '\n'
+        syntax = 1
+        semantic = 1 if semantic_err_msg == "" else 0
+        
+        return syntax, semantic, syntax_err_msg, semantic_err_msg        #formality check 구현하지 않음.
+    
+
+    ###### 아래는 필요 없는것같기도
+    '''
+    def run_tbverify(self, filepath, system_name):
+        data = []
+        with open(filepath, 'r') as file:
+            for line in file:
+                record = json.loads(line)
+                data.append(record)
+        results = Parallel(n_jobs=1)(
+            delayed(self.testbench_verification)(record["code"], system_name, record["task"]) for record in data
+        )
+
+        for index, record in enumerate(data):
+            record["syntax"] = results[index][0]
+            record["function"] = results[index][1]
+            record["syntax_info"] = results[index][2]
+            record["function_info"] = results[index][3]
+
+        new_filepath = filepath.replace("samples", "samples_after_verilator")
+        new_dir = os.path.dirname(new_filepath)  
+        if not os.path.exists(new_dir):
+            os.makedirs(new_dir)  
+        with open(new_filepath, 'w') as f:
+            for record in data:
+                f.write(json.dumps(record) + '\n')
+
+    def evaluate(self, system_name, sol_path, task_level="module"):
+        if task_level == 'module':
+            self.run_tbverify(sol_path, system_name)
+        else: # TO-DO: system level 구현
+            assert False,'undefined task level'
+
+        #formality check 구현하지 않음.
+    '''
+
+class RealBenchSynthesis(SynthesisEvaluator):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+   
+    def _run_synthesis(
+            self,
+            verilog_file: str,
+            problem_name: str,
+            synth_top_module_name: str,
+            output_directory: str,
+            report_base_path: str,
+            synthesized_netlist_path: str,
+            synthesis_timeout_s: int = 300,
+        ) -> Tuple[bool, str]:
+            """
+            하위 모듈을 포함하여 synthesis.
+            """
+            clk_period = self.clk_period
+            output_file = synthesized_netlist_path
+
+            # 1. 하위 모듈 파일 탐색
+            # RealBench 구조상 후보군 파일 옆의 'verification' 폴더에서 하위 모듈들을 찾습니다.
+            candidate_dir = os.path.dirname(verilog_file)
+            verification_dir = os.path.join(candidate_dir, "verification")
+            
+            design_files = [os.path.abspath(verilog_file)]
+            
+            if os.path.exists(verification_dir):
+                for file in os.listdir(verification_dir):
+                    # _ref.sv, _testbench.sv, _stimulus_gen.sv는 합성에서 제외해야 함
+                    if (file.endswith(".v") or file.endswith(".sv")) and \
+                    not any(exclude in file for exclude in ["_ref", "_testbench", "_stimulus_gen", "_top"]):
+                        design_files.append(os.path.abspath(os.path.join(verification_dir, file)))
+
+            # 2. SDC 및 스크립트 생성
+            sdc_file_path = self._create_sdc_file(
+                verilog_file, synth_top_module_name, output_directory, clk_period=clk_period
+            )
+            
+            # 수정된 _create_yosys_script를 사용하여 여러 파일을 읽도록 함
+            yosys_script_path = self._create_yosys_script(
+                design_files,
+                synth_top_module_name,
+                output_directory,
+                clk_period,
+                output_file,
+            )
+            
+            openroad_script_path = self._create_openroad_script(
+                sdc_file_path, synth_top_module_name, output_directory, output_file
+            )
+
+            report_path = report_base_path + "_synthesis_report.rpt"
+            
+            # 3. 합성 실행 (Yosys -> OpenROAD)
+            command = f"yosys {yosys_script_path} && openroad {openroad_script_path} | tee {report_path}"
+            print(f"INFO: [RealBench] Running synthesis for {synth_top_module_name} with {len(design_files)} files")
+
+            try:
+                process = subprocess.run(
+                    command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=synthesis_timeout_s
+                )
+                if process.returncode == 0:
+                    return True, report_path
+                else:
+                    with open(report_path, "a") as f:
+                        f.write("\n\n--- SYNTHESIS FAILED ---\n")
+                        f.write(process.stderr.decode())
+                    return False, report_path
+            except subprocess.TimeoutExpired:
+                return False, report_path
+            except Exception as e:
+                return False, report_path
+
+    def _create_yosys_script(
+        self,
+        verilog_files,
+        module_name,
+        output_directory,
+        clk_period,
+        output_file,
+    ):
+        #기존 SynthesisEvaluator class의 _create_yosys_script에서 하위 모듈을 다 불러오도록 수정함.
+        yosys_ref = os.path.join(self.ref_dir_path, "ref.yosys.tcl")
+        yosys_gen = f"{output_directory}/{module_name}.yosys.tcl"
+
+        with open(yosys_ref, "r") as infile:
+            text = infile.read()
+
+        read_cmds = "\n".join(
+            [f"read_verilog {os.path.abspath(f)}" for f in verilog_files]
+        )
+
+        text = text.replace("__READ_VERILOG_FILES__", read_cmds)
+        text = text.replace("__MODULE_NAME__", module_name)
+        text = text.replace("__OUTPUT_DIR__", os.path.abspath(output_directory))
+        text = text.replace("__OUTPUT_FILE__", output_file)
+        text = text.replace("__REF_DIR__", self.ref_dir_path)
+        text = text.replace("__PDK_DIR__", os.path.abspath(self.pdk_path))
+        text = text.replace("__CLK_PERIOD__", str(clk_period * 1000))
+
+        with open(yosys_gen, "w") as outfile:
+            outfile.write(text)
+
+        return yosys_gen
