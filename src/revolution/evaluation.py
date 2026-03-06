@@ -14,6 +14,7 @@ import sys
 import numpy as np
 import itertools
 import argparse
+import glob
 
 # Ensure the src directory is in the Python path for imports
 sys.path.insert(
@@ -61,6 +62,7 @@ class VerilogEvaluator:
         top_module_name: str = "tb",
         output_directory: str | None = None,
         simulation_timeout_seconds: int = 60,
+        include_dirs: list[str] | None = None, 
     ) -> dict[str, Any]:
         """
         Compiles and simulates the given Verilog files.
@@ -183,6 +185,9 @@ class VerilogEvaluator:
         # --- 2. Compile Verilog files ---
         compile_cmd_list = [self.iverilog_executable]
         compile_cmd_list.extend(self.base_iverilog_flags)
+        if include_dirs:                               # ← 추가
+            for d in include_dirs:                     # ← 추가
+                compile_cmd_list.extend([f"-I{d}"])    # ← 추가
         compile_cmd_list.extend(["-s", top_module_name])  # Specify top module
         compile_cmd_list.extend(["-o", compiled_vvp_file])
         compile_cmd_list.extend(dut_files)  # Add the generated Verilog file(s)
@@ -225,6 +230,25 @@ class VerilogEvaluator:
                     )
                 print(f"INFO: Compilation successful. Output: {compiled_vvp_file}")
 
+            except Exception as e:
+                error_msg = f"An unexpected error occurred during compilation: {e}"
+                print(f"ERROR: {error_msg}")
+                lf.write(f"CRITICAL ERROR: {error_msg}\n")
+                return self._format_result(
+                    "compilation_error", log_file, None, comp_stderr=error_msg
+                )
+            
+            except subprocess.TimeoutExpired as e:
+                if e.process:
+                    e.process.kill()         
+                    e.process.communicate()  
+                error_msg = f"Compilation timed out after {simulation_timeout_seconds} seconds."
+                print(f"ERROR: {error_msg}")
+                lf.write(f"TIMEOUT ERROR: {error_msg}\n")
+                return self._format_result(
+                    "compilation_error", log_file, None, comp_stderr=error_msg
+                )
+
             except FileNotFoundError:
                 # This case should ideally be caught by __init__, but as a safeguard:
                 error_msg = f"Icarus Verilog executable (iverilog) not found during compilation. Path: {self.iverilog_executable}"
@@ -233,14 +257,7 @@ class VerilogEvaluator:
                 return self._format_result(
                     "file_error", log_file, None, comp_stderr=error_msg
                 )
-            except Exception as e:
-                error_msg = f"An unexpected error occurred during compilation: {e}"
-                print(f"ERROR: {error_msg}")
-                lf.write(f"CRITICAL ERROR: {error_msg}\n")
-                return self._format_result(
-                    "compilation_error", log_file, None, comp_stderr=error_msg
-                )
-
+            
             lf.write("\n--- Simulation Phase ---\n")
             # --- 3. Simulate the compiled VVP file ---
             # The compiled .vvp file is typically made executable by iverilog using a shebang
@@ -315,6 +332,9 @@ class VerilogEvaluator:
                     )
 
             except subprocess.TimeoutExpired:
+                if e.process:
+                    e.process.kill()         # ← 추가
+                    e.process.communicate()
                 timeout_msg = (
                     f"Simulation timed out after {simulation_timeout_seconds} seconds."
                 )
@@ -984,7 +1004,83 @@ class RealBenchSynthesis(SynthesisEvaluator):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-   
+
+    def _check_synthesis_functionality(
+        self,
+        synthesized_netlist: str,
+        test_sv: str,
+        ref_sv: str | None,
+        tb_top_module: str,
+        output_dir: str,
+        verilog_evaluator: VerilogEvaluator,
+        simulation_timeout_s: int = 300,
+    ) -> tuple[bool, str]:
+        """
+        Runs a functional simulation on the synthesized netlist using the provided testbench.
+
+        :param synthesized_netlist: Path to the synthesized netlist file.
+        :param test_sv: Path to the testbench Verilog file.
+        :param ref_sv: Path to the reference design Verilog file (optional).
+        :param tb_top_module: Name of the top-level module in the testbench.
+        :param output_dir: Directory for output files.
+        :param verilog_evaluator: An instance of VerilogEvaluator for simulation.
+        :param simulation_timeout_s: Timeout for the simulation in seconds.
+        :return: A tuple containing a success boolean and the log of the simulation.
+        """
+        # need to include the verilog files from pdk for simulation of synthesized netlist
+        pdk_verilog_lib = os.path.join(
+            self.pdk_path, "Nangate45", "work_around_yosys", "cells.v"
+        )
+        if not os.path.exists(pdk_verilog_lib):
+            error_msg = f"PDK Verilog library not found at: {pdk_verilog_lib}"
+            print(f"ERROR: {error_msg}")
+            return False, error_msg
+        verification_dir = os.path.dirname(test_sv)
+
+        extra_files = []
+        for pattern in ["*.sv", "*.v"]:
+            extra_files += [
+                f for f in glob.glob(os.path.join(verification_dir, pattern))
+                if not f.endswith("_top.sv")
+                and not f.endswith("_testbench.sv")
+                and not f.endswith("_ref.sv")
+            ]
+
+
+        # The evaluator expects a list of files. The synthesized netlist replaces the original DUT.
+        # The VerilogEvaluator's evaluate method has been slightly adapted to accept a list of files
+        # Example: iverilog -Wall -Winfloop -Wno-timescale -g2012 -o compiled.vvp -s tb testbench.sv synthesized_netlist.syn.v pdk_verilog_lib.v
+        sim_results = verilog_evaluator.evaluate(
+            generated_sv_file=[synthesized_netlist,pdk_verilog_lib] + extra_files,  # Pass synthesized netlist and PDK lib
+            test_sv_file=test_sv,
+            ref_sv_file=ref_sv,
+            top_module_name=tb_top_module,
+            simulation_timeout_seconds=simulation_timeout_s,
+            include_dirs=[verification_dir], ##<- 추가
+            # Don't use output_directory here, if we pass the synthesized_netlist its .syn suffix will differentiate it from the rtl simulation
+        )
+
+        if sim_results["status"] == "compilation_error":
+            print(
+                f"Synthesis functionality check failed during compilation: {sim_results.get('compilation_stderr', 'Compilation log not available')}"
+            )
+        log = f"Compilation Log:\n{sim_results.get('compilation_stderr')}\n\nSimulation Log:\n{sim_results.get('simulation_stdout')}\n{sim_results.get('simulation_stderr')}"
+
+        if sim_results["status"] == "success":
+            output = sim_results.get("simulation_stdout", "")
+            # Check for simulation output in two ways:
+            # Looks for "Mismatches: 0" in the output (VerilogEvalv2)
+            # or checks for "===========Your Design Passed===========" in the output (RTLLMv2)
+            m_match = re.search(r"^Mismatches: (\d+)", output, re.M)
+            if (
+                m_match and int(m_match.group(1)) == 0
+            ) or "===========Your Design Passed===========" in output:
+                return True, log
+
+        return False, log
+
+
+
     def _run_synthesis(
             self,
             verilog_file: str,

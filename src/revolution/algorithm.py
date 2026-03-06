@@ -24,6 +24,9 @@ from .llm import LLMInterface, LLMRequest
 from .logging import EoHLogger
 from .prompt_store import PromptStore, safe_format # Able to load prompts from files
 
+import glob, tempfile
+
+
 
 # Literal Typing for strategies (M-F, M-S, M-E, M-R, M-I, C-F, ...)
 EvolStrategyMethod = Literal["initial", "M-F", "M-S", "M-E", "M-R", "M-I", "C-F"]
@@ -3068,10 +3071,59 @@ class RealBenchEngine(EoHEngine):
             system_name = "e203_hbirdv2"
         elif system_name == "sd":
             system_name = "sdc"
-
-        syntax, semantic, syntax_err_msg, semantic_err_msg = self.evaluator.evaluate(
-            cand.code, system_name, self.problem_name
+        verification_dir = os.path.join(
+            self.benchmark_path, system_name, self.problem_name, "verification"
         )
+        # testbench, stimulus_gen, ref 등 _top.sv 제외한 모든 sv 파일
+        extra_files = []
+        for pattern in ["*.sv", "*.v"]:
+            extra_files += [
+                f for f in glob.glob(os.path.join(verification_dir, pattern))
+                if not f.endswith("_top.sv")
+                and not f.endswith("_testbench.sv")
+                and not f.endswith("_ref.sv")
+            ]
+        testbench_file = os.path.join(verification_dir, f"{self.problem_name}_testbench.sv")
+        ref_file = os.path.join(verification_dir, f"{self.problem_name}_ref.sv")
+        
+
+        # LLM 생성 코드를 임시 파일로 저장
+        with tempfile.NamedTemporaryFile(suffix=".sv", mode="w", delete=False, dir=verification_dir) as tmp:
+            tmp.write(cand.code)
+            dut_file = tmp.name
+
+        try:
+            sim_result = self.evaluator.evaluate(
+                generated_sv_file=[dut_file] + extra_files,  # DUT + stimulus_gen 등
+                test_sv_file=testbench_file,
+                ref_sv_file=ref_file,
+                top_module_name="tb",
+                include_dirs=[verification_dir],
+            )
+        finally:
+            os.unlink(dut_file)  # 임시 파일 정리
+
+        # VerilogEvaluator 결과를 기존 syntax/semantic 형태로 변환
+        if sim_result["status"] == "compilation_error":
+            syntax, semantic = 0, 0
+            syntax_err_msg = sim_result.get("compilation_stderr", "")
+            semantic_err_msg = ""
+        elif sim_result["status"] == "success":
+            output = sim_result.get("simulation_stdout", "")
+            print(f"[DEBUG] simulation_stdout: {repr(output)}")  # 추가
+            m_match = re.search(r"^Mismatches: (\d+)", output, re.M)
+            print(f"[DEBUG] m_match: {m_match}")  # 추가
+            syntax = 1
+            if m_match and int(m_match.group(1)) == 0:
+                semantic, semantic_err_msg = 1, ""
+            else:
+                semantic = 0
+                semantic_err_msg = output
+            syntax_err_msg = ""
+        else:
+            syntax, semantic = 0, 0
+            syntax_err_msg = sim_result.get("simulation_stderr", "")
+            semantic_err_msg = ""
 
         if syntax == 0:
             cand.status = "failed_syntax"
