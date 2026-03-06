@@ -113,7 +113,10 @@ def run_problem_worker(args_tuple):
         if evaluation_mode == "gen0":
             if gen0_eval_best:
                 if benchmark.lower() == "realbench":
-                    verilog_evaluator = VerilatorEvaluator()
+                    #verilog_evaluator = VerilatorEvaluator()
+                    verilog_evaluator = VerilogEvaluator(
+                        iverilog_executable_path="iverilog", vvp_executable_path="vvp"
+                    )
                     synthesis_evaluator = RealBenchSynthesis()
                 else:
                     verilog_evaluator = VerilogEvaluator(
@@ -125,7 +128,10 @@ def run_problem_worker(args_tuple):
                 synthesis_evaluator = None
         else:
             if benchmark.lower() == "realbench":
-                    verilog_evaluator = VerilatorEvaluator()
+                    #verilog_evaluator = VerilatorEvaluator()
+                    verilog_evaluator = VerilogEvaluator(
+                        iverilog_executable_path="iverilog", vvp_executable_path="vvp"
+                    )
                     synthesis_evaluator = RealBenchSynthesis()
             else: 
                 verilog_evaluator = VerilogEvaluator(

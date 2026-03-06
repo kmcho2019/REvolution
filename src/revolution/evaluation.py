@@ -875,7 +875,7 @@ class VerilatorEvaluator:
     def __init__(self, verilator_path: str = "verilator"):
         self.verilator_path = verilator_path
 
-    def testbench_verification(self, gen_code: str, system_name: str, module_name: str) -> Dict[str, Any]:
+    def evaluate(self, gen_code: str, system_name: str, module_name: str) -> Dict[str, Any]:
         """
         인자로 받은 template_dir(검증 파일들이 있는 폴더)의 파일을 활용하여 시뮬레이션을 수행합니다.
         
@@ -883,52 +883,65 @@ class VerilatorEvaluator:
         :param system_name: 모듈 이름 (파일명 결정에 사용)
         :param module_name: 시스템 이름
         """
+        print(f"\n[Verilator] Starting evaluation for module: {module_name} (System: {system_name})")
         current_file_path = os.path.abspath(__file__)
         project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_file_path)))
         realbench_path = os.path.join(project_root, "data", "bench", "RealBench")
         
         template_dir = os.path.join(realbench_path, system_name, module_name, "verification")
-        with tempfile.TemporaryDirectory(dir=f"/run/user/{os.getuid()}") as temp_dir:
+        print(f"[Verilator] Using verification template from: {template_dir}")
+        # verilator
+        syntax = -2
+        semantic = -2
+        syntax_err_msg = ""
+        semantic_err_msg = ""
+
+        with tempfile.TemporaryDirectory() as temp_dir: #dir=f"/run/user/{os.getuid()}"
             # prepare tempdir
+            print(f"[Verilator] Created temporary working directory: {temp_dir}")
+            print(f"[Verilator] Copying verification files...")
             os.system(f"cp {template_dir}/* {temp_dir}/")
             top_filepath = os.path.join(temp_dir, f"{module_name}_top.sv")
             assert os.path.exists(top_filepath)
             os.system(f"rm {top_filepath}")
             with open(top_filepath, "w") as f:
                 f.write(gen_code) # temp_dir에 top_filepath로 LLM generated 된 코드(gen_code)를 복사해서 넣음
-        
-        # verilator
-        syntax = -2
-        semantic = -2
-        syntax_err_msg = ""
-        semantic_err_msg = ""
-        ys_ret = subprocess.run(
-            f"cd {temp_dir} && make all",
-            shell=True,
-            timeout=5 * 60,
-            stderr=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-        )
-        if ys_ret.stderr:
-            err_msg = ys_ret.stderr.decode()
-            for line in err_msg.split('\n'):
-                if line.startswith(f"%Error") or line.startswith(f"%Warning"):
-                    syntax_err_msg += line
-                    syntax_err_msg += "\n"
-            syntax = 0
-            semantic = 0
-            return syntax, semantic, syntax_err_msg, semantic_err_msg
+            
+            print(f"[Verilator] Running 'make all'")
+            ys_ret = subprocess.run(
+                f"cd {temp_dir} && make all",
+                shell=True,
+                timeout=5 * 60,
+                stderr=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+            )
+            print("STDOUT:", ys_ret.stdout.decode())
+            print("STDERR:", ys_ret.stderr.decode())
+            print("RETURNCODE:", ys_ret.returncode)
 
-        tb_msg = ys_ret.stdout.decode()
-        for line in tb_msg.split('\n'):
-            if "Hint: Output" in line and "no mismatches" in line:
-                continue
-            elif "Hint: Output" in line and "mismatches" in line:
-                semantic_err_msg += line[6:]
-                semantic_err_msg += '\n'
-        syntax = 1
-        semantic = 1 if semantic_err_msg == "" else 0
-        
+            if ys_ret.stderr: #ys_ret.returncode != 0:
+                err_msg = ys_ret.stderr.decode()
+                for line in err_msg.split('\n'):
+                    if line.startswith(f"%Error") or line.startswith(f"%Warning"):
+                        syntax_err_msg += line
+                        syntax_err_msg += "\n"
+                syntax = 0
+                semantic = 0
+                print("ys_ret.returncode != 0 -->err msg:", err_msg)
+                return syntax, semantic, syntax_err_msg, semantic_err_msg
+
+            tb_msg = ys_ret.stdout.decode()
+            for line in tb_msg.split('\n'):
+                if "Hint: Output" in line and "no mismatches" in line:
+                    print("semantix err: Hint: Output in line and no mismatches in line")
+                    continue
+                elif "Hint: Output" in line and "mismatches" in line:
+                    semantic_err_msg += line[6:]
+                    semantic_err_msg += '\n'
+            syntax = 1
+            semantic = 1 if semantic_err_msg == "" else 0
+            print(f"[Verilator] Evaluation complete. Syntax: {syntax}, Semantic: {semantic}")
+            
         return syntax, semantic, syntax_err_msg, semantic_err_msg        #formality check 구현하지 않음.
     
 

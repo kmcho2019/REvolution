@@ -702,6 +702,16 @@ class EoHEngine:
                     "area": float(values[4]),
                 }
                 print(f"Reference PPA loaded successfully: {self.ref_ppa_metrics}")
+        else:
+            self.ref_ppa_metrics = {
+                "tns": 0.0,
+                "wns": 0.0,
+                "eff_clk_period": self.clk_period,
+                "area": 1e4,
+                "power": 1.0,
+            }
+            return
+
 
     def _calculate_fitness_score(self, candidate: Heuristic) -> float:
         """
@@ -2955,7 +2965,7 @@ class EoHEngine:
         self.run_start_utc = datetime.datetime.now(datetime.timezone.utc)
 
         try:
-            self._calculate_reference_ppa()
+            self._calculate_reference_ppa()    #--- Calculating Reference PPA for <problem_name> ---
             self.logger = EoHLogger(
                 self.problem_name,
                 self.benchmark_name,
@@ -2965,7 +2975,8 @@ class EoHEngine:
                 self.generation_mode,
             )
             self.logger.meta_strategy_name = self.strategy_selection_method
-            self.initialize_population()
+            self.initialize_population()   #--- Initializing Population (Size: 2) ---
+
         except Exception as e:
             print(f"Critical error during initialization: {e}")
             # Print the full call stack, showing exactly where the error occurred.
@@ -3008,6 +3019,7 @@ class RealBenchEngine(EoHEngine):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
 
     def load_problem_description(self) -> str:
         """
@@ -3156,7 +3168,6 @@ class RealBenchEngine(EoHEngine):
 
         return cand, feedback_payload
 
-
     def _evaluate_candidates(self, candidates_to_evaluate: list[Heuristic]) -> None:
         """
         Evaluates a list of new candidates through the full pipeline (syntax, func, synth).
@@ -3172,9 +3183,17 @@ class RealBenchEngine(EoHEngine):
             return
 
         print(f"\n--- Evaluating {len(candidates_to_evaluate)} New Candidates ---")
-        test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_testbench.sv")
-        ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
-        top_module_name = self.problem_name
+
+        system_name = self.problem_name.split("_")[0]
+        if system_name == "e203":
+            system_name = "e203_hbirdv2"
+        elif system_name == "sd":
+            system_name = "sdc"
+
+        test_sv_file = os.path.join(self.benchmark_path, system_name, self.problem_name, "verification", f"{self.problem_name}_testbench.sv")
+        ref_sv_file = os.path.join(self.benchmark_path, system_name, self.problem_name, "verification", f"{self.problem_name}_ref.sv")
+        top_module_name = self.problem_name 
+
 
         if self.parallelize_candidates:
             with ThreadPoolExecutor(max_workers=self.candidate_workers) as executor:
@@ -3255,6 +3274,7 @@ class RealBenchEngine(EoHEngine):
                     "analysis", "Feedback generation failed."
                 )
                 self._save_feedback_files(cand, feedback_data)
+
 
 class SingleShotEngine(EoHEngine):
     """

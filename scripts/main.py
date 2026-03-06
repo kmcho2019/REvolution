@@ -2226,7 +2226,7 @@ if __name__ == "__main__":
     parser.add_argument('--problems', nargs='+',
                         help='A list of specific problem names to run. If not provided, all problems in the suite will be run.')
     parser.add_argument('--api_backend', type=str, default='openai',
-                        choices=['openai', 'openrouter', 'deepseek', 'gemini', 'vllm'],
+                        choices=['openai', 'openrouter', 'deepseek', 'gemini', 'vllm', 'local'],
                         help='The API backend to use for LLM calls.')
     parser.add_argument(
         '--vllm_port',
