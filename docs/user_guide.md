@@ -201,6 +201,7 @@ FunSearch vs EoH vs CodeEvolve sweeps with explicit fairness normalization.
 - `--max_evaluations`: candidate budget per problem (primary in `candidate_evaluations`)
 - `--max_llm_calls_per_problem`: required for `llm_calls` and `dual_gate`
 - `--backends revolution funsearch eoh codeevolve`: select the backend subset to launch
+- `--problems <ids...>`: optional problem subset forwarded to every backend run, useful for live smoke checks
 - `--revolution_population_size`, `--funsearch_initial_population_size`, `--eoh_population_size`, `--eoh_operators`, `--codeevolve_num_islands`, `--codeevolve_init_pop`: preferred schedule knobs used to derive candidate budgets
 
 The ablation runner propagates budget metadata to per-problem summaries (`run_budget.primary_budget_axis`, evaluation/call caps), which the backend comparison report consumes for fairness diagnostics.

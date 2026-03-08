@@ -272,6 +272,12 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         default=_available_benchmarks(),
         help="Benchmark suites to include (defaults to all non-CVDP suites).",
     )
+    parser.add_argument(
+        "--problems",
+        nargs="+",
+        default=None,
+        help="Optional problem-id subset forwarded to each backend run.",
+    )
     parser.add_argument("--api_backend", type=str, default="vllm")
     parser.add_argument("--vllm_host", type=str, default=os.getenv("VLLM_HOST", "vllm"))
     parser.add_argument("--vllm_port", type=int, default=int(os.getenv("VLLM_PORT", "8888")))
@@ -562,6 +568,7 @@ def main(argv: list[str] | None = None) -> int:
     common = [
         "--benchmarks",
         *args.benchmarks,
+        *([] if not args.problems else ["--problems", *args.problems]),
         "--api_backend",
         args.api_backend,
         "--vllm_host",

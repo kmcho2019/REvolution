@@ -161,6 +161,8 @@ Use `scripts/run_backend_ablation.py` to launch matched backend sets over shared
 benchmark suites and emit a comparison report automatically. The ablation runner
 now accepts `--backends revolution funsearch eoh codeevolve` and derives
 fairness schedules per backend while preserving backend-specific mechanics.
+Use `--problems` to constrain the sweep to a small problem subset when doing
+live smoke validation of a new backend.
 
 `run_backend.py` strict/accelerated evaluation controls:
 - `--evaluation_mode strict_ablation|search_accelerated`:

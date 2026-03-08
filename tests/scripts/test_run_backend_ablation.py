@@ -549,6 +549,32 @@ def test_ablation_main_writes_top_level_config_and_meta(tmp_path):
     assert meta_payload["command_line_arguments"]
 
 
+def test_ablation_main_accepts_problem_subset_in_dry_run(tmp_path, capsys):
+    save_root = tmp_path / "ablation_run_subset"
+    rc = run_backend_ablation_main(
+        [
+            "--benchmarks",
+            "RTLLM",
+            "--problems",
+            "Prob001_accu",
+            "--save_root",
+            str(save_root),
+            "--backends",
+            "codeevolve",
+            "--seeds",
+            "42",
+            "--max_evaluations",
+            "1",
+            "--dry_run",
+            "--no-run_report",
+        ]
+    )
+
+    assert rc == 0
+    captured = capsys.readouterr()
+    assert "--problems Prob001_accu" in captured.out
+
+
 def test_ablation_generated_config_roundtrip_and_edit(tmp_path):
     save_root_a = tmp_path / "ablation_a"
     rc = run_backend_ablation_main(

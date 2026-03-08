@@ -337,6 +337,16 @@ the implementation work and the post-implementation review pass against
     `/workspace/exp/codeevolve_smoke_fix/rtllm_diff/codeevolve/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/RTLLM/Prob001_accu/Prob001_accu_summary.json`
   - VerilogEval diff remained fully successful:
     `/workspace/exp/codeevolve_smoke_fix/verilogeval_diff/codeevolve/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob001_zero/Prob001_zero_summary.json`
+- Surrounding-script integration check on 2026-03-08:
+  - `backend_comparison_report.py` successfully generated a CodeEvolve-only
+    report from live smoke outputs:
+    `/workspace/exp/codeevolve_smoke_fix/codeevolve_only_report.md`
+  - `archive_baseline.py` successfully archived a CodeEvolve smoke run to:
+    `/workspace/baselines_smoke_archive/20260308_182554__789e054a__codeevolve`
+  - `run_backend_ablation.py` initially rejected `--problems`, which made small
+    backend smoke probes awkward. The script now forwards `--problems` to
+    backend runs and a real live ablation smoke succeeded at:
+    `/workspace/exp/ablation_live_smoke/codeevolve/seed_42/codeevolve/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/20260308_182641_codeevolve_summary_results.txt`
 - Post-fix validation completed:
   - `.venv/bin/python -m pytest tests/revolution/test_codeevolve_backend.py tests/revolution/test_diff_apply.py`
   - `.venv/bin/python -m pytest`
@@ -345,3 +355,5 @@ the implementation work and the post-implementation review pass against
   - `.venv/bin/python -m pytest tests/scripts/test_run_backend.py tests/revolution/test_codeevolve_backend.py`
   - `.venv/bin/python -m ruff check scripts/run_backend.py tests/scripts/test_run_backend.py`
   - `.venv/bin/python -m pyright scripts/run_backend.py`
+  - `.venv/bin/python -m pytest tests/scripts/test_run_backend_ablation.py tests/scripts/test_run_backend.py`
+  - `.venv/bin/python -m ruff check scripts/run_backend_ablation.py tests/scripts/test_run_backend_ablation.py`
