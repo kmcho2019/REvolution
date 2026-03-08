@@ -158,14 +158,30 @@ class _FakeCandidateEvaluator:
         return out
 
 
-def _make_problem_context(tmp_path: Path) -> ProblemContext:
+def _make_problem_context(tmp_path: Path, *, prompt_text: str | None = None) -> ProblemContext:
     bench = tmp_path / "bench" / "Bench"
     bench.mkdir(parents=True, exist_ok=True)
     prompt = bench / "Prob001_prompt.txt"
     test_sv = bench / "Prob001_test.sv"
     ref_sv = bench / "Prob001_ref.sv"
     ppa = bench / "Prob001_ppa.txt"
-    prompt.write_text("build a module", encoding="utf-8")
+    prompt_body = prompt_text or (
+        "Please act as a professional verilog designer.\n\n"
+        "Implement a module to achieve serial input data accumulation output.\n\n"
+        "Module name:\n"
+        "    accu\n"
+        "Input ports:\n"
+        "\tclk: Clock input for synchronization.\n"
+        "\trst_n: Active-low reset signal.\n"
+        "\tdata_in[7:0]: 8-bit input data for addition.\n"
+        "\tvalid_in: Input signal indicating readiness for new data.\n"
+        "Output ports:\n"
+        "    valid_out: Output signal indicating when 4 input data accumulation is reached.\n"
+        "\tdata_out[9:0]: 10-bit output data representing the accumulated sum.\n"
+        "Implementation:\n"
+        "Give me the complete code.\n"
+    )
+    prompt.write_text(prompt_body, encoding="utf-8")
     test_sv.write_text("module tb; endmodule\n", encoding="utf-8")
     ref_sv.write_text("module ref; endmodule\n", encoding="utf-8")
     ppa.write_text(
@@ -177,7 +193,7 @@ def _make_problem_context(tmp_path: Path) -> ProblemContext:
         problem_name="Prob001",
         benchmark_path=bench,
         prompt_path=prompt,
-        problem_description="build a module",
+        problem_description=prompt_body,
         test_sv_path=test_sv,
         ref_sv_path=ref_sv,
         top_module_names_path=bench / "synthesis_top_module_names.json",
@@ -203,10 +219,11 @@ def _make_backend(
     *,
     config_overrides: dict[str, object] | None = None,
     include_meta: bool = True,
+    prompt_text: str | None = None,
 ):
     store = PromptStore(root_dir=str(tmp_path / "prompts"), profile="codeevolve")
     _write_prompts(store, include_meta=include_meta)
-    context = _make_problem_context(tmp_path)
+    context = _make_problem_context(tmp_path, prompt_text=prompt_text)
     artifact_writer = ArtifactWriter(
         save_path=tmp_path / "exp",
         model_name="model/x",
@@ -311,6 +328,34 @@ def test_codeevolve_meta_prompting_updates_prompt_population(tmp_path):
     assert backend._islands[0].prompt_count() > 1
 
 
+def test_codeevolve_seed_code_uses_rtllm_interface_stub(tmp_path):
+    backend, _ = _make_backend(tmp_path)
+    backend.initialize()
+    seed = backend._task_adapter.initial_seed_code()
+    assert "module accu" in seed
+    assert "input clk;" in seed
+    assert "input [7:0] data_in;" in seed
+    assert "output [9:0] data_out;" in seed
+
+
+def test_codeevolve_seed_code_uses_verilogeval_interface_stub(tmp_path):
+    backend, _ = _make_backend(
+        tmp_path,
+        prompt_text=(
+            "I would like you to implement a module named TopModule with the following\n"
+            "interface. All input and output ports are one bit unless otherwise\n"
+            "specified.\n\n"
+            " - input clk\n"
+            " - output [3:0] out\n"
+        ),
+    )
+    backend.initialize()
+    seed = backend._task_adapter.initial_seed_code()
+    assert "module TopModule" in seed
+    assert "input clk;" in seed
+    assert "output [3:0] out;" in seed
+
+
 def test_codeevolve_migration_creates_root_clones(tmp_path):
     backend, _ = _make_backend(
         tmp_path,
@@ -335,6 +380,23 @@ def test_codeevolve_migration_creates_root_clones(tmp_path):
     ]
     assert migrated
     assert all(program.parent_id is None for program in migrated)
+
+
+def test_codeevolve_meta_prompt_failures_only_count_attempts(tmp_path):
+    backend, _ = _make_backend(
+        tmp_path,
+        config_overrides={
+            "num_islands": 1,
+            "num_epochs": 1,
+            "init_pop": 1,
+            "meta_prompting": True,
+            "use_scheduler": False,
+        },
+    )
+    backend.run()
+    epoch_stats = backend.get_result_summary()["generation_statistics"][0]["epoch_statistics"]
+    assert epoch_stats["meta_prompt_successes"] == 0
+    assert epoch_stats["meta_prompt_failures"] == 0
 
 
 def test_codeevolve_honors_max_evaluations(tmp_path):

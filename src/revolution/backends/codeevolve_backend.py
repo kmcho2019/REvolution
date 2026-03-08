@@ -5,6 +5,7 @@ import datetime as dt
 import json
 import math
 import random
+import re
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -166,8 +167,16 @@ class _IslandStepResult:
     island_id: int
     epoch: int
     program: CodeEvolveProgram
+    meta_prompt_attempted: bool
     meta_prompt_created: bool
     exploration: bool
+
+
+@dataclass(frozen=True)
+class _PortSpec:
+    direction: str
+    name: str
+    width: str | None = None
 
 
 class CodeEvolveTaskAdapter:
@@ -199,6 +208,9 @@ class CodeEvolveTaskAdapter:
         return bool(getattr(self.candidate_evaluator, "ref_ppa_metrics", {}))
 
     def initial_seed_code(self) -> str:
+        prompt_seed = self._seed_module_from_prompt()
+        if prompt_seed is not None:
+            return prompt_seed
         return (
             f"module {self.top_module_name};\n"
             "  // Seed implementation used for CodeEvolve phase-1 RTL adaptation.\n"
@@ -218,6 +230,109 @@ class CodeEvolveTaskAdapter:
         if system_template:
             return f"{system_template.strip()}\n\n{rendered}".strip()
         return rendered
+
+    def _seed_module_from_prompt(self) -> str | None:
+        ports = self._extract_ports_from_prompt()
+        if not ports:
+            return None
+        module_name = self._extract_module_name_from_prompt() or self.top_module_name
+        return self._render_seed_module(module_name, ports)
+
+    def _extract_module_name_from_prompt(self) -> str | None:
+        text = self.problem_description
+        verilogeval_match = re.search(
+            r"module named\s+([A-Za-z_][A-Za-z0-9_]*)",
+            text,
+            flags=re.IGNORECASE,
+        )
+        if verilogeval_match:
+            return verilogeval_match.group(1)
+
+        lines = text.splitlines()
+        for idx, raw_line in enumerate(lines):
+            line = raw_line.strip()
+            if not line.lower().startswith("module name"):
+                continue
+            _, _, remainder = line.partition(":")
+            if remainder.strip():
+                return remainder.strip().split()[0]
+            for follow in lines[idx + 1 :]:
+                stripped = follow.strip()
+                if stripped:
+                    return stripped.split()[0]
+        return None
+
+    def _extract_ports_from_prompt(self) -> list[_PortSpec]:
+        ports = self._extract_rtllm_ports()
+        if ports:
+            return ports
+        return self._extract_verilogeval_ports()
+
+    def _extract_rtllm_ports(self) -> list[_PortSpec]:
+        ports: list[_PortSpec] = []
+        section: str | None = None
+        for raw_line in self.problem_description.splitlines():
+            line = raw_line.strip()
+            lower = line.lower()
+            if lower.startswith("input ports"):
+                section = "input"
+                continue
+            if lower.startswith("output ports"):
+                section = "output"
+                continue
+            if lower.startswith("implementation"):
+                break
+            if section is None or not line or ":" not in line:
+                continue
+            spec = line.rsplit(":", 1)[0].strip()
+            port = self._port_from_compact_spec(section, spec)
+            if port is not None:
+                ports.append(port)
+        return ports
+
+    def _extract_verilogeval_ports(self) -> list[_PortSpec]:
+        bullet_re = re.compile(
+            r"^-\s*(input|output)\s+(?:(\[[^\]]+\])\s+)?([A-Za-z_][A-Za-z0-9_]*)$",
+            flags=re.IGNORECASE,
+        )
+        ports: list[_PortSpec] = []
+        for raw_line in self.problem_description.splitlines():
+            match = bullet_re.match(raw_line.strip())
+            if not match:
+                continue
+            direction = match.group(1).lower()
+            width = match.group(2)
+            name = match.group(3)
+            ports.append(_PortSpec(direction=direction, name=name, width=width))
+        return ports
+
+    def _port_from_compact_spec(self, direction: str, spec: str) -> _PortSpec | None:
+        match = re.match(
+            r"^([A-Za-z_][A-Za-z0-9_]*)(?:\[(\d+):(\d+)\])?$",
+            spec,
+        )
+        if match is None:
+            return None
+        name = match.group(1)
+        msb = match.group(2)
+        lsb = match.group(3)
+        width = f"[{msb}:{lsb}]" if msb is not None and lsb is not None else None
+        return _PortSpec(direction=direction, name=name, width=width)
+
+    def _render_seed_module(self, module_name: str, ports: list[_PortSpec]) -> str:
+        port_list = ",\n".join(f"    {port.name}" for port in ports)
+        declarations = "\n".join(
+            f"    {port.direction} {port.width + ' ' if port.width else ''}{port.name};"
+            for port in ports
+        )
+        return (
+            f"module {module_name} (\n"
+            f"{port_list}\n"
+            ");\n"
+            f"{declarations}\n\n"
+            "  // Seed implementation used for CodeEvolve phase-1 RTL adaptation.\n"
+            "endmodule\n"
+        )
 
 
 class CodeEvolveBackend(EvolutionBackend):
@@ -742,35 +857,10 @@ class CodeEvolveBackend(EvolutionBackend):
                 origin_program_id=prep.origin_program_id,
             )
             self._store_extra_candidate_files(prep, evaluation)
-            island.programs[program.id] = program
-            island.program_order.append(program.id)
-            if island.best_program_id is None:
-                island.best_program_id = program.id
-            else:
-                current_best = island.programs[island.best_program_id]
-                if (program.score, -program.epoch) > (current_best.score, -current_best.epoch):
-                    island.best_program_id = program.id
-            prompt = island.prompts.get(program.prompt_id)
-            if prompt is not None and math.isfinite(program.score):
-                prompt.fitness = max(prompt.fitness, program.score)
-                if island.best_prompt_id is None:
-                    island.best_prompt_id = prompt.id
-                else:
-                    best_prompt = island.prompts[island.best_prompt_id]
-                    if (prompt.fitness, -prompt.created_epoch) > (
-                        best_prompt.fitness,
-                        -best_prompt.created_epoch,
-                    ):
-                        island.best_prompt_id = prompt.id
-            if self._best_program is None or (program.score, -program.epoch) > (
-                self._best_program.score,
-                -self._best_program.epoch,
-            ):
-                self._best_program = program
-            out.append(program)
+            out.append(self._register_program(island, program))
         return out
 
-    def _register_existing_program(
+    def _register_program(
         self,
         island: CodeEvolveIsland,
         program: CodeEvolveProgram,
@@ -820,6 +910,7 @@ class CodeEvolveBackend(EvolutionBackend):
         )
 
         meta_prompt_created = False
+        meta_prompt_attempted = False
         active_prompt = prompt
         if (
             self.config.meta_prompting
@@ -827,6 +918,7 @@ class CodeEvolveBackend(EvolutionBackend):
             and exploration
             and self.services.prompt_store.has("codeevolve/meta_prompt")
         ):
+            meta_prompt_attempted = True
             meta_prompt = self._build_meta_prompt(
                 island,
                 epoch=epoch,
@@ -921,6 +1013,7 @@ class CodeEvolveBackend(EvolutionBackend):
             island_id=island.id,
             epoch=epoch,
             program=evaluated[0],
+            meta_prompt_attempted=meta_prompt_attempted,
             meta_prompt_created=meta_prompt_created,
             exploration=exploration or is_initializing,
         )
@@ -989,7 +1082,7 @@ class CodeEvolveBackend(EvolutionBackend):
                         migrated_from=source_id,
                         origin_program_id=migrant.id,
                     )
-                    self._register_existing_program(target, clone)
+                    self._register_program(target, clone)
                     cloned_ids.append(clone.id)
                 if cloned_ids:
                     event = CodeEvolveMigrationEvent(
@@ -1046,7 +1139,7 @@ class CodeEvolveBackend(EvolutionBackend):
                 "exploitation_steps": sum(1 for step in steps if not step.exploration),
                 "meta_prompt_successes": sum(1 for step in steps if step.meta_prompt_created),
                 "meta_prompt_failures": sum(
-                    1 for step in steps if step.exploration and not step.meta_prompt_created
+                    1 for step in steps if step.meta_prompt_attempted and not step.meta_prompt_created
                 ),
                 "migrations_sent": sum(event.migrant_count for event in migration_events),
                 "migrations_received": sum(event.migrant_count for event in migration_events),
