@@ -117,7 +117,10 @@ the implementation work and the post-implementation review pass against
 - [x] Ruff checks completed on touched files
 - [x] Pyright checks completed on touched files
 - [ ] real-model smoke run against live `vllm` for `RTLLM`
+      Blocked in current workspace: `http://vllm:8888/v1/models` DNS failure and
+      `http://localhost:8888/v1/models` connection refused on 2026-03-08.
 - [ ] real-model smoke run against live `vllm` for `VerilogEval-Spec-to-RTL`
+      Blocked in current workspace: same endpoint availability issue as above.
 
 ### Stage 5: Deferred Follow-Ups
 
@@ -135,6 +138,9 @@ the implementation work and the post-implementation review pass against
 - [ ] Run one real `codeevolve` backend smoke test on
       `VerilogEval-Spec-to-RTL` with the intended serving stack and archive the
       output path for future regression checks.
+- [ ] Bring up a reachable LLM endpoint first by either:
+      - starting the Compose `vllm` service and using `--vllm_host vllm`
+      - or pointing `--vllm_host` at a reachable local/remote host
 - [ ] Compare the current `codeevolve` prompt profile against upstream mock
       config behavior and document any deliberate prompt-shape differences that
       remain after phase 1.
@@ -180,3 +186,9 @@ the implementation work and the post-implementation review pass against
   - `.venv/bin/python -m pyright src/revolution/backends/codeevolve_backend.py`
   - `.venv/bin/python -m ruff check src/revolution/backends/codeevolve_backend.py scripts/run_backend.py scripts/run_backend_ablation.py scripts/archive_baseline.py tests/revolution/test_codeevolve_backend.py tests/scripts/test_run_backend.py tests/scripts/test_run_backend_ablation.py tests/scripts/test_archive_baseline.py`
   - `.venv/bin/python -m pyright src/revolution/backends/codeevolve_backend.py scripts/run_backend.py scripts/run_backend_ablation.py scripts/archive_baseline.py`
+- Execution-stage blocker observed on 2026-03-08:
+  - `http://vllm:8888/v1/models` -> DNS resolution failure
+  - `http://localhost:8888/v1/models` -> connection refused
+- Prepared smoke-run commands once a reachable endpoint exists:
+  - `python scripts/run_backend.py --backend codeevolve --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host <reachable-host> --vllm_port 8888 --model_name <served-model> --prompt_profile codeevolve --generation_mode whole --codeevolve_num_islands 2 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_max_evaluations 4 --seed 42`
+  - `python scripts/run_backend.py --backend codeevolve --benchmarks VerilogEval-Spec-to-RTL --problems Prob001_zero --api_backend vllm --vllm_host <reachable-host> --vllm_port 8888 --model_name <served-model> --prompt_profile codeevolve --generation_mode whole --codeevolve_num_islands 2 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_max_evaluations 4 --seed 42`

@@ -116,9 +116,18 @@ fidelity, repo-fit, and maintainability decisions.
 
 - Run a real-model smoke test on `RTLLM`
 - Run a real-model smoke test on `VerilogEval-Spec-to-RTL`
+- Ensure a reachable LLM endpoint exists first; this workspace currently has no
+  reachable `vllm` endpoint at either `vllm:8888` or `localhost:8888`
 - Compare current prompt templates against upstream mock/reference configs and
   document any deliberate remaining prompt-shape differences
 - Revisit backend file splitting only if phase-2 scope expands
+
+## Execution Commands for the Remaining Smoke Stage
+
+Use these once a reachable endpoint exists:
+
+- `python scripts/run_backend.py --backend codeevolve --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host <reachable-host> --vllm_port 8888 --model_name <served-model> --prompt_profile codeevolve --generation_mode whole --codeevolve_num_islands 2 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_max_evaluations 4 --seed 42`
+- `python scripts/run_backend.py --backend codeevolve --benchmarks VerilogEval-Spec-to-RTL --problems Prob001_zero --api_backend vllm --vllm_host <reachable-host> --vllm_port 8888 --model_name <served-model> --prompt_profile codeevolve --generation_mode whole --codeevolve_num_islands 2 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_max_evaluations 4 --seed 42`
 
 ## Validation Snapshot
 
