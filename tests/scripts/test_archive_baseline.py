@@ -178,6 +178,47 @@ def test_archive_ablation_root_includes_backend_report_and_configs(tmp_path):
     ).exists()
 
 
+def test_archive_ablation_root_detects_codeevolve_backend(tmp_path):
+    run_started = "20260223_020305"
+    run_dir = tmp_path / "ablation" / run_started
+    model_root = run_dir / "codeevolve" / "stub-model"
+    _write_text(run_dir / "backend_comparison.md", "# compare\n")
+    _write_text(
+        model_root / f"{run_started}_codeevolve_run_log.txt",
+        _build_run_log(run_started, backend="codeevolve"),
+    )
+    _write_text(
+        model_root / f"{run_started}_codeevolve_summary_results.txt",
+        "codeevolve: ok\n",
+    )
+    _write_text(
+        model_root / f"{run_started}_codeevolve_config.yaml",
+        "backend: codeevolve\n",
+    )
+    _write_json(
+        model_root / "RTLLM" / "Prob001_accu" / "Prob001_accu_summary.json",
+        {"benchmark_name": "RTLLM", "problem_name": "Prob001_accu"},
+    )
+
+    archive_dir = archive_baseline(
+        run_dir=run_dir,
+        archive_root=tmp_path / "archives",
+        embed_images=False,
+        regenerate_plots=False,
+    )
+    manifest = json.loads((archive_dir / "manifest.json").read_text(encoding="utf-8"))
+
+    assert manifest["archive_type"] == "ablation_run"
+    assert manifest["config_snapshot_count"] == 1
+    assert (
+        archive_dir
+        / "configs"
+        / "codeevolve"
+        / "stub-model"
+        / f"{run_started}_codeevolve_config.yaml"
+    ).exists()
+
+
 def test_archive_fails_when_no_config_snapshot_found(tmp_path):
     run_started = "20260223_030405"
     run_dir = _make_single_run_tree(tmp_path, run_started=run_started)

@@ -183,3 +183,45 @@ def test_backend_comparison_report_excludes_failed_designs_from_aggregates(tmp_p
         "| 1/2 | +10.00% ± 0.00% ✅ | +10.00% ± 0.00% ✅ / +10.00% ± 0.00% ✅ / "
         "+10.00% ± 0.00% ✅ | ✅ 1 / ➖ 0 / ❌ 0 |" in agg_row
     )
+
+
+def test_backend_comparison_report_accepts_codeevolve_label(tmp_path):
+    codeevolve_root = tmp_path / "codeevolve"
+    _write_summary(
+        codeevolve_root,
+        "Bench",
+        "Prob001",
+        {
+            "benchmark_name": "Bench",
+            "problem_name": "Prob001",
+            "stage_success_rates": {"functionality": 1.0, "synthesis": 1.0},
+            "final_population_ppa": {
+                "best_score": 0.3,
+                "best_metrics": {"area": 70.0, "power": 0.7, "eff_clk_period": 0.7},
+            },
+            "ref_ppa_metric": {"area": 100.0, "power": 1.0, "eff_clk_period": 1.0},
+            "total_runtime_seconds": 1.5,
+            "total_llm_api_calls": 4,
+            "total_llm_prompt_tokens": 40,
+            "total_llm_completion_tokens": 12,
+            "run_budget": {
+                "primary_budget_axis": "candidate_evaluations",
+                "max_evaluations": 12,
+                "max_llm_calls": 12,
+            },
+        },
+    )
+
+    output_path = tmp_path / "comparison.md"
+    cmd = [
+        sys.executable,
+        "scripts/backend_comparison_report.py",
+        "--backend_run",
+        f"codeevolve={codeevolve_root}",
+        "--output",
+        str(output_path),
+    ]
+    subprocess.run(cmd, check=True, cwd=Path(__file__).resolve().parents[2])
+    text = output_path.read_text(encoding="utf-8")
+    assert "`codeevolve`" in text
+    assert "Prob001" in text

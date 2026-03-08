@@ -39,13 +39,14 @@ backend, ablation, reporting, and archive workflows.
 - [x] implement native backend
 - [x] add CodeEvolve prompt profile and default config template
 - [x] integrate ablation runner and archive detection
-- [ ] add tests
+- [x] add tests
 - [ ] update docs and examples
 
 ## Next
 
-- Add backend and runner test coverage.
 - Update backend-facing docs, usage examples, and limitations.
+- Phase-2 follow-up: extend the task adapter beyond single-file RTL problems.
+- Phase-2 follow-up: evaluate whether checkpoint/resume is worth adding for long ablation sweeps.
 
 ## Fidelity Deviations
 
@@ -68,3 +69,13 @@ backend, ablation, reporting, and archive workflows.
 - Refactored `run_backend_ablation.py` around a backend-command registry,
   added CodeEvolve fairness scheduling, generalized archive ablation detection,
   and extended `run_evolution.py` delegation for `codeevolve_` configs.
+- Added backend, runner, ablation, archive, comparison-report, and delegation
+  coverage for the new `codeevolve` path.
+- Validation complete:
+  - `.venv/bin/python -m pytest tests/revolution/test_codeevolve_backend.py tests/scripts/test_run_backend.py tests/scripts/test_run_backend_ablation.py tests/scripts/test_archive_baseline.py tests/scripts/test_backend_comparison_report.py tests/scripts/test_run_evolution.py`
+  - `.venv/bin/python -m pytest`
+  - `.venv/bin/python -m ruff check src/revolution/backends/codeevolve_backend.py scripts/run_backend.py scripts/run_backend_ablation.py scripts/archive_baseline.py tests/revolution/test_codeevolve_backend.py tests/scripts/test_run_backend.py tests/scripts/test_run_backend_ablation.py tests/scripts/test_archive_baseline.py`
+  - `.venv/bin/python -m pyright src/revolution/backends/codeevolve_backend.py scripts/run_backend.py scripts/run_backend_ablation.py scripts/archive_baseline.py`
+- Pyright reports zero errors for the touched files; the remaining
+  `reportMissingModuleSource` warning for `tqdm` is pre-existing environment
+  resolution noise in `scripts/run_backend.py`, not a CodeEvolve typing error.

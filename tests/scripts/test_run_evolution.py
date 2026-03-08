@@ -1,6 +1,9 @@
 import sys
 from pathlib import Path
+from types import ModuleType
 from types import SimpleNamespace
+
+import pytest
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -86,3 +89,36 @@ def test_run_problem_worker_sets_placeholder_api_key_for_vllm(monkeypatch, tmp_p
     assert result == "ok"
     assert log_path.endswith("problem_run.log")
     assert captured["api_key"] == "vllm-local-placeholder"
+
+
+def test_run_evolution_delegates_to_run_backend_for_codeevolve_config(
+    monkeypatch, tmp_path
+):
+    from scripts import run_evolution
+
+    config_path = tmp_path / "codeevolve.yaml"
+    config_path.write_text(
+        "backend: codeevolve\ncodeevolve_num_islands: 3\n",
+        encoding="utf-8",
+    )
+
+    captured: dict[str, list[str]] = {}
+    fake_module = ModuleType("run_backend")
+
+    def fake_main(argv):
+        captured["argv"] = list(argv)
+        return 17
+
+    fake_module.main = fake_main
+    monkeypatch.setitem(sys.modules, "run_backend", fake_module)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["run_evolution.py", "--config", str(config_path)],
+    )
+
+    with pytest.raises(SystemExit) as exc:
+        run_evolution.main()
+
+    assert exc.value.code == 17
+    assert captured["argv"] == ["--config", str(config_path)]

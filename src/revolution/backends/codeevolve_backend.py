@@ -16,7 +16,6 @@ from revolution.backends.base import (
     BackendServices,
     EvolutionBackend,
 )
-from revolution.llm import LLMRequest
 from revolution.prompt_store import safe_format
 from revolution.runtime import CandidateEvaluation, CandidateEvaluator, CandidateWorkItem
 from revolution.runtime.diff_apply import DiffApplyConfig, DiffApplier
@@ -224,7 +223,7 @@ class CodeEvolveTaskAdapter:
 class CodeEvolveBackend(EvolutionBackend):
     """Native REvolution adaptation of the CodeEvolve search strategy."""
 
-    REQUIRED_PROMPT_KEYS = (
+    REQUIRED_PROMPT_KEYS: tuple[str, ...] = (
         "system/whole",
         "feedback/system",
         "feedback/user",
@@ -701,6 +700,9 @@ class CodeEvolveBackend(EvolutionBackend):
         island: CodeEvolveIsland,
         prepared: list[_PreparedProgram],
     ) -> list[CodeEvolveProgram]:
+        evaluator = self.services.candidate_evaluator
+        if evaluator is None:
+            raise ValueError("CodeEvolveBackend requires a candidate_evaluator service.")
         items = [
             CandidateWorkItem(
                 code=item.code,
@@ -709,7 +711,7 @@ class CodeEvolveBackend(EvolutionBackend):
             )
             for item in prepared
         ]
-        evaluations = self.services.candidate_evaluator.evaluate_candidates(
+        evaluations = evaluator.evaluate_candidates(
             items,
             candidate_workers=self.config.candidate_workers,
         )
@@ -884,6 +886,7 @@ class CodeEvolveBackend(EvolutionBackend):
         diff_diag: dict[str, Any] | None = None
         if initial_status == "new" and mode == "diff" and parent is not None:
             diff_payload = raw_text
+            assert diff_payload is not None
             applied = self._diff_applier.apply(
                 parent.code,
                 diff_payload,

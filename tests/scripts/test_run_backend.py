@@ -54,6 +54,8 @@ def test_prompt_profile_defaults_by_backend():
     assert _resolve_prompt_profile(args) == "funsearch"
     args.backend = "eoh"
     assert _resolve_prompt_profile(args) == "eoh"
+    args.backend = "codeevolve"
+    assert _resolve_prompt_profile(args) == "codeevolve"
     args.backend = "revolution"
     assert _resolve_prompt_profile(args) == "default"
     args.prompt_profile = "custom"
@@ -120,6 +122,38 @@ def test_backend_parser_accepts_eoh_options():
     assert args.eoh_operators == ["e1", "m1"]
     assert args.eoh_selection_method == "tournament"
     assert args.eoh_max_evaluations == 20
+
+
+def test_backend_parser_accepts_codeevolve_options():
+    parser, _ = _build_parser()
+    args, _ = parser.parse_known_args(
+        [
+            "--backend",
+            "codeevolve",
+            "--generation_mode",
+            "diff",
+            "--codeevolve_num_islands",
+            "4",
+            "--codeevolve_num_epochs",
+            "9",
+            "--codeevolve_init_pop",
+            "3",
+            "--codeevolve_selection_policy",
+            "random",
+            "--codeevolve_scheduler_type",
+            "fixed",
+            "--codeevolve_max_evaluations",
+            "20",
+        ]
+    )
+    assert args.backend == "codeevolve"
+    assert args.generation_mode == "diff"
+    assert args.codeevolve_num_islands == 4
+    assert args.codeevolve_num_epochs == 9
+    assert args.codeevolve_init_pop == 3
+    assert args.codeevolve_selection_policy == "random"
+    assert args.codeevolve_scheduler_type == "fixed"
+    assert args.codeevolve_max_evaluations == 20
 
 
 def test_backend_parser_defaults_strategy_selection_to_ucb():
