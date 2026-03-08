@@ -13,10 +13,17 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tarfile
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterable
+
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+)
+
+from revolution.backends import registered_backend_names  # noqa: E402
 
 DEFAULT_ARCHIVE_ROOT = "baselines"
 DEFAULT_EXCLUDES = [
@@ -163,7 +170,9 @@ def _select_primary_run_log(run_logs: list[Path]) -> Path | None:
 
 
 def _detect_archive_type(run_dir: Path) -> str:
-    has_backend_root = any((run_dir / name).is_dir() for name in ("revolution", "funsearch"))
+    has_backend_root = any(
+        (run_dir / name).is_dir() for name in registered_backend_names()
+    )
     has_comparison_report = (run_dir / "backend_comparison.md").is_file()
     if has_backend_root or has_comparison_report:
         return "ablation_run"

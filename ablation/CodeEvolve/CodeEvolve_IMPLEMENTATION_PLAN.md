@@ -38,16 +38,14 @@ backend, ablation, reporting, and archive workflows.
 - [x] register CLI surfaces
 - [x] implement native backend
 - [x] add CodeEvolve prompt profile and default config template
-- [ ] integrate ablation runner and archive detection
+- [x] integrate ablation runner and archive detection
 - [ ] add tests
 - [ ] update docs and examples
 
 ## Next
 
-- Refine backend behavior against fairness constraints, especially migration semantics.
-- Refactor the ablation runner to use a backend registry instead of a fixed
-  hardcoded backend set.
 - Add backend and runner test coverage.
+- Update backend-facing docs, usage examples, and limitations.
 
 ## Fidelity Deviations
 
@@ -67,3 +65,6 @@ backend, ablation, reporting, and archive workflows.
   helpers for later runner/archive integration.
 - Added the native `CodeEvolveBackend`, prompt profile, and `run_backend.py`
   parser/build support for `codeevolve`.
+- Refactored `run_backend_ablation.py` around a backend-command registry,
+  added CodeEvolve fairness scheduling, generalized archive ablation detection,
+  and extended `run_evolution.py` delegation for `codeevolve_` configs.
