@@ -13,14 +13,16 @@ the implementation work and the post-implementation review pass against
 
 ## Status
 
-- Review status: phase-1 implementation reviewed and tightened on 2026-03-08
+- Review status: phase-1 implementation reviewed, tightened, and live-smoke
+  validated on 2026-03-08
 - Branch: `feat/CodEvolve-ablation-backend`
 - Canonical path: `/workspace/ablation/CodeEvolve/CodeEvolve_IMPLEMENTATION_PLAN.md`
 - Overall verdict: mostly aligned with the original phase-1 goals, with a small
   set of intentional divergences from upstream CodeEvolve and one review-driven
   fidelity fix added after the first implementation pass
 - Code-level phase-1 verdict: implemented for the planned REvolution surfaces;
-  remaining items are execution validation and future-scope follow-up work
+  preliminary live execution validation is now complete and remaining items are
+  prompt-fidelity and broader-scale follow-up work
 
 ## Audit Verdict
 
@@ -116,14 +118,15 @@ the implementation work and the post-implementation review pass against
 - [x] full repository test suite completed
 - [x] Ruff checks completed on touched files
 - [x] Pyright checks completed on touched files
-- [ ] real-model smoke run against live `vllm` for `RTLLM`
-      Blocked in current workspace: `http://vllm:8888/v1/models` DNS failure and
-      `http://localhost:8888/v1/models` connection refused on 2026-03-08.
-- [ ] real-model smoke run against live `vllm` for `VerilogEval-Spec-to-RTL`
-      Blocked in current workspace: same endpoint availability issue as above.
+- [x] real-model smoke run against live `vllm` for `RTLLM`
+- [x] real-model smoke run against live `vllm` for `VerilogEval-Spec-to-RTL`
+- [x] investigate and fix live diff-application mismatch found during smoke
+- [x] rerun repository-wide regression suite after live-driven fixes
 
 ### Stage 5: Deferred Follow-Ups
 
+- [ ] compare current `codeevolve` prompt profile against upstream mock config
+      behavior and document any deliberate remaining prompt-shape differences
 - [ ] evaluate whether checkpoint/resume is worth adding for long ablation sweeps
 - [ ] design a multi-file task adapter contract before RealBench-style support
 - [ ] add a future `cvdp`/codebase-task adapter only after phase-1 RTL results
@@ -133,17 +136,16 @@ the implementation work and the post-implementation review pass against
 
 ## Exact Remaining TODO List
 
-- [ ] Run one real `codeevolve` backend smoke test on `RTLLM` with the intended
-      serving stack and archive the output path for future regression checks.
-- [ ] Run one real `codeevolve` backend smoke test on
-      `VerilogEval-Spec-to-RTL` with the intended serving stack and archive the
-      output path for future regression checks.
-- [ ] Bring up a reachable LLM endpoint first by either:
-      - starting the Compose `vllm` service and using `--vllm_host vllm`
-      - or pointing `--vllm_host` at a reachable local/remote host
 - [ ] Compare the current `codeevolve` prompt profile against upstream mock
       config behavior and document any deliberate prompt-shape differences that
       remain after phase 1.
+- [ ] Run a slightly larger live matrix before using CodeEvolve in published
+      ablation charts:
+      - 3 to 5 RTLLM problems in whole mode at the default 2048-token cap
+      - 3 to 5 VerilogEval problems in both whole and diff modes
+- [ ] Investigate RTLLM diff-mode stability for this served model under tiny
+      budgets; second-generation responses were still brittle due empty or
+      malformed completions even after prompt cleanup.
 - [ ] Decide whether phase 2 should keep the backend self-contained or split
       the task adapter into a separate module before adding more domains.
 
@@ -160,6 +162,9 @@ the implementation work and the post-implementation review pass against
 - Diff editing uses REvolution's existing single-file JSON diff contract and
   diff applier instead of upstream raw SEARCH/REPLACE text handling.
 - Multi-file codebase tasks are deferred.
+- Live-smoke follow-up changed one small interoperability detail: the shared
+  diff applier now accepts the logical single-file name `code.sv` in addition
+  to the concrete run-artifact path when selecting a JSON diff edit block.
 
 ## Validation Log
 
@@ -179,16 +184,41 @@ the implementation work and the post-implementation review pass against
   - corrected meta-prompt failure accounting
   - per-epoch stage pass counts in generation statistics
   - deduplicated internal program-registration bookkeeping
-- Validation completed:
+- Validation completed before live smoke:
   - `.venv/bin/python -m pytest tests/revolution/test_codeevolve_backend.py`
   - `.venv/bin/python -m pytest`
   - `.venv/bin/python -m ruff check src/revolution/backends/codeevolve_backend.py tests/revolution/test_codeevolve_backend.py`
   - `.venv/bin/python -m pyright src/revolution/backends/codeevolve_backend.py`
   - `.venv/bin/python -m ruff check src/revolution/backends/codeevolve_backend.py scripts/run_backend.py scripts/run_backend_ablation.py scripts/archive_baseline.py tests/revolution/test_codeevolve_backend.py tests/scripts/test_run_backend.py tests/scripts/test_run_backend_ablation.py tests/scripts/test_archive_baseline.py`
   - `.venv/bin/python -m pyright src/revolution/backends/codeevolve_backend.py scripts/run_backend.py scripts/run_backend_ablation.py scripts/archive_baseline.py`
-- Execution-stage blocker observed on 2026-03-08:
-  - `http://vllm:8888/v1/models` -> DNS resolution failure
-  - `http://localhost:8888/v1/models` -> connection refused
-- Prepared smoke-run commands once a reachable endpoint exists:
-  - `python scripts/run_backend.py --backend codeevolve --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host <reachable-host> --vllm_port 8888 --model_name <served-model> --prompt_profile codeevolve --generation_mode whole --codeevolve_num_islands 2 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_max_evaluations 4 --seed 42`
-  - `python scripts/run_backend.py --backend codeevolve --benchmarks VerilogEval-Spec-to-RTL --problems Prob001_zero --api_backend vllm --vllm_host <reachable-host> --vllm_port 8888 --model_name <served-model> --prompt_profile codeevolve --generation_mode whole --codeevolve_num_islands 2 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_max_evaluations 4 --seed 42`
+- Live endpoint verified on 2026-03-08:
+  - `curl http://host.docker.internal:8000/v1/models`
+  - served model:
+    `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b`
+- Live smoke commands executed:
+  - `python scripts/run_backend.py --backend codeevolve --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke/rtllm_whole --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 1024 --generation_mode whole --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
+  - `python scripts/run_backend.py --backend codeevolve --benchmarks VerilogEval-Spec-to-RTL --problems Prob001_zero --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke/verilogeval_whole --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 1024 --generation_mode whole --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
+  - `python scripts/run_backend.py --backend codeevolve --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke/rtllm_diff_2048 --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 2048 --generation_mode diff --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
+  - `python scripts/run_backend.py --backend codeevolve --benchmarks VerilogEval-Spec-to-RTL --problems Prob001_zero --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke/verilogeval_diff_promptfix --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 1024 --generation_mode diff --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
+  - `python scripts/run_backend.py --backend codeevolve --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke/rtllm_whole_2048 --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 2048 --generation_mode whole --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
+- Live smoke outcomes:
+  - RTLLM whole at 2048 tokens produced a passing second-generation candidate:
+    `/workspace/exp/codeevolve_smoke/rtllm_whole_2048/codeevolve/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/RTLLM/Prob001_accu/Prob001_accu_summary.json`
+  - VerilogEval whole passed under the short 1024-token budget:
+    `/workspace/exp/codeevolve_smoke/verilogeval_whole/codeevolve/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob001_zero/Prob001_zero_summary.json`
+  - VerilogEval diff passed after two live-driven cleanups:
+    `/workspace/exp/codeevolve_smoke/verilogeval_diff_promptfix/codeevolve/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob001_zero/Prob001_zero_summary.json`
+  - RTLLM diff remained brittle on this served model under a tiny 2-evaluation
+    smoke budget; generation 1 could pass, but generation 2 still sometimes
+    failed due empty or malformed model replies.
+- Live-driven code cleanups applied:
+  - `src/revolution/runtime/diff_apply.py` now accepts logical single-file edit
+    names such as `code.sv` when matching JSON diff payloads to artifact files
+  - `src/revolution/backends/codeevolve_backend.py` no longer includes
+    `seed_code` in non-initializing prompts, which reduced diff-mode confusion
+    between the seed stub and the actual parent candidate
+- Post-fix validation completed:
+  - `.venv/bin/python -m pytest tests/revolution/test_codeevolve_backend.py tests/revolution/test_diff_apply.py`
+  - `.venv/bin/python -m pytest`
+  - `.venv/bin/python -m ruff check src/revolution/backends/codeevolve_backend.py src/revolution/runtime/diff_apply.py tests/revolution/test_codeevolve_backend.py tests/revolution/test_diff_apply.py`
+  - `.venv/bin/python -m pyright src/revolution/backends/codeevolve_backend.py src/revolution/runtime/diff_apply.py`

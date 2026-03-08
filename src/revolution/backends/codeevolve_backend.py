@@ -722,15 +722,12 @@ class CodeEvolveBackend(EvolutionBackend):
                 "fitness": active_prompt.fitness,
                 "text": active_prompt.text,
             },
-            "seed_code": self._task_adapter.initial_seed_code(),
             "reference_ppa_available": self._task_adapter.reference_ppa_available,
         }
-        file_to_edit = self._task_adapter.editable_filename
-        original_file = self._task_adapter.initial_seed_code()
+        if parent is None:
+            context_obj["seed_code"] = self._task_adapter.initial_seed_code()
         if parent is not None:
             context_obj["parent"] = self._serialize_program(island, parent)
-            file_to_edit = parent.code_file_path
-            original_file = parent.code
         if inspirations:
             context_obj["inspirations"] = [
                 self._serialize_program(island, inspiration) for inspiration in inspirations
@@ -738,8 +735,6 @@ class CodeEvolveBackend(EvolutionBackend):
         rendered = safe_format(
             template,
             context_json=json.dumps(context_obj, indent=2),
-            file_to_edit=file_to_edit,
-            original_file=original_file,
         )
         return rendered
 

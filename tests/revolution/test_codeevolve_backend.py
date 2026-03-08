@@ -10,6 +10,7 @@ from revolution.backends import (
     CodeEvolveBackend,
     CodeEvolveBackendConfig,
 )
+from revolution.backends.codeevolve_backend import CodeEvolveProgram
 from revolution.prompt_store import PromptStore
 from revolution.runtime import ArtifactWriter, CandidateEvaluation, ProblemContext
 
@@ -357,6 +358,40 @@ def test_codeevolve_seed_code_uses_verilogeval_interface_stub(tmp_path):
     assert "module TopModule" in seed
     assert "input clk;" in seed
     assert "output [3:0] out;" in seed
+
+
+def test_codeevolve_diff_prompt_uses_parent_context_without_seed_code(tmp_path):
+    backend, _ = _make_backend(tmp_path)
+    backend.initialize()
+    island = backend._islands[0]
+    prompt = island.best_prompt()
+    assert prompt is not None
+    parent = CodeEvolveProgram(
+        id="prog-parent",
+        epoch=1,
+        island_id=0,
+        prompt_id=prompt.id,
+        thought="baseline",
+        code="module accu;\nendmodule\n",
+        code_file_path="/tmp/run/code.sv",
+        status="success",
+        score=1.0,
+        exploration=False,
+    )
+
+    rendered = backend._build_solution_prompt(
+        island,
+        epoch=2,
+        active_prompt=prompt,
+        parent=parent,
+        inspirations=[],
+        exploration=False,
+        mode="diff",
+    )
+
+    assert '"seed_code"' not in rendered
+    assert '"parent"' in rendered
+    assert "module accu;" in rendered
 
 
 def test_codeevolve_migration_creates_root_clones(tmp_path):

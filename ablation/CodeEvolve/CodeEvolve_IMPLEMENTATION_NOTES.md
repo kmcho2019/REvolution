@@ -112,25 +112,46 @@ fidelity, repo-fit, and maintainability decisions.
   - prompt/context builder
   - island/program bookkeeping helpers
 
+## Live Smoke Findings
+
+- Live endpoint confirmed at `http://host.docker.internal:8000/v1/models`
+- Served model used for preliminary smoke:
+  `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b`
+- `RTLLM` whole mode succeeded under a 2-evaluation smoke when `max_tokens`
+  was raised back to the default 2048 budget
+- `VerilogEval-Spec-to-RTL` whole mode succeeded under the smaller 1024-token
+  smoke budget
+- `VerilogEval-Spec-to-RTL` diff mode initially failed for backend-side reasons
+  and then passed after two narrow cleanups:
+  - the diff applier now accepts the logical file name `code.sv` in addition to
+    the concrete run-artifact path
+  - non-initializing CodeEvolve prompts no longer include `seed_code`, which
+    had been distracting the model away from the actual parent candidate
+- `RTLLM` diff mode remains less stable with this served model under tiny smoke
+  budgets; generation 1 could pass, but generation 2 still produced empty or
+  malformed responses in some runs
+
 ## Concrete Follow-Ups
 
-- Run a real-model smoke test on `RTLLM`
-- Run a real-model smoke test on `VerilogEval-Spec-to-RTL`
-- Ensure a reachable LLM endpoint exists first; this workspace currently has no
-  reachable `vllm` endpoint at either `vllm:8888` or `localhost:8888`
 - Compare current prompt templates against upstream mock/reference configs and
   document any deliberate remaining prompt-shape differences
+- Run a slightly wider live matrix before treating CodeEvolve as publishable in
+  backend comparison figures:
+  - 3 to 5 `RTLLM` problems in whole mode
+  - 3 to 5 `VerilogEval-Spec-to-RTL` problems in whole and diff modes
+- Revisit `RTLLM` diff-mode prompt stability only if diff-mode RTL ablations
+  become a required publishable result
 - Revisit backend file splitting only if phase-2 scope expands
 
-## Execution Commands for the Remaining Smoke Stage
+## Execution Commands Used for Preliminary Smoke
 
-Use these once a reachable endpoint exists:
-
-- `python scripts/run_backend.py --backend codeevolve --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host <reachable-host> --vllm_port 8888 --model_name <served-model> --prompt_profile codeevolve --generation_mode whole --codeevolve_num_islands 2 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_max_evaluations 4 --seed 42`
-- `python scripts/run_backend.py --backend codeevolve --benchmarks VerilogEval-Spec-to-RTL --problems Prob001_zero --api_backend vllm --vllm_host <reachable-host> --vllm_port 8888 --model_name <served-model> --prompt_profile codeevolve --generation_mode whole --codeevolve_num_islands 2 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_max_evaluations 4 --seed 42`
+- `python scripts/run_backend.py --backend codeevolve --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke/rtllm_whole_2048 --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 2048 --generation_mode whole --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
+- `python scripts/run_backend.py --backend codeevolve --benchmarks VerilogEval-Spec-to-RTL --problems Prob001_zero --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke/verilogeval_whole --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 1024 --generation_mode whole --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
+- `python scripts/run_backend.py --backend codeevolve --benchmarks VerilogEval-Spec-to-RTL --problems Prob001_zero --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke/verilogeval_diff_promptfix --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 1024 --generation_mode diff --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
 
 ## Validation Snapshot
 
+- `.venv/bin/python -m pytest tests/revolution/test_codeevolve_backend.py tests/revolution/test_diff_apply.py`
 - `.venv/bin/python -m pytest`
-- `.venv/bin/python -m ruff check src/revolution/backends/codeevolve_backend.py scripts/run_backend.py scripts/run_backend_ablation.py scripts/archive_baseline.py tests/revolution/test_codeevolve_backend.py tests/scripts/test_run_backend.py tests/scripts/test_run_backend_ablation.py tests/scripts/test_archive_baseline.py`
-- `.venv/bin/python -m pyright src/revolution/backends/codeevolve_backend.py scripts/run_backend.py scripts/run_backend_ablation.py scripts/archive_baseline.py`
+- `.venv/bin/python -m ruff check src/revolution/backends/codeevolve_backend.py src/revolution/runtime/diff_apply.py tests/revolution/test_codeevolve_backend.py tests/revolution/test_diff_apply.py`
+- `.venv/bin/python -m pyright src/revolution/backends/codeevolve_backend.py src/revolution/runtime/diff_apply.py`
