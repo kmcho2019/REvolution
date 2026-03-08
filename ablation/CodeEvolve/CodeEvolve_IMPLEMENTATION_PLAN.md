@@ -9,7 +9,7 @@ backend, ablation, reporting, and archive workflows.
 
 ## Status
 
-- In progress
+- Implementation complete for phase 1
 - Branch: `feat/CodEvolve-ablation-backend`
 - Canonical path: `/workspace/ablation/CodeEvolve/CodeEvolve_IMPLEMENTATION_PLAN.md`
 
@@ -40,11 +40,10 @@ backend, ablation, reporting, and archive workflows.
 - [x] add CodeEvolve prompt profile and default config template
 - [x] integrate ablation runner and archive detection
 - [x] add tests
-- [ ] update docs and examples
+- [x] update docs and examples
 
 ## Next
 
-- Update backend-facing docs, usage examples, and limitations.
 - Phase-2 follow-up: extend the task adapter beyond single-file RTL problems.
 - Phase-2 follow-up: evaluate whether checkpoint/resume is worth adding for long ablation sweeps.
 
