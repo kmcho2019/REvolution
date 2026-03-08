@@ -1,0 +1,64 @@
+# CodeEvolve Backend Implementation Plan
+
+## Summary
+
+Implement a native `codeevolve` backend inside REvolution for backend ablation studies.
+Phase 1 targets `RTLLM` and `VerilogEval-Spec-to-RTL` only, keeps the vendored
+`science-codeevolve` tree read-only, and integrates through the existing
+backend, ablation, reporting, and archive workflows.
+
+## Status
+
+- In progress
+- Branch: `feat/CodEvolve-ablation-backend`
+- Canonical path: `/workspace/ablation/CodeEvolve/CodeEvolve_IMPLEMENTATION_PLAN.md`
+
+## Decision Log
+
+- Use a native REvolution backend, not a subprocess wrapper around the vendored CLI.
+- Keep the canonical directory casing as `CodeEvolve`.
+- Phase 1 scope is `RTLLM` plus `VerilogEval-Spec-to-RTL`.
+- Preserve CodeEvolve mechanics where they fit REvolution's single-problem runner:
+  islands, separate prompt/solution populations, exploration/exploitation,
+  inspiration-based crossover, meta-prompting, ancestor-depth exploitation,
+  migration, and optional exploration scheduling.
+- Treat the vendored `science-codeevolve` repo as the reference source of truth
+  for semantics, but not as a runtime dependency because it targets Python
+  `>=3.13.5` and assumes a different problem packaging model.
+
+## Completed
+
+- [x] repo/backend/ablation architecture audited
+- [x] integration mode fixed to native backend
+- [x] phase-1 scope fixed to RTLLM + VerilogEval
+- [x] canonical naming fixed to CodeEvolve
+- [x] implementation branch created
+- [ ] create CodeEvolve notes crosswalk
+- [ ] register backend metadata and CLI surfaces
+- [ ] implement native backend
+- [ ] integrate ablation runner and archive detection
+- [ ] add tests
+- [ ] update docs and examples
+
+## Next
+
+- Create `CodeEvolve_IMPLEMENTATION_NOTES.md`.
+- Add backend exports and runner parser support for `codeevolve`.
+- Refactor the ablation runner to use a backend registry instead of a fixed
+  hardcoded backend set.
+
+## Fidelity Deviations
+
+- No direct use of the vendored CodeEvolve CLI or multiprocessing island workers.
+- No checkpoint/resume in v1.
+- No MAP-Elites, embeddings, or copied sandbox codebases in v1.
+- No Python `input/src/init_program.py` problem packaging; REvolution RTL
+  benchmarks will use a native task adapter.
+- Diff editing will use REvolution's existing single-file JSON diff contract and
+  diff applier instead of CodeEvolve's raw SEARCH/REPLACE text flow.
+- Multi-file codebase tasks are deferred.
+
+## Validation Log
+
+- Planning pass complete against current repository state.
+
