@@ -101,13 +101,21 @@ Set `--api_backend` to `vllm` to use a local vLLM server.
 `scripts/run_evolution.py` and `scripts/run_one_shot.py` read `VLLM_HOST` and `VLLM_PORT` environment variables for default host/port values, so you can avoid repeating `--vllm_host`/`--vllm_port` in devcontainer sessions.
 All primary runners (`run_evolution.py`, `run_backend.py`, `run_one_shot.py`) perform a lightweight vLLM `/v1/models` preflight and print the served `max_model_len`.
 Use `--vllm_min_model_len` (default `128000`) and `--vllm_preflight_timeout_s` to tune this gate. A failed preflight is reported as a warning and does not abort the run.
+For reasoning-oriented vLLM models with large context windows, keep
+`--max_tokens` high enough to avoid truncated JSON/code responses. On the
+shared `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b` endpoint used
+for CodeEvolve smoke tests, `--max_tokens 128000` is the safe setting. For
+`--backend codeevolve --generation_mode diff`, the runner now promotes the
+generic diff cap to match `--max_tokens` on large-context vLLM runs when the
+default `--diff_max_tokens 1024` was left unchanged.
 
 
 ## Running the Framework
 
 ### Backend-selectable runner (`scripts/run_backend.py`)
 
-Use `run_backend.py` for REvolution-vs-FunSearch ablations:
+Use `run_backend.py` for backend ablations across REvolution, FunSearch, EoH,
+and CodeEvolve:
 
 ```bash
 python scripts/run_backend.py \
@@ -123,9 +131,38 @@ python scripts/run_backend.py \
   --seed 42
 ```
 
-`scripts/run_funsearch.py` is a convenience wrapper for `run_backend.py --backend funsearch`.
+CodeEvolve phase 1 is intentionally scoped to `RTLLM` and
+`VerilogEval-Spec-to-RTL` and keeps close to the upstream islands-based search
+structure while reusing REvolution's evaluator and artifact pipeline.
+
+```bash
+python scripts/run_backend.py \
+  --backend codeevolve \
+  --benchmarks RTLLM \
+  --problems Prob001_accu \
+  --api_backend vllm \
+  --vllm_host vllm \
+  --vllm_port 8888 \
+  --model_name /models/openai-gpt-oss-120b \
+  --prompt_profile codeevolve \
+  --max_tokens 128000 \
+  --generation_mode diff \
+  --codeevolve_num_islands 3 \
+  --codeevolve_num_epochs 24 \
+  --codeevolve_init_pop 8 \
+  --codeevolve_max_evaluations 72 \
+  --seed 42
+```
+
+`scripts/run_funsearch.py` is a convenience wrapper for
+`run_backend.py --backend funsearch`.
 Use `scripts/backend_comparison_report.py` to combine multiple backend experiment roots into one markdown comparison table.
-Use `scripts/run_backend_ablation.py` to launch both backends over shared benchmark suites and emit a comparison report automatically.
+Use `scripts/run_backend_ablation.py` to launch matched backend sets over shared
+benchmark suites and emit a comparison report automatically. The ablation runner
+now accepts `--backends revolution funsearch eoh codeevolve` and derives
+fairness schedules per backend while preserving backend-specific mechanics.
+Use `--problems` to constrain the sweep to a small problem subset when doing
+live smoke validation of a new backend.
 
 `run_backend.py` strict/accelerated evaluation controls:
 - `--evaluation_mode strict_ablation|search_accelerated`:
@@ -136,6 +173,18 @@ Use `scripts/run_backend_ablation.py` to launch both backends over shared benchm
 FunSearch feedback controls:
 - `--fs_feedback_policy off|fail_only|always` (default `off`).
 - `--fs_feedback_sample_probability <0..1>`.
+
+CodeEvolve controls:
+- `--codeevolve_num_islands`, `--codeevolve_num_epochs`, `--codeevolve_init_pop`
+- `--codeevolve_exploration_rate`, `--codeevolve_selection_policy`
+- `--codeevolve_meta_prompting`, `--codeevolve_num_inspirations`
+- `--codeevolve_migration_topology`, `--codeevolve_migration_interval`, `--codeevolve_migration_rate`
+- `--codeevolve_max_evaluations`, `--codeevolve_max_llm_calls`, `--codeevolve_max_runtime_seconds`
+- Practical note for reasoning-heavy vLLM models: prefer a large `--max_tokens`
+  budget first, then tune `--diff_max_tokens` only after verifying the model is
+  not truncating JSON envelopes. CodeEvolve diff runs now auto-promote the
+  default diff cap on large-context vLLM endpoints so the overall generation
+  budget is not silently undercut.
 
 ### Multi-problem evolution (`scripts/run_evolution.py`)
 
@@ -210,7 +259,13 @@ The prompt name defaults to the file stem; override it with `--gen0_prompt_name`
 
 #### Configuration files
 
-`run_backend.py`, `run_evolution.py`, `run_one_shot.py`, and `run_backend_ablation.py` accept a `--config path/to/config.yaml` (or `.json`) flag. The file provides defaults for any CLI option and can contain only the parameters you wish to override; explicit CLI arguments always take precedence. Example templates live in `data/configs/` and mirror the available flags for each script.
+`run_backend.py`, `run_evolution.py`, `run_one_shot.py`, and
+`run_backend_ablation.py` accept a `--config path/to/config.yaml` (or `.json`)
+flag. The file provides defaults for any CLI option and can contain only the
+parameters you wish to override; explicit CLI arguments always take precedence.
+Example templates live in `data/configs/` and mirror the available flags for
+each script, including `data/configs/codeevolve_default.yaml` for reproducible
+CodeEvolve runs.
 
 Every run now records configuration in two files:
 - `<timestamp>_config.yaml`: flat runnable arguments (directly reusable with `--config`).

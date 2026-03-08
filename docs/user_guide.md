@@ -63,6 +63,15 @@ If the vLLM server runs outside the shared Compose network, use `--vllm_host hos
 
 The CLI defaults for `--vllm_host` and `--vllm_port` also read `VLLM_HOST` and `VLLM_PORT` from the environment.
 `run_evolution.py`, `run_backend.py`, and `run_one_shot.py` also perform a vLLM `/v1/models` preflight and report `max_model_len`. Use `--vllm_min_model_len` (default `128000`) and `--vllm_preflight_timeout_s` to tune this check.
+For reasoning-oriented vLLM models, keep `--max_tokens` large enough that the
+model can finish the required JSON envelope and code payload. On the shared
+`/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b` endpoint used during
+CodeEvolve live smoke testing, `--max_tokens 128000` avoided artificial
+truncation; smaller caps could still be used later if a specific model is shown
+to remain format-stable.
+For `--backend codeevolve --generation_mode diff`, the runner now promotes the
+generic diff cap to match `--max_tokens` on large-context vLLM runs when the
+default `--diff_max_tokens 1024` was left unchanged.
 
 ## 2. Repository assets
 
@@ -76,15 +85,17 @@ The CLI defaults for `--vllm_host` and `--vllm_port` also read `VLLM_HOST` and `
 
 `run_backend.py` is the canonical runner for backend ablations. It supports:
 
-- `--backend revolution|funsearch|eoh`
+- `--backend revolution|funsearch|eoh|codeevolve`
 - shared model/benchmark options (`--benchmarks`, `--problems`, `--model_name`, `--api_backend`, `--save_path`, `--num_workers`)
-- backend-specific controls (`--population_size`, `--num_generations`, `--strategy_selection`, `--fs_*`, `--eoh_*`)
+- backend-specific controls (`--population_size`, `--num_generations`, `--strategy_selection`, `--fs_*`, `--eoh_*`, `--codeevolve_*`)
 - shared evaluation controls:
   - `--evaluation_mode strict_ablation|search_accelerated`
   - `--accelerated_synthesis_top_k <int>` (used in `search_accelerated`)
 - deterministic run controls (`--seed` with per-worker derived seeds)
 
 `cvdp` benchmark support in `run_backend.py` is currently enabled for `--backend eoh`.
+CodeEvolve phase 1 currently targets `RTLLM` and `VerilogEval-Spec-to-RTL`
+only; multi-file codebase tasks and `cvdp` adapters are intentionally deferred.
 
 By default outputs are isolated by backend under `<save_path>/<backend>/...` (`--backend_subdir` can be disabled if needed).
 
@@ -140,19 +151,58 @@ python scripts/run_backend.py \
   --generation_mode diff
 ```
 
+Example (CodeEvolve backend):
+
+```bash
+python scripts/run_backend.py \
+  --backend codeevolve \
+  --benchmarks RTLLM \
+  --problems Prob001_accu \
+  --api_backend vllm \
+  --vllm_host vllm \
+  --vllm_port 8888 \
+  --model_name /models/openai-gpt-oss-120b \
+  --prompt_profile codeevolve \
+  --max_tokens 128000 \
+  --generation_mode diff \
+  --codeevolve_num_islands 3 \
+  --codeevolve_num_epochs 24 \
+  --codeevolve_init_pop 8 \
+  --codeevolve_exploration_rate 0.2 \
+  --codeevolve_meta_prompting \
+  --codeevolve_max_evaluations 72 \
+  --seed 42
+```
+
 FunSearch feedback controls:
 - `--fs_feedback_policy off|fail_only|always` (default `off`)
 - `--fs_feedback_sample_probability <0..1>`
 
+CodeEvolve controls:
+- `--codeevolve_num_islands`, `--codeevolve_num_epochs`, `--codeevolve_init_pop`
+- `--codeevolve_exploration_rate`, `--codeevolve_selection_policy`, `--codeevolve_roulette_by_rank`
+- `--codeevolve_meta_prompting`, `--codeevolve_num_inspirations`, `--codeevolve_max_chat_depth`
+- `--codeevolve_migration_topology`, `--codeevolve_migration_interval`, `--codeevolve_migration_rate`
+- `--codeevolve_use_scheduler`, `--codeevolve_scheduler_type`, `--codeevolve_scheduler_kwargs_json`
+- `--codeevolve_max_evaluations`, `--codeevolve_max_llm_calls`, `--codeevolve_max_llm_tokens`, `--codeevolve_max_runtime_seconds`
+- Practical note for reasoning-heavy vLLM models: validate with a generous
+  `--max_tokens` budget before concluding that diff-mode or meta-prompting
+  failures are backend bugs. CodeEvolve diff runs now auto-promote the default
+  diff cap on large-context vLLM endpoints so diff offspring are not
+  accidentally constrained to the legacy `1024`-token default.
+
 #### 3.1.1 Ablation fairness controls (`scripts/run_backend_ablation.py`)
 
-Use `run_backend_ablation.py` when you need one-command REvolution vs FunSearch vs EoH sweeps with explicit fairness normalization.
+Use `run_backend_ablation.py` when you need one-command REvolution vs
+FunSearch vs EoH vs CodeEvolve sweeps with explicit fairness normalization.
 
 - `--primary_budget_axis candidate_evaluations|llm_calls|dual_gate`
   - default: `candidate_evaluations` (recommended for headline comparisons)
 - `--max_evaluations`: candidate budget per problem (primary in `candidate_evaluations`)
 - `--max_llm_calls_per_problem`: required for `llm_calls` and `dual_gate`
-- `--revolution_population_size`, `--funsearch_initial_population_size`, `--eoh_population_size`, `--eoh_operators`: preferred schedule knobs used to derive candidate budgets
+- `--backends revolution funsearch eoh codeevolve`: select the backend subset to launch
+- `--problems <ids...>`: optional problem subset forwarded to every backend run, useful for live smoke checks
+- `--revolution_population_size`, `--funsearch_initial_population_size`, `--eoh_population_size`, `--eoh_operators`, `--codeevolve_num_islands`, `--codeevolve_init_pop`: preferred schedule knobs used to derive candidate budgets
 
 The ablation runner propagates budget metadata to per-problem summaries (`run_budget.primary_budget_axis`, evaluation/call caps), which the backend comparison report consumes for fairness diagnostics.
 
@@ -244,7 +294,11 @@ Every invocation writes two files next to summary/log outputs in `exp/<model>/`:
 
 Legacy nested snapshots that store fields under `resolved_arguments` are still accepted by `--config`.
 
-`run_evolution.py` remains backward-compatible. It delegates to `run_backend.py` when invoked with a non-`revolution` backend (for example `--backend funsearch` or `--backend eoh`).
+`run_evolution.py` remains backward-compatible. It delegates to
+`run_backend.py` when invoked with a non-`revolution` backend (for example
+`--backend funsearch`, `--backend eoh`, or `--backend codeevolve`) or when the
+loaded config contains backend-specific keys such as `fs_*`, `eoh_*`, or
+`codeevolve_*`.
 
 #### Archiving completed runs
 
@@ -286,10 +340,10 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 ## 4. Utility scripts
 
 - `scripts/evolutionary_report_generator.py`: generate Markdown reports summarising a run (`--experiment_path path/to/exp/...`).
-- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, solved-only score/PPA deltas (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`) with regression checks, and budget/fairness diagnostics (`--backend_run revolution=<path> --backend_run funsearch=<path> --backend_run eoh=<path>`).
-- `scripts/run_backend_ablation.py`: one-command ablation sweep runner for REvolution/FunSearch/EoH plus optional comparison report generation, multi-seed loops (`--seeds`), strict fairness checks, selectable primary budget axis (`candidate_evaluations|llm_calls|dual_gate`), and command validation via `--dry_run`.
+- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, solved-only score/PPA deltas (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`) with regression checks, and budget/fairness diagnostics (`--backend_run revolution=<path> --backend_run funsearch=<path> --backend_run eoh=<path> --backend_run codeevolve=<path>`).
+- `scripts/run_backend_ablation.py`: one-command ablation sweep runner for REvolution/FunSearch/EoH/CodeEvolve plus optional comparison report generation, multi-seed loops (`--seeds`), strict fairness checks, selectable primary budget axis (`candidate_evaluations|llm_calls|dual_gate`), backend selection via `--backends`, and command validation via `--dry_run`.
   - Also writes top-level snapshots under `save_root` as `<timestamp>_ablation_config.yaml` and `<timestamp>_ablation_config_meta.yaml`.
-- `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch/EoH comparisons.
+- `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch/EoH/CodeEvolve comparisons.
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
 - `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts).
 - `scripts/run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with matched-seed runs (`--seeds`), fixed hard validation matrix defaults (RTLLM/VerilogEval/CVDP), aggregate token/runtime report output, diff-failure catalogs, and optional `--skip_if_unreachable` fail-fast artifact mode for unstable vLLM connectivity.

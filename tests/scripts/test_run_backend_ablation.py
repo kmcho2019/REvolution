@@ -10,6 +10,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.run_backend_ablation import (  # noqa: E402
+    _derive_codeevolve_schedule,
     _derive_eoh_schedule,
     _resolve_candidate_budget,
     _safe_workers,
@@ -78,6 +79,19 @@ def test_derive_eoh_schedule_respects_formula():
     assert generations >= 0
     assert estimated == 2 * pop + generations * pop * 5
     assert estimated >= 42
+
+
+def test_derive_codeevolve_schedule_respects_formula():
+    islands, epochs, init_pop, estimated = _derive_codeevolve_schedule(
+        target_candidates=17,
+        preferred_num_islands=3,
+        preferred_init_pop=10,
+    )
+    assert islands == 3
+    assert epochs == 6
+    assert init_pop == 6
+    assert estimated == islands * epochs
+    assert estimated >= 17
 
 
 def test_validate_fairness_accepts_matching_commands():
@@ -150,9 +164,7 @@ def test_validate_fairness_accepts_matching_commands():
         "3",
     ]
     _validate_fairness(
-        revolution_cmd=rev,
-        funsearch_cmd=fs,
-        eoh_cmd=None,
+        backend_cmds={"revolution": rev, "funsearch": fs},
         primary_budget_axis="candidate_evaluations",
         primary_budget_candidates=3,
         max_llm_calls_per_problem=None,
@@ -228,9 +240,7 @@ def test_validate_fairness_rejects_non_strict_mode():
     ]
     with pytest.raises(ValueError, match="strict_ablation"):
         _validate_fairness(
-            revolution_cmd=rev,
-            funsearch_cmd=fs,
-            eoh_cmd=None,
+            backend_cmds={"revolution": rev, "funsearch": fs},
             primary_budget_axis="candidate_evaluations",
             primary_budget_candidates=1,
             max_llm_calls_per_problem=None,
@@ -306,9 +316,7 @@ def test_validate_fairness_rejects_missing_fs_llm_cap_for_dual_gate():
     ]
     with pytest.raises(ValueError, match="fs_max_llm_calls"):
         _validate_fairness(
-            revolution_cmd=rev,
-            funsearch_cmd=fs,
-            eoh_cmd=None,
+            backend_cmds={"revolution": rev, "funsearch": fs},
             primary_budget_axis="dual_gate",
             primary_budget_candidates=3,
             max_llm_calls_per_problem=3,
@@ -421,9 +429,88 @@ def test_validate_fairness_accepts_eoh_command():
         "3",
     ]
     _validate_fairness(
-        revolution_cmd=rev,
-        funsearch_cmd=fs,
-        eoh_cmd=eoh,
+        backend_cmds={"revolution": rev, "funsearch": fs, "eoh": eoh},
+        primary_budget_axis="candidate_evaluations",
+        primary_budget_candidates=3,
+        max_llm_calls_per_problem=None,
+    )
+
+
+def test_validate_fairness_accepts_codeevolve_command():
+    rev = [
+        "python",
+        "scripts/run_backend.py",
+        "--backend",
+        "revolution",
+        "--benchmarks",
+        "RTLLM",
+        "--api_backend",
+        "vllm",
+        "--vllm_host",
+        "vllm",
+        "--vllm_port",
+        "8888",
+        "--model_name",
+        "m",
+        "--num_workers",
+        "2",
+        "--temperature",
+        "0.7",
+        "--top_p",
+        "0.95",
+        "--max_tokens",
+        "512",
+        "--seed",
+        "42",
+        "--evaluation_mode",
+        "strict_ablation",
+        "--primary_budget_axis",
+        "candidate_evaluations",
+        "--population_size",
+        "3",
+        "--num_generations",
+        "0",
+    ]
+    codeevolve = [
+        "python",
+        "scripts/run_backend.py",
+        "--backend",
+        "codeevolve",
+        "--benchmarks",
+        "RTLLM",
+        "--api_backend",
+        "vllm",
+        "--vllm_host",
+        "vllm",
+        "--vllm_port",
+        "8888",
+        "--model_name",
+        "m",
+        "--num_workers",
+        "2",
+        "--temperature",
+        "0.7",
+        "--top_p",
+        "0.95",
+        "--max_tokens",
+        "512",
+        "--seed",
+        "42",
+        "--evaluation_mode",
+        "strict_ablation",
+        "--primary_budget_axis",
+        "candidate_evaluations",
+        "--codeevolve_num_islands",
+        "3",
+        "--codeevolve_num_epochs",
+        "1",
+        "--codeevolve_init_pop",
+        "1",
+        "--codeevolve_max_evaluations",
+        "3",
+    ]
+    _validate_fairness(
+        backend_cmds={"revolution": rev, "codeevolve": codeevolve},
         primary_budget_axis="candidate_evaluations",
         primary_budget_candidates=3,
         max_llm_calls_per_problem=None,
@@ -460,6 +547,32 @@ def test_ablation_main_writes_top_level_config_and_meta(tmp_path):
     assert meta_path.exists()
     meta_payload = yaml.safe_load(meta_path.read_text(encoding="utf-8"))
     assert meta_payload["command_line_arguments"]
+
+
+def test_ablation_main_accepts_problem_subset_in_dry_run(tmp_path, capsys):
+    save_root = tmp_path / "ablation_run_subset"
+    rc = run_backend_ablation_main(
+        [
+            "--benchmarks",
+            "RTLLM",
+            "--problems",
+            "Prob001_accu",
+            "--save_root",
+            str(save_root),
+            "--backends",
+            "codeevolve",
+            "--seeds",
+            "42",
+            "--max_evaluations",
+            "1",
+            "--dry_run",
+            "--no-run_report",
+        ]
+    )
+
+    assert rc == 0
+    captured = capsys.readouterr()
+    assert "--problems Prob001_accu" in captured.out
 
 
 def test_ablation_generated_config_roundtrip_and_edit(tmp_path):

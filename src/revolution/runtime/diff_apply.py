@@ -82,6 +82,22 @@ class DiffApplier:
         if phase is not None:
             self._last_diff_apply_diagnostics["phase"] = phase
 
+    def _diff_targets_match(self, edit_file: str, target_file_path: str) -> bool:
+        """Return whether a diff edit targets the requested single-file artifact.
+
+        CodeEvolve diff prompts name the editable artifact as `code.sv`, while the
+        evaluator passes the concrete artifact path from the run directory. Accept
+        either the exact path or the logical single-file basename so phase-1
+        backends do not fail valid one-file edits just because the artifact root
+        is run-specific.
+        """
+
+        normalized_edit = os.path.normpath(edit_file)
+        normalized_target = os.path.normpath(target_file_path)
+        if normalized_edit == normalized_target:
+            return True
+        return os.path.basename(normalized_edit) == os.path.basename(normalized_target)
+
     def _parse_diff_block(self, diff_text: str) -> Iterator[tuple[str, str, str]]:
         lines = diff_text.splitlines(keepends=True)
         i = 0
@@ -465,7 +481,9 @@ class DiffApplier:
             chosen_edits = [
                 cast(dict[str, Any], e)
                 for e in edits
-                if isinstance(e, dict) and e.get("file") == target_file_path
+                if isinstance(e, dict)
+                and isinstance(e.get("file"), str)
+                and self._diff_targets_match(cast(str, e["file"]), target_file_path)
             ]
             if not chosen_edits:
                 self._set_diff_failure(
@@ -478,7 +496,11 @@ class DiffApplier:
                 )
                 return None
             non_target_edits = [
-                e for e in edits if isinstance(e, dict) and e.get("file") != target_file_path
+                e
+                for e in edits
+                if isinstance(e, dict)
+                and isinstance(e.get("file"), str)
+                and not self._diff_targets_match(cast(str, e["file"]), target_file_path)
             ]
             if non_target_edits:
                 self._set_diff_failure(

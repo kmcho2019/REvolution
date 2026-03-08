@@ -15,6 +15,7 @@ sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 )
 
+from revolution.backends import registered_backend_names  # noqa: E402
 from revolution.configuration import (  # noqa: E402
     ConfigError,
     parse_args_with_config,
@@ -24,6 +25,7 @@ from revolution.configuration import (  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PRIMARY_BUDGET_AXES = ("candidate_evaluations", "llm_calls", "dual_gate")
+DEFAULT_ABLATION_BACKENDS = ["revolution", "funsearch", "eoh", "codeevolve"]
 
 
 def _available_benchmarks() -> list[str]:
@@ -52,6 +54,18 @@ def _arg_value(cmd: Sequence[str], flag: str) -> str | None:
     if idx + 1 >= len(cmd):
         return None
     return cmd[idx + 1]
+
+
+def _flag_values(cmd: Sequence[str], flag: str) -> list[str]:
+    try:
+        idx = cmd.index(flag) + 1
+    except ValueError:
+        return []
+    values: list[str] = []
+    while idx < len(cmd) and not cmd[idx].startswith("--"):
+        values.append(cmd[idx])
+        idx += 1
+    return values
 
 
 def _resolve_candidate_budget(
@@ -86,7 +100,6 @@ def _derive_revolution_schedule(
     preferred = max(1, preferred_population_size)
     if target % preferred == 0:
         return preferred, (target // preferred) - 1
-    # Keep exact candidate budget in non-divisible cases.
     return target, 0
 
 
@@ -96,11 +109,6 @@ def _derive_eoh_schedule(
     preferred_population_size: int,
     operators_count: int,
 ) -> tuple[int, int, int]:
-    """
-    Solve EoH schedule against fairness budget:
-      budget = 2*pop + generations*pop*len(operators)
-    Returns (population_size, num_generations, estimated_candidates).
-    """
     target = max(1, target_candidates)
     ops = max(1, operators_count)
     population = max(1, preferred_population_size)
@@ -110,22 +118,68 @@ def _derive_eoh_schedule(
     if target <= base:
         generations = 0
     else:
-        generations = int(
-            math.ceil((target - base) / max(1, population * ops))
-        )
+        generations = int(math.ceil((target - base) / max(1, population * ops)))
     estimated = base + generations * population * ops
     return population, generations, estimated
 
 
+def _derive_codeevolve_schedule(
+    *,
+    target_candidates: int,
+    preferred_num_islands: int,
+    preferred_init_pop: int,
+) -> tuple[int, int, int, int]:
+    target = max(1, target_candidates)
+    islands = max(1, min(preferred_num_islands, target))
+    epochs = int(math.ceil(target / islands))
+    init_pop = max(1, min(preferred_init_pop, epochs))
+    estimated = islands * epochs
+    return islands, epochs, init_pop, estimated
+
+
+def _candidate_budget_from_cmd(backend: str, cmd: list[str]) -> int:
+    if backend == "revolution":
+        pop = _arg_value(cmd, "--population_size")
+        generations = _arg_value(cmd, "--num_generations")
+        if pop is None or generations is None:
+            raise ValueError("Revolution command is missing schedule flags.")
+        return int(pop) * (int(generations) + 1)
+    if backend == "funsearch":
+        max_evals = _arg_value(cmd, "--fs_max_evaluations")
+        if max_evals is None:
+            raise ValueError("FunSearch command is missing --fs_max_evaluations.")
+        return int(max_evals)
+    if backend == "eoh":
+        population = _arg_value(cmd, "--eoh_population_size")
+        generations = _arg_value(cmd, "--eoh_num_generations")
+        max_evals = _arg_value(cmd, "--eoh_max_evaluations")
+        operators = _flag_values(cmd, "--eoh_operators")
+        if population is None or generations is None or max_evals is None or not operators:
+            raise ValueError("EoH command is missing fairness flags.")
+        estimated = 2 * int(population) + int(generations) * int(population) * len(operators)
+        return min(estimated, int(max_evals))
+    if backend == "codeevolve":
+        islands = _arg_value(cmd, "--codeevolve_num_islands")
+        epochs = _arg_value(cmd, "--codeevolve_num_epochs")
+        max_evals = _arg_value(cmd, "--codeevolve_max_evaluations")
+        if islands is None or epochs is None or max_evals is None:
+            raise ValueError("CodeEvolve command is missing fairness flags.")
+        estimated = int(islands) * int(epochs)
+        return min(estimated, int(max_evals))
+    raise ValueError(f"Unsupported backend '{backend}' in fairness validation.")
+
+
 def _validate_fairness(
     *,
-    revolution_cmd: list[str],
-    funsearch_cmd: list[str],
-    eoh_cmd: list[str] | None,
+    backend_cmds: dict[str, list[str]],
     primary_budget_axis: str,
     primary_budget_candidates: int,
     max_llm_calls_per_problem: int | None,
 ) -> None:
+    if not backend_cmds:
+        raise ValueError("At least one backend command is required.")
+    baseline_name = next(iter(backend_cmds))
+    baseline_cmd = backend_cmds[baseline_name]
     shared_flags = [
         "--evaluation_mode",
         "--benchmarks",
@@ -139,82 +193,30 @@ def _validate_fairness(
         "--max_tokens",
         "--seed",
     ]
-    comparisons: list[tuple[str, list[str]]] = [("funsearch", funsearch_cmd)]
-    if eoh_cmd is not None:
-        comparisons.append(("eoh", eoh_cmd))
-
     for flag in shared_flags:
-        rev_value = _arg_value(revolution_cmd, flag)
-        for name, cmd in comparisons:
-            candidate_value = _arg_value(cmd, flag)
-            if flag == "--benchmarks":
-                rev_slice = " ".join(
-                    revolution_cmd[
-                        revolution_cmd.index(flag) + 1 : revolution_cmd.index("--api_backend")
-                    ]
-                )
-                candidate_slice = " ".join(
-                    cmd[cmd.index(flag) + 1 : cmd.index("--api_backend")]
-                )
-                if rev_slice != candidate_slice:
-                    raise ValueError(
-                        f"Fairness check failed for {flag}: revolution='{rev_slice}' vs {name}='{candidate_slice}'"
-                    )
-                continue
-            if rev_value != candidate_value:
+        baseline_values = _flag_values(baseline_cmd, flag) if flag == "--benchmarks" else [_arg_value(baseline_cmd, flag)]
+        for backend, cmd in backend_cmds.items():
+            candidate_values = _flag_values(cmd, flag) if flag == "--benchmarks" else [_arg_value(cmd, flag)]
+            if baseline_values != candidate_values:
                 raise ValueError(
-                    f"Fairness check failed for {flag}: revolution='{rev_value}' vs {name}='{candidate_value}'"
+                    f"Fairness check failed for {flag}: {baseline_name}={baseline_values} vs {backend}={candidate_values}"
                 )
 
-    rev_population = _arg_value(revolution_cmd, "--population_size")
-    rev_generations = _arg_value(revolution_cmd, "--num_generations")
-    fs_max_evals = _arg_value(funsearch_cmd, "--fs_max_evaluations")
-    if rev_population is None or rev_generations is None or fs_max_evals is None:
-        raise ValueError("Missing primary budget flags in ablation commands.")
-    rev_candidate_budget = int(rev_population) * (int(rev_generations) + 1)
-    fs_candidate_budget = int(fs_max_evals)
-    if rev_candidate_budget != primary_budget_candidates or fs_candidate_budget != primary_budget_candidates:
-        raise ValueError(
-            "Primary budget mismatch: expected both backends to use "
-            f"{primary_budget_candidates} candidate evaluations."
-        )
-
-    rev_axis = _arg_value(revolution_cmd, "--primary_budget_axis")
-    fs_axis = _arg_value(funsearch_cmd, "--primary_budget_axis")
-    if rev_axis != primary_budget_axis or fs_axis != primary_budget_axis:
-        raise ValueError("Primary budget axis metadata mismatch between backend commands.")
-
-    if eoh_cmd is not None:
-        eoh_axis = _arg_value(eoh_cmd, "--primary_budget_axis")
-        if eoh_axis != primary_budget_axis:
-            raise ValueError("Primary budget axis metadata mismatch for EoH command.")
-        eoh_population = _arg_value(eoh_cmd, "--eoh_population_size")
-        eoh_generations = _arg_value(eoh_cmd, "--eoh_num_generations")
-        eoh_max_evaluations = _arg_value(eoh_cmd, "--eoh_max_evaluations")
-        if eoh_population is None or eoh_generations is None or eoh_max_evaluations is None:
-            raise ValueError("Missing EoH fairness flags in ablation commands.")
-        if int(eoh_max_evaluations) != primary_budget_candidates:
+    for backend, cmd in backend_cmds.items():
+        axis = _arg_value(cmd, "--primary_budget_axis")
+        if axis != primary_budget_axis:
             raise ValueError(
-                "EoH command must include --eoh_max_evaluations matching the primary budget."
+                f"Primary budget axis metadata mismatch for {backend}: {axis} != {primary_budget_axis}"
             )
-        try:
-            op_idx = eoh_cmd.index("--eoh_operators") + 1
-        except ValueError as exc:
-            raise ValueError("EoH command must include --eoh_operators.") from exc
-        operators: list[str] = []
-        while op_idx < len(eoh_cmd) and not eoh_cmd[op_idx].startswith("--"):
-            operators.append(eoh_cmd[op_idx])
-            op_idx += 1
-        if not operators:
-            raise ValueError("EoH command must specify at least one operator.")
-        eoh_estimated_budget = (
-            2 * int(eoh_population)
-            + int(eoh_generations) * int(eoh_population) * len(operators)
-        )
-        effective_eoh_budget = min(eoh_estimated_budget, int(eoh_max_evaluations))
-        if effective_eoh_budget != primary_budget_candidates:
+        candidate_budget = _candidate_budget_from_cmd(backend, cmd)
+        if candidate_budget != primary_budget_candidates:
             raise ValueError(
-                "EoH effective budget (min(schedule, max_evaluations)) must match the primary budget."
+                f"{backend} effective budget {candidate_budget} does not match the primary budget "
+                f"{primary_budget_candidates}."
+            )
+        if _arg_value(cmd, "--evaluation_mode") != "strict_ablation":
+            raise ValueError(
+                "Ablation script requires strict_ablation mode for publishable comparison."
             )
 
     if primary_budget_axis in {"llm_calls", "dual_gate"}:
@@ -222,25 +224,27 @@ def _validate_fairness(
             raise ValueError(
                 "max_llm_calls_per_problem must be set for llm_calls/dual_gate modes."
             )
-        fs_max_llm_calls = _arg_value(funsearch_cmd, "--fs_max_llm_calls")
-        if fs_max_llm_calls is None or int(fs_max_llm_calls) != max_llm_calls_per_problem:
-            raise ValueError(
-                "FunSearch command must include --fs_max_llm_calls matching the configured cap."
-            )
-        if rev_candidate_budget > max_llm_calls_per_problem:
-            raise ValueError(
-                "Revolution candidate budget exceeds max_llm_calls_per_problem "
-                "under llm_calls/dual_gate fairness mode."
-            )
-        if eoh_cmd is not None:
-            eoh_max_llm_calls = _arg_value(eoh_cmd, "--eoh_max_llm_calls")
-            if eoh_max_llm_calls is None or int(eoh_max_llm_calls) != max_llm_calls_per_problem:
+        llm_cap_flags = {
+            "funsearch": "--fs_max_llm_calls",
+            "eoh": "--eoh_max_llm_calls",
+            "codeevolve": "--codeevolve_max_llm_calls",
+        }
+        for backend, cmd in backend_cmds.items():
+            if backend == "revolution":
+                if _candidate_budget_from_cmd(backend, cmd) > max_llm_calls_per_problem:
+                    raise ValueError(
+                        "Revolution candidate budget exceeds max_llm_calls_per_problem "
+                        "under llm_calls/dual_gate fairness mode."
+                    )
+                continue
+            flag = llm_cap_flags.get(backend)
+            if flag is None:
+                continue
+            value = _arg_value(cmd, flag)
+            if value is None or int(value) != max_llm_calls_per_problem:
                 raise ValueError(
-                    "EoH command must include --eoh_max_llm_calls matching the configured cap."
+                    f"{backend} command must include {flag} matching the configured LLM-call cap."
                 )
-
-    if _arg_value(revolution_cmd, "--evaluation_mode") != "strict_ablation":
-        raise ValueError("Ablation script requires strict_ablation mode for publishable comparison.")
 
 
 def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
@@ -252,14 +256,27 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     )
 
     parser = argparse.ArgumentParser(
-        description="Run backend ablation sweeps for REvolution vs FunSearch vs EoH.",
+        description="Run backend ablation sweeps for REvolution, FunSearch, EoH, and CodeEvolve.",
         parents=[config_parser],
+    )
+    parser.add_argument(
+        "--backends",
+        nargs="+",
+        default=DEFAULT_ABLATION_BACKENDS,
+        choices=registered_backend_names(),
+        help="Backend set to include in the ablation sweep.",
     )
     parser.add_argument(
         "--benchmarks",
         nargs="+",
         default=_available_benchmarks(),
         help="Benchmark suites to include (defaults to all non-CVDP suites).",
+    )
+    parser.add_argument(
+        "--problems",
+        nargs="+",
+        default=None,
+        help="Optional problem-id subset forwarded to each backend run.",
     )
     parser.add_argument("--api_backend", type=str, default="vllm")
     parser.add_argument("--vllm_host", type=str, default=os.getenv("VLLM_HOST", "vllm"))
@@ -335,6 +352,18 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         help="Operators used per EoH generation in ablation runs.",
     )
     parser.add_argument(
+        "--codeevolve_num_islands",
+        type=int,
+        default=3,
+        help="Preferred CodeEvolve island count when deriving fairness schedules.",
+    )
+    parser.add_argument(
+        "--codeevolve_init_pop",
+        type=int,
+        default=10,
+        help="Preferred CodeEvolve init_pop when deriving fairness schedules.",
+    )
+    parser.add_argument(
         "--run_report",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -349,6 +378,161 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     return parser, config_parser
 
 
+def _build_backend_commands(
+    args: argparse.Namespace,
+    *,
+    seed: int,
+    primary_budget_candidates: int,
+    common: list[str],
+    save_root: Path,
+) -> tuple[dict[str, list[str]], dict[str, str]]:
+    commands: dict[str, list[str]] = {}
+    summaries: dict[str, str] = {}
+    seed_tag = f"seed_{seed}"
+
+    if "revolution" in args.backends:
+        rev_population_size, rev_generations = _derive_revolution_schedule(
+            target_candidates=primary_budget_candidates,
+            preferred_population_size=args.revolution_population_size,
+        )
+        save_path = save_root / "revolution" / seed_tag
+        commands["revolution"] = [
+            sys.executable,
+            "scripts/run_backend.py",
+            "--backend",
+            "revolution",
+            "--save_path",
+            str(save_path),
+            "--population_size",
+            str(rev_population_size),
+            "--num_generations",
+            str(rev_generations),
+            "--seed",
+            str(seed),
+            *common,
+        ]
+        summaries["revolution"] = (
+            f"revolution(pop={rev_population_size}, gen={rev_generations})"
+        )
+
+    if "funsearch" in args.backends:
+        fs_initial_population = max(
+            1,
+            min(args.funsearch_initial_population_size, primary_budget_candidates),
+        )
+        fs_iterations = max(0, primary_budget_candidates - fs_initial_population)
+        save_path = save_root / "funsearch" / seed_tag
+        cmd = [
+            sys.executable,
+            "scripts/run_backend.py",
+            "--backend",
+            "funsearch",
+            "--save_path",
+            str(save_path),
+            "--prompt_profile",
+            "funsearch",
+            "--fs_initial_population_size",
+            str(fs_initial_population),
+            "--fs_samples_per_prompt",
+            "1",
+            "--fs_num_islands",
+            "8",
+            "--fs_functions_per_prompt",
+            "2",
+            "--fs_max_evaluations",
+            str(primary_budget_candidates),
+            "--fs_max_iterations",
+            str(fs_iterations),
+            "--seed",
+            str(seed),
+            *common,
+        ]
+        if args.primary_budget_axis in {"llm_calls", "dual_gate"}:
+            assert args.max_llm_calls_per_problem is not None
+            cmd.extend(["--fs_max_llm_calls", str(max(1, args.max_llm_calls_per_problem))])
+        commands["funsearch"] = cmd
+        summaries["funsearch"] = (
+            f"funsearch(init={fs_initial_population}, iter={fs_iterations}, max_eval={primary_budget_candidates})"
+        )
+
+    if "eoh" in args.backends:
+        eoh_population_size, eoh_generations, eoh_estimated = _derive_eoh_schedule(
+            target_candidates=primary_budget_candidates,
+            preferred_population_size=args.eoh_population_size,
+            operators_count=len(args.eoh_operators),
+        )
+        save_path = save_root / "eoh" / seed_tag
+        cmd = [
+            sys.executable,
+            "scripts/run_backend.py",
+            "--backend",
+            "eoh",
+            "--save_path",
+            str(save_path),
+            "--prompt_profile",
+            "eoh",
+            "--eoh_population_size",
+            str(eoh_population_size),
+            "--eoh_num_generations",
+            str(eoh_generations),
+            "--eoh_operators",
+            *[str(op).lower() for op in args.eoh_operators],
+            "--eoh_max_evaluations",
+            str(primary_budget_candidates),
+            "--seed",
+            str(seed),
+            *common,
+        ]
+        if args.primary_budget_axis in {"llm_calls", "dual_gate"}:
+            assert args.max_llm_calls_per_problem is not None
+            cmd.extend(["--eoh_max_llm_calls", str(max(1, args.max_llm_calls_per_problem))])
+        commands["eoh"] = cmd
+        summaries["eoh"] = (
+            f"eoh(pop={eoh_population_size}, gen={eoh_generations}, est_eval={eoh_estimated}, max_eval={primary_budget_candidates})"
+        )
+
+    if "codeevolve" in args.backends:
+        ce_islands, ce_epochs, ce_init_pop, ce_estimated = _derive_codeevolve_schedule(
+            target_candidates=primary_budget_candidates,
+            preferred_num_islands=args.codeevolve_num_islands,
+            preferred_init_pop=args.codeevolve_init_pop,
+        )
+        save_path = save_root / "codeevolve" / seed_tag
+        cmd = [
+            sys.executable,
+            "scripts/run_backend.py",
+            "--backend",
+            "codeevolve",
+            "--save_path",
+            str(save_path),
+            "--prompt_profile",
+            "codeevolve",
+            "--codeevolve_num_islands",
+            str(ce_islands),
+            "--codeevolve_num_epochs",
+            str(ce_epochs),
+            "--codeevolve_init_pop",
+            str(ce_init_pop),
+            "--codeevolve_max_evaluations",
+            str(primary_budget_candidates),
+            "--seed",
+            str(seed),
+            *common,
+        ]
+        if args.primary_budget_axis in {"llm_calls", "dual_gate"}:
+            assert args.max_llm_calls_per_problem is not None
+            cmd.extend(
+                ["--codeevolve_max_llm_calls", str(max(1, args.max_llm_calls_per_problem))]
+            )
+        commands["codeevolve"] = cmd
+        summaries["codeevolve"] = (
+            f"codeevolve(islands={ce_islands}, epochs={ce_epochs}, init_pop={ce_init_pop}, "
+            f"est_eval={ce_estimated}, max_eval={primary_budget_candidates})"
+        )
+
+    return commands, summaries
+
+
 def main(argv: list[str] | None = None) -> int:
     parser, config_parser = _build_parser()
     try:
@@ -357,6 +541,10 @@ def main(argv: list[str] | None = None) -> int:
         )
     except ConfigError as exc:
         print(f"Configuration error: {exc}")
+        return 2
+
+    if not args.backends:
+        print("No backends selected.")
         return 2
 
     workers = _safe_workers(args.num_workers)
@@ -380,6 +568,7 @@ def main(argv: list[str] | None = None) -> int:
     common = [
         "--benchmarks",
         *args.benchmarks,
+        *([] if not args.problems else ["--problems", *args.problems]),
         "--api_backend",
         args.api_backend,
         "--vllm_host",
@@ -410,138 +599,51 @@ def main(argv: list[str] | None = None) -> int:
             ["--max_llm_calls_per_problem", str(args.max_llm_calls_per_problem)]
         )
 
-    revolution_root = save_root / "revolution"
-    funsearch_root = save_root / "funsearch"
-    eoh_root = save_root / "eoh"
+    save_roots: dict[str, Path] = {}
+    for backend in args.backends:
+        save_roots[backend] = save_root / backend
+
     for seed in args.seeds:
-        seed_tag = f"seed_{seed}"
-        rev_population_size, rev_generations = _derive_revolution_schedule(
-            target_candidates=primary_budget_candidates,
-            preferred_population_size=args.revolution_population_size,
+        backend_cmds, summaries = _build_backend_commands(
+            args,
+            seed=seed,
+            primary_budget_candidates=primary_budget_candidates,
+            common=common,
+            save_root=save_root,
         )
-        revolution_cmd = [
-            sys.executable,
-            "scripts/run_backend.py",
-            "--backend",
-            "revolution",
-            "--save_path",
-            str(revolution_root / seed_tag),
-            "--population_size",
-            str(rev_population_size),
-            "--num_generations",
-            str(rev_generations),
-            "--seed",
-            str(seed),
-            *common,
-        ]
-
-        fs_initial_population = max(
-            1,
-            min(args.funsearch_initial_population_size, primary_budget_candidates),
-        )
-        fs_iterations = max(0, primary_budget_candidates - fs_initial_population)
-        funsearch_cmd = [
-            sys.executable,
-            "scripts/run_backend.py",
-            "--backend",
-            "funsearch",
-            "--save_path",
-            str(funsearch_root / seed_tag),
-            "--prompt_profile",
-            "funsearch",
-            "--fs_initial_population_size",
-            str(fs_initial_population),
-            "--fs_samples_per_prompt",
-            "1",
-            "--fs_num_islands",
-            "8",
-            "--fs_functions_per_prompt",
-            "2",
-            "--fs_max_evaluations",
-            str(primary_budget_candidates),
-            "--fs_max_iterations",
-            str(fs_iterations),
-            "--seed",
-            str(seed),
-            *common,
-        ]
-        if args.primary_budget_axis in {"llm_calls", "dual_gate"}:
-            assert args.max_llm_calls_per_problem is not None
-            funsearch_cmd.extend(
-                ["--fs_max_llm_calls", str(max(1, args.max_llm_calls_per_problem))]
-            )
-
-        eoh_population_size, eoh_generations, eoh_estimated_candidates = _derive_eoh_schedule(
-            target_candidates=primary_budget_candidates,
-            preferred_population_size=args.eoh_population_size,
-            operators_count=len(args.eoh_operators),
-        )
-        eoh_cmd = [
-            sys.executable,
-            "scripts/run_backend.py",
-            "--backend",
-            "eoh",
-            "--save_path",
-            str(eoh_root / seed_tag),
-            "--prompt_profile",
-            "eoh",
-            "--eoh_population_size",
-            str(eoh_population_size),
-            "--eoh_num_generations",
-            str(eoh_generations),
-            "--eoh_operators",
-            *[str(op).lower() for op in args.eoh_operators],
-            "--eoh_max_evaluations",
-            str(primary_budget_candidates),
-            "--seed",
-            str(seed),
-            *common,
-        ]
-        if args.primary_budget_axis in {"llm_calls", "dual_gate"}:
-            assert args.max_llm_calls_per_problem is not None
-            eoh_cmd.extend(
-                ["--eoh_max_llm_calls", str(max(1, args.max_llm_calls_per_problem))]
-            )
-
         _validate_fairness(
-            revolution_cmd=revolution_cmd,
-            funsearch_cmd=funsearch_cmd,
-            eoh_cmd=eoh_cmd,
+            backend_cmds=backend_cmds,
             primary_budget_axis=args.primary_budget_axis,
             primary_budget_candidates=primary_budget_candidates,
             max_llm_calls_per_problem=args.max_llm_calls_per_problem,
         )
+        summary_text = " ".join(
+            summary for backend, summary in summaries.items() if backend in backend_cmds
+        )
         print(
             f"[ablation] seed={seed} axis={args.primary_budget_axis} "
-            f"candidate_budget={primary_budget_candidates} "
-            f"revolution(pop={rev_population_size}, gen={rev_generations}) "
-            f"funsearch(init={fs_initial_population}, iter={fs_iterations}, max_eval={primary_budget_candidates}) "
-            f"eoh(pop={eoh_population_size}, gen={eoh_generations}, est_eval={eoh_estimated_candidates}, max_eval={primary_budget_candidates})"
+            f"candidate_budget={primary_budget_candidates} {summary_text}"
         )
+        ordered_backends = [backend for backend in args.backends if backend in backend_cmds]
         if args.dry_run:
-            print("\n[ablation] dry-run validated command:")
-            print("  " + " ".join(revolution_cmd))
-            print("  " + " ".join(funsearch_cmd))
-            print("  " + " ".join(eoh_cmd))
+            print("\n[ablation] dry-run validated commands:")
+            for backend in ordered_backends:
+                print("  " + " ".join(backend_cmds[backend]))
         else:
-            _run_cmd(revolution_cmd)
-            _run_cmd(funsearch_cmd)
-            _run_cmd(eoh_cmd)
+            for backend in ordered_backends:
+                _run_cmd(backend_cmds[backend])
 
     if args.run_report and not args.dry_run:
         report_path = save_root / "backend_comparison.md"
         comparison_cmd = [
             sys.executable,
             "scripts/backend_comparison_report.py",
-            "--backend_run",
-            f"revolution={revolution_root}",
-            "--backend_run",
-            f"funsearch={funsearch_root}",
-            "--backend_run",
-            f"eoh={eoh_root}",
-            "--output",
-            str(report_path),
         ]
+        for backend in args.backends:
+            comparison_cmd.extend(
+                ["--backend_run", f"{backend}={save_roots[backend]}"]
+            )
+        comparison_cmd.extend(["--output", str(report_path)])
         _run_cmd(comparison_cmd)
         print(f"\n[ablation] comparison report written: {report_path}")
 
