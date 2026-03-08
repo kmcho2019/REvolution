@@ -1,5 +1,6 @@
 import argparse
 import datetime
+import json
 import multiprocessing
 import os
 import sys
@@ -14,6 +15,8 @@ sys.path.insert(
 )
 
 from revolution.backends import (  # noqa: E402
+    CodeEvolveBackend,
+    CodeEvolveBackendConfig,
     BackendExecutionContext,
     BackendServices,
     EoHBackend,
@@ -22,6 +25,9 @@ from revolution.backends import (  # noqa: E402
     FunSearchBackendConfig,
     RevolutionBackend,
     RevolutionBackendConfig,
+    backend_supports_cvdp,
+    default_prompt_profile_for_backend,
+    registered_backend_names,
 )
 from revolution.configuration import (  # noqa: E402
     ConfigError,
@@ -73,11 +79,7 @@ def _resolve_api_key(args: argparse.Namespace) -> str | None:
 def _resolve_prompt_profile(args: argparse.Namespace) -> str:
     if args.prompt_profile:
         return args.prompt_profile
-    if args.backend == "funsearch":
-        return "funsearch"
-    if args.backend == "eoh":
-        return "eoh"
-    return "default"
+    return default_prompt_profile_for_backend(args.backend)
 
 
 def _effective_save_path(args: argparse.Namespace) -> str:
@@ -283,6 +285,53 @@ def _build_backend(
         )
         return EoHBackend(context=context, services=services, config=eoh_cfg)
 
+    if args.backend == "codeevolve":
+        try:
+            scheduler_kwargs = json.loads(args.codeevolve_scheduler_kwargs_json)
+        except json.JSONDecodeError as exc:
+            raise ValueError(
+                "--codeevolve_scheduler_kwargs_json must be valid JSON."
+            ) from exc
+        if not isinstance(scheduler_kwargs, dict):
+            raise ValueError(
+                "--codeevolve_scheduler_kwargs_json must decode to a JSON object."
+            )
+        codeevolve_cfg = CodeEvolveBackendConfig(
+            num_islands=max(1, int(args.codeevolve_num_islands)),
+            num_epochs=max(0, int(args.codeevolve_num_epochs)),
+            init_pop=max(1, int(args.codeevolve_init_pop)),
+            exploration_rate=float(args.codeevolve_exploration_rate),
+            selection_policy=args.codeevolve_selection_policy,
+            roulette_by_rank=bool(args.codeevolve_roulette_by_rank),
+            meta_prompting=bool(args.codeevolve_meta_prompting),
+            num_inspirations=max(0, int(args.codeevolve_num_inspirations)),
+            max_chat_depth=max(0, int(args.codeevolve_max_chat_depth)),
+            migration_topology=args.codeevolve_migration_topology,
+            migration_interval=max(1, int(args.codeevolve_migration_interval)),
+            migration_rate=float(args.codeevolve_migration_rate),
+            use_scheduler=bool(args.codeevolve_use_scheduler),
+            scheduler_type=args.codeevolve_scheduler_type,
+            scheduler_kwargs=scheduler_kwargs,
+            generation_mode=args.generation_mode,
+            default_llm_temp=args.temperature,
+            default_llm_top_p=args.top_p,
+            default_llm_max_tokens=args.max_tokens,
+            diff_max_tokens=args.diff_max_tokens,
+            max_evaluations=args.codeevolve_max_evaluations,
+            max_llm_calls=args.codeevolve_max_llm_calls,
+            max_llm_tokens=args.codeevolve_max_llm_tokens,
+            max_runtime_seconds=args.codeevolve_max_runtime_seconds,
+            prompt_profile=prompt_profile,
+            prompt_root=prompt_root,
+            strict_prompt_keys=args.codeevolve_strict_prompt_keys,
+            seed=task_seed,
+            candidate_workers=args.candidate_workers,
+            diff_apply_policy=args.diff_apply_policy,
+            diff_similarity_threshold=args.diff_similarity_threshold,
+            diff_fuzzy_margin=args.diff_fuzzy_margin,
+        )
+        return CodeEvolveBackend(context=context, services=services, config=codeevolve_cfg)
+
     feedback_policy = args.fs_feedback_policy
     if args.fs_enable_feedback and feedback_policy == "off":
         feedback_policy = "always"
@@ -374,7 +423,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         "--backend",
         type=str,
         default="revolution",
-        choices=["revolution", "funsearch", "eoh"],
+        choices=registered_backend_names(),
     )
     parser.add_argument(
         "--benchmarks",
@@ -572,6 +621,71 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         action=argparse.BooleanOptionalAction,
         default=True,
     )
+
+    # CodeEvolve-specific
+    parser.add_argument("--codeevolve_num_islands", type=int, default=3)
+    parser.add_argument("--codeevolve_num_epochs", type=int, default=50)
+    parser.add_argument("--codeevolve_init_pop", type=int, default=10)
+    parser.add_argument("--codeevolve_exploration_rate", type=float, default=0.2)
+    parser.add_argument(
+        "--codeevolve_selection_policy",
+        type=str,
+        default="roulette",
+        choices=["roulette", "random"],
+    )
+    parser.add_argument(
+        "--codeevolve_roulette_by_rank",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
+    parser.add_argument(
+        "--codeevolve_meta_prompting",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
+    parser.add_argument("--codeevolve_num_inspirations", type=int, default=2)
+    parser.add_argument("--codeevolve_max_chat_depth", type=int, default=3)
+    parser.add_argument(
+        "--codeevolve_migration_topology",
+        type=str,
+        default="ring",
+        choices=[
+            "directed_ring",
+            "ring",
+            "complete",
+            "inward_star",
+            "outward_star",
+            "star",
+            "empty",
+        ],
+    )
+    parser.add_argument("--codeevolve_migration_interval", type=int, default=25)
+    parser.add_argument("--codeevolve_migration_rate", type=float, default=0.1)
+    parser.add_argument(
+        "--codeevolve_use_scheduler",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
+    parser.add_argument(
+        "--codeevolve_scheduler_type",
+        type=str,
+        default="plateau",
+        choices=["plateau", "fixed"],
+    )
+    parser.add_argument(
+        "--codeevolve_scheduler_kwargs_json",
+        type=str,
+        default='{"min_rate": 0.2, "max_rate": 0.5, "plateau_threshold": 5, "increase_factor": 1.05, "decrease_factor": 0.95}',
+    )
+    parser.add_argument("--codeevolve_max_evaluations", type=int, default=None)
+    parser.add_argument("--codeevolve_max_llm_calls", type=int, default=None)
+    parser.add_argument("--codeevolve_max_llm_tokens", type=int, default=None)
+    parser.add_argument("--codeevolve_max_runtime_seconds", type=float, default=None)
+    parser.add_argument(
+        "--codeevolve_strict_prompt_keys",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
     return parser, config_parser
 
 
@@ -582,10 +696,10 @@ def _discover_tasks(args: argparse.Namespace) -> list[tuple[str, str, argparse.N
     tasks: list[tuple[str, str, argparse.Namespace]] = []
     for benchmark in args.benchmarks:
         if benchmark.lower() == "cvdp":
-            if args.backend != "eoh":
+            if not backend_supports_cvdp(args.backend):
                 print(
                     f"Skipping benchmark '{benchmark}' for backend '{args.backend}' "
-                    "(cvdp support is currently enabled for backend=eoh)."
+                    "(cvdp support is currently enabled only for registered CVDP-capable backends)."
                 )
                 continue
             selected_ids = args.problems if args.problems else None

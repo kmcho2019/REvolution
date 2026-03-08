@@ -1,0 +1,41 @@
+backend: codeevolve
+benchmarks:
+  - RTLLM
+problems: []
+api_backend: vllm
+vllm_host: vllm
+vllm_port: 8888
+model_name: /models/openai-gpt-oss-120b
+save_path: ./exp
+num_workers: 1
+candidate_workers: 0
+evaluation_mode: strict_ablation
+accelerated_synthesis_top_k: 1
+temperature: 0.8
+top_p: 0.95
+max_tokens: 2048
+generation_mode: whole
+prompt_profile: codeevolve
+seed: 42
+codeevolve_num_islands: 3
+codeevolve_num_epochs: 50
+codeevolve_init_pop: 10
+codeevolve_exploration_rate: 0.2
+codeevolve_selection_policy: roulette
+codeevolve_roulette_by_rank: true
+codeevolve_meta_prompting: true
+codeevolve_num_inspirations: 2
+codeevolve_max_chat_depth: 3
+codeevolve_migration_topology: ring
+codeevolve_migration_interval: 25
+codeevolve_migration_rate: 0.1
+codeevolve_use_scheduler: true
+codeevolve_scheduler_type: plateau
+codeevolve_scheduler_kwargs_json: >-
+  {"min_rate": 0.2, "max_rate": 0.5, "plateau_threshold": 5, "increase_factor": 1.05, "decrease_factor": 0.95}
+codeevolve_max_evaluations: 64
+codeevolve_max_llm_calls: null
+codeevolve_max_llm_tokens: null
+codeevolve_max_runtime_seconds: 3600
+codeevolve_strict_prompt_keys: true
+

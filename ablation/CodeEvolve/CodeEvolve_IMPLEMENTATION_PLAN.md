@@ -35,18 +35,19 @@ backend, ablation, reporting, and archive workflows.
 - [x] implementation branch created
 - [x] create CodeEvolve notes crosswalk
 - [x] register backend metadata layer
-- [ ] register CLI surfaces
-- [ ] implement native backend
+- [x] register CLI surfaces
+- [x] implement native backend
+- [x] add CodeEvolve prompt profile and default config template
 - [ ] integrate ablation runner and archive detection
 - [ ] add tests
 - [ ] update docs and examples
 
 ## Next
 
-- Add runner parser support for `codeevolve`.
-- Implement `CodeEvolveBackend` and the `codeevolve` prompt profile.
+- Refine backend behavior against fairness constraints, especially migration semantics.
 - Refactor the ablation runner to use a backend registry instead of a fixed
   hardcoded backend set.
+- Add backend and runner test coverage.
 
 ## Fidelity Deviations
 
@@ -64,3 +65,5 @@ backend, ablation, reporting, and archive workflows.
 - Planning pass complete against current repository state.
 - Added central backend metadata registry with prompt-profile and CVDP capability
   helpers for later runner/archive integration.
+- Added the native `CodeEvolveBackend`, prompt profile, and `run_backend.py`
+  parser/build support for `codeevolve`.
