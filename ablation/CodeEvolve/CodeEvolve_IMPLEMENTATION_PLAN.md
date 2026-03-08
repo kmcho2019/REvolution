@@ -33,8 +33,9 @@ backend, ablation, reporting, and archive workflows.
 - [x] phase-1 scope fixed to RTLLM + VerilogEval
 - [x] canonical naming fixed to CodeEvolve
 - [x] implementation branch created
-- [ ] create CodeEvolve notes crosswalk
-- [ ] register backend metadata and CLI surfaces
+- [x] create CodeEvolve notes crosswalk
+- [x] register backend metadata layer
+- [ ] register CLI surfaces
 - [ ] implement native backend
 - [ ] integrate ablation runner and archive detection
 - [ ] add tests
@@ -42,8 +43,8 @@ backend, ablation, reporting, and archive workflows.
 
 ## Next
 
-- Create `CodeEvolve_IMPLEMENTATION_NOTES.md`.
-- Add backend exports and runner parser support for `codeevolve`.
+- Add runner parser support for `codeevolve`.
+- Implement `CodeEvolveBackend` and the `codeevolve` prompt profile.
 - Refactor the ablation runner to use a backend registry instead of a fixed
   hardcoded backend set.
 
@@ -61,4 +62,5 @@ backend, ablation, reporting, and archive workflows.
 ## Validation Log
 
 - Planning pass complete against current repository state.
-
+- Added central backend metadata registry with prompt-profile and CVDP capability
+  helpers for later runner/archive integration.
