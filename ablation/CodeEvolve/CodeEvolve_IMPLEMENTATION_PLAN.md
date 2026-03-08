@@ -72,6 +72,54 @@ the implementation work and the post-implementation review pass against
   self-contained backend, but phase 2 should split only if the task-adapter or
   prompt-building surface expands further
 
+## Source Material and Repo Fit
+
+### Source material
+
+- Paper markdown:
+  `/workspace/ablation/CodeEvolve/CodeEvolve_2510.14150v3.md`
+- Paper PDF:
+  `/workspace/ablation/CodeEvolve/CodeEvolve_2510.14150v3.pdf`
+- Vendored repo:
+  `/workspace/ablation/CodeEvolve/science-codeevolve`
+- Original integration plan:
+  `/workspace/ablation/CodeEvolve/CodeEvolve_IMPLEMENTATION_PLAN_original.md`
+
+### Repo-fit analysis
+
+- Upstream CodeEvolve is a general code-evolution framework, not an RTL-native
+  runner.
+- Its runtime expects a problem directory with evaluator scripts and an initial
+  source tree; REvolution instead exposes benchmark/problem contexts and a
+  candidate evaluator API.
+- Upstream declares Python `>=3.13.5`, while this repository targets Python
+  3.11.
+- The strongest reusable asset for this repo is the algorithm shape, not the
+  upstream runtime shell.
+
+### Phase-1 preserved mechanics
+
+- Islands-based search
+- Separate solution and prompt populations
+- Exploration vs exploitation split
+- Inspiration-based crossover
+- Meta-prompting during exploration
+- Ancestor-depth exploitation context
+- Migration topology, interval, and rate
+- Optional exploration scheduler
+- Higher-is-better fitness orientation
+
+### Phase-1 deferred or adapted
+
+- Direct CLI/process orchestration
+- Checkpointing
+- MAP-Elites
+- Embeddings
+- Multi-file codebase editing
+- Upstream benchmark packaging and sandbox-copy workflow
+- Distinct exploration/exploitation LLM ensembles from upstream; REvolution
+  currently uses its existing LLM service model and sampling controls
+
 ## Stage Tracker
 
 ### Stage 0: Audit and Scope Lock
@@ -84,7 +132,7 @@ the implementation work and the post-implementation review pass against
 
 ### Stage 1: Core Backend Surface
 
-- [x] create CodeEvolve notes crosswalk
+- [x] consolidate CodeEvolve implementation context into the living plan
 - [x] add `CodeEvolveBackend` and `CodeEvolveBackendConfig`
 - [x] add prompt profile under `data/prompts/codeevolve/`
 - [x] add reproducible config template at `data/configs/codeevolve_default.yaml`
@@ -153,6 +201,15 @@ the implementation work and the post-implementation review pass against
 - [ ] Decide whether phase 2 should keep the backend self-contained or split
       the task adapter into a separate module before adding more domains.
 
+## Execution Commands Used for Preliminary Smoke
+
+- `python scripts/run_backend.py --backend codeevolve --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke/rtllm_whole_2048 --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 2048 --generation_mode whole --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
+- `python scripts/run_backend.py --backend codeevolve --benchmarks VerilogEval-Spec-to-RTL --problems Prob001_zero --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke/verilogeval_whole --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 1024 --generation_mode whole --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
+- `python scripts/run_backend.py --backend codeevolve --benchmarks VerilogEval-Spec-to-RTL --problems Prob001_zero --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke/verilogeval_diff_promptfix --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 1024 --generation_mode diff --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
+- `python scripts/run_backend.py --backend codeevolve --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke_128k/rtllm_whole --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 128000 --generation_mode whole --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
+- `python scripts/run_backend.py --backend codeevolve --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke_128k/rtllm_diff --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 128000 --generation_mode diff --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
+- `python scripts/run_backend.py --backend codeevolve --benchmarks VerilogEval-Spec-to-RTL --problems Prob001_zero --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path /workspace/exp/codeevolve_smoke_128k/verilogeval_diff --num_workers 1 --candidate_workers 0 --evaluation_mode strict_ablation --temperature 0.7 --top_p 0.95 --max_tokens 128000 --generation_mode diff --prompt_profile codeevolve --seed 42 --codeevolve_num_islands 1 --codeevolve_num_epochs 2 --codeevolve_init_pop 1 --codeevolve_exploration_rate 0.2 --codeevolve_max_evaluations 2 --codeevolve_max_runtime_seconds 900`
+
 ## Fidelity Deviations
 
 - No direct use of the vendored CodeEvolve CLI or multiprocessing island
@@ -169,6 +226,33 @@ the implementation work and the post-implementation review pass against
 - Live-smoke follow-up changed one small interoperability detail: the shared
   diff applier now accepts the logical single-file name `code.sv` in addition
   to the concrete run-artifact path when selecting a JSON diff edit block.
+
+## Maintainability Guidance
+
+### What looks acceptable
+
+- `src/revolution/backends/registry.py` is a small, low-risk abstraction that
+  removes repeated hardcoded backend metadata from runners.
+- The ablation runner refactor is justified by the requirement to support more
+  than three backends and future comparison backends.
+- Reusing REvolution's evaluator, artifact writer, and diff applier keeps the
+  new backend aligned with the rest of the repository.
+
+### Main tech-debt risk
+
+- `src/revolution/backends/codeevolve_backend.py` is large and now owns task
+  adaptation, prompt building, search control, migration bookkeeping, and
+  summary writing in one file.
+
+### Current recommendation
+
+- Do not split the backend further during phase 1 just to introduce new layers
+  of indirection.
+- If phase 2 adds another CodeEvolve-style domain adapter or more prompt logic,
+  split along concrete seams only:
+  - task adapter
+  - prompt/context builder
+  - island/program bookkeeping helpers
 
 ## Validation Log
 
