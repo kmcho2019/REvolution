@@ -1,3 +1,5 @@
+"""Native phase-1 CodeEvolve backend for REvolution RTL benchmark runs."""
+
 from __future__ import annotations
 
 import asyncio
@@ -39,6 +41,8 @@ _SUPPORTED_SCHEDULERS = {"plateau", "fixed"}
 
 @dataclass(frozen=True)
 class CodeEvolveBackendConfig:
+    """Configuration surface for the native CodeEvolve backend."""
+
     num_islands: int = 3
     num_epochs: int = 50
     init_pop: int = 10
@@ -75,6 +79,8 @@ class CodeEvolveBackendConfig:
 
 @dataclass
 class CodeEvolvePrompt:
+    """Prompt-population member co-evolved alongside solution programs."""
+
     id: str
     text: str
     fitness: float
@@ -86,6 +92,8 @@ class CodeEvolvePrompt:
 
 @dataclass
 class CodeEvolveProgram:
+    """Solution-population member tracked during CodeEvolve search."""
+
     id: str
     epoch: int
     island_id: int
@@ -110,6 +118,8 @@ class CodeEvolveProgram:
 
 @dataclass
 class CodeEvolveIsland:
+    """Per-island prompt/program populations plus best-member pointers."""
+
     id: int
     prompts: dict[str, CodeEvolvePrompt] = field(default_factory=dict)
     prompt_order: list[str] = field(default_factory=list)
@@ -137,6 +147,8 @@ class CodeEvolveIsland:
 
 @dataclass
 class CodeEvolveMigrationEvent:
+    """Record of a migration transfer between two islands."""
+
     epoch: int
     source_island: int
     target_island: int
@@ -146,6 +158,8 @@ class CodeEvolveMigrationEvent:
 
 @dataclass
 class _PreparedProgram:
+    """Candidate artifact description written before evaluator execution."""
+
     epoch: int
     island_id: int
     prompt_id: str
@@ -165,6 +179,8 @@ class _PreparedProgram:
 
 @dataclass
 class _IslandStepResult:
+    """Single-island epoch result used for generation-level aggregation."""
+
     island_id: int
     epoch: int
     program: CodeEvolveProgram
@@ -175,6 +191,8 @@ class _IslandStepResult:
 
 @dataclass(frozen=True)
 class _PortSpec:
+    """Parsed RTL port description recovered from benchmark prompt text."""
+
     direction: str
     name: str
     width: str | None = None
@@ -196,19 +214,27 @@ class CodeEvolveTaskAdapter:
 
     @property
     def problem_description(self) -> str:
+        """Return the benchmark prompt text used as the task description."""
+
         return self.context.problem_context.problem_description
 
     @property
     def editable_filename(self) -> str:
+        """Return the single editable file exposed in phase-1 RTL adaptation."""
+
         return "code.sv"
 
     @property
     def reference_ppa_available(self) -> bool:
+        """Report whether the current task has reference PPA metrics."""
+
         if self.candidate_evaluator is None:
             return False
         return bool(getattr(self.candidate_evaluator, "ref_ppa_metrics", {}))
 
     def initial_seed_code(self) -> str:
+        """Build the starting RTL module used to seed the solution population."""
+
         prompt_seed = self._seed_module_from_prompt()
         if prompt_seed is not None:
             return prompt_seed
@@ -219,6 +245,8 @@ class CodeEvolveTaskAdapter:
         )
 
     def feedback_text(self, evaluation: CandidateEvaluation) -> str:
+        """Convert evaluator feedback into the prompt-ready feedback channel."""
+
         payload = evaluation.feedback_payload or {}
         user_template = self.prompt_store.read("feedback/user") or "{simulation_log}"
         system_template = self.prompt_store.read("feedback/system") or ""
@@ -233,6 +261,8 @@ class CodeEvolveTaskAdapter:
         return rendered
 
     def _seed_module_from_prompt(self) -> str | None:
+        """Recover a minimal module skeleton from benchmark prompt text."""
+
         ports = self._extract_ports_from_prompt()
         if not ports:
             return None
@@ -264,6 +294,8 @@ class CodeEvolveTaskAdapter:
         return None
 
     def _extract_ports_from_prompt(self) -> list[_PortSpec]:
+        """Parse ports from RTLLM-style prompts first, then VerilogEval prompts."""
+
         ports = self._extract_rtllm_ports()
         if ports:
             return ports
@@ -321,6 +353,8 @@ class CodeEvolveTaskAdapter:
         return _PortSpec(direction=direction, name=name, width=width)
 
     def _render_seed_module(self, module_name: str, ports: list[_PortSpec]) -> str:
+        """Render a compilable module stub from parsed prompt metadata."""
+
         port_list = ",\n".join(f"    {port.name}" for port in ports)
         declarations = "\n".join(
             f"    {port.direction} {port.width + ' ' if port.width else ''}{port.name};"
@@ -404,6 +438,8 @@ class CodeEvolveBackend(EvolutionBackend):
         return value
 
     def _validate_prompt_profile(self) -> None:
+        """Fail fast when the selected prompt profile is missing required keys."""
+
         if not self.config.strict_prompt_keys:
             return
         required = list(self.REQUIRED_PROMPT_KEYS)
@@ -422,6 +458,8 @@ class CodeEvolveBackend(EvolutionBackend):
             )
 
     def _validate_config(self) -> None:
+        """Validate backend config values before any problem work starts."""
+
         if self.config.num_islands <= 0:
             raise ValueError("num_islands must be > 0")
         if self.config.num_epochs < 0:
@@ -445,6 +483,8 @@ class CodeEvolveBackend(EvolutionBackend):
             raise ValueError("generation_mode must be 'whole' or 'diff'")
 
     def initialize(self) -> None:
+        """Initialize island state, prompt populations, and task-adapter state."""
+
         self._validate_config()
         self._validate_prompt_profile()
         self._start_time = dt.datetime.now(dt.timezone.utc).timestamp()
@@ -477,6 +517,8 @@ class CodeEvolveBackend(EvolutionBackend):
             }
 
     def _consume_llm_usage(self) -> dict[str, int]:
+        """Drain the LLM usage accumulator and merge it into run totals."""
+
         usage = asyncio.run(self.services.llm.get_and_reset_usage_stats())
         for key, value in usage.items():
             self._total_llm_usage[key] = self._total_llm_usage.get(key, 0) + int(value)
@@ -486,6 +528,8 @@ class CodeEvolveBackend(EvolutionBackend):
         self._status_counts[status] = self._status_counts.get(status, 0) + 1
 
     def _check_budget_exhausted(self) -> tuple[bool, str]:
+        """Check runtime, evaluation, and token/call budgets in priority order."""
+
         elapsed = dt.datetime.now(dt.timezone.utc).timestamp() - self._start_time
         total_tokens = (
             self._total_llm_usage["prompt_tokens"]
@@ -514,6 +558,8 @@ class CodeEvolveBackend(EvolutionBackend):
         return False, ""
 
     def _build_adjacency(self) -> dict[int, list[int]]:
+        """Materialize the configured migration topology as adjacency lists."""
+
         count = self.config.num_islands
         adjacency: dict[int, list[int]] = {index: [] for index in range(count)}
         if count <= 1 or self.config.migration_topology == "empty":
@@ -546,6 +592,8 @@ class CodeEvolveBackend(EvolutionBackend):
         return adjacency
 
     def _select_prompt(self, island: CodeEvolveIsland, exploration: bool) -> CodeEvolvePrompt:
+        """Choose the active prompt for the next island step."""
+
         prompts = [island.prompts[prompt_id] for prompt_id in island.prompt_order]
         if not prompts:
             raise RuntimeError("CodeEvolve island prompt population is empty.")
@@ -558,6 +606,8 @@ class CodeEvolveBackend(EvolutionBackend):
         return prompt
 
     def _ranked_programs(self, island: CodeEvolveIsland) -> list[CodeEvolveProgram]:
+        """Return island programs sorted by score and recency tiebreakers."""
+
         return sorted(
             [island.programs[program_id] for program_id in island.program_order],
             key=lambda item: (item.score, item.epoch),
@@ -565,6 +615,8 @@ class CodeEvolveBackend(EvolutionBackend):
         )
 
     def _select_program(self, island: CodeEvolveIsland, exploration: bool) -> CodeEvolveProgram | None:
+        """Choose the parent program for the next island step."""
+
         if not island.program_order:
             return None
         programs = [island.programs[program_id] for program_id in island.program_order]
@@ -583,6 +635,8 @@ class CodeEvolveBackend(EvolutionBackend):
         parent_id: str | None,
         exploration: bool,
     ) -> list[CodeEvolveProgram]:
+        """Sample supporting programs used as inspirations for generation."""
+
         candidates = [
             island.programs[program_id]
             for program_id in island.program_order
@@ -599,6 +653,8 @@ class CodeEvolveBackend(EvolutionBackend):
     def _ancestors(
         self, island: CodeEvolveIsland, program: CodeEvolveProgram | None
     ) -> list[CodeEvolveProgram]:
+        """Recover the parent lineage used for exploitation context depth."""
+
         if program is None or self.config.max_chat_depth <= 0:
             return []
         out: list[CodeEvolveProgram] = []
@@ -649,6 +705,8 @@ class CodeEvolveBackend(EvolutionBackend):
         exploration: bool,
         mode: Literal["whole", "diff"],
     ) -> str:
+        """Render the solution-generation prompt for one island step."""
+
         assert self._task_adapter is not None
         key = "codeevolve/explore" if exploration or parent is None else "codeevolve/exploit"
         template = self._prompt_cache.get(key) or self._load_prompt(key)
@@ -693,6 +751,8 @@ class CodeEvolveBackend(EvolutionBackend):
         prompt: CodeEvolvePrompt,
         parent: CodeEvolveProgram | None,
     ) -> str:
+        """Render the meta-prompting request for prompt-population evolution."""
+
         assert self._task_adapter is not None
         template = self._prompt_cache.get("codeevolve/meta_prompt") or self._load_prompt(
             "codeevolve/meta_prompt"
@@ -714,6 +774,8 @@ class CodeEvolveBackend(EvolutionBackend):
         return self._prompt_cache.get(key) or self._load_prompt(key)
 
     def _apply_scheduler(self, island: CodeEvolveIsland) -> float:
+        """Update and return the exploration rate for the given island."""
+
         state = self._scheduler_state[island.id]
         if not self.config.use_scheduler or self.config.scheduler_type == "fixed":
             return float(self.config.exploration_rate)
@@ -756,6 +818,8 @@ class CodeEvolveBackend(EvolutionBackend):
         migrated_from: int | None = None,
         origin_program_id: str | None = None,
     ) -> _PreparedProgram:
+        """Write a candidate artifact and return the evaluator work description."""
+
         metadata = {
             "backend_name": self.name,
             "epoch": epoch,
@@ -794,6 +858,8 @@ class CodeEvolveBackend(EvolutionBackend):
         )
 
     def _store_extra_candidate_files(self, prepared: _PreparedProgram, evaluation: CandidateEvaluation) -> None:
+        """Persist diff/debug/feedback side files for an evaluated candidate."""
+
         candidate_dir = Path(prepared.code_file_path).parent
         if prepared.diff_payload:
             (candidate_dir / "codeevolve_diff.json").write_text(
@@ -816,6 +882,8 @@ class CodeEvolveBackend(EvolutionBackend):
         island: CodeEvolveIsland,
         prepared: list[_PreparedProgram],
     ) -> list[CodeEvolveProgram]:
+        """Evaluate prepared candidates and register the resulting programs."""
+
         evaluator = self.services.candidate_evaluator
         if evaluator is None:
             raise ValueError("CodeEvolveBackend requires a candidate_evaluator service.")
@@ -867,6 +935,8 @@ class CodeEvolveBackend(EvolutionBackend):
         island: CodeEvolveIsland,
         program: CodeEvolveProgram,
     ) -> CodeEvolveProgram:
+        """Insert a program into island/global bookkeeping and refresh best pointers."""
+
         island.programs[program.id] = program
         island.program_order.append(program.id)
         if island.best_program_id is None:
@@ -895,6 +965,8 @@ class CodeEvolveBackend(EvolutionBackend):
         return program
 
     def _step_island(self, island: CodeEvolveIsland, epoch: int) -> _IslandStepResult | None:
+        """Execute one island step: selection, prompting, evaluation, registration."""
+
         exhausted, _ = self._check_budget_exhausted()
         if exhausted:
             return None
@@ -1021,6 +1093,8 @@ class CodeEvolveBackend(EvolutionBackend):
         )
 
     def _migrate_epoch(self, epoch: int) -> list[CodeEvolveMigrationEvent]:
+        """Clone migrant programs across the configured topology for one epoch."""
+
         if self.config.migration_interval <= 0 or epoch % self.config.migration_interval != 0:
             return []
         events: list[CodeEvolveMigrationEvent] = []
@@ -1108,6 +1182,8 @@ class CodeEvolveBackend(EvolutionBackend):
         llm_usage: dict[str, int],
         runtime_seconds: float,
     ) -> None:
+        """Append one generation summary in the shared reporting schema."""
+
         total = len(steps)
         stage_pass_counts = self._stage_pass_counts([step.program for step in steps])
         syntax = sum(
@@ -1162,12 +1238,16 @@ class CodeEvolveBackend(EvolutionBackend):
         self._generation_stats.append(payload)
 
     def _status_count_payload(self, programs: list[CodeEvolveProgram]) -> dict[str, int]:
+        """Count candidate statuses for one generation or summary view."""
+
         counts: dict[str, int] = {}
         for program in programs:
             counts[program.status] = counts.get(program.status, 0) + 1
         return counts
 
     def _stage_pass_counts(self, programs: list[CodeEvolveProgram]) -> dict[str, int]:
+        """Count successful stage passes across a set of programs."""
+
         counts: dict[str, int] = {}
         for program in programs:
             for stage_name, passed in program.stage_statuses.items():
@@ -1176,6 +1256,8 @@ class CodeEvolveBackend(EvolutionBackend):
         return counts
 
     def _summary(self, reason: str) -> dict[str, Any]:
+        """Build the backend result summary consumed by reports and archives."""
+
         end_utc = dt.datetime.now(dt.timezone.utc)
         runtime = end_utc.timestamp() - self._start_time
         total = max(1, self._evaluations_done)
@@ -1295,6 +1377,8 @@ class CodeEvolveBackend(EvolutionBackend):
         return add_legacy_strategy_key_alias(summary)
 
     def _average_population_score(self) -> float | None:
+        """Compute the average score across all live island populations."""
+
         all_programs = [
             island.programs[program_id]
             for island in self._islands
@@ -1305,6 +1389,8 @@ class CodeEvolveBackend(EvolutionBackend):
         return sum(program.score for program in all_programs) / len(all_programs)
 
     def _population_ppa_details(self) -> list[dict[str, Any]]:
+        """Expose best-per-island PPA details in the shared summary format."""
+
         details: list[dict[str, Any]] = []
         for island in self._islands:
             best = island.best_program()
@@ -1322,6 +1408,8 @@ class CodeEvolveBackend(EvolutionBackend):
         return details
 
     def run(self) -> BackendRunResult:
+        """Run the full CodeEvolve search loop for one benchmark problem."""
+
         self.initialize()
         termination_reason = "max_epochs"
         for epoch in range(1, self.config.num_epochs + 1):
@@ -1384,4 +1472,6 @@ class CodeEvolveBackend(EvolutionBackend):
         )
 
     def get_result_summary(self) -> dict[str, Any]:
+        """Return the cached run summary after execution completes."""
+
         return self._summary_cache or {}
