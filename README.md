@@ -104,7 +104,10 @@ Use `--vllm_min_model_len` (default `128000`) and `--vllm_preflight_timeout_s` t
 For reasoning-oriented vLLM models with large context windows, keep
 `--max_tokens` high enough to avoid truncated JSON/code responses. On the
 shared `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b` endpoint used
-for CodeEvolve smoke tests, `--max_tokens 128000` is the safe setting.
+for CodeEvolve smoke tests, `--max_tokens 128000` is the safe setting. For
+`--backend codeevolve --generation_mode diff`, the runner now promotes the
+generic diff cap to match `--max_tokens` on large-context vLLM runs when the
+default `--diff_max_tokens 1024` was left unchanged.
 
 
 ## Running the Framework
@@ -177,7 +180,9 @@ CodeEvolve controls:
 - `--codeevolve_max_evaluations`, `--codeevolve_max_llm_calls`, `--codeevolve_max_runtime_seconds`
 - Practical note for reasoning-heavy vLLM models: prefer a large `--max_tokens`
   budget first, then tune `--diff_max_tokens` only after verifying the model is
-  not truncating JSON envelopes.
+  not truncating JSON envelopes. CodeEvolve diff runs now auto-promote the
+  default diff cap on large-context vLLM endpoints so the overall generation
+  budget is not silently undercut.
 
 ### Multi-problem evolution (`scripts/run_evolution.py`)
 

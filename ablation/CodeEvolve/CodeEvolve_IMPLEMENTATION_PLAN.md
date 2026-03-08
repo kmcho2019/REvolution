@@ -231,13 +231,33 @@ the implementation work and the post-implementation review pass against
   - `src/revolution/backends/codeevolve_backend.py` no longer includes
     `seed_code` in non-initializing prompts, which reduced diff-mode confusion
     between the seed stub and the actual parent candidate
+- Additional smoke-driven fix applied after the 128k reruns:
+  - `scripts/run_backend.py` now promotes CodeEvolve diff-generation token caps
+    to match `--max_tokens` on large-context vLLM runs when the generic
+    `--diff_max_tokens 1024` default was left unchanged. This avoids silently
+    undercutting reasoning-model smoke tests.
+  - CodeEvolve prompt templates were tightened to emphasize compile-clean RTL,
+    exact interface preservation, single-driver discipline, and correctness
+    before architectural novelty.
 - Re-review after the 128k reruns:
   - the diff-target matching fix remains justified and low-risk
   - the prompt cleanup that removes `seed_code` from non-initializing prompts
     remains justified and did not introduce an observable regression in the live
     reruns or the repository test suite
+  - the newly added diff-budget promotion is localized to CodeEvolve diff runs
+    on large-context vLLM endpoints and avoids introducing a broader backend
+    abstraction layer
+- Post-promotion smoke reruns on 2026-03-08:
+  - RTLLM diff improved from syntax/format failure to a valid diff candidate
+    that compiled and ran but still failed functionality in generation 2:
+    `/workspace/exp/codeevolve_smoke_fix/rtllm_diff/codeevolve/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/RTLLM/Prob001_accu/Prob001_accu_summary.json`
+  - VerilogEval diff remained fully successful:
+    `/workspace/exp/codeevolve_smoke_fix/verilogeval_diff/codeevolve/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob001_zero/Prob001_zero_summary.json`
 - Post-fix validation completed:
   - `.venv/bin/python -m pytest tests/revolution/test_codeevolve_backend.py tests/revolution/test_diff_apply.py`
   - `.venv/bin/python -m pytest`
   - `.venv/bin/python -m ruff check src/revolution/backends/codeevolve_backend.py src/revolution/runtime/diff_apply.py tests/revolution/test_codeevolve_backend.py tests/revolution/test_diff_apply.py`
   - `.venv/bin/python -m pyright src/revolution/backends/codeevolve_backend.py src/revolution/runtime/diff_apply.py`
+  - `.venv/bin/python -m pytest tests/scripts/test_run_backend.py tests/revolution/test_codeevolve_backend.py`
+  - `.venv/bin/python -m ruff check scripts/run_backend.py tests/scripts/test_run_backend.py`
+  - `.venv/bin/python -m pyright scripts/run_backend.py`

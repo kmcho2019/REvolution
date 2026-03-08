@@ -49,6 +49,8 @@ from revolution.runtime import (  # noqa: E402
 from revolution.utils import StreamRedirector  # noqa: E402
 from revolution.vllm_preflight import preflight_vllm_model  # noqa: E402
 
+_DEFAULT_DIFF_MAX_TOKENS = 1024
+
 
 def _derive_seed(base_seed: int | None, index: int) -> int | None:
     if base_seed is None:
@@ -80,6 +82,36 @@ def _resolve_prompt_profile(args: argparse.Namespace) -> str:
     if args.prompt_profile:
         return args.prompt_profile
     return default_prompt_profile_for_backend(args.backend)
+
+
+def _resolve_codeevolve_diff_max_tokens(args: argparse.Namespace) -> int:
+    """Resolve the effective diff-token budget for CodeEvolve.
+
+    Live smoke runs against reasoning-oriented vLLM models showed that the
+    generic diff default (`1024`) can silently undercut an intentionally large
+    `--max_tokens` setting. For CodeEvolve diff runs, if the user kept the
+    generic default but requested a larger overall generation budget on a large
+    vLLM endpoint, promote the diff budget to match `--max_tokens`.
+    """
+
+    if args.backend != "codeevolve":
+        return int(args.diff_max_tokens)
+    if args.generation_mode != "diff":
+        return int(args.diff_max_tokens)
+    if args.api_backend != "vllm":
+        return int(args.diff_max_tokens)
+    if int(args.diff_max_tokens) != _DEFAULT_DIFF_MAX_TOKENS:
+        return int(args.diff_max_tokens)
+    if int(args.max_tokens) <= int(args.diff_max_tokens):
+        return int(args.diff_max_tokens)
+    if int(getattr(args, "vllm_min_model_len", 0)) < 128000:
+        return int(args.diff_max_tokens)
+
+    print(
+        "[codeevolve] promoting diff_max_tokens to match max_tokens for a "
+        "large-context vLLM diff run."
+    )
+    return int(args.max_tokens)
 
 
 def _effective_save_path(args: argparse.Namespace) -> str:
@@ -296,6 +328,7 @@ def _build_backend(
             raise ValueError(
                 "--codeevolve_scheduler_kwargs_json must decode to a JSON object."
             )
+        effective_diff_max_tokens = _resolve_codeevolve_diff_max_tokens(args)
         codeevolve_cfg = CodeEvolveBackendConfig(
             num_islands=max(1, int(args.codeevolve_num_islands)),
             num_epochs=max(0, int(args.codeevolve_num_epochs)),
@@ -316,7 +349,7 @@ def _build_backend(
             default_llm_temp=args.temperature,
             default_llm_top_p=args.top_p,
             default_llm_max_tokens=args.max_tokens,
-            diff_max_tokens=args.diff_max_tokens,
+            diff_max_tokens=effective_diff_max_tokens,
             max_evaluations=args.codeevolve_max_evaluations,
             max_llm_calls=args.codeevolve_max_llm_calls,
             max_llm_tokens=args.codeevolve_max_llm_tokens,

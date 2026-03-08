@@ -69,6 +69,9 @@ model can finish the required JSON envelope and code payload. On the shared
 CodeEvolve live smoke testing, `--max_tokens 128000` avoided artificial
 truncation; smaller caps could still be used later if a specific model is shown
 to remain format-stable.
+For `--backend codeevolve --generation_mode diff`, the runner now promotes the
+generic diff cap to match `--max_tokens` on large-context vLLM runs when the
+default `--diff_max_tokens 1024` was left unchanged.
 
 ## 2. Repository assets
 
@@ -184,7 +187,9 @@ CodeEvolve controls:
 - `--codeevolve_max_evaluations`, `--codeevolve_max_llm_calls`, `--codeevolve_max_llm_tokens`, `--codeevolve_max_runtime_seconds`
 - Practical note for reasoning-heavy vLLM models: validate with a generous
   `--max_tokens` budget before concluding that diff-mode or meta-prompting
-  failures are backend bugs.
+  failures are backend bugs. CodeEvolve diff runs now auto-promote the default
+  diff cap on large-context vLLM endpoints so diff offspring are not
+  accidentally constrained to the legacy `1024`-token default.
 
 #### 3.1.1 Ablation fairness controls (`scripts/run_backend_ablation.py`)
 

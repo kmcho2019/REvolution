@@ -13,6 +13,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from revolution.runtime.problem_context import ProblemContext  # noqa: E402
 from scripts.run_backend import (  # noqa: E402
     _build_parser,
+    _resolve_codeevolve_diff_max_tokens,
     _derive_seed,
     _discover_tasks,
     _effective_save_path,
@@ -171,6 +172,44 @@ def test_backend_parser_includes_diff_controls_and_vllm_threshold():
     assert args.diff_similarity_threshold == pytest.approx(0.86)
     assert args.diff_fuzzy_margin == pytest.approx(0.03)
     assert args.vllm_min_model_len == 128000
+
+
+def test_codeevolve_diff_max_tokens_promotes_large_vllm_budget():
+    parser, _ = _build_parser()
+    args, _ = parser.parse_known_args(
+        [
+            "--backend",
+            "codeevolve",
+            "--generation_mode",
+            "diff",
+            "--api_backend",
+            "vllm",
+            "--max_tokens",
+            "128000",
+        ]
+    )
+
+    assert _resolve_codeevolve_diff_max_tokens(args) == 128000
+
+
+def test_codeevolve_diff_max_tokens_respects_explicit_override():
+    parser, _ = _build_parser()
+    args, _ = parser.parse_known_args(
+        [
+            "--backend",
+            "codeevolve",
+            "--generation_mode",
+            "diff",
+            "--api_backend",
+            "vllm",
+            "--max_tokens",
+            "128000",
+            "--diff_max_tokens",
+            "4096",
+        ]
+    )
+
+    assert _resolve_codeevolve_diff_max_tokens(args) == 4096
 
 
 def test_load_reference_ppa_metrics_parses_reference_file(tmp_path):

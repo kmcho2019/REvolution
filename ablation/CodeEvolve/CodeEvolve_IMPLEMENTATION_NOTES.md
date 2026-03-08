@@ -137,6 +137,20 @@ fidelity, repo-fit, and maintainability decisions.
     concerns to genuine syntax/empty-response issues
 - Conclusion from the reruns: the earlier live fixes remain justified and do
   not appear to be papering over an artificially low completion budget
+- Additional smoke analysis exposed one more runner-level issue: CodeEvolve diff
+  offspring were still using the generic `--diff_max_tokens 1024` cap even when
+  the user set a much larger `--max_tokens` budget for a reasoning-oriented
+  vLLM model. That made the live diff path look worse than intended.
+- Fix applied:
+  - promote CodeEvolve diff-generation token caps to match `--max_tokens` on
+    large-context vLLM runs when the default diff cap was left unchanged
+  - tighten CodeEvolve prompt text to stress single-driver RTL, exact interface
+    preservation, and correctness-first repairs
+- Result of the follow-up smoke rerun:
+  - `RTLLM` diff improved from syntax/format failure to a valid diff candidate
+    that compiled and simulated, though the generation-2 candidate still failed
+    functionality
+  - `VerilogEval-Spec-to-RTL` diff remained fully successful after the change
 
 ## Concrete Follow-Ups
 
