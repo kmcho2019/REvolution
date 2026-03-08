@@ -101,6 +101,10 @@ Set `--api_backend` to `vllm` to use a local vLLM server.
 `scripts/run_evolution.py` and `scripts/run_one_shot.py` read `VLLM_HOST` and `VLLM_PORT` environment variables for default host/port values, so you can avoid repeating `--vllm_host`/`--vllm_port` in devcontainer sessions.
 All primary runners (`run_evolution.py`, `run_backend.py`, `run_one_shot.py`) perform a lightweight vLLM `/v1/models` preflight and print the served `max_model_len`.
 Use `--vllm_min_model_len` (default `128000`) and `--vllm_preflight_timeout_s` to tune this gate. A failed preflight is reported as a warning and does not abort the run.
+For reasoning-oriented vLLM models with large context windows, keep
+`--max_tokens` high enough to avoid truncated JSON/code responses. On the
+shared `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b` endpoint used
+for CodeEvolve smoke tests, `--max_tokens 128000` is the safe setting.
 
 
 ## Running the Framework
@@ -138,6 +142,7 @@ python scripts/run_backend.py \
   --vllm_port 8888 \
   --model_name /models/openai-gpt-oss-120b \
   --prompt_profile codeevolve \
+  --max_tokens 128000 \
   --generation_mode diff \
   --codeevolve_num_islands 3 \
   --codeevolve_num_epochs 24 \
@@ -170,6 +175,9 @@ CodeEvolve controls:
 - `--codeevolve_meta_prompting`, `--codeevolve_num_inspirations`
 - `--codeevolve_migration_topology`, `--codeevolve_migration_interval`, `--codeevolve_migration_rate`
 - `--codeevolve_max_evaluations`, `--codeevolve_max_llm_calls`, `--codeevolve_max_runtime_seconds`
+- Practical note for reasoning-heavy vLLM models: prefer a large `--max_tokens`
+  budget first, then tune `--diff_max_tokens` only after verifying the model is
+  not truncating JSON envelopes.
 
 ### Multi-problem evolution (`scripts/run_evolution.py`)
 

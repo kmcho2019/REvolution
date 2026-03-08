@@ -63,6 +63,12 @@ If the vLLM server runs outside the shared Compose network, use `--vllm_host hos
 
 The CLI defaults for `--vllm_host` and `--vllm_port` also read `VLLM_HOST` and `VLLM_PORT` from the environment.
 `run_evolution.py`, `run_backend.py`, and `run_one_shot.py` also perform a vLLM `/v1/models` preflight and report `max_model_len`. Use `--vllm_min_model_len` (default `128000`) and `--vllm_preflight_timeout_s` to tune this check.
+For reasoning-oriented vLLM models, keep `--max_tokens` large enough that the
+model can finish the required JSON envelope and code payload. On the shared
+`/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b` endpoint used during
+CodeEvolve live smoke testing, `--max_tokens 128000` avoided artificial
+truncation; smaller caps could still be used later if a specific model is shown
+to remain format-stable.
 
 ## 2. Repository assets
 
@@ -154,6 +160,7 @@ python scripts/run_backend.py \
   --vllm_port 8888 \
   --model_name /models/openai-gpt-oss-120b \
   --prompt_profile codeevolve \
+  --max_tokens 128000 \
   --generation_mode diff \
   --codeevolve_num_islands 3 \
   --codeevolve_num_epochs 24 \
@@ -175,6 +182,9 @@ CodeEvolve controls:
 - `--codeevolve_migration_topology`, `--codeevolve_migration_interval`, `--codeevolve_migration_rate`
 - `--codeevolve_use_scheduler`, `--codeevolve_scheduler_type`, `--codeevolve_scheduler_kwargs_json`
 - `--codeevolve_max_evaluations`, `--codeevolve_max_llm_calls`, `--codeevolve_max_llm_tokens`, `--codeevolve_max_runtime_seconds`
+- Practical note for reasoning-heavy vLLM models: validate with a generous
+  `--max_tokens` budget before concluding that diff-mode or meta-prompting
+  failures are backend bugs.
 
 #### 3.1.1 Ablation fairness controls (`scripts/run_backend_ablation.py`)
 

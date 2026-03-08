@@ -143,9 +143,13 @@ the implementation work and the post-implementation review pass against
       ablation charts:
       - 3 to 5 RTLLM problems in whole mode at the default 2048-token cap
       - 3 to 5 VerilogEval problems in both whole and diff modes
+- [ ] Decide whether to standardize reasoning-model smoke runs on
+      `--max_tokens 128000` for this endpoint, or to keep a two-step policy:
+      generous smoke validation first, then tighter model-specific caps once
+      format stability is demonstrated
 - [ ] Investigate RTLLM diff-mode stability for this served model under tiny
-      budgets; second-generation responses were still brittle due empty or
-      malformed completions even after prompt cleanup.
+      budgets; 128k reruns showed that the remaining failures are not explained
+      solely by completion truncation.
 - [ ] Decide whether phase 2 should keep the backend self-contained or split
       the task adapter into a separate module before adding more domains.
 
@@ -211,12 +215,27 @@ the implementation work and the post-implementation review pass against
   - RTLLM diff remained brittle on this served model under a tiny 2-evaluation
     smoke budget; generation 1 could pass, but generation 2 still sometimes
     failed due empty or malformed model replies.
+- 128k completion-budget reruns completed on 2026-03-08:
+  - RTLLM whole still succeeded with `--max_tokens 128000`:
+    `/workspace/exp/codeevolve_smoke_128k/rtllm_whole/codeevolve/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/RTLLM/Prob001_accu/Prob001_accu_summary.json`
+  - VerilogEval diff still succeeded with `--max_tokens 128000`:
+    `/workspace/exp/codeevolve_smoke_128k/verilogeval_diff/codeevolve/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob001_zero/Prob001_zero_summary.json`
+  - RTLLM diff still failed with `--max_tokens 128000`, but the failure shape
+    changed to genuine syntax/empty-response problems instead of token-truncated
+    formatting. That indicates the remaining issue is model/output quality on
+    this task path, not only an artificially short completion cap:
+    `/workspace/exp/codeevolve_smoke_128k/rtllm_diff/codeevolve/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/RTLLM/Prob001_accu/Prob001_accu_summary.json`
 - Live-driven code cleanups applied:
   - `src/revolution/runtime/diff_apply.py` now accepts logical single-file edit
     names such as `code.sv` when matching JSON diff payloads to artifact files
   - `src/revolution/backends/codeevolve_backend.py` no longer includes
     `seed_code` in non-initializing prompts, which reduced diff-mode confusion
     between the seed stub and the actual parent candidate
+- Re-review after the 128k reruns:
+  - the diff-target matching fix remains justified and low-risk
+  - the prompt cleanup that removes `seed_code` from non-initializing prompts
+    remains justified and did not introduce an observable regression in the live
+    reruns or the repository test suite
 - Post-fix validation completed:
   - `.venv/bin/python -m pytest tests/revolution/test_codeevolve_backend.py tests/revolution/test_diff_apply.py`
   - `.venv/bin/python -m pytest`
