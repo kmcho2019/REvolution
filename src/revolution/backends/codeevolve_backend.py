@@ -96,6 +96,7 @@ class CodeEvolveProgram:
     status: str
     score: float
     exploration: bool
+    stage_statuses: dict[str, bool] = field(default_factory=dict)
     ppa_metrics: dict[str, float] = field(default_factory=dict)
     feedback: str = ""
     parent_id: str | None = None
@@ -846,6 +847,7 @@ class CodeEvolveBackend(EvolutionBackend):
                 status=evaluation.status,
                 score=float(evaluation.score),
                 exploration=prep.exploration,
+                stage_statuses=dict(evaluation.stage_statuses),
                 ppa_metrics=dict(evaluation.ppa_metrics),
                 feedback=feedback,
                 parent_id=prep.parent_id,
@@ -1072,6 +1074,7 @@ class CodeEvolveBackend(EvolutionBackend):
                         status=migrant.status,
                         score=migrant.score,
                         exploration=False,
+                        stage_statuses=dict(migrant.stage_statuses),
                         ppa_metrics=dict(migrant.ppa_metrics),
                         feedback=migrant.feedback,
                         parent_id=None,
@@ -1106,6 +1109,7 @@ class CodeEvolveBackend(EvolutionBackend):
         runtime_seconds: float,
     ) -> None:
         total = len(steps)
+        stage_pass_counts = self._stage_pass_counts([step.program for step in steps])
         syntax = sum(
             1
             for step in steps
@@ -1147,6 +1151,7 @@ class CodeEvolveBackend(EvolutionBackend):
                 "average_live_fitness": (
                     sum(step.program.score for step in steps) / total if total else None
                 ),
+                "stage_pass_counts": stage_pass_counts,
             },
             "population_ppa": {
                 "best_score": self._best_program.score if self._best_program else None,
@@ -1160,6 +1165,14 @@ class CodeEvolveBackend(EvolutionBackend):
         counts: dict[str, int] = {}
         for program in programs:
             counts[program.status] = counts.get(program.status, 0) + 1
+        return counts
+
+    def _stage_pass_counts(self, programs: list[CodeEvolveProgram]) -> dict[str, int]:
+        counts: dict[str, int] = {}
+        for program in programs:
+            for stage_name, passed in program.stage_statuses.items():
+                if passed:
+                    counts[stage_name] = counts.get(stage_name, 0) + 1
         return counts
 
     def _summary(self, reason: str) -> dict[str, Any]:

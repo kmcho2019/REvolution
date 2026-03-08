@@ -57,6 +57,8 @@ fidelity, repo-fit, and maintainability decisions.
 - CodeEvolve epoch metrics originally overstated `meta_prompt_failures` by
   counting initialization/exploration steps where no meta-prompt was attempted.
   The accounting now tracks only real attempts.
+- Generation statistics now include explicit per-epoch stage pass counts instead
+  of only coarse success-rate aggregates.
 - Duplicate program-registration bookkeeping was reduced to keep the large
   backend file from drifting internally.
 

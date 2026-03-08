@@ -19,6 +19,8 @@ the implementation work and the post-implementation review pass against
 - Overall verdict: mostly aligned with the original phase-1 goals, with a small
   set of intentional divergences from upstream CodeEvolve and one review-driven
   fidelity fix added after the first implementation pass
+- Code-level phase-1 verdict: implemented for the planned REvolution surfaces;
+  remaining items are execution validation and future-scope follow-up work
 
 ## Audit Verdict
 
@@ -50,6 +52,8 @@ the implementation work and the post-implementation review pass against
 - Improved the phase-1 seed program generation so RTL seed stubs now derive the
   module interface from benchmark prompt text instead of always emitting a bare
   top-module shell
+- Added explicit per-epoch stage pass counts so generation statistics now match
+  the planned reporting contract more closely
 - Deduplicated internal program-registration bookkeeping to reduce avoidable
   drift inside the large backend file
 
@@ -101,6 +105,7 @@ the implementation work and the post-implementation review pass against
 - [x] compare implementation shape against vendored upstream CodeEvolve runtime
 - [x] tighten meta-prompt accounting to reflect real attempts only
 - [x] derive phase-1 RTL seed stubs from benchmark interface text
+- [x] add per-epoch stage pass counts to generation statistics
 - [x] reduce internal bookkeeping duplication in the backend implementation
 
 ### Stage 4: Validation and Regression Checks
@@ -166,6 +171,7 @@ the implementation work and the post-implementation review pass against
 - Review pass findings were applied:
   - benchmark prompt-derived seed module skeletons
   - corrected meta-prompt failure accounting
+  - per-epoch stage pass counts in generation statistics
   - deduplicated internal program-registration bookkeeping
 - Validation completed:
   - `.venv/bin/python -m pytest tests/revolution/test_codeevolve_backend.py`

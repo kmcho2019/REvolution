@@ -282,6 +282,9 @@ def test_codeevolve_backend_run_writes_summary(tmp_path):
     assert summary["llm_usage"]["api_calls"] >= 1
     assert summary["backend_details"]["fidelity_deviations"]
     assert "accumulated_strategy_counts:" in summary
+    epoch_stats = summary["generation_statistics"][0]["epoch_statistics"]
+    assert epoch_stats["stage_pass_counts"]["format"] >= 1
+    assert epoch_stats["stage_pass_counts"]["functionality"] >= 1
 
 
 def test_codeevolve_seed_is_deterministic(tmp_path):
