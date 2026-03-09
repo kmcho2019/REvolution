@@ -3047,6 +3047,94 @@ class RealBenchEngine(EoHEngine):
             raise FileNotFoundError(
                 f"Problem description file not found: {prompt_path}"
             )
+        
+
+    def _calculate_reference_ppa(self) -> None:
+        """
+        Loads the pre-calculated PPA metrics for the reference design.
+        If the PPA file is missing or malformed, it sets default high values.
+        """
+        print(f"\n--- Calculating Reference PPA for {self.problem_name} ---")
+        # Instead of synthesizing the reference Verilog file, we will use the pre-synthesized reference file.
+        # This is to ensure that we have a consistent reference PPA across all runs.
+        # The reference Verilog file is expected to be in the benchmark directory with the name <problem_name>_ppa.txt
+        # Format of the reference PPA file is:
+        # tns,wns,eff_clk_period,power,area
+        # value0,value1,value2,value3,value4
+        # Example:
+        # tns,wns,eff_clk_period,power,area
+        # 0.0,0.0,0.0,2.36e-08,1.0
+        # If the file does not exist, we will use default high PPA values.
+        system_name = self.problem_name.split("_")[0]
+        if system_name == "e203":
+            system_name = "e203_hbirdv2"
+        elif system_name == "sd":
+            system_name = "sdc"
+
+
+        ref_ppa_file = os.path.join(self.benchmark_path, self.benchmark_path, system_name, self.problem_name, f"{self.problem_name}_ppa.txt")
+        if os.path.exists(ref_ppa_file):
+            with open(ref_ppa_file, "r") as f:
+                lines = f.readlines()
+                if len(lines) < 2:
+                    print(
+                        f"WARNING: Reference PPA file {ref_ppa_file} is malformed. Using default high PPA values."
+                    )
+                    self.ref_ppa_metrics = {
+                        "tns": 0.0,
+                        "wns": 0.0,
+                        "eff_clk_period": self.clk_period,
+                        "area": 1e4,
+                        "power": 1.0,
+                    }
+                    return
+
+                # Parse the second line for metrics
+                values = lines[1].strip().split(",")
+                if len(values) < 5:
+                    print(
+                        f"WARNING: Reference PPA file {ref_ppa_file} does not contain enough values. Using default high PPA values."
+                    )
+                    self.ref_ppa_metrics = {
+                        "tns": 0.0,
+                        "wns": 0.0,
+                        "eff_clk_period": self.clk_period,
+                        "area": 1e4,
+                        "power": 1.0,
+                    }
+                    return
+
+                # If area and power are zero, we also call warning and set it to high values
+                if float(values[3]) == 0.0 or float(values[4]) == 0.0:
+                    print(
+                        f"WARNING: Reference PPA file {ref_ppa_file} has zero area or power. Using default high PPA values."
+                    )
+                    self.ref_ppa_metrics = {
+                        "tns": 0.0,
+                        "wns": 0.0,
+                        "eff_clk_period": self.clk_period,
+                        "area": 1e4,
+                        "power": 1.0,
+                    }
+                    return
+
+                self.ref_ppa_metrics = {
+                    "tns": float(values[0]),
+                    "wns": float(values[1]),
+                    "eff_clk_period": float(values[2]),
+                    "power": float(values[3]),
+                    "area": float(values[4]),
+                }
+                print(f"Reference PPA loaded successfully: {self.ref_ppa_metrics}")
+        else:
+            self.ref_ppa_metrics = {
+                "tns": 0.0,
+                "wns": 0.0,
+                "eff_clk_period": self.clk_period,
+                "area": 1e4,
+                "power": 1.0,
+            }
+            return
 
     def _evaluate_candidate_pipeline(
         self,
@@ -3088,7 +3176,7 @@ class RealBenchEngine(EoHEngine):
         
 
         # LLM 생성 코드를 임시 파일로 저장
-        with tempfile.NamedTemporaryFile(suffix=".sv", mode="w", delete=False, dir=verification_dir) as tmp:
+        with tempfile.NamedTemporaryFile(suffix=".sv", mode="w", delete=False, dir="/workspace/tmp") as tmp:
             tmp.write(cand.code)
             dut_file = tmp.name
 

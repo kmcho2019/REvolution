@@ -1079,6 +1079,44 @@ class RealBenchSynthesis(SynthesisEvaluator):
 
         return False, log
 
+    def _create_yosys_script(
+        self,
+        verilog_files,
+        module_name,
+        output_directory,
+        clk_period,
+        output_file,
+        include_dirs=None,  # ← 추가
+    ):
+        #기존 SynthesisEvaluator class의 _create_yosys_script에서 하위 모듈을 다 불러오도록 수정함.
+        yosys_ref = os.path.join(self.ref_dir_path, "ref.yosys.tcl")
+        yosys_gen = f"{output_directory}/{module_name}.yosys.tcl"
+
+        with open(yosys_ref, "r") as infile:
+            text = infile.read()
+
+        include_cmds = ""
+        if include_dirs:
+            include_cmds = "\n".join(
+                [f"verilog_defaults -add -I{d}" for d in include_dirs]
+            ) + "\n"
+
+        read_cmds = include_cmds + "\n".join(
+            [f"read_verilog {os.path.abspath(f)}" for f in verilog_files]
+        )
+
+        text = text.replace("__READ_VERILOG_FILES__", read_cmds)
+        text = text.replace("__MODULE_NAME__", module_name)
+        text = text.replace("__OUTPUT_DIR__", os.path.abspath(output_directory))
+        text = text.replace("__OUTPUT_FILE__", output_file)
+        text = text.replace("__REF_DIR__", self.ref_dir_path)
+        text = text.replace("__PDK_DIR__", os.path.abspath(self.pdk_path))
+        text = text.replace("__CLK_PERIOD__", str(clk_period * 1000))
+
+        with open(yosys_gen, "w") as outfile:
+            outfile.write(text)
+
+        return yosys_gen
 
 
     def _run_synthesis(
@@ -1123,6 +1161,7 @@ class RealBenchSynthesis(SynthesisEvaluator):
                 output_directory,
                 clk_period,
                 output_file,
+                include_dirs=[verification_dir] if os.path.exists(verification_dir) else [],
             )
             
             openroad_script_path = self._create_openroad_script(
@@ -1151,34 +1190,3 @@ class RealBenchSynthesis(SynthesisEvaluator):
             except Exception as e:
                 return False, report_path
 
-    def _create_yosys_script(
-        self,
-        verilog_files,
-        module_name,
-        output_directory,
-        clk_period,
-        output_file,
-    ):
-        #기존 SynthesisEvaluator class의 _create_yosys_script에서 하위 모듈을 다 불러오도록 수정함.
-        yosys_ref = os.path.join(self.ref_dir_path, "ref.yosys.tcl")
-        yosys_gen = f"{output_directory}/{module_name}.yosys.tcl"
-
-        with open(yosys_ref, "r") as infile:
-            text = infile.read()
-
-        read_cmds = "\n".join(
-            [f"read_verilog {os.path.abspath(f)}" for f in verilog_files]
-        )
-
-        text = text.replace("__READ_VERILOG_FILES__", read_cmds)
-        text = text.replace("__MODULE_NAME__", module_name)
-        text = text.replace("__OUTPUT_DIR__", os.path.abspath(output_directory))
-        text = text.replace("__OUTPUT_FILE__", output_file)
-        text = text.replace("__REF_DIR__", self.ref_dir_path)
-        text = text.replace("__PDK_DIR__", os.path.abspath(self.pdk_path))
-        text = text.replace("__CLK_PERIOD__", str(clk_period * 1000))
-
-        with open(yosys_gen, "w") as outfile:
-            outfile.write(text)
-
-        return yosys_gen
