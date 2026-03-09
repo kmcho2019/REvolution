@@ -73,14 +73,27 @@ def extract_ref_ppa(problem_name: str, system_name: str, synthesis_evaluator: Re
             output_directory=tmp_dir,
             report_base_path=report_base_path,
             synthesized_netlist_path=synthesized_netlist_path,
-            synthesis_timeout_s=600,
+            synthesis_timeout_s=7200,
         )
 
         if not success:
             print(f"[FAIL] {problem_name}: Synthesis failed.")
-            if os.path.exists(report_path):
+            if report_path and os.path.exists(report_path):
                 with open(report_path, "r") as f:
-                    print(f"  [REPORT]\n{f.read()[-3000:]}")  # ← 실패 report 출력
+                    print(f"  [REPORT]\n{f.read()[-3000:]}")
+            else:
+                # report가 없으면 yosys 직접 실행해서 에러 확인
+                print(f"  [REPORT] report_path not found: {report_path}")
+                # yosys script가 생성됐으면 직접 실행
+                yosys_script = os.path.join(tmp_dir, f"ref_{problem_name}.yosys.tcl")
+                if os.path.exists(yosys_script):
+                    import subprocess
+                    result = subprocess.run(
+                        f"yosys {yosys_script}",
+                        shell=True, capture_output=True, text=True
+                    )
+                    print(f"  [YOSYS STDERR]\n{result.stderr[-3000:]}")
+                    print(f"  [YOSYS STDOUT]\n{result.stdout[-3000:]}")
             return False
 
 

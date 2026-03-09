@@ -29,7 +29,7 @@ from src.revolution.configuration import (
     snapshot_run_configuration,
 )
 
-from data.bench.RealBench.benchmark_info import benchmark_info
+from data.bench.RealBench.benchmark_info import RUN_benchmark_info
 
 
 CUSTOM_PROMPT_BENCHMARK = "CustomPrompt"
@@ -648,7 +648,7 @@ def main():
                     if benchmark.lower()=="realbench":
                         all_problems = [
                             module
-                            for system_dict in benchmark_info.values()
+                            for system_dict in RUN_benchmark_info.values()
                             for module in system_dict.keys()
                         ]
                     else:

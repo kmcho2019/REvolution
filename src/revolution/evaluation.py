@@ -229,19 +229,8 @@ class VerilogEvaluator:
                         "compilation_error", log_file, None, comp_stdout, comp_stderr
                     )
                 print(f"INFO: Compilation successful. Output: {compiled_vvp_file}")
-
-            except Exception as e:
-                error_msg = f"An unexpected error occurred during compilation: {e}"
-                print(f"ERROR: {error_msg}")
-                lf.write(f"CRITICAL ERROR: {error_msg}\n")
-                return self._format_result(
-                    "compilation_error", log_file, None, comp_stderr=error_msg
-                )
             
             except subprocess.TimeoutExpired as e:
-                if e.process:
-                    e.process.kill()         
-                    e.process.communicate()  
                 error_msg = f"Compilation timed out after {simulation_timeout_seconds} seconds."
                 print(f"ERROR: {error_msg}")
                 lf.write(f"TIMEOUT ERROR: {error_msg}\n")
@@ -257,7 +246,13 @@ class VerilogEvaluator:
                 return self._format_result(
                     "file_error", log_file, None, comp_stderr=error_msg
                 )
-            
+            except Exception as e:
+                error_msg = f"An unexpected error occurred during compilation: {e}"
+                print(f"ERROR: {error_msg}")
+                lf.write(f"CRITICAL ERROR: {error_msg}\n")
+                return self._format_result(
+                    "compilation_error", log_file, None, comp_stderr=error_msg
+                )            
             lf.write("\n--- Simulation Phase ---\n")
             # --- 3. Simulate the compiled VVP file ---
             # The compiled .vvp file is typically made executable by iverilog using a shebang
@@ -331,10 +326,7 @@ class VerilogEvaluator:
                         sim_stderr,
                     )
 
-            except subprocess.TimeoutExpired:
-                if e.process:
-                    e.process.kill()         # ← 추가
-                    e.process.communicate()
+            except subprocess.TimeoutExpired as e:
                 timeout_msg = (
                     f"Simulation timed out after {simulation_timeout_seconds} seconds."
                 )
