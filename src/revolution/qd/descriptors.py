@@ -83,6 +83,7 @@ def load_descriptor_profiles(path: str | Path | None = None) -> dict[str, list[s
 
 
 def load_grid_axis_specs(path: str | Path | None = None) -> dict[str, GridAxisDescriptorSpec]:
+    """Load optional per-axis grid bin/bounds specs from the descriptor config."""
     payload = _load_descriptor_config(path)
     raw_specs = payload.get("grid_axes", {})
     if not raw_specs:
@@ -145,6 +146,7 @@ def resolve_grid_axis_specs(
     num_cells: int,
     descriptor_file: str | Path | None,
 ) -> list[GridAxisDescriptorSpec]:
+    """Resolve grid axis specs from config with sensible per-axis fallbacks."""
     if not axes:
         raise ValueError("Grid axis resolution requires at least one axis.")
     configured_specs = load_grid_axis_specs(descriptor_file)
@@ -170,6 +172,7 @@ def resolve_grid_axis_specs(
 
 
 def _default_grid_bounds(axis: str) -> tuple[float, float]:
+    """Return conservative default bounds for grid axes lacking explicit config."""
     if axis.startswith("g_"):
         return (-1.0, 1.0)
     if axis in {"seq_ratio", "comb_ratio", "mux_ratio", "adder_ratio", "utilization"}:

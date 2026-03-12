@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 from revolution.algorithm import EoHEngine
@@ -94,7 +93,7 @@ class RevolutionBackend(EvolutionBackend):
                 "does not support population_pool_mode=single."
             )
         engine_cls = QDEngine if self.config.search_mode == "revolution_qd" else EoHEngine
-        engine_kwargs = dict(
+        engine_kwargs: dict[str, Any] = dict(
             benchmark_name=self.context.benchmark_name,
             problem_name=self.context.problem_name,
             llm_interface=self.services.llm,

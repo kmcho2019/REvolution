@@ -210,6 +210,20 @@ Documentation risk to watch:
   be refreshed again when CVT lands and when reporting/artifact parity is
   added.
 
+## Validation Workflow
+
+- This worktree currently has no checked-in `.github/workflows/` CI definition,
+  so branch validation is tracked through the local proxy checklist below.
+- Required local checklist for QD feature work:
+  - `pytest`
+  - `ruff check` on touched files or the intentionally scoped tree
+  - `python -m pyright` on touched source modules
+  - vLLM `/v1/models` preflight
+  - at least one bounded runtime smoke for changed LLM-backed behavior
+- When repo-wide lint or typecheck debt outside the feature scope prevents a
+  clean global pass, record the scoped pass result and the broader blocking debt
+  explicitly instead of leaving the validation state ambiguous.
+
 ## Stage Tracker
 
 ### Stage 0: Worktree And Living Plan Bootstrap
@@ -309,8 +323,8 @@ Documentation risk to watch:
 ### Stage 8: Full Regression, Docs, And Merge-Ready Cleanup
 
 - [ ] Run full pytest suite.
-- [ ] Run `ruff` on touched files.
-- [ ] Run `pyright` on touched modules.
+- [ ] Run `ruff` on touched files and record broader repo lint debt status.
+- [ ] Run `pyright` on touched modules and record broader repo type-debt status.
 - [ ] Run final vLLM-backed smoke matrix.
 - [ ] Perform code cleanliness and intent-alignment review.
 - [ ] Update top-level docs and finalize this plan.
@@ -502,12 +516,37 @@ Documentation risk to watch:
   - focused grid-bin configuration validation:
     - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py tests/revolution/test_defaults.py tests/scripts/test_run_backend.py`
     - Result: `39 passed in 1.09s`
+  - full regression rerun after Stage 3 follow-through and lint/type fixes:
+    - `/workspace/.venv/bin/python -m pytest`
+    - Result: `308 passed in 2.72s`
+  - branch-scoped lint validation:
+    - `/workspace/.venv/bin/ruff check src/revolution/algorithm.py src/revolution/backends/revolution_backend.py src/revolution/qd src/revolution/runtime tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py tests/revolution/test_problem_spec.py tests/revolution/test_defaults.py tests/scripts/test_run_backend.py scripts/run_backend.py scripts/run_evolution.py`
+    - Result: `All checks passed!`
+  - source-scoped type validation:
+    - `/workspace/.venv/bin/python -m pyright src/revolution/backends/revolution_backend.py src/revolution/qd src/revolution/runtime/problem_spec.py`
+    - Result: `0 errors, 1 warning`
+    - Warning detail:
+      - `src/revolution/qd/descriptors.py`: `yaml` could not be resolved from source by pyright
+  - broader typecheck observation:
+    - `/workspace/.venv/bin/python -m pyright src/revolution scripts/run_backend.py scripts/run_evolution.py`
+    - Result: blocked by pre-existing repo-wide type debt outside the current
+      QD branch surface, plus environment/source-resolution warnings for some
+      third-party modules
   - grid runtime now keeps a bounded per-cell reservoir for recent successful
     occupants, and `success_view` samples from archive elites plus that
     reservoir without making it a second source of truth
   - grid runtime now loads per-axis bin/bounds settings from
     `qd_descriptor_file` `grid_axes:` entries when present, with derived
     fallbacks for unspecified axes
+  - live vLLM smoke evidence:
+    - preflight command:
+      - `curl -s http://host.docker.internal:8000/v1/models`
+    - runtime smoke command:
+      - `timeout 180s bash -lc 'OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --temperature 0.3 --top_p 0.95 --max_tokens 2048 --save_path /workspace/.tmp_qd_smokes/grid_smoke --no-backend_subdir'`
+    - result:
+      - vLLM preflight succeeded and the run started
+      - the runtime smoke timed out after `180s` without a completion signal
+      - smoke remains blocked, not passed
   - commit-message hygiene review for `447c012822..HEAD`:
     - checked `git log --format=%B`, `git show --pretty=fuller --no-patch`, and
       `sed -n 'l'` formatting output for each commit
@@ -574,10 +613,13 @@ Documentation risk to watch:
   lightweight grid-bin specification loading path. The remaining gap is not
   configurability itself, but broader archive parity, reporting, and CVT
   geometry support.
-- The `ProblemSpec` phase-default data model is now consumed by `QDEngine`, but
+  - The `ProblemSpec` phase-default data model is now consumed by `QDEngine`, but
   the resolution logic still lives only in the QD engine rather than behind a
   shared reusable helper. That is acceptable for now, but it is still a seam
   to watch if classic and QD mode continue to diverge in prompt routing.
+- New QD helpers added in this branch now have type hints and short docstrings
+  for the public descriptor/grid-spec surface, but the broader repo still has
+  uneven docstring/type coverage in older modules.
 - Physical descriptor plumbing still lags the registry/config surface. That is
   acceptable for the current gain-axis-heavy grid checkpoint, but not for final
   paper-grade descriptor experiments.
@@ -648,6 +690,9 @@ implementation and testing so far.
   shared by `EoHEngine` and `QDEngine` into reusable helpers.
 - Add a small completion-oriented live smoke profile for the grid runtime
   separate from the paper-grade `128k` long-context smoke profile.
+- Reduce branch-local pyright noise further where fixes are low-risk, while
+  keeping broader pre-existing repo-wide type debt explicitly tracked instead of
+  hiding it behind narrow command scopes.
 
 ### Stage 4 revision
 
@@ -696,8 +741,8 @@ implementation and testing so far.
 - `fae94e617c` `docs(qd): review plan alignment and extend roadmap`
 - `6c987af52a` `feat(qd): honor problem defaults and add success reservoirs`
 - `dc62a11c2b` `docs(qd): document single sign-off commit rule`
-- Current checkpoint pending commit: configurable grid-axis bin loading and
-  focused descriptor/grid validation
+- `d5a7176628` `feat(qd): add configurable grid-axis bin loading`
+- `05f0da6dd9` `chore(qd): record validation status and clean branch typing`
 - Stage 3 remains in progress; live-smoke closure, engine-seam cleanup, and
   grid-bin/CVT/reporting work are still pending.
 

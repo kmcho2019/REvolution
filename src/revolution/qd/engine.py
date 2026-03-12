@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import datetime
-import math
-import os
 import random
 import time
 import traceback
@@ -330,7 +328,10 @@ class QDEngine(EoHEngine):
         new_offspring: list[Heuristic] = []
         fail_rewards_this_gen = defaultdict(float)
         success_rewards_this_gen = defaultdict(float)
-        strategy_avg_selection_probabilities = {"fail_pool": defaultdict(float), "success_pool": defaultdict(float)}
+        strategy_avg_selection_probabilities: dict[str, dict[str, float]] = {
+            "fail_pool": {},
+            "success_pool": {},
+        }
 
         if budget.seed_budget > 0:
             seed_mode = self._phase_mode("seed")
@@ -386,7 +387,10 @@ class QDEngine(EoHEngine):
                     }
                 )
                 for key, value in prob_dist.items():
-                    strategy_avg_selection_probabilities["fail_pool"][key] += value
+                    strategy_avg_selection_probabilities["fail_pool"][key] = (
+                        strategy_avg_selection_probabilities["fail_pool"].get(key, 0.0)
+                        + value
+                    )
 
         success_selected: set[EvolStrategyMethodSuccess] = set()
         success_total_requests = budget.backfill_budget + budget.refine_budget
@@ -401,19 +405,27 @@ class QDEngine(EoHEngine):
             if not parents:
                 break
             if budget.phase == "fill" or idx < budget.backfill_budget:
-                strat_name: EvolStrategyMethodSuccess = "M-E"
+                strat_name = cast(EvolStrategyMethodSuccess, "M-E")
                 mode = self._phase_mode("backfill")
             else:
                 available: list[EvolStrategyMethodSuccess] = ["M-S", "M-R", "M-I"]
                 if len(self.success_pool) > 1:
                     available.append("C-F")
-                strat_name, prob_dist = self._select_strategy("success", available, success_selected)
-                if strat_name is None or prob_dist is None:
+                selected_name, prob_dist = self._select_strategy(
+                    "success",
+                    available,
+                    success_selected,
+                )
+                if selected_name is None or prob_dist is None:
                     continue
+                strat_name = cast(EvolStrategyMethodSuccess, selected_name)
                 success_selected.add(strat_name)
                 mode = self._phase_mode("crossover" if strat_name == "C-F" else "refine")
                 for key, value in prob_dist.items():
-                    strategy_avg_selection_probabilities["success_pool"][key] += value
+                    strategy_avg_selection_probabilities["success_pool"][key] = (
+                        strategy_avg_selection_probabilities["success_pool"].get(key, 0.0)
+                        + value
+                    )
 
             if strat_name == "C-F" and len(parents) < 2:
                 parents = self._sample_success_parents(2)

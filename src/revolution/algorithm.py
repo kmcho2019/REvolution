@@ -3052,9 +3052,6 @@ class EoHEngine:
         print(f"\n--- Starting Generation {self.current_generation} ---")
         self.gen_start_time = time.time()
 
-        # Allows current default system prompt to be overriden if necessary
-        generation_system_prompt = self._get_generation_system_prompt()
-
         strategies = {
             "M-F": {"func": self._create_prompt_M_F, "num_parents": 1},
             "M-S": {"func": self._create_prompt_M_S, "num_parents": 1},

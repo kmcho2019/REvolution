@@ -120,7 +120,11 @@ def build_cvdp_problem_spec(
 ) -> ProblemSpec:
     """Build a normalized spec for CVDP JSONL records."""
 
-    categories = tuple(str(cat) for cat in cvdp_record.get("categories", []))
+    raw_categories = cvdp_record.get("categories", [])
+    if isinstance(raw_categories, list):
+        categories = tuple(str(cat) for cat in raw_categories)
+    else:
+        categories = ()
     quality_mode: QualityMode = "ppa" if supports_reference_ppa else "functional_only"
     return ProblemSpec(
         benchmark_name=context.benchmark_name,

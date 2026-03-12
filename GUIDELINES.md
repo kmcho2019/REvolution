@@ -43,6 +43,14 @@
 - Prefer fixtures/mocks for external binaries (`iverilog`, `yosys`, `openroad`) instead of hard runtime dependencies in unit tests.
 - Add script-focused tests under `tests/scripts/` when CLI/report behavior changes.
 
+## Local Validation Checklist
+- This worktree does not currently contain a checked-in `.github/workflows/` CI definition, so pre-push validation should use the local repo proxy checklist instead.
+- Run `pytest` for the full test suite.
+- Run `ruff check` at least on touched files; use a broader tree only when cleaning legacy lint debt intentionally.
+- Run `python -m pyright` on the touched source modules. If repo-wide pyright still has pre-existing debt, record that explicitly instead of silently skipping typecheck.
+- For LLM-backed runtime changes, run a vLLM preflight (`curl http://<host>:<port>/v1/models`) and at least one bounded smoke command.
+- Record blocked smoke results explicitly when the model endpoint is reachable but the run does not complete in a reasonable timeout.
+
 ## Commit & Pull Request Guidelines
 - Follow the repository’s Conventional Commit pattern: `feat(scope): ...`, `fix(scope): ...`, `docs: ...`, `test(scope): ...`, `chore(scope): ...`.
 - Use clear scopes (for example: `gen0`, `llm`, `devcontainer`, `reporting`).
