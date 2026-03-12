@@ -38,7 +38,7 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Branch: `feat/revolution-qd-map-elites`
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
-- Current stage: `Stage 7`
+- Current stage: `Stage 8`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
@@ -325,7 +325,7 @@ Documentation risk to watch:
 - [x] Add visualization tests.
 - [x] Run grid and CVT artifact-validation smokes.
 - [x] Update docs and plan with Stage 7 validation notes.
-- [ ] Commit Stage 7.
+- [x] Commit Stage 7.
 
 ### Stage 8: Full Regression, Docs, And Merge-Ready Cleanup
 
@@ -671,6 +671,8 @@ Documentation risk to watch:
     `run_evolution.py`, `algorithm.py`, `candidate_evaluator.py`, `llm.py`,
     and other older modules, so the local validation checklist continues to use
     touched-module typechecks plus an explicit repo-debt note
+  - Stage 7 reporting/visualization parity checkpoint commit:
+    - `013972bfe4` `feat(qd): add reporting and visualization parity for qd runs`
 
 ### Stage 5
 
@@ -962,6 +964,7 @@ implementation and testing so far.
 - `ed3e933f61` `chore(qd): record validation status and clean branch typing`
 - `c03242b784` `feat(qd): add initial cvt archive runtime support`
 - `855472eb70` `docs(qd): record stage 4 cvt checkpoint`
+- `013972bfe4` `feat(qd): add reporting and visualization parity for qd runs`
 - `8b0393d10e` `feat(qd): emit archive-state artifacts for qd runs`
 - `7cb58e1240` `feat(qd): add targeted and diverse qd operators`
 - Stage 3 follow-through and Stage 4 parity work are still pending: live-smoke
