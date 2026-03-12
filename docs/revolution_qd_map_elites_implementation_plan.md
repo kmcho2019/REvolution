@@ -44,7 +44,9 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   - `VerilogEval-Spec-to-RTL`
   - `cvdp` 1.0.2 limited to `cid002` and `cid003`
   - `RealBench` module subsets
-- Current backend status: Stage 0 bootstrap in progress
+- Current backend status: Stage 3 grid-runtime checkpoint landed; CVT, QD
+  operator expansion, reporting parity, and benchmark-expansion stages remain
+  pending
 
 ## Worktree Info
 
@@ -78,6 +80,136 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Descriptor selection is configurable through preset profiles, explicit axis
   lists, and descriptor files.
 
+## Original Plan Comparison Review
+
+This section compares the current implementation state to the original QD/MAP-
+Elites plan that seeded the branch. The goal is to make any divergence
+explicit, evaluate whether it was appropriate, and keep the roadmap honest.
+
+### High-level alignment
+
+- `search_mode=revolution_qd` was added as planned and classic
+  `search_mode=revolution` remains intact.
+- `ProblemSpec`, `StructuralEvaluator`, the descriptor registry/config path,
+  and the exact maximize-form REvolution PPA `quality_score` were all landed in
+  line with the original design.
+- `grid` was implemented before `cvt`, matching the original risk-reduction
+  rollout.
+- Descriptor selection is configurable through CLI, config, and descriptor
+  profile files as intended.
+- The simple linear fill-based scheduler was implemented exactly as planned.
+
+### Explicit divergences and review
+
+- Divergence: `QDEngine` currently lives in `src/revolution/qd/engine.py`
+  instead of first refactoring `src/revolution/algorithm.py` into a richer set
+  of shared helper seams.
+  Review:
+  This was an intentional short-term divergence. It reduced the risk of
+  breaking classic REvolution while letting the grid runtime path land sooner.
+  The tradeoff is some duplicated offspring-materialization and generation-loop
+  logic. This is acceptable for the grid-first checkpoint, but it should be
+  reduced before or during CVT integration so the branch does not accumulate
+  engine-loop drift.
+
+- Divergence: `success_view` is currently implemented as an archive-elite view
+  only; the planned bounded per-cell recent-occupant reservoir has not been
+  added yet.
+  Review:
+  This is an acceptable temporary simplification. It preserves the critical
+  “archive as source of truth” property and is enough to validate archive-based
+  success selection. The missing reservoir will matter more once backfill,
+  cross-cell diversity, and richer operator routing land.
+
+- Divergence: grid binning currently uses uniform per-axis bounds `[-1, 1]`
+  with derived bin counts, rather than a richer bin-spec path loaded from
+  config/descriptor files.
+  Review:
+  This is appropriate for the first grid checkpoint because the current grid
+  axes are normalized PPA gains (`g_A`, `g_P`, `g_T`), where `[-1, 1]` is a
+  defensible debugging range. However, the original intent of configurable grid
+  axes and bin specs still stands, especially once structural/physical axes are
+  used in grid ablations.
+
+- Divergence: descriptor extraction is currently a tested substrate and registry
+  plus Yosys-like structural helpers, but not yet fully wired to machine-
+  readable OpenROAD sidecars for physical descriptors.
+  Review:
+  This divergence is acceptable at the current stage because the active runtime
+  grid path is using normalized PPA gain axes. It should not be treated as
+  complete descriptor parity. Stage 4 or Stage 7 still needs actual physical-
+  metric plumbing so descriptor experiments are not partly synthetic.
+
+- Divergence: live RTLLM grid smokes were attempted but are currently blocked by
+  long-running first-generation behavior on the shared vLLM endpoint rather
+  than producing quick pass/fail evidence.
+  Review:
+  This is not a design divergence, but it does affect validation confidence.
+  The blocked smoke does not disprove the runtime path, but it means the branch
+  still lacks the intended end-to-end live validation evidence for Stage 3.
+
+- Divergence: the per-phase generation-mode override surface exists in CLI,
+  backend config, and `QDEngine`, but the runtime `auto` policy does not yet
+  consult `ProblemSpec.phase_generation_defaults`.
+  Review:
+  This is a meaningful but still acceptable divergence. The original plan
+  wanted resolution order `explicit override -> ProblemSpec defaults -> runtime
+  fallback`. The current engine only implements `explicit override -> local
+  fallback`, which is enough for early grid runtime bring-up but not enough for
+  benchmark-specific diff-heavy defaults on larger tasks. This should be closed
+  before Stage 5 so diff-policy experiments mean what the plan says they mean.
+
+- Divergence: top-level and immediate docs were updated earlier than the
+  original stage ordering would have required.
+  Review:
+  This divergence is appropriate and beneficial. The user explicitly requested
+  that new features be reflected immediately in the nearest docs and the
+  top-level repo map. The documentation now better matches actual branch state.
+
+### Internal review conclusion
+
+- The implementation is still aligned with the original research intent at the
+  architectural level.
+- The main acceptable divergence is tactical: the branch prioritized a working
+  grid runtime path with limited duplication before doing the deeper engine
+  seam refactor.
+- The largest remaining risk is not conceptual drift but technical debt around
+  duplicated generation-loop logic and incomplete runtime parity for CVT,
+  reporting, and richer archive-parent semantics.
+
+### Evidence basis for the review
+
+- Strong evidence:
+  parser/config, scoring, descriptor, archive, scheduler, and grid runtime
+  selection paths are covered by focused unit tests and backend tests.
+- Moderate evidence:
+  top-level docs and immediate feature docs already reflect the current staged
+  QD surface instead of describing CVT/runtime parity that has not landed yet.
+- Weak evidence:
+  live end-to-end vLLM smoke validation is still incomplete because the shared
+  endpoint did not yield a fast first-generation success/failure result in the
+  attempted Stage 3 grid smokes.
+
+## Documentation Surface Review
+
+The original plan required that new feature work be reflected both near the
+implementation and in the top-level repo map. The current branch is aligned
+with that requirement.
+
+- `README.md` now exposes `revolution_qd`, grid-vs-CVT staging status, and a
+  concrete example command for the grid runtime path.
+- `GUIDELINES.md` now acts as a repo map that points readers to the right docs
+  and source areas for high-level orientation before they dive into details.
+- `docs/user_guide.md`, `docs/module_structure.md`,
+  `docs/implementation_details.md`, and `docs/REvolution_specification.md` all
+  mention the QD feature surface and the current grid-first, CVT-pending state.
+
+Documentation risk to watch:
+
+- These docs are directionally correct for the current branch, but they should
+  be refreshed again when CVT lands, when `ProblemSpec`-driven phase defaults
+  are wired into runtime behavior, and when reporting/artifact parity is added.
+
 ## Stage Tracker
 
 ### Stage 0: Worktree And Living Plan Bootstrap
@@ -96,7 +228,7 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - [x] Add shared archive protocol / state types without altering classic mode.
 - [x] Add regression and config-surface tests.
 - [x] Update docs and plan with Stage 1 validation notes.
-- [ ] Commit Stage 1 with signed multi-line commit message.
+- [x] Commit Stage 1 with signed multi-line commit message.
 
 ### Stage 2: Exact Quality Score, Descriptor Registry, And Extraction Substrate
 
@@ -114,15 +246,26 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 
 ### Stage 3: Grid Backend First Implementation
 
-- [ ] Add `QDEngine` scaffolding.
 - [x] Add `QDEngine` scaffolding.
 - [x] Implement `GridArchive`.
 - [x] Implement linear fill/improve scheduler.
-- [x] Implement success archive insertion/replacement and `success_view`.
+- [x] Implement archive-backed success insertion/replacement.
+- [x] Wire the first grid runtime path through `revolution_backend.py`.
 - [x] Add grid-specific tests.
-- [ ] Run RTLLM and VerilogEval grid smokes.
+- [x] Refresh top-level and immediate QD docs for the grid-runtime checkpoint.
+- [ ] Wire `ProblemSpec.phase_generation_defaults` into QD runtime `auto`
+      policy resolution.
+- [ ] Add bounded per-cell reservoir support so `success_view` matches the
+      planned elite-plus-recent-occupant semantics.
+- [ ] Add configurable grid-bin specification loading for structural/physical
+      grid experiments.
+- [ ] Refactor duplicated engine-loop seams shared by `EoHEngine` and
+      `QDEngine`.
+- [ ] Run RTLLM and VerilogEval grid smokes to a real completion state.
+- [ ] Add a deterministic fast-smoke path so Stage 3 runtime validation does
+      not depend only on slow long-context vLLM runs.
 - [x] Update docs and plan with Stage 3 validation notes.
-- [x] Commit Stage 3.
+- [x] Commit Stage 3 checkpoints.
 
 ### Stage 4: CVT Backend With Parity Surface
 
@@ -202,10 +345,16 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - [x] Add `src/revolution/qd/types.py`
 - [x] Add `src/revolution/qd/scoring.py`
 - [x] Add `src/revolution/qd/descriptors.py`
-- [ ] Add `src/revolution/qd/archive.py`
-- [ ] Add `src/revolution/qd/scheduler.py`
+- [x] Add `src/revolution/qd/archive.py`
+- [x] Add `src/revolution/qd/scheduler.py`
+- [ ] Add `src/revolution/qd/engine.py` follow-through cleanup for shared engine
+      seams and reduced duplication
 - [ ] Add `src/revolution/qd/visualization.py`
 - [ ] Refactor `src/revolution/algorithm.py` for shared engine seams
+- [ ] Wire `ProblemSpec.phase_generation_defaults` into runtime `auto` phase
+      resolution
+- [ ] Add bounded per-cell `success_view` reservoir support
+- [ ] Add configurable grid-bin specification loading
 
 ### Descriptor Registry Candidates
 
@@ -221,6 +370,8 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   `rtl_core`, `rtl_phys`, `rtl_phys_cts`, `hybrid_seq_default`,
   `hybrid_comb_default`, `hybrid_phys_seq`
 - [x] Add descriptor probe script for extraction coverage and experiment logging
+- [ ] Add machine-readable physical-metric sidecars for OpenROAD-backed
+      descriptor extraction parity
 
 ### Reporting
 
@@ -318,7 +469,7 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_archive.py tests/revolution/test_qd_scheduler.py tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_scoring.py`
   - Result: `20 passed in 0.83s`
   - `/workspace/.venv/bin/python -m pytest tests/revolution/test_defaults.py tests/revolution/test_problem_spec.py tests/revolution/test_qd_scoring.py tests/revolution/test_qd_descriptors.py tests/revolution/test_structural_evaluator.py tests/revolution/test_qd_archive.py tests/revolution/test_qd_scheduler.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py tests/scripts/test_run_backend.py tests/scripts/test_qd_descriptor_probe.py`
-  - Result: `51 passed in 1.01s`
+- Result: `51 passed in 1.01s`
 - Smoke tests:
   - attempted live RTLLM smoke with `search_mode=revolution_qd`, `qd_archive_type=grid`,
     `population_size=1`, `num_generations=0`, vLLM endpoint
@@ -331,8 +482,20 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   - `revolution_backend.py` now selects `QDEngine` when
     `search_mode=revolution_qd`
   - current runtime support is grid-only; `cvt` remains staged work for Stage 4
+  - top-level docs refreshed at this checkpoint:
+    - `README.md`
+    - `GUIDELINES.md`
+    - `docs/user_guide.md`
+    - `docs/module_structure.md`
+    - `docs/implementation_details.md`
+    - `docs/REvolution_specification.md`
+  - phase-generation override flags are exposed and carried through runtime
+    construction, but benchmark-specific `ProblemSpec` defaults are not yet
+    applied in the `QDEngine` `auto` path
   - first Stage 3 substrate commit:
     - `efbf9b48d0` `feat(qd): add grid archive and linear scheduler substrate`
+  - second Stage 3 runtime/docs checkpoint commit:
+    - `4a82690a1f` `feat(qd): wire grid runtime path and refresh docs`
 
 ## Debt Review
 
@@ -380,6 +543,15 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   but there is still duplicated offspring-materialization logic. That seam
   should be refactored once the grid runtime is stable enough to avoid
   spreading engine-loop duplication into CVT work.
+- The current grid runtime does not yet expose a bounded per-cell reservoir or
+  configurable grid-bin specification loading. Those were deferred to keep the
+  first runtime checkpoint smaller and easier to debug.
+- The `ProblemSpec` phase-default data model exists, but `QDEngine` does not
+  yet consume it. That leaves some benchmark-specific diff/whole policy intent
+  stranded in configuration metadata instead of runtime behavior.
+- Physical descriptor plumbing still lags the registry/config surface. That is
+  acceptable for the current gain-axis-heavy grid checkpoint, but not for final
+  paper-grade descriptor experiments.
 
 ## Intent Alignment Review
 
@@ -419,8 +591,72 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   reaches zero at the target fill fraction.
 - The archive replacement semantics already match the intended MAP-Elites
   contract: empty-cell insert, occupied-cell replace only on higher quality.
-- The remaining work is broader live validation, richer QD-specific operators,
-  and CVT parity.
+- The branch still honors the intended “archive as success truth” direction,
+  but `success_view` is currently thinner than originally planned because it is
+  archive-elites only, without the small per-cell reservoir.
+- Benchmark-specific phase-generation defaults exist in `ProblemSpec`, but the
+  runtime does not yet use them. This is a real implementation gap relative to
+  the intended diff-flexibility story, not just a documentation gap.
+- The most important remaining work is broader live validation, richer
+  QD-specific operators, CVT parity, and reducing `QDEngine` loop duplication
+  before the architecture hardens further.
+
+## Roadmap Extension
+
+This roadmap extends the original stage list with the concrete findings from
+implementation and testing so far.
+
+### Stage 3 follow-through before Stage 4
+
+- Add a deterministic local smoke mode for `revolution_qd` using mocked or
+  low-budget runtime settings so the branch has a reliable end-to-end sanity
+  check even when long-context vLLM runs are slow.
+- Wire `ProblemSpec.phase_generation_defaults` into `QDEngine._phase_mode()` so
+  `auto` actually reflects benchmark-specific policy rather than a generic
+  fallback.
+- Refactor the duplicated offspring-materialization / request bookkeeping seam
+  shared by `EoHEngine` and `QDEngine` into reusable helpers.
+- Add explicit `success_view` implementation notes in code and plan:
+  archive elites now, per-cell reservoir next.
+- Add configurable grid-bin loading for structural/physical grid experiments.
+- Add a small completion-oriented live smoke profile for the grid runtime
+  separate from the paper-grade `128k` long-context smoke profile.
+
+### Stage 4 revision
+
+- Keep CVT as the next major milestone, but require a shared archive interface
+  that can support both:
+  - grid debug axes and fixed bins
+  - CVT warm-up/freeze centroids over the full descriptor space
+- Add parity tests that compare shared archive behavior across grid and CVT:
+  insertion semantics, quality-based replacement, exported metadata shape, and
+  summary compatibility.
+
+### Stage 5 revision
+
+- Add `M-T` and `C-D` only after the grid runtime and archive parent-view
+  semantics are stable enough to measure them meaningfully.
+- Include explicit tests for how per-phase generation-mode overrides interact
+  with benchmark defaults from `ProblemSpec`.
+- Revisit whether diff-capable backfill should be enabled by default on larger
+  benchmarks only after the runtime is actually honoring those benchmark
+  defaults.
+
+### Stage 7 revision
+
+- Logging/reporting should now include both algorithm evidence and research
+  evidence:
+  - archive occupancy and QD score
+  - blocked vs passed smoke status
+  - descriptor profile used
+  - whether the run was `grid` or `cvt`
+  - whether the run was `ppa` or `functional_only`
+
+### Stage 8 revision
+
+- The final branch review should explicitly compare the finished branch against
+  this “Original Plan Comparison Review” section, not just against the running
+  checklist, so the merge decision is based on both execution and intent.
 
 ## Commit Ledger
 
@@ -428,7 +664,10 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - `e91188281b` `feat(qd): add search mode and capability scaffolding`
 - `2268a7f81f` `feat(qd): add scoring and descriptor substrate`
 - `efbf9b48d0` `feat(qd): add grid archive and linear scheduler substrate`
-- Pending Stage 3 runtime/docs checkpoint commit.
+- `98db8207e4` `docs(qd): record stage 3 substrate checkpoint`
+- `4a82690a1f` `feat(qd): wire grid runtime path and refresh docs`
+- Stage 3 remains in progress; live-smoke closure, engine-seam cleanup, and
+  richer success-view semantics are still pending.
 
 ## Deferred Follow-Ups
 
