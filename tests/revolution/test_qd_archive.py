@@ -1,6 +1,6 @@
 import pytest
 
-from revolution.qd.archive import GridArchive, GridAxisSpec
+from revolution.qd.archive import CVTArchive, GridArchive, GridAxisSpec
 
 
 def test_grid_archive_inserts_into_empty_cell():
@@ -53,3 +53,47 @@ def test_grid_archive_rejects_dimension_mismatch():
 
     with pytest.raises(ValueError, match="dimensionality"):
         archive.cell_id_for((0.1, 0.2))
+
+
+def test_cvt_archive_buffers_until_warmup_threshold_then_initializes():
+    archive = CVTArchive(("g_A", "g_T"), num_cells=4, warmup_successes=2)
+
+    first = archive.insert("cand-a", (0.2, 0.3), 0.5, {"id": "cand-a"})
+    assert first.inserted is False
+    assert archive.is_initialized is False
+    assert archive.occupied_count() == 0
+
+    second = archive.insert("cand-b", (0.4, 0.1), 0.6, {"id": "cand-b"})
+    assert archive.is_initialized is True
+    assert second.inserted is True
+    assert archive.occupied_count() >= 1
+
+
+def test_cvt_archive_replaces_only_on_higher_quality():
+    archive = CVTArchive(("g_A",), num_cells=1, warmup_successes=1)
+
+    first = archive.insert("cand-a", (0.2,), 0.4, {"id": "cand-a"})
+    second = archive.insert("cand-b", (0.3,), 0.3, {"id": "cand-b"})
+    third = archive.insert("cand-c", (0.3,), 0.8, {"id": "cand-c"})
+
+    assert first.inserted is True
+    assert second.inserted is False
+    assert third.replaced is True
+    assert archive.elite_for_cell("0").candidate_id == "cand-c"
+
+
+def test_cvt_archive_freezes_scaler_and_centroids_after_warmup():
+    archive = CVTArchive(("g_A", "g_T"), num_cells=4, warmup_successes=2)
+    archive.insert("cand-a", (0.1, 0.2), 0.4, {"id": "cand-a"})
+    archive.insert("cand-b", (0.2, 0.4), 0.5, {"id": "cand-b"})
+
+    assert archive.is_initialized is True
+    means_before = archive.scaler.means
+    stds_before = archive.scaler.stds
+    centroids_before = archive.centroids
+
+    archive.insert("cand-c", (100.0, -100.0), 0.6, {"id": "cand-c"})
+
+    assert archive.scaler.means == means_before
+    assert archive.scaler.stds == stds_before
+    assert archive.centroids == centroids_before

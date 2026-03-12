@@ -10,7 +10,7 @@
 ## Key Features
 
 - Dual-pool evolutionary engine with configurable strategies (`M-*`, `C-F`) and meta-strategy selection (random, epsilon-greedy, UCB).
-- Experimental `revolution_qd` search mode with grid MAP-Elites archive support, configurable descriptor axes, and staged CVT integration.
+- Experimental `revolution_qd` search mode with grid and CVT archive support, configurable descriptor axes, and staged reporting/operator parity work.
 - End-to-end evaluation pipeline: Icarus Verilog for syntax/functional checks, Yosys + OpenROAD for PPA, and post-synthesis regression.
 - Unified LLM client with retry/backoff, prompt templating, diff/whole generation modes, and multi-backend support (OpenAI, OpenRouter, DeepSeek, Gemini, vLLM).
 - Detailed JSONL logging, per-problem summaries, and prebuilt scripts for table generation and visualization.
@@ -138,8 +138,10 @@ Current status on this feature branch:
   per-cell reservoir for archive-adjacent parent sampling.
 - `qd_descriptor_file` can now carry both descriptor profiles and per-axis
   `grid_axes` bin/bounds specs for structural or physical grid experiments.
-- `cvt` is already part of the config surface but full runtime support is still
-  staged work.
+- `cvt` now has an initial warm-up/freeze runtime path with nearest-centroid
+  archive insertion.
+- grid/CVT reporting parity, richer QD operators, and completion-grade live
+  smokes are still staged work.
 - The detailed status and validation record lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.
 

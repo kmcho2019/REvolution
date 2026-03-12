@@ -78,12 +78,22 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
     backend = RevolutionBackend(
         context=_context(tmp_path),
         services=_services(tmp_path),
-        config=RevolutionBackendConfig(search_mode="revolution_qd", qd_grid_axes=("g_A", "g_T")),
+        config=RevolutionBackendConfig(
+            search_mode="revolution_qd",
+            qd_archive_type="cvt",
+            qd_grid_axes=("g_A", "g_T"),
+            qd_cvt_axes=("seq_ratio", "g_A", "g_T"),
+            qd_cvt_warmup_successes=9,
+            qd_descriptor_profile="hybrid_seq_default",
+        ),
         base_save_path=str(tmp_path / "exp"),
     )
     backend.initialize()
     assert isinstance(backend.engine, _FakeQDEngine)
     assert captured["kwargs"]["qd_grid_axes"] == ("g_A", "g_T")
+    assert captured["kwargs"]["qd_cvt_axes"] == ("seq_ratio", "g_A", "g_T")
+    assert captured["kwargs"]["qd_cvt_warmup_successes"] == 9
+    assert captured["kwargs"]["qd_descriptor_profile"] == "hybrid_seq_default"
     assert captured["kwargs"]["qd_cell_reservoir"] == 2
     assert captured["kwargs"]["qd_descriptor_file"] is None
     assert captured["kwargs"]["problem_spec"].problem_name == "Prob001"

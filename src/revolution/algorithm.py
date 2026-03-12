@@ -144,6 +144,15 @@ class Heuristic:
     :type ppa_success: bool
     :param ppa_metrics: The PPA metrics obtained from synthesis (if applicable).
     :type ppa_metrics: dict[str, float]
+    :param structural_metrics: Coarse structural descriptor metrics attached by
+        evaluation when available.
+    :type structural_metrics: dict[str, float]
+    :param physical_metrics: Physical descriptor metrics attached by evaluation
+        when available.
+    :type physical_metrics: dict[str, float]
+    :param descriptor_values: Descriptor-axis values already materialized for
+        QD archive insertion or reporting.
+    :type descriptor_values: dict[str, float]
     :param code_file_path: The file path where the Verilog code is saved.
     :type code_file_path: str
     :param strategy: The evolutionary strategy used to generate this heuristic.
@@ -185,6 +194,10 @@ class Heuristic:
         self.synthesis_functionality: bool = False
         self.ppa_success: bool = False
         self.ppa_metrics: dict[str, float] = {}
+        self.structural_metrics: dict[str, float] = {}
+        self.physical_metrics: dict[str, float] = {}
+        self.descriptor_values: dict[str, float] = {}
+        self.quality_score: float = score
         # File path to the code for evaluation purposes
         self.code_file_path: str = ""
         self.strategy: EvolStrategyMethod = strategy  # Strategy used to generate this heuristic, e.g., "initial", "M-F", "C-F", etc. (Total of 6 strategies + "initial")
@@ -914,6 +927,17 @@ class EoHEngine:
             cand.ppa_success = True
             cand.ppa_metrics = synth_results["ppa_metrics"]
             cand.score = self._calculate_fitness_score(cand)
+            cand.quality_score = cand.score
+            if isinstance(synth_results.get("structural_metrics"), dict):
+                cand.structural_metrics = {
+                    str(key): float(value)
+                    for key, value in synth_results["structural_metrics"].items()
+                }
+            if isinstance(synth_results.get("physical_metrics"), dict):
+                cand.physical_metrics = {
+                    str(key): float(value)
+                    for key, value in synth_results["physical_metrics"].items()
+                }
             cand.feedback = (
                 "Functionality OK and Synthesis OK. Now focus on improving PPA metrics while "
                 "preserving functionality. PPA metrics (tns/wns/eff_clk_period: ns, power: W, area: um^2): "

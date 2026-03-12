@@ -27,6 +27,8 @@ class QDArchive(Protocol):
 
     def occupied_count(self) -> int: ...
 
+    def entries(self) -> dict[str, Any]: ...
+
     def insert(
         self,
         candidate_id: str,

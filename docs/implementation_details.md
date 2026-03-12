@@ -44,6 +44,8 @@ The current QD implementation is staged:
 
 - `search_mode=revolution_qd` is exposed through `run_backend.py` and the `revolution` backend adapter.
 - `grid` archive support is the first active runtime path.
+- `cvt` archive support now has an initial runtime path with warm-up buffering,
+  frozen scaling, centroid generation, and nearest-centroid insertion.
 - grid runtime phase selection now resolves as explicit override first, then
   benchmark defaults from `ProblemSpec`, then local fallback.
 - grid `success_view` sampling now uses archive elites plus a bounded per-cell
@@ -52,15 +54,18 @@ The current QD implementation is staged:
 - `qd_descriptor_file` can now define grid-axis bin/bounds specs in addition to
   descriptor profiles, so grid experiments can move beyond the uniform
   `[-1, 1]` gain-axis fallback.
-- `cvt` support has CLI/config scaffolding plus archive-planning substrate, but full runtime CVT integration is still pending.
+- CVT/runtime parity is still incomplete: reporting artifacts, visualization,
+  and completion-grade live smokes remain staged work.
 
 The QD substrate currently lives under `src/revolution/qd/`:
 
-- `archive.py`: grid archive insertion and replacement contract
+- `archive.py`: grid and CVT archive insertion/replacement contracts, including
+  CVT warm-up/freeze scaling
 - `scheduler.py`: linear fail-share and fill/improve budget split
 - `scoring.py`: exact weighted PPA quality score, gain axes, repair score, hash normalization
 - `descriptors.py`: descriptor registry and profile resolution
-- `engine.py`: grid-first runtime engine that reuses existing prompt builders, diff application, evaluation, and logger wiring
+- `engine.py`: archive-selectable QD runtime engine that reuses existing prompt
+  builders, diff application, evaluation, and logger wiring
 
 ## Evaluation stack
 

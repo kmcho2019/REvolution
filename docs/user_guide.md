@@ -121,6 +121,8 @@ Current feature status:
 
 - `grid` is the active first runtime path and now has archive, scheduler, and
   benchmark-aware phase-mode runtime wiring.
+- `cvt` now has an initial runtime path with warm-up buffering, frozen scaling,
+  and nearest-centroid insertion over configured CVT axes.
 - `auto` per-phase generation-mode selection now consults
   `ProblemSpec.phase_generation_defaults`, while explicit CLI/config overrides
   still take precedence.
@@ -129,7 +131,8 @@ Current feature status:
 - `qd_descriptor_file` may now define both `profiles:` and `grid_axes:` so the
   same YAML can control descriptor selection and per-axis grid bin/bounds
   settings.
-- `cvt` is exposed in the config surface but full runtime integration is still pending.
+- Live completion-grade smokes for both grid and CVT are still pending, and
+  reporting/artifact parity is not finished yet.
 - The authoritative detailed status lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.
 

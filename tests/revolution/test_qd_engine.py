@@ -165,20 +165,55 @@ def test_qd_engine_replacement_pushes_previous_elite_into_reservoir(tmp_path, mo
     assert prior in engine.success_pool
 
 
-def test_qd_engine_rejects_non_grid_archive_runtime(monkeypatch):
+def test_qd_engine_builds_cvt_archive_runtime(monkeypatch, tmp_path):
     monkeypatch.setattr(
         "revolution.algorithm.EoHEngine.load_problem_description",
         lambda self: "desc",
     )
-    with pytest.raises(NotImplementedError, match="grid only"):
-        QDEngine(
-            benchmark_name="Bench",
-            problem_name="Prob",
-            llm_interface=_DummyLLM(),
-            verilog_evaluator=_DummyEval(),
-            synthesis_evaluator=_DummySynth(),
-            qd_archive_type="cvt",
-        )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="cvt",
+        qd_num_cells=8,
+        qd_cvt_axes=("g_A", "g_T"),
+        qd_cvt_warmup_successes=1,
+    )
+    assert engine.success_archive.archive_type == "cvt"
+    assert tuple(engine.success_archive.axes) == ("g_A", "g_T")
+
+
+def test_qd_engine_uses_cvt_axes_for_descriptor_tuple(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="cvt",
+        qd_num_cells=8,
+        qd_cvt_axes=("seq_ratio", "g_A"),
+        qd_cvt_warmup_successes=1,
+    )
+    cand = Heuristic("t", "module m; endmodule", "", score=0.5, generation=0, status="success")
+    cand.ppa_success = True
+    cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    cand.structural_metrics = {"seq_ratio": 0.25}
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+
+    descriptors = engine._descriptor_tuple(cand)
+
+    assert descriptors is not None
+    assert descriptors[0] == pytest.approx(0.25)
+    assert descriptors[1] == pytest.approx(0.1)
 
 
 def test_qd_engine_builds_grid_archive_from_descriptor_file(tmp_path, monkeypatch):

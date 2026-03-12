@@ -11,14 +11,14 @@ from typing import Any, Literal, cast
 
 from revolution.algorithm import EoHEngine, EvolStrategyMethodFail, EvolStrategyMethodSuccess, Heuristic
 from revolution.logging import EoHLogger
-from revolution.qd.archive import GridArchive, GridAxisSpec
-from revolution.qd.descriptors import resolve_grid_axis_specs
+from revolution.qd.archive import CVTArchive, GridArchive, GridAxisSpec
+from revolution.qd.descriptors import extract_descriptor_values, resolve_descriptor_axes, resolve_grid_axis_specs
 from revolution.qd.scoring import compute_ppa_gains
 from revolution.qd.scheduler import split_qd_budget
 
 
 class QDEngine(EoHEngine):
-    """Grid-first QD engine that reuses the existing REvolution prompt/eval stack."""
+    """Archive-selectable QD engine that reuses the existing REvolution stack."""
 
     def __init__(
         self,
@@ -27,8 +27,12 @@ class QDEngine(EoHEngine):
         qd_num_cells: int = 64,
         qd_fill_target_fraction: float = 0.25,
         qd_cell_reservoir: int = 2,
+        qd_cvt_warmup_successes: int | None = None,
+        qd_descriptor_profile: str | None = None,
+        qd_descriptor_axes: tuple[str, ...] = (),
         qd_descriptor_file: str | None = None,
         qd_grid_axes: tuple[str, ...] = (),
+        qd_cvt_axes: tuple[str, ...] = (),
         qd_fail_generation_mode: str = "auto",
         qd_seed_generation_mode: str = "auto",
         qd_backfill_generation_mode: str = "auto",
@@ -41,18 +45,18 @@ class QDEngine(EoHEngine):
         self.qd_num_cells = max(1, int(qd_num_cells))
         self.qd_fill_target_fraction = float(qd_fill_target_fraction)
         self.qd_cell_reservoir = max(0, int(qd_cell_reservoir))
+        self.qd_cvt_warmup_successes = qd_cvt_warmup_successes
+        self.qd_descriptor_profile = qd_descriptor_profile
+        self.qd_descriptor_axes = tuple(qd_descriptor_axes)
         self.qd_descriptor_file = qd_descriptor_file
         self.qd_grid_axes = tuple(qd_grid_axes) if qd_grid_axes else self._default_grid_axes()
+        self.qd_cvt_axes = tuple(qd_cvt_axes)
         self.qd_fail_generation_mode = qd_fail_generation_mode
         self.qd_seed_generation_mode = qd_seed_generation_mode
         self.qd_backfill_generation_mode = qd_backfill_generation_mode
         self.qd_refine_generation_mode = qd_refine_generation_mode
         self.qd_crossover_generation_mode = qd_crossover_generation_mode
-        if self.qd_archive_type != "grid":
-            raise NotImplementedError(
-                "QDEngine currently supports qd_archive_type=grid only. CVT lands in Stage 4."
-            )
-        self.success_archive = self._build_grid_archive()
+        self.success_archive = self._build_archive()
         self.success_reservoir: dict[str, deque[Heuristic]] = {}
 
     def _default_grid_axes(self) -> tuple[str, ...]:
@@ -75,6 +79,38 @@ class QDEngine(EoHEngine):
             )
         ]
         return GridArchive(axes)
+
+    def _build_cvt_archive(self) -> CVTArchive:
+        circuit_type = (
+            self.problem_spec.circuit_type
+            if self.problem_spec is not None
+            else ("sequential" if self.ref_ppa_metrics.get("eff_clk_period", 0.0) else "combinational")
+        )
+        axes = resolve_descriptor_axes(
+            profile_name=self.qd_descriptor_profile,
+            explicit_axes=self.qd_cvt_axes or self.qd_descriptor_axes or None,
+            descriptor_file=self.qd_descriptor_file,
+            archive_type="cvt",
+            circuit_type=circuit_type,
+        )
+        return CVTArchive(
+            axes=axes,
+            num_cells=self.qd_num_cells,
+            warmup_successes=self.qd_cvt_warmup_successes,
+        )
+
+    def _build_archive(self) -> GridArchive | CVTArchive:
+        if self.qd_archive_type == "grid":
+            return self._build_grid_archive()
+        if self.qd_archive_type == "cvt":
+            return self._build_cvt_archive()
+        raise ValueError(f"Unsupported qd_archive_type '{self.qd_archive_type}'.")
+
+    def _archive_axes(self) -> tuple[str, ...]:
+        if self.qd_archive_type == "grid":
+            return self.qd_grid_axes
+        archive_axes = getattr(self.success_archive, "axes", ())
+        return tuple(str(axis) for axis in archive_axes)
 
     def _phase_mode(self, phase: str) -> Literal["whole", "diff"]:
         override = {
@@ -101,11 +137,20 @@ class QDEngine(EoHEngine):
     def _descriptor_tuple(self, candidate: Heuristic) -> tuple[float, ...] | None:
         if candidate.status != "success" or not candidate.ppa_success:
             return None
+        axes = self._archive_axes()
+        if not axes:
+            return None
         gains = compute_ppa_gains(candidate.ppa_metrics, self.ref_ppa_metrics)
-        return tuple(float(gains.get(axis, 0.0)) for axis in self.qd_grid_axes)
+        descriptor_metrics: dict[str, float] = {}
+        descriptor_metrics.update(getattr(candidate, "structural_metrics", {}) or {})
+        descriptor_metrics.update(getattr(candidate, "physical_metrics", {}) or {})
+        descriptor_metrics.update(getattr(candidate, "descriptor_values", {}) or {})
+        descriptor_metrics.update(gains)
+        descriptor_values = extract_descriptor_values(descriptor_metrics, axes)
+        return tuple(float(descriptor_values.get(axis, 0.0)) for axis in axes)
 
     def _rebuild_archive_from_success_pool(self) -> None:
-        self.success_archive = self._build_grid_archive()
+        self.success_archive = self._build_archive()
         self.success_reservoir = {}
         for cand in self.success_pool:
             descriptors = self._descriptor_tuple(cand)
@@ -526,7 +571,7 @@ class QDEngine(EoHEngine):
                 self.ref_ppa_metrics,
                 self.generation_mode,
             )
-            self.logger.meta_strategy_name = f"{self.strategy_selection_method}_qd_grid"
+            self.logger.meta_strategy_name = f"{self.strategy_selection_method}_qd_{self.qd_archive_type}"
             self.initialize_population()
         except Exception as exc:
             print(f"Critical error during QD initialization: {exc}")

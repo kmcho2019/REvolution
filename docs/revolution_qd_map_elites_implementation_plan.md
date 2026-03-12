@@ -38,16 +38,17 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Branch: `feat/revolution-qd-map-elites`
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
-- Current stage: `Stage 3`
+- Current stage: `Stage 4`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
   - `cvdp` 1.0.2 limited to `cid002` and `cid003`
   - `RealBench` module subsets
-- Current backend status: Stage 3 grid-runtime path is live with benchmark-
-  default phase-mode wiring, a bounded per-cell `success_view` reservoir, and
-  configurable grid-axis bin loading; CVT, reporting parity, and benchmark-
-  expansion stages remain pending
+- Current backend status: grid and initial CVT runtime paths are live with
+  archive-backed success-state handling, benchmark-default phase-mode wiring, a
+  bounded per-cell `success_view` reservoir, configurable grid-axis bin
+  loading, and frozen-scaler CVT warm-up; reporting parity, operator work, and
+  completion-grade live validation still remain pending
 
 ## Worktree Info
 
@@ -183,8 +184,9 @@ explicit, evaluate whether it was appropriate, and keep the roadmap honest.
   parser/config, scoring, descriptor, archive, scheduler, and grid runtime
   selection paths are covered by focused unit tests and backend tests.
 - Moderate evidence:
-  top-level docs and immediate feature docs already reflect the current staged
-  QD surface instead of describing CVT/runtime parity that has not landed yet.
+  top-level docs and immediate feature docs now reflect the current staged QD
+  surface, including initial CVT runtime support and the remaining reporting/
+  smoke gaps.
 - Weak evidence:
   live end-to-end vLLM smoke validation is still incomplete because the shared
   endpoint did not yield a fast first-generation success/failure result in the
@@ -202,13 +204,14 @@ with that requirement.
   and source areas for high-level orientation before they dive into details.
 - `docs/user_guide.md`, `docs/module_structure.md`,
   `docs/implementation_details.md`, and `docs/REvolution_specification.md` all
-  mention the QD feature surface and the current grid-first, CVT-pending state.
+  mention the QD feature surface and now describe the current grid-plus-initial-
+  CVT state instead of the older grid-only checkpoint.
 
 Documentation risk to watch:
 
 - These docs are directionally correct for the current branch, but they should
-  be refreshed again when CVT lands and when reporting/artifact parity is
-  added.
+  be refreshed again when reporting/artifact parity, visualization outputs, and
+  richer QD operator routing are added.
 
 ## Validation Workflow
 
@@ -283,11 +286,11 @@ Documentation risk to watch:
 
 ### Stage 4: CVT Backend With Parity Surface
 
-- [ ] Implement CVT warm-up, scaler fit, frozen centroids, and reinsertion.
+- [x] Implement CVT warm-up, scaler fit, frozen centroids, and reinsertion.
 - [ ] Keep grid/CVT on equal footing in summary, artifacts, and tests.
-- [ ] Add CVT-specific tests and parity tests.
+- [x] Add CVT-specific tests and parity tests.
 - [ ] Run RTLLM and VerilogEval CVT smokes.
-- [ ] Update docs and plan with Stage 4 validation notes.
+- [x] Update docs and plan with Stage 4 validation notes.
 - [ ] Commit Stage 4.
 
 ### Stage 5: QD Operators And Flexible Diff Usage
@@ -495,7 +498,8 @@ Documentation risk to watch:
 - Notes:
   - `revolution_backend.py` now selects `QDEngine` when
     `search_mode=revolution_qd`
-  - current runtime support is grid-only; `cvt` remains staged work for Stage 4
+  - this checkpoint was still grid-only; later Stage 4 work removes that
+    limitation and adds initial CVT runtime support
   - top-level docs refreshed at this checkpoint:
     - `README.md`
     - `GUIDELINES.md`
@@ -563,6 +567,48 @@ Documentation risk to watch:
   - second Stage 3 runtime/docs checkpoint commit:
     - `4a82690a1f` `feat(qd): wire grid runtime path and refresh docs`
 
+### Stage 4
+
+- Date: `2026-03-12`
+- In-progress implementation:
+  - added `CVTArchive` with warm-up buffering, frozen z-score scaling, relaxed
+    centroid generation, warm-up reinsertion, and nearest-centroid replacement
+    semantics
+  - removed the `grid only` runtime guard from `QDEngine` and switched archive
+    construction to backend selection (`grid` or `cvt`)
+  - threaded `qd_cvt_axes`, `qd_cvt_warmup_successes`,
+    `qd_descriptor_profile`, and `qd_descriptor_axes` through the revolution
+    backend into `QDEngine`
+  - generalized descriptor extraction in `QDEngine` so CVT axes can draw from
+    gains plus any structural/physical metrics already attached to a candidate
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_archive.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py tests/revolution/test_defaults.py tests/scripts/test_run_backend.py`
+  - Result: `39 passed in 0.99s`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `312 passed in 2.80s`
+  - `/workspace/.venv/bin/ruff check src/revolution/qd/archive.py src/revolution/qd/engine.py src/revolution/qd/__init__.py src/revolution/backends/revolution_backend.py src/revolution/algorithm.py tests/revolution/test_qd_archive.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py`
+  - Result: `All checks passed!`
+  - `/workspace/.venv/bin/python -m pyright src/revolution/qd/archive.py src/revolution/qd/engine.py src/revolution/backends/revolution_backend.py`
+  - Result: `0 errors, 0 warnings`
+- Smoke tests:
+  - preflight command:
+    - `curl -s http://host.docker.internal:8000/v1/models`
+  - CVT runtime smoke command:
+    - `timeout 180s bash -lc 'OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --qd_cvt_axes g_A g_T --qd_cvt_warmup_successes 1 --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --temperature 0.3 --top_p 0.95 --max_tokens 1024 --save_path /workspace/.tmp_qd_smokes/cvt_smoke --no-backend_subdir'`
+  - result:
+    - vLLM preflight succeeded and the CVT run started
+    - the runtime smoke timed out after `180s` without a completion signal
+    - CVT smoke remains blocked, not passed
+- Notes:
+  - CVT runtime support is now real, but archive-reporting parity is still not
+    implemented
+  - the current runtime can reliably use gain axes in both grid and CVT mode;
+    richer structural/physical axes still depend on evaluator-side metric
+    plumbing that is not fully wired through the legacy `EoHEngine` path yet
+  - this stage reduces a major config/runtime mismatch, but it does not close
+    the remaining duplicated generation-loop seam between `EoHEngine` and
+    `QDEngine`
+
 ## Debt Review
 
 ### Stage 0
@@ -624,6 +670,19 @@ Documentation risk to watch:
   acceptable for the current gain-axis-heavy grid checkpoint, but not for final
   paper-grade descriptor experiments.
 
+### Stage 4
+
+- CVT archive logic now lives behind the same archive-selection surface as
+  grid, which removes an obvious config/runtime mismatch from the branch.
+- The CVT implementation deliberately keeps scaling frozen after warm-up. That
+  matches the original intent and avoids archive-geometry drift.
+- The main remaining debt is still architectural rather than geometric:
+  `QDEngine` duplicates request/materialization flow that should eventually be
+  shared with `EoHEngine`.
+- Descriptor richness remains partly aspirational in the runtime path. The
+  archive can consume structural or physical axes, but the legacy engine path
+  still surfaces gains more reliably than deeper synthesis-derived metrics.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -676,6 +735,20 @@ Documentation risk to watch:
   QD-specific operators, CVT parity, and reducing `QDEngine` loop duplication
   before the architecture hardens further.
 
+### Stage 4
+
+- The branch is now closer to the original intent because both `grid` and
+  `cvt` exist as real runtime archive choices instead of one being config-only.
+- The CVT warm-up/freeze implementation is aligned with the original plan's
+  requirement to avoid moving cell boundaries throughout the run.
+- The branch still has an intent gap around descriptor realism: the design
+  allows structural/physical axes, but the end-to-end runtime still needs
+  better evaluator-side metric plumbing before those axes are equally strong in
+  live runs.
+- The remaining divergence is therefore acceptable but explicit: CVT geometry
+  is implemented, while reporting parity and richer descriptor/evaluator
+  integration remain staged follow-through.
+
 ## Roadmap Extension
 
 This roadmap extends the original stage list with the concrete findings from
@@ -696,11 +769,12 @@ implementation and testing so far.
 
 ### Stage 4 revision
 
-- Keep CVT as the next major milestone, but require a shared archive interface
-  that can support both:
-  - grid debug axes and fixed bins
-  - CVT warm-up/freeze centroids over the full descriptor space
-- Add parity tests that compare shared archive behavior across grid and CVT:
+- Initial CVT runtime support is now landed. The next Stage 4 follow-through is
+  parity work:
+  - shared reporting/artifact emission across grid and CVT
+  - archive metadata export for centroids/scaler state
+  - more convincing live-smoke completion evidence on the shared vLLM endpoint
+- Keep parity tests that compare shared archive behavior across grid and CVT:
   insertion semantics, quality-based replacement, exported metadata shape, and
   summary compatibility.
 
@@ -742,9 +816,9 @@ implementation and testing so far.
 - `6c987af52a` `feat(qd): honor problem defaults and add success reservoirs`
 - `dc62a11c2b` `docs(qd): document single sign-off commit rule`
 - `d5a7176628` `feat(qd): add configurable grid-axis bin loading`
-- `05f0da6dd9` `chore(qd): record validation status and clean branch typing`
-- Stage 3 remains in progress; live-smoke closure, engine-seam cleanup, and
-  grid-bin/CVT/reporting work are still pending.
+- `ed3e933f61` `chore(qd): record validation status and clean branch typing`
+- Stage 3 follow-through and Stage 4 parity work are still pending: live-smoke
+  closure, engine-seam cleanup, and grid/CVT reporting parity are not done yet.
 
 ## Deferred Follow-Ups
 

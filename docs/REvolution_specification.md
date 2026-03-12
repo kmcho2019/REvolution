@@ -82,8 +82,9 @@ The intended QD state is:
 
 Current branch status:
 
-- grid archive substrate and a first grid runtime path are in progress
-- CVT support is staged after grid stabilization
+- grid archive substrate and runtime path are implemented
+- CVT now has an initial warm-up/freeze runtime path
+- reporting/artifact parity and richer QD operators remain staged work
 - the living implementation record is maintained in
   `docs/revolution_qd_map_elites_implementation_plan.md`
 
@@ -111,8 +112,9 @@ Current branch status:
 | `PromptStore`        | `src/revolution/prompt_store.py` | Prompt templating and profile management.                                                           |
 | `EoHLogger`          | `src/revolution/logging.py`      | JSONL generation log + final summary.                                                               |
 | `StreamRedirector`   | `src/revolution/utils.py`        | Capture stdout/stderr to per-problem log files.                                                     |
-| `QDEngine`           | `src/revolution/qd/engine.py`    | Experimental grid-first archive-backed search path for `revolution_qd`.                             |
+| `QDEngine`           | `src/revolution/qd/engine.py`    | Experimental archive-backed search path for `revolution_qd`, currently supporting grid and CVT.    |
 | `GridArchive`        | `src/revolution/qd/archive.py`   | Grid MAP-Elites archive for reduced-axis QD runs.                                                   |
+| `CVTArchive`         | `src/revolution/qd/archive.py`   | Warm-up/freeze CVT archive with frozen scaling and nearest-centroid cell assignment.                |
 | `split_qd_budget`    | `src/revolution/qd/scheduler.py` | Linear fail-share and fill/improve budget split helper.                                             |
 | QD scoring helpers   | `src/revolution/qd/scoring.py`   | Weighted PPA quality score, gain axes, repair score, code hashing.                                  |
 | Descriptor registry  | `src/revolution/qd/descriptors.py` | Descriptor profiles, axis resolution, and requirements metadata.                                  |
