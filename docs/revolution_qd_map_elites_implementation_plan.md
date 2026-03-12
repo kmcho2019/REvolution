@@ -47,8 +47,9 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Current backend status: grid and initial CVT runtime paths are live with
   archive-backed success-state handling, benchmark-default phase-mode wiring, a
   bounded per-cell `success_view` reservoir, configurable grid-axis bin
-  loading, and frozen-scaler CVT warm-up; reporting parity, operator work, and
-  completion-grade live validation still remain pending
+  loading, frozen-scaler CVT warm-up, and initial archive-state artifact
+  emission; reporting parity, operator work, and completion-grade live
+  validation still remain pending
 
 ## Worktree Info
 
@@ -313,7 +314,7 @@ Documentation risk to watch:
 
 ### Stage 7: Archive Logging, Reporting, Visualization, And Descriptor Study
 
-- [ ] Emit `archive_history.jsonl`, `archive_cells.csv`,
+- [x] Emit `archive_history.jsonl`, `archive_cells.csv`,
       `archive_summary.json`, `qd_metrics.json`, and
       `grid_layout.json` or `centroids.json`.
 - [ ] Add generation metrics, per-cell exports, and visualization outputs.
@@ -611,6 +612,27 @@ Documentation risk to watch:
   - first Stage 4 runtime/docs checkpoint commit:
     - `c03242b784` `feat(qd): add initial cvt archive runtime support`
 
+### Stage 7
+
+- Date: `2026-03-12`
+- Partial implementation checkpoint:
+  - added engine-level archive artifact emission for both grid and CVT runs:
+    `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`,
+    `qd_metrics.json`, and `grid_layout.json` or `centroids.json`
+  - archive history now records per-generation occupancy, coverage, QD score,
+    best/mean quality, replacement counts, and gain aggregates
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_engine.py tests/revolution/test_qd_archive.py tests/revolution/test_revolution_backend.py tests/scripts/test_archive_baseline.py tests/scripts/test_backend_comparison_report.py`
+  - Result: `35 passed in 1.11s`
+  - `/workspace/.venv/bin/ruff check src/revolution/qd/engine.py tests/revolution/test_qd_engine.py`
+  - Result: `All checks passed!`
+- Notes:
+  - this is engine-local artifact emission only; comparison-report integration,
+    visualization generation, and archive packaging awareness are still not
+    complete
+  - live smoke evidence was not rerun for this checkpoint because the change is
+    artifact emission rather than LLM request routing
+
 ## Debt Review
 
 ### Stage 0
@@ -685,6 +707,13 @@ Documentation risk to watch:
   archive can consume structural or physical axes, but the legacy engine path
   still surfaces gains more reliably than deeper synthesis-derived metrics.
 
+### Stage 7
+
+- The engine now emits the baseline archive-state files without requiring the
+  reporting scripts to infer archive shape from legacy summaries.
+- This reduces one parity gap between grid and CVT, but the reporting stack
+  still does not consume the new files as first-class inputs.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -750,6 +779,14 @@ Documentation risk to watch:
 - The remaining divergence is therefore acceptable but explicit: CVT geometry
   is implemented, while reporting parity and richer descriptor/evaluator
   integration remain staged follow-through.
+
+### Stage 7
+
+- The branch now partially satisfies the original “archive evolution as a
+  first-class output” goal because raw archive-state files are emitted from the
+  runtime itself.
+- The intent gap that remains is downstream consumption: the reporting scripts
+  and visual outputs still need to treat those files as primary artifacts.
 
 ## Roadmap Extension
 
@@ -820,6 +857,7 @@ implementation and testing so far.
 - `d5a7176628` `feat(qd): add configurable grid-axis bin loading`
 - `ed3e933f61` `chore(qd): record validation status and clean branch typing`
 - `c03242b784` `feat(qd): add initial cvt archive runtime support`
+- `855472eb70` `docs(qd): record stage 4 cvt checkpoint`
 - Stage 3 follow-through and Stage 4 parity work are still pending: live-smoke
   closure, engine-seam cleanup, and grid/CVT reporting parity are not done yet.
 

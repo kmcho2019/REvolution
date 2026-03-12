@@ -140,6 +140,9 @@ Current status on this feature branch:
   `grid_axes` bin/bounds specs for structural or physical grid experiments.
 - `cvt` now has an initial warm-up/freeze runtime path with nearest-centroid
   archive insertion.
+- QD runs now emit archive-state artifacts alongside the legacy summary/log
+  files: `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`,
+  `qd_metrics.json`, and `grid_layout.json` or `centroids.json`.
 - grid/CVT reporting parity, richer QD operators, and completion-grade live
   smokes are still staged work.
 - The detailed status and validation record lives in

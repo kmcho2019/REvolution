@@ -1,4 +1,7 @@
+import csv
+import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -247,3 +250,71 @@ def test_qd_engine_builds_grid_archive_from_descriptor_file(tmp_path, monkeypatc
     assert engine.success_archive.axes[0].bins == 3
     assert engine.success_archive.axes[0].lower_bound == pytest.approx(0.0)
     assert engine.success_archive.axes[0].upper_bound == pytest.approx(1.0)
+
+
+def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
+    engine = _engine(tmp_path, monkeypatch)
+    engine.logger = SimpleNamespace(log_dir=str(tmp_path / "artifacts"))
+    elite = Heuristic("elite", "module m; endmodule", "", score=0.6, generation=0, status="success")
+    elite.ppa_success = True
+    elite.code_file_path = str(tmp_path / "elite.sv")
+    elite.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+    engine.success_pool = [elite]
+    engine._rebuild_archive_from_success_pool()
+
+    snapshot = engine._build_qd_snapshot(inserted=1, replaced=0, budget=None, runtime_sec=0.1)
+    engine._write_qd_artifacts(snapshot)
+
+    history_path = tmp_path / "artifacts" / "archive_history.jsonl"
+    cells_path = tmp_path / "artifacts" / "archive_cells.csv"
+    summary_path = tmp_path / "artifacts" / "archive_summary.json"
+    layout_path = tmp_path / "artifacts" / "grid_layout.json"
+    metrics_path = tmp_path / "artifacts" / "qd_metrics.json"
+
+    assert history_path.is_file()
+    assert cells_path.is_file()
+    assert summary_path.is_file()
+    assert layout_path.is_file()
+    assert metrics_path.is_file()
+
+    history_entry = json.loads(history_path.read_text(encoding="utf-8").strip())
+    assert history_entry["archive_type"] == "grid"
+    assert history_entry["occupied_cells"] == 1
+
+    cell_rows = list(csv.DictReader(cells_path.open(encoding="utf-8")))
+    assert len(cell_rows) == 1
+    assert cell_rows[0]["candidate_id"] == elite.id
+
+
+def test_qd_engine_writes_cvt_layout_metadata(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="cvt",
+        qd_num_cells=4,
+        qd_cvt_axes=("g_A", "g_T"),
+        qd_cvt_warmup_successes=1,
+    )
+    engine.logger = SimpleNamespace(log_dir=str(tmp_path / "artifacts"))
+    cand = Heuristic("elite", "module m; endmodule", "", score=0.6, generation=0, status="success")
+    cand.ppa_success = True
+    cand.code_file_path = str(tmp_path / "elite.sv")
+    cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+
+    engine._insert_successes([cand])
+    engine._write_qd_artifacts(engine._build_qd_snapshot(inserted=1, replaced=0, budget=None))
+
+    layout_payload = json.loads((tmp_path / "artifacts" / "centroids.json").read_text(encoding="utf-8"))
+    assert layout_payload["archive_type"] == "cvt"
+    assert layout_payload["initialized"] is True
+    assert len(layout_payload["centroids"]) == 4

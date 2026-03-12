@@ -93,6 +93,9 @@ The engine writes everything necessary to reproduce a candidate:
 - Generated code and thoughts under `exp/<model>/<benchmark>/<problem>/Gen<idx>/<problem_sample_strategy>/`, where each candidate folder is self-contained (code, thought, diff artefacts, feedback) to avoid collisions during parallel evaluation.
 - Simulation logs, synthesis reports, and diff application traces (`*_diff_apply_error.json` with reason codes and diagnostics).
 - JSONL generation logs with per-candidate metadata and strategy stats.
+- QD archive-state artifacts for `revolution_qd` runs:
+  `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`,
+  `qd_metrics.json`, and `grid_layout.json` or `centroids.json`.
 - A final `<problem>_summary.json` containing aggregated metrics, champion details, reward histories, and token usage.
 
 Support scripts in `scripts/` load these artefacts to build tables, visualisations, or markdown reports.
