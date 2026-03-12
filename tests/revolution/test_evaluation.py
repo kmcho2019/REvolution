@@ -1,5 +1,7 @@
+import json
 import os
 import subprocess
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -615,10 +617,13 @@ def test_parse_ppa_log_various_cases(tmp_path):
     assert m2["wns"] == 0.0
     assert m2["power"] == 1.23
     assert m2["area"] == 42.0
+    physical = se._parse_openroad_physical_metrics(str(rpt2))
+    assert physical["utilization"] == 1.0
 
     # Missing report file handled gracefully
     m3 = se._parse_ppa_log(str(tmp_path / "missing.rpt"))
     assert m3["tns"] is None and m3["report_path"] is None
+    assert se._parse_openroad_physical_metrics(str(tmp_path / "missing.rpt")) == {}
 
 
 def test_evaluate_end_to_end_with_stubs(mocker, tmp_path):
@@ -674,11 +679,17 @@ def test_evaluate_end_to_end_with_stubs(mocker, tmp_path):
     assert results["synthesis_success"] is True
     assert results["synthesis_functionality_success"] is True
     assert results["ppa_success"] is True
+    assert results["physical_metrics"] == {}
+    assert results["metrics_sidecar_path"] == rpt.replace(".rpt", ".metrics.json")
     ppa = results["ppa_metrics"]
     assert isinstance(ppa, dict), f"ppa_metrics should be a dict, got {type(ppa)}"
 
     assert ppa.get("area") == 256.0
     assert ppa.get("power") == 0.50
+    sidecar = json.loads(Path(results["metrics_sidecar_path"]).read_text())
+    assert sidecar["report_path"] == rpt
+    assert sidecar["ppa_metrics"]["area"] == 256.0
+    assert sidecar["physical_metrics"] == {}
 
 
 def test_create_yosys_script_replacements(tmp_path):

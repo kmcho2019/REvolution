@@ -398,7 +398,7 @@ Documentation risk to watch:
   `rtl_core`, `rtl_phys`, `rtl_phys_cts`, `hybrid_seq_default`,
   `hybrid_comb_default`, `hybrid_phys_seq`
 - [x] Add descriptor probe script for extraction coverage and experiment logging
-- [ ] Add machine-readable physical-metric sidecars for OpenROAD-backed
+- [x] Add machine-readable physical-metric sidecars for OpenROAD-backed
       descriptor extraction parity
 
 ### Reporting
@@ -933,6 +933,23 @@ Documentation risk to watch:
     containers, and generic strategy bookkeeping
   - `uv tool run ty` also surfaces transient environment-resolution issues for
     some third-party and test imports when run from the tool sandbox
+- OpenROAD metrics sidecar follow-through:
+  - `src/revolution/evaluation.py` now emits `physical_metrics` and
+    `metrics_sidecar_path` from the legacy synthesis evaluator
+  - the sidecar is written as `<report_base>_synthesis_report.metrics.json`
+    beside the existing `.rpt` and `.ppa` files
+  - current guaranteed coverage is lightweight but real:
+    - `utilization` is parsed from the OpenROAD report text when present
+    - regex hooks for `wirelength`, `cts_buffer_count`,
+      `repair_buffer_count`, and `hold_buffer_count` now exist and will emit
+      values if the report contains those metrics
+  - focused validation:
+    - `/workspace/.venv/bin/python -m pytest tests/revolution/test_evaluation.py tests/revolution/test_candidate_evaluator.py tests/revolution/test_candidate_evaluator_parity.py`
+    - Result: `43 passed in 1.82s`
+    - `/workspace/.venv/bin/ruff check src/revolution/evaluation.py tests/revolution/test_evaluation.py`
+    - Result: `All checks passed!`
+    - `/workspace/.venv/bin/python -m pyright src/revolution/evaluation.py`
+    - Result: `0 errors, 0 warnings`
 
 ## Debt Review
 
@@ -991,9 +1008,11 @@ Documentation risk to watch:
 - New QD helpers added in this branch now have type hints and short docstrings
   for the public descriptor/grid-spec surface, but the broader repo still has
   uneven docstring/type coverage in older modules.
-- Physical descriptor plumbing still lags the registry/config surface. That is
-  acceptable for the current gain-axis-heavy grid checkpoint, but not for final
-  paper-grade descriptor experiments.
+- Physical descriptor plumbing is now better grounded because the legacy
+  synthesis evaluator emits a machine-readable metrics sidecar and returns
+  `physical_metrics`. The remaining gap is metric richness, not total absence:
+  utilization is reliable now, while deeper OpenROAD metrics still depend on
+  what the report text exposes.
 - The Stage 3 smoke gate is now satisfied. Minimal accelerated grid runs on
   RTLLM and VerilogEval complete end-to-end; the remaining Stage 3 debt is
   architectural cleanup, not runtime reachability.
@@ -1274,9 +1293,8 @@ implementation and testing so far.
 - `5c669d1c1f` `feat(qd): add repeatable vllm smoke harness`
 - `7777665902` `refactor(qd): share offspring materialization across engines`
 - Bounded grid/CVT smoke closure is now complete.
-- The main remaining debt is engine-seam cleanup, `ty` cleanup, and
-  machine-readable OpenROAD metric sidecars rather than basic runtime
-  reachability.
+- The main remaining debt is engine-seam cleanup and broader `algorithm.py`
+  type cleanup rather than basic runtime reachability.
 
 ## Deferred Follow-Ups
 

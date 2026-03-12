@@ -1,3 +1,4 @@
+import json
 import os
 import re
 import shutil
@@ -483,6 +484,8 @@ class SynthesisEvaluator:
                 "ppa_success": False,
                 "synthesis_log": synthesis_log,
                 "ppa_metrics": None,
+                "physical_metrics": {},
+                "metrics_sidecar_path": None,
             }
 
         # After synthesis add post-synthesis functionality test
@@ -504,9 +507,19 @@ class SynthesisEvaluator:
                 "ppa_success": False,
                 "synthesis_log": f"{synthesis_log}\n\n--- Post-Synthesis Functional Verification Log ---\n{func_check_log}",
                 "ppa_metrics": None,
+                "physical_metrics": self._parse_openroad_physical_metrics(
+                    synthesis_log
+                ),
+                "metrics_sidecar_path": None,
             }
 
         ppa_metrics = self._parse_ppa_log(synthesis_log)
+        physical_metrics = self._parse_openroad_physical_metrics(synthesis_log)
+        metrics_sidecar_path = self._write_metrics_sidecar(
+            synthesis_log,
+            ppa_metrics=ppa_metrics,
+            physical_metrics=physical_metrics,
+        )
 
         return {
             "synthesis_success": True,
@@ -514,6 +527,8 @@ class SynthesisEvaluator:
             "ppa_success": True,
             "synthesis_log": synthesis_log,
             "ppa_metrics": ppa_metrics,
+            "physical_metrics": physical_metrics,
+            "metrics_sidecar_path": metrics_sidecar_path,
         }
 
     def _run_synthesis(
@@ -849,3 +864,64 @@ class SynthesisEvaluator:
             "area": area,
             "report_path": ppa_path,
         }
+
+    def _parse_openroad_physical_metrics(self, report_path: str) -> dict[str, float]:
+        """Parse lightweight OpenROAD physical metrics from the synthesis report."""
+        metrics: dict[str, float] = {}
+        try:
+            with open(report_path, "r", encoding="utf-8") as file:
+                report_text = file.read()
+        except FileNotFoundError:
+            return metrics
+
+        utilization_match = re.search(
+            r"Design area\s+[-+0-9.eE]+\s+u\^2\s+([-+0-9.eE]+)%\s+utilization",
+            report_text,
+            re.IGNORECASE,
+        )
+        if utilization_match:
+            try:
+                metrics["utilization"] = float(utilization_match.group(1))
+            except ValueError:
+                pass
+
+        regex_extractors: dict[str, tuple[str, int]] = {
+            "wirelength": (r"wire\s*length[^0-9-+]*([-+0-9.eE]+)", 1),
+            "cts_buffer_count": (
+                r"(?:cts|clock tree)[^\\n]*buffer(?:_count)?[^0-9-+]*([-+0-9.eE]+)",
+                1,
+            ),
+            "repair_buffer_count": (
+                r"repair_design_buffer_count[^0-9-+]*([-+0-9.eE]+)",
+                1,
+            ),
+            "hold_buffer_count": (r"hold_buffer_count[^0-9-+]*([-+0-9.eE]+)", 1),
+        }
+        for metric_name, (pattern, group_idx) in regex_extractors.items():
+            match = re.search(pattern, report_text, re.IGNORECASE)
+            if match is None:
+                continue
+            try:
+                metrics[metric_name] = float(match.group(group_idx))
+            except ValueError:
+                continue
+
+        return metrics
+
+    def _write_metrics_sidecar(
+        self,
+        report_path: str,
+        *,
+        ppa_metrics: dict[str, float | str | None],
+        physical_metrics: dict[str, float],
+    ) -> str | None:
+        """Write a machine-readable sidecar for parsed OpenROAD/PPA metrics."""
+        sidecar_path = report_path.replace(".rpt", ".metrics.json")
+        payload = {
+            "report_path": report_path,
+            "ppa_metrics": ppa_metrics,
+            "physical_metrics": physical_metrics,
+        }
+        with open(sidecar_path, "w", encoding="utf-8") as handle:
+            json.dump(payload, handle, indent=2)
+        return sidecar_path
