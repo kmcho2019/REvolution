@@ -120,8 +120,8 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - [ ] Implement success archive insertion/replacement and `success_view`.
 - [x] Add grid-specific tests.
 - [ ] Run RTLLM and VerilogEval grid smokes.
-- [ ] Update docs and plan with Stage 3 validation notes.
-- [ ] Commit Stage 3.
+- [x] Update docs and plan with Stage 3 validation notes.
+- [x] Commit Stage 3.
 
 ### Stage 4: CVT Backend With Parity Surface
 
@@ -317,6 +317,8 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Notes:
   - this is the first Stage 3 checkpoint only; the backend is not yet running
     `revolution_qd` through the grid archive end-to-end
+  - first Stage 3 substrate commit:
+    - `efbf9b48d0` `feat(qd): add grid archive and linear scheduler substrate`
 
 ## Debt Review
 
@@ -407,7 +409,8 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - `32ea6f39e6` `docs(qd): bootstrap living implementation plan and worktree log`
 - `e91188281b` `feat(qd): add search mode and capability scaffolding`
 - `2268a7f81f` `feat(qd): add scoring and descriptor substrate`
-- Stage 3 is active; first archive/scheduler substrate commit is pending.
+- `efbf9b48d0` `feat(qd): add grid archive and linear scheduler substrate`
+- Stage 3 remains in progress; runtime engine wiring and smokes are still pending.
 
 ## Deferred Follow-Ups
 
