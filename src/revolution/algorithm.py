@@ -3225,6 +3225,80 @@ class EoHEngine:
                 sel_gen,
             )
 
+    def _initialize_logger(self, meta_strategy_name: str | None = None) -> None:
+        """Create the per-problem logger shared by classic and QD runs."""
+        self.logger = EoHLogger(
+            self.problem_name,
+            self.benchmark_name,
+            self.llm.model_name,
+            self.base_save_path,
+            self.ref_ppa_metrics,
+            self.generation_mode,
+        )
+        self.logger.meta_strategy_name = (
+            meta_strategy_name or self.strategy_selection_method
+        )
+
+    def _log_generation_stats(
+        self,
+        new_offspring: list[Heuristic],
+        gen_runtime: float,
+        fail_rewards_this_gen: defaultdict[str, float],
+        success_rewards_this_gen: defaultdict[str, float],
+        strategy_avg_selection_probabilities: dict[str, float]
+        | dict[str, dict[str, float]],
+    ) -> dict[str, int]:
+        """Log one generation and return the reset LLM usage snapshot."""
+        llm_stat_dict = asyncio.run(self.llm.get_and_reset_usage_stats())
+        llm_calls = llm_stat_dict.get("api_calls", 0)
+        llm_prompt_tokens = llm_stat_dict.get("prompt_tokens", 0)
+        llm_completion_tokens = llm_stat_dict.get("completion_tokens", 0)
+        llm_code_prompt_tokens = llm_stat_dict.get("code_prompt_tokens", 0)
+        llm_code_completion_tokens = llm_stat_dict.get("code_completion_tokens", 0)
+        llm_feedback_prompt_tokens = llm_stat_dict.get("feedback_prompt_tokens", 0)
+        llm_feedback_completion_tokens = llm_stat_dict.get(
+            "feedback_completion_tokens", 0
+        )
+        if self.logger:
+            self.logger.log_generation(
+                self.current_generation,
+                new_offspring,
+                gen_runtime,
+                llm_calls,
+                llm_prompt_tokens,
+                llm_completion_tokens,
+                llm_code_prompt_tokens,
+                llm_code_completion_tokens,
+                llm_feedback_prompt_tokens,
+                llm_feedback_completion_tokens,
+                llm_stat_dict,
+                fail_rewards_this_gen,
+                success_rewards_this_gen,
+                self.fail_strategy_stats,
+                self.success_strategy_stats,
+                strategy_avg_selection_probabilities,
+            )
+        else:
+            print(
+                "WARNING: Logger is not initialized. Generation statistics will not be logged."
+            )
+        return llm_stat_dict
+
+    def _finalize_run_summary(self, summary_population: list[Heuristic]) -> None:
+        """Finalize the run summary shared by classic and QD engines."""
+        if self.run_start_utc is None:
+            self.run_start_utc = datetime.datetime.now(datetime.timezone.utc)
+        total_runtime = time.time() - self.run_start_time
+        end_utc = datetime.datetime.now(datetime.timezone.utc)
+        if self.logger:
+            self.logger.finalize_summary(
+                self.run_start_utc,
+                end_utc,
+                total_runtime,
+                self.current_generation,
+                summary_population,
+            )
+
     # Allow per-request system-prompt selection
     def _get_generation_system_prompt(self, mode: Literal["whole","diff"] | None = None) -> str | None:
         """
@@ -3600,42 +3674,13 @@ class EoHEngine:
             self.population = next_gen_population
 
         gen_runtime = time.time() - self.gen_start_time
-        # get_and_reset_usage_stats is an async function, so we need to run it in the event loop
-        # This will reset the API call count and usage stats for the next generation
-        llm_stat_dict = asyncio.run(self.llm.get_and_reset_usage_stats())
-        llm_calls = llm_stat_dict.get("api_calls", 0)
-        llm_prompt_tokens = llm_stat_dict.get("prompt_tokens", 0)
-        llm_completion_tokens = llm_stat_dict.get("completion_tokens", 0)
-        llm_code_prompt_tokens = llm_stat_dict.get("code_prompt_tokens", 0)
-        llm_code_completion_tokens = llm_stat_dict.get("code_completion_tokens", 0)
-        llm_feedback_prompt_tokens = llm_stat_dict.get("feedback_prompt_tokens", 0)
-        llm_feedback_completion_tokens = llm_stat_dict.get(
-            "feedback_completion_tokens", 0
+        self._log_generation_stats(
+            new_offspring,
+            gen_runtime,
+            fail_rewards_this_gen,
+            success_rewards_this_gen,
+            strategy_avg_selection_probabilities,
         )
-        # Check that self.logger is not None before logging should have been initialized during initialization
-        if self.logger:
-            self.logger.log_generation(
-                self.current_generation,
-                new_offspring,
-                gen_runtime,
-                llm_calls,
-                llm_prompt_tokens,
-                llm_completion_tokens,
-                llm_code_prompt_tokens,
-                llm_code_completion_tokens,
-                llm_feedback_prompt_tokens,
-                llm_feedback_completion_tokens,
-                llm_stat_dict,
-                fail_rewards_this_gen,
-                success_rewards_this_gen,
-                self.fail_strategy_stats,
-                self.success_strategy_stats,
-                strategy_avg_selection_probabilities,
-            )
-        else:
-            print(
-                "WARNING: Logger is not initialized. Generation statistics will not be logged."
-            )
 
         print(
             f"--- Gen {self.current_generation} Complete. Pools: Success({len(self.success_pool)}), Fail({len(self.fail_pool)}) ---"
@@ -3654,15 +3699,7 @@ class EoHEngine:
 
         try:
             self._calculate_reference_ppa()
-            self.logger = EoHLogger(
-                self.problem_name,
-                self.benchmark_name,
-                self.llm.model_name,
-                self.base_save_path,
-                self.ref_ppa_metrics,
-                self.generation_mode,
-            )
-            self.logger.meta_strategy_name = self.strategy_selection_method
+            self._initialize_logger()
             self.initialize_population()
         except Exception as e:
             print(f"Critical error during initialization: {e}")
@@ -3677,16 +3714,7 @@ class EoHEngine:
                 break
 
         print("\n--- REvolution Run Finished ---")
-        total_runtime = time.time() - self.run_start_time
-        end_utc = datetime.datetime.now(datetime.timezone.utc)
-        if self.logger:
-            self.logger.finalize_summary(
-                self.run_start_utc,
-                end_utc,
-                total_runtime,
-                self.current_generation,
-                self.success_pool,
-            )
+        self._finalize_run_summary(self.success_pool)
 
         if self.success_pool:
             best_solution = self.success_pool[0]

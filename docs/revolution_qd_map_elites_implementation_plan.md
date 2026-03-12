@@ -375,10 +375,10 @@ Documentation risk to watch:
 - [x] Add `src/revolution/qd/descriptors.py`
 - [x] Add `src/revolution/qd/archive.py`
 - [x] Add `src/revolution/qd/scheduler.py`
-- [ ] Add `src/revolution/qd/engine.py` follow-through cleanup for shared engine
+- [x] Add `src/revolution/qd/engine.py` follow-through cleanup for shared engine
       seams and reduced duplication
 - [x] Add `src/revolution/qd/visualization.py`
-- [ ] Refactor `src/revolution/algorithm.py` for shared engine seams
+- [x] Refactor `src/revolution/algorithm.py` for shared engine seams
 - [x] Wire `ProblemSpec.phase_generation_defaults` into runtime `auto` phase
       resolution
 - [x] Add bounded per-cell `success_view` reservoir support
@@ -950,6 +950,25 @@ Documentation risk to watch:
     - Result: `All checks passed!`
     - `/workspace/.venv/bin/python -m pyright src/revolution/evaluation.py`
     - Result: `0 errors, 0 warnings`
+- Shared-engine seam follow-through:
+  - `src/revolution/algorithm.py` now owns shared helpers for:
+    - logger initialization
+    - generation-stat logging and LLM usage reset
+    - run-summary finalization
+  - `src/revolution/qd/engine.py` now reuses those helpers instead of carrying
+    separate near-copy logger/finalization code
+  - the generation policies still remain intentionally separate between classic
+    REvolution and `revolution_qd`; the cleanup goal here was to remove shared
+    plumbing duplication without forcing the two generation loops into one
+    abstraction
+  - focused validation:
+    - `/workspace/.venv/bin/python -m pytest tests/revolution/test_algorithm.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py tests/scripts/test_run_backend.py`
+    - Result: `103 passed in 7.28s`
+    - `/workspace/.venv/bin/ruff check src/revolution/algorithm.py src/revolution/qd/engine.py tests/revolution/test_algorithm.py`
+    - Result: `All checks passed!`
+    - `/workspace/.venv/bin/python -m pyright src/revolution/algorithm.py src/revolution/qd/engine.py`
+    - Result: still blocked by older `algorithm.py` typing debt, but the seam
+      extraction itself did not add a new failure class
 
 ## Debt Review
 

@@ -14,7 +14,6 @@ from typing import Any, Literal, cast
 
 from revolution.algorithm import EoHEngine, EvolStrategyMethodFail, EvolStrategyMethodSuccess, Heuristic
 from revolution.algorithm import QD_SUCCESS_STRATEGIES
-from revolution.logging import EoHLogger
 from revolution.prompt_store import safe_format
 from revolution.qd.archive import CVTArchive, GridArchive, GridAxisSpec
 from revolution.qd.descriptors import extract_descriptor_values, resolve_descriptor_axes, resolve_grid_axis_specs
@@ -960,24 +959,12 @@ class QDEngine(EoHEngine):
             budget=budget,
             runtime_sec=gen_runtime,
         )
-        llm_stat_dict = asyncio.run(self.llm.get_and_reset_usage_stats())
         if self.logger:
-            self.logger.log_generation(
-                self.current_generation,
+            self._log_generation_stats(
                 new_offspring,
                 gen_runtime,
-                llm_stat_dict.get("api_calls", 0),
-                llm_stat_dict.get("prompt_tokens", 0),
-                llm_stat_dict.get("completion_tokens", 0),
-                llm_stat_dict.get("code_prompt_tokens", 0),
-                llm_stat_dict.get("code_completion_tokens", 0),
-                llm_stat_dict.get("feedback_prompt_tokens", 0),
-                llm_stat_dict.get("feedback_completion_tokens", 0),
-                llm_stat_dict,
                 fail_rewards_this_gen,
                 success_rewards_this_gen,
-                self.fail_strategy_stats,
-                self.success_strategy_stats,
                 strategy_avg_selection_probabilities,
             )
             self._write_qd_artifacts(qd_snapshot)
@@ -997,15 +984,9 @@ class QDEngine(EoHEngine):
 
         try:
             self._calculate_reference_ppa()
-            self.logger = EoHLogger(
-                self.problem_name,
-                self.benchmark_name,
-                self.llm.model_name,
-                self.base_save_path,
-                self.ref_ppa_metrics,
-                self.generation_mode,
+            self._initialize_logger(
+                f"{self.strategy_selection_method}_qd_{self.qd_archive_type}"
             )
-            self.logger.meta_strategy_name = f"{self.strategy_selection_method}_qd_{self.qd_archive_type}"
             self.initialize_population()
             self._write_qd_artifacts()
         except Exception as exc:
@@ -1018,16 +999,7 @@ class QDEngine(EoHEngine):
                 break
 
         print("\n--- REvolution QD Run Finished ---")
-        total_runtime = time.time() - self.run_start_time
-        end_utc = datetime.datetime.now(datetime.timezone.utc)
-        if self.logger:
-            self.logger.finalize_summary(
-                self.run_start_utc,
-                end_utc,
-                total_runtime,
-                self.current_generation,
-                self._archive_elites(),
-            )
+        self._finalize_run_summary(self._archive_elites())
 
         if self.success_pool:
             best_solution = self._archive_elites()[0]
