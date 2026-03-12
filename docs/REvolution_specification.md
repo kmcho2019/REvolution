@@ -67,6 +67,26 @@ F_gen = alpha*(P_ref - P_gen)/P_ref
 
 where P/A/T correspond to power/area/effective clock period. Functionally incorrect individuals get -inf.
 
+### 2.7 QD Extension Track
+
+The active feature branch adds a second search mode:
+
+- `search_mode=revolution`: classic REvolution behavior
+- `search_mode=revolution_qd`: archive-backed success-state search
+
+The intended QD state is:
+
+- `fail_pool`
+- `success_archive`
+- `success_view`
+
+Current branch status:
+
+- grid archive substrate and a first grid runtime path are in progress
+- CVT support is staged after grid stabilization
+- the living implementation record is maintained in
+  `docs/revolution_qd_map_elites_implementation_plan.md`
+
 ---
 
 ## 3) Implementation Architecture and Key Modules
@@ -91,6 +111,11 @@ where P/A/T correspond to power/area/effective clock period. Functionally incorr
 | `PromptStore`        | `src/revolution/prompt_store.py` | Prompt templating and profile management.                                                           |
 | `EoHLogger`          | `src/revolution/logging.py`      | JSONL generation log + final summary.                                                               |
 | `StreamRedirector`   | `src/revolution/utils.py`        | Capture stdout/stderr to per-problem log files.                                                     |
+| `QDEngine`           | `src/revolution/qd/engine.py`    | Experimental grid-first archive-backed search path for `revolution_qd`.                             |
+| `GridArchive`        | `src/revolution/qd/archive.py`   | Grid MAP-Elites archive for reduced-axis QD runs.                                                   |
+| `split_qd_budget`    | `src/revolution/qd/scheduler.py` | Linear fail-share and fill/improve budget split helper.                                             |
+| QD scoring helpers   | `src/revolution/qd/scoring.py`   | Weighted PPA quality score, gain axes, repair score, code hashing.                                  |
+| Descriptor registry  | `src/revolution/qd/descriptors.py` | Descriptor profiles, axis resolution, and requirements metadata.                                  |
 
 #### 3.2.1 `EoHEngine`: Public Interface and Core State
 

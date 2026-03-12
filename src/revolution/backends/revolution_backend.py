@@ -12,6 +12,7 @@ from revolution.backends.base import (
     BackendServices,
     EvolutionBackend,
 )
+from revolution.qd import QDEngine
 from revolution.runtime.run_artifacts import add_legacy_strategy_key_alias
 
 
@@ -92,7 +93,8 @@ class RevolutionBackend(EvolutionBackend):
                 "search_mode=revolution_qd requires archive-backed success state and "
                 "does not support population_pool_mode=single."
             )
-        self.engine = EoHEngine(
+        engine_cls = QDEngine if self.config.search_mode == "revolution_qd" else EoHEngine
+        engine_kwargs = dict(
             benchmark_name=self.context.benchmark_name,
             problem_name=self.context.problem_name,
             llm_interface=self.services.llm,
@@ -119,6 +121,19 @@ class RevolutionBackend(EvolutionBackend):
             prompt_root=self.config.prompt_root,
             candidate_workers=self.config.candidate_workers,
         )
+        if engine_cls is QDEngine:
+            engine_kwargs.update(
+                qd_archive_type=self.config.qd_archive_type,
+                qd_num_cells=self.config.qd_num_cells,
+                qd_fill_target_fraction=self.config.qd_fill_target_fraction,
+                qd_grid_axes=self.config.qd_grid_axes,
+                qd_fail_generation_mode=self.config.qd_fail_generation_mode,
+                qd_seed_generation_mode=self.config.qd_seed_generation_mode,
+                qd_backfill_generation_mode=self.config.qd_backfill_generation_mode,
+                qd_refine_generation_mode=self.config.qd_refine_generation_mode,
+                qd_crossover_generation_mode=self.config.qd_crossover_generation_mode,
+            )
+        self.engine = engine_cls(**engine_kwargs)
 
     def _annotate_summary(self) -> str | None:
         summary_path = self.services.artifact_writer.paths.summary_path

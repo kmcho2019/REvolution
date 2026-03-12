@@ -86,6 +86,7 @@ default `--diff_max_tokens 1024` was left unchanged.
 `run_backend.py` is the canonical runner for backend ablations. It supports:
 
 - `--backend revolution|funsearch|eoh|codeevolve`
+- `--search_mode revolution|revolution_qd` for the `revolution` backend
 - shared model/benchmark options (`--benchmarks`, `--problems`, `--model_name`, `--api_backend`, `--save_path`, `--num_workers`)
 - backend-specific controls (`--population_size`, `--num_generations`, `--strategy_selection`, `--fs_*`, `--eoh_*`, `--codeevolve_*`)
 - shared evaluation controls:
@@ -98,6 +99,30 @@ CodeEvolve phase 1 currently targets `RTLLM` and `VerilogEval-Spec-to-RTL`
 only; multi-file codebase tasks and `cvdp` adapters are intentionally deferred.
 
 By default outputs are isolated by backend under `<save_path>/<backend>/...` (`--backend_subdir` can be disabled if needed).
+
+QD-mode controls on the `revolution` backend currently include:
+
+- archive selection: `--qd_archive_type grid|cvt`
+- descriptor selection:
+  `--qd_descriptor_profile`,
+  `--qd_descriptor_axes`,
+  `--qd_descriptor_file`
+- quality weighting:
+  `--qd_quality_mode auto|ppa|functional_only`,
+  `--qd_alpha`, `--qd_beta`, `--qd_gamma`
+- per-phase generation-mode overrides:
+  `--qd_fail_generation_mode`,
+  `--qd_seed_generation_mode`,
+  `--qd_backfill_generation_mode`,
+  `--qd_refine_generation_mode`,
+  `--qd_crossover_generation_mode`
+
+Current feature status:
+
+- `grid` is the active first runtime path and now has archive and scheduler runtime scaffolding.
+- `cvt` is exposed in the config surface but full runtime integration is still pending.
+- The authoritative detailed status lives in
+  `docs/revolution_qd_map_elites_implementation_plan.md`.
 
 Example (REvolution backend):
 
@@ -112,6 +137,25 @@ python scripts/run_backend.py \
   --model_name /models/openai-gpt-oss-120b \
   --population_size 4 \
   --num_generations 3
+```
+
+Example (experimental REvolution QD grid run):
+
+```bash
+python scripts/run_backend.py \
+  --backend revolution \
+  --search_mode revolution_qd \
+  --qd_archive_type grid \
+  --qd_grid_axes g_A g_T \
+  --benchmarks RTLLM \
+  --problems Prob001_accu \
+  --api_backend vllm \
+  --vllm_host host.docker.internal \
+  --vllm_port 8000 \
+  --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b \
+  --max_tokens 128000 \
+  --population_size 4 \
+  --num_generations 2
 ```
 
 Example (FunSearch backend):
@@ -217,6 +261,7 @@ Essential arguments:
 - `--num_workers <int>`: worker count (processes in `problem` mode, candidate-evaluation threads in `candidate` mode).
 - `--multiprocessing_mode {problem,candidate}`: distribute work across problems (default) or evaluate candidates inside a problem in parallel.
 - `--population_size <int>` / `--num_generations <int>`: evolutionary parameters.
+- `--search_mode {revolution,revolution_qd}`: use the canonical backend runner for the experimental QD path; `run_evolution.py` forwards QD configs to `run_backend.py`.
 - `--save_path <dir>`: base directory for artefacts (default: `./exp` relative to the repo).
 - `--model_name <str>` / `--api_backend {openai,openrouter,deepseek,gemini,vllm}` / `--vllm_host <str>` / `--vllm_port <int>`: LLM configuration.
 - `--temperature`, `--top_p`, `--max_tokens`: sampling parameters forwarded to the LLM.

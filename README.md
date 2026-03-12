@@ -10,6 +10,7 @@
 ## Key Features
 
 - Dual-pool evolutionary engine with configurable strategies (`M-*`, `C-F`) and meta-strategy selection (random, epsilon-greedy, UCB).
+- Experimental `revolution_qd` search mode with grid MAP-Elites archive support, configurable descriptor axes, and staged CVT integration.
 - End-to-end evaluation pipeline: Icarus Verilog for syntax/functional checks, Yosys + OpenROAD for PPA, and post-synthesis regression.
 - Unified LLM client with retry/backoff, prompt templating, diff/whole generation modes, and multi-backend support (OpenAI, OpenRouter, DeepSeek, Gemini, vLLM).
 - Detailed JSONL logging, per-problem summaries, and prebuilt scripts for table generation and visualization.
@@ -20,6 +21,7 @@
 The `docs/` directory contains deeper dives:
 
 - `docs/implementation_details.md` – architecture and component responsibilities.
+- `docs/revolution_qd_map_elites_implementation_plan.md` – living QD/MAP-Elites implementation status, validation notes, and staged roadmap.
 - `docs/diff_mode.md` – diff-mode schema, policies, diagnostics, and benchmark workflow.
 - `docs/module_structure.md` – file-by-file breakdown of the codebase.
 - `docs/method_interaction_and_evolutionary_loop.md` – data flow through the evolutionary loop.
@@ -117,6 +119,24 @@ default `--diff_max_tokens 1024` was left unchanged.
 Use `run_backend.py` for backend ablations across REvolution, FunSearch, EoH,
 and CodeEvolve:
 
+The `revolution` backend now also exposes the experimental QD search-mode
+surface:
+
+- `--search_mode revolution|revolution_qd`
+- `--qd_archive_type grid|cvt`
+- `--qd_descriptor_profile`, `--qd_descriptor_axes`, `--qd_descriptor_file`
+- `--qd_fail_generation_mode`, `--qd_seed_generation_mode`,
+  `--qd_backfill_generation_mode`, `--qd_refine_generation_mode`,
+  `--qd_crossover_generation_mode`
+
+Current status on this feature branch:
+
+- `grid` is the active first runtime path for QD search.
+- `cvt` is already part of the config surface but full runtime support is still
+  staged work.
+- The detailed status and validation record lives in
+  `docs/revolution_qd_map_elites_implementation_plan.md`.
+
 ```bash
 python scripts/run_backend.py \
   --backend funsearch \
@@ -163,6 +183,25 @@ now accepts `--backends revolution funsearch eoh codeevolve` and derives
 fairness schedules per backend while preserving backend-specific mechanics.
 Use `--problems` to constrain the sweep to a small problem subset when doing
 live smoke validation of a new backend.
+
+Example (experimental REvolution QD grid run):
+
+```bash
+python scripts/run_backend.py \
+  --backend revolution \
+  --search_mode revolution_qd \
+  --qd_archive_type grid \
+  --qd_grid_axes g_A g_T \
+  --benchmarks RTLLM \
+  --problems Prob001_accu \
+  --api_backend vllm \
+  --vllm_host host.docker.internal \
+  --vllm_port 8000 \
+  --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b \
+  --max_tokens 128000 \
+  --population_size 4 \
+  --num_generations 2
+```
 
 `run_backend.py` strict/accelerated evaluation controls:
 - `--evaluation_mode strict_ablation|search_accelerated`:

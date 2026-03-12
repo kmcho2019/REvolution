@@ -22,8 +22,16 @@
 - `algorithm.py`: main evolutionary driver (`Heuristic`, `EoHEngine`, `SingleShotEngine`, `CVDPEngine`) with strategy and diff orchestration.
 - `backends/base.py`: backend interface (`EvolutionBackend`) and shared context/service dataclasses.
 - `backends/revolution_backend.py`: adapter around existing `EoHEngine` behavior.
+- `qd/`: QD/MAP-Elites substrate and runtime extensions.
+  - `qd/archive.py`: grid archive implementation and insertion/replacement semantics.
+  - `qd/scheduler.py`: occupancy-based fail/success budget splitting helpers.
+  - `qd/scoring.py`: exact PPA `quality_score`, gain axes, repair score, and code hashing helpers.
+  - `qd/descriptors.py`: descriptor registry, profile loading, and descriptor-axis resolution.
+  - `qd/engine.py`: experimental grid-first `QDEngine` that reuses REvolution prompt/eval infrastructure.
 - `backends/funsearch_backend.py`: FunSearch-style RTL backend (islands, signature clusters, reset/reseed, budgeted loop).
 - `runtime/problem_context.py`: benchmark/problem path and metadata resolution.
+- `runtime/problem_spec.py`: benchmark capability layer and default descriptor / generation-mode preferences.
+- `runtime/structural_evaluator.py`: structural descriptor extraction helpers for Yosys-like stats payloads.
 - `runtime/candidate_evaluator.py`: backend-agnostic format/syntax/functionality/synthesis/PPA evaluation orchestration with `strict_ablation` and `search_accelerated` modes.
 - `runtime/run_artifacts.py`: shared generation-log/summary writer plus legacy summary key alias support.
 - `evaluation.py`: evaluation stack (`VerilogEvaluator`, `SynthesisEvaluator`).
@@ -38,6 +46,7 @@
 
 - `run_evolution.py`: CLI entry point for multi-problem evolutionary runs with multiprocessing.
 - `run_backend.py`: canonical backend-selectable runner (`--backend revolution|funsearch`).
+- `qd_descriptor_probe.py`: descriptor/profile inspection helper for QD experiments.
 - `run_funsearch.py`: convenience wrapper for `run_backend.py --backend funsearch`.
 - `run_backend_ablation.py`: ablation sweep orchestrator across both backends with multi-seed support, strict fairness checks, and configurable budget-axis normalization (`candidate_evaluations`, `llm_calls`, `dual_gate`).
 - `backend_comparison_report.py`: side-by-side + aggregate backend report generator across experiment roots with pass/fail emoji status, any-pass design counts, solved-only score/PPA summaries (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`), PPA regression counts, and budget/fairness diagnostics.

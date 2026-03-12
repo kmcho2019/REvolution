@@ -7,6 +7,7 @@ from revolution.qd.types import (
     QDPhaseName,
     QDSearchMode,
 )
+from revolution.qd.engine import QDEngine
 from revolution.qd.scheduler import QDBudgetSplit, qd_fail_share, qd_target_cells, split_qd_budget
 from revolution.qd.descriptors import (
     DescriptorDefinition,
@@ -29,6 +30,7 @@ __all__ = [
     "GridArchive",
     "GridArchiveEntry",
     "GridAxisSpec",
+    "QDEngine",
     "QDArchive",
     "QDArchiveInsertResult",
     "QDArchiveType",

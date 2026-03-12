@@ -1,27 +1,41 @@
 # Repository Guidelines
 
+## Repo Map
+- Start with [README.md](/workspace/.worktrees/revolution-qd-map-elites/README.md) for the project overview, environment setup, and primary run commands.
+- Use [docs/user_guide.md](/workspace/.worktrees/revolution-qd-map-elites/docs/user_guide.md) for CLI usage, benchmark workflows, and validation guidance.
+- Use [docs/module_structure.md](/workspace/.worktrees/revolution-qd-map-elites/docs/module_structure.md) for a file-by-file breakdown of the codebase.
+- Use [docs/implementation_details.md](/workspace/.worktrees/revolution-qd-map-elites/docs/implementation_details.md) for subsystem-level architecture details.
+- Use [docs/REvolution_specification.md](/workspace/.worktrees/revolution-qd-map-elites/docs/REvolution_specification.md) for the paper-plus-implementation specification view.
+- Use [docs/revolution_qd_map_elites_implementation_plan.md](/workspace/.worktrees/revolution-qd-map-elites/docs/revolution_qd_map_elites_implementation_plan.md) for the current QD/MAP-Elites feature status and staged roadmap.
+
 ## Project Structure & Module Organization
-- `src/revolution/`: core package (`algorithm.py`, `evaluation.py`, `llm.py`, `configuration.py`, logging, prompt management).
-- `scripts/`: runnable entry points and utilities (`run_evolution.py`, `run_one_shot.py`, report/table/plot generators).
-- `tests/revolution/` and `tests/scripts/`: unit tests for framework modules and script helpers.
+- `src/revolution/`: core package. Start with `algorithm.py` for classic REvolution, `backends/` for runner adapters, `runtime/` for evaluation/problem abstractions, and `qd/` for the new archive/scoring/scheduler substrate.
+- `scripts/`: runnable entry points and utilities. `run_backend.py` is the canonical runner, `run_evolution.py` is the legacy REvolution entry point, and `run_backend_ablation.py` is the fairness-controlled sweep runner.
+- `tests/revolution/` and `tests/scripts/`: unit tests for framework modules and script helpers. The closest matching `test_<module>.py` file is usually the fastest way to see intended behavior.
 - `data/bench/`: benchmark suites used by CLI runs (`RTLLM`, `VerilogEval-*`, `cvdp`).
-- `data/prompts/`, `pdk/`, and `docs/`: prompt templates, synthesis assets, and project documentation.
-- `exp/` is generated run output and is intentionally gitignored.
+- `data/prompts/`: prompt templates grouped by profile and strategy/mode.
+- `data/configs/`: reusable config examples, including QD descriptor profile configuration.
+- `pdk/`: synthesis assets used by the OpenROAD flow.
+- `docs/`: project documentation and implementation notes.
+- `exp/`: generated run output and intentionally gitignored.
 
 ## Build, Test, and Development Commands
 - `uv sync`: install pinned dependencies from `pyproject.toml` and `uv.lock` into `.venv`.
 - `source .venv/bin/activate`: activate local environment for development.
 - `pytest`: run all tests under `tests/`.
 - `pytest --cov=src/revolution --cov-report=term-missing`: run tests with coverage details.
+- `python scripts/run_backend.py --help`: canonical backend-selectable runner help.
 - `python scripts/run_evolution.py --help`: view all evolutionary run options.
 - `python scripts/run_evolution.py --benchmarks RTLLM --model_name gpt-4.1-mini`: example multi-generation run.
 - `python scripts/run_one_shot.py --benchmarks VerilogEval-Spec-to-RTL --num_samples 20`: example n-shot baseline run.
+- `python scripts/qd_descriptor_probe.py --archive_type grid --circuit_type sequential`: inspect the current QD descriptor-axis selection and requirements.
 
 ## Coding Style & Naming Conventions
 - Target Python 3.11+, 4-space indentation, and UTF-8 text files.
 - Match the existing typed style: add type hints for new public interfaces and docstrings for non-trivial logic.
 - Use `snake_case` for modules/functions/variables, `PascalCase` for classes, and `UPPER_SNAKE_CASE` for constants.
 - Keep framework logic in `src/revolution/`; keep operational wrappers and reporting scripts in `scripts/`.
+- When adding a new feature area, update the nearest detailed doc in `docs/` and also reflect the new entry points in `README.md` and this file so readers can find the right follow-on material quickly.
 
 ## Testing Guidelines
 - Testing framework: `pytest` (configured in `pyproject.toml` with `tests/` as test root).

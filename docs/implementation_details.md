@@ -2,7 +2,9 @@
 
 ## Architectural overview
 
-REvolution centres around the `EoHEngine` class (`src/revolution/algorithm.py`), which manages the end-to-end evolution of Verilog designs. Each run focuses on a single benchmark problem and coordinates:
+REvolution centres around the `EoHEngine` class (`src/revolution/algorithm.py`), which manages the end-to-end evolution of Verilog designs. The active feature branch also adds an experimental `QDEngine` (`src/revolution/qd/engine.py`) that keeps the same prompt/evaluation substrate but replaces the success-side flat pool with an archive-backed success state for `search_mode=revolution_qd`.
+
+Each run focuses on a single benchmark problem and coordinates:
 
 - population management (dual fail/success pools or a single unified pool),
 - calls to the language model through `LLMInterface`,
@@ -36,13 +38,33 @@ The main execution entry point is `EoHEngine.run()`:
 
 The loop terminates after `num_generations` iterations or early if no parents remain to evolve.
 
+## QD search-mode status
+
+The current QD implementation is staged:
+
+- `search_mode=revolution_qd` is exposed through `run_backend.py` and the `revolution` backend adapter.
+- `grid` archive support is the first active runtime path.
+- `cvt` support has CLI/config scaffolding plus archive-planning substrate, but full runtime CVT integration is still pending.
+
+The QD substrate currently lives under `src/revolution/qd/`:
+
+- `archive.py`: grid archive insertion and replacement contract
+- `scheduler.py`: linear fail-share and fill/improve budget split
+- `scoring.py`: exact weighted PPA quality score, gain axes, repair score, hash normalization
+- `descriptors.py`: descriptor registry and profile resolution
+- `engine.py`: grid-first runtime engine that reuses existing prompt builders, diff application, evaluation, and logger wiring
+
 ## Evaluation stack
 
 `VerilogEvaluator` compiles designs with Icarus Verilog (iverilog) and runs them under `vvp`. Compilation output, simulation logs, and timeouts are written to `<candidate>_simulation.log`. Optional reference design files enable mismatch counting on VerilogEval, while RTLLM detects the `===========Your Design Passed===========` banner.
 
 `SynthesisEvaluator` automates the Yosys + OpenROAD flow. It generates SDC, Yosys, and OpenROAD scripts from the candidate design, writes reports to `<candidate>_synthesis_report.rpt`, and parses timing/power/area metrics. Netlists are regression-tested again using `VerilogEvaluator` to ensure synthesis has not broken functionality.
 
-Fitness is defined as the negative relative PPA delta versus the reference design. For sequential circuits the average includes the effective clock period; for combinational circuits power and area are averaged.
+Classic `EoHEngine` fitness remains the existing score used by the original loop. The QD substrate additionally defines an explicit maximize-form `quality_score`:
+
+`alpha * (P_ref - P_gen) / P_ref + beta * (A_ref - A_gen) / A_ref + gamma * (T_ref - T_gen) / T_ref`
+
+with automatic defaults of `1/3,1/3,1/3` for sequential circuits and `1/2,1/2,0` for combinational circuits.
 
 ## LLM integration and prompting
 

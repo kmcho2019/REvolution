@@ -115,9 +115,10 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 ### Stage 3: Grid Backend First Implementation
 
 - [ ] Add `QDEngine` scaffolding.
+- [x] Add `QDEngine` scaffolding.
 - [x] Implement `GridArchive`.
 - [x] Implement linear fill/improve scheduler.
-- [ ] Implement success archive insertion/replacement and `success_view`.
+- [x] Implement success archive insertion/replacement and `success_view`.
 - [x] Add grid-specific tests.
 - [ ] Run RTLLM and VerilogEval grid smokes.
 - [x] Update docs and plan with Stage 3 validation notes.
@@ -309,14 +310,27 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   - added `GridArchive` with tested empty-cell insert, same-cell replacement,
     and edge-bin clamping semantics
   - added exact linear QD fail-share and fill/improve budget split helpers
+  - added experimental `QDEngine` runtime wiring for `search_mode=revolution_qd`
+    with archive-backed success-state handling on the grid path
+  - updated README, GUIDELINES, and immediate implementation docs to reflect
+    the new QD feature surface and repo navigation pointers
 - Automated tests:
   - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_archive.py tests/revolution/test_qd_scheduler.py tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_scoring.py`
   - Result: `20 passed in 0.83s`
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_defaults.py tests/revolution/test_problem_spec.py tests/revolution/test_qd_scoring.py tests/revolution/test_qd_descriptors.py tests/revolution/test_structural_evaluator.py tests/revolution/test_qd_archive.py tests/revolution/test_qd_scheduler.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py tests/scripts/test_run_backend.py tests/scripts/test_qd_descriptor_probe.py`
+  - Result: `51 passed in 1.01s`
 - Smoke tests:
-  - none yet; runtime engine wiring is still pending
+  - attempted live RTLLM smoke with `search_mode=revolution_qd`, `qd_archive_type=grid`,
+    `population_size=1`, `num_generations=0`, vLLM endpoint
+    `http://host.docker.internal:8000`
+  - attempted once with `--max_tokens 128000` and once with `--max_tokens 4096`
+  - both runs were manually stopped after stalling in the first end-to-end
+    generation step without producing a quick failure signal; this is recorded
+    as a blocked smoke rather than a pass
 - Notes:
-  - this is the first Stage 3 checkpoint only; the backend is not yet running
-    `revolution_qd` through the grid archive end-to-end
+  - `revolution_backend.py` now selects `QDEngine` when
+    `search_mode=revolution_qd`
+  - current runtime support is grid-only; `cvt` remains staged work for Stage 4
   - first Stage 3 substrate commit:
     - `efbf9b48d0` `feat(qd): add grid archive and linear scheduler substrate`
 
@@ -362,6 +376,10 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   portions of `EoHEngine`.
 - Grid geometry is explicit and easy to test, which is the intended low-risk
   first step before CVT warm-up/freeze logic is introduced.
+- The new `QDEngine` reuses a meaningful amount of existing prompt/eval code,
+  but there is still duplicated offspring-materialization logic. That seam
+  should be refactored once the grid runtime is stable enough to avoid
+  spreading engine-loop duplication into CVT work.
 
 ## Intent Alignment Review
 
@@ -401,8 +419,8 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   reaches zero at the target fill fraction.
 - The archive replacement semantics already match the intended MAP-Elites
   contract: empty-cell insert, occupied-cell replace only on higher quality.
-- The remaining work is engine integration, parent-view semantics, and live
-  smoke validation.
+- The remaining work is broader live validation, richer QD-specific operators,
+  and CVT parity.
 
 ## Commit Ledger
 
@@ -410,7 +428,7 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - `e91188281b` `feat(qd): add search mode and capability scaffolding`
 - `2268a7f81f` `feat(qd): add scoring and descriptor substrate`
 - `efbf9b48d0` `feat(qd): add grid archive and linear scheduler substrate`
-- Stage 3 remains in progress; runtime engine wiring and smokes are still pending.
+- Pending Stage 3 runtime/docs checkpoint commit.
 
 ## Deferred Follow-Ups
 
