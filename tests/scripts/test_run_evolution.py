@@ -122,3 +122,37 @@ def test_run_evolution_delegates_to_run_backend_for_codeevolve_config(
 
     assert exc.value.code == 17
     assert captured["argv"] == ["--config", str(config_path)]
+
+
+def test_run_evolution_delegates_to_run_backend_for_qd_search_mode(
+    monkeypatch, tmp_path
+):
+    from scripts import run_evolution
+
+    captured: dict[str, list[str]] = {}
+    fake_module = ModuleType("run_backend")
+
+    def fake_main(argv):
+        captured["argv"] = list(argv)
+        return 19
+
+    fake_module.main = fake_main
+    monkeypatch.setitem(sys.modules, "run_backend", fake_module)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["run_evolution.py", "--search_mode", "revolution_qd", "--benchmarks", "RTLLM"],
+    )
+
+    with pytest.raises(SystemExit) as exc:
+        run_evolution.main()
+
+    assert exc.value.code == 19
+    assert captured["argv"] == [
+        "--backend",
+        "revolution",
+        "--search_mode",
+        "revolution_qd",
+        "--benchmarks",
+        "RTLLM",
+    ]

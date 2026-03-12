@@ -259,16 +259,22 @@ def main():
     """Main function to parse arguments and orchestrate the evolutionary run."""
     raw_argv = list(sys.argv[1:])
     config_backend: str | None = None
+    config_search_mode: str | None = None
     config_has_funsearch_keys = False
     config_has_nonrevolution_backend_keys = False
+    config_has_qd_keys = False
     if "--config" in raw_argv:
         cfg_idx = raw_argv.index("--config")
         if cfg_idx + 1 < len(raw_argv):
             try:
                 cfg = load_config_file(raw_argv[cfg_idx + 1])
                 config_backend = cfg.get("backend")
+                config_search_mode = cfg.get("search_mode")
                 config_has_funsearch_keys = any(
                     str(key).startswith("fs_") for key in cfg.keys()
+                )
+                config_has_qd_keys = any(
+                    str(key).startswith("qd_") for key in cfg.keys()
                 )
                 config_has_nonrevolution_backend_keys = any(
                     str(key).startswith(prefix)
@@ -290,6 +296,19 @@ def main():
             raise SystemExit(run_backend_main(raw_argv))
         # Preserve backward compatibility: ignore explicit '--backend revolution'.
         del raw_argv[backend_idx : backend_idx + 2]
+    if "--search_mode" in raw_argv:
+        mode_idx = raw_argv.index("--search_mode")
+        if mode_idx + 1 >= len(raw_argv):
+            print("Missing value for --search_mode")
+            sys.exit(2)
+        if raw_argv[mode_idx + 1] == "revolution_qd":
+            from run_backend import main as run_backend_main
+
+            raise SystemExit(run_backend_main(["--backend", "revolution", *raw_argv]))
+    elif config_search_mode == "revolution_qd" or config_has_qd_keys:
+        from run_backend import main as run_backend_main
+
+        raise SystemExit(run_backend_main(["--backend", "revolution", *raw_argv]))
     elif (config_backend and config_backend != "revolution") or config_has_funsearch_keys or config_has_nonrevolution_backend_keys:
         from run_backend import main as run_backend_main
 

@@ -18,6 +18,11 @@ from revolution.runtime.problem_context import (
     load_problem_context,
     resolve_top_module_name,
 )
+from revolution.runtime.problem_spec import (
+    ProblemSpec,
+    build_cvdp_problem_spec,
+    build_problem_spec,
+)
 from revolution.runtime.run_artifacts import ArtifactWriter, add_legacy_strategy_key_alias
 
 __all__ = [
@@ -32,6 +37,9 @@ __all__ = [
     "DiffApplyPolicy",
     "EvaluationMode",
     "ProblemContext",
+    "ProblemSpec",
+    "build_cvdp_problem_spec",
+    "build_problem_spec",
     "build_cvdp_problem_context",
     "add_legacy_strategy_key_alias",
     "default_benchmark_root",

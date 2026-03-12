@@ -334,6 +334,26 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         help="Preferred REvolution population size when deriving exact candidate budgets.",
     )
     parser.add_argument(
+        "--search_mode",
+        type=str,
+        default="revolution",
+        choices=["revolution", "revolution_qd"],
+        help="Search mode forwarded to backend runs.",
+    )
+    parser.add_argument(
+        "--qd_archive_type",
+        type=str,
+        default="grid",
+        choices=["grid", "cvt"],
+        help="QD archive geometry for revolution_qd runs.",
+    )
+    parser.add_argument("--qd_num_cells", type=int, default=64)
+    parser.add_argument("--qd_fill_target_fraction", type=float, default=0.25)
+    parser.add_argument("--qd_descriptor_profile", type=str, default=None)
+    parser.add_argument("--qd_descriptor_axes", nargs="+", default=None)
+    parser.add_argument("--qd_grid_axes", nargs="+", default=None)
+    parser.add_argument("--qd_cvt_axes", nargs="+", default=None)
+    parser.add_argument(
         "--funsearch_initial_population_size",
         type=int,
         default=10,
@@ -591,9 +611,24 @@ def main(argv: list[str] | None = None) -> int:
         str(args.top_p),
         "--max_tokens",
         str(args.max_tokens),
+        "--search_mode",
+        args.search_mode,
         "--primary_budget_axis",
         args.primary_budget_axis,
     ]
+    common.extend(["--qd_archive_type", args.qd_archive_type])
+    common.extend(["--qd_num_cells", str(args.qd_num_cells)])
+    common.extend(
+        ["--qd_fill_target_fraction", str(args.qd_fill_target_fraction)]
+    )
+    if args.qd_descriptor_profile:
+        common.extend(["--qd_descriptor_profile", args.qd_descriptor_profile])
+    if args.qd_descriptor_axes:
+        common.extend(["--qd_descriptor_axes", *args.qd_descriptor_axes])
+    if args.qd_grid_axes:
+        common.extend(["--qd_grid_axes", *args.qd_grid_axes])
+    if args.qd_cvt_axes:
+        common.extend(["--qd_cvt_axes", *args.qd_cvt_axes])
     if args.max_llm_calls_per_problem is not None:
         common.extend(
             ["--max_llm_calls_per_problem", str(args.max_llm_calls_per_problem)]

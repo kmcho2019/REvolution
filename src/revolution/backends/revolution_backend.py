@@ -17,6 +17,7 @@ from revolution.runtime.run_artifacts import add_legacy_strategy_key_alias
 
 @dataclass(frozen=True)
 class RevolutionBackendConfig:
+    search_mode: str = "revolution"
     population_size: int = 5
     num_generations: int = 5
     default_llm_temp: float = 1.0
@@ -36,6 +37,29 @@ class RevolutionBackendConfig:
     prompt_profile: str = "default"
     prompt_root: str | None = None
     candidate_workers: int = 0
+    qd_archive_type: str = "grid"
+    qd_num_cells: int = 64
+    qd_fill_target_fraction: float = 0.25
+    qd_cell_reservoir: int = 2
+    qd_neighbor_k: int = 8
+    qd_cvt_warmup_successes: int | None = None
+    qd_quality_mode: str = "auto"
+    qd_alpha: float | None = None
+    qd_beta: float | None = None
+    qd_gamma: float | None = None
+    qd_descriptor_profile: str | None = None
+    qd_descriptor_axes: tuple[str, ...] = ()
+    qd_descriptor_file: str | None = None
+    qd_enable_descriptor_experiments: bool = False
+    qd_descriptor_probe_budget: int = 0
+    qd_grid_axes: tuple[str, ...] = ()
+    qd_cvt_axes: tuple[str, ...] = ()
+    qd_fail_generation_mode: str = "auto"
+    qd_seed_generation_mode: str = "auto"
+    qd_backfill_generation_mode: str = "auto"
+    qd_refine_generation_mode: str = "auto"
+    qd_crossover_generation_mode: str = "auto"
+    qd_formal_mode: str = "auto"
 
 
 class RevolutionBackend(EvolutionBackend):
@@ -60,6 +84,14 @@ class RevolutionBackend(EvolutionBackend):
         return "revolution"
 
     def initialize(self) -> None:
+        if (
+            self.config.search_mode == "revolution_qd"
+            and self.config.population_pool_mode == "single"
+        ):
+            raise ValueError(
+                "search_mode=revolution_qd requires archive-backed success state and "
+                "does not support population_pool_mode=single."
+            )
         self.engine = EoHEngine(
             benchmark_name=self.context.benchmark_name,
             problem_name=self.context.problem_name,
@@ -101,6 +133,37 @@ class RevolutionBackend(EvolutionBackend):
         backend_details = payload.setdefault("backend_details", {})
         backend_details.setdefault("population_size", self.config.population_size)
         backend_details.setdefault("num_generations", self.config.num_generations)
+        backend_details.setdefault("search_mode", self.config.search_mode)
+        if self.context.problem_spec is not None:
+            backend_details.setdefault(
+                "problem_spec",
+                {
+                    "quality_mode": self.context.problem_spec.quality_mode,
+                    "circuit_type": self.context.problem_spec.circuit_type,
+                    "default_descriptor_profile": self.context.problem_spec.default_descriptor_profile,
+                },
+            )
+        if self.config.search_mode == "revolution_qd":
+            backend_details.setdefault(
+                "qd_config",
+                {
+                    "archive_type": self.config.qd_archive_type,
+                    "num_cells": self.config.qd_num_cells,
+                    "fill_target_fraction": self.config.qd_fill_target_fraction,
+                    "quality_mode": self.config.qd_quality_mode,
+                    "descriptor_profile": self.config.qd_descriptor_profile,
+                    "descriptor_axes": list(self.config.qd_descriptor_axes),
+                    "grid_axes": list(self.config.qd_grid_axes),
+                    "cvt_axes": list(self.config.qd_cvt_axes),
+                    "phase_generation_modes": {
+                        "fail": self.config.qd_fail_generation_mode,
+                        "seed": self.config.qd_seed_generation_mode,
+                        "backfill": self.config.qd_backfill_generation_mode,
+                        "refine": self.config.qd_refine_generation_mode,
+                        "crossover": self.config.qd_crossover_generation_mode,
+                    },
+                },
+            )
 
         metadata = self.context.metadata if isinstance(self.context.metadata, dict) else {}
         run_budget = payload.setdefault("run_budget", {})

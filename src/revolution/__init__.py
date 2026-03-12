@@ -22,7 +22,15 @@ from .backends import (
 from .evaluation import VerilogEvaluator, SynthesisEvaluator
 from .llm import LLMInterface
 from .logging import EoHLogger
-from .runtime import ArtifactWriter, CandidateEvaluator, CandidateWorkItem, ProblemContext
+from .runtime import (
+    ArtifactWriter,
+    CandidateEvaluator,
+    CandidateWorkItem,
+    ProblemContext,
+    ProblemSpec,
+    build_cvdp_problem_spec,
+    build_problem_spec,
+)
 from .utils import StreamRedirector
 
 # This defines the public API of your package
@@ -40,6 +48,7 @@ __all__ = [
     "EoHBackend",
     "EoHBackendConfig",
     "ProblemContext",
+    "ProblemSpec",
     "EoHEngine",
     "FunSearchBackend",
     "FunSearchBackendConfig",
@@ -55,6 +64,8 @@ __all__ = [
     "EoHLogger",
     "StreamRedirector",
     "backend_supports_cvdp",
+    "build_cvdp_problem_spec",
+    "build_problem_spec",
     "default_prompt_profile_for_backend",
     "registered_backend_names",
 ]

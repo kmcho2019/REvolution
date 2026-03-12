@@ -7,7 +7,12 @@ from typing import Any
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
 from revolution.llm import LLMInterface
 from revolution.prompt_store import PromptStore
-from revolution.runtime import ArtifactWriter, CandidateEvaluator, ProblemContext
+from revolution.runtime import (
+    ArtifactWriter,
+    CandidateEvaluator,
+    ProblemContext,
+    ProblemSpec,
+)
 
 
 @dataclass(frozen=True)
@@ -42,6 +47,7 @@ class BackendExecutionContext:
     benchmark_name: str
     problem_name: str
     problem_context: ProblemContext
+    problem_spec: ProblemSpec | None = None
     generation_mode: str = "whole"
     seed: int | None = None
     metadata: dict[str, Any] = field(default_factory=dict)

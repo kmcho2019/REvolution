@@ -163,6 +163,33 @@ def test_backend_parser_defaults_strategy_selection_to_ucb():
     assert args.strategy_selection == "ucb"
 
 
+def test_backend_parser_accepts_qd_options():
+    parser, _ = _build_parser()
+    args, _ = parser.parse_known_args(
+        [
+            "--backend",
+            "revolution",
+            "--search_mode",
+            "revolution_qd",
+            "--qd_archive_type",
+            "cvt",
+            "--qd_descriptor_profile",
+            "hybrid_seq_default",
+            "--qd_descriptor_axes",
+            "seq_ratio",
+            "g_A",
+            "g_T",
+            "--qd_refine_generation_mode",
+            "diff",
+        ]
+    )
+    assert args.search_mode == "revolution_qd"
+    assert args.qd_archive_type == "cvt"
+    assert args.qd_descriptor_profile == "hybrid_seq_default"
+    assert args.qd_descriptor_axes == ["seq_ratio", "g_A", "g_T"]
+    assert args.qd_refine_generation_mode == "diff"
+
+
 def test_backend_parser_includes_diff_controls_and_vllm_threshold():
     parser, _ = _build_parser()
     args, _ = parser.parse_known_args([])
@@ -172,6 +199,27 @@ def test_backend_parser_includes_diff_controls_and_vllm_threshold():
     assert args.diff_similarity_threshold == pytest.approx(0.86)
     assert args.diff_fuzzy_margin == pytest.approx(0.03)
     assert args.vllm_min_model_len == 128000
+
+
+def test_run_backend_rejects_single_pool_qd_mode(capsys):
+    code = run_backend_main(
+        [
+            "--backend",
+            "revolution",
+            "--search_mode",
+            "revolution_qd",
+            "--population_pool_mode",
+            "single",
+            "--benchmarks",
+            "RTLLM",
+            "--problems",
+            "Prob001_accu",
+        ]
+    )
+
+    captured = capsys.readouterr()
+    assert code == 2
+    assert "population_pool_mode=single" in captured.out
 
 
 def test_codeevolve_diff_max_tokens_promotes_large_vllm_budget():

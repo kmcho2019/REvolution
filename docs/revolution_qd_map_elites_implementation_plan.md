@@ -85,17 +85,17 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - [x] Create feature worktree from `wip/journal-extension-2026`.
 - [x] Query live vLLM `/v1/models` endpoint and record model metadata.
 - [x] Create this canonical living plan document.
-- [ ] Review Stage 0 status and commit bootstrap docs-only change.
+- [x] Review Stage 0 status and commit bootstrap docs-only change.
 
 ### Stage 1: Search Mode, ProblemSpec, Archive Interface, And Per-Phase Modes
 
-- [ ] Add `search_mode=revolution_qd` plumbing to runners and backend config.
-- [ ] Add QD config surface for archive type, quality mode, descriptor config,
+- [x] Add `search_mode=revolution_qd` plumbing to runners and backend config.
+- [x] Add QD config surface for archive type, quality mode, descriptor config,
       and phase generation-mode overrides.
-- [ ] Add `ProblemSpec` capability layer.
-- [ ] Add shared archive protocol / state types without altering classic mode.
-- [ ] Add regression and config-surface tests.
-- [ ] Update docs and plan with Stage 1 validation notes.
+- [x] Add `ProblemSpec` capability layer.
+- [x] Add shared archive protocol / state types without altering classic mode.
+- [x] Add regression and config-surface tests.
+- [x] Update docs and plan with Stage 1 validation notes.
 - [ ] Commit Stage 1 with signed multi-line commit message.
 
 ### Stage 2: Exact Quality Score, Descriptor Registry, And Extraction Substrate
@@ -176,29 +176,29 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 
 ### Public Surface
 
-- [ ] Add `search_mode`
-- [ ] Add `qd_archive_type`
-- [ ] Add `qd_num_cells`
-- [ ] Add `qd_fill_target_fraction`
-- [ ] Add `qd_cell_reservoir`
-- [ ] Add `qd_neighbor_k`
-- [ ] Add `qd_cvt_warmup_successes`
-- [ ] Add `qd_quality_mode`
-- [ ] Add `qd_alpha`, `qd_beta`, `qd_gamma`
-- [ ] Add `qd_descriptor_profile`
-- [ ] Add `qd_descriptor_axes`
-- [ ] Add `qd_descriptor_file`
-- [ ] Add `qd_enable_descriptor_experiments`
-- [ ] Add `qd_descriptor_probe_budget`
-- [ ] Add `qd_grid_axes`
-- [ ] Add `qd_cvt_axes`
-- [ ] Add per-phase generation-mode overrides
+- [x] Add `search_mode`
+- [x] Add `qd_archive_type`
+- [x] Add `qd_num_cells`
+- [x] Add `qd_fill_target_fraction`
+- [x] Add `qd_cell_reservoir`
+- [x] Add `qd_neighbor_k`
+- [x] Add `qd_cvt_warmup_successes`
+- [x] Add `qd_quality_mode`
+- [x] Add `qd_alpha`, `qd_beta`, `qd_gamma`
+- [x] Add `qd_descriptor_profile`
+- [x] Add `qd_descriptor_axes`
+- [x] Add `qd_descriptor_file`
+- [x] Add `qd_enable_descriptor_experiments`
+- [x] Add `qd_descriptor_probe_budget`
+- [x] Add `qd_grid_axes`
+- [x] Add `qd_cvt_axes`
+- [x] Add per-phase generation-mode overrides
 
 ### Core Runtime
 
-- [ ] Add `src/revolution/runtime/problem_spec.py`
+- [x] Add `src/revolution/runtime/problem_spec.py`
 - [ ] Add `src/revolution/runtime/structural_evaluator.py`
-- [ ] Add `src/revolution/qd/types.py`
+- [x] Add `src/revolution/qd/types.py`
 - [ ] Add `src/revolution/qd/scoring.py`
 - [ ] Add `src/revolution/qd/descriptors.py`
 - [ ] Add `src/revolution/qd/archive.py`
@@ -243,6 +243,33 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   - `max_model_len=131072`
 - Automated tests: not yet run
 - Smoke tests: preflight only
+- Commit:
+  - `32ea6f39e6` `docs(qd): bootstrap living implementation plan and worktree log`
+
+### Stage 1
+
+- Date: `2026-03-12`
+- Implemented:
+  - runner/back-end `search_mode` scaffolding
+  - QD parser/config surface for archive type, descriptor inputs, quality mode,
+    and per-phase generation-mode overrides
+  - new `ProblemSpec` capability layer
+  - shared `QDArchive` protocol and insert-result types
+  - `run_evolution.py` delegation to `run_backend.py` for QD-mode configs
+  - guard rejecting `search_mode=revolution_qd` with
+    `population_pool_mode=single`
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_defaults.py tests/revolution/test_problem_spec.py tests/scripts/test_run_backend.py tests/scripts/test_run_evolution.py`
+  - Result: `26 passed in 1.50s`
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_backends_base.py tests/scripts/test_run_backend_ablation.py`
+  - Result: `15 passed in 0.75s`
+- Smoke tests:
+  - no live backend run yet; Stage 1 is parser/config/capability scaffolding only
+- Notes:
+  - `run_backend.py` now annotates summary metadata with `search_mode`,
+    `problem_spec`, and initial `qd_config` fields.
+  - `run_evolution.py` stays as a legacy wrapper and forwards QD requests to
+    `run_backend.py` instead of growing a second execution path.
 
 ## Debt Review
 
@@ -255,6 +282,18 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   avoid forcing archive-specific logic deep into classic `revolution` paths
   where a clean `search_mode` split is sufficient.
 
+### Stage 1
+
+- Kept the classic `revolution` engine path intact.
+- Avoided early engine forking by landing typed config/capability scaffolding
+  before archive logic.
+- The QD surface is broad, but still mostly passive; behavioral changes are
+  limited to validation and metadata until Stage 3.
+- Follow-up risk to watch:
+  the large QD config surface should eventually be grouped into dedicated
+  config objects once the execution path exists, otherwise `run_backend.py`
+  argument plumbing will become noisy.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -265,9 +304,21 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Grid-first implementation order is aligned with the debugging strategy while
   keeping CVT parity as an explicit requirement.
 
+### Stage 1
+
+- The implementation still matches the intended architecture:
+  classic REvolution remains unchanged, while QD mode now has a typed entry
+  surface instead of ad-hoc future flags.
+- `ProblemSpec` captures benchmark defaults for descriptor profile, quality
+  mode, and per-phase generation-mode preferences without hardcoding those
+  choices directly into the backend runner.
+- No success-side archive state has been introduced yet, so there is no risk
+  of archive/pool source-of-truth drift at this stage.
+
 ## Commit Ledger
 
-- Pending Stage 0 bootstrap commit.
+- `32ea6f39e6` `docs(qd): bootstrap living implementation plan and worktree log`
+- Pending Stage 1 scaffolding commit.
 
 ## Deferred Follow-Ups
 

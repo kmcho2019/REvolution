@@ -41,6 +41,9 @@ from revolution.runtime import (  # noqa: E402
     ArtifactWriter,
     CVDPEvaluator,
     CandidateEvaluator,
+    ProblemSpec,
+    build_cvdp_problem_spec,
+    build_problem_spec,
     build_cvdp_problem_context,
     load_cvdp_record,
     load_problem_context,
@@ -188,6 +191,11 @@ def _build_backend(
             cvdp_record=record,
         )
         ref_ppa_metrics: dict[str, float] = {}
+        problem_spec: ProblemSpec = build_cvdp_problem_spec(
+            problem_context,
+            cvdp_record=record,
+            supports_reference_ppa=False,
+        )
         candidate_evaluator = cast(
             CandidateEvaluator,
             CVDPEvaluator(
@@ -200,6 +208,10 @@ def _build_backend(
     else:
         problem_context = load_problem_context(benchmark, problem)
         ref_ppa_metrics = _load_reference_ppa_metrics(problem_context)
+        problem_spec = build_problem_spec(
+            problem_context,
+            supports_reference_ppa=bool(ref_ppa_metrics),
+        )
         candidate_evaluator = CandidateEvaluator(
             context=problem_context,
             problem_description=problem_context.problem_description,
@@ -232,6 +244,7 @@ def _build_backend(
         benchmark_name=benchmark,
         problem_name=problem,
         problem_context=problem_context,
+        problem_spec=problem_spec,
         generation_mode=args.generation_mode,
         seed=task_seed,
         metadata={
@@ -244,11 +257,13 @@ def _build_backend(
             "accelerated_synthesis_top_k": args.accelerated_synthesis_top_k,
             "cvdp_jsonl": getattr(args, "cvdp_jsonl", None),
             "cvdp_simulation_timeout_s": getattr(args, "cvdp_simulation_timeout_s", None),
+            "search_mode": getattr(args, "search_mode", "revolution"),
         },
     )
 
     if args.backend == "revolution":
         backend_cfg = RevolutionBackendConfig(
+            search_mode=args.search_mode,
             population_size=args.population_size,
             num_generations=args.num_generations,
             default_llm_temp=args.temperature,
@@ -268,6 +283,29 @@ def _build_backend(
             prompt_profile=prompt_profile,
             prompt_root=prompt_root,
             candidate_workers=args.candidate_workers,
+            qd_archive_type=args.qd_archive_type,
+            qd_num_cells=args.qd_num_cells,
+            qd_fill_target_fraction=args.qd_fill_target_fraction,
+            qd_cell_reservoir=args.qd_cell_reservoir,
+            qd_neighbor_k=args.qd_neighbor_k,
+            qd_cvt_warmup_successes=args.qd_cvt_warmup_successes,
+            qd_quality_mode=args.qd_quality_mode,
+            qd_alpha=args.qd_alpha,
+            qd_beta=args.qd_beta,
+            qd_gamma=args.qd_gamma,
+            qd_descriptor_profile=args.qd_descriptor_profile,
+            qd_descriptor_axes=tuple(args.qd_descriptor_axes or []),
+            qd_descriptor_file=args.qd_descriptor_file,
+            qd_enable_descriptor_experiments=args.qd_enable_descriptor_experiments,
+            qd_descriptor_probe_budget=args.qd_descriptor_probe_budget,
+            qd_grid_axes=tuple(args.qd_grid_axes or []),
+            qd_cvt_axes=tuple(args.qd_cvt_axes or []),
+            qd_fail_generation_mode=args.qd_fail_generation_mode,
+            qd_seed_generation_mode=args.qd_seed_generation_mode,
+            qd_backfill_generation_mode=args.qd_backfill_generation_mode,
+            qd_refine_generation_mode=args.qd_refine_generation_mode,
+            qd_crossover_generation_mode=args.qd_crossover_generation_mode,
+            qd_formal_mode=args.qd_formal_mode,
         )
         return RevolutionBackend(
             context=context,
@@ -511,6 +549,12 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--top_p", type=float, default=0.95)
     parser.add_argument("--max_tokens", type=int, default=2048)
+    parser.add_argument(
+        "--search_mode",
+        type=str,
+        default="revolution",
+        choices=["revolution", "revolution_qd"],
+    )
     parser.add_argument("--generation_mode", type=str, default="whole", choices=["whole", "diff"])
     parser.add_argument(
         "--diff_apply_policy",
@@ -589,6 +633,73 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--epsilon", type=float, default=0.1)
     parser.add_argument("--ucb_c", type=float, default=2.0)
     parser.add_argument("--population_pool_mode", type=str, default="dual", choices=["dual", "single"])
+    parser.add_argument(
+        "--qd_archive_type",
+        type=str,
+        default="grid",
+        choices=["grid", "cvt"],
+    )
+    parser.add_argument("--qd_num_cells", type=int, default=64)
+    parser.add_argument("--qd_fill_target_fraction", type=float, default=0.25)
+    parser.add_argument("--qd_cell_reservoir", type=int, default=2)
+    parser.add_argument("--qd_neighbor_k", type=int, default=8)
+    parser.add_argument("--qd_cvt_warmup_successes", type=int, default=None)
+    parser.add_argument(
+        "--qd_quality_mode",
+        type=str,
+        default="auto",
+        choices=["auto", "ppa", "functional_only"],
+    )
+    parser.add_argument("--qd_alpha", type=float, default=None)
+    parser.add_argument("--qd_beta", type=float, default=None)
+    parser.add_argument("--qd_gamma", type=float, default=None)
+    parser.add_argument("--qd_descriptor_profile", type=str, default=None)
+    parser.add_argument("--qd_descriptor_axes", nargs="+", default=None)
+    parser.add_argument("--qd_descriptor_file", type=str, default=None)
+    parser.add_argument(
+        "--qd_enable_descriptor_experiments",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
+    parser.add_argument("--qd_descriptor_probe_budget", type=int, default=0)
+    parser.add_argument("--qd_grid_axes", nargs="+", default=None)
+    parser.add_argument("--qd_cvt_axes", nargs="+", default=None)
+    parser.add_argument(
+        "--qd_fail_generation_mode",
+        type=str,
+        default="auto",
+        choices=["auto", "whole", "diff"],
+    )
+    parser.add_argument(
+        "--qd_seed_generation_mode",
+        type=str,
+        default="auto",
+        choices=["auto", "whole", "diff"],
+    )
+    parser.add_argument(
+        "--qd_backfill_generation_mode",
+        type=str,
+        default="auto",
+        choices=["auto", "whole", "diff"],
+    )
+    parser.add_argument(
+        "--qd_refine_generation_mode",
+        type=str,
+        default="auto",
+        choices=["auto", "whole", "diff"],
+    )
+    parser.add_argument(
+        "--qd_crossover_generation_mode",
+        type=str,
+        default="auto",
+        choices=["auto", "whole", "diff"],
+    )
+    parser.add_argument(
+        "--qd_formal_mode",
+        type=str,
+        default="auto",
+        choices=["off", "auto", "required"],
+    )
 
     # FunSearch-specific
     parser.add_argument("--fs_initial_population_size", type=int, default=4)
@@ -771,6 +882,17 @@ def main(argv: list[str] | None = None) -> int:
         )
     except ConfigError as exc:
         print(f"Configuration error: {exc}")
+        return 2
+
+    if (
+        args.backend == "revolution"
+        and args.search_mode == "revolution_qd"
+        and args.population_pool_mode == "single"
+    ):
+        print(
+            "Configuration error: search_mode=revolution_qd does not support "
+            "population_pool_mode=single."
+        )
         return 2
 
     if args.api_backend == "vllm":

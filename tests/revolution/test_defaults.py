@@ -33,6 +33,13 @@ def test_revolution_backend_config_default_strategy_selection_is_ucb():
     assert RevolutionBackendConfig().strategy_selection_method == "ucb"
 
 
+def test_revolution_backend_config_defaults_to_classic_search_mode():
+    cfg = RevolutionBackendConfig()
+    assert cfg.search_mode == "revolution"
+    assert cfg.qd_archive_type == "grid"
+    assert cfg.qd_fail_generation_mode == "auto"
+
+
 def test_cvdp_engine_default_timeout_is_120_seconds():
     signature = inspect.signature(CVDPEngine.__init__)
     assert signature.parameters["simulation_timeout_s"].default == 120
