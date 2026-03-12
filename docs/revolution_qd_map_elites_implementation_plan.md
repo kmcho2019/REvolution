@@ -608,6 +608,8 @@ Documentation risk to watch:
   - this stage reduces a major config/runtime mismatch, but it does not close
     the remaining duplicated generation-loop seam between `EoHEngine` and
     `QDEngine`
+  - first Stage 4 runtime/docs checkpoint commit:
+    - `c03242b784` `feat(qd): add initial cvt archive runtime support`
 
 ## Debt Review
 
@@ -817,6 +819,7 @@ implementation and testing so far.
 - `dc62a11c2b` `docs(qd): document single sign-off commit rule`
 - `d5a7176628` `feat(qd): add configurable grid-axis bin loading`
 - `ed3e933f61` `chore(qd): record validation status and clean branch typing`
+- `c03242b784` `feat(qd): add initial cvt archive runtime support`
 - Stage 3 follow-through and Stage 4 parity work are still pending: live-smoke
   closure, engine-seam cleanup, and grid/CVT reporting parity are not done yet.
 
