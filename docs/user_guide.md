@@ -113,6 +113,9 @@ to module-level tasks:
 - fixture coverage exists on this branch, but there is still no checked-in
   dataset under `data/bench/RealBench`, so live RealBench smoke runs remain
   blocked until that dataset is added
+- there is also a separate remote GitHub branch named `realbench` intended to
+  land fuller RealBench benchmark/problem-analysis integration, but that branch
+  is not merged into `wip/journal-extension-2026` yet
 
 By default outputs are isolated by backend under `<save_path>/<backend>/...` (`--backend_subdir` can be disabled if needed).
 
@@ -149,6 +152,9 @@ Current feature status:
 - `qd_descriptor_file` may now define both `profiles:` and `grid_axes:` so the
   same YAML can control descriptor selection and per-axis grid bin/bounds
   settings.
+- `scripts/run_backend_qd_smoke_vllm.sh` provides a repeatable QD smoke matrix
+  for `grid` and `cvt` with `--suite rtllm|verilogeval`,
+  `--policy whole-heavy|diff-heavy`, and `--dry-run`.
 - Live completion-grade smokes for both grid and CVT are still pending, and
   reporting/artifact parity is not finished yet.
 - The authoritative detailed status lives in

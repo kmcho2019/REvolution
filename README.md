@@ -162,6 +162,9 @@ Current status on this feature branch:
   `scripts/run_backend.py`, and the feature branch includes a manifest-based
   `RealBench` module adapter for future dataset drops under
   `data/bench/RealBench`.
+- `scripts/run_backend_qd_smoke_vllm.sh` now provides a repeatable grid/CVT QD
+  smoke harness with fixed small-budget defaults and a `--dry-run` mode so
+  smoke validation is not just a collection of ad hoc commands.
 - The detailed status and validation record lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.
 

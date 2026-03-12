@@ -25,6 +25,8 @@
 - `pytest`: run all tests under `tests/`.
 - `pytest --cov=src/revolution --cov-report=term-missing`: run tests with coverage details.
 - `python scripts/run_backend.py --help`: canonical backend-selectable runner help.
+- `bash scripts/run_backend_qd_smoke_vllm.sh --dry-run`: inspect the repeatable
+  QD smoke matrix before running live grid/CVT validation.
 - `python scripts/run_evolution.py --help`: view all evolutionary run options.
 - `python scripts/run_evolution.py --benchmarks RTLLM --model_name gpt-4.1-mini`: example multi-generation run.
 - `python scripts/run_one_shot.py --benchmarks VerilogEval-Spec-to-RTL --num_samples 20`: example n-shot baseline run.
