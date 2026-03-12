@@ -8,6 +8,7 @@ import random
 import time
 import traceback
 from collections import defaultdict
+from collections import deque
 from typing import Any, Literal, cast
 
 from revolution.algorithm import EoHEngine, EvolStrategyMethodFail, EvolStrategyMethodSuccess, Heuristic
@@ -26,6 +27,7 @@ class QDEngine(EoHEngine):
         qd_archive_type: str = "grid",
         qd_num_cells: int = 64,
         qd_fill_target_fraction: float = 0.25,
+        qd_cell_reservoir: int = 2,
         qd_grid_axes: tuple[str, ...] = (),
         qd_fail_generation_mode: str = "auto",
         qd_seed_generation_mode: str = "auto",
@@ -38,6 +40,7 @@ class QDEngine(EoHEngine):
         self.qd_archive_type = qd_archive_type
         self.qd_num_cells = max(1, int(qd_num_cells))
         self.qd_fill_target_fraction = float(qd_fill_target_fraction)
+        self.qd_cell_reservoir = max(0, int(qd_cell_reservoir))
         self.qd_grid_axes = tuple(qd_grid_axes) if qd_grid_axes else self._default_grid_axes()
         self.qd_fail_generation_mode = qd_fail_generation_mode
         self.qd_seed_generation_mode = qd_seed_generation_mode
@@ -49,6 +52,7 @@ class QDEngine(EoHEngine):
                 "QDEngine currently supports qd_archive_type=grid only. CVT lands in Stage 4."
             )
         self.success_archive = self._build_grid_archive()
+        self.success_reservoir: dict[str, deque[Heuristic]] = {}
 
     def _default_grid_axes(self) -> tuple[str, ...]:
         if self.ref_ppa_metrics.get("eff_clk_period", 0.0):
@@ -76,6 +80,12 @@ class QDEngine(EoHEngine):
             if phase == "seed" and override == "diff":
                 return "whole"
             return cast(Literal["whole", "diff"], override)
+        if self.problem_spec is not None:
+            problem_default = self.problem_spec.phase_generation_defaults.get(phase, "auto")
+            if problem_default in {"whole", "diff"}:
+                if phase == "seed" and problem_default == "diff":
+                    return "whole"
+                return cast(Literal["whole", "diff"], problem_default)
         if phase == "refine" and self.generation_mode == "diff":
             return "diff"
         return "whole"
@@ -88,29 +98,51 @@ class QDEngine(EoHEngine):
 
     def _rebuild_archive_from_success_pool(self) -> None:
         self.success_archive = self._build_grid_archive()
+        self.success_reservoir = {}
         for cand in self.success_pool:
             descriptors = self._descriptor_tuple(cand)
             if descriptors is None:
                 continue
             self.success_archive.insert(cand.id, descriptors, cand.score, cand)
-        self.success_pool = self._archive_elites()
+        self.success_pool = self._success_view()
 
     def _archive_elites(self) -> list[Heuristic]:
         elites = [entry.payload for entry in self.success_archive.entries().values()]
         elites.sort(key=lambda cand: cand.score, reverse=True)
         return elites
 
+    def _record_reservoir_candidate(self, cell_id: str, candidate: Heuristic) -> None:
+        if self.qd_cell_reservoir <= 0:
+            return
+        bucket = self.success_reservoir.setdefault(
+            cell_id,
+            deque(maxlen=self.qd_cell_reservoir),
+        )
+        bucket.appendleft(candidate)
+
+    def _success_view(self) -> list[Heuristic]:
+        elites = self._archive_elites()
+        seen_ids = {cand.id for cand in elites}
+        view = list(elites)
+        for cell_id in sorted(self.success_reservoir):
+            for cand in self.success_reservoir[cell_id]:
+                if cand.id in seen_ids:
+                    continue
+                seen_ids.add(cand.id)
+                view.append(cand)
+        return view
+
     def initialize_population(self) -> None:
         super().initialize_population()
         self._rebuild_archive_from_success_pool()
 
     def _sample_success_parents(self, count: int) -> list[Heuristic]:
-        elites = self._archive_elites()
-        if not elites:
+        success_view = self._success_view()
+        if not success_view:
             return []
-        base = min(c.score for c in elites)
-        weights = [max(c.score - base + 0.1, 1e-6) for c in elites]
-        return random.choices(elites, weights=weights, k=count)
+        base = min(c.score for c in success_view)
+        weights = [max(c.score - base + 0.1, 1e-6) for c in success_view]
+        return random.choices(success_view, weights=weights, k=count)
 
     def _materialize_offspring(
         self,
@@ -262,7 +294,12 @@ class QDEngine(EoHEngine):
                 inserted += 1
             if result.replaced:
                 replaced += 1
-        self.success_pool = self._archive_elites()
+                previous_payload = cast(Heuristic | None, result.previous_payload)
+                if previous_payload is not None:
+                    self._record_reservoir_candidate(result.cell_id, previous_payload)
+            elif self.qd_cell_reservoir > 0:
+                self._record_reservoir_candidate(result.cell_id, cand)
+        self.success_pool = self._success_view()
         return inserted, replaced
 
     def evolve_one_generation(self):
@@ -344,7 +381,13 @@ class QDEngine(EoHEngine):
         success_selected: set[EvolStrategyMethodSuccess] = set()
         success_total_requests = budget.backfill_budget + budget.refine_budget
         for idx in range(success_total_requests):
-            parents = self._sample_success_parents(2 if budget.phase == "improve" and idx == success_total_requests - 1 and len(self.success_pool) > 1 else 1)
+            parents = self._sample_success_parents(
+                2
+                if budget.phase == "improve"
+                and idx == success_total_requests - 1
+                and len(self.success_pool) > 1
+                else 1
+            )
             if not parents:
                 break
             if budget.phase == "fill" or idx < budget.backfill_budget:
@@ -481,11 +524,11 @@ class QDEngine(EoHEngine):
                 end_utc,
                 total_runtime,
                 self.current_generation,
-                self.success_pool,
+                self._archive_elites(),
             )
 
         if self.success_pool:
-            best_solution = self.success_pool[0]
+            best_solution = self._archive_elites()[0]
             final_report = best_solution.ppa_metrics.get("report_path", "N/A")
             final_score = best_solution.score if best_solution.score is not None else "N/A"
             return f"{self.problem_name},success,{best_solution.code_file_path},{final_report},{final_score}"

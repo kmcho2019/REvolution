@@ -16,6 +16,7 @@ class QDArchiveInsertResult:
     replaced: bool
     previous_quality_score: float | None = None
     new_quality_score: float | None = None
+    previous_payload: Any | None = None
 
 
 class QDArchive(Protocol):

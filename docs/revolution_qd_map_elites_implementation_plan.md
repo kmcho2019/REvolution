@@ -44,9 +44,9 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   - `VerilogEval-Spec-to-RTL`
   - `cvdp` 1.0.2 limited to `cid002` and `cid003`
   - `RealBench` module subsets
-- Current backend status: Stage 3 grid-runtime checkpoint landed; CVT, QD
-  operator expansion, reporting parity, and benchmark-expansion stages remain
-  pending
+- Current backend status: Stage 3 grid-runtime path is live with benchmark-
+  default phase-mode wiring and a bounded per-cell `success_view` reservoir;
+  CVT, reporting parity, and benchmark-expansion stages remain pending
 
 ## Worktree Info
 
@@ -112,14 +112,13 @@ explicit, evaluate whether it was appropriate, and keep the roadmap honest.
   reduced before or during CVT integration so the branch does not accumulate
   engine-loop drift.
 
-- Divergence: `success_view` is currently implemented as an archive-elite view
-  only; the planned bounded per-cell recent-occupant reservoir has not been
-  added yet.
+- Resolved divergence: `success_view` originally landed as an archive-elite
+  view only, without the planned bounded per-cell recent-occupant reservoir.
   Review:
-  This is an acceptable temporary simplification. It preserves the critical
-  “archive as source of truth” property and is enough to validate archive-based
-  success selection. The missing reservoir will matter more once backfill,
-  cross-cell diversity, and richer operator routing land.
+  This gap is now closed for the grid runtime path. The archive remains the
+  success-side source of truth, while `success_view` now adds a bounded recent-
+  occupant reservoir for parent sampling without creating a second flat success
+  store.
 
 - Divergence: grid binning currently uses uniform per-axis bounds `[-1, 1]`
   with derived bin counts, rather than a richer bin-spec path loaded from
@@ -148,16 +147,14 @@ explicit, evaluate whether it was appropriate, and keep the roadmap honest.
   The blocked smoke does not disprove the runtime path, but it means the branch
   still lacks the intended end-to-end live validation evidence for Stage 3.
 
-- Divergence: the per-phase generation-mode override surface exists in CLI,
-  backend config, and `QDEngine`, but the runtime `auto` policy does not yet
-  consult `ProblemSpec.phase_generation_defaults`.
+- Resolved divergence: the branch originally exposed per-phase generation-mode
+  overrides in CLI/backend config before the QD runtime `auto` path actually
+  consumed `ProblemSpec.phase_generation_defaults`.
   Review:
-  This is a meaningful but still acceptable divergence. The original plan
-  wanted resolution order `explicit override -> ProblemSpec defaults -> runtime
-  fallback`. The current engine only implements `explicit override -> local
-  fallback`, which is enough for early grid runtime bring-up but not enough for
-  benchmark-specific diff-heavy defaults on larger tasks. This should be closed
-  before Stage 5 so diff-policy experiments mean what the plan says they mean.
+  This gap has now been closed for the current grid runtime path. Resolution
+  order is now `explicit override -> ProblemSpec defaults -> local fallback`,
+  which is materially closer to the original plan and makes benchmark-specific
+  diff-policy experiments meaningful.
 
 - Divergence: top-level and immediate docs were updated earlier than the
   original stage ordering would have required.
@@ -207,8 +204,8 @@ with that requirement.
 Documentation risk to watch:
 
 - These docs are directionally correct for the current branch, but they should
-  be refreshed again when CVT lands, when `ProblemSpec`-driven phase defaults
-  are wired into runtime behavior, and when reporting/artifact parity is added.
+  be refreshed again when CVT lands and when reporting/artifact parity is
+  added.
 
 ## Stage Tracker
 
@@ -253,9 +250,9 @@ Documentation risk to watch:
 - [x] Wire the first grid runtime path through `revolution_backend.py`.
 - [x] Add grid-specific tests.
 - [x] Refresh top-level and immediate QD docs for the grid-runtime checkpoint.
-- [ ] Wire `ProblemSpec.phase_generation_defaults` into QD runtime `auto`
+- [x] Wire `ProblemSpec.phase_generation_defaults` into QD runtime `auto`
       policy resolution.
-- [ ] Add bounded per-cell reservoir support so `success_view` matches the
+- [x] Add bounded per-cell reservoir support so `success_view` matches the
       planned elite-plus-recent-occupant semantics.
 - [ ] Add configurable grid-bin specification loading for structural/physical
       grid experiments.
@@ -351,9 +348,9 @@ Documentation risk to watch:
       seams and reduced duplication
 - [ ] Add `src/revolution/qd/visualization.py`
 - [ ] Refactor `src/revolution/algorithm.py` for shared engine seams
-- [ ] Wire `ProblemSpec.phase_generation_defaults` into runtime `auto` phase
+- [x] Wire `ProblemSpec.phase_generation_defaults` into runtime `auto` phase
       resolution
-- [ ] Add bounded per-cell `success_view` reservoir support
+- [x] Add bounded per-cell `success_view` reservoir support
 - [ ] Add configurable grid-bin specification loading
 
 ### Descriptor Registry Candidates
@@ -490,8 +487,25 @@ Documentation risk to watch:
     - `docs/implementation_details.md`
     - `docs/REvolution_specification.md`
   - phase-generation override flags are exposed and carried through runtime
-    construction, but benchmark-specific `ProblemSpec` defaults are not yet
-    applied in the `QDEngine` `auto` path
+    construction, and benchmark-specific `ProblemSpec` defaults are now applied
+    in the `QDEngine` `auto` path with explicit overrides still taking
+    precedence
+  - focused runtime/default-wiring validation:
+    - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py tests/revolution/test_problem_spec.py tests/revolution/test_defaults.py tests/scripts/test_run_backend.py`
+    - Result: `31 passed in 1.57s`
+  - focused reservoir/runtime sampling validation:
+    - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_engine.py tests/revolution/test_qd_archive.py tests/revolution/test_revolution_backend.py tests/revolution/test_problem_spec.py tests/revolution/test_defaults.py tests/scripts/test_run_backend.py`
+    - Result: `37 passed in 1.03s`
+  - grid runtime now keeps a bounded per-cell reservoir for recent successful
+    occupants, and `success_view` samples from archive elites plus that
+    reservoir without making it a second source of truth
+  - commit-message hygiene review for `447c012822..HEAD`:
+    - checked `git log --format=%B`, `git show --pretty=fuller --no-patch`, and
+      `sed -n 'l'` formatting output for each commit
+    - no malformed headers, raw `\\n`, or spacing corruption found
+    - note: `e6ac6130ef` contains both an existing `Signed-off-by` footer and
+      the automatic `-s` footer, which is not malformed but should not be
+      repeated in future commits
   - first Stage 3 substrate commit:
     - `efbf9b48d0` `feat(qd): add grid archive and linear scheduler substrate`
   - second Stage 3 runtime/docs checkpoint commit:
@@ -544,11 +558,13 @@ Documentation risk to watch:
   should be refactored once the grid runtime is stable enough to avoid
   spreading engine-loop duplication into CVT work.
 - The current grid runtime does not yet expose a bounded per-cell reservoir or
-  configurable grid-bin specification loading. Those were deferred to keep the
-  first runtime checkpoint smaller and easier to debug.
-- The `ProblemSpec` phase-default data model exists, but `QDEngine` does not
-  yet consume it. That leaves some benchmark-specific diff/whole policy intent
-  stranded in configuration metadata instead of runtime behavior.
+  configurable grid-bin specification loading. The reservoir gap is now closed;
+  configurable grid-bin loading is still deferred to keep the geometry logic
+  smaller before CVT work lands.
+- The `ProblemSpec` phase-default data model is now consumed by `QDEngine`, but
+  the resolution logic still lives only in the QD engine rather than behind a
+  shared reusable helper. That is acceptable for now, but it is still a seam
+  to watch if classic and QD mode continue to diverge in prompt routing.
 - Physical descriptor plumbing still lags the registry/config surface. That is
   acceptable for the current gain-axis-heavy grid checkpoint, but not for final
   paper-grade descriptor experiments.
@@ -592,11 +608,12 @@ Documentation risk to watch:
 - The archive replacement semantics already match the intended MAP-Elites
   contract: empty-cell insert, occupied-cell replace only on higher quality.
 - The branch still honors the intended “archive as success truth” direction,
-  but `success_view` is currently thinner than originally planned because it is
-  archive-elites only, without the small per-cell reservoir.
-- Benchmark-specific phase-generation defaults exist in `ProblemSpec`, but the
-  runtime does not yet use them. This is a real implementation gap relative to
-  the intended diff-flexibility story, not just a documentation gap.
+  and `success_view` is now materially closer to the original plan because it
+  combines archive elites with a small bounded per-cell reservoir rather than
+  being elite-only.
+- Benchmark-specific phase-generation defaults now affect runtime `auto`
+  resolution, which brings the implemented diff-flexibility story materially
+  closer to the original intent.
 - The most important remaining work is broader live validation, richer
   QD-specific operators, CVT parity, and reducing `QDEngine` loop duplication
   before the architecture hardens further.
@@ -611,13 +628,8 @@ implementation and testing so far.
 - Add a deterministic local smoke mode for `revolution_qd` using mocked or
   low-budget runtime settings so the branch has a reliable end-to-end sanity
   check even when long-context vLLM runs are slow.
-- Wire `ProblemSpec.phase_generation_defaults` into `QDEngine._phase_mode()` so
-  `auto` actually reflects benchmark-specific policy rather than a generic
-  fallback.
 - Refactor the duplicated offspring-materialization / request bookkeeping seam
   shared by `EoHEngine` and `QDEngine` into reusable helpers.
-- Add explicit `success_view` implementation notes in code and plan:
-  archive elites now, per-cell reservoir next.
 - Add configurable grid-bin loading for structural/physical grid experiments.
 - Add a small completion-oriented live smoke profile for the grid runtime
   separate from the paper-grade `128k` long-context smoke profile.
@@ -667,7 +679,7 @@ implementation and testing so far.
 - `98db8207e4` `docs(qd): record stage 3 substrate checkpoint`
 - `4a82690a1f` `feat(qd): wire grid runtime path and refresh docs`
 - Stage 3 remains in progress; live-smoke closure, engine-seam cleanup, and
-  richer success-view semantics are still pending.
+  grid-bin/CVT/reporting work are still pending.
 
 ## Deferred Follow-Ups
 

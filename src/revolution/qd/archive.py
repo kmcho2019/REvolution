@@ -76,10 +76,12 @@ class GridArchive:
                 replaced=False,
                 previous_quality_score=None,
                 new_quality_score=float(quality_score),
+                previous_payload=None,
             )
 
         if float(quality_score) > float(entry.quality_score):
             previous = float(entry.quality_score)
+            previous_payload = entry.payload
             self._entries[cell_id] = GridArchiveEntry(
                 candidate_id=candidate_id,
                 descriptors=descriptors,
@@ -92,6 +94,7 @@ class GridArchive:
                 replaced=True,
                 previous_quality_score=previous,
                 new_quality_score=float(quality_score),
+                previous_payload=previous_payload,
             )
 
         return QDArchiveInsertResult(
@@ -100,6 +103,7 @@ class GridArchive:
             replaced=False,
             previous_quality_score=float(entry.quality_score),
             new_quality_score=float(quality_score),
+            previous_payload=entry.payload,
         )
 
     def elite_for_cell(self, cell_id: str) -> GridArchiveEntry | None:

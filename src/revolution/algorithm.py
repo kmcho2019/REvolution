@@ -11,7 +11,7 @@ import time
 import traceback
 import uuid
 from collections import defaultdict
-from typing import Any, Iterator, Literal, TypeVar, cast, get_args, overload
+from typing import TYPE_CHECKING, Any, Iterator, Literal, TypeVar, cast, get_args, overload
 from difflib import SequenceMatcher # Used for fuzzy matching in "diff" mode
 import hashlib
 
@@ -24,6 +24,9 @@ from .evaluation import SynthesisEvaluator, VerilogEvaluator
 from .llm import LLMInterface, LLMRequest
 from .logging import EoHLogger
 from .prompt_store import PromptStore, safe_format # Able to load prompts from files
+
+if TYPE_CHECKING:
+    from .runtime.problem_spec import ProblemSpec
 
 
 # Literal Typing for strategies (M-F, M-S, M-E, M-R, M-I, C-F, ...)
@@ -326,6 +329,7 @@ class EoHEngine:
         prompt_profile: str = "default",
         prompt_root: str | None = None,
         candidate_workers: int | None = None,
+        problem_spec: "ProblemSpec | None" = None,
     ):
         self.generation_mode: Literal["whole", "diff"] = generation_mode
         self.diff_apply_policy: DiffApplyPolicy = diff_apply_policy
@@ -349,6 +353,7 @@ class EoHEngine:
             )
         )
         self.problem_description: str = self.load_problem_description()
+        self.problem_spec: ProblemSpec | None = problem_spec
         self.llm: LLMInterface = llm_interface
         self.evaluator: VerilogEvaluator = verilog_evaluator
         self.synthesis_evaluator: SynthesisEvaluator = synthesis_evaluator

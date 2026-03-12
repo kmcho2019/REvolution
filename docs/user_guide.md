@@ -119,7 +119,13 @@ QD-mode controls on the `revolution` backend currently include:
 
 Current feature status:
 
-- `grid` is the active first runtime path and now has archive and scheduler runtime scaffolding.
+- `grid` is the active first runtime path and now has archive, scheduler, and
+  benchmark-aware phase-mode runtime wiring.
+- `auto` per-phase generation-mode selection now consults
+  `ProblemSpec.phase_generation_defaults`, while explicit CLI/config overrides
+  still take precedence.
+- `success_view` in the grid runtime now samples from archive elites plus a
+  small bounded per-cell reservoir of recent successful occupants.
 - `cvt` is exposed in the config surface but full runtime integration is still pending.
 - The authoritative detailed status lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.

@@ -64,6 +64,7 @@ def test_revolution_backend_uses_classic_engine_by_default(monkeypatch, tmp_path
     backend.initialize()
     assert isinstance(backend.engine, _FakeEngine)
     assert captured["kwargs"]["benchmark_name"] == "Bench"
+    assert captured["kwargs"]["problem_spec"].benchmark_name == "Bench"
 
 
 def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_path):
@@ -83,3 +84,5 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
     backend.initialize()
     assert isinstance(backend.engine, _FakeQDEngine)
     assert captured["kwargs"]["qd_grid_axes"] == ("g_A", "g_T")
+    assert captured["kwargs"]["qd_cell_reservoir"] == 2
+    assert captured["kwargs"]["problem_spec"].problem_name == "Prob001"
