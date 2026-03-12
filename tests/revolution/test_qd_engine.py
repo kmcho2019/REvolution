@@ -65,6 +65,32 @@ def test_qd_engine_phase_mode_defaults_follow_refine_diff_only(tmp_path, monkeyp
     assert engine._phase_mode("refine") == "diff"
 
 
+def test_qd_engine_uses_problem_spec_prompt_text_for_non_file_backed_problem(tmp_path):
+    problem_spec = ProblemSpec(
+        benchmark_name="cvdp",
+        problem_name="cvdp_demo",
+        prompt_text="jsonl prompt text",
+        top_module="TopModule",
+        benchmark_root=tmp_path / "cvdp_root",
+    )
+    engine = QDEngine(
+        benchmark_name="cvdp",
+        problem_name="cvdp_demo",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        population_size=1,
+        num_generations=0,
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="grid",
+        qd_num_cells=4,
+        qd_grid_axes=("g_A", "g_T"),
+        problem_spec=problem_spec,
+    )
+    assert engine.problem_description == "jsonl prompt text"
+    assert Path(engine.benchmark_path) == problem_spec.benchmark_root.resolve()
+
+
 def test_qd_engine_phase_mode_uses_problem_spec_defaults(tmp_path, monkeypatch):
     problem_spec = ProblemSpec(
         benchmark_name="RealBench",

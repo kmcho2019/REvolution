@@ -158,6 +158,10 @@ Current status on this feature branch:
   fusion.
 - broader benchmark expansion and completion-grade live smokes are still staged
   work.
+- `revolution` now accepts the existing `cvdp` subset path in
+  `scripts/run_backend.py`, and the feature branch includes a manifest-based
+  `RealBench` module adapter for future dataset drops under
+  `data/bench/RealBench`.
 - The detailed status and validation record lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.
 

@@ -58,6 +58,10 @@ The current QD implementation is staged:
   `[-1, 1]` gain-axis fallback.
 - CVT/runtime parity is still incomplete mainly around live smoke completion,
   broader benchmark coverage, and deeper evaluator-side descriptor richness.
+- Stage 6 benchmark plumbing is now partially landed:
+  `revolution` can use the existing JSONL-backed `cvdp` subset path, and
+  `src/revolution/runtime/realbench_adapter.py` provides a manifest-based
+  RealBench module adapter for future dataset drops.
 
 The QD substrate currently lives under `src/revolution/qd/`:
 
@@ -77,6 +81,12 @@ The QD substrate currently lives under `src/revolution/qd/`:
 `VerilogEvaluator` compiles designs with Icarus Verilog (iverilog) and runs them under `vvp`. Compilation output, simulation logs, and timeouts are written to `<candidate>_simulation.log`. Optional reference design files enable mismatch counting on VerilogEval, while RTLLM detects the `===========Your Design Passed===========` banner.
 
 `SynthesisEvaluator` automates the Yosys + OpenROAD flow. It generates SDC, Yosys, and OpenROAD scripts from the candidate design, writes reports to `<candidate>_synthesis_report.rpt`, and parses timing/power/area metrics. Netlists are regression-tested again using `VerilogEvaluator` to ensure synthesis has not broken functionality.
+
+`CVDPEvaluator` remains the JSONL/harness-backed functional path for `cvdp`
+tasks. The feature branch now also includes a lightweight RealBench adapter that
+converts module-manifest entries into `ProblemContext` / `ProblemSpec`
+instances, but live RealBench runs still depend on an external dataset root
+because no checked-in `data/bench/RealBench` tree exists in this worktree.
 
 Classic `EoHEngine` fitness remains the existing score used by the original loop. The QD substrate additionally defines an explicit maximize-form `quality_score`:
 

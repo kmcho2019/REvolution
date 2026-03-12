@@ -18,6 +18,7 @@ BACKEND_REGISTRY: dict[str, BackendMetadata] = {
     "revolution": BackendMetadata(
         backend_name="revolution",
         default_prompt_profile="default",
+        supports_cvdp=True,
     ),
     "funsearch": BackendMetadata(
         backend_name="funsearch",

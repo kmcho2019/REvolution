@@ -34,6 +34,7 @@
 - `runtime/problem_spec.py`: benchmark capability layer and default descriptor / generation-mode preferences.
 - `runtime/structural_evaluator.py`: structural descriptor extraction helpers for Yosys-like stats payloads.
 - `runtime/candidate_evaluator.py`: backend-agnostic format/syntax/functionality/synthesis/PPA evaluation orchestration with `strict_ablation` and `search_accelerated` modes.
+- `runtime/realbench_adapter.py`: manifest-based RealBench module discovery plus `ProblemContext` / `ProblemSpec` builders.
 - `runtime/run_artifacts.py`: shared generation-log/summary writer plus legacy summary key alias support.
 - `evaluation.py`: evaluation stack (`VerilogEvaluator`, `SynthesisEvaluator`).
 - `llm.py`: unified async LLM client with retry/backoff, token tracking, and JSON parsing helpers.

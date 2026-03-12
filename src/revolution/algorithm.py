@@ -359,8 +359,11 @@ class EoHEngine:
         )
         self.benchmark_name: str = benchmark_name
         self.problem_name: str = problem_name
-        self.benchmark_path: str = os.path.abspath(
-            os.path.join(
+        self.problem_spec: ProblemSpec | None = problem_spec
+        benchmark_root = (
+            str(self.problem_spec.benchmark_root)
+            if self.problem_spec is not None
+            else os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
                 "..",
                 "..",
@@ -369,8 +372,10 @@ class EoHEngine:
                 self.benchmark_name,
             )
         )
+        self.benchmark_path: str = os.path.abspath(
+            benchmark_root
+        )
         self.problem_description: str = self.load_problem_description()
-        self.problem_spec: ProblemSpec | None = problem_spec
         self.llm: LLMInterface = llm_interface
         self.evaluator: VerilogEvaluator = verilog_evaluator
         self.synthesis_evaluator: SynthesisEvaluator = synthesis_evaluator
@@ -486,6 +491,8 @@ class EoHEngine:
         :return: The problem description text.
         :rtype: str
         """
+        if self.problem_spec is not None and self.problem_spec.prompt_text.strip():
+            return self.problem_spec.prompt_text.strip()
         prompt_path = os.path.join(
             self.benchmark_path, f"{self.problem_name}_prompt.txt"
         )

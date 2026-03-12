@@ -45,9 +45,14 @@ from revolution.runtime import (  # noqa: E402
     build_cvdp_problem_spec,
     build_problem_spec,
     build_cvdp_problem_context,
+    build_realbench_problem_context,
+    build_realbench_problem_spec,
     load_cvdp_record,
+    load_realbench_record,
+    load_realbench_reference_ppa_metrics,
     load_problem_context,
     select_cvdp_ids,
+    select_realbench_problem_ids,
 )
 from revolution.utils import StreamRedirector  # noqa: E402
 from revolution.vllm_preflight import preflight_vllm_model  # noqa: E402
@@ -204,6 +209,45 @@ def _build_backend(
                 cvdp_id=problem,
                 simulation_timeout_s=args.cvdp_simulation_timeout_s,
             ),
+        )
+    elif benchmark.lower() == "realbench":
+        record = load_realbench_record(args.realbench_root, problem)
+        if record is None:
+            raise FileNotFoundError(
+                f"RealBench problem '{problem}' not found in manifest under '{args.realbench_root}'."
+            )
+        problem_context = build_realbench_problem_context(
+            benchmark_name=benchmark,
+            problem_name=problem,
+            realbench_root=args.realbench_root,
+            realbench_record=record,
+        )
+        ref_ppa_metrics = load_realbench_reference_ppa_metrics(
+            args.realbench_root,
+            record,
+        )
+        problem_spec = build_realbench_problem_spec(
+            problem_context,
+            realbench_record=record,
+            supports_reference_ppa=bool(ref_ppa_metrics),
+        )
+        candidate_evaluator = CandidateEvaluator(
+            context=problem_context,
+            problem_description=problem_context.problem_description,
+            verilog_evaluator=verilog_evaluator,
+            synthesis_evaluator=synthesis_evaluator,
+            ref_ppa_metrics=ref_ppa_metrics,
+            problem_spec=problem_spec,
+            evaluation_mode=args.evaluation_mode,
+            accelerated_synthesis_top_k=args.accelerated_synthesis_top_k,
+            quality_mode=args.qd_quality_mode,
+            alpha=args.qd_alpha,
+            beta=args.qd_beta,
+            gamma=args.qd_gamma,
+            descriptor_profile=args.qd_descriptor_profile,
+            descriptor_axes=args.qd_descriptor_axes,
+            descriptor_file=args.qd_descriptor_file,
+            archive_type=args.qd_archive_type,
         )
     else:
         problem_context = load_problem_context(benchmark, problem)
@@ -498,6 +542,9 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         for d in os.listdir(benchmark_root)
         if os.path.isdir(os.path.join(benchmark_root, d))
     ]
+    if "RealBench" not in available_benchmarks:
+        available_benchmarks.append("RealBench")
+    available_benchmarks = sorted(set(available_benchmarks))
 
     parser.add_argument(
         "--backend",
@@ -628,6 +675,21 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         type=int,
         default=120,
         help="Timeout in seconds for CVDP harness pytest execution.",
+    )
+    parser.add_argument(
+        "--realbench_root",
+        type=str,
+        default=os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "data", "bench", "RealBench")
+        ),
+        help="Path to a RealBench module-manifest root.",
+    )
+    parser.add_argument(
+        "--realbench_subset",
+        type=str,
+        default="module",
+        choices=["module"],
+        help="RealBench subset selector. Only module-level tasks are supported on this branch.",
     )
 
     # REvolution-specific
@@ -868,6 +930,22 @@ def _discover_tasks(args: argparse.Namespace) -> list[tuple[str, str, argparse.N
                 continue
             for cvdp_id in cvdp_ids:
                 tasks.append((benchmark, cvdp_id, args))
+            continue
+        if benchmark.lower() == "realbench":
+            selected_ids = args.problems if args.problems else None
+            realbench_ids = select_realbench_problem_ids(
+                args.realbench_root,
+                selected_ids=selected_ids,
+                subset=args.realbench_subset,
+            )
+            if not realbench_ids:
+                print(
+                    f"[RealBench] No matching IDs found under {args.realbench_root} "
+                    f"for subset={args.realbench_subset}. Skipping."
+                )
+                continue
+            for realbench_id in realbench_ids:
+                tasks.append((benchmark, realbench_id, args))
             continue
         benchmark_dir = os.path.join(benchmark_root, benchmark)
         problems_file = os.path.join(benchmark_dir, "problems.txt")

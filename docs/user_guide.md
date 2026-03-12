@@ -94,9 +94,25 @@ default `--diff_max_tokens 1024` was left unchanged.
   - `--accelerated_synthesis_top_k <int>` (used in `search_accelerated`)
 - deterministic run controls (`--seed` with per-worker derived seeds)
 
-`cvdp` benchmark support in `run_backend.py` is currently enabled for `--backend eoh`.
-CodeEvolve phase 1 currently targets `RTLLM` and `VerilogEval-Spec-to-RTL`
-only; multi-file codebase tasks and `cvdp` adapters are intentionally deferred.
+`cvdp` benchmark support in `run_backend.py` is now enabled for `--backend revolution`
+and `--backend eoh`. On this branch, the `revolution_qd` path uses the existing
+JSONL-backed `cid002` / `cid003` subset and currently validates best through
+focused tests plus bounded live-smoke attempts.
+CodeEvolve phase 1 still targets `RTLLM` and `VerilogEval-Spec-to-RTL`
+only; multi-file codebase tasks and CodeEvolve-specific `cvdp` adapters remain
+deferred.
+
+`RealBench` support in `run_backend.py` is currently manifest-driven and limited
+to module-level tasks:
+
+- point `--realbench_root` at a dataset root containing `module_manifest.json`
+- keep `--realbench_subset module`
+- expected manifest entry fields include `problem_name`, `prompt_path`,
+  `test_sv_path`, optional `ref_sv_path`, optional `ppa_path`, `top_module`,
+  and capability flags such as `supports_formal` / `supports_synthesis`
+- fixture coverage exists on this branch, but there is still no checked-in
+  dataset under `data/bench/RealBench`, so live RealBench smoke runs remain
+  blocked until that dataset is added
 
 By default outputs are isolated by backend under `<save_path>/<backend>/...` (`--backend_subdir` can be disabled if needed).
 

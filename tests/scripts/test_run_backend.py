@@ -317,6 +317,48 @@ def test_discover_tasks_includes_cvdp_ids(tmp_path):
     assert payload is args
 
 
+def test_discover_tasks_allows_revolution_backend_for_cvdp(tmp_path):
+    dataset = tmp_path / "cvdp.jsonl"
+    dataset.write_text(
+        '{"id":"cvdp_a","categories":["cid002"],"input":{"prompt":"p"},"output":{"context":{"rtl/a.sv":""}},"harness":{"files":{}}}\n',
+        encoding="utf-8",
+    )
+
+    class Args:
+        backend = "revolution"
+        benchmarks = ["cvdp"]
+        problems = None
+        cvdp_jsonl = str(dataset)
+        cvdp_categories = ["cid002"]
+
+    tasks = _discover_tasks(Args())
+    assert len(tasks) == 1
+    assert tasks[0][0] == "cvdp"
+    assert tasks[0][1] == "cvdp_a"
+
+
+def test_discover_tasks_includes_realbench_module_ids(tmp_path):
+    realbench_root = tmp_path / "RealBench"
+    realbench_root.mkdir(parents=True, exist_ok=True)
+    (realbench_root / "module_manifest.json").write_text(
+        '{"problems":[{"problem_name":"rb_mod_a","subset":"module"},{"problem_name":"rb_sys_b","subset":"system"}]}',
+        encoding="utf-8",
+    )
+
+    class Args:
+        backend = "revolution"
+        benchmarks = ["RealBench"]
+        problems = None
+        realbench_root = ""
+        realbench_subset = "module"
+
+    Args.realbench_root = str(realbench_root)
+    tasks = _discover_tasks(Args())
+    assert len(tasks) == 1
+    assert tasks[0][0] == "RealBench"
+    assert tasks[0][1] == "rb_mod_a"
+
+
 def test_run_backend_generated_config_roundtrip_and_edit(monkeypatch, tmp_path):
     def fake_discover(args):
         return [("RTLLM", "Prob001_accu", args)]
