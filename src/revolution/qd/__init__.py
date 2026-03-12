@@ -1,3 +1,4 @@
+from revolution.qd.archive import GridArchive, GridArchiveEntry, GridAxisSpec
 from revolution.qd.types import (
     QDArchive,
     QDArchiveInsertResult,
@@ -6,6 +7,7 @@ from revolution.qd.types import (
     QDPhaseName,
     QDSearchMode,
 )
+from revolution.qd.scheduler import QDBudgetSplit, qd_fail_share, qd_target_cells, split_qd_budget
 from revolution.qd.descriptors import (
     DescriptorDefinition,
     descriptor_registry,
@@ -24,12 +26,16 @@ from revolution.qd.scoring import (
 
 __all__ = [
     "DescriptorDefinition",
+    "GridArchive",
+    "GridArchiveEntry",
+    "GridAxisSpec",
     "QDArchive",
     "QDArchiveInsertResult",
     "QDArchiveType",
     "QDGenerationMode",
     "QDPhaseName",
     "QDSearchMode",
+    "QDBudgetSplit",
     "compute_partial_pass_fraction",
     "compute_quality_score",
     "compute_ppa_gains",
@@ -39,5 +45,8 @@ __all__ = [
     "functional_quality_score",
     "load_descriptor_profiles",
     "normalize_code_hash",
+    "qd_fail_share",
+    "qd_target_cells",
     "resolve_descriptor_axes",
+    "split_qd_budget",
 ]

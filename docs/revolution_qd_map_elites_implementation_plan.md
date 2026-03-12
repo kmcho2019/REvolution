@@ -38,7 +38,7 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Branch: `feat/revolution-qd-map-elites`
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
-- Current stage: `Stage 0`
+- Current stage: `Stage 3`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
@@ -110,15 +110,15 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - [x] Add duplicate code hashing before expensive evaluation.
 - [x] Add tests and a descriptor probe utility.
 - [x] Update docs and plan with Stage 2 validation notes.
-- [ ] Commit Stage 2.
+- [x] Commit Stage 2.
 
 ### Stage 3: Grid Backend First Implementation
 
 - [ ] Add `QDEngine` scaffolding.
-- [ ] Implement `GridArchive`.
-- [ ] Implement linear fill/improve scheduler.
+- [x] Implement `GridArchive`.
+- [x] Implement linear fill/improve scheduler.
 - [ ] Implement success archive insertion/replacement and `success_view`.
-- [ ] Add grid-specific tests.
+- [x] Add grid-specific tests.
 - [ ] Run RTLLM and VerilogEval grid smokes.
 - [ ] Update docs and plan with Stage 3 validation notes.
 - [ ] Commit Stage 3.
@@ -299,6 +299,24 @@ debt review notes, and commit evidence stay synchronized with the codebase.
     `CandidateEvaluator`
   - CVDP evaluator now emits functional-only quality metadata compatible with
     later archive insertion logic
+- Commit:
+  - `2268a7f81f` `feat(qd): add scoring and descriptor substrate`
+
+### Stage 3
+
+- Date: `2026-03-12`
+- In-progress implementation:
+  - added `GridArchive` with tested empty-cell insert, same-cell replacement,
+    and edge-bin clamping semantics
+  - added exact linear QD fail-share and fill/improve budget split helpers
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_archive.py tests/revolution/test_qd_scheduler.py tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_scoring.py`
+  - Result: `20 passed in 0.83s`
+- Smoke tests:
+  - none yet; runtime engine wiring is still pending
+- Notes:
+  - this is the first Stage 3 checkpoint only; the backend is not yet running
+    `revolution_qd` through the grid archive end-to-end
 
 ## Debt Review
 
@@ -335,6 +353,14 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Candidate evaluation enrichment is centralized so later archive logic does
   not need to recompute code hashes, quality score aliases, or repair score.
 
+### Stage 3
+
+- The archive and scheduler substrate are intentionally separate from the
+  existing engine until the runner can be wired without duplicating major
+  portions of `EoHEngine`.
+- Grid geometry is explicit and easy to test, which is the intended low-risk
+  first step before CVT warm-up/freeze logic is introduced.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -367,11 +393,21 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - The current implementation still stops short of archive behavior, so there is
   no divergence yet from the planned grid-first then CVT rollout.
 
+### Stage 3
+
+- The linear fail-share helper exactly matches the planned budgeting rule and
+  reaches zero at the target fill fraction.
+- The archive replacement semantics already match the intended MAP-Elites
+  contract: empty-cell insert, occupied-cell replace only on higher quality.
+- The remaining work is engine integration, parent-view semantics, and live
+  smoke validation.
+
 ## Commit Ledger
 
 - `32ea6f39e6` `docs(qd): bootstrap living implementation plan and worktree log`
 - `e91188281b` `feat(qd): add search mode and capability scaffolding`
-- Pending Stage 2 scoring and descriptor substrate commit.
+- `2268a7f81f` `feat(qd): add scoring and descriptor substrate`
+- Stage 3 is active; first archive/scheduler substrate commit is pending.
 
 ## Deferred Follow-Ups
 
