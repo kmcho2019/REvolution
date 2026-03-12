@@ -970,6 +970,112 @@ Documentation risk to watch:
     - Result: still blocked by older `algorithm.py` typing debt, but the seam
       extraction itself did not add a new failure class
 
+### Moderate-budget RTLLM / VerilogEval experiment follow-through
+
+- Date: `2026-03-12`
+- Experiment goal:
+  - move beyond reachability smokes and test whether classic `revolution`,
+    `revolution_qd --qd_archive_type grid`, and
+    `revolution_qd --qd_archive_type cvt` can produce successful candidates and
+    non-empty archives on relatively larger PPA-relevant tasks
+- Experimental command shape:
+  - model:
+    `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b`
+  - common settings:
+    `population_size=8`, `num_generations=3`, `num_workers=2`,
+    `evaluation_mode=search_accelerated`, `accelerated_synthesis_top_k=1`,
+    `temperature=0.4`, `top_p=0.95`, `max_tokens=1024`,
+    `diff_max_tokens=1024`, `--seed 42`
+  - RTLLM problem set:
+    `Prob043_RAM`, `Prob045_alu`
+  - VerilogEval problem set:
+    `Prob153_gshare`, `Prob156_review2015_fancytimer`
+  - QD axes:
+    - RTLLM grid/CVT: `g_A`, `g_T`
+    - VerilogEval grid/CVT: `g_A`, `g_P`
+- Current experiment evidence captured from `/tmp/qd_midbatch/...` artifacts:
+  - RTLLM `Prob043_RAM`:
+    - classic:
+      - `3` generation-log rows observed
+      - max observed `best_score=0.2366190815`
+      - total successful candidates observed: `4`
+    - grid:
+      - `2` generation-log rows observed
+      - archive summary:
+        `occupied_cells=1`, `coverage=0.0625`, `qd_score=0.2366190815`
+      - total successful candidates observed: `6`
+      - generated plots are non-empty and readable:
+        `coverage_vs_generation.png`, `best_quality_vs_generation.png`,
+        `qd_score_vs_generation.png`, `grid_occupancy_heatmap.png`,
+        `grid_quality_heatmap.png`, `grid_g_P_heatmap.png`,
+        `grid_g_A_heatmap.png`, `grid_g_T_heatmap.png`
+    - CVT:
+      - `2` generation-log rows observed
+      - archive summary:
+        `occupied_cells=2`, `coverage=0.125`, `qd_score=0.4633680699`
+      - archive cells show one initial elite and one Gen1 `M-E` occupant in a
+        second centroid cell
+      - generated plots are non-empty and readable:
+        `coverage_vs_generation.png`, `best_quality_vs_generation.png`,
+        `qd_score_vs_generation.png`, `cvt_quality_projection.png`,
+        `cvt_g_P_projection.png`, `cvt_g_A_projection.png`,
+        `cvt_g_T_projection.png`
+  - RTLLM `Prob045_alu`:
+    - classic, grid, and CVT all remained dominated by `failed_format`
+    - observed archive occupancy stayed at `0` for both QD modes
+    - no meaningful visualization content was produced beyond empty/default
+      archive outputs
+  - VerilogEval `Prob153_gshare` and `Prob156_review2015_fancytimer`:
+    - classic, grid, and CVT were all dominated by `failed_format` already in
+      Gen0 under the `1024`-token budget
+    - observed archive occupancy stayed at `0` for both QD modes
+    - no useful plots were generated because no successful occupants reached
+      the archive
+- Key empirical conclusions:
+  - QD-style evolution is working mechanically on at least one larger RTLLM
+    task:
+    `Prob043_RAM` produced successful archive fill under both grid and CVT, and
+    CVT filled more cells (`2`) than grid (`1`) under the same short budget
+  - QD is not yet robust on harder arithmetic / control-heavy tasks at this
+    budget:
+    `Prob045_alu`, `Prob153_gshare`, and `Prob156_review2015_fancytimer` all
+    collapsed before the archive could meaningfully populate
+  - the dominant blocker is response-format robustness, not archive geometry:
+    representative `code_format_error.json` files show truncated/unclosed JSON
+    envelopes and incomplete `code` payloads from the model
+  - whole-mode prompt size plus `max_tokens=1024` is not enough for the larger
+    VerilogEval tasks and is marginal even for larger RTLLM problems
+- Implementation issues exposed by the experiments:
+  - QD artifact drift:
+    - before the fix, `archive_history.jsonl` stayed empty after a successful
+      initial population because only evolved generations appended snapshots
+    - before the fix, `qd_metrics.json` omitted the top-level occupancy/quality
+      fields and only stored `history` plus `visualization_files`
+    - fixed in `src/revolution/qd/engine.py` by recording an initial snapshot
+      immediately after `initialize_population()` and by promoting the latest
+      headline archive metrics into `qd_metrics.json`
+    - focused validation after the fix:
+      - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_engine.py`
+      - Result: `17 passed in 9.88s`
+      - `/workspace/.venv/bin/ruff check src/revolution/qd/engine.py tests/revolution/test_qd_engine.py`
+      - Result: `All checks passed!`
+      - `uv tool run ty check src/revolution/qd/engine.py`
+      - Result: `All checks passed!`
+  - runner shutdown debt:
+    - interrupting long `run_backend.py` multiprocessing runs still leaves a
+      noisy `KeyboardInterrupt` / pool-cleanup traceback
+    - this does not invalidate experiment artifacts, but it should be treated
+      as runner cleanup debt rather than ideal behavior
+- Practical recommendations based on the experiment:
+  - keep the `population_size=1`, `num_generations<=1`, `max_tokens=128`
+    profile for CI-like reachability checks
+  - for meaningful RTLLM / VerilogEval QD experiments on larger designs,
+    increase `max_tokens` well beyond `1024` and consider diff-heavy defaults
+    where the benchmark/problem size justifies them
+  - use `Prob043_RAM` as the current positive regression example for archive
+    fill and `Prob045_alu` plus `Prob153_gshare` as robustness regressions for
+    prompt/response format stability
+
 ## Debt Review
 
 ### Stage 0
@@ -1249,6 +1355,10 @@ implementation and testing so far.
 - Keep parity tests that compare shared archive behavior across grid and CVT:
   insertion semantics, quality-based replacement, exported metadata shape, and
   summary compatibility.
+- Moderate-budget evidence now shows that CVT can out-fill grid on
+  `RTLLM/Prob043_RAM` under the same short budget (`2` occupied cells vs `1`),
+  so CVT should remain in the default paper path rather than being treated as a
+  visualization-only backend.
 
 ### Stage 5 revision
 
@@ -1262,6 +1372,10 @@ implementation and testing so far.
 - Treat low-budget operator smokes as routing validation only. Do not use them
   as evidence of archive or PPA improvement until longer-budget runs produce
   successful candidates.
+- The moderate-budget experiments reinforce that recommendation: larger
+  VerilogEval control/FSM tasks still fail mostly at the response-format layer
+  before operator choice matters, so prompt/output robustness is the next
+  limiting factor there.
 
 ### Stage 7 revision
 
@@ -1288,6 +1402,12 @@ implementation and testing so far.
   focused `pyright`, with any remaining diagnostics explicitly separated into
   QD-branch debt, older repo-wide debt, and transient tool-environment import
   issues.
+- Keep a documented “research-budget” recommendation beside the smoke
+  checklist:
+  `max_tokens=1024` is enough to find archive-fill signal on some RTLLM tasks
+  (`Prob043_RAM`), but it is not enough to draw negative conclusions on larger
+  arithmetic or VerilogEval control problems because response truncation
+  dominates before archive search can express itself.
 
 ## Commit Ledger
 

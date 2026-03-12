@@ -161,6 +161,11 @@ Current feature status:
   RTLLM/VerilogEval problems, `128-256` completion-token budgets still leave
   the archive empty, so use materially larger token budgets for meaningful QD
   experiments.
+- Moderate-budget comparison runs (`population_size=8`, `num_generations=3`,
+  `max_tokens=1024`) now show that `RTLLM/Prob043_RAM` can fill both grid and
+  CVT archives, but `RTLLM/Prob045_alu` and larger VerilogEval tasks such as
+  `Prob153_gshare` and `Prob156_review2015_fancytimer` still fail primarily at
+  the response-format layer before archive search becomes the limiting factor.
 - The authoritative detailed status lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.
 

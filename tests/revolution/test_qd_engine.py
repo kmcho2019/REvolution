@@ -325,7 +325,13 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     assert len(cell_rows) == 1
     assert cell_rows[0]["candidate_id"] == elite.id
     summary_payload = json.loads(summary_path.read_text(encoding="utf-8"))
+    metrics_payload = json.loads(metrics_path.read_text(encoding="utf-8"))
     assert "coverage_vs_generation.png" in "".join(summary_payload["visualization_files"])
+    assert metrics_payload["occupied_cells"] == 1
+    assert metrics_payload["coverage"] == pytest.approx(1 / 16)
+    assert metrics_payload["qd_score"] == pytest.approx(0.6)
+    assert metrics_payload["history_length"] == 1
+    assert metrics_payload["latest_snapshot"]["occupied_cells"] == 1
 
 
 def test_qd_engine_writes_cvt_layout_metadata(tmp_path, monkeypatch):
@@ -360,6 +366,36 @@ def test_qd_engine_writes_cvt_layout_metadata(tmp_path, monkeypatch):
     assert layout_payload["initialized"] is True
     assert len(layout_payload["centroids"]) == 4
     assert (tmp_path / "artifacts" / "cvt_quality_projection.png").is_file()
+
+
+def test_qd_engine_initial_artifact_write_records_initial_snapshot(tmp_path, monkeypatch):
+    engine = _engine(tmp_path, monkeypatch)
+    engine.logger = SimpleNamespace(log_dir=str(tmp_path / "artifacts"))
+    elite = Heuristic("elite", "module m; endmodule", "", score=0.6, generation=0, status="success")
+    elite.ppa_success = True
+    elite.code_file_path = str(tmp_path / "elite.sv")
+    elite.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+    engine.success_pool = [elite]
+    engine._rebuild_archive_from_success_pool()
+
+    engine._write_qd_artifacts(
+        engine._build_qd_snapshot(inserted=engine.success_archive.occupied_count(), replaced=0, budget=None)
+    )
+
+    history_path = tmp_path / "artifacts" / "archive_history.jsonl"
+    summary_path = tmp_path / "artifacts" / "archive_summary.json"
+    metrics_path = tmp_path / "artifacts" / "qd_metrics.json"
+
+    history_lines = [line for line in history_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    assert len(history_lines) == 1
+
+    summary_payload = json.loads(summary_path.read_text(encoding="utf-8"))
+    metrics_payload = json.loads(metrics_path.read_text(encoding="utf-8"))
+    assert summary_payload["history_length"] == 1
+    assert summary_payload["occupied_cells"] == 1
+    assert metrics_payload["history_length"] == 1
+    assert metrics_payload["latest_snapshot"]["occupied_cells"] == 1
 
 
 def test_qd_engine_creates_targeted_mutation_prompt(tmp_path, monkeypatch):

@@ -412,6 +412,14 @@ class QDEngine(EoHEngine):
         }
         metrics_payload = {
             "archive_type": self.qd_archive_type,
+            "num_cells": self.success_archive.num_cells,
+            "occupied_cells": latest["occupied_cells"],
+            "coverage": latest["coverage"],
+            "qd_score": latest["qd_score"],
+            "best_quality": latest["best_quality"],
+            "mean_quality": latest["mean_quality"],
+            "history_length": len(self.qd_generation_history),
+            "latest_snapshot": latest,
             "history": self.qd_generation_history,
             "visualization_files": list(visualization_artifacts.generated_files),
         }
@@ -855,7 +863,7 @@ class QDEngine(EoHEngine):
                 )
                 if selected_name is None or prob_dist is None:
                     continue
-                strat_name = cast(EvolStrategyMethodSuccess, selected_name)
+                strat_name = selected_name
                 success_selected.add(strat_name)
                 parents = (
                     self._sample_diverse_success_parents()
@@ -888,7 +896,7 @@ class QDEngine(EoHEngine):
                 )
                 if selected_name is None or prob_dist is None:
                     continue
-                strat_name = cast(EvolStrategyMethodSuccess, selected_name)
+                strat_name = selected_name
                 success_selected.add(strat_name)
                 mode = self._phase_mode("crossover" if strat_name == "C-F" else "refine")
                 for key, value in prob_dist.items():
@@ -988,7 +996,13 @@ class QDEngine(EoHEngine):
                 f"{self.strategy_selection_method}_qd_{self.qd_archive_type}"
             )
             self.initialize_population()
-            self._write_qd_artifacts()
+            initial_snapshot = self._build_qd_snapshot(
+                inserted=self.success_archive.occupied_count(),
+                replaced=0,
+                budget=None,
+                runtime_sec=time.time() - self.run_start_time,
+            )
+            self._write_qd_artifacts(initial_snapshot)
         except Exception as exc:
             print(f"Critical error during QD initialization: {exc}")
             traceback.print_exc()

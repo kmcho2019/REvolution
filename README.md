@@ -161,6 +161,11 @@ Current status on this feature branch:
   VerilogEval, but the larger short-budget experiments still produce empty
   archives; use the smoke profile for reachability checks and a higher token
   budget for meaningful QD evaluation.
+- moderate-budget comparison runs on larger tasks show mixed behavior:
+  `RTLLM/Prob043_RAM` now fills both grid and CVT archives under a short
+  `1024`-token budget, while `RTLLM/Prob045_alu` and larger
+  VerilogEval control/FSM tasks still collapse mostly into truncated-format
+  failures before the archive can populate.
 - `revolution` now accepts the existing `cvdp` subset path in
   `scripts/run_backend.py`, and the feature branch includes a manifest-based
   `RealBench` module adapter for future dataset drops under
