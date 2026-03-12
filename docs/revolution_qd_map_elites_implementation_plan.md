@@ -45,8 +45,9 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   - `cvdp` 1.0.2 limited to `cid002` and `cid003`
   - `RealBench` module subsets
 - Current backend status: Stage 3 grid-runtime path is live with benchmark-
-  default phase-mode wiring and a bounded per-cell `success_view` reservoir;
-  CVT, reporting parity, and benchmark-expansion stages remain pending
+  default phase-mode wiring, a bounded per-cell `success_view` reservoir, and
+  configurable grid-axis bin loading; CVT, reporting parity, and benchmark-
+  expansion stages remain pending
 
 ## Worktree Info
 
@@ -68,6 +69,8 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   `quality_mode = {ppa,functional_only}`
 - Grid is implemented first because it is easier to debug and less prone to
   geometry bugs, but CVT is not a second-class feature at merge time.
+- Grid axis bins and bounds can be loaded from `qd_descriptor_file` under
+  `grid_axes:`; unspecified axes still fall back to derived defaults.
 - Default `quality_score` weights:
   - sequential circuits: `alpha=beta=gamma=1/3`
   - combinational circuits: `alpha=beta=1/2`, `gamma=0`
@@ -120,15 +123,15 @@ explicit, evaluate whether it was appropriate, and keep the roadmap honest.
   occupant reservoir for parent sampling without creating a second flat success
   store.
 
-- Divergence: grid binning currently uses uniform per-axis bounds `[-1, 1]`
-  with derived bin counts, rather than a richer bin-spec path loaded from
-  config/descriptor files.
+- Resolved divergence: grid binning originally used only fallback bounds and
+  derived bin counts instead of allowing explicit per-axis bin specs from
+  config.
   Review:
-  This is appropriate for the first grid checkpoint because the current grid
-  axes are normalized PPA gains (`g_A`, `g_P`, `g_T`), where `[-1, 1]` is a
-  defensible debugging range. However, the original intent of configurable grid
-  axes and bin specs still stands, especially once structural/physical axes are
-  used in grid ablations.
+  The grid runtime now accepts per-axis `grid_axes:` entries from
+  `qd_descriptor_file` so structural and physical grid experiments do not have
+  to rely on the old uniform fallback. This is still a lightweight config
+  scheme, but it closes the main usability gap without introducing a second
+  parallel config mechanism.
 
 - Divergence: descriptor extraction is currently a tested substrate and registry
   plus Yosys-like structural helpers, but not yet fully wired to machine-
@@ -254,7 +257,7 @@ Documentation risk to watch:
       policy resolution.
 - [x] Add bounded per-cell reservoir support so `success_view` matches the
       planned elite-plus-recent-occupant semantics.
-- [ ] Add configurable grid-bin specification loading for structural/physical
+- [x] Add configurable grid-bin specification loading for structural/physical
       grid experiments.
 - [ ] Refactor duplicated engine-loop seams shared by `EoHEngine` and
       `QDEngine`.
@@ -351,7 +354,7 @@ Documentation risk to watch:
 - [x] Wire `ProblemSpec.phase_generation_defaults` into runtime `auto` phase
       resolution
 - [x] Add bounded per-cell `success_view` reservoir support
-- [ ] Add configurable grid-bin specification loading
+- [x] Add configurable grid-bin specification loading
 
 ### Descriptor Registry Candidates
 
@@ -496,9 +499,15 @@ Documentation risk to watch:
   - focused reservoir/runtime sampling validation:
     - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_engine.py tests/revolution/test_qd_archive.py tests/revolution/test_revolution_backend.py tests/revolution/test_problem_spec.py tests/revolution/test_defaults.py tests/scripts/test_run_backend.py`
     - Result: `37 passed in 1.03s`
+  - focused grid-bin configuration validation:
+    - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py tests/revolution/test_defaults.py tests/scripts/test_run_backend.py`
+    - Result: `39 passed in 1.09s`
   - grid runtime now keeps a bounded per-cell reservoir for recent successful
     occupants, and `success_view` samples from archive elites plus that
     reservoir without making it a second source of truth
+  - grid runtime now loads per-axis bin/bounds settings from
+    `qd_descriptor_file` `grid_axes:` entries when present, with derived
+    fallbacks for unspecified axes
   - commit-message hygiene review for `447c012822..HEAD`:
     - checked `git log --format=%B`, `git show --pretty=fuller --no-patch`, and
       `sed -n 'l'` formatting output for each commit
@@ -561,10 +570,10 @@ Documentation risk to watch:
   but there is still duplicated offspring-materialization logic. That seam
   should be refactored once the grid runtime is stable enough to avoid
   spreading engine-loop duplication into CVT work.
-- The current grid runtime does not yet expose a bounded per-cell reservoir or
-  configurable grid-bin specification loading. The reservoir gap is now closed;
-  configurable grid-bin loading is still deferred to keep the geometry logic
-  smaller before CVT work lands.
+- The current grid runtime now exposes both a bounded per-cell reservoir and a
+  lightweight grid-bin specification loading path. The remaining gap is not
+  configurability itself, but broader archive parity, reporting, and CVT
+  geometry support.
 - The `ProblemSpec` phase-default data model is now consumed by `QDEngine`, but
   the resolution logic still lives only in the QD engine rather than behind a
   shared reusable helper. That is acceptable for now, but it is still a seam
@@ -618,6 +627,9 @@ Documentation risk to watch:
 - Benchmark-specific phase-generation defaults now affect runtime `auto`
   resolution, which brings the implemented diff-flexibility story materially
   closer to the original intent.
+- Grid experiments are now materially closer to the original intent because
+  structural and physical axes can carry explicit bin/bounds settings from the
+  descriptor config file instead of relying only on uniform gain-axis defaults.
 - The most important remaining work is broader live validation, richer
   QD-specific operators, CVT parity, and reducing `QDEngine` loop duplication
   before the architecture hardens further.
@@ -634,7 +646,6 @@ implementation and testing so far.
   check even when long-context vLLM runs are slow.
 - Refactor the duplicated offspring-materialization / request bookkeeping seam
   shared by `EoHEngine` and `QDEngine` into reusable helpers.
-- Add configurable grid-bin loading for structural/physical grid experiments.
 - Add a small completion-oriented live smoke profile for the grid runtime
   separate from the paper-grade `128k` long-context smoke profile.
 
@@ -684,6 +695,9 @@ implementation and testing so far.
 - `4a82690a1f` `feat(qd): wire grid runtime path and refresh docs`
 - `fae94e617c` `docs(qd): review plan alignment and extend roadmap`
 - `6c987af52a` `feat(qd): honor problem defaults and add success reservoirs`
+- `dc62a11c2b` `docs(qd): document single sign-off commit rule`
+- Current checkpoint pending commit: configurable grid-axis bin loading and
+  focused descriptor/grid validation
 - Stage 3 remains in progress; live-smoke closure, engine-seam cleanup, and
   grid-bin/CVT/reporting work are still pending.
 

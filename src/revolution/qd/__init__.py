@@ -11,9 +11,12 @@ from revolution.qd.engine import QDEngine
 from revolution.qd.scheduler import QDBudgetSplit, qd_fail_share, qd_target_cells, split_qd_budget
 from revolution.qd.descriptors import (
     DescriptorDefinition,
+    GridAxisDescriptorSpec,
     descriptor_registry,
+    load_grid_axis_specs,
     load_descriptor_profiles,
     resolve_descriptor_axes,
+    resolve_grid_axis_specs,
 )
 from revolution.qd.scoring import (
     compute_partial_pass_fraction,
@@ -27,6 +30,7 @@ from revolution.qd.scoring import (
 
 __all__ = [
     "DescriptorDefinition",
+    "GridAxisDescriptorSpec",
     "GridArchive",
     "GridArchiveEntry",
     "GridAxisSpec",
@@ -45,10 +49,12 @@ __all__ = [
     "default_ppa_weights",
     "descriptor_registry",
     "functional_quality_score",
+    "load_grid_axis_specs",
     "load_descriptor_profiles",
     "normalize_code_hash",
     "qd_fail_share",
     "qd_target_cells",
     "resolve_descriptor_axes",
+    "resolve_grid_axis_specs",
     "split_qd_budget",
 ]

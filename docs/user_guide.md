@@ -126,6 +126,9 @@ Current feature status:
   still take precedence.
 - `success_view` in the grid runtime now samples from archive elites plus a
   small bounded per-cell reservoir of recent successful occupants.
+- `qd_descriptor_file` may now define both `profiles:` and `grid_axes:` so the
+  same YAML can control descriptor selection and per-axis grid bin/bounds
+  settings.
 - `cvt` is exposed in the config surface but full runtime integration is still pending.
 - The authoritative detailed status lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.

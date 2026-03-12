@@ -21,6 +21,14 @@ class DescriptorDefinition:
     supported_benchmarks: tuple[str, ...] = ()
 
 
+@dataclass(frozen=True)
+class GridAxisDescriptorSpec:
+    name: str
+    bins: int
+    lower_bound: float
+    upper_bound: float
+
+
 _REGISTRY: dict[str, DescriptorDefinition] = {
     "seq_ratio": DescriptorDefinition("seq_ratio", "yosys", requires_synthesis=True),
     "comb_ratio": DescriptorDefinition("comb_ratio", "yosys", requires_synthesis=True),
@@ -52,11 +60,16 @@ def descriptor_registry() -> dict[str, DescriptorDefinition]:
     return dict(_REGISTRY)
 
 
-def load_descriptor_profiles(path: str | Path | None = None) -> dict[str, list[str]]:
+def _load_descriptor_config(path: str | Path | None = None) -> dict[str, Any]:
     profile_path = Path(path) if path is not None else default_descriptor_profile_path()
     payload = yaml.safe_load(profile_path.read_text(encoding="utf-8")) or {}
     if not isinstance(payload, dict):
         raise ValueError("Descriptor profile file must contain a mapping.")
+    return payload
+
+
+def load_descriptor_profiles(path: str | Path | None = None) -> dict[str, list[str]]:
+    payload = _load_descriptor_config(path)
     profiles_raw = payload.get("profiles", payload)
     if not isinstance(profiles_raw, dict):
         raise ValueError("Descriptor profiles must decode to a mapping.")
@@ -67,6 +80,35 @@ def load_descriptor_profiles(path: str | Path | None = None) -> dict[str, list[s
             raise ValueError(f"Descriptor profile '{profile_name}' must be a list of strings.")
         profiles[str(profile_name)] = list(axes)
     return profiles
+
+
+def load_grid_axis_specs(path: str | Path | None = None) -> dict[str, GridAxisDescriptorSpec]:
+    payload = _load_descriptor_config(path)
+    raw_specs = payload.get("grid_axes", {})
+    if not raw_specs:
+        return {}
+    if not isinstance(raw_specs, dict):
+        raise ValueError("grid_axes must decode to a mapping.")
+
+    specs: dict[str, GridAxisDescriptorSpec] = {}
+    for axis_name, axis_payload in raw_specs.items():
+        if not isinstance(axis_payload, dict):
+            raise ValueError(f"grid_axes['{axis_name}'] must be a mapping.")
+        try:
+            bins = int(axis_payload["bins"])
+            lower_bound = float(axis_payload["lower_bound"])
+            upper_bound = float(axis_payload["upper_bound"])
+        except KeyError as exc:
+            raise ValueError(
+                f"grid_axes['{axis_name}'] is missing required field {exc.args[0]!r}."
+            ) from exc
+        specs[str(axis_name)] = GridAxisDescriptorSpec(
+            name=str(axis_name),
+            bins=bins,
+            lower_bound=lower_bound,
+            upper_bound=upper_bound,
+        )
+    return specs
 
 
 def resolve_descriptor_axes(
@@ -95,6 +137,48 @@ def resolve_descriptor_axes(
         "g_A",
         "g_T",
     ]
+
+
+def resolve_grid_axis_specs(
+    axes: list[str] | tuple[str, ...],
+    *,
+    num_cells: int,
+    descriptor_file: str | Path | None,
+) -> list[GridAxisDescriptorSpec]:
+    if not axes:
+        raise ValueError("Grid axis resolution requires at least one axis.")
+    configured_specs = load_grid_axis_specs(descriptor_file)
+    dim = max(1, len(axes))
+    default_bins = max(2, round(num_cells ** (1 / dim)))
+
+    resolved: list[GridAxisDescriptorSpec] = []
+    for axis in axes:
+        configured = configured_specs.get(axis)
+        if configured is not None:
+            resolved.append(configured)
+            continue
+        lower_bound, upper_bound = _default_grid_bounds(axis)
+        resolved.append(
+            GridAxisDescriptorSpec(
+                name=axis,
+                bins=default_bins,
+                lower_bound=lower_bound,
+                upper_bound=upper_bound,
+            )
+        )
+    return resolved
+
+
+def _default_grid_bounds(axis: str) -> tuple[float, float]:
+    if axis.startswith("g_"):
+        return (-1.0, 1.0)
+    if axis in {"seq_ratio", "comb_ratio", "mux_ratio", "adder_ratio", "utilization"}:
+        return (0.0, 1.0)
+    if axis in {"cell_count_log", "wirelength", "cts_buffer_count", "repair_buffer_count", "hold_buffer_count"}:
+        return (0.0, 16.0)
+    if axis == "ltp_noff":
+        return (0.0, 64.0)
+    return (-1.0, 1.0)
 
 
 def extract_descriptor_values(

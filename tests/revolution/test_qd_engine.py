@@ -179,3 +179,36 @@ def test_qd_engine_rejects_non_grid_archive_runtime(monkeypatch):
             synthesis_evaluator=_DummySynth(),
             qd_archive_type="cvt",
         )
+
+
+def test_qd_engine_builds_grid_archive_from_descriptor_file(tmp_path, monkeypatch):
+    cfg = tmp_path / "qd.yaml"
+    cfg.write_text(
+        "grid_axes:\n"
+        "  seq_ratio:\n"
+        "    bins: 3\n"
+        "    lower_bound: 0.0\n"
+        "    upper_bound: 1.0\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        population_size=2,
+        num_generations=0,
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="grid",
+        qd_num_cells=16,
+        qd_descriptor_file=str(cfg),
+        qd_grid_axes=("seq_ratio",),
+    )
+    assert engine.success_archive.axes[0].bins == 3
+    assert engine.success_archive.axes[0].lower_bound == pytest.approx(0.0)
+    assert engine.success_archive.axes[0].upper_bound == pytest.approx(1.0)

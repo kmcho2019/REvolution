@@ -136,6 +136,8 @@ Current status on this feature branch:
   `ProblemSpec`, while explicit per-phase overrides still win.
 - `success_view` is no longer elite-only; grid mode now keeps a small bounded
   per-cell reservoir for archive-adjacent parent sampling.
+- `qd_descriptor_file` can now carry both descriptor profiles and per-axis
+  `grid_axes` bin/bounds specs for structural or physical grid experiments.
 - `cvt` is already part of the config surface but full runtime support is still
   staged work.
 - The detailed status and validation record lives in

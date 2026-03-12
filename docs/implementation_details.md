@@ -49,6 +49,9 @@ The current QD implementation is staged:
 - grid `success_view` sampling now uses archive elites plus a bounded per-cell
   reservoir of recent successful occupants, while the archive remains the
   success-side source of truth.
+- `qd_descriptor_file` can now define grid-axis bin/bounds specs in addition to
+  descriptor profiles, so grid experiments can move beyond the uniform
+  `[-1, 1]` gain-axis fallback.
 - `cvt` support has CLI/config scaffolding plus archive-planning substrate, but full runtime CVT integration is still pending.
 
 The QD substrate currently lives under `src/revolution/qd/`:

@@ -14,6 +14,7 @@ from typing import Any, Literal, cast
 from revolution.algorithm import EoHEngine, EvolStrategyMethodFail, EvolStrategyMethodSuccess, Heuristic
 from revolution.logging import EoHLogger
 from revolution.qd.archive import GridArchive, GridAxisSpec
+from revolution.qd.descriptors import resolve_grid_axis_specs
 from revolution.qd.scoring import compute_ppa_gains
 from revolution.qd.scheduler import split_qd_budget
 
@@ -28,6 +29,7 @@ class QDEngine(EoHEngine):
         qd_num_cells: int = 64,
         qd_fill_target_fraction: float = 0.25,
         qd_cell_reservoir: int = 2,
+        qd_descriptor_file: str | None = None,
         qd_grid_axes: tuple[str, ...] = (),
         qd_fail_generation_mode: str = "auto",
         qd_seed_generation_mode: str = "auto",
@@ -41,6 +43,7 @@ class QDEngine(EoHEngine):
         self.qd_num_cells = max(1, int(qd_num_cells))
         self.qd_fill_target_fraction = float(qd_fill_target_fraction)
         self.qd_cell_reservoir = max(0, int(qd_cell_reservoir))
+        self.qd_descriptor_file = qd_descriptor_file
         self.qd_grid_axes = tuple(qd_grid_axes) if qd_grid_axes else self._default_grid_axes()
         self.qd_fail_generation_mode = qd_fail_generation_mode
         self.qd_seed_generation_mode = qd_seed_generation_mode
@@ -60,11 +63,18 @@ class QDEngine(EoHEngine):
         return ("g_A", "g_P")
 
     def _build_grid_archive(self) -> GridArchive:
-        dim = max(1, len(self.qd_grid_axes))
-        bins_per_axis = max(2, round(self.qd_num_cells ** (1 / dim)))
         axes = [
-            GridAxisSpec(name=axis, bins=bins_per_axis, lower_bound=-1.0, upper_bound=1.0)
-            for axis in self.qd_grid_axes
+            GridAxisSpec(
+                name=axis.name,
+                bins=axis.bins,
+                lower_bound=axis.lower_bound,
+                upper_bound=axis.upper_bound,
+            )
+            for axis in resolve_grid_axis_specs(
+                self.qd_grid_axes,
+                num_cells=self.qd_num_cells,
+                descriptor_file=self.qd_descriptor_file,
+            )
         ]
         return GridArchive(axes)
 

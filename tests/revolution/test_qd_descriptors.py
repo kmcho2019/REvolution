@@ -5,8 +5,10 @@ import pytest
 from revolution.qd.descriptors import (
     descriptor_requirements,
     extract_descriptor_values,
+    load_grid_axis_specs,
     load_descriptor_profiles,
     resolve_descriptor_axes,
+    resolve_grid_axis_specs,
 )
 
 
@@ -58,3 +60,43 @@ def test_load_descriptor_profiles_accepts_custom_file(tmp_path: Path):
     cfg.write_text("profiles:\n  mini:\n    - g_A\n    - g_T\n", encoding="utf-8")
     profiles = load_descriptor_profiles(cfg)
     assert profiles["mini"] == ["g_A", "g_T"]
+
+
+def test_load_grid_axis_specs_accepts_custom_file(tmp_path: Path):
+    cfg = tmp_path / "profiles.yaml"
+    cfg.write_text(
+        "profiles:\n  mini:\n    - g_A\n"
+        "grid_axes:\n"
+        "  g_A:\n"
+        "    bins: 5\n"
+        "    lower_bound: -0.5\n"
+        "    upper_bound: 0.75\n",
+        encoding="utf-8",
+    )
+    specs = load_grid_axis_specs(cfg)
+    assert specs["g_A"].bins == 5
+    assert specs["g_A"].lower_bound == pytest.approx(-0.5)
+    assert specs["g_A"].upper_bound == pytest.approx(0.75)
+
+
+def test_resolve_grid_axis_specs_uses_configured_and_fallback_specs(tmp_path: Path):
+    cfg = tmp_path / "profiles.yaml"
+    cfg.write_text(
+        "grid_axes:\n"
+        "  seq_ratio:\n"
+        "    bins: 3\n"
+        "    lower_bound: 0.1\n"
+        "    upper_bound: 0.9\n",
+        encoding="utf-8",
+    )
+    specs = resolve_grid_axis_specs(
+        ["seq_ratio", "g_A"],
+        num_cells=16,
+        descriptor_file=cfg,
+    )
+    assert specs[0].bins == 3
+    assert specs[0].lower_bound == pytest.approx(0.1)
+    assert specs[0].upper_bound == pytest.approx(0.9)
+    assert specs[1].bins == 4
+    assert specs[1].lower_bound == pytest.approx(-1.0)
+    assert specs[1].upper_bound == pytest.approx(1.0)

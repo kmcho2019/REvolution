@@ -128,6 +128,7 @@ class RevolutionBackend(EvolutionBackend):
                 qd_num_cells=self.config.qd_num_cells,
                 qd_fill_target_fraction=self.config.qd_fill_target_fraction,
                 qd_cell_reservoir=self.config.qd_cell_reservoir,
+                qd_descriptor_file=self.config.qd_descriptor_file,
                 qd_grid_axes=self.config.qd_grid_axes,
                 qd_fail_generation_mode=self.config.qd_fail_generation_mode,
                 qd_seed_generation_mode=self.config.qd_seed_generation_mode,

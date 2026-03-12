@@ -85,4 +85,5 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
     assert isinstance(backend.engine, _FakeQDEngine)
     assert captured["kwargs"]["qd_grid_axes"] == ("g_A", "g_T")
     assert captured["kwargs"]["qd_cell_reservoir"] == 2
+    assert captured["kwargs"]["qd_descriptor_file"] is None
     assert captured["kwargs"]["problem_spec"].problem_name == "Prob001"
