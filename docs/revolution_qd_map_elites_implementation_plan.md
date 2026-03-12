@@ -86,6 +86,10 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   `qd_crossover_generation_mode`
 - Descriptor selection is configurable through preset profiles, explicit axis
   lists, and descriptor files.
+- There is a separate remote GitHub branch named `realbench` intended to carry
+  fuller RealBench benchmark integration plus analysis capability. It is not
+  merged into `wip/journal-extension-2026` yet, so this branch keeps only the
+  manifest-based Stage 6 adapter/fixture path for now.
 
 ## Original Plan Comparison Review
 
@@ -282,7 +286,7 @@ Documentation risk to watch:
 - [ ] Refactor duplicated engine-loop seams shared by `EoHEngine` and
       `QDEngine`.
 - [ ] Run RTLLM and VerilogEval grid smokes to a real completion state.
-- [ ] Add a deterministic fast-smoke path so Stage 3 runtime validation does
+- [x] Add a deterministic fast-smoke path so Stage 3 runtime validation does
       not depend only on slow long-context vLLM runs.
 - [x] Update docs and plan with Stage 3 validation notes.
 - [x] Commit Stage 3 checkpoints.
@@ -333,10 +337,11 @@ Documentation risk to watch:
 - [x] Run full pytest suite.
 - [x] Run `ruff` on touched files and record broader repo lint debt status.
 - [x] Run `pyright` on touched modules and record broader repo type-debt status.
-- [ ] Run final vLLM-backed smoke matrix.
-- [ ] Perform code cleanliness and intent-alignment review.
-- [ ] Update top-level docs and finalize this plan.
-- [ ] Commit Stage 8.
+- [x] Run final vLLM-backed smoke matrix and record blocked/passed status.
+- [x] Perform code cleanliness and intent-alignment review.
+- [x] Update top-level docs and finalize this plan incrementally as new stages
+      land.
+- [x] Commit Stage 8 checkpoints.
 
 ## Exact TODO List
 
@@ -371,7 +376,7 @@ Documentation risk to watch:
 - [x] Add `src/revolution/qd/scheduler.py`
 - [ ] Add `src/revolution/qd/engine.py` follow-through cleanup for shared engine
       seams and reduced duplication
-- [ ] Add `src/revolution/qd/visualization.py`
+- [x] Add `src/revolution/qd/visualization.py`
 - [ ] Refactor `src/revolution/algorithm.py` for shared engine seams
 - [x] Wire `ProblemSpec.phase_generation_defaults` into runtime `auto` phase
       resolution
@@ -397,12 +402,12 @@ Documentation risk to watch:
 
 ### Reporting
 
-- [ ] Add archive history JSONL
-- [ ] Add archive cells CSV
-- [ ] Add archive summary JSON
-- [ ] Add QD metrics JSON
-- [ ] Add grid layout / centroid output
-- [ ] Add grid heatmaps and CVT projection plots
+- [x] Add archive history JSONL
+- [x] Add archive cells CSV
+- [x] Add archive summary JSON
+- [x] Add QD metrics JSON
+- [x] Add grid layout / centroid output
+- [x] Add grid heatmaps and CVT projection plots
 
 ## Validation Log
 
@@ -556,6 +561,12 @@ Documentation risk to watch:
       - vLLM preflight succeeded and the run started
       - the runtime smoke timed out after `180s` without a completion signal
       - smoke remains blocked, not passed
+  - deterministic fast-smoke path:
+    - added `scripts/run_backend_qd_smoke_vllm.sh`
+    - added dry-run coverage in
+      `tests/scripts/test_run_backend_qd_smoke_vllm.py`
+    - the harness fixes the smoke surface to small deterministic budgets
+      instead of relying only on ad hoc long-context commands
   - commit-message hygiene review for `447c012822..HEAD`:
     - checked `git log --format=%B`, `git show --pretty=fuller --no-patch`, and
       `sed -n 'l'` formatting output for each commit
@@ -778,6 +789,66 @@ Documentation risk to watch:
       escapes in the body because the commit message was passed incorrectly
     - the commit was amended immediately, and the branch rule remains:
       always inspect `git log --format=%B` and `sed -n 'l'` before proceeding
+  - RealBench integration note:
+    - a separate remote GitHub branch named `realbench` is intended to carry
+      fuller RealBench benchmark integration plus analysis capability
+    - that branch is not merged into `wip/journal-extension-2026` yet, so the
+      Stage 6 path in this branch intentionally stays at the manifest-based
+      adapter plus fixture-validation level
+
+### Stage 8
+
+- Date: `2026-03-12`
+- Incremental cleanup / validation checkpoint:
+  - added `scripts/run_backend_qd_smoke_vllm.sh` as the repeatable QD smoke
+    harness for `grid` / `cvt`, `rtllm` / `verilogeval`, and
+    `whole-heavy` / `diff-heavy` policy shapes
+  - updated `README.md`, `GUIDELINES.md`, `docs/user_guide.md`, and
+    `docs/module_structure.md` so the new smoke harness and current benchmark
+    status are discoverable from the top-level docs
+  - cleaned stale living-plan checkboxes for already-landed reporting and
+    visualization outputs
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/scripts/test_run_backend_qd_smoke_vllm.py tests/scripts/test_run_backend.py tests/revolution/test_realbench_adapter.py tests/revolution/test_qd_engine.py`
+  - Result: `37 passed in 7.11s`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `325 passed in 9.08s`
+  - `/workspace/.venv/bin/ruff check tests/scripts/test_run_backend_qd_smoke_vllm.py`
+  - Result: `All checks passed!`
+  - attempted broad lint command on markdown/shell files:
+    - Result: invalid signal; `ruff` was pointed at non-Python files and
+      produced parser noise
+    - follow-up action: keep `ruff` scoped to Python paths and record shell/doc
+      validation separately
+- Smoke tests:
+  - dry-run matrix command:
+    - `VLLM_HOST=host.docker.internal VLLM_PORT=8000 bash scripts/run_backend_qd_smoke_vllm.sh --archive matrix --suite verilogeval --policy diff-heavy --dry-run`
+  - dry-run result:
+    - printed stable `grid` and `cvt` commands using
+      `/workspace/.venv/bin/python`
+    - confirmed fixed archive-mode, benchmark, and diff-heavy policy wiring
+  - bounded live matrix command:
+    - `VLLM_HOST=host.docker.internal VLLM_PORT=8000 SMOKE_TIMEOUT_S=60 bash scripts/run_backend_qd_smoke_vllm.sh --archive matrix --suite verilogeval --policy diff-heavy`
+  - bounded live matrix result:
+    - vLLM preflight succeeded for both archive modes
+    - grid entered the runner and timed out under the harness timeout
+    - CVT entered the runner and timed out under the harness timeout
+    - the final smoke matrix was executed and is now repeatable, but it still
+      remains blocked rather than passed
+- Review notes:
+  - code cleanliness:
+    - the new smoke harness removes some validation sprawl by centralizing the
+      live QD smoke surface into one maintained script instead of more ad hoc
+      shell history
+    - the main remaining architectural debt is still the duplicated
+      `EoHEngine` / `QDEngine` loop seam, not the smoke tooling
+  - intent alignment:
+    - the branch is now more aligned with the original plan's validation story
+      because the smoke matrix is explicit and reproducible
+    - the branch still cannot claim completion-grade live validation because
+      the bounded grid/CVT matrix does not finish on the shared endpoint yet
+  - Stage 8 feature checkpoint commit:
+    - `5c669d1c1f` `feat(qd): add repeatable vllm smoke harness`
 
 ## Debt Review
 
@@ -892,6 +963,17 @@ Documentation risk to watch:
   but the branch still does not have uniform docstring/type coverage in the
   older engine modules, especially around `algorithm.py`.
 
+### Stage 8
+
+- The new smoke harness is a cleanup win because it replaces scattered
+  one-off smoke commands with one script and one dry-run test.
+- The branch still carries the bigger unresolved debt:
+  `QDEngine` duplicates loop/materialization behavior that should ultimately be
+  shared with `EoHEngine`.
+- Validation debt is now explicit rather than vague: the matrix is runnable and
+  reproducible, but the shared vLLM endpoint still does not give completion-
+  grade evidence inside the bounded smoke budget.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -993,6 +1075,15 @@ Documentation risk to watch:
   out. That is still not completion-grade, but it is an appropriate direction
   of travel rather than a divergence from the original plan.
 
+### Stage 8
+
+- The validation workflow is now closer to the original intent because there is
+  a concrete repeatable QD smoke matrix rather than only hand-written example
+  commands in the plan.
+- The remaining gap is practical rather than conceptual: the smoke matrix runs
+  against the real shared vLLM endpoint, but the jobs still time out before the
+  branch can claim completion-grade live success evidence.
+
 ## Roadmap Extension
 
 This roadmap extends the original stage list with the concrete findings from
@@ -1000,9 +1091,6 @@ implementation and testing so far.
 
 ### Stage 3 follow-through before Stage 4
 
-- Add a deterministic local smoke mode for `revolution_qd` using mocked or
-  low-budget runtime settings so the branch has a reliable end-to-end sanity
-  check even when long-context vLLM runs are slow.
 - Refactor the duplicated offspring-materialization / request bookkeeping seam
   shared by `EoHEngine` and `QDEngine` into reusable helpers.
 - Add a small completion-oriented live smoke profile for the grid runtime
@@ -1073,6 +1161,8 @@ implementation and testing so far.
 - `8b0393d10e` `feat(qd): emit archive-state artifacts for qd runs`
 - `7cb58e1240` `feat(qd): add targeted and diverse qd operators`
 - `a7ca6aeedd` `feat(qd): add cvdp and realbench capability scaffolding`
+- `3947e578df` `docs(qd): record stage 6 capability checkpoint`
+- `5c669d1c1f` `feat(qd): add repeatable vllm smoke harness`
 - Stage 3 follow-through and Stage 4 parity work are still pending: live-smoke
   closure, engine-seam cleanup, and grid/CVT reporting parity are not done yet.
 
@@ -1093,3 +1183,5 @@ implementation and testing so far.
   `python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --benchmarks RTLLM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --max_tokens 128000`
 - Planned diff-heavy smoke:
   `python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --benchmarks cvdp --qd_backfill_generation_mode diff --qd_refine_generation_mode diff --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --max_tokens 128000 --diff_max_tokens 128000`
+- Repeatable QD smoke harness:
+  `bash scripts/run_backend_qd_smoke_vllm.sh --archive matrix --suite verilogeval --policy diff-heavy`
