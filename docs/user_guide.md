@@ -154,18 +154,25 @@ Current feature status:
   settings.
 - `scripts/run_backend_qd_smoke_vllm.sh` provides a repeatable QD smoke matrix
   for `grid` and `cvt` with `--suite rtllm|verilogeval`,
-  `--policy whole-heavy|diff-heavy`, and `--dry-run`.
+  `--policy whole-heavy|diff-heavy`, and `--dry-run`, and now defaults to a
+  `128000`-token budget on the shared reasoning-model vLLM endpoint.
+- `scripts/run_evolution_smoke_vllm.sh` now uses the same `128000` token floor
+  and forwards `--diff_max_tokens 128000` so whole-mode and diff-mode smokes
+  are not accidentally evaluated under truncation-prone budgets.
+- `scripts/run_backend.py` prints a warning when a large-context vLLM endpoint
+  is paired with sub-`128000` `max_tokens` or `diff_max_tokens`. Treat that
+  warning as an experiment-validity issue, not cosmetic noise.
 - Bounded completion-grade smokes for both grid and CVT now complete on RTLLM
   and VerilogEval.
 - Those small-budget smokes are only reachability checks; on larger
   RTLLM/VerilogEval problems, `128-256` completion-token budgets still leave
   the archive empty, so use materially larger token budgets for meaningful QD
   experiments.
-- Moderate-budget comparison runs (`population_size=8`, `num_generations=3`,
-  `max_tokens=1024`) now show that `RTLLM/Prob043_RAM` can fill both grid and
-  CVT archives, but `RTLLM/Prob045_alu` and larger VerilogEval tasks such as
-  `Prob153_gshare` and `Prob156_review2015_fancytimer` still fail primarily at
-  the response-format layer before archive search becomes the limiting factor.
+- Earlier moderate-budget comparison runs that used `max_tokens=1024` on the
+  shared reasoning-model vLLM endpoint should be treated as configuration-
+  invalid for research conclusions. For this model family, use
+  `--max_tokens 128000` and `--diff_max_tokens 128000` before drawing
+  conclusions about archive fill, operator quality, or benchmark difficulty.
 - The authoritative detailed status lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.
 

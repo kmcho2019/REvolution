@@ -3,9 +3,9 @@ import subprocess
 from pathlib import Path
 
 
-def test_qd_smoke_script_dry_run_prints_grid_and_cvt_commands(tmp_path):
+def test_evolution_smoke_script_dry_run_uses_large_token_defaults(tmp_path):
     repo_root = Path(__file__).resolve().parents[2]
-    script_path = repo_root / "scripts" / "run_backend_qd_smoke_vllm.sh"
+    script_path = repo_root / "scripts" / "run_evolution_smoke_vllm.sh"
     fake_bin = tmp_path / "bin"
     fake_bin.mkdir()
 
@@ -25,7 +25,7 @@ def test_qd_smoke_script_dry_run_prints_grid_and_cvt_commands(tmp_path):
     env["PYTHON_BIN"] = str(Path(os.sys.executable))
 
     result = subprocess.run(
-        ["bash", str(script_path), "--archive", "matrix", "--policy", "diff-heavy", "--dry-run"],
+        ["bash", str(script_path), "--suite", "rtllm", "--dry-run"],
         cwd=repo_root,
         env=env,
         check=False,
@@ -36,12 +36,6 @@ def test_qd_smoke_script_dry_run_prints_grid_and_cvt_commands(tmp_path):
     assert result.returncode == 0, result.stderr
     normalized = " ".join(result.stdout.split())
     assert "Detected model: stub-model" in result.stdout
-    assert "[grid] command:" in result.stdout
-    assert "[cvt] command:" in result.stdout
-    assert "--qd_archive_type grid" in normalized
-    assert "--qd_archive_type cvt" in normalized
-    assert "--qd_backfill_generation_mode diff" in normalized
-    assert "--qd_refine_generation_mode diff" in normalized
     assert "--max_tokens 128000" in normalized
     assert "--diff_max_tokens 128000" in normalized
-    assert "Dry run enabled; commands were not executed." in result.stdout
+    assert "Dry run enabled; command was not executed." in result.stdout

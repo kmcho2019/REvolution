@@ -22,7 +22,8 @@ Environment overrides:
   SMOKE_POPULATION_SIZE     Population size (default: 2)
   SMOKE_NUM_GENERATIONS     Number of generations (default: 1)
   SMOKE_NUM_WORKERS         Worker count (default: 1)
-  SMOKE_MAX_TOKENS          LLM max tokens (default: 2048)
+  SMOKE_MAX_TOKENS          LLM max tokens (default: 128000)
+  SMOKE_DIFF_MAX_TOKENS     Diff max tokens (default: SMOKE_MAX_TOKENS)
   SMOKE_TEMPERATURE         LLM temperature (default: 0.7)
   SMOKE_TOP_P               LLM top-p (default: 0.95)
   SMOKE_STRATEGY_SELECTION  Meta-strategy (default: ucb)
@@ -189,7 +190,8 @@ fi
 POPULATION_SIZE="${SMOKE_POPULATION_SIZE:-2}"
 NUM_GENERATIONS="${SMOKE_NUM_GENERATIONS:-1}"
 NUM_WORKERS="${SMOKE_NUM_WORKERS:-1}"
-MAX_TOKENS="${SMOKE_MAX_TOKENS:-2048}"
+MAX_TOKENS="${SMOKE_MAX_TOKENS:-128000}"
+DIFF_MAX_TOKENS="${SMOKE_DIFF_MAX_TOKENS:-${MAX_TOKENS}}"
 TEMPERATURE="${SMOKE_TEMPERATURE:-0.7}"
 TOP_P="${SMOKE_TOP_P:-0.95}"
 STRATEGY_SELECTION="${SMOKE_STRATEGY_SELECTION:-ucb}"
@@ -218,6 +220,7 @@ CMD+=("--population_pool_mode" "${POOL_MODE}")
 CMD+=("--temperature" "${TEMPERATURE}")
 CMD+=("--top_p" "${TOP_P}")
 CMD+=("--max_tokens" "${MAX_TOKENS}")
+CMD+=("--diff_max_tokens" "${DIFF_MAX_TOKENS}")
 CMD+=("--save_path" "${SAVE_PATH}")
 
 echo "vLLM endpoint: ${MODEL_ENDPOINT}"

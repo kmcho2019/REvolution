@@ -973,6 +973,10 @@ Documentation risk to watch:
 ### Moderate-budget RTLLM / VerilogEval experiment follow-through
 
 - Date: `2026-03-12`
+- Status:
+  superseded for research interpretation because it used `max_tokens=1024` and
+  `diff_max_tokens=1024` on a reasoning-oriented model that requires long
+  output budgets
 - Experiment goal:
   - move beyond reachability smokes and test whether classic `revolution`,
     `revolution_qd --qd_archive_type grid`, and
@@ -1032,19 +1036,13 @@ Documentation risk to watch:
     - no useful plots were generated because no successful occupants reached
       the archive
 - Key empirical conclusions:
-  - QD-style evolution is working mechanically on at least one larger RTLLM
-    task:
-    `Prob043_RAM` produced successful archive fill under both grid and CVT, and
-    CVT filled more cells (`2`) than grid (`1`) under the same short budget
-  - QD is not yet robust on harder arithmetic / control-heavy tasks at this
-    budget:
-    `Prob045_alu`, `Prob153_gshare`, and `Prob156_review2015_fancytimer` all
-    collapsed before the archive could meaningfully populate
-  - the dominant blocker is response-format robustness, not archive geometry:
-    representative `code_format_error.json` files show truncated/unclosed JSON
-    envelopes and incomplete `code` payloads from the model
-  - whole-mode prompt size plus `max_tokens=1024` is not enough for the larger
-    VerilogEval tasks and is marginal even for larger RTLLM problems
+  - this run is still useful as a debugging artifact because it exposed the QD
+    sidecar/history drift that was subsequently fixed
+  - this run is not valid evidence about benchmark difficulty or QD-vs-classic
+    effectiveness because the token budget was too short for this reasoning
+    model family
+  - any negative conclusions from the `1024`-token run must be superseded by
+    long-token reruns (`>=128000`)
 - Implementation issues exposed by the experiments:
   - QD artifact drift:
     - before the fix, `archive_history.jsonl` stayed empty after a successful
@@ -1067,14 +1065,144 @@ Documentation risk to watch:
     - this does not invalidate experiment artifacts, but it should be treated
       as runner cleanup debt rather than ideal behavior
 - Practical recommendations based on the experiment:
-  - keep the `population_size=1`, `num_generations<=1`, `max_tokens=128`
-    profile for CI-like reachability checks
-  - for meaningful RTLLM / VerilogEval QD experiments on larger designs,
-    increase `max_tokens` well beyond `1024` and consider diff-heavy defaults
-    where the benchmark/problem size justifies them
-  - use `Prob043_RAM` as the current positive regression example for archive
-    fill and `Prob045_alu` plus `Prob153_gshare` as robustness regressions for
-    prompt/response format stability
+  - keep tiny-token smoke profiles only for reachability checks
+  - do not use `1024`-token runs as research evidence on this shared reasoning
+    model
+  - rerun moderate-budget RTLLM / VerilogEval comparisons with
+    `max_tokens>=128000` and matching `diff_max_tokens` before updating any
+    archive-quality conclusions
+
+### Long-token rerun and configuration-audit follow-through
+
+- Date: `2026-03-12`
+- Status:
+  in progress, but already strong enough to supersede the core negative
+  interpretation from the `1024`-token run
+- Motivation:
+  - the prior moderate-budget comparison used `max_tokens=1024` and
+    `diff_max_tokens=1024` on the shared reasoning-model vLLM endpoint
+  - that configuration was invalid for research interpretation because it
+    measured truncation pressure more than search quality
+- Immediate configuration fixes made before the rerun:
+  - `scripts/run_backend_qd_smoke_vllm.sh` now defaults to
+    `SMOKE_MAX_TOKENS=128000` and `SMOKE_DIFF_MAX_TOKENS=128000`
+  - `scripts/run_evolution_smoke_vllm.sh` now defaults to
+    `SMOKE_MAX_TOKENS=128000` and forwards `--diff_max_tokens 128000`
+  - `scripts/run_backend.py` now prints explicit warnings when a large-context
+    vLLM endpoint is paired with sub-`128000` `max_tokens` or
+    `diff_max_tokens`
+  - added focused regression coverage:
+    - `tests/scripts/test_run_backend.py`
+    - `tests/scripts/test_run_backend_qd_smoke_vllm.py`
+    - `tests/scripts/test_run_evolution_smoke_vllm.py`
+- Validation after the configuration fix:
+  - `/workspace/.venv/bin/python -m pytest tests/scripts/test_run_backend.py tests/scripts/test_run_backend_qd_smoke_vllm.py tests/scripts/test_run_evolution_smoke_vllm.py`
+  - Result: `22 passed in 2.00s`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `331 passed in 14.31s`
+  - `/workspace/.venv/bin/ruff check scripts/run_backend.py tests/scripts/test_run_backend.py tests/scripts/test_run_backend_qd_smoke_vllm.py tests/scripts/test_run_evolution_smoke_vllm.py`
+  - Result: `All checks passed!`
+  - `bash -n scripts/run_backend_qd_smoke_vllm.sh scripts/run_evolution_smoke_vllm.sh`
+  - Result: success
+  - `/workspace/.venv/bin/python -m pyright scripts/run_backend.py`
+  - Result: `0 errors, 1 warning`
+    (`tqdm` source-resolution only)
+  - `uv tool run ty check scripts/run_backend.py`
+  - Result: existing environment/import-resolution warning only (`tqdm`)
+- Corrected rerun command shape:
+  - model:
+    `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b`
+  - common settings:
+    `population_size=8`, `num_generations=3`, `num_workers=2`,
+    `evaluation_mode=search_accelerated`, `accelerated_synthesis_top_k=1`,
+    `temperature=0.4`, `top_p=0.95`, `max_tokens=128000`,
+    `diff_max_tokens=128000`, `--seed 42`
+  - RTLLM problem set:
+    `Prob043_RAM`, `Prob045_alu`
+  - VerilogEval problem set:
+    `Prob153_gshare`, `Prob156_review2015_fancytimer`
+  - QD axes:
+    - RTLLM grid/CVT: `g_A`, `g_T`
+    - VerilogEval grid/CVT: `g_A`, `g_P`
+- Rerun observations so far from `/tmp/qd_longbudget/...`:
+  - global:
+    - `code_format_error.json` count stayed at `0` across the long-budget RTLLM
+      and VerilogEval reruns checked so far
+    - this alone invalidates the earlier conclusion that the larger RTLLM /
+      VerilogEval tasks were primarily format-failure dominated
+  - RTLLM `Prob043_RAM`:
+    - classic:
+      - Gen0: `success: 8`
+      - latest observed generation:
+        `generation=1`, `best_score=0.4261226376`,
+        `status={success: 7, failed_functionality: 1}`
+    - grid Gen0:
+      - `success: 8`
+      - archive summary:
+        `occupied_cells=1`, `coverage=0.0625`,
+        `qd_score=0.2366190815`
+    - CVT Gen0:
+      - `success: 8`
+      - archive summary:
+        `occupied_cells=1`, `coverage=0.0625`,
+        `qd_score=0.2366190815`
+    - interpretation:
+      - QD is mechanically working on this larger task under the long-token
+        budget, but early coverage is still low because the successful Gen0
+        candidates observed so far land in the same gain cell / centroid region
+  - RTLLM `Prob045_alu`:
+    - classic Gen0:
+      - status mix:
+        `failed_functionality: 5`, `failed_syntax: 2`, `success: 1`
+      - `best_score=0.0967941389`
+    - grid Gen0:
+      - status mix:
+        `failed_functionality: 6`, `failed_syntax: 1`, `success: 1`
+      - archive summary:
+        `occupied_cells=1`, `coverage=0.0625`,
+        `qd_score=0.1150942900`
+    - CVT Gen0:
+      - status mix:
+        `failed_functionality: 7`, `success: 1`
+      - archive summary:
+        `occupied_cells=0`, `coverage=0.0`, `qd_score=0`
+    - interpretation:
+      - the corrected run shows real functional/synthesis pressure rather than
+        formatting collapse
+      - grid already preserves one successful specialist, while CVT has not yet
+        converted the single Gen0 success into occupied frozen-centroid state in
+        the currently observed window
+  - VerilogEval `Prob156_review2015_fancytimer`:
+    - classic Gen0 produced eight complete `code.sv` candidates with sizes
+      around `3.8k-6.1k` chars
+    - sample simulation logs now show large functional mismatch counts such as
+      `165951` to `199075` mismatches out of `200000`, not formatting failure
+    - interpretation:
+      - the bottleneck moved from truncation to genuine functional correctness
+  - VerilogEval `Prob153_gshare`:
+    - directories and per-problem logs exist, but the observed window has not
+      yet reached a written `generation_log.jsonl`
+    - treat this as still-running / slower-evaluating, not as evidence of
+      archive failure
+- Updated empirical interpretation:
+  - the additional branch changes made after the short-budget run were not
+    invalidated by the token-budget correction
+  - the artifact-history fix in `src/revolution/qd/engine.py` remains valid
+    because long-budget QD runs still need an initial archive snapshot to avoid
+    empty-looking metrics
+  - the earlier negative claim that larger RTLLM / VerilogEval tasks were
+    mostly `failed_format` was configuration-induced and should not be reused
+  - the long-budget rerun shows QD and classic both reaching meaningful
+    evaluation states; the remaining challenge is functional correctness and
+    descriptor diversity, not prompt truncation
+- Roadmap adjustments after the rerun:
+  - treat any future short-budget (`<128000`) reasoning-model experiments as
+    smoke/debug evidence only
+  - when comparing classic vs grid vs CVT on larger tasks, report archive fill
+    only after at least one long-budget generation has fully completed
+  - prioritize longer multi-generation runs on tasks like `Prob043_RAM` and
+    `Prob045_alu`, because they now expose real QD behavior instead of format
+    artifacts
 
 ## Debt Review
 
@@ -1404,10 +1532,10 @@ implementation and testing so far.
   issues.
 - Keep a documented “research-budget” recommendation beside the smoke
   checklist:
-  `max_tokens=1024` is enough to find archive-fill signal on some RTLLM tasks
-  (`Prob043_RAM`), but it is not enough to draw negative conclusions on larger
-  arithmetic or VerilogEval control problems because response truncation
-  dominates before archive search can express itself.
+  for the shared reasoning-model vLLM endpoint, use `max_tokens>=128000` and
+  `diff_max_tokens>=128000` before drawing conclusions about archive fill or
+  mode quality on larger RTLLM / VerilogEval problems; shorter budgets are
+  debugging-only.
 
 ## Commit Ledger
 

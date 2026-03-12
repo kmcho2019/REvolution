@@ -161,18 +161,26 @@ Current status on this feature branch:
   VerilogEval, but the larger short-budget experiments still produce empty
   archives; use the smoke profile for reachability checks and a higher token
   budget for meaningful QD evaluation.
-- moderate-budget comparison runs on larger tasks show mixed behavior:
-  `RTLLM/Prob043_RAM` now fills both grid and CVT archives under a short
-  `1024`-token budget, while `RTLLM/Prob045_alu` and larger
-  VerilogEval control/FSM tasks still collapse mostly into truncated-format
-  failures before the archive can populate.
+- earlier moderate-budget comparison runs that used `max_tokens=1024` for this
+  reasoning model should be treated as configuration-invalid for research
+  conclusions; use `128000`-class token budgets for meaningful REvolution/QD
+  experiments on the shared vLLM endpoint.
 - `revolution` now accepts the existing `cvdp` subset path in
   `scripts/run_backend.py`, and the feature branch includes a manifest-based
   `RealBench` module adapter for future dataset drops under
   `data/bench/RealBench`.
 - `scripts/run_backend_qd_smoke_vllm.sh` now provides a repeatable grid/CVT QD
-  smoke harness with fixed small-budget defaults and a `--dry-run` mode so
-  smoke validation is not just a collection of ad hoc commands.
+  smoke harness with `128000`-token defaults and a `--dry-run` mode so smoke
+  validation is not just a collection of ad hoc commands.
+- `scripts/run_evolution_smoke_vllm.sh` now also defaults to
+  `--max_tokens 128000` and forwards `--diff_max_tokens 128000` so the shared
+  reasoning-model vLLM endpoint is not exercised with an artificially tiny
+  completion budget.
+- `scripts/run_backend.py` now prints an explicit warning when a large-context
+  vLLM endpoint is paired with sub-`128000` `max_tokens` or `diff_max_tokens`
+  settings. The warning is advisory rather than coercive, but it is meant to
+  stop the exact truncation-driven misconfiguration that previously distorted
+  moderate-budget RTLLM / VerilogEval comparisons.
 - The detailed status and validation record lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.
 

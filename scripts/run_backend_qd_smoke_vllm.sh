@@ -18,7 +18,7 @@ Environment overrides:
   SMOKE_MIN_MODEL_LEN       Required minimum served max_model_len (default: 128000, set 0 to disable)
   PYTHON_BIN                Python binary (default: <repo>/.venv/bin/python if present, else python3)
   SMOKE_PROBLEMS            Space-separated problem IDs (overrides suite defaults)
-  SMOKE_MAX_TOKENS          LLM max tokens (default: 1024)
+  SMOKE_MAX_TOKENS          LLM max tokens (default: 128000)
   SMOKE_DIFF_MAX_TOKENS     Diff max tokens (default: SMOKE_MAX_TOKENS)
   SMOKE_TEMPERATURE         LLM temperature (default: 0.3)
   SMOKE_TOP_P               LLM top-p (default: 0.95)
@@ -219,7 +219,7 @@ case "${POLICY}" in
     ;;
 esac
 
-MAX_TOKENS="${SMOKE_MAX_TOKENS:-1024}"
+MAX_TOKENS="${SMOKE_MAX_TOKENS:-128000}"
 DIFF_MAX_TOKENS="${SMOKE_DIFF_MAX_TOKENS:-${MAX_TOKENS}}"
 TEMPERATURE="${SMOKE_TEMPERATURE:-0.3}"
 TOP_P="${SMOKE_TOP_P:-0.95}"

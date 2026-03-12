@@ -58,6 +58,7 @@ from revolution.utils import StreamRedirector  # noqa: E402
 from revolution.vllm_preflight import preflight_vllm_model  # noqa: E402
 
 _DEFAULT_DIFF_MAX_TOKENS = 1024
+_LARGE_CONTEXT_TOKEN_FLOOR = 128000
 
 
 def _derive_seed(base_seed: int | None, index: int) -> int | None:
@@ -120,6 +121,36 @@ def _resolve_codeevolve_diff_max_tokens(args: argparse.Namespace) -> int:
         "large-context vLLM diff run."
     )
     return int(args.max_tokens)
+
+
+def _collect_vllm_token_budget_warnings(
+    args: argparse.Namespace,
+    *,
+    reported_model_len: int | None = None,
+) -> list[str]:
+    """Return warnings for undersized token budgets on large-context vLLM runs."""
+
+    if args.api_backend != "vllm":
+        return []
+
+    min_model_len = int(getattr(args, "vllm_min_model_len", 0) or 0)
+    max_model_len = int(reported_model_len or 0)
+    if max(min_model_len, max_model_len) < _LARGE_CONTEXT_TOKEN_FLOOR:
+        return []
+
+    warnings: list[str] = []
+    if int(args.max_tokens) < _LARGE_CONTEXT_TOKEN_FLOOR:
+        warnings.append(
+            "max_tokens is below 128000 on a large-context vLLM endpoint; "
+            "reasoning-oriented runs can truncate code/JSON and invalidate "
+            "benchmark conclusions."
+        )
+    if int(args.diff_max_tokens) < _LARGE_CONTEXT_TOKEN_FLOOR:
+        warnings.append(
+            "diff_max_tokens is below 128000 on a large-context vLLM endpoint; "
+            "diff outputs can truncate even when max_tokens is large."
+        )
+    return warnings
 
 
 def _effective_save_path(args: argparse.Namespace) -> str:
@@ -997,6 +1028,11 @@ def main(argv: list[str] | None = None) -> int:
         )
         if preflight.get("warning"):
             print(f"[vLLM preflight] WARNING: {preflight['warning']}")
+        for warning in _collect_vllm_token_budget_warnings(
+            args,
+            reported_model_len=preflight.get("max_model_len"),
+        ):
+            print(f"[vLLM budget] WARNING: {warning}")
 
     tasks_to_run = _discover_tasks(args)
     if not tasks_to_run:
