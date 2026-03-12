@@ -502,10 +502,14 @@ Documentation risk to watch:
   - commit-message hygiene review for `447c012822..HEAD`:
     - checked `git log --format=%B`, `git show --pretty=fuller --no-patch`, and
       `sed -n 'l'` formatting output for each commit
-    - no malformed headers, raw `\\n`, or spacing corruption found
-    - note: `e6ac6130ef` contains both an existing `Signed-off-by` footer and
-      the automatic `-s` footer, which is not malformed but should not be
-      repeated in future commits
+    - initial review found duplicate sign-off footers on two branch commits
+    - branch history was rewritten to remove the extra `Signed-off-by: Codex
+      <codex@openai.com>` footer so each commit now carries exactly one
+      repository-author sign-off
+    - post-rewrite review found no malformed headers, raw `\\n`, spacing
+      corruption, or remaining duplicate sign-off footers
+    - prevention note added to `GUIDELINES.md`: when using `git commit -s`, do
+      not manually add a second `Signed-off-by:` footer
   - first Stage 3 substrate commit:
     - `efbf9b48d0` `feat(qd): add grid archive and linear scheduler substrate`
   - second Stage 3 runtime/docs checkpoint commit:
@@ -678,6 +682,8 @@ implementation and testing so far.
 - `efbf9b48d0` `feat(qd): add grid archive and linear scheduler substrate`
 - `98db8207e4` `docs(qd): record stage 3 substrate checkpoint`
 - `4a82690a1f` `feat(qd): wire grid runtime path and refresh docs`
+- `fae94e617c` `docs(qd): review plan alignment and extend roadmap`
+- `6c987af52a` `feat(qd): honor problem defaults and add success reservoirs`
 - Stage 3 remains in progress; live-smoke closure, engine-seam cleanup, and
   grid-bin/CVT/reporting work are still pending.
 

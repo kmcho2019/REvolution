@@ -49,6 +49,9 @@
 - Prefer concise, imperative subjects and keep the first line under ~72 characters when possible.
 - Keep commit structure clean: `<type>(<scope>): <subject>` on line 1, one blank line, wrapped body text, optional labeled sections (`Tests:`, `Docs:`), and optional footers (`Signed-off-by:`).
 - In commit bodies, explain what changed and why; use short wrapped paragraphs or simple `- ` bullets for grouped changes.
+- When using `git commit -s`, do not manually add another `Signed-off-by:` line
+  in the message body. Each commit should end with exactly one sign-off footer
+  for the repository author identity.
 - Preferred message template:
 ```text
 feat(reporting): add reproducible experiment archiving for run outputs
