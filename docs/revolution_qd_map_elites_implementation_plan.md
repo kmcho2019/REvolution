@@ -659,6 +659,8 @@ Documentation risk to watch:
   - whole/diff execution already follows explicit per-phase mode resolution in
     the QD runtime, but targeted live smoke evidence for the new operators is
     still missing
+  - Stage 5 operator checkpoint commit:
+    - `7cb58e1240` `feat(qd): add targeted and diverse qd operators`
 
 ## Debt Review
 
@@ -903,6 +905,7 @@ implementation and testing so far.
 - `c03242b784` `feat(qd): add initial cvt archive runtime support`
 - `855472eb70` `docs(qd): record stage 4 cvt checkpoint`
 - `8b0393d10e` `feat(qd): emit archive-state artifacts for qd runs`
+- `7cb58e1240` `feat(qd): add targeted and diverse qd operators`
 - Stage 3 follow-through and Stage 4 parity work are still pending: live-smoke
   closure, engine-seam cleanup, and grid/CVT reporting parity are not done yet.
 
