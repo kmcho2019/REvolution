@@ -156,8 +156,11 @@ Current status on this feature branch:
 - QD success-side fill/backfill now has dedicated operators:
   `M-T` for targeted descriptor mutation and `C-D` for diverse cross-cell
   fusion.
-- broader benchmark expansion and completion-grade live smokes are still staged
-  work.
+- broader benchmark expansion is still staged work.
+- bounded completion-grade grid/CVT smokes now pass on RTLLM and
+  VerilogEval, but the larger short-budget experiments still produce empty
+  archives; use the smoke profile for reachability checks and a higher token
+  budget for meaningful QD evaluation.
 - `revolution` now accepts the existing `cvdp` subset path in
   `scripts/run_backend.py`, and the feature branch includes a manifest-based
   `RealBench` module adapter for future dataset drops under

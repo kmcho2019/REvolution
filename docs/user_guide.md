@@ -155,8 +155,12 @@ Current feature status:
 - `scripts/run_backend_qd_smoke_vllm.sh` provides a repeatable QD smoke matrix
   for `grid` and `cvt` with `--suite rtllm|verilogeval`,
   `--policy whole-heavy|diff-heavy`, and `--dry-run`.
-- Live completion-grade smokes for both grid and CVT are still pending, and
-  reporting/artifact parity is not finished yet.
+- Bounded completion-grade smokes for both grid and CVT now complete on RTLLM
+  and VerilogEval.
+- Those small-budget smokes are only reachability checks; on larger
+  RTLLM/VerilogEval problems, `128-256` completion-token budgets still leave
+  the archive empty, so use materially larger token budgets for meaningful QD
+  experiments.
 - The authoritative detailed status lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.
 

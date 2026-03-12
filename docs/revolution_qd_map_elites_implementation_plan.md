@@ -285,7 +285,7 @@ Documentation risk to watch:
       grid experiments.
 - [x] Refactor the shared offspring-materialization seam duplicated between
       `EoHEngine` and `QDEngine`.
-- [ ] Run RTLLM and VerilogEval grid smokes to a real completion state.
+- [x] Run RTLLM and VerilogEval grid smokes to a real completion state.
 - [x] Add a deterministic fast-smoke path so Stage 3 runtime validation does
       not depend only on slow long-context vLLM runs.
 - [x] Update docs and plan with Stage 3 validation notes.
@@ -296,7 +296,7 @@ Documentation risk to watch:
 - [x] Implement CVT warm-up, scaler fit, frozen centroids, and reinsertion.
 - [x] Keep grid/CVT on equal footing in summary, artifacts, and tests.
 - [x] Add CVT-specific tests and parity tests.
-- [ ] Run RTLLM and VerilogEval CVT smokes.
+- [x] Run RTLLM and VerilogEval CVT smokes.
 - [x] Update docs and plan with Stage 4 validation notes.
 - [x] Commit Stage 4.
 
@@ -305,7 +305,7 @@ Documentation risk to watch:
 - [x] Add `M-T` and `C-D` prompts and operator routing.
 - [x] Route whole/diff by explicit per-phase policy resolution.
 - [x] Add operator routing tests.
-- [ ] Run targeted whole-heavy and diff-heavy smoke tests.
+- [x] Run targeted whole-heavy and diff-heavy smoke tests.
 - [x] Update docs and plan with Stage 5 validation notes.
 - [x] Commit Stage 5.
 
@@ -337,6 +337,7 @@ Documentation risk to watch:
 - [x] Run full pytest suite.
 - [x] Run `ruff` on touched files and record broader repo lint debt status.
 - [x] Run `pyright` on touched modules and record broader repo type-debt status.
+- [x] Run `ty` on touched modules and record broader type-debt status.
 - [x] Run final vLLM-backed smoke matrix and record blocked/passed status.
 - [x] Perform code cleanliness and intent-alignment review.
 - [x] Update top-level docs and finalize this plan incrementally as new stages
@@ -868,6 +869,71 @@ Documentation risk to watch:
   - Stage 8 feature checkpoint commit:
     - `5c669d1c1f` `feat(qd): add repeatable vllm smoke harness`
 
+### Stage 3/4/5/8 follow-through
+
+- Date: `2026-03-12`
+- Regression fix discovered by live experimentation:
+  - larger VerilogEval comparison runs exposed a classic-mode bug where
+    `EoHEngine` was incorrectly selecting QD-only success strategies and could
+    crash with `KeyError: 'M-T'`
+  - fixed by splitting classic success strategies from QD success strategies
+    and restoring the full QD set inside `QDEngine`
+  - focused validation after the fix:
+    - `/workspace/.venv/bin/python -m pytest tests/revolution/test_algorithm.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py tests/scripts/test_run_backend.py`
+    - Result: `103 passed in 7.35s`
+    - `/workspace/.venv/bin/ruff check src/revolution/algorithm.py src/revolution/qd/engine.py tests/revolution/test_algorithm.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py tests/scripts/test_run_backend.py`
+    - Result: `All checks passed!`
+- Completion-grade live smokes now pass for both archive backends and both
+  benchmark suites under bounded accelerated settings:
+  - VerilogEval grid:
+    `Prob001_zero`, `population_size=1`, `num_generations=0`,
+    `evaluation_mode=search_accelerated`, `accelerated_synthesis_top_k=1`,
+    `max_tokens=128`, completed in `53.85s`
+  - VerilogEval CVT: same budget, completed in `70.51s`
+  - RTLLM grid:
+    `Prob001_accu`, same budget, completed in `70.52s`
+  - RTLLM CVT: same budget, completed in `127.21s`
+- Targeted phase-routing smokes also now complete:
+  - grid whole-heavy on `VerilogEval-Spec-to-RTL/Prob001_zero` with
+    `population_size=1`, `num_generations=1`, `max_tokens=128`,
+    completed in `273.61s`
+  - CVT diff-heavy on the same problem with `population_size=1`,
+    `num_generations=1`, `max_tokens=128`, completed in `331.56s`
+- Larger short-budget comparative runs completed for both suites:
+  - RTLLM `Prob045_alu`: classic, grid, and CVT all completed in roughly
+    `285-290s`
+  - VerilogEval `Prob030_popcount255`: classic, grid, and CVT all completed in
+    roughly `404-406s`
+- Empirical findings from those larger runs:
+  - all three modes failed on both larger problems under the short-budget
+    setting (`population_size=1`, `num_generations=1`, `max_tokens=256`)
+  - in both QD modes the archive remained empty (`occupied_cells=0`,
+    `coverage=0.0`, `qd_score=0`) even though archive artifacts were emitted
+  - the dominant blockers were prompt/response robustness rather than archive
+    semantics:
+    - empty Gen1 completions from the shared vLLM endpoint
+    - truncated whole-mode JSON/code payloads on larger VerilogEval prompts
+    - feedback responses that did not contain a parsable JSON object
+  - conclusion: the branch is now completion-grade for smoke validation, but
+    the short-budget experiments are not evidence of meaningful QD search
+    performance on harder problems
+- Practical implication for future runs:
+  - keep the low-budget smoke profile for CI-like reachability checks
+  - use materially larger completion budgets than `128-256` tokens for harder
+    RTLLM/VerilogEval experiments if archive occupancy is the goal
+- Additional typecheck evidence:
+  - `/workspace/.venv/bin/python -m pyright src/revolution/algorithm.py src/revolution/qd/engine.py`
+  - Result: existing `algorithm.py` type debt remains on heterogeneous
+    synthesis-result dictionaries, optional prompt-override containers, and
+    generic strategy bookkeeping
+  - `uv tool run ty check src/revolution/algorithm.py src/revolution/qd/engine.py tests/revolution/test_algorithm.py`
+  - result: the new strategy split does not introduce a targeted `ty` failure,
+    but `algorithm.py` still has substantial pre-existing `ty` diagnostics
+    around heterogeneous synthesis-result dictionaries, optional override
+    containers, and generic strategy bookkeeping
+  - `uv tool run ty` also surfaces transient environment-resolution issues for
+    some third-party and test imports when run from the tool sandbox
+
 ## Debt Review
 
 ### Stage 0
@@ -928,6 +994,9 @@ Documentation risk to watch:
 - Physical descriptor plumbing still lags the registry/config surface. That is
   acceptable for the current gain-axis-heavy grid checkpoint, but not for final
   paper-grade descriptor experiments.
+- The Stage 3 smoke gate is now satisfied. Minimal accelerated grid runs on
+  RTLLM and VerilogEval complete end-to-end; the remaining Stage 3 debt is
+  architectural cleanup, not runtime reachability.
 
 ### Stage 4
 
@@ -941,6 +1010,9 @@ Documentation risk to watch:
 - Descriptor richness remains partly aspirational in the runtime path. The
   archive can consume structural or physical axes, but the legacy engine path
   still surfaces gains more reliably than deeper synthesis-derived metrics.
+- The Stage 4 smoke gate is now satisfied under bounded accelerated settings.
+  The remaining Stage 4 gap is usefulness on harder runs, not basic CVT
+  execution.
 
 ### Stage 7
 
@@ -964,6 +1036,10 @@ Documentation risk to watch:
 - This is a pragmatic debt tradeoff: the branch gains the missing operator
   semantics now, but the duplicated engine/prompt seam remains and still needs
   cleanup before the architecture is considered clean.
+- The Stage 5 whole-heavy and diff-heavy smoke requirement is now satisfied,
+  but those runs should be treated as routing validation rather than evidence
+  of QD quality improvement because the archives stayed empty under short
+  token budgets.
 
 ### Stage 6
 
@@ -990,8 +1066,11 @@ Documentation risk to watch:
   generation-loop behavior, even though the lower-level offspring
   materialization seam is now shared with `EoHEngine`.
 - Validation debt is now explicit rather than vague: the matrix is runnable and
-  reproducible, but the shared vLLM endpoint still does not give completion-
-  grade evidence inside the bounded smoke budget.
+  reproducible.
+- The completion-grade bounded smoke gap is now closed.
+- The remaining validation gap is quality-oriented: on harder RTLLM and
+  VerilogEval problems with short budgets, classic, grid, and CVT all still
+  fail before generating successful archive occupants.
 
 ## Intent Alignment Review
 
@@ -1113,11 +1192,14 @@ implementation and testing so far.
 - Continue reducing the remaining request-bookkeeping / generation-loop seam
   still duplicated between `EoHEngine` and `QDEngine` now that offspring
   materialization is shared.
-- Add a small completion-oriented live smoke profile for the grid runtime
+- Keep the small completion-oriented live smoke profile for the grid runtime
   separate from the paper-grade `128k` long-context smoke profile.
 - Reduce branch-local pyright noise further where fixes are low-risk, while
   keeping broader pre-existing repo-wide type debt explicitly tracked instead of
   hiding it behind narrow command scopes.
+- Use the larger `RTLLM/Prob045_alu` and
+  `VerilogEval-Spec-to-RTL/Prob030_popcount255` short-budget runs as the
+  branch's current regression pair for prompt/runtime robustness.
 
 ### Stage 4 revision
 
@@ -1125,7 +1207,7 @@ implementation and testing so far.
   parity work:
   - shared reporting/artifact emission across grid and CVT
   - archive metadata export for centroids/scaler state
-  - more convincing live-smoke completion evidence on the shared vLLM endpoint
+  - better success-side evidence on harder runs, not just completion evidence
 - Keep parity tests that compare shared archive behavior across grid and CVT:
   insertion semantics, quality-based replacement, exported metadata shape, and
   summary compatibility.
@@ -1139,6 +1221,9 @@ implementation and testing so far.
 - Revisit whether diff-capable backfill should be enabled by default on larger
   benchmarks only after the runtime is actually honoring those benchmark
   defaults.
+- Treat low-budget operator smokes as routing validation only. Do not use them
+  as evidence of archive or PPA improvement until longer-budget runs produce
+  successful candidates.
 
 ### Stage 7 revision
 
@@ -1161,6 +1246,10 @@ implementation and testing so far.
 - The final branch review should explicitly compare the finished branch against
   this “Original Plan Comparison Review” section, not just against the running
   checklist, so the merge decision is based on both execution and intent.
+- Add `ty` to the merge-readiness checklist alongside `pytest`, `ruff`, and
+  focused `pyright`, with any remaining diagnostics explicitly separated into
+  QD-branch debt, older repo-wide debt, and transient tool-environment import
+  issues.
 
 ## Commit Ledger
 
@@ -1184,8 +1273,10 @@ implementation and testing so far.
 - `3947e578df` `docs(qd): record stage 6 capability checkpoint`
 - `5c669d1c1f` `feat(qd): add repeatable vllm smoke harness`
 - `7777665902` `refactor(qd): share offspring materialization across engines`
-- Stage 3 follow-through and Stage 4 parity work are still pending: live-smoke
-  closure, engine-seam cleanup, and grid/CVT reporting parity are not done yet.
+- Bounded grid/CVT smoke closure is now complete.
+- The main remaining debt is engine-seam cleanup, `ty` cleanup, and
+  machine-readable OpenROAD metric sidecars rather than basic runtime
+  reachability.
 
 ## Deferred Follow-Ups
 

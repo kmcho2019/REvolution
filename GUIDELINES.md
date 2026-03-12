@@ -50,6 +50,9 @@
 - Run `pytest` for the full test suite.
 - Run `ruff check` at least on touched files; use a broader tree only when cleaning legacy lint debt intentionally.
 - Run `python -m pyright` on the touched source modules. If repo-wide pyright still has pre-existing debt, record that explicitly instead of silently skipping typecheck.
+- Run `uv tool run ty check <touched modules>` when type-cleanliness is part of
+  the change review; record whether diagnostics are branch-local debt,
+  older repo-wide debt, or tool-environment import resolution noise.
 - For LLM-backed runtime changes, run a vLLM preflight (`curl http://<host>:<port>/v1/models`) and at least one bounded smoke command.
 - Record blocked smoke results explicitly when the model endpoint is reachable but the run does not complete in a reasonable timeout.
 
