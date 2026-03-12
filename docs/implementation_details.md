@@ -46,6 +46,8 @@ The current QD implementation is staged:
 - `grid` archive support is the first active runtime path.
 - `cvt` archive support now has an initial runtime path with warm-up buffering,
   frozen scaling, centroid generation, and nearest-centroid insertion.
+- QD-specific success-side operators now include `M-T` (targeted descriptor
+  mutation) and `C-D` (diverse archive fusion) on the `QDEngine` path.
 - grid runtime phase selection now resolves as explicit override first, then
   benchmark defaults from `ProblemSpec`, then local fallback.
 - grid `success_view` sampling now uses archive elites plus a bounded per-cell
@@ -66,6 +68,7 @@ The QD substrate currently lives under `src/revolution/qd/`:
 - `descriptors.py`: descriptor registry and profile resolution
 - `engine.py`: archive-selectable QD runtime engine that reuses existing prompt
   builders, diff application, evaluation, and logger wiring
+  - also owns the current QD-specific prompt builders for `M-T` and `C-D`
 
 ## Evaluation stack
 

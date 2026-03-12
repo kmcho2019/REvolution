@@ -296,11 +296,11 @@ Documentation risk to watch:
 
 ### Stage 5: QD Operators And Flexible Diff Usage
 
-- [ ] Add `M-T` and `C-D` prompts and operator routing.
+- [x] Add `M-T` and `C-D` prompts and operator routing.
 - [ ] Route whole/diff by explicit per-phase policy resolution.
-- [ ] Add operator routing tests.
+- [x] Add operator routing tests.
 - [ ] Run targeted whole-heavy and diff-heavy smoke tests.
-- [ ] Update docs and plan with Stage 5 validation notes.
+- [x] Update docs and plan with Stage 5 validation notes.
 - [ ] Commit Stage 5.
 
 ### Stage 6: CVDP And RealBench Module Capability Expansion
@@ -633,6 +633,33 @@ Documentation risk to watch:
   - live smoke evidence was not rerun for this checkpoint because the change is
     artifact emission rather than LLM request routing
 
+### Stage 5
+
+- Date: `2026-03-12`
+- Partial implementation checkpoint:
+  - added `M-T` prompt builders and prompt templates for targeted descriptor
+    mutation on the success-side fill/backfill path
+  - added `C-D` prompt builders and prompt templates for diverse two-parent
+    archive fusion on the success-side fill/backfill path
+  - fill/backfill operator routing now selects from `M-T`, `M-E`, and `C-D`
+    instead of collapsing all backfill into `M-E`
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py tests/revolution/test_defaults.py tests/scripts/test_run_backend.py tests/revolution/test_prompt_store.py`
+  - Result: `40 passed in 1.00s`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `317 passed in 2.69s`
+  - `/workspace/.venv/bin/ruff check src/revolution/qd/engine.py src/revolution/algorithm.py tests/revolution/test_qd_engine.py`
+  - Result: `All checks passed!`
+  - `/workspace/.venv/bin/python -m pyright src/revolution/qd/engine.py`
+  - Result: `0 errors, 0 warnings`
+- Notes:
+  - the new operators are currently localized in `QDEngine` rather than pushed
+    into the classic engine, which keeps the QD-specific surface contained but
+    preserves the existing engine-seam debt
+  - whole/diff execution already follows explicit per-phase mode resolution in
+    the QD runtime, but targeted live smoke evidence for the new operators is
+    still missing
+
 ## Debt Review
 
 ### Stage 0
@@ -714,6 +741,14 @@ Documentation risk to watch:
 - This reduces one parity gap between grid and CVT, but the reporting stack
   still does not consume the new files as first-class inputs.
 
+### Stage 5
+
+- The new QD operators are intentionally implemented inside `QDEngine` to keep
+  QD-specific prompt logic from spreading further into the legacy engine.
+- This is a pragmatic debt tradeoff: the branch gains the missing operator
+  semantics now, but the duplicated engine/prompt seam remains and still needs
+  cleanup before the architecture is considered clean.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -788,6 +823,15 @@ Documentation risk to watch:
 - The intent gap that remains is downstream consumption: the reporting scripts
   and visual outputs still need to treat those files as primary artifacts.
 
+### Stage 5
+
+- The branch is now materially closer to the original intent because fill-phase
+  QD search no longer relies only on generic exploration; it has explicit
+  targeted mutation and diverse fusion operators.
+- The remaining intent gap is validation, not architecture: the operators are
+  present and routed, but the branch still lacks live smoke evidence showing
+  them behaving well on long-context runs.
+
 ## Roadmap Extension
 
 This roadmap extends the original stage list with the concrete findings from
@@ -858,6 +902,7 @@ implementation and testing so far.
 - `ed3e933f61` `chore(qd): record validation status and clean branch typing`
 - `c03242b784` `feat(qd): add initial cvt archive runtime support`
 - `855472eb70` `docs(qd): record stage 4 cvt checkpoint`
+- `8b0393d10e` `feat(qd): emit archive-state artifacts for qd runs`
 - Stage 3 follow-through and Stage 4 parity work are still pending: live-smoke
   closure, engine-seam cleanup, and grid/CVT reporting parity are not done yet.
 

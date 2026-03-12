@@ -123,6 +123,8 @@ Current feature status:
   benchmark-aware phase-mode runtime wiring.
 - `cvt` now has an initial runtime path with warm-up buffering, frozen scaling,
   and nearest-centroid insertion over configured CVT axes.
+- success-side QD fill/backfill now has dedicated operators:
+  `M-T` for targeted descriptor mutation and `C-D` for diverse archive fusion.
 - `auto` per-phase generation-mode selection now consults
   `ProblemSpec.phase_generation_defaults`, while explicit CLI/config overrides
   still take precedence.

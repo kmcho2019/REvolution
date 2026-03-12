@@ -14,6 +14,7 @@ from typing import Any, Literal, cast
 
 from revolution.algorithm import EoHEngine, EvolStrategyMethodFail, EvolStrategyMethodSuccess, Heuristic
 from revolution.logging import EoHLogger
+from revolution.prompt_store import safe_format
 from revolution.qd.archive import CVTArchive, GridArchive, GridAxisSpec
 from revolution.qd.descriptors import extract_descriptor_values, resolve_descriptor_axes, resolve_grid_axis_specs
 from revolution.qd.scoring import compute_ppa_gains
@@ -427,6 +428,277 @@ class QDEngine(EoHEngine):
         weights = [max(c.score - base + 0.1, 1e-6) for c in success_view]
         return random.choices(success_view, weights=weights, k=count)
 
+    def _descriptor_distance(self, left: Heuristic, right: Heuristic) -> float:
+        left_desc = self._descriptor_tuple(left)
+        right_desc = self._descriptor_tuple(right)
+        if left_desc is None or right_desc is None:
+            return float("-inf")
+        return sum((lhs - rhs) ** 2 for lhs, rhs in zip(left_desc, right_desc))
+
+    def _sample_diverse_success_parents(self) -> list[Heuristic]:
+        success_view = self._success_view()
+        if len(success_view) < 2:
+            return self._sample_success_parents(1)
+        first = self._sample_success_parents(1)[0]
+        alternatives = [cand for cand in success_view if cand.id != first.id]
+        if not alternatives:
+            return [first]
+        second = max(alternatives, key=lambda cand: self._descriptor_distance(first, cand))
+        return [first, second]
+
+    def _descriptor_metadata(self, parent: Heuristic) -> dict[str, float]:
+        descriptors = self._descriptor_tuple(parent)
+        axes = self._archive_axes()
+        if descriptors is None:
+            return {}
+        return {axis: float(value) for axis, value in zip(axes, descriptors)}
+
+    def _descriptor_direction(self, axis: str, current_value: float) -> dict[str, Any]:
+        if self.qd_archive_type == "grid":
+            grid_axes = {
+                axis_spec.name: axis_spec
+                for axis_spec in getattr(self.success_archive, "axes", ())
+            }
+            axis_spec = grid_axes.get(axis)
+            if axis_spec is not None:
+                midpoint = (axis_spec.lower_bound + axis_spec.upper_bound) / 2.0
+                increase = current_value <= midpoint
+                return {
+                    "axis": axis,
+                    "current_value": current_value,
+                    "direction": "increase" if increase else "decrease",
+                    "target_hint": axis_spec.upper_bound if increase else axis_spec.lower_bound,
+                    "rationale": self._descriptor_rationale(axis, increase),
+                }
+        increase = current_value <= 0.0
+        return {
+            "axis": axis,
+            "current_value": current_value,
+            "direction": "increase" if increase else "decrease",
+            "target_hint": 1.0 if increase else -1.0,
+            "rationale": self._descriptor_rationale(axis, increase),
+        }
+
+    def _descriptor_rationale(self, axis: str, increase: bool) -> str:
+        direction = "more" if increase else "less"
+        mapping = {
+            "seq_ratio": f"{direction} explicit pipelining or staging",
+            "mux_ratio": f"{direction} control multiplexing pressure",
+            "ltp_noff": f"{direction} combinational path depth" if increase else "shorter combinational chains",
+            "g_P": f"{direction} power improvement",
+            "g_A": f"{direction} area improvement",
+            "g_T": f"{direction} timing improvement",
+            "wirelength": f"{direction} routing wirelength pressure" if increase else "more localized organization",
+            "utilization": f"{direction} placement density",
+            "cts_buffer_count": f"{direction} inserted clock-tree buffering",
+        }
+        return mapping.get(axis, f"{direction} emphasis on {axis}")
+
+    def _target_descriptor_shift(self, parent: Heuristic, limit: int = 2) -> list[dict[str, Any]]:
+        descriptor_map = self._descriptor_metadata(parent)
+        shifts: list[dict[str, Any]] = []
+        for axis in list(self._archive_axes())[: max(1, limit)]:
+            current_value = float(descriptor_map.get(axis, 0.0))
+            shifts.append(self._descriptor_direction(axis, current_value))
+        return shifts
+
+    def _cell_id_for_candidate(self, candidate: Heuristic) -> str | None:
+        descriptors = self._descriptor_tuple(candidate)
+        if descriptors is None:
+            return None
+        try:
+            return self.success_archive.cell_id_for(descriptors)
+        except ValueError:
+            return None
+
+    def _create_prompt_M_T(self, parents: list[Heuristic]) -> str:
+        """Create a QD-specific targeted-mutation prompt for one successful parent."""
+        parent = parents[0]
+        descriptor_shift = self._target_descriptor_shift(parent)
+        if self.generation_mode == "whole":
+            parent_obj = json.loads(self._format_parent_for_prompt(parent, 1))
+            context_obj = {
+                "task": "target_descriptor_mutation",
+                "problem_description": self.problem_description,
+                "parent": parent_obj,
+                "qd": {
+                    "archive_type": self.qd_archive_type,
+                    "archive_axes": list(self._archive_axes()),
+                    "source_cell_id": self._cell_id_for_candidate(parent),
+                    "parent_descriptors": self._descriptor_metadata(parent),
+                    "desired_descriptor_shift": descriptor_shift,
+                },
+            }
+            tpl = self.prompts.read("evolve/M-T/whole")
+            if tpl:
+                return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+            return (
+                "You are an expert Verilog design assistant.\n"
+                "Refactor the parent toward the requested descriptor shift while preserving functionality.\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "whole",\n'
+                '  "thought": "<targeted mutation plan>",\n'
+                '  "code": "<full, runnable Verilog as one JSON string>"\n'
+                "}\n"
+            )
+        with open(parent.code_file_path, "r", encoding="utf-8") as handle:
+            parent_code = handle.read()
+        parent_obj = json.loads(
+            self._format_parent_for_prompt(
+                parent,
+                1,
+                include_code=not self.diff_compact_context,
+                code_override=parent_code,
+            )
+        )
+        context_obj = {
+            "task": "target_descriptor_mutation_via_patch",
+            "problem_description": self.problem_description,
+            "file_to_edit": parent.code_file_path,
+            "original_file": parent_code,
+            "parent": parent_obj,
+            "qd": {
+                "archive_type": self.qd_archive_type,
+                "archive_axes": list(self._archive_axes()),
+                "source_cell_id": self._cell_id_for_candidate(parent),
+                "parent_descriptors": self._descriptor_metadata(parent),
+                "desired_descriptor_shift": descriptor_shift,
+            },
+        }
+        tpl = self.prompts.read("evolve/M-T/diff")
+        if tpl:
+            return safe_format(
+                tpl,
+                context_json=json.dumps(context_obj, indent=2),
+                file_to_edit=parent.code_file_path,
+                original_file=parent_code,
+            )
+        return (
+            "You are an expert Verilog design assistant.\n"
+            "Edit the base file to move it toward the requested descriptor shift.\n\n"
+            "CONTEXT_JSON:\n"
+            f"{json.dumps(context_obj, indent=2)}\n\n"
+            "Return exactly ONE JSON object and nothing else:\n"
+            "{\n"
+            '  "format": "eoh_v1",\n'
+            '  "mode": "diff",\n'
+            '  "thought": "<targeted mutation plan>",\n'
+            '  "code": {\n'
+            '    "edits": [\n'
+            f'      {{ "file": "{parent.code_file_path}", "hunks": [\n'
+            '          { "search": "<exact original text>\\n", "replace": "<replacement text>\\n" }\n'
+            "        ] }\n"
+            "    ]\n"
+            "  }\n"
+            "}\n"
+        )
+
+    def _create_prompt_C_D(self, parents: list[Heuristic]) -> str:
+        """Create a QD-specific diverse-fusion prompt for two distant parents."""
+        parent1 = parents[0]
+        parent2 = parents[1]
+        distance = self._descriptor_distance(parent1, parent2)
+        if self.generation_mode == "whole":
+            p1_obj = json.loads(self._format_parent_for_prompt(parent1, 1))
+            p2_obj = json.loads(self._format_parent_for_prompt(parent2, 2))
+            context_obj = {
+                "task": "diverse_archive_fusion",
+                "problem_description": self.problem_description,
+                "parents": [p1_obj, p2_obj],
+                "qd": {
+                    "archive_type": self.qd_archive_type,
+                    "archive_axes": list(self._archive_axes()),
+                    "parent_descriptors": [
+                        self._descriptor_metadata(parent1),
+                        self._descriptor_metadata(parent2),
+                    ],
+                    "descriptor_distance": distance,
+                },
+            }
+            tpl = self.prompts.read("evolve/C-D/whole")
+            if tpl:
+                return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+            return (
+                "You are an expert Verilog design assistant.\n"
+                "Fuse the distant archive parents into a functionally correct design that spans their strengths.\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "whole",\n'
+                '  "thought": "<diverse fusion strategy>",\n'
+                '  "code": "<full, runnable Verilog as one JSON string>"\n'
+                "}\n"
+            )
+        with open(parent1.code_file_path, "r", encoding="utf-8") as handle:
+            parent1_code = handle.read()
+        with open(parent2.code_file_path, "r", encoding="utf-8") as handle:
+            parent2_code = handle.read()
+        p1_obj = json.loads(
+            self._format_parent_for_prompt(
+                parent1,
+                1,
+                include_code=not self.diff_compact_context,
+                code_override=parent1_code,
+            )
+        )
+        p2_obj = json.loads(
+            self._format_parent_for_prompt(
+                parent2,
+                2,
+                include_code=not self.diff_compact_context,
+                code_override=parent2_code,
+            )
+        )
+        context_obj = {
+            "task": "diverse_archive_fusion_via_patch",
+            "problem_description": self.problem_description,
+            "file_to_edit": parent1.code_file_path,
+            "original_file": parent1_code,
+            "parents": [p1_obj, p2_obj],
+            "qd": {
+                "archive_type": self.qd_archive_type,
+                "archive_axes": list(self._archive_axes()),
+                "parent_descriptors": [
+                    self._descriptor_metadata(parent1),
+                    self._descriptor_metadata(parent2),
+                ],
+                "descriptor_distance": distance,
+            },
+        }
+        tpl = self.prompts.read("evolve/C-D/diff")
+        if tpl:
+            return safe_format(
+                tpl,
+                context_json=json.dumps(context_obj, indent=2),
+                file_to_edit=parent1.code_file_path,
+                original_file=parent1_code,
+            )
+        return (
+            "You are an expert Verilog design assistant.\n"
+            "Edit Example 1 to incorporate strengths from the distant second parent.\n\n"
+            "CONTEXT_JSON:\n"
+            f"{json.dumps(context_obj, indent=2)}\n\n"
+            "Return exactly ONE JSON object and nothing else:\n"
+            "{\n"
+            '  "format": "eoh_v1",\n'
+            '  "mode": "diff",\n'
+            '  "thought": "<diverse fusion plan>",\n'
+            '  "code": {\n'
+            '    "edits": [\n'
+            f'      {{ "file": "{parent1.code_file_path}", "hunks": [\n'
+            '          { "search": "<exact original text>\\n", "replace": "<replacement text>\\n" }\n'
+            "        ] }\n"
+            "    ]\n"
+            "  }\n"
+            "}\n"
+        )
+
     def _materialize_offspring(
         self,
         llm_results_with_meta: list[tuple[str | None, str | None, dict[str, Any]]],
@@ -670,19 +942,40 @@ class QDEngine(EoHEngine):
         success_selected: set[EvolStrategyMethodSuccess] = set()
         success_total_requests = budget.backfill_budget + budget.refine_budget
         for idx in range(success_total_requests):
-            parents = self._sample_success_parents(
-                2
-                if budget.phase == "improve"
-                and idx == success_total_requests - 1
-                and len(self.success_pool) > 1
-                else 1
-            )
-            if not parents:
-                break
             if budget.phase == "fill" or idx < budget.backfill_budget:
-                strat_name = cast(EvolStrategyMethodSuccess, "M-E")
-                mode = self._phase_mode("backfill")
+                available: list[EvolStrategyMethodSuccess] = ["M-T", "M-E"]
+                if len(self.success_pool) > 1:
+                    available.append("C-D")
+                selected_name, prob_dist = self._select_strategy(
+                    "success",
+                    available,
+                    success_selected,
+                )
+                if selected_name is None or prob_dist is None:
+                    continue
+                strat_name = cast(EvolStrategyMethodSuccess, selected_name)
+                success_selected.add(strat_name)
+                parents = (
+                    self._sample_diverse_success_parents()
+                    if strat_name == "C-D"
+                    else self._sample_success_parents(1)
+                )
+                if not parents:
+                    break
+                mode = self._phase_mode("crossover" if strat_name == "C-D" else "backfill")
+                for key, value in prob_dist.items():
+                    strategy_avg_selection_probabilities["success_pool"][key] = (
+                        strategy_avg_selection_probabilities["success_pool"].get(key, 0.0)
+                        + value
+                    )
             else:
+                parents = self._sample_success_parents(
+                    2
+                    if idx == success_total_requests - 1 and len(self.success_pool) > 1
+                    else 1
+                )
+                if not parents:
+                    break
                 available: list[EvolStrategyMethodSuccess] = ["M-S", "M-R", "M-I"]
                 if len(self.success_pool) > 1:
                     available.append("C-F")
@@ -702,11 +995,11 @@ class QDEngine(EoHEngine):
                         + value
                     )
 
-            if strat_name == "C-F" and len(parents) < 2:
+            if strat_name in {"C-F", "C-D"} and len(parents) < 2:
                 parents = self._sample_success_parents(2)
                 if len(parents) < 2:
                     continue
-            if strat_name != "C-F":
+            if strat_name not in {"C-F", "C-D"}:
                 prompt_text = self._with_mode(mode, getattr(self, f"_create_prompt_{strat_name.replace('-', '_')}"), [parents[0]])
             else:
                 if parents[0].id == parents[1].id:
@@ -714,7 +1007,8 @@ class QDEngine(EoHEngine):
                     if not alt:
                         continue
                     parents[1] = random.choice(alt)
-                prompt_text = self._with_mode(mode, self._create_prompt_C_F, parents)
+                prompt_builder = self._create_prompt_C_F if strat_name == "C-F" else self._create_prompt_C_D
+                prompt_text = self._with_mode(mode, prompt_builder, parents)
 
             llm_requests.append(
                 self._build_prompt_request(

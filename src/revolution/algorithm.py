@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 
 # Literal Typing for strategies (M-F, M-S, M-E, M-R, M-I, C-F, ...)
-EvolStrategyMethod = Literal["initial", "M-F", "M-S", "M-E", "M-R", "M-I", "C-F"]
+EvolStrategyMethod = Literal["initial", "M-F", "M-S", "M-E", "M-R", "M-I", "C-F", "M-T", "C-D"]
 """
 Defines the set of all possible evolutionary strategies.
 - **initial**: The first set of candidates generated from the problem description.
@@ -40,6 +40,8 @@ Defines the set of all possible evolutionary strategies.
 - **M-R**: Mutate-Refactor: Maintains original thought from parent but refactors code.
 - **M-I**: Mutate-Improve: Make general enhancements from parent.
 - **C-F**: Crossover-Fusion: Combines the thought and code of two successful parents.
+- **M-T**: Mutate-Targeted: Pushes a successful parent toward a descriptor target.
+- **C-D**: Crossover-Diverse: Fuses distant archive occupants to backfill novel cells.
 """
 EvolStrategyMethodFail = Literal["M-F", "M-S", "M-E", "M-R", "M-I"]
 """
@@ -50,7 +52,7 @@ Define the set of all possible evolutionary strategies for failing candidates(fa
 - **M-R**: Mutate-Refactor: Maintains original thought from parent but refactors code.
 - **M-I**: Mutate-Improve: Make general enhancements from parent.
 """
-EvolStrategyMethodSuccess = Literal["M-S", "M-E", "M-R", "M-I", "C-F"]
+EvolStrategyMethodSuccess = Literal["M-S", "M-E", "M-R", "M-I", "C-F", "M-T", "C-D"]
 """
 Define the set of all possible evolutionary strategies for successful candidates(success_pool).
 - **M-S**: Mutate-Simplify: Simplifies the design while preserving functionality
@@ -58,6 +60,8 @@ Define the set of all possible evolutionary strategies for successful candidates
 - **M-R**: Mutate-Refactor: Maintains original thought from parent but refactors code.
 - **M-I**: Mutate-Improve: Make general enhancements from parent.
 - **C-F**: Crossover-Fusion: Combines the thought and code of two successful parents.
+- **M-T**: Mutate-Targeted: Pushes a successful parent toward a descriptor target.
+- **C-D**: Crossover-Diverse: Combines distant archive occupants to search underfilled cells.
 """
 
 # Generic TypeVar for strategy types

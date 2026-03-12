@@ -143,6 +143,9 @@ Current status on this feature branch:
 - QD runs now emit archive-state artifacts alongside the legacy summary/log
   files: `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`,
   `qd_metrics.json`, and `grid_layout.json` or `centroids.json`.
+- QD success-side fill/backfill now has dedicated operators:
+  `M-T` for targeted descriptor mutation and `C-D` for diverse cross-cell
+  fusion.
 - grid/CVT reporting parity, richer QD operators, and completion-grade live
   smokes are still staged work.
 - The detailed status and validation record lives in
