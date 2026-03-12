@@ -120,6 +120,19 @@ def _add_candidate_artifacts(run_dir: Path) -> None:
     _write_text(legacy_candidate / "candidate_2_feedback.txt", "legacy feedback\n")
 
 
+def _add_qd_sidecars(run_dir: Path) -> None:
+    problem_dir = run_dir / "RTLLM" / "Prob001_accu"
+    _write_text(problem_dir / "archive_history.jsonl", "{}\n")
+    _write_text(problem_dir / "archive_cells.csv", "cell_id,candidate_id\n")
+    _write_json(
+        problem_dir / "archive_summary.json",
+        {"archive_type": "grid", "occupied_cells": 2, "num_cells": 8},
+    )
+    _write_json(problem_dir / "qd_metrics.json", {"history": []})
+    _write_json(problem_dir / "grid_layout.json", {"archive_type": "grid", "axes": []})
+    _write_text(problem_dir / "coverage_vs_generation.png", "png")
+
+
 def test_archive_single_run_includes_configs_and_summaries(tmp_path):
     run_started = "20260223_010203"
     run_dir = _make_single_run_tree(tmp_path, run_started=run_started)
@@ -413,3 +426,26 @@ def test_archive_rejects_invalid_artifact_mode(tmp_path):
             regenerate_plots=False,
             artifact_mode="not-a-mode",
         )
+
+
+def test_archive_includes_qd_sidecars_in_summaries(tmp_path):
+    run_started = "20260223_111213"
+    run_dir = _make_single_run_tree(tmp_path, run_started=run_started)
+    _add_qd_sidecars(run_dir)
+
+    archive_dir = archive_baseline(
+        run_dir=run_dir,
+        archive_root=tmp_path / "archives",
+        embed_images=False,
+        regenerate_plots=False,
+    )
+
+    manifest = json.loads((archive_dir / "manifest.json").read_text(encoding="utf-8"))
+    archived_names = {Path(entry["archived"]).name for entry in manifest["summary_files"]}
+
+    assert "archive_history.jsonl" in archived_names
+    assert "archive_cells.csv" in archived_names
+    assert "archive_summary.json" in archived_names
+    assert "qd_metrics.json" in archived_names
+    assert "grid_layout.json" in archived_names
+    assert "coverage_vs_generation.png" in archived_names

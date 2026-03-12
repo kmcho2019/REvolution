@@ -14,6 +14,7 @@ class SummaryRow:
     backend: str
     benchmark: str
     problem: str
+    search_mode: str | None
     functionality_rate: float
     synthesis_rate: float
     best_score: float | None
@@ -29,6 +30,15 @@ class SummaryRow:
     primary_budget_axis: str | None
     max_evaluations: int | None
     max_llm_calls: int | None
+    qd_archive_type: str | None
+    qd_coverage: float | None
+    qd_score: float | None
+    qd_best_quality: float | None
+    qd_occupied_cells: int | None
+    qd_num_cells: int | None
+
+
+IGNORED_SUMMARY_FILENAMES = {"archive_summary.json"}
 
 
 def _safe_float(value: Any) -> float | None:
@@ -207,6 +217,30 @@ def _format_ratio(numerator: float, denominator: int) -> str:
     return f"{numerator / denominator:.2f}"
 
 
+def _is_problem_summary_path(summary_path: Path) -> bool:
+    """Return whether a JSON summary path is a canonical per-problem summary."""
+
+    return (
+        summary_path.name.endswith("_summary.json")
+        and summary_path.name not in IGNORED_SUMMARY_FILENAMES
+    )
+
+
+def _load_qd_archive_summary(summary_path: Path) -> dict[str, Any]:
+    """Load QD archive sidecar metrics stored beside the problem summary."""
+
+    archive_summary_path = summary_path.parent / "archive_summary.json"
+    if not archive_summary_path.is_file():
+        return {}
+    try:
+        payload = json.loads(archive_summary_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+    if not isinstance(payload, dict):
+        return {}
+    return payload
+
+
 def _render_budget_fairness_section(rows: list[SummaryRow]) -> list[str]:
     grouped: dict[tuple[str, str], list[SummaryRow]] = {}
     for row in rows:
@@ -223,9 +257,6 @@ def _render_budget_fairness_section(rows: list[SummaryRow]) -> list[str]:
         func_any_pass = sum(1 for row in group if row.functionality_rate > 0)
         synth_any_pass = sum(1 for row in group if row.synthesis_rate > 0)
         total_calls = float(sum(row.llm_api_calls for row in group))
-        total_tokens = float(
-            sum(row.llm_prompt_tokens + row.llm_completion_tokens for row in group)
-        )
         axis_values = sorted(
             {
                 row.primary_budget_axis
@@ -244,6 +275,42 @@ def _render_budget_fairness_section(rows: list[SummaryRow]) -> list[str]:
             f"{_format_mean_ci([float(row.llm_prompt_tokens + row.llm_completion_tokens) for row in group], precision=2)} | "
             f"{_format_ratio(total_calls, func_any_pass)} | "
             f"{_format_ratio(total_calls, synth_any_pass)} |"
+        )
+    lines.append("")
+    return lines
+
+
+def _render_qd_archive_section(rows: list[SummaryRow]) -> list[str]:
+    """Render an optional section summarizing QD archive coverage and quality."""
+
+    qd_rows = [row for row in rows if row.search_mode == "revolution_qd"]
+    if not qd_rows:
+        return []
+    lines = [
+        "## QD Archive Metrics",
+        "",
+        "| Backend | Benchmark | Problem | Archive | Coverage | QD Score | Best Quality | Occupied Cells |",
+        "|:---|:---|:---|:---|:---|:---|:---|:---|",
+    ]
+    for row in sorted(qd_rows, key=lambda item: (item.benchmark, item.problem, item.backend)):
+        occupied = (
+            f"{row.qd_occupied_cells}/{row.qd_num_cells}"
+            if row.qd_occupied_cells is not None and row.qd_num_cells is not None
+            else "N/A"
+        )
+        coverage = (
+            f"{row.qd_coverage * 100:.1f}%"
+            if row.qd_coverage is not None
+            else "N/A"
+        )
+        qd_score = f"{row.qd_score:.4f}" if row.qd_score is not None else "N/A"
+        best_quality = (
+            f"{row.qd_best_quality:.4f}" if row.qd_best_quality is not None else "N/A"
+        )
+        lines.append(
+            f"| `{row.backend}` | {row.benchmark} | {row.problem} | "
+            f"{row.qd_archive_type or 'N/A'} | {coverage} | {qd_score} | {best_quality} | "
+            f"{occupied} |"
         )
     lines.append("")
     return lines
@@ -322,10 +389,13 @@ def _render_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: boo
 def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
     rows: list[SummaryRow] = []
     for summary_path in root.rglob("*_summary.json"):
+        if not _is_problem_summary_path(summary_path):
+            continue
         try:
             payload = json.loads(summary_path.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
             continue
+        qd_archive_summary = _load_qd_archive_summary(summary_path)
         rates = payload.get("accumulated_success_rates", {})
         if not rates and "stage_success_rates" in payload:
             stage_rates = payload["stage_success_rates"]
@@ -356,6 +426,16 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
         run_budget = (
             payload.get("run_budget", {})
             if isinstance(payload.get("run_budget", {}), dict)
+            else {}
+        )
+        backend_details = (
+            payload.get("backend_details", {})
+            if isinstance(payload.get("backend_details", {}), dict)
+            else {}
+        )
+        qd_config = (
+            backend_details.get("qd_config", {})
+            if isinstance(backend_details.get("qd_config", {}), dict)
             else {}
         )
         functionality_rate = _safe_rate(rates.get("functionality", 0.0))
@@ -400,6 +480,11 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
                 backend=backend,
                 benchmark=benchmark_name,
                 problem=problem_name,
+                search_mode=(
+                    backend_details.get("search_mode")
+                    if isinstance(backend_details.get("search_mode"), str)
+                    else None
+                ),
                 functionality_rate=functionality_rate,
                 synthesis_rate=synthesis_rate,
                 best_score=best_score,
@@ -415,6 +500,20 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
                 primary_budget_axis=run_budget.get("primary_budget_axis"),
                 max_evaluations=_safe_int(run_budget.get("max_evaluations")),
                 max_llm_calls=_safe_int(run_budget.get("max_llm_calls")),
+                qd_archive_type=(
+                    qd_archive_summary.get("archive_type")
+                    if isinstance(qd_archive_summary.get("archive_type"), str)
+                    else (
+                        qd_config.get("archive_type")
+                        if isinstance(qd_config.get("archive_type"), str)
+                        else None
+                    )
+                ),
+                qd_coverage=_safe_float(qd_archive_summary.get("coverage")),
+                qd_score=_safe_float(qd_archive_summary.get("qd_score")),
+                qd_best_quality=_safe_float(qd_archive_summary.get("best_quality")),
+                qd_occupied_cells=_safe_int(qd_archive_summary.get("occupied_cells")),
+                qd_num_cells=_safe_int(qd_archive_summary.get("num_cells")),
             )
         )
     return rows
@@ -457,6 +556,7 @@ def _render_markdown(rows: list[SummaryRow]) -> str:
     lines.append("")
     lines.extend(_render_aggregate_section(rows, group_by_benchmark=True))
     lines.extend(_render_aggregate_section(rows, group_by_benchmark=False))
+    lines.extend(_render_qd_archive_section(rows))
     return "\n".join(lines) + "\n"
 
 

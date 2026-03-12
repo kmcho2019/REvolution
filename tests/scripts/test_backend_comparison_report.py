@@ -225,3 +225,69 @@ def test_backend_comparison_report_accepts_codeevolve_label(tmp_path):
     text = output_path.read_text(encoding="utf-8")
     assert "`codeevolve`" in text
     assert "Prob001" in text
+
+
+def test_backend_comparison_report_ignores_qd_sidecar_summary_and_renders_qd_section(tmp_path):
+    qd_root = tmp_path / "revolution_qd"
+    problem_dir = qd_root / "model-x" / "Bench" / "Prob001"
+    problem_dir.mkdir(parents=True, exist_ok=True)
+    (problem_dir / "Prob001_summary.json").write_text(
+        json.dumps(
+            {
+                "benchmark_name": "Bench",
+                "problem_name": "Prob001",
+                "backend_details": {
+                    "search_mode": "revolution_qd",
+                    "qd_config": {"archive_type": "cvt"},
+                },
+                "accumulated_success_rates": {"functionality": 1.0, "synthesis_ppa": 1.0},
+                "final_population_ppa": {
+                    "best_score": 0.25,
+                    "best_metrics": {"area": 75.0, "power": 0.8, "eff_clk_period": 0.85},
+                },
+                "ref_ppa_metric": {"area": 100.0, "power": 1.0, "eff_clk_period": 1.0},
+                "total_runtime_seconds": 4.0,
+                "total_llm_api_calls": 5,
+                "total_llm_prompt_tokens": 50,
+                "total_llm_completion_tokens": 25,
+                "run_budget": {
+                    "primary_budget_axis": "candidate_evaluations",
+                    "max_evaluations": 8,
+                    "max_llm_calls": 8,
+                },
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    (problem_dir / "archive_summary.json").write_text(
+        json.dumps(
+            {
+                "archive_type": "cvt",
+                "num_cells": 8,
+                "occupied_cells": 3,
+                "coverage": 0.375,
+                "qd_score": 1.75,
+                "best_quality": 0.4,
+                "mean_quality": 0.2,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    output_path = tmp_path / "comparison.md"
+    cmd = [
+        sys.executable,
+        "scripts/backend_comparison_report.py",
+        "--backend_run",
+        f"revolution={qd_root}",
+        "--output",
+        str(output_path),
+    ]
+    subprocess.run(cmd, check=True, cwd=Path(__file__).resolve().parents[2])
+    text = output_path.read_text(encoding="utf-8")
+
+    assert text.count("Prob001 |") == 2
+    assert "## QD Archive Metrics" in text
+    assert "| `revolution` | Bench | Prob001 | cvt | 37.5% | 1.7500 | 0.4000 | 3/8 |" in text

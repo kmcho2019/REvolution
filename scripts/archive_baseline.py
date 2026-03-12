@@ -51,6 +51,21 @@ LEGACY_CANDIDATE_THOUGHT_RE = re.compile(
     r"candidate_\d+(?:_[A-Za-z0-9.-]+)?_thought\.txt$",
     re.IGNORECASE,
 )
+QD_SUMMARY_SIDECAR_NAMES = (
+    "archive_history.jsonl",
+    "archive_cells.csv",
+    "archive_summary.json",
+    "qd_metrics.json",
+    "grid_layout.json",
+    "centroids.json",
+)
+QD_VISUALIZATION_PATTERNS = (
+    "coverage_vs_generation.png",
+    "best_quality_vs_generation.png",
+    "qd_score_vs_generation.png",
+    "grid_*_heatmap.png",
+    "cvt_*_projection.png",
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -330,10 +345,22 @@ def _dedupe_paths(paths: Iterable[Path]) -> list[Path]:
 
 
 def _collect_summary_files(run_dir: Path, extra_summary: Iterable[str] | None) -> list[Path]:
+    """Collect user-facing run summaries plus QD archive sidecars."""
+
     summary_candidates = [
         *run_dir.rglob("*.md"),
         *run_dir.rglob("*_summary_results.txt"),
         *run_dir.rglob("*_summary.json"),
+        *(
+            path
+            for name in QD_SUMMARY_SIDECAR_NAMES
+            for path in run_dir.rglob(name)
+        ),
+        *(
+            path
+            for pattern in QD_VISUALIZATION_PATTERNS
+            for path in run_dir.rglob(pattern)
+        ),
     ]
 
     extras: list[Path] = []

@@ -28,6 +28,7 @@
   - `qd/scoring.py`: exact PPA `quality_score`, gain axes, repair score, and code hashing helpers.
   - `qd/descriptors.py`: descriptor registry, profile loading, and descriptor-axis resolution.
   - `qd/engine.py`: experimental grid-first `QDEngine` that reuses REvolution prompt/eval infrastructure.
+  - `qd/visualization.py`: QD archive-history plots plus grid heatmaps / CVT projection helpers.
 - `backends/funsearch_backend.py`: FunSearch-style RTL backend (islands, signature clusters, reset/reseed, budgeted loop).
 - `runtime/problem_context.py`: benchmark/problem path and metadata resolution.
 - `runtime/problem_spec.py`: benchmark capability layer and default descriptor / generation-mode preferences.
@@ -49,9 +50,9 @@
 - `qd_descriptor_probe.py`: descriptor/profile inspection helper for QD experiments.
 - `run_funsearch.py`: convenience wrapper for `run_backend.py --backend funsearch`.
 - `run_backend_ablation.py`: ablation sweep orchestrator across both backends with multi-seed support, strict fairness checks, and configurable budget-axis normalization (`candidate_evaluations`, `llm_calls`, `dual_gate`).
-- `backend_comparison_report.py`: side-by-side + aggregate backend report generator across experiment roots with pass/fail emoji status, any-pass design counts, solved-only score/PPA summaries (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`), PPA regression counts, and budget/fairness diagnostics.
+- `backend_comparison_report.py`: side-by-side + aggregate backend report generator across experiment roots with pass/fail emoji status, any-pass design counts, solved-only score/PPA summaries (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`), PPA regression counts, budget/fairness diagnostics, and QD archive metrics when QD sidecars are present.
 - `run_one_shot.py`: CLI for n-shot baselines that reuse the evaluation stack without evolution.
-- `archive_baseline.py`: archive utility for run roots and ablation roots with manifest/index metadata, copied run configs, and compressed raw artifacts.
+- `archive_baseline.py`: archive utility for run roots and ablation roots with manifest/index metadata, copied run configs, preserved QD sidecars/plots, and compressed raw artifacts.
 - `run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with hard-task selection, aggregate token/runtime comparisons, and diff failure catalog generation.
 - `run_diff_mode_diagnostics.py`: repeated real-LLM diff stress harness producing strict-parse/apply failure catalogs across curated edge cases, including worst-case failure sample retention.
 - `run_diff_prompt_optimization_loop.py`: prompt-candidate loop runner that calls `run_diff_prompt_suite.py` per candidate and ranks prompts by objective score.

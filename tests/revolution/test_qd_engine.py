@@ -280,12 +280,16 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     summary_path = tmp_path / "artifacts" / "archive_summary.json"
     layout_path = tmp_path / "artifacts" / "grid_layout.json"
     metrics_path = tmp_path / "artifacts" / "qd_metrics.json"
+    coverage_plot = tmp_path / "artifacts" / "coverage_vs_generation.png"
+    quality_plot = tmp_path / "artifacts" / "grid_quality_heatmap.png"
 
     assert history_path.is_file()
     assert cells_path.is_file()
     assert summary_path.is_file()
     assert layout_path.is_file()
     assert metrics_path.is_file()
+    assert coverage_plot.is_file()
+    assert quality_plot.is_file()
 
     history_entry = json.loads(history_path.read_text(encoding="utf-8").strip())
     assert history_entry["archive_type"] == "grid"
@@ -294,6 +298,8 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     cell_rows = list(csv.DictReader(cells_path.open(encoding="utf-8")))
     assert len(cell_rows) == 1
     assert cell_rows[0]["candidate_id"] == elite.id
+    summary_payload = json.loads(summary_path.read_text(encoding="utf-8"))
+    assert "coverage_vs_generation.png" in "".join(summary_payload["visualization_files"])
 
 
 def test_qd_engine_writes_cvt_layout_metadata(tmp_path, monkeypatch):
@@ -327,6 +333,7 @@ def test_qd_engine_writes_cvt_layout_metadata(tmp_path, monkeypatch):
     assert layout_payload["archive_type"] == "cvt"
     assert layout_payload["initialized"] is True
     assert len(layout_payload["centroids"]) == 4
+    assert (tmp_path / "artifacts" / "cvt_quality_projection.png").is_file()
 
 
 def test_qd_engine_creates_targeted_mutation_prompt(tmp_path, monkeypatch):

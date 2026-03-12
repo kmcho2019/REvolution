@@ -56,8 +56,8 @@ The current QD implementation is staged:
 - `qd_descriptor_file` can now define grid-axis bin/bounds specs in addition to
   descriptor profiles, so grid experiments can move beyond the uniform
   `[-1, 1]` gain-axis fallback.
-- CVT/runtime parity is still incomplete: reporting artifacts, visualization,
-  and completion-grade live smokes remain staged work.
+- CVT/runtime parity is still incomplete mainly around live smoke completion,
+  broader benchmark coverage, and deeper evaluator-side descriptor richness.
 
 The QD substrate currently lives under `src/revolution/qd/`:
 
@@ -69,6 +69,8 @@ The QD substrate currently lives under `src/revolution/qd/`:
 - `engine.py`: archive-selectable QD runtime engine that reuses existing prompt
   builders, diff application, evaluation, and logger wiring
   - also owns the current QD-specific prompt builders for `M-T` and `C-D`
+- `visualization.py`: archive-history plots plus grid heatmaps / CVT projection
+  helpers emitted from the QD runtime
 
 ## Evaluation stack
 
@@ -99,6 +101,15 @@ The engine writes everything necessary to reproduce a candidate:
 - QD archive-state artifacts for `revolution_qd` runs:
   `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`,
   `qd_metrics.json`, and `grid_layout.json` or `centroids.json`.
+- QD visualization outputs for `revolution_qd` runs:
+  `coverage_vs_generation.png`, `best_quality_vs_generation.png`,
+  `qd_score_vs_generation.png`, plus grid heatmaps or CVT projection plots.
+- `scripts/backend_comparison_report.py` now treats `archive_summary.json` as a
+  QD sidecar rather than a per-problem summary, and renders a dedicated QD
+  archive section instead of accidentally double-counting it as a design.
+- `scripts/archive_baseline.py` now preserves the QD sidecars as archived
+  summary files, along with the generated QD plots, so baseline packages keep
+  archive coverage and quality history.
 - A final `<problem>_summary.json` containing aggregated metrics, champion details, reward histories, and token usage.
 
 Support scripts in `scripts/` load these artefacts to build tables, visualisations, or markdown reports.

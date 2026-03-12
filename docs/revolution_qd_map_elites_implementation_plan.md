@@ -38,7 +38,7 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Branch: `feat/revolution-qd-map-elites`
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
-- Current stage: `Stage 4`
+- Current stage: `Stage 7`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
@@ -48,8 +48,9 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   archive-backed success-state handling, benchmark-default phase-mode wiring, a
   bounded per-cell `success_view` reservoir, configurable grid-axis bin
   loading, frozen-scaler CVT warm-up, and initial archive-state artifact
-  emission; reporting parity, operator work, and completion-grade live
-  validation still remain pending
+  emission; QD operator routing, QD-aware report/archive packaging, and
+  archive-history visualization are now live, but benchmark expansion, engine
+  seam cleanup, and completion-grade live validation still remain pending
 
 ## Worktree Info
 
@@ -288,20 +289,20 @@ Documentation risk to watch:
 ### Stage 4: CVT Backend With Parity Surface
 
 - [x] Implement CVT warm-up, scaler fit, frozen centroids, and reinsertion.
-- [ ] Keep grid/CVT on equal footing in summary, artifacts, and tests.
+- [x] Keep grid/CVT on equal footing in summary, artifacts, and tests.
 - [x] Add CVT-specific tests and parity tests.
 - [ ] Run RTLLM and VerilogEval CVT smokes.
 - [x] Update docs and plan with Stage 4 validation notes.
-- [ ] Commit Stage 4.
+- [x] Commit Stage 4.
 
 ### Stage 5: QD Operators And Flexible Diff Usage
 
 - [x] Add `M-T` and `C-D` prompts and operator routing.
-- [ ] Route whole/diff by explicit per-phase policy resolution.
+- [x] Route whole/diff by explicit per-phase policy resolution.
 - [x] Add operator routing tests.
 - [ ] Run targeted whole-heavy and diff-heavy smoke tests.
 - [x] Update docs and plan with Stage 5 validation notes.
-- [ ] Commit Stage 5.
+- [x] Commit Stage 5.
 
 ### Stage 6: CVDP And RealBench Module Capability Expansion
 
@@ -317,18 +318,20 @@ Documentation risk to watch:
 - [x] Emit `archive_history.jsonl`, `archive_cells.csv`,
       `archive_summary.json`, `qd_metrics.json`, and
       `grid_layout.json` or `centroids.json`.
-- [ ] Add generation metrics, per-cell exports, and visualization outputs.
-- [ ] Extend archive/report packaging.
-- [ ] Add reporting and visualization tests.
-- [ ] Run grid and CVT artifact-validation smokes.
-- [ ] Update docs and plan with Stage 7 validation notes.
+- [x] Add generation metrics and per-cell exports.
+- [x] Add visualization outputs.
+- [x] Extend archive/report packaging.
+- [x] Add reporting tests.
+- [x] Add visualization tests.
+- [x] Run grid and CVT artifact-validation smokes.
+- [x] Update docs and plan with Stage 7 validation notes.
 - [ ] Commit Stage 7.
 
 ### Stage 8: Full Regression, Docs, And Merge-Ready Cleanup
 
-- [ ] Run full pytest suite.
-- [ ] Run `ruff` on touched files and record broader repo lint debt status.
-- [ ] Run `pyright` on touched modules and record broader repo type-debt status.
+- [x] Run full pytest suite.
+- [x] Run `ruff` on touched files and record broader repo lint debt status.
+- [x] Run `pyright` on touched modules and record broader repo type-debt status.
 - [ ] Run final vLLM-backed smoke matrix.
 - [ ] Perform code cleanliness and intent-alignment review.
 - [ ] Update top-level docs and finalize this plan.
@@ -615,23 +618,59 @@ Documentation risk to watch:
 ### Stage 7
 
 - Date: `2026-03-12`
-- Partial implementation checkpoint:
+- Expanded implementation checkpoint:
   - added engine-level archive artifact emission for both grid and CVT runs:
     `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`,
     `qd_metrics.json`, and `grid_layout.json` or `centroids.json`
   - archive history now records per-generation occupancy, coverage, QD score,
     best/mean quality, replacement counts, and gain aggregates
+  - added `src/revolution/qd/visualization.py` and runtime-emitted QD plots:
+    `coverage_vs_generation.png`, `best_quality_vs_generation.png`,
+    `qd_score_vs_generation.png`, plus final grid heatmaps or CVT projection
+    plots
+  - updated `scripts/backend_comparison_report.py` to ignore
+    `archive_summary.json` as a per-problem summary and render a dedicated QD
+    archive metrics section instead
+  - updated `scripts/archive_baseline.py` to preserve QD sidecars and QD plots
+    in archived summary payloads so `candidate_core` archives keep archive-state
+    evidence
 - Automated tests:
   - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_engine.py tests/revolution/test_qd_archive.py tests/revolution/test_revolution_backend.py tests/scripts/test_archive_baseline.py tests/scripts/test_backend_comparison_report.py`
-  - Result: `35 passed in 1.11s`
-  - `/workspace/.venv/bin/ruff check src/revolution/qd/engine.py tests/revolution/test_qd_engine.py`
+  - Result: `40 passed in 9.27s`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `319 passed in 9.12s`
+  - `/workspace/.venv/bin/ruff check src/revolution/qd src/revolution/backends/revolution_backend.py scripts/backend_comparison_report.py scripts/archive_baseline.py tests/revolution/test_qd_engine.py tests/scripts/test_backend_comparison_report.py tests/scripts/test_archive_baseline.py`
   - Result: `All checks passed!`
+  - `/workspace/.venv/bin/python -m pyright src/revolution/qd src/revolution/backends/revolution_backend.py scripts/backend_comparison_report.py scripts/archive_baseline.py`
+  - Result: `0 errors, 1 warning`
+    - `src/revolution/qd/descriptors.py`: `yaml` could not be resolved from source by pyright
+- Smoke tests:
+  - grid smoke command:
+    - `timeout 240s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --qd_grid_axes g_A g_T --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --max_tokens 128000 --population_size 1 --num_generations 0 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --save_path /tmp/revolution_qd_smoke_stage7 --seed 42`
+  - grid result:
+    - vLLM preflight succeeded and the run entered the problem loop
+    - the smoke timed out after `240s` without producing a completion signal
+    - partial logs/config snapshots were written under `/tmp/revolution_qd_smoke_stage7`
+  - CVT smoke command:
+    - `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --qd_cvt_axes g_A g_P --qd_num_cells 4 --qd_cvt_warmup_successes 1 --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --max_tokens 128000 --population_size 1 --num_generations 0 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --save_path /tmp/revolution_qd_smoke_stage7_cvt --seed 42`
+  - CVT result:
+    - vLLM preflight succeeded and the run entered the problem loop
+    - the smoke timed out after `120s` without producing a completion signal
+    - partial logs/config snapshots were written under `/tmp/revolution_qd_smoke_stage7_cvt`
 - Notes:
-  - this is engine-local artifact emission only; comparison-report integration,
-    visualization generation, and archive packaging awareness are still not
-    complete
-  - live smoke evidence was not rerun for this checkpoint because the change is
-    artifact emission rather than LLM request routing
+  - Stage 7 is no longer just engine-local artifact emission; report/archive
+    packaging and first-pass visualization outputs are now wired through the
+    runtime and script layer
+  - the remaining Stage 7 gap is mostly deeper visualization coverage and
+    downstream analysis polish, not basic artifact/report discovery anymore
+  - live smoke evidence is still blocked rather than passed; the bounded runs
+    reach vLLM preflight and enter the runner but do not complete within the
+    timeout budget
+  - broader repo-wide `pyright` remains red outside the touched QD/reporting
+    surface; current failures are still pre-existing in
+    `run_evolution.py`, `algorithm.py`, `candidate_evaluator.py`, `llm.py`,
+    and other older modules, so the local validation checklist continues to use
+    touched-module typechecks plus an explicit repo-debt note
 
 ### Stage 5
 
@@ -740,8 +779,16 @@ Documentation risk to watch:
 
 - The engine now emits the baseline archive-state files without requiring the
   reporting scripts to infer archive shape from legacy summaries.
-- This reduces one parity gap between grid and CVT, but the reporting stack
-  still does not consume the new files as first-class inputs.
+- The reporting and archive-packaging scripts now consume the new files as
+  first-class inputs, which closes the earlier `archive_summary.json`
+  double-counting bug and prevents `candidate_core` archives from silently
+  dropping QD sidecars or plots.
+- The new visualization module is intentionally lightweight and runtime-local.
+  That is a good first step, but it adds another place where plotting logic now
+  exists, so future cleanup should decide whether QD-specific visualization
+  stays engine-local or gets moved behind a broader reporting interface.
+- The largest remaining debt is still the `EoHEngine` / `QDEngine` seam rather
+  than artifact plumbing.
 
 ### Stage 5
 
@@ -822,8 +869,13 @@ Documentation risk to watch:
 - The branch now partially satisfies the original “archive evolution as a
   first-class output” goal because raw archive-state files are emitted from the
   runtime itself.
-- The intent gap that remains is downstream consumption: the reporting scripts
-  and visual outputs still need to treat those files as primary artifacts.
+- The branch is now much closer to the original intent because downstream
+  consumption has caught up: comparison reports, baseline archives, and runtime
+  plots now treat the QD sidecars as primary artifacts.
+- The remaining intent gap is validation and breadth rather than core design:
+  the new outputs exist, but the branch still needs successful live smoke
+  completion, broader benchmark coverage, and deeper visualization/reporting
+  polish before the feature can be called complete.
 
 ### Stage 5
 
@@ -882,6 +934,12 @@ implementation and testing so far.
   - descriptor profile used
   - whether the run was `grid` or `cvt`
   - whether the run was `ppa` or `functional_only`
+- The next Stage 7 follow-through should focus on:
+  - adding more complete visualization coverage for per-metric archive views
+  - deciding whether QD plot generation should remain runtime-local or move
+    into a reusable reporting layer
+  - ensuring archive packaging and comparison reports can surface the new plot
+    files without manual inspection
 
 ### Stage 8 revision
 

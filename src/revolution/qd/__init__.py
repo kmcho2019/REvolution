@@ -27,6 +27,7 @@ from revolution.qd.scoring import (
     functional_quality_score,
     normalize_code_hash,
 )
+from revolution.qd.visualization import QDVisualizationArtifacts, write_qd_visualizations
 
 __all__ = [
     "DescriptorDefinition",
@@ -59,4 +60,6 @@ __all__ = [
     "resolve_descriptor_axes",
     "resolve_grid_axis_specs",
     "split_qd_budget",
+    "QDVisualizationArtifacts",
+    "write_qd_visualizations",
 ]

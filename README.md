@@ -143,11 +143,21 @@ Current status on this feature branch:
 - QD runs now emit archive-state artifacts alongside the legacy summary/log
   files: `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`,
   `qd_metrics.json`, and `grid_layout.json` or `centroids.json`.
+- QD runs now also emit visualization files from those artifacts:
+  `coverage_vs_generation.png`, `best_quality_vs_generation.png`,
+  `qd_score_vs_generation.png`, plus grid heatmaps or CVT projection plots for
+  the final archive state.
+- `scripts/backend_comparison_report.py` now skips QD sidecar summaries during
+  per-problem loading and emits a dedicated QD archive metrics section when
+  `revolution_qd` runs are present.
+- `scripts/archive_baseline.py` now preserves QD archive sidecars in archived
+  summary payloads, including the generated QD plots, so candidate-core
+  archives do not silently drop archive state.
 - QD success-side fill/backfill now has dedicated operators:
   `M-T` for targeted descriptor mutation and `C-D` for diverse cross-cell
   fusion.
-- grid/CVT reporting parity, richer QD operators, and completion-grade live
-  smokes are still staged work.
+- broader benchmark expansion and completion-grade live smokes are still staged
+  work.
 - The detailed status and validation record lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.
 

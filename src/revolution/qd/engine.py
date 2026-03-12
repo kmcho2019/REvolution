@@ -19,6 +19,7 @@ from revolution.qd.archive import CVTArchive, GridArchive, GridAxisSpec
 from revolution.qd.descriptors import extract_descriptor_values, resolve_descriptor_axes, resolve_grid_axis_specs
 from revolution.qd.scoring import compute_ppa_gains
 from revolution.qd.scheduler import split_qd_budget
+from revolution.qd.visualization import write_qd_visualizations
 
 
 class QDEngine(EoHEngine):
@@ -381,6 +382,12 @@ class QDEngine(EoHEngine):
         metrics_path = self._qd_metrics_path()
         if summary_path is None or metrics_path is None:
             return
+        visualization_artifacts = write_qd_visualizations(
+            output_dir=self._qd_log_dir() or os.path.dirname(summary_path),
+            history=self.qd_generation_history,
+            archive=self.success_archive,
+            ref_ppa_metrics=self.ref_ppa_metrics,
+        )
         latest = self.qd_generation_history[-1] if self.qd_generation_history else self._build_qd_snapshot(
             inserted=0,
             replaced=0,
@@ -396,10 +403,12 @@ class QDEngine(EoHEngine):
             "best_quality": latest["best_quality"],
             "mean_quality": latest["mean_quality"],
             "history_length": len(self.qd_generation_history),
+            "visualization_files": list(visualization_artifacts.generated_files),
         }
         metrics_payload = {
             "archive_type": self.qd_archive_type,
             "history": self.qd_generation_history,
+            "visualization_files": list(visualization_artifacts.generated_files),
         }
         with open(summary_path, "w", encoding="utf-8") as handle:
             json.dump(summary_payload, handle, indent=2)
