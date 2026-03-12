@@ -49,8 +49,9 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   bounded per-cell `success_view` reservoir, configurable grid-axis bin
   loading, frozen-scaler CVT warm-up, and initial archive-state artifact
   emission; QD operator routing, QD-aware report/archive packaging, and
-  archive-history visualization are now live, but benchmark expansion, engine
-  seam cleanup, and completion-grade live validation still remain pending
+  archive-history visualization are now live, and Stage 6 benchmark capability
+  scaffolding for `cvdp` plus fixture-backed `RealBench` modules is now landed;
+  engine seam cleanup and completion-grade live validation still remain pending
 
 ## Worktree Info
 
@@ -306,12 +307,12 @@ Documentation risk to watch:
 
 ### Stage 6: CVDP And RealBench Module Capability Expansion
 
-- [ ] Add `cvdp` `cid002` / `cid003` capability path.
-- [ ] Add `RealBench` module-subset adapter and fixtures.
-- [ ] Gate `quality_mode=ppa` vs `functional_only` per problem.
-- [ ] Add tests and smokes or explicitly record blocked live smoke.
-- [ ] Update docs and plan with Stage 6 validation notes.
-- [ ] Commit Stage 6.
+- [x] Add `cvdp` `cid002` / `cid003` capability path.
+- [x] Add `RealBench` module-subset adapter and fixtures.
+- [x] Gate `quality_mode=ppa` vs `functional_only` per problem.
+- [x] Add tests and smokes or explicitly record blocked live smoke.
+- [x] Update docs and plan with Stage 6 validation notes.
+- [x] Commit Stage 6.
 
 ### Stage 7: Archive Logging, Reporting, Visualization, And Descriptor Study
 
@@ -703,6 +704,81 @@ Documentation risk to watch:
   - Stage 5 operator checkpoint commit:
     - `7cb58e1240` `feat(qd): add targeted and diverse qd operators`
 
+### Stage 6
+
+- Date: `2026-03-12`
+- Partial implementation checkpoint:
+  - enabled `revolution` in the backend registry for the existing JSONL-backed
+    `cvdp` path used by `scripts/run_backend.py`
+  - added `src/revolution/runtime/realbench_adapter.py` with a manifest-based
+    RealBench module adapter:
+    `module_manifest.json` -> problem discovery -> `ProblemContext` /
+    `ProblemSpec`
+  - added `--realbench_root` and `--realbench_subset module` to
+    `scripts/run_backend.py`
+  - fixed a legacy `EoHEngine` initialization assumption so JSONL-backed tasks
+    can use `ProblemSpec.prompt_text` and `ProblemSpec.benchmark_root` instead
+    of requiring on-disk `<problem>_prompt.txt` files
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_problem_spec.py tests/revolution/test_cvdp_evaluator.py tests/revolution/test_realbench_adapter.py tests/scripts/test_run_backend.py`
+  - Result: `27 passed in 0.98s`
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_engine.py tests/revolution/test_realbench_adapter.py tests/revolution/test_problem_spec.py tests/scripts/test_run_backend.py`
+  - Result: `39 passed in 7.03s`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `319 passed in 9.12s`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `324 passed in 10.80s`
+  - `/workspace/.venv/bin/ruff check src/revolution/runtime/realbench_adapter.py src/revolution/runtime/__init__.py src/revolution/backends/registry.py scripts/run_backend.py tests/revolution/test_realbench_adapter.py tests/scripts/test_run_backend.py`
+  - Result: `All checks passed!`
+  - `/workspace/.venv/bin/ruff check src/revolution/runtime/realbench_adapter.py src/revolution/runtime/__init__.py src/revolution/backends/registry.py scripts/run_backend.py src/revolution/algorithm.py tests/revolution/test_realbench_adapter.py tests/revolution/test_qd_engine.py tests/scripts/test_run_backend.py`
+  - Result: `All checks passed!`
+  - `/workspace/.venv/bin/python -m pyright src/revolution/runtime/realbench_adapter.py src/revolution/runtime/__init__.py src/revolution/backends/registry.py`
+  - Result: `0 errors, 0 warnings`
+  - `/workspace/.venv/bin/python -m pyright src/revolution/algorithm.py src/revolution/runtime/realbench_adapter.py src/revolution/backends/registry.py src/revolution/runtime/__init__.py`
+  - Result: broader pre-existing `algorithm.py` type debt remains; no new
+    Stage 6-specific adapter errors were introduced
+  - `/workspace/.venv/bin/python -m pyright src/revolution/runtime/realbench_adapter.py src/revolution/runtime/__init__.py src/revolution/backends/registry.py scripts/run_backend.py`
+  - Result: `0 errors, 1 warning` (`tqdm` source-resolution warning only)
+- Smoke tests:
+  - CVDP smoke command:
+    - `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks cvdp --problems cvdp_copilot_16qam_mapper_0001 --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --max_tokens 128000 --population_size 1 --num_generations 0 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --save_path /tmp/revolution_qd_stage6_cvdp --seed 42`
+  - Retry smoke command:
+    - `timeout 150s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks cvdp --problems cvdp_copilot_16qam_mapper_0001 --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --max_tokens 128000 --population_size 1 --num_generations 0 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --save_path /tmp/revolution_qd_stage6_cvdp_retry --seed 42`
+  - CVDP smoke result:
+    - initial run exposed a real bug in `EoHEngine.load_problem_description()`
+      for JSONL-backed tasks
+    - after the fix, the run passed vLLM preflight, entered the problem loop,
+      and timed out after `120s` without a completion signal
+    - the retry reproduced the same behavior with a `150s` timeout
+    - this is now a blocked live smoke, not an initialization failure
+  - RealBench smoke result:
+    - no checked-in dataset exists under `data/bench/RealBench`
+    - Stage 6 therefore validates RealBench through adapter fixtures only
+- Notes:
+  - Stage 6 is now real at the capability layer rather than only planned:
+    the runner can discover `cvdp` for `revolution` and can discover
+    manifest-backed RealBench module tasks
+  - RealBench runtime support is still not completion-grade because the branch
+    lacks a checked-in dataset and the legacy engine still assumes benchmark
+    layouts more often than the manifest adapter would prefer
+  - the `ProblemSpec.prompt_text` / `benchmark_root` initialization fix is
+    useful beyond Stage 6 because it reduces one class of path-coupling debt
+    between the classic engine and non-file-backed benchmark formats
+  - code documentation and typing review:
+    - the new public adapter helpers in
+      `src/revolution/runtime/realbench_adapter.py` have explicit type hints
+      and short docstrings
+    - Stage 6 did not eliminate older `algorithm.py` type debt, so the branch
+      still relies on scoped pyright passes plus explicit debt tracking rather
+      than a clean repo-wide typecheck
+  - Stage 6 feature checkpoint commit:
+    - `a7ca6aeedd` `feat(qd): add cvdp and realbench capability scaffolding`
+  - commit-hygiene note:
+    - the first stored version of the Stage 6 feature commit had literal `\\n`
+      escapes in the body because the commit message was passed incorrectly
+    - the commit was amended immediately, and the branch rule remains:
+      always inspect `git log --format=%B` and `sed -n 'l'` before proceeding
+
 ## Debt Review
 
 ### Stage 0
@@ -800,6 +876,22 @@ Documentation risk to watch:
   semantics now, but the duplicated engine/prompt seam remains and still needs
   cleanup before the architecture is considered clean.
 
+### Stage 6
+
+- The new RealBench adapter is intentionally manifest-based and lightweight.
+  That keeps the branch independent of a vendored dataset, but it also means
+  some benchmark semantics now live in a side manifest contract that must stay
+  documented if the dataset is added later.
+- The `ProblemSpec.prompt_text` / `benchmark_root` initialization fix reduces a
+  real engine-coupling bug for JSONL-backed tasks, but it also highlights the
+  broader seam debt: `EoHEngine` still assumes standard benchmark layouts in
+  several deeper paths besides prompt loading.
+- `revolution` now supports the `cvdp` discovery path, which matches the plan,
+  but the live smoke still times out before giving strong end-to-end evidence.
+- The Stage 6 code itself is documented and typed at the public-helper level,
+  but the branch still does not have uniform docstring/type coverage in the
+  older engine modules, especially around `algorithm.py`.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -888,6 +980,19 @@ Documentation risk to watch:
   present and routed, but the branch still lacks live smoke evidence showing
   them behaving well on long-context runs.
 
+### Stage 6
+
+- The branch is now closer to the original benchmark-scope intent because
+  `revolution_qd` can participate in the existing `cvdp` subset path and a
+  concrete RealBench module adapter contract exists.
+- The RealBench part is still intentionally partial: fixture-backed adapter
+  coverage exists, but no checked-in dataset means the branch cannot yet claim
+  live RealBench execution evidence.
+- The CVDP smoke progression is meaningful: the branch moved from an immediate
+  prompt-path crash to a live run that reaches the problem loop before timing
+  out. That is still not completion-grade, but it is an appropriate direction
+  of travel rather than a divergence from the original plan.
+
 ## Roadmap Extension
 
 This roadmap extends the original stage list with the concrete findings from
@@ -967,6 +1072,7 @@ implementation and testing so far.
 - `013972bfe4` `feat(qd): add reporting and visualization parity for qd runs`
 - `8b0393d10e` `feat(qd): emit archive-state artifacts for qd runs`
 - `7cb58e1240` `feat(qd): add targeted and diverse qd operators`
+- `a7ca6aeedd` `feat(qd): add cvdp and realbench capability scaffolding`
 - Stage 3 follow-through and Stage 4 parity work are still pending: live-smoke
   closure, engine-seam cleanup, and grid/CVT reporting parity are not done yet.
 
