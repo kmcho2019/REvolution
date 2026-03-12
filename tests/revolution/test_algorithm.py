@@ -682,7 +682,7 @@ def test_all_mutation_prompts_cover_expected_scaffolding(
     builder_name, n_parents = STRAT_INFO[strategy]
     builder = getattr(base_engine, builder_name)
 
-    parents: List[Heuristic] = []
+    parents: list[Heuristic] = []
     for _ in range(n_parents):
         # Give parents PPA so that PPA blocks can appear if code path includes them
         parents.append(

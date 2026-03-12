@@ -1094,6 +1094,175 @@ class EoHEngine:
                 )
                 self._save_feedback_files(cand, feedback_data)
 
+    def _resolve_offspring_origin_pool(
+        self, meta_rec: dict[str, Any]
+    ) -> HeuristicOriginPool:
+        """Normalize per-request metadata into a heuristic origin-pool label."""
+        explicit_origin = meta_rec.get("origin_pool")
+        if explicit_origin in {"initial", "fail_pool", "success_pool"}:
+            return cast(HeuristicOriginPool, explicit_origin)
+        pool_name = meta_rec.get("pool")
+        if pool_name == "fail":
+            return "fail_pool"
+        if pool_name == "success":
+            return "success_pool"
+        return "initial"
+
+    def _materialize_offspring_batch(
+        self,
+        llm_results_with_meta: list[tuple[str | None, str | None, dict[str, Any]]],
+        metadata: list[dict[str, Any]],
+    ) -> list[Heuristic]:
+        """Convert raw LLM responses plus request metadata into offspring objects."""
+        if len(llm_results_with_meta) < len(metadata):
+            missing = len(metadata) - len(llm_results_with_meta)
+            print(
+                f"WARNING: LLM returned {len(llm_results_with_meta)}/{len(metadata)} "
+                f"offspring responses. Padding {missing} missing entries as failed_format."
+            )
+            for _ in range(missing):
+                llm_results_with_meta.append(
+                    (
+                        None,
+                        None,
+                        {
+                            "format_ok": False,
+                            "error": "missing_response",
+                            "raw": "",
+                            "parsed_mode": None,
+                        },
+                    )
+                )
+
+        new_offspring: list[Heuristic] = []
+        for i, (thought, code_content, meta) in enumerate(llm_results_with_meta):
+            meta_rec = metadata[i]
+            strategy = meta_rec["strategy"]
+            is_format_ok = meta.get("format_ok", False)
+            resolved_mode = meta_rec.get("resolved_mode", self.generation_mode)
+            parent_ids = [p.id for p in meta_rec.get("parents", [])]
+            origin_pool = self._resolve_offspring_origin_pool(meta_rec)
+
+            if not is_format_ok and self.require_strict_format:
+                code_path, _ = self._save_result_to_file(
+                    (code_content or meta.get("raw", "") or ""),
+                    thought or "",
+                    self.current_generation,
+                    i + 1,
+                    strategy,
+                    None,
+                )
+                self._save_format_error_artifacts(code_path, meta)
+                cand = Heuristic(
+                    thought=thought or "",
+                    code=(code_content or meta.get("raw", "") or ""),
+                    feedback=f"FORMAT_ERROR: {meta.get('error', 'unknown')}",
+                    generation=self.current_generation,
+                    parent_ids=parent_ids,
+                    strategy=strategy,
+                    origin_pool=origin_pool,
+                    status="failed_format",
+                )
+                cand.code_file_path = code_path
+                cand.generated_mode = resolved_mode
+                new_offspring.append(cand)
+                continue
+
+            final_code = ""
+            diff_to_save = ""
+            if resolved_mode == "diff":
+                diff_to_save = code_content or ""
+                base_parent = meta_rec["parents"][0]
+                with open(base_parent.code_file_path, "r", encoding="utf-8") as handle:
+                    original_code = handle.read()
+                new_code = self._apply_diff(
+                    original_code,
+                    diff_to_save,
+                    target_file_path=base_parent.code_file_path,
+                )
+                if new_code:
+                    final_code = new_code
+                else:
+                    diagnostics = dict(self._last_diff_apply_diagnostics)
+                    reason_code = diagnostics.get("reason_code") or "diff_apply_failed"
+                    reason_text = (
+                        diagnostics.get("reason")
+                        or "Diff application returned no result."
+                    )
+                    diff_fail_warning = (
+                        f"WARNING: Diff application failed ({reason_code}). "
+                        "Using original code with diff appended."
+                    )
+                    final_code = (
+                        original_code
+                        + "\n"
+                        + diff_fail_warning
+                        + "\n"
+                        + diff_to_save
+                    )
+
+                    code_path, _ = self._save_result_to_file(
+                        final_code,
+                        thought or "",
+                        self.current_generation,
+                        i + 1,
+                        strategy,
+                        diff_to_save,
+                    )
+                    self._save_diff_error_artifacts(
+                        code_path,
+                        diff_to_save,
+                        parent_file=base_parent.code_file_path,
+                        reason=reason_text,
+                        diagnostics=diagnostics,
+                    )
+                    cand = Heuristic(
+                        thought=thought or "",
+                        code=original_code,
+                        feedback=f"DIFF_APPLY_ERROR[{reason_code}]: {reason_text}",
+                        generation=self.current_generation,
+                        parent_ids=parent_ids,
+                        strategy=strategy,
+                        origin_pool=origin_pool,
+                        status="failed_diff",
+                    )
+                    cand.code_file_path = code_path
+                    cand.generated_mode = "diff"
+                    cand.diff_apply_phase = diagnostics.get("phase")
+                    cand.diff_apply_reason_code = reason_code
+                    new_offspring.append(cand)
+                    continue
+            else:
+                final_code = code_content or ""
+
+            code_path, _ = self._save_result_to_file(
+                final_code,
+                thought or "",
+                self.current_generation,
+                i + 1,
+                strategy,
+                diff_to_save,
+            )
+            cand = Heuristic(
+                thought=thought or "",
+                code=final_code,
+                feedback="",
+                generation=self.current_generation,
+                parent_ids=parent_ids,
+                strategy=strategy,
+                origin_pool=origin_pool,
+            )
+            cand.code_file_path = code_path
+            cand.generated_mode = resolved_mode
+            if resolved_mode == "diff":
+                cand.diff_apply_phase = self._last_diff_apply_diagnostics.get("phase")
+                cand.diff_apply_reason_code = self._last_diff_apply_diagnostics.get(
+                    "reason_code"
+                )
+            new_offspring.append(cand)
+
+        return new_offspring
+
     # Prompt generation functions for the 6 new strategies
     def _format_parent_for_prompt(
         self,
@@ -3259,155 +3428,10 @@ class EoHEngine:
                 self.default_llm_max_tokens,
             )
         )
-        if len(llm_results_with_meta) < len(metadata):
-            missing = len(metadata) - len(llm_results_with_meta)
-            print(
-                f"WARNING: LLM returned {len(llm_results_with_meta)}/{len(metadata)} "
-                f"offspring responses. Padding {missing} missing entries as failed_format."
-            )
-            for _ in range(missing):
-                llm_results_with_meta.append(
-                    (
-                        None,
-                        None,
-                        {
-                            "format_ok": False,
-                            "error": "missing_response",
-                            "raw": "",
-                            "parsed_mode": None,
-                        },
-                    )
-                )
-
-        new_offspring = []
-        for i, (thought, code_content, meta) in enumerate(llm_results_with_meta):
-            meta_rec = metadata[i]
-            strategy = meta_rec["strategy"]
-            is_format_ok = meta.get("format_ok", False)
-            resolved_mode = meta_rec.get("resolved_mode", self.generation_mode)
-
-            # When format fails, we still save the raw for auditing—skip diff application/execution
-            if not is_format_ok and self.require_strict_format:
-                code_path, _ = self._save_result_to_file(
-                    (code_content or meta.get("raw", "") or ""),
-                    thought or "",
-                    self.current_generation,
-                    i + 1,
-                    strategy,
-                    None,
-                )
-                self._save_format_error_artifacts(code_path, meta)  # [FORMAT-ERROR] NEW
-                cand = Heuristic(
-                    thought=thought or "",
-                    code=(code_content or meta.get("raw", "") or ""),
-                    feedback=f"FORMAT_ERROR: {meta.get('error','unknown')}",
-                    generation=self.current_generation,
-                    parent_ids=[p.id for p in meta_rec["parents"]],
-                    strategy=strategy,
-                    origin_pool=("fail_pool" if meta_rec["pool"] == "fail" else "success_pool"),
-                    status="failed_format",  # [FORMAT-ERROR] NEW
-                )
-                cand.code_file_path = code_path
-                cand.generated_mode = resolved_mode
-                new_offspring.append(cand)
-                continue  # Skip diff/whole processing for bad format
-
-            # When the format is good apply the necessary transformations
-            final_code, diff_to_save = "", ""
-            # Check if the offspring was generated using "whole" or "diff"
-            # Decide using per-request resolved mode, not the global engine setting
-            # As sometimes the global engine setting is sometimes overriden for initial generation or for failed parents.
-
-            # If offspring was generated under "diff" mode then _apply_diff is needed
-            if resolved_mode == "diff":
-                diff_to_save = code_content
-                original_code = ""
-                with open(meta_rec["parents"][0].code_file_path, "r") as f:
-                    original_code = f.read()
-                # If original_code or diff_to_save is None then save it as "" empty string
-                if original_code is None:
-                    original_code = ""
-                if diff_to_save is None:
-                    diff_to_save = ""
-                new_code = self._apply_diff(original_code, diff_to_save, target_file_path=meta_rec["parents"][0].code_file_path)
-                if new_code:  # Diff application successful
-                    final_code = new_code
-                else:  # Diff application failed
-                    diagnostics = dict(self._last_diff_apply_diagnostics)
-                    reason_code = diagnostics.get("reason_code") or "diff_apply_failed"
-                    reason_text = diagnostics.get("reason") or "Diff application returned no result."
-                    print(f"WARNING: Diff application failed for candidate {i + 1} in generation {self.current_generation}. Applying fallback logic.")
-                    # Save the original code with diff appended as a fallback
-                    diff_fail_warning = (
-                        f"WARNING: Diff application failed ({reason_code}). "
-                        "Using original code with diff appended."
-                    )
-                    final_code = (
-                        original_code
-                        + "\n"
-                        + diff_fail_warning
-                        + "\n"
-                        + diff_to_save
-                    )
-
-                    code_path, _ = self._save_result_to_file(
-                        final_code or "",
-                        thought or "",
-                        self.current_generation,
-                        i + 1,
-                        strategy,
-                        diff_to_save,
-                    )
-                    self._save_diff_error_artifacts(
-                        code_path,
-                        diff_to_save,
-                        parent_file=meta_rec["parents"][0].code_file_path,
-                        reason=reason_text,
-                        diagnostics=diagnostics,
-                    )
-                    cand = Heuristic(
-                        thought=thought or "",
-                        code=original_code,
-                        feedback=f"DIFF_APPLY_ERROR[{reason_code}]: {reason_text}",
-                        generation=self.current_generation,
-                        parent_ids=[p.id for p in meta_rec["parents"]],
-                        strategy=strategy,
-                        origin_pool=("fail_pool" if meta_rec["pool"] == "fail" else "success_pool"),
-                        status="failed_diff",  # [DIFF-ERROR]
-                    )
-                    cand.code_file_path = code_path
-                    cand.generated_mode = "diff"  # [DIFF-ERROR]
-                    cand.diff_apply_phase = diagnostics.get("phase")
-                    cand.diff_apply_reason_code = reason_code
-                    new_offspring.append(cand)
-                    continue                     
-            else:  # whole mode
-                final_code = code_content
-
-            # When the returned code satisfies output and diff formats
-            code_path, _ = self._save_result_to_file(
-                final_code or "", thought or "", self.current_generation, i + 1, strategy, diff_to_save
-            )
-            # pool_type
-            if meta_rec["pool"] == "fail":
-                candidate_origin_pool = "fail_pool"
-            else:
-                candidate_origin_pool = "success_pool"
-            cand = Heuristic(
-                thought=thought or "",
-                code=final_code or "",
-                feedback="",
-                generation=self.current_generation,
-                parent_ids=[p.id for p in meta_rec["parents"]],
-                strategy=meta_rec["strategy"],
-                origin_pool=candidate_origin_pool,
-            )
-            cand.code_file_path = code_path
-            cand.generated_mode = resolved_mode
-            if resolved_mode == "diff":
-                cand.diff_apply_phase = self._last_diff_apply_diagnostics.get("phase")
-                cand.diff_apply_reason_code = self._last_diff_apply_diagnostics.get("reason_code")
-            new_offspring.append(cand)
+        new_offspring = self._materialize_offspring_batch(
+            llm_results_with_meta,
+            metadata,
+        )
 
         self._evaluate_candidates(new_offspring)
 
