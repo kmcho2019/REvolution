@@ -283,8 +283,8 @@ Documentation risk to watch:
       planned elite-plus-recent-occupant semantics.
 - [x] Add configurable grid-bin specification loading for structural/physical
       grid experiments.
-- [ ] Refactor duplicated engine-loop seams shared by `EoHEngine` and
-      `QDEngine`.
+- [x] Refactor the shared offspring-materialization seam duplicated between
+      `EoHEngine` and `QDEngine`.
 - [ ] Run RTLLM and VerilogEval grid smokes to a real completion state.
 - [x] Add a deterministic fast-smoke path so Stage 3 runtime validation does
       not depend only on slow long-context vLLM runs.
@@ -567,6 +567,24 @@ Documentation risk to watch:
       `tests/scripts/test_run_backend_qd_smoke_vllm.py`
     - the harness fixes the smoke surface to small deterministic budgets
       instead of relying only on ad hoc long-context commands
+  - shared engine-seam cleanup:
+    - moved offspring materialization into the shared
+      `EoHEngine._materialize_offspring_batch()` helper
+    - `QDEngine` now reuses that helper instead of carrying its own near-copy
+      of the diff/format/materialization path
+  - focused seam-cleanup validation:
+    - `/workspace/.venv/bin/python -m pytest tests/revolution/test_algorithm.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py tests/scripts/test_run_backend.py`
+    - Result: `101 passed in 7.30s`
+    - `/workspace/.venv/bin/ruff check src/revolution/algorithm.py src/revolution/qd/engine.py tests/revolution/test_algorithm.py tests/revolution/test_qd_engine.py tests/revolution/test_revolution_backend.py tests/scripts/test_run_backend.py`
+    - Result: `All checks passed!`
+  - reduced-budget grid smoke retry:
+    - `VLLM_HOST=host.docker.internal VLLM_PORT=8000 SMOKE_TIMEOUT_S=180 SMOKE_MAX_TOKENS=256 bash scripts/run_backend_qd_smoke_vllm.sh --archive grid --suite verilogeval --policy whole-heavy`
+    - result:
+      - vLLM preflight succeeded
+      - the run entered the problem loop
+      - the bounded whole-heavy grid smoke still timed out without completion
+  - Stage 3 seam-cleanup checkpoint commit:
+    - `7777665902` `refactor(qd): share offspring materialization across engines`
   - commit-message hygiene review for `447c012822..HEAD`:
     - checked `git log --format=%B`, `git show --pretty=fuller --no-patch`, and
       `sed -n 'l'` formatting output for each commit
@@ -968,8 +986,9 @@ Documentation risk to watch:
 - The new smoke harness is a cleanup win because it replaces scattered
   one-off smoke commands with one script and one dry-run test.
 - The branch still carries the bigger unresolved debt:
-  `QDEngine` duplicates loop/materialization behavior that should ultimately be
-  shared with `EoHEngine`.
+  `QDEngine` still duplicates some higher-level request-bookkeeping and
+  generation-loop behavior, even though the lower-level offspring
+  materialization seam is now shared with `EoHEngine`.
 - Validation debt is now explicit rather than vague: the matrix is runnable and
   reproducible, but the shared vLLM endpoint still does not give completion-
   grade evidence inside the bounded smoke budget.
@@ -1091,8 +1110,9 @@ implementation and testing so far.
 
 ### Stage 3 follow-through before Stage 4
 
-- Refactor the duplicated offspring-materialization / request bookkeeping seam
-  shared by `EoHEngine` and `QDEngine` into reusable helpers.
+- Continue reducing the remaining request-bookkeeping / generation-loop seam
+  still duplicated between `EoHEngine` and `QDEngine` now that offspring
+  materialization is shared.
 - Add a small completion-oriented live smoke profile for the grid runtime
   separate from the paper-grade `128k` long-context smoke profile.
 - Reduce branch-local pyright noise further where fixes are low-risk, while
@@ -1163,6 +1183,7 @@ implementation and testing so far.
 - `a7ca6aeedd` `feat(qd): add cvdp and realbench capability scaffolding`
 - `3947e578df` `docs(qd): record stage 6 capability checkpoint`
 - `5c669d1c1f` `feat(qd): add repeatable vllm smoke harness`
+- `7777665902` `refactor(qd): share offspring materialization across engines`
 - Stage 3 follow-through and Stage 4 parity work are still pending: live-smoke
   closure, engine-seam cleanup, and grid/CVT reporting parity are not done yet.
 
