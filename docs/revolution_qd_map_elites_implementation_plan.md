@@ -1204,6 +1204,116 @@ Documentation risk to watch:
     `Prob045_alu`, because they now expose real QD behavior instead of format
     artifacts
 
+### Completed `20 x 5` long-budget comparison (`temperature=1.0`, `top_p=1.0`)
+
+- Purpose:
+  - rerun the same larger RTLLM / VerilogEval comparison slice with a more
+    substantive search budget after correcting the bad short-token setup
+- Common configuration:
+  - model:
+    `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b`
+  - common settings:
+    `population_size=20`, `num_generations=5`, `num_workers=2`,
+    `candidate_workers=0`, `evaluation_mode=search_accelerated`,
+    `accelerated_synthesis_top_k=1`, `temperature=1.0`, `top_p=1.0`,
+    `max_tokens=128000`, `diff_max_tokens=128000`, `seed=42`
+  - RTLLM problem set:
+    `Prob043_RAM`, `Prob045_alu`
+  - VerilogEval problem set:
+    `Prob153_gshare`, `Prob156_review2015_fancytimer`
+  - QD axes:
+    - RTLLM grid/CVT: `g_A`, `g_T`
+    - VerilogEval grid/CVT: `g_A`, `g_P`
+- Result overview from `/tmp/qd_longbudget_20x5/...`:
+  - RTLLM `Prob043_RAM`:
+    - classic best score: `0.44449010410240736`
+    - grid:
+      `occupied_cells=1`, `coverage=0.0625`,
+      `qd_score=0.4305511495240007`,
+      `best_quality=0.4305511495240007`
+    - CVT:
+      `occupied_cells=4`, `coverage=0.25`,
+      `qd_score=1.077114727148152`,
+      `best_quality=0.4261226375763753`
+    - interpretation:
+      classic keeps the best single elite, but CVT clearly explores and fills
+      more of the feature space while staying near-classic on best quality
+  - RTLLM `Prob045_alu`:
+    - classic best score: `0.1581891057231093`
+    - grid:
+      `occupied_cells=2`, `coverage=0.125`,
+      `qd_score=0.10705696826335506`,
+      `best_quality=0.15404691504041004`
+    - CVT:
+      `occupied_cells=5`, `coverage=0.3125`,
+      `qd_score=0.6572922005388002`,
+      `best_quality=0.16489191142650636`
+    - interpretation:
+      this is the strongest positive QD result so far; CVT beats classic on
+      best quality and fills meaningfully more archive territory than grid
+  - VerilogEval `Prob153_gshare`:
+    - classic best score: `0.13560291914358902`
+    - grid archive state:
+      `occupied_cells=5`, `coverage=0.3125`,
+      `qd_score=-0.7576534220927813`,
+      `best_quality=0.15112296251468296`
+    - CVT:
+      `occupied_cells=7`, `coverage=0.4375`,
+      `qd_score=0.2377194033112486`,
+      `best_quality=0.13560291914358902`
+    - interpretation:
+      CVT preserves a broader and healthier archive, while grid reaches a
+      slightly better single elite but also accumulates enough negative-score
+      cells to drag total QD score below zero
+  - VerilogEval `Prob156_review2015_fancytimer`:
+    - classic best score: `-0.2052573876663846`
+    - grid archive state before finalization hang:
+      `occupied_cells=3`, `coverage=0.1875`,
+      `qd_score=-0.40373818413968365`,
+      `best_quality=-0.00304644029900661`
+    - CVT:
+      `occupied_cells=3`, `coverage=0.1875`,
+      `qd_score=-0.6705769462837745`,
+      `best_quality=-0.17356127933152068`
+    - interpretation:
+      this remains a hard control/FSM task for all modes; grid appears to find
+      the least-bad specialist so far, but neither QD backend turns the task
+      into a healthy positive-score archive under this budget
+- Visualization/artifact evidence:
+  - grid heatmaps and archive CSV/JSON outputs exist for the completed grid
+    runs, e.g. `RTLLM/Prob043_RAM/grid_occupancy_heatmap.png` and
+    `VerilogEval-Spec-to-RTL/Prob153_gshare/grid_quality_heatmap.png`
+  - CVT projection plots and centroid dumps exist for the completed CVT runs,
+    e.g. `RTLLM/Prob043_RAM/cvt_quality_projection.png` and
+    `VerilogEval-Spec-to-RTL/Prob153_gshare/centroids.json`
+- Implementation issue exposed by the `20 x 5` run:
+  - `VerilogEval-Spec-to-RTL` grid mode did not emit the top-level
+    `*_revolution_summary_results.txt` and remained stuck in end-of-run
+    finalization even after both problem directories had Gen5 artifacts
+  - `Prob153_gshare` finished and wrote its per-problem summary, but
+    `Prob156_review2015_fancytimer` stopped logging after candidate 14 in the
+    tail of Gen5 while child processes remained sleeping
+  - this is not a prompt/truncation problem; it looks like a real runtime
+    finalization or worker-pool coordination defect on the grid path
+- Updated research interpretation after the `20 x 5` run:
+  - QD, especially CVT, now has clear positive evidence on larger RTLLM PPA
+    tasks:
+    it can fill the archive and, on `Prob045_alu`, improve the best elite over
+    classic REvolution
+  - CVT is currently the most convincing backend for preserving multiple useful
+    niches without collapsing total archive quality
+  - grid can still find strong specialists, but on harder VerilogEval tasks it
+    is more vulnerable to filling the archive with net-negative elites
+  - the remaining ambiguity is no longer "does QD work mechanically?" but
+    "what descriptor / replacement / budgeting refinements keep grid healthy on
+    tougher control-heavy tasks?"
+- Immediate follow-up priority from this experiment:
+  - diagnose and fix the VerilogEval grid end-of-run hang before treating grid
+    comparison results as fully complete
+  - run another `20 x 5` comparison after the hang fix to confirm whether the
+    recovered final grid summary matches the partial archive evidence captured
+    here
+
 ## Debt Review
 
 ### Stage 0
