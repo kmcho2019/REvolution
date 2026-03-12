@@ -70,6 +70,20 @@ StrategyT = TypeVar("StrategyT", EvolStrategyMethodFail, EvolStrategyMethodSucce
 Defines a generic type variable for strategy types, which can be either EvolStrategyMethodFail or EvolStrategyMethodSuccess.
 """
 
+CLASSIC_FAIL_STRATEGIES: tuple[EvolStrategyMethodFail, ...] = tuple(
+    cast(tuple[EvolStrategyMethodFail, ...], get_args(EvolStrategyMethodFail))
+)
+CLASSIC_SUCCESS_STRATEGIES: tuple[EvolStrategyMethodSuccess, ...] = (
+    "M-S",
+    "M-E",
+    "M-R",
+    "M-I",
+    "C-F",
+)
+QD_SUCCESS_STRATEGIES: tuple[EvolStrategyMethodSuccess, ...] = tuple(
+    cast(tuple[EvolStrategyMethodSuccess, ...], get_args(EvolStrategyMethodSuccess))
+)
+
 
 # Literal Typing for status
 HeuristicStatus = Literal[
@@ -441,11 +455,9 @@ class EoHEngine:
             ucb_c  # Exploration parameter for UCB strategy (default 2.0)
         )
 
-        self.fail_strats: list[EvolStrategyMethodFail] = list(
-            get_args(EvolStrategyMethodFail)
-        )
+        self.fail_strats: list[EvolStrategyMethodFail] = list(CLASSIC_FAIL_STRATEGIES)
         self.success_strats: list[EvolStrategyMethodSuccess] = list(
-            get_args(EvolStrategyMethodSuccess)
+            CLASSIC_SUCCESS_STRATEGIES
         )
         self.fail_strategy_stats: dict[
             EvolStrategyMethodFail, dict[str, int | float]

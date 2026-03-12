@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from revolution.algorithm import EoHEngine, Heuristic, SingleShotEngine, Gen0LatencyEngine
+from revolution.qd.engine import QDEngine
 
 
 def test_heuristic_initialization():
@@ -536,6 +537,46 @@ def base_engine(mocker, tmp_path):
         "bench", "prob", llm, MagicMock(), synth, base_save_path=str(tmp_path)
     )
     return eng
+
+
+def test_classic_engine_excludes_qd_only_success_strategies(mocker, tmp_path):
+    mocker.patch.object(
+        EoHEngine, "load_problem_description", return_value="PROBLEM DESC"
+    )
+    llm = MagicMock()
+    llm.model_name = "x"
+    synth = MagicMock()
+    synth.clk_period = 0.01
+    eng = EoHEngine(
+        "bench", "prob", llm, MagicMock(), synth, base_save_path=str(tmp_path)
+    )
+
+    assert "M-T" not in eng.success_strats
+    assert "C-D" not in eng.success_strats
+
+
+def test_qd_engine_restores_qd_only_success_strategies(mocker, tmp_path):
+    mocker.patch.object(
+        EoHEngine, "load_problem_description", return_value="PROBLEM DESC"
+    )
+    llm = MagicMock()
+    llm.model_name = "x"
+    synth = MagicMock()
+    synth.clk_period = 0.01
+    eng = QDEngine(
+        "bench",
+        "prob",
+        llm,
+        MagicMock(),
+        synth,
+        base_save_path=str(tmp_path),
+        qd_archive_type="grid",
+        qd_num_cells=4,
+        qd_grid_axes=("g_A", "g_P"),
+    )
+
+    assert "M-T" in eng.success_strats
+    assert "C-D" in eng.success_strats
 
 
 def _make_parent(

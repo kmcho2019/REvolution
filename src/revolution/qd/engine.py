@@ -13,6 +13,7 @@ from collections import deque
 from typing import Any, Literal, cast
 
 from revolution.algorithm import EoHEngine, EvolStrategyMethodFail, EvolStrategyMethodSuccess, Heuristic
+from revolution.algorithm import QD_SUCCESS_STRATEGIES
 from revolution.logging import EoHLogger
 from revolution.prompt_store import safe_format
 from revolution.qd.archive import CVTArchive, GridArchive, GridAxisSpec
@@ -46,6 +47,11 @@ class QDEngine(EoHEngine):
         **kwargs: Any,
     ) -> None:
         super().__init__(*args, **kwargs)
+        self.success_strats = list(QD_SUCCESS_STRATEGIES)
+        self.success_strategy_stats = {
+            strategy: {"count": 0, "value": 0.0}
+            for strategy in self.success_strats
+        }
         self.qd_archive_type = qd_archive_type
         self.qd_num_cells = max(1, int(qd_num_cells))
         self.qd_fill_target_fraction = float(qd_fill_target_fraction)
