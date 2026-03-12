@@ -1411,6 +1411,7 @@ implementation and testing so far.
 
 ## Commit Ledger
 
+- `675d2fbc4d` `fix(qd): record initial archive snapshots and experiment findings`
 - `32ea6f39e6` `docs(qd): bootstrap living implementation plan and worktree log`
 - `e91188281b` `feat(qd): add search mode and capability scaffolding`
 - `2268a7f81f` `feat(qd): add scoring and descriptor substrate`
