@@ -23,6 +23,7 @@ from revolution.runtime.problem_spec import (
     build_cvdp_problem_spec,
     build_problem_spec,
 )
+from revolution.runtime.structural_evaluator import StructuralEvaluator
 from revolution.runtime.run_artifacts import ArtifactWriter, add_legacy_strategy_key_alias
 
 __all__ = [
@@ -38,6 +39,7 @@ __all__ = [
     "EvaluationMode",
     "ProblemContext",
     "ProblemSpec",
+    "StructuralEvaluator",
     "build_cvdp_problem_spec",
     "build_problem_spec",
     "build_cvdp_problem_context",

@@ -113,6 +113,11 @@ def test_candidate_evaluator_success_path(tmp_path):
     assert result.status == "success"
     assert result.stage_statuses["ppa"] is True
     assert result.score == pytest.approx(0.1)
+    assert result.quality_score == pytest.approx(0.1)
+    assert result.score_components["g_P"] == pytest.approx(0.1)
+    assert result.score_components["g_A"] == pytest.approx(0.1)
+    assert result.normalized_code_hash
+    assert result.archiveable is True
 
 
 def test_candidate_evaluator_search_accelerated_throttles_synthesis(tmp_path):

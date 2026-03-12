@@ -100,16 +100,16 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 
 ### Stage 2: Exact Quality Score, Descriptor Registry, And Extraction Substrate
 
-- [ ] Add exact REvolution PPA `quality_score`.
-- [ ] Add `g_P`, `g_A`, `g_T` extraction and logging fields.
-- [ ] Add functional-only fallback ranking.
-- [ ] Add descriptor registry and descriptor profile config file.
-- [ ] Add configurable descriptor axes / descriptor file loading.
-- [ ] Add structural descriptor extraction (`seq_ratio`, `mux_ratio`,
+- [x] Add exact REvolution PPA `quality_score`.
+- [x] Add `g_P`, `g_A`, `g_T` extraction and logging fields.
+- [x] Add functional-only fallback ranking.
+- [x] Add descriptor registry and descriptor profile config file.
+- [x] Add configurable descriptor axes / descriptor file loading.
+- [x] Add structural descriptor extraction (`seq_ratio`, `mux_ratio`,
       `ltp_noff`, etc.).
-- [ ] Add duplicate code hashing before expensive evaluation.
-- [ ] Add tests and a descriptor probe utility.
-- [ ] Update docs and plan with Stage 2 validation notes.
+- [x] Add duplicate code hashing before expensive evaluation.
+- [x] Add tests and a descriptor probe utility.
+- [x] Update docs and plan with Stage 2 validation notes.
 - [ ] Commit Stage 2.
 
 ### Stage 3: Grid Backend First Implementation
@@ -197,10 +197,10 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 ### Core Runtime
 
 - [x] Add `src/revolution/runtime/problem_spec.py`
-- [ ] Add `src/revolution/runtime/structural_evaluator.py`
+- [x] Add `src/revolution/runtime/structural_evaluator.py`
 - [x] Add `src/revolution/qd/types.py`
-- [ ] Add `src/revolution/qd/scoring.py`
-- [ ] Add `src/revolution/qd/descriptors.py`
+- [x] Add `src/revolution/qd/scoring.py`
+- [x] Add `src/revolution/qd/descriptors.py`
 - [ ] Add `src/revolution/qd/archive.py`
 - [ ] Add `src/revolution/qd/scheduler.py`
 - [ ] Add `src/revolution/qd/visualization.py`
@@ -208,18 +208,18 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 
 ### Descriptor Registry Candidates
 
-- [ ] Support structural descriptors:
+- [x] Support structural descriptors:
   `seq_ratio`, `comb_ratio`, `mux_ratio`, `adder_ratio`, `ltp_noff`,
   `cell_count_log`
-- [ ] Support physical descriptors:
+- [x] Support physical descriptors:
   `wirelength`, `utilization`, `cts_buffer_count`, `repair_buffer_count`,
   `hold_buffer_count`
-- [ ] Support PPA gain descriptors:
+- [x] Support PPA gain descriptors:
   `g_P`, `g_A`, `g_T`
-- [ ] Add initial preset profiles:
+- [x] Add initial preset profiles:
   `rtl_core`, `rtl_phys`, `rtl_phys_cts`, `hybrid_seq_default`,
   `hybrid_comb_default`, `hybrid_phys_seq`
-- [ ] Add descriptor probe script for extraction coverage and experiment logging
+- [x] Add descriptor probe script for extraction coverage and experiment logging
 
 ### Reporting
 
@@ -271,6 +271,35 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   - `run_evolution.py` stays as a legacy wrapper and forwards QD requests to
     `run_backend.py` instead of growing a second execution path.
 
+### Stage 2
+
+- Date: `2026-03-12`
+- Implemented:
+  - exact REvolution PPA `quality_score` helper using the maximize-form
+    equation with automatic sequential/combinational defaults
+  - explicit `g_P`, `g_A`, `g_T` gain extraction
+  - functional-only fallback scoring for CVDP-style paths
+  - `normalized_code_hash`, `partial_pass_fraction`, `repair_score`,
+    `archiveable`, and `archive_rejection_reason` fields on evaluations
+  - descriptor registry, descriptor profile YAML, and descriptor-axis
+    resolution helpers
+  - descriptor probe CLI utility
+  - lightweight structural metric extraction for Yosys-like statistics
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_structural_evaluator.py tests/revolution/test_qd_scoring.py tests/revolution/test_qd_descriptors.py tests/scripts/test_qd_descriptor_probe.py tests/revolution/test_candidate_evaluator.py tests/revolution/test_cvdp_evaluator.py`
+  - Result: `24 passed in 0.73s`
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_defaults.py tests/revolution/test_problem_spec.py tests/revolution/test_structural_evaluator.py tests/revolution/test_qd_scoring.py tests/revolution/test_qd_descriptors.py tests/revolution/test_candidate_evaluator.py tests/revolution/test_candidate_evaluator_parity.py tests/revolution/test_cvdp_evaluator.py tests/revolution/test_backends_base.py tests/scripts/test_run_backend.py tests/scripts/test_run_evolution.py tests/scripts/test_run_backend_ablation.py tests/scripts/test_qd_descriptor_probe.py`
+  - Result: `71 passed in 1.23s`
+- Smoke tests:
+  - no live LLM/backend smoke yet; Stage 2 is evaluation/config substrate only
+- Notes:
+  - descriptor selection now supports preset profiles, explicit axis lists, and
+    descriptor files
+  - `run_backend.py` threads descriptor and quality settings into
+    `CandidateEvaluator`
+  - CVDP evaluator now emits functional-only quality metadata compatible with
+    later archive insertion logic
+
 ## Debt Review
 
 ### Stage 0
@@ -294,6 +323,18 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   config objects once the execution path exists, otherwise `run_backend.py`
   argument plumbing will become noisy.
 
+### Stage 2
+
+- The descriptor registry is intentionally lightweight and declarative, which
+  keeps experimentation easy and avoids prematurely over-abstracting archive
+  logic before Stage 3.
+- Structural extraction is currently based on Yosys-like payloads rather than
+  a direct subprocess integration. That is sufficient for unit-tested substrate
+  work now, but Stage 3 or 4 will need actual runtime wiring from synthesis
+  artifacts.
+- Candidate evaluation enrichment is centralized so later archive logic does
+  not need to recompute code hashes, quality score aliases, or repair score.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -315,10 +356,22 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - No success-side archive state has been introduced yet, so there is no risk
   of archive/pool source-of-truth drift at this stage.
 
+### Stage 2
+
+- The scoring implementation now matches the intended research framing:
+  maximize weighted normalized PPA gains while also exposing the three gains
+  independently for archive descriptors.
+- Descriptor configuration remains open for empirical iteration, which matches
+  the paper-oriented requirement to test new feature sets rather than locking
+  into only `seq_ratio`, `mux_ratio`, and `ltp_noff`.
+- The current implementation still stops short of archive behavior, so there is
+  no divergence yet from the planned grid-first then CVT rollout.
+
 ## Commit Ledger
 
 - `32ea6f39e6` `docs(qd): bootstrap living implementation plan and worktree log`
-- Pending Stage 1 scaffolding commit.
+- `e91188281b` `feat(qd): add search mode and capability scaffolding`
+- Pending Stage 2 scoring and descriptor substrate commit.
 
 ## Deferred Follow-Ups
 

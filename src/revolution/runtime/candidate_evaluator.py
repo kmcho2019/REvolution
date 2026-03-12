@@ -9,6 +9,15 @@ from typing import Any
 
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
 from revolution.runtime.problem_context import ProblemContext, resolve_top_module_name
+from revolution.runtime.problem_spec import ProblemSpec
+from revolution.qd.descriptors import extract_descriptor_values, resolve_descriptor_axes
+from revolution.qd.scoring import (
+    compute_partial_pass_fraction,
+    compute_quality_score,
+    compute_repair_score,
+    functional_quality_score,
+    normalize_code_hash,
+)
 
 
 class CandidateStatus(StrEnum):
@@ -47,6 +56,17 @@ class CandidateEvaluation:
     simulation_result: dict[str, Any] | None = None
     synthesis_result: dict[str, Any] | None = None
     synthesis_skipped: bool = False
+    quality_score: float | None = None
+    repair_score: float | None = None
+    quality_mode: str = "ppa"
+    circuit_type: str = "unknown"
+    structural_metrics: dict[str, float] = field(default_factory=dict)
+    physical_metrics: dict[str, float] = field(default_factory=dict)
+    descriptor_values: dict[str, float] = field(default_factory=dict)
+    partial_pass_fraction: float = 0.0
+    normalized_code_hash: str = ""
+    archiveable: bool = False
+    archive_rejection_reason: str | None = None
 
 
 @dataclass
@@ -70,19 +90,51 @@ class CandidateEvaluator:
         verilog_evaluator: VerilogEvaluator,
         synthesis_evaluator: SynthesisEvaluator,
         ref_ppa_metrics: dict[str, float] | None = None,
+        problem_spec: ProblemSpec | None = None,
         *,
         failure_score: float = float("-inf"),
         evaluation_mode: str = EvaluationMode.STRICT_ABLATION.value,
         accelerated_synthesis_top_k: int | None = None,
         accelerated_skip_score: float = 0.0,
+        quality_mode: str = "auto",
+        alpha: float | None = None,
+        beta: float | None = None,
+        gamma: float | None = None,
+        descriptor_profile: str | None = None,
+        descriptor_axes: list[str] | tuple[str, ...] | None = None,
+        descriptor_file: str | None = None,
+        archive_type: str = "grid",
     ) -> None:
         self.context = context
+        self.problem_spec = problem_spec
         self.problem_description = problem_description
         self.verilog_evaluator = verilog_evaluator
         self.synthesis_evaluator = synthesis_evaluator
         self.ref_ppa_metrics = ref_ppa_metrics or {}
         self.failure_score = failure_score
         self.top_module_name = resolve_top_module_name(context)
+        self.quality_mode = (
+            problem_spec.quality_mode
+            if quality_mode == "auto" and problem_spec is not None
+            else quality_mode
+        )
+        self.circuit_type = (
+            problem_spec.circuit_type if problem_spec is not None else "unknown"
+        )
+        self.alpha = alpha
+        self.beta = beta
+        self.gamma = gamma
+        resolved_profile = descriptor_profile
+        if resolved_profile is None and problem_spec is not None:
+            resolved_profile = problem_spec.default_descriptor_profile
+        self.descriptor_profile = resolved_profile
+        self.descriptor_axes = resolve_descriptor_axes(
+            profile_name=self.descriptor_profile,
+            explicit_axes=descriptor_axes,
+            descriptor_file=descriptor_file,
+            archive_type=archive_type,
+            circuit_type=self.circuit_type,
+        )
         if evaluation_mode not in {
             EvaluationMode.STRICT_ABLATION.value,
             EvaluationMode.SEARCH_ACCELERATED.value,
@@ -98,40 +150,15 @@ class CandidateEvaluator:
         self.accelerated_skip_score = accelerated_skip_score
 
     def calculate_fitness_score(self, ppa_metrics: dict[str, float]) -> tuple[float, dict[str, float]]:
-        """Compute REvolution fitness from candidate and reference PPA metrics."""
-        p_gen = ppa_metrics.get("power")
-        a_gen = ppa_metrics.get("area")
-        t_gen = ppa_metrics.get("eff_clk_period")
-
-        p_ref = self.ref_ppa_metrics.get("power")
-        a_ref = self.ref_ppa_metrics.get("area")
-        t_ref = self.ref_ppa_metrics.get("eff_clk_period")
-        if any(v is None for v in (p_gen, a_gen, t_gen, p_ref, a_ref, t_ref)):
-            return 0.0, {}
-
-        # Keep historical behavior for zero values to avoid divide-by-zero.
-        p_gen = p_gen if p_gen else 1.0
-        a_gen = a_gen if a_gen else 1.0
-        t_gen = t_gen if t_gen else 1.0
-        p_ref = p_ref if p_ref else 1.0
-        a_ref = a_ref if a_ref else 1.0
-        t_ref = t_ref if t_ref else 1.0
-
-        power_improvement = (p_gen - p_ref) / p_ref
-        area_improvement = (a_gen - a_ref) / a_ref
-        components: dict[str, float] = {
-            "power_improvement": power_improvement,
-            "area_improvement": area_improvement,
-        }
-        if t_ref == 0.0:
-            total_improvement = (power_improvement + area_improvement) / 2
-        else:
-            timing_improvement = (t_gen - t_ref) / t_ref
-            components["timing_improvement"] = timing_improvement
-            total_improvement = (
-                power_improvement + area_improvement + timing_improvement
-            ) / 3
-        return -total_improvement, components
+        """Compute the QD quality score using the REvolution PPA equation."""
+        return compute_quality_score(
+            ppa_metrics,
+            self.ref_ppa_metrics,
+            circuit_type=self.circuit_type,
+            alpha=self.alpha,
+            beta=self.beta,
+            gamma=self.gamma,
+        )
 
     def _base_stage_statuses(self) -> dict[str, bool]:
         return {
@@ -143,6 +170,60 @@ class CandidateEvaluator:
             "synthesis_functionality": False,
             "ppa": False,
         }
+
+    def _enrich_result(
+        self,
+        item: CandidateWorkItem,
+        result: CandidateEvaluation,
+    ) -> CandidateEvaluation:
+        result.normalized_code_hash = normalize_code_hash(item.code)
+        result.quality_mode = self.quality_mode
+        result.circuit_type = self.circuit_type
+        result.partial_pass_fraction = compute_partial_pass_fraction(result.stage_statuses)
+
+        quality_score = result.quality_score
+        if quality_score is None:
+            if result.status == CandidateStatus.SUCCESS.value and self.quality_mode == "functional_only":
+                quality_score, components = functional_quality_score(
+                    functional_score=result.score,
+                    structural_metrics=result.structural_metrics,
+                )
+                result.score_components.update(components)
+            else:
+                quality_score = result.score
+        result.quality_score = quality_score
+
+        if not result.descriptor_values and self.descriptor_axes:
+            descriptor_metrics: dict[str, float] = {}
+            descriptor_metrics.update(result.structural_metrics)
+            descriptor_metrics.update(result.physical_metrics)
+            descriptor_metrics.update(
+                {
+                    axis: float(result.score_components.get(axis, 0.0))
+                    for axis in ("g_P", "g_A", "g_T")
+                }
+            )
+            result.descriptor_values = extract_descriptor_values(
+                descriptor_metrics,
+                self.descriptor_axes,
+            )
+
+        result.archiveable = bool(
+            result.status == CandidateStatus.SUCCESS.value
+            and (self.quality_mode != "ppa" or result.ppa_success)
+        )
+        if not result.archiveable:
+            if result.status != CandidateStatus.SUCCESS.value:
+                result.archive_rejection_reason = result.status
+            elif self.quality_mode == "ppa" and not result.ppa_success:
+                result.archive_rejection_reason = "missing_ppa"
+
+        result.repair_score = compute_repair_score(
+            result.status,
+            stage_statuses=result.stage_statuses,
+            partial_pass_fraction=result.partial_pass_fraction,
+        )
+        return result
 
     def _evaluate_pre_synthesis(self, item: CandidateWorkItem) -> CandidateEvaluation:
         """Run format/syntax/functionality stages and return an intermediate result."""
@@ -263,6 +344,16 @@ class CandidateEvaluator:
             stages["synthesis_functionality"] = True
             stages["ppa"] = True
             score, components = self.calculate_fitness_score(ppa_metrics)
+            physical_metrics = (
+                synth_results.get("physical_metrics")
+                if isinstance(synth_results.get("physical_metrics"), dict)
+                else {}
+            )
+            structural_metrics = (
+                synth_results.get("structural_metrics")
+                if isinstance(synth_results.get("structural_metrics"), dict)
+                else {}
+            )
             feedback_payload = {
                 "problem_def": self.problem_description,
                 "code": item.code,
@@ -287,6 +378,19 @@ class CandidateEvaluator:
                 feedback_payload=feedback_payload,
                 simulation_result=sim_results,
                 synthesis_result=synth_results,
+                quality_score=score,
+                structural_metrics=structural_metrics,
+                physical_metrics=physical_metrics,
+                descriptor_values=extract_descriptor_values(
+                    {
+                        **structural_metrics,
+                        **physical_metrics,
+                        "g_P": float(components.get("g_P", 0.0)),
+                        "g_A": float(components.get("g_A", 0.0)),
+                        "g_T": float(components.get("g_T", 0.0)),
+                    },
+                    self.descriptor_axes,
+                ),
             )
 
         if not synth_success:
@@ -327,6 +431,16 @@ class CandidateEvaluator:
             feedback_payload=feedback_payload,
             simulation_result=sim_results,
             synthesis_result=synth_results,
+            structural_metrics=(
+                synth_results.get("structural_metrics")
+                if isinstance(synth_results.get("structural_metrics"), dict)
+                else {}
+            ),
+            physical_metrics=(
+                synth_results.get("physical_metrics")
+                if isinstance(synth_results.get("physical_metrics"), dict)
+                else {}
+            ),
         )
 
     def _mark_synthesis_skipped(
@@ -355,8 +469,8 @@ class CandidateEvaluator:
     def _evaluate_candidate_strict(self, item: CandidateWorkItem) -> CandidateEvaluation:
         pre = self._evaluate_pre_synthesis(item)
         if pre.status != _PRE_SYNTHESIS_STATUS:
-            return pre
-        return self._evaluate_synthesis(item, pre)
+            return self._enrich_result(item, pre)
+        return self._enrich_result(item, self._evaluate_synthesis(item, pre))
 
     def evaluate_candidate(self, item: CandidateWorkItem) -> CandidateEvaluation:
         """Run evaluation for one candidate using the configured evaluation mode."""
@@ -365,11 +479,11 @@ class CandidateEvaluator:
 
         pre = self._evaluate_pre_synthesis(item)
         if pre.status != _PRE_SYNTHESIS_STATUS:
-            return pre
+            return self._enrich_result(item, pre)
         top_k = self.accelerated_synthesis_top_k
         if top_k is not None and top_k <= 0:
-            return self._mark_synthesis_skipped(item, pre)
-        return self._evaluate_synthesis(item, pre)
+            return self._enrich_result(item, self._mark_synthesis_skipped(item, pre))
+        return self._enrich_result(item, self._evaluate_synthesis(item, pre))
 
     def _select_synthesis_indices(
         self,
@@ -415,7 +529,10 @@ class CandidateEvaluator:
             pre_results = [self._evaluate_pre_synthesis(item) for item in items]
 
         synth_indices = self._select_synthesis_indices(items, pre_results)
-        final_results: list[CandidateEvaluation] = [CandidateEvaluation(status="", score=0.0, stage_statuses={}) for _ in items]
+        final_results: list[CandidateEvaluation] = [
+            CandidateEvaluation(status="", score=0.0, stage_statuses={})
+            for _ in items
+        ]
 
         if candidate_workers > 1 and len(synth_indices) > 1:
             with ThreadPoolExecutor(max_workers=candidate_workers) as executor:
@@ -424,16 +541,22 @@ class CandidateEvaluator:
                     for idx in synth_indices
                 }
                 for idx in synth_indices:
-                    final_results[idx] = synth_futures[idx].result()
+                    final_results[idx] = self._enrich_result(
+                        items[idx], synth_futures[idx].result()
+                    )
         else:
             for idx in synth_indices:
-                final_results[idx] = self._evaluate_synthesis(items[idx], pre_results[idx])
+                final_results[idx] = self._enrich_result(
+                    items[idx], self._evaluate_synthesis(items[idx], pre_results[idx])
+                )
 
         for idx, pre in enumerate(pre_results):
             if pre.status != _PRE_SYNTHESIS_STATUS:
-                final_results[idx] = pre
+                final_results[idx] = self._enrich_result(items[idx], pre)
                 continue
             if idx in synth_indices:
                 continue
-            final_results[idx] = self._mark_synthesis_skipped(items[idx], pre)
+            final_results[idx] = self._enrich_result(
+                items[idx], self._mark_synthesis_skipped(items[idx], pre)
+            )
         return final_results

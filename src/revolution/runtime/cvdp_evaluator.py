@@ -9,6 +9,12 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 
+from revolution.qd.scoring import (
+    compute_partial_pass_fraction,
+    compute_repair_score,
+    functional_quality_score,
+    normalize_code_hash,
+)
 from revolution.runtime.candidate_evaluator import CandidateEvaluation, CandidateWorkItem
 from revolution.runtime.problem_context import ProblemContext
 
@@ -123,6 +129,27 @@ class CVDPEvaluator:
             )
         self.cvdp_record = record
         self.problem_description = str(record.get("input", {}).get("prompt", ""))
+
+    def _enrich_result(self, item: CandidateWorkItem, result: CandidateEvaluation) -> CandidateEvaluation:
+        result.normalized_code_hash = normalize_code_hash(item.code)
+        result.quality_mode = "functional_only"
+        result.circuit_type = "unknown"
+        result.partial_pass_fraction = compute_partial_pass_fraction(result.stage_statuses)
+        quality_score, components = functional_quality_score(
+            functional_score=result.score,
+            structural_metrics=result.structural_metrics,
+        )
+        result.quality_score = quality_score
+        result.score_components.update(components)
+        result.archiveable = result.status == "success"
+        if not result.archiveable:
+            result.archive_rejection_reason = result.status
+        result.repair_score = compute_repair_score(
+            result.status,
+            stage_statuses=result.stage_statuses,
+            partial_pass_fraction=result.partial_pass_fraction,
+        )
+        return result
 
     def _normalize_code_text(self, source: str) -> str:
         source_norm = source.replace("\r\n", "\n")
@@ -293,7 +320,7 @@ class CVDPEvaluator:
         }
 
         if item.initial_status == "failed_format":
-            return CandidateEvaluation(
+            return self._enrich_result(item, CandidateEvaluation(
                 status="failed_format",
                 score=self.failure_score,
                 stage_statuses=base_stages,
@@ -302,12 +329,12 @@ class CVDPEvaluator:
                     "code": item.code,
                     "simulation_log": "Candidate failed format compliance checks.",
                 },
-            )
+            ))
 
         if item.initial_status == "failed_diff":
             stages = dict(base_stages)
             stages["format"] = True
-            return CandidateEvaluation(
+            return self._enrich_result(item, CandidateEvaluation(
                 status="failed_diff",
                 score=self.failure_score,
                 stage_statuses=stages,
@@ -316,7 +343,7 @@ class CVDPEvaluator:
                     "code": item.code,
                     "simulation_log": "Candidate failed diff-application checks.",
                 },
-            )
+            ))
 
         stages = dict(base_stages)
         stages["format"] = True
@@ -337,7 +364,7 @@ class CVDPEvaluator:
             if status == "success":
                 stages["syntax"] = True
                 stages["functionality"] = True
-                return CandidateEvaluation(
+                return self._enrich_result(item, CandidateEvaluation(
                     status="success",
                     score=self.success_score,
                     stage_statuses=stages,
@@ -349,7 +376,7 @@ class CVDPEvaluator:
                             "Keep behavior intact while simplifying implementation where possible."
                         ),
                     },
-                )
+                ))
 
             combined_log = f"STDOUT:\n{stdout}\n\nSTDERR:\n{stderr}"
             syntax_like = bool(
@@ -360,7 +387,7 @@ class CVDPEvaluator:
                 )
             )
             if syntax_like:
-                return CandidateEvaluation(
+                return self._enrich_result(item, CandidateEvaluation(
                     status="failed_syntax",
                     score=self.failure_score,
                     stage_statuses=stages,
@@ -369,10 +396,10 @@ class CVDPEvaluator:
                         "code": item.code,
                         "simulation_log": combined_log,
                     },
-                )
+                ))
 
             stages["syntax"] = True
-            return CandidateEvaluation(
+            return self._enrich_result(item, CandidateEvaluation(
                 status="failed_functionality",
                 score=self.failure_score,
                 stage_statuses=stages,
@@ -381,9 +408,9 @@ class CVDPEvaluator:
                     "code": item.code,
                     "simulation_log": combined_log,
                 },
-            )
+            ))
         except Exception as exc:
-            return CandidateEvaluation(
+            return self._enrich_result(item, CandidateEvaluation(
                 status="failed_functionality",
                 score=self.failure_score,
                 stage_statuses=stages,
@@ -392,4 +419,4 @@ class CVDPEvaluator:
                     "code": item.code,
                     "simulation_log": f"CVDP evaluation exception: {exc}",
                 },
-            )
+            ))

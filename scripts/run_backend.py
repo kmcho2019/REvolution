@@ -218,8 +218,17 @@ def _build_backend(
             verilog_evaluator=verilog_evaluator,
             synthesis_evaluator=synthesis_evaluator,
             ref_ppa_metrics=ref_ppa_metrics,
+            problem_spec=problem_spec,
             evaluation_mode=args.evaluation_mode,
             accelerated_synthesis_top_k=args.accelerated_synthesis_top_k,
+            quality_mode=args.qd_quality_mode,
+            alpha=args.qd_alpha,
+            beta=args.qd_beta,
+            gamma=args.qd_gamma,
+            descriptor_profile=args.qd_descriptor_profile,
+            descriptor_axes=args.qd_descriptor_axes,
+            descriptor_file=args.qd_descriptor_file,
+            archive_type=args.qd_archive_type,
         )
 
     prompt_store = PromptStore(root_dir=prompt_root, profile=prompt_profile)
