@@ -315,13 +315,57 @@ def test_qd_engine_builds_grid_archive_from_descriptor_file(tmp_path, monkeypatc
     assert engine.success_archive.axes[0].upper_bound == pytest.approx(1.0)
 
 
+def test_qd_engine_grid_profile_is_used_when_qd_grid_axes_are_omitted(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    problem_spec = ProblemSpec(
+        benchmark_name="RTLLM",
+        problem_name="Prob",
+        prompt_text="desc",
+        top_module="TopModule",
+        benchmark_root=tmp_path,
+        circuit_type="sequential",
+    )
+    engine = QDEngine(
+        benchmark_name="RTLLM",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        population_size=2,
+        num_generations=0,
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="grid",
+        qd_num_cells=16,
+        qd_descriptor_profile="implemented_structural_compact_3d",
+        qd_grid_axes=(),
+        problem_spec=problem_spec,
+    )
+    assert engine.qd_grid_axes == ("comb_ratio", "adder_ratio", "cell_count_log")
+    assert [axis.name for axis in engine.success_archive.axes] == [
+        "comb_ratio",
+        "adder_ratio",
+        "cell_count_log",
+    ]
+
+
 def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     engine = _engine(tmp_path, monkeypatch)
     engine.logger = SimpleNamespace(log_dir=str(tmp_path / "artifacts"))
+    engine.qd_descriptor_profile = "implemented_structural_compact_3d"
+    engine.qd_grid_axes = ("comb_ratio", "adder_ratio", "cell_count_log")
+    engine.success_archive = engine._build_archive()
     elite = Heuristic("elite", "module m; endmodule", "", score=0.6, generation=0, status="success")
     elite.ppa_success = True
     elite.code_file_path = str(tmp_path / "elite.sv")
     elite.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    elite.structural_metrics = {
+        "comb_ratio": 0.8,
+        "adder_ratio": 0.1,
+        "cell_count_log": 6.2,
+    }
     engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
     engine.success_pool = [elite]
     engine._rebuild_archive_from_success_pool()
@@ -347,7 +391,7 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     assert space_json_path.is_file()
     assert space_report_path.is_file()
     assert coverage_plot.is_file()
-    assert quality_plot.is_file()
+    assert not quality_plot.exists()
 
     history_entry = json.loads(history_path.read_text(encoding="utf-8").strip())
     assert history_entry["archive_type"] == "grid"
@@ -359,12 +403,25 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     summary_payload = json.loads(summary_path.read_text(encoding="utf-8"))
     metrics_payload = json.loads(metrics_path.read_text(encoding="utf-8"))
     assert "coverage_vs_generation.png" in "".join(summary_payload["visualization_files"])
+    assert summary_payload["descriptor_profile"] == "implemented_structural_compact_3d"
+    assert summary_payload["descriptor_axes"] == [
+        "comb_ratio",
+        "adder_ratio",
+        "cell_count_log",
+    ]
     space_payload = json.loads(space_json_path.read_text(encoding="utf-8"))
     assert space_payload["archive_type"] == "grid"
     assert "uniform grid binning" in space_payload["assignment_rule"]
+    assert "Current grid heatmaps are emitted only for 2-axis grids." in space_report_path.read_text(encoding="utf-8")
     assert metrics_payload["occupied_cells"] == 1
-    assert metrics_payload["coverage"] == pytest.approx(1 / 16)
+    assert metrics_payload["coverage"] == pytest.approx(1 / space_payload["num_cells"])
     assert metrics_payload["qd_score"] == pytest.approx(0.6)
+    assert metrics_payload["descriptor_profile"] == "implemented_structural_compact_3d"
+    assert metrics_payload["descriptor_axes"] == [
+        "comb_ratio",
+        "adder_ratio",
+        "cell_count_log",
+    ]
     assert metrics_payload["history_length"] == 1
     assert metrics_payload["latest_snapshot"]["occupied_cells"] == 1
 
@@ -622,3 +679,18 @@ def test_qd_engine_fill_phase_can_select_targeted_operator(tmp_path, monkeypatch
     assert result is None
     assert captured_requests
     assert "target_descriptor_mutation" in captured_requests[0]["prompt"]
+
+
+def test_qd_engine_run_returns_failed_when_archive_stays_empty(tmp_path, monkeypatch):
+    engine = _engine(tmp_path, monkeypatch)
+
+    monkeypatch.setattr(engine, "_calculate_reference_ppa", lambda: None)
+    monkeypatch.setattr(engine, "_initialize_logger", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(engine, "initialize_population", lambda: None)
+    monkeypatch.setattr(engine, "_build_qd_snapshot", lambda **_kwargs: {})
+    monkeypatch.setattr(engine, "_write_qd_artifacts", lambda _snapshot: None)
+    monkeypatch.setattr(engine, "_finalize_run_summary", lambda _elites: None)
+
+    result = engine.run()
+
+    assert result == "Prob,failed"

@@ -120,6 +120,8 @@ def write_qd_summary_files(
     history: list[dict[str, Any]],
     archive: GridArchive | CVTArchive,
     ref_ppa_metrics: dict[str, float],
+    descriptor_profile: str | None,
+    descriptor_axes: tuple[str, ...],
 ) -> QDVisualizationArtifacts:
     """Write summary JSON files and generate the current QD visualization set."""
     visualization_artifacts = write_qd_visualizations(
@@ -145,6 +147,8 @@ def write_qd_summary_files(
         "qd_score": latest["qd_score"],
         "best_quality": latest["best_quality"],
         "mean_quality": latest["mean_quality"],
+        "descriptor_profile": descriptor_profile,
+        "descriptor_axes": list(descriptor_axes),
         "history_length": len(history),
         "visualization_files": list(visualization_artifacts.generated_files),
     }
@@ -156,6 +160,8 @@ def write_qd_summary_files(
         "qd_score": latest["qd_score"],
         "best_quality": latest["best_quality"],
         "mean_quality": latest["mean_quality"],
+        "descriptor_profile": descriptor_profile,
+        "descriptor_axes": list(descriptor_axes),
         "history_length": len(history),
         "latest_snapshot": latest,
         "history": history,

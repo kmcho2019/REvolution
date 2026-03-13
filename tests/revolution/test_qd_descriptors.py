@@ -16,6 +16,24 @@ def test_load_descriptor_profiles_includes_hybrid_defaults():
     profiles = load_descriptor_profiles()
     assert "hybrid_seq_default" in profiles
     assert "rtl_core" in profiles
+    assert "implemented_structural_fixed_5d" in profiles
+    assert "implemented_structural_compact_3d" in profiles
+
+
+def test_load_descriptor_profiles_includes_retrospective_structural_profiles():
+    profiles = load_descriptor_profiles()
+    assert profiles["implemented_structural_fixed_5d"] == [
+        "seq_ratio",
+        "comb_ratio",
+        "mux_ratio",
+        "adder_ratio",
+        "cell_count_log",
+    ]
+    assert profiles["implemented_structural_compact_3d"] == [
+        "comb_ratio",
+        "adder_ratio",
+        "cell_count_log",
+    ]
 
 
 def test_resolve_descriptor_axes_prefers_explicit_axes():
@@ -111,3 +129,22 @@ def test_resolve_grid_axis_specs_uses_configured_and_fallback_specs(tmp_path: Pa
     assert specs[1].bins == 4
     assert specs[1].lower_bound == pytest.approx(-1.0)
     assert specs[1].upper_bound == pytest.approx(1.0)
+
+
+def test_default_descriptor_file_exposes_retrospective_structural_grid_specs():
+    specs = load_grid_axis_specs()
+    assert specs["seq_ratio"].bins == 2
+    assert specs["seq_ratio"].lower_bound == pytest.approx(0.0)
+    assert specs["seq_ratio"].upper_bound == pytest.approx(0.2918918918918919)
+    assert specs["comb_ratio"].bins == 2
+    assert specs["comb_ratio"].lower_bound == pytest.approx(0.7081081081081081)
+    assert specs["comb_ratio"].upper_bound == pytest.approx(1.0)
+    assert specs["mux_ratio"].bins == 2
+    assert specs["mux_ratio"].lower_bound == pytest.approx(0.026345721755332695)
+    assert specs["mux_ratio"].upper_bound == pytest.approx(0.37158469945355194)
+    assert specs["adder_ratio"].bins == 2
+    assert specs["adder_ratio"].lower_bound == pytest.approx(0.0)
+    assert specs["adder_ratio"].upper_bound == pytest.approx(0.11588330632090761)
+    assert specs["cell_count_log"].bins == 2
+    assert specs["cell_count_log"].lower_bound == pytest.approx(5.1152555343856845)
+    assert specs["cell_count_log"].upper_bound == pytest.approx(7.605890001053122)

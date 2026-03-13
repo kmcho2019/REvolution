@@ -66,7 +66,7 @@ class QDEngine(EoHEngine):
         self.qd_descriptor_profile = qd_descriptor_profile
         self.qd_descriptor_axes = tuple(qd_descriptor_axes)
         self.qd_descriptor_file = qd_descriptor_file
-        self.qd_grid_axes = tuple(qd_grid_axes) if qd_grid_axes else self._default_grid_axes()
+        self.qd_grid_axes = self._resolve_grid_axes(qd_grid_axes)
         self.qd_cvt_axes = tuple(qd_cvt_axes)
         self.qd_fail_generation_mode = qd_fail_generation_mode
         self.qd_seed_generation_mode = qd_seed_generation_mode
@@ -77,7 +77,10 @@ class QDEngine(EoHEngine):
         self.success_reservoir: dict[str, deque[Heuristic]] = {}
         self.qd_generation_history: list[dict[str, Any]] = []
 
-    def _default_grid_axes(self) -> tuple[str, ...]:
+    def _resolve_grid_axes(
+        self,
+        explicit_grid_axes: tuple[str, ...] = (),
+    ) -> tuple[str, ...]:
         circuit_type = (
             self.problem_spec.circuit_type
             if self.problem_spec is not None
@@ -85,8 +88,8 @@ class QDEngine(EoHEngine):
         )
         return tuple(
             resolve_descriptor_axes(
-                profile_name=None,
-                explicit_axes=None,
+                profile_name=self.qd_descriptor_profile,
+                explicit_axes=explicit_grid_axes or self.qd_descriptor_axes or None,
                 descriptor_file=self.qd_descriptor_file,
                 archive_type="grid",
                 circuit_type=circuit_type,
@@ -408,6 +411,8 @@ class QDEngine(EoHEngine):
             history=self.qd_generation_history,
             archive=self.success_archive,
             ref_ppa_metrics=self.ref_ppa_metrics,
+            descriptor_profile=self.qd_descriptor_profile,
+            descriptor_axes=self._archive_axes(),
         )
         if space_json_path is not None and space_report_path is not None:
             write_archive_space_files(
@@ -1018,10 +1023,11 @@ class QDEngine(EoHEngine):
                 break
 
         print("\n--- REvolution QD Run Finished ---")
-        self._finalize_run_summary(self._archive_elites())
+        archive_elites = self._archive_elites()
+        self._finalize_run_summary(archive_elites)
 
-        if self.success_pool:
-            best_solution = self._archive_elites()[0]
+        if archive_elites:
+            best_solution = archive_elites[0]
             final_report = best_solution.ppa_metrics.get("report_path", "N/A")
             final_score = best_solution.score if best_solution.score is not None else "N/A"
             return f"{self.problem_name},success,{best_solution.code_file_path},{final_report},{final_score}"
