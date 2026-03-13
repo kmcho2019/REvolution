@@ -2482,6 +2482,8 @@ Documentation risk to watch:
   - focused pyright validation was kept on the new dynamic-descriptor surface;
     broader legacy typing debt in `algorithm.py` and
     `runtime/candidate_evaluator.py` remains tracked separately
+- Commit:
+  - `6975cfdb48` `feat(qd): add dynamic activity descriptor extraction`
 
 ## Debt Review
 
@@ -3030,6 +3032,7 @@ implementation and testing so far.
 - `50fd888e3d` `feat(qd): add archive event logs and space reports`
 - `13611203f0` `fix(qd): honor retrospective grid profiles in runtime`
 - `9e7ec003fa` `feat(qd): add multi-axis grid visualization outputs`
+- `6975cfdb48` `feat(qd): add dynamic activity descriptor extraction`
 
 ## Deferred Follow-Ups
 
