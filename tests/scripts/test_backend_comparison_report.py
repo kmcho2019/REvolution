@@ -270,6 +270,35 @@ def test_backend_comparison_report_ignores_qd_sidecar_summary_and_renders_qd_sec
                 "qd_score": 1.75,
                 "best_quality": 0.4,
                 "mean_quality": 0.2,
+                "descriptor_profile": "wire_ctrl_assign_3d",
+                "descriptor_axes": [
+                    "wire_count_log_est",
+                    "ctrl_depth_est",
+                    "assign_count",
+                ],
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    (problem_dir / "descriptor_health.json").write_text(
+        json.dumps(
+            {
+                "archive_type": "cvt",
+                "descriptor_profile": "wire_ctrl_assign_3d",
+                "descriptor_axes": [
+                    "wire_count_log_est",
+                    "ctrl_depth_est",
+                    "assign_count",
+                ],
+                "observation_count": 6,
+                "archive_entry_count": 3,
+                "collapsed_axes": ["ctrl_depth_est"],
+                "decision_counts": {
+                    "filled_empty": 2,
+                    "replaced_elite": 1,
+                    "not_inserted": 3,
+                },
             },
             indent=2,
         ),
@@ -288,6 +317,10 @@ def test_backend_comparison_report_ignores_qd_sidecar_summary_and_renders_qd_sec
     subprocess.run(cmd, check=True, cwd=Path(__file__).resolve().parents[2])
     text = output_path.read_text(encoding="utf-8")
 
-    assert text.count("Prob001 |") == 2
+    assert text.count("Prob001 |") == 3
     assert "## QD Archive Metrics" in text
     assert "| `revolution` | Bench | Prob001 | cvt | 37.5% | 1.7500 | 0.4000 | 3/8 |" in text
+    assert "## QD Descriptor Health" in text
+    assert "wire_ctrl_assign_3d" in text
+    assert "ctrl_depth_est" in text
+    assert "filled_empty=2, not_inserted=3, replaced_elite=1" in text

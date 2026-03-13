@@ -39,7 +39,7 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
 - Current stage:
-  `Stage 14 descriptor-health and second-wave profile rollout completed;`
+  `Stage 15 descriptor-health report aggregation completed;`
   `Stage 10 long-budget refresh evidence and follow-on profile evaluation`
   `still in progress`
 - Current backend scope:
@@ -70,8 +70,10 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   `assign_always_math_3d`) are now executable through the repo config surface,
   and per-problem `descriptor_health.json` plus
   `descriptor_health_report.md` now make axis collapse/missingness visible in
-  the run tree itself; engine seam cleanup and broader type-debt reduction
-  still remain pending
+  the run tree itself; `backend_comparison_report.py` now aggregates those
+  descriptor-health sidecars into a dedicated QD report section and
+  `archive_baseline.py` preserves them in archived runs; engine seam cleanup
+  and broader type-debt reduction still remain pending
 
 ## Worktree Info
 
@@ -1163,6 +1165,18 @@ Documentation risk to watch:
 - [ ] Run bounded live vLLM smoke(s) with one of the new second-wave profiles.
 - [ ] Run longer-budget comparative evaluation for the new second-wave
       profiles before considering any default change.
+
+### Stage 15: Descriptor-Health Report Aggregation
+
+- [x] Extend `backend_comparison_report.py` so QD runs render a descriptor-
+      health section in addition to archive coverage/quality metrics.
+- [x] Preserve `descriptor_health.json` and `descriptor_health_report.md` in
+      `archive_baseline.py` archives.
+- [x] Add regression coverage for report rendering and archive preservation of
+      the new descriptor-health artifacts.
+- [x] Update docs and the living plan so the new report path is discoverable.
+- [ ] Use the new report section on fresh long-budget QD runs once Stage 10
+      refresh evidence is finalized.
 
 ## Exact TODO List
 
@@ -2560,6 +2574,34 @@ Documentation risk to watch:
     runs rather than a full replacement for the offline corpus-wide
     retrospective analysis
 
+### Stage 15
+
+- Date: `2026-03-13`
+- Implementation checkpoint:
+  - `scripts/backend_comparison_report.py` now loads
+    `descriptor_health.json` when present and renders a dedicated
+    `QD Descriptor Health` section
+  - `scripts/archive_baseline.py` now preserves:
+    - `descriptor_health.json`
+    - `descriptor_health_report.md`
+    in archived QD summary payloads
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/scripts/test_backend_comparison_report.py tests/scripts/test_archive_baseline.py`
+  - Result: `16 passed in 1.26s`
+  - `/workspace/.venv/bin/ruff check scripts/backend_comparison_report.py scripts/archive_baseline.py tests/scripts/test_backend_comparison_report.py tests/scripts/test_archive_baseline.py`
+  - Result: `All checks passed!`
+- Live validation:
+  - not run for Stage 15
+  - this stage is report/archive consumption only; the next real runtime check
+    is to apply the new section on fresh Stage 10/14 long-budget reruns once
+    they are regenerated
+- Notes:
+  - this closes a concrete follow-up from Stage 14 by making the new
+    descriptor-health sidecars visible in the normal repo reporting workflow
+  - the remaining gap is comparative evidence, not visibility: the report can
+    now summarize collapse signals, but it still needs fresh long-budget runs
+    that actually exercise the newer profiles
+
 ## Debt Review
 
 ### Stage 0
@@ -2779,6 +2821,15 @@ Documentation risk to watch:
   the new profiles still need live comparison runs, and report consumers do not
   yet aggregate `descriptor_health` across problems or backends.
 
+### Stage 15
+
+- Stage 15 deliberately extends existing scripts instead of adding new report
+  entry points, which keeps the branch's reporting surface coherent.
+- The remaining debt is aggregation depth rather than missing plumbing:
+  descriptor-health is now visible in backend comparison reports and archived
+  summaries, but there is still no higher-order trend summary across multiple
+  experiment roots or repeated runs.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -2965,6 +3016,15 @@ Documentation risk to watch:
   the branch can now run and introspect these second-wave profiles, but it has
   not yet shown that any of them beat the earlier controls on live long-budget
   runs.
+
+### Stage 15
+
+- Stage 15 improves alignment with the retrospective-analysis workflow by
+  moving one more analysis step out of `/tmp`-only notebooks and into the
+  repo's normal reporting path.
+- This keeps the branch closer to the original research intent of making QD
+  behavior explainable and reviewable from tracked artifacts rather than from
+  ad hoc manual inspection alone.
 
 ## Roadmap Extension
 
@@ -3153,8 +3213,8 @@ implementation and testing so far.
   (`wire_ctrl_assign_3d`, `wire_if_math_3d`, `wire_always_ternary_3d`,
   `assign_always_math_3d`) materially improve archive fill or archive quality
   relative to the first-wave structural/runtime profiles.
-- Improve downstream report consumption of `descriptor_health.json` and
-  `descriptor_health_report.md`, including summary aggregation across problems.
+- Extend descriptor-health summarization beyond per-report sections into
+  higher-order trend summaries across problems, backends, and repeated runs.
 - Continue reducing older `algorithm.py` typing/documentation debt and shared
   engine-loop duplication where the cleanup is low-risk.
 - Consider integrating the separate remote `realbench` branch once its fuller

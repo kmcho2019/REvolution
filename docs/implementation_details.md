@@ -101,6 +101,10 @@ The QD substrate currently lives under `src/revolution/qd/`:
 - `visualization.py`: archive-history plots plus 2-axis grid heatmaps,
   multi-axis grid marginal/projection plots, and CVT projection helpers emitted
   from the QD runtime
+- `scripts/backend_comparison_report.py`: now consumes descriptor-health
+  sidecars and renders a dedicated `QD Descriptor Health` section
+- `scripts/archive_baseline.py`: now preserves descriptor-health sidecars in
+  archived QD summaries
 
 ## Evaluation stack
 

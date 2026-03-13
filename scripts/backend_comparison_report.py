@@ -36,6 +36,12 @@ class SummaryRow:
     qd_best_quality: float | None
     qd_occupied_cells: int | None
     qd_num_cells: int | None
+    qd_descriptor_profile: str | None
+    qd_descriptor_axes: tuple[str, ...]
+    qd_observation_count: int | None
+    qd_archive_entry_count: int | None
+    qd_collapsed_axes: tuple[str, ...]
+    qd_decision_counts: dict[str, int]
 
 
 IGNORED_SUMMARY_FILENAMES = {"archive_summary.json"}
@@ -241,6 +247,21 @@ def _load_qd_archive_summary(summary_path: Path) -> dict[str, Any]:
     return payload
 
 
+def _load_qd_descriptor_health(summary_path: Path) -> dict[str, Any]:
+    """Load QD descriptor-health sidecar metrics stored beside the problem summary."""
+
+    health_path = summary_path.parent / "descriptor_health.json"
+    if not health_path.is_file():
+        return {}
+    try:
+        payload = json.loads(health_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+    if not isinstance(payload, dict):
+        return {}
+    return payload
+
+
 def _render_budget_fairness_section(rows: list[SummaryRow]) -> list[str]:
     grouped: dict[tuple[str, str], list[SummaryRow]] = {}
     for row in rows:
@@ -311,6 +332,49 @@ def _render_qd_archive_section(rows: list[SummaryRow]) -> list[str]:
             f"| `{row.backend}` | {row.benchmark} | {row.problem} | "
             f"{row.qd_archive_type or 'N/A'} | {coverage} | {qd_score} | {best_quality} | "
             f"{occupied} |"
+        )
+    lines.append("")
+    return lines
+
+
+def _render_qd_descriptor_health_section(rows: list[SummaryRow]) -> list[str]:
+    """Render descriptor-health diagnostics for QD runs when available."""
+
+    qd_rows = [
+        row
+        for row in rows
+        if row.search_mode == "revolution_qd"
+        and (
+            row.qd_observation_count is not None
+            or row.qd_archive_entry_count is not None
+            or row.qd_collapsed_axes
+        )
+    ]
+    if not qd_rows:
+        return []
+    lines = [
+        "## QD Descriptor Health",
+        "",
+        "| Backend | Benchmark | Problem | Profile | Axes | Observations | Archive Elites | Collapsed Axes | Decisions |",
+        "|:---|:---|:---|:---|:---|---:|---:|:---|:---|",
+    ]
+    for row in sorted(qd_rows, key=lambda item: (item.benchmark, item.problem, item.backend)):
+        axes = ", ".join(row.qd_descriptor_axes) if row.qd_descriptor_axes else "N/A"
+        collapsed_axes = ", ".join(row.qd_collapsed_axes) if row.qd_collapsed_axes else "none"
+        decision_counts = (
+            ", ".join(
+                f"{decision}={count}"
+                for decision, count in sorted(row.qd_decision_counts.items())
+            )
+            if row.qd_decision_counts
+            else "N/A"
+        )
+        lines.append(
+            f"| `{row.backend}` | {row.benchmark} | {row.problem} | "
+            f"{row.qd_descriptor_profile or 'N/A'} | {axes} | "
+            f"{row.qd_observation_count if row.qd_observation_count is not None else 'N/A'} | "
+            f"{row.qd_archive_entry_count if row.qd_archive_entry_count is not None else 'N/A'} | "
+            f"{collapsed_axes} | {decision_counts} |"
         )
     lines.append("")
     return lines
@@ -396,6 +460,7 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
         except json.JSONDecodeError:
             continue
         qd_archive_summary = _load_qd_archive_summary(summary_path)
+        qd_descriptor_health = _load_qd_descriptor_health(summary_path)
         rates = payload.get("accumulated_success_rates", {})
         if not rates and "stage_success_rates" in payload:
             stage_rates = payload["stage_success_rates"]
@@ -438,6 +503,29 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
             if isinstance(backend_details.get("qd_config", {}), dict)
             else {}
         )
+        descriptor_axes_raw = qd_descriptor_health.get(
+            "descriptor_axes",
+            qd_archive_summary.get("descriptor_axes"),
+        )
+        descriptor_axes = tuple(
+            axis
+            for axis in descriptor_axes_raw
+            if isinstance(axis, str)
+        ) if isinstance(descriptor_axes_raw, list) else ()
+        collapsed_axes_raw = qd_descriptor_health.get("collapsed_axes", [])
+        collapsed_axes = tuple(
+            axis
+            for axis in collapsed_axes_raw
+            if isinstance(axis, str)
+        ) if isinstance(collapsed_axes_raw, list) else ()
+        decision_counts_raw = qd_descriptor_health.get("decision_counts", {})
+        decision_counts: dict[str, int] = {}
+        if isinstance(decision_counts_raw, dict):
+            for key, value in decision_counts_raw.items():
+                parsed = _safe_int(value)
+                if parsed is None:
+                    continue
+                decision_counts[str(key)] = int(parsed)
         functionality_rate = _safe_rate(rates.get("functionality", 0.0))
         synthesis_rate = _safe_rate(rates.get("synthesis_ppa", 0.0))
         best_score = _safe_float(final_ppa.get("best_score"))
@@ -514,6 +602,20 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
                 qd_best_quality=_safe_float(qd_archive_summary.get("best_quality")),
                 qd_occupied_cells=_safe_int(qd_archive_summary.get("occupied_cells")),
                 qd_num_cells=_safe_int(qd_archive_summary.get("num_cells")),
+                qd_descriptor_profile=(
+                    qd_descriptor_health.get("descriptor_profile")
+                    if isinstance(qd_descriptor_health.get("descriptor_profile"), str)
+                    else (
+                        qd_archive_summary.get("descriptor_profile")
+                        if isinstance(qd_archive_summary.get("descriptor_profile"), str)
+                        else None
+                    )
+                ),
+                qd_descriptor_axes=descriptor_axes,
+                qd_observation_count=_safe_int(qd_descriptor_health.get("observation_count")),
+                qd_archive_entry_count=_safe_int(qd_descriptor_health.get("archive_entry_count")),
+                qd_collapsed_axes=collapsed_axes,
+                qd_decision_counts=decision_counts,
             )
         )
     return rows
@@ -557,6 +659,7 @@ def _render_markdown(rows: list[SummaryRow]) -> str:
     lines.extend(_render_aggregate_section(rows, group_by_benchmark=True))
     lines.extend(_render_aggregate_section(rows, group_by_benchmark=False))
     lines.extend(_render_qd_archive_section(rows))
+    lines.extend(_render_qd_descriptor_health_section(rows))
     return "\n".join(lines) + "\n"
 
 

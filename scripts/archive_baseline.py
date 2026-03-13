@@ -58,6 +58,8 @@ QD_SUMMARY_SIDECAR_NAMES = (
     "qd_metrics.json",
     "grid_layout.json",
     "centroids.json",
+    "descriptor_health.json",
+    "descriptor_health_report.md",
 )
 QD_VISUALIZATION_PATTERNS = (
     "coverage_vs_generation.png",

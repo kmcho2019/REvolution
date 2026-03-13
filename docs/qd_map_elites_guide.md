@@ -284,6 +284,15 @@ over archive-handled successful candidates and current archive elites so the
 run output itself shows whether a chosen descriptor set is actually separating
 solutions.
 
+Report/archive consumers:
+
+- `scripts/backend_comparison_report.py`
+  - renders a `QD Descriptor Health` section when descriptor-health sidecars
+    are present beside problem summaries
+- `scripts/archive_baseline.py`
+  - preserves descriptor-health sidecars in archived QD runs so later summary
+    review does not silently lose axis-collapse diagnostics
+
 ## What Happens In One Generation
 
 Assume Gen0 has already run and the archive has been rebuilt from the initial

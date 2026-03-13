@@ -130,6 +130,14 @@ def _add_qd_sidecars(run_dir: Path) -> None:
     )
     _write_json(problem_dir / "qd_metrics.json", {"history": []})
     _write_json(problem_dir / "grid_layout.json", {"archive_type": "grid", "axes": []})
+    _write_json(
+        problem_dir / "descriptor_health.json",
+        {
+            "descriptor_profile": "wire_ctrl_assign_3d",
+            "collapsed_axes": ["ctrl_depth_est"],
+        },
+    )
+    _write_text(problem_dir / "descriptor_health_report.md", "# Descriptor Health\n")
     _write_text(problem_dir / "coverage_vs_generation.png", "png")
 
 
@@ -448,4 +456,6 @@ def test_archive_includes_qd_sidecars_in_summaries(tmp_path):
     assert "archive_summary.json" in archived_names
     assert "qd_metrics.json" in archived_names
     assert "grid_layout.json" in archived_names
+    assert "descriptor_health.json" in archived_names
+    assert "descriptor_health_report.md" in archived_names
     assert "coverage_vs_generation.png" in archived_names

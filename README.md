@@ -191,6 +191,9 @@ Current status on this feature branch:
 - QD problem directories now emit `descriptor_health.json` and
   `descriptor_health_report.md` so collapsed or low-signal axes are visible
   directly from the run tree.
+- `scripts/backend_comparison_report.py` now renders a `QD Descriptor Health`
+  section when those sidecars are present, and `scripts/archive_baseline.py`
+  now preserves them in archived QD runs.
 - The still-future descriptor work is now mainly benchmark-specific dynamic or
   heavier physical extraction:
   - latency and throughput descriptors

@@ -175,6 +175,9 @@ Current feature status:
   `descriptor_health_report.md`, which summarize per-axis unique count,
   nonzero fraction, and collapse behavior over archive-handled successful
   candidates and the current archive elites.
+- `scripts/backend_comparison_report.py` now renders those diagnostics in a
+  dedicated `QD Descriptor Health` section, and `scripts/archive_baseline.py`
+  preserves them when packaging QD runs for later review.
 - `scripts/run_backend_qd_smoke_vllm.sh` provides a repeatable QD smoke matrix
   for `grid` and `cvt` with `--suite rtllm|verilogeval`,
   `--policy whole-heavy|diff-heavy`, and `--dry-run`, and now defaults to a
