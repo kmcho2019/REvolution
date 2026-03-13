@@ -39,7 +39,7 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
 - Current stage:
-  `Stage 15 descriptor-health report aggregation completed;`
+  `Stage 16 retrospective redo harness completed;`
   `Stage 10 long-budget refresh evidence and follow-on profile evaluation`
   `still in progress`
 - Current backend scope:
@@ -72,8 +72,10 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   `descriptor_health_report.md` now make axis collapse/missingness visible in
   the run tree itself; `backend_comparison_report.py` now aggregates those
   descriptor-health sidecars into a dedicated QD report section and
-  `archive_baseline.py` preserves them in archived runs; engine seam cleanup
-  and broader type-debt reduction still remain pending
+  `archive_baseline.py` preserves them in archived runs; a repo-native
+  long-budget retrospective redo harness now exists for `/tmp/qd_rich20x5`-
+  style reruns using the shared vLLM endpoint; engine seam cleanup and broader
+  type-debt reduction still remain pending
 
 ## Worktree Info
 
@@ -1177,6 +1179,19 @@ Documentation risk to watch:
 - [x] Update docs and the living plan so the new report path is discoverable.
 - [ ] Use the new report section on fresh long-budget QD runs once Stage 10
       refresh evidence is finalized.
+
+### Stage 16: Retrospective 20x5 Redo Harness
+
+- [x] Add a repo-native long-budget retrospective rerun harness that encodes
+      the same four-design corpus and 128k-token vLLM settings used in
+      `/tmp/qd_rich20x5`.
+- [x] Add preset-driven mode matrices so refresh controls and follow-on
+      profiles can be rerun reproducibly instead of through ad hoc commands.
+- [x] Add a dry-run regression test for the new rerun harness.
+- [x] Update docs and the living plan so the new redo workflow is discoverable.
+- [ ] Launch a fresh long-budget redo root using the new harness.
+- [ ] Record the resulting run root and comparison outputs in the validation
+      log once the rerun completes.
 
 ## Exact TODO List
 
@@ -2602,6 +2617,38 @@ Documentation risk to watch:
     now summarize collapse signals, but it still needs fresh long-budget runs
     that actually exercise the newer profiles
 
+### Stage 16
+
+- Date: `2026-03-13`
+- Implementation checkpoint:
+  - added `scripts/run_qd_retrospective_redo_vllm.sh`
+  - the new harness encodes:
+    - the same four-design corpus used in `/tmp/qd_rich20x5`
+    - `population_size=20`
+    - `num_generations=5`
+    - `max_tokens=128000`
+    - `diff_max_tokens=128000`
+    - repeatable preset matrices:
+      - `refresh`
+      - `follow-on`
+      - `full`
+  - each suite run now automatically emits a local
+    `backend_comparison_report.py` markdown after the matrix finishes
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/scripts/test_run_qd_retrospective_redo_vllm.py`
+  - Result: `1 passed in 0.08s`
+  - `/workspace/.venv/bin/ruff check tests/scripts/test_run_qd_retrospective_redo_vllm.py`
+  - Result: `All checks passed!`
+  - `bash -n scripts/run_qd_retrospective_redo_vllm.sh`
+  - Result: clean
+- Live validation:
+  - not yet launched at this checkpoint
+- Notes:
+  - this stage does not claim new empirical results; it adds the reproducible
+    rerun harness needed to generate them
+  - the intended next execution is:
+    - `scripts/run_qd_retrospective_redo_vllm.sh --preset follow-on --suite matrix`
+
 ## Debt Review
 
 ### Stage 0
@@ -2830,6 +2877,14 @@ Documentation risk to watch:
   summaries, but there is still no higher-order trend summary across multiple
   experiment roots or repeated runs.
 
+### Stage 16
+
+- The new rerun harness keeps the branch from accumulating more experimental
+  debt through copy-pasted shell history.
+- Remaining debt is still empirical:
+  the harness exists, but the branch still needs the long-budget rerun results
+  themselves before any new default or profile recommendation should change.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -3026,6 +3081,14 @@ Documentation risk to watch:
   behavior explainable and reviewable from tracked artifacts rather than from
   ad hoc manual inspection alone.
 
+### Stage 16
+
+- Stage 16 improves alignment with the retrospective-analysis intent by turning
+  the `/tmp/qd_rich20x5` rerun idea into a tracked, reproducible repo-native
+  workflow.
+- The remaining alignment gap is run completion and interpretation, not the
+  absence of a reproducible experiment path.
+
 ## Roadmap Extension
 
 This roadmap extends the original stage list with the concrete findings from
@@ -3215,6 +3278,9 @@ implementation and testing so far.
   relative to the first-wave structural/runtime profiles.
 - Extend descriptor-health summarization beyond per-report sections into
   higher-order trend summaries across problems, backends, and repeated runs.
+- Finish the fresh long-budget retrospective redo started from the new
+  `run_qd_retrospective_redo_vllm.sh` harness and compare it against
+  `/tmp/qd_rich20x5`.
 - Continue reducing older `algorithm.py` typing/documentation debt and shared
   engine-loop duplication where the cleanup is low-risk.
 - Consider integrating the separate remote `realbench` branch once its fuller

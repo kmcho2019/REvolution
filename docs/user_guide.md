@@ -178,6 +178,9 @@ Current feature status:
 - `scripts/backend_comparison_report.py` now renders those diagnostics in a
   dedicated `QD Descriptor Health` section, and `scripts/archive_baseline.py`
   preserves them when packaging QD runs for later review.
+- `scripts/run_qd_retrospective_redo_vllm.sh` now encodes the long-budget
+  `/tmp/qd_rich20x5`-style redo workflow as a tracked repo script instead of a
+  loose command notebook.
 - `scripts/run_backend_qd_smoke_vllm.sh` provides a repeatable QD smoke matrix
   for `grid` and `cvt` with `--suite rtllm|verilogeval`,
   `--policy whole-heavy|diff-heavy`, and `--dry-run`, and now defaults to a

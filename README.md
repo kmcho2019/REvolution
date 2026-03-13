@@ -194,6 +194,9 @@ Current status on this feature branch:
 - `scripts/backend_comparison_report.py` now renders a `QD Descriptor Health`
   section when those sidecars are present, and `scripts/archive_baseline.py`
   now preserves them in archived QD runs.
+- `scripts/run_qd_retrospective_redo_vllm.sh` now provides a repo-native
+  long-budget redo harness for the `/tmp/qd_rich20x5` four-design corpus with
+  `refresh`, `follow-on`, and `full` presets.
 - The still-future descriptor work is now mainly benchmark-specific dynamic or
   heavier physical extraction:
   - latency and throughput descriptors
