@@ -39,9 +39,9 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
 - Current stage:
-  `Stage 16 retrospective redo harness completed;`
-  `Stage 10 long-budget refresh evidence and follow-on profile evaluation`
-  `still in progress`
+  `Stage 16 retrospective redo matrix launched;`
+  `Stage 10/14/15 long-budget refresh evidence, follow-on profile evaluation,`
+  `and aggregated descriptor-health comparison still in progress`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
@@ -1189,7 +1189,7 @@ Documentation risk to watch:
       profiles can be rerun reproducibly instead of through ad hoc commands.
 - [x] Add a dry-run regression test for the new rerun harness.
 - [x] Update docs and the living plan so the new redo workflow is discoverable.
-- [ ] Launch a fresh long-budget redo root using the new harness.
+- [x] Launch a fresh long-budget redo root using the new harness.
 - [ ] Record the resulting run root and comparison outputs in the validation
       log once the rerun completes.
 
@@ -2642,12 +2642,23 @@ Documentation risk to watch:
   - `bash -n scripts/run_qd_retrospective_redo_vllm.sh`
   - Result: clean
 - Live validation:
-  - not yet launched at this checkpoint
+  - launched the fresh long-budget redo matrix with the new harness
+  - exact launch:
+    - `VLLM_HOST=host.docker.internal VLLM_PORT=8000 REDO_SAVE_PATH=/tmp/qd_rich20x5_redo_full bash scripts/run_qd_retrospective_redo_vllm.sh --preset full --suite matrix`
+  - launch time:
+    - `2026-03-13T18:20:07Z`
+  - active run root:
+    - `/tmp/qd_rich20x5_redo_full/20260313_181943`
+  - status at this checkpoint:
+    - the redo matrix has started successfully and entered the `rtllm/classic`
+      runner path
+    - top-level suite comparison outputs are not available yet because the
+      matrix has not completed
 - Notes:
-  - this stage does not claim new empirical results; it adds the reproducible
-    rerun harness needed to generate them
-  - the intended next execution is:
-    - `scripts/run_qd_retrospective_redo_vllm.sh --preset follow-on --suite matrix`
+  - this stage now has a real launched redo root rather than only harness
+    scaffolding
+  - empirical comparison claims must still wait for the matrix to finish and
+    emit suite-local reports
 
 ## Debt Review
 
