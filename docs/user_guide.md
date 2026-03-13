@@ -160,7 +160,8 @@ Current feature status:
   - early-stage runtime-supported retrospective profiles:
     `size_control_3d`, `timing_control_3d`
   - richer follow-on runtime-supported controls:
-    `wire_assign_if_3d`, `size_sharing_3d`
+    `wire_assign_if_3d`, `size_sharing_3d`, `wire_ctrl_assign_3d`,
+    `wire_if_math_3d`, `wire_always_ternary_3d`, `assign_always_math_3d`
   - exploratory activity profiles:
     `activity_size_3d`, `activity_control_3d`
 - When `qd_grid_axes` is omitted, grid mode now honors
@@ -170,6 +171,10 @@ Current feature status:
   structural and early-stage retrospective profiles are useful experimental
   controls, but they are not strong enough on the current four-problem corpus
   to replace the earlier richer/gain-heavy baseline as new defaults.
+- QD problem directories now also emit `descriptor_health.json` and
+  `descriptor_health_report.md`, which summarize per-axis unique count,
+  nonzero fraction, and collapse behavior over archive-handled successful
+  candidates and the current archive elites.
 - `scripts/run_backend_qd_smoke_vllm.sh` provides a repeatable QD smoke matrix
   for `grid` and `cvt` with `--suite rtllm|verilogeval`,
   `--policy whole-heavy|diff-heavy`, and `--dry-run`, and now defaults to a

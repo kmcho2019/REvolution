@@ -178,6 +178,14 @@ Runtime-supported retrospective profiles:
 - `size_sharing_3d`
   - `wire_count_log_est`, `wire_cell_ratio_est`,
     `resource_sharing_ratio_est`
+- `wire_ctrl_assign_3d`
+  - `wire_count_log_est`, `ctrl_depth_est`, `assign_count`
+- `wire_if_math_3d`
+  - `wire_count_log_est`, `if_count`, `math_op_ast_count`
+- `wire_always_ternary_3d`
+  - `wire_count_log_est`, `always_count`, `ternary_count`
+- `assign_always_math_3d`
+  - `assign_count`, `always_count`, `math_op_ast_count`
 
 Exploratory dynamic profiles:
 
@@ -242,6 +250,8 @@ Run-level / problem-level QD artifacts:
 - `grid_layout.json` or `centroids.json`
 - `archive_space.json`
 - `archive_space_report.md`
+- `descriptor_health.json`
+- `descriptor_health_report.md`
 - `coverage_vs_generation.png`
 - `best_quality_vs_generation.png`
 - `qd_score_vs_generation.png`
@@ -263,6 +273,16 @@ This file records:
 - archive occupancy / QD score before and after insertion
 - previous elite and current cell elite summaries
 - structural, RTL, dynamic, and physical metric payloads when available
+
+Descriptor-health artifacts:
+
+- `descriptor_health.json`
+- `descriptor_health_report.md`
+
+These summarize per-axis unique count, nonzero fraction, and collapse signals
+over archive-handled successful candidates and current archive elites so the
+run output itself shows whether a chosen descriptor set is actually separating
+solutions.
 
 ## What Happens In One Generation
 

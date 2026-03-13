@@ -50,6 +50,26 @@ def test_load_descriptor_profiles_includes_runtime_retro_profiles():
         "if_count",
         "ast_depth_est",
     ]
+    assert profiles["wire_ctrl_assign_3d"] == [
+        "wire_count_log_est",
+        "ctrl_depth_est",
+        "assign_count",
+    ]
+    assert profiles["wire_if_math_3d"] == [
+        "wire_count_log_est",
+        "if_count",
+        "math_op_ast_count",
+    ]
+    assert profiles["wire_always_ternary_3d"] == [
+        "wire_count_log_est",
+        "always_count",
+        "ternary_count",
+    ]
+    assert profiles["assign_always_math_3d"] == [
+        "assign_count",
+        "always_count",
+        "math_op_ast_count",
+    ]
     assert profiles["activity_size_3d"] == [
         "toggle_count_log_est",
         "active_signal_ratio_est",
@@ -191,9 +211,18 @@ def test_default_descriptor_file_exposes_retrospective_structural_grid_specs():
     assert specs["assign_count"].bins == 4
     assert specs["assign_count"].lower_bound == pytest.approx(0.0)
     assert specs["assign_count"].upper_bound == pytest.approx(8.740000000000009)
+    assert specs["always_count"].bins == 4
+    assert specs["always_count"].lower_bound == pytest.approx(0.0)
+    assert specs["always_count"].upper_bound == pytest.approx(4.0)
+    assert specs["case_count"].bins == 4
+    assert specs["case_count"].lower_bound == pytest.approx(0.0)
+    assert specs["case_count"].upper_bound == pytest.approx(4.0)
     assert specs["ctrl_depth_est"].bins == 2
     assert specs["ctrl_depth_est"].lower_bound == pytest.approx(0.0)
     assert specs["ctrl_depth_est"].upper_bound == pytest.approx(10.0)
+    assert specs["math_op_ast_count"].bins == 2
+    assert specs["math_op_ast_count"].lower_bound == pytest.approx(0.0)
+    assert specs["math_op_ast_count"].upper_bound == pytest.approx(16.0)
     assert specs["toggle_count_log_est"].bins == 4
     assert specs["toggle_count_log_est"].lower_bound == pytest.approx(0.0)
     assert specs["toggle_count_log_est"].upper_bound == pytest.approx(16.0)

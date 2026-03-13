@@ -380,6 +380,8 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     metrics_path = tmp_path / "artifacts" / "qd_metrics.json"
     space_json_path = tmp_path / "artifacts" / "archive_space.json"
     space_report_path = tmp_path / "artifacts" / "archive_space_report.md"
+    descriptor_health_json_path = tmp_path / "artifacts" / "descriptor_health.json"
+    descriptor_health_report_path = tmp_path / "artifacts" / "descriptor_health_report.md"
     coverage_plot = tmp_path / "artifacts" / "coverage_vs_generation.png"
     legacy_quality_plot = tmp_path / "artifacts" / "grid_quality_heatmap.png"
     occupancy_marginal = tmp_path / "artifacts" / "grid_comb_ratio_occupancy_marginal.png"
@@ -394,6 +396,8 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     assert metrics_path.is_file()
     assert space_json_path.is_file()
     assert space_report_path.is_file()
+    assert descriptor_health_json_path.is_file()
+    assert descriptor_health_report_path.is_file()
     assert coverage_plot.is_file()
     assert not legacy_quality_plot.exists()
     assert occupancy_marginal.is_file()
@@ -410,6 +414,9 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     assert cell_rows[0]["candidate_id"] == elite.id
     summary_payload = json.loads(summary_path.read_text(encoding="utf-8"))
     metrics_payload = json.loads(metrics_path.read_text(encoding="utf-8"))
+    descriptor_health_payload = json.loads(
+        descriptor_health_json_path.read_text(encoding="utf-8")
+    )
     visualization_files = "".join(summary_payload["visualization_files"])
     assert "coverage_vs_generation.png" in visualization_files
     assert "grid_comb_ratio_occupancy_marginal.png" in visualization_files
@@ -420,6 +427,10 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
         "adder_ratio",
         "cell_count_log",
     ]
+    assert summary_payload["descriptor_health_files"] == {
+        "json": "descriptor_health.json",
+        "report": "descriptor_health_report.md",
+    }
     space_payload = json.loads(space_json_path.read_text(encoding="utf-8"))
     assert space_payload["archive_type"] == "grid"
     assert "uniform grid binning" in space_payload["assignment_rule"]
@@ -437,6 +448,12 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     ]
     assert metrics_payload["history_length"] == 1
     assert metrics_payload["latest_snapshot"]["occupied_cells"] == 1
+    assert descriptor_health_payload["descriptor_profile"] == "implemented_structural_compact_3d"
+    assert descriptor_health_payload["observation_count"] == 1
+    assert descriptor_health_payload["archive_entry_count"] == 1
+    assert descriptor_health_payload["decision_counts"]["filled_empty"] == 1
+    assert any(item["axis"] == "comb_ratio" for item in descriptor_health_payload["axis_health"])
+    assert "Descriptor Health Report" in descriptor_health_report_path.read_text(encoding="utf-8")
 
 
 def test_qd_engine_writes_cvt_layout_metadata(tmp_path, monkeypatch):

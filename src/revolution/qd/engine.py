@@ -20,6 +20,7 @@ from revolution.qd.artifacts import (
     write_archive_cells_csv,
     write_archive_space_files,
     write_candidate_archive_event,
+    write_descriptor_health_files,
     write_legacy_archive_layout,
     write_qd_summary_files,
 )
@@ -81,6 +82,7 @@ class QDEngine(EoHEngine):
         self.success_archive = self._build_archive()
         self.success_reservoir: dict[str, deque[Heuristic]] = {}
         self.qd_generation_history: list[dict[str, Any]] = []
+        self.qd_descriptor_observations: list[dict[str, Any]] = []
 
     def _resolve_grid_axes(
         self,
@@ -199,6 +201,7 @@ class QDEngine(EoHEngine):
     def _rebuild_archive_from_success_pool(self) -> None:
         self.success_archive = self._build_archive()
         self.success_reservoir = {}
+        self.qd_descriptor_observations = []
         for cand in self.success_pool:
             descriptors = self._descriptor_tuple(cand)
             if descriptors is None:
@@ -257,6 +260,19 @@ class QDEngine(EoHEngine):
         before_qd_score: float,
         after_qd_score: float,
     ) -> None:
+        self.qd_descriptor_observations.append(
+            {
+                "candidate_id": candidate.id,
+                "generation": candidate.generation,
+                "strategy": candidate.strategy,
+                "decision": insert_result.decision,
+                "descriptor_values": {
+                    axis: float(value)
+                    for axis, value in zip(self._archive_axes(), descriptor_tuple)
+                },
+                "quality_score": float(getattr(candidate, "quality_score", candidate.score)),
+            }
+        )
         if not candidate.code_file_path:
             return
         event_path = os.path.join(
@@ -328,6 +344,18 @@ class QDEngine(EoHEngine):
         if log_dir is None:
             return None
         return os.path.join(log_dir, "archive_space_report.md")
+
+    def _descriptor_health_json_path(self) -> str | None:
+        log_dir = self._qd_log_dir()
+        if log_dir is None:
+            return None
+        return os.path.join(log_dir, "descriptor_health.json")
+
+    def _descriptor_health_report_path(self) -> str | None:
+        log_dir = self._qd_log_dir()
+        if log_dir is None:
+            return None
+        return os.path.join(log_dir, "descriptor_health_report.md")
 
     def _archive_qd_score(self) -> float:
         return sum(float(entry.quality_score) for entry in self.success_archive.entries().values())
@@ -417,6 +445,25 @@ class QDEngine(EoHEngine):
         metrics_path = self._qd_metrics_path()
         space_json_path = self._archive_space_json_path()
         space_report_path = self._archive_space_report_path()
+        descriptor_health_json_path = self._descriptor_health_json_path()
+        descriptor_health_report_path = self._descriptor_health_report_path()
+        descriptor_health_files: tuple[str, str] | None = None
+        if (
+            descriptor_health_json_path is not None
+            and descriptor_health_report_path is not None
+        ):
+            write_descriptor_health_files(
+                json_path=descriptor_health_json_path,
+                report_path=descriptor_health_report_path,
+                archive=self.success_archive,
+                descriptor_axes=self._archive_axes(),
+                descriptor_profile=self.qd_descriptor_profile,
+                observations=self.qd_descriptor_observations,
+            )
+            descriptor_health_files = (
+                os.path.basename(descriptor_health_json_path),
+                os.path.basename(descriptor_health_report_path),
+            )
         if summary_path is None or metrics_path is None:
             return
         visualization_artifacts = write_qd_summary_files(
@@ -428,6 +475,7 @@ class QDEngine(EoHEngine):
             ref_ppa_metrics=self.ref_ppa_metrics,
             descriptor_profile=self.qd_descriptor_profile,
             descriptor_axes=self._archive_axes(),
+            descriptor_health_files=descriptor_health_files,
         )
         if space_json_path is not None and space_report_path is not None:
             write_archive_space_files(

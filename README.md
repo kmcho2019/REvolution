@@ -172,6 +172,12 @@ Current status on this feature branch:
   - `timing_control_3d`
   - `wire_assign_if_3d`
   - `size_sharing_3d`
+- Second-wave retrospective follow-on profiles are now also selectable through
+  the builtin descriptor config:
+  - `wire_ctrl_assign_3d`
+  - `wire_if_math_3d`
+  - `wire_always_ternary_3d`
+  - `assign_always_math_3d`
 - The first Icarus/VCD-derived activity descriptor family is now also live:
   - `toggle_count_log_est`
   - `toggle_density_est`
@@ -182,6 +188,9 @@ Current status on this feature branch:
     - `activity_control_3d`
 - When `--qd_grid_axes` is omitted, grid mode now correctly honors
   `--qd_descriptor_profile` instead of silently falling back to gain axes.
+- QD problem directories now emit `descriptor_health.json` and
+  `descriptor_health_report.md` so collapsed or low-signal axes are visible
+  directly from the run tree.
 - The still-future descriptor work is now mainly benchmark-specific dynamic or
   heavier physical extraction:
   - latency and throughput descriptors

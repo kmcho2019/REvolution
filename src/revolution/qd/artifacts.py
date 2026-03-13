@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import statistics
 from pathlib import Path
 from typing import Any
 
@@ -122,6 +123,7 @@ def write_qd_summary_files(
     ref_ppa_metrics: dict[str, float],
     descriptor_profile: str | None,
     descriptor_axes: tuple[str, ...],
+    descriptor_health_files: tuple[str, str] | None = None,
 ) -> QDVisualizationArtifacts:
     """Write summary JSON files and generate the current QD visualization set."""
     visualization_artifacts = write_qd_visualizations(
@@ -149,6 +151,14 @@ def write_qd_summary_files(
         "mean_quality": latest["mean_quality"],
         "descriptor_profile": descriptor_profile,
         "descriptor_axes": list(descriptor_axes),
+        "descriptor_health_files": (
+            {
+                "json": descriptor_health_files[0],
+                "report": descriptor_health_files[1],
+            }
+            if descriptor_health_files is not None
+            else None
+        ),
         "history_length": len(history),
         "visualization_files": list(visualization_artifacts.generated_files),
     }
@@ -162,6 +172,14 @@ def write_qd_summary_files(
         "mean_quality": latest["mean_quality"],
         "descriptor_profile": descriptor_profile,
         "descriptor_axes": list(descriptor_axes),
+        "descriptor_health_files": (
+            {
+                "json": descriptor_health_files[0],
+                "report": descriptor_health_files[1],
+            }
+            if descriptor_health_files is not None
+            else None
+        ),
         "history_length": len(history),
         "latest_snapshot": latest,
         "history": history,
@@ -190,6 +208,27 @@ def write_archive_space_files(
     payload["visualization_files"] = list(visualization_files)
     Path(json_path).write_text(json.dumps(payload, indent=2), encoding="utf-8")
     Path(report_path).write_text(_format_archive_space_report(payload), encoding="utf-8")
+
+
+def write_descriptor_health_files(
+    *,
+    json_path: str | Path,
+    report_path: str | Path,
+    archive: GridArchive | CVTArchive,
+    descriptor_axes: tuple[str, ...],
+    descriptor_profile: str | None,
+    observations: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Write per-problem descriptor health diagnostics for the current run."""
+    payload = _build_descriptor_health_payload(
+        archive=archive,
+        descriptor_axes=descriptor_axes,
+        descriptor_profile=descriptor_profile,
+        observations=observations,
+    )
+    Path(json_path).write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    Path(report_path).write_text(_format_descriptor_health_report(payload), encoding="utf-8")
+    return payload
 
 
 def write_candidate_archive_event(
@@ -348,3 +387,140 @@ def _format_archive_space_report(payload: dict[str, Any]) -> str:
             ]
         )
     return "\n".join(lines) + "\n"
+
+
+def _build_descriptor_health_payload(
+    *,
+    archive: GridArchive | CVTArchive,
+    descriptor_axes: tuple[str, ...],
+    descriptor_profile: str | None,
+    observations: list[dict[str, Any]],
+) -> dict[str, Any]:
+    entries = archive.entries()
+    archive_values_by_axis = {axis: [] for axis in descriptor_axes}
+    for entry in entries.values():
+        for axis, value in zip(descriptor_axes, entry.descriptors):
+            archive_values_by_axis[axis].append(float(value))
+
+    observation_values_by_axis = {axis: [] for axis in descriptor_axes}
+    decision_counts: dict[str, int] = {}
+    for observation in observations:
+        decision = str(observation.get("decision", "unknown"))
+        decision_counts[decision] = decision_counts.get(decision, 0) + 1
+        values = observation.get("descriptor_values", {})
+        if not isinstance(values, dict):
+            continue
+        for axis in descriptor_axes:
+            if axis not in values:
+                continue
+            observation_values_by_axis[axis].append(float(values[axis]))
+
+    axis_health: list[dict[str, Any]] = []
+    collapsed_axes: list[str] = []
+    for axis in descriptor_axes:
+        observation_stats = _value_stats(observation_values_by_axis.get(axis, []))
+        archive_stats = _value_stats(archive_values_by_axis.get(axis, []))
+        zero_in_archive = archive_stats["count"] > 0 and archive_stats["nonzero_fraction"] == 0.0
+        low_unique_in_archive = archive_stats["count"] > 1 and archive_stats["unique_count"] <= 1
+        collapsed = zero_in_archive or low_unique_in_archive
+        if collapsed:
+            collapsed_axes.append(axis)
+        axis_health.append(
+            {
+                "axis": axis,
+                "observation_stats": observation_stats,
+                "archive_stats": archive_stats,
+                "collapsed_in_archive": collapsed,
+            }
+        )
+
+    return {
+        "archive_type": archive.archive_type,
+        "descriptor_profile": descriptor_profile,
+        "descriptor_axes": list(descriptor_axes),
+        "observation_count": len(observations),
+        "archive_entry_count": len(entries),
+        "decision_counts": decision_counts,
+        "collapsed_axes": collapsed_axes,
+        "axis_health": axis_health,
+    }
+
+
+def _value_stats(values: list[float]) -> dict[str, Any]:
+    if not values:
+        return {
+            "count": 0,
+            "unique_count": 0,
+            "nonzero_fraction": 0.0,
+            "min": None,
+            "max": None,
+            "mean": None,
+            "stddev": None,
+        }
+    unique_count = len({round(value, 12) for value in values})
+    nonzero_fraction = sum(value != 0.0 for value in values) / len(values)
+    stddev = statistics.pstdev(values) if len(values) > 1 else 0.0
+    return {
+        "count": len(values),
+        "unique_count": unique_count,
+        "nonzero_fraction": nonzero_fraction,
+        "min": min(values),
+        "max": max(values),
+        "mean": statistics.fmean(values),
+        "stddev": stddev,
+    }
+
+
+def _format_descriptor_health_report(payload: dict[str, Any]) -> str:
+    lines = [
+        "# Descriptor Health Report",
+        "",
+        f"- archive_type: `{payload['archive_type']}`",
+        f"- descriptor_profile: `{payload.get('descriptor_profile')}`",
+        f"- descriptor_axes: `{', '.join(payload.get('descriptor_axes', []))}`",
+        f"- observation_count: `{payload['observation_count']}`",
+        f"- archive_entry_count: `{payload['archive_entry_count']}`",
+        f"- collapsed_axes: `{', '.join(payload['collapsed_axes']) if payload['collapsed_axes'] else 'none'}`",
+        "",
+        "## Decision Counts",
+        "",
+    ]
+    decision_counts = payload.get("decision_counts", {})
+    if decision_counts:
+        for decision, count in sorted(decision_counts.items()):
+            lines.append(f"- `{decision}`: {count}")
+    else:
+        lines.append("- no archive-handled successful candidates were recorded")
+    lines.extend(
+        [
+            "",
+            "## Axis Health",
+            "",
+        ]
+    )
+    for axis_payload in payload.get("axis_health", []):
+        observation_stats = axis_payload["observation_stats"]
+        archive_stats = axis_payload["archive_stats"]
+        lines.extend(
+            [
+                f"### {axis_payload['axis']}",
+                "",
+                f"- collapsed_in_archive: `{axis_payload['collapsed_in_archive']}`",
+                f"- observations: count={observation_stats['count']}, unique={observation_stats['unique_count']}, "
+                f"nonzero_fraction={observation_stats['nonzero_fraction']:.4f}, "
+                f"mean={_fmt_optional_float(observation_stats['mean'])}, "
+                f"stddev={_fmt_optional_float(observation_stats['stddev'])}",
+                f"- archive_elites: count={archive_stats['count']}, unique={archive_stats['unique_count']}, "
+                f"nonzero_fraction={archive_stats['nonzero_fraction']:.4f}, "
+                f"mean={_fmt_optional_float(archive_stats['mean'])}, "
+                f"stddev={_fmt_optional_float(archive_stats['stddev'])}",
+                "",
+            ]
+        )
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def _fmt_optional_float(value: float | None) -> str:
+    if value is None:
+        return "n/a"
+    return f"{value:.4f}"

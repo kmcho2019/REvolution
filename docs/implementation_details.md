@@ -67,7 +67,11 @@ The current QD implementation is staged:
     `timing_control_3d`
   - additional runtime-supported follow-on controls:
     `wire_assign_if_3d`,
-    `size_sharing_3d`
+    `size_sharing_3d`,
+    `wire_ctrl_assign_3d`,
+    `wire_if_math_3d`,
+    `wire_always_ternary_3d`,
+    `assign_always_math_3d`
 - grid archive construction now honors `qd_descriptor_profile` when
   `qd_grid_axes` is omitted; the Stage 10 refresh work fixed an earlier bug
   where grid runs silently fell back to gain axes.
@@ -86,7 +90,8 @@ The QD substrate currently lives under `src/revolution/qd/`:
 - `archive.py`: grid and CVT archive insertion/replacement contracts, including
   CVT warm-up/freeze scaling
 - `artifacts.py`: archive summary files, archive-space reports, and
-  per-candidate `qd_archive_event.json` emission
+  per-candidate `qd_archive_event.json` emission plus per-problem
+  `descriptor_health.json` / `descriptor_health_report.md`
 - `scheduler.py`: linear fail-share and fill/improve budget split
 - `scoring.py`: exact weighted PPA quality score, gain axes, repair score, hash normalization
 - `descriptors.py`: descriptor registry and profile resolution

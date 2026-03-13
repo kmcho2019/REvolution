@@ -39,7 +39,9 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
 - Current stage:
-  `Stage 13 completed; Stage 10 long-budget refresh evidence still in progress`
+  `Stage 14 descriptor-health and second-wave profile rollout completed;`
+  `Stage 10 long-budget refresh evidence and follow-on profile evaluation`
+  `still in progress`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
@@ -63,8 +65,13 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   counts) is now wired into live QD runs through `rtl_metrics`; Icarus/VCD
   activity descriptors (`toggle_count_log_est`, `toggle_density_est`,
   `active_signal_ratio_est`, `avg_toggle_rate_est`) are now wired into live QD
-  runs through `dynamic_metrics`; engine seam cleanup and broader type-debt
-  reduction still remain pending
+  runs through `dynamic_metrics`; second-wave retrospective builtin profiles
+  (`wire_ctrl_assign_3d`, `wire_if_math_3d`, `wire_always_ternary_3d`,
+  `assign_always_math_3d`) are now executable through the repo config surface,
+  and per-problem `descriptor_health.json` plus
+  `descriptor_health_report.md` now make axis collapse/missingness visible in
+  the run tree itself; engine seam cleanup and broader type-debt reduction
+  still remain pending
 
 ## Worktree Info
 
@@ -1139,6 +1146,23 @@ Documentation risk to watch:
 - [x] Run focused pytest/ruff/pyright/ty validation for the rollout.
 - [x] Update QD docs and the living plan with the new dynamic descriptor
       family and its current caveats.
+
+### Stage 14: Second-Wave Retrospective Profiles And Descriptor Health
+
+- [x] Promote the strongest already-runtime-supported second-wave retrospective
+      combinations into builtin descriptor profiles.
+- [x] Add explicit grid-axis bounds for the new second-wave profile axes where
+      the retrospective analysis provides grounded corpus ranges.
+- [x] Emit per-problem `descriptor_health.json` and
+      `descriptor_health_report.md` artifacts so axis collapse and low-signal
+      behavior are visible from the run tree itself.
+- [x] Thread descriptor-health references into `archive_summary.json` and
+      `qd_metrics.json` so downstream tooling can discover the new artifacts.
+- [x] Add regression coverage for the new builtin profiles, grid-axis specs,
+      and descriptor-health artifact emission.
+- [ ] Run bounded live vLLM smoke(s) with one of the new second-wave profiles.
+- [ ] Run longer-budget comparative evaluation for the new second-wave
+      profiles before considering any default change.
 
 ## Exact TODO List
 
@@ -2485,6 +2509,57 @@ Documentation risk to watch:
 - Commit:
   - `6975cfdb48` `feat(qd): add dynamic activity descriptor extraction`
 
+### Stage 14
+
+- Date: `2026-03-13`
+- Implementation checkpoint:
+  - promoted the strongest already-runtime-supported second-wave retrospective
+    combinations into builtin profiles:
+    - `wire_ctrl_assign_3d`
+    - `wire_if_math_3d`
+    - `wire_always_ternary_3d`
+    - `assign_always_math_3d`
+  - added retrospective-grounded explicit grid-axis specs for:
+    - `always_count`
+    - `case_count`
+    - `math_op_ast_count`
+  - added per-problem descriptor diagnostics:
+    - `descriptor_health.json`
+    - `descriptor_health_report.md`
+  - `archive_summary.json` and `qd_metrics.json` now expose the new
+    descriptor-health artifact filenames for downstream tooling
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_engine.py`
+  - Result: `38 passed in 12.12s`
+  - `/workspace/.venv/bin/ruff check src/revolution/qd tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_engine.py`
+  - Result: `All checks passed!`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `354 passed in 13.17s`
+  - `/workspace/.venv/bin/python -m pyright src/revolution/qd`
+  - Result: `0 errors, 1 warning`
+    - warning detail:
+      - `src/revolution/qd/descriptors.py`: `yaml` could not be resolved from
+        source by pyright
+  - `uv tool run ty check src/revolution/qd`
+  - Result: `All checks passed!`
+- Live validation:
+  - attempted bounded second-wave profile smoke:
+    - `timeout 900s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --qd_descriptor_profile wire_ctrl_assign_3d --benchmarks RTLLM --problems Prob043_RAM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_stage14_smoke/wire_ctrl_assign_grid_rtllm --no-backend_subdir --seed 42`
+    - result:
+      - vLLM preflight succeeded
+      - runner created config/log files plus `problem_run.log`
+      - no first candidate directory or archive artifact materialized in the
+        bounded observation window, so treat this as attempted-but-blocked on
+        the shared endpoint rather than a descriptor-resolution failure
+- Notes:
+  - this stage intentionally focuses on making second-wave retrospective
+    profiles executable and diagnosable before spending more vLLM budget on
+    longer reruns
+  - descriptor-health reporting is derived from archive-handled successful
+    candidates plus current archive elites, so it is a debugging aid for live
+    runs rather than a full replacement for the offline corpus-wide
+    retrospective analysis
+
 ## Debt Review
 
 ### Stage 0
@@ -2690,6 +2765,20 @@ Documentation risk to watch:
   growth by reusing the same `descriptor_requirements(...)` gating pattern
   already used for RTL/AST/netlist metrics.
 
+### Stage 14
+
+- The second-wave retrospective rollout intentionally stays config/artifact
+  focused: it adds more executable profiles and better diagnostics without
+  changing global defaults or introducing another descriptor-specific runtime
+  framework.
+- The new `descriptor_health` artifacts are a deliberate debt-reduction move:
+  they surface axis-collapse and zero-signal behavior directly from the run
+  tree, which reduces reliance on ad hoc offline notebooks for basic QD
+  debugging.
+- Remaining debt is empirical and downstream-facing:
+  the new profiles still need live comparison runs, and report consumers do not
+  yet aggregate `descriptor_health` across problems or backends.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -2862,6 +2951,20 @@ Documentation risk to watch:
 - The remaining alignment gap is validation breadth rather than architecture:
   the branch now supports activity descriptors end-to-end, but their archive
   usefulness still needs bounded live smokes and longer-budget experiments.
+
+### Stage 14
+
+- Stage 14 stays aligned with the retrospective-analysis intent by making the
+  strongest already-runtime-supported second-wave combinations selectable
+  without inventing a new off-branch experiment harness.
+- The new `descriptor_health` files also improve intent alignment because they
+  expose exactly the sort of axis-collapse problem that the retrospective
+  analysis found in the earlier grid runs, but now from the branch's own live
+  outputs.
+- The remaining intent gap is still experimental rather than architectural:
+  the branch can now run and introspect these second-wave profiles, but it has
+  not yet shown that any of them beat the earlier controls on live long-budget
+  runs.
 
 ## Roadmap Extension
 
@@ -3046,6 +3149,12 @@ implementation and testing so far.
 - Validate whether the new activity profiles produce meaningful archive
   diversity or archive-quality gains on RTLLM / VerilogEval before considering
   any default change.
+- Validate whether the new second-wave retrospective profiles
+  (`wire_ctrl_assign_3d`, `wire_if_math_3d`, `wire_always_ternary_3d`,
+  `assign_always_math_3d`) materially improve archive fill or archive quality
+  relative to the first-wave structural/runtime profiles.
+- Improve downstream report consumption of `descriptor_health.json` and
+  `descriptor_health_report.md`, including summary aggregation across problems.
 - Continue reducing older `algorithm.py` typing/documentation debt and shared
   engine-loop duplication where the cleanup is low-risk.
 - Consider integrating the separate remote `realbench` branch once its fuller
