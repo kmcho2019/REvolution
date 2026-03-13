@@ -91,6 +91,324 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   merged into `wip/journal-extension-2026` yet, so this branch keeps only the
   manifest-based Stage 6 adapter/fixture path for now.
 
+## Descriptor Inventory, Runtime Status, Default Fixes, And Rich-Rerun Plan
+
+This section is the descriptor-specific source of truth for the branch. It
+separates what is actually implemented today from what was merely proposed,
+what the completed experiments really used, and what still needs follow-up.
+
+### Descriptor Status Taxonomy
+
+- `Implemented and runtime-usable`
+  means the descriptor exists in the runtime registry and can flow into
+  `descriptor_values` during QD evaluation.
+- `Implemented but lightly validated`
+  means the runtime can extract and use the descriptor, but the branch's main
+  experiment evidence has not stressed it as heavily as the core gain/structural
+  axes.
+- `Planned but not implemented`
+  means the descriptor is part of the design intent or roadmap, but it is not
+  in the current runtime registry.
+- `Exploratory future candidate`
+  means the descriptor is a research idea worth testing later, but it should
+  not yet be described as part of the implemented branch surface.
+
+Descriptor references elsewhere in this document should use these labels rather
+than implying that proposal text and runtime implementation are the same thing.
+
+### Implemented Descriptor Registry
+
+#### Implemented and runtime-usable: structural descriptors
+
+The current runtime registry in `src/revolution/qd/descriptors.py` includes:
+
+- `seq_ratio`
+- `comb_ratio`
+- `mux_ratio`
+- `adder_ratio`
+- `ltp_noff`
+- `cell_count_log`
+
+Current extraction path:
+
+- `seq_ratio`, `comb_ratio`, `mux_ratio`, and `adder_ratio`
+  are derived from structural cell-count composition in
+  `src/revolution/runtime/structural_evaluator.py`
+- `ltp_noff`
+  is a longest-topological-path descriptor intended to track long
+  combinational chains
+- `cell_count_log`
+  is represented as a `log1p`-transformed descriptor in the registry even
+  though the structural evaluator emits raw total-cell count into the metric
+  payload first
+
+#### Implemented but lightly validated: physical descriptors
+
+The current runtime registry also includes these OpenROAD-facing descriptors:
+
+- `wirelength`
+- `utilization`
+- `cts_buffer_count`
+- `repair_buffer_count`
+- `hold_buffer_count`
+
+Current extraction path:
+
+- these are parsed from the synthesis/OpenROAD reporting path in
+  `src/revolution/evaluation.py`
+- they are written into the machine-readable physical-metrics sidecar and are
+  available to the runtime through `physical_metrics`
+- they are therefore runtime-usable today, but the branch's most closely
+  reviewed comparison runs still rely more on structural descriptors and PPA
+  gain axes than on these physical descriptors
+
+#### Implemented and runtime-usable: PPA gain descriptors
+
+The runtime registry includes:
+
+- `g_P`
+- `g_A`
+- `g_T`
+
+Definitions:
+
+- `g_P = (P_ref - P_gen) / P_ref`
+- `g_A = (A_ref - A_gen) / A_ref`
+- `g_T = (T_ref - T_gen) / T_ref`
+
+These are the most heavily exercised QD descriptors in the branch's completed
+comparison runs so far.
+
+### Implemented Descriptor Profiles
+
+The current descriptor-profile config in
+`data/configs/qd_descriptor_profiles.yaml` defines:
+
+- `rtl_core`
+  - `seq_ratio`
+  - `mux_ratio`
+  - `ltp_noff`
+  - `cell_count_log`
+- `rtl_phys`
+  - `seq_ratio`
+  - `ltp_noff`
+  - `wirelength`
+  - `utilization`
+- `rtl_phys_cts`
+  - `seq_ratio`
+  - `ltp_noff`
+  - `wirelength`
+  - `cts_buffer_count`
+  - `repair_buffer_count`
+- `hybrid_seq_default`
+  - `seq_ratio`
+  - `mux_ratio`
+  - `ltp_noff`
+  - `cell_count_log`
+  - `g_P`
+  - `g_A`
+  - `g_T`
+- `hybrid_comb_default`
+  - `mux_ratio`
+  - `ltp_noff`
+  - `cell_count_log`
+  - `g_P`
+  - `g_A`
+- `hybrid_phys_seq`
+  - `seq_ratio`
+  - `ltp_noff`
+  - `wirelength`
+  - `utilization`
+  - `cts_buffer_count`
+  - `g_P`
+  - `g_A`
+  - `g_T`
+
+Current runtime default resolution from `src/revolution/qd/descriptors.py`:
+
+- current `grid` default:
+  - combinational: `g_A`, `g_P`
+  - sequential: `g_A`, `g_T`
+- current `cvt` default:
+  - combinational:
+    `mux_ratio`, `ltp_noff`, `cell_count_log`, `g_P`, `g_A`
+  - sequential:
+    `seq_ratio`, `mux_ratio`, `ltp_noff`, `cell_count_log`, `g_P`, `g_A`,
+    `g_T`
+
+Current public descriptor-control surface:
+
+- `qd_descriptor_profile`
+- `qd_descriptor_axes`
+- `qd_descriptor_file`
+- `qd_grid_axes`
+- `qd_cvt_axes`
+
+### Actual Descriptor Usage In The Completed `20 x 5` Run
+
+The completed `20 x 5` long-budget comparison did **not** use the richer
+descriptor inventory above in any meaningful way. It used reduced gain-axis
+descriptors to isolate archive mechanics:
+
+- RTLLM `grid`:
+  `g_A`, `g_T`
+- RTLLM `cvt`:
+  `g_A`, `g_T`
+- VerilogEval `grid`:
+  `g_A`, `g_P`
+- VerilogEval `cvt`:
+  `g_A`, `g_P`
+
+Interpretation:
+
+- this was a useful archive-mechanics and geometry-comparison run
+- it was **not** a full descriptor-rich QD study
+- it validated low-dimensional archive behavior much more than it validated
+  the branch's fuller descriptor program
+
+### Known Descriptor Gaps And Current Limitations
+
+- Structural descriptors and PPA gain descriptors currently have the strongest
+  empirical support in this branch.
+- Physical descriptors are implemented and available, but the most visible run
+  evidence still under-exercises them.
+- The completed `20 x 5` run under-used the implemented descriptor inventory.
+- Current paper-style claims should therefore frame the existing results as
+  archive-mechanics and low-dimensional QD evidence, not as proof that the full
+  structural-plus-physical descriptor program is already validated.
+- Icarus-derived dynamic descriptors are **not** part of the implemented
+  runtime descriptor registry yet.
+
+### Planned Default Fix: Sequential Grid Must Include `g_P`
+
+Current issue:
+
+- the current sequential `grid` default resolves to `g_A`, `g_T`
+- this omits `g_P` without a strong algorithmic reason
+- that omission makes the default sequential grid archive under-represent
+  power-specialist elites relative to the original QD intent
+
+Planned future fix:
+
+- update `src/revolution/qd/descriptors.py`
+- change sequential `grid` default resolution from:
+  - `g_A`, `g_T`
+- to:
+  - `g_A`, `g_P`, `g_T`
+
+Required follow-through once that code change lands:
+
+- update descriptor/default documentation in this living plan
+- update any user-facing docs that describe grid defaults
+- add regression coverage for sequential grid default resolution
+- rerun at least one bounded sequential grid smoke to confirm the archive now
+  retains power-specialist candidates more naturally
+
+### Future Descriptor Roadmap
+
+#### Planned but not implemented
+
+- Icarus/VCD/SAIF-derived toggle or activity descriptors
+- latency / cycle-to-valid descriptors
+- throughput or initiation-interval descriptors where benchmark semantics
+  allow them
+- richer OpenROAD congestion or routing-stress descriptors
+- additional structural or control-shape proxies if extraction remains cheap
+  and stable
+
+#### Exploratory future candidates
+
+- fanout or criticality proxies
+- FSM/control-entropy proxies
+- formal-complexity or proof-difficulty proxies
+- localized congestion-hotspot descriptors
+
+Promotion rule for future descriptors:
+
+- do not promote a future descriptor into defaults unless extraction stability,
+  descriptor-probe coverage, and empirical QD benefit are all documented in the
+  living plan
+
+### Rich-Descriptor `20 x 5` Rerun Plan
+
+Goal:
+
+- rerun the same `20 x 5` comparison on the same four designs while using much
+  richer QD descriptor spaces than the reduced gain-only setup used previously
+
+Design set:
+
+- RTLLM:
+  - `Prob043_RAM`
+  - `Prob045_alu`
+- VerilogEval-Spec-to-RTL:
+  - `Prob153_gshare`
+  - `Prob156_review2015_fancytimer`
+
+Common settings:
+
+- model:
+  `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b`
+- `population_size=20`
+- `num_generations=5`
+- `temperature=1.0`
+- `top_p=1.0`
+- `max_tokens=128000`
+- `diff_max_tokens=128000`
+- `num_workers=2`
+- `candidate_workers=0`
+- `evaluation_mode=search_accelerated`
+- `accelerated_synthesis_top_k=1`
+- `seed=42`
+
+Classic control:
+
+- keep classic REvolution unchanged as the non-QD baseline
+
+Richer grid rerun:
+
+- first fix the sequential grid default so it includes `g_P`
+- then run the richer grid rerun using explicit descriptor axes instead of
+  relying on minimal defaults
+- planned richer grid axes:
+  - sequential-style problems:
+    `seq_ratio`, `ltp_noff`, `g_A`, `g_P`, `g_T`
+  - combinational-style problems:
+    `mux_ratio`, `ltp_noff`, `g_A`, `g_P`
+- for the richer grid rerun, use explicit `grid_axes:` configuration in
+  `qd_descriptor_file` rather than fallback bounds/bin inference
+
+Richer CVT rerun:
+
+- use fuller descriptor profiles as the primary descriptor-rich experiment
+- planned CVT profiles:
+  - sequential-style problems:
+    `hybrid_seq_default`
+  - combinational-style problems:
+    `hybrid_comb_default`
+- sequential follow-up if primary CVT rerun is stable:
+  - rerun sequential tasks with `hybrid_phys_seq` to test whether physical
+    descriptors improve archive diversity or best-quality outcomes
+
+Archive settings for the richer rerun:
+
+- keep `qd_num_cells=16`
+- keep `qd_cvt_warmup_successes=4`
+- for grid, explicitly configure per-axis bin/bounds specs through
+  `qd_descriptor_file`
+
+Required post-rerun review checklist:
+
+- compare best score across classic, grid, and CVT
+- compare coverage, QD score, best quality, and mean quality
+- inspect descriptor extraction failures
+- inspect grid heatmaps and CVT projection plots
+- explicitly assess whether adding `g_P` changes sequential grid retention of
+  power-specialist elites
+- compare the richer rerun against the earlier reduced-axis run without
+  pretending they are the same experiment
+- assess whether CVT benefits more than grid from the richer descriptor space
+
 ## Original Plan Comparison Review
 
 This section compares the current implementation state to the original QD/MAP-
@@ -141,14 +459,15 @@ explicit, evaluate whether it was appropriate, and keep the roadmap honest.
   scheme, but it closes the main usability gap without introducing a second
   parallel config mechanism.
 
-- Divergence: descriptor extraction is currently a tested substrate and registry
-  plus Yosys-like structural helpers, but not yet fully wired to machine-
-  readable OpenROAD sidecars for physical descriptors.
+- Divergence: physical descriptor plumbing now exists through machine-readable
+  OpenROAD sidecars and runtime `physical_metrics`, but the main published run
+  evidence still under-exercises those axes relative to structural and gain
+  descriptors.
   Review:
-  This divergence is acceptable at the current stage because the active runtime
-  grid path is using normalized PPA gain axes. It should not be treated as
-  complete descriptor parity. Stage 4 or Stage 7 still needs actual physical-
-  metric plumbing so descriptor experiments are not partly synthetic.
+  This is now a validation-depth gap rather than a missing-runtime-plumbing
+  gap. The branch should not describe physical descriptors as absent, but it
+  also should not over-claim that the full structural-plus-physical descriptor
+  program is already empirically validated.
 
 - Divergence: live RTLLM grid smokes were attempted but are currently blocked by
   long-running first-generation behavior on the shared vLLM endpoint rather
@@ -409,6 +728,18 @@ Documentation risk to watch:
 - [x] Add QD metrics JSON
 - [x] Add grid layout / centroid output
 - [x] Add grid heatmaps and CVT projection plots
+
+### Future Descriptor Follow-Through
+
+- [ ] Fix sequential `grid` default resolution so it includes `g_P` in addition
+      to `g_A` and `g_T`
+- [ ] Add regression coverage for the corrected sequential `grid` default
+- [ ] Re-run the `20 x 5` comparison with richer descriptor spaces for both
+      `grid` and `cvt`
+- [ ] Compare rich-descriptor rerun results against the existing reduced-axis
+      run on coverage, QD score, best quality, and visualization behavior
+- [ ] Evaluate whether `hybrid_phys_seq` materially improves sequential CVT
+      archive diversity or best-quality outcomes
 
 ## Validation Log
 
@@ -1598,6 +1929,31 @@ implementation and testing so far.
   so CVT should remain in the default paper path rather than being treated as a
   visualization-only backend.
 
+### Descriptor follow-through revision
+
+- The branch now has a richer implemented descriptor inventory than the main
+  completed `20 x 5` run actually used.
+- The next descriptor-focused follow-through should explicitly separate:
+  - archive-geometry questions
+  - descriptor-richness questions
+  - runtime-extraction reliability questions
+- Planned near-term fix:
+  - update sequential `grid` defaults so they include `g_P` alongside `g_A`
+    and `g_T`
+- Planned near-term rerun:
+  - repeat the same four-design `20 x 5` matrix with richer descriptor spaces
+    for both `grid` and `cvt`
+  - keep classic unchanged as the control
+  - use explicit grid-axis specs instead of relying on the current minimal
+    defaults
+  - use `hybrid_seq_default` / `hybrid_comb_default` as the primary CVT
+    descriptor-rich rerun profiles
+- Interpretation rule for that rerun:
+  - if CVT improves coverage and archive quality under richer descriptors while
+    grid becomes sparse or unstable, treat that as evidence about archive
+    geometry suitability rather than proof that richer descriptors are a bad
+    idea
+
 ### Stage 5 revision
 
 - Add `M-T` and `C-D` only after the grid runtime and archive parent-view
@@ -1679,6 +2035,9 @@ implementation and testing so far.
 - Formal-heavy RealBench support beyond module subsets.
 - Benchmark-specific descriptor studies once the core archive pipeline is
   stable.
+- Fix sequential `grid` defaults so `g_P` is included for sequential circuits.
+- Run the richer-descriptor `20 x 5` comparison after the sequential-grid
+  default fix and explicit grid-axis spec update land.
 - Additional descriptors adopted only after probe evidence justifies them.
 
 ## Smoke Commands
