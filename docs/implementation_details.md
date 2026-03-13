@@ -62,9 +62,12 @@ The current QD implementation is staged:
   - immediate current-runtime-compatible profiles:
     `implemented_structural_compact_3d`,
     `implemented_structural_fixed_5d`
-  - deferred future profiles that still need new runtime axes:
+  - early-stage runtime-supported retrospective profiles:
     `size_control_3d`,
     `timing_control_3d`
+  - additional runtime-supported follow-on controls:
+    `wire_assign_if_3d`,
+    `size_sharing_3d`
 - grid archive construction now honors `qd_descriptor_profile` when
   `qd_grid_axes` is omitted; the Stage 10 refresh work fixed an earlier bug
   where grid runs silently fell back to gain axes.

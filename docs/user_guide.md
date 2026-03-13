@@ -157,16 +157,17 @@ Current feature status:
     `implemented_structural_compact_3d`
   - immediate CVT/control profile:
     `implemented_structural_fixed_5d`
-  - deferred future profiles:
+  - early-stage runtime-supported retrospective profiles:
     `size_control_3d`, `timing_control_3d`
-    because they still require new runtime descriptor extraction
+  - richer follow-on runtime-supported controls:
+    `wire_assign_if_3d`, `size_sharing_3d`
 - When `qd_grid_axes` is omitted, grid mode now honors
   `qd_descriptor_profile`, so the compact structural profile above is actually
   enough to reproduce the retrospective refresh configuration.
 - Current refresh evidence under `/tmp/qd_rich20x5_refresh_v2` suggests these
-  structural retrospective profiles are useful experimental controls, but they
-  are not strong enough on the current four-problem corpus to replace the
-  earlier richer/gain-heavy baseline as new defaults.
+  structural and early-stage retrospective profiles are useful experimental
+  controls, but they are not strong enough on the current four-problem corpus
+  to replace the earlier richer/gain-heavy baseline as new defaults.
 - `scripts/run_backend_qd_smoke_vllm.sh` provides a repeatable QD smoke matrix
   for `grid` and `cvt` with `--suite rtllm|verilogeval`,
   `--policy whole-heavy|diff-heavy`, and `--dry-run`, and now defaults to a

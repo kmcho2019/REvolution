@@ -49,6 +49,9 @@ Related evaluation files:
   Icarus, Yosys, and OpenROAD execution plus structural/physical metric parsing
 - [structural_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/structural_evaluator.py):
   structural metric extraction helpers
+- [rtl_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/rtl_descriptor_evaluator.py):
+  lightweight RTL-text, AST, and netlist-estimate descriptor extraction used by
+  the new retrospective runtime profiles
 - [problem_spec.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/problem_spec.py):
   benchmark capability defaults and per-phase generation-mode defaults
 
@@ -72,6 +75,33 @@ Structural descriptors come from the synthesis side of the pipeline:
 
 These are extracted through the Yosys-oriented path and attached to candidates
 as `structural_metrics`.
+
+Retrospective RTL/AST/netlist-estimate descriptors now also exist at runtime
+through `rtl_metrics`:
+
+- `wire_count_log_est`
+- `wire_cell_ratio_est`
+- `assign_count`
+- `if_count`
+- `always_count`
+- `case_count`
+- `ternary_count`
+- `rtl_instance_count_est`
+- `fsm_state_count_est`
+- `ast_depth_est`
+- `ctrl_depth_est`
+- `math_op_ast_count`
+- `resource_sharing_ratio_est`
+
+Extraction path:
+
+- source-text counts and lightweight RTL-shape counts come from
+  [rtl_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/rtl_descriptor_evaluator.py)
+- `wire_count_log_est` and `wire_cell_ratio_est` prefer the synthesized netlist
+  when available and fall back to source-level wire-like declarations
+- `ast_depth_est`, `ctrl_depth_est`, `math_op_ast_count`, and
+  `resource_sharing_ratio_est` come from a lightweight Yosys AST dump when the
+  candidate RTL file is available
 
 Physical descriptors come from the OpenROAD reporting path:
 
@@ -116,15 +146,17 @@ Adopted immediate profiles on this branch:
   - use as the immediate current-runtime-compatible structural CVT/control
     profile
 
-Retrospective-only future profiles:
+Runtime-supported retrospective profiles:
 
 - `size_control_3d`
   - `wire_count_log_est`, `assign_count`, `ctrl_depth_est`
 - `timing_control_3d`
   - `wire_count_log_est`, `if_count`, `ast_depth_est`
-
-Those future profiles are intentionally not treated as runtime-supported yet,
-because the current branch does not extract those axes during real QD runs.
+- `wire_assign_if_3d`
+  - `wire_count_log_est`, `assign_count`, `if_count`
+- `size_sharing_3d`
+  - `wire_count_log_est`, `wire_cell_ratio_est`,
+    `resource_sharing_ratio_est`
 
 Stage 10 runtime note:
 
@@ -134,6 +166,13 @@ Stage 10 runtime note:
 - current refresh evidence under `/tmp/qd_rich20x5_refresh_v2` indicates the
   structural retrospective profiles are useful controls, but not new defaults
   yet
+
+Stage 11 runtime note:
+
+- the branch now supports the primary retrospective source/AST/netlist
+  descriptor family during real QD runs, not just retrospective replay
+- these profiles should still be treated as early-stage experimental surfaces
+  until bounded smokes and longer reruns confirm their live behavior
 
 ## Archive Geometry
 
@@ -225,6 +264,7 @@ successful pool.
     syntax, simulation, synthesis, post-synthesis functionality, and PPA.
 13. For successful candidates, QD descriptor tuples are constructed from:
     - structural metrics
+    - RTL/AST/netlist-estimate metrics
     - physical metrics
     - computed `g_P`, `g_A`, `g_T`
 14. Each success is inserted into the archive:

@@ -165,16 +165,23 @@ Current status on this feature branch:
   retrospective `/tmp/qd_rich20x5` analysis are:
   - `implemented_structural_compact_3d` for compact structural grid studies
   - `implemented_structural_fixed_5d` for structural CVT/control studies
+- The first runtime-supported retrospective source/AST/netlist profiles are now
+  live:
+  - `size_control_3d`
+  - `timing_control_3d`
+  - `wire_assign_if_3d`
+  - `size_sharing_3d`
 - When `--qd_grid_axes` is omitted, grid mode now correctly honors
   `--qd_descriptor_profile` instead of silently falling back to gain axes.
-- Retrospective future profiles such as `size_control_3d` and
-  `timing_control_3d` are documented in the living plan and QD guide, but they
-  remain future work until the branch grows the required runtime descriptor
-  extraction support.
+- The still-future descriptor work is now mainly dynamic or heavier physical
+  extraction:
+  - Icarus/VCD/SAIF-derived activity axes
+  - latency and throughput descriptors
+  - richer congestion-oriented physical axes
 - Current refresh evidence under `/tmp/qd_rich20x5_refresh_v2` suggests these
-  structural retrospective profiles are useful experimental controls, but not
-  new defaults yet; the older richer/gain-heavy baseline still performs better
-  on the current four-problem corpus.
+  structural and early-stage retrospective profiles are useful experimental
+  controls, but not new defaults yet; the older richer/gain-heavy baseline
+  still performs better on the current four-problem corpus.
 - broader benchmark expansion is still staged work.
 - bounded completion-grade grid/CVT smokes now pass on RTLLM and
   VerilogEval, but the larger short-budget experiments still produce empty

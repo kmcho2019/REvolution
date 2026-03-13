@@ -38,7 +38,8 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Branch: `feat/revolution-qd-map-elites`
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
-- Current stage: `Stage 10 (in progress)`
+- Current stage:
+  `Stage 11 completed; Stage 10 long-budget refresh evidence still in progress`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
@@ -55,8 +56,12 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   `qd_archive_event.json` artifacts are emitted for archive-handled successful
   candidates, `archive_space.json` plus `archive_space_report.md` are emitted
   per QD problem, and a dedicated QD runtime guide now documents descriptor
-  extraction plus generation/run traces; engine seam cleanup and broader
-  type-debt reduction still remain pending
+  extraction plus generation/run traces; runtime structural metrics are now
+  emitted from synthesized netlists, and the retrospective RTL/AST/netlist
+  descriptor family (`wire_count_log_est`, `assign_count`, `if_count`,
+  `ctrl_depth_est`, `ast_depth_est`, `resource_sharing_ratio_est`, and related
+  counts) is now wired into live QD runs through `rtl_metrics`; engine seam
+  cleanup and broader type-debt reduction still remain pending
 
 ## Worktree Info
 
@@ -471,22 +476,26 @@ Current-runtime-compatible implemented sets:
   - role:
     strongest already-supported compact structural profile
 
-Retrospective future sets that still require new runtime descriptor support:
+Retrospective primary target sets at the time of the original analysis:
 
 - `size_control_3d`
   - axes:
     `wire_count_log_est`, `assign_count`, `ctrl_depth_est`
   - retrospective mean coverage:
     `0.7473958333333333`
-  - recommendation:
+  - original recommendation:
     first future runtime descriptor target
+  - Stage 11 status:
+    now runtime-supported on this branch
 - `timing_control_3d`
   - axes:
     `wire_count_log_est`, `if_count`, `ast_depth_est`
   - retrospective mean coverage:
     `0.65625`
-  - recommendation:
+  - original recommendation:
     timing/control-oriented second future runtime target
+  - Stage 11 status:
+    now runtime-supported on this branch
 
 Second-wave exploratory combinations from the same analysis:
 
@@ -507,9 +516,10 @@ Runtime-supported today on this branch:
 - gains:
   `g_P`, `g_A`, `g_T`
 
-Retrospective-only axes for now:
+New runtime-supported RTL/AST/netlist-estimate axes:
 
 - `wire_count_log_est`
+- `wire_cell_ratio_est`
 - `assign_count`
 - `if_count`
 - `always_count`
@@ -521,14 +531,23 @@ Retrospective-only axes for now:
 - `ast_depth_est`
 - `math_op_ast_count`
 - `resource_sharing_ratio_est`
-- `wire_cell_ratio_est`
+
+Still retrospective-only / future-only for now:
+
+- Icarus/VCD/SAIF-derived activity descriptors
+- latency / cycle-to-valid descriptors
+- throughput / initiation-interval descriptors
+- richer congestion or routing-pressure descriptors
+- second-wave hypothetical combinations that need new axes beyond the current
+  RTL/AST/netlist estimator family
 
 Interpretation:
 
 - the retrospective analysis is useful for feature prioritization
-- it does **not** imply those axes are already available in the runtime branch
-- only the runtime-supported axes may be described as implemented in this
+- the primary recommended retrospective sets are now available in the runtime
   branch
+- the remaining future-only axes above should still not be described as
+  implemented
 
 ### Adopted Immediate Changes
 
@@ -543,6 +562,18 @@ retrospective analysis:
   - use as the immediate low-dimensional exploratory replacement for the
     earlier poor `rich_seq_grid`-style choice on this corpus
 
+This branch now also adopts live runtime support for the primary retrospective
+descriptor family:
+
+- `size_control_3d`
+  - `wire_count_log_est`, `assign_count`, `ctrl_depth_est`
+- `timing_control_3d`
+  - `wire_count_log_est`, `if_count`, `ast_depth_est`
+- additional currently implemented supporting axes:
+  `always_count`, `case_count`, `ternary_count`, `rtl_instance_count_est`,
+  `fsm_state_count_est`, `wire_cell_ratio_est`, `math_op_ast_count`,
+  `resource_sharing_ratio_est`
+
 This branch also adopts the retrospective grid-axis bounds for the structural
 axes used by those profiles:
 
@@ -551,25 +582,30 @@ axes used by those profiles:
 - `mux_ratio`
 - `adder_ratio`
 - `cell_count_log`
-
-These are config-only changes. They do not add new runtime feature extraction.
+- `wire_count_log_est`
+- `assign_count`
+- `ctrl_depth_est`
+- `if_count`
+- `ast_depth_est`
+- `wire_cell_ratio_est`
+- `resource_sharing_ratio_est`
 
 ### Deferred Runtime-Feature Work
 
-Still deferred until new runtime descriptor support is added:
+Still deferred until further runtime descriptor support is added:
 
-- `size_control_3d`
-- `timing_control_3d`
-- any profile requiring `wire_count_log_est`
-- any profile requiring source-text counts such as `assign_count` or `if_count`
-- any profile requiring AST-derived descriptors such as `ctrl_depth_est` or
-  `ast_depth_est`
+- Icarus/VCD/SAIF-derived activity descriptors
+- latency / cycle-to-valid descriptors
+- throughput / initiation-interval descriptors
+- richer OpenROAD congestion or routing-stress descriptors
+- second-wave hypothetical combinations that depend on not-yet-implemented
+  future axes
 
 Reason for deferral:
 
-- this execution phase is intentionally limited to docs/config/profile refresh
-  plus reruns
-- no new runtime extraction logic is added in this phase
+- this execution phase adds the primary RTL/AST/netlist estimator family, but
+  it does not yet cover dynamic simulation descriptors or richer physical-flow
+  congestion signals
 
 ### Refresh Experiment Plan
 
@@ -636,8 +672,9 @@ Interpretation rules:
   as a documented control profile rather than changing defaults
 - if neither improves, record that the retrospective simulation did not
   transfer cleanly to the live runtime
-- do not claim runtime validation for `size_control_3d` or `timing_control_3d`
-  until the new axes are actually implemented
+- treat `size_control_3d` and `timing_control_3d` as runtime-supported but
+  still early-stage profiles until live smokes and longer reruns confirm they
+  behave well outside retrospective replay
 
 ### Refresh Execution Findings From `/tmp/qd_rich20x5_refresh_v2`
 
@@ -1021,6 +1058,22 @@ Documentation risk to watch:
       whether coverage/QD score improved.
 - [ ] Update validation log, debt review, intent alignment review, and commit
       ledger.
+
+### Stage 11: Runtime Retrospective Descriptor Rollout
+
+- [x] Implement runtime structural-metric emission from synthesized netlists.
+- [x] Implement lightweight RTL/AST/netlist descriptor extraction for the
+      primary retrospective axis family.
+- [x] Add runtime-supported profiles for `size_control_3d`,
+      `timing_control_3d`, and related follow-on controls.
+- [x] Wire the new descriptor family into both the shared
+      `CandidateEvaluator` path and the legacy `QDEngine`/`EoHEngine`
+      evaluation path.
+- [x] Add regression coverage for the new runtime descriptor extraction path.
+- [x] Run focused pytest/ruff/ty validation after the rollout.
+- [x] Run bounded live vLLM smokes for the new runtime-supported profiles.
+- [x] Update validation log, debt review, intent alignment review, and commit
+      ledger with Stage 11 findings.
 
 ## Exact TODO List
 
@@ -2227,6 +2280,57 @@ Documentation risk to watch:
     baseline on this four-problem corpus, so they should remain explicit
     experimental controls rather than new defaults
 
+### Stage 11
+
+- Date: `2026-03-13`
+- Implementation checkpoint:
+  - added runtime descriptor extraction for the primary retrospective
+    source/AST/netlist family in
+    `src/revolution/rtl_descriptor_evaluator.py`
+  - synthesis-side metrics now emit `structural_metrics` from synthesized
+    netlists in `src/revolution/evaluation.py`
+  - candidate enrichment now carries `rtl_metrics` through:
+    - `src/revolution/runtime/candidate_evaluator.py`
+    - `src/revolution/runtime/cvdp_evaluator.py`
+    - `src/revolution/algorithm.py`
+    - `src/revolution/qd/engine.py`
+  - runtime-supported retrospective profiles now include:
+    - `size_control_3d`
+    - `timing_control_3d`
+    - `wire_assign_if_3d`
+    - `size_sharing_3d`
+  - QD candidate archive-event artifacts now include `rtl_metrics`
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_rtl_descriptor_evaluator.py tests/revolution/test_structural_evaluator.py tests/revolution/test_candidate_evaluator.py tests/revolution/test_cvdp_evaluator.py tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_engine.py tests/revolution/test_evaluation.py`
+  - Result: `84 passed`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `349 passed`
+  - `/workspace/.venv/bin/ruff check src/revolution/rtl_descriptor_evaluator.py src/revolution/evaluation.py src/revolution/qd src/revolution/runtime/structural_evaluator.py src/revolution/runtime/candidate_evaluator.py src/revolution/runtime/cvdp_evaluator.py tests/revolution/test_rtl_descriptor_evaluator.py tests/revolution/test_structural_evaluator.py tests/revolution/test_candidate_evaluator.py tests/revolution/test_cvdp_evaluator.py tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_engine.py tests/revolution/test_evaluation.py`
+  - Result: `All checks passed!`
+  - `/workspace/.venv/bin/python -m pyright src/revolution/rtl_descriptor_evaluator.py src/revolution/evaluation.py src/revolution/qd/descriptors.py src/revolution/qd/engine.py src/revolution/qd/artifacts.py src/revolution/runtime/structural_evaluator.py src/revolution/runtime/cvdp_evaluator.py`
+  - Result: `0 errors, 1 warning`
+    - warning detail:
+      - `src/revolution/qd/descriptors.py`: `yaml` could not be resolved from
+        source by pyright
+  - `uv tool run ty check src/revolution/rtl_descriptor_evaluator.py src/revolution/evaluation.py src/revolution/qd src/revolution/runtime/structural_evaluator.py src/revolution/runtime/cvdp_evaluator.py`
+  - Result: `All checks passed!`
+- Live validation:
+  - attempted richer-profile smokes under:
+    - `/tmp/qd_stage11_smoke`
+    - `/tmp/qd_stage11_smoke_v2`
+  - commands passed vLLM preflight and entered the runner, but they did not
+    materialize a first candidate directory or archive artifact inside the
+    bounded observation window
+  - result:
+    - treat Stage 11 smoke validation as attempted-but-blocked on the shared
+      endpoint, not as a passed completion-grade smoke
+- Notes:
+  - the runtime rollout is code-complete and covered by tests, but live smoke
+    evidence for the new retrospective profiles is still weaker than the
+    existing Stage 10 compact/fixed-profile smoke evidence
+  - the practical bottleneck remains the shared reasoning-model endpoint rather
+    than descriptor-resolution failures or archive-serialization bugs
+
 ## Debt Review
 
 ### Stage 0
@@ -2393,6 +2497,21 @@ Documentation risk to watch:
   refresh matrices remain multi-hour jobs; the plan should continue to
   distinguish bounded profile-smoke evidence from full experiment evidence.
 
+### Stage 11
+
+- The new retrospective descriptor rollout adds one focused evaluator module
+  (`src/revolution/rtl_descriptor_evaluator.py`) instead of scattering source-
+  and AST-level heuristics across multiple unrelated runtime files.
+- Structural metrics now have two live runtime sources:
+  report/sidecar extraction and synthesized-netlist extraction. That is useful
+  but means those paths need to stay aligned to avoid silent drift.
+- The new descriptor family is intentionally heuristic and lightweight. That is
+  appropriate for this stage, but the branch should continue treating these
+  axes as experimental until longer live evidence accumulates.
+- The main remaining debt is empirical and endpoint-related rather than
+  architectural: bounded live smokes for these new profiles still stall before
+  first-candidate artifact materialization on the shared endpoint.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -2529,6 +2648,20 @@ Documentation risk to watch:
   budget. That is an empirical outcome, not an architectural failure, and the
   plan now records it explicitly instead of forcing a premature default change.
 
+### Stage 11
+
+- Stage 11 moves the branch closer to the original QD intent because the first
+  retrospective “future” descriptor family is now part of the live runtime
+  instead of only offline analysis artifacts.
+- The rollout still respects the original configurability goal: the new axes
+  arrive behind the existing descriptor-profile and axis-selection surfaces
+  rather than hardcoding a new archive policy.
+- Classic REvolution remains comparable because the new RTL/AST/netlist metric
+  extraction is only activated when the selected QD axes actually require it.
+- The remaining alignment gap is validation breadth, not architecture:
+  unit/integration evidence is strong, but live smoke evidence for the new
+  profiles is still thinner than for the earlier Stage 10 structural controls.
+
 ## Roadmap Extension
 
 This roadmap extends the original stage list with the concrete findings from
@@ -2661,6 +2794,7 @@ implementation and testing so far.
 
 ## Commit Ledger
 
+- `4fefc818ee` `feat(qd): add runtime retrospective descriptor extraction`
 - `675d2fbc4d` `fix(qd): record initial archive snapshots and experiment findings`
 - `32ea6f39e6` `docs(qd): bootstrap living implementation plan and worktree log`
 - `e91188281b` `feat(qd): add search mode and capability scaffolding`
