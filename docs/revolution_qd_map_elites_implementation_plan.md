@@ -38,7 +38,7 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Branch: `feat/revolution-qd-map-elites`
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
-- Current stage: `Stage 9`
+- Current stage: `Stage 9 (complete)`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
@@ -679,7 +679,7 @@ Documentation risk to watch:
 - [x] Update top-level docs and the living plan to point to the new guide and
       artifact set.
 - [x] Run bounded live grid/CVT validation after the new artifact layer lands.
-- [ ] Commit Stage 9.
+- [x] Commit Stage 9.
 
 ## Exact TODO List
 
@@ -1817,6 +1817,8 @@ Documentation risk to watch:
     shared endpoint not materializing a first candidate quickly enough
   - the new guide and artifact set are now the recommended way to understand
     or debug QD runs without reverse-engineering `archive_history.jsonl` alone
+- Commit:
+  - `50fd888e3d` `feat(qd): add archive event logs and space reports`
 
 ## Debt Review
 
@@ -2261,6 +2263,7 @@ implementation and testing so far.
 - `0fa6b0af2d` `fix(qd): guard long-context vllm token budgets`
 - `edd230b585` `docs(qd): record 20x5 experiment results`
 - `20f1353e07` `docs(qd): expand descriptor inventory and rerun roadmap`
+- `50fd888e3d` `feat(qd): add archive event logs and space reports`
 
 ## Deferred Follow-Ups
 
