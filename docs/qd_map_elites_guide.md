@@ -98,6 +98,43 @@ Important current-runtime detail:
   [algorithm.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/algorithm.py),
   not the separate typed `CandidateEvaluator` loop as its primary runtime
 
+## Retrospective Profile Ladder
+
+The finished retrospective analysis under `/tmp/qd_rich20x5` showed that the
+branch should distinguish between:
+
+- current-runtime-compatible profiles that can be used immediately
+- retrospective-only profiles that still need new runtime descriptor extraction
+
+Adopted immediate profiles on this branch:
+
+- `implemented_structural_compact_3d`
+  - `comb_ratio`, `adder_ratio`, `cell_count_log`
+  - use as the immediate compact structural grid profile
+- `implemented_structural_fixed_5d`
+  - `seq_ratio`, `comb_ratio`, `mux_ratio`, `adder_ratio`, `cell_count_log`
+  - use as the immediate current-runtime-compatible structural CVT/control
+    profile
+
+Retrospective-only future profiles:
+
+- `size_control_3d`
+  - `wire_count_log_est`, `assign_count`, `ctrl_depth_est`
+- `timing_control_3d`
+  - `wire_count_log_est`, `if_count`, `ast_depth_est`
+
+Those future profiles are intentionally not treated as runtime-supported yet,
+because the current branch does not extract those axes during real QD runs.
+
+Stage 10 runtime note:
+
+- grid mode now honors `qd_descriptor_profile` when `qd_grid_axes` is omitted,
+  so `implemented_structural_compact_3d` is no longer just a config file entry;
+  it is active in real grid runs and visible in `archive_space_report.md`
+- current refresh evidence under `/tmp/qd_rich20x5_refresh_v2` indicates the
+  structural retrospective profiles are useful controls, but not new defaults
+  yet
+
 ## Archive Geometry
 
 ### Grid

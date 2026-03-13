@@ -38,7 +38,7 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Branch: `feat/revolution-qd-map-elites`
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
-- Current stage: `Stage 9 (complete)`
+- Current stage: `Stage 10 (in progress)`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
@@ -409,6 +409,326 @@ Required post-rerun review checklist:
   pretending they are the same experiment
 - assess whether CVT benefits more than grid from the richer descriptor space
 
+## Retrospective Descriptor Analysis From `/tmp/qd_rich20x5`
+
+This section records the retrospective feature-analysis work performed after the
+initial rich-descriptor reruns. Unlike the earlier descriptor section above,
+this section is grounded in the finished experiment corpus under
+`/tmp/qd_rich20x5` and explicitly separates:
+
+- actual branch runtime support
+- retrospective simulation-only axes
+- immediate config/profile changes adopted on this branch
+- deferred runtime-feature work that still needs code changes
+
+### Data Sources Reviewed
+
+- `/tmp/qd_rich20x5/QD_FEATURE_STATE_AND_RECOMMENDATIONS.md`
+- `/tmp/qd_rich20x5/analysis/reports/qd_feature_experiment_report.md`
+- `/tmp/qd_rich20x5/analysis/reports/feature_variation_live.md`
+- `/tmp/qd_rich20x5/analysis/data/recommendation_matrix.csv`
+- `/tmp/qd_rich20x5/analysis/data/stable_feature_set_scores.csv`
+- `/tmp/qd_rich20x5/analysis/data/current_qd_axis_inventory.csv`
+- `/tmp/qd_rich20x5/analysis/data/experimental_descriptor_profiles.yaml`
+
+### Actual Run Findings
+
+The retrospective executive summary confirms that the earlier rich-grid choice
+was a poor main exploratory profile for this corpus, while CVT remained viable:
+
+- current rich grid equivalent (`rich_seq_grid`) mean coverage:
+  `0.0859375`
+- current runtime CVT baseline (`hybrid_seq_default`) mean coverage:
+  `0.421875`
+- current sequential objective-only grid default (`g_A`, `g_P`, `g_T`) mean
+  coverage:
+  `0.5859375`
+
+Important interpretation from the retrospective analysis:
+
+- the earlier rich-grid runs collapsed structurally
+- `seq_ratio` and `ltp_noff` did not carry meaningful occupied-cell separation
+  on this corpus
+- occupancy was still driven mostly by gain axes (`g_A`, `g_P`, `g_T`)
+- the objective-only sequential grid default is therefore acceptable as an
+  ablation/control, but it is not sufficient evidence of structural-space
+  illumination
+
+### Retrospective Feature-Set Findings
+
+Current-runtime-compatible implemented sets:
+
+- `implemented_structural_fixed_5d`
+  - axes:
+    `seq_ratio`, `comb_ratio`, `mux_ratio`, `adder_ratio`, `cell_count_log`
+  - retrospective mean coverage:
+    `0.5234375`
+  - role:
+    immediate current-runtime-compatible structural control profile
+- `comb_ratio + adder_ratio + cell_count_log`
+  - retrospective mean coverage:
+    `0.671875`
+  - role:
+    strongest already-supported compact structural profile
+
+Retrospective future sets that still require new runtime descriptor support:
+
+- `size_control_3d`
+  - axes:
+    `wire_count_log_est`, `assign_count`, `ctrl_depth_est`
+  - retrospective mean coverage:
+    `0.7473958333333333`
+  - recommendation:
+    first future runtime descriptor target
+- `timing_control_3d`
+  - axes:
+    `wire_count_log_est`, `if_count`, `ast_depth_est`
+  - retrospective mean coverage:
+    `0.65625`
+  - recommendation:
+    timing/control-oriented second future runtime target
+
+Second-wave exploratory combinations from the same analysis:
+
+- `wire_count_log_est + assign_count + if_count`
+- `wire_count_log_est + ctrl_depth_est + assign_count`
+- `wire_count_log_est + if_count + math_op_ast_count`
+
+### Current Runtime Support vs Retrospective-Only Axes
+
+Runtime-supported today on this branch:
+
+- structural:
+  `seq_ratio`, `comb_ratio`, `mux_ratio`, `adder_ratio`, `ltp_noff`,
+  `cell_count_log`
+- physical:
+  `wirelength`, `utilization`, `cts_buffer_count`, `repair_buffer_count`,
+  `hold_buffer_count`
+- gains:
+  `g_P`, `g_A`, `g_T`
+
+Retrospective-only axes for now:
+
+- `wire_count_log_est`
+- `assign_count`
+- `if_count`
+- `always_count`
+- `case_count`
+- `ternary_count`
+- `rtl_instance_count_est`
+- `fsm_state_count_est`
+- `ctrl_depth_est`
+- `ast_depth_est`
+- `math_op_ast_count`
+- `resource_sharing_ratio_est`
+- `wire_cell_ratio_est`
+
+Interpretation:
+
+- the retrospective analysis is useful for feature prioritization
+- it does **not** imply those axes are already available in the runtime branch
+- only the runtime-supported axes may be described as implemented in this
+  branch
+
+### Adopted Immediate Changes
+
+This branch now adopts two current-runtime-compatible profiles from the
+retrospective analysis:
+
+- `implemented_structural_fixed_5d`
+  - use as the immediate structural control/baseline profile
+- `implemented_structural_compact_3d`
+  - defined as:
+    `comb_ratio`, `adder_ratio`, `cell_count_log`
+  - use as the immediate low-dimensional exploratory replacement for the
+    earlier poor `rich_seq_grid`-style choice on this corpus
+
+This branch also adopts the retrospective grid-axis bounds for the structural
+axes used by those profiles:
+
+- `seq_ratio`
+- `comb_ratio`
+- `mux_ratio`
+- `adder_ratio`
+- `cell_count_log`
+
+These are config-only changes. They do not add new runtime feature extraction.
+
+### Deferred Runtime-Feature Work
+
+Still deferred until new runtime descriptor support is added:
+
+- `size_control_3d`
+- `timing_control_3d`
+- any profile requiring `wire_count_log_est`
+- any profile requiring source-text counts such as `assign_count` or `if_count`
+- any profile requiring AST-derived descriptors such as `ctrl_depth_est` or
+  `ast_depth_est`
+
+Reason for deferral:
+
+- this execution phase is intentionally limited to docs/config/profile refresh
+  plus reruns
+- no new runtime extraction logic is added in this phase
+
+### Refresh Experiment Plan
+
+Refresh run root:
+
+- `/tmp/qd_rich20x5_refresh`
+
+Reuse the same 4-problem corpus:
+
+- RTLLM:
+  - `Prob043_RAM`
+  - `Prob045_alu`
+- VerilogEval-Spec-to-RTL:
+  - `Prob153_gshare`
+  - `Prob156_review2015_fancytimer`
+
+Refresh matrix:
+
+- `grid`
+  - `qd_descriptor_profile=implemented_structural_compact_3d`
+- `cvt`
+  - `qd_descriptor_profile=implemented_structural_fixed_5d`
+  - `qd_num_cells=16`
+  - `qd_cvt_warmup_successes=4`
+
+Keep the same long-budget settings as the earlier rich reruns:
+
+- `population_size=20`
+- `num_generations=5`
+- `temperature=1.0`
+- `top_p=1.0`
+- `max_tokens=128000`
+- `diff_max_tokens=128000`
+- `num_workers=2`
+- `candidate_workers=0`
+- `evaluation_mode=search_accelerated`
+- `accelerated_synthesis_top_k=1`
+- `seed=42`
+
+Classic baseline handling:
+
+- do not rerun classic unless the refresh changes reveal a regression
+- compare against the existing classic historical baseline under
+  `/tmp/qd_rich20x5`
+
+### Comparison Rules
+
+The refresh comparison must explicitly answer:
+
+- does `implemented_structural_compact_3d` improve grid coverage relative to
+  the earlier `rich_seq_grid`-style run
+- does `implemented_structural_fixed_5d` improve or degrade CVT coverage and
+  archive quality relative to `hybrid_seq_default`
+- do the refreshed runs still exhibit axis collapse
+- does the new compact structural grid remain interpretable on both RTLLM and
+  VerilogEval
+
+Interpretation rules:
+
+- if grid improves materially while CVT holds or improves, treat that as
+  evidence that the old rich-grid profile was the wrong near-term choice on
+  this corpus
+- if CVT degrades materially with `implemented_structural_fixed_5d`, keep it
+  as a documented control profile rather than changing defaults
+- if neither improves, record that the retrospective simulation did not
+  transfer cleanly to the live runtime
+- do not claim runtime validation for `size_control_3d` or `timing_control_3d`
+  until the new axes are actually implemented
+
+### Refresh Execution Findings From `/tmp/qd_rich20x5_refresh_v2`
+
+The first Stage 10 refresh attempt under `/tmp/qd_rich20x5_refresh` exposed a
+real runtime/config bug:
+
+- `implemented_structural_compact_3d` had been added to the descriptor config,
+  but `QDEngine` grid initialization still fell back to hardcoded gain axes
+  when `qd_grid_axes` was omitted
+- effect:
+  early "refresh" grid runs were mislabeled as structural-profile runs while
+  actually using `g_A`, `g_P`, `g_T`
+
+That bug is now fixed in `src/revolution/qd/engine.py`, and a corrected smoke
+run under `/tmp/qd_rich20x5_refresh_v2/smokes/grid_rtllm_compact_profile`
+confirms:
+
+- `descriptor_profile = implemented_structural_compact_3d`
+- `descriptor_axes = comb_ratio, adder_ratio, cell_count_log`
+- grid geometry uses the retrospective-derived explicit bounds from
+  `data/configs/qd_descriptor_profiles.yaml`
+
+Corrected refresh matrix:
+
+- root:
+  `/tmp/qd_rich20x5_refresh_v2`
+- grid profile:
+  `implemented_structural_compact_3d`
+- CVT profile:
+  `implemented_structural_fixed_5d`
+- status:
+  long `20 x 5` wrapper processes are still running as of this update, but
+  all four QD problems now have problem-level archive summaries that are
+  sufficient for an interim comparison
+- executive comparison note:
+  `/tmp/qd_rich20x5_refresh_v2/QD_PROFILE_REFRESH_SUMMARY.md`
+
+Interim comparison against baseline `/tmp/qd_rich20x5`:
+
+- `RTLLM/Prob043_RAM`
+  - baseline grid:
+    `coverage=0.0625`, `qd_score=0.5538087600419216`
+  - refresh grid:
+    `coverage=0.125`, `qd_score=0.23661908152587477`
+  - baseline CVT:
+    `coverage=0.4375`, `qd_score=2.2098059043421205`
+  - refresh CVT:
+    `coverage=0.0625`, `qd_score=0.23661908152587477`
+- `RTLLM/Prob045_alu`
+  - baseline grid:
+    `coverage=0.03125`, `qd_score=0.15088639200998752`
+  - refresh grid:
+    `coverage=0.125`, `qd_score=0.08804914908995333`
+  - baseline CVT:
+    `coverage=0.5`, `qd_score=0.8971647283001513`
+  - refresh CVT:
+    `coverage=0.0`, `qd_score=0`
+- `VerilogEval-Spec-to-RTL/Prob153_gshare`
+  - baseline grid:
+    `coverage=0.21875`, `qd_score=0.22159468620046935`
+  - refresh grid:
+    `coverage=0.125`, `qd_score=0.05641133616170021`
+  - baseline CVT:
+    `coverage=0.5`, `qd_score=0.03473310176867479`
+  - refresh CVT:
+    `coverage=0.0625`, `qd_score=0.02575814311200209`
+- `VerilogEval-Spec-to-RTL/Prob156_review2015_fancytimer`
+  - baseline grid:
+    `coverage=0.03125`, `qd_score=-0.21196762495855093`
+  - refresh grid:
+    `coverage=0.0`, `qd_score=0`
+  - baseline CVT:
+    `coverage=0.25`, `qd_score=-1.1153786401307686`
+  - refresh CVT:
+    `coverage=0.0`, `qd_score=0`
+
+Current interpretation:
+
+- the retrospective structural-profile recommendations are now truly live in
+  runtime, but they are **not** outperforming the older richer/gain-heavy
+  baseline on this four-problem corpus so far
+- the corrected compact grid profile is at least interpretable and now uses
+  real structural axes, but it is currently trading off archive quality for a
+  small coverage gain on some RTLLM tasks
+- the fixed structural CVT profile is currently weaker than the earlier
+  `hybrid_seq_default`/gain-heavy baseline on the same corpus
+- provisional conclusion:
+  the retrospective simulation ranking did not transfer cleanly to the live
+  long-context runtime at this budget; keep these new profiles as explicit
+  experimental controls rather than changing defaults
+
 ## Original Plan Comparison Review
 
 This section compares the current implementation state to the original QD/MAP-
@@ -681,6 +1001,27 @@ Documentation risk to watch:
 - [x] Run bounded live grid/CVT validation after the new artifact layer lands.
 - [x] Commit Stage 9.
 
+### Stage 10: Retrospective Feature Integration And Profile Refresh
+
+- [x] Record the retrospective data sources and findings from
+      `/tmp/qd_rich20x5`.
+- [x] Add `implemented_structural_fixed_5d` to repo descriptor profiles.
+- [x] Add `implemented_structural_compact_3d` to repo descriptor profiles.
+- [x] Add retrospective-derived `grid_axes` bounds for the implemented
+      structural axes.
+- [x] Keep `size_control_3d` and `timing_control_3d` documented as deferred
+      future runtime work.
+- [x] Update top-level and QD docs with the new adopted profile ladder and the
+      retrospective-analysis interpretation.
+- [x] Run unit tests for descriptor config loading/resolution.
+- [ ] Run bounded vLLM smokes for the new profiles.
+- [ ] Run the refresh `20 x 5` comparison using the new explicit profiles.
+- [x] Generate refreshed benchmark comparison summaries.
+- [x] Compare refreshed runs against `/tmp/qd_rich20x5` baseline and record
+      whether coverage/QD score improved.
+- [ ] Update validation log, debt review, intent alignment review, and commit
+      ledger.
+
 ## Exact TODO List
 
 ### Public Surface
@@ -762,6 +1103,9 @@ Documentation risk to watch:
       and probe coverage are documented
 - [ ] Add richer multi-axis grid visualization support beyond the current 2D
       heatmap path
+- [ ] Implement new runtime descriptor extraction for retrospective-only axes
+      such as `wire_count_log_est`, `assign_count`, `if_count`,
+      `ctrl_depth_est`, and `ast_depth_est`
 
 ## Validation Log
 
@@ -1820,6 +2164,69 @@ Documentation risk to watch:
 - Commit:
   - `50fd888e3d` `feat(qd): add archive event logs and space reports`
 
+### Stage 10
+
+- Date: `2026-03-13`
+- Implementation checkpoint:
+  - added retrospective-analysis-driven runtime-usable profiles:
+    - `implemented_structural_fixed_5d`
+    - `implemented_structural_compact_3d`
+  - added retrospective-derived explicit `grid_axes` bounds for:
+    - `seq_ratio`
+    - `comb_ratio`
+    - `mux_ratio`
+    - `adder_ratio`
+    - `cell_count_log`
+  - found and fixed a real Stage 10 runtime bug:
+    grid archive construction ignored `qd_descriptor_profile` when
+    `qd_grid_axes` was omitted, so the first refresh-grid attempt silently used
+    gain axes instead of the new structural profile
+  - `archive_summary.json` and `qd_metrics.json` now record
+    `descriptor_profile` and `descriptor_axes`
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_engine.py`
+  - Result: `35 passed in 7.82s`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `343 passed in 12.24s`
+  - `/workspace/.venv/bin/ruff check src/revolution/qd/artifacts.py src/revolution/qd/engine.py tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_engine.py`
+  - Result: `All checks passed!`
+  - `/workspace/.venv/bin/python -m pyright src/revolution/qd`
+  - Result: `0 errors, 1 warning`
+    - warning detail:
+      - `src/revolution/qd/descriptors.py`: `yaml` could not be resolved from
+        source by pyright
+  - `uv tool run ty check src/revolution/qd`
+  - Result: `All checks passed!`
+- Live validation:
+  - corrected grid-profile smoke:
+    - `timeout 1800s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --qd_descriptor_profile implemented_structural_compact_3d --benchmarks RTLLM --problems Prob043_RAM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_rich20x5_refresh_v2/smokes/grid_rtllm_compact_profile --no-backend_subdir --seed 42`
+    - result:
+      - completed successfully in `613.41s`
+      - emitted `archive_summary.json`, `archive_space_report.md`, and
+        `qd_archive_event.json`
+      - confirmed active axes:
+        `comb_ratio`, `adder_ratio`, `cell_count_log`
+  - corrected CVT-profile smoke:
+    - `timeout 1800s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --qd_descriptor_profile implemented_structural_fixed_5d --qd_num_cells 16 --qd_cvt_warmup_successes 4 --benchmarks RTLLM --problems Prob043_RAM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_rich20x5_refresh_v2/smokes/cvt_rtllm_fixed_profile --no-backend_subdir --seed 42`
+    - result:
+      - still running at the time of this checkpoint; do not mark the Stage 10
+        bounded-smoke checkbox complete until it emits archive artifacts or a
+        clean failed summary
+  - refresh rerun root:
+    - `/tmp/qd_rich20x5_refresh_v2`
+  - interim executive comparison summary:
+    - `/tmp/qd_rich20x5_refresh_v2/QD_PROFILE_REFRESH_SUMMARY.md`
+  - interim comparison status:
+    - all four QD problem directories now have `archive_summary.json`
+    - wrapper-level `20 x 5` processes were still running at this checkpoint,
+      so the refresh comparison should be treated as an interim snapshot rather
+      than a final top-level summary set
+- Notes:
+  - the retrospective-driven profiles are now truly live in runtime
+  - the current refresh snapshots are weaker than the earlier richer/gain-heavy
+    baseline on this four-problem corpus, so they should remain explicit
+    experimental controls rather than new defaults
+
 ## Debt Review
 
 ### Stage 0
@@ -1975,6 +2382,17 @@ Documentation risk to watch:
   `algorithm.py` typing/documentation debt, not the new archive-observability
   layer.
 
+### Stage 10
+
+- The Stage 10 bug fix is small but important: profile selection now behaves
+  the way the docs, config, and experiment commands already implied it should.
+- The remaining debt is empirical, not structural:
+  the retrospective-driven structural profiles are now reproducible, but they
+  are not yet strong enough on this corpus to justify any default change.
+- Long-budget live validation is also expensive enough that full `20 x 5`
+  refresh matrices remain multi-hour jobs; the plan should continue to
+  distinguish bounded profile-smoke evidence from full experiment evidence.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -2097,6 +2515,19 @@ Documentation risk to watch:
   bounded live artifact validation is blocked by slow first-candidate
   materialization on the shared endpoint, but the code and test surface are now
   aligned with the intended observability model.
+
+### Stage 10
+
+- The branch now matches the Stage 10 intent more closely because the adopted
+  retrospective profiles are not just documented; they are runtime-selectable
+  and verified by smoke evidence.
+- The first refresh-grid attempt diverged from intent because the structural
+  profile was silently ignored at runtime. That divergence was inappropriate,
+  was found by inspecting the emitted archive-space reports, and is now fixed.
+- The current interim refresh results suggest the retrospective simulation
+  ranking does not transfer cleanly to the live long-context runtime at this
+  budget. That is an empirical outcome, not an architectural failure, and the
+  plan now records it explicitly instead of forcing a premature default change.
 
 ## Roadmap Extension
 
@@ -2264,6 +2695,7 @@ implementation and testing so far.
 - `edd230b585` `docs(qd): record 20x5 experiment results`
 - `20f1353e07` `docs(qd): expand descriptor inventory and rerun roadmap`
 - `50fd888e3d` `feat(qd): add archive event logs and space reports`
+- `13611203f0` `fix(qd): honor retrospective grid profiles in runtime`
 
 ## Deferred Follow-Ups
 

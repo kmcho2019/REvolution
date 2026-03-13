@@ -58,6 +58,19 @@ The current QD implementation is staged:
   `[-1, 1]` gain-axis fallback.
 - sequential grid defaults now include `g_P` alongside `g_A` and `g_T`, so
   default sequential grid runs preserve power, area, and timing gain axes.
+- the current retrospective-analysis-driven profile ladder now distinguishes:
+  - immediate current-runtime-compatible profiles:
+    `implemented_structural_compact_3d`,
+    `implemented_structural_fixed_5d`
+  - deferred future profiles that still need new runtime axes:
+    `size_control_3d`,
+    `timing_control_3d`
+- grid archive construction now honors `qd_descriptor_profile` when
+  `qd_grid_axes` is omitted; the Stage 10 refresh work fixed an earlier bug
+  where grid runs silently fell back to gain axes.
+- the first corrected Stage 10 refresh snapshots under
+  `/tmp/qd_rich20x5_refresh_v2` suggest these structural retrospective profiles
+  should remain explicit experiment controls rather than new defaults for now.
 - CVT/runtime parity is still incomplete mainly around live smoke completion,
   broader benchmark coverage, and deeper evaluator-side descriptor richness.
 - Stage 6 benchmark plumbing is now partially landed:

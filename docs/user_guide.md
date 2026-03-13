@@ -152,6 +152,21 @@ Current feature status:
 - `qd_descriptor_file` may now define both `profiles:` and `grid_axes:` so the
   same YAML can control descriptor selection and per-axis grid bin/bounds
   settings.
+- The current retrospective-analysis-driven profile ladder is:
+  - immediate grid profile:
+    `implemented_structural_compact_3d`
+  - immediate CVT/control profile:
+    `implemented_structural_fixed_5d`
+  - deferred future profiles:
+    `size_control_3d`, `timing_control_3d`
+    because they still require new runtime descriptor extraction
+- When `qd_grid_axes` is omitted, grid mode now honors
+  `qd_descriptor_profile`, so the compact structural profile above is actually
+  enough to reproduce the retrospective refresh configuration.
+- Current refresh evidence under `/tmp/qd_rich20x5_refresh_v2` suggests these
+  structural retrospective profiles are useful experimental controls, but they
+  are not strong enough on the current four-problem corpus to replace the
+  earlier richer/gain-heavy baseline as new defaults.
 - `scripts/run_backend_qd_smoke_vllm.sh` provides a repeatable QD smoke matrix
   for `grid` and `cvt` with `--suite rtllm|verilogeval`,
   `--policy whole-heavy|diff-heavy`, and `--dry-run`, and now defaults to a

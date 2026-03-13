@@ -10,7 +10,7 @@
 ## Key Features
 
 - Dual-pool evolutionary engine with configurable strategies (`M-*`, `C-F`) and meta-strategy selection (random, epsilon-greedy, UCB).
-- Experimental `revolution_qd` search mode with grid and CVT archive support, configurable descriptor axes, and staged reporting/operator parity work.
+- Experimental `revolution_qd` search mode with grid and CVT archive support, configurable descriptor axes, archive-event reporting, and retrospective-analysis-driven descriptor profiles.
 - End-to-end evaluation pipeline: Icarus Verilog for syntax/functional checks, Yosys + OpenROAD for PPA, and post-synthesis regression.
 - Unified LLM client with retry/backoff, prompt templating, diff/whole generation modes, and multi-backend support (OpenAI, OpenRouter, DeepSeek, Gemini, vLLM).
 - Detailed JSONL logging, per-problem summaries, and prebuilt scripts for table generation and visualization.
@@ -161,6 +161,20 @@ Current status on this feature branch:
 - QD success-side fill/backfill now has dedicated operators:
   `M-T` for targeted descriptor mutation and `C-D` for diverse cross-cell
   fusion.
+- The current adopted current-runtime-compatible descriptor profiles from the
+  retrospective `/tmp/qd_rich20x5` analysis are:
+  - `implemented_structural_compact_3d` for compact structural grid studies
+  - `implemented_structural_fixed_5d` for structural CVT/control studies
+- When `--qd_grid_axes` is omitted, grid mode now correctly honors
+  `--qd_descriptor_profile` instead of silently falling back to gain axes.
+- Retrospective future profiles such as `size_control_3d` and
+  `timing_control_3d` are documented in the living plan and QD guide, but they
+  remain future work until the branch grows the required runtime descriptor
+  extraction support.
+- Current refresh evidence under `/tmp/qd_rich20x5_refresh_v2` suggests these
+  structural retrospective profiles are useful experimental controls, but not
+  new defaults yet; the older richer/gain-heavy baseline still performs better
+  on the current four-problem corpus.
 - broader benchmark expansion is still staged work.
 - bounded completion-grade grid/CVT smokes now pass on RTLLM and
   VerilogEval, but the larger short-budget experiments still produce empty
