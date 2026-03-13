@@ -2657,6 +2657,12 @@ Documentation risk to watch:
 - Notes:
   - this stage now has a real launched redo root rather than only harness
     scaffolding
+  - fixed a real usability defect after launch:
+    `scripts/run_qd_retrospective_redo_vllm.sh` initially had mode `644`, so
+    direct invocation failed with `Permission denied` until the executable bit
+    was restored
+  - validated the direct-invocation path with:
+    - `VLLM_HOST=host.docker.internal VLLM_PORT=8000 scripts/run_qd_retrospective_redo_vllm.sh --dry-run`
   - empirical comparison claims must still wait for the matrix to finish and
     emit suite-local reports
 
