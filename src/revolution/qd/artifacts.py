@@ -231,6 +231,7 @@ def write_candidate_archive_event(
             "g_T": float(gains.get("g_T", 0.0)),
         },
         "structural_metrics": dict(getattr(candidate, "structural_metrics", {}) or {}),
+        "rtl_metrics": dict(getattr(candidate, "rtl_metrics", {}) or {}),
         "physical_metrics": dict(getattr(candidate, "physical_metrics", {}) or {}),
         "descriptor_values": descriptor_values,
         "descriptor_tuple": list(descriptor_tuple),

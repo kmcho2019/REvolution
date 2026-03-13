@@ -10,7 +10,11 @@ from typing import Any
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
 from revolution.runtime.problem_context import ProblemContext, resolve_top_module_name
 from revolution.runtime.problem_spec import ProblemSpec
-from revolution.qd.descriptors import extract_descriptor_values, resolve_descriptor_axes
+from revolution.qd.descriptors import (
+    descriptor_requirements,
+    extract_descriptor_values,
+    resolve_descriptor_axes,
+)
 from revolution.qd.scoring import (
     compute_partial_pass_fraction,
     compute_quality_score,
@@ -18,6 +22,7 @@ from revolution.qd.scoring import (
     functional_quality_score,
     normalize_code_hash,
 )
+from revolution.rtl_descriptor_evaluator import RTLDescriptorEvaluator
 
 
 class CandidateStatus(StrEnum):
@@ -61,6 +66,7 @@ class CandidateEvaluation:
     quality_mode: str = "ppa"
     circuit_type: str = "unknown"
     structural_metrics: dict[str, float] = field(default_factory=dict)
+    rtl_metrics: dict[str, float] = field(default_factory=dict)
     physical_metrics: dict[str, float] = field(default_factory=dict)
     descriptor_values: dict[str, float] = field(default_factory=dict)
     partial_pass_fraction: float = 0.0
@@ -135,6 +141,8 @@ class CandidateEvaluator:
             archive_type=archive_type,
             circuit_type=self.circuit_type,
         )
+        self.descriptor_requirements = descriptor_requirements(self.descriptor_axes)
+        self.rtl_descriptor_evaluator = RTLDescriptorEvaluator()
         if evaluation_mode not in {
             EvaluationMode.STRICT_ABLATION.value,
             EvaluationMode.SEARCH_ACCELERATED.value,
@@ -193,9 +201,20 @@ class CandidateEvaluator:
                 quality_score = result.score
         result.quality_score = quality_score
 
+        if (
+            not result.rtl_metrics
+            and self.descriptor_requirements.get("requires_rtl_metrics", False)
+        ):
+            result.rtl_metrics = self.rtl_descriptor_evaluator.extract_metrics(
+                code_text=item.code,
+                code_file_path=item.code_file_path,
+                mapped_cell_count=result.structural_metrics.get("total_cells"),
+            )
+
         if not result.descriptor_values and self.descriptor_axes:
             descriptor_metrics: dict[str, float] = {}
             descriptor_metrics.update(result.structural_metrics)
+            descriptor_metrics.update(result.rtl_metrics)
             descriptor_metrics.update(result.physical_metrics)
             descriptor_metrics.update(
                 {
@@ -339,21 +358,26 @@ class CandidateEvaluator:
         post_synth_success = bool(synth_results.get("synthesis_functionality_success"))
         ppa_success = bool(synth_results.get("ppa_success"))
         ppa_metrics = synth_results.get("ppa_metrics") or {}
+        physical_metrics = (
+            synth_results.get("physical_metrics")
+            if isinstance(synth_results.get("physical_metrics"), dict)
+            else {}
+        )
+        structural_metrics = (
+            synth_results.get("structural_metrics")
+            if isinstance(synth_results.get("structural_metrics"), dict)
+            else {}
+        )
+        rtl_metrics = self.rtl_descriptor_evaluator.extract_metrics(
+            code_text=item.code,
+            code_file_path=item.code_file_path,
+            mapped_cell_count=structural_metrics.get("total_cells"),
+        )
         if synth_success and post_synth_success and ppa_success:
             stages["synthesis"] = True
             stages["synthesis_functionality"] = True
             stages["ppa"] = True
             score, components = self.calculate_fitness_score(ppa_metrics)
-            physical_metrics = (
-                synth_results.get("physical_metrics")
-                if isinstance(synth_results.get("physical_metrics"), dict)
-                else {}
-            )
-            structural_metrics = (
-                synth_results.get("structural_metrics")
-                if isinstance(synth_results.get("structural_metrics"), dict)
-                else {}
-            )
             feedback_payload = {
                 "problem_def": self.problem_description,
                 "code": item.code,
@@ -384,6 +408,7 @@ class CandidateEvaluator:
                 descriptor_values=extract_descriptor_values(
                     {
                         **structural_metrics,
+                        **rtl_metrics,
                         **physical_metrics,
                         "g_P": float(components.get("g_P", 0.0)),
                         "g_A": float(components.get("g_A", 0.0)),
@@ -391,6 +416,7 @@ class CandidateEvaluator:
                     },
                     self.descriptor_axes,
                 ),
+                rtl_metrics=rtl_metrics,
             )
 
         if not synth_success:
@@ -431,16 +457,9 @@ class CandidateEvaluator:
             feedback_payload=feedback_payload,
             simulation_result=sim_results,
             synthesis_result=synth_results,
-            structural_metrics=(
-                synth_results.get("structural_metrics")
-                if isinstance(synth_results.get("structural_metrics"), dict)
-                else {}
-            ),
-            physical_metrics=(
-                synth_results.get("physical_metrics")
-                if isinstance(synth_results.get("physical_metrics"), dict)
-                else {}
-            ),
+            structural_metrics=structural_metrics,
+            rtl_metrics=rtl_metrics,
+            physical_metrics=physical_metrics,
         )
 
     def _mark_synthesis_skipped(

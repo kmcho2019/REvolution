@@ -23,7 +23,12 @@ from revolution.qd.artifacts import (
     write_legacy_archive_layout,
     write_qd_summary_files,
 )
-from revolution.qd.descriptors import extract_descriptor_values, resolve_descriptor_axes, resolve_grid_axis_specs
+from revolution.qd.descriptors import (
+    descriptor_requirements,
+    extract_descriptor_values,
+    resolve_descriptor_axes,
+    resolve_grid_axis_specs,
+)
 from revolution.qd.scoring import compute_ppa_gains
 from revolution.qd.scheduler import split_qd_budget
 from revolution.qd.types import QDArchiveInsertResult
@@ -144,6 +149,9 @@ class QDEngine(EoHEngine):
         archive_axes = getattr(self.success_archive, "axes", ())
         return tuple(str(axis) for axis in archive_axes)
 
+    def _requires_rtl_descriptor_metrics(self) -> bool:
+        return bool(descriptor_requirements(self._archive_axes()).get("requires_rtl_metrics"))
+
     def _phase_mode(self, phase: str) -> Literal["whole", "diff"]:
         override = {
             "fail": self.qd_fail_generation_mode,
@@ -175,6 +183,7 @@ class QDEngine(EoHEngine):
         gains = compute_ppa_gains(candidate.ppa_metrics, self.ref_ppa_metrics)
         descriptor_metrics: dict[str, float] = {}
         descriptor_metrics.update(getattr(candidate, "structural_metrics", {}) or {})
+        descriptor_metrics.update(getattr(candidate, "rtl_metrics", {}) or {})
         descriptor_metrics.update(getattr(candidate, "physical_metrics", {}) or {})
         descriptor_metrics.update(getattr(candidate, "descriptor_values", {}) or {})
         descriptor_metrics.update(gains)

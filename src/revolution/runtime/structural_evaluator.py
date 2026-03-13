@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -7,6 +8,10 @@ from typing import Any
 _SEQUENTIAL_CELL_PREFIXES = ("$_DFF", "$dff", "$adff", "$sdff")
 _MUX_CELL_PREFIXES = ("$_MUX", "$mux")
 _ARITH_CELL_PREFIXES = ("$_ADD", "$add", "$alu", "$fa")
+_NETLIST_INSTANCE_RE = re.compile(
+    r"^\s*([\\$A-Za-z_][\\$A-Za-z0-9_]*)\s+([\\$A-Za-z_][\\$A-Za-z0-9_]*)\s*\(",
+    re.M,
+)
 
 
 @dataclass(frozen=True)
@@ -58,7 +63,12 @@ class StructuralEvaluator:
         modules = payload.get("modules")
         if not isinstance(modules, dict) or not modules:
             return self.extract_metrics(cell_counts={})
-        top_module = next(iter(modules.values()))
+        top_module_raw = next(iter(modules.values()))
+        if not isinstance(top_module_raw, dict):
+            return self.extract_metrics(cell_counts={})
+        top_module: dict[str, Any] = {
+            str(name): value for name, value in top_module_raw.items()
+        }
         cells = top_module.get("num_cells_by_type", {})
         ltp_noff = top_module.get("ltp_noff", payload.get("ltp_noff", 0.0))
         cell_counts = {
@@ -66,6 +76,19 @@ class StructuralEvaluator:
             for name, count in cells.items()
             if isinstance(name, str) and isinstance(count, int | float)
         }
+        return self.extract_metrics(cell_counts=cell_counts, ltp_noff=ltp_noff)
+
+    def extract_from_netlist_text(
+        self,
+        netlist_text: str,
+        *,
+        ltp_noff: float | int | None = None,
+    ) -> dict[str, float]:
+        """Recover cell-composition metrics from a synthesized netlist text dump."""
+        cell_counts: dict[str, int] = {}
+        for cell_type, _ in _NETLIST_INSTANCE_RE.findall(netlist_text):
+            clean_type = cell_type.replace("\\", "")
+            cell_counts[clean_type] = cell_counts.get(clean_type, 0) + 1
         return self.extract_metrics(cell_counts=cell_counts, ltp_noff=ltp_noff)
 
     def _sum_matching(self, cell_counts: dict[str, int], prefixes: tuple[str, ...]) -> int:

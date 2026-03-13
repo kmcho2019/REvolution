@@ -18,6 +18,8 @@ def test_load_descriptor_profiles_includes_hybrid_defaults():
     assert "rtl_core" in profiles
     assert "implemented_structural_fixed_5d" in profiles
     assert "implemented_structural_compact_3d" in profiles
+    assert "size_control_3d" in profiles
+    assert "timing_control_3d" in profiles
 
 
 def test_load_descriptor_profiles_includes_retrospective_structural_profiles():
@@ -33,6 +35,20 @@ def test_load_descriptor_profiles_includes_retrospective_structural_profiles():
         "comb_ratio",
         "adder_ratio",
         "cell_count_log",
+    ]
+
+
+def test_load_descriptor_profiles_includes_runtime_retro_profiles():
+    profiles = load_descriptor_profiles()
+    assert profiles["size_control_3d"] == [
+        "wire_count_log_est",
+        "assign_count",
+        "ctrl_depth_est",
+    ]
+    assert profiles["timing_control_3d"] == [
+        "wire_count_log_est",
+        "if_count",
+        "ast_depth_est",
     ]
 
 
@@ -82,6 +98,12 @@ def test_descriptor_requirements_detect_ppa_and_synthesis_needs():
     reqs = descriptor_requirements(["seq_ratio", "g_A"])
     assert reqs["requires_synthesis"] is True
     assert reqs["requires_ppa"] is True
+    assert reqs["requires_rtl_metrics"] is False
+
+
+def test_descriptor_requirements_detect_rtl_metric_axes():
+    reqs = descriptor_requirements(["wire_count_log_est", "assign_count", "ctrl_depth_est"])
+    assert reqs["requires_rtl_metrics"] is True
 
 
 def test_load_descriptor_profiles_accepts_custom_file(tmp_path: Path):
@@ -148,3 +170,12 @@ def test_default_descriptor_file_exposes_retrospective_structural_grid_specs():
     assert specs["cell_count_log"].bins == 2
     assert specs["cell_count_log"].lower_bound == pytest.approx(5.1152555343856845)
     assert specs["cell_count_log"].upper_bound == pytest.approx(7.605890001053122)
+    assert specs["wire_count_log_est"].bins == 4
+    assert specs["wire_count_log_est"].lower_bound == pytest.approx(5.306052475806975)
+    assert specs["wire_count_log_est"].upper_bound == pytest.approx(7.729735331385051)
+    assert specs["assign_count"].bins == 4
+    assert specs["assign_count"].lower_bound == pytest.approx(0.0)
+    assert specs["assign_count"].upper_bound == pytest.approx(8.740000000000009)
+    assert specs["ctrl_depth_est"].bins == 2
+    assert specs["ctrl_depth_est"].lower_bound == pytest.approx(0.0)
+    assert specs["ctrl_depth_est"].upper_bound == pytest.approx(10.0)

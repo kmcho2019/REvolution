@@ -31,6 +31,7 @@ from revolution.runtime.realbench_adapter import (
     load_realbench_reference_ppa_metrics,
     select_realbench_problem_ids,
 )
+from revolution.rtl_descriptor_evaluator import RTLDescriptorEvaluator
 from revolution.runtime.structural_evaluator import StructuralEvaluator
 from revolution.runtime.run_artifacts import ArtifactWriter, add_legacy_strategy_key_alias
 
@@ -47,6 +48,7 @@ __all__ = [
     "EvaluationMode",
     "ProblemContext",
     "ProblemSpec",
+    "RTLDescriptorEvaluator",
     "StructuralEvaluator",
     "build_cvdp_problem_spec",
     "build_problem_spec",

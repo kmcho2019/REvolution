@@ -32,3 +32,22 @@ def test_structural_evaluator_reads_yosys_like_payload():
     assert metrics["sequential_cells"] == pytest.approx(2.0)
     assert metrics["combinational_cells"] == pytest.approx(4.0)
     assert metrics["ltp_noff"] == pytest.approx(5.0)
+
+
+def test_structural_evaluator_reads_synthesized_netlist_text():
+    evaluator = StructuralEvaluator()
+    metrics = evaluator.extract_from_netlist_text(
+        "\n".join(
+            [
+                "$_DFF_P_ ff0 (",
+                "$_MUX_ mux0 (",
+                "$_AND_ and0 (",
+                "$_ADD_ add0 (",
+            ]
+        )
+    )
+
+    assert metrics["total_cells"] == pytest.approx(4.0)
+    assert metrics["seq_ratio"] == pytest.approx(0.25)
+    assert metrics["mux_ratio"] == pytest.approx(0.25)
+    assert metrics["adder_ratio"] == pytest.approx(0.25)

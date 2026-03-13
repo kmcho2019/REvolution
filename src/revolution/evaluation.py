@@ -6,6 +6,31 @@ import subprocess
 import traceback
 from typing import Any, Literal
 
+_NETLIST_INSTANCE_RE = re.compile(
+    r"^\s*([\\$A-Za-z_][\\$A-Za-z0-9_]*)\s+([\\$A-Za-z_][\\$A-Za-z0-9_]*)\s*\(",
+    re.M,
+)
+_SEQ_CELL_PATTERNS = (
+    re.compile(r"(^|_)DFF"),
+    re.compile(r"(^|_)SDFF"),
+    re.compile(r"(^|_)ADFF"),
+    re.compile(r"(^|_)DLH"),
+    re.compile(r"(^|_)DLL"),
+    re.compile(r"(^|_)LHQ"),
+    re.compile(r"(^|_)LATCH"),
+)
+_MUX_CELL_PATTERNS = (
+    re.compile(r"MUX"),
+    re.compile(r"MXI"),
+)
+_ARITH_CELL_PATTERNS = (
+    re.compile(r"(^|_)FA"),
+    re.compile(r"(^|_)HA"),
+    re.compile(r"ADD"),
+    re.compile(r"ADDF"),
+    re.compile(r"FADD"),
+)
+
 
 class VerilogEvaluator:
     """
@@ -484,9 +509,12 @@ class SynthesisEvaluator:
                 "ppa_success": False,
                 "synthesis_log": synthesis_log,
                 "ppa_metrics": None,
+                "structural_metrics": {},
                 "physical_metrics": {},
                 "metrics_sidecar_path": None,
             }
+
+        structural_metrics = self._extract_structural_metrics(synthesized_netlist_path)
 
         # After synthesis add post-synthesis functionality test
         synthesis_functionality_success, func_check_log = (
@@ -507,6 +535,7 @@ class SynthesisEvaluator:
                 "ppa_success": False,
                 "synthesis_log": f"{synthesis_log}\n\n--- Post-Synthesis Functional Verification Log ---\n{func_check_log}",
                 "ppa_metrics": None,
+                "structural_metrics": structural_metrics,
                 "physical_metrics": self._parse_openroad_physical_metrics(
                     synthesis_log
                 ),
@@ -518,6 +547,7 @@ class SynthesisEvaluator:
         metrics_sidecar_path = self._write_metrics_sidecar(
             synthesis_log,
             ppa_metrics=ppa_metrics,
+            structural_metrics=structural_metrics,
             physical_metrics=physical_metrics,
         )
 
@@ -527,6 +557,7 @@ class SynthesisEvaluator:
             "ppa_success": True,
             "synthesis_log": synthesis_log,
             "ppa_metrics": ppa_metrics,
+            "structural_metrics": structural_metrics,
             "physical_metrics": physical_metrics,
             "metrics_sidecar_path": metrics_sidecar_path,
         }
@@ -913,6 +944,7 @@ class SynthesisEvaluator:
         report_path: str,
         *,
         ppa_metrics: dict[str, float | str | None],
+        structural_metrics: dict[str, float],
         physical_metrics: dict[str, float],
     ) -> str | None:
         """Write a machine-readable sidecar for parsed OpenROAD/PPA metrics."""
@@ -920,8 +952,60 @@ class SynthesisEvaluator:
         payload = {
             "report_path": report_path,
             "ppa_metrics": ppa_metrics,
+            "structural_metrics": structural_metrics,
             "physical_metrics": physical_metrics,
         }
         with open(sidecar_path, "w", encoding="utf-8") as handle:
             json.dump(payload, handle, indent=2)
         return sidecar_path
+
+    def _extract_structural_metrics(self, synthesized_netlist_path: str) -> dict[str, float]:
+        """Recover coarse structural metrics from the synthesized netlist when available."""
+        if not os.path.isfile(synthesized_netlist_path):
+            return {}
+        try:
+            with open(
+                synthesized_netlist_path,
+                "r",
+                encoding="utf-8",
+                errors="ignore",
+            ) as handle:
+                netlist_text = handle.read()
+        except OSError:
+            return {}
+        cell_counts: dict[str, int] = {}
+        for cell_type, _ in _NETLIST_INSTANCE_RE.findall(netlist_text):
+            clean_type = cell_type.replace("\\", "")
+            cell_counts[clean_type] = cell_counts.get(clean_type, 0) + 1
+
+        total_cells = max(sum(cell_counts.values()), 0)
+        sequential_cells = self._sum_matching_cell_types(cell_counts, _SEQ_CELL_PATTERNS)
+        mux_cells = self._sum_matching_cell_types(cell_counts, _MUX_CELL_PATTERNS)
+        arithmetic_cells = self._sum_matching_cell_types(cell_counts, _ARITH_CELL_PATTERNS)
+        combinational_cells = max(total_cells - sequential_cells, 0)
+        denom = max(total_cells, 1)
+        return {
+            "total_cells": float(total_cells),
+            "sequential_cells": float(sequential_cells),
+            "combinational_cells": float(combinational_cells),
+            "mux_cells": float(mux_cells),
+            "arithmetic_cells": float(arithmetic_cells),
+            "seq_ratio": sequential_cells / denom,
+            "comb_ratio": combinational_cells / denom,
+            "mux_ratio": mux_cells / denom,
+            "adder_ratio": arithmetic_cells / denom,
+            "ltp_noff": 0.0,
+            "cell_count_log": float(total_cells),
+        }
+
+    def _sum_matching_cell_types(
+        self,
+        cell_counts: dict[str, int],
+        patterns: tuple[re.Pattern[str], ...],
+    ) -> int:
+        total = 0
+        for cell_type, count in cell_counts.items():
+            upper = cell_type.upper()
+            if any(pattern.search(upper) for pattern in patterns):
+                total += int(count)
+        return total

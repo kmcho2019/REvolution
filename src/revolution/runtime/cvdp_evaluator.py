@@ -15,6 +15,7 @@ from revolution.qd.scoring import (
     functional_quality_score,
     normalize_code_hash,
 )
+from revolution.rtl_descriptor_evaluator import RTLDescriptorEvaluator
 from revolution.runtime.candidate_evaluator import CandidateEvaluation, CandidateWorkItem
 from revolution.runtime.problem_context import ProblemContext
 
@@ -121,6 +122,7 @@ class CVDPEvaluator:
         self.evaluation_mode = "strict_ablation"
         self.accelerated_synthesis_top_k = 0
         self.ref_ppa_metrics: dict[str, float] = {}
+        self.rtl_descriptor_evaluator = RTLDescriptorEvaluator()
 
         record = load_cvdp_record(cvdp_jsonl_path, cvdp_id)
         if record is None:
@@ -141,6 +143,12 @@ class CVDPEvaluator:
         )
         result.quality_score = quality_score
         result.score_components.update(components)
+        if not result.rtl_metrics:
+            result.rtl_metrics = self.rtl_descriptor_evaluator.extract_metrics(
+                code_text=item.code,
+                code_file_path=item.code_file_path,
+                mapped_cell_count=result.structural_metrics.get("total_cells"),
+            )
         result.archiveable = result.status == "success"
         if not result.archiveable:
             result.archive_rejection_reason = result.status
@@ -183,7 +191,8 @@ class CVDPEvaluator:
             path.parent.mkdir(parents=True, exist_ok=True)
             text = str(content)
             if relative_path == "src/.env":
-                dut_rel = next(iter(output_context.keys()))
+                dut_rel_raw = next(iter(output_context.keys()))
+                dut_rel = str(dut_rel_raw)
                 dut_abs = (run_root / dut_rel).resolve()
                 src_abs = (run_root / "src").resolve()
                 updated_lines: list[str] = []
@@ -198,7 +207,7 @@ class CVDPEvaluator:
                 text = "\n".join(updated_lines)
             path.write_text(text, encoding="utf-8")
 
-        dut_rel = next(iter(output_context.keys()))
+        dut_rel = str(next(iter(output_context.keys())))
         dut_path = run_root / dut_rel
         dut_path.parent.mkdir(parents=True, exist_ok=True)
         dut_path.write_text(

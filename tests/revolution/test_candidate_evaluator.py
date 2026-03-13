@@ -120,6 +120,54 @@ def test_candidate_evaluator_success_path(tmp_path):
     assert result.archiveable is True
 
 
+def test_candidate_evaluator_uses_runtime_retro_profile_axes(tmp_path, monkeypatch):
+    context = _context(tmp_path)
+    code_path = tmp_path / "candidate.sv"
+    code_path.write_text("module m; endmodule\n", encoding="utf-8")
+    evaluator = CandidateEvaluator(
+        context=context,
+        problem_description="desc",
+        verilog_evaluator=_FakeVerilogEvaluator(
+            {
+                "status": "success",
+                "simulation_stdout": "Mismatches: 0\n",
+                "simulation_stderr": "",
+                "compilation_stderr": "",
+            }
+        ),
+        synthesis_evaluator=_FakeSynthesisEvaluator(
+            {
+                "synthesis_success": True,
+                "synthesis_functionality_success": True,
+                "ppa_success": True,
+                "ppa_metrics": {"power": 0.9, "area": 90.0, "eff_clk_period": 0.9},
+                "structural_metrics": {"total_cells": 12.0},
+            }
+        ),
+        ref_ppa_metrics={"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
+        descriptor_profile="size_control_3d",
+    )
+    monkeypatch.setattr(
+        evaluator.rtl_descriptor_evaluator,
+        "extract_metrics",
+        lambda **kwargs: {
+            "wire_count_log_est": 5.5,
+            "assign_count": 3.0,
+            "ctrl_depth_est": 2.0,
+        },
+    )
+
+    result = evaluator.evaluate_candidate(
+        CandidateWorkItem(code="module m; endmodule", code_file_path=str(code_path))
+    )
+
+    assert result.status == "success"
+    assert result.rtl_metrics["wire_count_log_est"] == pytest.approx(5.5)
+    assert result.descriptor_values["wire_count_log_est"] == pytest.approx(5.5)
+    assert result.descriptor_values["assign_count"] == pytest.approx(3.0)
+    assert result.descriptor_values["ctrl_depth_est"] == pytest.approx(2.0)
+
+
 def test_candidate_evaluator_search_accelerated_throttles_synthesis(tmp_path):
     context = _context(tmp_path)
     synthesis = _FakeSynthesisEvaluator(

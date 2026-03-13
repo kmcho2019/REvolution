@@ -24,6 +24,7 @@ from .evaluation import SynthesisEvaluator, VerilogEvaluator
 from .llm import LLMInterface, LLMRequest
 from .logging import EoHLogger
 from .prompt_store import PromptStore, safe_format # Able to load prompts from files
+from .rtl_descriptor_evaluator import RTLDescriptorEvaluator
 
 if TYPE_CHECKING:
     from .runtime.problem_spec import ProblemSpec
@@ -168,6 +169,9 @@ class Heuristic:
     :param physical_metrics: Physical descriptor metrics attached by evaluation
         when available.
     :type physical_metrics: dict[str, float]
+    :param rtl_metrics: Lightweight RTL/source/netlist-estimate descriptor
+        metrics attached by evaluation when available.
+    :type rtl_metrics: dict[str, float]
     :param descriptor_values: Descriptor-axis values already materialized for
         QD archive insertion or reporting.
     :type descriptor_values: dict[str, float]
@@ -213,6 +217,7 @@ class Heuristic:
         self.ppa_success: bool = False
         self.ppa_metrics: dict[str, float] = {}
         self.structural_metrics: dict[str, float] = {}
+        self.rtl_metrics: dict[str, float] = {}
         self.physical_metrics: dict[str, float] = {}
         self.descriptor_values: dict[str, float] = {}
         self.quality_score: float = score
@@ -472,6 +477,7 @@ class EoHEngine:
         self.run_start_time: float = 0
         self.run_start_utc: datetime.datetime | None = None
         self.gen_start_time: float = 0
+        self.rtl_descriptor_evaluator = RTLDescriptorEvaluator()
 
         # --- Diff application tunables ---
         self.diff_similarity_threshold: float = diff_similarity_threshold
@@ -867,6 +873,27 @@ class EoHEngine:
             top_module_names = json.load(f)
         return top_module_names.get(self.problem_name, "TopModule")
 
+    def _requires_rtl_descriptor_metrics(self) -> bool:
+        """Return whether the active engine configuration needs RTL descriptor extraction."""
+        return False
+
+    def _extract_candidate_rtl_metrics(
+        self,
+        cand: Heuristic,
+        structural_metrics: dict[str, float] | None = None,
+    ) -> dict[str, float]:
+        """Extract lightweight RTL and AST metrics for descriptor-rich QD runs."""
+        if not self._requires_rtl_descriptor_metrics():
+            return {}
+        mapped_cell_count = 0.0
+        if structural_metrics is not None:
+            mapped_cell_count = float(structural_metrics.get("total_cells", 0.0))
+        return self.rtl_descriptor_evaluator.extract_metrics(
+            code_text=cand.code,
+            code_file_path=cand.code_file_path,
+            mapped_cell_count=mapped_cell_count,
+        )
+
     def _evaluate_candidate_pipeline(
         self,
         cand: Heuristic,
@@ -938,6 +965,28 @@ class EoHEngine:
             test_sv_file,
             ref_sv_file,
         )
+        structural_metrics = (
+            synth_results.get("structural_metrics")
+            if isinstance(synth_results.get("structural_metrics"), dict)
+            else {}
+        )
+        physical_metrics = (
+            synth_results.get("physical_metrics")
+            if isinstance(synth_results.get("physical_metrics"), dict)
+            else {}
+        )
+        cand.structural_metrics = {
+            str(key): float(value) for key, value in structural_metrics.items()
+        }
+        cand.physical_metrics = {
+            str(key): float(value) for key, value in physical_metrics.items()
+        }
+        extract_rtl_metrics = getattr(self, "_extract_candidate_rtl_metrics", None)
+        cand.rtl_metrics = (
+            extract_rtl_metrics(cand, cand.structural_metrics)
+            if callable(extract_rtl_metrics)
+            else {}
+        )
 
         if (
             synth_results["synthesis_success"]
@@ -951,16 +1000,6 @@ class EoHEngine:
             cand.ppa_metrics = synth_results["ppa_metrics"]
             cand.score = self._calculate_fitness_score(cand)
             cand.quality_score = cand.score
-            if isinstance(synth_results.get("structural_metrics"), dict):
-                cand.structural_metrics = {
-                    str(key): float(value)
-                    for key, value in synth_results["structural_metrics"].items()
-                }
-            if isinstance(synth_results.get("physical_metrics"), dict):
-                cand.physical_metrics = {
-                    str(key): float(value)
-                    for key, value in synth_results["physical_metrics"].items()
-                }
             cand.feedback = (
                 "Functionality OK and Synthesis OK. Now focus on improving PPA metrics while "
                 "preserving functionality. PPA metrics (tns/wns/eff_clk_period: ns, power: W, area: um^2): "

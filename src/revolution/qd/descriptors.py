@@ -36,6 +36,19 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "adder_ratio": DescriptorDefinition("adder_ratio", "yosys", requires_synthesis=True),
     "ltp_noff": DescriptorDefinition("ltp_noff", "yosys", requires_synthesis=True),
     "cell_count_log": DescriptorDefinition("cell_count_log", "yosys", transform="log1p", requires_synthesis=True),
+    "always_count": DescriptorDefinition("always_count", "rtl_text"),
+    "assign_count": DescriptorDefinition("assign_count", "rtl_text"),
+    "if_count": DescriptorDefinition("if_count", "rtl_text"),
+    "case_count": DescriptorDefinition("case_count", "rtl_text"),
+    "ternary_count": DescriptorDefinition("ternary_count", "rtl_text"),
+    "rtl_instance_count_est": DescriptorDefinition("rtl_instance_count_est", "rtl_text"),
+    "fsm_state_count_est": DescriptorDefinition("fsm_state_count_est", "rtl_text"),
+    "wire_count_log_est": DescriptorDefinition("wire_count_log_est", "rtl_estimator"),
+    "wire_cell_ratio_est": DescriptorDefinition("wire_cell_ratio_est", "rtl_estimator"),
+    "ast_depth_est": DescriptorDefinition("ast_depth_est", "yosys_ast"),
+    "ctrl_depth_est": DescriptorDefinition("ctrl_depth_est", "yosys_ast"),
+    "math_op_ast_count": DescriptorDefinition("math_op_ast_count", "yosys_ast"),
+    "resource_sharing_ratio_est": DescriptorDefinition("resource_sharing_ratio_est", "yosys_ast"),
     "wirelength": DescriptorDefinition("wirelength", "openroad", transform="log1p", requires_synthesis=True),
     "utilization": DescriptorDefinition("utilization", "openroad", requires_synthesis=True),
     "cts_buffer_count": DescriptorDefinition("cts_buffer_count", "openroad", transform="log1p", requires_synthesis=True),
@@ -177,8 +190,12 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (-1.0, 1.0)
     if axis in {"seq_ratio", "comb_ratio", "mux_ratio", "adder_ratio", "utilization"}:
         return (0.0, 1.0)
-    if axis in {"cell_count_log", "wirelength", "cts_buffer_count", "repair_buffer_count", "hold_buffer_count"}:
+    if axis in {"cell_count_log", "wirelength", "cts_buffer_count", "repair_buffer_count", "hold_buffer_count", "wire_count_log_est"}:
         return (0.0, 16.0)
+    if axis in {"always_count", "assign_count", "if_count", "case_count", "ternary_count", "rtl_instance_count_est", "fsm_state_count_est", "ast_depth_est", "ctrl_depth_est", "math_op_ast_count"}:
+        return (0.0, 32.0)
+    if axis in {"wire_cell_ratio_est", "resource_sharing_ratio_est"}:
+        return (0.0, 4.0)
     if axis == "ltp_noff":
         return (0.0, 64.0)
     return (-1.0, 1.0)
@@ -210,6 +227,11 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
             registry[axis].requires_synthesis for axis in axes if axis in registry
         ),
         "requires_formal": any(registry[axis].requires_formal for axis in axes if axis in registry),
+        "requires_rtl_metrics": any(
+            registry[axis].source_tool in {"rtl_text", "rtl_estimator", "yosys_ast"}
+            for axis in axes
+            if axis in registry
+        ),
     }
 
 

@@ -650,6 +650,16 @@ def test_evaluate_end_to_end_with_stubs(mocker, tmp_path):
             ]
         )
     )
+    Path(dut).with_suffix(".syn.v").write_text(
+        "\n".join(
+            [
+                "$_DFF_P_ ff0 (",
+                "$_MUX_ mux0 (",
+                "$_ADD_ add0 (",
+            ]
+        ),
+        encoding="utf-8",
+    )
 
     mocker.patch.object(se, "_run_synthesis", return_value=(True, rpt))
 
@@ -679,6 +689,7 @@ def test_evaluate_end_to_end_with_stubs(mocker, tmp_path):
     assert results["synthesis_success"] is True
     assert results["synthesis_functionality_success"] is True
     assert results["ppa_success"] is True
+    assert results["structural_metrics"]["seq_ratio"] == pytest.approx(1 / 3)
     assert results["physical_metrics"] == {}
     assert results["metrics_sidecar_path"] == rpt.replace(".rpt", ".metrics.json")
     ppa = results["ppa_metrics"]
@@ -689,6 +700,7 @@ def test_evaluate_end_to_end_with_stubs(mocker, tmp_path):
     sidecar = json.loads(Path(results["metrics_sidecar_path"]).read_text())
     assert sidecar["report_path"] == rpt
     assert sidecar["ppa_metrics"]["area"] == 256.0
+    assert sidecar["structural_metrics"]["adder_ratio"] == pytest.approx(1 / 3)
     assert sidecar["physical_metrics"] == {}
 
 

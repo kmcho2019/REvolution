@@ -94,6 +94,11 @@ def test_cvdp_evaluator_success_path(monkeypatch, tmp_path):
         "_run_pytest",
         lambda **kwargs: ("success", "ok", "", 0),
     )
+    monkeypatch.setattr(
+        evaluator.rtl_descriptor_evaluator,
+        "extract_metrics",
+        lambda **kwargs: {"assign_count": 1.0, "if_count": 0.0},
+    )
 
     code_file = tmp_path / "candidate" / "code.sv"
     code_file.parent.mkdir(parents=True, exist_ok=True)
@@ -104,6 +109,7 @@ def test_cvdp_evaluator_success_path(monkeypatch, tmp_path):
     assert result.status == "success"
     assert result.score == 1.0
     assert result.stage_statuses["functionality"] is True
+    assert result.rtl_metrics["assign_count"] == 1.0
 
 
 def test_cvdp_evaluator_marks_syntax_failure(monkeypatch, tmp_path):
