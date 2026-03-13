@@ -25,6 +25,7 @@ from .llm import LLMInterface, LLMRequest
 from .logging import EoHLogger
 from .prompt_store import PromptStore, safe_format # Able to load prompts from files
 from .rtl_descriptor_evaluator import RTLDescriptorEvaluator
+from .simulation_descriptor_evaluator import SimulationDescriptorEvaluator
 
 if TYPE_CHECKING:
     from .runtime.problem_spec import ProblemSpec
@@ -172,6 +173,9 @@ class Heuristic:
     :param rtl_metrics: Lightweight RTL/source/netlist-estimate descriptor
         metrics attached by evaluation when available.
     :type rtl_metrics: dict[str, float]
+    :param dynamic_metrics: Simulation-derived activity descriptor metrics
+        attached by evaluation when available.
+    :type dynamic_metrics: dict[str, float]
     :param descriptor_values: Descriptor-axis values already materialized for
         QD archive insertion or reporting.
     :type descriptor_values: dict[str, float]
@@ -218,6 +222,7 @@ class Heuristic:
         self.ppa_metrics: dict[str, float] = {}
         self.structural_metrics: dict[str, float] = {}
         self.rtl_metrics: dict[str, float] = {}
+        self.dynamic_metrics: dict[str, float] = {}
         self.physical_metrics: dict[str, float] = {}
         self.descriptor_values: dict[str, float] = {}
         self.quality_score: float = score
@@ -478,6 +483,7 @@ class EoHEngine:
         self.run_start_utc: datetime.datetime | None = None
         self.gen_start_time: float = 0
         self.rtl_descriptor_evaluator = RTLDescriptorEvaluator()
+        self.simulation_descriptor_evaluator = SimulationDescriptorEvaluator()
 
         # --- Diff application tunables ---
         self.diff_similarity_threshold: float = diff_similarity_threshold
@@ -877,6 +883,10 @@ class EoHEngine:
         """Return whether the active engine configuration needs RTL descriptor extraction."""
         return False
 
+    def _requires_dynamic_descriptor_metrics(self) -> bool:
+        """Return whether the active engine configuration needs VCD activity extraction."""
+        return False
+
     def _extract_candidate_rtl_metrics(
         self,
         cand: Heuristic,
@@ -892,6 +902,23 @@ class EoHEngine:
             code_text=cand.code,
             code_file_path=cand.code_file_path,
             mapped_cell_count=mapped_cell_count,
+        )
+
+    def _extract_candidate_dynamic_metrics(
+        self,
+        cand: Heuristic,
+        simulation_result: dict[str, Any] | None = None,
+        *,
+        top_module_name: str = "tb",
+    ) -> dict[str, float]:
+        """Extract activity descriptors from a waveform emitted during simulation."""
+        if not self._requires_dynamic_descriptor_metrics():
+            return {}
+        if not simulation_result:
+            return {}
+        return self.simulation_descriptor_evaluator.extract_metrics(
+            vcd_file_path=simulation_result.get("vcd_file_path"),
+            top_module_name=top_module_name,
         )
 
     def _evaluate_candidate_pipeline(
@@ -912,8 +939,17 @@ class EoHEngine:
             }
             return cand, feedback_payload
 
+        require_dynamic_metrics = getattr(
+            self,
+            "_requires_dynamic_descriptor_metrics",
+            lambda: False,
+        )
         sim_results = self.evaluator.evaluate(
-            cand.code_file_path, test_sv_file, ref_sv_file
+            cand.code_file_path,
+            test_sv_file,
+            ref_sv_file,
+            top_module_name=top_module_name,
+            enable_vcd_probe=bool(require_dynamic_metrics()),
         )
 
         if sim_results["status"] == "compilation_error":
@@ -951,6 +987,17 @@ class EoHEngine:
                 "simulation_log": log,
             }
             return cand, feedback_payload
+
+        extract_dynamic_metrics = getattr(self, "_extract_candidate_dynamic_metrics", None)
+        cand.dynamic_metrics = (
+            extract_dynamic_metrics(
+                cand,
+                sim_results,
+                top_module_name=top_module_name,
+            )
+            if callable(extract_dynamic_metrics)
+            else {}
+        )
 
         # Stage 2: Synthesis and PPA for functionally correct candidates
         report_base_path = cand.code_file_path.rsplit(".", 1)[0]

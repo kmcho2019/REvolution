@@ -99,7 +99,12 @@ The QD substrate currently lives under `src/revolution/qd/`:
 
 ## Evaluation stack
 
-`VerilogEvaluator` compiles designs with Icarus Verilog (iverilog) and runs them under `vvp`. Compilation output, simulation logs, and timeouts are written to `<candidate>_simulation.log`. Optional reference design files enable mismatch counting on VerilogEval, while RTLLM detects the `===========Your Design Passed===========` banner.
+`VerilogEvaluator` compiles designs with Icarus Verilog (iverilog) and runs them under `vvp`. Compilation output, simulation logs, and timeouts are written to `<candidate>_simulation.log`. Optional reference design files enable mismatch counting on VerilogEval, while RTLLM detects the `===========Your Design Passed===========` banner. When the selected descriptor axes require dynamic metrics, `VerilogEvaluator` also injects a temporary VCD probe into the testbench and returns the emitted waveform path for later activity extraction.
+
+`SimulationDescriptorEvaluator` parses those VCD files and derives the current
+activity-oriented descriptor family:
+`toggle_count_log_est`, `toggle_density_est`, `active_signal_ratio_est`, and
+`avg_toggle_rate_est`. These metrics are attached as `dynamic_metrics`.
 
 `SynthesisEvaluator` automates the Yosys + OpenROAD flow. It generates SDC, Yosys, and OpenROAD scripts from the candidate design, writes reports to `<candidate>_synthesis_report.rpt`, and parses timing/power/area metrics. Netlists are regression-tested again using `VerilogEvaluator` to ensure synthesis has not broken functionality.
 
@@ -135,8 +140,8 @@ The engine writes everything necessary to reproduce a candidate:
   `archive_space.json`, and `archive_space_report.md`.
 - Per-candidate QD archive-event artifacts:
   `qd_archive_event.json` in every archive-handled successful candidate
-  directory, recording descriptor values, cell assignment, and insertion or
-  displacement outcome.
+  directory, recording descriptor values, structural/RTL/dynamic/physical
+  metric payloads, cell assignment, and insertion or displacement outcome.
 - QD visualization outputs for `revolution_qd` runs:
   `coverage_vs_generation.png`, `best_quality_vs_generation.png`,
   `qd_score_vs_generation.png`, plus 2-axis grid heatmaps, multi-axis grid

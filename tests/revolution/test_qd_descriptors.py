@@ -50,6 +50,16 @@ def test_load_descriptor_profiles_includes_runtime_retro_profiles():
         "if_count",
         "ast_depth_est",
     ]
+    assert profiles["activity_size_3d"] == [
+        "toggle_count_log_est",
+        "active_signal_ratio_est",
+        "wire_count_log_est",
+    ]
+    assert profiles["activity_control_3d"] == [
+        "toggle_density_est",
+        "active_signal_ratio_est",
+        "ctrl_depth_est",
+    ]
 
 
 def test_resolve_descriptor_axes_prefers_explicit_axes():
@@ -104,6 +114,11 @@ def test_descriptor_requirements_detect_ppa_and_synthesis_needs():
 def test_descriptor_requirements_detect_rtl_metric_axes():
     reqs = descriptor_requirements(["wire_count_log_est", "assign_count", "ctrl_depth_est"])
     assert reqs["requires_rtl_metrics"] is True
+
+
+def test_descriptor_requirements_detect_dynamic_metric_axes():
+    reqs = descriptor_requirements(["toggle_count_log_est", "active_signal_ratio_est"])
+    assert reqs["requires_dynamic_metrics"] is True
 
 
 def test_load_descriptor_profiles_accepts_custom_file(tmp_path: Path):
@@ -179,3 +194,12 @@ def test_default_descriptor_file_exposes_retrospective_structural_grid_specs():
     assert specs["ctrl_depth_est"].bins == 2
     assert specs["ctrl_depth_est"].lower_bound == pytest.approx(0.0)
     assert specs["ctrl_depth_est"].upper_bound == pytest.approx(10.0)
+    assert specs["toggle_count_log_est"].bins == 4
+    assert specs["toggle_count_log_est"].lower_bound == pytest.approx(0.0)
+    assert specs["toggle_count_log_est"].upper_bound == pytest.approx(16.0)
+    assert specs["toggle_density_est"].bins == 4
+    assert specs["toggle_density_est"].lower_bound == pytest.approx(0.0)
+    assert specs["toggle_density_est"].upper_bound == pytest.approx(64.0)
+    assert specs["active_signal_ratio_est"].bins == 4
+    assert specs["active_signal_ratio_est"].lower_bound == pytest.approx(0.0)
+    assert specs["active_signal_ratio_est"].upper_bound == pytest.approx(1.0)

@@ -169,6 +169,31 @@ def test_os_chmod_warning_is_non_fatal(mocker, minimal_sv_files):
     assert res["status"] == "success"
 
 
+def test_verilog_evaluator_injects_vcd_probe_when_enabled(mocker, minimal_sv_files, tmp_path):
+    comp = make_proc(returncode=0, stdout="Compile OK")
+    sim = make_proc(returncode=0, stdout="Simulation OK")
+    mock_run = mocker.patch("subprocess.run", side_effect=[comp, sim])
+    mocker.patch("os.chmod")
+
+    ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
+    result = ev.evaluate(
+        generated_sv_file=minimal_sv_files["dut"],
+        test_sv_file=minimal_sv_files["tb"],
+        ref_sv_file=None,
+        output_directory=str(tmp_path / "out"),
+        enable_vcd_probe=True,
+    )
+
+    compile_args, _ = mock_run.call_args_list[0]
+    compile_cmd = compile_args[0]
+    probe_files = [arg for arg in compile_cmd if arg.endswith("_qd_probe.sv")]
+    assert len(probe_files) == 1
+    probe_text = Path(probe_files[0]).read_text(encoding="utf-8")
+    assert "$dumpfile" in probe_text
+    assert "$dumpvars(0, tb);" in probe_text
+    assert result["vcd_file_path"] == str((tmp_path / "out" / "dut_activity.vcd").resolve())
+
+
 def test_verilog_evaluator_compilation_error(mocker):
     """
     Tests that VerilogEvaluator correctly handles a compilation error.

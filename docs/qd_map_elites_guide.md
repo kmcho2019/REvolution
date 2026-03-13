@@ -52,6 +52,8 @@ Related evaluation files:
 - [rtl_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/rtl_descriptor_evaluator.py):
   lightweight RTL-text, AST, and netlist-estimate descriptor extraction used by
   the new retrospective runtime profiles
+- [simulation_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/simulation_descriptor_evaluator.py):
+  VCD/activity parsing used by the dynamic simulation-derived descriptor family
 - [problem_spec.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/problem_spec.py):
   benchmark capability defaults and per-phase generation-mode defaults
 
@@ -113,6 +115,25 @@ Physical descriptors come from the OpenROAD reporting path:
 
 These are attached as `physical_metrics`.
 
+Dynamic simulation descriptors now come from the Icarus/VCD path and are
+attached as `dynamic_metrics`:
+
+- `toggle_count_log_est`
+- `toggle_density_est`
+- `active_signal_ratio_est`
+- `avg_toggle_rate_est`
+
+Extraction path:
+
+- [evaluation.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/evaluation.py)
+  injects a temporary `$dumpfile/$dumpvars` probe only when the selected
+  archive axes require dynamic metrics
+- [simulation_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/simulation_descriptor_evaluator.py)
+  parses the emitted waveform and estimates signal-change behavior from
+  DUT-scoped activity
+- the current path is intentionally descriptor-gated so classic REvolution and
+  non-dynamic QD runs do not pay waveform cost
+
 PPA gain axes are derived from reference-vs-generated PPA metrics:
 
 - `g_P = (P_ref - P_gen) / P_ref`
@@ -157,6 +178,13 @@ Runtime-supported retrospective profiles:
 - `size_sharing_3d`
   - `wire_count_log_est`, `wire_cell_ratio_est`,
     `resource_sharing_ratio_est`
+
+Exploratory dynamic profiles:
+
+- `activity_size_3d`
+  - `toggle_count_log_est`, `active_signal_ratio_est`, `wire_count_log_est`
+- `activity_control_3d`
+  - `toggle_density_est`, `active_signal_ratio_est`, `ctrl_depth_est`
 
 Stage 10 runtime note:
 
@@ -234,6 +262,7 @@ This file records:
 - cell id and assignment details
 - archive occupancy / QD score before and after insertion
 - previous elite and current cell elite summaries
+- structural, RTL, dynamic, and physical metric payloads when available
 
 ## What Happens In One Generation
 
@@ -267,6 +296,7 @@ successful pool.
 13. For successful candidates, QD descriptor tuples are constructed from:
     - structural metrics
     - RTL/AST/netlist-estimate metrics
+    - dynamic simulation metrics
     - physical metrics
     - computed `g_P`, `g_A`, `g_T`
 14. Each success is inserted into the archive:
@@ -314,6 +344,6 @@ When debugging a QD run, inspect artifacts in this order:
 For richer multi-axis grid runs:
 
 - current history plots still exist
-- current grid heatmaps do not render unless the grid is exactly 2D
+- use the per-axis marginal plots and pairwise projection heatmaps first
 - use `archive_space_report.md`, `archive_space.json`, `archive_cells.csv`, and
-  per-candidate `qd_archive_event.json` to understand cell organization
+  per-candidate `qd_archive_event.json` to understand full cell organization

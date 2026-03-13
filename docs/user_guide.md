@@ -161,6 +161,8 @@ Current feature status:
     `size_control_3d`, `timing_control_3d`
   - richer follow-on runtime-supported controls:
     `wire_assign_if_3d`, `size_sharing_3d`
+  - exploratory activity profiles:
+    `activity_size_3d`, `activity_control_3d`
 - When `qd_grid_axes` is omitted, grid mode now honors
   `qd_descriptor_profile`, so the compact structural profile above is actually
   enough to reproduce the retrospective refresh configuration.

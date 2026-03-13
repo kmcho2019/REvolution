@@ -152,6 +152,11 @@ class QDEngine(EoHEngine):
     def _requires_rtl_descriptor_metrics(self) -> bool:
         return bool(descriptor_requirements(self._archive_axes()).get("requires_rtl_metrics"))
 
+    def _requires_dynamic_descriptor_metrics(self) -> bool:
+        return bool(
+            descriptor_requirements(self._archive_axes()).get("requires_dynamic_metrics")
+        )
+
     def _phase_mode(self, phase: str) -> Literal["whole", "diff"]:
         override = {
             "fail": self.qd_fail_generation_mode,
@@ -184,6 +189,7 @@ class QDEngine(EoHEngine):
         descriptor_metrics: dict[str, float] = {}
         descriptor_metrics.update(getattr(candidate, "structural_metrics", {}) or {})
         descriptor_metrics.update(getattr(candidate, "rtl_metrics", {}) or {})
+        descriptor_metrics.update(getattr(candidate, "dynamic_metrics", {}) or {})
         descriptor_metrics.update(getattr(candidate, "physical_metrics", {}) or {})
         descriptor_metrics.update(getattr(candidate, "descriptor_values", {}) or {})
         descriptor_metrics.update(gains)

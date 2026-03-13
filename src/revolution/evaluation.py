@@ -4,6 +4,7 @@ import re
 import shutil
 import subprocess
 import traceback
+from pathlib import Path
 from typing import Any, Literal
 
 _NETLIST_INSTANCE_RE = re.compile(
@@ -71,6 +72,7 @@ class VerilogEvaluator:
         top_module_name: str = "tb",
         output_directory: str | None = None,
         simulation_timeout_seconds: int = 60,
+        enable_vcd_probe: bool = False,
     ) -> dict[str, Any]:
         """
         Compiles and simulates the given Verilog files.
@@ -107,8 +109,12 @@ class VerilogEvaluator:
             - ``compilation_stderr`` (str): Standard error from the compiler.
             - ``simulation_stdout`` (str): Standard output from the simulator.
             - ``simulation_stderr`` (str): Standard error from the simulator.
+            - ``vcd_file_path`` (str | None): Path to an emitted activity VCD
+              when `enable_vcd_probe=True`.
         :rtype: dict[str, Any]
         """
+
+        vcd_file_path: str | None = None
 
         # --- 1. Determine paths and prepare ---
         # Handle single file or list of files for test_sv_file
@@ -185,6 +191,21 @@ class VerilogEvaluator:
             actual_output_dir, output_basename + "_compiled.vvp"
         )
         log_file = os.path.join(actual_output_dir, output_basename + "_simulation.log")
+        vcd_file_path = (
+            os.path.join(actual_output_dir, output_basename + "_activity.vcd")
+            if enable_vcd_probe
+            else None
+        )
+        compile_test_sv_file = (
+            self._prepare_vcd_probe_testbench(
+                test_sv_file,
+                top_module_name=top_module_name,
+                output_directory=actual_output_dir,
+                vcd_file_path=vcd_file_path,
+            )
+            if enable_vcd_probe and vcd_file_path is not None
+            else test_sv_file
+        )
 
         # Initialize result components
         comp_stdout, comp_stderr = "", ""
@@ -199,8 +220,8 @@ class VerilogEvaluator:
         # Add logic for testing for duplicate files, if the same file is given multiple times, it should be added only once
         # This guard is necessary as when applying this function for reference files ref_sv_file might be the same as generated_sv_file,
         # So we need to ensure we don't add it multiple times. To avoid simulation errors.
-        if test_sv_file not in dut_files:
-            compile_cmd_list.append(test_sv_file)
+        if compile_test_sv_file not in dut_files:
+            compile_cmd_list.append(compile_test_sv_file)
         if ref_sv_file not in dut_files:
             # Skip adding ref_sv_file if it is None
             # This is to avoid errors when the reference file is not provided
@@ -231,7 +252,12 @@ class VerilogEvaluator:
                 if compile_process.returncode != 0:
                     print(f"ERROR: Compilation failed. See {log_file} for details.")
                     return self._format_result(
-                        "compilation_error", log_file, None, comp_stdout, comp_stderr
+                        "compilation_error",
+                        log_file,
+                        None,
+                        comp_stdout,
+                        comp_stderr,
+                        vcd_file_path=vcd_file_path,
                     )
                 print(f"INFO: Compilation successful. Output: {compiled_vvp_file}")
 
@@ -241,14 +267,22 @@ class VerilogEvaluator:
                 print(f"ERROR: {error_msg}")
                 lf.write(f"CRITICAL ERROR: {error_msg}\n")
                 return self._format_result(
-                    "file_error", log_file, None, comp_stderr=error_msg
+                    "file_error",
+                    log_file,
+                    None,
+                    comp_stderr=error_msg,
+                    vcd_file_path=vcd_file_path,
                 )
             except Exception as e:
                 error_msg = f"An unexpected error occurred during compilation: {e}"
                 print(f"ERROR: {error_msg}")
                 lf.write(f"CRITICAL ERROR: {error_msg}\n")
                 return self._format_result(
-                    "compilation_error", log_file, None, comp_stderr=error_msg
+                    "compilation_error",
+                    log_file,
+                    None,
+                    comp_stderr=error_msg,
+                    vcd_file_path=vcd_file_path,
                 )
 
             lf.write("\n--- Simulation Phase ---\n")
@@ -308,6 +342,7 @@ class VerilogEvaluator:
                         comp_stderr,
                         sim_stdout,
                         sim_stderr,
+                        vcd_file_path=vcd_file_path,
                     )
                 else:
                     # Non-zero return code could be due to $finish(X) with X!=0, or runtime errors.
@@ -322,6 +357,7 @@ class VerilogEvaluator:
                         comp_stderr,
                         sim_stdout,
                         sim_stderr,
+                        vcd_file_path=vcd_file_path,
                     )
 
             except subprocess.TimeoutExpired:
@@ -339,6 +375,7 @@ class VerilogEvaluator:
                     comp_stdout,
                     comp_stderr,
                     sim_stderr=timeout_msg,
+                    vcd_file_path=vcd_file_path,
                 )
             except FileNotFoundError:
                 # This case should ideally be caught by __init__, but as a safeguard:
@@ -352,6 +389,7 @@ class VerilogEvaluator:
                     comp_stdout,
                     comp_stderr,
                     sim_stderr=error_msg,
+                    vcd_file_path=vcd_file_path,
                 )
             except Exception as e:
                 error_msg = f"An unexpected error occurred during simulation: {e}"
@@ -364,7 +402,59 @@ class VerilogEvaluator:
                     comp_stdout,
                     comp_stderr,
                     sim_stderr=error_msg,
+                    vcd_file_path=vcd_file_path,
                 )
+
+    def _prepare_vcd_probe_testbench(
+        self,
+        test_sv_file: str,
+        *,
+        top_module_name: str,
+        output_directory: str,
+        vcd_file_path: str,
+    ) -> str:
+        """Create a temporary testbench copy with a VCD probe injected."""
+        testbench_text = Path(test_sv_file).read_text(encoding="utf-8", errors="ignore")
+        instrumented = self._inject_vcd_probe(
+            testbench_text,
+            top_module_name=top_module_name,
+            vcd_file_path=vcd_file_path,
+        )
+        if instrumented == testbench_text:
+            return test_sv_file
+        probe_path = os.path.join(
+            output_directory,
+            f"{Path(test_sv_file).stem}_qd_probe{Path(test_sv_file).suffix}",
+        )
+        with open(probe_path, "w", encoding="utf-8") as handle:
+            handle.write(instrumented)
+        return probe_path
+
+    def _inject_vcd_probe(
+        self,
+        testbench_text: str,
+        *,
+        top_module_name: str,
+        vcd_file_path: str,
+    ) -> str:
+        """Inject a dumpfile/dumpvars block into the target testbench module."""
+        module_pattern = re.compile(rf"\bmodule\s+{re.escape(top_module_name)}\b")
+        endmodule_pattern = re.compile(r"\bendmodule\b")
+        module_match = module_pattern.search(testbench_text)
+        if module_match is None:
+            return testbench_text
+        end_match = endmodule_pattern.search(testbench_text, module_match.end())
+        if end_match is None:
+            return testbench_text
+        escaped_vcd_path = vcd_file_path.replace("\\", "\\\\")
+        probe = (
+            "\n// QD dynamic descriptor probe\n"
+            "initial begin\n"
+            f'  $dumpfile("{escaped_vcd_path}");\n'
+            f"  $dumpvars(0, {top_module_name});\n"
+            "end\n\n"
+        )
+        return f"{testbench_text[:end_match.start()]}{probe}{testbench_text[end_match.start():]}"
 
     def _format_result(
         self,
@@ -381,6 +471,7 @@ class VerilogEvaluator:
         comp_stderr: str = "",
         sim_stdout: str = "",
         sim_stderr: str = "",
+        vcd_file_path: str | None = None,
     ) -> dict[str, str | None]:
         """Helper method to format the return dictionary.
 
@@ -409,6 +500,7 @@ class VerilogEvaluator:
             "compilation_stderr": comp_stderr,
             "simulation_stdout": sim_stdout,
             "simulation_stderr": sim_stderr,
+            "vcd_file_path": vcd_file_path,
         }
 
 

@@ -38,6 +38,7 @@
 - `runtime/realbench_adapter.py`: manifest-based RealBench module discovery plus `ProblemContext` / `ProblemSpec` builders.
 - `runtime/run_artifacts.py`: shared generation-log/summary writer plus legacy summary key alias support.
 - `evaluation.py`: evaluation stack (`VerilogEvaluator`, `SynthesisEvaluator`).
+- `simulation_descriptor_evaluator.py`: VCD/activity parsing for simulation-derived QD descriptors.
 - `llm.py`: unified async LLM client with retry/backoff, token tracking, and JSON parsing helpers.
 - `logging.py`: `EoHLogger` for JSONL generation logs, per-run summaries, and reward statistics.
 - `prompt_store.py`: filesystem-backed prompt templating system with concatenated bundle support and tolerant `safe_format`.

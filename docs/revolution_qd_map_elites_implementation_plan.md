@@ -39,7 +39,7 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
 - Current stage:
-  `Stage 12 completed; Stage 10 long-budget refresh evidence still in progress`
+  `Stage 13 completed; Stage 10 long-budget refresh evidence still in progress`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
@@ -60,8 +60,11 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   emitted from synthesized netlists, and the retrospective RTL/AST/netlist
   descriptor family (`wire_count_log_est`, `assign_count`, `if_count`,
   `ctrl_depth_est`, `ast_depth_est`, `resource_sharing_ratio_est`, and related
-  counts) is now wired into live QD runs through `rtl_metrics`; engine seam
-  cleanup and broader type-debt reduction still remain pending
+  counts) is now wired into live QD runs through `rtl_metrics`; Icarus/VCD
+  activity descriptors (`toggle_count_log_est`, `toggle_density_est`,
+  `active_signal_ratio_est`, `avg_toggle_rate_est`) are now wired into live QD
+  runs through `dynamic_metrics`; engine seam cleanup and broader type-debt
+  reduction still remain pending
 
 ## Worktree Info
 
@@ -189,6 +192,30 @@ Definitions:
 These are the most heavily exercised QD descriptors in the branch's completed
 comparison runs so far.
 
+#### Implemented and runtime-usable: dynamic simulation descriptors
+
+The runtime registry now also includes Icarus/VCD-derived activity descriptors:
+
+- `toggle_count_log_est`
+- `toggle_density_est`
+- `active_signal_ratio_est`
+- `avg_toggle_rate_est`
+
+Current extraction path:
+
+- `src/revolution/evaluation.py` can now inject a lightweight VCD probe into
+  the active testbench when the selected archive axes require dynamic metrics
+- `src/revolution/simulation_descriptor_evaluator.py` parses the emitted VCD
+  and derives activity estimates from tracked DUT-scoped signal changes
+- the resulting metrics are attached to candidates as `dynamic_metrics`
+
+Current validation status:
+
+- runtime-usable today on Icarus-backed benchmarks
+- still lightly validated relative to the already more heavily exercised gain
+  axes and structural axes
+- currently treated as experimental descriptors rather than defaults
+
 ### Implemented Descriptor Profiles
 
 The current descriptor-profile config in
@@ -286,8 +313,9 @@ Interpretation:
 - Current paper-style claims should therefore frame the existing results as
   archive-mechanics and low-dimensional QD evidence, not as proof that the full
   structural-plus-physical descriptor program is already validated.
-- Icarus-derived dynamic descriptors are **not** part of the implemented
-  runtime descriptor registry yet.
+- Icarus-derived dynamic descriptors are now implemented, but their current
+  extraction path is still benchmark- and testbench-dependent because it relies
+  on VCD dumping through the active Icarus simulation harness.
 
 ### Completed Default Fix: Sequential Grid Includes `g_P`
 
@@ -311,7 +339,6 @@ Interpretation:
 
 #### Planned but not implemented
 
-- Icarus/VCD/SAIF-derived toggle or activity descriptors
 - latency / cycle-to-valid descriptors
 - throughput or initiation-interval descriptors where benchmark semantics
   allow them
@@ -534,7 +561,6 @@ New runtime-supported RTL/AST/netlist-estimate axes:
 
 Still retrospective-only / future-only for now:
 
-- Icarus/VCD/SAIF-derived activity descriptors
 - latency / cycle-to-valid descriptors
 - throughput / initiation-interval descriptors
 - richer congestion or routing-pressure descriptors
@@ -574,6 +600,14 @@ descriptor family:
   `fsm_state_count_est`, `wire_cell_ratio_est`, `math_op_ast_count`,
   `resource_sharing_ratio_est`
 
+This branch now also adopts live runtime support for the first dynamic
+simulation descriptor family:
+
+- `toggle_count_log_est`
+- `toggle_density_est`
+- `active_signal_ratio_est`
+- `avg_toggle_rate_est`
+
 This branch also adopts the retrospective grid-axis bounds for the structural
 axes used by those profiles:
 
@@ -594,7 +628,6 @@ axes used by those profiles:
 
 Still deferred until further runtime descriptor support is added:
 
-- Icarus/VCD/SAIF-derived activity descriptors
 - latency / cycle-to-valid descriptors
 - throughput / initiation-interval descriptors
 - richer OpenROAD congestion or routing-stress descriptors
@@ -604,8 +637,8 @@ Still deferred until further runtime descriptor support is added:
 Reason for deferral:
 
 - this execution phase adds the primary RTL/AST/netlist estimator family, but
-  it does not yet cover dynamic simulation descriptors or richer physical-flow
-  congestion signals
+  richer physical-flow congestion signals and benchmark-specific latency /
+  throughput descriptors still remain
 
 ### Refresh Experiment Plan
 
@@ -1088,6 +1121,25 @@ Documentation risk to watch:
       change.
 - [x] Update QD docs and the living plan with the new artifact inventory.
 
+### Stage 13: Dynamic Activity Descriptor Rollout
+
+- [x] Add Icarus/VCD-derived activity descriptor extraction behind descriptor
+      requirements so non-dynamic runs do not pay the waveform cost.
+- [x] Add `toggle_count_log_est`, `toggle_density_est`,
+      `active_signal_ratio_est`, and `avg_toggle_rate_est` to the runtime
+      descriptor registry.
+- [x] Thread `dynamic_metrics` through both the shared
+      `CandidateEvaluator` path and the legacy `QDEngine`/`EoHEngine`
+      evaluation path.
+- [x] Extend QD archive-event artifacts so successful candidates preserve
+      dynamic metrics alongside structural, RTL, and physical metrics.
+- [x] Add exploratory built-in activity profiles and grid-axis bounds.
+- [x] Add regression coverage for VCD parsing, Verilog evaluator probe
+      injection, descriptor resolution, and QD artifact payloads.
+- [x] Run focused pytest/ruff/pyright/ty validation for the rollout.
+- [x] Update QD docs and the living plan with the new dynamic descriptor
+      family and its current caveats.
+
 ## Exact TODO List
 
 ### Public Surface
@@ -1165,13 +1217,15 @@ Documentation risk to watch:
       run on coverage, QD score, best quality, and visualization behavior
 - [ ] Evaluate whether `hybrid_phys_seq` materially improves sequential CVT
       archive diversity or best-quality outcomes
-- [ ] Add Icarus-derived dynamic descriptors only after extraction reliability
+- [x] Add Icarus-derived dynamic descriptors only after extraction reliability
       and probe coverage are documented
 - [x] Add richer multi-axis grid visualization support beyond the current 2D
       heatmap path
 - [x] Implement new runtime descriptor extraction for retrospective-only axes
       such as `wire_count_log_est`, `assign_count`, `if_count`,
       `ctrl_depth_est`, and `ast_depth_est`
+- [ ] Evaluate whether the new activity profiles improve archive fill or
+      archive quality enough to justify any default or near-default use
 
 ## Validation Log
 
@@ -2378,6 +2432,57 @@ Documentation risk to watch:
   - the remaining visualization gap is higher-level report consumption, not
     raw file generation
 
+### Stage 13
+
+- Date: `2026-03-13`
+- Implementation checkpoint:
+  - added `src/revolution/simulation_descriptor_evaluator.py` for lightweight
+    VCD/activity parsing
+  - `src/revolution/evaluation.py` now supports descriptor-gated testbench
+    probe injection and returns `vcd_file_path` in simulation results
+  - candidate enrichment now carries `dynamic_metrics` through:
+    - `src/revolution/runtime/candidate_evaluator.py`
+    - `src/revolution/algorithm.py`
+    - `src/revolution/qd/engine.py`
+  - QD candidate archive-event artifacts now include `dynamic_metrics`
+  - runtime-supported exploratory activity profiles now include:
+    - `activity_size_3d`
+    - `activity_control_3d`
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_simulation_descriptor_evaluator.py tests/revolution/test_qd_descriptors.py tests/revolution/test_evaluation.py tests/revolution/test_candidate_evaluator.py tests/revolution/test_qd_engine.py`
+  - Result: `80 passed in 11.21s`
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_candidate_evaluator_parity.py`
+  - Result: `6 passed in 0.73s`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `354 passed in 12.64s`
+  - `/workspace/.venv/bin/ruff check src/revolution/simulation_descriptor_evaluator.py src/revolution/evaluation.py src/revolution/algorithm.py src/revolution/qd/descriptors.py src/revolution/qd/engine.py src/revolution/qd/artifacts.py src/revolution/runtime/candidate_evaluator.py tests/revolution/test_simulation_descriptor_evaluator.py tests/revolution/test_qd_descriptors.py tests/revolution/test_evaluation.py tests/revolution/test_candidate_evaluator.py tests/revolution/test_qd_engine.py`
+  - Result: `All checks passed!`
+  - `/workspace/.venv/bin/python -m pyright src/revolution/simulation_descriptor_evaluator.py src/revolution/evaluation.py src/revolution/qd/descriptors.py src/revolution/qd/engine.py src/revolution/qd/artifacts.py`
+  - Result: `0 errors, 1 warning`
+    - warning detail:
+      - `src/revolution/qd/descriptors.py`: `yaml` could not be resolved from
+        source by pyright
+  - `uv tool run ty check src/revolution/simulation_descriptor_evaluator.py src/revolution/evaluation.py src/revolution/qd`
+  - Result: `All checks passed!`
+- Live validation:
+  - attempted bounded activity-profile smoke:
+    - `timeout 1800s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --qd_descriptor_profile activity_control_3d --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_stage13_smoke/activity_grid_rtllm --no-backend_subdir --seed 42`
+    - result:
+      - vLLM preflight succeeded
+      - runner created config and top-level run-log files
+      - no first candidate directory or archive artifact was materialized
+        before the bounded observation window, so treat this as
+        attempted-but-blocked rather than passed
+- Notes:
+  - dynamic descriptors are now runtime-real rather than roadmap-only, but
+    they remain experimental because their signal quality depends on VCD scope
+    filtering and the behavior of the benchmark testbench
+  - the rollout intentionally keeps activity extraction descriptor-gated so
+    classic REvolution and non-dynamic QD runs do not pay the waveform cost
+  - focused pyright validation was kept on the new dynamic-descriptor surface;
+    broader legacy typing debt in `algorithm.py` and
+    `runtime/candidate_evaluator.py` remains tracked separately
+
 ## Debt Review
 
 ### Stage 0
@@ -2570,6 +2675,19 @@ Documentation risk to watch:
 - The remaining debt is now on report consumption and summarization, not on
   raw multi-axis plot generation.
 
+### Stage 13
+
+- The new dynamic-descriptor rollout is deliberately small in structure:
+  one focused evaluator (`src/revolution/simulation_descriptor_evaluator.py`)
+  plus descriptor-gated wiring through existing evaluation paths.
+- The main remaining debt is empirical rather than structural:
+  the current VCD probe path dumps from the active testbench hierarchy, so
+  descriptor quality depends on how cleanly DUT-local signals can be separated
+  from testbench-local activity on each benchmark.
+- The rollout adds another descriptor family but avoids broad abstraction
+  growth by reusing the same `descriptor_requirements(...)` gating pattern
+  already used for RTL/AST/netlist metrics.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -2731,6 +2849,18 @@ Documentation risk to watch:
 - The remaining intent gap is presentation quality in downstream reports, not
   the absence of multi-axis grid diagnostics themselves.
 
+### Stage 13
+
+- Stage 13 moves the branch closer to the original descriptor roadmap because
+  the first dynamic/activity descriptor family is now part of the live runtime
+  rather than only a future note in the plan.
+- The rollout still respects the original configurability goal:
+  activity extraction only activates when the selected archive axes require it,
+  so classic REvolution remains comparable and unaffected by default.
+- The remaining alignment gap is validation breadth rather than architecture:
+  the branch now supports activity descriptors end-to-end, but their archive
+  usefulness still needs bounded live smokes and longer-budget experiments.
+
 ## Roadmap Extension
 
 This roadmap extends the original stage list with the concrete findings from
@@ -2856,8 +2986,8 @@ implementation and testing so far.
   downstream report consumption rather than raw plot generation.
 - The next descriptor-rich follow-through should prioritize:
   - `hybrid_phys_seq` validation on sequential CVT tasks
-  - Icarus-derived dynamic/activity descriptors only after extraction
-    reliability is documented
+  - bounded live smokes for the new Icarus-derived activity profiles and a
+    first archive-quality comparison against the existing structural controls
   - further shared-engine cleanup and older `algorithm.py`
     typing/documentation reduction
 
@@ -2899,6 +3029,7 @@ implementation and testing so far.
 - `20f1353e07` `docs(qd): expand descriptor inventory and rerun roadmap`
 - `50fd888e3d` `feat(qd): add archive event logs and space reports`
 - `13611203f0` `fix(qd): honor retrospective grid profiles in runtime`
+- `9e7ec003fa` `feat(qd): add multi-axis grid visualization outputs`
 
 ## Deferred Follow-Ups
 
@@ -2909,8 +3040,9 @@ implementation and testing so far.
   diversity or best-quality outcomes.
 - Improve downstream report consumption and summarization of the new multi-axis
   grid marginal/projection artifacts.
-- Add Icarus-derived dynamic descriptors only after extraction reliability and
-  descriptor-probe coverage are documented.
+- Validate whether the new activity profiles produce meaningful archive
+  diversity or archive-quality gains on RTLLM / VerilogEval before considering
+  any default change.
 - Continue reducing older `algorithm.py` typing/documentation debt and shared
   engine-loop duplication where the cleanup is low-risk.
 - Consider integrating the separate remote `realbench` branch once its fuller
@@ -2933,3 +3065,5 @@ implementation and testing so far.
   `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128 --diff_max_tokens 128 --save_path /tmp/qd_stage9_fast_smoke/cvt --no-backend_subdir --seed 42`
 - Repeatable QD smoke harness:
   `bash scripts/run_backend_qd_smoke_vllm.sh --archive matrix --suite verilogeval --policy diff-heavy`
+- Planned activity-profile smoke:
+  `python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --qd_descriptor_profile activity_control_3d --benchmarks RTLLM --problems Prob043_RAM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --max_tokens 128000`

@@ -515,6 +515,7 @@ def test_qd_engine_writes_candidate_archive_event_for_empty_fill(tmp_path, monke
     cand.code_file_path = str(tmp_path / "cand" / "code.sv")
     cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
     cand.rtl_metrics = {"assign_count": 1.0}
+    cand.dynamic_metrics = {"toggle_count_log_est": 3.5}
     engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
 
     inserted, replaced = engine._insert_successes([cand])
@@ -526,6 +527,7 @@ def test_qd_engine_writes_candidate_archive_event_for_empty_fill(tmp_path, monke
     assert payload["decision"] == "filled_empty"
     assert payload["cell_id"] == "2,2"
     assert payload["rtl_metrics"]["assign_count"] == pytest.approx(1.0)
+    assert payload["dynamic_metrics"]["toggle_count_log_est"] == pytest.approx(3.5)
     assert payload["current_cell_elite"]["candidate_id"] == cand.id
 
 

@@ -17,6 +17,7 @@ class DescriptorDefinition:
     transform: str = "identity"
     requires_ppa: bool = False
     requires_synthesis: bool = False
+    requires_simulation: bool = False
     requires_formal: bool = False
     supported_benchmarks: tuple[str, ...] = ()
 
@@ -49,6 +50,10 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "ctrl_depth_est": DescriptorDefinition("ctrl_depth_est", "yosys_ast"),
     "math_op_ast_count": DescriptorDefinition("math_op_ast_count", "yosys_ast"),
     "resource_sharing_ratio_est": DescriptorDefinition("resource_sharing_ratio_est", "yosys_ast"),
+    "toggle_count_log_est": DescriptorDefinition("toggle_count_log_est", "icarus_vcd", requires_simulation=True),
+    "toggle_density_est": DescriptorDefinition("toggle_density_est", "icarus_vcd", requires_simulation=True),
+    "active_signal_ratio_est": DescriptorDefinition("active_signal_ratio_est", "icarus_vcd", requires_simulation=True),
+    "avg_toggle_rate_est": DescriptorDefinition("avg_toggle_rate_est", "icarus_vcd", requires_simulation=True),
     "wirelength": DescriptorDefinition("wirelength", "openroad", transform="log1p", requires_synthesis=True),
     "utilization": DescriptorDefinition("utilization", "openroad", requires_synthesis=True),
     "cts_buffer_count": DescriptorDefinition("cts_buffer_count", "openroad", transform="log1p", requires_synthesis=True),
@@ -192,8 +197,14 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (0.0, 1.0)
     if axis in {"cell_count_log", "wirelength", "cts_buffer_count", "repair_buffer_count", "hold_buffer_count", "wire_count_log_est"}:
         return (0.0, 16.0)
+    if axis == "toggle_count_log_est":
+        return (0.0, 16.0)
     if axis in {"always_count", "assign_count", "if_count", "case_count", "ternary_count", "rtl_instance_count_est", "fsm_state_count_est", "ast_depth_est", "ctrl_depth_est", "math_op_ast_count"}:
         return (0.0, 32.0)
+    if axis == "toggle_density_est":
+        return (0.0, 64.0)
+    if axis in {"active_signal_ratio_est", "avg_toggle_rate_est"}:
+        return (0.0, 1.0)
     if axis in {"wire_cell_ratio_est", "resource_sharing_ratio_est"}:
         return (0.0, 4.0)
     if axis == "ltp_noff":
@@ -232,6 +243,9 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
             for axis in axes
             if axis in registry
         ),
+        "requires_dynamic_metrics": any(
+            registry[axis].source_tool == "icarus_vcd" for axis in axes if axis in registry
+        ),
     }
 
 
@@ -244,6 +258,7 @@ def summarize_descriptor_axes(axes: list[str] | tuple[str, ...]) -> list[dict[st
             "transform": registry[axis].transform,
             "requires_ppa": registry[axis].requires_ppa,
             "requires_synthesis": registry[axis].requires_synthesis,
+            "requires_simulation": registry[axis].requires_simulation,
         }
         for axis in axes
         if axis in registry

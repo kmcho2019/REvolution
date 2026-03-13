@@ -172,11 +172,18 @@ Current status on this feature branch:
   - `timing_control_3d`
   - `wire_assign_if_3d`
   - `size_sharing_3d`
+- The first Icarus/VCD-derived activity descriptor family is now also live:
+  - `toggle_count_log_est`
+  - `toggle_density_est`
+  - `active_signal_ratio_est`
+  - `avg_toggle_rate_est`
+  - exploratory built-in profiles:
+    - `activity_size_3d`
+    - `activity_control_3d`
 - When `--qd_grid_axes` is omitted, grid mode now correctly honors
   `--qd_descriptor_profile` instead of silently falling back to gain axes.
-- The still-future descriptor work is now mainly dynamic or heavier physical
-  extraction:
-  - Icarus/VCD/SAIF-derived activity axes
+- The still-future descriptor work is now mainly benchmark-specific dynamic or
+  heavier physical extraction:
   - latency and throughput descriptors
   - richer congestion-oriented physical axes
 - Current refresh evidence under `/tmp/qd_rich20x5_refresh_v2` suggests these

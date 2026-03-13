@@ -23,6 +23,7 @@ from revolution.qd.scoring import (
     normalize_code_hash,
 )
 from revolution.rtl_descriptor_evaluator import RTLDescriptorEvaluator
+from revolution.simulation_descriptor_evaluator import SimulationDescriptorEvaluator
 
 
 class CandidateStatus(StrEnum):
@@ -67,6 +68,7 @@ class CandidateEvaluation:
     circuit_type: str = "unknown"
     structural_metrics: dict[str, float] = field(default_factory=dict)
     rtl_metrics: dict[str, float] = field(default_factory=dict)
+    dynamic_metrics: dict[str, float] = field(default_factory=dict)
     physical_metrics: dict[str, float] = field(default_factory=dict)
     descriptor_values: dict[str, float] = field(default_factory=dict)
     partial_pass_fraction: float = 0.0
@@ -143,6 +145,7 @@ class CandidateEvaluator:
         )
         self.descriptor_requirements = descriptor_requirements(self.descriptor_axes)
         self.rtl_descriptor_evaluator = RTLDescriptorEvaluator()
+        self.simulation_descriptor_evaluator = SimulationDescriptorEvaluator()
         if evaluation_mode not in {
             EvaluationMode.STRICT_ABLATION.value,
             EvaluationMode.SEARCH_ACCELERATED.value,
@@ -210,11 +213,17 @@ class CandidateEvaluator:
                 code_file_path=item.code_file_path,
                 mapped_cell_count=result.structural_metrics.get("total_cells"),
             )
+        if (
+            not result.dynamic_metrics
+            and self.descriptor_requirements.get("requires_dynamic_metrics", False)
+        ):
+            result.dynamic_metrics = self._extract_dynamic_metrics(result.simulation_result)
 
         if not result.descriptor_values and self.descriptor_axes:
             descriptor_metrics: dict[str, float] = {}
             descriptor_metrics.update(result.structural_metrics)
             descriptor_metrics.update(result.rtl_metrics)
+            descriptor_metrics.update(result.dynamic_metrics)
             descriptor_metrics.update(result.physical_metrics)
             descriptor_metrics.update(
                 {
@@ -243,6 +252,18 @@ class CandidateEvaluator:
             partial_pass_fraction=result.partial_pass_fraction,
         )
         return result
+
+    def _extract_dynamic_metrics(
+        self,
+        simulation_result: dict[str, Any] | None,
+    ) -> dict[str, float]:
+        """Extract activity descriptors from an optional waveform emitted by simulation."""
+        if not simulation_result:
+            return {}
+        return self.simulation_descriptor_evaluator.extract_metrics(
+            vcd_file_path=simulation_result.get("vcd_file_path"),
+            top_module_name=self.top_module_name,
+        )
 
     def _evaluate_pre_synthesis(self, item: CandidateWorkItem) -> CandidateEvaluation:
         """Run format/syntax/functionality stages and return an intermediate result."""
@@ -276,10 +297,18 @@ class CandidateEvaluator:
         stages["format"] = True
         stages["diff"] = True
 
+        enable_dynamic_probe = bool(
+            self.descriptor_requirements.get("requires_dynamic_metrics", False)
+        )
         sim_results = self.verilog_evaluator.evaluate(
             item.code_file_path,
             str(self.context.test_sv_path),
             str(self.context.ref_sv_path) if self.context.ref_sv_path else None,
+            top_module_name=self.top_module_name,
+            enable_vcd_probe=enable_dynamic_probe,
+        )
+        dynamic_metrics = (
+            self._extract_dynamic_metrics(sim_results) if enable_dynamic_probe else {}
         )
         if sim_results["status"] == "compilation_error":
             feedback_payload = {
@@ -295,6 +324,7 @@ class CandidateEvaluator:
                 stage_statuses=stages,
                 feedback_payload=feedback_payload,
                 simulation_result=sim_results,
+                dynamic_metrics=dynamic_metrics,
             )
 
         stages["syntax"] = sim_results["status"] == "success"
@@ -322,6 +352,7 @@ class CandidateEvaluator:
                 mismatch_count=mismatch_count,
                 feedback_payload=feedback_payload,
                 simulation_result=sim_results,
+                dynamic_metrics=dynamic_metrics,
             )
 
         stages["functionality"] = True
@@ -331,6 +362,7 @@ class CandidateEvaluator:
             stage_statuses=stages,
             mismatch_count=mismatch_count,
             simulation_result=sim_results,
+            dynamic_metrics=dynamic_metrics,
         )
 
     def _evaluate_synthesis(
@@ -341,6 +373,7 @@ class CandidateEvaluator:
         stages = dict(pre_synthesis.stage_statuses)
         sim_results = pre_synthesis.simulation_result
         mismatch_count = pre_synthesis.mismatch_count
+        dynamic_metrics = dict(pre_synthesis.dynamic_metrics)
 
         report_base_path = item.code_file_path.rsplit(".", 1)[0]
         output_dir = os.path.dirname(item.code_file_path)
@@ -409,6 +442,7 @@ class CandidateEvaluator:
                     {
                         **structural_metrics,
                         **rtl_metrics,
+                        **dynamic_metrics,
                         **physical_metrics,
                         "g_P": float(components.get("g_P", 0.0)),
                         "g_A": float(components.get("g_A", 0.0)),
@@ -417,6 +451,7 @@ class CandidateEvaluator:
                     self.descriptor_axes,
                 ),
                 rtl_metrics=rtl_metrics,
+                dynamic_metrics=dynamic_metrics,
             )
 
         if not synth_success:
@@ -459,6 +494,7 @@ class CandidateEvaluator:
             synthesis_result=synth_results,
             structural_metrics=structural_metrics,
             rtl_metrics=rtl_metrics,
+            dynamic_metrics=dynamic_metrics,
             physical_metrics=physical_metrics,
         )
 
@@ -482,6 +518,7 @@ class CandidateEvaluator:
             mismatch_count=pre_synthesis.mismatch_count,
             feedback_payload=feedback_payload,
             simulation_result=pre_synthesis.simulation_result,
+            dynamic_metrics=pre_synthesis.dynamic_metrics,
             synthesis_skipped=True,
         )
 
