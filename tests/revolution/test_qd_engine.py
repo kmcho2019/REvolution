@@ -65,6 +65,34 @@ def test_qd_engine_phase_mode_defaults_follow_refine_diff_only(tmp_path, monkeyp
     assert engine._phase_mode("refine") == "diff"
 
 
+def test_qd_engine_default_grid_axes_include_power_for_sequential_problem(tmp_path, monkeypatch):
+    problem_spec = ProblemSpec(
+        benchmark_name="RTLLM",
+        problem_name="Prob",
+        prompt_text="desc",
+        top_module="TopModule",
+        benchmark_root=tmp_path,
+        circuit_type="sequential",
+    )
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    engine = QDEngine(
+        benchmark_name="RTLLM",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="grid",
+        qd_num_cells=16,
+        qd_grid_axes=(),
+        problem_spec=problem_spec,
+    )
+    assert engine.qd_grid_axes == ("g_A", "g_P", "g_T")
+
+
 def test_qd_engine_uses_problem_spec_prompt_text_for_non_file_backed_problem(tmp_path):
     problem_spec = ProblemSpec(
         benchmark_name="cvdp",
@@ -306,6 +334,8 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     summary_path = tmp_path / "artifacts" / "archive_summary.json"
     layout_path = tmp_path / "artifacts" / "grid_layout.json"
     metrics_path = tmp_path / "artifacts" / "qd_metrics.json"
+    space_json_path = tmp_path / "artifacts" / "archive_space.json"
+    space_report_path = tmp_path / "artifacts" / "archive_space_report.md"
     coverage_plot = tmp_path / "artifacts" / "coverage_vs_generation.png"
     quality_plot = tmp_path / "artifacts" / "grid_quality_heatmap.png"
 
@@ -314,6 +344,8 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     assert summary_path.is_file()
     assert layout_path.is_file()
     assert metrics_path.is_file()
+    assert space_json_path.is_file()
+    assert space_report_path.is_file()
     assert coverage_plot.is_file()
     assert quality_plot.is_file()
 
@@ -327,6 +359,9 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     summary_payload = json.loads(summary_path.read_text(encoding="utf-8"))
     metrics_payload = json.loads(metrics_path.read_text(encoding="utf-8"))
     assert "coverage_vs_generation.png" in "".join(summary_payload["visualization_files"])
+    space_payload = json.loads(space_json_path.read_text(encoding="utf-8"))
+    assert space_payload["archive_type"] == "grid"
+    assert "uniform grid binning" in space_payload["assignment_rule"]
     assert metrics_payload["occupied_cells"] == 1
     assert metrics_payload["coverage"] == pytest.approx(1 / 16)
     assert metrics_payload["qd_score"] == pytest.approx(0.6)
@@ -362,9 +397,13 @@ def test_qd_engine_writes_cvt_layout_metadata(tmp_path, monkeypatch):
     engine._write_qd_artifacts(engine._build_qd_snapshot(inserted=1, replaced=0, budget=None))
 
     layout_payload = json.loads((tmp_path / "artifacts" / "centroids.json").read_text(encoding="utf-8"))
+    space_payload = json.loads((tmp_path / "artifacts" / "archive_space.json").read_text(encoding="utf-8"))
     assert layout_payload["archive_type"] == "cvt"
     assert layout_payload["initialized"] is True
     assert len(layout_payload["centroids"]) == 4
+    assert space_payload["archive_type"] == "cvt"
+    assert space_payload["space_geometry"]["initialized"] is True
+    assert (tmp_path / "artifacts" / "archive_space_report.md").is_file()
     assert (tmp_path / "artifacts" / "cvt_quality_projection.png").is_file()
 
 
@@ -396,6 +435,98 @@ def test_qd_engine_initial_artifact_write_records_initial_snapshot(tmp_path, mon
     assert summary_payload["occupied_cells"] == 1
     assert metrics_payload["history_length"] == 1
     assert metrics_payload["latest_snapshot"]["occupied_cells"] == 1
+
+
+def test_qd_engine_writes_candidate_archive_event_for_empty_fill(tmp_path, monkeypatch):
+    engine = _engine(tmp_path, monkeypatch)
+    engine.logger = SimpleNamespace(log_dir=str(tmp_path / "artifacts"))
+    cand = Heuristic("elite", "module m; endmodule", "", score=0.6, generation=0, status="success")
+    cand.ppa_success = True
+    cand.code_file_path = str(tmp_path / "cand" / "code.sv")
+    cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+
+    inserted, replaced = engine._insert_successes([cand])
+
+    event_path = tmp_path / "cand" / "qd_archive_event.json"
+    payload = json.loads(event_path.read_text(encoding="utf-8"))
+    assert inserted == 1
+    assert replaced == 0
+    assert payload["decision"] == "filled_empty"
+    assert payload["cell_id"] == "2,2"
+    assert payload["current_cell_elite"]["candidate_id"] == cand.id
+
+
+def test_qd_engine_writes_candidate_archive_event_for_replacement(tmp_path, monkeypatch):
+    engine = _engine(tmp_path, monkeypatch)
+    prior = Heuristic("prior", "module m; endmodule", "", score=0.5, generation=0, status="success")
+    prior.ppa_success = True
+    prior.code_file_path = str(tmp_path / "prior" / "code.sv")
+    prior.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    better = Heuristic("better", "module m; endmodule", "", score=0.8, generation=1, status="success")
+    better.ppa_success = True
+    better.code_file_path = str(tmp_path / "better" / "code.sv")
+    better.ppa_metrics = {"power": 0.85, "area": 90.0, "eff_clk_period": 0.8}
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+
+    engine._insert_successes([prior])
+    engine._insert_successes([better])
+
+    payload = json.loads((tmp_path / "better" / "qd_archive_event.json").read_text(encoding="utf-8"))
+    assert payload["decision"] == "replaced_elite"
+    assert payload["previous_elite"]["candidate_id"] == prior.id
+    assert payload["current_cell_elite"]["candidate_id"] == better.id
+
+
+def test_qd_engine_writes_candidate_archive_event_for_non_inserted_success(tmp_path, monkeypatch):
+    engine = _engine(tmp_path, monkeypatch)
+    elite = Heuristic("elite", "module m; endmodule", "", score=0.6, generation=0, status="success")
+    elite.ppa_success = True
+    elite.code_file_path = str(tmp_path / "elite" / "code.sv")
+    elite.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    near = Heuristic("near", "module m; endmodule", "", score=0.4, generation=1, status="success")
+    near.ppa_success = True
+    near.code_file_path = str(tmp_path / "near" / "code.sv")
+    near.ppa_metrics = {"power": 0.92, "area": 90.0, "eff_clk_period": 0.8}
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+
+    engine._insert_successes([elite])
+    engine._insert_successes([near])
+
+    payload = json.loads((tmp_path / "near" / "qd_archive_event.json").read_text(encoding="utf-8"))
+    assert payload["decision"] == "not_inserted"
+    assert payload["previous_elite"]["candidate_id"] == elite.id
+    assert payload["current_cell_elite"]["candidate_id"] == elite.id
+
+
+def test_qd_engine_writes_candidate_archive_event_for_cvt_warmup(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="cvt",
+        qd_num_cells=4,
+        qd_cvt_axes=("g_A", "g_T"),
+        qd_cvt_warmup_successes=2,
+    )
+    cand = Heuristic("elite", "module m; endmodule", "", score=0.6, generation=0, status="success")
+    cand.ppa_success = True
+    cand.code_file_path = str(tmp_path / "cand" / "code.sv")
+    cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+
+    engine._insert_successes([cand])
+
+    payload = json.loads((tmp_path / "cand" / "qd_archive_event.json").read_text(encoding="utf-8"))
+    assert payload["decision"] == "warmup_buffered"
+    assert payload["assignment"]["assignment_status"] == "warmup_pending"
 
 
 def test_qd_engine_creates_targeted_mutation_prompt(tmp_path, monkeypatch):

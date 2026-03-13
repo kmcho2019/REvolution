@@ -78,7 +78,7 @@ def load_descriptor_profiles(path: str | Path | None = None) -> dict[str, list[s
     for profile_name, axes in profiles_raw.items():
         if not isinstance(axes, list) or not all(isinstance(axis, str) for axis in axes):
             raise ValueError(f"Descriptor profile '{profile_name}' must be a list of strings.")
-        profiles[str(profile_name)] = list(axes)
+        profiles[str(profile_name)] = [str(axis) for axis in axes]
     return profiles
 
 
@@ -128,7 +128,7 @@ def resolve_descriptor_axes(
         return list(profiles[profile_name])
 
     if archive_type == "grid":
-        return ["g_A", "g_P"] if circuit_type == "combinational" else ["g_A", "g_T"]
+        return ["g_A", "g_P"] if circuit_type == "combinational" else ["g_A", "g_P", "g_T"]
     return ["mux_ratio", "ltp_noff", "cell_count_log", "g_P", "g_A"] if circuit_type == "combinational" else [
         "seq_ratio",
         "mux_ratio",

@@ -175,6 +175,8 @@ Current feature status:
   conclusions about archive fill, operator quality, or benchmark difficulty.
 - The authoritative detailed status lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.
+- The runtime behavior, file map, and trace-level walkthrough live in
+  `docs/qd_map_elites_guide.md`.
 
 Example (REvolution backend):
 
@@ -442,7 +444,9 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
   - Also writes top-level snapshots under `save_root` as `<timestamp>_ablation_config.yaml` and `<timestamp>_ablation_config_meta.yaml`.
 - `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch/EoH/CodeEvolve comparisons.
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
-- `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts`). QD runs keep `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`, `qd_metrics.json`, `grid_layout.json` or `centroids.json`, and the generated QD plots in the archived summary set so archive state is preserved even in `candidate_core` mode.
+- `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts`). QD runs keep `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`, `qd_metrics.json`, `grid_layout.json` or `centroids.json`, `archive_space.json`, `archive_space_report.md`, and the generated QD plots in the archived summary set so archive state is preserved even in `candidate_core` mode.
+- QD candidate directories now also include `qd_archive_event.json` for every
+  archive-handled successful candidate.
 - `scripts/run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with matched-seed runs (`--seeds`), fixed hard validation matrix defaults (RTLLM/VerilogEval/CVDP), aggregate token/runtime report output, diff-failure catalogs, and optional `--skip_if_unreachable` fail-fast artifact mode for unstable vLLM connectivity.
 - `scripts/run_diff_mode_diagnostics.py`: real-LLM diff robustness diagnostics for parse/apply failure taxonomy over curated stress cases, with skip artifact support when vLLM is unreachable and worst-case failure sample retention per reason.
 - `scripts/run_diff_prompt_suite.py`: self-contained prompt-optimization suite for diff mode with per-run objective scoring and case-level hard-pass/safe-reject diagnostics.

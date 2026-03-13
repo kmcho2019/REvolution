@@ -24,6 +24,7 @@
 - `backends/revolution_backend.py`: adapter around existing `EoHEngine` behavior.
 - `qd/`: QD/MAP-Elites substrate and runtime extensions.
   - `qd/archive.py`: grid archive implementation and insertion/replacement semantics.
+  - `qd/artifacts.py`: archive summaries, archive-space reports, and per-candidate archive-event writers.
   - `qd/scheduler.py`: occupancy-based fail/success budget splitting helpers.
   - `qd/scoring.py`: exact PPA `quality_score`, gain axes, repair score, and code hashing helpers.
   - `qd/descriptors.py`: descriptor registry, profile loading, and descriptor-axis resolution.

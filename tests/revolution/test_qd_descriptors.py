@@ -40,6 +40,17 @@ def test_resolve_descriptor_axes_uses_grid_defaults_for_comb_logic():
     assert axes == ["g_A", "g_P"]
 
 
+def test_resolve_descriptor_axes_uses_grid_defaults_for_sequential_logic():
+    axes = resolve_descriptor_axes(
+        profile_name=None,
+        explicit_axes=None,
+        descriptor_file=None,
+        archive_type="grid",
+        circuit_type="sequential",
+    )
+    assert axes == ["g_A", "g_P", "g_T"]
+
+
 def test_extract_descriptor_values_applies_log1p_transform():
     values = extract_descriptor_values(
         {"cell_count_log": 99.0, "g_A": 0.2},

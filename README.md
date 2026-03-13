@@ -22,6 +22,7 @@ The `docs/` directory contains deeper dives:
 
 - `docs/implementation_details.md` – architecture and component responsibilities.
 - `docs/revolution_qd_map_elites_implementation_plan.md` – living QD/MAP-Elites implementation status, validation notes, and staged roadmap.
+- `docs/qd_map_elites_guide.md` – QD runtime guide, descriptor/tool mapping, and generation-by-generation trace.
 - `docs/diff_mode.md` – diff-mode schema, policies, diagnostics, and benchmark workflow.
 - `docs/module_structure.md` – file-by-file breakdown of the codebase.
 - `docs/method_interaction_and_evolutionary_loop.md` – data flow through the evolutionary loop.
@@ -142,7 +143,11 @@ Current status on this feature branch:
   archive insertion.
 - QD runs now emit archive-state artifacts alongside the legacy summary/log
   files: `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`,
-  `qd_metrics.json`, and `grid_layout.json` or `centroids.json`.
+  `qd_metrics.json`, `grid_layout.json` or `centroids.json`, plus
+  `archive_space.json` and `archive_space_report.md`.
+- Every archive-handled successful QD candidate now writes
+  `qd_archive_event.json` beside `code.sv`, simulation logs, and synthesis
+  reports so archive insertion and displacement can be debugged per candidate.
 - QD runs now also emit visualization files from those artifacts:
   `coverage_vs_generation.png`, `best_quality_vs_generation.png`,
   `qd_score_vs_generation.png`, plus grid heatmaps or CVT projection plots for

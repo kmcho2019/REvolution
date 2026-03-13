@@ -114,6 +114,7 @@ Current branch status:
 | `StreamRedirector`   | `src/revolution/utils.py`        | Capture stdout/stderr to per-problem log files.                                                     |
 | `QDEngine`           | `src/revolution/qd/engine.py`    | Experimental archive-backed search path for `revolution_qd`, currently supporting grid and CVT.    |
 | `GridArchive`        | `src/revolution/qd/archive.py`   | Grid MAP-Elites archive for reduced-axis QD runs.                                                   |
+| QD artifact helpers  | `src/revolution/qd/artifacts.py` | Archive summaries, archive-space reports, and per-candidate archive-event emission.                 |
 | `CVTArchive`         | `src/revolution/qd/archive.py`   | Warm-up/freeze CVT archive with frozen scaling and nearest-centroid cell assignment.                |
 | `split_qd_budget`    | `src/revolution/qd/scheduler.py` | Linear fail-share and fill/improve budget split helper.                                             |
 | QD scoring helpers   | `src/revolution/qd/scoring.py`   | Weighted PPA quality score, gain axes, repair score, code hashing.                                  |

@@ -56,6 +56,8 @@ The current QD implementation is staged:
 - `qd_descriptor_file` can now define grid-axis bin/bounds specs in addition to
   descriptor profiles, so grid experiments can move beyond the uniform
   `[-1, 1]` gain-axis fallback.
+- sequential grid defaults now include `g_P` alongside `g_A` and `g_T`, so
+  default sequential grid runs preserve power, area, and timing gain axes.
 - CVT/runtime parity is still incomplete mainly around live smoke completion,
   broader benchmark coverage, and deeper evaluator-side descriptor richness.
 - Stage 6 benchmark plumbing is now partially landed:
@@ -67,6 +69,8 @@ The QD substrate currently lives under `src/revolution/qd/`:
 
 - `archive.py`: grid and CVT archive insertion/replacement contracts, including
   CVT warm-up/freeze scaling
+- `artifacts.py`: archive summary files, archive-space reports, and
+  per-candidate `qd_archive_event.json` emission
 - `scheduler.py`: linear fail-share and fill/improve budget split
 - `scoring.py`: exact weighted PPA quality score, gain axes, repair score, hash normalization
 - `descriptors.py`: descriptor registry and profile resolution
@@ -110,10 +114,17 @@ The engine writes everything necessary to reproduce a candidate:
 - JSONL generation logs with per-candidate metadata and strategy stats.
 - QD archive-state artifacts for `revolution_qd` runs:
   `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`,
-  `qd_metrics.json`, and `grid_layout.json` or `centroids.json`.
+  `qd_metrics.json`, `grid_layout.json` or `centroids.json`,
+  `archive_space.json`, and `archive_space_report.md`.
+- Per-candidate QD archive-event artifacts:
+  `qd_archive_event.json` in every archive-handled successful candidate
+  directory, recording descriptor values, cell assignment, and insertion or
+  displacement outcome.
 - QD visualization outputs for `revolution_qd` runs:
   `coverage_vs_generation.png`, `best_quality_vs_generation.png`,
   `qd_score_vs_generation.png`, plus grid heatmaps or CVT projection plots.
+- Use [qd_map_elites_guide.md](/workspace/.worktrees/revolution-qd-map-elites/docs/qd_map_elites_guide.md)
+  for the code-accurate one-generation trace and full-run trace.
 - `scripts/backend_comparison_report.py` now treats `archive_summary.json` as a
   QD sidecar rather than a per-problem summary, and renders a dedicated QD
   archive section instead of accidentally double-counting it as a design.

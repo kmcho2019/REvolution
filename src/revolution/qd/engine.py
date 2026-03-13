@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import csv
 import datetime
 import json
 import os
@@ -16,10 +15,18 @@ from revolution.algorithm import EoHEngine, EvolStrategyMethodFail, EvolStrategy
 from revolution.algorithm import QD_SUCCESS_STRATEGIES
 from revolution.prompt_store import safe_format
 from revolution.qd.archive import CVTArchive, GridArchive, GridAxisSpec
+from revolution.qd.artifacts import (
+    append_archive_history,
+    write_archive_cells_csv,
+    write_archive_space_files,
+    write_candidate_archive_event,
+    write_legacy_archive_layout,
+    write_qd_summary_files,
+)
 from revolution.qd.descriptors import extract_descriptor_values, resolve_descriptor_axes, resolve_grid_axis_specs
 from revolution.qd.scoring import compute_ppa_gains
 from revolution.qd.scheduler import split_qd_budget
-from revolution.qd.visualization import write_qd_visualizations
+from revolution.qd.types import QDArchiveInsertResult
 
 
 class QDEngine(EoHEngine):
@@ -71,9 +78,20 @@ class QDEngine(EoHEngine):
         self.qd_generation_history: list[dict[str, Any]] = []
 
     def _default_grid_axes(self) -> tuple[str, ...]:
-        if self.ref_ppa_metrics.get("eff_clk_period", 0.0):
-            return ("g_A", "g_T")
-        return ("g_A", "g_P")
+        circuit_type = (
+            self.problem_spec.circuit_type
+            if self.problem_spec is not None
+            else ("sequential" if self.ref_ppa_metrics.get("eff_clk_period", 0.0) else "combinational")
+        )
+        return tuple(
+            resolve_descriptor_axes(
+                profile_name=None,
+                explicit_axes=None,
+                descriptor_file=self.qd_descriptor_file,
+                archive_type="grid",
+                circuit_type=circuit_type,
+            )
+        )
 
     def _build_grid_archive(self) -> GridArchive:
         axes = [
@@ -167,7 +185,18 @@ class QDEngine(EoHEngine):
             descriptors = self._descriptor_tuple(cand)
             if descriptors is None:
                 continue
-            self.success_archive.insert(cand.id, descriptors, cand.score, cand)
+            before_occupied = self.success_archive.occupied_count()
+            before_qd_score = self._archive_qd_score()
+            result = self.success_archive.insert(cand.id, descriptors, cand.score, cand)
+            self._write_candidate_qd_event(
+                cand,
+                descriptor_tuple=descriptors,
+                insert_result=result,
+                before_occupied=before_occupied,
+                after_occupied=self.success_archive.occupied_count(),
+                before_qd_score=before_qd_score,
+                after_qd_score=self._archive_qd_score(),
+            )
         self.success_pool = self._success_view()
 
     def _archive_elites(self) -> list[Heuristic]:
@@ -198,6 +227,38 @@ class QDEngine(EoHEngine):
                 seen_ids.add(cand.id)
                 view.append(cand)
         return view
+
+    def _write_candidate_qd_event(
+        self,
+        candidate: Heuristic,
+        *,
+        descriptor_tuple: tuple[float, ...],
+        insert_result: QDArchiveInsertResult,
+        before_occupied: int,
+        after_occupied: int,
+        before_qd_score: float,
+        after_qd_score: float,
+    ) -> None:
+        if not candidate.code_file_path:
+            return
+        event_path = os.path.join(
+            os.path.dirname(candidate.code_file_path),
+            "qd_archive_event.json",
+        )
+        write_candidate_archive_event(
+            candidate=candidate,
+            event_path=event_path,
+            archive=self.success_archive,
+            archive_axes=self._archive_axes(),
+            descriptor_tuple=descriptor_tuple,
+            insert_result=insert_result,
+            before_occupied=before_occupied,
+            after_occupied=after_occupied,
+            before_qd_score=before_qd_score,
+            after_qd_score=after_qd_score,
+            ref_ppa_metrics=self.ref_ppa_metrics,
+            space_reference_file=self._archive_space_json_path(),
+        )
 
     def _qd_log_dir(self) -> str | None:
         if self.logger is None:
@@ -237,6 +298,21 @@ class QDEngine(EoHEngine):
         if log_dir is None:
             return None
         return os.path.join(log_dir, "qd_metrics.json")
+
+    def _archive_space_json_path(self) -> str | None:
+        log_dir = self._qd_log_dir()
+        if log_dir is None:
+            return None
+        return os.path.join(log_dir, "archive_space.json")
+
+    def _archive_space_report_path(self) -> str | None:
+        log_dir = self._qd_log_dir()
+        if log_dir is None:
+            return None
+        return os.path.join(log_dir, "archive_space_report.md")
+
+    def _archive_qd_score(self) -> float:
+        return sum(float(entry.quality_score) for entry in self.success_archive.entries().values())
 
     def _gain_stats(self) -> dict[str, float]:
         elites = self._archive_elites()
@@ -299,134 +375,50 @@ class QDEngine(EoHEngine):
         path = self._archive_layout_path()
         if path is None:
             return
-        payload: dict[str, Any]
-        if self.qd_archive_type == "grid":
-            payload = {
-                "archive_type": "grid",
-                "num_cells": self.success_archive.num_cells,
-                "axes": [
-                    {
-                        "name": axis.name,
-                        "bins": axis.bins,
-                        "lower_bound": axis.lower_bound,
-                        "upper_bound": axis.upper_bound,
-                    }
-                    for axis in getattr(self.success_archive, "axes", ())
-                ],
-            }
-        else:
-            scaler = getattr(self.success_archive, "scaler", None)
-            payload = {
-                "archive_type": "cvt",
-                "num_cells": self.success_archive.num_cells,
-                "axes": list(getattr(self.success_archive, "axes", ())),
-                "initialized": bool(getattr(self.success_archive, "is_initialized", False)),
-                "warmup_successes": getattr(self.success_archive, "warmup_successes", None),
-                "centroids": list(getattr(self.success_archive, "centroids", ())),
-                "scaler": (
-                    {
-                        "means": list(scaler.means),
-                        "stds": list(scaler.stds),
-                    }
-                    if scaler is not None
-                    else None
-                ),
-            }
-        with open(path, "w", encoding="utf-8") as handle:
-            json.dump(payload, handle, indent=2)
+        write_legacy_archive_layout(path=path, archive=self.success_archive)
 
     def _write_archive_cells(self) -> None:
         path = self._archive_cells_path()
         if path is None:
             return
-        fieldnames = [
-            "cell_id",
-            "candidate_id",
-            "quality_score",
-            "generation",
-            "strategy",
-            "code_file_path",
-            "g_P",
-            "g_A",
-            "g_T",
-            "descriptors_json",
-            "parent_ids_json",
-        ]
-        with open(path, "w", encoding="utf-8", newline="") as handle:
-            writer = csv.DictWriter(handle, fieldnames=fieldnames)
-            writer.writeheader()
-            for cell_id, entry in self._archive_entries():
-                candidate = cast(Heuristic, entry.payload)
-                gains = compute_ppa_gains(candidate.ppa_metrics, self.ref_ppa_metrics)
-                writer.writerow(
-                    {
-                        "cell_id": cell_id,
-                        "candidate_id": candidate.id,
-                        "quality_score": float(entry.quality_score),
-                        "generation": candidate.generation,
-                        "strategy": candidate.strategy,
-                        "code_file_path": candidate.code_file_path,
-                        "g_P": float(gains.get("g_P", 0.0)),
-                        "g_A": float(gains.get("g_A", 0.0)),
-                        "g_T": float(gains.get("g_T", 0.0)),
-                        "descriptors_json": json.dumps(list(entry.descriptors)),
-                        "parent_ids_json": json.dumps(candidate.parent_ids),
-                    }
-                )
+        write_archive_cells_csv(
+            path=path,
+            entries=self._archive_entries(),
+            ref_ppa_metrics=self.ref_ppa_metrics,
+        )
 
     def _append_archive_history(self, snapshot: dict[str, Any]) -> None:
         path = self._archive_history_path()
         if path is None:
             return
         self.qd_generation_history.append(dict(snapshot))
-        with open(path, "a", encoding="utf-8") as handle:
-            handle.write(json.dumps(snapshot) + "\n")
+        append_archive_history(path=path, snapshot=snapshot)
 
     def _write_qd_summary_files(self) -> None:
         summary_path = self._archive_summary_path()
         metrics_path = self._qd_metrics_path()
+        space_json_path = self._archive_space_json_path()
+        space_report_path = self._archive_space_report_path()
         if summary_path is None or metrics_path is None:
             return
-        visualization_artifacts = write_qd_visualizations(
+        visualization_artifacts = write_qd_summary_files(
+            summary_path=summary_path,
+            metrics_path=metrics_path,
             output_dir=self._qd_log_dir() or os.path.dirname(summary_path),
             history=self.qd_generation_history,
             archive=self.success_archive,
             ref_ppa_metrics=self.ref_ppa_metrics,
         )
-        latest = self.qd_generation_history[-1] if self.qd_generation_history else self._build_qd_snapshot(
-            inserted=0,
-            replaced=0,
-            budget=None,
-            runtime_sec=None,
-        )
-        summary_payload = {
-            "archive_type": self.qd_archive_type,
-            "num_cells": self.success_archive.num_cells,
-            "occupied_cells": latest["occupied_cells"],
-            "coverage": latest["coverage"],
-            "qd_score": latest["qd_score"],
-            "best_quality": latest["best_quality"],
-            "mean_quality": latest["mean_quality"],
-            "history_length": len(self.qd_generation_history),
-            "visualization_files": list(visualization_artifacts.generated_files),
-        }
-        metrics_payload = {
-            "archive_type": self.qd_archive_type,
-            "num_cells": self.success_archive.num_cells,
-            "occupied_cells": latest["occupied_cells"],
-            "coverage": latest["coverage"],
-            "qd_score": latest["qd_score"],
-            "best_quality": latest["best_quality"],
-            "mean_quality": latest["mean_quality"],
-            "history_length": len(self.qd_generation_history),
-            "latest_snapshot": latest,
-            "history": self.qd_generation_history,
-            "visualization_files": list(visualization_artifacts.generated_files),
-        }
-        with open(summary_path, "w", encoding="utf-8") as handle:
-            json.dump(summary_payload, handle, indent=2)
-        with open(metrics_path, "w", encoding="utf-8") as handle:
-            json.dump(metrics_payload, handle, indent=2)
+        if space_json_path is not None and space_report_path is not None:
+            write_archive_space_files(
+                json_path=space_json_path,
+                report_path=space_report_path,
+                archive=self.success_archive,
+                descriptor_profile=self.qd_descriptor_profile,
+                descriptor_axes=self._archive_axes(),
+                occupied_cells=self.success_archive.occupied_count(),
+                visualization_files=visualization_artifacts.generated_files,
+            )
 
     def _write_qd_artifacts(self, snapshot: dict[str, Any] | None = None) -> None:
         history_path = self._archive_history_path()
@@ -754,6 +746,8 @@ class QDEngine(EoHEngine):
             descriptors = self._descriptor_tuple(cand)
             if descriptors is None:
                 continue
+            before_occupied = self.success_archive.occupied_count()
+            before_qd_score = self._archive_qd_score()
             result = self.success_archive.insert(cand.id, descriptors, cand.score, cand)
             if result.inserted:
                 inserted += 1
@@ -764,6 +758,17 @@ class QDEngine(EoHEngine):
                     self._record_reservoir_candidate(result.cell_id, previous_payload)
             elif self.qd_cell_reservoir > 0:
                 self._record_reservoir_candidate(result.cell_id, cand)
+            after_occupied = self.success_archive.occupied_count()
+            after_qd_score = self._archive_qd_score()
+            self._write_candidate_qd_event(
+                cand,
+                descriptor_tuple=descriptors,
+                insert_result=result,
+                before_occupied=before_occupied,
+                after_occupied=after_occupied,
+                before_qd_score=before_qd_score,
+                after_qd_score=after_qd_score,
+            )
         self.success_pool = self._success_view()
         return inserted, replaced
 

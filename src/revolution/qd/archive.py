@@ -10,6 +10,8 @@ from revolution.qd.types import QDArchiveInsertResult
 
 @dataclass(frozen=True)
 class GridAxisSpec:
+    """Describe one axis in a uniform-binning grid archive."""
+
     name: str
     bins: int
     lower_bound: float
@@ -26,6 +28,8 @@ class GridArchiveEntry:
 
 @dataclass(frozen=True)
 class FrozenCVTScaler:
+    """Frozen descriptor scaler used once CVT warm-up has completed."""
+
     means: tuple[float, ...]
     stds: tuple[float, ...]
 
@@ -61,6 +65,49 @@ class GridArchive:
     def entries(self) -> dict[str, GridArchiveEntry]:
         return dict(self._entries)
 
+    def describe_space(self) -> dict[str, Any]:
+        """Return a machine-readable description of the current grid geometry."""
+        total_cells = 1
+        axes_payload = []
+        for axis in self.axes:
+            total_cells *= axis.bins
+            bin_width = (axis.upper_bound - axis.lower_bound) / axis.bins
+            intervals = []
+            for index in range(axis.bins):
+                lower = axis.lower_bound + index * bin_width
+                upper = axis.upper_bound if index == axis.bins - 1 else lower + bin_width
+                intervals.append(
+                    {
+                        "index": index,
+                        "lower_bound": lower,
+                        "upper_bound": upper,
+                        "upper_inclusive": index == axis.bins - 1,
+                    }
+                )
+            axes_payload.append(
+                {
+                    "name": axis.name,
+                    "bins": axis.bins,
+                    "lower_bound": axis.lower_bound,
+                    "upper_bound": axis.upper_bound,
+                    "bin_width": bin_width,
+                    "intervals": intervals,
+                }
+            )
+        return {
+            "archive_type": self.archive_type,
+            "num_cells": self.num_cells,
+            "occupied_cells": self.occupied_count(),
+            "assignment_rule": "uniform grid binning over descriptor axes",
+            "cell_id_format": "comma-separated bin indices in axis order",
+            "axes": axes_payload,
+            "space_geometry": {
+                "axis_count": len(self.axes),
+                "cell_count_derivation": " x ".join(str(axis.bins) for axis in self.axes),
+                "total_cells": total_cells,
+            },
+        }
+
     def cell_id_for(self, descriptors: tuple[float, ...]) -> str:
         if len(descriptors) != len(self.axes):
             raise ValueError("Descriptor dimensionality does not match grid axes.")
@@ -68,6 +115,33 @@ class GridArchive:
         for axis, value in zip(self.axes, descriptors):
             bucket_indices.append(self._bin_index(axis, float(value)))
         return ",".join(str(index) for index in bucket_indices)
+
+    def describe_assignment(self, descriptors: tuple[float, ...]) -> dict[str, Any]:
+        """Explain how one descriptor tuple maps into the current grid cell."""
+        if len(descriptors) != len(self.axes):
+            raise ValueError("Descriptor dimensionality does not match grid axes.")
+        cell_id = self.cell_id_for(descriptors)
+        indices = [int(index) for index in cell_id.split(",")]
+        axis_details = []
+        for axis, value, bin_index in zip(self.axes, descriptors, indices):
+            lower, upper = self._bin_interval(axis, bin_index)
+            axis_details.append(
+                {
+                    "axis": axis.name,
+                    "value": float(value),
+                    "bin_index": bin_index,
+                    "lower_bound": lower,
+                    "upper_bound": upper,
+                    "upper_inclusive": bin_index == axis.bins - 1,
+                }
+            )
+        return {
+            "archive_type": self.archive_type,
+            "cell_id": cell_id,
+            "descriptor_tuple": list(descriptors),
+            "indices": indices,
+            "axis_details": axis_details,
+        }
 
     def insert(
         self,
@@ -89,9 +163,13 @@ class GridArchive:
                 cell_id=cell_id,
                 inserted=True,
                 replaced=False,
+                decision="filled_empty",
                 previous_quality_score=None,
                 new_quality_score=float(quality_score),
                 previous_payload=None,
+                previous_descriptors=None,
+                current_payload=payload,
+                current_descriptors=descriptors,
             )
 
         if float(quality_score) > float(entry.quality_score):
@@ -107,18 +185,26 @@ class GridArchive:
                 cell_id=cell_id,
                 inserted=True,
                 replaced=True,
+                decision="replaced_elite",
                 previous_quality_score=previous,
                 new_quality_score=float(quality_score),
                 previous_payload=previous_payload,
+                previous_descriptors=entry.descriptors,
+                current_payload=payload,
+                current_descriptors=descriptors,
             )
 
         return QDArchiveInsertResult(
             cell_id=cell_id,
             inserted=False,
             replaced=False,
+            decision="not_inserted",
             previous_quality_score=float(entry.quality_score),
             new_quality_score=float(quality_score),
             previous_payload=entry.payload,
+            previous_descriptors=entry.descriptors,
+            current_payload=entry.payload,
+            current_descriptors=entry.descriptors,
         )
 
     def elite_for_cell(self, cell_id: str) -> GridArchiveEntry | None:
@@ -130,6 +216,12 @@ class GridArchive:
             return axis.bins - 1
         ratio = (clamped - axis.lower_bound) / (axis.upper_bound - axis.lower_bound)
         return min(axis.bins - 1, max(0, int(ratio * axis.bins)))
+
+    def _bin_interval(self, axis: GridAxisSpec, index: int) -> tuple[float, float]:
+        width = (axis.upper_bound - axis.lower_bound) / axis.bins
+        lower = axis.lower_bound + index * width
+        upper = axis.upper_bound if index == axis.bins - 1 else lower + width
+        return lower, upper
 
 
 class CVTArchive:
@@ -176,12 +268,65 @@ class CVTArchive:
     def entries(self) -> dict[str, GridArchiveEntry]:
         return dict(self._entries)
 
+    def describe_space(self) -> dict[str, Any]:
+        """Return a machine-readable description of the current CVT geometry."""
+        scaler_payload = None
+        if self.scaler is not None:
+            scaler_payload = {
+                "means": list(self.scaler.means),
+                "stds": list(self.scaler.stds),
+            }
+        return {
+            "archive_type": self.archive_type,
+            "num_cells": self.num_cells,
+            "occupied_cells": self.occupied_count(),
+            "assignment_rule": "nearest centroid in frozen normalized descriptor space",
+            "axes": list(self.axes),
+            "space_geometry": {
+                "axis_count": len(self.axes),
+                "warmup_successes": self.warmup_successes,
+                "initialized": self.is_initialized,
+                "centroid_count": len(self.centroids),
+                "centroids": [list(centroid) for centroid in self.centroids],
+                "scaler": scaler_payload,
+            },
+        }
+
     def cell_id_for(self, descriptors: tuple[float, ...]) -> str:
         if not self.is_initialized:
             raise ValueError("CVTArchive cell assignment is unavailable before warm-up completes.")
         assert self.scaler is not None
         transformed = self.scaler.transform(descriptors)
         return str(self._nearest_centroid_index(transformed))
+
+    def describe_assignment(self, descriptors: tuple[float, ...]) -> dict[str, Any]:
+        """Explain how one descriptor tuple maps into the current CVT cell."""
+        if len(descriptors) != len(self.axes):
+            raise ValueError("Descriptor dimensionality does not match CVT axes.")
+        if not self.is_initialized:
+            return {
+                "archive_type": self.archive_type,
+                "initialized": False,
+                "descriptor_tuple": list(descriptors),
+                "warmup_successes": self.warmup_successes,
+                "warmup_buffer_size": len(self._warmup_buffer),
+                "assignment_status": "warmup_pending",
+            }
+        assert self.scaler is not None
+        transformed = self.scaler.transform(descriptors)
+        centroid_index = self._nearest_centroid_index(transformed)
+        centroid = self.centroids[centroid_index]
+        distance_sq = sum((lhs - rhs) ** 2 for lhs, rhs in zip(transformed, centroid))
+        return {
+            "archive_type": self.archive_type,
+            "initialized": True,
+            "cell_id": str(centroid_index),
+            "descriptor_tuple": list(descriptors),
+            "scaled_descriptor_tuple": list(transformed),
+            "centroid": list(centroid),
+            "distance_sq": distance_sq,
+            "assignment_status": "assigned_to_frozen_centroid",
+        }
 
     def insert(
         self,
@@ -200,9 +345,13 @@ class CVTArchive:
                     cell_id=f"warmup:{len(self._warmup_buffer)}",
                     inserted=False,
                     replaced=False,
+                    decision="warmup_buffered",
                     previous_quality_score=None,
                     new_quality_score=float(quality_score),
                     previous_payload=None,
+                    previous_descriptors=None,
+                    current_payload=None,
+                    current_descriptors=None,
                 )
             init_results = self._initialize_from_warmup()
             return init_results.get(
@@ -211,9 +360,13 @@ class CVTArchive:
                     cell_id="warmup",
                     inserted=False,
                     replaced=False,
+                    decision="warmup_buffered",
                     previous_quality_score=None,
                     new_quality_score=float(quality_score),
                     previous_payload=None,
+                    previous_descriptors=None,
+                    current_payload=None,
+                    current_descriptors=None,
                 ),
             )
 
@@ -270,9 +423,13 @@ class CVTArchive:
                 cell_id=cell_id,
                 inserted=True,
                 replaced=False,
+                decision="filled_empty",
                 previous_quality_score=None,
                 new_quality_score=float(quality_score),
                 previous_payload=None,
+                previous_descriptors=None,
+                current_payload=payload,
+                current_descriptors=descriptors,
             )
 
         if float(quality_score) > float(entry.quality_score):
@@ -288,18 +445,26 @@ class CVTArchive:
                 cell_id=cell_id,
                 inserted=True,
                 replaced=True,
+                decision="replaced_elite",
                 previous_quality_score=previous,
                 new_quality_score=float(quality_score),
                 previous_payload=previous_payload,
+                previous_descriptors=entry.descriptors,
+                current_payload=payload,
+                current_descriptors=descriptors,
             )
 
         return QDArchiveInsertResult(
             cell_id=cell_id,
             inserted=False,
             replaced=False,
+            decision="not_inserted",
             previous_quality_score=float(entry.quality_score),
             new_quality_score=float(quality_score),
             previous_payload=entry.payload,
+            previous_descriptors=entry.descriptors,
+            current_payload=entry.payload,
+            current_descriptors=entry.descriptors,
         )
 
     def _nearest_centroid_index(self, transformed: tuple[float, ...]) -> int:

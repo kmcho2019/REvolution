@@ -5,6 +5,7 @@
 - Use [docs/user_guide.md](/workspace/.worktrees/revolution-qd-map-elites/docs/user_guide.md) for CLI usage, benchmark workflows, and validation guidance.
 - Use [docs/module_structure.md](/workspace/.worktrees/revolution-qd-map-elites/docs/module_structure.md) for a file-by-file breakdown of the codebase.
 - Use [docs/implementation_details.md](/workspace/.worktrees/revolution-qd-map-elites/docs/implementation_details.md) for subsystem-level architecture details.
+- Use [docs/qd_map_elites_guide.md](/workspace/.worktrees/revolution-qd-map-elites/docs/qd_map_elites_guide.md) for the QD/MAP-Elites runtime flow, descriptor extraction paths, archive artifact layout, and generation/run traces.
 - Use [docs/REvolution_specification.md](/workspace/.worktrees/revolution-qd-map-elites/docs/REvolution_specification.md) for the paper-plus-implementation specification view.
 - Use [docs/revolution_qd_map_elites_implementation_plan.md](/workspace/.worktrees/revolution-qd-map-elites/docs/revolution_qd_map_elites_implementation_plan.md) for the current QD/MAP-Elites feature status and staged roadmap.
 

@@ -38,7 +38,7 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Branch: `feat/revolution-qd-map-elites`
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
-- Current stage: `Stage 8`
+- Current stage: `Stage 9`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
@@ -51,7 +51,12 @@ debt review notes, and commit evidence stay synchronized with the codebase.
   emission; QD operator routing, QD-aware report/archive packaging, and
   archive-history visualization are now live, and Stage 6 benchmark capability
   scaffolding for `cvdp` plus fixture-backed `RealBench` modules is now landed;
-  engine seam cleanup and completion-grade live validation still remain pending
+  sequential grid defaults now include `g_P`, per-candidate
+  `qd_archive_event.json` artifacts are emitted for archive-handled successful
+  candidates, `archive_space.json` plus `archive_space_report.md` are emitted
+  per QD problem, and a dedicated QD runtime guide now documents descriptor
+  extraction plus generation/run traces; engine seam cleanup and broader
+  type-debt reduction still remain pending
 
 ## Worktree Info
 
@@ -228,7 +233,7 @@ Current runtime default resolution from `src/revolution/qd/descriptors.py`:
 
 - current `grid` default:
   - combinational: `g_A`, `g_P`
-  - sequential: `g_A`, `g_T`
+  - sequential: `g_A`, `g_P`, `g_T`
 - current `cvt` default:
   - combinational:
     `mux_ratio`, `ltp_noff`, `cell_count_log`, `g_P`, `g_A`
@@ -279,30 +284,23 @@ Interpretation:
 - Icarus-derived dynamic descriptors are **not** part of the implemented
   runtime descriptor registry yet.
 
-### Planned Default Fix: Sequential Grid Must Include `g_P`
+### Completed Default Fix: Sequential Grid Includes `g_P`
 
-Current issue:
+Implementation landed:
 
-- the current sequential `grid` default resolves to `g_A`, `g_T`
-- this omits `g_P` without a strong algorithmic reason
-- that omission makes the default sequential grid archive under-represent
-  power-specialist elites relative to the original QD intent
+- `src/revolution/qd/descriptors.py` now resolves sequential `grid` defaults
+  to `g_A`, `g_P`, `g_T`
+- `src/revolution/qd/engine.py` now uses the same corrected default at runtime
+  when `qd_grid_axes` is not explicitly provided
+- regression coverage was added for sequential default resolution and the
+  engine-level default wiring
 
-Planned future fix:
+Interpretation:
 
-- update `src/revolution/qd/descriptors.py`
-- change sequential `grid` default resolution from:
-  - `g_A`, `g_T`
-- to:
-  - `g_A`, `g_P`, `g_T`
-
-Required follow-through once that code change lands:
-
-- update descriptor/default documentation in this living plan
-- update any user-facing docs that describe grid defaults
-- add regression coverage for sequential grid default resolution
-- rerun at least one bounded sequential grid smoke to confirm the archive now
-  retains power-specialist candidates more naturally
+- this closes the remaining mismatch where default sequential grid runs could
+  silently ignore the power-improvement axis
+- it does **not** invalidate the completed richer-descriptor rerun below,
+  because that rerun already used explicit grid axes including `g_P`
 
 ### Future Descriptor Roadmap
 
@@ -335,6 +333,8 @@ Goal:
 
 - rerun the same `20 x 5` comparison on the same four designs while using much
   richer QD descriptor spaces than the reduced gain-only setup used previously
+- status: completed; the finished rerun results are recorded later in this
+  document
 
 Design set:
 
@@ -663,6 +663,24 @@ Documentation risk to watch:
       land.
 - [x] Commit Stage 8 checkpoints.
 
+### Stage 9: QD Observability, Default Cleanup, And Trace Docs
+
+- [x] Record the finished richer `20 x 5` descriptor run and its updated
+      interpretation.
+- [x] Fix sequential `grid` defaults so `g_P` is included in both descriptor
+      resolution and runtime default wiring.
+- [x] Emit per-candidate `qd_archive_event.json` for archive-handled successful
+      candidates, including warm-up buffered CVT candidates.
+- [x] Emit per-problem `archive_space.json` and `archive_space_report.md`.
+- [x] Add archive-space introspection helpers shared by grid and CVT.
+- [x] Add regression tests for the corrected default plus the new QD artifacts.
+- [x] Add a dedicated QD runtime guide with one-generation and whole-run
+      traces.
+- [x] Update top-level docs and the living plan to point to the new guide and
+      artifact set.
+- [x] Run bounded live grid/CVT validation after the new artifact layer lands.
+- [ ] Commit Stage 9.
+
 ## Exact TODO List
 
 ### Public Surface
@@ -731,15 +749,19 @@ Documentation risk to watch:
 
 ### Future Descriptor Follow-Through
 
-- [ ] Fix sequential `grid` default resolution so it includes `g_P` in addition
+- [x] Fix sequential `grid` default resolution so it includes `g_P` in addition
       to `g_A` and `g_T`
-- [ ] Add regression coverage for the corrected sequential `grid` default
-- [ ] Re-run the `20 x 5` comparison with richer descriptor spaces for both
+- [x] Add regression coverage for the corrected sequential `grid` default
+- [x] Re-run the `20 x 5` comparison with richer descriptor spaces for both
       `grid` and `cvt`
-- [ ] Compare rich-descriptor rerun results against the existing reduced-axis
+- [x] Compare rich-descriptor rerun results against the existing reduced-axis
       run on coverage, QD score, best quality, and visualization behavior
 - [ ] Evaluate whether `hybrid_phys_seq` materially improves sequential CVT
       archive diversity or best-quality outcomes
+- [ ] Add Icarus-derived dynamic descriptors only after extraction reliability
+      and probe coverage are documented
+- [ ] Add richer multi-axis grid visualization support beyond the current 2D
+      heatmap path
 
 ## Validation Log
 
@@ -1645,6 +1667,157 @@ Documentation risk to watch:
     recovered final grid summary matches the partial archive evidence captured
     here
 
+### Completed richer-descriptor `20 x 5` comparison
+
+- Purpose:
+  - repeat the same four-design matrix with materially richer descriptor spaces
+    instead of the earlier reduced gain-only setup
+- Common configuration:
+  - model:
+    `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b`
+  - common settings:
+    `population_size=20`, `num_generations=5`, `num_workers=2`,
+    `candidate_workers=0`, `evaluation_mode=search_accelerated`,
+    `accelerated_synthesis_top_k=1`, `temperature=1.0`, `top_p=1.0`,
+    `max_tokens=128000`, `diff_max_tokens=128000`, `seed=42`
+  - grid axes:
+    `seq_ratio`, `ltp_noff`, `g_A`, `g_P`, `g_T`
+  - CVT profile:
+    `hybrid_seq_default`
+  - RTLLM problem set:
+    `Prob043_RAM`, `Prob045_alu`
+  - VerilogEval problem set:
+    `Prob153_gshare`, `Prob156_review2015_fancytimer`
+- Result overview from `/tmp/qd_rich20x5/...`:
+  - RTLLM `Prob043_RAM`:
+    - classic best score: `0.44449010410240736`
+    - grid:
+      `occupied_cells=2/32`, `coverage=0.0625`,
+      `qd_score=0.5538087600419216`,
+      `best_quality=0.44282189588469034`
+    - CVT:
+      `occupied_cells=7/16`, `coverage=0.4375`,
+      `qd_score=2.2098059043421205`,
+      `best_quality=0.44449010410240736`
+    - interpretation:
+      CVT matches classic on the best elite and dramatically improves archive
+      fill plus total archive quality over grid
+  - RTLLM `Prob045_alu`:
+    - classic best score: `0.4067868453906301`
+    - grid:
+      `occupied_cells=1/32`, `coverage=0.03125`,
+      `qd_score=0.15088639200998752`,
+      `best_quality=0.15088639200998752`
+    - CVT:
+      `occupied_cells=8/16`, `coverage=0.5`,
+      `qd_score=0.8971647283001513`,
+      `best_quality=0.1581891057231093`
+    - interpretation:
+      classic still keeps the strongest single elite, but CVT again shows much
+      healthier archive fill than grid
+  - VerilogEval `Prob153_gshare`:
+    - classic best score: `0.1788682750113996`
+    - grid:
+      `occupied_cells=7/32`, `coverage=0.21875`,
+      `qd_score=0.22159468620046935`,
+      `best_quality=0.1431034287119163`
+    - CVT:
+      `occupied_cells=8/16`, `coverage=0.5`,
+      `qd_score=0.03473310176867479`,
+      `best_quality=0.1442725990926532`
+    - interpretation:
+      classic still wins single-best quality; both QD modes now fill archive
+      space meaningfully, with CVT giving higher coverage and grid giving a
+      slightly healthier total archive score under this descriptor setup
+  - VerilogEval `Prob156_review2015_fancytimer`:
+    - classic best score: `-0.044251681938680516`
+    - grid:
+      `occupied_cells=1/32`, `coverage=0.03125`,
+      `qd_score=-0.21196762495855093`,
+      `best_quality=-0.21196762495855093`
+    - CVT:
+      `occupied_cells=4/16`, `coverage=0.25`,
+      `qd_score=-1.1153786401307686`,
+      `best_quality=-0.12890970454996659`
+    - interpretation:
+      this remains difficult for all modes; CVT fills more cells, but the
+      archive quality remains net negative under the current setup
+- Updated empirical interpretation:
+  - richer descriptors strengthen the positive CVT story on RTLLM and confirm
+    that low-dimensional reduced-axis runs were under-using the implemented
+    descriptor system
+  - the richer grid run is still sparse on RTLLM and harder VerilogEval tasks,
+    which makes archive observability more important
+  - multi-axis grid runs currently do not emit grid heatmaps because the
+    visualization path only renders heatmaps for 2-axis grids
+  - this richer run is the direct reason to add per-candidate
+    `qd_archive_event.json` plus per-problem `archive_space.json` /
+    `archive_space_report.md`
+
+### Stage 9
+
+- Date: `2026-03-13`
+- Implementation checkpoint:
+  - fixed sequential `grid` defaults so descriptor resolution and runtime
+    wiring both use `g_A`, `g_P`, `g_T` for sequential problems
+  - extended the shared archive protocol with `cell_id_for(...)`,
+    `describe_space()`, and `describe_assignment(...)`
+  - added per-candidate `qd_archive_event.json` emission for archive-handled
+    successful candidates, including empty-cell fills, elite replacements,
+    same-cell non-insertions, and CVT warm-up buffered successes
+  - added per-problem `archive_space.json` and `archive_space_report.md`
+  - added `src/revolution/qd/artifacts.py` to centralize QD artifact writing
+  - added the dedicated guide `docs/qd_map_elites_guide.md` with descriptor
+    extraction notes, a QD file map, a one-generation trace, and a full-run
+    trace
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_archive.py tests/revolution/test_qd_engine.py`
+  - Result: `40 passed in 0.99s`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `339 passed in 10.93s`
+  - `/workspace/.venv/bin/ruff check src/revolution/qd src/revolution/runtime/candidate_evaluator.py tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_archive.py tests/revolution/test_qd_engine.py`
+  - Result: `All checks passed!`
+  - `/workspace/.venv/bin/python -m pyright src/revolution/qd`
+  - Result: `0 errors, 1 warning`
+    - warning detail:
+      - `src/revolution/qd/descriptors.py`: `yaml` could not be resolved from
+        source by pyright
+  - `uv tool run ty check src/revolution/qd`
+  - Result:
+    scoped QD modules are clean aside from the same environment-level `yaml`
+    import-resolution warning
+- Live validation:
+  - preflight command:
+    - `curl -s http://host.docker.internal:8000/v1/models`
+  - long-token grid artifact smoke:
+    - `python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks RTLLM --problems Prob043_RAM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 4 --num_generations 1 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 1.0 --top_p 1.0 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_stage9_smoke/grid --no-backend_subdir --seed 42`
+    - result:
+      - vLLM preflight succeeded
+      - runner started and config/log files were created
+      - no first candidate directory was materialized within the bounded
+        observation window, so the run was recorded as blocked rather than
+        passed
+  - bounded fast-smoke grid validation:
+    - `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128 --diff_max_tokens 128 --save_path /tmp/qd_stage9_fast_smoke/grid_timeout --no-backend_subdir --seed 42`
+    - result:
+      - vLLM preflight succeeded
+      - runner started and config/log files were created
+      - timed out after `120s` before the first candidate directory or any
+        QD artifact files were materialized
+  - bounded fast-smoke CVT validation:
+    - `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128 --diff_max_tokens 128 --save_path /tmp/qd_stage9_fast_smoke/cvt --no-backend_subdir --seed 42`
+    - result:
+      - vLLM preflight succeeded
+      - runner started and config/log files were created
+      - timed out after `120s` before the first candidate directory or any
+        QD artifact files were materialized
+- Notes:
+  - Stage 9 closes the archive-observability gap in the code and in unit
+    coverage even though bounded live validation is currently limited by the
+    shared endpoint not materializing a first candidate quickly enough
+  - the new guide and artifact set are now the recommended way to understand
+    or debug QD runs without reverse-engineering `archive_history.jsonl` alone
+
 ## Debt Review
 
 ### Stage 0
@@ -1785,6 +1958,21 @@ Documentation risk to watch:
   VerilogEval problems with short budgets, classic, grid, and CVT all still
   fail before generating successful archive occupants.
 
+### Stage 9
+
+- The new `src/revolution/qd/artifacts.py` module is a targeted cleanup rather
+  than abstraction sprawl: it centralizes archive-artifact writing that would
+  otherwise keep inflating `QDEngine`.
+- Archive introspection now belongs to the archive objects themselves through
+  `describe_space()` and `describe_assignment(...)`, which is the right
+  ownership boundary for grid/CVT geometry details.
+- The new artifact surface does increase per-run output volume. Future
+  large-budget studies should watch for output bloat and decide whether older
+  intermediate files need optional pruning.
+- The biggest remaining debt is still shared-engine cleanup and older
+  `algorithm.py` typing/documentation debt, not the new archive-observability
+  layer.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -1895,6 +2083,19 @@ Documentation risk to watch:
   against the real shared vLLM endpoint, but the jobs still time out before the
   branch can claim completion-grade live success evidence.
 
+### Stage 9
+
+- The branch is now closer to the original QD research intent because archive
+  behavior is inspectable per candidate and per problem rather than only at the
+  coarse archive-summary level.
+- The sequential-grid default fix better aligns default archive behavior with
+  the intended preservation of separate power, area, and timing specialists on
+  sequential problems.
+- The remaining gap is now mostly empirical rather than architectural:
+  bounded live artifact validation is blocked by slow first-candidate
+  materialization on the shared endpoint, but the code and test surface are now
+  aligned with the intended observability model.
+
 ## Roadmap Extension
 
 This roadmap extends the original stage list with the concrete findings from
@@ -1933,21 +2134,28 @@ implementation and testing so far.
 
 - The branch now has a richer implemented descriptor inventory than the main
   completed `20 x 5` run actually used.
+- The richer-descriptor rerun is now complete and confirms that the descriptor
+  story should be split into:
+  - archive geometry suitability
+  - descriptor richness
+  - archive observability
 - The next descriptor-focused follow-through should explicitly separate:
   - archive-geometry questions
   - descriptor-richness questions
   - runtime-extraction reliability questions
-- Planned near-term fix:
-  - update sequential `grid` defaults so they include `g_P` alongside `g_A`
-    and `g_T`
-- Planned near-term rerun:
-  - repeat the same four-design `20 x 5` matrix with richer descriptor spaces
-    for both `grid` and `cvt`
-  - keep classic unchanged as the control
-  - use explicit grid-axis specs instead of relying on the current minimal
-    defaults
-  - use `hybrid_seq_default` / `hybrid_comb_default` as the primary CVT
-    descriptor-rich rerun profiles
+- Completed near-term fix:
+  - sequential `grid` defaults now include `g_P` alongside `g_A` and `g_T`
+- Completed near-term rerun:
+  - the same four-design `20 x 5` matrix was rerun with richer descriptor
+    spaces for both `grid` and `cvt`
+  - explicit grid-axis specs were used
+  - `hybrid_seq_default` was used as the primary CVT descriptor-rich profile
+- New near-term follow-through:
+  - preserve archive decisions at the candidate level with
+    `qd_archive_event.json`
+  - preserve archive geometry in a human-readable per-problem report
+  - decide whether multi-axis grid runs need projected or marginal
+    visualizations beyond the current 2D-only heatmap path
 - Interpretation rule for that rerun:
   - if CVT improves coverage and archive quality under richer descriptors while
     grid becomes sparse or unstable, treat that as evidence about archive
@@ -2003,6 +2211,21 @@ implementation and testing so far.
   mode quality on larger RTLLM / VerilogEval problems; shorter budgets are
   debugging-only.
 
+### Stage 9 revision
+
+- The new archive-observability layer is now in place. The next step is not
+  inventing more archive metadata, but deciding which parts should surface in
+  future reports by default and which should remain detailed debug artifacts.
+- Multi-axis grid studies now need better visualization support. The current
+  2D-only heatmap path is insufficient once richer grid-axis studies become
+  normal.
+- The next descriptor-rich follow-through should prioritize:
+  - `hybrid_phys_seq` validation on sequential CVT tasks
+  - Icarus-derived dynamic/activity descriptors only after extraction
+    reliability is documented
+  - further shared-engine cleanup and older `algorithm.py`
+    typing/documentation reduction
+
 ## Commit Ledger
 
 - `675d2fbc4d` `fix(qd): record initial archive snapshots and experiment findings`
@@ -2020,24 +2243,40 @@ implementation and testing so far.
 - `c03242b784` `feat(qd): add initial cvt archive runtime support`
 - `855472eb70` `docs(qd): record stage 4 cvt checkpoint`
 - `013972bfe4` `feat(qd): add reporting and visualization parity for qd runs`
+- `8228eec6a8` `docs(qd): record stage 7 reporting checkpoint`
 - `8b0393d10e` `feat(qd): emit archive-state artifacts for qd runs`
 - `7cb58e1240` `feat(qd): add targeted and diverse qd operators`
+- `79b3c9c38d` `docs(qd): record stage 5 operator checkpoint`
 - `a7ca6aeedd` `feat(qd): add cvdp and realbench capability scaffolding`
 - `3947e578df` `docs(qd): record stage 6 capability checkpoint`
 - `5c669d1c1f` `feat(qd): add repeatable vllm smoke harness`
+- `87f10971d7` `docs(qd): record stage 8 smoke harness checkpoint`
 - `7777665902` `refactor(qd): share offspring materialization across engines`
-- Bounded grid/CVT smoke closure is now complete.
-- The main remaining debt is engine-seam cleanup and broader `algorithm.py`
-  type cleanup rather than basic runtime reachability.
+- `10030191a8` `docs(qd): record stage 3 seam cleanup checkpoint`
+- `38290247dc` `fix(qd): separate classic and qd success strategies`
+- `33d97c9cd0` `docs(qd): record completion smokes and experiment findings`
+- `fc2637529e` `feat(qd): emit openroad metrics sidecars from synthesis reports`
+- `94fd2ae074` `refactor(qd): share logger and run-finalization seams`
+- `40646b455d` `docs(qd): sync living plan ledger after experiment update`
+- `0fa6b0af2d` `fix(qd): guard long-context vllm token budgets`
+- `edd230b585` `docs(qd): record 20x5 experiment results`
+- `20f1353e07` `docs(qd): expand descriptor inventory and rerun roadmap`
 
 ## Deferred Follow-Ups
 
 - Formal-heavy RealBench support beyond module subsets.
 - Benchmark-specific descriptor studies once the core archive pipeline is
   stable.
-- Fix sequential `grid` defaults so `g_P` is included for sequential circuits.
-- Run the richer-descriptor `20 x 5` comparison after the sequential-grid
-  default fix and explicit grid-axis spec update land.
+- Validate whether `hybrid_phys_seq` materially improves sequential CVT archive
+  diversity or best-quality outcomes.
+- Add richer multi-axis grid visualization support beyond the current 2D
+  heatmap path.
+- Add Icarus-derived dynamic descriptors only after extraction reliability and
+  descriptor-probe coverage are documented.
+- Continue reducing older `algorithm.py` typing/documentation debt and shared
+  engine-loop duplication where the cleanup is low-risk.
+- Consider integrating the separate remote `realbench` branch once its fuller
+  benchmark-analysis surface is ready.
 - Additional descriptors adopted only after probe evidence justifies them.
 
 ## Smoke Commands
@@ -2050,5 +2289,9 @@ implementation and testing so far.
   `python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --benchmarks RTLLM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --max_tokens 128000`
 - Planned diff-heavy smoke:
   `python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --benchmarks cvdp --qd_backfill_generation_mode diff --qd_refine_generation_mode diff --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --max_tokens 128000 --diff_max_tokens 128000`
+- Stage 9 grid artifact smoke:
+  `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128 --diff_max_tokens 128 --save_path /tmp/qd_stage9_fast_smoke/grid_timeout --no-backend_subdir --seed 42`
+- Stage 9 CVT artifact smoke:
+  `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128 --diff_max_tokens 128 --save_path /tmp/qd_stage9_fast_smoke/cvt --no-backend_subdir --seed 42`
 - Repeatable QD smoke harness:
   `bash scripts/run_backend_qd_smoke_vllm.sh --archive matrix --suite verilogeval --policy diff-heavy`

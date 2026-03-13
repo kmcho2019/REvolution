@@ -15,6 +15,7 @@ def test_grid_archive_inserts_into_empty_cell():
 
     assert result.inserted is True
     assert result.replaced is False
+    assert result.decision == "filled_empty"
     assert archive.occupied_count() == 1
     assert archive.elite_for_cell(result.cell_id).candidate_id == "cand-a"
 
@@ -30,7 +31,9 @@ def test_grid_archive_replaces_only_on_higher_quality():
 
     assert first.inserted is True
     assert second.inserted is False
+    assert second.decision == "not_inserted"
     assert third.replaced is True
+    assert third.decision == "replaced_elite"
     assert archive.elite_for_cell(third.cell_id).candidate_id == "cand-c"
 
 
@@ -60,6 +63,7 @@ def test_cvt_archive_buffers_until_warmup_threshold_then_initializes():
 
     first = archive.insert("cand-a", (0.2, 0.3), 0.5, {"id": "cand-a"})
     assert first.inserted is False
+    assert first.decision == "warmup_buffered"
     assert archive.is_initialized is False
     assert archive.occupied_count() == 0
 
@@ -78,7 +82,9 @@ def test_cvt_archive_replaces_only_on_higher_quality():
 
     assert first.inserted is True
     assert second.inserted is False
+    assert second.decision == "not_inserted"
     assert third.replaced is True
+    assert third.decision == "replaced_elite"
     assert archive.elite_for_cell("0").candidate_id == "cand-c"
 
 
@@ -97,3 +103,34 @@ def test_cvt_archive_freezes_scaler_and_centroids_after_warmup():
     assert archive.scaler.means == means_before
     assert archive.scaler.stds == stds_before
     assert archive.centroids == centroids_before
+
+
+def test_grid_archive_describes_space_and_assignment():
+    archive = GridArchive(
+        [
+            GridAxisSpec(name="g_A", bins=2, lower_bound=-1.0, upper_bound=1.0),
+            GridAxisSpec(name="g_P", bins=4, lower_bound=-1.0, upper_bound=1.0),
+        ]
+    )
+
+    space = archive.describe_space()
+    assignment = archive.describe_assignment((0.25, -0.2))
+
+    assert space["archive_type"] == "grid"
+    assert space["space_geometry"]["total_cells"] == 8
+    assert assignment["cell_id"] == "1,1"
+    assert assignment["axis_details"][0]["axis"] == "g_A"
+
+
+def test_cvt_archive_describes_space_and_assignment():
+    archive = CVTArchive(("g_A", "g_T"), num_cells=4, warmup_successes=1)
+    archive.insert("cand-a", (0.2, 0.3), 0.5, {"id": "cand-a"})
+
+    space = archive.describe_space()
+    assignment = archive.describe_assignment((0.25, 0.35))
+
+    assert space["archive_type"] == "cvt"
+    assert space["space_geometry"]["initialized"] is True
+    assert assignment["archive_type"] == "cvt"
+    assert assignment["initialized"] is True
+    assert "centroid" in assignment
