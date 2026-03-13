@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import importlib
+from itertools import combinations
 from pathlib import Path
 from typing import Any
 
@@ -105,63 +106,89 @@ def _write_grid_plots(
 ) -> list[str]:
     np = _load_numpy()
     generated: list[str] = []
-    if len(archive.axes) != 2:
-        return generated
-    shape = (archive.axes[1].bins, archive.axes[0].bins)
-    occupancy = np.zeros(shape, dtype=float)
-    quality = np.full(shape, np.nan, dtype=float)
-    gain_maps = {
-        axis: np.full(shape, np.nan, dtype=float)
-        for axis in ("g_P", "g_A", "g_T")
-    }
+    entries = archive.entries()
+    if len(archive.axes) == 2:
+        shape = (archive.axes[1].bins, archive.axes[0].bins)
+        occupancy = np.zeros(shape, dtype=float)
+        quality = np.full(shape, np.nan, dtype=float)
+        gain_maps = {
+            axis: np.full(shape, np.nan, dtype=float)
+            for axis in ("g_P", "g_A", "g_T")
+        }
 
-    for cell_id, entry in archive.entries().items():
-        x_index, y_index = _parse_grid_cell_id(cell_id)
-        row_index = archive.axes[1].bins - 1 - y_index
-        occupancy[row_index, x_index] = 1.0
-        quality[row_index, x_index] = float(entry.quality_score)
-        gains = compute_ppa_gains(getattr(entry.payload, "ppa_metrics", {}), ref_ppa_metrics)
-        for axis in gain_maps:
-            gain_maps[axis][row_index, x_index] = float(gains.get(axis, 0.0))
+        for cell_id, entry in entries.items():
+            x_index, y_index = _parse_grid_cell_id(cell_id)
+            row_index = archive.axes[1].bins - 1 - y_index
+            occupancy[row_index, x_index] = 1.0
+            quality[row_index, x_index] = float(entry.quality_score)
+            gains = compute_ppa_gains(getattr(entry.payload, "ppa_metrics", {}), ref_ppa_metrics)
+            for axis in gain_maps:
+                gain_maps[axis][row_index, x_index] = float(gains.get(axis, 0.0))
 
-    generated.append(
-        _write_heatmap(
-            output_dir / "grid_occupancy_heatmap.png",
-            occupancy,
-            title="Grid Archive Occupancy",
-            xlabel=archive.axes[0].name,
-            ylabel=archive.axes[1].name,
-            cmap="Blues",
-            fmt=".0f",
-        )
-    )
-    generated.append(
-        _write_heatmap(
-            output_dir / "grid_quality_heatmap.png",
-            quality,
-            title="Grid Archive Quality",
-            xlabel=archive.axes[0].name,
-            ylabel=archive.axes[1].name,
-            cmap="viridis",
-        )
-    )
-    for axis, matrix in gain_maps.items():
         generated.append(
             _write_heatmap(
-                output_dir / f"grid_{axis}_heatmap.png",
-                matrix,
-                title=f"Grid Archive {axis} Gain",
+                output_dir / "grid_occupancy_heatmap.png",
+                occupancy,
+                title="Grid Archive Occupancy",
                 xlabel=archive.axes[0].name,
                 ylabel=archive.axes[1].name,
-                cmap="coolwarm",
+                cmap="Blues",
+                fmt=".0f",
             )
         )
+        generated.append(
+            _write_heatmap(
+                output_dir / "grid_quality_heatmap.png",
+                quality,
+                title="Grid Archive Quality",
+                xlabel=archive.axes[0].name,
+                ylabel=archive.axes[1].name,
+                cmap="viridis",
+            )
+        )
+        for axis, matrix in gain_maps.items():
+            generated.append(
+                _write_heatmap(
+                    output_dir / f"grid_{axis}_heatmap.png",
+                    matrix,
+                    title=f"Grid Archive {axis} Gain",
+                    xlabel=archive.axes[0].name,
+                    ylabel=archive.axes[1].name,
+                    cmap="coolwarm",
+                )
+            )
+        return generated
+
+    cell_indices = {
+        cell_id: _parse_grid_cell_indices(cell_id)
+        for cell_id in entries
+    }
+    generated.extend(
+        _write_grid_marginal_plots(
+            output_dir=output_dir,
+            archive=archive,
+            entries=entries,
+            cell_indices=cell_indices,
+        )
+    )
+    generated.extend(
+        _write_grid_projection_plots(
+            output_dir=output_dir,
+            archive=archive,
+            entries=entries,
+            cell_indices=cell_indices,
+        )
+    )
     return generated
 
 
 def _parse_grid_cell_id(cell_id: str) -> tuple[int, int]:
     first, second = cell_id.split(",", 1)
     return int(first), int(second)
+
+
+def _parse_grid_cell_indices(cell_id: str) -> tuple[int, ...]:
+    return tuple(int(part) for part in cell_id.split(","))
 
 
 def _write_heatmap(
@@ -187,6 +214,123 @@ def _write_heatmap(
     fig.savefig(path, dpi=180)
     plt.close(fig)
     return str(path)
+
+
+def _write_bar_plot(
+    path: Path,
+    values: list[float],
+    *,
+    title: str,
+    xlabel: str,
+    ylabel: str,
+    color: str,
+) -> str:
+    plt = _load_pyplot()
+    fig, ax = plt.subplots(figsize=(6, 4))
+    positions = list(range(len(values)))
+    ax.bar(positions, values, color=color, alpha=0.85)
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_xticks(positions)
+    ax.set_xticklabels([str(index) for index in positions])
+    ax.grid(True, axis="y", alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(path, dpi=180)
+    plt.close(fig)
+    return str(path)
+
+
+def _write_grid_marginal_plots(
+    *,
+    output_dir: Path,
+    archive: GridArchive,
+    entries: dict[str, Any],
+    cell_indices: dict[str, tuple[int, ...]],
+) -> list[str]:
+    generated: list[str] = []
+    for axis_position, axis in enumerate(archive.axes):
+        occupancy_counts = [0.0 for _ in range(axis.bins)]
+        best_quality = [float("-inf") for _ in range(axis.bins)]
+        for cell_id, entry in entries.items():
+            bin_index = cell_indices[cell_id][axis_position]
+            occupancy_counts[bin_index] += 1.0
+            best_quality[bin_index] = max(best_quality[bin_index], float(entry.quality_score))
+        best_quality_values = [
+            0.0 if value == float("-inf") else value
+            for value in best_quality
+        ]
+        generated.append(
+            _write_bar_plot(
+                output_dir / f"grid_{axis.name}_occupancy_marginal.png",
+                occupancy_counts,
+                title=f"{axis.name} Occupancy Marginal",
+                xlabel=f"{axis.name} bin",
+                ylabel="Occupied cells",
+                color="#4C78A8",
+            )
+        )
+        generated.append(
+            _write_bar_plot(
+                output_dir / f"grid_{axis.name}_quality_marginal.png",
+                best_quality_values,
+                title=f"{axis.name} Best Quality Marginal",
+                xlabel=f"{axis.name} bin",
+                ylabel="Best quality",
+                color="#59A14F",
+            )
+        )
+    return generated
+
+
+def _write_grid_projection_plots(
+    *,
+    output_dir: Path,
+    archive: GridArchive,
+    entries: dict[str, Any],
+    cell_indices: dict[str, tuple[int, ...]],
+) -> list[str]:
+    np = _load_numpy()
+    generated: list[str] = []
+    for first_index, second_index in combinations(range(len(archive.axes)), 2):
+        first_axis = archive.axes[first_index]
+        second_axis = archive.axes[second_index]
+        shape = (second_axis.bins, first_axis.bins)
+        occupancy = np.zeros(shape, dtype=float)
+        quality = np.full(shape, np.nan, dtype=float)
+        for cell_id, entry in entries.items():
+            indices = cell_indices[cell_id]
+            x_index = indices[first_index]
+            y_index = indices[second_index]
+            row_index = second_axis.bins - 1 - y_index
+            occupancy[row_index, x_index] += 1.0
+            existing_quality = quality[row_index, x_index]
+            candidate_quality = float(entry.quality_score)
+            if np.isnan(existing_quality) or candidate_quality > float(existing_quality):
+                quality[row_index, x_index] = candidate_quality
+        prefix = f"grid_{first_axis.name}__{second_axis.name}"
+        generated.append(
+            _write_heatmap(
+                output_dir / f"{prefix}_occupancy_projection.png",
+                occupancy,
+                title=f"Grid Occupancy Projection: {first_axis.name} vs {second_axis.name}",
+                xlabel=first_axis.name,
+                ylabel=second_axis.name,
+                cmap="Blues",
+                fmt=".0f",
+            )
+        )
+        generated.append(
+            _write_heatmap(
+                output_dir / f"{prefix}_quality_projection.png",
+                quality,
+                title=f"Grid Quality Projection: {first_axis.name} vs {second_axis.name}",
+                xlabel=first_axis.name,
+                ylabel=second_axis.name,
+                cmap="viridis",
+            )
+        )
+    return generated
 
 
 def _write_cvt_plots(

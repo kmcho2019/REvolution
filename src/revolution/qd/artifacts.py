@@ -310,8 +310,9 @@ def _format_archive_space_report(payload: dict[str, Any]) -> str:
                     "",
                     "## Visualization Note",
                     "",
-                    "- Current grid heatmaps are emitted only for 2-axis grids.",
-                    "- Multi-axis grids still emit generation-history plots plus this space report.",
+                    "- 2-axis grids emit direct archive heatmaps.",
+                    "- Multi-axis grids emit per-axis marginal plots and pairwise projected occupancy/quality heatmaps.",
+                    "- Multi-axis plots are projections of the full grid, not a complete rendering of every higher-dimensional cell neighborhood.",
                 ]
             )
     else:

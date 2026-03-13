@@ -29,7 +29,7 @@
   - `qd/scoring.py`: exact PPA `quality_score`, gain axes, repair score, and code hashing helpers.
   - `qd/descriptors.py`: descriptor registry, profile loading, and descriptor-axis resolution.
   - `qd/engine.py`: experimental grid-first `QDEngine` that reuses REvolution prompt/eval infrastructure.
-  - `qd/visualization.py`: QD archive-history plots plus grid heatmaps / CVT projection helpers.
+  - `qd/visualization.py`: QD archive-history plots plus 2-axis grid heatmaps, multi-axis grid marginal/projection helpers, and CVT projection helpers.
 - `backends/funsearch_backend.py`: FunSearch-style RTL backend (islands, signature clusters, reset/reseed, budgeted loop).
 - `runtime/problem_context.py`: benchmark/problem path and metadata resolution.
 - `runtime/problem_spec.py`: benchmark capability layer and default descriptor / generation-mode preferences.

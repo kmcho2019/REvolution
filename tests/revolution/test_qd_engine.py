@@ -381,7 +381,11 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     space_json_path = tmp_path / "artifacts" / "archive_space.json"
     space_report_path = tmp_path / "artifacts" / "archive_space_report.md"
     coverage_plot = tmp_path / "artifacts" / "coverage_vs_generation.png"
-    quality_plot = tmp_path / "artifacts" / "grid_quality_heatmap.png"
+    legacy_quality_plot = tmp_path / "artifacts" / "grid_quality_heatmap.png"
+    occupancy_marginal = tmp_path / "artifacts" / "grid_comb_ratio_occupancy_marginal.png"
+    quality_marginal = tmp_path / "artifacts" / "grid_comb_ratio_quality_marginal.png"
+    occupancy_projection = tmp_path / "artifacts" / "grid_comb_ratio__adder_ratio_occupancy_projection.png"
+    quality_projection = tmp_path / "artifacts" / "grid_comb_ratio__adder_ratio_quality_projection.png"
 
     assert history_path.is_file()
     assert cells_path.is_file()
@@ -391,7 +395,11 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     assert space_json_path.is_file()
     assert space_report_path.is_file()
     assert coverage_plot.is_file()
-    assert not quality_plot.exists()
+    assert not legacy_quality_plot.exists()
+    assert occupancy_marginal.is_file()
+    assert quality_marginal.is_file()
+    assert occupancy_projection.is_file()
+    assert quality_projection.is_file()
 
     history_entry = json.loads(history_path.read_text(encoding="utf-8").strip())
     assert history_entry["archive_type"] == "grid"
@@ -402,7 +410,10 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     assert cell_rows[0]["candidate_id"] == elite.id
     summary_payload = json.loads(summary_path.read_text(encoding="utf-8"))
     metrics_payload = json.loads(metrics_path.read_text(encoding="utf-8"))
-    assert "coverage_vs_generation.png" in "".join(summary_payload["visualization_files"])
+    visualization_files = "".join(summary_payload["visualization_files"])
+    assert "coverage_vs_generation.png" in visualization_files
+    assert "grid_comb_ratio_occupancy_marginal.png" in visualization_files
+    assert "grid_comb_ratio__adder_ratio_quality_projection.png" in visualization_files
     assert summary_payload["descriptor_profile"] == "implemented_structural_compact_3d"
     assert summary_payload["descriptor_axes"] == [
         "comb_ratio",
@@ -412,7 +423,9 @@ def test_qd_engine_writes_grid_artifacts(tmp_path, monkeypatch):
     space_payload = json.loads(space_json_path.read_text(encoding="utf-8"))
     assert space_payload["archive_type"] == "grid"
     assert "uniform grid binning" in space_payload["assignment_rule"]
-    assert "Current grid heatmaps are emitted only for 2-axis grids." in space_report_path.read_text(encoding="utf-8")
+    report_text = space_report_path.read_text(encoding="utf-8")
+    assert "Multi-axis grids emit per-axis marginal plots" in report_text
+    assert "pairwise projected occupancy/quality heatmaps" in report_text
     assert metrics_payload["occupied_cells"] == 1
     assert metrics_payload["coverage"] == pytest.approx(1 / space_payload["num_cells"])
     assert metrics_payload["qd_score"] == pytest.approx(0.6)

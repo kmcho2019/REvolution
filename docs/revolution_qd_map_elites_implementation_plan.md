@@ -39,7 +39,7 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
 - Current stage:
-  `Stage 11 completed; Stage 10 long-budget refresh evidence still in progress`
+  `Stage 12 completed; Stage 10 long-budget refresh evidence still in progress`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
@@ -1075,6 +1075,19 @@ Documentation risk to watch:
 - [x] Update validation log, debt review, intent alignment review, and commit
       ledger with Stage 11 findings.
 
+### Stage 12: Multi-Axis Grid Visualization Follow-Through
+
+- [x] Add per-axis marginal plots for multi-axis grid archives.
+- [x] Add pairwise occupancy/quality projection heatmaps for multi-axis grid
+      archives.
+- [x] Keep the existing 2-axis grid heatmap path unchanged.
+- [x] Update archive-space reporting to describe the new multi-axis grid
+      visualization behavior.
+- [x] Add regression coverage for the new visualization outputs.
+- [x] Run focused pytest/ruff/pyright/ty validation for the visualization
+      change.
+- [x] Update QD docs and the living plan with the new artifact inventory.
+
 ## Exact TODO List
 
 ### Public Surface
@@ -1154,9 +1167,9 @@ Documentation risk to watch:
       archive diversity or best-quality outcomes
 - [ ] Add Icarus-derived dynamic descriptors only after extraction reliability
       and probe coverage are documented
-- [ ] Add richer multi-axis grid visualization support beyond the current 2D
+- [x] Add richer multi-axis grid visualization support beyond the current 2D
       heatmap path
-- [ ] Implement new runtime descriptor extraction for retrospective-only axes
+- [x] Implement new runtime descriptor extraction for retrospective-only axes
       such as `wire_count_log_est`, `assign_count`, `if_count`,
       `ctrl_depth_est`, and `ast_depth_est`
 
@@ -1407,8 +1420,8 @@ Documentation risk to watch:
     best/mean quality, replacement counts, and gain aggregates
   - added `src/revolution/qd/visualization.py` and runtime-emitted QD plots:
     `coverage_vs_generation.png`, `best_quality_vs_generation.png`,
-    `qd_score_vs_generation.png`, plus final grid heatmaps or CVT projection
-    plots
+    `qd_score_vs_generation.png`, plus final 2-axis grid heatmaps, multi-axis
+    grid marginals/projection plots, or CVT projection plots
   - updated `scripts/backend_comparison_report.py` to ignore
     `archive_summary.json` as a per-problem summary and render a dedicated QD
     archive metrics section instead
@@ -2145,8 +2158,8 @@ Documentation risk to watch:
     descriptor system
   - the richer grid run is still sparse on RTLLM and harder VerilogEval tasks,
     which makes archive observability more important
-  - multi-axis grid runs currently do not emit grid heatmaps because the
-    visualization path only renders heatmaps for 2-axis grids
+  - multi-axis grid runs now emit marginals and pairwise projections rather
+    than only 2-axis heatmaps
   - this richer run is the direct reason to add per-candidate
     `qd_archive_event.json` plus per-problem `archive_space.json` /
     `archive_space_report.md`
@@ -2331,6 +2344,40 @@ Documentation risk to watch:
   - the practical bottleneck remains the shared reasoning-model endpoint rather
     than descriptor-resolution failures or archive-serialization bugs
 
+### Stage 12
+
+- Date: `2026-03-13`
+- Implementation checkpoint:
+  - extended `src/revolution/qd/visualization.py` so multi-axis grid archives
+    now emit:
+    - per-axis occupancy marginals
+    - per-axis best-quality marginals
+    - pairwise occupancy projection heatmaps
+    - pairwise quality projection heatmaps
+  - preserved the existing 2-axis grid heatmap path unchanged
+  - updated `archive_space_report.md` wording in
+    `src/revolution/qd/artifacts.py` so multi-axis grid output is described
+    accurately
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_qd_engine.py`
+  - Result: `24 passed`
+  - `/workspace/.venv/bin/ruff check src/revolution/qd/visualization.py src/revolution/qd/artifacts.py tests/revolution/test_qd_engine.py`
+  - Result: `All checks passed!`
+  - `/workspace/.venv/bin/python -m pyright src/revolution/qd/visualization.py src/revolution/qd/artifacts.py`
+  - Result: `0 errors, 0 warnings`
+  - `uv tool run ty check src/revolution/qd/visualization.py src/revolution/qd/artifacts.py`
+  - Result: `All checks passed!`
+- Live validation:
+  - no new live vLLM smoke was required for this stage because the change is
+    in artifact rendering after archive snapshots already exist
+  - regression coverage validates the new files through the existing
+    `QDEngine._write_qd_artifacts(...)` path
+- Notes:
+  - richer grid runs no longer degrade to history-only output when the archive
+    has more than 2 axes
+  - the remaining visualization gap is higher-level report consumption, not
+    raw file generation
+
 ## Debt Review
 
 ### Stage 0
@@ -2512,6 +2559,17 @@ Documentation risk to watch:
   architectural: bounded live smokes for these new profiles still stall before
   first-candidate artifact materialization on the shared endpoint.
 
+### Stage 12
+
+- The multi-axis visualization follow-through stays within the existing
+  `qd/visualization.py` and `qd/artifacts.py` surface instead of adding a
+  second report-generation layer.
+- The new plots increase artifact count for higher-dimensional grid runs, so
+  future archive packaging and comparison tooling should decide which of those
+  files are primary outputs versus debug-only assets.
+- The remaining debt is now on report consumption and summarization, not on
+  raw multi-axis plot generation.
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -2662,6 +2720,17 @@ Documentation risk to watch:
   unit/integration evidence is strong, but live smoke evidence for the new
   profiles is still thinner than for the earlier Stage 10 structural controls.
 
+### Stage 12
+
+- Stage 12 closes an explicit roadmap item from the retrospective-analysis
+  follow-through: richer grid runs are now visually inspectable even when the
+  archive has more than 2 axes.
+- The implementation stays aligned with the original observability intent by
+  reusing the existing archive-artifact path instead of inventing a separate
+  visualization-only workflow.
+- The remaining intent gap is presentation quality in downstream reports, not
+  the absence of multi-axis grid diagnostics themselves.
+
 ## Roadmap Extension
 
 This roadmap extends the original stage list with the concrete findings from
@@ -2720,8 +2789,8 @@ implementation and testing so far.
   - preserve archive decisions at the candidate level with
     `qd_archive_event.json`
   - preserve archive geometry in a human-readable per-problem report
-  - decide whether multi-axis grid runs need projected or marginal
-    visualizations beyond the current 2D-only heatmap path
+  - improve downstream reporting and summary consumption of the new multi-axis
+    grid marginals/projection plots
 - Interpretation rule for that rerun:
   - if CVT improves coverage and archive quality under richer descriptors while
     grid becomes sparse or unstable, treat that as evidence about archive
@@ -2782,9 +2851,9 @@ implementation and testing so far.
 - The new archive-observability layer is now in place. The next step is not
   inventing more archive metadata, but deciding which parts should surface in
   future reports by default and which should remain detailed debug artifacts.
-- Multi-axis grid studies now need better visualization support. The current
-  2D-only heatmap path is insufficient once richer grid-axis studies become
-  normal.
+- Multi-axis grid studies now have first-pass visualization support through
+  per-axis marginals and pairwise projection heatmaps. The next step is better
+  downstream report consumption rather than raw plot generation.
 - The next descriptor-rich follow-through should prioritize:
   - `hybrid_phys_seq` validation on sequential CVT tasks
   - Icarus-derived dynamic/activity descriptors only after extraction
@@ -2838,8 +2907,8 @@ implementation and testing so far.
   stable.
 - Validate whether `hybrid_phys_seq` materially improves sequential CVT archive
   diversity or best-quality outcomes.
-- Add richer multi-axis grid visualization support beyond the current 2D
-  heatmap path.
+- Improve downstream report consumption and summarization of the new multi-axis
+  grid marginal/projection artifacts.
 - Add Icarus-derived dynamic descriptors only after extraction reliability and
   descriptor-probe coverage are documented.
 - Continue reducing older `algorithm.py` typing/documentation debt and shared

@@ -93,8 +93,9 @@ The QD substrate currently lives under `src/revolution/qd/`:
 - `engine.py`: archive-selectable QD runtime engine that reuses existing prompt
   builders, diff application, evaluation, and logger wiring
   - also owns the current QD-specific prompt builders for `M-T` and `C-D`
-- `visualization.py`: archive-history plots plus grid heatmaps / CVT projection
-  helpers emitted from the QD runtime
+- `visualization.py`: archive-history plots plus 2-axis grid heatmaps,
+  multi-axis grid marginal/projection plots, and CVT projection helpers emitted
+  from the QD runtime
 
 ## Evaluation stack
 
@@ -138,7 +139,8 @@ The engine writes everything necessary to reproduce a candidate:
   displacement outcome.
 - QD visualization outputs for `revolution_qd` runs:
   `coverage_vs_generation.png`, `best_quality_vs_generation.png`,
-  `qd_score_vs_generation.png`, plus grid heatmaps or CVT projection plots.
+  `qd_score_vs_generation.png`, plus 2-axis grid heatmaps, multi-axis grid
+  marginals/projection plots, or CVT projection plots.
 - Use [qd_map_elites_guide.md](/workspace/.worktrees/revolution-qd-map-elites/docs/qd_map_elites_guide.md)
   for the code-accurate one-generation trace and full-run trace.
 - `scripts/backend_comparison_report.py` now treats `archive_summary.json` as a

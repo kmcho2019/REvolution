@@ -150,8 +150,9 @@ Current status on this feature branch:
   reports so archive insertion and displacement can be debugged per candidate.
 - QD runs now also emit visualization files from those artifacts:
   `coverage_vs_generation.png`, `best_quality_vs_generation.png`,
-  `qd_score_vs_generation.png`, plus grid heatmaps or CVT projection plots for
-  the final archive state.
+  `qd_score_vs_generation.png`, plus 2-axis grid heatmaps, multi-axis grid
+  marginals/projection plots, or CVT projection plots for the final archive
+  state.
 - `scripts/backend_comparison_report.py` now skips QD sidecar summaries during
   per-problem loading and emits a dedicated QD archive metrics section when
   `revolution_qd` runs are present.

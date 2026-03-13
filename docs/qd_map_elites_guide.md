@@ -218,6 +218,8 @@ Run-level / problem-level QD artifacts:
 - `best_quality_vs_generation.png`
 - `qd_score_vs_generation.png`
 - grid heatmaps for 2-axis grid runs
+- per-axis occupancy/quality marginals for multi-axis grid runs
+- pairwise occupancy/quality projection heatmaps for multi-axis grid runs
 - CVT projection plots for initialized CVT runs
 
 Per-successful-candidate artifact:
