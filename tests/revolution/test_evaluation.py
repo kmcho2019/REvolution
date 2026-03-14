@@ -1,20 +1,74 @@
 import json
 import os
-import subprocess
+import sys
+import time
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import pytest
 
-from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
+from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator, _run_command
 
 
-def make_proc(returncode=0, stdout="", stderr=""):
-    m = MagicMock()
-    m.returncode = returncode
-    m.stdout = stdout
-    m.stderr = stderr
-    return m
+def make_proc(returncode=0, stdout="", stderr="", timed_out=False):
+    return SimpleNamespace(
+        returncode=returncode,
+        stdout=stdout,
+        stderr=stderr,
+        timed_out=timed_out,
+    )
+
+
+def _wait_for_pid_exit(pid: int, timeout_s: float = 5.0) -> None:
+    deadline = time.time() + timeout_s
+    while time.time() < deadline:
+        if not Path(f"/proc/{pid}").exists():
+            return
+        time.sleep(0.05)
+    raise AssertionError(f"PID {pid} is still alive after {timeout_s} seconds")
+
+
+def _write_executable(path: Path, body: str) -> str:
+    path.write_text(body, encoding="utf-8")
+    os.chmod(path, 0o755)
+    return str(path)
+
+
+def _timeout_spawner_script() -> str:
+    return """#!/usr/bin/env python3
+import os
+import signal
+import subprocess
+import sys
+import time
+
+child = None
+
+def _cleanup(_signum, _frame):
+    global child
+    if child is not None:
+        try:
+            child.terminate()
+        except ProcessLookupError:
+            pass
+        try:
+            child.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            child.kill()
+            child.wait()
+    raise SystemExit(143)
+
+signal.signal(signal.SIGTERM, _cleanup)
+signal.signal(signal.SIGINT, _cleanup)
+
+pid_file = os.environ["EDA_CHILD_PID_FILE"]
+child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(300)"])
+with open(pid_file, "w", encoding="utf-8") as handle:
+    handle.write(str(child.pid))
+while True:
+    time.sleep(1)
+"""
 
 
 # Tests for VerilogEvaluator
@@ -23,7 +77,7 @@ def test_success_simulation_creates_log_and_sets_cwd(
 ):
     comp = make_proc(returncode=0, stdout="OK compile")
     sim = make_proc(returncode=0, stdout="Simulation fine")
-    mock_run = mocker.patch("subprocess.run", side_effect=[comp, sim])
+    mock_run = mocker.patch("revolution.evaluation._run_command", side_effect=[comp, sim])
     mocker.patch("os.chmod")  # avoid real chmod
 
     ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
@@ -52,7 +106,7 @@ def test_success_simulation_creates_log_and_sets_cwd(
 
 def test_compilation_error_path(mocker, minimal_sv_files):
     comp = make_proc(returncode=1, stderr="Syntax error at line 5.")
-    mocker.patch("subprocess.run", return_value=comp)
+    mocker.patch("revolution.evaluation._run_command", return_value=comp)
     ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
     res = ev.evaluate(minimal_sv_files["dut"], minimal_sv_files["tb"], None)
     assert res["status"] == "compilation_error"
@@ -63,7 +117,7 @@ def test_compilation_error_path(mocker, minimal_sv_files):
 def test_simulation_error_nonzero_exit(mocker, minimal_sv_files):
     comp = make_proc(returncode=0)
     sim = make_proc(returncode=1, stdout="TB failed")
-    mocker.patch("subprocess.run", side_effect=[comp, sim])
+    mocker.patch("revolution.evaluation._run_command", side_effect=[comp, sim])
     ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
     res = ev.evaluate(minimal_sv_files["dut"], minimal_sv_files["tb"], None)
     assert res["status"] == "simulation_error"
@@ -73,8 +127,8 @@ def test_simulation_error_nonzero_exit(mocker, minimal_sv_files):
 def test_simulation_timeout(mocker, minimal_sv_files):
     comp = make_proc(returncode=0)
     mocker.patch(
-        "subprocess.run",
-        side_effect=[comp, subprocess.TimeoutExpired(cmd="vvp", timeout=1)],
+        "revolution.evaluation._run_command",
+        side_effect=[comp, make_proc(returncode=-15, timed_out=True)],
     )
     ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
     res = ev.evaluate(
@@ -88,7 +142,10 @@ def test_simulation_timeout(mocker, minimal_sv_files):
 
 
 def test_compile_stage_file_not_found_safeguard(mocker, minimal_sv_files):
-    mocker.patch("subprocess.run", side_effect=FileNotFoundError("iverilog not found"))
+    mocker.patch(
+        "revolution.evaluation._run_command",
+        side_effect=FileNotFoundError("iverilog not found"),
+    )
     ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
     res = ev.evaluate(minimal_sv_files["dut"], minimal_sv_files["tb"], None)
     assert res["status"] == "file_error"
@@ -97,7 +154,10 @@ def test_compile_stage_file_not_found_safeguard(mocker, minimal_sv_files):
 
 def test_simulation_stage_vvp_missing(mocker, minimal_sv_files):
     comp = make_proc(returncode=0)
-    mocker.patch("subprocess.run", side_effect=[comp, FileNotFoundError("vvp missing")])
+    mocker.patch(
+        "revolution.evaluation._run_command",
+        side_effect=[comp, FileNotFoundError("vvp missing")],
+    )
     ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
     res = ev.evaluate(minimal_sv_files["dut"], minimal_sv_files["tb"], None)
     assert res["status"] == "file_error"
@@ -115,7 +175,7 @@ def test_invalid_generated_type_returns_file_error(mocker, minimal_sv_files):
 
 def test_missing_ref_file_short_circuits(mocker, minimal_sv_files):
     # Only the ref should be missing; others real
-    mock_run = mocker.patch("subprocess.run")
+    mock_run = mocker.patch("revolution.evaluation._run_command")
     ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
     res = ev.evaluate(
         minimal_sv_files["dut"],
@@ -130,7 +190,7 @@ def test_missing_ref_file_short_circuits(mocker, minimal_sv_files):
 def test_dedup_input_files_and_skip_ref_if_in_dut_list(mocker, minimal_sv_files):
     comp = make_proc(returncode=0)
     sim = make_proc(returncode=0)
-    mock_run = mocker.patch("subprocess.run", side_effect=[comp, sim])
+    mock_run = mocker.patch("revolution.evaluation._run_command", side_effect=[comp, sim])
 
     # Include duplicates; also pass ref equal to the first DUT to ensure it isn't appended
     dut_list = [
@@ -161,7 +221,7 @@ def test_dedup_input_files_and_skip_ref_if_in_dut_list(mocker, minimal_sv_files)
 def test_os_chmod_warning_is_non_fatal(mocker, minimal_sv_files):
     comp = make_proc(returncode=0)
     sim = make_proc(returncode=0)
-    mocker.patch("subprocess.run", side_effect=[comp, sim])
+    mocker.patch("revolution.evaluation._run_command", side_effect=[comp, sim])
     mocker.patch("os.chmod", side_effect=OSError("nope"))
 
     ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
@@ -172,7 +232,7 @@ def test_os_chmod_warning_is_non_fatal(mocker, minimal_sv_files):
 def test_verilog_evaluator_injects_vcd_probe_when_enabled(mocker, minimal_sv_files, tmp_path):
     comp = make_proc(returncode=0, stdout="Compile OK")
     sim = make_proc(returncode=0, stdout="Simulation OK")
-    mock_run = mocker.patch("subprocess.run", side_effect=[comp, sim])
+    mock_run = mocker.patch("revolution.evaluation._run_command", side_effect=[comp, sim])
     mocker.patch("os.chmod")
 
     ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
@@ -198,14 +258,14 @@ def test_verilog_evaluator_compilation_error(mocker):
     """
     Tests that VerilogEvaluator correctly handles a compilation error.
     """
-    # Arrange: Mock subprocess.run to simulate a failed compilation
+    # Arrange: mock the managed command runner to simulate a failed compilation
     mock_process = MagicMock()
     mock_process.returncode = 1  # Non-zero return code indicates an error
     mock_process.stdout = ""
     mock_process.stderr = "Syntax error at line 5."
 
     mocker.patch("shutil.which", return_value=True)
-    mocker.patch("subprocess.run", return_value=mock_process)
+    mocker.patch("revolution.evaluation._run_command", return_value=make_proc(returncode=1, stderr="Syntax error at line 5."))
 
     # We also need to mock os.path.isfile to prevent FileNotFoundError
     mocker.patch("os.path.isfile", return_value=True)
@@ -231,7 +291,7 @@ def test_compilation_error_is_reported(
 ):
     # Arrange: first subprocess.run (compile) fails
     compile_proc = make_proc(returncode=1, stderr="Syntax error at line 5.")
-    mock = mocker.patch("subprocess.run", return_value=compile_proc)
+    mock = mocker.patch("revolution.evaluation._run_command", return_value=compile_proc)
 
     ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
     results = ev.evaluate(
@@ -251,7 +311,7 @@ def test_simulation_success(mocker, fake_binaries, minimal_sv_files, no_chmod):
     compile_proc = make_proc(returncode=0, stdout="Compile OK")
     sim_proc = make_proc(returncode=0, stdout="Simulation OK")
 
-    run = mocker.patch("subprocess.run", side_effect=[compile_proc, sim_proc])
+    run = mocker.patch("revolution.evaluation._run_command", side_effect=[compile_proc, sim_proc])
 
     ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
     results = ev.evaluate(
@@ -276,7 +336,7 @@ def test_simulation_nonzero_return_is_error(
     compile_proc = make_proc(returncode=0, stdout="Compile OK")
     sim_proc = make_proc(returncode=2, stdout="TB failed", stderr="assertion")
 
-    mocker.patch("subprocess.run", side_effect=[compile_proc, sim_proc])
+    mocker.patch("revolution.evaluation._run_command", side_effect=[compile_proc, sim_proc])
 
     ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
     results = ev.evaluate(
@@ -327,7 +387,7 @@ def test_compile_cmd_flags_and_dedup(mocker, fake_binaries, minimal_sv_files, no
     compile_proc = make_proc(returncode=0)
     sim_proc = make_proc(returncode=0, stdout="OK")
 
-    run = mocker.patch("subprocess.run", side_effect=[compile_proc, sim_proc])
+    run = mocker.patch("revolution.evaluation._run_command", side_effect=[compile_proc, sim_proc])
 
     pdk_file = os.path.join(os.path.dirname(minimal_sv_files["dut"]), "cells.v")
     open(pdk_file, "w").write("//cells\n")
@@ -365,7 +425,7 @@ def test_windows_skips_chmod(mocker, fake_binaries, minimal_sv_files):
     compile_proc = make_proc(returncode=0)
     sim_proc = make_proc(returncode=0)
 
-    mocker.patch("subprocess.run", side_effect=[compile_proc, sim_proc])
+    mocker.patch("revolution.evaluation._run_command", side_effect=[compile_proc, sim_proc])
     # Force Windows path
     mocker.patch("os.name", "nt")
     chmod_spy = mocker.patch("os.chmod")
@@ -382,7 +442,7 @@ def test_windows_skips_chmod(mocker, fake_binaries, minimal_sv_files):
 def test_output_directory_and_log_written(mocker, fake_binaries, tmp_path, no_chmod):
     # Force compilation error to check log creation
     compile_proc = make_proc(returncode=1, stderr="compile broke")
-    mocker.patch("subprocess.run", return_value=compile_proc)
+    mocker.patch("revolution.evaluation._run_command", return_value=compile_proc)
 
     outdir = tmp_path / "out"
     dut = tmp_path / "dut.sv"
@@ -519,7 +579,11 @@ def test_run_synthesis_success_and_failure(mocker, tmp_path):
     (tmp_path / "a.sv").write_text("module top(input clk); endmodule", encoding="utf-8")
     # Success path
     mocker.patch(
-        "subprocess.run", return_value=make_proc(returncode=0, stdout="ok", stderr=b"")
+        "revolution.evaluation._run_command",
+        side_effect=[
+            make_proc(returncode=0, stdout="yosys ok"),
+            make_proc(returncode=0, stdout="openroad ok"),
+        ],
     )
     ok, report = se._run_synthesis(
         verilog_file=str(tmp_path / "a.sv"),
@@ -530,9 +594,15 @@ def test_run_synthesis_success_and_failure(mocker, tmp_path):
         synthesized_netlist_path=str(tmp_path / "a.syn.v"),
     )
     assert ok and report.endswith("_synthesis_report.rpt")
+    report_text = open(report, "r", encoding="utf-8").read()
+    assert "--- YOSYS ---" in report_text
+    assert "--- OPENROAD ---" in report_text
 
     # Failure path ensures report is written/appended
-    mocker.patch("subprocess.run", return_value=make_proc(returncode=1, stderr=b"boom"))
+    mocker.patch(
+        "revolution.evaluation._run_command",
+        return_value=make_proc(returncode=1, stderr="boom"),
+    )
     ok, report = se._run_synthesis(
         verilog_file=str(tmp_path / "a.sv"),
         problem_name="p",
@@ -806,8 +876,13 @@ def test_run_synthesis_success_and_failure_alt(mocker, tmp_path):
 
     rpt_base = str(tmp_path / "report")
     # Success path
-    ok = MagicMock(returncode=0, stdout=b"ok", stderr=b"")
-    run = mocker.patch("subprocess.run", return_value=ok)
+    run = mocker.patch(
+        "revolution.evaluation._run_command",
+        side_effect=[
+            make_proc(returncode=0, stdout="yosys ok"),
+            make_proc(returncode=0, stdout="openroad ok"),
+        ],
+    )
     success, rpt_path = se._run_synthesis(
         "/d.v", "p", "top", str(tmp_path), rpt_base, str(tmp_path / "d.syn.v")
     )
@@ -815,8 +890,7 @@ def test_run_synthesis_success_and_failure_alt(mocker, tmp_path):
     assert rpt_path == rpt_base + "_synthesis_report.rpt"
 
     # Failure path
-    fail = MagicMock(returncode=1, stdout=b"", stderr=b"boom")
-    run.return_value = fail
+    run.side_effect = [make_proc(returncode=1, stderr="boom")]
     success2, rpt_path2 = se._run_synthesis(
         "/d.v", "p", "top", str(tmp_path), rpt_base, str(tmp_path / "d.syn.v")
     )
@@ -887,3 +961,212 @@ def test_check_synthesis_functionality_delegates_to_verilog_ev(
     assert dut_list[0] == str(tmp_path / "n.syn.v")
     # pdk_cells is the exact path created by the fixture
     assert pdk_cells in dut_list
+
+
+def test_run_command_timeout_kills_process_group(monkeypatch, tmp_path):
+    pid_file = tmp_path / "child.pid"
+    tool_path = _write_executable(
+        tmp_path / "timeout_tool.py",
+        _timeout_spawner_script(),
+    )
+    monkeypatch.setenv("EDA_CHILD_PID_FILE", str(pid_file))
+
+    result = _run_command([tool_path], timeout_s=1)
+
+    assert result.timed_out is True
+    child_pid = int(pid_file.read_text(encoding="utf-8"))
+    _wait_for_pid_exit(child_pid)
+
+
+def test_verilog_evaluator_timeout_kills_vvp_child(monkeypatch, minimal_sv_files, tmp_path):
+    pid_file = tmp_path / "vvp_child.pid"
+    iverilog_path = _write_executable(
+        tmp_path / "fake_iverilog.py",
+        """#!/usr/bin/env python3
+import pathlib
+import sys
+
+output_path = sys.argv[sys.argv.index("-o") + 1]
+pathlib.Path(output_path).write_text("#!/bin/sh\\nexit 0\\n", encoding="utf-8")
+print("compile ok")
+""",
+    )
+    vvp_path = _write_executable(
+        tmp_path / "fake_vvp.py",
+        _timeout_spawner_script(),
+    )
+    monkeypatch.setenv("EDA_CHILD_PID_FILE", str(pid_file))
+
+    ev = VerilogEvaluator(
+        iverilog_path,
+        vvp_path,
+        default_simulation_timeout_seconds=1,
+    )
+    result = ev.evaluate(
+        generated_sv_file=minimal_sv_files["dut"],
+        test_sv_file=minimal_sv_files["tb"],
+        ref_sv_file=None,
+    )
+
+    assert result["status"] == "simulation_timeout"
+    child_pid = int(pid_file.read_text(encoding="utf-8"))
+    _wait_for_pid_exit(child_pid)
+
+
+def test_synthesis_timeout_kills_yosys_children(monkeypatch, tmp_path):
+    pid_file = tmp_path / "yosys_child.pid"
+    se = SynthesisEvaluator(
+        yosys_path=_write_executable(
+            tmp_path / "fake_yosys.py",
+            _timeout_spawner_script(),
+        ),
+        openroad_path=_write_executable(
+            tmp_path / "fake_openroad.py",
+            """#!/usr/bin/env python3
+print("openroad should not run")
+""",
+        ),
+    )
+    se.script_root_dir = str(tmp_path)
+    se.ref_dir_path = str(_mk_templates(tmp_path))
+    se.pdk_path = os.path.join(str(tmp_path), "data", "pdk")
+    monkeypatch.setenv("EDA_CHILD_PID_FILE", str(pid_file))
+
+    report_base = str(tmp_path / "rpt" / "design")
+    os.makedirs(os.path.dirname(report_base), exist_ok=True)
+    (tmp_path / "a.sv").write_text("module top(input clk); endmodule", encoding="utf-8")
+
+    ok, report = se._run_synthesis(
+        verilog_file=str(tmp_path / "a.sv"),
+        problem_name="p",
+        synth_top_module_name="top",
+        output_directory=str(tmp_path),
+        report_base_path=report_base,
+        synthesized_netlist_path=str(tmp_path / "a.syn.v"),
+        synthesis_timeout_s=1,
+    )
+
+    assert ok is False
+    assert "stage 'yosys'" in Path(report).read_text(encoding="utf-8")
+    child_pid = int(pid_file.read_text(encoding="utf-8"))
+    _wait_for_pid_exit(child_pid)
+
+
+def test_synthesis_timeout_kills_openroad_children(monkeypatch, tmp_path):
+    pid_file = tmp_path / "openroad_child.pid"
+    se = SynthesisEvaluator(
+        yosys_path=_write_executable(
+            tmp_path / "fake_yosys.py",
+            """#!/usr/bin/env python3
+print("yosys ok")
+""",
+        ),
+        openroad_path=_write_executable(
+            tmp_path / "fake_openroad.py",
+            _timeout_spawner_script(),
+        ),
+    )
+    se.script_root_dir = str(tmp_path)
+    se.ref_dir_path = str(_mk_templates(tmp_path))
+    se.pdk_path = os.path.join(str(tmp_path), "data", "pdk")
+    monkeypatch.setenv("EDA_CHILD_PID_FILE", str(pid_file))
+
+    report_base = str(tmp_path / "rpt" / "design")
+    os.makedirs(os.path.dirname(report_base), exist_ok=True)
+    (tmp_path / "a.sv").write_text("module top(input clk); endmodule", encoding="utf-8")
+
+    ok, report = se._run_synthesis(
+        verilog_file=str(tmp_path / "a.sv"),
+        problem_name="p",
+        synth_top_module_name="top",
+        output_directory=str(tmp_path),
+        report_base_path=report_base,
+        synthesized_netlist_path=str(tmp_path / "a.syn.v"),
+        synthesis_timeout_s=1,
+    )
+
+    assert ok is False
+    assert "stage 'openroad'" in Path(report).read_text(encoding="utf-8")
+    child_pid = int(pid_file.read_text(encoding="utf-8"))
+    _wait_for_pid_exit(child_pid)
+
+
+def test_verilog_evaluator_uses_default_timeout_and_explicit_override(mocker, minimal_sv_files):
+    mock_runner = mocker.patch(
+        "revolution.evaluation._run_command",
+        side_effect=[
+            make_proc(returncode=0),
+            make_proc(returncode=0),
+            make_proc(returncode=0),
+            make_proc(returncode=0),
+        ],
+    )
+    mocker.patch("os.chmod")
+    ev = VerilogEvaluator(
+        "/fake/iverilog",
+        "/fake/vvp",
+        default_simulation_timeout_seconds=17,
+    )
+
+    ev.evaluate(minimal_sv_files["dut"], minimal_sv_files["tb"], None)
+    assert mock_runner.call_args_list[0].kwargs["timeout_s"] == 17
+    assert mock_runner.call_args_list[1].kwargs["timeout_s"] == 17
+
+    ev.evaluate(
+        minimal_sv_files["dut"],
+        minimal_sv_files["tb"],
+        None,
+        simulation_timeout_seconds=23,
+    )
+    assert mock_runner.call_args_list[2].kwargs["timeout_s"] == 23
+    assert mock_runner.call_args_list[3].kwargs["timeout_s"] == 23
+
+
+def test_synthesis_evaluator_forwards_default_and_explicit_timeouts(mocker, tmp_path):
+    se = SynthesisEvaluator(
+        default_simulation_timeout_s=31,
+        default_synthesis_timeout_s=29,
+    )
+    dut, tb, _ = _mk_design(tmp_path)
+    outdir = str(tmp_path / "out")
+    os.makedirs(outdir, exist_ok=True)
+    report_base = os.path.join(outdir, "prob")
+    report_path = report_base + "_synthesis_report.rpt"
+    Path(report_path).write_text("tns 0\nwns 0\nTotal a b c 1.0\nDesign area 1.0\n", encoding="utf-8")
+    Path(dut).with_suffix(".syn.v").write_text("module top; endmodule\n", encoding="utf-8")
+
+    run_synth = mocker.patch.object(se, "_run_synthesis", return_value=(True, report_path))
+    check_func = mocker.patch.object(
+        se,
+        "_check_synthesis_functionality",
+        return_value=(False, "bad"),
+    )
+    mocker.patch.object(se, "_extract_structural_metrics", return_value={})
+
+    se.evaluate(
+        verilog_file=dut,
+        problem_name="prob",
+        synth_top_module_name="top",
+        output_directory=outdir,
+        report_base_path=report_base,
+        verilog_evaluator=MagicMock(spec=VerilogEvaluator),
+        test_sv_file=tb,
+        ref_sv_file=None,
+    )
+    assert run_synth.call_args.kwargs["synthesis_timeout_s"] == 29
+    assert check_func.call_args.kwargs["simulation_timeout_s"] == 31
+
+    se.evaluate(
+        verilog_file=dut,
+        problem_name="prob",
+        synth_top_module_name="top",
+        output_directory=outdir,
+        report_base_path=report_base,
+        verilog_evaluator=MagicMock(spec=VerilogEvaluator),
+        test_sv_file=tb,
+        ref_sv_file=None,
+        simulation_timeout_s=41,
+        synthesis_timeout_s=43,
+    )
+    assert run_synth.call_args.kwargs["synthesis_timeout_s"] == 43
+    assert check_func.call_args.kwargs["simulation_timeout_s"] == 41
