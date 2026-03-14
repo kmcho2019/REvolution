@@ -110,6 +110,19 @@ The QD substrate currently lives under `src/revolution/qd/`:
 
 `VerilogEvaluator` compiles designs with Icarus Verilog (iverilog) and runs them under `vvp`. Compilation output, simulation logs, and timeouts are written to `<candidate>_simulation.log`. Optional reference design files enable mismatch counting on VerilogEval, while RTLLM detects the `===========Your Design Passed===========` banner. When the selected descriptor axes require dynamic metrics, `VerilogEvaluator` also injects a temporary VCD probe into the testbench and returns the emitted waveform path for later activity extraction.
 
+Top-module resolution is now split explicitly:
+
+- simulation uses the testbench top module from
+  `ProblemContext.testbench_top_module` / `ProblemSpec.testbench_top_module`
+- synthesis uses the DUT top module from
+  `synthesis_top_module_names.json` or benchmark manifest metadata
+
+That distinction matters for RTLLM and VerilogEval. Their simulations must
+compile the harness top (`tb`) even though synthesis must still target DUT
+module names like `RAM`, `alu`, or `TopModule`. If a run suddenly shows empty
+simulation stdout and blanket functionality failure across classic and QD
+modes, inspect the `iverilog -s ...` target first.
+
 `SimulationDescriptorEvaluator` parses those VCD files and derives the current
 activity-oriented descriptor family:
 `toggle_count_log_est`, `toggle_density_est`, `active_signal_ratio_est`, and

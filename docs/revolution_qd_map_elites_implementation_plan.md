@@ -39,9 +39,11 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
 - Current stage:
-  `Stage 16 retrospective redo matrix launched;`
-  `Stage 10/14/15 long-budget refresh evidence, follow-on profile evaluation,`
-  `and aggregated descriptor-health comparison still in progress`
+  `Stage 17 simulation-top regression fixed;`
+  `the original redo root is invalidated;`
+  `a replacement full redo matrix is now running under a fresh root;`
+  `Stage 10/14/15 long-budget refresh evidence and final comparative`
+  `descriptor-health analysis still remain in progress`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
@@ -1159,7 +1161,7 @@ Documentation risk to watch:
       the retrospective analysis provides grounded corpus ranges.
 - [x] Emit per-problem `descriptor_health.json` and
       `descriptor_health_report.md` artifacts so axis collapse and low-signal
-      behavior are visible from the run tree itself.
+  behavior are visible from the run tree itself.
 - [x] Thread descriptor-health references into `archive_summary.json` and
       `qd_metrics.json` so downstream tooling can discover the new artifacts.
 - [x] Add regression coverage for the new builtin profiles, grid-axis specs,
@@ -1192,6 +1194,24 @@ Documentation risk to watch:
 - [x] Launch a fresh long-budget redo root using the new harness.
 - [ ] Record the resulting run root and comparison outputs in the validation
       log once the rerun completes.
+
+### Stage 17: Simulation-Top Regression Fix And Redo Recovery
+
+- [x] Diagnose why `/tmp/qd_rich20x5_redo_full` produced meaningless all-fail
+      results despite using the intended long-token settings.
+- [x] Split synthesis-top and testbench-top resolution in the runtime model so
+      simulation no longer uses DUT top names from
+      `synthesis_top_module_names.json`.
+- [x] Thread the fix through both `CandidateEvaluator` and the legacy
+      `algorithm.py` evaluation path.
+- [x] Add regression tests that would have caught the bug on RTLLM and
+      VerilogEval-style harnesses.
+- [x] Run bounded live sentinels to confirm `iverilog -s tb` is restored and
+      functionality results are meaningful again.
+- [x] Mark the original redo root as invalid for numeric comparison.
+- [x] Launch a replacement full redo matrix under a fresh root.
+- [ ] Record the fixed redo comparison outputs once the replacement matrix
+      completes.
 
 ## Exact TODO List
 
@@ -2666,6 +2686,94 @@ Documentation risk to watch:
   - empirical comparison claims must still wait for the matrix to finish and
     emit suite-local reports
 
+### Stage 17
+
+- Date: `2026-03-14`
+- Implementation checkpoint:
+  - fixed the simulation-top regression that invalidated
+    `/tmp/qd_rich20x5_redo_full/20260313_181943`
+  - `ProblemContext` now carries `testbench_top_module`, and runtime helpers
+    now distinguish:
+    - synthesis top:
+      `resolve_synthesis_top_module_name(...)`
+    - simulation top:
+      `resolve_testbench_top_module(...)`
+  - `ProblemSpec` now records `testbench_top_module` alongside synthesis
+    `top_module`
+  - `CandidateEvaluator` now uses:
+    - `testbench_top_module_name` for pre-synthesis simulation and dynamic
+      metric extraction
+    - `synthesis_top_module_name` for synthesis/PPA
+  - the legacy `EoHEngine` path in `src/revolution/algorithm.py` now uses the
+    same split and no longer passes DUT top names to Icarus simulation
+  - RealBench adapter support now accepts `testbench_top_module` from the
+    manifest and otherwise falls back to testbench parsing
+- Automated tests:
+  - `/workspace/.venv/bin/python -m pytest tests/revolution/test_problem_spec.py tests/revolution/test_candidate_evaluator.py tests/revolution/test_candidate_evaluator_parity.py tests/revolution/test_revolution_backend.py tests/scripts/test_run_backend.py`
+  - Result: `44 passed in 1.43s`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `360 passed in 13.60s`
+  - `/workspace/.venv/bin/ruff check src/revolution/runtime src/revolution/algorithm.py tests/revolution/test_problem_spec.py tests/revolution/test_candidate_evaluator.py tests/revolution/test_candidate_evaluator_parity.py tests/revolution/test_revolution_backend.py tests/scripts/test_run_backend.py`
+  - Result: `All checks passed!`
+  - `/workspace/.venv/bin/python -m pyright src/revolution/runtime/problem_context.py src/revolution/runtime/problem_spec.py src/revolution/runtime/candidate_evaluator.py src/revolution/runtime/realbench_adapter.py src/revolution/algorithm.py`
+  - Result:
+    red on pre-existing `algorithm.py` and `candidate_evaluator.py` typing debt;
+    no new syntax/type regression was introduced by the split-top fix
+  - `uv tool run ty check src/revolution/runtime/problem_context.py src/revolution/runtime/problem_spec.py src/revolution/runtime/candidate_evaluator.py src/revolution/runtime/realbench_adapter.py src/revolution/algorithm.py`
+  - Result:
+    red on the same pre-existing `algorithm.py` and `candidate_evaluator.py`
+    typing debt; no new split-top-specific breakage found
+- Live validation:
+  - original invalid redo root:
+    - `/tmp/qd_rich20x5_redo_full/20260313_181943`
+    - this root is **invalid for numeric comparison**
+    - reason: simulation compiled the DUT top instead of the testbench top
+      (`-s RAM`, `-s alu`, `-s TopModule`) which caused blanket functionality
+      failure and empty simulation stdout
+  - RTLLM classic sentinel:
+    - root:
+      `/tmp/qd_topfix_sentinels/rtllm_classic/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b`
+    - summary:
+      `/tmp/qd_topfix_sentinels/rtllm_classic/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/20260314_115541_revolution_summary_results.txt`
+    - evidence:
+      compile command restored to `iverilog ... -s tb ...`
+      and the run completed with a meaningful success result:
+      `Prob043_RAM,...,0.39049514834774496`
+  - VerilogEval classic sentinel:
+    - root:
+      `/tmp/qd_topfix_sentinels/verilogeval_classic/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b`
+    - evidence:
+      `/tmp/qd_topfix_sentinels/verilogeval_classic/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob153_gshare/problem_run.log`
+      now shows `iverilog ... -s tb ...`, and
+      `Gen0/Prob153_gshare_sample1_initial/code_simulation.log`
+      reports real harness output:
+      `Mismatches: 0 in 1083 samples`
+  - RTLLM QD sentinel:
+    - root:
+      `/tmp/qd_topfix_sentinels/rtllm_qd_grid/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b`
+    - summary:
+      `/tmp/qd_topfix_sentinels/rtllm_qd_grid/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/RTLLM/Prob043_RAM/archive_summary.json`
+    - evidence:
+      compile command restored to `iverilog ... -s tb ...`
+      and the run emitted meaningful QD artifacts, including:
+      `archive_space_report.md`, `archive_summary.json`,
+      and `descriptor_health.json`
+  - replacement full redo launch:
+    - exact launch:
+      `VLLM_HOST=host.docker.internal VLLM_PORT=8000 REDO_SAVE_PATH=/tmp/qd_rich20x5_redo_full_fixed bash scripts/run_qd_retrospective_redo_vllm.sh --preset full --suite matrix`
+    - launch time:
+      `2026-03-14T11:59:20Z`
+    - active fixed run root:
+      `/tmp/qd_rich20x5_redo_full_fixed/20260314_115920`
+    - current status:
+      the replacement redo matrix is running and has entered the
+      `rtllm/classic` suite
+- Notes:
+  - the root cause was not a QD-profile failure; it invalidated `classic`,
+    `grid`, and `cvt` equally because the functional harness never actually ran
+  - the fix is now covered by regression tests that assert simulation uses the
+    harness top while synthesis still uses the mapped DUT top
+
 ## Debt Review
 
 ### Stage 0
@@ -2902,6 +3010,17 @@ Documentation risk to watch:
   the harness exists, but the branch still needs the long-budget rerun results
   themselves before any new default or profile recommendation should change.
 
+### Stage 17
+
+- The split-top fix removes a real correctness regression rather than adding
+  new feature surface. This is debt repayment, not scope growth.
+- Remaining debt is now mostly historical and empirical:
+  - the invalid redo root must remain excluded from numeric comparison
+  - the fresh fixed redo root still needs to finish before retrospective
+    comparison claims can be updated
+  - broader `algorithm.py` / `candidate_evaluator.py` typing debt remains
+    pre-existing and was reconfirmed by `pyright` / `ty`
+
 ## Intent Alignment Review
 
 ### Stage 0
@@ -3106,6 +3225,17 @@ Documentation risk to watch:
 - The remaining alignment gap is run completion and interpretation, not the
   absence of a reproducible experiment path.
 
+### Stage 17
+
+- Stage 17 restores alignment with the core experimental intent by making the
+  redo matrix functionally comparable to the original `/tmp/qd_rich20x5` runs.
+- The earlier redo root diverged in an unacceptable way because it never
+  exercised the benchmark harness correctly; documenting it as invalid and
+  launching a fixed rerun is the correct response.
+- The branch is now back on the intended comparison path: classic and QD runs
+  both use the real harness top for simulation while keeping synthesis bound to
+  the DUT top.
+
 ## Roadmap Extension
 
 This roadmap extends the original stage list with the concrete findings from
@@ -3296,8 +3426,11 @@ implementation and testing so far.
 - Extend descriptor-health summarization beyond per-report sections into
   higher-order trend summaries across problems, backends, and repeated runs.
 - Finish the fresh long-budget retrospective redo started from the new
-  `run_qd_retrospective_redo_vllm.sh` harness and compare it against
+  `run_qd_retrospective_redo_vllm.sh` harness under
+  `/tmp/qd_rich20x5_redo_full_fixed` and compare it against
   `/tmp/qd_rich20x5`.
+- Keep `/tmp/qd_rich20x5_redo_full/20260313_181943` recorded as an invalid
+  regression case study only; do not use it for numeric comparison.
 - Continue reducing older `algorithm.py` typing/documentation debt and shared
   engine-loop duplication where the cleanup is low-risk.
 - Consider integrating the separate remote `realbench` branch once its fuller

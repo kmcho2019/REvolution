@@ -16,6 +16,8 @@ from revolution.runtime.problem_context import (
     ProblemContext,
     default_benchmark_root,
     load_problem_context,
+    resolve_synthesis_top_module_name,
+    resolve_testbench_top_module,
     resolve_top_module_name,
 )
 from revolution.runtime.problem_spec import (
@@ -62,6 +64,8 @@ __all__ = [
     "load_realbench_record",
     "load_realbench_reference_ppa_metrics",
     "load_problem_context",
+    "resolve_synthesis_top_module_name",
+    "resolve_testbench_top_module",
     "select_cvdp_ids",
     "select_realbench_problem_ids",
     "resolve_top_module_name",

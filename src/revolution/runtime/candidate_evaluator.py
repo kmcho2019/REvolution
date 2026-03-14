@@ -8,7 +8,11 @@ from enum import StrEnum
 from typing import Any
 
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
-from revolution.runtime.problem_context import ProblemContext, resolve_top_module_name
+from revolution.runtime.problem_context import (
+    ProblemContext,
+    resolve_synthesis_top_module_name,
+    resolve_testbench_top_module,
+)
 from revolution.runtime.problem_spec import ProblemSpec
 from revolution.qd.descriptors import (
     descriptor_requirements,
@@ -120,7 +124,12 @@ class CandidateEvaluator:
         self.synthesis_evaluator = synthesis_evaluator
         self.ref_ppa_metrics = ref_ppa_metrics or {}
         self.failure_score = failure_score
-        self.top_module_name = resolve_top_module_name(context)
+        self.synthesis_top_module_name = resolve_synthesis_top_module_name(context)
+        self.testbench_top_module_name = (
+            problem_spec.testbench_top_module
+            if problem_spec is not None
+            else resolve_testbench_top_module(context)
+        )
         self.quality_mode = (
             problem_spec.quality_mode
             if quality_mode == "auto" and problem_spec is not None
@@ -262,7 +271,7 @@ class CandidateEvaluator:
             return {}
         return self.simulation_descriptor_evaluator.extract_metrics(
             vcd_file_path=simulation_result.get("vcd_file_path"),
-            top_module_name=self.top_module_name,
+            top_module_name=self.testbench_top_module_name,
         )
 
     def _evaluate_pre_synthesis(self, item: CandidateWorkItem) -> CandidateEvaluation:
@@ -304,7 +313,7 @@ class CandidateEvaluator:
             item.code_file_path,
             str(self.context.test_sv_path),
             str(self.context.ref_sv_path) if self.context.ref_sv_path else None,
-            top_module_name=self.top_module_name,
+            top_module_name=self.testbench_top_module_name,
             enable_vcd_probe=enable_dynamic_probe,
         )
         dynamic_metrics = (
@@ -380,7 +389,7 @@ class CandidateEvaluator:
         synth_results = self.synthesis_evaluator.evaluate(
             item.code_file_path,
             self.context.problem_name,
-            self.top_module_name,
+            self.synthesis_top_module_name,
             output_dir,
             report_base_path,
             self.verilog_evaluator,

@@ -4,7 +4,10 @@ import json
 from pathlib import Path
 from typing import Any
 
-from revolution.runtime.problem_context import ProblemContext
+from revolution.runtime.problem_context import (
+    ProblemContext,
+    resolve_testbench_top_module_from_path,
+)
 from revolution.runtime.problem_spec import ProblemSpec
 
 
@@ -84,6 +87,10 @@ def build_realbench_problem_context(
     ref_sv_path = _resolve_optional_path(root, ref_value)
     prompt_text = prompt_path.read_text(encoding="utf-8").strip()
     top_module_path = root / "synthesis_top_module_names.json"
+    testbench_top_module = str(
+        realbench_record.get("testbench_top_module")
+        or resolve_testbench_top_module_from_path(test_sv_path)
+    )
     return ProblemContext(
         benchmark_name=benchmark_name,
         problem_name=problem_name,
@@ -93,6 +100,7 @@ def build_realbench_problem_context(
         test_sv_path=test_sv_path,
         ref_sv_path=ref_sv_path,
         top_module_names_path=top_module_path,
+        testbench_top_module=testbench_top_module,
     )
 
 
@@ -105,6 +113,9 @@ def build_realbench_problem_spec(
     """Build a normalized ProblemSpec for RealBench module tasks."""
 
     top_module = str(realbench_record.get("top_module") or "TopModule")
+    testbench_top_module = str(
+        realbench_record.get("testbench_top_module") or context.testbench_top_module
+    )
     supports_synthesis = bool(realbench_record.get("supports_synthesis", True))
     supports_formal = bool(realbench_record.get("supports_formal", False))
     aux_files = tuple(str(item) for item in realbench_record.get("aux_files", []) or [])
@@ -116,6 +127,7 @@ def build_realbench_problem_spec(
         prompt_text=context.problem_description,
         top_module=top_module,
         benchmark_root=context.benchmark_path,
+        testbench_top_module=testbench_top_module,
         reference_sources=((str(context.ref_sv_path),) if context.ref_sv_path else ()),
         test_harness=str(context.test_sv_path),
         aux_files=aux_files,

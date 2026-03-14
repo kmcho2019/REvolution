@@ -214,6 +214,13 @@ Current status on this feature branch:
   reasoning model should be treated as configuration-invalid for research
   conclusions; use `128000`-class token budgets for meaningful REvolution/QD
   experiments on the shared vLLM endpoint.
+- RTLLM and VerilogEval now explicitly split simulation-top versus synthesis-
+  top resolution:
+  - simulation compiles the harness top (`tb`)
+  - synthesis still targets DUT names from
+    `synthesis_top_module_names.json`
+  If a run suddenly shows empty simulation stdout and blanket functionality
+  failure across all modes, inspect the `iverilog -s ...` target first.
 - `revolution` now accepts the existing `cvdp` subset path in
   `scripts/run_backend.py`, and the feature branch includes a manifest-based
   `RealBench` module adapter for future dataset drops under

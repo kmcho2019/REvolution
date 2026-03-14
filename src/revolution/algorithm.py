@@ -866,7 +866,7 @@ class EoHEngine:
                 f"Score: {feedback.get('score', 'N/A')}\nJustification: {feedback.get('justification', 'N/A')}\n\nANALYSIS:\n{feedback.get('analysis', '')}"
             )
 
-    def _resolve_top_module_name(self) -> str:
+    def _resolve_synthesis_top_module_name(self) -> str:
         top_module_name_file = os.path.join(
             self.benchmark_path, "synthesis_top_module_names.json"
         )
@@ -878,6 +878,28 @@ class EoHEngine:
         with open(top_module_name_file, "r", encoding="utf-8") as f:
             top_module_names = json.load(f)
         return top_module_names.get(self.problem_name, "TopModule")
+
+    def _resolve_testbench_top_module_name(self) -> str:
+        test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
+        path = Path(test_sv_file)
+        if not path.is_file():
+            return "tb"
+        module_names = re.findall(
+            r"\bmodule\s+([A-Za-z_][A-Za-z0-9_$]*)\b",
+            path.read_text(encoding="utf-8"),
+        )
+        if "tb" in module_names:
+            return "tb"
+        if len(module_names) == 1:
+            return module_names[0]
+        if len(module_names) > 1:
+            return module_names[-1]
+        return "tb"
+
+    def _resolve_top_module_name(self) -> str:
+        """Backward-compatible alias for synthesis-top resolution."""
+
+        return self._resolve_synthesis_top_module_name()
 
     def _requires_rtl_descriptor_metrics(self) -> bool:
         """Return whether the active engine configuration needs RTL descriptor extraction."""
@@ -926,7 +948,8 @@ class EoHEngine:
         cand: Heuristic,
         test_sv_file: str,
         ref_sv_file: str | None,
-        top_module_name: str,
+        testbench_top_module_name: str,
+        synthesis_top_module_name: str,
     ) -> tuple[Heuristic, dict[str, str] | None]:
         feedback_payload: dict[str, str] | None = None
 
@@ -948,7 +971,7 @@ class EoHEngine:
             cand.code_file_path,
             test_sv_file,
             ref_sv_file,
-            top_module_name=top_module_name,
+            top_module_name=testbench_top_module_name,
             enable_vcd_probe=bool(require_dynamic_metrics()),
         )
 
@@ -993,7 +1016,7 @@ class EoHEngine:
             extract_dynamic_metrics(
                 cand,
                 sim_results,
-                top_module_name=top_module_name,
+                top_module_name=testbench_top_module_name,
             )
             if callable(extract_dynamic_metrics)
             else {}
@@ -1005,7 +1028,7 @@ class EoHEngine:
         synth_results = self.synthesis_evaluator.evaluate(
             cand.code_file_path,
             self.problem_name,
-            top_module_name,
+            synthesis_top_module_name,
             output_dir,
             report_base_path,
             self.evaluator,
@@ -1110,7 +1133,8 @@ class EoHEngine:
         print(f"\n--- Evaluating {len(candidates_to_evaluate)} New Candidates ---")
         test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
         ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
-        top_module_name = self._resolve_top_module_name()
+        testbench_top_module_name = self._resolve_testbench_top_module_name()
+        synthesis_top_module_name = self._resolve_synthesis_top_module_name()
 
         if self.parallelize_candidates:
             with ThreadPoolExecutor(max_workers=self.candidate_workers) as executor:
@@ -1120,7 +1144,8 @@ class EoHEngine:
                         cand,
                         test_sv_file,
                         ref_sv_file,
-                        top_module_name,
+                        testbench_top_module_name,
+                        synthesis_top_module_name,
                     )
                     for cand in candidates_to_evaluate
                 ]
@@ -1128,7 +1153,11 @@ class EoHEngine:
         else:
             evaluated = [
                 self._evaluate_candidate_pipeline(
-                    cand, test_sv_file, ref_sv_file, top_module_name
+                    cand,
+                    test_sv_file,
+                    ref_sv_file,
+                    testbench_top_module_name,
+                    synthesis_top_module_name,
                 )
                 for cand in candidates_to_evaluate
             ]

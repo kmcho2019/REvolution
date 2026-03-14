@@ -12,16 +12,20 @@ from revolution.runtime import CandidateEvaluator, CandidateWorkItem, ProblemCon
 class _FakeVerilogEvaluator:
     def __init__(self, result):
         self.result = result
+        self.calls: list[tuple[tuple[object, ...], dict[str, object]]] = []
 
     def evaluate(self, *args, **kwargs):
+        self.calls.append((args, kwargs))
         return dict(self.result)
 
 
 class _FakeSynthesisEvaluator:
     def __init__(self, result):
         self.result = result
+        self.calls: list[tuple[tuple[object, ...], dict[str, object]]] = []
 
     def evaluate(self, *args, **kwargs):
+        self.calls.append((args, kwargs))
         return dict(self.result)
 
 
@@ -43,6 +47,7 @@ def _context(tmp_path: Path) -> ProblemContext:
         test_sv_path=test_sv,
         ref_sv_path=ref_sv,
         top_module_names_path=bench / "synthesis_top_module_names.json",
+        testbench_top_module="tb",
     )
 
 
@@ -64,7 +69,12 @@ def _run_legacy(
     candidate.code_file_path = "x.sv"
     candidate.status = initial_status  # type: ignore[assignment]
     evaluated, _ = EoHEngine._evaluate_candidate_pipeline(
-        engine, candidate, "test.sv", "ref.sv", "TopModule"
+        engine,
+        candidate,
+        "test.sv",
+        "ref.sv",
+        "tb",
+        "TopModule",
     )
     return evaluated.status, evaluated.score
 
@@ -197,3 +207,46 @@ def test_candidate_evaluator_strict_ablation_matches_legacy_pipeline(
     else:
         assert legacy_score == float("-inf")
         assert new_score == float("-inf")
+
+
+def test_legacy_pipeline_uses_testbench_top_for_simulation_and_synthesis_top_for_synthesis() -> None:
+    verilog = _FakeVerilogEvaluator(
+        {
+            "status": "success",
+            "simulation_stdout": "Mismatches: 0\n",
+            "simulation_stderr": "",
+            "compilation_stderr": "",
+        }
+    )
+    synthesis = _FakeSynthesisEvaluator(
+        {
+            "synthesis_success": True,
+            "synthesis_functionality_success": True,
+            "ppa_success": True,
+            "ppa_metrics": {"power": 0.9, "area": 90.0, "eff_clk_period": 0.9},
+        }
+    )
+    engine = SimpleNamespace()
+    engine.problem_description = "desc"
+    engine.problem_name = "Prob"
+    engine.evaluator = verilog
+    engine.synthesis_evaluator = synthesis
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+    engine._calculate_fitness_score = MethodType(EoHEngine._calculate_fitness_score, engine)
+
+    candidate = Heuristic(thought="", code="module m; endmodule\n", feedback="")
+    candidate.code_file_path = "x.sv"
+    candidate.status = "new"  # type: ignore[assignment]
+
+    evaluated, _ = EoHEngine._evaluate_candidate_pipeline(
+        engine,
+        candidate,
+        "test.sv",
+        "ref.sv",
+        "tb",
+        "TopModule",
+    )
+
+    assert evaluated.status == "success"
+    assert verilog.calls[-1][1]["top_module_name"] == "tb"
+    assert synthesis.calls[-1][0][2] == "TopModule"

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -17,6 +18,7 @@ class ProblemContext:
     test_sv_path: Path
     ref_sv_path: Path | None
     top_module_names_path: Path
+    testbench_top_module: str = "tb"
 
 
 def default_benchmark_root() -> Path:
@@ -57,10 +59,14 @@ def load_problem_context(
         test_sv_path=test_sv_path,
         ref_sv_path=ref_sv_path,
         top_module_names_path=top_module_names_path,
+        testbench_top_module=resolve_testbench_top_module_from_path(test_sv_path),
     )
 
 
-def resolve_top_module_name(context: ProblemContext, default: str = "TopModule") -> str:
+def resolve_synthesis_top_module_name(
+    context: ProblemContext,
+    default: str = "TopModule",
+) -> str:
     """Resolve synthesis top module mapping for the current problem."""
     path = context.top_module_names_path
     if not path.is_file():
@@ -70,3 +76,43 @@ def resolve_top_module_name(context: ProblemContext, default: str = "TopModule")
     except json.JSONDecodeError:
         return default
     return str(data.get(context.problem_name, default))
+
+
+def resolve_testbench_top_module_from_path(
+    test_sv_path: Path | str,
+    default: str = "tb",
+) -> str:
+    """Resolve the simulation top module name from a testbench file."""
+
+    path = Path(test_sv_path)
+    if not path.is_file():
+        return default
+
+    module_names = re.findall(
+        r"\bmodule\s+([A-Za-z_][A-Za-z0-9_$]*)\b",
+        path.read_text(encoding="utf-8"),
+    )
+    if "tb" in module_names:
+        return "tb"
+    if len(module_names) == 1:
+        return module_names[0]
+    if len(module_names) > 1:
+        return module_names[-1]
+    return default
+
+
+def resolve_testbench_top_module(
+    context: ProblemContext,
+    default: str = "tb",
+) -> str:
+    """Resolve the simulation top module name for the current problem."""
+
+    if context.testbench_top_module:
+        return context.testbench_top_module
+    return resolve_testbench_top_module_from_path(context.test_sv_path, default)
+
+
+def resolve_top_module_name(context: ProblemContext, default: str = "TopModule") -> str:
+    """Backward-compatible alias for synthesis top module resolution."""
+
+    return resolve_synthesis_top_module_name(context, default)

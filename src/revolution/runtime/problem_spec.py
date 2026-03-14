@@ -4,7 +4,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
-from revolution.runtime.problem_context import ProblemContext, resolve_top_module_name
+from revolution.runtime.problem_context import (
+    ProblemContext,
+    resolve_synthesis_top_module_name,
+    resolve_testbench_top_module,
+)
 
 CircuitType = Literal["sequential", "combinational", "unknown"]
 QualityMode = Literal["ppa", "functional_only"]
@@ -34,6 +38,7 @@ class ProblemSpec:
     prompt_text: str
     top_module: str
     benchmark_root: Path
+    testbench_top_module: str = "tb"
     reference_sources: tuple[str, ...] = ()
     test_harness: str | None = None
     aux_files: tuple[str, ...] = ()
@@ -94,7 +99,8 @@ def build_problem_spec(
         benchmark_name=benchmark_name,
         problem_name=context.problem_name,
         prompt_text=context.problem_description,
-        top_module=resolve_top_module_name(context),
+        top_module=resolve_synthesis_top_module_name(context),
+        testbench_top_module=resolve_testbench_top_module(context),
         benchmark_root=context.benchmark_path,
         reference_sources=reference_sources,
         test_harness=str(context.test_sv_path),
@@ -131,6 +137,7 @@ def build_cvdp_problem_spec(
         problem_name=context.problem_name,
         prompt_text=context.problem_description,
         top_module="TopModule",
+        testbench_top_module="tb",
         benchmark_root=context.benchmark_path,
         reference_sources=(),
         test_harness="pytest",

@@ -8,8 +8,10 @@ from revolution.runtime import CandidateEvaluator, CandidateWorkItem, ProblemCon
 class _FakeVerilogEvaluator:
     def __init__(self, result):
         self.result = result
+        self.calls: list[tuple[tuple[object, ...], dict[str, object]]] = []
 
     def evaluate(self, *args, **kwargs):
+        self.calls.append((args, kwargs))
         return dict(self.result)
 
 
@@ -17,9 +19,11 @@ class _FakeSynthesisEvaluator:
     def __init__(self, result):
         self.result = result
         self.calls = 0
+        self.call_args: list[tuple[tuple[object, ...], dict[str, object]]] = []
 
     def evaluate(self, *args, **kwargs):
         self.calls += 1
+        self.call_args.append((args, kwargs))
         return dict(self.result)
 
 
@@ -32,6 +36,10 @@ def _context(tmp_path: Path) -> ProblemContext:
     prompt.write_text("desc", encoding="utf-8")
     test_sv.write_text("module tb; endmodule\n", encoding="utf-8")
     ref_sv.write_text("module ref; endmodule\n", encoding="utf-8")
+    (bench / "synthesis_top_module_names.json").write_text(
+        '{"Prob":"TopA"}',
+        encoding="utf-8",
+    )
     return ProblemContext(
         benchmark_name="Bench",
         problem_name="Prob",
@@ -41,6 +49,7 @@ def _context(tmp_path: Path) -> ProblemContext:
         test_sv_path=test_sv,
         ref_sv_path=ref_sv,
         top_module_names_path=bench / "synthesis_top_module_names.json",
+        testbench_top_module="tb",
     )
 
 
@@ -283,6 +292,43 @@ def test_candidate_evaluator_search_accelerated_top_k_zero_skips_all(tmp_path):
     assert result.status == "skipped_synthesis"
     assert result.synthesis_skipped is True
     assert synthesis.calls == 0
+
+
+def test_candidate_evaluator_uses_testbench_top_for_simulation_and_synthesis_top_for_synthesis(
+    tmp_path,
+):
+    context = _context(tmp_path)
+    verilog = _FakeVerilogEvaluator(
+        {
+            "status": "success",
+            "simulation_stdout": "Mismatches: 0\n",
+            "simulation_stderr": "",
+            "compilation_stderr": "",
+        }
+    )
+    synthesis = _FakeSynthesisEvaluator(
+        {
+            "synthesis_success": True,
+            "synthesis_functionality_success": True,
+            "ppa_success": True,
+            "ppa_metrics": {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
+        }
+    )
+    evaluator = CandidateEvaluator(
+        context=context,
+        problem_description="desc",
+        verilog_evaluator=verilog,
+        synthesis_evaluator=synthesis,
+        ref_ppa_metrics={"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
+    )
+
+    result = evaluator.evaluate_candidate(
+        CandidateWorkItem(code="module m; endmodule", code_file_path="x.sv")
+    )
+
+    assert result.status == "success"
+    assert verilog.calls[-1][1]["top_module_name"] == "tb"
+    assert synthesis.call_args[-1][0][2] == "TopA"
 
 
 def test_candidate_evaluator_rejects_invalid_mode(tmp_path):

@@ -21,6 +21,23 @@ Supported archive geometries:
 
 The main runtime lives in [engine.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/engine.py).
 
+## Top-Module Resolution
+
+Simulation and synthesis do not use the same top-module source:
+
+- simulation uses the benchmark harness top from
+  [problem_context.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/problem_context.py)
+  and [problem_spec.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/problem_spec.py)
+  (`testbench_top_module`)
+- synthesis uses DUT top-module mappings from
+  `synthesis_top_module_names.json` or RealBench manifest metadata
+
+For RTLLM and VerilogEval this means simulation must compile `tb`, while
+synthesis still targets module names like `RAM`, `alu`, or `TopModule`.
+If a run suddenly shows empty simulation stdout and every candidate fails
+functionality across classic, grid, and CVT, inspect the `iverilog -s ...`
+target before debugging descriptor logic or archive behavior.
+
 ## File Map
 
 Core QD files:
