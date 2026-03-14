@@ -311,6 +311,11 @@ python scripts/run_backend.py \
   - `strict_ablation` (default): full syntax + functionality + synthesis/PPA for every candidate.
   - `search_accelerated`: runs syntax/functionality for all candidates and throttles synthesis.
 - `--accelerated_synthesis_top_k <int>`: in `search_accelerated`, only the top-K functional candidates per batch are synthesized (deterministic shortest-code policy).
+- Shared RTL/EDA timeouts:
+  - `--rtl_simulation_timeout_s` (default `60`)
+  - `--synthesis_timeout_s` (default `300`)
+  - `--post_synthesis_simulation_timeout_s` (default `300`)
+  - Timeout cleanup now terminates the entire subprocess tree for `iverilog`, `vvp`, `yosys`, and `openroad`, not just the wrapper process.
 
 FunSearch feedback controls:
 - `--fs_feedback_policy off|fail_only|always` (default `off`).
@@ -349,6 +354,7 @@ This script distributes problems across worker processes and executes the full e
 - `--model_name`: The specific model identifier to use (e.g., `gpt-4.1-mini`).
 - `--vllm_host`, `--vllm_port`: Specify host/port for a local vLLM server (only used if `--api_backend` is `vllm`).
 - `--evaluation_mode`: use `gen0` for the new latency-optimised initial-generation scorer or `standard` for full evolution.
+- `--rtl_simulation_timeout_s`, `--synthesis_timeout_s`, `--post_synthesis_simulation_timeout_s`: shared RTL and synthesis timeout controls for all non-CVDP benchmark paths.
 - `--cvdp_jsonl`, `--cvdp_categories`, `--cvdp_simulation_timeout_s`: enable CVDP dataset integration and control pytest/cocotb timeout (default 120s).
 - `--save_path`: override default run save path with a custom one, must be a full absolute path.
 
@@ -510,6 +516,9 @@ python scripts/run_backend_ablation.py \
   --model_name /models/openai-gpt-oss-120b \
   --evaluation_mode strict_ablation \
   --max_evaluations 1 \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 300 \
+  --post_synthesis_simulation_timeout_s 300 \
   --seeds 42 43 \
   --num_workers 8
 ```
@@ -520,6 +529,31 @@ The script enforces fairness checks before launching runs:
 - primary budget axis (`total_candidates_evaluated`) must match.
 
 Use `--dry_run` to validate and print all generated backend commands without executing live runs.
+
+Recommended timeout-stress smoke run after modifying the evaluator:
+
+```bash
+timeout 3600 python scripts/run_backend_ablation.py \
+  --backends revolution funsearch eoh codeevolve \
+  --benchmarks VerilogEval-Spec-to-RTL \
+  --problems Prob144_conwaylife \
+  --api_backend vllm \
+  --vllm_host host.docker.internal \
+  --vllm_port 8000 \
+  --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b \
+  --evaluation_mode strict_ablation \
+  --max_evaluations 6 \
+  --primary_budget_axis candidate_evaluations \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 45 \
+  --post_synthesis_simulation_timeout_s 45 \
+  --temperature 0.7 \
+  --top_p 0.95 \
+  --max_tokens 16384 \
+  --num_workers 1 \
+  --candidate_workers 0 \
+  --save_root /tmp/prob144_conwaylife_timeout_smoke
+```
 
 Each ablation invocation also writes top-level snapshots under `save_root`:
 - `<timestamp>_ablation_config.yaml`

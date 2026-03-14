@@ -575,6 +575,38 @@ def test_ablation_main_accepts_problem_subset_in_dry_run(tmp_path, capsys):
     assert "--problems Prob001_accu" in captured.out
 
 
+def test_ablation_dry_run_propagates_shared_timeout_flags(tmp_path, capsys):
+    save_root = tmp_path / "ablation_run_timeouts"
+    rc = run_backend_ablation_main(
+        [
+            "--benchmarks",
+            "RTLLM",
+            "--save_root",
+            str(save_root),
+            "--backends",
+            "codeevolve",
+            "--seeds",
+            "42",
+            "--max_evaluations",
+            "1",
+            "--rtl_simulation_timeout_s",
+            "17",
+            "--synthesis_timeout_s",
+            "29",
+            "--post_synthesis_simulation_timeout_s",
+            "31",
+            "--dry_run",
+            "--no-run_report",
+        ]
+    )
+
+    assert rc == 0
+    captured = capsys.readouterr()
+    assert "--rtl_simulation_timeout_s 17" in captured.out
+    assert "--synthesis_timeout_s 29" in captured.out
+    assert "--post_synthesis_simulation_timeout_s 31" in captured.out
+
+
 def test_ablation_generated_config_roundtrip_and_edit(tmp_path):
     save_root_a = tmp_path / "ablation_a"
     rc = run_backend_ablation_main(

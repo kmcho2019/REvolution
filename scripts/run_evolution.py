@@ -130,17 +130,27 @@ def run_problem_worker(args_tuple):
         if evaluation_mode == "gen0":
             if gen0_eval_best:
                 verilog_evaluator = VerilogEvaluator(
-                    iverilog_executable_path="iverilog", vvp_executable_path="vvp"
+                    iverilog_executable_path="iverilog",
+                    vvp_executable_path="vvp",
+                    default_simulation_timeout_seconds=args.rtl_simulation_timeout_s,
                 )
-                synthesis_evaluator = SynthesisEvaluator()
+                synthesis_evaluator = SynthesisEvaluator(
+                    default_simulation_timeout_s=args.post_synthesis_simulation_timeout_s,
+                    default_synthesis_timeout_s=args.synthesis_timeout_s,
+                )
             else:
                 verilog_evaluator = None
                 synthesis_evaluator = None
         else:
             verilog_evaluator = VerilogEvaluator(
-                iverilog_executable_path="iverilog", vvp_executable_path="vvp"
+                iverilog_executable_path="iverilog",
+                vvp_executable_path="vvp",
+                default_simulation_timeout_seconds=args.rtl_simulation_timeout_s,
             )
-            synthesis_evaluator = SynthesisEvaluator()
+            synthesis_evaluator = SynthesisEvaluator(
+                default_simulation_timeout_s=args.post_synthesis_simulation_timeout_s,
+                default_synthesis_timeout_s=args.synthesis_timeout_s,
+            )
 
         # Choose engine based on benchmarks
         if evaluation_mode == "gen0":
@@ -417,6 +427,24 @@ def main():
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--top_p", type=float, default=0.95)
     parser.add_argument("--max_tokens", type=int, default=2048)
+    parser.add_argument(
+        "--rtl_simulation_timeout_s",
+        type=int,
+        default=60,
+        help="Timeout in seconds for RTL compile/simulation stages.",
+    )
+    parser.add_argument(
+        "--synthesis_timeout_s",
+        type=int,
+        default=300,
+        help="Timeout in seconds for each synthesis/physical-design tool stage.",
+    )
+    parser.add_argument(
+        "--post_synthesis_simulation_timeout_s",
+        type=int,
+        default=300,
+        help="Timeout in seconds for post-synthesis compile/simulation.",
+    )
     parser.add_argument(
         "--seed",
         type=int,

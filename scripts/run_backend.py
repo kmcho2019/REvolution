@@ -210,9 +210,14 @@ def _build_backend(
         vllm_host=args.vllm_host,
     )
     verilog_evaluator = VerilogEvaluator(
-        iverilog_executable_path="iverilog", vvp_executable_path="vvp"
+        iverilog_executable_path="iverilog",
+        vvp_executable_path="vvp",
+        default_simulation_timeout_seconds=args.rtl_simulation_timeout_s,
     )
-    synthesis_evaluator = SynthesisEvaluator()
+    synthesis_evaluator = SynthesisEvaluator(
+        default_simulation_timeout_s=args.post_synthesis_simulation_timeout_s,
+        default_synthesis_timeout_s=args.synthesis_timeout_s,
+    )
 
     if benchmark.lower() == "cvdp":
         record = load_cvdp_record(args.cvdp_jsonl, problem)
@@ -341,6 +346,11 @@ def _build_backend(
             "accelerated_synthesis_top_k": args.accelerated_synthesis_top_k,
             "cvdp_jsonl": getattr(args, "cvdp_jsonl", None),
             "cvdp_simulation_timeout_s": getattr(args, "cvdp_simulation_timeout_s", None),
+            "rtl_simulation_timeout_s": getattr(args, "rtl_simulation_timeout_s", None),
+            "synthesis_timeout_s": getattr(args, "synthesis_timeout_s", None),
+            "post_synthesis_simulation_timeout_s": getattr(
+                args, "post_synthesis_simulation_timeout_s", None
+            ),
             "search_mode": getattr(args, "search_mode", "revolution"),
         },
     )
@@ -706,6 +716,24 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         type=int,
         default=120,
         help="Timeout in seconds for CVDP harness pytest execution.",
+    )
+    parser.add_argument(
+        "--rtl_simulation_timeout_s",
+        type=int,
+        default=60,
+        help="Timeout in seconds for RTL compile/simulation stages.",
+    )
+    parser.add_argument(
+        "--synthesis_timeout_s",
+        type=int,
+        default=300,
+        help="Timeout in seconds for each synthesis/physical-design tool stage.",
+    )
+    parser.add_argument(
+        "--post_synthesis_simulation_timeout_s",
+        type=int,
+        default=300,
+        help="Timeout in seconds for post-synthesis compile/simulation.",
     )
     parser.add_argument(
         "--realbench_root",

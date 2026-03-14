@@ -44,6 +44,9 @@ def _minimal_args(tmp_path):
         diff_fuzzy_margin=0.03,
         cvdp_jsonl="",
         cvdp_simulation_timeout_s=120,
+        rtl_simulation_timeout_s=60,
+        synthesis_timeout_s=300,
+        post_synthesis_simulation_timeout_s=300,
     )
 
 
@@ -78,7 +81,7 @@ def test_run_problem_worker_sets_placeholder_api_key_for_vllm(monkeypatch, tmp_p
     monkeypatch.setattr(run_evolution, "StreamRedirector", _DummyRedirect)
     monkeypatch.setattr(run_evolution, "LLMInterface", _FakeLLM)
     monkeypatch.setattr(run_evolution, "VerilogEvaluator", lambda **_kwargs: object())
-    monkeypatch.setattr(run_evolution, "SynthesisEvaluator", lambda: object())
+    monkeypatch.setattr(run_evolution, "SynthesisEvaluator", lambda **_kwargs: object())
     monkeypatch.setattr(run_evolution, "EoHEngine", _FakeEngine)
     monkeypatch.setattr(run_evolution, "CVDPEngine", _FakeEngine)
     monkeypatch.setattr(run_evolution, "Gen0LatencyEngine", _FakeEngine)
@@ -89,6 +92,59 @@ def test_run_problem_worker_sets_placeholder_api_key_for_vllm(monkeypatch, tmp_p
     assert result == "ok"
     assert log_path.endswith("problem_run.log")
     assert captured["api_key"] == "vllm-local-placeholder"
+
+
+def test_run_problem_worker_forwards_timeout_defaults(monkeypatch, tmp_path):
+    from scripts import run_evolution
+
+    class _DummyRedirect:
+        def __init__(self, filepath):
+            self.filepath = filepath
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+    captured: dict[str, dict[str, object]] = {}
+
+    class _FakeEngine:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+
+        def run(self):
+            return "ok"
+
+    monkeypatch.setattr(run_evolution, "StreamRedirector", _DummyRedirect)
+    monkeypatch.setattr(
+        run_evolution,
+        "LLMInterface",
+        lambda **_kwargs: object(),
+    )
+    monkeypatch.setattr(
+        run_evolution,
+        "VerilogEvaluator",
+        lambda **kwargs: captured.setdefault("verilog", kwargs) or object(),
+    )
+    monkeypatch.setattr(
+        run_evolution,
+        "SynthesisEvaluator",
+        lambda **kwargs: captured.setdefault("synthesis", kwargs) or object(),
+    )
+    monkeypatch.setattr(run_evolution, "EoHEngine", _FakeEngine)
+    monkeypatch.setattr(run_evolution, "CVDPEngine", _FakeEngine)
+    monkeypatch.setattr(run_evolution, "Gen0LatencyEngine", _FakeEngine)
+
+    args = _minimal_args(tmp_path)
+    args.rtl_simulation_timeout_s = 17
+    args.synthesis_timeout_s = 29
+    args.post_synthesis_simulation_timeout_s = 31
+    run_evolution.run_problem_worker(("RTLLM", "Prob001_accu", args))
+
+    assert captured["verilog"]["default_simulation_timeout_seconds"] == 17
+    assert captured["synthesis"]["default_synthesis_timeout_s"] == 29
+    assert captured["synthesis"]["default_simulation_timeout_s"] == 31
 
 
 def test_run_evolution_delegates_to_run_backend_for_codeevolve_config(

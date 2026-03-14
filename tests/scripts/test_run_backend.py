@@ -202,6 +202,23 @@ def test_backend_parser_includes_diff_controls_and_vllm_threshold():
     assert args.vllm_min_model_len == 128000
 
 
+def test_backend_parser_exposes_shared_timeout_flags():
+    parser, _ = _build_parser()
+    args, _ = parser.parse_known_args(
+        [
+            "--rtl_simulation_timeout_s",
+            "17",
+            "--synthesis_timeout_s",
+            "29",
+            "--post_synthesis_simulation_timeout_s",
+            "31",
+        ]
+    )
+    assert args.rtl_simulation_timeout_s == 17
+    assert args.synthesis_timeout_s == 29
+    assert args.post_synthesis_simulation_timeout_s == 31
+
+
 def test_run_backend_rejects_single_pool_qd_mode(capsys):
     code = run_backend_main(
         [

@@ -330,6 +330,7 @@ FunSearch vs EoH vs CodeEvolve sweeps with explicit fairness normalization.
 - `--backends revolution funsearch eoh codeevolve`: select the backend subset to launch
 - `--problems <ids...>`: optional problem subset forwarded to every backend run, useful for live smoke checks
 - `--revolution_population_size`, `--funsearch_initial_population_size`, `--eoh_population_size`, `--eoh_operators`, `--codeevolve_num_islands`, `--codeevolve_init_pop`: preferred schedule knobs used to derive candidate budgets
+- `--rtl_simulation_timeout_s`, `--synthesis_timeout_s`, `--post_synthesis_simulation_timeout_s`: shared timeout knobs propagated to every backend command
 
 The ablation runner propagates budget metadata to per-problem summaries (`run_budget.primary_budget_axis`, evaluation/call caps), which the backend comparison report consumes for fairness diagnostics.
 
@@ -359,6 +360,7 @@ Essential arguments:
 - `--population_pool_mode {dual,single}`: dual maintains separate fail/success pools; single blends them but throttles fail-derived offspring once successes are available.
 - `--evaluation_mode {standard,gen0}`: switch between the full pipeline and the latency-only Gen0 scorer.
 - `--gen0_evaluate_best`: when used with `--evaluation_mode gen0`, replay the top-ranked candidate through the full functional testbench, synthesis, and OpenROAD PPA flow and store the logs under `Gen0/best_candidate/`.
+- `--rtl_simulation_timeout_s <int>` / `--synthesis_timeout_s <int>` / `--post_synthesis_simulation_timeout_s <int>`: shared timeout controls for RTL compile/sim, synthesis/OpenROAD, and post-synthesis compile/sim.
 - `--cvdp_jsonl <path>` / `--cvdp_categories <list>` / `--cvdp_simulation_timeout_s <int>`: enable CVDP dataset support (`bench/cvdp/...`) and control pytest/cocotb timeout (default 120 seconds).
 
 Example (dual-pool UCB search):
@@ -540,6 +542,8 @@ All Python helper scripts accept `--help` to show the full argument list.
 - **Diff application failures**: candidates generated in diff mode create `<candidate>_diff_apply_error.json` snapshots with `reason_code`, phase diagnostics, and raw diff payload to speed up triage.
 - **Diff telemetry**: generation logs include `diff_phase_distribution_generation`, `failed_diff_reason_counts_generation`, and `tokens_per_successful_candidate_by_mode_generation` for rapid mode-level regression checks.
 - **Synthesis timeouts**: `SynthesisEvaluator` writes timeout or crash information directly into the `_synthesis_report.rpt` file. Consider loosening the design constraints or increasing resources.
+- **Timeout cleanup semantics**: RTL and synthesis timeouts now terminate the full subprocess tree for `iverilog`, `vvp`, `yosys`, and `openroad`. Reports identify the timed-out stage.
+- **Old runs may still leak**: runs created before the subprocess-tree cleanup fix can leave orphaned EDA processes behind; clean them up manually before re-running comparisons.
 - **CVDP harness timeouts**: `run_evolution.py` exposes `--cvdp_simulation_timeout_s` (default `120`) for cocotb/pytest harness execution.
 - **Token usage**: generation logs include per-generation token counts (`total_llm_*` fields), handy when budgeting API usage.
 
@@ -555,8 +559,34 @@ All Python helper scripts accept `--help` to show the full argument list.
   ```
   The suite includes targeted checks for the single-pool evolutionary mode, `PromptStore` helpers, `StreamRedirector`, and `EoHLogger` to make it clear when regression risk touches prompting, logging, or path management.
 - Use `scripts/run_test.sh` for smoke coverage across a small benchmark subset after modifying core logic.
+- Use `Prob144_conwaylife` when you specifically need a timeout-stress benchmark for evaluator cleanup and backend smoke validation.
 - When altering prompts or evaluation hooks, regenerate reports for a known run and confirm metrics match expectations.
 - The summary JSON exposes `all_*_passed` sets to count how many unique candidates cleared each evaluation stage—use these to spot regressions in compilation or synthesis rates.
+
+Suggested all-backend timeout smoke:
+
+```bash
+timeout 3600 python scripts/run_backend_ablation.py \
+  --backends revolution funsearch eoh codeevolve \
+  --benchmarks VerilogEval-Spec-to-RTL \
+  --problems Prob144_conwaylife \
+  --api_backend vllm \
+  --vllm_host host.docker.internal \
+  --vllm_port 8000 \
+  --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b \
+  --evaluation_mode strict_ablation \
+  --max_evaluations 6 \
+  --primary_budget_axis candidate_evaluations \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 45 \
+  --post_synthesis_simulation_timeout_s 45 \
+  --temperature 0.7 \
+  --top_p 0.95 \
+  --max_tokens 16384 \
+  --num_workers 1 \
+  --candidate_workers 0 \
+  --save_root /tmp/prob144_conwaylife_timeout_smoke
+```
 
 ## 7. Customisation checklist
 

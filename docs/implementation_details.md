@@ -108,7 +108,7 @@ The QD substrate currently lives under `src/revolution/qd/`:
 
 ## Evaluation stack
 
-`VerilogEvaluator` compiles designs with Icarus Verilog (iverilog) and runs them under `vvp`. Compilation output, simulation logs, and timeouts are written to `<candidate>_simulation.log`. Optional reference design files enable mismatch counting on VerilogEval, while RTLLM detects the `===========Your Design Passed===========` banner. When the selected descriptor axes require dynamic metrics, `VerilogEvaluator` also injects a temporary VCD probe into the testbench and returns the emitted waveform path for later activity extraction.
+`VerilogEvaluator` compiles designs with Icarus Verilog (iverilog) and runs them under `vvp`. Compilation output, simulation logs, and timeouts are written to `<candidate>_simulation.log`. Timeout cleanup now terminates the full subprocess tree for the active stage instead of only the direct wrapper process. Optional reference design files enable mismatch counting on VerilogEval, while RTLLM detects the `===========Your Design Passed===========` banner. When the selected descriptor axes require dynamic metrics, `VerilogEvaluator` also injects a temporary VCD probe into the testbench and returns the emitted waveform path for later activity extraction.
 
 Top-module resolution is now split explicitly:
 
@@ -128,7 +128,7 @@ activity-oriented descriptor family:
 `toggle_count_log_est`, `toggle_density_est`, `active_signal_ratio_est`, and
 `avg_toggle_rate_est`. These metrics are attached as `dynamic_metrics`.
 
-`SynthesisEvaluator` automates the Yosys + OpenROAD flow. It generates SDC, Yosys, and OpenROAD scripts from the candidate design, writes reports to `<candidate>_synthesis_report.rpt`, and parses timing/power/area metrics. Netlists are regression-tested again using `VerilogEvaluator` to ensure synthesis has not broken functionality.
+`SynthesisEvaluator` automates the Yosys + OpenROAD flow. It generates SDC, Yosys, and OpenROAD scripts from the candidate design, then executes `yosys` and `openroad` as separate managed subprocesses rather than a shell pipeline. Reports are written directly to `<candidate>_synthesis_report.rpt`, include stage-specific timeout/crash markers, and still carry the OpenROAD text needed for timing/power/area parsing. Netlists are regression-tested again using `VerilogEvaluator` to ensure synthesis has not broken functionality.
 
 `CVDPEvaluator` remains the JSONL/harness-backed functional path for `cvdp`
 tasks. The feature branch now also includes a lightweight RealBench adapter that

@@ -209,6 +209,7 @@ Key methods:
 - Accepts either a single DUT file or a list of DUT+library files.
 - Produces compilation and simulation logs, and classifies status:
   - `success`, `compilation_error`, `simulation_error`, `simulation_timeout`, `file_error`.
+- The current implementation launches `iverilog` and `vvp` in managed process groups so a timeout kills spawned descendants as well.
 
 #### 3.2.6 `SynthesisEvaluator`: Synthesis + PPA API
 
@@ -217,6 +218,7 @@ Key methods:
 - Runs Yosys then OpenROAD, writes report paths.
 - Runs post-synthesis simulation with the PDK cell library.
 - Returns flags `synthesis_success`, `synthesis_functionality_success`, `ppa_success`, plus `ppa_metrics` and log paths.
+- Timeout reports identify the stage that timed out (`yosys`, `openroad`, or post-synthesis simulation).
 
 #### 3.2.7 `EoHLogger`: Logging API
 
@@ -437,12 +439,15 @@ Implemented in `SynthesisEvaluator.evaluate()`:
   - Yosys script (`scripts/ref/ref.yosys.tcl`)
   - OpenROAD script (`scripts/ref/ref.openroad.tcl`)
 - Default synthesis clock period is 0.01 ns; `_create_sdc_file()` infers clock ports via a regex on port names and falls back to `f_clk` when none are found.
-- `SynthesisEvaluator.__init__()` anchors template paths to `scripts/ref/` and forces the PDK path to `data/pdk/` under the repo root (overriding the constructor argument).
-- Runs synthesis command:
+- `SynthesisEvaluator.__init__()` anchors template paths to `scripts/ref/` and defaults the PDK path to `data/pdk/` under the repo root unless an explicit override is supplied.
+- Runs synthesis as two explicit managed subprocess stages:
 
 ```
-yosys <script> && openroad <script> | tee <report>
+yosys <script>
+openroad <script>
 ```
+
+- Each stage runs in its own process group. On timeout the evaluator sends `SIGTERM`, waits briefly, then escalates to `SIGKILL` if necessary before writing the stage-specific report marker.
 
 - Post-synthesis functional check simulates the synthesized netlist with the testbench and PDK cell library (`pdk/Nangate45/work_around_yosys/cells.v`).
 

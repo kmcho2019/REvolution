@@ -191,6 +191,9 @@ def _validate_fairness(
         "--temperature",
         "--top_p",
         "--max_tokens",
+        "--rtl_simulation_timeout_s",
+        "--synthesis_timeout_s",
+        "--post_synthesis_simulation_timeout_s",
         "--seed",
     ]
     for flag in shared_flags:
@@ -295,6 +298,9 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--temperature", type=float, default=0.7)
     parser.add_argument("--top_p", type=float, default=0.95)
     parser.add_argument("--max_tokens", type=int, default=1024)
+    parser.add_argument("--rtl_simulation_timeout_s", type=int, default=60)
+    parser.add_argument("--synthesis_timeout_s", type=int, default=300)
+    parser.add_argument("--post_synthesis_simulation_timeout_s", type=int, default=300)
     parser.add_argument(
         "--seeds",
         nargs="+",
@@ -611,6 +617,12 @@ def main(argv: list[str] | None = None) -> int:
         str(args.top_p),
         "--max_tokens",
         str(args.max_tokens),
+        "--rtl_simulation_timeout_s",
+        str(args.rtl_simulation_timeout_s),
+        "--synthesis_timeout_s",
+        str(args.synthesis_timeout_s),
+        "--post_synthesis_simulation_timeout_s",
+        str(args.post_synthesis_simulation_timeout_s),
         "--search_mode",
         args.search_mode,
         "--primary_budget_axis",
