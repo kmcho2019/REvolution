@@ -1,11 +1,12 @@
 import json
 import os
 import re
+import signal
 import shutil
 import subprocess
 import traceback
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, NamedTuple
 
 _NETLIST_INSTANCE_RE = re.compile(
     r"^\s*([\\$A-Za-z_][\\$A-Za-z0-9_]*)\s+([\\$A-Za-z_][\\$A-Za-z0-9_]*)\s*\(",
@@ -31,6 +32,67 @@ _ARITH_CELL_PATTERNS = (
     re.compile(r"ADDF"),
     re.compile(r"FADD"),
 )
+_PROCESS_TERMINATION_GRACE_SECONDS = 5.0
+
+
+class _CommandResult(NamedTuple):
+    returncode: int
+    stdout: str
+    stderr: str
+    timed_out: bool
+
+
+def _run_command(
+    command: list[str],
+    *,
+    timeout_s: int | float | None,
+    cwd: str | None = None,
+) -> _CommandResult:
+    popen_kwargs: dict[str, Any] = {
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.PIPE,
+        "text": True,
+        "cwd": cwd,
+    }
+    if os.name != "nt":
+        popen_kwargs["start_new_session"] = True
+
+    process = subprocess.Popen(command, **popen_kwargs)
+    try:
+        stdout, stderr = process.communicate(timeout=timeout_s)
+        return _CommandResult(
+            returncode=process.returncode if process.returncode is not None else -1,
+            stdout=stdout or "",
+            stderr=stderr or "",
+            timed_out=False,
+        )
+    except subprocess.TimeoutExpired:
+        if os.name == "nt":
+            process.terminate()
+        else:
+            try:
+                os.killpg(process.pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+        try:
+            stdout, stderr = process.communicate(
+                timeout=_PROCESS_TERMINATION_GRACE_SECONDS
+            )
+        except subprocess.TimeoutExpired:
+            if os.name == "nt":
+                process.kill()
+            else:
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            stdout, stderr = process.communicate()
+        return _CommandResult(
+            returncode=process.returncode if process.returncode is not None else -1,
+            stdout=stdout or "",
+            stderr=stderr or "",
+            timed_out=True,
+        )
 
 
 class VerilogEvaluator:
@@ -41,7 +103,12 @@ class VerilogEvaluator:
     capturing outputs, handling errors, and managing timeouts.
     """
 
-    def __init__(self, iverilog_executable_path: str, vvp_executable_path: str) -> None:
+    def __init__(
+        self,
+        iverilog_executable_path: str,
+        vvp_executable_path: str,
+        default_simulation_timeout_seconds: int = 60,
+    ) -> None:
         if not shutil.which(iverilog_executable_path):
             raise FileNotFoundError(
                 f"Icarus Verilog executable (iverilog) not found or not executable at: {iverilog_executable_path}. "
@@ -55,6 +122,7 @@ class VerilogEvaluator:
                 f"Please provide a valid absolute path or ensure it's in your system PATH."
             )
         self.vvp_executable: str = vvp_executable_path
+        self.default_simulation_timeout_seconds = int(default_simulation_timeout_seconds)
 
         # Base flags for iverilog compilation
         self.base_iverilog_flags: list[str] = [
@@ -71,7 +139,7 @@ class VerilogEvaluator:
         ref_sv_file: str | None,
         top_module_name: str = "tb",
         output_directory: str | None = None,
-        simulation_timeout_seconds: int = 60,
+        simulation_timeout_seconds: int | None = None,
         enable_vcd_probe: bool = False,
     ) -> dict[str, Any]:
         """
@@ -115,6 +183,11 @@ class VerilogEvaluator:
         """
 
         vcd_file_path: str | None = None
+        effective_timeout = (
+            self.default_simulation_timeout_seconds
+            if simulation_timeout_seconds is None
+            else int(simulation_timeout_seconds)
+        )
 
         # --- 1. Determine paths and prepare ---
         # Handle single file or list of files for test_sv_file
@@ -233,12 +306,9 @@ class VerilogEvaluator:
             lf.write("--- Compilation Phase ---\n")
             lf.write(f"Command: {' '.join(compile_cmd_list)}\n\n")
             try:
-                compile_process = subprocess.run(
+                compile_process = _run_command(
                     compile_cmd_list,
-                    capture_output=True,
-                    text=True,
-                    check=False,  # Do not raise exception on non-zero exit
-                    timeout=simulation_timeout_seconds,
+                    timeout_s=effective_timeout,
                 )
                 comp_stdout = compile_process.stdout or ""
                 comp_stderr = compile_process.stderr or ""
@@ -248,7 +318,22 @@ class VerilogEvaluator:
                 lf.write(comp_stdout + "\n")
                 lf.write("Stderr:\n")
                 lf.write(comp_stderr + "\n")
+                lf.write(f"Timed Out: {compile_process.timed_out}\n")
 
+                if compile_process.timed_out:
+                    timeout_msg = (
+                        f"Compilation timed out after {effective_timeout} seconds."
+                    )
+                    print(f"ERROR: {timeout_msg}")
+                    lf.write(f"TIMEOUT ERROR: {timeout_msg}\n")
+                    return self._format_result(
+                        "compilation_error",
+                        log_file,
+                        None,
+                        comp_stdout,
+                        timeout_msg,
+                        vcd_file_path=vcd_file_path,
+                    )
                 if compile_process.returncode != 0:
                     print(f"ERROR: Compilation failed. See {log_file} for details.")
                     return self._format_result(
@@ -315,12 +400,9 @@ class VerilogEvaluator:
             lf.write(f"Working Directory: {simulation_working_dir}\n\n")
 
             try:
-                run_process = subprocess.run(
+                run_process = _run_command(
                     run_cmd_list,
-                    capture_output=True,
-                    text=True,
-                    timeout=simulation_timeout_seconds,
-                    check=False,  # Do not raise exception on non-zero exit
+                    timeout_s=effective_timeout,
                     cwd=simulation_working_dir,  # Set the working directory for the simulation
                 )
                 sim_stdout = run_process.stdout or ""
@@ -331,7 +413,24 @@ class VerilogEvaluator:
                 lf.write(sim_stdout + "\n")
                 lf.write("Stderr:\n")
                 lf.write(sim_stderr + "\n")
+                lf.write(f"Timed Out: {run_process.timed_out}\n")
 
+                if run_process.timed_out:
+                    timeout_msg = (
+                        f"Simulation timed out after {effective_timeout} seconds."
+                    )
+                    print(f"ERROR: {timeout_msg}")
+                    lf.write(f"TIMEOUT ERROR: {timeout_msg}\n")
+                    return self._format_result(
+                        "simulation_timeout",
+                        log_file,
+                        compiled_vvp_file,
+                        comp_stdout,
+                        comp_stderr,
+                        sim_stdout,
+                        timeout_msg,
+                        vcd_file_path=vcd_file_path,
+                    )
                 if run_process.returncode == 0:
                     print(f"INFO: Simulation successful. See {log_file} for details.")
                     return self._format_result(
@@ -360,23 +459,6 @@ class VerilogEvaluator:
                         vcd_file_path=vcd_file_path,
                     )
 
-            except subprocess.TimeoutExpired:
-                timeout_msg = (
-                    f"Simulation timed out after {simulation_timeout_seconds} seconds."
-                )
-                print(f"ERROR: {timeout_msg}")
-                lf.write(f"TIMEOUT ERROR: {timeout_msg}\n")
-                # Capture any partial output before timeout
-                # (Note: subprocess.run with timeout might not populate stdout/stderr for timed-out process easily)
-                return self._format_result(
-                    "simulation_timeout",
-                    log_file,
-                    compiled_vvp_file,
-                    comp_stdout,
-                    comp_stderr,
-                    sim_stderr=timeout_msg,
-                    vcd_file_path=vcd_file_path,
-                )
             except FileNotFoundError:
                 # This case should ideally be caught by __init__, but as a safeguard:
                 error_msg = f"vvp executable not found during simulation. Path: {self.vvp_executable}"
@@ -513,7 +595,9 @@ class SynthesisEvaluator:
         self,
         yosys_path: str = "yosys",
         openroad_path: str = "openroad",
-        pdk_path: str = "./pdk",
+        pdk_path: str | None = None,
+        default_simulation_timeout_s: int = 300,
+        default_synthesis_timeout_s: int = 300,
     ) -> None:
         """
         Initialize the synthesis evaluator with toolchain paths and environment configuration.
@@ -524,7 +608,8 @@ class SynthesisEvaluator:
         """
         self.yosys_path: str = yosys_path
         self.openroad_path: str = openroad_path
-        self.pdk_path: str = pdk_path
+        self.default_simulation_timeout_s = int(default_simulation_timeout_s)
+        self.default_synthesis_timeout_s = int(default_synthesis_timeout_s)
 
         # Synthesis clk period in nanoseconds
         self.clk_period: float = 0.01  # ns
@@ -538,8 +623,11 @@ class SynthesisEvaluator:
         # The ref directory is inside the script root
         self.ref_dir_path: str = os.path.join(self.script_root_dir, "scripts", "ref")
         # The pdk directory is in the data directory (../../data/pdk)
-        self.pdk_path: str = os.path.abspath(
+        default_pdk_path = os.path.abspath(
             os.path.join(self.script_root_dir, "data", "pdk")
+        )
+        self.pdk_path: str = (
+            default_pdk_path if pdk_path is None else os.path.abspath(pdk_path)
         )
 
         # Print directories for debugging
@@ -558,8 +646,8 @@ class SynthesisEvaluator:
         verilog_evaluator: VerilogEvaluator,
         test_sv_file: str,
         ref_sv_file: str | None,
-        simulation_timeout_s: int = 300,
-        synthesis_timeout_s: int = 300,
+        simulation_timeout_s: int | None = None,
+        synthesis_timeout_s: int | None = None,
     ) -> dict[str, bool | str | None | dict[str, Any]]:
         """
         Performs synthesis, PPA analysis, and post-synthesis verification.
@@ -584,6 +672,16 @@ class SynthesisEvaluator:
             os.makedirs(output_directory)
 
         synthesized_netlist_path = verilog_file.replace(".sv", ".syn.v")
+        effective_simulation_timeout_s = (
+            self.default_simulation_timeout_s
+            if simulation_timeout_s is None
+            else int(simulation_timeout_s)
+        )
+        effective_synthesis_timeout_s = (
+            self.default_synthesis_timeout_s
+            if synthesis_timeout_s is None
+            else int(synthesis_timeout_s)
+        )
 
         synthesis_success, synthesis_log = self._run_synthesis(
             verilog_file,
@@ -592,6 +690,7 @@ class SynthesisEvaluator:
             output_directory,
             report_base_path,
             synthesized_netlist_path,
+            synthesis_timeout_s=effective_synthesis_timeout_s,
         )
 
         if not synthesis_success:
@@ -617,6 +716,7 @@ class SynthesisEvaluator:
                 "tb",  # Assuming the top module name for the testbench is "tb"
                 output_directory,
                 verilog_evaluator,
+                simulation_timeout_s=effective_simulation_timeout_s,
             )
         )
 
@@ -699,33 +799,72 @@ class SynthesisEvaluator:
             report_base_path + "_synthesis_report.rpt"
         )  # os.path.join(output_directory, f"{problem_name}_synthesis_report.rpt")
 
-        command = f"yosys {yosys_script_path} && openroad {openroad_script_path} | tee {report_path}"
+        yosys_command = [self.yosys_path, yosys_script_path]
+        openroad_command = [self.openroad_path, openroad_script_path]
+        report_lines: list[str] = []
 
-        # log_path = os.path.join(output_directory, "yosys.log")
+        def _append_stage(stage_name: str, command: list[str], result: _CommandResult) -> None:
+            report_lines.append(f"--- {stage_name.upper()} ---\n")
+            report_lines.append(f"Command: {' '.join(command)}\n")
+            report_lines.append(f"Return Code: {result.returncode}\n")
+            report_lines.append(f"Timed Out: {result.timed_out}\n")
+            report_lines.append("Stdout:\n")
+            report_lines.append(result.stdout)
+            report_lines.append("\nStderr:\n")
+            report_lines.append(result.stderr)
+            report_lines.append("\n\n")
 
-        print(f"INFO: Running synthesis command: {command}")
+        def _write_report() -> None:
+            with open(report_path, "w", encoding="utf-8") as handle:
+                handle.write("".join(report_lines))
+
+        print(f"INFO: Running synthesis command: {' '.join(yosys_command)}")
 
         try:
-            process = subprocess.run(
-                command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=synthesis_timeout_s
+            yosys_result = _run_command(
+                yosys_command,
+                timeout_s=synthesis_timeout_s,
             )
+            _append_stage("yosys", yosys_command, yosys_result)
+            if yosys_result.timed_out:
+                timeout_msg = (
+                    f"Synthesis timed out in stage 'yosys' after {synthesis_timeout_s} seconds."
+                )
+                print(f"ERROR: {timeout_msg}")
+                report_lines.append(
+                    f"--- SYNTHESIS/Physical Design FAILED: TIMEOUT ---\n{timeout_msg}\n"
+                )
+                _write_report()
+                return False, report_path
+            if yosys_result.returncode != 0:
+                print(f"Synthesis failed. Error: {yosys_result.stderr}")
+                report_lines.append("\n--- SYNTHESIS FAILED ---\n")
+                _write_report()
+                return False, report_path
 
-            if process.returncode == 0:
+            print(f"INFO: Running synthesis command: {' '.join(openroad_command)}")
+            openroad_result = _run_command(
+                openroad_command,
+                timeout_s=synthesis_timeout_s,
+            )
+            _append_stage("openroad", openroad_command, openroad_result)
+            if openroad_result.timed_out:
+                timeout_msg = (
+                    f"Synthesis timed out in stage 'openroad' after {synthesis_timeout_s} seconds."
+                )
+                print(f"ERROR: {timeout_msg}")
+                report_lines.append(
+                    f"--- SYNTHESIS/Physical Design FAILED: TIMEOUT ---\n{timeout_msg}\n"
+                )
+                _write_report()
+                return False, report_path
+            if openroad_result.returncode == 0:
+                _write_report()
                 print(f"Synthesis completed successfully. Report saved to {report_path}")
                 return True, report_path
-            else:
-                print(f"Synthesis failed. Error: {process.stderr.decode()}")
-                # Return the path to the report even on failure to aid debugging
-                with open(report_path, "a") as f:
-                    f.write("\n\n--- SYNTHESIS FAILED ---\n")
-                    f.write(process.stderr.decode())
-                return False, report_path
-        except subprocess.TimeoutExpired:
-            timeout_msg = f"Synthesis/Physical Design timed out after {synthesis_timeout_s} seconds (likely due to an infinite loop or complex design)."
-            print(f"ERROR: {timeout_msg}")
-            # Overwrite the report file with a clear timeout message
-            with open(report_path, "w", encoding="utf-8") as f:
-                f.write(f"--- SYNTHESIS/Physical Design FAILED: TIMEOUT ---\n{timeout_msg}\n")
+            print(f"Synthesis failed. Error: {openroad_result.stderr}")
+            report_lines.append("\n--- SYNTHESIS FAILED ---\n")
+            _write_report()
             return False, report_path
 
         except Exception as e:

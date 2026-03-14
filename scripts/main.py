@@ -27,6 +27,17 @@ import time
 import math # Used for UCB calculation
 
 import sys # Used for stream redirection
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+SRC_ROOT = PROJECT_ROOT / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
+
+from revolution.evaluation import (  # noqa: E402
+    SynthesisEvaluator as SharedSynthesisEvaluator,
+    VerilogEvaluator as SharedVerilogEvaluator,
+)
 
 # StreamRedirector class for systematic output redirection and error logging
 # This class is used to redirect stdout and stderr to a file for each problem
@@ -887,6 +898,12 @@ class VerilogEvaluator:
             "simulation_stdout": sim_stdout,
             "simulation_stderr": sim_stderr
         }
+
+
+# Keep the legacy CLI on the shared evaluator implementation so timeout cleanup
+# stays consistent with the maintained backend path.
+SynthesisEvaluator = SharedSynthesisEvaluator
+VerilogEvaluator = SharedVerilogEvaluator
 
 class LLMInterface:
     def __init__(
