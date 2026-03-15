@@ -58,6 +58,7 @@ class LLMInterface:
         base_delay: float = 2.0,
         port: int = 8000,
         vllm_host: str = "localhost",
+        request_timeout_seconds: float = 600.0,
         debug: bool = False,
     ) -> None:
         """
@@ -68,12 +69,17 @@ class LLMInterface:
         :param base_delay:   Initial backoff delay in seconds (doubles each retry).
         :param port:         Port for the vLLM server (default: 8000).
         :param vllm_host:    Hostname or IP address for the vLLM server (default: "localhost").
+        :param request_timeout_seconds:
+                             Default wall-clock timeout for one LLM API request.
+                             Uses seconds, not milliseconds. Defaults to 600.
         :param debug:       Enable debug mode for verbose logging. (Prints prompt+response)
         :raises ValueError:  If api_key is missing for non-vllm backends, or
                              api_backend is unsupported.
         """
         if not api_key and api_backend != "vllm":
             raise ValueError("API key is required for LLMInterface initialization.")
+        if request_timeout_seconds <= 0:
+            raise ValueError("request_timeout_seconds must be positive.")
 
         self.debug: bool = debug  # Store debug state
 
@@ -88,7 +94,7 @@ class LLMInterface:
         # Configure arguments for the AsyncOpenAI client based on the backend
         self.client_args: dict[str, Any] = {
             "api_key": api_key,
-            "timeout": 120.0 * 1000,  # Set a reasonable timeout for API calls
+            "timeout": float(request_timeout_seconds),
         }
 
         if api_backend == "openai":

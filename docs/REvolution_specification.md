@@ -191,6 +191,7 @@ Primary methods (all async internally; the engine uses `asyncio.run()` to call t
 - `generate_batch_feedback(feedback_requests, ...)`: concurrent feedback generation.
 - `parse_thought_and_code()`: lenient parsing for legacy formats (used only when strict parse fails).
 - `get_and_reset_usage_stats()`: returns token and call counts (code vs. feedback separated).
+- The client uses a default 600-second request timeout for one OpenAI-compatible API call unless a caller overrides it explicitly.
 
 #### 3.2.4 `PromptStore`: Prompt File API
 

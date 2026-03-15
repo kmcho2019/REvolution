@@ -104,6 +104,7 @@ Set `--api_backend` to `vllm` to use a local vLLM server.
 `scripts/run_evolution.py` and `scripts/run_one_shot.py` read `VLLM_HOST` and `VLLM_PORT` environment variables for default host/port values, so you can avoid repeating `--vllm_host`/`--vllm_port` in devcontainer sessions.
 All primary runners (`run_evolution.py`, `run_backend.py`, `run_one_shot.py`) perform a lightweight vLLM `/v1/models` preflight and print the served `max_model_len`.
 Use `--vllm_min_model_len` (default `128000`) and `--vllm_preflight_timeout_s` to tune this gate. A failed preflight is reported as a warning and does not abort the run.
+The shared OpenAI-compatible client now uses a 600-second default request timeout; the previous effective 120000-second timeout could leave model calls hanging for far too long during backend sweeps.
 For reasoning-oriented vLLM models with large context windows, keep
 `--max_tokens` high enough to avoid truncated JSON/code responses. On the
 shared `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b` endpoint used
@@ -554,6 +555,21 @@ timeout 3600 python scripts/run_backend_ablation.py \
   --candidate_workers 0 \
   --save_root /tmp/prob144_conwaylife_timeout_smoke
 ```
+
+For the strongest live timeout regression, also run:
+
+```bash
+RUN_LIVE_EDA_SMOKE=1 pytest -q \
+  tests/revolution/test_prob144_timeout_live.py \
+  -k primary_timeout_stress
+```
+
+That test replays the real historical stress sample
+`tests/fixtures/prob144_conwaylife_timeout/epoch22_timeout_cur_state_next_state.sv`,
+copied from
+`/workspace/exp/ablation_codeevolve_20260308_190014/.../Gen22/Prob144_conwaylife_epoch22_island1/code.sv`,
+through live `yosys`/`openroad` with a short synthesis timeout and asserts both
+timeout reporting and subprocess cleanup.
 
 Each ablation invocation also writes top-level snapshots under `save_root`:
 - `<timestamp>_ablation_config.yaml`

@@ -144,7 +144,7 @@ with automatic defaults of `1/3,1/3,1/3` for sequential circuits and `1/2,1/2,0`
 
 ## LLM integration and prompting
 
-`LLMInterface` wraps asynchronous OpenAI-compatible clients and consolidates retry logic, token accounting, and request batching. It supports OpenAI, OpenRouter, DeepSeek, Gemini, and local vLLM deployments. Responses must adhere to the `eoh_v1` JSON schema. When `require_strict_format` is enabled, malformed outputs are skipped and logged with context artefacts.
+`LLMInterface` wraps asynchronous OpenAI-compatible clients and consolidates retry logic, token accounting, and request batching. It supports OpenAI, OpenRouter, DeepSeek, Gemini, and local vLLM deployments. Responses must adhere to the `eoh_v1` JSON schema. The client now uses a deliberate 600-second default request timeout so live runs fail fast enough to recover from stalled API calls instead of waiting effectively indefinitely. When `require_strict_format` is enabled, malformed outputs are skipped and logged with context artefacts.
 
 Prompt construction is delegated to `PromptStore`. Templates live in `data/prompts/<profile>/...` and can be swapped by passing `prompt_profile` and `prompt_root` to the engine.
 Diff-mode prompts carry the base file contents and expected search strings so the model can emit structured edits that `_apply_diff()` can apply. To reduce token pressure, diff requests use an independent token budget (`diff_max_tokens`) and can omit duplicated parent code blocks via compact-context prompting (`diff_compact_context`).

@@ -544,6 +544,7 @@ All Python helper scripts accept `--help` to show the full argument list.
 - **Synthesis timeouts**: `SynthesisEvaluator` writes timeout or crash information directly into the `_synthesis_report.rpt` file. Consider loosening the design constraints or increasing resources.
 - **Timeout cleanup semantics**: RTL and synthesis timeouts now terminate the full subprocess tree for `iverilog`, `vvp`, `yosys`, and `openroad`. Reports identify the timed-out stage.
 - **Old runs may still leak**: runs created before the subprocess-tree cleanup fix can leave orphaned EDA processes behind; clean them up manually before re-running comparisons.
+- **LLM request stalls**: the shared OpenAI-compatible client now defaults to a 600-second request timeout instead of the previous effectively multi-hour timeout. If a model endpoint is slow but healthy, increase it deliberately instead of relying on a giant implicit default.
 - **CVDP harness timeouts**: `run_evolution.py` exposes `--cvdp_simulation_timeout_s` (default `120`) for cocotb/pytest harness execution.
 - **Token usage**: generation logs include per-generation token counts (`total_llm_*` fields), handy when budgeting API usage.
 
@@ -559,7 +560,7 @@ All Python helper scripts accept `--help` to show the full argument list.
   ```
   The suite includes targeted checks for the single-pool evolutionary mode, `PromptStore` helpers, `StreamRedirector`, and `EoHLogger` to make it clear when regression risk touches prompting, logging, or path management.
 - Use `scripts/run_test.sh` for smoke coverage across a small benchmark subset after modifying core logic.
-- Use `Prob144_conwaylife` when you specifically need a timeout-stress benchmark for evaluator cleanup and backend smoke validation.
+- Use `Prob144_conwaylife` when you specifically need a timeout-stress benchmark for evaluator cleanup and backend smoke validation. The primary real stress sample is `tests/fixtures/prob144_conwaylife_timeout/epoch22_timeout_cur_state_next_state.sv`, sourced from the historical leaked run at `Gen22/Prob144_conwaylife_epoch22_island1/code.sv`.
 - When altering prompts or evaluation hooks, regenerate reports for a known run and confirm metrics match expectations.
 - The summary JSON exposes `all_*_passed` sets to count how many unique candidates cleared each evaluation stage—use these to spot regressions in compilation or synthesis rates.
 
@@ -586,6 +587,14 @@ timeout 3600 python scripts/run_backend_ablation.py \
   --num_workers 1 \
   --candidate_workers 0 \
   --save_root /tmp/prob144_conwaylife_timeout_smoke
+```
+
+Suggested live single-sample timeout regression:
+
+```bash
+RUN_LIVE_EDA_SMOKE=1 pytest -q \
+  tests/revolution/test_prob144_timeout_live.py \
+  -k primary_timeout_stress
 ```
 
 ## 7. Customisation checklist

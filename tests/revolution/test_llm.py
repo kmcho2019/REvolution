@@ -250,6 +250,21 @@ def test_backend_base_urls():
         LLMInterface(api_key="k", api_backend="madeup")
 
 
+def test_default_request_timeout_is_ten_minutes():
+    llm = LLMInterface(api_key="k")
+    assert llm.client_args["timeout"] == 600.0
+
+
+def test_request_timeout_can_be_overridden():
+    llm = LLMInterface(api_key="k", request_timeout_seconds=90)
+    assert llm.client_args["timeout"] == 90.0
+
+
+def test_request_timeout_must_be_positive():
+    with pytest.raises(ValueError, match="request_timeout_seconds"):
+        LLMInterface(api_key="k", request_timeout_seconds=0)
+
+
 # ---------------------------
 # parse_thought_and_code
 # ---------------------------
