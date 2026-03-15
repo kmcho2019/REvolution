@@ -2014,6 +2014,48 @@ class EoHEngine:
             return [c for c in self.population if c.status == "success"]
         return self.success_pool
 
+    def _candidate_pool_for_survivor_selection(
+        self, new_offspring: list[Heuristic]
+    ) -> list[Heuristic]:
+        """Return the ranked pool used for survivor selection."""
+        return [*self.success_pool, *new_offspring]
+
+    def _collect_additional_champions(
+        self, successful_candidates: list[Heuristic]
+    ) -> list[Heuristic]:
+        """Optional hook for subclasses to preserve extra successful niches."""
+        _ = successful_candidates
+        return []
+
+    def _collect_candidate_pool_champions(
+        self,
+        candidate_pool: list[Heuristic],
+        successful_candidates: list[Heuristic],
+    ) -> list[Heuristic]:
+        """Optional hook for subclasses to preserve niches outside the success pool."""
+        _ = candidate_pool
+        _ = successful_candidates
+        return []
+
+    def _merge_champions_with_cap(
+        self,
+        primary: list[Heuristic],
+        extra: list[Heuristic],
+        *,
+        cap: int,
+    ) -> list[Heuristic]:
+        merged: list[Heuristic] = []
+        seen_ids: set[str] = set()
+        for group in (primary, extra):
+            for cand in group:
+                if cand.id in seen_ids:
+                    continue
+                merged.append(cand)
+                seen_ids.add(cand.id)
+                if len(merged) >= cap:
+                    return merged
+        return merged
+
     def _save_format_error_artifacts(self, code_file_path: str, fmt_meta: dict[str, Any]) -> None:
         """
         Persist raw model output + parse error for audit/metrics.
@@ -2819,7 +2861,7 @@ class EoHEngine:
             s["value"] = s["value"] + (reward - s["value"]) / (s["count"])
 
         # Survivor Selection (Elitism)
-        candidate_pool = self.success_pool + new_offspring
+        candidate_pool = self._candidate_pool_for_survivor_selection(new_offspring)
         # Shuffle the candidate pool to ensure diversity
         random.shuffle(candidate_pool)
         candidate_pool.sort(key=lambda c: c.score, reverse=True)
@@ -2871,6 +2913,20 @@ class EoHEngine:
 
                 if champion:
                     champions.append(champion)
+
+            champions = self._merge_champions_with_cap(
+                champions,
+                self._collect_additional_champions(successful_candidates),
+                cap=self.population_size,
+            )
+            champions = self._merge_champions_with_cap(
+                champions,
+                self._collect_candidate_pool_champions(
+                    candidate_pool,
+                    successful_candidates,
+                ),
+                cap=self.population_size,
+            )
 
             # 3. Add unique champions to the next generation
             for champ in champions:

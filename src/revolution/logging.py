@@ -116,6 +116,7 @@ class EoHLogger:
         self.meta_strategy_name: str = (
             "random"  # Default meta-strategy name to be updated by engine
         )
+        self.extra_generation_log_fields_provider = None
 
     def _calculate_ppa_stats(
         self, ppa_candidates: list["Heuristic"] | None
@@ -416,6 +417,19 @@ class EoHLogger:
             "strategy_ppa": strategy_ppa_stats,
             "population_ppa_details": population_ppa,
         }
+
+        extra_generation_fields = None
+        provider = getattr(self, "extra_generation_log_fields_provider", None)
+        if callable(provider):
+            try:
+                extra_generation_fields = provider(
+                    generation_num=generation_num,
+                    candidates_this_gen=candidates_this_gen,
+                )
+            except TypeError:
+                extra_generation_fields = provider()
+        if isinstance(extra_generation_fields, dict):
+            log_entry.update(extra_generation_fields)
 
         # 8. Write to file and update accumulators
         def numpy_converter(o):
