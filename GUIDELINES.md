@@ -1,45 +1,45 @@
 # Repository Guidelines
 
 ## Repo Map
-- Start with [README.md](/workspace/.worktrees/revolution-qd-map-elites/README.md) for the project overview, environment setup, and primary run commands.
-- Use [docs/user_guide.md](/workspace/.worktrees/revolution-qd-map-elites/docs/user_guide.md) for CLI usage, benchmark workflows, and validation guidance.
-- Use [docs/module_structure.md](/workspace/.worktrees/revolution-qd-map-elites/docs/module_structure.md) for a file-by-file breakdown of the codebase.
-- Use [docs/implementation_details.md](/workspace/.worktrees/revolution-qd-map-elites/docs/implementation_details.md) for subsystem-level architecture details.
-- Use [docs/qd_map_elites_guide.md](/workspace/.worktrees/revolution-qd-map-elites/docs/qd_map_elites_guide.md) for the QD/MAP-Elites runtime flow, descriptor extraction paths, archive artifact layout, and generation/run traces.
-- Use [docs/REvolution_specification.md](/workspace/.worktrees/revolution-qd-map-elites/docs/REvolution_specification.md) for the paper-plus-implementation specification view.
-- Use [docs/revolution_qd_map_elites_implementation_plan.md](/workspace/.worktrees/revolution-qd-map-elites/docs/revolution_qd_map_elites_implementation_plan.md) for the current QD/MAP-Elites feature status and staged roadmap.
-- Use [docs/method_interaction_and_evolutionary_loop.md](/workspace/.worktrees/revolution-qd-map-elites/docs/method_interaction_and_evolutionary_loop.md) when you need the classic REvolution data flow or generation loop explained end to end.
-- Use [docs/diff_mode.md](/workspace/.worktrees/revolution-qd-map-elites/docs/diff_mode.md) when the change touches diff-mode generation, apply policy, or diff diagnostics.
+- Start with [README.md](README.md) for the project overview, environment setup, and primary run commands.
+- Use [docs/user_guide.md](docs/user_guide.md) for CLI usage, benchmark workflows, and validation guidance.
+- Use [docs/module_structure.md](docs/module_structure.md) for a file-by-file breakdown of the codebase.
+- Use [docs/implementation_details.md](docs/implementation_details.md) for subsystem-level architecture details.
+- Use [docs/qd_map_elites_guide.md](docs/qd_map_elites_guide.md) for the QD/MAP-Elites runtime flow, descriptor extraction paths, archive artifact layout, and generation/run traces.
+- Use [docs/REvolution_specification.md](docs/REvolution_specification.md) for the paper-plus-implementation specification view.
+- Use [docs/revolution_qd_map_elites_implementation_plan.md](docs/revolution_qd_map_elites_implementation_plan.md) for the current QD/MAP-Elites feature status and staged roadmap.
+- Use [docs/method_interaction_and_evolutionary_loop.md](docs/method_interaction_and_evolutionary_loop.md) when you need the classic REvolution data flow or generation loop explained end to end.
+- Use [docs/diff_mode.md](docs/diff_mode.md) when the change touches diff-mode generation, apply policy, or diff diagnostics.
 
 ## Where To Look By Task
 - Runner/CLI wiring:
-  [scripts/run_backend.py](/workspace/.worktrees/revolution-qd-map-elites/scripts/run_backend.py),
-  [scripts/run_evolution.py](/workspace/.worktrees/revolution-qd-map-elites/scripts/run_evolution.py),
-  [src/revolution/backends/revolution_backend.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/backends/revolution_backend.py)
+  [scripts/run_backend.py](scripts/run_backend.py),
+  [scripts/run_evolution.py](scripts/run_evolution.py),
+  [src/revolution/backends/revolution_backend.py](src/revolution/backends/revolution_backend.py)
 - Classic REvolution loop:
-  [src/revolution/algorithm.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/algorithm.py)
+  [src/revolution/algorithm.py](src/revolution/algorithm.py)
 - QD runtime and archives:
-  [src/revolution/qd/engine.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/engine.py),
-  [src/revolution/qd/archive.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/archive.py),
-  [src/revolution/qd/descriptors.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/descriptors.py),
-  [src/revolution/qd/artifacts.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/artifacts.py)
+  [src/revolution/qd/engine.py](src/revolution/qd/engine.py),
+  [src/revolution/qd/archive.py](src/revolution/qd/archive.py),
+  [src/revolution/qd/descriptors.py](src/revolution/qd/descriptors.py),
+  [src/revolution/qd/artifacts.py](src/revolution/qd/artifacts.py)
 - Evaluation stack:
-  [src/revolution/evaluation.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/evaluation.py),
-  [src/revolution/runtime/candidate_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/candidate_evaluator.py),
-  [src/revolution/runtime/problem_context.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/problem_context.py),
-  [src/revolution/runtime/problem_spec.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/problem_spec.py)
+  [src/revolution/evaluation.py](src/revolution/evaluation.py),
+  [src/revolution/runtime/candidate_evaluator.py](src/revolution/runtime/candidate_evaluator.py),
+  [src/revolution/runtime/problem_context.py](src/revolution/runtime/problem_context.py),
+  [src/revolution/runtime/problem_spec.py](src/revolution/runtime/problem_spec.py)
 - Descriptor extraction:
-  [src/revolution/runtime/structural_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/structural_evaluator.py),
-  [src/revolution/rtl_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/rtl_descriptor_evaluator.py),
-  [src/revolution/simulation_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/simulation_descriptor_evaluator.py)
+  [src/revolution/runtime/structural_evaluator.py](src/revolution/runtime/structural_evaluator.py),
+  [src/revolution/rtl_descriptor_evaluator.py](src/revolution/rtl_descriptor_evaluator.py),
+  [src/revolution/simulation_descriptor_evaluator.py](src/revolution/simulation_descriptor_evaluator.py)
 - Reporting and experiment summaries:
-  [scripts/backend_comparison_report.py](/workspace/.worktrees/revolution-qd-map-elites/scripts/backend_comparison_report.py),
-  [scripts/archive_baseline.py](/workspace/.worktrees/revolution-qd-map-elites/scripts/archive_baseline.py),
-  [src/revolution/qd/visualization.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/visualization.py)
+  [scripts/backend_comparison_report.py](scripts/backend_comparison_report.py),
+  [scripts/archive_baseline.py](scripts/archive_baseline.py),
+  [src/revolution/qd/visualization.py](src/revolution/qd/visualization.py)
 - Prompt and diff surfaces:
-  [src/revolution/prompt_store.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/prompt_store.py),
-  [data/prompts/](/workspace/.worktrees/revolution-qd-map-elites/data/prompts),
-  [docs/diff_mode.md](/workspace/.worktrees/revolution-qd-map-elites/docs/diff_mode.md)
+  [src/revolution/prompt_store.py](src/revolution/prompt_store.py),
+  [data/prompts/](data/prompts),
+  [docs/diff_mode.md](docs/diff_mode.md)
 
 ## Project Structure & Module Organization
 - `src/revolution/`: core package. Start with `algorithm.py` for classic REvolution, `backends/` for runner adapters, `runtime/` for evaluation/problem abstractions, and `qd/` for the new archive/scoring/scheduler substrate.

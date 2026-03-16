@@ -19,7 +19,7 @@ Supported archive geometries:
 - `grid`: uniform-binned MAP-Elites archive
 - `cvt`: frozen-scaler CVT archive with warm-up buffering
 
-The main runtime lives in [engine.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/engine.py).
+The main runtime lives in [engine.py](../src/revolution/qd/engine.py).
 
 ### Mode quick reference
 
@@ -45,8 +45,8 @@ The main runtime lives in [engine.py](/workspace/.worktrees/revolution-qd-map-el
 Simulation and synthesis do not use the same top-module source:
 
 - simulation uses the benchmark harness top from
-  [problem_context.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/problem_context.py)
-  and [problem_spec.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/problem_spec.py)
+  [problem_context.py](../src/revolution/runtime/problem_context.py)
+  and [problem_spec.py](../src/revolution/runtime/problem_spec.py)
   (`testbench_top_module`)
 - synthesis uses DUT top-module mappings from
   `synthesis_top_module_names.json` or RealBench manifest metadata
@@ -61,49 +61,49 @@ target before debugging descriptor logic or archive behavior.
 
 Core QD files:
 
-- [archive.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/archive.py):
+- [archive.py](../src/revolution/qd/archive.py):
   grid/CVT archive insertion, replacement, and assignment introspection
-- [artifacts.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/artifacts.py):
+- [artifacts.py](../src/revolution/qd/artifacts.py):
   archive summaries, archive-space reports, and per-candidate archive-event logs
-- [descriptors.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/descriptors.py):
+- [descriptors.py](../src/revolution/qd/descriptors.py):
   descriptor registry, profile loading, default-axis resolution, and grid-axis specs
-- [engine.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/engine.py):
+- [engine.py](../src/revolution/qd/engine.py):
   QD runtime loop, prompt routing, archive insertion, and artifact emission
-- [scheduler.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/scheduler.py):
+- [scheduler.py](../src/revolution/qd/scheduler.py):
   linear fill/improve budget split
-- [scoring.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/scoring.py):
+- [scoring.py](../src/revolution/qd/scoring.py):
   `quality_score`, gain components, repair score, and code hashing
-- [visualization.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/visualization.py):
+- [visualization.py](../src/revolution/qd/visualization.py):
   history plots plus grid/CVT archive visualizations
 
 Related evaluation files:
 
-- [algorithm.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/algorithm.py):
+- [algorithm.py](../src/revolution/algorithm.py):
   shared REvolution engine, candidate materialization, prompt creation helpers,
   and the current candidate evaluation path used by `QDEngine`
-- [evaluation.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/evaluation.py):
+- [evaluation.py](../src/revolution/evaluation.py):
   Icarus, Yosys, and OpenROAD execution plus structural/physical metric parsing
-- [structural_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/structural_evaluator.py):
+- [structural_evaluator.py](../src/revolution/runtime/structural_evaluator.py):
   structural metric extraction helpers
-- [rtl_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/rtl_descriptor_evaluator.py):
+- [rtl_descriptor_evaluator.py](../src/revolution/rtl_descriptor_evaluator.py):
   lightweight RTL-text, AST, and netlist-estimate descriptor extraction used by
   the new retrospective runtime profiles
-- [simulation_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/simulation_descriptor_evaluator.py):
+- [simulation_descriptor_evaluator.py](../src/revolution/simulation_descriptor_evaluator.py):
   VCD/activity parsing used by the dynamic simulation-derived descriptor family
-- [problem_spec.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/problem_spec.py):
+- [problem_spec.py](../src/revolution/runtime/problem_spec.py):
   benchmark capability defaults and per-phase generation-mode defaults
 
 Prompt files:
 
-- [M-T whole](/workspace/.worktrees/revolution-qd-map-elites/data/prompts/default/evolve/M-T/whole.txt)
-- [M-T diff](/workspace/.worktrees/revolution-qd-map-elites/data/prompts/default/evolve/M-T/diff.txt)
-- [C-D whole](/workspace/.worktrees/revolution-qd-map-elites/data/prompts/default/evolve/C-D/whole.txt)
-- [C-D diff](/workspace/.worktrees/revolution-qd-map-elites/data/prompts/default/evolve/C-D/diff.txt)
+- [M-T whole](../data/prompts/default/evolve/M-T/whole.txt)
+- [M-T diff](../data/prompts/default/evolve/M-T/diff.txt)
+- [C-D whole](../data/prompts/default/evolve/C-D/whole.txt)
+- [C-D diff](../data/prompts/default/evolve/C-D/diff.txt)
 
 ## Descriptor Extraction
 
 Descriptor values are assembled from several metric families before
-[descriptors.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/descriptors.py)
+[descriptors.py](../src/revolution/qd/descriptors.py)
 applies any final archive-side transform such as `log1p`.
 
 ```mermaid
@@ -138,7 +138,7 @@ flowchart LR
 
 Structural descriptors come from the synthesis side of the pipeline and are
 attached as `structural_metrics`. The current extractor lives in
-[structural_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/structural_evaluator.py).
+[structural_evaluator.py](../src/revolution/runtime/structural_evaluator.py).
 It reads Yosys-style cell counts or, when needed, reconstructs them from a
 synthesized netlist text dump.
 
@@ -170,7 +170,7 @@ synthesized netlist text dump.
 ### RTL, AST, and netlist-estimate descriptors
 
 These descriptors are attached as `rtl_metrics` and are extracted by
-[rtl_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/rtl_descriptor_evaluator.py).
+[rtl_descriptor_evaluator.py](../src/revolution/rtl_descriptor_evaluator.py).
 They are intentionally lighter-weight than full physical metrics and exist to
 capture source-level shape, control structure, and cheap size estimates.
 
@@ -234,7 +234,7 @@ AST-shape descriptors come from a lightweight Yosys AST dump:
 
 Physical descriptors come from the OpenROAD reporting path and are attached as
 `physical_metrics`. They are parsed from the synthesis report by
-[evaluation.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/evaluation.py),
+[evaluation.py](../src/revolution/evaluation.py),
 not from DEF/ODB analysis.
 
 - `wirelength`
@@ -277,10 +277,10 @@ attached as `dynamic_metrics`:
 
 Extraction path:
 
-- [evaluation.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/evaluation.py)
+- [evaluation.py](../src/revolution/evaluation.py)
   injects a temporary `$dumpfile/$dumpvars` probe only when the selected
   archive axes require dynamic metrics
-- [simulation_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/simulation_descriptor_evaluator.py)
+- [simulation_descriptor_evaluator.py](../src/revolution/simulation_descriptor_evaluator.py)
   parses the emitted waveform and estimates signal-change behavior from
   DUT-scoped activity
 - clocks, resets, and obvious scoreboard/reference-style signals are filtered
@@ -298,10 +298,10 @@ PPA gain axes are derived from reference-vs-generated PPA metrics:
 Important current-runtime detail:
 
 - the checked-in `QDEngine` computes archive descriptor tuples on demand in
-  [engine.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/engine.py)
+  [engine.py](../src/revolution/qd/engine.py)
   via `_descriptor_tuple(...)`
 - the QD loop currently uses the shared evaluation path in
-  [algorithm.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/algorithm.py),
+  [algorithm.py](../src/revolution/algorithm.py),
   not the separate typed `CandidateEvaluator` loop as its primary runtime
 
 ## Retrospective Profile Ladder
@@ -452,7 +452,7 @@ Current default axis behavior:
 - sequential grid default: `g_A`, `g_P`, `g_T`
 
 Grid assignment is implemented in
-[archive.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/archive.py)
+[archive.py](../src/revolution/qd/archive.py)
 through `cell_id_for(...)` and `describe_assignment(...)`.
 
 ### CVT
@@ -466,7 +466,7 @@ CVT buffering and assignment work like this:
 5. Later candidates are assigned to the nearest centroid in frozen scaled space.
 
 The current implementation is in
-[archive.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/archive.py).
+[archive.py](../src/revolution/qd/archive.py).
 
 ## Output Artifacts
 
@@ -546,7 +546,7 @@ successful pool.
 
 1. `QDEngine.evolve_one_generation()` increments `current_generation`.
 2. The engine computes a QD budget with `split_qd_budget(...)` from
-   [scheduler.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/scheduler.py).
+   [scheduler.py](../src/revolution/qd/scheduler.py).
 3. That budget decides how many offspring come from:
    - seed
    - fail repair/explore

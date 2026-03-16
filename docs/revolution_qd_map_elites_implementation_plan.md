@@ -8,10 +8,10 @@ with an archive-backed success state and supports both `grid` and `cvt` archive
 geometries through the same runner, logging, and reporting surfaces.
 
 This document is the canonical living plan for the feature branch
-`feat/revolution-qd-map-elites` in worktree
-`/workspace/.worktrees/revolution-qd-map-elites`. It must be updated before and
-after every implementation stage so that completed work, tests, smoke runs,
-debt review notes, and commit evidence stay synchronized with the codebase.
+`feat/revolution-qd-map-elites`. It was maintained in a dedicated Git worktree
+during implementation and must be updated before and after every implementation
+stage so that completed work, tests, smoke runs, debt review notes, and commit
+evidence stay synchronized with the codebase.
 
 ## Research Intent Lock
 
@@ -83,13 +83,14 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 
 ## Worktree Info
 
-- Main workspace: `/workspace`
-- Feature worktree: `/workspace/.worktrees/revolution-qd-map-elites`
-- Created with:
-  `git worktree add -b feat/revolution-qd-map-elites /workspace/.worktrees/revolution-qd-map-elites wip/journal-extension-2026`
+- This branch was developed in a dedicated Git worktree rooted outside the main
+  checkout so QD implementation work could proceed without disturbing the base
+  branch.
+- Example creation pattern:
+  `git worktree add -b feat/revolution-qd-map-elites <path-to-new-worktree> wip/journal-extension-2026`
 - Note: the feature worktree starts from the committed state of
-  `wip/journal-extension-2026`; unrelated untracked files in `/workspace` do not
-  carry into the new worktree automatically.
+  `wip/journal-extension-2026`; unrelated untracked files in another checkout
+  do not carry into the new worktree automatically.
 
 ## Decisions Locked
 

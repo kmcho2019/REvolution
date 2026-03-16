@@ -3,16 +3,16 @@
 This document cross-walks the EoH paper with the concrete implementation in this repository. It is intended as a reference for later backend integration work alongside the existing FunSearch backend.
 
 **Sources analyzed**
-- Paper (PDF): [Evolution_of_Heuristics_Towards_Efficient_Automatic_Algorithm_Design_Using_Large_Language_Model.pdf](/workspace/ablation/EoH/Evolution_of_Heuristics_Towards_Efficient_Automatic_Algorithm_Design_Using_Large_Language_Model.pdf)
-- Paper (Markdown): [Evolution_of_Heuristics_Towards_Efficient_Automatic_Algorithm_Design_Using_Large_Language_Model.md](/workspace/ablation/EoH/Evolution_of_Heuristics_Towards_Efficient_Automatic_Algorithm_Design_Using_Large_Language_Model.md)
-- Codebase root: [README.md](/workspace/ablation/EoH/EoH/README.md)
-- Core package entrypoint: [eoh.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/eoh.py)
-- EoH method implementation: [eoh/methods/eoh/eoh.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/methods/eoh/eoh.py)
-- EoH evolution prompts: [eoh/methods/eoh/eoh_evolution.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/methods/eoh/eoh_evolution.py)
-- EC interface and evaluation dispatch: [eoh/methods/eoh/eoh_interface_EC.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/methods/eoh/eoh_interface_EC.py)
-- LLM interfaces: [eoh/llm/interface_LLM.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/llm/interface_LLM.py)
-- Default parameter schema: [eoh/utils/getParas.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/utils/getParas.py)
-- Built-in optimization problems: [eoh/problems/problems.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/problems/problems.py)
+- Paper (PDF): [Evolution_of_Heuristics_Towards_Efficient_Automatic_Algorithm_Design_Using_Large_Language_Model.pdf](Evolution_of_Heuristics_Towards_Efficient_Automatic_Algorithm_Design_Using_Large_Language_Model.pdf)
+- Paper (Markdown): [Evolution_of_Heuristics_Towards_Efficient_Automatic_Algorithm_Design_Using_Large_Language_Model.md](Evolution_of_Heuristics_Towards_Efficient_Automatic_Algorithm_Design_Using_Large_Language_Model.md)
+- Codebase root: [README.md](EoH/README.md)
+- Core package entrypoint: [eoh.py](EoH/eoh/src/eoh/eoh.py)
+- EoH method implementation: [eoh/methods/eoh/eoh.py](EoH/eoh/src/eoh/methods/eoh/eoh.py)
+- EoH evolution prompts: [eoh/methods/eoh/eoh_evolution.py](EoH/eoh/src/eoh/methods/eoh/eoh_evolution.py)
+- EC interface and evaluation dispatch: [eoh/methods/eoh/eoh_interface_EC.py](EoH/eoh/src/eoh/methods/eoh/eoh_interface_EC.py)
+- LLM interfaces: [eoh/llm/interface_LLM.py](EoH/eoh/src/eoh/llm/interface_LLM.py)
+- Default parameter schema: [eoh/utils/getParas.py](EoH/eoh/src/eoh/utils/getParas.py)
+- Built-in optimization problems: [eoh/problems/problems.py](EoH/eoh/src/eoh/problems/problems.py)
 
 ## 0. Architecture Diagrams (Mermaid)
 
@@ -21,12 +21,12 @@ These diagrams are designed to complement the implementation notes below. The hi
 ### 0.0 Diagram Reading Guide
 
 Use the diagrams as an index into the rest of this document. The most important crosswalks are:
-- `EVOL`: Section 3, [eoh.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/eoh.py)
-- `Probs.get_problem`: Section 9, [problems.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/problems/problems.py)
-- `Evolution._get_alg` and prompts: Section 5, [eoh_evolution.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/methods/eoh/eoh_evolution.py)
-- `InterfaceEC` evaluation path: Section 7, [eoh_interface_EC.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/methods/eoh/eoh_interface_EC.py)
-- `pop_greedy`: Section 8, [pop_greedy.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/methods/management/pop_greedy.py)
-- `results/pops` and `results/pops_best`: Section 10, [createFolders.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/utils/createFolders.py)
+- `EVOL`: Section 3, [eoh.py](EoH/eoh/src/eoh/eoh.py)
+- `Probs.get_problem`: Section 9, [problems.py](EoH/eoh/src/eoh/problems/problems.py)
+- `Evolution._get_alg` and prompts: Section 5, [eoh_evolution.py](EoH/eoh/src/eoh/methods/eoh/eoh_evolution.py)
+- `InterfaceEC` evaluation path: Section 7, [eoh_interface_EC.py](EoH/eoh/src/eoh/methods/eoh/eoh_interface_EC.py)
+- `pop_greedy`: Section 8, [pop_greedy.py](EoH/eoh/src/eoh/methods/management/pop_greedy.py)
+- `results/pops` and `results/pops_best`: Section 10, [createFolders.py](EoH/eoh/src/eoh/utils/createFolders.py)
 
 Diagram notes:
 - Edges indicate control flow. The `population` node represents in-memory state, and `results/pops*` nodes represent persisted artifacts.
@@ -204,14 +204,14 @@ Inside the package (`eoh/src/eoh`):
 ## 3. Runtime Control Flow (Actual Implementation)
 
 This is the concrete call path when you run `eoh.EVOL.run()`:
-1. `EVOL.run()` in [eoh.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/eoh.py) instantiates a problem via `Probs`.
-2. `Probs.get_problem()` (in [problems.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/problems/problems.py)) returns either a built-in problem object or a user-supplied one.
-3. `Methods.get_method()` (in [methods.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/methods/methods.py)) selects the backend (`EOH` for `method = "eoh"`).
-4. `EOH.run()` (in [eoh/methods/eoh/eoh.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/methods/eoh/eoh.py)) orchestrates evolution. It creates `InterfaceEC` (LLM + evaluation + operator interface), initializes a population, iterates through generations (`ec_n_pop`) and operators (`ec_operators`), and saves population snapshots to `results/pops` plus the best individual to `results/pops_best`.
+1. `EVOL.run()` in [eoh.py](EoH/eoh/src/eoh/eoh.py) instantiates a problem via `Probs`.
+2. `Probs.get_problem()` (in [problems.py](EoH/eoh/src/eoh/problems/problems.py)) returns either a built-in problem object or a user-supplied one.
+3. `Methods.get_method()` (in [methods.py](EoH/eoh/src/eoh/methods/methods.py)) selects the backend (`EOH` for `method = "eoh"`).
+4. `EOH.run()` (in [eoh/methods/eoh/eoh.py](EoH/eoh/src/eoh/methods/eoh/eoh.py)) orchestrates evolution. It creates `InterfaceEC` (LLM + evaluation + operator interface), initializes a population, iterates through generations (`ec_n_pop`) and operators (`ec_operators`), and saves population snapshots to `results/pops` plus the best individual to `results/pops_best`.
 
 ## 4. Configuration and Defaults
 
-The configuration schema is `Paras` in [getParas.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/utils/getParas.py).
+The configuration schema is `Paras` in [getParas.py](EoH/eoh/src/eoh/utils/getParas.py).
 
 Key defaults (as shipped):
 - `method = 'eoh'`
@@ -231,7 +231,7 @@ Parallelism:
 
 ## 5. Evolution Operators and Prompting (Implemented)
 
-Prompts are defined by the problem’s `GetPrompts` object and are assembled in `Evolution` (in [eoh_evolution.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/methods/eoh/eoh_evolution.py)). Each prompt expects:
+Prompts are defined by the problem’s `GetPrompts` object and are assembled in `Evolution` (in [eoh_evolution.py](EoH/eoh/src/eoh/methods/eoh/eoh_evolution.py)). Each prompt expects:
 - A one-sentence algorithm description inside braces `{...}`.
 - A Python function with a fixed name, inputs, and outputs.
 
@@ -254,7 +254,7 @@ Important implementation detail:
 
 ## 6. LLM Interface Layer
 
-LLM selection in [interface_LLM.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/llm/interface_LLM.py):
+LLM selection in [interface_LLM.py](EoH/eoh/src/eoh/llm/interface_LLM.py):
 - `llm_use_local = True` uses `InterfaceLocalLLM` (custom REST endpoint, expects `content` in JSON response).
 - Otherwise uses `InterfaceAPI` (OpenAI-compatible `/v1/chat/completions` style).
 
@@ -264,7 +264,7 @@ Behavior:
 
 ## 7. EC Interface and Evaluation
 
-`InterfaceEC` (in [eoh_interface_EC.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/methods/eoh/eoh_interface_EC.py)) manages:
+`InterfaceEC` (in [eoh_interface_EC.py](EoH/eoh/src/eoh/methods/eoh/eoh_interface_EC.py)) manages:
 - LLM prompt calls for each operator.
 - Duplicate checking by code string.
 - Evaluation of candidate code via the problem’s `evaluate(code_string)`.
@@ -274,7 +274,7 @@ Evaluation is executed by:
 - Passing that module to the problem’s evaluation routine.
 
 Optional acceleration:
-- If `eva_numba_decorator = True`, the system injects `@numba.jit(nopython=True)` into the generated function (see [evaluator_accelerate.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/methods/eoh/evaluator_accelerate.py)).
+- If `eva_numba_decorator = True`, the system injects `@numba.jit(nopython=True)` into the generated function (see [evaluator_accelerate.py](EoH/eoh/src/eoh/methods/eoh/evaluator_accelerate.py)).
 
 Timeout handling:
 - Each evaluation runs via a `ThreadPoolExecutor` with a timeout (`eva_timeout`).
@@ -288,7 +288,7 @@ Selection methods (choose via `paras.selection`):
 - `tournament`: tournament size 2.
 - `equal`: uniform random.
 
-Management method (default `pop_greedy` in [pop_greedy.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/methods/management/pop_greedy.py)):
+Management method (default `pop_greedy` in [pop_greedy.py](EoH/eoh/src/eoh/methods/management/pop_greedy.py)):
 - Filters out individuals with `objective = None`.
 - Deduplicates by objective value.
 - Keeps the `size` smallest objectives (minimization).
@@ -296,8 +296,8 @@ Management method (default `pop_greedy` in [pop_greedy.py](/workspace/ablation/E
 ## 9. Built-in Problems (as Implemented)
 
 ### 9.1 Online Bin Packing (`bp_online`)
-- Implementation: [bp_online/run.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/problems/optimization/bp_online/run.py)
-- Instances: hard-coded Weibull 5k dataset in [bp_online/get_instance.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/problems/optimization/bp_online/get_instance.py).
+- Implementation: [bp_online/run.py](EoH/eoh/src/eoh/problems/optimization/bp_online/run.py)
+- Instances: hard-coded Weibull 5k dataset in [bp_online/get_instance.py](EoH/eoh/src/eoh/problems/optimization/bp_online/get_instance.py).
 - Heuristic signature: `score(item, bins) -> scores`.
 - Fitness: average gap vs. L1 lower bound computed from instances.
 - Evaluation uses greedy online packing with the score function.
@@ -305,8 +305,8 @@ Management method (default `pop_greedy` in [pop_greedy.py](/workspace/ablation/E
 - If multiple datasets were present, the current loop would overwrite `fitness` on each dataset and return only the last one; with the shipped single dataset this is not a practical issue.
 
 ### 9.2 TSP Constructive (`tsp_construct`)
-- Implementation: [tsp_greedy/run.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/problems/optimization/tsp_greedy/run.py)
-- Instances: randomly generated coordinates with fixed seed, via [tsp_greedy/get_instance.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/problems/optimization/tsp_greedy/get_instance.py).
+- Implementation: [tsp_greedy/run.py](EoH/eoh/src/eoh/problems/optimization/tsp_greedy/run.py)
+- Instances: randomly generated coordinates with fixed seed, via [tsp_greedy/get_instance.py](EoH/eoh/src/eoh/problems/optimization/tsp_greedy/get_instance.py).
 - Heuristic signature: `select_next_node(current_node, destination_node, unvisited_nodes, distance_matrix) -> next_node`.
 - Fitness: average tour length across generated instances.
 - If the heuristic selects a duplicate node, the evaluation returns `None` for that instance and the individual is discarded by population management.
@@ -314,8 +314,8 @@ Management method (default `pop_greedy` in [pop_greedy.py](/workspace/ablation/E
 
 ### 9.3 GLS-based TSP and FSSP (Examples)
 The GLS-style tasks described in the paper are implemented as **examples**, not as built-in `problems`:
-- TSP GLS: [examples/user_tsp_gls](/workspace/ablation/EoH/EoH/examples/user_tsp_gls)
-- FSSP GLS: [examples/user_fssp_gls](/workspace/ablation/EoH/EoH/examples/user_fssp_gls)
+- TSP GLS: [examples/user_tsp_gls](EoH/examples/user_tsp_gls)
+- FSSP GLS: [examples/user_fssp_gls](EoH/examples/user_fssp_gls)
 
 These follow the same contract: `problem.prompts` + `problem.evaluate(code_string)`.
 - TSP GLS prompt expects `update_edge_distance(edge_distance, local_opt_tour, edge_n_used) -> updated_edge_distance`.
@@ -327,7 +327,7 @@ When running EoH, the framework creates:
 - `results/pops/population_generation_<k>.json` for each generation.
 - `results/pops_best/population_generation_<k>.json` for the best individual.
 
-Folder creation is handled by [createFolders.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/utils/createFolders.py).
+Folder creation is handled by [createFolders.py](EoH/eoh/src/eoh/utils/createFolders.py).
 
 ## 11. Paper vs. Code: Notable Deviations
 
@@ -361,13 +361,13 @@ This document should be used as the canonical mapping between the paper’s algo
 
 ## 13. Prompt Content vs. Paper Examples
 
-The paper’s appendix shows explicit prompt templates that include “avoid randomness” and detailed formatting notes. In the code, the shipped prompts are shorter and less restrictive. For example, [bp_online/prompts.py](/workspace/ablation/EoH/EoH/eoh/src/eoh/problems/optimization/bp_online/prompts.py) does not forbid randomness even though the paper’s prompt example does. If you want parity with paper experiments, you should align the prompt strings with the appendix versions.
+The paper’s appendix shows explicit prompt templates that include “avoid randomness” and detailed formatting notes. In the code, the shipped prompts are shorter and less restrictive. For example, [bp_online/prompts.py](EoH/eoh/src/eoh/problems/optimization/bp_online/prompts.py) does not forbid randomness even though the paper’s prompt example does. If you want parity with paper experiments, you should align the prompt strings with the appendix versions.
 
-The paper’s GLS-based tasks are represented as examples rather than built-in problems. Their prompts live in [examples/user_tsp_gls/prompts.py](/workspace/ablation/EoH/EoH/examples/user_tsp_gls/prompts.py) and [examples/user_fssp_gls/prompts.py](/workspace/ablation/EoH/EoH/examples/user_fssp_gls/prompts.py), which more closely match the paper’s description of GLS update heuristics.
+The paper’s GLS-based tasks are represented as examples rather than built-in problems. Their prompts live in [examples/user_tsp_gls/prompts.py](EoH/examples/user_tsp_gls/prompts.py) and [examples/user_fssp_gls/prompts.py](EoH/examples/user_fssp_gls/prompts.py), which more closely match the paper’s description of GLS update heuristics.
 
 ## 14. Baseline FunSearch Code (Separate from EoH Package)
 
-The FunSearch baseline under [baseline/funsearch](/workspace/ablation/EoH/EoH/baseline/funsearch) is a standalone implementation with its own LLM interface, sandboxing, and evaluation pipeline. It is not wired into `eoh/src/eoh/methods` and cannot be selected through `Paras.method` without additional integration work.
+The FunSearch baseline under [baseline/funsearch](EoH/baseline/funsearch) is a standalone implementation with its own LLM interface, sandboxing, and evaluation pipeline. It is not wired into `eoh/src/eoh/methods` and cannot be selected through `Paras.method` without additional integration work.
 
 Key interface differences relevant to future backend integration:
 1. FunSearch uses a “specification + function continuation” paradigm, not “thought + code” pairs.
@@ -387,10 +387,10 @@ Key interface differences relevant to future backend integration:
 
 ## 16. REvolution Backend Integration Requirements (Cross-Referenced)
 
-The REvolution repo expects every backend to conform to the `EvolutionBackend` interface in [backends/base.py](/workspace/src/revolution/backends/base.py) and to operate on Verilog candidates with JSON-formatted LLM outputs. To integrate an EoH-style backend into REvolution, the following details must be specified or implemented:
+The REvolution repo expects every backend to conform to the `EvolutionBackend` interface in [backends/base.py](../../src/revolution/backends/base.py) and to operate on Verilog candidates with JSON-formatted LLM outputs. To integrate an EoH-style backend into REvolution, the following details must be specified or implemented:
 
 1. Backend registration and CLI plumbing
-   Add a new backend class under `src/revolution/backends/`, export it in [backends/__init__.py](/workspace/src/revolution/backends/__init__.py), and update [scripts/run_backend.py](/workspace/scripts/run_backend.py) to include the new backend in `--backend` choices and parse backend-specific options.
+   Add a new backend class under `src/revolution/backends/`, export it in [backends/__init__.py](../../src/revolution/backends/__init__.py), and update [scripts/run_backend.py](../../scripts/run_backend.py) to include the new backend in `--backend` choices and parse backend-specific options.
 
 2. LLM response schema (strict `eoh_v1`)
    REvolution’s `LLMInterface` enforces strict JSON parsing with `format="eoh_v1"` and either `mode="whole"` or `mode="diff"`. In `diff` mode, the code must serialize as `{"edits":[{"file":"...","hunks":[{"search":"...","replace":"..."}]}]}` or strict validation fails with `failed_format`, so prompts must guarantee this shape.
@@ -411,7 +411,7 @@ The REvolution repo expects every backend to conform to the `EvolutionBackend` i
    In `search_accelerated` mode, `CandidateEvaluator` will skip synthesis for some candidates based on length. The backend should expect `SKIPPED_SYNTHESIS` statuses and still log them.
 
 8. Test coverage expectations
-   Add tests analogous to [tests/revolution/test_funsearch_backend.py](/workspace/tests/revolution/test_funsearch_backend.py) validating initialization, prompt key requirements, candidate flow, and summary output.
+   Add tests analogous to [tests/revolution/test_funsearch_backend.py](../../tests/revolution/test_funsearch_backend.py) validating initialization, prompt key requirements, candidate flow, and summary output.
 
 These are the minimum details required to implement a new backend inside REvolution while maintaining compatibility with existing runners and tests.
 

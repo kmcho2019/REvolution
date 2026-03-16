@@ -177,7 +177,7 @@ The engine writes everything necessary to reproduce a candidate:
   `coverage_vs_generation.png`, `best_quality_vs_generation.png`,
   `qd_score_vs_generation.png`, plus 2-axis grid heatmaps, multi-axis grid
   marginals/projection plots, or CVT projection plots.
-- Use [qd_map_elites_guide.md](/workspace/.worktrees/revolution-qd-map-elites/docs/qd_map_elites_guide.md)
+- Use [qd_map_elites_guide.md](qd_map_elites_guide.md)
   for the code-accurate one-generation trace and full-run trace.
 - `scripts/backend_comparison_report.py` now treats `archive_summary.json` as a
   QD sidecar rather than a per-problem summary, and renders a dedicated QD
