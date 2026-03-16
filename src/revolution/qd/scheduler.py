@@ -6,6 +6,8 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class QDBudgetSplit:
+    """Resolved per-generation QD budget allocation across search phases."""
+
     total_budget: int
     target_cells: int
     occupied_cells: int
@@ -19,10 +21,14 @@ class QDBudgetSplit:
 
 
 def qd_target_cells(num_cells: int, fill_target_fraction: float) -> int:
+    """Return the occupied-cell target that switches fill into improve mode."""
+
     return max(1, math.ceil(max(fill_target_fraction, 0.0) * max(num_cells, 1)))
 
 
 def qd_fail_share(*, occupied_cells: int, num_cells: int, fill_target_fraction: float) -> float:
+    """Compute the linear fail-side budget share from current archive fill."""
+
     target = qd_target_cells(num_cells, fill_target_fraction)
     rho = min(1.0, max(0, occupied_cells) / max(target, 1))
     return 1.0 - rho
@@ -38,6 +44,8 @@ def split_qd_budget(
     archive_empty: bool,
     empty_cells_remaining: bool,
 ) -> QDBudgetSplit:
+    """Split one generation budget across fail, seed, backfill, and refine."""
+
     total_budget = max(0, int(total_budget))
     target = qd_target_cells(num_cells, fill_target_fraction)
     fail_share = qd_fail_share(

@@ -20,6 +20,8 @@ class GridAxisSpec:
 
 @dataclass
 class GridArchiveEntry:
+    """Archive occupant payload for one grid or CVT cell."""
+
     candidate_id: str
     descriptors: tuple[float, ...]
     quality_score: float

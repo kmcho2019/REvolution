@@ -202,10 +202,10 @@ Current status on this feature branch:
   heavier physical extraction:
   - latency and throughput descriptors
   - richer congestion-oriented physical axes
-- Current refresh evidence under `/tmp/qd_rich20x5_refresh_v2` suggests these
-  structural and early-stage retrospective profiles are useful experimental
-  controls, but not new defaults yet; the older richer/gain-heavy baseline
-  still performs better on the current four-problem corpus.
+- The later fixed redo under
+  `/tmp/qd_rich20x5_redo_full_fixed/20260314_115920` supersedes the earlier
+  `/tmp/qd_rich20x5_refresh_v2` checkpoint and is the current comparative
+  reference for practical backend guidance on this branch.
 - broader benchmark expansion is still staged work.
 - bounded completion-grade grid/CVT smokes now pass on RTLLM and
   VerilogEval, but the larger short-budget experiments still produce empty

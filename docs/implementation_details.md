@@ -75,10 +75,12 @@ The current QD implementation is staged:
 - grid archive construction now honors `qd_descriptor_profile` when
   `qd_grid_axes` is omitted; the Stage 10 refresh work fixed an earlier bug
   where grid runs silently fell back to gain axes.
-- the first corrected Stage 10 refresh snapshots under
-  `/tmp/qd_rich20x5_refresh_v2` suggest these structural retrospective profiles
-  should remain explicit experiment controls rather than new defaults for now.
-- the fixed retrospective redo adds a practical short-term usage rule:
+- the fixed retrospective redo under
+  `/tmp/qd_rich20x5_redo_full_fixed/20260314_115920` is the current
+  comparative reference for practical usage guidance on this branch and
+  supersedes the earlier refresh-only checkpoint under
+  `/tmp/qd_rich20x5_refresh_v2`.
+- the current short-term usage rule from that fixed redo is:
   - prefer CVT as the default archive geometry
   - use `implemented_structural_fixed_5d` for score/frontier-oriented runs
   - use `size_control_3d` for archive-health-oriented runs

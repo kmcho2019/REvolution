@@ -82,9 +82,19 @@ The intended QD state is:
 
 Current branch status:
 
-- grid archive substrate and runtime path are implemented
-- CVT now has an initial warm-up/freeze runtime path
-- reporting/artifact parity and richer QD operators remain staged work
+- grid and CVT archive substrates plus runtime paths are implemented
+- reporting/artifact parity, archive-event logging, descriptor-health
+  reporting, and richer QD operators are now landed on the feature branch
+- current practical backend guidance from the fixed retrospective redo is:
+  - prefer `cvt` over `grid` for most QD runs
+  - use `implemented_structural_fixed_5d` when score/frontier quality is the
+    main objective
+  - use `size_control_3d` when archive health, coverage, and QD score are the
+    main objective
+  - use `implemented_structural_compact_3d` as the main grid control
+  - keep classic `revolution` as the safest non-QD baseline
+- these recommendations are current branch guidance, not final permanent
+  defaults across all models or benchmarks
 - the living implementation record is maintained in
   `docs/revolution_qd_map_elites_implementation_plan.md`
 

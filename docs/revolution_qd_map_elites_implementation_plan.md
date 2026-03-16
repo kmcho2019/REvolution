@@ -39,11 +39,13 @@ debt review notes, and commit evidence stay synchronized with the codebase.
 - Base branch: `wip/journal-extension-2026`
 - Base commit: `447c012822`
 - Current stage:
-  `Stage 17 simulation-top regression fixed;`
-  `the original redo root is invalidated;`
-  `a replacement full redo matrix is now running under a fresh root;`
-  `Stage 10/14/15 long-budget refresh evidence and final comparative`
-  `descriptor-health analysis still remain in progress`
+  `Stage 18 merge-readiness docs/tests/cleanup complete;`
+  `the fixed retrospective redo under`
+  ``/tmp/qd_rich20x5_redo_full_fixed/20260314_115920`` `is now the`
+  `comparative reference for practical backend guidance;`
+  `the earlier redo root remains invalidated for numeric comparison;`
+  `local merge review against wip/journal-extension-2026 is clean on the`
+  `touched surface`
 - Current backend scope:
   - `RTLLM`
   - `VerilogEval-Spec-to-RTL`
@@ -724,6 +726,11 @@ Interpretation rules:
 
 ### Refresh Execution Findings From `/tmp/qd_rich20x5_refresh_v2`
 
+This section is kept as a historical Stage 10 checkpoint only. It is
+superseded by the later fixed redo under
+`/tmp/qd_rich20x5_redo_full_fixed/20260314_115920`, which is now the branch's
+main comparative reference for backend recommendations.
+
 The first Stage 10 refresh attempt under `/tmp/qd_rich20x5_refresh` exposed a
 real runtime/config bug:
 
@@ -752,9 +759,8 @@ Corrected refresh matrix:
 - CVT profile:
   `implemented_structural_fixed_5d`
 - status:
-  long `20 x 5` wrapper processes are still running as of this update, but
-  all four QD problems now have problem-level archive summaries that are
-  sufficient for an interim comparison
+  historical interim checkpoint only; useful for diagnosing the Stage 10
+  profile-selection bug, but no longer the latest experimental evidence
 - executive comparison note:
   `/tmp/qd_rich20x5_refresh_v2/QD_PROFILE_REFRESH_SUMMARY.md`
 
@@ -1179,7 +1185,7 @@ Documentation risk to watch:
 - [x] Add regression coverage for report rendering and archive preservation of
       the new descriptor-health artifacts.
 - [x] Update docs and the living plan so the new report path is discoverable.
-- [ ] Use the new report section on fresh long-budget QD runs once Stage 10
+- [x] Use the new report section on fresh long-budget QD runs once Stage 10
       refresh evidence is finalized.
 
 ### Stage 16: Retrospective 20x5 Redo Harness
@@ -1192,7 +1198,7 @@ Documentation risk to watch:
 - [x] Add a dry-run regression test for the new rerun harness.
 - [x] Update docs and the living plan so the new redo workflow is discoverable.
 - [x] Launch a fresh long-budget redo root using the new harness.
-- [ ] Record the resulting run root and comparison outputs in the validation
+- [x] Record the resulting run root and comparison outputs in the validation
       log once the rerun completes.
 
 ### Stage 17: Simulation-Top Regression Fix And Redo Recovery
@@ -1210,8 +1216,24 @@ Documentation risk to watch:
       functionality results are meaningful again.
 - [x] Mark the original redo root as invalid for numeric comparison.
 - [x] Launch a replacement full redo matrix under a fresh root.
-- [ ] Record the fixed redo comparison outputs once the replacement matrix
+- [x] Record the fixed redo comparison outputs once the replacement matrix
       completes.
+
+### Stage 18: Merge-Readiness Docs, Tests, And Cleanup
+
+- [x] Review the branch delta against `wip/journal-extension-2026` and confirm
+      the feature branch is a straight descendant locally.
+- [x] Refresh user-facing docs so they reference the finished fixed redo rather
+      than the earlier `refresh_v2` checkpoint.
+- [x] Expand `docs/qd_map_elites_guide.md` with mode tables, profile tables,
+      descriptor-family tables, and Mermaid lifecycle diagrams.
+- [x] Add missing docstrings across the touched QD/runtime surface.
+- [x] Remove branch-local unused `type: ignore` comments from
+      `src/revolution/backends/revolution_backend.py`.
+- [x] Re-run `git diff --check`, full `pytest`, targeted `ruff`, targeted
+      `pyright`, and targeted `ty`.
+- [x] Record that no new live vLLM runs were executed in this merge-readiness
+      cleanup pass.
 
 ## Exact TODO List
 
@@ -2627,15 +2649,15 @@ Documentation risk to watch:
   - Result: `All checks passed!`
 - Live validation:
   - not run for Stage 15
-  - this stage is report/archive consumption only; the next real runtime check
-    is to apply the new section on fresh Stage 10/14 long-budget reruns once
-    they are regenerated
+  - this stage is report/archive consumption only
+  - the descriptor-health report section was later exercised on the fixed redo
+    outputs under
+    `/tmp/qd_rich20x5_redo_full_fixed/20260314_115920`
 - Notes:
   - this closes a concrete follow-up from Stage 14 by making the new
     descriptor-health sidecars visible in the normal repo reporting workflow
-  - the remaining gap is comparative evidence, not visibility: the report can
-    now summarize collapse signals, but it still needs fresh long-budget runs
-    that actually exercise the newer profiles
+  - the remaining gap is no longer basic report visibility; it is repeated-seed
+    and broader-benchmark evidence for the newer profile ladder
 
 ### Stage 16
 
@@ -2667,13 +2689,12 @@ Documentation risk to watch:
     - `VLLM_HOST=host.docker.internal VLLM_PORT=8000 REDO_SAVE_PATH=/tmp/qd_rich20x5_redo_full bash scripts/run_qd_retrospective_redo_vllm.sh --preset full --suite matrix`
   - launch time:
     - `2026-03-13T18:20:07Z`
-  - active run root:
+  - original run root:
     - `/tmp/qd_rich20x5_redo_full/20260313_181943`
-  - status at this checkpoint:
-    - the redo matrix has started successfully and entered the `rtllm/classic`
-      runner path
-    - top-level suite comparison outputs are not available yet because the
-      matrix has not completed
+  - final status:
+    - the harness completed, but this root is now retained only as an invalid
+      regression case study because Stage 17 later proved it compiled the DUT
+      top instead of the testbench top during simulation
 - Notes:
   - this stage now has a real launched redo root rather than only harness
     scaffolding
@@ -2683,8 +2704,8 @@ Documentation risk to watch:
     was restored
   - validated the direct-invocation path with:
     - `VLLM_HOST=host.docker.internal VLLM_PORT=8000 scripts/run_qd_retrospective_redo_vllm.sh --dry-run`
-  - empirical comparison claims must still wait for the matrix to finish and
-    emit suite-local reports
+  - the later fixed redo under `/tmp/qd_rich20x5_redo_full_fixed/20260314_115920`
+    supersedes this original root for all numeric comparison
 
 ### Stage 17
 
@@ -2763,14 +2784,86 @@ Documentation risk to watch:
       `VLLM_HOST=host.docker.internal VLLM_PORT=8000 REDO_SAVE_PATH=/tmp/qd_rich20x5_redo_full_fixed bash scripts/run_qd_retrospective_redo_vllm.sh --preset full --suite matrix`
     - launch time:
       `2026-03-14T11:59:20Z`
-    - active fixed run root:
+    - fixed run root:
       `/tmp/qd_rich20x5_redo_full_fixed/20260314_115920`
-    - current status:
-      the replacement redo matrix is running and has entered the
-      `rtllm/classic` suite
+    - completed comparison outputs:
+      - `/tmp/qd_rich20x5_redo_full_fixed/20260314_115920/combined_backend_comparison.md`
+      - `/tmp/qd_rich20x5_redo_full_fixed/20260314_115920/analysis/classic_vs_qd/results/report.md`
+    - key findings:
+      - `cvt_size_control` is the best balanced archive-health/QD-score option
+        in the fixed redo:
+        `mean coverage = 39.05%`, `mean QD score = 1.0268`
+      - `cvt_struct` is the strongest score/frontier-oriented QD option in the
+        fixed redo analysis:
+        `macro final best score = 24.86%`,
+        `macro final selectable hyperarea = 0.085`
+      - `grid_struct` is the best grid control:
+        `mean coverage = 25.00%`,
+        `macro cumulative hyperarea = 0.167`
+      - classic remains the safest non-QD baseline:
+        `macro synthesis success = 48.75%`
 - Notes:
   - the root cause was not a QD-profile failure; it invalidated `classic`,
     `grid`, and `cvt` equally because the functional harness never actually ran
+  - the fixed redo now provides the comparative reference that should be used
+    in docs and merge guidance:
+    - prefer `cvt` over `grid` for most QD runs
+    - use `implemented_structural_fixed_5d` / `cvt_struct` when
+      score/frontier quality is the main objective
+    - use `size_control_3d` / `cvt_size_control` when archive health,
+      coverage, and QD score are the main objective
+    - use `implemented_structural_compact_3d` / `grid_struct` as the main grid
+      control
+
+### Stage 18
+
+- Date: `2026-03-16`
+- Implementation checkpoint:
+  - completed a merge-readiness cleanup pass on the QD/touched surface before
+    merge into `wip/journal-extension-2026`
+  - refreshed stale docs so they now point to the finished fixed redo instead
+    of the earlier `refresh_v2` checkpoint
+  - expanded `docs/qd_map_elites_guide.md` with:
+    - mode comparison tables
+    - descriptor-family tables
+    - profile guidance tables
+    - Mermaid diagrams for one-generation, whole-run, and descriptor-pipeline
+      flows
+  - added missing docstrings across the public QD/runtime symbols touched by
+    this branch
+  - removed branch-local unused `type: ignore` comments from
+    `src/revolution/backends/revolution_backend.py`
+  - tightened `src/revolution/runtime/candidate_evaluator.py` typing so the
+    touched-surface `pyright` and `ty` checks are green again
+- Automated validation:
+  - `git diff --check wip/journal-extension-2026...HEAD`
+  - Result: clean
+  - `python` AST docstring scan on the touched QD/runtime surface
+  - Result: `NO_MISSING_DOCSTRINGS`
+  - `/workspace/.venv/bin/python -m pytest`
+  - Result: `376 passed, 4 skipped in 20.20s`
+  - `/workspace/.venv/bin/ruff check src/revolution/qd src/revolution/runtime/problem_context.py src/revolution/runtime/problem_spec.py src/revolution/runtime/candidate_evaluator.py src/revolution/runtime/structural_evaluator.py src/revolution/rtl_descriptor_evaluator.py src/revolution/simulation_descriptor_evaluator.py src/revolution/backends/revolution_backend.py src/revolution/evaluation.py scripts/run_backend.py scripts/backend_comparison_report.py scripts/archive_baseline.py tests/revolution/test_qd_archive.py tests/revolution/test_qd_descriptors.py tests/revolution/test_qd_engine.py tests/revolution/test_qd_scheduler.py tests/revolution/test_qd_scoring.py tests/revolution/test_problem_spec.py tests/revolution/test_candidate_evaluator.py tests/revolution/test_candidate_evaluator_parity.py tests/revolution/test_revolution_backend.py tests/revolution/test_evaluation.py tests/scripts/test_run_backend.py tests/scripts/test_backend_comparison_report.py tests/scripts/test_archive_baseline.py tests/scripts/test_run_qd_retrospective_redo_vllm.py`
+  - Result: `All checks passed!`
+  - `/workspace/.venv/bin/python -m pyright src/revolution/qd src/revolution/runtime/problem_context.py src/revolution/runtime/problem_spec.py src/revolution/runtime/candidate_evaluator.py src/revolution/runtime/structural_evaluator.py src/revolution/rtl_descriptor_evaluator.py src/revolution/simulation_descriptor_evaluator.py src/revolution/backends/revolution_backend.py scripts/run_backend.py scripts/backend_comparison_report.py scripts/archive_baseline.py`
+  - Result: `0 errors, 2 warnings`
+  - warning details:
+    - `scripts/run_backend.py`: `tqdm` source-resolution only
+    - `src/revolution/qd/descriptors.py`: `yaml` source-resolution only
+  - `uv tool run ty check src/revolution/qd src/revolution/runtime/problem_context.py src/revolution/runtime/problem_spec.py src/revolution/runtime/candidate_evaluator.py src/revolution/runtime/structural_evaluator.py src/revolution/rtl_descriptor_evaluator.py src/revolution/simulation_descriptor_evaluator.py src/revolution/backends/revolution_backend.py scripts/run_backend.py scripts/backend_comparison_report.py scripts/archive_baseline.py`
+  - Result: `All checks passed!`
+- Merge posture:
+  - local merge base against `wip/journal-extension-2026` remains:
+    `447c0128225ac3cdb91c41f9559bda208d3065f5`
+  - local left/right count:
+    `0 54`
+  - interpretation:
+    this branch is a straight descendant of the merge target locally, so merge
+    conflict risk is low unless the target branch changes remotely before merge
+- Live validation:
+  - none in this cleanup pass by design
+  - no new vLLM experiments were run here because the branch already has fixed
+    redo evidence and this pass was limited to docs, tests, cleanup, and
+    docstrings
   - the fix is now covered by regression tests that assert simulation uses the
     harness top while synthesis still uses the mapped DUT top
 
@@ -3016,10 +3109,22 @@ Documentation risk to watch:
   new feature surface. This is debt repayment, not scope growth.
 - Remaining debt is now mostly historical and empirical:
   - the invalid redo root must remain excluded from numeric comparison
-  - the fresh fixed redo root still needs to finish before retrospective
-    comparison claims can be updated
-  - broader `algorithm.py` / `candidate_evaluator.py` typing debt remains
-    pre-existing and was reconfirmed by `pyright` / `ty`
+  - repeated-seed evidence is still absent, so the fixed redo should be treated
+    as directional rather than statistical
+  - broader legacy repo-wide type and lint debt still exists outside this
+    branch's touched surface
+
+### Stage 18
+
+- The merge-readiness pass deliberately stayed on the touched QD/runtime
+  surface instead of widening into unrelated repo-wide cleanup, which keeps the
+  branch reviewable and lowers merge risk.
+- The remaining debt after this pass is now mostly beyond the branch's
+  immediate merge goal:
+  - repo-wide old script lint debt outside the touched surface
+  - broader legacy typing debt outside the targeted validation scope
+  - repeated-seed or broader-benchmark evidence for the new QD profile ladder
+  - future benchmark/runtime expansion beyond the current QD branch scope
 
 ## Intent Alignment Review
 
@@ -3232,9 +3337,20 @@ Documentation risk to watch:
 - The earlier redo root diverged in an unacceptable way because it never
   exercised the benchmark harness correctly; documenting it as invalid and
   launching a fixed rerun is the correct response.
-- The branch is now back on the intended comparison path: classic and QD runs
-  both use the real harness top for simulation while keeping synthesis bound to
-  the DUT top.
+- The branch is now back on the intended comparison path, and the fixed redo
+  completed successfully: classic and QD runs both use the real harness top for
+  simulation while keeping synthesis bound to the DUT top.
+
+### Stage 18
+
+- Stage 18 improves alignment with the original merge intent by turning the
+  branch from an active implementation notebook into a merge-ready change set
+  with synchronized docs, explicit recommendation guidance, and clean
+  touched-surface validation.
+- The branch now presents the finished fixed redo as the current evidence base
+  instead of leaving readers on stale intermediate checkpoints, which makes the
+  documented recommendations materially closer to the actual code and artifact
+  state.
 
 ## Roadmap Extension
 
@@ -3406,6 +3522,19 @@ implementation and testing so far.
 - `13611203f0` `fix(qd): honor retrospective grid profiles in runtime`
 - `9e7ec003fa` `feat(qd): add multi-axis grid visualization outputs`
 - `6975cfdb48` `feat(qd): add dynamic activity descriptor extraction`
+- `aea5ae7823` `docs(qd): record stage 13 dynamic descriptor rollout`
+- `ad65b66ba6` `feat(qd): add second-wave profiles and descriptor health reports`
+- `ec87266c73` `feat(reporting): aggregate qd descriptor health in reports`
+- `30c41c568e` `feat(experiments): add retrospective qd redo harness`
+- `91108364e5` `docs(qd): record retrospective redo launch`
+- `cc7947af71` `fix(experiments): mark qd redo harness executable`
+- `dbbb6293fc` `fix(runtime): split simulation and synthesis top resolution`
+- `c8deb0d797` `fix(evaluation): clean up eda subprocess groups on timeout`
+- `1ad0d1e075` `test(evaluation): add Prob144 timeout fixtures and cleanup regressions`
+- `a71021a759` `feat(cli): expose shared rtl and synthesis timeout controls`
+- `61b8423d69` `fix(llm): reduce request timeout and add Prob144 live stress coverage`
+- `eb56e695cc` `docs(qd): summarize preliminary backend guidance`
+- `0b8253d8aa` `docs(qd): expand descriptor extraction guide`
 
 ## Deferred Follow-Ups
 
@@ -3425,10 +3554,8 @@ implementation and testing so far.
   relative to the first-wave structural/runtime profiles.
 - Extend descriptor-health summarization beyond per-report sections into
   higher-order trend summaries across problems, backends, and repeated runs.
-- Finish the fresh long-budget retrospective redo started from the new
-  `run_qd_retrospective_redo_vllm.sh` harness under
-  `/tmp/qd_rich20x5_redo_full_fixed` and compare it against
-  `/tmp/qd_rich20x5`.
+- Repeat the fixed retrospective redo with additional seeds before treating the
+  current recommendation ladder as statistically stable.
 - Keep `/tmp/qd_rich20x5_redo_full/20260313_181943` recorded as an invalid
   regression case study only; do not use it for numeric comparison.
 - Continue reducing older `algorithm.py` typing/documentation debt and shared

@@ -21,6 +21,25 @@ Supported archive geometries:
 
 The main runtime lives in [engine.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/engine.py).
 
+### Mode quick reference
+
+| Mode | CLI surface | Success-side state | Recommended starting point | Best used for | Current caveat |
+| --- | --- | --- | --- | --- | --- |
+| Classic REvolution | `--search_mode revolution` | flat success pool | default REvolution settings | safest baseline, throughput, single-best candidate chasing | no archive or repertoire view |
+| Grid QD | `--search_mode revolution_qd --qd_archive_type grid` | archive elites + bounded reservoir view | `--qd_descriptor_profile implemented_structural_compact_3d` | control runs, reduced-axis debugging, discovery-oriented follow-up | weaker repertoire fill than CVT on the fixed redo |
+| CVT QD | `--search_mode revolution_qd --qd_archive_type cvt` | archive elites + bounded reservoir view | `--qd_descriptor_profile implemented_structural_fixed_5d` or `size_control_3d` | richer descriptor spaces, repertoire search, balanced archive experiments | warm-up and centroid geometry matter on the hardest tasks |
+
+### Descriptor family to mode map
+
+| Descriptor family | Runtime source | Most natural mode use | Representative profiles |
+| --- | --- | --- | --- |
+| PPA gains | reference-vs-generated PPA metrics | grid defaults, hybrid CVT studies | sequential/combinational grid defaults, `hybrid_seq_default` |
+| Structural | synthesized cell counts / Yosys stats | grid controls, structural CVT baselines | `implemented_structural_compact_3d`, `implemented_structural_fixed_5d` |
+| RTL / source-text | regex over candidate RTL | richer CVT descriptor studies | `size_control_3d`, `wire_assign_if_3d` |
+| RTL / Yosys AST | lightweight Yosys AST dump | control-shape CVT studies | `timing_control_3d`, `wire_ctrl_assign_3d` |
+| Physical | OpenROAD report parsing | richer CVT follow-up studies | `hybrid_phys_seq` |
+| Dynamic / VCD | Icarus waveform parsing | experimental activity-driven studies | `activity_size_3d`, `activity_control_3d` |
+
 ## Top-Module Resolution
 
 Simulation and synthesis do not use the same top-module source:
@@ -86,6 +105,34 @@ Prompt files:
 Descriptor values are assembled from several metric families before
 [descriptors.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/descriptors.py)
 applies any final archive-side transform such as `log1p`.
+
+```mermaid
+flowchart LR
+  A[Candidate RTL code] --> B[VerilogEvaluator]
+  A --> C[RTLDescriptorEvaluator]
+  B --> D[VCD probe if dynamic axes are requested]
+  A --> E[SynthesisEvaluator]
+  E --> F[StructuralEvaluator]
+  E --> G[OpenROAD physical report parsing]
+  E --> H[Synthesized netlist]
+  H --> C
+  A --> I[Yosys AST dump]
+  I --> C
+  D --> J[SimulationDescriptorEvaluator]
+  E --> K[PPA metrics]
+  K --> L[PPA gain computation]
+  F --> M[structural_metrics]
+  C --> N[rtl_metrics]
+  G --> O[physical_metrics]
+  J --> P[dynamic_metrics]
+  L --> Q[g_P / g_A / g_T]
+  M --> R[descriptor registry + transforms]
+  N --> R
+  O --> R
+  P --> R
+  Q --> R
+  R --> S[Archive descriptor tuple]
+```
 
 ### Structural descriptors
 
@@ -214,9 +261,19 @@ Dynamic simulation descriptors now come from the Icarus/VCD path and are
 attached as `dynamic_metrics`:
 
 - `toggle_count_log_est`
+  `log1p` of the estimated bit-toggle activity across tracked DUT-scoped
+  signals. It compresses very large toggle totals so a few extremely active
+  signals do not dominate the descriptor tuple.
 - `toggle_density_est`
+  Total signal-change events divided by tracked-signal count. This is the most
+  compact “how busy was the design” metric and is less size-sensitive than raw
+  toggle count.
 - `active_signal_ratio_est`
+  Fraction of tracked signals that toggled at least once during the captured
+  run. It distinguishes broad design exercise from highly localized activity.
 - `avg_toggle_rate_est`
+  Average change-event rate over the observed VCD time span. This separates
+  short bursts of activity from designs that remain active throughout the run.
 
 Extraction path:
 
@@ -226,6 +283,9 @@ Extraction path:
 - [simulation_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/simulation_descriptor_evaluator.py)
   parses the emitted waveform and estimates signal-change behavior from
   DUT-scoped activity
+- clocks, resets, and obvious scoreboard/reference-style signals are filtered
+  before metric computation so the descriptors reflect DUT behavior rather than
+  harness bookkeeping
 - the current path is intentionally descriptor-gated so classic REvolution and
   non-dynamic QD runs do not pay waveform cost
 
@@ -289,14 +349,27 @@ Exploratory dynamic profiles:
 - `activity_control_3d`
   - `toggle_density_est`, `active_signal_ratio_est`, `ctrl_depth_est`
 
+### Profile quick reference
+
+| Profile | Axes | Archive type it fits best | Use when | Current confidence |
+| --- | --- | --- | --- | --- |
+| `implemented_structural_compact_3d` | `comb_ratio`, `adder_ratio`, `cell_count_log` | grid | you want the main grid control and an interpretable compact structural view | high |
+| `implemented_structural_fixed_5d` | `seq_ratio`, `comb_ratio`, `mux_ratio`, `adder_ratio`, `cell_count_log` | cvt | you want the strongest score/frontier-oriented structural CVT run | high |
+| `size_control_3d` | `wire_count_log_est`, `assign_count`, `ctrl_depth_est` | cvt | you want the healthiest archive and best coverage/QD-score balance | high |
+| `timing_control_3d` | `wire_count_log_est`, `if_count`, `ast_depth_est` | cvt | you want a control-shape-heavy follow-up to `size_control_3d` | medium |
+| `hybrid_phys_seq` | structural + physical + gain axes | cvt | you want to test whether physical variation meaningfully enriches the archive | medium |
+| `activity_size_3d` / `activity_control_3d` | dynamic + size/control axes | grid or cvt follow-up | you want an experimental activity-sensitive archive study | low to medium |
+
 Stage 10 runtime note:
 
 - grid mode now honors `qd_descriptor_profile` when `qd_grid_axes` is omitted,
   so `implemented_structural_compact_3d` is no longer just a config file entry;
   it is active in real grid runs and visible in `archive_space_report.md`
-- current refresh evidence under `/tmp/qd_rich20x5_refresh_v2` indicates the
-  structural retrospective profiles are useful controls, but not new defaults
-  yet
+- the later fixed redo under
+  `/tmp/qd_rich20x5_redo_full_fixed/20260314_115920` supersedes the early
+  refresh-only read and shows that the structural retrospective profiles are
+  useful controls, but still not a blanket default replacement for every
+  previous gain-heavy setup
 
 Stage 11 runtime note:
 
@@ -352,7 +425,21 @@ Immediate takeaway:
 - Grid is still useful, but mainly as a control, discovery-oriented run, or
   problem-specific follow-up rather than as the first default choice.
 
+### Practical recommendation table
+
+| Goal | Recommended config | Why | Caveat |
+| --- | --- | --- | --- |
+| Score/frontier-focused QD | `cvt_struct` = `--qd_archive_type cvt --qd_descriptor_profile implemented_structural_fixed_5d` | strongest macro final score and frontier width in the fixed redo/classic-vs-QD analysis | not the healthiest archive by coverage |
+| Archive-health-focused QD | `cvt_size_control` = `--qd_archive_type cvt --qd_descriptor_profile size_control_3d` | strongest mean coverage and QD score in the fixed redo | not the strongest score-oriented QD setting |
+| Grid control / discovery run | `grid_struct` = `--qd_archive_type grid --qd_descriptor_profile implemented_structural_compact_3d` | best grid on the fixed redo and a clear improvement over the older rich-grid baseline | still less consistent than CVT across the full suite |
+| Conservative baseline | `classic` = `--search_mode revolution` | highest synthesis stability and still strongest on some single-best outcomes | no archive illumination or repertoire view |
+
 ## Archive Geometry
+
+| Archive type | Cell definition | Initialization | Best current use | Typical descriptor shape |
+| --- | --- | --- | --- | --- |
+| Grid | uniform bins over explicit axes | immediate | reduced-axis controls, interpretable debugging | gains or compact structural axes |
+| CVT | nearest centroid in frozen normalized space | warm-up buffer, scaler fit, centroid freeze | richer repertoire search and archive-health studies | structural, RTL/AST, hybrid, or activity-driven profiles |
 
 ### Grid
 
@@ -437,6 +524,23 @@ Report/archive consumers:
 
 ## What Happens In One Generation
 
+```mermaid
+flowchart TD
+  A[Start generation] --> B[split_qd_budget]
+  B --> C[Seed requests]
+  B --> D[Fail-pool requests]
+  B --> E[Success backfill/refine requests]
+  C --> F[Batch LLM generation]
+  D --> F
+  E --> F
+  F --> G[Materialize Heuristic candidates]
+  G --> H[Shared evaluation pipeline]
+  H --> I[Descriptor tuple construction]
+  I --> J[Archive insert or warmup buffer]
+  J --> K[Reservoir / fail-pool updates]
+  K --> L[Archive snapshots, metrics, plots, logs]
+```
+
 Assume Gen0 has already run and the archive has been rebuilt from the initial
 successful pool.
 
@@ -483,6 +587,22 @@ successful pool.
 
 ## What Happens Through The Entire Process
 
+```mermaid
+flowchart TD
+  A[Load benchmark/problem context] --> B[Load reference PPA and logger]
+  B --> C[Run Gen0 initialize_population]
+  C --> D[Evaluate candidates]
+  D --> E[Rebuild archive from Gen0 successes]
+  E --> F[Write initial archive artifacts]
+  F --> G[Loop over generations]
+  G --> H[evolve_one_generation]
+  H --> I[Update fail pool, archive, reservoir, history]
+  I --> J{More generations?}
+  J -->|Yes| G
+  J -->|No| K[Finalize summaries from archive elites]
+  K --> L[Write archive/report artifacts and final run summary]
+```
+
 1. `QDEngine.run()` starts, loads reference PPA, and initializes the logger.
 2. `initialize_population()` runs Gen0 through the shared REvolution path.
 3. The archive is rebuilt from Gen0 successes.
@@ -518,3 +638,12 @@ For richer multi-axis grid runs:
 - use the per-axis marginal plots and pairwise projection heatmaps first
 - use `archive_space_report.md`, `archive_space.json`, `archive_cells.csv`, and
   per-candidate `qd_archive_event.json` to understand full cell organization
+
+When choosing which mode/profile to run next:
+
+1. Start with the practical recommendation table above.
+2. If you need a richer descriptor space, prefer CVT before widening grid.
+3. If a run shows weak archive fill, inspect `descriptor_health_report.md`
+   before changing operators or prompt strategy.
+4. If simulation output is empty across many candidates, inspect the
+   `iverilog -s ...` top-module target before blaming the descriptor setup.

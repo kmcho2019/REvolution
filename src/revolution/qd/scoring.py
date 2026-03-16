@@ -19,11 +19,15 @@ _STAGE_RANK = {
 
 
 def normalize_code_hash(source: str) -> str:
+    """Return a stable content hash used for duplicate detection."""
+
     normalized = source.replace("\r\n", "\n").strip()
     return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
 
 def default_ppa_weights(circuit_type: CircuitType) -> tuple[float, float, float]:
+    """Return default REvolution PPA weights for one circuit type."""
+
     if circuit_type == "combinational":
         return 0.5, 0.5, 0.0
     return (1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
@@ -45,6 +49,8 @@ def compute_ppa_gains(
     ppa_metrics: dict[str, float],
     ref_ppa_metrics: dict[str, float],
 ) -> dict[str, float]:
+    """Compute normalized PPA gain axes against the reference design."""
+
     gains: dict[str, float] = {}
     for metric_name, axis_name in (
         ("power", "g_P"),
@@ -66,6 +72,8 @@ def compute_quality_score(
     beta: float | None = None,
     gamma: float | None = None,
 ) -> tuple[float, dict[str, float]]:
+    """Compute the maximize-form QD quality score and its components."""
+
     default_alpha, default_beta, default_gamma = default_ppa_weights(circuit_type)
     alpha = default_alpha if alpha is None else float(alpha)
     beta = default_beta if beta is None else float(beta)
@@ -89,6 +97,8 @@ def compute_quality_score(
 
 
 def compute_partial_pass_fraction(stage_statuses: dict[str, bool]) -> float:
+    """Return the fraction of evaluation stages passed by one candidate."""
+
     if not stage_statuses:
         return 0.0
     true_count = sum(1 for passed in stage_statuses.values() if passed)
@@ -103,6 +113,8 @@ def compute_repair_score(
     duplicate_signature_penalty: float = 0.0,
     age_penalty: float = 0.0,
 ) -> float:
+    """Score a failing candidate for fail-pool prioritization."""
+
     stage_rank = _STAGE_RANK.get(status, 0.0)
     partial = (
         compute_partial_pass_fraction(stage_statuses)
@@ -117,6 +129,8 @@ def functional_quality_score(
     functional_score: float,
     structural_metrics: dict[str, float] | None = None,
 ) -> tuple[float, dict[str, float]]:
+    """Build a functional-only quality score with structural tiebreak fields."""
+
     structural_metrics = structural_metrics or {}
     components = {
         "functional_score": float(functional_score),

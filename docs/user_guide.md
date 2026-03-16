@@ -167,10 +167,12 @@ Current feature status:
 - When `qd_grid_axes` is omitted, grid mode now honors
   `qd_descriptor_profile`, so the compact structural profile above is actually
   enough to reproduce the retrospective refresh configuration.
-- Current refresh evidence under `/tmp/qd_rich20x5_refresh_v2` suggests these
-  structural and early-stage retrospective profiles are useful experimental
-  controls, but they are not strong enough on the current four-problem corpus
-  to replace the earlier richer/gain-heavy baseline as new defaults.
+- The fixed redo under
+  `/tmp/qd_rich20x5_redo_full_fixed/20260314_115920` is now the main
+  comparative reference for practical QD backend guidance on this branch; the
+  earlier `/tmp/qd_rich20x5_refresh_v2` snapshots are still useful as
+  intermediate history, but they should not be treated as the latest backend
+  recommendation source.
 - QD problem directories now also emit `descriptor_health.json` and
   `descriptor_health_report.md`, which summarize per-axis unique count,
   nonzero fraction, and collapse behavior over archive-handled successful

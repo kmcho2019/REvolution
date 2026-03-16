@@ -14,6 +14,8 @@ _CLOCK_RESET_RE = re.compile(r"(^|_)(clk|clock|rst|reset)($|_)", re.I)
 
 @dataclass(frozen=True)
 class VCDSignal:
+    """One tracked VCD signal definition after header parsing."""
+
     symbol: str
     width: int
     full_name: str

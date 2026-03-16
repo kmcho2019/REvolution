@@ -16,6 +16,8 @@ _NETLIST_INSTANCE_RE = re.compile(
 
 @dataclass(frozen=True)
 class StructuralMetrics:
+    """Structured cell-mix payload used by structural descriptor extraction."""
+
     total_cells: int
     sequential_cells: int
     combinational_cells: int

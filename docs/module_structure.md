@@ -21,14 +21,17 @@
 - `__init__.py`: package export surface, re-exports engines plus backend/runtime abstractions.
 - `algorithm.py`: main evolutionary driver (`Heuristic`, `EoHEngine`, `SingleShotEngine`, `CVDPEngine`) with strategy and diff orchestration.
 - `backends/base.py`: backend interface (`EvolutionBackend`) and shared context/service dataclasses.
-- `backends/revolution_backend.py`: adapter around existing `EoHEngine` behavior.
+- `backends/revolution_backend.py`: backend adapter that selects classic
+  `EoHEngine` or archive-backed `QDEngine` based on `search_mode`.
 - `qd/`: QD/MAP-Elites substrate and runtime extensions.
   - `qd/archive.py`: grid archive implementation and insertion/replacement semantics.
   - `qd/artifacts.py`: archive summaries, archive-space reports, and per-candidate archive-event writers.
   - `qd/scheduler.py`: occupancy-based fail/success budget splitting helpers.
   - `qd/scoring.py`: exact PPA `quality_score`, gain axes, repair score, and code hashing helpers.
-  - `qd/descriptors.py`: descriptor registry, profile loading, and descriptor-axis resolution.
-  - `qd/engine.py`: experimental grid-first `QDEngine` that reuses REvolution prompt/eval infrastructure.
+- `qd/descriptors.py`: descriptor registry, descriptor requirement metadata,
+  profile loading, grid-axis spec handling, and descriptor-axis resolution.
+- `qd/engine.py`: archive-backed `QDEngine` for both grid and CVT modes that
+  reuses REvolution prompt, evaluation, and logging infrastructure.
   - `qd/visualization.py`: QD archive-history plots plus 2-axis grid heatmaps, multi-axis grid marginal/projection helpers, and CVT projection helpers.
 - `backends/funsearch_backend.py`: FunSearch-style RTL backend (islands, signature clusters, reset/reseed, budgeted loop).
 - `runtime/problem_context.py`: benchmark/problem path and metadata resolution.

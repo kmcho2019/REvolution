@@ -4,7 +4,7 @@ import re
 import os
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
-from enum import StrEnum
+from enum import Enum
 from typing import Any
 
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
@@ -20,6 +20,7 @@ from revolution.qd.descriptors import (
     resolve_descriptor_axes,
 )
 from revolution.qd.scoring import (
+    CircuitType,
     compute_partial_pass_fraction,
     compute_quality_score,
     compute_repair_score,
@@ -30,7 +31,9 @@ from revolution.rtl_descriptor_evaluator import RTLDescriptorEvaluator
 from revolution.simulation_descriptor_evaluator import SimulationDescriptorEvaluator
 
 
-class CandidateStatus(StrEnum):
+class CandidateStatus(str, Enum):
+    """Normalized candidate-status values shared across backend evaluators."""
+
     FAILED_FORMAT = "failed_format"
     FAILED_DIFF = "failed_diff"
     FAILED_SYNTAX = "failed_syntax"
@@ -41,7 +44,9 @@ class CandidateStatus(StrEnum):
     SUCCESS = "success"
 
 
-class EvaluationMode(StrEnum):
+class EvaluationMode(str, Enum):
+    """Evaluation-policy choices for synthesis scheduling behavior."""
+
     STRICT_ABLATION = "strict_ablation"
     SEARCH_ACCELERATED = "search_accelerated"
 
@@ -69,7 +74,7 @@ class CandidateEvaluation:
     quality_score: float | None = None
     repair_score: float | None = None
     quality_mode: str = "ppa"
-    circuit_type: str = "unknown"
+    circuit_type: CircuitType = "unknown"
     structural_metrics: dict[str, float] = field(default_factory=dict)
     rtl_metrics: dict[str, float] = field(default_factory=dict)
     dynamic_metrics: dict[str, float] = field(default_factory=dict)
@@ -88,6 +93,24 @@ class CandidateWorkItem:
     code: str
     code_file_path: str
     initial_status: str = "new"
+
+
+def _coerce_metric_dict(value: Any) -> dict[str, float]:
+    """Normalize a loosely typed metrics payload into one float-valued mapping."""
+
+    if not isinstance(value, dict):
+        return {}
+    metrics: dict[str, float] = {}
+    for key, metric_value in value.items():
+        if isinstance(key, str) and isinstance(metric_value, (int, float)):
+            metrics[key] = float(metric_value)
+    return metrics
+
+
+def _coerce_result_dict(value: Any) -> dict[str, Any]:
+    """Return an evaluator result payload as a mapping when available."""
+
+    return value if isinstance(value, dict) else {}
 
 
 class CandidateEvaluator:
@@ -135,9 +158,10 @@ class CandidateEvaluator:
             if quality_mode == "auto" and problem_spec is not None
             else quality_mode
         )
-        self.circuit_type = (
+        resolved_circuit_type: CircuitType = (
             problem_spec.circuit_type if problem_spec is not None else "unknown"
         )
+        self.circuit_type: CircuitType = resolved_circuit_type
         self.alpha = alpha
         self.beta = beta
         self.gamma = gamma
@@ -309,12 +333,14 @@ class CandidateEvaluator:
         enable_dynamic_probe = bool(
             self.descriptor_requirements.get("requires_dynamic_metrics", False)
         )
-        sim_results = self.verilog_evaluator.evaluate(
-            item.code_file_path,
-            str(self.context.test_sv_path),
-            str(self.context.ref_sv_path) if self.context.ref_sv_path else None,
-            top_module_name=self.testbench_top_module_name,
-            enable_vcd_probe=enable_dynamic_probe,
+        sim_results = _coerce_result_dict(
+            self.verilog_evaluator.evaluate(
+                item.code_file_path,
+                str(self.context.test_sv_path),
+                str(self.context.ref_sv_path) if self.context.ref_sv_path else None,
+                top_module_name=self.testbench_top_module_name,
+                enable_vcd_probe=enable_dynamic_probe,
+            )
         )
         dynamic_metrics = (
             self._extract_dynamic_metrics(sim_results) if enable_dynamic_probe else {}
@@ -386,30 +412,24 @@ class CandidateEvaluator:
 
         report_base_path = item.code_file_path.rsplit(".", 1)[0]
         output_dir = os.path.dirname(item.code_file_path)
-        synth_results = self.synthesis_evaluator.evaluate(
-            item.code_file_path,
-            self.context.problem_name,
-            self.synthesis_top_module_name,
-            output_dir,
-            report_base_path,
-            self.verilog_evaluator,
-            str(self.context.test_sv_path),
-            str(self.context.ref_sv_path) if self.context.ref_sv_path else None,
+        synth_results = _coerce_result_dict(
+            self.synthesis_evaluator.evaluate(
+                item.code_file_path,
+                self.context.problem_name,
+                self.synthesis_top_module_name,
+                output_dir,
+                report_base_path,
+                self.verilog_evaluator,
+                str(self.context.test_sv_path),
+                str(self.context.ref_sv_path) if self.context.ref_sv_path else None,
+            )
         )
         synth_success = bool(synth_results.get("synthesis_success"))
         post_synth_success = bool(synth_results.get("synthesis_functionality_success"))
         ppa_success = bool(synth_results.get("ppa_success"))
-        ppa_metrics = synth_results.get("ppa_metrics") or {}
-        physical_metrics = (
-            synth_results.get("physical_metrics")
-            if isinstance(synth_results.get("physical_metrics"), dict)
-            else {}
-        )
-        structural_metrics = (
-            synth_results.get("structural_metrics")
-            if isinstance(synth_results.get("structural_metrics"), dict)
-            else {}
-        )
+        ppa_metrics = _coerce_metric_dict(synth_results.get("ppa_metrics"))
+        physical_metrics = _coerce_metric_dict(synth_results.get("physical_metrics"))
+        structural_metrics = _coerce_metric_dict(synth_results.get("structural_metrics"))
         rtl_metrics = self.rtl_descriptor_evaluator.extract_metrics(
             code_text=item.code,
             code_file_path=item.code_file_path,
@@ -494,7 +514,7 @@ class CandidateEvaluator:
             score=self.failure_score,
             stage_statuses=stages,
             mismatch_count=mismatch_count,
-            ppa_metrics=ppa_metrics if isinstance(ppa_metrics, dict) else {},
+            ppa_metrics=ppa_metrics,
             synthesis_success=synth_success,
             synthesis_functionality_success=post_synth_success,
             ppa_success=ppa_success,

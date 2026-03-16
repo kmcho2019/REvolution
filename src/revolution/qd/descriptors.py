@@ -12,6 +12,8 @@ from revolution.runtime.problem_spec import CircuitType
 
 @dataclass(frozen=True)
 class DescriptorDefinition:
+    """Registry metadata describing how one descriptor is produced and used."""
+
     name: str
     source_tool: str
     transform: str = "identity"
@@ -24,6 +26,8 @@ class DescriptorDefinition:
 
 @dataclass(frozen=True)
 class GridAxisDescriptorSpec:
+    """Resolved grid-axis binning and bounds for one descriptor axis."""
+
     name: str
     bins: int
     lower_bound: float
@@ -66,6 +70,8 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
 
 
 def default_descriptor_profile_path() -> Path:
+    """Return the repository default descriptor-profile config path."""
+
     return (
         Path(__file__).resolve().parents[3]
         / "data"
@@ -75,6 +81,8 @@ def default_descriptor_profile_path() -> Path:
 
 
 def descriptor_registry() -> dict[str, DescriptorDefinition]:
+    """Return a copy of the descriptor registry used by QD axis resolution."""
+
     return dict(_REGISTRY)
 
 
@@ -87,6 +95,8 @@ def _load_descriptor_config(path: str | Path | None = None) -> dict[str, Any]:
 
 
 def load_descriptor_profiles(path: str | Path | None = None) -> dict[str, list[str]]:
+    """Load named descriptor profiles from YAML config."""
+
     payload = _load_descriptor_config(path)
     profiles_raw = payload.get("profiles", payload)
     if not isinstance(profiles_raw, dict):
@@ -138,6 +148,8 @@ def resolve_descriptor_axes(
     archive_type: str,
     circuit_type: CircuitType,
 ) -> list[str]:
+    """Resolve the active descriptor axis list for one archive configuration."""
+
     if explicit_axes:
         return list(explicit_axes)
 
@@ -216,6 +228,8 @@ def extract_descriptor_values(
     metrics: dict[str, float],
     axes: list[str] | tuple[str, ...],
 ) -> dict[str, float]:
+    """Project raw metric payloads onto the requested descriptor axes."""
+
     registry = descriptor_registry()
     values: dict[str, float] = {}
     for axis in axes:
@@ -231,6 +245,8 @@ def extract_descriptor_values(
 
 
 def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool]:
+    """Summarize which runtime stages are required by the selected axes."""
+
     registry = descriptor_registry()
     return {
         "requires_ppa": any(registry[axis].requires_ppa for axis in axes if axis in registry),
@@ -250,6 +266,8 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
 
 
 def summarize_descriptor_axes(axes: list[str] | tuple[str, ...]) -> list[dict[str, Any]]:
+    """Return lightweight metadata summaries for UI/reporting surfaces."""
+
     registry = descriptor_registry()
     return [
         {

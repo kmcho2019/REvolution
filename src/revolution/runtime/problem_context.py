@@ -22,6 +22,8 @@ class ProblemContext:
 
 
 def default_benchmark_root() -> Path:
+    """Return the default benchmark root under the repository data tree."""
+
     return (Path(__file__).resolve().parents[3] / "data" / "bench").resolve()
 
 

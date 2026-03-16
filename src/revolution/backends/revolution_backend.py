@@ -17,6 +17,8 @@ from revolution.runtime.run_artifacts import add_legacy_strategy_key_alias
 
 @dataclass(frozen=True)
 class RevolutionBackendConfig:
+    """Configuration snapshot for the REvolution backend adapter."""
+
     search_mode: str = "revolution"
     population_size: int = 5
     num_generations: int = 5
@@ -105,12 +107,12 @@ class RevolutionBackend(EvolutionBackend):
             default_llm_top_p=self.config.default_llm_top_p,
             default_llm_max_tokens=self.config.default_llm_max_tokens,
             base_save_path=self.base_save_path,
-            strategy_selection_method=self.config.strategy_selection_method,  # type: ignore[arg-type]
+            strategy_selection_method=self.config.strategy_selection_method,
             epsilon=self.config.epsilon,
             ucb_c=self.config.ucb_c,
-            generation_mode=self.config.generation_mode,  # type: ignore[arg-type]
-            population_pool_mode=self.config.population_pool_mode,  # type: ignore[arg-type]
-            diff_apply_policy=self.config.diff_apply_policy,  # type: ignore[arg-type]
+            generation_mode=self.config.generation_mode,
+            population_pool_mode=self.config.population_pool_mode,
+            diff_apply_policy=self.config.diff_apply_policy,
             diff_max_tokens=self.config.diff_max_tokens,
             diff_compact_context=self.config.diff_compact_context,
             diff_similarity_threshold=self.config.diff_similarity_threshold,
