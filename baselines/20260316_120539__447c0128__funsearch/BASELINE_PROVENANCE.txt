@@ -1,0 +1,57 @@
+baseline provenance
+===================
+
+Archive directory:
+- /workspace/baselines/20260316_120539__447c0128__funsearch
+
+Archive scope:
+- archived from ablation root: /workspace/exp/ablation_pop10_gen20_20260221_091716
+- archive backend label: funsearch
+- artifact packing mode: candidate_core
+- git commit at archive time: 447c0128225ac3cdb91c41f9559bda208d3065f5
+
+Backend coverage inside this archive:
+- revolution
+- funsearch
+
+Original ablation launch template:
+- source file: /workspace/exp/ablation_pop10_gen20_20260221_091716/commandline.txt
+- command:
+  python scripts/run_backend_ablation.py \
+    --benchmarks RTLLM VerilogEval-Spec-to-RTL \
+    --api_backend vllm \
+    --vllm_host vllm \
+    --vllm_port 8888 \
+    --model_name /models/openai-gpt-oss-120b \
+    --evaluation_mode strict_ablation \
+    --num_workers 32 \
+    --max_evaluations 210 \
+    --revolution_population_size 10 \
+    --funsearch_initial_population_size 10 \
+    --primary_budget_axis candidate_evaluations \
+    --seeds 42 \
+    --max_tokens 128000 \
+    --temperature 1.0 \
+    --top_p 1.0 \
+    --run_report
+
+Primary runtime settings:
+- benchmarks: RTLLM, VerilogEval-Spec-to-RTL
+- seed: 42
+- primary budget axis: candidate_evaluations
+- max evaluations per problem: 210
+- model: /models/openai-gpt-oss-120b
+- vLLM endpoint: vllm:8888
+- max tokens: 128000
+
+Important archived outputs:
+- report: /workspace/baselines/20260316_120539__447c0128__funsearch/summaries/backend_comparison.md
+- artifact bundle: /workspace/baselines/20260316_120539__447c0128__funsearch/artifacts/raw_results.tar.xz
+
+Representative original run logs:
+- /workspace/exp/ablation_pop10_gen20_20260221_091716/revolution/seed_42/revolution/_models_openai-gpt-oss-120b/20260221_091717_revolution_run_log.txt
+- /workspace/exp/ablation_pop10_gen20_20260221_091716/funsearch/seed_42/funsearch/_models_openai-gpt-oss-120b/20260222_124201_funsearch_run_log.txt
+
+Notes:
+- This archive contains both revolution and funsearch outputs because both were
+  archived from the same original ablation root.
