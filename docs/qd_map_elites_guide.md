@@ -227,6 +227,53 @@ Stage 11 runtime note:
 - these profiles should still be treated as early-stage experimental surfaces
   until bounded smokes and longer reruns confirm their live behavior
 
+## Preliminary Experiment Takeaways
+
+The current practical guidance is based on the fixed long-budget `20 x 5`
+retrospective redo and the follow-on classic-vs-QD analysis over:
+
+- `RTLLM/Prob043_RAM`
+- `RTLLM/Prob045_alu`
+- `VerilogEval-Spec-to-RTL/Prob153_gshare`
+- `VerilogEval-Spec-to-RTL/Prob156_review2015_fancytimer`
+
+This evidence is still preliminary:
+
+- one model family
+- one seed
+- four problems
+- directional guidance rather than a final paper-grade default claim
+
+Current recommendation ladder:
+
+- If you want one general-purpose QD backend today, prefer `CVT Struct`.
+  It is the strongest current score/frontier-oriented QD option in the fixed
+  retrospective redo.
+- If you care most about archive health, coverage, and QD score, prefer
+  `CVT Size/Control`.
+  It is the healthiest repertoire-building configuration in the current runs.
+- If you need a grid-mode control, prefer `Grid Struct`.
+  It is the best current grid option and clearly better than the older rich
+  grid baseline on this corpus.
+- Keep classic `revolution` in every serious comparison.
+  It is still the safest non-QD baseline and remains stronger on some
+  single-best-design outcomes, especially on harder VerilogEval tasks.
+
+Operationally, that maps to:
+
+- score/frontier-focused CVT:
+  `--qd_archive_type cvt --qd_descriptor_profile implemented_structural_fixed_5d`
+- archive-health-focused CVT:
+  `--qd_archive_type cvt --qd_descriptor_profile size_control_3d`
+- recommended grid control:
+  `--qd_archive_type grid --qd_descriptor_profile implemented_structural_compact_3d`
+
+Immediate takeaway:
+
+- CVT is generally the recommended archive geometry for practical use.
+- Grid is still useful, but mainly as a control, discovery-oriented run, or
+  problem-specific follow-up rather than as the first default choice.
+
 ## Archive Geometry
 
 ### Grid

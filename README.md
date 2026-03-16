@@ -238,8 +238,21 @@ Current status on this feature branch:
   settings. The warning is advisory rather than coercive, but it is meant to
   stop the exact truncation-driven misconfiguration that previously distorted
   moderate-budget RTLLM / VerilogEval comparisons.
+- Preliminary four-problem `20 x 5` experiments on RTLLM and VerilogEval now
+  give a usable recommendation ladder for QD runs:
+  - generally prefer `cvt` over `grid`
+  - for score/frontier-oriented QD runs, start with
+    `--qd_archive_type cvt --qd_descriptor_profile implemented_structural_fixed_5d`
+  - for archive-health/coverage-oriented QD runs, start with
+    `--qd_archive_type cvt --qd_descriptor_profile size_control_3d`
+  - if you need a grid control, start with
+    `--qd_archive_type grid --qd_descriptor_profile implemented_structural_compact_3d`
+  - keep classic `revolution` in comparisons because it is still the safest
+    non-QD baseline on single-best-design outcomes
 - The detailed status and validation record lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.
+  For the short experimental takeaway and recommendation ladder, see
+  `docs/qd_map_elites_guide.md`.
 
 ```bash
 python scripts/run_backend.py \

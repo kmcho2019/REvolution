@@ -202,6 +202,16 @@ Current feature status:
   invalid for research conclusions. For this model family, use
   `--max_tokens 128000` and `--diff_max_tokens 128000` before drawing
   conclusions about archive fill, operator quality, or benchmark difficulty.
+- Preliminary fixed `20 x 5` RTLLM/VerilogEval experiments give the following
+  immediate recommendation ladder:
+  - prefer `cvt` over `grid` for general-purpose QD runs
+  - use `implemented_structural_fixed_5d` when the priority is final
+    score/frontier quality
+  - use `size_control_3d` when the priority is archive health, coverage, and
+    QD score
+  - use `implemented_structural_compact_3d` as the preferred grid control
+  - keep classic `revolution` in serious comparisons because it still remains
+    the safest non-QD baseline on some harder tasks
 - The authoritative detailed status lives in
   `docs/revolution_qd_map_elites_implementation_plan.md`.
 - The runtime behavior, file map, and trace-level walkthrough live in

@@ -78,6 +78,13 @@ The current QD implementation is staged:
 - the first corrected Stage 10 refresh snapshots under
   `/tmp/qd_rich20x5_refresh_v2` suggest these structural retrospective profiles
   should remain explicit experiment controls rather than new defaults for now.
+- the fixed retrospective redo adds a practical short-term usage rule:
+  - prefer CVT as the default archive geometry
+  - use `implemented_structural_fixed_5d` for score/frontier-oriented runs
+  - use `size_control_3d` for archive-health-oriented runs
+  - use `implemented_structural_compact_3d` as the main grid control
+  - keep classic REvolution in comparisons because it still wins some
+    single-best-design cases
 - CVT/runtime parity is still incomplete mainly around live smoke completion,
   broader benchmark coverage, and deeper evaluator-side descriptor richness.
 - Stage 6 benchmark plumbing is now partially landed:
