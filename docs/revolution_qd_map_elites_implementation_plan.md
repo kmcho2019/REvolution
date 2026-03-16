@@ -13,6 +13,11 @@ during implementation and must be updated before and after every implementation
 stage so that completed work, tests, smoke runs, debt review notes, and commit
 evidence stay synchronized with the codebase.
 
+Historical sections in this document may still refer to the original
+development worktree path `/workspace/.worktrees/revolution-qd-map-elites`
+and to `/tmp/...` run roots. Those references are intentional provenance for
+implementation and experiment history, not stable installation paths.
+
 ## Research Intent Lock
 
 - Keep REvolution's original repair-driven search loop intact for
@@ -86,6 +91,8 @@ evidence stay synchronized with the codebase.
 - This branch was developed in a dedicated Git worktree rooted outside the main
   checkout so QD implementation work could proceed without disturbing the base
   branch.
+- Original development worktree path:
+  `/workspace/.worktrees/revolution-qd-map-elites`
 - Example creation pattern:
   `git worktree add -b feat/revolution-qd-map-elites <path-to-new-worktree> wip/journal-extension-2026`
 - Note: the feature worktree starts from the committed state of
