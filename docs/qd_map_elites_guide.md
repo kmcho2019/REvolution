@@ -83,54 +83,132 @@ Prompt files:
 
 ## Descriptor Extraction
 
-Structural descriptors come from the synthesis side of the pipeline:
+Descriptor values are assembled from several metric families before
+[descriptors.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/qd/descriptors.py)
+applies any final archive-side transform such as `log1p`.
+
+### Structural descriptors
+
+Structural descriptors come from the synthesis side of the pipeline and are
+attached as `structural_metrics`. The current extractor lives in
+[structural_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/runtime/structural_evaluator.py).
+It reads Yosys-style cell counts or, when needed, reconstructs them from a
+synthesized netlist text dump.
 
 - `seq_ratio`
+  Fraction of mapped cells that look sequential, such as DFF- or latch-like
+  cell types. It is computed by matching Yosys/OpenROAD cell names against a
+  small sequential prefix list and dividing by total mapped cells.
 - `comb_ratio`
+  Fraction of mapped cells that are not classified as sequential. It is
+  derived from the same cell-count table as `seq_ratio`, so it is effectively
+  the combinational complement of the sequential share.
 - `mux_ratio`
+  Fraction of mapped cells whose type matches mux-like primitives. This is a
+  coarse proxy for control-heavy datapaths and is extracted by prefix-matching
+  synthesized cell names such as `$_MUX` or `$mux`.
 - `adder_ratio`
+  Fraction of mapped cells whose type matches arithmetic primitives such as
+  adders or full adders. This is another coarse structural mix feature, again
+  derived from synthesized cell-type counts rather than source syntax alone.
 - `ltp_noff`
+  Longest topological path with flip-flop boundaries excluded. In practice
+  this is carried through the Yosys payload as a depth-like structural
+  estimate and is used as a cheap proxy for pipeline-free logic depth.
 - `cell_count_log`
+  Size proxy based on mapped cell count. The structural extractor records raw
+  total mapped cells first, then the descriptor registry applies a `log1p`
+  transform when the archive tuple is built.
 
-These are extracted through the Yosys-oriented path and attached to candidates
-as `structural_metrics`.
+### RTL, AST, and netlist-estimate descriptors
 
-Retrospective RTL/AST/netlist-estimate descriptors now also exist at runtime
-through `rtl_metrics`:
+These descriptors are attached as `rtl_metrics` and are extracted by
+[rtl_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/rtl_descriptor_evaluator.py).
+They are intentionally lighter-weight than full physical metrics and exist to
+capture source-level shape, control structure, and cheap size estimates.
+
+Source-text descriptors come directly from the candidate RTL text using regex
+counts:
+
+- `assign_count`
+  Number of continuous `assign` statements. It is a simple count over the RTL
+  source and acts as a lightweight proxy for explicit combinational wiring.
+- `if_count`
+  Number of `if` keywords in the RTL source. This is a coarse control-shape
+  signal rather than a semantic CFG reconstruction.
+- `always_count`
+  Number of `always`, `always_ff`, `always_comb`, or `always_latch` blocks.
+  It is extracted by regex over the source and acts as a rough measure of
+  procedural structure.
+- `case_count`
+  Number of `case`, `casex`, or `casez` constructs in the RTL. This is mainly
+  useful as another control-logic proxy.
+- `ternary_count`
+  Number of `?` operators in the source. It approximates conditional-expression
+  usage without needing deeper parsing.
+- `rtl_instance_count_est`
+  Estimated count of instantiated modules/cells in the RTL source. The
+  evaluator uses a regex over instance-like statements while filtering out
+  reserved language keywords.
+- `fsm_state_count_est`
+  Estimated number of state-like parameters in the source. The evaluator scans
+  `parameter` and `localparam` declarations and keeps names that look like FSM
+  state labels such as `IDLE`, `RUN`, `DONE`, or `S0`.
+
+Netlist/source-size estimate descriptors prefer synthesized artifacts when
+available:
 
 - `wire_count_log_est`
+  Estimate of wiring richness. The evaluator first counts `wire` declarations
+  in the synthesized `.syn.v` netlist; if no netlist exists yet, it falls back
+  to source-level `wire`, `logic`, or `reg` declarations, then applies `log1p`
+  at descriptor time.
 - `wire_cell_ratio_est`
-- `assign_count`
-- `if_count`
-- `always_count`
-- `case_count`
-- `ternary_count`
-- `rtl_instance_count_est`
-- `fsm_state_count_est`
+  Ratio of estimated wire declarations to mapped cell count. It is intended as
+  a cheap structural-density proxy rather than a true routed-fanout metric.
+
+AST-shape descriptors come from a lightweight Yosys AST dump:
+
 - `ast_depth_est`
+  Maximum nesting depth observed in the dumped Yosys AST after simplification.
+  It is a general structural-complexity proxy for the parsed RTL.
 - `ctrl_depth_est`
+  Maximum number of control-like AST nodes on one stack path, using nodes such
+  as `AST_CASE`, `AST_COND`, `AST_FOR`, and related constructs. This is meant
+  to approximate control-logic nesting depth.
 - `math_op_ast_count`
+  Count of arithmetic operator nodes currently tracked in the AST walk, mainly
+  `AST_ADD` and `AST_MUL`. It is a cheap arithmetic-intensity proxy.
 - `resource_sharing_ratio_est`
+  Ratio of `math_op_ast_count` to mapped cell count. This is meant to capture
+  how much arithmetic intent exists relative to the eventual mapped size.
 
-Extraction path:
+### Physical descriptors
 
-- source-text counts and lightweight RTL-shape counts come from
-  [rtl_descriptor_evaluator.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/rtl_descriptor_evaluator.py)
-- `wire_count_log_est` and `wire_cell_ratio_est` prefer the synthesized netlist
-  when available and fall back to source-level wire-like declarations
-- `ast_depth_est`, `ctrl_depth_est`, `math_op_ast_count`, and
-  `resource_sharing_ratio_est` come from a lightweight Yosys AST dump when the
-  candidate RTL file is available
-
-Physical descriptors come from the OpenROAD reporting path:
+Physical descriptors come from the OpenROAD reporting path and are attached as
+`physical_metrics`. They are parsed from the synthesis report by
+[evaluation.py](/workspace/.worktrees/revolution-qd-map-elites/src/revolution/evaluation.py),
+not from DEF/ODB analysis.
 
 - `wirelength`
+  Total wire-length-like number parsed from the OpenROAD report text. The raw
+  report value is extracted by regex and the descriptor registry applies
+  `log1p` before archive insertion.
 - `utilization`
+  Placement utilization percentage parsed from the `Design area ... utilization`
+  line in the OpenROAD report. It is used as a normalized congestion/packing
+  proxy.
 - `cts_buffer_count`
+  Number of buffers inserted by clock-tree synthesis when OpenROAD reports it.
+  This is a cheap clock-tree effort signal and is log-transformed in the
+  descriptor registry.
 - `repair_buffer_count`
+  Number of buffers inserted by `repair_design` or equivalent repair passes.
+  This acts as a rough proxy for timing-fix effort and is also log-transformed
+  before archive insertion.
 - `hold_buffer_count`
-
-These are attached as `physical_metrics`.
+  Number of hold-fix buffers reported by OpenROAD. This is another physical
+  closure-effort signal and is likewise log-transformed by the registry.
 
 Dynamic simulation descriptors now come from the Icarus/VCD path and are
 attached as `dynamic_metrics`:
