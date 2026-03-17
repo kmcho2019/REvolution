@@ -15,8 +15,8 @@
 |:---|:---|:---|
 | Stage 0 | `completed` | Worktree setup and execution scaffold |
 | Stage 1 | `completed` | Runtime circuit typing, subset builder, QD runner, and workflow docs |
-| Stage 2 | `active` | Relative-path evaluation bug fixed; clean one-shot baseline rerun pending |
-| Stage 3 | `pending` | Waiting for corrected Stage 2 baseline rerun and valid subset freeze |
+| Stage 2 | `completed` | Corrected one-shot baseline rerun completed and frozen into a balanced 16-problem subset |
+| Stage 3 | `pending` | Frozen subset is ready; long-budget classic-vs-QD matrix not yet launched |
 | Stage 4 | `pending` | Analysis, docs, and final recommendations |
 
 ## TODO
@@ -30,9 +30,9 @@
 - [x] Add regression tests for circuit typing, subset building, one-shot recovery, QD runner dry-run, and final analysis
 - [x] Update `README.md`, `GUIDELINES.md`, and `docs/user_guide.md`
 - [x] Run bounded vLLM smoke on the restored endpoint
-- [ ] Run clean one-shot baseline restart (`10` samples/problem, `8` workers, long-context vLLM)
-- [ ] Freeze and commit `data/configs/hard_iteration_subset.yaml`
-- [ ] Commit vanilla baseline CSV for difficulty reference
+- [x] Run clean one-shot baseline restart (`10` samples/problem, `8` workers, long-context vLLM)
+- [x] Freeze and commit `data/configs/hard_iteration_subset.yaml`
+- [x] Commit vanilla baseline CSV for difficulty reference
 - [ ] Run classic + grid_struct + cvt_struct + cvt_size_control on the frozen subset
 - [ ] Produce comparison report, analysis notes, and recommendations
 - [ ] Make signed multi-line commits for the remaining live stages
@@ -251,3 +251,15 @@
   - added a negative-batch-size rejection test
   - surfaced a concrete queue-mode resume command in the stable workflow docs
 - Current tail: one long remaining VerilogEval problem is still active in the live session; Stage 2 remains `active` until the rerun reaches `156/156`.
+
+## Status refresh: 2026-03-17 09:29 UTC
+
+- Stage 2 completed: the corrected one-shot rerun finished at `RTLLM 50/50` and `VerilogEval-Spec-to-RTL 156/156` under `exp/hard_iteration_one_shot_rerun_20260317_pathfix`.
+- Freeze outputs created:
+  - `data/configs/hard_iteration_subset.yaml`
+  - `baselines/hard_iteration_subset_vanilla_openai_gpt_oss_120b.csv`
+- Frozen subset acceptance checks:
+  - subset size is `16`
+  - bucket balance is `4` each for `RTLLM`/`VerilogEval-Spec-to-RTL` x `combinational`/`sequential`
+  - `15` selections came from the primary functionality window and `1` required fallback (`RTLLM/Prob049_signal_generator`)
+- Operational note: the one-shot wrapper printed a one-off post-run shell syntax error after the rerun completed, but `bash -n` and traced dry-run reproduction both passed immediately afterward. Treat that message as non-blocking for Stage 2 artifacts unless it recurs during later live runs.
