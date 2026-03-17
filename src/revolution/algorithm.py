@@ -859,12 +859,64 @@ class EoHEngine:
         :return: None
         :rtype: None
         """
-        base_path = candidate.code_file_path.rsplit(".", 1)[0]
+        base_path = self._refresh_candidate_code_path(candidate).rsplit(".", 1)[0]
         feedback_file_path = f"{base_path}_feedback.txt"
+        os.makedirs(os.path.dirname(feedback_file_path), exist_ok=True)
         with open(feedback_file_path, "w") as f:
             f.write(
                 f"Score: {feedback.get('score', 'N/A')}\nJustification: {feedback.get('justification', 'N/A')}\n\nANALYSIS:\n{feedback.get('analysis', '')}"
             )
+
+    def _resolve_existing_candidate_code_path(self, code_file_path: str) -> str:
+        """
+        Recover a candidate code path when the enclosing problem directory was
+        renamed before a resumed run completed.
+        """
+        candidate_path = Path(code_file_path)
+        if candidate_path.is_file():
+            return str(candidate_path)
+
+        sample_dir = candidate_path.parent
+        generation_dir = sample_dir.parent
+        problem_dir = generation_dir.parent
+        benchmark_dir = problem_dir.parent
+        if sample_dir == candidate_path or generation_dir == sample_dir:
+            return code_file_path
+        if benchmark_dir == problem_dir:
+            return code_file_path
+
+        matches: list[Path] = []
+        seen: set[str] = set()
+        for pattern in (
+            f"{problem_dir.name}_partial_pre_resume_*",
+            f"{problem_dir.name}_*",
+        ):
+            for sibling in benchmark_dir.glob(pattern):
+                relocated = (
+                    sibling / generation_dir.name / sample_dir.name / candidate_path.name
+                )
+                if not relocated.is_file():
+                    continue
+                resolved = str(relocated.resolve())
+                if resolved in seen:
+                    continue
+                seen.add(resolved)
+                matches.append(relocated.resolve())
+            if len(matches) == 1:
+                return str(matches[0])
+            if len(matches) > 1:
+                break
+        return code_file_path
+
+    def _refresh_candidate_code_path(self, candidate: Heuristic) -> str:
+        resolved = self._resolve_existing_candidate_code_path(candidate.code_file_path)
+        candidate.code_file_path = resolved
+        return resolved
+
+    def _read_candidate_code_file(self, candidate: Heuristic) -> str:
+        resolved = self._refresh_candidate_code_path(candidate)
+        with open(resolved, "r", encoding="utf-8") as handle:
+            return handle.read()
 
     def _resolve_synthesis_top_module_name(self) -> str:
         top_module_name_file = os.path.join(
@@ -922,7 +974,7 @@ class EoHEngine:
             mapped_cell_count = float(structural_metrics.get("total_cells", 0.0))
         return self.rtl_descriptor_evaluator.extract_metrics(
             code_text=cand.code,
-            code_file_path=cand.code_file_path,
+            code_file_path=self._refresh_candidate_code_path(cand),
             mapped_cell_count=mapped_cell_count,
         )
 
@@ -962,13 +1014,15 @@ class EoHEngine:
             }
             return cand, feedback_payload
 
+        code_file_path = self._refresh_candidate_code_path(cand)
+
         require_dynamic_metrics = getattr(
             self,
             "_requires_dynamic_descriptor_metrics",
             lambda: False,
         )
         sim_results = self.evaluator.evaluate(
-            cand.code_file_path,
+            code_file_path,
             test_sv_file,
             ref_sv_file,
             top_module_name=testbench_top_module_name,
@@ -1023,10 +1077,10 @@ class EoHEngine:
         )
 
         # Stage 2: Synthesis and PPA for functionally correct candidates
-        report_base_path = cand.code_file_path.rsplit(".", 1)[0]
-        output_dir = os.path.dirname(cand.code_file_path)
+        report_base_path = code_file_path.rsplit(".", 1)[0]
+        output_dir = os.path.dirname(code_file_path)
         synth_results = self.synthesis_evaluator.evaluate(
-            cand.code_file_path,
+            code_file_path,
             self.problem_name,
             synthesis_top_module_name,
             output_dir,
@@ -1300,8 +1354,7 @@ class EoHEngine:
             if resolved_mode == "diff":
                 diff_to_save = code_content or ""
                 base_parent = meta_rec["parents"][0]
-                with open(base_parent.code_file_path, "r", encoding="utf-8") as handle:
-                    original_code = handle.read()
+                original_code = self._read_candidate_code_file(base_parent)
                 new_code = self._apply_diff(
                     original_code,
                     diff_to_save,
@@ -1478,8 +1531,7 @@ class EoHEngine:
                 r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:  # diff mode
-            with open(parent.code_file_path, "r") as f:
-                parent_code = f.read()
+            parent_code = self._read_candidate_code_file(parent)
             parent_obj = json.loads(
                 self._format_parent_for_prompt(
                     parent,
@@ -1569,8 +1621,7 @@ class EoHEngine:
                 r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
-            with open(parent.code_file_path, "r") as f:
-                parent_code = f.read()
+            parent_code = self._read_candidate_code_file(parent)
             parent_obj = json.loads(
                 self._format_parent_for_prompt(
                     parent,
@@ -1667,8 +1718,7 @@ class EoHEngine:
                 r'- All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
-            with open(parent.code_file_path, "r") as f:
-                parent_code = f.read()
+            parent_code = self._read_candidate_code_file(parent)
             parent_obj = json.loads(
                 self._format_parent_for_prompt(
                     parent,
@@ -1764,8 +1814,7 @@ class EoHEngine:
                 r'- All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
-            with open(parent.code_file_path, "r") as f:
-                parent_code = f.read()
+            parent_code = self._read_candidate_code_file(parent)
             parent_obj = json.loads(
                 self._format_parent_for_prompt(
                     parent,
@@ -1855,8 +1904,7 @@ class EoHEngine:
                 r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
-            with open(parent.code_file_path, "r") as f:
-                parent_code = f.read()
+            parent_code = self._read_candidate_code_file(parent)
             parent_obj = json.loads(
                 self._format_parent_for_prompt(
                     parent,
@@ -1947,10 +1995,8 @@ class EoHEngine:
                 "Rules: valid JSON only; escape newlines as \\n."
             )
         else:
-            with open(parent1.code_file_path, "r") as f:
-                parent1_code = f.read()
-            with open(parent2.code_file_path, "r") as f:
-                parent2_code = f.read()
+            parent1_code = self._read_candidate_code_file(parent1)
+            parent2_code = self._read_candidate_code_file(parent2)
             p1_obj = json.loads(
                 self._format_parent_for_prompt(
                     parent1,
@@ -3960,8 +4006,9 @@ class SingleShotEngine(EoHEngine):
             if getattr(cand, "status", None) in ("failed_format", "failed_diff"):
                 cand.score = -float("inf")
                 continue
+            code_file_path = self._refresh_candidate_code_path(cand)
             sim_results = self.evaluator.evaluate(
-                cand.code_file_path, test_sv_file, ref_sv_file
+                code_file_path, test_sv_file, ref_sv_file
             )
 
             if sim_results["status"] == "compilation_error":
@@ -3987,8 +4034,9 @@ class SingleShotEngine(EoHEngine):
 
         # Stage 2: Synthesis and PPA for functionally correct candidates
         for cand in func_passed:
-            report_base_path = cand.code_file_path.rsplit(".", 1)[0]
-            output_dir = os.path.dirname(cand.code_file_path)
+            code_file_path = self._refresh_candidate_code_path(cand)
+            report_base_path = code_file_path.rsplit(".", 1)[0]
+            output_dir = os.path.dirname(code_file_path)
 
             # Get top module name for synthesis
             top_module_name_file = os.path.join(
@@ -4002,7 +4050,7 @@ class SingleShotEngine(EoHEngine):
                 top_module_name = top_module_names.get(self.problem_name, "TopModule")
 
             synth_results = self.synthesis_evaluator.evaluate(
-                cand.code_file_path,
+                code_file_path,
                 self.problem_name,
                 top_module_name,
                 output_dir,
@@ -4994,7 +5042,7 @@ class CVDPEngine(EoHEngine):
                 )
                 continue
             # Put a per-candidate harness beside its saved code
-            cand_dir = Path(cand.code_file_path).parent
+            cand_dir = Path(self._refresh_candidate_code_path(cand)).parent
             run_root = cand_dir / f"cvdp_harness_{cand.id[:8]}"
             try:
                 paths = self._cvdp_materialize_harness(run_root, cand.code)
