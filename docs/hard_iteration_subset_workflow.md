@@ -102,6 +102,23 @@ python scripts/report_hard_iteration_analysis.py \
   --output-dir exp/hard_iteration_qd/<run_tag>/analysis
 ```
 
+Stage 3 and Stage 4 produce different report surfaces:
+
+- Stage 3 raw comparison:
+  - `exp/hard_iteration_qd/<run_tag>/hard_iteration_backend_comparison.md`
+  - emitted by `scripts/run_hard_iteration_qd_vllm.sh`
+  - use this as the direct backend-by-backend comparison for the finished matrix run
+- Stage 4 final analysis:
+  - `exp/hard_iteration_qd/<run_tag>/analysis/report.md`
+  - `exp/hard_iteration_qd/<run_tag>/analysis/summary.json`
+  - emitted by `scripts/report_hard_iteration_analysis.py`
+  - `report.md` is the human-readable synthesis of the run
+  - `summary.json` contains the same aggregate/recommendation content in machine-readable form
+  - the recommendation keys are:
+    - `overall`
+    - `score_qd`
+    - `archive_qd`
+
 ## Artifacts
 
 - one-shot baseline root:
@@ -119,6 +136,24 @@ python scripts/report_hard_iteration_analysis.py \
   - `exp/hard_iteration_qd/<timestamp>/analysis/summary.json`
 - progress tracker:
   - `docs/hard_iteration_subset_qd_plan.md`
+
+## Reserved Stage 4 results section
+
+Populate this section after the live matrix finishes:
+
+- frozen 16-problem subset table:
+  - benchmark
+  - problem
+  - circuit type
+  - reference gate count
+  - vanilla functionality rate
+  - selection stage
+- vanilla baseline context:
+  - note the one-shot model and sampling settings used to derive the subset
+  - link the committed baseline CSV
+- final recommendations context:
+  - distinguish the Stage 3 raw comparison markdown from the Stage 4 final analysis report
+  - summarize why the chosen `overall`, `score_qd`, and `archive_qd` recommendations were selected
 
 ## Current branch status
 

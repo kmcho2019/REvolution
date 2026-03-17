@@ -21,7 +21,7 @@
 The `docs/` directory contains deeper dives:
 
 - `docs/implementation_details.md` – architecture and component responsibilities.
-- `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, and long-budget classic-vs-QD runner.
+- `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, long-budget classic-vs-QD runner, and the final analysis/report surfaces (`hard_iteration_backend_comparison.md`, `analysis/report.md`, `analysis/summary.json`).
 - `docs/revolution_qd_map_elites_implementation_plan.md` – living QD/MAP-Elites implementation status, validation notes, and staged roadmap.
 - `docs/qd_map_elites_guide.md` – QD runtime guide, descriptor/tool mapping, and generation-by-generation trace.
 - `docs/diff_mode.md` – diff-mode schema, policies, diagnostics, and benchmark workflow.

@@ -293,3 +293,42 @@
   - corrected the Stage 3/4 checklist paths so they match the runner's timestamped `<run_tag>` layout
   - extended dry-run test coverage to pin the timestamped matrix output root, manifest creation, and CVT-specific flags
   - extended analysis coverage to include the four-backend workflow and a partial backend tree with placeholder metrics
+
+## Status refresh: 2026-03-17 09:56 UTC
+
+- Stage 3 progress: `classic` has completed `2/16` selected problems at the matrix root `exp/hard_iteration_qd_rerun_20260317_pathfix/20260317_093142`.
+- Latest completed classic summary at poll time:
+  - `RTLLM/Prob024_fsm`
+- Current active tail:
+  - synthesized-netlist verification is running for `RTLLM/Prob015_multi_pipe_8bit/Gen4/Prob015_multi_pipe_8bit_sample19_M-I`
+- Interpretation: the matrix is progressing normally; the current delay is one long late-generation evaluation inside the `classic` mode, not a launcher or endpoint failure.
+
+## Status refresh: 2026-03-17 10:03 UTC
+
+- Stage 3 progress: `classic` has advanced to `3/16` completed problems.
+- Latest completed classic summary at poll time:
+  - `RTLLM/Prob037_parallel2serial`
+- Current active tail:
+  - synthesized-netlist verification is now running for `RTLLM/Prob015_multi_pipe_8bit/Gen5/Prob015_multi_pipe_8bit_sample3_M-R`
+- Follow-through while waiting:
+  - reviewed the earlier one-shot post-run shell syntax error against the last several script revisions and local shell parsing behavior
+  - result: no reproducible repo-local shell syntax bug was found; treat that earlier message as transient/non-actionable unless it recurs with exact stderr and on-disk script contents
+
+## Status refresh: 2026-03-17 10:08 UTC
+
+- Stage 3 progress: `classic` has advanced to `4/16` completed problems at the live matrix root.
+- Latest completed classic summary at poll time:
+  - `RTLLM/Prob015_multi_pipe_8bit`
+- Interpretation: the previously long late-generation tail on `Prob015_multi_pipe_8bit` resolved cleanly, and the `classic` leg continues to make steady forward progress without any launcher or endpoint regression.
+
+## Status refresh: 2026-03-17 10:14 UTC
+
+- Stage 3 progress: `classic` has advanced to `5/16` completed problems.
+- Latest completed classic summary at poll time:
+  - `RTLLM/Prob041_traffic_light`
+- Current matrix shape is unchanged:
+  - `classic` is still the only active mode
+  - `grid_struct`, `cvt_struct`, and `cvt_size_control` have not started yet because the runner executes the modes sequentially
+- Documentation follow-through while waiting:
+  - clarified the distinction between the Stage 3 raw comparison markdown and the Stage 4 final analysis/report surfaces in `README.md`, `docs/user_guide.md`, and `docs/hard_iteration_subset_workflow.md`
+  - reserved a Stage 4 results section in the workflow doc for the frozen subset table, vanilla baseline context, and recommendation rationale

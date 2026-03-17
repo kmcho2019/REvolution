@@ -515,6 +515,19 @@ python scripts/report_hard_iteration_analysis.py \
   --output-dir exp/hard_iteration_qd/<timestamp>/analysis
 ```
 
+The two post-run report surfaces have different roles:
+
+- Stage 3 raw comparison: `exp/hard_iteration_qd/<run_tag>/hard_iteration_backend_comparison.md`
+  - emitted directly by `scripts/run_hard_iteration_qd_vllm.sh`
+  - shows the side-by-side backend comparison for the completed matrix run
+- Stage 4 final analysis: `exp/hard_iteration_qd/<run_tag>/analysis/report.md` plus `analysis/summary.json`
+  - emitted by `scripts/report_hard_iteration_analysis.py`
+  - summarizes aggregate backend performance, per-problem winners, and the recommendation fields:
+    - `overall`
+    - `score_qd`
+    - `archive_qd`
+  - `summary.json` is the machine-readable version of that final writeup surface
+
 Use a fresh post-fix one-shot root for the freeze step. Do not reuse any
 pre-path-fix 2026-03-17 smoke or baseline outputs.
 
