@@ -79,6 +79,10 @@ bash scripts/run_hard_iteration_qd_vllm.sh \
   --mode matrix
 ```
 
+The runner creates a timestamped run directory under the configured save root,
+for example `exp/hard_iteration_qd/<run_tag>/`, and writes both
+`hard_iteration_manifest.txt` and `hard_iteration_backend_comparison.md` there.
+
 Current fixed modes:
 
 - `classic`
@@ -91,11 +95,11 @@ Current fixed modes:
 ```bash
 python scripts/report_hard_iteration_analysis.py \
   --subset-config data/configs/hard_iteration_subset.yaml \
-  --backend_run classic=exp/hard_iteration_qd/<timestamp>/classic \
-  --backend_run grid_struct=exp/hard_iteration_qd/<timestamp>/grid_struct \
-  --backend_run cvt_struct=exp/hard_iteration_qd/<timestamp>/cvt_struct \
-  --backend_run cvt_size_control=exp/hard_iteration_qd/<timestamp>/cvt_size_control \
-  --output-dir exp/hard_iteration_qd/<timestamp>/analysis
+  --backend_run classic=exp/hard_iteration_qd/<run_tag>/classic \
+  --backend_run grid_struct=exp/hard_iteration_qd/<run_tag>/grid_struct \
+  --backend_run cvt_struct=exp/hard_iteration_qd/<run_tag>/cvt_struct \
+  --backend_run cvt_size_control=exp/hard_iteration_qd/<run_tag>/cvt_size_control \
+  --output-dir exp/hard_iteration_qd/<run_tag>/analysis
 ```
 
 ## Artifacts
@@ -107,7 +111,9 @@ python scripts/report_hard_iteration_analysis.py \
 - vanilla difficulty reference generated after the freeze step:
   - `baselines/hard_iteration_subset_vanilla_openai_gpt_oss_120b.csv`
 - long-budget comparison root:
-  - `exp/hard_iteration_qd/`
+  - `exp/hard_iteration_qd/<run_tag>/`
+- matrix manifest:
+  - `exp/hard_iteration_qd/<run_tag>/hard_iteration_manifest.txt`
 - analysis report outputs:
   - `exp/hard_iteration_qd/<timestamp>/analysis/report.md`
   - `exp/hard_iteration_qd/<timestamp>/analysis/summary.json`

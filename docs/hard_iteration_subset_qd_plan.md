@@ -16,7 +16,7 @@
 | Stage 0 | `completed` | Worktree setup and execution scaffold |
 | Stage 1 | `completed` | Runtime circuit typing, subset builder, QD runner, and workflow docs |
 | Stage 2 | `completed` | Corrected one-shot baseline rerun completed and frozen into a balanced 16-problem subset |
-| Stage 3 | `pending` | Frozen subset is ready; long-budget classic-vs-QD matrix not yet launched |
+| Stage 3 | `active` | Long-budget classic-vs-QD matrix launched from the frozen subset config |
 | Stage 4 | `pending` | Analysis, docs, and final recommendations |
 
 ## TODO
@@ -164,18 +164,19 @@
   - `cvt_struct`
   - `cvt_size_control`
 - expected outputs:
-  - `exp/hard_iteration_qd_rerun_<date>/hard_iteration_backend_comparison.md`
-  - per-mode run roots under the same save directory
+  - `exp/hard_iteration_qd_rerun_<date>/<run_tag>/hard_iteration_backend_comparison.md`
+  - `exp/hard_iteration_qd_rerun_<date>/<run_tag>/hard_iteration_manifest.txt`
+  - per-mode run roots under the same timestamped save directory
 - planned commit after matrix completion:
   - `feat(qd): run hard subset classic and qd comparison matrix`
 
 ### Stage 4 analysis checklist
 
 - generate final report artifacts from the completed matrix:
-  - `/workspace/.venv/bin/python scripts/report_hard_iteration_analysis.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd_rerun_<date>/classic --backend_run grid_struct=exp/hard_iteration_qd_rerun_<date>/grid_struct --backend_run cvt_struct=exp/hard_iteration_qd_rerun_<date>/cvt_struct --backend_run cvt_size_control=exp/hard_iteration_qd_rerun_<date>/cvt_size_control --output-dir exp/hard_iteration_qd_rerun_<date>/analysis`
+  - `/workspace/.venv/bin/python scripts/report_hard_iteration_analysis.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd_rerun_<date>/<run_tag>/classic --backend_run grid_struct=exp/hard_iteration_qd_rerun_<date>/<run_tag>/grid_struct --backend_run cvt_struct=exp/hard_iteration_qd_rerun_<date>/<run_tag>/cvt_struct --backend_run cvt_size_control=exp/hard_iteration_qd_rerun_<date>/<run_tag>/cvt_size_control --output-dir exp/hard_iteration_qd_rerun_<date>/<run_tag>/analysis`
 - expected outputs:
-  - `exp/hard_iteration_qd_rerun_<date>/analysis/report.md`
-  - `exp/hard_iteration_qd_rerun_<date>/analysis/summary.json`
+  - `exp/hard_iteration_qd_rerun_<date>/<run_tag>/analysis/report.md`
+  - `exp/hard_iteration_qd_rerun_<date>/<run_tag>/analysis/summary.json`
 - final writeup additions after live results exist:
   - add the frozen subset table and vanilla baseline outcomes to the workflow doc or a dedicated benchmark note
   - add recommendation bullets backed by the real matrix results
@@ -263,3 +264,32 @@
   - bucket balance is `4` each for `RTLLM`/`VerilogEval-Spec-to-RTL` x `combinational`/`sequential`
   - `15` selections came from the primary functionality window and `1` required fallback (`RTLLM/Prob049_signal_generator`)
 - Operational note: the one-shot wrapper printed a one-off post-run shell syntax error after the rerun completed, but `bash -n` and traced dry-run reproduction both passed immediately afterward. Treat that message as non-blocking for Stage 2 artifacts unless it recurs during later live runs.
+
+## Status refresh: 2026-03-17 09:31 UTC
+
+- Stage 3 launched from `data/configs/hard_iteration_subset.yaml`.
+- Live matrix root: `exp/hard_iteration_qd_rerun_20260317_pathfix/20260317_093142`
+- Modes in flight:
+  - `classic`
+  - `grid_struct`
+  - `cvt_struct`
+  - `cvt_size_control`
+- Runtime settings match the frozen config defaults:
+  - `population_size=20`
+  - `num_generations=5`
+  - `num_workers=2`
+  - `candidate_workers=0`
+  - `evaluation_mode=search_accelerated`
+  - `accelerated_synthesis_top_k=1`
+  - `max_tokens=128000`
+  - `diff_max_tokens=128000`
+
+## Status refresh: 2026-03-17 09:40 UTC
+
+- Stage 3 poll: `classic` completed its first problem under `exp/hard_iteration_qd_rerun_20260317_pathfix/20260317_093142/classic`.
+- Latest completed summary at poll time:
+  - `RTLLM/Prob004_adder_8bit`
+- Follow-through while waiting:
+  - corrected the Stage 3/4 checklist paths so they match the runner's timestamped `<run_tag>` layout
+  - extended dry-run test coverage to pin the timestamped matrix output root, manifest creation, and CVT-specific flags
+  - extended analysis coverage to include the four-backend workflow and a partial backend tree with placeholder metrics

@@ -107,8 +107,24 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "--qd_descriptor_profile implemented_structural_compact_3d" in normalized
     assert "--qd_descriptor_profile implemented_structural_fixed_5d" in normalized
     assert "--qd_descriptor_profile size_control_3d" in normalized
+    assert "--qd_num_cells 16" in normalized
+    assert "--qd_cvt_warmup_successes 4" in normalized
     assert "--population_size 20" in normalized
     assert "--num_generations 5" in normalized
     assert "--max_tokens 128000" in normalized
     assert "--diff_max_tokens 128000" in normalized
+    run_dirs = [path for path in (tmp_path / "runs").iterdir() if path.is_dir()]
+    assert len(run_dirs) == 1
+    run_dir = run_dirs[0]
+    assert (run_dir / "hard_iteration_manifest.txt").is_file()
+    manifest = (run_dir / "hard_iteration_manifest.txt").read_text(encoding="utf-8")
+    assert "subset_name=hard_iteration_subset_v1" in manifest
+    assert "mode=matrix" in manifest
+    assert "qd_num_cells=16" in manifest
+    assert "qd_cvt_warmup_successes=4" in manifest
+    assert f"--output {run_dir / 'hard_iteration_backend_comparison.md'}" in normalized
+    assert f"--backend_run classic={run_dir / 'classic'}" in normalized
+    assert f"--backend_run grid_struct={run_dir / 'grid_struct'}" in normalized
+    assert f"--backend_run cvt_struct={run_dir / 'cvt_struct'}" in normalized
+    assert f"--backend_run cvt_size_control={run_dir / 'cvt_size_control'}" in normalized
     assert "Dry run enabled; commands were not executed." in result.stdout
