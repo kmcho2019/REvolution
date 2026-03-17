@@ -16,7 +16,7 @@
 | Stage 0 | `completed` | Worktree setup and execution scaffold |
 | Stage 1 | `completed` | Runtime circuit typing, subset builder, QD runner, and workflow docs |
 | Stage 2 | `completed` | Corrected one-shot baseline rerun completed and frozen into a balanced 16-problem subset |
-| Stage 3 | `active` | Long-budget classic-vs-QD matrix launched from the frozen subset config |
+| Stage 3 | `blocked` | Original matrix session exited after `classic` only; `Prob124_rule110` is missing and the QD legs have not started |
 | Stage 4 | `pending` | Analysis, docs, and final recommendations |
 
 ## TODO
@@ -27,6 +27,7 @@
 - [x] Add `scripts/run_hard_iteration_qd_vllm.sh`
 - [x] Add `scripts/run_hard_iteration_one_shot_vllm.sh`
 - [x] Add `scripts/report_hard_iteration_analysis.py`
+- [x] Add `scripts/report_qd_feature_space.py`
 - [x] Add regression tests for circuit typing, subset building, one-shot recovery, QD runner dry-run, and final analysis
 - [x] Update `README.md`, `GUIDELINES.md`, and `docs/user_guide.md`
 - [x] Run bounded vLLM smoke on the restored endpoint
@@ -332,3 +333,68 @@
 - Documentation follow-through while waiting:
   - clarified the distinction between the Stage 3 raw comparison markdown and the Stage 4 final analysis/report surfaces in `README.md`, `docs/user_guide.md`, and `docs/hard_iteration_subset_workflow.md`
   - reserved a Stage 4 results section in the workflow doc for the frozen subset table, vanilla baseline context, and recommendation rationale
+
+## Status refresh: 2026-03-17 10:27 UTC
+
+- Stage 3 progress: `classic` has advanced to `6/16` completed problems.
+- Latest completed classic summary at poll time:
+  - `RTLLM/Prob042_width_8to16`
+- Current matrix shape is still sequential by mode:
+  - `classic` remains the only active mode
+  - `grid_struct`, `cvt_struct`, and `cvt_size_control` are queued behind it
+
+## Status refresh: 2026-03-17 10:34 UTC
+
+- Stage 3 classic progress: the original sequential matrix at `exp/hard_iteration_qd_rerun_20260317_pathfix/20260317_093142` has advanced to `8/16` completed problems.
+- Parallel Stage 3 branch launched at user request:
+  - mode: `grid_struct`
+  - worker count: `num_workers=8`
+  - save root: `exp/hard_iteration_qd_parallel_grid8_20260317/20260317_103455`
+- Interpretation:
+  - the original matrix run remains active and will continue its sequential mode order unless interrupted later
+  - the new `grid_struct` branch is an auxiliary parallel run intended to overlap with the in-flight `classic` leg rather than replace the already-started matrix process
+
+## Status refresh: 2026-03-17 11:01 UTC
+
+- Auxiliary branch shutdown:
+  - the parallel `grid_struct` run at `exp/hard_iteration_qd_parallel_grid8_20260317/20260317_103455` was intentionally interrupted at user request
+  - it had already produced partial artifacts before the interrupt and currently shows `8` completed summaries
+  - treat that branch as abandoned and exclude it from the primary comparison path unless explicitly revived later
+- Primary matrix status:
+  - the original sequential run at `exp/hard_iteration_qd_rerun_20260317_pathfix/20260317_093142` remains the source of truth
+  - `classic` is still at `8/16` completed problems
+  - latest completed classic summary at poll time: `RTLLM/Prob045_alu`
+- Process check:
+  - no `hard_iteration_qd_parallel_grid8_20260317` worker processes remain
+  - only the original `classic` process tree is still active
+
+## Status refresh: 2026-03-17 11:06 UTC
+
+- Primary matrix progress:
+  - the original sequential run has advanced to `10/16` completed problems in `classic`
+  - latest completed classic summary at poll time: `VerilogEval-Spec-to-RTL/Prob116_m2014_q3`
+- Interpretation:
+  - `classic` has moved from the RTLLM half into the VerilogEval half of the frozen subset
+  - the original run remains healthy and is still the only active source-of-truth experiment
+
+## Status refresh: 2026-03-17 13:35 UTC
+
+- Original matrix session outcome:
+  - the source-of-truth session for `exp/hard_iteration_qd_rerun_20260317_pathfix/20260317_093142` exited before any QD leg started
+  - `classic` stopped at `15/16` completed summaries
+  - `grid_struct`, `cvt_struct`, and `cvt_size_control` were never launched
+  - `hard_iteration_backend_comparison.md` was never generated
+- Missing classic problem:
+  - `VerilogEval-Spec-to-RTL/Prob124_rule110`
+  - its problem directory existed with `generation_log.jsonl` and successful simulation traces, but no final `Prob124_rule110_summary.json`
+  - the partial directory was moved aside to `Prob124_rule110_partial_pre_resume_20260317` so a clean single-problem rerun can reuse the original `classic` root
+- Current resume blocker:
+  - the worktree shell currently cannot reach the vLLM endpoint
+  - `curl http://host.docker.internal:8000/v1/models` fails DNS resolution from this shell
+  - direct probes to `172.17.0.1:8000` and `localhost:8000` also fail
+  - until the endpoint is reachable again, Stage 3 remains `blocked`
+- Safe progress while blocked on the endpoint:
+  - added `scripts/report_qd_feature_space.py`
+  - added `tests/scripts/test_report_qd_feature_space.py`
+  - added workflow and QD-guide documentation for the deep feature-space analysis path
+  - local validation for the new script passed via `pytest tests/scripts/test_report_qd_feature_space.py`

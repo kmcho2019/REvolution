@@ -119,6 +119,26 @@ Stage 3 and Stage 4 produce different report surfaces:
     - `score_qd`
     - `archive_qd`
 
+### 5. Generate the deep QD feature-space report
+
+```bash
+python scripts/report_qd_feature_space.py \
+  --subset-config data/configs/hard_iteration_subset.yaml \
+  --backend_run classic=exp/hard_iteration_qd/<run_tag>/classic \
+  --backend_run grid_struct=exp/hard_iteration_qd/<run_tag>/grid_struct \
+  --backend_run cvt_struct=exp/hard_iteration_qd/<run_tag>/cvt_struct \
+  --backend_run cvt_size_control=exp/hard_iteration_qd/<run_tag>/cvt_size_control \
+  --output-dir exp/hard_iteration_qd/<run_tag>/feature_analysis
+```
+
+This deep analysis layer consumes finished run artifacts and adds:
+
+- `report.md` and `summary.json` with backend aggregate context plus QD-specific feature-space findings
+- `qd_successful_candidates.csv` with one row per successful QD candidate
+- per-backend histogram, PCA, and t-SNE plots for successful designs
+- regression coefficient tables for `quality_score`, `g_P`, `g_A`, and `g_T`
+- `recommended_profile.json` and `recommended_profile_scores.csv` for selecting a larger follow-up descriptor profile
+
 ## Artifacts
 
 - one-shot baseline root:
@@ -134,6 +154,11 @@ Stage 3 and Stage 4 produce different report surfaces:
 - analysis report outputs:
   - `exp/hard_iteration_qd/<timestamp>/analysis/report.md`
   - `exp/hard_iteration_qd/<timestamp>/analysis/summary.json`
+- deep QD feature-space outputs:
+  - `exp/hard_iteration_qd/<timestamp>/feature_analysis/report.md`
+  - `exp/hard_iteration_qd/<timestamp>/feature_analysis/summary.json`
+  - `exp/hard_iteration_qd/<timestamp>/feature_analysis/qd_successful_candidates.csv`
+  - `exp/hard_iteration_qd/<timestamp>/feature_analysis/recommended_profile.json`
 - progress tracker:
   - `docs/hard_iteration_subset_qd_plan.md`
 

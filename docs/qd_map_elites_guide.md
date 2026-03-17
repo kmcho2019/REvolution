@@ -75,6 +75,9 @@ Core QD files:
   `quality_score`, gain components, repair score, and code hashing
 - [visualization.py](../src/revolution/qd/visualization.py):
   history plots plus grid/CVT archive visualizations
+- `scripts/report_qd_feature_space.py`:
+  post-run feature-space analysis, regression summaries, collapse diagnostics,
+  and PCA/t-SNE projections over successful QD candidates
 
 Related evaluation files:
 
@@ -288,6 +291,37 @@ Extraction path:
   harness bookkeeping
 - the current path is intentionally descriptor-gated so classic REvolution and
   non-dynamic QD runs do not pay waveform cost
+
+## Post-run QD feature-space analysis
+
+The run tree now supports a deeper post-run analysis pass without rerunning
+evaluation. The intended entry point is `scripts/report_qd_feature_space.py`.
+
+Inputs:
+
+- one or more finished backend run roots such as `classic`, `grid_struct`, or
+  `cvt_struct`
+- the frozen hard-subset config so missing problems still show up in backend
+  aggregate tables
+
+Primary outputs:
+
+- backend aggregate report with classic-vs-QD context
+- per-backend successful-candidate histograms
+- per-backend PCA and t-SNE plots over successful QD candidates, colored by
+  `quality_score`
+- regression coefficient tables for `quality_score`, `g_P`, `g_A`, and `g_T`
+- `recommended_profile.json` for selecting a larger follow-up descriptor
+  profile from observed variability, collapse behavior, and predictive signal
+
+The analysis intentionally uses only the existing run tree:
+
+- problem summaries for backend-level score and success rates
+- `qd_archive_event.json` for per-candidate descriptor and metric payloads
+- `archive_cells.csv` for final-elite membership
+
+That keeps the reporting pass decoupled from the live search runtime and makes
+it safe to re-run on older experiment roots.
 
 PPA gain axes are derived from reference-vs-generated PPA metrics:
 
