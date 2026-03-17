@@ -515,9 +515,14 @@ python scripts/report_hard_iteration_analysis.py \
   --output-dir exp/hard_iteration_qd/<timestamp>/analysis
 ```
 
-Use a fresh post-fix one-shot root for the freeze step. Do not reuse the
-invalid March 17 outputs under `exp/hard_iteration_one_shot_smoke_20260317`
-or `exp/hard_iteration_one_shot_restart_20260317`.
+Use a fresh post-fix one-shot root for the freeze step. Do not reuse any
+pre-path-fix 2026-03-17 smoke or baseline outputs.
+
+For resumed hard-subset one-shot baselines, set
+`HARD_ONE_SHOT_BATCH_SIZE=0` when you want one `run_one_shot.py` invocation to
+cover all remaining pending problems for a benchmark. This is useful when a
+small fixed batch is being held open by one slow problem and you want freed
+workers to keep pulling more pending work.
 
 ### 3.4 Output inspection
 

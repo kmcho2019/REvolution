@@ -115,7 +115,7 @@
   - the prior 2026-03-17 Stage 2 freeze and the launched Stage 3 matrix are invalid and must not be used
   - rerun Stage 2 from scratch with a fresh output root before freezing the subset again
 
-### 2026-03-17 Stage 3 launch
+### 2026-03-17 Historical aborted Stage 3 launch
 
 - launched the full hard-subset matrix with save root `exp/hard_iteration_qd_20260317/20260317_063730`
 - the run was interrupted after the path-regression diagnosis because the preceding Stage 2 freeze was invalid
@@ -129,21 +129,24 @@
   - `curl http://host.docker.internal:8000/v1/models`
   - confirm `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b` is served
   - confirm `max_model_len >= 128000`
-- bounded smoke command:
-  - `/workspace/.venv/bin/python scripts/run_one_shot.py --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path exp/hard_iteration_one_shot_smoke_20260317 --num_workers 1 --temperature 1.0 --top_p 0.95 --max_tokens 128000 --num_samples 1 --generation_mode whole`
+- completed smoke reference:
+  - `/workspace/.venv/bin/python scripts/run_one_shot.py --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path exp/hard_iteration_one_shot_smoke_fix_20260317 --num_workers 1 --temperature 1.0 --top_p 0.95 --max_tokens 128000 --num_samples 1 --generation_mode whole`
 - smoke acceptance:
-  - one summary is emitted under `exp/hard_iteration_one_shot_smoke_20260317`
+  - one summary is emitted under `exp/hard_iteration_one_shot_smoke_fix_20260317`
   - no local script/runtime error occurs before generation completes
 
 ### Stage 2 baseline restart and freeze
 
 - clean baseline restart:
-  - `HARD_ONE_SHOT_VLLM_HOST=host.docker.internal HARD_ONE_SHOT_VLLM_PORT=8000 HARD_ONE_SHOT_MIN_MODEL_LEN=128000 HARD_ONE_SHOT_SAVE_PATH=exp/hard_iteration_one_shot_restart_20260317 HARD_ONE_SHOT_NUM_WORKERS=8 HARD_ONE_SHOT_BATCH_SIZE=8 HARD_ONE_SHOT_NUM_SAMPLES=10 HARD_ONE_SHOT_MAX_TOKENS=128000 HARD_ONE_SHOT_TEMPERATURE=1.0 HARD_ONE_SHOT_TOP_P=0.95 bash scripts/run_hard_iteration_one_shot_vllm.sh --benchmarks RTLLM VerilogEval-Spec-to-RTL`
+  - `HARD_ONE_SHOT_VLLM_HOST=host.docker.internal HARD_ONE_SHOT_VLLM_PORT=8000 HARD_ONE_SHOT_MIN_MODEL_LEN=128000 HARD_ONE_SHOT_SAVE_PATH=exp/hard_iteration_one_shot_rerun_20260317_pathfix HARD_ONE_SHOT_NUM_WORKERS=8 HARD_ONE_SHOT_BATCH_SIZE=8 HARD_ONE_SHOT_NUM_SAMPLES=10 HARD_ONE_SHOT_MAX_TOKENS=128000 HARD_ONE_SHOT_TEMPERATURE=1.0 HARD_ONE_SHOT_TOP_P=0.95 bash scripts/run_hard_iteration_one_shot_vllm.sh --benchmarks RTLLM VerilogEval-Spec-to-RTL`
+- late-stage resume recommendation after the current in-flight batch exits:
+  - `HARD_ONE_SHOT_VLLM_HOST=host.docker.internal HARD_ONE_SHOT_VLLM_PORT=8000 HARD_ONE_SHOT_MIN_MODEL_LEN=128000 HARD_ONE_SHOT_SAVE_PATH=exp/hard_iteration_one_shot_rerun_20260317_pathfix HARD_ONE_SHOT_NUM_WORKERS=8 HARD_ONE_SHOT_BATCH_SIZE=0 HARD_ONE_SHOT_NUM_SAMPLES=10 HARD_ONE_SHOT_MAX_TOKENS=128000 HARD_ONE_SHOT_TEMPERATURE=1.0 HARD_ONE_SHOT_TOP_P=0.95 bash scripts/run_hard_iteration_one_shot_vllm.sh --benchmarks VerilogEval-Spec-to-RTL`
+  - rationale: `HARD_ONE_SHOT_BATCH_SIZE=0` launches all remaining pending problems for the benchmark in one `run_one_shot.py` command, so workers that finish shorter problems can immediately move on instead of waiting behind one slow batch member
 - completion criteria:
-  - `50` RTLLM summaries under `exp/hard_iteration_one_shot_restart_20260317/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/RTLLM`
-  - `156` VerilogEval-Spec-to-RTL summaries under `exp/hard_iteration_one_shot_restart_20260317/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/VerilogEval-Spec-to-RTL`
+  - `50` RTLLM summaries under `exp/hard_iteration_one_shot_rerun_20260317_pathfix/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/RTLLM`
+  - `156` VerilogEval-Spec-to-RTL summaries under `exp/hard_iteration_one_shot_rerun_20260317_pathfix/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/VerilogEval-Spec-to-RTL`
 - freeze immediately after the restart completes:
-  - `/workspace/.venv/bin/python scripts/build_hard_iteration_subset.py --one-shot-root exp/hard_iteration_one_shot_restart_20260317 --subset-size 16 --per-bucket 4 --benchmark-root data/bench --rtllm-csv scripts/RTLLM.csv --verilogeval-csv scripts/VerilogEval-Spec-to-RTL.csv --output-config data/configs/hard_iteration_subset.yaml --output-csv baselines/hard_iteration_subset_vanilla_openai_gpt_oss_120b.csv`
+  - `/workspace/.venv/bin/python scripts/build_hard_iteration_subset.py --one-shot-root exp/hard_iteration_one_shot_rerun_20260317_pathfix --subset-size 16 --per-bucket 4 --benchmark-root data/bench --rtllm-csv scripts/RTLLM.csv --verilogeval-csv scripts/VerilogEval-Spec-to-RTL.csv --output-config data/configs/hard_iteration_subset.yaml --output-csv baselines/hard_iteration_subset_vanilla_openai_gpt_oss_120b.csv`
 - freeze acceptance:
   - subset size is `16`
   - bucket target is `4` each for RTLLM/VerilogEval x combinational/sequential
@@ -154,14 +157,14 @@
 ### Stage 3 execution checklist
 
 - run the full hard-subset matrix:
-  - `HARD_SUBSET_SAVE_PATH=exp/hard_iteration_qd_20260317 HARD_SUBSET_VLLM_HOST=host.docker.internal HARD_SUBSET_VLLM_PORT=8000 HARD_SUBSET_MIN_MODEL_LEN=128000 HARD_SUBSET_POPULATION_SIZE=20 HARD_SUBSET_NUM_GENERATIONS=5 HARD_SUBSET_NUM_WORKERS=2 HARD_SUBSET_CANDIDATE_WORKERS=0 HARD_SUBSET_TEMPERATURE=1.0 HARD_SUBSET_TOP_P=1.0 HARD_SUBSET_MAX_TOKENS=128000 HARD_SUBSET_DIFF_MAX_TOKENS=128000 HARD_SUBSET_NUM_CELLS=16 HARD_SUBSET_CVT_WARMUP=4 bash scripts/run_hard_iteration_qd_vllm.sh --config data/configs/hard_iteration_subset.yaml --mode matrix`
+  - `HARD_SUBSET_SAVE_PATH=exp/hard_iteration_qd_rerun_<date> HARD_SUBSET_VLLM_HOST=host.docker.internal HARD_SUBSET_VLLM_PORT=8000 HARD_SUBSET_MIN_MODEL_LEN=128000 HARD_SUBSET_POPULATION_SIZE=20 HARD_SUBSET_NUM_GENERATIONS=5 HARD_SUBSET_NUM_WORKERS=2 HARD_SUBSET_CANDIDATE_WORKERS=0 HARD_SUBSET_TEMPERATURE=1.0 HARD_SUBSET_TOP_P=1.0 HARD_SUBSET_MAX_TOKENS=128000 HARD_SUBSET_DIFF_MAX_TOKENS=128000 HARD_SUBSET_NUM_CELLS=16 HARD_SUBSET_CVT_WARMUP=4 bash scripts/run_hard_iteration_qd_vllm.sh --config data/configs/hard_iteration_subset.yaml --mode matrix`
 - required modes:
   - `classic`
   - `grid_struct`
   - `cvt_struct`
   - `cvt_size_control`
 - expected outputs:
-  - `exp/hard_iteration_qd_20260317/hard_iteration_backend_comparison.md`
+  - `exp/hard_iteration_qd_rerun_<date>/hard_iteration_backend_comparison.md`
   - per-mode run roots under the same save directory
 - planned commit after matrix completion:
   - `feat(qd): run hard subset classic and qd comparison matrix`
@@ -169,10 +172,10 @@
 ### Stage 4 analysis checklist
 
 - generate final report artifacts from the completed matrix:
-  - `/workspace/.venv/bin/python scripts/report_hard_iteration_analysis.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd_20260317/classic --backend_run grid_struct=exp/hard_iteration_qd_20260317/grid_struct --backend_run cvt_struct=exp/hard_iteration_qd_20260317/cvt_struct --backend_run cvt_size_control=exp/hard_iteration_qd_20260317/cvt_size_control --output-dir exp/hard_iteration_qd_20260317/analysis`
+  - `/workspace/.venv/bin/python scripts/report_hard_iteration_analysis.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd_rerun_<date>/classic --backend_run grid_struct=exp/hard_iteration_qd_rerun_<date>/grid_struct --backend_run cvt_struct=exp/hard_iteration_qd_rerun_<date>/cvt_struct --backend_run cvt_size_control=exp/hard_iteration_qd_rerun_<date>/cvt_size_control --output-dir exp/hard_iteration_qd_rerun_<date>/analysis`
 - expected outputs:
-  - `exp/hard_iteration_qd_20260317/analysis/report.md`
-  - `exp/hard_iteration_qd_20260317/analysis/summary.json`
+  - `exp/hard_iteration_qd_rerun_<date>/analysis/report.md`
+  - `exp/hard_iteration_qd_rerun_<date>/analysis/summary.json`
 - final writeup additions after live results exist:
   - add the frozen subset table and vanilla baseline outcomes to the workflow doc or a dedicated benchmark note
   - add recommendation bullets backed by the real matrix results
@@ -193,3 +196,30 @@
 - Stable completion snapshot: `RTLLM` is now `50/50` complete and `VerilogEval-Spec-to-RTL` is `8/156` complete.
 - Follow-through completed while waiting: hard-subset workflow docs now point at a fresh post-fix one-shot root, warn against the invalid March 17 outputs, and a new `tests/scripts/test_run_one_shot.py` regression pins the relative-`--save_path` normalization at the script entrypoint.
 - Validation snapshot: `python -m pytest tests/scripts/test_run_one_shot.py tests/revolution/test_evaluation.py tests/scripts/test_build_hard_iteration_subset.py` passed (`42` tests).
+
+## Status refresh: 2026-03-17 07:49 UTC
+
+- Poll result: corrected Stage 2 rerun is still active and has cleared the full RTLLM suite.
+- Stable completion snapshot: `RTLLM` is `50/50` complete and `VerilogEval-Spec-to-RTL` is `63/156` complete.
+- Run health: the corrected VerilogEval batches continue to pass preflight and aggregate normally; no recurrence of the broken relative-path simulation error has appeared.
+- Stage impact: Stage 2 remains on track for a truthful refreeze once the remaining `93` VerilogEval problems complete.
+
+## Status refresh: 2026-03-17 08:08 UTC
+
+- Poll result: corrected Stage 2 rerun is still active under `exp/hard_iteration_one_shot_rerun_20260317_pathfix`.
+- Stable completion snapshot: `RTLLM` is `50/50` complete and `VerilogEval-Spec-to-RTL` is `111/156` complete.
+- Batch health: the latest completed VerilogEval summary at poll time was `Prob105_rotate100` written at `08:00:03 UTC`; the run has gone quiet in the terminal since then, but no new path-regression symptom has appeared.
+- Documentation follow-through: the active checklist now points at the post-fix smoke root and the live corrected baseline root, while the invalid pre-fix March 17 roots remain only in historical sections or warning prose.
+- Stage impact: keep Stage 2 as `active`; Stage 3 and Stage 4 stay blocked on the remaining `45` VerilogEval summaries and the subsequent valid subset freeze.
+
+## Status refresh: 2026-03-17 08:24 UTC
+
+- Poll result: corrected Stage 2 rerun is still active with unchanged completed-summary counts at `RTLLM 50/50` and `VerilogEval-Spec-to-RTL 111/156`.
+- Stall check: the flat summary count is not a dead process. The active VerilogEval worker has continued advancing inside `Prob108_rule90`, moving from `sample4_initial` to `sample5_initial` and then `sample6_initial` under `vvp`.
+- Operational conclusion: keep the batch running. The current slow point is long per-sample simulation time inside one problem, not a recurrence of the relative-path evaluator failure.
+
+## Status refresh: 2026-03-17 08:32 UTC
+
+- Stage 2 runtime improvement: `scripts/run_hard_iteration_one_shot_vllm.sh` now accepts `HARD_ONE_SHOT_BATCH_SIZE=0` to launch all remaining pending problems for a benchmark in one command.
+- Why this matters: the current `VerilogEval-Spec-to-RTL` rerun is spending a long time inside `Prob108_rule90`, and a small fixed batch can leave finished workers idle until that whole batch returns. The new resume mode avoids that head-of-line blocking on the next launch.
+- Testing follow-through: added a dry-run regression in `tests/scripts/test_run_hard_iteration_one_shot_vllm.py` to pin the single-command all-remaining behavior.

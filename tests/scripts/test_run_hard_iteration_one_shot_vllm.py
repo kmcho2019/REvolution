@@ -59,3 +59,55 @@ def test_run_hard_iteration_one_shot_script_dry_run_skips_completed_and_batches_
     assert "--num_samples 10" in normalized
     assert "--max_tokens 128000" in normalized
     assert "Dry run enabled; commands were not executed." in result.stdout
+
+
+def test_run_hard_iteration_one_shot_script_batch_size_zero_runs_all_pending_in_one_command(tmp_path):
+    repo_root = Path(__file__).resolve().parents[2]
+    script_path = repo_root / "scripts" / "run_hard_iteration_one_shot_vllm.sh"
+    model_dir = "_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b"
+    save_root = tmp_path / "one_shot"
+
+    completed_rtllm = save_root / model_dir / "RTLLM" / "Prob001_accu"
+    completed_rtllm.mkdir(parents=True, exist_ok=True)
+    (completed_rtllm / "Prob001_accu_summary.json").write_text("{}", encoding="utf-8")
+
+    fake_bin = tmp_path / "bin"
+    fake_bin.mkdir()
+    fake_curl = fake_bin / "curl"
+    fake_curl.write_text(
+        "#!/usr/bin/env bash\n"
+        "printf '%s' '{\"data\":[{\"id\":\"stub-model\",\"max_model_len\":131072}]}'\n",
+        encoding="utf-8",
+    )
+    fake_curl.chmod(0o755)
+
+    pending_rtllm = [
+        line.strip()
+        for line in (repo_root / "data" / "bench" / "RTLLM" / "problems.txt").read_text(encoding="utf-8").splitlines()
+        if line.strip() and line.strip() != "Prob001_accu"
+    ]
+
+    env = os.environ.copy()
+    env["PATH"] = f"{fake_bin}:{env['PATH']}"
+    env["PYTHON_BIN"] = str(Path(os.sys.executable))
+    env["HARD_ONE_SHOT_SAVE_PATH"] = str(save_root)
+    env["HARD_ONE_SHOT_BATCH_SIZE"] = "0"
+    env["HARD_ONE_SHOT_NUM_WORKERS"] = "8"
+
+    result = subprocess.run(
+        ["bash", str(script_path), "--benchmarks", "RTLLM", "--dry-run"],
+        cwd=repo_root,
+        env=env,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    normalized = " ".join(result.stdout.split())
+    assert "Batch size: all remaining problems per benchmark" in result.stdout
+    assert "[RTLLM/batch1] command:" in result.stdout
+    assert "[RTLLM/batch2] command:" not in result.stdout
+    assert f"--problems {pending_rtllm[0]} {pending_rtllm[1]}" in normalized
+    assert f"{pending_rtllm[-1]} --api_backend vllm" in normalized
+    assert "Prob001_accu" not in normalized

@@ -10,14 +10,16 @@ Description:
   Run or resume the long-context vanilla one-shot baseline used to freeze the
   hard iteration subset. Existing problem summaries are treated as completed,
   and the remaining pending problems are launched in bounded batches so the run
-  can be resumed after endpoint outages.
+  can be resumed after endpoint outages. Set `HARD_ONE_SHOT_BATCH_SIZE=0` to
+  disable batching and launch all remaining problems for a benchmark in one
+  command so idle workers can keep pulling new problems.
 
 Environment overrides:
   HARD_ONE_SHOT_VLLM_HOST       vLLM host (default: host.docker.internal)
   HARD_ONE_SHOT_VLLM_PORT       vLLM port (default: 8000)
   HARD_ONE_SHOT_MIN_MODEL_LEN   Required minimum served max_model_len (default: 128000, set 0 to disable)
   HARD_ONE_SHOT_SAVE_PATH       Output root (default: <repo>/exp/hard_iteration_one_shot)
-  HARD_ONE_SHOT_BATCH_SIZE      Problems per batch (default: 8)
+  HARD_ONE_SHOT_BATCH_SIZE      Problems per batch (default: 8, set 0 to run all remaining problems in one command)
   HARD_ONE_SHOT_NUM_WORKERS     run_one_shot worker count (default: 8)
   HARD_ONE_SHOT_NUM_SAMPLES     Samples per problem (default: 10)
   HARD_ONE_SHOT_MAX_TOKENS      Max tokens (default: 128000)
@@ -103,6 +105,11 @@ MODEL_NAME="${HARD_ONE_SHOT_MODEL_NAME:-/project/cad-team/LX_Semicon/models/open
 MODEL_DIR_NAME="${MODEL_NAME//\//_}"
 MODEL_ENDPOINT="http://${VLLM_HOST}:${VLLM_PORT}/v1/models"
 
+if [[ ! "${BATCH_SIZE}" =~ ^-?[0-9]+$ ]]; then
+  echo "HARD_ONE_SHOT_BATCH_SIZE must be an integer, got: ${BATCH_SIZE}" >&2
+  exit 2
+fi
+
 if [[ -z "${OPENAI_API_KEY:-}" ]]; then
   export OPENAI_API_KEY="vllm-local-placeholder"
 fi
@@ -147,7 +154,11 @@ echo "vLLM endpoint: ${MODEL_ENDPOINT}"
 echo "Model: ${MODEL_NAME}"
 echo "Benchmarks: ${BENCHMARKS[*]}"
 echo "Save path: ${SAVE_PATH}"
-echo "Batch size: ${BATCH_SIZE}"
+if (( BATCH_SIZE <= 0 )); then
+  echo "Batch size: all remaining problems per benchmark"
+else
+  echo "Batch size: ${BATCH_SIZE}"
+fi
 echo "Workers: ${NUM_WORKERS}"
 
 status=0
@@ -177,10 +188,14 @@ PY
   fi
 
   echo "[${benchmark}] pending problems: ${#PENDING[@]}"
+  EFFECTIVE_BATCH_SIZE="${BATCH_SIZE}"
+  if (( EFFECTIVE_BATCH_SIZE <= 0 )); then
+    EFFECTIVE_BATCH_SIZE="${#PENDING[@]}"
+  fi
   batch_index=0
-  for ((start=0; start<${#PENDING[@]}; start+=BATCH_SIZE)); do
+  for ((start=0; start<${#PENDING[@]}; start+=EFFECTIVE_BATCH_SIZE)); do
     batch_index=$(( batch_index + 1 ))
-    BATCH=("${PENDING[@]:start:BATCH_SIZE}")
+    BATCH=("${PENDING[@]:start:EFFECTIVE_BATCH_SIZE}")
     if ! wait_for_endpoint; then
       status=1
       break 2

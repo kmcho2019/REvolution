@@ -12,9 +12,7 @@ frozen subset.
 - benchmark reference PPA files under `data/bench/<suite>/`
 - vanilla one-shot summaries under a valid post-fix rerun root such as
   `exp/hard_iteration_one_shot_rerun_<date>/`
-- do not reuse the invalid March 17 relative-path outputs under
-  `exp/hard_iteration_one_shot_smoke_20260317/` or
-  `exp/hard_iteration_one_shot_restart_20260317/`
+- do not reuse any pre-path-fix 2026-03-17 smoke or baseline outputs
 
 ## Commands
 
@@ -29,6 +27,12 @@ HARD_ONE_SHOT_VLLM_PORT=8000 \
 HARD_ONE_SHOT_SAVE_PATH=exp/hard_iteration_one_shot_rerun_<date> \
 bash scripts/run_hard_iteration_one_shot_vllm.sh
 ```
+
+If the endpoint is stable and the remaining work is dominated by one long
+problem, resume with `HARD_ONE_SHOT_BATCH_SIZE=0` so the wrapper launches all
+remaining pending problems for the benchmark in one `run_one_shot.py` command.
+That lets idle workers move on to the next problem instead of waiting behind a
+small fixed batch.
 
 ### 2. Freeze the hard subset
 
@@ -86,9 +90,9 @@ python scripts/report_hard_iteration_analysis.py \
 
 - one-shot baseline root:
   - `exp/hard_iteration_one_shot_rerun_<date>/`
-- frozen subset config:
+- frozen subset config generated after the freeze step:
   - `data/configs/hard_iteration_subset.yaml`
-- vanilla difficulty reference:
+- vanilla difficulty reference generated after the freeze step:
   - `baselines/hard_iteration_subset_vanilla_openai_gpt_oss_120b.csv`
 - long-budget comparison root:
   - `exp/hard_iteration_qd/`
