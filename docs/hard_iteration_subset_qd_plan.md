@@ -1,0 +1,154 @@
+# Hard Iteration Subset + QD Matrix Execution Plan
+
+## Original request
+
+- create and use a dedicated git worktree
+- keep a committed markdown plan/progress tracker with clear stages and TODOs
+- derive a relatively hard RTLLM + VerilogEval-Spec-to-RTL subset using gate count and vanilla-model one-shot difficulty
+- keep both combinational and sequential designs in the subset
+- use the subset for a `20 x 5` classic-vs-QD comparison with recommended grid/CVT variants
+- update docs, configs, tests, and commit history as the work progresses
+
+## Stage tracker
+
+| Stage | Status | Notes |
+|:---|:---|:---|
+| Stage 0 | `completed` | Worktree setup and execution scaffold |
+| Stage 1 | `completed` | Runtime circuit typing, subset builder, QD runner, and workflow docs |
+| Stage 2 | `active` | Clean one-shot baseline restart and hard subset freeze |
+| Stage 3 | `pending` | Hard-subset classic-vs-QD matrix execution |
+| Stage 4 | `pending` | Analysis, docs, and final recommendations |
+
+## TODO
+
+- [x] Create worktree `feat/hard-iteration-subset-qd`
+- [x] Add PPA-derived circuit typing for RTLLM and VerilogEval-Spec-to-RTL
+- [x] Add `scripts/build_hard_iteration_subset.py`
+- [x] Add `scripts/run_hard_iteration_qd_vllm.sh`
+- [x] Add `scripts/run_hard_iteration_one_shot_vllm.sh`
+- [x] Add `scripts/report_hard_iteration_analysis.py`
+- [x] Add regression tests for circuit typing, subset building, one-shot recovery, QD runner dry-run, and final analysis
+- [x] Update `README.md`, `GUIDELINES.md`, and `docs/user_guide.md`
+- [ ] Run bounded vLLM smoke on the restored endpoint
+- [ ] Run clean one-shot baseline restart (`10` samples/problem, `8` workers, long-context vLLM)
+- [ ] Freeze and commit `data/configs/hard_iteration_subset.yaml`
+- [ ] Commit vanilla baseline CSV for difficulty reference
+- [ ] Run classic + grid_struct + cvt_struct + cvt_size_control on the frozen subset
+- [ ] Produce comparison report, analysis notes, and recommendations
+- [ ] Make signed multi-line commits for the remaining live stages
+
+## Progress log
+
+### 2026-03-16 Stage 0
+
+- created worktree `/workspace/.worktrees/hard-iteration-subset-qd`
+- branched from `wip/journal-extension-2026` at `902f1bd78f`
+- confirmed the shared vLLM endpoint serves `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b` with `max_model_len=131072`
+- confirmed existing repo surfaces already provide:
+  - `scripts/run_one_shot.py` for vanilla baseline generation
+  - `scripts/backend_comparison_report.py` for classic-vs-QD comparison markdown
+  - `scripts/run_qd_retrospective_redo_vllm.sh` as the closest existing long-run harness to mirror
+
+### 2026-03-16 Stage 1
+
+- implemented PPA-derived circuit typing in `src/revolution/runtime/problem_spec.py`
+- added `scripts/build_hard_iteration_subset.py` to freeze a balanced hard subset from one-shot summaries, gate-count CSVs, and reference PPA metadata
+- added `scripts/run_hard_iteration_qd_vllm.sh` to run classic, grid, and CVT modes from the frozen subset config
+- added `scripts/run_hard_iteration_one_shot_vllm.sh` so the vanilla baseline can restart or resume safely after endpoint outages
+- added `scripts/report_hard_iteration_analysis.py` so the final hard-subset matrix can emit:
+  - `report.md`
+  - `summary.json`
+  - recommendation fields for overall, score-oriented QD, and archive-health QD
+- added regression coverage for:
+  - benchmark circuit typing behavior
+  - subset builder selection and export behavior
+  - one-shot runner dry-run batching and completed-problem skipping
+  - hard-subset runner dry-run matrix generation
+  - hard-subset analysis reporting
+- linked the new hard-subset workflow surfaces from `README.md`, `GUIDELINES.md`, and `docs/user_guide.md`
+
+### 2026-03-16 Outage summary
+
+- started the full one-shot baseline over `RTLLM` and `VerilogEval-Spec-to-RTL` with:
+  - `10` samples/problem
+  - `8` workers
+  - `temperature=1.0`
+  - `top_p=0.95`
+  - `max_tokens=128000`
+- the initial sweep completed `35` RTLLM problems before the remaining workers stopped making forward progress on the shared endpoint
+- preserved the partial outputs under:
+  - `exp/hard_iteration_one_shot/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b`
+- recovery probes then failed because `http://host.docker.internal:8000/v1/models` returned `connection refused`
+- a bounded retry through `scripts/run_hard_iteration_one_shot_vllm.sh` confirmed the harness waited correctly and exited cleanly without producing new summaries while the endpoint was unavailable
+- decision change for the final benchmark reference run:
+  - keep the partial RTLLM outputs only as audit history
+  - restart Stage 2 from a fresh output root once the endpoint is restored
+
+### 2026-03-17 Recovery status
+
+- `curl http://host.docker.internal:8000/v1/models` is reachable again
+- the restored endpoint reports:
+  - model id `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b`
+  - `max_model_len=131072`
+- no one-shot baseline or hard-subset QD process is currently running
+- Stage 2 is unblocked and reset to `active`
+- the next execution step is a bounded smoke followed by a clean one-shot baseline restart from a new output root
+
+## Remaining execution checklist
+
+### Stage 2 smoke
+
+- endpoint preflight:
+  - `curl http://host.docker.internal:8000/v1/models`
+  - confirm `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b` is served
+  - confirm `max_model_len >= 128000`
+- bounded smoke command:
+  - `/workspace/.venv/bin/python scripts/run_one_shot.py --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --save_path exp/hard_iteration_one_shot_smoke_20260317 --num_workers 1 --temperature 1.0 --top_p 0.95 --max_tokens 128000 --num_samples 1 --generation_mode whole`
+- smoke acceptance:
+  - one summary is emitted under `exp/hard_iteration_one_shot_smoke_20260317`
+  - no local script/runtime error occurs before generation completes
+
+### Stage 2 baseline restart and freeze
+
+- clean baseline restart:
+  - `HARD_ONE_SHOT_VLLM_HOST=host.docker.internal HARD_ONE_SHOT_VLLM_PORT=8000 HARD_ONE_SHOT_MIN_MODEL_LEN=128000 HARD_ONE_SHOT_SAVE_PATH=exp/hard_iteration_one_shot_restart_20260317 HARD_ONE_SHOT_NUM_WORKERS=8 HARD_ONE_SHOT_BATCH_SIZE=8 HARD_ONE_SHOT_NUM_SAMPLES=10 HARD_ONE_SHOT_MAX_TOKENS=128000 HARD_ONE_SHOT_TEMPERATURE=1.0 HARD_ONE_SHOT_TOP_P=0.95 bash scripts/run_hard_iteration_one_shot_vllm.sh --benchmarks RTLLM VerilogEval-Spec-to-RTL`
+- completion criteria:
+  - `50` RTLLM summaries under `exp/hard_iteration_one_shot_restart_20260317/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/RTLLM`
+  - `156` VerilogEval-Spec-to-RTL summaries under `exp/hard_iteration_one_shot_restart_20260317/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/VerilogEval-Spec-to-RTL`
+- freeze immediately after the restart completes:
+  - `/workspace/.venv/bin/python scripts/build_hard_iteration_subset.py --one-shot-root exp/hard_iteration_one_shot_restart_20260317 --subset-size 16 --per-bucket 4 --benchmark-root data/bench --rtllm-csv scripts/RTLLM.csv --verilogeval-csv scripts/VerilogEval-Spec-to-RTL.csv --output-config data/configs/hard_iteration_subset.yaml --output-csv baselines/hard_iteration_subset_vanilla_openai_gpt_oss_120b.csv`
+- freeze acceptance:
+  - subset size is `16`
+  - bucket target is `4` each for RTLLM/VerilogEval x combinational/sequential
+  - no selected problem has invalid gate count or unknown circuit type
+- planned commit after freeze:
+  - `feat(bench): freeze hard iteration subset and baseline reference`
+
+### Stage 3 execution checklist
+
+- run the full hard-subset matrix:
+  - `HARD_SUBSET_SAVE_PATH=exp/hard_iteration_qd_20260317 HARD_SUBSET_VLLM_HOST=host.docker.internal HARD_SUBSET_VLLM_PORT=8000 HARD_SUBSET_MIN_MODEL_LEN=128000 HARD_SUBSET_POPULATION_SIZE=20 HARD_SUBSET_NUM_GENERATIONS=5 HARD_SUBSET_NUM_WORKERS=2 HARD_SUBSET_CANDIDATE_WORKERS=0 HARD_SUBSET_TEMPERATURE=1.0 HARD_SUBSET_TOP_P=1.0 HARD_SUBSET_MAX_TOKENS=128000 HARD_SUBSET_DIFF_MAX_TOKENS=128000 HARD_SUBSET_NUM_CELLS=16 HARD_SUBSET_CVT_WARMUP=4 bash scripts/run_hard_iteration_qd_vllm.sh --config data/configs/hard_iteration_subset.yaml --mode matrix`
+- required modes:
+  - `classic`
+  - `grid_struct`
+  - `cvt_struct`
+  - `cvt_size_control`
+- expected outputs:
+  - `exp/hard_iteration_qd_20260317/hard_iteration_backend_comparison.md`
+  - per-mode run roots under the same save directory
+- planned commit after matrix completion:
+  - `feat(qd): run hard subset classic and qd comparison matrix`
+
+### Stage 4 analysis checklist
+
+- generate final report artifacts from the completed matrix:
+  - `/workspace/.venv/bin/python scripts/report_hard_iteration_analysis.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd_20260317/classic --backend_run grid_struct=exp/hard_iteration_qd_20260317/grid_struct --backend_run cvt_struct=exp/hard_iteration_qd_20260317/cvt_struct --backend_run cvt_size_control=exp/hard_iteration_qd_20260317/cvt_size_control --output-dir exp/hard_iteration_qd_20260317/analysis`
+- expected outputs:
+  - `exp/hard_iteration_qd_20260317/analysis/report.md`
+  - `exp/hard_iteration_qd_20260317/analysis/summary.json`
+- final writeup additions after live results exist:
+  - add the frozen subset table and vanilla baseline outcomes to the workflow doc or a dedicated benchmark note
+  - add recommendation bullets backed by the real matrix results
+  - update the stage tracker from `active/pending` to `completed`
+- planned commit after final reporting is published:
+  - `docs(bench): publish hard subset results and recommendations`
