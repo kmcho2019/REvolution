@@ -115,6 +115,27 @@ def test_resolve_descriptor_axes_uses_grid_defaults_for_sequential_logic():
     assert axes == ["g_A", "g_P", "g_T"]
 
 
+def test_resolve_descriptor_axes_drops_g_t_for_named_comb_profile(tmp_path: Path):
+    cfg = tmp_path / "profiles.yaml"
+    cfg.write_text(
+        "profiles:\n"
+        "  large_profile:\n"
+        "    - wire_count_log_est\n"
+        "    - g_P\n"
+        "    - g_A\n"
+        "    - g_T\n",
+        encoding="utf-8",
+    )
+    axes = resolve_descriptor_axes(
+        profile_name="large_profile",
+        explicit_axes=None,
+        descriptor_file=cfg,
+        archive_type="cvt",
+        circuit_type="combinational",
+    )
+    assert axes == ["wire_count_log_est", "g_P", "g_A"]
+
+
 def test_extract_descriptor_values_applies_log1p_transform():
     values = extract_descriptor_values(
         {"cell_count_log": 99.0, "g_A": 0.2},

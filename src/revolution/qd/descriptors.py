@@ -155,7 +155,7 @@ def resolve_descriptor_axes(
 
     profiles = load_descriptor_profiles(descriptor_file)
     if profile_name and profile_name in profiles:
-        return list(profiles[profile_name])
+        return _filter_axes_for_circuit_type(list(profiles[profile_name]), circuit_type)
 
     if archive_type == "grid":
         return ["g_A", "g_P"] if circuit_type == "combinational" else ["g_A", "g_P", "g_T"]
@@ -168,6 +168,15 @@ def resolve_descriptor_axes(
         "g_A",
         "g_T",
     ]
+
+
+def _filter_axes_for_circuit_type(
+    axes: list[str],
+    circuit_type: CircuitType,
+) -> list[str]:
+    if circuit_type != "combinational":
+        return axes
+    return [axis for axis in axes if axis != "g_T"]
 
 
 def resolve_grid_axis_specs(
