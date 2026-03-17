@@ -8,6 +8,7 @@ from revolution.runtime.problem_context import (
 from revolution.runtime.problem_spec import (
     build_cvdp_problem_spec,
     build_problem_spec,
+    infer_circuit_type_from_reference_ppa_path,
 )
 
 
@@ -32,6 +33,12 @@ def _context(tmp_path: Path, benchmark_name: str, problem_name: str = "Prob001")
 
 
 def test_build_problem_spec_defaults_rtllm_to_ppa_and_small_problem_modes(tmp_path):
+    bench = tmp_path / "RTLLM"
+    bench.mkdir(parents=True, exist_ok=True)
+    (bench / "Prob001_ppa.txt").write_text(
+        "tns,wns,eff_clk_period,power,area\n0,0,0.55,1,1\n",
+        encoding="utf-8",
+    )
     spec = build_problem_spec(_context(tmp_path, "RTLLM"), supports_reference_ppa=True)
 
     assert spec.quality_mode == "ppa"
@@ -58,6 +65,30 @@ def test_build_problem_spec_defaults_realbench_to_diff_heavy_large_problem_modes
     assert spec.default_descriptor_profile == "rtl_core"
     assert spec.phase_generation_defaults["backfill"] == "diff"
     assert spec.phase_generation_defaults["refine"] == "diff"
+
+
+def test_build_problem_spec_infers_combinational_circuit_type_from_reference_ppa(tmp_path):
+    bench = tmp_path / "VerilogEval-Spec-to-RTL"
+    bench.mkdir(parents=True, exist_ok=True)
+    (bench / "Prob001_ppa.txt").write_text(
+        "tns,wns,eff_clk_period,power,area\n0,0,0.0,1,1\n",
+        encoding="utf-8",
+    )
+
+    spec = build_problem_spec(
+        _context(tmp_path, "VerilogEval-Spec-to-RTL"),
+        supports_reference_ppa=True,
+    )
+
+    assert spec.circuit_type == "combinational"
+    assert spec.default_descriptor_profile == "hybrid_comb_default"
+
+
+def test_build_problem_spec_uses_unknown_when_reference_ppa_is_missing(tmp_path):
+    spec = build_problem_spec(_context(tmp_path, "RTLLM"), supports_reference_ppa=True)
+
+    assert spec.circuit_type == "unknown"
+    assert spec.default_descriptor_profile == "hybrid_seq_default"
 
 
 def test_build_cvdp_problem_spec_keeps_functional_only_and_large_problem_modes(tmp_path):
@@ -107,3 +138,10 @@ def test_testbench_top_resolution_falls_back_to_last_module(tmp_path):
     )
 
     assert resolve_testbench_top_module_from_path(test_sv) == "harness"
+
+
+def test_infer_circuit_type_from_reference_ppa_path_handles_invalid_content(tmp_path):
+    ppa_path = tmp_path / "invalid_ppa.txt"
+    ppa_path.write_text("bad\ncontent\n", encoding="utf-8")
+
+    assert infer_circuit_type_from_reference_ppa_path(ppa_path) == "unknown"

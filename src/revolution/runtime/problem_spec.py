@@ -74,6 +74,30 @@ def _default_descriptor_profile(
     return "hybrid_seq_default"
 
 
+def infer_circuit_type_from_reference_ppa_path(ppa_path: Path) -> CircuitType:
+    """Infer whether a benchmark problem is sequential or combinational."""
+
+    if not ppa_path.is_file():
+        return "unknown"
+
+    lines = ppa_path.read_text(encoding="utf-8").splitlines()
+    if len(lines) < 2:
+        return "unknown"
+
+    values = lines[1].split(",")
+    if len(values) < 3:
+        return "unknown"
+
+    try:
+        eff_clk_period = float(values[2])
+    except ValueError:
+        return "unknown"
+
+    if abs(eff_clk_period) <= 1e-12:
+        return "combinational"
+    return "sequential"
+
+
 def build_problem_spec(
     context: ProblemContext,
     *,
@@ -85,8 +109,11 @@ def build_problem_spec(
     reference_sources = (
         (str(context.ref_sv_path),) if context.ref_sv_path is not None else ()
     )
+    inferred_circuit_type = infer_circuit_type_from_reference_ppa_path(
+        context.benchmark_path / f"{context.problem_name}_ppa.txt"
+    )
     if benchmark_name.lower() in {"rtllm", "verilogeval-spec-to-rtl"}:
-        circuit_type: CircuitType = "sequential"
+        circuit_type = inferred_circuit_type
         quality_mode: QualityMode = "ppa" if supports_reference_ppa else "functional_only"
     elif benchmark_name.lower() == "realbench":
         circuit_type = "unknown"
