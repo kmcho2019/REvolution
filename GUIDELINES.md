@@ -41,7 +41,8 @@
   [scripts/build_hard_iteration_subset.py](scripts/build_hard_iteration_subset.py),
   [scripts/run_hard_iteration_one_shot_vllm.sh](scripts/run_hard_iteration_one_shot_vllm.sh),
   [scripts/run_hard_iteration_qd_vllm.sh](scripts/run_hard_iteration_qd_vllm.sh),
-  [scripts/report_hard_iteration_analysis.py](scripts/report_hard_iteration_analysis.py)
+  [scripts/report_hard_iteration_analysis.py](scripts/report_hard_iteration_analysis.py),
+  [scripts/report_qd_feature_space.py](scripts/report_qd_feature_space.py)
 - Prompt and diff surfaces:
   [src/revolution/prompt_store.py](src/revolution/prompt_store.py),
   [data/prompts/](data/prompts),
@@ -77,6 +78,7 @@
 - `bash scripts/run_hard_iteration_one_shot_vllm.sh --dry-run`: inspect the resumable hard-subset vanilla baseline batches without running them.
 - `python scripts/build_hard_iteration_subset.py --one-shot-root exp/hard_iteration_one_shot_rerun_<date> --output-config data/configs/hard_iteration_subset.yaml`: freeze the hard iteration subset from a valid post-fix one-shot rerun.
 - `bash scripts/run_hard_iteration_qd_vllm.sh --dry-run`: inspect the classic + QD hard-subset matrix commands before running them live.
+- `python scripts/report_qd_feature_space.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd/<run_tag>/classic --backend_run cvt_struct=exp/hard_iteration_qd/<run_tag>/cvt_struct --output-dir exp/hard_iteration_qd/<run_tag>/feature_analysis`: generate the deep post-run QD feature-space report, candidate table, and recommended profile artifacts.
 - `python scripts/qd_descriptor_probe.py --archive_type grid --circuit_type sequential`: inspect the current QD descriptor-axis selection and requirements.
 - `bash scripts/run_qd_retrospective_redo_vllm.sh --dry-run`: inspect the tracked long-budget retrospective redo matrix without launching live jobs.
 

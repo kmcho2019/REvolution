@@ -486,6 +486,9 @@ VerilogEval-Spec-to-RTL iteration testing:
   subset config.
 - `scripts/report_hard_iteration_analysis.py`: generate the post-run markdown
   report plus machine-readable summary for classic-vs-QD hard-subset results.
+- `scripts/report_qd_feature_space.py`: generate the deeper post-run QD
+  feature-space report with successful-candidate tables, collapse diagnostics,
+  regression summaries, and PCA/t-SNE plots.
 
 Typical flow:
 
@@ -513,6 +516,14 @@ python scripts/report_hard_iteration_analysis.py \
   --backend_run cvt_struct=exp/hard_iteration_qd/<timestamp>/cvt_struct \
   --backend_run cvt_size_control=exp/hard_iteration_qd/<timestamp>/cvt_size_control \
   --output-dir exp/hard_iteration_qd/<timestamp>/analysis
+
+python scripts/report_qd_feature_space.py \
+  --subset-config data/configs/hard_iteration_subset.yaml \
+  --backend_run classic=exp/hard_iteration_qd/<timestamp>/classic \
+  --backend_run grid_struct=exp/hard_iteration_qd/<timestamp>/grid_struct \
+  --backend_run cvt_struct=exp/hard_iteration_qd/<timestamp>/cvt_struct \
+  --backend_run cvt_size_control=exp/hard_iteration_qd/<timestamp>/cvt_size_control \
+  --output-dir exp/hard_iteration_qd/<timestamp>/feature_analysis
 ```
 
 The two post-run report surfaces have different roles:
@@ -527,6 +538,11 @@ The two post-run report surfaces have different roles:
     - `score_qd`
     - `archive_qd`
   - `summary.json` is the machine-readable version of that final writeup surface
+- Deep QD feature-space analysis: `exp/hard_iteration_qd/<run_tag>/feature_analysis/report.md` plus `feature_analysis/summary.json`
+  - emitted by `scripts/report_qd_feature_space.py`
+  - summarizes successful-candidate feature variability, collapse behavior,
+    regression outputs, and PCA/t-SNE projections
+  - also writes `qd_successful_candidates.csv` and `recommended_profile.json`
 
 Use a fresh post-fix one-shot root for the freeze step. Do not reuse any
 pre-path-fix 2026-03-17 smoke or baseline outputs.
@@ -570,6 +586,7 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/build_hard_iteration_subset.py`: turn one-shot summaries plus benchmark metadata into a frozen balanced hard-subset config and baseline CSV.
 - `scripts/run_hard_iteration_qd_vllm.sh`: run the `classic`, `grid_struct`, `cvt_struct`, and `cvt_size_control` long-budget matrix from the frozen hard-subset config.
 - `scripts/report_hard_iteration_analysis.py`: summarize hard-subset classic-vs-QD runs into a markdown report plus JSON recommendations.
+- `scripts/report_qd_feature_space.py`: summarize finished QD backend roots into successful-candidate tables, collapse diagnostics, regression outputs, and embedding plots.
 - `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts`). QD runs keep `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`, `qd_metrics.json`, `grid_layout.json` or `centroids.json`, `archive_space.json`, `archive_space_report.md`, and the generated QD plots in the archived summary set so archive state is preserved even in `candidate_core` mode.
 - QD candidate directories now also include `qd_archive_event.json` for every
   archive-handled successful candidate.
