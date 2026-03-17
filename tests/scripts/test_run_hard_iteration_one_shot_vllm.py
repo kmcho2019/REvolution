@@ -111,3 +111,89 @@ def test_run_hard_iteration_one_shot_script_batch_size_zero_runs_all_pending_in_
     assert f"--problems {pending_rtllm[0]} {pending_rtllm[1]}" in normalized
     assert f"{pending_rtllm[-1]} --api_backend vllm" in normalized
     assert "Prob001_accu" not in normalized
+
+
+def test_run_hard_iteration_one_shot_script_batch_size_zero_skips_completed_benchmark_and_runs_remaining_one(tmp_path):
+    repo_root = Path(__file__).resolve().parents[2]
+    script_path = repo_root / "scripts" / "run_hard_iteration_one_shot_vllm.sh"
+    model_dir = "_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b"
+    save_root = tmp_path / "one_shot"
+
+    rtllm_root = save_root / model_dir / "RTLLM"
+    for problem in [
+        line.strip()
+        for line in (repo_root / "data" / "bench" / "RTLLM" / "problems.txt").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]:
+        completed = rtllm_root / problem
+        completed.mkdir(parents=True, exist_ok=True)
+        (completed / f"{problem}_summary.json").write_text("{}", encoding="utf-8")
+
+    completed_ve = save_root / model_dir / "VerilogEval-Spec-to-RTL" / "Prob001_zero"
+    completed_ve.mkdir(parents=True, exist_ok=True)
+    (completed_ve / "Prob001_zero_summary.json").write_text("{}", encoding="utf-8")
+
+    fake_bin = tmp_path / "bin"
+    fake_bin.mkdir()
+    fake_curl = fake_bin / "curl"
+    fake_curl.write_text(
+        "#!/usr/bin/env bash\n"
+        "printf '%s' '{\"data\":[{\"id\":\"stub-model\",\"max_model_len\":131072}]}'\n",
+        encoding="utf-8",
+    )
+    fake_curl.chmod(0o755)
+
+    env = os.environ.copy()
+    env["PATH"] = f"{fake_bin}:{env['PATH']}"
+    env["PYTHON_BIN"] = str(Path(os.sys.executable))
+    env["HARD_ONE_SHOT_SAVE_PATH"] = str(save_root)
+    env["HARD_ONE_SHOT_BATCH_SIZE"] = "0"
+
+    result = subprocess.run(
+        ["bash", str(script_path), "--benchmarks", "RTLLM", "VerilogEval-Spec-to-RTL", "--dry-run"],
+        cwd=repo_root,
+        env=env,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    normalized = " ".join(result.stdout.split())
+    assert "[RTLLM] no pending problems." in result.stdout
+    assert "[VerilogEval-Spec-to-RTL/batch1] command:" in result.stdout
+    assert "[VerilogEval-Spec-to-RTL/batch2] command:" not in result.stdout
+    assert "--problems Prob002_m2014_q4i Prob003_step_one" in normalized
+    assert "Prob001_zero" not in normalized
+
+
+def test_run_hard_iteration_one_shot_script_rejects_negative_batch_size(tmp_path):
+    repo_root = Path(__file__).resolve().parents[2]
+    script_path = repo_root / "scripts" / "run_hard_iteration_one_shot_vllm.sh"
+
+    fake_bin = tmp_path / "bin"
+    fake_bin.mkdir()
+    fake_curl = fake_bin / "curl"
+    fake_curl.write_text(
+        "#!/usr/bin/env bash\n"
+        "printf '%s' '{\"data\":[{\"id\":\"stub-model\",\"max_model_len\":131072}]}'\n",
+        encoding="utf-8",
+    )
+    fake_curl.chmod(0o755)
+
+    env = os.environ.copy()
+    env["PATH"] = f"{fake_bin}:{env['PATH']}"
+    env["PYTHON_BIN"] = str(Path(os.sys.executable))
+    env["HARD_ONE_SHOT_BATCH_SIZE"] = "-1"
+
+    result = subprocess.run(
+        ["bash", str(script_path), "--benchmarks", "RTLLM", "--dry-run"],
+        cwd=repo_root,
+        env=env,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 2
+    assert "HARD_ONE_SHOT_BATCH_SIZE must be an integer" in result.stderr

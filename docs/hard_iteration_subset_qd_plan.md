@@ -223,3 +223,31 @@
 - Stage 2 runtime improvement: `scripts/run_hard_iteration_one_shot_vllm.sh` now accepts `HARD_ONE_SHOT_BATCH_SIZE=0` to launch all remaining pending problems for a benchmark in one command.
 - Why this matters: the current `VerilogEval-Spec-to-RTL` rerun is spending a long time inside `Prob108_rule90`, and a small fixed batch can leave finished workers idle until that whole batch returns. The new resume mode avoids that head-of-line blocking on the next launch.
 - Testing follow-through: added a dry-run regression in `tests/scripts/test_run_hard_iteration_one_shot_vllm.py` to pin the single-command all-remaining behavior.
+
+## Status refresh: 2026-03-17 08:37 UTC
+
+- Operational cutover: intentionally interrupted the old small-batch `VerilogEval-Spec-to-RTL` Stage 2 resume after confirming it was blocked by long per-sample work inside `Prob108_rule90` rather than the earlier path bug.
+- Cleanup note: the interrupt left one orphaned `vvp` process on `Prob108_rule90_sample8_initial`; that evaluator process was terminated before the new resume was launched to avoid overlapping writes into the same candidate directory.
+- Current live command: Stage 2 is now running as `VerilogEval-Spec-to-RTL` only with `HARD_ONE_SHOT_BATCH_SIZE=0`, `HARD_ONE_SHOT_NUM_WORKERS=8`, and the same corrected save root `exp/hard_iteration_one_shot_rerun_20260317_pathfix`.
+- Current intent: let one `run_one_shot.py` invocation cover all `45` remaining VerilogEval problems so workers that finish shorter problems can immediately move on to later pending work.
+
+## Status refresh: 2026-03-17 08:38 UTC
+
+- Early cutover result: the all-remaining resume immediately moved `VerilogEval-Spec-to-RTL` from `111/156` to `112/156`.
+- Worker utilization check: concurrent backend activity is visible across different problems again, including `vvp` on `Prob115_shift18` while `iverilog` is already compiling a later `Prob108_rule90` sample. This confirms the new launch mode is using freed workers instead of serializing the tail behind one problem.
+
+## Status refresh: 2026-03-17 08:57 UTC
+
+- Stage 2 progress: the all-remaining VerilogEval resume advanced the rerun to `154/156` completed summaries while leaving the corrected save root unchanged.
+- Current tail: the remaining long-running evaluator is again inside `Prob108_rule90`, with an active `vvp` on `Prob108_rule90_sample4_initial`.
+- Execution guidance: leave the current session running. The queueing bottleneck has been resolved; the remaining delay is ordinary long-tail evaluation time inside the last hard problems.
+
+## Status refresh: 2026-03-17 09:05 UTC
+
+- Stage 2 progress: the corrected one-shot rerun is now at `155/156` completed VerilogEval summaries, with `Prob144_conwaylife` recently completing.
+- Queue-mode hardening while waiting:
+  - tightened `HARD_ONE_SHOT_BATCH_SIZE` validation so the special queue mode is explicitly `0` only
+  - added a dry-run regression for the realistic late-resume case where one benchmark is already complete and the other resumes in queue mode
+  - added a negative-batch-size rejection test
+  - surfaced a concrete queue-mode resume command in the stable workflow docs
+- Current tail: one long remaining VerilogEval problem is still active in the live session; Stage 2 remains `active` until the rerun reaches `156/156`.

@@ -105,7 +105,7 @@ MODEL_NAME="${HARD_ONE_SHOT_MODEL_NAME:-/project/cad-team/LX_Semicon/models/open
 MODEL_DIR_NAME="${MODEL_NAME//\//_}"
 MODEL_ENDPOINT="http://${VLLM_HOST}:${VLLM_PORT}/v1/models"
 
-if [[ ! "${BATCH_SIZE}" =~ ^-?[0-9]+$ ]]; then
+if [[ ! "${BATCH_SIZE}" =~ ^[0-9]+$ ]]; then
   echo "HARD_ONE_SHOT_BATCH_SIZE must be an integer, got: ${BATCH_SIZE}" >&2
   exit 2
 fi
@@ -154,7 +154,7 @@ echo "vLLM endpoint: ${MODEL_ENDPOINT}"
 echo "Model: ${MODEL_NAME}"
 echo "Benchmarks: ${BENCHMARKS[*]}"
 echo "Save path: ${SAVE_PATH}"
-if (( BATCH_SIZE <= 0 )); then
+if (( BATCH_SIZE == 0 )); then
   echo "Batch size: all remaining problems per benchmark"
 else
   echo "Batch size: ${BATCH_SIZE}"
@@ -189,7 +189,7 @@ PY
 
   echo "[${benchmark}] pending problems: ${#PENDING[@]}"
   EFFECTIVE_BATCH_SIZE="${BATCH_SIZE}"
-  if (( EFFECTIVE_BATCH_SIZE <= 0 )); then
+  if (( EFFECTIVE_BATCH_SIZE == 0 )); then
     EFFECTIVE_BATCH_SIZE="${#PENDING[@]}"
   fi
   batch_index=0

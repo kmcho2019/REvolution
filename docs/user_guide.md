@@ -524,6 +524,18 @@ cover all remaining pending problems for a benchmark. This is useful when a
 small fixed batch is being held open by one slow problem and you want freed
 workers to keep pulling more pending work.
 
+Example late-resume command:
+
+```bash
+HARD_ONE_SHOT_VLLM_HOST=host.docker.internal \
+HARD_ONE_SHOT_VLLM_PORT=8000 \
+HARD_ONE_SHOT_SAVE_PATH=exp/hard_iteration_one_shot_rerun_<date> \
+HARD_ONE_SHOT_NUM_WORKERS=8 \
+HARD_ONE_SHOT_BATCH_SIZE=0 \
+bash scripts/run_hard_iteration_one_shot_vllm.sh \
+  --benchmarks VerilogEval-Spec-to-RTL
+```
+
 ### 3.4 Output inspection
 
 Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:

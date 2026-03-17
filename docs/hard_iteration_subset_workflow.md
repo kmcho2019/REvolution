@@ -34,6 +34,18 @@ remaining pending problems for the benchmark in one `run_one_shot.py` command.
 That lets idle workers move on to the next problem instead of waiting behind a
 small fixed batch.
 
+Concrete late-resume example:
+
+```bash
+HARD_ONE_SHOT_VLLM_HOST=host.docker.internal \
+HARD_ONE_SHOT_VLLM_PORT=8000 \
+HARD_ONE_SHOT_SAVE_PATH=exp/hard_iteration_one_shot_rerun_<date> \
+HARD_ONE_SHOT_NUM_WORKERS=8 \
+HARD_ONE_SHOT_BATCH_SIZE=0 \
+bash scripts/run_hard_iteration_one_shot_vllm.sh \
+  --benchmarks VerilogEval-Spec-to-RTL
+```
+
 ### 2. Freeze the hard subset
 
 ```bash
