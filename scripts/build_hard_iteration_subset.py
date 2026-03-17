@@ -138,8 +138,10 @@ def _load_one_shot_summaries(one_shot_root: Path) -> dict[tuple[str, str], dict[
 
 
 def _extract_rate(payload: dict[str, Any], *, primary_key: str, legacy_key: str) -> float:
-    success_rates = payload.get("success_rates")
-    if isinstance(success_rates, dict):
+    for container_key in ("success_rates", "accumulated_success_rates"):
+        success_rates = payload.get(container_key)
+        if not isinstance(success_rates, dict):
+            continue
         if primary_key in success_rates:
             return _safe_float(success_rates.get(primary_key))
         if legacy_key in success_rates:

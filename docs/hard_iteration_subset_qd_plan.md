@@ -15,8 +15,8 @@
 |:---|:---|:---|
 | Stage 0 | `completed` | Worktree setup and execution scaffold |
 | Stage 1 | `completed` | Runtime circuit typing, subset builder, QD runner, and workflow docs |
-| Stage 2 | `active` | Clean one-shot baseline restart and hard subset freeze |
-| Stage 3 | `pending` | Hard-subset classic-vs-QD matrix execution |
+| Stage 2 | `active` | Relative-path evaluation bug fixed; clean one-shot baseline rerun pending |
+| Stage 3 | `pending` | Waiting for corrected Stage 2 baseline rerun and valid subset freeze |
 | Stage 4 | `pending` | Analysis, docs, and final recommendations |
 
 ## TODO
@@ -29,7 +29,7 @@
 - [x] Add `scripts/report_hard_iteration_analysis.py`
 - [x] Add regression tests for circuit typing, subset building, one-shot recovery, QD runner dry-run, and final analysis
 - [x] Update `README.md`, `GUIDELINES.md`, and `docs/user_guide.md`
-- [ ] Run bounded vLLM smoke on the restored endpoint
+- [x] Run bounded vLLM smoke on the restored endpoint
 - [ ] Run clean one-shot baseline restart (`10` samples/problem, `8` workers, long-context vLLM)
 - [ ] Freeze and commit `data/configs/hard_iteration_subset.yaml`
 - [ ] Commit vanilla baseline CSV for difficulty reference
@@ -93,6 +93,33 @@
 - no one-shot baseline or hard-subset QD process is currently running
 - Stage 2 is unblocked and reset to `active`
 - the next execution step is a bounded smoke followed by a clean one-shot baseline restart from a new output root
+
+### 2026-03-17 Evaluation path regression diagnosis
+
+- the 2026-03-17 smoke and clean baseline reruns were invalidated by a relative-path evaluation bug
+- root cause:
+  - later runs passed a relative `save_path` into the evaluation stack
+  - compilation wrote `code_compiled.vvp` under that relative output directory
+  - simulation then invoked `vvp` with the same relative `.vvp` path while also setting the working directory to that relative candidate directory
+  - `vvp` therefore searched for `exp/.../code_compiled.vvp` from inside `exp/.../`, effectively doubling the path and failing with `Unable to open input file`
+- evidence:
+  - the pre-outage March 16 run used absolute compile and simulation paths and passed on `RTLLM/Prob001_accu`
+  - the broken March 17 smoke and restart runs used relative paths and failed on the same sample with `Unable to open input file`
+  - the fixed March 17 smoke rerun used absolute paths again and restored `functionality=1.0` and `synthesis_ppa=1.0` on `RTLLM/Prob001_accu`
+- corrective code changes:
+  - normalize `save_path` to an absolute path in `scripts/run_one_shot.py`
+  - normalize the effective save path in `scripts/run_backend.py`
+  - normalize evaluator output/runtime paths in `src/revolution/evaluation.py`
+  - add a focused evaluator regression in `tests/revolution/test_evaluation.py`
+- impact on progress tracking:
+  - the prior 2026-03-17 Stage 2 freeze and the launched Stage 3 matrix are invalid and must not be used
+  - rerun Stage 2 from scratch with a fresh output root before freezing the subset again
+
+### 2026-03-17 Stage 3 launch
+
+- launched the full hard-subset matrix with save root `exp/hard_iteration_qd_20260317/20260317_063730`
+- the run was interrupted after the path-regression diagnosis because the preceding Stage 2 freeze was invalid
+- do not reuse any outputs from this aborted matrix run; rerun Stage 3 only after the corrected Stage 2 baseline and subset freeze complete
 
 ## Remaining execution checklist
 

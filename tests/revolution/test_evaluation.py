@@ -329,6 +329,40 @@ def test_simulation_success(mocker, fake_binaries, minimal_sv_files, no_chmod):
     )
 
 
+def test_simulation_uses_absolute_vvp_path_with_relative_generated_file(
+    mocker, fake_binaries, tmp_path, no_chmod, monkeypatch
+):
+    monkeypatch.chdir(tmp_path)
+    rel_dir = tmp_path / "relative_case"
+    rel_dir.mkdir()
+    dut = rel_dir / "dut.sv"
+    tb = rel_dir / "tb.sv"
+    dut.write_text("module dut; endmodule\n")
+    tb.write_text("module tb; dut uut(); endmodule\n")
+
+    compile_proc = make_proc(returncode=0, stdout="Compile OK")
+    sim_proc = make_proc(returncode=0, stdout="Simulation OK")
+    run = mocker.patch(
+        "revolution.evaluation._run_command", side_effect=[compile_proc, sim_proc]
+    )
+
+    ev = VerilogEvaluator("/fake/iverilog", "/fake/vvp")
+    results = ev.evaluate(
+        generated_sv_file=os.path.join("relative_case", "dut.sv"),
+        test_sv_file=os.path.join("relative_case", "tb.sv"),
+        ref_sv_file=None,
+    )
+
+    assert results["status"] == "success"
+    (compile_cmd,), _ = run.call_args_list[0]
+    (_, compiled_arg) = compile_cmd[compile_cmd.index("-o") : compile_cmd.index("-o") + 2]
+    assert os.path.isabs(compiled_arg)
+    (sim_cmd,), sim_kwargs = run.call_args_list[1]
+    assert os.path.isabs(sim_cmd[1])
+    assert os.path.isabs(sim_kwargs["cwd"])
+    assert sim_cmd[1] == compiled_arg
+
+
 def test_simulation_nonzero_return_is_error(
     mocker, fake_binaries, minimal_sv_files, no_chmod
 ):

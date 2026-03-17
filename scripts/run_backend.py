@@ -155,8 +155,8 @@ def _collect_vllm_token_budget_warnings(
 
 def _effective_save_path(args: argparse.Namespace) -> str:
     if getattr(args, "backend_subdir", True):
-        return os.path.join(args.save_path, args.backend)
-    return args.save_path
+        return os.path.abspath(os.path.join(args.save_path, args.backend))
+    return os.path.abspath(args.save_path)
 
 
 def _load_reference_ppa_metrics(problem_context) -> dict[str, float]:

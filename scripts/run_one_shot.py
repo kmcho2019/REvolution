@@ -306,6 +306,8 @@ def main():
         print(f"Configuration error: {exc}")
         sys.exit(2)
 
+    args.save_path = os.path.abspath(args.save_path)
+
     api_key = None
     if args.api_backend != "vllm":  # vllm does not require an API key
         # Map backends to their required environment variables
