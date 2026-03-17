@@ -8,6 +8,7 @@
 - Use [docs/qd_map_elites_guide.md](docs/qd_map_elites_guide.md) for the QD/MAP-Elites runtime flow, descriptor extraction paths, archive artifact layout, and generation/run traces.
 - Use [docs/REvolution_specification.md](docs/REvolution_specification.md) for the paper-plus-implementation specification view.
 - Use [docs/revolution_qd_map_elites_implementation_plan.md](docs/revolution_qd_map_elites_implementation_plan.md) for the current QD/MAP-Elites feature status and staged roadmap.
+- Use [docs/hard_iteration_subset_workflow.md](docs/hard_iteration_subset_workflow.md) for the hard-subset baseline freeze flow, resumable one-shot commands, and long-budget classic-vs-QD matrix entrypoints.
 - Use [docs/method_interaction_and_evolutionary_loop.md](docs/method_interaction_and_evolutionary_loop.md) when you need the classic REvolution data flow or generation loop explained end to end.
 - Use [docs/diff_mode.md](docs/diff_mode.md) when the change touches diff-mode generation, apply policy, or diff diagnostics.
 
@@ -36,6 +37,11 @@
   [scripts/backend_comparison_report.py](scripts/backend_comparison_report.py),
   [scripts/archive_baseline.py](scripts/archive_baseline.py),
   [src/revolution/qd/visualization.py](src/revolution/qd/visualization.py)
+- Hard subset selection and iteration matrix:
+  [scripts/build_hard_iteration_subset.py](scripts/build_hard_iteration_subset.py),
+  [scripts/run_hard_iteration_one_shot_vllm.sh](scripts/run_hard_iteration_one_shot_vllm.sh),
+  [scripts/run_hard_iteration_qd_vllm.sh](scripts/run_hard_iteration_qd_vllm.sh),
+  [scripts/report_hard_iteration_analysis.py](scripts/report_hard_iteration_analysis.py)
 - Prompt and diff surfaces:
   [src/revolution/prompt_store.py](src/revolution/prompt_store.py),
   [data/prompts/](data/prompts),
@@ -68,6 +74,9 @@
 - `python scripts/run_evolution.py --help`: view all evolutionary run options.
 - `python scripts/run_evolution.py --benchmarks RTLLM --model_name gpt-4.1-mini`: example multi-generation run.
 - `python scripts/run_one_shot.py --benchmarks VerilogEval-Spec-to-RTL --num_samples 20`: example n-shot baseline run.
+- `bash scripts/run_hard_iteration_one_shot_vllm.sh --dry-run`: inspect the resumable hard-subset vanilla baseline batches without running them.
+- `python scripts/build_hard_iteration_subset.py --one-shot-root exp/hard_iteration_one_shot --output-config data/configs/hard_iteration_subset.yaml`: freeze the hard iteration subset from one-shot results.
+- `bash scripts/run_hard_iteration_qd_vllm.sh --dry-run`: inspect the classic + QD hard-subset matrix commands before running them live.
 - `python scripts/qd_descriptor_probe.py --archive_type grid --circuit_type sequential`: inspect the current QD descriptor-axis selection and requirements.
 - `bash scripts/run_qd_retrospective_redo_vllm.sh --dry-run`: inspect the tracked long-budget retrospective redo matrix without launching live jobs.
 

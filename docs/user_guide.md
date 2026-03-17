@@ -470,6 +470,50 @@ python scripts/run_one_shot.py \
   --api_backend openai
 ```
 
+### 3.3.1 Hard iteration subset baseline and matrix
+
+The repo now includes a dedicated hard-subset workflow for RTLLM plus
+VerilogEval-Spec-to-RTL iteration testing:
+
+- `scripts/run_hard_iteration_one_shot_vllm.sh`: resumable vanilla one-shot
+  baseline runner that skips completed problems, batches pending ones, and
+  polls the configured endpoint before each batch.
+- `scripts/build_hard_iteration_subset.py`: freeze the balanced hard subset
+  from one-shot summaries, benchmark gate-count CSVs, and reference PPA-derived
+  circuit typing.
+- `scripts/run_hard_iteration_qd_vllm.sh`: run the long-budget `classic`,
+  `grid_struct`, `cvt_struct`, and `cvt_size_control` matrix from the frozen
+  subset config.
+- `scripts/report_hard_iteration_analysis.py`: generate the post-run markdown
+  report plus machine-readable summary for classic-vs-QD hard-subset results.
+
+Typical flow:
+
+```bash
+HARD_ONE_SHOT_VLLM_HOST=host.docker.internal \
+HARD_ONE_SHOT_VLLM_PORT=8000 \
+bash scripts/run_hard_iteration_one_shot_vllm.sh
+
+python scripts/build_hard_iteration_subset.py \
+  --one-shot-root exp/hard_iteration_one_shot \
+  --output-config data/configs/hard_iteration_subset.yaml \
+  --output-csv baselines/hard_iteration_subset_vanilla_openai_gpt_oss_120b.csv
+
+HARD_SUBSET_VLLM_HOST=host.docker.internal \
+HARD_SUBSET_VLLM_PORT=8000 \
+bash scripts/run_hard_iteration_qd_vllm.sh \
+  --config data/configs/hard_iteration_subset.yaml \
+  --mode matrix
+
+python scripts/report_hard_iteration_analysis.py \
+  --subset-config data/configs/hard_iteration_subset.yaml \
+  --backend_run classic=exp/hard_iteration_qd/<timestamp>/classic \
+  --backend_run grid_struct=exp/hard_iteration_qd/<timestamp>/grid_struct \
+  --backend_run cvt_struct=exp/hard_iteration_qd/<timestamp>/cvt_struct \
+  --backend_run cvt_size_control=exp/hard_iteration_qd/<timestamp>/cvt_size_control \
+  --output-dir exp/hard_iteration_qd/<timestamp>/analysis
+```
+
 ### 3.4 Output inspection
 
 Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
@@ -487,6 +531,10 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
   - Also writes top-level snapshots under `save_root` as `<timestamp>_ablation_config.yaml` and `<timestamp>_ablation_config_meta.yaml`.
 - `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch/EoH/CodeEvolve comparisons.
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
+- `scripts/run_hard_iteration_one_shot_vllm.sh`: resumable one-shot hard-subset baseline harness for RTLLM and VerilogEval-Spec-to-RTL.
+- `scripts/build_hard_iteration_subset.py`: turn one-shot summaries plus benchmark metadata into a frozen balanced hard-subset config and baseline CSV.
+- `scripts/run_hard_iteration_qd_vllm.sh`: run the `classic`, `grid_struct`, `cvt_struct`, and `cvt_size_control` long-budget matrix from the frozen hard-subset config.
+- `scripts/report_hard_iteration_analysis.py`: summarize hard-subset classic-vs-QD runs into a markdown report plus JSON recommendations.
 - `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts`). QD runs keep `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`, `qd_metrics.json`, `grid_layout.json` or `centroids.json`, `archive_space.json`, `archive_space_report.md`, and the generated QD plots in the archived summary set so archive state is preserved even in `candidate_core` mode.
 - QD candidate directories now also include `qd_archive_event.json` for every
   archive-handled successful candidate.
