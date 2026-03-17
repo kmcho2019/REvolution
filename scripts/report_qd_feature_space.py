@@ -113,15 +113,52 @@ def _load_subset_problems(config_path: Path) -> list[tuple[str, str]]:
     return problems
 
 
-def _load_qd_archive_summary(summary_path: Path) -> dict[str, Any]:
+def _canonical_summary_identity(summary_path: Path) -> tuple[str, str] | None:
+    try:
+        benchmark = summary_path.parent.parent.name
+        problem = summary_path.parent.name
+    except IndexError:
+        return None
+    if not benchmark or not problem:
+        return None
+    return benchmark, problem
+
+
+def _canonical_event_identity(event_path: Path) -> tuple[str, str] | None:
+    try:
+        benchmark = event_path.parents[3].name
+        problem = event_path.parents[2].name
+    except IndexError:
+        return None
+    if not benchmark or not problem:
+        return None
+    return benchmark, problem
+
+
+def _load_json_mapping(path: Path, *, warnings: list[str], label: str) -> dict[str, Any] | None:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        warnings.append(f"Skipped malformed {label}: {path} ({exc})")
+        return None
+    if not isinstance(payload, dict):
+        warnings.append(f"Skipped non-object {label}: {path}")
+        return None
+    return payload
+
+
+def _load_qd_archive_summary(summary_path: Path, *, warnings: list[str]) -> dict[str, Any]:
     archive_summary_path = summary_path.parent / "archive_summary.json"
     if not archive_summary_path.is_file():
         return {}
-    try:
-        payload = json.loads(archive_summary_path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
+    payload = _load_json_mapping(
+        archive_summary_path,
+        warnings=warnings,
+        label="archive summary",
+    )
+    if payload is None:
         return {}
-    return payload if isinstance(payload, dict) else {}
+    return payload
 
 
 def _is_problem_summary_path(summary_path: Path) -> bool:
@@ -131,24 +168,53 @@ def _is_problem_summary_path(summary_path: Path) -> bool:
     )
 
 
-def _load_problem_metrics(backend: str, root: Path) -> dict[tuple[str, str], ProblemMetrics]:
+def _load_problem_metrics(
+    backend: str,
+    root: Path,
+    *,
+    allowed_problems: set[tuple[str, str]],
+    warnings: list[str],
+) -> dict[tuple[str, str], ProblemMetrics]:
+    if not root.is_dir():
+        raise ValueError(f"Backend root does not exist: {root}")
     rows: dict[tuple[str, str], ProblemMetrics] = {}
     for summary_path in sorted(root.rglob("*_summary.json")):
         if not _is_problem_summary_path(summary_path):
             continue
-        payload = json.loads(summary_path.read_text(encoding="utf-8"))
+        payload = _load_json_mapping(
+            summary_path,
+            warnings=warnings,
+            label="problem summary",
+        )
+        if payload is None:
+            continue
         benchmark = payload.get("benchmark_name") or summary_path.parent.parent.name
         problem = payload.get("problem_name") or summary_path.parent.name
         if not isinstance(benchmark, str) or not isinstance(problem, str):
             continue
+        problem_key = (benchmark, problem)
+        if problem_key not in allowed_problems:
+            continue
+        canonical_identity = _canonical_summary_identity(summary_path)
+        if canonical_identity != problem_key:
+            warnings.append(
+                "Skipped non-canonical problem summary outside selected problem directory: "
+                f"{summary_path}"
+            )
+            continue
         rates = {}
-        for key in ("success_rates", "accumulated_success_rates"):
-            value = payload.get(key)
+        for rate_key in ("success_rates", "accumulated_success_rates"):
+            value = payload.get(rate_key)
             if isinstance(value, dict):
                 rates = value
                 break
-        archive_summary = _load_qd_archive_summary(summary_path)
-        rows[(benchmark, problem)] = ProblemMetrics(
+        archive_summary = _load_qd_archive_summary(summary_path, warnings=warnings)
+        best_score_raw = payload.get("best_score")
+        if best_score_raw is None:
+            final_population = payload.get("final_population_ppa")
+            if isinstance(final_population, dict):
+                best_score_raw = final_population.get("best_score")
+        rows[problem_key] = ProblemMetrics(
             backend=backend,
             benchmark=benchmark,
             problem=problem,
@@ -158,10 +224,7 @@ def _load_problem_metrics(backend: str, root: Path) -> dict[tuple[str, str], Pro
             synthesis_rate=_safe_rate(
                 rates.get("total_synthesis_ppa", rates.get("synthesis_ppa", rates.get("synthesis", 0.0)))
             ),
-            best_score=_safe_float(
-                payload.get("best_score")
-                or (payload.get("final_population_ppa") or {}).get("best_score")
-            ),
+            best_score=_safe_float(best_score_raw),
             runtime_seconds=float(payload.get("total_runtime_seconds", 0.0) or 0.0),
             qd_archive_type=(
                 archive_summary.get("archive_type")
@@ -234,11 +297,10 @@ def _write_csv(path: Path, rows: list[dict[str, Any]], fieldnames: list[str]) ->
 def _load_archive_elites(root: Path) -> dict[tuple[str, str], set[str]]:
     elite_ids: dict[tuple[str, str], set[str]] = defaultdict(set)
     for cells_path in root.rglob("archive_cells.csv"):
-        try:
-            benchmark = cells_path.parent.parent.name
-            problem = cells_path.parent.name
-        except IndexError:
+        identity = _canonical_summary_identity(cells_path)
+        if identity is None:
             continue
+        benchmark, problem = identity
         with cells_path.open("r", encoding="utf-8", newline="") as handle:
             reader = csv.DictReader(handle)
             for row in reader:
@@ -270,15 +332,31 @@ def _flatten_numeric_metrics(payload: dict[str, Any]) -> dict[str, float]:
     return flattened
 
 
-def _collect_qd_candidates(backend: str, root: Path) -> list[dict[str, Any]]:
+def _collect_qd_candidates(
+    backend: str,
+    root: Path,
+    *,
+    allowed_problems: set[tuple[str, str]],
+    warnings: list[str],
+) -> list[dict[str, Any]]:
+    if not root.is_dir():
+        raise ValueError(f"Backend root does not exist: {root}")
     elite_ids = _load_archive_elites(root)
     rows: list[dict[str, Any]] = []
     for event_path in sorted(root.rglob("qd_archive_event.json")):
-        payload = json.loads(event_path.read_text(encoding="utf-8"))
-        if not isinstance(payload, dict):
+        payload = _load_json_mapping(
+            event_path,
+            warnings=warnings,
+            label="qd archive event",
+        )
+        if payload is None:
             continue
-        benchmark = event_path.parents[3].name
-        problem = event_path.parents[2].name
+        identity = _canonical_event_identity(event_path)
+        if identity is None:
+            continue
+        benchmark, problem = identity
+        if (benchmark, problem) not in allowed_problems:
+            continue
         features = _flatten_numeric_metrics(payload)
         quality_score = _safe_float(payload.get("quality_score"))
         if quality_score is None:
@@ -959,6 +1037,7 @@ def _write_top_report(
     per_backend_payloads: dict[str, dict[str, Any]],
     regression_payload: dict[str, Any],
     profile_payload: dict[str, Any],
+    warnings: list[str],
 ) -> None:
     lines = [
         "# QD Feature-Space Analysis",
@@ -1029,6 +1108,14 @@ def _write_top_report(
         f"- combinational_axes: `{', '.join(profile_payload['combinational_axes'])}`",
         "",
     ])
+    if warnings:
+        lines.extend([
+            "## Warnings",
+            "",
+        ])
+        for warning in warnings:
+            lines.append(f"- {warning}")
+        lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")
 
 
@@ -1063,7 +1150,9 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     problems = _load_subset_problems(subset_config)
+    allowed_problems = set(problems)
     backend_roots: dict[str, Path] = {}
+    warnings: list[str] = []
     for item in args.backend_run:
         if "=" not in item:
             raise ValueError(f"Invalid --backend_run '{item}'. Expected LABEL=PATH.")
@@ -1071,8 +1160,19 @@ def main() -> int:
         backend_roots[label] = Path(path_str).resolve()
 
     backend_problem_metrics: dict[str, dict[tuple[str, str], ProblemMetrics]] = {
-        backend: _load_problem_metrics(backend, root) for backend, root in backend_roots.items()
+        backend: _load_problem_metrics(
+            backend,
+            root,
+            allowed_problems=allowed_problems,
+            warnings=warnings,
+        )
+        for backend, root in backend_roots.items()
     }
+    for backend, rows in backend_problem_metrics.items():
+        if not rows:
+            raise ValueError(
+                f"No selected problem summaries found under backend root '{backend_roots[backend]}'."
+            )
     backend_aggregates = [
         _aggregate_backend(backend, problems, backend_problem_metrics[backend])
         for backend in backend_roots
@@ -1117,7 +1217,14 @@ def main() -> int:
 
     qd_candidate_rows: list[dict[str, Any]] = []
     for backend, root in backend_roots.items():
-        qd_candidate_rows.extend(_collect_qd_candidates(backend, root))
+        qd_candidate_rows.extend(
+            _collect_qd_candidates(
+                backend,
+                root,
+                allowed_problems=allowed_problems,
+                warnings=warnings,
+            )
+        )
 
     candidate_fieldnames = sorted({key for row in qd_candidate_rows for key in row}) if qd_candidate_rows else []
     if candidate_fieldnames:
@@ -1191,9 +1298,17 @@ def main() -> int:
         "qd_backends": per_backend_payloads,
         "regression": regression_payload,
         "recommended_profile": recommended_profile,
+        "warnings": warnings,
     }
     (output_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    _write_top_report(output_dir / "report.md", backend_aggregates, per_backend_payloads, regression_payload, recommended_profile)
+    _write_top_report(
+        output_dir / "report.md",
+        backend_aggregates,
+        per_backend_payloads,
+        regression_payload,
+        recommended_profile,
+        warnings,
+    )
     return 0
 
 
