@@ -492,10 +492,11 @@ Typical flow:
 ```bash
 HARD_ONE_SHOT_VLLM_HOST=host.docker.internal \
 HARD_ONE_SHOT_VLLM_PORT=8000 \
+HARD_ONE_SHOT_SAVE_PATH=exp/hard_iteration_one_shot_rerun_<date> \
 bash scripts/run_hard_iteration_one_shot_vllm.sh
 
 python scripts/build_hard_iteration_subset.py \
-  --one-shot-root exp/hard_iteration_one_shot \
+  --one-shot-root exp/hard_iteration_one_shot_rerun_<date> \
   --output-config data/configs/hard_iteration_subset.yaml \
   --output-csv baselines/hard_iteration_subset_vanilla_openai_gpt_oss_120b.csv
 
@@ -513,6 +514,10 @@ python scripts/report_hard_iteration_analysis.py \
   --backend_run cvt_size_control=exp/hard_iteration_qd/<timestamp>/cvt_size_control \
   --output-dir exp/hard_iteration_qd/<timestamp>/analysis
 ```
+
+Use a fresh post-fix one-shot root for the freeze step. Do not reuse the
+invalid March 17 outputs under `exp/hard_iteration_one_shot_smoke_20260317`
+or `exp/hard_iteration_one_shot_restart_20260317`.
 
 ### 3.4 Output inspection
 

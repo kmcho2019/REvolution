@@ -75,7 +75,7 @@
 - `python scripts/run_evolution.py --benchmarks RTLLM --model_name gpt-4.1-mini`: example multi-generation run.
 - `python scripts/run_one_shot.py --benchmarks VerilogEval-Spec-to-RTL --num_samples 20`: example n-shot baseline run.
 - `bash scripts/run_hard_iteration_one_shot_vllm.sh --dry-run`: inspect the resumable hard-subset vanilla baseline batches without running them.
-- `python scripts/build_hard_iteration_subset.py --one-shot-root exp/hard_iteration_one_shot --output-config data/configs/hard_iteration_subset.yaml`: freeze the hard iteration subset from one-shot results.
+- `python scripts/build_hard_iteration_subset.py --one-shot-root exp/hard_iteration_one_shot_rerun_<date> --output-config data/configs/hard_iteration_subset.yaml`: freeze the hard iteration subset from a valid post-fix one-shot rerun.
 - `bash scripts/run_hard_iteration_qd_vllm.sh --dry-run`: inspect the classic + QD hard-subset matrix commands before running them live.
 - `python scripts/qd_descriptor_probe.py --archive_type grid --circuit_type sequential`: inspect the current QD descriptor-axis selection and requirements.
 - `bash scripts/run_qd_retrospective_redo_vllm.sh --dry-run`: inspect the tracked long-budget retrospective redo matrix without launching live jobs.

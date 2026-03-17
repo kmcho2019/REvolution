@@ -179,3 +179,17 @@
   - update the stage tracker from `active/pending` to `completed`
 - planned commit after final reporting is published:
   - `docs(bench): publish hard subset results and recommendations`
+
+## Status refresh: 2026-03-17 07:35 UTC
+
+- Poll result: corrected Stage 2 one-shot rerun is still active under `exp/hard_iteration_one_shot_rerun_20260317_pathfix`.
+- Stable completion snapshot: `RTLLM` is `39/50` complete and `VerilogEval-Spec-to-RTL` is `0/156` complete.
+- Run health: the corrected rerun continues to pass vLLM preflight and batch aggregation; no repeat of the March 17 relative-path simulation failure has appeared in the rerun logs so far.
+- Stage impact: keep Stage 2 as `active`; do not refreeze the hard subset or rerun the Stage 3 matrix until this corrected baseline completes.
+
+## Status refresh: 2026-03-17 07:44 UTC
+
+- Poll result: corrected Stage 2 rerun remains active under `exp/hard_iteration_one_shot_rerun_20260317_pathfix`.
+- Stable completion snapshot: `RTLLM` is now `50/50` complete and `VerilogEval-Spec-to-RTL` is `8/156` complete.
+- Follow-through completed while waiting: hard-subset workflow docs now point at a fresh post-fix one-shot root, warn against the invalid March 17 outputs, and a new `tests/scripts/test_run_one_shot.py` regression pins the relative-`--save_path` normalization at the script entrypoint.
+- Validation snapshot: `python -m pytest tests/scripts/test_run_one_shot.py tests/revolution/test_evaluation.py tests/scripts/test_build_hard_iteration_subset.py` passed (`42` tests).
