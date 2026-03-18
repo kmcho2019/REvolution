@@ -322,7 +322,7 @@ Script behavior:
 - validates the served `max_model_len` against `SMOKE_MIN_MODEL_LEN` (default `128000`) so long-context reasoning-model runs do not silently use a short window,
   - `SMOKE_MIN_MODEL_LEN` accepts raw integers and human-friendly suffixes (`k`, `m`, `g`), for example `128k`, `131072`, `12800k`,
 - exports a placeholder `OPENAI_API_KEY` when unset so the OpenAI-compatible client can initialize against local vLLM,
-- runs `scripts/run_evolution.py` with small defaults (`population_size=2`, `num_generations=1`, `num_workers=1`),
+- runs `scripts/run_evolution.py` with small defaults (`population_size=2`, `num_generations=1`, `total_worker_slots=1`),
 - fails with non-zero exit if summary statuses include `initialization_failed` or `run_failed`,
 - supports tiny suites:
   - `--suite rtllm` -> `RTLLM/Prob001_accu`,

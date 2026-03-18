@@ -36,6 +36,7 @@
 - `backends/funsearch_backend.py`: FunSearch-style RTL backend (islands, signature clusters, reset/reseed, budgeted loop).
 - `runtime/problem_context.py`: benchmark/problem path and metadata resolution.
 - `runtime/problem_spec.py`: benchmark capability layer and default descriptor / generation-mode preferences.
+- `runtime/parallelism.py`: shared parallelism config resolution, Manager-backed elastic slot coordination, and per-problem worker leasing helpers used by both runners and backends.
 - `runtime/structural_evaluator.py`: structural descriptor extraction helpers for Yosys-like stats payloads.
 - `runtime/candidate_evaluator.py`: backend-agnostic format/syntax/functionality/synthesis/PPA evaluation orchestration with `strict_ablation` and `search_accelerated` modes.
 - `runtime/realbench_adapter.py`: manifest-based RealBench module discovery plus `ProblemContext` / `ProblemSpec` builders.
@@ -51,8 +52,8 @@
 
 ## `scripts/`
 
-- `run_evolution.py`: CLI entry point for multi-problem evolutionary runs with multiprocessing.
-- `run_backend.py`: canonical backend-selectable runner (`--backend revolution|funsearch`).
+- `run_evolution.py`: CLI entry point for multi-problem evolutionary runs with elastic global worker-pool scheduling and config-file translation for older parallelism keys.
+- `run_backend.py`: canonical backend-selectable runner (`--backend revolution|funsearch`) with shared elastic/global parallelism controls.
 - `run_backend_qd_smoke_vllm.sh`: repeatable grid/CVT QD smoke harness for live
   vLLM validation with fixed small-budget defaults and `--dry-run`.
 - `run_qd_retrospective_redo_vllm.sh`: repeatable long-budget retrospective

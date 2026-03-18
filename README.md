@@ -123,6 +123,18 @@ default `--diff_max_tokens 1024` was left unchanged.
 Use `run_backend.py` for backend ablations across REvolution, FunSearch, EoH,
 and CodeEvolve:
 
+Multi-problem runs now default to an elastic global worker pool. The primary
+controls are:
+
+- `--total_worker_slots <int>` for the total run-wide worker budget
+- `--max_active_problems <int>` to cap how many problems run at once
+- `--max_workers_per_problem <int>` to cap borrowed evaluation threads inside
+  one problem
+
+Older config files that still use `num_workers`, `candidate_workers`, or
+`multiprocessing_mode` are translated automatically with warnings. Those legacy
+names are no longer accepted on the CLI.
+
 The `revolution` backend now also exposes the experimental QD search-mode
 surface:
 
@@ -295,6 +307,8 @@ python scripts/run_backend.py \
 
 `scripts/run_funsearch.py` is a convenience wrapper for
 `run_backend.py --backend funsearch`.
+It accepts the same shared elastic parallelism flags because it delegates
+directly to `run_backend.py`.
 Use `scripts/backend_comparison_report.py` to combine multiple backend experiment roots into one markdown comparison table.
 Use `scripts/run_backend_ablation.py` to launch matched backend sets over shared
 benchmark suites and emit a comparison report automatically. The ablation runner
@@ -354,8 +368,12 @@ CodeEvolve controls:
 This script distributes problems across worker processes and executes the full evolutionary loop. Key arguments:
 
 - `--benchmarks` / `--problems`: control which suites and problem IDs run.
-- `--num_workers`: worker count (processes in `problem` mode, candidate-evaluation threads in `candidate` mode).
-- `--multiprocessing_mode`: `problem` (default) or `candidate` to switch between multi-problem and per-problem parallelism.
+- `--total_worker_slots`: total run-wide worker budget.
+- `--max_active_problems`: limit how many problems can run at once.
+- `--max_workers_per_problem`: cap how many evaluation threads one problem can
+  borrow when spare slots exist.
+- older config files that still use `num_workers` or `multiprocessing_mode`
+  are translated to the elastic controls with warnings
 - `--population_size`, `--num_generations`: evolutionary dynamics.
 - `--strategy_selection`: choose meta-strategy (`random`, `epsilon-greedy`, `ucb`).
 - `--generation_mode`: request whole-file or diff-based offspring generation. (`whole` mode works by generating entire snippets of code from scratch whereas `diff` mode is able to edit snippets of code with an editing format. Weaker models may have trouble adhering to `diff` mode formatting resulting errors and lower performance, `whole` mode is recommended for general purpose use.)
@@ -382,7 +400,7 @@ python scripts/run_evolution.py \
   --model_name meta-llama/llama-3.3-70b-instruct \
   --api_backend openrouter \
   --strategy_selection ucb \
-  --num_workers 32 \
+  --total_worker_slots 32 \
   --population_size 10 \
   --num_generations 20
 ```
@@ -395,7 +413,7 @@ python scripts/run_evolution.py \
   --problems Prob001_zero \
   --evaluation_mode gen0 \
   --population_size 16 \
-  --num_workers 1
+  --total_worker_slots 1
 ```
 
 Add `--gen0_evaluate_best` to run the same search but also execute the functional testbench, synthesis, and OpenROAD PPA flow for the top-ranked candidate. The resulting logs are collated under `Gen0/best_candidate/` alongside a metadata summary:
@@ -536,13 +554,18 @@ python scripts/run_backend_ablation.py \
   --synthesis_timeout_s 300 \
   --post_synthesis_simulation_timeout_s 300 \
   --seeds 42 43 \
-  --num_workers 8
+  --total_worker_slots 8
 ```
 
 The script enforces fairness checks before launching runs:
 - shared model/sampling/toolchain options must match across backends,
 - strict-ablation mode is required for comparison runs,
 - primary budget axis (`total_candidates_evaluated`) must match.
+
+The same elastic parallelism knobs are forwarded to every generated backend
+command, and fairness validation now also checks
+`--total_worker_slots`, `--max_active_problems`, and
+`--max_workers_per_problem`.
 
 Use `--dry_run` to validate and print all generated backend commands without executing live runs.
 
@@ -566,8 +589,8 @@ timeout 3600 python scripts/run_backend_ablation.py \
   --temperature 0.7 \
   --top_p 0.95 \
   --max_tokens 16384 \
-  --num_workers 1 \
-  --candidate_workers 0 \
+  --total_worker_slots 1 \
+  --max_workers_per_problem 1 \
   --save_root /tmp/prob144_conwaylife_timeout_smoke
 ```
 
@@ -603,7 +626,7 @@ python scripts/run_evolution.py \
   --benchmarks cvdp \
   --cvdp_categories cid002 \
   --model_name gpt-4.1-mini \
-  --num_workers 10
+  --total_worker_slots 10
 ```
 - Running individual problems: To run one or more specific CVDP problems by their ID, provide them using the `--problems` argument.
 ```bash
@@ -614,7 +637,7 @@ python scripts/run_evolution.py \
   --problems cvdp_copilot_64b66b_decoder_0001 cvdp_copilot_16qam_mapper_0001 \
   --cvdp_simulation_timeout_s 120 \
   --model_name gpt-4.1-mini \
-  --num_workers 2 \
+  --total_worker_slots 2 \
   --population_size 10 \
   --num_generations 5
 ```

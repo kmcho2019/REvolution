@@ -87,7 +87,11 @@ default `--diff_max_tokens 1024` was left unchanged.
 
 - `--backend revolution|funsearch|eoh|codeevolve`
 - `--search_mode revolution|revolution_qd` for the `revolution` backend
-- shared model/benchmark options (`--benchmarks`, `--problems`, `--model_name`, `--api_backend`, `--save_path`, `--num_workers`)
+- shared model/benchmark options (`--benchmarks`, `--problems`, `--model_name`, `--api_backend`, `--save_path`)
+- shared parallelism controls:
+  - `--total_worker_slots <int>`
+  - `--max_active_problems <int>`
+  - `--max_workers_per_problem <int>`
 - backend-specific controls (`--population_size`, `--num_generations`, `--strategy_selection`, `--fs_*`, `--eoh_*`, `--codeevolve_*`)
 - shared evaluation controls:
   - `--evaluation_mode strict_ablation|search_accelerated`
@@ -118,6 +122,11 @@ to module-level tasks:
   is not merged into `wip/journal-extension-2026` yet
 
 By default outputs are isolated by backend under `<save_path>/<backend>/...` (`--backend_subdir` can be disabled if needed).
+
+In the default `elastic` mode, each active problem keeps one base slot and can
+borrow extra evaluation threads when the global pool has spare capacity. That
+lets long-running problems scale up after shorter problems finish without
+having to pre-commit the run to a fixed problem/process split.
 
 QD-mode controls on the `revolution` backend currently include:
 
@@ -271,7 +280,9 @@ python scripts/run_backend.py \
   --seed 42
 ```
 
-`scripts/run_funsearch.py` is a convenience wrapper that injects `--backend funsearch`.
+`scripts/run_funsearch.py` is a convenience wrapper that injects
+`--backend funsearch` and accepts the same shared elastic parallelism flags as
+`run_backend.py`.
 
 Example (EoH backend):
 
@@ -354,8 +365,10 @@ Essential arguments:
 
 - `--benchmarks <names>`: select suites from `data/bench` (default: all).
 - `--problems <ids>`: restrict to specific problems (optional).
-- `--num_workers <int>`: worker count (processes in `problem` mode, candidate-evaluation threads in `candidate` mode).
-- `--multiprocessing_mode {problem,candidate}`: distribute work across problems (default) or evaluate candidates inside a problem in parallel.
+- `--total_worker_slots <int>`: total run-wide worker budget.
+- `--max_active_problems <int>`: cap how many problems can stay active at once.
+- `--max_workers_per_problem <int>`: per-problem cap for borrowed evaluation threads.
+- older config files that still use `num_workers`, `candidate_workers`, or `multiprocessing_mode` are translated to the elastic controls with warnings
 - `--population_size <int>` / `--num_generations <int>`: evolutionary parameters.
 - `--search_mode {revolution,revolution_qd}`: use the canonical backend runner for the experimental QD path; `run_evolution.py` forwards QD configs to `run_backend.py`.
 - `--save_path <dir>`: base directory for artefacts (default: `./exp` relative to the repo).
@@ -382,7 +395,7 @@ python scripts/run_evolution.py \
   --benchmarks VerilogEval-Spec-to-RTL RTLLM \
   --model_name meta-llama/llama-3.3-70b-instruct \
   --api_backend openrouter \
-  --num_workers 32 \
+  --total_worker_slots 32 \
   --population_size 12 \
   --num_generations 24 \
   --strategy_selection ucb \
@@ -397,7 +410,7 @@ python scripts/run_evolution.py \
   --problems Prob001_zero \
   --evaluation_mode gen0 \
   --population_size 16 \
-  --num_workers 1
+  --total_worker_slots 1
 ```
 
 The `gen0` mode skips test benches, synthesis, and PPA analysis by default. It simply collects `population_size` candidates, scores them using the feedback LLM (the returned `score` field), and keeps the top-ranked artefacts under `Gen0/<problem>_sample*/`.
@@ -428,6 +441,11 @@ The prompt file is read verbatim (UTF-8 by default) and becomes the `problem_des
 #### Configuration files
 
 `scripts/run_evolution.py` accepts `--config path/to/settings.yaml` (or `.json`). The file can contain any subset of CLI options; unspecified values fall back to the parser defaults. When both a config file and explicit CLI switches are supplied, the CLI values win. Curated examples live under `data/configs/`—copy them as a starting point for reproducible experiment setups.
+
+Legacy `num_workers`, `candidate_workers`, and `multiprocessing_mode` fields
+still load from config files. They are translated with explicit warnings to the
+new elastic controls. New snapshots and manifests record only the resolved
+elastic fields so the effective run capacity is clear after the fact.
 
 Every invocation writes two files next to summary/log outputs in `exp/<model>/`:
 
@@ -696,8 +714,8 @@ timeout 3600 python scripts/run_backend_ablation.py \
   --temperature 0.7 \
   --top_p 0.95 \
   --max_tokens 16384 \
-  --num_workers 1 \
-  --candidate_workers 0 \
+  --total_worker_slots 1 \
+  --max_workers_per_problem 1 \
   --save_root /tmp/prob144_conwaylife_timeout_smoke
 ```
 

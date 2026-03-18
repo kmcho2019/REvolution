@@ -74,6 +74,9 @@ Selection policy:
 ```bash
 HARD_SUBSET_VLLM_HOST=host.docker.internal \
 HARD_SUBSET_VLLM_PORT=8000 \
+HARD_SUBSET_TOTAL_WORKER_SLOTS=8 \
+HARD_SUBSET_MAX_ACTIVE_PROBLEMS=4 \
+HARD_SUBSET_MAX_WORKERS_PER_PROBLEM=4 \
 bash scripts/run_hard_iteration_qd_vllm.sh \
   --config data/configs/hard_iteration_subset.yaml \
   --mode matrix
@@ -82,6 +85,12 @@ bash scripts/run_hard_iteration_qd_vllm.sh \
 The runner creates a timestamped run directory under the configured save root,
 for example `exp/hard_iteration_qd/<run_tag>/`, and writes both
 `hard_iteration_manifest.txt` and `hard_iteration_backend_comparison.md` there.
+
+The wrapper now reads the elastic scheduling defaults from
+`matrix_defaults.total_worker_slots`, `max_active_problems`, and
+`max_workers_per_problem` in `data/configs/hard_iteration_subset.yaml`. Older
+configs that still use `num_workers` or `candidate_workers` are translated with
+warnings when the wrapper loads them.
 
 Current fixed modes:
 
