@@ -12,8 +12,8 @@ if str(PROJECT_ROOT) not in sys.path:
 from scripts.run_backend_ablation import (  # noqa: E402
     _derive_codeevolve_schedule,
     _derive_eoh_schedule,
+    _positive_worker_budget,
     _resolve_candidate_budget,
-    _safe_workers,
     _validate_fairness,
     main as run_backend_ablation_main,
 )
@@ -36,10 +36,10 @@ def mocker(request):
     return instance
 
 
-def test_safe_workers_bounds():
-    assert _safe_workers(0) >= 1
-    assert _safe_workers(1) == 1
-    assert _safe_workers(10_000) >= 1
+def test_positive_worker_budget_bounds():
+    assert _positive_worker_budget(0) == 1
+    assert _positive_worker_budget(1) == 1
+    assert _positive_worker_budget(10_000) == 10_000
 
 
 @pytest.mark.parametrize(
@@ -630,6 +630,32 @@ def test_ablation_dry_run_propagates_shared_timeout_flags(tmp_path, capsys):
     assert "--synthesis_timeout_s 29" in captured.out
     assert "--post_synthesis_simulation_timeout_s 31" in captured.out
     assert "--total_worker_slots 8" in captured.out
+
+
+def test_ablation_preserves_explicit_total_worker_slots(tmp_path, capsys):
+    save_root = tmp_path / "ablation_run_worker_budget"
+    rc = run_backend_ablation_main(
+        [
+            "--benchmarks",
+            "RTLLM",
+            "--save_root",
+            str(save_root),
+            "--backends",
+            "revolution",
+            "--seeds",
+            "42",
+            "--max_evaluations",
+            "1",
+            "--total_worker_slots",
+            "99",
+            "--dry_run",
+            "--no-run_report",
+        ]
+    )
+
+    assert rc == 0
+    captured = capsys.readouterr()
+    assert "--total_worker_slots 99" in captured.out
 
 
 def test_ablation_generated_config_roundtrip_and_edit(tmp_path):

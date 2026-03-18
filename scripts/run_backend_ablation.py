@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import datetime
 import math
-import multiprocessing
 import os
 import subprocess
 import sys
@@ -40,9 +39,8 @@ def _available_benchmarks() -> list[str]:
     )
 
 
-def _safe_workers(requested: int) -> int:
-    cpus = max(1, multiprocessing.cpu_count())
-    return max(1, min(requested, cpus))
+def _positive_worker_budget(requested: int) -> int:
+    return max(1, int(requested))
 
 
 def _run_cmd(cmd: list[str]) -> None:
@@ -611,7 +609,7 @@ def main(argv: list[str] | None = None) -> int:
         raw_argv=raw_argv,
     )
 
-    total_worker_slots = _safe_workers(int(args.total_worker_slots))
+    total_worker_slots = _positive_worker_budget(int(args.total_worker_slots))
     max_active_problems = (
         max(1, int(args.max_active_problems))
         if args.max_active_problems is not None

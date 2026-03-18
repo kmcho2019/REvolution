@@ -1,4 +1,7 @@
 from argparse import Namespace
+from pathlib import Path
+
+import yaml
 
 from revolution.runtime.parallelism import (
     BACKEND_LEGACY_CLI_OPTIONS,
@@ -12,6 +15,9 @@ from revolution.runtime.parallelism import (
     translate_backend_legacy_parallelism_config,
     translate_evolution_legacy_parallelism_config,
 )
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _elastic_config() -> ResolvedParallelismConfig:
@@ -137,6 +143,30 @@ def test_reject_legacy_parallelism_cli_options():
 
     assert "--num_workers -> --total_worker_slots" in message
     assert "--parallelism_mode -> elastic scheduling is always enabled" in message
+
+
+def test_repo_default_parallelism_configs_use_elastic_keys():
+    config_paths = [
+        PROJECT_ROOT / "data" / "configs" / "evolution_default.yaml",
+        PROJECT_ROOT / "data" / "configs" / "funsearch_default.yaml",
+        PROJECT_ROOT / "data" / "configs" / "codeevolve_default.yaml",
+        PROJECT_ROOT / "data" / "configs" / "hard_iteration_subset.yaml",
+    ]
+
+    loaded_payloads = [
+        yaml.safe_load(config_path.read_text(encoding="utf-8"))
+        for config_path in config_paths
+    ]
+
+    for payload in loaded_payloads:
+        assert "num_workers" not in payload
+        assert "candidate_workers" not in payload
+        assert "multiprocessing_mode" not in payload
+        assert "parallelism_mode" not in payload
+
+    assert loaded_payloads[0]["total_worker_slots"] == 2
+    assert loaded_payloads[1]["total_worker_slots"] == 1
+    assert loaded_payloads[2]["total_worker_slots"] == 1
 
 
 def test_elastic_controller_releases_extra_slots_after_exception():
