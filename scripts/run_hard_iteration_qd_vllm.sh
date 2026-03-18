@@ -17,8 +17,9 @@ Environment overrides:
   HARD_SUBSET_SAVE_PATH         Base output directory (default: <repo>/exp/hard_iteration_qd)
   HARD_SUBSET_TIMEOUT_S         Per-command timeout in seconds (default: 0, disabled)
   HARD_SUBSET_SEED              Seed override (defaults to config value)
-  HARD_SUBSET_NUM_WORKERS       Worker count override (defaults to config value)
-  HARD_SUBSET_CANDIDATE_WORKERS Candidate worker override (defaults to config value)
+  HARD_SUBSET_TOTAL_WORKER_SLOTS Total worker-slot override (defaults to config value)
+  HARD_SUBSET_MAX_ACTIVE_PROBLEMS Active problem cap override (defaults to config value)
+  HARD_SUBSET_MAX_WORKERS_PER_PROBLEM Per-problem worker cap override (defaults to config value)
   HARD_SUBSET_POPULATION_SIZE   Population size override (defaults to config value)
   HARD_SUBSET_NUM_GENERATIONS   Generation count override (defaults to config value)
   HARD_SUBSET_MAX_TOKENS        Max token override (defaults to config value)
@@ -139,8 +140,35 @@ emit_scalar(
     "CONFIG_ACCELERATED_SYNTHESIS_TOP_K",
     defaults["accelerated_synthesis_top_k"],
 )
-emit_scalar("CONFIG_NUM_WORKERS", defaults["num_workers"])
-emit_scalar("CONFIG_CANDIDATE_WORKERS", defaults["candidate_workers"])
+total_worker_slots = defaults.get("total_worker_slots")
+if total_worker_slots is None:
+    total_worker_slots = defaults.get("num_workers")
+    if total_worker_slots is not None:
+        print(
+            "[parallelism] WARNING: hard-subset config key 'num_workers' is deprecated. "
+            f"Translated it to 'total_worker_slots={total_worker_slots}'.",
+            file=sys.stderr,
+        )
+if total_worker_slots is None:
+    raise KeyError("matrix_defaults.total_worker_slots is required")
+
+max_active_problems = defaults.get("max_active_problems", total_worker_slots)
+max_workers_per_problem = defaults.get("max_workers_per_problem")
+if max_workers_per_problem is None:
+    legacy_candidate_workers = defaults.get("candidate_workers")
+    if legacy_candidate_workers is not None:
+        max_workers_per_problem = max(1, int(legacy_candidate_workers))
+        print(
+            "[parallelism] WARNING: hard-subset config key 'candidate_workers' is deprecated. "
+            f"Translated it to 'max_workers_per_problem={max_workers_per_problem}'.",
+            file=sys.stderr,
+        )
+    else:
+        max_workers_per_problem = total_worker_slots
+
+emit_scalar("CONFIG_TOTAL_WORKER_SLOTS", total_worker_slots)
+emit_scalar("CONFIG_MAX_ACTIVE_PROBLEMS", max_active_problems)
+emit_scalar("CONFIG_MAX_WORKERS_PER_PROBLEM", max_workers_per_problem)
 emit_scalar("CONFIG_TEMPERATURE", defaults["temperature"])
 emit_scalar("CONFIG_TOP_P", defaults["top_p"])
 emit_scalar("CONFIG_MAX_TOKENS", defaults["max_tokens"])
@@ -254,8 +282,9 @@ esac
 
 POPULATION_SIZE="${HARD_SUBSET_POPULATION_SIZE:-${CONFIG_POPULATION_SIZE}}"
 NUM_GENERATIONS="${HARD_SUBSET_NUM_GENERATIONS:-${CONFIG_NUM_GENERATIONS}}"
-NUM_WORKERS="${HARD_SUBSET_NUM_WORKERS:-${CONFIG_NUM_WORKERS}}"
-CANDIDATE_WORKERS="${HARD_SUBSET_CANDIDATE_WORKERS:-${CONFIG_CANDIDATE_WORKERS}}"
+TOTAL_WORKER_SLOTS="${HARD_SUBSET_TOTAL_WORKER_SLOTS:-${CONFIG_TOTAL_WORKER_SLOTS}}"
+MAX_ACTIVE_PROBLEMS="${HARD_SUBSET_MAX_ACTIVE_PROBLEMS:-${CONFIG_MAX_ACTIVE_PROBLEMS}}"
+MAX_WORKERS_PER_PROBLEM="${HARD_SUBSET_MAX_WORKERS_PER_PROBLEM:-${CONFIG_MAX_WORKERS_PER_PROBLEM}}"
 TEMPERATURE="${HARD_SUBSET_TEMPERATURE:-${CONFIG_TEMPERATURE}}"
 TOP_P="${HARD_SUBSET_TOP_P:-${CONFIG_TOP_P}}"
 MAX_TOKENS="${HARD_SUBSET_MAX_TOKENS:-${CONFIG_MAX_TOKENS}}"
@@ -279,8 +308,9 @@ benchmarks=${CONFIG_BENCHMARKS[*]}
 problems=${CONFIG_PROBLEMS[*]}
 population_size=${POPULATION_SIZE}
 num_generations=${NUM_GENERATIONS}
-num_workers=${NUM_WORKERS}
-candidate_workers=${CANDIDATE_WORKERS}
+total_worker_slots=${TOTAL_WORKER_SLOTS}
+max_active_problems=${MAX_ACTIVE_PROBLEMS}
+max_workers_per_problem=${MAX_WORKERS_PER_PROBLEM}
 temperature=${TEMPERATURE}
 top_p=${TOP_P}
 max_tokens=${MAX_TOKENS}
@@ -345,8 +375,9 @@ for mode_name in "${MODES[@]}"; do
   CMD+=("--model_name" "${MODEL_NAME}")
   CMD+=("--population_size" "${POPULATION_SIZE}")
   CMD+=("--num_generations" "${NUM_GENERATIONS}")
-  CMD+=("--num_workers" "${NUM_WORKERS}")
-  CMD+=("--candidate_workers" "${CANDIDATE_WORKERS}")
+  CMD+=("--total_worker_slots" "${TOTAL_WORKER_SLOTS}")
+  CMD+=("--max_active_problems" "${MAX_ACTIVE_PROBLEMS}")
+  CMD+=("--max_workers_per_problem" "${MAX_WORKERS_PER_PROBLEM}")
   CMD+=("--evaluation_mode" "${CONFIG_EVALUATION_MODE}")
   CMD+=("--accelerated_synthesis_top_k" "${CONFIG_ACCELERATED_SYNTHESIS_TOP_K}")
   CMD+=("--temperature" "${TEMPERATURE}")

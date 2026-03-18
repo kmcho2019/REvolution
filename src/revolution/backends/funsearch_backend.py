@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-import numpy as np
+import numpy as np  # pyright: ignore[reportMissingImports]
 
 from revolution.backends.base import (
     BackendExecutionContext,
@@ -20,6 +20,7 @@ from revolution.backends.base import (
 )
 from revolution.prompt_store import safe_format
 from revolution.runtime import CandidateEvaluation, CandidateEvaluator, CandidateWorkItem
+from revolution.runtime.parallelism import FixedProblemConcurrencyController
 from revolution.runtime.run_artifacts import add_legacy_strategy_key_alias
 
 
@@ -618,10 +619,16 @@ class FunSearchBackend(EvolutionBackend):
                     initial_status=prepared.initial_status,
                 )
             )
-        evaluations = self.services.candidate_evaluator.evaluate_candidates(
-            items,
-            candidate_workers=max(0, self.config.candidate_workers),
-        )
+        controller = getattr(self.services, "problem_concurrency", None)
+        if controller is None:
+            controller = FixedProblemConcurrencyController(
+                max(1, self.config.candidate_workers),
+            )
+        with controller.lease_candidate_workers(len(items)) as workers:
+            evaluations = self.services.candidate_evaluator.evaluate_candidates(
+                items,
+                candidate_workers=workers,
+            )
         return [
             self._finalize_candidate(prepared, evaluation)
             for prepared, evaluation in zip(prepared_candidates, evaluations)
@@ -803,6 +810,15 @@ class FunSearchBackend(EvolutionBackend):
                 else "strict_ablation",
                 "accelerated_synthesis_top_k": self.services.candidate_evaluator.accelerated_synthesis_top_k
                 if self.services.candidate_evaluator
+                else None,
+                "total_worker_slots": self.context.metadata.get("total_worker_slots")
+                if isinstance(self.context.metadata, dict)
+                else None,
+                "max_active_problems": self.context.metadata.get("max_active_problems")
+                if isinstance(self.context.metadata, dict)
+                else None,
+                "max_workers_per_problem": self.context.metadata.get("max_workers_per_problem")
+                if isinstance(self.context.metadata, dict)
                 else None,
             },
             "stage_success_rates": {

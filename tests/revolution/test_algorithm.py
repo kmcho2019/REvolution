@@ -1072,15 +1072,18 @@ def test_evaluate_candidates_parallel_uses_thread_pool(mocker, tmp_path):
     eng, llm = _mk_engine(mocker, tmp_path, pop_size=1, candidate_workers=2)
     mocker.patch.object(EoHEngine, "_copy_misc_files", return_value=None)
 
-    code_path, _ = eng._save_result_to_file(
-        "module foo; endmodule",
-        "thought",
-        generation_num=0,
-        sample_idx_in_generation=1,
-        strategy="initial",
-    )
-    cand = Heuristic("thought", "module foo; endmodule", "")
-    cand.code_file_path = code_path
+    candidates: list[Heuristic] = []
+    for sample_idx in (1, 2):
+        code_path, _ = eng._save_result_to_file(
+            "module foo; endmodule",
+            "thought",
+            generation_num=0,
+            sample_idx_in_generation=sample_idx,
+            strategy="initial",
+        )
+        candidate = Heuristic("thought", "module foo; endmodule", "")
+        candidate.code_file_path = code_path
+        candidates.append(candidate)
 
     class DummyFuture:
         def __init__(self, fn, args):
@@ -1137,14 +1140,20 @@ def test_evaluate_candidates_parallel_uses_thread_pool(mocker, tmp_path):
     mocker.patch.object(
         eng.llm,
         "generate_batch_feedback",
-        mocker.AsyncMock(return_value=[{"analysis": "ok", "justification": "", "score": 0}]),
+        mocker.AsyncMock(
+            return_value=[
+                {"analysis": "ok", "justification": "", "score": 0},
+                {"analysis": "ok", "justification": "", "score": 0},
+            ]
+        ),
     )
 
-    eng._evaluate_candidates([cand])
+    eng._evaluate_candidates(candidates)
 
     assert executor_instances
     assert executor_instances[0].max_workers == 2
-    assert cand.status == "success"
+    assert len(executor_instances[0].submitted) == 2
+    assert all(candidate.status == "success" for candidate in candidates)
 
 
 def test_initialize_population_whole_splits_pools_and_writes(mocker, tmp_path):

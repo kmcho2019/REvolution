@@ -121,6 +121,7 @@ class RevolutionBackend(EvolutionBackend):
             prompt_profile=self.config.prompt_profile,
             prompt_root=self.config.prompt_root,
             candidate_workers=self.config.candidate_workers,
+            problem_concurrency=getattr(self.services, "problem_concurrency", None),
             problem_spec=self.context.problem_spec,
         )
         if engine_cls is QDEngine:
@@ -201,6 +202,12 @@ class RevolutionBackend(EvolutionBackend):
         run_budget.setdefault(
             "accelerated_synthesis_top_k",
             metadata.get("accelerated_synthesis_top_k"),
+        )
+        run_budget.setdefault("total_worker_slots", metadata.get("total_worker_slots"))
+        run_budget.setdefault("max_active_problems", metadata.get("max_active_problems"))
+        run_budget.setdefault(
+            "max_workers_per_problem",
+            metadata.get("max_workers_per_problem"),
         )
         summary_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         return str(summary_path)

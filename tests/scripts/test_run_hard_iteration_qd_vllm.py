@@ -28,8 +28,9 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
                     "num_generations": 5,
                     "evaluation_mode": "search_accelerated",
                     "accelerated_synthesis_top_k": 1,
-                    "num_workers": 2,
-                    "candidate_workers": 0,
+                    "total_worker_slots": 2,
+                    "max_active_problems": 2,
+                    "max_workers_per_problem": 2,
                     "temperature": 1.0,
                     "top_p": 1.0,
                     "max_tokens": 128000,
@@ -111,6 +112,9 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "--qd_cvt_warmup_successes 4" in normalized
     assert "--population_size 20" in normalized
     assert "--num_generations 5" in normalized
+    assert "--total_worker_slots 2" in normalized
+    assert "--max_active_problems 2" in normalized
+    assert "--max_workers_per_problem 2" in normalized
     assert "--max_tokens 128000" in normalized
     assert "--diff_max_tokens 128000" in normalized
     run_dirs = [path for path in (tmp_path / "runs").iterdir() if path.is_dir()]
@@ -120,6 +124,7 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     manifest = (run_dir / "hard_iteration_manifest.txt").read_text(encoding="utf-8")
     assert "subset_name=hard_iteration_subset_v1" in manifest
     assert "mode=matrix" in manifest
+    assert "total_worker_slots=2" in manifest
     assert "qd_num_cells=16" in manifest
     assert "qd_cvt_warmup_successes=4" in manifest
     assert f"--output {run_dir / 'hard_iteration_backend_comparison.md'}" in normalized

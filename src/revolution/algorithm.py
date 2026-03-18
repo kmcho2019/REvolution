@@ -26,6 +26,10 @@ from .logging import EoHLogger
 from .prompt_store import PromptStore, safe_format # Able to load prompts from files
 from .rtl_descriptor_evaluator import RTLDescriptorEvaluator
 from .simulation_descriptor_evaluator import SimulationDescriptorEvaluator
+from .runtime.parallelism import (
+    FixedProblemConcurrencyController,
+    ProblemConcurrencyController,
+)
 
 if TYPE_CHECKING:
     from .runtime.problem_spec import ProblemSpec
@@ -370,6 +374,7 @@ class EoHEngine:
         prompt_profile: str = "default",
         prompt_root: str | None = None,
         candidate_workers: int | None = None,
+        problem_concurrency: ProblemConcurrencyController | None = None,
         problem_spec: "ProblemSpec | None" = None,
     ):
         self.generation_mode: Literal["whole", "diff"] = generation_mode
@@ -419,7 +424,7 @@ class EoHEngine:
         self.candidate_workers: int = (
             candidate_workers if candidate_workers and candidate_workers > 0 else 0
         )
-        self.parallelize_candidates: bool = self.candidate_workers > 1
+        self.problem_concurrency = problem_concurrency
 
         # Champion Metrics Configuration
         # Defines the configuration for champion metrics.
@@ -1190,11 +1195,30 @@ class EoHEngine:
         testbench_top_module_name = self._resolve_testbench_top_module_name()
         synthesis_top_module_name = self._resolve_synthesis_top_module_name()
 
-        if self.parallelize_candidates:
-            with ThreadPoolExecutor(max_workers=self.candidate_workers) as executor:
-                results = [
-                    executor.submit(
-                        self._evaluate_candidate_pipeline,
+        worker_controller = self.problem_concurrency
+        if worker_controller is None:
+            worker_controller = FixedProblemConcurrencyController(
+                max(1, self.candidate_workers),
+            )
+
+        with worker_controller.lease_candidate_workers(len(candidates_to_evaluate)) as workers:
+            if workers > 1:
+                with ThreadPoolExecutor(max_workers=workers) as executor:
+                    results = [
+                        executor.submit(
+                            self._evaluate_candidate_pipeline,
+                            cand,
+                            test_sv_file,
+                            ref_sv_file,
+                            testbench_top_module_name,
+                            synthesis_top_module_name,
+                        )
+                        for cand in candidates_to_evaluate
+                    ]
+                    evaluated = [future.result() for future in results]
+            else:
+                evaluated = [
+                    self._evaluate_candidate_pipeline(
                         cand,
                         test_sv_file,
                         ref_sv_file,
@@ -1203,18 +1227,6 @@ class EoHEngine:
                     )
                     for cand in candidates_to_evaluate
                 ]
-                evaluated = [future.result() for future in results]
-        else:
-            evaluated = [
-                self._evaluate_candidate_pipeline(
-                    cand,
-                    test_sv_file,
-                    ref_sv_file,
-                    testbench_top_module_name,
-                    synthesis_top_module_name,
-                )
-                for cand in candidates_to_evaluate
-            ]
 
         feedback_request_candidates: list[Heuristic] = []
         feedback_requests: list[dict[str, str]] = []

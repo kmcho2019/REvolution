@@ -200,6 +200,9 @@ def test_backend_parser_includes_diff_controls_and_vllm_threshold():
     assert args.diff_similarity_threshold == pytest.approx(0.86)
     assert args.diff_fuzzy_margin == pytest.approx(0.03)
     assert args.vllm_min_model_len == 128000
+    assert args.total_worker_slots == 1
+    assert args.max_active_problems is None
+    assert args.max_workers_per_problem is None
 
 
 def test_backend_parser_exposes_shared_timeout_flags():
@@ -238,6 +241,214 @@ def test_run_backend_rejects_single_pool_qd_mode(capsys):
     captured = capsys.readouterr()
     assert code == 2
     assert "population_pool_mode=single" in captured.out
+
+
+@pytest.mark.parametrize(
+    ("argv", "expected_message"),
+    [
+        (["--num_workers", "4"], "--num_workers -> --total_worker_slots"),
+        (
+            ["--candidate_workers", "2"],
+            "--candidate_workers -> --max_workers_per_problem",
+        ),
+        (
+            ["--parallelism_mode", "elastic"],
+            "--parallelism_mode -> elastic scheduling is always enabled",
+        ),
+    ],
+)
+def test_run_backend_rejects_legacy_worker_flags_on_cli(capsys, argv, expected_message):
+    code = run_backend_main(argv)
+
+    captured = capsys.readouterr()
+    assert code == 2
+    assert expected_message in captured.out
+
+
+def test_run_backend_pool_terminates_and_joins_on_interrupt(monkeypatch):
+    from scripts import run_backend
+
+    events: list[str] = []
+
+    class _FakePool:
+        def imap_unordered(self, _func, _indexed_tasks):
+            class _InterruptingIterator:
+                def __iter__(self):
+                    return self
+
+                def __next__(self):
+                    raise KeyboardInterrupt()
+
+            return _InterruptingIterator()
+
+        def terminate(self):
+            events.append("terminate")
+
+        def join(self):
+            events.append("join")
+
+        def close(self):
+            events.append("close")
+
+    monkeypatch.setattr(
+        run_backend.multiprocessing,
+        "Pool",
+        lambda processes: _FakePool(),
+    )
+    monkeypatch.setattr(run_backend, "tqdm", lambda iterable, **_kwargs: iterable)
+
+    with pytest.raises(KeyboardInterrupt):
+        run_backend._run_indexed_tasks_with_pool(
+            process_count=2,
+            indexed_tasks=[(0, ("RTLLM", "Prob001_accu", object()))],
+            original_stdout=sys.stdout,
+        )
+
+    assert events == ["terminate", "join"]
+
+
+def test_run_backend_worker_closes_problem_concurrency_after_error(
+    monkeypatch, tmp_path
+):
+    from scripts import run_backend
+    from types import SimpleNamespace
+
+    class _DummyRedirect:
+        def __init__(self, filepath):
+            self.filepath = filepath
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+    class _FakeController:
+        def __init__(self):
+            self.open_calls = 0
+            self.close_calls = 0
+
+        def open_problem(self):
+            self.open_calls += 1
+
+        def close_problem(self):
+            self.close_calls += 1
+
+    controller = _FakeController()
+    args = SimpleNamespace(
+        model_name="stub-model",
+        save_path=str(tmp_path / "exp"),
+        backend="revolution",
+        backend_subdir=True,
+        seed=None,
+        resolved_parallelism_config=SimpleNamespace(
+            candidate_worker_limit=1,
+            max_workers_per_problem=1,
+        ),
+        parallelism_handles=object(),
+    )
+
+    def _raise_backend(*_args, **_kwargs):
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(run_backend, "StreamRedirector", _DummyRedirect)
+    monkeypatch.setattr(
+        run_backend,
+        "build_problem_concurrency_controller",
+        lambda *args, **kwargs: controller,
+    )
+    monkeypatch.setattr(run_backend, "_build_backend", _raise_backend)
+
+    result, _log_path = run_backend.run_problem_worker(
+        ("RTLLM", "Prob001_accu", args, 0)
+    )
+
+    assert result == "Prob001_accu,worker_error,boom"
+    assert controller.open_calls == 1
+    assert controller.close_calls == 1
+
+
+def test_run_backend_main_closes_runtime_on_interrupt(monkeypatch, tmp_path):
+    from scripts import run_backend
+
+    class _DummyRedirect:
+        def __init__(self, filepath):
+            self.filepath = filepath
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+    class _FakeRuntime:
+        def __init__(self):
+            self.handles = object()
+            self.close_calls = 0
+
+        def close(self):
+            self.close_calls += 1
+
+    runtime = _FakeRuntime()
+
+    monkeypatch.setattr(run_backend, "StreamRedirector", _DummyRedirect)
+    monkeypatch.setattr(
+        run_backend,
+        "_discover_tasks",
+        lambda args: [
+            ("RTLLM", "Prob001_accu", args),
+            ("RTLLM", "Prob002_accu", args),
+        ],
+    )
+    monkeypatch.setattr(
+        run_backend,
+        "build_elastic_parallelism_runtime",
+        lambda config, task_count: runtime,
+    )
+    monkeypatch.setattr(
+        run_backend,
+        "_run_indexed_tasks_with_pool",
+        lambda **kwargs: (_ for _ in ()).throw(KeyboardInterrupt()),
+    )
+    monkeypatch.setattr(
+        run_backend,
+        "preflight_vllm_model",
+        lambda **kwargs: {
+            "endpoint": "http://vllm:8888/v1/models",
+            "model_id": "stub-model",
+            "max_model_len": 131072,
+        },
+    )
+
+    code = run_backend_main(
+        [
+            "--backend",
+            "revolution",
+            "--benchmarks",
+            "RTLLM",
+            "--problems",
+            "Prob001_accu",
+            "--api_backend",
+            "vllm",
+            "--model_name",
+            "stub-model",
+            "--save_path",
+            str(tmp_path / "interrupt_run"),
+            "--total_worker_slots",
+            "2",
+            "--population_size",
+            "1",
+            "--num_generations",
+            "0",
+            "--vllm_host",
+            "vllm",
+            "--vllm_port",
+            "8888",
+        ]
+    )
+
+    assert code == 130
+    assert runtime.close_calls == 1
 
 
 def test_codeevolve_diff_max_tokens_promotes_large_vllm_budget():
@@ -465,7 +676,7 @@ def test_run_backend_generated_config_roundtrip_and_edit(monkeypatch, tmp_path):
             "stub-model",
             "--save_path",
             str(save_path),
-            "--num_workers",
+            "--total_worker_slots",
             "1",
             "--population_size",
             "2",
@@ -482,6 +693,12 @@ def test_run_backend_generated_config_roundtrip_and_edit(monkeypatch, tmp_path):
     generated_payload = yaml.safe_load(generated_config.read_text(encoding="utf-8"))
     assert generated_payload["save_path"] == str(save_path)
     assert generated_payload["strategy_selection"] == "ucb"
+    assert generated_payload["total_worker_slots"] == 1
+    assert generated_payload["max_active_problems"] == 1
+    assert generated_payload["max_workers_per_problem"] == 1
+    assert "parallelism_mode" not in generated_payload
+    assert "num_workers" not in generated_payload
+    assert "candidate_workers" not in generated_payload
 
     generated_meta = generated_config.with_name(f"{generated_config.stem}_meta.yaml")
     assert generated_meta.exists()
@@ -489,9 +706,7 @@ def test_run_backend_generated_config_roundtrip_and_edit(monkeypatch, tmp_path):
     assert meta_payload["command_line_arguments"]
 
     # Rerun using generated config directly.
-    rc_generated = run_backend_main(
-        ["--config", str(generated_config), "--num_workers", "1"]
-    )
+    rc_generated = run_backend_main(["--config", str(generated_config)])
     assert rc_generated == 0
 
     # Copy and edit generated config, then rerun with modified settings.
@@ -504,12 +719,63 @@ def test_run_backend_generated_config_roundtrip_and_edit(monkeypatch, tmp_path):
         encoding="utf-8",
     )
 
-    rc_modified = run_backend_main(
-        ["--config", str(modified_config), "--num_workers", "1"]
-    )
+    rc_modified = run_backend_main(["--config", str(modified_config)])
     assert rc_modified == 0
     modified_model_root = tmp_path / "run_b" / "revolution" / "stub-model"
     assert sorted(modified_model_root.glob("*_revolution_config.yaml"))
+
+
+def test_run_backend_translates_legacy_parallelism_config_keys(
+    monkeypatch, tmp_path, capsys
+):
+    def fake_discover(args):
+        return [("RTLLM", "Prob001_accu", args)]
+
+    def fake_worker(payload):
+        benchmark, problem, args, _task_index = payload
+        model_name_cleaned = args.model_name.replace("/", "_")
+        problem_dir = (
+            Path(_effective_save_path(args))
+            / model_name_cleaned
+            / benchmark
+            / problem
+        )
+        problem_dir.mkdir(parents=True, exist_ok=True)
+        log_path = problem_dir / "problem_run.log"
+        log_path.write_text("fake worker log\n", encoding="utf-8")
+        return ("ok", str(log_path))
+
+    monkeypatch.setattr("scripts.run_backend._discover_tasks", fake_discover)
+    monkeypatch.setattr("scripts.run_backend.run_problem_worker", fake_worker)
+
+    config_path = tmp_path / "legacy_backend_config.yaml"
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                "backend": "revolution",
+                "benchmarks": ["RTLLM"],
+                "problems": ["Prob001_accu"],
+                "api_backend": "vllm",
+                "model_name": "stub-model",
+                "save_path": str(tmp_path / "legacy_run"),
+                "parallelism_mode": "elastic",
+                "num_workers": 3,
+                "candidate_workers": 0,
+                "population_size": 2,
+                "num_generations": 0,
+            },
+            sort_keys=True,
+        ),
+        encoding="utf-8",
+    )
+
+    rc = run_backend_main(["--config", str(config_path)])
+
+    assert rc == 0
+    captured = capsys.readouterr()
+    assert "parallelism_mode" in captured.out
+    assert "num_workers" in captured.out
+    assert "candidate_workers" in captured.out
 
 
 def test_run_backend_calls_vllm_preflight_and_prints_warning(monkeypatch, tmp_path, capsys):
@@ -559,7 +825,7 @@ def test_run_backend_calls_vllm_preflight_and_prints_warning(monkeypatch, tmp_pa
             "stub-model",
             "--save_path",
             str(tmp_path / "run"),
-            "--num_workers",
+            "--total_worker_slots",
             "1",
             "--population_size",
             "1",

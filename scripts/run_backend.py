@@ -5,6 +5,7 @@ import multiprocessing
 import os
 import sys
 import time
+import traceback
 from pathlib import Path
 from typing import cast
 
@@ -53,6 +54,16 @@ from revolution.runtime import (  # noqa: E402
     load_problem_context,
     select_cvdp_ids,
     select_realbench_problem_ids,
+)
+from revolution.runtime.parallelism import (  # noqa: E402
+    BACKEND_LEGACY_CLI_OPTIONS,
+    FixedProblemConcurrencyController,
+    apply_resolved_parallelism_args,
+    build_elastic_parallelism_runtime,
+    build_problem_concurrency_controller,
+    reject_legacy_cli_options,
+    resolve_backend_parallelism_config,
+    translate_backend_legacy_parallelism_config,
 )
 from revolution.utils import StreamRedirector  # noqa: E402
 from revolution.vllm_preflight import preflight_vllm_model  # noqa: E402
@@ -159,6 +170,14 @@ def _effective_save_path(args: argparse.Namespace) -> str:
     return os.path.abspath(args.save_path)
 
 
+def _parallelism_metadata(args: argparse.Namespace) -> dict[str, object]:
+    return {
+        "total_worker_slots": getattr(args, "total_worker_slots", None),
+        "max_active_problems": getattr(args, "max_active_problems", None),
+        "max_workers_per_problem": getattr(args, "max_workers_per_problem", None),
+    }
+
+
 def _load_reference_ppa_metrics(problem_context) -> dict[str, float]:
     ref_ppa_file = (
         problem_context.benchmark_path / f"{problem_context.problem_name}_ppa.txt"
@@ -196,6 +215,7 @@ def _build_backend(
     benchmark: str,
     problem: str,
     task_seed: int | None,
+    problem_concurrency,
 ):
     prompt_profile = _resolve_prompt_profile(args)
     prompt_root = args.prompt_root or os.path.abspath(
@@ -326,6 +346,7 @@ def _build_backend(
         prompt_store=prompt_store,
         artifact_writer=artifact_writer,
         candidate_evaluator=candidate_evaluator,
+        problem_concurrency=problem_concurrency,
     )
     context = BackendExecutionContext(
         backend_name=args.backend,
@@ -352,6 +373,7 @@ def _build_backend(
                 args, "post_synthesis_simulation_timeout_s", None
             ),
             "search_mode": getattr(args, "search_mode", "revolution"),
+            **_parallelism_metadata(args),
         },
     )
 
@@ -376,7 +398,7 @@ def _build_backend(
             require_strict_format=True,
             prompt_profile=prompt_profile,
             prompt_root=prompt_root,
-            candidate_workers=args.candidate_workers,
+            candidate_workers=args.max_workers_per_problem,
             qd_archive_type=args.qd_archive_type,
             qd_num_cells=args.qd_num_cells,
             qd_fill_target_fraction=args.qd_fill_target_fraction,
@@ -442,7 +464,7 @@ def _build_backend(
             prompt_root=prompt_root,
             strict_prompt_keys=args.eoh_strict_prompt_keys,
             seed=task_seed,
-            candidate_workers=args.candidate_workers,
+            candidate_workers=args.max_workers_per_problem,
             diff_apply_policy=args.diff_apply_policy,
             diff_similarity_threshold=args.diff_similarity_threshold,
             diff_fuzzy_margin=args.diff_fuzzy_margin,
@@ -490,7 +512,7 @@ def _build_backend(
             prompt_root=prompt_root,
             strict_prompt_keys=args.codeevolve_strict_prompt_keys,
             seed=task_seed,
-            candidate_workers=args.candidate_workers,
+            candidate_workers=args.max_workers_per_problem,
             diff_apply_policy=args.diff_apply_policy,
             diff_similarity_threshold=args.diff_similarity_threshold,
             diff_fuzzy_margin=args.diff_fuzzy_margin,
@@ -527,7 +549,7 @@ def _build_backend(
         feedback_policy=feedback_policy,
         feedback_sample_probability=args.fs_feedback_sample_probability,
         seed=task_seed,
-        candidate_workers=args.candidate_workers,
+        candidate_workers=args.max_workers_per_problem,
     )
     return FunSearchBackend(context=context, services=services, config=fs_cfg)
 
@@ -544,16 +566,49 @@ def run_problem_worker(args_tuple: tuple[str, str, argparse.Namespace, int]):
     os.makedirs(problem_log_dir, exist_ok=True)
     individual_log_path = os.path.join(problem_log_dir, "problem_run.log")
 
-    with StreamRedirector(filepath=individual_log_path):
-        print(
-            f"\n[Worker PID: {os.getpid()}] backend={args.backend} starting {benchmark}/{problem} seed={task_seed}\n"
+    config = getattr(args, "resolved_parallelism_config", None)
+    handles = getattr(args, "parallelism_handles", None)
+    if config is None:
+        fallback_workers = max(
+            1,
+            int(getattr(args, "max_workers_per_problem", 1) or 1),
         )
-        backend = _build_backend(args, benchmark, problem, task_seed)
-        result = backend.run()
-        print(
-            f"[Worker PID: {os.getpid()}] finished {benchmark}/{problem} status={result.status}\n"
+        problem_concurrency = FixedProblemConcurrencyController(fallback_workers)
+    else:
+        problem_id = f"{benchmark}/{problem}/{task_index}"
+        problem_concurrency = build_problem_concurrency_controller(
+            config,
+            problem_id=problem_id,
+            handles=handles,
         )
-        return result.result_string, individual_log_path
+
+    problem_concurrency.open_problem()
+    try:
+        with StreamRedirector(filepath=individual_log_path):
+            print(
+                f"\n[Worker PID: {os.getpid()}] backend={args.backend} starting {benchmark}/{problem} seed={task_seed}\n"
+            )
+            try:
+                backend = _build_backend(
+                    args,
+                    benchmark,
+                    problem,
+                    task_seed,
+                    problem_concurrency,
+                )
+                result = backend.run()
+            except Exception as exc:
+                traceback.print_exc()
+                print(
+                    f"[Worker PID: {os.getpid()}] failed {benchmark}/{problem} error={exc}\n"
+                )
+                return f"{problem},worker_error,{exc}", individual_log_path
+            print(
+                f"[Worker PID: {os.getpid()}] finished {benchmark}/{problem} status={result.status}\n"
+            )
+            return result.result_string, individual_log_path
+    finally:
+        problem_concurrency.close_problem()
 
 
 def run_indexed_problem_worker(indexed_task):
@@ -561,6 +616,33 @@ def run_indexed_problem_worker(indexed_task):
     benchmark, problem, args = payload
     result = run_problem_worker((benchmark, problem, args, index))
     return index, result
+
+
+def _run_indexed_tasks_with_pool(
+    *,
+    process_count: int,
+    indexed_tasks,
+    original_stdout,
+):
+    pool = multiprocessing.Pool(processes=process_count)
+    try:
+        results_iter = pool.imap_unordered(run_indexed_problem_worker, indexed_tasks)
+        unordered = list(
+            tqdm(
+                results_iter,
+                total=len(indexed_tasks),
+                desc="Running problems",
+                file=original_stdout,
+            )
+        )
+    except BaseException:
+        pool.terminate()
+        pool.join()
+        raise
+    pool.close()
+    pool.join()
+    unordered.sort(key=lambda item: item[0])
+    return [item[1] for item in unordered]
 
 
 def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
@@ -628,8 +710,22 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     )
     parser.add_argument("--model_name", type=str, default="gpt-4.1-mini")
     parser.add_argument("--save_path", type=str, default=os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "exp")))
-    parser.add_argument("--num_workers", type=int, default=1)
-    parser.add_argument("--candidate_workers", type=int, default=0)
+    parser.add_argument("--total_worker_slots", type=int, default=1)
+    parser.add_argument("--max_active_problems", type=int, default=None)
+    parser.add_argument("--max_workers_per_problem", type=int, default=None)
+    parser.add_argument(
+        "--parallelism_mode",
+        type=str,
+        default="elastic",
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument("--num_workers", type=int, default=None, help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--candidate_workers",
+        type=int,
+        default=None,
+        help=argparse.SUPPRESS,
+    )
     parser.add_argument(
         "--evaluation_mode",
         type=str,
@@ -1021,6 +1117,17 @@ def _discover_tasks(args: argparse.Namespace) -> list[tuple[str, str, argparse.N
 
 
 def main(argv: list[str] | None = None) -> int:
+    raw_input_argv = list(sys.argv[1:] if argv is None else argv)
+    try:
+        reject_legacy_cli_options(
+            raw_input_argv,
+            runner_name="run_backend.py",
+            legacy_options=BACKEND_LEGACY_CLI_OPTIONS,
+        )
+    except ValueError as exc:
+        print(f"Configuration error: {exc}")
+        return 2
+
     parser, config_parser = _build_parser()
     try:
         args, config_from_file, raw_argv = parse_args_with_config(
@@ -1067,6 +1174,17 @@ def main(argv: list[str] | None = None) -> int:
         print("No valid tasks found to run.")
         return 1
 
+    config_from_file = translate_backend_legacy_parallelism_config(
+        args,
+        config_from_file=config_from_file,
+        raw_argv=raw_argv,
+    )
+    resolved_parallelism = resolve_backend_parallelism_config(
+        args,
+        task_count=len(tasks_to_run),
+    )
+    apply_resolved_parallelism_args(args, resolved_parallelism)
+
     run_datetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     start_time = time.time()
     model_name_cleaned = args.model_name.replace("/", "_")
@@ -1082,7 +1200,16 @@ def main(argv: list[str] | None = None) -> int:
     run_config_path = os.path.join(
         master_log_dir, f"{run_datetime}_{args.backend}_config.yaml"
     )
-    allowed_keys = {action.dest for action in parser._actions if action.dest != "help"}
+    hidden_legacy_keys = {
+        "candidate_workers",
+        "num_workers",
+        "parallelism_mode",
+    }
+    allowed_keys = {
+        action.dest
+        for action in parser._actions
+        if action.dest not in {"help", *hidden_legacy_keys}
+    }
     snapshot_run_configuration(
         args,
         run_config_path,
@@ -1093,42 +1220,57 @@ def main(argv: list[str] | None = None) -> int:
 
     original_stdout = sys.stdout
     results_data = []
+    runtime = build_elastic_parallelism_runtime(
+        resolved_parallelism,
+        task_count=len(tasks_to_run),
+    )
+    args.resolved_parallelism_config = resolved_parallelism
+    args.parallelism_handles = runtime.handles if runtime is not None else None
+    interrupted = False
     try:
-        with StreamRedirector(filepath=comprehensive_log_path):
-            print(f"--- Backend run started: {run_datetime} backend={args.backend} ---")
-            print(f"Arguments: {vars(args)}")
-            print("-" * 50)
-            if args.num_workers <= 1:
-                results_data = [
-                    run_problem_worker((benchmark, problem, args, index))
-                    for index, (benchmark, problem, _) in enumerate(
-                        tqdm(
-                            tasks_to_run,
-                            total=len(tasks_to_run),
-                            desc="Running problems",
-                            file=original_stdout,
+        try:
+            with StreamRedirector(filepath=comprehensive_log_path):
+                print(f"--- Backend run started: {run_datetime} backend={args.backend} ---")
+                log_args = {
+                    key: value
+                    for key, value in vars(args).items()
+                    if key
+                    not in {
+                        "candidate_workers",
+                        "num_workers",
+                        "parallelism_handles",
+                        "parallelism_mode",
+                        "resolved_parallelism_config",
+                    }
+                }
+                print(f"Arguments: {log_args}")
+                print("-" * 50)
+                if resolved_parallelism.problem_processes <= 1:
+                    results_data = [
+                        run_problem_worker((benchmark, problem, args, index))
+                        for index, (benchmark, problem, _) in enumerate(
+                            tqdm(
+                                tasks_to_run,
+                                total=len(tasks_to_run),
+                                desc="Running problems",
+                                file=original_stdout,
+                            )
                         )
+                    ]
+                else:
+                    indexed_tasks = list(enumerate(tasks_to_run))
+                    results_data = _run_indexed_tasks_with_pool(
+                        process_count=resolved_parallelism.problem_processes,
+                        indexed_tasks=indexed_tasks,
+                        original_stdout=original_stdout,
                     )
-                ]
-            else:
-                indexed_tasks = list(enumerate(tasks_to_run))
-                with multiprocessing.Pool(processes=args.num_workers) as pool:
-                    results_iter = pool.imap_unordered(
-                        run_indexed_problem_worker, indexed_tasks
-                    )
-                    unordered = list(
-                        tqdm(
-                            results_iter,
-                            total=len(indexed_tasks),
-                            desc="Running problems",
-                            file=original_stdout,
-                        )
-                    )
-                unordered.sort(key=lambda item: item[0])
-                results_data = [item[1] for item in unordered]
-            print("--- All backend tasks completed ---")
+                print("--- All backend tasks completed ---")
+        except KeyboardInterrupt:
+            interrupted = True
+            print("run_backend.py interrupted. Cleaning up worker pool state.")
     finally:
         end_time = time.time()
+        completion_label = "interrupted" if interrupted else "completed"
         with open(comprehensive_log_path, "a", encoding="utf-8") as log_file:
             log_file.write("\n\n==================== AGGREGATED INDIVIDUAL LOGS ====================\n")
             if not results_data:
@@ -1147,7 +1289,9 @@ def main(argv: list[str] | None = None) -> int:
                         log_file.write(
                             f"\n--- Error processing log {individual_log_path}: {exc} ---\n"
                         )
-            log_file.write("\n--- Backend run completed ---\n")
+            if interrupted:
+                log_file.write("\nRun interrupted by user.\n")
+            log_file.write(f"\n--- Backend run {completion_label} ---\n")
             log_file.write(f"Total run time: {end_time - start_time:.2f} seconds\n")
 
         if results_data:
@@ -1156,8 +1300,13 @@ def main(argv: list[str] | None = None) -> int:
                     summary_file.write(f"{result_str}\n")
 
         print(f"Comprehensive run log saved to: {comprehensive_log_path}")
-        print(f"Summary results saved to: {summary_results_path}")
+        if results_data:
+            print(f"Summary results saved to: {summary_results_path}")
         print(f"Total run time: {end_time - start_time:.2f} seconds")
+        if runtime is not None:
+            runtime.close()
+    if interrupted:
+        return 130
     return 0
 
 

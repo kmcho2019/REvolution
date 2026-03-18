@@ -48,6 +48,8 @@ def test_qd_retrospective_redo_script_dry_run_prints_expected_matrix(tmp_path):
     assert "--qd_descriptor_profile activity_control_3d" in normalized
     assert "--population_size 20" in normalized
     assert "--num_generations 5" in normalized
+    assert "--total_worker_slots 2" in normalized
+    assert "--max_workers_per_problem 1" in normalized
     assert "--max_tokens 128000" in normalized
     assert "--diff_max_tokens 128000" in normalized
     assert "Dry run enabled; commands were not executed." in result.stdout

@@ -21,7 +21,7 @@ Environment overrides:
   SMOKE_PROBLEMS            Space-separated problem IDs (overrides suite defaults)
   SMOKE_POPULATION_SIZE     Population size (default: 2)
   SMOKE_NUM_GENERATIONS     Number of generations (default: 1)
-  SMOKE_NUM_WORKERS         Worker count (default: 1)
+  SMOKE_TOTAL_WORKER_SLOTS  Total worker-slot budget (default: 1)
   SMOKE_MAX_TOKENS          LLM max tokens (default: 128000)
   SMOKE_DIFF_MAX_TOKENS     Diff max tokens (default: SMOKE_MAX_TOKENS)
   SMOKE_TEMPERATURE         LLM temperature (default: 0.7)
@@ -189,7 +189,7 @@ fi
 
 POPULATION_SIZE="${SMOKE_POPULATION_SIZE:-2}"
 NUM_GENERATIONS="${SMOKE_NUM_GENERATIONS:-1}"
-NUM_WORKERS="${SMOKE_NUM_WORKERS:-1}"
+TOTAL_WORKER_SLOTS="${SMOKE_TOTAL_WORKER_SLOTS:-1}"
 MAX_TOKENS="${SMOKE_MAX_TOKENS:-128000}"
 DIFF_MAX_TOKENS="${SMOKE_DIFF_MAX_TOKENS:-${MAX_TOKENS}}"
 TEMPERATURE="${SMOKE_TEMPERATURE:-0.7}"
@@ -213,7 +213,7 @@ CMD+=("--vllm_port" "${VLLM_PORT}")
 CMD+=("--model_name" "${MODEL_NAME}")
 CMD+=("--population_size" "${POPULATION_SIZE}")
 CMD+=("--num_generations" "${NUM_GENERATIONS}")
-CMD+=("--num_workers" "${NUM_WORKERS}")
+CMD+=("--total_worker_slots" "${TOTAL_WORKER_SLOTS}")
 CMD+=("--strategy_selection" "${STRATEGY_SELECTION}")
 CMD+=("--generation_mode" "${GENERATION_MODE}")
 CMD+=("--population_pool_mode" "${POOL_MODE}")
@@ -234,7 +234,7 @@ echo "Benchmarks: ${BENCHMARKS[*]}"
 echo "Problems: ${PROBLEMS[*]}"
 echo "Population size: ${POPULATION_SIZE}"
 echo "Generations: ${NUM_GENERATIONS}"
-echo "Workers: ${NUM_WORKERS}"
+echo "Total worker slots: ${TOTAL_WORKER_SLOTS}"
 echo "Output path: ${SAVE_PATH}"
 echo "Command:"
 printf '  %q' "${CMD[@]}"

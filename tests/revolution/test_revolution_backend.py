@@ -55,16 +55,20 @@ def test_revolution_backend_uses_classic_engine_by_default(monkeypatch, tmp_path
             captured["kwargs"] = kwargs
 
     monkeypatch.setattr("revolution.backends.revolution_backend.EoHEngine", _FakeEngine)
+    services = _services(tmp_path)
+    services.problem_concurrency = object()
     backend = RevolutionBackend(
         context=_context(tmp_path),
-        services=_services(tmp_path),
-        config=RevolutionBackendConfig(),
+        services=services,
+        config=RevolutionBackendConfig(candidate_workers=3),
         base_save_path=str(tmp_path / "exp"),
     )
     backend.initialize()
     assert isinstance(backend.engine, _FakeEngine)
     assert captured["kwargs"]["benchmark_name"] == "Bench"
     assert captured["kwargs"]["problem_spec"].benchmark_name == "Bench"
+    assert captured["kwargs"]["candidate_workers"] == 3
+    assert captured["kwargs"]["problem_concurrency"] is services.problem_concurrency
 
 
 def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_path):
@@ -75,11 +79,14 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
             captured["kwargs"] = kwargs
 
     monkeypatch.setattr("revolution.backends.revolution_backend.QDEngine", _FakeQDEngine)
+    services = _services(tmp_path)
+    services.problem_concurrency = object()
     backend = RevolutionBackend(
         context=_context(tmp_path),
-        services=_services(tmp_path),
+        services=services,
         config=RevolutionBackendConfig(
             search_mode="revolution_qd",
+            candidate_workers=4,
             qd_archive_type="cvt",
             qd_grid_axes=("g_A", "g_T"),
             qd_cvt_axes=("seq_ratio", "g_A", "g_T"),
@@ -97,3 +104,5 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
     assert captured["kwargs"]["qd_cell_reservoir"] == 2
     assert captured["kwargs"]["qd_descriptor_file"] is None
     assert captured["kwargs"]["problem_spec"].problem_name == "Prob001"
+    assert captured["kwargs"]["candidate_workers"] == 4
+    assert captured["kwargs"]["problem_concurrency"] is services.problem_concurrency

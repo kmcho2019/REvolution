@@ -42,6 +42,30 @@ def test_safe_workers_bounds():
     assert _safe_workers(10_000) >= 1
 
 
+@pytest.mark.parametrize(
+    ("argv", "expected_message"),
+    [
+        (["--num_workers", "4"], "--num_workers -> --total_worker_slots"),
+        (
+            ["--candidate_workers", "2"],
+            "--candidate_workers -> --max_workers_per_problem",
+        ),
+        (
+            ["--parallelism_mode", "elastic"],
+            "--parallelism_mode -> elastic scheduling is always enabled",
+        ),
+    ],
+)
+def test_run_backend_ablation_rejects_legacy_parallelism_flags(
+    capsys, argv, expected_message
+):
+    code = run_backend_ablation_main(argv)
+
+    captured = capsys.readouterr()
+    assert code == 2
+    assert expected_message in captured.out
+
+
 def test_resolve_candidate_budget_by_axis():
     assert (
         _resolve_candidate_budget(
@@ -111,7 +135,7 @@ def test_validate_fairness_accepts_matching_commands():
         "8888",
         "--model_name",
         "m",
-        "--num_workers",
+        "--total_worker_slots",
         "2",
         "--temperature",
         "0.7",
@@ -146,7 +170,7 @@ def test_validate_fairness_accepts_matching_commands():
         "8888",
         "--model_name",
         "m",
-        "--num_workers",
+        "--total_worker_slots",
         "2",
         "--temperature",
         "0.7",
@@ -187,7 +211,7 @@ def test_validate_fairness_rejects_non_strict_mode():
         "8888",
         "--model_name",
         "m",
-        "--num_workers",
+        "--total_worker_slots",
         "2",
         "--temperature",
         "0.7",
@@ -221,7 +245,7 @@ def test_validate_fairness_rejects_non_strict_mode():
         "8888",
         "--model_name",
         "m",
-        "--num_workers",
+        "--total_worker_slots",
         "2",
         "--temperature",
         "0.7",
@@ -263,7 +287,7 @@ def test_validate_fairness_rejects_missing_fs_llm_cap_for_dual_gate():
         "8888",
         "--model_name",
         "m",
-        "--num_workers",
+        "--total_worker_slots",
         "2",
         "--temperature",
         "0.7",
@@ -297,7 +321,7 @@ def test_validate_fairness_rejects_missing_fs_llm_cap_for_dual_gate():
         "8888",
         "--model_name",
         "m",
-        "--num_workers",
+        "--total_worker_slots",
         "2",
         "--temperature",
         "0.7",
@@ -339,7 +363,7 @@ def test_validate_fairness_accepts_eoh_command():
         "8888",
         "--model_name",
         "m",
-        "--num_workers",
+        "--total_worker_slots",
         "2",
         "--temperature",
         "0.7",
@@ -373,7 +397,7 @@ def test_validate_fairness_accepts_eoh_command():
         "8888",
         "--model_name",
         "m",
-        "--num_workers",
+        "--total_worker_slots",
         "2",
         "--temperature",
         "0.7",
@@ -405,7 +429,7 @@ def test_validate_fairness_accepts_eoh_command():
         "8888",
         "--model_name",
         "m",
-        "--num_workers",
+        "--total_worker_slots",
         "2",
         "--temperature",
         "0.7",
@@ -452,7 +476,7 @@ def test_validate_fairness_accepts_codeevolve_command():
         "8888",
         "--model_name",
         "m",
-        "--num_workers",
+        "--total_worker_slots",
         "2",
         "--temperature",
         "0.7",
@@ -486,7 +510,7 @@ def test_validate_fairness_accepts_codeevolve_command():
         "8888",
         "--model_name",
         "m",
-        "--num_workers",
+        "--total_worker_slots",
         "2",
         "--temperature",
         "0.7",
@@ -605,6 +629,7 @@ def test_ablation_dry_run_propagates_shared_timeout_flags(tmp_path, capsys):
     assert "--rtl_simulation_timeout_s 17" in captured.out
     assert "--synthesis_timeout_s 29" in captured.out
     assert "--post_synthesis_simulation_timeout_s 31" in captured.out
+    assert "--total_worker_slots 8" in captured.out
 
 
 def test_ablation_generated_config_roundtrip_and_edit(tmp_path):
