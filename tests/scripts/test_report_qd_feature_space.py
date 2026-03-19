@@ -78,6 +78,7 @@ def _write_qd_event(
     g_p: float,
     g_a: float,
     g_t: float,
+    current_cell_elite: dict[str, str] | None = None,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
@@ -119,9 +120,11 @@ def _write_qd_event(
         "decision": "inserted",
         "inserted": True,
         "replaced": False,
-        "current_cell_elite": {
-            "code_file_path": f"/tmp/{benchmark}/{problem}/{candidate_id}/code.v"
-        },
+        "current_cell_elite": (
+            current_cell_elite
+            if current_cell_elite is not None
+            else {"code_file_path": f"/tmp/{benchmark}/{problem}/{candidate_id}/code.v"}
+        ),
     }
     path.write_text(json.dumps(payload), encoding="utf-8")
 
@@ -247,6 +250,93 @@ def test_report_qd_feature_space_generates_feature_outputs(tmp_path):
     assert (output_dir / "backends" / "grid_struct" / "pca_fitness.png").is_file()
     assert (output_dir / "backends" / "grid_struct" / "tsne_fitness.png").is_file()
     assert (output_dir / "regression" / "quality_score_coefficients.csv").is_file()
+
+
+def test_report_qd_feature_space_handles_null_current_cell_elite(tmp_path):
+    repo_root = Path(__file__).resolve().parents[2]
+    script_path = repo_root / "scripts" / "report_qd_feature_space.py"
+    config_path = tmp_path / "hard_iteration_subset.yaml"
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                "subset_name": "hard_iteration_subset_v1",
+                "selected_problems": [
+                    {"benchmark": "RTLLM", "problem": "Prob001_accu"},
+                ],
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+
+    qd_root = tmp_path / "grid_struct"
+    problem_root = qd_root / "RTLLM" / "Prob001_accu"
+    _write_summary(
+        problem_root / "Prob001_accu_summary.json",
+        benchmark="RTLLM",
+        problem="Prob001_accu",
+        functionality=0.7,
+        synthesis=0.6,
+        best_score=0.35,
+        runtime_seconds=15.0,
+    )
+    _write_archive_summary(
+        problem_root / "archive_summary.json",
+        archive_type="grid",
+        coverage=0.4,
+        qd_score=1.5,
+        best_quality=0.8,
+    )
+    _write_archive_cells(problem_root / "archive_cells.csv", ["cand_0"])
+    _write_qd_event(
+        problem_root / "Gen0" / "Prob001_accu_sample1_M-I" / "qd_archive_event.json",
+        candidate_id="cand_0",
+        benchmark="RTLLM",
+        problem="Prob001_accu",
+        generation=0,
+        quality_score=0.25,
+        seq_ratio=0.1,
+        mux_ratio=0.2,
+        cell_count_log=5.0,
+        assign_count=1.0,
+        if_count=2.0,
+        wire_count_log_est=4.0,
+        active_signal_ratio_est=0.1,
+        ctrl_depth_est=1.0,
+        g_p=0.2,
+        g_a=0.1,
+        g_t=0.05,
+        current_cell_elite=None,
+    )
+    event_path = problem_root / "Gen0" / "Prob001_accu_sample1_M-I" / "qd_archive_event.json"
+    payload = json.loads(event_path.read_text(encoding="utf-8"))
+    payload["current_cell_elite"] = None
+    event_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    output_dir = tmp_path / "analysis"
+    env = os.environ.copy()
+    env["MPLBACKEND"] = "Agg"
+    result = subprocess.run(
+        [
+            str(Path(os.sys.executable)),
+            str(script_path),
+            "--subset-config",
+            str(config_path),
+            "--backend_run",
+            f"grid_struct={qd_root}",
+            "--output-dir",
+            str(output_dir),
+        ],
+        cwd=repo_root,
+        env=env,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    rows = list(csv.DictReader((output_dir / "qd_successful_candidates.csv").open("r", encoding="utf-8")))
+    assert rows[0]["code_file_path"] == ""
 
 
 def test_report_qd_feature_space_handles_classic_only_inputs(tmp_path):

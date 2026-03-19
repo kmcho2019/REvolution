@@ -148,6 +148,16 @@ This deep analysis layer consumes finished run artifacts and adds:
 - regression coefficient tables for `quality_score`, `g_P`, `g_A`, and `g_T`
 - `recommended_profile.json` and `recommended_profile_scores.csv` for selecting a larger follow-up descriptor profile
 
+For the March 2026 hard-subset follow-up, the frozen large-profile reruns use
+the dedicated descriptor file:
+
+- `data/configs/qd_descriptor_profiles_hard_iteration_large.yaml`
+- profile name: `hard_iteration_large_struct10d`
+
+That dedicated file keeps the large-profile grid intentionally coarse with
+`2` bins per axis so the 10D sequential archive does not become unusably
+sparse.
+
 ## Artifacts
 
 - one-shot baseline root:

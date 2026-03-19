@@ -35,6 +35,11 @@ class GridAxisDescriptorSpec:
 
 
 _REGISTRY: dict[str, DescriptorDefinition] = {
+    "total_cells": DescriptorDefinition("total_cells", "yosys", requires_synthesis=True),
+    "sequential_cells": DescriptorDefinition("sequential_cells", "yosys", requires_synthesis=True),
+    "combinational_cells": DescriptorDefinition("combinational_cells", "yosys", requires_synthesis=True),
+    "mux_cells": DescriptorDefinition("mux_cells", "yosys", requires_synthesis=True),
+    "arithmetic_cells": DescriptorDefinition("arithmetic_cells", "yosys", requires_synthesis=True),
     "seq_ratio": DescriptorDefinition("seq_ratio", "yosys", requires_synthesis=True),
     "comb_ratio": DescriptorDefinition("comb_ratio", "yosys", requires_synthesis=True),
     "mux_ratio": DescriptorDefinition("mux_ratio", "yosys", requires_synthesis=True),
@@ -216,6 +221,14 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (-1.0, 1.0)
     if axis in {"seq_ratio", "comb_ratio", "mux_ratio", "adder_ratio", "utilization"}:
         return (0.0, 1.0)
+    if axis in {
+        "total_cells",
+        "sequential_cells",
+        "combinational_cells",
+        "mux_cells",
+        "arithmetic_cells",
+    }:
+        return (0.0, 8192.0)
     if axis in {"cell_count_log", "wirelength", "cts_buffer_count", "repair_buffer_count", "hold_buffer_count", "wire_count_log_est"}:
         return (0.0, 16.0)
     if axis == "toggle_count_log_est":

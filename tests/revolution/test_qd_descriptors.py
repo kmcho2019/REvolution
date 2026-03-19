@@ -82,6 +82,22 @@ def test_load_descriptor_profiles_includes_runtime_retro_profiles():
     ]
 
 
+def test_load_descriptor_profiles_includes_hard_iteration_large_profile():
+    profiles = load_descriptor_profiles("data/configs/qd_descriptor_profiles_hard_iteration_large.yaml")
+    assert profiles["hard_iteration_large_struct10d"] == [
+        "sequential_cells",
+        "mux_ratio",
+        "mux_cells",
+        "adder_ratio",
+        "seq_ratio",
+        "arithmetic_cells",
+        "total_cells",
+        "g_P",
+        "g_A",
+        "g_T",
+    ]
+
+
 def test_resolve_descriptor_axes_prefers_explicit_axes():
     axes = resolve_descriptor_axes(
         profile_name="rtl_core",
@@ -136,6 +152,27 @@ def test_resolve_descriptor_axes_drops_g_t_for_named_comb_profile(tmp_path: Path
     assert axes == ["wire_count_log_est", "g_P", "g_A"]
 
 
+def test_resolve_descriptor_axes_drops_g_t_for_hard_iteration_large_profile():
+    axes = resolve_descriptor_axes(
+        profile_name="hard_iteration_large_struct10d",
+        explicit_axes=None,
+        descriptor_file="data/configs/qd_descriptor_profiles_hard_iteration_large.yaml",
+        archive_type="grid",
+        circuit_type="combinational",
+    )
+    assert axes == [
+        "sequential_cells",
+        "mux_ratio",
+        "mux_cells",
+        "adder_ratio",
+        "seq_ratio",
+        "arithmetic_cells",
+        "total_cells",
+        "g_P",
+        "g_A",
+    ]
+
+
 def test_extract_descriptor_values_applies_log1p_transform():
     values = extract_descriptor_values(
         {"cell_count_log": 99.0, "g_A": 0.2},
@@ -143,6 +180,24 @@ def test_extract_descriptor_values_applies_log1p_transform():
     )
     assert values["cell_count_log"] > 0.0
     assert values["g_A"] == pytest.approx(0.2)
+
+
+def test_extract_descriptor_values_accepts_hard_iteration_structural_counts():
+    values = extract_descriptor_values(
+        {
+            "sequential_cells": 12.0,
+            "mux_cells": 3.0,
+            "arithmetic_cells": 5.0,
+            "total_cells": 24.0,
+        },
+        ["sequential_cells", "mux_cells", "arithmetic_cells", "total_cells"],
+    )
+    assert values == {
+        "sequential_cells": pytest.approx(12.0),
+        "mux_cells": pytest.approx(3.0),
+        "arithmetic_cells": pytest.approx(5.0),
+        "total_cells": pytest.approx(24.0),
+    }
 
 
 def test_descriptor_requirements_detect_ppa_and_synthesis_needs():

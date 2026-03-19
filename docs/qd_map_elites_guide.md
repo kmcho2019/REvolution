@@ -78,6 +78,9 @@ Core QD files:
 - `scripts/report_qd_feature_space.py`:
   post-run feature-space analysis, regression summaries, collapse diagnostics,
   and PCA/t-SNE projections over successful QD candidates
+- `data/configs/qd_descriptor_profiles_hard_iteration_large.yaml`:
+  frozen hard-subset follow-up profile with coarse grid bins for the 10D large
+  structural/PPA descriptor mix
 
 Related evaluation files:
 

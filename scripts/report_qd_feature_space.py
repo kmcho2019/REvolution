@@ -361,6 +361,10 @@ def _collect_qd_candidates(
         quality_score = _safe_float(payload.get("quality_score"))
         if quality_score is None:
             continue
+        current_cell_elite = payload.get("current_cell_elite")
+        code_file_path = ""
+        if isinstance(current_cell_elite, dict):
+            code_file_path = str(current_cell_elite.get("code_file_path") or "")
         row: dict[str, Any] = {
             "backend": backend,
             "benchmark": benchmark,
@@ -376,7 +380,7 @@ def _collect_qd_candidates(
             "inserted": bool(payload.get("inserted", False)),
             "replaced": bool(payload.get("replaced", False)),
             "cell_id": str(payload.get("cell_id", "")),
-            "code_file_path": str(payload.get("current_cell_elite", {}).get("code_file_path") or ""),
+            "code_file_path": code_file_path,
             "is_final_elite": str(payload.get("candidate_id", "")) in elite_ids[(benchmark, problem)],
         }
         for metric_name, metric_value in features.items():
