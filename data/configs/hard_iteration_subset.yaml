@@ -1,7 +1,7 @@
 version: 1
-subset_name: hard_iteration_subset_v1
+subset_name: hard_iteration_subset_v1_pruned
 selection:
-  subset_size: 16
+  subset_size: 13
   per_bucket_target: 4
   primary_functionality_min: 0.1
   primary_functionality_max: 0.6
@@ -20,19 +20,26 @@ benchmarks:
     - Prob024_fsm
     - Prob037_parallel2serial
     - Prob041_traffic_light
-    - Prob042_width_8to16
     - Prob045_alu
     - Prob049_signal_generator
   VerilogEval-Spec-to-RTL:
     problems:
     - Prob098_circuit7
     - Prob116_m2014_q3
-    - Prob124_rule110
     - Prob135_m2014_q6b
     - Prob150_review2015_fsmonehot
     - Prob151_review2015_fsm
     - Prob153_gshare
-    - Prob156_review2015_fancytimer
+manual_exclusions:
+- benchmark: RTLLM
+  problem: Prob042_width_8to16
+  reason: long or unreliable simulation/ppa behavior for iterative evaluation
+- benchmark: VerilogEval-Spec-to-RTL
+  problem: Prob124_rule110
+  reason: long or unreliable simulation/ppa behavior for iterative evaluation
+- benchmark: VerilogEval-Spec-to-RTL
+  problem: Prob156_review2015_fancytimer
+  reason: long or unreliable simulation/ppa behavior for iterative evaluation
 matrix_defaults:
   population_size: 20
   num_generations: 5
@@ -120,17 +127,6 @@ selected_problems:
   selected: true
   selection_stage: primary
 - benchmark: RTLLM
-  problem: Prob042_width_8to16
-  reference_gate_count: 57
-  circuit_type: sequential
-  functionality_rate: 0.3
-  synthesis_rate: 0.0
-  difficulty_score: 2.842310107382493
-  bucket: RTLLM/sequential
-  summary_path: /workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_one_shot_rerun_20260317_pathfix/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/RTLLM/Prob042_width_8to16/Prob042_width_8to16_summary.json
-  selected: true
-  selection_stage: primary
-- benchmark: RTLLM
   problem: Prob045_alu
   reference_gate_count: 1623
   circuit_type: combinational
@@ -175,17 +171,6 @@ selected_problems:
   selected: true
   selection_stage: primary
 - benchmark: VerilogEval-Spec-to-RTL
-  problem: Prob124_rule110
-  reference_gate_count: 3178
-  circuit_type: sequential
-  functionality_rate: 0.5
-  synthesis_rate: 0.0
-  difficulty_score: 4.0321609804554015
-  bucket: VerilogEval-Spec-to-RTL/sequential
-  summary_path: /workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_one_shot_rerun_20260317_pathfix/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob124_rule110/Prob124_rule110_summary.json
-  selected: true
-  selection_stage: primary
-- benchmark: VerilogEval-Spec-to-RTL
   problem: Prob135_m2014_q6b
   reference_gate_count: 4
   circuit_type: combinational
@@ -227,16 +212,5 @@ selected_problems:
   difficulty_score: 6.558188770575629
   bucket: VerilogEval-Spec-to-RTL/sequential
   summary_path: /workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_one_shot_rerun_20260317_pathfix/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob153_gshare/Prob153_gshare_summary.json
-  selected: true
-  selection_stage: primary
-- benchmark: VerilogEval-Spec-to-RTL
-  problem: Prob156_review2015_fancytimer
-  reference_gate_count: 94
-  circuit_type: sequential
-  functionality_rate: 0.1
-  synthesis_rate: 0.0
-  difficulty_score: 4.098489202440486
-  bucket: VerilogEval-Spec-to-RTL/sequential
-  summary_path: /workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_one_shot_rerun_20260317_pathfix/_project_cad-team_LX_Semicon_models_openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob156_review2015_fancytimer/Prob156_review2015_fancytimer_summary.json
   selected: true
   selection_stage: primary
