@@ -112,8 +112,12 @@ def _load_problem_metrics(backend: str, root: Path) -> dict[tuple[str, str], Pro
         if not isinstance(benchmark, str) or not isinstance(problem, str):
             continue
 
-        success_rates = payload.get("success_rates")
-        rates = success_rates if isinstance(success_rates, dict) else {}
+        rates = {}
+        for rate_key in ("success_rates", "accumulated_success_rates"):
+            value = payload.get(rate_key)
+            if isinstance(value, dict):
+                rates = value
+                break
         qd_archive_summary = _load_qd_archive_summary(summary_path)
         rows[(benchmark, problem)] = ProblemMetrics(
             backend=backend,
@@ -123,7 +127,7 @@ def _load_problem_metrics(backend: str, root: Path) -> dict[tuple[str, str], Pro
                 rates.get("total_functionality", rates.get("functionality", 0.0))
             ),
             synthesis_rate=_safe_rate(
-                rates.get("total_synthesis_ppa", rates.get("synthesis", 0.0))
+                rates.get("total_synthesis_ppa", rates.get("synthesis_ppa", rates.get("synthesis", 0.0)))
             ),
             best_score=_safe_float(payload.get("best_score")),
             runtime_seconds=float(payload.get("total_runtime_seconds", 0.0)),

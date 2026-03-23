@@ -5,6 +5,7 @@ import argparse
 import csv
 import json
 import math
+import os
 import statistics
 from collections import defaultdict
 from dataclasses import dataclass
@@ -95,6 +96,15 @@ def _format_percent(value: float | None) -> str:
     if value is None:
         return "N/A"
     return f"{value * 100.0:.1f}%"
+
+
+def _relative_markdown_path(target: str | None, report_path: Path) -> str | None:
+    if not target:
+        return None
+    try:
+        return Path(os.path.relpath(Path(target), report_path.parent)).as_posix()
+    except ValueError:
+        return target
 
 
 def _load_subset_problems(config_path: Path) -> list[tuple[str, str]]:
@@ -925,6 +935,9 @@ def _write_backend_report(
     backend_summary: dict[str, Any],
     feature_stats: list[FeatureStats],
 ) -> None:
+    histogram_rel = _relative_markdown_path(backend_summary.get("histogram_file"), path)
+    pca_rel = _relative_markdown_path(backend_summary["embeddings"].get("pca_plot"), path)
+    tsne_rel = _relative_markdown_path(backend_summary["embeddings"].get("tsne_plot"), path)
     top_variable = sorted(
         feature_stats,
         key=lambda item: (item.normalized_range_coverage, item.stddev_value or 0.0),
@@ -961,9 +974,9 @@ def _write_backend_report(
         "",
         "## Plot files",
         "",
-        f"- histogram: `{backend_summary.get('histogram_file') or 'n/a'}`",
-        f"- PCA: `{backend_summary['embeddings'].get('pca_plot') or 'n/a'}`",
-        f"- t-SNE: `{backend_summary['embeddings'].get('tsne_plot') or backend_summary['embeddings'].get('note') or 'n/a'}`",
+        f"- histogram: {'![](./' + histogram_rel + ')' if histogram_rel else 'n/a'}",
+        f"- PCA: {'![](./' + pca_rel + ')' if pca_rel else 'n/a'}",
+        f"- t-SNE: {'![](./' + tsne_rel + ')' if tsne_rel else (backend_summary['embeddings'].get('note') or 'n/a')}",
         "",
     ])
     path.write_text("\n".join(lines), encoding="utf-8")
@@ -1043,6 +1056,14 @@ def _write_top_report(
     profile_payload: dict[str, Any],
     warnings: list[str],
 ) -> None:
+    plot_relatives = {
+        backend: {
+            "histogram": _relative_markdown_path(payload.get("histogram_file"), path),
+            "pca": _relative_markdown_path(payload["embeddings"].get("pca_plot"), path),
+            "tsne": _relative_markdown_path(payload["embeddings"].get("tsne_plot"), path),
+        }
+        for backend, payload in per_backend_payloads.items()
+    }
     lines = [
         "# QD Feature-Space Analysis",
         "",
@@ -1070,6 +1091,7 @@ def _write_top_report(
         "",
     ])
     for backend, payload in per_backend_payloads.items():
+        rel = plot_relatives[backend]
         lines.extend(
             [
                 f"### {backend}",
@@ -1078,9 +1100,9 @@ def _write_top_report(
                 f"- final_elites: `{payload['final_elite_count']}`",
                 f"- collapsed_features: `{', '.join(payload['collapsed_features']) if payload['collapsed_features'] else 'none'}`",
                 f"- near_collapsed_features: `{', '.join(payload['near_collapsed_features']) if payload['near_collapsed_features'] else 'none'}`",
-                f"- histogram: `{payload.get('histogram_file') or 'n/a'}`",
-                f"- PCA: `{payload['embeddings'].get('pca_plot') or 'n/a'}`",
-                f"- t-SNE: `{payload['embeddings'].get('tsne_plot') or payload['embeddings'].get('note') or 'n/a'}`",
+                f"- histogram: {'![](' + rel['histogram'] + ')' if rel['histogram'] else 'n/a'}",
+                f"- PCA: {'![](' + rel['pca'] + ')' if rel['pca'] else 'n/a'}",
+                f"- t-SNE: {'![](' + rel['tsne'] + ')' if rel['tsne'] else (payload['embeddings'].get('note') or 'n/a')}",
                 "",
             ]
         )
