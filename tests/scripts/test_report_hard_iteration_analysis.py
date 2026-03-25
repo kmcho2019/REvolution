@@ -55,6 +55,13 @@ def _write_archive_summary(
     )
 
 
+def _write_generation_log(path: Path, payloads: list[dict]) -> None:
+    path.write_text(
+        "\n".join(json.dumps(payload) for payload in payloads) + "\n",
+        encoding="utf-8",
+    )
+
+
 def test_report_hard_iteration_analysis_generates_report_and_summary(tmp_path):
     repo_root = Path(__file__).resolve().parents[2]
     script_path = repo_root / "scripts" / "report_hard_iteration_analysis.py"
@@ -371,3 +378,128 @@ def test_report_hard_iteration_analysis_handles_four_backends_with_partial_resul
     assert summary["recommendations"]["overall"] == "cvt_struct"
     assert summary["recommendations"]["score_qd"] == "cvt_struct"
     assert summary["recommendations"]["archive_qd"] == "cvt_size_control"
+
+
+def test_report_hard_iteration_analysis_recommends_multi_objective_backend(tmp_path):
+    repo_root = Path(__file__).resolve().parents[2]
+    script_path = repo_root / "scripts" / "report_hard_iteration_analysis.py"
+    config_path = tmp_path / "hard_iteration_subset.yaml"
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                "subset_name": "hard_iteration_subset_v1",
+                "selected_problems": [{"benchmark": "RTLLM", "problem": "Prob001"}],
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+
+    classic_root = tmp_path / "classic"
+    cvt_root = tmp_path / "cvt_struct"
+    ref = {"area": 100.0, "power": 1.0, "eff_clk_period": 1.0}
+
+    _write_summary(
+        classic_root / "RTLLM" / "Prob001" / "Prob001_summary.json",
+        benchmark="RTLLM",
+        problem="Prob001",
+        functionality=0.7,
+        synthesis=0.7,
+        best_score=0.12,
+        runtime_seconds=10.0,
+    )
+    classic_summary = json.loads(
+        (classic_root / "RTLLM" / "Prob001" / "Prob001_summary.json").read_text(encoding="utf-8")
+    )
+    classic_summary["ref_ppa_metric"] = ref
+    classic_summary["final_population_ppa_details"] = [
+        {
+            "id": "classic_a",
+            "strategy": "seed",
+            "score": 0.1,
+            "ppa_metrics": {
+                "area": 95.0,
+                "power": 0.95,
+                "eff_clk_period": 0.95,
+                "report_path": "/tmp/classic_a.rpt",
+            },
+        }
+    ]
+    (classic_root / "RTLLM" / "Prob001" / "Prob001_summary.json").write_text(
+        json.dumps(classic_summary),
+        encoding="utf-8",
+    )
+    _write_generation_log(
+        classic_root / "RTLLM" / "Prob001" / "generation_log.jsonl",
+        [
+            {
+                "generation": 0,
+                "population_ppa_details": classic_summary["final_population_ppa_details"],
+            }
+        ],
+    )
+
+    _write_summary(
+        cvt_root / "RTLLM" / "Prob001" / "Prob001_summary.json",
+        benchmark="RTLLM",
+        problem="Prob001",
+        functionality=0.9,
+        synthesis=0.9,
+        best_score=0.24,
+        runtime_seconds=12.0,
+    )
+    cvt_summary = json.loads(
+        (cvt_root / "RTLLM" / "Prob001" / "Prob001_summary.json").read_text(encoding="utf-8")
+    )
+    cvt_summary["ref_ppa_metric"] = ref
+    cvt_summary["final_population_ppa_details"] = [
+        {
+            "id": "qd_a",
+            "strategy": "seed",
+            "score": 0.2,
+            "ppa_metrics": {
+                "area": 90.0,
+                "power": 0.9,
+                "eff_clk_period": 0.9,
+                "report_path": "/tmp/qd_a.rpt",
+            },
+        }
+    ]
+    cvt_summary["backend_details"] = {"search_mode": "revolution_qd", "qd_config": {"archive_type": "cvt"}}
+    (cvt_root / "RTLLM" / "Prob001" / "Prob001_summary.json").write_text(
+        json.dumps(cvt_summary),
+        encoding="utf-8",
+    )
+    _write_generation_log(
+        cvt_root / "RTLLM" / "Prob001" / "generation_log.jsonl",
+        [
+            {
+                "generation": 0,
+                "population_ppa_details": cvt_summary["final_population_ppa_details"],
+            }
+        ],
+    )
+
+    output_dir = tmp_path / "analysis"
+    result = subprocess.run(
+        [
+            str(Path(os.sys.executable)),
+            str(script_path),
+            "--subset-config",
+            str(config_path),
+            "--backend_run",
+            f"classic={classic_root}",
+            "--backend_run",
+            f"cvt_struct={cvt_root}",
+            "--output-dir",
+            str(output_dir),
+        ],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8"))
+    assert summary["recommendations"]["multi_objective"] == "cvt_struct"

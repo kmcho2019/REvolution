@@ -1,9 +1,17 @@
 import argparse
 import json
 import math
+import os
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+)
+
+from revolution.qd.pareto_analysis import collect_backend_problem_pareto  # noqa: E402
 
 
 TREND_EPSILON = 0.01
@@ -42,6 +50,14 @@ class SummaryRow:
     qd_archive_entry_count: int | None
     qd_collapsed_axes: tuple[str, ...]
     qd_decision_counts: dict[str, int]
+    pareto_objective_count: int
+    pareto_candidate_count: int
+    pareto_point_count: int
+    pareto_hypervolume: float
+    pareto_reference_beating_count: int
+    pareto_area_improvement_pct: float | None
+    pareto_power_improvement_pct: float | None
+    pareto_period_improvement_pct: float | None
 
 
 IGNORED_SUMMARY_FILENAMES = {"archive_summary.json"}
@@ -380,6 +396,114 @@ def _render_qd_descriptor_health_section(rows: list[SummaryRow]) -> list[str]:
     return lines
 
 
+def _pareto_problem_winners(rows: list[SummaryRow]) -> dict[tuple[str, str], SummaryRow]:
+    winners: dict[tuple[str, str], SummaryRow] = {}
+    grouped: dict[tuple[str, str], list[SummaryRow]] = {}
+    for row in rows:
+        grouped.setdefault((row.benchmark, row.problem), []).append(row)
+    for key, group in grouped.items():
+        winners[key] = max(
+            group,
+            key=lambda item: (
+                item.pareto_hypervolume,
+                item.pareto_point_count,
+                item.pareto_reference_beating_count,
+            ),
+        )
+    return winners
+
+
+def _recommend_pareto_backend(rows: list[SummaryRow]) -> str | None:
+    grouped: dict[str, list[SummaryRow]] = {}
+    for row in rows:
+        grouped.setdefault(row.backend, []).append(row)
+    if not grouped:
+        return None
+    winners = _pareto_problem_winners(rows)
+    win_counts: dict[str, int] = {backend: 0 for backend in grouped}
+    for winner in winners.values():
+        win_counts[winner.backend] = win_counts.get(winner.backend, 0) + 1
+    backend_scores: list[tuple[str, float, int, float]] = []
+    for backend, group in grouped.items():
+        mean_hypervolume, _, _ = _mean_std_ci95([row.pareto_hypervolume for row in group])
+        mean_pareto_points, _, _ = _mean_std_ci95(
+            [float(row.pareto_point_count) for row in group]
+        )
+        backend_scores.append(
+            (
+                backend,
+                mean_hypervolume or 0.0,
+                win_counts.get(backend, 0),
+                mean_pareto_points or 0.0,
+            )
+        )
+    return max(backend_scores, key=lambda item: (item[1], item[2], item[3]))[0]
+
+
+def _render_pareto_problem_section(rows: list[SummaryRow]) -> list[str]:
+    lines = [
+        "## Pareto / Multi-Objective Metrics",
+        "",
+        "| Backend | Benchmark | Problem | Objectives | Candidates | Pareto Points | Hypervolume | Ref-Beating | Best Pareto Delta (A/P/T) |",
+        "|:---|:---|:---|---:|---:|---:|:---|---:|:---|",
+    ]
+    for row in sorted(rows, key=lambda item: (item.benchmark, item.problem, item.backend)):
+        ppa_components = " / ".join(
+            [
+                _format_delta(row.pareto_area_improvement_pct),
+                _format_delta(row.pareto_power_improvement_pct),
+                _format_delta(row.pareto_period_improvement_pct),
+            ]
+        )
+        lines.append(
+            f"| `{row.backend}` | {row.benchmark} | {row.problem} | "
+            f"{row.pareto_objective_count} | {row.pareto_candidate_count} | {row.pareto_point_count} | "
+            f"{row.pareto_hypervolume:.4f} | {row.pareto_reference_beating_count} | {ppa_components} |"
+        )
+    lines.append("")
+    return lines
+
+
+def _render_pareto_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: bool) -> list[str]:
+    grouped: dict[tuple[str, str], list[SummaryRow]] = {}
+    for row in rows:
+        key = (row.backend, row.benchmark if group_by_benchmark else "ALL")
+        grouped.setdefault(key, []).append(row)
+
+    winners = _pareto_problem_winners(rows)
+    heading = (
+        "## Aggregate Pareto Metrics by Benchmark"
+        if group_by_benchmark
+        else "## Aggregate Pareto Metrics (All Benchmarks)"
+    )
+    lines = [
+        heading,
+        "",
+        "| Backend | Benchmark | Problems | Pareto-Valid Problems | Mean Hypervolume ± CI | Mean Pareto Points ± CI | Mean Ref-Beating ± CI | HV Wins |",
+        "|:---|:---|---:|---:|:---|:---|:---|---:|",
+    ]
+    for (backend, benchmark), group in sorted(grouped.items()):
+        valid_problem_count = sum(1 for row in group if row.pareto_candidate_count > 0)
+        hv_values = [row.pareto_hypervolume for row in group]
+        pareto_point_values = [float(row.pareto_point_count) for row in group]
+        beating_values = [float(row.pareto_reference_beating_count) for row in group]
+        win_count = sum(
+            1
+            for (row_benchmark, row_problem), winner in winners.items()
+            if winner.backend == backend
+            and (not group_by_benchmark or row_benchmark == benchmark)
+        )
+        lines.append(
+            f"| `{backend}` | {benchmark} | {len(group)} | {valid_problem_count} | "
+            f"{_format_mean_ci(hv_values, precision=4)} | "
+            f"{_format_mean_ci(pareto_point_values, precision=2)} | "
+            f"{_format_mean_ci(beating_values, precision=2)} | "
+            f"{win_count} |"
+        )
+    lines.append("")
+    return lines
+
+
 def _render_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: bool) -> list[str]:
     grouped: dict[tuple[str, str], list[SummaryRow]] = {}
     for row in rows:
@@ -452,6 +576,7 @@ def _render_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: boo
 
 def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
     rows: list[SummaryRow] = []
+    pareto_metrics_by_problem = collect_backend_problem_pareto(backend, root)
     for summary_path in root.rglob("*_summary.json"):
         if not _is_problem_summary_path(summary_path):
             continue
@@ -529,6 +654,7 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
         functionality_rate = _safe_rate(rates.get("functionality", 0.0))
         synthesis_rate = _safe_rate(rates.get("synthesis_ppa", 0.0))
         best_score = _safe_float(final_ppa.get("best_score"))
+        pareto_metrics = pareto_metrics_by_problem.get((benchmark_name, problem_name))
 
         score_improvement_pct: float | None = None
         area_improvement_pct: float | None = None
@@ -616,17 +742,50 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
                 qd_archive_entry_count=_safe_int(qd_descriptor_health.get("archive_entry_count")),
                 qd_collapsed_axes=collapsed_axes,
                 qd_decision_counts=decision_counts,
+                pareto_objective_count=(
+                    len(pareto_metrics.objective_metrics) if pareto_metrics is not None else 0
+                ),
+                pareto_candidate_count=(
+                    pareto_metrics.candidate_count if pareto_metrics is not None else 0
+                ),
+                pareto_point_count=(
+                    pareto_metrics.pareto_point_count if pareto_metrics is not None else 0
+                ),
+                pareto_hypervolume=(
+                    pareto_metrics.hypervolume if pareto_metrics is not None else 0.0
+                ),
+                pareto_reference_beating_count=(
+                    pareto_metrics.reference_beating_count if pareto_metrics is not None else 0
+                ),
+                pareto_area_improvement_pct=(
+                    (pareto_metrics.best_improvements.get("area") or 0.0) * 100.0
+                    if pareto_metrics is not None and "area" in pareto_metrics.best_improvements
+                    else None
+                ),
+                pareto_power_improvement_pct=(
+                    (pareto_metrics.best_improvements.get("power") or 0.0) * 100.0
+                    if pareto_metrics is not None and "power" in pareto_metrics.best_improvements
+                    else None
+                ),
+                pareto_period_improvement_pct=(
+                    (pareto_metrics.best_improvements.get("eff_clk_period") or 0.0) * 100.0
+                    if pareto_metrics is not None and "eff_clk_period" in pareto_metrics.best_improvements
+                    else None
+                ),
             )
         )
     return rows
 
 
 def _render_markdown(rows: list[SummaryRow]) -> str:
+    pareto_winner = _recommend_pareto_backend(rows)
     lines = [
         "# Backend Comparison Report",
         "",
         "Legend: `✅` pass/improvement, `❌` fail/regression, `➖` neutral.",
         "Score/PPA aggregate metrics exclude failed designs (no synthesis pass) and non-finite scores.",
+        "Pareto hypervolume uses normalized improvement space against the zero-improvement reference point.",
+        f"Multi-objective winner: `{pareto_winner or 'N/A'}` (mean hypervolume, then per-problem HV wins, then mean Pareto points).",
         "",
     ]
     lines.extend(_render_budget_fairness_section(rows))
@@ -658,9 +817,42 @@ def _render_markdown(rows: list[SummaryRow]) -> str:
     lines.append("")
     lines.extend(_render_aggregate_section(rows, group_by_benchmark=True))
     lines.extend(_render_aggregate_section(rows, group_by_benchmark=False))
+    lines.extend(_render_pareto_problem_section(rows))
+    lines.extend(_render_pareto_aggregate_section(rows, group_by_benchmark=True))
+    lines.extend(_render_pareto_aggregate_section(rows, group_by_benchmark=False))
     lines.extend(_render_qd_archive_section(rows))
     lines.extend(_render_qd_descriptor_health_section(rows))
     return "\n".join(lines) + "\n"
+
+
+def parse_backend_runs(mappings: list[str]) -> list[tuple[str, Path]]:
+    backend_runs: list[tuple[str, Path]] = []
+    for mapping in mappings:
+        if "=" not in mapping:
+            raise ValueError(
+                f"Invalid --backend_run '{mapping}'. Expected format <backend>=<path>."
+            )
+        backend, path_str = mapping.split("=", 1)
+        root = Path(path_str).expanduser().resolve()
+        if not root.is_dir():
+            raise FileNotFoundError(f"Experiment path not found: {root}")
+        backend_runs.append((backend, root))
+    return backend_runs
+
+
+def generate_backend_comparison_report(
+    backend_runs: list[tuple[str, Path]],
+    *,
+    output_path: Path | None = None,
+) -> str:
+    rows: list[SummaryRow] = []
+    for backend, root in backend_runs:
+        rows.extend(_load_summary_rows(backend=backend, root=root))
+    report = _render_markdown(rows)
+    if output_path is not None:
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(report, encoding="utf-8")
+    return report
 
 
 def main() -> int:
@@ -681,23 +873,11 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    rows: list[SummaryRow] = []
-    for mapping in args.backend_run:
-        if "=" not in mapping:
-            raise ValueError(
-                f"Invalid --backend_run '{mapping}'. Expected format <backend>=<path>."
-            )
-        backend, path_str = mapping.split("=", 1)
-        root = Path(path_str).expanduser().resolve()
-        if not root.is_dir():
-            raise FileNotFoundError(f"Experiment path not found: {root}")
-        rows.extend(_load_summary_rows(backend=backend, root=root))
-
-    report = _render_markdown(rows)
+    report = generate_backend_comparison_report(
+        parse_backend_runs(args.backend_run),
+        output_path=args.output,
+    )
     print(report)
-    if args.output:
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(report, encoding="utf-8")
     return 0
 
 

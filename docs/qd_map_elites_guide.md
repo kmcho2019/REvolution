@@ -78,6 +78,10 @@ Core QD files:
 - `scripts/report_qd_feature_space.py`:
   post-run feature-space analysis, regression summaries, collapse diagnostics,
   and PCA/t-SNE projections over successful QD candidates
+- `scripts/report_qd_problem_histograms.py`:
+  per-problem CVT histogram reports over successful candidates, with projected
+  centroid/division overlays and cumulative generation-history panels emitted
+  into `qd_feature_histograms/` under each problem directory
 - `data/configs/qd_descriptor_profiles_hard_iteration_large.yaml`:
   frozen hard-subset follow-up profile with coarse grid bins for the 10D large
   structural/PPA descriptor mix

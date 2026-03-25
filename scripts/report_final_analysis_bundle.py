@@ -1,0 +1,237 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import sys
+from pathlib import Path
+from typing import Any
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+)
+
+from scripts.backend_comparison_report import (  # noqa: E402
+    generate_backend_comparison_report,
+)
+from scripts.report_evolutionary_run import generate_evolutionary_reports  # noqa: E402
+from scripts.report_hard_iteration_analysis import (  # noqa: E402
+    generate_hard_iteration_analysis,
+)
+from scripts.report_pareto_analysis import generate_pareto_analysis_report  # noqa: E402
+from scripts.report_qd_feature_space import (  # noqa: E402
+    generate_qd_feature_space_analysis,
+)
+
+
+RESERVED_DIR_NAMES = {
+    "analysis",
+    "feature_analysis",
+    "hard_iteration_analysis",
+    "pareto_analysis",
+    "evolutionary_reports",
+    "final_analysis",
+}
+
+
+def _discover_backend_runs(run_root: Path) -> list[tuple[str, Path]]:
+    backend_runs: list[tuple[str, Path]] = []
+    for child in sorted(run_root.iterdir()):
+        if not child.is_dir() or child.name in RESERVED_DIR_NAMES:
+            continue
+        if not any(path.name.endswith("_summary.json") for path in child.rglob("*_summary.json")):
+            continue
+        backend_runs.append((child.name, child.resolve()))
+    if not backend_runs:
+        raise ValueError(f"No backend run directories found under {run_root}")
+    return backend_runs
+
+
+def _has_qd_backend(backend_runs: list[tuple[str, Path]]) -> bool:
+    for _, root in backend_runs:
+        if any(root.rglob("qd_archive_event.json")) or any(root.rglob("archive_summary.json")):
+            return True
+    return False
+
+
+def _write_top_level_report(
+    *,
+    output_dir: Path,
+    backend_runs: list[tuple[str, Path]],
+    sections: dict[str, str],
+    skipped_sections: list[dict[str, str]],
+    recommendations: dict[str, Any],
+) -> None:
+    lines = [
+        "# Final Analysis Bundle",
+        "",
+        f"- backend_count: `{len(backend_runs)}`",
+        f"- backends: `{', '.join(backend for backend, _ in backend_runs)}`",
+        "",
+        "## Sections",
+        "",
+        f"- backend comparison: [backend_comparison.md]({sections['backend_comparison']})",
+        f"- hard iteration analysis: [report.md]({sections['hard_iteration_analysis_report']})",
+        f"- pareto analysis: [report.md]({sections['pareto_analysis_report']})",
+        f"- evolutionary reports: [report.md]({sections['evolutionary_reports_report']})",
+    ]
+    if "feature_analysis_report" in sections:
+        lines.append(f"- feature analysis: [report.md]({sections['feature_analysis_report']})")
+    if skipped_sections:
+        lines.extend(
+            [
+                "",
+                "## Skipped Sections",
+                "",
+            ]
+        )
+        for item in skipped_sections:
+            lines.append(f"- `{item['section']}`: {item['reason']}")
+    lines.extend(
+        [
+            "",
+            "## Recommendations",
+            "",
+            f"- overall: `{recommendations.get('overall') or 'N/A'}`",
+            f"- score_qd: `{recommendations.get('score_qd') or 'N/A'}`",
+            f"- archive_qd: `{recommendations.get('archive_qd') or 'N/A'}`",
+            f"- multi_objective: `{recommendations.get('multi_objective') or 'N/A'}`",
+            f"- pareto winner: `{recommendations.get('pareto_overall') or 'N/A'}`",
+        ]
+    )
+    if recommendations.get("recommended_profile_path"):
+        lines.append(
+            f"- recommended profile: [recommended_profile.json]({recommendations['recommended_profile_path']})"
+        )
+    lines.append("")
+    (output_dir / "report.md").write_text("\n".join(lines), encoding="utf-8")
+
+
+def generate_final_analysis_bundle(
+    *,
+    run_root: Path,
+    subset_config: Path,
+    output_dir: Path | None = None,
+    min_profile_features: int = 7,
+) -> dict[str, Any]:
+    run_root = run_root.resolve()
+    subset_config = subset_config.resolve()
+    backend_runs = _discover_backend_runs(run_root)
+    output_dir = (output_dir or (run_root / "final_analysis")).resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    backend_comparison_path = output_dir / "backend_comparison.md"
+    generate_backend_comparison_report(backend_runs, output_path=backend_comparison_path)
+
+    hard_iteration_result = generate_hard_iteration_analysis(
+        subset_config=subset_config,
+        backend_runs=backend_runs,
+        output_dir=output_dir / "hard_iteration_analysis",
+    )
+    pareto_result = generate_pareto_analysis_report(
+        backend_runs=backend_runs,
+        output_dir=output_dir / "pareto_analysis",
+        subset_config=subset_config,
+    )
+    evolutionary_result = generate_evolutionary_reports(
+        subset_config=subset_config,
+        backend_runs=backend_runs,
+        output_dir=output_dir / "evolutionary_reports",
+    )
+
+    skipped_sections: list[dict[str, str]] = []
+    sections = {
+        "backend_comparison": "backend_comparison.md",
+        "hard_iteration_analysis_report": "hard_iteration_analysis/report.md",
+        "hard_iteration_analysis_summary": "hard_iteration_analysis/summary.json",
+        "pareto_analysis_report": "pareto_analysis/report.md",
+        "pareto_analysis_summary": "pareto_analysis/summary.json",
+        "evolutionary_reports_report": "evolutionary_reports/report.md",
+    }
+    recommendations = dict(hard_iteration_result["payload"]["recommendations"])
+    recommendations["pareto_overall"] = pareto_result["summary"].get("overall_multi_objective_winner")
+
+    if _has_qd_backend(backend_runs):
+        generate_qd_feature_space_analysis(
+            subset_config=subset_config,
+            backend_roots={backend: root for backend, root in backend_runs},
+            output_dir=output_dir / "feature_analysis",
+            min_profile_features=min_profile_features,
+        )
+        sections["feature_analysis_report"] = "feature_analysis/report.md"
+        sections["feature_analysis_summary"] = "feature_analysis/summary.json"
+        recommendations["recommended_profile_path"] = "feature_analysis/recommended_profile.json"
+    else:
+        skipped_sections.append(
+            {
+                "section": "feature_analysis",
+                "reason": "No QD backend artifacts were found under the discovered backend roots.",
+            }
+        )
+
+    _write_top_level_report(
+        output_dir=output_dir,
+        backend_runs=backend_runs,
+        sections=sections,
+        skipped_sections=skipped_sections,
+        recommendations=recommendations,
+    )
+
+    summary = {
+        "run_root": str(run_root),
+        "subset_config": str(subset_config),
+        "output_dir": str(output_dir),
+        "backend_runs": [
+            {"backend": backend, "root": str(root)}
+            for backend, root in backend_runs
+        ],
+        "sections": sections,
+        "skipped_sections": skipped_sections,
+        "recommendations": recommendations,
+        "hard_iteration_summary_path": hard_iteration_result["summary_path"],
+        "pareto_summary_path": pareto_result["summary_path"],
+        "evolutionary_report_path": evolutionary_result["report_path"],
+    }
+    summary_path = output_dir / "summary.json"
+    summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    return summary
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Generate the full final_analysis bundle for a finished hard-iteration run root."
+    )
+    parser.add_argument("--run-root", type=Path, required=True, help="Finished comparison run root.")
+    parser.add_argument(
+        "--subset-config",
+        type=Path,
+        required=True,
+        help="Frozen hard-subset config used for the run.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=None,
+        help="Optional output directory. Defaults to <run-root>/final_analysis.",
+    )
+    parser.add_argument(
+        "--min-profile-features",
+        type=int,
+        default=7,
+        help="Minimum non-target features to keep in the recommended feature profile.",
+    )
+    args = parser.parse_args()
+    summary = generate_final_analysis_bundle(
+        run_root=args.run_root,
+        subset_config=args.subset_config,
+        output_dir=args.output_dir,
+        min_profile_features=args.min_profile_features,
+    )
+    print(json.dumps(summary, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

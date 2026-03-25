@@ -33,6 +33,15 @@ def _write_summary(root: Path, benchmark: str, problem: str, payload: dict) -> N
     )
 
 
+def _write_generation_log(root: Path, benchmark: str, problem: str, payloads: list[dict]) -> None:
+    problem_dir = root / "model-x" / benchmark / problem
+    problem_dir.mkdir(parents=True, exist_ok=True)
+    (problem_dir / "generation_log.jsonl").write_text(
+        "\n".join(json.dumps(payload) for payload in payloads) + "\n",
+        encoding="utf-8",
+    )
+
+
 def test_backend_comparison_report_generates_markdown(tmp_path):
     rev_root = tmp_path / "revolution"
     fs_root = tmp_path / "funsearch"
@@ -317,10 +326,120 @@ def test_backend_comparison_report_ignores_qd_sidecar_summary_and_renders_qd_sec
     subprocess.run(cmd, check=True, cwd=Path(__file__).resolve().parents[2])
     text = output_path.read_text(encoding="utf-8")
 
-    assert text.count("Prob001 |") == 3
+    assert text.count("Prob001 |") == 4
     assert "## QD Archive Metrics" in text
     assert "| `revolution` | Bench | Prob001 | cvt | 37.5% | 1.7500 | 0.4000 | 3/8 |" in text
     assert "## QD Descriptor Health" in text
     assert "wire_ctrl_assign_3d" in text
     assert "ctrl_depth_est" in text
     assert "filled_empty=2, not_inserted=3, replaced_elite=1" in text
+
+
+def test_backend_comparison_report_renders_pareto_sections(tmp_path):
+    classic_root = tmp_path / "classic"
+    qd_root = tmp_path / "cvt_struct"
+    _write_summary(
+        classic_root,
+        "Bench",
+        "Prob001",
+        {
+            "benchmark_name": "Bench",
+            "problem_name": "Prob001",
+            "accumulated_success_rates": {"functionality": 1.0, "synthesis_ppa": 1.0},
+            "final_population_ppa": {
+                "best_score": 0.1,
+                "best_metrics": {"area": 95.0, "power": 0.95, "eff_clk_period": 0.95},
+            },
+            "ref_ppa_metric": {"area": 100.0, "power": 1.0, "eff_clk_period": 1.0},
+        },
+    )
+    _write_generation_log(
+        classic_root,
+        "Bench",
+        "Prob001",
+        [
+            {
+                "generation": 0,
+                "population_ppa_details": [
+                    {
+                        "id": "classic_a",
+                        "strategy": "seed",
+                        "score": 0.1,
+                        "ppa_metrics": {
+                            "area": 95.0,
+                            "power": 0.95,
+                            "eff_clk_period": 0.95,
+                            "report_path": "/tmp/classic_a.rpt",
+                        },
+                    }
+                ],
+            }
+        ],
+    )
+    _write_summary(
+        qd_root,
+        "Bench",
+        "Prob001",
+        {
+            "benchmark_name": "Bench",
+            "problem_name": "Prob001",
+            "accumulated_success_rates": {"functionality": 1.0, "synthesis_ppa": 1.0},
+            "final_population_ppa": {
+                "best_score": 0.2,
+                "best_metrics": {"area": 88.0, "power": 0.9, "eff_clk_period": 0.9},
+            },
+            "ref_ppa_metric": {"area": 100.0, "power": 1.0, "eff_clk_period": 1.0},
+        },
+    )
+    _write_generation_log(
+        qd_root,
+        "Bench",
+        "Prob001",
+        [
+            {
+                "generation": 0,
+                "population_ppa_details": [
+                    {
+                        "id": "qd_a",
+                        "strategy": "seed",
+                        "score": 0.2,
+                        "ppa_metrics": {
+                            "area": 90.0,
+                            "power": 0.92,
+                            "eff_clk_period": 0.91,
+                            "report_path": "/tmp/qd_a.rpt",
+                        },
+                    },
+                    {
+                        "id": "qd_b",
+                        "strategy": "mutate",
+                        "score": 0.22,
+                        "ppa_metrics": {
+                            "area": 88.0,
+                            "power": 0.9,
+                            "eff_clk_period": 0.9,
+                            "report_path": "/tmp/qd_b.rpt",
+                        },
+                    },
+                ],
+            }
+        ],
+    )
+
+    output_path = tmp_path / "comparison.md"
+    cmd = [
+        sys.executable,
+        "scripts/backend_comparison_report.py",
+        "--backend_run",
+        f"classic={classic_root}",
+        "--backend_run",
+        f"cvt_struct={qd_root}",
+        "--output",
+        str(output_path),
+    ]
+    subprocess.run(cmd, check=True, cwd=Path(__file__).resolve().parents[2])
+    text = output_path.read_text(encoding="utf-8")
+
+    assert "## Pareto / Multi-Objective Metrics" in text
+    assert "## Aggregate Pareto Metrics (All Benchmarks)" in text
+    assert "Multi-objective winner: `cvt_struct`" in text

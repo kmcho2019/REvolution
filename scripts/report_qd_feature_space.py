@@ -820,7 +820,8 @@ def _spearman_feature_map(rows: list[dict[str, Any]], feature_cols: list[str], t
         if len({round(value, 12) for value in left}) <= 1 or len({round(value, 12) for value in right}) <= 1:
             correlations[feature] = None
             continue
-        corr = spearmanr(left, right).correlation
+        corr_result: Any = spearmanr(left, right)
+        corr = corr_result.correlation
         correlations[feature] = float(corr) if corr is not None and math.isfinite(float(corr)) else None
     return correlations
 
@@ -1167,23 +1168,30 @@ def build_argument_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main() -> int:
-    parser = build_argument_parser()
-    args = parser.parse_args()
-
-    subset_config = Path(args.subset_config).resolve()
-    output_dir = Path(args.output_dir).resolve()
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    problems = _load_subset_problems(subset_config)
-    allowed_problems = set(problems)
+def parse_backend_runs(items: list[str]) -> dict[str, Path]:
     backend_roots: dict[str, Path] = {}
-    warnings: list[str] = []
-    for item in args.backend_run:
+    for item in items:
         if "=" not in item:
             raise ValueError(f"Invalid --backend_run '{item}'. Expected LABEL=PATH.")
         label, path_str = item.split("=", 1)
         backend_roots[label] = Path(path_str).resolve()
+    return backend_roots
+
+
+def generate_qd_feature_space_analysis(
+    *,
+    subset_config: Path,
+    backend_roots: dict[str, Path],
+    output_dir: Path,
+    min_profile_features: int = 7,
+) -> dict[str, Any]:
+    subset_config = subset_config.resolve()
+    output_dir = output_dir.resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    problems = _load_subset_problems(subset_config)
+    allowed_problems = set(problems)
+    warnings: list[str] = []
 
     backend_problem_metrics: dict[str, dict[tuple[str, str], ProblemMetrics]] = {
         backend: _load_problem_metrics(
@@ -1296,7 +1304,7 @@ def main() -> int:
             )
 
     profile_scores = _profile_feature_scores(qd_candidate_rows, regression_features, backend_feature_stats)
-    recommended_profile = _recommended_profile(profile_scores, args.min_profile_features)
+    recommended_profile = _recommended_profile(profile_scores, min_profile_features)
     (output_dir / "recommended_profile.json").write_text(
         json.dumps(recommended_profile, indent=2),
         encoding="utf-8",
@@ -1334,6 +1342,22 @@ def main() -> int:
         regression_payload,
         recommended_profile,
         warnings,
+    )
+    return {
+        "report_path": str(output_dir / "report.md"),
+        "summary_path": str(output_dir / "summary.json"),
+        "summary": summary,
+    }
+
+
+def main() -> int:
+    parser = build_argument_parser()
+    args = parser.parse_args()
+    generate_qd_feature_space_analysis(
+        subset_config=Path(args.subset_config),
+        backend_roots=parse_backend_runs(args.backend_run),
+        output_dir=Path(args.output_dir),
+        min_profile_features=args.min_profile_features,
     )
     return 0
 

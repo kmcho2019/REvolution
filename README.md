@@ -21,8 +21,11 @@
 The `docs/` directory contains deeper dives:
 
 - `docs/implementation_details.md` – architecture and component responsibilities.
-- `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, long-budget classic-vs-QD runner, and the final analysis/report surfaces (`hard_iteration_backend_comparison.md`, `analysis/report.md`, `analysis/summary.json`).
+- `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, long-budget classic-vs-QD runner, and the formal `final_analysis/` bundle workflow.
 - `scripts/report_qd_feature_space.py` – deep post-run QD feature-space analysis over finished backend roots, including candidate tables, collapse diagnostics, regression summaries, and PCA/t-SNE plots.
+- `scripts/report_pareto_analysis.py` – per-problem Pareto-front figures plus aggregate hypervolume tables for backend comparisons.
+- `scripts/report_final_analysis_bundle.py` – one-command generator for `final_analysis/`, including backend comparison, hard-iteration analysis, Pareto analysis, feature analysis, and evolutionary reports.
+- `scripts/report_qd_problem_histograms.py` – per-problem CVT feature histograms over successful candidates, with final centroid overlays and cumulative generation-history views written back into each problem directory.
 - `docs/revolution_qd_map_elites_implementation_plan.md` – living QD/MAP-Elites implementation status, validation notes, and staged roadmap.
 - `docs/qd_map_elites_guide.md` – QD runtime guide, descriptor/tool mapping, and generation-by-generation trace.
 - `docs/diff_mode.md` – diff-mode schema, policies, diagnostics, and benchmark workflow.
@@ -310,6 +313,8 @@ python scripts/run_backend.py \
 It accepts the same shared elastic parallelism flags because it delegates
 directly to `run_backend.py`.
 Use `scripts/backend_comparison_report.py` to combine multiple backend experiment roots into one markdown comparison table.
+It now also emits multi-objective sections with per-problem Pareto counts and hypervolume aggregates.
+Use `scripts/report_final_analysis_bundle.py` when you want the documented post-run layout under `final_analysis/` without assembling each report manually.
 Use `scripts/run_backend_ablation.py` to launch matched backend sets over shared
 benchmark suites and emit a comparison report automatically. The ablation runner
 now accepts `--backends revolution funsearch eoh codeevolve` and derives
@@ -334,6 +339,14 @@ python scripts/run_backend.py \
   --max_tokens 128000 \
   --population_size 4 \
   --num_generations 2
+```
+
+Example final-analysis bundle for a finished hard-subset run:
+
+```bash
+python scripts/report_final_analysis_bundle.py \
+  --run-root exp/hard_iteration_qd/<run_tag> \
+  --subset-config data/configs/hard_iteration_subset.yaml
 ```
 
 `run_backend.py` strict/accelerated evaluation controls:

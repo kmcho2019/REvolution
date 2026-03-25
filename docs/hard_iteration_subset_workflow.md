@@ -99,7 +99,29 @@ Current fixed modes:
 - `cvt_struct`
 - `cvt_size_control`
 
-### 4. Generate the hard-subset analysis report
+### 4. Generate the formal `final_analysis/` bundle
+
+```bash
+python scripts/report_final_analysis_bundle.py \
+  --run-root exp/hard_iteration_qd/<run_tag> \
+  --subset-config data/configs/hard_iteration_subset.yaml
+```
+
+This is the recommended post-run entrypoint. It preserves the reference layout
+under `exp/hard_iteration_qd/<run_tag>/final_analysis/` and generates:
+
+- `backend_comparison.md`
+- `hard_iteration_analysis/`
+- `pareto_analysis/`
+- `feature_analysis/` when QD backends are present
+- `evolutionary_reports/`
+- top-level `report.md` and `summary.json`
+
+The Pareto layer adds backend/problem hypervolume, Pareto-point counts,
+reference-beating counts, projected pairwise-front figures for every problem,
+and static 3D front views for sequential problems.
+
+### 5. Generate the hard-subset analysis report manually
 
 ```bash
 python scripts/report_hard_iteration_analysis.py \
@@ -111,13 +133,13 @@ python scripts/report_hard_iteration_analysis.py \
   --output-dir exp/hard_iteration_qd/<run_tag>/analysis
 ```
 
-Stage 3 and Stage 4 produce different report surfaces:
+Stage 3 and Stage 5 produce different report surfaces:
 
 - Stage 3 raw comparison:
   - `exp/hard_iteration_qd/<run_tag>/hard_iteration_backend_comparison.md`
   - emitted by `scripts/run_hard_iteration_qd_vllm.sh`
   - use this as the direct backend-by-backend comparison for the finished matrix run
-- Stage 4 final analysis:
+- Stage 5 hard-iteration analysis:
   - `exp/hard_iteration_qd/<run_tag>/analysis/report.md`
   - `exp/hard_iteration_qd/<run_tag>/analysis/summary.json`
   - emitted by `scripts/report_hard_iteration_analysis.py`
@@ -127,8 +149,9 @@ Stage 3 and Stage 4 produce different report surfaces:
     - `overall`
     - `score_qd`
     - `archive_qd`
+    - `multi_objective`
 
-### 5. Generate the deep QD feature-space report
+### 6. Generate the deep QD feature-space report manually
 
 ```bash
 python scripts/report_qd_feature_space.py \
@@ -147,6 +170,26 @@ This deep analysis layer consumes finished run artifacts and adds:
 - per-backend histogram, PCA, and t-SNE plots for successful designs
 - regression coefficient tables for `quality_score`, `g_P`, `g_A`, and `g_T`
 - `recommended_profile.json` and `recommended_profile_scores.csv` for selecting a larger follow-up descriptor profile
+
+### 7. Generate Pareto-only comparison artifacts manually
+
+```bash
+python scripts/report_pareto_analysis.py \
+  --subset-config data/configs/hard_iteration_subset.yaml \
+  --backend_run classic=exp/hard_iteration_qd/<run_tag>/classic \
+  --backend_run grid_struct=exp/hard_iteration_qd/<run_tag>/grid_struct \
+  --backend_run cvt_struct=exp/hard_iteration_qd/<run_tag>/cvt_struct \
+  --backend_run cvt_size_control=exp/hard_iteration_qd/<run_tag>/cvt_size_control \
+  --output-dir exp/hard_iteration_qd/<run_tag>/pareto_analysis
+```
+
+This writes:
+
+- `report.md` and `summary.json`
+- `backend_problem_metrics.csv`
+- `aggregate_backend_metrics.csv`
+- `problems/<benchmark>/<problem>/pairwise_fronts.png`
+- `problems/<benchmark>/<problem>/front_3d.png` for sequential problems
 
 For the March 2026 hard-subset follow-up, the frozen large-profile reruns use
 the dedicated descriptor file:
@@ -173,6 +216,12 @@ sparse.
 - analysis report outputs:
   - `exp/hard_iteration_qd/<timestamp>/analysis/report.md`
   - `exp/hard_iteration_qd/<timestamp>/analysis/summary.json`
+- formal final-analysis bundle:
+  - `exp/hard_iteration_qd/<timestamp>/final_analysis/report.md`
+  - `exp/hard_iteration_qd/<timestamp>/final_analysis/summary.json`
+  - `exp/hard_iteration_qd/<timestamp>/final_analysis/backend_comparison.md`
+  - `exp/hard_iteration_qd/<timestamp>/final_analysis/hard_iteration_analysis/report.md`
+  - `exp/hard_iteration_qd/<timestamp>/final_analysis/pareto_analysis/report.md`
 - deep QD feature-space outputs:
   - `exp/hard_iteration_qd/<timestamp>/feature_analysis/report.md`
   - `exp/hard_iteration_qd/<timestamp>/feature_analysis/summary.json`
@@ -196,8 +245,8 @@ Populate this section after the live matrix finishes:
   - note the one-shot model and sampling settings used to derive the subset
   - link the committed baseline CSV
 - final recommendations context:
-  - distinguish the Stage 3 raw comparison markdown from the Stage 4 final analysis report
-  - summarize why the chosen `overall`, `score_qd`, and `archive_qd` recommendations were selected
+  - distinguish the Stage 3 raw comparison markdown from the Stage 4 `final_analysis/` bundle and the Stage 5 hard-iteration analysis report
+  - summarize why the chosen `overall`, `score_qd`, `archive_qd`, and `multi_objective` recommendations were selected
 
 ## Current branch status
 

@@ -504,9 +504,17 @@ VerilogEval-Spec-to-RTL iteration testing:
   subset config.
 - `scripts/report_hard_iteration_analysis.py`: generate the post-run markdown
   report plus machine-readable summary for classic-vs-QD hard-subset results.
+- `scripts/report_pareto_analysis.py`: generate per-problem Pareto-front
+  figures plus aggregate hypervolume/frontier tables for backend comparisons.
 - `scripts/report_qd_feature_space.py`: generate the deeper post-run QD
   feature-space report with successful-candidate tables, collapse diagnostics,
   regression summaries, and PCA/t-SNE plots.
+- `scripts/report_final_analysis_bundle.py`: generate the formal
+  `final_analysis/` bundle for a finished hard-subset run root.
+- `scripts/report_qd_problem_histograms.py`: backfill per-problem CVT feature
+  histograms with projected centroid/division overlays plus cumulative
+  generation-history panels under each problem's `qd_feature_histograms/`
+  subdirectory.
 
 Typical flow:
 
@@ -527,6 +535,10 @@ bash scripts/run_hard_iteration_qd_vllm.sh \
   --config data/configs/hard_iteration_subset.yaml \
   --mode matrix
 
+python scripts/report_final_analysis_bundle.py \
+  --run-root exp/hard_iteration_qd/<timestamp> \
+  --subset-config data/configs/hard_iteration_subset.yaml
+
 python scripts/report_hard_iteration_analysis.py \
   --subset-config data/configs/hard_iteration_subset.yaml \
   --backend_run classic=exp/hard_iteration_qd/<timestamp>/classic \
@@ -535,6 +547,14 @@ python scripts/report_hard_iteration_analysis.py \
   --backend_run cvt_size_control=exp/hard_iteration_qd/<timestamp>/cvt_size_control \
   --output-dir exp/hard_iteration_qd/<timestamp>/analysis
 
+python scripts/report_pareto_analysis.py \
+  --subset-config data/configs/hard_iteration_subset.yaml \
+  --backend_run classic=exp/hard_iteration_qd/<timestamp>/classic \
+  --backend_run grid_struct=exp/hard_iteration_qd/<timestamp>/grid_struct \
+  --backend_run cvt_struct=exp/hard_iteration_qd/<timestamp>/cvt_struct \
+  --backend_run cvt_size_control=exp/hard_iteration_qd/<timestamp>/cvt_size_control \
+  --output-dir exp/hard_iteration_qd/<timestamp>/pareto_analysis
+
 python scripts/report_qd_feature_space.py \
   --subset-config data/configs/hard_iteration_subset.yaml \
   --backend_run classic=exp/hard_iteration_qd/<timestamp>/classic \
@@ -542,20 +562,36 @@ python scripts/report_qd_feature_space.py \
   --backend_run cvt_struct=exp/hard_iteration_qd/<timestamp>/cvt_struct \
   --backend_run cvt_size_control=exp/hard_iteration_qd/<timestamp>/cvt_size_control \
   --output-dir exp/hard_iteration_qd/<timestamp>/feature_analysis
+
+python scripts/report_qd_problem_histograms.py \
+  --run-root exp/hard_iteration_qd/<timestamp>
 ```
 
-The two post-run report surfaces have different roles:
+The post-run analysis surfaces have different roles:
 
 - Stage 3 raw comparison: `exp/hard_iteration_qd/<run_tag>/hard_iteration_backend_comparison.md`
   - emitted directly by `scripts/run_hard_iteration_qd_vllm.sh`
   - shows the side-by-side backend comparison for the completed matrix run
+- Formal bundle: `exp/hard_iteration_qd/<run_tag>/final_analysis/`
+  - emitted by `scripts/report_final_analysis_bundle.py`
+  - recreates the reference post-run layout with:
+    - `backend_comparison.md`
+    - `hard_iteration_analysis/`
+    - `pareto_analysis/`
+    - `feature_analysis/` when QD backends are present
+    - `evolutionary_reports/`
+  - writes top-level `report.md` and `summary.json` to index those sections
 - Stage 4 final analysis: `exp/hard_iteration_qd/<run_tag>/analysis/report.md` plus `analysis/summary.json`
   - emitted by `scripts/report_hard_iteration_analysis.py`
   - summarizes aggregate backend performance, per-problem winners, and the recommendation fields:
     - `overall`
     - `score_qd`
     - `archive_qd`
+    - `multi_objective`
   - `summary.json` is the machine-readable version of that final writeup surface
+- Pareto / multi-objective analysis: `exp/hard_iteration_qd/<run_tag>/pareto_analysis/report.md` plus `pareto_analysis/summary.json`
+  - emitted by `scripts/report_pareto_analysis.py`
+  - summarizes per-problem Pareto hypervolume, frontier size, reference-beating counts, and backend-comparison front figures
 - Deep QD feature-space analysis: `exp/hard_iteration_qd/<run_tag>/feature_analysis/report.md` plus `feature_analysis/summary.json`
   - emitted by `scripts/report_qd_feature_space.py`
   - summarizes successful-candidate feature variability, collapse behavior,
@@ -595,7 +631,7 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 ## 4. Utility scripts
 
 - `scripts/evolutionary_report_generator.py`: generate Markdown reports summarising a run (`--experiment_path path/to/exp/...`).
-- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, solved-only score/PPA deltas (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`) with regression checks, budget/fairness diagnostics, and an extra QD archive section when `revolution_qd` summaries plus `archive_summary.json` sidecars are present. The loader now ignores `archive_summary.json` as a per-problem summary so QD runs are not double-counted (`--backend_run revolution=<path> --backend_run funsearch=<path> --backend_run eoh=<path> --backend_run codeevolve=<path>`).
+- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, solved-only score/PPA deltas (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`) with regression checks, budget/fairness diagnostics, Pareto / multi-objective sections, and an extra QD archive section when `revolution_qd` summaries plus `archive_summary.json` sidecars are present. The loader now ignores `archive_summary.json` as a per-problem summary so QD runs are not double-counted (`--backend_run revolution=<path> --backend_run funsearch=<path> --backend_run eoh=<path> --backend_run codeevolve=<path>`).
 - `scripts/run_backend_ablation.py`: one-command ablation sweep runner for REvolution/FunSearch/EoH/CodeEvolve plus optional comparison report generation, multi-seed loops (`--seeds`), strict fairness checks, selectable primary budget axis (`candidate_evaluations|llm_calls|dual_gate`), backend selection via `--backends`, and command validation via `--dry_run`.
   - Also writes top-level snapshots under `save_root` as `<timestamp>_ablation_config.yaml` and `<timestamp>_ablation_config_meta.yaml`.
 - `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch/EoH/CodeEvolve comparisons.
@@ -604,7 +640,10 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/build_hard_iteration_subset.py`: turn one-shot summaries plus benchmark metadata into a frozen balanced hard-subset config and baseline CSV.
 - `scripts/run_hard_iteration_qd_vllm.sh`: run the `classic`, `grid_struct`, `cvt_struct`, and `cvt_size_control` long-budget matrix from the frozen hard-subset config.
 - `scripts/report_hard_iteration_analysis.py`: summarize hard-subset classic-vs-QD runs into a markdown report plus JSON recommendations.
+- `scripts/report_pareto_analysis.py`: summarize hard-subset backend runs into Pareto-front figures plus per-backend hypervolume and frontier-size tables.
 - `scripts/report_qd_feature_space.py`: summarize finished QD backend roots into successful-candidate tables, collapse diagnostics, regression outputs, and embedding plots.
+- `scripts/report_final_analysis_bundle.py`: generate the formal `final_analysis/` directory for a finished hard-subset run root.
+- `scripts/report_qd_problem_histograms.py`: emit per-problem CVT successful-candidate histograms, projected centroid/division overlays, and cumulative history views into `qd_feature_histograms/` under each problem directory.
 - `data/configs/qd_descriptor_profiles_hard_iteration_large.yaml`: dedicated large-profile follow-up descriptor config for the hard-subset workflow, using the frozen `hard_iteration_large_struct10d` profile and coarse grid bins.
 - `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts`). QD runs keep `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`, `qd_metrics.json`, `grid_layout.json` or `centroids.json`, `archive_space.json`, `archive_space_report.md`, and the generated QD plots in the archived summary set so archive state is preserved even in `candidate_core` mode.
 - QD candidate directories now also include `qd_archive_event.json` for every

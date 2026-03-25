@@ -120,8 +120,10 @@ def _plot_generation_rates(path: Path, rows: list[dict[str, Any]]) -> None:
     if not rows:
         return
     generations = [int(row["generation"]) for row in rows]
-    functionality = [row.get("functionality_mean") for row in rows]
-    synthesis = [row.get("synthesis_mean") for row in rows]
+    functionality = [
+        _safe_float(row.get("functionality_mean")) or float("nan") for row in rows
+    ]
+    synthesis = [_safe_float(row.get("synthesis_mean")) or float("nan") for row in rows]
     plt.figure(figsize=(8, 4.8))
     plt.plot(generations, functionality, marker="o", label="functionality")
     plt.plot(generations, synthesis, marker="o", label="synthesis")
@@ -140,8 +142,10 @@ def _plot_generation_scores(path: Path, rows: list[dict[str, Any]]) -> None:
     if not rows:
         return
     generations = [int(row["generation"]) for row in rows]
-    best_score = [row.get("best_score_mean") for row in rows]
-    average_score = [row.get("average_score_mean") for row in rows]
+    best_score = [_safe_float(row.get("best_score_mean")) or float("nan") for row in rows]
+    average_score = [
+        _safe_float(row.get("average_score_mean")) or float("nan") for row in rows
+    ]
     plt.figure(figsize=(8, 4.8))
     plt.plot(generations, best_score, marker="o", label="best_score")
     plt.plot(generations, average_score, marker="o", label="average_score")
@@ -425,46 +429,28 @@ def _build_backend_summary(
     return summary, per_problem_rows, generation_rows, status_rows, strategy_rows
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Generate per-backend evolutionary reports from finished run roots."
-    )
-    parser.add_argument(
-        "--subset-config",
-        required=True,
-        type=Path,
-        help="Subset config used to select problems.",
-    )
-    parser.add_argument(
-        "--backend-run",
-        action="append",
-        default=[],
-        type=_parse_backend_run,
-        help="Backend label and experiment root in the form backend=/path/to/root",
-    )
-    parser.add_argument(
-        "--output-dir",
-        required=True,
-        type=Path,
-        help="Directory to write reports into.",
-    )
-    args = parser.parse_args()
-
-    selected = _load_selected_problems(args.subset_config.resolve())
-    output_dir = args.output_dir.resolve()
+def generate_evolutionary_reports(
+    *,
+    subset_config: Path,
+    backend_runs: list[tuple[str, Path]],
+    output_dir: Path,
+) -> dict[str, Any]:
+    selected = _load_selected_problems(subset_config.resolve())
+    output_dir = output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
 
     index_lines = [
         "# Evolutionary run reports",
         "",
-        f"- subset_config: `{args.subset_config.resolve()}`",
+        f"- subset_config: `{subset_config.resolve()}`",
         f"- selected_problem_count: `{len(selected)}`",
         "",
         "## Backends",
         "",
     ]
+    backend_payloads: dict[str, Any] = {}
 
-    for backend, backend_root in args.backend_run:
+    for backend, backend_root in backend_runs:
         backend_dir = output_dir / backend
         backend_dir.mkdir(parents=True, exist_ok=True)
         summary, per_problem_rows, generation_rows, status_rows, strategy_rows = _build_backend_summary(
@@ -520,18 +506,15 @@ def main() -> None:
                 key=lambda item: (item != "generation", item),
             ),
         )
+        summary_payload = {
+            "summary": summary,
+            "per_problem_rows": per_problem_rows,
+            "generation_rows": generation_rows,
+            "status_rows": status_rows,
+            "strategy_rows": strategy_rows,
+        }
         (backend_dir / "summary.json").write_text(
-            json.dumps(
-                {
-                    "summary": summary,
-                    "per_problem_rows": per_problem_rows,
-                    "generation_rows": generation_rows,
-                    "status_rows": status_rows,
-                    "strategy_rows": strategy_rows,
-                },
-                indent=2,
-            )
-            + "\n",
+            json.dumps(summary_payload, indent=2) + "\n",
             encoding="utf-8",
         )
         _plot_generation_rates(backend_dir / "generation_rates.png", generation_rows)
@@ -548,8 +531,46 @@ def main() -> None:
             strategy_rows=strategy_rows,
         )
         index_lines.append(f"- `{backend}`: [report.md]({backend}/report.md)")
+        backend_payloads[backend] = summary_payload
 
-    (output_dir / "report.md").write_text("\n".join(index_lines) + "\n", encoding="utf-8")
+    index_path = output_dir / "report.md"
+    index_path.write_text("\n".join(index_lines) + "\n", encoding="utf-8")
+    return {
+        "output_dir": str(output_dir),
+        "report_path": str(index_path),
+        "backends": backend_payloads,
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Generate per-backend evolutionary reports from finished run roots."
+    )
+    parser.add_argument(
+        "--subset-config",
+        required=True,
+        type=Path,
+        help="Subset config used to select problems.",
+    )
+    parser.add_argument(
+        "--backend-run",
+        action="append",
+        default=[],
+        type=_parse_backend_run,
+        help="Backend label and experiment root in the form backend=/path/to/root",
+    )
+    parser.add_argument(
+        "--output-dir",
+        required=True,
+        type=Path,
+        help="Directory to write reports into.",
+    )
+    args = parser.parse_args()
+    generate_evolutionary_reports(
+        subset_config=args.subset_config,
+        backend_runs=args.backend_run,
+        output_dir=args.output_dir,
+    )
 
 
 if __name__ == "__main__":
