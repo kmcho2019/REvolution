@@ -20,6 +20,7 @@ from revolution.qd.pareto_analysis import collect_backend_problem_pareto  # noqa
 
 
 IGNORED_SUMMARY_FILENAMES = {"archive_summary.json"}
+SUCCESS_RATE_KEYS = ("accumulated_success_rates", "success_rates")
 
 
 @dataclass(frozen=True)
@@ -94,13 +95,8 @@ def _load_subset_problems(config_path: Path) -> list[tuple[str, str]]:
 
 def _load_qd_archive_summary(summary_path: Path) -> dict[str, Any]:
     archive_summary_path = summary_path.parent / "archive_summary.json"
-    if not archive_summary_path.is_file():
-        return {}
-    try:
-        payload = json.loads(archive_summary_path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return {}
-    if not isinstance(payload, dict):
+    payload = _load_json_dict(archive_summary_path)
+    if payload is None:
         return {}
     return payload
 
@@ -112,6 +108,43 @@ def _is_problem_summary_path(summary_path: Path) -> bool:
     )
 
 
+def _load_json_dict(path: Path) -> dict[str, Any] | None:
+    if not path.is_file():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(payload, dict):
+        return None
+    return payload
+
+
+def _extract_success_rates(payload: dict[str, Any]) -> dict[str, Any]:
+    for key in SUCCESS_RATE_KEYS:
+        value = payload.get(key)
+        if isinstance(value, dict):
+            return value
+    return {}
+
+
+def _extract_best_score(payload: dict[str, Any]) -> float | None:
+    best_score = _safe_float(payload.get("best_score"))
+    if best_score is not None:
+        return best_score
+
+    final_population = payload.get("final_population_ppa")
+    if isinstance(final_population, dict):
+        best_score = _safe_float(final_population.get("best_score"))
+        if best_score is not None:
+            return best_score
+
+    final_strategy = payload.get("final_strategy_ppa")
+    if not isinstance(final_strategy, dict):
+        return None
+    return _safe_float(final_strategy.get("best_score"))
+
+
 def _load_problem_metrics(backend: str, root: Path) -> dict[tuple[str, str], ProblemMetrics]:
     rows: dict[tuple[str, str], ProblemMetrics] = {}
     pareto_metrics_by_problem = collect_backend_problem_pareto(backend, root)
@@ -119,18 +152,15 @@ def _load_problem_metrics(backend: str, root: Path) -> dict[tuple[str, str], Pro
         if not _is_problem_summary_path(summary_path):
             continue
 
-        payload = json.loads(summary_path.read_text(encoding="utf-8"))
+        payload = _load_json_dict(summary_path)
+        if payload is None:
+            continue
         benchmark = payload.get("benchmark_name") or summary_path.parent.parent.name
         problem = payload.get("problem_name") or summary_path.parent.name
         if not isinstance(benchmark, str) or not isinstance(problem, str):
             continue
 
-        rates = {}
-        for rate_key in ("success_rates", "accumulated_success_rates"):
-            value = payload.get(rate_key)
-            if isinstance(value, dict):
-                rates = value
-                break
+        rates = _extract_success_rates(payload)
         qd_archive_summary = _load_qd_archive_summary(summary_path)
         pareto_metrics = pareto_metrics_by_problem.get((benchmark, problem))
         rows[(benchmark, problem)] = ProblemMetrics(
@@ -141,9 +171,12 @@ def _load_problem_metrics(backend: str, root: Path) -> dict[tuple[str, str], Pro
                 rates.get("total_functionality", rates.get("functionality", 0.0))
             ),
             synthesis_rate=_safe_rate(
-                rates.get("total_synthesis_ppa", rates.get("synthesis_ppa", rates.get("synthesis", 0.0)))
+                rates.get(
+                    "total_synthesis_ppa",
+                    rates.get("synthesis_ppa", rates.get("synthesis", 0.0)),
+                )
             ),
-            best_score=_safe_float(payload.get("best_score")),
+            best_score=_extract_best_score(payload),
             runtime_seconds=float(payload.get("total_runtime_seconds", 0.0)),
             qd_archive_type=(
                 qd_archive_summary.get("archive_type")

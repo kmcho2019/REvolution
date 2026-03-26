@@ -582,6 +582,8 @@ VerilogEval-Spec-to-RTL iteration testing:
   balanced default.
 - `scripts/report_hard_iteration_analysis.py`: generate the post-run markdown
   report plus machine-readable summary for classic-vs-QD hard-subset results.
+  The loader prefers accumulated end-of-run success rates and falls back to
+  nested final best-score fields when a top-level `best_score` is absent.
 - `scripts/report_pareto_analysis.py`: generate per-problem Pareto-front
   figures plus aggregate hypervolume/frontier tables for backend comparisons.
 - `scripts/report_qd_feature_space.py`: generate the deeper post-run QD
@@ -592,7 +594,8 @@ VerilogEval-Spec-to-RTL iteration testing:
 - `scripts/report_qd_problem_histograms.py`: backfill per-problem CVT feature
   histograms with projected centroid/division overlays plus cumulative
   generation-history panels under each problem's `qd_feature_histograms/`
-  subdirectory.
+  subdirectory. The discovery pass ignores malformed or non-CVT artifact roots
+  instead of failing the whole scan.
 
 Typical flow:
 

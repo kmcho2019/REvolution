@@ -303,6 +303,12 @@ def test_report_final_analysis_bundle_generates_reference_layout(tmp_path: Path)
     assert summary["recommendations"]["multi_objective"] == "cvt_struct"
     assert summary["recommendations"]["pareto_overall"] == "cvt_struct"
     assert "feature_analysis_report" in summary["sections"]
+    hard_iteration_summary = json.loads(
+        (output_dir / "hard_iteration_analysis" / "summary.json").read_text(encoding="utf-8")
+    )
+    aggregates = {item["backend"]: item for item in hard_iteration_summary["aggregates"]}
+    assert aggregates["classic"]["best_score_mean"] == 0.12
+    assert aggregates["cvt_struct"]["best_score_mean"] == 0.24
 
 
 def test_report_final_analysis_bundle_accepts_explicit_backend_runs(tmp_path: Path) -> None:

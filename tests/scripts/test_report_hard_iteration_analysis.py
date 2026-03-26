@@ -34,6 +34,11 @@ def _write_summary(
     )
 
 
+def _write_json(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+
 def _write_archive_summary(
     path: Path,
     *,
@@ -503,3 +508,72 @@ def test_report_hard_iteration_analysis_recommends_multi_objective_backend(tmp_p
     assert result.returncode == 0, result.stderr
     summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8"))
     assert summary["recommendations"]["multi_objective"] == "cvt_struct"
+
+
+def test_report_hard_iteration_analysis_prefers_accumulated_rates_and_nested_best_score(
+    tmp_path,
+):
+    repo_root = Path(__file__).resolve().parents[2]
+    script_path = repo_root / "scripts" / "report_hard_iteration_analysis.py"
+    config_path = tmp_path / "hard_iteration_subset.yaml"
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                "subset_name": "hard_iteration_subset_v1",
+                "selected_problems": [{"benchmark": "RTLLM", "problem": "Prob001"}],
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+
+    backend_root = tmp_path / "cvt_struct"
+    _write_json(
+        backend_root / "RTLLM" / "Prob001" / "Prob001_summary.json",
+        {
+            "benchmark_name": "RTLLM",
+            "problem_name": "Prob001",
+            "success_rates": {
+                "total_functionality": 0.10,
+                "total_synthesis_ppa": 0.10,
+            },
+            "accumulated_success_rates": {
+                "functionality": 0.80,
+                "synthesis_ppa": 0.75,
+            },
+            "final_population_ppa": {"best_score": 0.33},
+            "total_runtime_seconds": 12.5,
+        },
+    )
+    _write_archive_summary(
+        backend_root / "RTLLM" / "Prob001" / "archive_summary.json",
+        archive_type="cvt",
+        coverage=0.40,
+        qd_score=1.20,
+        best_quality=0.33,
+    )
+
+    output_dir = tmp_path / "analysis"
+    result = subprocess.run(
+        [
+            str(Path(os.sys.executable)),
+            str(script_path),
+            "--subset-config",
+            str(config_path),
+            "--backend_run",
+            f"cvt_struct={backend_root}",
+            "--output-dir",
+            str(output_dir),
+        ],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8"))
+    aggregate = summary["aggregates"][0]
+    assert aggregate["functionality_mean"] == 0.8
+    assert aggregate["synthesis_mean"] == 0.75
+    assert aggregate["best_score_mean"] == 0.33

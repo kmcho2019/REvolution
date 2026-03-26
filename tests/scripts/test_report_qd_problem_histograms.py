@@ -2,6 +2,9 @@ import json
 import os
 import subprocess
 from pathlib import Path
+from types import SimpleNamespace
+
+from scripts import report_qd_problem_histograms
 
 
 def _write_json(path: Path, payload: dict) -> None:
@@ -185,3 +188,71 @@ def test_report_qd_problem_histograms_handles_uninitialized_centroids(tmp_path):
     assert summary["centroid_count"] == 0
     assert summary["axes"][0]["division_count"] == 0
     assert "\"processed_problem_count\": 1" in result.stdout
+
+
+def test_discover_cvt_problem_dirs_filters_invalid_problem_dirs(tmp_path):
+    valid_problem = tmp_path / "exp" / "backend" / "RTLLM" / "ProbA"
+    non_cvt_problem = tmp_path / "exp" / "backend" / "RTLLM" / "ProbB"
+    malformed_problem = tmp_path / "exp" / "backend" / "RTLLM" / "ProbC"
+    missing_archive_problem = tmp_path / "exp" / "backend" / "RTLLM" / "ProbD"
+
+    for problem_dir in [valid_problem, non_cvt_problem, malformed_problem, missing_archive_problem]:
+        _write_json(problem_dir / "centroids.json", {"dummy": True})
+
+    _write_json(valid_problem / "archive_space.json", {"archive_type": "cvt"})
+    _write_json(non_cvt_problem / "archive_space.json", {"archive_type": "grid"})
+    malformed_problem.joinpath("archive_space.json").write_text("{not-json", encoding="utf-8")
+
+    discovered = report_qd_problem_histograms.discover_cvt_problem_dirs(tmp_path / "exp")
+    assert discovered == [valid_problem]
+
+
+def test_generate_problem_histogram_reports_collects_processed_and_skipped(
+    tmp_path,
+    monkeypatch,
+):
+    ok_problem = tmp_path / "exp" / "backend" / "RTLLM" / "ProbOk"
+    bad_problem = tmp_path / "exp" / "backend" / "RTLLM" / "ProbBad"
+    _write_json(ok_problem / "centroids.json", {"dummy": True})
+    _write_json(bad_problem / "centroids.json", {"dummy": True})
+    _write_json(ok_problem / "archive_space.json", {"archive_type": "cvt"})
+    _write_json(bad_problem / "archive_space.json", {"archive_type": "cvt"})
+
+    def fake_write_problem_feature_histograms(*, problem_dir, output_subdir, bins):
+        if problem_dir == bad_problem:
+            raise RuntimeError("expected failure")
+        return SimpleNamespace(
+            problem_dir=str(problem_dir),
+            output_dir=str(problem_dir / output_subdir),
+            success_count=3,
+            generations=[0, 1],
+            centroid_count=4,
+        )
+
+    monkeypatch.setattr(
+        report_qd_problem_histograms,
+        "write_problem_feature_histograms",
+        fake_write_problem_feature_histograms,
+    )
+
+    processed, skipped = report_qd_problem_histograms.generate_problem_histogram_reports(
+        run_root=tmp_path / "exp",
+        output_subdir="custom_histograms",
+        bins=9,
+    )
+
+    assert processed == [
+        {
+            "problem_dir": str(ok_problem),
+            "output_dir": str(ok_problem / "custom_histograms"),
+            "success_count": 3,
+            "generation_count": 2,
+            "centroid_count": 4,
+        }
+    ]
+    assert skipped == [
+        {
+            "problem_dir": str(bad_problem),
+            "reason": "expected failure",
+        }
+    ]
