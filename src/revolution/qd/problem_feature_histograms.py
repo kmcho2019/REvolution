@@ -119,6 +119,7 @@ def write_problem_feature_histograms(
         "problem_dir": str(problem_root),
         "output_dir": str(output_dir),
         "archive_type": "cvt",
+        "centroids_initialized": archive_context["centroids_initialized"],
         "success_count": len(observations),
         "generation_count": len(generations),
         "generations": list(generations),
@@ -126,11 +127,9 @@ def write_problem_feature_histograms(
         "warmup_successes": archive_context["warmup_successes"],
         "initialization_generation": initialization_generation,
         "histogram_bins": bins,
-        "notes": [
-            "Centroid and division overlays use the final frozen CVT centroids projected back into raw feature units.",
-            "Division markers are 1D projected Voronoi midpoints along each axis, not exact full-dimensional CVT cell boundaries.",
-            "The current CVT implementation freezes centroids after warmup, so historical plots show cumulative distributions against fixed final centroid projections.",
-        ],
+        "notes": _build_summary_notes(
+            centroids_initialized=archive_context["centroids_initialized"],
+        ),
         "generated_files": [
             str(final_path),
             str(historical_path),
@@ -181,10 +180,17 @@ def _load_cvt_archive_context(problem_root: Path) -> dict[str, Any]:
     if not isinstance(axes, list) or not axes or not all(isinstance(axis, str) for axis in axes):
         raise ValueError(f"Invalid centroid axes in {centroids_path}")
     initialized = bool(payload.get("initialized"))
+    if not initialized:
+        return {
+            "axes": tuple(axes),
+            "raw_centroids": np.empty((0, len(axes)), dtype=float),
+            "warmup_successes": _safe_int(payload.get("warmup_successes")),
+            "centroids_initialized": False,
+        }
     centroids = payload.get("centroids")
     scaler = payload.get("scaler")
-    if not initialized or not isinstance(centroids, list) or not centroids:
-        raise ValueError(f"CVT centroids were not initialized for {problem_root}")
+    if not isinstance(centroids, list) or not centroids:
+        raise ValueError(f"Missing frozen CVT centroids for {problem_root}")
     if not isinstance(scaler, dict):
         raise ValueError(f"Missing scaler payload in {centroids_path}")
     means = scaler.get("means")
@@ -205,6 +211,7 @@ def _load_cvt_archive_context(problem_root: Path) -> dict[str, Any]:
         "axes": tuple(axes),
         "raw_centroids": raw_centroids,
         "warmup_successes": _safe_int(payload.get("warmup_successes")),
+        "centroids_initialized": True,
     }
 
 
@@ -356,26 +363,32 @@ def _write_final_histograms(
     dpi: int,
 ) -> None:
     fig, subplot_axes = _build_subplot_grid(len(axes), panel_height=3.5)
+    show_centroid_overlays = centroid_count > 0
     legend_handles = [
         Patch(facecolor="#4C78A8", edgecolor="white", label="Successful candidates"),
-        Line2D(
-            [0],
-            [0],
-            color="#9C755F",
-            linestyle="--",
-            linewidth=1.0,
-            label="Projected 1D CVT division",
-        ),
-        Line2D(
-            [0],
-            [0],
-            marker="v",
-            color="#D62728",
-            markersize=6,
-            linestyle="None",
-            label="Final centroid projection",
-        ),
     ]
+    if show_centroid_overlays:
+        legend_handles.extend(
+            [
+                Line2D(
+                    [0],
+                    [0],
+                    color="#9C755F",
+                    linestyle="--",
+                    linewidth=1.0,
+                    label="Projected 1D CVT division",
+                ),
+                Line2D(
+                    [0],
+                    [0],
+                    marker="v",
+                    color="#D62728",
+                    markersize=6,
+                    linestyle="None",
+                    label="Final centroid projection",
+                ),
+            ]
+        )
     for axis_plot, axis_data in zip(subplot_axes, axes):
         counts, _, _ = axis_plot.hist(
             axis_data.values,
@@ -438,24 +451,29 @@ def _write_final_histograms(
     for unused_axis in subplot_axes[len(axes):]:
         unused_axis.axis("off")
 
-    fig.suptitle(
-        (
+    title = (
+        f"{title_prefix}\n"
+        f"Final successful-candidate histograms with projected CVT centroid/division overlays "
+        f"({success_count} successes, {centroid_count} centroids, {bins} bins)"
+    )
+    footer = "Division lines are 1D projected Voronoi midpoints derived from the final frozen CVT centroids."
+    legend_columns = 3
+    if not show_centroid_overlays:
+        title = (
             f"{title_prefix}\n"
-            f"Final successful-candidate histograms with projected CVT centroid/division overlays "
-            f"({success_count} successes, {centroid_count} centroids, {bins} bins)"
-        ),
-        fontsize=14,
-        y=0.995,
+            f"Final successful-candidate histograms without centroid overlays "
+            f"({success_count} successes, centroids not initialized, {bins} bins)"
+        )
+        footer = "This CVT archive never froze centroids, so the plots only show successful-candidate distributions."
+        legend_columns = 1
+    fig.suptitle(title, fontsize=14, y=0.995)
+    fig.legend(
+        handles=legend_handles,
+        loc="upper center",
+        ncol=legend_columns,
+        bbox_to_anchor=(0.5, 0.955),
     )
-    fig.legend(handles=legend_handles, loc="upper center", ncol=3, bbox_to_anchor=(0.5, 0.955))
-    fig.text(
-        0.5,
-        0.015,
-        "Division lines are 1D projected Voronoi midpoints derived from the final frozen CVT centroids.",
-        ha="center",
-        va="bottom",
-        fontsize=9,
-    )
+    fig.text(0.5, 0.015, footer, ha="center", va="bottom", fontsize=9)
     fig.subplots_adjust(
         left=0.06,
         right=0.98,
@@ -480,25 +498,30 @@ def _write_historical_histograms(
     dpi: int,
 ) -> None:
     fig, subplot_axes = _build_subplot_grid(len(axes), panel_height=4.0)
-    legend_handles = [
-        Line2D(
-            [0],
-            [0],
-            color="#9C755F",
-            linestyle="--",
-            linewidth=1.0,
-            label="Projected 1D CVT division",
-        ),
-        Line2D(
-            [0],
-            [0],
-            marker="v",
-            color="#D62728",
-            markersize=6,
-            linestyle="None",
-            label="Final centroid projection",
-        ),
-    ]
+    show_centroid_overlays = centroid_count > 0
+    legend_handles: list[Any] = []
+    if show_centroid_overlays:
+        legend_handles.extend(
+            [
+                Line2D(
+                    [0],
+                    [0],
+                    color="#9C755F",
+                    linestyle="--",
+                    linewidth=1.0,
+                    label="Projected 1D CVT division",
+                ),
+                Line2D(
+                    [0],
+                    [0],
+                    marker="v",
+                    color="#D62728",
+                    markersize=6,
+                    linestyle="None",
+                    label="Final centroid projection",
+                ),
+            ]
+        )
     heatmap_max = max(
         (
             max((max(row) for row in axis.cumulative_histograms), default=0)
@@ -600,31 +623,60 @@ def _write_historical_histograms(
             cax=colorbar_axis,
             label="Cumulative successful candidates",
         )
-    title_suffix = (
-        "final frozen centroid projection"
-        if initialization_generation is None
-        else f"final frozen centroid projection, active from generation {initialization_generation}"
+    title = (
+        f"{title_prefix}\n"
+        f"Cumulative successful-candidate histograms by generation with projected CVT overlays "
+        f"({centroid_count} centroids, {bins} bins)"
     )
-    fig.suptitle(
-        (
+    if initialization_generation is not None:
+        title = (
             f"{title_prefix}\n"
             f"Cumulative successful-candidate histograms by generation with projected CVT overlays "
-            f"({centroid_count} centroids, {bins} bins, {title_suffix})"
-        ),
-        fontsize=14,
-        y=0.995,
-    )
-    fig.legend(handles=legend_handles, loc="upper center", ncol=2, bbox_to_anchor=(0.5, 0.955))
-    fig.text(
-        0.5,
-        0.015,
-        "Rows are cumulative generation-end histograms with fixed per-axis x-ranges for direct alignment.",
-        ha="center",
-        va="bottom",
-        fontsize=9,
-    )
+            f"({centroid_count} centroids, {bins} bins, active from generation {initialization_generation})"
+        )
+    footer = "Rows are cumulative generation-end histograms with fixed per-axis x-ranges for direct alignment."
+    legend_columns = 2
+    if not show_centroid_overlays:
+        title = (
+            f"{title_prefix}\n"
+            f"Cumulative successful-candidate histograms by generation without centroid overlays "
+            f"(centroids not initialized, {bins} bins)"
+        )
+        footer = (
+            "Rows are cumulative generation-end histograms. This CVT archive never froze centroids, "
+            "so only successful-candidate distributions are shown."
+        )
+    fig.suptitle(title, fontsize=14, y=0.995)
+    if legend_handles:
+        fig.legend(
+            handles=legend_handles,
+            loc="upper center",
+            ncol=legend_columns,
+            bbox_to_anchor=(0.5, 0.955),
+        )
+    fig.text(0.5, 0.015, footer, ha="center", va="bottom", fontsize=9)
     fig.savefig(path, dpi=dpi)
     plt.close(fig)
+
+
+def _build_summary_notes(*, centroids_initialized: bool) -> list[str]:
+    notes = [
+        "Division markers are 1D projected Voronoi midpoints along each axis, not exact full-dimensional CVT cell boundaries.",
+    ]
+    if centroids_initialized:
+        notes.insert(
+            0,
+            "Centroid and division overlays use the final frozen CVT centroids projected back into raw feature units.",
+        )
+        notes.append(
+            "The current CVT implementation freezes centroids after warmup, so historical plots show cumulative distributions against fixed final centroid projections.",
+        )
+        return notes
+    notes.insert(
+        0,
+        "This CVT archive never froze centroids, so the histograms show successful-candidate distributions without centroid or division overlays.",
+    )
+    return notes
 
 
 def _build_subplot_grid(count: int, *, panel_height: float) -> tuple[Any, list[Any]]:

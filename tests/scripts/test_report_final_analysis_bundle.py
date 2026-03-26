@@ -303,3 +303,120 @@ def test_report_final_analysis_bundle_generates_reference_layout(tmp_path: Path)
     assert summary["recommendations"]["multi_objective"] == "cvt_struct"
     assert summary["recommendations"]["pareto_overall"] == "cvt_struct"
     assert "feature_analysis_report" in summary["sections"]
+
+
+def test_report_final_analysis_bundle_accepts_explicit_backend_runs(tmp_path: Path) -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    script_path = repo_root / "scripts" / "report_final_analysis_bundle.py"
+    subset_config = tmp_path / "subset.yaml"
+    subset_config.write_text(
+        yaml.safe_dump(
+            {
+                "subset_name": "hard_iteration_subset_v1",
+                "selected_problems": [{"benchmark": "RTLLM", "problem": "Prob001"}],
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+
+    classic_root = tmp_path / "external" / "classic"
+    qd_root = tmp_path / "external" / "cvt_struct"
+    output_dir = tmp_path / "analysis" / "final_analysis"
+    ref = {"area": 100.0, "power": 1.0, "eff_clk_period": 1.0}
+
+    _write_summary(
+        classic_root / "RTLLM" / "Prob001" / "Prob001_summary.json",
+        benchmark="RTLLM",
+        problem="Prob001",
+        functionality=0.7,
+        synthesis=0.7,
+        best_score=0.12,
+        runtime_seconds=10.0,
+        ref_ppa_metric=ref,
+        best_metrics={"area": 93.0, "power": 0.94, "eff_clk_period": 0.94},
+        final_details=[
+            {
+                "id": "classic_a",
+                "strategy": "seed",
+                "score": 0.1,
+                "ppa_metrics": {
+                    "area": 93.0,
+                    "power": 0.94,
+                    "eff_clk_period": 0.94,
+                    "report_path": "/tmp/classic_a.rpt",
+                },
+            }
+        ],
+    )
+    _write_generation_log(
+        classic_root / "RTLLM" / "Prob001" / "generation_log.jsonl",
+        [_generation_payload(0, [("classic_a", 93.0, 0.94, 0.94)])],
+    )
+
+    _write_summary(
+        qd_root / "RTLLM" / "Prob001" / "Prob001_summary.json",
+        benchmark="RTLLM",
+        problem="Prob001",
+        functionality=0.9,
+        synthesis=0.9,
+        best_score=0.24,
+        runtime_seconds=12.0,
+        ref_ppa_metric=ref,
+        best_metrics={"area": 88.0, "power": 0.89, "eff_clk_period": 0.9},
+        final_details=[
+            {
+                "id": "qd_a",
+                "strategy": "seed",
+                "score": 0.2,
+                "ppa_metrics": {
+                    "area": 88.0,
+                    "power": 0.89,
+                    "eff_clk_period": 0.9,
+                    "report_path": "/tmp/qd_a.rpt",
+                },
+            }
+        ],
+        search_mode="revolution_qd",
+    )
+    _write_generation_log(
+        qd_root / "RTLLM" / "Prob001" / "generation_log.jsonl",
+        [_generation_payload(0, [("qd_a", 88.0, 0.89, 0.9)])],
+    )
+    _write_archive_summary(qd_root / "RTLLM" / "Prob001" / "archive_summary.json")
+    _write_archive_cells(qd_root / "RTLLM" / "Prob001" / "archive_cells.csv", ["qd_a"])
+    _write_qd_event(
+        qd_root / "RTLLM" / "Prob001" / "Gen0" / "sample_0" / "qd_archive_event.json",
+        candidate_id="qd_a",
+        generation=0,
+        seq_ratio=0.2,
+        mux_ratio=0.1,
+        cell_count_log=1.0,
+        quality_score=0.2,
+    )
+
+    result = subprocess.run(
+        [
+            str(Path(os.sys.executable)),
+            str(script_path),
+            "--subset-config",
+            str(subset_config),
+            "--backend_run",
+            f"classic={classic_root}",
+            "--backend_run",
+            f"cvt_struct={qd_root}",
+            "--output-dir",
+            str(output_dir),
+        ],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8"))
+    assert summary["run_root"] is None
+    assert [item["backend"] for item in summary["backend_runs"]] == ["classic", "cvt_struct"]
+    assert (output_dir / "feature_analysis" / "summary.json").is_file()
+    assert (output_dir / "report.md").is_file()

@@ -49,6 +49,23 @@ def _discover_backend_runs(run_root: Path) -> list[tuple[str, Path]]:
     return backend_runs
 
 
+def _parse_backend_runs(mappings: list[str]) -> list[tuple[str, Path]]:
+    backend_runs: list[tuple[str, Path]] = []
+    for mapping in mappings:
+        if "=" not in mapping:
+            raise ValueError(
+                f"Invalid --backend_run '{mapping}'. Expected format <backend>=<path>."
+            )
+        backend, path_str = mapping.split("=", 1)
+        root = Path(path_str).expanduser().resolve()
+        if not root.is_dir():
+            raise FileNotFoundError(f"Experiment path not found: {root}")
+        backend_runs.append((backend, root))
+    if not backend_runs:
+        raise ValueError("At least one --backend_run mapping is required.")
+    return backend_runs
+
+
 def _has_qd_backend(backend_runs: list[tuple[str, Path]]) -> bool:
     for _, root in backend_runs:
         if any(root.rglob("qd_archive_event.json")) or any(root.rglob("archive_summary.json")):
@@ -111,33 +128,46 @@ def _write_top_level_report(
 
 def generate_final_analysis_bundle(
     *,
-    run_root: Path,
+    run_root: Path | None,
     subset_config: Path,
     output_dir: Path | None = None,
     min_profile_features: int = 7,
+    backend_runs: list[tuple[str, Path]] | None = None,
 ) -> dict[str, Any]:
-    run_root = run_root.resolve()
     subset_config = subset_config.resolve()
-    backend_runs = _discover_backend_runs(run_root)
-    output_dir = (output_dir or (run_root / "final_analysis")).resolve()
+    resolved_run_root = run_root.resolve() if run_root is not None else None
+    resolved_backend_runs = backend_runs
+    if resolved_backend_runs is None:
+        if resolved_run_root is None:
+            raise ValueError("run_root is required when backend_runs are not provided.")
+        resolved_backend_runs = _discover_backend_runs(resolved_run_root)
+
+    if output_dir is None:
+        if resolved_run_root is None:
+            raise ValueError("output_dir is required when backend_runs are provided directly.")
+        resolved_output_dir = (resolved_run_root / "final_analysis").resolve()
+    else:
+        resolved_output_dir = output_dir.resolve()
+
+    output_dir = resolved_output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
     backend_comparison_path = output_dir / "backend_comparison.md"
-    generate_backend_comparison_report(backend_runs, output_path=backend_comparison_path)
+    generate_backend_comparison_report(resolved_backend_runs, output_path=backend_comparison_path)
 
     hard_iteration_result = generate_hard_iteration_analysis(
         subset_config=subset_config,
-        backend_runs=backend_runs,
+        backend_runs=resolved_backend_runs,
         output_dir=output_dir / "hard_iteration_analysis",
     )
     pareto_result = generate_pareto_analysis_report(
-        backend_runs=backend_runs,
+        backend_runs=resolved_backend_runs,
         output_dir=output_dir / "pareto_analysis",
         subset_config=subset_config,
     )
     evolutionary_result = generate_evolutionary_reports(
         subset_config=subset_config,
-        backend_runs=backend_runs,
+        backend_runs=resolved_backend_runs,
         output_dir=output_dir / "evolutionary_reports",
     )
 
@@ -153,10 +183,10 @@ def generate_final_analysis_bundle(
     recommendations = dict(hard_iteration_result["payload"]["recommendations"])
     recommendations["pareto_overall"] = pareto_result["summary"].get("overall_multi_objective_winner")
 
-    if _has_qd_backend(backend_runs):
+    if _has_qd_backend(resolved_backend_runs):
         generate_qd_feature_space_analysis(
             subset_config=subset_config,
-            backend_roots={backend: root for backend, root in backend_runs},
+            backend_roots={backend: root for backend, root in resolved_backend_runs},
             output_dir=output_dir / "feature_analysis",
             min_profile_features=min_profile_features,
         )
@@ -173,19 +203,19 @@ def generate_final_analysis_bundle(
 
     _write_top_level_report(
         output_dir=output_dir,
-        backend_runs=backend_runs,
+        backend_runs=resolved_backend_runs,
         sections=sections,
         skipped_sections=skipped_sections,
         recommendations=recommendations,
     )
 
     summary = {
-        "run_root": str(run_root),
+        "run_root": str(resolved_run_root) if resolved_run_root is not None else None,
         "subset_config": str(subset_config),
         "output_dir": str(output_dir),
         "backend_runs": [
             {"backend": backend, "root": str(root)}
-            for backend, root in backend_runs
+            for backend, root in resolved_backend_runs
         ],
         "sections": sections,
         "skipped_sections": skipped_sections,
@@ -201,9 +231,23 @@ def generate_final_analysis_bundle(
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Generate the full final_analysis bundle for a finished hard-iteration run root."
+        description=(
+            "Generate the full final_analysis bundle from either a finished hard-iteration "
+            "run root or an explicit list of backend run directories."
+        )
     )
-    parser.add_argument("--run-root", type=Path, required=True, help="Finished comparison run root.")
+    parser.add_argument(
+        "--run-root",
+        type=Path,
+        default=None,
+        help="Finished comparison run root containing backend subdirectories.",
+    )
+    parser.add_argument(
+        "--backend_run",
+        action="append",
+        default=[],
+        help="Backend mapping in the form <name>=<experiment_path>. Repeat for multiple backends.",
+    )
     parser.add_argument(
         "--subset-config",
         type=Path,
@@ -223,11 +267,17 @@ def main() -> int:
         help="Minimum non-target features to keep in the recommended feature profile.",
     )
     args = parser.parse_args()
+    has_run_root = args.run_root is not None
+    has_backend_runs = bool(args.backend_run)
+    if has_run_root == has_backend_runs:
+        parser.error("Provide exactly one of --run-root or --backend_run.")
+
     summary = generate_final_analysis_bundle(
         run_root=args.run_root,
         subset_config=args.subset_config,
         output_dir=args.output_dir,
         min_profile_features=args.min_profile_features,
+        backend_runs=_parse_backend_runs(args.backend_run) if has_backend_runs else None,
     )
     print(json.dumps(summary, indent=2))
     return 0

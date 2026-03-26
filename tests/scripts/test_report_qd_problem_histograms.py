@@ -109,3 +109,79 @@ def test_report_qd_problem_histograms_generates_per_problem_outputs(tmp_path):
     assert summary["axes"][0]["division_count"] == 3
     assert summary["axes"][1]["name"] == "g_P"
     assert "\"processed_problem_count\": 1" in result.stdout
+
+
+def test_report_qd_problem_histograms_handles_uninitialized_centroids(tmp_path):
+    repo_root = Path(__file__).resolve().parents[2]
+    script_path = repo_root / "scripts" / "report_qd_problem_histograms.py"
+
+    problem_root = (
+        tmp_path
+        / "exp"
+        / "cvt_backend"
+        / "RTLLM"
+        / "Prob004_adder_8bit"
+    )
+    _write_json(
+        problem_root / "archive_space.json",
+        {
+            "archive_type": "cvt",
+            "axes": ["rent_exponent", "reconv_source_ratio"],
+        },
+    )
+    _write_json(
+        problem_root / "centroids.json",
+        {
+            "archive_type": "cvt",
+            "axes": ["rent_exponent", "reconv_source_ratio"],
+            "initialized": False,
+            "warmup_successes": 16,
+        },
+    )
+    (problem_root / "archive_history.jsonl").write_text(
+        json.dumps({"generation": 0, "coverage": 0.0}) + "\n",
+        encoding="utf-8",
+    )
+
+    for candidate_id, descriptor_values in (
+        ("warmup_a", {"rent_exponent": 0.41, "reconv_source_ratio": 0.0}),
+        ("warmup_b", {"rent_exponent": 0.65, "reconv_source_ratio": 0.25}),
+    ):
+        _write_json(
+            problem_root / "Gen0" / f"Prob004_{candidate_id}" / "qd_archive_event.json",
+            {
+                "candidate_id": candidate_id,
+                "generation": 0,
+                "quality_score": 0.1,
+                "descriptor_values": descriptor_values,
+                "decision": "warmup_buffered",
+            },
+        )
+
+    env = os.environ.copy()
+    env["MPLBACKEND"] = "Agg"
+    result = subprocess.run(
+        [
+            str(Path(os.sys.executable)),
+            str(script_path),
+            "--run-root",
+            str(tmp_path / "exp"),
+            "--bins",
+            "6",
+        ],
+        cwd=repo_root,
+        env=env,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    output_dir = problem_root / "qd_feature_histograms"
+    assert (output_dir / "final_feature_histograms.png").is_file()
+    assert (output_dir / "historical_feature_histograms.png").is_file()
+    summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8"))
+    assert summary["centroids_initialized"] is False
+    assert summary["centroid_count"] == 0
+    assert summary["axes"][0]["division_count"] == 0
+    assert "\"processed_problem_count\": 1" in result.stdout

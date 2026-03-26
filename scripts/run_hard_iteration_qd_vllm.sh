@@ -4,7 +4,7 @@ set -euo pipefail
 usage() {
   cat <<'USAGE'
 Usage:
-  scripts/run_hard_iteration_qd_vllm.sh [--config path] [--mode classic|grid_struct|cvt_struct|cvt_size_control|matrix] [--dry-run]
+  scripts/run_hard_iteration_qd_vllm.sh [--config path] [--mode classic|grid_struct|cvt_struct|cvt_size_control|cvt_theory_grounded|matrix] [--dry-run]
 
 Description:
   Run the hard-iteration benchmark subset against classic REvolution and the
@@ -271,11 +271,14 @@ case "${MODE}" in
   cvt_size_control)
     MODES=("cvt_size_control")
     ;;
+  cvt_theory_grounded)
+    MODES=("cvt_theory_grounded")
+    ;;
   matrix)
     MODES=("classic" "grid_struct" "cvt_struct" "cvt_size_control")
     ;;
   *)
-    echo "Unsupported mode '${MODE}'. Use classic, grid_struct, cvt_struct, cvt_size_control, or matrix." >&2
+    echo "Unsupported mode '${MODE}'. Use classic, grid_struct, cvt_struct, cvt_size_control, cvt_theory_grounded, or matrix." >&2
     exit 2
     ;;
 esac
