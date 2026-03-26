@@ -27,9 +27,8 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   bounded theory follow-up reporting, manifest-driven broader experiment
   tooling, the first hard-subset `20 x 5` comparison, the compact follow-on
   profile, the CVT warmup fallback, and the first native Rent reference
-  validation pass are complete; Stage 10 QD archive tuning is now complete,
-  and the next stage is to rerun the compact theory profile using the tuned
-  hard-subset CVT policy
+  validation pass are complete; Stage 10 QD archive tuning is now complete.
+  Stage 11 is the tuned compact-theory hard-subset rerun and comparison pass.
 
 ## Worktree Notes
 
@@ -248,6 +247,52 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     report spot-check against the selected recommendation
   - Stage 10C status:
     completed locally and ready for a signed checkpoint commit
+- Stage 11: compact theory rerun under tuned CVT defaults
+  - scope:
+    rerun the hard subset with `theory_grounded_compact_8d` under the tuned
+    hard-subset CVT policy (`16 / 4 / 0.25 / 2`), generate a comparison bundle
+    against the prior full-theory and structural-control baselines, inspect
+    feature diversity and collapse at both run and problem levels, and record
+    whether the compact profile is a better practical default for theory-based
+    exploration
+  - status:
+    in progress
+  - Stage 11A goal:
+    update the living plan and lock the exact experiment/report surfaces before
+    launching the rerun
+  - Stage 11A expected surfaces:
+    this plan journal and any small harness/config tweaks needed for a clean
+    rerun
+  - Stage 11A validation:
+    code review of the stage plan, shell/config sanity checks, and a clean
+    `git status` before the live run starts
+  - Stage 11A status:
+    completed locally and ready for a signed checkpoint commit
+  - Stage 11B goal:
+    run the hard subset with `cvt_theory_grounded_compact` using the tuned CVT
+    defaults and the available 20 worker slots, then capture the run root and
+    any obvious runtime/archive-health issues
+  - Stage 11B expected surfaces:
+    a new experiment root under `exp/` and the standard per-problem QD
+    artifact/report files emitted by the live run
+  - Stage 11B validation:
+    vLLM preflight, successful hard-subset run completion, and a spot-check of
+    representative per-problem archive/descriptor-health artifacts
+  - Stage 11B status:
+    pending
+  - Stage 11C goal:
+    generate the formal `final_analysis/` bundle, compare compact theory
+    against the prior full theory and structural controls, inspect feature
+    diversity/collapse, update docs/plan with the conclusions, and checkpoint
+    the stage in a signed commit
+  - Stage 11C expected surfaces:
+    the comparison bundle under `exp/`, this plan journal, and any user-facing
+    docs needed to explain the outcome
+  - Stage 11C validation:
+    report generation, result/code review, targeted doc updates, and a signed
+    multi-line commit after the analysis is recorded
+  - Stage 11C status:
+    pending
 
 ## Decisions Log
 
