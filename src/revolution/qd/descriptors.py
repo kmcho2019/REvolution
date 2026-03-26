@@ -59,6 +59,29 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "ctrl_depth_est": DescriptorDefinition("ctrl_depth_est", "yosys_ast"),
     "math_op_ast_count": DescriptorDefinition("math_op_ast_count", "yosys_ast"),
     "resource_sharing_ratio_est": DescriptorDefinition("resource_sharing_ratio_est", "yosys_ast"),
+    "rtl_cyclomatic_total_log": DescriptorDefinition("rtl_cyclomatic_total_log", "yosys_ast", transform="log1p"),
+    "rtl_cyclomatic_max_log": DescriptorDefinition("rtl_cyclomatic_max_log", "yosys_ast", transform="log1p"),
+    "rent_exponent": DescriptorDefinition("rent_exponent", "yosys_graph"),
+    "reconv_source_ratio": DescriptorDefinition("reconv_source_ratio", "yosys_graph"),
+    "reconv_sink_ratio": DescriptorDefinition("reconv_sink_ratio", "yosys_graph"),
+    "rent_k": DescriptorDefinition("rent_k", "yosys_graph"),
+    "rent_r2": DescriptorDefinition("rent_r2", "yosys_graph"),
+    "rent_sample_count": DescriptorDefinition("rent_sample_count", "yosys_graph"),
+    "scoap_cc0_bin_0_pct": DescriptorDefinition("scoap_cc0_bin_0_pct", "yosys_graph"),
+    "scoap_cc0_bin_1_pct": DescriptorDefinition("scoap_cc0_bin_1_pct", "yosys_graph"),
+    "scoap_cc0_bin_2_pct": DescriptorDefinition("scoap_cc0_bin_2_pct", "yosys_graph"),
+    "scoap_cc0_bin_3_pct": DescriptorDefinition("scoap_cc0_bin_3_pct", "yosys_graph"),
+    "scoap_cc1_bin_0_pct": DescriptorDefinition("scoap_cc1_bin_0_pct", "yosys_graph"),
+    "scoap_cc1_bin_1_pct": DescriptorDefinition("scoap_cc1_bin_1_pct", "yosys_graph"),
+    "scoap_cc1_bin_2_pct": DescriptorDefinition("scoap_cc1_bin_2_pct", "yosys_graph"),
+    "scoap_cc1_bin_3_pct": DescriptorDefinition("scoap_cc1_bin_3_pct", "yosys_graph"),
+    "scoap_co_bin_0_pct": DescriptorDefinition("scoap_co_bin_0_pct", "yosys_graph"),
+    "scoap_co_bin_1_pct": DescriptorDefinition("scoap_co_bin_1_pct", "yosys_graph"),
+    "scoap_co_bin_2_pct": DescriptorDefinition("scoap_co_bin_2_pct", "yosys_graph"),
+    "scoap_co_bin_3_pct": DescriptorDefinition("scoap_co_bin_3_pct", "yosys_graph"),
+    "laplacian_lambda2": DescriptorDefinition("laplacian_lambda2", "yosys_graph"),
+    "laplacian_spectral_entropy": DescriptorDefinition("laplacian_spectral_entropy", "yosys_graph"),
+    "scoap_signal_smoothness": DescriptorDefinition("scoap_signal_smoothness", "yosys_graph"),
     "toggle_count_log_est": DescriptorDefinition("toggle_count_log_est", "icarus_vcd", requires_simulation=True),
     "toggle_density_est": DescriptorDefinition("toggle_density_est", "icarus_vcd", requires_simulation=True),
     "active_signal_ratio_est": DescriptorDefinition("active_signal_ratio_est", "icarus_vcd", requires_simulation=True),
@@ -221,6 +244,18 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (-1.0, 1.0)
     if axis in {"seq_ratio", "comb_ratio", "mux_ratio", "adder_ratio", "utilization"}:
         return (0.0, 1.0)
+    if axis in {"laplacian_lambda2", "scoap_signal_smoothness"}:
+        return (0.0, 2.0)
+    if axis in {
+        "rent_exponent",
+        "reconv_source_ratio",
+        "reconv_sink_ratio",
+        "laplacian_spectral_entropy",
+    } or (
+        axis.startswith("scoap_")
+        and axis not in {"scoap_signal_smoothness"}
+    ):
+        return (0.0, 1.0)
     if axis in {
         "total_cells",
         "sequential_cells",
@@ -233,7 +268,21 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (0.0, 16.0)
     if axis == "toggle_count_log_est":
         return (0.0, 16.0)
-    if axis in {"always_count", "assign_count", "if_count", "case_count", "ternary_count", "rtl_instance_count_est", "fsm_state_count_est", "ast_depth_est", "ctrl_depth_est", "math_op_ast_count"}:
+    if axis in {
+        "always_count",
+        "assign_count",
+        "if_count",
+        "case_count",
+        "ternary_count",
+        "rtl_instance_count_est",
+        "fsm_state_count_est",
+        "ast_depth_est",
+        "ctrl_depth_est",
+        "math_op_ast_count",
+        "rtl_cyclomatic_total_log",
+        "rtl_cyclomatic_max_log",
+        "rent_sample_count",
+    }:
         return (0.0, 32.0)
     if axis == "toggle_density_est":
         return (0.0, 64.0)
@@ -284,6 +333,9 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
         "requires_dynamic_metrics": any(
             registry[axis].source_tool == "icarus_vcd" for axis in axes if axis in registry
         ),
+        "requires_graph_metrics": any(
+            registry[axis].source_tool == "yosys_graph" for axis in axes if axis in registry
+        ),
     }
 
 
@@ -299,6 +351,7 @@ def summarize_descriptor_axes(axes: list[str] | tuple[str, ...]) -> list[dict[st
             "requires_ppa": registry[axis].requires_ppa,
             "requires_synthesis": registry[axis].requires_synthesis,
             "requires_simulation": registry[axis].requires_simulation,
+            "requires_graph_metrics": registry[axis].source_tool == "yosys_graph",
         }
         for axis in axes
         if axis in registry

@@ -37,6 +37,7 @@ The main runtime lives in [engine.py](../src/revolution/qd/engine.py).
 | Structural | synthesized cell counts / Yosys stats | grid controls, structural CVT baselines | `implemented_structural_compact_3d`, `implemented_structural_fixed_5d` |
 | RTL / source-text | regex over candidate RTL | richer CVT descriptor studies | `size_control_3d`, `wire_assign_if_3d` |
 | RTL / Yosys AST | lightweight Yosys AST dump | control-shape CVT studies | `timing_control_3d`, `wire_ctrl_assign_3d` |
+| Graph / testability | flattened Yosys JSON graph | theory-grounded CVT studies | `theory_grounded_full_20d` |
 | Physical | OpenROAD report parsing | richer CVT follow-up studies | `hybrid_phys_seq` |
 | Dynamic / VCD | Icarus waveform parsing | experimental activity-driven studies | `activity_size_3d`, `activity_control_3d` |
 
@@ -120,6 +121,7 @@ applies any final archive-side transform such as `log1p`.
 flowchart LR
   A[Candidate RTL code] --> B[VerilogEvaluator]
   A --> C[RTLDescriptorEvaluator]
+  A --> C2[GraphDescriptorEvaluator]
   B --> D[VCD probe if dynamic axes are requested]
   A --> E[SynthesisEvaluator]
   E --> F[StructuralEvaluator]
@@ -133,11 +135,13 @@ flowchart LR
   K --> L[PPA gain computation]
   F --> M[structural_metrics]
   C --> N[rtl_metrics]
+  C2 --> N2[graph_metrics]
   G --> O[physical_metrics]
   J --> P[dynamic_metrics]
   L --> Q[g_P / g_A / g_T]
   M --> R[descriptor registry + transforms]
   N --> R
+  N2 --> R
   O --> R
   P --> R
   Q --> R
@@ -239,6 +243,52 @@ AST-shape descriptors come from a lightweight Yosys AST dump:
 - `resource_sharing_ratio_est`
   Ratio of `math_op_ast_count` to mapped cell count. This is meant to capture
   how much arithmetic intent exists relative to the eventual mapped size.
+- `rtl_cyclomatic_total_log`
+  Raw cyclomatic complexity total accumulated over procedural Yosys AST blocks.
+  The descriptor registry applies `log1p` when the archive tuple is built.
+- `rtl_cyclomatic_max_log`
+  Maximum per-procedural-block cyclomatic complexity observed in the Yosys AST
+  walk. This is also log-transformed at descriptor time.
+
+### Graph and testability descriptors
+
+Graph/testability descriptors are attached as `graph_metrics` and are extracted
+by [graph_descriptor_evaluator.py](../src/revolution/graph_descriptor_evaluator.py).
+The extractor runs Yosys on the candidate RTL, builds a normalized cell/signal
+graph from the flattened JSON netlist, and computes theory-grounded descriptors
+without adding a new required external runtime dependency beyond Yosys.
+
+- `rent_exponent`
+  Rent slope estimated from recursive spectral bipartitioning plus a trimmed
+  log-log fit over boundary-pin versus block-size samples.
+- `rent_k`
+  Intercept-derived Rent coefficient from the same fit. It is kept as a raw
+  diagnostic metric rather than part of the default theory profile.
+- `rent_r2`
+  Goodness-of-fit diagnostic for the retained Rent regression samples.
+- `rent_sample_count`
+  Number of partition samples retained after trimming.
+- `reconv_source_ratio`
+  Fraction of branching sources whose fan-out reconverges downstream.
+- `reconv_sink_ratio`
+  Fraction of graph nodes that serve as reconvergence sinks for at least one
+  branching source.
+- `scoap_cc0_bin_*`, `scoap_cc1_bin_*`, `scoap_co_bin_*`
+  Histogram percentages over SCOAP controllability and observability scores
+  using fixed bins `1`, `2-3`, `4-7`, and `8+`.
+- `laplacian_lambda2`
+  Second-smallest eigenvalue of the normalized Laplacian. This is a compact
+  connectivity / bottleneck descriptor.
+- `laplacian_spectral_entropy`
+  Entropy-like summary of the normalized Laplacian spectrum.
+- `scoap_signal_smoothness`
+  Graph-signal smoothness over `log1p(CC0 + CC1 + CO)` on the normalized graph.
+
+Important implementation note:
+
+- This path is repo-native and Yosys-based. RentCon remains optional for
+  offline comparison only through
+  `scripts/qd_theory_descriptor_probe.py`; it is not a live runtime dependency.
 
 ### Physical descriptors
 
@@ -390,6 +440,21 @@ Exploratory dynamic profiles:
 - `activity_control_3d`
   - `toggle_density_est`, `active_signal_ratio_est`, `ctrl_depth_est`
 
+Experimental theory-grounded profile:
+
+- `theory_grounded_full_20d`
+  - `rtl_cyclomatic_total_log`
+  - `rtl_cyclomatic_max_log`
+  - `rent_exponent`
+  - `reconv_source_ratio`
+  - `reconv_sink_ratio`
+  - SCOAP CC0 histogram bins
+  - SCOAP CC1 histogram bins
+  - SCOAP CO histogram bins
+  - `laplacian_lambda2`
+  - `laplacian_spectral_entropy`
+  - `scoap_signal_smoothness`
+
 ### Profile quick reference
 
 | Profile | Axes | Archive type it fits best | Use when | Current confidence |
@@ -398,6 +463,7 @@ Exploratory dynamic profiles:
 | `implemented_structural_fixed_5d` | `seq_ratio`, `comb_ratio`, `mux_ratio`, `adder_ratio`, `cell_count_log` | cvt | you want the strongest score/frontier-oriented structural CVT run | high |
 | `size_control_3d` | `wire_count_log_est`, `assign_count`, `ctrl_depth_est` | cvt | you want the healthiest archive and best coverage/QD-score balance | high |
 | `timing_control_3d` | `wire_count_log_est`, `if_count`, `ast_depth_est` | cvt | you want a control-shape-heavy follow-up to `size_control_3d` | medium |
+| `theory_grounded_full_20d` | AST cyclomatic + Rent + reconvergence + SCOAP histograms + Laplacian metrics | cvt | you want the most theory-grounded current runtime profile and are willing to trade simplicity for descriptor richness | experimental |
 | `hybrid_phys_seq` | structural + physical + gain axes | cvt | you want to test whether physical variation meaningfully enriches the archive | medium |
 | `activity_size_3d` / `activity_control_3d` | dynamic + size/control axes | grid or cvt follow-up | you want an experimental activity-sensitive archive study | low to medium |
 

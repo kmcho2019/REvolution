@@ -272,6 +272,7 @@ def write_candidate_archive_event(
         "structural_metrics": dict(getattr(candidate, "structural_metrics", {}) or {}),
         "rtl_metrics": dict(getattr(candidate, "rtl_metrics", {}) or {}),
         "dynamic_metrics": dict(getattr(candidate, "dynamic_metrics", {}) or {}),
+        "graph_metrics": dict(getattr(candidate, "graph_metrics", {}) or {}),
         "physical_metrics": dict(getattr(candidate, "physical_metrics", {}) or {}),
         "descriptor_values": descriptor_values,
         "descriptor_tuple": list(descriptor_tuple),

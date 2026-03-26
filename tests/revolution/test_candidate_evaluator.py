@@ -230,6 +230,68 @@ def test_candidate_evaluator_extracts_dynamic_metrics_for_activity_profile(tmp_p
     assert result.descriptor_values["active_signal_ratio_est"] == pytest.approx(0.75)
 
 
+def test_candidate_evaluator_extracts_graph_metrics_for_theory_profile(tmp_path, monkeypatch):
+    context = _context(tmp_path)
+    code_path = tmp_path / "candidate.sv"
+    code_path.write_text("module TopA; endmodule\n", encoding="utf-8")
+    evaluator = CandidateEvaluator(
+        context=context,
+        problem_description="desc",
+        verilog_evaluator=_FakeVerilogEvaluator(
+            {
+                "status": "success",
+                "simulation_stdout": "Mismatches: 0\n",
+                "simulation_stderr": "",
+                "compilation_stderr": "",
+            }
+        ),
+        synthesis_evaluator=_FakeSynthesisEvaluator(
+            {
+                "synthesis_success": True,
+                "synthesis_functionality_success": True,
+                "ppa_success": True,
+                "ppa_metrics": {"power": 0.9, "area": 90.0, "eff_clk_period": 0.9},
+                "structural_metrics": {"total_cells": 12.0},
+            }
+        ),
+        ref_ppa_metrics={"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
+        descriptor_profile="theory_grounded_full_20d",
+    )
+    monkeypatch.setattr(
+        evaluator.rtl_descriptor_evaluator,
+        "extract_metrics",
+        lambda **kwargs: {
+            "rtl_cyclomatic_total_log": 5.0,
+            "rtl_cyclomatic_max_log": 3.0,
+        },
+    )
+    monkeypatch.setattr(
+        evaluator.graph_descriptor_evaluator,
+        "extract_metrics",
+        lambda **kwargs: {
+            "rent_exponent": 0.42,
+            "reconv_source_ratio": 0.25,
+            "reconv_sink_ratio": 0.5,
+            "laplacian_lambda2": 0.9,
+            "laplacian_spectral_entropy": 0.6,
+            "scoap_signal_smoothness": 0.7,
+            **{f"scoap_cc0_bin_{idx}_pct": 0.25 for idx in range(4)},
+            **{f"scoap_cc1_bin_{idx}_pct": 0.25 for idx in range(4)},
+            **{f"scoap_co_bin_{idx}_pct": 0.25 for idx in range(4)},
+        },
+    )
+
+    result = evaluator.evaluate_candidate(
+        CandidateWorkItem(code="module TopA; endmodule", code_file_path=str(code_path))
+    )
+
+    assert result.status == "success"
+    assert result.graph_metrics["rent_exponent"] == pytest.approx(0.42)
+    assert result.descriptor_values["rent_exponent"] == pytest.approx(0.42)
+    assert result.descriptor_values["reconv_source_ratio"] == pytest.approx(0.25)
+    assert result.descriptor_values["laplacian_lambda2"] == pytest.approx(0.9)
+
+
 def test_candidate_evaluator_search_accelerated_throttles_synthesis(tmp_path):
     context = _context(tmp_path)
     synthesis = _FakeSynthesisEvaluator(

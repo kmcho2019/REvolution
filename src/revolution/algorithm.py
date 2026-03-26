@@ -21,6 +21,7 @@ from pathlib import Path
 
 # Import from local modules
 from .evaluation import SynthesisEvaluator, VerilogEvaluator
+from .graph_descriptor_evaluator import GraphDescriptorEvaluator
 from .llm import LLMInterface, LLMRequest
 from .logging import EoHLogger
 from .prompt_store import PromptStore, safe_format # Able to load prompts from files
@@ -180,6 +181,9 @@ class Heuristic:
     :param dynamic_metrics: Simulation-derived activity descriptor metrics
         attached by evaluation when available.
     :type dynamic_metrics: dict[str, float]
+    :param graph_metrics: Graph-theoretic descriptor metrics attached by
+        evaluation when available.
+    :type graph_metrics: dict[str, float]
     :param descriptor_values: Descriptor-axis values already materialized for
         QD archive insertion or reporting.
     :type descriptor_values: dict[str, float]
@@ -227,6 +231,7 @@ class Heuristic:
         self.structural_metrics: dict[str, float] = {}
         self.rtl_metrics: dict[str, float] = {}
         self.dynamic_metrics: dict[str, float] = {}
+        self.graph_metrics: dict[str, float] = {}
         self.physical_metrics: dict[str, float] = {}
         self.descriptor_values: dict[str, float] = {}
         self.quality_score: float = score
@@ -263,6 +268,18 @@ class Heuristic:
             f"Heuristic(ID: {self.id}, Gen: {self.generation}, Origin: {self.origin_pool}, Strategy: {self.strategy}, Score: {self.score:.4f}, "
             f"Status: {self.status}, Thought: '{thought_repr}...', Parents: {self.parent_ids}, {ppa_info})"
         )
+
+
+def _coerce_float_metric_dict(value: Any) -> dict[str, float]:
+    """Normalize loosely typed evaluator metric payloads into float mappings."""
+
+    if not isinstance(value, dict):
+        return {}
+    metrics: dict[str, float] = {}
+    for key, metric_value in value.items():
+        if isinstance(key, str) and isinstance(metric_value, (int, float)):
+            metrics[key] = float(metric_value)
+    return metrics
 
 
 # Entire class executing for the new REvolution framework for each problem in the benchmark.
@@ -489,6 +506,7 @@ class EoHEngine:
         self.gen_start_time: float = 0
         self.rtl_descriptor_evaluator = RTLDescriptorEvaluator()
         self.simulation_descriptor_evaluator = SimulationDescriptorEvaluator()
+        self.graph_descriptor_evaluator = GraphDescriptorEvaluator()
 
         # --- Diff application tunables ---
         self.diff_similarity_threshold: float = diff_similarity_threshold
@@ -966,6 +984,10 @@ class EoHEngine:
         """Return whether the active engine configuration needs VCD activity extraction."""
         return False
 
+    def _requires_graph_descriptor_metrics(self) -> bool:
+        """Return whether the active engine configuration needs graph descriptor extraction."""
+        return False
+
     def _extract_candidate_rtl_metrics(
         self,
         cand: Heuristic,
@@ -1000,6 +1022,20 @@ class EoHEngine:
             top_module_name=top_module_name,
         )
 
+    def _extract_candidate_graph_metrics(
+        self,
+        cand: Heuristic,
+        *,
+        top_module_name: str,
+    ) -> dict[str, float]:
+        """Extract graph-theoretic descriptors from a candidate RTL file."""
+        if not self._requires_graph_descriptor_metrics():
+            return {}
+        return self.graph_descriptor_evaluator.extract_metrics(
+            code_file_path=cand.code_file_path,
+            top_module_name=top_module_name,
+        )
+
     def _evaluate_candidate_pipeline(
         self,
         cand: Heuristic,
@@ -1019,7 +1055,17 @@ class EoHEngine:
             }
             return cand, feedback_payload
 
-        code_file_path = self._refresh_candidate_code_path(cand)
+        refresh_candidate_code_path = getattr(self, "_refresh_candidate_code_path", None)
+        code_file_path_value = (
+            refresh_candidate_code_path(cand)
+            if callable(refresh_candidate_code_path)
+            else cand.code_file_path
+        )
+        code_file_path = (
+            code_file_path_value
+            if isinstance(code_file_path_value, str)
+            else cand.code_file_path
+        )
 
         require_dynamic_metrics = getattr(
             self,
@@ -1071,7 +1117,7 @@ class EoHEngine:
             return cand, feedback_payload
 
         extract_dynamic_metrics = getattr(self, "_extract_candidate_dynamic_metrics", None)
-        cand.dynamic_metrics = (
+        cand.dynamic_metrics = _coerce_float_metric_dict(
             extract_dynamic_metrics(
                 cand,
                 sim_results,
@@ -1094,26 +1140,23 @@ class EoHEngine:
             test_sv_file,
             ref_sv_file,
         )
-        structural_metrics = (
-            synth_results.get("structural_metrics")
-            if isinstance(synth_results.get("structural_metrics"), dict)
-            else {}
-        )
-        physical_metrics = (
-            synth_results.get("physical_metrics")
-            if isinstance(synth_results.get("physical_metrics"), dict)
-            else {}
-        )
-        cand.structural_metrics = {
-            str(key): float(value) for key, value in structural_metrics.items()
-        }
-        cand.physical_metrics = {
-            str(key): float(value) for key, value in physical_metrics.items()
-        }
+        structural_metrics_raw = synth_results.get("structural_metrics")
+        physical_metrics_raw = synth_results.get("physical_metrics")
+        cand.structural_metrics = _coerce_float_metric_dict(structural_metrics_raw)
+        cand.physical_metrics = _coerce_float_metric_dict(physical_metrics_raw)
         extract_rtl_metrics = getattr(self, "_extract_candidate_rtl_metrics", None)
-        cand.rtl_metrics = (
+        cand.rtl_metrics = _coerce_float_metric_dict(
             extract_rtl_metrics(cand, cand.structural_metrics)
             if callable(extract_rtl_metrics)
+            else {}
+        )
+        extract_graph_metrics = getattr(self, "_extract_candidate_graph_metrics", None)
+        cand.graph_metrics = _coerce_float_metric_dict(
+            extract_graph_metrics(
+                cand,
+                top_module_name=synthesis_top_module_name,
+            )
+            if callable(extract_graph_metrics)
             else {}
         )
 
@@ -1126,7 +1169,7 @@ class EoHEngine:
             cand.synthesis_success = True
             cand.synthesis_functionality = True
             cand.ppa_success = True
-            cand.ppa_metrics = synth_results["ppa_metrics"]
+            cand.ppa_metrics = _coerce_float_metric_dict(synth_results.get("ppa_metrics"))
             cand.score = self._calculate_fitness_score(cand)
             cand.quality_score = cand.score
             cand.feedback = (
@@ -1142,10 +1185,10 @@ class EoHEngine:
             }
         else:
             cand.score = -float("inf")
-            cand.synthesis_success = synth_results["synthesis_success"]
-            cand.synthesis_functionality = synth_results[
-                "synthesis_functionality_success"
-            ]
+            cand.synthesis_success = bool(synth_results.get("synthesis_success"))
+            cand.synthesis_functionality = bool(
+                synth_results.get("synthesis_functionality_success")
+            )
 
             if not synth_results["synthesis_success"]:
                 cand.status = "failed_synthesis"
@@ -1250,7 +1293,8 @@ class EoHEngine:
                         code=feedback_payload.get("code", ""),
                         simulation_log=feedback_payload.get("simulation_log", "")
                     )
-                    user_overrides.append(formatted_prompt)
+                    if user_overrides is not None:
+                        user_overrides.append(formatted_prompt)
 
         # Stage 3: Batch LLM Feedback Generation for all failures
         if feedback_requests:
@@ -1282,8 +1326,11 @@ class EoHEngine:
             for cand, feedback_data in zip(
                 feedback_request_candidates, feedback_results
             ):
-                cand.feedback = feedback_data.get(
-                    "analysis", "Feedback generation failed."
+                feedback_text = feedback_data.get("analysis")
+                cand.feedback = (
+                    feedback_text
+                    if isinstance(feedback_text, str)
+                    else "Feedback generation failed."
                 )
                 self._save_feedback_files(cand, feedback_data)
 
@@ -4551,7 +4598,11 @@ class Gen0LatencyEngine(EoHEngine):
                 "ppa_success": synth_results.get("ppa_success"),
                 "synthesis_log": synth_results.get("synthesis_log"),
             }
-            ppa_metrics = synth_results.get("ppa_metrics")
+            ppa_metrics = (
+                dict(raw_ppa_metrics)
+                if isinstance((raw_ppa_metrics := synth_results.get("ppa_metrics")), dict)
+                else None
+            )
         except Exception as exc:  # pragma: no cover - subprocess errors mocked in tests
             final_status = "synthesis_exception"
             message = f"Gen0 optional evaluation failed during synthesis/PPA: {exc}"
@@ -4718,7 +4769,8 @@ class Gen0LatencyEngine(EoHEngine):
                     code=cand.code,
                     simulation_log=simulation_log
                 )
-                user_overrides.append(formatted_prompt)
+                if user_overrides is not None:
+                    user_overrides.append(formatted_prompt)
             cand.score = float("-inf")
 
         # Prepare system prompt list (same prompt for everyone)
@@ -4743,10 +4795,15 @@ class Gen0LatencyEngine(EoHEngine):
         for cand, feedback in zip(candidates, feedback_results):
             score_val = feedback.get("score")
             try:
-                cand.score = float(score_val)
+                cand.score = (
+                    float(score_val)
+                    if isinstance(score_val, (int, float, str))
+                    else float("-inf")
+                )
             except (TypeError, ValueError):
                 cand.score = float("-inf")
-            cand.feedback = feedback.get("analysis", "")
+            feedback_text = feedback.get("analysis")
+            cand.feedback = feedback_text if isinstance(feedback_text, str) else ""
             self._save_feedback_files(cand, feedback)
 
         candidates.sort(

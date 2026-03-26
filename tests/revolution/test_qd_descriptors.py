@@ -80,6 +80,28 @@ def test_load_descriptor_profiles_includes_runtime_retro_profiles():
         "active_signal_ratio_est",
         "ctrl_depth_est",
     ]
+    assert profiles["theory_grounded_full_20d"] == [
+        "rtl_cyclomatic_total_log",
+        "rtl_cyclomatic_max_log",
+        "rent_exponent",
+        "reconv_source_ratio",
+        "reconv_sink_ratio",
+        "scoap_cc0_bin_0_pct",
+        "scoap_cc0_bin_1_pct",
+        "scoap_cc0_bin_2_pct",
+        "scoap_cc0_bin_3_pct",
+        "scoap_cc1_bin_0_pct",
+        "scoap_cc1_bin_1_pct",
+        "scoap_cc1_bin_2_pct",
+        "scoap_cc1_bin_3_pct",
+        "scoap_co_bin_0_pct",
+        "scoap_co_bin_1_pct",
+        "scoap_co_bin_2_pct",
+        "scoap_co_bin_3_pct",
+        "laplacian_lambda2",
+        "laplacian_spectral_entropy",
+        "scoap_signal_smoothness",
+    ]
 
 
 def test_load_descriptor_profiles_includes_hard_iteration_large_profile():
@@ -215,6 +237,14 @@ def test_descriptor_requirements_detect_rtl_metric_axes():
 def test_descriptor_requirements_detect_dynamic_metric_axes():
     reqs = descriptor_requirements(["toggle_count_log_est", "active_signal_ratio_est"])
     assert reqs["requires_dynamic_metrics"] is True
+
+
+def test_descriptor_requirements_detect_graph_metric_axes():
+    reqs = descriptor_requirements(
+        ["rent_exponent", "reconv_source_ratio", "laplacian_lambda2"]
+    )
+    assert reqs["requires_graph_metrics"] is True
+    assert reqs["requires_rtl_metrics"] is False
 
 
 def test_load_descriptor_profiles_accepts_custom_file(tmp_path: Path):

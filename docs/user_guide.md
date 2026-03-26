@@ -171,8 +171,15 @@ Current feature status:
   - richer follow-on runtime-supported controls:
     `wire_assign_if_3d`, `size_sharing_3d`, `wire_ctrl_assign_3d`,
     `wire_if_math_3d`, `wire_always_ternary_3d`, `assign_always_math_3d`
+  - experimental theory-grounded profile:
+    `theory_grounded_full_20d`
   - exploratory activity profiles:
     `activity_size_3d`, `activity_control_3d`
+- The theory-grounded profile combines AST cyclomatic complexity, Rent
+  exponent, reconvergence, SCOAP histogram percentages, and normalized
+  Laplacian descriptors through the new `graph_metrics` runtime payload. Treat
+  it as a CVT-first research profile rather than a default replacement for the
+  structural ladder.
 - When `qd_grid_axes` is omitted, grid mode now honors
   `qd_descriptor_profile`, so the compact structural profile above is actually
   enough to reproduce the retrospective refresh configuration.

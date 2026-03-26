@@ -28,6 +28,7 @@ The `docs/` directory contains deeper dives:
 - `scripts/report_qd_problem_histograms.py` – per-problem CVT feature histograms over successful candidates, with final centroid overlays and cumulative generation-history views written back into each problem directory.
 - `docs/revolution_qd_map_elites_implementation_plan.md` – living QD/MAP-Elites implementation status, validation notes, and staged roadmap.
 - `docs/qd_map_elites_guide.md` – QD runtime guide, descriptor/tool mapping, and generation-by-generation trace.
+- `docs/qd_theory_grounded_descriptors_plan.md` – living implementation journal for the experimental theory-grounded QD descriptor family.
 - `docs/diff_mode.md` – diff-mode schema, policies, diagnostics, and benchmark workflow.
 - `docs/module_structure.md` – file-by-file breakdown of the codebase.
 - `docs/method_interaction_and_evolutionary_loop.md` – data flow through the evolutionary loop.
@@ -204,6 +205,18 @@ Current status on this feature branch:
   - exploratory built-in profiles:
     - `activity_size_3d`
     - `activity_control_3d`
+- The first theory-grounded graph/AST descriptor family is now also live:
+  - `rtl_cyclomatic_total_log`
+  - `rtl_cyclomatic_max_log`
+  - `rent_exponent`
+  - `reconv_source_ratio`
+  - `reconv_sink_ratio`
+  - SCOAP controllability/observability histogram percentages
+  - `laplacian_lambda2`
+  - `laplacian_spectral_entropy`
+  - `scoap_signal_smoothness`
+  - experimental built-in profile:
+    - `theory_grounded_full_20d`
 - When `--qd_grid_axes` is omitted, grid mode now correctly honors
   `--qd_descriptor_profile` instead of silently falling back to gain axes.
 - QD problem directories now emit `descriptor_health.json` and
@@ -262,6 +275,10 @@ Current status on this feature branch:
     `--qd_archive_type cvt --qd_descriptor_profile implemented_structural_fixed_5d`
   - for archive-health/coverage-oriented QD runs, start with
     `--qd_archive_type cvt --qd_descriptor_profile size_control_3d`
+  - for theory-grounded research follow-ups, use
+    `--qd_archive_type cvt --qd_descriptor_profile theory_grounded_full_20d`
+    and treat it as experimental rather than a replacement for the structural
+    controls
   - if you need a grid control, start with
     `--qd_archive_type grid --qd_descriptor_profile implemented_structural_compact_3d`
   - keep classic `revolution` in comparisons because it is still the safest
