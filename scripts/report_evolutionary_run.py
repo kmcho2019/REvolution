@@ -58,12 +58,44 @@ def _load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _iter_problem_roots(backend_root: Path, selected: list[tuple[str, str]]) -> list[tuple[str, str, Path]]:
+def _summary_matches_problem(summary_path: Path, benchmark: str, problem: str) -> bool:
+    if summary_path.parent.name != problem:
+        return False
+    if summary_path.parent.parent.name == benchmark:
+        return True
+
+    payload = _load_json(summary_path)
+    return (
+        payload.get("benchmark_name") == benchmark
+        and payload.get("problem_name") == problem
+    )
+
+
+def _find_problem_summary_path(
+    backend_root: Path,
+    benchmark: str,
+    problem: str,
+) -> Path | None:
+    direct_path = backend_root / benchmark / problem / f"{problem}_summary.json"
+    if direct_path.exists():
+        return direct_path
+
+    for summary_path in sorted(backend_root.rglob(f"{problem}_summary.json")):
+        if _summary_matches_problem(summary_path, benchmark, problem):
+            return summary_path
+    return None
+
+
+def _iter_problem_roots(
+    backend_root: Path,
+    selected: list[tuple[str, str]],
+) -> list[tuple[str, str, Path]]:
     rows: list[tuple[str, str, Path]] = []
     for benchmark, problem in selected:
-        summary_path = backend_root / benchmark / problem / f"{problem}_summary.json"
-        if summary_path.exists():
-            rows.append((benchmark, problem, summary_path.parent))
+        summary_path = _find_problem_summary_path(backend_root, benchmark, problem)
+        if summary_path is None:
+            continue
+        rows.append((benchmark, problem, summary_path.parent))
     return rows
 
 

@@ -24,10 +24,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   `/workspace/.worktrees/qd-theory-grounded-descriptors`
 - Current stage:
   runtime extraction, profile wiring, docs, bounded smokes, Rent calibration,
-  bounded theory follow-up reporting, and the first follow-up matrix/report
-  checkpoint are complete; the broader experiment runner and compact-profile
-  decision workflow are now reproducible, and the remaining work is mostly
-  longer-budget evidence collection plus RentCon corpus growth
+  bounded theory follow-up reporting, manifest-driven broader experiment
+  tooling, and the first hard-subset `20 x 5` comparison are complete; the
+  next stage is to turn the Stage 6 evidence into a reduced follow-on profile
+  and to address CVT warmup failures on low-success problems
 
 ## Worktree Notes
 
@@ -106,6 +106,24 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     manifests, update docs, and validate with dry-run plus bounded live smoke
   - status:
     completed locally and ready for a signed checkpoint commit
+- Stage 6: hard-subset integration and long-budget comparison
+  - scope:
+    add the theory-grounded backend to the hard-iteration harness/config,
+    validate the workflow, run a `20 x 5` hard-subset experiment with up to 20
+    worker slots, generate the final analysis bundle and histogram artifacts,
+    compare against the existing classic/QD hard-subset baselines, and update
+    the plan based on the observed feature diversity / collapse behavior
+  - status:
+    completed locally and ready for a signed checkpoint commit
+- Stage 7: compact theory follow-on and centroid-init follow-up
+  - scope:
+    turn the Stage 6 collapse evidence into a smaller builtin theory profile,
+    add bounded harness support for that profile, investigate warmup /
+    centroid-initialization fallback options for low-success problems, and rerun
+    the hard subset to check whether archive health remains strong without the
+    current initialization failures
+  - status:
+    planned
 
 ## Decisions Log
 
@@ -132,6 +150,17 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - 2026-03-26: Treat compact-profile promotion as an explicit decision output,
   not just a list of candidate axes. The report now records both pairwise
   control deltas and a `candidate_ready` / `needs_more_data` status.
+- 2026-03-26: The first hard-subset `20 x 5` run does not justify promoting
+  `theory_grounded_full_20d` as a general-performance replacement. It should
+  remain experimental and archive-health-focused until a reduced profile is
+  tested.
+- 2026-03-26: Three hard-subset problems never initialized CVT centroids with
+  `warmup_successes=16`, so the next stage should treat centroid
+  initialization, not just axis selection, as a first-class follow-up item.
+- 2026-03-26: `scripts/report_evolutionary_run.py` must support nested
+  model-directory run roots. Stage 6 surfaced this as a real analysis bug, and
+  the report helper now resolves selected problems recursively instead of
+  assuming a shallow `backend_root/<benchmark>/<problem>` layout.
 
 ## Implementation Checklist
 
@@ -159,12 +188,19 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - [x] Add pairwise control deltas and explicit promotion-decision output to
   the follow-up report.
 - [x] Add a checked-in broad follow-up matrix manifest and docs for it.
-- [ ] Run longer multi-problem QD experiments and compare archive behavior
+- [x] Run longer multi-problem QD experiments and compare archive behavior
   against the structural CVT controls.
+- [x] Generate problem-level histogram artifacts for the hard-subset theory run.
+- [x] Fix final-analysis evolutionary reporting for nested model-directory
+  backend roots.
 - [ ] Compare repo-native Rent estimates against extracted RentCon reports on a
   small calibration corpus.
+- [ ] Add and benchmark a compact theory-grounded follow-on profile based on
+  Stage 6 collapse evidence.
+- [ ] Investigate warmup / centroid-initialization fallback behavior for
+  low-success problems.
 - [ ] Decide whether any reduced theory-grounded profile should become a
-  default recommended follow-on after experiment evidence exists.
+  default recommended follow-on after the Stage 7 rerun.
 
 ## Delivered Runtime Surface
 
@@ -335,6 +371,106 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   The manifest-driven smoke-budget RTLLM run still produced
   `recommendation_decision.status=needs_more_data`; this is the expected
   outcome for a `population_size=1`, `num_generations=0` reachability pass.
+- 2026-03-26:
+  `HARD_SUBSET_SAVE_PATH=/workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_grounded_20x5_warmup16_unconstrained HARD_SUBSET_TOTAL_WORKER_SLOTS=20 HARD_SUBSET_MAX_ACTIVE_PROBLEMS=20 HARD_SUBSET_MAX_WORKERS_PER_PROBLEM=20 HARD_SUBSET_CVT_WARMUP=16 bash scripts/run_hard_iteration_qd_vllm.sh --config data/configs/hard_iteration_subset.yaml --mode cvt_theory_grounded`
+  completed in `3540.78` seconds over the 13-problem hard subset and wrote the
+  theory run root under
+  `/workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_grounded_20x5_warmup16_unconstrained/20260326_160434/cvt_theory_grounded`.
+- 2026-03-26:
+  `python scripts/report_qd_problem_histograms.py --run-root /workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_grounded_20x5_warmup16_unconstrained/20260326_160434/cvt_theory_grounded`
+  completed for all 13 problems and wrote per-problem histogram artifacts under
+  each problem directory in `qd_feature_histograms/`.
+- 2026-03-26:
+  `python scripts/report_qd_theory_followup.py --run_root /workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_grounded_20x5_warmup16_unconstrained/20260326_160434/cvt_theory_grounded --output_dir /workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_vs_baseline_20260326_160434/final_analysis/theory_followup`
+  emitted the theory-only collapse summary, compact 8D candidate profile, and
+  recommendation status for the hard-subset run.
+- 2026-03-26:
+  `pytest tests/scripts/test_report_evolutionary_run.py tests/scripts/test_report_final_analysis_bundle.py -q`
+  passed after fixing nested-root problem discovery in
+  `scripts/report_evolutionary_run.py`.
+- 2026-03-26:
+  `ruff check scripts/report_evolutionary_run.py tests/scripts/test_report_evolutionary_run.py tests/scripts/test_report_final_analysis_bundle.py`
+  passed.
+- 2026-03-26:
+  `python -m pyright --pythonpath /workspace/.venv/bin/python scripts/report_evolutionary_run.py`
+  passed.
+- 2026-03-26:
+  `python scripts/report_final_analysis_bundle.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=/workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_qd_5way_standard20x5_warmup16_unconstrained_20260326_032529/classic --backend_run cvt_implemented_structural_fixed_5d=/workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_qd_5way_standard20x5_warmup16_unconstrained_20260326_032529/cvt_implemented_structural_fixed_5d --backend_run cvt_large_struct10d=/workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_qd_5way_standard20x5_warmup16_unconstrained_20260326_032529/cvt_large_struct10d --backend_run cvt_large_struct_size_control_13d=/workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_qd_5way_standard20x5_warmup16_unconstrained_20260326_032529/cvt_large_struct_size_control_13d --backend_run cvt_size_control_3d=/workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_qd_5way_standard20x5_warmup16_unconstrained_20260326_032529/cvt_size_control_3d --backend_run cvt_theory_grounded=/workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_grounded_20x5_warmup16_unconstrained/20260326_160434/cvt_theory_grounded --output-dir /workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_vs_baseline_20260326_160434/final_analysis`
+  regenerated the comparison bundle after the evolutionary-report fix. The
+  repaired bundle now has a populated
+  `final_analysis/evolutionary_reports/cvt_theory_grounded/summary.json`.
+
+## Stage 6 Results
+
+- Theory hard-subset run root:
+  `/workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_grounded_20x5_warmup16_unconstrained/20260326_160434/cvt_theory_grounded`
+- Final comparison bundle:
+  `/workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_vs_baseline_20260326_160434/final_analysis`
+- Final bundle recommendations:
+  - overall winner: `classic`
+  - score-focused QD winner: `cvt_large_struct10d`
+  - archive-focused QD winner: `cvt_theory_grounded`
+  - multi-objective / pareto winner: `classic`
+- Theory hard-subset aggregate metrics:
+  - `functionality_mean=0.3660`
+  - `synthesis_mean=0.2942`
+  - `qd_coverage_mean=0.4087`
+  - `qd_score_mean=0.7261`
+  - `qd_best_quality_mean=0.2401`
+  - `pareto_hypervolume_mean=0.0858`
+  - `pareto_point_count_mean=2.0`
+  - `pareto_reference_beating_mean=5.62`
+  - `runtime_seconds_mean=3326.24`
+- Comparison takeaways:
+  - vs `classic`: theory lost on functionality, synthesis, hypervolume, pareto
+    point count, reference-beating count, and runtime.
+  - vs `cvt_large_struct10d`: theory gained archive coverage (`+0.1202`) and
+    QD score (`+0.2692`) but lost best quality (`-0.0436`) and slightly lost
+    pareto hypervolume (`-0.0010`).
+  - vs `cvt_size_control_3d`: theory gained archive coverage (`+0.1010`) and
+    slightly improved pareto hypervolume (`+0.0037`) but slightly lost QD
+    score (`-0.0061`) and clearly lost best quality (`-0.0256`).
+  - The current 20D theory profile behaves more like an archive-filling profile
+    than a score-optimizing profile.
+- Run-level feature diversity:
+  - run-level feature-analysis artifacts for the theory backend are in
+    `final_analysis/feature_analysis/backends/cvt_theory_grounded/`
+  - run-level histogram file:
+    `final_analysis/feature_analysis/backends/cvt_theory_grounded/feature_histograms.png`
+  - run-level embedding views:
+    `pca_fitness.png` and `tsne_fitness.png`
+  - run-level summary reports `459` successful candidates and `85` final elites
+  - only the global physical proxy features `ltp_noff` and `utilization`
+    collapsed at the run level, which matches the earlier structural baselines
+- Problem-level feature diversity:
+  - per-problem histogram artifacts were written under each theory-run problem
+    directory in `qd_feature_histograms/`
+  - three problems never initialized CVT centroids:
+    - `RTLLM/Prob037_parallel2serial` (`11` successes, below the `16`
+      warmup threshold)
+    - `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` (`4` successes)
+    - `VerilogEval-Spec-to-RTL/Prob153_gshare` (`8` successes)
+  - these cases finished with `centroid_count=0`, `coverage=0.0`, and
+    `qd_score=0.0`, so they are a real source of archive-health instability for
+    the current configuration
+- Axis-collapse findings from the theory-only hard-subset follow-up summary:
+  - collapsed in at least one problem:
+    `laplacian_lambda2`, `reconv_sink_ratio`, `reconv_source_ratio`,
+    `rent_exponent`, `scoap_cc0_bin_2_pct`, `scoap_cc0_bin_3_pct`,
+    `scoap_cc1_bin_2_pct`, `scoap_cc1_bin_3_pct`, `scoap_co_bin_1_pct`,
+    `scoap_co_bin_2_pct`
+  - strongest consistently non-collapsed axes:
+    `scoap_signal_smoothness`, `laplacian_spectral_entropy`,
+    `scoap_cc0_bin_1_pct`, `scoap_co_bin_3_pct`, `scoap_cc1_bin_1_pct`,
+    `scoap_co_bin_0_pct`, `scoap_cc0_bin_0_pct`, `scoap_cc1_bin_0_pct`
+  - emitted compact candidate:
+    `theory_grounded_compact_candidate_8d`
+- Stage 6 conclusion:
+  - `theory_grounded_full_20d` is promising for archive coverage and descriptor
+    richness, but it is not yet the best choice when the goal is pure quality
+    improvement or broad pareto strength.
+  - The next code/data follow-up should focus on a reduced theory profile and a
+    more robust centroid-initialization strategy for low-success problems.
 
 ## Remaining Validation / Experiment TODOs
 
@@ -346,12 +482,18 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - [x] Add a manifest-driven broader theory follow-up runner and decision
   report workflow.
 - [ ] Run a broader theory-profile smoke matrix over both RTLLM and
-  VerilogEval with non-trivial population/generation budgets.
+  VerilogEval with the Stage 7 compact profile and non-trivial
+  population/generation budgets.
 - [ ] Save a small calibration set of RentCon outputs so
   `scripts/qd_theory_descriptor_probe.py` can report concrete deltas instead of
   just repo-native values.
-- [ ] Inspect archive-side descriptor-health behavior for the SCOAP histogram
-  axes; some bins may collapse on trivial designs and may need profile pruning.
+- [x] Inspect archive-side descriptor-health behavior for the SCOAP histogram
+  axes; the hard-subset run shows that several higher-score bins do collapse and
+  should be pruned or demoted in the next profile iteration.
+- [ ] Add the compact Stage 6 candidate profile to the registry and rerun the
+  hard-subset comparison.
+- [ ] Prototype a warmup / centroid-init fallback for problems that never reach
+  the current success threshold.
 
 ## Open Questions
 
@@ -363,18 +505,21 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   profiles compress them through PCA or hand-picked summary ratios?
 - Are there benchmark families where graph extraction from raw RTL should be
   replaced with post-`techmap` or post-`abc` graphs for better comparability?
+- What is the right fallback when a CVT profile has a high warmup target but a
+  problem never produces enough successful candidates to initialize centroids?
 
 ## Roadmap
 
 - Short term:
-  compare `theory_grounded_full_20d` against
-  `implemented_structural_fixed_5d` and `size_control_3d` on bounded CVT runs.
+  add the compact theory candidate as a builtin profile and rerun the hard
+  subset against `implemented_structural_fixed_5d`, `large_struct10d`, and
+  `size_control_3d`.
 - Medium term:
   calibrate repo-native Rent against RentCon reference outputs and decide
   whether `rent_k` or fit-quality diagnostics deserve report-side exposure.
 - Medium term:
-  identify a compact theory-grounded follow-on profile for longer-budget
-  experiments.
+  decide whether centroid warmup should be adaptive, reduced, or bypassed with
+  a fallback archive-init path on low-success problems.
 - Longer term:
   explore additional graph-signal descriptors, sequential-boundary-aware graph
   variants, and benchmark-family-specific descriptor gating.
