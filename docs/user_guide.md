@@ -232,8 +232,8 @@ Current feature status:
   - stage one passing synthesized netlist per problem into `exp/`
   - generate placed DEF files with OpenROAD
   - run the native RentCon binary plus the repo-native extractor
-  - emit `final_analysis/rent_reference_validation_report.{json,md}` with
-    accuracy/runtime deltas and plots
+  - emit `final_analysis/rent_reference_validation_report.{json,md}` with raw
+    versus confidence-gated accuracy/runtime deltas and plots
   Start with:
   `/workspace/.venv/bin/python scripts/report_qd_rent_reference_validation.py --run_root <hard_subset_run_root> --output_root exp/qd_rent_reference_validation_example --workers 1`
   Use `--workers 1` by default on this branch because the local RentCon binary

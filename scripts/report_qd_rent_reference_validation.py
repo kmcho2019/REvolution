@@ -517,14 +517,18 @@ def parse_rentcon_output(text: str) -> dict[str, Any]:
             label=match.group("label"),
             method_index=index,
         )
-        method_payload["arithmetic"]["avg_pins_per_gate"] = float(match.group("avg"))
-        method_payload["arithmetic"]["type1"] = float(match.group("arith_t1"))
-        method_payload["arithmetic"]["type2"] = float(match.group("arith_t2"))
-        method_payload["arithmetic"]["type3"] = float(match.group("arith_t3"))
-        method_payload["geometric"]["avg_pins_per_gate"] = float(match.group("geom_avg"))
-        method_payload["geometric"]["type1"] = float(match.group("geom_t1"))
-        method_payload["geometric"]["type2"] = float(match.group("geom_t2"))
-        method_payload["geometric"]["type3"] = float(match.group("geom_t3"))
+        method_payload["arithmetic"]["avg_pins_per_gate"] = parse_finite_float_or_none(
+            match.group("avg")
+        )
+        method_payload["arithmetic"]["type1"] = parse_float_or_none(match.group("arith_t1"))
+        method_payload["arithmetic"]["type2"] = parse_float_or_none(match.group("arith_t2"))
+        method_payload["arithmetic"]["type3"] = parse_float_or_none(match.group("arith_t3"))
+        method_payload["geometric"]["avg_pins_per_gate"] = parse_finite_float_or_none(
+            match.group("geom_avg")
+        )
+        method_payload["geometric"]["type1"] = parse_float_or_none(match.group("geom_t1"))
+        method_payload["geometric"]["type2"] = parse_float_or_none(match.group("geom_t2"))
+        method_payload["geometric"]["type3"] = parse_float_or_none(match.group("geom_t3"))
 
     current_method: str | None = None
     current_domain: str | None = None
@@ -588,8 +592,10 @@ def parse_rentcon_output(text: str) -> dict[str, Any]:
                 label=current_method,
                 method_index=resolve_method_index(current_method),
             )
-            method_payload["arithmetic"]["avg_pins_per_gate"] = float(avg_match.group("avg"))
-            method_payload["geometric"]["avg_pins_per_gate"] = float(
+            method_payload["arithmetic"]["avg_pins_per_gate"] = parse_finite_float_or_none(
+                avg_match.group("avg")
+            )
+            method_payload["geometric"]["avg_pins_per_gate"] = parse_finite_float_or_none(
                 avg_match.group("geom_avg")
             )
             continue
@@ -700,6 +706,16 @@ def parse_float_or_none(raw_value: str) -> float | None:
     return value
 
 
+def parse_finite_float_or_none(raw_value: str) -> float | None:
+    try:
+        value = float(raw_value)
+    except ValueError:
+        return None
+    if not math.isfinite(value):
+        return None
+    return value
+
+
 def clean_method_label(raw_label: str) -> str:
     return raw_label.replace("=", "").strip()
 
@@ -711,13 +727,27 @@ def compare_rent_results(
 ) -> dict[str, Any]:
     rent_metrics = internal_payload["rent_metrics"]
     internal_exponent = float(rent_metrics.get("rent_exponent", 0.0))
+    gated_exponent = float(
+        rent_metrics.get("rent_exponent_confidence_gated", internal_exponent)
+    )
+    rent_confidence = float(rent_metrics.get("rent_confidence", 0.0))
     internal_sample_count = float(rent_metrics.get("rent_sample_count", 0.0))
+    raw_sample_count = float(rent_metrics.get("rent_raw_sample_count", internal_sample_count))
+    retained_sample_ratio = float(
+        rent_metrics.get("rent_retained_sample_ratio", 0.0)
+    )
+    rent_clamped_flag = float(rent_metrics.get("rent_clamped_flag", 0.0))
     methods = rentcon_payload["parsed_output"]["methods"]
 
     comparison: dict[str, Any] = {
         "internal": {
             "rent_exponent": internal_exponent,
+            "rent_exponent_confidence_gated": gated_exponent,
+            "rent_confidence": rent_confidence,
+            "rent_clamped_flag": rent_clamped_flag,
             "rent_sample_count": internal_sample_count,
+            "rent_raw_sample_count": raw_sample_count,
+            "rent_retained_sample_ratio": retained_sample_ratio,
             "timing_seconds": internal_payload["timing_seconds"],
             "graph_node_count": internal_payload["graph_node_count"],
             "graph_edge_count": internal_payload["graph_edge_count"],
@@ -737,9 +767,9 @@ def compare_rent_results(
         },
         "delta": {},
         "flags": {
-            "internal_clamped": math.isclose(internal_exponent, 0.0)
-            or math.isclose(internal_exponent, 1.0),
+            "internal_clamped": rent_clamped_flag > 0.0,
             "low_sample_count": internal_sample_count <= 2.0,
+            "low_confidence": rent_confidence < 0.5,
             "rentcon_nonzero_exit": rentcon_payload["return_code"] != 0,
         },
     }
@@ -749,8 +779,11 @@ def compare_rent_results(
         cp_type1_raw = cp_method["arithmetic"].get("type1")
         if isinstance(cp_type1_raw, (int, float)):
             cp_type1 = float(cp_type1_raw)
-            comparison["delta"]["vs_circuit_partitioning_type1"] = (
+            comparison["delta"]["raw_vs_circuit_partitioning_type1"] = (
                 internal_exponent - cp_type1
+            )
+            comparison["delta"]["gated_vs_circuit_partitioning_type1"] = (
+                gated_exponent - cp_type1
             )
 
     gt_method = methods.get("graph_traversal")
@@ -758,7 +791,8 @@ def compare_rent_results(
         gt_type1_raw = gt_method["arithmetic"].get("type1")
         if isinstance(gt_type1_raw, (int, float)):
             gt_type1 = float(gt_type1_raw)
-            comparison["delta"]["vs_graph_traversal_type1"] = internal_exponent - gt_type1
+            comparison["delta"]["raw_vs_graph_traversal_type1"] = internal_exponent - gt_type1
+            comparison["delta"]["gated_vs_graph_traversal_type1"] = gated_exponent - gt_type1
 
     return comparison
 
@@ -844,13 +878,21 @@ def build_report(
 
 
 def summarize_results(successful_results: list[dict[str, Any]]) -> dict[str, Any]:
-    cp_deltas = collect_float_metric(
+    cp_deltas_raw = collect_float_metric(
         successful_results,
-        "comparison.delta.vs_circuit_partitioning_type1",
+        "comparison.delta.raw_vs_circuit_partitioning_type1",
     )
-    gt_deltas = collect_float_metric(
+    cp_deltas_gated = collect_float_metric(
         successful_results,
-        "comparison.delta.vs_graph_traversal_type1",
+        "comparison.delta.gated_vs_circuit_partitioning_type1",
+    )
+    gt_deltas_raw = collect_float_metric(
+        successful_results,
+        "comparison.delta.raw_vs_graph_traversal_type1",
+    )
+    gt_deltas_gated = collect_float_metric(
+        successful_results,
+        "comparison.delta.gated_vs_graph_traversal_type1",
     )
     internal_totals = collect_float_metric(
         successful_results,
@@ -872,8 +914,16 @@ def summarize_results(successful_results: list[dict[str, Any]]) -> dict[str, Any
         successful_results,
         "comparison.reference.timing_seconds.reference_total_seconds",
     )
-    cp_internal_exponents, cp_type1_values = collect_paired_internal_and_reference(
+    cp_internal_exponents_raw, cp_type1_values_raw = collect_paired_internal_and_reference(
         successful_results,
+        internal_path="comparison.internal.rent_exponent",
+        method_name="circuit_partitioning_mlpart",
+        domain="arithmetic",
+        key="type1",
+    )
+    cp_internal_exponents_gated, cp_type1_values_gated = collect_paired_internal_and_reference(
+        successful_results,
+        internal_path="comparison.internal.rent_exponent_confidence_gated",
         method_name="circuit_partitioning_mlpart",
         domain="arithmetic",
         key="type1",
@@ -885,17 +935,49 @@ def summarize_results(successful_results: list[dict[str, Any]]) -> dict[str, Any
             continue
         ratio_values.append(reference_total / internal_total)
 
+    cp_improved_count, cp_compared_count = count_improved_abs_deltas(
+        successful_results,
+        raw_path="comparison.delta.raw_vs_circuit_partitioning_type1",
+        gated_path="comparison.delta.gated_vs_circuit_partitioning_type1",
+    )
+    gt_improved_count, gt_compared_count = count_improved_abs_deltas(
+        successful_results,
+        raw_path="comparison.delta.raw_vs_graph_traversal_type1",
+        gated_path="comparison.delta.gated_vs_graph_traversal_type1",
+    )
+
     return {
         "completed_case_count": len(successful_results),
-        "mean_abs_cp_type1_delta": mean_absolute(cp_deltas),
-        "median_abs_cp_type1_delta": median_absolute(cp_deltas),
-        "max_abs_cp_type1_delta": max_absolute(cp_deltas),
-        "mean_abs_gt_type1_delta": mean_absolute(gt_deltas),
-        "median_abs_gt_type1_delta": median_absolute(gt_deltas),
-        "cp_type1_pearson_r": pearson_correlation(
-            cp_internal_exponents,
-            cp_type1_values,
+        "mean_abs_cp_type1_delta_raw": mean_absolute(cp_deltas_raw),
+        "median_abs_cp_type1_delta_raw": median_absolute(cp_deltas_raw),
+        "max_abs_cp_type1_delta_raw": max_absolute(cp_deltas_raw),
+        "mean_abs_cp_type1_delta_gated": mean_absolute(cp_deltas_gated),
+        "median_abs_cp_type1_delta_gated": median_absolute(cp_deltas_gated),
+        "max_abs_cp_type1_delta_gated": max_absolute(cp_deltas_gated),
+        "mean_abs_gt_type1_delta_raw": mean_absolute(gt_deltas_raw),
+        "median_abs_gt_type1_delta_raw": median_absolute(gt_deltas_raw),
+        "mean_abs_gt_type1_delta_gated": mean_absolute(gt_deltas_gated),
+        "median_abs_gt_type1_delta_gated": median_absolute(gt_deltas_gated),
+        "raw_cp_type1_pearson_r": pearson_correlation(
+            cp_internal_exponents_raw,
+            cp_type1_values_raw,
         ),
+        "gated_cp_type1_pearson_r": pearson_correlation(
+            cp_internal_exponents_gated,
+            cp_type1_values_gated,
+        ),
+        "cp_type1_mean_abs_delta_improvement": subtract_or_none(
+            mean_absolute(cp_deltas_raw),
+            mean_absolute(cp_deltas_gated),
+        ),
+        "gt_type1_mean_abs_delta_improvement": subtract_or_none(
+            mean_absolute(gt_deltas_raw),
+            mean_absolute(gt_deltas_gated),
+        ),
+        "gated_better_than_raw_cp_type1_case_count": cp_improved_count,
+        "gated_better_than_raw_cp_type1_case_total": cp_compared_count,
+        "gated_better_than_raw_gt_type1_case_count": gt_improved_count,
+        "gated_better_than_raw_gt_type1_case_total": gt_compared_count,
         "internal_clamped_case_count": sum(
             1
             for result in successful_results
@@ -905,6 +987,11 @@ def summarize_results(successful_results: list[dict[str, Any]]) -> dict[str, Any
             1
             for result in successful_results
             if bool(result["comparison"]["flags"]["low_sample_count"])
+        ),
+        "low_confidence_case_count": sum(
+            1
+            for result in successful_results
+            if bool(result["comparison"]["flags"].get("low_confidence"))
         ),
         "rentcon_nonzero_exit_case_count": sum(
             1
@@ -956,6 +1043,7 @@ def collect_reference_metric(
 def collect_paired_internal_and_reference(
     results: list[dict[str, Any]],
     *,
+    internal_path: str,
     method_name: str,
     domain: str,
     key: str,
@@ -963,7 +1051,7 @@ def collect_paired_internal_and_reference(
     internal_values: list[float] = []
     reference_values: list[float] = []
     for result in results:
-        internal_value = lookup_path(result, "comparison.internal.rent_exponent")
+        internal_value = lookup_path(result, internal_path)
         methods = lookup_path(result, "rentcon_payload.parsed_output.methods")
         if not isinstance(internal_value, (int, float)) or not isinstance(methods, dict):
             continue
@@ -979,6 +1067,25 @@ def collect_paired_internal_and_reference(
         internal_values.append(float(internal_value))
         reference_values.append(float(reference_value))
     return internal_values, reference_values
+
+
+def count_improved_abs_deltas(
+    results: list[dict[str, Any]],
+    *,
+    raw_path: str,
+    gated_path: str,
+) -> tuple[int, int]:
+    improved_count = 0
+    compared_count = 0
+    for result in results:
+        raw_value = lookup_path(result, raw_path)
+        gated_value = lookup_path(result, gated_path)
+        if not isinstance(raw_value, (int, float)) or not isinstance(gated_value, (int, float)):
+            continue
+        compared_count += 1
+        if abs(float(gated_value)) < abs(float(raw_value)):
+            improved_count += 1
+    return improved_count, compared_count
 
 
 def lookup_path(payload: dict[str, Any], path: str) -> Any:
@@ -1035,6 +1142,12 @@ def pearson_correlation(xs: list[float], ys: list[float]) -> float | None:
     return numerator / (denom_x * denom_y)
 
 
+def subtract_or_none(lhs: float | None, rhs: float | None) -> float | None:
+    if lhs is None or rhs is None:
+        return None
+    return lhs - rhs
+
+
 def render_markdown_report(report: dict[str, Any]) -> str:
     summary = report["summary"]
     lines = [
@@ -1045,13 +1158,19 @@ def render_markdown_report(report: dict[str, Any]) -> str:
         f"- rentcon_binary: `{report['rentcon_binary']}`",
         f"- completed_case_count: `{report['completed_case_count']}`",
         f"- failed_case_count: `{report['failed_case_count']}`",
-        f"- mean_abs_cp_type1_delta: `{format_metric(summary.get('mean_abs_cp_type1_delta'))}`",
-        f"- median_abs_cp_type1_delta: `{format_metric(summary.get('median_abs_cp_type1_delta'))}`",
-        f"- max_abs_cp_type1_delta: `{format_metric(summary.get('max_abs_cp_type1_delta'))}`",
-        f"- mean_abs_gt_type1_delta: `{format_metric(summary.get('mean_abs_gt_type1_delta'))}`",
-        f"- cp_type1_pearson_r: `{format_metric(summary.get('cp_type1_pearson_r'))}`",
+        f"- mean_abs_cp_type1_delta_raw: `{format_metric(summary.get('mean_abs_cp_type1_delta_raw'))}`",
+        f"- mean_abs_cp_type1_delta_gated: `{format_metric(summary.get('mean_abs_cp_type1_delta_gated'))}`",
+        f"- cp_type1_mean_abs_delta_improvement: `{format_metric(summary.get('cp_type1_mean_abs_delta_improvement'))}`",
+        f"- mean_abs_gt_type1_delta_raw: `{format_metric(summary.get('mean_abs_gt_type1_delta_raw'))}`",
+        f"- mean_abs_gt_type1_delta_gated: `{format_metric(summary.get('mean_abs_gt_type1_delta_gated'))}`",
+        f"- gt_type1_mean_abs_delta_improvement: `{format_metric(summary.get('gt_type1_mean_abs_delta_improvement'))}`",
+        f"- raw_cp_type1_pearson_r: `{format_metric(summary.get('raw_cp_type1_pearson_r'))}`",
+        f"- gated_cp_type1_pearson_r: `{format_metric(summary.get('gated_cp_type1_pearson_r'))}`",
+        f"- gated_better_than_raw_cp_type1_case_count: `{summary.get('gated_better_than_raw_cp_type1_case_count')}` / `{summary.get('gated_better_than_raw_cp_type1_case_total')}`",
+        f"- gated_better_than_raw_gt_type1_case_count: `{summary.get('gated_better_than_raw_gt_type1_case_count')}` / `{summary.get('gated_better_than_raw_gt_type1_case_total')}`",
         f"- internal_clamped_case_count: `{summary.get('internal_clamped_case_count')}`",
         f"- low_sample_count_case_count: `{summary.get('low_sample_count_case_count')}`",
+        f"- low_confidence_case_count: `{summary.get('low_confidence_case_count')}`",
         f"- rentcon_nonzero_exit_case_count: `{summary.get('rentcon_nonzero_exit_case_count')}`",
         f"- internal_total_seconds_mean: `{format_metric(summary.get('internal_total_seconds_mean'))}`",
         f"- reference_total_seconds_mean: `{format_metric(summary.get('reference_total_seconds_mean'))}`",
@@ -1059,8 +1178,8 @@ def render_markdown_report(report: dict[str, Any]) -> str:
         "",
         "## Per-Case Summary",
         "",
-        "| Case | Nodes | Internal p | Samples | CP Type1 | GT Type1 | |p-CP| | Internal s | Ref s | Flags |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+        "| Case | Nodes | Raw p | Gated p | Conf | Samples | CP Type1 | |raw-CP| | |gated-CP| | Internal s | Ref s | Flags |",
+        "| --- | ---: | ---: | ---: | ---: | --- | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
 
     for result in report["results"]:
@@ -1078,27 +1197,32 @@ def render_markdown_report(report: dict[str, Any]) -> str:
             result,
             "rentcon_payload.parsed_output.methods.circuit_partitioning_mlpart.arithmetic.type1",
         )
-        gt_type1 = lookup_path(
-            result,
-            "rentcon_payload.parsed_output.methods.graph_traversal.arithmetic.type1",
-        )
-        cp_delta = comparison["delta"].get("vs_circuit_partitioning_type1")
+        raw_cp_delta = comparison["delta"].get("raw_vs_circuit_partitioning_type1")
+        gated_cp_delta = comparison["delta"].get("gated_vs_circuit_partitioning_type1")
         flags: list[str] = []
         if comparison["flags"]["internal_clamped"]:
             flags.append("clamped")
         if comparison["flags"]["low_sample_count"]:
             flags.append("low-samples")
+        if comparison["flags"].get("low_confidence"):
+            flags.append("low-confidence")
         if comparison["flags"].get("rentcon_nonzero_exit"):
             flags.append("rentcon-nonzero")
+
+        retained_samples = comparison["internal"]["rent_sample_count"]
+        raw_samples = comparison["internal"]["rent_raw_sample_count"]
+        sample_text = format_sample_counts(retained_samples, raw_samples)
 
         lines.append(
             f"| {case['benchmark']}/{case['problem']} | "
             f"{comparison['internal']['graph_node_count']} | "
             f"{format_metric(comparison['internal']['rent_exponent'])} | "
-            f"{format_metric(comparison['internal']['rent_sample_count'])} | "
+            f"{format_metric(comparison['internal']['rent_exponent_confidence_gated'])} | "
+            f"{format_metric(comparison['internal']['rent_confidence'])} | "
+            f"{sample_text} | "
             f"{format_metric(cp_type1)} | "
-            f"{format_metric(gt_type1)} | "
-            f"{format_metric(abs(cp_delta) if isinstance(cp_delta, float) else None)} | "
+            f"{format_metric(abs(raw_cp_delta) if isinstance(raw_cp_delta, float) else None)} | "
+            f"{format_metric(abs(gated_cp_delta) if isinstance(gated_cp_delta, float) else None)} | "
             f"{format_metric(comparison['internal']['timing_seconds']['internal_total_seconds'])} | "
             f"{format_metric(comparison['reference']['timing_seconds']['reference_total_seconds'])} | "
             f"{', '.join(flags) if flags else '-'} |"
@@ -1112,6 +1236,31 @@ def format_metric(value: Any) -> str:
     if not isinstance(value, (int, float)):
         return "-"
     return f"{float(value):.6f}"
+
+
+def format_sample_counts(retained_samples: Any, raw_samples: Any) -> str:
+    if not isinstance(retained_samples, (int, float)):
+        return "-"
+    if not isinstance(raw_samples, (int, float)):
+        return format_metric(retained_samples)
+    return f"{int(round(float(retained_samples)))}/{int(round(float(raw_samples)))}"
+
+
+def plot_accuracy_scatter(
+    ax: Any,
+    *,
+    reference_values: list[float],
+    internal_values: list[float],
+    ylabel: str,
+    title: str,
+) -> None:
+    ax.scatter(reference_values, internal_values)
+    low = min(reference_values + internal_values)
+    high = max(reference_values + internal_values)
+    ax.plot([low, high], [low, high], linestyle="--", color="gray")
+    ax.set_xlabel("RentCon CP arithmetic Type I")
+    ax.set_ylabel(ylabel)
+    ax.set_title(title)
 
 
 def render_plots(report: dict[str, Any], output_dir: Path) -> list[str]:
@@ -1128,6 +1277,14 @@ def render_plots(report: dict[str, Any], output_dir: Path) -> list[str]:
 
     internal_values, cp_values = collect_paired_internal_and_reference(
         successful,
+        internal_path="comparison.internal.rent_exponent",
+        method_name="circuit_partitioning_mlpart",
+        domain="arithmetic",
+        key="type1",
+    )
+    gated_values, gated_cp_values = collect_paired_internal_and_reference(
+        successful,
+        internal_path="comparison.internal.rent_exponent_confidence_gated",
         method_name="circuit_partitioning_mlpart",
         domain="arithmetic",
         key="type1",
@@ -1147,15 +1304,27 @@ def render_plots(report: dict[str, Any], output_dir: Path) -> list[str]:
 
     output_paths: list[str] = []
 
-    if len(internal_values) == len(cp_values) and internal_values:
-        fig, ax = plt.subplots(figsize=(6, 6))
-        ax.scatter(cp_values, internal_values)
-        low = min(cp_values + internal_values)
-        high = max(cp_values + internal_values)
-        ax.plot([low, high], [low, high], linestyle="--", color="gray")
-        ax.set_xlabel("RentCon CP arithmetic Type I")
-        ax.set_ylabel("Internal rent_exponent")
-        ax.set_title("Internal vs RentCon Rent Exponent")
+    if (
+        len(internal_values) == len(cp_values)
+        and len(gated_values) == len(gated_cp_values)
+        and internal_values
+        and gated_values
+    ):
+        fig, axes = plt.subplots(1, 2, figsize=(12, 6), sharex=True, sharey=True)
+        plot_accuracy_scatter(
+            axes[0],
+            reference_values=cp_values,
+            internal_values=internal_values,
+            ylabel="Internal raw rent_exponent",
+            title="Raw Internal vs RentCon",
+        )
+        plot_accuracy_scatter(
+            axes[1],
+            reference_values=gated_cp_values,
+            internal_values=gated_values,
+            ylabel="Internal gated rent_exponent",
+            title="Confidence-Gated Internal vs RentCon",
+        )
         plot_path = output_dir / "rent_accuracy_scatter.png"
         fig.tight_layout()
         fig.savefig(plot_path, dpi=200)

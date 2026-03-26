@@ -27,9 +27,9 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   bounded theory follow-up reporting, manifest-driven broader experiment
   tooling, the first hard-subset `20 x 5` comparison, the compact follow-on
   profile, the CVT warmup fallback, and the first native Rent reference
-  validation pass are complete; the active stage is to add rent-confidence
-  gating so low-sample or clamped fits stop acting like high-confidence
-  descriptor values before the next compact-profile rerun
+  validation pass are complete; the next stage is to rerun the hard subset
+  with the compact theory profile now that the safer Rent policy and the
+  updated reference-validation workflow are both in place
 
 ## Worktree Notes
 
@@ -168,7 +168,7 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     theory profile to a confidence-gated Rent axis, and update docs/tests so
     the safety policy is explicit
   - status:
-    active
+    completed locally and ready for a signed checkpoint commit
   - Stage 9A goal:
     add readable helper logic that computes raw Rent diagnostics plus a
     confidence-gated profile-facing exponent without changing the raw analysis
@@ -178,10 +178,24 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     `src/revolution/qd/descriptors.py`,
     `data/configs/qd_descriptor_profiles.yaml`,
     matching unit tests, and theory-profile docs
-- Stage 9A validation:
+  - Stage 9A validation:
     targeted graph-descriptor and descriptor-registry tests, lint, typecheck,
     and a descriptor-probe sanity check for the full theory profile
   - Stage 9A status:
+    completed locally and ready for a signed checkpoint commit
+  - Stage 9B goal:
+    extend the native Rent reference-validation workflow so it compares both
+    raw and confidence-gated Rent against RentCon, rerun the staged hard-subset
+    bundle, and record whether confidence gating improves or only stabilizes
+    the reference picture
+  - Stage 9B expected surfaces:
+    `scripts/report_qd_rent_reference_validation.py`,
+    `tests/scripts/test_report_qd_rent_reference_validation.py`,
+    the Rent validation bundle under `exp/`, and the theory plan journal
+  - Stage 9B validation:
+    targeted report-script tests, lint, typecheck, a real hard-subset rerun,
+    and a code review pass on the reporting diff
+  - Stage 9B status:
     completed locally and ready for a signed checkpoint commit
 
 ## Decisions Log
@@ -240,6 +254,17 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   reporting and offline calibration, but switch the shipped full theory profile
   to `rent_exponent_confidence_gated` so low-sample or clamped fits shrink
   toward a neutral archive value instead of behaving like trusted extremes.
+- 2026-03-26: The Rent reference-validation report should compare raw and
+  confidence-gated Rent side by side. That keeps the archive-facing safety
+  policy visible in analysis instead of only in runtime code.
+- 2026-03-26: RentCon report parsing must reject out-of-range fast-path summary
+  values as well as the slower fallback fit lines. The graph-traversal summary
+  can emit malformed `500+` values on this machine, and those must not pollute
+  accuracy summaries.
+- 2026-03-26: Confidence gating is still justified as an archive-safety
+  policy, but the current five-case hard-subset reference subset does not show
+  a clean CP Type I accuracy win from gating. Promotion decisions should treat
+  gating as safer behavior, not as proven calibration.
 
 ## Implementation Checklist
 
@@ -555,6 +580,25 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   `/workspace/.venv/bin/python scripts/qd_descriptor_probe.py --archive_type cvt --profile theory_grounded_full_20d`
   confirmed the full theory profile now resolves
   `rent_exponent_confidence_gated` while keeping `requires_graph_metrics=true`.
+- 2026-03-26:
+  `/workspace/.venv/bin/pytest tests/scripts/test_report_qd_rent_reference_validation.py -q`
+  passed with `7 passed` after extending the report to track raw and
+  confidence-gated Rent side by side and after adding the out-of-range
+  RentCon parser regression test.
+- 2026-03-26:
+  `/workspace/.venv/bin/ruff check scripts/report_qd_rent_reference_validation.py tests/scripts/test_report_qd_rent_reference_validation.py`
+  passed after the Stage 9B report updates.
+- 2026-03-26:
+  `/workspace/.venv/bin/python -m pyright --pythonpath /workspace/.venv/bin/python scripts/report_qd_rent_reference_validation.py`
+  passed after the Stage 9B report updates.
+- 2026-03-26:
+  `/workspace/.venv/bin/python scripts/report_qd_rent_reference_validation.py --run_root /workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_qd_5way_standard20x5_warmup16_unconstrained_20260326_032529 --output_root /workspace/.worktrees/qd-theory-grounded-descriptors/exp/qd_rent_reference_validation_hard_subset_20260326_stage9b_final --workers 1 --repo_root /workspace/.worktrees/qd-theory-grounded-descriptors`
+  completed and wrote the corrected Stage 9B bundle under
+  `/workspace/.worktrees/qd-theory-grounded-descriptors/exp/qd_rent_reference_validation_hard_subset_20260326_stage9b_final/final_analysis`.
+- 2026-03-26:
+  Stage 9B code review confirmed the report changes stay local to the offline
+  reference-validation surface. The live QD runtime still emits the same raw
+  graph metrics; only the comparison/reporting layer changed.
 
 ## Stage 7A Results
 
@@ -580,6 +624,44 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   offline calibration.
 - Descriptor registry metadata, default bounds, tests, and user-facing docs now
   all describe the same safer Rent policy.
+
+## Stage 9B Results
+
+- `scripts/report_qd_rent_reference_validation.py` now carries both raw and
+  confidence-gated Rent through the comparison payload, summary metrics,
+  markdown report, and accuracy plot.
+- The report now records whether confidence gating beats the raw exponent on a
+  per-case absolute-delta basis, along with low-confidence case counts and the
+  confidence value used by the runtime.
+- The RentCon fast-path parser now applies the same out-of-range filtering as
+  the fallback parser, which removes malformed graph-traversal `500+` values
+  from the summary.
+- The corrected Stage 9B final bundle is at:
+  `/workspace/.worktrees/qd-theory-grounded-descriptors/exp/qd_rent_reference_validation_hard_subset_20260326_stage9b_final/final_analysis`
+- Stage 9B conclusion:
+  - CP Type I remains the only useful reference target on this corpus.
+  - Confidence gating did not improve CP Type I mean absolute error on the
+    tiny comparable subset:
+    `mean_abs_cp_type1_delta_raw=0.201490`,
+    `mean_abs_cp_type1_delta_gated=0.221993`,
+    `cp_type1_mean_abs_delta_improvement=-0.020503`.
+  - Confidence gating did improve the CP Type I median absolute delta:
+    `0.231087` raw to `0.208348` gated, and it improved `2 / 4` CP-comparable
+    cases.
+  - Confidence gating clearly improved the cleaner GT Type I comparison after
+    parser repair:
+    `mean_abs_gt_type1_delta_raw=0.282649`,
+    `mean_abs_gt_type1_delta_gated=0.106178`,
+    `gt_type1_mean_abs_delta_improvement=0.176471`,
+    with `3 / 4` GT-comparable cases improved.
+  - Runtime overhead is still negligible:
+    `internal_total_seconds_mean=0.020551`,
+    `rent_fit_seconds_mean=0.000542`,
+    `reference_total_seconds_mean=0.523847`,
+    `reference_over_internal_ratio_mean=25.793383`.
+  - The gating change should therefore remain framed as a safer archive-facing
+    policy and a better report diagnostic, not as a demonstrated CP-calibration
+    improvement.
 
 ## Stage 7B Results
 
@@ -700,6 +782,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     circuit-partitioning Type-I behavior before expanding Rent-heavy profiles.
   - Stage 9A follows directly from that conclusion by keeping the raw slope for
     analysis while using a safer profile-facing axis in the archive tuple.
+  - Stage 9B confirms that the new confidence-gated report view is useful for
+    diagnostics, but it does not change the core calibration conclusion: the
+    repo-native Rent path is still fast and still not accurate enough to claim
+    direct CP Type I agreement on this corpus.
 
 ## Remaining Validation / Experiment TODOs
 
@@ -730,11 +816,14 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   and confirm that low-success problems no longer finish with empty archives.
 - [x] Add Rent confidence gating for graphs with too few retained samples or
   obviously clamped fits.
-- [ ] Rerun the reference validation bundle after the confidence-gating change
+- [x] Rerun the reference validation bundle after the confidence-gating change
   and measure whether the new diagnostics reduce misleading boundary cases.
 - [ ] Decide whether the current repo-native Rent fit should target
   circuit-partitioning Type I specifically, or whether it should become a
   different named metric that is documented as only loosely Rent-like.
+- [ ] Decide whether report-side CP comparisons should stay raw-only by
+  default, with confidence-gated values kept as a safety diagnostic rather than
+  the headline accuracy metric.
 
 ## Open Questions
 
@@ -766,7 +855,9 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - Medium term:
   rerun confidence-gated Rent calibration against a stable reference corpus and
   decide whether `rent_k`, retained-sample counts, or fit-quality diagnostics
-  should directly influence profile selection or report-side warnings.
+  should directly influence profile selection or report-side warnings, and
+  decide whether raw or confidence-gated Rent should remain the headline
+  CP-comparison metric in offline reports.
 - Medium term:
   decide whether centroid warmup should be adaptive, reduced, or bypassed with
   a fallback archive-init path on low-success problems.

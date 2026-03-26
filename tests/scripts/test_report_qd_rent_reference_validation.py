@@ -4,6 +4,8 @@ import importlib
 import sys
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
@@ -12,6 +14,7 @@ REFERENCE_VALIDATION = importlib.import_module(
     "scripts.report_qd_rent_reference_validation"
 )
 SynthNetlistCase = REFERENCE_VALIDATION.SynthNetlistCase
+compare_rent_results = REFERENCE_VALIDATION.compare_rent_results
 parse_rentcon_output = REFERENCE_VALIDATION.parse_rentcon_output
 render_markdown_report = REFERENCE_VALIDATION.render_markdown_report
 select_problem_representatives = REFERENCE_VALIDATION.select_problem_representatives
@@ -42,6 +45,7 @@ Arithmetic avg pins per gate: 3.333333, geometric avg pins per gate: 3.174802
     assert methods["circuit_partitioning_mlpart"]["label"] == (
         "Circuit partitioning based method using MLPart"
     )
+    assert methods["circuit_partitioning_mlpart"]["arithmetic"]["avg_pins_per_gate"] == 3.333333
     assert methods["circuit_partitioning_mlpart"]["arithmetic"]["type1"] == 0.44966
     assert methods["graph_traversal"]["geometric"]["type3"] == 0.795546
 
@@ -70,6 +74,24 @@ Final #points = 2, Rent's p = 0.758683
     assert method["arithmetic"]["type1"] == 0.908496
     assert method["arithmetic"]["type3"] == 0.708496
     assert method["geometric"]["type2"] == 0.858683
+
+
+def test_parse_rentcon_output_ignores_out_of_range_summary_values():
+    text = """
+Method 1 :
+========= Graph traversal based method =========
+Arithmetic avg pins per gate: 4.285714, geometric avg pins per gate: 4.077827
+----------------- Arithmetic Rent's parameters -----------------
+(1) Type 1 pin counting: 505.854016, (2) Type 2 pin counting: 506.118513, (3) Type 3 pin counting: 506.823745
+----------------- Geometric Rent's parameters -----------------
+(1) Type 1 pin counting: 16.366576, (2) Type 2 pin counting: 33.099771, (3) Type 3 pin counting: 33.800140
+"""
+    parsed = parse_rentcon_output(text)
+    method = parsed["methods"]["graph_traversal"]
+
+    assert method["arithmetic"]["type1"] is None
+    assert method["arithmetic"]["type2"] is None
+    assert method["geometric"]["type1"] is None
 
 
 def test_select_problem_representatives_keeps_one_case_per_problem():
@@ -116,6 +138,52 @@ def test_select_problem_representatives_keeps_one_case_per_problem():
     assert next(case for case in selected if case.problem == "Prob001").candidate == "b"
 
 
+def test_compare_rent_results_keeps_raw_and_gated_metrics():
+    internal_payload = {
+        "graph_node_count": 12,
+        "graph_edge_count": 18,
+        "rent_metrics": {
+            "rent_exponent": 1.0,
+            "rent_exponent_confidence_gated": 0.62,
+            "rent_confidence": 0.24,
+            "rent_clamped_flag": 1.0,
+            "rent_sample_count": 2.0,
+            "rent_raw_sample_count": 4.0,
+            "rent_retained_sample_ratio": 0.5,
+        },
+        "timing_seconds": {
+            "internal_total_seconds": 0.02,
+            "rent_fit_seconds": 0.001,
+        },
+    }
+    rentcon_payload = {
+        "return_code": 1,
+        "extra_text_sources": [],
+        "timing_seconds": {"rentcon_seconds": 0.1},
+        "parsed_output": {
+            "methods": {
+                "circuit_partitioning_mlpart": {"arithmetic": {"type1": 0.45}},
+                "graph_traversal": {"arithmetic": {"type1": 0.60}},
+            }
+        },
+    }
+    placement_payload = {"openroad_seconds": 0.5}
+
+    comparison = compare_rent_results(internal_payload, rentcon_payload, placement_payload)
+
+    assert comparison["internal"]["rent_exponent"] == 1.0
+    assert comparison["internal"]["rent_exponent_confidence_gated"] == 0.62
+    assert comparison["internal"]["rent_confidence"] == 0.24
+    assert comparison["delta"]["raw_vs_circuit_partitioning_type1"] == pytest.approx(0.55)
+    assert comparison["delta"]["gated_vs_circuit_partitioning_type1"] == pytest.approx(0.17)
+    assert comparison["delta"]["raw_vs_graph_traversal_type1"] == pytest.approx(0.4)
+    assert comparison["delta"]["gated_vs_graph_traversal_type1"] == pytest.approx(0.02)
+    assert comparison["flags"]["internal_clamped"] is True
+    assert comparison["flags"]["low_sample_count"] is True
+    assert comparison["flags"]["low_confidence"] is True
+    assert comparison["flags"]["rentcon_nonzero_exit"] is True
+
+
 def test_summarize_results_reports_accuracy_and_runtime():
     results = [
         {
@@ -123,7 +191,10 @@ def test_summarize_results_reports_accuracy_and_runtime():
             "comparison": {
                 "internal": {
                     "rent_exponent": 1.0,
+                    "rent_exponent_confidence_gated": 0.62,
+                    "rent_confidence": 0.24,
                     "rent_sample_count": 2.0,
+                    "rent_raw_sample_count": 4.0,
                     "timing_seconds": {
                         "internal_total_seconds": 0.02,
                         "rent_fit_seconds": 0.001,
@@ -137,12 +208,15 @@ def test_summarize_results_reports_accuracy_and_runtime():
                     }
                 },
                 "delta": {
-                    "vs_circuit_partitioning_type1": 0.55,
-                    "vs_graph_traversal_type1": 0.40,
+                    "raw_vs_circuit_partitioning_type1": 0.55,
+                    "gated_vs_circuit_partitioning_type1": 0.17,
+                    "raw_vs_graph_traversal_type1": 0.40,
+                    "gated_vs_graph_traversal_type1": 0.02,
                 },
                 "flags": {
                     "internal_clamped": True,
                     "low_sample_count": True,
+                    "low_confidence": True,
                 },
             },
             "rentcon_payload": {
@@ -160,7 +234,10 @@ def test_summarize_results_reports_accuracy_and_runtime():
             "comparison": {
                 "internal": {
                     "rent_exponent": 0.50,
+                    "rent_exponent_confidence_gated": 0.50,
+                    "rent_confidence": 1.0,
                     "rent_sample_count": 4.0,
+                    "rent_raw_sample_count": 4.0,
                     "timing_seconds": {
                         "internal_total_seconds": 0.03,
                         "rent_fit_seconds": 0.002,
@@ -174,12 +251,15 @@ def test_summarize_results_reports_accuracy_and_runtime():
                     }
                 },
                 "delta": {
-                    "vs_circuit_partitioning_type1": 0.05,
-                    "vs_graph_traversal_type1": -0.02,
+                    "raw_vs_circuit_partitioning_type1": 0.05,
+                    "gated_vs_circuit_partitioning_type1": 0.05,
+                    "raw_vs_graph_traversal_type1": -0.02,
+                    "gated_vs_graph_traversal_type1": -0.02,
                 },
                 "flags": {
                     "internal_clamped": False,
                     "low_sample_count": False,
+                    "low_confidence": False,
                 },
             },
             "rentcon_payload": {
@@ -199,7 +279,12 @@ def test_summarize_results_reports_accuracy_and_runtime():
     assert summary["completed_case_count"] == 2
     assert summary["internal_clamped_case_count"] == 1
     assert summary["low_sample_count_case_count"] == 1
-    assert summary["mean_abs_cp_type1_delta"] == 0.30000000000000004
+    assert summary["low_confidence_case_count"] == 1
+    assert summary["mean_abs_cp_type1_delta_raw"] == pytest.approx(0.30000000000000004)
+    assert summary["mean_abs_cp_type1_delta_gated"] == pytest.approx(0.11)
+    assert summary["cp_type1_mean_abs_delta_improvement"] == pytest.approx(0.19000000000000003)
+    assert summary["gated_better_than_raw_cp_type1_case_count"] == 1
+    assert summary["gated_better_than_raw_gt_type1_case_count"] == 1
     assert summary["internal_total_seconds_mean"] == 0.025
     assert summary["reference_total_seconds_mean"] == 0.75
 
@@ -212,13 +297,21 @@ def test_render_markdown_report_includes_per_case_rows():
         "completed_case_count": 1,
         "failed_case_count": 0,
         "summary": {
-            "mean_abs_cp_type1_delta": 0.05,
-            "median_abs_cp_type1_delta": 0.05,
-            "max_abs_cp_type1_delta": 0.05,
-            "mean_abs_gt_type1_delta": 0.02,
-            "cp_type1_pearson_r": 0.9,
+            "mean_abs_cp_type1_delta_raw": 0.05,
+            "mean_abs_cp_type1_delta_gated": 0.03,
+            "cp_type1_mean_abs_delta_improvement": 0.02,
+            "mean_abs_gt_type1_delta_raw": 0.02,
+            "mean_abs_gt_type1_delta_gated": 0.01,
+            "gt_type1_mean_abs_delta_improvement": 0.01,
+            "raw_cp_type1_pearson_r": 0.9,
+            "gated_cp_type1_pearson_r": 0.95,
+            "gated_better_than_raw_cp_type1_case_count": 1,
+            "gated_better_than_raw_cp_type1_case_total": 1,
+            "gated_better_than_raw_gt_type1_case_count": 1,
+            "gated_better_than_raw_gt_type1_case_total": 1,
             "internal_clamped_case_count": 0,
             "low_sample_count_case_count": 0,
+            "low_confidence_case_count": 0,
             "internal_total_seconds_mean": 0.02,
             "reference_total_seconds_mean": 0.7,
             "reference_over_internal_ratio_mean": 35.0,
@@ -234,16 +327,23 @@ def test_render_markdown_report_includes_per_case_rows():
                     "internal": {
                         "graph_node_count": 12,
                         "rent_exponent": 0.45,
+                        "rent_exponent_confidence_gated": 0.47,
+                        "rent_confidence": 0.60,
                         "rent_sample_count": 5.0,
+                        "rent_raw_sample_count": 8.0,
                         "timing_seconds": {"internal_total_seconds": 0.02},
                     },
                     "reference": {
                         "timing_seconds": {"reference_total_seconds": 0.7}
                     },
-                    "delta": {"vs_circuit_partitioning_type1": 0.05},
+                    "delta": {
+                        "raw_vs_circuit_partitioning_type1": 0.05,
+                        "gated_vs_circuit_partitioning_type1": 0.07,
+                    },
                     "flags": {
                         "internal_clamped": False,
                         "low_sample_count": False,
+                        "low_confidence": False,
                     },
                 },
                 "rentcon_payload": {
@@ -265,4 +365,4 @@ def test_render_markdown_report_includes_per_case_rows():
     markdown = render_markdown_report(report)
 
     assert "RTLLM/Prob001_accu" in markdown
-    assert "| RTLLM/Prob001_accu | 12 | 0.450000 | 5.000000 | 0.400000 | 0.480000 | 0.050000 | 0.020000 | 0.700000 | - |" in markdown
+    assert "| RTLLM/Prob001_accu | 12 | 0.450000 | 0.470000 | 0.600000 | 5/8 | 0.400000 | 0.050000 | 0.070000 | 0.020000 | 0.700000 | - |" in markdown

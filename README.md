@@ -272,9 +272,9 @@ Current status on this feature branch:
 - `scripts/report_qd_rent_reference_validation.py` now stages passing
   synthesized netlists from a prior run, generates placed DEF files with
   OpenROAD, runs the native RentCon binary, and writes a final analysis bundle
-  with accuracy/runtime deltas under `exp/`. On this branch, sequential use is
-  the recommended mode because the shipped RentCon binary is unstable on many
-  OpenROAD DEFs.
+  with raw-versus-confidence-gated Rent accuracy/runtime deltas under `exp/`.
+  On this branch, sequential use is the recommended mode because the shipped
+  RentCon binary is unstable on many OpenROAD DEFs.
 - `scripts/run_qd_theory_followup_vllm.sh` now provides a bounded multi-problem
   follow-up matrix for the theory profile versus the current CVT controls.
 - `scripts/run_qd_theory_followup_manifest.py` now provides a manifest-driven
