@@ -61,6 +61,11 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
                         "qd_archive_type": "cvt",
                         "qd_descriptor_profile": "theory_grounded_full_20d",
                     },
+                    "cvt_theory_grounded_compact": {
+                        "search_mode": "revolution_qd",
+                        "qd_archive_type": "cvt",
+                        "qd_descriptor_profile": "theory_grounded_compact_8d",
+                    },
                 },
                 "selected_problems": [
                     {"benchmark": "RTLLM", "problem": "Prob001_accu"},
@@ -181,6 +186,11 @@ def test_run_hard_iteration_qd_script_supports_theory_mode(tmp_path):
                         "qd_archive_type": "cvt",
                         "qd_descriptor_profile": "theory_grounded_full_20d",
                     },
+                    "cvt_theory_grounded_compact": {
+                        "search_mode": "revolution_qd",
+                        "qd_archive_type": "cvt",
+                        "qd_descriptor_profile": "theory_grounded_compact_8d",
+                    },
                 },
                 "selected_problems": [
                     {"benchmark": "RTLLM", "problem": "Prob001_accu"},
@@ -223,3 +233,93 @@ def test_run_hard_iteration_qd_script_supports_theory_mode(tmp_path):
     assert "--total_worker_slots 20" in normalized
     assert "--max_active_problems 20" in normalized
     assert "--max_workers_per_problem 20" in normalized
+
+
+def test_run_hard_iteration_qd_script_supports_compact_theory_mode(tmp_path):
+    repo_root = Path(__file__).resolve().parents[2]
+    script_path = repo_root / "scripts" / "run_hard_iteration_qd_vllm.sh"
+    config_path = tmp_path / "hard_iteration_subset.yaml"
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                "subset_name": "hard_iteration_subset_v1",
+                "model": {
+                    "api_backend": "vllm",
+                    "model_name": "stub-model",
+                    "vllm_host": "fake-host",
+                    "vllm_port": 9999,
+                },
+                "benchmarks": {
+                    "RTLLM": {"problems": ["Prob001_accu"]},
+                },
+                "matrix_defaults": {
+                    "population_size": 20,
+                    "num_generations": 5,
+                    "evaluation_mode": "search_accelerated",
+                    "accelerated_synthesis_top_k": 1,
+                    "total_worker_slots": 20,
+                    "max_active_problems": 20,
+                    "max_workers_per_problem": 20,
+                    "temperature": 1.0,
+                    "top_p": 1.0,
+                    "max_tokens": 128000,
+                    "diff_max_tokens": 128000,
+                    "qd_num_cells": 16,
+                    "qd_cvt_warmup_successes": 16,
+                    "seed": 42,
+                },
+                "modes": {
+                    "classic": {"search_mode": "revolution"},
+                    "cvt_theory_grounded_compact": {
+                        "search_mode": "revolution_qd",
+                        "qd_archive_type": "cvt",
+                        "qd_descriptor_profile": "theory_grounded_compact_8d",
+                    },
+                },
+                "selected_problems": [
+                    {"benchmark": "RTLLM", "problem": "Prob001_accu"},
+                ],
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+
+    fake_bin = tmp_path / "bin"
+    fake_bin.mkdir()
+    fake_curl = fake_bin / "curl"
+    fake_curl.write_text(
+        "#!/usr/bin/env bash\n"
+        "printf '%s' '{\"data\":[{\"id\":\"stub-model\",\"max_model_len\":131072}]}'\n",
+        encoding="utf-8",
+    )
+    fake_curl.chmod(0o755)
+
+    env = os.environ.copy()
+    env["PATH"] = f"{fake_bin}:{env['PATH']}"
+    env["HARD_SUBSET_SAVE_PATH"] = str(tmp_path / "runs")
+    env["PYTHON_BIN"] = str(Path(os.sys.executable))
+
+    result = subprocess.run(
+        [
+            "bash",
+            str(script_path),
+            "--config",
+            str(config_path),
+            "--mode",
+            "cvt_theory_grounded_compact",
+            "--dry-run",
+        ],
+        cwd=repo_root,
+        env=env,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    normalized = " ".join(result.stdout.split())
+    assert "[cvt_theory_grounded_compact] command:" in result.stdout
+    assert "--qd_descriptor_profile theory_grounded_compact_8d" in normalized
+    assert "--qd_cvt_warmup_successes 16" in normalized
+    assert "--total_worker_slots 20" in normalized

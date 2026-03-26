@@ -215,8 +215,9 @@ Current status on this feature branch:
   - `laplacian_lambda2`
   - `laplacian_spectral_entropy`
   - `scoap_signal_smoothness`
-  - experimental built-in profile:
+  - experimental built-in profiles:
     - `theory_grounded_full_20d`
+    - `theory_grounded_compact_8d`
 - When `--qd_grid_axes` is omitted, grid mode now correctly honors
   `--qd_descriptor_profile` instead of silently falling back to gain axes.
 - QD problem directories now emit `descriptor_health.json` and
@@ -261,8 +262,8 @@ Current status on this feature branch:
   validation is not just a collection of ad hoc commands.
 - `scripts/run_qd_theory_grounded_smoke_vllm.sh` now provides a dedicated
   theory-grounded CVT smoke/comparison harness so
-  `theory_grounded_full_20d` can be checked against structural controls
-  without rebuilding the command matrix by hand.
+  `theory_grounded_full_20d` and `theory_grounded_compact_8d` can be checked
+  against structural controls without rebuilding the command matrix by hand.
 - `scripts/report_qd_rent_calibration.py` now provides a manifest-driven
   offline calibration helper for comparing repo-native Rent extraction against
   stored RentCon outputs.
@@ -293,6 +294,10 @@ Current status on this feature branch:
     `--qd_archive_type cvt --qd_descriptor_profile theory_grounded_full_20d`
     and treat it as experimental rather than a replacement for the structural
     controls
+  - if you want the reduced follow-on theory profile from the first hard-subset
+    collapse pass, use
+    `--qd_archive_type cvt --qd_descriptor_profile theory_grounded_compact_8d`
+    and compare it directly against the full 20D profile
   - if you need a grid control, start with
     `--qd_archive_type grid --qd_descriptor_profile implemented_structural_compact_3d`
   - keep classic `revolution` in comparisons because it is still the safest

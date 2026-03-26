@@ -42,6 +42,10 @@ def test_build_run_plan_applies_smoke_budget_and_filters(tmp_path, monkeypatch):
                         "name": "theory_grounded_full_20d",
                         "label": "cvt_theory_grounded",
                     },
+                    {
+                        "name": "theory_grounded_compact_8d",
+                        "label": "cvt_theory_compact",
+                    },
                 ],
                 "cases": [
                     {
@@ -94,3 +98,68 @@ def test_build_run_plan_applies_smoke_budget_and_filters(tmp_path, monkeypatch):
     rendered = FOLLOWUP_MANIFEST.render_plan(plan)
     assert "stub-model" in rendered
     assert "[rtllm_core_pair/cvt_theory_grounded]" in rendered
+
+
+def test_build_run_plan_supports_compact_theory_profile(tmp_path, monkeypatch):
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "save_root": "runs",
+                "min_model_len": 128000,
+                "defaults": {
+                    "qd_num_cells": 16,
+                    "qd_cvt_warmup_successes": 4,
+                    "population_size": 4,
+                    "num_generations": 2,
+                    "total_worker_slots": 2,
+                    "max_workers_per_problem": 1,
+                    "evaluation_mode": "strict_ablation",
+                    "temperature": 0.3,
+                    "top_p": 0.95,
+                    "max_tokens": 128000,
+                    "diff_max_tokens": 128000,
+                    "seed": 42,
+                },
+                "profiles": [
+                    {
+                        "name": "theory_grounded_compact_8d",
+                        "label": "cvt_theory_compact",
+                    }
+                ],
+                "cases": [
+                    {
+                        "name": "rtllm_compact_case",
+                        "benchmark": "RTLLM",
+                        "problems": ["Prob001_accu"],
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        FOLLOWUP_MANIFEST,
+        "fetch_model_info",
+        lambda **kwargs: FOLLOWUP_MANIFEST.ModelInfo(
+            name="stub-model",
+            max_model_len=131072,
+        ),
+    )
+
+    plan = FOLLOWUP_MANIFEST.build_run_plan(
+        FOLLOWUP_MANIFEST.load_manifest(manifest_path),
+        case_filters=["rtllm_compact_case"],
+        profile_filters=["theory_grounded_compact_8d"],
+        smoke_budget=False,
+        run_tag="stage7a-compact",
+    )
+
+    assert len(plan["commands"]) == 1
+    command = plan["commands"][0]
+    assert command["profile_name"] == "theory_grounded_compact_8d"
+    assert command["profile_label"] == "cvt_theory_compact"
+    assert "--qd_descriptor_profile theory_grounded_compact_8d" in " ".join(
+        command["command"]
+    )

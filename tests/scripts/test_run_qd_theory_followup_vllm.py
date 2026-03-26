@@ -39,10 +39,13 @@ def test_theory_followup_script_dry_run_prints_compare_matrix(tmp_path):
     assert "[rtllm/cvt_structural_fixed] command:" in result.stdout
     assert "[rtllm/cvt_size_control] command:" in result.stdout
     assert "[rtllm/cvt_theory_grounded] command:" in result.stdout
+    assert "[rtllm/cvt_theory_compact] command:" in result.stdout
     assert "[verilogeval/cvt_theory_grounded] command:" in result.stdout
+    assert "[verilogeval/cvt_theory_compact] command:" in result.stdout
     assert "--qd_descriptor_profile implemented_structural_fixed_5d" in normalized
     assert "--qd_descriptor_profile size_control_3d" in normalized
     assert "--qd_descriptor_profile theory_grounded_full_20d" in normalized
+    assert "--qd_descriptor_profile theory_grounded_compact_8d" in normalized
     assert "--problems Prob001_accu Prob002_adder_16bit" in normalized
     assert "--problems Prob001_zero Prob017_mux2to1v" in normalized
     assert "--population_size 4" in normalized

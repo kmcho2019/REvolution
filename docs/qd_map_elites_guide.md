@@ -475,6 +475,15 @@ Experimental theory-grounded profile:
   - `laplacian_lambda2`
   - `laplacian_spectral_entropy`
   - `scoap_signal_smoothness`
+- `theory_grounded_compact_8d`
+  - `scoap_signal_smoothness`
+  - `laplacian_spectral_entropy`
+  - `scoap_cc0_bin_1_pct`
+  - `scoap_co_bin_3_pct`
+  - `scoap_cc1_bin_1_pct`
+  - `scoap_co_bin_0_pct`
+  - `scoap_cc0_bin_0_pct`
+  - `scoap_cc1_bin_0_pct`
 
 ### Profile quick reference
 
@@ -485,6 +494,7 @@ Experimental theory-grounded profile:
 | `size_control_3d` | `wire_count_log_est`, `assign_count`, `ctrl_depth_est` | cvt | you want the healthiest archive and best coverage/QD-score balance | high |
 | `timing_control_3d` | `wire_count_log_est`, `if_count`, `ast_depth_est` | cvt | you want a control-shape-heavy follow-up to `size_control_3d` | medium |
 | `theory_grounded_full_20d` | AST cyclomatic + Rent + reconvergence + SCOAP histograms + Laplacian metrics | cvt | you want the most theory-grounded current runtime profile and are willing to trade simplicity for descriptor richness | experimental |
+| `theory_grounded_compact_8d` | reduced SCOAP + spectral theory profile from the Stage 6 hard-subset collapse pass | cvt | you want the first reduced theory follow-on and a better starting point for compact theory experiments | experimental |
 | `hybrid_phys_seq` | structural + physical + gain axes | cvt | you want to test whether physical variation meaningfully enriches the archive | medium |
 | `activity_size_3d` / `activity_control_3d` | dynamic + size/control axes | grid or cvt follow-up | you want an experimental activity-sensitive archive study | low to medium |
 

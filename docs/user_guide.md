@@ -171,8 +171,8 @@ Current feature status:
   - richer follow-on runtime-supported controls:
     `wire_assign_if_3d`, `size_sharing_3d`, `wire_ctrl_assign_3d`,
     `wire_if_math_3d`, `wire_always_ternary_3d`, `assign_always_math_3d`
-  - experimental theory-grounded profile:
-    `theory_grounded_full_20d`
+  - experimental theory-grounded profiles:
+    `theory_grounded_full_20d`, `theory_grounded_compact_8d`
   - exploratory activity profiles:
     `activity_size_3d`, `activity_control_3d`
 - The theory-grounded profile combines AST cyclomatic complexity, Rent
@@ -180,6 +180,10 @@ Current feature status:
   Laplacian descriptors through the new `graph_metrics` runtime payload. Treat
   it as a CVT-first research profile rather than a default replacement for the
   structural ladder.
+- `theory_grounded_compact_8d` is the reduced follow-on candidate from the
+  first hard-subset collapse pass. It keeps the strongest non-collapsed SCOAP
+  and spectral axes and is the first profile to try when you want a smaller
+  theory-grounded CVT study.
 - When `qd_grid_axes` is omitted, grid mode now honors
   `qd_descriptor_profile`, so the compact structural profile above is actually
   enough to reproduce the retrospective refresh configuration.
@@ -208,7 +212,8 @@ Current feature status:
   - `--mode theory-only` for direct validation of
     `theory_grounded_full_20d`
   - `--mode compare` for side-by-side bounded smokes against
-    `implemented_structural_fixed_5d` and `size_control_3d`
+    `implemented_structural_fixed_5d`, `size_control_3d`,
+    `theory_grounded_full_20d`, and `theory_grounded_compact_8d`
   - `--suite rtllm|verilogeval|matrix`, `--policy whole-heavy|diff-heavy`,
     and `--dry-run`
 - `scripts/report_qd_rent_calibration.py` provides a manifest-driven offline
@@ -220,6 +225,7 @@ Current feature status:
   - `implemented_structural_fixed_5d`
   - `size_control_3d`
   - `theory_grounded_full_20d`
+  - `theory_grounded_compact_8d`
   Start with:
   `VLLM_HOST=host.docker.internal VLLM_PORT=8000 bash scripts/run_qd_theory_followup_vllm.sh --suite rtllm --dry-run`
 - `scripts/run_qd_theory_followup_manifest.py` provides a manifest-driven

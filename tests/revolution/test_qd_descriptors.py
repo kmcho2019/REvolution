@@ -102,6 +102,16 @@ def test_load_descriptor_profiles_includes_runtime_retro_profiles():
         "laplacian_spectral_entropy",
         "scoap_signal_smoothness",
     ]
+    assert profiles["theory_grounded_compact_8d"] == [
+        "scoap_signal_smoothness",
+        "laplacian_spectral_entropy",
+        "scoap_cc0_bin_1_pct",
+        "scoap_co_bin_3_pct",
+        "scoap_cc1_bin_1_pct",
+        "scoap_co_bin_0_pct",
+        "scoap_cc0_bin_0_pct",
+        "scoap_cc1_bin_0_pct",
+    ]
 
 
 def test_load_descriptor_profiles_includes_hard_iteration_large_profile():

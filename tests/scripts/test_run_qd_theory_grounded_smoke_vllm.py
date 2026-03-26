@@ -50,11 +50,14 @@ def test_theory_grounded_smoke_script_dry_run_prints_compare_matrix(tmp_path):
     assert "[rtllm/cvt_structural_fixed] command:" in result.stdout
     assert "[rtllm/cvt_size_control] command:" in result.stdout
     assert "[rtllm/cvt_theory_grounded] command:" in result.stdout
+    assert "[rtllm/cvt_theory_compact] command:" in result.stdout
     assert "[verilogeval/cvt_theory_grounded] command:" in result.stdout
+    assert "[verilogeval/cvt_theory_compact] command:" in result.stdout
     assert "--qd_archive_type cvt" in normalized
     assert "--qd_descriptor_profile implemented_structural_fixed_5d" in normalized
     assert "--qd_descriptor_profile size_control_3d" in normalized
     assert "--qd_descriptor_profile theory_grounded_full_20d" in normalized
+    assert "--qd_descriptor_profile theory_grounded_compact_8d" in normalized
     assert "--qd_backfill_generation_mode diff" in normalized
     assert "--qd_refine_generation_mode diff" in normalized
     assert "--max_tokens 128000" in normalized

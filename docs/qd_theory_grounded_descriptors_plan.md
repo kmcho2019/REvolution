@@ -123,7 +123,32 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     the hard subset to check whether archive health remains strong without the
     current initialization failures
   - status:
-    planned
+    active
+  - Stage 7A goal:
+    land the reduced theory profile as a first-class builtin option and make
+    the follow-up / hard-subset harnesses able to run it directly
+  - Stage 7A expected surfaces:
+    `data/configs/qd_descriptor_profiles.yaml`,
+    `src/revolution/qd/descriptors.py`,
+    `scripts/run_qd_theory_followup_vllm.sh`,
+    `scripts/run_qd_theory_followup_manifest.py`,
+    `scripts/run_hard_iteration_qd_vllm.sh`,
+    matching script tests, and user-facing docs
+  - Stage 7A validation:
+    descriptor-profile unit tests, harness dry-run tests, targeted
+    lint/typecheck, and a quick code review pass
+  - Stage 7A status:
+    completed locally and ready for a signed checkpoint commit
+  - Stage 7B goal:
+    add a CVT centroid-initialization fallback so low-success problems do not
+    finish with permanently uninitialized archives when they never hit the
+    configured warmup target
+  - Stage 7B expected surfaces:
+    `src/revolution/qd/archive.py`,
+    archive/engine tests, artifact docs, and the theory plan journal
+  - Stage 7B validation:
+    targeted archive and engine tests, lint/typecheck, and a bounded smoke if
+    the fallback changes user-visible artifact behavior
 
 ## Decisions Log
 
@@ -161,6 +186,9 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   model-directory run roots. Stage 6 surfaced this as a real analysis bug, and
   the report helper now resolves selected problems recursively instead of
   assuming a shallow `backend_root/<benchmark>/<problem>` layout.
+- 2026-03-26: The first reduced theory follow-on should be explicit and
+  reproducible, not just a report artifact. `theory_grounded_compact_8d` is now
+  the checked-in compact profile name for Stage 7 experiments.
 
 ## Implementation Checklist
 
@@ -195,8 +223,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   backend roots.
 - [ ] Compare repo-native Rent estimates against extracted RentCon reports on a
   small calibration corpus.
-- [ ] Add and benchmark a compact theory-grounded follow-on profile based on
+- [x] Add a compact theory-grounded follow-on profile based on
   Stage 6 collapse evidence.
+- [ ] Benchmark the compact theory-grounded follow-on profile against the full
+  theory profile and the structural controls.
 - [ ] Investigate warmup / centroid-initialization fallback behavior for
   low-success problems.
 - [ ] Decide whether any reduced theory-grounded profile should become a
@@ -245,6 +275,17 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - `laplacian_lambda2`
 - `laplacian_spectral_entropy`
 - `scoap_signal_smoothness`
+
+`theory_grounded_compact_8d`:
+
+- `scoap_signal_smoothness`
+- `laplacian_spectral_entropy`
+- `scoap_cc0_bin_1_pct`
+- `scoap_co_bin_3_pct`
+- `scoap_cc1_bin_1_pct`
+- `scoap_co_bin_0_pct`
+- `scoap_cc0_bin_0_pct`
+- `scoap_cc1_bin_0_pct`
 
 ## Validation Log
 
@@ -399,6 +440,31 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   regenerated the comparison bundle after the evolutionary-report fix. The
   repaired bundle now has a populated
   `final_analysis/evolutionary_reports/cvt_theory_grounded/summary.json`.
+- 2026-03-26:
+  `pytest tests/revolution/test_qd_descriptors.py tests/scripts/test_run_qd_theory_followup_manifest.py tests/scripts/test_run_qd_theory_followup_vllm.py tests/scripts/test_run_qd_theory_grounded_smoke_vllm.py tests/scripts/test_run_hard_iteration_qd_vllm.py -q`
+  passed after adding the builtin compact theory profile and its harness
+  surfaces.
+- 2026-03-26:
+  `bash -n scripts/run_qd_theory_followup_vllm.sh && bash -n scripts/run_qd_theory_grounded_smoke_vllm.sh && bash -n scripts/run_hard_iteration_qd_vllm.sh`
+  passed after adding compact-profile labels and hard-subset mode support.
+- 2026-03-26:
+  `ruff check tests/revolution/test_qd_descriptors.py tests/scripts/test_run_qd_theory_followup_manifest.py tests/scripts/test_run_qd_theory_followup_vllm.py tests/scripts/test_run_qd_theory_grounded_smoke_vllm.py tests/scripts/test_run_hard_iteration_qd_vllm.py`
+  passed.
+- 2026-03-26:
+  `python -m pyright --pythonpath /workspace/.venv/bin/python tests/revolution/test_qd_descriptors.py tests/scripts/test_run_qd_theory_followup_manifest.py`
+  passed.
+
+## Stage 7A Results
+
+- Added the builtin reduced theory profile `theory_grounded_compact_8d`.
+- Added hard-subset mode `cvt_theory_grounded_compact` so the compact profile
+  can be run directly from `scripts/run_hard_iteration_qd_vllm.sh`.
+- Added compact-profile labels to the theory smoke and follow-up shell harnesses
+  and to the checked-in follow-up manifest.
+- Updated the user-facing docs so the compact profile is documented as the
+  reduced follow-on candidate from the Stage 6 hard-subset collapse pass.
+- Remaining Stage 7B work is still runtime behavior, not registry wiring:
+  low-success problems still need a centroid-initialization fallback.
 
 ## Stage 6 Results
 
@@ -490,8 +556,8 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - [x] Inspect archive-side descriptor-health behavior for the SCOAP histogram
   axes; the hard-subset run shows that several higher-score bins do collapse and
   should be pruned or demoted in the next profile iteration.
-- [ ] Add the compact Stage 6 candidate profile to the registry and rerun the
-  hard-subset comparison.
+- [ ] Rerun the hard-subset comparison with the compact theory profile and
+  compare it directly against the full theory profile and structural controls.
 - [ ] Prototype a warmup / centroid-init fallback for problems that never reach
   the current success threshold.
 

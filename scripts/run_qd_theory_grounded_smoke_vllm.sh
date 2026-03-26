@@ -139,6 +139,10 @@ profile_label() {
       echo "cvt_theory_grounded"
       return 0
       ;;
+    theory_grounded_compact_8d)
+      echo "cvt_theory_compact"
+      return 0
+      ;;
     implemented_structural_fixed_5d)
       echo "cvt_structural_fixed"
       return 0
@@ -219,6 +223,7 @@ case "${MODE}" in
       "implemented_structural_fixed_5d"
       "size_control_3d"
       "theory_grounded_full_20d"
+      "theory_grounded_compact_8d"
     )
     ;;
   *)

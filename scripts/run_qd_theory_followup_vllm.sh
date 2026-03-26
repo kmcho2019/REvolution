@@ -176,6 +176,10 @@ profile_label() {
       echo "cvt_theory_grounded"
       return 0
       ;;
+    theory_grounded_compact_8d)
+      echo "cvt_theory_compact"
+      return 0
+      ;;
     *)
       echo "$1"
       return 0
@@ -262,6 +266,7 @@ PROFILES=(
   "implemented_structural_fixed_5d"
   "size_control_3d"
   "theory_grounded_full_20d"
+  "theory_grounded_compact_8d"
 )
 
 echo "vLLM endpoint: ${MODEL_ENDPOINT}"
