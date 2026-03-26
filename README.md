@@ -298,16 +298,18 @@ Current status on this feature branch:
     `--qd_archive_type cvt --qd_descriptor_profile implemented_structural_fixed_5d`
   - for archive-health/coverage-oriented QD runs, start with
     `--qd_archive_type cvt --qd_descriptor_profile size_control_3d`
-  - for theory-grounded research follow-ups, use
-    `--qd_archive_type cvt --qd_descriptor_profile theory_grounded_full_20d`
-    and treat it as experimental rather than a replacement for the structural
-    controls. This full profile now uses a confidence-gated Rent axis so
-    low-sample or clamped Rent fits shrink toward a neutral value instead of
-    behaving like high-confidence extremes.
-  - if you want the reduced follow-on theory profile from the first hard-subset
-    collapse pass, use
+  - for theory-grounded hard-subset follow-ups, start with
     `--qd_archive_type cvt --qd_descriptor_profile theory_grounded_compact_8d`
-    and compare it directly against the full 20D profile
+    under the tuned `16 / 4 / 0.25 / 2` CVT policy. It is the better current
+    theory-only profile for stability, synthesis throughput, and mean
+    hypervolume, but it still trails the structural controls on archive QD
+    score, elite quality, and pareto breadth.
+  - use `--qd_archive_type cvt --qd_descriptor_profile theory_grounded_full_20d`
+    when you want the richer theory-grounded descriptor family itself, not when
+    you want the strongest current score-oriented QD backend. This full
+    profile uses a confidence-gated Rent axis so low-sample or clamped Rent
+    fits shrink toward a neutral value instead of behaving like high-confidence
+    extremes.
   - CVT runs that never reach their configured warmup target now finalize from
     the available warmup buffer at run end instead of finishing with a
     permanently uninitialized empty archive

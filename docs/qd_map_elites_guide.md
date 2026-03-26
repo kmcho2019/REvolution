@@ -510,8 +510,8 @@ Experimental theory-grounded profile:
 | `implemented_structural_fixed_5d` | `seq_ratio`, `comb_ratio`, `mux_ratio`, `adder_ratio`, `cell_count_log` | cvt | you want the strongest score/frontier-oriented structural CVT run | high |
 | `size_control_3d` | `wire_count_log_est`, `assign_count`, `ctrl_depth_est` | cvt | you want the healthiest archive and best coverage/QD-score balance | high |
 | `timing_control_3d` | `wire_count_log_est`, `if_count`, `ast_depth_est` | cvt | you want a control-shape-heavy follow-up to `size_control_3d` | medium |
-| `theory_grounded_full_20d` | AST cyclomatic + confidence-gated Rent + reconvergence + SCOAP histograms + Laplacian metrics | cvt | you want the most theory-grounded current runtime profile and are willing to trade simplicity for descriptor richness | experimental |
-| `theory_grounded_compact_8d` | reduced SCOAP + spectral theory profile from the Stage 6 hard-subset collapse pass | cvt | you want the first reduced theory follow-on and a better starting point for compact theory experiments | experimental |
+| `theory_grounded_full_20d` | AST cyclomatic + confidence-gated Rent + reconvergence + SCOAP histograms + Laplacian metrics | cvt | you want the richest current theory-grounded runtime profile and are willing to trade score/stability for descriptor richness and coverage experiments | experimental |
+| `theory_grounded_compact_8d` | reduced SCOAP + spectral theory profile from the Stage 6 hard-subset collapse pass | cvt | you want the best current theory-only hard-subset follow-on, with better stability/hypervolume than the 20D profile but without claiming to beat the structural controls on QD score | experimental |
 | `hybrid_phys_seq` | structural + physical + gain axes | cvt | you want to test whether physical variation meaningfully enriches the archive | medium |
 | `activity_size_3d` / `activity_control_3d` | dynamic + size/control axes | grid or cvt follow-up | you want an experimental activity-sensitive archive study | low to medium |
 
@@ -527,6 +527,19 @@ Stage 10 runtime note:
   previous gain-heavy setup
 
 Stage 11 runtime note:
+
+- the tuned hard-subset `20 x 5` compact-theory rerun removed the per-problem
+  descriptor-collapse and centroid-init failures seen in the earlier 20D
+  theory run, and it improved mean synthesis rate and mean hypervolume versus
+  that full theory baseline
+- the same rerun still trailed the main structural CVT controls on archive QD
+  score, elite quality, and pareto breadth, so `theory_grounded_compact_8d`
+  is currently the better theory-only follow-on rather than a general QD
+  default replacement
+- the current comparison still mixes profile and archive-policy changes:
+  compact theory was rerun under the tuned `16 / 4 / 0.25 / 2` CVT policy,
+  while the older structural/full-theory baselines used warmup-16 settings.
+  A same-policy rerun matrix is still required for a cleaner A/B conclusion
 
 - the branch now supports the primary retrospective source/AST/netlist
   descriptor family during real QD runs, not just retrospective replay

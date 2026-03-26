@@ -185,8 +185,12 @@ Current feature status:
   for the structural ladder.
 - `theory_grounded_compact_8d` is the reduced follow-on candidate from the
   first hard-subset collapse pass. It keeps the strongest non-collapsed SCOAP
-  and spectral axes and is the first profile to try when you want a smaller
-  theory-grounded CVT study.
+  and spectral axes and is now the first profile to try when you want a
+  smaller theory-grounded CVT study on the hard subset. Under the tuned
+  `16 / 4 / 0.25 / 2` CVT policy it improved theory-only stability,
+  synthesis rate, and mean hypervolume versus the earlier 20D theory run, but
+  it still trails the structural controls on archive QD score, elite quality,
+  and pareto breadth.
 - CVT archives that never hit `qd_cvt_warmup_successes` now finalize from the
   available warmup buffer at run end. That keeps low-success problems from
   ending with empty, permanently uninitialized CVT artifacts.

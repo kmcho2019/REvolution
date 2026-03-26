@@ -27,8 +27,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   bounded theory follow-up reporting, manifest-driven broader experiment
   tooling, the first hard-subset `20 x 5` comparison, the compact follow-on
   profile, the CVT warmup fallback, and the first native Rent reference
-  validation pass are complete; Stage 10 QD archive tuning is now complete.
-  Stage 11 is the tuned compact-theory hard-subset rerun and comparison pass.
+  validation pass are complete; Stages 10 and 11 are now complete.
+  The next stage is a same-policy rerun matrix so compact theory can be
+  compared against full theory and the main structural controls under the same
+  tuned CVT settings.
 
 ## Worktree Notes
 
@@ -203,7 +205,7 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     knob sweeps, confirm the strongest candidate on a heavier hard-subset run,
     then freeze a recommended archive/default policy in config and docs
   - status:
-    in progress
+    completed locally and ready for a signed checkpoint commit
   - Stage 10A goal:
     finish the config-driven hard-subset tuning harness and document the
     tuning stage before launching experiments
@@ -256,7 +258,7 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     whether the compact profile is a better practical default for theory-based
     exploration
   - status:
-    in progress
+    completed locally and ready for a signed checkpoint commit
   - Stage 11A goal:
     update the living plan and lock the exact experiment/report surfaces before
     launching the rerun
@@ -279,7 +281,7 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     vLLM preflight, successful hard-subset run completion, and a spot-check of
     representative per-problem archive/descriptor-health artifacts
   - Stage 11B status:
-    pending
+    completed locally and ready for a signed checkpoint commit
   - Stage 11C goal:
     generate the formal `final_analysis/` bundle, compare compact theory
     against the prior full theory and structural controls, inspect feature
@@ -292,6 +294,40 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     report generation, result/code review, targeted doc updates, and a signed
     multi-line commit after the analysis is recorded
   - Stage 11C status:
+    completed locally and ready for a signed checkpoint commit
+- Stage 12: same-policy theory versus structural rerun matrix
+  - scope:
+    rerun `theory_grounded_full_20d`, `theory_grounded_compact_8d`, and the
+    main structural CVT controls under the same tuned hard-subset CVT policy so
+    the profile effect is isolated from the archive-policy effect; then decide
+    whether the next theory follow-on should be compact-only, hybrid, or a
+    score-oriented revision
+  - status:
+    pending
+  - Stage 12A goal:
+    extend the hard-subset comparison matrix so the tuned `16 / 4 / 0.25 / 2`
+    policy is reused across the comparison set instead of mixing tuned and
+    older warmup-16 baselines
+  - Stage 12A expected surfaces:
+    hard-subset config or harness surfaces, this plan journal, and the new run
+    roots under `exp/`
+  - Stage 12A validation:
+    shell/config sanity checks, bounded dry-run review, and a clean run
+    manifest that records the resolved archive settings for every compared
+    backend
+  - Stage 12A status:
+    pending
+  - Stage 12B goal:
+    run the same-policy matrix and regenerate the formal comparison bundle so
+    quality, coverage, hypervolume, and collapse findings no longer mix profile
+    changes with warmup-policy changes
+  - Stage 12B expected surfaces:
+    same-policy experiment roots, updated `final_analysis/` output, and the
+    corresponding run/problem histogram artifacts
+  - Stage 12B validation:
+    completed live runs, updated comparison bundle, and a result/code review
+    pass before any new default recommendation is made
+  - Stage 12B status:
     pending
 
 ## Decisions Log
@@ -376,6 +412,23 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   `grid` to `cvt` yet. The hard-subset tuning result is workflow-specific, and
   the current global CVT warmup semantics at the CLI default cell count would
   be misleading as a blanket repo-wide default.
+- 2026-03-26: On the hard subset, `theory_grounded_compact_8d` is now the
+  preferred theory-only follow-up profile. Under the tuned `16 / 4 / 0.25 / 2`
+  CVT policy it improved functionality, synthesis, runtime, and mean pareto
+  hypervolume versus the earlier full-theory run while also removing the
+  per-problem descriptor-collapse and centroid-init failures seen in the 20D
+  profile.
+- 2026-03-26: Do not promote compact theory to the main QD default yet.
+  Even with better stability and mean hypervolume than the full 20D profile,
+  compact theory still trails the structural controls on archive QD score,
+  elite quality, and pareto breadth, while classic REvolution remains the
+  overall hard-subset winner.
+- 2026-03-26: Treat the Stage 11 compact-versus-baseline comparison as a
+  directional result, not a clean isolated A/B. The compact rerun used the
+  tuned hard-subset CVT policy, while the earlier full-theory and structural
+  baselines still used older warmup-16 settings. Stage 12 must rerun the
+  comparison set under the same tuned archive policy before making a stricter
+  profile recommendation.
 
 ## Implementation Checklist
 
@@ -414,7 +467,7 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   synthesized hard-subset netlists and record the accuracy/runtime findings.
 - [x] Add a compact theory-grounded follow-on profile based on
   Stage 6 collapse evidence.
-- [ ] Benchmark the compact theory-grounded follow-on profile against the full
+- [x] Benchmark the compact theory-grounded follow-on profile against the full
   theory profile and the structural controls.
 - [x] Add a CVT run-end fallback for low-success problems that never hit the
   configured warmup threshold.
@@ -1011,6 +1064,97 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   - `pytest tests/scripts/test_run_hard_iteration_qd_vllm.py -q`
   - `ruff check tests/scripts/test_run_hard_iteration_qd_vllm.py`
 
+## Stage 11 Results
+
+- Stage 11 compact-theory run root:
+  `/workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_grounded_compact_tuned_20x5_20260326/20260326_205740/cvt_theory_grounded_compact`
+- Stage 11 comparison bundle:
+  `/workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_compact_vs_baselines_20260326_2158/final_analysis`
+- Stage 11 run policy:
+  `population_size=20`, `num_generations=5`, `total_worker_slots=20`,
+  `qd_num_cells=16`, `qd_cvt_warmup_successes=4`,
+  `qd_fill_target_fraction=0.25`, `qd_cell_reservoir=2`
+- Comparison set:
+  - `classic`
+  - `cvt_implemented_structural_fixed_5d`
+  - `cvt_large_struct10d`
+  - `cvt_large_struct_size_control_13d`
+  - `cvt_size_control_3d`
+  - `cvt_theory_grounded`
+  - `cvt_theory_grounded_compact`
+- Aggregate outcome:
+  - overall recommendation in the generated bundle is still `classic`
+  - the bundle’s `score_qd` recommendation is `cvt_theory_grounded_compact`
+    on the hard-iteration score surface
+  - the bundle’s `archive_qd` recommendation remains `cvt_theory_grounded`
+    because the full 20D profile still had the highest mean archive coverage
+- Compact theory versus earlier full theory:
+  - `functionality_mean`: `0.5199` vs `0.3660`
+  - `synthesis_mean`: `0.4128` vs `0.2942`
+  - `runtime_seconds_mean`: `3147.77s` vs `3326.24s`
+  - `qd_coverage_mean`: `0.3558` vs `0.4087`
+  - `qd_score_mean`: `0.3163` vs `0.7261`
+  - `qd_best_quality_mean`: `0.2058` vs `0.2401`
+  - `mean_hypervolume`: `0.0905` vs `0.0858`
+  - `mean_pareto_point_count`: `2.23` vs `2.00`
+  - `mean_reference_beating_count`: `7.62` vs `5.62`
+- Compact theory versus the main structural CVT controls:
+  - vs `cvt_large_struct10d`:
+    compact improved functionality (`0.5199` vs `0.4141`), synthesis
+    (`0.4128` vs `0.3615`), runtime (`3147.77s` vs `3453.71s`), and mean
+    hypervolume (`0.0905` vs `0.0867`), but lost QD score (`0.3163` vs
+    `0.4569`), best quality (`0.2058` vs `0.2838`), and pareto breadth
+    (`2.23` vs `9.54`)
+  - vs `cvt_size_control_3d`:
+    compact improved functionality (`0.5199` vs `0.3981`), synthesis
+    (`0.4128` vs `0.3250`), runtime (`3147.77s` vs `3470.73s`), archive
+    coverage (`0.3558` vs `0.3077`), and mean hypervolume (`0.0905` vs
+    `0.0821`), but lost QD score (`0.3163` vs `0.7322`), best quality
+    (`0.2058` vs `0.2658`), and pareto breadth (`2.23` vs `9.38`)
+- Run-level feature diversity:
+  - run-level feature-analysis artifacts for the compact theory backend are in
+    `final_analysis/feature_analysis/backends/cvt_theory_grounded_compact/`
+  - run-level histogram file:
+    `final_analysis/feature_analysis/backends/cvt_theory_grounded_compact/feature_histograms.png`
+  - run-level embedding views:
+    `pca_fitness.png` and `tsne_fitness.png`
+  - run-level summary reports `644` successful candidates and `74` final elites
+  - only the global physical proxy features `ltp_noff` and `utilization`
+    collapsed at run level, matching the structural controls and improving on
+    the earlier full-theory problem-local collapse picture
+- Problem-level feature diversity and collapse:
+  - per-problem histogram artifacts were generated for all 13 compact-theory
+    problems under each problem directory in `qd_feature_histograms/`
+  - no compact-theory problem reported any collapsed descriptor axis in
+    `descriptor_health.json`
+  - the compact rerun produced non-empty initialized CVT artifacts for all
+    13 problems, including the earlier weak cases
+    `RTLLM/Prob037_parallel2serial`,
+    `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm`, and
+    `VerilogEval-Spec-to-RTL/Prob153_gshare`
+  - the earlier full-theory run still showed problem-local collapsed axes in
+    several cases, including Rent/reconvergence collapse on
+    `VerilogEval-Spec-to-RTL/Prob098_circuit7` and reconvergence collapse on
+    `VerilogEval-Spec-to-RTL/Prob116_m2014_q3`
+- Interpretation:
+  - `theory_grounded_compact_8d` is the best current theory-only hard-subset
+    profile when the goal is stable archive construction, higher synthesis
+    throughput, and stronger mean hypervolume than the earlier 20D theory run
+  - it is not yet the best QD default, because structural controls still win on
+    archive QD score, elite quality, and pareto breadth
+  - the comparison is directionally useful but still confounded:
+    compact theory used the tuned Stage 10 CVT policy, while the earlier
+    full-theory and structural baselines still used older warmup-16 settings
+- Code review outcome:
+  no new runtime code changes landed in Stage 11B/11C. Review focused on the
+  experiment surfaces, generated artifact integrity, and whether the results
+  justify a change in the recommended theory profile.
+- Validation:
+  - `HARD_SUBSET_SAVE_PATH=/workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_grounded_compact_tuned_20x5_20260326 HARD_SUBSET_TOTAL_WORKER_SLOTS=20 HARD_SUBSET_MAX_ACTIVE_PROBLEMS=13 HARD_SUBSET_MAX_WORKERS_PER_PROBLEM=2 bash scripts/run_hard_iteration_qd_vllm.sh --config data/configs/hard_iteration_subset.yaml --mode cvt_theory_grounded_compact`
+  - `/workspace/.venv/bin/python scripts/report_final_analysis_bundle.py --subset-config data/configs/hard_iteration_subset.yaml --output-dir /workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_compact_vs_baselines_20260326_2158/final_analysis --backend_run classic=/workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_qd_5way_standard20x5_warmup16_unconstrained_20260326_032529/classic --backend_run cvt_implemented_structural_fixed_5d=/workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_qd_5way_standard20x5_warmup16_unconstrained_20260326_032529/cvt_implemented_structural_fixed_5d --backend_run cvt_large_struct10d=/workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_qd_5way_standard20x5_warmup16_unconstrained_20260326_032529/cvt_large_struct10d --backend_run cvt_large_struct_size_control_13d=/workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_qd_5way_standard20x5_warmup16_unconstrained_20260326_032529/cvt_large_struct_size_control_13d --backend_run cvt_size_control_3d=/workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_qd_5way_standard20x5_warmup16_unconstrained_20260326_032529/cvt_size_control_3d --backend_run cvt_theory_grounded=/workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_grounded_20x5_warmup16_unconstrained/20260326_160434/cvt_theory_grounded --backend_run cvt_theory_grounded_compact=/workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_grounded_compact_tuned_20x5_20260326/20260326_205740/cvt_theory_grounded_compact`
+  - `/workspace/.venv/bin/python scripts/report_qd_problem_histograms.py --run-root /workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_grounded_compact_tuned_20x5_20260326/20260326_205740/cvt_theory_grounded_compact`
+  - `/workspace/.venv/bin/python scripts/report_qd_problem_histograms.py --run-root /workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_grounded_20x5_warmup16_unconstrained/20260326_160434/cvt_theory_grounded`
+
 ## Remaining Validation / Experiment TODOs
 
 - [x] Run full `pytest`.
@@ -1032,11 +1176,11 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - [x] Inspect archive-side descriptor-health behavior for the SCOAP histogram
   axes; the hard-subset run shows that several higher-score bins do collapse and
   should be pruned or demoted in the next profile iteration.
-- [ ] Rerun the hard-subset comparison with the compact theory profile and
+- [x] Rerun the hard-subset comparison with the compact theory profile and
   compare it directly against the full theory profile and structural controls.
 - [x] Prototype a warmup / centroid-init fallback for problems that never reach
   the current success threshold.
-- [ ] Evaluate the new warmup fallback on the compact-profile hard-subset rerun
+- [x] Evaluate the new warmup fallback on the compact-profile hard-subset rerun
   and confirm that low-success problems no longer finish with empty archives.
 - [x] Add Rent confidence gating for graphs with too few retained samples or
   obviously clamped fits.
@@ -1054,11 +1198,20 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - [ ] Decide whether report-side CP comparisons should stay raw-only by
   default, with confidence-gated values kept as a safety diagnostic rather than
   the headline accuracy metric.
+- [ ] Rerun the full-theory and main structural hard-subset controls under the
+  same tuned `16 / 4 / 0.25 / 2` CVT policy used by Stage 11 so profile
+  comparisons are no longer confounded by archive-policy differences.
+- [ ] Decide whether the next theory follow-on should be a hybrid
+  theory-plus-structural profile aimed at recovering QD score and pareto
+  breadth without reintroducing the collapse problems of the full 20D profile.
 
 ## Open Questions
 
 - Does the 20D profile produce useful archive diversity, or is a reduced
   subspace needed to avoid CVT dilution?
+- Once archive-policy differences are removed, does compact theory still beat
+  full theory on stability and hypervolume, or is part of the Stage 11 gain
+  mostly the tuned `warmup=4` policy rather than the profile reduction itself?
 - Is the current Rent fit stable enough across small synthesized graphs, or
   should the recursive partition flow add stronger trimming, confidence
   filters, or a stricter minimum sample/node threshold?
@@ -1075,14 +1228,15 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 ## Roadmap
 
 - Short term:
-  add the compact theory candidate as a builtin profile and rerun the hard
-  subset against `implemented_structural_fixed_5d`, `large_struct10d`, and
-  `size_control_3d`.
+  rerun `theory_grounded_full_20d`, `theory_grounded_compact_8d`,
+  `implemented_structural_fixed_5d`, `large_struct10d`, and
+  `size_control_3d` under the same tuned `16 / 4 / 0.25 / 2` CVT policy, then
+  decide whether the next theory follow-on should be compact-only or a hybrid
+  score-recovery profile.
 - Medium term:
-  rerun the hard subset with `theory_grounded_compact_8d` using the tuned
-  hard-subset CVT policy (`16 / 4 / 0.25 / 2`), then compare the compact
-  profile against the full theory profile now that the full profile no longer
-  uses raw unclipped Rent extremes directly.
+  if the same-policy rerun still shows a score gap, prototype a hybrid
+  theory-plus-structural profile that tries to keep compact theory’s stability
+  while recovering QD score and pareto breadth.
 - Medium term:
   rerun confidence-gated Rent calibration against a stable reference corpus and
   decide whether `rent_k`, retained-sample counts, or fit-quality diagnostics
