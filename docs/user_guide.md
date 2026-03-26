@@ -223,6 +223,19 @@ Current feature status:
   calibration path for Rent analysis. Start from
   `data/configs/qd_theory_rent_calibration_example.json`, then point each case
   at an RTL file, top module, and optional stored RentCon output paths.
+- `scripts/report_qd_rent_reference_validation.py` provides a synthesized-
+  netlist validation path for Rent analysis. Point it at a prior experiment
+  root that contains passing `code.syn.v` outputs and it will:
+  - stage one passing synthesized netlist per problem into `exp/`
+  - generate placed DEF files with OpenROAD
+  - run the native RentCon binary plus the repo-native extractor
+  - emit `final_analysis/rent_reference_validation_report.{json,md}` with
+    accuracy/runtime deltas and plots
+  Start with:
+  `/workspace/.venv/bin/python scripts/report_qd_rent_reference_validation.py --run_root <hard_subset_run_root> --output_root exp/qd_rent_reference_validation_example --workers 1`
+  Use `--workers 1` by default on this branch because the local RentCon binary
+  is unstable on many OpenROAD-generated DEFs and sequential runs are more
+  reproducible.
 - `scripts/run_qd_theory_followup_vllm.sh` provides a bounded multi-problem
   CVT follow-up matrix over:
   - `implemented_structural_fixed_5d`
