@@ -25,9 +25,11 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - Current stage:
   runtime extraction, profile wiring, docs, bounded smokes, Rent calibration,
   bounded theory follow-up reporting, manifest-driven broader experiment
-  tooling, and the first hard-subset `20 x 5` comparison are complete; the
-  next stage is to turn the Stage 6 evidence into a reduced follow-on profile
-  and to address CVT warmup failures on low-success problems
+  tooling, the first hard-subset `20 x 5` comparison, the compact follow-on
+  profile, the CVT warmup fallback, and the first native Rent reference
+  validation pass are complete; the next stage is to rerun the hard subset
+  with the compact theory profile and to add rent-confidence / calibration
+  fixes before any broader promotion decision
 
 ## Worktree Notes
 
@@ -151,6 +153,14 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     the fallback changes user-visible artifact behavior
   - Stage 7B status:
     completed locally and ready for a signed checkpoint commit
+- Stage 8: native Rent reference validation on synthesized netlists
+  - scope:
+    stage passing synthesized hard-subset netlists into `exp/`, generate
+    OpenROAD DEF files, compare the repo-native Rent extractor against the
+    native RentCon binary, time both paths, and record the findings in this
+    plan plus a reusable report bundle
+  - status:
+    completed locally and ready for a signed checkpoint commit
 
 ## Decisions Log
 
@@ -195,6 +205,15 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   archive when they have at least one successful candidate. The archive now
   performs a run-end fallback initialization from the warmup buffer instead of
   discarding those successes.
+- 2026-03-26: The shipped RentCon binary under `/workspace/.rentcon` is usable
+  only as a best-effort offline reference on this machine. It crashes on many
+  OpenROAD-generated DEFs, so the new validation helper runs one case per
+  process, accepts parseable summaries from non-zero exits, and treats
+  RentCon as comparison-only evidence rather than a clean batch oracle.
+- 2026-03-26: Repo-native Rent extraction is cheap enough for the live runtime,
+  but the current slope/clamp behavior is not calibrated well enough for small
+  synthesized graphs. Promotion work should focus on confidence gating and fit
+  policy before expanding Rent-heavy profiles.
 
 ## Implementation Checklist
 
@@ -227,8 +246,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - [x] Generate problem-level histogram artifacts for the hard-subset theory run.
 - [x] Fix final-analysis evolutionary reporting for nested model-directory
   backend roots.
-- [ ] Compare repo-native Rent estimates against extracted RentCon reports on a
+- [x] Compare repo-native Rent estimates against extracted RentCon reports on a
   small calibration corpus.
+- [x] Compare repo-native Rent estimates against native RentCon runs on staged
+  synthesized hard-subset netlists and record the accuracy/runtime findings.
 - [x] Add a compact theory-grounded follow-on profile based on
   Stage 6 collapse evidence.
 - [ ] Benchmark the compact theory-grounded follow-on profile against the full
@@ -237,6 +258,8 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   configured warmup threshold.
 - [ ] Decide whether any reduced theory-grounded profile should become a
   default recommended follow-on after the Stage 7 rerun.
+- [ ] Add rent-confidence gating or fallback handling for low-sample /
+  clamped Rent cases before using Rent more aggressively in profile decisions.
 
 ## Delivered Runtime Surface
 
@@ -365,6 +388,20 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   `python scripts/report_qd_rent_calibration.py --manifest data/configs/qd_theory_rent_calibration_example.json --output_json /tmp/qd_rent_calibration_stage3/report.json --output_md /tmp/qd_rent_calibration_stage3/report.md`
   completed and emitted a real example markdown/json report over two RTLLM
   reference designs.
+- 2026-03-26:
+  `/workspace/.venv/bin/pytest tests/scripts/test_report_qd_rent_reference_validation.py -q`
+  passed after adding the synthesized-netlist reference-validation harness and
+  fallback parsing for partial RentCon outputs.
+- 2026-03-26:
+  `/workspace/.venv/bin/ruff check scripts/report_qd_rent_reference_validation.py tests/scripts/test_report_qd_rent_reference_validation.py`
+  passed.
+- 2026-03-26:
+  `/workspace/.venv/bin/python -m pyright scripts/report_qd_rent_reference_validation.py`
+  passed.
+- 2026-03-26:
+  `/workspace/.venv/bin/python scripts/report_qd_rent_reference_validation.py --run_root /workspace/.worktrees/hard-iteration-subset-qd/exp/hard_iteration_qd_5way_standard20x5_warmup16_unconstrained_20260326_032529 --output_root /workspace/.worktrees/qd-theory-grounded-descriptors/exp/qd_rent_reference_validation_hard_subset_20260326_final --workers 1 --repo_root /workspace/.worktrees/qd-theory-grounded-descriptors`
+  completed and wrote the final Stage 8 bundle under
+  `/workspace/.worktrees/qd-theory-grounded-descriptors/exp/qd_rent_reference_validation_hard_subset_20260326_final/final_analysis`.
 - 2026-03-26:
   `bash -n scripts/run_qd_theory_followup_vllm.sh`
   passed.
@@ -568,6 +605,35 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     improvement or broad pareto strength.
   - The next code/data follow-up should focus on a reduced theory profile and a
     more robust centroid-initialization strategy for low-success problems.
+- Stage 8 conclusion:
+  - The repo-native Rent path is fast:
+    mean internal wall time was `0.020968s`, and the Rent-fit portion itself
+    averaged `0.000560s` across the five parseable cases.
+  - The native RentCon reference path is much heavier:
+    mean reference wall time was `0.514413s` per case
+    (`0.331768s` OpenROAD DEF generation plus `0.182646s` RentCon), or about
+    `24.85x` slower than the repo-native extractor.
+  - Accuracy is not good enough yet on the CP-comparable subset:
+    mean absolute delta vs circuit-partitioning Type-I Rent was `0.201490`
+    with median `0.231087`, max `0.252282`, and paired Pearson correlation
+    `0.246132`.
+  - The current internal extractor frequently collapses to boundary values:
+    4 of 5 parseable cases produced `rent_exponent` values at `0.0` or `1.0`,
+    and 2 of 5 kept only `1-2` retained samples.
+  - Concrete examples from the final bundle:
+    `Prob004_adder_8bit` was `1.000000` internally vs `0.908496` from RentCon
+    CP Type I; `Prob024_fsm` was `1.000000` vs `0.752423`;
+    `Prob135_m2014_q6b` was `0.550340` vs `0.764936`;
+    `Prob151_review2015_fsm` was `1.000000` vs `0.747718`.
+  - The RentCon binary itself is unstable on this corpus:
+    only 5 of 13 staged hard-subset cases yielded any parseable reference
+    output, all 5 of those still exited non-zero, and 8 cases produced no
+    parseable summary at all.
+  - The next Rent-specific fixes should be:
+    add explicit confidence gating for low-node / low-sample cases, avoid
+    promoting clamped `rent_exponent` values as if they were high-confidence,
+    and revisit the recursive-partition regression policy against
+    circuit-partitioning Type-I behavior before expanding Rent-heavy profiles.
 
 ## Remaining Validation / Experiment TODOs
 
@@ -578,32 +644,46 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - [x] Add a bounded theory follow-up matrix harness and report workflow.
 - [x] Add a manifest-driven broader theory follow-up runner and decision
   report workflow.
+- [x] Add a synthesized-netlist Rent reference-validation harness that stages
+  hard-subset netlists, generates DEFs, runs RentCon, and reports
+  accuracy/runtime deltas.
 - [ ] Run a broader theory-profile smoke matrix over both RTLLM and
   VerilogEval with the Stage 7 compact profile and non-trivial
   population/generation budgets.
-- [ ] Save a small calibration set of RentCon outputs so
-  `scripts/qd_theory_descriptor_probe.py` can report concrete deltas instead of
-  just repo-native values.
+- [ ] Save or vendor a stable small calibration set of RentCon outputs so
+  `scripts/qd_theory_descriptor_probe.py` can report concrete deltas without
+  depending on the unstable local RentCon binary.
 - [x] Inspect archive-side descriptor-health behavior for the SCOAP histogram
   axes; the hard-subset run shows that several higher-score bins do collapse and
   should be pruned or demoted in the next profile iteration.
 - [ ] Rerun the hard-subset comparison with the compact theory profile and
   compare it directly against the full theory profile and structural controls.
-- [ ] Prototype a warmup / centroid-init fallback for problems that never reach
+- [x] Prototype a warmup / centroid-init fallback for problems that never reach
   the current success threshold.
+- [ ] Evaluate the new warmup fallback on the compact-profile hard-subset rerun
+  and confirm that low-success problems no longer finish with empty archives.
+- [ ] Add Rent confidence gating for graphs with too few retained samples or
+  obviously clamped fits, then rerun the reference validation bundle.
+- [ ] Decide whether the current repo-native Rent fit should target
+  circuit-partitioning Type I specifically, or whether it should become a
+  different named metric that is documented as only loosely Rent-like.
 
 ## Open Questions
 
 - Does the 20D profile produce useful archive diversity, or is a reduced
   subspace needed to avoid CVT dilution?
 - Is the current Rent fit stable enough across small synthesized graphs, or
-  should the recursive partition flow add stronger trimming / sample filters?
+  should the recursive partition flow add stronger trimming, confidence
+  filters, or a stricter minimum sample/node threshold?
 - Should SCOAP histograms remain raw percentages, or should future follow-on
   profiles compress them through PCA or hand-picked summary ratios?
 - Are there benchmark families where graph extraction from raw RTL should be
   replaced with post-`techmap` or post-`abc` graphs for better comparability?
 - What is the right fallback when a CVT profile has a high warmup target but a
   problem never produces enough successful candidates to initialize centroids?
+- Should the repo continue to rely on the shipped RentCon binary for native
+  comparison, or should it move to a checked-in calibration corpus because the
+  local binary is too unstable for unattended batch use?
 
 ## Roadmap
 
@@ -612,8 +692,9 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   subset against `implemented_structural_fixed_5d`, `large_struct10d`, and
   `size_control_3d`.
 - Medium term:
-  calibrate repo-native Rent against RentCon reference outputs and decide
-  whether `rent_k` or fit-quality diagnostics deserve report-side exposure.
+  add confidence-gated Rent calibration against a stable reference corpus and
+  decide whether `rent_k`, retained-sample counts, or fit-quality diagnostics
+  should directly influence profile selection or report-side warnings.
 - Medium term:
   decide whether centroid warmup should be adaptive, reduced, or bypassed with
   a fallback archive-init path on low-success problems.
