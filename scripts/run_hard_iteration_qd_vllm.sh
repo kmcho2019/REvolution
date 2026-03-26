@@ -28,6 +28,8 @@ Environment overrides:
   HARD_SUBSET_TOP_P             Top-p override (defaults to config value)
   HARD_SUBSET_NUM_CELLS         CVT cell override (defaults to config value)
   HARD_SUBSET_CVT_WARMUP        CVT warmup override (defaults to config value)
+  HARD_SUBSET_QD_FILL_TARGET_FRACTION QD fill-target override (defaults to config value)
+  HARD_SUBSET_QD_CELL_RESERVOIR QD per-cell reservoir override (defaults to config value)
   PYTHON_BIN                    Python binary (default: <repo>/.venv/bin/python if present, else python3)
 
 Examples:
@@ -127,6 +129,13 @@ model = cfg["model"]
 defaults = cfg["matrix_defaults"]
 benchmarks = list(cfg["benchmarks"].keys())
 problems = [entry["problem"] for entry in cfg["selected_problems"]]
+configured_mode_names = list(cfg["modes"].keys())
+matrix_modes = list(
+    cfg.get(
+        "matrix_modes",
+        ["classic", "grid_struct", "cvt_struct", "cvt_size_control"],
+    )
+)
 
 emit_scalar("CONFIG_SUBSET_NAME", cfg.get("subset_name", "hard_iteration_subset"))
 emit_scalar("CONFIG_MODEL_NAME", model["model_name"])
@@ -175,9 +184,13 @@ emit_scalar("CONFIG_MAX_TOKENS", defaults["max_tokens"])
 emit_scalar("CONFIG_DIFF_MAX_TOKENS", defaults["diff_max_tokens"])
 emit_scalar("CONFIG_QD_NUM_CELLS", defaults["qd_num_cells"])
 emit_scalar("CONFIG_QD_CVT_WARMUP", defaults["qd_cvt_warmup_successes"])
+emit_scalar("CONFIG_QD_FILL_TARGET_FRACTION", defaults.get("qd_fill_target_fraction", 0.25))
+emit_scalar("CONFIG_QD_CELL_RESERVOIR", defaults.get("qd_cell_reservoir", 2))
 emit_scalar("CONFIG_SEED", defaults["seed"])
 emit_array("CONFIG_BENCHMARKS", benchmarks)
 emit_array("CONFIG_PROBLEMS", problems)
+emit_array("CONFIG_MODE_NAMES", configured_mode_names)
+emit_array("CONFIG_MATRIX_MODES", matrix_modes)
 
 for mode_name, mode_cfg in cfg["modes"].items():
     prefix = f"MODE_{mode_name.upper()}"
@@ -186,6 +199,19 @@ for mode_name, mode_cfg in cfg["modes"].items():
     emit_scalar(
         f"{prefix}_QD_DESCRIPTOR_PROFILE",
         mode_cfg.get("qd_descriptor_profile", ""),
+    )
+    emit_scalar(f"{prefix}_QD_NUM_CELLS", mode_cfg.get("qd_num_cells", ""))
+    emit_scalar(
+        f"{prefix}_QD_CVT_WARMUP",
+        mode_cfg.get("qd_cvt_warmup_successes", ""),
+    )
+    emit_scalar(
+        f"{prefix}_QD_FILL_TARGET_FRACTION",
+        mode_cfg.get("qd_fill_target_fraction", ""),
+    )
+    emit_scalar(
+        f"{prefix}_QD_CELL_RESERVOIR",
+        mode_cfg.get("qd_cell_reservoir", ""),
     )
 PY
 )"
@@ -258,33 +284,22 @@ if [[ -z "${OPENAI_API_KEY:-}" ]]; then
   export OPENAI_API_KEY="vllm-local-placeholder"
 fi
 
-case "${MODE}" in
-  classic)
-    MODES=("classic")
-    ;;
-  grid_struct)
-    MODES=("grid_struct")
-    ;;
-  cvt_struct)
-    MODES=("cvt_struct")
-    ;;
-  cvt_size_control)
-    MODES=("cvt_size_control")
-    ;;
-  cvt_theory_grounded)
-    MODES=("cvt_theory_grounded")
-    ;;
-  cvt_theory_grounded_compact)
-    MODES=("cvt_theory_grounded_compact")
-    ;;
-  matrix)
-    MODES=("classic" "grid_struct" "cvt_struct" "cvt_size_control")
-    ;;
-  *)
-    echo "Unsupported mode '${MODE}'. Use classic, grid_struct, cvt_struct, cvt_size_control, cvt_theory_grounded, cvt_theory_grounded_compact, or matrix." >&2
-    exit 2
-    ;;
-esac
+mode_in_config=0
+for configured_mode in "${CONFIG_MODE_NAMES[@]}"; do
+  if [[ "${MODE}" == "${configured_mode}" ]]; then
+    mode_in_config=1
+    break
+  fi
+done
+
+if [[ "${MODE}" == "matrix" ]]; then
+  MODES=("${CONFIG_MATRIX_MODES[@]}")
+elif (( mode_in_config == 1 )); then
+  MODES=("${MODE}")
+else
+  echo "Unsupported mode '${MODE}'. Use one of: matrix ${CONFIG_MODE_NAMES[*]}" >&2
+  exit 2
+fi
 
 POPULATION_SIZE="${HARD_SUBSET_POPULATION_SIZE:-${CONFIG_POPULATION_SIZE}}"
 NUM_GENERATIONS="${HARD_SUBSET_NUM_GENERATIONS:-${CONFIG_NUM_GENERATIONS}}"
@@ -297,6 +312,8 @@ MAX_TOKENS="${HARD_SUBSET_MAX_TOKENS:-${CONFIG_MAX_TOKENS}}"
 DIFF_MAX_TOKENS="${HARD_SUBSET_DIFF_MAX_TOKENS:-${CONFIG_DIFF_MAX_TOKENS}}"
 NUM_CELLS="${HARD_SUBSET_NUM_CELLS:-${CONFIG_QD_NUM_CELLS}}"
 CVT_WARMUP="${HARD_SUBSET_CVT_WARMUP:-${CONFIG_QD_CVT_WARMUP}}"
+QD_FILL_TARGET_FRACTION="${HARD_SUBSET_QD_FILL_TARGET_FRACTION:-${CONFIG_QD_FILL_TARGET_FRACTION}}"
+QD_CELL_RESERVOIR="${HARD_SUBSET_QD_CELL_RESERVOIR:-${CONFIG_QD_CELL_RESERVOIR}}"
 SEED="${HARD_SUBSET_SEED:-${CONFIG_SEED}}"
 TIMEOUT_S="${HARD_SUBSET_TIMEOUT_S:-0}"
 SAVE_ROOT="${HARD_SUBSET_SAVE_PATH:-${REPO_ROOT}/exp/hard_iteration_qd}"
@@ -323,6 +340,8 @@ max_tokens=${MAX_TOKENS}
 diff_max_tokens=${DIFF_MAX_TOKENS}
 qd_num_cells=${NUM_CELLS}
 qd_cvt_warmup_successes=${CVT_WARMUP}
+qd_fill_target_fraction=${QD_FILL_TARGET_FRACTION}
+qd_cell_reservoir=${QD_CELL_RESERVOIR}
 seed=${SEED}
 EOF
 
@@ -361,11 +380,41 @@ for mode_name in "${MODES[@]}"; do
   search_mode_var="MODE_${upper_mode}_SEARCH_MODE"
   archive_type_var="MODE_${upper_mode}_QD_ARCHIVE_TYPE"
   descriptor_profile_var="MODE_${upper_mode}_QD_DESCRIPTOR_PROFILE"
+  mode_num_cells_var="MODE_${upper_mode}_QD_NUM_CELLS"
+  mode_cvt_warmup_var="MODE_${upper_mode}_QD_CVT_WARMUP"
+  mode_fill_target_var="MODE_${upper_mode}_QD_FILL_TARGET_FRACTION"
+  mode_cell_reservoir_var="MODE_${upper_mode}_QD_CELL_RESERVOIR"
 
   search_mode="${!search_mode_var}"
   archive_type="${!archive_type_var}"
   descriptor_profile="${!descriptor_profile_var}"
+  resolved_num_cells="${!mode_num_cells_var}"
+  resolved_cvt_warmup="${!mode_cvt_warmup_var}"
+  resolved_fill_target="${!mode_fill_target_var}"
+  resolved_cell_reservoir="${!mode_cell_reservoir_var}"
+  if [[ -z "${resolved_num_cells}" ]]; then
+    resolved_num_cells="${NUM_CELLS}"
+  fi
+  if [[ -z "${resolved_cvt_warmup}" ]]; then
+    resolved_cvt_warmup="${CVT_WARMUP}"
+  fi
+  if [[ -z "${resolved_fill_target}" ]]; then
+    resolved_fill_target="${QD_FILL_TARGET_FRACTION}"
+  fi
+  if [[ -z "${resolved_cell_reservoir}" ]]; then
+    resolved_cell_reservoir="${QD_CELL_RESERVOIR}"
+  fi
   mode_root="${SAVE_PATH}/${mode_name}"
+
+  {
+    echo "mode.${mode_name}.search_mode=${search_mode}"
+    echo "mode.${mode_name}.qd_archive_type=${archive_type}"
+    echo "mode.${mode_name}.qd_descriptor_profile=${descriptor_profile}"
+    echo "mode.${mode_name}.qd_num_cells=${resolved_num_cells}"
+    echo "mode.${mode_name}.qd_cvt_warmup_successes=${resolved_cvt_warmup}"
+    echo "mode.${mode_name}.qd_fill_target_fraction=${resolved_fill_target}"
+    echo "mode.${mode_name}.qd_cell_reservoir=${resolved_cell_reservoir}"
+  } >> "${SAVE_PATH}/hard_iteration_manifest.txt"
 
   CMD=("${PYTHON_BIN}" "scripts/run_backend.py")
   CMD+=("--backend" "revolution")
@@ -397,9 +446,11 @@ for mode_name in "${MODES[@]}"; do
   if [[ "${search_mode}" == "revolution_qd" ]]; then
     CMD+=("--qd_archive_type" "${archive_type}")
     CMD+=("--qd_descriptor_profile" "${descriptor_profile}")
+    CMD+=("--qd_num_cells" "${resolved_num_cells}")
+    CMD+=("--qd_fill_target_fraction" "${resolved_fill_target}")
+    CMD+=("--qd_cell_reservoir" "${resolved_cell_reservoir}")
     if [[ "${archive_type}" == "cvt" ]]; then
-      CMD+=("--qd_num_cells" "${NUM_CELLS}")
-      CMD+=("--qd_cvt_warmup_successes" "${CVT_WARMUP}")
+      CMD+=("--qd_cvt_warmup_successes" "${resolved_cvt_warmup}")
     fi
   fi
 

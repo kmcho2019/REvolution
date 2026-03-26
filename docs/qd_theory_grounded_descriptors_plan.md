@@ -27,9 +27,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   bounded theory follow-up reporting, manifest-driven broader experiment
   tooling, the first hard-subset `20 x 5` comparison, the compact follow-on
   profile, the CVT warmup fallback, and the first native Rent reference
-  validation pass are complete; the next stage is to rerun the hard subset
-  with the compact theory profile now that the safer Rent policy and the
-  updated reference-validation workflow are both in place
+  validation pass are complete; the next stage is Stage 10 QD archive tuning:
+  finish the config-driven hard-subset harness, screen grid vs CVT plus the
+  active CVT knobs on the hard subset, then freeze a cleaner recommended
+  archive/default policy before the next compact-theory rerun
 
 ## Worktree Notes
 
@@ -197,6 +198,57 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     and a code review pass on the reporting diff
   - Stage 9B status:
     completed locally and ready for a signed checkpoint commit
+- Stage 10: QD archive family and CVT parameter tuning
+  - scope:
+    make the hard-subset harness support config-driven archive-parameter
+    matrices, run a bounded grid-vs-CVT screening matrix plus focused CVT
+    knob sweeps, confirm the strongest candidate on a heavier hard-subset run,
+    then freeze a recommended archive/default policy in config and docs
+  - status:
+    in progress
+  - Stage 10A goal:
+    finish the config-driven hard-subset tuning harness and document the
+    tuning stage before launching experiments
+  - Stage 10A expected surfaces:
+    `scripts/run_hard_iteration_qd_vllm.sh`,
+    `tests/scripts/test_run_hard_iteration_qd_vllm.py`,
+    and this plan journal
+  - Stage 10A validation:
+    harness dry-run regression tests, shell syntax check, and a code review
+    pass on the new config-driven mode/override handling
+  - Stage 10A status:
+    completed locally and ready for a signed checkpoint commit
+  - Stage 10B goal:
+    run a bounded hard-subset tuning matrix to answer two practical
+    questions:
+    `grid` or `cvt` as the better default family for this workload, and which
+    active CVT settings (`qd_num_cells`, `qd_cvt_warmup_successes`,
+    `qd_fill_target_fraction`, `qd_cell_reservoir`) give the strongest
+    trade-off between score, archive health, and stability
+  - Stage 10B expected surfaces:
+    a dedicated hard-subset tuning config under `data/configs/`,
+    experiment roots under `exp/`,
+    and the resulting `final_analysis/` bundle(s)
+  - Stage 10B validation:
+    vLLM preflight, completed hard-subset screening runs, report generation,
+    and a code review pass on any new report/config glue
+  - Stage 10B status:
+    pending
+  - Stage 10C goal:
+    freeze the chosen recommendation into the checked-in hard-subset defaults
+    and user-facing docs, record the evidence and rationale in this plan, and
+    leave the next compact-theory rerun stage with a clearer archive policy
+  - Stage 10C expected surfaces:
+    `data/configs/hard_iteration_subset.yaml`,
+    `scripts/build_hard_iteration_subset.py`,
+    relevant user docs,
+    and this plan journal
+  - Stage 10C validation:
+    targeted tests for any changed config-emission code, lint/typecheck on
+    touched Python modules, shell validation for touched harnesses, and a final
+    report spot-check against the selected recommendation
+  - Stage 10C status:
+    pending
 
 ## Decisions Log
 
@@ -787,6 +839,31 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     repo-native Rent path is still fast and still not accurate enough to claim
     direct CP Type I agreement on this corpus.
 
+## Stage 10A Results
+
+- `scripts/run_hard_iteration_qd_vllm.sh` now supports config-driven tuning
+  matrices:
+  - `--mode matrix` uses `matrix_modes` from the config when present
+  - `--mode <name>` can target any named mode declared in the config
+  - each mode can now override `qd_num_cells`,
+    `qd_cvt_warmup_successes`, `qd_fill_target_fraction`, and
+    `qd_cell_reservoir`
+- The hard-subset manifest now records the resolved per-mode archive settings,
+  which makes later report review and parameter audits easier.
+- The harness still keeps the control flow simple:
+  read config, resolve a concrete mode list, resolve per-mode overrides, write
+  them to the manifest, then build one explicit `run_backend.py` command per
+  mode.
+- Code review outcome:
+  no issues found in the Stage 10A harness diff. The new logic only exposes
+  active runtime knobs and deliberately avoids adding dead or misleading
+  surfaces such as `qd_neighbor_k`, which is not currently consumed by the
+  runtime.
+- Validation:
+  - `bash -n scripts/run_hard_iteration_qd_vllm.sh`
+  - `pytest tests/scripts/test_run_hard_iteration_qd_vllm.py -q`
+  - `ruff check tests/scripts/test_run_hard_iteration_qd_vllm.py`
+
 ## Remaining Validation / Experiment TODOs
 
 - [x] Run full `pytest`.
@@ -818,6 +895,12 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   obviously clamped fits.
 - [x] Rerun the reference validation bundle after the confidence-gating change
   and measure whether the new diagnostics reduce misleading boundary cases.
+- [x] Finish Stage 10A by landing the config-driven hard-subset tuning matrix
+  support in the runner and tests.
+- [ ] Run the Stage 10B hard-subset archive-tuning screen for grid vs CVT plus
+  the active CVT knobs.
+- [ ] Freeze the Stage 10 tuning decision into the hard-subset config and
+  runner defaults, then document the rationale and evidence.
 - [ ] Decide whether the current repo-native Rent fit should target
   circuit-partitioning Type I specifically, or whether it should become a
   different named metric that is documented as only loosely Rent-like.

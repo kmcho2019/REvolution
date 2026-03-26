@@ -37,6 +37,8 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
                     "diff_max_tokens": 128000,
                     "qd_num_cells": 16,
                     "qd_cvt_warmup_successes": 4,
+                    "qd_fill_target_fraction": 0.35,
+                    "qd_cell_reservoir": 3,
                     "seed": 42,
                 },
                 "modes": {
@@ -121,6 +123,8 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "--qd_descriptor_profile size_control_3d" in normalized
     assert "--qd_num_cells 16" in normalized
     assert "--qd_cvt_warmup_successes 4" in normalized
+    assert "--qd_fill_target_fraction 0.35" in normalized
+    assert "--qd_cell_reservoir 3" in normalized
     assert "--population_size 20" in normalized
     assert "--num_generations 5" in normalized
     assert "--total_worker_slots 2" in normalized
@@ -138,6 +142,8 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "total_worker_slots=2" in manifest
     assert "qd_num_cells=16" in manifest
     assert "qd_cvt_warmup_successes=4" in manifest
+    assert "qd_fill_target_fraction=0.35" in manifest
+    assert "qd_cell_reservoir=3" in manifest
     assert f"--output {run_dir / 'hard_iteration_backend_comparison.md'}" in normalized
     assert f"--backend_run classic={run_dir / 'classic'}" in normalized
     assert f"--backend_run grid_struct={run_dir / 'grid_struct'}" in normalized
@@ -177,6 +183,8 @@ def test_run_hard_iteration_qd_script_supports_theory_mode(tmp_path):
                     "diff_max_tokens": 128000,
                     "qd_num_cells": 16,
                     "qd_cvt_warmup_successes": 16,
+                    "qd_fill_target_fraction": 0.25,
+                    "qd_cell_reservoir": 2,
                     "seed": 42,
                 },
                 "modes": {
@@ -229,7 +237,10 @@ def test_run_hard_iteration_qd_script_supports_theory_mode(tmp_path):
     normalized = " ".join(result.stdout.split())
     assert "[cvt_theory_grounded] command:" in result.stdout
     assert "--qd_descriptor_profile theory_grounded_full_20d" in normalized
+    assert "--qd_num_cells 16" in normalized
     assert "--qd_cvt_warmup_successes 16" in normalized
+    assert "--qd_fill_target_fraction 0.25" in normalized
+    assert "--qd_cell_reservoir 2" in normalized
     assert "--total_worker_slots 20" in normalized
     assert "--max_active_problems 20" in normalized
     assert "--max_workers_per_problem 20" in normalized
@@ -266,6 +277,8 @@ def test_run_hard_iteration_qd_script_supports_compact_theory_mode(tmp_path):
                     "diff_max_tokens": 128000,
                     "qd_num_cells": 16,
                     "qd_cvt_warmup_successes": 16,
+                    "qd_fill_target_fraction": 0.25,
+                    "qd_cell_reservoir": 2,
                     "seed": 42,
                 },
                 "modes": {
@@ -321,5 +334,121 @@ def test_run_hard_iteration_qd_script_supports_compact_theory_mode(tmp_path):
     normalized = " ".join(result.stdout.split())
     assert "[cvt_theory_grounded_compact] command:" in result.stdout
     assert "--qd_descriptor_profile theory_grounded_compact_8d" in normalized
+    assert "--qd_num_cells 16" in normalized
     assert "--qd_cvt_warmup_successes 16" in normalized
+    assert "--qd_fill_target_fraction 0.25" in normalized
+    assert "--qd_cell_reservoir 2" in normalized
     assert "--total_worker_slots 20" in normalized
+
+
+def test_run_hard_iteration_qd_script_supports_custom_matrix_modes_and_overrides(tmp_path):
+    repo_root = Path(__file__).resolve().parents[2]
+    script_path = repo_root / "scripts" / "run_hard_iteration_qd_vllm.sh"
+    config_path = tmp_path / "hard_iteration_subset_tuning.yaml"
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                "subset_name": "hard_iteration_subset_tuning",
+                "model": {
+                    "api_backend": "vllm",
+                    "model_name": "stub-model",
+                    "vllm_host": "fake-host",
+                    "vllm_port": 9999,
+                },
+                "benchmarks": {
+                    "RTLLM": {"problems": ["Prob001_accu"]},
+                },
+                "matrix_defaults": {
+                    "population_size": 12,
+                    "num_generations": 3,
+                    "evaluation_mode": "search_accelerated",
+                    "accelerated_synthesis_top_k": 1,
+                    "total_worker_slots": 4,
+                    "max_active_problems": 4,
+                    "max_workers_per_problem": 4,
+                    "temperature": 1.0,
+                    "top_p": 1.0,
+                    "max_tokens": 128000,
+                    "diff_max_tokens": 128000,
+                    "qd_num_cells": 16,
+                    "qd_cvt_warmup_successes": 4,
+                    "qd_fill_target_fraction": 0.25,
+                    "qd_cell_reservoir": 2,
+                    "seed": 42,
+                },
+                "matrix_modes": [
+                    "grid_struct",
+                    "cvt_size_control_fill50",
+                    "cvt_size_control_dense",
+                ],
+                "modes": {
+                    "grid_struct": {
+                        "search_mode": "revolution_qd",
+                        "qd_archive_type": "grid",
+                        "qd_descriptor_profile": "implemented_structural_compact_3d",
+                    },
+                    "cvt_size_control_fill50": {
+                        "search_mode": "revolution_qd",
+                        "qd_archive_type": "cvt",
+                        "qd_descriptor_profile": "size_control_3d",
+                        "qd_fill_target_fraction": 0.5,
+                    },
+                    "cvt_size_control_dense": {
+                        "search_mode": "revolution_qd",
+                        "qd_archive_type": "cvt",
+                        "qd_descriptor_profile": "size_control_3d",
+                        "qd_num_cells": 24,
+                        "qd_cvt_warmup_successes": 6,
+                        "qd_cell_reservoir": 4,
+                    },
+                },
+                "selected_problems": [
+                    {"benchmark": "RTLLM", "problem": "Prob001_accu"},
+                ],
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+
+    fake_bin = tmp_path / "bin"
+    fake_bin.mkdir()
+    fake_curl = fake_bin / "curl"
+    fake_curl.write_text(
+        "#!/usr/bin/env bash\n"
+        "printf '%s' '{\"data\":[{\"id\":\"stub-model\",\"max_model_len\":131072}]}'\n",
+        encoding="utf-8",
+    )
+    fake_curl.chmod(0o755)
+
+    env = os.environ.copy()
+    env["PATH"] = f"{fake_bin}:{env['PATH']}"
+    env["HARD_SUBSET_SAVE_PATH"] = str(tmp_path / "runs")
+    env["PYTHON_BIN"] = str(Path(os.sys.executable))
+
+    result = subprocess.run(
+        ["bash", str(script_path), "--config", str(config_path), "--mode", "matrix", "--dry-run"],
+        cwd=repo_root,
+        env=env,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    normalized = " ".join(result.stdout.split())
+    assert "[grid_struct] command:" in result.stdout
+    assert "[cvt_size_control_fill50] command:" in result.stdout
+    assert "[cvt_size_control_dense] command:" in result.stdout
+    assert "--qd_fill_target_fraction 0.5" in normalized
+    assert "--qd_num_cells 24" in normalized
+    assert "--qd_cvt_warmup_successes 6" in normalized
+    assert "--qd_cell_reservoir 4" in normalized
+
+    run_dirs = [path for path in (tmp_path / "runs").iterdir() if path.is_dir()]
+    assert len(run_dirs) == 1
+    manifest = (run_dirs[0] / "hard_iteration_manifest.txt").read_text(encoding="utf-8")
+    assert "mode.cvt_size_control_fill50.qd_fill_target_fraction=0.5" in manifest
+    assert "mode.cvt_size_control_dense.qd_num_cells=24" in manifest
+    assert "mode.cvt_size_control_dense.qd_cvt_warmup_successes=6" in manifest
+    assert "mode.cvt_size_control_dense.qd_cell_reservoir=4" in manifest

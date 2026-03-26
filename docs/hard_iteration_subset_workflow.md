@@ -92,12 +92,16 @@ The wrapper now reads the elastic scheduling defaults from
 configs that still use `num_workers` or `candidate_workers` are translated with
 warnings when the wrapper loads them.
 
-Current fixed modes:
+Mode selection is config-driven:
 
-- `classic`
-- `grid_struct`
-- `cvt_struct`
-- `cvt_size_control`
+- `--mode matrix` runs the config's `matrix_modes` list when present, or falls
+  back to the legacy fixed matrix
+- `--mode <name>` runs any mode declared under `modes`
+- each mode can override `qd_num_cells`, `qd_cvt_warmup_successes`,
+  `qd_fill_target_fraction`, and `qd_cell_reservoir`
+
+That makes the hard-subset wrapper usable for bounded archive-tuning sweeps
+without editing the shell script itself.
 
 ### 4. Generate the formal `final_analysis/` bundle
 

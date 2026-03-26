@@ -563,7 +563,11 @@ VerilogEval-Spec-to-RTL iteration testing:
   circuit typing.
 - `scripts/run_hard_iteration_qd_vllm.sh`: run the long-budget `classic`,
   `grid_struct`, `cvt_struct`, and `cvt_size_control` matrix from the frozen
-  subset config.
+  subset config. The runner now also supports config-defined `matrix_modes`
+  plus per-mode overrides for `qd_num_cells`,
+  `qd_cvt_warmup_successes`, `qd_fill_target_fraction`, and
+  `qd_cell_reservoir`, so the same wrapper can drive bounded archive-tuning
+  sweeps without shell edits.
 - `scripts/report_hard_iteration_analysis.py`: generate the post-run markdown
   report plus machine-readable summary for classic-vs-QD hard-subset results.
 - `scripts/report_pareto_analysis.py`: generate per-problem Pareto-front
