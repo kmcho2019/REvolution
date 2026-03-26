@@ -62,6 +62,11 @@
 - `report_qd_rent_calibration.py`: manifest-driven offline Rent calibration
   helper that compares repo-native graph extraction against stored RentCon
   outputs and emits JSON/markdown summaries.
+- `run_qd_theory_followup_vllm.sh`: bounded multi-problem theory-vs-control
+  CVT follow-up matrix for RTLLM / VerilogEval with `--dry-run`.
+- `report_qd_theory_followup.py`: focused follow-up report generator for the
+  theory-profile experiment roots, including compact-profile recommendation
+  output.
 - `run_qd_retrospective_redo_vllm.sh`: repeatable long-budget retrospective
   rerun harness for the four-design `/tmp/qd_rich20x5` corpus with preset
   profile matrices and automatic suite-local comparison reports.

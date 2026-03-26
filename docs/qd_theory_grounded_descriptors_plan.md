@@ -23,10 +23,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - Implementation worktree:
   `/workspace/.worktrees/qd-theory-grounded-descriptors`
 - Current stage:
-  runtime extraction, profile wiring, docs, and bounded validation complete;
-  the branch now has passing full local tests plus one live theory-profile QD
-  smoke; follow-on work is mainly broader experiment evidence and optional
-  RentCon cross-check automation
+  runtime extraction, profile wiring, docs, bounded smokes, Rent calibration,
+  and bounded theory follow-up reporting are complete; the remaining work is
+  mostly longer-budget experiment evidence, broader suite coverage, and
+  optional RentCon cross-check corpus growth
 
 ## Worktree Notes
 
@@ -91,10 +91,12 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     completed locally and ready for a signed checkpoint commit
 - Stage 4: broader experiment follow-through
   - scope:
-    multi-problem bounded theory-profile runs, archive-health review, and any
-    compact-profile decisions
+    add a repeatable bounded theory follow-up matrix harness, add a focused
+    theory-vs-control comparison report, surface archive-health signals for the
+    theory profile, and emit a compact-profile recommendation candidate from
+    observed non-collapsed axes
   - status:
-    pending
+    completed locally and ready for a signed checkpoint commit
 
 ## Decisions Log
 
@@ -134,6 +136,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - [x] Add unit/integration tests for the new runtime surfaces.
 - [x] Add repo docs for the new profile and descriptor family.
 - [x] Add an offline theory-descriptor probe / Rent comparison helper.
+- [x] Add a bounded multi-problem theory follow-up matrix harness.
+- [x] Add a theory-vs-control follow-up report with archive-health summaries.
+- [x] Emit a compact theory-profile recommendation candidate from descriptor
+  health observations.
 - [ ] Run longer multi-problem QD experiments and compare archive behavior
   against the structural CVT controls.
 - [ ] Compare repo-native Rent estimates against extracted RentCon reports on a
@@ -257,6 +263,33 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   `python scripts/report_qd_rent_calibration.py --manifest data/configs/qd_theory_rent_calibration_example.json --output_json /tmp/qd_rent_calibration_stage3/report.json --output_md /tmp/qd_rent_calibration_stage3/report.md`
   completed and emitted a real example markdown/json report over two RTLLM
   reference designs.
+- 2026-03-26:
+  `bash -n scripts/run_qd_theory_followup_vllm.sh`
+  passed.
+- 2026-03-26:
+  `pytest tests/scripts/test_run_qd_theory_followup_vllm.py tests/scripts/test_report_qd_theory_followup.py -q`
+  passed.
+- 2026-03-26:
+  `ruff check scripts/report_qd_theory_followup.py tests/scripts/test_run_qd_theory_followup_vllm.py tests/scripts/test_report_qd_theory_followup.py`
+  passed.
+- 2026-03-26:
+  `python -m pyright --pythonpath /workspace/.venv/bin/python scripts/report_qd_theory_followup.py`
+  passed.
+- 2026-03-26:
+  `VLLM_HOST=host.docker.internal VLLM_PORT=8000 bash scripts/run_qd_theory_followup_vllm.sh --suite rtllm --dry-run`
+  printed the expected structural/size-control/theory matrix.
+- 2026-03-26:
+  `VLLM_HOST=host.docker.internal VLLM_PORT=8000 THEORY_FOLLOWUP_SAVE_PATH=/tmp/qd_theory_followup_stage4 THEORY_FOLLOWUP_POPULATION_SIZE=1 THEORY_FOLLOWUP_NUM_GENERATIONS=0 THEORY_FOLLOWUP_TOTAL_WORKER_SLOTS=1 THEORY_FOLLOWUP_MAX_WORKERS=1 THEORY_FOLLOWUP_TIMEOUT_S=180 bash scripts/run_qd_theory_followup_vllm.sh --suite rtllm`
+  completed and wrote a bounded live follow-up root under
+  `/tmp/qd_theory_followup_stage4/20260326_153928`.
+- 2026-03-26:
+  `python scripts/report_qd_theory_followup.py --run_root /tmp/qd_theory_followup_stage4/20260326_153928 --output_dir /tmp/qd_theory_followup_stage4/20260326_153928/theory_followup_report`
+  completed and emitted `theory_followup_summary.json`,
+  `theory_followup_report.md`, and `recommended_theory_profile.json`.
+- 2026-03-26:
+  The bounded RTLLM follow-up used `population_size=1` and `num_generations=0`,
+  so the emitted compact recommendation was intentionally empty; this is a
+  useful smoke artifact, not evidence for final profile pruning.
 
 ## Remaining Validation / Experiment TODOs
 
@@ -264,8 +297,9 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - [x] Add a repeatable theory-grounded smoke/comparison harness with dry-run
   coverage.
 - [x] Add a manifest-driven Rent calibration/report workflow.
+- [x] Add a bounded theory follow-up matrix harness and report workflow.
 - [ ] Run a broader theory-profile smoke matrix over both RTLLM and
-  VerilogEval.
+  VerilogEval with non-trivial population/generation budgets.
 - [ ] Save a small calibration set of RentCon outputs so
   `scripts/qd_theory_descriptor_probe.py` can report concrete deltas instead of
   just repo-native values.

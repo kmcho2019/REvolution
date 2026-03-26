@@ -215,6 +215,18 @@ Current feature status:
   calibration path for Rent analysis. Start from
   `data/configs/qd_theory_rent_calibration_example.json`, then point each case
   at an RTL file, top module, and optional stored RentCon output paths.
+- `scripts/run_qd_theory_followup_vllm.sh` provides a bounded multi-problem
+  CVT follow-up matrix over:
+  - `implemented_structural_fixed_5d`
+  - `size_control_3d`
+  - `theory_grounded_full_20d`
+  Start with:
+  `VLLM_HOST=host.docker.internal VLLM_PORT=8000 bash scripts/run_qd_theory_followup_vllm.sh --suite rtllm --dry-run`
+- `scripts/report_qd_theory_followup.py` scans the resulting run root,
+  summarizes profile outcomes, and writes
+  `recommended_theory_profile.json` from non-collapsed theory axes.
+  Example:
+  `python scripts/report_qd_theory_followup.py --run_root /tmp/qd_theory_followup/<run_tag> --output_dir /tmp/qd_theory_followup/<run_tag>/theory_followup_report`
 - `scripts/run_evolution_smoke_vllm.sh` now uses the same `128000` token floor
   and forwards `--diff_max_tokens 128000` so whole-mode and diff-mode smokes
   are not accidentally evaluated under truncation-prone budgets.

@@ -292,6 +292,19 @@ Important implementation note:
   `scripts/report_qd_rent_calibration.py`; it is not a live runtime
   dependency.
 
+Follow-on workflow:
+
+- use `scripts/run_qd_theory_followup_vllm.sh` for the bounded multi-problem
+  comparison matrix between `theory_grounded_full_20d` and the current CVT
+  controls
+- use `scripts/report_qd_theory_followup.py` on the resulting run root to
+  summarize archive behavior and emit a compact theory-profile candidate from
+  descriptor-health signals
+- example dry run:
+  `VLLM_HOST=host.docker.internal VLLM_PORT=8000 bash scripts/run_qd_theory_followup_vllm.sh --suite rtllm --dry-run`
+- example report:
+  `python scripts/report_qd_theory_followup.py --run_root /tmp/qd_theory_followup/<run_tag> --output_dir /tmp/qd_theory_followup/<run_tag>/theory_followup_report`
+
 ### Physical descriptors
 
 Physical descriptors come from the OpenROAD reporting path and are attached as
