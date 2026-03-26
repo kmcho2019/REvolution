@@ -1,5 +1,5 @@
 version: 1
-subset_name: hard_iteration_subset_v1_pruned
+subset_name: hard_iteration_subset_qd_archive_tuning_v1
 selection:
   subset_size: 13
   per_bucket_target: 4
@@ -41,12 +41,12 @@ manual_exclusions:
   problem: Prob156_review2015_fancytimer
   reason: long or unreliable simulation/ppa behavior for iterative evaluation
 matrix_defaults:
-  population_size: 20
-  num_generations: 5
+  population_size: 12
+  num_generations: 3
   evaluation_mode: search_accelerated
   accelerated_synthesis_top_k: 1
-  total_worker_slots: 2
-  max_active_problems: 2
+  total_worker_slots: 20
+  max_active_problems: 13
   max_workers_per_problem: 2
   temperature: 1.0
   top_p: 1.0
@@ -57,29 +57,37 @@ matrix_defaults:
   qd_fill_target_fraction: 0.25
   qd_cell_reservoir: 2
   seed: 42
+matrix_modes:
+- grid_size_control
+- cvt_size_control_default
+- cvt_size_control_fill50
+- cvt_size_control_warmup2
+- cvt_size_control_dense24
 modes:
-  classic:
-    search_mode: revolution
-  grid_struct:
+  grid_size_control:
     search_mode: revolution_qd
     qd_archive_type: grid
-    qd_descriptor_profile: implemented_structural_compact_3d
-  cvt_struct:
-    search_mode: revolution_qd
-    qd_archive_type: cvt
-    qd_descriptor_profile: implemented_structural_fixed_5d
-  cvt_size_control:
+    qd_descriptor_profile: size_control_3d
+  cvt_size_control_default:
     search_mode: revolution_qd
     qd_archive_type: cvt
     qd_descriptor_profile: size_control_3d
-  cvt_theory_grounded:
+  cvt_size_control_fill50:
     search_mode: revolution_qd
     qd_archive_type: cvt
-    qd_descriptor_profile: theory_grounded_full_20d
-  cvt_theory_grounded_compact:
+    qd_descriptor_profile: size_control_3d
+    qd_fill_target_fraction: 0.5
+  cvt_size_control_warmup2:
     search_mode: revolution_qd
     qd_archive_type: cvt
-    qd_descriptor_profile: theory_grounded_compact_8d
+    qd_descriptor_profile: size_control_3d
+    qd_cvt_warmup_successes: 2
+  cvt_size_control_dense24:
+    search_mode: revolution_qd
+    qd_archive_type: cvt
+    qd_descriptor_profile: size_control_3d
+    qd_num_cells: 24
+    qd_cvt_warmup_successes: 6
 selected_problems:
 - benchmark: RTLLM
   problem: Prob004_adder_8bit

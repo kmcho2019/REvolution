@@ -568,6 +568,14 @@ VerilogEval-Spec-to-RTL iteration testing:
   `qd_cvt_warmup_successes`, `qd_fill_target_fraction`, and
   `qd_cell_reservoir`, so the same wrapper can drive bounded archive-tuning
   sweeps without shell edits.
+- The March 2026 hard-subset archive-tuning screen selected the current
+  `cvt_size_control` pack as the balanced default for this workflow:
+  `qd_archive_type=cvt`, `qd_num_cells=16`,
+  `qd_cvt_warmup_successes=4`, `qd_fill_target_fraction=0.25`, and
+  `qd_cell_reservoir=2`.
+  `warmup2` is better only when raw synthesis rate is prioritized over archive
+  quality, while `fill50` and `dense24` were not strong enough to replace the
+  balanced default.
 - `scripts/report_hard_iteration_analysis.py`: generate the post-run markdown
   report plus machine-readable summary for classic-vs-QD hard-subset results.
 - `scripts/report_pareto_analysis.py`: generate per-problem Pareto-front

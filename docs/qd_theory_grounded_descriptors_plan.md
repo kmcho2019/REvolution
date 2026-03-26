@@ -27,10 +27,9 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   bounded theory follow-up reporting, manifest-driven broader experiment
   tooling, the first hard-subset `20 x 5` comparison, the compact follow-on
   profile, the CVT warmup fallback, and the first native Rent reference
-  validation pass are complete; the next stage is Stage 10 QD archive tuning:
-  finish the config-driven hard-subset harness, screen grid vs CVT plus the
-  active CVT knobs on the hard subset, then freeze a cleaner recommended
-  archive/default policy before the next compact-theory rerun
+  validation pass are complete; Stage 10 QD archive tuning is now complete,
+  and the next stage is to rerun the compact theory profile using the tuned
+  hard-subset CVT policy
 
 ## Worktree Notes
 
@@ -233,7 +232,7 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     vLLM preflight, completed hard-subset screening runs, report generation,
     and a code review pass on any new report/config glue
   - Stage 10B status:
-    pending
+    completed locally and ready for a signed checkpoint commit
   - Stage 10C goal:
     freeze the chosen recommendation into the checked-in hard-subset defaults
     and user-facing docs, record the evidence and rationale in this plan, and
@@ -248,7 +247,7 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     touched Python modules, shell validation for touched harnesses, and a final
     report spot-check against the selected recommendation
   - Stage 10C status:
-    pending
+    completed locally and ready for a signed checkpoint commit
 
 ## Decisions Log
 
@@ -317,6 +316,21 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   policy, but the current five-case hard-subset reference subset does not show
   a clean CP Type I accuracy win from gating. Promotion decisions should treat
   gating as safer behavior, not as proven calibration.
+- 2026-03-26: For the frozen hard-subset workflow, prefer `cvt` over `grid`
+  as the default archive family. The Stage 10 same-profile `size_control_3d`
+  screen showed that the balanced CVT default beats grid on synthesis,
+  coverage, QD score, best quality, and mean hypervolume at roughly the same
+  runtime.
+- 2026-03-26: Keep the hard-subset CVT default at
+  `qd_num_cells=16`, `qd_cvt_warmup_successes=4`,
+  `qd_fill_target_fraction=0.25`, and `qd_cell_reservoir=2`.
+  `warmup2` helps raw synthesis rate, `dense24` helps mean hypervolume, and
+  `fill50` reduces both archive quality and score, but the existing pack is
+  still the strongest balanced default.
+- 2026-03-26: Do not flip the repo-wide `run_backend.py` CLI default from
+  `grid` to `cvt` yet. The hard-subset tuning result is workflow-specific, and
+  the current global CVT warmup semantics at the CLI default cell count would
+  be misleading as a blanket repo-wide default.
 
 ## Implementation Checklist
 
@@ -839,6 +853,94 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     repo-native Rent path is still fast and still not accurate enough to claim
     direct CP Type I agreement on this corpus.
 
+## Stage 10 Results
+
+- Stage 10 screening run root:
+  `/workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_archive_tuning_screen_20260326/20260326_184428`
+- Stage 10 final bundle:
+  `/workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_archive_tuning_screen_20260326/20260326_184428/final_analysis`
+- Screened modes on the frozen 13-problem hard subset with the same
+  `size_control_3d` profile and the same `12 x 3` budget:
+  - `grid_size_control`
+  - `cvt_size_control_default`
+  - `cvt_size_control_fill50`
+  - `cvt_size_control_warmup2`
+  - `cvt_size_control_dense24`
+- Family decision:
+  prefer `cvt` over `grid` for the hard-subset workflow.
+  On the same profile and budget, `cvt_size_control_default` beat
+  `grid_size_control` on:
+  - `synthesis_mean`: `0.3670` vs `0.3189`
+  - `qd_coverage_mean`: `0.3269` vs `0.0986`
+  - `qd_score_mean`: `0.4931` vs `0.3778`
+  - `qd_best_quality_mean`: `0.2094` vs `0.1455`
+  - `mean_hypervolume`: `0.0686` vs `0.0524`
+  while staying close on runtime:
+  `1299.82s` vs `1263.08s` mean runtime per problem.
+- CVT knob results:
+  - Keep `qd_fill_target_fraction=0.25`.
+    `fill50` was faster, but it clearly regressed synthesis, coverage, QD
+    score, best quality, Pareto breadth, and mean hypervolume.
+  - Keep `qd_cvt_warmup_successes=4` as the balanced default.
+    `warmup2` raised `functionality_mean` and `synthesis_mean`
+    (`0.5192` / `0.4327`), but it gave back archive-health and QD quality:
+    `qd_coverage_mean=0.3029`, `qd_score_mean=0.2871`,
+    `qd_best_quality_mean=0.1698`, `mean_hypervolume=0.0652`.
+  - Keep `qd_num_cells=16` as the balanced default.
+    `dense24` improved `mean_hypervolume` to `0.0931`, but it regressed
+    `functionality_mean`, `synthesis_mean`, `qd_coverage_mean`,
+    `qd_score_mean`, and `qd_best_quality_mean` versus the `16`-cell default.
+  - Keep `qd_cell_reservoir=2`.
+    The screen did not show a reason to change it, so it stays explicit but
+    unchanged.
+- Final hard-subset recommendation:
+  - recommended archive family: `cvt`
+  - recommended compact control profile: `size_control_3d`
+  - recommended archive settings:
+    `qd_num_cells=16`,
+    `qd_cvt_warmup_successes=4`,
+    `qd_fill_target_fraction=0.25`,
+    `qd_cell_reservoir=2`
+- Recommendation interpretation:
+  - `hard_iteration_analysis` chose `cvt_size_control_warmup2` as the overall
+    winner because that report prioritizes synthesis-heavy aggregate outcomes.
+  - For QD default policy, the more relevant winner is the balanced archive
+    configuration: `cvt_size_control_default`.
+    It best preserved archive coverage, QD score, best quality, and strong
+    Pareto behavior without a meaningful runtime penalty.
+- Collapse / diversity findings:
+  - every screened backend collapsed only the same two physical proxy features
+    at run level: `ltp_noff` and `utilization`
+  - the strongest archive-bearing success counts were:
+    - `cvt_size_control_warmup2`: `270` successful candidates
+    - `cvt_size_control_default`: `229`
+    - `grid_size_control`: `199`
+  - but final elite counts and archive quality still favored the balanced CVT
+    default:
+    - `cvt_size_control_default`: `68` elites
+    - `cvt_size_control_dense24`: `67`
+    - `cvt_size_control_warmup2`: `63`
+    - `cvt_size_control_fill50`: `55`
+    - `grid_size_control`: `41`
+- Stage 10 conclusion:
+  - hard-subset QD defaults should stay CVT-based, not grid-based
+  - the balanced default remains the existing `16 / 4 / 0.25 / 2` CVT pack,
+    now made explicit in the emitted subset config and docs
+  - `warmup2` is a useful opt-in variant when raw synthesis pass rate matters
+    more than archive quality
+  - `dense24` is a useful Pareto-leaning opt-in variant when hypervolume is the
+    main objective
+  - the evidence is not strong enough to flip the repo-wide `run_backend.py`
+    CLI default from `grid` to `cvt`, because the hard-subset result is
+    workflow-specific and the current global CVT warmup semantics at the CLI
+    default cell count would be misleading as a blanket repo-wide default
+- Validation:
+  - `bash scripts/run_hard_iteration_qd_vllm.sh --config data/configs/hard_iteration_subset_qd_archive_tuning.yaml --mode matrix`
+  - `python scripts/report_final_analysis_bundle.py --run-root /workspace/.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_archive_tuning_screen_20260326/20260326_184428 --subset-config data/configs/hard_iteration_subset_qd_archive_tuning.yaml`
+  - `pytest tests/scripts/test_build_hard_iteration_subset.py tests/scripts/test_run_hard_iteration_qd_vllm.py -q`
+  - `ruff check scripts/build_hard_iteration_subset.py tests/scripts/test_build_hard_iteration_subset.py tests/scripts/test_run_hard_iteration_qd_vllm.py`
+  - `python -m pyright scripts/build_hard_iteration_subset.py`
+
 ## Stage 10A Results
 
 - `scripts/run_hard_iteration_qd_vllm.sh` now supports config-driven tuning
@@ -897,9 +999,9 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   and measure whether the new diagnostics reduce misleading boundary cases.
 - [x] Finish Stage 10A by landing the config-driven hard-subset tuning matrix
   support in the runner and tests.
-- [ ] Run the Stage 10B hard-subset archive-tuning screen for grid vs CVT plus
+- [x] Run the Stage 10B hard-subset archive-tuning screen for grid vs CVT plus
   the active CVT knobs.
-- [ ] Freeze the Stage 10 tuning decision into the hard-subset config and
+- [x] Freeze the Stage 10 tuning decision into the hard-subset config and
   runner defaults, then document the rationale and evidence.
 - [ ] Decide whether the current repo-native Rent fit should target
   circuit-partitioning Type I specifically, or whether it should become a
@@ -932,9 +1034,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   subset against `implemented_structural_fixed_5d`, `large_struct10d`, and
   `size_control_3d`.
 - Medium term:
-  rerun the hard subset with `theory_grounded_compact_8d`, then compare the
-  compact profile against the full theory profile now that the full profile no
-  longer uses raw unclipped Rent extremes directly.
+  rerun the hard subset with `theory_grounded_compact_8d` using the tuned
+  hard-subset CVT policy (`16 / 4 / 0.25 / 2`), then compare the compact
+  profile against the full theory profile now that the full profile no longer
+  uses raw unclipped Rent extremes directly.
 - Medium term:
   rerun confidence-gated Rent calibration against a stable reference corpus and
   decide whether `rent_k`, retained-sample counts, or fit-quality diagnostics

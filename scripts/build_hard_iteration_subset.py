@@ -61,6 +61,8 @@ MATRIX_DEFAULTS = {
     "diff_max_tokens": 128000,
     "qd_num_cells": 16,
     "qd_cvt_warmup_successes": 4,
+    "qd_fill_target_fraction": 0.25,
+    "qd_cell_reservoir": 2,
     "seed": 42,
 }
 BENCHMARK_SOURCES = {

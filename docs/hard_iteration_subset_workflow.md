@@ -103,6 +103,27 @@ Mode selection is config-driven:
 That makes the hard-subset wrapper usable for bounded archive-tuning sweeps
 without editing the shell script itself.
 
+Recommended hard-subset QD default after the March 2026 archive-tuning screen:
+
+- archive family: `cvt`
+- compact control profile: `size_control_3d`
+- archive settings:
+  `qd_num_cells=16`, `qd_cvt_warmup_successes=4`,
+  `qd_fill_target_fraction=0.25`, `qd_cell_reservoir=2`
+
+Why this is the default:
+
+- compared against the same-profile `grid` control, the CVT default improved
+  synthesis, coverage, QD score, best quality, and mean Pareto hypervolume at
+  roughly the same runtime
+- `qd_fill_target_fraction=0.50` reduced synthesis, archive quality, and
+  Pareto breadth, so the existing `0.25` setting remains the default
+- `qd_cvt_warmup_successes=2` improved raw synthesis rate but weakened archive
+  score, best quality, and hypervolume, so it remains an opt-in score-chasing
+  variant rather than the workflow default
+- `qd_num_cells=24` improved mean hypervolume but regressed synthesis,
+  coverage, and archive quality enough that it is not the balanced default
+
 ### 4. Generate the formal `final_analysis/` bundle
 
 ```bash

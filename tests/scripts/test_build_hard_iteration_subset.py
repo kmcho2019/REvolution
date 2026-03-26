@@ -140,6 +140,10 @@ def test_build_hard_iteration_subset_cli_writes_balanced_config(tmp_path):
     assert result.returncode == 0, result.stderr
     config = yaml.safe_load(output_config.read_text(encoding="utf-8"))
     assert config["selection"]["subset_size"] == 16
+    assert config["matrix_defaults"]["qd_num_cells"] == 16
+    assert config["matrix_defaults"]["qd_cvt_warmup_successes"] == 4
+    assert config["matrix_defaults"]["qd_fill_target_fraction"] == 0.25
+    assert config["matrix_defaults"]["qd_cell_reservoir"] == 2
     assert sorted(config["benchmarks"]["RTLLM"]["problems"]) == [
         "Prob101_comb",
         "Prob102_comb",
