@@ -83,7 +83,7 @@ def test_load_descriptor_profiles_includes_runtime_retro_profiles():
     assert profiles["theory_grounded_full_20d"] == [
         "rtl_cyclomatic_total_log",
         "rtl_cyclomatic_max_log",
-        "rent_exponent",
+        "rent_exponent_confidence_gated",
         "reconv_source_ratio",
         "reconv_sink_ratio",
         "scoap_cc0_bin_0_pct",
@@ -251,7 +251,7 @@ def test_descriptor_requirements_detect_dynamic_metric_axes():
 
 def test_descriptor_requirements_detect_graph_metric_axes():
     reqs = descriptor_requirements(
-        ["rent_exponent", "reconv_source_ratio", "laplacian_lambda2"]
+        ["rent_exponent_confidence_gated", "reconv_source_ratio", "laplacian_lambda2"]
     )
     assert reqs["requires_graph_metrics"] is True
     assert reqs["requires_rtl_metrics"] is False

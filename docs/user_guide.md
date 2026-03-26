@@ -176,10 +176,13 @@ Current feature status:
   - exploratory activity profiles:
     `activity_size_3d`, `activity_control_3d`
 - The theory-grounded profile combines AST cyclomatic complexity, Rent
-  exponent, reconvergence, SCOAP histogram percentages, and normalized
-  Laplacian descriptors through the new `graph_metrics` runtime payload. Treat
-  it as a CVT-first research profile rather than a default replacement for the
-  structural ladder.
+  analysis, reconvergence, SCOAP histogram percentages, and normalized
+  Laplacian descriptors through the new `graph_metrics` runtime payload. The
+  raw `rent_exponent` metric is still emitted for analysis, but
+  `theory_grounded_full_20d` now uses `rent_exponent_confidence_gated` so
+  low-sample or clamped Rent fits shrink toward a neutral descriptor value.
+  Treat it as a CVT-first research profile rather than a default replacement
+  for the structural ladder.
 - `theory_grounded_compact_8d` is the reduced follow-on candidate from the
   first hard-subset collapse pass. It keeps the strongest non-collapsed SCOAP
   and spectral axes and is the first profile to try when you want a smaller

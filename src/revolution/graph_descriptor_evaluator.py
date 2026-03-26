@@ -400,12 +400,10 @@ class GraphDescriptorEvaluator:
     def _extract_rent_metrics(self, graph: GraphModel) -> dict[str, float]:
         points = self._collect_rent_points(graph)
         if len(points) < 2:
-            return {
-                "rent_exponent": 0.0,
-                "rent_k": 0.0,
-                "rent_r2": 0.0,
-                "rent_sample_count": float(len(points)),
-            }
+            return self._empty_rent_metrics(
+                graph_node_count=len(graph.partition_nodes),
+                raw_sample_count=len(points),
+            )
 
         grouped: dict[int, list[float]] = defaultdict(list)
         for size, terminals in points:
@@ -416,22 +414,18 @@ class GraphDescriptorEvaluator:
             if size >= 2 and sum(terminals) > 0.0
         )
         if len(samples) < 2:
-            return {
-                "rent_exponent": 0.0,
-                "rent_k": 0.0,
-                "rent_r2": 0.0,
-                "rent_sample_count": float(len(samples)),
-            }
+            return self._empty_rent_metrics(
+                graph_node_count=len(graph.partition_nodes),
+                raw_sample_count=len(samples),
+            )
 
         best_samples = list(samples)
         best_fit = self._fit_rent_line(best_samples)
         if best_fit is None:
-            return {
-                "rent_exponent": 0.0,
-                "rent_k": 0.0,
-                "rent_r2": 0.0,
-                "rent_sample_count": float(len(samples)),
-            }
+            return self._empty_rent_metrics(
+                graph_node_count=len(graph.partition_nodes),
+                raw_sample_count=len(samples),
+            )
 
         min_points = max(2, math.ceil(0.75 * len(samples)))
         while len(best_samples) > min_points:
@@ -442,12 +436,113 @@ class GraphDescriptorEvaluator:
             best_samples = candidate_samples
             best_fit = candidate_fit
 
+        return self._build_rent_metrics(
+            graph_node_count=len(graph.partition_nodes),
+            raw_sample_count=len(samples),
+            retained_sample_count=len(best_samples),
+            fit=best_fit,
+        )
+
+    def _empty_rent_metrics(
+        self,
+        *,
+        graph_node_count: int,
+        raw_sample_count: int,
+    ) -> dict[str, float]:
         return {
-            "rent_exponent": float(max(0.0, min(1.0, best_fit["slope"]))),
-            "rent_k": float(best_fit["k"]),
-            "rent_r2": float(best_fit["r2"]),
-            "rent_sample_count": float(len(best_samples)),
+            "rent_exponent": 0.0,
+            "rent_exponent_confidence_gated": 0.5,
+            "rent_confidence": 0.0,
+            "rent_clamped_flag": 0.0,
+            "rent_k": 0.0,
+            "rent_r2": 0.0,
+            "rent_sample_count": 0.0,
+            "rent_raw_sample_count": float(raw_sample_count),
+            "rent_retained_sample_ratio": 0.0,
+            "rent_graph_node_count": float(graph_node_count),
         }
+
+    def _build_rent_metrics(
+        self,
+        *,
+        graph_node_count: int,
+        raw_sample_count: int,
+        retained_sample_count: int,
+        fit: dict[str, float],
+    ) -> dict[str, float]:
+        raw_slope = float(fit["slope"])
+        rent_exponent = self._clamp_rent_exponent(raw_slope)
+        rent_r2 = max(0.0, min(1.0, float(fit["r2"])))
+
+        retained_ratio = 0.0
+        if raw_sample_count > 0:
+            retained_ratio = retained_sample_count / raw_sample_count
+
+        was_clamped = not math.isclose(raw_slope, rent_exponent)
+        rent_confidence = self._rent_confidence(
+            graph_node_count=graph_node_count,
+            raw_sample_count=raw_sample_count,
+            retained_sample_count=retained_sample_count,
+            retained_ratio=retained_ratio,
+            rent_r2=rent_r2,
+            was_clamped=was_clamped,
+        )
+
+        return {
+            "rent_exponent": rent_exponent,
+            "rent_exponent_confidence_gated": self._confidence_gate_rent_exponent(
+                rent_exponent,
+                rent_confidence,
+            ),
+            "rent_confidence": rent_confidence,
+            "rent_clamped_flag": 1.0 if was_clamped else 0.0,
+            "rent_k": float(fit["k"]),
+            "rent_r2": rent_r2,
+            "rent_sample_count": float(retained_sample_count),
+            "rent_raw_sample_count": float(raw_sample_count),
+            "rent_retained_sample_ratio": float(max(0.0, min(1.0, retained_ratio))),
+            "rent_graph_node_count": float(graph_node_count),
+        }
+
+    def _clamp_rent_exponent(self, slope: float) -> float:
+        return float(max(0.0, min(1.0, slope)))
+
+    def _rent_confidence(
+        self,
+        *,
+        graph_node_count: int,
+        raw_sample_count: int,
+        retained_sample_count: int,
+        retained_ratio: float,
+        rent_r2: float,
+        was_clamped: bool,
+    ) -> float:
+        if retained_sample_count <= 0 or raw_sample_count <= 0 or graph_node_count <= 0:
+            return 0.0
+
+        sample_confidence = min(1.0, retained_sample_count / 6.0)
+        node_confidence = min(1.0, graph_node_count / 32.0)
+        ratio_confidence = max(0.0, min(1.0, retained_ratio))
+        fit_confidence = max(0.0, min(1.0, rent_r2))
+
+        confidence = (
+            0.35 * sample_confidence
+            + 0.25 * node_confidence
+            + 0.25 * fit_confidence
+            + 0.15 * ratio_confidence
+        )
+        if was_clamped:
+            confidence *= 0.25
+        return float(max(0.0, min(1.0, confidence)))
+
+    def _confidence_gate_rent_exponent(
+        self,
+        rent_exponent: float,
+        rent_confidence: float,
+    ) -> float:
+        neutral_exponent = 0.5
+        gated_exponent = neutral_exponent + rent_confidence * (rent_exponent - neutral_exponent)
+        return float(max(0.0, min(1.0, gated_exponent)))
 
     def _collect_rent_points(self, graph: GraphModel) -> list[tuple[int, float]]:
         if len(graph.partition_nodes) < 2:

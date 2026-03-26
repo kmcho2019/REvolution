@@ -27,9 +27,9 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   bounded theory follow-up reporting, manifest-driven broader experiment
   tooling, the first hard-subset `20 x 5` comparison, the compact follow-on
   profile, the CVT warmup fallback, and the first native Rent reference
-  validation pass are complete; the next stage is to rerun the hard subset
-  with the compact theory profile and to add rent-confidence / calibration
-  fixes before any broader promotion decision
+  validation pass are complete; the active stage is to add rent-confidence
+  gating so low-sample or clamped fits stop acting like high-confidence
+  descriptor values before the next compact-profile rerun
 
 ## Worktree Notes
 
@@ -125,7 +125,7 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     the hard subset to check whether archive health remains strong without the
     current initialization failures
   - status:
-    active
+    code-complete; experiment reruns moved into later stages
   - Stage 7A goal:
     land the reduced theory profile as a first-class builtin option and make
     the follow-up / hard-subset harnesses able to run it directly
@@ -160,6 +160,28 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     native RentCon binary, time both paths, and record the findings in this
     plan plus a reusable report bundle
   - status:
+    completed locally and ready for a signed checkpoint commit
+- Stage 9: Rent confidence gating and safer profile wiring
+  - scope:
+    keep the raw repo-native Rent metrics for analysis, add explicit
+    confidence diagnostics for low-sample or clamped fits, switch the full
+    theory profile to a confidence-gated Rent axis, and update docs/tests so
+    the safety policy is explicit
+  - status:
+    active
+  - Stage 9A goal:
+    add readable helper logic that computes raw Rent diagnostics plus a
+    confidence-gated profile-facing exponent without changing the raw analysis
+    payload
+  - Stage 9A expected surfaces:
+    `src/revolution/graph_descriptor_evaluator.py`,
+    `src/revolution/qd/descriptors.py`,
+    `data/configs/qd_descriptor_profiles.yaml`,
+    matching unit tests, and theory-profile docs
+- Stage 9A validation:
+    targeted graph-descriptor and descriptor-registry tests, lint, typecheck,
+    and a descriptor-probe sanity check for the full theory profile
+  - Stage 9A status:
     completed locally and ready for a signed checkpoint commit
 
 ## Decisions Log
@@ -214,6 +236,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   but the current slope/clamp behavior is not calibrated well enough for small
   synthesized graphs. Promotion work should focus on confidence gating and fit
   policy before expanding Rent-heavy profiles.
+- 2026-03-26: Keep raw `rent_exponent` available in `graph_metrics` for
+  reporting and offline calibration, but switch the shipped full theory profile
+  to `rent_exponent_confidence_gated` so low-sample or clamped fits shrink
+  toward a neutral archive value instead of behaving like trusted extremes.
 
 ## Implementation Checklist
 
@@ -258,7 +284,7 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   configured warmup threshold.
 - [ ] Decide whether any reduced theory-grounded profile should become a
   default recommended follow-on after the Stage 7 rerun.
-- [ ] Add rent-confidence gating or fallback handling for low-sample /
+- [x] Add rent-confidence gating or fallback handling for low-sample /
   clamped Rent cases before using Rent more aggressively in profile decisions.
 
 ## Delivered Runtime Surface
@@ -268,9 +294,15 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - `rtl_cyclomatic_total_log`
 - `rtl_cyclomatic_max_log`
 - `rent_exponent`
+- `rent_exponent_confidence_gated`
+- `rent_confidence`
+- `rent_clamped_flag`
 - `rent_k`
 - `rent_r2`
 - `rent_sample_count`
+- `rent_raw_sample_count`
+- `rent_retained_sample_ratio`
+- `rent_graph_node_count`
 - `reconv_source_ratio`
 - `reconv_sink_ratio`
 - `scoap_cc0_bin_0_pct` through `scoap_cc0_bin_3_pct`
@@ -286,7 +318,7 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 
 - `rtl_cyclomatic_total_log`
 - `rtl_cyclomatic_max_log`
-- `rent_exponent`
+- `rent_exponent_confidence_gated`
 - `reconv_source_ratio`
 - `reconv_sink_ratio`
 - `scoap_cc0_bin_0_pct`
@@ -505,6 +537,24 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - 2026-03-26:
   `python -m pyright --pythonpath /workspace/.venv/bin/python src/revolution/qd/archive.py src/revolution/qd/artifacts.py src/revolution/qd/engine.py`
   passed.
+- 2026-03-26:
+  Stage 9A code review confirmed the Rent confidence-gating change stays local
+  to graph extraction, descriptor registry metadata, and profile wiring. Raw
+  Rent metrics are still emitted unchanged for offline analysis; only the full
+  theory profile axis changes.
+- 2026-03-26:
+  `/workspace/.venv/bin/pytest tests/revolution/test_graph_descriptor_evaluator.py tests/revolution/test_qd_descriptors.py tests/scripts/test_report_qd_rent_reference_validation.py -q`
+  passed with `28 passed`.
+- 2026-03-26:
+  `/workspace/.venv/bin/ruff check src/revolution/graph_descriptor_evaluator.py src/revolution/qd/descriptors.py tests/revolution/test_graph_descriptor_evaluator.py tests/revolution/test_qd_descriptors.py`
+  passed.
+- 2026-03-26:
+  `/workspace/.venv/bin/python -m pyright --pythonpath /workspace/.venv/bin/python src/revolution/graph_descriptor_evaluator.py src/revolution/qd/descriptors.py`
+  passed.
+- 2026-03-26:
+  `/workspace/.venv/bin/python scripts/qd_descriptor_probe.py --archive_type cvt --profile theory_grounded_full_20d`
+  confirmed the full theory profile now resolves
+  `rent_exponent_confidence_gated` while keeping `requires_graph_metrics=true`.
 
 ## Stage 7A Results
 
@@ -516,6 +566,20 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - Updated the user-facing docs so the compact profile is documented as the
   reduced follow-on candidate from the Stage 6 hard-subset collapse pass.
 - Stage 7A completed the profile and harness wiring half of the follow-up plan.
+
+## Stage 9A Results
+
+- Rent extraction now returns both the raw `rent_exponent` and a
+  `rent_exponent_confidence_gated` variant that shrinks weak fits toward a
+  neutral `0.5` value.
+- The confidence signal is intentionally simple and readable: it combines
+  retained sample count, graph size, retained/raw sample ratio, fit quality,
+  and a clamp penalty with early returns for empty cases.
+- The full theory profile now uses `rent_exponent_confidence_gated`, while raw
+  Rent diagnostics remain available in `graph_metrics` for reporting and
+  offline calibration.
+- Descriptor registry metadata, default bounds, tests, and user-facing docs now
+  all describe the same safer Rent policy.
 
 ## Stage 7B Results
 
@@ -634,6 +698,8 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     promoting clamped `rent_exponent` values as if they were high-confidence,
     and revisit the recursive-partition regression policy against
     circuit-partitioning Type-I behavior before expanding Rent-heavy profiles.
+  - Stage 9A follows directly from that conclusion by keeping the raw slope for
+    analysis while using a safer profile-facing axis in the archive tuple.
 
 ## Remaining Validation / Experiment TODOs
 
@@ -662,8 +728,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   the current success threshold.
 - [ ] Evaluate the new warmup fallback on the compact-profile hard-subset rerun
   and confirm that low-success problems no longer finish with empty archives.
-- [ ] Add Rent confidence gating for graphs with too few retained samples or
-  obviously clamped fits, then rerun the reference validation bundle.
+- [x] Add Rent confidence gating for graphs with too few retained samples or
+  obviously clamped fits.
+- [ ] Rerun the reference validation bundle after the confidence-gating change
+  and measure whether the new diagnostics reduce misleading boundary cases.
 - [ ] Decide whether the current repo-native Rent fit should target
   circuit-partitioning Type I specifically, or whether it should become a
   different named metric that is documented as only loosely Rent-like.
@@ -692,7 +760,11 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   subset against `implemented_structural_fixed_5d`, `large_struct10d`, and
   `size_control_3d`.
 - Medium term:
-  add confidence-gated Rent calibration against a stable reference corpus and
+  rerun the hard subset with `theory_grounded_compact_8d`, then compare the
+  compact profile against the full theory profile now that the full profile no
+  longer uses raw unclipped Rent extremes directly.
+- Medium term:
+  rerun confidence-gated Rent calibration against a stable reference corpus and
   decide whether `rent_k`, retained-sample counts, or fit-quality diagnostics
   should directly influence profile selection or report-side warnings.
 - Medium term:

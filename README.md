@@ -209,6 +209,8 @@ Current status on this feature branch:
   - `rtl_cyclomatic_total_log`
   - `rtl_cyclomatic_max_log`
   - `rent_exponent`
+  - `rent_exponent_confidence_gated`
+  - `rent_confidence`
   - `reconv_source_ratio`
   - `reconv_sink_ratio`
   - SCOAP controllability/observability histogram percentages
@@ -299,7 +301,9 @@ Current status on this feature branch:
   - for theory-grounded research follow-ups, use
     `--qd_archive_type cvt --qd_descriptor_profile theory_grounded_full_20d`
     and treat it as experimental rather than a replacement for the structural
-    controls
+    controls. This full profile now uses a confidence-gated Rent axis so
+    low-sample or clamped Rent fits shrink toward a neutral value instead of
+    behaving like high-confidence extremes.
   - if you want the reduced follow-on theory profile from the first hard-subset
     collapse pass, use
     `--qd_archive_type cvt --qd_descriptor_profile theory_grounded_compact_8d`

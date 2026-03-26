@@ -261,6 +261,17 @@ without adding a new required external runtime dependency beyond Yosys.
 - `rent_exponent`
   Rent slope estimated from recursive spectral bipartitioning plus a trimmed
   log-log fit over boundary-pin versus block-size samples.
+- `rent_exponent_confidence_gated`
+  Profile-facing Rent axis. It uses the same raw slope but shrinks low-sample,
+  low-node, weak-fit, or clamped cases toward a neutral `0.5` value before the
+  archive tuple is built.
+- `rent_confidence`
+  Confidence score used by `rent_exponent_confidence_gated`. It combines
+  retained sample count, graph size, retained/raw sample ratio, fit quality,
+  and a clamp penalty.
+- `rent_clamped_flag`
+  Diagnostic flag showing whether the raw fitted slope had to be clamped into
+  the valid `[0.0, 1.0]` Rent range.
 - `rent_k`
   Intercept-derived Rent coefficient from the same fit. It is kept as a raw
   diagnostic metric rather than part of the default theory profile.
@@ -268,6 +279,12 @@ without adding a new required external runtime dependency beyond Yosys.
   Goodness-of-fit diagnostic for the retained Rent regression samples.
 - `rent_sample_count`
   Number of partition samples retained after trimming.
+- `rent_raw_sample_count`
+  Number of size buckets before trimming.
+- `rent_retained_sample_ratio`
+  Fraction of raw samples kept after trimming.
+- `rent_graph_node_count`
+  Graph size seen by the Rent extractor.
 - `reconv_source_ratio`
   Fraction of branching sources whose fan-out reconverges downstream.
 - `reconv_sink_ratio`
@@ -466,7 +483,7 @@ Experimental theory-grounded profile:
 - `theory_grounded_full_20d`
   - `rtl_cyclomatic_total_log`
   - `rtl_cyclomatic_max_log`
-  - `rent_exponent`
+  - `rent_exponent_confidence_gated`
   - `reconv_source_ratio`
   - `reconv_sink_ratio`
   - SCOAP CC0 histogram bins
@@ -493,7 +510,7 @@ Experimental theory-grounded profile:
 | `implemented_structural_fixed_5d` | `seq_ratio`, `comb_ratio`, `mux_ratio`, `adder_ratio`, `cell_count_log` | cvt | you want the strongest score/frontier-oriented structural CVT run | high |
 | `size_control_3d` | `wire_count_log_est`, `assign_count`, `ctrl_depth_est` | cvt | you want the healthiest archive and best coverage/QD-score balance | high |
 | `timing_control_3d` | `wire_count_log_est`, `if_count`, `ast_depth_est` | cvt | you want a control-shape-heavy follow-up to `size_control_3d` | medium |
-| `theory_grounded_full_20d` | AST cyclomatic + Rent + reconvergence + SCOAP histograms + Laplacian metrics | cvt | you want the most theory-grounded current runtime profile and are willing to trade simplicity for descriptor richness | experimental |
+| `theory_grounded_full_20d` | AST cyclomatic + confidence-gated Rent + reconvergence + SCOAP histograms + Laplacian metrics | cvt | you want the most theory-grounded current runtime profile and are willing to trade simplicity for descriptor richness | experimental |
 | `theory_grounded_compact_8d` | reduced SCOAP + spectral theory profile from the Stage 6 hard-subset collapse pass | cvt | you want the first reduced theory follow-on and a better starting point for compact theory experiments | experimental |
 | `hybrid_phys_seq` | structural + physical + gain axes | cvt | you want to test whether physical variation meaningfully enriches the archive | medium |
 | `activity_size_3d` / `activity_control_3d` | dynamic + size/control axes | grid or cvt follow-up | you want an experimental activity-sensitive archive study | low to medium |

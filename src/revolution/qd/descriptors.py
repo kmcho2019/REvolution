@@ -62,11 +62,17 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "rtl_cyclomatic_total_log": DescriptorDefinition("rtl_cyclomatic_total_log", "yosys_ast", transform="log1p"),
     "rtl_cyclomatic_max_log": DescriptorDefinition("rtl_cyclomatic_max_log", "yosys_ast", transform="log1p"),
     "rent_exponent": DescriptorDefinition("rent_exponent", "yosys_graph"),
+    "rent_exponent_confidence_gated": DescriptorDefinition("rent_exponent_confidence_gated", "yosys_graph"),
+    "rent_confidence": DescriptorDefinition("rent_confidence", "yosys_graph"),
+    "rent_clamped_flag": DescriptorDefinition("rent_clamped_flag", "yosys_graph"),
     "reconv_source_ratio": DescriptorDefinition("reconv_source_ratio", "yosys_graph"),
     "reconv_sink_ratio": DescriptorDefinition("reconv_sink_ratio", "yosys_graph"),
     "rent_k": DescriptorDefinition("rent_k", "yosys_graph"),
     "rent_r2": DescriptorDefinition("rent_r2", "yosys_graph"),
     "rent_sample_count": DescriptorDefinition("rent_sample_count", "yosys_graph"),
+    "rent_raw_sample_count": DescriptorDefinition("rent_raw_sample_count", "yosys_graph"),
+    "rent_retained_sample_ratio": DescriptorDefinition("rent_retained_sample_ratio", "yosys_graph"),
+    "rent_graph_node_count": DescriptorDefinition("rent_graph_node_count", "yosys_graph"),
     "scoap_cc0_bin_0_pct": DescriptorDefinition("scoap_cc0_bin_0_pct", "yosys_graph"),
     "scoap_cc0_bin_1_pct": DescriptorDefinition("scoap_cc0_bin_1_pct", "yosys_graph"),
     "scoap_cc0_bin_2_pct": DescriptorDefinition("scoap_cc0_bin_2_pct", "yosys_graph"),
@@ -248,6 +254,9 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (0.0, 2.0)
     if axis in {
         "rent_exponent",
+        "rent_exponent_confidence_gated",
+        "rent_confidence",
+        "rent_clamped_flag",
         "reconv_source_ratio",
         "reconv_sink_ratio",
         "laplacian_spectral_entropy",
@@ -282,8 +291,12 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         "rtl_cyclomatic_total_log",
         "rtl_cyclomatic_max_log",
         "rent_sample_count",
+        "rent_raw_sample_count",
+        "rent_graph_node_count",
     }:
         return (0.0, 32.0)
+    if axis == "rent_retained_sample_ratio":
+        return (0.0, 1.0)
     if axis == "toggle_density_est":
         return (0.0, 64.0)
     if axis in {"active_signal_ratio_est", "avg_toggle_rate_est"}:
