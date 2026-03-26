@@ -211,6 +211,10 @@ Current feature status:
     `implemented_structural_fixed_5d` and `size_control_3d`
   - `--suite rtllm|verilogeval|matrix`, `--policy whole-heavy|diff-heavy`,
     and `--dry-run`
+- `scripts/report_qd_rent_calibration.py` provides a manifest-driven offline
+  calibration path for Rent analysis. Start from
+  `data/configs/qd_theory_rent_calibration_example.json`, then point each case
+  at an RTL file, top module, and optional stored RentCon output paths.
 - `scripts/run_evolution_smoke_vllm.sh` now uses the same `128000` token floor
   and forwards `--diff_max_tokens 128000` so whole-mode and diff-mode smokes
   are not accidentally evaluated under truncation-prone budgets.

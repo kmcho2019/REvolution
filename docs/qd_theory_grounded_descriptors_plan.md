@@ -88,7 +88,7 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     make it easier to compare repo-native Rent extraction against stored
     RentCon outputs and record calibration decisions
   - status:
-    pending
+    completed locally and ready for a signed checkpoint commit
 - Stage 4: broader experiment follow-through
   - scope:
     multi-problem bounded theory-profile runs, archive-health review, and any
@@ -244,12 +244,26 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   `VLLM_HOST=host.docker.internal VLLM_PORT=8000 THEORY_SMOKE_SAVE_PATH=/tmp/qd_theory_stage2_smoke bash scripts/run_qd_theory_grounded_smoke_vllm.sh --suite rtllm --mode theory-only`
   completed in 33.25 seconds and wrote a bounded live smoke root under
   `/tmp/qd_theory_stage2_smoke/20260326_152838`.
+- 2026-03-26:
+  `pytest tests/scripts/test_report_qd_rent_calibration.py -q`
+  passed.
+- 2026-03-26:
+  `ruff check scripts/report_qd_rent_calibration.py tests/scripts/test_report_qd_rent_calibration.py`
+  passed.
+- 2026-03-26:
+  `python -m pyright --pythonpath /workspace/.venv/bin/python scripts/report_qd_rent_calibration.py`
+  passed.
+- 2026-03-26:
+  `python scripts/report_qd_rent_calibration.py --manifest data/configs/qd_theory_rent_calibration_example.json --output_json /tmp/qd_rent_calibration_stage3/report.json --output_md /tmp/qd_rent_calibration_stage3/report.md`
+  completed and emitted a real example markdown/json report over two RTLLM
+  reference designs.
 
 ## Remaining Validation / Experiment TODOs
 
 - [x] Run full `pytest`.
 - [x] Add a repeatable theory-grounded smoke/comparison harness with dry-run
   coverage.
+- [x] Add a manifest-driven Rent calibration/report workflow.
 - [ ] Run a broader theory-profile smoke matrix over both RTLLM and
   VerilogEval.
 - [ ] Save a small calibration set of RentCon outputs so

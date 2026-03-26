@@ -263,6 +263,9 @@ Current status on this feature branch:
   theory-grounded CVT smoke/comparison harness so
   `theory_grounded_full_20d` can be checked against structural controls
   without rebuilding the command matrix by hand.
+- `scripts/report_qd_rent_calibration.py` now provides a manifest-driven
+  offline calibration helper for comparing repo-native Rent extraction against
+  stored RentCon outputs.
 - `scripts/run_evolution_smoke_vllm.sh` now also defaults to
   `--max_tokens 128000` and forwards `--diff_max_tokens 128000` so the shared
   reasoning-model vLLM endpoint is not exercised with an artificially tiny

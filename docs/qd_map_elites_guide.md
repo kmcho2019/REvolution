@@ -288,7 +288,9 @@ Important implementation note:
 
 - This path is repo-native and Yosys-based. RentCon remains optional for
   offline comparison only through
-  `scripts/qd_theory_descriptor_probe.py`; it is not a live runtime dependency.
+  `scripts/qd_theory_descriptor_probe.py` and
+  `scripts/report_qd_rent_calibration.py`; it is not a live runtime
+  dependency.
 
 ### Physical descriptors
 

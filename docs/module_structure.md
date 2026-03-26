@@ -59,6 +59,9 @@
 - `run_qd_theory_grounded_smoke_vllm.sh`: dedicated CVT smoke/comparison
   harness for the theory-grounded descriptor family, including a structural
   control matrix and `--dry-run`.
+- `report_qd_rent_calibration.py`: manifest-driven offline Rent calibration
+  helper that compares repo-native graph extraction against stored RentCon
+  outputs and emits JSON/markdown summaries.
 - `run_qd_retrospective_redo_vllm.sh`: repeatable long-budget retrospective
   rerun harness for the four-design `/tmp/qd_rich20x5` corpus with preset
   profile matrices and automatic suite-local comparison reports.
