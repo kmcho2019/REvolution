@@ -82,7 +82,7 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     update docs, add dry-run regression coverage, and validate against the
     shared vLLM endpoint
   - status:
-    next implementation stage
+    completed locally and ready for a signed checkpoint commit
 - Stage 3: RentCon calibration workflow
   - scope:
     make it easier to compare repo-native Rent extraction against stored
@@ -228,10 +228,28 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - 2026-03-26:
   `pytest -q`
   passed with `451 passed, 4 skipped`.
+- 2026-03-26:
+  `bash -n scripts/run_qd_theory_grounded_smoke_vllm.sh`
+  passed.
+- 2026-03-26:
+  `pytest tests/scripts/test_run_qd_theory_grounded_smoke_vllm.py -q`
+  passed.
+- 2026-03-26:
+  `ruff check tests/scripts/test_run_qd_theory_grounded_smoke_vllm.py`
+  passed.
+- 2026-03-26:
+  `VLLM_HOST=host.docker.internal VLLM_PORT=8000 bash scripts/run_qd_theory_grounded_smoke_vllm.sh --suite rtllm --mode theory-only --dry-run`
+  printed the expected CVT theory-grounded command matrix.
+- 2026-03-26:
+  `VLLM_HOST=host.docker.internal VLLM_PORT=8000 THEORY_SMOKE_SAVE_PATH=/tmp/qd_theory_stage2_smoke bash scripts/run_qd_theory_grounded_smoke_vllm.sh --suite rtllm --mode theory-only`
+  completed in 33.25 seconds and wrote a bounded live smoke root under
+  `/tmp/qd_theory_stage2_smoke/20260326_152838`.
 
 ## Remaining Validation / Experiment TODOs
 
 - [x] Run full `pytest`.
+- [x] Add a repeatable theory-grounded smoke/comparison harness with dry-run
+  coverage.
 - [ ] Run a broader theory-profile smoke matrix over both RTLLM and
   VerilogEval.
 - [ ] Save a small calibration set of RentCon outputs so

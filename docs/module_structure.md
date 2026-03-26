@@ -56,6 +56,9 @@
 - `run_backend.py`: canonical backend-selectable runner (`--backend revolution|funsearch`) with shared elastic/global parallelism controls.
 - `run_backend_qd_smoke_vllm.sh`: repeatable grid/CVT QD smoke harness for live
   vLLM validation with fixed small-budget defaults and `--dry-run`.
+- `run_qd_theory_grounded_smoke_vllm.sh`: dedicated CVT smoke/comparison
+  harness for the theory-grounded descriptor family, including a structural
+  control matrix and `--dry-run`.
 - `run_qd_retrospective_redo_vllm.sh`: repeatable long-budget retrospective
   rerun harness for the four-design `/tmp/qd_rich20x5` corpus with preset
   profile matrices and automatic suite-local comparison reports.

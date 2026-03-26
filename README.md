@@ -259,6 +259,10 @@ Current status on this feature branch:
 - `scripts/run_backend_qd_smoke_vllm.sh` now provides a repeatable grid/CVT QD
   smoke harness with `128000`-token defaults and a `--dry-run` mode so smoke
   validation is not just a collection of ad hoc commands.
+- `scripts/run_qd_theory_grounded_smoke_vllm.sh` now provides a dedicated
+  theory-grounded CVT smoke/comparison harness so
+  `theory_grounded_full_20d` can be checked against structural controls
+  without rebuilding the command matrix by hand.
 - `scripts/run_evolution_smoke_vllm.sh` now also defaults to
   `--max_tokens 128000` and forwards `--diff_max_tokens 128000` so the shared
   reasoning-model vLLM endpoint is not exercised with an artificially tiny

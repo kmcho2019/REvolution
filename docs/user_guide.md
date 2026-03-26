@@ -203,6 +203,14 @@ Current feature status:
   for `grid` and `cvt` with `--suite rtllm|verilogeval`,
   `--policy whole-heavy|diff-heavy`, and `--dry-run`, and now defaults to a
   `128000`-token budget on the shared reasoning-model vLLM endpoint.
+- `scripts/run_qd_theory_grounded_smoke_vllm.sh` provides a dedicated
+  theory-grounded CVT harness with:
+  - `--mode theory-only` for direct validation of
+    `theory_grounded_full_20d`
+  - `--mode compare` for side-by-side bounded smokes against
+    `implemented_structural_fixed_5d` and `size_control_3d`
+  - `--suite rtllm|verilogeval|matrix`, `--policy whole-heavy|diff-heavy`,
+    and `--dry-run`
 - `scripts/run_evolution_smoke_vllm.sh` now uses the same `128000` token floor
   and forwards `--diff_max_tokens 128000` so whole-mode and diff-mode smokes
   are not accidentally evaluated under truncation-prone budgets.
