@@ -43,6 +43,9 @@ def write_legacy_archive_layout(
             "axes": list(archive.axes),
             "initialized": archive.is_initialized,
             "warmup_successes": archive.warmup_successes,
+            "warmup_buffer_size": archive.warmup_buffer_size(),
+            "initialization_mode": archive.initialization_mode,
+            "initialization_sample_count": archive.initialization_sample_count,
             "centroids": [list(centroid) for centroid in archive.centroids],
             "scaler": (
                 {
@@ -364,7 +367,10 @@ def _format_archive_space_report(payload: dict[str, Any]) -> str:
                 "## CVT Geometry",
                 "",
                 f"- warmup_successes: `{geometry['warmup_successes']}`",
+                f"- warmup_buffer_size: `{geometry['warmup_buffer_size']}`",
                 f"- initialized: `{geometry['initialized']}`",
+                f"- initialization_mode: `{geometry['initialization_mode']}`",
+                f"- initialization_sample_count: `{geometry['initialization_sample_count']}`",
                 f"- centroid_count: `{geometry['centroid_count']}`",
                 "- cells are defined by nearest centroid after frozen scaling",
                 "",
@@ -387,6 +393,16 @@ def _format_archive_space_report(payload: dict[str, Any]) -> str:
                 "- Full centroid coordinates are recorded in `centroids.json`.",
             ]
         )
+        if geometry.get("initialization_mode") == "run_finalization_fallback":
+            lines.extend(
+                [
+                    "",
+                    "## Finalization Note",
+                    "",
+                    "- This archive did not hit its configured warmup threshold during the run.",
+                    "- The final archive was initialized from the available warmup buffer at run end.",
+                ]
+            )
     return "\n".join(lines) + "\n"
 
 

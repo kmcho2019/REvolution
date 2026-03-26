@@ -515,6 +515,9 @@ Stage 11 runtime note:
   descriptor family during real QD runs, not just retrospective replay
 - these profiles should still be treated as early-stage experimental surfaces
   until bounded smokes and longer reruns confirm their live behavior
+- CVT archives now perform a run-end fallback initialization from the current
+  warmup buffer when a problem never reaches the configured warmup threshold,
+  so final archive artifacts are no longer forced to stay empty in that case
 
 ## Preliminary Experiment Takeaways
 

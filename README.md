@@ -298,6 +298,9 @@ Current status on this feature branch:
     collapse pass, use
     `--qd_archive_type cvt --qd_descriptor_profile theory_grounded_compact_8d`
     and compare it directly against the full 20D profile
+  - CVT runs that never reach their configured warmup target now finalize from
+    the available warmup buffer at run end instead of finishing with a
+    permanently uninitialized empty archive
   - if you need a grid control, start with
     `--qd_archive_type grid --qd_descriptor_profile implemented_structural_compact_3d`
   - keep classic `revolution` in comparisons because it is still the safest

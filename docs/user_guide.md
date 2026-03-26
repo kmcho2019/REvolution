@@ -184,6 +184,9 @@ Current feature status:
   first hard-subset collapse pass. It keeps the strongest non-collapsed SCOAP
   and spectral axes and is the first profile to try when you want a smaller
   theory-grounded CVT study.
+- CVT archives that never hit `qd_cvt_warmup_successes` now finalize from the
+  available warmup buffer at run end. That keeps low-success problems from
+  ending with empty, permanently uninitialized CVT artifacts.
 - When `qd_grid_axes` is omitted, grid mode now honors
   `qd_descriptor_profile`, so the compact structural profile above is actually
   enough to reproduce the retrospective refresh configuration.

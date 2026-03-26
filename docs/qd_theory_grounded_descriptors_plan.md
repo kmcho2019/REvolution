@@ -149,6 +149,8 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   - Stage 7B validation:
     targeted archive and engine tests, lint/typecheck, and a bounded smoke if
     the fallback changes user-visible artifact behavior
+  - Stage 7B status:
+    completed locally and ready for a signed checkpoint commit
 
 ## Decisions Log
 
@@ -189,6 +191,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - 2026-03-26: The first reduced theory follow-on should be explicit and
   reproducible, not just a report artifact. `theory_grounded_compact_8d` is now
   the checked-in compact profile name for Stage 7 experiments.
+- 2026-03-26: Low-success CVT problems should not end with a permanently empty
+  archive when they have at least one successful candidate. The archive now
+  performs a run-end fallback initialization from the warmup buffer instead of
+  discarding those successes.
 
 ## Implementation Checklist
 
@@ -227,8 +233,8 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   Stage 6 collapse evidence.
 - [ ] Benchmark the compact theory-grounded follow-on profile against the full
   theory profile and the structural controls.
-- [ ] Investigate warmup / centroid-initialization fallback behavior for
-  low-success problems.
+- [x] Add a CVT run-end fallback for low-success problems that never hit the
+  configured warmup threshold.
 - [ ] Decide whether any reduced theory-grounded profile should become a
   default recommended follow-on after the Stage 7 rerun.
 
@@ -453,6 +459,15 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - 2026-03-26:
   `python -m pyright --pythonpath /workspace/.venv/bin/python tests/revolution/test_qd_descriptors.py tests/scripts/test_run_qd_theory_followup_manifest.py`
   passed.
+- 2026-03-26:
+  `pytest tests/revolution/test_qd_archive.py tests/revolution/test_qd_engine.py -q`
+  passed after adding the CVT run-end fallback initialization path.
+- 2026-03-26:
+  `ruff check src/revolution/qd/archive.py src/revolution/qd/artifacts.py src/revolution/qd/engine.py tests/revolution/test_qd_archive.py tests/revolution/test_qd_engine.py`
+  passed.
+- 2026-03-26:
+  `python -m pyright --pythonpath /workspace/.venv/bin/python src/revolution/qd/archive.py src/revolution/qd/artifacts.py src/revolution/qd/engine.py`
+  passed.
 
 ## Stage 7A Results
 
@@ -463,8 +478,24 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   and to the checked-in follow-up manifest.
 - Updated the user-facing docs so the compact profile is documented as the
   reduced follow-on candidate from the Stage 6 hard-subset collapse pass.
-- Remaining Stage 7B work is still runtime behavior, not registry wiring:
-  low-success problems still need a centroid-initialization fallback.
+- Stage 7A completed the profile and harness wiring half of the follow-up plan.
+
+## Stage 7B Results
+
+- Added `CVTArchive.finalize_pending()` so a run can initialize from its
+  current warmup buffer at shutdown when the configured warmup target was never
+  reached.
+- QD engine shutdown now finalizes pending CVT archives once, refreshes the
+  success view, and writes a final snapshot with `phase=run_finalization_fallback`.
+- `centroids.json` and `archive_space.json` now record
+  `initialization_mode`, `initialization_sample_count`, and
+  `warmup_buffer_size`, and the archive-space report calls out fallback
+  initialization explicitly.
+- The normal warmup path is unchanged while the run is active; the fallback only
+  applies at the end of the run.
+- Remaining Stage 7 work is experiment reruns: the hard subset still needs to
+  be rerun with the compact profile and the new fallback enabled so the effect
+  on coverage, QD score, and problem-level collapse can be measured directly.
 
 ## Stage 6 Results
 

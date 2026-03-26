@@ -134,3 +134,23 @@ def test_cvt_archive_describes_space_and_assignment():
     assert assignment["archive_type"] == "cvt"
     assert assignment["initialized"] is True
     assert "centroid" in assignment
+
+
+def test_cvt_archive_finalizes_from_partial_warmup_buffer():
+    archive = CVTArchive(("g_A", "g_T"), num_cells=4, warmup_successes=4)
+
+    first = archive.insert("cand-a", (0.2, 0.3), 0.5, {"id": "cand-a"})
+    second = archive.insert("cand-b", (0.4, 0.1), 0.6, {"id": "cand-b"})
+
+    assert first.decision == "warmup_buffered"
+    assert second.decision == "warmup_buffered"
+    assert archive.is_initialized is False
+
+    results = archive.finalize_pending()
+
+    assert archive.is_initialized is True
+    assert archive.initialization_mode == "run_finalization_fallback"
+    assert archive.initialization_sample_count == 2
+    assert archive.describe_space()["space_geometry"]["warmup_buffer_size"] == 0
+    assert set(results) == {"cand-a", "cand-b"}
+    assert any(result.inserted for result in results.values())
