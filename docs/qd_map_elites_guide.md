@@ -297,11 +297,17 @@ Follow-on workflow:
 - use `scripts/run_qd_theory_followup_vllm.sh` for the bounded multi-problem
   comparison matrix between `theory_grounded_full_20d` and the current CVT
   controls
+- use `scripts/run_qd_theory_followup_manifest.py` when the broader RTLLM /
+  VerilogEval matrix should be driven from a checked-in manifest rather than
+  shell environment overrides
 - use `scripts/report_qd_theory_followup.py` on the resulting run root to
-  summarize archive behavior and emit a compact theory-profile candidate from
-  descriptor-health signals
+  summarize archive behavior, emit a compact theory-profile candidate, and
+  record whether the current evidence is strong enough to recommend that
+  compact follow-on profile
 - example dry run:
   `VLLM_HOST=host.docker.internal VLLM_PORT=8000 bash scripts/run_qd_theory_followup_vllm.sh --suite rtllm --dry-run`
+- example manifest dry run:
+  `python scripts/run_qd_theory_followup_manifest.py --manifest data/configs/qd_theory_followup_broad_matrix.json --dry-run`
 - example report:
   `python scripts/report_qd_theory_followup.py --run_root /tmp/qd_theory_followup/<run_tag> --output_dir /tmp/qd_theory_followup/<run_tag>/theory_followup_report`
 

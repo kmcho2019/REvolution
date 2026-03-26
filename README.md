@@ -268,8 +268,11 @@ Current status on this feature branch:
   stored RentCon outputs.
 - `scripts/run_qd_theory_followup_vllm.sh` now provides a bounded multi-problem
   follow-up matrix for the theory profile versus the current CVT controls.
+- `scripts/run_qd_theory_followup_manifest.py` now provides a manifest-driven
+  broader follow-up runner for RTLLM / VerilogEval theory-vs-control matrices.
 - `scripts/report_qd_theory_followup.py` now summarizes those follow-up runs
-  and emits a compact theory-profile candidate from descriptor-health data.
+  and emits both a compact theory-profile candidate and a promotion-decision
+  status from descriptor-health plus control-delta data.
 - `scripts/run_evolution_smoke_vllm.sh` now also defaults to
   `--max_tokens 128000` and forwards `--diff_max_tokens 128000` so the shared
   reasoning-model vLLM endpoint is not exercised with an artificially tiny

@@ -16,7 +16,13 @@ if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
 THEORY_PROFILE = "theory_grounded_full_20d"
+DEFAULT_CONTROL_PROFILES = (
+    "implemented_structural_fixed_5d",
+    "size_control_3d",
+)
 DEFAULT_RECOMMENDED_AXIS_LIMIT = 8
+DEFAULT_MIN_SELECTED_AXES = 4
+DEFAULT_MIN_THEORY_PROBLEM_COUNT = 4
 
 
 @dataclass(frozen=True)
@@ -54,6 +60,30 @@ def _build_parser() -> argparse.ArgumentParser:
         type=int,
         default=DEFAULT_RECOMMENDED_AXIS_LIMIT,
         help="Maximum number of axes to keep in the compact theory recommendation.",
+    )
+    parser.add_argument(
+        "--theory_profile",
+        default=THEORY_PROFILE,
+        help="Profile name to treat as the theory-grounded profile.",
+    )
+    parser.add_argument(
+        "--control_profile",
+        dest="control_profiles",
+        action="append",
+        default=[],
+        help="Control profile name to compare against the theory profile. May be repeated.",
+    )
+    parser.add_argument(
+        "--min_selected_axes",
+        type=int,
+        default=DEFAULT_MIN_SELECTED_AXES,
+        help="Minimum selected compact axes required before the profile is considered ready.",
+    )
+    parser.add_argument(
+        "--min_theory_problem_count",
+        type=int,
+        default=DEFAULT_MIN_THEORY_PROBLEM_COUNT,
+        help="Minimum theory-profile problem count required before the profile is considered ready.",
     )
     return parser
 
@@ -140,7 +170,11 @@ def load_followup_rows(run_root: str | Path) -> list[TheoryRunRow]:
 def summarize_rows(
     rows: list[TheoryRunRow],
     *,
+    theory_profile: str = THEORY_PROFILE,
+    control_profiles: tuple[str, ...] = DEFAULT_CONTROL_PROFILES,
     max_recommended_axes: int = DEFAULT_RECOMMENDED_AXIS_LIMIT,
+    min_selected_axes: int = DEFAULT_MIN_SELECTED_AXES,
+    min_theory_problem_count: int = DEFAULT_MIN_THEORY_PROBLEM_COUNT,
 ) -> dict[str, Any]:
     profile_summary: dict[str, dict[str, Any]] = {}
     for row in rows:
@@ -185,19 +219,41 @@ def summarize_rows(
         )
 
     rendered_profiles.sort(key=lambda item: item["profile"])
-    theory_axis_summary = summarize_theory_axes(rows)
+    theory_axis_summary = summarize_theory_axes(rows, theory_profile=theory_profile)
+    profile_lookup = {profile["profile"]: profile for profile in rendered_profiles}
+    pairwise_deltas = summarize_profile_deltas(
+        profile_lookup,
+        theory_profile=theory_profile,
+        control_profiles=control_profiles,
+    )
+    recommendation = recommend_theory_profile(
+        theory_axis_summary,
+        theory_profile=theory_profile,
+        max_axes=max_recommended_axes,
+    )
     return {
         "profiles": rendered_profiles,
         "theory_axis_summary": theory_axis_summary,
-        "recommended_theory_profile": recommend_theory_profile(
-            theory_axis_summary,
-            max_axes=max_recommended_axes,
+        "pairwise_deltas": pairwise_deltas,
+        "recommended_theory_profile": recommendation,
+        "recommendation_decision": build_recommendation_decision(
+            profile_lookup,
+            theory_axis_summary=theory_axis_summary,
+            pairwise_deltas=pairwise_deltas,
+            recommendation=recommendation,
+            theory_profile=theory_profile,
+            min_selected_axes=min_selected_axes,
+            min_theory_problem_count=min_theory_problem_count,
         ),
     }
 
 
-def summarize_theory_axes(rows: list[TheoryRunRow]) -> list[dict[str, Any]]:
-    theory_rows = [row for row in rows if row.profile == THEORY_PROFILE]
+def summarize_theory_axes(
+    rows: list[TheoryRunRow],
+    *,
+    theory_profile: str = THEORY_PROFILE,
+) -> list[dict[str, Any]]:
+    theory_rows = [row for row in rows if row.profile == theory_profile]
     axis_values: dict[str, dict[str, Any]] = {}
     for row in theory_rows:
         for axis_payload in row.axis_health:
@@ -258,6 +314,7 @@ def summarize_theory_axes(rows: list[TheoryRunRow]) -> list[dict[str, Any]]:
 def recommend_theory_profile(
     axis_summary: list[dict[str, Any]],
     *,
+    theory_profile: str = THEORY_PROFILE,
     max_axes: int = DEFAULT_RECOMMENDED_AXIS_LIMIT,
 ) -> dict[str, Any]:
     if max_axes < 1:
@@ -272,8 +329,114 @@ def recommend_theory_profile(
     selected_axes = [axis["axis"] for axis in eligible_axes[:max_axes]]
     return {
         "profile_name": f"theory_grounded_compact_candidate_{len(selected_axes)}d",
-        "source_profile": THEORY_PROFILE,
+        "source_profile": theory_profile,
         "selected_axes": selected_axes,
+    }
+
+
+def summarize_profile_deltas(
+    profile_lookup: dict[str, dict[str, Any]],
+    *,
+    theory_profile: str,
+    control_profiles: tuple[str, ...],
+) -> list[dict[str, Any]]:
+    theory_metrics = profile_lookup.get(theory_profile)
+    if theory_metrics is None:
+        return []
+
+    rendered: list[dict[str, Any]] = []
+    for control_profile in control_profiles:
+        control_metrics = profile_lookup.get(control_profile)
+        if control_metrics is None:
+            continue
+        rendered.append(
+            {
+                "theory_profile": theory_profile,
+                "control_profile": control_profile,
+                "mean_coverage_delta": _delta_metric(
+                    theory_metrics.get("mean_coverage"),
+                    control_metrics.get("mean_coverage"),
+                ),
+                "mean_qd_score_delta": _delta_metric(
+                    theory_metrics.get("mean_qd_score"),
+                    control_metrics.get("mean_qd_score"),
+                ),
+                "mean_best_quality_delta": _delta_metric(
+                    theory_metrics.get("mean_best_quality"),
+                    control_metrics.get("mean_best_quality"),
+                ),
+                "mean_observation_count_delta": _delta_metric(
+                    theory_metrics.get("mean_observation_count"),
+                    control_metrics.get("mean_observation_count"),
+                ),
+            }
+        )
+    return rendered
+
+
+def build_recommendation_decision(
+    profile_lookup: dict[str, dict[str, Any]],
+    *,
+    theory_axis_summary: list[dict[str, Any]],
+    pairwise_deltas: list[dict[str, Any]],
+    recommendation: dict[str, Any],
+    theory_profile: str,
+    min_selected_axes: int,
+    min_theory_problem_count: int,
+) -> dict[str, Any]:
+    theory_metrics = profile_lookup.get(theory_profile)
+    selected_axes = recommendation.get("selected_axes", [])
+    if not isinstance(selected_axes, list):
+        selected_axes = []
+
+    reasons: list[str] = []
+    if theory_metrics is None:
+        reasons.append("theory profile was not present in the scanned run root")
+        return {
+            "status": "needs_more_data",
+            "reason_count": len(reasons),
+            "reasons": reasons,
+            "selected_axis_count": 0,
+            "required_min_selected_axes": min_selected_axes,
+            "theory_problem_count": 0,
+            "required_min_theory_problem_count": min_theory_problem_count,
+            "noncollapsed_axis_count": 0,
+        }
+
+    theory_problem_count = int(theory_metrics.get("problem_count", 0) or 0)
+    if theory_problem_count < min_theory_problem_count:
+        reasons.append(
+            "theory profile has not yet been run on enough problems for a compact recommendation"
+        )
+    if len(selected_axes) < max(1, min_selected_axes):
+        reasons.append("compact theory candidate does not yet have enough stable axes")
+
+    noncollapsed_axes = [
+        axis["axis"]
+        for axis in theory_axis_summary
+        if (axis.get("noncollapsed_fraction") or 0.0) >= 0.5
+    ]
+    if not noncollapsed_axes:
+        reasons.append("no theory axes remained non-collapsed across the scanned runs")
+
+    if not pairwise_deltas:
+        reasons.append("no configured control profiles were available for comparison")
+    elif not any(_delta_is_positive_enough(item) for item in pairwise_deltas):
+        reasons.append(
+            "theory profile did not beat a configured control on mean coverage or mean QD score"
+        )
+
+    status = "candidate_ready" if not reasons else "needs_more_data"
+    return {
+        "status": status,
+        "reason_count": len(reasons),
+        "reasons": reasons,
+        "selected_axis_count": len(selected_axes),
+        "required_min_selected_axes": max(1, min_selected_axes),
+        "theory_problem_count": theory_problem_count,
+        "required_min_theory_problem_count": min_theory_problem_count,
+        "noncollapsed_axis_count": len(noncollapsed_axes),
+        "noncollapsed_axes": noncollapsed_axes,
     }
 
 
@@ -281,6 +444,24 @@ def _mean(values: list[float]) -> float | None:
     if not values:
         return None
     return sum(values) / len(values)
+
+
+def _delta_metric(left: Any, right: Any) -> float | None:
+    if not isinstance(left, (int, float)):
+        return None
+    if not isinstance(right, (int, float)):
+        return None
+    return float(left) - float(right)
+
+
+def _delta_is_positive_enough(delta_row: dict[str, Any]) -> bool:
+    coverage_delta = delta_row.get("mean_coverage_delta")
+    qd_score_delta = delta_row.get("mean_qd_score_delta")
+    if isinstance(coverage_delta, (int, float)) and float(coverage_delta) > 0.0:
+        return True
+    if isinstance(qd_score_delta, (int, float)) and float(qd_score_delta) > 0.0:
+        return True
+    return False
 
 
 def render_markdown(rows: list[TheoryRunRow], summary: dict[str, Any]) -> str:
@@ -323,7 +504,27 @@ def render_markdown(rows: list[TheoryRunRow], summary: dict[str, Any]) -> str:
             f"{_format_metric(axis['mean_stddev'])} |"
         )
 
+    lines.extend(
+        [
+            "",
+            "## Theory Vs Control",
+            "",
+            "| Control Profile | Coverage Delta | QD Score Delta | Best Quality Delta | Observation Delta |",
+            "| --- | ---: | ---: | ---: | ---: |",
+        ]
+    )
+
+    for item in summary["pairwise_deltas"]:
+        lines.append(
+            f"| {item['control_profile']} | "
+            f"{_format_metric(item['mean_coverage_delta'])} | "
+            f"{_format_metric(item['mean_qd_score_delta'])} | "
+            f"{_format_metric(item['mean_best_quality_delta'])} | "
+            f"{_format_metric(item['mean_observation_count_delta'])} |"
+        )
+
     recommendation = summary["recommended_theory_profile"]
+    decision = summary["recommendation_decision"]
     lines.extend(
         [
             "",
@@ -331,9 +532,19 @@ def render_markdown(rows: list[TheoryRunRow], summary: dict[str, Any]) -> str:
             "",
             f"- profile_name: `{recommendation['profile_name']}`",
             f"- selected_axes: `{', '.join(recommendation['selected_axes']) or 'none'}`",
+            f"- status: `{decision['status']}`",
+            f"- selected_axis_count: `{decision['selected_axis_count']}`",
+            f"- theory_problem_count: `{decision['theory_problem_count']}`",
+            f"- noncollapsed_axis_count: `{decision['noncollapsed_axis_count']}`",
             "",
         ]
     )
+    if decision["reasons"]:
+        lines.append("### Decision Notes")
+        lines.append("")
+        for reason in decision["reasons"]:
+            lines.append(f"- {reason}")
+        lines.append("")
     return "\n".join(lines)
 
 
@@ -362,6 +573,10 @@ def write_report_files(
         json.dumps(summary["recommended_theory_profile"], indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
+    (output_dir / "theory_promotion_decision.json").write_text(
+        json.dumps(summary["recommendation_decision"], indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     (output_dir / "theory_followup_report.md").write_text(
         render_markdown(rows, summary),
         encoding="utf-8",
@@ -374,7 +589,11 @@ def main(argv: list[str] | None = None) -> int:
     rows = load_followup_rows(args.run_root)
     summary = summarize_rows(
         rows,
+        theory_profile=args.theory_profile,
+        control_profiles=tuple(args.control_profiles or DEFAULT_CONTROL_PROFILES),
         max_recommended_axes=args.max_recommended_axes,
+        min_selected_axes=args.min_selected_axes,
+        min_theory_problem_count=args.min_theory_problem_count,
     )
     output_dir = (
         Path(args.output_dir)

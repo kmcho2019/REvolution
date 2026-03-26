@@ -24,9 +24,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   `/workspace/.worktrees/qd-theory-grounded-descriptors`
 - Current stage:
   runtime extraction, profile wiring, docs, bounded smokes, Rent calibration,
-  and bounded theory follow-up reporting are complete; the remaining work is
-  mostly longer-budget experiment evidence, broader suite coverage, and
-  optional RentCon cross-check corpus growth
+  bounded theory follow-up reporting, and the first follow-up matrix/report
+  checkpoint are complete; the broader experiment runner and compact-profile
+  decision workflow are now reproducible, and the remaining work is mostly
+  longer-budget evidence collection plus RentCon corpus growth
 
 ## Worktree Notes
 
@@ -97,6 +98,14 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
     observed non-collapsed axes
   - status:
     completed locally and ready for a signed checkpoint commit
+- Stage 5: broader experiment manifest and decision workflow
+  - scope:
+    add a manifest-driven theory follow-up runner for broader RTLLM /
+    VerilogEval experiment passes, extend the follow-up report with
+    theory-vs-control deltas and a compact-profile decision status, add example
+    manifests, update docs, and validate with dry-run plus bounded live smoke
+  - status:
+    completed locally and ready for a signed checkpoint commit
 
 ## Decisions Log
 
@@ -117,6 +126,12 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - 2026-03-26: Add an offline probe script for theory descriptors and optional
   RentCon report comparison instead of invoking RentCon from the evaluation hot
   path.
+- 2026-03-26: Use a manifest-driven Python runner for broader theory follow-up
+  experiments instead of continuing to extend the bounded shell harness with
+  more environment-variable combinations.
+- 2026-03-26: Treat compact-profile promotion as an explicit decision output,
+  not just a list of candidate axes. The report now records both pairwise
+  control deltas and a `candidate_ready` / `needs_more_data` status.
 
 ## Implementation Checklist
 
@@ -140,6 +155,10 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
 - [x] Add a theory-vs-control follow-up report with archive-health summaries.
 - [x] Emit a compact theory-profile recommendation candidate from descriptor
   health observations.
+- [x] Add a manifest-driven broader theory follow-up runner.
+- [x] Add pairwise control deltas and explicit promotion-decision output to
+  the follow-up report.
+- [x] Add a checked-in broad follow-up matrix manifest and docs for it.
 - [ ] Run longer multi-problem QD experiments and compare archive behavior
   against the structural CVT controls.
 - [ ] Compare repo-native Rent estimates against extracted RentCon reports on a
@@ -290,6 +309,32 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   The bounded RTLLM follow-up used `population_size=1` and `num_generations=0`,
   so the emitted compact recommendation was intentionally empty; this is a
   useful smoke artifact, not evidence for final profile pruning.
+- 2026-03-26:
+  `pytest tests/scripts/test_run_qd_theory_followup_manifest.py tests/scripts/test_report_qd_theory_followup.py -q`
+  passed.
+- 2026-03-26:
+  `ruff check scripts/run_qd_theory_followup_manifest.py scripts/report_qd_theory_followup.py tests/scripts/test_run_qd_theory_followup_manifest.py tests/scripts/test_report_qd_theory_followup.py`
+  passed.
+- 2026-03-26:
+  `python -m pyright --pythonpath /workspace/.venv/bin/python scripts/run_qd_theory_followup_manifest.py scripts/report_qd_theory_followup.py`
+  passed.
+- 2026-03-26:
+  `python scripts/run_qd_theory_followup_manifest.py --manifest data/configs/qd_theory_followup_broad_matrix.json --dry-run`
+  printed the expected RTLLM / VerilogEval broader matrix from the checked-in
+  manifest.
+- 2026-03-26:
+  `python scripts/run_qd_theory_followup_manifest.py --manifest data/configs/qd_theory_followup_broad_matrix.json --case rtllm_core_pair --smoke-budget --run_tag 20260326_stage5_seq_live`
+  completed and wrote a bounded live manifest-driven run root under
+  `/tmp/qd_theory_followup_broad/20260326_stage5_seq_live`.
+- 2026-03-26:
+  `python scripts/report_qd_theory_followup.py --run_root /tmp/qd_theory_followup_broad/20260326_stage5_seq_live --output_dir /tmp/qd_theory_followup_broad/20260326_stage5_seq_live/theory_followup_report`
+  completed and emitted `theory_followup_summary.json`,
+  `theory_followup_report.md`, `recommended_theory_profile.json`, and
+  `theory_promotion_decision.json`.
+- 2026-03-26:
+  The manifest-driven smoke-budget RTLLM run still produced
+  `recommendation_decision.status=needs_more_data`; this is the expected
+  outcome for a `population_size=1`, `num_generations=0` reachability pass.
 
 ## Remaining Validation / Experiment TODOs
 
@@ -298,6 +343,8 @@ opt-in, CVT-first, and not a replacement for the current structural defaults.
   coverage.
 - [x] Add a manifest-driven Rent calibration/report workflow.
 - [x] Add a bounded theory follow-up matrix harness and report workflow.
+- [x] Add a manifest-driven broader theory follow-up runner and decision
+  report workflow.
 - [ ] Run a broader theory-profile smoke matrix over both RTLLM and
   VerilogEval with non-trivial population/generation budgets.
 - [ ] Save a small calibration set of RentCon outputs so

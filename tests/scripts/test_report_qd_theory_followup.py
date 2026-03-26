@@ -27,9 +27,9 @@ def test_report_qd_theory_followup_summarizes_profiles_and_recommends_axes(tmp_p
         {
             "archive_type": "cvt",
             "descriptor_profile": "theory_grounded_full_20d",
-            "coverage": 0.25,
-            "qd_score": 1.2,
-            "best_quality": 0.8,
+            "coverage": 0.55,
+            "qd_score": 1.8,
+            "best_quality": 0.95,
             "occupied_cells": 4,
             "num_cells": 16,
         },
@@ -39,7 +39,7 @@ def test_report_qd_theory_followup_summarizes_profiles_and_recommends_axes(tmp_p
         {
             "descriptor_profile": "theory_grounded_full_20d",
             "observation_count": 10,
-            "collapsed_axes": ["rent_exponent"],
+            "collapsed_axes": [],
             "axis_health": [
                 {
                     "axis": "rtl_cyclomatic_total_log",
@@ -52,9 +52,9 @@ def test_report_qd_theory_followup_summarizes_profiles_and_recommends_axes(tmp_p
                 {
                     "axis": "rent_exponent",
                     "observation_stats": {
-                        "unique_count": 1,
-                        "nonzero_fraction": 0.0,
-                        "stddev": 0.0,
+                        "unique_count": 3,
+                        "nonzero_fraction": 1.0,
+                        "stddev": 0.2,
                     },
                 },
             ],
@@ -84,13 +84,24 @@ def test_report_qd_theory_followup_summarizes_profiles_and_recommends_axes(tmp_p
     )
 
     rows = load_followup_rows(run_root)
-    summary = summarize_rows(rows)
+    summary = summarize_rows(
+        rows,
+        min_selected_axes=1,
+        min_theory_problem_count=1,
+    )
 
     assert len(rows) == 2
     assert summary["profiles"][0]["profile"] == "implemented_structural_fixed_5d"
     theory_summary = next(
         item for item in summary["profiles"] if item["profile"] == "theory_grounded_full_20d"
     )
-    assert theory_summary["collapsed_axes"] == ["rent_exponent"]
+    assert theory_summary["collapsed_axes"] == []
     recommendation = summary["recommended_theory_profile"]
-    assert recommendation["selected_axes"] == ["rtl_cyclomatic_total_log"]
+    assert recommendation["selected_axes"] == [
+        "rtl_cyclomatic_total_log",
+        "rent_exponent",
+    ]
+    pairwise_delta = summary["pairwise_deltas"][0]
+    assert pairwise_delta["control_profile"] == "implemented_structural_fixed_5d"
+    assert pairwise_delta["mean_coverage_delta"] == 0.15000000000000002
+    assert summary["recommendation_decision"]["status"] == "candidate_ready"

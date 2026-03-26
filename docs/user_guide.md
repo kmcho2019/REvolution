@@ -222,9 +222,15 @@ Current feature status:
   - `theory_grounded_full_20d`
   Start with:
   `VLLM_HOST=host.docker.internal VLLM_PORT=8000 bash scripts/run_qd_theory_followup_vllm.sh --suite rtllm --dry-run`
+- `scripts/run_qd_theory_followup_manifest.py` provides a manifest-driven
+  broader matrix runner. Start from
+  `data/configs/qd_theory_followup_broad_matrix.json`, then use:
+  `python scripts/run_qd_theory_followup_manifest.py --manifest data/configs/qd_theory_followup_broad_matrix.json --dry-run`
 - `scripts/report_qd_theory_followup.py` scans the resulting run root,
-  summarizes profile outcomes, and writes
-  `recommended_theory_profile.json` from non-collapsed theory axes.
+  summarizes profile outcomes, writes
+  `recommended_theory_profile.json`, and also writes
+  `theory_promotion_decision.json` from pairwise control deltas plus
+  non-collapsed theory axes.
   Example:
   `python scripts/report_qd_theory_followup.py --run_root /tmp/qd_theory_followup/<run_tag> --output_dir /tmp/qd_theory_followup/<run_tag>/theory_followup_report`
 - `scripts/run_evolution_smoke_vllm.sh` now uses the same `128000` token floor
