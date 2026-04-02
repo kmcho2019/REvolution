@@ -22,9 +22,10 @@ The `docs/` directory contains deeper dives:
 
 - `docs/implementation_details.md` – architecture and component responsibilities.
 - `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, long-budget classic-vs-QD runner, the formal `final_analysis/` bundle workflow, and the current archive-tuning-backed QD default recommendation for that workflow.
+- `scripts/report_design_space_analysis.py` – retrospective classical-vs-QD design-space analysis over completed runs, with per-problem generation-local vs accumulated PPA/feature plots, aggregate pooled views, candidate CSV export, and markdown indices.
 - `scripts/report_qd_feature_space.py` – deep post-run QD feature-space analysis over finished backend roots, including candidate tables, collapse diagnostics, regression summaries, and PCA/t-SNE plots.
 - `scripts/report_pareto_analysis.py` – per-problem Pareto-front figures plus aggregate hypervolume tables for backend comparisons.
-- `scripts/report_final_analysis_bundle.py` – one-command generator for `final_analysis/`, including backend comparison, hard-iteration analysis, Pareto analysis, feature analysis, and evolutionary reports. The hard-iteration section reads accumulated end-of-run success rates plus nested final best-score fields from completed summaries.
+- `scripts/report_final_analysis_bundle.py` – one-command generator for `final_analysis/`, including backend comparison, hard-iteration analysis, Pareto analysis, design-space analysis, feature analysis, and evolutionary reports. The hard-iteration section reads accumulated end-of-run success rates plus nested final best-score fields from completed summaries.
 - `scripts/report_qd_problem_histograms.py` – per-problem CVT feature histograms over successful candidates, with final centroid overlays and cumulative generation-history views written back into each problem directory. The script scans only valid CVT problem directories and skips malformed/non-CVT artifact roots cleanly.
 - `docs/revolution_qd_map_elites_implementation_plan.md` – living QD/MAP-Elites implementation status, validation notes, and staged roadmap.
 - `docs/qd_map_elites_guide.md` – QD runtime guide, descriptor/tool mapping, and generation-by-generation trace.
@@ -366,6 +367,9 @@ directly to `run_backend.py`.
 Use `scripts/backend_comparison_report.py` to combine multiple backend experiment roots into one markdown comparison table.
 It now also emits multi-objective sections with per-problem Pareto counts and hypervolume aggregates.
 Use `scripts/report_final_analysis_bundle.py` when you want the documented post-run layout under `final_analysis/` without assembling each report manually.
+Use `scripts/report_design_space_analysis.py` when you want the new retrospective
+PPA-space and feature-space views directly, either on their own or before
+building the full bundle.
 Use `scripts/run_backend_ablation.py` to launch matched backend sets over shared
 benchmark suites and emit a comparison report automatically. The ablation runner
 now accepts `--backends revolution funsearch eoh codeevolve` and derives
@@ -399,6 +403,41 @@ python scripts/report_final_analysis_bundle.py \
   --run-root exp/hard_iteration_qd/<run_tag> \
   --subset-config data/configs/hard_iteration_subset.yaml
 ```
+
+Example standalone design-space analysis for the same run:
+
+```bash
+python scripts/report_design_space_analysis.py \
+  --run-root exp/hard_iteration_qd/<run_tag> \
+  --subset-config data/configs/hard_iteration_subset.yaml \
+  --output-dir exp/hard_iteration_qd/<run_tag>/design_space_analysis
+```
+
+Helpful options for the standalone report:
+
+- `python scripts/report_design_space_analysis.py --help` shows the full CLI,
+  including examples for `--run-root` and repeated
+  `--backend_run name=path` mappings.
+- `--feature-profile <name>` loads a descriptor profile from the shared config.
+- Repeated `--feature <metric>` values override `--feature-profile` and force a
+  fixed feature subset for all generated plots.
+- `--aggregate-ppa-basis normalized|raw|both` controls whether aggregate PPA
+  plots use normalized gains, raw units, or both. Raw pooled plots are
+  qualitative-only because units differ across problems.
+- Per-problem reports now start with a quick-reference section that repeats the
+  final accumulated PPA and feature plots at the top, followed by the full
+  generation-by-generation chronology below.
+- Feature-space reports now include both:
+  - all-backend embeddings on the report's selected feature subset
+  - classic-vs-one-QD pairwise embeddings on the QD backend's descriptor basis
+- Pairwise PCA and t-SNE coordinates stay fixed across local and accumulated
+  generation plots for the same problem/comparison, so the layout is directly
+  comparable across generations.
+- Every generated markdown index now includes a short table of contents for
+  faster navigation.
+- The script always writes `report.md`, `summary.json`,
+  `successful_candidates.csv`, and `recommended_profile.json` under the chosen
+  output directory.
 
 `run_backend.py` strict/accelerated evaluation controls:
 - `--evaluation_mode strict_ablation|search_accelerated`:

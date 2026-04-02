@@ -26,8 +26,11 @@
 - `qd/`: QD/MAP-Elites substrate and runtime extensions.
   - `qd/archive.py`: grid archive implementation and insertion/replacement semantics.
   - `qd/artifacts.py`: archive summaries, archive-space reports, and per-candidate archive-event writers.
+  - `qd/design_space_report_support.py`: shared report-layout dataclasses plus plotting and markdown helpers for the standalone design-space analysis pipeline.
+  - `qd/feature_space_analysis.py`: shared feature-statistics, embedding, regression, and profile-selection helpers used by retrospective reporting scripts. This is the shared "feature math" layer behind both `report_design_space_analysis.py` and `report_qd_feature_space.py`.
   - `qd/scheduler.py`: occupancy-based fail/success budget splitting helpers.
   - `qd/scoring.py`: exact PPA `quality_score`, gain axes, repair score, and code hashing helpers.
+  - `qd/successful_candidate_catalog.py`: shared retrospective loader for successful candidates from `generation_log.jsonl` plus best-effort artifact enrichment from synthesis reports, QD archive events, and on-disk RTL artifacts. It normalizes classic and QD runs into one row-oriented candidate catalog for downstream reports.
 - `qd/descriptors.py`: descriptor registry, descriptor requirement metadata,
   profile loading, grid-axis spec handling, and descriptor-axis resolution.
 - `qd/engine.py`: archive-backed `QDEngine` for both grid and CVT modes that
@@ -79,6 +82,7 @@
 - `backend_comparison_report.py`: side-by-side + aggregate backend report generator across experiment roots with pass/fail emoji status, any-pass design counts, solved-only score/PPA summaries (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`), PPA regression counts, budget/fairness diagnostics, and QD archive metrics when QD sidecars are present.
 - `run_one_shot.py`: CLI for n-shot baselines that reuse the evaluation stack without evolution.
 - `archive_baseline.py`: archive utility for run roots and ablation roots with manifest/index metadata, copied run configs, preserved QD sidecars/plots, and compressed raw artifacts.
+- `report_design_space_analysis.py`: retrospective classical-vs-QD design-space report generator with per-problem generation-local vs accumulated PPA plots, all-backend plus classic-vs-QD pairwise feature plots, quick-reference sections, stable markdown indices, and `successful_candidates.csv` / `recommended_profile.json` exports.
 - `run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with hard-task selection, aggregate token/runtime comparisons, and diff failure catalog generation.
 - `run_diff_mode_diagnostics.py`: repeated real-LLM diff stress harness producing strict-parse/apply failure catalogs across curated edge cases, including worst-case failure sample retention.
 - `run_diff_prompt_optimization_loop.py`: prompt-candidate loop runner that calls `run_diff_prompt_suite.py` per candidate and ranks prompts by objective score.

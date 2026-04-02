@@ -37,12 +37,17 @@
 - Reporting and experiment summaries:
   [scripts/backend_comparison_report.py](scripts/backend_comparison_report.py),
   [scripts/archive_baseline.py](scripts/archive_baseline.py),
+  [scripts/report_design_space_analysis.py](scripts/report_design_space_analysis.py),
+  [src/revolution/qd/design_space_report_support.py](src/revolution/qd/design_space_report_support.py),
+  [src/revolution/qd/feature_space_analysis.py](src/revolution/qd/feature_space_analysis.py),
+  [src/revolution/qd/successful_candidate_catalog.py](src/revolution/qd/successful_candidate_catalog.py),
   [src/revolution/qd/visualization.py](src/revolution/qd/visualization.py)
 - Hard subset selection and iteration matrix:
   [scripts/build_hard_iteration_subset.py](scripts/build_hard_iteration_subset.py),
   [scripts/run_hard_iteration_one_shot_vllm.sh](scripts/run_hard_iteration_one_shot_vllm.sh),
   [scripts/run_hard_iteration_qd_vllm.sh](scripts/run_hard_iteration_qd_vllm.sh),
   [scripts/report_hard_iteration_analysis.py](scripts/report_hard_iteration_analysis.py),
+  [scripts/report_design_space_analysis.py](scripts/report_design_space_analysis.py),
   [scripts/report_qd_feature_space.py](scripts/report_qd_feature_space.py)
 - Prompt and diff surfaces:
   [src/revolution/prompt_store.py](src/revolution/prompt_store.py),
@@ -80,6 +85,8 @@
 - `python scripts/build_hard_iteration_subset.py --one-shot-root exp/hard_iteration_one_shot_rerun_<date> --output-config data/configs/hard_iteration_subset.yaml`: freeze the hard iteration subset from a valid post-fix one-shot rerun.
 - `bash scripts/run_hard_iteration_qd_vllm.sh --dry-run`: inspect the classic + QD hard-subset matrix commands before running them live.
 - `python scripts/report_qd_feature_space.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd/<run_tag>/classic --backend_run cvt_struct=exp/hard_iteration_qd/<run_tag>/cvt_struct --output-dir exp/hard_iteration_qd/<run_tag>/feature_analysis`: generate the deep post-run QD feature-space report, candidate table, and recommended profile artifacts.
+- `python scripts/report_design_space_analysis.py --help`: inspect the standalone retrospective design-space analysis CLI, including `--backend_run name=path`, feature selection precedence, and aggregate PPA options.
+- `python scripts/report_design_space_analysis.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd/<run_tag>/classic --backend_run cvt_struct=exp/hard_iteration_qd/<run_tag>/cvt_struct --output-dir exp/hard_iteration_qd/<run_tag>/design_space_analysis`: generate per-problem generation-local vs accumulated PPA plots, all-backend plus classic-vs-QD pairwise feature-space plots, quick-reference markdown indices, and `successful_candidates.csv`.
 - `python scripts/qd_descriptor_probe.py --archive_type grid --circuit_type sequential`: inspect the current QD descriptor-axis selection and requirements.
 - `bash scripts/run_qd_retrospective_redo_vllm.sh --dry-run`: inspect the tracked long-budget retrospective redo matrix without launching live jobs.
 
