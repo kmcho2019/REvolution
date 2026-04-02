@@ -7,6 +7,7 @@ import json
 import math
 import os
 import statistics
+import sys
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -17,6 +18,17 @@ import numpy as np
 import yaml
 from scipy.stats import spearmanr
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+)
+
+from revolution.qd import feature_space_analysis as shared_feature_analysis
+from revolution.qd.successful_candidate_catalog import (
+    catalog_rows,
+    load_successful_candidate_catalog,
+)
+
 IGNORED_SUMMARY_FILENAMES = {"archive_summary.json"}
 TARGET_COLUMNS = ("quality_score", "g_P", "g_A", "g_T")
 BENCHMARK_MARKERS = {
@@ -26,6 +38,50 @@ BENCHMARK_MARKERS = {
     "cvdp": "D",
 }
 RIDGE_ALPHAS = [0.01, 0.1, 1.0, 10.0, 100.0]
+FEATURE_EXCLUDED_COLUMNS = {
+    "backend",
+    "benchmark",
+    "problem",
+    "circuit_type",
+    "search_mode",
+    "archive_type",
+    "generation",
+    "generation_views_available",
+    "source",
+    "candidate_id",
+    "strategy",
+    "score",
+    "quality_score",
+    "color_score",
+    "origin_pool",
+    "generated_mode",
+    "decision",
+    "inserted",
+    "replaced",
+    "cell_id",
+    "is_final_elite",
+    "area",
+    "power",
+    "eff_clk_period",
+    "tns",
+    "wns",
+    "report_path",
+    "candidate_dir",
+    "code_file_path",
+    "metrics_json_path",
+    "qd_event_path",
+    "vcd_file_path",
+    "has_qd_event",
+    "has_metrics_json",
+    "has_code_file",
+    "has_vcd_file",
+    "has_structural_metrics",
+    "has_rtl_metrics",
+    "has_graph_metrics",
+    "has_dynamic_metrics",
+    "has_physical_metrics",
+    "warning_messages",
+}
 
 
 @dataclass(frozen=True)
@@ -43,24 +99,7 @@ class ProblemMetrics:
     qd_best_quality: float | None
 
 
-@dataclass(frozen=True)
-class FeatureStats:
-    feature: str
-    count: int
-    finite_fraction: float
-    unique_count: int
-    unique_ratio: float
-    nonzero_fraction: float
-    min_value: float | None
-    max_value: float | None
-    mean_value: float | None
-    stddev_value: float | None
-    q25_value: float | None
-    q75_value: float | None
-    iqr_value: float | None
-    normalized_range_coverage: float
-    collapsed: bool
-    near_collapsed: bool
+FeatureStats = shared_feature_analysis.FeatureStats
 
 
 def _safe_float(value: Any) -> float | None:
@@ -400,31 +439,10 @@ def _collect_qd_candidates(
 
 
 def _candidate_feature_columns(rows: list[dict[str, Any]]) -> list[str]:
-    excluded = {
-        "backend",
-        "benchmark",
-        "problem",
-        "candidate_id",
-        "generation",
-        "strategy",
-        "origin_pool",
-        "generated_mode",
-        "archive_type",
-        "decision",
-        "inserted",
-        "replaced",
-        "cell_id",
-        "code_file_path",
-        "is_final_elite",
-    }
-    cols: set[str] = set()
-    for row in rows:
-        for key, value in row.items():
-            if key in excluded or key in TARGET_COLUMNS:
-                continue
-            if isinstance(value, (int, float)) and math.isfinite(float(value)):
-                cols.add(key)
-    return sorted(cols)
+    return shared_feature_analysis.candidate_feature_columns(
+        rows,
+        excluded=FEATURE_EXCLUDED_COLUMNS,
+    )
 
 
 def _values_for_feature(rows: list[dict[str, Any]], feature: str) -> list[float]:
@@ -455,70 +473,15 @@ def _compute_feature_stats(
     feature: str,
     global_range_by_feature: dict[str, float],
 ) -> FeatureStats:
-    total_count = len(rows)
-    values = _values_for_feature(rows, feature)
-    finite_fraction = (len(values) / total_count) if total_count else 0.0
-    if not values:
-        return FeatureStats(
-            feature=feature,
-            count=0,
-            finite_fraction=finite_fraction,
-            unique_count=0,
-            unique_ratio=0.0,
-            nonzero_fraction=0.0,
-            min_value=None,
-            max_value=None,
-            mean_value=None,
-            stddev_value=None,
-            q25_value=None,
-            q75_value=None,
-            iqr_value=None,
-            normalized_range_coverage=0.0,
-            collapsed=True,
-            near_collapsed=True,
-        )
-    sorted_values = sorted(values)
-    unique_count = len({round(value, 12) for value in values})
-    unique_ratio = unique_count / len(values)
-    nonzero_fraction = sum(value != 0.0 for value in values) / len(values)
-    min_value = sorted_values[0]
-    max_value = sorted_values[-1]
-    stddev_value = statistics.pstdev(values) if len(values) > 1 else 0.0
-    q25_value = _quantile(sorted_values, 0.25)
-    q75_value = _quantile(sorted_values, 0.75)
-    iqr_value = (q75_value - q25_value) if q25_value is not None and q75_value is not None else None
-    global_range = global_range_by_feature.get(feature, 0.0)
-    normalized_range_coverage = 0.0
-    if global_range > 0.0:
-        normalized_range_coverage = max(0.0, (max_value - min_value) / global_range)
-    collapsed = unique_count <= 1 or nonzero_fraction == 0.0
-    near_collapsed = collapsed or normalized_range_coverage < 0.05
-    return FeatureStats(
-        feature=feature,
-        count=len(values),
-        finite_fraction=finite_fraction,
-        unique_count=unique_count,
-        unique_ratio=unique_ratio,
-        nonzero_fraction=nonzero_fraction,
-        min_value=min_value,
-        max_value=max_value,
-        mean_value=statistics.fmean(values),
-        stddev_value=stddev_value,
-        q25_value=q25_value,
-        q75_value=q75_value,
-        iqr_value=iqr_value,
-        normalized_range_coverage=normalized_range_coverage,
-        collapsed=collapsed,
-        near_collapsed=near_collapsed,
+    return shared_feature_analysis.compute_feature_stats(
+        rows,
+        feature,
+        global_range_by_feature,
     )
 
 
 def _global_range_by_feature(rows: list[dict[str, Any]], features: list[str]) -> dict[str, float]:
-    ranges: dict[str, float] = {}
-    for feature in features:
-        values = _values_for_feature(rows, feature)
-        ranges[feature] = (max(values) - min(values)) if values else 0.0
-    return ranges
+    return shared_feature_analysis.global_range_by_feature(rows, features)
 
 
 def _stats_rows(stats_by_feature: list[FeatureStats]) -> list[dict[str, Any]]:
@@ -761,44 +724,29 @@ def _scatter_embeddings(
 
 
 def _write_embeddings(path_root: Path, rows: list[dict[str, Any]], feature_cols: list[str]) -> dict[str, Any]:
-    if len(rows) < 3:
-        return {"usable_features": [], "pca_plot": None, "tsne_plot": None, "note": "too_few_successes"}
-    usable_cols, matrix = _embedding_feature_matrix(rows, feature_cols)
-    if len(usable_cols) < 2:
-        return {"usable_features": usable_cols, "pca_plot": None, "tsne_plot": None, "note": "too_few_varying_features"}
-    x_scaled = _standardize_matrix(matrix)
-
-    _, _, vt = np.linalg.svd(x_scaled, full_matrices=False)
-    pca_points = x_scaled.dot(vt[:2].T)
-    pca_path = _scatter_embeddings(
-        path_root / "pca_fitness.png",
-        [(float(row[0]), float(row[1])) for row in pca_points],
-        rows,
-        title="PCA of successful designs",
-    )
-
+    pca_payload = shared_feature_analysis.fit_embedding(rows, feature_cols, method="pca")
+    pca_path: str | None = None
+    if pca_payload.get("points"):
+        pca_path = _scatter_embeddings(
+            path_root / "pca_fitness.png",
+            pca_payload["points"],
+            rows,
+            title="PCA of successful designs",
+        )
+    tsne_payload = shared_feature_analysis.fit_embedding(rows, feature_cols, method="tsne")
     tsne_path: str | None = None
-    tsne_note: str | None = None
-    if len(rows) >= 6:
-        perplexity = min(30, max(5, (len(rows) - 1) // 3))
-        if perplexity < len(rows):
-            tsne_points = _tsne_embedding(x_scaled, perplexity=perplexity, max_iter=500)
-            tsne_path = _scatter_embeddings(
-                path_root / "tsne_fitness.png",
-                [(float(row[0]), float(row[1])) for row in tsne_points],
-                rows,
-                title="t-SNE of successful designs",
-            )
-        else:
-            tsne_note = "invalid_perplexity_for_sample_count"
-    else:
-        tsne_note = "too_few_successes"
-
+    if tsne_payload.get("points"):
+        tsne_path = _scatter_embeddings(
+            path_root / "tsne_fitness.png",
+            tsne_payload["points"],
+            rows,
+            title="t-SNE of successful designs",
+        )
     return {
-        "usable_features": usable_cols,
+        "usable_features": pca_payload.get("usable_features", []),
         "pca_plot": pca_path,
         "tsne_plot": tsne_path,
-        "note": tsne_note,
+        "note": tsne_payload.get("note"),
     }
 
 
@@ -827,46 +775,7 @@ def _spearman_feature_map(rows: list[dict[str, Any]], feature_cols: list[str], t
 
 
 def _run_ridge_regression(rows: list[dict[str, Any]], feature_cols: list[str], target: str) -> dict[str, Any]:
-    usable_rows: list[dict[str, Any]] = []
-    for row in rows:
-        target_value = _safe_float(row.get(target))
-        if target_value is None:
-            continue
-        usable_rows.append(row)
-    if len(usable_rows) < 4 or not feature_cols:
-        return {"target": target, "sample_count": len(usable_rows), "r2": None, "alpha": None, "coefficients": []}
-    usable_cols, matrix = _embedding_feature_matrix(usable_rows, feature_cols)
-    if not usable_cols:
-        return {"target": target, "sample_count": len(usable_rows), "r2": None, "alpha": None, "coefficients": []}
-    y = [_safe_float(row.get(target)) or 0.0 for row in usable_rows]
-    x_scaled = _standardize_matrix(matrix)
-    y_array = np.asarray(y, dtype=float)
-    y_mean = float(np.mean(y_array))
-    y_std = float(np.std(y_array))
-    if y_std == 0.0:
-        return {"target": target, "sample_count": len(usable_rows), "r2": None, "alpha": None, "coefficients": []}
-    y_scaled = (y_array - y_mean) / y_std
-    alpha = _cross_validated_ridge_alpha(x_scaled, y_scaled)
-    weights = _fit_ridge_weights(x_scaled, y_scaled, alpha)
-    predictions = x_scaled.dot(weights)
-    coefficients = [
-        {"feature": feature, "coefficient": float(coefficient)}
-        for feature, coefficient in sorted(
-            zip(usable_cols, weights, strict=True),
-            key=lambda item: abs(float(item[1])),
-            reverse=True,
-        )
-    ]
-    residual = float(np.sum(np.square(y_scaled - predictions)))
-    total = float(np.sum(np.square(y_scaled - np.mean(y_scaled))))
-    r2 = 1.0 - (residual / total) if total > 0.0 else None
-    return {
-        "target": target,
-        "sample_count": len(usable_rows),
-        "r2": r2,
-        "alpha": float(alpha),
-        "coefficients": coefficients,
-    }
+    return shared_feature_analysis.run_ridge_regression(rows, feature_cols, target)
 
 
 def _per_backend_feature_summary(
@@ -988,65 +897,18 @@ def _profile_feature_scores(
     feature_cols: list[str],
     backend_feature_stats: dict[str, list[FeatureStats]],
 ) -> list[dict[str, Any]]:
-    global_ranges = _global_range_by_feature(rows, feature_cols)
-    global_stats = {feature: _compute_feature_stats(rows, feature, global_ranges) for feature in feature_cols}
-    scores: list[dict[str, Any]] = []
-    targets = [target for target in TARGET_COLUMNS if target == "quality_score" or any(_safe_float(row.get(target)) is not None for row in rows)]
-    per_target_corr = {target: _spearman_feature_map(rows, feature_cols, target) for target in targets}
-    for feature in feature_cols:
-        if feature in {"g_P", "g_A", "g_T"}:
-            continue
-        stats = global_stats[feature]
-        collapsed_in_backends = sum(
-            1
-            for feature_stats in backend_feature_stats.values()
-            for item in feature_stats
-            if item.feature == feature and item.collapsed
-        )
-        if stats.finite_fraction < 0.9 or stats.collapsed or collapsed_in_backends >= 2:
-            eligible = False
-        else:
-            eligible = True
-        predictive = max(
-            [abs(corr) for corr in (per_target_corr[target].get(feature) for target in targets) if corr is not None] or [0.0]
-        )
-        diversity = statistics.fmean(
-            [
-                stats.normalized_range_coverage,
-                min(1.0, (stats.stddev_value or 0.0) / max(abs(stats.mean_value or 0.0), 1e-6)),
-                stats.unique_ratio,
-            ]
-        )
-        stability = stats.finite_fraction
-        composite = 0.45 * predictive + 0.35 * diversity + 0.20 * stability
-        scores.append(
-            {
-                "feature": feature,
-                "eligible": eligible,
-                "predictive_score": predictive,
-                "diversity_score": diversity,
-                "stability_score": stability,
-                "composite_score": composite,
-                "collapsed_in_backend_count": collapsed_in_backends,
-                "finite_fraction": stats.finite_fraction,
-                "normalized_range_coverage": stats.normalized_range_coverage,
-                "unique_ratio": stats.unique_ratio,
-            }
-        )
-    scores.sort(key=lambda item: (item["eligible"], item["composite_score"]), reverse=True)
-    return scores
+    return shared_feature_analysis.profile_feature_scores(
+        rows,
+        feature_cols,
+        backend_feature_stats,
+    )
 
 
 def _recommended_profile(scores: list[dict[str, Any]], min_features: int) -> dict[str, Any]:
-    selected = [row["feature"] for row in scores if row["eligible"]][:min_features]
-    sequential_axes = list(selected) + ["g_P", "g_A", "g_T"]
-    combinational_axes = [axis for axis in sequential_axes if axis != "g_T"]
-    return {
-        "selected_non_target_features": selected,
-        "sequential_axes": sequential_axes,
-        "combinational_axes": combinational_axes,
-        "feature_scores": scores,
-    }
+    return shared_feature_analysis.recommended_profile(
+        scores,
+        min_features=min_features,
+    )
 
 
 def _write_top_report(
@@ -1249,16 +1111,12 @@ def generate_qd_feature_space_analysis(
         ],
     )
 
-    qd_candidate_rows: list[dict[str, Any]] = []
-    for backend, root in backend_roots.items():
-        qd_candidate_rows.extend(
-            _collect_qd_candidates(
-                backend,
-                root,
-                allowed_problems=allowed_problems,
-                warnings=warnings,
-            )
-        )
+    catalog = load_successful_candidate_catalog(
+        backend_roots=backend_roots,
+        allowed_problems=allowed_problems,
+    )
+    warnings.extend(catalog.warnings)
+    qd_candidate_rows = catalog_rows(catalog, only_qd_candidates=True)
 
     candidate_fieldnames = sorted({key for row in qd_candidate_rows for key in row}) if qd_candidate_rows else []
     if candidate_fieldnames:

@@ -20,6 +20,9 @@ from scripts.report_evolutionary_run import generate_evolutionary_reports  # noq
 from scripts.report_hard_iteration_analysis import (  # noqa: E402
     generate_hard_iteration_analysis,
 )
+from scripts.report_design_space_analysis import (  # noqa: E402
+    generate_design_space_analysis,
+)
 from scripts.report_pareto_analysis import generate_pareto_analysis_report  # noqa: E402
 from scripts.report_qd_feature_space import (  # noqa: E402
     generate_qd_feature_space_analysis,
@@ -32,6 +35,7 @@ RESERVED_DIR_NAMES = {
     "hard_iteration_analysis",
     "pareto_analysis",
     "evolutionary_reports",
+    "design_space_analysis",
     "final_analysis",
 }
 
@@ -93,6 +97,7 @@ def _write_top_level_report(
         f"- hard iteration analysis: [report.md]({sections['hard_iteration_analysis_report']})",
         f"- pareto analysis: [report.md]({sections['pareto_analysis_report']})",
         f"- evolutionary reports: [report.md]({sections['evolutionary_reports_report']})",
+        f"- design-space analysis: [report.md]({sections['design_space_analysis_report']})",
     ]
     if "feature_analysis_report" in sections:
         lines.append(f"- feature analysis: [report.md]({sections['feature_analysis_report']})")
@@ -121,6 +126,11 @@ def _write_top_level_report(
     if recommendations.get("recommended_profile_path"):
         lines.append(
             f"- recommended profile: [recommended_profile.json]({recommendations['recommended_profile_path']})"
+        )
+    if recommendations.get("design_space_profile_path"):
+        lines.append(
+            "- design-space profile: "
+            f"[recommended_profile.json]({recommendations['design_space_profile_path']})"
         )
     lines.append("")
     (output_dir / "report.md").write_text("\n".join(lines), encoding="utf-8")
@@ -170,6 +180,12 @@ def generate_final_analysis_bundle(
         backend_runs=resolved_backend_runs,
         output_dir=output_dir / "evolutionary_reports",
     )
+    design_space_result = generate_design_space_analysis(
+        subset_config=subset_config,
+        backend_runs=resolved_backend_runs,
+        output_dir=output_dir / "design_space_analysis",
+        min_profile_features=min_profile_features,
+    )
 
     skipped_sections: list[dict[str, str]] = []
     sections = {
@@ -179,9 +195,12 @@ def generate_final_analysis_bundle(
         "pareto_analysis_report": "pareto_analysis/report.md",
         "pareto_analysis_summary": "pareto_analysis/summary.json",
         "evolutionary_reports_report": "evolutionary_reports/report.md",
+        "design_space_analysis_report": "design_space_analysis/report.md",
+        "design_space_analysis_summary": "design_space_analysis/summary.json",
     }
     recommendations = dict(hard_iteration_result["payload"]["recommendations"])
     recommendations["pareto_overall"] = pareto_result["summary"].get("overall_multi_objective_winner")
+    recommendations["design_space_profile_path"] = "design_space_analysis/recommended_profile.json"
 
     if _has_qd_backend(resolved_backend_runs):
         generate_qd_feature_space_analysis(
@@ -223,6 +242,7 @@ def generate_final_analysis_bundle(
         "hard_iteration_summary_path": hard_iteration_result["summary_path"],
         "pareto_summary_path": pareto_result["summary_path"],
         "evolutionary_report_path": evolutionary_result["report_path"],
+        "design_space_report_path": design_space_result["report_path"],
     }
     summary_path = output_dir / "summary.json"
     summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")

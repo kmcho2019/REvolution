@@ -16,6 +16,8 @@ def _write_summary(
     synthesis: float,
     best_score: float,
     runtime_seconds: float,
+    ref_ppa_metric: dict[str, float] | None = None,
+    final_details: list[dict] | None = None,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -28,9 +30,41 @@ def _write_summary(
                     "synthesis_ppa": synthesis,
                 },
                 "final_population_ppa": {"best_score": best_score},
+                "final_population_ppa_details": final_details or [],
+                "ref_ppa_metric": ref_ppa_metric
+                or {"area": 100.0, "power": 1.0, "eff_clk_period": 1.0},
                 "total_runtime_seconds": runtime_seconds,
             }
         ),
+        encoding="utf-8",
+    )
+
+
+def _candidate_detail(
+    *,
+    candidate_id: str,
+    generation: int,
+    area: float,
+    power: float,
+    period: float,
+) -> dict:
+    return {
+        "id": candidate_id,
+        "strategy": "M-I",
+        "score": 0.2 + generation * 0.01,
+        "ppa_metrics": {
+            "area": area,
+            "power": power,
+            "eff_clk_period": period,
+            "report_path": f"/tmp/{candidate_id}.rpt",
+        },
+    }
+
+
+def _write_generation_log(path: Path, payloads: list[dict]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        "\n".join(json.dumps(payload) for payload in payloads) + "\n",
         encoding="utf-8",
     )
 
@@ -158,6 +192,7 @@ def test_report_qd_feature_space_generates_feature_outputs(tmp_path):
         synthesis=0.5,
         best_score=0.1,
         runtime_seconds=10.0,
+        final_details=[],
     )
     _write_summary(
         classic_root / "VerilogEval-Spec-to-RTL" / "Prob153_gshare" / "Prob153_gshare_summary.json",
@@ -167,12 +202,15 @@ def test_report_qd_feature_space_generates_feature_outputs(tmp_path):
         synthesis=0.4,
         best_score=0.2,
         runtime_seconds=12.0,
+        final_details=[],
     )
 
     elite_ids = []
     counter = 0
     for benchmark, problem in [("RTLLM", "Prob001_accu"), ("VerilogEval-Spec-to-RTL", "Prob153_gshare")]:
         problem_root = qd_root / benchmark / problem
+        final_details: list[dict] = []
+        generation_payloads: list[dict] = []
         _write_summary(
             problem_root / f"{problem}_summary.json",
             benchmark=benchmark,
@@ -181,6 +219,7 @@ def test_report_qd_feature_space_generates_feature_outputs(tmp_path):
             synthesis=0.6,
             best_score=0.35,
             runtime_seconds=15.0,
+            final_details=[],
         )
         _write_archive_summary(problem_root / "archive_summary.json", archive_type="grid", coverage=0.4, qd_score=1.5, best_quality=0.8)
         local_elites = []
@@ -208,7 +247,32 @@ def test_report_qd_feature_space_generates_feature_outputs(tmp_path):
                 g_a=0.1 + 0.02 * counter,
                 g_t=0.05 + 0.01 * counter,
             )
+            detail = _candidate_detail(
+                candidate_id=candidate_id,
+                generation=local_index,
+                area=90.0 - counter,
+                power=0.9 - counter * 0.01,
+                period=0.8 - counter * 0.01,
+            )
+            final_details.append(detail)
+            generation_payloads.append(
+                {
+                    "generation": local_index,
+                    "population_ppa_details": [detail],
+                }
+            )
             counter += 1
+        _write_summary(
+            problem_root / f"{problem}_summary.json",
+            benchmark=benchmark,
+            problem=problem,
+            functionality=0.7,
+            synthesis=0.6,
+            best_score=0.35,
+            runtime_seconds=15.0,
+            final_details=final_details,
+        )
+        _write_generation_log(problem_root / "generation_log.jsonl", generation_payloads)
         _write_archive_cells(problem_root / "archive_cells.csv", local_elites[:2])
 
     output_dir = tmp_path / "analysis"
@@ -279,6 +343,15 @@ def test_report_qd_feature_space_handles_null_current_cell_elite(tmp_path):
         synthesis=0.6,
         best_score=0.35,
         runtime_seconds=15.0,
+        final_details=[
+            _candidate_detail(
+                candidate_id="cand_0",
+                generation=0,
+                area=91.0,
+                power=0.9,
+                period=0.8,
+            )
+        ],
     )
     _write_archive_summary(
         problem_root / "archive_summary.json",
@@ -312,6 +385,23 @@ def test_report_qd_feature_space_handles_null_current_cell_elite(tmp_path):
     payload = json.loads(event_path.read_text(encoding="utf-8"))
     payload["current_cell_elite"] = None
     event_path.write_text(json.dumps(payload), encoding="utf-8")
+    _write_generation_log(
+        problem_root / "generation_log.jsonl",
+        [
+            {
+                "generation": 0,
+                "population_ppa_details": [
+                    _candidate_detail(
+                        candidate_id="cand_0",
+                        generation=0,
+                        area=91.0,
+                        power=0.9,
+                        period=0.8,
+                    )
+                ],
+            }
+        ],
+    )
 
     output_dir = tmp_path / "analysis"
     env = os.environ.copy()
@@ -467,6 +557,15 @@ def test_report_qd_feature_space_ignores_partial_dirs_and_malformed_json(tmp_pat
         synthesis=0.6,
         best_score=0.0,
         runtime_seconds=15.0,
+        final_details=[
+            _candidate_detail(
+                candidate_id="good_cand",
+                generation=0,
+                area=90.0,
+                power=0.88,
+                period=0.8,
+            )
+        ],
     )
     _write_archive_summary(
         problem_root / "archive_summary.json",
@@ -495,6 +594,26 @@ def test_report_qd_feature_space_ignores_partial_dirs_and_malformed_json(tmp_pat
         g_a=0.2,
         g_t=0.0,
     )
+    _write_generation_log(
+        problem_root / "generation_log.jsonl",
+        [
+            {
+                "generation": 0,
+                "population_ppa_details": [
+                    _candidate_detail(
+                        candidate_id="good_cand",
+                        generation=0,
+                        area=90.0,
+                        power=0.88,
+                        period=0.8,
+                    )
+                ],
+            }
+        ],
+    )
+    malformed_event_dir = problem_root / "Gen1" / "Prob001_accu_sample2_M-I"
+    malformed_event_dir.mkdir(parents=True, exist_ok=True)
+    (malformed_event_dir / "qd_archive_event.json").write_text("{bad json", encoding="utf-8")
 
     partial_root = qd_root / "RTLLM" / "Prob001_accu_partial_pre_resume_20260317"
     _write_summary(
@@ -505,6 +624,7 @@ def test_report_qd_feature_space_ignores_partial_dirs_and_malformed_json(tmp_pat
         synthesis=0.1,
         best_score=0.9,
         runtime_seconds=999.0,
+        final_details=[],
     )
     (partial_root / "archive_summary.json").write_text("{bad json", encoding="utf-8")
     bad_event_dir = partial_root / "Gen0" / "Prob001_accu_sample2_M-I"
