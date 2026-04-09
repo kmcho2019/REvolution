@@ -2677,6 +2677,7 @@ class EoHEngine:
             meta_rec = metadata[i]
             strategy = meta_rec["strategy"]
             is_format_ok = meta.get("format_ok", False)
+            candidate_attrs: dict[str, object] = {}
 
             # When format fails, we still save the raw for auditing—skip diff application/execution
             if not is_format_ok and self.require_strict_format:
@@ -2709,6 +2710,64 @@ class EoHEngine:
             # Decide using per-request resolved mode, not the global engine setting
             # As sometimes the global engine setting is sometimes overriden for initial generation or for failed parents.
             resolved_mode = meta_rec.get("resolved_mode", self.generation_mode)
+            postprocess_hook = getattr(self, "_postprocess_generated_offspring_candidate", None)
+            if callable(postprocess_hook):
+                postprocess_result = postprocess_hook(
+                    thought=thought,
+                    code_content=code_content,
+                    meta=meta,
+                    meta_rec=meta_rec,
+                    resolved_mode=resolved_mode,
+                )
+            else:
+                postprocess_result = None
+            if isinstance(postprocess_result, dict):
+                is_format_ok = bool(postprocess_result.get("format_ok", is_format_ok))
+                resolved_mode = cast(
+                    Literal["whole", "diff"],
+                    postprocess_result.get("resolved_mode", resolved_mode),
+                )
+                candidate_attrs = dict(
+                    cast(dict[str, object], postprocess_result.get("candidate_attrs", {}))
+                )
+                material_to_save_on_fail = str(
+                    postprocess_result.get(
+                        "material_to_save_on_fail", code_content or meta.get("raw", "") or ""
+                    )
+                )
+            else:
+                material_to_save_on_fail = code_content or meta.get("raw", "") or ""
+
+            if isinstance(postprocess_result, dict) and not is_format_ok and self.require_strict_format:
+                code_path, _ = self._save_result_to_file(
+                    material_to_save_on_fail,
+                    thought or "",
+                    self.current_generation,
+                    i + 1,
+                    strategy,
+                    None,
+                )
+                error_meta = dict(meta)
+                error_meta["error"] = str(
+                    postprocess_result.get("error", error_meta.get("error", "unknown"))
+                )
+                self._save_format_error_artifacts(code_path, error_meta)
+                cand = Heuristic(
+                    thought=thought or "",
+                    code=material_to_save_on_fail,
+                    feedback=f"FORMAT_ERROR: {error_meta.get('error','unknown')}",
+                    generation=self.current_generation,
+                    parent_ids=[p.id for p in meta_rec["parents"]],
+                    strategy=strategy,
+                    origin_pool=("fail_pool" if meta_rec["pool"] == "fail" else "success_pool"),
+                    status="failed_format",
+                )
+                cand.code_file_path = code_path
+                cand.generated_mode = resolved_mode
+                for attr_name, attr_value in candidate_attrs.items():
+                    setattr(cand, attr_name, attr_value)
+                new_offspring.append(cand)
+                continue
 
             # If offspring was generated under "diff" mode then _apply_diff is needed
             if resolved_mode == "diff":
@@ -2762,10 +2821,15 @@ class EoHEngine:
                     )
                     cand.code_file_path = code_path
                     cand.generated_mode = "diff"  # [DIFF-ERROR]
+                    for attr_name, attr_value in candidate_attrs.items():
+                        setattr(cand, attr_name, attr_value)
                     new_offspring.append(cand)
                     continue                     
             else:  # whole mode
-                final_code = code_content
+                if isinstance(postprocess_result, dict) and "final_code" in postprocess_result:
+                    final_code = cast(str, postprocess_result.get("final_code") or "")
+                else:
+                    final_code = code_content
 
             # When the returned code satisfies output and diff formats
             code_path, _ = self._save_result_to_file(
@@ -2787,6 +2851,8 @@ class EoHEngine:
             )
             cand.code_file_path = code_path
             cand.generated_mode = resolved_mode
+            for attr_name, attr_value in candidate_attrs.items():
+                setattr(cand, attr_name, attr_value)
             new_offspring.append(cand)
 
         self._evaluate_candidates(new_offspring)
