@@ -2671,6 +2671,14 @@ class EoHEngine:
                 self.default_llm_max_tokens,
             )
         )
+        batch_postprocess_hook = getattr(self, "_postprocess_generated_offspring_batch", None)
+        if callable(batch_postprocess_hook):
+            batch_postprocess_result = batch_postprocess_hook(
+                results_with_meta=llm_results_with_meta,
+                metadata=metadata,
+            )
+            if isinstance(batch_postprocess_result, list):
+                llm_results_with_meta = batch_postprocess_result
 
         new_offspring = []
         for i, (thought, code_content, meta) in enumerate(llm_results_with_meta):
