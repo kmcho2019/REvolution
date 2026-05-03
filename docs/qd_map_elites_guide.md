@@ -757,11 +757,15 @@ successful pool.
    - success-side refine
 4. If `seed_budget > 0`, the engine asks the LLM for fresh designs directly
    from the problem description.
-5. If `fail_budget > 0`, the engine samples fail-pool parents and chooses from
-   `M-F` and `M-E`.
-6. For success-side fill/backfill, it chooses from `M-T`, `M-E`, and `C-D`
-   when enough successful parents exist.
-7. For refine, it chooses from `M-S`, `M-R`, `M-I`, and `C-F`.
+5. If `fail_budget > 0`, descriptor-guided profiles sample fail-pool parents
+   from `M-F` and `M-E`; archive-only profiles such as
+   `journal_logic_ff_width_3d` use the classic fail-side operator set.
+6. For descriptor-guided success-side fill/backfill, it chooses from `M-T`,
+   `M-E`, and `C-D` when enough successful parents exist. Archive-only
+   profiles use the classic success-side operator set.
+7. For descriptor-guided refine, it chooses from `M-S`, `M-R`, `M-I`, and
+   `C-F`. Archive-only profiles use the global generation mode rather than
+   per-phase QD generation-mode defaults.
 8. Parent sampling uses `success_view`, which is archive elites plus the
    bounded per-cell reservoir, not elites alone.
 9. `M-T` computes a desired descriptor shift from the parent’s current archive

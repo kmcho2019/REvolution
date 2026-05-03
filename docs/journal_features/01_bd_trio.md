@@ -227,3 +227,25 @@ Phase 01 verification results on `2026-05-03`:
   `cvt_journal_bd`. The QD run produced six `qd_archive_event.json` files, all
   with `logic_depth`, `ff_depth`, and `comb_width_log`, and no archive event
   used `M-T` or `C-D`.
+- Post-fix bounded hard-subset run root:
+  `exp/journal_bd_trio_hard_subset_postfix/20260503_174526`.
+  This used `population_size=8`, `num_generations=2`, full 128k token budgets,
+  and the three representative problems
+  `RTLLM/Prob004_adder_8bit`, `RTLLM/Prob015_multi_pipe_8bit`, and
+  `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm`.
+  Both classic and `cvt_journal_bd` had `3/3` functionality-pass designs and
+  `3/3` synthesis-pass designs. Classic had `26/72` functionality-passing
+  samples and `23/72` synthesis-passing samples; `cvt_journal_bd` had `28/72`
+  for both. Average synthesis-passing samples per design improved from `7.67`
+  to `9.33`.
+- The bounded post-fix comparison showed mixed outcome by metric. Journal QD
+  improved pass-sample yield and Pareto hypervolume (`0.0503` vs `0.0137`,
+  with `2` hypervolume wins vs `1` for classic), and the generated final
+  analysis recommended `cvt_journal_bd` overall. It did not improve mean best
+  score/PPA on this three-problem slice (`+4.00%` average score delta vs
+  `+10.03%` for classic), mostly because
+  `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` regressed. The current
+  evidence supports the journal profile as an archive/multi-objective and
+  success-yield improvement on this bounded run, but not as an unqualified PPA
+  improvement; larger multi-seed runs are still needed before claiming a
+  robust journal result.
