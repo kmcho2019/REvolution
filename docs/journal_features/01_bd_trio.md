@@ -249,3 +249,41 @@ Phase 01 verification results on `2026-05-03`:
   success-yield improvement on this bounded run, but not as an unqualified PPA
   improvement; larger multi-seed runs are still needed before claiming a
   robust journal result.
+- Full hard-subset single-seed run root:
+  `exp/journal_bd_trio_hard_subset_full/20260503_181144`. This used the full
+  `data/configs/hard_iteration_subset.yaml` selected-problem list through the
+  scratch config
+  `exp/journal_bd_trio_configs/hard_iteration_subset_journal_bd_full.yaml`,
+  `population_size=20`, `num_generations=5`, and full 128k token budgets.
+  Each backend evaluated `13` designs with `120` generated candidates per
+  design.
+- In the full hard-subset run, classic and `cvt_journal_bd` both had `13/13`
+  functionality-pass designs and `13/13` synthesis-pass designs. Classic had
+  `794/1560` functionality-passing samples and `779/1560`
+  synthesis-passing samples. `cvt_journal_bd` had `793/1560`
+  functionality-passing samples and `765/1560` synthesis-passing samples. The
+  journal mode therefore had no design-level pass gap, a `1`-sample
+  functionality gap, and a `14`-sample synthesis-success gap on this run
+  (`49.0%` synthesis mean vs `49.9%` for classic).
+- The full hard-subset quality result was mixed and slightly favored classic
+  on aggregate best-score and Pareto hypervolume. The completed
+  hard-iteration analysis reported mean best score `0.2649` for classic and
+  `0.2258` for `cvt_journal_bd`; mean Pareto hypervolume was `0.1122` for
+  classic and `0.0868` for `cvt_journal_bd`. Journal QD produced more mean
+  Pareto points (`2.85` vs `2.46`) and had mean archive coverage `34.6%`, but
+  this single-seed full run does not support a PPA-performance improvement
+  claim.
+- Full-run archive validation found `13` archive summaries with descriptor
+  profile `journal_logic_ff_width_3d` and descriptor axes
+  `logic_depth`, `ff_depth`, and `comb_width_log`. The run produced `765`
+  `qd_archive_event.json` files, all with the three journal descriptor values.
+  No archive event used descriptor-targeted generation strategies `M-T` or
+  `C-D`. Descriptor health reported `ff_depth` as collapsed in `7/13`
+  problems, which is expected for combinational or shallow temporal designs.
+- The full-run matrix report and final hard-iteration, Pareto, and
+  evolutionary subreports completed. The default design-space report path was
+  stopped because the t-SNE embedding step remained CPU-bound for more than
+  `20` minutes without new output on this full artifact tree. A PCA-only
+  design-space attempt was also stopped after more than `6` minutes without
+  output. This is a post-processing limitation and did not affect the completed
+  run artifacts, archive summaries, descriptor health, or pass-count analysis.
