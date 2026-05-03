@@ -44,6 +44,7 @@ Pareto-front cells, two-tier fail handling, and single-operator plans.
 | RTL / source-text | regex over candidate RTL | richer CVT descriptor studies | `size_control_3d`, `wire_assign_if_3d` |
 | RTL / Yosys AST | lightweight Yosys AST dump | control-shape CVT studies | `timing_control_3d`, `wire_ctrl_assign_3d` |
 | Graph / testability | flattened Yosys JSON graph | theory-grounded CVT studies | `theory_grounded_full_20d` |
+| Journal BD trio | flattened Yosys JSON graph | journal behavior-descriptor CVT studies | `journal_logic_ff_width_3d` |
 | Physical | OpenROAD report parsing | richer CVT follow-up studies | `hybrid_phys_seq` |
 | Dynamic / VCD | Icarus waveform parsing | experimental activity-driven studies | `activity_size_3d`, `activity_control_3d` |
 
@@ -186,6 +187,24 @@ synthesized netlist text dump.
   Size proxy based on mapped cell count. The structural extractor records raw
   total mapped cells first, then the descriptor registry applies a `log1p`
   transform when the archive tuple is built.
+
+### Journal behavior-descriptor trio
+
+The first journal descriptor profile is selectable as
+`--qd_descriptor_profile journal_logic_ff_width_3d`.
+
+It uses post-Yosys graph extraction for three behavior axes:
+
+- `logic_depth`
+  Longest non-buffer combinational-cell path from a primary input or FF-Q
+  boundary to a primary output or FF-D boundary.
+- `ff_depth`
+  Maximum number of FF boundaries on a primary-input to primary-output
+  dependency path. Combinational-only problems normally collapse this axis to
+  `0`.
+- `comb_width_log`
+  `log1p(combinational_cells)`. The raw combinational-cell count is retained
+  in graph/archive metric payloads when this graph profile is active.
 
 ### RTL, AST, and netlist-estimate descriptors
 
