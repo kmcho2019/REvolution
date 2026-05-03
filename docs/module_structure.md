@@ -16,6 +16,25 @@
 - `Dockerfile`: reproducible environment for CI or local development.
 - `pyproject.toml` / `uv.lock`: Python dependency definitions maintained by `uv`.
 
+## `docs/journal_features/`
+
+- `overall_plan.md`: canonical journal-extension roadmap, ETA checklist,
+  implementation rules, validation policy, and links to each feature spec. This
+  plan is based on the `feat/qd-theory-grounded-descriptors` branch.
+- `01_bd_trio.md`: behavior descriptor trio specification for logic depth,
+  FF depth, and width.
+- `02_quantile_binning.md`: initial quantile-based adaptive grid plan.
+- `03_pareto_front_archive.md`: bounded Pareto-front per cell and
+  multiobjective MAP-Elites plan.
+- `04_two_tier_fail_pool.md`: success-archive plus fail-pool parent-source
+  plan.
+- `05_single_mutation_operator.md`: single thought-level mutation/crossover
+  prompt plan.
+- `06_thought_only_k_code.md`: thought-only individual and k-code evaluation
+  plan.
+- `07_ks_adaptive_rebinning.md`: KS-triggered adaptive re-binning and final
+  integration plan.
+
 ## `src/revolution/`
 
 - `__init__.py`: package export surface, re-exports engines plus backend/runtime abstractions.

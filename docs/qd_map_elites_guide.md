@@ -21,6 +21,12 @@ Supported archive geometries:
 
 The main runtime lives in [engine.py](../src/revolution/qd/engine.py).
 
+The journal-extension roadmap for the next QD runtime revision lives in
+[journal_features/overall_plan.md](journal_features/overall_plan.md). That hub
+is based on the `feat/qd-theory-grounded-descriptors` branch and tracks the
+thought-only representation, k-code evaluation, quantile/adaptive binning,
+Pareto-front cells, two-tier fail handling, and single-operator plans.
+
 ### Mode quick reference
 
 | Mode | CLI surface | Success-side state | Recommended starting point | Best used for | Current caveat |
