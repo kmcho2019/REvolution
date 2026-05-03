@@ -202,7 +202,7 @@ class QDEngine(EoHEngine):
         descriptor_metrics.update(getattr(candidate, "descriptor_values", {}) or {})
         descriptor_metrics.update(gains)
         descriptor_values = extract_descriptor_values(descriptor_metrics, axes)
-        return tuple(float(descriptor_values.get(axis, 0.0)) for axis in axes)
+        return tuple(float(descriptor_values[axis]) for axis in axes)
 
     def _rebuild_archive_from_success_pool(self) -> None:
         self.success_archive = self._build_archive()
