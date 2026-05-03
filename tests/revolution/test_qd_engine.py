@@ -42,7 +42,7 @@ def _engine(
         "revolution.algorithm.EoHEngine.load_problem_description",
         lambda self: "desc",
     )
-    return QDEngine(
+    engine = QDEngine(
         benchmark_name="Bench",
         problem_name="Prob",
         llm_interface=_DummyLLM(),
@@ -56,6 +56,8 @@ def _engine(
         qd_grid_axes=("g_A", "g_T"),
         problem_spec=problem_spec,
     )
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+    return engine
 
 
 def test_qd_engine_phase_mode_defaults_follow_refine_diff_only(tmp_path, monkeypatch):
