@@ -1,3 +1,4 @@
+import contextlib
 import json
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -258,6 +259,34 @@ def test_funsearch_backend_run_writes_summary(tmp_path):
     assert summary["best_candidate"]["score"] is not None
     assert summary["accumulated_strategy_counts"] == {}
     assert "accumulated_strategy_counts:" in summary
+
+
+def test_funsearch_backend_uses_problem_concurrency_leases(tmp_path):
+    evaluator = _FakeCandidateEvaluator()
+    leased_workers: list[int] = []
+    batch_sizes: list[int] = []
+
+    class _FakeController:
+        @contextlib.contextmanager
+        def lease_candidate_workers(self, batch_size: int):
+            batch_sizes.append(batch_size)
+            yield 4
+
+    original_evaluate = evaluator.evaluate_candidates
+
+    def _record_workers(items, *, candidate_workers=0):
+        leased_workers.append(candidate_workers)
+        return original_evaluate(items, candidate_workers=candidate_workers)
+
+    evaluator.evaluate_candidates = _record_workers  # type: ignore[method-assign]
+    backend, _writer = _make_backend(tmp_path, seed=7, evaluator=evaluator)
+    backend.services.problem_concurrency = _FakeController()
+
+    backend.run()
+
+    assert batch_sizes
+    assert leased_workers
+    assert all(worker_count == 4 for worker_count in leased_workers)
 
 
 def test_funsearch_backend_backfills_reference_ppa_when_evaluator_missing_ref(tmp_path):

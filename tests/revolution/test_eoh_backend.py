@@ -1,3 +1,4 @@
+import contextlib
 import json
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -336,3 +337,31 @@ def test_eoh_backend_respects_max_evaluations_budget(tmp_path):
     summary = json.loads(writer.paths.summary_path.read_text(encoding="utf-8"))
     assert summary["total_candidates_generated"] == 2
     assert summary["backend_details"]["termination_reason"] == "max_evaluations"
+
+
+def test_eoh_backend_uses_problem_concurrency_leases(tmp_path):
+    evaluator = _FakeCandidateEvaluator()
+    leased_workers: list[int] = []
+    batch_sizes: list[int] = []
+
+    class _FakeController:
+        @contextlib.contextmanager
+        def lease_candidate_workers(self, batch_size: int):
+            batch_sizes.append(batch_size)
+            yield 3
+
+    original_evaluate = evaluator.evaluate_candidates
+
+    def _record_workers(items, *, candidate_workers=0):
+        leased_workers.append(candidate_workers)
+        return original_evaluate(items, candidate_workers=candidate_workers)
+
+    evaluator.evaluate_candidates = _record_workers  # type: ignore[method-assign]
+    backend, _writer = _make_backend(tmp_path, evaluator=evaluator)
+    backend.services.problem_concurrency = _FakeController()
+
+    backend.run()
+
+    assert batch_sizes
+    assert leased_workers
+    assert all(worker_count == 3 for worker_count in leased_workers)

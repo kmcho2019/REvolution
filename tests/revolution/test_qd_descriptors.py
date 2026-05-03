@@ -80,6 +80,54 @@ def test_load_descriptor_profiles_includes_runtime_retro_profiles():
         "active_signal_ratio_est",
         "ctrl_depth_est",
     ]
+    assert profiles["theory_grounded_full_20d"] == [
+        "rtl_cyclomatic_total_log",
+        "rtl_cyclomatic_max_log",
+        "rent_exponent_confidence_gated",
+        "reconv_source_ratio",
+        "reconv_sink_ratio",
+        "scoap_cc0_bin_0_pct",
+        "scoap_cc0_bin_1_pct",
+        "scoap_cc0_bin_2_pct",
+        "scoap_cc0_bin_3_pct",
+        "scoap_cc1_bin_0_pct",
+        "scoap_cc1_bin_1_pct",
+        "scoap_cc1_bin_2_pct",
+        "scoap_cc1_bin_3_pct",
+        "scoap_co_bin_0_pct",
+        "scoap_co_bin_1_pct",
+        "scoap_co_bin_2_pct",
+        "scoap_co_bin_3_pct",
+        "laplacian_lambda2",
+        "laplacian_spectral_entropy",
+        "scoap_signal_smoothness",
+    ]
+    assert profiles["theory_grounded_compact_8d"] == [
+        "scoap_signal_smoothness",
+        "laplacian_spectral_entropy",
+        "scoap_cc0_bin_1_pct",
+        "scoap_co_bin_3_pct",
+        "scoap_cc1_bin_1_pct",
+        "scoap_co_bin_0_pct",
+        "scoap_cc0_bin_0_pct",
+        "scoap_cc1_bin_0_pct",
+    ]
+
+
+def test_load_descriptor_profiles_includes_hard_iteration_large_profile():
+    profiles = load_descriptor_profiles("data/configs/qd_descriptor_profiles_hard_iteration_large.yaml")
+    assert profiles["hard_iteration_large_struct10d"] == [
+        "sequential_cells",
+        "mux_ratio",
+        "mux_cells",
+        "adder_ratio",
+        "seq_ratio",
+        "arithmetic_cells",
+        "total_cells",
+        "g_P",
+        "g_A",
+        "g_T",
+    ]
 
 
 def test_resolve_descriptor_axes_prefers_explicit_axes():
@@ -115,6 +163,48 @@ def test_resolve_descriptor_axes_uses_grid_defaults_for_sequential_logic():
     assert axes == ["g_A", "g_P", "g_T"]
 
 
+def test_resolve_descriptor_axes_drops_g_t_for_named_comb_profile(tmp_path: Path):
+    cfg = tmp_path / "profiles.yaml"
+    cfg.write_text(
+        "profiles:\n"
+        "  large_profile:\n"
+        "    - wire_count_log_est\n"
+        "    - g_P\n"
+        "    - g_A\n"
+        "    - g_T\n",
+        encoding="utf-8",
+    )
+    axes = resolve_descriptor_axes(
+        profile_name="large_profile",
+        explicit_axes=None,
+        descriptor_file=cfg,
+        archive_type="cvt",
+        circuit_type="combinational",
+    )
+    assert axes == ["wire_count_log_est", "g_P", "g_A"]
+
+
+def test_resolve_descriptor_axes_drops_g_t_for_hard_iteration_large_profile():
+    axes = resolve_descriptor_axes(
+        profile_name="hard_iteration_large_struct10d",
+        explicit_axes=None,
+        descriptor_file="data/configs/qd_descriptor_profiles_hard_iteration_large.yaml",
+        archive_type="grid",
+        circuit_type="combinational",
+    )
+    assert axes == [
+        "sequential_cells",
+        "mux_ratio",
+        "mux_cells",
+        "adder_ratio",
+        "seq_ratio",
+        "arithmetic_cells",
+        "total_cells",
+        "g_P",
+        "g_A",
+    ]
+
+
 def test_extract_descriptor_values_applies_log1p_transform():
     values = extract_descriptor_values(
         {"cell_count_log": 99.0, "g_A": 0.2},
@@ -122,6 +212,24 @@ def test_extract_descriptor_values_applies_log1p_transform():
     )
     assert values["cell_count_log"] > 0.0
     assert values["g_A"] == pytest.approx(0.2)
+
+
+def test_extract_descriptor_values_accepts_hard_iteration_structural_counts():
+    values = extract_descriptor_values(
+        {
+            "sequential_cells": 12.0,
+            "mux_cells": 3.0,
+            "arithmetic_cells": 5.0,
+            "total_cells": 24.0,
+        },
+        ["sequential_cells", "mux_cells", "arithmetic_cells", "total_cells"],
+    )
+    assert values == {
+        "sequential_cells": pytest.approx(12.0),
+        "mux_cells": pytest.approx(3.0),
+        "arithmetic_cells": pytest.approx(5.0),
+        "total_cells": pytest.approx(24.0),
+    }
 
 
 def test_descriptor_requirements_detect_ppa_and_synthesis_needs():
@@ -139,6 +247,14 @@ def test_descriptor_requirements_detect_rtl_metric_axes():
 def test_descriptor_requirements_detect_dynamic_metric_axes():
     reqs = descriptor_requirements(["toggle_count_log_est", "active_signal_ratio_est"])
     assert reqs["requires_dynamic_metrics"] is True
+
+
+def test_descriptor_requirements_detect_graph_metric_axes():
+    reqs = descriptor_requirements(
+        ["rent_exponent_confidence_gated", "reconv_source_ratio", "laplacian_lambda2"]
+    )
+    assert reqs["requires_graph_metrics"] is True
+    assert reqs["requires_rtl_metrics"] is False
 
 
 def test_load_descriptor_profiles_accepts_custom_file(tmp_path: Path):

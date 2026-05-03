@@ -1,5 +1,6 @@
 import csv
 import json
+import time
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -533,6 +534,7 @@ def test_qd_engine_writes_candidate_archive_event_for_empty_fill(tmp_path, monke
     cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
     cand.rtl_metrics = {"assign_count": 1.0}
     cand.dynamic_metrics = {"toggle_count_log_est": 3.5}
+    cand.graph_metrics = {"rent_exponent": 0.42}
     engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
 
     inserted, replaced = engine._insert_successes([cand])
@@ -545,6 +547,7 @@ def test_qd_engine_writes_candidate_archive_event_for_empty_fill(tmp_path, monke
     assert payload["cell_id"] == "2,2"
     assert payload["rtl_metrics"]["assign_count"] == pytest.approx(1.0)
     assert payload["dynamic_metrics"]["toggle_count_log_est"] == pytest.approx(3.5)
+    assert payload["graph_metrics"]["rent_exponent"] == pytest.approx(0.42)
     assert payload["current_cell_elite"]["candidate_id"] == cand.id
 
 
@@ -618,6 +621,57 @@ def test_qd_engine_writes_candidate_archive_event_for_cvt_warmup(tmp_path, monke
     payload = json.loads((tmp_path / "cand" / "qd_archive_event.json").read_text(encoding="utf-8"))
     assert payload["decision"] == "warmup_buffered"
     assert payload["assignment"]["assignment_status"] == "warmup_pending"
+
+
+def test_qd_engine_finalizes_partial_cvt_warmup_at_run_end(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="cvt",
+        qd_num_cells=4,
+        qd_cvt_axes=("g_A", "g_T"),
+        qd_cvt_warmup_successes=4,
+    )
+    engine.logger = SimpleNamespace(log_dir=str(tmp_path / "artifacts"))
+    engine.run_start_time = time.time()
+
+    cand = Heuristic("elite", "module m; endmodule", "", score=0.6, generation=0, status="success")
+    cand.ppa_success = True
+    cand.code_file_path = str(tmp_path / "elite.sv")
+    cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+
+    engine._insert_successes([cand])
+
+    finalization = engine._finalize_pending_cvt_archive()
+
+    assert finalization == (1, 0)
+    assert engine.success_archive.is_initialized is True
+
+    engine._write_finalization_fallback_artifacts(inserted=1, replaced=0)
+
+    layout_payload = json.loads((tmp_path / "artifacts" / "centroids.json").read_text(encoding="utf-8"))
+    summary_payload = json.loads((tmp_path / "artifacts" / "archive_summary.json").read_text(encoding="utf-8"))
+    history_lines = [
+        line
+        for line in (tmp_path / "artifacts" / "archive_history.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    history_payload = json.loads(history_lines[-1])
+
+    assert layout_payload["initialized"] is True
+    assert layout_payload["initialization_mode"] == "run_finalization_fallback"
+    assert summary_payload["occupied_cells"] == 1
+    assert history_payload["phase"] == "run_finalization_fallback"
+    assert history_payload["generation"] == 1
 
 
 def test_qd_engine_creates_targeted_mutation_prompt(tmp_path, monkeypatch):

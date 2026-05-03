@@ -259,6 +259,7 @@ class VerilogEvaluator:
                 comp_stderr=f"Reference Verilog file not found: {ref_sv_file}",
             )
 
+        actual_output_dir = os.path.abspath(actual_output_dir)
         os.makedirs(actual_output_dir, exist_ok=True)
         compiled_vvp_file = os.path.join(
             actual_output_dir, output_basename + "_compiled.vvp"
@@ -395,7 +396,7 @@ class VerilogEvaluator:
             # Examples: Prob013_test_data.dat, Prob026_asyn_fifo_tdata.txt, Prob026_asyn_fifo_rempty.txt,
             # Prob026_asyn_fifo_wfull.txt, Prob035_calendar_reference.txt, Prob045_alu_reference.dat,
             # Prob049_signal_generator_tri_gen.txt
-            simulation_working_dir = os.path.dirname(dut_files[0])
+            simulation_working_dir = os.path.abspath(os.path.dirname(dut_files[0]))
             print(f"INFO: Running simulation in directory: {simulation_working_dir}")
             lf.write(f"Working Directory: {simulation_working_dir}\n\n")
 

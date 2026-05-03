@@ -87,7 +87,11 @@ default `--diff_max_tokens 1024` was left unchanged.
 
 - `--backend revolution|funsearch|eoh|codeevolve`
 - `--search_mode revolution|revolution_qd` for the `revolution` backend
-- shared model/benchmark options (`--benchmarks`, `--problems`, `--model_name`, `--api_backend`, `--save_path`, `--num_workers`)
+- shared model/benchmark options (`--benchmarks`, `--problems`, `--model_name`, `--api_backend`, `--save_path`)
+- shared parallelism controls:
+  - `--total_worker_slots <int>`
+  - `--max_active_problems <int>`
+  - `--max_workers_per_problem <int>`
 - backend-specific controls (`--population_size`, `--num_generations`, `--strategy_selection`, `--fs_*`, `--eoh_*`, `--codeevolve_*`)
 - shared evaluation controls:
   - `--evaluation_mode strict_ablation|search_accelerated`
@@ -118,6 +122,11 @@ to module-level tasks:
   is not merged into `wip/journal-extension-2026` yet
 
 By default outputs are isolated by backend under `<save_path>/<backend>/...` (`--backend_subdir` can be disabled if needed).
+
+In the default `elastic` mode, each active problem keeps one base slot and can
+borrow extra evaluation threads when the global pool has spare capacity. That
+lets long-running problems scale up after shorter problems finish without
+having to pre-commit the run to a fixed problem/process split.
 
 QD-mode controls on the `revolution` backend currently include:
 
@@ -162,8 +171,29 @@ Current feature status:
   - richer follow-on runtime-supported controls:
     `wire_assign_if_3d`, `size_sharing_3d`, `wire_ctrl_assign_3d`,
     `wire_if_math_3d`, `wire_always_ternary_3d`, `assign_always_math_3d`
+  - experimental theory-grounded profiles:
+    `theory_grounded_full_20d`, `theory_grounded_compact_8d`
   - exploratory activity profiles:
     `activity_size_3d`, `activity_control_3d`
+- The theory-grounded profile combines AST cyclomatic complexity, Rent
+  analysis, reconvergence, SCOAP histogram percentages, and normalized
+  Laplacian descriptors through the new `graph_metrics` runtime payload. The
+  raw `rent_exponent` metric is still emitted for analysis, but
+  `theory_grounded_full_20d` now uses `rent_exponent_confidence_gated` so
+  low-sample or clamped Rent fits shrink toward a neutral descriptor value.
+  Treat it as a CVT-first research profile rather than a default replacement
+  for the structural ladder.
+- `theory_grounded_compact_8d` is the reduced follow-on candidate from the
+  first hard-subset collapse pass. It keeps the strongest non-collapsed SCOAP
+  and spectral axes and is now the first profile to try when you want a
+  smaller theory-grounded CVT study on the hard subset. Under the tuned
+  `16 / 4 / 0.25 / 2` CVT policy it improved theory-only stability,
+  synthesis rate, and mean hypervolume versus the earlier 20D theory run, but
+  it still trails the structural controls on archive QD score, elite quality,
+  and pareto breadth.
+- CVT archives that never hit `qd_cvt_warmup_successes` now finalize from the
+  available warmup buffer at run end. That keeps low-success problems from
+  ending with empty, permanently uninitialized CVT artifacts.
 - When `qd_grid_axes` is omitted, grid mode now honors
   `qd_descriptor_profile`, so the compact structural profile above is actually
   enough to reproduce the retrospective refresh configuration.
@@ -187,6 +217,51 @@ Current feature status:
   for `grid` and `cvt` with `--suite rtllm|verilogeval`,
   `--policy whole-heavy|diff-heavy`, and `--dry-run`, and now defaults to a
   `128000`-token budget on the shared reasoning-model vLLM endpoint.
+- `scripts/run_qd_theory_grounded_smoke_vllm.sh` provides a dedicated
+  theory-grounded CVT harness with:
+  - `--mode theory-only` for direct validation of
+    `theory_grounded_full_20d`
+  - `--mode compare` for side-by-side bounded smokes against
+    `implemented_structural_fixed_5d`, `size_control_3d`,
+    `theory_grounded_full_20d`, and `theory_grounded_compact_8d`
+  - `--suite rtllm|verilogeval|matrix`, `--policy whole-heavy|diff-heavy`,
+    and `--dry-run`
+- `scripts/report_qd_rent_calibration.py` provides a manifest-driven offline
+  calibration path for Rent analysis. Start from
+  `data/configs/qd_theory_rent_calibration_example.json`, then point each case
+  at an RTL file, top module, and optional stored RentCon output paths.
+- `scripts/report_qd_rent_reference_validation.py` provides a synthesized-
+  netlist validation path for Rent analysis. Point it at a prior experiment
+  root that contains passing `code.syn.v` outputs and it will:
+  - stage one passing synthesized netlist per problem into `exp/`
+  - generate placed DEF files with OpenROAD
+  - run the native RentCon binary plus the repo-native extractor
+  - emit `final_analysis/rent_reference_validation_report.{json,md}` with raw
+    versus confidence-gated accuracy/runtime deltas and plots
+  Start with:
+  `/workspace/.venv/bin/python scripts/report_qd_rent_reference_validation.py --run_root <hard_subset_run_root> --output_root exp/qd_rent_reference_validation_example --workers 1`
+  Use `--workers 1` by default on this branch because the local RentCon binary
+  is unstable on many OpenROAD-generated DEFs and sequential runs are more
+  reproducible.
+- `scripts/run_qd_theory_followup_vllm.sh` provides a bounded multi-problem
+  CVT follow-up matrix over:
+  - `implemented_structural_fixed_5d`
+  - `size_control_3d`
+  - `theory_grounded_full_20d`
+  - `theory_grounded_compact_8d`
+  Start with:
+  `VLLM_HOST=host.docker.internal VLLM_PORT=8000 bash scripts/run_qd_theory_followup_vllm.sh --suite rtllm --dry-run`
+- `scripts/run_qd_theory_followup_manifest.py` provides a manifest-driven
+  broader matrix runner. Start from
+  `data/configs/qd_theory_followup_broad_matrix.json`, then use:
+  `python scripts/run_qd_theory_followup_manifest.py --manifest data/configs/qd_theory_followup_broad_matrix.json --dry-run`
+- `scripts/report_qd_theory_followup.py` scans the resulting run root,
+  summarizes profile outcomes, writes
+  `recommended_theory_profile.json`, and also writes
+  `theory_promotion_decision.json` from pairwise control deltas plus
+  non-collapsed theory axes.
+  Example:
+  `python scripts/report_qd_theory_followup.py --run_root /tmp/qd_theory_followup/<run_tag> --output_dir /tmp/qd_theory_followup/<run_tag>/theory_followup_report`
 - `scripts/run_evolution_smoke_vllm.sh` now uses the same `128000` token floor
   and forwards `--diff_max_tokens 128000` so whole-mode and diff-mode smokes
   are not accidentally evaluated under truncation-prone budgets.
@@ -271,7 +346,9 @@ python scripts/run_backend.py \
   --seed 42
 ```
 
-`scripts/run_funsearch.py` is a convenience wrapper that injects `--backend funsearch`.
+`scripts/run_funsearch.py` is a convenience wrapper that injects
+`--backend funsearch` and accepts the same shared elastic parallelism flags as
+`run_backend.py`.
 
 Example (EoH backend):
 
@@ -354,8 +431,10 @@ Essential arguments:
 
 - `--benchmarks <names>`: select suites from `data/bench` (default: all).
 - `--problems <ids>`: restrict to specific problems (optional).
-- `--num_workers <int>`: worker count (processes in `problem` mode, candidate-evaluation threads in `candidate` mode).
-- `--multiprocessing_mode {problem,candidate}`: distribute work across problems (default) or evaluate candidates inside a problem in parallel.
+- `--total_worker_slots <int>`: total run-wide worker budget.
+- `--max_active_problems <int>`: cap how many problems can stay active at once.
+- `--max_workers_per_problem <int>`: per-problem cap for borrowed evaluation threads.
+- older config files that still use `num_workers`, `candidate_workers`, or `multiprocessing_mode` are translated to the elastic controls with warnings
 - `--population_size <int>` / `--num_generations <int>`: evolutionary parameters.
 - `--search_mode {revolution,revolution_qd}`: use the canonical backend runner for the experimental QD path; `run_evolution.py` forwards QD configs to `run_backend.py`.
 - `--save_path <dir>`: base directory for artefacts (default: `./exp` relative to the repo).
@@ -382,7 +461,7 @@ python scripts/run_evolution.py \
   --benchmarks VerilogEval-Spec-to-RTL RTLLM \
   --model_name meta-llama/llama-3.3-70b-instruct \
   --api_backend openrouter \
-  --num_workers 32 \
+  --total_worker_slots 32 \
   --population_size 12 \
   --num_generations 24 \
   --strategy_selection ucb \
@@ -397,7 +476,7 @@ python scripts/run_evolution.py \
   --problems Prob001_zero \
   --evaluation_mode gen0 \
   --population_size 16 \
-  --num_workers 1
+  --total_worker_slots 1
 ```
 
 The `gen0` mode skips test benches, synthesis, and PPA analysis by default. It simply collects `population_size` candidates, scores them using the feedback LLM (the returned `score` field), and keeps the top-ranked artefacts under `Gen0/<problem>_sample*/`.
@@ -428,6 +507,11 @@ The prompt file is read verbatim (UTF-8 by default) and becomes the `problem_des
 #### Configuration files
 
 `scripts/run_evolution.py` accepts `--config path/to/settings.yaml` (or `.json`). The file can contain any subset of CLI options; unspecified values fall back to the parser defaults. When both a config file and explicit CLI switches are supplied, the CLI values win. Curated examples live under `data/configs/`—copy them as a starting point for reproducible experiment setups.
+
+Legacy `num_workers`, `candidate_workers`, and `multiprocessing_mode` fields
+still load from config files. They are translated with explicit warnings to the
+new elastic controls. New snapshots and manifests record only the resolved
+elastic fields so the effective run capacity is clear after the fact.
 
 Every invocation writes two files next to summary/log outputs in `exp/<model>/`:
 
@@ -470,6 +554,202 @@ python scripts/run_one_shot.py \
   --api_backend openai
 ```
 
+### 3.3.1 Hard iteration subset baseline and matrix
+
+The repo now includes a dedicated hard-subset workflow for RTLLM plus
+VerilogEval-Spec-to-RTL iteration testing:
+
+- `scripts/run_hard_iteration_one_shot_vllm.sh`: resumable vanilla one-shot
+  baseline runner that skips completed problems, batches pending ones, and
+  polls the configured endpoint before each batch.
+- `scripts/build_hard_iteration_subset.py`: freeze the balanced hard subset
+  from one-shot summaries, benchmark gate-count CSVs, and reference PPA-derived
+  circuit typing.
+- `scripts/run_hard_iteration_qd_vllm.sh`: run the long-budget `classic`,
+  `grid_struct`, `cvt_struct`, and `cvt_size_control` matrix from the frozen
+  subset config. The runner now also supports config-defined `matrix_modes`
+  plus per-mode overrides for `qd_num_cells`,
+  `qd_cvt_warmup_successes`, `qd_fill_target_fraction`, and
+  `qd_cell_reservoir`, so the same wrapper can drive bounded archive-tuning
+  sweeps without shell edits.
+- The March 2026 hard-subset archive-tuning screen selected the current
+  `cvt_size_control` pack as the balanced default for this workflow:
+  `qd_archive_type=cvt`, `qd_num_cells=16`,
+  `qd_cvt_warmup_successes=4`, `qd_fill_target_fraction=0.25`, and
+  `qd_cell_reservoir=2`.
+  `warmup2` is better only when raw synthesis rate is prioritized over archive
+  quality, while `fill50` and `dense24` were not strong enough to replace the
+  balanced default.
+- `scripts/report_hard_iteration_analysis.py`: generate the post-run markdown
+  report plus machine-readable summary for classic-vs-QD hard-subset results.
+  The loader prefers accumulated end-of-run success rates and falls back to
+  nested final best-score fields when a top-level `best_score` is absent.
+- `scripts/report_pareto_analysis.py`: generate per-problem Pareto-front
+  figures plus aggregate hypervolume/frontier tables for backend comparisons.
+- `scripts/report_design_space_analysis.py`: generate retrospective
+  design-space reports with generation-local and accumulated PPA plots,
+  feature-space PCA/t-SNE views, aggregate pooled views, and a
+  `successful_candidates.csv` export that works for both classic and QD runs.
+- `scripts/report_qd_feature_space.py`: generate the deeper post-run QD
+  feature-space report with successful-candidate tables, collapse diagnostics,
+  regression summaries, and PCA/t-SNE plots.
+- `scripts/report_final_analysis_bundle.py`: generate the formal
+  `final_analysis/` bundle for a finished hard-subset run root, now including
+  `design_space_analysis/`.
+- `scripts/report_qd_problem_histograms.py`: backfill per-problem CVT feature
+  histograms with projected centroid/division overlays plus cumulative
+  generation-history panels under each problem's `qd_feature_histograms/`
+  subdirectory. The discovery pass ignores malformed or non-CVT artifact roots
+  instead of failing the whole scan.
+
+Typical flow:
+
+```bash
+HARD_ONE_SHOT_VLLM_HOST=host.docker.internal \
+HARD_ONE_SHOT_VLLM_PORT=8000 \
+HARD_ONE_SHOT_SAVE_PATH=exp/hard_iteration_one_shot_rerun_<date> \
+bash scripts/run_hard_iteration_one_shot_vllm.sh
+
+python scripts/build_hard_iteration_subset.py \
+  --one-shot-root exp/hard_iteration_one_shot_rerun_<date> \
+  --output-config data/configs/hard_iteration_subset.yaml \
+  --output-csv baselines/hard_iteration_subset_vanilla_openai_gpt_oss_120b.csv
+
+HARD_SUBSET_VLLM_HOST=host.docker.internal \
+HARD_SUBSET_VLLM_PORT=8000 \
+bash scripts/run_hard_iteration_qd_vllm.sh \
+  --config data/configs/hard_iteration_subset.yaml \
+  --mode matrix
+
+python scripts/report_final_analysis_bundle.py \
+  --run-root exp/hard_iteration_qd/<timestamp> \
+  --subset-config data/configs/hard_iteration_subset.yaml
+
+python scripts/report_hard_iteration_analysis.py \
+  --subset-config data/configs/hard_iteration_subset.yaml \
+  --backend_run classic=exp/hard_iteration_qd/<timestamp>/classic \
+  --backend_run grid_struct=exp/hard_iteration_qd/<timestamp>/grid_struct \
+  --backend_run cvt_struct=exp/hard_iteration_qd/<timestamp>/cvt_struct \
+  --backend_run cvt_size_control=exp/hard_iteration_qd/<timestamp>/cvt_size_control \
+  --output-dir exp/hard_iteration_qd/<timestamp>/analysis
+
+python scripts/report_pareto_analysis.py \
+  --subset-config data/configs/hard_iteration_subset.yaml \
+  --backend_run classic=exp/hard_iteration_qd/<timestamp>/classic \
+  --backend_run grid_struct=exp/hard_iteration_qd/<timestamp>/grid_struct \
+  --backend_run cvt_struct=exp/hard_iteration_qd/<timestamp>/cvt_struct \
+  --backend_run cvt_size_control=exp/hard_iteration_qd/<timestamp>/cvt_size_control \
+  --output-dir exp/hard_iteration_qd/<timestamp>/pareto_analysis
+
+python scripts/report_design_space_analysis.py \
+  --subset-config data/configs/hard_iteration_subset.yaml \
+  --backend_run classic=exp/hard_iteration_qd/<timestamp>/classic \
+  --backend_run grid_struct=exp/hard_iteration_qd/<timestamp>/grid_struct \
+  --backend_run cvt_struct=exp/hard_iteration_qd/<timestamp>/cvt_struct \
+  --backend_run cvt_size_control=exp/hard_iteration_qd/<timestamp>/cvt_size_control \
+  --output-dir exp/hard_iteration_qd/<timestamp>/design_space_analysis
+
+python scripts/report_qd_feature_space.py \
+  --subset-config data/configs/hard_iteration_subset.yaml \
+  --backend_run classic=exp/hard_iteration_qd/<timestamp>/classic \
+  --backend_run grid_struct=exp/hard_iteration_qd/<timestamp>/grid_struct \
+  --backend_run cvt_struct=exp/hard_iteration_qd/<timestamp>/cvt_struct \
+  --backend_run cvt_size_control=exp/hard_iteration_qd/<timestamp>/cvt_size_control \
+  --output-dir exp/hard_iteration_qd/<timestamp>/feature_analysis
+
+python scripts/report_qd_problem_histograms.py \
+  --run-root exp/hard_iteration_qd/<timestamp>
+```
+
+Design-space analysis tips:
+
+- `python scripts/report_design_space_analysis.py --help` prints the current
+  CLI plus concrete examples for `--run-root` and repeated
+  `--backend_run name=path` mappings.
+- Use repeated `--feature <metric>` flags when you want one exact feature set
+  across every backend and plot. Those explicit features override
+  `--feature-profile`.
+- Use `--feature-profile <name>` when you want to reuse a descriptor profile
+  from the shared config without typing every feature manually.
+- Per-problem reports now open with a quick-reference section that repeats the
+  final accumulated PPA and feature plots before the full chronology.
+- The design-space report now emits two feature-space families:
+  - all-backend PCA/t-SNE plots on the report's selected feature subset
+  - classic-vs-one-QD pairwise PCA/t-SNE plots on the QD backend's descriptor basis
+- Within one problem/comparison/method, the PCA and t-SNE coordinates stay
+  fixed across generation-local and accumulated plots so the same 2D feature
+  space is reused over time.
+- The top-level design-space report, aggregate report, and every per-problem
+  report now include short in-page tables of contents.
+- Use `--aggregate-ppa-basis normalized` when you need pooled plots that are
+  quantitatively comparable across problems. `raw` pooled plots are still
+  useful visually, but they remain qualitative-only because each benchmark has
+  different native units and scales.
+- The script writes `report.md`, `summary.json`, `successful_candidates.csv`,
+  and `recommended_profile.json` at the top of the chosen output directory, so
+  the markdown entry point and the machine-readable exports stay together.
+
+The post-run analysis surfaces have different roles:
+
+- Stage 3 raw comparison: `exp/hard_iteration_qd/<run_tag>/hard_iteration_backend_comparison.md`
+  - emitted directly by `scripts/run_hard_iteration_qd_vllm.sh`
+  - shows the side-by-side backend comparison for the completed matrix run
+- Formal bundle: `exp/hard_iteration_qd/<run_tag>/final_analysis/`
+  - emitted by `scripts/report_final_analysis_bundle.py`
+  - recreates the reference post-run layout with:
+    - `backend_comparison.md`
+    - `hard_iteration_analysis/`
+    - `pareto_analysis/`
+    - `design_space_analysis/`
+    - `feature_analysis/` when QD backends are present
+    - `evolutionary_reports/`
+  - writes top-level `report.md` and `summary.json` to index those sections
+- Stage 4 final analysis: `exp/hard_iteration_qd/<run_tag>/analysis/report.md` plus `analysis/summary.json`
+  - emitted by `scripts/report_hard_iteration_analysis.py`
+  - summarizes aggregate backend performance, per-problem winners, and the recommendation fields:
+    - `overall`
+    - `score_qd`
+    - `archive_qd`
+    - `multi_objective`
+  - `summary.json` is the machine-readable version of that final writeup surface
+- Pareto / multi-objective analysis: `exp/hard_iteration_qd/<run_tag>/pareto_analysis/report.md` plus `pareto_analysis/summary.json`
+  - emitted by `scripts/report_pareto_analysis.py`
+  - summarizes per-problem Pareto hypervolume, frontier size, reference-beating counts, and backend-comparison front figures
+- Retrospective design-space analysis: `exp/hard_iteration_qd/<run_tag>/design_space_analysis/report.md` plus `design_space_analysis/summary.json`
+  - emitted by `scripts/report_design_space_analysis.py`
+  - summarizes per-problem generation-local vs accumulated PPA plots,
+    all-backend plus classic-vs-QD pairwise feature-space PCA/t-SNE views,
+    aggregate pooled plots, and a shared `successful_candidates.csv` export
+    across classic and QD backends
+  - keeps pairwise feature coordinates fixed across generations for the same
+    problem/comparison so the plotted 2D space stays comparable over time
+- Deep QD feature-space analysis: `exp/hard_iteration_qd/<run_tag>/feature_analysis/report.md` plus `feature_analysis/summary.json`
+  - emitted by `scripts/report_qd_feature_space.py`
+  - summarizes successful-candidate feature variability, collapse behavior,
+    regression outputs, and PCA/t-SNE projections
+  - also writes `qd_successful_candidates.csv` and `recommended_profile.json`
+
+Use a fresh post-fix one-shot root for the freeze step. Do not reuse any
+pre-path-fix 2026-03-17 smoke or baseline outputs.
+
+For resumed hard-subset one-shot baselines, set
+`HARD_ONE_SHOT_BATCH_SIZE=0` when you want one `run_one_shot.py` invocation to
+cover all remaining pending problems for a benchmark. This is useful when a
+small fixed batch is being held open by one slow problem and you want freed
+workers to keep pulling more pending work.
+
+Example late-resume command:
+
+```bash
+HARD_ONE_SHOT_VLLM_HOST=host.docker.internal \
+HARD_ONE_SHOT_VLLM_PORT=8000 \
+HARD_ONE_SHOT_SAVE_PATH=exp/hard_iteration_one_shot_rerun_<date> \
+HARD_ONE_SHOT_NUM_WORKERS=8 \
+HARD_ONE_SHOT_BATCH_SIZE=0 \
+bash scripts/run_hard_iteration_one_shot_vllm.sh \
+  --benchmarks VerilogEval-Spec-to-RTL
+```
+
 ### 3.4 Output inspection
 
 Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
@@ -482,11 +762,21 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 ## 4. Utility scripts
 
 - `scripts/evolutionary_report_generator.py`: generate Markdown reports summarising a run (`--experiment_path path/to/exp/...`).
-- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, solved-only score/PPA deltas (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`) with regression checks, budget/fairness diagnostics, and an extra QD archive section when `revolution_qd` summaries plus `archive_summary.json` sidecars are present. The loader now ignores `archive_summary.json` as a per-problem summary so QD runs are not double-counted (`--backend_run revolution=<path> --backend_run funsearch=<path> --backend_run eoh=<path> --backend_run codeevolve=<path>`).
+- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, solved-only score/PPA deltas (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`) with regression checks, budget/fairness diagnostics, Pareto / multi-objective sections, and an extra QD archive section when `revolution_qd` summaries plus `archive_summary.json` sidecars are present. The loader now ignores `archive_summary.json` as a per-problem summary so QD runs are not double-counted (`--backend_run revolution=<path> --backend_run funsearch=<path> --backend_run eoh=<path> --backend_run codeevolve=<path>`).
 - `scripts/run_backend_ablation.py`: one-command ablation sweep runner for REvolution/FunSearch/EoH/CodeEvolve plus optional comparison report generation, multi-seed loops (`--seeds`), strict fairness checks, selectable primary budget axis (`candidate_evaluations|llm_calls|dual_gate`), backend selection via `--backends`, and command validation via `--dry_run`.
   - Also writes top-level snapshots under `save_root` as `<timestamp>_ablation_config.yaml` and `<timestamp>_ablation_config_meta.yaml`.
 - `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch/EoH/CodeEvolve comparisons.
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
+- `scripts/run_hard_iteration_one_shot_vllm.sh`: resumable one-shot hard-subset baseline harness for RTLLM and VerilogEval-Spec-to-RTL.
+- `scripts/build_hard_iteration_subset.py`: turn one-shot summaries plus benchmark metadata into a frozen balanced hard-subset config and baseline CSV.
+- `scripts/run_hard_iteration_qd_vllm.sh`: run the `classic`, `grid_struct`, `cvt_struct`, and `cvt_size_control` long-budget matrix from the frozen hard-subset config.
+- `scripts/report_hard_iteration_analysis.py`: summarize hard-subset classic-vs-QD runs into a markdown report plus JSON recommendations.
+- `scripts/report_pareto_analysis.py`: summarize hard-subset backend runs into Pareto-front figures plus per-backend hypervolume and frontier-size tables.
+- `scripts/report_design_space_analysis.py`: summarize completed classic and QD runs into generation-local and accumulated PPA-space / feature-space figures, aggregate pooled views, markdown indices, and `successful_candidates.csv`.
+- `scripts/report_qd_feature_space.py`: summarize finished QD backend roots into successful-candidate tables, collapse diagnostics, regression outputs, and embedding plots.
+- `scripts/report_final_analysis_bundle.py`: generate the formal `final_analysis/` directory for a finished hard-subset run root.
+- `scripts/report_qd_problem_histograms.py`: emit per-problem CVT successful-candidate histograms, projected centroid/division overlays, and cumulative history views into `qd_feature_histograms/` under each problem directory.
+- `data/configs/qd_descriptor_profiles_hard_iteration_large.yaml`: dedicated large-profile follow-up descriptor config for the hard-subset workflow, using the frozen `hard_iteration_large_struct10d` profile and coarse grid bins.
 - `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts`). QD runs keep `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`, `qd_metrics.json`, `grid_layout.json` or `centroids.json`, `archive_space.json`, `archive_space_report.md`, and the generated QD plots in the archived summary set so archive state is preserved even in `candidate_core` mode.
 - QD candidate directories now also include `qd_archive_event.json` for every
   archive-handled successful candidate.
@@ -596,8 +886,8 @@ timeout 3600 python scripts/run_backend_ablation.py \
   --temperature 0.7 \
   --top_p 0.95 \
   --max_tokens 16384 \
-  --num_workers 1 \
-  --candidate_workers 0 \
+  --total_worker_slots 1 \
+  --max_workers_per_problem 1 \
   --save_root /tmp/prob144_conwaylife_timeout_smoke
 ```
 

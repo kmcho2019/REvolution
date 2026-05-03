@@ -389,6 +389,80 @@ def test_save_feedback_files_writes(engine_for_utils, tmp_path):
     assert "ANALYSIS:\ndetails" in content
 
 
+def _make_relocated_candidate_paths(
+    engine: EoHEngine,
+    tmp_path: Path,
+    *,
+    generation: int = 2,
+    label: str = "prob_sample1_M-E",
+) -> tuple[Path, Path]:
+    model_dir = engine.llm.model_name.replace("/", "_")
+    stale = (
+        tmp_path
+        / model_dir
+        / "bench"
+        / "prob"
+        / f"Gen{generation}"
+        / label
+        / "code.sv"
+    )
+    relocated = (
+        tmp_path
+        / model_dir
+        / "bench"
+        / "prob_partial_pre_resume_20260317"
+        / f"Gen{generation}"
+        / label
+        / "code.sv"
+    )
+    relocated.parent.mkdir(parents=True, exist_ok=True)
+    relocated.write_text("module relocated; endmodule\n", encoding="utf-8")
+    return stale, relocated
+
+
+def test_refresh_candidate_code_path_recovers_partial_pre_resume_directory(
+    engine_for_utils, tmp_path
+):
+    stale, relocated = _make_relocated_candidate_paths(engine_for_utils, tmp_path)
+    cand = Heuristic("t", "c", "fb")
+    cand.code_file_path = str(stale)
+
+    resolved = engine_for_utils._refresh_candidate_code_path(cand)
+
+    assert resolved == str(relocated.resolve())
+    assert cand.code_file_path == str(relocated.resolve())
+
+
+def test_save_feedback_files_recovers_relocated_candidate_path(
+    engine_for_utils, tmp_path
+):
+    stale, relocated = _make_relocated_candidate_paths(engine_for_utils, tmp_path)
+    cand = Heuristic("t", "c", "fb")
+    cand.code_file_path = str(stale)
+
+    fb = {"score": 7, "justification": "recover", "analysis": "details"}
+    engine_for_utils._save_feedback_files(cand, fb)
+
+    feedback_path = relocated.with_name("code_feedback.txt")
+    assert feedback_path.exists()
+    assert "Score: 7" in feedback_path.read_text(encoding="utf-8")
+    assert not stale.with_name("code_feedback.txt").exists()
+
+
+def test_create_prompt_M_I_diff_recovers_relocated_parent_path(
+    engine_for_utils, tmp_path
+):
+    stale, relocated = _make_relocated_candidate_paths(engine_for_utils, tmp_path)
+    parent = Heuristic("TH", "CODE", "FB", status="success")
+    parent.code_file_path = str(stale)
+    engine_for_utils.generation_mode = "diff"
+
+    prompt = engine_for_utils._create_prompt_M_I([parent])
+
+    assert str(relocated.resolve()) in prompt
+    assert "module relocated; endmodule" in prompt
+
+
 # ---------- Reference PPA ------------------------------------------------------------
 
 
@@ -998,15 +1072,18 @@ def test_evaluate_candidates_parallel_uses_thread_pool(mocker, tmp_path):
     eng, llm = _mk_engine(mocker, tmp_path, pop_size=1, candidate_workers=2)
     mocker.patch.object(EoHEngine, "_copy_misc_files", return_value=None)
 
-    code_path, _ = eng._save_result_to_file(
-        "module foo; endmodule",
-        "thought",
-        generation_num=0,
-        sample_idx_in_generation=1,
-        strategy="initial",
-    )
-    cand = Heuristic("thought", "module foo; endmodule", "")
-    cand.code_file_path = code_path
+    candidates: list[Heuristic] = []
+    for sample_idx in (1, 2):
+        code_path, _ = eng._save_result_to_file(
+            "module foo; endmodule",
+            "thought",
+            generation_num=0,
+            sample_idx_in_generation=sample_idx,
+            strategy="initial",
+        )
+        candidate = Heuristic("thought", "module foo; endmodule", "")
+        candidate.code_file_path = code_path
+        candidates.append(candidate)
 
     class DummyFuture:
         def __init__(self, fn, args):
@@ -1063,14 +1140,20 @@ def test_evaluate_candidates_parallel_uses_thread_pool(mocker, tmp_path):
     mocker.patch.object(
         eng.llm,
         "generate_batch_feedback",
-        mocker.AsyncMock(return_value=[{"analysis": "ok", "justification": "", "score": 0}]),
+        mocker.AsyncMock(
+            return_value=[
+                {"analysis": "ok", "justification": "", "score": 0},
+                {"analysis": "ok", "justification": "", "score": 0},
+            ]
+        ),
     )
 
-    eng._evaluate_candidates([cand])
+    eng._evaluate_candidates(candidates)
 
     assert executor_instances
     assert executor_instances[0].max_workers == 2
-    assert cand.status == "success"
+    assert len(executor_instances[0].submitted) == 2
+    assert all(candidate.status == "success" for candidate in candidates)
 
 
 def test_initialize_population_whole_splits_pools_and_writes(mocker, tmp_path):

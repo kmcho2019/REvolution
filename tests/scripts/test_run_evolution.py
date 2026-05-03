@@ -16,8 +16,8 @@ def _minimal_args(tmp_path):
         model_name="stub-model",
         save_path=str(tmp_path / "exp"),
         evaluation_mode="standard",
-        num_workers=1,
-        multiprocessing_mode="problem",
+        total_worker_slots=1,
+        max_workers_per_problem=1,
         gen0_prompt_file=None,
         gen0_prompt_encoding="utf-8",
         gen0_prompt_benchmark=None,
@@ -145,6 +145,218 @@ def test_run_problem_worker_forwards_timeout_defaults(monkeypatch, tmp_path):
     assert captured["verilog"]["default_simulation_timeout_seconds"] == 17
     assert captured["synthesis"]["default_synthesis_timeout_s"] == 29
     assert captured["synthesis"]["default_simulation_timeout_s"] == 31
+
+
+def test_run_evolution_pool_terminates_and_joins_on_interrupt(monkeypatch):
+    from scripts import run_evolution
+
+    events: list[str] = []
+
+    class _FakePool:
+        def imap_unordered(self, _func, _indexed_tasks):
+            class _InterruptingIterator:
+                def __iter__(self):
+                    return self
+
+                def __next__(self):
+                    raise KeyboardInterrupt()
+
+            return _InterruptingIterator()
+
+        def terminate(self):
+            events.append("terminate")
+
+        def join(self):
+            events.append("join")
+
+        def close(self):
+            events.append("close")
+
+    monkeypatch.setattr(
+        run_evolution.multiprocessing,
+        "Pool",
+        lambda processes: _FakePool(),
+    )
+    monkeypatch.setattr(run_evolution, "tqdm", lambda iterable, **_kwargs: iterable)
+
+    with pytest.raises(KeyboardInterrupt):
+        run_evolution._run_indexed_tasks_with_pool(
+            process_count=2,
+            indexed_tasks=[(0, ("RTLLM", "Prob001_accu", object()))],
+            original_stdout=sys.stdout,
+        )
+
+    assert events == ["terminate", "join"]
+
+
+def test_run_evolution_worker_closes_problem_concurrency_after_error(
+    monkeypatch, tmp_path
+):
+    from scripts import run_evolution
+    from types import SimpleNamespace
+
+    class _DummyRedirect:
+        def __init__(self, filepath):
+            self.filepath = filepath
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+    class _FakeController:
+        def __init__(self):
+            self.open_calls = 0
+            self.close_calls = 0
+
+        def open_problem(self):
+            self.open_calls += 1
+
+        def close_problem(self):
+            self.close_calls += 1
+
+    controller = _FakeController()
+    args = _minimal_args(tmp_path)
+    args.resolved_parallelism_config = SimpleNamespace(
+        candidate_worker_limit=1,
+        max_workers_per_problem=1,
+    )
+    args.parallelism_handles = object()
+
+    def _raise_llm(**_kwargs):
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(run_evolution, "StreamRedirector", _DummyRedirect)
+    monkeypatch.setattr(
+        run_evolution,
+        "build_problem_concurrency_controller",
+        lambda *args, **kwargs: controller,
+    )
+    monkeypatch.setattr(run_evolution, "LLMInterface", _raise_llm)
+
+    result, _log_path = run_evolution.run_problem_worker(
+        ("RTLLM", "Prob001_accu", args)
+    )
+
+    assert result == "Prob001_accu,worker_error,boom"
+    assert controller.open_calls == 1
+    assert controller.close_calls == 1
+
+
+@pytest.mark.parametrize(
+    ("argv", "expected_message"),
+    [
+        (["--num_workers", "4"], "--num_workers -> --total_worker_slots"),
+        (
+            ["--multiprocessing_mode", "candidate"],
+            "--multiprocessing_mode -> --max_active_problems",
+        ),
+        (
+            ["--parallelism_mode", "elastic"],
+            "--parallelism_mode -> elastic scheduling is always enabled",
+        ),
+    ],
+)
+def test_run_evolution_rejects_legacy_parallelism_flags(
+    monkeypatch, capsys, argv, expected_message
+):
+    from scripts import run_evolution
+
+    monkeypatch.setattr(sys, "argv", ["run_evolution.py", *argv])
+
+    with pytest.raises(SystemExit) as exc:
+        run_evolution.main()
+
+    assert exc.value.code == 2
+    captured = capsys.readouterr()
+    assert expected_message in captured.out
+
+
+def test_run_evolution_main_closes_runtime_on_interrupt(monkeypatch, tmp_path):
+    from scripts import run_evolution
+
+    class _DummyRedirect:
+        def __init__(self, filepath):
+            self.filepath = filepath
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+    class _FakeRuntime:
+        def __init__(self):
+            self.handles = object()
+            self.close_calls = 0
+
+        def close(self):
+            self.close_calls += 1
+
+    runtime = _FakeRuntime()
+
+    monkeypatch.setattr(run_evolution, "StreamRedirector", _DummyRedirect)
+    monkeypatch.setattr(
+        run_evolution,
+        "_discover_tasks",
+        lambda args, **kwargs: [
+            ("RTLLM", "Prob001_accu", args),
+            ("RTLLM", "Prob002_accu", args),
+        ],
+    )
+    monkeypatch.setattr(
+        run_evolution,
+        "build_elastic_parallelism_runtime",
+        lambda config, task_count: runtime,
+    )
+    monkeypatch.setattr(
+        run_evolution,
+        "_run_indexed_tasks_with_pool",
+        lambda **kwargs: (_ for _ in ()).throw(KeyboardInterrupt()),
+    )
+    monkeypatch.setattr(
+        run_evolution,
+        "preflight_vllm_model",
+        lambda **kwargs: {
+            "endpoint": "http://vllm:8888/v1/models",
+            "model_id": "stub-model",
+            "max_model_len": 131072,
+        },
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "run_evolution.py",
+            "--benchmarks",
+            "RTLLM",
+            "--problems",
+            "Prob001_accu",
+            "--api_backend",
+            "vllm",
+            "--model_name",
+            "stub-model",
+            "--save_path",
+            str(tmp_path / "interrupt_run"),
+            "--total_worker_slots",
+            "2",
+            "--population_size",
+            "1",
+            "--num_generations",
+            "0",
+            "--vllm_host",
+            "vllm",
+            "--vllm_port",
+            "8888",
+        ],
+    )
+
+    with pytest.raises(SystemExit) as exc:
+        run_evolution.main()
+
+    assert exc.value.code == 130
+    assert runtime.close_calls == 1
 
 
 def test_run_evolution_delegates_to_run_backend_for_codeevolve_config(

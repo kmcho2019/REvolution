@@ -11,6 +11,14 @@ Each run focuses on a single benchmark problem and coordinates:
 - evaluation of generated RTL via `VerilogEvaluator` (syntax and functional checks) and `SynthesisEvaluator` (Yosys + OpenROAD + post-synthesis regression),
 - logging and summarisation through `EoHLogger`.
 
+For multi-problem entry points, `scripts/run_backend.py` and
+`scripts/run_evolution.py` now resolve a shared `ResolvedParallelismConfig`
+before any worker processes start. The default `elastic` mode treats worker
+capacity as one global slot pool instead of a fixed split between problem
+processes and within-problem threads. Older config files can still provide
+deprecated parallelism keys, but those keys are translated once at load time
+and the runtime always executes with the resolved elastic settings.
+
 The framework also exposes `SingleShotEngine` for baseline n-shot evaluation, the new `Gen0LatencyEngine` for feedback-first scoring with an optional full evaluation pass on the winning candidate (or a standalone prompt file when no benchmark assets are available), and `CVDPEngine` for JSONL-defined hardware design prompts.
 
 ## Candidate representation
@@ -114,6 +122,31 @@ The QD substrate currently lives under `src/revolution/qd/`:
   sidecars and renders a dedicated `QD Descriptor Health` section
 - `scripts/archive_baseline.py`: now preserves descriptor-health sidecars in
   archived QD summaries
+
+## Elastic run parallelism
+
+The new parallelism path lives in `src/revolution/runtime/parallelism.py` and
+is shared by `run_backend.py`, `run_evolution.py`, and the backend/engine
+evaluation loops.
+
+The model is intentionally simple:
+
+- each active problem owns one base slot for its full lifetime
+- candidate-evaluation batches can borrow extra slots in a `try/finally` lease
+- `max_active_problems` limits how many problem processes may be live at once
+- `max_workers_per_problem` limits how many total workers one problem may hold
+- when many problems remain, capacity stays spread one-per-problem
+- when the number of remaining problems drops, the survivors can borrow the
+  newly freed slots and evaluate larger batches in parallel
+
+Cleanup is explicit rather than implicit. Problem workers call
+`open_problem()` before backend initialization and `close_problem()` in a
+`finally` block. Extra borrowed slots are always released in a nested
+`finally`, and `close_problem()` also reclaims any leaked extras as a safety
+net for exceptions, interrupts, or early worker termination. On the parent
+side, both runners wrap the process pool so interrupts or fatal scheduler
+errors terminate and join child workers instead of leaving stray processes
+behind.
 
 ## Evaluation stack
 

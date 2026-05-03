@@ -684,8 +684,9 @@ def _build_command_settings(args: dict[str, Any], defaults: dict[str, Any]) -> d
         "num_generations",
         "population_size",
         "num_samples",
-        "num_workers",
-        "candidate_workers",
+        "total_worker_slots",
+        "max_active_problems",
+        "max_workers_per_problem",
         "prompt_profile",
         "backend",
     ]

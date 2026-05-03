@@ -21,6 +21,12 @@ Supported archive geometries:
 
 The main runtime lives in [engine.py](../src/revolution/qd/engine.py).
 
+The journal-extension roadmap for the next QD runtime revision lives in
+[journal_features/overall_plan.md](journal_features/overall_plan.md). That hub
+is based on the `feat/qd-theory-grounded-descriptors` branch and tracks the
+thought-only representation, k-code evaluation, quantile/adaptive binning,
+Pareto-front cells, two-tier fail handling, and single-operator plans.
+
 ### Mode quick reference
 
 | Mode | CLI surface | Success-side state | Recommended starting point | Best used for | Current caveat |
@@ -37,6 +43,7 @@ The main runtime lives in [engine.py](../src/revolution/qd/engine.py).
 | Structural | synthesized cell counts / Yosys stats | grid controls, structural CVT baselines | `implemented_structural_compact_3d`, `implemented_structural_fixed_5d` |
 | RTL / source-text | regex over candidate RTL | richer CVT descriptor studies | `size_control_3d`, `wire_assign_if_3d` |
 | RTL / Yosys AST | lightweight Yosys AST dump | control-shape CVT studies | `timing_control_3d`, `wire_ctrl_assign_3d` |
+| Graph / testability | flattened Yosys JSON graph | theory-grounded CVT studies | `theory_grounded_full_20d` |
 | Physical | OpenROAD report parsing | richer CVT follow-up studies | `hybrid_phys_seq` |
 | Dynamic / VCD | Icarus waveform parsing | experimental activity-driven studies | `activity_size_3d`, `activity_control_3d` |
 
@@ -75,6 +82,16 @@ Core QD files:
   `quality_score`, gain components, repair score, and code hashing
 - [visualization.py](../src/revolution/qd/visualization.py):
   history plots plus grid/CVT archive visualizations
+- `scripts/report_qd_feature_space.py`:
+  post-run feature-space analysis, regression summaries, collapse diagnostics,
+  and PCA/t-SNE projections over successful QD candidates
+- `scripts/report_qd_problem_histograms.py`:
+  per-problem CVT histogram reports over successful candidates, with projected
+  centroid/division overlays and cumulative generation-history panels emitted
+  into `qd_feature_histograms/` under each problem directory
+- `data/configs/qd_descriptor_profiles_hard_iteration_large.yaml`:
+  frozen hard-subset follow-up profile with coarse grid bins for the 10D large
+  structural/PPA descriptor mix
 
 Related evaluation files:
 
@@ -110,6 +127,7 @@ applies any final archive-side transform such as `log1p`.
 flowchart LR
   A[Candidate RTL code] --> B[VerilogEvaluator]
   A --> C[RTLDescriptorEvaluator]
+  A --> C2[GraphDescriptorEvaluator]
   B --> D[VCD probe if dynamic axes are requested]
   A --> E[SynthesisEvaluator]
   E --> F[StructuralEvaluator]
@@ -123,11 +141,13 @@ flowchart LR
   K --> L[PPA gain computation]
   F --> M[structural_metrics]
   C --> N[rtl_metrics]
+  C2 --> N2[graph_metrics]
   G --> O[physical_metrics]
   J --> P[dynamic_metrics]
   L --> Q[g_P / g_A / g_T]
   M --> R[descriptor registry + transforms]
   N --> R
+  N2 --> R
   O --> R
   P --> R
   Q --> R
@@ -229,6 +249,90 @@ AST-shape descriptors come from a lightweight Yosys AST dump:
 - `resource_sharing_ratio_est`
   Ratio of `math_op_ast_count` to mapped cell count. This is meant to capture
   how much arithmetic intent exists relative to the eventual mapped size.
+- `rtl_cyclomatic_total_log`
+  Raw cyclomatic complexity total accumulated over procedural Yosys AST blocks.
+  The descriptor registry applies `log1p` when the archive tuple is built.
+- `rtl_cyclomatic_max_log`
+  Maximum per-procedural-block cyclomatic complexity observed in the Yosys AST
+  walk. This is also log-transformed at descriptor time.
+
+### Graph and testability descriptors
+
+Graph/testability descriptors are attached as `graph_metrics` and are extracted
+by [graph_descriptor_evaluator.py](../src/revolution/graph_descriptor_evaluator.py).
+The extractor runs Yosys on the candidate RTL, builds a normalized cell/signal
+graph from the flattened JSON netlist, and computes theory-grounded descriptors
+without adding a new required external runtime dependency beyond Yosys.
+
+- `rent_exponent`
+  Rent slope estimated from recursive spectral bipartitioning plus a trimmed
+  log-log fit over boundary-pin versus block-size samples.
+- `rent_exponent_confidence_gated`
+  Profile-facing Rent axis. It uses the same raw slope but shrinks low-sample,
+  low-node, weak-fit, or clamped cases toward a neutral `0.5` value before the
+  archive tuple is built.
+- `rent_confidence`
+  Confidence score used by `rent_exponent_confidence_gated`. It combines
+  retained sample count, graph size, retained/raw sample ratio, fit quality,
+  and a clamp penalty.
+- `rent_clamped_flag`
+  Diagnostic flag showing whether the raw fitted slope had to be clamped into
+  the valid `[0.0, 1.0]` Rent range.
+- `rent_k`
+  Intercept-derived Rent coefficient from the same fit. It is kept as a raw
+  diagnostic metric rather than part of the default theory profile.
+- `rent_r2`
+  Goodness-of-fit diagnostic for the retained Rent regression samples.
+- `rent_sample_count`
+  Number of partition samples retained after trimming.
+- `rent_raw_sample_count`
+  Number of size buckets before trimming.
+- `rent_retained_sample_ratio`
+  Fraction of raw samples kept after trimming.
+- `rent_graph_node_count`
+  Graph size seen by the Rent extractor.
+- `reconv_source_ratio`
+  Fraction of branching sources whose fan-out reconverges downstream.
+- `reconv_sink_ratio`
+  Fraction of graph nodes that serve as reconvergence sinks for at least one
+  branching source.
+- `scoap_cc0_bin_*`, `scoap_cc1_bin_*`, `scoap_co_bin_*`
+  Histogram percentages over SCOAP controllability and observability scores
+  using fixed bins `1`, `2-3`, `4-7`, and `8+`.
+- `laplacian_lambda2`
+  Second-smallest eigenvalue of the normalized Laplacian. This is a compact
+  connectivity / bottleneck descriptor.
+- `laplacian_spectral_entropy`
+  Entropy-like summary of the normalized Laplacian spectrum.
+- `scoap_signal_smoothness`
+  Graph-signal smoothness over `log1p(CC0 + CC1 + CO)` on the normalized graph.
+
+Important implementation note:
+
+- This path is repo-native and Yosys-based. RentCon remains optional for
+  offline comparison only through
+  `scripts/qd_theory_descriptor_probe.py` and
+  `scripts/report_qd_rent_calibration.py`; it is not a live runtime
+  dependency.
+
+Follow-on workflow:
+
+- use `scripts/run_qd_theory_followup_vllm.sh` for the bounded multi-problem
+  comparison matrix between `theory_grounded_full_20d` and the current CVT
+  controls
+- use `scripts/run_qd_theory_followup_manifest.py` when the broader RTLLM /
+  VerilogEval matrix should be driven from a checked-in manifest rather than
+  shell environment overrides
+- use `scripts/report_qd_theory_followup.py` on the resulting run root to
+  summarize archive behavior, emit a compact theory-profile candidate, and
+  record whether the current evidence is strong enough to recommend that
+  compact follow-on profile
+- example dry run:
+  `VLLM_HOST=host.docker.internal VLLM_PORT=8000 bash scripts/run_qd_theory_followup_vllm.sh --suite rtllm --dry-run`
+- example manifest dry run:
+  `python scripts/run_qd_theory_followup_manifest.py --manifest data/configs/qd_theory_followup_broad_matrix.json --dry-run`
+- example report:
+  `python scripts/report_qd_theory_followup.py --run_root /tmp/qd_theory_followup/<run_tag> --output_dir /tmp/qd_theory_followup/<run_tag>/theory_followup_report`
 
 ### Physical descriptors
 
@@ -288,6 +392,37 @@ Extraction path:
   harness bookkeeping
 - the current path is intentionally descriptor-gated so classic REvolution and
   non-dynamic QD runs do not pay waveform cost
+
+## Post-run QD feature-space analysis
+
+The run tree now supports a deeper post-run analysis pass without rerunning
+evaluation. The intended entry point is `scripts/report_qd_feature_space.py`.
+
+Inputs:
+
+- one or more finished backend run roots such as `classic`, `grid_struct`, or
+  `cvt_struct`
+- the frozen hard-subset config so missing problems still show up in backend
+  aggregate tables
+
+Primary outputs:
+
+- backend aggregate report with classic-vs-QD context
+- per-backend successful-candidate histograms
+- per-backend PCA and t-SNE plots over successful QD candidates, colored by
+  `quality_score`
+- regression coefficient tables for `quality_score`, `g_P`, `g_A`, and `g_T`
+- `recommended_profile.json` for selecting a larger follow-up descriptor
+  profile from observed variability, collapse behavior, and predictive signal
+
+The analysis intentionally uses only the existing run tree:
+
+- problem summaries for backend-level score and success rates
+- `qd_archive_event.json` for per-candidate descriptor and metric payloads
+- `archive_cells.csv` for final-elite membership
+
+That keeps the reporting pass decoupled from the live search runtime and makes
+it safe to re-run on older experiment roots.
 
 PPA gain axes are derived from reference-vs-generated PPA metrics:
 
@@ -349,6 +484,30 @@ Exploratory dynamic profiles:
 - `activity_control_3d`
   - `toggle_density_est`, `active_signal_ratio_est`, `ctrl_depth_est`
 
+Experimental theory-grounded profile:
+
+- `theory_grounded_full_20d`
+  - `rtl_cyclomatic_total_log`
+  - `rtl_cyclomatic_max_log`
+  - `rent_exponent_confidence_gated`
+  - `reconv_source_ratio`
+  - `reconv_sink_ratio`
+  - SCOAP CC0 histogram bins
+  - SCOAP CC1 histogram bins
+  - SCOAP CO histogram bins
+  - `laplacian_lambda2`
+  - `laplacian_spectral_entropy`
+  - `scoap_signal_smoothness`
+- `theory_grounded_compact_8d`
+  - `scoap_signal_smoothness`
+  - `laplacian_spectral_entropy`
+  - `scoap_cc0_bin_1_pct`
+  - `scoap_co_bin_3_pct`
+  - `scoap_cc1_bin_1_pct`
+  - `scoap_co_bin_0_pct`
+  - `scoap_cc0_bin_0_pct`
+  - `scoap_cc1_bin_0_pct`
+
 ### Profile quick reference
 
 | Profile | Axes | Archive type it fits best | Use when | Current confidence |
@@ -357,6 +516,8 @@ Exploratory dynamic profiles:
 | `implemented_structural_fixed_5d` | `seq_ratio`, `comb_ratio`, `mux_ratio`, `adder_ratio`, `cell_count_log` | cvt | you want the strongest score/frontier-oriented structural CVT run | high |
 | `size_control_3d` | `wire_count_log_est`, `assign_count`, `ctrl_depth_est` | cvt | you want the healthiest archive and best coverage/QD-score balance | high |
 | `timing_control_3d` | `wire_count_log_est`, `if_count`, `ast_depth_est` | cvt | you want a control-shape-heavy follow-up to `size_control_3d` | medium |
+| `theory_grounded_full_20d` | AST cyclomatic + confidence-gated Rent + reconvergence + SCOAP histograms + Laplacian metrics | cvt | you want the richest current theory-grounded runtime profile and are willing to trade score/stability for descriptor richness and coverage experiments | experimental |
+| `theory_grounded_compact_8d` | reduced SCOAP + spectral theory profile from the Stage 6 hard-subset collapse pass | cvt | you want the best current theory-only hard-subset follow-on, with better stability/hypervolume than the 20D profile but without claiming to beat the structural controls on QD score | experimental |
 | `hybrid_phys_seq` | structural + physical + gain axes | cvt | you want to test whether physical variation meaningfully enriches the archive | medium |
 | `activity_size_3d` / `activity_control_3d` | dynamic + size/control axes | grid or cvt follow-up | you want an experimental activity-sensitive archive study | low to medium |
 
@@ -373,10 +534,26 @@ Stage 10 runtime note:
 
 Stage 11 runtime note:
 
+- the tuned hard-subset `20 x 5` compact-theory rerun removed the per-problem
+  descriptor-collapse and centroid-init failures seen in the earlier 20D
+  theory run, and it improved mean synthesis rate and mean hypervolume versus
+  that full theory baseline
+- the same rerun still trailed the main structural CVT controls on archive QD
+  score, elite quality, and pareto breadth, so `theory_grounded_compact_8d`
+  is currently the better theory-only follow-on rather than a general QD
+  default replacement
+- the current comparison still mixes profile and archive-policy changes:
+  compact theory was rerun under the tuned `16 / 4 / 0.25 / 2` CVT policy,
+  while the older structural/full-theory baselines used warmup-16 settings.
+  A same-policy rerun matrix is still required for a cleaner A/B conclusion
+
 - the branch now supports the primary retrospective source/AST/netlist
   descriptor family during real QD runs, not just retrospective replay
 - these profiles should still be treated as early-stage experimental surfaces
   until bounded smokes and longer reruns confirm their live behavior
+- CVT archives now perform a run-end fallback initialization from the current
+  warmup buffer when a problem never reaches the configured warmup threshold,
+  so final archive artifacts are no longer forced to stay empty in that case
 
 ## Preliminary Experiment Takeaways
 

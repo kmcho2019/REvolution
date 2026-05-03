@@ -42,6 +42,8 @@ def test_qd_smoke_script_dry_run_prints_grid_and_cvt_commands(tmp_path):
     assert "--qd_archive_type cvt" in normalized
     assert "--qd_backfill_generation_mode diff" in normalized
     assert "--qd_refine_generation_mode diff" in normalized
+    assert "--total_worker_slots 1" in normalized
+    assert "--max_workers_per_problem 1" in normalized
     assert "--max_tokens 128000" in normalized
     assert "--diff_max_tokens 128000" in normalized
     assert "Dry run enabled; commands were not executed." in result.stdout

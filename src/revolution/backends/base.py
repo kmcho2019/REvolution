@@ -13,6 +13,7 @@ from revolution.runtime import (
     ProblemContext,
     ProblemSpec,
 )
+from revolution.runtime.parallelism import ProblemConcurrencyController
 
 
 @dataclass(frozen=True)
@@ -36,6 +37,7 @@ class BackendServices:
     prompt_store: PromptStore
     artifact_writer: ArtifactWriter
     candidate_evaluator: CandidateEvaluator | None = None
+    problem_concurrency: ProblemConcurrencyController | None = None
 
 
 @dataclass

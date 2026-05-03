@@ -38,8 +38,8 @@ Environment overrides:
   REDO_BASELINE_ROOT        Baseline root for later comparison (default: /tmp/qd_rich20x5)
   REDO_POPULATION_SIZE      Population size (default: 20)
   REDO_NUM_GENERATIONS      Number of generations (default: 5)
-  REDO_NUM_WORKERS          Worker count (default: 2)
-  REDO_CANDIDATE_WORKERS    Candidate worker count (default: 0)
+  REDO_TOTAL_WORKER_SLOTS   Total worker-slot budget (default: 2)
+  REDO_MAX_WORKERS_PER_PROBLEM Per-problem worker cap (default: 1)
   REDO_MAX_TOKENS           LLM max tokens (default: 128000)
   REDO_DIFF_MAX_TOKENS      Diff max tokens (default: REDO_MAX_TOKENS)
   REDO_TEMPERATURE          LLM temperature (default: 1.0)
@@ -210,8 +210,8 @@ esac
 
 POPULATION_SIZE="${REDO_POPULATION_SIZE:-20}"
 NUM_GENERATIONS="${REDO_NUM_GENERATIONS:-5}"
-NUM_WORKERS="${REDO_NUM_WORKERS:-2}"
-CANDIDATE_WORKERS="${REDO_CANDIDATE_WORKERS:-0}"
+TOTAL_WORKER_SLOTS="${REDO_TOTAL_WORKER_SLOTS:-2}"
+MAX_WORKERS_PER_PROBLEM="${REDO_MAX_WORKERS_PER_PROBLEM:-1}"
 MAX_TOKENS="${REDO_MAX_TOKENS:-128000}"
 DIFF_MAX_TOKENS="${REDO_DIFF_MAX_TOKENS:-${MAX_TOKENS}}"
 TEMPERATURE="${REDO_TEMPERATURE:-1.0}"
@@ -269,8 +269,8 @@ echo "Preset: ${PRESET}"
 echo "Suites: ${SUITES[*]}"
 echo "Population size: ${POPULATION_SIZE}"
 echo "Generations: ${NUM_GENERATIONS}"
-echo "Workers: ${NUM_WORKERS}"
-echo "Candidate workers: ${CANDIDATE_WORKERS}"
+echo "Total worker slots: ${TOTAL_WORKER_SLOTS}"
+echo "Max workers per problem: ${MAX_WORKERS_PER_PROBLEM}"
 echo "Baseline root: ${BASELINE_ROOT}"
 echo "Save path: ${SAVE_PATH}"
 
@@ -283,8 +283,8 @@ preset=${PRESET}
 suites=${SUITES[*]}
 population_size=${POPULATION_SIZE}
 num_generations=${NUM_GENERATIONS}
-num_workers=${NUM_WORKERS}
-candidate_workers=${CANDIDATE_WORKERS}
+total_worker_slots=${TOTAL_WORKER_SLOTS}
+max_workers_per_problem=${MAX_WORKERS_PER_PROBLEM}
 max_tokens=${MAX_TOKENS}
 diff_max_tokens=${DIFF_MAX_TOKENS}
 temperature=${TEMPERATURE}
@@ -333,8 +333,8 @@ for suite_name in "${SUITES[@]}"; do
     CMD+=("--model_name" "${MODEL_NAME}")
     CMD+=("--population_size" "${POPULATION_SIZE}")
     CMD+=("--num_generations" "${NUM_GENERATIONS}")
-    CMD+=("--num_workers" "${NUM_WORKERS}")
-    CMD+=("--candidate_workers" "${CANDIDATE_WORKERS}")
+    CMD+=("--total_worker_slots" "${TOTAL_WORKER_SLOTS}")
+    CMD+=("--max_workers_per_problem" "${MAX_WORKERS_PER_PROBLEM}")
     CMD+=("--evaluation_mode" "search_accelerated")
     CMD+=("--accelerated_synthesis_top_k" "1")
     CMD+=("--temperature" "${TEMPERATURE}")

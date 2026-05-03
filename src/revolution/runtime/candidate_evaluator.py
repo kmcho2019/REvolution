@@ -5,9 +5,11 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
 from typing import Any
 
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
+from revolution.graph_descriptor_evaluator import GraphDescriptorEvaluator
 from revolution.runtime.problem_context import (
     ProblemContext,
     resolve_synthesis_top_module_name,
@@ -78,6 +80,7 @@ class CandidateEvaluation:
     structural_metrics: dict[str, float] = field(default_factory=dict)
     rtl_metrics: dict[str, float] = field(default_factory=dict)
     dynamic_metrics: dict[str, float] = field(default_factory=dict)
+    graph_metrics: dict[str, float] = field(default_factory=dict)
     physical_metrics: dict[str, float] = field(default_factory=dict)
     descriptor_values: dict[str, float] = field(default_factory=dict)
     partial_pass_fraction: float = 0.0
@@ -179,6 +182,7 @@ class CandidateEvaluator:
         self.descriptor_requirements = descriptor_requirements(self.descriptor_axes)
         self.rtl_descriptor_evaluator = RTLDescriptorEvaluator()
         self.simulation_descriptor_evaluator = SimulationDescriptorEvaluator()
+        self.graph_descriptor_evaluator = GraphDescriptorEvaluator()
         if evaluation_mode not in {
             EvaluationMode.STRICT_ABLATION.value,
             EvaluationMode.SEARCH_ACCELERATED.value,
@@ -251,12 +255,18 @@ class CandidateEvaluator:
             and self.descriptor_requirements.get("requires_dynamic_metrics", False)
         ):
             result.dynamic_metrics = self._extract_dynamic_metrics(result.simulation_result)
+        if (
+            not result.graph_metrics
+            and self.descriptor_requirements.get("requires_graph_metrics", False)
+        ):
+            result.graph_metrics = self._extract_graph_metrics(item.code_file_path)
 
         if not result.descriptor_values and self.descriptor_axes:
             descriptor_metrics: dict[str, float] = {}
             descriptor_metrics.update(result.structural_metrics)
             descriptor_metrics.update(result.rtl_metrics)
             descriptor_metrics.update(result.dynamic_metrics)
+            descriptor_metrics.update(result.graph_metrics)
             descriptor_metrics.update(result.physical_metrics)
             descriptor_metrics.update(
                 {
@@ -296,6 +306,16 @@ class CandidateEvaluator:
         return self.simulation_descriptor_evaluator.extract_metrics(
             vcd_file_path=simulation_result.get("vcd_file_path"),
             top_module_name=self.testbench_top_module_name,
+        )
+
+    def _extract_graph_metrics(
+        self,
+        code_file_path: str | Path,
+    ) -> dict[str, float]:
+        """Extract graph-theoretic descriptors from the candidate RTL."""
+        return self.graph_descriptor_evaluator.extract_metrics(
+            code_file_path=code_file_path,
+            top_module_name=self.synthesis_top_module_name,
         )
 
     def _evaluate_pre_synthesis(self, item: CandidateWorkItem) -> CandidateEvaluation:
@@ -435,6 +455,11 @@ class CandidateEvaluator:
             code_file_path=item.code_file_path,
             mapped_cell_count=structural_metrics.get("total_cells"),
         )
+        graph_metrics = (
+            self._extract_graph_metrics(item.code_file_path)
+            if self.descriptor_requirements.get("requires_graph_metrics", False)
+            else {}
+        )
         if synth_success and post_synth_success and ppa_success:
             stages["synthesis"] = True
             stages["synthesis_functionality"] = True
@@ -472,6 +497,7 @@ class CandidateEvaluator:
                         **structural_metrics,
                         **rtl_metrics,
                         **dynamic_metrics,
+                        **graph_metrics,
                         **physical_metrics,
                         "g_P": float(components.get("g_P", 0.0)),
                         "g_A": float(components.get("g_A", 0.0)),
@@ -481,6 +507,7 @@ class CandidateEvaluator:
                 ),
                 rtl_metrics=rtl_metrics,
                 dynamic_metrics=dynamic_metrics,
+                graph_metrics=graph_metrics,
             )
 
         if not synth_success:
@@ -524,6 +551,7 @@ class CandidateEvaluator:
             structural_metrics=structural_metrics,
             rtl_metrics=rtl_metrics,
             dynamic_metrics=dynamic_metrics,
+            graph_metrics=graph_metrics,
             physical_metrics=physical_metrics,
         )
 

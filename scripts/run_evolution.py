@@ -6,6 +6,7 @@ import sys
 import time
 import random
 import hashlib
+import traceback
 
 from tqdm import tqdm
 
@@ -31,8 +32,113 @@ from revolution.configuration import (
     parse_args_with_config,
     snapshot_run_configuration,
 )
+from revolution.runtime.parallelism import (
+    EVOLUTION_LEGACY_CLI_OPTIONS,
+    FixedProblemConcurrencyController,
+    apply_resolved_parallelism_args,
+    build_elastic_parallelism_runtime,
+    build_problem_concurrency_controller,
+    reject_legacy_cli_options,
+    resolve_evolution_parallelism_config,
+    translate_evolution_legacy_parallelism_config,
+)
 
 CUSTOM_PROMPT_BENCHMARK = "CustomPrompt"
+
+
+def _load_cvdp_ids(
+    jsonl_path: str,
+    allowed_categories: list[str],
+    selected_ids: list[str] | None,
+) -> list[str]:
+    allowed = {category.lower() for category in allowed_categories}
+    ids: list[str] = []
+    try:
+        with open(jsonl_path, "r", encoding="utf-8") as handle:
+            for line in handle:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    payload = json.loads(line)
+                except Exception:
+                    continue
+                problem_id = payload.get("id")
+                categories = [str(item).lower() for item in payload.get("categories", [])]
+                if not problem_id:
+                    continue
+                if selected_ids is not None and problem_id not in selected_ids:
+                    continue
+                if any(category in allowed for category in categories):
+                    ids.append(problem_id)
+    except FileNotFoundError:
+        print(f"[CVDP] JSONL not found: {jsonl_path}")
+    return ids
+
+
+def _discover_tasks(
+    args: argparse.Namespace,
+    *,
+    benchmark_root: str,
+    custom_prompt_mode: bool,
+) -> list[tuple[str, str, argparse.Namespace]]:
+    if custom_prompt_mode:
+        return [(args.gen0_prompt_benchmark, args.gen0_prompt_name, args)]
+
+    tasks: list[tuple[str, str, argparse.Namespace]] = []
+    for benchmark in args.benchmarks:
+        if benchmark.lower() == "cvdp":
+            selected_ids = args.problems if args.problems else None
+            cvdp_ids = _load_cvdp_ids(
+                args.cvdp_jsonl,
+                args.cvdp_categories,
+                selected_ids,
+            )
+            for problem_id in cvdp_ids:
+                tasks.append((benchmark, problem_id, args))
+            continue
+
+        benchmark_dir = os.path.join(benchmark_root, benchmark)
+        problems_file = os.path.join(benchmark_dir, "problems.txt")
+        if not os.path.exists(problems_file):
+            print(
+                f"Warning: 'problems.txt' not found in {benchmark_dir}. Skipping."
+            )
+            continue
+        with open(problems_file, "r", encoding="utf-8") as handle:
+            all_problems = [line.strip() for line in handle if line.strip()]
+        problems_to_process = args.problems if args.problems else all_problems
+        for problem in problems_to_process:
+            if problem in all_problems:
+                tasks.append((benchmark, problem, args))
+    return tasks
+
+
+def _run_indexed_tasks_with_pool(
+    *,
+    process_count: int,
+    indexed_tasks,
+    original_stdout,
+):
+    pool = multiprocessing.Pool(processes=process_count)
+    try:
+        results_iter = pool.imap_unordered(run_indexed_problem_worker, indexed_tasks)
+        unordered = list(
+            tqdm(
+                results_iter,
+                total=len(indexed_tasks),
+                desc="Running problems",
+                file=original_stdout,
+            )
+        )
+    except BaseException:
+        pool.terminate()
+        pool.join()
+        raise
+    pool.close()
+    pool.join()
+    unordered.sort(key=lambda item: item[0])
+    return [item[1] for item in unordered]
 
 
 # Wrapper function for multiprocessing
@@ -47,12 +153,13 @@ def run_problem_worker(args_tuple):
 
     # Optional deterministic seeding for reproducible whole-vs-diff comparisons.
     base_seed = getattr(args, "seed", None)
+    task_seed: int | None = None
     if base_seed is not None:
         seed_key = f"{base_seed}:{benchmark}:{problem}".encode("utf-8")
         task_seed = int(hashlib.sha256(seed_key).hexdigest()[:8], 16)
         random.seed(task_seed)
         try:
-            import numpy as np
+            import numpy as np  # pyright: ignore[reportMissingImports]
 
             np.random.seed(task_seed % (2**32 - 1))
         except Exception:
@@ -68,11 +175,23 @@ def run_problem_worker(args_tuple):
     individual_log_path = os.path.join(problem_log_dir, "problem_run.log")
 
     evaluation_mode = getattr(args, "evaluation_mode", "standard")
-    candidate_workers = (
-        args.num_workers
-        if evaluation_mode != "gen0" and getattr(args, "multiprocessing_mode", "problem") == "candidate"
-        else 0
-    )
+    config = getattr(args, "resolved_parallelism_config", None)
+    handles = getattr(args, "parallelism_handles", None)
+    if config is None:
+        fallback_workers = max(
+            1,
+            int(getattr(args, "max_workers_per_problem", 1) or 1),
+        )
+        candidate_workers = fallback_workers
+        problem_concurrency = FixedProblemConcurrencyController(fallback_workers)
+    else:
+        candidate_workers = int(config.candidate_worker_limit)
+        problem_id = f"{benchmark}/{problem}"
+        problem_concurrency = build_problem_concurrency_controller(
+            config,
+            problem_id=problem_id,
+            handles=handles,
+        )
     custom_prompt_path = getattr(args, "gen0_prompt_file", None)
     custom_prompt_encoding = getattr(args, "gen0_prompt_encoding", "utf-8")
     custom_prompt_benchmark = getattr(args, "gen0_prompt_benchmark", None)
@@ -89,157 +208,165 @@ def run_problem_worker(args_tuple):
 
 
     # Redirect all output from this worker to the individual log file
-    with StreamRedirector(filepath=individual_log_path):
-        print(
-            f"\n[Worker PID: {os.getpid()}] Starting problem: {benchmark}/{problem}\n"
-        )
-        if base_seed is not None:
-            print(f"[Seed] base_seed={base_seed} task_seed={task_seed}")
+    problem_concurrency.open_problem()
+    try:
+        with StreamRedirector(filepath=individual_log_path):
+            print(
+                f"\n[Worker PID: {os.getpid()}] Starting problem: {benchmark}/{problem}\n"
+            )
+            if task_seed is not None:
+                print(f"[Seed] base_seed={base_seed} task_seed={task_seed}")
 
-        # Initialize objects within the worker process to avoid pickling issues
-        # Determine the API key based on the selected backend
-        api_key = None
-        if args.api_backend == "openai":
-            api_key = os.getenv("OPENAI_API_KEY")
-        elif args.api_backend == "openrouter":
-            api_key = os.getenv("OPENROUTER_API_KEY")
-        elif args.api_backend == "deepseek":
-            api_key = os.getenv("DEEPSEEK_API_KEY")
-        elif args.api_backend == "gemini":
-            api_key = os.getenv("GEMINI_API_KEY")
-        elif args.api_backend == "vllm":
-            # OpenAI-compatible clients often still require a non-empty api_key argument.
-            api_key = os.getenv("OPENAI_API_KEY") or "vllm-local-placeholder"
+            try:
+                api_key = None
+                if args.api_backend == "openai":
+                    api_key = os.getenv("OPENAI_API_KEY")
+                elif args.api_backend == "openrouter":
+                    api_key = os.getenv("OPENROUTER_API_KEY")
+                elif args.api_backend == "deepseek":
+                    api_key = os.getenv("DEEPSEEK_API_KEY")
+                elif args.api_backend == "gemini":
+                    api_key = os.getenv("GEMINI_API_KEY")
+                elif args.api_backend == "vllm":
+                    api_key = os.getenv("OPENAI_API_KEY") or "vllm-local-placeholder"
 
-
-        if args.api_backend != "vllm":  # vllm does not require an API key
-            if not api_key:
-                raise ValueError(
-                    f"API key for backend '{args.api_backend}' not found. "
-                    f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
+                if args.api_backend != "vllm" and not api_key:
+                    raise ValueError(
+                        f"API key for backend '{args.api_backend}' not found. "
+                        f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
+                    )
+                llm_interface = LLMInterface(
+                    api_key=api_key,
+                    model_name=args.model_name,
+                    api_backend=args.api_backend,
+                    port=args.vllm_port,
+                    vllm_host=args.vllm_host,
                 )
-        llm_interface = LLMInterface(
-            api_key=api_key,
-            model_name=args.model_name,
-            api_backend=args.api_backend,
-            port=args.vllm_port,
-            vllm_host=args.vllm_host,
-        )
 
-        gen0_eval_best = getattr(args, "gen0_evaluate_best", False)
-        if evaluation_mode == "gen0":
-            if gen0_eval_best:
-                verilog_evaluator = VerilogEvaluator(
-                    iverilog_executable_path="iverilog",
-                    vvp_executable_path="vvp",
-                    default_simulation_timeout_seconds=args.rtl_simulation_timeout_s,
-                )
-                synthesis_evaluator = SynthesisEvaluator(
-                    default_simulation_timeout_s=args.post_synthesis_simulation_timeout_s,
-                    default_synthesis_timeout_s=args.synthesis_timeout_s,
-                )
-            else:
-                verilog_evaluator = None
-                synthesis_evaluator = None
-        else:
-            verilog_evaluator = VerilogEvaluator(
-                iverilog_executable_path="iverilog",
-                vvp_executable_path="vvp",
-                default_simulation_timeout_seconds=args.rtl_simulation_timeout_s,
-            )
-            synthesis_evaluator = SynthesisEvaluator(
-                default_simulation_timeout_s=args.post_synthesis_simulation_timeout_s,
-                default_synthesis_timeout_s=args.synthesis_timeout_s,
-            )
+                gen0_eval_best = getattr(args, "gen0_evaluate_best", False)
+                if evaluation_mode == "gen0":
+                    if gen0_eval_best:
+                        verilog_evaluator = VerilogEvaluator(
+                            iverilog_executable_path="iverilog",
+                            vvp_executable_path="vvp",
+                            default_simulation_timeout_seconds=args.rtl_simulation_timeout_s,
+                        )
+                        synthesis_evaluator = SynthesisEvaluator(
+                            default_simulation_timeout_s=args.post_synthesis_simulation_timeout_s,
+                            default_synthesis_timeout_s=args.synthesis_timeout_s,
+                        )
+                    else:
+                        verilog_evaluator = None
+                        synthesis_evaluator = None
+                else:
+                    verilog_evaluator = VerilogEvaluator(
+                        iverilog_executable_path="iverilog",
+                        vvp_executable_path="vvp",
+                        default_simulation_timeout_seconds=args.rtl_simulation_timeout_s,
+                    )
+                    synthesis_evaluator = SynthesisEvaluator(
+                        default_simulation_timeout_s=args.post_synthesis_simulation_timeout_s,
+                        default_synthesis_timeout_s=args.synthesis_timeout_s,
+                    )
 
-        # Choose engine based on benchmarks
-        if evaluation_mode == "gen0":
-            if benchmark.lower() == "cvdp":
-                raise ValueError("Gen0 latency mode is not supported for CVDP benchmarks.")
-            eoh_engine = Gen0LatencyEngine(
-                benchmark_name=benchmark,
-                problem_name=problem,
-                llm_interface=llm_interface,
-                verilog_evaluator=verilog_evaluator,
-                synthesis_evaluator=synthesis_evaluator,
-                population_size=args.population_size,
-                base_save_path=args.save_path,
-                default_llm_temp=args.temperature,
-                default_llm_top_p=args.top_p,
-                default_llm_max_tokens=args.max_tokens,
-                require_strict_format=True,
-                prompt_profile=target_prompt_profile,             # System prompt profile
-                prompt_root=None,                     # Use default prompt root (data/prompts/)                              
-                custom_prompt_path=(
-                    custom_prompt_path
-                    if custom_prompt_benchmark
-                    and benchmark == custom_prompt_benchmark
-                    else None
-                ),
-                custom_prompt_encoding=custom_prompt_encoding,
-                evaluate_best_candidate=gen0_eval_best,
-            )
-        elif benchmark.lower() == "cvdp":
-            eoh_engine = CVDPEngine(
-                cvdp_jsonl_path=args.cvdp_jsonl,
-                cvdp_id=problem,                         # 'problem' is the CVDP item id
-                simulation_timeout_s=args.cvdp_simulation_timeout_s,
-                problem_name=problem,                    # for logging/paths
-                benchmark_name=benchmark,
-                llm_interface=llm_interface,
-                verilog_evaluator=verilog_evaluator,     # unused by CVDP adapter, but fine
-                synthesis_evaluator=synthesis_evaluator, # unused for CVDP
-                population_size=args.population_size,
-                num_generations=args.num_generations,
-                base_save_path=args.save_path,
-                default_llm_temp=args.temperature,
-                default_llm_top_p=args.top_p,
-                default_llm_max_tokens=args.max_tokens,
-                strategy_selection_method=args.strategy_selection,
-                epsilon=args.epsilon,
-                ucb_c=args.ucb_c,
-                generation_mode=args.generation_mode,
-                population_pool_mode=args.population_pool_mode,
-                diff_apply_policy=args.diff_apply_policy,
-                diff_max_tokens=args.diff_max_tokens,
-                diff_compact_context=args.diff_compact_context,
-                diff_similarity_threshold=args.diff_similarity_threshold,
-                diff_fuzzy_margin=args.diff_fuzzy_margin,
-                prompt_profile=target_prompt_profile,             # System prompt profile
-                prompt_root=None,                     # Use default prompt root (data/prompts/)  
-                candidate_workers=candidate_workers,
-            )
-        else: # None CVDP benchmarks (e.g. RTLLM, VerilogEval)
-            eoh_engine = EoHEngine(
-                problem_name=problem,
-                benchmark_name=benchmark,
-                llm_interface=llm_interface,
-                verilog_evaluator=verilog_evaluator,
-                synthesis_evaluator=synthesis_evaluator,
-                population_size=args.population_size,
-                num_generations=args.num_generations,
-                base_save_path=args.save_path,
-                default_llm_temp=args.temperature,
-                default_llm_top_p=args.top_p,
-                default_llm_max_tokens=args.max_tokens,
-                strategy_selection_method=args.strategy_selection,
-                epsilon=args.epsilon,
-                ucb_c=args.ucb_c,
-                generation_mode=args.generation_mode,
-                population_pool_mode=args.population_pool_mode,
-                diff_apply_policy=args.diff_apply_policy,
-                diff_max_tokens=args.diff_max_tokens,
-                diff_compact_context=args.diff_compact_context,
-                diff_similarity_threshold=args.diff_similarity_threshold,
-                diff_fuzzy_margin=args.diff_fuzzy_margin,
-                prompt_profile=target_prompt_profile,             # System prompt profile
-                prompt_root=None,                     # Use default prompt root (data/prompts/)  
-                candidate_workers=candidate_workers,
-            )
-        result_str = eoh_engine.run()
-        # Return the result string and the path to the individual log file created for this problem
-        print(f"[Worker PID: {os.getpid()}] Finished problem: {benchmark}/{problem}\n")
-    return result_str, individual_log_path
+                if evaluation_mode == "gen0":
+                    if benchmark.lower() == "cvdp":
+                        raise ValueError("Gen0 latency mode is not supported for CVDP benchmarks.")
+                    eoh_engine = Gen0LatencyEngine(
+                        benchmark_name=benchmark,
+                        problem_name=problem,
+                        llm_interface=llm_interface,
+                        verilog_evaluator=verilog_evaluator,
+                        synthesis_evaluator=synthesis_evaluator,
+                        population_size=args.population_size,
+                        base_save_path=args.save_path,
+                        default_llm_temp=args.temperature,
+                        default_llm_top_p=args.top_p,
+                        default_llm_max_tokens=args.max_tokens,
+                        require_strict_format=True,
+                        prompt_profile=target_prompt_profile,
+                        prompt_root=None,
+                        custom_prompt_path=(
+                            custom_prompt_path
+                            if custom_prompt_benchmark
+                            and benchmark == custom_prompt_benchmark
+                            else None
+                        ),
+                        custom_prompt_encoding=custom_prompt_encoding,
+                        evaluate_best_candidate=gen0_eval_best,
+                    )
+                elif benchmark.lower() == "cvdp":
+                    assert verilog_evaluator is not None
+                    assert synthesis_evaluator is not None
+                    eoh_engine = CVDPEngine(
+                        cvdp_jsonl_path=args.cvdp_jsonl,
+                        cvdp_id=problem,
+                        simulation_timeout_s=args.cvdp_simulation_timeout_s,
+                        problem_name=problem,
+                        benchmark_name=benchmark,
+                        llm_interface=llm_interface,
+                        verilog_evaluator=verilog_evaluator,
+                        synthesis_evaluator=synthesis_evaluator,
+                        population_size=args.population_size,
+                        num_generations=args.num_generations,
+                        base_save_path=args.save_path,
+                        default_llm_temp=args.temperature,
+                        default_llm_top_p=args.top_p,
+                        default_llm_max_tokens=args.max_tokens,
+                        strategy_selection_method=args.strategy_selection,
+                        epsilon=args.epsilon,
+                        ucb_c=args.ucb_c,
+                        generation_mode=args.generation_mode,
+                        population_pool_mode=args.population_pool_mode,
+                        diff_apply_policy=args.diff_apply_policy,
+                        diff_max_tokens=args.diff_max_tokens,
+                        diff_compact_context=args.diff_compact_context,
+                        diff_similarity_threshold=args.diff_similarity_threshold,
+                        diff_fuzzy_margin=args.diff_fuzzy_margin,
+                        prompt_profile=target_prompt_profile,
+                        prompt_root=None,
+                        candidate_workers=candidate_workers,
+                        problem_concurrency=problem_concurrency,
+                    )
+                else:
+                    assert verilog_evaluator is not None
+                    assert synthesis_evaluator is not None
+                    eoh_engine = EoHEngine(
+                        problem_name=problem,
+                        benchmark_name=benchmark,
+                        llm_interface=llm_interface,
+                        verilog_evaluator=verilog_evaluator,
+                        synthesis_evaluator=synthesis_evaluator,
+                        population_size=args.population_size,
+                        num_generations=args.num_generations,
+                        base_save_path=args.save_path,
+                        default_llm_temp=args.temperature,
+                        default_llm_top_p=args.top_p,
+                        default_llm_max_tokens=args.max_tokens,
+                        strategy_selection_method=args.strategy_selection,
+                        epsilon=args.epsilon,
+                        ucb_c=args.ucb_c,
+                        generation_mode=args.generation_mode,
+                        population_pool_mode=args.population_pool_mode,
+                        diff_apply_policy=args.diff_apply_policy,
+                        diff_max_tokens=args.diff_max_tokens,
+                        diff_compact_context=args.diff_compact_context,
+                        diff_similarity_threshold=args.diff_similarity_threshold,
+                        diff_fuzzy_margin=args.diff_fuzzy_margin,
+                        prompt_profile=target_prompt_profile,
+                        prompt_root=None,
+                        candidate_workers=candidate_workers,
+                        problem_concurrency=problem_concurrency,
+                    )
+                result_str = eoh_engine.run()
+            except Exception as exc:
+                traceback.print_exc()
+                print(f"[Worker PID: {os.getpid()}] Failed problem: {benchmark}/{problem} error={exc}\n")
+                return f"{problem},worker_error,{exc}", individual_log_path
+            print(f"[Worker PID: {os.getpid()}] Finished problem: {benchmark}/{problem}\n")
+        return result_str, individual_log_path
+    finally:
+        problem_concurrency.close_problem()
 
 
 # Wrapper function for multiprocessing
@@ -268,6 +395,16 @@ def run_indexed_problem_worker(indexed_task):
 def main():
     """Main function to parse arguments and orchestrate the evolutionary run."""
     raw_argv = list(sys.argv[1:])
+    try:
+        reject_legacy_cli_options(
+            raw_argv,
+            runner_name="run_evolution.py",
+            legacy_options=EVOLUTION_LEGACY_CLI_OPTIONS,
+        )
+    except ValueError as exc:
+        print(f"Configuration error: {exc}")
+        raise SystemExit(2)
+
     config_backend: str | None = None
     config_search_mode: str | None = None
     config_has_funsearch_keys = False
@@ -419,11 +556,30 @@ def main():
         help="Base path to save results.",
     )  # Default is ./exp, defined relative to main.py
     parser.add_argument(
-        "--num_workers",
+        "--total_worker_slots",
         type=int,
         default=10,
-        help="Number of worker processes (problem mode) or candidate-evaluation threads (candidate mode).",
+        help="Total worker budget shared across the run.",
     )
+    parser.add_argument(
+        "--max_active_problems",
+        type=int,
+        default=None,
+        help="Maximum number of simultaneously active problems.",
+    )
+    parser.add_argument(
+        "--max_workers_per_problem",
+        type=int,
+        default=None,
+        help="Maximum worker count that a single problem may borrow.",
+    )
+    parser.add_argument(
+        "--parallelism_mode",
+        type=str,
+        default="elastic",
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument("--num_workers", type=int, default=None, help=argparse.SUPPRESS)
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--top_p", type=float, default=0.95)
     parser.add_argument("--max_tokens", type=int, default=2048)
@@ -549,9 +705,8 @@ def main():
     parser.add_argument(
         "--multiprocessing_mode",
         type=str,
-        default="problem",
-        choices=["problem", "candidate"],
-        help="Parallelism granularity: 'problem' (default) distributes problems across processes; 'candidate' keeps one problem per process and parallelizes candidate evaluation within the engine.",
+        default=None,
+        help=argparse.SUPPRESS,
     )
 
     # CVDP INTEGRATION: CVDP JSONL path and category filter
@@ -655,57 +810,46 @@ def main():
         if preflight.get("warning"):
             print(f"[vLLM preflight] WARNING: {preflight['warning']}")
 
-    # --- Task helpers ---
-    # >>> CVDP INTEGRATION: helper to read CVDP ids filtered by categories (case-insensitive)
-    def _load_cvdp_ids(jsonl_path: str, allowed_categories: list[str], selected_ids: list[str] | None):
-        allowed = {c.lower() for c in allowed_categories}
-        ids = []
-        try:
-            with open(jsonl_path, "r", encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    try:
-                        obj = json.loads(line)
-                    except Exception:
-                        continue
-                    cid = obj.get("id")
-                    cats = [c.lower() for c in obj.get("categories", [])]
-                    # print('---\n')
-                    # print(cid)
-                    # print(cats)
-                    if not cid:
-                        continue
-                    # If user specified explicit ids for cvdp, keep intersection only
-                    if selected_ids is not None and cid not in selected_ids:
-                        # print(f"[CVDP] Skipping non-selected id: {cid}, selected_ids={selected_ids}")
-                        continue
-                    # Keep only items having any of the allowed categories
-                    if any(c in allowed for c in cats):
-                        # print(f"[CVDP] Keeping id: {cid}")
-                        ids.append(cid)
-        except FileNotFoundError:
-            print(f"[CVDP] JSONL not found: {jsonl_path}")
-        return ids
+    tasks_to_run = _discover_tasks(
+        args,
+        benchmark_root=benchmark_root,
+        custom_prompt_mode=custom_prompt_mode,
+    )
+    if not tasks_to_run:
+        print("No valid problems found to run. Exiting.")
+        sys.exit(1)
 
+    config_from_file = translate_evolution_legacy_parallelism_config(
+        args,
+        config_from_file=config_from_file,
+        raw_argv=raw_argv,
+    )
+    resolved_parallelism = resolve_evolution_parallelism_config(
+        args,
+        task_count=len(tasks_to_run),
+    )
+    apply_resolved_parallelism_args(args, resolved_parallelism)
 
-    # Main execution block now handles comprehensive, aggregated logging
-    # --- Task Preparation ---
     run_datetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     start_time = time.time()
     model_name_cleaned = args.model_name.replace("/", "_")
-    # Define path for the new comprehensive log file for the entire run
     master_log_dir = os.path.join(args.save_path, model_name_cleaned)
     os.makedirs(master_log_dir, exist_ok=True)
     comprehensive_log_path = os.path.join(master_log_dir, f"{run_datetime}_run_log.txt")
-
-    # Define path for the summary results file (similar to the original script's master log)
     summary_results_path = os.path.join(
         master_log_dir, f"{run_datetime}_summary_results.txt"
     )
     run_config_path = os.path.join(master_log_dir, f"{run_datetime}_config.yaml")
-    allowed_keys = {action.dest for action in parser._actions if action.dest != "help"}
+    hidden_legacy_keys = {
+        "multiprocessing_mode",
+        "num_workers",
+        "parallelism_mode",
+    }
+    allowed_keys = {
+        action.dest
+        for action in parser._actions
+        if action.dest not in {"help", *hidden_legacy_keys}
+    }
     snapshot_run_configuration(
         args,
         run_config_path,
@@ -714,72 +858,39 @@ def main():
         allowed_keys=allowed_keys,
     )
 
-    # Use a list to store results before writing to files
     results_data = []
-    tasks_to_run = []  # Define this before the try block
-
-    # Save a reference to the real stdout before it gets redirected
-    # This allows us to print to the console even when redirecting output
-    # This is to allow the progress bar to print to the console
     original_stdout = sys.stdout
+    runtime = build_elastic_parallelism_runtime(
+        resolved_parallelism,
+        task_count=len(tasks_to_run),
+    )
+    args.resolved_parallelism_config = resolved_parallelism
+    args.parallelism_handles = runtime.handles if runtime is not None else None
+    interrupted = False
 
-    # The `finally` block will handle aggregation.
     try:
-        # Redirect all output from this main script to the comprehensive log file
-        with StreamRedirector(filepath=comprehensive_log_path):
-            print(f"--- EoH Framework Run Started: {run_datetime} ---")
-            print(f"Arguments: {vars(args)}")
-            print("-" * 50)
+        try:
+            with StreamRedirector(filepath=comprehensive_log_path):
+                print(f"--- EoH Framework Run Started: {run_datetime} ---")
+                log_args = {
+                    key: value
+                    for key, value in vars(args).items()
+                    if key
+                    not in {
+                        "multiprocessing_mode",
+                        "num_workers",
+                        "parallelism_handles",
+                        "parallelism_mode",
+                        "resolved_parallelism_config",
+                    }
+                }
+                print(f"Arguments: {log_args}")
+                print("-" * 50)
 
-            # --- Task Preparation ---
-            # Task preparation loop to populate tasks_to_run
-            if custom_prompt_mode:
-                print(
-                    f"Custom Gen0 prompt run: benchmark='{args.gen0_prompt_benchmark}', problem='{args.gen0_prompt_name}', prompt_file='{args.gen0_prompt_file}'."
-                )
-                tasks_to_run.append(
-                    (args.gen0_prompt_benchmark, args.gen0_prompt_name, args)
-                )
-            else:
-                for benchmark in args.benchmarks:
-                    benchmark_dir = os.path.join(benchmark_root, benchmark)
-                    print(f"benchmark_dir: {benchmark_dir}, benchmark_root: {benchmark_root}, benchmark: {benchmark}\n")
-
-                    # CVDP INTEGRATION: build tasks from JSONL
-                    if benchmark.lower() == "cvdp":
-                        # For cvdp, if --problems provided treat them as explicit CVDP ids
-                        selected_ids = args.problems if args.problems else None
-                        cvdp_ids = _load_cvdp_ids(
-                            args.cvdp_jsonl, args.cvdp_categories, selected_ids
-                        )
-                        if not cvdp_ids:
-                            print(
-                                f"[CVDP] No matching problems found (categories={args.cvdp_categories}). Skipping."
-                            )
-                            continue
-                        for cid in cvdp_ids:
-                            tasks_to_run.append((benchmark, cid, args))
-                        continue
-
-                    # Non-CVDP flow: use problems.txt
-                    problems_file = os.path.join(benchmark_dir, "problems.txt")
-                    if not os.path.exists(problems_file):
-                        print(
-                            f"Warning: 'problems.txt' not found in {benchmark_dir}. Skipping."
-                        )
-                        continue
-                    with open(problems_file, "r") as f:
-                        all_problems = [line.strip() for line in f if line.strip()]
-
-                    problems_to_process = args.problems if args.problems else all_problems
-                    print(f"problems_to_process: {problems_to_process}\n")
-                    for problem in problems_to_process:
-                        if problem in all_problems:
-                            tasks_to_run.append((benchmark, problem, args))
-
-            if not tasks_to_run:
-                print("No valid problems found to run. Exiting.")
-            else:
+                if custom_prompt_mode:
+                    print(
+                        f"Custom Gen0 prompt run: benchmark='{args.gen0_prompt_benchmark}', problem='{args.gen0_prompt_name}', prompt_file='{args.gen0_prompt_file}'."
+                    )
                 if args.evaluation_mode == "gen0":
                     print(
                         f"\nRunning Gen0 latency mode sequentially for {len(tasks_to_run)} problems."
@@ -793,21 +904,7 @@ def main():
                             file=original_stdout,
                         )
                     ]
-                elif args.multiprocessing_mode == "candidate":
-                    worker_count = max(1, args.num_workers)
-                    print(
-                        f"\nStarting candidate-level evaluation with {worker_count} worker(s) per problem across {len(tasks_to_run)} problems."
-                    )
-                    results_data = [
-                        run_problem_worker(task)
-                        for task in tqdm(
-                            tasks_to_run,
-                            total=len(tasks_to_run),
-                            desc="Running problems",
-                            file=original_stdout,
-                        )
-                    ]
-                elif args.num_workers <= 1:
+                elif resolved_parallelism.problem_processes <= 1:
                     print(
                         f"\nStarting sequential execution for {len(tasks_to_run)} problems."
                     )
@@ -822,40 +919,27 @@ def main():
                     ]
                 else:
                     print(
-                        f"\nStarting parallel execution with {args.num_workers} workers for {len(tasks_to_run)} problems."
+                        f"\nStarting elastic execution with {resolved_parallelism.problem_processes} active problem worker(s) and {resolved_parallelism.total_worker_slots} total worker slot(s) for {len(tasks_to_run)} problems."
                     )
-
                     indexed_tasks = list(enumerate(tasks_to_run))
-
-                    with multiprocessing.Pool(processes=args.num_workers) as pool:
-                        results_iterator = pool.imap_unordered(
-                            run_indexed_problem_worker, indexed_tasks
-                        )
-
-                        unordered_results = list(
-                            tqdm(
-                                results_iterator,
-                                total=len(indexed_tasks),
-                                desc="Running problems",
-                                file=original_stdout,
-                            )
-                        )
-                    unordered_results.sort(key=lambda x: x[0])
-                    results_data = [result[1] for result in unordered_results]
+                    results_data = _run_indexed_tasks_with_pool(
+                        process_count=resolved_parallelism.problem_processes,
+                        indexed_tasks=indexed_tasks,
+                        original_stdout=original_stdout,
+                    )
                     print("\n--- All parallel tasks completed successfully.---")
+        except KeyboardInterrupt:
+            interrupted = True
+            print("run_evolution.py interrupted. Cleaning up worker pool state.")
 
     finally:
         end_time = time.time()
-        # --- This block will ALWAYS run, even if the pool crashes ---
+        completion_label = "interrupted" if interrupted else "completed"
         print("\n--- Aggregation & Finalization Step ---")
-
-        # Re-open the comprehensive log in append mode to add aggregation results
         with open(comprehensive_log_path, "a", encoding="utf-8") as log_file:
             log_file.write(
                 "\n\n" + "=" * 20 + " AGGREGATED INDIVIDUAL LOGS " + "=" * 20 + "\n"
             )
-
-            # Check if any results were produced before a potential crash
             if not results_data:
                 log_file.write(
                     "\nNo results were returned from worker processes. This may be due to an early crash.\nCheck individual problem directories for logs.\n"
@@ -881,9 +965,10 @@ def main():
                         log_file.write(
                             f"\n--- Error processing log {individual_log_path}: {e} ---\n"
                         )
-            log_file.write("\n--- EoH Framework Run Completed ---\n")
+            if interrupted:
+                log_file.write("\nRun interrupted by user.\n")
+            log_file.write(f"\n--- EoH Framework Run {completion_label} ---\n")
             log_file.write(f"Total run time: {end_time - start_time:.2f} seconds\n")
-        # --- Write the summary results file ---
         if results_data:
             try:
                 with open(summary_results_path, "w") as summary_file:
@@ -897,7 +982,11 @@ def main():
             f"Comprehensive run log with aggregated details saved to: {comprehensive_log_path}"
         )
         print(f"Total run time: {end_time - start_time:.2f} seconds")
-        print("--- EoH Framework Run Completed ---")
+        print(f"--- EoH Framework Run {completion_label} ---")
+        if runtime is not None:
+            runtime.close()
+    if interrupted:
+        raise SystemExit(130)
 
 
 if __name__ == "__main__":

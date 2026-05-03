@@ -36,6 +36,7 @@ def test_evolution_smoke_script_dry_run_uses_large_token_defaults(tmp_path):
     assert result.returncode == 0, result.stderr
     normalized = " ".join(result.stdout.split())
     assert "Detected model: stub-model" in result.stdout
+    assert "--total_worker_slots 1" in normalized
     assert "--max_tokens 128000" in normalized
     assert "--diff_max_tokens 128000" in normalized
     assert "Dry run enabled; command was not executed." in result.stdout

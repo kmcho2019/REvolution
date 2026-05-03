@@ -67,3 +67,37 @@ def test_rtl_descriptor_evaluator_merges_ast_and_netlist_estimates(monkeypatch, 
     assert metrics["ctrl_depth_est"] == pytest.approx(1.0)
     assert metrics["math_op_ast_count"] == pytest.approx(2.0)
     assert metrics["resource_sharing_ratio_est"] == pytest.approx(1.0)
+
+
+def test_rtl_descriptor_evaluator_extracts_cyclomatic_metrics_from_ast(monkeypatch, tmp_path: Path):
+    code_path = tmp_path / "candidate.sv"
+    code_path.write_text("module demo; endmodule\n", encoding="utf-8")
+    evaluator = RTLDescriptorEvaluator()
+
+    monkeypatch.setattr(evaluator, "_load_netlist_text", lambda path: None)
+    monkeypatch.setattr(
+        evaluator,
+        "_load_ast_dump",
+        lambda path: "\n".join(
+            [
+                "Dumping AST after simplification:",
+                "  AST_MODULE",
+                "    AST_ALWAYS",
+                "      AST_CASE",
+                "        AST_COND",
+                "        AST_COND",
+                "    AST_ALWAYS",
+                "      AST_CASE",
+                "        AST_COND",
+                "End of script.",
+            ]
+        ),
+    )
+
+    metrics = evaluator.extract_metrics(
+        code_text="module demo; endmodule\n",
+        code_file_path=code_path,
+    )
+
+    assert metrics["rtl_cyclomatic_total_log"] == pytest.approx(5.0)
+    assert metrics["rtl_cyclomatic_max_log"] == pytest.approx(3.0)

@@ -259,6 +259,8 @@ class CVTArchive:
         self._warmup_buffer: list[tuple[str, tuple[float, ...], float, Any]] = []
         self.scaler: FrozenCVTScaler | None = None
         self.centroids: tuple[tuple[float, ...], ...] = ()
+        self.initialization_mode = "pending"
+        self.initialization_sample_count = 0
 
     @property
     def is_initialized(self) -> bool:
@@ -269,6 +271,9 @@ class CVTArchive:
 
     def entries(self) -> dict[str, GridArchiveEntry]:
         return dict(self._entries)
+
+    def warmup_buffer_size(self) -> int:
+        return len(self._warmup_buffer)
 
     def describe_space(self) -> dict[str, Any]:
         """Return a machine-readable description of the current CVT geometry."""
@@ -287,7 +292,10 @@ class CVTArchive:
             "space_geometry": {
                 "axis_count": len(self.axes),
                 "warmup_successes": self.warmup_successes,
+                "warmup_buffer_size": self.warmup_buffer_size(),
                 "initialized": self.is_initialized,
+                "initialization_mode": self.initialization_mode,
+                "initialization_sample_count": self.initialization_sample_count,
                 "centroid_count": len(self.centroids),
                 "centroids": [list(centroid) for centroid in self.centroids],
                 "scaler": scaler_payload,
@@ -311,7 +319,8 @@ class CVTArchive:
                 "initialized": False,
                 "descriptor_tuple": list(descriptors),
                 "warmup_successes": self.warmup_successes,
-                "warmup_buffer_size": len(self._warmup_buffer),
+                "warmup_buffer_size": self.warmup_buffer_size(),
+                "initialization_mode": self.initialization_mode,
                 "assignment_status": "warmup_pending",
             }
         assert self.scaler is not None
@@ -379,12 +388,44 @@ class CVTArchive:
             payload=payload,
         )
 
+    def finalize_pending(self) -> dict[str, QDArchiveInsertResult]:
+        """Initialize from the current warmup buffer when the run is ending."""
+        if self.is_initialized:
+            return {}
+        if not self._warmup_buffer:
+            return {}
+        warmup_records = self._consume_warmup_records()
+        return self._initialize_records(
+            warmup_records,
+            initialization_mode="run_finalization_fallback",
+        )
+
     def elite_for_cell(self, cell_id: str) -> GridArchiveEntry | None:
         return self._entries.get(cell_id)
 
     def _initialize_from_warmup(self) -> dict[str, QDArchiveInsertResult]:
+        warmup_records = self._consume_warmup_records()
+        return self._initialize_records(
+            warmup_records,
+            initialization_mode="warmup_complete",
+        )
+
+    def _consume_warmup_records(
+        self,
+    ) -> list[tuple[str, tuple[float, ...], float, Any]]:
         warmup_records = list(self._warmup_buffer)
         self._warmup_buffer.clear()
+        return warmup_records
+
+    def _initialize_records(
+        self,
+        warmup_records: list[tuple[str, tuple[float, ...], float, Any]],
+        *,
+        initialization_mode: str,
+    ) -> dict[str, QDArchiveInsertResult]:
+        if not warmup_records:
+            return {}
+
         descriptor_samples = [record[1] for record in warmup_records]
         self.scaler = self._fit_scaler(descriptor_samples)
         self.centroids = self._generate_centroids(
@@ -392,6 +433,9 @@ class CVTArchive:
             seed=self.centroid_seed,
             num_cells=self.num_cells,
         )
+        self.initialization_mode = initialization_mode
+        self.initialization_sample_count = len(warmup_records)
+
         results: dict[str, QDArchiveInsertResult] = {}
         for candidate_id, descriptors, quality_score, payload in warmup_records:
             results[candidate_id] = self._insert_initialized(

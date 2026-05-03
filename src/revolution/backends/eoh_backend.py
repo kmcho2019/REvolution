@@ -20,6 +20,7 @@ from revolution.llm import LLMRequest
 from revolution.prompt_store import safe_format
 from revolution.runtime import CandidateEvaluation, CandidateEvaluator, CandidateWorkItem
 from revolution.runtime.diff_apply import DiffApplyConfig, DiffApplier
+from revolution.runtime.parallelism import FixedProblemConcurrencyController
 from revolution.runtime.run_artifacts import add_legacy_strategy_key_alias
 
 
@@ -490,10 +491,16 @@ class EoHBackend(EvolutionBackend):
             )
             for prepared in prepared_candidates
         ]
-        evaluations = self.services.candidate_evaluator.evaluate_candidates(
-            items,
-            candidate_workers=max(0, self.config.candidate_workers),
-        )
+        controller = getattr(self.services, "problem_concurrency", None)
+        if controller is None:
+            controller = FixedProblemConcurrencyController(
+                max(1, self.config.candidate_workers),
+            )
+        with controller.lease_candidate_workers(len(items)) as workers:
+            evaluations = self.services.candidate_evaluator.evaluate_candidates(
+                items,
+                candidate_workers=workers,
+            )
         return [
             self._finalize_candidate(prepared, evaluation)
             for prepared, evaluation in zip(prepared_candidates, evaluations)
@@ -690,6 +697,15 @@ class EoHBackend(EvolutionBackend):
                 "accelerated_synthesis_top_k": self.services.candidate_evaluator.accelerated_synthesis_top_k
                 if self.services.candidate_evaluator
                 else None,
+                "total_worker_slots": self.context.metadata.get("total_worker_slots")
+                if isinstance(self.context.metadata, dict)
+                else None,
+                "max_active_problems": self.context.metadata.get("max_active_problems")
+                if isinstance(self.context.metadata, dict)
+                else None,
+                "max_workers_per_problem": self.context.metadata.get("max_workers_per_problem")
+                if isinstance(self.context.metadata, dict)
+                else None,
             },
             "stage_success_rates": {
                 "format": 1.0 - (self._status_counts.get("failed_format", 0) / total),
@@ -832,7 +848,7 @@ class EoHBackend(EvolutionBackend):
                     base_parent = parents[0]
                     applied = self._diff_applier.apply(
                         base_parent.code,
-                        diff_payload,
+                        raw_text,
                         target_file_path=base_parent.code_file_path,
                     )
                     if applied is None:

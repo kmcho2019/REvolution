@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import datetime
 import math
-import multiprocessing
 import os
 import subprocess
 import sys
@@ -21,6 +20,11 @@ from revolution.configuration import (  # noqa: E402
     parse_args_with_config,
     snapshot_run_configuration,
 )
+from revolution.runtime.parallelism import (  # noqa: E402
+    BACKEND_LEGACY_CLI_OPTIONS,
+    reject_legacy_cli_options,
+    translate_backend_legacy_parallelism_config,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -35,9 +39,8 @@ def _available_benchmarks() -> list[str]:
     )
 
 
-def _safe_workers(requested: int) -> int:
-    cpus = max(1, multiprocessing.cpu_count())
-    return max(1, min(requested, cpus))
+def _positive_worker_budget(requested: int) -> int:
+    return max(1, int(requested))
 
 
 def _run_cmd(cmd: list[str]) -> None:
@@ -187,7 +190,9 @@ def _validate_fairness(
         "--vllm_host",
         "--vllm_port",
         "--model_name",
-        "--num_workers",
+        "--total_worker_slots",
+        "--max_active_problems",
+        "--max_workers_per_problem",
         "--temperature",
         "--top_p",
         "--max_tokens",
@@ -286,8 +291,22 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--vllm_port", type=int, default=int(os.getenv("VLLM_PORT", "8888")))
     parser.add_argument("--model_name", type=str, default="/models/openai-gpt-oss-120b")
     parser.add_argument("--save_root", type=Path, default=REPO_ROOT / "exp" / "ablation")
-    parser.add_argument("--num_workers", type=int, default=8)
-    parser.add_argument("--candidate_workers", type=int, default=0)
+    parser.add_argument("--total_worker_slots", type=int, default=8)
+    parser.add_argument("--max_active_problems", type=int, default=None)
+    parser.add_argument("--max_workers_per_problem", type=int, default=None)
+    parser.add_argument(
+        "--parallelism_mode",
+        type=str,
+        default="elastic",
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument("--num_workers", type=int, default=None, help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--candidate_workers",
+        type=int,
+        default=None,
+        help=argparse.SUPPRESS,
+    )
     parser.add_argument(
         "--evaluation_mode",
         type=str,
@@ -560,6 +579,17 @@ def _build_backend_commands(
 
 
 def main(argv: list[str] | None = None) -> int:
+    raw_input_argv = list(sys.argv[1:] if argv is None else argv)
+    try:
+        reject_legacy_cli_options(
+            raw_input_argv,
+            runner_name="run_backend_ablation.py",
+            legacy_options=BACKEND_LEGACY_CLI_OPTIONS,
+        )
+    except ValueError as exc:
+        print(f"Configuration error: {exc}")
+        return 2
+
     parser, config_parser = _build_parser()
     try:
         args, config_from_file, raw_argv = parse_args_with_config(
@@ -573,12 +603,37 @@ def main(argv: list[str] | None = None) -> int:
         print("No backends selected.")
         return 2
 
-    workers = _safe_workers(args.num_workers)
+    config_from_file = translate_backend_legacy_parallelism_config(
+        args,
+        config_from_file=config_from_file,
+        raw_argv=raw_argv,
+    )
+
+    total_worker_slots = _positive_worker_budget(int(args.total_worker_slots))
+    max_active_problems = (
+        max(1, int(args.max_active_problems))
+        if args.max_active_problems is not None
+        else total_worker_slots
+    )
+    max_workers_per_problem = (
+        max(1, int(args.max_workers_per_problem))
+        if args.max_workers_per_problem is not None
+        else total_worker_slots
+    )
     save_root = args.save_root.resolve()
     save_root.mkdir(parents=True, exist_ok=True)
     run_datetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     run_config_path = save_root / f"{run_datetime}_ablation_config.yaml"
-    allowed_keys = {action.dest for action in parser._actions if action.dest != "help"}
+    hidden_legacy_keys = {
+        "candidate_workers",
+        "num_workers",
+        "parallelism_mode",
+    }
+    allowed_keys = {
+        action.dest
+        for action in parser._actions
+        if action.dest not in {"help", *hidden_legacy_keys}
+    }
     snapshot_run_configuration(
         args,
         run_config_path,
@@ -603,10 +658,12 @@ def main(argv: list[str] | None = None) -> int:
         str(args.vllm_port),
         "--model_name",
         args.model_name,
-        "--num_workers",
-        str(workers),
-        "--candidate_workers",
-        str(max(0, args.candidate_workers)),
+        "--total_worker_slots",
+        str(total_worker_slots),
+        "--max_active_problems",
+        str(max_active_problems),
+        "--max_workers_per_problem",
+        str(max_workers_per_problem),
         "--evaluation_mode",
         args.evaluation_mode,
         "--accelerated_synthesis_top_k",

@@ -159,6 +159,11 @@ class QDEngine(EoHEngine):
             descriptor_requirements(self._archive_axes()).get("requires_dynamic_metrics")
         )
 
+    def _requires_graph_descriptor_metrics(self) -> bool:
+        return bool(
+            descriptor_requirements(self._archive_axes()).get("requires_graph_metrics")
+        )
+
     def _phase_mode(self, phase: str) -> Literal["whole", "diff"]:
         override = {
             "fail": self.qd_fail_generation_mode,
@@ -192,6 +197,7 @@ class QDEngine(EoHEngine):
         descriptor_metrics.update(getattr(candidate, "structural_metrics", {}) or {})
         descriptor_metrics.update(getattr(candidate, "rtl_metrics", {}) or {})
         descriptor_metrics.update(getattr(candidate, "dynamic_metrics", {}) or {})
+        descriptor_metrics.update(getattr(candidate, "graph_metrics", {}) or {})
         descriptor_metrics.update(getattr(candidate, "physical_metrics", {}) or {})
         descriptor_metrics.update(getattr(candidate, "descriptor_values", {}) or {})
         descriptor_metrics.update(gains)
@@ -497,6 +503,38 @@ class QDEngine(EoHEngine):
         if snapshot is not None:
             self._append_archive_history(snapshot)
         self._write_qd_summary_files()
+
+    def _finalize_pending_cvt_archive(self) -> tuple[int, int] | None:
+        if not isinstance(self.success_archive, CVTArchive):
+            return None
+
+        finalize_results = self.success_archive.finalize_pending()
+        if not finalize_results:
+            return None
+
+        inserted = sum(1 for result in finalize_results.values() if result.inserted)
+        replaced = sum(1 for result in finalize_results.values() if result.replaced)
+        self.success_pool = self._success_view()
+        return inserted, replaced
+
+    def _write_finalization_fallback_artifacts(
+        self,
+        *,
+        inserted: int,
+        replaced: int,
+    ) -> None:
+        if self.logger is None:
+            return
+
+        snapshot = self._build_qd_snapshot(
+            inserted=inserted,
+            replaced=replaced,
+            budget=None,
+            runtime_sec=time.time() - self.run_start_time,
+        )
+        snapshot["generation"] = self.current_generation + 1
+        snapshot["phase"] = "run_finalization_fallback"
+        self._write_qd_artifacts(snapshot)
 
     def initialize_population(self) -> None:
         super().initialize_population()
@@ -1086,6 +1124,13 @@ class QDEngine(EoHEngine):
                 break
 
         print("\n--- REvolution QD Run Finished ---")
+        finalization_counts = self._finalize_pending_cvt_archive()
+        if finalization_counts is not None:
+            inserted, replaced = finalization_counts
+            self._write_finalization_fallback_artifacts(
+                inserted=inserted,
+                replaced=replaced,
+            )
         archive_elites = self._archive_elites()
         self._finalize_run_summary(archive_elites)
 

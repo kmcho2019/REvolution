@@ -28,6 +28,10 @@ from revolution.qd.scoring import (
     normalize_code_hash,
 )
 from revolution.qd.visualization import QDVisualizationArtifacts, write_qd_visualizations
+from revolution.qd.problem_feature_histograms import (
+    CVTProblemFeatureHistogramArtifacts,
+    write_problem_feature_histograms,
+)
 
 __all__ = [
     "DescriptorDefinition",
@@ -62,4 +66,6 @@ __all__ = [
     "split_qd_budget",
     "QDVisualizationArtifacts",
     "write_qd_visualizations",
+    "CVTProblemFeatureHistogramArtifacts",
+    "write_problem_feature_histograms",
 ]

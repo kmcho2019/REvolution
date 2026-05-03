@@ -142,7 +142,8 @@ Constructor (selected parameters):
 - Strategy selection knobs: `strategy_selection_method` (`random|epsilon-greedy|ucb`), `epsilon`, `ucb_c`.
 - Generation controls: `generation_mode` (`whole|diff`), `population_pool_mode` (`dual|single`), `require_strict_format`.
 - Prompt routing: `prompt_profile`, `prompt_root`.
-- Parallel evaluation: `candidate_workers` (thread pool size for candidate evaluation).
+- Parallel evaluation: `problem_concurrency` plus an internal candidate-worker
+  cap used for per-problem evaluation batches.
 - `champion_metrics_config`: optional list defining \"champion\" metrics beyond best score.
 
 Key state stored on the engine:

@@ -16,6 +16,25 @@
 - `Dockerfile`: reproducible environment for CI or local development.
 - `pyproject.toml` / `uv.lock`: Python dependency definitions maintained by `uv`.
 
+## `docs/journal_features/`
+
+- `overall_plan.md`: canonical journal-extension roadmap, ETA checklist,
+  implementation rules, validation policy, and links to each feature spec. This
+  plan is based on the `feat/qd-theory-grounded-descriptors` branch.
+- `01_bd_trio.md`: behavior descriptor trio specification for logic depth,
+  FF depth, and width.
+- `02_quantile_binning.md`: initial quantile-based adaptive grid plan.
+- `03_pareto_front_archive.md`: bounded Pareto-front per cell and
+  multiobjective MAP-Elites plan.
+- `04_two_tier_fail_pool.md`: success-archive plus fail-pool parent-source
+  plan.
+- `05_single_mutation_operator.md`: single thought-level mutation/crossover
+  prompt plan.
+- `06_thought_only_k_code.md`: thought-only individual and k-code evaluation
+  plan.
+- `07_ks_adaptive_rebinning.md`: KS-triggered adaptive re-binning and final
+  integration plan.
+
 ## `src/revolution/`
 
 - `__init__.py`: package export surface, re-exports engines plus backend/runtime abstractions.
@@ -26,8 +45,11 @@
 - `qd/`: QD/MAP-Elites substrate and runtime extensions.
   - `qd/archive.py`: grid archive implementation and insertion/replacement semantics.
   - `qd/artifacts.py`: archive summaries, archive-space reports, and per-candidate archive-event writers.
+  - `qd/design_space_report_support.py`: shared report-layout dataclasses plus plotting and markdown helpers for the standalone design-space analysis pipeline.
+  - `qd/feature_space_analysis.py`: shared feature-statistics, embedding, regression, and profile-selection helpers used by retrospective reporting scripts. This is the shared "feature math" layer behind both `report_design_space_analysis.py` and `report_qd_feature_space.py`.
   - `qd/scheduler.py`: occupancy-based fail/success budget splitting helpers.
   - `qd/scoring.py`: exact PPA `quality_score`, gain axes, repair score, and code hashing helpers.
+  - `qd/successful_candidate_catalog.py`: shared retrospective loader for successful candidates from `generation_log.jsonl` plus best-effort artifact enrichment from synthesis reports, QD archive events, and on-disk RTL artifacts. It normalizes classic and QD runs into one row-oriented candidate catalog for downstream reports.
 - `qd/descriptors.py`: descriptor registry, descriptor requirement metadata,
   profile loading, grid-axis spec handling, and descriptor-axis resolution.
 - `qd/engine.py`: archive-backed `QDEngine` for both grid and CVT modes that
@@ -36,6 +58,7 @@
 - `backends/funsearch_backend.py`: FunSearch-style RTL backend (islands, signature clusters, reset/reseed, budgeted loop).
 - `runtime/problem_context.py`: benchmark/problem path and metadata resolution.
 - `runtime/problem_spec.py`: benchmark capability layer and default descriptor / generation-mode preferences.
+- `runtime/parallelism.py`: shared parallelism config resolution, Manager-backed elastic slot coordination, and per-problem worker leasing helpers used by both runners and backends.
 - `runtime/structural_evaluator.py`: structural descriptor extraction helpers for Yosys-like stats payloads.
 - `runtime/candidate_evaluator.py`: backend-agnostic format/syntax/functionality/synthesis/PPA evaluation orchestration with `strict_ablation` and `search_accelerated` modes.
 - `runtime/realbench_adapter.py`: manifest-based RealBench module discovery plus `ProblemContext` / `ProblemSpec` builders.
@@ -51,10 +74,24 @@
 
 ## `scripts/`
 
-- `run_evolution.py`: CLI entry point for multi-problem evolutionary runs with multiprocessing.
-- `run_backend.py`: canonical backend-selectable runner (`--backend revolution|funsearch`).
+- `run_evolution.py`: CLI entry point for multi-problem evolutionary runs with elastic global worker-pool scheduling and config-file translation for older parallelism keys.
+- `run_backend.py`: canonical backend-selectable runner (`--backend revolution|funsearch`) with shared elastic/global parallelism controls.
 - `run_backend_qd_smoke_vllm.sh`: repeatable grid/CVT QD smoke harness for live
   vLLM validation with fixed small-budget defaults and `--dry-run`.
+- `run_qd_theory_grounded_smoke_vllm.sh`: dedicated CVT smoke/comparison
+  harness for the theory-grounded descriptor family, including a structural
+  control matrix and `--dry-run`.
+- `report_qd_rent_calibration.py`: manifest-driven offline Rent calibration
+  helper that compares repo-native graph extraction against stored RentCon
+  outputs and emits JSON/markdown summaries.
+- `run_qd_theory_followup_vllm.sh`: bounded multi-problem theory-vs-control
+  CVT follow-up matrix for RTLLM / VerilogEval with `--dry-run`.
+- `run_qd_theory_followup_manifest.py`: manifest-driven broader theory
+  follow-up runner that writes a resolved run-plan snapshot and supports
+  case/profile filtering plus smoke-budget overrides.
+- `report_qd_theory_followup.py`: focused follow-up report generator for the
+  theory-profile experiment roots, including compact-profile recommendation,
+  pairwise control deltas, and promotion-decision output.
 - `run_qd_retrospective_redo_vllm.sh`: repeatable long-budget retrospective
   rerun harness for the four-design `/tmp/qd_rich20x5` corpus with preset
   profile matrices and automatic suite-local comparison reports.
@@ -64,6 +101,7 @@
 - `backend_comparison_report.py`: side-by-side + aggregate backend report generator across experiment roots with pass/fail emoji status, any-pass design counts, solved-only score/PPA summaries (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`), PPA regression counts, budget/fairness diagnostics, and QD archive metrics when QD sidecars are present.
 - `run_one_shot.py`: CLI for n-shot baselines that reuse the evaluation stack without evolution.
 - `archive_baseline.py`: archive utility for run roots and ablation roots with manifest/index metadata, copied run configs, preserved QD sidecars/plots, and compressed raw artifacts.
+- `report_design_space_analysis.py`: retrospective classical-vs-QD design-space report generator with per-problem generation-local vs accumulated PPA plots, all-backend plus classic-vs-QD pairwise feature plots, quick-reference sections, stable markdown indices, and `successful_candidates.csv` / `recommended_profile.json` exports.
 - `run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with hard-task selection, aggregate token/runtime comparisons, and diff failure catalog generation.
 - `run_diff_mode_diagnostics.py`: repeated real-LLM diff stress harness producing strict-parse/apply failure catalogs across curated edge cases, including worst-case failure sample retention.
 - `run_diff_prompt_optimization_loop.py`: prompt-candidate loop runner that calls `run_diff_prompt_suite.py` per candidate and ranks prompts by objective score.

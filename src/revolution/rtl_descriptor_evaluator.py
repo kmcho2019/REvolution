@@ -59,6 +59,10 @@ _CONTROL_AST_NODES = {
     "AST_GENFOR",
     "AST_GENIF",
 }
+_PROCEDURAL_AST_NODES = {
+    "AST_ALWAYS",
+    "AST_INITIAL",
+}
 
 
 class RTLDescriptorEvaluator:
@@ -140,6 +144,8 @@ class RTLDescriptorEvaluator:
                 "ctrl_depth_est": 0.0,
                 "math_op_ast_count": 0.0,
                 "resource_sharing_ratio_est": 0.0,
+                "rtl_cyclomatic_total_log": 0.0,
+                "rtl_cyclomatic_max_log": 0.0,
             }
 
         in_dump = False
@@ -148,8 +154,11 @@ class RTLDescriptorEvaluator:
         max_ctrl_depth = 0
         add_count = 0
         mul_count = 0
+        cyclomatic_stack: list[int] = []
+        cyclomatic_scores: list[int] = []
 
-        for line in ast_text.splitlines():
+        lines = ast_text.splitlines()
+        for line_idx, line in enumerate(lines):
             if "Dumping AST after simplification:" in line:
                 in_dump = True
                 continue
@@ -164,7 +173,9 @@ class RTLDescriptorEvaluator:
             indent = len(match.group("indent"))
             node = match.group("node")
             while stack and stack[-1][0] >= indent:
-                stack.pop()
+                _, popped_node = stack.pop()
+                if popped_node in _PROCEDURAL_AST_NODES and cyclomatic_stack:
+                    cyclomatic_scores.append(cyclomatic_stack.pop())
             stack.append((indent, node))
 
             node_depth = len(stack) - 1
@@ -172,19 +183,59 @@ class RTLDescriptorEvaluator:
             ctrl_depth = sum(1 for _, stack_node in stack if stack_node in _CONTROL_AST_NODES)
             max_ctrl_depth = max(max_ctrl_depth, ctrl_depth)
 
+            if node in _PROCEDURAL_AST_NODES:
+                cyclomatic_stack.append(1)
+            elif cyclomatic_stack and node == "AST_CASE":
+                child_cond_count = self._count_case_branch_alternatives(
+                    lines,
+                    start_index=line_idx,
+                    current_indent=indent,
+                )
+                cyclomatic_stack[-1] += max(1, child_cond_count)
+
             if node == "AST_ADD":
                 add_count += 1
             elif node == "AST_MUL":
                 mul_count += 1
 
+        while stack:
+            _, popped_node = stack.pop()
+            if popped_node in _PROCEDURAL_AST_NODES and cyclomatic_stack:
+                cyclomatic_scores.append(cyclomatic_stack.pop())
+
         denom = max(float(mapped_cell_count or 0.0), 1.0)
         math_op_ast_count = add_count + mul_count
+        cyclomatic_total = float(sum(cyclomatic_scores))
+        cyclomatic_max = float(max(cyclomatic_scores)) if cyclomatic_scores else 0.0
         return {
             "ast_depth_est": float(max_ast_depth),
             "ctrl_depth_est": float(max_ctrl_depth),
             "math_op_ast_count": float(math_op_ast_count),
             "resource_sharing_ratio_est": float(math_op_ast_count) / denom,
+            # Keep the raw score under the log-transformed axis name so the descriptor
+            # registry can apply the same projection logic used by cell_count_log.
+            "rtl_cyclomatic_total_log": cyclomatic_total,
+            "rtl_cyclomatic_max_log": cyclomatic_max,
         }
+
+    def _count_case_branch_alternatives(
+        self,
+        lines: list[str],
+        *,
+        start_index: int,
+        current_indent: int,
+    ) -> int:
+        cond_count = 0
+        for line in lines[start_index + 1 :]:
+            match = _AST_NODE_RE.match(line)
+            if match is None:
+                continue
+            indent = len(match.group("indent"))
+            if indent <= current_indent:
+                break
+            if indent == current_indent + 2 and match.group("node") == "AST_COND":
+                cond_count += 1
+        return cond_count
 
     def _load_netlist_text(self, code_file_path: str | Path | None) -> str | None:
         if code_file_path is None:

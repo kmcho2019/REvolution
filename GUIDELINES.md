@@ -8,6 +8,7 @@
 - Use [docs/qd_map_elites_guide.md](docs/qd_map_elites_guide.md) for the QD/MAP-Elites runtime flow, descriptor extraction paths, archive artifact layout, and generation/run traces.
 - Use [docs/REvolution_specification.md](docs/REvolution_specification.md) for the paper-plus-implementation specification view.
 - Use [docs/revolution_qd_map_elites_implementation_plan.md](docs/revolution_qd_map_elites_implementation_plan.md) for the current QD/MAP-Elites feature status and staged roadmap.
+- Use [docs/hard_iteration_subset_workflow.md](docs/hard_iteration_subset_workflow.md) for the hard-subset baseline freeze flow, resumable one-shot commands, and long-budget classic-vs-QD matrix entrypoints.
 - Use [docs/method_interaction_and_evolutionary_loop.md](docs/method_interaction_and_evolutionary_loop.md) when you need the classic REvolution data flow or generation loop explained end to end.
 - Use [docs/diff_mode.md](docs/diff_mode.md) when the change touches diff-mode generation, apply policy, or diff diagnostics.
 
@@ -15,7 +16,8 @@
 - Runner/CLI wiring:
   [scripts/run_backend.py](scripts/run_backend.py),
   [scripts/run_evolution.py](scripts/run_evolution.py),
-  [src/revolution/backends/revolution_backend.py](src/revolution/backends/revolution_backend.py)
+  [src/revolution/backends/revolution_backend.py](src/revolution/backends/revolution_backend.py),
+  [src/revolution/runtime/parallelism.py](src/revolution/runtime/parallelism.py)
 - Classic REvolution loop:
   [src/revolution/algorithm.py](src/revolution/algorithm.py)
 - QD runtime and archives:
@@ -35,7 +37,18 @@
 - Reporting and experiment summaries:
   [scripts/backend_comparison_report.py](scripts/backend_comparison_report.py),
   [scripts/archive_baseline.py](scripts/archive_baseline.py),
+  [scripts/report_design_space_analysis.py](scripts/report_design_space_analysis.py),
+  [src/revolution/qd/design_space_report_support.py](src/revolution/qd/design_space_report_support.py),
+  [src/revolution/qd/feature_space_analysis.py](src/revolution/qd/feature_space_analysis.py),
+  [src/revolution/qd/successful_candidate_catalog.py](src/revolution/qd/successful_candidate_catalog.py),
   [src/revolution/qd/visualization.py](src/revolution/qd/visualization.py)
+- Hard subset selection and iteration matrix:
+  [scripts/build_hard_iteration_subset.py](scripts/build_hard_iteration_subset.py),
+  [scripts/run_hard_iteration_one_shot_vllm.sh](scripts/run_hard_iteration_one_shot_vllm.sh),
+  [scripts/run_hard_iteration_qd_vllm.sh](scripts/run_hard_iteration_qd_vllm.sh),
+  [scripts/report_hard_iteration_analysis.py](scripts/report_hard_iteration_analysis.py),
+  [scripts/report_design_space_analysis.py](scripts/report_design_space_analysis.py),
+  [scripts/report_qd_feature_space.py](scripts/report_qd_feature_space.py)
 - Prompt and diff surfaces:
   [src/revolution/prompt_store.py](src/revolution/prompt_store.py),
   [data/prompts/](data/prompts),
@@ -43,7 +56,7 @@
 
 ## Project Structure & Module Organization
 - `src/revolution/`: core package. Start with `algorithm.py` for classic REvolution, `backends/` for runner adapters, `runtime/` for evaluation/problem abstractions, and `qd/` for the new archive/scoring/scheduler substrate.
-- `scripts/`: runnable entry points and utilities. `run_backend.py` is the canonical runner, `run_evolution.py` is the legacy REvolution entry point, `run_backend_ablation.py` is the fairness-controlled sweep runner, `run_backend_qd_smoke_vllm.sh` is the repeatable QD smoke harness, and `run_qd_retrospective_redo_vllm.sh` is the long-budget retrospective redo harness.
+- `scripts/`: runnable entry points and utilities. `run_backend.py` is the canonical runner with shared elastic parallelism controls, `run_evolution.py` is the legacy REvolution entry point that still resolves the same elastic settings, `run_backend_ablation.py` is the fairness-controlled sweep runner, `run_backend_qd_smoke_vllm.sh` is the repeatable QD smoke harness, and `run_qd_retrospective_redo_vllm.sh` is the long-budget retrospective redo harness.
 - `tests/revolution/` and `tests/scripts/`: unit tests for framework modules and script helpers. The closest matching `test_<module>.py` file is usually the fastest way to see intended behavior.
 - `data/bench/`: benchmark suites used by CLI runs (`RTLLM`, `VerilogEval-*`, `cvdp`).
 - `data/prompts/`: prompt templates grouped by profile and strategy/mode. QD-specific targeted/diverse operators live here too.
@@ -54,7 +67,7 @@
 
 ## Canonical Entry Points
 - Use `scripts/run_backend.py` for most new work. It is the canonical backend-selectable runner and the main place where `search_mode`, QD config, and benchmark wiring meet.
-- Treat `scripts/run_evolution.py` as the legacy REvolution-focused runner. Keep it working, but prefer `run_backend.py` when adding new backend or QD-facing surfaces.
+- Treat `scripts/run_evolution.py` as the legacy REvolution-focused runner. Keep it working, but prefer `run_backend.py` when adding new backend or QD-facing surfaces. Both entry points now use the shared elastic parallelism controls (`--total_worker_slots`, `--max_active_problems`, `--max_workers_per_problem`) and translate older config-file-only keys with warnings.
 - Treat `docs/revolution_qd_map_elites_implementation_plan.md` as the canonical history/status log for QD work. User-facing guidance belongs in `README.md`, `docs/user_guide.md`, and `docs/qd_map_elites_guide.md`.
 
 ## Build, Test, and Development Commands
@@ -66,8 +79,14 @@
 - `bash scripts/run_backend_qd_smoke_vllm.sh --dry-run`: inspect the repeatable
   QD smoke matrix before running live grid/CVT validation.
 - `python scripts/run_evolution.py --help`: view all evolutionary run options.
-- `python scripts/run_evolution.py --benchmarks RTLLM --model_name gpt-4.1-mini`: example multi-generation run.
+- `python scripts/run_evolution.py --benchmarks RTLLM --model_name gpt-4.1-mini --total_worker_slots 10`: example multi-generation run.
 - `python scripts/run_one_shot.py --benchmarks VerilogEval-Spec-to-RTL --num_samples 20`: example n-shot baseline run.
+- `bash scripts/run_hard_iteration_one_shot_vllm.sh --dry-run`: inspect the resumable hard-subset vanilla baseline batches without running them.
+- `python scripts/build_hard_iteration_subset.py --one-shot-root exp/hard_iteration_one_shot_rerun_<date> --output-config data/configs/hard_iteration_subset.yaml`: freeze the hard iteration subset from a valid post-fix one-shot rerun.
+- `bash scripts/run_hard_iteration_qd_vllm.sh --dry-run`: inspect the classic + QD hard-subset matrix commands before running them live.
+- `python scripts/report_qd_feature_space.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd/<run_tag>/classic --backend_run cvt_struct=exp/hard_iteration_qd/<run_tag>/cvt_struct --output-dir exp/hard_iteration_qd/<run_tag>/feature_analysis`: generate the deep post-run QD feature-space report, candidate table, and recommended profile artifacts.
+- `python scripts/report_design_space_analysis.py --help`: inspect the standalone retrospective design-space analysis CLI, including `--backend_run name=path`, feature selection precedence, and aggregate PPA options.
+- `python scripts/report_design_space_analysis.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd/<run_tag>/classic --backend_run cvt_struct=exp/hard_iteration_qd/<run_tag>/cvt_struct --output-dir exp/hard_iteration_qd/<run_tag>/design_space_analysis`: generate per-problem generation-local vs accumulated PPA plots, all-backend plus classic-vs-QD pairwise feature-space plots, quick-reference markdown indices, and `successful_candidates.csv`.
 - `python scripts/qd_descriptor_probe.py --archive_type grid --circuit_type sequential`: inspect the current QD descriptor-axis selection and requirements.
 - `bash scripts/run_qd_retrospective_redo_vllm.sh --dry-run`: inspect the tracked long-budget retrospective redo matrix without launching live jobs.
 

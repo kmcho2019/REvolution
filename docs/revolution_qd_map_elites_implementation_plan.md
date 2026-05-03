@@ -410,8 +410,8 @@ Common settings:
 - `top_p=1.0`
 - `max_tokens=128000`
 - `diff_max_tokens=128000`
-- `num_workers=2`
-- `candidate_workers=0`
+- `total_worker_slots=2`
+- `max_workers_per_problem=1`
 - `evaluation_mode=search_accelerated`
 - `accelerated_synthesis_top_k=1`
 - `seed=42`
@@ -695,8 +695,8 @@ Keep the same long-budget settings as the earlier rich reruns:
 - `top_p=1.0`
 - `max_tokens=128000`
 - `diff_max_tokens=128000`
-- `num_workers=2`
-- `candidate_workers=0`
+- `total_worker_slots=2`
+- `max_workers_per_problem=1`
 - `evaluation_mode=search_accelerated`
 - `accelerated_synthesis_top_k=1`
 - `seed=42`
@@ -1477,7 +1477,7 @@ Documentation risk to watch:
     - preflight command:
       - `curl -s http://host.docker.internal:8000/v1/models`
     - runtime smoke command:
-      - `timeout 180s bash -lc 'OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --temperature 0.3 --top_p 0.95 --max_tokens 2048 --save_path /workspace/.tmp_qd_smokes/grid_smoke --no-backend_subdir'`
+      - `timeout 180s bash -lc 'OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --total_worker_slots 1 --temperature 0.3 --top_p 0.95 --max_tokens 2048 --save_path /workspace/.tmp_qd_smokes/grid_smoke --no-backend_subdir'`
     - result:
       - vLLM preflight succeeded and the run started
       - the runtime smoke timed out after `180s` without a completion signal
@@ -1549,7 +1549,7 @@ Documentation risk to watch:
   - preflight command:
     - `curl -s http://host.docker.internal:8000/v1/models`
   - CVT runtime smoke command:
-    - `timeout 180s bash -lc 'OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --qd_cvt_axes g_A g_T --qd_cvt_warmup_successes 1 --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --temperature 0.3 --top_p 0.95 --max_tokens 1024 --save_path /workspace/.tmp_qd_smokes/cvt_smoke --no-backend_subdir'`
+    - `timeout 180s bash -lc 'OPENAI_API_KEY=${OPENAI_API_KEY:-vllm-local-placeholder} /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --qd_cvt_axes g_A g_T --qd_cvt_warmup_successes 1 --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --total_worker_slots 1 --temperature 0.3 --top_p 0.95 --max_tokens 1024 --save_path /workspace/.tmp_qd_smokes/cvt_smoke --no-backend_subdir'`
   - result:
     - vLLM preflight succeeded and the CVT run started
     - the runtime smoke timed out after `180s` without a completion signal
@@ -1597,13 +1597,13 @@ Documentation risk to watch:
     - `src/revolution/qd/descriptors.py`: `yaml` could not be resolved from source by pyright
 - Smoke tests:
   - grid smoke command:
-    - `timeout 240s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --qd_grid_axes g_A g_T --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --max_tokens 128000 --population_size 1 --num_generations 0 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --save_path /tmp/revolution_qd_smoke_stage7 --seed 42`
+    - `timeout 240s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --qd_grid_axes g_A g_T --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --max_tokens 128000 --population_size 1 --num_generations 0 --max_workers_per_problem 1 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --save_path /tmp/revolution_qd_smoke_stage7 --seed 42`
   - grid result:
     - vLLM preflight succeeded and the run entered the problem loop
     - the smoke timed out after `240s` without producing a completion signal
     - partial logs/config snapshots were written under `/tmp/revolution_qd_smoke_stage7`
   - CVT smoke command:
-    - `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --qd_cvt_axes g_A g_P --qd_num_cells 4 --qd_cvt_warmup_successes 1 --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --max_tokens 128000 --population_size 1 --num_generations 0 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --save_path /tmp/revolution_qd_smoke_stage7_cvt --seed 42`
+    - `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --qd_cvt_axes g_A g_P --qd_num_cells 4 --qd_cvt_warmup_successes 1 --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --max_tokens 128000 --population_size 1 --num_generations 0 --max_workers_per_problem 1 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --save_path /tmp/revolution_qd_smoke_stage7_cvt --seed 42`
   - CVT result:
     - vLLM preflight succeeded and the run entered the problem loop
     - the smoke timed out after `120s` without producing a completion signal
@@ -1691,9 +1691,9 @@ Documentation risk to watch:
   - Result: `0 errors, 1 warning` (`tqdm` source-resolution warning only)
 - Smoke tests:
   - CVDP smoke command:
-    - `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks cvdp --problems cvdp_copilot_16qam_mapper_0001 --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --max_tokens 128000 --population_size 1 --num_generations 0 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --save_path /tmp/revolution_qd_stage6_cvdp --seed 42`
+    - `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks cvdp --problems cvdp_copilot_16qam_mapper_0001 --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --max_tokens 128000 --population_size 1 --num_generations 0 --max_workers_per_problem 1 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --save_path /tmp/revolution_qd_stage6_cvdp --seed 42`
   - Retry smoke command:
-    - `timeout 150s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks cvdp --problems cvdp_copilot_16qam_mapper_0001 --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --max_tokens 128000 --population_size 1 --num_generations 0 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --save_path /tmp/revolution_qd_stage6_cvdp_retry --seed 42`
+    - `timeout 150s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks cvdp --problems cvdp_copilot_16qam_mapper_0001 --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --max_tokens 128000 --population_size 1 --num_generations 0 --max_workers_per_problem 1 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --save_path /tmp/revolution_qd_stage6_cvdp_retry --seed 42`
   - CVDP smoke result:
     - initial run exposed a real bug in `EoHEngine.load_problem_description()`
       for JSONL-backed tasks
@@ -1906,7 +1906,7 @@ Documentation risk to watch:
   - model:
     `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b`
   - common settings:
-    `population_size=8`, `num_generations=3`, `num_workers=2`,
+    `population_size=8`, `num_generations=3`, `total_worker_slots=2`,
     `evaluation_mode=search_accelerated`, `accelerated_synthesis_top_k=1`,
     `temperature=0.4`, `top_p=0.95`, `max_tokens=1024`,
     `diff_max_tokens=1024`, `--seed 42`
@@ -2033,7 +2033,7 @@ Documentation risk to watch:
   - model:
     `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b`
   - common settings:
-    `population_size=8`, `num_generations=3`, `num_workers=2`,
+    `population_size=8`, `num_generations=3`, `total_worker_slots=2`,
     `evaluation_mode=search_accelerated`, `accelerated_synthesis_top_k=1`,
     `temperature=0.4`, `top_p=0.95`, `max_tokens=128000`,
     `diff_max_tokens=128000`, `--seed 42`
@@ -2133,8 +2133,8 @@ Documentation risk to watch:
   - model:
     `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b`
   - common settings:
-    `population_size=20`, `num_generations=5`, `num_workers=2`,
-    `candidate_workers=0`, `evaluation_mode=search_accelerated`,
+    `population_size=20`, `num_generations=5`, `total_worker_slots=2`,
+    `max_workers_per_problem=1`, `evaluation_mode=search_accelerated`,
     `accelerated_synthesis_top_k=1`, `temperature=1.0`, `top_p=1.0`,
     `max_tokens=128000`, `diff_max_tokens=128000`, `seed=42`
   - RTLLM problem set:
@@ -2243,8 +2243,8 @@ Documentation risk to watch:
   - model:
     `/project/cad-team/LX_Semicon/models/openai-gpt-oss-120b`
   - common settings:
-    `population_size=20`, `num_generations=5`, `num_workers=2`,
-    `candidate_workers=0`, `evaluation_mode=search_accelerated`,
+    `population_size=20`, `num_generations=5`, `total_worker_slots=2`,
+    `max_workers_per_problem=1`, `evaluation_mode=search_accelerated`,
     `accelerated_synthesis_top_k=1`, `temperature=1.0`, `top_p=1.0`,
     `max_tokens=128000`, `diff_max_tokens=128000`, `seed=42`
   - grid axes:
@@ -2357,7 +2357,7 @@ Documentation risk to watch:
   - preflight command:
     - `curl -s http://host.docker.internal:8000/v1/models`
   - long-token grid artifact smoke:
-    - `python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks RTLLM --problems Prob043_RAM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 4 --num_generations 1 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 1.0 --top_p 1.0 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_stage9_smoke/grid --no-backend_subdir --seed 42`
+    - `python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks RTLLM --problems Prob043_RAM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 4 --num_generations 1 --total_worker_slots 1 --max_workers_per_problem 1 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 1.0 --top_p 1.0 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_stage9_smoke/grid --no-backend_subdir --seed 42`
     - result:
       - vLLM preflight succeeded
       - runner started and config/log files were created
@@ -2365,14 +2365,14 @@ Documentation risk to watch:
         observation window, so the run was recorded as blocked rather than
         passed
   - bounded fast-smoke grid validation:
-    - `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128 --diff_max_tokens 128 --save_path /tmp/qd_stage9_fast_smoke/grid_timeout --no-backend_subdir --seed 42`
+    - `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --total_worker_slots 1 --max_workers_per_problem 1 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128 --diff_max_tokens 128 --save_path /tmp/qd_stage9_fast_smoke/grid_timeout --no-backend_subdir --seed 42`
     - result:
       - vLLM preflight succeeded
       - runner started and config/log files were created
       - timed out after `120s` before the first candidate directory or any
         QD artifact files were materialized
   - bounded fast-smoke CVT validation:
-    - `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128 --diff_max_tokens 128 --save_path /tmp/qd_stage9_fast_smoke/cvt --no-backend_subdir --seed 42`
+    - `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --total_worker_slots 1 --max_workers_per_problem 1 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128 --diff_max_tokens 128 --save_path /tmp/qd_stage9_fast_smoke/cvt --no-backend_subdir --seed 42`
     - result:
       - vLLM preflight succeeded
       - runner started and config/log files were created
@@ -2422,7 +2422,7 @@ Documentation risk to watch:
   - Result: `All checks passed!`
 - Live validation:
   - corrected grid-profile smoke:
-    - `timeout 1800s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --qd_descriptor_profile implemented_structural_compact_3d --benchmarks RTLLM --problems Prob043_RAM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_rich20x5_refresh_v2/smokes/grid_rtllm_compact_profile --no-backend_subdir --seed 42`
+    - `timeout 1800s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --qd_descriptor_profile implemented_structural_compact_3d --benchmarks RTLLM --problems Prob043_RAM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --total_worker_slots 1 --max_workers_per_problem 1 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_rich20x5_refresh_v2/smokes/grid_rtllm_compact_profile --no-backend_subdir --seed 42`
     - result:
       - completed successfully in `613.41s`
       - emitted `archive_summary.json`, `archive_space_report.md`, and
@@ -2430,7 +2430,7 @@ Documentation risk to watch:
       - confirmed active axes:
         `comb_ratio`, `adder_ratio`, `cell_count_log`
   - corrected CVT-profile smoke:
-    - `timeout 1800s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --qd_descriptor_profile implemented_structural_fixed_5d --qd_num_cells 16 --qd_cvt_warmup_successes 4 --benchmarks RTLLM --problems Prob043_RAM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_rich20x5_refresh_v2/smokes/cvt_rtllm_fixed_profile --no-backend_subdir --seed 42`
+    - `timeout 1800s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --qd_descriptor_profile implemented_structural_fixed_5d --qd_num_cells 16 --qd_cvt_warmup_successes 4 --benchmarks RTLLM --problems Prob043_RAM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --total_worker_slots 1 --max_workers_per_problem 1 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_rich20x5_refresh_v2/smokes/cvt_rtllm_fixed_profile --no-backend_subdir --seed 42`
     - result:
       - still running at the time of this checkpoint; do not mark the Stage 10
         bounded-smoke checkbox complete until it emits archive artifacts or a
@@ -2569,7 +2569,7 @@ Documentation risk to watch:
   - Result: `All checks passed!`
 - Live validation:
   - attempted bounded activity-profile smoke:
-    - `timeout 1800s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --qd_descriptor_profile activity_control_3d --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_stage13_smoke/activity_grid_rtllm --no-backend_subdir --seed 42`
+    - `timeout 1800s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --qd_descriptor_profile activity_control_3d --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --total_worker_slots 1 --max_workers_per_problem 1 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_stage13_smoke/activity_grid_rtllm --no-backend_subdir --seed 42`
     - result:
       - vLLM preflight succeeded
       - runner created config and top-level run-log files
@@ -2623,7 +2623,7 @@ Documentation risk to watch:
   - Result: `All checks passed!`
 - Live validation:
   - attempted bounded second-wave profile smoke:
-    - `timeout 900s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --qd_descriptor_profile wire_ctrl_assign_3d --benchmarks RTLLM --problems Prob043_RAM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_stage14_smoke/wire_ctrl_assign_grid_rtllm --no-backend_subdir --seed 42`
+    - `timeout 900s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --qd_descriptor_profile wire_ctrl_assign_3d --benchmarks RTLLM --problems Prob043_RAM --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --total_worker_slots 1 --max_workers_per_problem 1 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128000 --diff_max_tokens 128000 --save_path /tmp/qd_stage14_smoke/wire_ctrl_assign_grid_rtllm --no-backend_subdir --seed 42`
     - result:
       - vLLM preflight succeeded
       - runner created config/log files plus `problem_run.log`
@@ -3583,9 +3583,9 @@ implementation and testing so far.
 - Planned diff-heavy smoke:
   `python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --benchmarks cvdp --qd_backfill_generation_mode diff --qd_refine_generation_mode diff --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --max_tokens 128000 --diff_max_tokens 128000`
 - Stage 9 grid artifact smoke:
-  `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128 --diff_max_tokens 128 --save_path /tmp/qd_stage9_fast_smoke/grid_timeout --no-backend_subdir --seed 42`
+  `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type grid --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --total_worker_slots 1 --max_workers_per_problem 1 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128 --diff_max_tokens 128 --save_path /tmp/qd_stage9_fast_smoke/grid_timeout --no-backend_subdir --seed 42`
 - Stage 9 CVT artifact smoke:
-  `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --num_workers 1 --candidate_workers 0 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128 --diff_max_tokens 128 --save_path /tmp/qd_stage9_fast_smoke/cvt --no-backend_subdir --seed 42`
+  `timeout 120s /workspace/.venv/bin/python scripts/run_backend.py --backend revolution --search_mode revolution_qd --qd_archive_type cvt --benchmarks RTLLM --problems Prob001_accu --api_backend vllm --vllm_host host.docker.internal --vllm_port 8000 --vllm_min_model_len 128000 --model_name /project/cad-team/LX_Semicon/models/openai-gpt-oss-120b --population_size 1 --num_generations 0 --total_worker_slots 1 --max_workers_per_problem 1 --evaluation_mode search_accelerated --accelerated_synthesis_top_k 1 --temperature 0.3 --top_p 0.95 --max_tokens 128 --diff_max_tokens 128 --save_path /tmp/qd_stage9_fast_smoke/cvt --no-backend_subdir --seed 42`
 - Repeatable QD smoke harness:
   `bash scripts/run_backend_qd_smoke_vllm.sh --archive matrix --suite verilogeval --policy diff-heavy`
 - Planned activity-profile smoke:

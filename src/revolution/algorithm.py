@@ -21,11 +21,16 @@ from pathlib import Path
 
 # Import from local modules
 from .evaluation import SynthesisEvaluator, VerilogEvaluator
+from .graph_descriptor_evaluator import GraphDescriptorEvaluator
 from .llm import LLMInterface, LLMRequest
 from .logging import EoHLogger
 from .prompt_store import PromptStore, safe_format # Able to load prompts from files
 from .rtl_descriptor_evaluator import RTLDescriptorEvaluator
 from .simulation_descriptor_evaluator import SimulationDescriptorEvaluator
+from .runtime.parallelism import (
+    FixedProblemConcurrencyController,
+    ProblemConcurrencyController,
+)
 
 if TYPE_CHECKING:
     from .runtime.problem_spec import ProblemSpec
@@ -176,6 +181,9 @@ class Heuristic:
     :param dynamic_metrics: Simulation-derived activity descriptor metrics
         attached by evaluation when available.
     :type dynamic_metrics: dict[str, float]
+    :param graph_metrics: Graph-theoretic descriptor metrics attached by
+        evaluation when available.
+    :type graph_metrics: dict[str, float]
     :param descriptor_values: Descriptor-axis values already materialized for
         QD archive insertion or reporting.
     :type descriptor_values: dict[str, float]
@@ -223,6 +231,7 @@ class Heuristic:
         self.structural_metrics: dict[str, float] = {}
         self.rtl_metrics: dict[str, float] = {}
         self.dynamic_metrics: dict[str, float] = {}
+        self.graph_metrics: dict[str, float] = {}
         self.physical_metrics: dict[str, float] = {}
         self.descriptor_values: dict[str, float] = {}
         self.quality_score: float = score
@@ -259,6 +268,18 @@ class Heuristic:
             f"Heuristic(ID: {self.id}, Gen: {self.generation}, Origin: {self.origin_pool}, Strategy: {self.strategy}, Score: {self.score:.4f}, "
             f"Status: {self.status}, Thought: '{thought_repr}...', Parents: {self.parent_ids}, {ppa_info})"
         )
+
+
+def _coerce_float_metric_dict(value: Any) -> dict[str, float]:
+    """Normalize loosely typed evaluator metric payloads into float mappings."""
+
+    if not isinstance(value, dict):
+        return {}
+    metrics: dict[str, float] = {}
+    for key, metric_value in value.items():
+        if isinstance(key, str) and isinstance(metric_value, (int, float)):
+            metrics[key] = float(metric_value)
+    return metrics
 
 
 # Entire class executing for the new REvolution framework for each problem in the benchmark.
@@ -370,6 +391,7 @@ class EoHEngine:
         prompt_profile: str = "default",
         prompt_root: str | None = None,
         candidate_workers: int | None = None,
+        problem_concurrency: ProblemConcurrencyController | None = None,
         problem_spec: "ProblemSpec | None" = None,
     ):
         self.generation_mode: Literal["whole", "diff"] = generation_mode
@@ -419,7 +441,7 @@ class EoHEngine:
         self.candidate_workers: int = (
             candidate_workers if candidate_workers and candidate_workers > 0 else 0
         )
-        self.parallelize_candidates: bool = self.candidate_workers > 1
+        self.problem_concurrency = problem_concurrency
 
         # Champion Metrics Configuration
         # Defines the configuration for champion metrics.
@@ -484,6 +506,7 @@ class EoHEngine:
         self.gen_start_time: float = 0
         self.rtl_descriptor_evaluator = RTLDescriptorEvaluator()
         self.simulation_descriptor_evaluator = SimulationDescriptorEvaluator()
+        self.graph_descriptor_evaluator = GraphDescriptorEvaluator()
 
         # --- Diff application tunables ---
         self.diff_similarity_threshold: float = diff_similarity_threshold
@@ -859,12 +882,64 @@ class EoHEngine:
         :return: None
         :rtype: None
         """
-        base_path = candidate.code_file_path.rsplit(".", 1)[0]
+        base_path = self._refresh_candidate_code_path(candidate).rsplit(".", 1)[0]
         feedback_file_path = f"{base_path}_feedback.txt"
+        os.makedirs(os.path.dirname(feedback_file_path), exist_ok=True)
         with open(feedback_file_path, "w") as f:
             f.write(
                 f"Score: {feedback.get('score', 'N/A')}\nJustification: {feedback.get('justification', 'N/A')}\n\nANALYSIS:\n{feedback.get('analysis', '')}"
             )
+
+    def _resolve_existing_candidate_code_path(self, code_file_path: str) -> str:
+        """
+        Recover a candidate code path when the enclosing problem directory was
+        renamed before a resumed run completed.
+        """
+        candidate_path = Path(code_file_path)
+        if candidate_path.is_file():
+            return str(candidate_path)
+
+        sample_dir = candidate_path.parent
+        generation_dir = sample_dir.parent
+        problem_dir = generation_dir.parent
+        benchmark_dir = problem_dir.parent
+        if sample_dir == candidate_path or generation_dir == sample_dir:
+            return code_file_path
+        if benchmark_dir == problem_dir:
+            return code_file_path
+
+        matches: list[Path] = []
+        seen: set[str] = set()
+        for pattern in (
+            f"{problem_dir.name}_partial_pre_resume_*",
+            f"{problem_dir.name}_*",
+        ):
+            for sibling in benchmark_dir.glob(pattern):
+                relocated = (
+                    sibling / generation_dir.name / sample_dir.name / candidate_path.name
+                )
+                if not relocated.is_file():
+                    continue
+                resolved = str(relocated.resolve())
+                if resolved in seen:
+                    continue
+                seen.add(resolved)
+                matches.append(relocated.resolve())
+            if len(matches) == 1:
+                return str(matches[0])
+            if len(matches) > 1:
+                break
+        return code_file_path
+
+    def _refresh_candidate_code_path(self, candidate: Heuristic) -> str:
+        resolved = self._resolve_existing_candidate_code_path(candidate.code_file_path)
+        candidate.code_file_path = resolved
+        return resolved
+
+    def _read_candidate_code_file(self, candidate: Heuristic) -> str:
+        resolved = self._refresh_candidate_code_path(candidate)
+        with open(resolved, "r", encoding="utf-8") as handle:
+            return handle.read()
 
     def _resolve_synthesis_top_module_name(self) -> str:
         top_module_name_file = os.path.join(
@@ -909,6 +984,10 @@ class EoHEngine:
         """Return whether the active engine configuration needs VCD activity extraction."""
         return False
 
+    def _requires_graph_descriptor_metrics(self) -> bool:
+        """Return whether the active engine configuration needs graph descriptor extraction."""
+        return False
+
     def _extract_candidate_rtl_metrics(
         self,
         cand: Heuristic,
@@ -922,7 +1001,7 @@ class EoHEngine:
             mapped_cell_count = float(structural_metrics.get("total_cells", 0.0))
         return self.rtl_descriptor_evaluator.extract_metrics(
             code_text=cand.code,
-            code_file_path=cand.code_file_path,
+            code_file_path=self._refresh_candidate_code_path(cand),
             mapped_cell_count=mapped_cell_count,
         )
 
@@ -940,6 +1019,20 @@ class EoHEngine:
             return {}
         return self.simulation_descriptor_evaluator.extract_metrics(
             vcd_file_path=simulation_result.get("vcd_file_path"),
+            top_module_name=top_module_name,
+        )
+
+    def _extract_candidate_graph_metrics(
+        self,
+        cand: Heuristic,
+        *,
+        top_module_name: str,
+    ) -> dict[str, float]:
+        """Extract graph-theoretic descriptors from a candidate RTL file."""
+        if not self._requires_graph_descriptor_metrics():
+            return {}
+        return self.graph_descriptor_evaluator.extract_metrics(
+            code_file_path=cand.code_file_path,
             top_module_name=top_module_name,
         )
 
@@ -962,13 +1055,25 @@ class EoHEngine:
             }
             return cand, feedback_payload
 
+        refresh_candidate_code_path = getattr(self, "_refresh_candidate_code_path", None)
+        code_file_path_value = (
+            refresh_candidate_code_path(cand)
+            if callable(refresh_candidate_code_path)
+            else cand.code_file_path
+        )
+        code_file_path = (
+            code_file_path_value
+            if isinstance(code_file_path_value, str)
+            else cand.code_file_path
+        )
+
         require_dynamic_metrics = getattr(
             self,
             "_requires_dynamic_descriptor_metrics",
             lambda: False,
         )
         sim_results = self.evaluator.evaluate(
-            cand.code_file_path,
+            code_file_path,
             test_sv_file,
             ref_sv_file,
             top_module_name=testbench_top_module_name,
@@ -1012,7 +1117,7 @@ class EoHEngine:
             return cand, feedback_payload
 
         extract_dynamic_metrics = getattr(self, "_extract_candidate_dynamic_metrics", None)
-        cand.dynamic_metrics = (
+        cand.dynamic_metrics = _coerce_float_metric_dict(
             extract_dynamic_metrics(
                 cand,
                 sim_results,
@@ -1023,10 +1128,10 @@ class EoHEngine:
         )
 
         # Stage 2: Synthesis and PPA for functionally correct candidates
-        report_base_path = cand.code_file_path.rsplit(".", 1)[0]
-        output_dir = os.path.dirname(cand.code_file_path)
+        report_base_path = code_file_path.rsplit(".", 1)[0]
+        output_dir = os.path.dirname(code_file_path)
         synth_results = self.synthesis_evaluator.evaluate(
-            cand.code_file_path,
+            code_file_path,
             self.problem_name,
             synthesis_top_module_name,
             output_dir,
@@ -1035,26 +1140,23 @@ class EoHEngine:
             test_sv_file,
             ref_sv_file,
         )
-        structural_metrics = (
-            synth_results.get("structural_metrics")
-            if isinstance(synth_results.get("structural_metrics"), dict)
-            else {}
-        )
-        physical_metrics = (
-            synth_results.get("physical_metrics")
-            if isinstance(synth_results.get("physical_metrics"), dict)
-            else {}
-        )
-        cand.structural_metrics = {
-            str(key): float(value) for key, value in structural_metrics.items()
-        }
-        cand.physical_metrics = {
-            str(key): float(value) for key, value in physical_metrics.items()
-        }
+        structural_metrics_raw = synth_results.get("structural_metrics")
+        physical_metrics_raw = synth_results.get("physical_metrics")
+        cand.structural_metrics = _coerce_float_metric_dict(structural_metrics_raw)
+        cand.physical_metrics = _coerce_float_metric_dict(physical_metrics_raw)
         extract_rtl_metrics = getattr(self, "_extract_candidate_rtl_metrics", None)
-        cand.rtl_metrics = (
+        cand.rtl_metrics = _coerce_float_metric_dict(
             extract_rtl_metrics(cand, cand.structural_metrics)
             if callable(extract_rtl_metrics)
+            else {}
+        )
+        extract_graph_metrics = getattr(self, "_extract_candidate_graph_metrics", None)
+        cand.graph_metrics = _coerce_float_metric_dict(
+            extract_graph_metrics(
+                cand,
+                top_module_name=synthesis_top_module_name,
+            )
+            if callable(extract_graph_metrics)
             else {}
         )
 
@@ -1067,7 +1169,7 @@ class EoHEngine:
             cand.synthesis_success = True
             cand.synthesis_functionality = True
             cand.ppa_success = True
-            cand.ppa_metrics = synth_results["ppa_metrics"]
+            cand.ppa_metrics = _coerce_float_metric_dict(synth_results.get("ppa_metrics"))
             cand.score = self._calculate_fitness_score(cand)
             cand.quality_score = cand.score
             cand.feedback = (
@@ -1083,10 +1185,10 @@ class EoHEngine:
             }
         else:
             cand.score = -float("inf")
-            cand.synthesis_success = synth_results["synthesis_success"]
-            cand.synthesis_functionality = synth_results[
-                "synthesis_functionality_success"
-            ]
+            cand.synthesis_success = bool(synth_results.get("synthesis_success"))
+            cand.synthesis_functionality = bool(
+                synth_results.get("synthesis_functionality_success")
+            )
 
             if not synth_results["synthesis_success"]:
                 cand.status = "failed_synthesis"
@@ -1136,11 +1238,30 @@ class EoHEngine:
         testbench_top_module_name = self._resolve_testbench_top_module_name()
         synthesis_top_module_name = self._resolve_synthesis_top_module_name()
 
-        if self.parallelize_candidates:
-            with ThreadPoolExecutor(max_workers=self.candidate_workers) as executor:
-                results = [
-                    executor.submit(
-                        self._evaluate_candidate_pipeline,
+        worker_controller = self.problem_concurrency
+        if worker_controller is None:
+            worker_controller = FixedProblemConcurrencyController(
+                max(1, self.candidate_workers),
+            )
+
+        with worker_controller.lease_candidate_workers(len(candidates_to_evaluate)) as workers:
+            if workers > 1:
+                with ThreadPoolExecutor(max_workers=workers) as executor:
+                    results = [
+                        executor.submit(
+                            self._evaluate_candidate_pipeline,
+                            cand,
+                            test_sv_file,
+                            ref_sv_file,
+                            testbench_top_module_name,
+                            synthesis_top_module_name,
+                        )
+                        for cand in candidates_to_evaluate
+                    ]
+                    evaluated = [future.result() for future in results]
+            else:
+                evaluated = [
+                    self._evaluate_candidate_pipeline(
                         cand,
                         test_sv_file,
                         ref_sv_file,
@@ -1149,18 +1270,6 @@ class EoHEngine:
                     )
                     for cand in candidates_to_evaluate
                 ]
-                evaluated = [future.result() for future in results]
-        else:
-            evaluated = [
-                self._evaluate_candidate_pipeline(
-                    cand,
-                    test_sv_file,
-                    ref_sv_file,
-                    testbench_top_module_name,
-                    synthesis_top_module_name,
-                )
-                for cand in candidates_to_evaluate
-            ]
 
         feedback_request_candidates: list[Heuristic] = []
         feedback_requests: list[dict[str, str]] = []
@@ -1184,7 +1293,8 @@ class EoHEngine:
                         code=feedback_payload.get("code", ""),
                         simulation_log=feedback_payload.get("simulation_log", "")
                     )
-                    user_overrides.append(formatted_prompt)
+                    if user_overrides is not None:
+                        user_overrides.append(formatted_prompt)
 
         # Stage 3: Batch LLM Feedback Generation for all failures
         if feedback_requests:
@@ -1216,8 +1326,11 @@ class EoHEngine:
             for cand, feedback_data in zip(
                 feedback_request_candidates, feedback_results
             ):
-                cand.feedback = feedback_data.get(
-                    "analysis", "Feedback generation failed."
+                feedback_text = feedback_data.get("analysis")
+                cand.feedback = (
+                    feedback_text
+                    if isinstance(feedback_text, str)
+                    else "Feedback generation failed."
                 )
                 self._save_feedback_files(cand, feedback_data)
 
@@ -1300,8 +1413,7 @@ class EoHEngine:
             if resolved_mode == "diff":
                 diff_to_save = code_content or ""
                 base_parent = meta_rec["parents"][0]
-                with open(base_parent.code_file_path, "r", encoding="utf-8") as handle:
-                    original_code = handle.read()
+                original_code = self._read_candidate_code_file(base_parent)
                 new_code = self._apply_diff(
                     original_code,
                     diff_to_save,
@@ -1478,8 +1590,7 @@ class EoHEngine:
                 r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:  # diff mode
-            with open(parent.code_file_path, "r") as f:
-                parent_code = f.read()
+            parent_code = self._read_candidate_code_file(parent)
             parent_obj = json.loads(
                 self._format_parent_for_prompt(
                     parent,
@@ -1569,8 +1680,7 @@ class EoHEngine:
                 r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
-            with open(parent.code_file_path, "r") as f:
-                parent_code = f.read()
+            parent_code = self._read_candidate_code_file(parent)
             parent_obj = json.loads(
                 self._format_parent_for_prompt(
                     parent,
@@ -1667,8 +1777,7 @@ class EoHEngine:
                 r'- All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
-            with open(parent.code_file_path, "r") as f:
-                parent_code = f.read()
+            parent_code = self._read_candidate_code_file(parent)
             parent_obj = json.loads(
                 self._format_parent_for_prompt(
                     parent,
@@ -1764,8 +1873,7 @@ class EoHEngine:
                 r'- All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
-            with open(parent.code_file_path, "r") as f:
-                parent_code = f.read()
+            parent_code = self._read_candidate_code_file(parent)
             parent_obj = json.loads(
                 self._format_parent_for_prompt(
                     parent,
@@ -1855,8 +1963,7 @@ class EoHEngine:
                 r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
-            with open(parent.code_file_path, "r") as f:
-                parent_code = f.read()
+            parent_code = self._read_candidate_code_file(parent)
             parent_obj = json.loads(
                 self._format_parent_for_prompt(
                     parent,
@@ -1947,10 +2054,8 @@ class EoHEngine:
                 "Rules: valid JSON only; escape newlines as \\n."
             )
         else:
-            with open(parent1.code_file_path, "r") as f:
-                parent1_code = f.read()
-            with open(parent2.code_file_path, "r") as f:
-                parent2_code = f.read()
+            parent1_code = self._read_candidate_code_file(parent1)
+            parent2_code = self._read_candidate_code_file(parent2)
             p1_obj = json.loads(
                 self._format_parent_for_prompt(
                     parent1,
@@ -3960,8 +4065,9 @@ class SingleShotEngine(EoHEngine):
             if getattr(cand, "status", None) in ("failed_format", "failed_diff"):
                 cand.score = -float("inf")
                 continue
+            code_file_path = self._refresh_candidate_code_path(cand)
             sim_results = self.evaluator.evaluate(
-                cand.code_file_path, test_sv_file, ref_sv_file
+                code_file_path, test_sv_file, ref_sv_file
             )
 
             if sim_results["status"] == "compilation_error":
@@ -3987,8 +4093,9 @@ class SingleShotEngine(EoHEngine):
 
         # Stage 2: Synthesis and PPA for functionally correct candidates
         for cand in func_passed:
-            report_base_path = cand.code_file_path.rsplit(".", 1)[0]
-            output_dir = os.path.dirname(cand.code_file_path)
+            code_file_path = self._refresh_candidate_code_path(cand)
+            report_base_path = code_file_path.rsplit(".", 1)[0]
+            output_dir = os.path.dirname(code_file_path)
 
             # Get top module name for synthesis
             top_module_name_file = os.path.join(
@@ -4002,7 +4109,7 @@ class SingleShotEngine(EoHEngine):
                 top_module_name = top_module_names.get(self.problem_name, "TopModule")
 
             synth_results = self.synthesis_evaluator.evaluate(
-                cand.code_file_path,
+                code_file_path,
                 self.problem_name,
                 top_module_name,
                 output_dir,
@@ -4491,7 +4598,11 @@ class Gen0LatencyEngine(EoHEngine):
                 "ppa_success": synth_results.get("ppa_success"),
                 "synthesis_log": synth_results.get("synthesis_log"),
             }
-            ppa_metrics = synth_results.get("ppa_metrics")
+            ppa_metrics = (
+                dict(raw_ppa_metrics)
+                if isinstance((raw_ppa_metrics := synth_results.get("ppa_metrics")), dict)
+                else None
+            )
         except Exception as exc:  # pragma: no cover - subprocess errors mocked in tests
             final_status = "synthesis_exception"
             message = f"Gen0 optional evaluation failed during synthesis/PPA: {exc}"
@@ -4658,7 +4769,8 @@ class Gen0LatencyEngine(EoHEngine):
                     code=cand.code,
                     simulation_log=simulation_log
                 )
-                user_overrides.append(formatted_prompt)
+                if user_overrides is not None:
+                    user_overrides.append(formatted_prompt)
             cand.score = float("-inf")
 
         # Prepare system prompt list (same prompt for everyone)
@@ -4683,10 +4795,15 @@ class Gen0LatencyEngine(EoHEngine):
         for cand, feedback in zip(candidates, feedback_results):
             score_val = feedback.get("score")
             try:
-                cand.score = float(score_val)
+                cand.score = (
+                    float(score_val)
+                    if isinstance(score_val, (int, float, str))
+                    else float("-inf")
+                )
             except (TypeError, ValueError):
                 cand.score = float("-inf")
-            cand.feedback = feedback.get("analysis", "")
+            feedback_text = feedback.get("analysis")
+            cand.feedback = feedback_text if isinstance(feedback_text, str) else ""
             self._save_feedback_files(cand, feedback)
 
         candidates.sort(
@@ -4994,7 +5111,7 @@ class CVDPEngine(EoHEngine):
                 )
                 continue
             # Put a per-candidate harness beside its saved code
-            cand_dir = Path(cand.code_file_path).parent
+            cand_dir = Path(self._refresh_candidate_code_path(cand)).parent
             run_root = cand_dir / f"cvdp_harness_{cand.id[:8]}"
             try:
                 paths = self._cvdp_materialize_harness(run_root, cand.code)

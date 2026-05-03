@@ -1,3 +1,4 @@
+import contextlib
 import json
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -286,6 +287,35 @@ def test_codeevolve_backend_run_writes_summary(tmp_path):
     epoch_stats = summary["generation_statistics"][0]["epoch_statistics"]
     assert epoch_stats["stage_pass_counts"]["format"] >= 1
     assert epoch_stats["stage_pass_counts"]["functionality"] >= 1
+
+
+def test_codeevolve_backend_uses_problem_concurrency_leases(tmp_path):
+    evaluator = _FakeCandidateEvaluator()
+    leased_workers: list[int] = []
+    batch_sizes: list[int] = []
+
+    class _FakeController:
+        @contextlib.contextmanager
+        def lease_candidate_workers(self, batch_size: int):
+            batch_sizes.append(batch_size)
+            yield 5
+
+    original_evaluate = evaluator.evaluate_candidates
+
+    def _record_workers(items, *, candidate_workers=0):
+        leased_workers.append(candidate_workers)
+        return original_evaluate(items, candidate_workers=candidate_workers)
+
+    evaluator.evaluate_candidates = _record_workers  # type: ignore[method-assign]
+    backend, _writer = _make_backend(tmp_path)
+    backend.services.candidate_evaluator = evaluator
+    backend.services.problem_concurrency = _FakeController()
+
+    backend.run()
+
+    assert batch_sizes
+    assert leased_workers
+    assert all(worker_count == 5 for worker_count in leased_workers)
 
 
 def test_codeevolve_seed_is_deterministic(tmp_path):

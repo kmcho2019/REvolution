@@ -22,6 +22,7 @@ from revolution.backends.base import (
 from revolution.prompt_store import safe_format
 from revolution.runtime import CandidateEvaluation, CandidateEvaluator, CandidateWorkItem
 from revolution.runtime.diff_apply import DiffApplyConfig, DiffApplier
+from revolution.runtime.parallelism import FixedProblemConcurrencyController
 from revolution.runtime.problem_context import resolve_top_module_name
 from revolution.runtime.run_artifacts import add_legacy_strategy_key_alias
 
@@ -890,10 +891,16 @@ class CodeEvolveBackend(EvolutionBackend):
             )
             for item in prepared
         ]
-        evaluations = evaluator.evaluate_candidates(
-            items,
-            candidate_workers=self.config.candidate_workers,
-        )
+        controller = getattr(self.services, "problem_concurrency", None)
+        if controller is None:
+            controller = FixedProblemConcurrencyController(
+                max(1, self.config.candidate_workers),
+            )
+        with controller.lease_candidate_workers(len(items)) as workers:
+            evaluations = evaluator.evaluate_candidates(
+                items,
+                candidate_workers=workers,
+            )
         out: list[CodeEvolveProgram] = []
         for prep, evaluation in zip(prepared, evaluations):
             self._evaluations_done += 1
@@ -1351,6 +1358,15 @@ class CodeEvolveBackend(EvolutionBackend):
                 else "strict_ablation",
                 "accelerated_synthesis_top_k": self.services.candidate_evaluator.accelerated_synthesis_top_k
                 if self.services.candidate_evaluator
+                else None,
+                "total_worker_slots": self.context.metadata.get("total_worker_slots")
+                if isinstance(self.context.metadata, dict)
+                else None,
+                "max_active_problems": self.context.metadata.get("max_active_problems")
+                if isinstance(self.context.metadata, dict)
+                else None,
+                "max_workers_per_problem": self.context.metadata.get("max_workers_per_problem")
+                if isinstance(self.context.metadata, dict)
                 else None,
             },
             "stage_success_rates": {

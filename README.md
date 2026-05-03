@@ -21,8 +21,16 @@
 The `docs/` directory contains deeper dives:
 
 - `docs/implementation_details.md` – architecture and component responsibilities.
+- `docs/journal_features/overall_plan.md` – journal-extension hub based on the `qd-theory-grounded-descriptors` branch, with the QD feature roadmap, ETA checklist, implementation rules, and links to per-feature specs.
+- `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, long-budget classic-vs-QD runner, the formal `final_analysis/` bundle workflow, and the current archive-tuning-backed QD default recommendation for that workflow.
+- `scripts/report_design_space_analysis.py` – retrospective classical-vs-QD design-space analysis over completed runs, with per-problem generation-local vs accumulated PPA/feature plots, aggregate pooled views, candidate CSV export, and markdown indices.
+- `scripts/report_qd_feature_space.py` – deep post-run QD feature-space analysis over finished backend roots, including candidate tables, collapse diagnostics, regression summaries, and PCA/t-SNE plots.
+- `scripts/report_pareto_analysis.py` – per-problem Pareto-front figures plus aggregate hypervolume tables for backend comparisons.
+- `scripts/report_final_analysis_bundle.py` – one-command generator for `final_analysis/`, including backend comparison, hard-iteration analysis, Pareto analysis, design-space analysis, feature analysis, and evolutionary reports. The hard-iteration section reads accumulated end-of-run success rates plus nested final best-score fields from completed summaries.
+- `scripts/report_qd_problem_histograms.py` – per-problem CVT feature histograms over successful candidates, with final centroid overlays and cumulative generation-history views written back into each problem directory. The script scans only valid CVT problem directories and skips malformed/non-CVT artifact roots cleanly.
 - `docs/revolution_qd_map_elites_implementation_plan.md` – living QD/MAP-Elites implementation status, validation notes, and staged roadmap.
 - `docs/qd_map_elites_guide.md` – QD runtime guide, descriptor/tool mapping, and generation-by-generation trace.
+- `docs/qd_theory_grounded_descriptors_plan.md` – living implementation journal for the experimental theory-grounded QD descriptor family.
 - `docs/diff_mode.md` – diff-mode schema, policies, diagnostics, and benchmark workflow.
 - `docs/module_structure.md` – file-by-file breakdown of the codebase.
 - `docs/method_interaction_and_evolutionary_loop.md` – data flow through the evolutionary loop.
@@ -46,7 +54,7 @@ The `docs/` directory contains deeper dives:
      revolution-env
    ```
    The project is mounted at `/workspace` with all required EDA tools available.
-  
+
 (Note that CVDP evaluations that depend on Docker might cause issues with this setup.)
 
 ### Devcontainer + optional shared vLLM Compose
@@ -121,6 +129,18 @@ default `--diff_max_tokens 1024` was left unchanged.
 Use `run_backend.py` for backend ablations across REvolution, FunSearch, EoH,
 and CodeEvolve:
 
+Multi-problem runs now default to an elastic global worker pool. The primary
+controls are:
+
+- `--total_worker_slots <int>` for the total run-wide worker budget
+- `--max_active_problems <int>` to cap how many problems run at once
+- `--max_workers_per_problem <int>` to cap borrowed evaluation threads inside
+  one problem
+
+Older config files that still use `num_workers`, `candidate_workers`, or
+`multiprocessing_mode` are translated automatically with warnings. Those legacy
+names are no longer accepted on the CLI.
+
 The `revolution` backend now also exposes the experimental QD search-mode
 surface:
 
@@ -187,6 +207,21 @@ Current status on this feature branch:
   - exploratory built-in profiles:
     - `activity_size_3d`
     - `activity_control_3d`
+- The first theory-grounded graph/AST descriptor family is now also live:
+  - `rtl_cyclomatic_total_log`
+  - `rtl_cyclomatic_max_log`
+  - `rent_exponent`
+  - `rent_exponent_confidence_gated`
+  - `rent_confidence`
+  - `reconv_source_ratio`
+  - `reconv_sink_ratio`
+  - SCOAP controllability/observability histogram percentages
+  - `laplacian_lambda2`
+  - `laplacian_spectral_entropy`
+  - `scoap_signal_smoothness`
+  - experimental built-in profiles:
+    - `theory_grounded_full_20d`
+    - `theory_grounded_compact_8d`
 - When `--qd_grid_axes` is omitted, grid mode now correctly honors
   `--qd_descriptor_profile` instead of silently falling back to gain axes.
 - QD problem directories now emit `descriptor_health.json` and
@@ -229,6 +264,26 @@ Current status on this feature branch:
 - `scripts/run_backend_qd_smoke_vllm.sh` now provides a repeatable grid/CVT QD
   smoke harness with `128000`-token defaults and a `--dry-run` mode so smoke
   validation is not just a collection of ad hoc commands.
+- `scripts/run_qd_theory_grounded_smoke_vllm.sh` now provides a dedicated
+  theory-grounded CVT smoke/comparison harness so
+  `theory_grounded_full_20d` and `theory_grounded_compact_8d` can be checked
+  against structural controls without rebuilding the command matrix by hand.
+- `scripts/report_qd_rent_calibration.py` now provides a manifest-driven
+  offline calibration helper for comparing repo-native Rent extraction against
+  stored RentCon outputs.
+- `scripts/report_qd_rent_reference_validation.py` now stages passing
+  synthesized netlists from a prior run, generates placed DEF files with
+  OpenROAD, runs the native RentCon binary, and writes a final analysis bundle
+  with raw-versus-confidence-gated Rent accuracy/runtime deltas under `exp/`.
+  On this branch, sequential use is the recommended mode because the shipped
+  RentCon binary is unstable on many OpenROAD DEFs.
+- `scripts/run_qd_theory_followup_vllm.sh` now provides a bounded multi-problem
+  follow-up matrix for the theory profile versus the current CVT controls.
+- `scripts/run_qd_theory_followup_manifest.py` now provides a manifest-driven
+  broader follow-up runner for RTLLM / VerilogEval theory-vs-control matrices.
+- `scripts/report_qd_theory_followup.py` now summarizes those follow-up runs
+  and emits both a compact theory-profile candidate and a promotion-decision
+  status from descriptor-health plus control-delta data.
 - `scripts/run_evolution_smoke_vllm.sh` now also defaults to
   `--max_tokens 128000` and forwards `--diff_max_tokens 128000` so the shared
   reasoning-model vLLM endpoint is not exercised with an artificially tiny
@@ -245,6 +300,21 @@ Current status on this feature branch:
     `--qd_archive_type cvt --qd_descriptor_profile implemented_structural_fixed_5d`
   - for archive-health/coverage-oriented QD runs, start with
     `--qd_archive_type cvt --qd_descriptor_profile size_control_3d`
+  - for theory-grounded hard-subset follow-ups, start with
+    `--qd_archive_type cvt --qd_descriptor_profile theory_grounded_compact_8d`
+    under the tuned `16 / 4 / 0.25 / 2` CVT policy. It is the better current
+    theory-only profile for stability, synthesis throughput, and mean
+    hypervolume, but it still trails the structural controls on archive QD
+    score, elite quality, and pareto breadth.
+  - use `--qd_archive_type cvt --qd_descriptor_profile theory_grounded_full_20d`
+    when you want the richer theory-grounded descriptor family itself, not when
+    you want the strongest current score-oriented QD backend. This full
+    profile uses a confidence-gated Rent axis so low-sample or clamped Rent
+    fits shrink toward a neutral value instead of behaving like high-confidence
+    extremes.
+  - CVT runs that never reach their configured warmup target now finalize from
+    the available warmup buffer at run end instead of finishing with a
+    permanently uninitialized empty archive
   - if you need a grid control, start with
     `--qd_archive_type grid --qd_descriptor_profile implemented_structural_compact_3d`
   - keep classic `revolution` in comparisons because it is still the safest
@@ -293,7 +363,14 @@ python scripts/run_backend.py \
 
 `scripts/run_funsearch.py` is a convenience wrapper for
 `run_backend.py --backend funsearch`.
+It accepts the same shared elastic parallelism flags because it delegates
+directly to `run_backend.py`.
 Use `scripts/backend_comparison_report.py` to combine multiple backend experiment roots into one markdown comparison table.
+It now also emits multi-objective sections with per-problem Pareto counts and hypervolume aggregates.
+Use `scripts/report_final_analysis_bundle.py` when you want the documented post-run layout under `final_analysis/` without assembling each report manually.
+Use `scripts/report_design_space_analysis.py` when you want the new retrospective
+PPA-space and feature-space views directly, either on their own or before
+building the full bundle.
 Use `scripts/run_backend_ablation.py` to launch matched backend sets over shared
 benchmark suites and emit a comparison report automatically. The ablation runner
 now accepts `--backends revolution funsearch eoh codeevolve` and derives
@@ -319,6 +396,49 @@ python scripts/run_backend.py \
   --population_size 4 \
   --num_generations 2
 ```
+
+Example final-analysis bundle for a finished hard-subset run:
+
+```bash
+python scripts/report_final_analysis_bundle.py \
+  --run-root exp/hard_iteration_qd/<run_tag> \
+  --subset-config data/configs/hard_iteration_subset.yaml
+```
+
+Example standalone design-space analysis for the same run:
+
+```bash
+python scripts/report_design_space_analysis.py \
+  --run-root exp/hard_iteration_qd/<run_tag> \
+  --subset-config data/configs/hard_iteration_subset.yaml \
+  --output-dir exp/hard_iteration_qd/<run_tag>/design_space_analysis
+```
+
+Helpful options for the standalone report:
+
+- `python scripts/report_design_space_analysis.py --help` shows the full CLI,
+  including examples for `--run-root` and repeated
+  `--backend_run name=path` mappings.
+- `--feature-profile <name>` loads a descriptor profile from the shared config.
+- Repeated `--feature <metric>` values override `--feature-profile` and force a
+  fixed feature subset for all generated plots.
+- `--aggregate-ppa-basis normalized|raw|both` controls whether aggregate PPA
+  plots use normalized gains, raw units, or both. Raw pooled plots are
+  qualitative-only because units differ across problems.
+- Per-problem reports now start with a quick-reference section that repeats the
+  final accumulated PPA and feature plots at the top, followed by the full
+  generation-by-generation chronology below.
+- Feature-space reports now include both:
+  - all-backend embeddings on the report's selected feature subset
+  - classic-vs-one-QD pairwise embeddings on the QD backend's descriptor basis
+- Pairwise PCA and t-SNE coordinates stay fixed across local and accumulated
+  generation plots for the same problem/comparison, so the layout is directly
+  comparable across generations.
+- Every generated markdown index now includes a short table of contents for
+  faster navigation.
+- The script always writes `report.md`, `summary.json`,
+  `successful_candidates.csv`, and `recommended_profile.json` under the chosen
+  output directory.
 
 `run_backend.py` strict/accelerated evaluation controls:
 - `--evaluation_mode strict_ablation|search_accelerated`:
@@ -352,8 +472,12 @@ CodeEvolve controls:
 This script distributes problems across worker processes and executes the full evolutionary loop. Key arguments:
 
 - `--benchmarks` / `--problems`: control which suites and problem IDs run.
-- `--num_workers`: worker count (processes in `problem` mode, candidate-evaluation threads in `candidate` mode).
-- `--multiprocessing_mode`: `problem` (default) or `candidate` to switch between multi-problem and per-problem parallelism.
+- `--total_worker_slots`: total run-wide worker budget.
+- `--max_active_problems`: limit how many problems can run at once.
+- `--max_workers_per_problem`: cap how many evaluation threads one problem can
+  borrow when spare slots exist.
+- older config files that still use `num_workers` or `multiprocessing_mode`
+  are translated to the elastic controls with warnings
 - `--population_size`, `--num_generations`: evolutionary dynamics.
 - `--strategy_selection`: choose meta-strategy (`random`, `epsilon-greedy`, `ucb`).
 - `--generation_mode`: request whole-file or diff-based offspring generation. (`whole` mode works by generating entire snippets of code from scratch whereas `diff` mode is able to edit snippets of code with an editing format. Weaker models may have trouble adhering to `diff` mode formatting resulting errors and lower performance, `whole` mode is recommended for general purpose use.)
@@ -380,7 +504,7 @@ python scripts/run_evolution.py \
   --model_name meta-llama/llama-3.3-70b-instruct \
   --api_backend openrouter \
   --strategy_selection ucb \
-  --num_workers 32 \
+  --total_worker_slots 32 \
   --population_size 10 \
   --num_generations 20
 ```
@@ -393,7 +517,7 @@ python scripts/run_evolution.py \
   --problems Prob001_zero \
   --evaluation_mode gen0 \
   --population_size 16 \
-  --num_workers 1
+  --total_worker_slots 1
 ```
 
 Add `--gen0_evaluate_best` to run the same search but also execute the functional testbench, synthesis, and OpenROAD PPA flow for the top-ranked candidate. The resulting logs are collated under `Gen0/best_candidate/` alongside a metadata summary:
@@ -534,13 +658,18 @@ python scripts/run_backend_ablation.py \
   --synthesis_timeout_s 300 \
   --post_synthesis_simulation_timeout_s 300 \
   --seeds 42 43 \
-  --num_workers 8
+  --total_worker_slots 8
 ```
 
 The script enforces fairness checks before launching runs:
 - shared model/sampling/toolchain options must match across backends,
 - strict-ablation mode is required for comparison runs,
 - primary budget axis (`total_candidates_evaluated`) must match.
+
+The same elastic parallelism knobs are forwarded to every generated backend
+command, and fairness validation now also checks
+`--total_worker_slots`, `--max_active_problems`, and
+`--max_workers_per_problem`.
 
 Use `--dry_run` to validate and print all generated backend commands without executing live runs.
 
@@ -564,8 +693,8 @@ timeout 3600 python scripts/run_backend_ablation.py \
   --temperature 0.7 \
   --top_p 0.95 \
   --max_tokens 16384 \
-  --num_workers 1 \
-  --candidate_workers 0 \
+  --total_worker_slots 1 \
+  --max_workers_per_problem 1 \
   --save_root /tmp/prob144_conwaylife_timeout_smoke
 ```
 
@@ -601,7 +730,7 @@ python scripts/run_evolution.py \
   --benchmarks cvdp \
   --cvdp_categories cid002 \
   --model_name gpt-4.1-mini \
-  --num_workers 10
+  --total_worker_slots 10
 ```
 - Running individual problems: To run one or more specific CVDP problems by their ID, provide them using the `--problems` argument.
 ```bash
@@ -612,7 +741,7 @@ python scripts/run_evolution.py \
   --problems cvdp_copilot_64b66b_decoder_0001 cvdp_copilot_16qam_mapper_0001 \
   --cvdp_simulation_timeout_s 120 \
   --model_name gpt-4.1-mini \
-  --num_workers 2 \
+  --total_worker_slots 2 \
   --population_size 10 \
   --num_generations 5
 ```
