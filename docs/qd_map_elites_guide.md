@@ -193,6 +193,13 @@ synthesized netlist text dump.
 The first journal descriptor profile is selectable as
 `--qd_descriptor_profile journal_logic_ff_width_3d`.
 
+This Phase 01 profile is archive-only. It affects descriptor extraction,
+archive placement, descriptor-health artifacts, and reports, but it keeps the
+classic success-side generation policy so pass counts remain comparable with
+`search_mode=revolution`. Descriptor-targeted success operators such as `M-T`
+and `C-D` are still used by the older descriptor-guided QD profiles, not by
+`journal_logic_ff_width_3d`.
+
 It uses post-Yosys graph extraction for three behavior axes:
 
 - `logic_depth`

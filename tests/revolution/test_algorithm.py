@@ -653,6 +653,32 @@ def test_qd_engine_restores_qd_only_success_strategies(mocker, tmp_path):
     assert "C-D" in eng.success_strats
 
 
+def test_journal_qd_engine_uses_classic_generation_policy(mocker, tmp_path):
+    mocker.patch.object(
+        EoHEngine, "load_problem_description", return_value="PROBLEM DESC"
+    )
+    llm = MagicMock()
+    llm.model_name = "x"
+    synth = MagicMock()
+    synth.clk_period = 0.01
+    eng = QDEngine(
+        "bench",
+        "prob",
+        llm,
+        MagicMock(),
+        synth,
+        base_save_path=str(tmp_path),
+        qd_archive_type="cvt",
+        qd_num_cells=4,
+        qd_descriptor_profile="journal_logic_ff_width_3d",
+        qd_cvt_warmup_successes=1,
+    )
+
+    assert "M-T" not in eng.success_strats
+    assert "C-D" not in eng.success_strats
+    assert eng._phase_mode("refine") == "whole"
+
+
 def _make_parent(
     tmp_path: Path, status: str = "failed_functionality", with_ppa: bool = False
 ):

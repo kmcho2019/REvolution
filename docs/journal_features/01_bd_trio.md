@@ -147,6 +147,14 @@ required metric values instead of filling absent required descriptors with
 `0.0`. Failed and synthesis-skipped candidates remain non-archiveable without
 fabricated descriptor values.
 
+For Phase 01, `journal_logic_ff_width_3d` is an archive-only descriptor
+profile. It changes archive placement, archive events, descriptor health, and
+QD reports, but it does not switch the QD generator to descriptor-targeted
+success operators. The journal profile uses the same success-side generation
+operators and global generation mode as classic REvolution so candidate pass
+counts remain comparable; `M-T`, `C-D`, and per-phase QD diff defaults remain
+available to the older descriptor-guided QD profiles.
+
 Known limits for this phase:
 
 - `ff_depth` naturally collapses to `0` for combinational-only problems.
@@ -199,8 +207,23 @@ Phase 01 verification results on `2026-05-03`:
 - The bounded three-problem run had lower mean best score for
   `cvt_journal_bd` than classic (`0.0984` vs `0.1904`). Archive artifacts,
   descriptor health, and per-candidate payloads were present, so this looked
-  like small-sample search/PPA variance rather than a descriptor extraction
-  failure.
-- Pyright reported environment import-resolution noise for `numpy`, `scipy`,
-  and `yaml`; no implementation type errors were reported in the checked
-  targets.
+  like small-sample search/PPA variance rather than descriptor extraction
+  rejecting successful candidates. A follow-up inspection found that the first
+  implementation had enabled descriptor-targeted QD generation for this new
+  profile, including `M-T`, `C-D`, and problem-specific diff defaults, which
+  changed generated candidates in generation 2. The profile is now constrained
+  to archive-only behavior for Phase 01.
+- Additional regression coverage now checks that ordinary QD profiles still use
+  descriptor-targeted operators, while `journal_logic_ff_width_3d` uses the
+  classic success-side generation policy. The targeted regression command
+  passed with `97 passed`.
+- Ruff passed on touched runtime, script, and test files. Pyright passed with
+  `0 errors, 0 warnings, 0 informations` on the checked runtime targets.
+- Post-fix live smoke run root:
+  `exp/journal_bd_trio_live_smoke_postfix_20260503_170506`.
+  Both classic and `cvt_journal_bd` had `2/2` problems with at least one
+  synthesis-passing sample. Both modes had `6/16` synthesis-passing candidates;
+  functionality-passing candidates were `7/16` for classic and `6/16` for
+  `cvt_journal_bd`. The QD run produced six `qd_archive_event.json` files, all
+  with `logic_depth`, `ff_depth`, and `comb_width_log`, and no archive event
+  used `M-T` or `C-D`.
