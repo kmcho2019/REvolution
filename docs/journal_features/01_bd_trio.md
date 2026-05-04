@@ -265,6 +265,12 @@ Phase 01 verification results on `2026-05-03`:
   journal mode therefore had no design-level pass gap, a `1`-sample
   functionality gap, and a `14`-sample synthesis-success gap on this run
   (`49.0%` synthesis mean vs `49.9%` for classic).
+- A stricter loop-artifact check confirmed that those synthesis-passing counts
+  also passed PPA extraction inside the candidate-evaluation loop. Classic had
+  `779` `code_synthesis_report.metrics.json` files, `779` `.ppa` files, and
+  `779` finite loop PPA metric payloads. `cvt_journal_bd` had `765` of each.
+  All final-population PPA details were valid as well (`260/260` for classic
+  and `72/72` for `cvt_journal_bd`).
 - The full hard-subset quality result was mixed and slightly favored classic
   on aggregate best-score and Pareto hypervolume. The completed
   hard-iteration analysis reported mean best score `0.2649` for classic and
