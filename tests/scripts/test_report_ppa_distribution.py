@@ -137,3 +137,6 @@ def test_report_ppa_distribution_generates_outputs(tmp_path: Path) -> None:
     assert summary["reference_problem_count"] == 1
     assert summary["best_backend_problem_count"] == 2
     assert summary["figure_count"] == 12
+    report = (output_dir / "report.md").read_text(encoding="utf-8")
+    assert "filled score contours" in report
+    assert "projected Pareto-front lines" in report

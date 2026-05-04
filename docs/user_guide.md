@@ -587,8 +587,9 @@ VerilogEval-Spec-to-RTL iteration testing:
 - `scripts/report_pareto_analysis.py`: generate per-problem Pareto-front
   figures plus aggregate hypervolume/frontier tables for backend comparisons.
 - `scripts/report_ppa_distribution.py`: generate successful-candidate PPA
-  distribution figures, per-backend best-candidate tables, and
-  reference-normalized gain views for completed backend comparisons.
+  distribution figures with score contours, projected Pareto-front overlays,
+  per-backend best-candidate tables, and reference-normalized gain views for
+  completed backend comparisons.
 - `scripts/report_design_space_analysis.py`: generate retrospective
   design-space reports with generation-local and accumulated PPA plots,
   feature-space PCA/t-SNE views, aggregate pooled views, and a
@@ -724,6 +725,7 @@ The post-run analysis surfaces have different roles:
   - summarizes every successful candidate with extracted PPA, writes
     `ppa_candidates.csv`, `best_candidate_by_backend_problem.csv`, and
     absolute plus reference-normalized all-backend and classic-vs-QD figures
+    with score shading, contour lines, and projected Pareto-front overlays
 - Retrospective design-space analysis: `exp/hard_iteration_qd/<run_tag>/design_space_analysis/report.md` plus `design_space_analysis/summary.json`
   - emitted by `scripts/report_design_space_analysis.py`
   - summarizes per-problem generation-local vs accumulated PPA plots,
@@ -781,7 +783,7 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/run_hard_iteration_qd_vllm.sh`: run the `classic`, `grid_struct`, `cvt_struct`, and `cvt_size_control` long-budget matrix from the frozen hard-subset config.
 - `scripts/report_hard_iteration_analysis.py`: summarize hard-subset classic-vs-QD runs into a markdown report plus JSON recommendations.
 - `scripts/report_pareto_analysis.py`: summarize hard-subset backend runs into Pareto-front figures plus per-backend hypervolume and frontier-size tables.
-- `scripts/report_ppa_distribution.py`: summarize successful candidates into PPA-space scatter figures, best-candidate CSVs, and reference-normalized gain views.
+- `scripts/report_ppa_distribution.py`: summarize successful candidates into PPA-space scatter figures with score contours and projected Pareto fronts, best-candidate CSVs, and reference-normalized gain views.
 - `scripts/report_design_space_analysis.py`: summarize completed classic and QD runs into generation-local and accumulated PPA-space / feature-space figures, aggregate pooled views, markdown indices, and `successful_candidates.csv`.
 - `scripts/report_qd_feature_space.py`: summarize finished QD backend roots into successful-candidate tables, collapse diagnostics, regression outputs, and embedding plots.
 - `scripts/report_final_analysis_bundle.py`: generate the formal `final_analysis/` directory for a finished hard-subset run root.

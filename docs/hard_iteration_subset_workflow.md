@@ -148,7 +148,8 @@ reference-beating counts, projected pairwise-front figures for every problem,
 and static 3D front views for sequential problems.
 
 The PPA distribution layer adds successful-candidate PPA scatter figures,
-reference-normalized gain views, and `ppa_candidates.csv` /
+score-contour shading, projected Pareto-front overlays, reference-normalized
+gain views, and `ppa_candidates.csv` /
 `best_candidate_by_backend_problem.csv` exports for each backend comparison.
 
 ### 5. Generate the hard-subset analysis report manually

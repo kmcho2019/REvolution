@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # pyright: reportMissingImports=false, reportMissingModuleSource=false
-"""Generate successful-candidate PPA distribution figures."""
+"""Generate contour-shaded successful-candidate PPA distribution figures."""
 
 from __future__ import annotations
 
@@ -20,6 +20,7 @@ import matplotlib
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
+import matplotlib.tri as mtri
 import yaml
 from matplotlib.colors import Normalize
 
@@ -180,6 +181,68 @@ def _axis_limits(values: list[float], reference: float) -> tuple[float, float]:
     return low - pad, high + pad
 
 
+def _surface_points(
+    xs: list[float],
+    ys: list[float],
+    zs: list[float],
+) -> tuple[list[float], list[float], list[float]]:
+    grouped: dict[tuple[float, float], list[float]] = {}
+    for x_value, y_value, z_value in zip(xs, ys, zs, strict=True):
+        grouped.setdefault((round(x_value, 12), round(y_value, 12)), []).append(z_value)
+    out_xs: list[float] = []
+    out_ys: list[float] = []
+    out_zs: list[float] = []
+    for (x_value, y_value), values in grouped.items():
+        out_xs.append(x_value)
+        out_ys.append(y_value)
+        out_zs.append(sum(values) / len(values))
+    return out_xs, out_ys, out_zs
+
+
+def _collinear(xs: list[float], ys: list[float]) -> bool:
+    if len(xs) < 3:
+        return True
+    x0, y0 = xs[0], ys[0]
+    x1, y1 = xs[1], ys[1]
+    return all(
+        abs((x1 - x0) * (ys[index] - y0) - (xs[index] - x0) * (y1 - y0)) <= 1e-12
+        for index in range(2, len(xs))
+    )
+
+
+def _mask_flat_triangles(triangulation: mtri.Triangulation) -> None:
+    mask: list[bool] = []
+    for triangle in triangulation.triangles:
+        x0, x1, x2 = triangulation.x[triangle]
+        y0, y1, y2 = triangulation.y[triangle]
+        area_twice = abs((x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0))
+        mask.append(area_twice <= 1e-12)
+    if any(mask):
+        triangulation.set_mask(mask)
+
+
+def _front_points(xs: list[float], ys: list[float], view: PlotView) -> list[tuple[float, float]]:
+    points = list(dict.fromkeys(zip(xs, ys, strict=True)))
+    front: list[tuple[float, float]] = []
+    for x_value, y_value in points:
+        dominated = False
+        for other_x, other_y in points:
+            if view == "absolute":
+                no_worse = other_x <= x_value and other_y <= y_value
+                better = other_x < x_value or other_y < y_value
+            elif view == "gain":
+                no_worse = other_x >= x_value and other_y >= y_value
+                better = other_x > x_value or other_y > y_value
+            else:
+                raise AssertionError(f"unknown plot view: {view}")
+            if no_worse and better:
+                dominated = True
+                break
+        if not dominated:
+            front.append((x_value, y_value))
+    return sorted(front)
+
+
 def _layout(count: int) -> tuple[int, int]:
     if count <= 1:
         return 1, 1
@@ -284,14 +347,34 @@ def _plot_group(
         sharey=True,
     )
     axes_list = list(axes.flat) if hasattr(axes, "flat") else [axes]
-    scatter = None
+    mappable = None
     for axis, backend in zip(axes_list, methods):
         subset = rows_by_backend.get(backend, [])
         xs = [_metric(row, x_metric, view) for row in subset]
         ys = [_metric(row, y_metric, view) for row in subset]
         zs = [float(row.values["ppa_score"]) for row in subset]
+        surface_xs, surface_ys, surface_zs = _surface_points(xs, ys, zs)
+        if len(surface_xs) >= 3 and not _collinear(surface_xs, surface_ys):
+            triangulation = mtri.Triangulation(surface_xs, surface_ys)
+            _mask_flat_triangles(triangulation)
+            mappable = axis.tricontourf(
+                triangulation,
+                surface_zs,
+                levels=12,
+                cmap="viridis",
+                norm=norm,
+                alpha=0.42,
+            )
+            axis.tricontour(
+                triangulation,
+                surface_zs,
+                levels=8,
+                colors="white",
+                linewidths=0.45,
+                alpha=0.45,
+            )
         if xs:
-            scatter = axis.scatter(
+            mappable = axis.scatter(
                 xs,
                 ys,
                 c=zs,
@@ -302,6 +385,16 @@ def _plot_group(
                 linewidths=0.25,
                 alpha=0.9,
             )
+            front = _front_points(xs, ys, view)
+            if len(front) >= 2:
+                axis.plot(
+                    [point[0] for point in front],
+                    [point[1] for point in front],
+                    color="black",
+                    linewidth=1.8,
+                    alpha=0.85,
+                    zorder=5,
+                )
         axis.scatter([ref_x], [ref_y], marker="*", s=150, color="crimson", zorder=4)
         if view == "gain":
             axis.axhline(0.0, color="#777777", linewidth=0.8, linestyle="--")
@@ -316,9 +409,9 @@ def _plot_group(
         axis.axis("off")
     fig.suptitle(title, fontsize=13)
     fig.subplots_adjust(left=0.08, right=0.88, top=0.84, bottom=0.13, wspace=0.22, hspace=0.35)
-    if scatter is not None:
+    if mappable is not None:
         colorbar_axis = fig.add_axes([0.90, 0.16, 0.018, 0.66])
-        fig.colorbar(scatter, cax=colorbar_axis).set_label("PPA score")
+        fig.colorbar(mappable, cax=colorbar_axis).set_label("PPA score")
     output_dir.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_dir, dpi=220, bbox_inches="tight")
     plt.close(fig)
@@ -411,6 +504,10 @@ def _write_report(output_dir: Path, summary: dict[str, Any]) -> None:
         "- references: [reference_ppa_metrics.csv](data/reference_ppa_metrics.csv)",
         "- all-backend figures: [figures/all_backends](figures/all_backends)",
         "- classic-vs figures: [figures/classic_vs](figures/classic_vs)",
+        "",
+        "Figures use filled score contours when enough non-collinear candidates are "
+        "available, white contour lines for local score levels, black projected "
+        "Pareto-front lines, and a red star for the reference design.",
         "",
         "## Problems",
         "",

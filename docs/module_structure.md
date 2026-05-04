@@ -102,7 +102,7 @@
 - `run_one_shot.py`: CLI for n-shot baselines that reuse the evaluation stack without evolution.
 - `archive_baseline.py`: archive utility for run roots and ablation roots with manifest/index metadata, copied run configs, preserved QD sidecars/plots, and compressed raw artifacts.
 - `report_design_space_analysis.py`: retrospective classical-vs-QD design-space report generator with per-problem generation-local vs accumulated PPA plots, all-backend plus classic-vs-QD pairwise feature plots, quick-reference sections, stable markdown indices, and `successful_candidates.csv` / `recommended_profile.json` exports.
-- `report_ppa_distribution.py`: successful-candidate PPA distribution report generator with absolute PPA scatter views, reference-normalized gain views, best-candidate CSVs, and classic-vs-QD figure slices.
+- `report_ppa_distribution.py`: successful-candidate PPA distribution report generator with absolute PPA scatter views, score-contour shading, projected Pareto-front overlays, reference-normalized gain views, best-candidate CSVs, and classic-vs-QD figure slices.
 - `run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with hard-task selection, aggregate token/runtime comparisons, and diff failure catalog generation.
 - `run_diff_mode_diagnostics.py`: repeated real-LLM diff stress harness producing strict-parse/apply failure catalogs across curated edge cases, including worst-case failure sample retention.
 - `run_diff_prompt_optimization_loop.py`: prompt-candidate loop runner that calls `run_diff_prompt_suite.py` per candidate and ranks prompts by objective score.
