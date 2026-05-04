@@ -163,7 +163,29 @@ def _write_candidate_artifacts(
     (candidate_dir / "code_synthesis_report.ppa").write_text("placeholder\n", encoding="utf-8")
 
 
-def _write_qd_event(candidate_dir: Path, *, candidate_id: str, generation: int) -> None:
+def _write_qd_event(
+    candidate_dir: Path,
+    *,
+    candidate_id: str,
+    generation: int,
+    descriptor_profile: str | None = None,
+) -> None:
+    if descriptor_profile == "journal_logic_ff_width_3d":
+        descriptor_values = {
+            "logic_depth": 4.0 + generation,
+            "ff_depth": 1.0 + generation,
+            "comb_width_log": 2.0 + generation * 0.2,
+        }
+        graph_metrics = {**descriptor_values, "combinational_cells": 6.0 + generation}
+        archive_axes = ["logic_depth", "ff_depth", "comb_width_log"]
+    else:
+        descriptor_values = {
+            "seq_ratio": 0.3 + generation * 0.05,
+            "mux_ratio": 0.1 + generation * 0.02,
+            "cell_count_log": 3.0 + generation * 0.1,
+        }
+        graph_metrics = {}
+        archive_axes = ["seq_ratio", "mux_ratio", "cell_count_log"]
     payload = {
         "candidate_id": candidate_id,
         "generation": generation,
@@ -171,6 +193,7 @@ def _write_qd_event(candidate_dir: Path, *, candidate_id: str, generation: int) 
         "origin_pool": "success_pool",
         "generated_mode": "whole",
         "archive_type": "cvt",
+        "archive_axes": archive_axes,
         "quality_score": 0.3 + generation * 0.02,
         "score_components": {
             "g_P": 0.1 + generation * 0.01,
@@ -187,12 +210,9 @@ def _write_qd_event(candidate_dir: Path, *, candidate_id: str, generation: int) 
             "if_count": 1.0 + generation,
         },
         "dynamic_metrics": {},
+        "graph_metrics": graph_metrics,
         "physical_metrics": {"utilization": 0.7 + generation * 0.01},
-        "descriptor_values": {
-            "seq_ratio": 0.3 + generation * 0.05,
-            "mux_ratio": 0.1 + generation * 0.02,
-            "cell_count_log": 3.0 + generation * 0.1,
-        },
+        "descriptor_values": descriptor_values,
         "cell_id": f"{generation},0",
         "decision": "inserted",
         "inserted": True,
@@ -233,7 +253,12 @@ def _build_problem(
             circuit_type=circuit_type,
         )
         if include_qd_events:
-            _write_qd_event(candidate_dir, candidate_id=candidate_id, generation=generation)
+            _write_qd_event(
+                candidate_dir,
+                candidate_id=candidate_id,
+                generation=generation,
+                descriptor_profile=descriptor_profile,
+            )
             qd_candidate_ids.append(candidate_id)
         detail = _candidate_detail(
             candidate_id=candidate_id,
@@ -538,6 +563,74 @@ def test_report_design_space_analysis_pairwise_basis_uses_qd_profile(tmp_path: P
     )
     assert "explicit report feature subset" in report_text
     assert "implemented_structural_fixed_5d descriptor profile" in report_text
+
+
+def test_report_design_space_analysis_uses_cached_journal_qd_features(tmp_path: Path) -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    script_path = repo_root / "scripts" / "report_design_space_analysis.py"
+    subset_config = tmp_path / "subset.yaml"
+    _write_subset_config(
+        subset_config,
+        [{"benchmark": "RTLLM", "problem": "SeqProb"}],
+    )
+
+    classic_root = tmp_path / "classic"
+    qd_root = tmp_path / "cvt_journal_bd"
+    _build_problem(
+        classic_root,
+        benchmark="RTLLM",
+        problem="SeqProb",
+        circuit_type="sequential",
+        search_mode=None,
+        generations=[(0, 94.0, 0.92, 0.88), (1, 92.0, 0.9, 0.84), (2, 90.0, 0.88, 0.8)],
+        include_qd_events=False,
+    )
+    _build_problem(
+        qd_root,
+        benchmark="RTLLM",
+        problem="SeqProb",
+        circuit_type="sequential",
+        search_mode="revolution_qd",
+        generations=[(0, 90.0, 0.86, 0.82), (1, 88.0, 0.84, 0.8), (2, 86.0, 0.82, 0.78)],
+        include_qd_events=True,
+        descriptor_profile="journal_logic_ff_width_3d",
+        descriptor_axes=["logic_depth", "ff_depth", "comb_width_log"],
+    )
+
+    output_dir = tmp_path / "analysis"
+    env = os.environ.copy()
+    env["MPLBACKEND"] = "Agg"
+    result = subprocess.run(
+        [
+            str(Path(os.sys.executable)),
+            str(script_path),
+            "--subset-config",
+            str(subset_config),
+            "--backend_run",
+            f"classic={classic_root}",
+            "--backend_run",
+            f"cvt_journal_bd={qd_root}",
+            "--output-dir",
+            str(output_dir),
+            "--feature-method",
+            "pca",
+        ],
+        cwd=repo_root,
+        env=env,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    problem_dir = output_dir / "problems" / "RTLLM" / "SeqProb"
+    assert (problem_dir / "features_classic_vs_cvt_journal_bd_gen002_accumulated_pca.png").is_file()
+    report_text = (problem_dir / "report.md").read_text(encoding="utf-8")
+    assert "journal_logic_ff_width_3d descriptor profile" in report_text
+    assert "without offline classic graph recovery" in report_text
+    summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8"))
+    assert any("Skipped automatic graph recovery" in warning for warning in summary["warnings"])
+    assert any("cached only for the QD backend" in warning for warning in summary["warnings"])
 
 
 def test_report_design_space_analysis_handles_classical_only_small_sample(tmp_path: Path) -> None:

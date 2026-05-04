@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pyright: reportMissingImports=false, reportMissingModuleSource=false
 from __future__ import annotations
 
 import argparse
@@ -723,7 +724,13 @@ def _scatter_embeddings(
     return str(path)
 
 
-def _write_embeddings(path_root: Path, rows: list[dict[str, Any]], feature_cols: list[str]) -> dict[str, Any]:
+def _write_embeddings(
+    path_root: Path,
+    rows: list[dict[str, Any]],
+    feature_cols: list[str],
+    *,
+    include_tsne: bool,
+) -> dict[str, Any]:
     pca_payload = shared_feature_analysis.fit_embedding(rows, feature_cols, method="pca")
     pca_path: str | None = None
     if pca_payload.get("points"):
@@ -733,8 +740,13 @@ def _write_embeddings(path_root: Path, rows: list[dict[str, Any]], feature_cols:
             rows,
             title="PCA of successful designs",
         )
-    tsne_payload = shared_feature_analysis.fit_embedding(rows, feature_cols, method="tsne")
     tsne_path: str | None = None
+    tsne_note = "tsne_skipped"
+    if include_tsne:
+        tsne_payload = shared_feature_analysis.fit_embedding(rows, feature_cols, method="tsne")
+        tsne_note = tsne_payload.get("note")
+    else:
+        tsne_payload = {"points": []}
     if tsne_payload.get("points"):
         tsne_path = _scatter_embeddings(
             path_root / "tsne_fitness.png",
@@ -746,7 +758,7 @@ def _write_embeddings(path_root: Path, rows: list[dict[str, Any]], feature_cols:
         "usable_features": pca_payload.get("usable_features", []),
         "pca_plot": pca_path,
         "tsne_plot": tsne_path,
-        "note": tsne_payload.get("note"),
+        "note": tsne_note,
     }
 
 
@@ -783,6 +795,8 @@ def _per_backend_feature_summary(
     rows: list[dict[str, Any]],
     output_dir: Path,
     global_ranges: dict[str, float],
+    *,
+    include_tsne: bool,
 ) -> dict[str, Any]:
     feature_cols = _candidate_feature_columns(rows)
     stats = [_compute_feature_stats(rows, feature, global_ranges) for feature in feature_cols]
@@ -815,7 +829,7 @@ def _per_backend_feature_summary(
         feature_cols,
         title=f"{backend}: successful design feature histograms",
     )
-    embeddings = _write_embeddings(output_dir, rows, feature_cols)
+    embeddings = _write_embeddings(output_dir, rows, feature_cols, include_tsne=include_tsne)
     fitness_corr = _spearman_feature_map(rows, feature_cols, "quality_score")
     top_fitness = [
         {"feature": feature, "spearman": corr}
@@ -1046,6 +1060,7 @@ def generate_qd_feature_space_analysis(
     backend_roots: dict[str, Path],
     output_dir: Path,
     min_profile_features: int = 7,
+    include_tsne: bool = True,
 ) -> dict[str, Any]:
     subset_config = subset_config.resolve()
     output_dir = output_dir.resolve()
@@ -1136,7 +1151,13 @@ def generate_qd_feature_space_analysis(
             for feature in _candidate_feature_columns(backend_rows)
         ]
         backend_feature_stats[backend] = feature_stats
-        payload = _per_backend_feature_summary(backend, backend_rows, backend_output_dir, global_ranges)
+        payload = _per_backend_feature_summary(
+            backend,
+            backend_rows,
+            backend_output_dir,
+            global_ranges,
+            include_tsne=include_tsne,
+        )
         per_backend_payloads[backend] = payload
         _write_backend_report(backend_output_dir / "report.md", payload, feature_stats)
 

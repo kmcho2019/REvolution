@@ -286,10 +286,11 @@ Phase 01 verification results on `2026-05-03`:
   No archive event used descriptor-targeted generation strategies `M-T` or
   `C-D`. Descriptor health reported `ff_depth` as collapsed in `7/13`
   problems, which is expected for combinational or shallow temporal designs.
-- The full-run matrix report and final hard-iteration, Pareto, and
-  evolutionary subreports completed. The default design-space report path was
-  stopped because the t-SNE embedding step remained CPU-bound for more than
-  `20` minutes without new output on this full artifact tree. A PCA-only
-  design-space attempt was also stopped after more than `6` minutes without
-  output. This is a post-processing limitation and did not affect the completed
-  run artifacts, archive summaries, descriptor health, or pass-count analysis.
+- The full-run `final_analysis/` bundle now completes for this artifact tree.
+  The design-space section writes `1544` successful candidates, `13` problem
+  reports, and `13` classic-vs-`cvt_journal_bd` pairwise descriptor
+  comparisons. For graph-backed journal axes, design-space reporting uses the
+  cached QD archive descriptor values and records that classic rows are not
+  offline graph-recovered. The bundle uses PCA-only design-space and QD
+  feature-space embeddings so the formal full-run report completes reliably;
+  standalone scripts can still be used for t-SNE views when needed.

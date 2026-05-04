@@ -322,6 +322,10 @@ def test_report_final_analysis_bundle_generates_reference_layout(tmp_path: Path)
     assert "feature_analysis_report" in summary["sections"]
     assert "ppa_distribution_report" in summary["sections"]
     assert "design_space_analysis_report" in summary["sections"]
+    feature_summary = json.loads(
+        (output_dir / "feature_analysis" / "summary.json").read_text(encoding="utf-8")
+    )
+    assert feature_summary["qd_backends"]["cvt_struct"]["embeddings"]["note"] == "tsne_skipped"
     hard_iteration_summary = json.loads(
         (output_dir / "hard_iteration_analysis" / "summary.json").read_text(encoding="utf-8")
     )

@@ -191,6 +191,7 @@ def generate_final_analysis_bundle(
         subset_config=subset_config,
         backend_runs=resolved_backend_runs,
         output_dir=output_dir / "design_space_analysis",
+        feature_methods=["pca"],
         min_profile_features=min_profile_features,
     )
 
@@ -217,6 +218,7 @@ def generate_final_analysis_bundle(
             backend_roots={backend: root for backend, root in resolved_backend_runs},
             output_dir=output_dir / "feature_analysis",
             min_profile_features=min_profile_features,
+            include_tsne=False,
         )
         sections["feature_analysis_report"] = "feature_analysis/report.md"
         sections["feature_analysis_summary"] = "feature_analysis/summary.json"

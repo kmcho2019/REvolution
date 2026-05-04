@@ -680,6 +680,11 @@ Design-space analysis tips:
 - The design-space report now emits two feature-space families:
   - all-backend PCA/t-SNE plots on the report's selected feature subset
   - classic-vs-one-QD pairwise PCA/t-SNE plots on the QD backend's descriptor basis
+- Graph-backed descriptor profiles, including `journal_logic_ff_width_3d`, use
+  cached QD archive descriptor values in pairwise plots. The report does not
+  automatically run offline graph extraction for classic rows; when only the QD
+  side has cached descriptor values, the classic panel is left empty and the
+  warning is recorded in `summary.json`.
 - Within one problem/comparison/method, the PCA and t-SNE coordinates stay
   fixed across generation-local and accumulated plots so the same 2D feature
   space is reused over time.
@@ -709,6 +714,9 @@ The post-run analysis surfaces have different roles:
     - `feature_analysis/` when QD backends are present
     - `evolutionary_reports/`
   - writes top-level `report.md` and `summary.json` to index those sections
+  - uses PCA-only embedding views for the bundled design-space and QD
+    feature-space sections so full hard-subset bundles complete reliably; run
+    the standalone scripts when a t-SNE view is needed
 - Stage 4 final analysis: `exp/hard_iteration_qd/<run_tag>/analysis/report.md` plus `analysis/summary.json`
   - emitted by `scripts/report_hard_iteration_analysis.py`
   - summarizes aggregate backend performance, per-problem winners, and the recommendation fields:
@@ -732,6 +740,9 @@ The post-run analysis surfaces have different roles:
     all-backend plus classic-vs-QD pairwise feature-space PCA/t-SNE views,
     aggregate pooled plots, and a shared `successful_candidates.csv` export
     across classic and QD backends
+  - uses cached QD descriptor artifacts for graph-backed profiles and skips
+    automatic classic graph recovery, while still generating PPA and QD
+    descriptor-space plots
   - keeps pairwise feature coordinates fixed across generations for the same
     problem/comparison so the plotted 2D space stays comparable over time
 - Deep QD feature-space analysis: `exp/hard_iteration_qd/<run_tag>/feature_analysis/report.md` plus `feature_analysis/summary.json`

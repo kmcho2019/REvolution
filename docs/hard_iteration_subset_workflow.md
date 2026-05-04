@@ -143,6 +143,10 @@ under `exp/hard_iteration_qd/<run_tag>/final_analysis/` and generates:
 - `evolutionary_reports/`
 - top-level `report.md` and `summary.json`
 
+The bundle uses PCA-only embedding views for the design-space and QD
+feature-space sections so full hard-subset runs finish without blocking on
+t-SNE. Run the standalone analysis scripts when a t-SNE view is needed.
+
 The Pareto layer adds backend/problem hypervolume, Pareto-point counts,
 reference-beating counts, projected pairwise-front figures for every problem,
 and static 3D front views for sequential problems.
