@@ -586,6 +586,9 @@ VerilogEval-Spec-to-RTL iteration testing:
   nested final best-score fields when a top-level `best_score` is absent.
 - `scripts/report_pareto_analysis.py`: generate per-problem Pareto-front
   figures plus aggregate hypervolume/frontier tables for backend comparisons.
+- `scripts/report_ppa_distribution.py`: generate successful-candidate PPA
+  distribution figures, per-backend best-candidate tables, and
+  reference-normalized gain views for completed backend comparisons.
 - `scripts/report_design_space_analysis.py`: generate retrospective
   design-space reports with generation-local and accumulated PPA plots,
   feature-space PCA/t-SNE views, aggregate pooled views, and a
@@ -595,7 +598,7 @@ VerilogEval-Spec-to-RTL iteration testing:
   regression summaries, and PCA/t-SNE plots.
 - `scripts/report_final_analysis_bundle.py`: generate the formal
   `final_analysis/` bundle for a finished hard-subset run root, now including
-  `design_space_analysis/`.
+  `ppa_distribution/` and `design_space_analysis/`.
 - `scripts/report_qd_problem_histograms.py`: backfill per-problem CVT feature
   histograms with projected centroid/division overlays plus cumulative
   generation-history panels under each problem's `qd_feature_histograms/`
@@ -700,6 +703,7 @@ The post-run analysis surfaces have different roles:
     - `backend_comparison.md`
     - `hard_iteration_analysis/`
     - `pareto_analysis/`
+    - `ppa_distribution/`
     - `design_space_analysis/`
     - `feature_analysis/` when QD backends are present
     - `evolutionary_reports/`
@@ -715,6 +719,11 @@ The post-run analysis surfaces have different roles:
 - Pareto / multi-objective analysis: `exp/hard_iteration_qd/<run_tag>/pareto_analysis/report.md` plus `pareto_analysis/summary.json`
   - emitted by `scripts/report_pareto_analysis.py`
   - summarizes per-problem Pareto hypervolume, frontier size, reference-beating counts, and backend-comparison front figures
+- PPA distribution analysis: `exp/hard_iteration_qd/<run_tag>/ppa_distribution/report.md` plus `ppa_distribution/summary.json`
+  - emitted by `scripts/report_ppa_distribution.py`
+  - summarizes every successful candidate with extracted PPA, writes
+    `ppa_candidates.csv`, `best_candidate_by_backend_problem.csv`, and
+    absolute plus reference-normalized all-backend and classic-vs-QD figures
 - Retrospective design-space analysis: `exp/hard_iteration_qd/<run_tag>/design_space_analysis/report.md` plus `design_space_analysis/summary.json`
   - emitted by `scripts/report_design_space_analysis.py`
   - summarizes per-problem generation-local vs accumulated PPA plots,
@@ -772,6 +781,7 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/run_hard_iteration_qd_vllm.sh`: run the `classic`, `grid_struct`, `cvt_struct`, and `cvt_size_control` long-budget matrix from the frozen hard-subset config.
 - `scripts/report_hard_iteration_analysis.py`: summarize hard-subset classic-vs-QD runs into a markdown report plus JSON recommendations.
 - `scripts/report_pareto_analysis.py`: summarize hard-subset backend runs into Pareto-front figures plus per-backend hypervolume and frontier-size tables.
+- `scripts/report_ppa_distribution.py`: summarize successful candidates into PPA-space scatter figures, best-candidate CSVs, and reference-normalized gain views.
 - `scripts/report_design_space_analysis.py`: summarize completed classic and QD runs into generation-local and accumulated PPA-space / feature-space figures, aggregate pooled views, markdown indices, and `successful_candidates.csv`.
 - `scripts/report_qd_feature_space.py`: summarize finished QD backend roots into successful-candidate tables, collapse diagnostics, regression outputs, and embedding plots.
 - `scripts/report_final_analysis_bundle.py`: generate the formal `final_analysis/` directory for a finished hard-subset run root.

@@ -295,6 +295,8 @@ def test_report_final_analysis_bundle_generates_reference_layout(tmp_path: Path)
     assert (output_dir / "feature_analysis" / "report.md").is_file()
     assert (output_dir / "pareto_analysis" / "report.md").is_file()
     assert (output_dir / "evolutionary_reports" / "report.md").is_file()
+    assert (output_dir / "ppa_distribution" / "report.md").is_file()
+    assert (output_dir / "ppa_distribution" / "summary.json").is_file()
     assert (output_dir / "design_space_analysis" / "report.md").is_file()
     assert (output_dir / "design_space_analysis" / "summary.json").is_file()
     assert (output_dir / "design_space_analysis" / "successful_candidates.csv").is_file()
@@ -318,6 +320,7 @@ def test_report_final_analysis_bundle_generates_reference_layout(tmp_path: Path)
     assert summary["recommendations"]["multi_objective"] == "cvt_struct"
     assert summary["recommendations"]["pareto_overall"] == "cvt_struct"
     assert "feature_analysis_report" in summary["sections"]
+    assert "ppa_distribution_report" in summary["sections"]
     assert "design_space_analysis_report" in summary["sections"]
     hard_iteration_summary = json.loads(
         (output_dir / "hard_iteration_analysis" / "summary.json").read_text(encoding="utf-8")
@@ -441,6 +444,7 @@ def test_report_final_analysis_bundle_accepts_explicit_backend_runs(tmp_path: Pa
     assert summary["run_root"] is None
     assert [item["backend"] for item in summary["backend_runs"]] == ["classic", "cvt_struct"]
     assert (output_dir / "feature_analysis" / "summary.json").is_file()
+    assert (output_dir / "ppa_distribution" / "summary.json").is_file()
     assert (output_dir / "design_space_analysis" / "summary.json").is_file()
     assert (output_dir / "report.md").is_file()
     design_space_summary = json.loads(
