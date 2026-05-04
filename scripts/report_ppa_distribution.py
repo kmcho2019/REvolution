@@ -391,9 +391,9 @@ def _plot_group(
                 axis.plot(
                     [point[0] for point in front],
                     [point[1] for point in front],
-                    color="#444444",
-                    linewidth=1.1,
-                    alpha=0.55,
+                    color="#333333",
+                    linewidth=1.35,
+                    alpha=0.68,
                     zorder=3,
                 )
         axis.scatter([ref_x], [ref_y], marker="*", s=150, color="crimson", zorder=5)
