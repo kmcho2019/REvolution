@@ -384,18 +384,19 @@ def _plot_group(
                 edgecolors="black",
                 linewidths=0.25,
                 alpha=0.9,
+                zorder=4,
             )
             front = _front_points(xs, ys, view)
             if len(front) >= 2:
                 axis.plot(
                     [point[0] for point in front],
                     [point[1] for point in front],
-                    color="black",
-                    linewidth=1.8,
-                    alpha=0.85,
-                    zorder=5,
+                    color="#444444",
+                    linewidth=1.1,
+                    alpha=0.55,
+                    zorder=3,
                 )
-        axis.scatter([ref_x], [ref_y], marker="*", s=150, color="crimson", zorder=4)
+        axis.scatter([ref_x], [ref_y], marker="*", s=150, color="crimson", zorder=5)
         if view == "gain":
             axis.axhline(0.0, color="#777777", linewidth=0.8, linestyle="--")
             axis.axvline(0.0, color="#777777", linewidth=0.8, linestyle="--")
@@ -506,7 +507,7 @@ def _write_report(output_dir: Path, summary: dict[str, Any]) -> None:
         "- classic-vs figures: [figures/classic_vs](figures/classic_vs)",
         "",
         "Figures use filled score contours when enough non-collinear candidates are "
-        "available, white contour lines for local score levels, black projected "
+        "available, white contour lines for local score levels, subtle projected "
         "Pareto-front lines, and a red star for the reference design.",
         "",
         "## Problems",
