@@ -11,8 +11,15 @@ from collections import defaultdict
 from collections import deque
 from typing import Any, Literal, cast
 
-from revolution.algorithm import EoHEngine, EvolStrategyMethodFail, EvolStrategyMethodSuccess, Heuristic
-from revolution.algorithm import QD_SUCCESS_STRATEGIES
+from revolution.algorithm import (
+    CLASSIC_FAIL_STRATEGIES,
+    CLASSIC_SUCCESS_STRATEGIES,
+    EoHEngine,
+    EvolStrategyMethodFail,
+    EvolStrategyMethodSuccess,
+    Heuristic,
+    QD_SUCCESS_STRATEGIES,
+)
 from revolution.prompt_store import safe_format
 from revolution.qd.archive import CVTArchive, GridArchive, GridAxisSpec
 from revolution.qd.artifacts import (
@@ -33,6 +40,9 @@ from revolution.qd.descriptors import (
 from revolution.qd.scoring import compute_ppa_gains
 from revolution.qd.scheduler import split_qd_budget
 from revolution.qd.types import QDArchiveInsertResult
+
+
+_ARCHIVE_ONLY_DESCRIPTOR_PROFILES = {"journal_logic_ff_width_3d"}
 
 
 class QDEngine(EoHEngine):
@@ -59,11 +69,6 @@ class QDEngine(EoHEngine):
         **kwargs: Any,
     ) -> None:
         super().__init__(*args, **kwargs)
-        self.success_strats = list(QD_SUCCESS_STRATEGIES)
-        self.success_strategy_stats = {
-            strategy: {"count": 0, "value": 0.0}
-            for strategy in self.success_strats
-        }
         self.qd_archive_type = qd_archive_type
         self.qd_num_cells = max(1, int(qd_num_cells))
         self.qd_fill_target_fraction = float(qd_fill_target_fraction)
@@ -79,10 +84,23 @@ class QDEngine(EoHEngine):
         self.qd_backfill_generation_mode = qd_backfill_generation_mode
         self.qd_refine_generation_mode = qd_refine_generation_mode
         self.qd_crossover_generation_mode = qd_crossover_generation_mode
+        self.success_strats = list(self._qd_success_strategies())
+        self.success_strategy_stats = {
+            strategy: {"count": 0, "value": 0.0}
+            for strategy in self.success_strats
+        }
         self.success_archive = self._build_archive()
         self.success_reservoir: dict[str, deque[Heuristic]] = {}
         self.qd_generation_history: list[dict[str, Any]] = []
         self.qd_descriptor_observations: list[dict[str, Any]] = []
+
+    def _uses_descriptor_guided_generation(self) -> bool:
+        return self.qd_descriptor_profile not in _ARCHIVE_ONLY_DESCRIPTOR_PROFILES
+
+    def _qd_success_strategies(self) -> tuple[EvolStrategyMethodSuccess, ...]:
+        if self._uses_descriptor_guided_generation():
+            return QD_SUCCESS_STRATEGIES
+        return CLASSIC_SUCCESS_STRATEGIES
 
     def _resolve_grid_axes(
         self,
@@ -165,6 +183,8 @@ class QDEngine(EoHEngine):
         )
 
     def _phase_mode(self, phase: str) -> Literal["whole", "diff"]:
+        if not self._uses_descriptor_guided_generation():
+            return cast(Literal["whole", "diff"], self.generation_mode)
         override = {
             "fail": self.qd_fail_generation_mode,
             "seed": self.qd_seed_generation_mode,
@@ -202,7 +222,7 @@ class QDEngine(EoHEngine):
         descriptor_metrics.update(getattr(candidate, "descriptor_values", {}) or {})
         descriptor_metrics.update(gains)
         descriptor_values = extract_descriptor_values(descriptor_metrics, axes)
-        return tuple(float(descriptor_values.get(axis, 0.0)) for axis in axes)
+        return tuple(float(descriptor_values[axis]) for axis in axes)
 
     def _rebuild_archive_from_success_pool(self) -> None:
         self.success_archive = self._build_archive()
@@ -929,7 +949,11 @@ class QDEngine(EoHEngine):
         request_meta: list[dict[str, Any]] = []
 
         if self.fail_pool and budget.fail_budget > 0:
-            fail_strategies: list[EvolStrategyMethodFail] = ["M-F", "M-E"]
+            fail_strategies: list[EvolStrategyMethodFail] = (
+                list(CLASSIC_FAIL_STRATEGIES)
+                if not self._uses_descriptor_guided_generation()
+                else ["M-F", "M-E"]
+            )
             fail_selected: set[EvolStrategyMethodFail] = set()
             for _ in range(budget.fail_budget):
                 strat_name, prob_dist = self._select_strategy("fail", fail_strategies, fail_selected)
@@ -963,7 +987,29 @@ class QDEngine(EoHEngine):
         success_selected: set[EvolStrategyMethodSuccess] = set()
         success_total_requests = budget.backfill_budget + budget.refine_budget
         for idx in range(success_total_requests):
-            if budget.phase == "fill" or idx < budget.backfill_budget:
+            if not self._uses_descriptor_guided_generation():
+                available = list(CLASSIC_SUCCESS_STRATEGIES)
+                if len(self.success_pool) < 2 and "C-F" in available:
+                    available.remove("C-F")
+                selected_name, prob_dist = self._select_strategy(
+                    "success",
+                    available,
+                    success_selected,
+                )
+                if selected_name is None or prob_dist is None:
+                    continue
+                strat_name = selected_name
+                success_selected.add(strat_name)
+                parents = self._sample_success_parents(2 if strat_name == "C-F" else 1)
+                if not parents:
+                    break
+                mode = self._phase_mode("refine")
+                for key, value in prob_dist.items():
+                    strategy_avg_selection_probabilities["success_pool"][key] = (
+                        strategy_avg_selection_probabilities["success_pool"].get(key, 0.0)
+                        + value
+                    )
+            elif budget.phase == "fill" or idx < budget.backfill_budget:
                 available: list[EvolStrategyMethodSuccess] = ["M-T", "M-E"]
                 if len(self.success_pool) > 1:
                     available.append("C-D")

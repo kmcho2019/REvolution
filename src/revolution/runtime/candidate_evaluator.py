@@ -219,6 +219,22 @@ class CandidateEvaluator:
             "ppa": False,
         }
 
+    def _extract_descriptor_values(self, result: CandidateEvaluation) -> dict[str, float]:
+        descriptor_metrics: dict[str, float] = {}
+        descriptor_metrics.update(result.structural_metrics)
+        descriptor_metrics.update(result.rtl_metrics)
+        descriptor_metrics.update(result.dynamic_metrics)
+        descriptor_metrics.update(result.graph_metrics)
+        descriptor_metrics.update(result.physical_metrics)
+        descriptor_metrics.update(
+            {
+                axis: float(result.score_components[axis])
+                for axis in ("g_P", "g_A", "g_T")
+                if axis in result.score_components
+            }
+        )
+        return extract_descriptor_values(descriptor_metrics, self.descriptor_axes)
+
     def _enrich_result(
         self,
         item: CandidateWorkItem,
@@ -261,28 +277,12 @@ class CandidateEvaluator:
         ):
             result.graph_metrics = self._extract_graph_metrics(item.code_file_path)
 
-        if not result.descriptor_values and self.descriptor_axes:
-            descriptor_metrics: dict[str, float] = {}
-            descriptor_metrics.update(result.structural_metrics)
-            descriptor_metrics.update(result.rtl_metrics)
-            descriptor_metrics.update(result.dynamic_metrics)
-            descriptor_metrics.update(result.graph_metrics)
-            descriptor_metrics.update(result.physical_metrics)
-            descriptor_metrics.update(
-                {
-                    axis: float(result.score_components.get(axis, 0.0))
-                    for axis in ("g_P", "g_A", "g_T")
-                }
-            )
-            result.descriptor_values = extract_descriptor_values(
-                descriptor_metrics,
-                self.descriptor_axes,
-            )
-
         result.archiveable = bool(
             result.status == CandidateStatus.SUCCESS.value
             and (self.quality_mode != "ppa" or result.ppa_success)
         )
+        if result.archiveable and not result.descriptor_values and self.descriptor_axes:
+            result.descriptor_values = self._extract_descriptor_values(result)
         if not result.archiveable:
             if result.status != CandidateStatus.SUCCESS.value:
                 result.archive_rejection_reason = result.status
@@ -492,19 +492,6 @@ class CandidateEvaluator:
                 quality_score=score,
                 structural_metrics=structural_metrics,
                 physical_metrics=physical_metrics,
-                descriptor_values=extract_descriptor_values(
-                    {
-                        **structural_metrics,
-                        **rtl_metrics,
-                        **dynamic_metrics,
-                        **graph_metrics,
-                        **physical_metrics,
-                        "g_P": float(components.get("g_P", 0.0)),
-                        "g_A": float(components.get("g_A", 0.0)),
-                        "g_T": float(components.get("g_T", 0.0)),
-                    },
-                    self.descriptor_axes,
-                ),
                 rtl_metrics=rtl_metrics,
                 dynamic_metrics=dynamic_metrics,
                 graph_metrics=graph_metrics,

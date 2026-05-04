@@ -81,6 +81,7 @@ def test_build_payload_projects_theory_profile(tmp_path, monkeypatch):
         "scripts.qd_theory_descriptor_probe.GraphDescriptorEvaluator.extract_metrics",
         lambda self, **kwargs: {
             "rent_exponent": 0.42,
+            "rent_exponent_confidence_gated": 0.42,
             "reconv_source_ratio": 0.0,
             "reconv_sink_ratio": 0.0,
             "scoap_cc0_bin_0_pct": 1.0,
@@ -118,3 +119,41 @@ def test_build_payload_projects_theory_profile(tmp_path, monkeypatch):
     assert payload["graph_metrics"]["rent_exponent"] == 0.42
     assert payload["descriptor_values"]["rtl_cyclomatic_total_log"] > 0.0
     assert payload["descriptor_values"]["laplacian_lambda2"] == 0.2
+
+
+def test_build_payload_projects_journal_profile(tmp_path, monkeypatch):
+    rtl_path = tmp_path / "demo.sv"
+    rtl_path.write_text("module demo(input logic a, output logic y); assign y = a; endmodule\n")
+
+    monkeypatch.setattr(
+        "scripts.qd_theory_descriptor_probe.RTLDescriptorEvaluator.extract_metrics",
+        lambda self, **kwargs: {},
+    )
+    monkeypatch.setattr(
+        "scripts.qd_theory_descriptor_probe.GraphDescriptorEvaluator.extract_metrics",
+        lambda self, **kwargs: {
+            "logic_depth": 2.0,
+            "ff_depth": 1.0,
+            "comb_width_log": 1.5,
+            "combinational_cells": 4.0,
+        },
+    )
+
+    payload = build_payload(
+        Namespace(
+            rtl=str(rtl_path),
+            top="demo",
+            profile="journal_logic_ff_width_3d",
+            archive_type="cvt",
+            circuit_type="sequential",
+            rentcon_reference=[],
+        )
+    )
+
+    assert payload["profile"] == "journal_logic_ff_width_3d"
+    assert payload["descriptor_values"] == {
+        "logic_depth": 2.0,
+        "ff_depth": 1.0,
+        "comb_width_log": 1.5,
+    }
+    assert payload["graph_metrics"]["combinational_cells"] == 4.0

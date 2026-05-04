@@ -138,13 +138,23 @@ under `exp/hard_iteration_qd/<run_tag>/final_analysis/` and generates:
 - `backend_comparison.md`
 - `hard_iteration_analysis/`
 - `pareto_analysis/`
+- `ppa_distribution/`
 - `feature_analysis/` when QD backends are present
 - `evolutionary_reports/`
 - top-level `report.md` and `summary.json`
 
+The bundle uses PCA-only embedding views for the design-space and QD
+feature-space sections so full hard-subset runs finish without blocking on
+t-SNE. Run the standalone analysis scripts when a t-SNE view is needed.
+
 The Pareto layer adds backend/problem hypervolume, Pareto-point counts,
 reference-beating counts, projected pairwise-front figures for every problem,
 and static 3D front views for sequential problems.
+
+The PPA distribution layer adds successful-candidate PPA scatter figures,
+score-contour shading, projected Pareto-front overlays, reference-normalized
+gain views, and `ppa_candidates.csv` /
+`best_candidate_by_backend_problem.csv` exports for each backend comparison.
 
 ### 5. Generate the hard-subset analysis report manually
 
@@ -247,6 +257,7 @@ sparse.
   - `exp/hard_iteration_qd/<timestamp>/final_analysis/backend_comparison.md`
   - `exp/hard_iteration_qd/<timestamp>/final_analysis/hard_iteration_analysis/report.md`
   - `exp/hard_iteration_qd/<timestamp>/final_analysis/pareto_analysis/report.md`
+  - `exp/hard_iteration_qd/<timestamp>/final_analysis/ppa_distribution/report.md`
 - deep QD feature-space outputs:
   - `exp/hard_iteration_qd/<timestamp>/feature_analysis/report.md`
   - `exp/hard_iteration_qd/<timestamp>/feature_analysis/summary.json`

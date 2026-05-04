@@ -42,7 +42,7 @@ def _engine(
         "revolution.algorithm.EoHEngine.load_problem_description",
         lambda self: "desc",
     )
-    return QDEngine(
+    engine = QDEngine(
         benchmark_name="Bench",
         problem_name="Prob",
         llm_interface=_DummyLLM(),
@@ -56,6 +56,8 @@ def _engine(
         qd_grid_axes=("g_A", "g_T"),
         problem_spec=problem_spec,
     )
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+    return engine
 
 
 def test_qd_engine_phase_mode_defaults_follow_refine_diff_only(tmp_path, monkeypatch):
@@ -767,6 +769,76 @@ def test_qd_engine_fill_phase_can_select_targeted_operator(tmp_path, monkeypatch
     assert result is None
     assert captured_requests
     assert "target_descriptor_mutation" in captured_requests[0]["prompt"]
+
+
+def test_journal_qd_fill_phase_uses_archive_only_success_operators(
+    tmp_path,
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="cvt",
+        qd_num_cells=8,
+        qd_descriptor_profile="journal_logic_ff_width_3d",
+        qd_cvt_warmup_successes=1,
+    )
+    engine.logger = SimpleNamespace(
+        log_generation=lambda *args, **kwargs: None,
+        log_dir=str(tmp_path / "artifacts"),
+    )
+    engine.current_generation = 0
+    engine.num_offspring_lambda = 4
+    engine.fail_pool = []
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+    parent = Heuristic(
+        "elite",
+        "module m; endmodule",
+        "",
+        score=0.6,
+        generation=0,
+        status="success",
+    )
+    parent.ppa_success = True
+    parent.code_file_path = str(tmp_path / "elite.sv")
+    parent.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    parent.graph_metrics = {
+        "logic_depth": 2.0,
+        "ff_depth": 1.0,
+        "comb_width_log": 1.5,
+    }
+    Path(parent.code_file_path).write_text(parent.code, encoding="utf-8")
+    engine.success_pool = [parent]
+    engine._rebuild_archive_from_success_pool()
+    assert engine.success_archive.occupied_count() == 1
+
+    success_requests = []
+
+    def _select_strategy(pool_type, available_strategies, selected_this_gen=None):
+        if pool_type == "success":
+            success_requests.append(tuple(available_strategies))
+        return available_strategies[0], {
+            strategy: (1.0 if strategy == available_strategies[0] else 0.0)
+            for strategy in available_strategies
+        }
+
+    monkeypatch.setattr(engine, "_select_strategy", _select_strategy)
+    monkeypatch.setattr(engine, "_materialize_offspring", lambda *_args: [])
+
+    result = engine.evolve_one_generation()
+
+    assert result == "STOP"
+    assert success_requests
+    assert all("M-T" not in request for request in success_requests)
+    assert all("C-D" not in request for request in success_requests)
 
 
 def test_qd_engine_run_returns_failed_when_archive_stays_empty(tmp_path, monkeypatch):

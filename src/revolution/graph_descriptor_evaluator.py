@@ -123,11 +123,12 @@ class GraphDescriptorEvaluator:
         if payload is None:
             return {}
         graph = self._build_graph_model(payload, top_module_name=top_module_name)
+        journal_metrics = self._extract_journal_bd_metrics(graph)
         if not graph.partition_nodes:
-            return {}
+            return journal_metrics
 
         cc0, cc1, co = self._compute_scoap_scores(graph)
-        metrics: dict[str, float] = {}
+        metrics: dict[str, float] = dict(journal_metrics)
         metrics.update(self._extract_rent_metrics(graph))
         metrics.update(self._extract_reconvergence_metrics(graph))
         metrics.update(self._extract_scoap_histogram_metrics(graph, cc0=cc0, cc1=cc1, co=co))
@@ -396,6 +397,206 @@ class GraphDescriptorEvaluator:
 
     def _is_sequential_control_port(self, port_name: str) -> bool:
         return port_name.upper() in _SEQUENTIAL_CONTROL_PORTS
+
+    def _extract_journal_bd_metrics(self, graph: GraphModel) -> dict[str, float]:
+        combinational_cells = sum(1 for cell in graph.cells.values() if not cell.is_sequential)
+        return {
+            "logic_depth": float(self._extract_logic_depth(graph)),
+            "ff_depth": float(self._extract_ff_depth(graph)),
+            "comb_width_log": math.log1p(float(combinational_cells)),
+            "combinational_cells": float(combinational_cells),
+        }
+
+    def _extract_logic_depth(self, graph: GraphModel) -> int:
+        """Count non-buffer combinational cells between PI/FF-Q and PO/FF-D boundaries."""
+
+        memo: dict[int, int] = {}
+
+        def bit_depth(bit: int, visiting: set[int]) -> int:
+            if bit in graph.module_input_bits or bit in graph.sequential_output_bits:
+                return 0
+            cached = memo.get(bit)
+            if cached is not None:
+                return cached
+            if bit in visiting:
+                return 0
+            driver_name = graph.bit_output_cell.get(bit)
+            if driver_name is None:
+                return 0
+            cell = graph.cells[driver_name]
+            if cell.is_sequential:
+                return 0
+            input_bits = self._cell_input_bits(cell)
+            if not input_bits:
+                return 0
+            input_depth = max(bit_depth(input_bit, visiting | {bit}) for input_bit in input_bits)
+            depth = input_depth if self._is_buffer_cell(cell.cell_type) else input_depth + 1
+            memo[bit] = depth
+            return depth
+
+        endpoints = graph.module_output_bits | graph.sequential_input_bits
+        return max((bit_depth(bit, set()) for bit in endpoints), default=0)
+
+    def _extract_ff_depth(self, graph: GraphModel) -> int:
+        """Count FF boundaries on PI-to-PO dependency paths without unrolling feedback cycles."""
+
+        pi_node = "__PI__"
+        po_node = "__PO__"
+        edges: dict[str, set[str]] = {pi_node: set(), po_node: set()}
+        source_memo: dict[int, frozenset[str]] = {}
+
+        def bit_sources(bit: int, visiting: set[int]) -> set[str]:
+            if bit in graph.module_input_bits:
+                return {pi_node}
+            cached = source_memo.get(bit)
+            if cached is not None:
+                return set(cached)
+            if bit in visiting:
+                return set()
+            driver_name = graph.bit_output_cell.get(bit)
+            if driver_name is None:
+                return set()
+            cell = graph.cells[driver_name]
+            if cell.is_sequential:
+                return {driver_name}
+            sources: set[str] = set()
+            for input_bit in self._cell_input_bits(cell):
+                sources.update(bit_sources(input_bit, visiting | {bit}))
+            source_memo[bit] = frozenset(sources)
+            return sources
+
+        for cell in graph.cells.values():
+            if not cell.is_sequential:
+                continue
+            edges.setdefault(cell.name, set())
+            for bit in self._sequential_data_input_bits(cell):
+                for source in bit_sources(bit, set()):
+                    edges.setdefault(source, set()).add(cell.name)
+
+        for bit in graph.module_output_bits:
+            for source in bit_sources(bit, set()):
+                edges.setdefault(source, set()).add(po_node)
+
+        return self._longest_ff_depth(edges, pi_node=pi_node, po_node=po_node)
+
+    def _longest_ff_depth(
+        self,
+        edges: dict[str, set[str]],
+        *,
+        pi_node: str,
+        po_node: str,
+    ) -> int:
+        nodes = set(edges)
+        for sinks in edges.values():
+            nodes.update(sinks)
+        if pi_node not in nodes or po_node not in nodes:
+            return 0
+
+        components = self._strongly_connected_components(nodes, edges)
+        component_by_node = {
+            node: idx for idx, component in enumerate(components) for node in component
+        }
+        weights = [
+            sum(1 for node in component if node not in {pi_node, po_node})
+            for component in components
+        ]
+        dag_edges: dict[int, set[int]] = {idx: set() for idx in range(len(components))}
+        indegree = {idx: 0 for idx in range(len(components))}
+        for source, sinks in edges.items():
+            source_idx = component_by_node[source]
+            for sink in sinks:
+                sink_idx = component_by_node[sink]
+                if source_idx == sink_idx or sink_idx in dag_edges[source_idx]:
+                    continue
+                dag_edges[source_idx].add(sink_idx)
+                indegree[sink_idx] += 1
+
+        ready = sorted(idx for idx, count in indegree.items() if count == 0)
+        order: list[int] = []
+        while ready:
+            node = ready.pop(0)
+            order.append(node)
+            for sink in sorted(dag_edges[node]):
+                indegree[sink] -= 1
+                if indegree[sink] == 0:
+                    ready.append(sink)
+            ready.sort()
+
+        pi_idx = component_by_node[pi_node]
+        po_idx = component_by_node[po_node]
+        distances = {pi_idx: 0}
+        for source in order:
+            if source not in distances:
+                continue
+            for sink in dag_edges[source]:
+                candidate = distances[source] + weights[sink]
+                distances[sink] = max(distances.get(sink, 0), candidate)
+        return max(distances.get(po_idx, 0), 0)
+
+    def _strongly_connected_components(
+        self,
+        nodes: set[str],
+        edges: dict[str, set[str]],
+    ) -> list[list[str]]:
+        index = 0
+        stack: list[str] = []
+        on_stack: set[str] = set()
+        indices: dict[str, int] = {}
+        lowlinks: dict[str, int] = {}
+        components: list[list[str]] = []
+
+        def visit(node: str) -> None:
+            nonlocal index
+            indices[node] = index
+            lowlinks[node] = index
+            index += 1
+            stack.append(node)
+            on_stack.add(node)
+
+            for sink in sorted(edges.get(node, set())):
+                if sink not in indices:
+                    visit(sink)
+                    lowlinks[node] = min(lowlinks[node], lowlinks[sink])
+                elif sink in on_stack:
+                    lowlinks[node] = min(lowlinks[node], indices[sink])
+
+            if lowlinks[node] != indices[node]:
+                return
+            component: list[str] = []
+            while True:
+                popped = stack.pop()
+                on_stack.remove(popped)
+                component.append(popped)
+                if popped == node:
+                    break
+            components.append(component)
+
+        for node in sorted(nodes):
+            if node not in indices:
+                visit(node)
+        return components
+
+    def _cell_input_bits(self, cell: CellModel) -> tuple[int, ...]:
+        return tuple(
+            bit
+            for bits in cell.inputs.values()
+            for bit in bits
+            if isinstance(bit, int)
+        )
+
+    def _sequential_data_input_bits(self, cell: CellModel) -> tuple[int, ...]:
+        assert cell.is_sequential
+        return tuple(
+            bit
+            for port_name, bits in cell.inputs.items()
+            if not self._is_sequential_control_port(port_name)
+            for bit in bits
+            if isinstance(bit, int)
+        )
+
+    def _is_buffer_cell(self, cell_type: str) -> bool:
+        normalized = cell_type.upper()
+        return self._matches_any(normalized, ("$BUF", "$_BUF", "$POS"))
 
     def _extract_rent_metrics(self, graph: GraphModel) -> dict[str, float]:
         points = self._collect_rent_points(graph)

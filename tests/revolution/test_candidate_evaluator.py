@@ -270,6 +270,7 @@ def test_candidate_evaluator_extracts_graph_metrics_for_theory_profile(tmp_path,
         "extract_metrics",
         lambda **kwargs: {
             "rent_exponent": 0.42,
+            "rent_exponent_confidence_gated": 0.42,
             "reconv_source_ratio": 0.25,
             "reconv_sink_ratio": 0.5,
             "laplacian_lambda2": 0.9,
@@ -287,9 +288,60 @@ def test_candidate_evaluator_extracts_graph_metrics_for_theory_profile(tmp_path,
 
     assert result.status == "success"
     assert result.graph_metrics["rent_exponent"] == pytest.approx(0.42)
-    assert result.descriptor_values["rent_exponent"] == pytest.approx(0.42)
+    assert result.descriptor_values["rent_exponent_confidence_gated"] == pytest.approx(0.42)
     assert result.descriptor_values["reconv_source_ratio"] == pytest.approx(0.25)
     assert result.descriptor_values["laplacian_lambda2"] == pytest.approx(0.9)
+
+
+def test_candidate_evaluator_extracts_journal_descriptor_profile(tmp_path, monkeypatch):
+    context = _context(tmp_path)
+    code_path = tmp_path / "candidate.sv"
+    code_path.write_text("module TopA; endmodule\n", encoding="utf-8")
+    evaluator = CandidateEvaluator(
+        context=context,
+        problem_description="desc",
+        verilog_evaluator=_FakeVerilogEvaluator(
+            {
+                "status": "success",
+                "simulation_stdout": "Mismatches: 0\n",
+                "simulation_stderr": "",
+                "compilation_stderr": "",
+            }
+        ),
+        synthesis_evaluator=_FakeSynthesisEvaluator(
+            {
+                "synthesis_success": True,
+                "synthesis_functionality_success": True,
+                "ppa_success": True,
+                "ppa_metrics": {"power": 0.9, "area": 90.0, "eff_clk_period": 0.9},
+                "structural_metrics": {"total_cells": 12.0},
+            }
+        ),
+        ref_ppa_metrics={"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
+        descriptor_profile="journal_logic_ff_width_3d",
+    )
+    monkeypatch.setattr(
+        evaluator.graph_descriptor_evaluator,
+        "extract_metrics",
+        lambda **kwargs: {
+            "logic_depth": 3.0,
+            "ff_depth": 2.0,
+            "comb_width_log": 1.5,
+            "combinational_cells": 4.0,
+        },
+    )
+
+    result = evaluator.evaluate_candidate(
+        CandidateWorkItem(code="module TopA; endmodule", code_file_path=str(code_path))
+    )
+
+    assert result.status == "success"
+    assert result.graph_metrics["combinational_cells"] == pytest.approx(4.0)
+    assert result.descriptor_values == {
+        "logic_depth": pytest.approx(3.0),
+        "ff_depth": pytest.approx(2.0),
+        "comb_width_log": pytest.approx(1.5),
+    }
 
 
 def test_candidate_evaluator_search_accelerated_throttles_synthesis(tmp_path):

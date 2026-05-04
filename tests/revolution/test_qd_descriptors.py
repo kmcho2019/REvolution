@@ -1,3 +1,4 @@
+import math
 from pathlib import Path
 
 import pytest
@@ -20,6 +21,11 @@ def test_load_descriptor_profiles_includes_hybrid_defaults():
     assert "implemented_structural_compact_3d" in profiles
     assert "size_control_3d" in profiles
     assert "timing_control_3d" in profiles
+    assert profiles["journal_logic_ff_width_3d"] == [
+        "logic_depth",
+        "ff_depth",
+        "comb_width_log",
+    ]
 
 
 def test_load_descriptor_profiles_includes_retrospective_structural_profiles():
@@ -205,6 +211,29 @@ def test_resolve_descriptor_axes_drops_g_t_for_hard_iteration_large_profile():
     ]
 
 
+def test_resolve_descriptor_axes_uses_journal_profile_for_comb_and_seq():
+    for circuit_type in ("combinational", "sequential"):
+        axes = resolve_descriptor_axes(
+            profile_name="journal_logic_ff_width_3d",
+            explicit_axes=None,
+            descriptor_file=None,
+            archive_type="cvt",
+            circuit_type=circuit_type,
+        )
+        assert axes == ["logic_depth", "ff_depth", "comb_width_log"]
+
+
+def test_resolve_descriptor_axes_rejects_unknown_profile():
+    with pytest.raises(KeyError, match="Unknown descriptor profile"):
+        resolve_descriptor_axes(
+            profile_name="missing_profile",
+            explicit_axes=None,
+            descriptor_file=None,
+            archive_type="cvt",
+            circuit_type="sequential",
+        )
+
+
 def test_extract_descriptor_values_applies_log1p_transform():
     values = extract_descriptor_values(
         {"cell_count_log": 99.0, "g_A": 0.2},
@@ -212,6 +241,27 @@ def test_extract_descriptor_values_applies_log1p_transform():
     )
     assert values["cell_count_log"] > 0.0
     assert values["g_A"] == pytest.approx(0.2)
+
+
+def test_extract_descriptor_values_requires_metrics():
+    with pytest.raises(KeyError, match="Missing required descriptor metric"):
+        extract_descriptor_values({"logic_depth": 2.0}, ["logic_depth", "ff_depth"])
+
+
+def test_extract_descriptor_values_accepts_journal_axis_values():
+    values = extract_descriptor_values(
+        {
+            "logic_depth": 3.0,
+            "ff_depth": 2.0,
+            "comb_width_log": math.log1p(7.0),
+        },
+        ["logic_depth", "ff_depth", "comb_width_log"],
+    )
+    assert values == {
+        "logic_depth": pytest.approx(3.0),
+        "ff_depth": pytest.approx(2.0),
+        "comb_width_log": pytest.approx(math.log1p(7.0)),
+    }
 
 
 def test_extract_descriptor_values_accepts_hard_iteration_structural_counts():
@@ -255,6 +305,13 @@ def test_descriptor_requirements_detect_graph_metric_axes():
     )
     assert reqs["requires_graph_metrics"] is True
     assert reqs["requires_rtl_metrics"] is False
+
+
+def test_descriptor_requirements_detect_journal_profile_needs_graph_and_synthesis():
+    reqs = descriptor_requirements(["logic_depth", "ff_depth", "comb_width_log"])
+    assert reqs["requires_graph_metrics"] is True
+    assert reqs["requires_synthesis"] is True
+    assert reqs["requires_ppa"] is False
 
 
 def test_load_descriptor_profiles_accepts_custom_file(tmp_path: Path):

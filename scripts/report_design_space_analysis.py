@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pyright: reportMissingImports=false, reportMissingModuleSource=false
 """Retrospective design-space report for classic and QD RTL runs.
 
 This script intentionally stays standalone so it can be used directly on
@@ -58,6 +59,7 @@ from revolution.qd.feature_space_analysis import (  # noqa: E402
     profile_features_from_config,
     recommended_profile,
 )
+from revolution.qd.descriptors import descriptor_registry  # noqa: E402
 from revolution.qd.successful_candidate_catalog import (  # noqa: E402
     ProblemRunContext,
     SuccessfulCandidateCatalog,
@@ -463,6 +465,57 @@ def _pairwise_requested_features(
     return list(dict.fromkeys(requested)), warnings
 
 
+def _report_recovery_features(features: list[str]) -> tuple[list[str], list[str]]:
+    """Keep report recovery cheap; graph-backed descriptors use cached artifacts."""
+
+    registry = descriptor_registry()
+    selected: list[str] = []
+    skipped_graph: list[str] = []
+    for feature in dict.fromkeys(features):
+        definition = registry.get(feature)
+        if definition is not None and definition.source_tool == "yosys_graph":
+            skipped_graph.append(feature)
+            continue
+        selected.append(feature)
+    if not skipped_graph:
+        return selected, []
+    return selected, [
+        "Skipped automatic graph recovery for graph-backed features "
+        f"`{', '.join(skipped_graph)}`; cached QD descriptor values are still used when present."
+    ]
+
+
+def _feature_basis_ready(rows: list[CandidateRow], features: tuple[str, ...]) -> bool:
+    if len(rows) < 3 or len(features) < 2:
+        return False
+    threshold = max(3, (9 * len(rows) + 9) // 10)
+    ready = 0
+    for feature in features:
+        finite_count = sum(safe_float(row.get(feature)) is not None for row in rows)
+        if finite_count >= threshold:
+            ready += 1
+    return ready >= 2
+
+
+def _cached_qd_context_rows(
+    *,
+    pair_rows: list[CandidateRow],
+    qd_rows: list[CandidateRow],
+    feature_basis: FeatureBasis,
+    warning_label: str,
+) -> tuple[list[CandidateRow], list[str]]:
+    """Use QD-only descriptor rows when the classical side lacks cached axes."""
+
+    if _feature_basis_ready(pair_rows, feature_basis.features):
+        return pair_rows, []
+    if _feature_basis_ready(qd_rows, feature_basis.features):
+        return qd_rows, [
+            f"{warning_label}: descriptor features are cached only for the QD backend; "
+            "plotting cached QD descriptor rows without offline classic graph recovery."
+        ]
+    return pair_rows, []
+
+
 def _embedding_context(
     *,
     label: str,
@@ -537,15 +590,21 @@ def _problem_pairwise_contexts(
             fallback_features=global_feature_cols,
             warning_label=f"{anchor_backend} vs {backend}",
         )
+        context_rows, cache_warnings = _cached_qd_context_rows(
+            pair_rows=pair_rows,
+            qd_rows=qd_rows,
+            feature_basis=feature_basis,
+            warning_label=f"{anchor_backend} vs {backend}",
+        )
         contexts.append(
             _embedding_context(
                 label=f"{anchor_backend} vs {backend}",
                 slug=_slug_value(f"{anchor_backend}_vs_{backend}"),
-                rows=pair_rows,
+                rows=context_rows,
                 backends=[anchor_backend, backend],
                 feature_basis=feature_basis,
                 feature_methods=feature_methods,
-                warnings=basis_warnings,
+                warnings=basis_warnings + cache_warnings,
             )
         )
     if not contexts:
@@ -608,15 +667,21 @@ def _aggregate_pairwise_contexts(
             fallback_features=global_feature_cols,
             warning_label=f"{anchor_backend} vs {backend} aggregate",
         )
+        context_rows, cache_warnings = _cached_qd_context_rows(
+            pair_rows=scope_rows,
+            qd_rows=qd_rows,
+            feature_basis=feature_basis,
+            warning_label=f"{anchor_backend} vs {backend} aggregate",
+        )
         contexts.append(
             _embedding_context(
                 label=f"{anchor_backend} vs {backend}",
                 slug=_slug_value(f"{anchor_backend}_vs_{backend}"),
-                rows=scope_rows,
+                rows=context_rows,
                 backends=[anchor_backend, backend],
                 feature_basis=feature_basis,
                 feature_methods=feature_methods,
-                warnings=basis_warnings,
+                warnings=basis_warnings + cache_warnings,
             )
         )
     return contexts, warnings
@@ -1631,9 +1696,10 @@ def _resolve_feature_selection(
         recovery_features.extend(profile_features_from_config(profile_name=feature_profile))
     pairwise_features, pairwise_warnings = _pairwise_requested_features(catalog.problem_runs)
     recovery_features.extend(pairwise_features)
+    recovery_features, recovery_skip_warnings = _report_recovery_features(recovery_features)
     recovery_warnings = recover_candidate_features(
         list(catalog.candidates),
-        requested_features=list(dict.fromkeys(recovery_features)) or None,
+        requested_features=list(dict.fromkeys(recovery_features)),
     )
     candidate_rows = catalog_rows(catalog)
     feature_payload = _select_feature_payload(
@@ -1642,7 +1708,7 @@ def _resolve_feature_selection(
         feature_profile=feature_profile,
         min_profile_features=min_profile_features,
     )
-    return candidate_rows, feature_payload, pairwise_warnings + recovery_warnings
+    return candidate_rows, feature_payload, pairwise_warnings + recovery_skip_warnings + recovery_warnings
 
 
 def _write_feature_selection_artifacts(

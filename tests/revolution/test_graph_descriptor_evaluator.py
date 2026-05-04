@@ -1,3 +1,4 @@
+import math
 from pathlib import Path
 
 import pytest
@@ -42,6 +43,115 @@ def test_graph_descriptor_evaluator_extracts_theory_metrics(tmp_path: Path):
     assert sum(metrics[f"scoap_cc0_bin_{idx}_pct"] for idx in range(4)) == pytest.approx(1.0)
     assert sum(metrics[f"scoap_cc1_bin_{idx}_pct"] for idx in range(4)) == pytest.approx(1.0)
     assert sum(metrics[f"scoap_co_bin_{idx}_pct"] for idx in range(4)) == pytest.approx(1.0)
+
+
+def test_graph_descriptor_evaluator_extracts_journal_comb_chain(tmp_path: Path):
+    code_path = tmp_path / "comb_chain.sv"
+    code_path.write_text(
+        "\n".join(
+            [
+                "module comb_chain(input logic a, input logic b, input logic c, input logic d, output logic y);",
+                "  logic w1;",
+                "  logic w2;",
+                "  assign w1 = a & b;",
+                "  assign w2 = c | d;",
+                "  assign y = w1 ^ w2;",
+                "endmodule",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    metrics = GraphDescriptorEvaluator().extract_metrics(
+        code_file_path=code_path,
+        top_module_name="comb_chain",
+    )
+
+    assert metrics["logic_depth"] == pytest.approx(2.0)
+    assert metrics["ff_depth"] == pytest.approx(0.0)
+    assert metrics["combinational_cells"] == pytest.approx(3.0)
+    assert metrics["comb_width_log"] == pytest.approx(math.log1p(3.0))
+
+
+def test_graph_descriptor_evaluator_extracts_journal_register_wrapper(tmp_path: Path):
+    code_path = tmp_path / "reg_wrap.sv"
+    code_path.write_text(
+        "\n".join(
+            [
+                "module reg_wrap(input logic clk, input logic a, output logic y);",
+                "  logic q;",
+                "  always_ff @(posedge clk) q <= a;",
+                "  assign y = q;",
+                "endmodule",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    metrics = GraphDescriptorEvaluator().extract_metrics(
+        code_file_path=code_path,
+        top_module_name="reg_wrap",
+    )
+
+    assert metrics["logic_depth"] == pytest.approx(0.0)
+    assert metrics["ff_depth"] == pytest.approx(1.0)
+    assert metrics["comb_width_log"] == pytest.approx(0.0)
+
+
+def test_graph_descriptor_evaluator_extracts_journal_two_stage_pipeline(tmp_path: Path):
+    code_path = tmp_path / "pipe2.sv"
+    code_path.write_text(
+        "\n".join(
+            [
+                "module pipe2(input logic clk, input logic a, output logic y);",
+                "  logic q1;",
+                "  logic q2;",
+                "  always_ff @(posedge clk) begin",
+                "    q1 <= a;",
+                "    q2 <= q1;",
+                "  end",
+                "  assign y = q2;",
+                "endmodule",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    metrics = GraphDescriptorEvaluator().extract_metrics(
+        code_file_path=code_path,
+        top_module_name="pipe2",
+    )
+
+    assert metrics["logic_depth"] == pytest.approx(0.0)
+    assert metrics["ff_depth"] == pytest.approx(2.0)
+    assert metrics["comb_width_log"] == pytest.approx(0.0)
+
+
+def test_graph_descriptor_evaluator_extracts_journal_comb_ff_depth_collapse(tmp_path: Path):
+    code_path = tmp_path / "pure_comb.sv"
+    code_path.write_text(
+        "\n".join(
+            [
+                "module pure_comb(input logic a, input logic b, output logic y);",
+                "  assign y = a & b;",
+                "endmodule",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    metrics = GraphDescriptorEvaluator().extract_metrics(
+        code_file_path=code_path,
+        top_module_name="pure_comb",
+    )
+
+    assert metrics["logic_depth"] == pytest.approx(1.0)
+    assert metrics["ff_depth"] == pytest.approx(0.0)
+    assert metrics["comb_width_log"] == pytest.approx(math.log1p(1.0))
 
 
 def test_graph_descriptor_evaluator_returns_empty_for_missing_file():

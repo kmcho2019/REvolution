@@ -44,6 +44,7 @@ Pareto-front cells, two-tier fail handling, and single-operator plans.
 | RTL / source-text | regex over candidate RTL | richer CVT descriptor studies | `size_control_3d`, `wire_assign_if_3d` |
 | RTL / Yosys AST | lightweight Yosys AST dump | control-shape CVT studies | `timing_control_3d`, `wire_ctrl_assign_3d` |
 | Graph / testability | flattened Yosys JSON graph | theory-grounded CVT studies | `theory_grounded_full_20d` |
+| Journal BD trio | flattened Yosys JSON graph | journal behavior-descriptor CVT studies | `journal_logic_ff_width_3d` |
 | Physical | OpenROAD report parsing | richer CVT follow-up studies | `hybrid_phys_seq` |
 | Dynamic / VCD | Icarus waveform parsing | experimental activity-driven studies | `activity_size_3d`, `activity_control_3d` |
 
@@ -186,6 +187,31 @@ synthesized netlist text dump.
   Size proxy based on mapped cell count. The structural extractor records raw
   total mapped cells first, then the descriptor registry applies a `log1p`
   transform when the archive tuple is built.
+
+### Journal behavior-descriptor trio
+
+The first journal descriptor profile is selectable as
+`--qd_descriptor_profile journal_logic_ff_width_3d`.
+
+This Phase 01 profile is archive-only. It affects descriptor extraction,
+archive placement, descriptor-health artifacts, and reports, but it keeps the
+classic success-side generation policy so pass counts remain comparable with
+`search_mode=revolution`. Descriptor-targeted success operators such as `M-T`
+and `C-D` are still used by the older descriptor-guided QD profiles, not by
+`journal_logic_ff_width_3d`.
+
+It uses post-Yosys graph extraction for three behavior axes:
+
+- `logic_depth`
+  Longest non-buffer combinational-cell path from a primary input or FF-Q
+  boundary to a primary output or FF-D boundary.
+- `ff_depth`
+  Maximum number of FF boundaries on a primary-input to primary-output
+  dependency path. Combinational-only problems normally collapse this axis to
+  `0`.
+- `comb_width_log`
+  `log1p(combinational_cells)`. The raw combinational-cell count is retained
+  in graph/archive metric payloads when this graph profile is active.
 
 ### RTL, AST, and netlist-estimate descriptors
 
@@ -731,11 +757,15 @@ successful pool.
    - success-side refine
 4. If `seed_budget > 0`, the engine asks the LLM for fresh designs directly
    from the problem description.
-5. If `fail_budget > 0`, the engine samples fail-pool parents and chooses from
-   `M-F` and `M-E`.
-6. For success-side fill/backfill, it chooses from `M-T`, `M-E`, and `C-D`
-   when enough successful parents exist.
-7. For refine, it chooses from `M-S`, `M-R`, `M-I`, and `C-F`.
+5. If `fail_budget > 0`, descriptor-guided profiles sample fail-pool parents
+   from `M-F` and `M-E`; archive-only profiles such as
+   `journal_logic_ff_width_3d` use the classic fail-side operator set.
+6. For descriptor-guided success-side fill/backfill, it chooses from `M-T`,
+   `M-E`, and `C-D` when enough successful parents exist. Archive-only
+   profiles use the classic success-side operator set.
+7. For descriptor-guided refine, it chooses from `M-S`, `M-R`, `M-I`, and
+   `C-F`. Archive-only profiles use the global generation mode rather than
+   per-phase QD generation-mode defaults.
 8. Parent sampling uses `success_view`, which is archive elites plus the
    bounded per-cell reservoir, not elites alone.
 9. `M-T` computes a desired descriptor shift from the parent’s current archive

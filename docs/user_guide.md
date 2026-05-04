@@ -586,6 +586,10 @@ VerilogEval-Spec-to-RTL iteration testing:
   nested final best-score fields when a top-level `best_score` is absent.
 - `scripts/report_pareto_analysis.py`: generate per-problem Pareto-front
   figures plus aggregate hypervolume/frontier tables for backend comparisons.
+- `scripts/report_ppa_distribution.py`: generate successful-candidate PPA
+  distribution figures with score contours, projected Pareto-front overlays,
+  per-backend best-candidate tables, and reference-normalized gain views for
+  completed backend comparisons.
 - `scripts/report_design_space_analysis.py`: generate retrospective
   design-space reports with generation-local and accumulated PPA plots,
   feature-space PCA/t-SNE views, aggregate pooled views, and a
@@ -595,7 +599,7 @@ VerilogEval-Spec-to-RTL iteration testing:
   regression summaries, and PCA/t-SNE plots.
 - `scripts/report_final_analysis_bundle.py`: generate the formal
   `final_analysis/` bundle for a finished hard-subset run root, now including
-  `design_space_analysis/`.
+  `ppa_distribution/` and `design_space_analysis/`.
 - `scripts/report_qd_problem_histograms.py`: backfill per-problem CVT feature
   histograms with projected centroid/division overlays plus cumulative
   generation-history panels under each problem's `qd_feature_histograms/`
@@ -676,6 +680,11 @@ Design-space analysis tips:
 - The design-space report now emits two feature-space families:
   - all-backend PCA/t-SNE plots on the report's selected feature subset
   - classic-vs-one-QD pairwise PCA/t-SNE plots on the QD backend's descriptor basis
+- Graph-backed descriptor profiles, including `journal_logic_ff_width_3d`, use
+  cached QD archive descriptor values in pairwise plots. The report does not
+  automatically run offline graph extraction for classic rows; when only the QD
+  side has cached descriptor values, the classic panel is left empty and the
+  warning is recorded in `summary.json`.
 - Within one problem/comparison/method, the PCA and t-SNE coordinates stay
   fixed across generation-local and accumulated plots so the same 2D feature
   space is reused over time.
@@ -700,10 +709,14 @@ The post-run analysis surfaces have different roles:
     - `backend_comparison.md`
     - `hard_iteration_analysis/`
     - `pareto_analysis/`
+    - `ppa_distribution/`
     - `design_space_analysis/`
     - `feature_analysis/` when QD backends are present
     - `evolutionary_reports/`
   - writes top-level `report.md` and `summary.json` to index those sections
+  - uses PCA-only embedding views for the bundled design-space and QD
+    feature-space sections so full hard-subset bundles complete reliably; run
+    the standalone scripts when a t-SNE view is needed
 - Stage 4 final analysis: `exp/hard_iteration_qd/<run_tag>/analysis/report.md` plus `analysis/summary.json`
   - emitted by `scripts/report_hard_iteration_analysis.py`
   - summarizes aggregate backend performance, per-problem winners, and the recommendation fields:
@@ -715,12 +728,21 @@ The post-run analysis surfaces have different roles:
 - Pareto / multi-objective analysis: `exp/hard_iteration_qd/<run_tag>/pareto_analysis/report.md` plus `pareto_analysis/summary.json`
   - emitted by `scripts/report_pareto_analysis.py`
   - summarizes per-problem Pareto hypervolume, frontier size, reference-beating counts, and backend-comparison front figures
+- PPA distribution analysis: `exp/hard_iteration_qd/<run_tag>/ppa_distribution/report.md` plus `ppa_distribution/summary.json`
+  - emitted by `scripts/report_ppa_distribution.py`
+  - summarizes every successful candidate with extracted PPA, writes
+    `ppa_candidates.csv`, `best_candidate_by_backend_problem.csv`, and
+    absolute plus reference-normalized all-backend and classic-vs-QD figures
+    with score shading, contour lines, and projected Pareto-front overlays
 - Retrospective design-space analysis: `exp/hard_iteration_qd/<run_tag>/design_space_analysis/report.md` plus `design_space_analysis/summary.json`
   - emitted by `scripts/report_design_space_analysis.py`
   - summarizes per-problem generation-local vs accumulated PPA plots,
     all-backend plus classic-vs-QD pairwise feature-space PCA/t-SNE views,
     aggregate pooled plots, and a shared `successful_candidates.csv` export
     across classic and QD backends
+  - uses cached QD descriptor artifacts for graph-backed profiles and skips
+    automatic classic graph recovery, while still generating PPA and QD
+    descriptor-space plots
   - keeps pairwise feature coordinates fixed across generations for the same
     problem/comparison so the plotted 2D space stays comparable over time
 - Deep QD feature-space analysis: `exp/hard_iteration_qd/<run_tag>/feature_analysis/report.md` plus `feature_analysis/summary.json`
@@ -772,6 +794,7 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/run_hard_iteration_qd_vllm.sh`: run the `classic`, `grid_struct`, `cvt_struct`, and `cvt_size_control` long-budget matrix from the frozen hard-subset config.
 - `scripts/report_hard_iteration_analysis.py`: summarize hard-subset classic-vs-QD runs into a markdown report plus JSON recommendations.
 - `scripts/report_pareto_analysis.py`: summarize hard-subset backend runs into Pareto-front figures plus per-backend hypervolume and frontier-size tables.
+- `scripts/report_ppa_distribution.py`: summarize successful candidates into PPA-space scatter figures with score contours and projected Pareto fronts, best-candidate CSVs, and reference-normalized gain views.
 - `scripts/report_design_space_analysis.py`: summarize completed classic and QD runs into generation-local and accumulated PPA-space / feature-space figures, aggregate pooled views, markdown indices, and `successful_candidates.csv`.
 - `scripts/report_qd_feature_space.py`: summarize finished QD backend roots into successful-candidate tables, collapse diagnostics, regression outputs, and embedding plots.
 - `scripts/report_final_analysis_bundle.py`: generate the formal `final_analysis/` directory for a finished hard-subset run root.

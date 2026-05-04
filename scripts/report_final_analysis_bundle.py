@@ -24,6 +24,7 @@ from scripts.report_design_space_analysis import (  # noqa: E402
     generate_design_space_analysis,
 )
 from scripts.report_pareto_analysis import generate_pareto_analysis_report  # noqa: E402
+from scripts.report_ppa_distribution import generate_ppa_distribution_report  # noqa: E402
 from scripts.report_qd_feature_space import (  # noqa: E402
     generate_qd_feature_space_analysis,
 )
@@ -97,6 +98,7 @@ def _write_top_level_report(
         f"- hard iteration analysis: [report.md]({sections['hard_iteration_analysis_report']})",
         f"- pareto analysis: [report.md]({sections['pareto_analysis_report']})",
         f"- evolutionary reports: [report.md]({sections['evolutionary_reports_report']})",
+        f"- PPA distribution: [report.md]({sections['ppa_distribution_report']})",
         f"- design-space analysis: [report.md]({sections['design_space_analysis_report']})",
     ]
     if "feature_analysis_report" in sections:
@@ -180,10 +182,16 @@ def generate_final_analysis_bundle(
         backend_runs=resolved_backend_runs,
         output_dir=output_dir / "evolutionary_reports",
     )
+    ppa_distribution_result = generate_ppa_distribution_report(
+        subset_config=subset_config,
+        backend_runs=resolved_backend_runs,
+        output_dir=output_dir / "ppa_distribution",
+    )
     design_space_result = generate_design_space_analysis(
         subset_config=subset_config,
         backend_runs=resolved_backend_runs,
         output_dir=output_dir / "design_space_analysis",
+        feature_methods=["pca"],
         min_profile_features=min_profile_features,
     )
 
@@ -195,6 +203,8 @@ def generate_final_analysis_bundle(
         "pareto_analysis_report": "pareto_analysis/report.md",
         "pareto_analysis_summary": "pareto_analysis/summary.json",
         "evolutionary_reports_report": "evolutionary_reports/report.md",
+        "ppa_distribution_report": "ppa_distribution/report.md",
+        "ppa_distribution_summary": "ppa_distribution/summary.json",
         "design_space_analysis_report": "design_space_analysis/report.md",
         "design_space_analysis_summary": "design_space_analysis/summary.json",
     }
@@ -208,6 +218,7 @@ def generate_final_analysis_bundle(
             backend_roots={backend: root for backend, root in resolved_backend_runs},
             output_dir=output_dir / "feature_analysis",
             min_profile_features=min_profile_features,
+            include_tsne=False,
         )
         sections["feature_analysis_report"] = "feature_analysis/report.md"
         sections["feature_analysis_summary"] = "feature_analysis/summary.json"
@@ -242,6 +253,8 @@ def generate_final_analysis_bundle(
         "hard_iteration_summary_path": hard_iteration_result["summary_path"],
         "pareto_summary_path": pareto_result["summary_path"],
         "evolutionary_report_path": evolutionary_result["report_path"],
+        "ppa_distribution_report_path": ppa_distribution_result["report_path"],
+        "ppa_distribution_summary_path": ppa_distribution_result["summary_path"],
         "design_space_report_path": design_space_result["report_path"],
     }
     summary_path = output_dir / "summary.json"

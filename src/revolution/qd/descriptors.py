@@ -73,6 +73,9 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "rent_raw_sample_count": DescriptorDefinition("rent_raw_sample_count", "yosys_graph"),
     "rent_retained_sample_ratio": DescriptorDefinition("rent_retained_sample_ratio", "yosys_graph"),
     "rent_graph_node_count": DescriptorDefinition("rent_graph_node_count", "yosys_graph"),
+    "logic_depth": DescriptorDefinition("logic_depth", "yosys_graph", requires_synthesis=True),
+    "ff_depth": DescriptorDefinition("ff_depth", "yosys_graph", requires_synthesis=True),
+    "comb_width_log": DescriptorDefinition("comb_width_log", "yosys_graph", requires_synthesis=True),
     "scoap_cc0_bin_0_pct": DescriptorDefinition("scoap_cc0_bin_0_pct", "yosys_graph"),
     "scoap_cc0_bin_1_pct": DescriptorDefinition("scoap_cc0_bin_1_pct", "yosys_graph"),
     "scoap_cc0_bin_2_pct": DescriptorDefinition("scoap_cc0_bin_2_pct", "yosys_graph"),
@@ -185,15 +188,20 @@ def resolve_descriptor_axes(
     """Resolve the active descriptor axis list for one archive configuration."""
 
     if explicit_axes:
-        return list(explicit_axes)
+        return _validate_descriptor_axes(list(explicit_axes))
 
     profiles = load_descriptor_profiles(descriptor_file)
-    if profile_name and profile_name in profiles:
-        return _filter_axes_for_circuit_type(list(profiles[profile_name]), circuit_type)
+    if profile_name:
+        if profile_name not in profiles:
+            raise KeyError(f"Unknown descriptor profile '{profile_name}'.")
+        return _validate_descriptor_axes(
+            _filter_axes_for_circuit_type(list(profiles[profile_name]), circuit_type)
+        )
 
     if archive_type == "grid":
-        return ["g_A", "g_P"] if circuit_type == "combinational" else ["g_A", "g_P", "g_T"]
-    return ["mux_ratio", "ltp_noff", "cell_count_log", "g_P", "g_A"] if circuit_type == "combinational" else [
+        axes = ["g_A", "g_P"] if circuit_type == "combinational" else ["g_A", "g_P", "g_T"]
+        return _validate_descriptor_axes(axes)
+    axes = ["mux_ratio", "ltp_noff", "cell_count_log", "g_P", "g_A"] if circuit_type == "combinational" else [
         "seq_ratio",
         "mux_ratio",
         "ltp_noff",
@@ -202,6 +210,7 @@ def resolve_descriptor_axes(
         "g_A",
         "g_T",
     ]
+    return _validate_descriptor_axes(axes)
 
 
 def _filter_axes_for_circuit_type(
@@ -213,6 +222,14 @@ def _filter_axes_for_circuit_type(
     return [axis for axis in axes if axis != "g_T"]
 
 
+def _validate_descriptor_axes(axes: list[str]) -> list[str]:
+    registry = descriptor_registry()
+    unknown = [axis for axis in axes if axis not in registry]
+    if unknown:
+        raise KeyError(f"Unknown descriptor axis '{unknown[0]}'.")
+    return axes
+
+
 def resolve_grid_axis_specs(
     axes: list[str] | tuple[str, ...],
     *,
@@ -222,6 +239,7 @@ def resolve_grid_axis_specs(
     """Resolve grid axis specs from config with sensible per-axis fallbacks."""
     if not axes:
         raise ValueError("Grid axis resolution requires at least one axis.")
+    _validate_descriptor_axes(list(axes))
     configured_specs = load_grid_axis_specs(descriptor_file)
     dim = max(1, len(axes))
     default_bins = max(2, round(num_cells ** (1 / dim)))
@@ -275,6 +293,10 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (0.0, 8192.0)
     if axis in {"cell_count_log", "wirelength", "cts_buffer_count", "repair_buffer_count", "hold_buffer_count", "wire_count_log_est"}:
         return (0.0, 16.0)
+    if axis in {"logic_depth", "ff_depth"}:
+        return (0.0, 64.0)
+    if axis == "comb_width_log":
+        return (0.0, 16.0)
     if axis == "toggle_count_log_est":
         return (0.0, 16.0)
     if axis in {
@@ -319,7 +341,9 @@ def extract_descriptor_values(
     for axis in axes:
         if axis not in registry:
             raise KeyError(f"Unknown descriptor axis '{axis}'.")
-        raw_value = float(metrics.get(axis, 0.0))
+        if axis not in metrics:
+            raise KeyError(f"Missing required descriptor metric '{axis}'.")
+        raw_value = float(metrics[axis])
         definition = registry[axis]
         if definition.transform == "log1p":
             values[axis] = math.log1p(max(raw_value, 0.0))
@@ -332,22 +356,22 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
     """Summarize which runtime stages are required by the selected axes."""
 
     registry = descriptor_registry()
+    _validate_descriptor_axes(list(axes))
     return {
-        "requires_ppa": any(registry[axis].requires_ppa for axis in axes if axis in registry),
+        "requires_ppa": any(registry[axis].requires_ppa for axis in axes),
         "requires_synthesis": any(
-            registry[axis].requires_synthesis for axis in axes if axis in registry
+            registry[axis].requires_synthesis for axis in axes
         ),
-        "requires_formal": any(registry[axis].requires_formal for axis in axes if axis in registry),
+        "requires_formal": any(registry[axis].requires_formal for axis in axes),
         "requires_rtl_metrics": any(
             registry[axis].source_tool in {"rtl_text", "rtl_estimator", "yosys_ast"}
             for axis in axes
-            if axis in registry
         ),
         "requires_dynamic_metrics": any(
-            registry[axis].source_tool == "icarus_vcd" for axis in axes if axis in registry
+            registry[axis].source_tool == "icarus_vcd" for axis in axes
         ),
         "requires_graph_metrics": any(
-            registry[axis].source_tool == "yosys_graph" for axis in axes if axis in registry
+            registry[axis].source_tool == "yosys_graph" for axis in axes
         ),
     }
 
@@ -356,6 +380,7 @@ def summarize_descriptor_axes(axes: list[str] | tuple[str, ...]) -> list[dict[st
     """Return lightweight metadata summaries for UI/reporting surfaces."""
 
     registry = descriptor_registry()
+    _validate_descriptor_axes(list(axes))
     return [
         {
             "name": axis,
@@ -367,5 +392,4 @@ def summarize_descriptor_axes(axes: list[str] | tuple[str, ...]) -> list[dict[st
             "requires_graph_metrics": registry[axis].source_tool == "yosys_graph",
         }
         for axis in axes
-        if axis in registry
     ]
