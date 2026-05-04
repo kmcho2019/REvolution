@@ -8,6 +8,7 @@ import pytest
 
 from revolution.algorithm import Heuristic
 from revolution.qd.engine import QDEngine
+from revolution.qd.archive import GridQuantileArchive
 from revolution.runtime.problem_spec import ProblemSpec
 
 
@@ -495,6 +496,100 @@ def test_qd_engine_writes_cvt_layout_metadata(tmp_path, monkeypatch):
     assert space_payload["space_geometry"]["initialized"] is True
     assert (tmp_path / "artifacts" / "archive_space_report.md").is_file()
     assert (tmp_path / "artifacts" / "cvt_quality_projection.png").is_file()
+
+
+def test_qd_engine_builds_grid_quantile_from_journal_profile(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="grid_quantile",
+        qd_descriptor_profile="journal_logic_ff_width_3d",
+        qd_grid_quantile_warmup_successes=8,
+    )
+
+    assert isinstance(engine.success_archive, GridQuantileArchive)
+    assert engine._archive_axes() == ("logic_depth", "ff_depth", "comb_width_log")
+    assert engine.success_archive.warmup_successes == 8
+
+
+def test_qd_engine_writes_grid_quantile_artifacts(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="grid_quantile",
+        qd_descriptor_profile="journal_logic_ff_width_3d",
+        qd_grid_quantile_warmup_successes=2,
+    )
+    engine.logger = SimpleNamespace(log_dir=str(tmp_path / "artifacts"))
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+
+    first = Heuristic("a", "module m; endmodule", "", score=0.5, generation=0, status="success")
+    first.ppa_success = True
+    first.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    first.graph_metrics = {
+        "logic_depth": 1.0,
+        "ff_depth": 0.0,
+        "comb_width_log": 1.0,
+    }
+    first.code_file_path = str(tmp_path / "Prob_sample1_initial" / "code.sv")
+    second = Heuristic("b", "module m; endmodule", "", score=0.7, generation=0, status="success")
+    second.ppa_success = True
+    second.ppa_metrics = {"power": 0.8, "area": 88.0, "eff_clk_period": 0.7}
+    second.graph_metrics = {
+        "logic_depth": 4.0,
+        "ff_depth": 0.0,
+        "comb_width_log": 2.0,
+    }
+    second.code_file_path = str(tmp_path / "Prob_sample2_initial" / "code.sv")
+
+    inserted, replaced = engine._insert_successes([first, second])
+    snapshot = engine._build_qd_snapshot(inserted=inserted, replaced=replaced, budget=None)
+    engine._write_qd_artifacts(snapshot)
+
+    artifact_root = tmp_path / "artifacts"
+    space_payload = json.loads((artifact_root / "archive_space.json").read_text(encoding="utf-8"))
+    summary_payload = json.loads((artifact_root / "archive_summary.json").read_text(encoding="utf-8"))
+    event_payload = json.loads(
+        (tmp_path / "Prob_sample1_initial" / "qd_archive_event.json").read_text(encoding="utf-8")
+    )
+    history_payload = json.loads(
+        (artifact_root / "archive_history.jsonl").read_text(encoding="utf-8").strip()
+    )
+
+    assert inserted == 0
+    assert replaced == 0
+    assert space_payload["archive_type"] == "grid_quantile"
+    assert space_payload["initialized"] is True
+    assert space_payload["intended_num_cells"] == 64
+    assert space_payload["warmup_initialization_samples"][0]["archive_insertion_index"] == 1
+    assert space_payload["warmup_initialization_samples"][0]["generation_candidate_index"] == 1
+    assert space_payload["warmup_replay_results"][0]["inserted"] is True
+    assert summary_payload["initialized"] is True
+    assert summary_payload["warmup_successes"] == 2
+    assert event_payload["decision"] == "warmup_buffered"
+    assert event_payload["assignment"]["initialized"] is False
+    assert event_payload["archive_insertion_index"] == 1
+    assert history_payload["grid_quantile_geometry"]["quantile_boundaries_hash"] == space_payload["quantile_boundaries_hash"]
+    assert (artifact_root / "grid_quantile_layout.json").is_file()
+    assert (artifact_root / "grid_quantile_occupancy_evolution.html").is_file()
+    assert (artifact_root / "grid_quantile_visualization_manifest.json").is_file()
+    assert (artifact_root / "grid_quantile_frames" / "frame_0000.png").is_file()
 
 
 def test_qd_engine_initial_artifact_write_records_initial_snapshot(tmp_path, monkeypatch):

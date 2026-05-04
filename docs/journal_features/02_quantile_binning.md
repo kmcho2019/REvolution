@@ -248,6 +248,11 @@ adaptive re-binning phases.
   - `intervals`.
 - `warmup_successes`.
 - `warmup_buffer_size`.
+- `warmup_buffer_samples`: compact descriptor evidence for pending warmup
+  candidates that have reached the archiveability gate but have not yet frozen
+  boundaries. Each row must include the same candidate ID, descriptor tuple,
+  quality score, PPA metrics, candidate ordering fields, candidate directory
+  basename, and `sample_role: "quantile_warmup_buffered"`.
 - `initialization_sample_count`.
 - `quantile_boundaries_hash`: SHA-256 hash of the canonical boundary payload.
 - `warmup_initialization_samples`: the exact fully archiveable samples used to
@@ -780,7 +785,8 @@ Add a strict audit command, preferably:
   --classic-mode classic \
   --grid-quantile-mode grid_quantile_journal_bd \
   --require-full-subset \
-  --require-visualizations
+  --require-visualizations \
+  --acceptance-hard-subset
 ```
 
 The audit command must emit:
@@ -1027,19 +1033,19 @@ Comments and docstrings should explain only non-obvious behavior:
 
 Target deadline: `2026-05-04`
 
-- [ ] 2.1 Add `GridQuantileArchive` with static quantile initialization,
+- [x] 2.1 Add `GridQuantileArchive` with static quantile initialization,
   duplicate-boundary collapse, effective cell IDs, and one-elite replacement.
-- [ ] 2.2 Wire `grid_quantile` through archive type unions, QD engine
+- [x] 2.2 Wire `grid_quantile` through archive type unions, QD engine
   construction, run_backend CLI, configs, artifacts, and reports.
-- [ ] 2.3 Add focused unit, engine, CLI, artifact, and visualization tests.
-- [ ] 2.4 Generate grid-quantile visualizations from real archive artifacts,
+- [x] 2.3 Add focused unit, engine, CLI, artifact, and visualization tests.
+- [x] 2.4 Generate grid-quantile visualizations from real archive artifacts,
   including 3D 4 x 4 x 4 and collapsed-axis 2D views.
-- [ ] 2.5 Add strict run and visualization validation scripts.
-- [ ] 2.6 Pass local tests, lint, and type checks on touched files.
-- [ ] 2.7 Pass direct live vLLM smoke.
+- [x] 2.5 Add strict run and visualization validation scripts.
+- [x] 2.6 Pass local tests, lint, and type checks on touched files.
+- [x] 2.7 Pass direct live vLLM smoke.
 - [ ] 2.8 Pass full hard-subset live vLLM matrix validation against classic
   with the validation command exiting `0`.
-- [ ] 2.9 Record final validation artifacts and stage log in this document.
+- [x] 2.9 Record final validation artifacts and stage log in this document.
 
 ## Stage Log
 
@@ -1048,27 +1054,83 @@ reconstructing it from commits.
 
 ### Stage 1: Archive Variant
 
-- Pending.
+- Implemented initial `GridQuantileArchive` with static four-bin quantile
+  initialization, duplicate-boundary collapse, effective cell IDs, warmup
+  replay metadata, and scalar `quality_score` replacement.
 
 ### Stage 2: Engine, CLI, And Artifacts
 
-- Pending.
+- Implemented initial `grid_quantile` engine/backend/CLI wiring,
+  `grid_quantile_layout.json`, warmup/replay artifact payloads, compact history
+  geometry digest, and hard-subset wrapper pass-through for
+  `qd_grid_quantile_warmup_successes`.
 
 ### Stage 3: Visualization Outputs
 
-- Pending.
+- Implemented initial offline grid-quantile HTML, PNG frame sequence, slide
+  PNGs, and visualization manifest with source artifact hashes. WebM export is
+  represented by an explicit encoder-unavailable warning when no encoder path
+  is configured.
 
 ### Stage 4: Local Verification
 
-- Pending.
+- Passed focused local verification:
+  - `tests/revolution/test_qd_archive.py`
+  - `tests/revolution/test_qd_engine.py`
+  - `tests/revolution/test_qd_descriptors.py`
+  - `tests/revolution/test_revolution_backend.py`
+  - `tests/scripts/test_run_backend.py`
+  - `tests/scripts/test_run_hard_iteration_qd_vllm.py`
+  - `tests/scripts/test_validate_grid_quantile.py`
+  - `tests/scripts/test_archive_baseline.py`
+- Passed `ruff check` on touched Python files.
+- Passed `pyright` on touched QD/backend/validation files plus
+  `src/revolution/algorithm.py`, with the existing `tqdm` source-resolution
+  warning in `scripts/run_backend.py`.
 
 ### Stage 5: Live Smoke
 
-- Pending.
+- Completed direct live vLLM smoke at
+  `exp/journal_quantile_binning_smoke_20260504_161939`.
+- The official warmup-4 smoke completed for classic and
+  `grid_quantile_journal_bd`. Both grid-quantile smoke problems were
+  `warmup_limited` because they produced 3/4 and 2/4 archiveable warmup
+  candidates; visualization validation passed for the pending-state artifacts.
+- A bounded one-problem init check with `qd_grid_quantile_warmup_successes=2`
+  initialized successfully and passed validation as
+  `initialized_but_degenerate`, proving frozen-boundary and replay artifacts on
+  a live run.
 
 ### Stage 6: Full Hard-Subset Validation
 
-- Pending.
+- Completed the required 13-problem hard-subset matrix at
+  `exp/journal_quantile_binning_hard_subset/20260504_165151` with population
+  20, generations 5, seed 42, and worker settings 4/4/4.
+- Classic and `grid_quantile_journal_bd` both completed all 13 problems.
+  Grid-quantile used `qd_archive_type=grid_quantile`,
+  `qd_descriptor_profile=journal_logic_ff_width_3d`, and
+  `qd_grid_quantile_warmup_successes=8`.
+- Generated:
+  - `hard_iteration_backend_comparison.md`
+  - `backend_comparison.md`
+  - `final_analysis/`
+  - `design_space_analysis/`
+  - `grid_quantile_visualization_validation.json`
+  - `grid_quantile_validation.json`
+  - `grid_quantile_validation.md`
+- Visualization validation passed with exit code `0`.
+- Full grid-quantile acceptance validation failed closed with exit code `1`.
+  The failure was not a problem-level archive invalidity:
+  `problem_invalid_count=0`, `warmup_limited_count=0`, and
+  `acceptance_error_count=1`. The single acceptance error was
+  `initialized_but_degenerate_count=5`, which exceeds the Phase 02 cap of `2`.
+  The five degenerate archives were `Prob024_fsm`,
+  `Prob037_parallel2serial`, `Prob049_signal_generator`,
+  `Prob098_circuit7`, and `Prob150_review2015_fsmonehot`.
+- A counterfactual duplicate-only boundary recomputation on the same warmup
+  samples would still leave four degenerate problems, so the current failure is
+  primarily a journal-descriptor diversity issue in the hard-subset run rather
+  than a stale-artifact or visualization failure.
 
 ## Final Planning Notes
 

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Literal, Protocol
 
 QDSearchMode = Literal["revolution", "revolution_qd"]
-QDArchiveType = Literal["grid", "cvt"]
+QDArchiveType = Literal["grid", "cvt", "grid_quantile"]
 QDPhaseName = Literal["fail", "seed", "backfill", "refine", "crossover"]
 QDGenerationMode = Literal["auto", "whole", "diff"]
 QDArchiveDecision = Literal[
@@ -32,7 +32,7 @@ class QDArchiveInsertResult:
 
 
 class QDArchive(Protocol):
-    """Shared archive contract for grid/CVT backends."""
+    """Shared archive contract for QD archive backends."""
 
     archive_type: QDArchiveType
     num_cells: int

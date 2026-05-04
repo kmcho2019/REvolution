@@ -28,7 +28,7 @@ def _build_parser() -> argparse.ArgumentParser:
         "--archive_type",
         type=str,
         default="grid",
-        choices=["grid", "cvt"],
+        choices=["grid", "cvt", "grid_quantile"],
     )
     parser.add_argument(
         "--circuit_type",

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import importlib
 from itertools import combinations
+import json
 from pathlib import Path
+import shutil
 from typing import Any
 
-from revolution.qd.archive import CVTArchive, GridArchive
+from revolution.qd.archive import CVTArchive, GridArchive, GridQuantileArchive
 from revolution.qd.scoring import compute_ppa_gains
 
 
@@ -21,7 +24,7 @@ def write_qd_visualizations(
     *,
     output_dir: str | Path,
     history: list[dict[str, Any]],
-    archive: GridArchive | CVTArchive,
+    archive: GridArchive | CVTArchive | GridQuantileArchive,
     ref_ppa_metrics: dict[str, float],
 ) -> QDVisualizationArtifacts:
     """Write archive-history and final-archive plots for grid or CVT runs."""
@@ -31,15 +34,31 @@ def write_qd_visualizations(
     generated: list[str] = []
 
     generated.extend(_write_history_plots(output_root, history))
+    if isinstance(archive, GridQuantileArchive):
+        generated.extend(_write_grid_quantile_outputs(output_root, history, archive))
+        return QDVisualizationArtifacts(generated_files=tuple(generated))
+
     entries = archive.entries()
     if not entries:
         return QDVisualizationArtifacts(generated_files=tuple(generated))
 
     if isinstance(archive, GridArchive):
         generated.extend(_write_grid_plots(output_root, archive, ref_ppa_metrics))
-    else:
+    elif isinstance(archive, CVTArchive):
         generated.extend(_write_cvt_plots(output_root, archive, ref_ppa_metrics))
+    else:
+        raise TypeError(f"Unsupported archive type: {type(archive).__name__}")
     return QDVisualizationArtifacts(generated_files=tuple(generated))
+
+
+def refresh_grid_quantile_manifest_sources(output_dir: str | Path) -> None:
+    output_root = Path(output_dir)
+    manifest_path = output_root / "grid_quantile_visualization_manifest.json"
+    if not manifest_path.is_file():
+        return
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["source_artifacts"] = _source_artifacts(output_root)
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
 
 def _write_history_plots(output_dir: Path, history: list[dict[str, Any]]) -> list[str]:
@@ -180,6 +199,234 @@ def _write_grid_plots(
         )
     )
     return generated
+
+
+def _write_grid_quantile_outputs(
+    output_dir: Path,
+    history: list[dict[str, Any]],
+    archive: GridQuantileArchive,
+) -> list[str]:
+    generated: list[str] = []
+    frame_dir = output_dir / "grid_quantile_frames"
+    slide_dir = output_dir / "grid_quantile_slides"
+    frame_dir.mkdir(parents=True, exist_ok=True)
+    slide_dir.mkdir(parents=True, exist_ok=True)
+    snapshots = history or [
+        {
+            "generation": 0,
+            "occupied_cells": archive.occupied_count(),
+            "coverage": 0.0,
+        }
+    ]
+    frame_paths = []
+    for index, snapshot in enumerate(snapshots):
+        frame_path = frame_dir / f"frame_{index:04d}.png"
+        _write_grid_quantile_frame(frame_path, archive, snapshot, index, len(snapshots))
+        frame_paths.append(frame_path)
+        generated.append(str(frame_path))
+
+    slide_indices = sorted({0, len(frame_paths) // 2, len(frame_paths) - 1})
+    for slide_number, frame_index in enumerate(slide_indices):
+        slide_path = slide_dir / f"slide_{slide_number:02d}.png"
+        shutil.copyfile(frame_paths[frame_index], slide_path)
+        generated.append(str(slide_path))
+
+    manifest_path = output_dir / "grid_quantile_visualization_manifest.json"
+    active_axes = [
+        axis for axis, bins in zip(archive.axes, archive.effective_bins) if bins > 1
+    ]
+    collapsed_axes = list(archive.collapsed_axes) if archive.is_initialized else []
+    manifest = {
+        "archive_type": archive.archive_type,
+        "initialized": archive.is_initialized,
+        "frame_count": len(frame_paths),
+        "occupied_cells": archive.occupied_count(),
+        "frames": [str(path.relative_to(output_dir)) for path in frame_paths],
+        "slides": [
+            str((slide_dir / f"slide_{index:02d}.png").relative_to(output_dir))
+            for index in range(len(slide_indices))
+        ],
+        "effective_shape": list(archive.effective_bins) if archive.is_initialized else [],
+        "collapsed_axes": collapsed_axes,
+        "rendered_axes": active_axes[:3],
+        "visualization_mode": "3d" if len(active_axes) == 3 else "2d" if len(active_axes) == 2 else "skipped",
+        "encoder_warning": "webm encoder unavailable; emitted full PNG frame sequence",
+        "webm": None,
+        "source_artifacts": _source_artifacts(output_dir),
+    }
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    generated.append(str(manifest_path))
+
+    html_path = output_dir / "grid_quantile_occupancy_evolution.html"
+    html_path.write_text(_grid_quantile_html(manifest), encoding="utf-8")
+    generated.append(str(html_path))
+    return generated
+
+
+def _file_digest(path: Path) -> dict[str, Any]:
+    return {
+        "mtime_ns": path.stat().st_mtime_ns,
+        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+    }
+
+
+def _source_artifacts(output_dir: Path) -> dict[str, dict[str, Any]]:
+    return {
+        name: _file_digest(output_dir / name)
+        for name in ("archive_history.jsonl", "archive_space.json", "archive_cells.csv")
+        if (output_dir / name).is_file()
+    }
+
+
+def _write_grid_quantile_frame(
+    path: Path,
+    archive: GridQuantileArchive,
+    snapshot: dict[str, Any],
+    frame_index: int,
+    frame_count: int,
+) -> None:
+    np = _load_numpy()
+    plt = _load_pyplot()
+    active_positions = [
+        index for index, bins in enumerate(archive.effective_bins) if bins > 1
+    ]
+    fig = plt.figure(figsize=(7, 6))
+    if not archive.is_initialized or len(active_positions) < 2:
+        ax = fig.add_subplot(111)
+        ax.text(
+            0.5,
+            0.5,
+            "Warmup pending" if not archive.is_initialized else "Visualization skipped",
+            ha="center",
+            va="center",
+            fontsize=16,
+            transform=ax.transAxes,
+        )
+        ax.set_axis_off()
+    elif len(active_positions) == 3:
+        ax = fig.add_subplot(111, projection="3d")
+        x_pos, y_pos, z_pos = active_positions
+        xs: list[int] = []
+        ys: list[int] = []
+        zs: list[int] = []
+        qualities: list[float] = []
+        for cell_id, entry in archive.entries().items():
+            indices = tuple(int(part) for part in cell_id.split(","))
+            xs.append(indices[x_pos])
+            ys.append(indices[y_pos])
+            zs.append(indices[z_pos])
+            qualities.append(float(entry.quality_score))
+        scatter = ax.scatter(
+            xs,
+            ys,
+            zs,
+            c=qualities,
+            cmap="viridis",
+            s=120,
+            edgecolors="black",
+        )
+        ax.set_xlabel(archive.axes[x_pos])
+        ax.set_ylabel(archive.axes[y_pos])
+        ax.set_zlabel(archive.axes[z_pos])
+        ax.set_xticks(range(archive.effective_bins[x_pos]))
+        ax.set_yticks(range(archive.effective_bins[y_pos]))
+        ax.set_zticks(range(archive.effective_bins[z_pos]))
+        ax.set_xlim(-0.5, archive.effective_bins[x_pos] - 0.5)
+        ax.set_ylim(-0.5, archive.effective_bins[y_pos] - 0.5)
+        ax.set_zlim(-0.5, archive.effective_bins[z_pos] - 0.5)
+        ax.set_title("Grid Quantile Archive Occupancy")
+        if qualities:
+            fig.colorbar(scatter, ax=ax, shrink=0.72, label="quality_score")
+    else:
+        ax = fig.add_subplot(111)
+        x_pos, y_pos = active_positions[:2]
+        shape = (archive.effective_bins[y_pos], archive.effective_bins[x_pos])
+        quality = np.full(shape, np.nan, dtype=float)
+        for cell_id, entry in archive.entries().items():
+            indices = tuple(int(part) for part in cell_id.split(","))
+            x_index = indices[x_pos]
+            y_index = indices[y_pos]
+            row_index = archive.effective_bins[y_pos] - 1 - y_index
+            current = quality[row_index, x_index]
+            if np.isnan(current) or entry.quality_score > float(current):
+                quality[row_index, x_index] = float(entry.quality_score)
+        image = ax.imshow(np.ma.masked_invalid(quality), cmap="viridis", aspect="equal")
+        ax.set_xlabel(archive.axes[x_pos])
+        ax.set_ylabel(archive.axes[y_pos])
+        ax.set_xticks(range(archive.effective_bins[x_pos]))
+        ax.set_yticks(range(archive.effective_bins[y_pos]))
+        ax.set_title("Grid Quantile Archive Occupancy")
+        fig.colorbar(image, ax=ax, shrink=0.82, label="quality_score")
+    fig.suptitle(
+        f"Frame {frame_index + 1}/{frame_count} - generation {snapshot.get('generation')}",
+        fontsize=10,
+    )
+    fig.tight_layout()
+    fig.savefig(path, dpi=180)
+    plt.close(fig)
+
+
+def _grid_quantile_html(manifest: dict[str, Any]) -> str:
+    frames = manifest["frames"]
+    options = "\n".join(
+        f'<option value="{index}">Frame {index + 1}</option>'
+        for index in range(len(frames))
+    )
+    frame_json = json.dumps(frames)
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Grid Quantile Occupancy Evolution</title>
+  <style>
+    body {{ margin: 0; font-family: system-ui, sans-serif; background: #f7f5ef; color: #1f2933; }}
+    main {{ max-width: 980px; margin: 0 auto; padding: 24px; }}
+    img {{ width: 100%; border: 1px solid #d8d3c4; background: white; }}
+    .controls {{ display: flex; gap: 12px; align-items: center; margin: 16px 0; }}
+    input[type=range] {{ flex: 1; }}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Grid Quantile Occupancy Evolution</h1>
+  <div class="controls">
+    <button id="play">Play</button>
+    <input id="slider" type="range" min="0" max="{max(len(frames) - 1, 0)}" value="0">
+    <select id="select">{options}</select>
+  </div>
+  <img id="frame" src="{frames[0] if frames else ''}" alt="Grid quantile frame">
+</main>
+<script>
+const frames = {frame_json};
+const image = document.getElementById("frame");
+const slider = document.getElementById("slider");
+const select = document.getElementById("select");
+const play = document.getElementById("play");
+let timer = null;
+function show(index) {{
+  slider.value = index;
+  select.value = index;
+  image.src = frames[index];
+}}
+slider.addEventListener("input", () => show(Number(slider.value)));
+select.addEventListener("change", () => show(Number(select.value)));
+play.addEventListener("click", () => {{
+  if (timer) {{
+    clearInterval(timer);
+    timer = null;
+    play.textContent = "Play";
+    return;
+  }}
+  play.textContent = "Pause";
+  timer = setInterval(() => {{
+    const next = (Number(slider.value) + 1) % frames.length;
+    show(next);
+  }}, 700);
+}});
+</script>
+</body>
+</html>
+"""
 
 
 def _parse_grid_cell_id(cell_id: str) -> tuple[int, int]:
