@@ -163,6 +163,93 @@ Known limits for this phase:
 - Quantile binning, Pareto cells, thought-only individuals, and KS re-binning
   remain out of scope for Phase 01.
 
+## Phase 01 Stage Log
+
+This log records what changed in each implementation and analysis stage so the
+phase can be audited without reconstructing it from commits.
+
+### Stage 1: Descriptor Trio Wiring
+
+- Added descriptor registry entries for `logic_depth`, `ff_depth`, and
+  `comb_width_log` as graph-backed descriptors.
+- Added the selectable `journal_logic_ff_width_3d` profile in
+  `data/configs/qd_descriptor_profiles.yaml`.
+- Implemented Yosys-JSON graph extraction in `GraphDescriptorEvaluator`:
+  - `logic_depth` counts non-buffer combinational cells between PI/FF-Q and
+    PO/FF-D boundaries.
+  - `ff_depth` counts FF boundaries on PI-to-PO dependency paths, with cyclic
+    FF components counted once.
+  - `comb_width_log` is `log1p(combinational_cells)`, while raw
+    `combinational_cells` is retained in graph metrics.
+- Wired graph descriptor requirements through `CandidateEvaluator`, descriptor
+  projection, QD archive tuple extraction, archive events, descriptor health,
+  and the descriptor probe.
+
+### Stage 2: Archive-Only Journal Behavior
+
+- Constrained `journal_logic_ff_width_3d` to archive-only QD behavior for Phase
+  01.
+- Preserved classic-style success-side generation for this profile so pass
+  counts remain comparable with `revolution`.
+- Kept descriptor-targeted operators such as `M-T` and `C-D` available for
+  older descriptor-guided QD profiles, but not for the journal profile.
+- Added regression coverage that ordinary QD profiles still use descriptor
+  targeting while `journal_logic_ff_width_3d` does not.
+
+### Stage 3: Live Smoke And Hard-Subset Validation
+
+- Ran a direct live smoke comparing classic `revolution` and
+  `revolution_qd` with the journal descriptor profile.
+- Ran a bounded three-problem hard-subset comparison after the archive-only
+  fix.
+- Ran the full hard-subset single-seed comparison under:
+  `exp/journal_bd_trio_hard_subset_full/20260503_181144`.
+- Confirmed the journal run produced archive summaries, descriptor health, and
+  `qd_archive_event.json` files with all three journal descriptor values.
+- Confirmed `ff_depth` collapse is expected on combinational or shallow
+  temporal problems rather than an extraction crash.
+
+### Stage 4: Success And PPA Accounting
+
+- Checked design-level functionality and synthesis/PPA pass coverage for
+  classic and `cvt_journal_bd`.
+- Added stricter loop-artifact validation that counted only candidates with
+  finite PPA extracted inside the candidate-evaluation loop.
+- For the full hard-subset run, both modes solved `13/13` designs at the
+  functionality and synthesis/PPA levels. Classic had `779` loop PPA-valid
+  samples; `cvt_journal_bd` had `765`.
+- Recorded that the single-seed full run did not support a PPA-performance
+  improvement claim even though journal QD maintained design-level pass
+  coverage and produced broader archive/descriptor artifacts.
+
+### Stage 5: PPA Distribution Reporting
+
+- Added `scripts/report_ppa_distribution.py` and integrated it into the formal
+  `final_analysis/` bundle.
+- Exported `ppa_candidates.csv`, `best_candidate_by_backend_problem.csv`, and
+  reference PPA metrics for completed backend comparisons.
+- Ported the older custom PPA figure behavior into the generalized report:
+  filled PPA score contours, white contour lines, reference markers, and
+  projected Pareto-front overlays.
+- Tuned the projected Pareto-front line so it remains readable without hiding
+  candidate points.
+
+### Stage 6: Design-Space And Final-Analysis Completion
+
+- Fixed `report_design_space_analysis.py` so graph-backed journal descriptors
+  use cached QD archive descriptor values instead of forcing offline graph
+  extraction for every classic and QD successful candidate.
+- The design-space report now emits PPA views for both backends and cached
+  journal descriptor-space views for `cvt_journal_bd`. When classic rows lack
+  cached graph descriptors, the report records an explicit warning instead of
+  blocking the whole bundle.
+- Made the formal `final_analysis/` bundle use PCA-only embeddings for bundled
+  design-space and QD feature-space sections. Standalone scripts still provide
+  t-SNE views when needed.
+- Regenerated the full-run `final_analysis/` bundle. The design-space section
+  now includes `1544` successful candidates, `13` problem reports, and `13`
+  classic-vs-`cvt_journal_bd` pairwise descriptor comparisons.
+
 Focused non-live verification commands:
 
 ```bash
