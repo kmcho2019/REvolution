@@ -81,6 +81,7 @@ def write_grid_quantile_visualizations_from_artifacts(problem_root: str | Path) 
         history=history,
         space=space,
         final_entries=_grid_quantile_csv_entries(output_dir),
+        strict_events=True,
     )
     refresh_grid_quantile_manifest_sources(output_dir)
     return QDVisualizationArtifacts(generated_files=tuple(generated))
@@ -236,6 +237,7 @@ def _write_grid_quantile_outputs(
         history=history,
         space=archive.describe_space(),
         final_entries=_grid_quantile_archive_entries(archive),
+        strict_events=False,
     )
 
 
@@ -245,6 +247,7 @@ def _write_grid_quantile_bundle(
     history: list[dict[str, Any]],
     space: dict[str, Any],
     final_entries: list[dict[str, Any]],
+    strict_events: bool,
 ) -> list[str]:
     generated: list[str] = []
     frame_dir = output_dir / "grid_quantile_frames"
@@ -255,7 +258,7 @@ def _write_grid_quantile_bundle(
         {
             "generation": 0,
             "occupied_cells": len(final_entries),
-            "num_cells": space.get("num_cells", 0),
+            "num_cells": space["num_cells"],
             "coverage": 0.0,
         }
     ]
@@ -267,6 +270,7 @@ def _write_grid_quantile_bundle(
         events=events,
         final_entries=final_entries,
         render=render,
+        strict_events=strict_events,
     )
     frame_paths = []
     for index, frame in enumerate(timeline["frames"]):
@@ -287,14 +291,14 @@ def _write_grid_quantile_bundle(
     generated.append(str(data_path))
 
     frames = timeline["frames"]
-    final_frame = frames[-1] if frames else {"cells": [], "occupied_cells": 0}
+    final_frame = frames[-1]
     manifest = {
         "archive_type": space["archive_type"],
         "visualization_version": 2,
-        "initialized": bool(space.get("initialized")),
+        "initialized": bool(space["initialized"]),
         "frame_count": len(frame_paths),
         "timeline_frame_count": len(frames),
-        "occupied_cells": int(final_frame.get("occupied_cells", 0)),
+        "occupied_cells": int(final_frame["occupied_cells"]),
         "frames": [str(path.relative_to(output_dir)) for path in frame_paths],
         "slides": [
             str((slide_dir / f"slide_{index:02d}.png").relative_to(output_dir))
@@ -302,8 +306,8 @@ def _write_grid_quantile_bundle(
         ],
         "data_file": str(data_path.relative_to(output_dir)),
         "intended_shape": [axis["intended_bins"] for axis in space["axes"]],
-        "effective_shape": list(space.get("effective_shape", [])),
-        "collapsed_axes": list(space.get("collapsed_axes", [])),
+        "effective_shape": list(space["effective_shape"]),
+        "collapsed_axes": list(space["collapsed_axes"]),
         "axis_layout": render["axis_layout"],
         "rendered_axes": render["active_axis_names"],
         "slice_axis": render["slice_axis"],
@@ -352,8 +356,7 @@ def _grid_quantile_archive_entries(archive: GridQuantileArchive) -> list[dict[st
 
 def _grid_quantile_csv_entries(output_dir: Path) -> list[dict[str, Any]]:
     path = output_dir / "archive_cells.csv"
-    if not path.is_file():
-        return []
+    assert path.is_file()
     entries = []
     with path.open(encoding="utf-8", newline="") as handle:
         for row in csv.DictReader(handle):
@@ -373,14 +376,14 @@ def _grid_quantile_events(output_dir: Path) -> list[dict[str, Any]]:
     events = []
     for path in sorted(output_dir.rglob("qd_archive_event.json")):
         event = json.loads(path.read_text(encoding="utf-8"))
-        if event.get("archive_type") != "grid_quantile":
-            continue
+        assert event["archive_type"] == "grid_quantile"
+        assert event["archive_insertion_index"] is not None
         event["_path"] = str(path.relative_to(output_dir))
         events.append(event)
     events.sort(
         key=lambda event: (
-            int(event.get("generation", 0)),
-            int(event.get("archive_insertion_index", 0) or 0),
+            int(event["generation"]),
+            int(event["archive_insertion_index"]),
             event["_path"],
         )
     )
@@ -389,7 +392,7 @@ def _grid_quantile_events(output_dir: Path) -> list[dict[str, Any]]:
 
 def _grid_quantile_render_layout(space: dict[str, Any]) -> dict[str, Any]:
     axis_names = [axis["name"] for axis in space["axes"]]
-    effective_shape = list(space.get("effective_shape", []))
+    effective_shape = list(space["effective_shape"])
     if len(axis_names) != 3 or len(effective_shape) != 3:
         return {
             "axis_layout": {},
@@ -426,7 +429,7 @@ def _grid_quantile_render_layout(space: dict[str, Any]) -> dict[str, Any]:
 
 
 def _grid_quantile_indices(space: dict[str, Any], descriptors: list[float]) -> list[int]:
-    if not space.get("initialized"):
+    if not space["initialized"]:
         return [0 for _ in space["axes"]]
     indices = []
     for axis, value in zip(space["axes"], descriptors):
@@ -446,25 +449,33 @@ def _grid_quantile_timeline(
     events: list[dict[str, Any]],
     final_entries: list[dict[str, Any]],
     render: dict[str, Any],
+    strict_events: bool,
 ) -> dict[str, Any]:
     event_by_id = {event["candidate_id"]: event for event in events}
     first_init_generation = None
     for snapshot in history:
-        geometry = snapshot.get("grid_quantile_geometry", {})
-        if geometry.get("initialized"):
-            first_init_generation = int(snapshot.get("generation", 0))
+        geometry = snapshot["grid_quantile_geometry"]
+        if geometry["initialized"]:
+            first_init_generation = int(snapshot["generation"])
             break
+    if space["initialized"]:
+        assert first_init_generation is not None
 
     replay_records = []
-    for replay in space.get("warmup_replay_results", []):
-        event = event_by_id.get(replay["candidate_id"], {})
+    for replay in space["warmup_replay_results"]:
+        event = event_by_id.get(replay["candidate_id"])
+        if strict_events:
+            assert event is not None
+        assert replay["archive_insertion_index"] is not None
+        generation = int(event["generation"]) if event is not None else first_init_generation
+        assert generation is not None
         replay_records.append(
             {
                 "cell_id": replay["cell_id"],
                 "candidate_id": replay["candidate_id"],
                 "quality_score": float(replay["quality_score"]),
-                "generation": int(event.get("generation", first_init_generation or 0)),
-                "archive_insertion_index": int(replay.get("archive_insertion_index", 0) or 0),
+                "generation": generation,
+                "archive_insertion_index": int(replay["archive_insertion_index"]),
                 "descriptor_tuple": list(replay["descriptor_tuple"]),
                 "decision": replay["decision"],
                 "inserted": bool(replay["inserted"]),
@@ -476,11 +487,10 @@ def _grid_quantile_timeline(
     all_qualities = [
         float(item["quality_score"])
         for item in [*events, *replay_records, *final_entries]
-        if item.get("quality_score") is not None
     ]
     for snapshot_index, snapshot in enumerate(history):
-        generation = int(snapshot.get("generation", snapshot_index))
-        initialized = bool(snapshot.get("grid_quantile_geometry", {}).get("initialized"))
+        generation = int(snapshot["generation"])
+        initialized = bool(snapshot["grid_quantile_geometry"]["initialized"])
         cells: dict[str, dict[str, Any]] = {}
         changed_cell_ids: set[str] = set()
 
@@ -491,36 +501,36 @@ def _grid_quantile_timeline(
                     if first_init_generation == generation:
                         changed_cell_ids.add(replay["cell_id"])
             for event in events:
-                if event.get("decision") == "warmup_buffered":
+                if event["decision"] == "warmup_buffered":
                     continue
-                if int(event.get("generation", 0)) > generation:
+                if int(event["generation"]) > generation:
                     continue
-                if not event.get("inserted") and not event.get("replaced"):
+                if not event["inserted"] and not event["replaced"]:
                     continue
                 cell_id = str(event["cell_id"])
                 cells[cell_id] = _grid_quantile_cell_payload(render, event)
-                if int(event.get("generation", 0)) == generation:
+                if int(event["generation"]) == generation:
                     changed_cell_ids.add(cell_id)
-            if not cells and generation >= int(history[-1].get("generation", generation)):
+            if not cells and generation >= int(history[-1]["generation"]):
                 for entry in final_entries:
                     cells[entry["cell_id"]] = _grid_quantile_cell_payload(render, entry)
 
         samples = []
         for event in events:
-            if int(event.get("generation", 0)) > generation:
+            if int(event["generation"]) > generation:
                 continue
             descriptors = list(event["descriptor_tuple"])
             indices = _grid_quantile_indices(space, descriptors)
             samples.append(
                 {
                     "candidate_id": event["candidate_id"],
-                    "generation": int(event.get("generation", 0)),
+                    "generation": int(event["generation"]),
                     "quality_score": float(event["quality_score"]),
-                    "decision": event.get("decision"),
-                    "cell_id": event.get("cell_id"),
+                    "decision": event["decision"],
+                    "cell_id": event["cell_id"],
                     "indices": indices,
                     "render_indices": _render_indices(indices, render),
-                    "current": int(event.get("generation", 0)) == generation,
+                    "current": int(event["generation"]) == generation,
                 }
             )
 
@@ -533,12 +543,12 @@ def _grid_quantile_timeline(
                 "generation": generation,
                 "initialized": initialized,
                 "phase": snapshot.get("phase", "warmup" if not initialized else "archive"),
-                "occupied_cells": int(snapshot.get("occupied_cells", len(frame_cells))),
-                "num_cells": int(snapshot.get("num_cells", space.get("num_cells", 0)) or 0),
-                "coverage": float(snapshot.get("coverage", 0.0) or 0.0),
-                "best_quality": snapshot.get("best_quality"),
-                "mean_quality": snapshot.get("mean_quality"),
-                "qd_score": float(snapshot.get("qd_score", 0.0) or 0.0),
+                "occupied_cells": int(snapshot["occupied_cells"]),
+                "num_cells": int(snapshot["num_cells"]),
+                "coverage": float(snapshot["coverage"]),
+                "best_quality": snapshot["best_quality"],
+                "mean_quality": snapshot["mean_quality"],
+                "qd_score": float(snapshot["qd_score"]),
                 "new_filled_cells": int(snapshot.get("new_filled_cells", 0) or 0),
                 "replaced_cells": int(snapshot.get("replaced_cells", 0) or 0),
                 "sample_count": len(samples),
@@ -555,9 +565,9 @@ def _grid_quantile_timeline(
         "axis_layout": render["axis_layout"],
         "render_axis_indices": render["axis_indices"],
         "render_shape": render["render_shape"],
-        "effective_shape": list(space.get("effective_shape", [])),
+        "effective_shape": list(space["effective_shape"]),
         "intended_shape": [axis["intended_bins"] for axis in space["axes"]],
-        "collapsed_axes": list(space.get("collapsed_axes", [])),
+        "collapsed_axes": list(space["collapsed_axes"]),
         "active_axis_names": render["active_axis_names"],
         "slice_axis": render["slice_axis"],
         "slice_count": render["slice_count"],
@@ -571,15 +581,12 @@ def _grid_quantile_timeline(
 
 def _grid_quantile_cell_payload(render: dict[str, Any], record: dict[str, Any]) -> dict[str, Any]:
     indices = [int(part) for part in str(record["cell_id"]).split(",")]
-    descriptors = list(record.get("descriptor_tuple") or [])
-    if not descriptors:
-        descriptors = [0.0 for _ in indices]
     return {
         "cell_id": str(record["cell_id"]),
-        "candidate_id": str(record.get("candidate_id", "")),
+        "candidate_id": str(record["candidate_id"]),
         "quality_score": float(record["quality_score"]),
-        "generation": int(record.get("generation", 0) or 0),
-        "descriptor_tuple": descriptors,
+        "generation": int(record["generation"]),
+        "descriptor_tuple": list(record["descriptor_tuple"]),
         "indices": indices,
         "render_indices": _render_indices(indices, render),
     }

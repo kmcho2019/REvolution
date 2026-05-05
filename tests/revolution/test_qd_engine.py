@@ -668,7 +668,8 @@ def test_qd_engine_writes_grid_quantile_artifacts(tmp_path, monkeypatch):
         qd_descriptor_profile="journal_logic_ff_width_3d",
         qd_grid_quantile_warmup_successes=2,
     )
-    engine.logger = SimpleNamespace(log_dir=str(tmp_path / "artifacts"))
+    artifact_root = tmp_path / "artifacts"
+    engine.logger = SimpleNamespace(log_dir=str(artifact_root))
     engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
 
     first = Heuristic("a", "module m; endmodule", "", score=0.5, generation=0, status="success")
@@ -679,7 +680,7 @@ def test_qd_engine_writes_grid_quantile_artifacts(tmp_path, monkeypatch):
         "ff_depth": 0.0,
         "comb_width_log": 1.0,
     }
-    first.code_file_path = str(tmp_path / "Prob_sample1_initial" / "code.sv")
+    first.code_file_path = str(artifact_root / "Prob_sample1_initial" / "code.sv")
     second = Heuristic("b", "module m; endmodule", "", score=0.7, generation=0, status="success")
     second.ppa_success = True
     second.ppa_metrics = {"power": 0.8, "area": 88.0, "eff_clk_period": 0.7}
@@ -688,17 +689,16 @@ def test_qd_engine_writes_grid_quantile_artifacts(tmp_path, monkeypatch):
         "ff_depth": 0.0,
         "comb_width_log": 2.0,
     }
-    second.code_file_path = str(tmp_path / "Prob_sample2_initial" / "code.sv")
+    second.code_file_path = str(artifact_root / "Prob_sample2_initial" / "code.sv")
 
     inserted, replaced = engine._insert_successes([first, second])
     snapshot = engine._build_qd_snapshot(inserted=inserted, replaced=replaced, budget=None)
     engine._write_qd_artifacts(snapshot)
 
-    artifact_root = tmp_path / "artifacts"
     space_payload = json.loads((artifact_root / "archive_space.json").read_text(encoding="utf-8"))
     summary_payload = json.loads((artifact_root / "archive_summary.json").read_text(encoding="utf-8"))
     event_payload = json.loads(
-        (tmp_path / "Prob_sample1_initial" / "qd_archive_event.json").read_text(encoding="utf-8")
+        (artifact_root / "Prob_sample1_initial" / "qd_archive_event.json").read_text(encoding="utf-8")
     )
     history_payload = json.loads(
         (artifact_root / "archive_history.jsonl").read_text(encoding="utf-8").strip()
