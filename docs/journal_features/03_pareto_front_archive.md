@@ -6,9 +6,9 @@ Replace one elite per cell with a bounded Pareto front per cell. This makes the
 journal QD archive preserve behavior diversity across cells and PPA trade-off
 diversity inside each cell.
 
-## Current State
+## Initial State
 
-The current archive keeps one best candidate per cell using a scalar
+Before Phase 03, the archive kept one best candidate per cell using a scalar
 `quality_score`. Reports can compute Pareto fronts after a run, but archive
 replacement itself is not multiobjective.
 
@@ -916,8 +916,99 @@ There should be no raw `\n` text and exactly one `Signed-off-by:` footer.
 
 Target deadline: `2026-05-06`
 
-- [ ] 3.1 Replace a single archive entry per cell with bounded front members.
-- [ ] 3.2 Implement PPA-only dominance over active objectives, accounting for
+- [x] 3.1 Replace a single archive entry per cell with bounded front members.
+- [x] 3.2 Implement PPA-only dominance over active objectives, accounting for
   combinational designs.
-- [ ] 3.3 Add NSGA-II crowding-distance eviction, preserve PPA extremes, parent
+- [x] 3.3 Add NSGA-II crowding-distance eviction, preserve PPA extremes, parent
   sampling from fronts, and artifact/report updates.
+
+## Implementation And Validation Log
+
+### Stage 1: Archive Cell Mode
+
+- Implemented `QDCellMode = Literal["scalar_elite", "pareto_front"]` and
+  `QDObjectiveMode = Literal["ppa"]`.
+- Added a small required `ArchiveMember.objectives` payload. The engine now
+  computes active PPA objectives once at the archive boundary and passes that
+  member object into the archive.
+- Kept archive geometry separate from cell replacement behavior:
+  `grid`, `cvt`, and `grid_quantile` all accept `scalar_elite` and
+  `pareto_front`.
+
+### Stage 2: Pareto Replacement
+
+- Implemented maximize-form PPA dominance over `g_P`/`g_A` for combinational
+  tasks and `g_P`/`g_A`/`g_T` for sequential tasks.
+- Pareto replacement does not use `quality_score`; scalar mode still uses it
+  for the legacy representative behavior.
+- Added dominated rejection, duplicate-objective rejection, dominant-member
+  removal, and bounded front eviction by crowding distance while preserving
+  active-objective extremes.
+- Parent sampling in Pareto mode is uniform over occupied cells, then uniform
+  over members in the selected cell.
+
+### Stage 3: Artifacts And Reports
+
+- `archive.entries()` remains the representative-per-cell legacy view.
+- `archive.members()` is the one-row-per-member view used by final archive
+  artifacts, summaries, and parent sampling.
+- `archive_cells.csv` now emits `cell_id`, `member_index`, `front_size`,
+  `candidate_id`, `quality_score`, `g_P`, `g_A`, `g_T`, `objectives_json`,
+  and `descriptors_json` for every archive member.
+- `archive_summary.json`, `qd_metrics.json`, `archive_history.jsonl`,
+  `archive_space.json`, and `qd_archive_event.json` include cell-mode,
+  objective-name, total-member, and front-size data.
+- Added `scripts/validate_pareto_front_run.py` for Phase 03 acceptance.
+
+### Stage 4: Local Verification
+
+- Passed the focused and regression test suite:
+  - `tests/revolution/test_qd_archive.py`
+  - `tests/revolution/test_qd_engine.py`
+  - `tests/revolution/test_pareto_analysis.py`
+  - `tests/revolution/test_revolution_backend.py`
+  - `tests/revolution/test_defaults.py`
+  - `tests/scripts/test_backend_comparison_report.py`
+  - `tests/scripts/test_validate_pareto_front_run.py`
+  - `tests/scripts/test_validate_grid_quantile.py`
+  - `tests/scripts/test_run_hard_iteration_qd_vllm.py`
+- Passed `ruff check` on touched Python files.
+- Passed `pyright` on touched QD source files.
+- Passed `bash -n scripts/run_hard_iteration_qd_vllm.sh`.
+
+### Stage 5: Small Geometry Smokes
+
+- Completed small Pareto smoke coverage for all archive geometries:
+  `grid`, `cvt`, and `grid_quantile`.
+- Direct archive smoke verified all three geometries can store Pareto members
+  and report front stats.
+- Live vLLM smoke completed for all three geometry modes at
+  `exp/journal_pareto_front_smoke_20260505_135343`; the smoke verified CLI and
+  artifact initialization paths. The smoke was not used as a performance claim.
+
+### Stage 6: Full Hard-Subset Acceptance
+
+- Completed the full 13-problem hard-subset matrix at
+  `exp/journal_pareto_front_hard_subset/20260505_135953`.
+- The matrix included:
+  - `classic`
+  - `grid_quantile_journal_bd`
+  - `grid_quantile_pareto_journal_bd`
+- The hard acceptance target was
+  `grid_quantile + journal_logic_ff_width_3d` with
+  `qd_cell_mode=pareto_front`, `qd_max_elites_per_cell=5`, and
+  `qd_objectives=ppa`.
+- Generated final reports:
+  - `hard_iteration_backend_comparison.md`
+  - `final_analysis/`
+  - `pareto_analysis/`
+  - `design_space_analysis/`
+  - `pareto_front_validation.json`
+  - `pareto_front_validation.md`
+- Full Pareto-front acceptance validation passed with exit code `0`:
+  `valid=true`, `failure_count=0`, `problem_invalid_count=0`,
+  `acceptance_error_count=0`, and `max_front_size_seen=5`.
+- The validator checked that `archive_cells.csv` row counts equal
+  `total_archive_members`, distinct `cell_id` counts equal `occupied_cells`,
+  every same-cell member pair is mutually non-dominated, and
+  `max_front_size <= qd_max_elites_per_cell`.

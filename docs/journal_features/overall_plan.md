@@ -88,7 +88,7 @@ stable while the first implementation lands.
 | --- | --- | --- | --- | --- |
 | BD trio: logic depth, FF depth, width | Planned | 2026-05-03 | [01_bd_trio.md](01_bd_trio.md) | First because it is mostly additive and gives the archive stable axes. |
 | Initial QD binning: static quantile grid | Planned | 2026-05-04 | [02_quantile_binning.md](02_quantile_binning.md) | Adds the first journal archive geometry before dynamic re-binning. |
-| Pareto-front archive / multiobjective MAP-Elites | Planned | 2026-05-06 | [03_pareto_front_archive.md](03_pareto_front_archive.md) | Replaces one elite per cell with bounded PPA fronts. |
+| Pareto-front archive / multiobjective MAP-Elites | Implemented | 2026-05-06 | [03_pareto_front_archive.md](03_pareto_front_archive.md) | Replaces one elite per cell with bounded PPA fronts; full hard-subset acceptance passed at `exp/journal_pareto_front_hard_subset/20260505_135953`. |
 | Two-tier archive + fail handling | Planned | 2026-05-07 | [04_two_tier_fail_pool.md](04_two_tier_fail_pool.md) | Makes success archive and fail pool explicit parent sources. |
 | Single thought mutation operator | Planned | 2026-05-08 | [05_single_mutation_operator.md](05_single_mutation_operator.md) | Removes QD strategy-bandit routing from the journal path. |
 | Thought-only individuals + k-code evaluation | Planned | 2026-05-10 | [06_thought_only_k_code.md](06_thought_only_k_code.md) | Splits thought evolution from code sampling. |
@@ -100,7 +100,7 @@ Initial target: 2026-05-12
 
 - [ ] 1. BD trio: logic depth, FF depth, width - target 2026-05-03
 - [ ] 2. Initial QD binning: static quantile grid - target 2026-05-04
-- [ ] 3. Pareto-front archive / multiobjective MAP-Elites - target 2026-05-06
+- [x] 3. Pareto-front archive / multiobjective MAP-Elites - target 2026-05-06
 - [ ] 4. Two-tier archive + fail handling - target 2026-05-07
 - [ ] 5. Single thought mutation operator - target 2026-05-08
 - [ ] 6. Thought-only individuals + k-code evaluation - target 2026-05-10
@@ -137,10 +137,10 @@ evaluation, and Pareto-front archive semantics are implemented.
 
 Target deadline: `2026-05-06`
 
-- [ ] 3.1 Replace a single archive entry per cell with bounded front members.
-- [ ] 3.2 Implement PPA-only dominance over active objectives, accounting for
+- [x] 3.1 Replace a single archive entry per cell with bounded front members.
+- [x] 3.2 Implement PPA-only dominance over active objectives, accounting for
   combinational designs.
-- [ ] 3.3 Add NSGA-II crowding-distance eviction, preserve PPA extremes, parent
+- [x] 3.3 Add NSGA-II crowding-distance eviction, preserve PPA extremes, parent
   sampling from fronts, and artifact/report updates.
 
 ### 4. Two-Tier Archive And Fail Pool
