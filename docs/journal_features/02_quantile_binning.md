@@ -405,21 +405,44 @@ the preferred Phase 02 artifact remains offline and reproducible. If Three.js
 or another browser library is adopted, vendor it into the repo or generated
 artifact bundle rather than relying on a network CDN for validation.
 
-### Current Issues To Fix
+### Interactive Viewer Specification
 
-- `grid_quantile_occupancy_evolution.html` is currently a PNG frame selector,
-  not an interactive archive scene.
-- The current 3D PNG output uses a flat scatter view and does not draw the
-  bin lattice clearly.
-- The current visual frames are not replayed from per-candidate insertion
-  events, so they can appear static even when the archive changes.
-- The current output lacks in-view statistics matching the demo: generation,
-  coverage, best fitness, archive mean, and sample count.
-- Sample-level points are missing from the interactive visualization.
-- Axis orientation is implicit. The journal profile needs fixed directions so
-  `ff_depth` is always the vertical z/slice axis.
-- Validation checks file existence and blank images, but it does not yet prove
-  that the interactive animation state actually progresses.
+`grid_quantile_occupancy_evolution.html` must be a self-contained archive
+viewer, not a static PNG selector. It should be visually close to
+`docs/journal_features/02_quantile_binning_visualization.html` while remaining
+offline-reproducible.
+
+Required viewer behavior:
+
+- Render the archive as the main full-window object. The stats panel must stay
+  compact enough that it does not obscure the grid in normal desktop views.
+  It must default to a small state and provide an in-view control to expand or
+  shrink the panel.
+- Use a fixed journal axis layout for `journal_logic_ff_width_3d`:
+  `logic_depth` on x, `comb_width_log` on y, and `ff_depth` on vertical z.
+- Draw color-coded in-scene axis marks and a matching axis legend with the real
+  descriptor names. The legend must explicitly show which behavior descriptor
+  maps to x, y, and z.
+- Draw a fitness legend using the same color scale used for filled archive
+  cells. Filled cells are colored by the current elite `quality_score`.
+- Support timeline play/pause independently from camera motion.
+- Support manual camera inspection with horizontal and vertical pointer drag,
+  plus wheel zoom. Horizontal drag changes yaw; vertical drag changes pitch.
+  Do not clamp pitch to a narrow demo angle; viewers must be able to inspect
+  the archive from above, below, and oblique perspectives.
+- Enable a slow natural camera spin by default and include a button to toggle
+  that spin without changing the archive timeline frame.
+- Render all effective z slices in a lower-corner mini-grid panel. Collapsed
+  z axes still render one explicit slice. Each slice must be shown as a
+  separate labeled layer using the same fitness color scale as the main grid.
+- Show archiveable samples as 3D-positioned markers with a short guide line or
+  equivalent depth cue, not as flat unanchored circles.
+- Preserve 2D collapsed views by rendering the two active axes in the main
+  grid while keeping collapsed axes visible in metadata and labels.
+- Append one clean final viewer frame after the last history snapshot. This
+  frame repeats the final archive state with no newly changed cell outlines or
+  current-sample emphasis, so exported animations end on a publication-ready
+  final state.
 
 ### Inputs
 
@@ -443,12 +466,15 @@ needed JavaScript directly in the generated HTML.
 For each grid-quantile problem directory in the hard-subset run, generate:
 
 - `grid_quantile_occupancy_evolution.html`: interactive browser view with a
-  timeline slider and play/pause control.
+  timeline slider, play/pause control, natural-spin toggle, compact stats
+  panel with a size toggle, color-coded BD-axis legend, fitness legend, and
+  z-slice layer mini-grids.
 - `grid_quantile_occupancy_evolution.webm`: exportable animation. If WebM
   encoding is unavailable in the environment, emit the full PNG frame sequence
   and record an explicit encoder-unavailable validation warning.
-- `grid_quantile_frames/`: one PNG frame per archive-history snapshot. Phase
-  02 validation must not downsample the timeline.
+- `grid_quantile_frames/`: one PNG frame per archive-history snapshot plus one
+  clean final frame. Phase 02 validation must not downsample the history
+  timeline.
   Warmup-pending snapshots must render as explicit pending-initialization
   frames, not as fake empty grids.
 - `grid_quantile_slides/`: a small ordered set of PNG diagrams for the paper or
@@ -511,9 +537,10 @@ Required checks:
 
 1. `archive_history.jsonl` has at least one warmup-pending snapshot and at
    least one snapshot after initialization for initialized problems.
-2. PNG frame count equals the number of history snapshots selected for
-   rendering. For Phase 02 acceptance, the selected snapshot count is the full
-   `archive_history.jsonl` length.
+2. PNG frame count equals the full `archive_history.jsonl` length plus one
+   clean final frame. The clean final frame must be marked in
+   `grid_quantile_evolution_data.json`, repeat the final archive state, and
+   have no changed-cell highlight list.
 3. Final frame occupied-cell count in the manifest equals final
    `archive_summary.json.occupied_cells`.
 4. Effective shape in the manifest equals the effective bins in

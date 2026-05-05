@@ -71,12 +71,18 @@ def validate_problem(problem_root: Path) -> list[str]:
     html_path = problem_root / "grid_quantile_occupancy_evolution.html"
     data_path = _artifact_path(problem_root, manifest.get("data_file", ""))
     data = _load_json(data_path) if data_path.is_file() else {}
+    history_len = _history_count(history_path)
+    expected_frames = history_len + 1
     if manifest["frame_count"] != len(frame_paths):
         errors.append("manifest frame_count does not match frame list")
-    if len(frame_paths) != _history_count(history_path):
-        errors.append("frame count does not match archive_history.jsonl")
-    if manifest.get("timeline_frame_count") != _history_count(history_path):
-        errors.append("timeline frame count does not match archive_history.jsonl")
+    if len(frame_paths) != expected_frames:
+        errors.append("frame count does not include one clean final frame")
+    if manifest.get("timeline_frame_count") != expected_frames:
+        errors.append("timeline frame count does not include one clean final frame")
+    if manifest.get("history_frame_count") != history_len:
+        errors.append("manifest history_frame_count does not match archive_history.jsonl")
+    if not manifest.get("has_clean_final_frame"):
+        errors.append("missing clean final visualization frame")
     if manifest["effective_shape"] != summary.get("effective_shape", []):
         errors.append("manifest effective_shape does not match summary")
     if manifest["occupied_cells"] != summary["occupied_cells"]:
@@ -87,8 +93,12 @@ def validate_problem(problem_root: Path) -> list[str]:
         errors.append("manifest final_cell_ids do not match archive_cells.csv")
     if not data:
         errors.append("missing grid_quantile_evolution_data.json")
-    elif len(data.get("frames", [])) != _history_count(history_path):
-        errors.append("evolution data frame count does not match history")
+    elif len(data.get("frames", [])) != expected_frames:
+        errors.append("evolution data frame count does not include clean final frame")
+    elif not data["frames"][-1].get("final_clean_frame"):
+        errors.append("evolution data final frame is not marked clean")
+    elif data["frames"][-1].get("changed_cell_ids"):
+        errors.append("clean final frame still has changed cells")
 
     history = [
         json.loads(line)
@@ -96,8 +106,11 @@ def validate_problem(problem_root: Path) -> list[str]:
         if line.strip()
     ]
     occupied_sequence = [int(snapshot["occupied_cells"]) for snapshot in history]
-    if manifest.get("cell_count_sequence") != occupied_sequence:
+    cell_count_sequence = manifest.get("cell_count_sequence", [])
+    if cell_count_sequence[:history_len] != occupied_sequence:
         errors.append("manifest cell_count_sequence does not match history")
+    if cell_count_sequence[-1:] != occupied_sequence[-1:]:
+        errors.append("clean final frame cell count does not match final history")
     sample_sequence = manifest.get("sample_count_sequence", [])
     if any(rhs < lhs for lhs, rhs in zip(sample_sequence, sample_sequence[1:])):
         errors.append("sample_count_sequence decreases")
@@ -132,7 +145,22 @@ def validate_problem(problem_root: Path) -> list[str]:
         html = html_path.read_text(encoding="utf-8").lower()
         if "http://" in html or "https://" in html or "cdn" in html:
             errors.append("interactive HTML references network assets")
-        for token in ("genval", "covval", "bestval", "meanval", "sampval", "slicesgrid"):
+        required_tokens = (
+            "genval",
+            "covval",
+            "bestval",
+            "meanval",
+            "sampval",
+            "slicesgrid",
+            "slice-layer",
+            "spinbtn",
+            "statssizebtn",
+            "drawaxisguides",
+            "drawsamplemarker",
+            "bd axes",
+            "fitness",
+        )
+        for token in required_tokens:
             if token not in html:
                 errors.append(f"interactive HTML missing {token}")
 

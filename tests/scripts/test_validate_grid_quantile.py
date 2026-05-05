@@ -166,8 +166,19 @@ def test_grid_quantile_visualization_validator_accepts_generated_artifacts(tmp_p
     )
     assert manifest["visualization_mode"] == "2d"
     assert manifest["frames"][0] == "grid_quantile_frames/frame_0000.png"
+    assert manifest["has_clean_final_frame"] is True
+    assert manifest["frame_count"] == manifest["history_frame_count"] + 1
     assert manifest["axis_layout"]["z"] == "ff_depth"
     assert manifest["final_cell_ids"]
+    html = (problem_root / "grid_quantile_occupancy_evolution.html").read_text(
+        encoding="utf-8"
+    )
+    assert "spinBtn" in html
+    assert "statsSizeBtn" in html
+    assert "BD axes" in html
+    assert "slice-layer" in html
+    assert "drawAxisGuides" in html
+    assert "drawSampleMarker" in html
 
 
 def test_grid_quantile_visualization_supports_3d_artifacts(tmp_path):

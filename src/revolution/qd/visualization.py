@@ -275,7 +275,7 @@ def _write_grid_quantile_bundle(
     frame_paths = []
     for index, frame in enumerate(timeline["frames"]):
         frame_path = frame_dir / f"frame_{index:04d}.png"
-        _write_grid_quantile_frame(frame_path, timeline, frame, index, len(snapshots))
+        _write_grid_quantile_frame(frame_path, timeline, frame, index, len(timeline["frames"]))
         frame_paths.append(frame_path)
         generated.append(str(frame_path))
 
@@ -298,6 +298,8 @@ def _write_grid_quantile_bundle(
         "initialized": bool(space["initialized"]),
         "frame_count": len(frame_paths),
         "timeline_frame_count": len(frames),
+        "history_frame_count": len(snapshots),
+        "has_clean_final_frame": bool(frames[-1].get("final_clean_frame")),
         "occupied_cells": int(final_frame["occupied_cells"]),
         "frames": [str(path.relative_to(output_dir)) for path in frame_paths],
         "slides": [
@@ -557,6 +559,25 @@ def _grid_quantile_timeline(
                 "changed_cell_ids": sorted(changed_cell_ids),
             }
         )
+    if frame_payloads:
+        final_frame = frame_payloads[-1]
+        frame_payloads.append(
+            {
+                **final_frame,
+                "frame_index": len(frame_payloads),
+                "phase": "final_clean",
+                "cells": [
+                    {**cell, "changed": False}
+                    for cell in final_frame["cells"]
+                ],
+                "samples": [
+                    {**sample, "current": False}
+                    for sample in final_frame["samples"]
+                ],
+                "changed_cell_ids": [],
+                "final_clean_frame": True,
+            }
+        )
 
     return {
         "archive_type": "grid_quantile",
@@ -775,29 +796,37 @@ def _grid_quantile_html(timeline: dict[str, Any]) -> str:
     #title { top: 22px; left: 50%; transform: translateX(-50%); padding: 14px 24px; text-align: center; }
     #title h1 { margin: 0; font: 600 19px Georgia, serif; }
     #title .sub { margin-top: 4px; color: var(--dim); font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; }
-    #stats { top: 22px; left: 22px; width: 255px; padding: 16px 18px; }
-    #legend { top: 22px; right: 22px; padding: 16px 18px; }
-    #axisInfo { bottom: 26px; left: 22px; padding: 14px 18px; line-height: 1.9; }
-    #slices { right: 22px; bottom: 26px; padding: 14px 16px; }
+    #stats { top: 14px; left: 14px; width: 142px; padding: 8px 9px; }
+    #stats.full { width: 196px; }
+    #legend { top: 18px; right: 18px; padding: 12px 14px; }
+    #axisInfo { bottom: 22px; left: 18px; padding: 12px 14px; line-height: 1.8; }
+    #slices { right: 18px; bottom: 22px; padding: 12px 14px; }
     #controls {
       left: 50%;
       bottom: 26px;
       transform: translateX(-50%);
-      width: min(620px, calc(100vw - 44px));
-      padding: 13px 16px;
+      width: min(640px, calc(100vw - 44px));
+      padding: 11px 14px;
       display: flex;
       gap: 12px;
       align-items: center;
     }
-    .label { color: var(--dim); font-size: 10px; letter-spacing: 1.8px; text-transform: uppercase; margin-bottom: 11px; }
-    .stat-row { display: flex; justify-content: space-between; gap: 16px; padding: 6px 0; border-bottom: 1px dashed var(--border); }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .label { color: var(--dim); font-size: 9px; letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 8px; }
+    .panel-head .label { margin-bottom: 0; }
+    .stat-row { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; border-bottom: 1px dashed var(--border); font-size: 10px; }
     .stat-row:last-child { border-bottom: 0; }
+    #stats:not(.full) .optional-stat { display: none; }
     .stat-label { color: var(--dim); }
     .stat-value { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .mini-button {
+      min-width: 38px; height: 22px; padding: 0 7px; border-radius: 6px;
+      font-size: 9px; font-weight: 700;
+    }
     button {
-      width: 38px; height: 38px; border: 1px solid var(--border); border-radius: 9px;
+      min-width: 42px; height: 34px; border: 1px solid var(--border); border-radius: 8px;
       background: rgba(40, 30, 20, 0.05); color: var(--text); cursor: pointer;
-      font: 700 12px ui-monospace, monospace;
+      font: 700 11px ui-monospace, monospace; padding: 0 10px;
     }
     button:hover { background: rgba(40, 30, 20, 0.1); }
     input[type=range] { flex: 1; }
@@ -806,11 +835,14 @@ def _grid_quantile_html(timeline: dict[str, Any]) -> str:
     .gradient { width: 18px; height: 150px; border-radius: 4px; background: linear-gradient(to top,#440154,#365c8d,#1fa187,#a0da39,#fde725); }
     .ticks { height: 150px; display: flex; flex-direction: column; justify-content: space-between; color: var(--dim); font-size: 10px; }
     .axis-row { display: flex; gap: 8px; align-items: center; color: var(--dim); }
-    .axis-dot { width: 9px; height: 9px; border-radius: 2px; }
+    .axis-name { color: var(--text); font-weight: 700; }
+    .axis-desc { color: var(--text); }
+    .axis-dot { width: 9px; height: 9px; border-radius: 2px; flex: 0 0 auto; }
     .slices-grid { display: flex; gap: 8px; align-items: flex-start; }
+    .slice-layer { text-align: center; }
     .slice-label { text-align: center; color: var(--dim); font-size: 10px; margin-top: 6px; }
     .slice-grid { display: grid; gap: 2px; }
-    .slice-cell { width: 13px; height: 13px; background: rgba(40, 30, 20, 0.08); border-radius: 2px; }
+    .slice-cell { width: 14px; height: 14px; background: rgba(40, 30, 20, 0.08); border-radius: 2px; }
     @media (max-width: 860px) {
       #title, #legend, #axisInfo, #slices { display: none; }
       #stats { width: min(270px, calc(100vw - 44px)); }
@@ -824,32 +856,37 @@ def _grid_quantile_html(timeline: dict[str, Any]) -> str:
   <div class="sub" id="subtitle"></div>
 </div>
 <div class="panel" id="stats">
-  <div class="label">Run state</div>
+  <div class="panel-head">
+    <div class="label">Run state</div>
+    <button class="mini-button" id="statsSizeBtn" title="Toggle run state size">More</button>
+  </div>
   <div class="stat-row"><span class="stat-label">generation</span><span class="stat-value" id="genVal"></span></div>
   <div class="stat-row"><span class="stat-label">coverage</span><span class="stat-value" id="covVal"></span></div>
-  <div class="stat-row"><span class="stat-label">best fitness</span><span class="stat-value" id="bestVal"></span></div>
-  <div class="stat-row"><span class="stat-label">archive mean</span><span class="stat-value" id="meanVal"></span></div>
-  <div class="stat-row"><span class="stat-label">samples</span><span class="stat-value" id="sampVal"></span></div>
+  <div class="stat-row optional-stat"><span class="stat-label">best fitness</span><span class="stat-value" id="bestVal"></span></div>
+  <div class="stat-row optional-stat"><span class="stat-label">archive mean</span><span class="stat-value" id="meanVal"></span></div>
+  <div class="stat-row optional-stat"><span class="stat-label">samples</span><span class="stat-value" id="sampVal"></span></div>
 </div>
 <div class="panel" id="legend">
-  <div class="label" style="text-align:center">Quality</div>
+  <div class="label" style="text-align:center">Fitness</div>
   <div class="legend-wrap">
     <div class="gradient"></div>
     <div class="ticks"><span id="qMax"></span><span id="qMid"></span><span id="qMin"></span></div>
   </div>
 </div>
 <div class="panel" id="axisInfo">
-  <div class="axis-row"><span class="axis-dot" style="background:#c2185b"></span>X <span id="xAxis"></span></div>
-  <div class="axis-row"><span class="axis-dot" style="background:#2e7d32"></span>Y <span id="yAxis"></span></div>
-  <div class="axis-row"><span class="axis-dot" style="background:#1565c0"></span>Z <span id="zAxis"></span></div>
+  <div class="label">BD axes</div>
+  <div class="axis-row"><span class="axis-dot" style="background:#c2185b"></span><span class="axis-name">X</span><span>=</span><span class="axis-desc" id="xAxis"></span></div>
+  <div class="axis-row"><span class="axis-dot" style="background:#2e7d32"></span><span class="axis-name">Y</span><span>=</span><span class="axis-desc" id="yAxis"></span></div>
+  <div class="axis-row"><span class="axis-dot" style="background:#1565c0"></span><span class="axis-name">Z</span><span>=</span><span class="axis-desc" id="zAxis"></span></div>
 </div>
 <div class="panel" id="slices">
-  <div class="label" style="text-align:center">Z-slices</div>
+  <div class="label" style="text-align:center">Z-slice layers</div>
   <div class="slices-grid" id="slicesGrid"></div>
 </div>
 <div class="panel" id="controls">
   <button id="resetBtn" title="Reset">Reset</button>
   <button id="playBtn" title="Play or pause">Play</button>
+  <button id="spinBtn" title="Toggle natural spin">Spin</button>
   <input id="slider" type="range" min="0" max="0" value="0" step="1">
   <span id="frameLabel"></span>
 </div>
@@ -861,13 +898,19 @@ const ctx = canvas.getContext("2d");
 const slider = document.getElementById("slider");
 const playBtn = document.getElementById("playBtn");
 const resetBtn = document.getElementById("resetBtn");
+const spinBtn = document.getElementById("spinBtn");
+const stats = document.getElementById("stats");
+const statsSizeBtn = document.getElementById("statsSizeBtn");
 let current = 0;
 let playing = false;
 let timer = 0;
 let theta = -0.72;
+let phi = 0.82;
 let zoom = 1;
 let dragging = false;
 let lastX = 0;
+let lastY = 0;
+let naturalSpin = true;
 const viridisStops = [
   [0.00,[68,1,84]],[0.13,[70,50,126]],[0.25,[54,92,141]],
   [0.38,[39,127,142]],[0.50,[31,161,135]],[0.63,[74,193,109]],
@@ -883,6 +926,8 @@ document.getElementById("zAxis").textContent = `${DATA.axis_layout.z || "z"} (ve
 document.getElementById("qMin").textContent = fmt(DATA.quality_min);
 document.getElementById("qMid").textContent = fmt((DATA.quality_min + DATA.quality_max) / 2);
 document.getElementById("qMax").textContent = fmt(DATA.quality_max);
+spinBtn.textContent = naturalSpin ? "Spin on" : "Spin off";
+statsSizeBtn.textContent = "More";
 
 function fmt(value) {
   if (value === null || value === undefined || Number.isNaN(Number(value))) return "-";
@@ -931,11 +976,15 @@ function project(point) {
   const c = Math.cos(theta), s = Math.sin(theta);
   const rx = x * c - y * s;
   const ry = x * s + y * c;
-  const scale = Math.min(window.innerWidth, window.innerHeight) * 0.135 * zoom;
+  const cp = Math.cos(phi), sp = Math.sin(phi);
+  const sy = ry * cp - z * sp;
+  const depth = ry * sp + z * cp;
+  const scale = Math.min(window.innerWidth, window.innerHeight) * 0.18 * zoom;
+  const perspective = 1 / Math.max(0.55, 1 + depth * 0.055);
   return {
-    x: window.innerWidth / 2 + rx * scale,
-    y: window.innerHeight / 2 + ry * scale * 0.43 - z * scale * 0.82,
-    depth: ry + z * 0.12
+    x: window.innerWidth / 2 + rx * scale * perspective,
+    y: window.innerHeight * 0.56 + sy * scale * perspective,
+    depth
   };
 }
 function centered(indices, offset = [0,0,0]) {
@@ -972,10 +1021,73 @@ function gridCells() {
   }
   return cells.sort((a, b) => project(centered(a)).depth - project(centered(b)).depth);
 }
+function drawAxisLine(start, end, colorValue, label) {
+  const a = project(start);
+  const b = project(end);
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.strokeStyle = colorValue;
+  ctx.lineWidth = 2.4;
+  ctx.stroke();
+  const angle = Math.atan2(b.y - a.y, b.x - a.x);
+  ctx.beginPath();
+  ctx.moveTo(b.x, b.y);
+  ctx.lineTo(b.x - Math.cos(angle - 0.55) * 10, b.y - Math.sin(angle - 0.55) * 10);
+  ctx.lineTo(b.x - Math.cos(angle + 0.55) * 10, b.y - Math.sin(angle + 0.55) * 10);
+  ctx.closePath();
+  ctx.fillStyle = colorValue;
+  ctx.fill();
+  ctx.font = "700 11px ui-monospace, monospace";
+  ctx.fillStyle = colorValue;
+  ctx.fillText(label, b.x + 8, b.y - 8);
+}
+function drawAxisGuides() {
+  const base = centered([0,0,0], [-0.65,-0.65,-0.65]);
+  drawAxisLine(base, centered([Math.max(shape[0] - 1, 0),0,0], [0.75,-0.65,-0.65]), "#c2185b", "X");
+  drawAxisLine(base, centered([0,Math.max(shape[1] - 1, 0),0], [-0.65,0.75,-0.65]), "#2e7d32", "Y");
+  drawAxisLine(base, centered([0,0,Math.max(shape[2] - 1, 0)], [-0.65,-0.65,0.75]), "#1565c0", "Z");
+}
+function drawSampleMarker(sample) {
+  const jitter = [
+    (hash01(sample.candidate_id, 1) - 0.5) * 0.48,
+    (hash01(sample.candidate_id, 2) - 0.5) * 0.48,
+    (hash01(sample.candidate_id, 3) - 0.5) * 0.32
+  ];
+  const p = project(centered(sample.render_indices, jitter));
+  const floor = project(centered([sample.render_indices[0], sample.render_indices[1], 0], [jitter[0], jitter[1], -0.5]));
+  ctx.beginPath();
+  ctx.moveTo(floor.x, floor.y);
+  ctx.lineTo(p.x, p.y);
+  ctx.strokeStyle = "rgba(20,18,15,0.22)";
+  ctx.lineWidth = sample.current ? 1.3 : 0.7;
+  ctx.stroke();
+  const size = sample.current ? 7 : 4.8;
+  ctx.beginPath();
+  ctx.moveTo(p.x, p.y - size);
+  ctx.lineTo(p.x + size, p.y);
+  ctx.lineTo(p.x, p.y + size);
+  ctx.lineTo(p.x - size, p.y);
+  ctx.closePath();
+  ctx.fillStyle = color(sample.quality_score, sample.current ? 1 : 0.78);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(20,18,15,0.82)";
+  ctx.lineWidth = sample.current ? 1.4 : 0.7;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(p.x - size * 0.65, p.y);
+  ctx.lineTo(p.x + size * 0.65, p.y);
+  ctx.moveTo(p.x, p.y - size * 0.65);
+  ctx.lineTo(p.x, p.y + size * 0.65);
+  ctx.strokeStyle = "rgba(255,255,255,0.58)";
+  ctx.lineWidth = 0.75;
+  ctx.stroke();
+}
 function render() {
   ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
   const frame = frames[current] || {cells: [], samples: []};
   for (const indices of gridCells()) drawCube(indices, null, "rgba(90,80,70,0.24)", 1);
+  drawAxisGuides();
   const cells = [...frame.cells].sort((a, b) => {
     return project(centered(a.render_indices)).depth - project(centered(b.render_indices)).depth;
   });
@@ -987,21 +1099,7 @@ function render() {
       cell.changed ? 2.2 : 1.0
     );
   }
-  for (const sample of frame.samples) {
-    const jitter = [
-      (hash01(sample.candidate_id, 1) - 0.5) * 0.48,
-      (hash01(sample.candidate_id, 2) - 0.5) * 0.48,
-      (hash01(sample.candidate_id, 3) - 0.5) * 0.32
-    ];
-    const p = project(centered(sample.render_indices, jitter));
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, sample.current ? 5.8 : 3.7, 0, Math.PI * 2);
-    ctx.fillStyle = color(sample.quality_score, sample.current ? 1 : 0.78);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(20,18,15,0.72)";
-    ctx.lineWidth = sample.current ? 1.4 : 0.6;
-    ctx.stroke();
-  }
+  for (const sample of frame.samples) drawSampleMarker(sample);
 }
 function updateStats() {
   const frame = frames[current] || {};
@@ -1026,9 +1124,10 @@ function updateSlices(frame) {
   for (const cell of frame.cells || []) best.set(cell.render_indices.join(","), cell.quality_score);
   for (let z = 0; z < zCount; z++) {
     const wrap = document.createElement("div");
+    wrap.className = "slice-layer";
     const grid = document.createElement("div");
     grid.className = "slice-grid";
-    grid.style.gridTemplateColumns = `repeat(${xCount}, 13px)`;
+    grid.style.gridTemplateColumns = `repeat(${xCount}, 14px)`;
     for (let y = yCount - 1; y >= 0; y--) {
       for (let x = 0; x < xCount; x++) {
         const box = document.createElement("div");
@@ -1040,7 +1139,7 @@ function updateSlices(frame) {
     }
     const label = document.createElement("div");
     label.className = "slice-label";
-    label.textContent = `z${z}`;
+    label.textContent = `${DATA.axis_layout.z || "z"} ${z}`;
     wrap.appendChild(grid);
     wrap.appendChild(label);
     root.appendChild(wrap);
@@ -1063,24 +1162,53 @@ playBtn.addEventListener("click", () => {
     clearInterval(timer);
   }
 });
-resetBtn.addEventListener("click", () => { playing = false; clearInterval(timer); playBtn.textContent = "Play"; show(0); });
+spinBtn.addEventListener("click", () => {
+  naturalSpin = !naturalSpin;
+  spinBtn.textContent = naturalSpin ? "Spin on" : "Spin off";
+  render();
+});
+statsSizeBtn.addEventListener("click", () => {
+  stats.classList.toggle("full");
+  statsSizeBtn.textContent = stats.classList.contains("full") ? "Less" : "More";
+});
+resetBtn.addEventListener("click", () => {
+  playing = false;
+  clearInterval(timer);
+  playBtn.textContent = "Play";
+  theta = -0.72;
+  phi = 0.82;
+  zoom = 1;
+  naturalSpin = true;
+  spinBtn.textContent = "Spin on";
+  show(0);
+});
 slider.addEventListener("input", () => { playing = false; clearInterval(timer); playBtn.textContent = "Play"; show(slider.value); });
-canvas.addEventListener("mousedown", event => { dragging = true; lastX = event.clientX; });
+canvas.addEventListener("mousedown", event => { dragging = true; lastX = event.clientX; lastY = event.clientY; naturalSpin = false; spinBtn.textContent = "Spin off"; });
 window.addEventListener("mouseup", () => { dragging = false; });
 window.addEventListener("mousemove", event => {
   if (!dragging) return;
   theta += (event.clientX - lastX) * 0.008;
+  phi += (event.clientY - lastY) * 0.006;
   lastX = event.clientX;
+  lastY = event.clientY;
   render();
 });
 canvas.addEventListener("wheel", event => {
   event.preventDefault();
-  zoom = Math.max(0.62, Math.min(1.8, zoom - event.deltaY * 0.001));
+  zoom = Math.max(0.45, Math.min(3.2, zoom - event.deltaY * 0.001));
   render();
 }, {passive: false});
+function animateView() {
+  if (naturalSpin && !dragging) {
+    theta += 0.0022;
+    render();
+  }
+  window.requestAnimationFrame(animateView);
+}
 window.addEventListener("resize", resize);
 resize();
 show(0);
+animateView();
 </script>
 </body>
 </html>
