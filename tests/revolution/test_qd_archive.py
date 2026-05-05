@@ -1,5 +1,8 @@
-import pytest
+import csv
+import json
 from types import SimpleNamespace
+
+import pytest
 
 from revolution.qd.archive import (
     CVTArchive,
@@ -8,6 +11,7 @@ from revolution.qd.archive import (
     GridQuantileArchive,
     dominates,
 )
+from revolution.qd.artifacts import write_archive_cells_csv
 from revolution.qd.types import ArchiveMember
 
 
@@ -266,6 +270,36 @@ def test_pareto_archive_crowding_eviction_preserves_extremes():
     assert len(members) == 3
     assert any(member.objectives["g_P"] == 0.0 for member in members)
     assert any(member.objectives["g_P"] == 1.0 for member in members)
+
+
+def test_pareto_archive_cells_csv_writes_one_row_per_member(tmp_path):
+    archive = GridArchive(
+        [GridAxisSpec(name="g_A", bins=1, lower_bound=0.0, upper_bound=1.0)],
+        cell_mode="pareto_front",
+        max_elites_per_cell=5,
+        objective_names=("g_P", "g_A"),
+    )
+
+    _insert(archive, "power", (0.5,), 0.1, objectives={"g_P": 0.9, "g_A": 0.1})
+    _insert(archive, "area", (0.5,), 0.9, objectives={"g_P": 0.1, "g_A": 0.9})
+    write_archive_cells_csv(
+        path=tmp_path / "archive_cells.csv",
+        members=archive.members(),
+    )
+
+    with (tmp_path / "archive_cells.csv").open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    space = archive.describe_space()
+
+    assert len(rows) == 2
+    assert {row["candidate_id"] for row in rows} == {"power", "area"}
+    assert {int(row["front_size"]) for row in rows} == {2}
+    assert {int(row["member_index"]) for row in rows} == {0, 1}
+    assert all(json.loads(row["objectives_json"]) for row in rows)
+    assert space["occupied_cells"] == 1
+    assert space["total_archive_members"] == 2
+    assert space["mean_front_size"] == 2.0
+    assert space["max_front_size"] == 2
 
 
 def test_pareto_cell_mode_is_supported_by_all_geometries():

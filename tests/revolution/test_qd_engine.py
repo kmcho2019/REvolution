@@ -278,6 +278,7 @@ def test_qd_engine_pareto_mode_samples_every_front_member(tmp_path, monkeypatch)
     engine.success_pool = [power, area]
 
     engine._rebuild_archive_from_success_pool()
+    snapshot = engine._build_qd_snapshot(inserted=2, replaced=0, budget=None)
     random.seed(3)
     sampled = {
         parent.id
@@ -289,6 +290,9 @@ def test_qd_engine_pareto_mode_samples_every_front_member(tmp_path, monkeypatch)
         "power",
         "area",
     }
+    assert snapshot["total_archive_members"] == 2
+    assert snapshot["mean_front_size"] == 2.0
+    assert snapshot["max_front_size"] == 2
     assert sampled == {"power", "area"}
 
 
