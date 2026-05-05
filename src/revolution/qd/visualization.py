@@ -859,8 +859,9 @@ def _grid_quantile_html(timeline: dict[str, Any]) -> str:
     .axis-dot { width: 9px; height: 9px; border-radius: 2px; flex: 0 0 auto; }
     .axis-boundaries {
       margin-top: 9px; padding-top: 9px; border-top: 1px dashed var(--border);
-      line-height: 1.45;
+      display: none; line-height: 1.45;
     }
+    #axisInfo.details-open .axis-boundaries { display: block; }
     .axis-detail { margin-top: 7px; }
     .axis-detail-title { color: var(--text); font-size: 9px; font-weight: 800; }
     .axis-cutoffs, .axis-bins { color: var(--dim); font-size: 9px; }
@@ -930,7 +931,10 @@ def _grid_quantile_html(timeline: dict[str, Any]) -> str:
   </div>
 </div>
 <div class="panel" id="axisInfo">
-  <div class="label">BD axes</div>
+  <div class="panel-head">
+    <div class="label">BD axes</div>
+    <button class="mini-button" id="axisDetailBtn" title="Toggle quantile bins">Bins</button>
+  </div>
   <div class="axis-row"><span class="axis-dot" style="background:#c2185b"></span><span class="axis-name">X</span><span>=</span><span class="axis-desc" id="xAxis"></span></div>
   <div class="axis-row"><span class="axis-dot" style="background:#2e7d32"></span><span class="axis-name">Y</span><span>=</span><span class="axis-desc" id="yAxis"></span></div>
   <div class="axis-row"><span class="axis-dot" style="background:#1565c0"></span><span class="axis-name">Z</span><span>=</span><span class="axis-desc" id="zAxis"></span></div>
@@ -958,6 +962,8 @@ const resetBtn = document.getElementById("resetBtn");
 const spinBtn = document.getElementById("spinBtn");
 const stats = document.getElementById("stats");
 const statsSizeBtn = document.getElementById("statsSizeBtn");
+const axisInfo = document.getElementById("axisInfo");
+const axisDetailBtn = document.getElementById("axisDetailBtn");
 let current = 0;
 let playing = false;
 let timer = 0;
@@ -977,19 +983,37 @@ const shape = DATA.render_shape && DATA.render_shape.length ? DATA.render_shape 
 slider.max = Math.max(frames.length - 1, 0);
 document.getElementById("subtitle").textContent =
   `${shape.join(" x ")} effective grid; z axis = ${DATA.axis_layout.z || "axis"}`;
-document.getElementById("xAxis").textContent = DATA.axis_layout.x || "x";
-document.getElementById("yAxis").textContent = DATA.axis_layout.y || "y";
-document.getElementById("zAxis").textContent = `${DATA.axis_layout.z || "z"} (vertical)`;
+document.getElementById("xAxis").textContent = axisSummary(DATA.axis_layout.x);
+document.getElementById("yAxis").textContent = axisSummary(DATA.axis_layout.y);
+document.getElementById("zAxis").textContent = `${axisSummary(DATA.axis_layout.z)} vertical`;
 document.getElementById("qMin").textContent = fmt(DATA.quality_min);
 document.getElementById("qMid").textContent = fmt((DATA.quality_min + DATA.quality_max) / 2);
 document.getElementById("qMax").textContent = fmt(DATA.quality_max);
 spinBtn.textContent = naturalSpin ? "Spin on" : "Spin off";
 statsSizeBtn.textContent = "More";
+axisDetailBtn.textContent = "Bins";
 renderAxisBoundaries();
 
 function fmt(value) {
   if (value === null || value === undefined || Number.isNaN(Number(value))) return "-";
   return Number(value).toFixed(3);
+}
+function axisByName(name) {
+  return (DATA.axis_details || []).find(item => item.name === name) || null;
+}
+function cutoffText(axis) {
+  const values = (axis.quantile_boundaries || []).map(fmt);
+  return values.length ? values.join("/") : "none";
+}
+function axisSummary(name) {
+  const axis = axisByName(name);
+  if (!axis) return name || "-";
+  return `${name} | ${axis.effective_bins} bins | q ${cutoffText(axis)}`;
+}
+function axisStepLabel(name) {
+  const axis = axisByName(name);
+  if (!axis) return "";
+  return `bins ${axis.effective_bins}; q ${cutoffText(axis)}`;
 }
 function fmtBound(value, edge) {
   if (value === null || value === undefined) return edge === "lower" ? "-inf" : "+inf";
@@ -1114,7 +1138,7 @@ function gridCells() {
   }
   return cells.sort((a, b) => project(centered(a)).depth - project(centered(b)).depth);
 }
-function drawAxisLine(start, end, colorValue, label) {
+function drawAxisLine(start, end, colorValue, label, detail) {
   const a = project(start);
   const b = project(end);
   ctx.beginPath();
@@ -1134,12 +1158,14 @@ function drawAxisLine(start, end, colorValue, label) {
   ctx.font = "700 11px ui-monospace, monospace";
   ctx.fillStyle = colorValue;
   ctx.fillText(label, b.x + 8, b.y - 8);
+  ctx.font = "700 9px ui-monospace, monospace";
+  ctx.fillText(detail, b.x + 8, b.y + 6);
 }
 function drawAxisGuides() {
   const base = centered([0,0,0], [-0.65,-0.65,-0.65]);
-  drawAxisLine(base, centered([Math.max(shape[0] - 1, 0),0,0], [0.75,-0.65,-0.65]), "#c2185b", "X");
-  drawAxisLine(base, centered([0,Math.max(shape[1] - 1, 0),0], [-0.65,0.75,-0.65]), "#2e7d32", "Y");
-  drawAxisLine(base, centered([0,0,Math.max(shape[2] - 1, 0)], [-0.65,-0.65,0.75]), "#1565c0", "Z");
+  drawAxisLine(base, centered([Math.max(shape[0] - 1, 0),0,0], [0.75,-0.65,-0.65]), "#c2185b", `X ${DATA.axis_layout.x || ""}`, axisStepLabel(DATA.axis_layout.x));
+  drawAxisLine(base, centered([0,Math.max(shape[1] - 1, 0),0], [-0.65,0.75,-0.65]), "#2e7d32", `Y ${DATA.axis_layout.y || ""}`, axisStepLabel(DATA.axis_layout.y));
+  drawAxisLine(base, centered([0,0,Math.max(shape[2] - 1, 0)], [-0.65,-0.65,0.75]), "#1565c0", `Z ${DATA.axis_layout.z || ""}`, axisStepLabel(DATA.axis_layout.z));
 }
 function drawSampleMarker(sample) {
   const jitter = [
@@ -1263,6 +1289,10 @@ spinBtn.addEventListener("click", () => {
 statsSizeBtn.addEventListener("click", () => {
   stats.classList.toggle("full");
   statsSizeBtn.textContent = stats.classList.contains("full") ? "Less" : "More";
+});
+axisDetailBtn.addEventListener("click", () => {
+  axisInfo.classList.toggle("details-open");
+  axisDetailBtn.textContent = axisInfo.classList.contains("details-open") ? "Hide" : "Bins";
 });
 resetBtn.addEventListener("click", () => {
   playing = false;

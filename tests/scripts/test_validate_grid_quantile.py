@@ -185,6 +185,10 @@ def test_grid_quantile_visualization_validator_accepts_generated_artifacts(tmp_p
     assert "fitness" in lowered
     assert "gradient" in lowered
     assert "axis-desc" in lowered
+    assert "axisdetailbtn" in lowered
+    assert "details-open" in lowered
+    assert "axissummary" in lowered
+    assert "axissteplabel" in lowered
     assert "axisboundaries" in lowered
     assert "axis-detail" in lowered
     assert "axis-bins" in lowered
