@@ -1256,7 +1256,7 @@ function updateSlices(frame) {
   const yCount = Math.max(shape[1] || 1, 1);
   const best = new Map();
   for (const cell of frame.cells || []) best.set(cell.render_indices.join(","), cell.quality_score);
-  for (let z = 0; z < zCount; z++) {
+  for (let z = zCount - 1; z >= 0; z--) {
     const wrap = document.createElement("div");
     wrap.className = "slice-layer";
     const grid = document.createElement("div");

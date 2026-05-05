@@ -155,6 +155,7 @@ def validate_problem(problem_root: Path) -> list[str]:
             "slice-layer",
             "z-slice layers",
             "flex-direction: column",
+            "z = zcount - 1",
             "spinbtn",
             "statssizebtn",
             "drawaxisguides",

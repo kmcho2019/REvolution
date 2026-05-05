@@ -450,7 +450,8 @@ Required viewer behavior:
   z axes still render one explicit slice. Each slice must be shown as a
   separate labeled layer using the same fitness color scale as the main grid.
   Slice layers must be stacked vertically so each z plane reads as a distinct
-  layer rather than as a horizontal strip.
+  layer rather than as a horizontal strip. The bottom layer must be
+  `ff_depth 0`, with layer labels increasing upward.
 - Show archiveable samples as 3D-positioned markers with a short guide line or
   equivalent depth cue, not as flat unanchored circles.
 - Preserve 2D collapsed views by rendering the two active axes in the main
@@ -1144,6 +1145,7 @@ For every supported visualization:
 - in-scene axis cutoff labels are drawn at quantile boundary positions rather
   than as a summary at the arrow tip.
 - z-slice layer mini-grids are stacked vertically in the interactive viewer.
+- z-slice layer order places `ff_depth 0` at the bottom and increments upward.
 - responsive CSS does not hide the BD-axis legend, fitness legend, or
   z-slice panel in narrow preview panes.
 
