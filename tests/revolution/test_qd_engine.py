@@ -1,5 +1,6 @@
 import csv
 import json
+import random
 import time
 from pathlib import Path
 from types import SimpleNamespace
@@ -38,12 +39,13 @@ def _engine(
     monkeypatch: pytest.MonkeyPatch,
     *,
     problem_spec: ProblemSpec | None = None,
+    **qd_kwargs,
 ) -> QDEngine:
     monkeypatch.setattr(
         "revolution.algorithm.EoHEngine.load_problem_description",
         lambda self: "desc",
     )
-    engine = QDEngine(
+    kwargs = dict(
         benchmark_name="Bench",
         problem_name="Prob",
         llm_interface=_DummyLLM(),
@@ -57,6 +59,8 @@ def _engine(
         qd_grid_axes=("g_A", "g_T"),
         problem_spec=problem_spec,
     )
+    kwargs.update(qd_kwargs)
+    engine = QDEngine(**kwargs)
     engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
     return engine
 
@@ -233,6 +237,64 @@ def test_qd_engine_replacement_pushes_previous_elite_into_reservoir(tmp_path, mo
     assert replaced == 1
     assert engine.success_pool[0] is better
     assert prior in engine.success_pool
+
+
+def test_qd_engine_pareto_mode_samples_every_front_member(tmp_path, monkeypatch):
+    cfg = tmp_path / "qd.yaml"
+    cfg.write_text(
+        "grid_axes:\n"
+        "  g_A:\n"
+        "    bins: 1\n"
+        "    lower_bound: 0.0\n"
+        "    upper_bound: 1.0\n",
+        encoding="utf-8",
+    )
+    problem_spec = ProblemSpec(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        prompt_text="desc",
+        top_module="TopModule",
+        benchmark_root=tmp_path,
+        circuit_type="combinational",
+    )
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        problem_spec=problem_spec,
+        qd_cell_mode="pareto_front",
+        qd_max_elites_per_cell=5,
+        qd_grid_axes=("g_A",),
+        qd_descriptor_file=str(cfg),
+    )
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0}
+    power = Heuristic("power", "module m; endmodule", "", score=0.1, generation=0, status="success")
+    power.id = "power"
+    power.ppa_success = True
+    power.ppa_metrics = {"power": 0.8, "area": 90.0}
+    area = Heuristic("area", "module m; endmodule", "", score=0.9, generation=0, status="success")
+    area.id = "area"
+    area.ppa_success = True
+    area.ppa_metrics = {"power": 0.9, "area": 80.0}
+    engine.success_pool = [power, area]
+
+    engine._rebuild_archive_from_success_pool()
+    random.seed(3)
+    sampled = {
+        parent.id
+        for _ in range(200)
+        for parent in engine._sample_success_parents(1)
+    }
+
+    assert {member.candidate_id for _, member in engine.success_archive.members()} == {
+        "power",
+        "area",
+    }
+    assert sampled == {"power", "area"}
+
+
+def test_qd_engine_rejects_unknown_cell_mode(tmp_path, monkeypatch):
+    with pytest.raises(ValueError, match="qd_cell_mode"):
+        _engine(tmp_path, monkeypatch, qd_cell_mode="mystery")
 
 
 def test_qd_engine_builds_cvt_archive_runtime(monkeypatch, tmp_path):

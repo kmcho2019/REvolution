@@ -140,6 +140,9 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "--qd_grid_quantile_warmup_successes 8" in normalized
     assert "--qd_fill_target_fraction 0.35" in normalized
     assert "--qd_cell_reservoir 3" in normalized
+    assert "--qd_cell_mode scalar_elite" in normalized
+    assert "--qd_max_elites_per_cell 1" in normalized
+    assert "--qd_objectives ppa" in normalized
     assert "--population_size 20" in normalized
     assert "--num_generations 5" in normalized
     assert "--total_worker_slots 2" in normalized
@@ -160,6 +163,9 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "qd_grid_quantile_warmup_successes=8" in manifest
     assert "qd_fill_target_fraction=0.35" in manifest
     assert "qd_cell_reservoir=3" in manifest
+    assert "qd_cell_mode=scalar_elite" in manifest
+    assert "qd_max_elites_per_cell=1" in manifest
+    assert "qd_objectives=ppa" in manifest
     assert f"--output {run_dir / 'hard_iteration_backend_comparison.md'}" in normalized
     assert f"--backend_run classic={run_dir / 'classic'}" in normalized
     assert f"--backend_run grid_struct={run_dir / 'grid_struct'}" in normalized

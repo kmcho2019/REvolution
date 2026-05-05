@@ -93,6 +93,9 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
             qd_cvt_warmup_successes=9,
             qd_grid_quantile_warmup_successes=8,
             qd_descriptor_profile="hybrid_seq_default",
+            qd_cell_mode="pareto_front",
+            qd_max_elites_per_cell=5,
+            qd_objectives="ppa",
         ),
         base_save_path=str(tmp_path / "exp"),
     )
@@ -104,6 +107,9 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
     assert captured["kwargs"]["qd_grid_quantile_warmup_successes"] == 8
     assert captured["kwargs"]["qd_descriptor_profile"] == "hybrid_seq_default"
     assert captured["kwargs"]["qd_cell_reservoir"] == 2
+    assert captured["kwargs"]["qd_cell_mode"] == "pareto_front"
+    assert captured["kwargs"]["qd_max_elites_per_cell"] == 5
+    assert captured["kwargs"]["qd_objectives"] == "ppa"
     assert captured["kwargs"]["qd_descriptor_file"] is None
     assert captured["kwargs"]["problem_spec"].problem_name == "Prob001"
     assert captured["kwargs"]["candidate_workers"] == 4

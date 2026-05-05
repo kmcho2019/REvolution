@@ -11,6 +11,7 @@ from revolution.qd.artifacts import (
     write_archive_space_files,
     write_qd_summary_files,
 )
+from revolution.qd.types import ArchiveMember
 from revolution.qd.visualization import write_grid_quantile_visualizations_from_artifacts
 from scripts.validate_grid_quantile_run import main as validate_run_main
 from scripts.validate_grid_quantile_visualizations import validate_problem
@@ -50,8 +51,26 @@ def _write_problem(
     )
     first = _candidate(tmp_path, name="cand1", score=0.5, descriptors=(1.0, 0.0, 1.0))
     second = _candidate(tmp_path, name="cand2", score=0.7, descriptors=second_descriptors)
-    archive.insert(first.id, (1.0, 0.0, 1.0), first.score, first)
-    archive.insert(second.id, second_descriptors, second.score, second)
+    archive.insert(
+        ArchiveMember(
+            candidate_id=first.id,
+            descriptors=(1.0, 0.0, 1.0),
+            quality_score=first.score,
+            objectives={"g_P": 0.1, "g_A": 0.1, "g_T": 0.2},
+            payload=first,
+            insertion_index=1,
+        )
+    )
+    archive.insert(
+        ArchiveMember(
+            candidate_id=second.id,
+            descriptors=second_descriptors,
+            quality_score=second.score,
+            objectives={"g_P": 0.1, "g_A": 0.1, "g_T": 0.2},
+            payload=second,
+            insertion_index=2,
+        )
+    )
 
     root.mkdir(parents=True)
     for candidate, descriptors in ((first, (1.0, 0.0, 1.0)), (second, second_descriptors)):
@@ -94,8 +113,7 @@ def _write_problem(
     append_archive_history(path=root / "archive_history.jsonl", snapshot=history[0])
     write_archive_cells_csv(
         path=root / "archive_cells.csv",
-        entries=sorted(archive.entries().items()),
-        ref_ppa_metrics={"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
+        members=archive.members(),
     )
     artifacts = write_qd_summary_files(
         summary_path=root / "archive_summary.json",
