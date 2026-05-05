@@ -48,14 +48,15 @@ def _expected_problems(path: Path) -> list[dict[str, str]]:
 
 def _problem_root(run_root: Path, mode: str, benchmark: str, problem: str) -> Path | None:
     direct = run_root / mode / benchmark / problem
-    if (direct / "archive_summary.json").is_file():
-        return direct
-    matches = sorted((run_root / mode).rglob(f"{benchmark}/{problem}/archive_summary.json"))
-    if matches:
-        return matches[-1].parent
-    matches = sorted((run_root / mode).rglob(f"{problem}/archive_summary.json"))
-    if matches:
-        return matches[-1].parent
+    for summary_name in ("archive_summary.json", f"{problem}_summary.json"):
+        if (direct / summary_name).is_file():
+            return direct
+        matches = sorted((run_root / mode).rglob(f"{benchmark}/{problem}/{summary_name}"))
+        if matches:
+            return matches[-1].parent
+        matches = sorted((run_root / mode).rglob(f"{problem}/{summary_name}"))
+        if matches:
+            return matches[-1].parent
     return None
 
 

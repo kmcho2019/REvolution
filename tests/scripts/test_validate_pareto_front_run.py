@@ -74,6 +74,15 @@ def _write_problem(path: Path, rows: list[dict[str, float]]) -> None:
             )
 
 
+def _write_classic_problem(path: Path) -> None:
+    problem_root = path / "classic" / "RTLLM" / "Prob004_adder_8bit"
+    problem_root.mkdir(parents=True)
+    (problem_root / "Prob004_adder_8bit_summary.json").write_text(
+        json.dumps({"problem": "Prob004_adder_8bit"}),
+        encoding="utf-8",
+    )
+
+
 def test_validate_pareto_front_run_accepts_multi_member_front(tmp_path):
     subset_config = _subset_config(tmp_path)
     _write_problem(
@@ -101,6 +110,37 @@ def test_validate_pareto_front_run_accepts_multi_member_front(tmp_path):
     assert payload["failure_count"] == 0
     assert payload["max_front_size_seen"] == 2
     assert (tmp_path / "pareto_front_validation.md").is_file()
+
+
+def test_validate_pareto_front_run_accepts_classic_problem_summary(tmp_path):
+    subset_config = _subset_config(tmp_path)
+    _write_classic_problem(tmp_path)
+    _write_problem(
+        tmp_path,
+        [
+            {"quality_score": 0.1, "g_P": 0.9, "g_A": 0.1},
+            {"quality_score": 0.9, "g_P": 0.1, "g_A": 0.9},
+        ],
+    )
+
+    exit_code = validate_pareto_main(
+        [
+            "--run-root",
+            str(tmp_path),
+            "--subset-config",
+            str(subset_config),
+            "--classic-mode",
+            "classic",
+            "--pareto-qd-mode",
+            "grid_quantile_pareto_journal_bd",
+            "--require-full-subset",
+            "--acceptance-hard-subset",
+        ]
+    )
+
+    payload = json.loads((tmp_path / "pareto_front_validation.json").read_text(encoding="utf-8"))
+    assert exit_code == 0
+    assert payload["acceptance_error_count"] == 0
 
 
 def test_validate_pareto_front_run_rejects_dominated_same_cell_member(tmp_path):
