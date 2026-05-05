@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from revolution.algorithm import Heuristic
-from revolution.qd.archive import CVTArchive, GridArchive
+from revolution.qd.archive import CVTArchive, GridArchive, GridQuantileArchive
 from revolution.qd.scoring import compute_ppa_gains
 from revolution.qd.types import QDArchiveInsertResult
 from revolution.qd.visualization import QDVisualizationArtifacts, write_qd_visualizations
@@ -16,7 +16,7 @@ from revolution.qd.visualization import QDVisualizationArtifacts, write_qd_visua
 def write_legacy_archive_layout(
     *,
     path: str | Path,
-    archive: GridArchive | CVTArchive,
+    archive: GridArchive | CVTArchive | GridQuantileArchive,
 ) -> None:
     """Write the legacy layout file that older reports and tests still expect."""
     output_path = Path(path)
@@ -35,7 +35,9 @@ def write_legacy_archive_layout(
                 for axis in archive.axes
             ],
         }
-    else:
+    elif isinstance(archive, GridQuantileArchive):
+        payload = archive.describe_space()
+    elif isinstance(archive, CVTArchive):
         scaler = archive.scaler
         payload = {
             "archive_type": "cvt",
@@ -56,6 +58,8 @@ def write_legacy_archive_layout(
                 else None
             ),
         }
+    else:
+        raise TypeError(f"Unsupported archive type: {type(archive).__name__}")
     output_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
@@ -122,7 +126,7 @@ def write_qd_summary_files(
     metrics_path: str | Path,
     output_dir: str | Path,
     history: list[dict[str, Any]],
-    archive: GridArchive | CVTArchive,
+    archive: GridArchive | CVTArchive | GridQuantileArchive,
     ref_ppa_metrics: dict[str, float],
     descriptor_profile: str | None,
     descriptor_axes: tuple[str, ...],
@@ -165,6 +169,22 @@ def write_qd_summary_files(
         "history_length": len(history),
         "visualization_files": list(visualization_artifacts.generated_files),
     }
+    if isinstance(archive, GridQuantileArchive):
+        summary_payload.update(
+            {
+                "initialized": archive.is_initialized,
+                "warmup_successes": archive.warmup_successes,
+                "warmup_buffer_size": archive.warmup_buffer_size(),
+                "initialization_sample_count": archive.initialization_sample_count,
+                "intended_num_cells": archive.intended_num_cells,
+                "effective_shape": list(archive.effective_bins)
+                if archive.is_initialized
+                else [],
+                "collapsed_axes": list(archive.collapsed_axes)
+                if archive.is_initialized
+                else [],
+            }
+        )
     metrics_payload = {
         "archive_type": archive.archive_type,
         "num_cells": archive.num_cells,
@@ -188,6 +208,22 @@ def write_qd_summary_files(
         "history": history,
         "visualization_files": list(visualization_artifacts.generated_files),
     }
+    if isinstance(archive, GridQuantileArchive):
+        metrics_payload.update(
+            {
+                "initialized": archive.is_initialized,
+                "warmup_successes": archive.warmup_successes,
+                "warmup_buffer_size": archive.warmup_buffer_size(),
+                "initialization_sample_count": archive.initialization_sample_count,
+                "intended_num_cells": archive.intended_num_cells,
+                "effective_shape": list(archive.effective_bins)
+                if archive.is_initialized
+                else [],
+                "collapsed_axes": list(archive.collapsed_axes)
+                if archive.is_initialized
+                else [],
+            }
+        )
     Path(summary_path).write_text(json.dumps(summary_payload, indent=2), encoding="utf-8")
     Path(metrics_path).write_text(json.dumps(metrics_payload, indent=2), encoding="utf-8")
     return visualization_artifacts
@@ -197,7 +233,7 @@ def write_archive_space_files(
     *,
     json_path: str | Path,
     report_path: str | Path,
-    archive: GridArchive | CVTArchive,
+    archive: GridArchive | CVTArchive | GridQuantileArchive,
     descriptor_profile: str | None,
     descriptor_axes: tuple[str, ...],
     occupied_cells: int,
@@ -207,6 +243,7 @@ def write_archive_space_files(
     payload = archive.describe_space()
     payload["descriptor_profile"] = descriptor_profile
     payload["descriptor_axes"] = list(descriptor_axes)
+    payload["artifact_dir"] = str(Path(json_path).parent)
     payload["occupied_cells"] = occupied_cells
     payload["visualization_files"] = list(visualization_files)
     Path(json_path).write_text(json.dumps(payload, indent=2), encoding="utf-8")
@@ -217,7 +254,7 @@ def write_descriptor_health_files(
     *,
     json_path: str | Path,
     report_path: str | Path,
-    archive: GridArchive | CVTArchive,
+    archive: GridArchive | CVTArchive | GridQuantileArchive,
     descriptor_axes: tuple[str, ...],
     descriptor_profile: str | None,
     observations: list[dict[str, Any]],
@@ -238,7 +275,7 @@ def write_candidate_archive_event(
     *,
     candidate: Heuristic,
     event_path: str | Path,
-    archive: GridArchive | CVTArchive,
+    archive: GridArchive | CVTArchive | GridQuantileArchive,
     archive_axes: tuple[str, ...],
     descriptor_tuple: tuple[float, ...],
     insert_result: QDArchiveInsertResult,
@@ -256,7 +293,15 @@ def write_candidate_archive_event(
         axis: float(value) for axis, value in zip(archive_axes, descriptor_tuple)
     }
     gains = compute_ppa_gains(candidate.ppa_metrics, ref_ppa_metrics)
-    assignment = archive.describe_assignment(descriptor_tuple)
+    if insert_result.decision == "warmup_buffered":
+        assignment = {
+            "archive_type": archive.archive_type,
+            "initialized": False,
+            "descriptor_tuple": list(descriptor_tuple),
+            "assignment_status": "warmup_pending",
+        }
+    else:
+        assignment = archive.describe_assignment(descriptor_tuple)
     assignment.setdefault("cell_id", insert_result.cell_id)
     payload = {
         "candidate_id": candidate.id,
@@ -267,6 +312,7 @@ def write_candidate_archive_event(
         "archive_type": archive.archive_type,
         "archive_axes": list(archive_axes),
         "quality_score": float(getattr(candidate, "quality_score", candidate.score)),
+        "ppa_metrics": dict(getattr(candidate, "ppa_metrics", {}) or {}),
         "score_components": {
             "g_P": float(gains.get("g_P", 0.0)),
             "g_A": float(gains.get("g_A", 0.0)),
@@ -279,6 +325,9 @@ def write_candidate_archive_event(
         "physical_metrics": dict(getattr(candidate, "physical_metrics", {}) or {}),
         "descriptor_values": descriptor_values,
         "descriptor_tuple": list(descriptor_tuple),
+        "generation_candidate_index": getattr(candidate, "generation_candidate_index", None),
+        "archive_insertion_index": getattr(candidate, "archive_insertion_index", None),
+        "candidate_directory_basename": output_path.parent.name,
         "cell_id": insert_result.cell_id,
         "assignment": assignment,
         "decision": insert_result.decision,
@@ -359,7 +408,37 @@ def _format_archive_space_report(payload: dict[str, Any]) -> str:
                     "- Multi-axis plots are projections of the full grid, not a complete rendering of every higher-dimensional cell neighborhood.",
                 ]
             )
-    else:
+    elif payload["archive_type"] == "grid_quantile":
+        geometry = payload["space_geometry"]
+        lines.extend(
+            [
+                "## Grid Quantile Geometry",
+                "",
+                f"- initialized: `{payload['initialized']}`",
+                f"- warmup_successes: `{payload['warmup_successes']}`",
+                f"- warmup_buffer_size: `{payload['warmup_buffer_size']}`",
+                f"- initialization_sample_count: `{payload['initialization_sample_count']}`",
+                f"- intended bins per axis: `{payload['intended_bins_per_axis']}`",
+                f"- intended cells: `{payload['intended_num_cells']}`",
+                f"- effective shape: `{payload.get('effective_shape', [])}`",
+                f"- collapsed_axes: `{', '.join(payload.get('collapsed_axes', [])) or 'none'}`",
+                f"- quantile_method: `{payload['quantile_method']}`",
+                f"- quantile_boundaries_hash: `{payload.get('quantile_boundaries_hash')}`",
+                f"- cell count derivation: `{geometry['effective_cell_count_derivation']} = {geometry['total_cells']}`",
+                "- exact boundary values map to the higher bin",
+                "",
+                "## Axis Split",
+                "",
+            ]
+        )
+        for axis in payload["axes"]:
+            lines.append(
+                f"- `{axis['name']}`: intended={axis['intended_bins']}, "
+                f"effective={axis['effective_bins']}, "
+                f"boundaries={axis['quantile_boundaries']}, "
+                f"collapsed={axis['collapsed']}"
+            )
+    elif payload["archive_type"] == "cvt":
         geometry = payload["space_geometry"]
         scaler = geometry.get("scaler")
         lines.extend(
@@ -403,12 +482,14 @@ def _format_archive_space_report(payload: dict[str, Any]) -> str:
                     "- The final archive was initialized from the available warmup buffer at run end.",
                 ]
             )
+    else:
+        raise ValueError(f"Unsupported archive_type '{payload['archive_type']}'.")
     return "\n".join(lines) + "\n"
 
 
 def _build_descriptor_health_payload(
     *,
-    archive: GridArchive | CVTArchive,
+    archive: GridArchive | CVTArchive | GridQuantileArchive,
     descriptor_axes: tuple[str, ...],
     descriptor_profile: str | None,
     observations: list[dict[str, Any]],

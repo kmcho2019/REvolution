@@ -28,6 +28,7 @@ Environment overrides:
   HARD_SUBSET_TOP_P             Top-p override (defaults to config value)
   HARD_SUBSET_NUM_CELLS         CVT cell override (defaults to config value)
   HARD_SUBSET_CVT_WARMUP        CVT warmup override (defaults to config value)
+  HARD_SUBSET_GRID_QUANTILE_WARMUP Grid-quantile warmup override (defaults to config value)
   HARD_SUBSET_QD_FILL_TARGET_FRACTION QD fill-target override (defaults to config value)
   HARD_SUBSET_QD_CELL_RESERVOIR QD per-cell reservoir override (defaults to config value)
   PYTHON_BIN                    Python binary (default: <repo>/.venv/bin/python if present, else python3)
@@ -184,6 +185,7 @@ emit_scalar("CONFIG_MAX_TOKENS", defaults["max_tokens"])
 emit_scalar("CONFIG_DIFF_MAX_TOKENS", defaults["diff_max_tokens"])
 emit_scalar("CONFIG_QD_NUM_CELLS", defaults["qd_num_cells"])
 emit_scalar("CONFIG_QD_CVT_WARMUP", defaults["qd_cvt_warmup_successes"])
+emit_scalar("CONFIG_QD_GRID_QUANTILE_WARMUP", defaults.get("qd_grid_quantile_warmup_successes", 20))
 emit_scalar("CONFIG_QD_FILL_TARGET_FRACTION", defaults.get("qd_fill_target_fraction", 0.25))
 emit_scalar("CONFIG_QD_CELL_RESERVOIR", defaults.get("qd_cell_reservoir", 2))
 emit_scalar("CONFIG_SEED", defaults["seed"])
@@ -204,6 +206,10 @@ for mode_name, mode_cfg in cfg["modes"].items():
     emit_scalar(
         f"{prefix}_QD_CVT_WARMUP",
         mode_cfg.get("qd_cvt_warmup_successes", ""),
+    )
+    emit_scalar(
+        f"{prefix}_QD_GRID_QUANTILE_WARMUP",
+        mode_cfg.get("qd_grid_quantile_warmup_successes", ""),
     )
     emit_scalar(
         f"{prefix}_QD_FILL_TARGET_FRACTION",
@@ -312,6 +318,7 @@ MAX_TOKENS="${HARD_SUBSET_MAX_TOKENS:-${CONFIG_MAX_TOKENS}}"
 DIFF_MAX_TOKENS="${HARD_SUBSET_DIFF_MAX_TOKENS:-${CONFIG_DIFF_MAX_TOKENS}}"
 NUM_CELLS="${HARD_SUBSET_NUM_CELLS:-${CONFIG_QD_NUM_CELLS}}"
 CVT_WARMUP="${HARD_SUBSET_CVT_WARMUP:-${CONFIG_QD_CVT_WARMUP}}"
+GRID_QUANTILE_WARMUP="${HARD_SUBSET_GRID_QUANTILE_WARMUP:-${CONFIG_QD_GRID_QUANTILE_WARMUP}}"
 QD_FILL_TARGET_FRACTION="${HARD_SUBSET_QD_FILL_TARGET_FRACTION:-${CONFIG_QD_FILL_TARGET_FRACTION}}"
 QD_CELL_RESERVOIR="${HARD_SUBSET_QD_CELL_RESERVOIR:-${CONFIG_QD_CELL_RESERVOIR}}"
 SEED="${HARD_SUBSET_SEED:-${CONFIG_SEED}}"
@@ -340,6 +347,7 @@ max_tokens=${MAX_TOKENS}
 diff_max_tokens=${DIFF_MAX_TOKENS}
 qd_num_cells=${NUM_CELLS}
 qd_cvt_warmup_successes=${CVT_WARMUP}
+qd_grid_quantile_warmup_successes=${GRID_QUANTILE_WARMUP}
 qd_fill_target_fraction=${QD_FILL_TARGET_FRACTION}
 qd_cell_reservoir=${QD_CELL_RESERVOIR}
 seed=${SEED}
@@ -382,6 +390,7 @@ for mode_name in "${MODES[@]}"; do
   descriptor_profile_var="MODE_${upper_mode}_QD_DESCRIPTOR_PROFILE"
   mode_num_cells_var="MODE_${upper_mode}_QD_NUM_CELLS"
   mode_cvt_warmup_var="MODE_${upper_mode}_QD_CVT_WARMUP"
+  mode_grid_quantile_warmup_var="MODE_${upper_mode}_QD_GRID_QUANTILE_WARMUP"
   mode_fill_target_var="MODE_${upper_mode}_QD_FILL_TARGET_FRACTION"
   mode_cell_reservoir_var="MODE_${upper_mode}_QD_CELL_RESERVOIR"
 
@@ -390,6 +399,7 @@ for mode_name in "${MODES[@]}"; do
   descriptor_profile="${!descriptor_profile_var}"
   resolved_num_cells="${!mode_num_cells_var}"
   resolved_cvt_warmup="${!mode_cvt_warmup_var}"
+  resolved_grid_quantile_warmup="${!mode_grid_quantile_warmup_var}"
   resolved_fill_target="${!mode_fill_target_var}"
   resolved_cell_reservoir="${!mode_cell_reservoir_var}"
   if [[ -z "${resolved_num_cells}" ]]; then
@@ -397,6 +407,9 @@ for mode_name in "${MODES[@]}"; do
   fi
   if [[ -z "${resolved_cvt_warmup}" ]]; then
     resolved_cvt_warmup="${CVT_WARMUP}"
+  fi
+  if [[ -z "${resolved_grid_quantile_warmup}" ]]; then
+    resolved_grid_quantile_warmup="${GRID_QUANTILE_WARMUP}"
   fi
   if [[ -z "${resolved_fill_target}" ]]; then
     resolved_fill_target="${QD_FILL_TARGET_FRACTION}"
@@ -412,6 +425,7 @@ for mode_name in "${MODES[@]}"; do
     echo "mode.${mode_name}.qd_descriptor_profile=${descriptor_profile}"
     echo "mode.${mode_name}.qd_num_cells=${resolved_num_cells}"
     echo "mode.${mode_name}.qd_cvt_warmup_successes=${resolved_cvt_warmup}"
+    echo "mode.${mode_name}.qd_grid_quantile_warmup_successes=${resolved_grid_quantile_warmup}"
     echo "mode.${mode_name}.qd_fill_target_fraction=${resolved_fill_target}"
     echo "mode.${mode_name}.qd_cell_reservoir=${resolved_cell_reservoir}"
   } >> "${SAVE_PATH}/hard_iteration_manifest.txt"
@@ -451,6 +465,9 @@ for mode_name in "${MODES[@]}"; do
     CMD+=("--qd_cell_reservoir" "${resolved_cell_reservoir}")
     if [[ "${archive_type}" == "cvt" ]]; then
       CMD+=("--qd_cvt_warmup_successes" "${resolved_cvt_warmup}")
+    fi
+    if [[ "${archive_type}" == "grid_quantile" ]]; then
+      CMD+=("--qd_grid_quantile_warmup_successes" "${resolved_grid_quantile_warmup}")
     fi
   fi
 

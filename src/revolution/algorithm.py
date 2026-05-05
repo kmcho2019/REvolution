@@ -235,6 +235,8 @@ class Heuristic:
         self.physical_metrics: dict[str, float] = {}
         self.descriptor_values: dict[str, float] = {}
         self.quality_score: float = score
+        self.generation_candidate_index: int | None = None
+        self.archive_insertion_index: int | None = None
         # File path to the code for evaluation purposes
         self.code_file_path: str = ""
         self.strategy: EvolStrategyMethod = strategy  # Strategy used to generate this heuristic, e.g., "initial", "M-F", "C-F", etc. (Total of 6 strategies + "initial")
@@ -1541,10 +1543,7 @@ class EoHEngine:
         """
         Build an LLMRequest with mode-specific token budgeting.
         """
-        request: LLMRequest = {
-            "prompt": prompt,
-            "generation_mode": mode,
-        }
+        request = cast(LLMRequest, {"prompt": prompt, "generation_mode": mode})
         if system_prompt:
             request["system_prompt"] = system_prompt
         if mode == "diff":

@@ -57,7 +57,10 @@ QD_SUMMARY_SIDECAR_NAMES = (
     "archive_summary.json",
     "qd_metrics.json",
     "grid_layout.json",
+    "grid_quantile_layout.json",
     "centroids.json",
+    "grid_quantile_visualization_manifest.json",
+    "grid_quantile_evolution_data.json",
     "descriptor_health.json",
     "descriptor_health_report.md",
 )
@@ -66,6 +69,9 @@ QD_VISUALIZATION_PATTERNS = (
     "best_quality_vs_generation.png",
     "qd_score_vs_generation.png",
     "grid_*_heatmap.png",
+    "grid_quantile_*.html",
+    "grid_quantile_frames/*.png",
+    "grid_quantile_slides/*.png",
     "cvt_*_projection.png",
 )
 

@@ -34,6 +34,7 @@ Pareto-front cells, two-tier fail handling, and single-operator plans.
 | Classic REvolution | `--search_mode revolution` | flat success pool | default REvolution settings | safest baseline, throughput, single-best candidate chasing | no archive or repertoire view |
 | Grid QD | `--search_mode revolution_qd --qd_archive_type grid` | archive elites + bounded reservoir view | `--qd_descriptor_profile implemented_structural_compact_3d` | control runs, reduced-axis debugging, discovery-oriented follow-up | weaker repertoire fill than CVT on the fixed redo |
 | CVT QD | `--search_mode revolution_qd --qd_archive_type cvt` | archive elites + bounded reservoir view | `--qd_descriptor_profile implemented_structural_fixed_5d` or `size_control_3d` | richer descriptor spaces, repertoire search, balanced archive experiments | warm-up and centroid geometry matter on the hardest tasks |
+| Grid-quantile QD | `--search_mode revolution_qd --qd_archive_type grid_quantile` | warmup buffer, then archive elites + bounded reservoir view | `--qd_descriptor_profile journal_logic_ff_width_3d --qd_grid_quantile_warmup_successes 8` | journal behavior-descriptor hard-subset validation | static 4-bin quantiles only; adaptive re-binning is deferred |
 
 ### Descriptor family to mode map
 
@@ -44,7 +45,7 @@ Pareto-front cells, two-tier fail handling, and single-operator plans.
 | RTL / source-text | regex over candidate RTL | richer CVT descriptor studies | `size_control_3d`, `wire_assign_if_3d` |
 | RTL / Yosys AST | lightweight Yosys AST dump | control-shape CVT studies | `timing_control_3d`, `wire_ctrl_assign_3d` |
 | Graph / testability | flattened Yosys JSON graph | theory-grounded CVT studies | `theory_grounded_full_20d` |
-| Journal BD trio | flattened Yosys JSON graph | journal behavior-descriptor CVT studies | `journal_logic_ff_width_3d` |
+| Journal BD trio | flattened Yosys JSON graph | static grid-quantile journal studies | `journal_logic_ff_width_3d` |
 | Physical | OpenROAD report parsing | richer CVT follow-up studies | `hybrid_phys_seq` |
 | Dynamic / VCD | Icarus waveform parsing | experimental activity-driven studies | `activity_size_3d`, `activity_control_3d` |
 
@@ -82,7 +83,7 @@ Core QD files:
 - [scoring.py](../src/revolution/qd/scoring.py):
   `quality_score`, gain components, repair score, and code hashing
 - [visualization.py](../src/revolution/qd/visualization.py):
-  history plots plus grid/CVT archive visualizations
+  history plots plus grid, CVT, and grid-quantile archive visualizations
 - `scripts/report_qd_feature_space.py`:
   post-run feature-space analysis, regression summaries, collapse diagnostics,
   and PCA/t-SNE projections over successful QD candidates
@@ -546,12 +547,16 @@ Experimental theory-grounded profile:
 | `theory_grounded_compact_8d` | reduced SCOAP + spectral theory profile from the Stage 6 hard-subset collapse pass | cvt | you want the best current theory-only hard-subset follow-on, with better stability/hypervolume than the 20D profile but without claiming to beat the structural controls on QD score | experimental |
 | `hybrid_phys_seq` | structural + physical + gain axes | cvt | you want to test whether physical variation meaningfully enriches the archive | medium |
 | `activity_size_3d` / `activity_control_3d` | dynamic + size/control axes | grid or cvt follow-up | you want an experimental activity-sensitive archive study | low to medium |
+| `journal_logic_ff_width_3d` | `logic_depth`, `ff_depth`, `comb_width_log` | grid_quantile | you want the Phase 02 journal behavior-descriptor archive with static quantile bins | high for journal validation |
 
 Stage 10 runtime note:
 
 - grid mode now honors `qd_descriptor_profile` when `qd_grid_axes` is omitted,
   so `implemented_structural_compact_3d` is no longer just a config file entry;
   it is active in real grid runs and visible in `archive_space_report.md`
+- grid-quantile mode is available as `--qd_archive_type grid_quantile`; it
+  always uses four intended bins per axis and freezes quantile boundaries from
+  successful archiveable warmup candidates
 - the later fixed redo under
   `/tmp/qd_rich20x5_redo_full_fixed/20260314_115920` supersedes the early
   refresh-only read and shows that the structural retrospective profiles are
@@ -679,7 +684,7 @@ Run-level / problem-level QD artifacts:
 - `archive_cells.csv`
 - `archive_summary.json`
 - `qd_metrics.json`
-- `grid_layout.json` or `centroids.json`
+- `grid_layout.json`, `grid_quantile_layout.json`, or `centroids.json`
 - `archive_space.json`
 - `archive_space_report.md`
 - `descriptor_health.json`
@@ -688,6 +693,8 @@ Run-level / problem-level QD artifacts:
 - `best_quality_vs_generation.png`
 - `qd_score_vs_generation.png`
 - grid heatmaps for 2-axis grid runs
+- grid-quantile HTML, frame PNGs, slide PNGs, and manifest files for supported
+  2D/3D journal archives
 - per-axis occupancy/quality marginals for multi-axis grid runs
 - pairwise occupancy/quality projection heatmaps for multi-axis grid runs
 - CVT projection plots for initialized CVT runs
@@ -845,6 +852,21 @@ For richer multi-axis grid runs:
 - use the per-axis marginal plots and pairwise projection heatmaps first
 - use `archive_space_report.md`, `archive_space.json`, `archive_cells.csv`, and
   per-candidate `qd_archive_event.json` to understand full cell organization
+
+For grid-quantile journal runs:
+
+- inspect `archive_space.json` first to see pending warmup buffer samples,
+  initialization samples, replay results, quantile boundaries, effective bins,
+  collapsed axes, and the boundary hash
+- use `grid_quantile_occupancy_evolution.html` or the PNG frames to inspect
+  how bins and archiveable samples fill across recorded history snapshots; the
+  journal layout keeps `logic_depth` on x, `comb_width_log` on y/depth, and
+  `ff_depth` on the vertical z/slice axis
+- use `scripts/render_grid_quantile_visualizations.py` to regenerate the HTML,
+  frame PNGs, slides, and manifest from existing run artifacts after renderer
+  changes
+- run `scripts/validate_grid_quantile_run.py` before treating hard-subset
+  artifacts as Phase 02 acceptance evidence
 
 When choosing which mode/profile to run next:
 

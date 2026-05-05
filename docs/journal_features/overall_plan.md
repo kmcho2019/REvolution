@@ -69,8 +69,8 @@ stable while the first implementation lands.
   registry resolution, and descriptor requirements.
 - `src/revolution/runtime/candidate_evaluator.py` already collects structural,
   RTL, dynamic, graph, physical, score-component, and descriptor-value payloads.
-- `src/revolution/qd/archive.py` currently has fixed `GridArchive` behavior and
-  CVT warmup behavior. `adaptive_grid` should be a new explicit archive variant.
+- `src/revolution/qd/archive.py` has fixed `GridArchive` behavior, CVT warmup
+  behavior, and `grid_quantile` as the static quantile archive for Phase 02.
 - `src/revolution/qd/engine.py` currently owns QD strategy routing, archive
   insertion, success/fail pools, and artifact snapshots. The journal path should
   simplify this rather than preserve every experimental QD mode.
@@ -87,7 +87,7 @@ stable while the first implementation lands.
 | Feature | Status | Deadline | Spec | Notes |
 | --- | --- | --- | --- | --- |
 | BD trio: logic depth, FF depth, width | Planned | 2026-05-03 | [01_bd_trio.md](01_bd_trio.md) | First because it is mostly additive and gives the archive stable axes. |
-| Initial QD binning: quantile adaptive grid | Planned | 2026-05-04 | [02_quantile_binning.md](02_quantile_binning.md) | Adds the first journal archive geometry before dynamic re-binning. |
+| Initial QD binning: static quantile grid | Planned | 2026-05-04 | [02_quantile_binning.md](02_quantile_binning.md) | Adds the first journal archive geometry before dynamic re-binning. |
 | Pareto-front archive / multiobjective MAP-Elites | Planned | 2026-05-06 | [03_pareto_front_archive.md](03_pareto_front_archive.md) | Replaces one elite per cell with bounded PPA fronts. |
 | Two-tier archive + fail handling | Planned | 2026-05-07 | [04_two_tier_fail_pool.md](04_two_tier_fail_pool.md) | Makes success archive and fail pool explicit parent sources. |
 | Single thought mutation operator | Planned | 2026-05-08 | [05_single_mutation_operator.md](05_single_mutation_operator.md) | Removes QD strategy-bandit routing from the journal path. |
@@ -99,7 +99,7 @@ stable while the first implementation lands.
 Initial target: 2026-05-12
 
 - [ ] 1. BD trio: logic depth, FF depth, width - target 2026-05-03
-- [ ] 2. Initial QD binning: quantile-based adaptive grid - target 2026-05-04
+- [ ] 2. Initial QD binning: static quantile grid - target 2026-05-04
 - [ ] 3. Pareto-front archive / multiobjective MAP-Elites - target 2026-05-06
 - [ ] 4. Two-tier archive + fail handling - target 2026-05-07
 - [ ] 5. Single thought mutation operator - target 2026-05-08
@@ -123,8 +123,8 @@ Target deadline: `2026-05-03`
 
 Target deadline: `2026-05-04`
 
-- [ ] 2.1 Add new `adaptive_grid` mode with quantile-based 25/50/75
-  boundaries and four bins per axis.
+- [ ] 2.1 Add new `grid_quantile` mode with fixed 25/50/75 quantile
+  boundaries and four intended bins per axis.
 - [ ] 2.2 Initialize bin edges from initial warmup successful descriptor samples
   using per-axis quantiles.
 - [ ] 2.3 Support quantile collapse, such as a combinational design producing

@@ -130,7 +130,7 @@ having to pre-commit the run to a fixed problem/process split.
 
 QD-mode controls on the `revolution` backend currently include:
 
-- archive selection: `--qd_archive_type grid|cvt`
+- archive selection: `--qd_archive_type grid|cvt|grid_quantile`
 - descriptor selection:
   `--qd_descriptor_profile`,
   `--qd_descriptor_axes`,
@@ -151,6 +151,10 @@ Current feature status:
   benchmark-aware phase-mode runtime wiring.
 - `cvt` now has an initial runtime path with warm-up buffering, frozen scaling,
   and nearest-centroid insertion over configured CVT axes.
+- `grid_quantile` is the static journal MAP-Elites mode. It uses four intended
+  bins per descriptor axis, freezes 25/50/75 quantile boundaries from
+  archiveable warmup successes, and exposes only
+  `--qd_grid_quantile_warmup_successes` as its archive-specific knob.
 - success-side QD fill/backfill now has dedicated operators:
   `M-T` for targeted descriptor mutation and `C-D` for diverse archive fusion.
 - `auto` per-phase generation-mode selection now consults
@@ -791,7 +795,7 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
 - `scripts/run_hard_iteration_one_shot_vllm.sh`: resumable one-shot hard-subset baseline harness for RTLLM and VerilogEval-Spec-to-RTL.
 - `scripts/build_hard_iteration_subset.py`: turn one-shot summaries plus benchmark metadata into a frozen balanced hard-subset config and baseline CSV.
-- `scripts/run_hard_iteration_qd_vllm.sh`: run the `classic`, `grid_struct`, `cvt_struct`, and `cvt_size_control` long-budget matrix from the frozen hard-subset config.
+- `scripts/run_hard_iteration_qd_vllm.sh`: run the `classic`, `grid_struct`, `cvt_struct`, `cvt_size_control`, and `grid_quantile_journal_bd` matrix entries from a frozen hard-subset config.
 - `scripts/report_hard_iteration_analysis.py`: summarize hard-subset classic-vs-QD runs into a markdown report plus JSON recommendations.
 - `scripts/report_pareto_analysis.py`: summarize hard-subset backend runs into Pareto-front figures plus per-backend hypervolume and frontier-size tables.
 - `scripts/report_ppa_distribution.py`: summarize successful candidates into PPA-space scatter figures with score contours and projected Pareto fronts, best-candidate CSVs, and reference-normalized gain views.
@@ -800,7 +804,17 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/report_final_analysis_bundle.py`: generate the formal `final_analysis/` directory for a finished hard-subset run root.
 - `scripts/report_qd_problem_histograms.py`: emit per-problem CVT successful-candidate histograms, projected centroid/division overlays, and cumulative history views into `qd_feature_histograms/` under each problem directory.
 - `data/configs/qd_descriptor_profiles_hard_iteration_large.yaml`: dedicated large-profile follow-up descriptor config for the hard-subset workflow, using the frozen `hard_iteration_large_struct10d` profile and coarse grid bins.
-- `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts`). QD runs keep `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`, `qd_metrics.json`, `grid_layout.json` or `centroids.json`, `archive_space.json`, `archive_space_report.md`, and the generated QD plots in the archived summary set so archive state is preserved even in `candidate_core` mode.
+- `scripts/validate_grid_quantile_run.py`: audit a `grid_quantile_journal_bd`
+  run against static-boundary, warmup, cell-assignment, and visualization
+  invariants. Add `--acceptance-hard-subset` for the Phase 02 full hard-subset
+  gate; it also checks the resolved seed, population, worker settings, and
+  classic-relative warmup allowance.
+- `scripts/validate_grid_quantile_visualizations.py`: check generated
+  grid-quantile HTML, PNG frames, slides, and manifest source hashes.
+- `scripts/render_grid_quantile_visualizations.py`: regenerate grid-quantile
+  interactive HTML, frame PNGs, slides, and manifest data from an existing run
+  root without rerunning model evaluation.
+- `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts`). QD runs keep `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`, `qd_metrics.json`, `grid_layout.json`, `grid_quantile_layout.json`, or `centroids.json`, `archive_space.json`, `archive_space_report.md`, and the generated QD plots in the archived summary set so archive state is preserved even in `candidate_core` mode.
 - QD candidate directories now also include `qd_archive_event.json` for every
   archive-handled successful candidate.
 - `scripts/run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with matched-seed runs (`--seeds`), fixed hard validation matrix defaults (RTLLM/VerilogEval/CVDP), aggregate token/runtime report output, diff-failure catalogs, and optional `--skip_if_unreachable` fail-fast artifact mode for unstable vLLM connectivity.

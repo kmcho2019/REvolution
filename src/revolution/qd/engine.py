@@ -5,6 +5,7 @@ import datetime
 import json
 import os
 import random
+import re
 import time
 import traceback
 from collections import defaultdict
@@ -21,7 +22,7 @@ from revolution.algorithm import (
     QD_SUCCESS_STRATEGIES,
 )
 from revolution.prompt_store import safe_format
-from revolution.qd.archive import CVTArchive, GridArchive, GridAxisSpec
+from revolution.qd.archive import CVTArchive, GridArchive, GridAxisSpec, GridQuantileArchive
 from revolution.qd.artifacts import (
     append_archive_history,
     write_archive_cells_csv,
@@ -38,8 +39,9 @@ from revolution.qd.descriptors import (
     resolve_grid_axis_specs,
 )
 from revolution.qd.scoring import compute_ppa_gains
-from revolution.qd.scheduler import split_qd_budget
+from revolution.qd.scheduler import QDBudgetSplit, split_qd_budget
 from revolution.qd.types import QDArchiveInsertResult
+from revolution.qd.visualization import write_grid_quantile_visualizations_from_artifacts
 
 
 _ARCHIVE_ONLY_DESCRIPTOR_PROFILES = {"journal_logic_ff_width_3d"}
@@ -56,6 +58,7 @@ class QDEngine(EoHEngine):
         qd_fill_target_fraction: float = 0.25,
         qd_cell_reservoir: int = 2,
         qd_cvt_warmup_successes: int | None = None,
+        qd_grid_quantile_warmup_successes: int = 20,
         qd_descriptor_profile: str | None = None,
         qd_descriptor_axes: tuple[str, ...] = (),
         qd_descriptor_file: str | None = None,
@@ -74,6 +77,7 @@ class QDEngine(EoHEngine):
         self.qd_fill_target_fraction = float(qd_fill_target_fraction)
         self.qd_cell_reservoir = max(0, int(qd_cell_reservoir))
         self.qd_cvt_warmup_successes = qd_cvt_warmup_successes
+        self.qd_grid_quantile_warmup_successes = int(qd_grid_quantile_warmup_successes)
         self.qd_descriptor_profile = qd_descriptor_profile
         self.qd_descriptor_axes = tuple(qd_descriptor_axes)
         self.qd_descriptor_file = qd_descriptor_file
@@ -93,6 +97,7 @@ class QDEngine(EoHEngine):
         self.success_reservoir: dict[str, deque[Heuristic]] = {}
         self.qd_generation_history: list[dict[str, Any]] = []
         self.qd_descriptor_observations: list[dict[str, Any]] = []
+        self._archive_insertion_index = 0
 
     def _uses_descriptor_guided_generation(self) -> bool:
         return self.qd_descriptor_profile not in _ARCHIVE_ONLY_DESCRIPTOR_PROFILES
@@ -156,11 +161,31 @@ class QDEngine(EoHEngine):
             warmup_successes=self.qd_cvt_warmup_successes,
         )
 
-    def _build_archive(self) -> GridArchive | CVTArchive:
+    def _build_grid_quantile_archive(self) -> GridQuantileArchive:
+        circuit_type = (
+            self.problem_spec.circuit_type
+            if self.problem_spec is not None
+            else ("sequential" if self.ref_ppa_metrics.get("eff_clk_period", 0.0) else "combinational")
+        )
+        axes = resolve_descriptor_axes(
+            profile_name=self.qd_descriptor_profile,
+            explicit_axes=self.qd_descriptor_axes or None,
+            descriptor_file=self.qd_descriptor_file,
+            archive_type="grid",
+            circuit_type=circuit_type,
+        )
+        return GridQuantileArchive(
+            axes=axes,
+            warmup_successes=self.qd_grid_quantile_warmup_successes,
+        )
+
+    def _build_archive(self) -> GridArchive | CVTArchive | GridQuantileArchive:
         if self.qd_archive_type == "grid":
             return self._build_grid_archive()
         if self.qd_archive_type == "cvt":
             return self._build_cvt_archive()
+        if self.qd_archive_type == "grid_quantile":
+            return self._build_grid_quantile_archive()
         raise ValueError(f"Unsupported qd_archive_type '{self.qd_archive_type}'.")
 
     def _archive_axes(self) -> tuple[str, ...]:
@@ -228,13 +253,17 @@ class QDEngine(EoHEngine):
         self.success_archive = self._build_archive()
         self.success_reservoir = {}
         self.qd_descriptor_observations = []
+        self._archive_insertion_index = 0
         for cand in self.success_pool:
             descriptors = self._descriptor_tuple(cand)
             if descriptors is None:
                 continue
+            self._assign_archive_indices(cand)
             before_occupied = self.success_archive.occupied_count()
             before_qd_score = self._archive_qd_score()
             result = self.success_archive.insert(cand.id, descriptors, cand.score, cand)
+            if isinstance(self.success_archive, GridQuantileArchive) and result.decision == "warmup_buffered":
+                self.success_reservoir.setdefault(result.cell_id, deque(maxlen=1)).appendleft(cand)
             self._write_candidate_qd_event(
                 cand,
                 descriptor_tuple=descriptors,
@@ -244,6 +273,8 @@ class QDEngine(EoHEngine):
                 before_qd_score=before_qd_score,
                 after_qd_score=self._archive_qd_score(),
             )
+        if isinstance(self.success_archive, GridQuantileArchive) and self.success_archive.is_initialized:
+            self._drop_warmup_reservoir()
         self.success_pool = self._success_view()
 
     def _archive_elites(self) -> list[Heuristic]:
@@ -262,6 +293,11 @@ class QDEngine(EoHEngine):
             deque(maxlen=self.qd_cell_reservoir),
         )
         bucket.appendleft(candidate)
+
+    def _drop_warmup_reservoir(self) -> None:
+        for cell_id in list(self.success_reservoir):
+            if cell_id.startswith("warmup:"):
+                del self.success_reservoir[cell_id]
 
     def _success_view(self) -> list[Heuristic]:
         elites = self._archive_elites()
@@ -297,6 +333,8 @@ class QDEngine(EoHEngine):
                     for axis, value in zip(self._archive_axes(), descriptor_tuple)
                 },
                 "quality_score": float(getattr(candidate, "quality_score", candidate.score)),
+                "generation_candidate_index": getattr(candidate, "generation_candidate_index", None),
+                "archive_insertion_index": getattr(candidate, "archive_insertion_index", None),
             }
         )
         if not candidate.code_file_path:
@@ -332,7 +370,14 @@ class QDEngine(EoHEngine):
         log_dir = self._qd_log_dir()
         if log_dir is None:
             return None
-        filename = "grid_layout.json" if self.qd_archive_type == "grid" else "centroids.json"
+        if self.qd_archive_type == "grid":
+            filename = "grid_layout.json"
+        elif self.qd_archive_type == "cvt":
+            filename = "centroids.json"
+        elif self.qd_archive_type == "grid_quantile":
+            filename = "grid_quantile_layout.json"
+        else:
+            raise ValueError(f"Unsupported qd_archive_type '{self.qd_archive_type}'.")
         return os.path.join(log_dir, filename)
 
     def _archive_history_path(self) -> str | None:
@@ -386,6 +431,25 @@ class QDEngine(EoHEngine):
     def _archive_qd_score(self) -> float:
         return sum(float(entry.quality_score) for entry in self.success_archive.entries().values())
 
+    def _assign_archive_indices(self, candidate: Heuristic) -> None:
+        self._archive_insertion_index += 1
+        candidate.archive_insertion_index = self._archive_insertion_index
+        if candidate.generation_candidate_index is not None:
+            return
+        candidate.generation_candidate_index = self._parse_generation_candidate_index(
+            candidate
+        )
+
+    def _parse_generation_candidate_index(self, candidate: Heuristic) -> int | None:
+        code_path = getattr(candidate, "code_file_path", "")
+        if not code_path:
+            return None
+        basename = os.path.basename(os.path.dirname(code_path))
+        match = re.search(r"(?:^|_)sample(\d+)(?:_|$)", basename)
+        if match is None:
+            return None
+        return int(match.group(1))
+
     def _gain_stats(self) -> dict[str, float]:
         elites = self._archive_elites()
         if not elites:
@@ -430,6 +494,10 @@ class QDEngine(EoHEngine):
             "replaced_cells": replaced,
             "runtime_seconds": runtime_sec,
         }
+        if isinstance(self.success_archive, GridQuantileArchive):
+            snapshot["grid_quantile_geometry"] = (
+                self.success_archive.describe_history_geometry()
+            )
         snapshot.update(self._gain_stats())
         if budget is not None:
             snapshot.update(
@@ -513,6 +581,10 @@ class QDEngine(EoHEngine):
                 occupied_cells=self.success_archive.occupied_count(),
                 visualization_files=visualization_artifacts.generated_files,
             )
+            if isinstance(self.success_archive, GridQuantileArchive):
+                write_grid_quantile_visualizations_from_artifacts(
+                    self._qd_log_dir() or os.path.dirname(summary_path)
+                )
 
     def _write_qd_artifacts(self, snapshot: dict[str, Any] | None = None) -> None:
         history_path = self._archive_history_path()
@@ -524,8 +596,8 @@ class QDEngine(EoHEngine):
             self._append_archive_history(snapshot)
         self._write_qd_summary_files()
 
-    def _finalize_pending_cvt_archive(self) -> tuple[int, int] | None:
-        if not isinstance(self.success_archive, CVTArchive):
+    def _finalize_pending_archive(self) -> tuple[int, int] | None:
+        if not isinstance(self.success_archive, CVTArchive | GridQuantileArchive):
             return None
 
         finalize_results = self.success_archive.finalize_pending()
@@ -534,6 +606,8 @@ class QDEngine(EoHEngine):
 
         inserted = sum(1 for result in finalize_results.values() if result.inserted)
         replaced = sum(1 for result in finalize_results.values() if result.replaced)
+        if isinstance(self.success_archive, GridQuantileArchive):
+            self._drop_warmup_reservoir()
         self.success_pool = self._success_view()
         return inserted, replaced
 
@@ -559,6 +633,50 @@ class QDEngine(EoHEngine):
     def initialize_population(self) -> None:
         super().initialize_population()
         self._rebuild_archive_from_success_pool()
+
+    def _split_generation_budget(self) -> QDBudgetSplit:
+        if isinstance(self.success_archive, GridQuantileArchive) and not self.success_archive.is_initialized:
+            total_pool = len(self.fail_pool) + len(self.success_pool)
+            if total_pool == 0:
+                return QDBudgetSplit(
+                    total_budget=self.num_offspring_lambda,
+                    target_cells=self.success_archive.warmup_successes,
+                    occupied_cells=self.success_archive.warmup_buffer_size(),
+                    fail_share=0.0,
+                    fail_budget=0,
+                    success_budget=self.num_offspring_lambda,
+                    phase="warmup",
+                    seed_budget=self.num_offspring_lambda,
+                    backfill_budget=0,
+                    refine_budget=0,
+                )
+            fail_budget = round(self.num_offspring_lambda * len(self.fail_pool) / total_pool)
+            success_budget = self.num_offspring_lambda - fail_budget
+            if self.fail_pool and self.success_pool:
+                success_budget = max(success_budget, self.num_offspring_lambda // 2)
+                fail_budget = self.num_offspring_lambda - success_budget
+            return QDBudgetSplit(
+                total_budget=self.num_offspring_lambda,
+                target_cells=self.success_archive.warmup_successes,
+                occupied_cells=self.success_archive.warmup_buffer_size(),
+                fail_share=fail_budget / max(self.num_offspring_lambda, 1),
+                fail_budget=fail_budget,
+                success_budget=success_budget,
+                phase="warmup",
+                seed_budget=0,
+                backfill_budget=0,
+                refine_budget=success_budget,
+            )
+
+        return split_qd_budget(
+            total_budget=self.num_offspring_lambda,
+            occupied_cells=self.success_archive.occupied_count(),
+            num_cells=self.success_archive.num_cells,
+            fill_target_fraction=self.qd_fill_target_fraction,
+            fail_pool_empty=not bool(self.fail_pool),
+            archive_empty=self.success_archive.occupied_count() == 0,
+            empty_cells_remaining=self.success_archive.occupied_count() < self.success_archive.num_cells,
+        )
 
     def _sample_success_parents(self, count: int) -> list[Heuristic]:
         success_view = self._success_view()
@@ -872,6 +990,7 @@ class QDEngine(EoHEngine):
             descriptors = self._descriptor_tuple(cand)
             if descriptors is None:
                 continue
+            self._assign_archive_indices(cand)
             before_occupied = self.success_archive.occupied_count()
             before_qd_score = self._archive_qd_score()
             result = self.success_archive.insert(cand.id, descriptors, cand.score, cand)
@@ -882,6 +1001,8 @@ class QDEngine(EoHEngine):
                 previous_payload = cast(Heuristic | None, result.previous_payload)
                 if previous_payload is not None:
                     self._record_reservoir_candidate(result.cell_id, previous_payload)
+            elif isinstance(self.success_archive, GridQuantileArchive) and result.decision == "warmup_buffered":
+                self.success_reservoir.setdefault(result.cell_id, deque(maxlen=1)).appendleft(cand)
             elif self.qd_cell_reservoir > 0:
                 self._record_reservoir_candidate(result.cell_id, cand)
             after_occupied = self.success_archive.occupied_count()
@@ -895,6 +1016,8 @@ class QDEngine(EoHEngine):
                 before_qd_score=before_qd_score,
                 after_qd_score=after_qd_score,
             )
+        if isinstance(self.success_archive, GridQuantileArchive) and self.success_archive.is_initialized:
+            self._drop_warmup_reservoir()
         self.success_pool = self._success_view()
         return inserted, replaced
 
@@ -903,15 +1026,7 @@ class QDEngine(EoHEngine):
         print(f"\n--- Starting QD Generation {self.current_generation} ---")
         self.gen_start_time = time.time()
 
-        budget = split_qd_budget(
-            total_budget=self.num_offspring_lambda,
-            occupied_cells=self.success_archive.occupied_count(),
-            num_cells=self.success_archive.num_cells,
-            fill_target_fraction=self.qd_fill_target_fraction,
-            fail_pool_empty=not bool(self.fail_pool),
-            archive_empty=self.success_archive.occupied_count() == 0,
-            empty_cells_remaining=self.success_archive.occupied_count() < self.success_archive.num_cells,
-        )
+        budget = self._split_generation_budget()
 
         new_offspring: list[Heuristic] = []
         fail_rewards_this_gen = defaultdict(float)
@@ -1170,7 +1285,7 @@ class QDEngine(EoHEngine):
                 break
 
         print("\n--- REvolution QD Run Finished ---")
-        finalization_counts = self._finalize_pending_cvt_archive()
+        finalization_counts = self._finalize_pending_archive()
         if finalization_counts is not None:
             inserted, replaced = finalization_counts
             self._write_finalization_fallback_artifacts(

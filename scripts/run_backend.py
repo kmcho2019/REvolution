@@ -405,6 +405,7 @@ def _build_backend(
             qd_cell_reservoir=args.qd_cell_reservoir,
             qd_neighbor_k=args.qd_neighbor_k,
             qd_cvt_warmup_successes=args.qd_cvt_warmup_successes,
+            qd_grid_quantile_warmup_successes=args.qd_grid_quantile_warmup_successes,
             qd_quality_mode=args.qd_quality_mode,
             qd_alpha=args.qd_alpha,
             qd_beta=args.qd_beta,
@@ -863,13 +864,14 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         "--qd_archive_type",
         type=str,
         default="grid",
-        choices=["grid", "cvt"],
+        choices=["grid", "cvt", "grid_quantile"],
     )
     parser.add_argument("--qd_num_cells", type=int, default=64)
     parser.add_argument("--qd_fill_target_fraction", type=float, default=0.25)
     parser.add_argument("--qd_cell_reservoir", type=int, default=2)
     parser.add_argument("--qd_neighbor_k", type=int, default=8)
     parser.add_argument("--qd_cvt_warmup_successes", type=int, default=None)
+    parser.add_argument("--qd_grid_quantile_warmup_successes", type=int, default=20)
     parser.add_argument(
         "--qd_quality_mode",
         type=str,

@@ -1,4 +1,11 @@
-from revolution.qd.archive import CVTArchive, FrozenCVTScaler, GridArchive, GridArchiveEntry, GridAxisSpec
+from revolution.qd.archive import (
+    CVTArchive,
+    FrozenCVTScaler,
+    GridArchive,
+    GridArchiveEntry,
+    GridAxisSpec,
+    GridQuantileArchive,
+)
 from revolution.qd.types import (
     QDArchive,
     QDArchiveInsertResult,
@@ -40,6 +47,7 @@ __all__ = [
     "GridArchive",
     "GridArchiveEntry",
     "GridAxisSpec",
+    "GridQuantileArchive",
     "FrozenCVTScaler",
     "QDEngine",
     "QDArchive",

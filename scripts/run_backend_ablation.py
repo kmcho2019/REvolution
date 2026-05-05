@@ -369,7 +369,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         "--qd_archive_type",
         type=str,
         default="grid",
-        choices=["grid", "cvt"],
+        choices=["grid", "cvt", "grid_quantile"],
         help="QD archive geometry for revolution_qd runs.",
     )
     parser.add_argument("--qd_num_cells", type=int, default=64)

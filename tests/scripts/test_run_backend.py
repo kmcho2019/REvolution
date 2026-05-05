@@ -173,7 +173,9 @@ def test_backend_parser_accepts_qd_options():
             "--search_mode",
             "revolution_qd",
             "--qd_archive_type",
-            "cvt",
+            "grid_quantile",
+            "--qd_grid_quantile_warmup_successes",
+            "8",
             "--qd_descriptor_profile",
             "hybrid_seq_default",
             "--qd_descriptor_axes",
@@ -185,7 +187,8 @@ def test_backend_parser_accepts_qd_options():
         ]
     )
     assert args.search_mode == "revolution_qd"
-    assert args.qd_archive_type == "cvt"
+    assert args.qd_archive_type == "grid_quantile"
+    assert args.qd_grid_quantile_warmup_successes == 8
     assert args.qd_descriptor_profile == "hybrid_seq_default"
     assert args.qd_descriptor_axes == ["seq_ratio", "g_A", "g_T"]
     assert args.qd_refine_generation_mode == "diff"

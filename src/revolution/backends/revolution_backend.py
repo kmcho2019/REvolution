@@ -45,6 +45,7 @@ class RevolutionBackendConfig:
     qd_cell_reservoir: int = 2
     qd_neighbor_k: int = 8
     qd_cvt_warmup_successes: int | None = None
+    qd_grid_quantile_warmup_successes: int = 20
     qd_quality_mode: str = "auto"
     qd_alpha: float | None = None
     qd_beta: float | None = None
@@ -131,6 +132,7 @@ class RevolutionBackend(EvolutionBackend):
                 qd_fill_target_fraction=self.config.qd_fill_target_fraction,
                 qd_cell_reservoir=self.config.qd_cell_reservoir,
                 qd_cvt_warmup_successes=self.config.qd_cvt_warmup_successes,
+                qd_grid_quantile_warmup_successes=self.config.qd_grid_quantile_warmup_successes,
                 qd_descriptor_profile=self.config.qd_descriptor_profile,
                 qd_descriptor_axes=self.config.qd_descriptor_axes,
                 qd_descriptor_file=self.config.qd_descriptor_file,
@@ -175,6 +177,7 @@ class RevolutionBackend(EvolutionBackend):
                     "num_cells": self.config.qd_num_cells,
                     "fill_target_fraction": self.config.qd_fill_target_fraction,
                     "quality_mode": self.config.qd_quality_mode,
+                    "grid_quantile_warmup_successes": self.config.qd_grid_quantile_warmup_successes,
                     "descriptor_profile": self.config.qd_descriptor_profile,
                     "descriptor_axes": list(self.config.qd_descriptor_axes),
                     "grid_axes": list(self.config.qd_grid_axes),

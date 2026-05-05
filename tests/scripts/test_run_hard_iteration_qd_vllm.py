@@ -37,6 +37,7 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
                     "diff_max_tokens": 128000,
                     "qd_num_cells": 16,
                     "qd_cvt_warmup_successes": 4,
+                    "qd_grid_quantile_warmup_successes": 8,
                     "qd_fill_target_fraction": 0.35,
                     "qd_cell_reservoir": 3,
                     "seed": 42,
@@ -58,6 +59,11 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
                         "qd_archive_type": "cvt",
                         "qd_descriptor_profile": "size_control_3d",
                     },
+                    "grid_quantile_journal_bd": {
+                        "search_mode": "revolution_qd",
+                        "qd_archive_type": "grid_quantile",
+                        "qd_descriptor_profile": "journal_logic_ff_width_3d",
+                    },
                     "cvt_theory_grounded": {
                         "search_mode": "revolution_qd",
                         "qd_archive_type": "cvt",
@@ -69,6 +75,13 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
                         "qd_descriptor_profile": "theory_grounded_compact_8d",
                     },
                 },
+                "matrix_modes": [
+                    "classic",
+                    "grid_struct",
+                    "cvt_struct",
+                    "cvt_size_control",
+                    "grid_quantile_journal_bd",
+                ],
                 "selected_problems": [
                     {"benchmark": "RTLLM", "problem": "Prob001_accu"},
                     {"benchmark": "VerilogEval-Spec-to-RTL", "problem": "Prob153_gshare"},
@@ -112,6 +125,7 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "[grid_struct] command:" in result.stdout
     assert "[cvt_struct] command:" in result.stdout
     assert "[cvt_size_control] command:" in result.stdout
+    assert "[grid_quantile_journal_bd] command:" in result.stdout
     assert "[cvt_theory_grounded] command:" not in result.stdout
     assert "[report] command:" in result.stdout
     assert "--benchmarks RTLLM VerilogEval-Spec-to-RTL" in normalized
@@ -123,6 +137,7 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "--qd_descriptor_profile size_control_3d" in normalized
     assert "--qd_num_cells 16" in normalized
     assert "--qd_cvt_warmup_successes 4" in normalized
+    assert "--qd_grid_quantile_warmup_successes 8" in normalized
     assert "--qd_fill_target_fraction 0.35" in normalized
     assert "--qd_cell_reservoir 3" in normalized
     assert "--population_size 20" in normalized
@@ -142,12 +157,14 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "total_worker_slots=2" in manifest
     assert "qd_num_cells=16" in manifest
     assert "qd_cvt_warmup_successes=4" in manifest
+    assert "qd_grid_quantile_warmup_successes=8" in manifest
     assert "qd_fill_target_fraction=0.35" in manifest
     assert "qd_cell_reservoir=3" in manifest
     assert f"--output {run_dir / 'hard_iteration_backend_comparison.md'}" in normalized
     assert f"--backend_run classic={run_dir / 'classic'}" in normalized
     assert f"--backend_run grid_struct={run_dir / 'grid_struct'}" in normalized
     assert f"--backend_run cvt_struct={run_dir / 'cvt_struct'}" in normalized
+    assert f"--backend_run grid_quantile_journal_bd={run_dir / 'grid_quantile_journal_bd'}" in normalized
     assert f"--backend_run cvt_size_control={run_dir / 'cvt_size_control'}" in normalized
     assert "Dry run enabled; commands were not executed." in result.stdout
 

@@ -54,7 +54,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--archive_type",
         default="cvt",
-        choices=["grid", "cvt"],
+        choices=["grid", "cvt", "grid_quantile"],
         help="Archive type used for descriptor-axis resolution.",
     )
     parser.add_argument(

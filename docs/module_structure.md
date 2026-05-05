@@ -52,9 +52,9 @@
   - `qd/successful_candidate_catalog.py`: shared retrospective loader for successful candidates from `generation_log.jsonl` plus best-effort artifact enrichment from synthesis reports, QD archive events, and on-disk RTL artifacts. It normalizes classic and QD runs into one row-oriented candidate catalog for downstream reports.
 - `qd/descriptors.py`: descriptor registry, descriptor requirement metadata,
   profile loading, grid-axis spec handling, and descriptor-axis resolution.
-- `qd/engine.py`: archive-backed `QDEngine` for both grid and CVT modes that
+- `qd/engine.py`: archive-backed `QDEngine` for grid, CVT, and grid-quantile modes that
   reuses REvolution prompt, evaluation, and logging infrastructure.
-  - `qd/visualization.py`: QD archive-history plots plus 2-axis grid heatmaps, multi-axis grid marginal/projection helpers, and CVT projection helpers.
+  - `qd/visualization.py`: QD archive-history plots plus 2-axis grid heatmaps, multi-axis grid marginal/projection helpers, CVT projection helpers, and artifact-replayed grid-quantile evolution visualizations.
 - `backends/funsearch_backend.py`: FunSearch-style RTL backend (islands, signature clusters, reset/reseed, budgeted loop).
 - `runtime/problem_context.py`: benchmark/problem path and metadata resolution.
 - `runtime/problem_spec.py`: benchmark capability layer and default descriptor / generation-mode preferences.
@@ -108,6 +108,10 @@
 - `run_diff_prompt_optimization_loop.py`: prompt-candidate loop runner that calls `run_diff_prompt_suite.py` per candidate and ranks prompts by objective score.
 - `run_test.sh`, `run_regression_test.sh`, `run_cvdp_test.sh`: shell wrappers for regression suites.
 - `generate_*`, `plot_problem_pareto.py`, `evolutionary_report_generator.py`: reporting and visualisation utilities.
+- `render_grid_quantile_visualizations.py`,
+  `validate_grid_quantile_run.py`,
+  `validate_grid_quantile_visualizations.py`: Phase 02 grid-quantile archive,
+  visualization rendering, and validation utilities.
 - `prompt_file_manager.py`: manage prompt bundle files and synchronise `data/prompts/`.
 - `util/` and `ref/`: helper scripts, synthesis references, and datasets.
 
