@@ -160,6 +160,11 @@ def validate_problem(problem_root: Path) -> list[str]:
             "drawsamplemarker",
             "bd axes",
             "axis-desc",
+            "axisboundaries",
+            "axis-detail",
+            "axis-bins",
+            "cutoffs",
+            "intervaltext",
             "fitness",
             "gradient",
         )

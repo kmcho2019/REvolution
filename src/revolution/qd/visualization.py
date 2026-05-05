@@ -583,6 +583,16 @@ def _grid_quantile_timeline(
         "archive_type": "grid_quantile",
         "visualization_version": 2,
         "axes": [axis["name"] for axis in space["axes"]],
+        "axis_details": [
+            {
+                "name": axis["name"],
+                "effective_bins": int(axis["effective_bins"]),
+                "quantile_boundaries": list(axis["quantile_boundaries"]),
+                "intervals": list(axis["intervals"]),
+                "collapsed": bool(axis["collapsed"]),
+            }
+            for axis in space["axes"]
+        ],
         "axis_layout": render["axis_layout"],
         "render_axis_indices": render["axis_indices"],
         "render_shape": render["render_shape"],
@@ -799,7 +809,12 @@ def _grid_quantile_html(timeline: dict[str, Any]) -> str:
     #stats { top: 14px; left: 14px; width: 142px; padding: 8px 9px; }
     #stats.full { width: 196px; }
     #legend { top: 18px; right: 18px; padding: 12px 14px; }
-    #axisInfo { bottom: 22px; left: 18px; padding: 12px 14px; line-height: 1.8; }
+    #axisInfo {
+      bottom: 22px; left: 18px; padding: 12px 14px; line-height: 1.8;
+      max-width: min(390px, calc(100vw - 36px));
+      max-height: calc(100vh - 160px);
+      overflow-y: auto;
+    }
     #slices { right: 18px; bottom: 22px; padding: 12px 14px; }
     #controls {
       left: 50%;
@@ -838,6 +853,13 @@ def _grid_quantile_html(timeline: dict[str, Any]) -> str:
     .axis-name { color: var(--text); font-weight: 700; }
     .axis-desc { color: var(--text); }
     .axis-dot { width: 9px; height: 9px; border-radius: 2px; flex: 0 0 auto; }
+    .axis-boundaries {
+      margin-top: 9px; padding-top: 9px; border-top: 1px dashed var(--border);
+      line-height: 1.45;
+    }
+    .axis-detail { margin-top: 7px; }
+    .axis-detail-title { color: var(--text); font-size: 9px; font-weight: 800; }
+    .axis-cutoffs, .axis-bins { color: var(--dim); font-size: 9px; }
     .slices-grid { display: flex; gap: 8px; align-items: flex-start; }
     .slice-layer { text-align: center; }
     .slice-label { text-align: center; color: var(--dim); font-size: 10px; margin-top: 6px; }
@@ -850,7 +872,8 @@ def _grid_quantile_html(timeline: dict[str, Any]) -> str:
       #legend .gradient { width: 14px; height: 88px; }
       #legend .ticks { height: 88px; font-size: 9px; }
       #axisInfo {
-        left: 10px; bottom: 88px; max-width: min(260px, calc(100vw - 20px));
+        left: 10px; bottom: 88px; max-width: min(280px, calc(100vw - 20px));
+        max-height: calc(100vh - 168px);
         padding: 8px 9px; line-height: 1.55;
       }
       #axisInfo .axis-row { gap: 5px; font-size: 9px; }
@@ -906,6 +929,7 @@ def _grid_quantile_html(timeline: dict[str, Any]) -> str:
   <div class="axis-row"><span class="axis-dot" style="background:#c2185b"></span><span class="axis-name">X</span><span>=</span><span class="axis-desc" id="xAxis"></span></div>
   <div class="axis-row"><span class="axis-dot" style="background:#2e7d32"></span><span class="axis-name">Y</span><span>=</span><span class="axis-desc" id="yAxis"></span></div>
   <div class="axis-row"><span class="axis-dot" style="background:#1565c0"></span><span class="axis-name">Z</span><span>=</span><span class="axis-desc" id="zAxis"></span></div>
+  <div class="axis-boundaries" id="axisBoundaries"></div>
 </div>
 <div class="panel" id="slices">
   <div class="label" style="text-align:center">Z-slice layers</div>
@@ -956,10 +980,46 @@ document.getElementById("qMid").textContent = fmt((DATA.quality_min + DATA.quali
 document.getElementById("qMax").textContent = fmt(DATA.quality_max);
 spinBtn.textContent = naturalSpin ? "Spin on" : "Spin off";
 statsSizeBtn.textContent = "More";
+renderAxisBoundaries();
 
 function fmt(value) {
   if (value === null || value === undefined || Number.isNaN(Number(value))) return "-";
   return Number(value).toFixed(3);
+}
+function fmtBound(value, edge) {
+  if (value === null || value === undefined) return edge === "lower" ? "-inf" : "+inf";
+  return fmt(value);
+}
+function intervalText(interval) {
+  const left = interval.lower_bound === null ? "(" : interval.lower_inclusive ? "[" : "(";
+  const right = interval.upper_bound === null ? ")" : interval.upper_inclusive ? "]" : ")";
+  return `B${interval.index}: ${left}${fmtBound(interval.lower_bound, "lower")}, ${fmtBound(interval.upper_bound, "upper")}${right}`;
+}
+function renderAxisBoundaries() {
+  const root = document.getElementById("axisBoundaries");
+  const axes = DATA.axis_details || [];
+  const rows = [["X", DATA.axis_layout.x], ["Y", DATA.axis_layout.y], ["Z", DATA.axis_layout.z]];
+  root.innerHTML = "";
+  for (const [label, name] of rows) {
+    const axis = axes.find(item => item.name === name);
+    if (!axis) continue;
+    const section = document.createElement("div");
+    section.className = "axis-detail";
+    const title = document.createElement("div");
+    title.className = "axis-detail-title";
+    title.textContent = `${label} ${name}`;
+    const cutoffs = document.createElement("div");
+    cutoffs.className = "axis-cutoffs";
+    const boundaryText = axis.quantile_boundaries.map(fmt).join(", ") || "none";
+    cutoffs.textContent = `cutoffs: ${boundaryText}`;
+    const bins = document.createElement("div");
+    bins.className = "axis-bins";
+    bins.textContent = `bins: ${axis.intervals.map(intervalText).join(" | ")}`;
+    section.appendChild(title);
+    section.appendChild(cutoffs);
+    section.appendChild(bins);
+    root.appendChild(section);
+  }
 }
 function qualityT(value) {
   const lo = Number(DATA.quality_min), hi = Number(DATA.quality_max);

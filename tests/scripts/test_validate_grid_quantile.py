@@ -184,9 +184,20 @@ def test_grid_quantile_visualization_validator_accepts_generated_artifacts(tmp_p
     assert "fitness" in lowered
     assert "gradient" in lowered
     assert "axis-desc" in lowered
+    assert "axisboundaries" in lowered
+    assert "axis-detail" in lowered
+    assert "axis-bins" in lowered
+    assert "cutoffs" in lowered
+    assert "intervaltext" in lowered
     assert "#legend { display: none" not in lowered
     assert "#axisinfo { display: none" not in lowered
     assert "#slices { display: none" not in lowered
+    data = json.loads(
+        (problem_root / "grid_quantile_evolution_data.json").read_text(encoding="utf-8")
+    )
+    axis_details = {axis["name"]: axis for axis in data["axis_details"]}
+    assert axis_details["logic_depth"]["quantile_boundaries"]
+    assert axis_details["logic_depth"]["intervals"][0]["index"] == 0
 
 
 def test_grid_quantile_visualization_supports_3d_artifacts(tmp_path):

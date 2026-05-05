@@ -423,6 +423,9 @@ Required viewer behavior:
 - Draw color-coded in-scene axis marks and a matching axis legend with the real
   descriptor names. The legend must explicitly show which behavior descriptor
   maps to x, y, and z.
+- In the same BD-axis panel, show the frozen quantile cutoff values and the
+  effective bin intervals for each descriptor axis. Labels must make the
+  current boundary rule inspectable without opening `archive_space.json`.
 - Draw a fitness legend using the same color scale used for filled archive
   cells. Filled cells are colored by the current elite `quality_score`.
 - Keep the BD-axis legend, fitness legend, and z-slice panel visible in
@@ -1124,6 +1127,8 @@ For every supported visualization:
 - `final_cell_ids` exactly matches `archive_cells.csv`.
 - the HTML includes the statistics panel, z-slice panel, timeline controls,
   BD-axis legend, fitness legend, and embedded/offline timeline data.
+- the HTML includes per-axis quantile cutoff labels and effective bin
+  interval labels derived from `archive_space.json`.
 - responsive CSS does not hide the BD-axis legend, fitness legend, or
   z-slice panel in narrow preview panes.
 
