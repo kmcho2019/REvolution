@@ -179,6 +179,8 @@ def test_grid_quantile_visualization_validator_accepts_generated_artifacts(tmp_p
     assert "slice-layer" in html
     assert "drawAxisGuides" in html
     assert "drawSampleMarker" in html
+    assert "drawBoundaryTick" in html
+    assert "drawAxisBoundaryLabels" in html
     lowered = html.lower()
     assert "z-slice layers" in lowered
     assert "flex-direction: column" in lowered
@@ -187,8 +189,6 @@ def test_grid_quantile_visualization_validator_accepts_generated_artifacts(tmp_p
     assert "axis-desc" in lowered
     assert "axisdetailbtn" in lowered
     assert "details-open" in lowered
-    assert "axissummary" in lowered
-    assert "axissteplabel" in lowered
     assert "axisboundaries" in lowered
     assert "axis-detail" in lowered
     assert "axis-bins" in lowered

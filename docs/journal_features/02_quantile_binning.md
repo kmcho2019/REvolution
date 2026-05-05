@@ -428,10 +428,12 @@ Required viewer behavior:
   current boundary rule inspectable without opening `archive_space.json`.
   This detailed cutoff/bin block must be collapsible and should default to a
   compact state.
-- The visible axis labels themselves must include an abridged geometry summary:
-  descriptor name, effective bin count, and frozen cutoff values in compact
-  form. This applies to both the BD-axis panel rows and the in-scene axis
-  arrow labels.
+- The collapsed BD-axis panel rows must stay compact: `X = logic_depth`,
+  `Y = comb_width_log`, and `Z = ff_depth`. Effective bin counts and cutoff
+  lists belong in the expanded detail block.
+- The in-scene axes must mark each frozen quantile boundary at its boundary
+  position along the axis. Boundary tick labels should use compact cutoff
+  values, not a summary placed at the arrow tip.
 - Draw a fitness legend using the same color scale used for filled archive
   cells. Filled cells are colored by the current elite `quality_score`.
 - Keep the BD-axis legend, fitness legend, and z-slice panel visible in
@@ -1138,7 +1140,9 @@ For every supported visualization:
 - the HTML includes per-axis quantile cutoff labels and effective bin
   interval labels derived from `archive_space.json`.
 - the detailed cutoff/bin interval block has an in-view collapse toggle, while
-  the compact axis labels remain visible.
+  the collapsed BD-axis panel rows remain descriptor-only.
+- in-scene axis cutoff labels are drawn at quantile boundary positions rather
+  than as a summary at the arrow tip.
 - z-slice layer mini-grids are stacked vertically in the interactive viewer.
 - responsive CSS does not hide the BD-axis legend, fitness legend, or
   z-slice panel in narrow preview panes.

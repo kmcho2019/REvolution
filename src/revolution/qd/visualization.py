@@ -983,9 +983,9 @@ const shape = DATA.render_shape && DATA.render_shape.length ? DATA.render_shape 
 slider.max = Math.max(frames.length - 1, 0);
 document.getElementById("subtitle").textContent =
   `${shape.join(" x ")} effective grid; z axis = ${DATA.axis_layout.z || "axis"}`;
-document.getElementById("xAxis").textContent = axisSummary(DATA.axis_layout.x);
-document.getElementById("yAxis").textContent = axisSummary(DATA.axis_layout.y);
-document.getElementById("zAxis").textContent = `${axisSummary(DATA.axis_layout.z)} vertical`;
+document.getElementById("xAxis").textContent = DATA.axis_layout.x || "x";
+document.getElementById("yAxis").textContent = DATA.axis_layout.y || "y";
+document.getElementById("zAxis").textContent = DATA.axis_layout.z || "z";
 document.getElementById("qMin").textContent = fmt(DATA.quality_min);
 document.getElementById("qMid").textContent = fmt((DATA.quality_min + DATA.quality_max) / 2);
 document.getElementById("qMax").textContent = fmt(DATA.quality_max);
@@ -1004,16 +1004,6 @@ function axisByName(name) {
 function cutoffText(axis) {
   const values = (axis.quantile_boundaries || []).map(fmt);
   return values.length ? values.join("/") : "none";
-}
-function axisSummary(name) {
-  const axis = axisByName(name);
-  if (!axis) return name || "-";
-  return `${name} | ${axis.effective_bins} bins | q ${cutoffText(axis)}`;
-}
-function axisStepLabel(name) {
-  const axis = axisByName(name);
-  if (!axis) return "";
-  return `bins ${axis.effective_bins}; q ${cutoffText(axis)}`;
 }
 function fmtBound(value, edge) {
   if (value === null || value === undefined) return edge === "lower" ? "-inf" : "+inf";
@@ -1138,7 +1128,7 @@ function gridCells() {
   }
   return cells.sort((a, b) => project(centered(a)).depth - project(centered(b)).depth);
 }
-function drawAxisLine(start, end, colorValue, label, detail) {
+function drawAxisLine(start, end, colorValue, label) {
   const a = project(start);
   const b = project(end);
   ctx.beginPath();
@@ -1158,14 +1148,39 @@ function drawAxisLine(start, end, colorValue, label, detail) {
   ctx.font = "700 11px ui-monospace, monospace";
   ctx.fillStyle = colorValue;
   ctx.fillText(label, b.x + 8, b.y - 8);
+}
+function drawBoundaryTick(point, colorValue, label) {
+  const p = project(point);
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, 3.2, 0, Math.PI * 2);
+  ctx.fillStyle = colorValue;
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,252,246,0.9)";
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
   ctx.font = "700 9px ui-monospace, monospace";
-  ctx.fillText(detail, b.x + 8, b.y + 6);
+  ctx.fillStyle = colorValue;
+  ctx.fillText(label, p.x + 5, p.y - 5);
+}
+function drawAxisBoundaryLabels(axisName, position, colorValue) {
+  const axis = axisByName(axisName);
+  if (!axis) return;
+  for (let i = 0; i < axis.quantile_boundaries.length; i++) {
+    const indices = [0, 0, 0];
+    const offsets = [-0.65, -0.65, -0.65];
+    indices[position] = i + 0.5;
+    offsets[position] = 0;
+    drawBoundaryTick(centered(indices, offsets), colorValue, `q ${fmt(axis.quantile_boundaries[i])}`);
+  }
 }
 function drawAxisGuides() {
   const base = centered([0,0,0], [-0.65,-0.65,-0.65]);
-  drawAxisLine(base, centered([Math.max(shape[0] - 1, 0),0,0], [0.75,-0.65,-0.65]), "#c2185b", `X ${DATA.axis_layout.x || ""}`, axisStepLabel(DATA.axis_layout.x));
-  drawAxisLine(base, centered([0,Math.max(shape[1] - 1, 0),0], [-0.65,0.75,-0.65]), "#2e7d32", `Y ${DATA.axis_layout.y || ""}`, axisStepLabel(DATA.axis_layout.y));
-  drawAxisLine(base, centered([0,0,Math.max(shape[2] - 1, 0)], [-0.65,-0.65,0.75]), "#1565c0", `Z ${DATA.axis_layout.z || ""}`, axisStepLabel(DATA.axis_layout.z));
+  drawAxisLine(base, centered([Math.max(shape[0] - 1, 0),0,0], [0.75,-0.65,-0.65]), "#c2185b", "X");
+  drawAxisLine(base, centered([0,Math.max(shape[1] - 1, 0),0], [-0.65,0.75,-0.65]), "#2e7d32", "Y");
+  drawAxisLine(base, centered([0,0,Math.max(shape[2] - 1, 0)], [-0.65,-0.65,0.75]), "#1565c0", "Z");
+  drawAxisBoundaryLabels(DATA.axis_layout.x, 0, "#c2185b");
+  drawAxisBoundaryLabels(DATA.axis_layout.y, 1, "#2e7d32");
+  drawAxisBoundaryLabels(DATA.axis_layout.z, 2, "#1565c0");
 }
 function drawSampleMarker(sample) {
   const jitter = [
