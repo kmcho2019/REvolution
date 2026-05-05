@@ -441,6 +441,8 @@ Required viewer behavior:
 - Render all effective z slices in a lower-corner mini-grid panel. Collapsed
   z axes still render one explicit slice. Each slice must be shown as a
   separate labeled layer using the same fitness color scale as the main grid.
+  Slice layers must be stacked vertically so each z plane reads as a distinct
+  layer rather than as a horizontal strip.
 - Show archiveable samples as 3D-positioned markers with a short guide line or
   equivalent depth cue, not as flat unanchored circles.
 - Preserve 2D collapsed views by rendering the two active axes in the main
@@ -1129,6 +1131,7 @@ For every supported visualization:
   BD-axis legend, fitness legend, and embedded/offline timeline data.
 - the HTML includes per-axis quantile cutoff labels and effective bin
   interval labels derived from `archive_space.json`.
+- z-slice layer mini-grids are stacked vertically in the interactive viewer.
 - responsive CSS does not hide the BD-axis legend, fitness legend, or
   z-slice panel in narrow preview panes.
 

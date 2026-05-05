@@ -181,6 +181,7 @@ def test_grid_quantile_visualization_validator_accepts_generated_artifacts(tmp_p
     assert "drawSampleMarker" in html
     lowered = html.lower()
     assert "z-slice layers" in lowered
+    assert "flex-direction: column" in lowered
     assert "fitness" in lowered
     assert "gradient" in lowered
     assert "axis-desc" in lowered

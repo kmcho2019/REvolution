@@ -815,7 +815,11 @@ def _grid_quantile_html(timeline: dict[str, Any]) -> str:
       max-height: calc(100vh - 160px);
       overflow-y: auto;
     }
-    #slices { right: 18px; bottom: 22px; padding: 12px 14px; }
+    #slices {
+      right: 18px; bottom: 22px; padding: 12px 14px;
+      max-height: calc(100vh - 150px);
+      overflow-y: auto;
+    }
     #controls {
       left: 50%;
       bottom: 26px;
@@ -860,9 +864,9 @@ def _grid_quantile_html(timeline: dict[str, Any]) -> str:
     .axis-detail { margin-top: 7px; }
     .axis-detail-title { color: var(--text); font-size: 9px; font-weight: 800; }
     .axis-cutoffs, .axis-bins { color: var(--dim); font-size: 9px; }
-    .slices-grid { display: flex; gap: 8px; align-items: flex-start; }
-    .slice-layer { text-align: center; }
-    .slice-label { text-align: center; color: var(--dim); font-size: 10px; margin-top: 6px; }
+    .slices-grid { display: flex; flex-direction: column; gap: 8px; }
+    .slice-layer { display: flex; gap: 8px; align-items: center; }
+    .slice-label { color: var(--dim); font-size: 10px; min-width: 46px; text-align: left; }
     .slice-grid { display: grid; gap: 2px; }
     .slice-cell { width: 14px; height: 14px; background: rgba(40, 30, 20, 0.08); border-radius: 2px; }
     @media (max-width: 860px) {
@@ -879,12 +883,13 @@ def _grid_quantile_html(timeline: dict[str, Any]) -> str:
       #axisInfo .axis-row { gap: 5px; font-size: 9px; }
       #slices {
         right: 10px; bottom: 86px; max-width: min(300px, calc(100vw - 170px));
-        padding: 8px 9px; overflow-x: auto;
+        max-height: calc(100vh - 170px);
+        padding: 8px 9px; overflow-y: auto;
       }
       #slices .label { margin-bottom: 6px; }
       .slices-grid { gap: 5px; }
       .slice-cell { width: 9px; height: 9px; }
-      .slice-label { font-size: 8px; margin-top: 4px; }
+      .slice-label { font-size: 8px; min-width: 36px; }
       #controls {
         bottom: 10px; width: calc(100vw - 20px); gap: 6px; padding: 8px;
       }
