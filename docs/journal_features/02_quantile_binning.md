@@ -95,18 +95,25 @@ Required behavior:
    exist; it does not mean the candidate is rejected.
 2. Initialize only during the deterministic post-evaluation archive-insertion
    pass, never from asynchronous worker completion order. Process successful
-   candidates in stable generation/materialization order. When the first
-   `warmup_successes` buffered samples exist in that order, compute quantiles
-   per axis, freeze the boundaries, clear the warmup buffer, and reinsert all
-   warmup candidates through normal archive replacement logic. Do not collect
-   extra warmup samples and choose the best samples by quality. Every warmup
-   sample participates in quantile calculation and replay, but not every
-   warmup sample is guaranteed to survive as a final elite because multiple
-   samples can map to the same effective cell and normal one-elite replacement
-   keeps only the best quality per cell. If the threshold is reached partway
-   through a completed generation batch, candidates after the warmup slice in
-   that same deterministic insertion order are inserted normally into the
-   frozen grid.
+   candidates in stable generation/materialization order.
+   `warmup_successes` is the minimum warmup size. Once at least that many
+   samples exist, freeze the grid at the first deterministic insertion point
+   where the buffered descriptors produce the minimum active geometry:
+   `min(2, axis_count)` axes with more than one effective bin. This prevents a
+   static grid from freezing on the first descriptor-identical successes when
+   the same generation/run already contains enough diversity to validate the
+   intended 2D/3D journal behavior. If run end arrives without that active
+   geometry, initialize from the available warmup buffer as a
+   `run_finalization_fallback` when at least `warmup_successes` samples exist;
+   that archive is reported as `initialized_but_degenerate` when fewer than
+   two journal axes remain active. Do not choose warmup samples by quality.
+   Every warmup sample participates in quantile calculation and replay, but
+   not every warmup sample is guaranteed to survive as a final elite because
+   multiple samples can map to the same effective cell and normal one-elite
+   replacement keeps only the best quality per cell. If the freeze point is
+   reached partway through a completed generation batch, candidates after the
+   warmup slice in that same deterministic insertion order are inserted
+   normally into the frozen grid.
 3. After initialization, assign candidates with the frozen boundaries and apply
    the same `filled_empty`, `replaced_elite`, and `not_inserted` semantics as
    `GridArchive`. Replacement uses only the existing scalar `quality_score`.
@@ -121,9 +128,9 @@ Required behavior:
    - values above the last boundary go to the final bin.
    - implementation should use `bisect_right(quantile_boundaries, value)`.
 5. Duplicate quantile boundaries are dropped. Boundaries equal to the warmup
-   axis minimum or maximum are also dropped because they do not split the
-   observed warmup range. If all warmup values for an axis are equal, that axis
-   has zero boundaries and one effective bin.
+   axis minimum or maximum are kept; they still define outer bins for future
+   candidates that fall outside the warmup range. If all warmup values for an
+   axis are equal, that axis has zero boundaries and one effective bin.
 6. `num_cells` is `0` before initialization and the product of effective bins
    once initialized. Pending reports must still expose `intended_num_cells`,
    but pending `coverage` is `0.0` because effective geometry does not exist
@@ -140,11 +147,14 @@ must continue through the existing fail-pool path; Phase 02 does not change
 fail-pool behavior.
 
 Parent selection must not use archive cells before initialization because no
-cell geometry exists yet. During warmup, use the existing classic-style
-success/fail pool behavior for the journal profile. After `grid_quantile`
-initializes, use archive elites only where the current initialized-QD parent
-selection path already uses them. Do not add a new parent-source policy in this
-phase.
+cell geometry exists yet. During warmup, retain warmup-buffered successes as
+selectable success parents even when the optional cell reservoir is disabled.
+If both fail and success parents exist before initialization, reserve at least
+half of the offspring budget for success-parent refinement so the run can
+finish collecting the required archiveable warmup samples instead of starving
+the not-yet-materialized archive. After `grid_quantile` initializes, use
+archive elites only where the current initialized-QD parent selection path
+already uses them. Do not add a broader parent-source policy in this phase.
 
 Do not change journal-profile operators in Phase 02. `journal_logic_ff_width_3d`
 remains archive-only as in Phase 01; descriptor-targeted QD operators are not
@@ -167,9 +177,9 @@ interpolation at sorted positions `p * (n - 1)` for
 floor and ceiling sorted samples. For an integer position, use that sorted
 sample directly.
 
-After interpolation, keep only sorted unique boundaries that are strictly
-between the warmup axis minimum and maximum. Effective bins are
-`len(filtered_boundaries) + 1`.
+After interpolation, keep sorted unique boundaries. Do not drop a boundary only
+because it equals the warmup axis minimum or maximum. Effective bins are
+`len(unique_boundaries) + 1`.
 
 The implementation must record this in `describe_space()` as:
 
@@ -247,6 +257,7 @@ adaptive re-binning phases.
   - `collapsed`.
   - `intervals`.
 - `warmup_successes`.
+- `minimum_active_axes`.
 - `warmup_buffer_size`.
 - `warmup_buffer_samples`: compact descriptor evidence for pending warmup
   candidates that have reached the archiveability gate but have not yet frozen
@@ -609,7 +620,10 @@ Run one direct classic smoke and one direct grid-quantile smoke on a small hard
 subset. This smoke proves CLI wiring, archive initialization, and artifact
 emission, but it is not the final acceptance gate. The smoke intentionally uses
 `qd_grid_quantile_warmup_successes 4` so a one-generation run can initialize
-quickly.
+quickly when the smoke samples have enough descriptor diversity. A
+descriptor-identical smoke may remain warmup-pending or finish as
+`initialized_but_degenerate`; that is acceptable for smoke only if artifacts
+and validators make the state explicit.
 
 Classic:
 
@@ -928,13 +942,16 @@ For every grid-quantile problem:
 - `intended_bins_per_axis == 4`.
 - `intended_num_cells == 64`.
 - If at least `warmup_successes` fully archiveable successes exist, the archive
-  is initialized by run end.
+  is initialized by run end. If the minimum active geometry is not reached,
+  initialization happens as a `run_finalization_fallback` and may be reported
+  as `initialized_but_degenerate`.
 - If initialized:
-  - `initialization_sample_count == warmup_successes`.
+  - `initialization_sample_count >= warmup_successes`.
+  - `initialization_sample_count == len(warmup_initialization_samples)`.
   - `warmup_buffer_size == 0`.
   - every axis has sorted unique `quantile_boundaries`.
   - quantile boundaries recomputed from `warmup_initialization_samples` with
-    `linear_interpolation_n_minus_1` and strict min/max filtering exactly match
+    `linear_interpolation_n_minus_1` and duplicate-only collapse exactly match
     `archive_space.json`.
   - warmup replay recomputed from `warmup_replay_results` in stored warmup
     order, using frozen boundaries and scalar `quality_score`, exactly matches
@@ -950,6 +967,9 @@ For every grid-quantile problem:
     recomputed canonical boundary hash.
 - If not initialized:
   - total fully archiveable successes must be less than `warmup_successes`.
+    A run with at least `warmup_successes` successes but insufficient active
+    geometry must initialize through `run_finalization_fallback` and be
+    reported as `initialized_but_degenerate`, not left pending.
   - validation report must mark the problem as `warmup_limited`, not
     `initialized`.
   - the report must show the exact archiveable-success count and the configured
@@ -1043,7 +1063,7 @@ Target deadline: `2026-05-04`
 - [x] 2.5 Add strict run and visualization validation scripts.
 - [x] 2.6 Pass local tests, lint, and type checks on touched files.
 - [x] 2.7 Pass direct live vLLM smoke.
-- [ ] 2.8 Pass full hard-subset live vLLM matrix validation against classic
+- [x] 2.8 Pass full hard-subset live vLLM matrix validation against classic
   with the validation command exiting `0`.
 - [x] 2.9 Record final validation artifacts and stage log in this document.
 
@@ -1103,14 +1123,36 @@ reconstructing it from commits.
 
 ### Stage 6: Full Hard-Subset Validation
 
-- Completed the required 13-problem hard-subset matrix at
+- The first required 13-problem hard-subset matrix completed at
   `exp/journal_quantile_binning_hard_subset/20260504_165151` with population
   20, generations 5, seed 42, and worker settings 4/4/4.
-- Classic and `grid_quantile_journal_bd` both completed all 13 problems.
-  Grid-quantile used `qd_archive_type=grid_quantile`,
+- That first matrix proved the wrapper/report/visualization path but failed
+  acceptance with `initialized_but_degenerate_count=5`, above the cap of `2`.
+  This drove two implementation fixes: duplicate-only boundary collapse and a
+  delayed freeze until at least `min(2, axis_count)` axes are active, with
+  run-finalization fallback for genuinely degenerate archives.
+- A second full matrix at
+  `exp/journal_quantile_binning_hard_subset_duplicate_only/20260504_223434`
+  reduced degenerate archives to one but failed acceptance because
+  `Prob153_gshare` ended `warmup_limited` with 7/8 archiveable samples while
+  classic had enough successful final-PPA samples. This exposed pre-init
+  parent starvation.
+- Targeted `Prob153_gshare` probes showed the fix: warmup-buffered candidates
+  must be selectable success parents from the initial rebuild path, and
+  pending `grid_quantile` runs must reserve at least half of the offspring
+  budget for success-parent refinement when both pools are non-empty. The
+  passing probe was
+  `exp/journal_quantile_binning_prob153_probe_20260505_015736`, where
+  `Prob153_gshare` initialized with 8 warmup samples and ended with 8 occupied
+  cells.
+- The final required 13-problem hard-subset matrix completed at
+  `exp/journal_quantile_binning_hard_subset_final/20260505_022158` with
+  population 20, generations 5, seed 42, and worker settings 4/4/4. Classic
+  and `grid_quantile_journal_bd` both completed all 13 problems. Grid-quantile
+  used `qd_archive_type=grid_quantile`,
   `qd_descriptor_profile=journal_logic_ff_width_3d`, and
   `qd_grid_quantile_warmup_successes=8`.
-- Generated:
+- Generated final validation artifacts:
   - `hard_iteration_backend_comparison.md`
   - `backend_comparison.md`
   - `final_analysis/`
@@ -1119,18 +1161,11 @@ reconstructing it from commits.
   - `grid_quantile_validation.json`
   - `grid_quantile_validation.md`
 - Visualization validation passed with exit code `0`.
-- Full grid-quantile acceptance validation failed closed with exit code `1`.
-  The failure was not a problem-level archive invalidity:
-  `problem_invalid_count=0`, `warmup_limited_count=0`, and
-  `acceptance_error_count=1`. The single acceptance error was
-  `initialized_but_degenerate_count=5`, which exceeds the Phase 02 cap of `2`.
-  The five degenerate archives were `Prob024_fsm`,
-  `Prob037_parallel2serial`, `Prob049_signal_generator`,
-  `Prob098_circuit7`, and `Prob150_review2015_fsmonehot`.
-- A counterfactual duplicate-only boundary recomputation on the same warmup
-  samples would still leave four degenerate problems, so the current failure is
-  primarily a journal-descriptor diversity issue in the hard-subset run rather
-  than a stale-artifact or visualization failure.
+- Full grid-quantile acceptance validation passed with exit code `0`:
+  `problem_count=13`, `failure_count=0`, `problem_invalid_count=0`,
+  `acceptance_error_count=0`, `warmup_limited_count=0`,
+  `initialized_but_degenerate_count=1`, and
+  `allowed_initialized_but_degenerate=2`.
 
 ## Final Planning Notes
 

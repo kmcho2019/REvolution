@@ -520,6 +520,138 @@ def test_qd_engine_builds_grid_quantile_from_journal_profile(tmp_path, monkeypat
     assert engine.success_archive.warmup_successes == 8
 
 
+def test_qd_engine_grid_quantile_warmup_budget_uses_success_pool(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        population_size=20,
+        num_generations=0,
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="grid_quantile",
+        qd_descriptor_profile="journal_logic_ff_width_3d",
+        qd_grid_quantile_warmup_successes=8,
+    )
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+    engine.qd_cell_reservoir = 0
+    successes = []
+    for index in range(3):
+        cand = Heuristic(
+            f"success-{index}",
+            "module m; endmodule",
+            "",
+            score=0.5 + index,
+            generation=0,
+            status="success",
+        )
+        cand.ppa_success = True
+        cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+        cand.graph_metrics = {
+            "logic_depth": float(index + 1),
+            "ff_depth": 0.0,
+            "comb_width_log": float(index + 2),
+        }
+        successes.append(cand)
+    fail = Heuristic("fail", "module m; endmodule", "", score=-1.0, generation=0, status="failed")
+
+    engine.success_pool = successes
+    engine._rebuild_archive_from_success_pool()
+    engine.fail_pool = [fail]
+    budget = engine._split_generation_budget()
+
+    assert len(engine.success_pool) == 3
+    assert budget.phase == "warmup"
+    assert budget.fail_budget == 5
+    assert budget.refine_budget == 15
+    assert budget.seed_budget == 0
+
+
+def test_qd_engine_drops_warmup_reservoir_after_grid_quantile_init(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        population_size=20,
+        num_generations=0,
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="grid_quantile",
+        qd_descriptor_profile="journal_logic_ff_width_3d",
+        qd_grid_quantile_warmup_successes=2,
+    )
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+    engine.qd_cell_reservoir = 0
+    candidates = []
+    for index, descriptors in enumerate(((1.0, 0.0, 1.0), (4.0, 1.0, 2.0))):
+        cand = Heuristic(
+            f"success-{index}",
+            "module m; endmodule",
+            "",
+            score=0.5 + index,
+            generation=0,
+            status="success",
+        )
+        cand.ppa_success = True
+        cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+        cand.graph_metrics = {
+            "logic_depth": descriptors[0],
+            "ff_depth": descriptors[1],
+            "comb_width_log": descriptors[2],
+        }
+        candidates.append(cand)
+
+    engine.success_pool = candidates
+    engine._rebuild_archive_from_success_pool()
+
+    assert isinstance(engine.success_archive, GridQuantileArchive)
+    assert engine.success_archive.is_initialized is True
+    assert not any(cell_id.startswith("warmup:") for cell_id in engine.success_reservoir)
+
+
+def test_qd_engine_grid_quantile_warmup_budget_keeps_success_share(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        population_size=20,
+        num_generations=0,
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="grid_quantile",
+        qd_descriptor_profile="journal_logic_ff_width_3d",
+        qd_grid_quantile_warmup_successes=8,
+    )
+    engine.success_pool = [
+        Heuristic("success", "module m; endmodule", "", score=1.0, generation=0, status="success")
+    ]
+    engine.fail_pool = [
+        Heuristic(f"fail-{index}", "module m; endmodule", "", score=-1.0, generation=0, status="failed")
+        for index in range(19)
+    ]
+
+    budget = engine._split_generation_budget()
+
+    assert budget.phase == "warmup"
+    assert budget.fail_budget == 10
+    assert budget.refine_budget == 10
+
+
 def test_qd_engine_writes_grid_quantile_artifacts(tmp_path, monkeypatch):
     monkeypatch.setattr(
         "revolution.algorithm.EoHEngine.load_problem_description",
@@ -590,6 +722,56 @@ def test_qd_engine_writes_grid_quantile_artifacts(tmp_path, monkeypatch):
     assert (artifact_root / "grid_quantile_occupancy_evolution.html").is_file()
     assert (artifact_root / "grid_quantile_visualization_manifest.json").is_file()
     assert (artifact_root / "grid_quantile_frames" / "frame_0000.png").is_file()
+
+
+def test_qd_engine_finalizes_degenerate_grid_quantile_at_run_end(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "revolution.algorithm.EoHEngine.load_problem_description",
+        lambda self: "desc",
+    )
+    engine = QDEngine(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        llm_interface=_DummyLLM(),
+        verilog_evaluator=_DummyEval(),
+        synthesis_evaluator=_DummySynth(),
+        base_save_path=str(tmp_path / "exp"),
+        qd_archive_type="grid_quantile",
+        qd_descriptor_profile="journal_logic_ff_width_3d",
+        qd_grid_quantile_warmup_successes=2,
+    )
+    engine.run_start_time = time.time()
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 1.0}
+    candidates = []
+    for index in range(2):
+        candidate = Heuristic(
+            f"cand-{index}",
+            "module m; endmodule",
+            "",
+            score=0.5 + index,
+            generation=0,
+            status="success",
+        )
+        candidate.ppa_success = True
+        candidate.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+        candidate.graph_metrics = {
+            "logic_depth": 1.0,
+            "ff_depth": 0.0,
+            "comb_width_log": 1.0,
+        }
+        candidate.code_file_path = str(tmp_path / f"Prob_sample{index}_initial" / "code.sv")
+        candidates.append(candidate)
+
+    inserted, replaced = engine._insert_successes(candidates)
+    finalization = engine._finalize_pending_archive()
+
+    assert inserted == 0
+    assert replaced == 0
+    assert finalization == (2, 1)
+    assert isinstance(engine.success_archive, GridQuantileArchive)
+    assert engine.success_archive.is_initialized is True
+    assert engine.success_archive.initialization_mode == "run_finalization_fallback"
+    assert engine.success_archive.effective_bins == (1, 1, 1)
 
 
 def test_qd_engine_initial_artifact_write_records_initial_snapshot(tmp_path, monkeypatch):
@@ -748,7 +930,7 @@ def test_qd_engine_finalizes_partial_cvt_warmup_at_run_end(tmp_path, monkeypatch
 
     engine._insert_successes([cand])
 
-    finalization = engine._finalize_pending_cvt_archive()
+    finalization = engine._finalize_pending_archive()
 
     assert finalization == (1, 0)
     assert engine.success_archive.is_initialized is True

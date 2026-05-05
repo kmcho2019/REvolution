@@ -88,13 +88,7 @@ def _axis_boundaries(values: list[float]) -> list[float]:
         _quantile(sorted_values, 0.5),
         _quantile(sorted_values, 0.75),
     ]
-    return sorted(
-        {
-            boundary
-            for boundary in boundaries
-            if sorted_values[0] < boundary < sorted_values[-1]
-        }
-    )
+    return sorted(set(boundaries))
 
 
 def _boundary_hash(axes: list[dict[str, Any]]) -> str:
@@ -450,10 +444,10 @@ def validate_problem(problem_root: Path, require_visualizations: bool) -> dict[s
     if initialized:
         if len(buffer_samples) != 0 or int(space["warmup_buffer_size"]) != 0:
             errors.append("initialized archive still reports warmup buffer samples")
-        if len(samples) != warmup_successes:
-            errors.append("initialization sample count does not match warmup_successes")
-        if space.get("initialization_sample_count") != warmup_successes:
-            errors.append("initialization_sample_count does not match warmup_successes")
+        if len(samples) < warmup_successes:
+            errors.append("initialization sample count is below warmup_successes")
+        if space.get("initialization_sample_count") != len(samples):
+            errors.append("initialization_sample_count does not match stored samples")
         for sample in samples:
             if sample.get("sample_role") != "quantile_warmup_initialization":
                 errors.append("warmup initialization sample has wrong sample_role")

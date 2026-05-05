@@ -271,6 +271,10 @@ class GridQuantileArchive:
         return self.intended_bins_per_axis ** len(self.axes)
 
     @property
+    def minimum_active_axes(self) -> int:
+        return min(2, len(self.axes))
+
+    @property
     def collapsed_axes(self) -> tuple[str, ...]:
         return tuple(
             axis for axis, bins in zip(self.axes, self.effective_bins) if bins <= 1
@@ -329,6 +333,7 @@ class GridQuantileArchive:
             "intended_num_cells": self.intended_num_cells,
             "initialized": self.initialized,
             "warmup_successes": self.warmup_successes,
+            "minimum_active_axes": self.minimum_active_axes,
             "warmup_buffer_size": self.warmup_buffer_size(),
             "warmup_buffer_samples": [
                 self._sample_payload(record, sample_role="quantile_warmup_buffered")
@@ -337,6 +342,11 @@ class GridQuantileArchive:
             "initialization_sample_count": self.initialization_sample_count,
             "initialization_mode": self.initialization_mode,
             "effective_shape": effective_shape,
+            "active_effective_axes": (
+                sum(1 for bins in self.effective_bins if bins > 1)
+                if self.initialized
+                else 0
+            ),
             "collapsed_axes": list(self.collapsed_axes) if self.initialized else [],
             "quantile_method": self.quantile_method,
             "quantile_boundaries_hash": self.quantile_boundaries_hash,
@@ -362,6 +372,11 @@ class GridQuantileArchive:
         payload = {
             "initialized": self.initialized,
             "effective_shape": list(self.effective_bins) if self.initialized else [],
+            "active_effective_axes": (
+                sum(1 for bins in self.effective_bins if bins > 1)
+                if self.initialized
+                else 0
+            ),
             "collapsed_axes": list(self.collapsed_axes) if self.initialized else [],
             "quantile_boundaries_hash": self.quantile_boundaries_hash,
         }
@@ -436,7 +451,7 @@ class GridQuantileArchive:
         if not self.initialized:
             self._warmup_buffer.append((candidate_id, descriptors, float(quality_score), payload))
             warmup_index = len(self._warmup_buffer)
-            if warmup_index == self.warmup_successes:
+            if warmup_index >= self.warmup_successes and self._warmup_geometry_ready():
                 self._initialize_from_warmup()
             return QDArchiveInsertResult(
                 cell_id=f"warmup:{warmup_index}",
@@ -457,31 +472,36 @@ class GridQuantileArchive:
             payload=payload,
         )
 
+    def finalize_pending(self) -> dict[str, QDArchiveInsertResult]:
+        if self.initialized or not self._warmup_buffer:
+            return {}
+        if len(self._warmup_buffer) < self.warmup_successes:
+            return {}
+        return self._initialize_from_warmup("run_finalization_fallback")
+
     def elite_for_cell(self, cell_id: str) -> GridArchiveEntry | None:
         return self._entries.get(cell_id)
 
-    def _initialize_from_warmup(self) -> None:
+    def _initialize_from_warmup(
+        self,
+        initialization_mode: str = "warmup_complete",
+    ) -> dict[str, QDArchiveInsertResult]:
         warmup_records = list(self._warmup_buffer)
         self._warmup_buffer.clear()
-        descriptor_samples = [record[1] for record in warmup_records]
-        self.quantile_boundaries = tuple(
-            self._axis_quantile_boundaries(
-                [sample[index] for sample in descriptor_samples]
-            )
-            for index in range(len(self.axes))
-        )
+        self.quantile_boundaries = self._boundaries_for_records(warmup_records)
         self.effective_bins = tuple(
             len(boundaries) + 1 for boundaries in self.quantile_boundaries
         )
         self.num_cells = math.prod(self.effective_bins)
         self.initialized = True
-        self.initialization_mode = "warmup_complete"
+        self.initialization_mode = initialization_mode
         self.initialization_sample_count = len(warmup_records)
         self.warmup_initialization_samples = [
             self._sample_payload(record, sample_role="quantile_warmup_initialization")
             for record in warmup_records
         ]
         self.warmup_replay_results = []
+        results = {}
         for record in warmup_records:
             candidate_id, descriptors, quality_score, payload = record
             previous_entry = self.elite_for_cell(self.cell_id_for(descriptors))
@@ -504,6 +524,24 @@ class GridQuantileArchive:
                 }
             )
             self.warmup_replay_results.append(replay)
+            results[candidate_id] = result
+        return results
+
+    def _warmup_geometry_ready(self) -> bool:
+        boundaries = self._boundaries_for_records(self._warmup_buffer)
+        return sum(1 for axis in boundaries if axis) >= self.minimum_active_axes
+
+    def _boundaries_for_records(
+        self,
+        records: list[tuple[str, tuple[float, ...], float, Any]],
+    ) -> tuple[tuple[float, ...], ...]:
+        descriptor_samples = [record[1] for record in records]
+        return tuple(
+            self._axis_quantile_boundaries(
+                [sample[index] for sample in descriptor_samples]
+            )
+            for index in range(len(self.axes))
+        )
 
     def _insert_initialized(
         self,
@@ -577,15 +615,7 @@ class GridQuantileArchive:
             self._quantile(sorted_values, 0.5),
             self._quantile(sorted_values, 0.75),
         ]
-        return tuple(
-            sorted(
-                {
-                    boundary
-                    for boundary in boundaries
-                    if sorted_values[0] < boundary < sorted_values[-1]
-                }
-            )
-        )
+        return tuple(sorted(set(boundaries)))
 
     def _quantile(self, sorted_values: list[float], probability: float) -> float:
         position = probability * (len(sorted_values) - 1)

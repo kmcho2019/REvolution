@@ -170,12 +170,12 @@ def test_grid_quantile_archive_computes_interpolated_boundaries():
 
 
 def test_grid_quantile_archive_collapses_duplicate_boundaries():
-    archive = GridQuantileArchive(("logic_depth",), warmup_successes=4)
+    archive = GridQuantileArchive(("logic_depth",), warmup_successes=5)
 
-    for index, value in enumerate([0.0, 0.0, 10.0, 10.0], start=1):
+    for index, value in enumerate([0.0, 0.0, 0.0, 0.0, 10.0], start=1):
         archive.insert(f"cand-{index}", (value,), float(index), {"id": index})
 
-    assert archive.quantile_boundaries == ((5.0,),)
+    assert archive.quantile_boundaries == ((0.0,),)
     assert archive.effective_bins == (2,)
     assert archive.num_cells == 2
 
@@ -186,6 +186,11 @@ def test_grid_quantile_archive_collapses_all_equal_axis_to_one_bin():
     for index in range(4):
         archive.insert(f"cand-{index}", (0.0,), float(index), {"id": index})
 
+    assert archive.is_initialized is False
+
+    results = archive.finalize_pending()
+
+    assert any(result.inserted for result in results.values())
     assert archive.quantile_boundaries == ((),)
     assert archive.effective_bins == (1,)
     assert archive.cell_id_for((0.0,)) == "0"
@@ -229,7 +234,7 @@ def test_grid_quantile_archive_buffers_warmup_then_replays_samples():
         generation_candidate_index=2,
         archive_insertion_index=2,
     )
-    second = archive.insert("cand-b", (10.0, 0.0), 0.7, payload_b)
+    second = archive.insert("cand-b", (10.0, 10.0), 0.7, payload_b)
 
     assert second.decision == "warmup_buffered"
     assert second.inserted is False
@@ -244,6 +249,27 @@ def test_grid_quantile_archive_buffers_warmup_then_replays_samples():
     assert space["warmup_replay_results"][0]["inserted"] is True
     assert space["warmup_initialization_samples"][0]["generation_candidate_index"] == 1
     assert space["quantile_boundaries_hash"] == archive.quantile_boundaries_hash
+
+
+def test_grid_quantile_archive_delays_until_two_active_axes():
+    archive = GridQuantileArchive(
+        ("logic_depth", "ff_depth", "comb_width_log"),
+        warmup_successes=2,
+    )
+
+    archive.insert("cand-a", (3.0, 0.0, 2.0), 0.5, {"id": "a"})
+    archive.insert("cand-b", (3.0, 0.0, 3.0), 0.6, {"id": "b"})
+
+    assert archive.is_initialized is False
+    assert archive.warmup_buffer_size() == 2
+
+    third = archive.insert("cand-c", (5.0, 0.0, 4.0), 0.7, {"id": "c"})
+
+    assert third.decision == "warmup_buffered"
+    assert archive.is_initialized is True
+    assert archive.initialization_sample_count == 3
+    assert archive.effective_bins[0] > 1
+    assert archive.effective_bins[2] > 1
 
 
 def test_grid_quantile_archive_replaces_after_initialization():
