@@ -403,6 +403,9 @@ def _build_backend(
             qd_num_cells=args.qd_num_cells,
             qd_fill_target_fraction=args.qd_fill_target_fraction,
             qd_cell_reservoir=args.qd_cell_reservoir,
+            qd_cell_mode=args.qd_cell_mode,
+            qd_max_elites_per_cell=args.qd_max_elites_per_cell,
+            qd_objectives=args.qd_objectives,
             qd_neighbor_k=args.qd_neighbor_k,
             qd_cvt_warmup_successes=args.qd_cvt_warmup_successes,
             qd_grid_quantile_warmup_successes=args.qd_grid_quantile_warmup_successes,
@@ -869,6 +872,19 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--qd_num_cells", type=int, default=64)
     parser.add_argument("--qd_fill_target_fraction", type=float, default=0.25)
     parser.add_argument("--qd_cell_reservoir", type=int, default=2)
+    parser.add_argument(
+        "--qd_cell_mode",
+        type=str,
+        default="scalar_elite",
+        choices=["scalar_elite", "pareto_front"],
+    )
+    parser.add_argument("--qd_max_elites_per_cell", type=int, default=1)
+    parser.add_argument(
+        "--qd_objectives",
+        type=str,
+        default="ppa",
+        choices=["ppa"],
+    )
     parser.add_argument("--qd_neighbor_k", type=int, default=8)
     parser.add_argument("--qd_cvt_warmup_successes", type=int, default=None)
     parser.add_argument("--qd_grid_quantile_warmup_successes", type=int, default=20)

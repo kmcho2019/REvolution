@@ -188,6 +188,9 @@ emit_scalar("CONFIG_QD_CVT_WARMUP", defaults["qd_cvt_warmup_successes"])
 emit_scalar("CONFIG_QD_GRID_QUANTILE_WARMUP", defaults.get("qd_grid_quantile_warmup_successes", 20))
 emit_scalar("CONFIG_QD_FILL_TARGET_FRACTION", defaults.get("qd_fill_target_fraction", 0.25))
 emit_scalar("CONFIG_QD_CELL_RESERVOIR", defaults.get("qd_cell_reservoir", 2))
+emit_scalar("CONFIG_QD_CELL_MODE", defaults.get("qd_cell_mode", "scalar_elite"))
+emit_scalar("CONFIG_QD_MAX_ELITES_PER_CELL", defaults.get("qd_max_elites_per_cell", 1))
+emit_scalar("CONFIG_QD_OBJECTIVES", defaults.get("qd_objectives", "ppa"))
 emit_scalar("CONFIG_SEED", defaults["seed"])
 emit_array("CONFIG_BENCHMARKS", benchmarks)
 emit_array("CONFIG_PROBLEMS", problems)
@@ -219,6 +222,12 @@ for mode_name, mode_cfg in cfg["modes"].items():
         f"{prefix}_QD_CELL_RESERVOIR",
         mode_cfg.get("qd_cell_reservoir", ""),
     )
+    emit_scalar(f"{prefix}_QD_CELL_MODE", mode_cfg.get("qd_cell_mode", ""))
+    emit_scalar(
+        f"{prefix}_QD_MAX_ELITES_PER_CELL",
+        mode_cfg.get("qd_max_elites_per_cell", ""),
+    )
+    emit_scalar(f"{prefix}_QD_OBJECTIVES", mode_cfg.get("qd_objectives", ""))
 PY
 )"
 
@@ -321,6 +330,9 @@ CVT_WARMUP="${HARD_SUBSET_CVT_WARMUP:-${CONFIG_QD_CVT_WARMUP}}"
 GRID_QUANTILE_WARMUP="${HARD_SUBSET_GRID_QUANTILE_WARMUP:-${CONFIG_QD_GRID_QUANTILE_WARMUP}}"
 QD_FILL_TARGET_FRACTION="${HARD_SUBSET_QD_FILL_TARGET_FRACTION:-${CONFIG_QD_FILL_TARGET_FRACTION}}"
 QD_CELL_RESERVOIR="${HARD_SUBSET_QD_CELL_RESERVOIR:-${CONFIG_QD_CELL_RESERVOIR}}"
+QD_CELL_MODE="${HARD_SUBSET_QD_CELL_MODE:-${CONFIG_QD_CELL_MODE}}"
+QD_MAX_ELITES_PER_CELL="${HARD_SUBSET_QD_MAX_ELITES_PER_CELL:-${CONFIG_QD_MAX_ELITES_PER_CELL}}"
+QD_OBJECTIVES="${HARD_SUBSET_QD_OBJECTIVES:-${CONFIG_QD_OBJECTIVES}}"
 SEED="${HARD_SUBSET_SEED:-${CONFIG_SEED}}"
 TIMEOUT_S="${HARD_SUBSET_TIMEOUT_S:-0}"
 SAVE_ROOT="${HARD_SUBSET_SAVE_PATH:-${REPO_ROOT}/exp/hard_iteration_qd}"
@@ -350,6 +362,9 @@ qd_cvt_warmup_successes=${CVT_WARMUP}
 qd_grid_quantile_warmup_successes=${GRID_QUANTILE_WARMUP}
 qd_fill_target_fraction=${QD_FILL_TARGET_FRACTION}
 qd_cell_reservoir=${QD_CELL_RESERVOIR}
+qd_cell_mode=${QD_CELL_MODE}
+qd_max_elites_per_cell=${QD_MAX_ELITES_PER_CELL}
+qd_objectives=${QD_OBJECTIVES}
 seed=${SEED}
 EOF
 
@@ -393,6 +408,9 @@ for mode_name in "${MODES[@]}"; do
   mode_grid_quantile_warmup_var="MODE_${upper_mode}_QD_GRID_QUANTILE_WARMUP"
   mode_fill_target_var="MODE_${upper_mode}_QD_FILL_TARGET_FRACTION"
   mode_cell_reservoir_var="MODE_${upper_mode}_QD_CELL_RESERVOIR"
+  mode_cell_mode_var="MODE_${upper_mode}_QD_CELL_MODE"
+  mode_max_elites_var="MODE_${upper_mode}_QD_MAX_ELITES_PER_CELL"
+  mode_objectives_var="MODE_${upper_mode}_QD_OBJECTIVES"
 
   search_mode="${!search_mode_var}"
   archive_type="${!archive_type_var}"
@@ -402,6 +420,9 @@ for mode_name in "${MODES[@]}"; do
   resolved_grid_quantile_warmup="${!mode_grid_quantile_warmup_var}"
   resolved_fill_target="${!mode_fill_target_var}"
   resolved_cell_reservoir="${!mode_cell_reservoir_var}"
+  resolved_cell_mode="${!mode_cell_mode_var}"
+  resolved_max_elites="${!mode_max_elites_var}"
+  resolved_objectives="${!mode_objectives_var}"
   if [[ -z "${resolved_num_cells}" ]]; then
     resolved_num_cells="${NUM_CELLS}"
   fi
@@ -417,6 +438,15 @@ for mode_name in "${MODES[@]}"; do
   if [[ -z "${resolved_cell_reservoir}" ]]; then
     resolved_cell_reservoir="${QD_CELL_RESERVOIR}"
   fi
+  if [[ -z "${resolved_cell_mode}" ]]; then
+    resolved_cell_mode="${QD_CELL_MODE}"
+  fi
+  if [[ -z "${resolved_max_elites}" ]]; then
+    resolved_max_elites="${QD_MAX_ELITES_PER_CELL}"
+  fi
+  if [[ -z "${resolved_objectives}" ]]; then
+    resolved_objectives="${QD_OBJECTIVES}"
+  fi
   mode_root="${SAVE_PATH}/${mode_name}"
 
   {
@@ -428,6 +458,9 @@ for mode_name in "${MODES[@]}"; do
     echo "mode.${mode_name}.qd_grid_quantile_warmup_successes=${resolved_grid_quantile_warmup}"
     echo "mode.${mode_name}.qd_fill_target_fraction=${resolved_fill_target}"
     echo "mode.${mode_name}.qd_cell_reservoir=${resolved_cell_reservoir}"
+    echo "mode.${mode_name}.qd_cell_mode=${resolved_cell_mode}"
+    echo "mode.${mode_name}.qd_max_elites_per_cell=${resolved_max_elites}"
+    echo "mode.${mode_name}.qd_objectives=${resolved_objectives}"
   } >> "${SAVE_PATH}/hard_iteration_manifest.txt"
 
   CMD=("${PYTHON_BIN}" "scripts/run_backend.py")
@@ -463,6 +496,9 @@ for mode_name in "${MODES[@]}"; do
     CMD+=("--qd_num_cells" "${resolved_num_cells}")
     CMD+=("--qd_fill_target_fraction" "${resolved_fill_target}")
     CMD+=("--qd_cell_reservoir" "${resolved_cell_reservoir}")
+    CMD+=("--qd_cell_mode" "${resolved_cell_mode}")
+    CMD+=("--qd_max_elites_per_cell" "${resolved_max_elites}")
+    CMD+=("--qd_objectives" "${resolved_objectives}")
     if [[ "${archive_type}" == "cvt" ]]; then
       CMD+=("--qd_cvt_warmup_successes" "${resolved_cvt_warmup}")
     fi

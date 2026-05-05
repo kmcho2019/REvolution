@@ -374,6 +374,14 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     )
     parser.add_argument("--qd_num_cells", type=int, default=64)
     parser.add_argument("--qd_fill_target_fraction", type=float, default=0.25)
+    parser.add_argument(
+        "--qd_cell_mode",
+        type=str,
+        default="scalar_elite",
+        choices=["scalar_elite", "pareto_front"],
+    )
+    parser.add_argument("--qd_max_elites_per_cell", type=int, default=1)
+    parser.add_argument("--qd_objectives", type=str, default="ppa", choices=["ppa"])
     parser.add_argument("--qd_descriptor_profile", type=str, default=None)
     parser.add_argument("--qd_descriptor_axes", nargs="+", default=None)
     parser.add_argument("--qd_grid_axes", nargs="+", default=None)
@@ -690,6 +698,9 @@ def main(argv: list[str] | None = None) -> int:
     common.extend(
         ["--qd_fill_target_fraction", str(args.qd_fill_target_fraction)]
     )
+    common.extend(["--qd_cell_mode", args.qd_cell_mode])
+    common.extend(["--qd_max_elites_per_cell", str(args.qd_max_elites_per_cell)])
+    common.extend(["--qd_objectives", args.qd_objectives])
     if args.qd_descriptor_profile:
         common.extend(["--qd_descriptor_profile", args.qd_descriptor_profile])
     if args.qd_descriptor_axes:

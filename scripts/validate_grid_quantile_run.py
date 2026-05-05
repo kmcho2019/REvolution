@@ -508,15 +508,15 @@ def validate_problem(problem_root: Path, require_visualizations: bool) -> dict[s
         )
         state = "warmup_limited"
 
-    if summary["occupied_cells"] != len(_csv_rows(cells_path)):
-        errors.append("summary occupied_cells does not match archive_cells.csv")
+    archive_rows = _csv_rows(cells_path)
+    expected_rows = int(summary.get("total_archive_members", summary["occupied_cells"]))
+    if expected_rows != len(archive_rows):
+        errors.append("summary total archive members does not match archive_cells.csv")
+    if summary["occupied_cells"] != len({row["cell_id"] for row in archive_rows}):
+        errors.append("summary occupied_cells does not match archive_cells.csv cell ids")
     if initialized:
-        seen_cells: set[str] = set()
-        for row in _csv_rows(cells_path):
+        for row in archive_rows:
             descriptors = json.loads(row["descriptors_json"])
-            if row["cell_id"] in seen_cells:
-                errors.append(f"duplicate archive cell {row['cell_id']}")
-            seen_cells.add(row["cell_id"])
             indices = [int(part) for part in row["cell_id"].split(",")]
             if any(index < 0 or index >= limit for index, limit in zip(indices, effective)):
                 errors.append(f"archive cell out of range for {row['candidate_id']}")
