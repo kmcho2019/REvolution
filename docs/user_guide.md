@@ -811,6 +811,9 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
   classic-relative warmup allowance.
 - `scripts/validate_grid_quantile_visualizations.py`: check generated
   grid-quantile HTML, PNG frames, slides, and manifest source hashes.
+- `scripts/render_grid_quantile_visualizations.py`: regenerate grid-quantile
+  interactive HTML, frame PNGs, slides, and manifest data from an existing run
+  root without rerunning model evaluation.
 - `scripts/archive_baseline.py`: archive run roots into reproducible packages (`manifest.json`, copied configs/summaries, and compressed raw artifacts`). QD runs keep `archive_history.jsonl`, `archive_cells.csv`, `archive_summary.json`, `qd_metrics.json`, `grid_layout.json`, `grid_quantile_layout.json`, or `centroids.json`, `archive_space.json`, `archive_space_report.md`, and the generated QD plots in the archived summary set so archive state is preserved even in `candidate_core` mode.
 - QD candidate directories now also include `qd_archive_event.json` for every
   archive-handled successful candidate.

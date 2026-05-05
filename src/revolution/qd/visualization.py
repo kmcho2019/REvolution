@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from bisect import bisect_right
+import csv
 from dataclasses import dataclass
 import hashlib
 import importlib
@@ -59,6 +61,29 @@ def refresh_grid_quantile_manifest_sources(output_dir: str | Path) -> None:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     manifest["source_artifacts"] = _source_artifacts(output_root)
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+
+def write_grid_quantile_visualizations_from_artifacts(problem_root: str | Path) -> QDVisualizationArtifacts:
+    output_dir = Path(problem_root)
+    space_path = output_dir / "archive_space.json"
+    history_path = output_dir / "archive_history.jsonl"
+    assert space_path.is_file()
+    assert history_path.is_file()
+    space = json.loads(space_path.read_text(encoding="utf-8"))
+    assert space["archive_type"] == "grid_quantile"
+    history = [
+        json.loads(line)
+        for line in history_path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    generated = _write_grid_quantile_bundle(
+        output_dir=output_dir,
+        history=history,
+        space=space,
+        final_entries=_grid_quantile_csv_entries(output_dir),
+    )
+    refresh_grid_quantile_manifest_sources(output_dir)
+    return QDVisualizationArtifacts(generated_files=tuple(generated))
 
 
 def _write_history_plots(output_dir: Path, history: list[dict[str, Any]]) -> list[str]:
@@ -206,6 +231,21 @@ def _write_grid_quantile_outputs(
     history: list[dict[str, Any]],
     archive: GridQuantileArchive,
 ) -> list[str]:
+    return _write_grid_quantile_bundle(
+        output_dir=output_dir,
+        history=history,
+        space=archive.describe_space(),
+        final_entries=_grid_quantile_archive_entries(archive),
+    )
+
+
+def _write_grid_quantile_bundle(
+    *,
+    output_dir: Path,
+    history: list[dict[str, Any]],
+    space: dict[str, Any],
+    final_entries: list[dict[str, Any]],
+) -> list[str]:
     generated: list[str] = []
     frame_dir = output_dir / "grid_quantile_frames"
     slide_dir = output_dir / "grid_quantile_slides"
@@ -214,14 +254,24 @@ def _write_grid_quantile_outputs(
     snapshots = history or [
         {
             "generation": 0,
-            "occupied_cells": archive.occupied_count(),
+            "occupied_cells": len(final_entries),
+            "num_cells": space.get("num_cells", 0),
             "coverage": 0.0,
         }
     ]
+    events = _grid_quantile_events(output_dir)
+    render = _grid_quantile_render_layout(space)
+    timeline = _grid_quantile_timeline(
+        history=snapshots,
+        space=space,
+        events=events,
+        final_entries=final_entries,
+        render=render,
+    )
     frame_paths = []
-    for index, snapshot in enumerate(snapshots):
+    for index, frame in enumerate(timeline["frames"]):
         frame_path = frame_dir / f"frame_{index:04d}.png"
-        _write_grid_quantile_frame(frame_path, archive, snapshot, index, len(snapshots))
+        _write_grid_quantile_frame(frame_path, timeline, frame, index, len(snapshots))
         frame_paths.append(frame_path)
         generated.append(str(frame_path))
 
@@ -232,24 +282,46 @@ def _write_grid_quantile_outputs(
         generated.append(str(slide_path))
 
     manifest_path = output_dir / "grid_quantile_visualization_manifest.json"
-    active_axes = [
-        axis for axis, bins in zip(archive.axes, archive.effective_bins) if bins > 1
-    ]
-    collapsed_axes = list(archive.collapsed_axes) if archive.is_initialized else []
+    data_path = output_dir / "grid_quantile_evolution_data.json"
+    data_path.write_text(json.dumps(timeline, indent=2), encoding="utf-8")
+    generated.append(str(data_path))
+
+    frames = timeline["frames"]
+    final_frame = frames[-1] if frames else {"cells": [], "occupied_cells": 0}
     manifest = {
-        "archive_type": archive.archive_type,
-        "initialized": archive.is_initialized,
+        "archive_type": space["archive_type"],
+        "visualization_version": 2,
+        "initialized": bool(space.get("initialized")),
         "frame_count": len(frame_paths),
-        "occupied_cells": archive.occupied_count(),
+        "timeline_frame_count": len(frames),
+        "occupied_cells": int(final_frame.get("occupied_cells", 0)),
         "frames": [str(path.relative_to(output_dir)) for path in frame_paths],
         "slides": [
             str((slide_dir / f"slide_{index:02d}.png").relative_to(output_dir))
             for index in range(len(slide_indices))
         ],
-        "effective_shape": list(archive.effective_bins) if archive.is_initialized else [],
-        "collapsed_axes": collapsed_axes,
-        "rendered_axes": active_axes[:3],
-        "visualization_mode": "3d" if len(active_axes) == 3 else "2d" if len(active_axes) == 2 else "skipped",
+        "data_file": str(data_path.relative_to(output_dir)),
+        "intended_shape": [axis["intended_bins"] for axis in space["axes"]],
+        "effective_shape": list(space.get("effective_shape", [])),
+        "collapsed_axes": list(space.get("collapsed_axes", [])),
+        "axis_layout": render["axis_layout"],
+        "rendered_axes": render["active_axis_names"],
+        "slice_axis": render["slice_axis"],
+        "slice_count": render["slice_count"],
+        "visualization_mode": render["visualization_mode"],
+        "cell_count_sequence": [int(frame["occupied_cells"]) for frame in frames],
+        "sample_count_sequence": [int(frame["sample_count"]) for frame in frames],
+        "final_cell_ids": sorted(cell["cell_id"] for cell in final_frame["cells"]),
+        "animation_checks": {
+            "has_multiple_frames": len(frames) > 1,
+            "has_state_progression": len(
+                {
+                    (int(frame["occupied_cells"]), int(frame["sample_count"]))
+                    for frame in frames
+                }
+            )
+            > 1,
+        },
         "encoder_warning": "webm encoder unavailable; emitted full PNG frame sequence",
         "webm": None,
         "source_artifacts": _source_artifacts(output_dir),
@@ -258,9 +330,259 @@ def _write_grid_quantile_outputs(
     generated.append(str(manifest_path))
 
     html_path = output_dir / "grid_quantile_occupancy_evolution.html"
-    html_path.write_text(_grid_quantile_html(manifest), encoding="utf-8")
+    html_path.write_text(_grid_quantile_html(timeline), encoding="utf-8")
     generated.append(str(html_path))
     return generated
+
+
+def _grid_quantile_archive_entries(archive: GridQuantileArchive) -> list[dict[str, Any]]:
+    entries = []
+    for cell_id, entry in archive.entries().items():
+        entries.append(
+            {
+                "cell_id": cell_id,
+                "candidate_id": entry.candidate_id,
+                "quality_score": float(entry.quality_score),
+                "generation": getattr(entry.payload, "generation", 0),
+                "descriptor_tuple": list(entry.descriptors),
+            }
+        )
+    return entries
+
+
+def _grid_quantile_csv_entries(output_dir: Path) -> list[dict[str, Any]]:
+    path = output_dir / "archive_cells.csv"
+    if not path.is_file():
+        return []
+    entries = []
+    with path.open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            entries.append(
+                {
+                    "cell_id": row["cell_id"],
+                    "candidate_id": row["candidate_id"],
+                    "quality_score": float(row["quality_score"]),
+                    "generation": int(row["generation"] or 0),
+                    "descriptor_tuple": json.loads(row["descriptors_json"]),
+                }
+            )
+    return entries
+
+
+def _grid_quantile_events(output_dir: Path) -> list[dict[str, Any]]:
+    events = []
+    for path in sorted(output_dir.rglob("qd_archive_event.json")):
+        event = json.loads(path.read_text(encoding="utf-8"))
+        if event.get("archive_type") != "grid_quantile":
+            continue
+        event["_path"] = str(path.relative_to(output_dir))
+        events.append(event)
+    events.sort(
+        key=lambda event: (
+            int(event.get("generation", 0)),
+            int(event.get("archive_insertion_index", 0) or 0),
+            event["_path"],
+        )
+    )
+    return events
+
+
+def _grid_quantile_render_layout(space: dict[str, Any]) -> dict[str, Any]:
+    axis_names = [axis["name"] for axis in space["axes"]]
+    effective_shape = list(space.get("effective_shape", []))
+    if len(axis_names) != 3 or len(effective_shape) != 3:
+        return {
+            "axis_layout": {},
+            "axis_indices": [],
+            "render_shape": [],
+            "active_axis_names": [],
+            "slice_axis": None,
+            "slice_count": 0,
+            "visualization_mode": "skipped",
+            "skip_reason": "grid_quantile visualizer supports 3-axis journal profiles",
+        }
+    if {"logic_depth", "ff_depth", "comb_width_log"}.issubset(axis_names):
+        render_names = ["logic_depth", "comb_width_log", "ff_depth"]
+    else:
+        render_names = axis_names[:3]
+    axis_indices = [axis_names.index(name) for name in render_names]
+    render_shape = [effective_shape[index] for index in axis_indices]
+    active_axis_names = [
+        name for name, bins in zip(render_names, render_shape) if int(bins) > 1
+    ]
+    mode = "3d" if len(active_axis_names) == 3 else "2d" if len(active_axis_names) == 2 else "skipped"
+    slice_axis = "ff_depth" if "ff_depth" in axis_names else render_names[2]
+    slice_count = int(effective_shape[axis_names.index(slice_axis)])
+    return {
+        "axis_layout": {"x": render_names[0], "y": render_names[1], "z": render_names[2]},
+        "axis_indices": axis_indices,
+        "render_shape": render_shape,
+        "active_axis_names": active_axis_names,
+        "slice_axis": slice_axis,
+        "slice_count": max(slice_count, 1),
+        "visualization_mode": mode,
+        "skip_reason": None if mode != "skipped" else "fewer than two active axes",
+    }
+
+
+def _grid_quantile_indices(space: dict[str, Any], descriptors: list[float]) -> list[int]:
+    if not space.get("initialized"):
+        return [0 for _ in space["axes"]]
+    indices = []
+    for axis, value in zip(space["axes"], descriptors):
+        boundaries = [float(boundary) for boundary in axis["quantile_boundaries"]]
+        indices.append(bisect_right(boundaries, float(value)))
+    return indices
+
+
+def _render_indices(indices: list[int], render: dict[str, Any]) -> list[int]:
+    return [indices[index] for index in render["axis_indices"]]
+
+
+def _grid_quantile_timeline(
+    *,
+    history: list[dict[str, Any]],
+    space: dict[str, Any],
+    events: list[dict[str, Any]],
+    final_entries: list[dict[str, Any]],
+    render: dict[str, Any],
+) -> dict[str, Any]:
+    event_by_id = {event["candidate_id"]: event for event in events}
+    first_init_generation = None
+    for snapshot in history:
+        geometry = snapshot.get("grid_quantile_geometry", {})
+        if geometry.get("initialized"):
+            first_init_generation = int(snapshot.get("generation", 0))
+            break
+
+    replay_records = []
+    for replay in space.get("warmup_replay_results", []):
+        event = event_by_id.get(replay["candidate_id"], {})
+        replay_records.append(
+            {
+                "cell_id": replay["cell_id"],
+                "candidate_id": replay["candidate_id"],
+                "quality_score": float(replay["quality_score"]),
+                "generation": int(event.get("generation", first_init_generation or 0)),
+                "archive_insertion_index": int(replay.get("archive_insertion_index", 0) or 0),
+                "descriptor_tuple": list(replay["descriptor_tuple"]),
+                "decision": replay["decision"],
+                "inserted": bool(replay["inserted"]),
+            }
+        )
+    replay_records.sort(key=lambda item: int(item["archive_insertion_index"]))
+
+    frame_payloads = []
+    all_qualities = [
+        float(item["quality_score"])
+        for item in [*events, *replay_records, *final_entries]
+        if item.get("quality_score") is not None
+    ]
+    for snapshot_index, snapshot in enumerate(history):
+        generation = int(snapshot.get("generation", snapshot_index))
+        initialized = bool(snapshot.get("grid_quantile_geometry", {}).get("initialized"))
+        cells: dict[str, dict[str, Any]] = {}
+        changed_cell_ids: set[str] = set()
+
+        if initialized:
+            for replay in replay_records:
+                if replay["inserted"]:
+                    cells[replay["cell_id"]] = _grid_quantile_cell_payload(render, replay)
+                    if first_init_generation == generation:
+                        changed_cell_ids.add(replay["cell_id"])
+            for event in events:
+                if event.get("decision") == "warmup_buffered":
+                    continue
+                if int(event.get("generation", 0)) > generation:
+                    continue
+                if not event.get("inserted") and not event.get("replaced"):
+                    continue
+                cell_id = str(event["cell_id"])
+                cells[cell_id] = _grid_quantile_cell_payload(render, event)
+                if int(event.get("generation", 0)) == generation:
+                    changed_cell_ids.add(cell_id)
+            if not cells and generation >= int(history[-1].get("generation", generation)):
+                for entry in final_entries:
+                    cells[entry["cell_id"]] = _grid_quantile_cell_payload(render, entry)
+
+        samples = []
+        for event in events:
+            if int(event.get("generation", 0)) > generation:
+                continue
+            descriptors = list(event["descriptor_tuple"])
+            indices = _grid_quantile_indices(space, descriptors)
+            samples.append(
+                {
+                    "candidate_id": event["candidate_id"],
+                    "generation": int(event.get("generation", 0)),
+                    "quality_score": float(event["quality_score"]),
+                    "decision": event.get("decision"),
+                    "cell_id": event.get("cell_id"),
+                    "indices": indices,
+                    "render_indices": _render_indices(indices, render),
+                    "current": int(event.get("generation", 0)) == generation,
+                }
+            )
+
+        frame_cells = sorted(cells.values(), key=lambda item: item["cell_id"])
+        for cell in frame_cells:
+            cell["changed"] = cell["cell_id"] in changed_cell_ids
+        frame_payloads.append(
+            {
+                "frame_index": snapshot_index,
+                "generation": generation,
+                "initialized": initialized,
+                "phase": snapshot.get("phase", "warmup" if not initialized else "archive"),
+                "occupied_cells": int(snapshot.get("occupied_cells", len(frame_cells))),
+                "num_cells": int(snapshot.get("num_cells", space.get("num_cells", 0)) or 0),
+                "coverage": float(snapshot.get("coverage", 0.0) or 0.0),
+                "best_quality": snapshot.get("best_quality"),
+                "mean_quality": snapshot.get("mean_quality"),
+                "qd_score": float(snapshot.get("qd_score", 0.0) or 0.0),
+                "new_filled_cells": int(snapshot.get("new_filled_cells", 0) or 0),
+                "replaced_cells": int(snapshot.get("replaced_cells", 0) or 0),
+                "sample_count": len(samples),
+                "cells": frame_cells,
+                "samples": samples,
+                "changed_cell_ids": sorted(changed_cell_ids),
+            }
+        )
+
+    return {
+        "archive_type": "grid_quantile",
+        "visualization_version": 2,
+        "axes": [axis["name"] for axis in space["axes"]],
+        "axis_layout": render["axis_layout"],
+        "render_axis_indices": render["axis_indices"],
+        "render_shape": render["render_shape"],
+        "effective_shape": list(space.get("effective_shape", [])),
+        "intended_shape": [axis["intended_bins"] for axis in space["axes"]],
+        "collapsed_axes": list(space.get("collapsed_axes", [])),
+        "active_axis_names": render["active_axis_names"],
+        "slice_axis": render["slice_axis"],
+        "slice_count": render["slice_count"],
+        "visualization_mode": render["visualization_mode"],
+        "skip_reason": render["skip_reason"],
+        "quality_min": min(all_qualities) if all_qualities else 0.0,
+        "quality_max": max(all_qualities) if all_qualities else 1.0,
+        "frames": frame_payloads,
+    }
+
+
+def _grid_quantile_cell_payload(render: dict[str, Any], record: dict[str, Any]) -> dict[str, Any]:
+    indices = [int(part) for part in str(record["cell_id"]).split(",")]
+    descriptors = list(record.get("descriptor_tuple") or [])
+    if not descriptors:
+        descriptors = [0.0 for _ in indices]
+    return {
+        "cell_id": str(record["cell_id"]),
+        "candidate_id": str(record.get("candidate_id", "")),
+        "quality_score": float(record["quality_score"]),
+        "generation": int(record.get("generation", 0) or 0),
+        "descriptor_tuple": descriptors,
+        "indices": indices,
+        "render_indices": _render_indices(indices, render),
+    }
 
 
 def _file_digest(path: Path) -> dict[str, Any]:
@@ -280,23 +602,24 @@ def _source_artifacts(output_dir: Path) -> dict[str, dict[str, Any]]:
 
 def _write_grid_quantile_frame(
     path: Path,
-    archive: GridQuantileArchive,
-    snapshot: dict[str, Any],
+    timeline: dict[str, Any],
+    frame: dict[str, Any],
     frame_index: int,
     frame_count: int,
 ) -> None:
     np = _load_numpy()
     plt = _load_pyplot()
-    active_positions = [
-        index for index, bins in enumerate(archive.effective_bins) if bins > 1
-    ]
-    fig = plt.figure(figsize=(7, 6))
-    if not archive.is_initialized or len(active_positions) < 2:
+    shape = list(timeline.get("render_shape") or [1, 1, 1])
+    active_positions = [index for index, bins in enumerate(shape) if int(bins) > 1]
+    axis_layout = timeline.get("axis_layout", {})
+    axis_labels = [axis_layout.get(axis, axis) for axis in ("x", "y", "z")]
+    fig = plt.figure(figsize=(8, 6))
+    if len(active_positions) < 2:
         ax = fig.add_subplot(111)
         ax.text(
             0.5,
             0.5,
-            "Warmup pending" if not archive.is_initialized else "Visualization skipped",
+            "Warmup pending" if not frame["initialized"] else "Degenerate archive",
             ha="center",
             va="center",
             fontsize=16,
@@ -305,60 +628,93 @@ def _write_grid_quantile_frame(
         ax.set_axis_off()
     elif len(active_positions) == 3:
         ax = fig.add_subplot(111, projection="3d")
-        x_pos, y_pos, z_pos = active_positions
-        xs: list[int] = []
-        ys: list[int] = []
-        zs: list[int] = []
-        qualities: list[float] = []
-        for cell_id, entry in archive.entries().items():
-            indices = tuple(int(part) for part in cell_id.split(","))
-            xs.append(indices[x_pos])
-            ys.append(indices[y_pos])
-            zs.append(indices[z_pos])
-            qualities.append(float(entry.quality_score))
-        scatter = ax.scatter(
-            xs,
-            ys,
-            zs,
-            c=qualities,
-            cmap="viridis",
-            s=120,
-            edgecolors="black",
-        )
-        ax.set_xlabel(archive.axes[x_pos])
-        ax.set_ylabel(archive.axes[y_pos])
-        ax.set_zlabel(archive.axes[z_pos])
-        ax.set_xticks(range(archive.effective_bins[x_pos]))
-        ax.set_yticks(range(archive.effective_bins[y_pos]))
-        ax.set_zticks(range(archive.effective_bins[z_pos]))
-        ax.set_xlim(-0.5, archive.effective_bins[x_pos] - 0.5)
-        ax.set_ylim(-0.5, archive.effective_bins[y_pos] - 0.5)
-        ax.set_zlim(-0.5, archive.effective_bins[z_pos] - 0.5)
-        ax.set_title("Grid Quantile Archive Occupancy")
-        if qualities:
-            fig.colorbar(scatter, ax=ax, shrink=0.72, label="quality_score")
+        for cell in frame["cells"]:
+            x, y, z = cell["render_indices"]
+            ax.bar3d(
+                x - 0.42,
+                y - 0.42,
+                z - 0.42,
+                0.84,
+                0.84,
+                0.84,
+                color=plt.cm.viridis(_quality_t(timeline, cell["quality_score"])),
+                alpha=0.62,
+                edgecolor="#1f1c18" if cell.get("changed") else "#6b6055",
+                linewidth=1.2 if cell.get("changed") else 0.45,
+                shade=True,
+            )
+        if frame["samples"]:
+            ax.scatter(
+                [sample["render_indices"][0] for sample in frame["samples"]],
+                [sample["render_indices"][1] for sample in frame["samples"]],
+                [sample["render_indices"][2] for sample in frame["samples"]],
+                c=[sample["quality_score"] for sample in frame["samples"]],
+                cmap="viridis",
+                vmin=timeline["quality_min"],
+                vmax=timeline["quality_max"],
+                s=[34 if sample["current"] else 16 for sample in frame["samples"]],
+                edgecolors="black",
+                linewidths=0.35,
+                alpha=0.86,
+            )
+        ax.set_xlabel(axis_labels[0])
+        ax.set_ylabel(axis_labels[1])
+        ax.set_zlabel(f"{axis_labels[2]} (vertical)")
+        ax.set_xticks(range(max(int(shape[0]), 1)))
+        ax.set_yticks(range(max(int(shape[1]), 1)))
+        ax.set_zticks(range(max(int(shape[2]), 1)))
+        ax.set_xlim(-0.5, max(int(shape[0]), 1) - 0.5)
+        ax.set_ylim(-0.5, max(int(shape[1]), 1) - 0.5)
+        ax.set_zlim(-0.5, max(int(shape[2]), 1) - 0.5)
+        ax.view_init(elev=26, azim=-42)
     else:
         ax = fig.add_subplot(111)
         x_pos, y_pos = active_positions[:2]
-        shape = (archive.effective_bins[y_pos], archive.effective_bins[x_pos])
-        quality = np.full(shape, np.nan, dtype=float)
-        for cell_id, entry in archive.entries().items():
-            indices = tuple(int(part) for part in cell_id.split(","))
+        matrix_shape = (max(int(shape[y_pos]), 1), max(int(shape[x_pos]), 1))
+        quality = np.full(matrix_shape, np.nan, dtype=float)
+        for cell in frame["cells"]:
+            indices = cell["render_indices"]
             x_index = indices[x_pos]
             y_index = indices[y_pos]
-            row_index = archive.effective_bins[y_pos] - 1 - y_index
+            row_index = matrix_shape[0] - 1 - y_index
             current = quality[row_index, x_index]
-            if np.isnan(current) or entry.quality_score > float(current):
-                quality[row_index, x_index] = float(entry.quality_score)
-        image = ax.imshow(np.ma.masked_invalid(quality), cmap="viridis", aspect="equal")
-        ax.set_xlabel(archive.axes[x_pos])
-        ax.set_ylabel(archive.axes[y_pos])
-        ax.set_xticks(range(archive.effective_bins[x_pos]))
-        ax.set_yticks(range(archive.effective_bins[y_pos]))
-        ax.set_title("Grid Quantile Archive Occupancy")
+            if np.isnan(current) or cell["quality_score"] > float(current):
+                quality[row_index, x_index] = float(cell["quality_score"])
+        image = ax.imshow(
+            np.ma.masked_invalid(quality),
+            cmap="viridis",
+            aspect="equal",
+            vmin=timeline["quality_min"],
+            vmax=timeline["quality_max"],
+        )
+        for sample in frame["samples"]:
+            indices = sample["render_indices"]
+            ax.scatter(
+                indices[x_pos],
+                matrix_shape[0] - 1 - indices[y_pos],
+                s=48 if sample["current"] else 20,
+                c=[sample["quality_score"]],
+                cmap="viridis",
+                vmin=timeline["quality_min"],
+                vmax=timeline["quality_max"],
+                edgecolors="black",
+                linewidths=0.35,
+                alpha=0.82,
+            )
+        ax.set_xlabel(axis_labels[x_pos])
+        ax.set_ylabel(axis_labels[y_pos])
+        ax.set_xticks(range(matrix_shape[1]))
+        ax.set_yticks(range(matrix_shape[0]))
+        ax.set_yticklabels([str(index) for index in reversed(range(matrix_shape[0]))])
         fig.colorbar(image, ax=ax, shrink=0.82, label="quality_score")
+    best = frame["best_quality"]
+    best_text = "none" if best is None else f"{float(best):.3f}"
     fig.suptitle(
-        f"Frame {frame_index + 1}/{frame_count} - generation {snapshot.get('generation')}",
+        (
+            f"Frame {frame_index + 1}/{frame_count} - generation {frame['generation']} | "
+            f"cells {frame['occupied_cells']} | samples {frame['sample_count']} | "
+            f"best {best_text}"
+        ),
         fontsize=10,
     )
     fig.tight_layout()
@@ -366,67 +722,363 @@ def _write_grid_quantile_frame(
     plt.close(fig)
 
 
-def _grid_quantile_html(manifest: dict[str, Any]) -> str:
-    frames = manifest["frames"]
-    options = "\n".join(
-        f'<option value="{index}">Frame {index + 1}</option>'
-        for index in range(len(frames))
-    )
-    frame_json = json.dumps(frames)
-    return f"""<!doctype html>
+def _quality_t(timeline: dict[str, Any], value: float) -> float:
+    low = float(timeline["quality_min"])
+    high = float(timeline["quality_max"])
+    if high <= low:
+        return 0.75
+    return max(0.0, min(1.0, (float(value) - low) / (high - low)))
+
+
+def _grid_quantile_html(timeline: dict[str, Any]) -> str:
+    data_json = json.dumps(timeline, separators=(",", ":"))
+    html = """<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Grid Quantile Occupancy Evolution</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grid Quantile MAP-Elites Evolution</title>
   <style>
-    body {{ margin: 0; font-family: system-ui, sans-serif; background: #f7f5ef; color: #1f2933; }}
-    main {{ max-width: 980px; margin: 0 auto; padding: 24px; }}
-    img {{ width: 100%; border: 1px solid #d8d3c4; background: white; }}
-    .controls {{ display: flex; gap: 12px; align-items: center; margin: 16px 0; }}
-    input[type=range] {{ flex: 1; }}
+    :root {
+      --bg: #f5f2ea;
+      --panel: rgba(255, 252, 246, 0.9);
+      --border: rgba(40, 35, 30, 0.14);
+      --text: #1f1c18;
+      --dim: #70675d;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+    }
+    #canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; cursor: grab; }
+    #canvas:active { cursor: grabbing; }
+    .panel {
+      position: fixed;
+      z-index: 2;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 10px 28px rgba(36, 28, 18, 0.09);
+      backdrop-filter: blur(12px);
+    }
+    #title { top: 22px; left: 50%; transform: translateX(-50%); padding: 14px 24px; text-align: center; }
+    #title h1 { margin: 0; font: 600 19px Georgia, serif; }
+    #title .sub { margin-top: 4px; color: var(--dim); font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; }
+    #stats { top: 22px; left: 22px; width: 255px; padding: 16px 18px; }
+    #legend { top: 22px; right: 22px; padding: 16px 18px; }
+    #axisInfo { bottom: 26px; left: 22px; padding: 14px 18px; line-height: 1.9; }
+    #slices { right: 22px; bottom: 26px; padding: 14px 16px; }
+    #controls {
+      left: 50%;
+      bottom: 26px;
+      transform: translateX(-50%);
+      width: min(620px, calc(100vw - 44px));
+      padding: 13px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .label { color: var(--dim); font-size: 10px; letter-spacing: 1.8px; text-transform: uppercase; margin-bottom: 11px; }
+    .stat-row { display: flex; justify-content: space-between; gap: 16px; padding: 6px 0; border-bottom: 1px dashed var(--border); }
+    .stat-row:last-child { border-bottom: 0; }
+    .stat-label { color: var(--dim); }
+    .stat-value { font-weight: 700; font-variant-numeric: tabular-nums; }
+    button {
+      width: 38px; height: 38px; border: 1px solid var(--border); border-radius: 9px;
+      background: rgba(40, 30, 20, 0.05); color: var(--text); cursor: pointer;
+      font: 700 12px ui-monospace, monospace;
+    }
+    button:hover { background: rgba(40, 30, 20, 0.1); }
+    input[type=range] { flex: 1; }
+    #frameLabel { min-width: 92px; text-align: right; font-variant-numeric: tabular-nums; }
+    .legend-wrap { display: flex; gap: 11px; align-items: center; }
+    .gradient { width: 18px; height: 150px; border-radius: 4px; background: linear-gradient(to top,#440154,#365c8d,#1fa187,#a0da39,#fde725); }
+    .ticks { height: 150px; display: flex; flex-direction: column; justify-content: space-between; color: var(--dim); font-size: 10px; }
+    .axis-row { display: flex; gap: 8px; align-items: center; color: var(--dim); }
+    .axis-dot { width: 9px; height: 9px; border-radius: 2px; }
+    .slices-grid { display: flex; gap: 8px; align-items: flex-start; }
+    .slice-label { text-align: center; color: var(--dim); font-size: 10px; margin-top: 6px; }
+    .slice-grid { display: grid; gap: 2px; }
+    .slice-cell { width: 13px; height: 13px; background: rgba(40, 30, 20, 0.08); border-radius: 2px; }
+    @media (max-width: 860px) {
+      #title, #legend, #axisInfo, #slices { display: none; }
+      #stats { width: min(270px, calc(100vw - 44px)); }
+    }
   </style>
 </head>
 <body>
-<main>
-  <h1>Grid Quantile Occupancy Evolution</h1>
-  <div class="controls">
-    <button id="play">Play</button>
-    <input id="slider" type="range" min="0" max="{max(len(frames) - 1, 0)}" value="0">
-    <select id="select">{options}</select>
+<canvas id="canvas"></canvas>
+<div class="panel" id="title">
+  <h1>MAP-Elites Archive</h1>
+  <div class="sub" id="subtitle"></div>
+</div>
+<div class="panel" id="stats">
+  <div class="label">Run state</div>
+  <div class="stat-row"><span class="stat-label">generation</span><span class="stat-value" id="genVal"></span></div>
+  <div class="stat-row"><span class="stat-label">coverage</span><span class="stat-value" id="covVal"></span></div>
+  <div class="stat-row"><span class="stat-label">best fitness</span><span class="stat-value" id="bestVal"></span></div>
+  <div class="stat-row"><span class="stat-label">archive mean</span><span class="stat-value" id="meanVal"></span></div>
+  <div class="stat-row"><span class="stat-label">samples</span><span class="stat-value" id="sampVal"></span></div>
+</div>
+<div class="panel" id="legend">
+  <div class="label" style="text-align:center">Quality</div>
+  <div class="legend-wrap">
+    <div class="gradient"></div>
+    <div class="ticks"><span id="qMax"></span><span id="qMid"></span><span id="qMin"></span></div>
   </div>
-  <img id="frame" src="{frames[0] if frames else ''}" alt="Grid quantile frame">
-</main>
+</div>
+<div class="panel" id="axisInfo">
+  <div class="axis-row"><span class="axis-dot" style="background:#c2185b"></span>X <span id="xAxis"></span></div>
+  <div class="axis-row"><span class="axis-dot" style="background:#2e7d32"></span>Y <span id="yAxis"></span></div>
+  <div class="axis-row"><span class="axis-dot" style="background:#1565c0"></span>Z <span id="zAxis"></span></div>
+</div>
+<div class="panel" id="slices">
+  <div class="label" style="text-align:center">Z-slices</div>
+  <div class="slices-grid" id="slicesGrid"></div>
+</div>
+<div class="panel" id="controls">
+  <button id="resetBtn" title="Reset">Reset</button>
+  <button id="playBtn" title="Play or pause">Play</button>
+  <input id="slider" type="range" min="0" max="0" value="0" step="1">
+  <span id="frameLabel"></span>
+</div>
 <script>
-const frames = {frame_json};
-const image = document.getElementById("frame");
+const DATA = __DATA__;
+const frames = DATA.frames || [];
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 const slider = document.getElementById("slider");
-const select = document.getElementById("select");
-const play = document.getElementById("play");
-let timer = null;
-function show(index) {{
-  slider.value = index;
-  select.value = index;
-  image.src = frames[index];
-}}
-slider.addEventListener("input", () => show(Number(slider.value)));
-select.addEventListener("change", () => show(Number(select.value)));
-play.addEventListener("click", () => {{
-  if (timer) {{
+const playBtn = document.getElementById("playBtn");
+const resetBtn = document.getElementById("resetBtn");
+let current = 0;
+let playing = false;
+let timer = 0;
+let theta = -0.72;
+let zoom = 1;
+let dragging = false;
+let lastX = 0;
+const viridisStops = [
+  [0.00,[68,1,84]],[0.13,[70,50,126]],[0.25,[54,92,141]],
+  [0.38,[39,127,142]],[0.50,[31,161,135]],[0.63,[74,193,109]],
+  [0.75,[160,218,57]],[1.00,[253,231,37]]
+];
+const shape = DATA.render_shape && DATA.render_shape.length ? DATA.render_shape : [1,1,1];
+slider.max = Math.max(frames.length - 1, 0);
+document.getElementById("subtitle").textContent =
+  `${shape.join(" x ")} effective grid; z axis = ${DATA.axis_layout.z || "axis"}`;
+document.getElementById("xAxis").textContent = DATA.axis_layout.x || "x";
+document.getElementById("yAxis").textContent = DATA.axis_layout.y || "y";
+document.getElementById("zAxis").textContent = `${DATA.axis_layout.z || "z"} (vertical)`;
+document.getElementById("qMin").textContent = fmt(DATA.quality_min);
+document.getElementById("qMid").textContent = fmt((DATA.quality_min + DATA.quality_max) / 2);
+document.getElementById("qMax").textContent = fmt(DATA.quality_max);
+
+function fmt(value) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return "-";
+  return Number(value).toFixed(3);
+}
+function qualityT(value) {
+  const lo = Number(DATA.quality_min), hi = Number(DATA.quality_max);
+  if (hi <= lo) return 0.75;
+  return Math.max(0, Math.min(1, (Number(value) - lo) / (hi - lo)));
+}
+function viridis(t) {
+  t = Math.max(0, Math.min(1, t));
+  for (let i = 0; i < viridisStops.length - 1; i++) {
+    const [a, ca] = viridisStops[i], [b, cb] = viridisStops[i + 1];
+    if (t >= a && t <= b) {
+      const u = (t - a) / (b - a);
+      return [
+        ca[0] + (cb[0] - ca[0]) * u,
+        ca[1] + (cb[1] - ca[1]) * u,
+        ca[2] + (cb[2] - ca[2]) * u
+      ];
+    }
+  }
+  return [253, 231, 37];
+}
+function color(value, alpha = 1) {
+  const [r, g, b] = viridis(qualityT(value));
+  return `rgba(${r|0},${g|0},${b|0},${alpha})`;
+}
+function hash01(text, salt) {
+  let h = 2166136261 + salt * 131;
+  for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619);
+  return ((h >>> 0) % 10000) / 10000;
+}
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.floor(window.innerWidth * dpr);
+  canvas.height = Math.floor(window.innerHeight * dpr);
+  canvas.style.width = `${window.innerWidth}px`;
+  canvas.style.height = `${window.innerHeight}px`;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  render();
+}
+function project(point) {
+  const [x, y, z] = point;
+  const c = Math.cos(theta), s = Math.sin(theta);
+  const rx = x * c - y * s;
+  const ry = x * s + y * c;
+  const scale = Math.min(window.innerWidth, window.innerHeight) * 0.135 * zoom;
+  return {
+    x: window.innerWidth / 2 + rx * scale,
+    y: window.innerHeight / 2 + ry * scale * 0.43 - z * scale * 0.82,
+    depth: ry + z * 0.12
+  };
+}
+function centered(indices, offset = [0,0,0]) {
+  return [0,1,2].map(i => Number(indices[i] || 0) + offset[i] - (Math.max(shape[i], 1) - 1) / 2);
+}
+function cubeCorners(indices) {
+  const h = 0.45;
+  const offsets = [[-h,-h,-h],[h,-h,-h],[-h,h,-h],[h,h,-h],[-h,-h,h],[h,-h,h],[-h,h,h],[h,h,h]];
+  return offsets.map(offset => project(centered(indices, offset)));
+}
+function pathFace(points, fill, stroke, width = 1) {
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (const p of points.slice(1)) ctx.lineTo(p.x, p.y);
+  ctx.closePath();
+  if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+  if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = width; ctx.stroke(); }
+}
+function drawCube(indices, fill, stroke, width) {
+  const p = cubeCorners(indices);
+  const faces = [[4,5,7,6],[2,3,7,6],[1,3,7,5],[0,1,3,2],[0,2,6,4],[0,1,5,4]];
+  const sorted = faces.map(face => ({
+    face,
+    depth: face.reduce((sum, idx) => sum + p[idx].depth, 0) / face.length
+  })).sort((a, b) => a.depth - b.depth);
+  for (const item of sorted) pathFace(item.face.map(idx => p[idx]), fill, stroke, width);
+}
+function gridCells() {
+  const cells = [];
+  for (let x = 0; x < Math.max(shape[0], 1); x++) {
+    for (let y = 0; y < Math.max(shape[1], 1); y++) {
+      for (let z = 0; z < Math.max(shape[2], 1); z++) cells.push([x, y, z]);
+    }
+  }
+  return cells.sort((a, b) => project(centered(a)).depth - project(centered(b)).depth);
+}
+function render() {
+  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  const frame = frames[current] || {cells: [], samples: []};
+  for (const indices of gridCells()) drawCube(indices, null, "rgba(90,80,70,0.24)", 1);
+  const cells = [...frame.cells].sort((a, b) => {
+    return project(centered(a.render_indices)).depth - project(centered(b.render_indices)).depth;
+  });
+  for (const cell of cells) {
+    drawCube(
+      cell.render_indices,
+      color(cell.quality_score, cell.changed ? 0.72 : 0.48),
+      cell.changed ? "rgba(20,18,15,0.95)" : "rgba(65,55,45,0.44)",
+      cell.changed ? 2.2 : 1.0
+    );
+  }
+  for (const sample of frame.samples) {
+    const jitter = [
+      (hash01(sample.candidate_id, 1) - 0.5) * 0.48,
+      (hash01(sample.candidate_id, 2) - 0.5) * 0.48,
+      (hash01(sample.candidate_id, 3) - 0.5) * 0.32
+    ];
+    const p = project(centered(sample.render_indices, jitter));
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, sample.current ? 5.8 : 3.7, 0, Math.PI * 2);
+    ctx.fillStyle = color(sample.quality_score, sample.current ? 1 : 0.78);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(20,18,15,0.72)";
+    ctx.lineWidth = sample.current ? 1.4 : 0.6;
+    ctx.stroke();
+  }
+}
+function updateStats() {
+  const frame = frames[current] || {};
+  document.getElementById("genVal").textContent = `${frame.generation ?? 0}`;
+  const total = frame.num_cells || 0;
+  const pct = total ? `${Math.round((frame.occupied_cells || 0) / total * 100)}%` : "0%";
+  document.getElementById("covVal").textContent = `${frame.occupied_cells || 0} / ${total} (${pct})`;
+  document.getElementById("bestVal").textContent = fmt(frame.best_quality);
+  document.getElementById("meanVal").textContent = fmt(frame.mean_quality);
+  document.getElementById("sampVal").textContent = `${frame.sample_count || 0}`;
+  document.getElementById("frameLabel").textContent = `frame ${current + 1} / ${frames.length}`;
+  slider.value = String(current);
+  updateSlices(frame);
+}
+function updateSlices(frame) {
+  const root = document.getElementById("slicesGrid");
+  root.innerHTML = "";
+  const zCount = Math.max(shape[2] || 1, 1);
+  const xCount = Math.max(shape[0] || 1, 1);
+  const yCount = Math.max(shape[1] || 1, 1);
+  const best = new Map();
+  for (const cell of frame.cells || []) best.set(cell.render_indices.join(","), cell.quality_score);
+  for (let z = 0; z < zCount; z++) {
+    const wrap = document.createElement("div");
+    const grid = document.createElement("div");
+    grid.className = "slice-grid";
+    grid.style.gridTemplateColumns = `repeat(${xCount}, 13px)`;
+    for (let y = yCount - 1; y >= 0; y--) {
+      for (let x = 0; x < xCount; x++) {
+        const box = document.createElement("div");
+        box.className = "slice-cell";
+        const q = best.get(`${x},${y},${z}`);
+        if (q !== undefined) box.style.background = color(q, 1);
+        grid.appendChild(box);
+      }
+    }
+    const label = document.createElement("div");
+    label.className = "slice-label";
+    label.textContent = `z${z}`;
+    wrap.appendChild(grid);
+    wrap.appendChild(label);
+    root.appendChild(wrap);
+  }
+}
+function show(index) {
+  current = Math.max(0, Math.min(frames.length - 1, Number(index)));
+  updateStats();
+  render();
+}
+playBtn.addEventListener("click", () => {
+  playing = !playing;
+  playBtn.textContent = playing ? "Pause" : "Play";
+  if (playing) {
+    timer = window.setInterval(() => {
+      if (current >= frames.length - 1) show(0);
+      else show(current + 1);
+    }, 850);
+  } else {
     clearInterval(timer);
-    timer = null;
-    play.textContent = "Play";
-    return;
-  }}
-  play.textContent = "Pause";
-  timer = setInterval(() => {{
-    const next = (Number(slider.value) + 1) % frames.length;
-    show(next);
-  }}, 700);
-}});
+  }
+});
+resetBtn.addEventListener("click", () => { playing = false; clearInterval(timer); playBtn.textContent = "Play"; show(0); });
+slider.addEventListener("input", () => { playing = false; clearInterval(timer); playBtn.textContent = "Play"; show(slider.value); });
+canvas.addEventListener("mousedown", event => { dragging = true; lastX = event.clientX; });
+window.addEventListener("mouseup", () => { dragging = false; });
+window.addEventListener("mousemove", event => {
+  if (!dragging) return;
+  theta += (event.clientX - lastX) * 0.008;
+  lastX = event.clientX;
+  render();
+});
+canvas.addEventListener("wheel", event => {
+  event.preventDefault();
+  zoom = Math.max(0.62, Math.min(1.8, zoom - event.deltaY * 0.001));
+  render();
+}, {passive: false});
+window.addEventListener("resize", resize);
+resize();
+show(0);
 </script>
 </body>
 </html>
 """
+    return html.replace("__DATA__", data_json)
 
 
 def _parse_grid_cell_id(cell_id: str) -> tuple[int, int]:

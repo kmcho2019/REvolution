@@ -25,6 +25,11 @@ def _csv_count(path: Path) -> int:
         return sum(1 for _ in csv.DictReader(handle))
 
 
+def _csv_cell_ids(path: Path) -> list[str]:
+    with path.open(encoding="utf-8", newline="") as handle:
+        return sorted(row["cell_id"] for row in csv.DictReader(handle))
+
+
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -63,16 +68,53 @@ def validate_problem(problem_root: Path) -> list[str]:
     assert space["archive_type"] == "grid_quantile"
 
     frame_paths = [_artifact_path(problem_root, path) for path in manifest["frames"]]
+    html_path = problem_root / "grid_quantile_occupancy_evolution.html"
+    data_path = _artifact_path(problem_root, manifest.get("data_file", ""))
+    data = _load_json(data_path) if data_path.is_file() else {}
     if manifest["frame_count"] != len(frame_paths):
         errors.append("manifest frame_count does not match frame list")
     if len(frame_paths) != _history_count(history_path):
         errors.append("frame count does not match archive_history.jsonl")
+    if manifest.get("timeline_frame_count") != _history_count(history_path):
+        errors.append("timeline frame count does not match archive_history.jsonl")
     if manifest["effective_shape"] != summary.get("effective_shape", []):
         errors.append("manifest effective_shape does not match summary")
     if manifest["occupied_cells"] != summary["occupied_cells"]:
         errors.append("manifest occupied_cells does not match summary")
     if _csv_count(cells_path) != summary["occupied_cells"]:
         errors.append("archive_cells.csv row count does not match summary")
+    if sorted(manifest.get("final_cell_ids", [])) != _csv_cell_ids(cells_path):
+        errors.append("manifest final_cell_ids do not match archive_cells.csv")
+    if not data:
+        errors.append("missing grid_quantile_evolution_data.json")
+    elif len(data.get("frames", [])) != _history_count(history_path):
+        errors.append("evolution data frame count does not match history")
+
+    history = [
+        json.loads(line)
+        for line in history_path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    occupied_sequence = [int(snapshot["occupied_cells"]) for snapshot in history]
+    if manifest.get("cell_count_sequence") != occupied_sequence:
+        errors.append("manifest cell_count_sequence does not match history")
+    sample_sequence = manifest.get("sample_count_sequence", [])
+    if any(rhs < lhs for lhs, rhs in zip(sample_sequence, sample_sequence[1:])):
+        errors.append("sample_count_sequence decreases")
+    if len(history) > 1 and not manifest.get("animation_checks", {}).get("has_state_progression"):
+        errors.append("animation has no state progression")
+
+    axes = [axis["name"] for axis in space["axes"]]
+    if {"logic_depth", "ff_depth", "comb_width_log"}.issubset(axes):
+        layout = manifest.get("axis_layout", {})
+        if layout.get("x") != "logic_depth" or layout.get("y") != "comb_width_log":
+            errors.append("journal axis layout does not keep logic/width on x/y")
+        if layout.get("z") != "ff_depth":
+            errors.append("journal axis layout does not keep ff_depth on z")
+    active_axes = sum(1 for bins in space.get("effective_shape", []) if int(bins) > 1)
+    expected_mode = "3d" if active_axes == 3 else "2d" if active_axes == 2 else "skipped"
+    if manifest.get("visualization_mode") != expected_mode:
+        errors.append("manifest visualization_mode does not match active axes")
 
     if manifest.get("webm") is None and not manifest.get("encoder_warning"):
         errors.append("missing WebM and missing encoder warning")
@@ -84,8 +126,18 @@ def validate_problem(problem_root: Path) -> list[str]:
             errors.append(f"frame too small: {frame_path}")
         if _pixel_variance(frame_path) <= 0.0001:
             errors.append(f"blank frame: {frame_path}")
+    if not html_path.is_file():
+        errors.append("missing interactive HTML")
+    else:
+        html = html_path.read_text(encoding="utf-8").lower()
+        if "http://" in html or "https://" in html or "cdn" in html:
+            errors.append("interactive HTML references network assets")
+        for token in ("genval", "covval", "bestval", "meanval", "sampval", "slicesgrid"):
+            if token not in html:
+                errors.append(f"interactive HTML missing {token}")
 
     source_artifacts = manifest.get("source_artifacts", {})
+    source_mtime = 0
     for name, path in {
         "archive_history.jsonl": history_path,
         "archive_space.json": space_path,
@@ -99,6 +151,10 @@ def validate_problem(problem_root: Path) -> list[str]:
             errors.append(f"stale source hash for {name}")
         if int(recorded.get("mtime_ns", 0)) != path.stat().st_mtime_ns:
             errors.append(f"stale source mtime for {name}")
+        source_mtime = max(source_mtime, path.stat().st_mtime_ns)
+    for output_path in [manifest_path, html_path, data_path, *frame_paths]:
+        if output_path.is_file() and output_path.stat().st_mtime_ns < source_mtime:
+            errors.append(f"stale generated output: {output_path.name}")
 
     return errors
 

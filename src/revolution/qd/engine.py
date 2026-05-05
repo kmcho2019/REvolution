@@ -41,7 +41,7 @@ from revolution.qd.descriptors import (
 from revolution.qd.scoring import compute_ppa_gains
 from revolution.qd.scheduler import QDBudgetSplit, split_qd_budget
 from revolution.qd.types import QDArchiveInsertResult
-from revolution.qd.visualization import refresh_grid_quantile_manifest_sources
+from revolution.qd.visualization import write_grid_quantile_visualizations_from_artifacts
 
 
 _ARCHIVE_ONLY_DESCRIPTOR_PROFILES = {"journal_logic_ff_width_3d"}
@@ -582,7 +582,7 @@ class QDEngine(EoHEngine):
                 visualization_files=visualization_artifacts.generated_files,
             )
             if isinstance(self.success_archive, GridQuantileArchive):
-                refresh_grid_quantile_manifest_sources(
+                write_grid_quantile_visualizations_from_artifacts(
                     self._qd_log_dir() or os.path.dirname(summary_path)
                 )
 

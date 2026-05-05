@@ -60,6 +60,7 @@ QD_SUMMARY_SIDECAR_NAMES = (
     "grid_quantile_layout.json",
     "centroids.json",
     "grid_quantile_visualization_manifest.json",
+    "grid_quantile_evolution_data.json",
     "descriptor_health.json",
     "descriptor_health_report.md",
 )

@@ -366,6 +366,61 @@ be inspected during evolution, not only at final state. The demo file
 reference only. The production visualizations must be generated from real
 grid-quantile artifacts.
 
+### Second-Iteration Visualization Goal
+
+The first committed visualization attempt is not sufficient. It emits a static
+HTML frame viewer plus flat PNGs, and the frames are too close to final-state
+archive plots to explain the MAP-Elites process. The second iteration must be a
+real archive evolution viewer with feature parity with the demo's core ideas,
+using real run artifacts rather than synthetic samples.
+
+The updated goal is:
+
+- show the archive as an evolving MAP-Elites grid, not only as a final
+  projection.
+- show both occupied bins and individual archiveable samples as visible
+  dots/spheres.
+- expose run-state counters in the view: generation, occupied-cell coverage,
+  best fitness/quality, archive mean quality, and cumulative archiveable
+  sample count.
+- include play/pause, reset, a timeline slider, and a visible frame label.
+- include z-slice mini-grids so a viewer can inspect each `ff_depth` layer.
+- use a consistent journal-BD axis layout:
+  - x axis: `logic_depth`.
+  - y/depth axis: `comb_width_log`.
+  - z/vertical axis: `ff_depth`.
+- when `ff_depth` collapses in combinational cases, render the active
+  `logic_depth` x `comb_width_log` plane and record that `ff_depth` is the
+  collapsed z axis.
+- when all three journal axes are active, render a true interactive 3D archive
+  with cell outlines, filled-cell quality coloring, and sample dots.
+- make animation progress mechanically checkable. Validation must prove that
+  the frame count matches `archive_history.jsonl`, that occupied-cell and
+  sample-count sequences match the run state, and that at least one state
+  change is visible when the history contains multiple snapshots.
+
+The implementation should use a self-contained browser artifact if possible.
+The strict no-CDN rule may be relaxed during exploratory implementation, but
+the preferred Phase 02 artifact remains offline and reproducible. If Three.js
+or another browser library is adopted, vendor it into the repo or generated
+artifact bundle rather than relying on a network CDN for validation.
+
+### Current Issues To Fix
+
+- `grid_quantile_occupancy_evolution.html` is currently a PNG frame selector,
+  not an interactive archive scene.
+- The current 3D PNG output uses a flat scatter view and does not draw the
+  bin lattice clearly.
+- The current visual frames are not replayed from per-candidate insertion
+  events, so they can appear static even when the archive changes.
+- The current output lacks in-view statistics matching the demo: generation,
+  coverage, best fitness, archive mean, and sample count.
+- Sample-level points are missing from the interactive visualization.
+- Axis orientation is implicit. The journal profile needs fixed directions so
+  `ff_depth` is always the vertical z/slice axis.
+- Validation checks file existence and blank images, but it does not yet prove
+  that the interactive animation state actually progresses.
+
 ### Inputs
 
 Visualization generation must read only run artifacts:
@@ -404,9 +459,14 @@ For each grid-quantile problem directory in the hard-subset run, generate:
   - mid-run state.
   - final state.
 - `grid_quantile_visualization_manifest.json`: source paths, generated files,
-  active axes, effective shape, frame count, encoder used, and validation
-  checks. It must record source artifact mtimes or content hashes for
-  `archive_history.jsonl`, `archive_space.json`, and `archive_cells.csv`.
+  active axes, effective shape, frame count, encoder used, timeline counters,
+  final rendered cells, axis layout, and validation checks. It must record
+  source artifact mtimes or content hashes for `archive_history.jsonl`,
+  `archive_space.json`, and `archive_cells.csv`.
+- `grid_quantile_evolution_data.json`: compact replay data used by the HTML
+  renderer. It must include one frame per `archive_history.jsonl` snapshot,
+  frame-level counters, filled cells, changed cells, and archiveable sample
+  points.
 
 ### Dimensional Rules
 
@@ -1022,6 +1082,18 @@ Across the full hard-subset validation run:
 - if the hard subset does not naturally produce one of those dimensional cases,
   the missing case must be covered by a deterministic synthetic visualization
   test fixture.
+
+For every supported visualization:
+
+- the manifest records `visualization_version >= 2`.
+- `axis_layout.z == "ff_depth"` for `journal_logic_ff_width_3d`.
+- `cell_count_sequence` exactly matches `archive_history.jsonl.occupied_cells`.
+- `sample_count_sequence` is monotonically nondecreasing.
+- the manifest records `animation_checks.has_state_progression == true` when
+  the history has more than one frame.
+- `final_cell_ids` exactly matches `archive_cells.csv`.
+- the HTML includes the statistics panel, z-slice panel, timeline controls,
+  and embedded/offline timeline data.
 
 For every `initialized_but_degenerate` problem:
 

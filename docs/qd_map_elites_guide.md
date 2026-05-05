@@ -859,7 +859,12 @@ For grid-quantile journal runs:
   initialization samples, replay results, quantile boundaries, effective bins,
   collapsed axes, and the boundary hash
 - use `grid_quantile_occupancy_evolution.html` or the PNG frames to inspect
-  how the archive fills across recorded history snapshots
+  how bins and archiveable samples fill across recorded history snapshots; the
+  journal layout keeps `logic_depth` on x, `comb_width_log` on y/depth, and
+  `ff_depth` on the vertical z/slice axis
+- use `scripts/render_grid_quantile_visualizations.py` to regenerate the HTML,
+  frame PNGs, slides, and manifest from existing run artifacts after renderer
+  changes
 - run `scripts/validate_grid_quantile_run.py` before treating hard-subset
   artifacts as Phase 02 acceptance evidence
 

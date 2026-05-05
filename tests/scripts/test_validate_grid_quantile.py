@@ -11,7 +11,7 @@ from revolution.qd.artifacts import (
     write_archive_space_files,
     write_qd_summary_files,
 )
-from revolution.qd.visualization import refresh_grid_quantile_manifest_sources
+from revolution.qd.visualization import write_grid_quantile_visualizations_from_artifacts
 from scripts.validate_grid_quantile_run import main as validate_run_main
 from scripts.validate_grid_quantile_visualizations import validate_problem
 
@@ -54,6 +54,30 @@ def _write_problem(
     archive.insert(second.id, second_descriptors, second.score, second)
 
     root.mkdir(parents=True)
+    for candidate, descriptors in ((first, (1.0, 0.0, 1.0)), (second, second_descriptors)):
+        event_dir = root / "Gen0" / candidate.code_file_path.split("/")[-2]
+        event_dir.mkdir(parents=True)
+        cell_id = archive.cell_id_for(descriptors)
+        (event_dir / "qd_archive_event.json").write_text(
+            json.dumps(
+                {
+                    "candidate_id": candidate.id,
+                    "generation": 0,
+                    "strategy": "initial",
+                    "archive_type": "grid_quantile",
+                    "archive_axes": ["logic_depth", "ff_depth", "comb_width_log"],
+                    "quality_score": candidate.score,
+                    "descriptor_tuple": list(descriptors),
+                    "archive_insertion_index": candidate.archive_insertion_index,
+                    "cell_id": cell_id,
+                    "assignment": archive.describe_assignment(descriptors),
+                    "decision": "filled_empty",
+                    "inserted": True,
+                    "replaced": False,
+                }
+            ),
+            encoding="utf-8",
+        )
     history = [
         {
             "generation": 0,
@@ -95,7 +119,7 @@ def _write_problem(
     (root / "descriptor_health.json").write_text("{}", encoding="utf-8")
     (root / "descriptor_health_report.md").write_text("# Descriptor Health\n", encoding="utf-8")
     _write_problem_summary(root, success_count=2)
-    refresh_grid_quantile_manifest_sources(root)
+    write_grid_quantile_visualizations_from_artifacts(root)
 
 
 def _write_problem_summary(root: Path, *, success_count: int) -> None:
@@ -142,6 +166,8 @@ def test_grid_quantile_visualization_validator_accepts_generated_artifacts(tmp_p
     )
     assert manifest["visualization_mode"] == "2d"
     assert manifest["frames"][0] == "grid_quantile_frames/frame_0000.png"
+    assert manifest["axis_layout"]["z"] == "ff_depth"
+    assert manifest["final_cell_ids"]
 
 
 def test_grid_quantile_visualization_supports_3d_artifacts(tmp_path):
