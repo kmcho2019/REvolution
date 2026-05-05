@@ -36,6 +36,13 @@ Pareto-front cells, two-tier fail handling, and single-operator plans.
 | CVT QD | `--search_mode revolution_qd --qd_archive_type cvt` | archive elites + bounded reservoir view | `--qd_descriptor_profile implemented_structural_fixed_5d` or `size_control_3d` | richer descriptor spaces, repertoire search, balanced archive experiments | warm-up and centroid geometry matter on the hardest tasks |
 | Grid-quantile QD | `--search_mode revolution_qd --qd_archive_type grid_quantile` | warmup buffer, then archive elites + bounded reservoir view | `--qd_descriptor_profile journal_logic_ff_width_3d --qd_grid_quantile_warmup_successes 8` | journal behavior-descriptor hard-subset validation | static 4-bin quantiles only; adaptive re-binning is deferred |
 
+All three QD geometries support `--qd_cell_mode scalar_elite` and
+`--qd_cell_mode pareto_front`. `scalar_elite` keeps the legacy one-best
+`quality_score` occupant per cell. `pareto_front` stores a bounded
+non-dominated PPA front per cell using `--qd_max_elites_per_cell` and
+`--qd_objectives ppa`; the active objectives are `g_P`/`g_A` for
+combinational tasks and `g_P`/`g_A`/`g_T` for sequential tasks.
+
 ### Descriptor family to mode map
 
 | Descriptor family | Runtime source | Most natural mode use | Representative profiles |
@@ -858,6 +865,10 @@ For grid-quantile journal runs:
 - inspect `archive_space.json` first to see pending warmup buffer samples,
   initialization samples, replay results, quantile boundaries, effective bins,
   collapsed axes, and the boundary hash
+- in Pareto-front cell mode, `archive_cells.csv` has one row per archive
+  member rather than one row per occupied cell. Use `total_archive_members`,
+  `mean_front_size`, and `max_front_size` for front breadth; use distinct
+  `cell_id` values for behavior-space coverage.
 - use `grid_quantile_occupancy_evolution.html` or the PNG frames to inspect
   how bins and archiveable samples fill across recorded history snapshots; the
   journal layout keeps `logic_depth` on x, `comb_width_log` on y/depth, and
@@ -867,6 +878,8 @@ For grid-quantile journal runs:
   changes
 - run `scripts/validate_grid_quantile_run.py` before treating hard-subset
   artifacts as Phase 02 acceptance evidence
+- run `scripts/validate_pareto_front_run.py` before treating a Phase 03
+  Pareto-front hard-subset run as accepted
 
 When choosing which mode/profile to run next:
 

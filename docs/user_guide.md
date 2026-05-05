@@ -131,6 +131,9 @@ having to pre-commit the run to a fixed problem/process split.
 QD-mode controls on the `revolution` backend currently include:
 
 - archive selection: `--qd_archive_type grid|cvt|grid_quantile`
+- cell replacement mode:
+  `--qd_cell_mode scalar_elite|pareto_front`,
+  `--qd_max_elites_per_cell <int>`, and `--qd_objectives ppa`
 - descriptor selection:
   `--qd_descriptor_profile`,
   `--qd_descriptor_axes`,
@@ -155,6 +158,12 @@ Current feature status:
   bins per descriptor axis, freezes 25/50/75 quantile boundaries from
   archiveable warmup successes, and exposes only
   `--qd_grid_quantile_warmup_successes` as its archive-specific knob.
+- `pareto_front` is an archive cell mode, not a geometry. It works with
+  `grid`, `cvt`, and `grid_quantile`, stores up to
+  `--qd_max_elites_per_cell` non-dominated members per occupied cell, and uses
+  PPA objectives only: `g_P`/`g_A` for combinational tasks and
+  `g_P`/`g_A`/`g_T` for sequential tasks. `quality_score` remains a reporting
+  and representative-ordering field, not a Pareto replacement criterion.
 - success-side QD fill/backfill now has dedicated operators:
   `M-T` for targeted descriptor mutation and `C-D` for diverse archive fusion.
 - `auto` per-phase generation-mode selection now consults
@@ -795,7 +804,11 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/run_funsearch.py`: shortcut wrapper for FunSearch backend runs.
 - `scripts/run_hard_iteration_one_shot_vllm.sh`: resumable one-shot hard-subset baseline harness for RTLLM and VerilogEval-Spec-to-RTL.
 - `scripts/build_hard_iteration_subset.py`: turn one-shot summaries plus benchmark metadata into a frozen balanced hard-subset config and baseline CSV.
-- `scripts/run_hard_iteration_qd_vllm.sh`: run the `classic`, `grid_struct`, `cvt_struct`, `cvt_size_control`, and `grid_quantile_journal_bd` matrix entries from a frozen hard-subset config.
+- `scripts/run_hard_iteration_qd_vllm.sh`: run the `classic`, `grid_struct`,
+  `cvt_struct`, `cvt_size_control`, `grid_quantile_journal_bd`, and custom
+  Pareto-grid-quantile matrix entries from a frozen hard-subset config. The
+  wrapper forwards `qd_cell_mode`, `qd_max_elites_per_cell`, and
+  `qd_objectives` from `matrix_defaults` or per-mode overrides.
 - `scripts/report_hard_iteration_analysis.py`: summarize hard-subset classic-vs-QD runs into a markdown report plus JSON recommendations.
 - `scripts/report_pareto_analysis.py`: summarize hard-subset backend runs into Pareto-front figures plus per-backend hypervolume and frontier-size tables.
 - `scripts/report_ppa_distribution.py`: summarize successful candidates into PPA-space scatter figures with score contours and projected Pareto fronts, best-candidate CSVs, and reference-normalized gain views.
@@ -809,6 +822,11 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
   invariants. Add `--acceptance-hard-subset` for the Phase 02 full hard-subset
   gate; it also checks the resolved seed, population, worker settings, and
   classic-relative warmup allowance.
+- `scripts/validate_pareto_front_run.py`: audit a Pareto-front hard-subset run
+  for Phase 03. It checks that `archive_cells.csv` has one row per archive
+  member, distinct cells match `occupied_cells`, fronts stay within
+  `max_elites_per_cell`, same-cell members are mutually non-dominated, and at
+  least one accepted hard-subset problem produced a multi-member front.
 - `scripts/validate_grid_quantile_visualizations.py`: check generated
   grid-quantile HTML, PNG frames, slides, and manifest source hashes.
 - `scripts/render_grid_quantile_visualizations.py`: regenerate grid-quantile
