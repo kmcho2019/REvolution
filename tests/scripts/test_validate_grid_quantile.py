@@ -179,6 +179,14 @@ def test_grid_quantile_visualization_validator_accepts_generated_artifacts(tmp_p
     assert "slice-layer" in html
     assert "drawAxisGuides" in html
     assert "drawSampleMarker" in html
+    lowered = html.lower()
+    assert "z-slice layers" in lowered
+    assert "fitness" in lowered
+    assert "gradient" in lowered
+    assert "axis-desc" in lowered
+    assert "#legend { display: none" not in lowered
+    assert "#axisinfo { display: none" not in lowered
+    assert "#slices { display: none" not in lowered
 
 
 def test_grid_quantile_visualization_supports_3d_artifacts(tmp_path):

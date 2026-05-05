@@ -844,8 +844,36 @@ def _grid_quantile_html(timeline: dict[str, Any]) -> str:
     .slice-grid { display: grid; gap: 2px; }
     .slice-cell { width: 14px; height: 14px; background: rgba(40, 30, 20, 0.08); border-radius: 2px; }
     @media (max-width: 860px) {
-      #title, #legend, #axisInfo, #slices { display: none; }
-      #stats { width: min(270px, calc(100vw - 44px)); }
+      #title { display: none; }
+      #stats { top: 10px; left: 10px; width: 136px; }
+      #legend { top: 10px; right: 10px; padding: 8px 9px; }
+      #legend .gradient { width: 14px; height: 88px; }
+      #legend .ticks { height: 88px; font-size: 9px; }
+      #axisInfo {
+        left: 10px; bottom: 88px; max-width: min(260px, calc(100vw - 20px));
+        padding: 8px 9px; line-height: 1.55;
+      }
+      #axisInfo .axis-row { gap: 5px; font-size: 9px; }
+      #slices {
+        right: 10px; bottom: 86px; max-width: min(300px, calc(100vw - 170px));
+        padding: 8px 9px; overflow-x: auto;
+      }
+      #slices .label { margin-bottom: 6px; }
+      .slices-grid { gap: 5px; }
+      .slice-cell { width: 9px; height: 9px; }
+      .slice-label { font-size: 8px; margin-top: 4px; }
+      #controls {
+        bottom: 10px; width: calc(100vw - 20px); gap: 6px; padding: 8px;
+      }
+      button { min-width: 38px; height: 30px; padding: 0 7px; }
+      #frameLabel { min-width: 64px; font-size: 10px; }
+    }
+    @media (max-width: 560px) {
+      #axisInfo { bottom: 140px; right: 10px; }
+      #slices {
+        left: 10px; right: auto; bottom: 74px;
+        max-width: calc(100vw - 20px);
+      }
     }
   </style>
 </head>

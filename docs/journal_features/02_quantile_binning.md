@@ -425,6 +425,9 @@ Required viewer behavior:
   maps to x, y, and z.
 - Draw a fitness legend using the same color scale used for filled archive
   cells. Filled cells are colored by the current elite `quality_score`.
+- Keep the BD-axis legend, fitness legend, and z-slice panel visible in
+  narrow VS Code/dev-container preview panes. Responsive layout may resize or
+  reposition these panels, but must not hide them.
 - Support timeline play/pause independently from camera motion.
 - Support manual camera inspection with horizontal and vertical pointer drag,
   plus wheel zoom. Horizontal drag changes yaw; vertical drag changes pitch.
@@ -1120,7 +1123,9 @@ For every supported visualization:
   the history has more than one frame.
 - `final_cell_ids` exactly matches `archive_cells.csv`.
 - the HTML includes the statistics panel, z-slice panel, timeline controls,
-  and embedded/offline timeline data.
+  BD-axis legend, fitness legend, and embedded/offline timeline data.
+- responsive CSS does not hide the BD-axis legend, fitness legend, or
+  z-slice panel in narrow preview panes.
 
 For every `initialized_but_degenerate` problem:
 

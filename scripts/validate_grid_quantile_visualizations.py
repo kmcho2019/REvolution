@@ -153,16 +153,28 @@ def validate_problem(problem_root: Path) -> list[str]:
             "sampval",
             "slicesgrid",
             "slice-layer",
+            "z-slice layers",
             "spinbtn",
             "statssizebtn",
             "drawaxisguides",
             "drawsamplemarker",
             "bd axes",
+            "axis-desc",
             "fitness",
+            "gradient",
         )
         for token in required_tokens:
             if token not in html:
                 errors.append(f"interactive HTML missing {token}")
+        hidden_tokens = (
+            "#legend { display: none",
+            "#axisinfo { display: none",
+            "#slices { display: none",
+            "#title, #legend, #axisinfo, #slices { display: none",
+        )
+        for token in hidden_tokens:
+            if token in html:
+                errors.append(f"interactive HTML hides required panel: {token}")
 
     source_artifacts = manifest.get("source_artifacts", {})
     source_mtime = 0
