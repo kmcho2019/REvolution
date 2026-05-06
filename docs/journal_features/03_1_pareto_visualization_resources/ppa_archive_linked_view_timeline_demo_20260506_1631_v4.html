@@ -1,0 +1,2182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPA Archive ↔ Pareto · Timeline Linked View</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --panel: rgba(255, 252, 246, 0.9);
+    --panel-solid: #fbf7ee;
+    --border: rgba(40, 35, 30, 0.1);
+    --border-strong: rgba(40, 35, 30, 0.18);
+    --text: #1f1c18;
+    --dim: #7a7065;
+    --muted: #b5ab9d;
+    --classic: #e76f51;
+    --journal: #2a9d8f;
+    --rank0: #f4a261;
+    --teal: #277f8e;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --serif: 'Fraunces', ui-serif, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background:
+      radial-gradient(ellipse at 25% 15%, #f9f5eb 0%, transparent 55%),
+      radial-gradient(ellipse at 75% 85%, #ede6d6 0%, transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.9' /></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.6'/></svg>");
+    opacity: 0.04;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ===== Topbar ===== */
+  #topbar {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 22px 12px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255, 252, 246, 0.6);
+    backdrop-filter: blur(10px);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .brand h1 {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 20px;
+  }
+  .brand .sub {
+    font-size: 9px;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    margin-top: 2px;
+  }
+  .controls { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .control-group { display: flex; gap: 7px; align-items: center; }
+  .control-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--dim);
+  }
+  .seg {
+    display: flex;
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
+    overflow: hidden;
+    background: var(--panel-solid);
+  }
+  .seg button {
+    background: transparent;
+    border: none;
+    padding: 5px 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+    transition: all 0.15s;
+  }
+  .seg button:last-child { border-right: none; }
+  .seg button:hover { color: var(--text); background: rgba(40,30,20,0.04); }
+  .seg button.active {
+    background: rgba(39, 127, 142, 0.13);
+    color: #1a5560;
+  }
+  .tech-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 11px 4px 9px;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: var(--panel-solid);
+    font-size: 11px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s;
+  }
+  .tech-chip .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .tech-chip[data-tech="classic"] .dot { background: var(--classic); }
+  .tech-chip[data-tech="journalBd"] .dot { background: var(--journal); }
+  .tech-chip.off { opacity: 0.4; background: transparent; }
+  .tech-chip.off .dot { background: var(--muted) !important; }
+
+  button.icon-btn {
+    background: rgba(40, 30, 20, 0.04);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  button.icon-btn:hover {
+    background: rgba(40,30,20,0.09);
+    border-color: rgba(40,30,20,0.2);
+  }
+  button.icon-btn.toggle-active {
+    background: rgba(39, 127, 142, 0.16);
+    border-color: rgba(39, 127, 142, 0.42);
+    color: #1a5560;
+  }
+  button.icon-btn svg { display: block; }
+  button.icon-btn:disabled {
+    opacity: 0.42;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  /* ===== Timeline controls ===== */
+  #timelineBar {
+    position: relative;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: auto minmax(220px, 1fr) auto auto;
+    align-items: center;
+    gap: 14px;
+    padding: 9px 22px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255, 252, 246, 0.72);
+    backdrop-filter: blur(10px);
+  }
+  .timeline-left {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+  }
+  .timeline-btn {
+    width: 29px !important;
+    height: 29px !important;
+    font-size: 11px;
+  }
+  #genSlider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 3px;
+    background: linear-gradient(to right, rgba(231,111,81,0.42), rgba(42,157,143,0.55));
+    border-radius: 999px;
+    outline: none;
+  }
+  #genSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #277f8e;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(39, 127, 142, 0.18);
+  }
+  #genSlider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: #277f8e;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .timeline-speed {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 170px;
+    justify-content: flex-end;
+  }
+  #speedSlider {
+    width: 110px;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 3px;
+    background: rgba(40, 30, 20, 0.15);
+    border-radius: 999px;
+    outline: none;
+  }
+  #speedSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #277f8e;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(39, 127, 142, 0.16);
+  }
+  #speedSlider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: #277f8e;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  #speedDisp {
+    min-width: 44px;
+    text-align: right;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+  .timeline-readout {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    min-width: 250px;
+    justify-content: flex-end;
+    white-space: nowrap;
+  }
+  #genDisp {
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  #timelineStats {
+    font-size: 10px;
+    color: var(--dim);
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 900px) {
+    #timelineBar { grid-template-columns: 1fr; gap: 8px; }
+    .timeline-speed, .timeline-readout { justify-content: flex-start; min-width: 0; }
+  }
+
+  /* ===== Main grid ===== */
+  #main {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    /* In single mode, give archive and PPA equal visual weight. */
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  #main.compare {
+    grid-template-columns: 1fr 1fr 1.4fr;
+  }
+  /* In single mode, hide only the inactive archive. The !important prevents
+     stale inline display styles from a previous mode switch from overriding
+     the layout rule and stealing grid space. */
+  #main:not(.compare) .archive-pane.hidden { display: none !important; }
+  /* In compare mode, show all archives even if one had the hidden class in
+     single mode during a previous layout frame. */
+  #main.compare .archive-pane { display: flex !important; }
+
+  .pane {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border-right: 1px solid var(--border);
+    min-width: 0;
+  }
+  .pane:last-child { border-right: none; }
+
+  .pane-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255, 252, 246, 0.7);
+    backdrop-filter: blur(10px);
+    z-index: 3;
+    gap: 10px;
+    min-height: 50px;
+  }
+  .ph-title {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+  .pt-name {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .pt-tag {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ph-controls { display: flex; align-items: center; gap: 8px; }
+
+  .pane-canvas-wrap {
+    flex: 1;
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .pane-canvas-wrap canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+  }
+  .pane-canvas-wrap canvas:active { cursor: grabbing; }
+
+  /* ===== Layers panel ===== */
+  .layers-panel {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    /* Fully opaque background — any transparency lets the canvas
+       re-render bleed through and on some browser configurations
+       this can read as the panel "disappearing" against the scene. */
+    background: var(--panel-solid);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    /* Extra bottom padding reserves a small footer area for the tiny
+       orientation cue so it sits beneath the k0 slice instead of
+       colliding with the title area. */
+    padding: 9px 11px 25px 11px;
+    z-index: 9999;
+    transform: translateZ(0);
+    box-shadow: 0 4px 14px rgba(40,30,20,0.10);
+    pointer-events: auto;
+  }
+  .archive-pane:not(.hidden) .layers-panel { display: block !important; visibility: visible !important; opacity: 1 !important; }
+  .lp-title {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--dim);
+    margin-bottom: 7px;
+    text-align: center;
+  }
+  .layers-stack {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 3px;
+  }
+  .layer-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .layer-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 11px);
+    grid-template-rows: repeat(4, 11px);
+    gap: 1px;
+  }
+  .layer-cell {
+    width: 11px; height: 11px;
+    background: rgba(40,30,20,0.05);
+    border-radius: 1px;
+    cursor: pointer;
+    transition: outline 0.1s, transform 0.1s;
+  }
+  .layer-cell:hover { transform: scale(1.15); }
+  .layer-cell.hover-active {
+    outline: 1.5px solid var(--text);
+    outline-offset: 1px;
+    transform: scale(1.15);
+  }
+  .layer-label {
+    font-size: 9px;
+    color: var(--dim);
+    font-variant-numeric: tabular-nums;
+  }
+  .layers-orient {
+    position: absolute;
+    left: 11px;
+    bottom: 6px;
+    width: 42px;
+    height: 16px;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+  .layers-orient .orient-corner {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 9px;
+    height: 9px;
+    border-left: 1.5px solid rgba(40,35,30,0.8);
+    border-bottom: 1.5px solid rgba(40,35,30,0.8);
+  }
+  .layers-orient .orient-x,
+  .layers-orient .orient-y {
+    position: absolute;
+    font-size: 6.5px;
+    line-height: 1;
+    color: var(--dim);
+    letter-spacing: 0.1px;
+    white-space: nowrap;
+  }
+  .layers-orient .orient-x {
+    left: 12px;
+    bottom: -1px;
+  }
+  .layers-orient .orient-y {
+    left: -1px;
+    bottom: 11px;
+  }
+
+  /* ===== Scatter legend ===== */
+  .scatter-legend {
+    position: absolute;
+    top: 14px; right: 14px;
+    z-index: 3;
+    background: var(--panel);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 10px;
+    line-height: 1.7;
+    box-shadow: 0 4px 14px rgba(40,30,20,0.06);
+    min-width: 110px;
+  }
+  .sl-section { margin-top: 6px; }
+  .sl-section:first-child { margin-top: 0; }
+  .sl-title {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--dim);
+    margin-bottom: 4px;
+  }
+  .sl-row {
+    display: flex; align-items: center; gap: 7px;
+    color: var(--dim);
+  }
+  .sl-row .sw {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .gradient-bar-h {
+    width: 86px; height: 8px;
+    background: linear-gradient(to right, #440154, #3b528b, #21918c, #5ec962, #fde725);
+    border-radius: 2px;
+  }
+  .gb-ticks {
+    display: flex; justify-content: space-between;
+    width: 86px; font-size: 9px; color: var(--dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ===== Stats bar ===== */
+  #statsBar {
+    display: flex;
+    gap: 10px;
+    padding: 10px 22px 14px;
+    border-top: 1px solid var(--border);
+    background: rgba(255, 252, 246, 0.7);
+    backdrop-filter: blur(10px);
+    z-index: 4;
+  }
+  .stat-card {
+    flex: 1;
+    background: var(--panel-solid);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 11px 16px;
+    position: relative;
+    overflow: hidden;
+    transition: opacity 0.2s;
+  }
+  .stat-card.muted { opacity: 0.45; }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent, var(--muted));
+  }
+  .stat-card[data-tech="classic"] { --accent: var(--classic); }
+  .stat-card[data-tech="journalBd"] { --accent: var(--journal); }
+  .stat-card[data-tech="diff"] { --accent: var(--rank0); }
+  .stat-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 7px;
+  }
+  .stat-name {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 13px;
+  }
+  .stat-tech-tag {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--dim);
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));
+    gap: 5px 12px;
+  }
+  .stat-item { display: flex; flex-direction: column; gap: 1px; }
+  .stat-key {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--dim);
+  }
+  .stat-val {
+    font-size: 13px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-val.small { font-size: 11px; }
+  .delta-better { color: #2e7d32; }
+  .delta-worse  { color: #c2185b; }
+
+  /* ===== Tooltip ===== */
+  #tooltip {
+    position: fixed;
+    z-index: 100;
+    background: rgba(20, 18, 14, 0.92);
+    color: #f4f1ea;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    line-height: 1.55;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s;
+    backdrop-filter: blur(8px);
+    max-width: 240px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  }
+  #tooltip.visible { opacity: 1; }
+  .tt-title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  .tt-row { display: flex; justify-content: space-between; gap: 14px; }
+  .tt-key { color: rgba(244, 241, 234, 0.55); }
+  .tt-val { font-variant-numeric: tabular-nums; }
+
+  @media (max-width: 1100px) {
+    #main, #main.compare { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr 1fr; }
+    #statsBar { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Topbar ===== -->
+<div id="topbar">
+  <div class="brand">
+    <h1>PPA Archive ↔ Pareto</h1>
+    <div class="sub">timeline linked view · area × power × effective clock period · classic vs MAP-Elites</div>
+  </div>
+  <div class="controls">
+    <div class="control-group">
+      <span class="control-label">mode</span>
+      <div class="seg" id="modeSeg">
+        <button data-mode="single">single</button>
+        <button data-mode="compare" class="active">compare</button>
+      </div>
+    </div>
+    <div class="control-group">
+      <span class="control-label">techniques</span>
+      <div class="tech-chip" data-tech="classic"><span class="dot"></span><span>classic</span></div>
+      <div class="tech-chip" data-tech="journalBd"><span class="dot"></span><span>journal_bd</span></div>
+    </div>
+    <div class="control-group">
+      <span class="control-label">view</span>
+      <button class="icon-btn" id="perspectiveLockBtn" title="Lock classic and MAP-Elites archive perspectives together in compare mode">
+        <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3.2" y="7" width="9.6" height="6.2" rx="1.2"/>
+          <path d="M5.5 7V5.7a2.5 2.5 0 0 1 5 0V7"/>
+        </svg>
+      </button>
+      <button class="icon-btn toggle-active" id="autoRotateBtn" title="Toggle auto-rotate">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <ellipse cx="8" cy="8" rx="6" ry="2.6" transform="rotate(-25 8 8)"/>
+          <circle cx="8" cy="8" r="1.6" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
+      <button class="icon-btn" id="resetBtn" title="Reset camera angles & explode">
+        <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2.5 8 a5.5 5.5 0 1 0 1.5 -3.8"/>
+          <path d="M2.5 3 v3 h3"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Generation / final-state timeline ===== -->
+<div id="timelineBar">
+  <div class="timeline-left">
+    <span class="control-label">timeline</span>
+    <button class="icon-btn timeline-btn" id="playBtn" title="Play / pause generation playback">▶</button>
+    <button class="icon-btn timeline-btn" id="prevGenBtn" title="Previous generation">‹</button>
+    <button class="icon-btn timeline-btn" id="nextGenBtn" title="Next generation">›</button>
+    <button class="icon-btn timeline-btn" id="finalGenBtn" title="Jump to final stable state">F</button>
+  </div>
+  <input type="range" id="genSlider" min="0" max="40" value="40" step="1" aria-label="Generation timeline">
+  <div class="timeline-speed">
+    <span class="control-label">speed</span>
+    <input type="range" id="speedSlider" min="0.25" max="8" value="2" step="0.25" aria-label="Playback speed">
+    <span id="speedDisp">2.00×</span>
+  </div>
+  <div class="timeline-readout">
+    <span id="genDisp">final</span>
+    <span id="timelineStats">stable archive snapshot</span>
+  </div>
+</div>
+
+
+<!-- ===== Main split ===== -->
+<div id="main" class="compare">
+
+  <!-- Archive: Classic -->
+  <div class="pane archive-pane" data-tech="classic">
+    <div class="pane-header">
+      <div class="ph-title">
+        <span class="pt-name">Archive · Classic</span>
+        <span class="pt-tag" style="color:var(--classic)">posthoc-binned</span>
+      </div>
+      <div class="ph-controls">
+        <button class="icon-btn explode-btn" title="Toggle vertical separation">
+          <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round">
+            <rect x="3" y="2.5" width="10" height="2.4" rx="0.5"/>
+            <rect x="3" y="6.8" width="10" height="2.4" rx="0.5"/>
+            <rect x="3" y="11.1" width="10" height="2.4" rx="0.5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="pane-canvas-wrap">
+      <canvas id="archiveCanvasClassic"></canvas>
+      <div class="layers-panel">
+        <div class="lp-title">layers · BD₃</div>
+        <div class="layers-stack" id="layersStackClassic"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Archive: MAP-Elites journal_bd -->
+  <div class="pane archive-pane" data-tech="journalBd">
+    <div class="pane-header">
+      <div class="ph-title">
+        <span class="pt-name">Archive · MAP-Elites</span>
+        <span class="pt-tag" style="color:var(--journal)">journal_bd</span>
+      </div>
+      <div class="ph-controls">
+        <button class="icon-btn explode-btn" title="Toggle vertical separation">
+          <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round">
+            <rect x="3" y="2.5" width="10" height="2.4" rx="0.5"/>
+            <rect x="3" y="6.8" width="10" height="2.4" rx="0.5"/>
+            <rect x="3" y="11.1" width="10" height="2.4" rx="0.5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="pane-canvas-wrap">
+      <canvas id="archiveCanvasJournalBd"></canvas>
+      <div class="layers-panel">
+        <div class="lp-title">layers · BD₃</div>
+        <div class="layers-stack" id="layersStackJournalBd"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PPA scatter -->
+  <div class="pane scatter-pane">
+    <div class="pane-header">
+      <div class="ph-title">
+        <span class="pt-name">PPA distribution</span>
+        <span class="pt-tag">↑ better · rank computed at current generation</span>
+      </div>
+      <div class="ph-controls">
+        <div class="control-group">
+          <span class="control-label">color</span>
+          <div class="seg" id="colorBySeg">
+            <button data-color="fitness" class="active">fitness</button>
+            <button data-color="technique">tech</button>
+            <button data-color="rank">rank</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <span class="control-label">show</span>
+          <div class="seg" id="rankSeg">
+            <button data-rank="all" class="active">all</button>
+            <button data-rank="0">r0</button>
+            <button data-rank="1">≤1</button>
+            <button data-rank="2">≤2</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pane-canvas-wrap">
+      <canvas id="scatterCanvas"></canvas>
+      <div class="scatter-legend" id="scatterLegend"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== Stats ===== -->
+<div id="statsBar">
+  <div class="stat-card" data-tech="classic">
+    <div class="stat-head">
+      <span class="stat-name">Classic</span>
+      <span class="stat-tech-tag">baseline</span>
+    </div>
+    <div class="stat-grid" id="classicStats"></div>
+  </div>
+  <div class="stat-card" data-tech="journalBd">
+    <div class="stat-head">
+      <span class="stat-name">MAP-Elites · journal_bd</span>
+      <span class="stat-tech-tag">QD run</span>
+    </div>
+    <div class="stat-grid" id="journalBdStats"></div>
+  </div>
+  <div class="stat-card" data-tech="diff">
+    <div class="stat-head">
+      <span class="stat-name">Δ (journal − classic)</span>
+      <span class="stat-tech-tag">improvement</span>
+    </div>
+    <div class="stat-grid" id="diffStats"></div>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ============================================================
+// Constants & technique metadata
+// ============================================================
+const N = 4;
+const BD_AXES = ['area', 'power', 'period'];
+const REF_PPA = { area: 1.0, power: 1.0, period: 1.0 };
+const TECH = {
+  classic:   { name: 'Classic',     hex: 0xe76f51, css: '#e76f51' },
+  journalBd: { name: 'journal_bd',  hex: 0x2a9d8f, css: '#2a9d8f' }
+};
+
+// Viridis stops
+const viridisStops = [
+  [0.00, [68, 1, 84]],
+  [0.13, [70, 50, 126]],
+  [0.25, [54, 92, 141]],
+  [0.38, [39, 127, 142]],
+  [0.50, [33, 145, 140]],
+  [0.63, [74, 193, 109]],
+  [0.75, [160, 218, 57]],
+  [1.00, [253, 231, 37]],
+];
+function viridis(t) {
+  t = Math.max(0, Math.min(1, t));
+  for (let i = 0; i < viridisStops.length - 1; i++) {
+    const [a, ca] = viridisStops[i], [b, cb] = viridisStops[i+1];
+    if (t >= a && t <= b) {
+      const u = (t - a) / (b - a);
+      return [ca[0]+(cb[0]-ca[0])*u, ca[1]+(cb[1]-ca[1])*u, ca[2]+(cb[2]-ca[2])*u];
+    }
+  }
+  return [255,255,255];
+}
+function viridisColor(t) {
+  const [r,g,b] = viridis(t);
+  return new THREE.Color(r/255, g/255, b/255);
+}
+function viridisCSS(t) {
+  const [r,g,b] = viridis(t);
+  return `rgb(${r|0},${g|0},${b|0})`;
+}
+
+// Rank palette (used when colorBy === 'rank')
+const RANK_COLORS = [0xf4a261, 0xe9c46a, 0x8ab17d, 0x457b9d, 0x6a4c93];
+function rankColor(r) { return new THREE.Color(RANK_COLORS[Math.min(r, RANK_COLORS.length - 1)]); }
+function rankCSS(r)   {
+  const h = RANK_COLORS[Math.min(r, RANK_COLORS.length - 1)];
+  return '#' + h.toString(16).padStart(6, '0');
+}
+
+// ============================================================
+// Synthetic timeline data — replace these generators with real logs.
+// Each sample has { area, power, period, gen }, lower PPA is better.
+// The slider shows generations 1..NUM_GENS plus one final stable snapshot.
+// ============================================================
+const NUM_GENS = 40;
+const FINAL_STEP = NUM_GENS;
+const GRID_SOURCE_TECH = 'journalBd';  // MAP-Elites defines the archive coordinates.
+let playbackSpeed = 2.0;
+let _seed = 7;
+function rand() { _seed = (_seed * 9301 + 49297) % 233280; return _seed / 233280; }
+function clamp01(x) { return Math.max(0.05, Math.min(0.98, x)); }
+
+function genClassicSamples() {
+  const out = [];
+  const perGen = 2;
+  for (let g = 0; g < NUM_GENS; g++) {
+    const progress = g / Math.max(1, NUM_GENS - 1);
+    for (let s = 0; s < perGen; s++) {
+      const c = (g + s) % 3;
+      const cx = [0.64, 0.56, 0.72][c];
+      const cy = [0.61, 0.70, 0.55][c];
+      const cz = [0.60, 0.64, 0.67][c];
+      // Classic slowly improves but remains concentrated in a few basins.
+      const drift = 0.055 * progress;
+      out.push({
+        id: `classic_g${g}_s${s}`,
+        gen: g,
+        area:   clamp01(cx - drift * 0.8 + (rand() - 0.5) * 0.28),
+        power:  clamp01(cy - drift * 0.7 + (rand() - 0.5) * 0.27),
+        period: clamp01(cz - drift * 0.6 + (rand() - 0.5) * 0.26),
+      });
+    }
+  }
+  return out;
+}
+
+function genJournalBdSamples() {
+  const out = [];
+  const perGen = 3;
+  const elites = [];
+  for (let g = 0; g < NUM_GENS; g++) {
+    const progress = g / Math.max(1, NUM_GENS - 1);
+    for (let s = 0; s < perGen; s++) {
+      let area, power, period;
+      if (g < 5 || rand() < 0.38) {
+        // Warm-up / exploration samples fill the archive broadly.
+        area   = 0.35 + rand() * 0.50;
+        power  = 0.34 + rand() * 0.50;
+        period = 0.34 + rand() * 0.50;
+      } else if (elites.length && rand() < 0.52) {
+        // MAP-Elites-like local perturbation around existing elites.
+        const p = elites[Math.floor(rand() * elites.length)];
+        const sigma = 0.18 * (1 - progress) + 0.055;
+        area   = p.area   + (rand() - 0.5) * sigma;
+        power  = p.power  + (rand() - 0.5) * sigma;
+        period = p.period + (rand() - 0.5) * sigma;
+      } else {
+        // A broad Pareto-like sheet: low area/power/period trade off with each other.
+        const t1 = rand(), t2 = rand();
+        area   = 0.28 + t1 * 0.48 - 0.12 * progress;
+        power  = 0.30 + t2 * 0.48 - 0.10 * progress;
+        period = 0.31 + (1 - 0.55 * t1 - 0.40 * t2) * 0.44 - 0.09 * progress;
+      }
+      const sample = {
+        id: `journal_g${g}_s${s}`,
+        gen: g,
+        area:   clamp01(area   + (rand() - 0.5) * 0.055),
+        power:  clamp01(power  + (rand() - 0.5) * 0.055),
+        period: clamp01(period + (rand() - 0.5) * 0.055),
+      };
+      out.push(sample);
+      const imp = ((REF_PPA.area - sample.area) + (REF_PPA.power - sample.power) + (REF_PPA.period - sample.period)) / 3;
+      if (imp > 0.42 || rand() < 0.25) elites.push(sample);
+    }
+  }
+  return out;
+}
+
+const samples = {
+  classic:   genClassicSamples(),
+  journalBd: genJournalBdSamples(),
+};
+
+// ============================================================
+// Shared quantile bins from the MAP-Elites run. Classic samples are
+// placed posthoc into this fixed journal_bd archive coordinate system.
+// ============================================================
+function quantileBins(values, k) {
+  const sorted = values.slice().sort((a,b) => a-b);
+  const edges = [];
+  for (let q = 1; q < k; q++) edges.push(sorted[Math.floor(q / k * sorted.length)]);
+  return edges;
+}
+function binIdx(value, edges) {
+  for (let i = 0; i < edges.length; i++) if (value < edges[i]) return i;
+  return edges.length;
+}
+const allSamples = [...samples.classic, ...samples.journalBd];
+const gridSourceSamples = samples[GRID_SOURCE_TECH];
+const BINS = {};
+const PPA_RANGE = {};
+for (const ax of BD_AXES) {
+  const vals = gridSourceSamples.map(s => s[ax]);
+  BINS[ax] = quantileBins(vals, N);
+  PPA_RANGE[ax] = { min: Math.min(...vals), max: Math.max(...vals) };
+}
+
+// Annotate samples with cell indices and fitness (improvement vs reference)
+for (const tech of Object.keys(samples)) {
+  for (const s of samples[tech]) {
+    s.tech = tech;
+    s.i = binIdx(s.area,   BINS.area);     // BD₁
+    s.j = binIdx(s.power,  BINS.power);    // BD₂
+    s.k = binIdx(s.period, BINS.period);   // BD₃ (vertical)
+    const imp = ((REF_PPA.area - s.area) + (REF_PPA.power - s.power) + (REF_PPA.period - s.period)) / 3;
+    s.fitness = Math.max(0, Math.min(1, imp));
+  }
+}
+
+// ============================================================
+// Pareto fronts (per technique, lower = better on all axes)
+// ============================================================
+function dominates(a, b) {
+  return (a.area <= b.area && a.power <= b.power && a.period <= b.period)
+      && (a.area <  b.area || a.power <  b.power || a.period <  b.period);
+}
+function computeFronts(arr) {
+  let remaining = arr.slice();
+  let rank = 0;
+  while (remaining.length > 0 && rank < 60) {
+    const front = [], next = [];
+    for (const s of remaining) {
+      let dom = false;
+      for (const o of remaining) {
+        if (o === s) continue;
+        if (dominates(o, s)) { dom = true; break; }
+      }
+      if (!dom) { s.rank = rank; front.push(s); }
+      else next.push(s);
+    }
+    remaining = next; rank++;
+  }
+  for (const s of remaining) s.rank = rank;
+}
+computeFronts(samples.classic);
+computeFronts(samples.journalBd);
+
+// ============================================================
+// Hypervolume (Monte Carlo, 3D, vs reference)
+// ============================================================
+function hypervolumeMC(front, ref, nSamples = 9000) {
+  if (front.length === 0) return 0;
+  const minA = Math.min(...front.map(p => p.area));
+  const minP = Math.min(...front.map(p => p.power));
+  const minT = Math.min(...front.map(p => p.period));
+  if (minA >= ref.area || minP >= ref.power || minT >= ref.period) return 0;
+  let count = 0;
+  for (let i = 0; i < nSamples; i++) {
+    const a = minA + Math.random() * (ref.area - minA);
+    const p = minP + Math.random() * (ref.power - minP);
+    const t = minT + Math.random() * (ref.period - minT);
+    for (const f of front) {
+      if (f.area <= a && f.power <= p && f.period <= t) { count++; break; }
+    }
+  }
+  return (ref.area - minA) * (ref.power - minP) * (ref.period - minT) * count / nSamples;
+}
+
+let currentStats = {};
+
+function emptyStats() {
+  return {
+    samples: 0, rank0: 0, coverage: 0,
+    bestArea: NaN, bestPower: NaN, bestPeriod: NaN, hv: 0,
+  };
+}
+
+// ============================================================
+// State
+// ============================================================
+const state = {
+  mode: 'compare',                                 // 'single' | 'compare'
+  activeTechs: new Set(['classic', 'journalBd']),
+  rankFilter: Infinity,
+  colorBy: 'fitness',                              // 'fitness' | 'technique' | 'rank'
+  currentStep: FINAL_STEP,                         // 0..NUM_GENS-1 = gen, NUM_GENS = final snapshot
+  exploded: false,
+  autoRotate: true,
+  lockArchivePerspective: false,
+  hoverCell: null,                                 // { tech, i, j, k }
+  hoverSample: null,
+};
+let explodeT = 0;  // smoothly interpolated 0..1
+const EXPLODE_EPS = 0.0008;
+
+
+let timelineFloat = FINAL_STEP;
+let isPlaying = false;
+let lastFrameTime = performance.now();
+
+function isFinalStep() { return state.currentStep >= FINAL_STEP; }
+function isVisibleSample(s) { return isFinalStep() || s.gen <= state.currentStep; }
+function visibleSamples(tech) { return samples[tech].filter(isVisibleSample); }
+
+function computeStatsFor(arr) {
+  if (arr.length === 0) return emptyStats();
+  const rank0 = arr.filter(s => s.rank === 0);
+  const cells = new Set(arr.map(s => `${s.i},${s.j},${s.k}`));
+  return {
+    samples: arr.length,
+    rank0: rank0.length,
+    coverage: cells.size,
+    bestArea:   Math.min(...arr.map(s => s.area)),
+    bestPower:  Math.min(...arr.map(s => s.power)),
+    bestPeriod: Math.min(...arr.map(s => s.period)),
+    hv: hypervolumeMC(rank0, REF_PPA),
+  };
+}
+
+function rebuildArchiveAggregation() {
+  for (const tech of Object.keys(archives)) {
+    const arch = archives[tech];
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) for (let k = 0; k < N; k++) {
+      const c = arch.cells[i][j][k];
+      c.bestFitness = -1;
+      c.sampleCount = 0;
+      c.samples = [];
+    }
+    for (const s of visibleSamples(tech)) {
+      const c = arch.cells[s.i][s.j][s.k];
+      c.sampleCount++;
+      c.samples.push(s);
+      if (s.fitness > c.bestFitness) c.bestFitness = s.fitness;
+    }
+  }
+}
+
+function updateTimelineDerived() {
+  for (const tech of Object.keys(samples)) {
+    for (const s of samples[tech]) s.rank = Infinity;
+    const arr = visibleSamples(tech);
+    computeFronts(arr);
+    currentStats[tech] = computeStatsFor(arr);
+  }
+  if (typeof archives !== 'undefined') rebuildArchiveAggregation();
+  syncTimelineUI();
+}
+
+function timelineLabel() {
+  if (isFinalStep()) return 'final stable';
+  return `gen ${state.currentStep + 1} / ${NUM_GENS}`;
+}
+
+function syncTimelineUI() {
+  const slider = document.getElementById('genSlider');
+  const genDisp = document.getElementById('genDisp');
+  const timelineStats = document.getElementById('timelineStats');
+  if (!slider || !genDisp || !timelineStats || !currentStats.classic || !currentStats.journalBd) return;
+  slider.max = FINAL_STEP;
+  slider.value = state.currentStep;
+  genDisp.textContent = timelineLabel();
+  const c = currentStats.classic, j = currentStats.journalBd;
+  timelineStats.textContent = `${c.samples + j.samples} visible samples · coverage ${c.coverage}/${N**3} vs ${j.coverage}/${N**3}`;
+}
+
+function setTimelineStep(step) {
+  const next = Math.max(0, Math.min(FINAL_STEP, Math.round(step)));
+  timelineFloat = next;
+  if (state.currentStep === next) {
+    syncTimelineUI();
+    return;
+  }
+  state.currentStep = next;
+  if (typeof clearHoverState === 'function') clearHoverState();
+  updateTimelineDerived();
+  if (typeof rerender === 'function') rerender();
+}
+
+function setPlaying(next) {
+  isPlaying = next;
+  const btn = document.getElementById('playBtn');
+  if (btn) btn.textContent = isPlaying ? '❚❚' : '▶';
+}
+
+function syncSpeedUI() {
+  const slider = document.getElementById('speedSlider');
+  const disp = document.getElementById('speedDisp');
+  if (slider) slider.value = String(playbackSpeed);
+  if (disp) disp.textContent = `${playbackSpeed.toFixed(2)}×`;
+}
+
+// Camera presets are intentionally shared by single/compare mode.
+// The wider FOV + slightly larger radius avoid clipping the lower archive
+// slices and the worse-period region of the PPA scatter near the stats bar.
+const CAMERA_PRESETS = {
+  archive: {
+    // Lower camera elevation + wider FOV gives more bottom margin and makes
+    // the BD3/period vertical stack easier to inspect in both modes.
+    fov: 62,
+    theta: Math.PI * 0.30,
+    phi: Math.PI * 0.465,
+    radius: 13.2,
+    targetY: -1.35,
+    minR: 6,
+    maxR: 28,
+  },
+  scatter: {
+    // The PPA plot needs extra bottom headroom because high effective-period
+    // points are mapped to the bottom of the cube.
+    fov: 62,
+    theta: Math.PI * 0.30,
+    phi: Math.PI * 0.465,
+    radius: 10.8,
+    targetY: -1.25,
+    minR: 4,
+    maxR: 24,
+  },
+};
+
+// ============================================================
+// Three.js scene setup helper (one camera / orbit per canvas)
+// ============================================================
+function setupScene(canvas, opts = {}) {
+  const scene = new THREE.Scene();
+  // A slightly wider FOV gives more vertical headroom. This matters most when
+  // the archive is exploded into z-layer slices or when the scatter contains
+  // low-screen-space, worse-period points near the bottom of the panel.
+  const camera = new THREE.PerspectiveCamera(opts.fov ?? 55, 1, 0.1, 200);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+  const key = new THREE.DirectionalLight(0xffffff, 0.5);
+  key.position.set(6, 10, 5); scene.add(key);
+  const fill = new THREE.DirectionalLight(0xfff0e0, 0.22);
+  fill.position.set(-6, 4, -3); scene.add(fill);
+
+  // Camera defaults. phi is the polar angle from +Y: 0 = directly above,
+  // π/2 = horizontal. A near-horizontal view makes vertical BD₃/period layers
+  // easier to inspect, while targetY shifts the scene upward inside the pane.
+  const defTheta   = opts.theta   ?? Math.PI * 0.30;
+  const defPhi     = opts.phi     ?? Math.PI * 0.43;
+  const defRadius  = opts.radius  ?? 10.5;
+  const defTargetY = opts.targetY ?? -0.85;
+  let theta = defTheta, phi = defPhi, radius = defRadius;
+  const target = new THREE.Vector3(0, defTargetY, 0);
+  let dragging = false, lastM = {x:0,y:0};
+  let lastW = 0, lastH = 0;
+  let interactionStamp = 0;
+  function markInteraction() { interactionStamp = performance.now(); }
+
+  function update() {
+    camera.position.x = target.x + radius * Math.sin(phi) * Math.cos(theta);
+    camera.position.y = target.y + radius * Math.cos(phi);
+    camera.position.z = target.z + radius * Math.sin(phi) * Math.sin(theta);
+    camera.lookAt(target);
+  }
+
+  canvas.addEventListener('mousedown', e => { dragging = true; lastM = {x:e.clientX, y:e.clientY}; markInteraction(); });
+  window.addEventListener('mouseup', () => dragging = false);
+  function onMove(e) {
+    if (!dragging) return;
+    theta -= (e.clientX - lastM.x) * 0.005;
+    phi = Math.max(0.15, Math.min(Math.PI - 0.15, phi - (e.clientY - lastM.y) * 0.005));
+    lastM = {x:e.clientX, y:e.clientY};
+    markInteraction();
+  }
+  window.addEventListener('mousemove', onMove);
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    radius = Math.max(opts.minR ?? 4, Math.min(opts.maxR ?? 20, radius + e.deltaY * 0.008));
+    markInteraction();
+  }, { passive: false });
+
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    const w = Math.max(1, Math.floor(r.width));
+    const h = Math.max(1, Math.floor(r.height));
+    if (w === lastW && h === lastH) return false;
+    lastW = w; lastH = h;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    return true;
+  }
+
+  return {
+    scene, camera, renderer, update, resize,
+    isDragging: () => dragging,
+    getInteractionStamp: () => interactionStamp,
+    getViewState() {
+      return { theta, phi, radius, targetX: target.x, targetY: target.y, targetZ: target.z };
+    },
+    setViewState(view) {
+      if (!view) return;
+      theta = view.theta;
+      phi = view.phi;
+      radius = view.radius;
+      target.set(view.targetX ?? 0, view.targetY ?? defTargetY, view.targetZ ?? 0);
+      update();
+    },
+    nudgeOrbit(deltaTheta = 0) {
+      theta += deltaTheta;
+    },
+    resetCamera() {
+      dragging = false;
+      theta = defTheta; phi = defPhi; radius = defRadius;
+      target.set(0, defTargetY, 0);
+      update();
+    }
+  };
+}
+
+// ============================================================
+// Position helpers
+//   - cells laid out in N×N×N world grid (x: BD₁, y: BD₃, z: BD₂)
+//   - sample placed at its actual within-bin position so the
+//     in-cell location reflects its real PPA value (not random).
+// ============================================================
+const cellSize = 1;
+const gridSize = N * cellSize;
+const offset = -gridSize/2 + cellSize/2;
+const sliceCenter = (N - 1) / 2;
+const EXPLODE_SEP = 1.2;
+
+function valueToWorld(value, axis, bin) {
+  const edges = BINS[axis];
+  const lo = bin === 0           ? PPA_RANGE[axis].min : edges[bin - 1];
+  const hi = bin === N - 1       ? PPA_RANGE[axis].max : edges[bin];
+  let t = hi > lo ? (value - lo) / (hi - lo) : 0.5;
+  t = Math.max(0.10, Math.min(0.90, t));
+  return offset + bin * cellSize - cellSize/2 + t * cellSize;
+}
+
+// ============================================================
+// Per-technique geometries — sphere for classic, octahedron for
+// journal_bd. Shape-based distinction keeps techniques legible
+// regardless of color mode (especially in fitness coloring, where
+// hue alone can't separate them).
+// ============================================================
+const TECH_GEO_ARCHIVE = {
+  classic:   new THREE.SphereGeometry(0.06, 14, 14),
+  journalBd: new THREE.OctahedronGeometry(0.075)
+};
+const TECH_GEO_SCATTER = {
+  classic:   new THREE.SphereGeometry(0.05, 14, 14),
+  journalBd: new THREE.OctahedronGeometry(0.062)
+};
+
+// ============================================================
+// Build one archive scene (called once per technique)
+// ============================================================
+function buildArchive(tech, canvas) {
+  const arch = setupScene(canvas, CAMERA_PRESETS.archive);
+  arch.tech = tech;
+
+  // Cells (wireframe + fill mesh; fill doubles as raycast hitbox)
+  const cells = [];
+  const hitboxes = [];
+  for (let i = 0; i < N; i++) {
+    cells.push([]);
+    for (let j = 0; j < N; j++) {
+      cells[i].push([]);
+      for (let k = 0; k < N; k++) {
+        const x = offset + i * cellSize;
+        const y = offset + k * cellSize;  // BD₃ vertical
+        const z = offset + j * cellSize;  // BD₂ depth
+        const geo = new THREE.BoxGeometry(cellSize * 0.96, cellSize * 0.96, cellSize * 0.96);
+        const wire = new THREE.LineSegments(
+          new THREE.EdgesGeometry(geo),
+          new THREE.LineBasicMaterial({ color: 0x6b6055, transparent: true, opacity: 0.32 })
+        );
+        wire.position.set(x, y, z);
+        arch.scene.add(wire);
+
+        const fill = new THREE.Mesh(geo,
+          new THREE.MeshLambertMaterial({ color: 0xc8c0b0, transparent: true, opacity: 0, depthWrite: false })
+        );
+        fill.position.set(x, y, z);
+        fill.userData = { type: 'cell', tech, i, j, k, occupied: false };
+        arch.scene.add(fill);
+        hitboxes.push(fill);
+
+        cells[i][j][k] = {
+          wire, fill, x, y, z, i, j, k,
+          bestFitness: -1, sampleCount: 0, samples: []
+        };
+      }
+    }
+  }
+
+  // Outer bounding box
+  const outerWire = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.BoxGeometry(gridSize, gridSize, gridSize)),
+    new THREE.LineBasicMaterial({ color: 0x4a4035, transparent: true, opacity: 0.5 })
+  );
+  arch.scene.add(outerWire);
+
+  // Axis arrows
+  const axStart = new THREE.Vector3(-gridSize/2 - 0.15, -gridSize/2 - 0.15, -gridSize/2 - 0.15);
+  arch.scene.add(new THREE.ArrowHelper(new THREE.Vector3(1,0,0), axStart, gridSize+0.5, 0xc2185b, 0.16, 0.08));
+  arch.scene.add(new THREE.ArrowHelper(new THREE.Vector3(0,0,1), axStart, gridSize+0.5, 0x2e7d32, 0.16, 0.08));
+  arch.scene.add(new THREE.ArrowHelper(new THREE.Vector3(0,1,0), axStart, gridSize+0.5, 0x1565c0, 0.16, 0.08));
+
+  // Cell occupancy is rebuilt from the active timeline step.
+
+  // Sample point markers — shape varies by technique; same shape used
+  // in the scatter so a point reads identically across both views.
+  const points = [];
+  for (const s of samples[tech]) {
+    const baseX = valueToWorld(s.area,   'area',   s.i);
+    const baseY = valueToWorld(s.period, 'period', s.k);
+    const baseZ = valueToWorld(s.power,  'power',  s.j);
+    const col = viridisColor(s.fitness);
+    const mat = new THREE.MeshLambertMaterial({
+      color: col,
+      emissive: col,
+      emissiveIntensity: 0.5
+    });
+    const m = new THREE.Mesh(TECH_GEO_ARCHIVE[tech], mat);
+    m.position.set(baseX, baseY, baseZ);
+    m.userData = { type: 'sample', sample: s };
+    arch.scene.add(m);
+    points.push({ mesh: m, sample: s, baseX, baseY, baseZ });
+  }
+
+  arch.cells = cells;
+  arch.hitboxes = hitboxes;
+  arch.outerWire = outerWire;
+  arch.points = points;
+  return arch;
+}
+
+const archives = {
+  classic:   buildArchive('classic',   document.getElementById('archiveCanvasClassic')),
+  journalBd: buildArchive('journalBd', document.getElementById('archiveCanvasJournalBd')),
+};
+
+// ============================================================
+// Layers panels (per technique)
+// ============================================================
+function buildLayersPanel(tech, stackEl) {
+  stackEl.innerHTML = '';
+  const grid = [];  // grid[k][i][j] -> cell DOM element
+  for (let k = 0; k < N; k++) {
+    grid.push([]);
+    const row = document.createElement('div');
+    row.className = 'layer-row';
+    const gridEl = document.createElement('div');
+    gridEl.className = 'layer-grid';
+    for (let i = 0; i < N; i++) grid[k].push(new Array(N));
+    // Render with high j on top, low j on bottom; i left-to-right
+    for (let j = N - 1; j >= 0; j--) {
+      for (let i = 0; i < N; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'layer-cell';
+        cell.dataset.tech = tech;
+        cell.dataset.i = i;
+        cell.dataset.j = j;
+        cell.dataset.k = k;
+        gridEl.appendChild(cell);
+        grid[k][i][j] = cell;
+        cell.addEventListener('mouseenter', () => {
+          const archCell = archives[tech].cells[i][j][k];
+          if (archCell.bestFitness < 0) return;
+          state.hoverCell = { tech, i, j, k };
+          state.hoverSample = null;
+          rerender();
+          const r = cell.getBoundingClientRect();
+          showTooltip(r.left + r.width/2, r.top - 10);
+        });
+        cell.addEventListener('mouseleave', () => {
+          state.hoverCell = null;
+          state.hoverSample = null;
+          rerender();
+          hideTooltip();
+        });
+      }
+    }
+    row.appendChild(gridEl);
+    const lbl = document.createElement('div');
+    lbl.className = 'layer-label';
+    lbl.textContent = `k${k}`;
+    row.appendChild(lbl);
+    stackEl.appendChild(row);
+  }
+  return grid;
+}
+
+const layersUI = {
+  classic:   buildLayersPanel('classic',   document.getElementById('layersStackClassic')),
+  journalBd: buildLayersPanel('journalBd', document.getElementById('layersStackJournalBd')),
+};
+
+// ============================================================
+// Build PPA scatter
+// ============================================================
+const scatterCanvas = document.getElementById('scatterCanvas');
+const scatter = setupScene(scatterCanvas, CAMERA_PRESETS.scatter);
+
+const scatterScale = 4;
+function ppaToWorld(s) {
+  return new THREE.Vector3(
+    s.area  * scatterScale - scatterScale/2,
+    -(s.period * scatterScale - scatterScale/2), // invert period: lower = up = better
+    s.power * scatterScale - scatterScale/2
+  );
+}
+
+// Bounding box
+scatter.scene.add(new THREE.LineSegments(
+  new THREE.EdgesGeometry(new THREE.BoxGeometry(scatterScale, scatterScale, scatterScale)),
+  new THREE.LineBasicMaterial({ color: 0x6b6055, transparent: true, opacity: 0.25 })
+));
+
+// "Better" indicator plane at top
+const goodPlane = new THREE.Mesh(
+  new THREE.PlaneGeometry(scatterScale, scatterScale),
+  new THREE.MeshBasicMaterial({ color: 0xfde725, transparent: true, opacity: 0.06, depthWrite: false })
+);
+goodPlane.rotation.x = -Math.PI/2;
+goodPlane.position.y = scatterScale/2;
+scatter.scene.add(goodPlane);
+
+// Reference point marker
+const refMesh = new THREE.Mesh(
+  new THREE.SphereGeometry(0.09, 16, 16),
+  new THREE.MeshBasicMaterial({ color: 0x222222 })
+);
+refMesh.position.copy(ppaToWorld(REF_PPA));
+scatter.scene.add(refMesh);
+const refRing = new THREE.Mesh(
+  new THREE.RingGeometry(0.18, 0.22, 24),
+  new THREE.MeshBasicMaterial({ color: 0x222222, side: THREE.DoubleSide, transparent: true, opacity: 0.5 })
+);
+refRing.position.copy(refMesh.position);
+scatter.scene.add(refRing);
+
+// Axis arrows pointing in "worse" direction
+const sAxStart = new THREE.Vector3(-scatterScale/2 - 0.1, scatterScale/2 + 0.1, -scatterScale/2 - 0.1);
+scatter.scene.add(new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0),  sAxStart, scatterScale + 0.4, 0xc2185b, 0.18, 0.09));
+scatter.scene.add(new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1),  sAxStart, scatterScale + 0.4, 0x2e7d32, 0.18, 0.09));
+scatter.scene.add(new THREE.ArrowHelper(new THREE.Vector3(0,-1, 0),  sAxStart, scatterScale + 0.4, 0x1565c0, 0.18, 0.09));
+
+// Scatter points — shape per technique
+const scatterPoints = [];
+for (const tech of Object.keys(samples)) {
+  for (const s of samples[tech]) {
+    const mat = new THREE.MeshLambertMaterial({
+      color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.2
+    });
+    const m = new THREE.Mesh(TECH_GEO_SCATTER[tech], mat);
+    m.position.copy(ppaToWorld(s));
+    m.userData = { type: 'sample', sample: s };
+    scatter.scene.add(m);
+    scatterPoints.push({ mesh: m, sample: s });
+  }
+}
+
+// ============================================================
+// Rendering: pure function of state
+// ============================================================
+function isTechActive(tech) { return state.activeTechs.has(tech); }
+function sameCell(a, b) {
+  return a && b && a.tech === b.tech && a.i === b.i && a.j === b.j && a.k === b.k;
+}
+
+function rerender() {
+  // ---- ARCHIVES ----
+  for (const tech of Object.keys(archives)) {
+    const arch = archives[tech];
+
+    // Cell shading by best fitness (per technique, viridis)
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) for (let k = 0; k < N; k++) {
+      const c = arch.cells[i][j][k];
+      if (c.bestFitness < 0) {
+        c.fill.material.opacity = 0;
+        c.fill.userData.occupied = false;
+      } else {
+        c.fill.userData.occupied = true;
+        c.fill.material.color.copy(viridisColor(c.bestFitness));
+        // Lower opacity so individual sample points (also viridis-shaded)
+        // remain visible inside the cell rather than getting washed out.
+        c.fill.material.opacity = 0.14 + c.bestFitness * 0.30;
+      }
+    }
+    // Hover-cell highlight (only for hover within this archive)
+    if (state.hoverCell && state.hoverCell.tech === tech) {
+      const hc = arch.cells[state.hoverCell.i][state.hoverCell.j][state.hoverCell.k];
+      if (hc.fill.userData.occupied) {
+        hc.fill.material.opacity = Math.min(0.95, hc.fill.material.opacity + 0.25);
+      }
+    }
+
+    // Archive sample points (always viridis-by-fitness, hover-linked)
+    for (const p of arch.points) {
+      const s = p.sample;
+      const timeOK = isVisibleSample(s);
+      const rankOK = s.rank <= state.rankFilter;
+      p.mesh.visible = timeOK && rankOK;
+      if (!p.mesh.visible) continue;
+      const col = viridisColor(s.fitness);
+      p.mesh.material.color.copy(col);
+      p.mesh.material.emissive.copy(col);
+
+      let scale = 1.05, emiss = 0.50;
+      if (s.rank === 0)      { scale = 1.45; emiss = 0.80; }
+      else if (s.rank === 1) { scale = 1.15; emiss = 0.50; }
+      else if (s.rank >= 2)  { scale = 0.92; emiss = 0.35; }
+
+      const inHC = state.hoverCell && state.hoverCell.tech === tech &&
+        s.i === state.hoverCell.i && s.j === state.hoverCell.j && s.k === state.hoverCell.k;
+      if (inHC)                    { scale *= 1.6;  emiss = 0.85; }
+      if (state.hoverSample === s) { scale *= 1.8;  emiss = 1.00; }
+
+      let opacity = 1.0;
+      if (state.hoverCell) {
+        if (state.hoverCell.tech !== tech) opacity = 0.18;
+        else if (!inHC) opacity = 0.18;
+      }
+
+      p.mesh.scale.setScalar(scale);
+      p.mesh.material.emissiveIntensity = emiss;
+      p.mesh.material.transparent = opacity < 0.99;
+      p.mesh.material.opacity = opacity;
+    }
+  }
+
+  // ---- SCATTER POINTS ----
+  for (const sp of scatterPoints) {
+    const s = sp.sample;
+    const techActive = isTechActive(s.tech);
+    const timeOK = isVisibleSample(s);
+    const rankOK = s.rank <= state.rankFilter;
+    sp.mesh.visible = timeOK && techActive && rankOK;
+    if (!sp.mesh.visible) continue;
+
+    let color;
+    if      (state.colorBy === 'fitness')   color = viridisColor(s.fitness);
+    else if (state.colorBy === 'technique') color = new THREE.Color(TECH[s.tech].hex);
+    else                                    color = rankColor(s.rank);
+    sp.mesh.material.color.copy(color);
+    sp.mesh.material.emissive.copy(color);
+
+    let scale = 1.0, emiss = 0.18;
+    if (s.rank === 0)      { scale = 1.45; emiss = 0.55; }
+    else if (s.rank === 1) { scale = 1.10; emiss = 0.30; }
+    else if (s.rank === 2) { scale = 0.90; emiss = 0.20; }
+    else                   { scale = 0.72; emiss = 0.10; }
+
+    const inHC = state.hoverCell && state.hoverCell.tech === s.tech &&
+      s.i === state.hoverCell.i && s.j === state.hoverCell.j && s.k === state.hoverCell.k;
+    if (inHC)                    { scale *= 1.7; emiss = 0.85; }
+    if (state.hoverSample === s) { scale *= 2.0; emiss = 1.00; }
+
+    let opacity = 1.0;
+    if (state.hoverCell && !inHC) opacity = 0.18;
+
+    sp.mesh.scale.setScalar(scale);
+    sp.mesh.material.emissiveIntensity = emiss;
+    sp.mesh.material.transparent = opacity < 0.99;
+    sp.mesh.material.opacity = opacity;
+  }
+
+  // ---- LAYERS PANELS ----
+  for (const tech of Object.keys(archives)) {
+    const arch = archives[tech];
+    for (let k = 0; k < N; k++) for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+      const c = arch.cells[i][j][k];
+      const cell = layersUI[tech][k][i][j];
+      if (c.bestFitness >= 0) cell.style.background = viridisCSS(c.bestFitness);
+      else                    cell.style.background = 'rgba(40,30,20,0.05)';
+      const isHover = state.hoverCell && state.hoverCell.tech === tech &&
+        state.hoverCell.i === i && state.hoverCell.j === j && state.hoverCell.k === k;
+      cell.classList.toggle('hover-active', isHover);
+    }
+  }
+
+  renderStats();
+  renderScatterLegend();
+}
+
+// ============================================================
+// Smooth explode animation (driven from tick, not rerender)
+// ============================================================
+function applyExplode() {
+  for (const tech of Object.keys(archives)) {
+    const arch = archives[tech];
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) for (let k = 0; k < N; k++) {
+      const c = arch.cells[i][j][k];
+      const yOff = explodeT * EXPLODE_SEP * (k - sliceCenter);
+      c.fill.position.y = c.y + yOff;
+      c.wire.position.y = c.y + yOff;
+    }
+    arch.outerWire.material.opacity = 0.5 * (1 - explodeT * 0.85);
+    for (const p of arch.points) {
+      const yOff = explodeT * EXPLODE_SEP * (p.sample.k - sliceCenter);
+      p.mesh.position.y = p.baseY + yOff;
+    }
+  }
+}
+
+// ============================================================
+// Stats + legend rendering
+// ============================================================
+function fmt(v, d=3) { return Number(v).toFixed(d); }
+function arrowClass(v, lowerIsBetter=false) {
+  if (lowerIsBetter) v = -v;
+  return v > 0 ? 'delta-better' : (v < 0 ? 'delta-worse' : '');
+}
+
+function renderStats() {
+  const elsByTech = {
+    classic:   document.getElementById('classicStats'),
+    journalBd: document.getElementById('journalBdStats'),
+  };
+  function maybeFmt(v, d=3) { return Number.isFinite(v) ? fmt(v, d) : '—'; }
+  for (const tech of Object.keys(samples)) {
+    const s = currentStats[tech] || emptyStats();
+    const card = document.querySelector(`.stat-card[data-tech="${tech}"]`);
+    card.classList.toggle('muted', !isTechActive(tech));
+    elsByTech[tech].innerHTML = `
+      <div class="stat-item"><span class="stat-key">visible samples</span><span class="stat-val">${s.samples}</span></div>
+      <div class="stat-item"><span class="stat-key">rank 0 now</span><span class="stat-val">${s.rank0}</span></div>
+      <div class="stat-item"><span class="stat-key">coverage now</span><span class="stat-val">${s.coverage}<span style="color:var(--dim);font-size:11px"> / 64</span></span></div>
+      <div class="stat-item"><span class="stat-key">hypervolume</span><span class="stat-val">${maybeFmt(s.hv, 4)}</span></div>
+      <div class="stat-item"><span class="stat-key">best area</span><span class="stat-val small">${maybeFmt(s.bestArea)}</span></div>
+      <div class="stat-item"><span class="stat-key">best power</span><span class="stat-val small">${maybeFmt(s.bestPower)}</span></div>
+      <div class="stat-item"><span class="stat-key">best period</span><span class="stat-val small">${maybeFmt(s.bestPeriod)}</span></div>
+    `;
+  }
+  const A = currentStats.classic || emptyStats();
+  const B = currentStats.journalBd || emptyStats();
+  function diffFmt(v, d=3, plus=true) { return Number.isFinite(v) ? `${plus && v >= 0 ? '+' : ''}${fmt(v, d)}` : '—'; }
+  function diffClass(v, lowerIsBetter=false) { return Number.isFinite(v) ? arrowClass(v, lowerIsBetter) : ''; }
+  const dHV = B.hv - A.hv, dCov = B.coverage - A.coverage, dR0 = B.rank0 - A.rank0;
+  const dA = B.bestArea - A.bestArea, dP = B.bestPower - A.bestPower, dT = B.bestPeriod - A.bestPeriod;
+  document.getElementById('diffStats').innerHTML = `
+    <div class="stat-item"><span class="stat-key">Δ hypervolume</span>
+      <span class="stat-val ${diffClass(dHV)}">${diffFmt(dHV, 4)}</span></div>
+    <div class="stat-item"><span class="stat-key">Δ coverage</span>
+      <span class="stat-val ${arrowClass(dCov)}">${dCov >= 0 ? '+' : ''}${dCov}</span></div>
+    <div class="stat-item"><span class="stat-key">Δ rank-0</span>
+      <span class="stat-val ${arrowClass(dR0)}">${dR0 >= 0 ? '+' : ''}${dR0}</span></div>
+    <div class="stat-item"><span class="stat-key">Δ best area</span>
+      <span class="stat-val small ${diffClass(dA, true)}">${diffFmt(dA)}</span></div>
+    <div class="stat-item"><span class="stat-key">Δ best power</span>
+      <span class="stat-val small ${diffClass(dP, true)}">${diffFmt(dP)}</span></div>
+    <div class="stat-item"><span class="stat-key">Δ best period</span>
+      <span class="stat-val small ${diffClass(dT, true)}">${diffFmt(dT)}</span></div>
+  `;
+  syncTimelineUI();
+}
+
+function renderScatterLegend() {
+  const el = document.getElementById('scatterLegend');
+  let html = '';
+  if (state.colorBy === 'fitness') {
+    html += `<div class="sl-section">
+      <div class="sl-title">color · fitness</div>
+      <div class="gradient-bar-h"></div>
+      <div class="gb-ticks"><span>0</span><span>0.5</span><span>1</span></div>
+    </div>`;
+  } else if (state.colorBy === 'technique') {
+    html += `<div class="sl-section">
+      <div class="sl-title">color · technique</div>
+      <div class="sl-row"><span class="sw" style="background:var(--classic)"></span>classic</div>
+      <div class="sl-row"><span class="sw" style="background:var(--journal)"></span>journal_bd</div>
+    </div>`;
+  } else {
+    html += `<div class="sl-section">
+      <div class="sl-title">color · pareto rank</div>
+      <div class="sl-row"><span class="sw" style="background:${rankCSS(0)}"></span>rank 0 (front)</div>
+      <div class="sl-row"><span class="sw" style="background:${rankCSS(1)}"></span>rank 1</div>
+      <div class="sl-row"><span class="sw" style="background:${rankCSS(2)}"></span>rank 2</div>
+      <div class="sl-row"><span class="sw" style="background:${rankCSS(3)}"></span>rank 3+</div>
+    </div>`;
+  }
+  html += `<div class="sl-section">
+    <div class="sl-title">size</div>
+    <div class="sl-row">larger = lower rank</div>
+  </div>`;
+  // Shape encoding — only meaningful when more than one technique is on screen
+  if (state.activeTechs.size > 1) {
+    html += `<div class="sl-section">
+      <div class="sl-title">shape · technique</div>
+      <div class="sl-row"><span class="sw" style="background:var(--dim)"></span>● classic</div>
+      <div class="sl-row"><span class="sw" style="background:var(--dim);border-radius:1px;transform:rotate(45deg)"></span>◆ journal_bd</div>
+    </div>`;
+  }
+  html += `<div class="sl-section">
+    <div class="sl-title">marker</div>
+    <div class="sl-row"><span class="sw" style="background:#222"></span>reference PPA</div>
+  </div>`;
+  el.innerHTML = html;
+}
+
+// ============================================================
+// Hover / raycasting
+// ============================================================
+const raycaster = new THREE.Raycaster();
+const tooltip = document.getElementById('tooltip');
+
+function showTooltip(x, y) {
+  tooltip.style.left = (x + 14) + 'px';
+  tooltip.style.top = (y + 14) + 'px';
+  tooltip.classList.add('visible');
+  updateTooltip();
+}
+function hideTooltip() { tooltip.classList.remove('visible'); }
+
+function updateTooltip() {
+  if (state.hoverSample) {
+    const s = state.hoverSample;
+    const tt = TECH[s.tech];
+    tooltip.innerHTML = `
+      <div class="tt-title" style="color:${tt.css}">● ${tt.name}</div>
+      <div class="tt-row"><span class="tt-key">gen</span><span class="tt-val">${s.gen + 1}</span></div>
+      <div class="tt-row"><span class="tt-key">cell</span><span class="tt-val">[${s.i}, ${s.j}, ${s.k}]</span></div>
+      <div class="tt-row"><span class="tt-key">area</span><span class="tt-val">${fmt(s.area)}</span></div>
+      <div class="tt-row"><span class="tt-key">power</span><span class="tt-val">${fmt(s.power)}</span></div>
+      <div class="tt-row"><span class="tt-key">period</span><span class="tt-val">${fmt(s.period)}</span></div>
+      <div class="tt-row"><span class="tt-key">rank</span><span class="tt-val">${s.rank}</span></div>
+      <div class="tt-row"><span class="tt-key">fitness</span><span class="tt-val">${fmt(s.fitness)}</span></div>
+    `;
+  } else if (state.hoverCell) {
+    const arch = archives[state.hoverCell.tech];
+    const c = arch.cells[state.hoverCell.i][state.hoverCell.j][state.hoverCell.k];
+    const tt = TECH[state.hoverCell.tech];
+    tooltip.innerHTML = `
+      <div class="tt-title" style="color:${tt.css}">cell · ${tt.name}</div>
+      <div class="tt-row"><span class="tt-key">indices</span><span class="tt-val">[${c.i}, ${c.j}, ${c.k}]</span></div>
+      <div class="tt-row"><span class="tt-key">samples</span><span class="tt-val">${c.sampleCount}</span></div>
+      <div class="tt-row"><span class="tt-key">best fitness</span><span class="tt-val">${c.bestFitness >= 0 ? fmt(c.bestFitness) : '—'}</span></div>
+    `;
+  }
+}
+
+function attachArchiveHover(tech, archive, canvas) {
+  canvas.addEventListener('mousemove', e => {
+    if (archive.isDragging()) return;
+    const r = canvas.getBoundingClientRect();
+    const ndc = { x: ((e.clientX - r.left)/r.width)*2 - 1, y: -((e.clientY - r.top)/r.height)*2 + 1 };
+    raycaster.setFromCamera(ndc, archive.camera);
+
+    // Try hitting a sample point first (smaller, more specific)
+    const visiblePoints = archive.points.filter(p => p.mesh.visible).map(p => p.mesh);
+    const pHit = raycaster.intersectObjects(visiblePoints);
+    if (pHit.length > 0) {
+      const s = pHit[0].object.userData.sample;
+      if (state.hoverSample !== s) {
+        state.hoverSample = s;
+        state.hoverCell = { tech, i: s.i, j: s.j, k: s.k };
+        rerender();
+      }
+      showTooltip(e.clientX, e.clientY);
+      return;
+    }
+    // Otherwise an occupied cell
+    const occHits = archive.hitboxes.filter(c => c.userData.occupied);
+    const cHit = raycaster.intersectObjects(occHits);
+    if (cHit.length > 0) {
+      const u = cHit[0].object.userData;
+      const newCell = { tech, i: u.i, j: u.j, k: u.k };
+      if (!sameCell(state.hoverCell, newCell) || state.hoverSample) {
+        state.hoverCell = newCell;
+        state.hoverSample = null;
+        rerender();
+      }
+      showTooltip(e.clientX, e.clientY);
+    } else if (state.hoverCell || state.hoverSample) {
+      state.hoverCell = null;
+      state.hoverSample = null;
+      rerender();
+      hideTooltip();
+    }
+  });
+  canvas.addEventListener('mouseleave', () => {
+    if (state.hoverCell || state.hoverSample) {
+      state.hoverCell = null;
+      state.hoverSample = null;
+      rerender();
+      hideTooltip();
+    }
+  });
+}
+attachArchiveHover('classic',   archives.classic,   document.getElementById('archiveCanvasClassic'));
+attachArchiveHover('journalBd', archives.journalBd, document.getElementById('archiveCanvasJournalBd'));
+
+scatterCanvas.addEventListener('mousemove', e => {
+  if (scatter.isDragging()) return;
+  const r = scatterCanvas.getBoundingClientRect();
+  const ndc = { x: ((e.clientX - r.left)/r.width)*2 - 1, y: -((e.clientY - r.top)/r.height)*2 + 1 };
+  raycaster.setFromCamera(ndc, scatter.camera);
+  const visiblePoints = scatterPoints.filter(p => p.mesh.visible).map(p => p.mesh);
+  const hits = raycaster.intersectObjects(visiblePoints);
+  if (hits.length > 0) {
+    const s = hits[0].object.userData.sample;
+    if (state.hoverSample !== s) {
+      state.hoverSample = s;
+      state.hoverCell = { tech: s.tech, i: s.i, j: s.j, k: s.k };
+      rerender();
+    }
+    showTooltip(e.clientX, e.clientY);
+  } else if (state.hoverSample) {
+    state.hoverSample = null;
+    state.hoverCell = null;
+    rerender();
+    hideTooltip();
+  }
+});
+scatterCanvas.addEventListener('mouseleave', () => {
+  if (state.hoverSample || state.hoverCell) {
+    state.hoverSample = null;
+    state.hoverCell = null;
+    rerender();
+    hideTooltip();
+  }
+});
+
+// ============================================================
+// UI bindings
+// ============================================================
+function syncTechChips() {
+  document.querySelectorAll('.tech-chip').forEach(chip => {
+    chip.classList.toggle('off', !state.activeTechs.has(chip.dataset.tech));
+  });
+}
+
+function resetAllCameras() {
+  for (const tech of Object.keys(archives)) archives[tech].resetCamera();
+  scatter.resetCamera();
+}
+
+function syncPerspectiveLockUI() {
+  const btn = document.getElementById('perspectiveLockBtn');
+  if (!btn) return;
+  const enabled = state.mode === 'compare' && state.activeTechs.has('classic') && state.activeTechs.has('journalBd');
+  btn.disabled = !enabled;
+  btn.classList.toggle('toggle-active', enabled && state.lockArchivePerspective);
+}
+
+function syncLockedArchiveViews() {
+  if (!(state.mode === 'compare' && state.lockArchivePerspective && state.activeTechs.has('classic') && state.activeTechs.has('journalBd'))) return;
+  const a = archives.classic;
+  const b = archives.journalBd;
+  const source = b.getInteractionStamp() > a.getInteractionStamp() ? b : a;
+  const target = source === a ? b : a;
+  target.setViewState(source.getViewState());
+}
+
+function clearHoverState() {
+  state.hoverCell = null;
+  state.hoverSample = null;
+  hideTooltip();
+}
+
+function ensureLayerPanelMounted(tech) {
+  const pane = document.querySelector(`.archive-pane[data-tech="${tech}"]`);
+  if (!pane) return null;
+  const wrap = pane.querySelector('.pane-canvas-wrap');
+  let panel = wrap.querySelector('.layers-panel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.className = 'layers-panel';
+    panel.innerHTML = `<div class="lp-title">layers · BD₃</div><div class="layers-stack" id="layersStack${tech === 'classic' ? 'Classic' : 'JournalBd'}"></div>`;
+    wrap.appendChild(panel);
+  }
+  let orient = panel.querySelector('.layers-orient');
+  if (!orient) {
+    orient = document.createElement('div');
+    orient.className = 'layers-orient';
+    orient.innerHTML = `<div class="orient-corner"></div><div class="orient-y">BD₂ ↑</div><div class="orient-x">BD₁ →</div>`;
+    panel.appendChild(orient);
+  }
+  let stack = panel.querySelector('.layers-stack');
+  if (!stack) {
+    stack = document.createElement('div');
+    stack.className = 'layers-stack';
+    stack.id = `layersStack${tech === 'classic' ? 'Classic' : 'JournalBd'}`;
+    panel.appendChild(stack);
+  }
+  return { panel, stack };
+}
+
+function rebuildLayerPanels() {
+  for (const tech of Object.keys(archives)) {
+    const mounted = ensureLayerPanelMounted(tech);
+    if (!mounted) continue;
+    layersUI[tech] = buildLayersPanel(tech, mounted.stack);
+  }
+}
+
+function forceLayerPanelsVisible() {
+  for (const tech of Object.keys(archives)) {
+    const mounted = ensureLayerPanelMounted(tech);
+    if (!mounted) continue;
+    const { panel, stack } = mounted;
+    if (stack.children.length === 0) layersUI[tech] = buildLayersPanel(tech, stack);
+    panel.hidden = false;
+    panel.style.removeProperty('display');
+    panel.style.removeProperty('visibility');
+    panel.style.removeProperty('opacity');
+    panel.style.setProperty('display', 'block', 'important');
+    panel.style.setProperty('visibility', 'visible', 'important');
+    panel.style.setProperty('opacity', '1', 'important');
+  }
+}
+
+function resetVisualState({ resetExplode = false } = {}) {
+  clearHoverState();
+  resetAllCameras();
+  state.autoRotate = true;
+  const rotateBtn = document.getElementById('autoRotateBtn');
+  if (rotateBtn) rotateBtn.classList.add('toggle-active');
+  if (resetExplode) {
+    state.exploded = false;
+    explodeT = 0;
+    applyExplode();
+    document.querySelectorAll('.explode-btn').forEach(x => x.classList.remove('toggle-active'));
+  }
+}
+
+function scheduleLayoutRefresh({ resetCameras = false } = {}) {
+  let passes = 0;
+  const refresh = () => {
+    forceLayerPanelsVisible();
+    resizeAll();
+    if (resetCameras) resetVisualState({ resetExplode: true });
+    rerender();
+    passes += 1;
+    if (passes < 5) requestAnimationFrame(refresh);
+  };
+  refresh();
+  setTimeout(refresh, 150);
+  setTimeout(refresh, 350);
+}
+
+function syncMainLayout({ resetCameras = false } = {}) {
+  const main = document.getElementById('main');
+  main.classList.toggle('compare', state.mode === 'compare');
+  document.querySelectorAll('.archive-pane').forEach(pane => {
+    const t = pane.dataset.tech;
+    if (state.mode === 'compare') {
+      pane.classList.remove('hidden');
+    } else {
+      pane.classList.toggle('hidden', !state.activeTechs.has(t));
+    }
+  });
+  // Rebuilding the tiny layer UI on mode changes is safer than trying to
+  // preserve DOM state across a display:none -> flex transition.
+  rebuildLayerPanels();
+  syncPerspectiveLockUI();
+  if (state.mode === 'compare' && state.lockArchivePerspective && state.activeTechs.has('classic') && state.activeTechs.has('journalBd')) {
+    archives.journalBd.setViewState(archives.classic.getViewState());
+  }
+  scheduleLayoutRefresh({ resetCameras: true });
+}
+
+const playBtn = document.getElementById('playBtn');
+const prevGenBtn = document.getElementById('prevGenBtn');
+const nextGenBtn = document.getElementById('nextGenBtn');
+const finalGenBtn = document.getElementById('finalGenBtn');
+const autoRotateBtn = document.getElementById('autoRotateBtn');
+const perspectiveLockBtn = document.getElementById('perspectiveLockBtn');
+const genSlider = document.getElementById('genSlider');
+const speedSlider = document.getElementById('speedSlider');
+
+playBtn.addEventListener('click', () => {
+  if (!isPlaying && state.currentStep >= FINAL_STEP) setTimelineStep(0);
+  setPlaying(!isPlaying);
+  lastFrameTime = performance.now();
+});
+prevGenBtn.addEventListener('click', () => { setPlaying(false); setTimelineStep(state.currentStep - 1); });
+nextGenBtn.addEventListener('click', () => { setPlaying(false); setTimelineStep(state.currentStep + 1); });
+finalGenBtn.addEventListener('click', () => { setPlaying(false); setTimelineStep(FINAL_STEP); });
+genSlider.addEventListener('input', e => { setPlaying(false); setTimelineStep(Number(e.target.value)); });
+autoRotateBtn.addEventListener('click', () => {
+  state.autoRotate = !state.autoRotate;
+  autoRotateBtn.classList.toggle('toggle-active', state.autoRotate);
+});
+perspectiveLockBtn.addEventListener('click', () => {
+  if (perspectiveLockBtn.disabled) return;
+  state.lockArchivePerspective = !state.lockArchivePerspective;
+  syncPerspectiveLockUI();
+  if (state.lockArchivePerspective) archives.journalBd.setViewState(archives.classic.getViewState());
+});
+speedSlider.addEventListener('input', e => {
+  playbackSpeed = Math.max(0.25, Number(e.target.value) || 2.0);
+  syncSpeedUI();
+});
+
+document.querySelectorAll('#modeSeg button').forEach(b => {
+  b.addEventListener('click', () => {
+    const nextMode = b.dataset.mode;
+    const modeChanged = state.mode !== nextMode;
+    state.mode = nextMode;
+    document.querySelectorAll('#modeSeg button').forEach(x => x.classList.toggle('active', x === b));
+    if (state.mode === 'single' && state.activeTechs.size !== 1) {
+      const keep = state.activeTechs.has('journalBd') ? 'journalBd' : Array.from(state.activeTechs)[0];
+      state.activeTechs = new Set([keep]);
+    } else if (state.mode === 'compare') {
+      state.activeTechs = new Set(['classic', 'journalBd']);
+    }
+    syncTechChips();
+    syncMainLayout({ resetCameras: modeChanged });
+  });
+});
+
+document.querySelectorAll('.tech-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const t = chip.dataset.tech;
+    const before = Array.from(state.activeTechs).join('|');
+    if (state.mode === 'single') {
+      state.activeTechs = new Set([t]);
+    } else {
+      if (state.activeTechs.has(t)) {
+        if (state.activeTechs.size > 1) state.activeTechs.delete(t);
+      } else state.activeTechs.add(t);
+    }
+    const after = Array.from(state.activeTechs).join('|');
+    syncTechChips();
+    syncMainLayout({ resetCameras: state.mode === 'single' && before !== after });
+  });
+});
+
+document.querySelectorAll('#colorBySeg button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#colorBySeg button').forEach(x => x.classList.toggle('active', x === b));
+    state.colorBy = b.dataset.color;
+    rerender();
+  });
+});
+
+document.querySelectorAll('#rankSeg button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#rankSeg button').forEach(x => x.classList.toggle('active', x === b));
+    state.rankFilter = b.dataset.rank === 'all' ? Infinity : parseInt(b.dataset.rank, 10);
+    rerender();
+  });
+});
+
+document.querySelectorAll('.explode-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    state.exploded = !state.exploded;
+    document.querySelectorAll('.explode-btn').forEach(x => x.classList.toggle('toggle-active', state.exploded));
+  });
+});
+
+// Reset: restore default camera angles for every scene and clear explode state.
+// Camera state can drift from accumulated drag input; this gives a one-click
+// recovery without forcing the user to manually re-orient three views.
+document.getElementById('resetBtn').addEventListener('click', () => {
+  resetVisualState({ resetExplode: true });
+  forceLayerPanelsVisible();
+  resizeAll();
+  rerender();
+  requestAnimationFrame(() => {
+    resetVisualState({ resetExplode: true });
+    resizeAll();
+    rerender();
+  });
+});
+
+// ============================================================
+// Animation loop
+// ============================================================
+function tick() {
+  const now = performance.now();
+  const dt = Math.min(0.08, (now - lastFrameTime) / 1000);
+  lastFrameTime = now;
+
+  if (isPlaying) {
+    timelineFloat += playbackSpeed * dt;
+    if (timelineFloat >= FINAL_STEP) {
+      timelineFloat = FINAL_STEP;
+      setTimelineStep(FINAL_STEP);
+      setPlaying(false);
+    } else {
+      const nextStep = Math.floor(timelineFloat);
+      if (nextStep !== state.currentStep) setTimelineStep(nextStep);
+    }
+  }
+
+  // Validate canvas sizes every frame. This removes stale-aspect camera issues
+  // after single/compare grid changes, browser zoom changes, or hidden panes
+  // becoming visible again. resize() is a no-op when dimensions are unchanged.
+  resizeAll();
+  forceLayerPanelsVisible();
+
+  // Smooth explode interpolation
+  const tgt = state.exploded ? 1 : 0;
+  explodeT += (tgt - explodeT) * 0.12;
+  if (Math.abs(explodeT - tgt) < EXPLODE_EPS) explodeT = tgt;
+  applyExplode();
+
+  if (state.autoRotate) {
+    const orbitDelta = dt * 0.28;
+    const sceneDragging = Object.values(archives).some(a => a.isDragging()) || scatter.isDragging();
+    if (!sceneDragging) {
+      for (const tech of Object.keys(archives)) archives[tech].nudgeOrbit(orbitDelta);
+      scatter.nudgeOrbit(orbitDelta);
+    }
+  }
+
+  syncLockedArchiveViews();
+
+  // Render archive scenes
+  for (const tech of Object.keys(archives)) {
+    const a = archives[tech];
+    a.update();
+    a.renderer.render(a.scene, a.camera);
+  }
+  // Render scatter
+  scatter.update();
+  refRing.lookAt(scatter.camera.position);
+  scatter.renderer.render(scatter.scene, scatter.camera);
+
+  requestAnimationFrame(tick);
+}
+
+// ============================================================
+// Bootstrap
+// ============================================================
+function resizeAll() {
+  for (const tech of Object.keys(archives)) archives[tech].resize();
+  scatter.resize();
+}
+window.addEventListener('resize', () => scheduleLayoutRefresh());
+const layoutRO = new ResizeObserver(() => scheduleLayoutRefresh());
+layoutRO.observe(document.getElementById('main'));
+document.querySelectorAll('.pane-canvas-wrap').forEach(el => layoutRO.observe(el));
+
+updateTimelineDerived();
+syncTechChips();
+syncMainLayout({ resetCameras: true });
+syncPerspectiveLockUI();
+syncSpeedUI();
+rerender();
+resizeAll();
+tick();
+</script>
+</body>
+</html>
