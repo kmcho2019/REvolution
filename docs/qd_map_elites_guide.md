@@ -91,6 +91,11 @@ Core QD files:
   `quality_score`, gain components, repair score, and code hashing
 - [visualization.py](../src/revolution/qd/visualization.py):
   history plots plus grid, CVT, and grid-quantile archive visualizations
+- [ppa_visualization_export.py](../src/revolution/qd/ppa_visualization_export.py),
+  [ppa_visualization_metrics.py](../src/revolution/qd/ppa_visualization_metrics.py),
+  and [ppa_visualization_viewer.py](../src/revolution/qd/ppa_visualization_viewer.py):
+  Phase 03.1 static linked archive/PPA viewer export, fixed-objective
+  Pareto-rank and hypervolume helpers, and inline HTML generation
 - `scripts/report_qd_feature_space.py`:
   post-run feature-space analysis, regression summaries, collapse diagnostics,
   and PCA/t-SNE projections over successful QD candidates
@@ -880,6 +885,13 @@ For grid-quantile journal runs:
   artifacts as Phase 02 acceptance evidence
 - run `scripts/validate_pareto_front_run.py` before treating a Phase 03
   Pareto-front hard-subset run as accepted
+- use `scripts/export_qd_ppa_visualization.py` to generate
+  `visualization/qd_ppa_viewer/index.html` from completed classic and QD runs,
+  then run `scripts/validate_qd_ppa_visualization.py` before treating the
+  linked archive/PPA viewer as inspection-grade. The viewer computes PPA-space
+  ranks independently of the display coordinate mode, keeps
+  `all_ppa_valid` as the default timeline universe, and labels classic archive
+  cells as posthoc projections into the selected QD archive source.
 
 When choosing which mode/profile to run next:
 

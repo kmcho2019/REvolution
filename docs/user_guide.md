@@ -420,7 +420,42 @@ CodeEvolve controls:
   diff cap on large-context vLLM endpoints so diff offspring are not
   accidentally constrained to the legacy `1024`-token default.
 
-#### 3.1.1 Ablation fairness controls (`scripts/run_backend_ablation.py`)
+#### 3.1.1 Linked archive/PPA viewer
+
+Use `scripts/export_qd_ppa_visualization.py` to create the Phase 03.1 static
+viewer for completed runs. It reads `final_analysis/ppa_distribution` plus QD
+archive sidecars and writes a filesystem-openable bundle under
+`visualization/qd_ppa_viewer/`.
+
+For the Phase 03 hard run:
+
+```bash
+RUN_ROOT=exp/journal_pareto_front_hard_subset/20260506_040658
+
+/workspace/.venv/bin/python scripts/export_qd_ppa_visualization.py \
+  --run-root "${RUN_ROOT}" \
+  --backend_run classic="${RUN_ROOT}/classic" \
+  --backend_run grid_quantile_journal_bd="${RUN_ROOT}/grid_quantile_journal_bd" \
+  --backend_run grid_quantile_pareto_journal_bd="${RUN_ROOT}/grid_quantile_pareto_journal_bd" \
+  --archive_source_backend grid_quantile_pareto_journal_bd \
+  --output-dir "${RUN_ROOT}/visualization/qd_ppa_viewer" \
+  --strict
+
+/workspace/.venv/bin/python scripts/validate_qd_ppa_visualization.py \
+  --viewer-root "${RUN_ROOT}/visualization/qd_ppa_viewer" \
+  --strict
+```
+
+The viewer supports single and compare modes, raw/improvement/normalized PPA
+coordinates, `per_technique` and `pooled_visible` Pareto-rank scopes, and an
+`all_ppa_valid` default timeline universe. Classic samples are projected
+posthoc into the selected QD archive source for inspection only; missing
+descriptors stay visible in the PPA/Pareto pane and are excluded from archive
+occupancy. The validator checks rank contiguity, nondominance, hypervolume
+metadata, source hashes, strict no-network HTML, and the required viewer
+controls.
+
+#### 3.1.2 Ablation fairness controls (`scripts/run_backend_ablation.py`)
 
 Use `run_backend_ablation.py` when you need one-command REvolution vs
 FunSearch vs EoH vs CodeEvolve sweeps with explicit fairness normalization.
