@@ -43,8 +43,11 @@
 - `backends/revolution_backend.py`: backend adapter that selects classic
   `EoHEngine` or archive-backed `QDEngine` based on `search_mode`.
 - `qd/`: QD/MAP-Elites substrate and runtime extensions.
-  - `qd/archive.py`: grid archive implementation and insertion/replacement semantics.
-  - `qd/artifacts.py`: archive summaries, archive-space reports, and per-candidate archive-event writers.
+  - `qd/archive.py`: grid, CVT, and grid-quantile archive geometries plus
+    scalar-elite and bounded Pareto-front cell replacement semantics.
+  - `qd/artifacts.py`: archive summaries, archive-space reports,
+    one-row-per-member `archive_cells.csv`, and per-candidate archive-event
+    writers.
   - `qd/design_space_report_support.py`: shared report-layout dataclasses plus plotting and markdown helpers for the standalone design-space analysis pipeline.
   - `qd/feature_space_analysis.py`: shared feature-statistics, embedding, regression, and profile-selection helpers used by retrospective reporting scripts. This is the shared "feature math" layer behind both `report_design_space_analysis.py` and `report_qd_feature_space.py`.
   - `qd/scheduler.py`: occupancy-based fail/success budget splitting helpers.
@@ -112,6 +115,8 @@
   `validate_grid_quantile_run.py`,
   `validate_grid_quantile_visualizations.py`: Phase 02 grid-quantile archive,
   visualization rendering, and validation utilities.
+- `validate_pareto_front_run.py`: Phase 03 Pareto-front hard-subset audit for
+  member counts, front bounds, and same-cell non-dominance.
 - `prompt_file_manager.py`: manage prompt bundle files and synchronise `data/prompts/`.
 - `util/` and `ref/`: helper scripts, synthesis references, and datasets.
 

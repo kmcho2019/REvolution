@@ -27,7 +27,7 @@ def _csv_count(path: Path) -> int:
 
 def _csv_cell_ids(path: Path) -> list[str]:
     with path.open(encoding="utf-8", newline="") as handle:
-        return sorted(row["cell_id"] for row in csv.DictReader(handle))
+        return sorted({row["cell_id"] for row in csv.DictReader(handle)})
 
 
 def _sha256(path: Path) -> str:
@@ -87,7 +87,8 @@ def validate_problem(problem_root: Path) -> list[str]:
         errors.append("manifest effective_shape does not match summary")
     if manifest["occupied_cells"] != summary["occupied_cells"]:
         errors.append("manifest occupied_cells does not match summary")
-    if _csv_count(cells_path) != summary["occupied_cells"]:
+    expected_rows = int(summary.get("total_archive_members", summary["occupied_cells"]))
+    if _csv_count(cells_path) != expected_rows:
         errors.append("archive_cells.csv row count does not match summary")
     if sorted(manifest.get("final_cell_ids", [])) != _csv_cell_ids(cells_path):
         errors.append("manifest final_cell_ids do not match archive_cells.csv")

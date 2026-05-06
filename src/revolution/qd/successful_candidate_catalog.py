@@ -28,7 +28,10 @@ from revolution.rtl_descriptor_evaluator import RTLDescriptorEvaluator
 from revolution.simulation_descriptor_evaluator import SimulationDescriptorEvaluator
 
 
-IGNORED_SUMMARY_FILENAMES = {"archive_summary.json"}
+IGNORED_SUMMARY_FILENAMES = {
+    "archive_summary.json",
+    "global_pareto_summary.json",
+}
 BASE_EXPORT_COLUMNS = [
     "backend",
     "benchmark",

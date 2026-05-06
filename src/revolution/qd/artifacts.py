@@ -8,8 +8,12 @@ from typing import Any
 
 from revolution.algorithm import Heuristic
 from revolution.qd.archive import CVTArchive, GridArchive, GridQuantileArchive
-from revolution.qd.scoring import compute_ppa_gains
-from revolution.qd.types import QDArchiveInsertResult
+from revolution.qd.types import (
+    ArchiveMember,
+    GlobalParetoInsertResult,
+    QDArchiveInsertResult,
+    RankedArchiveMember,
+)
 from revolution.qd.visualization import QDVisualizationArtifacts, write_qd_visualizations
 
 
@@ -66,44 +70,65 @@ def write_legacy_archive_layout(
 def write_archive_cells_csv(
     *,
     path: str | Path,
-    entries: list[tuple[str, Any]],
-    ref_ppa_metrics: dict[str, float],
+    ranked_members: list[tuple[str, RankedArchiveMember]],
 ) -> None:
-    """Write the current elite set in one CSV row per occupied cell."""
+    """Write the current archive set in one CSV row per archive member."""
     output_path = Path(path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = [
         "cell_id",
+        "member_index",
+        "cell_member_count",
+        "front_size",
+        "pareto_rank",
+        "crowding_distance",
         "candidate_id",
         "quality_score",
         "generation",
         "strategy",
+        "parent_arity",
         "code_file_path",
         "g_P",
         "g_A",
         "g_T",
+        "objectives_json",
         "descriptors_json",
         "parent_ids_json",
     ]
+    front_sizes: dict[str, int] = {}
+    for cell_id, _ in ranked_members:
+        front_sizes[cell_id] = front_sizes.get(cell_id, 0) + 1
+    member_indices: dict[str, int] = {}
     with output_path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
-        for cell_id, entry in entries:
-            candidate = entry.payload
-            gains = compute_ppa_gains(candidate.ppa_metrics, ref_ppa_metrics)
+        for cell_id, ranked_member in ranked_members:
+            member = ranked_member.member
+            candidate = member.payload
+            member_index = member_indices.get(cell_id, 0)
+            member_indices[cell_id] = member_index + 1
+            objectives = dict(member.objectives)
+            parent_ids = getattr(candidate, "parent_ids", [])
             writer.writerow(
                 {
                     "cell_id": cell_id,
-                    "candidate_id": candidate.id,
-                    "quality_score": float(entry.quality_score),
-                    "generation": candidate.generation,
-                    "strategy": candidate.strategy,
-                    "code_file_path": candidate.code_file_path,
-                    "g_P": float(gains.get("g_P", 0.0)),
-                    "g_A": float(gains.get("g_A", 0.0)),
-                    "g_T": float(gains.get("g_T", 0.0)),
-                    "descriptors_json": json.dumps(list(entry.descriptors)),
-                    "parent_ids_json": json.dumps(candidate.parent_ids),
+                    "member_index": member_index,
+                    "cell_member_count": front_sizes[cell_id],
+                    "front_size": front_sizes[cell_id],
+                    "pareto_rank": ranked_member.pareto_rank,
+                    "crowding_distance": ranked_member.crowding_distance,
+                    "candidate_id": member.candidate_id,
+                    "quality_score": float(member.quality_score),
+                    "generation": getattr(candidate, "generation", None),
+                    "strategy": getattr(candidate, "strategy", None),
+                    "parent_arity": len(parent_ids),
+                    "code_file_path": getattr(candidate, "code_file_path", None),
+                    "g_P": float(objectives.get("g_P", 0.0)),
+                    "g_A": float(objectives.get("g_A", 0.0)),
+                    "g_T": float(objectives.get("g_T", 0.0)),
+                    "objectives_json": json.dumps(objectives, sort_keys=True),
+                    "descriptors_json": json.dumps(list(member.descriptors)),
+                    "parent_ids_json": json.dumps(parent_ids),
                 }
             )
 
@@ -120,6 +145,75 @@ def append_archive_history(
         handle.write(json.dumps(snapshot) + "\n")
 
 
+def write_global_pareto_archive_csv(
+    *,
+    path: str | Path,
+    members: list[ArchiveMember],
+    benchmark: str,
+    problem: str,
+) -> None:
+    """Write one row per global Pareto member for this problem run."""
+    output_path = Path(path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = [
+        "candidate_id",
+        "benchmark",
+        "problem",
+        "generation",
+        "strategy",
+        "parent_arity",
+        "code_file_path",
+        "quality_score",
+        "g_P",
+        "g_A",
+        "g_T",
+        "objectives_json",
+        "descriptors_json",
+        "parent_ids_json",
+    ]
+    with output_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for member in members:
+            candidate = member.payload
+            objectives = dict(member.objectives)
+            parent_ids = getattr(candidate, "parent_ids", [])
+            writer.writerow(
+                {
+                    "candidate_id": member.candidate_id,
+                    "benchmark": benchmark,
+                    "problem": problem,
+                    "generation": getattr(candidate, "generation", None),
+                    "strategy": getattr(candidate, "strategy", None),
+                    "parent_arity": len(parent_ids),
+                    "code_file_path": getattr(candidate, "code_file_path", None),
+                    "quality_score": float(member.quality_score),
+                    "g_P": float(objectives.get("g_P", 0.0)),
+                    "g_A": float(objectives.get("g_A", 0.0)),
+                    "g_T": float(objectives.get("g_T", 0.0)),
+                    "objectives_json": json.dumps(objectives, sort_keys=True),
+                    "descriptors_json": json.dumps(list(member.descriptors)),
+                    "parent_ids_json": json.dumps(parent_ids),
+                }
+            )
+
+
+def write_global_pareto_summary(
+    *,
+    path: str | Path,
+    members: list[ArchiveMember],
+    objective_names: tuple[str, ...],
+) -> None:
+    """Write compact global Pareto archive summary statistics."""
+    payload = {
+        "total_global_pareto_members": len(members),
+        "global_pareto_size": len(members),
+        "objective_names": list(objective_names),
+        "candidate_ids": [member.candidate_id for member in members],
+    }
+    Path(path).write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
 def write_qd_summary_files(
     *,
     summary_path: str | Path,
@@ -130,6 +224,7 @@ def write_qd_summary_files(
     ref_ppa_metrics: dict[str, float],
     descriptor_profile: str | None,
     descriptor_axes: tuple[str, ...],
+    global_pareto_size: int,
     descriptor_health_files: tuple[str, str] | None = None,
 ) -> QDVisualizationArtifacts:
     """Write summary JSON files and generate the current QD visualization set."""
@@ -150,8 +245,15 @@ def write_qd_summary_files(
     }
     summary_payload = {
         "archive_type": archive.archive_type,
+        "cell_mode": getattr(archive, "cell_mode"),
+        "max_elites_per_cell": getattr(archive, "max_elites_per_cell"),
+        "objective_names": list(getattr(archive, "objective_names")),
         "num_cells": archive.num_cells,
         "occupied_cells": latest["occupied_cells"],
+        "total_archive_members": latest.get("total_archive_members", len(archive.members())),
+        "mean_front_size": latest.get("mean_front_size", 0.0),
+        "max_front_size": latest.get("max_front_size", 0),
+        "global_pareto_size": latest.get("global_pareto_size", global_pareto_size),
         "coverage": latest["coverage"],
         "qd_score": latest["qd_score"],
         "best_quality": latest["best_quality"],
@@ -187,8 +289,15 @@ def write_qd_summary_files(
         )
     metrics_payload = {
         "archive_type": archive.archive_type,
+        "cell_mode": getattr(archive, "cell_mode"),
+        "max_elites_per_cell": getattr(archive, "max_elites_per_cell"),
+        "objective_names": list(getattr(archive, "objective_names")),
         "num_cells": archive.num_cells,
         "occupied_cells": latest["occupied_cells"],
+        "total_archive_members": latest.get("total_archive_members", len(archive.members())),
+        "mean_front_size": latest.get("mean_front_size", 0.0),
+        "max_front_size": latest.get("max_front_size", 0),
+        "global_pareto_size": latest.get("global_pareto_size", global_pareto_size),
         "coverage": latest["coverage"],
         "qd_score": latest["qd_score"],
         "best_quality": latest["best_quality"],
@@ -283,8 +392,8 @@ def write_candidate_archive_event(
     after_occupied: int,
     before_qd_score: float,
     after_qd_score: float,
-    ref_ppa_metrics: dict[str, float],
     space_reference_file: str | None,
+    global_update: GlobalParetoInsertResult | None,
 ) -> None:
     """Write one per-candidate archive-event record for successful QD candidates."""
     output_path = Path(event_path)
@@ -292,7 +401,7 @@ def write_candidate_archive_event(
     descriptor_values = {
         axis: float(value) for axis, value in zip(archive_axes, descriptor_tuple)
     }
-    gains = compute_ppa_gains(candidate.ppa_metrics, ref_ppa_metrics)
+    objectives = dict(insert_result.objectives or {})
     if insert_result.decision == "warmup_buffered":
         assignment = {
             "archive_type": archive.archive_type,
@@ -310,14 +419,18 @@ def write_candidate_archive_event(
         "origin_pool": candidate.origin_pool,
         "generated_mode": candidate.generated_mode,
         "archive_type": archive.archive_type,
+        "cell_mode": getattr(archive, "cell_mode"),
+        "max_elites_per_cell": getattr(archive, "max_elites_per_cell"),
+        "objective_names": list(insert_result.objective_names),
         "archive_axes": list(archive_axes),
         "quality_score": float(getattr(candidate, "quality_score", candidate.score)),
         "ppa_metrics": dict(getattr(candidate, "ppa_metrics", {}) or {}),
         "score_components": {
-            "g_P": float(gains.get("g_P", 0.0)),
-            "g_A": float(gains.get("g_A", 0.0)),
-            "g_T": float(gains.get("g_T", 0.0)),
+            "g_P": float(objectives.get("g_P", 0.0)),
+            "g_A": float(objectives.get("g_A", 0.0)),
+            "g_T": float(objectives.get("g_T", 0.0)),
         },
+        "objectives": objectives,
         "structural_metrics": dict(getattr(candidate, "structural_metrics", {}) or {}),
         "rtl_metrics": dict(getattr(candidate, "rtl_metrics", {}) or {}),
         "dynamic_metrics": dict(getattr(candidate, "dynamic_metrics", {}) or {}),
@@ -329,8 +442,16 @@ def write_candidate_archive_event(
         "archive_insertion_index": getattr(candidate, "archive_insertion_index", None),
         "candidate_directory_basename": output_path.parent.name,
         "cell_id": insert_result.cell_id,
+        "member_index": insert_result.member_index,
+        "front_size": insert_result.front_size,
+        "cell_member_count": insert_result.front_size,
+        "pareto_rank": insert_result.pareto_rank,
+        "crowding_distance": insert_result.crowding_distance,
+        "evicted_candidate_id": insert_result.evicted_candidate_id,
+        "evicted_pareto_rank": insert_result.evicted_pareto_rank,
         "assignment": assignment,
         "decision": insert_result.decision,
+        "local_insert_decision": insert_result.decision,
         "inserted": insert_result.inserted,
         "replaced": insert_result.replaced,
         "archive_occupied_before": before_occupied,
@@ -347,6 +468,15 @@ def write_candidate_archive_event(
         ),
         "space_reference_file": space_reference_file,
     }
+    if global_update is not None:
+        payload.update(
+            {
+                "global_archive_inserted": global_update.inserted,
+                "global_archive_reject_reason": global_update.reject_reason,
+                "global_archive_removed_count": global_update.removed_count,
+                "global_archive_size": global_update.archive_size,
+            }
+        )
     output_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
@@ -372,8 +502,13 @@ def _format_archive_space_report(payload: dict[str, Any]) -> str:
         "# Archive Space Report",
         "",
         f"- archive_type: `{payload['archive_type']}`",
+        f"- cell_mode: `{payload.get('cell_mode')}`",
         f"- num_cells: `{payload['num_cells']}`",
         f"- occupied_cells: `{payload['occupied_cells']}`",
+        f"- total_archive_members: `{payload.get('total_archive_members', payload['occupied_cells'])}`",
+        f"- mean_front_size: `{payload.get('mean_front_size', 1.0)}`",
+        f"- max_front_size: `{payload.get('max_front_size', 1)}`",
+        f"- objective_names: `{', '.join(payload.get('objective_names', []))}`",
         f"- descriptor_profile: `{payload.get('descriptor_profile')}`",
         f"- descriptor_axes: `{', '.join(payload.get('descriptor_axes', []))}`",
         f"- assignment_rule: `{payload.get('assignment_rule', 'unknown')}`",
@@ -494,10 +629,10 @@ def _build_descriptor_health_payload(
     descriptor_profile: str | None,
     observations: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    entries = archive.entries()
+    members = archive.members()
     archive_values_by_axis = {axis: [] for axis in descriptor_axes}
-    for entry in entries.values():
-        for axis, value in zip(descriptor_axes, entry.descriptors):
+    for _, member in members:
+        for axis, value in zip(descriptor_axes, member.descriptors):
             archive_values_by_axis[axis].append(float(value))
 
     observation_values_by_axis = {axis: [] for axis in descriptor_axes}
@@ -534,10 +669,13 @@ def _build_descriptor_health_payload(
 
     return {
         "archive_type": archive.archive_type,
+        "cell_mode": getattr(archive, "cell_mode"),
         "descriptor_profile": descriptor_profile,
         "descriptor_axes": list(descriptor_axes),
         "observation_count": len(observations),
-        "archive_entry_count": len(entries),
+        "archive_entry_count": len(members),
+        "occupied_cells": archive.occupied_count(),
+        "total_archive_members": len(members),
         "decision_counts": decision_counts,
         "collapsed_axes": collapsed_axes,
         "axis_health": axis_health,

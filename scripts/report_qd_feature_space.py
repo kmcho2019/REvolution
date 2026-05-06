@@ -30,7 +30,10 @@ from revolution.qd.successful_candidate_catalog import (
     load_successful_candidate_catalog,
 )
 
-IGNORED_SUMMARY_FILENAMES = {"archive_summary.json"}
+IGNORED_SUMMARY_FILENAMES = {
+    "archive_summary.json",
+    "global_pareto_summary.json",
+}
 TARGET_COLUMNS = ("quality_score", "g_P", "g_A", "g_T")
 BENCHMARK_MARKERS = {
     "RTLLM": "o",

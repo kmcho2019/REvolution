@@ -60,7 +60,10 @@ class SummaryRow:
     pareto_period_improvement_pct: float | None
 
 
-IGNORED_SUMMARY_FILENAMES = {"archive_summary.json"}
+IGNORED_SUMMARY_FILENAMES = {
+    "archive_summary.json",
+    "global_pareto_summary.json",
+}
 
 
 def _safe_float(value: Any) -> float | None:

@@ -290,6 +290,17 @@ def test_backend_comparison_report_ignores_qd_sidecar_summary_and_renders_qd_sec
         ),
         encoding="utf-8",
     )
+    (problem_dir / "global_pareto_summary.json").write_text(
+        json.dumps(
+            {
+                "total_global_pareto_members": 2,
+                "global_pareto_size": 2,
+                "objective_names": ["g_P", "g_A"],
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     (problem_dir / "descriptor_health.json").write_text(
         json.dumps(
             {
@@ -327,6 +338,7 @@ def test_backend_comparison_report_ignores_qd_sidecar_summary_and_renders_qd_sec
     text = output_path.read_text(encoding="utf-8")
 
     assert text.count("Prob001 |") == 4
+    assert "global_pareto" not in text
     assert "## QD Archive Metrics" in text
     assert "| `revolution` | Bench | Prob001 | cvt | 37.5% | 1.7500 | 0.4000 | 3/8 |" in text
     assert "## QD Descriptor Health" in text
