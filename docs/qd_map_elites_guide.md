@@ -891,7 +891,9 @@ For grid-quantile journal runs:
   linked archive/PPA viewer as inspection-grade. The viewer computes PPA-space
   ranks independently of the display coordinate mode, keeps
   `all_ppa_valid` as the default timeline universe, and labels classic archive
-  cells as posthoc projections into the selected QD archive source.
+  cells as posthoc projections into the selected QD archive source. Strict
+  Playwright validation records a visual parity report and rejects the previous
+  flat 2D-only viewer contract.
 
 When choosing which mode/profile to run next:
 

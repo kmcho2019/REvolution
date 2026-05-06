@@ -439,10 +439,13 @@ RUN_ROOT=exp/journal_pareto_front_hard_subset/20260506_040658
   --backend_run grid_quantile_pareto_journal_bd="${RUN_ROOT}/grid_quantile_pareto_journal_bd" \
   --archive_source_backend grid_quantile_pareto_journal_bd \
   --output-dir "${RUN_ROOT}/visualization/qd_ppa_viewer" \
+  --asset-mode local \
   --strict
 
 /workspace/.venv/bin/python scripts/validate_qd_ppa_visualization.py \
   --viewer-root "${RUN_ROOT}/visualization/qd_ppa_viewer" \
+  --subset-config exp/journal_pareto_front_configs/hard_subset_pareto_front.yaml \
+  --playwright \
   --strict
 ```
 
@@ -453,7 +456,12 @@ posthoc into the selected QD archive source for inspection only; missing
 descriptors stay visible in the PPA/Pareto pane and are excluded from archive
 occupancy. The validator checks rank contiguity, nondominance, hypervolume
 metadata, source hashes, strict no-network HTML, and the required viewer
-controls.
+controls. With `--playwright`, strict validation also checks the scene/debug
+contract, required 3D/2D visual matrix, linked hover behavior, coordinate
+mode switching, collapsed advanced settings, perspective lock, exploded layers,
+and browser errors. It writes screenshots plus
+`visualization/qd_ppa_viewer/visual_parity_report.md`; strict mode rejects the
+old flat 2D-only viewer contract.
 
 #### 3.1.2 Ablation fairness controls (`scripts/run_backend_ablation.py`)
 

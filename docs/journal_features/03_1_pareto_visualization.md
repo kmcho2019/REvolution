@@ -1602,13 +1602,65 @@ Document:
 - raw PPA versus reference-improvement coordinates;
 - sequential 3D versus combinational 2D behavior.
 
+## Implementation Record
+
+As of the Phase 03.1 viewer implementation commit, the accepted hard-run bundle
+is:
+
+```text
+exp/journal_pareto_front_hard_subset/20260506_040658/visualization/qd_ppa_viewer
+```
+
+Strict validation uses the offline/local viewer artifact and Playwright:
+
+```bash
+RUN_ROOT=exp/journal_pareto_front_hard_subset/20260506_040658
+
+/workspace/.venv/bin/python scripts/export_qd_ppa_visualization.py \
+  --run-root "${RUN_ROOT}" \
+  --backend_run classic="${RUN_ROOT}/classic" \
+  --backend_run grid_quantile_journal_bd="${RUN_ROOT}/grid_quantile_journal_bd" \
+  --backend_run grid_quantile_pareto_journal_bd="${RUN_ROOT}/grid_quantile_pareto_journal_bd" \
+  --archive_source_backend grid_quantile_pareto_journal_bd \
+  --subset-config exp/journal_pareto_front_configs/hard_subset_pareto_front.yaml \
+  --output-dir "${RUN_ROOT}/visualization/qd_ppa_viewer" \
+  --asset-mode local \
+  --strict
+
+/workspace/.venv/bin/python scripts/validate_qd_ppa_visualization.py \
+  --viewer-root "${RUN_ROOT}/visualization/qd_ppa_viewer" \
+  --subset-config exp/journal_pareto_front_configs/hard_subset_pareto_front.yaml \
+  --strict \
+  --playwright
+```
+
+The strict validator now requires `window.__QD_PPA_VIEWER_DEBUG__`, scene
+dimensionality metadata, camera state, linked hover hooks, and viewport
+screenshots. It also includes a negative flat-viewer regression test: a
+2D-only `getContext('2d')` HTML page without the scene/debug contract fails
+strict validation.
+
+The current hard-run validation artifacts are:
+
+```text
+validation.json
+validation.md
+visual_parity_report.md
+screenshots/
+```
+
+`visual_parity_report.md` must include the demo reference screenshot, the
+existing `Prob135_m2014_q6b` and `Prob151_review2015_fsm` grid-quantile
+baseline screenshots, and the required linked-viewer matrix screenshots:
+sequential 3D PPA, sequential full-3D archive, combinational 2D PPA, and
+combinational projected archive.
+
 ## Completion Checklist
 
-The first implementation attempt should be considered an exporter and data
-schema scaffold, not an accepted viewer implementation. The current flat 2D
-canvas renderer does not satisfy `3.1.5`, `3.1.6`, `3.1.8`, `3.1.9`, or
-`3.1.10` until the real 3D renderer and stronger Playwright checks are in
-place.
+The earlier flat implementation attempt should be considered an exporter and
+data schema scaffold, not an accepted viewer implementation. A Phase 03.1
+viewer is not accepted unless strict Playwright validation rejects that flat
+2D-only contract and passes the real scene/debug checks above.
 
 - [ ] 3.1.1 Define exporter data schema and metric helpers.
 - [ ] 3.1.2 Export real per-problem datasets from final-analysis and run
