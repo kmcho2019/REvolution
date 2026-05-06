@@ -95,6 +95,7 @@ def validate_viewer(
         "rankFilterSelect",
         "perspectiveLockBtn",
         "autoRotateBtn",
+        "explodeLayersBtn",
         "resetBtn",
         "scatterLegend",
         "mode_global_pareto_member",
@@ -328,34 +329,60 @@ def _playwright_smoke(viewer_root: Path) -> list[str]:
     errors: list[str] = []
     screenshot_dir = viewer_root / "screenshots"
     screenshot_dir.mkdir(parents=True, exist_ok=True)
+    manifest = _load_json(viewer_root / "manifest.json")
+    problems = manifest["problems"]
+    assert isinstance(problems, list) and problems
+    combinational = next(
+        problem["problem_key"]
+        for problem in problems
+        if problem["circuit_type"] == "combinational"
+    )
+    sequential = next(
+        problem["problem_key"]
+        for problem in problems
+        if problem["circuit_type"] == "sequential"
+    )
     try:
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch()
             page = browser.new_page(viewport={"width": 1440, "height": 900})
             page.goto((viewer_root / "index.html").resolve().as_uri())
             page.wait_for_selector("#ppaCanvas")
-            modes = [
-                ("single_classic", "#singleModeBtn"),
-                ("compare", "#compareModeBtn"),
-                ("pooled_visible", "[data-rank-scope='pooled_visible']"),
-                ("rank0", "#rankFilterSelect"),
-                ("locked", "#perspectiveLockBtn"),
-            ]
-            for name, selector in modes:
-                if selector == "#rankFilterSelect":
-                    page.select_option(selector, "0")
-                else:
-                    page.click(selector)
-                path = screenshot_dir / f"{name}.png"
-                page.screenshot(path=str(path), full_page=True)
-                if path.stat().st_size <= 20_000:
-                    errors.append(f"Playwright screenshot too small: {path.name}")
-                if _pixel_variance(path) <= 0.0001:
-                    errors.append(f"Playwright screenshot blank: {path.name}")
+            _viewer_screenshot(page, screenshot_dir, errors, "single_classic")
+            page.click("#singleModeBtn")
+            page.select_option("#techniqueASelect", "classic")
+            _viewer_screenshot(page, screenshot_dir, errors, "single_classic")
+            page.select_option("#techniqueASelect", "grid_quantile_pareto_journal_bd")
+            _viewer_screenshot(page, screenshot_dir, errors, "single_qd")
+            page.click("#compareModeBtn")
+            page.select_option("#techniqueASelect", "classic")
+            page.select_option("#techniqueBSelect", "grid_quantile_pareto_journal_bd")
+            _viewer_screenshot(page, screenshot_dir, errors, "compare_classic_qd")
+            page.click("#perspectiveLockBtn")
+            _viewer_screenshot(page, screenshot_dir, errors, "locked")
+            page.select_option("#problemSelect", combinational)
+            _viewer_screenshot(page, screenshot_dir, errors, "combinational_2d")
+            page.select_option("#problemSelect", sequential)
+            _viewer_screenshot(page, screenshot_dir, errors, "sequential_3d")
+            page.select_option("#rankFilterSelect", "0")
+            _viewer_screenshot(page, screenshot_dir, errors, "rank0")
+            page.click("[data-rank-scope='pooled_visible']")
+            _viewer_screenshot(page, screenshot_dir, errors, "pooled_visible")
+            page.click("#explodeLayersBtn")
+            _viewer_screenshot(page, screenshot_dir, errors, "exploded_layers")
             browser.close()
     except Exception as exc:
         errors.append(f"Playwright smoke failed: {exc}")
     return errors
+
+
+def _viewer_screenshot(page: Any, screenshot_dir: Path, errors: list[str], name: str) -> None:
+    path = screenshot_dir / f"{name}.png"
+    page.screenshot(path=str(path), full_page=True)
+    if path.stat().st_size <= 20_000:
+        errors.append(f"Playwright screenshot too small: {path.name}")
+    if _pixel_variance(path) <= 0.0001:
+        errors.append(f"Playwright screenshot blank: {path.name}")
 
 
 def _pixel_variance(path: Path) -> float:

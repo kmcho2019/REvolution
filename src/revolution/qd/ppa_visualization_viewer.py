@@ -164,6 +164,7 @@ canvas {
     <select id="techniqueBSelect"></select>
     <button id="perspectiveLockBtn">perspective lock</button>
     <button id="autoRotateBtn">auto rotate</button>
+    <button id="explodeLayersBtn">explode layers</button>
     <button id="resetBtn">reset</button>
   </div>
   <div class="controls">
@@ -242,6 +243,7 @@ const state = {
   timer: null,
   lockedPerspective: false,
   autoRotate: false,
+  explodedLayers: false,
   hoverSampleIds: new Set(),
 };
 const colors = ['#1167b1', '#c44730', '#13795b', '#9c5a00', '#6f42c1'];
@@ -317,12 +319,19 @@ function init() {
     state.autoRotate = !state.autoRotate;
     document.getElementById('autoRotateBtn').classList.toggle('active', state.autoRotate);
   });
+  document.getElementById('explodeLayersBtn').addEventListener('click', () => {
+    state.explodedLayers = !state.explodedLayers;
+    document.getElementById('explodeLayersBtn').classList.toggle('active', state.explodedLayers);
+    render();
+  });
   document.getElementById('resetBtn').addEventListener('click', () => {
     state.lockedPerspective = false;
     state.autoRotate = false;
+    state.explodedLayers = false;
     state.hoverSampleIds.clear();
     document.getElementById('perspectiveLockBtn').classList.remove('active');
     document.getElementById('autoRotateBtn').classList.remove('active');
+    document.getElementById('explodeLayersBtn').classList.remove('active');
     render();
   });
   ['archiveCanvasA', 'archiveCanvasB', 'ppaCanvas'].forEach((id) => {
@@ -422,8 +431,9 @@ function drawArchive(label, technique) {
     const parts = cell.cell_id.split(',').map(Number);
     const ix = parts[0] || 0;
     const iy = parts.length > 2 ? parts[2] : (parts[1] || 0);
-    const x = pad + ix * w / shape[0];
-    const y = pad + (shape[1] - iy - 1) * h / shape[1];
+    const z = parts.length > 1 ? parts[1] : 0;
+    const x = pad + ix * w / shape[0] + (state.explodedLayers ? z * 9 : 0);
+    const y = pad + (shape[1] - iy - 1) * h / shape[1] - (state.explodedLayers ? z * 11 : 0);
     const hot = cell.sample_ids.some((id) => state.hoverSampleIds.has(id));
     ctx.fillStyle = hot ? '#ffcb45' : shade(cell.rank0_count, cell.sample_count);
     ctx.fillRect(x + 2, y + 2, w / shape[0] - 5, h / shape[1] - 5);
@@ -433,6 +443,9 @@ function drawArchive(label, technique) {
   document.getElementById('axisDetail' + label).innerHTML = axisDetails(ds);
   const stats = (((ds.technique_stats_by_step[step] || {})[technique]) || {});
   document.getElementById('stats' + label).innerHTML = statsHtml(stats);
+  document.getElementById('layerPanel' + label).textContent = state.explodedLayers
+    ? 'z-slice layers; exploded layer controls active; orientation cue'
+    : 'z-slice layers; exploded layer controls; orientation cue';
 }
 function drawPpa(selected) {
   const ds = dataset();
