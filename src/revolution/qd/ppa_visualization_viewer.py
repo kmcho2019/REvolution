@@ -1289,6 +1289,21 @@ function hoverFirstArchiveCell(sceneName) {
   render();
   return true;
 }
+function hoverFirstLayerCell(label) {
+  const ds = dataset();
+  const selected = selectedTechniques();
+  const technique = label === 'B' ? selected[1] : selected[0];
+  const cells = ((ds.cell_summaries_by_step[stepName()] || {})[technique] || {});
+  const item = Array.from(document.querySelectorAll('#layerPanel' + label + ' .layer-cell.occupied'))[0];
+  if (!item) return false;
+  const summary = cells[item.dataset.cellId];
+  if (!summary) return false;
+  state.highlightedCellId = item.dataset.cellId;
+  state.highlightedScene = 'archive' + label;
+  state.hoveredSampleIds = new Set(summary.sample_ids);
+  render();
+  return true;
+}
 function hoverFirstPpaPoint() {
   const hit = (state.hitMaps.ppa || []).find((item) => item.kind === 'ppaSample');
   if (!hit) return false;
@@ -1317,6 +1332,7 @@ window.__QD_PPA_VIEWER_DEBUG__ = {
   setProblem,
   selectCompare,
   hoverFirstArchiveCell,
+  hoverFirstLayerCell,
   hoverFirstPpaPoint,
   setCoordinateMode,
   setRankFilter,

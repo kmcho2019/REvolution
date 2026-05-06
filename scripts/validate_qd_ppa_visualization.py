@@ -156,6 +156,7 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "makeProjector(",
         "rotatePoint(",
         "hoverFirstArchiveCell",
+        "hoverFirstLayerCell",
         "hoverFirstPpaPoint",
         "highlighted_sample_ids",
         "highlighted_cell_id",
@@ -418,6 +419,7 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
             )
             _assert_runtime_contract(page, errors, "initial")
             _assert_default_layout(page, errors)
+            _assert_auto_rotate(page, errors)
             if "classic" in _option_values(page, "#techniqueASelect"):
                 page.click("#singleModeBtn")
                 page.select_option("#techniqueASelect", "classic")
@@ -435,8 +437,9 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                     _viewer_screenshot(page, screenshot_dir, errors, f"coordinate_{coordinate_mode}"),
                 )
             page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setCoordinateMode('raw')")
+            ppa_camera_before_lock = _debug_state(page).get("scenes", {}).get("ppa", {}).get("camera")
             page.click("#perspectiveLockBtn")
-            _assert_locked_archive_cameras(page, errors)
+            _assert_locked_archive_cameras(page, errors, ppa_camera_before_lock)
             _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "locked"))
             if combinational is not None:
                 page.evaluate("key => window.__QD_PPA_VIEWER_DEBUG__.setProblem(key)", combinational)
@@ -470,6 +473,10 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                 errors.append("Playwright advanced panel did not open")
             _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "advanced_open"))
             page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setAdvancedOpen(false)")
+            problem_before_reset = _debug_state(page).get("problem_key")
+            page.click("#resetBtn")
+            _assert_reset_state(page, errors, problem_before_reset)
+            _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "reset"))
             page.evaluate(
                 "() => {"
                 " document.getElementById('rankScopeSelect').value = 'per_technique';"
@@ -563,7 +570,17 @@ def _assert_coordinate_mode(page: Any, errors: list[str], expected: str) -> None
         errors.append(f"Playwright coordinate mode mismatch: expected {expected}, saw {state.get('coordinate_mode')}")
 
 
-def _assert_locked_archive_cameras(page: Any, errors: list[str]) -> None:
+def _assert_auto_rotate(page: Any, errors: list[str]) -> None:
+    first = _debug_state(page)
+    first_camera = first.get("scenes", {}).get("archiveA", {}).get("camera", {})
+    page.wait_for_timeout(250)
+    second = _debug_state(page)
+    second_camera = second.get("scenes", {}).get("archiveA", {}).get("camera", {})
+    if first_camera.get("yaw") == second_camera.get("yaw"):
+        errors.append("Playwright auto-rotate did not change archive camera yaw")
+
+
+def _assert_locked_archive_cameras(page: Any, errors: list[str], ppa_camera_before: Any) -> None:
     state = _debug_state(page)
     scenes = state.get("scenes", {})
     assert isinstance(scenes, dict)
@@ -573,6 +590,18 @@ def _assert_locked_archive_cameras(page: Any, errors: list[str]) -> None:
         return
     if archive_a.get("camera") != archive_b.get("camera"):
         errors.append("Playwright locked archive cameras are not equal")
+    if ppa_camera_before is not None and scenes.get("ppa", {}).get("camera") != ppa_camera_before:
+        errors.append("Playwright perspective lock changed the PPA camera")
+
+
+def _assert_reset_state(page: Any, errors: list[str], problem_before: Any) -> None:
+    state = _debug_state(page)
+    if state.get("problem_key") != problem_before:
+        errors.append("Playwright reset changed the selected problem")
+    if state.get("locked_perspective"):
+        errors.append("Playwright reset did not clear perspective lock")
+    if state.get("exploded_layers"):
+        errors.append("Playwright reset did not clear exploded layers")
 
 
 def _assert_ppa_dimensionality(page: Any, errors: list[str], *, label: str, expected: str) -> None:
@@ -621,6 +650,19 @@ def _strict_visual_matrix(
             hover = _debug_state(page)
             if not hover.get("highlighted_sample_ids"):
                 errors.append(f"{label}: archive hover did not highlight PPA samples")
+            _report_screenshot(
+                report_lines,
+                _viewer_screenshot(page, screenshot_dir, errors, f"{label}_archive_hover"),
+            )
+            if not page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.hoverFirstLayerCell('A')"):
+                errors.append(f"{label}: layer-panel hover bridge found no occupied cell")
+            layer_hover = _debug_state(page)
+            if not layer_hover.get("highlighted_sample_ids") or layer_hover.get("highlighted_cell_id") is None:
+                errors.append(f"{label}: layer-panel hover did not map to cell samples")
+            _report_screenshot(
+                report_lines,
+                _viewer_screenshot(page, screenshot_dir, errors, f"{label}_layer_hover"),
+            )
         else:
             if int(scene.get("visible_sample_count", 0)) <= 0:
                 errors.append(f"{label}: PPA scene reports no visible samples")
@@ -629,10 +671,37 @@ def _strict_visual_matrix(
             hover = _debug_state(page)
             if hover.get("highlighted_cell_id") is None:
                 errors.append(f"{label}: PPA hover did not identify an archive cell")
+            _report_screenshot(
+                report_lines,
+                _viewer_screenshot(page, screenshot_dir, errors, f"{label}_ppa_hover"),
+            )
+        metadata = _scene_report_metadata(state, scene_kind, scene)
         report_lines.append(
             f"- `{label}`: `{problem_key}` -> `{scene.get('dimensionality')}` "
-            f"([screenshot]({screenshot_path.relative_to(screenshot_dir.parent)}))"
+            f"([screenshot]({screenshot_path.relative_to(screenshot_dir.parent)}))\n"
+            f"  - debug: `{json.dumps(metadata, sort_keys=True)}`"
         )
+
+
+def _scene_report_metadata(state: dict[str, Any], scene_kind: str, scene: dict[str, Any]) -> dict[str, Any]:
+    if scene_kind == "archive":
+        return {
+            "active_axes": scene.get("active_axes"),
+            "camera": scene.get("camera"),
+            "collapsed_axes": scene.get("collapsed_axes"),
+            "effective_shape": scene.get("effective_shape"),
+            "renderer": scene.get("renderer"),
+            "selected_techniques": state.get("selected_techniques"),
+            "visible_layer_count": scene.get("visible_layer_count"),
+        }
+    return {
+        "axes": scene.get("axes"),
+        "camera": scene.get("camera"),
+        "renderer": scene.get("renderer"),
+        "selected_techniques": state.get("selected_techniques"),
+        "visible_sample_count": scene.get("visible_sample_count"),
+        "z_range": scene.get("z_range"),
+    }
 
 
 def _visual_report_header() -> list[str]:

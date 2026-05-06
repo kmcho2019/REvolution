@@ -159,3 +159,62 @@ drawPpa();
     stderr = validate_result.stderr
     assert "__QD_PPA_VIEWER_DEBUG__" in stderr
     assert "flat 2D-only canvas viewer" in stderr
+
+
+def test_strict_validation_rejects_network_assets(tmp_path: Path) -> None:
+    fixture = _load_export_fixture()
+    run_root, classic_root, qd_root = fixture._write_run(tmp_path)
+    repo_root = Path(__file__).resolve().parents[2]
+    output_dir = run_root / "visualization" / "network_asset_viewer"
+
+    export_result = subprocess.run(
+        [
+            str(Path(os.sys.executable)),
+            str(repo_root / "scripts" / "export_qd_ppa_visualization.py"),
+            "--run-root",
+            str(run_root),
+            "--backend_run",
+            f"classic={classic_root}",
+            "--backend_run",
+            f"grid_quantile_pareto_journal_bd={qd_root}",
+            "--archive_source_backend",
+            "grid_quantile_pareto_journal_bd",
+            "--problem",
+            "RTLLM/Prob001",
+            "--output-dir",
+            str(output_dir),
+            "--strict",
+            "--no-classic-descriptor-recovery",
+        ],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert export_result.returncode == 0, export_result.stderr
+
+    html_path = output_dir / "index.html"
+    html_path.write_text(
+        html_path.read_text(encoding="utf-8").replace(
+            "</head>",
+            '<script src="https://cdn.example.invalid/viewer.js"></script></head>',
+        ),
+        encoding="utf-8",
+    )
+
+    validate_result = subprocess.run(
+        [
+            str(Path(os.sys.executable)),
+            str(repo_root / "scripts" / "validate_qd_ppa_visualization.py"),
+            "--viewer-root",
+            str(output_dir),
+            "--strict",
+        ],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert validate_result.returncode != 0
+    assert "strict HTML references network assets" in validate_result.stderr
