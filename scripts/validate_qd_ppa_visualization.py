@@ -22,6 +22,21 @@ from revolution.qd.ppa_visualization_metrics import (  # noqa: E402
 )
 
 
+STRICT_VISUAL_CASES: tuple[tuple[str, str, str, str], ...] = (
+    ("sequential_ppa_3d", "RTLLM/Prob015_multi_pipe_8bit", "ppa", "3d"),
+    ("sequential_archive_3d", "VerilogEval-Spec-to-RTL/Prob151_review2015_fsm", "archive", "3d"),
+    ("combinational_ppa_2d", "RTLLM/Prob004_adder_8bit", "ppa", "2d"),
+    ("combinational_projected_archive", "VerilogEval-Spec-to-RTL/Prob135_m2014_q6b", "archive", "2d_slab"),
+)
+
+
+REFERENCE_SCREENSHOTS: tuple[tuple[str, Path], ...] = (
+    ("demo_v4", Path("exp/visualization_reference_screenshots/demo_v4_1440x1000.png")),
+    ("baseline_prob151", Path("exp/visualization_reference_screenshots/existing_grid_quantile_prob151_1440x1000.png")),
+    ("baseline_prob135", Path("exp/visualization_reference_screenshots/existing_grid_quantile_prob135_1440x1000.png")),
+)
+
+
 def _load_json(path: Path) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert isinstance(payload, dict)
@@ -90,24 +105,25 @@ def validate_viewer(
         "raw",
         "improvement",
         "normalized",
-        "rank-scope",
+        "rankScopeSelect",
         "sampleUniverseSelect",
         "rankFilterSelect",
         "perspectiveLockBtn",
         "autoRotateBtn",
         "explodeLayersBtn",
         "resetBtn",
-        "scatterLegend",
         "mode_global_pareto_member",
         "viewer_pooled_pareto_member",
-        "axis-detail",
+        "axisDetail",
         "cutoffs",
-        "z-slice layers",
-        "exploded layer",
+        "Z-slice layers",
+        "exploded_layers",
     )
     for token in required_tokens:
         if token not in html:
             errors.append(f"HTML missing required control/token: {token}")
+    if strict:
+        errors.extend(_validate_html_scene_contract(html))
 
     for problem in manifest.get("problems", []):
         dataset_path = viewer_root / problem["dataset_path"]
@@ -118,9 +134,41 @@ def validate_viewer(
         errors.extend(_validate_dataset(dataset, viewer_root=viewer_root, strict=strict))
 
     if run_playwright:
-        errors.extend(_playwright_smoke(viewer_root))
+        errors.extend(_playwright_smoke(viewer_root, strict=strict))
 
     _write_validation(viewer_root, errors)
+    return errors
+
+
+def _validate_html_scene_contract(html: str) -> list[str]:
+    errors: list[str] = []
+    required_tokens = (
+        "__QD_PPA_VIEWER_DEBUG__",
+        "qd_ppa_viewer_debug.v2",
+        "custom_scene_canvas",
+        "scene_type: 'archive'",
+        "scene_type: 'ppa'",
+        "dimensionality: '3d'",
+        "dimensionality: '2d'",
+        "drawArchive(",
+        "drawPpa3d(",
+        "drawPpa2d(",
+        "makeProjector(",
+        "rotatePoint(",
+        "hoverFirstArchiveCell",
+        "hoverFirstPpaPoint",
+        "highlighted_sample_ids",
+        "highlighted_cell_id",
+        "camera:",
+        "z_range:",
+        "visible_layer_count:",
+        "advancedPanel",
+    )
+    for token in required_tokens:
+        if token not in html:
+            errors.append(f"strict HTML missing scene/debug contract token: {token}")
+    if "getContext('2d')" in html and "drawPpa3d(" not in html:
+        errors.append("strict HTML looks like a flat 2D-only canvas viewer")
     return errors
 
 
@@ -321,68 +369,295 @@ def _check_rank_zero(
     return errors
 
 
-def _playwright_smoke(viewer_root: Path) -> list[str]:
+def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
     try:
-        from playwright.sync_api import sync_playwright
+        from playwright.sync_api import sync_playwright  # type: ignore[reportMissingImports]
     except ImportError:
         return ["Playwright is not installed"]
     errors: list[str] = []
+    report_lines = _visual_report_header()
     screenshot_dir = viewer_root / "screenshots"
     screenshot_dir.mkdir(parents=True, exist_ok=True)
     manifest = _load_json(viewer_root / "manifest.json")
     problems = manifest["problems"]
     assert isinstance(problems, list) and problems
+    problem_keys = {str(problem["problem_key"]) for problem in problems}
     combinational = next(
-        problem["problem_key"]
-        for problem in problems
-        if problem["circuit_type"] == "combinational"
+        (problem["problem_key"] for problem in problems if problem["circuit_type"] == "combinational"),
+        None,
     )
     sequential = next(
-        problem["problem_key"]
-        for problem in problems
-        if problem["circuit_type"] == "sequential"
+        (problem["problem_key"] for problem in problems if problem["circuit_type"] == "sequential"),
+        None,
     )
     try:
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch()
-            page = browser.new_page(viewport={"width": 1440, "height": 900})
+            page = browser.new_page(viewport={"width": 1440, "height": 1000})
+            console_errors: list[str] = []
+            page_errors: list[str] = []
+            failed_requests: list[str] = []
+            network_requests: list[str] = []
+            page.on(
+                "console",
+                lambda message: console_errors.append(message.text) if message.type == "error" else None,
+            )
+            page.on("pageerror", lambda exc: page_errors.append(str(exc)))
+            page.on("requestfailed", lambda request: failed_requests.append(request.url))
+            page.on(
+                "request",
+                lambda request: network_requests.append(request.url)
+                if request.url.startswith(("http://", "https://"))
+                else None,
+            )
             page.goto((viewer_root / "index.html").resolve().as_uri())
             page.wait_for_selector("#ppaCanvas")
-            _viewer_screenshot(page, screenshot_dir, errors, "single_classic")
-            page.click("#singleModeBtn")
-            page.select_option("#techniqueASelect", "classic")
-            _viewer_screenshot(page, screenshot_dir, errors, "single_classic")
-            page.select_option("#techniqueASelect", "grid_quantile_pareto_journal_bd")
-            _viewer_screenshot(page, screenshot_dir, errors, "single_qd")
-            page.click("#compareModeBtn")
-            page.select_option("#techniqueASelect", "classic")
-            page.select_option("#techniqueBSelect", "grid_quantile_pareto_journal_bd")
-            _viewer_screenshot(page, screenshot_dir, errors, "compare_classic_qd")
+            page.wait_for_function(
+                "window.__QD_PPA_VIEWER_DEBUG__"
+                " && window.__QD_PPA_VIEWER_DEBUG__.getState().schema === 'qd_ppa_viewer_debug.v2'"
+            )
+            _assert_runtime_contract(page, errors, "initial")
+            _assert_default_layout(page, errors)
+            if "classic" in _option_values(page, "#techniqueASelect"):
+                page.click("#singleModeBtn")
+                page.select_option("#techniqueASelect", "classic")
+                _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "single_classic"))
+            if "grid_quantile_pareto_journal_bd" in _option_values(page, "#techniqueASelect"):
+                page.select_option("#techniqueASelect", "grid_quantile_pareto_journal_bd")
+                _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "single_qd"))
+            _select_compare(page, "classic", "grid_quantile_pareto_journal_bd", errors)
+            _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "compare_classic_qd"))
+            for coordinate_mode in ("raw", "improvement", "normalized"):
+                page.evaluate("mode => window.__QD_PPA_VIEWER_DEBUG__.setCoordinateMode(mode)", coordinate_mode)
+                _assert_coordinate_mode(page, errors, coordinate_mode)
+                _report_screenshot(
+                    report_lines,
+                    _viewer_screenshot(page, screenshot_dir, errors, f"coordinate_{coordinate_mode}"),
+                )
+            page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setCoordinateMode('raw')")
             page.click("#perspectiveLockBtn")
-            _viewer_screenshot(page, screenshot_dir, errors, "locked")
-            page.select_option("#problemSelect", combinational)
-            _viewer_screenshot(page, screenshot_dir, errors, "combinational_2d")
-            page.select_option("#problemSelect", sequential)
-            _viewer_screenshot(page, screenshot_dir, errors, "sequential_3d")
-            page.select_option("#rankFilterSelect", "0")
-            _viewer_screenshot(page, screenshot_dir, errors, "rank0")
-            page.click("[data-rank-scope='pooled_visible']")
-            _viewer_screenshot(page, screenshot_dir, errors, "pooled_visible")
+            _assert_locked_archive_cameras(page, errors)
+            _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "locked"))
+            if combinational is not None:
+                page.evaluate("key => window.__QD_PPA_VIEWER_DEBUG__.setProblem(key)", combinational)
+                _select_compare(page, "classic", "grid_quantile_pareto_journal_bd", errors)
+                _assert_ppa_dimensionality(page, errors, label="combinational_2d", expected="2d")
+                _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "combinational_2d"))
+            if sequential is not None:
+                page.evaluate("key => window.__QD_PPA_VIEWER_DEBUG__.setProblem(key)", sequential)
+                _select_compare(page, "classic", "grid_quantile_pareto_journal_bd", errors)
+                _assert_ppa_dimensionality(page, errors, label="sequential_3d", expected="3d")
+                _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "sequential_3d"))
+            page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setRankFilter('0')")
+            _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "rank0"))
+            page.evaluate(
+                "() => {"
+                " document.getElementById('rankScopeSelect').value = 'pooled_visible';"
+                " window.__QD_PPA_VIEWER_DEBUG__.setRankFilter("
+                "   document.getElementById('rankFilterSelect').value"
+                " );"
+                "}"
+            )
+            _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "pooled_visible"))
             page.click("#explodeLayersBtn")
-            _viewer_screenshot(page, screenshot_dir, errors, "exploded_layers")
+            state = _debug_state(page)
+            if not state.get("exploded_layers"):
+                errors.append("Playwright exploded layer toggle did not update debug state")
+            _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "exploded_layers"))
+            page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setAdvancedOpen(true)")
+            state = _debug_state(page)
+            if not state.get("advanced_open"):
+                errors.append("Playwright advanced panel did not open")
+            _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "advanced_open"))
+            page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setAdvancedOpen(false)")
+            page.evaluate(
+                "() => {"
+                " document.getElementById('rankScopeSelect').value = 'per_technique';"
+                " document.getElementById('sampleUniverseSelect').value = 'all_ppa_valid';"
+                " window.__QD_PPA_VIEWER_DEBUG__.setCoordinateMode('raw');"
+                " window.__QD_PPA_VIEWER_DEBUG__.setRankFilter('all');"
+                "}"
+            )
+            if strict:
+                _strict_visual_matrix(page, problem_keys, screenshot_dir, errors, report_lines)
+                if console_errors:
+                    errors.extend(f"Playwright console error: {message}" for message in console_errors)
+                if page_errors:
+                    errors.extend(f"Playwright page error: {message}" for message in page_errors)
+                if failed_requests:
+                    errors.extend(f"Playwright request failed: {url}" for url in failed_requests)
+                if network_requests:
+                    errors.extend(f"Playwright strict mode made network request: {url}" for url in network_requests)
             browser.close()
     except Exception as exc:
         errors.append(f"Playwright smoke failed: {exc}")
+    (viewer_root / "visual_parity_report.md").write_text("\n".join(report_lines) + "\n", encoding="utf-8")
     return errors
 
 
-def _viewer_screenshot(page: Any, screenshot_dir: Path, errors: list[str], name: str) -> None:
+def _option_values(page: Any, selector: str) -> list[str]:
+    return page.eval_on_selector_all(selector + " option", "(items) => items.map((item) => item.value)")
+
+
+def _select_compare(page: Any, first: str, second: str, errors: list[str]) -> None:
+    values = _option_values(page, "#techniqueASelect")
+    if first not in values or second not in values:
+        errors.append(f"Playwright compare techniques unavailable: {first}, {second}")
+        return
+    page.evaluate(
+        "payload => window.__QD_PPA_VIEWER_DEBUG__.selectCompare(payload[0], payload[1])",
+        [first, second],
+    )
+
+
+def _debug_state(page: Any) -> dict[str, Any]:
+    state = page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.getState()")
+    assert isinstance(state, dict)
+    return state
+
+
+def _assert_runtime_contract(page: Any, errors: list[str], label: str) -> None:
+    state = _debug_state(page)
+    if state.get("schema") != "qd_ppa_viewer_debug.v2":
+        errors.append(f"{label}: debug schema mismatch")
+    scenes = state.get("scenes", {})
+    assert isinstance(scenes, dict)
+    for scene_name in ("archiveA", "ppa"):
+        scene = scenes.get(scene_name)
+        if not isinstance(scene, dict):
+            errors.append(f"{label}: missing debug scene {scene_name}")
+            continue
+        if scene.get("renderer") != "custom_scene_canvas":
+            errors.append(f"{label}: {scene_name} does not report custom scene renderer")
+
+
+def _assert_default_layout(page: Any, errors: list[str]) -> None:
+    metrics = page.evaluate(
+        "() => {"
+        " const advanced = document.getElementById('advancedPanel');"
+        " const layout = document.getElementById('layout').getBoundingClientRect();"
+        " const stats = document.querySelector('.bottom-stats').getBoundingClientRect();"
+        " window.scrollTo(0, 9999);"
+        " return {"
+        "   advancedOpen: advanced.open,"
+        "   scrollY: window.scrollY,"
+        "   innerHeight: window.innerHeight,"
+        "   layoutTop: layout.top,"
+        "   layoutBottom: layout.bottom,"
+        "   statsBottom: stats.bottom"
+        " };"
+        "}"
+    )
+    assert isinstance(metrics, dict)
+    if metrics.get("advancedOpen"):
+        errors.append("Playwright default layout has advanced panel expanded")
+    if int(metrics["scrollY"]) != 0:
+        errors.append(f"Playwright default 1440x1000 layout is scrollable: scrollY={metrics['scrollY']}")
+    if float(metrics["layoutTop"]) >= float(metrics["innerHeight"]) or float(metrics["statsBottom"]) <= 0:
+        errors.append("Playwright default 1440x1000 layout panes are not visible")
+
+
+def _assert_coordinate_mode(page: Any, errors: list[str], expected: str) -> None:
+    state = _debug_state(page)
+    if state.get("coordinate_mode") != expected:
+        errors.append(f"Playwright coordinate mode mismatch: expected {expected}, saw {state.get('coordinate_mode')}")
+
+
+def _assert_locked_archive_cameras(page: Any, errors: list[str]) -> None:
+    state = _debug_state(page)
+    scenes = state.get("scenes", {})
+    assert isinstance(scenes, dict)
+    archive_a = scenes.get("archiveA", {})
+    archive_b = scenes.get("archiveB", {})
+    if not archive_b:
+        return
+    if archive_a.get("camera") != archive_b.get("camera"):
+        errors.append("Playwright locked archive cameras are not equal")
+
+
+def _assert_ppa_dimensionality(page: Any, errors: list[str], *, label: str, expected: str) -> None:
+    state = _debug_state(page)
+    ppa = state.get("scenes", {}).get("ppa", {})
+    if ppa.get("dimensionality") != expected:
+        errors.append(f"{label}: expected PPA dimensionality {expected}, saw {ppa.get('dimensionality')}")
+    if int(ppa.get("visible_sample_count", 0)) <= 0:
+        errors.append(f"{label}: PPA scene has no visible samples")
+    if expected == "3d":
+        z_range = ppa.get("z_range", [0, 0])
+        if len(z_range) != 2 or float(z_range[1]) <= float(z_range[0]):
+            errors.append(f"{label}: sequential PPA z range is not populated")
+
+
+def _strict_visual_matrix(
+    page: Any,
+    problem_keys: set[str],
+    screenshot_dir: Path,
+    errors: list[str],
+    report_lines: list[str],
+) -> None:
+    report_lines.extend(["", "## Required Matrix", ""])
+    for label, problem_key, scene_kind, expected_dimensionality in STRICT_VISUAL_CASES:
+        if problem_key not in problem_keys:
+            errors.append(f"strict Playwright missing required validation problem: {problem_key}")
+            continue
+        page.evaluate("key => window.__QD_PPA_VIEWER_DEBUG__.setProblem(key)", problem_key)
+        _select_compare(page, "classic", "grid_quantile_pareto_journal_bd", errors)
+        screenshot_path = _viewer_screenshot(page, screenshot_dir, errors, label)
+        state = _debug_state(page)
+        scene = state["scenes"]["ppa"] if scene_kind == "ppa" else state["scenes"]["archiveA"]
+        if scene.get("dimensionality") != expected_dimensionality:
+            errors.append(
+                f"{label}: expected {expected_dimensionality}, saw {scene.get('dimensionality')}"
+            )
+        if scene_kind == "archive":
+            if int(scene.get("visible_layer_count", 0)) <= 0:
+                errors.append(f"{label}: archive scene reports no layers")
+            if label == "sequential_archive_3d" and scene.get("collapsed_axes"):
+                errors.append(f"{label}: full 3D archive unexpectedly reports collapsed axes")
+            if label == "combinational_projected_archive" and "ff_depth" not in scene.get("collapsed_axes", []):
+                errors.append(f"{label}: projected archive does not report collapsed ff_depth")
+            if not page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.hoverFirstArchiveCell('archiveA')"):
+                errors.append(f"{label}: archive hover bridge found no occupied cell")
+            hover = _debug_state(page)
+            if not hover.get("highlighted_sample_ids"):
+                errors.append(f"{label}: archive hover did not highlight PPA samples")
+        else:
+            if int(scene.get("visible_sample_count", 0)) <= 0:
+                errors.append(f"{label}: PPA scene reports no visible samples")
+            if not page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.hoverFirstPpaPoint()"):
+                errors.append(f"{label}: PPA hover bridge found no sample")
+            hover = _debug_state(page)
+            if hover.get("highlighted_cell_id") is None:
+                errors.append(f"{label}: PPA hover did not identify an archive cell")
+        report_lines.append(
+            f"- `{label}`: `{problem_key}` -> `{scene.get('dimensionality')}` "
+            f"([screenshot]({screenshot_path.relative_to(screenshot_dir.parent)}))"
+        )
+
+
+def _visual_report_header() -> list[str]:
+    lines = ["# QD/PPA Visual Parity Report", "", "## Reference Screenshots", ""]
+    repo_root = Path(__file__).resolve().parents[1]
+    for label, relative_path in REFERENCE_SCREENSHOTS:
+        path = repo_root / relative_path
+        status = "present" if path.is_file() else "missing"
+        lines.append(f"- `{label}`: `{status}` `{relative_path}`")
+    lines.extend(["", "## New Viewer Screenshots", ""])
+    return lines
+
+
+def _report_screenshot(report_lines: list[str], path: Path) -> None:
+    report_lines.append(f"- `{path.stem}`: [screenshot]({path.relative_to(path.parent.parent)})")
+
+
+def _viewer_screenshot(page: Any, screenshot_dir: Path, errors: list[str], name: str) -> Path:
     path = screenshot_dir / f"{name}.png"
-    page.screenshot(path=str(path), full_page=True)
+    page.screenshot(path=str(path), full_page=False)
     if path.stat().st_size <= 20_000:
         errors.append(f"Playwright screenshot too small: {path.name}")
     if _pixel_variance(path) <= 0.0001:
         errors.append(f"Playwright screenshot blank: {path.name}")
+    return path
 
 
 def _pixel_variance(path: Path) -> float:

@@ -203,6 +203,12 @@ def test_export_writes_projected_classic_dataset(tmp_path: Path) -> None:
 
     assert result.manifest_path.is_file()
     assert (output_dir / "index.html").is_file()
+    html = (output_dir / "index.html").read_text(encoding="utf-8")
+    assert "__QD_PPA_VIEWER_DEBUG__" in html
+    assert "drawPpa3d(" in html
+    assert "drawPpa2d(" in html
+    assert "rankScopeSelect" in html
+    assert "advancedPanel" in html
     dataset = json.loads(result.dataset_paths[0].read_text(encoding="utf-8"))
     classic = next(sample for sample in dataset["samples"] if sample["technique"] == "classic")
     qd = next(sample for sample in dataset["samples"] if sample["technique"] != "classic")
