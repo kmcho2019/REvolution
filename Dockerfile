@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     git \
     libreadline-dev \
     gawk \
+    less \
     tcl-dev \
     libffi-dev \
     python3-dev \
@@ -29,6 +30,14 @@ RUN apt-get update && apt-get install -y \
     libboost-system-dev \
     libboost-python-dev \
     libboost-filesystem-dev \
+    libasound2 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libatspi2.0-0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxi6 \
+    libxrandr2 \
     zlib1g-dev \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
@@ -116,6 +125,7 @@ ENV PATH="/home/$USERNAME/.local/bin:${PATH}"
 
 # 12. Install third-party Python dependencies first for better layer caching
 RUN uv sync --frozen --no-install-project
+RUN /workspace/.venv/bin/python -m playwright install chromium
 
 # 13. Copy the rest of the application source code
 COPY --chown=$USERNAME:$USERNAME . .
