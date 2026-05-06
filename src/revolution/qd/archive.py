@@ -11,9 +11,11 @@ from typing import Any
 
 from revolution.qd.types import (
     ArchiveMember,
+    GlobalParetoInsertResult,
     QDArchiveDecision,
     QDArchiveInsertResult,
     QDCellMode,
+    RankedArchiveMember,
 )
 
 
@@ -73,6 +75,13 @@ def dominates(
     return greater_or_equal and strictly_greater
 
 
+def _objective_key(
+    member: ArchiveMember,
+    objective_names: tuple[str, ...],
+) -> tuple[float, ...]:
+    return tuple(member.objectives[name] for name in objective_names)
+
+
 def _validate_cell_mode(cell_mode: QDCellMode) -> None:
     if cell_mode not in {"scalar_elite", "pareto_front"}:
         raise ValueError(f"Unsupported qd_cell_mode '{cell_mode}'.")
@@ -87,6 +96,50 @@ def _validate_objectives(
             raise ValueError(f"Archive member is missing objective '{name}'.")
 
 
+def ranked_front(
+    front: list[ArchiveMember],
+    objective_names: tuple[str, ...],
+) -> list[RankedArchiveMember]:
+    """Return transient one-based Pareto ranks and NSGA-II crowding distances."""
+    if not front:
+        return []
+    if not objective_names:
+        return [
+            RankedArchiveMember(
+                member=member,
+                pareto_rank=1,
+                crowding_distance=float("inf"),
+            )
+            for member in front
+        ]
+
+    remaining = list(front)
+    ranked: list[RankedArchiveMember] = []
+    rank = 1
+    while remaining:
+        current_front = [
+            member
+            for member in remaining
+            if not any(
+                other is not member and dominates(other, member, objective_names)
+                for other in remaining
+            )
+        ]
+        distances = _crowding_distances(current_front, objective_names)
+        ranked.extend(
+            RankedArchiveMember(member=member, pareto_rank=rank, crowding_distance=distance)
+            for member, distance in zip(current_front, distances)
+        )
+        remaining = [
+            member
+            for member in remaining
+            if not any(member is front_member for front_member in current_front)
+        ]
+        rank += 1
+    by_id = {id(item.member): item for item in ranked}
+    return [by_id[id(member)] for member in front]
+
+
 def _member_result(
     *,
     cell_id: str,
@@ -99,12 +152,23 @@ def _member_result(
     removed: list[ArchiveMember] | None,
     objective_names: tuple[str, ...],
     front: list[ArchiveMember],
+    evicted: ArchiveMember | None = None,
 ) -> QDArchiveInsertResult:
     member_index = None
+    member_rank: RankedArchiveMember | None = None
+    evicted_rank: RankedArchiveMember | None = None
+    ranked = ranked_front(front, objective_names)
     if current is member:
-        for index, front_member in enumerate(front):
-            if front_member is member:
+        for index, item in enumerate(ranked):
+            if item.member is member:
                 member_index = index
+                member_rank = item
+                break
+    if evicted is not None:
+        ranked_with_evicted = ranked_front([*front, evicted], objective_names)
+        for item in ranked_with_evicted:
+            if item.member is evicted:
+                evicted_rank = item
                 break
     return QDArchiveInsertResult(
         cell_id=cell_id,
@@ -125,6 +189,14 @@ def _member_result(
         objective_names=objective_names,
         member_index=member_index,
         front_size=len(front),
+        pareto_rank=member_rank.pareto_rank if member_rank is not None else None,
+        crowding_distance=(
+            member_rank.crowding_distance if member_rank is not None else None
+        ),
+        evicted_candidate_id=evicted.candidate_id if evicted is not None else None,
+        evicted_pareto_rank=(
+            evicted_rank.pareto_rank if evicted_rank is not None else None
+        ),
     )
 
 
@@ -210,10 +282,9 @@ def _insert_pareto(
             front=fronts[cell_id],
         )
 
-    member_key = tuple(member.objectives[name] for name in objective_names)
+    member_key = _objective_key(member, objective_names)
     for existing in front:
-        existing_key = tuple(existing.objectives[name] for name in objective_names)
-        if existing_key == member_key:
+        if _objective_key(existing, objective_names) == member_key:
             return _member_result(
                 cell_id=cell_id,
                 member=member,
@@ -226,40 +297,15 @@ def _insert_pareto(
                 objective_names=objective_names,
                 front=front,
             )
-        if dominates(existing, member, objective_names):
-            return _member_result(
-                cell_id=cell_id,
-                member=member,
-                inserted=False,
-                replaced=False,
-                decision="dominated_rejected",
-                previous=existing,
-                current=existing,
-                removed=None,
-                objective_names=objective_names,
-                front=front,
-            )
 
-    kept = [
-        existing
-        for existing in front
-        if not dominates(member, existing, objective_names)
-    ]
-    removed = [
-        existing
-        for existing in front
-        if not any(existing is kept_member for kept_member in kept)
-    ]
-    kept.append(member)
+    kept = [*front, member]
+    removed: list[ArchiveMember] = []
     evicted = None
     if len(kept) > max_elites_per_cell:
-        evicted = _crowding_eviction(kept, objective_names)
+        evicted = _ranked_eviction(kept, objective_names)
         kept = [existing for existing in kept if existing is not evicted]
         removed.append(evicted)
-    if not kept:
-        del fronts[cell_id]
-    else:
-        fronts[cell_id] = kept
+    fronts[cell_id] = kept
 
     inserted = member is not evicted
     decision = "crowding_evicted" if evicted is not None else "pareto_inserted"
@@ -275,38 +321,51 @@ def _insert_pareto(
         removed=removed,
         objective_names=objective_names,
         front=kept,
+        evicted=evicted,
     )
 
 
-def _crowding_eviction(
-    front: list[ArchiveMember],
+def _crowding_distances(
+    members: list[ArchiveMember],
     objective_names: tuple[str, ...],
-) -> ArchiveMember:
-    distances = [0.0 for _ in front]
+) -> list[float]:
+    if not members:
+        return []
+    distances = [0.0 for _ in members]
     for name in objective_names:
-        ordered = sorted(range(len(front)), key=lambda index: front[index].objectives[name])
+        ordered = sorted(range(len(members)), key=lambda index: members[index].objectives[name])
         distances[ordered[0]] = float("inf")
         distances[ordered[-1]] = float("inf")
-        lower = front[ordered[0]].objectives[name]
-        upper = front[ordered[-1]].objectives[name]
+        lower = members[ordered[0]].objectives[name]
+        upper = members[ordered[-1]].objectives[name]
         if upper == lower:
             continue
         for ordered_index in range(1, len(ordered) - 1):
             front_index = ordered[ordered_index]
             if distances[front_index] == float("inf"):
                 continue
-            previous_value = front[ordered[ordered_index - 1]].objectives[name]
-            next_value = front[ordered[ordered_index + 1]].objectives[name]
+            previous_value = members[ordered[ordered_index - 1]].objectives[name]
+            next_value = members[ordered[ordered_index + 1]].objectives[name]
             distances[front_index] += (next_value - previous_value) / (upper - lower)
+    return distances
+
+
+def _ranked_eviction(
+    front: list[ArchiveMember],
+    objective_names: tuple[str, ...],
+) -> ArchiveMember:
+    ranked = ranked_front(front, objective_names)
+    worst_rank = max(item.pareto_rank for item in ranked)
+    candidates = [item for item in ranked if item.pareto_rank == worst_rank]
     evicted_index = min(
-        range(len(front)),
+        range(len(candidates)),
         key=lambda index: (
-            distances[index],
-            -front[index].insertion_index,
-            front[index].candidate_id,
+            candidates[index].crowding_distance,
+            -candidates[index].member.insertion_index,
+            candidates[index].member.candidate_id,
         ),
     )
-    return front[evicted_index]
+    return candidates[evicted_index].member
 
 
 def _front_stats(fronts: dict[str, list[ArchiveMember]]) -> dict[str, Any]:
@@ -318,6 +377,64 @@ def _front_stats(fronts: dict[str, list[ArchiveMember]]) -> dict[str, Any]:
         "mean_front_size": (total_members / len(sizes)) if sizes else 0.0,
         "max_front_size": max(sizes) if sizes else 0,
     }
+
+
+def _ranked_members(
+    fronts: dict[str, list[ArchiveMember]],
+    objective_names: tuple[str, ...],
+) -> list[tuple[str, RankedArchiveMember]]:
+    return [
+        (cell_id, ranked_member)
+        for cell_id in sorted(fronts)
+        for ranked_member in ranked_front(fronts[cell_id], objective_names)
+    ]
+
+
+class GlobalParetoArchive:
+    """Per-problem read-only final Pareto frontier for archiveable candidates."""
+
+    def __init__(self, objective_names: tuple[str, ...]) -> None:
+        if not objective_names:
+            raise ValueError("GlobalParetoArchive requires objective_names.")
+        self.objective_names = tuple(objective_names)
+        self._members: list[ArchiveMember] = []
+
+    def members(self) -> list[ArchiveMember]:
+        return list(self._members)
+
+    def insert(self, member: ArchiveMember) -> GlobalParetoInsertResult:
+        _validate_objectives(member, self.objective_names)
+        member_key = _objective_key(member, self.objective_names)
+        for existing in self._members:
+            if _objective_key(existing, self.objective_names) == member_key:
+                return GlobalParetoInsertResult(
+                    inserted=False,
+                    reject_reason="duplicate_objectives",
+                    removed_count=0,
+                    archive_size=len(self._members),
+                )
+            if dominates(existing, member, self.objective_names):
+                return GlobalParetoInsertResult(
+                    inserted=False,
+                    reject_reason="dominated",
+                    removed_count=0,
+                    archive_size=len(self._members),
+                )
+
+        kept = [
+            existing
+            for existing in self._members
+            if not dominates(member, existing, self.objective_names)
+        ]
+        removed_count = len(self._members) - len(kept)
+        kept.append(member)
+        self._members = kept
+        return GlobalParetoInsertResult(
+            inserted=True,
+            reject_reason=None,
+            removed_count=removed_count,
+            archive_size=len(self._members),
+        )
 
 
 class GridArchive:
@@ -367,6 +484,9 @@ class GridArchive:
             for cell_id in sorted(self._fronts)
             for member in self._fronts[cell_id]
         ]
+
+    def ranked_members(self) -> list[tuple[str, RankedArchiveMember]]:
+        return _ranked_members(self._fronts, self.objective_names)
 
     def describe_space(self) -> dict[str, Any]:
         """Return a machine-readable description of the current grid geometry."""
@@ -591,6 +711,9 @@ class GridQuantileArchive:
             for cell_id in sorted(self._fronts)
             for member in self._fronts[cell_id]
         ]
+
+    def ranked_members(self) -> list[tuple[str, RankedArchiveMember]]:
+        return _ranked_members(self._fronts, self.objective_names)
 
     def warmup_buffer_size(self) -> int:
         return len(self._warmup_buffer)
@@ -980,6 +1103,9 @@ class CVTArchive:
             for cell_id in sorted(self._fronts)
             for member in self._fronts[cell_id]
         ]
+
+    def ranked_members(self) -> list[tuple[str, RankedArchiveMember]]:
+        return _ranked_members(self._fronts, self.objective_names)
 
     def warmup_buffer_size(self) -> int:
         return len(self._warmup_buffer)

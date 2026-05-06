@@ -8,7 +8,12 @@ from typing import Any
 
 from revolution.algorithm import Heuristic
 from revolution.qd.archive import CVTArchive, GridArchive, GridQuantileArchive
-from revolution.qd.types import ArchiveMember, QDArchiveInsertResult
+from revolution.qd.types import (
+    ArchiveMember,
+    GlobalParetoInsertResult,
+    QDArchiveInsertResult,
+    RankedArchiveMember,
+)
 from revolution.qd.visualization import QDVisualizationArtifacts, write_qd_visualizations
 
 
@@ -65,7 +70,7 @@ def write_legacy_archive_layout(
 def write_archive_cells_csv(
     *,
     path: str | Path,
-    members: list[tuple[str, ArchiveMember]],
+    ranked_members: list[tuple[str, RankedArchiveMember]],
 ) -> None:
     """Write the current archive set in one CSV row per archive member."""
     output_path = Path(path)
@@ -73,11 +78,15 @@ def write_archive_cells_csv(
     fieldnames = [
         "cell_id",
         "member_index",
+        "cell_member_count",
         "front_size",
+        "pareto_rank",
+        "crowding_distance",
         "candidate_id",
         "quality_score",
         "generation",
         "strategy",
+        "parent_arity",
         "code_file_path",
         "g_P",
         "g_A",
@@ -87,33 +96,39 @@ def write_archive_cells_csv(
         "parent_ids_json",
     ]
     front_sizes: dict[str, int] = {}
-    for cell_id, _ in members:
+    for cell_id, _ in ranked_members:
         front_sizes[cell_id] = front_sizes.get(cell_id, 0) + 1
     member_indices: dict[str, int] = {}
     with output_path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
-        for cell_id, member in members:
+        for cell_id, ranked_member in ranked_members:
+            member = ranked_member.member
             candidate = member.payload
             member_index = member_indices.get(cell_id, 0)
             member_indices[cell_id] = member_index + 1
             objectives = dict(member.objectives)
+            parent_ids = getattr(candidate, "parent_ids", [])
             writer.writerow(
                 {
                     "cell_id": cell_id,
                     "member_index": member_index,
+                    "cell_member_count": front_sizes[cell_id],
                     "front_size": front_sizes[cell_id],
+                    "pareto_rank": ranked_member.pareto_rank,
+                    "crowding_distance": ranked_member.crowding_distance,
                     "candidate_id": member.candidate_id,
                     "quality_score": float(member.quality_score),
                     "generation": getattr(candidate, "generation", None),
                     "strategy": getattr(candidate, "strategy", None),
+                    "parent_arity": len(parent_ids),
                     "code_file_path": getattr(candidate, "code_file_path", None),
                     "g_P": float(objectives.get("g_P", 0.0)),
                     "g_A": float(objectives.get("g_A", 0.0)),
                     "g_T": float(objectives.get("g_T", 0.0)),
                     "objectives_json": json.dumps(objectives, sort_keys=True),
                     "descriptors_json": json.dumps(list(member.descriptors)),
-                    "parent_ids_json": json.dumps(getattr(candidate, "parent_ids", [])),
+                    "parent_ids_json": json.dumps(parent_ids),
                 }
             )
 
@@ -130,6 +145,75 @@ def append_archive_history(
         handle.write(json.dumps(snapshot) + "\n")
 
 
+def write_global_pareto_archive_csv(
+    *,
+    path: str | Path,
+    members: list[ArchiveMember],
+    benchmark: str,
+    problem: str,
+) -> None:
+    """Write one row per global Pareto member for this problem run."""
+    output_path = Path(path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = [
+        "candidate_id",
+        "benchmark",
+        "problem",
+        "generation",
+        "strategy",
+        "parent_arity",
+        "code_file_path",
+        "quality_score",
+        "g_P",
+        "g_A",
+        "g_T",
+        "objectives_json",
+        "descriptors_json",
+        "parent_ids_json",
+    ]
+    with output_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for member in members:
+            candidate = member.payload
+            objectives = dict(member.objectives)
+            parent_ids = getattr(candidate, "parent_ids", [])
+            writer.writerow(
+                {
+                    "candidate_id": member.candidate_id,
+                    "benchmark": benchmark,
+                    "problem": problem,
+                    "generation": getattr(candidate, "generation", None),
+                    "strategy": getattr(candidate, "strategy", None),
+                    "parent_arity": len(parent_ids),
+                    "code_file_path": getattr(candidate, "code_file_path", None),
+                    "quality_score": float(member.quality_score),
+                    "g_P": float(objectives.get("g_P", 0.0)),
+                    "g_A": float(objectives.get("g_A", 0.0)),
+                    "g_T": float(objectives.get("g_T", 0.0)),
+                    "objectives_json": json.dumps(objectives, sort_keys=True),
+                    "descriptors_json": json.dumps(list(member.descriptors)),
+                    "parent_ids_json": json.dumps(parent_ids),
+                }
+            )
+
+
+def write_global_pareto_summary(
+    *,
+    path: str | Path,
+    members: list[ArchiveMember],
+    objective_names: tuple[str, ...],
+) -> None:
+    """Write compact global Pareto archive summary statistics."""
+    payload = {
+        "total_global_pareto_members": len(members),
+        "global_pareto_size": len(members),
+        "objective_names": list(objective_names),
+        "candidate_ids": [member.candidate_id for member in members],
+    }
+    Path(path).write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
 def write_qd_summary_files(
     *,
     summary_path: str | Path,
@@ -140,6 +224,7 @@ def write_qd_summary_files(
     ref_ppa_metrics: dict[str, float],
     descriptor_profile: str | None,
     descriptor_axes: tuple[str, ...],
+    global_pareto_size: int,
     descriptor_health_files: tuple[str, str] | None = None,
 ) -> QDVisualizationArtifacts:
     """Write summary JSON files and generate the current QD visualization set."""
@@ -168,6 +253,7 @@ def write_qd_summary_files(
         "total_archive_members": latest.get("total_archive_members", len(archive.members())),
         "mean_front_size": latest.get("mean_front_size", 0.0),
         "max_front_size": latest.get("max_front_size", 0),
+        "global_pareto_size": latest.get("global_pareto_size", global_pareto_size),
         "coverage": latest["coverage"],
         "qd_score": latest["qd_score"],
         "best_quality": latest["best_quality"],
@@ -211,6 +297,7 @@ def write_qd_summary_files(
         "total_archive_members": latest.get("total_archive_members", len(archive.members())),
         "mean_front_size": latest.get("mean_front_size", 0.0),
         "max_front_size": latest.get("max_front_size", 0),
+        "global_pareto_size": latest.get("global_pareto_size", global_pareto_size),
         "coverage": latest["coverage"],
         "qd_score": latest["qd_score"],
         "best_quality": latest["best_quality"],
@@ -306,6 +393,7 @@ def write_candidate_archive_event(
     before_qd_score: float,
     after_qd_score: float,
     space_reference_file: str | None,
+    global_update: GlobalParetoInsertResult | None,
 ) -> None:
     """Write one per-candidate archive-event record for successful QD candidates."""
     output_path = Path(event_path)
@@ -356,8 +444,14 @@ def write_candidate_archive_event(
         "cell_id": insert_result.cell_id,
         "member_index": insert_result.member_index,
         "front_size": insert_result.front_size,
+        "cell_member_count": insert_result.front_size,
+        "pareto_rank": insert_result.pareto_rank,
+        "crowding_distance": insert_result.crowding_distance,
+        "evicted_candidate_id": insert_result.evicted_candidate_id,
+        "evicted_pareto_rank": insert_result.evicted_pareto_rank,
         "assignment": assignment,
         "decision": insert_result.decision,
+        "local_insert_decision": insert_result.decision,
         "inserted": insert_result.inserted,
         "replaced": insert_result.replaced,
         "archive_occupied_before": before_occupied,
@@ -374,6 +468,15 @@ def write_candidate_archive_event(
         ),
         "space_reference_file": space_reference_file,
     }
+    if global_update is not None:
+        payload.update(
+            {
+                "global_archive_inserted": global_update.inserted,
+                "global_archive_reject_reason": global_update.reject_reason,
+                "global_archive_removed_count": global_update.removed_count,
+                "global_archive_size": global_update.archive_size,
+            }
+        )
     output_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 

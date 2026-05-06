@@ -239,7 +239,7 @@ def test_qd_engine_replacement_pushes_previous_elite_into_reservoir(tmp_path, mo
     assert prior in engine.success_pool
 
 
-def test_qd_engine_pareto_mode_samples_every_front_member(tmp_path, monkeypatch):
+def test_qd_engine_pareto_mode_uses_crowded_tournament(tmp_path, monkeypatch):
     cfg = tmp_path / "qd.yaml"
     cfg.write_text(
         "grid_axes:\n"
@@ -293,7 +293,82 @@ def test_qd_engine_pareto_mode_samples_every_front_member(tmp_path, monkeypatch)
     assert snapshot["total_archive_members"] == 2
     assert snapshot["mean_front_size"] == 2.0
     assert snapshot["max_front_size"] == 2
-    assert sampled == {"power", "area"}
+    assert sampled == {"power"}
+
+
+def test_qd_engine_two_parent_probability_controls_arity(tmp_path, monkeypatch):
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_cell_mode="pareto_front",
+        qd_two_parent_probability=0.0,
+    )
+
+    assert engine._success_parent_arity() == 1
+    assert engine.qd_success_parent_requests == 1
+    assert engine.qd_two_parent_attempts == 0
+
+
+def test_qd_engine_two_parent_fallback_counts_underfilled_archive(tmp_path, monkeypatch):
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_cell_mode="pareto_front",
+        qd_two_parent_probability=1.0,
+    )
+
+    assert engine._success_parent_arity() == 1
+    assert engine.qd_two_parent_attempts == 1
+    assert engine.qd_two_parent_fallbacks == 1
+
+
+def test_qd_engine_two_parent_sampling_uses_distinct_cells(tmp_path, monkeypatch):
+    cfg = tmp_path / "qd.yaml"
+    cfg.write_text(
+        "grid_axes:\n"
+        "  g_A:\n"
+        "    bins: 2\n"
+        "    lower_bound: 0.0\n"
+        "    upper_bound: 1.0\n",
+        encoding="utf-8",
+    )
+    problem_spec = ProblemSpec(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        prompt_text="desc",
+        top_module="TopModule",
+        benchmark_root=tmp_path,
+        circuit_type="combinational",
+    )
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        problem_spec=problem_spec,
+        qd_cell_mode="pareto_front",
+        qd_two_parent_probability=1.0,
+        qd_grid_axes=("g_A",),
+        qd_descriptor_file=str(cfg),
+    )
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0}
+    left = Heuristic("left", "module m; endmodule", "", score=0.1, generation=0, status="success")
+    left.id = "left"
+    left.ppa_success = True
+    left.ppa_metrics = {"power": 0.9, "area": 90.0}
+    right = Heuristic("right", "module m; endmodule", "", score=0.9, generation=0, status="success")
+    right.id = "right"
+    right.ppa_success = True
+    right.ppa_metrics = {"power": 0.9, "area": 10.0}
+    engine.success_pool = [left, right]
+    engine._rebuild_archive_from_success_pool()
+
+    random.seed(7)
+    parents = engine._sample_two_success_parents()
+
+    assert {parent.id for parent in parents} == {"left", "right"}
+    assert {
+        engine._cell_id_for_candidate(parent)
+        for parent in parents
+    } == {"0", "1"}
 
 
 def test_qd_engine_rejects_unknown_cell_mode(tmp_path, monkeypatch):

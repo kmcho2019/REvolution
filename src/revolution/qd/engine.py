@@ -24,6 +24,7 @@ from revolution.algorithm import (
 from revolution.prompt_store import safe_format
 from revolution.qd.archive import (
     CVTArchive,
+    GlobalParetoArchive,
     GridArchive,
     GridAxisSpec,
     GridQuantileArchive,
@@ -35,6 +36,8 @@ from revolution.qd.artifacts import (
     write_archive_space_files,
     write_candidate_archive_event,
     write_descriptor_health_files,
+    write_global_pareto_archive_csv,
+    write_global_pareto_summary,
     write_legacy_archive_layout,
     write_qd_summary_files,
 )
@@ -48,9 +51,11 @@ from revolution.qd.scoring import compute_ppa_gains
 from revolution.qd.scheduler import QDBudgetSplit, split_qd_budget
 from revolution.qd.types import (
     ArchiveMember,
+    GlobalParetoInsertResult,
     QDArchiveInsertResult,
     QDCellMode,
     QDObjectiveMode,
+    RankedArchiveMember,
 )
 from revolution.runtime.problem_spec import CircuitType
 from revolution.qd.visualization import write_grid_quantile_visualizations_from_artifacts
@@ -72,6 +77,7 @@ class QDEngine(EoHEngine):
         qd_cell_mode: str = "scalar_elite",
         qd_max_elites_per_cell: int = 1,
         qd_objectives: str = "ppa",
+        qd_two_parent_probability: float = 0.5,
         qd_cvt_warmup_successes: int | None = None,
         qd_grid_quantile_warmup_successes: int = 20,
         qd_descriptor_profile: str | None = None,
@@ -97,9 +103,12 @@ class QDEngine(EoHEngine):
             raise ValueError(f"Unsupported qd_objectives '{qd_objectives}'.")
         if qd_max_elites_per_cell <= 0:
             raise ValueError("qd_max_elites_per_cell must be > 0.")
+        if not 0.0 <= float(qd_two_parent_probability) <= 1.0:
+            raise ValueError("qd_two_parent_probability must be between 0 and 1.")
         self.qd_cell_mode: QDCellMode = cast(QDCellMode, qd_cell_mode)
         self.qd_max_elites_per_cell = int(qd_max_elites_per_cell)
         self.qd_objectives: QDObjectiveMode = cast(QDObjectiveMode, qd_objectives)
+        self.qd_two_parent_probability = float(qd_two_parent_probability)
         self.qd_cvt_warmup_successes = qd_cvt_warmup_successes
         self.qd_grid_quantile_warmup_successes = int(qd_grid_quantile_warmup_successes)
         self.qd_descriptor_profile = qd_descriptor_profile
@@ -118,9 +127,13 @@ class QDEngine(EoHEngine):
             for strategy in self.success_strats
         }
         self.success_archive = self._build_archive()
+        self.global_pareto_archive = self._build_global_archive()
         self.success_reservoir: dict[str, deque[Heuristic]] = {}
         self.qd_generation_history: list[dict[str, Any]] = []
         self.qd_descriptor_observations: list[dict[str, Any]] = []
+        self.qd_success_parent_requests = 0
+        self.qd_two_parent_attempts = 0
+        self.qd_two_parent_fallbacks = 0
         self._archive_insertion_index = 0
 
     def _uses_descriptor_guided_generation(self) -> bool:
@@ -223,6 +236,13 @@ class QDEngine(EoHEngine):
             return self._build_grid_quantile_archive()
         raise ValueError(f"Unsupported qd_archive_type '{self.qd_archive_type}'.")
 
+    def _build_global_archive(self) -> GlobalParetoArchive | None:
+        if self.qd_cell_mode == "pareto_front":
+            return GlobalParetoArchive(self._objective_names())
+        if self.qd_cell_mode == "scalar_elite":
+            return None
+        raise ValueError(f"Unsupported qd_cell_mode '{self.qd_cell_mode}'.")
+
     def _archive_axes(self) -> tuple[str, ...]:
         if self.qd_archive_type == "grid":
             return self.qd_grid_axes
@@ -309,6 +329,7 @@ class QDEngine(EoHEngine):
 
     def _rebuild_archive_from_success_pool(self) -> None:
         self.success_archive = self._build_archive()
+        self.global_pareto_archive = self._build_global_archive()
         self.success_reservoir = {}
         self.qd_descriptor_observations = []
         self._archive_insertion_index = 0
@@ -321,12 +342,14 @@ class QDEngine(EoHEngine):
             before_occupied = self.success_archive.occupied_count()
             before_qd_score = self._archive_qd_score()
             result = self.success_archive.insert(member)
+            global_update = self._insert_global_pareto(member)
             if isinstance(self.success_archive, GridQuantileArchive) and result.decision == "warmup_buffered":
                 self.success_reservoir.setdefault(result.cell_id, deque(maxlen=1)).appendleft(cand)
             self._write_candidate_qd_event(
                 cand,
                 descriptor_tuple=descriptors,
                 insert_result=result,
+                global_update=global_update,
                 before_occupied=before_occupied,
                 after_occupied=self.success_archive.occupied_count(),
                 before_qd_score=before_qd_score,
@@ -346,6 +369,22 @@ class QDEngine(EoHEngine):
 
     def _archive_members(self) -> list[tuple[str, ArchiveMember]]:
         return self.success_archive.members()
+
+    def _archive_ranked_members(self) -> list[tuple[str, RankedArchiveMember]]:
+        return self.success_archive.ranked_members()
+
+    def _insert_global_pareto(
+        self,
+        member: ArchiveMember,
+    ) -> GlobalParetoInsertResult | None:
+        if self.global_pareto_archive is None:
+            return None
+        return self.global_pareto_archive.insert(member)
+
+    def _global_pareto_size(self) -> int:
+        if self.global_pareto_archive is None:
+            return 0
+        return len(self.global_pareto_archive.members())
 
     def _record_reservoir_candidate(self, cell_id: str, candidate: Heuristic) -> None:
         if self.qd_cell_reservoir <= 0:
@@ -379,6 +418,7 @@ class QDEngine(EoHEngine):
         *,
         descriptor_tuple: tuple[float, ...],
         insert_result: QDArchiveInsertResult,
+        global_update: GlobalParetoInsertResult | None,
         before_occupied: int,
         after_occupied: int,
         before_qd_score: float,
@@ -395,6 +435,13 @@ class QDEngine(EoHEngine):
                 "objectives": dict(insert_result.objectives or {}),
                 "cell_id": insert_result.cell_id,
                 "front_size": insert_result.front_size,
+                "cell_member_count": insert_result.front_size,
+                "pareto_rank": insert_result.pareto_rank,
+                "crowding_distance": insert_result.crowding_distance,
+                "parent_arity": len(getattr(candidate, "parent_ids", [])),
+                "global_archive_size": (
+                    global_update.archive_size if global_update is not None else None
+                ),
                 "descriptor_values": {
                     axis: float(value)
                     for axis, value in zip(self._archive_axes(), descriptor_tuple)
@@ -422,6 +469,7 @@ class QDEngine(EoHEngine):
             before_qd_score=before_qd_score,
             after_qd_score=after_qd_score,
             space_reference_file=self._archive_space_json_path(),
+            global_update=global_update,
         )
 
     def _qd_log_dir(self) -> str | None:
@@ -469,6 +517,24 @@ class QDEngine(EoHEngine):
         if log_dir is None:
             return None
         return os.path.join(log_dir, "qd_metrics.json")
+
+    def _global_pareto_archive_path(self) -> str | None:
+        log_dir = self._qd_log_dir()
+        if log_dir is None:
+            return None
+        return os.path.join(log_dir, "global_pareto_archive.csv")
+
+    def _global_pareto_summary_path(self) -> str | None:
+        log_dir = self._qd_log_dir()
+        if log_dir is None:
+            return None
+        return os.path.join(log_dir, "global_pareto_summary.json")
+
+    def _global_pareto_history_path(self) -> str | None:
+        log_dir = self._qd_log_dir()
+        if log_dir is None:
+            return None
+        return os.path.join(log_dir, "global_pareto_history.jsonl")
 
     def _archive_space_json_path(self) -> str | None:
         log_dir = self._qd_log_dir()
@@ -563,6 +629,11 @@ class QDEngine(EoHEngine):
                 total_members / len(front_sizes) if front_sizes else 0.0
             ),
             "max_front_size": max(front_sizes.values()) if front_sizes else 0,
+            "global_pareto_size": self._global_pareto_size(),
+            "success_parent_requests": self.qd_success_parent_requests,
+            "two_parent_attempts": self.qd_two_parent_attempts,
+            "two_parent_fallbacks": self.qd_two_parent_fallbacks,
+            "qd_two_parent_probability": self.qd_two_parent_probability,
             "num_cells": self.success_archive.num_cells,
             "coverage": coverage,
             "qd_score": sum(qualities),
@@ -602,7 +673,7 @@ class QDEngine(EoHEngine):
             return
         write_archive_cells_csv(
             path=path,
-            members=self._archive_members(),
+            ranked_members=self._archive_ranked_members(),
         )
 
     def _append_archive_history(self, snapshot: dict[str, Any]) -> None:
@@ -647,6 +718,7 @@ class QDEngine(EoHEngine):
             ref_ppa_metrics=self.ref_ppa_metrics,
             descriptor_profile=self.qd_descriptor_profile,
             descriptor_axes=self._archive_axes(),
+            global_pareto_size=self._global_pareto_size(),
             descriptor_health_files=descriptor_health_files,
         )
         if space_json_path is not None and space_report_path is not None:
@@ -664,12 +736,47 @@ class QDEngine(EoHEngine):
                     self._qd_log_dir() or os.path.dirname(summary_path)
                 )
 
+    def _write_global_pareto_artifacts(
+        self,
+        snapshot: dict[str, Any] | None,
+    ) -> None:
+        if self.global_pareto_archive is None:
+            return
+        archive_path = self._global_pareto_archive_path()
+        summary_path = self._global_pareto_summary_path()
+        history_path = self._global_pareto_history_path()
+        if archive_path is None or summary_path is None or history_path is None:
+            return
+        members = self.global_pareto_archive.members()
+        write_global_pareto_archive_csv(
+            path=archive_path,
+            members=members,
+            benchmark=self.benchmark_name,
+            problem=self.problem_name,
+        )
+        write_global_pareto_summary(
+            path=summary_path,
+            members=members,
+            objective_names=self._objective_names(),
+        )
+        if snapshot is None:
+            return
+        append_archive_history(
+            path=history_path,
+            snapshot={
+                "generation": snapshot["generation"],
+                "global_pareto_size": len(members),
+                "objective_names": list(self._objective_names()),
+            },
+        )
+
     def _write_qd_artifacts(self, snapshot: dict[str, Any] | None = None) -> None:
         history_path = self._archive_history_path()
         if history_path is not None and not os.path.exists(history_path):
             open(history_path, "a", encoding="utf-8").close()
         self._write_archive_layout()
         self._write_archive_cells()
+        self._write_global_pareto_artifacts(snapshot)
         if snapshot is not None:
             self._append_archive_history(snapshot)
         self._write_qd_summary_files()
@@ -758,15 +865,13 @@ class QDEngine(EoHEngine):
 
     def _sample_success_parents(self, count: int) -> list[Heuristic]:
         if self.qd_cell_mode == "pareto_front":
-            by_cell: dict[str, list[Heuristic]] = defaultdict(list)
-            for cell_id, member in self._archive_members():
-                by_cell[cell_id].append(member.payload)
+            by_cell = self._ranked_success_members_by_cell()
             if by_cell:
                 cell_ids = sorted(by_cell)
                 parents: list[Heuristic] = []
                 for _ in range(count):
                     cell_id = random.choice(cell_ids)
-                    parents.append(random.choice(by_cell[cell_id]))
+                    parents.append(self._crowded_tournament(by_cell[cell_id]))
                 return parents
         success_view = self._success_view()
         if not success_view:
@@ -774,6 +879,56 @@ class QDEngine(EoHEngine):
         base = min(c.score for c in success_view)
         weights = [max(c.score - base + 0.1, 1e-6) for c in success_view]
         return random.choices(success_view, weights=weights, k=count)
+
+    def _ranked_success_members_by_cell(self) -> dict[str, list[RankedArchiveMember]]:
+        by_cell: dict[str, list[RankedArchiveMember]] = defaultdict(list)
+        for cell_id, ranked_member in self._archive_ranked_members():
+            by_cell[cell_id].append(ranked_member)
+        return by_cell
+
+    def _crowded_tournament(
+        self,
+        members: list[RankedArchiveMember],
+    ) -> Heuristic:
+        if len(members) == 1:
+            return cast(Heuristic, members[0].member.payload)
+        contenders = random.sample(members, 2)
+        winner = min(
+            contenders,
+            key=lambda item: (
+                item.pareto_rank,
+                -item.crowding_distance,
+                item.member.insertion_index,
+                item.member.candidate_id,
+            ),
+        )
+        return cast(Heuristic, winner.member.payload)
+
+    def _sample_two_success_parents(self) -> list[Heuristic]:
+        if self.qd_cell_mode != "pareto_front":
+            return self._sample_success_parents(2)
+        by_cell = self._ranked_success_members_by_cell()
+        cell_ids = sorted(by_cell)
+        if len(cell_ids) < 2:
+            return self._sample_success_parents(1)
+        first_cell = random.choice(cell_ids)
+        second_cell = random.choice([cell_id for cell_id in cell_ids if cell_id != first_cell])
+        return [
+            self._crowded_tournament(by_cell[first_cell]),
+            self._crowded_tournament(by_cell[second_cell]),
+        ]
+
+    def _success_parent_arity(self) -> int | None:
+        if self.qd_cell_mode != "pareto_front":
+            return None
+        self.qd_success_parent_requests += 1
+        if random.random() >= self.qd_two_parent_probability:
+            return 1
+        self.qd_two_parent_attempts += 1
+        if self.success_archive.occupied_count() >= 2:
+            return 2
+        self.qd_two_parent_fallbacks += 1
+        return 1
 
     def _descriptor_distance(self, left: Heuristic, right: Heuristic) -> float:
         left_desc = self._descriptor_tuple(left)
@@ -783,6 +938,8 @@ class QDEngine(EoHEngine):
         return sum((lhs - rhs) ** 2 for lhs, rhs in zip(left_desc, right_desc))
 
     def _sample_diverse_success_parents(self) -> list[Heuristic]:
+        if self.qd_cell_mode == "pareto_front":
+            return self._sample_two_success_parents()
         success_view = self._success_view()
         if len(success_view) < 2:
             return self._sample_success_parents(1)
@@ -1084,6 +1241,7 @@ class QDEngine(EoHEngine):
             before_occupied = self.success_archive.occupied_count()
             before_qd_score = self._archive_qd_score()
             result = self.success_archive.insert(member)
+            global_update = self._insert_global_pareto(member)
             if result.inserted:
                 inserted += 1
             if result.replaced:
@@ -1102,6 +1260,7 @@ class QDEngine(EoHEngine):
                 cand,
                 descriptor_tuple=descriptors,
                 insert_result=result,
+                global_update=global_update,
                 before_occupied=before_occupied,
                 after_occupied=after_occupied,
                 before_qd_score=before_qd_score,
@@ -1194,9 +1353,15 @@ class QDEngine(EoHEngine):
         success_total_requests = budget.backfill_budget + budget.refine_budget
         for idx in range(success_total_requests):
             if not self._uses_descriptor_guided_generation():
-                available = list(CLASSIC_SUCCESS_STRATEGIES)
-                if len(self.success_pool) < 2 and "C-F" in available:
-                    available.remove("C-F")
+                arity = self._success_parent_arity()
+                if arity == 2:
+                    available = ["C-F"]
+                elif arity == 1:
+                    available = ["M-S", "M-E", "M-R", "M-I"]
+                else:
+                    available = list(CLASSIC_SUCCESS_STRATEGIES)
+                    if len(self.success_pool) < 2 and "C-F" in available:
+                        available.remove("C-F")
                 selected_name, prob_dist = self._select_strategy(
                     "success",
                     available,
@@ -1206,19 +1371,29 @@ class QDEngine(EoHEngine):
                     continue
                 strat_name = selected_name
                 success_selected.add(strat_name)
-                parents = self._sample_success_parents(2 if strat_name == "C-F" else 1)
+                parents = (
+                    self._sample_two_success_parents()
+                    if strat_name == "C-F"
+                    else self._sample_success_parents(1)
+                )
                 if not parents:
                     break
-                mode = self._phase_mode("refine")
+                mode = self._phase_mode("crossover" if strat_name == "C-F" else "refine")
                 for key, value in prob_dist.items():
                     strategy_avg_selection_probabilities["success_pool"][key] = (
                         strategy_avg_selection_probabilities["success_pool"].get(key, 0.0)
                         + value
                     )
             elif budget.phase == "fill" or idx < budget.backfill_budget:
-                available: list[EvolStrategyMethodSuccess] = ["M-T", "M-E"]
-                if len(self.success_pool) > 1:
-                    available.append("C-D")
+                arity = self._success_parent_arity()
+                if arity is None:
+                    available = ["M-T", "M-E"]
+                    if len(self.success_pool) > 1:
+                        available.append("C-D")
+                elif arity == 2:
+                    available: list[EvolStrategyMethodSuccess] = ["C-D"]
+                else:
+                    available = ["M-T", "M-E"]
                 selected_name, prob_dist = self._select_strategy(
                     "success",
                     available,
@@ -1242,16 +1417,28 @@ class QDEngine(EoHEngine):
                         + value
                     )
             else:
-                parents = self._sample_success_parents(
-                    2
-                    if idx == success_total_requests - 1 and len(self.success_pool) > 1
-                    else 1
-                )
+                arity = self._success_parent_arity()
+                if arity is None:
+                    parent_count = (
+                        2
+                        if idx == success_total_requests - 1 and len(self.success_pool) > 1
+                        else 1
+                    )
+                    parents = self._sample_success_parents(parent_count)
+                elif arity == 2:
+                    parents = self._sample_two_success_parents()
+                else:
+                    parents = self._sample_success_parents(1)
                 if not parents:
                     break
-                available: list[EvolStrategyMethodSuccess] = ["M-S", "M-R", "M-I"]
-                if len(self.success_pool) > 1:
-                    available.append("C-F")
+                if arity is None:
+                    available = ["M-S", "M-R", "M-I"]
+                    if len(self.success_pool) > 1:
+                        available.append("C-F")
+                elif arity == 2:
+                    available = ["C-F"]
+                else:
+                    available = ["M-S", "M-R", "M-I"]
                 selected_name, prob_dist = self._select_strategy(
                     "success",
                     available,

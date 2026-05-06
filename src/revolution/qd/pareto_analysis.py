@@ -8,7 +8,10 @@ from typing import Any
 
 
 EPSILON = 1e-12
-IGNORED_SUMMARY_FILENAMES = {"archive_summary.json"}
+IGNORED_SUMMARY_FILENAMES = {
+    "archive_summary.json",
+    "global_pareto_summary.json",
+}
 
 
 @dataclass(frozen=True)

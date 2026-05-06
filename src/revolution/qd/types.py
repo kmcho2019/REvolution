@@ -34,6 +34,25 @@ class ArchiveMember:
 
 
 @dataclass(frozen=True)
+class RankedArchiveMember:
+    """Transient local NSGA-II view for one archive member."""
+
+    member: ArchiveMember
+    pareto_rank: int
+    crowding_distance: float
+
+
+@dataclass(frozen=True)
+class GlobalParetoInsertResult:
+    """Describe how one member interacted with the global Pareto archive."""
+
+    inserted: bool
+    reject_reason: str | None
+    removed_count: int
+    archive_size: int
+
+
+@dataclass(frozen=True)
 class QDArchiveInsertResult:
     """Describe how one successful candidate interacted with the archive."""
 
@@ -53,6 +72,10 @@ class QDArchiveInsertResult:
     objective_names: tuple[str, ...] = ()
     member_index: int | None = None
     front_size: int | None = None
+    pareto_rank: int | None = None
+    crowding_distance: float | None = None
+    evicted_candidate_id: str | None = None
+    evicted_pareto_rank: int | None = None
 
 
 class QDArchive(Protocol):
@@ -66,6 +89,8 @@ class QDArchive(Protocol):
     def entries(self) -> dict[str, ArchiveMember]: ...
 
     def members(self) -> list[tuple[str, ArchiveMember]]: ...
+
+    def ranked_members(self) -> list[tuple[str, RankedArchiveMember]]: ...
 
     def cell_id_for(self, descriptors: tuple[float, ...]) -> str: ...
 

@@ -3,6 +3,7 @@ import datetime
 import json
 import multiprocessing
 import os
+import random
 import sys
 import time
 import traceback
@@ -406,6 +407,7 @@ def _build_backend(
             qd_cell_mode=args.qd_cell_mode,
             qd_max_elites_per_cell=args.qd_max_elites_per_cell,
             qd_objectives=args.qd_objectives,
+            qd_two_parent_probability=args.qd_two_parent_probability,
             qd_neighbor_k=args.qd_neighbor_k,
             qd_cvt_warmup_successes=args.qd_cvt_warmup_successes,
             qd_grid_quantile_warmup_successes=args.qd_grid_quantile_warmup_successes,
@@ -563,6 +565,7 @@ def run_problem_worker(args_tuple: tuple[str, str, argparse.Namespace, int]):
     task_seed = _derive_seed(args.seed, task_index)
     if task_seed is not None:
         os.environ["PYTHONHASHSEED"] = str(task_seed)
+        random.seed(task_seed)
 
     model_name_cleaned = args.model_name.replace("/", "_")
     effective_save_path = _effective_save_path(args)
@@ -885,6 +888,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         default="ppa",
         choices=["ppa"],
     )
+    parser.add_argument("--qd_two_parent_probability", type=float, default=0.5)
     parser.add_argument("--qd_neighbor_k", type=int, default=8)
     parser.add_argument("--qd_cvt_warmup_successes", type=int, default=None)
     parser.add_argument("--qd_grid_quantile_warmup_successes", type=int, default=20)

@@ -19,7 +19,10 @@ sys.path.insert(
 from revolution.qd.pareto_analysis import collect_backend_problem_pareto  # noqa: E402
 
 
-IGNORED_SUMMARY_FILENAMES = {"archive_summary.json"}
+IGNORED_SUMMARY_FILENAMES = {
+    "archive_summary.json",
+    "global_pareto_summary.json",
+}
 SUCCESS_RATE_KEYS = ("accumulated_success_rates", "success_rates")
 
 

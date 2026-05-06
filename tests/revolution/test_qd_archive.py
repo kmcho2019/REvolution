@@ -6,6 +6,7 @@ import pytest
 
 from revolution.qd.archive import (
     CVTArchive,
+    GlobalParetoArchive,
     GridArchive,
     GridAxisSpec,
     GridQuantileArchive,
@@ -144,7 +145,7 @@ def test_pareto_dominance_ignores_timing_for_combinational_objectives():
     assert dominates(left, right, ("g_P", "g_A")) is True
 
 
-def test_pareto_archive_rejects_dominated_member():
+def test_pareto_archive_retains_dominated_member_until_capacity():
     archive = GridArchive(
         [GridAxisSpec(name="g_A", bins=1, lower_bound=0.0, upper_bound=1.0)],
         cell_mode="pareto_front",
@@ -168,12 +169,16 @@ def test_pareto_archive_rejects_dominated_member():
     )
 
     assert first.inserted is True
-    assert second.inserted is False
-    assert second.decision == "dominated_rejected"
-    assert [member.candidate_id for _, member in archive.members()] == ["strong"]
+    assert second.inserted is True
+    assert second.decision == "pareto_inserted"
+    assert second.pareto_rank == 2
+    assert [member.candidate_id for _, member in archive.members()] == [
+        "strong",
+        "weak",
+    ]
 
 
-def test_pareto_archive_removes_dominated_members_without_quality_score():
+def test_pareto_archive_keeps_dominated_members_without_quality_score():
     archive = GridArchive(
         [GridAxisSpec(name="g_A", bins=1, lower_bound=0.0, upper_bound=1.0)],
         cell_mode="pareto_front",
@@ -197,8 +202,14 @@ def test_pareto_archive_removes_dominated_members_without_quality_score():
     )
 
     assert result.inserted is True
-    assert result.replaced is True
-    assert archive.members()[0][1].candidate_id == "strong"
+    assert result.replaced is False
+    assert {member.candidate_id for _, member in archive.members()} == {
+        "weak",
+        "strong",
+    }
+    ranked = archive.ranked_members()
+    ranks = {item.member.candidate_id: item.pareto_rank for _, item in ranked}
+    assert ranks == {"strong": 1, "weak": 2}
 
 
 def test_pareto_archive_keeps_non_dominated_members():
@@ -272,6 +283,55 @@ def test_pareto_archive_crowding_eviction_preserves_extremes():
     assert any(member.objectives["g_P"] == 1.0 for member in members)
 
 
+def test_pareto_archive_overflow_culls_worst_rank():
+    archive = GridArchive(
+        [GridAxisSpec(name="g_A", bins=1, lower_bound=0.0, upper_bound=1.0)],
+        cell_mode="pareto_front",
+        max_elites_per_cell=2,
+        objective_names=("g_P", "g_A"),
+    )
+
+    _insert(archive, "rank-1", (0.5,), 0.1, objectives={"g_P": 0.9, "g_A": 0.9})
+    _insert(archive, "rank-2", (0.5,), 0.2, objectives={"g_P": 0.5, "g_A": 0.5})
+    evicted = _insert(
+        archive,
+        "rank-3",
+        (0.5,),
+        0.3,
+        objectives={"g_P": 0.1, "g_A": 0.1},
+    )
+
+    assert evicted.inserted is False
+    assert evicted.decision == "crowding_evicted"
+    assert evicted.evicted_candidate_id == "rank-3"
+    assert evicted.evicted_pareto_rank == 3
+    assert {member.candidate_id for _, member in archive.members()} == {
+        "rank-1",
+        "rank-2",
+    }
+
+
+def test_global_pareto_archive_tracks_distinct_non_dominated_members():
+    archive = GlobalParetoArchive(("g_P", "g_A"))
+    weak = _member("weak", (0.5,), 0.1, objectives={"g_P": 0.1, "g_A": 0.1})
+    power = _member("power", (0.5,), 0.2, objectives={"g_P": 0.9, "g_A": 0.1})
+    area = _member("area", (0.5,), 0.3, objectives={"g_P": 0.1, "g_A": 0.9})
+    duplicate = _member("dupe", (0.5,), 0.4, objectives={"g_P": 0.9, "g_A": 0.1})
+
+    first = archive.insert(weak)
+    second = archive.insert(power)
+    third = archive.insert(area)
+    fourth = archive.insert(duplicate)
+
+    assert first.inserted is True
+    assert second.inserted is True
+    assert second.removed_count == 1
+    assert third.inserted is True
+    assert fourth.inserted is False
+    assert fourth.reject_reason == "duplicate_objectives"
+    assert {member.candidate_id for member in archive.members()} == {"power", "area"}
+
+
 def test_pareto_archive_cells_csv_writes_one_row_per_member(tmp_path):
     archive = GridArchive(
         [GridAxisSpec(name="g_A", bins=1, lower_bound=0.0, upper_bound=1.0)],
@@ -284,7 +344,7 @@ def test_pareto_archive_cells_csv_writes_one_row_per_member(tmp_path):
     _insert(archive, "area", (0.5,), 0.9, objectives={"g_P": 0.1, "g_A": 0.9})
     write_archive_cells_csv(
         path=tmp_path / "archive_cells.csv",
-        members=archive.members(),
+        ranked_members=archive.ranked_members(),
     )
 
     with (tmp_path / "archive_cells.csv").open(encoding="utf-8", newline="") as handle:
@@ -294,7 +354,9 @@ def test_pareto_archive_cells_csv_writes_one_row_per_member(tmp_path):
     assert len(rows) == 2
     assert {row["candidate_id"] for row in rows} == {"power", "area"}
     assert {int(row["front_size"]) for row in rows} == {2}
+    assert {int(row["cell_member_count"]) for row in rows} == {2}
     assert {int(row["member_index"]) for row in rows} == {0, 1}
+    assert {int(row["pareto_rank"]) for row in rows} == {1}
     assert all(json.loads(row["objectives_json"]) for row in rows)
     assert space["occupied_cells"] == 1
     assert space["total_archive_members"] == 2

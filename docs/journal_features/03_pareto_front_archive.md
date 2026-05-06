@@ -38,11 +38,6 @@ The journal target mode is:
 --qd_grid_quantile_warmup_successes 8
 ```
 
-The original 75/25 one-parent/two-parent idea is reproduced with:
-
-```text
---qd_two_parent_probability 0.25
-```
 
 ## Motivation
 
@@ -250,8 +245,6 @@ Rules:
 - valid range is `0.0 <= qd_two_parent_probability <= 1.0`;
 - one-parent probability is `1.0 - qd_two_parent_probability`;
 - default is `0.5`;
-- the original 75/25 architecture is expressed as
-  `qd_two_parent_probability=0.25`;
 - the value applies only to updated `pareto_front` QD success-parent
   generation; scalar behavior remains unchanged;
 - the value is sampled once per candidate reproduction attempt;
@@ -482,7 +475,6 @@ against classic in the declared final run, the goal remains open.
 | Archiveable candidate definition? | Functional pass, synthesis/PPA pass, complete active objectives. |
 | `grid_quantile` warm-up global handling? | Warm-up successes enter the global archive once archiveable. |
 | Operator default? | 50/50 via `qd_two_parent_probability=0.5`. |
-| Original 75/25 setting? | `qd_two_parent_probability=0.25`. |
 | Operator scope? | Updated `pareto_front` QD only; scalar behavior unchanged. |
 | Operator sampling unit? | Per candidate reproduction attempt. |
 | RNG source? | Existing seeded run RNG. |
@@ -1094,6 +1086,7 @@ modes:
     qd_cell_mode: pareto_front
     qd_max_elites_per_cell: 5
     qd_objectives: ppa
+    qd_two_parent_probability: 0.5
     seed: 42
 ```
 
@@ -1138,6 +1131,7 @@ The manifest must show:
 - `mode.grid_quantile_pareto_journal_bd.qd_cell_mode=pareto_front`.
 - `mode.grid_quantile_pareto_journal_bd.qd_max_elites_per_cell=5`.
 - `mode.grid_quantile_pareto_journal_bd.qd_objectives=ppa`.
+- `mode.grid_quantile_pareto_journal_bd.qd_two_parent_probability=0.5`.
 
 After the run, generate the same report family as Phase 02:
 

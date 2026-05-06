@@ -73,6 +73,86 @@ def _dominates(
     return greater_or_equal and strictly_greater
 
 
+def _local_ranks(
+    members: list[dict[str, Any]],
+    objective_names: list[str],
+) -> dict[str, int]:
+    remaining = list(members)
+    ranks: dict[str, int] = {}
+    rank = 1
+    while remaining:
+        current = [
+            member
+            for member in remaining
+            if not any(
+                other is not member
+                and _dominates(other["objectives"], member["objectives"], objective_names)
+                for other in remaining
+            )
+        ]
+        for member in current:
+            ranks[member["candidate_id"]] = rank
+        remaining = [member for member in remaining if member not in current]
+        rank += 1
+    return ranks
+
+
+def _validate_global_archive(
+    *,
+    problem_root: Path,
+    objective_names: list[str],
+) -> list[str]:
+    errors: list[str] = []
+    archive_path = problem_root / "global_pareto_archive.csv"
+    summary_path = problem_root / "global_pareto_summary.json"
+    if not archive_path.is_file():
+        errors.append("missing global_pareto_archive.csv")
+        rows: list[dict[str, str]] = []
+    else:
+        rows = _csv_rows(archive_path)
+    if not summary_path.is_file():
+        errors.append("missing global_pareto_summary.json")
+        summary: dict[str, Any] = {}
+    else:
+        summary = _load_json(summary_path)
+
+    summary_count = int(summary.get("total_global_pareto_members", -1))
+    if rows and len(rows) != summary_count:
+        errors.append("global archive row count does not match summary")
+
+    members: list[dict[str, Any]] = []
+    seen_keys: set[tuple[float, ...]] = set()
+    for row in rows:
+        objectives = json.loads(row.get("objectives_json") or "{}")
+        assert isinstance(objectives, dict)
+        missing = [name for name in objective_names if name not in objectives]
+        if missing:
+            errors.append(f"{row['candidate_id']} missing global objectives {missing}")
+            continue
+        key = tuple(float(objectives[name]) for name in objective_names)
+        if key in seen_keys:
+            errors.append("global archive contains duplicate objective vectors")
+        seen_keys.add(key)
+        members.append(
+            {
+                "candidate_id": row["candidate_id"],
+                "objectives": {name: float(objectives[name]) for name in objective_names},
+            }
+        )
+
+    for left_index, left in enumerate(members):
+        for right in members[left_index + 1 :]:
+            if _dominates(left["objectives"], right["objectives"], objective_names):
+                errors.append(
+                    f"global {left['candidate_id']} dominates {right['candidate_id']}"
+                )
+            if _dominates(right["objectives"], left["objectives"], objective_names):
+                errors.append(
+                    f"global {right['candidate_id']} dominates {left['candidate_id']}"
+                )
+    return errors
+
+
 def _validate_problem(
     *,
     problem_root: Path,
@@ -130,6 +210,8 @@ def _validate_problem(
             {
                 "candidate_id": row["candidate_id"],
                 "front_size": int(row.get("front_size") or 0),
+                "cell_member_count": int(row.get("cell_member_count") or row.get("front_size") or 0),
+                "pareto_rank": int(row.get("pareto_rank") or 0),
                 "objectives": {name: float(objectives[name]) for name in objective_names if name in objectives},
             }
         )
@@ -148,18 +230,25 @@ def _validate_problem(
         reported_sizes = {member["front_size"] for member in members}
         if reported_sizes != {len(members)}:
             errors.append(f"{cell_id} front_size values do not match cell row count")
+        reported_counts = {member["cell_member_count"] for member in members}
+        if reported_counts != {len(members)}:
+            errors.append(f"{cell_id} cell_member_count values do not match cell row count")
         objective_keys = {
             tuple(member["objectives"].get(name) for name in objective_names)
             for member in members
         }
         if len(objective_keys) != len(members):
             errors.append(f"{cell_id} contains duplicate objective vectors")
-        for left_index, left in enumerate(members):
-            for right in members[left_index + 1 :]:
-                if _dominates(left["objectives"], right["objectives"], objective_names):
-                    errors.append(f"{left['candidate_id']} dominates {right['candidate_id']} in {cell_id}")
-                if _dominates(right["objectives"], left["objectives"], objective_names):
-                    errors.append(f"{right['candidate_id']} dominates {left['candidate_id']} in {cell_id}")
+        recomputed = _local_ranks(members, objective_names)
+        for member in members:
+            if member["pareto_rank"] < 1:
+                errors.append(f"{member['candidate_id']} has invalid pareto_rank")
+                continue
+            expected_rank = recomputed.get(member["candidate_id"])
+            if member["pareto_rank"] != expected_rank:
+                errors.append(
+                    f"{member['candidate_id']} pareto_rank mismatch in {cell_id}"
+                )
 
     if history:
         latest = history[-1]
@@ -169,6 +258,15 @@ def _validate_problem(
             errors.append("latest history occupied_cells mismatch")
         if int(latest.get("max_front_size", -1)) != summary_max_front:
             errors.append("latest history max_front_size mismatch")
+        if int(latest.get("global_pareto_size", -1)) < 0:
+            errors.append("latest history missing global_pareto_size")
+
+    errors.extend(
+        _validate_global_archive(
+            problem_root=problem_root,
+            objective_names=objective_names,
+        )
+    )
 
     return {
         "benchmark": benchmark,
@@ -193,6 +291,30 @@ def _mode_has_all_problems(
         if _problem_root(run_root, mode, item["benchmark"], item["problem"]) is None:
             missing.append(f"{item['benchmark']}/{item['problem']}")
     return not missing, missing
+
+
+def _problem_has_verified_synthesis(problem_root: Path) -> bool:
+    archive_summary = problem_root / "archive_summary.json"
+    if archive_summary.is_file():
+        payload = _load_json(archive_summary)
+        return int(payload.get("total_archive_members", 0) or 0) > 0
+
+    summary_paths = [
+        path
+        for path in problem_root.glob("*_summary.json")
+        if path.name != "archive_summary.json"
+    ]
+    for path in summary_paths:
+        payload = _load_json(path)
+        if payload.get("status") == "success":
+            return True
+        if payload.get("best_code_path") or payload.get("best_report_path"):
+            return True
+        if payload.get("best_score") is not None:
+            return True
+        if int(payload.get("synthesis_success_count", 0) or 0) > 0:
+            return True
+    return False
 
 
 def _write_report(path: Path, payload: dict[str, Any]) -> None:
@@ -284,8 +406,27 @@ def main(argv: list[str] | None = None) -> int:
         (int(problem["max_front_size"]) for problem in problems),
         default=0,
     )
-    if args.acceptance_hard_subset and max_front_size_seen <= 1:
-        acceptance_errors.append("no Pareto run produced max_front_size > 1")
+    if args.acceptance_hard_subset:
+        for item in expected:
+            classic_root = _problem_root(
+                args.run_root,
+                args.classic_mode,
+                item["benchmark"],
+                item["problem"],
+            )
+            pareto_root = _problem_root(
+                args.run_root,
+                args.pareto_qd_mode,
+                item["benchmark"],
+                item["problem"],
+            )
+            if classic_root is None or pareto_root is None:
+                continue
+            if _problem_has_verified_synthesis(classic_root) and not _problem_has_verified_synthesis(pareto_root):
+                acceptance_errors.append(
+                    "classic solved but Pareto QD did not: "
+                    f"{item['benchmark']}/{item['problem']}"
+                )
 
     problem_invalid_count = sum(1 for problem in problems if not problem["valid"])
     problem_error_count = sum(len(problem["errors"]) for problem in problems)

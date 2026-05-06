@@ -28,6 +28,7 @@ def _write_problem(path: Path, rows: list[dict[str, float]]) -> None:
         "total_archive_members": len(rows),
         "max_elites_per_cell": 5,
         "max_front_size": len(rows),
+        "global_pareto_size": len(rows),
     }
     (problem_root / "archive_summary.json").write_text(
         json.dumps(summary, indent=2),
@@ -37,6 +38,7 @@ def _write_problem(path: Path, rows: list[dict[str, float]]) -> None:
         "occupied_cells": 1,
         "total_archive_members": len(rows),
         "max_front_size": len(rows),
+        "global_pareto_size": len(rows),
     }
     (problem_root / "archive_history.jsonl").write_text(json.dumps(history) + "\n", encoding="utf-8")
     with (problem_root / "archive_cells.csv").open("w", encoding="utf-8", newline="") as handle:
@@ -45,7 +47,10 @@ def _write_problem(path: Path, rows: list[dict[str, float]]) -> None:
             fieldnames=[
                 "cell_id",
                 "member_index",
+                "cell_member_count",
                 "front_size",
+                "pareto_rank",
+                "crowding_distance",
                 "candidate_id",
                 "quality_score",
                 "g_P",
@@ -62,7 +67,10 @@ def _write_problem(path: Path, rows: list[dict[str, float]]) -> None:
                 {
                     "cell_id": "0,0,0",
                     "member_index": index,
+                    "cell_member_count": len(rows),
                     "front_size": len(rows),
+                    "pareto_rank": row.get("pareto_rank", 1),
+                    "crowding_distance": "inf",
                     "candidate_id": f"cand-{index}",
                     "quality_score": row["quality_score"],
                     "g_P": row["g_P"],
@@ -72,6 +80,44 @@ def _write_problem(path: Path, rows: list[dict[str, float]]) -> None:
                     "descriptors_json": "[1.0, 0.0, 2.0]",
                 }
             )
+    global_rows = [
+        row
+        for row in rows
+        if not any(
+            other is not row
+            and other["g_P"] >= row["g_P"]
+            and other["g_A"] >= row["g_A"]
+            and (other["g_P"] > row["g_P"] or other["g_A"] > row["g_A"])
+            for other in rows
+        )
+    ]
+    with (problem_root / "global_pareto_archive.csv").open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=[
+                "candidate_id",
+                "benchmark",
+                "problem",
+                "objectives_json",
+                "descriptors_json",
+            ],
+        )
+        writer.writeheader()
+        for index, row in enumerate(global_rows):
+            objectives = {"g_P": row["g_P"], "g_A": row["g_A"]}
+            writer.writerow(
+                {
+                    "candidate_id": f"cand-{index}",
+                    "benchmark": "RTLLM",
+                    "problem": "Prob004_adder_8bit",
+                    "objectives_json": json.dumps(objectives),
+                    "descriptors_json": "[1.0, 0.0, 2.0]",
+                }
+            )
+    (problem_root / "global_pareto_summary.json").write_text(
+        json.dumps({"total_global_pareto_members": len(global_rows)}),
+        encoding="utf-8",
+    )
 
 
 def _write_classic_problem(path: Path) -> None:
@@ -143,13 +189,13 @@ def test_validate_pareto_front_run_accepts_classic_problem_summary(tmp_path):
     assert payload["acceptance_error_count"] == 0
 
 
-def test_validate_pareto_front_run_rejects_dominated_same_cell_member(tmp_path):
+def test_validate_pareto_front_run_accepts_ranked_dominated_member(tmp_path):
     subset_config = _subset_config(tmp_path)
     _write_problem(
         tmp_path,
         [
-            {"quality_score": 0.1, "g_P": 0.9, "g_A": 0.9},
-            {"quality_score": 0.9, "g_P": 0.1, "g_A": 0.1},
+            {"quality_score": 0.1, "g_P": 0.9, "g_A": 0.9, "pareto_rank": 1},
+            {"quality_score": 0.9, "g_P": 0.1, "g_A": 0.1, "pareto_rank": 2},
         ],
     )
 
@@ -165,6 +211,5 @@ def test_validate_pareto_front_run_rejects_dominated_same_cell_member(tmp_path):
     )
 
     payload = json.loads((tmp_path / "pareto_front_validation.json").read_text(encoding="utf-8"))
-    assert exit_code == 1
-    assert payload["failure_count"] > 0
-    assert "dominates" in json.dumps(payload)
+    assert exit_code == 0
+    assert payload["failure_count"] == 0

@@ -113,7 +113,7 @@ def _write_problem(
     append_archive_history(path=root / "archive_history.jsonl", snapshot=history[0])
     write_archive_cells_csv(
         path=root / "archive_cells.csv",
-        members=archive.members(),
+        ranked_members=archive.ranked_members(),
     )
     artifacts = write_qd_summary_files(
         summary_path=root / "archive_summary.json",
@@ -124,6 +124,7 @@ def _write_problem(
         ref_ppa_metrics={"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
         descriptor_profile="journal_logic_ff_width_3d",
         descriptor_axes=("logic_depth", "ff_depth", "comb_width_log"),
+        global_pareto_size=0,
     )
     write_archive_space_files(
         json_path=root / "archive_space.json",
