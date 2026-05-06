@@ -548,6 +548,165 @@ has initialized grid-quantile boundaries.
 
 ## Viewer Requirements
 
+### Renderer Fidelity Requirement
+
+The first implementation attempt proved that a data-correct but flat 2D canvas
+viewer is not sufficient for this phase. The accepted viewer must transfer the
+visual and interaction intent of the demo:
+
+```text
+docs/journal_features/03_1_pareto_visualization_resources/
+ppa_archive_linked_view_timeline_demo_20260506_1631_v4.html
+```
+
+and must not regress the already useful grid-quantile occupancy viewer style:
+
+```text
+grid_quantile_occupancy_evolution.html
+```
+
+The exporter/data contract can remain, but the viewer renderer must be treated
+as a proper 3D interactive visualization, not a placeholder chart. In
+particular:
+
+- sequential PPA views must be rendered as a real 3D scene with perspective
+  camera controls;
+- 3D archive views must render cells, occupied cells, and sample markers in a
+  real 3D archive coordinate system;
+- layer explosion must move actual archive layers in 3D, not apply a small 2D
+  screen-space offset;
+- perspective lock must synchronize real archive camera state between compare
+  panes while keeping the PPA camera independent;
+- auto-rotate must visibly rotate the 3D scene;
+- archive-cell hover and layer-panel hover must highlight the corresponding
+  PPA samples;
+- PPA-point hover must highlight the corresponding archive cell when projected;
+- validation must inspect browser scene/debug state and interaction effects,
+  not only look for text tokens or nonblank screenshots.
+
+Use a renderer structure close to the demo. A pinned Three.js asset is the
+preferred first target because it provides the required camera, raycast, and
+scene primitives without a custom frontend build. Strict artifacts should be
+self-contained with local or inline assets. A CDN-backed artifact is acceptable
+only as a separate opt-in demo mode.
+
+Reference screenshots captured for visual comparison:
+
+```text
+exp/visualization_reference_screenshots/demo_v4_1440x1000.png
+exp/visualization_reference_screenshots/existing_grid_quantile_prob098_1440x1000.png
+exp/visualization_reference_screenshots/existing_grid_quantile_prob135_1440x1000.png
+exp/visualization_reference_screenshots/existing_grid_quantile_prob151_1440x1000.png
+exp/visualization_reference_screenshots/current_qd_ppa_index_1440x1000.png
+```
+
+The accepted viewer should be visually closer to the demo and existing
+grid-quantile screenshots than the current flat `index.html`: the visualization
+panes should dominate the first viewport, the archive and PPA scenes should
+carry the meaning, and configuration text should not compete with the data.
+
+Use `Prob135_m2014_q6b` as the stronger grid-quantile reference because it has
+a 3 x 3 x 1 effective archive with visible occupied cell volumes, quantile
+labels, sample markers, axes, and z-slice panel:
+
+```text
+exp/journal_pareto_front_hard_subset/20260506_040658/
+grid_quantile_pareto_journal_bd/openai-gpt-oss-120b/
+VerilogEval-Spec-to-RTL/Prob135_m2014_q6b/
+grid_quantile_occupancy_evolution.html
+```
+
+The accepted archive pane for the linked viewer does not need to be pixel
+identical to that file, but it must preserve the same information density and
+spatial clarity: visible archive geometry, readable axes, quantile/bin
+landmarks, occupied cell volumes or markers, sample markers, layer panel, and
+current generation/final-state context.
+
+Use `Prob151_review2015_fsm` as the required full-3D grid-quantile reference
+because none of the three journal BD axes collapse:
+
+```text
+exp/journal_pareto_front_hard_subset/20260506_040658/
+grid_quantile_pareto_journal_bd/openai-gpt-oss-120b/
+VerilogEval-Spec-to-RTL/Prob151_review2015_fsm/
+grid_quantile_occupancy_evolution.html
+```
+
+Its source viewer reports:
+
+```text
+visualization_mode = 3d
+effective_shape = [3, 4, 4]
+render_shape = [3, 4, 4]
+collapsed_axes = []
+slice_count = 4
+```
+
+The linked viewer must include a matching exported problem state and render it
+as a real 3D archive scene. This is the hard gate for proving that the archive
+renderer handles non-collapsed 3D grid-quantile archives, not only 2D slabs or
+nearly collapsed examples.
+
+### Required Validation Example Matrix
+
+Final validation must exercise multiple representative problems, not just one
+happy-path dataset. At minimum, the Playwright validation and visual parity
+report must include these named cases:
+
+| Case | Required problem | Required proof |
+| --- | --- | --- |
+| Sequential 3D PPA | `RTLLM/Prob015_multi_pipe_8bit` or another sequential RTLLM problem with valid timing data | PPA pane renders a real 3D point cloud with area, effective clock period, and power on distinct axes. |
+| Sequential full-3D archive | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | Archive pane renders non-collapsed `grid_quantile` geometry with all three journal BD axes active and four `ff_depth` slices. |
+| Combinational 2D PPA | `RTLLM/Prob004_adder_8bit` or another combinational RTLLM problem | PPA pane renders a 2D scatter using area and power only; `eff_clk_period` is not required or fabricated. |
+| Combinational projected archive | `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` | Archive pane renders the 3 x 3 x 1 grid-quantile slab with collapsed `ff_depth` clearly labeled and full bin details available through expansion. |
+
+The validator may choose additional examples from the manifest, but it must
+not replace the matrix above with a single sequential or single combinational
+case. The final visual parity report must include screenshots and browser
+debug metadata for every row in this matrix.
+
+### Control Density And Advanced Details
+
+The current generated `index.html` exposes too many raw settings at once. The
+accepted viewer must keep the default UI focused on the main inspection task
+and move precise configuration details into collapsed panels.
+
+Default visible controls:
+
+- problem selector;
+- single/compare segmented control;
+- technique selector or pair selector;
+- compact timeline controls: play/pause, previous, next, final snapshot,
+  generation slider, speed;
+- compact camera/action controls with icon buttons and tooltips: perspective
+  lock, auto-rotate, explode layers, reset;
+- PPA coordinate segmented control: `raw`, `improvement`, `normalized`;
+- PPA color and rank-filter segmented controls in the PPA pane header or
+  adjacent compact toolbar.
+
+Default collapsed controls/details:
+
+- rank scope;
+- sample universe;
+- final-membership overlay source;
+- hypervolume method and reference point;
+- asset mode;
+- source file hashes/mtimes;
+- full archive axis definitions;
+- grid-quantile cutoffs and bin intervals;
+- projection diagnostics and missing-descriptor counts;
+- validation/debug metadata.
+
+The default desktop header should fit in at most two compact rows at
+`1440 x 1000`, and the main visual panes should start without requiring the
+user to scroll. At least 70 percent of the first viewport height should be
+visualization panes, not controls or expanded config text.
+
+Use collapsible `Details` or `Advanced` panels for precise settings. These
+panels must preserve all information needed for auditability, but they should
+be closed by default. Per-pane axis/bin details may expose a small summary by
+default and reveal full cutoffs/intervals only after expansion.
+
 ### Modes
 
 The viewer must support:
@@ -590,7 +749,7 @@ Use technique labels from the manifest, not hard-coded UI-only names.
 
 For each archive pane:
 
-- render grid cells from `archive_definition`;
+- render grid cells from `archive_definition` in a true archive scene;
 - show occupied cells for the selected technique and step;
 - show individual samples in or near their assigned cells;
 - distinguish native QD archive members from classic posthoc projections;
@@ -606,7 +765,9 @@ For each archive pane:
 Archive geometry rendering:
 
 - `grid` and `grid_quantile` render as regular cells using the source archive
-  axes and cell boundaries.
+  axes and cell boundaries. Three active axes must render as a 3D lattice or
+  3D cell stack. One or two active axes may render as a 2D slab, but the viewer
+  must label which axes collapsed.
 - `cvt` with one, two, or three descriptor dimensions renders true centroid
   cells/points in descriptor space. Samples should be shown at or near their
   assigned centroid, and hover semantics use centroid id.
@@ -619,13 +780,35 @@ Archive geometry rendering:
 Journal BD axis layout:
 
 ```text
-world_x = logic_depth
-world_y = comb_width_log
-world_z = ff_depth
+display_x = logic_depth
+display_y = comb_width_log
+display_z = ff_depth
 ```
 
-This keeps `ff_depth` vertical in the archive view. In PPA space,
+If the renderer uses Three.js, the implementation may map `display_z` to the
+Three.js vertical coordinate:
+
+```text
+scene_x = logic_depth
+scene_y = ff_depth
+scene_z = comb_width_log
+```
+
+User-facing labels, legends, debug metadata, and screenshots must still present
+the archive axes as `X = logic_depth`, `Y = comb_width_log`, and
+`Z = ff_depth`, matching the existing grid-quantile viewer. In PPA space,
 effective clock period is vertical.
+
+Archive view parity requirements from the existing grid-quantile viewer:
+
+- show quantile cutoffs and bin intervals for every grid-quantile axis;
+- show collapsed axes explicitly instead of silently dropping them;
+- show z/layer mini-panels for 3D archives, even in compare mode;
+- show current generation/final-state context;
+- show occupancy, sample count, rank-0 count, and hover sample membership;
+- preserve readable axis labels and legends at desktop and narrow widths;
+- avoid rendering a blank or mostly empty archive pane when the source archive
+  has initialized cells.
 
 ### PPA / Pareto View
 
@@ -647,6 +830,51 @@ The PPA view must support:
 For sequential problems, use a proper 3D scene. For combinational problems,
 use a 2D scatter view by default.
 
+Sequential raw PPA coordinates:
+
+```text
+world_x = area
+world_y = eff_clk_period
+world_z = power
+```
+
+Lower raw values are better for all three metrics. The viewer may invert the
+visual direction for `eff_clk_period` so better timing appears higher, but the
+axis label and tooltip must show the raw value. The point must still have a
+real z coordinate from power.
+
+Sequential improvement coordinates:
+
+```text
+world_x = g_A
+world_y = g_T
+world_z = g_P
+```
+
+Combinational raw PPA coordinates:
+
+```text
+world_x = area
+world_y = power
+```
+
+Combinational improvement coordinates:
+
+```text
+world_x = g_A
+world_y = g_P
+```
+
+The coordinate toggle changes only point positions and labels. Pareto ranks,
+rank-0 highlighting, and hypervolume must continue to use the fixed active
+objective semantics defined above.
+
+Rank-0 rendering should be visually obvious without inventing a misleading
+surface. For 2D, draw a front polyline when the ordering is unambiguous. For
+3D, render rank-0 points larger and brighter, optionally with nearest-neighbor
+or objective-sorted guide lines. Do not draw a smooth Pareto surface unless the
+surface is explicitly computed and labeled as an interpolation.
+
 ### Linked Interaction
 
 Hovering an archive cell must:
@@ -666,6 +894,16 @@ Hovering a PPA point must:
 
 Clicking a point should pin the tooltip or open a compact sample details panel.
 Pinned details are useful but not required for the first acceptance gate.
+
+Hover linking must be implemented with actual hit testing:
+
+- archive panes use 3D raycasting or equivalent cell hit detection;
+- PPA panes use 3D raycasting for sequential views and 2D hit testing for
+  combinational views;
+- layer mini-panel hover maps to the same cell id and sample ids as archive
+  cell hover;
+- compare mode highlights the same sample ids across both archive panes and
+  the shared PPA pane when those samples are visible.
 
 ### Timeline
 
@@ -728,6 +966,118 @@ Exact event replay is deferred unless it is cheap to implement cleanly.
 Adaptive rebinning will likely require true replay because the archive
 coordinate system may change over time; Phase 03.1 should keep the data schema
 able to store replay frames later without making replay a current hard gate.
+
+## Renderer V2 Implementation Plan
+
+Do not try to rescue the flat canvas renderer with small patches. Keep the
+exporter, schema, PPA rank, hypervolume, and projection work, but replace the
+viewer rendering layer with a real scene-based implementation.
+
+Recommended implementation order:
+
+1. Move viewer JavaScript and CSS out of the Python string template into
+   versioned viewer assets copied or inlined by the exporter.
+2. Add a pinned Three.js asset path for `local` and `inline` strict exports.
+   Keep CDN support only behind `--asset-mode cdn --allow-cdn`.
+3. Add a small browser debug API:
+
+   ```text
+   window.__QD_PPA_VIEWER_DEBUG__
+   ```
+
+   The debug API must expose selected problem, selected techniques, scene
+   dimensionality, camera state, visible sample count, z/depth ranges,
+   highlighted sample ids, highlighted cell id, and whether perspective lock,
+   auto-rotate, and exploded layers are active.
+4. Build `ArchiveScene` for grid and grid-quantile sources:
+   - true 3D cells for three active axes;
+   - true 2D slab for one or two active axes;
+   - occupied-cell mesh/material updates by technique, generation, and color
+     mode;
+   - sample markers placed inside or near assigned cells;
+   - axis labels, quantile cutoff labels, collapsed-axis labels, and layer
+     mini-panels.
+5. Build `ArchiveScene` for CVT sources:
+   - true centroid rendering for one, two, or three descriptor dimensions;
+   - projected rendering with visible disclaimer for more than three
+     dimensions.
+6. Build `PpaScene`:
+   - 3D point cloud for sequential raw/improvement/normalized coordinates;
+   - 2D scatter for combinational coordinates;
+   - rank-0 emphasis, technique coloring, fitness coloring, and final-member
+     overlays;
+   - independent camera from the archive panes.
+7. Build interaction controllers:
+   - archive-cell raycast hover to PPA highlight;
+   - PPA-point raycast hover to archive-cell highlight;
+   - layer mini-panel hover using the same cell-id mapping;
+   - click-to-pin details if it stays simple.
+8. Build camera controls:
+   - archive compare perspective lock;
+   - independent PPA camera;
+   - auto-rotate for archive scenes;
+   - reset that restores cameras and exploded layers without changing problem
+     or technique selection.
+9. Harden Playwright validation so the current flat canvas renderer fails
+   strict validation for sequential PPA and 3D archive datasets.
+10. Regenerate the Phase 03 hard-run viewer and inspect the required
+    screenshots before considering the goal complete.
+
+Avoid adding a frontend build system in the first V2 unless it materially
+simplifies the code. A small set of static JS/CSS assets is enough for this
+phase and keeps the exported viewer reproducible.
+
+## Known Problems To Fix Before Relaunch
+
+Do not start another acceptance run until these are addressed:
+
+1. The current viewer renderer is structurally incapable of passing the demo
+   goal because it is a flat 2D canvas implementation.
+2. The current validation accepts superficial evidence: text tokens, nonblank
+   screenshots, and control presence. It does not prove real 3D scenes,
+   camera behavior, raycast hover behavior, visual parity, or UI density.
+3. The current UI exposes implementation settings as the default experience.
+   It needs a cleaner default state with advanced details collapsed.
+4. Archive and PPA cameras are not real stateful objects, so perspective lock,
+   reset, and auto-rotate cannot be meaningfully validated.
+5. Archive hover, PPA hover, and layer-panel hover are not linked through a
+   shared sample/cell identity model.
+6. Sequential PPA points do not have a real power/depth coordinate in the
+   renderer.
+7. Existing grid-quantile visual semantics are not preserved: axis arrows,
+   quantile landmarks, occupied volume rendering, z-slice panel, frame context,
+   and visual hierarchy are all weaker than the baseline.
+8. The validation script does not currently fail when a required 3D view is
+   rendered as flat 2D.
+
+The next implementation attempt should first make validation fail on the
+current unacceptable viewer, then implement the V2 renderer until those
+validation failures pass.
+
+## Asset Policy
+
+The no-CDN requirement is not too strong for the signed-off strict artifact.
+The final accepted viewer must be reproducible offline from the experiment
+directory, so strict mode must use `local` or `inline` assets and must not load
+network fonts, CDN JavaScript, or remote stylesheets.
+
+CDN-backed mode is still useful for a development/demo artifact when it keeps
+the implementation close to the original demo or speeds iteration. It is
+allowed only when explicitly requested:
+
+```text
+--asset-mode cdn --allow-cdn
+```
+
+Acceptance policy:
+
+- strict hard-run validation must pass with `--asset-mode local` or
+  `--asset-mode inline`;
+- a CDN-only implementation cannot be signed off;
+- a CDN demo screenshot may be produced as an auxiliary comparison artifact,
+  but it does not replace the strict offline viewer;
+- the validator must fail strict mode if `index.html` references `http://`,
+  `https://`, network fonts, or CDN scripts.
 
 ## Exporter CLI
 
@@ -880,14 +1230,61 @@ Required checks:
 36. Viewer reset restores archive and PPA cameras and clears exploded-layer
     state without changing the selected problem or technique pair.
 37. Archive layer panels remain visible in single and compare mode.
-38. Quantile cutoffs and effective bin intervals are visible in the archive
-    axis/bin detail panel for grid-quantile datasets.
+38. Quantile cutoffs and effective bin intervals are available through a
+    collapsed-by-default archive axis/bin detail panel for grid-quantile
+    datasets.
 39. Per-technique stats and selected-technique delta stats are present for
     compare mode.
 40. Compare-mode stats show both per-technique rank-0 count and pooled-visible
     rank-0 contribution count for each selected technique.
 41. Compare-mode stats show per-technique hypervolume and pooled-visible
     hypervolume for the selected pair.
+42. Sequential PPA panes expose browser debug metadata confirming a 3D scene,
+    perspective camera, and nonzero z-coordinate range for visible samples.
+43. Grid/grid-quantile archive panes with three active axes expose browser
+    debug metadata confirming a 3D archive scene, perspective camera, and
+    nonzero depth or layer range for rendered cells.
+44. Exploded layers change actual archive-layer object positions by a nonzero
+    amount in scene coordinates.
+45. Auto-rotate changes the archive camera or root scene transform and produces
+    a visually different screenshot after a deterministic short wait.
+46. Perspective lock makes archive A and B camera state equal in compare mode
+    and leaves the PPA camera state unchanged.
+47. Archive-cell hover changes the highlighted archive cell id and highlights
+    at least one matching PPA sample when that cell has projected samples.
+48. PPA-point hover changes the highlighted sample id and highlights the
+    projected archive cell when projection is available.
+49. Layer mini-panel hover maps to the same archive cell id and sample ids as
+    archive-scene hover.
+50. Strict validation fails if the viewer falls back to a flat 2D canvas for a
+    sequential PPA dataset or a 3D grid/grid-quantile archive dataset.
+51. At `1440 x 1000`, the default header and toolbar occupy at most two compact
+    rows and the main visual panes are visible without scrolling.
+52. Advanced/configuration panels are closed by default and can be opened to
+    inspect rank scope, sample universe, overlay source, hypervolume method,
+    source hashes, axis cutoffs, projection diagnostics, and debug metadata.
+53. Per-pane axis/bin details are summarized by default and full cutoffs or
+    intervals are hidden until expansion.
+54. The validator has a negative fixture or mode proving that the current flat
+    2D canvas viewer fails required 3D checks before the V2 renderer is
+    accepted.
+55. The strict viewer becomes ready in Playwright within 10 seconds on the
+    Phase 03 hard-run bundle and every required interaction test completes
+    without uncaught browser errors.
+56. The viewer emits no console errors during strict Playwright validation.
+57. The default accepted artifact is offline reproducible: strict validation
+    fails on any network request or remote asset reference.
+58. A visual parity report is generated with side-by-side screenshots for the
+    demo, `Prob135_m2014_q6b` existing 2D-projected grid-quantile baseline,
+    `Prob151_review2015_fsm` existing full-3D grid-quantile baseline, and the
+    new viewer states listed below.
+59. The exported hard-run viewer includes `Prob151_review2015_fsm`, and browser
+    debug metadata confirms a non-collapsed 3D archive scene with all three
+    archive axes active, `effective_shape=[3,4,4]` or equivalent source-derived
+    shape, and four visible z/layer slices.
+60. The final Playwright validation covers the required validation example
+    matrix: sequential 3D PPA, sequential full-3D archive, combinational 2D
+    PPA, and combinational projected archive.
 
 Use Playwright for viewer smoke tests when available. The first acceptance gate
 requires at least one desktop screenshot for:
@@ -901,9 +1298,27 @@ requires at least one desktop screenshot for:
 - rank-0-only filter.
 - pooled-visible rank-scope mode.
 - exploded archive layers.
+- archive-cell hover linked to PPA samples.
+- PPA-point hover linked to archive cell.
+- default collapsed advanced/settings state.
+- expanded advanced/settings state.
+- baseline comparison: demo reference, existing `Prob135_m2014_q6b`
+  grid-quantile viewer, existing `Prob151_review2015_fsm` full-3D
+  grid-quantile viewer, and new linked viewer archive/PPA panes.
+- `Prob151_review2015_fsm` full-3D archive view in the linked viewer.
+- `RTLLM/Prob015_multi_pipe_8bit` or equivalent sequential 3D PPA view.
+- `RTLLM/Prob004_adder_8bit` or equivalent combinational 2D PPA view.
+- `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` combinational projected archive
+  view in the linked viewer.
 
 Screenshots must be nonblank by pixel variance and must show the expected pane
-count for the selected mode.
+count for the selected mode. Sequential 3D and 3D archive screenshots must also
+show depth cues, perspective axis framing, and visible point or cell variation
+along the third axis.
+
+The validator must record the screenshot paths and the browser debug metadata
+used to justify each screenshot. A screenshot without matching debug metadata
+is not sufficient for sign-off.
 
 ## Tests
 
@@ -954,6 +1369,38 @@ Focused unit tests:
 - layer-panel hover maps to the same samples as archive-cell hover.
 - quantile boundary labels are exported from `archive_space.json` without
   recomputing boundaries.
+- viewer debug state reports sequential PPA scenes as 3D with perspective
+  camera metadata and nonzero z-coordinate range.
+- viewer debug state reports 3D archive scenes with perspective camera
+  metadata and nonzero cell depth or layer range.
+- Playwright interaction tests prove auto-rotate, perspective lock, reset,
+  exploded layers, archive-cell hover, layer-panel hover, and PPA-point hover
+  change the expected scene or highlight state.
+- the validator rejects the current flat 2D canvas placeholder for sequential
+  PPA and 3D archive datasets.
+- default UI density is covered by a Playwright screenshot and DOM assertions
+  that advanced/settings panels are closed by default.
+- expanded advanced/settings panels expose rank scope, sample universe,
+  overlay source, hypervolume method, source hashes, axis cutoffs, projection
+  diagnostics, and debug metadata.
+- strict Playwright validation has a negative test that fails the old flat
+  canvas implementation for sequential 3D PPA and 3D/layer-capable archive
+  cases.
+- console errors, unhandled promise rejections, failed asset loads, or network
+  requests in strict mode fail validation.
+- visual parity screenshots are generated for the demo, the existing
+  `Prob135_m2014_q6b` grid-quantile viewer, the existing
+  `Prob151_review2015_fsm` full-3D grid-quantile viewer, and the new linked
+  viewer.
+- `Prob151_review2015_fsm` is validated as a non-collapsed 3D archive case:
+  all three archive axes are active, no source axis is collapsed, the linked
+  viewer renders a real 3D archive scene, and the layer panel exposes four
+  `ff_depth` slices.
+- the required validation example matrix is present in the final report:
+  sequential 3D PPA, sequential full-3D archive, combinational 2D PPA, and
+  combinational projected archive. Each row includes a screenshot, browser
+  debug metadata, selected problem key, circuit type, active PPA objectives,
+  and selected techniques.
 
 Script tests:
 
@@ -1015,6 +1462,7 @@ RUN_ROOT=exp/journal_pareto_front_hard_subset/20260506_040658
   --archive_source_backend grid_quantile_pareto_journal_bd \
   --subset-config exp/journal_pareto_front_configs/hard_subset_pareto_front.yaml \
   --output-dir "${RUN_ROOT}/visualization/qd_ppa_viewer" \
+  --asset-mode local \
   --strict
 
 /workspace/.venv/bin/python scripts/validate_qd_ppa_visualization.py \
@@ -1032,8 +1480,13 @@ Acceptance criteria:
   `grid_quantile_pareto_journal_bd` samples when those modes solved the
   problem;
 - accepted samples are PPA-valid only;
-- at least one sequential problem renders a 3D PPA view;
+- at least one sequential problem renders a real 3D PPA view with area,
+  effective clock period, and power on distinct axes;
 - at least one combinational problem renders a 2D PPA view;
+- at least one 3D or layer-capable archive view renders real 3D archive cells
+  or layers rather than a screen-space 2D offset;
+- `Prob151_review2015_fsm` renders as a non-collapsed 3D grid-quantile archive
+  with all three journal BD axes active and four `ff_depth` slices;
 - PPA coordinate mode defaults to `raw`, with `improvement` and `normalized`
   available in that order;
 - timeline sample universe defaults to `all_ppa_valid`, with final archive and
@@ -1056,8 +1509,27 @@ Acceptance criteria:
 - compare-mode perspective lock synchronizes archive cameras only;
 - reset clears camera/explode state but preserves selected problem and
   techniques;
-- quantile cutoffs and effective bin intervals are visible for grid-quantile
-  archive views;
+- auto-rotate, exploded layers, archive-cell hover, layer-panel hover, and
+  PPA-point hover are verified with Playwright against exported hard-run data;
+- strict validation fails when scene/debug metadata says a required 3D pane is
+  rendered by the flat 2D fallback;
+- strict validation includes a negative check demonstrating that the old flat
+  canvas implementation fails the required 3D scene and interaction gates;
+- default UI shows the main visualization panes without scrolling at
+  `1440 x 1000`, with advanced/configuration details collapsed;
+- quantile cutoffs and effective bin intervals are available through expanded
+  grid-quantile archive details;
+- a visual parity report exists under the viewer output directory and includes
+  the demo screenshot, the existing `Prob135_m2014_q6b` grid-quantile
+  screenshot, the existing `Prob151_review2015_fsm` full-3D grid-quantile
+  screenshot, and the new linked viewer screenshots;
+- the final report includes the required validation example matrix with
+  sequential 3D PPA, sequential full-3D archive, combinational 2D PPA, and
+  combinational projected archive rows;
+- strict validation records zero browser console errors, failed asset loads,
+  unhandled promise rejections, or network requests;
+- strict validation uses local or inline assets. CDN mode may be generated only
+  as an auxiliary non-strict demo artifact;
 - docs and user guide mention how to export, validate, and open the viewer.
 
 ## Non-Grid-Quantile Smoke
@@ -1132,20 +1604,28 @@ Document:
 
 ## Completion Checklist
 
+The first implementation attempt should be considered an exporter and data
+schema scaffold, not an accepted viewer implementation. The current flat 2D
+canvas renderer does not satisfy `3.1.5`, `3.1.6`, `3.1.8`, `3.1.9`, or
+`3.1.10` until the real 3D renderer and stronger Playwright checks are in
+place.
+
 - [ ] 3.1.1 Define exporter data schema and metric helpers.
 - [ ] 3.1.2 Export real per-problem datasets from final-analysis and run
   artifacts.
 - [ ] 3.1.3 Project classic candidates into selected `grid_quantile`, `grid`,
   and initialized `cvt` archive sources.
 - [ ] 3.1.4 Compute PPA Pareto ranks and hypervolume per technique and step.
-- [ ] 3.1.5 Build HTML viewer with single/compare modes and explicit
-  `cdn`/`local`/`inline` asset modes.
-- [ ] 3.1.6 Add linked archive-cell and PPA-point hover behavior.
+- [ ] 3.1.5 Build HTML viewer with single/compare modes, real 3D scene
+  rendering, and explicit `cdn`/`local`/`inline` asset modes.
+- [ ] 3.1.6 Add linked archive-cell, layer-panel, and PPA-point hover behavior.
 - [ ] 3.1.7 Add raw/improvement/normalized coordinate toggle, rank-scope
   toggle, sample-universe toggle, final-membership overlays, and rank filters.
 - [ ] 3.1.8 Add perspective lock, auto-rotate, reset, exploded layers, layer
-  mini-panels, scatter legends, and compare delta stats.
-- [ ] 3.1.9 Add validation script and Playwright smoke checks.
+  mini-panels, scatter legends, real 3D PPA/archive rendering, and compare
+  delta stats.
+- [ ] 3.1.9 Add validation script and Playwright smoke checks that reject flat
+  2D placeholders for required 3D views.
 - [ ] 3.1.10 Export and validate the Phase 03 hard-run viewer.
 - [ ] 3.1.11 Run and validate small `grid` and `cvt` geometry smokes.
 - [ ] 3.1.12 Update docs, docstrings, and user-facing guide entries.
