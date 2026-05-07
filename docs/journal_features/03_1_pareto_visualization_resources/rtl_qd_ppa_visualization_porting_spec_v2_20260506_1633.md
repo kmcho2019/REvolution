@@ -142,7 +142,7 @@ Use one manifest to list available problems/runs.
 
 ```json
 {
-  "schema_version": "qd_ppa_viewer.v1",
+  "schema_version": "qd_ppa_viewer.v2",
   "created_at": "2026-05-06T00:00:00Z",
   "problems": [
     {
@@ -160,7 +160,7 @@ Use one manifest to list available problems/runs.
 
 ```json
 {
-  "schema_version": "qd_ppa_problem.v1",
+  "schema_version": "qd_ppa_problem.v2",
   "problem_id": "aes_core_seed_001",
   "title": "AES Core / Seed 001",
   "design_type": "sequential",
@@ -355,14 +355,14 @@ output_file: visualization/qd_ppa_viewer/datasets/aes_core_seed_001.json
    For combinational 2D mode, omit period or replace it with an explicitly named timing proxy.
 
 6. **Compute Pareto ranks per technique and per generation step**
-   - Rank 0 = nondominated front.
-   - Rank 1 = nondominated after removing rank 0.
+   - Rank 1 = nondominated front.
+   - Rank 2 = nondominated after removing rank 1.
    - Continue until all valid visible samples are ranked.
 
 7. **Compute per-generation statistics**
    - Sample count.
    - Archive coverage.
-   - Rank-0 count.
+   - Rank-1 count.
    - Best area/power/period.
    - Mean archive elite fitness.
    - Hypervolume vs. reference PPA.
@@ -827,9 +827,9 @@ The PPA view should render:
   - Relative improvement.
 - Optional rank filters:
   - all.
-  - rank 0.
-  - rank ≤ 1.
+  - rank 1.
   - rank ≤ 2.
+  - rank ≤ 3.
 
 The PPA view should maintain its own independent camera.
 

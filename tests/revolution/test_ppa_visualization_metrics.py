@@ -24,8 +24,8 @@ def test_pareto_ranks_are_contiguous_for_2d_fronts() -> None:
 
     ranks = pareto_ranks(samples, ("g_P", "g_A"))
 
-    assert ranks == {"a": 0, "b": 0, "c": 1}
-    assert sorted(set(ranks.values())) == [0, 1]
+    assert ranks == {"a": 1, "b": 1, "c": 2}
+    assert sorted(set(ranks.values())) == [1, 2]
 
 
 def test_pareto_ranks_use_3d_sequential_objectives() -> None:
@@ -37,9 +37,9 @@ def test_pareto_ranks_use_3d_sequential_objectives() -> None:
 
     ranks = pareto_ranks(samples, ("g_P", "g_A", "g_T"))
 
-    assert ranks["b"] == 0
-    assert ranks["a"] == 1
-    assert ranks["c"] == 1
+    assert ranks["b"] == 1
+    assert ranks["a"] == 2
+    assert ranks["c"] == 2
 
 
 def test_dominance_requires_strict_improvement() -> None:

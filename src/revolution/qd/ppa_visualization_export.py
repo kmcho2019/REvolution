@@ -21,7 +21,7 @@ from revolution.qd.ppa_visualization_metrics import (
     front_points,
     hypervolume_payload,
     pareto_ranks,
-    rank_zero_count,
+    rank_one_count,
 )
 from revolution.qd.ppa_visualization_viewer import write_viewer_html
 
@@ -151,7 +151,7 @@ def export_qd_ppa_visualization(
         descriptor_cache_path.write_text(json.dumps(descriptor_cache, indent=2, sort_keys=True), encoding="utf-8")
 
     manifest = {
-        "schema_version": "qd_ppa_viewer.v1",
+        "schema_version": "qd_ppa_viewer.v2",
         "run_root": str(run_root),
         "created_at": datetime.now(timezone.utc).isoformat(),
         "archive_source_backend": archive_source_backend,
@@ -176,6 +176,9 @@ def export_qd_ppa_visualization(
     }
     manifest_path = output_dir / "manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True), encoding="utf-8")
+    legacy_standalone = output_dir / "index_standalone.html"
+    if legacy_standalone.exists():
+        legacy_standalone.unlink()
     write_viewer_html(
         output_dir / "index.html",
         manifest=manifest,
@@ -315,7 +318,7 @@ def _build_problem_dataset(
         backend_contexts=backend_contexts,
     )
     return {
-        "schema_version": "qd_ppa_problem.v1",
+        "schema_version": "qd_ppa_problem.v2",
         "benchmark": benchmark,
         "problem": problem,
         "circuit_type": circuit_type,
@@ -689,7 +692,7 @@ def _compute_rank_payloads(
     for sample in samples:
         sample["pareto_rank_final"] = sample["pareto_rank_by_step"]["per_technique"]["final"]
         sample["viewer_pooled_pareto_member"] = (
-            sample["pareto_rank_by_step"]["pooled_visible"]["final"] == 0
+            sample["pareto_rank_by_step"]["pooled_visible"]["final"] == 1
         )
 
 
@@ -717,7 +720,7 @@ def _cell_summaries_by_step(samples: list[dict[str, Any]], step_names: list[str]
                     "cell_id": cell_id,
                     "sample_ids": [],
                     "sample_count": 0,
-                    "rank0_count": 0,
+                    "rank1_count": 0,
                     "best_quality_score": None,
                     "best_mean_improvement": None,
                     "projection_type": sample["projection_type"],
@@ -726,8 +729,8 @@ def _cell_summaries_by_step(samples: list[dict[str, Any]], step_names: list[str]
             cell["sample_ids"].append(sample["sample_id"])
             cell["sample_count"] += 1
             rank = sample["pareto_rank_by_step"]["per_technique"].get(step_name)
-            if rank == 0:
-                cell["rank0_count"] += 1
+            if rank == 1:
+                cell["rank1_count"] += 1
             quality = sample["quality_score"]
             if quality is not None and (
                 cell["best_quality_score"] is None or quality > cell["best_quality_score"]
@@ -760,11 +763,11 @@ def _technique_stats_by_step(
         pooled_front = [
             tuple(float(sample[key]) for key in objective_keys)
             for sample in visible
-            if pooled_ranks[sample["sample_id"]] == 0
+            if pooled_ranks[sample["sample_id"]] == 1
         ]
         step_stats["_pooled_visible"] = {
             "sample_count": len(visible),
-            "rank0_count": rank_zero_count(visible, pooled_ranks),
+            "rank1_count": rank_one_count(visible, pooled_ranks),
             "hypervolume": hypervolume_payload(pooled_front, objective_keys),
         }
         for technique in techniques:
@@ -776,8 +779,8 @@ def _technique_stats_by_step(
             if not technique_samples:
                 step_stats[technique] = {
                     "sample_count": 0,
-                    "rank0_count": 0,
-                    "pooled_rank0_contribution_count": 0,
+                    "rank1_count": 0,
+                    "pooled_rank1_contribution_count": 0,
                     "projected_archive_sample_count": 0,
                     "occupied_projected_cells": 0,
                     "hypervolume": hypervolume_payload([], objective_keys),
@@ -794,11 +797,11 @@ def _technique_stats_by_step(
             }
             step_stats[technique] = {
                 "sample_count": len(technique_samples),
-                "rank0_count": rank_zero_count(technique_samples, ranks),
-                "pooled_rank0_contribution_count": sum(
+                "rank1_count": rank_one_count(technique_samples, ranks),
+                "pooled_rank1_contribution_count": sum(
                     1
                     for sample in technique_samples
-                    if pooled_ranks[sample["sample_id"]] == 0
+                    if pooled_ranks[sample["sample_id"]] == 1
                 ),
                 "projected_archive_sample_count": sum(
                     1

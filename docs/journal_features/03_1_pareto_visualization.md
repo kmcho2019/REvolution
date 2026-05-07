@@ -18,7 +18,7 @@ The viewer must answer, per problem:
 1. where each technique's successful candidates land in the QD archive;
 2. how candidates distribute in raw PPA and reference-normalized improvement
    space;
-3. which candidates are on Pareto rank 0, rank 1, rank 2, and later fronts;
+3. which candidates are on Pareto rank 1, rank 2, rank 3, and later fronts;
 4. how archive occupancy and PPA/Pareto fronts differ between two techniques.
 
 The main comparison target is:
@@ -138,19 +138,19 @@ Demo features that must carry over:
   `rank`, visible in the PPA pane rather than hidden only in advanced settings;
 - PPA coordinate-mode control ordered as `raw`, `improvement`, `normalized`,
   with `raw` selected by default;
-- PPA rank segmented control with `all`, `rank 0`, `rank <= 1`, and
-  `rank <= 2`;
+- PPA rank segmented control with `all`, `rank 1`, `rank <= 2`, and
+  `rank <= 3`;
 - Pareto rank-scope control with `per_technique` and `pooled_visible`, default
   `per_technique`;
 - per-technique stats cards plus a delta card for the two selected techniques;
 - in compare mode, each selected technique's stats card must show both its
-  own rank-0 count and its pooled-visible rank-0 contribution count;
+  own rank-1 count and its pooled-visible rank-1 contribution count;
 - hypervolume stats for each technique plus pooled-visible hypervolume for
   the selected compare pair;
 - scatter legend that updates with the active color mode: fitness uses a
   viridis ramp with currently displayed min/max mean-improvement scores,
-  technique lists selected techniques, and rank distinguishes rank 0, 1, 2,
-  and 3+;
+  technique lists selected techniques, and rank distinguishes rank 1, 2, 3,
+  and 4+;
 - compare-mode PPA legend section that maps point shape to selected technique;
 - archive layer mini-panels with hoverable cells;
 - archive-cell and PPA-point linked tooltips;
@@ -284,7 +284,7 @@ Write one top-level manifest:
 
 ```json
 {
-  "schema_version": "qd_ppa_viewer.v1",
+  "schema_version": "qd_ppa_viewer.v2",
   "run_root": "...",
   "created_at": "2026-05-06T00:00:00Z",
   "archive_source_backend": "grid_quantile_pareto_journal_bd",
@@ -311,7 +311,7 @@ Each dataset must be one JSON object:
 
 ```json
 {
-  "schema_version": "qd_ppa_problem.v1",
+  "schema_version": "qd_ppa_problem.v2",
   "benchmark": "RTLLM",
   "problem": "Prob015_multi_pipe_8bit",
   "circuit_type": "sequential",
@@ -410,7 +410,7 @@ because those fields already exist in the run artifacts.
 
 Pareto rank computation is independent of the active display coordinate mode.
 The coordinate toggle changes point positions, axis labels, and tooltip display
-values; it must not change which samples are rank 0.
+values; it must not change which samples are rank 1.
 
 Fixed active objective semantics:
 
@@ -422,9 +422,9 @@ Fixed active objective semantics:
 Rank numbering:
 
 ```text
-rank 0 = nondominated front
-rank 1 = next front after removing rank 0
-rank 2 = next front after removing rank 0 and rank 1
+rank 1 = nondominated front
+rank 2 = next front after removing rank 1
+rank 3 = next front after removing rank 1 and rank 2
 ```
 
 Compute ranks:
@@ -448,11 +448,13 @@ Rules:
 - `per_technique` computes fronts independently for each technique;
 - `pooled_visible` computes fronts after pooling all visible samples from the
   selected techniques at the current step;
-- compare-mode stats must expose both per-technique rank-0 counts and each
-  technique's contribution to the pooled-visible rank-0 front.
+- compare-mode stats must expose both per-technique rank-1 counts and each
+  technique's contribution to the pooled-visible rank-1 front.
 
-Do not confuse these viewer ranks with Phase 03 local archive
-`pareto_rank`, which is one-based inside a single archive cell.
+Viewer ranks and Phase 03 local archive `pareto_rank` are both one-based.
+They still describe different universes: viewer ranks are computed over
+visible PPA samples, while local archive ranks are computed inside one archive
+cell.
 
 ### Hypervolume
 
@@ -814,7 +816,7 @@ Archive view parity requirements from the existing grid-quantile viewer:
 - show collapsed axes explicitly instead of silently dropping them;
 - show z/layer mini-panels for 3D archives, even in compare mode;
 - show current generation/final-state context;
-- show occupancy, sample count, rank-0 count, and hover sample membership;
+- show occupancy, sample count, rank-1 count, and hover sample membership;
 - preserve readable axis labels and legends at desktop and narrow widths;
 - avoid rendering a blank or mostly empty archive pane when the source archive
   has initialized cells.
@@ -828,7 +830,7 @@ The PPA view must support:
 - reference-improvement coordinates;
 - default coordinate mode `raw`;
 - visible coordinate toggle order: `raw`, `improvement`, `normalized`;
-- rank filters: all, rank 0 only, rank <= 1, rank <= 2;
+- rank filters: all, rank 1 only, rank <= 2, rank <= 3;
 - technique filters;
 - final stable snapshot;
 - generation timeline playback;
@@ -839,9 +841,9 @@ The PPA view must support:
 - one sample-value tick on each active PPA axis while hovering a single PPA
   sample, so the sample can be compared directly against the reference ticks;
 - compare-mode shape legend mapping each selected technique to its PPA marker;
-- rank 0 front highlighting per technique;
+- rank 1 front highlighting per technique;
 - optional smoothed rank guide overlays in rank color mode:
-  `off`, `r0`, `<=1`, `<=2`, `3+`, and `all`.
+  `off`, `r1`, `<=2`, `<=3`, `4+`, and `all`.
 - advanced rank-guide method selector:
   `auto`, `pchip_2d`, `monotone_polyline`, `moving_average_trend`,
   `delaunay_mesh_3d`, and `projected_curves_3d`.
@@ -886,13 +888,13 @@ world_y = g_P
 ```
 
 The coordinate toggle changes only point positions and labels. Pareto ranks,
-rank-0 highlighting, and hypervolume must continue to use the fixed active
+rank-1 highlighting, and hypervolume must continue to use the fixed active
 objective semantics defined above.
 
 Rank rendering should be visually obvious without inventing a misleading
-surface. Rank color mode must use distinct colors for rank 0, rank 1, rank 2,
-and rank 3+. Point radius must decrease monotonically as Pareto rank worsens,
-not only distinguish rank 0 from every other rank. When two techniques overlap
+surface. Rank color mode must use distinct colors for rank 1, rank 2, rank 3,
+and rank 4+. Point radius must decrease monotonically as Pareto rank worsens,
+not only distinguish rank 1 from every other rank. When two techniques overlap
 at the same PPA coordinate, QD/journal techniques should render slightly larger
 than `classic` so both methods remain visible.
 
@@ -906,12 +908,12 @@ samples are assigned to each rank bucket.
 
 Rank-guide color is independently selectable in Advanced:
 `auto`, `rank`, or `technique`. The accepted default is `auto`, which resolves
-to rank colors so rank 0, 1, 2, and 3+ remain visually distinct. In compare
+to rank colors so rank 1, 2, 3, and 4+ remain visually distinct. In compare
 mode, techniques must remain distinguishable through marker shape and line
 weight: `classic` uses circle vertices and the base line weight, while
 non-classic techniques use diamond vertices and a slightly heavier line. Do not
 use dashed lines to distinguish non-classic techniques; reserve dashes for
-non-rank-0 guide buckets.
+non-rank-1 guide buckets.
 
 For 2D combinational PPA, draw guide lines for the selected rank bucket after
 axes/reference ticks and before points. The default `auto` method should use a
@@ -942,7 +944,7 @@ Hovering an archive cell must:
 - highlight the same samples in the PPA/Pareto view;
 - dim PPA/Pareto samples outside the hovered archive cell;
 - show cell summary: technique, cell id, sample count, best PPA, best
-  improvement, best quality score, and rank-0 sample count.
+  improvement, best quality score, and rank-1 sample count.
 
 Hovering a z-slice layer cell must:
 
@@ -1077,7 +1079,7 @@ Recommended implementation order:
 6. Build `PpaScene`:
    - 3D point cloud for sequential raw/improvement/normalized coordinates;
    - 2D scatter for combinational coordinates;
-   - rank-0 emphasis, technique coloring, fitness coloring, and final-member
+   - rank-1 emphasis, technique coloring, fitness coloring, and final-member
      overlays;
    - independent camera from the archive panes.
 7. Build interaction controllers:
@@ -1218,7 +1220,7 @@ one clean final frame. If slide export is implemented, include at least:
 - first initialized archive state for QD techniques;
 - mid-run state;
 - final stable state;
-- rank-0-only PPA view.
+- rank-1-only PPA view.
 
 ## Validation
 
@@ -1233,9 +1235,9 @@ broken.
 
 Required checks:
 
-1. `manifest.json` exists and has schema `qd_ppa_viewer.v1`.
+1. `manifest.json` exists and has schema `qd_ppa_viewer.v2`.
 2. Every manifest problem has an existing dataset file.
-3. Every dataset has schema `qd_ppa_problem.v1`.
+3. Every dataset has schema `qd_ppa_problem.v2`.
 4. Every selected problem from the subset config appears in the manifest.
 5. Every dataset has at least one PPA-valid sample for each exported
    technique that solved that problem.
@@ -1247,15 +1249,15 @@ Required checks:
    `eff_clk_period`.
 9. Combinational datasets have active PPA metrics `area` and `power`, and do
    not require `eff_clk_period` for Pareto ranking.
-10. Pareto ranks are contiguous starting at `0` for every technique/step with
+10. Pareto ranks are contiguous starting at `1` for every technique/step with
    visible samples.
-11. Every rank-0 sample is nondominated by visible same-technique samples.
-12. Pooled-visible rank 0 samples are nondominated by the pooled selected
+11. Every rank-1 sample is nondominated by visible same-technique samples.
+12. Pooled-visible rank 1 samples are nondominated by the pooled selected
     visible sample set.
 13. Switching PPA coordinate mode does not change rank assignments for the same
     visible sample set.
 14. Hypervolume is finite and nonnegative for every technique/step with
-    visible rank-0 samples.
+    visible rank-1 samples.
 15. Pooled-visible hypervolume is finite and nonnegative in compare mode when
     the selected pooled front is nonempty.
 16. Hypervolume metadata records method, reference point, and deterministic
@@ -1300,13 +1302,13 @@ Required checks:
     `technique`, and `rank`.
 35. The active PPA color legend is visible: fitness uses viridis and shows
     displayed min/max mean-improvement values, technique lists selected
-    techniques, rank distinguishes rank 0, 1, 2, and 3+, and compare mode
+    techniques, rank distinguishes rank 1, 2, 3, and 4+, and compare mode
     includes a marker-shape legend for the selected techniques.
 36. PPA point radii decrease monotonically with Pareto rank, and non-classic
     technique markers are consistently larger than classic markers so exact
     coordinate overlaps remain distinguishable.
 36a. Rank-guide controls are visible in the PPA pane, disabled outside rank
-    color mode, and support `off`, `r0`, `<=1`, `<=2`, `3+`, and `all`.
+    color mode, and support `off`, `r1`, `<=2`, `<=3`, `4+`, and `all`.
 36b. Rank guides emit browser debug metadata with
     `rank_guide_mode`, `rank_guide_count`, `rank_guide_projection_mode`,
     `rank_guide_method`, `rank_guide_color_scheme`,
@@ -1337,8 +1339,8 @@ Required checks:
     datasets.
 43. Per-technique stats and selected-technique delta stats are present for
     compare mode.
-44. Compare-mode stats show both per-technique rank-0 count and pooled-visible
-    rank-0 contribution count for each selected technique.
+44. Compare-mode stats show both per-technique rank-1 count and pooled-visible
+    rank-1 contribution count for each selected technique.
 45. Compare-mode stats show per-technique hypervolume and pooled-visible
     hypervolume for the selected pair.
 46. Sequential PPA panes expose browser debug metadata confirming a 3D scene,
@@ -1404,7 +1406,7 @@ requires at least one desktop screenshot for:
 - compare mode with locked archive perspective;
 - combinational 2D PPA view;
 - sequential 3D PPA view;
-- rank-0-only filter.
+- rank-1-only filter.
 - pooled-visible rank-scope mode.
 - exploded archive layers.
 - archive-cell hover linked to PPA samples.
@@ -1454,7 +1456,7 @@ Focused unit tests:
   modes for the same visible samples;
 - sequential active objectives are `g_P`, `g_A`, `g_T`;
 - combinational active objectives are `g_P`, `g_A`;
-- Pareto rank 0/1/2 computation on toy 2D and 3D samples;
+- Pareto rank 1/2/3 computation on toy 2D and 3D samples;
 - rank scope defaults to `per_technique`;
 - pooled-visible rank scope computes a joint front across selected
   techniques;
@@ -1604,7 +1606,7 @@ Acceptance criteria:
   separate badge when present;
 - classic projection coverage is at least 95 percent for initialized
   grid-quantile problems;
-- rank-0 highlighting exists for every technique with at least one visible
+- rank-1 highlighting exists for every technique with at least one visible
   PPA-valid sample;
 - rank color mode exposes smoothed rank-guide controls, 2D guide lines for
   combinational PPA, and true 3D Delaunay mesh guides for sequential PPA;
@@ -1615,8 +1617,8 @@ Acceptance criteria:
   vertices;
 - `per_technique` is the default rank scope and `pooled_visible` is available
   in the viewer;
-- compare-mode stats show both per-technique rank-0 count and pooled-visible
-  rank-0 contribution count for each selected technique;
+- compare-mode stats show both per-technique rank-1 count and pooled-visible
+  rank-1 contribution count for each selected technique;
 - compare-mode stats show per-technique hypervolume and pooled-visible
   hypervolume for the selected pair;
 - side-by-side archive/PPA hover linking works in a Playwright smoke;

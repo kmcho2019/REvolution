@@ -218,6 +218,10 @@ def test_export_writes_projected_classic_dataset(tmp_path: Path) -> None:
     assert qd["local_archive_member"] is True
     assert qd["mode_global_pareto_member"] is True
     assert dataset["viewer_defaults"]["coordinate_modes"] == ["raw", "improvement", "normalized"]
+    assert dataset["schema_version"] == "qd_ppa_problem.v2"
+    assert classic["pareto_rank_final"] == 1
+    assert qd["pareto_rank_final"] == 1
+    assert dataset["technique_stats_by_step"]["final"]["classic"]["rank1_count"] == 1
     assert dataset["technique_stats_by_step"]["final"]["_pooled_visible"]["hypervolume"]["method"] == "exact_recursive"
 
 

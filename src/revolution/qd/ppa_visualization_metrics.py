@@ -66,6 +66,7 @@ def pareto_ranks(
     samples: Sequence[Mapping[str, Any]],
     objective_keys: tuple[str, ...],
 ) -> dict[str, int]:
+    """Return one-based nondominated-sort ranks for visible PPA samples."""
     remaining = {
         str(sample["sample_id"]): {
             key: float(sample[key])
@@ -74,7 +75,7 @@ def pareto_ranks(
         for sample in samples
     }
     ranks: dict[str, int] = {}
-    rank = 0
+    rank = 1
     while remaining:
         front: list[str] = []
         for sample_id, values in remaining.items():
@@ -93,11 +94,11 @@ def pareto_ranks(
     return ranks
 
 
-def rank_zero_count(
+def rank_one_count(
     samples: Sequence[Mapping[str, Any]],
     ranks: Mapping[str, int],
 ) -> int:
-    return sum(1 for sample in samples if ranks[str(sample["sample_id"])] == 0)
+    return sum(1 for sample in samples if ranks[str(sample["sample_id"])] == 1)
 
 
 def active_points(
@@ -118,7 +119,7 @@ def front_points(
     return [
         tuple(float(sample[key]) for key in objective_keys)
         for sample in samples
-        if ranks[str(sample["sample_id"])] == 0
+        if ranks[str(sample["sample_id"])] == 1
     ]
 
 

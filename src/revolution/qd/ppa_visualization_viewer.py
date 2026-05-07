@@ -39,7 +39,7 @@ _HTML_TEMPLATE = r"""<!doctype html>
   --line: rgba(74, 64, 53, 0.18);
   --accent: #1d8792;
   --accent2: #cf5b36;
-  --rank0: #f0a51d;
+  --rank1: #f0a51d;
   --green: #168453;
   --blue: #1768c2;
 }
@@ -462,9 +462,9 @@ details summary {
     <label>Rank filter
       <select id="rankFilterSelect">
         <option value="all" selected>all</option>
-        <option value="0">rank 0</option>
-        <option value="1">rank <= 1</option>
+        <option value="1">rank 1</option>
         <option value="2">rank <= 2</option>
+        <option value="3">rank <= 3</option>
       </select>
     </label>
     <label>PPA color
@@ -547,17 +547,17 @@ details summary {
         <span class="control-label">Show</span>
         <span class="seg">
           <button class="rank-quick active" data-rank-filter="all">all</button>
-          <button class="rank-quick" data-rank-filter="0">r0</button>
-          <button class="rank-quick" data-rank-filter="1">&le;1</button>
+          <button class="rank-quick" data-rank-filter="1">r1</button>
           <button class="rank-quick" data-rank-filter="2">&le;2</button>
+          <button class="rank-quick" data-rank-filter="3">&le;3</button>
         </span>
         <span class="control-label">Guides</span>
         <span class="seg">
           <button class="rank-guide active" data-rank-guide="off">off</button>
-          <button class="rank-guide" data-rank-guide="0">r0</button>
-          <button class="rank-guide" data-rank-guide="1">&le;1</button>
+          <button class="rank-guide" data-rank-guide="1">r1</button>
           <button class="rank-guide" data-rank-guide="2">&le;2</button>
-          <button class="rank-guide" data-rank-guide="3plus">3+</button>
+          <button class="rank-guide" data-rank-guide="3">&le;3</button>
+          <button class="rank-guide" data-rank-guide="4plus">4+</button>
           <button class="rank-guide" data-rank-guide="all">all</button>
         </span>
       </div>
@@ -846,7 +846,7 @@ function render() {
   state.rankGuideColorScheme = document.getElementById('rankGuideColorSelect').value;
   state.projectedRankGuides = document.getElementById('projectedRankGuidesSelect').value;
   assertKnown(state.colorMode, ['fitness', 'technique', 'rank'], 'color mode');
-  assertKnown(state.rankGuideMode, ['off', '0', '1', '2', '3plus', 'all'], 'rank guide mode');
+  assertKnown(state.rankGuideMode, ['off', '1', '2', '3', '4plus', 'all'], 'rank guide mode');
   assertKnownRankGuideMethod(state.rankGuideMethod);
   assertKnownRankGuideColorScheme(state.rankGuideColorScheme);
   assertKnown(state.projectedRankGuides, ['off', 'on'], 'projected rank guides');
@@ -911,7 +911,7 @@ function drawArchive(label, sceneName, technique) {
         kind: 'archiveCell',
         cellId: object.cellId,
         sampleIds: object.summary.sample_ids,
-        rank0Count: object.summary.rank0_count,
+        rank1Count: object.summary.rank1_count,
         bestMeanImprovement: object.summary.best_mean_improvement,
         bestQualityScore: object.summary.best_quality_score,
         x: p.x,
@@ -1091,18 +1091,18 @@ function projectedRankGuideOverlayEnabled(ds, method) {
 function visibleGuideRanks() {
   const mode = effectiveRankGuideMode();
   if (mode === 'off') return [];
-  if (mode === '0') return [0];
-  if (mode === '1') return [0, 1];
-  if (mode === '2') return [0, 1, 2];
-  if (mode === '3plus') return [3];
-  if (mode === 'all') return [0, 1, 2, 3];
+  if (mode === '1') return [1];
+  if (mode === '2') return [1, 2];
+  if (mode === '3') return [1, 2, 3];
+  if (mode === '4plus') return [4];
+  if (mode === 'all') return [1, 2, 3, 4];
   throw new Error('unknown rank guide mode: ' + mode);
 }
 function rankGuideSamples(samples, technique, rankBucket) {
   return samples.filter((sample) => {
     if (sample.technique !== technique) return false;
     const rank = Number(sample.pareto_rank_by_step[state.rankScope][stepName()]);
-    if (rankBucket === 3) return rank >= 3;
+    if (rankBucket === 4) return rank >= 4;
     return rank === rankBucket;
   });
 }
@@ -1380,10 +1380,10 @@ function drawDelaunayMesh(ctx, projector, points, triangles, color, rank, techni
     return {screens, depth};
   }).sort((left, right) => right.depth - left.depth);
   ctx.save();
-  ctx.fillStyle = alphaColor(color, rank === 0 ? 0.18 : 0.10);
-  ctx.strokeStyle = alphaColor(color, rank === 0 ? 0.74 : 0.48);
+  ctx.fillStyle = alphaColor(color, rank === 1 ? 0.18 : 0.10);
+  ctx.strokeStyle = alphaColor(color, rank === 1 ? 0.74 : 0.48);
   ctx.lineWidth = guideLineWidth(technique, rank) * 0.48;
-  if (rank > 0) ctx.setLineDash([6, 4]);
+  if (rank > 1) ctx.setLineDash([6, 4]);
   for (const item of items) {
     ctx.beginPath();
     ctx.moveTo(item.screens[0].x, item.screens[0].y);
@@ -1398,9 +1398,9 @@ function drawDelaunayMesh(ctx, projector, points, triangles, color, rank, techni
 function drawRankGuidePolyline(ctx, screens, color, rank, technique) {
   ctx.save();
   ctx.strokeStyle = color;
-  ctx.globalAlpha = rank === 0 ? 0.78 : 0.58;
+  ctx.globalAlpha = rank === 1 ? 0.78 : 0.58;
   ctx.lineWidth = guideLineWidth(technique, rank);
-  if (rank > 0) ctx.setLineDash([7, 5]);
+  if (rank > 1) ctx.setLineDash([7, 5]);
   ctx.beginPath();
   ctx.moveTo(screens[0].x, screens[0].y);
   for (const screen of screens.slice(1)) ctx.lineTo(screen.x, screen.y);
@@ -1411,7 +1411,7 @@ function drawRankGuideVertices(ctx, screens, technique, selected, rank) {
   const color = guideColor(technique, selected, rank);
   const shape = techniqueShape(technique, selected);
   ctx.save();
-  ctx.globalAlpha = rank === 0 ? 0.76 : 0.52;
+  ctx.globalAlpha = rank === 1 ? 0.76 : 0.52;
   for (const screen of screens) {
     drawMarker(ctx, screen, technique === 'classic' ? 2.8 : 3.6, shape);
     ctx.fillStyle = alphaColor(color, 0.86);
@@ -1427,7 +1427,7 @@ function guideColor(technique, selected, rank) {
   return rankColor(rank);
 }
 function guideLineWidth(technique, rank) {
-  const base = rank === 0 ? 2.3 : 1.55;
+  const base = rank === 1 ? 2.3 : 1.55;
   return technique === 'classic' ? base : base * 1.24;
 }
 function alphaColor(color, alpha) {
@@ -1832,10 +1832,10 @@ function drawPpaLegend(samples, selected) {
   if (state.colorMode === 'rank') {
     document.getElementById('ppaLegend').innerHTML =
       '<div class="legend-title">Color · Pareto rank</div>' +
-      [0, 1, 2, 3].map((rank) =>
+      [1, 2, 3, 4].map((rank) =>
         '<div class="legend-row"><span class="legend-swatch" style="width:' + (rankRadius(rank, false) * 2) +
         'px;height:' + (rankRadius(rank, false) * 2) + 'px;background:' + rankColor(rank) +
-        '"></span><span>' + (rank === 3 ? 'rank 3+' : 'rank ' + rank) + '</span></div>'
+        '"></span><span>' + (rank === 4 ? 'rank 4+' : 'rank ' + rank) + '</span></div>'
       ).join('') +
       '<div class="legend-row">larger = lower rank</div>' +
       rankGuideLegend() +
@@ -1875,10 +1875,10 @@ function projectedRankGuideLegend() {
   return '<div class="legend-row">projected 3D overlay on · vertices use technique shape</div>';
 }
 function rankGuideModeLabel() {
-  if (state.rankGuideMode === '0') return 'rank 0';
-  if (state.rankGuideMode === '1') return 'rank <= 1';
+  if (state.rankGuideMode === '1') return 'rank 1';
   if (state.rankGuideMode === '2') return 'rank <= 2';
-  if (state.rankGuideMode === '3plus') return 'rank 3+';
+  if (state.rankGuideMode === '3') return 'rank <= 3';
+  if (state.rankGuideMode === '4plus') return 'rank 4+';
   if (state.rankGuideMode === 'all') return 'all ranks';
   return 'off';
 }
@@ -1982,7 +1982,7 @@ function forEachCell(shape, callback) {
   for (let x = 0; x < shape[0]; x++) for (let y = 0; y < shape[1]; y++) for (let z = 0; z < shape[2]; z++) callback([x, y, z]);
 }
 function cellFill(cell, technique) {
-  const alpha = cell.rank0_count > 0 ? 0.66 : 0.44;
+  const alpha = cell.rank1_count > 0 ? 0.66 : 0.44;
   return fitnessColor(cell.best_mean_improvement, alpha);
 }
 function pointColor(sample, rank, selected) {
@@ -1992,14 +1992,14 @@ function pointColor(sample, rank, selected) {
   throw new Error('unknown color mode: ' + state.colorMode);
 }
 function rankColor(rank) {
-  if (rank === 0) return '#f0a51d';
-  if (rank === 1) return '#e5c45a';
-  if (rank === 2) return '#7ba66f';
+  if (rank === 1) return '#f0a51d';
+  if (rank === 2) return '#e5c45a';
+  if (rank === 3) return '#7ba66f';
   return '#4c7fa3';
 }
 function rankRadius(rank, hot) {
   if (hot) return 7;
-  return Math.max(2.8, 5.8 - Number(rank) * 0.72);
+  return Math.max(2.8, 5.8 - (Number(rank) - 1) * 0.72);
 }
 function techniqueRadiusScale(technique) {
   return technique === 'classic' ? 1 : 1.2;
@@ -2149,7 +2149,7 @@ function resetHoverState() {
 }
 function cellTooltip(cell) {
   return 'cell ' + cell.cellId + '\n' +
-    'samples ' + cell.sampleIds.length + ' · rank0 ' + (cell.rank0Count || 0) + '\n' +
+    'samples ' + cell.sampleIds.length + ' · rank1 ' + (cell.rank1Count || 0) + '\n' +
     'best fitness ' + fmt(cell.bestMeanImprovement) + ' · best quality ' + fmt(cell.bestQualityScore);
 }
 function layerCellTooltip(cellId, summary) {
@@ -2213,15 +2213,15 @@ function axisDetails(ds) {
 function statsHtml(stats) {
   const hv = stats.hypervolume || {};
   return '<span class="badge"><strong>samples</strong> ' + (stats.sample_count || 0) + '</span>' +
-    '<span class="badge">rank0 ' + (stats.rank0_count || 0) + '</span>' +
-    '<span class="badge">pooled rank0 ' + (stats.pooled_rank0_contribution_count || 0) + '</span>' +
+    '<span class="badge">rank1 ' + (stats.rank1_count || 0) + '</span>' +
+    '<span class="badge">pooled rank1 ' + (stats.pooled_rank1_contribution_count || 0) + '</span>' +
     '<span class="badge">cells ' + (stats.occupied_projected_cells || 0) + '</span>' +
     '<span class="badge">hv ' + fmt(hv.value) + '</span>';
 }
 function compareStatsHtml(stepStats, selected) {
   const chunks = selected.map((tech) => '<span class="badge"><strong>' + tech + '</strong></span>' + statsHtml(stepStats[tech] || {}));
   const pooled = stepStats._pooled_visible || {};
-  chunks.push('<span class="badge">pooled-visible rank0 ' + (pooled.rank0_count || 0) + ' · hv ' + fmt((pooled.hypervolume || {}).value) + '</span>');
+  chunks.push('<span class="badge">pooled-visible rank1 ' + (pooled.rank1_count || 0) + ' · hv ' + fmt((pooled.hypervolume || {}).value) + '</span>');
   return chunks.join('');
 }
 function drawCards(selected) {
@@ -2233,7 +2233,7 @@ function drawCards(selected) {
     document.getElementById(id).innerHTML = '<h3>' + (tech || 'technique') + '</h3><div class="stat-row">' + statsHtml(payload) + '</div>';
   });
   const pooled = stats._pooled_visible || {};
-  document.getElementById('cardDelta').innerHTML = '<h3>Visible pooled front</h3><div class="stat-row"><span class="badge">rank0 ' + (pooled.rank0_count || 0) + '</span><span class="badge">hv ' + fmt((pooled.hypervolume || {}).value) + '</span></div>';
+  document.getElementById('cardDelta').innerHTML = '<h3>Visible pooled front</h3><div class="stat-row"><span class="badge">rank1 ' + (pooled.rank1_count || 0) + '</span><span class="badge">hv ' + fmt((pooled.hypervolume || {}).value) + '</span></div>';
 }
 function updateDebugText() {
   document.getElementById('debugText').textContent = JSON.stringify(debugState(), null, 2);
@@ -2264,7 +2264,7 @@ function debugState() {
     effective_rank_guide_method: effectiveRankGuideMethodName(ds),
     effective_rank_guide_color_scheme: effectiveRankGuideColorScheme(),
     effective_rank_guide_mode: effectiveRankGuideMode(),
-    rank_radius_preview: [0, 1, 2, 3].map((rank) => rankRadius(rank, false)),
+    rank_radius_preview: [1, 2, 3, 4].map((rank) => rankRadius(rank, false)),
     technique_radius_preview: selectedTechniques().map((technique) => [technique, techniqueRadiusScale(technique)]),
     reference_axis_labels: referenceAxisLabels(ds),
     hovered_sample_axis_labels: hoveredSample ? sampleAxisLabels(hoveredSample, ds) : [],
@@ -2357,7 +2357,7 @@ function setColorMode(value) {
 }
 function setRankGuideMode(value) {
   state.rankGuideMode = value;
-  assertKnown(state.rankGuideMode, ['off', '0', '1', '2', '3plus', 'all'], 'rank guide mode');
+  assertKnown(state.rankGuideMode, ['off', '1', '2', '3', '4plus', 'all'], 'rank guide mode');
   updateRankGuideControls();
   render();
 }

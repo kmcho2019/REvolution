@@ -73,8 +73,8 @@ def validate_viewer(
     if not html_path.is_file():
         return ["missing index.html"]
     manifest = _load_json(manifest_path)
-    if manifest.get("schema_version") != "qd_ppa_viewer.v1":
-        errors.append("manifest schema_version is not qd_ppa_viewer.v1")
+    if manifest.get("schema_version") != "qd_ppa_viewer.v2":
+        errors.append("manifest schema_version is not qd_ppa_viewer.v2")
     defaults = manifest.get("viewer_defaults", {})
     if defaults.get("coordinate_mode") != "raw":
         errors.append("coordinate mode default is not raw")
@@ -238,7 +238,7 @@ def _validate_html_scene_contract(html: str) -> list[str]:
 
 def _validate_dataset(dataset: dict[str, Any], *, viewer_root: Path, strict: bool) -> list[str]:
     errors: list[str] = []
-    if dataset.get("schema_version") != "qd_ppa_problem.v1":
+    if dataset.get("schema_version") != "qd_ppa_problem.v2":
         return [f"{dataset.get('benchmark')}/{dataset.get('problem')} schema mismatch"]
     circuit_type = str(dataset["circuit_type"])
     objective_keys = active_objective_keys(circuit_type)
@@ -310,7 +310,7 @@ def _validate_step_ranks(
         if observed != expected:
             errors.append(_prefix(dataset, f"per-technique ranks mismatch for {technique} step {step}"))
         errors.extend(_check_contiguous(dataset, observed.values(), f"{technique} step {step}"))
-        errors.extend(_check_rank_zero(dataset, technique_samples, observed, objective_keys, f"{technique} step {step}"))
+        errors.extend(_check_rank_one(dataset, technique_samples, observed, objective_keys, f"{technique} step {step}"))
     if visible:
         expected = pareto_ranks(visible, objective_keys)
         observed = {
@@ -320,7 +320,7 @@ def _validate_step_ranks(
         if observed != expected:
             errors.append(_prefix(dataset, f"pooled-visible ranks mismatch step {step}"))
         errors.extend(_check_contiguous(dataset, observed.values(), f"pooled step {step}"))
-        errors.extend(_check_rank_zero(dataset, visible, observed, objective_keys, f"pooled step {step}"))
+        errors.extend(_check_rank_one(dataset, visible, observed, objective_keys, f"pooled step {step}"))
     return errors
 
 
@@ -403,13 +403,13 @@ def _check_contiguous(dataset: dict[str, Any], ranks: Any, label: str) -> list[s
     values = sorted(set(int(rank) for rank in ranks))
     if not values:
         return []
-    expected = list(range(max(values) + 1))
+    expected = list(range(1, max(values) + 1))
     if values != expected:
         return [_prefix(dataset, f"ranks not contiguous for {label}: {values}")]
     return []
 
 
-def _check_rank_zero(
+def _check_rank_one(
     dataset: dict[str, Any],
     samples: list[dict[str, Any]],
     ranks: dict[str, int],
@@ -422,14 +422,14 @@ def _check_rank_zero(
         for sample in samples
     }
     for sample in samples:
-        if ranks[sample["sample_id"]] != 0:
+        if ranks[sample["sample_id"]] != 1:
             continue
         if any(
             other_id != sample["sample_id"]
             and dominates_values(other, values[sample["sample_id"]], objective_keys)
             for other_id, other in values.items()
         ):
-            errors.append(_prefix(dataset, f"rank-0 sample dominated for {label}"))
+            errors.append(_prefix(dataset, f"rank-1 sample dominated for {label}"))
     return errors
 
 
@@ -442,6 +442,8 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
     report_lines = _visual_report_header()
     screenshot_dir = viewer_root / "screenshots"
     screenshot_dir.mkdir(parents=True, exist_ok=True)
+    for screenshot in screenshot_dir.glob("*.png"):
+        screenshot.unlink()
     manifest = _load_json(viewer_root / "manifest.json")
     problems = manifest["problems"]
     assert isinstance(problems, list) and problems
@@ -583,8 +585,8 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                     screenshot_dir,
                     errors,
                     report_lines,
-                    label="combinational_2d_rank_guides_r0",
-                    mode="0",
+                    label="combinational_2d_rank_guides_r1",
+                    mode="1",
                     method="auto",
                     color_scheme="auto",
                     projected_overlay="off",
@@ -638,8 +640,8 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                     require_compare_techniques=True,
                 )
                 _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "sequential_3d"))
-            page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setRankFilter('0')")
-            _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "rank0"))
+            page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setRankFilter('1')")
+            _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "rank1"))
             page.evaluate(
                 "() => {"
                 " document.getElementById('rankScopeSelect').value = 'pooled_visible';"
@@ -798,7 +800,7 @@ def _assert_color_modes(
         if "shape" not in legend or "classic" not in legend:
             errors.append(f"Playwright compare legend does not include technique shapes in {color_mode} mode")
         _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, f"color_{color_mode}"))
-    colors = page.evaluate("() => [rankColor(0), rankColor(1), rankColor(2), rankColor(3)]")
+    colors = page.evaluate("() => [rankColor(1), rankColor(2), rankColor(3), rankColor(4)]")
     assert isinstance(colors, list)
     if len(set(colors)) != 4:
         errors.append(f"Playwright rank colors are not distinct: {colors}")
