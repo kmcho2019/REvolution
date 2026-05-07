@@ -891,11 +891,14 @@ For grid-quantile journal runs:
   linked archive/PPA viewer as inspection-grade. The viewer computes PPA-space
   ranks independently of the display coordinate mode, keeps
   `all_ppa_valid` as the default timeline universe, exposes visible
-  `fitness`/`technique`/`rank` color modes with legends, labels one reference
-  PPA value per active axis, labels hovered PPA samples on the same axes, and
-  labels classic archive cells as posthoc projections into the selected QD
-  archive source. Strict Playwright validation records a visual parity report
-  and rejects the previous flat 2D-only viewer contract.
+  `fitness`/`technique`/`rank` color modes with viridis fitness legends, renders
+  sequential PPA samples as shaded 3D glyphs, labels one reference PPA value per
+  active axis, labels hovered PPA samples on the same axes, rotates the 3D PPA
+  scene when auto-rotate is enabled, shows compare-mode technique shape legends,
+  dims unrelated PPA samples during archive hover, and labels classic archive
+  cells as posthoc projections into the selected QD archive source. Strict
+  Playwright validation records a visual parity report and rejects the previous
+  flat 2D-only viewer contract.
 
 When choosing which mode/profile to run next:
 

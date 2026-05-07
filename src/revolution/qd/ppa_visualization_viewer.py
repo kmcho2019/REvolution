@@ -254,6 +254,9 @@ canvas:active { cursor: grabbing; }
   letter-spacing: 3px;
   text-transform: uppercase;
 }
+.legend-subtitle {
+  margin-top: 10px;
+}
 .legend-row {
   display: flex;
   align-items: center;
@@ -276,7 +279,7 @@ canvas:active { cursor: grabbing; }
 .legend-ramp {
   height: 10px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgb(220,100,72), rgb(160,165,72), rgb(100,230,72));
+  background: linear-gradient(90deg, #440154, #3b528b, #21918c, #5ec962, #fde725);
 }
 .legend-scale {
   display: flex;
@@ -413,7 +416,7 @@ details summary {
     <label for="techniqueBSelect">B</label>
     <select id="techniqueBSelect"></select>
     <button class="icon-btn" id="perspectiveLockBtn" title="Lock archive perspectives">🔒</button>
-    <button class="icon-btn active" id="autoRotateBtn" title="Auto rotate archive scenes">↻</button>
+    <button class="icon-btn active" id="autoRotateBtn" title="Auto rotate 3D scenes">↻</button>
     <button class="icon-btn" id="explodeLayersBtn" title="Explode archive layers">⇅</button>
     <button class="icon-btn" id="resetBtn" title="Reset cameras and highlights">⟲</button>
   </div>
@@ -758,6 +761,7 @@ function tick(now) {
     state.cameras.archiveA.yaw += elapsed * 0.00008;
     if (state.lockedPerspective) syncArchiveCameras('archiveA');
     else state.cameras.archiveB.yaw += elapsed * 0.00008;
+    if (dataset().circuit_type === 'sequential') state.cameras.ppa.yaw += elapsed * 0.00007;
     render();
   }
   requestAnimationFrame(tick);
@@ -862,6 +866,7 @@ function drawArchive(label, sceneName, technique) {
     rendered_cell_count: sorted.length,
     archive_sample_hit_count: archiveSampleHitCount,
     fitness_shaded: true,
+    fitness_palette: 'viridis',
     highlighted_cell_id: state.highlightedCellId,
   };
 }
@@ -892,7 +897,7 @@ function drawPpa3d(ctx, canvas, ds, samples, selected) {
     const point = normalizeCoord(coords[index], limits, 3);
     return {sample, point, screen: projector(point)};
   }).sort((a, b) => b.screen.depth - a.screen.depth);
-  for (const item of points) drawPpaPoint(ctx, item.sample, item.screen, selected);
+  for (const item of points) drawPpaPoint(ctx, item.sample, item.screen, selected, true);
   if (reference) drawPpaReferencePoint(ctx, projector(normalizeCoord(reference, limits, 3)));
   state.sceneInfo.ppa = {
     scene_type: 'ppa',
@@ -904,6 +909,9 @@ function drawPpa3d(ctx, canvas, ds, samples, selected) {
     z_range: valueRange(coords.map((coord) => coord[2])),
     axes: ppaAxisNames(ds),
     highlighted_sample_count: state.hoveredSampleIds.size,
+    point_glyph_mode: 'shaded_3d_points',
+    fitness_palette: 'viridis',
+    linked_fade_mode: state.hoveredSampleIds.size ? 'dim_unselected_samples' : 'none',
   };
 }
 function drawPpa2d(ctx, canvas, ds, samples, selected) {
@@ -927,7 +935,7 @@ function drawPpa2d(ctx, canvas, ds, samples, selected) {
   drawPpaAxisLabels2d(ctx, ds, reference, limits, pad, width, height, rect, hoveredSample);
   for (const sample of samples) {
     const coord = ppaCoord(sample, ds);
-    drawPpaPoint(ctx, sample, ppaScreen2d(coord, limits, pad, width, height, rect), selected);
+    drawPpaPoint(ctx, sample, ppaScreen2d(coord, limits, pad, width, height, rect), selected, false);
   }
   if (reference) drawPpaReferencePoint(ctx, ppaScreen2d(reference, limits, pad, width, height, rect));
   state.sceneInfo.ppa = {
@@ -940,6 +948,9 @@ function drawPpa2d(ctx, canvas, ds, samples, selected) {
     z_range: [0, 0],
     axes: ppaAxisNames(ds),
     highlighted_sample_count: state.hoveredSampleIds.size,
+    point_glyph_mode: 'flat_2d_points',
+    fitness_palette: 'viridis',
+    linked_fade_mode: state.hoveredSampleIds.size ? 'dim_unselected_samples' : 'none',
   };
 }
 function ppaScreen2d(coord, limits, pad, width, height, rect) {
@@ -1269,20 +1280,57 @@ function drawAxisArrow(ctx, start, end, color) {
   ctx.fill();
   ctx.restore();
 }
-function drawPpaPoint(ctx, sample, screen, selected) {
+function drawPpaPoint(ctx, sample, screen, selected, shaded) {
   const rank = sample.pareto_rank_by_step[state.rankScope][stepName()];
   const hot = state.hoveredSampleIds.has(sample.sample_id);
   const radius = rankRadius(rank, hot) * techniqueRadiusScale(sample.technique) * Math.max(0.78, Math.min(1.7, screen.scale || 1));
-  drawMarker(ctx, screen, radius, techniqueShape(sample.technique, selected));
+  const shape = techniqueShape(sample.technique, selected);
+  const color = pointColor(sample, rank, selected);
   ctx.save();
-  ctx.globalAlpha = hot ? 1 : Math.max(0.42, Math.min(0.95, 0.68 + Number(screen.depth || 0) * 0.14));
-  ctx.fillStyle = pointColor(sample, rank, selected);
-  ctx.fill();
+  ctx.globalAlpha = ppaPointAlpha(hot, screen);
+  if (shaded) drawPpaShadedPoint(ctx, screen, radius, shape, color);
+  else {
+    drawMarker(ctx, screen, radius, shape);
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
   ctx.strokeStyle = sample.viewer_pooled_pareto_member ? '#25211d' : 'rgba(255,255,255,0.95)';
   ctx.lineWidth = sample.mode_global_pareto_member ? 2.3 : 1.1;
   ctx.stroke();
   ctx.restore();
   state.hitMaps.ppa.push({kind: 'ppaSample', sampleId: sample.sample_id, cellId: sample.archive_cell_id, x: screen.x, y: screen.y, radius: Math.max(radius + 5, 13)});
+}
+function ppaPointAlpha(hot, screen) {
+  if (hot) return 1;
+  if (state.hoveredSampleIds.size > 0) return 0.16;
+  return Math.max(0.42, Math.min(0.95, 0.68 + Number(screen.depth || 0) * 0.14));
+}
+function drawPpaShadedPoint(ctx, screen, radius, shape, color) {
+  ctx.save();
+  ctx.shadowColor = 'rgba(37,33,29,0.24)';
+  ctx.shadowBlur = Math.max(3, radius * 0.85);
+  ctx.shadowOffsetX = radius * 0.22;
+  ctx.shadowOffsetY = radius * 0.28;
+  drawMarker(ctx, screen, radius, shape);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  drawMarker(ctx, screen, radius, shape);
+  ctx.clip();
+  const highlight = ctx.createRadialGradient(
+    screen.x - radius * 0.35, screen.y - radius * 0.45, radius * 0.1,
+    screen.x, screen.y, radius
+  );
+  highlight.addColorStop(0, 'rgba(255,255,255,0.82)');
+  highlight.addColorStop(0.35, 'rgba(255,255,255,0.22)');
+  highlight.addColorStop(1, 'rgba(0,0,0,0.18)');
+  ctx.fillStyle = highlight;
+  ctx.fillRect(screen.x - radius, screen.y - radius, radius * 2, radius * 2);
+  ctx.restore();
+
+  drawMarker(ctx, screen, radius, shape);
 }
 function drawPpaLegend(samples, selected) {
   if (state.colorMode === 'fitness') {
@@ -1291,7 +1339,8 @@ function drawPpaLegend(samples, selected) {
       '<div class="legend-title">Color · fitness</div>' +
       '<div class="legend-ramp"></div>' +
       '<div class="legend-scale"><span>min ' + fmt(range[0]) + '</span><span>0</span><span>max ' + fmt(range[1]) + '</span></div>' +
-      '<div class="legend-row">mean active PPA improvement</div>';
+      '<div class="legend-row">viridis · mean active PPA improvement</div>' +
+      techniqueShapeLegend(selected);
     return;
   }
   if (state.colorMode === 'technique') {
@@ -1300,7 +1349,8 @@ function drawPpaLegend(samples, selected) {
       selected.map((technique) =>
         '<div class="legend-row"><span class="legend-swatch" style="background:' +
         techniqueColor(technique, selected) + '"></span><span>' + technique + '</span></div>'
-      ).join('');
+      ).join('') +
+      techniqueShapeLegend(selected);
     return;
   }
   if (state.colorMode === 'rank') {
@@ -1311,10 +1361,25 @@ function drawPpaLegend(samples, selected) {
         'px;height:' + (rankRadius(rank, false) * 2) + 'px;background:' + rankColor(rank) +
         '"></span><span>' + (rank === 3 ? 'rank 3+' : 'rank ' + rank) + '</span></div>'
       ).join('') +
-      '<div class="legend-row">larger = lower rank</div>';
+      '<div class="legend-row">larger = lower rank</div>' +
+      techniqueShapeLegend(selected);
     return;
   }
   throw new Error('unknown color mode: ' + state.colorMode);
+}
+function techniqueShapeLegend(selected) {
+  if (state.mode !== 'compare' || selected.length < 2) return '';
+  return '<div class="legend-title legend-subtitle">Shape · technique</div>' +
+    selected.map((technique) =>
+      '<div class="legend-row"><span class="legend-swatch" style="' +
+      legendShapeStyle(technique, selected) + '"></span><span>' + technique + '</span></div>'
+    ).join('');
+}
+function legendShapeStyle(technique, selected) {
+  const shape = techniqueShape(technique, selected);
+  if (shape === 'circle') return 'background:#6f6a60;border-radius:999px;';
+  if (shape === 'diamond') return 'background:#6f6a60;border-radius:2px;transform:rotate(45deg);';
+  throw new Error('unknown technique shape: ' + shape);
 }
 function drawPpaReferencePoint(ctx, screen) {
   ctx.save();
@@ -1415,10 +1480,7 @@ function cellFill(cell, technique) {
 }
 function pointColor(sample, rank, selected) {
   if (state.colorMode === 'technique') return techniqueColor(sample.technique, selected);
-  if (state.colorMode === 'fitness') {
-    const t = Math.max(0, Math.min(1, Number(sample.mean_improvement || 0) + 0.5));
-    return 'rgb(' + Math.round(220 - 120 * t) + ',' + Math.round(100 + 130 * t) + ',72)';
-  }
+  if (state.colorMode === 'fitness') return fitnessColor(sample.mean_improvement, 0.96);
   if (state.colorMode === 'rank') return rankColor(rank);
   throw new Error('unknown color mode: ' + state.colorMode);
 }
@@ -1445,11 +1507,29 @@ function fitnessRange(samples) {
   return [Math.min(...values), Math.max(...values)];
 }
 function fitnessColor(value, alpha) {
-  const t = Math.max(0, Math.min(1, Number(value || 0) + 0.5));
-  const r = Math.round(210 - 130 * t);
-  const g = Math.round(95 + 130 * t);
-  const b = Math.round(86 + 16 * t);
-  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+  return viridisColor(improvementUnit(value), alpha);
+}
+function improvementUnit(value) {
+  return Math.max(0, Math.min(1, Number(value || 0) + 0.5));
+}
+function viridisColor(value, alpha) {
+  const stops = [
+    [0.00, [68, 1, 84]],
+    [0.25, [59, 82, 139]],
+    [0.50, [33, 145, 140]],
+    [0.75, [94, 201, 98]],
+    [1.00, [253, 231, 37]],
+  ];
+  const t = Math.max(0, Math.min(1, Number(value)));
+  for (let index = 0; index < stops.length - 1; index++) {
+    const left = stops[index];
+    const right = stops[index + 1];
+    if (t > right[0]) continue;
+    const local = (t - left[0]) / (right[0] - left[0]);
+    const rgb = left[1].map((channel, offset) => Math.round(channel + (right[1][offset] - channel) * local));
+    return 'rgba(' + rgb.join(',') + ',' + alpha + ')';
+  }
+  return 'rgba(253,231,37,' + alpha + ')';
 }
 function techniqueShape(technique, selected) {
   return selected.indexOf(technique) % 2 === 1 ? 'diamond' : 'circle';
@@ -1483,13 +1563,15 @@ function drawLayerPanel(label, technique, cells, shape) {
         item.className = 'layer-cell' + (cell ? ' occupied' : '') + (state.highlightedCellId === cellId ? ' hot' : '');
         if (cell) item.style.background = state.highlightedCellId === cellId ? '#f3b23b' : fitnessColor(cell.best_mean_improvement, 0.76);
         item.dataset.cellId = cellId;
-        item.addEventListener('mouseenter', () => {
+        item.addEventListener('mouseenter', (event) => {
           const summary = cells[cellId];
           state.highlightedCellId = cellId;
           state.highlightedScene = 'archive' + label;
           state.hoveredSampleIds = new Set(summary ? summary.sample_ids : []);
           render();
+          showTooltip(event, layerCellTooltip(cellId, summary));
         });
+        item.addEventListener('mousemove', (event) => showTooltip(event, layerCellTooltip(cellId, cells[cellId])));
         item.addEventListener('mouseleave', clearHover);
         grid.appendChild(item);
       }
@@ -1527,23 +1609,26 @@ function handleHover(sceneName, event) {
     state.highlightedCellId = best.cellId;
     state.highlightedScene = sceneName;
     state.hoveredSampleIds = new Set(best.sampleIds);
-    tooltip.textContent = cellTooltip(best);
+    showTooltip(event, cellTooltip(best));
   } else if (best.kind === 'ppaSample' || best.kind === 'archiveSample') {
     const sample = dataset().samples.find((item) => item.sample_id === best.sampleId);
     state.highlightedCellId = best.cellId;
     state.highlightedScene = sceneName;
     state.hoveredSampleIds = new Set([best.sampleId]);
-    tooltip.textContent = sampleTooltip(sample);
+    showTooltip(event, sampleTooltip(sample));
   } else {
     state.highlightedCellId = null;
     state.highlightedScene = sceneName;
     state.hoveredSampleIds = new Set();
-    tooltip.textContent = referenceTooltip(dataset());
+    showTooltip(event, referenceTooltip(dataset()));
   }
+  render();
+}
+function showTooltip(event, text) {
+  tooltip.textContent = text;
   tooltip.style.display = 'block';
   tooltip.style.left = event.clientX + 12 + 'px';
   tooltip.style.top = event.clientY + 12 + 'px';
-  render();
 }
 function clearHover() {
   resetHoverState();
@@ -1559,6 +1644,13 @@ function cellTooltip(cell) {
   return 'cell ' + cell.cellId + '\n' +
     'samples ' + cell.sampleIds.length + ' · rank0 ' + (cell.rank0Count || 0) + '\n' +
     'best fitness ' + fmt(cell.bestMeanImprovement) + ' · best quality ' + fmt(cell.bestQualityScore);
+}
+function layerCellTooltip(cellId, summary) {
+  const sampleCount = summary ? summary.sample_ids.length : 0;
+  const bestFitness = summary ? summary.best_mean_improvement : null;
+  return 'cell indices ' + cellId + '\n' +
+    'samples ' + sampleCount + '\n' +
+    'best fitness ' + fmt(bestFitness);
 }
 function sampleTooltip(sample) {
   if (!sample) return '';

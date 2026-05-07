@@ -157,11 +157,18 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "drawPpa3d(",
         "drawPpa2d(",
         "drawPpaFrame3d(",
+        "drawPpaShadedPoint(",
         "drawPpaSampleAxisTicks3d(",
+        "techniqueShapeLegend(",
+        "layerCellTooltip(",
+        "showTooltip(",
         "ppaReferenceCoord(",
         "sampleAxisLabels(",
         "reference_visible:",
         "fitness_shaded:",
+        "fitness_palette:",
+        "point_glyph_mode:",
+        "linked_fade_mode:",
         "makeProjector(",
         "rotatePoint(",
         "hoverFirstArchiveCell",
@@ -172,6 +179,7 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "rankColor(",
         "rankRadius(",
         "fitnessRange(",
+        "viridisColor(",
         "techniqueRadiusScale(",
         "referenceAxisLabels(",
         "highlighted_sample_ids",
@@ -462,6 +470,8 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                     _viewer_screenshot(page, screenshot_dir, errors, f"coordinate_{coordinate_mode}"),
                 )
             page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setCoordinateMode('raw')")
+            if _debug_state(page).get("auto_rotate"):
+                page.click("#autoRotateBtn")
             ppa_camera_before_lock = _debug_state(page).get("scenes", {}).get("ppa", {}).get("camera")
             page.click("#perspectiveLockBtn")
             _assert_locked_archive_cameras(page, errors, ppa_camera_before_lock)
@@ -631,11 +641,18 @@ def _assert_color_modes(
             errors.append(f"Playwright legend does not describe {color_mode} mode")
         if color_mode == "fitness" and ("min " not in legend or "max " not in legend):
             errors.append("Playwright fitness legend does not show displayed min/max scores")
+        if color_mode == "fitness" and "viridis" not in legend:
+            errors.append("Playwright fitness legend does not identify viridis")
+        if "shape" not in legend or "classic" not in legend:
+            errors.append(f"Playwright compare legend does not include technique shapes in {color_mode} mode")
         _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, f"color_{color_mode}"))
     colors = page.evaluate("() => [rankColor(0), rankColor(1), rankColor(2), rankColor(3)]")
     assert isinstance(colors, list)
     if len(set(colors)) != 4:
         errors.append(f"Playwright rank colors are not distinct: {colors}")
+    palette = page.evaluate("() => [viridisColor(0, 1), viridisColor(1, 1)]")
+    if palette != ["rgba(68,1,84,1)", "rgba(253,231,37,1)"]:
+        errors.append(f"Playwright fitness palette is not viridis: {palette}")
     radii = _debug_state(page).get("rank_radius_preview")
     if not isinstance(radii, list) or len(radii) != 4:
         errors.append("Playwright rank radius preview is missing")
@@ -661,11 +678,17 @@ def _assert_color_modes(
 def _assert_auto_rotate(page: Any, errors: list[str]) -> None:
     first = _debug_state(page)
     first_camera = first.get("scenes", {}).get("archiveA", {}).get("camera", {})
+    first_ppa = first.get("scenes", {}).get("ppa", {})
+    first_ppa_camera = first_ppa.get("camera", {})
     page.wait_for_timeout(250)
     second = _debug_state(page)
     second_camera = second.get("scenes", {}).get("archiveA", {}).get("camera", {})
+    second_ppa = second.get("scenes", {}).get("ppa", {})
+    second_ppa_camera = second_ppa.get("camera", {})
     if first_camera.get("yaw") == second_camera.get("yaw"):
         errors.append("Playwright auto-rotate did not change archive camera yaw")
+    if first_ppa.get("dimensionality") == "3d" and first_ppa_camera.get("yaw") == second_ppa_camera.get("yaw"):
+        errors.append("Playwright auto-rotate did not change 3D PPA camera yaw")
 
 
 def _assert_archive_hover_clears(page: Any, errors: list[str]) -> None:
@@ -726,6 +749,12 @@ def _assert_ppa_dimensionality(page: Any, errors: list[str], *, label: str, expe
         z_range = ppa.get("z_range", [0, 0])
         if len(z_range) != 2 or float(z_range[1]) <= float(z_range[0]):
             errors.append(f"{label}: sequential PPA z range is not populated")
+        if ppa.get("point_glyph_mode") != "shaded_3d_points":
+            errors.append(f"{label}: sequential PPA points are not shaded 3D glyphs")
+    elif ppa.get("point_glyph_mode") != "flat_2d_points":
+        errors.append(f"{label}: combinational PPA points are not flat 2D glyphs")
+    if ppa.get("fitness_palette") != "viridis":
+        errors.append(f"{label}: PPA fitness palette is not viridis")
 
 
 def _assert_sample_axis_labels(
@@ -772,6 +801,8 @@ def _strict_visual_matrix(
                 errors.append(f"{label}: archive scene has no sample-level hit targets")
             if not scene.get("fitness_shaded"):
                 errors.append(f"{label}: archive scene does not report fitness shading")
+            if scene.get("fitness_palette") != "viridis":
+                errors.append(f"{label}: archive fitness palette is not viridis")
             if label == "sequential_archive_3d" and scene.get("collapsed_axes"):
                 errors.append(f"{label}: full 3D archive unexpectedly reports collapsed axes")
             if label == "combinational_projected_archive" and "ff_depth" not in scene.get("collapsed_axes", []):
@@ -781,6 +812,9 @@ def _strict_visual_matrix(
             hover = _debug_state(page)
             if not hover.get("highlighted_sample_ids"):
                 errors.append(f"{label}: archive hover did not highlight PPA samples")
+            ppa_scene = hover.get("scenes", {}).get("ppa", {})
+            if ppa_scene.get("linked_fade_mode") != "dim_unselected_samples":
+                errors.append(f"{label}: archive hover did not dim unselected PPA samples")
             _report_screenshot(
                 report_lines,
                 _viewer_screenshot(page, screenshot_dir, errors, f"{label}_archive_hover"),
@@ -797,6 +831,11 @@ def _strict_visual_matrix(
             layer_hover = _debug_state(page)
             if not layer_hover.get("highlighted_sample_ids") or layer_hover.get("highlighted_cell_id") is None:
                 errors.append(f"{label}: layer-panel hover did not map to cell samples")
+            layer_tooltip = _hover_first_layer_cell_with_mouse(page, "A")
+            if layer_tooltip is None:
+                errors.append(f"{label}: real layer-panel hover did not show a tooltip")
+            elif "cell indices " not in layer_tooltip or "samples " not in layer_tooltip or "best fitness " not in layer_tooltip:
+                errors.append(f"{label}: layer-panel tooltip is incomplete: {layer_tooltip}")
             _report_screenshot(
                 report_lines,
                 _viewer_screenshot(page, screenshot_dir, errors, f"{label}_layer_hover"),
@@ -851,6 +890,7 @@ def _scene_report_metadata(state: dict[str, Any], scene_kind: str, scene: dict[s
             "camera": scene.get("camera"),
             "collapsed_axes": scene.get("collapsed_axes"),
             "effective_shape": scene.get("effective_shape"),
+            "fitness_palette": scene.get("fitness_palette"),
             "renderer": scene.get("renderer"),
             "selected_techniques": state.get("selected_techniques"),
             "visible_layer_count": scene.get("visible_layer_count"),
@@ -859,7 +899,10 @@ def _scene_report_metadata(state: dict[str, Any], scene_kind: str, scene: dict[s
         "axes": scene.get("axes"),
         "camera": scene.get("camera"),
         "color_mode": state.get("color_mode"),
+        "fitness_palette": scene.get("fitness_palette"),
         "hovered_sample_axis_labels": state.get("hovered_sample_axis_labels"),
+        "linked_fade_mode": scene.get("linked_fade_mode"),
+        "point_glyph_mode": scene.get("point_glyph_mode"),
         "reference_visible": scene.get("reference_visible"),
         "renderer": scene.get("renderer"),
         "selected_techniques": state.get("selected_techniques"),
@@ -897,6 +940,21 @@ def _hover_first_archive_sample_with_mouse(page: Any, scene_name: str, canvas_se
     state = _debug_state(page)
     tooltip_display = page.locator("#tooltip").evaluate("node => getComputedStyle(node).display")
     return len(state.get("highlighted_sample_ids", [])) == 1 and tooltip_display != "none"
+
+
+def _hover_first_layer_cell_with_mouse(page: Any, label: str) -> str | None:
+    cell = page.locator(f"#layerPanel{label} .layer-cell.occupied").first
+    if cell.count() == 0:
+        return None
+    rect = cell.bounding_box()
+    if not rect:
+        return None
+    page.mouse.move(float(rect["x"]) + float(rect["width"]) / 2, float(rect["y"]) + float(rect["height"]) / 2)
+    page.wait_for_timeout(100)
+    tooltip = page.locator("#tooltip")
+    if tooltip.evaluate("node => getComputedStyle(node).display") == "none":
+        return None
+    return str(tooltip.inner_text())
 
 
 def _hover_ppa_reference_with_mouse(page: Any) -> str | None:

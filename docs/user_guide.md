@@ -453,15 +453,20 @@ The viewer supports single and compare modes, raw/improvement/normalized PPA
 coordinates, `per_technique` and `pooled_visible` Pareto-rank scopes, and an
 `all_ppa_valid` default timeline universe. The PPA pane exposes
 `fitness`/`technique`/`rank` color modes with visible legends; fitness legends
-show the displayed min/max mean-improvement scores, rank mode uses distinct
-rank colors with rank-scaled marker sizes, and QD/journal markers render
-slightly larger than `classic` to make exact overlaps visible. The PPA view
-labels one reference-value tick per active axis, and when hovering a single PPA
-sample it also labels that sample's active-axis values for direct comparison;
-reference-marker hover still shows the full raw reference PPA payload. Classic
-samples are projected posthoc into the selected QD archive source for inspection
-only; missing descriptors stay visible in the PPA/Pareto pane and are excluded
-from archive
+use viridis and show the displayed min/max mean-improvement scores, rank mode
+uses distinct rank colors with rank-scaled marker sizes, and QD/journal markers
+render slightly larger than `classic` to make exact overlaps visible. Sequential
+PPA views use shaded 3D point glyphs; combinational PPA views remain flat 2D
+scatter plots. Compare-mode legends include a marker-shape section for the two
+selected techniques. Auto-rotate rotates archive scenes and the PPA scene when
+the selected PPA distribution is 3D. Archive-cell hover dims unrelated PPA
+samples, and z-slice layer hover shows cell indices, sample count, and best
+fitness. The PPA view labels one reference-value tick per active axis, and when
+hovering a single PPA sample it also labels that sample's active-axis values for
+direct comparison; reference-marker hover still shows the full raw reference PPA
+payload. Classic samples are projected posthoc into the selected QD archive
+source for inspection only; missing descriptors stay visible in the PPA/Pareto
+pane and are excluded from archive
 occupancy. The validator checks rank contiguity, nondominance, hypervolume
 metadata, source hashes, strict no-network HTML, and the required viewer
 controls. With `--playwright`, strict validation also checks the scene/debug

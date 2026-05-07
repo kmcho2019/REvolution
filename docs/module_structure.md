@@ -64,9 +64,10 @@
     `qd/ppa_visualization_metrics.py`, and
     `qd/ppa_visualization_viewer.py`: static linked QD archive plus
     PPA/Pareto viewer exporter, fixed-objective Pareto-rank/hypervolume
-    helpers, and inline HTML bundle generation with visible PPA color legends,
-    rank-scaled markers, reference/sample axis ticks, and linked hover debug
-    hooks.
+    helpers, and inline HTML bundle generation with viridis fitness legends,
+    shaded sequential PPA glyphs, rank-scaled markers, reference/sample axis
+    ticks, compare-mode shape legends, linked-hover dimming, layer-cell
+    tooltips, and linked hover debug hooks.
 - `backends/funsearch_backend.py`: FunSearch-style RTL backend (islands, signature clusters, reset/reseed, budgeted loop).
 - `runtime/problem_context.py`: benchmark/problem path and metadata resolution.
 - `runtime/problem_spec.py`: benchmark capability layer and default descriptor / generation-mode preferences.
@@ -132,8 +133,9 @@
   into a selected QD archive source and emits
   `visualization/qd_ppa_viewer/index.html` plus per-problem JSON datasets. The
   validator checks the scene/debug contract, PPA color-mode controls, rank-size
-  semantics, reference and sample hover/tick behavior, and strict offline
-  reproducibility.
+  semantics, viridis fitness shading, shaded sequential PPA glyphs, reference
+  and sample hover/tick behavior, PPA auto-rotation, layer tooltips, linked
+  alpha dimming, and strict offline reproducibility.
 - `prompt_file_manager.py`: manage prompt bundle files and synchronise `data/prompts/`.
 - `util/` and `ref/`: helper scripts, synthesis references, and datasets.
 
