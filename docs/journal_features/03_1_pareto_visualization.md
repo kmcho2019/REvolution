@@ -904,6 +904,15 @@ area/power/effective clock period. The coordinate toggle may move the guide
 geometry because it changes display coordinates, but it must not change which
 samples are assigned to each rank bucket.
 
+Rank-guide color is independently selectable in Advanced:
+`auto`, `rank`, or `technique`. The accepted default is `auto`, which resolves
+to rank colors so rank 0, 1, 2, and 3+ remain visually distinct. In compare
+mode, techniques must remain distinguishable through marker shape and line
+weight: `classic` uses circle vertices and the base line weight, while
+non-classic techniques use diamond vertices and a slightly heavier line. Do not
+use dashed lines to distinguish non-classic techniques; reserve dashes for
+non-rank-0 guide buckets.
+
 For 2D combinational PPA, draw guide lines for the selected rank bucket after
 axes/reference ticks and before points. The default `auto` method should use a
 PCHIP-style monotone interpolation. `monotone_polyline` is the safest audit
@@ -915,6 +924,9 @@ area-period display plane and render the resulting triangles at their actual
 third-objective coordinate. Label it as a guide, not an exact Pareto surface.
 Keep `projected_curves_3d` available as an advanced diagnostic option, but do
 not use projected plane curves as the default accepted 3D representation.
+Also provide a separate `Projected 3D curves` advanced overlay switch so users
+can layer projected curves and technique-shaped guide vertices on top of the
+default 3D mesh without replacing it.
 Constrained monotone surfaces, RBFs, and alpha shapes remain future work until
 they have separate numerical validation gates.
 
@@ -1297,17 +1309,20 @@ Required checks:
     color mode, and support `off`, `r0`, `<=1`, `<=2`, `3+`, and `all`.
 36b. Rank guides emit browser debug metadata with
     `rank_guide_mode`, `rank_guide_count`, `rank_guide_projection_mode`,
-    `rank_guide_method`, `rank_guide_coordinate_mode`,
-    `rank_guide_signature`, `rank_guide_surface_mode`, and
-    `rank_guide_triangle_count`.
+    `rank_guide_method`, `rank_guide_color_scheme`,
+    `rank_guide_coordinate_mode`, `rank_guide_signature`,
+    `rank_guide_surface_mode`, `rank_guide_triangle_count`,
+    `rank_guide_projected_overlay`, `rank_guide_projected_count`, and
+    `rank_guide_projected_vertex_count`.
 36c. Strict Playwright validation proves 2D combinational PCHIP/trend guide
     lines and 3D sequential Delaunay mesh guides render with nonzero counts in
     compare mode, and proves guides do not render outside rank color mode.
 36d. The default 3D guide must report `rank_guide_surface_mode` as
     `delaunay_mesh_3d` with a positive triangle count. The advanced projected
-    diagnostic must report `none_projected_curves_only`. RBF, alpha-shape, or
-    constrained-spline surfaces require a separate later implementation with
-    explicit numerical validation.
+    overlay must be off by default, and when enabled it must report nonzero
+    projected curve and vertex counts with both circle and diamond vertex
+    shapes in compare mode. RBF, alpha-shape, or constrained-spline surfaces
+    require a separate later implementation with explicit numerical validation.
 37. PPA reference labels appear as one reference-value tick per active axis, and
     hovering the reference marker still exposes full raw reference PPA values.
 38. Source hashes or mtimes are recorded for the CSV/JSON artifacts used by
@@ -1596,7 +1611,8 @@ Acceptance criteria:
 - strict validation confirms rank guides are disabled outside rank color mode,
   compare mode emits guides for both selected techniques when enough samples
   exist, the default 3D guide has a positive triangle count, and projected
-  curves remain an advanced diagnostic option;
+  curves remain an off-by-default advanced overlay with technique-shaped
+  vertices;
 - `per_technique` is the default rank scope and `pooled_visible` is available
   in the viewer;
 - compare-mode stats show both per-technique rank-0 count and pooled-visible

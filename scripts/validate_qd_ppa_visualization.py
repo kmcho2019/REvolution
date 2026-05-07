@@ -109,6 +109,8 @@ def validate_viewer(
         "sampleUniverseSelect",
         "rankFilterSelect",
         "rankGuideMethodSelect",
+        "rankGuideColorSelect",
+        "projectedRankGuidesSelect",
         "colorModeSelect",
         "color-quick",
         "rank-guide",
@@ -165,12 +167,15 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "drawPpaRankGuides3d(",
         "effectiveRankGuideMode(",
         "effectiveRankGuideMethodName(",
+        "effectiveRankGuideColorScheme(",
+        "projectedRankGuideOverlayEnabled(",
         "rankGuideSamples(",
         "frontEnvelope2d(",
         "pchipGuide2d(",
         "smooth2dGuide(",
         "delaunayTriangles2d(",
         "drawDelaunayMesh(",
+        "drawRankGuideVertices(",
         "techniqueShapeLegend(",
         "layerCellTooltip(",
         "showTooltip(",
@@ -190,6 +195,8 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "setColorMode",
         "setRankGuideMode",
         "setRankGuideMethod",
+        "setRankGuideColorScheme",
+        "setProjectedRankGuides",
         "rankColor(",
         "rankRadius(",
         "fitnessRange(",
@@ -201,11 +208,16 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "color_mode:",
         "rank_guide_mode:",
         "rank_guide_method:",
+        "rank_guide_color_scheme:",
         "rank_guide_count:",
         "rank_guide_projection_mode:",
         "rank_guide_signature:",
         "rank_guide_surface_mode:",
         "rank_guide_triangle_count:",
+        "rank_guide_projected_overlay:",
+        "rank_guide_projected_count:",
+        "rank_guide_projected_vertex_count:",
+        "rank_guide_projected_vertex_shapes:",
         "rank_radius_preview:",
         "technique_radius_preview:",
         "reference_axis_labels:",
@@ -490,10 +502,14 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                     label="rank_guides_3d_mesh_le2",
                     mode="2",
                     method="auto",
+                    color_scheme="auto",
+                    projected_overlay="off",
                     expected_method="delaunay_mesh_3d",
+                    expected_color_scheme="rank",
                     expected_projection="3d_delaunay_mesh",
                     expected_surface="delaunay_mesh_3d",
                     require_mesh=True,
+                    require_projected_overlay=False,
                     require_compare_techniques=True,
                 )
                 _assert_rank_guides(
@@ -504,10 +520,32 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                     label="rank_guides_3d_projected_le2",
                     mode="2",
                     method="projected_curves_3d",
+                    color_scheme="technique",
+                    projected_overlay="off",
                     expected_method="projected_curves_3d",
+                    expected_color_scheme="technique",
                     expected_projection="3d_projected_curves",
                     expected_surface="none_projected_curves_only",
                     require_mesh=False,
+                    require_projected_overlay=False,
+                    require_compare_techniques=True,
+                )
+                _assert_rank_guides(
+                    page,
+                    screenshot_dir,
+                    errors,
+                    report_lines,
+                    label="rank_guides_3d_mesh_projected_overlay",
+                    mode="2",
+                    method="auto",
+                    color_scheme="rank",
+                    projected_overlay="on",
+                    expected_method="delaunay_mesh_3d",
+                    expected_color_scheme="rank",
+                    expected_projection="3d_delaunay_mesh",
+                    expected_surface="delaunay_mesh_3d",
+                    require_mesh=True,
+                    require_projected_overlay=True,
                     require_compare_techniques=True,
                 )
             _assert_rank_guides_disabled_outside_rank(page, errors)
@@ -548,10 +586,14 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                     label="combinational_2d_rank_guides_r0",
                     mode="0",
                     method="auto",
+                    color_scheme="auto",
+                    projected_overlay="off",
                     expected_method="pchip_2d",
+                    expected_color_scheme="rank",
                     expected_projection="2d_line",
                     expected_surface="none",
                     require_mesh=False,
+                    require_projected_overlay=False,
                     require_compare_techniques=False,
                 )
                 _assert_rank_guides(
@@ -562,10 +604,14 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                     label="combinational_2d_rank_guides_le2",
                     mode="2",
                     method="moving_average_trend",
+                    color_scheme="rank",
+                    projected_overlay="off",
                     expected_method="moving_average_trend",
+                    expected_color_scheme="rank",
                     expected_projection="2d_line",
                     expected_surface="none",
                     require_mesh=False,
+                    require_projected_overlay=False,
                     require_compare_techniques=True,
                 )
                 _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "combinational_2d"))
@@ -581,10 +627,14 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                     label="sequential_3d_rank_guides_mesh",
                     mode="2",
                     method="auto",
+                    color_scheme="auto",
+                    projected_overlay="off",
                     expected_method="delaunay_mesh_3d",
+                    expected_color_scheme="rank",
                     expected_projection="3d_delaunay_mesh",
                     expected_surface="delaunay_mesh_3d",
                     require_mesh=True,
+                    require_projected_overlay=False,
                     require_compare_techniques=True,
                 )
                 _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "sequential_3d"))
@@ -786,15 +836,21 @@ def _assert_rank_guides(
     label: str,
     mode: str,
     method: str,
+    color_scheme: str,
+    projected_overlay: str,
     expected_method: str,
+    expected_color_scheme: str,
     expected_projection: str,
     expected_surface: str,
     require_mesh: bool,
+    require_projected_overlay: bool,
     require_compare_techniques: bool,
 ) -> None:
     page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setColorMode('rank')")
     page.evaluate("mode => window.__QD_PPA_VIEWER_DEBUG__.setRankGuideMode(mode)", mode)
     page.evaluate("method => window.__QD_PPA_VIEWER_DEBUG__.setRankGuideMethod(method)", method)
+    page.evaluate("scheme => window.__QD_PPA_VIEWER_DEBUG__.setRankGuideColorScheme(scheme)", color_scheme)
+    page.evaluate("value => window.__QD_PPA_VIEWER_DEBUG__.setProjectedRankGuides(value)", projected_overlay)
     state = _debug_state(page)
     scene = state.get("scenes", {}).get("ppa", {})
     if state.get("color_mode") != "rank":
@@ -813,6 +869,13 @@ def _assert_rank_guides(
         )
     if scene.get("rank_guide_method") != expected_method:
         errors.append(f"{label}: scene rank guide method mismatch: {scene.get('rank_guide_method')}")
+    if state.get("effective_rank_guide_color_scheme") != expected_color_scheme:
+        errors.append(
+            f"{label}: expected guide color scheme {expected_color_scheme}, "
+            f"saw {state.get('effective_rank_guide_color_scheme')}"
+        )
+    if scene.get("rank_guide_color_scheme") != expected_color_scheme:
+        errors.append(f"{label}: scene guide color scheme mismatch: {scene.get('rank_guide_color_scheme')}")
     if scene.get("rank_guide_projection_mode") != expected_projection:
         errors.append(
             f"{label}: expected guide projection {expected_projection}, "
@@ -829,6 +892,18 @@ def _assert_rank_guides(
         errors.append(f"{label}: Delaunay mesh rendered no triangles")
     if not require_mesh and int(scene.get("rank_guide_triangle_count", 0)) != 0:
         errors.append(f"{label}: non-mesh rank guide unexpectedly emitted triangles")
+    if bool(scene.get("rank_guide_projected_overlay")) != require_projected_overlay:
+        errors.append(f"{label}: projected overlay state mismatch: {scene.get('rank_guide_projected_overlay')}")
+    projected_count = int(scene.get("rank_guide_projected_count", 0))
+    projected_vertices = int(scene.get("rank_guide_projected_vertex_count", 0))
+    if require_projected_overlay and (projected_count <= 0 or projected_vertices <= 0):
+        errors.append(f"{label}: projected overlay did not render curves and vertices")
+    if not require_projected_overlay and expected_method != "projected_curves_3d" and (projected_count != 0 or projected_vertices != 0):
+        errors.append(f"{label}: projected overlay counts are nonzero while disabled")
+    if require_projected_overlay:
+        shapes = set(scene.get("rank_guide_projected_vertex_shapes", []))
+        if not {"circle", "diamond"}.issubset(shapes):
+            errors.append(f"{label}: projected overlay vertex shapes are incomplete: {sorted(shapes)}")
     if require_compare_techniques and len(scene.get("rank_guide_techniques", [])) < 2:
         errors.append(f"{label}: compare mode did not emit guides for both techniques")
     if not scene.get("rank_guide_signature"):
@@ -1029,10 +1104,14 @@ def _strict_visual_matrix(
                 label=f"{label}_rank_guides",
                 mode="2",
                 method="auto",
+                color_scheme="auto",
+                projected_overlay="off",
                 expected_method="delaunay_mesh_3d" if expected_dimensionality == "3d" else "pchip_2d",
+                expected_color_scheme="rank",
                 expected_projection="3d_delaunay_mesh" if expected_dimensionality == "3d" else "2d_line",
                 expected_surface="delaunay_mesh_3d" if expected_dimensionality == "3d" else "none",
                 require_mesh=expected_dimensionality == "3d",
+                require_projected_overlay=False,
                 require_compare_techniques=True,
             )
             state = _debug_state(page)
@@ -1095,9 +1174,14 @@ def _scene_report_metadata(state: dict[str, Any], scene_kind: str, scene: dict[s
         "hovered_sample_axis_labels": state.get("hovered_sample_axis_labels"),
         "linked_fade_mode": scene.get("linked_fade_mode"),
         "point_glyph_mode": scene.get("point_glyph_mode"),
+        "rank_guide_color_scheme": scene.get("rank_guide_color_scheme"),
         "rank_guide_count": scene.get("rank_guide_count"),
         "rank_guide_method": scene.get("rank_guide_method"),
         "rank_guide_mode": scene.get("rank_guide_mode"),
+        "rank_guide_projected_count": scene.get("rank_guide_projected_count"),
+        "rank_guide_projected_overlay": scene.get("rank_guide_projected_overlay"),
+        "rank_guide_projected_vertex_count": scene.get("rank_guide_projected_vertex_count"),
+        "rank_guide_projected_vertex_shapes": scene.get("rank_guide_projected_vertex_shapes"),
         "rank_guide_projection_mode": scene.get("rank_guide_projection_mode"),
         "rank_guide_surface_mode": scene.get("rank_guide_surface_mode"),
         "rank_guide_techniques": scene.get("rank_guide_techniques"),
