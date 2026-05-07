@@ -1814,8 +1814,10 @@ function drawPpaLegend(samples, selected) {
     document.getElementById('ppaLegend').innerHTML =
       '<div class="legend-title">Color · fitness</div>' +
       '<div class="legend-ramp"></div>' +
-      '<div class="legend-scale"><span>min ' + fmt(range[0]) + '</span><span>0</span><span>max ' + fmt(range[1]) + '</span></div>' +
-      '<div class="legend-row">viridis · mean active PPA improvement</div>' +
+      '<div class="legend-scale"><span>-1.0</span><span>0</span><span>1.0</span></div>' +
+      '<div class="legend-row">mean active PPA improvement</div>' +
+      '<div class="legend-row">visible sample range ' + fmt(range[0]) + ' to ' + fmt(range[1]) + '</div>' +
+      '<div class="legend-row">outliers clipped to [-1.0, 1.0]</div>' +
       techniqueShapeLegend(selected);
     return;
   }
@@ -2017,7 +2019,8 @@ function fitnessColor(value, alpha) {
   return viridisColor(improvementUnit(value), alpha);
 }
 function improvementUnit(value) {
-  return Math.max(0, Math.min(1, Number(value || 0) + 0.5));
+  const clipped = Math.max(-1, Math.min(1, Number(value || 0)));
+  return (clipped + 1) * 0.5;
 }
 function viridisColor(value, alpha) {
   const stops = [

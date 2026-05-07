@@ -147,8 +147,9 @@ Demo features that must carry over:
   own rank-1 count and its pooled-visible rank-1 contribution count;
 - hypervolume stats for each technique plus pooled-visible hypervolume for
   the selected compare pair;
-- scatter legend that updates with the active color mode: fitness uses a
-  viridis ramp with currently displayed min/max mean-improvement scores,
+- scatter legend that updates with the active color mode: fitness labels the
+  metric as mean active PPA improvement, shows a fixed `-1.0`, `0`, `1.0`
+  scale, reports visible sample min/max separately, notes outlier clipping,
   technique lists selected techniques, and rank distinguishes rank 1, 2, 3,
   and 4+;
 - compare-mode PPA legend section that maps point shape to selected technique;
@@ -168,7 +169,8 @@ does not emphasize them:
 - visible quantile cutoffs and effective bin intervals for archive axes;
 - collapsible archive-axis/bin detail panel;
 - in-scene or in-pane boundary tick labels for frozen quantile boundaries;
-- viridis fitness/color legend using the same scale as archive cells;
+- fitness/color legend using the same fixed `[-1.0, 1.0]` clipped scale as
+  archive cells, with visible sample min/max reported separately;
 - z-slice/layer panel that remains visible in narrow VS Code preview panes;
 - orientation cue in the layer panel;
 - z-slice/layer hover tooltip with cell indices, sample count, and best fitness;
@@ -932,8 +934,11 @@ default 3D mesh without replacing it.
 Constrained monotone surfaces, RBFs, and alpha shapes remain future work until
 they have separate numerical validation gates.
 
-Fitness and archive-cell scalar shading must use a viridis ramp; do not use
-viridis for technique or rank categories.
+Fitness and archive-cell scalar shading must use a viridis ramp internally,
+mapped from mean active PPA improvement with `-1.0` at the low end, `0` in the
+middle, and `1.0` at the high end. Values outside `[-1.0, 1.0]` are clipped.
+The visible legend should name the metric and fixed scale, not expose the
+palette implementation. Do not use viridis for technique or rank categories.
 
 ### Linked Interaction
 
@@ -1300,8 +1305,9 @@ Required checks:
     `raw`, `improvement`, `normalized`.
 34. The PPA color control is visible in the PPA pane and supports `fitness`,
     `technique`, and `rank`.
-35. The active PPA color legend is visible: fitness uses viridis and shows
-    displayed min/max mean-improvement values, technique lists selected
+35. The active PPA color legend is visible: fitness shows mean active PPA
+    improvement on a fixed `-1.0`, `0`, `1.0` scale, reports visible sample
+    min/max separately, documents clipping, technique lists selected
     techniques, rank distinguishes rank 1, 2, 3, and 4+, and compare mode
     includes a marker-shape legend for the selected techniques.
 36. PPA point radii decrease monotonically with Pareto rank, and non-classic
@@ -1754,7 +1760,7 @@ RUN_ROOT=exp/journal_pareto_front_hard_subset/20260506_040658
 
 The strict validator now requires `window.__QD_PPA_VIEWER_DEBUG__`, scene
 dimensionality metadata, camera state, linked hover hooks, and viewport
-screenshots. It checks PPA color-mode switching, visible viridis fitness
+screenshots. It checks PPA color-mode switching, visible fixed-scale fitness
 legends, compare-mode technique shape legends, rank color and marker-size
 semantics, sequential shaded point glyph metadata, 3D PPA auto-rotation,
 non-classic overlap visibility, linked-hover alpha dimming, layer-cell tooltips,

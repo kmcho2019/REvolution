@@ -793,10 +793,17 @@ def _assert_color_modes(
         legend = page.locator("#ppaLegend").inner_text().lower()
         if color_mode not in legend:
             errors.append(f"Playwright legend does not describe {color_mode} mode")
-        if color_mode == "fitness" and ("min " not in legend or "max " not in legend):
-            errors.append("Playwright fitness legend does not show displayed min/max scores")
-        if color_mode == "fitness" and "viridis" not in legend:
-            errors.append("Playwright fitness legend does not identify viridis")
+        if color_mode == "fitness" and "viridis" in legend:
+            errors.append("Playwright fitness legend should not expose palette implementation")
+        if color_mode == "fitness":
+            if "-1.0" not in legend or "1.0" not in legend:
+                errors.append("Playwright fitness legend does not show fixed [-1, 1] scale")
+            if "visible sample range" not in legend:
+                errors.append("Playwright fitness legend does not show separate sample range")
+            if "outliers clipped" not in legend:
+                errors.append("Playwright fitness legend does not document clipping")
+            if "mean active ppa improvement" not in legend:
+                errors.append("Playwright fitness legend does not name the metric")
         if "shape" not in legend or "classic" not in legend:
             errors.append(f"Playwright compare legend does not include technique shapes in {color_mode} mode")
         _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, f"color_{color_mode}"))
@@ -807,6 +814,19 @@ def _assert_color_modes(
     palette = page.evaluate("() => [viridisColor(0, 1), viridisColor(1, 1)]")
     if palette != ["rgba(68,1,84,1)", "rgba(253,231,37,1)"]:
         errors.append(f"Playwright fitness palette is not viridis: {palette}")
+    fitness_scale = page.evaluate(
+        "() => [fitnessColor(-2, 1), fitnessColor(-1, 1), "
+        "fitnessColor(0, 1), fitnessColor(1, 1), fitnessColor(2, 1)]"
+    )
+    expected_scale = [
+        "rgba(68,1,84,1)",
+        "rgba(68,1,84,1)",
+        "rgba(33,145,140,1)",
+        "rgba(253,231,37,1)",
+        "rgba(253,231,37,1)",
+    ]
+    if fitness_scale != expected_scale:
+        errors.append(f"Playwright fitness scale is not clipped [-1, 1]: {fitness_scale}")
     radii = _debug_state(page).get("rank_radius_preview")
     if not isinstance(radii, list) or len(radii) != 4:
         errors.append("Playwright rank radius preview is missing")
