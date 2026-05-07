@@ -110,6 +110,7 @@ def validate_viewer(
         "rankFilterSelect",
         "colorModeSelect",
         "color-quick",
+        "rank-guide",
         "ppaLegend",
         "perspectiveLockBtn",
         "autoRotateBtn",
@@ -159,6 +160,12 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "drawPpaFrame3d(",
         "drawPpaShadedPoint(",
         "drawPpaSampleAxisTicks3d(",
+        "drawPpaRankGuides2d(",
+        "drawPpaRankGuides3d(",
+        "effectiveRankGuideMode(",
+        "rankGuideSamples(",
+        "frontEnvelope2d(",
+        "smooth2dGuide(",
         "techniqueShapeLegend(",
         "layerCellTooltip(",
         "showTooltip(",
@@ -176,6 +183,7 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "hoverFirstLayerCell",
         "hoverFirstPpaPoint",
         "setColorMode",
+        "setRankGuideMode",
         "rankColor(",
         "rankRadius(",
         "fitnessRange(",
@@ -185,6 +193,11 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "highlighted_sample_ids",
         "highlighted_cell_id",
         "color_mode:",
+        "rank_guide_mode:",
+        "rank_guide_count:",
+        "rank_guide_projection_mode:",
+        "rank_guide_signature:",
+        "rank_guide_surface_mode:",
         "rank_radius_preview:",
         "technique_radius_preview:",
         "reference_axis_labels:",
@@ -460,11 +473,32 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
             _select_compare(page, "classic", "grid_quantile_pareto_journal_bd", errors)
             _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "compare_classic_qd"))
             _assert_color_modes(page, screenshot_dir, errors, report_lines)
+            if _debug_state(page).get("circuit_type") == "sequential":
+                _assert_rank_guides(
+                    page,
+                    screenshot_dir,
+                    errors,
+                    report_lines,
+                    label="rank_guides_3d_le2",
+                    mode="2",
+                    expected_projection="3d_projected_curves",
+                    require_compare_techniques=True,
+                )
+            _assert_rank_guides_disabled_outside_rank(page, errors)
             _assert_archive_hover_clears(page, errors)
             _assert_reference_hover(page, errors)
             for coordinate_mode in ("raw", "improvement", "normalized"):
                 page.evaluate("mode => window.__QD_PPA_VIEWER_DEBUG__.setCoordinateMode(mode)", coordinate_mode)
                 _assert_coordinate_mode(page, errors, coordinate_mode)
+                scene = _debug_state(page).get("scenes", {}).get("ppa", {})
+                if scene.get("rank_guide_mode") != "off":
+                    if scene.get("rank_guide_coordinate_mode") != coordinate_mode:
+                        errors.append(
+                            "Playwright rank guide coordinate metadata did not follow "
+                            f"{coordinate_mode}"
+                        )
+                    if int(scene.get("rank_guide_count", 0)) <= 0:
+                        errors.append(f"Playwright rank guide count disappeared in {coordinate_mode} mode")
                 _report_screenshot(
                     report_lines,
                     _viewer_screenshot(page, screenshot_dir, errors, f"coordinate_{coordinate_mode}"),
@@ -480,11 +514,41 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                 page.evaluate("key => window.__QD_PPA_VIEWER_DEBUG__.setProblem(key)", combinational)
                 _select_compare(page, "classic", "grid_quantile_pareto_journal_bd", errors)
                 _assert_ppa_dimensionality(page, errors, label="combinational_2d", expected="2d")
+                _assert_rank_guides(
+                    page,
+                    screenshot_dir,
+                    errors,
+                    report_lines,
+                    label="combinational_2d_rank_guides_r0",
+                    mode="0",
+                    expected_projection="2d_line",
+                    require_compare_techniques=False,
+                )
+                _assert_rank_guides(
+                    page,
+                    screenshot_dir,
+                    errors,
+                    report_lines,
+                    label="combinational_2d_rank_guides_le2",
+                    mode="2",
+                    expected_projection="2d_line",
+                    require_compare_techniques=True,
+                )
                 _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "combinational_2d"))
             if sequential is not None:
                 page.evaluate("key => window.__QD_PPA_VIEWER_DEBUG__.setProblem(key)", sequential)
                 _select_compare(page, "classic", "grid_quantile_pareto_journal_bd", errors)
                 _assert_ppa_dimensionality(page, errors, label="sequential_3d", expected="3d")
+                _assert_rank_guides(
+                    page,
+                    screenshot_dir,
+                    errors,
+                    report_lines,
+                    label="sequential_3d_rank_guides_projected",
+                    mode="2",
+                    expected_projection="3d_projected_curves",
+                    require_compare_techniques=True,
+                )
                 _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "sequential_3d"))
             page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setRankFilter('0')")
             _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "rank0"))
@@ -675,6 +739,61 @@ def _assert_color_modes(
         errors.append(f"Playwright reference tooltip no longer has full PPA data: {reference_tooltip}")
 
 
+def _assert_rank_guides(
+    page: Any,
+    screenshot_dir: Path,
+    errors: list[str],
+    report_lines: list[str],
+    *,
+    label: str,
+    mode: str,
+    expected_projection: str,
+    require_compare_techniques: bool,
+) -> None:
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setColorMode('rank')")
+    page.evaluate("mode => window.__QD_PPA_VIEWER_DEBUG__.setRankGuideMode(mode)", mode)
+    state = _debug_state(page)
+    scene = state.get("scenes", {}).get("ppa", {})
+    if state.get("color_mode") != "rank":
+        errors.append(f"{label}: rank guides were not tested in rank color mode")
+    if state.get("rank_guide_mode") != mode or state.get("effective_rank_guide_mode") != mode:
+        errors.append(
+            f"{label}: expected rank guide mode {mode}, saw "
+            f"{state.get('rank_guide_mode')}/{state.get('effective_rank_guide_mode')}"
+        )
+    if scene.get("rank_guide_mode") != mode:
+        errors.append(f"{label}: scene rank guide mode mismatch: {scene.get('rank_guide_mode')}")
+    if scene.get("rank_guide_projection_mode") != expected_projection:
+        errors.append(
+            f"{label}: expected guide projection {expected_projection}, "
+            f"saw {scene.get('rank_guide_projection_mode')}"
+        )
+    if scene.get("rank_guide_surface_mode", "").startswith("triangulated"):
+        errors.append(f"{label}: first implementation must not emit a triangulated rank surface")
+    if int(scene.get("rank_guide_count", 0)) <= 0:
+        errors.append(f"{label}: rank guide count is zero")
+    if require_compare_techniques and len(scene.get("rank_guide_techniques", [])) < 2:
+        errors.append(f"{label}: compare mode did not emit guides for both techniques")
+    if not scene.get("rank_guide_signature"):
+        errors.append(f"{label}: rank guide geometry signature is missing")
+    _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, label))
+
+
+def _assert_rank_guides_disabled_outside_rank(page: Any, errors: list[str]) -> None:
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setRankGuideMode('2')")
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setColorMode('fitness')")
+    state = _debug_state(page)
+    scene = state.get("scenes", {}).get("ppa", {})
+    if state.get("effective_rank_guide_mode") != "off":
+        errors.append("Playwright rank guides are effective outside rank color mode")
+    if int(scene.get("rank_guide_count", 0)) != 0:
+        errors.append("Playwright rank guides render outside rank color mode")
+    disabled = page.locator(".rank-guide[data-rank-guide='2']").evaluate("node => node.disabled")
+    if not disabled:
+        errors.append("Playwright rank guide controls are not disabled outside rank color mode")
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setColorMode('rank')")
+
+
 def _assert_auto_rotate(page: Any, errors: list[str]) -> None:
     first = _debug_state(page)
     first_camera = first.get("scenes", {}).get("archiveA", {}).get("camera", {})
@@ -845,6 +964,18 @@ def _strict_visual_matrix(
                 errors.append(f"{label}: PPA scene reports no visible samples")
             if not scene.get("reference_visible"):
                 errors.append(f"{label}: PPA scene does not report a reference marker")
+            _assert_rank_guides(
+                page,
+                screenshot_dir,
+                errors,
+                report_lines,
+                label=f"{label}_rank_guides",
+                mode="2",
+                expected_projection="3d_projected_curves" if expected_dimensionality == "3d" else "2d_line",
+                require_compare_techniques=True,
+            )
+            state = _debug_state(page)
+            scene = state["scenes"]["ppa"]
             if not page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.hoverFirstPpaPoint()"):
                 errors.append(f"{label}: PPA hover bridge found no sample")
             hover = _debug_state(page)
@@ -903,6 +1034,11 @@ def _scene_report_metadata(state: dict[str, Any], scene_kind: str, scene: dict[s
         "hovered_sample_axis_labels": state.get("hovered_sample_axis_labels"),
         "linked_fade_mode": scene.get("linked_fade_mode"),
         "point_glyph_mode": scene.get("point_glyph_mode"),
+        "rank_guide_count": scene.get("rank_guide_count"),
+        "rank_guide_mode": scene.get("rank_guide_mode"),
+        "rank_guide_projection_mode": scene.get("rank_guide_projection_mode"),
+        "rank_guide_surface_mode": scene.get("rank_guide_surface_mode"),
+        "rank_guide_techniques": scene.get("rank_guide_techniques"),
         "reference_visible": scene.get("reference_visible"),
         "renderer": scene.get("renderer"),
         "selected_techniques": state.get("selected_techniques"),

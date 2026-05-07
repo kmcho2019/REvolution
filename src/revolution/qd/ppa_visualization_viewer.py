@@ -128,6 +128,10 @@ button.active, .seg button.active {
   background: transparent;
   min-height: 28px;
 }
+.seg button:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
 .seg button:last-child { border-right: 0; }
 .icon-btn {
   width: 32px;
@@ -524,6 +528,15 @@ details summary {
           <button class="rank-quick" data-rank-filter="1">&le;1</button>
           <button class="rank-quick" data-rank-filter="2">&le;2</button>
         </span>
+        <span class="control-label">Guides</span>
+        <span class="seg">
+          <button class="rank-guide active" data-rank-guide="off">off</button>
+          <button class="rank-guide" data-rank-guide="0">r0</button>
+          <button class="rank-guide" data-rank-guide="1">&le;1</button>
+          <button class="rank-guide" data-rank-guide="2">&le;2</button>
+          <button class="rank-guide" data-rank-guide="3plus">3+</button>
+          <button class="rank-guide" data-rank-guide="all">all</button>
+        </span>
       </div>
     </div>
     <div class="scene-wrap">
@@ -551,6 +564,7 @@ const state = {
   coordinateMode: 'raw',
   rankScope: 'per_technique',
   colorMode: 'fitness',
+  rankGuideMode: 'off',
   stepIndex: 0,
   timer: null,
   lockedPerspective: false,
@@ -629,6 +643,9 @@ function bindControls() {
   }));
   document.querySelectorAll('.color-quick').forEach((button) => button.addEventListener('click', () => {
     setColorMode(button.dataset.colorMode);
+  }));
+  document.querySelectorAll('.rank-guide').forEach((button) => button.addEventListener('click', () => {
+    setRankGuideMode(button.dataset.rankGuide);
   }));
   document.getElementById('colorModeSelect').addEventListener('change', () => {
     setColorMode(document.getElementById('colorModeSelect').value);
@@ -779,6 +796,8 @@ function render() {
   state.rankScope = document.getElementById('rankScopeSelect').value;
   state.colorMode = document.getElementById('colorModeSelect').value;
   assertKnown(state.colorMode, ['fitness', 'technique', 'rank'], 'color mode');
+  assertKnown(state.rankGuideMode, ['off', '0', '1', '2', '3plus', 'all'], 'rank guide mode');
+  updateRankGuideControls();
   const selected = selectedTechniques();
   document.getElementById('layout').className = state.mode;
   document.getElementById('archivePaneB').classList.toggle('hidden', state.mode === 'single');
@@ -893,6 +912,7 @@ function drawPpa3d(ctx, canvas, ds, samples, selected) {
   const hoveredSample = visibleHoveredSample(samples);
   drawPpaFrame3d(ctx, projector);
   drawPpaAxes3d(ctx, projector, ds, reference, limits, hoveredSample);
+  const guideSummary = drawPpaRankGuides3d(ctx, ds, samples, selected, limits, projector);
   const points = samples.map((sample, index) => {
     const point = normalizeCoord(coords[index], limits, 3);
     return {sample, point, screen: projector(point)};
@@ -912,6 +932,13 @@ function drawPpa3d(ctx, canvas, ds, samples, selected) {
     point_glyph_mode: 'shaded_3d_points',
     fitness_palette: 'viridis',
     linked_fade_mode: state.hoveredSampleIds.size ? 'dim_unselected_samples' : 'none',
+    rank_guide_mode: effectiveRankGuideMode(),
+    rank_guide_count: guideSummary.count,
+    rank_guide_techniques: guideSummary.techniques,
+    rank_guide_signature: guideSummary.signature,
+    rank_guide_projection_mode: '3d_projected_curves',
+    rank_guide_coordinate_mode: state.coordinateMode,
+    rank_guide_surface_mode: 'none_projected_curves_only',
   };
 }
 function drawPpa2d(ctx, canvas, ds, samples, selected) {
@@ -933,6 +960,7 @@ function drawPpa2d(ctx, canvas, ds, samples, selected) {
   ctx.fillStyle = '#716b64';
   ctx.fillText(ppaAxisSummary(ds), pad.left, 28);
   drawPpaAxisLabels2d(ctx, ds, reference, limits, pad, width, height, rect, hoveredSample);
+  const guideSummary = drawPpaRankGuides2d(ctx, ds, samples, selected, limits, pad, width, height, rect);
   for (const sample of samples) {
     const coord = ppaCoord(sample, ds);
     drawPpaPoint(ctx, sample, ppaScreen2d(coord, limits, pad, width, height, rect), selected, false);
@@ -951,6 +979,13 @@ function drawPpa2d(ctx, canvas, ds, samples, selected) {
     point_glyph_mode: 'flat_2d_points',
     fitness_palette: 'viridis',
     linked_fade_mode: state.hoveredSampleIds.size ? 'dim_unselected_samples' : 'none',
+    rank_guide_mode: effectiveRankGuideMode(),
+    rank_guide_count: guideSummary.count,
+    rank_guide_techniques: guideSummary.techniques,
+    rank_guide_signature: guideSummary.signature,
+    rank_guide_projection_mode: '2d_line',
+    rank_guide_coordinate_mode: state.coordinateMode,
+    rank_guide_surface_mode: 'none',
   };
 }
 function ppaScreen2d(coord, limits, pad, width, height, rect) {
@@ -960,6 +995,128 @@ function ppaScreen2d(coord, limits, pad, width, height, rect) {
     scale: 1,
     depth: 0,
   };
+}
+function effectiveRankGuideMode() {
+  return state.colorMode === 'rank' ? state.rankGuideMode : 'off';
+}
+function visibleGuideRanks() {
+  const mode = effectiveRankGuideMode();
+  if (mode === 'off') return [];
+  if (mode === '0') return [0];
+  if (mode === '1') return [0, 1];
+  if (mode === '2') return [0, 1, 2];
+  if (mode === '3plus') return [3];
+  if (mode === 'all') return [0, 1, 2, 3];
+  throw new Error('unknown rank guide mode: ' + mode);
+}
+function rankGuideSamples(samples, technique, rankBucket) {
+  return samples.filter((sample) => {
+    if (sample.technique !== technique) return false;
+    const rank = Number(sample.pareto_rank_by_step[state.rankScope][stepName()]);
+    if (rankBucket === 3) return rank >= 3;
+    return rank === rankBucket;
+  });
+}
+function drawPpaRankGuides2d(ctx, ds, samples, selected, limits, pad, width, height, rect) {
+  const summary = {count: 0, techniques: [], signature: []};
+  const ranks = visibleGuideRanks();
+  for (const rank of ranks) {
+    for (const technique of selected) {
+      const guide = smooth2dGuide(frontEnvelope2d(
+        rankGuideSamples(samples, technique, rank).map((sample) => ppaCoord(sample, ds))
+      ));
+      if (guide.length < 2) continue;
+      const screens = guide.map((coord) => ppaScreen2d(coord, limits, pad, width, height, rect));
+      drawRankGuidePolyline(ctx, screens, guideColor(technique, selected), rank);
+      summary.count += 1;
+      if (!summary.techniques.includes(technique)) summary.techniques.push(technique);
+      recordRankGuideSignature(summary, technique, rank, screens);
+    }
+  }
+  return summary;
+}
+function drawPpaRankGuides3d(ctx, ds, samples, selected, limits, projector) {
+  const summary = {count: 0, techniques: [], signature: []};
+  const projections = ['area_period', 'area_power', 'period_power'];
+  const ranks = visibleGuideRanks();
+  for (const rank of ranks) {
+    for (const technique of selected) {
+      const points = rankGuideSamples(samples, technique, rank).map((sample) => normalizeCoord(ppaCoord(sample, ds), limits, 3));
+      for (const projection of projections) {
+        const guide = smooth2dGuide(frontEnvelope2d(points.map((point) => projectedGuidePair(point, projection))));
+        if (guide.length < 2) continue;
+        const screens = guide.map((pair) => projector(projectedGuidePoint(pair, projection)));
+        drawRankGuidePolyline(ctx, screens, guideColor(technique, selected), rank);
+        summary.count += 1;
+        if (!summary.techniques.includes(technique)) summary.techniques.push(technique);
+        recordRankGuideSignature(summary, technique, rank, screens);
+      }
+    }
+  }
+  return summary;
+}
+function recordRankGuideSignature(summary, technique, rank, screens) {
+  const first = screens[0];
+  const last = screens[screens.length - 1];
+  summary.signature.push([
+    technique,
+    rank,
+    Math.round(first.x),
+    Math.round(first.y),
+    Math.round(last.x),
+    Math.round(last.y),
+    screens.length,
+  ]);
+}
+function frontEnvelope2d(points) {
+  const finite = points.filter((point) => point.length >= 2 && Number.isFinite(point[0]) && Number.isFinite(point[1]));
+  if (finite.length < 2) return finite;
+  const sorted = finite.slice().sort((left, right) => left[0] - right[0]);
+  const higherIsBetter = state.coordinateMode === 'improvement';
+  let best = higherIsBetter ? -Infinity : Infinity;
+  const envelope = [];
+  for (const point of sorted) {
+    if (higherIsBetter ? point[1] >= best : point[1] <= best) {
+      envelope.push(point);
+      best = point[1];
+    }
+  }
+  return envelope.length >= 2 ? envelope : sorted;
+}
+function smooth2dGuide(points) {
+  if (points.length <= 2) return points;
+  return points.map((point, index) => {
+    if (index === 0 || index === points.length - 1) return point;
+    const left = points[index - 1], right = points[index + 1];
+    return [(left[0] + point[0] + right[0]) / 3, (left[1] + point[1] + right[1]) / 3];
+  });
+}
+function projectedGuidePair(point, projection) {
+  if (projection === 'area_period') return [point.x, point.y];
+  if (projection === 'area_power') return [point.x, point.z];
+  if (projection === 'period_power') return [point.y, point.z];
+  throw new Error('unknown rank guide projection: ' + projection);
+}
+function projectedGuidePoint(pair, projection) {
+  if (projection === 'area_period') return {x: pair[0], y: pair[1], z: -1.12};
+  if (projection === 'area_power') return {x: pair[0], y: -1.18, z: pair[1]};
+  if (projection === 'period_power') return {x: -1.22, y: pair[0], z: pair[1]};
+  throw new Error('unknown rank guide projection: ' + projection);
+}
+function drawRankGuidePolyline(ctx, screens, color, rank) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = rank === 0 ? 0.78 : 0.58;
+  ctx.lineWidth = rank === 0 ? 2.3 : 1.55;
+  if (rank > 0) ctx.setLineDash([7, 5]);
+  ctx.beginPath();
+  ctx.moveTo(screens[0].x, screens[0].y);
+  for (const screen of screens.slice(1)) ctx.lineTo(screen.x, screen.y);
+  ctx.stroke();
+  ctx.restore();
+}
+function guideColor(technique, selected) {
+  return techniqueColor(technique, selected);
 }
 function setupCanvas(canvas) {
   const rect = canvas.getBoundingClientRect();
@@ -1362,6 +1519,7 @@ function drawPpaLegend(samples, selected) {
         '"></span><span>' + (rank === 3 ? 'rank 3+' : 'rank ' + rank) + '</span></div>'
       ).join('') +
       '<div class="legend-row">larger = lower rank</div>' +
+      rankGuideLegend() +
       techniqueShapeLegend(selected);
     return;
   }
@@ -1374,6 +1532,22 @@ function techniqueShapeLegend(selected) {
       '<div class="legend-row"><span class="legend-swatch" style="' +
       legendShapeStyle(technique, selected) + '"></span><span>' + technique + '</span></div>'
     ).join('');
+}
+function rankGuideLegend() {
+  if (effectiveRankGuideMode() === 'off') return '<div class="legend-row">rank guides off</div>';
+  const scene = dataset().circuit_type === 'sequential'
+    ? '3D projected curves, not an exact surface'
+    : '2D smoothed lines';
+  return '<div class="legend-title legend-subtitle">Smoothed rank guide</div>' +
+    '<div class="legend-row">' + rankGuideModeLabel() + ' · ' + scene + '</div>';
+}
+function rankGuideModeLabel() {
+  if (state.rankGuideMode === '0') return 'rank 0';
+  if (state.rankGuideMode === '1') return 'rank <= 1';
+  if (state.rankGuideMode === '2') return 'rank <= 2';
+  if (state.rankGuideMode === '3plus') return 'rank 3+';
+  if (state.rankGuideMode === 'all') return 'all ranks';
+  return 'off';
 }
 function legendShapeStyle(technique, selected) {
   const shape = techniqueShape(technique, selected);
@@ -1750,6 +1924,8 @@ function debugState() {
     highlighted_cell_id: state.highlightedCellId,
     highlighted_sample_ids: Array.from(state.hoveredSampleIds),
     color_mode: state.colorMode,
+    rank_guide_mode: state.rankGuideMode,
+    effective_rank_guide_mode: effectiveRankGuideMode(),
     rank_radius_preview: [0, 1, 2, 3].map((rank) => rankRadius(rank, false)),
     technique_radius_preview: selectedTechniques().map((technique) => [technique, techniqueRadiusScale(technique)]),
     reference_axis_labels: referenceAxisLabels(ds),
@@ -1841,6 +2017,19 @@ function setColorMode(value) {
   document.querySelectorAll('.color-quick').forEach((button) => button.classList.toggle('active', button.dataset.colorMode === value));
   render();
 }
+function setRankGuideMode(value) {
+  state.rankGuideMode = value;
+  assertKnown(state.rankGuideMode, ['off', '0', '1', '2', '3plus', 'all'], 'rank guide mode');
+  updateRankGuideControls();
+  render();
+}
+function updateRankGuideControls() {
+  const enabled = state.colorMode === 'rank';
+  document.querySelectorAll('.rank-guide').forEach((button) => {
+    button.disabled = !enabled;
+    button.classList.toggle('active', button.dataset.rankGuide === state.rankGuideMode);
+  });
+}
 function setAdvancedOpen(value) {
   document.getElementById('advancedPanel').open = Boolean(value);
   render();
@@ -1856,6 +2045,7 @@ window.__QD_PPA_VIEWER_DEBUG__ = {
   setCoordinateMode,
   setRankFilter,
   setColorMode,
+  setRankGuideMode,
   setAdvancedOpen,
   resetViewer,
 };

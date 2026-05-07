@@ -840,7 +840,8 @@ The PPA view must support:
   sample, so the sample can be compared directly against the reference ticks;
 - compare-mode shape legend mapping each selected technique to its PPA marker;
 - rank 0 front highlighting per technique;
-- optional rank 1, rank 2, ... front highlighting.
+- optional smoothed rank guide overlays in rank color mode:
+  `off`, `r0`, `<=1`, `<=2`, `3+`, and `all`.
 
 For sequential problems, use a proper 3D scene with shaded individual point
 glyphs so depth and overlap are easier to judge. For combinational problems,
@@ -890,13 +891,26 @@ surface. Rank color mode must use distinct colors for rank 0, rank 1, rank 2,
 and rank 3+. Point radius must decrease monotonically as Pareto rank worsens,
 not only distinguish rank 0 from every other rank. When two techniques overlap
 at the same PPA coordinate, QD/journal techniques should render slightly larger
-than `classic` so both methods remain visible. For 2D, draw a front polyline
-when the ordering is unambiguous. For 3D, render lower-rank points larger and
-brighter as shaded glyphs, optionally with nearest-neighbor or objective-sorted
-guide lines. Fitness and archive-cell scalar shading must use a viridis ramp; do
-not use viridis for technique or rank categories. Do not draw a smooth Pareto
-surface unless the surface is explicitly computed and labeled as an
-interpolation.
+than `classic` so both methods remain visible.
+
+Rank-guide overlays are visual aids, not Pareto-front definitions. They are
+available only in rank color mode and must be labeled as `smoothed rank guide`.
+Rank membership always uses the fixed active PPA objective semantics:
+combinational minimizes raw area/power, and sequential minimizes raw
+area/power/effective clock period. The coordinate toggle may move the guide
+geometry because it changes display coordinates, but it must not change which
+samples are assigned to each rank bucket.
+
+For 2D combinational PPA, draw smoothed guide lines for the selected rank
+bucket after axes/reference ticks and before points. For 3D sequential PPA,
+draw smoothed projected guide curves on the visible area-period, area-power,
+and period-power planes. Do not draw a filled translucent 3D surface in Phase
+03.1. A true surface can be added later only as an explicit opt-in mode with a
+robust triangulation method and validation that rejects nonsensical sparse
+surfaces.
+
+Fitness and archive-cell scalar shading must use a viridis ramp; do not use
+viridis for technique or rank categories.
 
 ### Linked Interaction
 
@@ -1270,6 +1284,18 @@ Required checks:
 36. PPA point radii decrease monotonically with Pareto rank, and non-classic
     technique markers are consistently larger than classic markers so exact
     coordinate overlaps remain distinguishable.
+36a. Rank-guide controls are visible in the PPA pane, disabled outside rank
+    color mode, and support `off`, `r0`, `<=1`, `<=2`, `3+`, and `all`.
+36b. Rank guides emit browser debug metadata with
+    `rank_guide_mode`, `rank_guide_count`, `rank_guide_projection_mode`,
+    `rank_guide_coordinate_mode`, `rank_guide_signature`, and
+    `rank_guide_surface_mode`.
+36c. Strict Playwright validation proves 2D combinational guide lines and 3D
+    sequential projected guide curves render with nonzero guide counts in
+    compare mode, and proves guides do not render outside rank color mode.
+36d. Phase 03.1 must report `rank_guide_surface_mode` as `none` or
+    `none_projected_curves_only`; any triangulated or filled surface requires a
+    separate later implementation with robust triangulation validation.
 37. PPA reference labels appear as one reference-value tick per active axis, and
     hovering the reference marker still exposes full raw reference PPA values.
 38. Source hashes or mtimes are recorded for the CSV/JSON artifacts used by
@@ -1553,6 +1579,11 @@ Acceptance criteria:
   grid-quantile problems;
 - rank-0 highlighting exists for every technique with at least one visible
   PPA-valid sample;
+- rank color mode exposes smoothed rank-guide controls, 2D guide lines for
+  combinational PPA, and 3D projected guide curves for sequential PPA;
+- strict validation confirms rank guides are disabled outside rank color mode,
+  compare mode emits guides for both selected techniques when enough samples
+  exist, and no filled/triangulated 3D surface is emitted in Phase 03.1;
 - `per_technique` is the default rank scope and `pooled_visible` is available
   in the viewer;
 - compare-mode stats show both per-technique rank-0 count and pooled-visible
