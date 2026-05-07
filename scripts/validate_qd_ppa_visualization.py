@@ -169,10 +169,16 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "setColorMode",
         "rankColor(",
         "rankRadius(",
+        "fitnessRange(",
+        "techniqueRadiusScale(",
+        "referenceAxisLabels(",
         "highlighted_sample_ids",
         "highlighted_cell_id",
         "color_mode:",
         "rank_radius_preview:",
+        "technique_radius_preview:",
+        "reference_axis_labels:",
+        "reference_tooltip_preview:",
         "camera:",
         "z_range:",
         "visible_layer_count:",
@@ -444,6 +450,7 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
             _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "compare_classic_qd"))
             _assert_color_modes(page, screenshot_dir, errors, report_lines)
             _assert_archive_hover_clears(page, errors)
+            _assert_reference_hover(page, errors)
             for coordinate_mode in ("raw", "improvement", "normalized"):
                 page.evaluate("mode => window.__QD_PPA_VIEWER_DEBUG__.setCoordinateMode(mode)", coordinate_mode)
                 _assert_coordinate_mode(page, errors, coordinate_mode)
@@ -619,6 +626,8 @@ def _assert_color_modes(
         legend = page.locator("#ppaLegend").inner_text().lower()
         if color_mode not in legend:
             errors.append(f"Playwright legend does not describe {color_mode} mode")
+        if color_mode == "fitness" and ("min " not in legend or "max " not in legend):
+            errors.append("Playwright fitness legend does not show displayed min/max scores")
         _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, f"color_{color_mode}"))
     colors = page.evaluate("() => [rankColor(0), rankColor(1), rankColor(2), rankColor(3)]")
     assert isinstance(colors, list)
@@ -630,6 +639,20 @@ def _assert_color_modes(
         return
     if not all(float(radii[index]) > float(radii[index + 1]) for index in range(3)):
         errors.append(f"Playwright rank radii are not monotonically decreasing: {radii}")
+    technique_radii = dict(_debug_state(page).get("technique_radius_preview") or [])
+    if technique_radii.get("classic") is not None:
+        non_classic = [scale for name, scale in technique_radii.items() if name != "classic"]
+        if non_classic and max(float(scale) for scale in non_classic) <= float(technique_radii["classic"]):
+            errors.append(f"Playwright non-classic technique markers are not larger: {technique_radii}")
+    state = _debug_state(page)
+    reference_labels = state.get("reference_axis_labels")
+    if not isinstance(reference_labels, list) or len(reference_labels) != 3:
+        errors.append(f"Playwright sequential reference axis labels are missing: {reference_labels}")
+    elif not all(str(label).startswith("ref ") and "=" in str(label) for label in reference_labels):
+        errors.append(f"Playwright reference axis labels are malformed: {reference_labels}")
+    reference_tooltip = str(state.get("reference_tooltip_preview") or "")
+    if "area " not in reference_tooltip or "power " not in reference_tooltip or "eff " not in reference_tooltip:
+        errors.append(f"Playwright reference tooltip no longer has full PPA data: {reference_tooltip}")
 
 
 def _assert_auto_rotate(page: Any, errors: list[str]) -> None:
@@ -652,6 +675,15 @@ def _assert_archive_hover_clears(page: Any, errors: list[str]) -> None:
     state = _debug_state(page)
     if state.get("highlighted_sample_ids") or state.get("highlighted_cell_id") is not None:
         errors.append("Playwright archive hover did not clear after moving off the cell")
+
+
+def _assert_reference_hover(page: Any, errors: list[str]) -> None:
+    tooltip = _hover_ppa_reference_with_mouse(page)
+    if tooltip is None:
+        errors.append("Playwright reference hover did not activate a tooltip")
+        return
+    if "area " not in tooltip or "power " not in tooltip or "eff " not in tooltip:
+        errors.append(f"Playwright reference hover tooltip no longer has full PPA data: {tooltip}")
 
 
 def _assert_locked_archive_cameras(page: Any, errors: list[str], ppa_camera_before: Any) -> None:
@@ -827,6 +859,21 @@ def _hover_first_archive_sample_with_mouse(page: Any, scene_name: str, canvas_se
     state = _debug_state(page)
     tooltip_display = page.locator("#tooltip").evaluate("node => getComputedStyle(node).display")
     return len(state.get("highlighted_sample_ids", [])) == 1 and tooltip_display != "none"
+
+
+def _hover_ppa_reference_with_mouse(page: Any) -> str | None:
+    hit = page.evaluate("() => state.hitMaps.ppa.find(item => item.kind === 'ppaReference')")
+    if not isinstance(hit, dict):
+        return None
+    rect = page.locator("#ppaCanvas").bounding_box()
+    if not rect:
+        return None
+    page.mouse.move(float(rect["x"]) + float(hit["x"]), float(rect["y"]) + float(hit["y"]))
+    page.wait_for_timeout(100)
+    tooltip = page.locator("#tooltip")
+    if tooltip.evaluate("node => getComputedStyle(node).display") == "none":
+        return None
+    return str(tooltip.inner_text())
 
 
 def _move_to_empty_canvas_point(page: Any, scene_name: str, canvas_selector: str) -> bool:

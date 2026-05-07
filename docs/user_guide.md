@@ -451,15 +451,22 @@ RUN_ROOT=exp/journal_pareto_front_hard_subset/20260506_040658
 
 The viewer supports single and compare modes, raw/improvement/normalized PPA
 coordinates, `per_technique` and `pooled_visible` Pareto-rank scopes, and an
-`all_ppa_valid` default timeline universe. Classic samples are projected
+`all_ppa_valid` default timeline universe. The PPA pane exposes
+`fitness`/`technique`/`rank` color modes with visible legends; fitness legends
+show the displayed min/max mean-improvement scores, rank mode uses distinct
+rank colors with rank-scaled marker sizes, and QD/journal markers render
+slightly larger than `classic` to make exact overlaps visible. The raw PPA view
+labels one reference-value tick per active axis while reference-marker hover
+still shows the full raw reference PPA payload. Classic samples are projected
 posthoc into the selected QD archive source for inspection only; missing
 descriptors stay visible in the PPA/Pareto pane and are excluded from archive
 occupancy. The validator checks rank contiguity, nondominance, hypervolume
 metadata, source hashes, strict no-network HTML, and the required viewer
 controls. With `--playwright`, strict validation also checks the scene/debug
 contract, required 3D/2D visual matrix, linked hover behavior, coordinate
-mode switching, collapsed advanced settings, perspective lock, exploded layers,
-and browser errors. It writes screenshots plus
+mode switching, color-mode legends, rank-size semantics, reference-marker hover,
+stale hover clearing, collapsed advanced settings, perspective lock, exploded
+layers, and browser errors. It writes screenshots plus
 `visualization/qd_ppa_viewer/visual_parity_report.md`; strict mode rejects the
 old flat 2D-only viewer contract.
 

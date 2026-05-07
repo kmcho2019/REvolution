@@ -135,7 +135,7 @@ Demo features that must carry over:
 - sample-universe control with `all_ppa_valid` as the default and final
   archive/global-Pareto views available as overlays or filters;
 - PPA color segmented control with at least `fitness`, `technique`, and
-  `rank`;
+  `rank`, visible in the PPA pane rather than hidden only in advanced settings;
 - PPA coordinate-mode control ordered as `raw`, `improvement`, `normalized`,
   with `raw` selected by default;
 - PPA rank segmented control with `all`, `rank 0`, `rank <= 1`, and
@@ -147,7 +147,9 @@ Demo features that must carry over:
   own rank-0 count and its pooled-visible rank-0 contribution count;
 - hypervolume stats for each technique plus pooled-visible hypervolume for
   the selected compare pair;
-- scatter legend that updates with the active color mode;
+- scatter legend that updates with the active color mode: fitness uses the
+  currently displayed min/max mean-improvement scores, technique lists selected
+  techniques, and rank distinguishes rank 0, 1, 2, and 3+;
 - archive layer mini-panels with hoverable cells;
 - archive-cell and PPA-point linked tooltips;
 - responsive stacked layout for narrow panes.
@@ -824,6 +826,9 @@ The PPA view must support:
 - final stable snapshot;
 - generation timeline playback;
 - reference design marker;
+- one reference-value tick on each active PPA axis, analogous to the archive
+  quantile boundary labels, while the reference marker hover keeps full raw PPA
+  details;
 - rank 0 front highlighting per technique;
 - optional rank 1, rank 2, ... front highlighting.
 
@@ -869,11 +874,16 @@ The coordinate toggle changes only point positions and labels. Pareto ranks,
 rank-0 highlighting, and hypervolume must continue to use the fixed active
 objective semantics defined above.
 
-Rank-0 rendering should be visually obvious without inventing a misleading
-surface. For 2D, draw a front polyline when the ordering is unambiguous. For
-3D, render rank-0 points larger and brighter, optionally with nearest-neighbor
-or objective-sorted guide lines. Do not draw a smooth Pareto surface unless the
-surface is explicitly computed and labeled as an interpolation.
+Rank rendering should be visually obvious without inventing a misleading
+surface. Rank color mode must use distinct colors for rank 0, rank 1, rank 2,
+and rank 3+. Point radius must decrease monotonically as Pareto rank worsens,
+not only distinguish rank 0 from every other rank. When two techniques overlap
+at the same PPA coordinate, QD/journal techniques should render slightly larger
+than `classic` so both methods remain visible. For 2D, draw a front polyline
+when the ordering is unambiguous. For 3D, render lower-rank points larger and
+brighter, optionally with nearest-neighbor or objective-sorted guide lines. Do
+not draw a smooth Pareto surface unless the surface is explicitly computed and
+labeled as an interpolation.
 
 ### Linked Interaction
 
@@ -891,6 +901,12 @@ Hovering a PPA point must:
 - highlight its archive cell if projected;
 - show sample details: id, technique, generation, strategy, raw PPA, gains,
   Pareto rank, archive cell, candidate path.
+
+Hovering the reference PPA marker must show the full raw reference PPA payload,
+including area, power, and effective clock period when present. Moving the
+cursor off an archive cell or sample hit target must clear linked PPA
+highlights rather than leaving the previous cell highlighted until another cell
+is entered.
 
 Clicking a point should pin the tooltip or open a compact sample details panel.
 Pinned details are useful but not required for the first acceptance gate.
@@ -1223,66 +1239,78 @@ Required checks:
     `viewer_pooled_pareto_member`.
 33. The PPA coordinate toggle defaults to `raw` and is ordered
     `raw`, `improvement`, `normalized`.
-34. Source hashes or mtimes are recorded for the CSV/JSON artifacts used by
+34. The PPA color control is visible in the PPA pane and supports `fitness`,
+    `technique`, and `rank`.
+35. The active PPA color legend is visible: fitness shows displayed min/max
+    mean-improvement values, technique lists selected techniques, and rank
+    distinguishes rank 0, 1, 2, and 3+.
+36. PPA point radii decrease monotonically with Pareto rank, and non-classic
+    technique markers are consistently larger than classic markers so exact
+    coordinate overlaps remain distinguishable.
+37. PPA reference labels appear as one reference-value tick per active axis, and
+    hovering the reference marker still exposes full raw reference PPA values.
+38. Source hashes or mtimes are recorded for the CSV/JSON artifacts used by
     the exporter.
-35. Compare mode exposes archive perspective locking and keeps the PPA camera
+39. Compare mode exposes archive perspective locking and keeps the PPA camera
     independent.
-36. Viewer reset restores archive and PPA cameras and clears exploded-layer
+40. Viewer reset restores archive and PPA cameras and clears exploded-layer
     state without changing the selected problem or technique pair.
-37. Archive layer panels remain visible in single and compare mode.
-38. Quantile cutoffs and effective bin intervals are available through a
+41. Archive layer panels remain visible in single and compare mode.
+42. Quantile cutoffs and effective bin intervals are available through a
     collapsed-by-default archive axis/bin detail panel for grid-quantile
     datasets.
-39. Per-technique stats and selected-technique delta stats are present for
+43. Per-technique stats and selected-technique delta stats are present for
     compare mode.
-40. Compare-mode stats show both per-technique rank-0 count and pooled-visible
+44. Compare-mode stats show both per-technique rank-0 count and pooled-visible
     rank-0 contribution count for each selected technique.
-41. Compare-mode stats show per-technique hypervolume and pooled-visible
+45. Compare-mode stats show per-technique hypervolume and pooled-visible
     hypervolume for the selected pair.
-42. Sequential PPA panes expose browser debug metadata confirming a 3D scene,
+46. Sequential PPA panes expose browser debug metadata confirming a 3D scene,
     perspective camera, and nonzero z-coordinate range for visible samples.
-43. Grid/grid-quantile archive panes with three active axes expose browser
+47. Grid/grid-quantile archive panes with three active axes expose browser
     debug metadata confirming a 3D archive scene, perspective camera, and
     nonzero depth or layer range for rendered cells.
-44. Exploded layers change actual archive-layer object positions by a nonzero
+48. Exploded layers change actual archive-layer object positions by a nonzero
     amount in scene coordinates.
-45. Auto-rotate changes the archive camera or root scene transform and produces
+49. Auto-rotate changes the archive camera or root scene transform and produces
     a visually different screenshot after a deterministic short wait.
-46. Perspective lock makes archive A and B camera state equal in compare mode
+50. Perspective lock makes archive A and B camera state equal in compare mode
     and leaves the PPA camera state unchanged.
-47. Archive-cell hover changes the highlighted archive cell id and highlights
+51. Archive-cell hover changes the highlighted archive cell id and highlights
     at least one matching PPA sample when that cell has projected samples.
-48. PPA-point hover changes the highlighted sample id and highlights the
+52. Moving off an archive-cell hit target clears the highlighted archive cell
+    and linked PPA highlights.
+53. PPA-point hover changes the highlighted sample id and highlights the
     projected archive cell when projection is available.
-49. Layer mini-panel hover maps to the same archive cell id and sample ids as
+54. Layer mini-panel hover maps to the same archive cell id and sample ids as
     archive-scene hover.
-50. Strict validation fails if the viewer falls back to a flat 2D canvas for a
+55. Strict validation fails if the viewer falls back to a flat 2D canvas for a
     sequential PPA dataset or a 3D grid/grid-quantile archive dataset.
-51. At `1440 x 1000`, the default header and toolbar occupy at most two compact
+56. At `1440 x 1000`, the default header and toolbar occupy at most two compact
     rows and the main visual panes are visible without scrolling.
-52. Advanced/configuration panels are closed by default and can be opened to
+57. Advanced/configuration panels are closed by default and can be opened to
     inspect rank scope, sample universe, overlay source, hypervolume method,
     source hashes, axis cutoffs, projection diagnostics, and debug metadata.
-53. Per-pane axis/bin details are summarized by default and full cutoffs or
+58. Per-pane axis/bin details are summarized by default and full cutoffs or
     intervals are hidden until expansion.
-54. The validator has a negative fixture or mode proving that the current flat
+59. The validator has a negative fixture or mode proving that the current flat
     2D canvas viewer fails required 3D checks before the V2 renderer is
     accepted.
-55. The strict viewer becomes ready in Playwright within 10 seconds on the
+60. The strict viewer becomes ready in Playwright within 10 seconds on the
     Phase 03 hard-run bundle and every required interaction test completes
     without uncaught browser errors.
-56. The viewer emits no console errors during strict Playwright validation.
-57. The default accepted artifact is offline reproducible: strict validation
+61. The viewer emits no console errors during strict Playwright validation.
+62. The default accepted artifact is offline reproducible: strict validation
     fails on any network request or remote asset reference.
-58. A visual parity report is generated with side-by-side screenshots for the
+63. A visual parity report is generated with side-by-side screenshots for the
     demo, `Prob135_m2014_q6b` existing 2D-projected grid-quantile baseline,
     `Prob151_review2015_fsm` existing full-3D grid-quantile baseline, and the
     new viewer states listed below.
-59. The exported hard-run viewer includes `Prob151_review2015_fsm`, and browser
+64. The exported hard-run viewer includes `Prob151_review2015_fsm`, and browser
     debug metadata confirms a non-collapsed 3D archive scene with all three
     archive axes active, `effective_shape=[3,4,4]` or equivalent source-derived
     shape, and four visible z/layer slices.
-60. The final Playwright validation covers the required validation example
+65. The final Playwright validation covers the required validation example
     matrix: sequential 3D PPA, sequential full-3D archive, combinational 2D
     PPA, and combinational projected archive.
 
@@ -1636,9 +1664,11 @@ RUN_ROOT=exp/journal_pareto_front_hard_subset/20260506_040658
 
 The strict validator now requires `window.__QD_PPA_VIEWER_DEBUG__`, scene
 dimensionality metadata, camera state, linked hover hooks, and viewport
-screenshots. It also includes a negative flat-viewer regression test: a
-2D-only `getContext('2d')` HTML page without the scene/debug contract fails
-strict validation.
+screenshots. It checks PPA color-mode switching, visible legends, rank color
+and marker-size semantics, non-classic overlap visibility, reference-axis ticks,
+full reference hover tooltips, and stale archive-hover clearing. It also
+includes a negative flat-viewer regression test: a 2D-only `getContext('2d')`
+HTML page without the scene/debug contract fails strict validation.
 
 The current hard-run validation artifacts are:
 

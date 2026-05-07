@@ -874,7 +874,7 @@ function drawPpa(selected) {
   document.getElementById('ppaModeBadge').textContent = state.coordinateMode;
   document.getElementById('ppaAxisSummary').textContent = ppaAxisSummary(ds);
   document.getElementById('ppaStats').innerHTML = compareStatsHtml(ds.technique_stats_by_step[stepName()] || {}, selected);
-  drawPpaLegend(selected);
+  drawPpaLegend(samples, selected);
   state.hitMaps.ppa = [];
   if (ds.circuit_type === 'sequential') drawPpa3d(ctx, canvas, ds, samples, selected);
   else drawPpa2d(ctx, canvas, ds, samples, selected);
@@ -886,7 +886,7 @@ function drawPpa3d(ctx, canvas, ds, samples, selected) {
   const camera = state.cameras.ppa;
   const projector = makeProjector(canvas, camera, 1.45);
   drawPpaFrame3d(ctx, projector);
-  drawPpaAxes3d(ctx, projector, ds);
+  drawPpaAxes3d(ctx, projector, ds, reference, limits);
   const points = samples.map((sample, index) => {
     const point = normalizeCoord(coords[index], limits, 3);
     return {sample, point, screen: projector(point)};
@@ -922,7 +922,7 @@ function drawPpa2d(ctx, canvas, ds, samples, selected) {
   ctx.stroke();
   ctx.fillStyle = '#716b64';
   ctx.fillText(ppaAxisSummary(ds), pad.left, 28);
-  drawPpaAxisLabels2d(ctx, ds, limits, pad, width, height, rect);
+  drawPpaAxisLabels2d(ctx, ds, reference, limits, pad, width, height, rect);
   for (const sample of samples) {
     const coord = ppaCoord(sample, ds);
     drawPpaPoint(ctx, sample, ppaScreen2d(coord, limits, pad, width, height, rect), selected);
@@ -1141,7 +1141,7 @@ function drawPpaFrame3d(ctx, projector) {
   ctx.stroke();
   ctx.restore();
 }
-function drawPpaAxes3d(ctx, projector, ds) {
+function drawPpaAxes3d(ctx, projector, ds, reference, limits) {
   const origin = {x: -1.22, y: -1.18, z: -1.22};
   const labels = ppaAxisNames(ds);
   const defs = [
@@ -1162,8 +1162,30 @@ function drawPpaAxes3d(ctx, projector, ds) {
     ctx.fillText(label, b.x + 6, b.y - 7);
     ctx.fillText(ppaAxisDirection(), b.x + 6, b.y + 7);
   }
+  if (reference) drawPpaReferenceAxisTicks3d(ctx, projector, ds, normalizeCoord(reference, limits, 3));
 }
-function drawPpaAxisLabels2d(ctx, ds, limits, pad, width, height, rect) {
+function drawPpaReferenceAxisTicks3d(ctx, projector, ds, ref) {
+  const specs = [
+    ['#c2185b', {x: ref.x, y: -1.18, z: -1.22}, {x: 6, y: 12}],
+    ['#1768c2', {x: -1.22, y: ref.y, z: -1.22}, {x: 6, y: -6}],
+    ['#237b35', {x: -1.22, y: -1.18, z: ref.z}, {x: 6, y: 12}],
+  ];
+  const labels = referenceAxisLabels(ds);
+  ctx.save();
+  ctx.font = '9px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+  for (const [index, [color, point, offset]] of specs.entries()) {
+    const p = projector(point);
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(p.x - 4, p.y - 4);
+    ctx.lineTo(p.x + 4, p.y + 4);
+    ctx.stroke();
+    ctx.fillText(labels[index], p.x + offset.x, p.y + offset.y);
+  }
+  ctx.restore();
+}
+function drawPpaAxisLabels2d(ctx, ds, reference, limits, pad, width, height, rect) {
   const labels = ppaAxisNames(ds);
   const x0 = pad.left, y0 = rect.height - pad.bottom;
   const x1 = pad.left + width, y1 = pad.top;
@@ -1175,13 +1197,25 @@ function drawPpaAxisLabels2d(ctx, ds, limits, pad, width, height, rect) {
   drawAxisArrow(ctx, {x: x0, y: y0}, {x: x0, y: y1}, '#237b35');
   ctx.fillStyle = '#c2185b';
   ctx.fillText(labels[0] + ' · ' + ppaAxisDirection(), x1 - 150, y0 + 28);
-  ctx.fillText(fmt(limits[0][0]), x0, y0 + 14);
-  ctx.fillText(fmt(limits[0][1]), x1 - 46, y0 + 14);
   ctx.fillStyle = '#237b35';
   ctx.fillText(labels[1] + ' · ' + ppaAxisDirection(), x0 + 8, y1 - 12);
-  ctx.fillText(fmt(limits[1][0]), x0 + 8, y0 - 4);
-  ctx.fillText(fmt(limits[1][1]), x0 + 8, y1 + 12);
+  if (reference) drawPpaReferenceAxisTicks2d(ctx, ds, reference, limits, pad, width, height, rect);
   ctx.restore();
+}
+function drawPpaReferenceAxisTicks2d(ctx, ds, reference, limits, pad, width, height, rect) {
+  const ref = ppaScreen2d(reference, limits, pad, width, height, rect);
+  const x0 = pad.left, y0 = rect.height - pad.bottom;
+  const labels = referenceAxisLabels(ds);
+  ctx.strokeStyle = 'rgba(37,33,29,0.55)';
+  ctx.fillStyle = '#25211d';
+  ctx.beginPath();
+  ctx.moveTo(ref.x, y0 - 5);
+  ctx.lineTo(ref.x, y0 + 5);
+  ctx.moveTo(x0 - 5, ref.y);
+  ctx.lineTo(x0 + 5, ref.y);
+  ctx.stroke();
+  ctx.fillText(labels[0], ref.x + 6, y0 - 8);
+  ctx.fillText(labels[1], x0 + 8, ref.y - 7);
 }
 function drawAxisArrow(ctx, start, end, color) {
   const angle = Math.atan2(end.y - start.y, end.x - start.x);
@@ -1199,7 +1233,7 @@ function drawAxisArrow(ctx, start, end, color) {
 function drawPpaPoint(ctx, sample, screen, selected) {
   const rank = sample.pareto_rank_by_step[state.rankScope][stepName()];
   const hot = state.hoveredSampleIds.has(sample.sample_id);
-  const radius = rankRadius(rank, hot) * Math.max(0.78, Math.min(1.7, screen.scale || 1));
+  const radius = rankRadius(rank, hot) * techniqueRadiusScale(sample.technique) * Math.max(0.78, Math.min(1.7, screen.scale || 1));
   drawMarker(ctx, screen, radius, techniqueShape(sample.technique, selected));
   ctx.save();
   ctx.globalAlpha = hot ? 1 : Math.max(0.42, Math.min(0.95, 0.68 + Number(screen.depth || 0) * 0.14));
@@ -1211,12 +1245,13 @@ function drawPpaPoint(ctx, sample, screen, selected) {
   ctx.restore();
   state.hitMaps.ppa.push({kind: 'ppaSample', sampleId: sample.sample_id, cellId: sample.archive_cell_id, x: screen.x, y: screen.y, radius: Math.max(radius + 5, 13)});
 }
-function drawPpaLegend(selected) {
+function drawPpaLegend(samples, selected) {
   if (state.colorMode === 'fitness') {
+    const range = fitnessRange(samples);
     document.getElementById('ppaLegend').innerHTML =
       '<div class="legend-title">Color · fitness</div>' +
       '<div class="legend-ramp"></div>' +
-      '<div class="legend-scale"><span>lower</span><span>0</span><span>higher</span></div>' +
+      '<div class="legend-scale"><span>min ' + fmt(range[0]) + '</span><span>0</span><span>max ' + fmt(range[1]) + '</span></div>' +
       '<div class="legend-row">mean active PPA improvement</div>';
     return;
   }
@@ -1358,9 +1393,17 @@ function rankRadius(rank, hot) {
   if (hot) return 7;
   return Math.max(2.8, 5.8 - Number(rank) * 0.72);
 }
+function techniqueRadiusScale(technique) {
+  return technique === 'classic' ? 1 : 1.2;
+}
 function techniqueColor(technique, selected) {
   const index = Math.max(0, selected.indexOf(technique));
   return colors[index % colors.length];
+}
+function fitnessRange(samples) {
+  const values = samples.map((sample) => Number(sample.mean_improvement)).filter(Number.isFinite);
+  if (!values.length) return [null, null];
+  return [Math.min(...values), Math.max(...values)];
 }
 function fitnessColor(value, alpha) {
   const t = Math.max(0, Math.min(1, Number(value || 0) + 0.5));
@@ -1492,6 +1535,12 @@ function referenceTooltip(ds) {
   return 'reference PPA\n' +
     'area ' + fmt(ref.area) + ' · power ' + fmt(ref.power) + ' · eff ' + fmt(ref.eff_clk_period);
 }
+function referenceAxisLabels(ds) {
+  const labels = ppaAxisNames(ds);
+  const coord = ppaReferenceCoord(ds);
+  if (!coord) return [];
+  return labels.map((label, index) => 'ref ' + label + '=' + fmt(coord[index]));
+}
 function axisSummary(ds) {
   const archive = ds.archive_definition;
   return 'X = ' + archive.axes[0].name + ' · Y = ' + archive.axes[2].name + ' · Z = ' + archive.axes[1].name +
@@ -1554,6 +1603,9 @@ function debugState() {
     highlighted_sample_ids: Array.from(state.hoveredSampleIds),
     color_mode: state.colorMode,
     rank_radius_preview: [0, 1, 2, 3].map((rank) => rankRadius(rank, false)),
+    technique_radius_preview: selectedTechniques().map((technique) => [technique, techniqueRadiusScale(technique)]),
+    reference_axis_labels: referenceAxisLabels(dataset()),
+    reference_tooltip_preview: referenceTooltip(dataset()),
     scenes: state.sceneInfo,
     source_artifacts: dataset().source_artifacts,
   };
