@@ -474,6 +474,16 @@ details summary {
         <option value="rank">rank</option>
       </select>
     </label>
+    <label>Rank guide method
+      <select id="rankGuideMethodSelect">
+        <option value="auto" selected>auto</option>
+        <option value="pchip_2d">PCHIP 2D</option>
+        <option value="monotone_polyline">monotone polyline</option>
+        <option value="moving_average_trend">moving-average trend</option>
+        <option value="delaunay_mesh_3d">Delaunay 3D mesh</option>
+        <option value="projected_curves_3d">projected 3D curves</option>
+      </select>
+    </label>
   </div>
   <details>
     <summary>Source hashes / debug metadata</summary>
@@ -565,6 +575,7 @@ const state = {
   rankScope: 'per_technique',
   colorMode: 'fitness',
   rankGuideMode: 'off',
+  rankGuideMethod: 'auto',
   stepIndex: 0,
   timer: null,
   lockedPerspective: false,
@@ -589,6 +600,9 @@ const tooltip = document.getElementById('tooltip');
 
 function assertKnown(value, allowed, label) {
   if (!allowed.includes(value)) throw new Error('unknown ' + label + ': ' + value);
+}
+function assertKnownRankGuideMethod(value) {
+  assertKnown(value, ['auto', 'pchip_2d', 'monotone_polyline', 'moving_average_trend', 'delaunay_mesh_3d', 'projected_curves_3d'], 'rank guide method');
 }
 function problemKey() { return document.getElementById('problemSelect').value; }
 function dataset() {
@@ -650,10 +664,12 @@ function bindControls() {
   document.getElementById('colorModeSelect').addEventListener('change', () => {
     setColorMode(document.getElementById('colorModeSelect').value);
   });
-  ['techniqueASelect', 'techniqueBSelect', 'rankScopeSelect', 'sampleUniverseSelect', 'rankFilterSelect'].forEach((id) => {
+  ['techniqueASelect', 'techniqueBSelect', 'rankScopeSelect', 'sampleUniverseSelect', 'rankFilterSelect', 'rankGuideMethodSelect'].forEach((id) => {
     document.getElementById(id).addEventListener('change', () => {
       state.rankScope = document.getElementById('rankScopeSelect').value;
       assertKnown(state.rankScope, ['per_technique', 'pooled_visible'], 'rank scope');
+      state.rankGuideMethod = document.getElementById('rankGuideMethodSelect').value;
+      assertKnownRankGuideMethod(state.rankGuideMethod);
       render();
     });
   });
@@ -795,8 +811,10 @@ function render() {
   document.getElementById('timelineSlider').value = String(state.stepIndex);
   state.rankScope = document.getElementById('rankScopeSelect').value;
   state.colorMode = document.getElementById('colorModeSelect').value;
+  state.rankGuideMethod = document.getElementById('rankGuideMethodSelect').value;
   assertKnown(state.colorMode, ['fitness', 'technique', 'rank'], 'color mode');
   assertKnown(state.rankGuideMode, ['off', '0', '1', '2', '3plus', 'all'], 'rank guide mode');
+  assertKnownRankGuideMethod(state.rankGuideMethod);
   updateRankGuideControls();
   const selected = selectedTechniques();
   document.getElementById('layout').className = state.mode;
@@ -907,12 +925,13 @@ function drawPpa3d(ctx, canvas, ds, samples, selected) {
   const coords = samples.map((sample) => ppaCoord(sample, ds));
   const reference = ppaReferenceCoord(ds);
   const limits = coordinateLimits(reference ? coords.concat([reference]) : coords, 3);
+  const method = effectiveRankGuideMethodName(ds);
   const camera = state.cameras.ppa;
   const projector = makeProjector(canvas, camera, 1.45);
   const hoveredSample = visibleHoveredSample(samples);
   drawPpaFrame3d(ctx, projector);
   drawPpaAxes3d(ctx, projector, ds, reference, limits, hoveredSample);
-  const guideSummary = drawPpaRankGuides3d(ctx, ds, samples, selected, limits, projector);
+  const guideSummary = drawPpaRankGuides3d(ctx, ds, samples, selected, limits, projector, method);
   const points = samples.map((sample, index) => {
     const point = normalizeCoord(coords[index], limits, 3);
     return {sample, point, screen: projector(point)};
@@ -936,9 +955,11 @@ function drawPpa3d(ctx, canvas, ds, samples, selected) {
     rank_guide_count: guideSummary.count,
     rank_guide_techniques: guideSummary.techniques,
     rank_guide_signature: guideSummary.signature,
-    rank_guide_projection_mode: '3d_projected_curves',
+    rank_guide_method: method,
+    rank_guide_projection_mode: guideSummary.projectionMode,
     rank_guide_coordinate_mode: state.coordinateMode,
-    rank_guide_surface_mode: 'none_projected_curves_only',
+    rank_guide_surface_mode: guideSummary.surfaceMode,
+    rank_guide_triangle_count: guideSummary.triangleCount,
   };
 }
 function drawPpa2d(ctx, canvas, ds, samples, selected) {
@@ -946,6 +967,7 @@ function drawPpa2d(ctx, canvas, ds, samples, selected) {
   const coords = samples.map((sample) => ppaCoord(sample, ds));
   const reference = ppaReferenceCoord(ds);
   const limits = coordinateLimits(reference ? coords.concat([reference]) : coords, 2);
+  const method = effectiveRankGuideMethodName(ds);
   const pad = {left: 54, right: 34, top: 54, bottom: 72};
   const width = rect.width - pad.left - pad.right;
   const height = rect.height - pad.top - pad.bottom;
@@ -960,7 +982,7 @@ function drawPpa2d(ctx, canvas, ds, samples, selected) {
   ctx.fillStyle = '#716b64';
   ctx.fillText(ppaAxisSummary(ds), pad.left, 28);
   drawPpaAxisLabels2d(ctx, ds, reference, limits, pad, width, height, rect, hoveredSample);
-  const guideSummary = drawPpaRankGuides2d(ctx, ds, samples, selected, limits, pad, width, height, rect);
+  const guideSummary = drawPpaRankGuides2d(ctx, ds, samples, selected, limits, pad, width, height, rect, method);
   for (const sample of samples) {
     const coord = ppaCoord(sample, ds);
     drawPpaPoint(ctx, sample, ppaScreen2d(coord, limits, pad, width, height, rect), selected, false);
@@ -983,9 +1005,11 @@ function drawPpa2d(ctx, canvas, ds, samples, selected) {
     rank_guide_count: guideSummary.count,
     rank_guide_techniques: guideSummary.techniques,
     rank_guide_signature: guideSummary.signature,
-    rank_guide_projection_mode: '2d_line',
+    rank_guide_method: method,
+    rank_guide_projection_mode: guideSummary.projectionMode,
     rank_guide_coordinate_mode: state.coordinateMode,
-    rank_guide_surface_mode: 'none',
+    rank_guide_surface_mode: guideSummary.surfaceMode,
+    rank_guide_triangle_count: guideSummary.triangleCount,
   };
 }
 function ppaScreen2d(coord, limits, pad, width, height, rect) {
@@ -998,6 +1022,13 @@ function ppaScreen2d(coord, limits, pad, width, height, rect) {
 }
 function effectiveRankGuideMode() {
   return state.colorMode === 'rank' ? state.rankGuideMode : 'off';
+}
+function effectiveRankGuideMethodName(ds) {
+  if (effectiveRankGuideMode() === 'off') return 'off';
+  if (state.rankGuideMethod === 'auto') return ds.circuit_type === 'sequential' ? 'delaunay_mesh_3d' : 'pchip_2d';
+  if (ds.circuit_type !== 'sequential' && ['delaunay_mesh_3d', 'projected_curves_3d'].includes(state.rankGuideMethod)) return 'pchip_2d';
+  if (ds.circuit_type === 'sequential' && ['pchip_2d', 'monotone_polyline', 'moving_average_trend'].includes(state.rankGuideMethod)) return 'delaunay_mesh_3d';
+  return state.rankGuideMethod;
 }
 function visibleGuideRanks() {
   const mode = effectiveRankGuideMode();
@@ -1017,14 +1048,12 @@ function rankGuideSamples(samples, technique, rankBucket) {
     return rank === rankBucket;
   });
 }
-function drawPpaRankGuides2d(ctx, ds, samples, selected, limits, pad, width, height, rect) {
-  const summary = {count: 0, techniques: [], signature: []};
+function drawPpaRankGuides2d(ctx, ds, samples, selected, limits, pad, width, height, rect, method) {
+  const summary = rankGuideSummary('2d_line', 'none');
   const ranks = visibleGuideRanks();
   for (const rank of ranks) {
     for (const technique of selected) {
-      const guide = smooth2dGuide(frontEnvelope2d(
-        rankGuideSamples(samples, technique, rank).map((sample) => ppaCoord(sample, ds))
-      ));
+      const guide = rankGuidePath2d(rankGuideSamples(samples, technique, rank).map((sample) => ppaCoord(sample, ds)), method);
       if (guide.length < 2) continue;
       const screens = guide.map((coord) => ppaScreen2d(coord, limits, pad, width, height, rect));
       drawRankGuidePolyline(ctx, screens, guideColor(technique, selected), rank);
@@ -1035,15 +1064,19 @@ function drawPpaRankGuides2d(ctx, ds, samples, selected, limits, pad, width, hei
   }
   return summary;
 }
-function drawPpaRankGuides3d(ctx, ds, samples, selected, limits, projector) {
-  const summary = {count: 0, techniques: [], signature: []};
+function drawPpaRankGuides3d(ctx, ds, samples, selected, limits, projector, method) {
+  if (method === 'projected_curves_3d') return drawProjectedRankGuides3d(ctx, ds, samples, selected, limits, projector);
+  return drawDelaunayRankGuides3d(ctx, ds, samples, selected, limits, projector);
+}
+function drawProjectedRankGuides3d(ctx, ds, samples, selected, limits, projector) {
+  const summary = rankGuideSummary('3d_projected_curves', 'none_projected_curves_only');
   const projections = ['area_period', 'area_power', 'period_power'];
   const ranks = visibleGuideRanks();
   for (const rank of ranks) {
     for (const technique of selected) {
       const points = rankGuideSamples(samples, technique, rank).map((sample) => normalizeCoord(ppaCoord(sample, ds), limits, 3));
       for (const projection of projections) {
-        const guide = smooth2dGuide(frontEnvelope2d(points.map((point) => projectedGuidePair(point, projection))));
+        const guide = pchipGuide2d(frontEnvelope2d(points.map((point) => projectedGuidePair(point, projection))));
         if (guide.length < 2) continue;
         const screens = guide.map((pair) => projector(projectedGuidePoint(pair, projection)));
         drawRankGuidePolyline(ctx, screens, guideColor(technique, selected), rank);
@@ -1055,7 +1088,35 @@ function drawPpaRankGuides3d(ctx, ds, samples, selected, limits, projector) {
   }
   return summary;
 }
+function drawDelaunayRankGuides3d(ctx, ds, samples, selected, limits, projector) {
+  const summary = rankGuideSummary('3d_delaunay_mesh', 'delaunay_mesh_3d');
+  for (const rank of visibleGuideRanks()) {
+    for (const technique of selected) {
+      const points = uniqueGuidePoints3d(rankGuideSamples(samples, technique, rank).map((sample) => normalizeCoord(ppaCoord(sample, ds), limits, 3)));
+      if (points.length < 3) continue;
+      const triangles = delaunayTriangles2d(points);
+      if (!triangles.length) continue;
+      drawDelaunayMesh(ctx, projector, points, triangles, guideColor(technique, selected), rank);
+      summary.count += 1;
+      summary.triangleCount += triangles.length;
+      if (!summary.techniques.includes(technique)) summary.techniques.push(technique);
+      recordRankGuideSignature(summary, technique, rank, triangles.map((triangle) => projector(points[triangle[0]])));
+    }
+  }
+  return summary;
+}
+function rankGuideSummary(projectionMode, surfaceMode) {
+  return {count: 0, techniques: [], signature: [], projectionMode, surfaceMode, triangleCount: 0};
+}
+function rankGuidePath2d(points, method) {
+  const envelope = frontEnvelope2d(points);
+  if (method === 'monotone_polyline') return envelope;
+  if (method === 'moving_average_trend') return smooth2dGuide(envelope);
+  if (method === 'pchip_2d') return pchipGuide2d(envelope);
+  return pchipGuide2d(envelope);
+}
 function recordRankGuideSignature(summary, technique, rank, screens) {
+  if (!screens.length) return;
   const first = screens[0];
   const last = screens[screens.length - 1];
   summary.signature.push([
@@ -1069,19 +1130,69 @@ function recordRankGuideSignature(summary, technique, rank, screens) {
   ]);
 }
 function frontEnvelope2d(points) {
-  const finite = points.filter((point) => point.length >= 2 && Number.isFinite(point[0]) && Number.isFinite(point[1]));
+  const finite = uniqueGuidePoints2d(points);
   if (finite.length < 2) return finite;
-  const sorted = finite.slice().sort((left, right) => left[0] - right[0]);
   const higherIsBetter = state.coordinateMode === 'improvement';
   let best = higherIsBetter ? -Infinity : Infinity;
   const envelope = [];
-  for (const point of sorted) {
+  for (const point of finite) {
     if (higherIsBetter ? point[1] >= best : point[1] <= best) {
       envelope.push(point);
       best = point[1];
     }
   }
-  return envelope.length >= 2 ? envelope : sorted;
+  return envelope.length >= 2 ? envelope : finite;
+}
+function uniqueGuidePoints2d(points) {
+  const higherIsBetter = state.coordinateMode === 'improvement';
+  const sorted = points
+    .filter((point) => point.length >= 2 && Number.isFinite(point[0]) && Number.isFinite(point[1]))
+    .sort((left, right) => left[0] - right[0]);
+  const unique = [];
+  for (const point of sorted) {
+    const previous = unique[unique.length - 1];
+    if (previous && Math.abs(previous[0] - point[0]) < 1e-9) {
+      if (higherIsBetter ? point[1] > previous[1] : point[1] < previous[1]) previous[1] = point[1];
+      continue;
+    }
+    unique.push([point[0], point[1]]);
+  }
+  return unique;
+}
+function pchipGuide2d(points) {
+  if (points.length < 3) return points;
+  const h = [];
+  const delta = [];
+  for (let index = 0; index < points.length - 1; index++) {
+    h.push(points[index + 1][0] - points[index][0]);
+    delta.push((points[index + 1][1] - points[index][1]) / h[index]);
+  }
+  const slopes = [delta[0]];
+  for (let index = 1; index < points.length - 1; index++) {
+    const left = delta[index - 1], right = delta[index];
+    if (left * right <= 0) slopes.push(0);
+    else {
+      const w1 = 2 * h[index] + h[index - 1];
+      const w2 = h[index] + 2 * h[index - 1];
+      slopes.push((w1 + w2) / (w1 / left + w2 / right));
+    }
+  }
+  slopes.push(delta[delta.length - 1]);
+  const guide = [points[0]];
+  for (let index = 0; index < points.length - 1; index++) {
+    for (let step = 1; step <= 6; step++) {
+      const t = step / 6;
+      const t2 = t * t, t3 = t2 * t;
+      const x = points[index][0] + h[index] * t;
+      const y =
+        (2 * t3 - 3 * t2 + 1) * points[index][1] +
+        (t3 - 2 * t2 + t) * h[index] * slopes[index] +
+        (-2 * t3 + 3 * t2) * points[index + 1][1] +
+        (t3 - t2) * h[index] * slopes[index + 1];
+      guide.push([x, y]);
+    }
+  }
+  return guide;
 }
 function smooth2dGuide(points) {
   if (points.length <= 2) return points;
@@ -1103,6 +1214,91 @@ function projectedGuidePoint(pair, projection) {
   if (projection === 'period_power') return {x: -1.22, y: pair[0], z: pair[1]};
   throw new Error('unknown rank guide projection: ' + projection);
 }
+function uniqueGuidePoints3d(points) {
+  const higherIsBetter = state.coordinateMode === 'improvement';
+  const sorted = points
+    .filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y) && Number.isFinite(point.z))
+    .sort((left, right) => left.x - right.x || left.y - right.y);
+  const unique = [];
+  for (const point of sorted) {
+    const previous = unique[unique.length - 1];
+    if (previous && Math.abs(previous.x - point.x) < 1e-9 && Math.abs(previous.y - point.y) < 1e-9) {
+      if (higherIsBetter ? point.z > previous.z : point.z < previous.z) previous.z = point.z;
+      continue;
+    }
+    unique.push({x: point.x, y: point.y, z: point.z});
+  }
+  return unique;
+}
+function delaunayTriangles2d(points) {
+  const work = points.concat([
+    {x: -20, y: -20, z: 0},
+    {x: 20, y: -20, z: 0},
+    {x: 0, y: 20, z: 0},
+  ]);
+  const superStart = points.length;
+  let triangles = [[superStart, superStart + 1, superStart + 2]];
+  for (let index = 0; index < points.length; index++) {
+    const bad = [];
+    for (const triangle of triangles) {
+      if (circumcircleContains(work, triangle, work[index])) bad.push(triangle);
+    }
+    const boundary = delaunayBoundaryEdges(bad);
+    triangles = triangles.filter((triangle) => !bad.includes(triangle));
+    for (const edge of boundary) triangles.push([edge[0], edge[1], index]);
+  }
+  return triangles.filter((triangle) =>
+    triangle.every((index) => index < superStart) && Math.abs(triangleArea2d(work, triangle)) > 1e-8
+  );
+}
+function delaunayBoundaryEdges(triangles) {
+  const edges = new Map();
+  for (const triangle of triangles) {
+    for (const edge of [[triangle[0], triangle[1]], [triangle[1], triangle[2]], [triangle[2], triangle[0]]]) {
+      const key = edge[0] < edge[1] ? edge.join(':') : [edge[1], edge[0]].join(':');
+      const value = edges.get(key);
+      if (value) value.count += 1;
+      else edges.set(key, {edge, count: 1});
+    }
+  }
+  return Array.from(edges.values()).filter((value) => value.count === 1).map((value) => value.edge);
+}
+function circumcircleContains(points, triangle, point) {
+  const a = points[triangle[0]], b = points[triangle[1]], c = points[triangle[2]];
+  const d = 2 * (a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y));
+  if (Math.abs(d) < 1e-9) return false;
+  const ux = ((a.x * a.x + a.y * a.y) * (b.y - c.y) + (b.x * b.x + b.y * b.y) * (c.y - a.y) + (c.x * c.x + c.y * c.y) * (a.y - b.y)) / d;
+  const uy = ((a.x * a.x + a.y * a.y) * (c.x - b.x) + (b.x * b.x + b.y * b.y) * (a.x - c.x) + (c.x * c.x + c.y * c.y) * (b.x - a.x)) / d;
+  const radius2 = (ux - a.x) * (ux - a.x) + (uy - a.y) * (uy - a.y);
+  const distance2 = (ux - point.x) * (ux - point.x) + (uy - point.y) * (uy - point.y);
+  return distance2 <= radius2 + 1e-8;
+}
+function triangleArea2d(points, triangle) {
+  const a = points[triangle[0]], b = points[triangle[1]], c = points[triangle[2]];
+  return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+}
+function drawDelaunayMesh(ctx, projector, points, triangles, color, rank) {
+  const items = triangles.map((triangle) => {
+    const screens = triangle.map((index) => projector(points[index]));
+    const depth = screens.reduce((total, screen) => total + screen.depth, 0) / screens.length;
+    return {screens, depth};
+  }).sort((left, right) => right.depth - left.depth);
+  ctx.save();
+  ctx.fillStyle = alphaColor(color, rank === 0 ? 0.18 : 0.10);
+  ctx.strokeStyle = alphaColor(color, rank === 0 ? 0.74 : 0.48);
+  ctx.lineWidth = rank === 0 ? 1.2 : 0.8;
+  if (rank > 0) ctx.setLineDash([6, 4]);
+  for (const item of items) {
+    ctx.beginPath();
+    ctx.moveTo(item.screens[0].x, item.screens[0].y);
+    ctx.lineTo(item.screens[1].x, item.screens[1].y);
+    ctx.lineTo(item.screens[2].x, item.screens[2].y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+  ctx.restore();
+}
 function drawRankGuidePolyline(ctx, screens, color, rank) {
   ctx.save();
   ctx.strokeStyle = color;
@@ -1117,6 +1313,13 @@ function drawRankGuidePolyline(ctx, screens, color, rank) {
 }
 function guideColor(technique, selected) {
   return techniqueColor(technique, selected);
+}
+function alphaColor(color, alpha) {
+  if (!color.startsWith('#') || color.length !== 7) return color;
+  const red = parseInt(color.slice(1, 3), 16);
+  const green = parseInt(color.slice(3, 5), 16);
+  const blue = parseInt(color.slice(5, 7), 16);
+  return 'rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')';
 }
 function setupCanvas(canvas) {
   const rect = canvas.getBoundingClientRect();
@@ -1535,11 +1738,18 @@ function techniqueShapeLegend(selected) {
 }
 function rankGuideLegend() {
   if (effectiveRankGuideMode() === 'off') return '<div class="legend-row">rank guides off</div>';
-  const scene = dataset().circuit_type === 'sequential'
-    ? '3D projected curves, not an exact surface'
-    : '2D smoothed lines';
+  const method = effectiveRankGuideMethodName(dataset());
+  const scene = rankGuideMethodDescription(method);
   return '<div class="legend-title legend-subtitle">Smoothed rank guide</div>' +
     '<div class="legend-row">' + rankGuideModeLabel() + ' · ' + scene + '</div>';
+}
+function rankGuideMethodDescription(method) {
+  if (method === 'pchip_2d') return 'PCHIP monotone 2D line';
+  if (method === 'monotone_polyline') return 'monotone envelope polyline';
+  if (method === 'moving_average_trend') return 'moving-average trend line';
+  if (method === 'delaunay_mesh_3d') return '3D Delaunay mesh guide, not exact surface';
+  if (method === 'projected_curves_3d') return '3D projected curves, not exact surface';
+  return 'off';
 }
 function rankGuideModeLabel() {
   if (state.rankGuideMode === '0') return 'rank 0';
@@ -1925,6 +2135,8 @@ function debugState() {
     highlighted_sample_ids: Array.from(state.hoveredSampleIds),
     color_mode: state.colorMode,
     rank_guide_mode: state.rankGuideMode,
+    rank_guide_method: state.rankGuideMethod,
+    effective_rank_guide_method: effectiveRankGuideMethodName(ds),
     effective_rank_guide_mode: effectiveRankGuideMode(),
     rank_radius_preview: [0, 1, 2, 3].map((rank) => rankRadius(rank, false)),
     technique_radius_preview: selectedTechniques().map((technique) => [technique, techniqueRadiusScale(technique)]),
@@ -2023,6 +2235,12 @@ function setRankGuideMode(value) {
   updateRankGuideControls();
   render();
 }
+function setRankGuideMethod(value) {
+  state.rankGuideMethod = value;
+  assertKnownRankGuideMethod(state.rankGuideMethod);
+  document.getElementById('rankGuideMethodSelect').value = value;
+  render();
+}
 function updateRankGuideControls() {
   const enabled = state.colorMode === 'rank';
   document.querySelectorAll('.rank-guide').forEach((button) => {
@@ -2046,6 +2264,7 @@ window.__QD_PPA_VIEWER_DEBUG__ = {
   setRankFilter,
   setColorMode,
   setRankGuideMode,
+  setRankGuideMethod,
   setAdvancedOpen,
   resetViewer,
 };
