@@ -157,7 +157,9 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "drawPpa3d(",
         "drawPpa2d(",
         "drawPpaFrame3d(",
+        "drawPpaSampleAxisTicks3d(",
         "ppaReferenceCoord(",
+        "sampleAxisLabels(",
         "reference_visible:",
         "fitness_shaded:",
         "makeProjector(",
@@ -178,6 +180,7 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "rank_radius_preview:",
         "technique_radius_preview:",
         "reference_axis_labels:",
+        "hovered_sample_axis_labels:",
         "reference_tooltip_preview:",
         "camera:",
         "z_range:",
@@ -725,6 +728,22 @@ def _assert_ppa_dimensionality(page: Any, errors: list[str], *, label: str, expe
             errors.append(f"{label}: sequential PPA z range is not populated")
 
 
+def _assert_sample_axis_labels(
+    state: dict[str, Any],
+    errors: list[str],
+    *,
+    label: str,
+    expected_count: int,
+    source: str,
+) -> None:
+    sample_labels = state.get("hovered_sample_axis_labels")
+    if not isinstance(sample_labels, list) or len(sample_labels) != expected_count:
+        errors.append(f"{label}: {source} did not expose sample axis labels: {sample_labels}")
+        return
+    if not all(str(item).startswith("sample ") and "=" in str(item) for item in sample_labels):
+        errors.append(f"{label}: {source} sample axis labels are malformed: {sample_labels}")
+
+
 def _strict_visual_matrix(
     page: Any,
     problem_keys: set[str],
@@ -792,8 +811,26 @@ def _strict_visual_matrix(
             hover = _debug_state(page)
             if hover.get("highlighted_cell_id") is None:
                 errors.append(f"{label}: PPA hover did not identify an archive cell")
+            expected_label_count = 3 if expected_dimensionality == "3d" else 2
+            _assert_sample_axis_labels(
+                hover,
+                errors,
+                label=label,
+                expected_count=expected_label_count,
+                source="PPA hover bridge",
+            )
             if not _hover_first_ppa_point_with_mouse(page):
                 errors.append(f"{label}: real mouse hover did not activate a PPA sample tooltip")
+            mouse_hover = _debug_state(page)
+            _assert_sample_axis_labels(
+                mouse_hover,
+                errors,
+                label=label,
+                expected_count=expected_label_count,
+                source="real mouse hover",
+            )
+            state = mouse_hover
+            scene = state["scenes"]["ppa"]
             _report_screenshot(
                 report_lines,
                 _viewer_screenshot(page, screenshot_dir, errors, f"{label}_ppa_hover"),
@@ -822,6 +859,7 @@ def _scene_report_metadata(state: dict[str, Any], scene_kind: str, scene: dict[s
         "axes": scene.get("axes"),
         "camera": scene.get("camera"),
         "color_mode": state.get("color_mode"),
+        "hovered_sample_axis_labels": state.get("hovered_sample_axis_labels"),
         "reference_visible": scene.get("reference_visible"),
         "renderer": scene.get("renderer"),
         "selected_techniques": state.get("selected_techniques"),

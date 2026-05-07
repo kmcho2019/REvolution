@@ -829,6 +829,8 @@ The PPA view must support:
 - one reference-value tick on each active PPA axis, analogous to the archive
   quantile boundary labels, while the reference marker hover keeps full raw PPA
   details;
+- one sample-value tick on each active PPA axis while hovering a single PPA
+  sample, so the sample can be compared directly against the reference ticks;
 - rank 0 front highlighting per technique;
 - optional rank 1, rank 2, ... front highlighting.
 
@@ -899,6 +901,8 @@ Hovering a PPA point must:
 
 - highlight the point;
 - highlight its archive cell if projected;
+- show one sample-value tick per active PPA axis, using the active coordinate
+  display mode;
 - show sample details: id, technique, generation, strategy, raw PPA, gains,
   Pareto rank, archive cell, candidate path.
 
@@ -1280,8 +1284,9 @@ Required checks:
     at least one matching PPA sample when that cell has projected samples.
 52. Moving off an archive-cell hit target clears the highlighted archive cell
     and linked PPA highlights.
-53. PPA-point hover changes the highlighted sample id and highlights the
-    projected archive cell when projection is available.
+53. PPA-point hover changes the highlighted sample id, highlights the projected
+    archive cell when projection is available, and exposes one sample-value tick
+    per active PPA axis.
 54. Layer mini-panel hover maps to the same archive cell id and sample ids as
     archive-scene hover.
 55. Strict validation fails if the viewer falls back to a flat 2D canvas for a

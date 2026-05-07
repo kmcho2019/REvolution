@@ -885,8 +885,9 @@ function drawPpa3d(ctx, canvas, ds, samples, selected) {
   const limits = coordinateLimits(reference ? coords.concat([reference]) : coords, 3);
   const camera = state.cameras.ppa;
   const projector = makeProjector(canvas, camera, 1.45);
+  const hoveredSample = visibleHoveredSample(samples);
   drawPpaFrame3d(ctx, projector);
-  drawPpaAxes3d(ctx, projector, ds, reference, limits);
+  drawPpaAxes3d(ctx, projector, ds, reference, limits, hoveredSample);
   const points = samples.map((sample, index) => {
     const point = normalizeCoord(coords[index], limits, 3);
     return {sample, point, screen: projector(point)};
@@ -913,6 +914,7 @@ function drawPpa2d(ctx, canvas, ds, samples, selected) {
   const pad = {left: 54, right: 34, top: 54, bottom: 72};
   const width = rect.width - pad.left - pad.right;
   const height = rect.height - pad.top - pad.bottom;
+  const hoveredSample = visibleHoveredSample(samples);
   ctx.strokeStyle = 'rgba(37,33,29,0.65)';
   ctx.lineWidth = 1.2;
   ctx.beginPath();
@@ -922,7 +924,7 @@ function drawPpa2d(ctx, canvas, ds, samples, selected) {
   ctx.stroke();
   ctx.fillStyle = '#716b64';
   ctx.fillText(ppaAxisSummary(ds), pad.left, 28);
-  drawPpaAxisLabels2d(ctx, ds, reference, limits, pad, width, height, rect);
+  drawPpaAxisLabels2d(ctx, ds, reference, limits, pad, width, height, rect, hoveredSample);
   for (const sample of samples) {
     const coord = ppaCoord(sample, ds);
     drawPpaPoint(ctx, sample, ppaScreen2d(coord, limits, pad, width, height, rect), selected);
@@ -1141,7 +1143,7 @@ function drawPpaFrame3d(ctx, projector) {
   ctx.stroke();
   ctx.restore();
 }
-function drawPpaAxes3d(ctx, projector, ds, reference, limits) {
+function drawPpaAxes3d(ctx, projector, ds, reference, limits, hoveredSample) {
   const origin = {x: -1.22, y: -1.18, z: -1.22};
   const labels = ppaAxisNames(ds);
   const defs = [
@@ -1163,6 +1165,7 @@ function drawPpaAxes3d(ctx, projector, ds, reference, limits) {
     ctx.fillText(ppaAxisDirection(), b.x + 6, b.y + 7);
   }
   if (reference) drawPpaReferenceAxisTicks3d(ctx, projector, ds, normalizeCoord(reference, limits, 3));
+  if (hoveredSample) drawPpaSampleAxisTicks3d(ctx, projector, ds, hoveredSample, limits);
 }
 function drawPpaReferenceAxisTicks3d(ctx, projector, ds, ref) {
   const specs = [
@@ -1185,7 +1188,28 @@ function drawPpaReferenceAxisTicks3d(ctx, projector, ds, ref) {
   }
   ctx.restore();
 }
-function drawPpaAxisLabels2d(ctx, ds, reference, limits, pad, width, height, rect) {
+function drawPpaSampleAxisTicks3d(ctx, projector, ds, sample, limits) {
+  const point = normalizeCoord(ppaCoord(sample, ds), limits, 3);
+  const specs = [
+    [{x: point.x, y: -1.18, z: -1.22}, {x: 6, y: -10}],
+    [{x: -1.22, y: point.y, z: -1.22}, {x: 6, y: 12}],
+    [{x: -1.22, y: -1.18, z: point.z}, {x: 6, y: -10}],
+  ];
+  const labels = sampleAxisLabels(sample, ds);
+  ctx.save();
+  ctx.font = '9px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+  ctx.strokeStyle = 'rgba(37,33,29,0.78)';
+  ctx.fillStyle = '#25211d';
+  for (const [index, [tick, offset]] of specs.entries()) {
+    const p = projector(tick);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillText(labels[index], p.x + offset.x, p.y + offset.y);
+  }
+  ctx.restore();
+}
+function drawPpaAxisLabels2d(ctx, ds, reference, limits, pad, width, height, rect, hoveredSample) {
   const labels = ppaAxisNames(ds);
   const x0 = pad.left, y0 = rect.height - pad.bottom;
   const x1 = pad.left + width, y1 = pad.top;
@@ -1200,6 +1224,7 @@ function drawPpaAxisLabels2d(ctx, ds, reference, limits, pad, width, height, rec
   ctx.fillStyle = '#237b35';
   ctx.fillText(labels[1] + ' · ' + ppaAxisDirection(), x0 + 8, y1 - 12);
   if (reference) drawPpaReferenceAxisTicks2d(ctx, ds, reference, limits, pad, width, height, rect);
+  if (hoveredSample) drawPpaSampleAxisTicks2d(ctx, ds, hoveredSample, limits, pad, width, height, rect);
   ctx.restore();
 }
 function drawPpaReferenceAxisTicks2d(ctx, ds, reference, limits, pad, width, height, rect) {
@@ -1216,6 +1241,20 @@ function drawPpaReferenceAxisTicks2d(ctx, ds, reference, limits, pad, width, hei
   ctx.stroke();
   ctx.fillText(labels[0], ref.x + 6, y0 - 8);
   ctx.fillText(labels[1], x0 + 8, ref.y - 7);
+}
+function drawPpaSampleAxisTicks2d(ctx, ds, sample, limits, pad, width, height, rect) {
+  const point = ppaScreen2d(ppaCoord(sample, ds), limits, pad, width, height, rect);
+  const x0 = pad.left, y0 = rect.height - pad.bottom;
+  const labels = sampleAxisLabels(sample, ds);
+  ctx.strokeStyle = 'rgba(37,33,29,0.72)';
+  ctx.fillStyle = '#25211d';
+  ctx.beginPath();
+  ctx.arc(point.x, y0, 3, 0, Math.PI * 2);
+  ctx.moveTo(x0 + 3, point.y);
+  ctx.arc(x0, point.y, 3, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillText(labels[0], point.x + 6, y0 + 18);
+  ctx.fillText(labels[1], x0 + 8, point.y + 12);
 }
 function drawAxisArrow(ctx, start, end, color) {
   const angle = Math.atan2(end.y - start.y, end.x - start.x);
@@ -1541,6 +1580,21 @@ function referenceAxisLabels(ds) {
   if (!coord) return [];
   return labels.map((label, index) => 'ref ' + label + '=' + fmt(coord[index]));
 }
+function visibleHoveredSample(samples) {
+  if (state.hoveredSampleIds.size !== 1) return null;
+  const sampleId = Array.from(state.hoveredSampleIds)[0];
+  return samples.find((sample) => sample.sample_id === sampleId) || null;
+}
+function singleHoveredSample(ds) {
+  if (state.hoveredSampleIds.size !== 1) return null;
+  const sampleId = Array.from(state.hoveredSampleIds)[0];
+  return ds.samples.find((sample) => sample.sample_id === sampleId) || null;
+}
+function sampleAxisLabels(sample, ds) {
+  const labels = ppaAxisNames(ds);
+  const coord = ppaCoord(sample, ds);
+  return labels.map((label, index) => 'sample ' + label + '=' + fmt(coord[index]));
+}
 function axisSummary(ds) {
   const archive = ds.archive_definition;
   return 'X = ' + archive.axes[0].name + ' · Y = ' + archive.axes[2].name + ' · Z = ' + archive.axes[1].name +
@@ -1586,10 +1640,12 @@ function updateDebugText() {
   document.getElementById('debugText').textContent = JSON.stringify(debugState(), null, 2);
 }
 function debugState() {
+  const ds = dataset();
+  const hoveredSample = singleHoveredSample(ds);
   return {
     schema: 'qd_ppa_viewer_debug.v2',
     problem_key: problemKey(),
-    circuit_type: dataset().circuit_type,
+    circuit_type: ds.circuit_type,
     selected_techniques: selectedTechniques(),
     step: stepName(),
     coordinate_mode: state.coordinateMode,
@@ -1604,10 +1660,11 @@ function debugState() {
     color_mode: state.colorMode,
     rank_radius_preview: [0, 1, 2, 3].map((rank) => rankRadius(rank, false)),
     technique_radius_preview: selectedTechniques().map((technique) => [technique, techniqueRadiusScale(technique)]),
-    reference_axis_labels: referenceAxisLabels(dataset()),
-    reference_tooltip_preview: referenceTooltip(dataset()),
+    reference_axis_labels: referenceAxisLabels(ds),
+    hovered_sample_axis_labels: hoveredSample ? sampleAxisLabels(hoveredSample, ds) : [],
+    reference_tooltip_preview: referenceTooltip(ds),
     scenes: state.sceneInfo,
-    source_artifacts: dataset().source_artifacts,
+    source_artifacts: ds.source_artifacts,
   };
 }
 function fmt(value) {

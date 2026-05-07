@@ -892,10 +892,10 @@ For grid-quantile journal runs:
   ranks independently of the display coordinate mode, keeps
   `all_ppa_valid` as the default timeline universe, exposes visible
   `fitness`/`technique`/`rank` color modes with legends, labels one reference
-  PPA value per active axis, and labels classic archive cells as posthoc
-  projections into the selected QD archive source. Strict Playwright validation
-  records a visual parity report and rejects the previous flat 2D-only viewer
-  contract.
+  PPA value per active axis, labels hovered PPA samples on the same axes, and
+  labels classic archive cells as posthoc projections into the selected QD
+  archive source. Strict Playwright validation records a visual parity report
+  and rejects the previous flat 2D-only viewer contract.
 
 When choosing which mode/profile to run next:
 
