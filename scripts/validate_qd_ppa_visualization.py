@@ -108,6 +108,9 @@ def validate_viewer(
         "rankScopeSelect",
         "sampleUniverseSelect",
         "rankFilterSelect",
+        "colorModeSelect",
+        "color-quick",
+        "ppaLegend",
         "perspectiveLockBtn",
         "autoRotateBtn",
         "explodeLayersBtn",
@@ -153,13 +156,23 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "drawArchive(",
         "drawPpa3d(",
         "drawPpa2d(",
+        "drawPpaFrame3d(",
+        "ppaReferenceCoord(",
+        "reference_visible:",
+        "fitness_shaded:",
         "makeProjector(",
         "rotatePoint(",
         "hoverFirstArchiveCell",
+        "hoverFirstArchiveSample",
         "hoverFirstLayerCell",
         "hoverFirstPpaPoint",
+        "setColorMode",
+        "rankColor(",
+        "rankRadius(",
         "highlighted_sample_ids",
         "highlighted_cell_id",
+        "color_mode:",
+        "rank_radius_preview:",
         "camera:",
         "z_range:",
         "visible_layer_count:",
@@ -429,6 +442,8 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                 _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "single_qd"))
             _select_compare(page, "classic", "grid_quantile_pareto_journal_bd", errors)
             _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "compare_classic_qd"))
+            _assert_color_modes(page, screenshot_dir, errors, report_lines)
+            _assert_archive_hover_clears(page, errors)
             for coordinate_mode in ("raw", "improvement", "normalized"):
                 page.evaluate("mode => window.__QD_PPA_VIEWER_DEBUG__.setCoordinateMode(mode)", coordinate_mode)
                 _assert_coordinate_mode(page, errors, coordinate_mode)
@@ -542,11 +557,15 @@ def _assert_default_layout(page: Any, errors: list[str]) -> None:
     metrics = page.evaluate(
         "() => {"
         " const advanced = document.getElementById('advancedPanel');"
+        " const advancedRect = advanced.getBoundingClientRect();"
+        " const legend = document.getElementById('ppaLegend').getBoundingClientRect();"
         " const layout = document.getElementById('layout').getBoundingClientRect();"
         " const stats = document.querySelector('.bottom-stats').getBoundingClientRect();"
         " window.scrollTo(0, 9999);"
         " return {"
         "   advancedOpen: advanced.open,"
+        "   advancedRect: {left: advancedRect.left, right: advancedRect.right, top: advancedRect.top, bottom: advancedRect.bottom},"
+        "   legendRect: {left: legend.left, right: legend.right, top: legend.top, bottom: legend.bottom},"
         "   scrollY: window.scrollY,"
         "   innerHeight: window.innerHeight,"
         "   layoutTop: layout.top,"
@@ -562,12 +581,55 @@ def _assert_default_layout(page: Any, errors: list[str]) -> None:
         errors.append(f"Playwright default 1440x1000 layout is scrollable: scrollY={metrics['scrollY']}")
     if float(metrics["layoutTop"]) >= float(metrics["innerHeight"]) or float(metrics["statsBottom"]) <= 0:
         errors.append("Playwright default 1440x1000 layout panes are not visible")
+    if _rects_overlap(metrics["advancedRect"], metrics["legendRect"]):
+        errors.append("Playwright default layout overlaps the Advanced tab and PPA legend")
+
+
+def _rects_overlap(first: dict[str, Any], second: dict[str, Any]) -> bool:
+    return (
+        float(first["left"]) < float(second["right"])
+        and float(first["right"]) > float(second["left"])
+        and float(first["top"]) < float(second["bottom"])
+        and float(first["bottom"]) > float(second["top"])
+    )
 
 
 def _assert_coordinate_mode(page: Any, errors: list[str], expected: str) -> None:
     state = _debug_state(page)
     if state.get("coordinate_mode") != expected:
         errors.append(f"Playwright coordinate mode mismatch: expected {expected}, saw {state.get('coordinate_mode')}")
+
+
+def _assert_color_modes(
+    page: Any,
+    screenshot_dir: Path,
+    errors: list[str],
+    report_lines: list[str],
+) -> None:
+    for color_mode in ("fitness", "technique", "rank"):
+        page.evaluate("mode => window.__QD_PPA_VIEWER_DEBUG__.setColorMode(mode)", color_mode)
+        state = _debug_state(page)
+        if state.get("color_mode") != color_mode:
+            errors.append(f"Playwright color mode mismatch: expected {color_mode}, saw {state.get('color_mode')}")
+        active = page.locator(f".color-quick[data-color-mode='{color_mode}']").evaluate(
+            "node => node.classList.contains('active')"
+        )
+        if not active:
+            errors.append(f"Playwright visible color control did not activate {color_mode}")
+        legend = page.locator("#ppaLegend").inner_text().lower()
+        if color_mode not in legend:
+            errors.append(f"Playwright legend does not describe {color_mode} mode")
+        _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, f"color_{color_mode}"))
+    colors = page.evaluate("() => [rankColor(0), rankColor(1), rankColor(2), rankColor(3)]")
+    assert isinstance(colors, list)
+    if len(set(colors)) != 4:
+        errors.append(f"Playwright rank colors are not distinct: {colors}")
+    radii = _debug_state(page).get("rank_radius_preview")
+    if not isinstance(radii, list) or len(radii) != 4:
+        errors.append("Playwright rank radius preview is missing")
+        return
+    if not all(float(radii[index]) > float(radii[index + 1]) for index in range(3)):
+        errors.append(f"Playwright rank radii are not monotonically decreasing: {radii}")
 
 
 def _assert_auto_rotate(page: Any, errors: list[str]) -> None:
@@ -578,6 +640,18 @@ def _assert_auto_rotate(page: Any, errors: list[str]) -> None:
     second_camera = second.get("scenes", {}).get("archiveA", {}).get("camera", {})
     if first_camera.get("yaw") == second_camera.get("yaw"):
         errors.append("Playwright auto-rotate did not change archive camera yaw")
+
+
+def _assert_archive_hover_clears(page: Any, errors: list[str]) -> None:
+    if not page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.hoverFirstArchiveCell('archiveA')"):
+        errors.append("Playwright archive hover clear check found no occupied archive cell")
+        return
+    if not _move_to_empty_canvas_point(page, "archiveA", "#archiveCanvasA"):
+        errors.append("Playwright archive hover clear check found no empty archive canvas point")
+        return
+    state = _debug_state(page)
+    if state.get("highlighted_sample_ids") or state.get("highlighted_cell_id") is not None:
+        errors.append("Playwright archive hover did not clear after moving off the cell")
 
 
 def _assert_locked_archive_cameras(page: Any, errors: list[str], ppa_camera_before: Any) -> None:
@@ -611,6 +685,8 @@ def _assert_ppa_dimensionality(page: Any, errors: list[str], *, label: str, expe
         errors.append(f"{label}: expected PPA dimensionality {expected}, saw {ppa.get('dimensionality')}")
     if int(ppa.get("visible_sample_count", 0)) <= 0:
         errors.append(f"{label}: PPA scene has no visible samples")
+    if not ppa.get("reference_visible"):
+        errors.append(f"{label}: PPA scene does not show the reference PPA marker")
     if expected == "3d":
         z_range = ppa.get("z_range", [0, 0])
         if len(z_range) != 2 or float(z_range[1]) <= float(z_range[0]):
@@ -641,6 +717,10 @@ def _strict_visual_matrix(
         if scene_kind == "archive":
             if int(scene.get("visible_layer_count", 0)) <= 0:
                 errors.append(f"{label}: archive scene reports no layers")
+            if int(scene.get("archive_sample_hit_count", 0)) <= 0:
+                errors.append(f"{label}: archive scene has no sample-level hit targets")
+            if not scene.get("fitness_shaded"):
+                errors.append(f"{label}: archive scene does not report fitness shading")
             if label == "sequential_archive_3d" and scene.get("collapsed_axes"):
                 errors.append(f"{label}: full 3D archive unexpectedly reports collapsed axes")
             if label == "combinational_projected_archive" and "ff_depth" not in scene.get("collapsed_axes", []):
@@ -654,6 +734,13 @@ def _strict_visual_matrix(
                 report_lines,
                 _viewer_screenshot(page, screenshot_dir, errors, f"{label}_archive_hover"),
             )
+            if not page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.hoverFirstArchiveSample('archiveA')"):
+                errors.append(f"{label}: archive sample hover bridge found no sample")
+            sample_hover = _debug_state(page)
+            if len(sample_hover.get("highlighted_sample_ids", [])) != 1:
+                errors.append(f"{label}: archive sample hover did not isolate one sample")
+            if not _hover_first_archive_sample_with_mouse(page, "archiveA", "#archiveCanvasA"):
+                errors.append(f"{label}: real mouse hover did not activate an archive sample tooltip")
             if not page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.hoverFirstLayerCell('A')"):
                 errors.append(f"{label}: layer-panel hover bridge found no occupied cell")
             layer_hover = _debug_state(page)
@@ -666,11 +753,15 @@ def _strict_visual_matrix(
         else:
             if int(scene.get("visible_sample_count", 0)) <= 0:
                 errors.append(f"{label}: PPA scene reports no visible samples")
+            if not scene.get("reference_visible"):
+                errors.append(f"{label}: PPA scene does not report a reference marker")
             if not page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.hoverFirstPpaPoint()"):
                 errors.append(f"{label}: PPA hover bridge found no sample")
             hover = _debug_state(page)
             if hover.get("highlighted_cell_id") is None:
                 errors.append(f"{label}: PPA hover did not identify an archive cell")
+            if not _hover_first_ppa_point_with_mouse(page):
+                errors.append(f"{label}: real mouse hover did not activate a PPA sample tooltip")
             _report_screenshot(
                 report_lines,
                 _viewer_screenshot(page, screenshot_dir, errors, f"{label}_ppa_hover"),
@@ -687,6 +778,7 @@ def _scene_report_metadata(state: dict[str, Any], scene_kind: str, scene: dict[s
     if scene_kind == "archive":
         return {
             "active_axes": scene.get("active_axes"),
+            "archive_sample_hit_count": scene.get("archive_sample_hit_count"),
             "camera": scene.get("camera"),
             "collapsed_axes": scene.get("collapsed_axes"),
             "effective_shape": scene.get("effective_shape"),
@@ -697,11 +789,70 @@ def _scene_report_metadata(state: dict[str, Any], scene_kind: str, scene: dict[s
     return {
         "axes": scene.get("axes"),
         "camera": scene.get("camera"),
+        "color_mode": state.get("color_mode"),
+        "reference_visible": scene.get("reference_visible"),
         "renderer": scene.get("renderer"),
         "selected_techniques": state.get("selected_techniques"),
         "visible_sample_count": scene.get("visible_sample_count"),
         "z_range": scene.get("z_range"),
     }
+
+
+def _hover_first_ppa_point_with_mouse(page: Any) -> bool:
+    hit = page.evaluate("() => state.hitMaps.ppa.find(item => item.kind === 'ppaSample')")
+    if not isinstance(hit, dict):
+        return False
+    rect = page.locator("#ppaCanvas").bounding_box()
+    if not rect:
+        return False
+    page.mouse.move(float(rect["x"]) + float(hit["x"]), float(rect["y"]) + float(hit["y"]))
+    page.wait_for_timeout(100)
+    state = _debug_state(page)
+    tooltip_display = page.locator("#tooltip").evaluate("node => getComputedStyle(node).display")
+    return bool(state.get("highlighted_sample_ids")) and tooltip_display != "none"
+
+
+def _hover_first_archive_sample_with_mouse(page: Any, scene_name: str, canvas_selector: str) -> bool:
+    hit = page.evaluate(
+        "scene => state.hitMaps[scene].find(item => item.kind === 'archiveSample')",
+        scene_name,
+    )
+    if not isinstance(hit, dict):
+        return False
+    rect = page.locator(canvas_selector).bounding_box()
+    if not rect:
+        return False
+    page.mouse.move(float(rect["x"]) + float(hit["x"]), float(rect["y"]) + float(hit["y"]))
+    page.wait_for_timeout(100)
+    state = _debug_state(page)
+    tooltip_display = page.locator("#tooltip").evaluate("node => getComputedStyle(node).display")
+    return len(state.get("highlighted_sample_ids", [])) == 1 and tooltip_display != "none"
+
+
+def _move_to_empty_canvas_point(page: Any, scene_name: str, canvas_selector: str) -> bool:
+    point = page.evaluate(
+        "scene => {"
+        " const canvas = document.querySelector('[data-scene=\"' + scene + '\"]');"
+        " const rect = canvas.getBoundingClientRect();"
+        " const hits = state.hitMaps[scene] || [];"
+        " for (let y = 12; y < rect.height - 12; y += 18) {"
+        "   for (let x = 12; x < rect.width - 12; x += 18) {"
+        "     const inside = hits.some((hit) => Math.hypot(x - hit.x, y - hit.y) < hit.radius + 2);"
+        "     if (!inside) return {x, y};"
+        "   }"
+        " }"
+        " return null;"
+        "}",
+        scene_name,
+    )
+    if not isinstance(point, dict):
+        return False
+    rect = page.locator(canvas_selector).bounding_box()
+    if not rect:
+        return False
+    page.mouse.move(float(rect["x"]) + float(point["x"]), float(rect["y"]) + float(point["y"]))
+    page.wait_for_timeout(100)
+    return True
 
 
 def _visual_report_header() -> list[str]:

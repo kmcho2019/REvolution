@@ -150,7 +150,7 @@ button.active, .seg button.active {
   position: relative;
   border-right: 1px solid var(--line);
   display: grid;
-  grid-template-rows: 44px minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   overflow: hidden;
 }
 .pane.hidden { display: none; }
@@ -160,6 +160,7 @@ button.active, .seg button.active {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  min-height: 44px;
   padding: 8px 14px;
   border-bottom: 1px solid var(--line);
   background: rgba(255, 253, 248, 0.72);
@@ -171,6 +172,14 @@ button.active, .seg button.active {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+#ppaPane .pane-head {
+  align-items: flex-start;
+  flex-direction: column;
+}
+#ppaPane .pane-tools {
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 .scene-wrap {
   position: relative;
@@ -191,7 +200,7 @@ canvas:active { cursor: grabbing; }
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(255, 253, 248, 0.9);
+  background: rgba(255, 253, 248, 0.98);
   box-shadow: 0 8px 22px rgba(45, 39, 31, 0.10);
   max-height: 70%;
   overflow: auto;
@@ -227,6 +236,53 @@ canvas:active { cursor: grabbing; }
   color: var(--muted);
   font-size: 10px;
   white-space: nowrap;
+}
+.legend-panel {
+  position: absolute;
+  right: 12px;
+  top: 44px;
+  width: 210px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 253, 248, 0.96);
+  box-shadow: 0 8px 22px rgba(45, 39, 31, 0.10);
+  color: var(--muted);
+}
+.legend-title {
+  margin-bottom: 8px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 5px 0;
+}
+.legend-row span:last-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.legend-swatch {
+  width: 13px;
+  height: 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(37, 33, 29, 0.18);
+  flex: 0 0 auto;
+}
+.legend-ramp {
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgb(220,100,72), rgb(160,165,72), rgb(100,230,72));
+}
+.legend-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 10px;
 }
 .pane-foot {
   border-top: 1px solid var(--line);
@@ -264,7 +320,7 @@ details summary {
 #advancedPanel {
   position: fixed;
   right: 18px;
-  top: 118px;
+  top: 174px;
   z-index: 5;
   width: min(520px, calc(100vw - 36px));
   padding: 8px 11px;
@@ -406,9 +462,9 @@ details summary {
     </label>
     <label>PPA color
       <select id="colorModeSelect">
-        <option value="rank" selected>rank</option>
+        <option value="fitness" selected>fitness</option>
         <option value="technique">technique</option>
-        <option value="fitness">fitness</option>
+        <option value="rank">rank</option>
       </select>
     </label>
   </div>
@@ -452,6 +508,13 @@ details summary {
     <div class="pane-head">
       <div><span class="pane-title">PPA / Pareto Distribution</span> <span class="badge" id="ppaModeBadge">raw</span></div>
       <div class="pane-tools">
+        <span class="control-label">Color</span>
+        <span class="seg">
+          <button class="color-quick active" data-color-mode="fitness">fitness</button>
+          <button class="color-quick" data-color-mode="technique">technique</button>
+          <button class="color-quick" data-color-mode="rank">rank</button>
+        </span>
+        <span class="control-label">Show</span>
         <span class="seg">
           <button class="rank-quick active" data-rank-filter="all">all</button>
           <button class="rank-quick" data-rank-filter="0">r0</button>
@@ -462,6 +525,7 @@ details summary {
     </div>
     <div class="scene-wrap">
       <canvas id="ppaCanvas" data-scene="ppa"></canvas>
+      <div class="legend-panel" id="ppaLegend"></div>
     </div>
     <div class="pane-foot">
       <div class="stat-row" id="ppaStats"></div>
@@ -483,7 +547,7 @@ const state = {
   mode: 'compare',
   coordinateMode: 'raw',
   rankScope: 'per_technique',
-  colorMode: 'rank',
+  colorMode: 'fitness',
   stepIndex: 0,
   timer: null,
   lockedPerspective: false,
@@ -560,12 +624,16 @@ function bindControls() {
     document.querySelectorAll('.rank-quick').forEach((item) => item.classList.toggle('active', item === button));
     render();
   }));
-  ['techniqueASelect', 'techniqueBSelect', 'rankScopeSelect', 'sampleUniverseSelect', 'rankFilterSelect', 'colorModeSelect'].forEach((id) => {
+  document.querySelectorAll('.color-quick').forEach((button) => button.addEventListener('click', () => {
+    setColorMode(button.dataset.colorMode);
+  }));
+  document.getElementById('colorModeSelect').addEventListener('change', () => {
+    setColorMode(document.getElementById('colorModeSelect').value);
+  });
+  ['techniqueASelect', 'techniqueBSelect', 'rankScopeSelect', 'sampleUniverseSelect', 'rankFilterSelect'].forEach((id) => {
     document.getElementById(id).addEventListener('change', () => {
       state.rankScope = document.getElementById('rankScopeSelect').value;
-      state.colorMode = document.getElementById('colorModeSelect').value;
       assertKnown(state.rankScope, ['per_technique', 'pooled_visible'], 'rank scope');
-      assertKnown(state.colorMode, ['rank', 'technique', 'fitness'], 'color mode');
       render();
     });
   });
@@ -706,6 +774,7 @@ function render() {
   document.getElementById('timelineSlider').value = String(state.stepIndex);
   state.rankScope = document.getElementById('rankScopeSelect').value;
   state.colorMode = document.getElementById('colorModeSelect').value;
+  assertKnown(state.colorMode, ['fitness', 'technique', 'rank'], 'color mode');
   const selected = selectedTechniques();
   document.getElementById('layout').className = state.mode;
   document.getElementById('archivePaneB').classList.toggle('hidden', state.mode === 'single');
@@ -745,7 +814,7 @@ function drawArchive(label, sceneName, technique) {
   document.getElementById('archive' + label + 'Badge').textContent = archive.archive_type;
   document.getElementById('archive' + label + 'Frame').textContent = shape.join(' x ') + ' effective';
   clear(ctx, canvas);
-  const projector = makeProjector(canvas, camera, 1.82);
+  const projector = makeProjector(canvas, camera, 1.36);
   const sceneObjects = [];
   forEachCell(shape, (indices) => {
     const cellId = indices.join(',');
@@ -766,13 +835,16 @@ function drawArchive(label, sceneName, technique) {
         kind: 'archiveCell',
         cellId: object.cellId,
         sampleIds: object.summary.sample_ids,
+        rank0Count: object.summary.rank0_count,
+        bestMeanImprovement: object.summary.best_mean_improvement,
+        bestQualityScore: object.summary.best_quality_score,
         x: p.x,
         y: p.y,
         radius: Math.max(18, 24 / p.scale),
       });
     }
   }
-  drawArchiveSamples(ctx, projector, ds, technique, cells, sceneName, shape);
+  const archiveSampleHitCount = drawArchiveSamples(ctx, projector, ds, technique, cells, sceneName, shape);
   document.getElementById('axisSummary' + label).textContent = axisSummary(ds);
   document.getElementById('axisDetail' + label).innerHTML = axisDetails(ds);
   document.getElementById('stats' + label).innerHTML = statsHtml((ds.technique_stats_by_step[stepName()] || {})[technique] || {});
@@ -788,6 +860,8 @@ function drawArchive(label, sceneName, technique) {
     z_or_layer_range: [0, Math.max(0, shape[1] - 1)],
     visible_layer_count: shape[1],
     rendered_cell_count: sorted.length,
+    archive_sample_hit_count: archiveSampleHitCount,
+    fitness_shaded: true,
     highlighted_cell_id: state.highlightedCellId,
   };
 }
@@ -800,60 +874,78 @@ function drawPpa(selected) {
   document.getElementById('ppaModeBadge').textContent = state.coordinateMode;
   document.getElementById('ppaAxisSummary').textContent = ppaAxisSummary(ds);
   document.getElementById('ppaStats').innerHTML = compareStatsHtml(ds.technique_stats_by_step[stepName()] || {}, selected);
+  drawPpaLegend(selected);
   state.hitMaps.ppa = [];
   if (ds.circuit_type === 'sequential') drawPpa3d(ctx, canvas, ds, samples, selected);
   else drawPpa2d(ctx, canvas, ds, samples, selected);
 }
 function drawPpa3d(ctx, canvas, ds, samples, selected) {
   const coords = samples.map((sample) => ppaCoord(sample, ds));
-  const limits = coordinateLimits(coords, 3);
+  const reference = ppaReferenceCoord(ds);
+  const limits = coordinateLimits(reference ? coords.concat([reference]) : coords, 3);
   const camera = state.cameras.ppa;
-  const projector = makeProjector(canvas, camera, 2.05);
+  const projector = makeProjector(canvas, camera, 1.45);
+  drawPpaFrame3d(ctx, projector);
   drawPpaAxes3d(ctx, projector, ds);
   const points = samples.map((sample, index) => {
     const point = normalizeCoord(coords[index], limits, 3);
     return {sample, point, screen: projector(point)};
   }).sort((a, b) => b.screen.depth - a.screen.depth);
   for (const item of points) drawPpaPoint(ctx, item.sample, item.screen, selected);
+  if (reference) drawPpaReferencePoint(ctx, projector(normalizeCoord(reference, limits, 3)));
   state.sceneInfo.ppa = {
     scene_type: 'ppa',
     renderer: 'custom_scene_canvas',
     dimensionality: '3d',
     camera: {...camera},
     visible_sample_count: samples.length,
+    reference_visible: Boolean(reference),
     z_range: valueRange(coords.map((coord) => coord[2])),
     axes: ppaAxisNames(ds),
     highlighted_sample_count: state.hoveredSampleIds.size,
   };
 }
 function drawPpa2d(ctx, canvas, ds, samples, selected) {
+  const rect = canvas.getBoundingClientRect();
   const coords = samples.map((sample) => ppaCoord(sample, ds));
-  const limits = coordinateLimits(coords, 2);
-  const pad = 54;
+  const reference = ppaReferenceCoord(ds);
+  const limits = coordinateLimits(reference ? coords.concat([reference]) : coords, 2);
+  const pad = {left: 54, right: 34, top: 54, bottom: 72};
+  const width = rect.width - pad.left - pad.right;
+  const height = rect.height - pad.top - pad.bottom;
   ctx.strokeStyle = 'rgba(37,33,29,0.65)';
   ctx.lineWidth = 1.2;
   ctx.beginPath();
-  ctx.moveTo(pad, pad);
-  ctx.lineTo(pad, canvas.height - pad);
-  ctx.lineTo(canvas.width - pad, canvas.height - pad);
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, rect.height - pad.bottom);
+  ctx.lineTo(rect.width - pad.right, rect.height - pad.bottom);
   ctx.stroke();
   ctx.fillStyle = '#716b64';
-  ctx.fillText(ppaAxisSummary(ds), pad, 28);
+  ctx.fillText(ppaAxisSummary(ds), pad.left, 28);
+  drawPpaAxisLabels2d(ctx, ds, limits, pad, width, height, rect);
   for (const sample of samples) {
     const coord = ppaCoord(sample, ds);
-    const x = pad + (coord[0] - limits[0][0]) / (limits[0][1] - limits[0][0]) * (canvas.width - pad * 2);
-    const y = canvas.height - pad - (coord[1] - limits[1][0]) / (limits[1][1] - limits[1][0]) * (canvas.height - pad * 2);
-    drawPpaPoint(ctx, sample, {x, y, scale: 1, depth: 0}, selected);
+    drawPpaPoint(ctx, sample, ppaScreen2d(coord, limits, pad, width, height, rect), selected);
   }
+  if (reference) drawPpaReferencePoint(ctx, ppaScreen2d(reference, limits, pad, width, height, rect));
   state.sceneInfo.ppa = {
     scene_type: 'ppa',
     renderer: 'custom_scene_canvas',
     dimensionality: '2d',
     camera: null,
     visible_sample_count: samples.length,
+    reference_visible: Boolean(reference),
     z_range: [0, 0],
     axes: ppaAxisNames(ds),
     highlighted_sample_count: state.hoveredSampleIds.size,
+  };
+}
+function ppaScreen2d(coord, limits, pad, width, height, rect) {
+  return {
+    x: pad.left + (coord[0] - limits[0][0]) / (limits[0][1] - limits[0][0]) * width,
+    y: rect.height - pad.bottom - (coord[1] - limits[1][0]) / (limits[1][1] - limits[1][0]) * height,
+    scale: 1,
+    depth: 0,
   };
 }
 function setupCanvas(canvas) {
@@ -972,9 +1064,45 @@ function drawArchiveAxes(ctx, projector, shape, axes) {
     ctx.stroke();
     ctx.fillText(label + ' = ' + name, b.x + 5, b.y - 5);
   }
+  drawArchiveQuantileLabels(ctx, projector, axes);
+}
+function drawArchiveQuantileLabels(ctx, projector, axes) {
+  const specs = [
+    [axes[0], 'x', {x: 0, y: -1.28, z: -1.32}, {x: 0, y: 10}],
+    [axes[2], 'z', {x: -1.32, y: -1.28, z: 0}, {x: 8, y: 12}],
+    [axes[1], 'y', {x: -1.32, y: 0, z: -1.32}, {x: 8, y: -4}],
+  ];
+  ctx.save();
+  ctx.font = '9px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+  ctx.lineWidth = 1;
+  for (const [axis, direction, base, offset] of specs) {
+    if (!axis || !(axis.quantile_boundaries || []).length) continue;
+    const boundaries = axis.quantile_boundaries;
+    const bins = Number(axis.effective_bins || boundaries.length + 1);
+    boundaries.forEach((value, index) => {
+      const coord = quantileBoundaryCoord(index, bins);
+      const point = {...base};
+      point[direction] = coord;
+      const screen = projector(point);
+      const label = 'q' + Math.round((index + 1) / bins * 100) + '=' + fmtQuantile(value);
+      ctx.strokeStyle = 'rgba(37,33,29,0.42)';
+      ctx.fillStyle = 'rgba(37,33,29,0.64)';
+      ctx.beginPath();
+      ctx.moveTo(screen.x - 3, screen.y - 3);
+      ctx.lineTo(screen.x + 3, screen.y + 3);
+      ctx.stroke();
+      ctx.fillText(label, screen.x + offset.x, screen.y + offset.y);
+    });
+  }
+  ctx.restore();
+}
+function quantileBoundaryCoord(index, bins) {
+  if (bins <= 1) return 0;
+  return (centerCoord(index, bins) + centerCoord(index + 1, bins)) * 0.5;
 }
 function drawArchiveSamples(ctx, projector, ds, technique, cells, sceneName, shape) {
   const sampleById = new Map(ds.samples.map((sample) => [sample.sample_id, sample]));
+  let hitCount = 0;
   for (const cell of Object.values(cells)) {
     const parts = cell.cell_id.split(',').map(Number);
     const center = archivePoint(parts, shape);
@@ -984,14 +1112,34 @@ function drawArchiveSamples(ctx, projector, ds, technique, cells, sceneName, sha
       const jitter = (index % 7 - 3) * 0.025;
       const p = projector({x: center.x + jitter, y: center.y + 0.04 + jitter, z: center.z - jitter});
       const hot = state.hoveredSampleIds.has(sampleId);
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, hot ? 5.5 : 3.4, 0, Math.PI * 2);
-      ctx.fillStyle = hot ? '#f0a51d' : techniqueColor(sample.technique, [technique]);
+      drawMarker(ctx, p, hot ? 5.5 : 3.4, techniqueShape(sample.technique, [technique]));
+      ctx.fillStyle = hot ? '#f0a51d' : fitnessColor(sample.mean_improvement, 0.74);
       ctx.fill();
-      ctx.strokeStyle = 'rgba(37,33,29,0.75)';
+      ctx.strokeStyle = 'rgba(37,33,29,0.78)';
+      ctx.lineWidth = hot ? 1.8 : 1.0;
       ctx.stroke();
+      state.hitMaps[sceneName].push({kind: 'archiveSample', sampleId, cellId: cell.cell_id, x: p.x, y: p.y, radius: hot ? 14 : 10});
+      hitCount += 1;
     });
   }
+  return hitCount;
+}
+function drawPpaFrame3d(ctx, projector) {
+  const corners = [];
+  for (const x of [-1.08, 1.08]) for (const y of [-1.08, 1.08]) for (const z of [-1.08, 1.08]) {
+    corners.push(projector({x, y, z}));
+  }
+  const edges = [[0,1],[0,2],[0,4],[3,1],[3,2],[3,7],[5,1],[5,4],[5,7],[6,2],[6,4],[6,7]];
+  ctx.save();
+  ctx.strokeStyle = 'rgba(74,64,53,0.18)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (const [a, b] of edges) {
+    ctx.moveTo(corners[a].x, corners[a].y);
+    ctx.lineTo(corners[b].x, corners[b].y);
+  }
+  ctx.stroke();
+  ctx.restore();
 }
 function drawPpaAxes3d(ctx, projector, ds) {
   const origin = {x: -1.22, y: -1.18, z: -1.22};
@@ -1001,15 +1149,6 @@ function drawPpaAxes3d(ctx, projector, ds) {
     [labels[1], '#1768c2', {x: -1.22, y: 1.24, z: -1.22}],
     [labels[2], '#237b35', {x: -1.22, y: -1.18, z: 1.24}],
   ];
-  ctx.strokeStyle = 'rgba(74,64,53,0.24)';
-  const box = cellCorners({x: 0, y: 0, z: 0}, [1, 1, 1]).map((p) => ({x: p.x * 2.1, y: p.y * 2.1, z: p.z * 2.1})).map(projector);
-  const edges = [[0,1],[0,2],[0,4],[3,1],[3,2],[3,7],[5,1],[5,4],[5,7],[6,2],[6,4],[6,7]];
-  ctx.beginPath();
-  for (const [a, b] of edges) {
-    ctx.moveTo(box[a].x, box[a].y);
-    ctx.lineTo(box[b].x, box[b].y);
-  }
-  ctx.stroke();
   for (const [label, color, end] of defs) {
     const a = projector(origin), b = projector(end);
     ctx.strokeStyle = color;
@@ -1019,21 +1158,105 @@ function drawPpaAxes3d(ctx, projector, ds) {
     ctx.moveTo(a.x, a.y);
     ctx.lineTo(b.x, b.y);
     ctx.stroke();
-    ctx.fillText(label, b.x + 5, b.y - 5);
+    drawAxisArrow(ctx, a, b, color);
+    ctx.fillText(label, b.x + 6, b.y - 7);
+    ctx.fillText(ppaAxisDirection(), b.x + 6, b.y + 7);
   }
+}
+function drawPpaAxisLabels2d(ctx, ds, limits, pad, width, height, rect) {
+  const labels = ppaAxisNames(ds);
+  const x0 = pad.left, y0 = rect.height - pad.bottom;
+  const x1 = pad.left + width, y1 = pad.top;
+  ctx.save();
+  ctx.fillStyle = '#716b64';
+  ctx.strokeStyle = 'rgba(37,33,29,0.52)';
+  ctx.lineWidth = 1.2;
+  drawAxisArrow(ctx, {x: x0, y: y0}, {x: x1, y: y0}, '#c2185b');
+  drawAxisArrow(ctx, {x: x0, y: y0}, {x: x0, y: y1}, '#237b35');
+  ctx.fillStyle = '#c2185b';
+  ctx.fillText(labels[0] + ' · ' + ppaAxisDirection(), x1 - 150, y0 + 28);
+  ctx.fillText(fmt(limits[0][0]), x0, y0 + 14);
+  ctx.fillText(fmt(limits[0][1]), x1 - 46, y0 + 14);
+  ctx.fillStyle = '#237b35';
+  ctx.fillText(labels[1] + ' · ' + ppaAxisDirection(), x0 + 8, y1 - 12);
+  ctx.fillText(fmt(limits[1][0]), x0 + 8, y0 - 4);
+  ctx.fillText(fmt(limits[1][1]), x0 + 8, y1 + 12);
+  ctx.restore();
+}
+function drawAxisArrow(ctx, start, end, color) {
+  const angle = Math.atan2(end.y - start.y, end.x - start.x);
+  const size = 7;
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(end.x, end.y);
+  ctx.lineTo(end.x - size * Math.cos(angle - 0.48), end.y - size * Math.sin(angle - 0.48));
+  ctx.lineTo(end.x - size * Math.cos(angle + 0.48), end.y - size * Math.sin(angle + 0.48));
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
 }
 function drawPpaPoint(ctx, sample, screen, selected) {
   const rank = sample.pareto_rank_by_step[state.rankScope][stepName()];
   const hot = state.hoveredSampleIds.has(sample.sample_id);
-  const radius = hot ? 7 : rank === 0 ? 5.2 : 3.4;
-  ctx.beginPath();
-  ctx.arc(screen.x, screen.y, radius * Math.max(0.8, Math.min(1.5, screen.scale || 1)), 0, Math.PI * 2);
+  const radius = rankRadius(rank, hot) * Math.max(0.78, Math.min(1.7, screen.scale || 1));
+  drawMarker(ctx, screen, radius, techniqueShape(sample.technique, selected));
+  ctx.save();
+  ctx.globalAlpha = hot ? 1 : Math.max(0.42, Math.min(0.95, 0.68 + Number(screen.depth || 0) * 0.14));
   ctx.fillStyle = pointColor(sample, rank, selected);
   ctx.fill();
   ctx.strokeStyle = sample.viewer_pooled_pareto_member ? '#25211d' : 'rgba(255,255,255,0.95)';
   ctx.lineWidth = sample.mode_global_pareto_member ? 2.3 : 1.1;
   ctx.stroke();
+  ctx.restore();
   state.hitMaps.ppa.push({kind: 'ppaSample', sampleId: sample.sample_id, cellId: sample.archive_cell_id, x: screen.x, y: screen.y, radius: Math.max(radius + 5, 13)});
+}
+function drawPpaLegend(selected) {
+  if (state.colorMode === 'fitness') {
+    document.getElementById('ppaLegend').innerHTML =
+      '<div class="legend-title">Color · fitness</div>' +
+      '<div class="legend-ramp"></div>' +
+      '<div class="legend-scale"><span>lower</span><span>0</span><span>higher</span></div>' +
+      '<div class="legend-row">mean active PPA improvement</div>';
+    return;
+  }
+  if (state.colorMode === 'technique') {
+    document.getElementById('ppaLegend').innerHTML =
+      '<div class="legend-title">Color · technique</div>' +
+      selected.map((technique) =>
+        '<div class="legend-row"><span class="legend-swatch" style="background:' +
+        techniqueColor(technique, selected) + '"></span><span>' + technique + '</span></div>'
+      ).join('');
+    return;
+  }
+  if (state.colorMode === 'rank') {
+    document.getElementById('ppaLegend').innerHTML =
+      '<div class="legend-title">Color · Pareto rank</div>' +
+      [0, 1, 2, 3].map((rank) =>
+        '<div class="legend-row"><span class="legend-swatch" style="width:' + (rankRadius(rank, false) * 2) +
+        'px;height:' + (rankRadius(rank, false) * 2) + 'px;background:' + rankColor(rank) +
+        '"></span><span>' + (rank === 3 ? 'rank 3+' : 'rank ' + rank) + '</span></div>'
+      ).join('') +
+      '<div class="legend-row">larger = lower rank</div>';
+    return;
+  }
+  throw new Error('unknown color mode: ' + state.colorMode);
+}
+function drawPpaReferencePoint(ctx, screen) {
+  ctx.save();
+  ctx.strokeStyle = 'rgba(37,33,29,0.48)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(screen.x, screen.y, 12, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = '#25211d';
+  ctx.beginPath();
+  ctx.arc(screen.x, screen.y, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#25211d';
+  ctx.fillText('reference', screen.x + 9, screen.y - 8);
+  ctx.restore();
+  state.hitMaps.ppa.push({kind: 'ppaReference', x: screen.x, y: screen.y, radius: 16});
 }
 function ppaCoord(sample, ds) {
   if (state.coordinateMode === 'raw') {
@@ -1054,6 +1277,18 @@ function ppaCoord(sample, ds) {
   }
   throw new Error('unknown coordinate mode: ' + state.coordinateMode);
 }
+function ppaReferenceCoord(ds) {
+  const ref = ds.reference_ppa || {};
+  if (state.coordinateMode === 'raw') {
+    const coord = ds.circuit_type === 'sequential'
+      ? [Number(ref.area), Number(ref.eff_clk_period), Number(ref.power)]
+      : [Number(ref.area), Number(ref.power)];
+    return coord.every(Number.isFinite) ? coord : null;
+  }
+  if (state.coordinateMode === 'improvement') return ds.circuit_type === 'sequential' ? [0, 0, 0] : [0, 0];
+  if (state.coordinateMode === 'normalized') return ds.circuit_type === 'sequential' ? [1, 1, 1] : [1, 1];
+  throw new Error('unknown coordinate mode: ' + state.coordinateMode);
+}
 function ppaAxisNames(ds) {
   if (state.coordinateMode === 'raw') return ds.circuit_type === 'sequential' ? ['area', 'eff_clk_period', 'power'] : ['area', 'power'];
   if (state.coordinateMode === 'improvement') return ds.circuit_type === 'sequential' ? ['g_A', 'g_T', 'g_P'] : ['g_A', 'g_P'];
@@ -1061,6 +1296,11 @@ function ppaAxisNames(ds) {
 }
 function ppaAxisSummary(ds) {
   return (ds.circuit_type === 'sequential' ? 'sequential 3D: ' : 'combinational 2D: ') + ppaAxisNames(ds).join(' / ');
+}
+function ppaAxisDirection() {
+  if (state.coordinateMode === 'improvement') return 'higher better';
+  if (state.coordinateMode === 'normalized') return 'lower better';
+  return 'lower better';
 }
 function normalizeCoord(coord, limits, dims) {
   const normalized = [];
@@ -1096,9 +1336,8 @@ function forEachCell(shape, callback) {
   for (let x = 0; x < shape[0]; x++) for (let y = 0; y < shape[1]; y++) for (let z = 0; z < shape[2]; z++) callback([x, y, z]);
 }
 function cellFill(cell, technique) {
-  if (cell.rank0_count > 0) return 'rgba(29, 135, 146, 0.48)';
-  if (cell.projection_type === 'posthoc') return 'rgba(207, 91, 54, 0.38)';
-  return 'rgba(36, 111, 160, 0.36)';
+  const alpha = cell.rank0_count > 0 ? 0.66 : 0.44;
+  return fitnessColor(cell.best_mean_improvement, alpha);
 }
 function pointColor(sample, rank, selected) {
   if (state.colorMode === 'technique') return techniqueColor(sample.technique, selected);
@@ -1106,13 +1345,44 @@ function pointColor(sample, rank, selected) {
     const t = Math.max(0, Math.min(1, Number(sample.mean_improvement || 0) + 0.5));
     return 'rgb(' + Math.round(220 - 120 * t) + ',' + Math.round(100 + 130 * t) + ',72)';
   }
+  if (state.colorMode === 'rank') return rankColor(rank);
+  throw new Error('unknown color mode: ' + state.colorMode);
+}
+function rankColor(rank) {
   if (rank === 0) return '#f0a51d';
-  if (rank === 1) return '#1d8792';
-  return '#6d7885';
+  if (rank === 1) return '#e5c45a';
+  if (rank === 2) return '#7ba66f';
+  return '#4c7fa3';
+}
+function rankRadius(rank, hot) {
+  if (hot) return 7;
+  return Math.max(2.8, 5.8 - Number(rank) * 0.72);
 }
 function techniqueColor(technique, selected) {
   const index = Math.max(0, selected.indexOf(technique));
   return colors[index % colors.length];
+}
+function fitnessColor(value, alpha) {
+  const t = Math.max(0, Math.min(1, Number(value || 0) + 0.5));
+  const r = Math.round(210 - 130 * t);
+  const g = Math.round(95 + 130 * t);
+  const b = Math.round(86 + 16 * t);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+function techniqueShape(technique, selected) {
+  return selected.indexOf(technique) % 2 === 1 ? 'diamond' : 'circle';
+}
+function drawMarker(ctx, screen, radius, shape) {
+  ctx.beginPath();
+  if (shape === 'diamond') {
+    ctx.moveTo(screen.x, screen.y - radius);
+    ctx.lineTo(screen.x + radius, screen.y);
+    ctx.lineTo(screen.x, screen.y + radius);
+    ctx.lineTo(screen.x - radius, screen.y);
+    ctx.closePath();
+    return;
+  }
+  ctx.arc(screen.x, screen.y, radius, 0, Math.PI * 2);
 }
 function drawLayerPanel(label, technique, cells, shape) {
   const panel = document.getElementById('layerPanel' + label);
@@ -1126,8 +1396,10 @@ function drawLayerPanel(label, technique, cells, shape) {
     for (let z = shape[2] - 1; z >= 0; z--) {
       for (let x = 0; x < shape[0]; x++) {
         const cellId = [x, y, z].join(',');
+        const cell = cells[cellId];
         const item = document.createElement('div');
-        item.className = 'layer-cell' + (cells[cellId] ? ' occupied' : '') + (state.highlightedCellId === cellId ? ' hot' : '');
+        item.className = 'layer-cell' + (cell ? ' occupied' : '') + (state.highlightedCellId === cellId ? ' hot' : '');
+        if (cell) item.style.background = state.highlightedCellId === cellId ? '#f3b23b' : fitnessColor(cell.best_mean_improvement, 0.76);
         item.dataset.cellId = cellId;
         item.addEventListener('mouseenter', () => {
           const summary = cells[cellId];
@@ -1164,20 +1436,27 @@ function handleHover(sceneName, event) {
     }
   }
   if (!best) {
-    tooltip.style.display = 'none';
+    const wasHighlighted = state.hoveredSampleIds.size > 0 || state.highlightedCellId !== null || tooltip.style.display !== 'none';
+    resetHoverState();
+    if (wasHighlighted) render();
     return;
   }
   if (best.kind === 'archiveCell') {
     state.highlightedCellId = best.cellId;
     state.highlightedScene = sceneName;
     state.hoveredSampleIds = new Set(best.sampleIds);
-    tooltip.textContent = 'cell ' + best.cellId + '\nsamples ' + best.sampleIds.length;
-  } else {
+    tooltip.textContent = cellTooltip(best);
+  } else if (best.kind === 'ppaSample' || best.kind === 'archiveSample') {
     const sample = dataset().samples.find((item) => item.sample_id === best.sampleId);
     state.highlightedCellId = best.cellId;
     state.highlightedScene = sceneName;
     state.hoveredSampleIds = new Set([best.sampleId]);
     tooltip.textContent = sampleTooltip(sample);
+  } else {
+    state.highlightedCellId = null;
+    state.highlightedScene = sceneName;
+    state.hoveredSampleIds = new Set();
+    tooltip.textContent = referenceTooltip(dataset());
   }
   tooltip.style.display = 'block';
   tooltip.style.left = event.clientX + 12 + 'px';
@@ -1185,19 +1464,33 @@ function handleHover(sceneName, event) {
   render();
 }
 function clearHover() {
+  resetHoverState();
+  render();
+}
+function resetHoverState() {
   tooltip.style.display = 'none';
   state.hoveredSampleIds.clear();
   state.highlightedCellId = null;
   state.highlightedScene = null;
-  render();
+}
+function cellTooltip(cell) {
+  return 'cell ' + cell.cellId + '\n' +
+    'samples ' + cell.sampleIds.length + ' · rank0 ' + (cell.rank0Count || 0) + '\n' +
+    'best fitness ' + fmt(cell.bestMeanImprovement) + ' · best quality ' + fmt(cell.bestQualityScore);
 }
 function sampleTooltip(sample) {
   if (!sample) return '';
   return sample.technique + ' ' + sample.candidate_id + '\n' +
     'generation ' + sample.generation + ' · rank ' + sample.pareto_rank_by_step[state.rankScope][stepName()] + '\n' +
     'area ' + fmt(sample.area) + ' · power ' + fmt(sample.power) + ' · eff ' + fmt(sample.eff_clk_period) + '\n' +
+    'fitness ' + fmt(sample.mean_improvement) + ' · quality ' + fmt(sample.quality_score) + '\n' +
     'g_A ' + fmt(sample.g_A) + ' · g_P ' + fmt(sample.g_P) + ' · g_T ' + fmt(sample.g_T) + '\n' +
     'cell ' + (sample.archive_cell_id || sample.archive_projection_status);
+}
+function referenceTooltip(ds) {
+  const ref = ds.reference_ppa || {};
+  return 'reference PPA\n' +
+    'area ' + fmt(ref.area) + ' · power ' + fmt(ref.power) + ' · eff ' + fmt(ref.eff_clk_period);
 }
 function axisSummary(ds) {
   const archive = ds.archive_definition;
@@ -1259,6 +1552,8 @@ function debugState() {
     exploded_layers: state.explodedLayers,
     highlighted_cell_id: state.highlightedCellId,
     highlighted_sample_ids: Array.from(state.hoveredSampleIds),
+    color_mode: state.colorMode,
+    rank_radius_preview: [0, 1, 2, 3].map((rank) => rankRadius(rank, false)),
     scenes: state.sceneInfo,
     source_artifacts: dataset().source_artifacts,
   };
@@ -1267,12 +1562,18 @@ function fmt(value) {
   if (value === null || value === undefined || Number.isNaN(Number(value))) return 'n/a';
   return Number(value).toFixed(4);
 }
+function fmtQuantile(value) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return 'n/a';
+  return Number(value).toFixed(2);
+}
 function setProblem(key) {
+  resetHoverState();
   document.getElementById('problemSelect').value = key;
   populateTechniques();
   render();
 }
 function selectCompare(a, b) {
+  resetHoverState();
   state.mode = 'compare';
   document.getElementById('compareModeBtn').classList.add('active');
   document.getElementById('singleModeBtn').classList.remove('active');
@@ -1286,6 +1587,15 @@ function hoverFirstArchiveCell(sceneName) {
   state.highlightedCellId = hit.cellId;
   state.highlightedScene = sceneName;
   state.hoveredSampleIds = new Set(hit.sampleIds);
+  render();
+  return true;
+}
+function hoverFirstArchiveSample(sceneName) {
+  const hit = (state.hitMaps[sceneName] || []).find((item) => item.kind === 'archiveSample');
+  if (!hit) return false;
+  state.highlightedCellId = hit.cellId;
+  state.highlightedScene = sceneName;
+  state.hoveredSampleIds = new Set([hit.sampleId]);
   render();
   return true;
 }
@@ -1323,6 +1633,13 @@ function setRankFilter(value) {
   document.querySelectorAll('.rank-quick').forEach((button) => button.classList.toggle('active', button.dataset.rankFilter === value));
   render();
 }
+function setColorMode(value) {
+  state.colorMode = value;
+  assertKnown(state.colorMode, ['fitness', 'technique', 'rank'], 'color mode');
+  document.getElementById('colorModeSelect').value = value;
+  document.querySelectorAll('.color-quick').forEach((button) => button.classList.toggle('active', button.dataset.colorMode === value));
+  render();
+}
 function setAdvancedOpen(value) {
   document.getElementById('advancedPanel').open = Boolean(value);
   render();
@@ -1332,10 +1649,12 @@ window.__QD_PPA_VIEWER_DEBUG__ = {
   setProblem,
   selectCompare,
   hoverFirstArchiveCell,
+  hoverFirstArchiveSample,
   hoverFirstLayerCell,
   hoverFirstPpaPoint,
   setCoordinateMode,
   setRankFilter,
+  setColorMode,
   setAdvancedOpen,
   resetViewer,
 };
