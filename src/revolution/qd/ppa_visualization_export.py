@@ -159,6 +159,8 @@ def export_qd_ppa_visualization(
         "viewer_defaults": {
             "coordinate_mode": "raw",
             "coordinate_modes": ["raw", "improvement", "normalized"],
+            "ppa_scale_mode": "current",
+            "ppa_scale_modes": ["current", "final"],
             "rank_scope": "per_technique",
             "rank_scopes": ["per_technique", "pooled_visible"],
             "sample_universe": "all_ppa_valid",
@@ -332,6 +334,8 @@ def _build_problem_dataset(
         "viewer_defaults": {
             "coordinate_mode": "raw",
             "coordinate_modes": ["raw", "improvement", "normalized"],
+            "ppa_scale_mode": "current",
+            "ppa_scale_modes": ["current", "final"],
             "rank_scope": "per_technique",
             "rank_scopes": ["per_technique", "pooled_visible"],
             "sample_universe": "all_ppa_valid",

@@ -209,6 +209,8 @@ def test_export_writes_projected_classic_dataset(tmp_path: Path) -> None:
     assert "drawPpa2d(" in html
     assert "rankScopeSelect" in html
     assert "advancedPanel" in html
+    assert 'data-ppa-scale="final"' in html
+    assert "setPpaScaleMode" in html
     dataset = json.loads(result.dataset_paths[0].read_text(encoding="utf-8"))
     classic = next(sample for sample in dataset["samples"] if sample["technique"] == "classic")
     qd = next(sample for sample in dataset["samples"] if sample["technique"] != "classic")
@@ -218,6 +220,7 @@ def test_export_writes_projected_classic_dataset(tmp_path: Path) -> None:
     assert qd["local_archive_member"] is True
     assert qd["mode_global_pareto_member"] is True
     assert dataset["viewer_defaults"]["coordinate_modes"] == ["raw", "improvement", "normalized"]
+    assert dataset["viewer_defaults"]["ppa_scale_modes"] == ["current", "final"]
     assert dataset["schema_version"] == "qd_ppa_problem.v2"
     assert classic["pareto_rank_final"] == 1
     assert qd["pareto_rank_final"] == 1

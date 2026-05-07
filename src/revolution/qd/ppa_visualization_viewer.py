@@ -551,6 +551,11 @@ details summary {
           <button class="rank-quick" data-rank-filter="2">&le;2</button>
           <button class="rank-quick" data-rank-filter="3">&le;3</button>
         </span>
+        <span class="control-label">Scale</span>
+        <span class="seg">
+          <button class="ppa-scale active" data-ppa-scale="current">current</button>
+          <button class="ppa-scale" data-ppa-scale="final">final</button>
+        </span>
         <span class="control-label">Guides</span>
         <span class="seg">
           <button class="rank-guide active" data-rank-guide="off">off</button>
@@ -591,6 +596,7 @@ const state = {
   rankGuideMethod: 'auto',
   rankGuideColorScheme: 'auto',
   projectedRankGuides: 'off',
+  ppaScaleMode: 'current',
   stepIndex: 0,
   timer: null,
   lockedPerspective: false,
@@ -678,6 +684,9 @@ function bindControls() {
   }));
   document.querySelectorAll('.rank-guide').forEach((button) => button.addEventListener('click', () => {
     setRankGuideMode(button.dataset.rankGuide);
+  }));
+  document.querySelectorAll('.ppa-scale').forEach((button) => button.addEventListener('click', () => {
+    setPpaScaleMode(button.dataset.ppaScale);
   }));
   document.getElementById('colorModeSelect').addEventListener('change', () => {
     setColorMode(document.getElementById('colorModeSelect').value);
@@ -847,6 +856,7 @@ function render() {
   state.projectedRankGuides = document.getElementById('projectedRankGuidesSelect').value;
   assertKnown(state.colorMode, ['fitness', 'technique', 'rank'], 'color mode');
   assertKnown(state.rankGuideMode, ['off', '1', '2', '3', '4plus', 'all'], 'rank guide mode');
+  assertKnown(state.ppaScaleMode, ['current', 'final'], 'PPA scale mode');
   assertKnownRankGuideMethod(state.rankGuideMethod);
   assertKnownRankGuideColorScheme(state.rankGuideColorScheme);
   assertKnown(state.projectedRankGuides, ['off', 'on'], 'projected rank guides');
@@ -862,10 +872,12 @@ function render() {
   updateDebugText();
 }
 function visibleSamples(ds, selected) {
-  const step = stepName();
+  return visibleSamplesForStep(ds, selected, stepName(), document.getElementById('rankFilterSelect').value);
+}
+function visibleSamplesForStep(ds, selected, step, rankFilter) {
   const universe = document.getElementById('sampleUniverseSelect').value;
-  const rankFilter = document.getElementById('rankFilterSelect').value;
   assertKnown(universe, ['all_ppa_valid', 'final_archive_members', 'viewer_pooled_pareto_members'], 'sample universe');
+  assertKnown(rankFilter, ['all', '1', '2', '3'], 'rank filter');
   return ds.samples.filter((sample) => {
     if (!selected.includes(sample.technique)) return false;
     if (step !== 'final' && Number(sample.generation) > Number(step)) return false;
@@ -876,6 +888,27 @@ function visibleSamples(ds, selected) {
     if (rankFilter === 'all') return true;
     return rank <= Number(rankFilter);
   });
+}
+function ppaScaleSamples(ds, selected) {
+  if (state.ppaScaleMode === 'current') return visibleSamples(ds, selected);
+  if (state.ppaScaleMode === 'final') return visibleSamplesForStep(ds, selected, 'final', 'all');
+  throw new Error('unknown PPA scale mode: ' + state.ppaScaleMode);
+}
+function ppaScaleLimits(ds, selected, dims) {
+  const samples = ppaScaleSamples(ds, selected);
+  const coords = samples.map((sample) => ppaCoord(sample, ds));
+  const reference = ppaReferenceCoord(ds);
+  return coordinateLimits(reference ? coords.concat([reference]) : coords, dims);
+}
+function ppaScaleStep() {
+  if (state.ppaScaleMode === 'current') return stepName();
+  if (state.ppaScaleMode === 'final') return 'final';
+  throw new Error('unknown PPA scale mode: ' + state.ppaScaleMode);
+}
+function ppaScaleRankFilter() {
+  if (state.ppaScaleMode === 'current') return document.getElementById('rankFilterSelect').value;
+  if (state.ppaScaleMode === 'final') return 'all';
+  throw new Error('unknown PPA scale mode: ' + state.ppaScaleMode);
 }
 function drawArchive(label, sceneName, technique) {
   const ds = dataset();
@@ -948,7 +981,7 @@ function drawPpa(selected) {
   const ctx = setupCanvas(canvas);
   clear(ctx, canvas);
   const samples = visibleSamples(ds, selected);
-  document.getElementById('ppaModeBadge').textContent = state.coordinateMode;
+  document.getElementById('ppaModeBadge').textContent = state.coordinateMode + ' · ' + state.ppaScaleMode + ' scale';
   document.getElementById('ppaAxisSummary').textContent = ppaAxisSummary(ds);
   document.getElementById('ppaStats').innerHTML = compareStatsHtml(ds.technique_stats_by_step[stepName()] || {}, selected);
   drawPpaLegend(samples, selected);
@@ -959,7 +992,7 @@ function drawPpa(selected) {
 function drawPpa3d(ctx, canvas, ds, samples, selected) {
   const coords = samples.map((sample) => ppaCoord(sample, ds));
   const reference = ppaReferenceCoord(ds);
-  const limits = coordinateLimits(reference ? coords.concat([reference]) : coords, 3);
+  const limits = ppaScaleLimits(ds, selected, 3);
   const method = effectiveRankGuideMethodName(ds);
   const camera = state.cameras.ppa;
   const projector = makeProjector(canvas, camera, 1.45);
@@ -986,6 +1019,10 @@ function drawPpa3d(ctx, canvas, ds, samples, selected) {
     point_glyph_mode: 'shaded_3d_points',
     fitness_palette: 'viridis',
     linked_fade_mode: state.hoveredSampleIds.size ? 'dim_unselected_samples' : 'none',
+    ppa_scale_mode: state.ppaScaleMode,
+    ppa_scale_step: ppaScaleStep(),
+    ppa_scale_rank_filter: ppaScaleRankFilter(),
+    ppa_limits: limits,
     rank_guide_mode: effectiveRankGuideMode(),
     rank_guide_count: guideSummary.count,
     rank_guide_techniques: guideSummary.techniques,
@@ -1006,7 +1043,7 @@ function drawPpa2d(ctx, canvas, ds, samples, selected) {
   const rect = canvas.getBoundingClientRect();
   const coords = samples.map((sample) => ppaCoord(sample, ds));
   const reference = ppaReferenceCoord(ds);
-  const limits = coordinateLimits(reference ? coords.concat([reference]) : coords, 2);
+  const limits = ppaScaleLimits(ds, selected, 2);
   const method = effectiveRankGuideMethodName(ds);
   const pad = {left: 54, right: 34, top: 54, bottom: 72};
   const width = rect.width - pad.left - pad.right;
@@ -1041,6 +1078,10 @@ function drawPpa2d(ctx, canvas, ds, samples, selected) {
     point_glyph_mode: 'flat_2d_points',
     fitness_palette: 'viridis',
     linked_fade_mode: state.hoveredSampleIds.size ? 'dim_unselected_samples' : 'none',
+    ppa_scale_mode: state.ppaScaleMode,
+    ppa_scale_step: ppaScaleStep(),
+    ppa_scale_rank_filter: ppaScaleRankFilter(),
+    ppa_limits: limits,
     rank_guide_mode: effectiveRankGuideMode(),
     rank_guide_count: guideSummary.count,
     rank_guide_techniques: guideSummary.techniques,
@@ -2260,6 +2301,7 @@ function debugState() {
     highlighted_cell_id: state.highlightedCellId,
     highlighted_sample_ids: Array.from(state.hoveredSampleIds),
     color_mode: state.colorMode,
+    ppa_scale_mode: state.ppaScaleMode,
     rank_guide_mode: state.rankGuideMode,
     rank_guide_method: state.rankGuideMethod,
     rank_guide_color_scheme: state.rankGuideColorScheme,
@@ -2364,6 +2406,14 @@ function setRankGuideMode(value) {
   updateRankGuideControls();
   render();
 }
+function setPpaScaleMode(value) {
+  state.ppaScaleMode = value;
+  assertKnown(state.ppaScaleMode, ['current', 'final'], 'PPA scale mode');
+  document.querySelectorAll('.ppa-scale').forEach((button) => {
+    button.classList.toggle('active', button.dataset.ppaScale === value);
+  });
+  render();
+}
 function setRankGuideMethod(value) {
   state.rankGuideMethod = value;
   assertKnownRankGuideMethod(state.rankGuideMethod);
@@ -2405,6 +2455,7 @@ window.__QD_PPA_VIEWER_DEBUG__ = {
   setRankFilter,
   setColorMode,
   setRankGuideMode,
+  setPpaScaleMode,
   setRankGuideMethod,
   setRankGuideColorScheme,
   setProjectedRankGuides,

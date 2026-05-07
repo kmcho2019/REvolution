@@ -80,6 +80,10 @@ def validate_viewer(
         errors.append("coordinate mode default is not raw")
     if defaults.get("coordinate_modes") != ["raw", "improvement", "normalized"]:
         errors.append("coordinate mode order is not raw | improvement | normalized")
+    if defaults.get("ppa_scale_mode") != "current":
+        errors.append("PPA scale default is not current")
+    if defaults.get("ppa_scale_modes") != ["current", "final"]:
+        errors.append("PPA scale mode order is not current | final")
     if defaults.get("rank_scope") != "per_technique":
         errors.append("rank scope default is not per_technique")
     if defaults.get("sample_universe") != "all_ppa_valid":
@@ -111,6 +115,9 @@ def validate_viewer(
         "rankGuideMethodSelect",
         "rankGuideColorSelect",
         "projectedRankGuidesSelect",
+        "data-ppa-scale=\"current\"",
+        "data-ppa-scale=\"final\"",
+        "setPpaScaleMode",
         "colorModeSelect",
         "color-quick",
         "rank-guide",
@@ -197,6 +204,13 @@ def _validate_html_scene_contract(html: str) -> list[str]:
         "setRankGuideMethod",
         "setRankGuideColorScheme",
         "setProjectedRankGuides",
+        "setPpaScaleMode",
+        "ppaScaleLimits(",
+        "ppaScaleSamples(",
+        "ppa_scale_mode:",
+        "ppa_scale_step:",
+        "ppa_scale_rank_filter:",
+        "ppa_limits:",
         "rankColor(",
         "rankRadius(",
         "fitnessRange(",
@@ -244,6 +258,9 @@ def _validate_dataset(dataset: dict[str, Any], *, viewer_root: Path, strict: boo
     objective_keys = active_objective_keys(circuit_type)
     samples = dataset["samples"]
     assert isinstance(samples, list)
+    defaults = dataset.get("viewer_defaults", {})
+    if defaults.get("ppa_scale_modes") != ["current", "final"]:
+        errors.append(_prefix(dataset, "dataset PPA scale mode order is not current | final"))
     if not samples:
         errors.append(_prefix(dataset, "dataset has no samples"))
         return errors
@@ -553,6 +570,7 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
             _assert_rank_guides_disabled_outside_rank(page, errors)
             _assert_archive_hover_clears(page, errors)
             _assert_reference_hover(page, errors)
+            _assert_ppa_scale_modes(page, screenshot_dir, errors, report_lines)
             for coordinate_mode in ("raw", "improvement", "normalized"):
                 page.evaluate("mode => window.__QD_PPA_VIEWER_DEBUG__.setCoordinateMode(mode)", coordinate_mode)
                 _assert_coordinate_mode(page, errors, coordinate_mode)
@@ -772,6 +790,83 @@ def _assert_coordinate_mode(page: Any, errors: list[str], expected: str) -> None
     state = _debug_state(page)
     if state.get("coordinate_mode") != expected:
         errors.append(f"Playwright coordinate mode mismatch: expected {expected}, saw {state.get('coordinate_mode')}")
+
+
+def _assert_ppa_scale_modes(
+    page: Any,
+    screenshot_dir: Path,
+    errors: list[str],
+    report_lines: list[str],
+) -> None:
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setCoordinateMode('raw')")
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setRankGuideMode('off')")
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setPpaScaleMode('current')")
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setRankFilter('all')")
+    _set_timeline_index(page, 0)
+    current = _debug_state(page).get("scenes", {}).get("ppa", {})
+    if current.get("ppa_scale_mode") != "current":
+        errors.append(f"Playwright current PPA scale did not update scene metadata: {current.get('ppa_scale_mode')}")
+    if current.get("ppa_scale_step") != _debug_state(page).get("step"):
+        errors.append("Playwright current PPA scale step does not follow the timeline")
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setRankFilter('1')")
+    current_rank = _debug_state(page).get("scenes", {}).get("ppa", {})
+    if current_rank.get("ppa_scale_rank_filter") != "1":
+        errors.append("Playwright current PPA scale rank filter does not follow the rank controls")
+
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setPpaScaleMode('final')")
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setRankFilter('all')")
+    _set_timeline_index(page, 0)
+    final_all = _debug_state(page).get("scenes", {}).get("ppa", {})
+    final_all_limits = _ppa_limits_signature(final_all)
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setRankFilter('1')")
+    final_rank = _debug_state(page).get("scenes", {}).get("ppa", {})
+    final_rank_limits = _ppa_limits_signature(final_rank)
+    _set_timeline_index(page, -1)
+    final_last = _debug_state(page).get("scenes", {}).get("ppa", {})
+    final_last_limits = _ppa_limits_signature(final_last)
+    active = page.locator(".ppa-scale[data-ppa-scale='final']").evaluate("node => node.classList.contains('active')")
+    if not active:
+        errors.append("Playwright final PPA scale control is not visibly active")
+    if final_all.get("ppa_scale_mode") != "final" or final_rank.get("ppa_scale_mode") != "final":
+        errors.append("Playwright final PPA scale did not update scene metadata")
+    if final_all.get("ppa_scale_step") != "final" or final_rank.get("ppa_scale_step") != "final":
+        errors.append("Playwright final PPA scale is not anchored to the final step")
+    if final_all.get("ppa_scale_rank_filter") != "all" or final_rank.get("ppa_scale_rank_filter") != "all":
+        errors.append("Playwright final PPA scale is not anchored to all ranks")
+    if not final_all_limits:
+        errors.append("Playwright final PPA scale did not expose axis limits")
+    if final_all_limits != final_rank_limits or final_rank_limits != final_last_limits:
+        errors.append(
+            "Playwright final PPA scale limits changed across rank filter or timeline: "
+            f"{final_all_limits} -> {final_rank_limits} -> {final_last_limits}"
+        )
+    _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "ppa_final_scale"))
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setPpaScaleMode('current')")
+    page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.setRankFilter('all')")
+    _set_timeline_index(page, -1)
+
+
+def _set_timeline_index(page: Any, index: int) -> None:
+    page.evaluate(
+        "index => {"
+        " const slider = document.getElementById('timelineSlider');"
+        " slider.value = String(index < 0 ? Number(slider.max) : index);"
+        " slider.dispatchEvent(new Event('input', {bubbles: true}));"
+        "}",
+        index,
+    )
+
+
+def _ppa_limits_signature(scene: dict[str, Any]) -> list[list[float]]:
+    limits = scene.get("ppa_limits")
+    if not isinstance(limits, list):
+        return []
+    signature: list[list[float]] = []
+    for axis in limits:
+        if not isinstance(axis, list) or len(axis) != 2:
+            return []
+        signature.append([round(float(axis[0]), 9), round(float(axis[1]), 9)])
+    return signature
 
 
 def _assert_color_modes(
@@ -1196,6 +1291,10 @@ def _scene_report_metadata(state: dict[str, Any], scene_kind: str, scene: dict[s
         "hovered_sample_axis_labels": state.get("hovered_sample_axis_labels"),
         "linked_fade_mode": scene.get("linked_fade_mode"),
         "point_glyph_mode": scene.get("point_glyph_mode"),
+        "ppa_limits": scene.get("ppa_limits"),
+        "ppa_scale_mode": scene.get("ppa_scale_mode"),
+        "ppa_scale_rank_filter": scene.get("ppa_scale_rank_filter"),
+        "ppa_scale_step": scene.get("ppa_scale_step"),
         "rank_guide_color_scheme": scene.get("rank_guide_color_scheme"),
         "rank_guide_count": scene.get("rank_guide_count"),
         "rank_guide_method": scene.get("rank_guide_method"),

@@ -138,6 +138,10 @@ Demo features that must carry over:
   `rank`, visible in the PPA pane rather than hidden only in advanced settings;
 - PPA coordinate-mode control ordered as `raw`, `improvement`, `normalized`,
   with `raw` selected by default;
+- PPA scale control ordered as `current`, `final`, with `current` selected by
+  default. `current` fits the active generation/rank-filter view; `final`
+  fixes the PPA axes to the selected techniques' final-generation all-rank
+  view so timeline playback and rank filters do not move the scale;
 - PPA rank segmented control with `all`, `rank 1`, `rank <= 2`, and
   `rank <= 3`;
 - Pareto rank-scope control with `per_technique` and `pooled_visible`, default
@@ -893,6 +897,12 @@ The coordinate toggle changes only point positions and labels. Pareto ranks,
 rank-1 highlighting, and hypervolume must continue to use the fixed active
 objective semantics defined above.
 
+The PPA scale toggle changes only axis limits. In `final` mode, axis limits are
+computed from final-generation samples for the selected techniques with all
+ranks included, plus the reference point. It must still honor the active
+coordinate mode and sample universe, but timeline position and rank filter must
+not change the plotted scale.
+
 Rank rendering should be visually obvious without inventing a misleading
 surface. Rank color mode must use distinct colors for rank 1, rank 2, rank 3,
 and rank 4+. Point radius must decrease monotonically as Pareto rank worsens,
@@ -1305,6 +1315,10 @@ Required checks:
     `raw`, `improvement`, `normalized`.
 34. The PPA color control is visible in the PPA pane and supports `fitness`,
     `technique`, and `rank`.
+34a. The PPA scale control is visible in the PPA pane and supports `current`
+    and `final`. Strict validation proves that `final` scale reports
+    `ppa_scale_step="final"`, uses all ranks for scale limits, and keeps the
+    same `ppa_limits` when the timeline or rank filter changes.
 35. The active PPA color legend is visible: fitness shows mean active PPA
     improvement on a fixed `-1.0`, `0`, `1.0` scale, reports visible sample
     min/max separately, documents clipping, technique lists selected
@@ -1762,7 +1776,8 @@ The strict validator now requires `window.__QD_PPA_VIEWER_DEBUG__`, scene
 dimensionality metadata, camera state, linked hover hooks, and viewport
 screenshots. It checks PPA color-mode switching, visible fixed-scale fitness
 legends, compare-mode technique shape legends, rank color and marker-size
-semantics, sequential shaded point glyph metadata, 3D PPA auto-rotation,
+semantics, final PPA scale-lock stability across timeline/rank-filter changes,
+sequential shaded point glyph metadata, 3D PPA auto-rotation,
 non-classic overlap visibility, linked-hover alpha dimming, layer-cell tooltips,
 reference/sample axis ticks, full reference hover tooltips, and stale
 archive-hover clearing. It also includes a negative flat-viewer regression test:
