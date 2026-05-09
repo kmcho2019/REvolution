@@ -495,6 +495,7 @@ class EoHLogger:
 
         # 1. Final PPA stats from the last generation's ppa_pool
         final_ppa_stats = self._calculate_ppa_stats(final_ppa_pool)
+        best_candidate = max(final_ppa_pool, key=lambda c: c.score) if final_ppa_pool else None
         # Collect detailed PPA metrics for all successful individuals in the final population pool
         final_population_ppa = [
             {
@@ -506,6 +507,21 @@ class EoHLogger:
             for c in final_ppa_pool
             if c.status == "success"
         ]
+
+        def candidate_payload(c: "Heuristic" | None) -> dict[str, Any] | None:
+            if c is None:
+                return None
+            return {
+                "id": c.id,
+                "generation": c.generation,
+                "strategy": c.strategy,
+                "status": c.status,
+                "score": c.score,
+                "code_file_path": getattr(c, "code_file_path", None),
+                "parent_ids": list(getattr(c, "parent_ids", [])),
+                "generated_mode": getattr(c, "generated_mode", None),
+                "ppa_metrics": c.ppa_metrics,
+            }
 
         # 2. Strategy-wise PPA for the final pool
         final_strategy_ppa_stats = {}
@@ -578,6 +594,7 @@ class EoHLogger:
             "ref_ppa_metric": self.ref_ppa_metrics,
             "final_population_ppa": final_ppa_stats,
             "final_strategy_ppa": final_strategy_ppa_stats,
+            "best_candidate": candidate_payload(best_candidate),
             "final_population_ppa_details": final_population_ppa,
             "generation_statistics": self.generation_stats_summary,
         }
