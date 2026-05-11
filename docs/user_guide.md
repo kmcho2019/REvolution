@@ -420,7 +420,64 @@ CodeEvolve controls:
   diff cap on large-context vLLM endpoints so diff offspring are not
   accidentally constrained to the legacy `1024`-token default.
 
-#### 3.1.1 Ablation fairness controls (`scripts/run_backend_ablation.py`)
+#### 3.1.1 Linked archive/PPA viewer
+
+Use `scripts/export_qd_ppa_visualization.py` to create the Phase 03.1 static
+viewer for completed runs. It reads `final_analysis/ppa_distribution` plus QD
+archive sidecars and writes a filesystem-openable bundle under
+`visualization/qd_ppa_viewer/`.
+
+For the Phase 03 hard run:
+
+```bash
+RUN_ROOT=exp/journal_pareto_front_hard_subset/20260506_040658
+
+/workspace/.venv/bin/python scripts/export_qd_ppa_visualization.py \
+  --run-root "${RUN_ROOT}" \
+  --backend_run classic="${RUN_ROOT}/classic" \
+  --backend_run grid_quantile_journal_bd="${RUN_ROOT}/grid_quantile_journal_bd" \
+  --backend_run grid_quantile_pareto_journal_bd="${RUN_ROOT}/grid_quantile_pareto_journal_bd" \
+  --archive_source_backend grid_quantile_pareto_journal_bd \
+  --output-dir "${RUN_ROOT}/visualization/qd_ppa_viewer" \
+  --asset-mode local \
+  --strict
+
+/workspace/.venv/bin/python scripts/validate_qd_ppa_visualization.py \
+  --viewer-root "${RUN_ROOT}/visualization/qd_ppa_viewer" \
+  --subset-config exp/journal_pareto_front_configs/hard_subset_pareto_front.yaml \
+  --playwright \
+  --strict
+```
+
+The viewer supports single and compare modes, raw/improvement/normalized PPA
+coordinates, `per_technique` and `pooled_visible` Pareto-rank scopes, and an
+`all_ppa_valid` default timeline universe. The PPA pane exposes
+`fitness`/`technique`/`rank` color modes with visible legends; fitness legends
+use viridis and show the displayed min/max mean-improvement scores, rank mode
+uses distinct rank colors with rank-scaled marker sizes, and QD/journal markers
+render slightly larger than `classic` to make exact overlaps visible. Sequential
+PPA views use shaded 3D point glyphs; combinational PPA views remain flat 2D
+scatter plots. Compare-mode legends include a marker-shape section for the two
+selected techniques. Auto-rotate rotates archive scenes and the PPA scene when
+the selected PPA distribution is 3D. Archive-cell hover dims unrelated PPA
+samples, and z-slice layer hover shows cell indices, sample count, and best
+fitness. The PPA view labels one reference-value tick per active axis, and when
+hovering a single PPA sample it also labels that sample's active-axis values for
+direct comparison; reference-marker hover still shows the full raw reference PPA
+payload. Classic samples are projected posthoc into the selected QD archive
+source for inspection only; missing descriptors stay visible in the PPA/Pareto
+pane and are excluded from archive
+occupancy. The validator checks rank contiguity, nondominance, hypervolume
+metadata, source hashes, strict no-network HTML, and the required viewer
+controls. With `--playwright`, strict validation also checks the scene/debug
+contract, required 3D/2D visual matrix, linked hover behavior, coordinate
+mode switching, color-mode legends, rank-size semantics, reference-marker hover,
+stale hover clearing, collapsed advanced settings, perspective lock, exploded
+layers, and browser errors. It writes screenshots plus
+`visualization/qd_ppa_viewer/visual_parity_report.md`; strict mode rejects the
+old flat 2D-only viewer contract.
+
+#### 3.1.2 Ablation fairness controls (`scripts/run_backend_ablation.py`)
 
 Use `run_backend_ablation.py` when you need one-command REvolution vs
 FunSearch vs EoH vs CodeEvolve sweeps with explicit fairness normalization.

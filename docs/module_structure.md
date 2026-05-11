@@ -26,6 +26,8 @@
 - `02_quantile_binning.md`: initial quantile-based adaptive grid plan.
 - `03_pareto_front_archive.md`: bounded Pareto-front per cell and
   multiobjective MAP-Elites plan.
+- `03_1_pareto_visualization.md`: linked archive/PPA/Pareto viewer plan for
+  classic-vs-QD and QD-vs-QD run comparison.
 - `04_two_tier_fail_pool.md`: success-archive plus fail-pool parent-source
   plan.
 - `05_single_mutation_operator.md`: single thought-level mutation/crossover
@@ -58,6 +60,14 @@
 - `qd/engine.py`: archive-backed `QDEngine` for grid, CVT, and grid-quantile modes that
   reuses REvolution prompt, evaluation, and logging infrastructure.
   - `qd/visualization.py`: QD archive-history plots plus 2-axis grid heatmaps, multi-axis grid marginal/projection helpers, CVT projection helpers, and artifact-replayed grid-quantile evolution visualizations.
+  - `qd/ppa_visualization_export.py`,
+    `qd/ppa_visualization_metrics.py`, and
+    `qd/ppa_visualization_viewer.py`: static linked QD archive plus
+    PPA/Pareto viewer exporter, fixed-objective Pareto-rank/hypervolume
+    helpers, and inline HTML bundle generation with viridis fitness legends,
+    shaded sequential PPA glyphs, rank-scaled markers, reference/sample axis
+    ticks, compare-mode shape legends, linked-hover dimming, layer-cell
+    tooltips, and linked hover debug hooks.
 - `backends/funsearch_backend.py`: FunSearch-style RTL backend (islands, signature clusters, reset/reseed, budgeted loop).
 - `runtime/problem_context.py`: benchmark/problem path and metadata resolution.
 - `runtime/problem_spec.py`: benchmark capability layer and default descriptor / generation-mode preferences.
@@ -117,6 +127,15 @@
   visualization rendering, and validation utilities.
 - `validate_pareto_front_run.py`: Phase 03 Pareto-front hard-subset audit for
   member counts, front bounds, and same-cell non-dominance.
+- `export_qd_ppa_visualization.py` and `validate_qd_ppa_visualization.py`:
+  Phase 03.1 static viewer export and validation for linked archive-space and
+  PPA/Pareto inspection. The exporter can project classic candidates posthoc
+  into a selected QD archive source and emits
+  `visualization/qd_ppa_viewer/index.html` plus per-problem JSON datasets. The
+  validator checks the scene/debug contract, PPA color-mode controls, rank-size
+  semantics, viridis fitness shading, shaded sequential PPA glyphs, reference
+  and sample hover/tick behavior, PPA auto-rotation, layer tooltips, linked
+  alpha dimming, and strict offline reproducibility.
 - `prompt_file_manager.py`: manage prompt bundle files and synchronise `data/prompts/`.
 - `util/` and `ref/`: helper scripts, synthesis references, and datasets.
 
