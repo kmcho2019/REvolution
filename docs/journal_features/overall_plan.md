@@ -89,7 +89,7 @@ stable while the first implementation lands.
 | BD trio: logic depth, FF depth, width | Planned | 2026-05-03 | [01_bd_trio.md](01_bd_trio.md) | First because it is mostly additive and gives the archive stable axes. |
 | Initial QD binning: static quantile grid | Planned | 2026-05-04 | [02_quantile_binning.md](02_quantile_binning.md) | Adds the first journal archive geometry before dynamic re-binning. |
 | Pareto-front archive / multiobjective MAP-Elites | Implemented | 2026-05-06 | [03_pareto_front_archive.md](03_pareto_front_archive.md) | Replaces one elite per cell with bounded PPA fronts; full hard-subset acceptance passed at `exp/journal_pareto_front_hard_subset/20260505_135953`. |
-| Two-tier archive + fail handling | Planned | 2026-05-07 | [04_two_tier_fail_pool.md](04_two_tier_fail_pool.md) | Makes success archive and fail pool explicit parent sources. |
+| Two-tier archive + fail handling | Implemented | 2026-05-07 | [04_two_tier_fail_pool.md](04_two_tier_fail_pool.md) | Runtime scheduling/reporting and full hard-subset acceptance passed at `exp/journal_two_tier_fail_pool_hard_subset/20260511_034341`. |
 | Single thought mutation operator | Planned | 2026-05-08 | [05_single_mutation_operator.md](05_single_mutation_operator.md) | Removes QD strategy-bandit routing from the journal path. |
 | Thought-only individuals + k-code evaluation | Planned | 2026-05-10 | [06_thought_only_k_code.md](06_thought_only_k_code.md) | Splits thought evolution from code sampling. |
 | KS-triggered re-binning + reporting polish | Planned | 2026-05-12 | [07_ks_adaptive_rebinning.md](07_ks_adaptive_rebinning.md) | Last because it depends on stable thought/archive semantics. |
@@ -101,7 +101,7 @@ Initial target: 2026-05-12
 - [ ] 1. BD trio: logic depth, FF depth, width - target 2026-05-03
 - [ ] 2. Initial QD binning: static quantile grid - target 2026-05-04
 - [x] 3. Pareto-front archive / multiobjective MAP-Elites - target 2026-05-06
-- [ ] 4. Two-tier archive + fail handling - target 2026-05-07
+- [x] 4. Two-tier archive + fail handling - target 2026-05-07
 - [ ] 5. Single thought mutation operator - target 2026-05-08
 - [ ] 6. Thought-only individuals + k-code evaluation - target 2026-05-10
 - [ ] 7. KS-triggered re-binning + reporting polish - target 2026-05-12
@@ -147,8 +147,11 @@ Target deadline: `2026-05-06`
 
 Target deadline: `2026-05-07`
 
-- [ ] 4.1 Make success archive and fail pool the two explicit parent sources.
-- [ ] 4.2 Implement adaptive source probability from pool sizes.
+- [x] 4.1 Make success archive and fail pool the two explicit parent sources.
+- [x] 4.2 Cap initialized archive-fill fail share by
+  `fail_pool_size / (fail_pool_size + archive_member_count)`.
+- [x] 4.3 Add explicit parent-source reporting for `archive`, `fail_pool`, and
+  `seed`.
 
 ### 5. Single Mutation Operator
 

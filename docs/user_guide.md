@@ -171,6 +171,10 @@ Current feature status:
   still take precedence.
 - `success_view` in the grid runtime now samples from archive elites plus a
   small bounded per-cell reservoir of recent successful occupants.
+- QD summaries record two-tier parent-source diagnostics for journal runs:
+  fail-pool size, total archive member count, coverage fail share, budget-time
+  `p_fail` cap, effective fail share, budget/generation counts, and
+  `archive`/`fail_pool`/`seed` source counts.
 - `qd_descriptor_file` may now define both `profiles:` and `grid_axes:` so the
   same YAML can control descriptor selection and per-axis grid bin/bounds
   settings.

@@ -48,7 +48,12 @@ from revolution.qd.descriptors import (
     resolve_grid_axis_specs,
 )
 from revolution.qd.scoring import compute_ppa_gains
-from revolution.qd.scheduler import QDBudgetSplit, split_qd_budget
+from revolution.qd.scheduler import (
+    QDBudgetSplit,
+    qd_fail_share,
+    qd_target_cells,
+    split_qd_budget,
+)
 from revolution.qd.types import (
     ArchiveMember,
     GlobalParetoInsertResult,
@@ -62,6 +67,7 @@ from revolution.qd.visualization import write_grid_quantile_visualizations_from_
 
 
 _ARCHIVE_ONLY_DESCRIPTOR_PROFILES = {"journal_logic_ff_width_3d"}
+JournalParentSource = Literal["archive", "fail_pool", "seed"]
 
 
 class QDEngine(EoHEngine):
@@ -617,6 +623,19 @@ class QDEngine(EoHEngine):
             front_sizes[cell_id] += 1
         total_members = len(members)
         coverage = occupied / max(self.success_archive.num_cells, 1)
+        archive_initialized = not (
+            isinstance(self.success_archive, GridQuantileArchive)
+            and not self.success_archive.is_initialized
+        )
+        coverage_fail_share = None
+        p_fail_cap = None
+        if budget is None and archive_initialized:
+            coverage_fail_share = qd_fail_share(
+                occupied_cells=occupied,
+                num_cells=self.success_archive.num_cells,
+                fill_target_fraction=self.qd_fill_target_fraction,
+            )
+            p_fail_cap = self._fail_pool_archive_member_ratio()
         snapshot = {
             "generation": self.current_generation,
             "archive_type": self.qd_archive_type,
@@ -625,6 +644,9 @@ class QDEngine(EoHEngine):
             "objective_names": list(self._objective_names()),
             "occupied_cells": occupied,
             "total_archive_members": total_members,
+            "archive_member_count": total_members,
+            "fail_pool_size": len(self.fail_pool),
+            "success_pool_size": len(self.success_pool),
             "mean_front_size": (
                 total_members / len(front_sizes) if front_sizes else 0.0
             ),
@@ -635,7 +657,13 @@ class QDEngine(EoHEngine):
             "two_parent_fallbacks": self.qd_two_parent_fallbacks,
             "qd_two_parent_probability": self.qd_two_parent_probability,
             "num_cells": self.success_archive.num_cells,
+            "fill_target_cells": qd_target_cells(
+                self.success_archive.num_cells,
+                self.qd_fill_target_fraction,
+            ),
             "coverage": coverage,
+            "coverage_fail_share": coverage_fail_share,
+            "p_fail_cap": p_fail_cap,
             "qd_score": sum(qualities),
             "best_quality": max(qualities) if qualities else None,
             "mean_quality": (sum(qualities) / len(qualities)) if qualities else None,
@@ -653,10 +681,21 @@ class QDEngine(EoHEngine):
             snapshot.update(
                 {
                     "phase": budget.phase,
+                    "total_budget": budget.total_budget,
+                    "coverage_fail_share": budget.coverage_fail_share,
+                    "p_fail_cap": budget.fail_share_cap,
+                    "effective_fail_share": budget.fail_share,
+                    "fail_share": budget.fail_share,
                     "fail_budget": budget.fail_budget,
+                    "success_budget": budget.success_budget,
                     "seed_budget": budget.seed_budget,
                     "backfill_budget": budget.backfill_budget,
                     "refine_budget": budget.refine_budget,
+                    "planned_parent_source_counts": {
+                        "archive": budget.backfill_budget + budget.refine_budget,
+                        "fail_pool": budget.fail_budget,
+                        "seed": budget.seed_budget,
+                    },
                 }
             )
         return snapshot
@@ -819,6 +858,40 @@ class QDEngine(EoHEngine):
         super().initialize_population()
         self._rebuild_archive_from_success_pool()
 
+    def _fail_pool_archive_member_ratio(self) -> float:
+        """Return the initialized scheduler's fail-side parent-share cap."""
+
+        fail_count = len(self.fail_pool)
+        archive_member_count = len(self._archive_members())
+        total = fail_count + archive_member_count
+        if total == 0:
+            return 0.0
+        return fail_count / total
+
+    def _journal_parent_source(self, candidate: Heuristic) -> JournalParentSource:
+        if candidate.origin_pool == "fail_pool":
+            return "fail_pool"
+        if candidate.origin_pool == "initial":
+            return "seed"
+        if candidate.origin_pool == "success_pool":
+            if candidate.strategy == "initial" and not candidate.parent_ids:
+                return "seed"
+            return "archive"
+        raise ValueError(f"Unsupported origin_pool '{candidate.origin_pool}'.")
+
+    def _journal_parent_source_counts(
+        self,
+        candidates: list[Heuristic],
+    ) -> dict[JournalParentSource, int]:
+        counts: dict[JournalParentSource, int] = {
+            "archive": 0,
+            "fail_pool": 0,
+            "seed": 0,
+        }
+        for candidate in candidates:
+            counts[self._journal_parent_source(candidate)] += 1
+        return counts
+
     def _split_generation_budget(self) -> QDBudgetSplit:
         if isinstance(self.success_archive, GridQuantileArchive) and not self.success_archive.is_initialized:
             total_pool = len(self.fail_pool) + len(self.success_pool)
@@ -828,6 +901,8 @@ class QDEngine(EoHEngine):
                     target_cells=self.success_archive.warmup_successes,
                     occupied_cells=self.success_archive.warmup_buffer_size(),
                     fail_share=0.0,
+                    coverage_fail_share=None,
+                    fail_share_cap=None,
                     fail_budget=0,
                     success_budget=self.num_offspring_lambda,
                     phase="warmup",
@@ -845,6 +920,8 @@ class QDEngine(EoHEngine):
                 target_cells=self.success_archive.warmup_successes,
                 occupied_cells=self.success_archive.warmup_buffer_size(),
                 fail_share=fail_budget / max(self.num_offspring_lambda, 1),
+                coverage_fail_share=None,
+                fail_share_cap=None,
                 fail_budget=fail_budget,
                 success_budget=success_budget,
                 phase="warmup",
@@ -861,6 +938,7 @@ class QDEngine(EoHEngine):
             fail_pool_empty=not bool(self.fail_pool),
             archive_empty=self.success_archive.occupied_count() == 0,
             empty_cells_remaining=self.success_archive.occupied_count() < self.success_archive.num_cells,
+            fail_share_cap=self._fail_pool_archive_member_ratio(),
         )
 
     def _sample_success_parents(self, count: int) -> list[Heuristic]:
@@ -1517,6 +1595,10 @@ class QDEngine(EoHEngine):
             budget=budget,
             runtime_sec=gen_runtime,
         )
+        qd_snapshot["generated_parent_source_counts"] = (
+            self._journal_parent_source_counts(new_offspring)
+        )
+        qd_snapshot["generated_candidate_count"] = len(new_offspring)
         if self.logger:
             self._log_generation_stats(
                 new_offspring,

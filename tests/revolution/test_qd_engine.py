@@ -296,6 +296,138 @@ def test_qd_engine_pareto_mode_uses_crowded_tournament(tmp_path, monkeypatch):
     assert sampled == {"power"}
 
 
+def test_qd_engine_initialized_budget_caps_fail_share_by_archive_member_ratio(
+    tmp_path,
+    monkeypatch,
+):
+    cfg = tmp_path / "qd.yaml"
+    cfg.write_text(
+        "grid_axes:\n"
+        "  g_A:\n"
+        "    bins: 4\n"
+        "    lower_bound: 0.0\n"
+        "    upper_bound: 1.0\n",
+        encoding="utf-8",
+    )
+    problem_spec = ProblemSpec(
+        benchmark_name="Bench",
+        problem_name="Prob",
+        prompt_text="desc",
+        top_module="TopModule",
+        benchmark_root=tmp_path,
+        circuit_type="combinational",
+    )
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        problem_spec=problem_spec,
+        qd_cell_mode="pareto_front",
+        qd_max_elites_per_cell=5,
+        qd_grid_axes=("g_A",),
+        qd_descriptor_file=str(cfg),
+        qd_fill_target_fraction=1.0,
+    )
+    engine.num_offspring_lambda = 10
+    engine.ref_ppa_metrics = {"power": 1.0, "area": 100.0}
+    power = Heuristic("power", "module m; endmodule", "", score=0.1, generation=0, status="success")
+    power.id = "power"
+    power.ppa_success = True
+    power.ppa_metrics = {"power": 0.8, "area": 90.0}
+    area = Heuristic("area", "module m; endmodule", "", score=0.9, generation=0, status="success")
+    area.id = "area"
+    area.ppa_success = True
+    area.ppa_metrics = {"power": 0.9, "area": 80.0}
+    engine.success_pool = [power, area]
+    engine._rebuild_archive_from_success_pool()
+    engine.fail_pool = [
+        Heuristic("failed idea", "module f; endmodule", "", status="failed_functionality")
+    ]
+
+    budget = engine._split_generation_budget()
+
+    assert engine.success_archive.occupied_count() == 1
+    assert len(engine.success_archive.members()) == 2
+    assert budget.phase == "fill"
+    assert budget.fail_share == pytest.approx(1 / 3)
+    assert budget.fail_budget == 3
+    assert budget.seed_budget == 2
+    assert budget.backfill_budget == 5
+
+    engine.fail_pool.append(
+        Heuristic("later failed idea", "module f2; endmodule", "", status="failed_syntax")
+    )
+    snapshot = engine._build_qd_snapshot(inserted=0, replaced=0, budget=budget)
+    assert snapshot["fail_pool_size"] == 2
+    assert snapshot["archive_member_count"] == 2
+    assert snapshot["coverage_fail_share"] == pytest.approx(0.75)
+    assert snapshot["p_fail_cap"] == pytest.approx(1 / 3)
+    assert snapshot["effective_fail_share"] == pytest.approx(1 / 3)
+    assert snapshot["total_budget"] == 10
+    assert snapshot["planned_parent_source_counts"] == {
+        "archive": 5,
+        "fail_pool": 3,
+        "seed": 2,
+    }
+
+    engine.logger = SimpleNamespace(log_dir=str(tmp_path / "artifacts"))
+    engine._write_qd_artifacts(snapshot)
+    summary_payload = json.loads(
+        (tmp_path / "artifacts" / "archive_summary.json").read_text(encoding="utf-8")
+    )
+    metrics_payload = json.loads(
+        (tmp_path / "artifacts" / "qd_metrics.json").read_text(encoding="utf-8")
+    )
+    assert summary_payload["fail_pool_size"] == 2
+    assert summary_payload["archive_member_count"] == 2
+    assert summary_payload["coverage_fail_share"] == pytest.approx(0.75)
+    assert summary_payload["p_fail_cap"] == pytest.approx(1 / 3)
+    assert summary_payload["effective_fail_share"] == pytest.approx(1 / 3)
+    assert summary_payload["total_budget"] == 10
+    assert summary_payload["planned_parent_source_counts"] == {
+        "archive": 5,
+        "fail_pool": 3,
+        "seed": 2,
+    }
+    assert metrics_payload["latest_snapshot"]["planned_parent_source_counts"] == {
+        "archive": 5,
+        "fail_pool": 3,
+        "seed": 2,
+    }
+
+
+def test_qd_engine_reports_journal_parent_source_counts(tmp_path, monkeypatch):
+    engine = _engine(tmp_path, monkeypatch)
+    seed = Heuristic(
+        "seed",
+        "module s; endmodule",
+        "",
+        strategy="initial",
+        origin_pool="success_pool",
+    )
+    archive = Heuristic(
+        "archive",
+        "module a; endmodule",
+        "",
+        parent_ids=["parent"],
+        strategy="M-S",
+        origin_pool="success_pool",
+    )
+    fail = Heuristic(
+        "fail",
+        "module f; endmodule",
+        "",
+        parent_ids=["failed"],
+        strategy="M-F",
+        origin_pool="fail_pool",
+    )
+
+    assert engine._journal_parent_source_counts([seed, archive, fail]) == {
+        "archive": 1,
+        "fail_pool": 1,
+        "seed": 1,
+    }
+
+
 def test_qd_engine_two_parent_probability_controls_arity(tmp_path, monkeypatch):
     engine = _engine(
         tmp_path,
