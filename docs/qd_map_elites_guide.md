@@ -711,6 +711,13 @@ Run-level / problem-level QD artifacts:
 - pairwise occupancy/quality projection heatmaps for multi-axis grid runs
 - CVT projection plots for initialized CVT runs
 
+`archive_summary.json`, `qd_metrics.json`, and `archive_history.jsonl` also
+record two-tier source diagnostics: `fail_pool_size`,
+`archive_member_count`, `coverage_fail_share`, `p_fail_cap`,
+`effective_fail_share`, `total_budget`, `generated_candidate_count`, and
+`archive`/`fail_pool`/`seed` parent-source counts when generation budgets are
+available.
+
 Per-successful-candidate artifact:
 
 - `qd_archive_event.json`

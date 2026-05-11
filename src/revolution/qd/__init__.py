@@ -15,7 +15,13 @@ from revolution.qd.types import (
     QDSearchMode,
 )
 from revolution.qd.engine import QDEngine
-from revolution.qd.scheduler import QDBudgetSplit, qd_fail_share, qd_target_cells, split_qd_budget
+from revolution.qd.scheduler import (
+    QDBudgetPhase,
+    QDBudgetSplit,
+    qd_fail_share,
+    qd_target_cells,
+    split_qd_budget,
+)
 from revolution.qd.descriptors import (
     DescriptorDefinition,
     GridAxisDescriptorSpec,
@@ -56,6 +62,7 @@ __all__ = [
     "QDGenerationMode",
     "QDPhaseName",
     "QDSearchMode",
+    "QDBudgetPhase",
     "QDBudgetSplit",
     "compute_partial_pass_fraction",
     "compute_quality_score",
