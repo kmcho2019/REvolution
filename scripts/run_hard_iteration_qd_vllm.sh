@@ -4,7 +4,7 @@ set -euo pipefail
 usage() {
   cat <<'USAGE'
 Usage:
-  scripts/run_hard_iteration_qd_vllm.sh [--config path] [--mode classic|grid_struct|cvt_struct|cvt_size_control|cvt_theory_grounded|cvt_theory_grounded_compact|matrix] [--dry-run]
+  scripts/run_hard_iteration_qd_vllm.sh [--config path] [--mode classic|grid_struct|cvt_struct|cvt_size_control|cvt_theory_grounded|cvt_theory_grounded_compact|matrix] [--smoke-subset N] [--dry-run]
 
 Description:
   Run the hard-iteration benchmark subset against classic REvolution and the
@@ -32,6 +32,11 @@ Environment overrides:
   HARD_SUBSET_QD_FILL_TARGET_FRACTION QD fill-target override (defaults to config value)
   HARD_SUBSET_QD_CELL_RESERVOIR QD per-cell reservoir override (defaults to config value)
   HARD_SUBSET_QD_TWO_PARENT_PROBABILITY Two-parent probability override (defaults to config value)
+  HARD_SUBSET_QD_OPERATOR_KIND  QD operator-kind override (defaults to config value)
+  HARD_SUBSET_QD_OPERATOR_ONE_PARENT_FRACTION Single-operator one-parent fraction override
+  HARD_SUBSET_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE Single-operator archive-context size override
+  HARD_SUBSET_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN Single-operator intra-bin toggle override
+  HARD_SUBSET_SMOKE_SUBSET      Limit selected problems to the first N entries
   PYTHON_BIN                    Python binary (default: <repo>/.venv/bin/python if present, else python3)
 
 Examples:
@@ -48,6 +53,7 @@ cd "${REPO_ROOT}"
 CONFIG_PATH="${HARD_SUBSET_CONFIG:-${REPO_ROOT}/data/configs/hard_iteration_subset.yaml}"
 MODE="${HARD_SUBSET_MODE:-matrix}"
 DRY_RUN="${DRY_RUN:-0}"
+SMOKE_SUBSET="${HARD_SUBSET_SMOKE_SUBSET:-}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -70,6 +76,14 @@ while [[ $# -gt 0 ]]; do
     --dry-run)
       DRY_RUN=1
       shift
+      ;;
+    --smoke-subset)
+      if [[ $# -lt 2 ]]; then
+        echo "Missing value for --smoke-subset" >&2
+        exit 2
+      fi
+      SMOKE_SUBSET="$2"
+      shift 2
       ;;
     --help|-h)
       usage
@@ -105,7 +119,7 @@ if ! command -v "${PYTHON_BIN}" >/dev/null 2>&1; then
   exit 1
 fi
 
-eval "$("${PYTHON_BIN}" - <<'PY' "${CONFIG_PATH}"
+eval "$("${PYTHON_BIN}" - <<'PY' "${CONFIG_PATH}" "${SMOKE_SUBSET}"
 from __future__ import annotations
 
 import shlex
@@ -115,6 +129,8 @@ import yaml
 
 
 def emit_scalar(name: str, value: object) -> None:
+    if isinstance(value, bool):
+        value = str(value).lower()
     print(f"{name}={shlex.quote(str(value))}")
 
 
@@ -124,13 +140,20 @@ def emit_array(name: str, values: list[object]) -> None:
 
 
 config_path = sys.argv[1]
+smoke_subset_raw = sys.argv[2] if len(sys.argv) > 2 else ""
+smoke_subset = int(smoke_subset_raw) if smoke_subset_raw else 0
+if smoke_subset < 0:
+    raise ValueError("--smoke-subset must be >= 0")
 with open(config_path, "r", encoding="utf-8") as handle:
     cfg = yaml.safe_load(handle)
 
 model = cfg["model"]
 defaults = cfg["matrix_defaults"]
-benchmarks = list(cfg["benchmarks"].keys())
-problems = [entry["problem"] for entry in cfg["selected_problems"]]
+selected_entries = list(cfg["selected_problems"])
+if smoke_subset:
+    selected_entries = selected_entries[:smoke_subset]
+benchmarks = list(dict.fromkeys(entry["benchmark"] for entry in selected_entries))
+problems = [entry["problem"] for entry in selected_entries]
 configured_mode_names = list(cfg["modes"].keys())
 matrix_modes = list(
     cfg.get(
@@ -193,7 +216,21 @@ emit_scalar("CONFIG_QD_CELL_MODE", defaults.get("qd_cell_mode", "scalar_elite"))
 emit_scalar("CONFIG_QD_MAX_ELITES_PER_CELL", defaults.get("qd_max_elites_per_cell", 1))
 emit_scalar("CONFIG_QD_OBJECTIVES", defaults.get("qd_objectives", "ppa"))
 emit_scalar("CONFIG_QD_TWO_PARENT_PROBABILITY", defaults.get("qd_two_parent_probability", 0.5))
+emit_scalar("CONFIG_QD_OPERATOR_KIND", defaults.get("qd_operator_kind", "eoh_strategies"))
+emit_scalar(
+    "CONFIG_QD_OPERATOR_ONE_PARENT_FRACTION",
+    defaults.get("qd_operator_one_parent_fraction", 0.5),
+)
+emit_scalar(
+    "CONFIG_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE",
+    defaults.get("qd_operator_archive_context_size", 4),
+)
+emit_scalar(
+    "CONFIG_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN",
+    defaults.get("qd_operator_two_parent_allow_intra_bin", True),
+)
 emit_scalar("CONFIG_SEED", defaults["seed"])
+emit_scalar("CONFIG_SMOKE_SUBSET", smoke_subset)
 emit_array("CONFIG_BENCHMARKS", benchmarks)
 emit_array("CONFIG_PROBLEMS", problems)
 emit_array("CONFIG_MODE_NAMES", configured_mode_names)
@@ -233,6 +270,19 @@ for mode_name, mode_cfg in cfg["modes"].items():
     emit_scalar(
         f"{prefix}_QD_TWO_PARENT_PROBABILITY",
         mode_cfg.get("qd_two_parent_probability", ""),
+    )
+    emit_scalar(f"{prefix}_QD_OPERATOR_KIND", mode_cfg.get("qd_operator_kind", ""))
+    emit_scalar(
+        f"{prefix}_QD_OPERATOR_ONE_PARENT_FRACTION",
+        mode_cfg.get("qd_operator_one_parent_fraction", ""),
+    )
+    emit_scalar(
+        f"{prefix}_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE",
+        mode_cfg.get("qd_operator_archive_context_size", ""),
+    )
+    emit_scalar(
+        f"{prefix}_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN",
+        mode_cfg.get("qd_operator_two_parent_allow_intra_bin", ""),
     )
 PY
 )"
@@ -340,6 +390,10 @@ QD_CELL_MODE="${HARD_SUBSET_QD_CELL_MODE:-${CONFIG_QD_CELL_MODE}}"
 QD_MAX_ELITES_PER_CELL="${HARD_SUBSET_QD_MAX_ELITES_PER_CELL:-${CONFIG_QD_MAX_ELITES_PER_CELL}}"
 QD_OBJECTIVES="${HARD_SUBSET_QD_OBJECTIVES:-${CONFIG_QD_OBJECTIVES}}"
 QD_TWO_PARENT_PROBABILITY="${HARD_SUBSET_QD_TWO_PARENT_PROBABILITY:-${CONFIG_QD_TWO_PARENT_PROBABILITY}}"
+QD_OPERATOR_KIND="${HARD_SUBSET_QD_OPERATOR_KIND:-${CONFIG_QD_OPERATOR_KIND}}"
+QD_OPERATOR_ONE_PARENT_FRACTION="${HARD_SUBSET_QD_OPERATOR_ONE_PARENT_FRACTION:-${CONFIG_QD_OPERATOR_ONE_PARENT_FRACTION}}"
+QD_OPERATOR_ARCHIVE_CONTEXT_SIZE="${HARD_SUBSET_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE:-${CONFIG_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE}}"
+QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN="${HARD_SUBSET_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN:-${CONFIG_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN}}"
 SEED="${HARD_SUBSET_SEED:-${CONFIG_SEED}}"
 TIMEOUT_S="${HARD_SUBSET_TIMEOUT_S:-0}"
 SAVE_ROOT="${HARD_SUBSET_SAVE_PATH:-${REPO_ROOT}/exp/hard_iteration_qd}"
@@ -373,7 +427,12 @@ qd_cell_mode=${QD_CELL_MODE}
 qd_max_elites_per_cell=${QD_MAX_ELITES_PER_CELL}
 qd_objectives=${QD_OBJECTIVES}
 qd_two_parent_probability=${QD_TWO_PARENT_PROBABILITY}
+qd_operator_kind=${QD_OPERATOR_KIND}
+qd_operator_one_parent_fraction=${QD_OPERATOR_ONE_PARENT_FRACTION}
+qd_operator_archive_context_size=${QD_OPERATOR_ARCHIVE_CONTEXT_SIZE}
+qd_operator_two_parent_allow_intra_bin=${QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN}
 seed=${SEED}
+smoke_subset=${CONFIG_SMOKE_SUBSET}
 EOF
 
 run_cmd() {
@@ -420,6 +479,10 @@ for mode_name in "${MODES[@]}"; do
   mode_max_elites_var="MODE_${upper_mode}_QD_MAX_ELITES_PER_CELL"
   mode_objectives_var="MODE_${upper_mode}_QD_OBJECTIVES"
   mode_two_parent_var="MODE_${upper_mode}_QD_TWO_PARENT_PROBABILITY"
+  mode_operator_kind_var="MODE_${upper_mode}_QD_OPERATOR_KIND"
+  mode_operator_one_parent_var="MODE_${upper_mode}_QD_OPERATOR_ONE_PARENT_FRACTION"
+  mode_operator_archive_context_var="MODE_${upper_mode}_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE"
+  mode_operator_two_parent_intra_var="MODE_${upper_mode}_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN"
 
   search_mode="${!search_mode_var}"
   archive_type="${!archive_type_var}"
@@ -433,6 +496,10 @@ for mode_name in "${MODES[@]}"; do
   resolved_max_elites="${!mode_max_elites_var}"
   resolved_objectives="${!mode_objectives_var}"
   resolved_two_parent_probability="${!mode_two_parent_var}"
+  resolved_operator_kind="${!mode_operator_kind_var}"
+  resolved_operator_one_parent_fraction="${!mode_operator_one_parent_var}"
+  resolved_operator_archive_context_size="${!mode_operator_archive_context_var}"
+  resolved_operator_two_parent_allow_intra_bin="${!mode_operator_two_parent_intra_var}"
   if [[ -z "${resolved_num_cells}" ]]; then
     resolved_num_cells="${NUM_CELLS}"
   fi
@@ -460,6 +527,18 @@ for mode_name in "${MODES[@]}"; do
   if [[ -z "${resolved_two_parent_probability}" ]]; then
     resolved_two_parent_probability="${QD_TWO_PARENT_PROBABILITY}"
   fi
+  if [[ -z "${resolved_operator_kind}" ]]; then
+    resolved_operator_kind="${QD_OPERATOR_KIND}"
+  fi
+  if [[ -z "${resolved_operator_one_parent_fraction}" ]]; then
+    resolved_operator_one_parent_fraction="${QD_OPERATOR_ONE_PARENT_FRACTION}"
+  fi
+  if [[ -z "${resolved_operator_archive_context_size}" ]]; then
+    resolved_operator_archive_context_size="${QD_OPERATOR_ARCHIVE_CONTEXT_SIZE}"
+  fi
+  if [[ -z "${resolved_operator_two_parent_allow_intra_bin}" ]]; then
+    resolved_operator_two_parent_allow_intra_bin="${QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN}"
+  fi
   mode_root="${SAVE_PATH}/${mode_name}"
 
   {
@@ -475,6 +554,10 @@ for mode_name in "${MODES[@]}"; do
     echo "mode.${mode_name}.qd_max_elites_per_cell=${resolved_max_elites}"
     echo "mode.${mode_name}.qd_objectives=${resolved_objectives}"
     echo "mode.${mode_name}.qd_two_parent_probability=${resolved_two_parent_probability}"
+    echo "mode.${mode_name}.qd_operator_kind=${resolved_operator_kind}"
+    echo "mode.${mode_name}.qd_operator_one_parent_fraction=${resolved_operator_one_parent_fraction}"
+    echo "mode.${mode_name}.qd_operator_archive_context_size=${resolved_operator_archive_context_size}"
+    echo "mode.${mode_name}.qd_operator_two_parent_allow_intra_bin=${resolved_operator_two_parent_allow_intra_bin}"
   } >> "${SAVE_PATH}/hard_iteration_manifest.txt"
 
   CMD=("${PYTHON_BIN}" "scripts/run_backend.py")
@@ -514,6 +597,14 @@ for mode_name in "${MODES[@]}"; do
     CMD+=("--qd_max_elites_per_cell" "${resolved_max_elites}")
     CMD+=("--qd_objectives" "${resolved_objectives}")
     CMD+=("--qd_two_parent_probability" "${resolved_two_parent_probability}")
+    CMD+=("--qd_operator_kind" "${resolved_operator_kind}")
+    CMD+=("--qd_operator_one_parent_fraction" "${resolved_operator_one_parent_fraction}")
+    CMD+=("--qd_operator_archive_context_size" "${resolved_operator_archive_context_size}")
+    if [[ "${resolved_operator_two_parent_allow_intra_bin,,}" == "true" ]]; then
+      CMD+=("--qd_operator_two_parent_allow_intra_bin")
+    else
+      CMD+=("--no-qd_operator_two_parent_allow_intra_bin")
+    fi
     if [[ "${archive_type}" == "cvt" ]]; then
       CMD+=("--qd_cvt_warmup_successes" "${resolved_cvt_warmup}")
     fi

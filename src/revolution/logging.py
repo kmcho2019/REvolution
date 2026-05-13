@@ -355,10 +355,34 @@ class EoHLogger:
             {
                 "id": c.id,
                 "strategy": c.strategy,
+                "parent_count": getattr(c, "parent_count", None),
+                "requested_parent_count": getattr(
+                    c,
+                    "requested_parent_count",
+                    getattr(c, "parent_count", None),
+                ),
                 "score": c.score,
                 "ppa_metrics": c.ppa_metrics,
             }
             for c in ppa_candidates_this_gen
+        ]
+        generated_candidates = [
+            {
+                "id": c.id,
+                "strategy": c.strategy,
+                "parent_count": getattr(c, "parent_count", None),
+                "requested_parent_count": getattr(
+                    c,
+                    "requested_parent_count",
+                    getattr(c, "parent_count", None),
+                ),
+                "parent_arity": len(getattr(c, "parent_ids", [])),
+                "origin_pool": c.origin_pool,
+                "status": c.status,
+                "generated_mode": getattr(c, "generated_mode", None),
+                "code_file_path": getattr(c, "code_file_path", None),
+            }
+            for c in candidates_this_gen
         ]
 
         # 5. Calculate strategy-wise PPA stats
@@ -448,6 +472,7 @@ class EoHLogger:
             "generation_ppa": generation_ppa_stats,
             "strategy_ppa": strategy_ppa_stats,
             "population_ppa_details": population_ppa,
+            "generated_candidates": generated_candidates,
         }
 
         # Mode-level token estimates are proportional allocation by generated-candidate count.
@@ -556,6 +581,12 @@ class EoHLogger:
             {
                 "id": c.id,
                 "strategy": c.strategy,
+                "parent_count": getattr(c, "parent_count", None),
+                "requested_parent_count": getattr(
+                    c,
+                    "requested_parent_count",
+                    getattr(c, "parent_count", None),
+                ),
                 "score": c.score,
                 "ppa_metrics": c.ppa_metrics,
             }

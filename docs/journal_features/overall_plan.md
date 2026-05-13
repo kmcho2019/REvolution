@@ -48,6 +48,9 @@ stable while the first implementation lands.
 - The journal operator is a single thought-generation prompt with one or two
   parent thoughts. The prompt must not include parent code, individual feedback,
   or code-level error logs.
+- Feature 05 keeps the current thought/code/feedback candidate interface so it
+  can be compared directly against the EoH prompt profile. Thought-only
+  individuals and k-code evaluation belong to Feature 06.
 
 ## Deferred Or Out Of Scope For This Pass
 
@@ -195,6 +198,11 @@ Target deadline: `2026-05-12`
 - Run one bounded QD smoke after runtime work lands.
 - Record blocked smoke results explicitly when model, vLLM, EDA, or benchmark
   endpoints are unavailable.
+- For Feature 05 validation on the shared server, cap local smoke runs,
+  matrix runs, and parallel config execution at `16` total workers. For
+  long-running evaluation monitoring, a cheap subagent such as
+  `gpt-5.3-codex-spark` may be used for progress checks and concise failure
+  summaries.
 
 ## Final Validation Checklist
 

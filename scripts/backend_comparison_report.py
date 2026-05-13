@@ -31,6 +31,7 @@ class SummaryRow:
     power_improvement_pct: float | None
     period_improvement_pct: float | None
     avg_ppa_improvement_pct: float | None
+    valid_ppa_sample_count: int
     runtime_seconds: float
     llm_api_calls: int
     llm_prompt_tokens: int
@@ -50,6 +51,10 @@ class SummaryRow:
     qd_archive_entry_count: int | None
     qd_collapsed_axes: tuple[str, ...]
     qd_decision_counts: dict[str, int]
+    qd_replay_decision_counts: dict[str, int]
+    qd_initialization_mode: str | None
+    qd_initialized: bool | None
+    qd_effective_shape: tuple[int, ...]
     pareto_objective_count: int
     pareto_candidate_count: int
     pareto_point_count: int
@@ -182,6 +187,23 @@ def _format_regression_count(values: list[float]) -> str:
     return f"{emoji} {regressed}/{len(values)}"
 
 
+def _format_decision_counts(counts: dict[str, int]) -> str:
+    if not counts:
+        return "N/A"
+    return ", ".join(f"{decision}={count}" for decision, count in sorted(counts.items()))
+
+
+def _parse_int_counts(raw_counts: Any) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    if not isinstance(raw_counts, dict):
+        return counts
+    for key, value in raw_counts.items():
+        parsed = _safe_int(value)
+        if parsed is not None:
+            counts[str(key)] = int(parsed)
+    return counts
+
+
 def _format_aggregate_ppa_deltas(
     area_values: list[float], power_values: list[float], period_values: list[float]
 ) -> str:
@@ -278,7 +300,82 @@ def _load_qd_descriptor_health(summary_path: Path) -> dict[str, Any]:
         return {}
     if not isinstance(payload, dict):
         return {}
+    _augment_grid_quantile_descriptor_health(summary_path, payload)
     return payload
+
+
+def _augment_grid_quantile_descriptor_health(
+    summary_path: Path,
+    payload: dict[str, Any],
+) -> None:
+    archive_space_path = summary_path.parent / "archive_space.json"
+    if not archive_space_path.is_file():
+        return
+    try:
+        space = json.loads(archive_space_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return
+    if not isinstance(space, dict) or space.get("archive_type") != "grid_quantile":
+        return
+    payload["archive_type"] = "grid_quantile"
+    for key in (
+        "initialization_mode",
+        "initialized",
+        "warmup_successes",
+        "warmup_buffer_size",
+        "initialization_sample_count",
+        "effective_shape",
+        "active_effective_axes",
+        "collapsed_axes",
+    ):
+        if key in space:
+            payload[key] = space[key]
+    replay_counts: dict[str, int] = {}
+    replay_results = space.get("warmup_replay_results", [])
+    if isinstance(replay_results, list):
+        for replay in replay_results:
+            if not isinstance(replay, dict):
+                continue
+            decision = replay.get("decision")
+            if decision is None:
+                continue
+            decision_key = str(decision)
+            replay_counts[decision_key] = replay_counts.get(decision_key, 0) + 1
+    if replay_counts:
+        payload.setdefault("replay_decision_counts", replay_counts)
+        payload.setdefault("warmup_replay_decision_counts", replay_counts)
+
+
+def _load_generation_ppa_details(summary_path: Path) -> list[dict[str, Any]]:
+    details: list[dict[str, Any]] = []
+    generation_log_path = summary_path.parent / "generation_log.jsonl"
+    if not generation_log_path.is_file():
+        return details
+    for line in generation_log_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            payload = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(payload, dict):
+            continue
+        row_details = payload.get("population_ppa_details", [])
+        if not isinstance(row_details, list):
+            continue
+        details.extend(detail for detail in row_details if isinstance(detail, dict))
+    return details
+
+
+def _best_ppa_detail(details: list[dict[str, Any]]) -> dict[str, Any] | None:
+    scored_details: list[tuple[float, dict[str, Any]]] = []
+    for detail in details:
+        score = _safe_float(detail.get("score"))
+        if score is not None:
+            scored_details.append((score, detail))
+    if not scored_details:
+        return None
+    return max(scored_details, key=lambda item: item[0])[1]
 
 
 def _render_budget_fairness_section(rows: list[SummaryRow]) -> list[str]:
@@ -374,26 +471,33 @@ def _render_qd_descriptor_health_section(rows: list[SummaryRow]) -> list[str]:
     lines = [
         "## QD Descriptor Health",
         "",
-        "| Backend | Benchmark | Problem | Profile | Axes | Observations | Archive Elites | Collapsed Axes | Decisions |",
-        "|:---|:---|:---|:---|:---|---:|---:|:---|:---|",
+        "| Backend | Benchmark | Problem | Profile | Axes | Observations | Archive Elites | Init / Shape | Collapsed Axes | Decisions |",
+        "|:---|:---|:---|:---|:---|---:|---:|:---|:---|:---|",
     ]
     for row in sorted(qd_rows, key=lambda item: (item.benchmark, item.problem, item.backend)):
         axes = ", ".join(row.qd_descriptor_axes) if row.qd_descriptor_axes else "N/A"
         collapsed_axes = ", ".join(row.qd_collapsed_axes) if row.qd_collapsed_axes else "none"
-        decision_counts = (
-            ", ".join(
-                f"{decision}={count}"
-                for decision, count in sorted(row.qd_decision_counts.items())
+        live_decisions = _format_decision_counts(row.qd_decision_counts)
+        replay_decisions = _format_decision_counts(row.qd_replay_decision_counts)
+        decision_counts = f"live {live_decisions}"
+        if replay_decisions != "N/A":
+            decision_counts = f"{decision_counts}; replay {replay_decisions}"
+        init_parts: list[str] = []
+        if row.qd_initialization_mode is not None:
+            init_parts.append(f"init={row.qd_initialization_mode}")
+        if row.qd_effective_shape:
+            init_parts.append(
+                "shape=" + "x".join(str(value) for value in row.qd_effective_shape)
             )
-            if row.qd_decision_counts
-            else "N/A"
-        )
+        if row.qd_initialized is not None and not init_parts:
+            init_parts.append(f"initialized={str(row.qd_initialized).lower()}")
+        init_shape = ", ".join(init_parts) if init_parts else "N/A"
         lines.append(
             f"| `{row.backend}` | {row.benchmark} | {row.problem} | "
             f"{row.qd_descriptor_profile or 'N/A'} | {axes} | "
             f"{row.qd_observation_count if row.qd_observation_count is not None else 'N/A'} | "
             f"{row.qd_archive_entry_count if row.qd_archive_entry_count is not None else 'N/A'} | "
-            f"{collapsed_axes} | {decision_counts} |"
+            f"{init_shape} | {collapsed_axes} | {decision_counts} |"
         )
     lines.append("")
     return lines
@@ -521,7 +625,7 @@ def _render_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: boo
     lines = [
         heading,
         "",
-        "| Backend | Benchmark | Designs | Func Any-Pass | Synth Any-Pass | Func Pass@1 Mean | Synth Pass@1 Mean | Valid Score Designs | Avg Score Delta | Score Trend (✅/➖/❌) | Valid PPA Designs | Avg PPA Delta | PPA Delta (A/P/T) | PPA Trend (✅/➖/❌) | PPA Regressions (A/P/T) | Runtime Mean ± CI (s) | Calls Mean ± CI |",
+        "| Backend | Benchmark | Designs | Func Any-Pass | Synth Any-Pass | Func Pass@1 Mean | Synth Pass@1 Mean | Valid Score Designs | Avg Score Delta | Score Trend (✅/➖/❌) | Valid PPA Designs / Samples | Avg PPA Delta | PPA Delta (A/P/T) | PPA Trend (✅/➖/❌) | PPA Regressions (A/P/T) | Runtime Mean ± CI (s) | Calls Mean ± CI |",
         "|:---|:---|---:|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|",
     ]
     for (backend, benchmark), group in sorted(grouped.items()):
@@ -537,6 +641,8 @@ def _render_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: boo
             for row in group
             if row.avg_ppa_improvement_pct is not None
         ]
+        valid_ppa_problem_count = sum(1 for row in group if row.valid_ppa_sample_count > 0)
+        valid_ppa_sample_count = sum(row.valid_ppa_sample_count for row in group)
         area_values = [
             row.area_improvement_pct
             for row in group
@@ -565,7 +671,7 @@ def _render_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: boo
             f"{len(score_values)}/{len(group)} | "
             f"{_format_mean_ci_percent(score_values, signed=True)} | "
             f"{_format_trend_counts(score_values)} | "
-            f"{len(avg_ppa_values)}/{len(group)} | "
+            f"{valid_ppa_problem_count}/{len(group)} ({valid_ppa_sample_count} samples) | "
             f"{_format_mean_ci_percent(avg_ppa_values, signed=True)} | "
             f"{_format_aggregate_ppa_deltas(area_values, power_values, period_values)} | "
             f"{_format_trend_counts(avg_ppa_values)} | "
@@ -598,6 +704,15 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
                 "synthesis_ppa": stage_rates.get("synthesis", 0.0),
             }
         final_ppa = payload.get("final_population_ppa", {})
+        if not isinstance(final_ppa, dict):
+            final_ppa = {}
+        generation_details = _load_generation_ppa_details(summary_path)
+        final_details = payload.get("final_population_ppa_details", [])
+        if not isinstance(final_details, list):
+            final_details = []
+        ppa_details = generation_details or [
+            detail for detail in final_details if isinstance(detail, dict)
+        ]
         best_metrics = (
             final_ppa.get("best_metrics", {})
             if isinstance(final_ppa.get("best_metrics", {}), dict)
@@ -646,17 +761,44 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
             for axis in collapsed_axes_raw
             if isinstance(axis, str)
         ) if isinstance(collapsed_axes_raw, list) else ()
-        decision_counts_raw = qd_descriptor_health.get("decision_counts", {})
-        decision_counts: dict[str, int] = {}
-        if isinstance(decision_counts_raw, dict):
-            for key, value in decision_counts_raw.items():
+        decision_counts = _parse_int_counts(
+            qd_descriptor_health.get(
+                "live_decision_counts",
+                qd_descriptor_health.get("decision_counts", {}),
+            )
+        )
+        replay_decision_counts = _parse_int_counts(
+            qd_descriptor_health.get(
+                "replay_decision_counts",
+                qd_descriptor_health.get("warmup_replay_decision_counts", {}),
+            )
+        )
+        effective_shape_raw = qd_descriptor_health.get("effective_shape", [])
+        effective_shape_values: list[int] = []
+        if isinstance(effective_shape_raw, list):
+            for value in effective_shape_raw:
                 parsed = _safe_int(value)
-                if parsed is None:
-                    continue
-                decision_counts[str(key)] = int(parsed)
+                if parsed is not None:
+                    effective_shape_values.append(parsed)
+        effective_shape = tuple(effective_shape_values)
+        initialized_raw = qd_descriptor_health.get("initialized")
+        initialized = initialized_raw if isinstance(initialized_raw, bool) else None
+        initialization_mode = qd_descriptor_health.get("initialization_mode")
+        if not isinstance(initialization_mode, str):
+            initialization_mode = None
         functionality_rate = _safe_rate(rates.get("functionality", 0.0))
         synthesis_rate = _safe_rate(rates.get("synthesis_ppa", 0.0))
         best_score = _safe_float(final_ppa.get("best_score"))
+        best_detail = _best_ppa_detail(ppa_details)
+        if best_detail is not None and (best_score is None or not best_metrics):
+            if best_score is None:
+                best_score = _safe_float(best_detail.get("score"))
+            detail_metrics = best_detail.get("ppa_metrics", {})
+            if not best_metrics and isinstance(detail_metrics, dict):
+                best_metrics = detail_metrics
+        valid_ppa_sample_count = len(generation_details) or len(ppa_details)
+        if valid_ppa_sample_count == 0 and best_score is not None:
+            valid_ppa_sample_count = 1
         pareto_metrics = pareto_metrics_by_problem.get((benchmark_name, problem_name))
 
         score_improvement_pct: float | None = None
@@ -710,6 +852,7 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
                 power_improvement_pct=power_improvement_pct,
                 period_improvement_pct=period_improvement_pct,
                 avg_ppa_improvement_pct=avg_ppa_improvement_pct,
+                valid_ppa_sample_count=valid_ppa_sample_count,
                 runtime_seconds=float(payload.get("total_runtime_seconds", 0.0)),
                 llm_api_calls=int(payload.get("total_llm_api_calls", 0)),
                 llm_prompt_tokens=int(payload.get("total_llm_prompt_tokens", 0)),
@@ -745,6 +888,10 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
                 qd_archive_entry_count=_safe_int(qd_descriptor_health.get("archive_entry_count")),
                 qd_collapsed_axes=collapsed_axes,
                 qd_decision_counts=decision_counts,
+                qd_replay_decision_counts=replay_decision_counts,
+                qd_initialization_mode=initialization_mode,
+                qd_initialized=initialized,
+                qd_effective_shape=effective_shape,
                 pareto_objective_count=(
                     len(pareto_metrics.objective_metrics) if pareto_metrics is not None else 0
                 ),
@@ -787,6 +934,8 @@ def _render_markdown(rows: list[SummaryRow]) -> str:
         "",
         "Legend: `✅` pass/improvement, `❌` fail/regression, `➖` neutral.",
         "Score/PPA aggregate metrics exclude failed designs (no synthesis pass) and non-finite scores.",
+        "Valid PPA samples count generated samples with PPA metrics even when QD warmup or archive insertion later drops them.",
+        "When the final population has no retained PPA aggregate, Score/PPA deltas use the best generated valid PPA sample.",
         "Pareto hypervolume uses normalized improvement space against the zero-improvement reference point.",
         f"Multi-objective winner: `{pareto_winner or 'N/A'}` (mean hypervolume, then per-problem HV wins, then mean Pareto points).",
         "",
@@ -796,8 +945,8 @@ def _render_markdown(rows: list[SummaryRow]) -> str:
         [
         "## Per-Problem Metrics",
         "",
-        "| Backend | Benchmark | Problem | Functionality | Synthesis | Score Delta vs Ref | PPA Delta (A/P/T) | Avg PPA Delta | Runtime (s) | LLM Calls |",
-        "|:---|:---|:---|:---|:---|:---|:---|:---|---:|---:|",
+        "| Backend | Benchmark | Problem | Functionality | Synthesis | Valid PPA Samples | Score Delta vs Ref | PPA Delta (A/P/T) | Avg PPA Delta | Runtime (s) | LLM Calls |",
+        "|:---|:---|:---|:---|:---|---:|:---|:---|:---|---:|---:|",
         ]
     )
     for row in sorted(rows, key=lambda item: (item.benchmark, item.problem, item.backend)):
@@ -812,6 +961,7 @@ def _render_markdown(rows: list[SummaryRow]) -> str:
             f"| `{row.backend}` | {row.benchmark} | {row.problem} | "
             f"{_format_pass_rate(row.functionality_rate)} | "
             f"{_format_pass_rate(row.synthesis_rate)} | "
+            f"{row.valid_ppa_sample_count} | "
             f"{_format_delta(row.score_improvement_pct)} | "
             f"{ppa_components} | "
             f"{_format_delta(row.avg_ppa_improvement_pct)} | "

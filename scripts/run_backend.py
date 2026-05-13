@@ -428,6 +428,10 @@ def _build_backend(
             qd_refine_generation_mode=args.qd_refine_generation_mode,
             qd_crossover_generation_mode=args.qd_crossover_generation_mode,
             qd_formal_mode=args.qd_formal_mode,
+            qd_operator_kind=args.qd_operator_kind,
+            qd_operator_one_parent_fraction=args.qd_operator_one_parent_fraction,
+            qd_operator_archive_context_size=args.qd_operator_archive_context_size,
+            qd_operator_two_parent_allow_intra_bin=args.qd_operator_two_parent_allow_intra_bin,
         )
         return RevolutionBackend(
             context=context,
@@ -947,6 +951,19 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         type=str,
         default="auto",
         choices=["off", "auto", "required"],
+    )
+    parser.add_argument(
+        "--qd_operator_kind",
+        type=str,
+        default="eoh_strategies",
+        choices=["eoh_strategies", "single_thought_operator"],
+    )
+    parser.add_argument("--qd_operator_one_parent_fraction", type=float, default=0.5)
+    parser.add_argument("--qd_operator_archive_context_size", type=int, default=4)
+    parser.add_argument(
+        "--qd_operator_two_parent_allow_intra_bin",
+        action=argparse.BooleanOptionalAction,
+        default=True,
     )
 
     # FunSearch-specific
