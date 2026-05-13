@@ -742,6 +742,16 @@ over archive-handled successful candidates and current archive elites so the
 run output itself shows whether a chosen descriptor set is actually separating
 solutions.
 
+For grid-quantile archives, descriptor health separates live insertion
+decisions from warmup replay/finalization. `decision_counts` remains a live
+decision alias for compatibility; new reports also expose
+`live_decision_counts`, `replay_decision_counts`,
+`warmup_replay_decision_counts`, `initialization_mode`, `initialized`,
+`warmup_buffer_size`, `initialization_sample_count`, `effective_shape`,
+`active_effective_axes`, and final `collapsed_axes`. This makes cases such as
+`live warmup_buffered=50; replay filled_empty=1, pareto_inserted=1,
+duplicate_objectives=48` explicit instead of looking like pending warmup.
+
 Report/archive consumers:
 
 - `scripts/backend_comparison_report.py`

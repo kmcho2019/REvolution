@@ -232,7 +232,8 @@ Current feature status:
 - QD problem directories now also emit `descriptor_health.json` and
   `descriptor_health_report.md`, which summarize per-axis unique count,
   nonzero fraction, and collapse behavior over archive-handled successful
-  candidates and the current archive elites.
+  candidates and the current archive elites. Grid-quantile descriptor health
+  separates live warmup buffering from replay/finalization outcomes.
 - `scripts/backend_comparison_report.py` now renders those diagnostics in a
   dedicated `QD Descriptor Health` section, and `scripts/archive_baseline.py`
   preserves them when packaging QD runs for later review.

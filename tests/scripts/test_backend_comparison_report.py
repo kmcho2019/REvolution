@@ -418,6 +418,100 @@ def test_backend_comparison_report_ignores_qd_sidecar_summary_and_renders_qd_sec
     assert "filled_empty=2, not_inserted=3, replaced_elite=1" in text
 
 
+def test_backend_comparison_report_renders_live_and_replay_decisions(tmp_path):
+    qd_root = tmp_path / "revolution"
+    problem_dir = qd_root / "model-x" / "Bench" / "ProbGridQuantile"
+    problem_dir.mkdir(parents=True, exist_ok=True)
+    (problem_dir / "ProbGridQuantile_summary.json").write_text(
+        json.dumps(
+            {
+                "benchmark_name": "Bench",
+                "problem_name": "ProbGridQuantile",
+                "backend_details": {
+                    "search_mode": "revolution_qd",
+                    "qd_config": {"archive_type": "grid_quantile"},
+                },
+                "accumulated_success_rates": {
+                    "functionality": 1.0,
+                    "synthesis_ppa": 1.0,
+                },
+                "final_population_ppa": {
+                    "best_score": 0.1,
+                    "best_metrics": {
+                        "area": 90.0,
+                        "power": 0.9,
+                        "eff_clk_period": 0.9,
+                    },
+                },
+                "ref_ppa_metric": {
+                    "area": 100.0,
+                    "power": 1.0,
+                    "eff_clk_period": 1.0,
+                },
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    (problem_dir / "descriptor_health.json").write_text(
+        json.dumps(
+            {
+                "archive_type": "grid_quantile",
+                "descriptor_profile": "journal_logic_ff_width_3d",
+                "descriptor_axes": ["logic_depth", "ff_depth", "comb_width_log"],
+                "observation_count": 50,
+                "archive_entry_count": 2,
+                "collapsed_axes": [],
+                "decision_counts": {"warmup_buffered": 50},
+                "live_decision_counts": {"warmup_buffered": 50},
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    (problem_dir / "archive_space.json").write_text(
+        json.dumps(
+            {
+                "archive_type": "grid_quantile",
+                "initialization_mode": "run_finalization_fallback",
+                "initialized": True,
+                "warmup_successes": 120,
+                "warmup_buffer_size": 0,
+                "initialization_sample_count": 50,
+                "effective_shape": [1, 1, 1],
+                "active_effective_axes": 0,
+                "collapsed_axes": ["logic_depth", "ff_depth", "comb_width_log"],
+                "warmup_replay_results": [
+                    {"decision": "filled_empty"},
+                    {"decision": "pareto_inserted"},
+                    *({"decision": "duplicate_objectives"} for _ in range(48)),
+                ],
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    output_path = tmp_path / "comparison.md"
+    cmd = [
+        sys.executable,
+        "scripts/backend_comparison_report.py",
+        "--backend_run",
+        f"revolution={qd_root}",
+        "--output",
+        str(output_path),
+    ]
+    subprocess.run(cmd, check=True, cwd=Path(__file__).resolve().parents[2])
+    text = output_path.read_text(encoding="utf-8")
+
+    assert "init=run_finalization_fallback, shape=1x1x1" in text
+    assert "live warmup_buffered=50" in text
+    assert (
+        "replay duplicate_objectives=48, filled_empty=1, pareto_inserted=1"
+        in text
+    )
+
+
 def test_backend_comparison_report_renders_pareto_sections(tmp_path):
     classic_root = tmp_path / "classic"
     qd_root = tmp_path / "cvt_struct"

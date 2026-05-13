@@ -688,10 +688,10 @@ def _build_descriptor_health_payload(
             archive_values_by_axis[axis].append(float(value))
 
     observation_values_by_axis = {axis: [] for axis in descriptor_axes}
-    decision_counts: dict[str, int] = {}
+    live_decision_counts: dict[str, int] = {}
     for observation in observations:
         decision = str(observation.get("decision", "unknown"))
-        decision_counts[decision] = decision_counts.get(decision, 0) + 1
+        live_decision_counts[decision] = live_decision_counts.get(decision, 0) + 1
         values = observation.get("descriptor_values", {})
         if not isinstance(values, dict):
             continue
@@ -719,7 +719,7 @@ def _build_descriptor_health_payload(
             }
         )
 
-    return {
+    payload = {
         "archive_type": archive.archive_type,
         "cell_mode": getattr(archive, "cell_mode"),
         "descriptor_profile": descriptor_profile,
@@ -728,9 +728,38 @@ def _build_descriptor_health_payload(
         "archive_entry_count": len(members),
         "occupied_cells": archive.occupied_count(),
         "total_archive_members": len(members),
-        "decision_counts": decision_counts,
+        "decision_counts": live_decision_counts,
+        "live_decision_counts": live_decision_counts,
         "collapsed_axes": collapsed_axes,
         "axis_health": axis_health,
+    }
+    if isinstance(archive, GridQuantileArchive):
+        payload.update(_grid_quantile_descriptor_health_fields(archive))
+    return payload
+
+
+def _grid_quantile_descriptor_health_fields(
+    archive: GridQuantileArchive,
+) -> dict[str, Any]:
+    space = archive.describe_space()
+    replay_results = space["warmup_replay_results"]
+    assert isinstance(replay_results, list)
+    replay_decision_counts: dict[str, int] = {}
+    for replay in replay_results:
+        assert isinstance(replay, dict)
+        decision = str(replay["decision"])
+        replay_decision_counts[decision] = replay_decision_counts.get(decision, 0) + 1
+    return {
+        "initialization_mode": space["initialization_mode"],
+        "initialized": space["initialized"],
+        "warmup_successes": space["warmup_successes"],
+        "warmup_buffer_size": space["warmup_buffer_size"],
+        "initialization_sample_count": space["initialization_sample_count"],
+        "effective_shape": space["effective_shape"],
+        "active_effective_axes": space["active_effective_axes"],
+        "collapsed_axes": space["collapsed_axes"],
+        "warmup_replay_decision_counts": replay_decision_counts,
+        "replay_decision_counts": replay_decision_counts,
     }
 
 
@@ -760,6 +789,7 @@ def _value_stats(values: list[float]) -> dict[str, Any]:
 
 
 def _format_descriptor_health_report(payload: dict[str, Any]) -> str:
+    collapsed_axes = payload["collapsed_axes"]
     lines = [
         "# Descriptor Health Report",
         "",
@@ -768,17 +798,47 @@ def _format_descriptor_health_report(payload: dict[str, Any]) -> str:
         f"- descriptor_axes: `{', '.join(payload.get('descriptor_axes', []))}`",
         f"- observation_count: `{payload['observation_count']}`",
         f"- archive_entry_count: `{payload['archive_entry_count']}`",
-        f"- collapsed_axes: `{', '.join(payload['collapsed_axes']) if payload['collapsed_axes'] else 'none'}`",
+        f"- collapsed_axes: `{', '.join(collapsed_axes) if collapsed_axes else 'none'}`",
         "",
-        "## Decision Counts",
+        "## Live Decision Counts",
         "",
     ]
-    decision_counts = payload.get("decision_counts", {})
+    decision_counts = payload.get(
+        "live_decision_counts",
+        payload.get("decision_counts", {}),
+    )
     if decision_counts:
         for decision, count in sorted(decision_counts.items()):
             lines.append(f"- `{decision}`: {count}")
     else:
         lines.append("- no archive-handled successful candidates were recorded")
+    if payload["archive_type"] == "grid_quantile":
+        replay_counts = payload.get("replay_decision_counts", {})
+        shape = payload.get("effective_shape", [])
+        shape_label = "x".join(str(value) for value in shape) if shape else "pending"
+        lines.extend(
+            [
+                "",
+                "## Grid-Quantile Initialization",
+                "",
+                f"- initialization_mode: `{payload.get('initialization_mode')}`",
+                f"- initialized: `{payload.get('initialized')}`",
+                f"- warmup_successes: `{payload.get('warmup_successes')}`",
+                f"- warmup_buffer_size: `{payload.get('warmup_buffer_size')}`",
+                f"- initialization_sample_count: `{payload.get('initialization_sample_count')}`",
+                f"- effective_shape: `{shape_label}`",
+                f"- active_effective_axes: `{payload.get('active_effective_axes')}`",
+                f"- collapsed_axes: `{', '.join(payload.get('collapsed_axes', [])) or 'none'}`",
+                "",
+                "### Warmup Replay Decision Counts",
+                "",
+            ]
+        )
+        if replay_counts:
+            for decision, count in sorted(replay_counts.items()):
+                lines.append(f"- `{decision}`: {count}")
+        else:
+            lines.append("- no warmup samples were replayed")
     lines.extend(
         [
             "",

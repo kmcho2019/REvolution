@@ -604,6 +604,15 @@ problem has generated valid PPA samples but no retained final-population PPA
 aggregate, the backend comparison report uses the best generated valid PPA
 sample for the per-problem score and PPA deltas.
 
+Descriptor-health reports distinguish live insertion decisions from
+grid-quantile warmup replay/finalization. `decision_counts` remains the
+live-decision compatibility alias, while `live_decision_counts` and
+`replay_decision_counts` make the distinction explicit. Grid-quantile
+descriptor health also records `initialization_mode`, `initialized`,
+`warmup_successes`, `warmup_buffer_size`, `initialization_sample_count`,
+`effective_shape`, `active_effective_axes`, `collapsed_axes`, and
+`warmup_replay_decision_counts` when available.
+
 ## Testing Plan
 
 Focused unit tests (live in `tests/revolution/test_single_thought_operator.py`):

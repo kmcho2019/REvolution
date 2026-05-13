@@ -51,6 +51,10 @@ class SummaryRow:
     qd_archive_entry_count: int | None
     qd_collapsed_axes: tuple[str, ...]
     qd_decision_counts: dict[str, int]
+    qd_replay_decision_counts: dict[str, int]
+    qd_initialization_mode: str | None
+    qd_initialized: bool | None
+    qd_effective_shape: tuple[int, ...]
     pareto_objective_count: int
     pareto_candidate_count: int
     pareto_point_count: int
@@ -183,6 +187,23 @@ def _format_regression_count(values: list[float]) -> str:
     return f"{emoji} {regressed}/{len(values)}"
 
 
+def _format_decision_counts(counts: dict[str, int]) -> str:
+    if not counts:
+        return "N/A"
+    return ", ".join(f"{decision}={count}" for decision, count in sorted(counts.items()))
+
+
+def _parse_int_counts(raw_counts: Any) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    if not isinstance(raw_counts, dict):
+        return counts
+    for key, value in raw_counts.items():
+        parsed = _safe_int(value)
+        if parsed is not None:
+            counts[str(key)] = int(parsed)
+    return counts
+
+
 def _format_aggregate_ppa_deltas(
     area_values: list[float], power_values: list[float], period_values: list[float]
 ) -> str:
@@ -279,7 +300,50 @@ def _load_qd_descriptor_health(summary_path: Path) -> dict[str, Any]:
         return {}
     if not isinstance(payload, dict):
         return {}
+    _augment_grid_quantile_descriptor_health(summary_path, payload)
     return payload
+
+
+def _augment_grid_quantile_descriptor_health(
+    summary_path: Path,
+    payload: dict[str, Any],
+) -> None:
+    archive_space_path = summary_path.parent / "archive_space.json"
+    if not archive_space_path.is_file():
+        return
+    try:
+        space = json.loads(archive_space_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return
+    if not isinstance(space, dict) or space.get("archive_type") != "grid_quantile":
+        return
+    payload["archive_type"] = "grid_quantile"
+    for key in (
+        "initialization_mode",
+        "initialized",
+        "warmup_successes",
+        "warmup_buffer_size",
+        "initialization_sample_count",
+        "effective_shape",
+        "active_effective_axes",
+        "collapsed_axes",
+    ):
+        if key in space:
+            payload[key] = space[key]
+    replay_counts: dict[str, int] = {}
+    replay_results = space.get("warmup_replay_results", [])
+    if isinstance(replay_results, list):
+        for replay in replay_results:
+            if not isinstance(replay, dict):
+                continue
+            decision = replay.get("decision")
+            if decision is None:
+                continue
+            decision_key = str(decision)
+            replay_counts[decision_key] = replay_counts.get(decision_key, 0) + 1
+    if replay_counts:
+        payload.setdefault("replay_decision_counts", replay_counts)
+        payload.setdefault("warmup_replay_decision_counts", replay_counts)
 
 
 def _load_generation_ppa_details(summary_path: Path) -> list[dict[str, Any]]:
@@ -407,26 +471,33 @@ def _render_qd_descriptor_health_section(rows: list[SummaryRow]) -> list[str]:
     lines = [
         "## QD Descriptor Health",
         "",
-        "| Backend | Benchmark | Problem | Profile | Axes | Observations | Archive Elites | Collapsed Axes | Decisions |",
-        "|:---|:---|:---|:---|:---|---:|---:|:---|:---|",
+        "| Backend | Benchmark | Problem | Profile | Axes | Observations | Archive Elites | Init / Shape | Collapsed Axes | Decisions |",
+        "|:---|:---|:---|:---|:---|---:|---:|:---|:---|:---|",
     ]
     for row in sorted(qd_rows, key=lambda item: (item.benchmark, item.problem, item.backend)):
         axes = ", ".join(row.qd_descriptor_axes) if row.qd_descriptor_axes else "N/A"
         collapsed_axes = ", ".join(row.qd_collapsed_axes) if row.qd_collapsed_axes else "none"
-        decision_counts = (
-            ", ".join(
-                f"{decision}={count}"
-                for decision, count in sorted(row.qd_decision_counts.items())
+        live_decisions = _format_decision_counts(row.qd_decision_counts)
+        replay_decisions = _format_decision_counts(row.qd_replay_decision_counts)
+        decision_counts = f"live {live_decisions}"
+        if replay_decisions != "N/A":
+            decision_counts = f"{decision_counts}; replay {replay_decisions}"
+        init_parts: list[str] = []
+        if row.qd_initialization_mode is not None:
+            init_parts.append(f"init={row.qd_initialization_mode}")
+        if row.qd_effective_shape:
+            init_parts.append(
+                "shape=" + "x".join(str(value) for value in row.qd_effective_shape)
             )
-            if row.qd_decision_counts
-            else "N/A"
-        )
+        if row.qd_initialized is not None and not init_parts:
+            init_parts.append(f"initialized={str(row.qd_initialized).lower()}")
+        init_shape = ", ".join(init_parts) if init_parts else "N/A"
         lines.append(
             f"| `{row.backend}` | {row.benchmark} | {row.problem} | "
             f"{row.qd_descriptor_profile or 'N/A'} | {axes} | "
             f"{row.qd_observation_count if row.qd_observation_count is not None else 'N/A'} | "
             f"{row.qd_archive_entry_count if row.qd_archive_entry_count is not None else 'N/A'} | "
-            f"{collapsed_axes} | {decision_counts} |"
+            f"{init_shape} | {collapsed_axes} | {decision_counts} |"
         )
     lines.append("")
     return lines
@@ -690,14 +761,31 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
             for axis in collapsed_axes_raw
             if isinstance(axis, str)
         ) if isinstance(collapsed_axes_raw, list) else ()
-        decision_counts_raw = qd_descriptor_health.get("decision_counts", {})
-        decision_counts: dict[str, int] = {}
-        if isinstance(decision_counts_raw, dict):
-            for key, value in decision_counts_raw.items():
+        decision_counts = _parse_int_counts(
+            qd_descriptor_health.get(
+                "live_decision_counts",
+                qd_descriptor_health.get("decision_counts", {}),
+            )
+        )
+        replay_decision_counts = _parse_int_counts(
+            qd_descriptor_health.get(
+                "replay_decision_counts",
+                qd_descriptor_health.get("warmup_replay_decision_counts", {}),
+            )
+        )
+        effective_shape_raw = qd_descriptor_health.get("effective_shape", [])
+        effective_shape_values: list[int] = []
+        if isinstance(effective_shape_raw, list):
+            for value in effective_shape_raw:
                 parsed = _safe_int(value)
-                if parsed is None:
-                    continue
-                decision_counts[str(key)] = int(parsed)
+                if parsed is not None:
+                    effective_shape_values.append(parsed)
+        effective_shape = tuple(effective_shape_values)
+        initialized_raw = qd_descriptor_health.get("initialized")
+        initialized = initialized_raw if isinstance(initialized_raw, bool) else None
+        initialization_mode = qd_descriptor_health.get("initialization_mode")
+        if not isinstance(initialization_mode, str):
+            initialization_mode = None
         functionality_rate = _safe_rate(rates.get("functionality", 0.0))
         synthesis_rate = _safe_rate(rates.get("synthesis_ppa", 0.0))
         best_score = _safe_float(final_ppa.get("best_score"))
@@ -800,6 +888,10 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
                 qd_archive_entry_count=_safe_int(qd_descriptor_health.get("archive_entry_count")),
                 qd_collapsed_axes=collapsed_axes,
                 qd_decision_counts=decision_counts,
+                qd_replay_decision_counts=replay_decision_counts,
+                qd_initialization_mode=initialization_mode,
+                qd_initialized=initialized,
+                qd_effective_shape=effective_shape,
                 pareto_objective_count=(
                     len(pareto_metrics.objective_metrics) if pareto_metrics is not None else 0
                 ),
