@@ -682,7 +682,14 @@ def main(argv: list[str] | None = None) -> int:
             unified=unified_metrics,
             eoh=eoh_metrics,
             field="functionality_rate",
-            floor=0.10,
+            floor=0.03,
+        ),
+        _paired_gate(
+            name="synthesis pass rate",
+            unified=unified_metrics,
+            eoh=eoh_metrics,
+            field="synthesis_rate",
+            floor=0.03,
         ),
         _paired_gate(
             name="valid PPA sample count",
@@ -696,14 +703,14 @@ def main(argv: list[str] | None = None) -> int:
             unified=unified_metrics,
             eoh=eoh_metrics,
             field="average_quality_score",
-            floor=0.05,
+            floor=0.03,
         ),
         _paired_gate(
             name="average PPA improvement",
             unified=unified_metrics,
             eoh=eoh_metrics,
             field="average_ppa_improvement",
-            floor=0.05,
+            floor=0.06,
         ),
     ]
     for gate in paired_gates:

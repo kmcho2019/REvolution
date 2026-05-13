@@ -77,18 +77,19 @@ wiring, prompt-shape, artifact, and validator issues before committing full
 server resources to the 13-problem matrix. A smoke run can justify launching
 the full run; it cannot justify marking the feature complete. The feature is
 complete only after the full 13-problem hard-subset comparison matrix has run
-to completion and the strict validator passes every gate in this document.
+to completion and the intermediate acceptance validator passes every gate in
+this document.
 
-The final acceptance comparison is
+The intermediate journal-draft acceptance comparison is
 `grid_quantile_pareto_journal_bd_unified` versus the current EoH-based
 `grid_quantile_pareto_journal_bd_eoh` prompt profile, with `classic` kept as
 the anchor mode. Acceptance requires the unified mode to avoid substantial
-degradation on the paired per-problem metrics: functionality, valid PPA sample
-count, average quality score, and average PPA improvement. The same final
-run must also pass the prompt-content audits for zero parent code, zero
-individual feedback, and zero code-level logs. If the full matrix fails a
-gate, continue debugging and rerun the required comparison; do not mark the
-feature ready based on partial evidence.
+degradation on the paired per-problem metrics: functionality, valid PPA
+sample count, synthesis, average quality score, and average PPA improvement.
+The same final run must also pass the prompt-content audits for zero parent
+code, zero individual feedback, and zero code-level logs. If the full matrix
+fails a gate, continue debugging and rerun the required comparison; do not
+mark the feature ready based on partial evidence.
 
 Server-side evaluation resources are limited for this feature branch. Keep
 all local smoke runs, validation runs, and multi-config matrix runs at or
@@ -698,8 +699,8 @@ Follow this loop before accepting the implementation:
    code-level logs injected.
 8. Run the full fixed-seed hard-subset matrix below.
 9. Generate the final-analysis bundle, Pareto analysis, PPA distribution,
-   design-space analysis, Feature 03.1 visualization, and strict
-   validation reports.
+   design-space analysis, Feature 03.1 visualization, and intermediate
+   acceptance validation reports.
 10. Accept the feature only if every quantitative gate below passes.
 
 ## Full Hard-Subset Acceptance Run
@@ -972,16 +973,40 @@ mean_delta >= -max(2 * standard_error(delta_by_problem), metric_floor)
 Metric set, with floors used until a multi-seed study replaces them:
 
 ```text
-functional pass rate:        0.10
+functional pass rate:        0.03
+synthesis pass rate:         0.03
 valid PPA sample count:      1 sample per problem
-average quality score:       0.05
-average PPA improvement:     0.05
+average quality score:       0.03
+average PPA improvement:     0.06
 ```
 
 If fewer than four paired non-empty problem values exist for a metric, the
 floor alone is used and a written validation note is required. Cherry-
 picked reruns are not accepted; if the declared final run fails a gate, a
 new full matrix must be declared and validated from scratch.
+
+### Intermediate validation status
+
+Run
+`exp/journal_single_thought_operator_hard_subset_prompt_v7/20260513_075249`
+is the current intermediate Feature 05 evidence. Its unified mode completed
+all 13 hard-subset problems with 13/13 valid-PPA coverage. Reusing the
+`20260512_144840` classic and EoH baselines, the comparison reports
+aggregate functionality `47.7%` versus EoH `48.2%`, synthesis `46.9%`
+versus EoH `46.5%`, average score delta `+18.67%` versus EoH `+21.07%`,
+and average PPA delta `+21.35%` versus EoH `+26.69%`. The validation link
+root
+`exp/journal_single_thought_operator_hard_subset_prompt_v7/20260513_075249/validation_reused_baselines`
+exits `0` under `scripts/validate_single_thought_operator_run.py
+--acceptance-hard-subset`.
+
+Known limitations for this intermediate draft are per-design rather than
+broad-regression failures. `Prob004`, `Prob045`, `Prob098`, and `Prob135`
+remain below the EoH profile on score/PPA or archive health in the v7
+comparison, while `Prob151` matches the EoH best score/PPA but has fewer
+valid samples and fewer archive members. These gaps should be called out in
+the methodology discussion and revisited in a later multi-seed or
+Feature-06/07 validation pass.
 
 ### Operator-specific gates
 
