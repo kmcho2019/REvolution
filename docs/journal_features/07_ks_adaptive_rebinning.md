@@ -10,10 +10,10 @@ archiveable offspring no longer look like they are drawn from the same
 descriptor distribution as the retained archive members. The first full
 acceptance target is the current journal path:
 
-- thought-only evaluation.
+- Feature 05 `single_thought_operator` prompt profile over the current
+  candidate interface.
 - `grid_quantile` archive geometry.
 - `pareto_front` cell mode.
-- unified `single_thought_operator` prompt profile.
 
 The feature should not be journal-only. It should live at the QD archive layer
 and apply to every supported MAP-Elites archive geometry that can rebuild its
@@ -45,6 +45,16 @@ Feature 07 adds a conservative drift trigger. It does not change candidate
 evaluation, PPA scoring, Pareto objectives, or prompt construction. It only
 changes the archive cell coordinate system when the retained archive and recent
 archiveable offspring show distributional drift.
+
+Feature 06 thought-only individuals and k-code evaluation are separate work.
+Feature 07 must not implement Feature 06. It should be compatible with either
+runtime representation by treating "recent sample" as the archive insertion
+unit:
+
+- before Feature 06 merges, the sample is the successful archiveable code
+  candidate that the current QD archive attempts to insert.
+- after Feature 06 merges, the sample is the successful thought
+  representative selected by the thought evaluation layer.
 
 `scipy` is already a project dependency, so the first implementation can use
 `scipy.stats.ks_2samp` without adding a new dependency.
@@ -161,6 +171,15 @@ Archive samples are retained archive members:
 The rebuild uses retained archive members only. It does not use failed
 candidates, rejected candidates, recent samples that did not survive archive
 replacement, or old warmup-only records that are no longer retained.
+
+Previously evicted archiveable candidates do not reactivate in Feature 07. In
+local Pareto-front cell mode, a candidate can be edged out by the per-cell
+limit after Pareto-rank and NSGA-II crowding-distance eviction. That inactive
+candidate might have belonged in a useful cell after a later geometry change,
+but supporting that requires a separate inactive archiveable reservoir and a
+larger replay set. The first implementation keeps the state narrow: re-binning
+is a rebucket of the active retained archive, not a replay of all historical
+archiveable candidates.
 
 ## Re-Binning Behavior
 
@@ -401,6 +420,47 @@ Reports should describe re-binning as a cell-coordinate change, not as a change
 in candidate evaluation. PPA metrics, validation status, and prompt behavior
 must remain comparable between adaptive-off and adaptive-on modes.
 
+## Visualization Contract
+
+Adaptive re-binning changes archive coordinates over time, so the linked QD/PPA
+viewer must expose geometry history rather than pretending there was one fixed
+archive grid for the whole run.
+
+The viewer should support two archive-geometry perspectives:
+
+- `native_timeline`: default. Each timeline step uses the archive geometry that
+  was active at that generation. This shows how bins and cells actually changed
+  during search.
+- `final_fixed`: optional stable view. Every visible sample with descriptors is
+  projected into the final archive geometry. This gives a fixed viewpoint for
+  comparing generations, but it is a visualization projection and must not be
+  treated as the runtime cell assignment.
+
+The exported viewer dataset for adaptive runs must include:
+
+- ordered archive geometry snapshots with `geometry_id`, generation,
+  re-bin count, effective shape, axis boundaries, collapsed axes, and source
+  hash.
+- re-bin timeline markers with trigger axes, p-values, corrected threshold,
+  old geometry id, and new geometry id.
+- sample-level native cell ids with the geometry id used for assignment.
+- sample-level final-fixed projected cell ids when descriptors are available.
+- projection status for samples that cannot be projected because descriptors
+  are missing.
+
+The UI should make re-binning visible with:
+
+- timeline markers at re-bin generations.
+- an archive geometry perspective control ordered `native_timeline`,
+  `final_fixed`.
+- an axis/bin detail panel that reports the active geometry id, effective
+  shape, collapsed axes, and quantile cutoffs for the selected timeline step.
+- linked hover that works in both geometry perspectives.
+
+Do not animate boundary morphing in the first pass. A discrete geometry change
+at the re-bin timeline marker is easier to validate and easier to describe in
+the paper.
+
 ## Full Hard-Subset Acceptance Run
 
 Feature 07 acceptance uses the Feature 05-style hard-subset matrix, narrowed to
@@ -476,7 +536,7 @@ Then edit `matrix_modes` and `modes` to match the matrix above.
 ### Local Smoke
 
 Before launching the full hard-subset matrix, run a smoke on at most three
-problems with total concurrent workers capped at `16`.
+problems with total concurrent workers capped at `8`.
 
 The smoke is acceptable when:
 
@@ -500,9 +560,9 @@ HARD_SUBSET_MAX_TOKENS=128000 \
 HARD_SUBSET_DIFF_MAX_TOKENS=128000 \
 HARD_SUBSET_POPULATION_SIZE=20 \
 HARD_SUBSET_NUM_GENERATIONS=5 \
-HARD_SUBSET_TOTAL_WORKER_SLOTS=16 \
+HARD_SUBSET_TOTAL_WORKER_SLOTS=8 \
 HARD_SUBSET_MAX_ACTIVE_PROBLEMS=4 \
-HARD_SUBSET_MAX_WORKERS_PER_PROBLEM=4 \
+HARD_SUBSET_MAX_WORKERS_PER_PROBLEM=2 \
 HARD_SUBSET_SAVE_PATH=exp/journal_adaptive_rebinning_hard_subset \
 bash scripts/run_hard_iteration_qd_vllm.sh \
   --config exp/journal_adaptive_rebinning_configs/hard_subset_adaptive_rebinning.yaml \
@@ -514,9 +574,9 @@ The manifest must show:
 - `reported_max_model_len >= 128000`.
 - `population_size=20`.
 - `num_generations=5`.
-- `total_worker_slots=16`.
+- `total_worker_slots=8`.
 - `max_active_problems=4`.
-- `max_workers_per_problem=4`.
+- `max_workers_per_problem=2`.
 - `max_tokens=128000`.
 - `diff_max_tokens=128000`.
 - `seed=42`.
@@ -629,6 +689,11 @@ metric gates use per-problem aggregation, not raw candidate rows.
   coverage, and QD score for every QD mode.
 - The linked archive/PPA viewer exports `index.html` and the strict validator
   exits `0`.
+- Adaptive-on viewer datasets include geometry snapshots, re-bin timeline
+  markers, native cell ids, and final-fixed projected cell ids.
+- Strict viewer validation proves that `native_timeline` changes active
+  geometry across a re-bin event and `final_fixed` keeps the final geometry
+  stable across timeline steps.
 
 ### Coverage Gates
 
@@ -707,6 +772,8 @@ the variance-envelope gates.
   - `reinserted_member_count` equals the retained member count from before the
     rebuild.
   - no retained Pareto member is lost during rebucketing.
+  - no previously evicted inactive member reappears unless it was still part
+    of the retained archive before the rebuild.
   - cooldown starts immediately after the event.
   - the next re-bin for that problem occurs only after cooldown expires.
 - Every `rebin` event records old geometry, new geometry, trigger axes,
@@ -741,8 +808,8 @@ modes:
     seed: 42
 ```
 
-Run with at most three problems, low generations, and bounded workers. The
-smoke passes when:
+Run with at most three problems, low generations, and total concurrent workers
+capped at `8`. The smoke passes when:
 
 - the mode completes without runtime errors.
 - CVT initialization still completes when enough archiveable samples exist.
@@ -765,9 +832,13 @@ smoke passes when:
 - Unit-test degenerate-axis quantile collapse.
 - Unit-test scalar-elite reinsertion after re-binning.
 - Unit-test Pareto-front reinsertion after re-binning.
+- Unit-test that previously evicted inactive members do not reappear during a
+  retained-member-only re-bin.
 - Unit-test unknown archive type and unknown cell mode failures.
 - Integration-test `grid_quantile` adaptive-on versus adaptive-off artifacts.
 - Integration-test CVT adaptive-on smoke artifacts and viewer export.
+- Integration-test adaptive viewer export with native-timeline and final-fixed
+  geometry perspectives.
 - Regression-test the strict acceptance validator with synthetic passing and
   failing summaries.
 

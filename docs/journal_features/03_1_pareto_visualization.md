@@ -1237,6 +1237,57 @@ one clean final frame. If slide export is implemented, include at least:
 - final stable state;
 - rank-1-only PPA view.
 
+## Feature 07 Adaptive Re-Binning Extension
+
+Feature 07 adaptive re-binning makes archive cell coordinates time-varying.
+The viewer must therefore treat archive geometry as timeline data, not only as
+one final `archive_space.json` payload.
+
+For adaptive runs, export each archive geometry snapshot with:
+
+- stable `geometry_id`.
+- generation and re-bin count.
+- archive type, descriptor axes, effective shape, and collapsed axes.
+- grid or grid-quantile intervals, or CVT scaler and centroid metadata.
+- source hash or mtime for the artifact that produced the geometry.
+
+Export each re-bin event with:
+
+- generation.
+- old and new `geometry_id`.
+- trigger axes.
+- KS statistics and p-values.
+- corrected p-value threshold.
+- retained member count and reinserted member count.
+
+Each sample with descriptors should carry:
+
+- native timeline cell id and native `geometry_id`.
+- final-fixed projected cell id when final geometry projection is possible.
+- projection status when descriptors are missing or the archive is not
+  initialized.
+
+The viewer must expose an archive geometry perspective control:
+
+```text
+native_timeline
+final_fixed
+```
+
+`native_timeline` is the default. It shows the geometry that was active at the
+selected timeline step and is the faithful runtime-history view.
+
+`final_fixed` projects visible samples into the final archive geometry. It is a
+stable viewpoint for paper figures and generation-to-generation comparison. It
+must be labeled as a projection and must not change runtime archive metrics,
+Pareto ranks, or native cell ids.
+
+Re-bin events should appear as timeline markers. Selecting or hovering a
+marker should expose old/new geometry ids, trigger axes, p-values, corrected
+threshold, and old/new effective shapes. Boundary morph animation is not
+required in the first pass; discrete geometry changes at the event marker are
+simpler to validate.
+
 ## Validation
 
 Add:
@@ -1416,6 +1467,21 @@ Required checks:
 65. The final Playwright validation covers the required validation example
     matrix: sequential 3D PPA, sequential full-3D archive, combinational 2D
     PPA, and combinational projected archive.
+66. Adaptive re-binning datasets with a re-bin event contain at least two
+    geometry snapshots with distinct `geometry_id` values.
+67. Re-bin timeline markers expose old/new geometry ids, trigger axes,
+    p-values, corrected threshold, and old/new effective shapes.
+68. The archive geometry perspective control supports `native_timeline` and
+    `final_fixed`, defaults to `native_timeline`, and reports the active mode
+    in browser debug metadata.
+69. In `native_timeline`, strict validation proves the active geometry id
+    changes across a re-bin marker for an adaptive dataset with a re-bin event.
+70. In `final_fixed`, strict validation proves the final geometry id stays
+    fixed while the timeline changes.
+71. Final-fixed projected cell ids are marked as projections and do not replace
+    native runtime cell ids.
+72. Hover linking works in both `native_timeline` and `final_fixed` archive
+    geometry modes.
 
 Use Playwright for viewer smoke tests when available. The first acceptance gate
 requires at least one desktop screenshot for:
@@ -1500,6 +1566,9 @@ Focused unit tests:
 - layer-panel hover maps to the same samples as archive-cell hover.
 - quantile boundary labels are exported from `archive_space.json` without
   recomputing boundaries.
+- adaptive re-binning geometry snapshots are exported with stable geometry ids.
+- final-fixed archive projection uses the final geometry and preserves native
+  runtime cell ids.
 - viewer debug state reports sequential PPA scenes as 3D with perspective
   camera metadata and nonzero z-coordinate range.
 - viewer debug state reports 3D archive scenes with perspective camera
@@ -1507,6 +1576,8 @@ Focused unit tests:
 - Playwright interaction tests prove auto-rotate, perspective lock, reset,
   exploded layers, archive-cell hover, layer-panel hover, and PPA-point hover
   change the expected scene or highlight state.
+- Playwright interaction tests prove adaptive re-bin timeline markers,
+  `native_timeline`, and `final_fixed` modes update the expected debug state.
 - the validator rejects the current flat 2D canvas placeholder for sequential
   PPA and 3D archive datasets.
 - default UI density is covered by a Playwright screenshot and DOM assertions
