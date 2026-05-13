@@ -160,9 +160,13 @@ qd_rebinning_base_p_threshold: 0.05
 
 With this config, the runtime checks for drift after every completed
 generation once the archive is initialized, unless it is still in cooldown or
-has fewer than `30` retained archive members. After a re-bin, the runtime skips
-KS checks for the next `3` completed generations while the cooldown counter
-expires. The CVT smoke uses the same defaults except
+has fewer than `30` retained archive members. The recent KS sample set contains
+valid-PPA archiveable insertion attempts from the last `3` completed
+generations. For example, the check at the end of generation `7` compares the
+current retained archive distribution against recent samples from generations
+`5`, `6`, and `7`. After a re-bin, the runtime skips KS checks for the next
+`3` completed generations while the cooldown counter expires. The CVT smoke
+uses the same defaults except
 `qd_rebinning_min_archive_members: 10` so the smoke can exercise the path with
 fewer evaluations.
 
