@@ -339,16 +339,7 @@ mentions a helper module such as `full_adder`, the prompt asks the model to
 translate that idea into inline logic rather than preserving the helper-module
 structure, unless the problem specification explicitly names extra modules.
 This avoids benchmark/reference module-name collisions while keeping the
-thought/code/feedback interface unchanged. Prompt-performance tuning should
-stay within this same single-operator contract: favor compact behavioral RTL,
-built-in operators, reductions, and shared datapath expressions over manually
-expanded arithmetic, comparators, muxes, counters, or decoders when the
-problem statement permits synthesis to infer the compact implementation.
-For recurring hard-subset failure modes, this includes translating bit-level
-adder-stage ideas into compact concatenated arithmetic inside the requested
-module, and driving requested next-state-only outputs directly with the
-minimized next-state expression rather than outputting the present state or
-leaving a computed next-state wire unused.
+thought/code/feedback interface unchanged.
 
 ### One-parent payload
 
