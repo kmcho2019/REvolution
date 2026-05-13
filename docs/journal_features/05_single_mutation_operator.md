@@ -92,8 +92,8 @@ feature ready based on partial evidence.
 
 Server-side evaluation resources are limited for this feature branch. Keep
 all local smoke runs, validation runs, and multi-config matrix runs at or
-below `8` total workers. When running multiple modes in parallel, split the
-worker budget so the sum across active configs never exceeds `8`. For
+below `16` total workers. When running multiple modes in parallel, split the
+worker budget so the sum across active configs never exceeds `16`. For
 long-running evaluations, progress monitoring may be delegated to a cheap
 subagent such as `gpt-5.3-codex-spark`; keep that subagent scoped to progress
 checks, failure summaries, and actionable status updates.
@@ -653,7 +653,7 @@ Focused unit tests (live in `tests/revolution/test_single_thought_operator.py`):
 10. Unknown `operator.kind`: engine construction raises immediately.
 
 Smoke testing: a bounded local smoke (population_size = 4,
-num_generations = 1, 2-3 problems, total concurrent workers <= 8) must
+num_generations = 1, 2-3 problems, total concurrent workers <= 16) must
 complete for `classic`, `grid_quantile_pareto_journal_bd_eoh`, and
 `grid_quantile_pareto_journal_bd_unified` without crashes. The smoke
 artifacts must include `qd_archive_event.json` with `parent_count`, and the
@@ -757,7 +757,7 @@ Then edit `matrix_modes` and `modes` to match the matrix above.
 ### Local smoke (before the costly run)
 
 Before launching the full hard-subset matrix, run a smoke at most three
-problems with total concurrent workers capped at `8` to confirm the runtime
+problems with total concurrent workers capped at `16` to confirm the runtime
 is wired correctly. Acceptable smoke parameters:
 
 ```bash
@@ -769,8 +769,8 @@ HARD_SUBSET_MAX_TOKENS=128000 \
 HARD_SUBSET_DIFF_MAX_TOKENS=128000 \
 HARD_SUBSET_POPULATION_SIZE=4 \
 HARD_SUBSET_NUM_GENERATIONS=1 \
-HARD_SUBSET_TOTAL_WORKER_SLOTS=8 \
-HARD_SUBSET_MAX_ACTIVE_PROBLEMS=2 \
+HARD_SUBSET_TOTAL_WORKER_SLOTS=16 \
+HARD_SUBSET_MAX_ACTIVE_PROBLEMS=4 \
 HARD_SUBSET_MAX_WORKERS_PER_PROBLEM=4 \
 HARD_SUBSET_SAVE_PATH=exp/journal_single_thought_operator_smoke \
 bash scripts/run_hard_iteration_qd_vllm.sh \
@@ -801,8 +801,8 @@ HARD_SUBSET_MAX_TOKENS=128000 \
 HARD_SUBSET_DIFF_MAX_TOKENS=128000 \
 HARD_SUBSET_POPULATION_SIZE=20 \
 HARD_SUBSET_NUM_GENERATIONS=5 \
-HARD_SUBSET_TOTAL_WORKER_SLOTS=8 \
-HARD_SUBSET_MAX_ACTIVE_PROBLEMS=2 \
+HARD_SUBSET_TOTAL_WORKER_SLOTS=16 \
+HARD_SUBSET_MAX_ACTIVE_PROBLEMS=4 \
 HARD_SUBSET_MAX_WORKERS_PER_PROBLEM=4 \
 HARD_SUBSET_SAVE_PATH=exp/journal_single_thought_operator_hard_subset \
 bash scripts/run_hard_iteration_qd_vllm.sh \
@@ -815,8 +815,8 @@ The manifest must show:
 - `reported_max_model_len >= 128000`.
 - `population_size=20`.
 - `num_generations=5`.
-- `total_worker_slots=8`.
-- `max_active_problems=2`.
+- `total_worker_slots=16`.
+- `max_active_problems=4`.
 - `max_workers_per_problem=4`.
 - `max_tokens=128000`.
 - `diff_max_tokens=128000`.
@@ -1095,7 +1095,7 @@ Target deadline: `2026-05-08`
 - [ ] 5.4 Add intra-bin two-parent sampling toggle and update
   `_sample_two_success_parents` to honor it.
 - [ ] 5.5 Add focused unit tests and the prompt-content regression.
-- [ ] 5.6 Run a bounded local smoke with at most 8 concurrent workers
+- [ ] 5.6 Run a bounded local smoke with at most 16 concurrent workers
   across `classic`, `grid_quantile_pareto_journal_bd_eoh`, and
   `grid_quantile_pareto_journal_bd_unified`.
 - [ ] 5.7 Run the full 13-problem hard-subset matrix and pass every

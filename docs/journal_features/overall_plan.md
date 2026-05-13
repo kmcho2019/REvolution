@@ -199,7 +199,7 @@ Target deadline: `2026-05-12`
 - Record blocked smoke results explicitly when model, vLLM, EDA, or benchmark
   endpoints are unavailable.
 - For Feature 05 validation on the shared server, cap local smoke runs,
-  matrix runs, and parallel config execution at `8` total workers. For
+  matrix runs, and parallel config execution at `16` total workers. For
   long-running evaluation monitoring, a cheap subagent such as
   `gpt-5.3-codex-spark` may be used for progress checks and concise failure
   summaries.

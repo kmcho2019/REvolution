@@ -13,6 +13,7 @@ from typing import Any
 
 
 SINGLE_OPERATOR = "single_thought_operator"
+MAX_ACCEPTANCE_WORKERS = 16
 FORBIDDEN_PROMPT_KEYS = {
     "code",
     "feedback",
@@ -632,10 +633,19 @@ def main(argv: list[str] | None = None) -> int:
         total_slots = _safe_float(manifest.get("total_worker_slots"))
         active = _safe_float(manifest.get("max_active_problems"))
         per_problem = _safe_float(manifest.get("max_workers_per_problem"))
-        if total_slots is None or total_slots > 8:
-            acceptance_errors.append("manifest total_worker_slots must be <= 8")
-        if active is not None and per_problem is not None and active * per_problem > 8:
-            acceptance_errors.append("manifest active problem worker product must be <= 8")
+        if total_slots is None or total_slots > MAX_ACCEPTANCE_WORKERS:
+            acceptance_errors.append(
+                f"manifest total_worker_slots must be <= {MAX_ACCEPTANCE_WORKERS}"
+            )
+        if (
+            active is not None
+            and per_problem is not None
+            and active * per_problem > MAX_ACCEPTANCE_WORKERS
+        ):
+            acceptance_errors.append(
+                "manifest active problem worker product must be <= "
+                f"{MAX_ACCEPTANCE_WORKERS}"
+            )
         if manifest.get(f"mode.{args.eoh_mode}.qd_operator_kind") != "eoh_strategies":
             acceptance_errors.append("EoH mode manifest qd_operator_kind is not eoh_strategies")
         if manifest.get(f"mode.{args.unified_mode}.qd_operator_kind") != SINGLE_OPERATOR:
