@@ -15,6 +15,12 @@ acceptance target is the current journal path:
 - `grid_quantile` archive geometry.
 - `pareto_front` cell mode.
 
+Feature 07 is not finished when the implementation lands. It is finished only
+after the full 13-problem hard-subset matrix below has actually run and the
+strict acceptance validator exits `0` on the resulting artifacts. Unit tests,
+synthetic integration tests, smoke runs, and validator tests are necessary but
+not sufficient for completion.
+
 The feature should not be journal-only. It should live at the QD archive layer
 and apply to every supported MAP-Elites archive geometry that can rebuild its
 cell assignment from a replay set of archiveable members.
@@ -704,6 +710,27 @@ The manifest must show:
 - adaptive-on mode has `qd_rebinning_cooldown_generations=3`.
 - adaptive-on mode has `qd_rebinning_base_p_threshold=0.05`.
 
+The full matrix is a hard completion gate. Do not mark Feature 07 complete
+from code review, unit tests, dry-run wrapper checks, or synthetic validator
+fixtures alone.
+
+If validation needs to be rerun after report or validator changes, do not
+repeat expensive baseline evaluations unless their configuration changed. It
+is acceptable to reuse the `classic` and adaptive-off baseline artifacts by
+passing their existing directories to report commands, copying them into a new
+run root, or linking them with symbolic links. Reused baselines must match the
+declared config, seed, prompt profile, model endpoint settings, generation
+count, population size, and worker limits. The adaptive-on run may also be
+reused for validator-only reruns when the runtime implementation and
+configuration are unchanged.
+
+When artifacts are reused, record the source run root and mode paths in the
+validation note. If any runtime code, candidate-evaluation behavior, matrix
+config, seed, model endpoint settings, or adaptive-on re-binning parameter
+changes, rerun the affected mode instead of reusing old artifacts. If the
+change can alter cross-mode comparability, declare a new full matrix and rerun
+all modes.
+
 ### Reports After The Run
 
 ```bash
@@ -1101,3 +1128,6 @@ Target deadline: `2026-05-12`
 - [ ] 7.7 Validate CVT size-control smoke and linked archive/PPA viewer export.
 - [ ] 7.8 Validate localized trigger evidence and collapse-escape tuning
   reports.
+- [ ] 7.9 Run the full hard-subset matrix and pass strict acceptance using the
+  resulting artifacts, reusing baseline artifacts only when the reuse rules
+  above apply.
