@@ -320,6 +320,13 @@ exact pulse widths, handshakes, reset behavior, serial pattern detection,
 and short fixed-delay phases should be modeled explicitly when that is
 clearer than a compact counter shortcut.
 
+The performance-tuning iteration keeps the same single operator, but makes
+the prompt more precise about the kinds of thought-level moves it can perform:
+improve, simplify, refactor, explore, repair-by-rethinking, and two-parent
+fusion. These are phrased as internal design intentions, not as strategy
+arms; the runtime still records every offspring as
+`single_thought_operator` and does not reintroduce bandit routing.
+
 ### One-parent payload
 
 ```text
