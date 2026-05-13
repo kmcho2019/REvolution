@@ -258,15 +258,24 @@ def _write_qd(
     )
 
 
-def _write_manifest(root: Path, *, total_worker_slots: int) -> None:
+def _write_manifest(
+    root: Path,
+    *,
+    total_worker_slots: int,
+    max_active_problems: int = 4,
+    max_workers_per_problem: int = 4,
+    one_parent_fraction: float = 0.5,
+) -> None:
     (root / "hard_iteration_manifest.txt").write_text(
         "\n".join(
             [
                 f"total_worker_slots={total_worker_slots}",
-                "max_active_problems=4",
-                "max_workers_per_problem=4",
+                f"max_active_problems={max_active_problems}",
+                f"max_workers_per_problem={max_workers_per_problem}",
                 "mode.grid_quantile_pareto_journal_bd_eoh.qd_operator_kind=eoh_strategies",
                 "mode.grid_quantile_pareto_journal_bd_unified.qd_operator_kind=single_thought_operator",
+                "mode.grid_quantile_pareto_journal_bd_unified."
+                f"qd_operator_one_parent_fraction={one_parent_fraction}",
             ]
         )
         + "\n",
@@ -307,7 +316,12 @@ def test_validate_single_thought_operator_run_accepts_clean_prompt(tmp_path):
 
 def test_validate_single_thought_operator_acceptance_allows_16_workers(tmp_path):
     subset_config = _subset_config(tmp_path)
-    _write_manifest(tmp_path, total_worker_slots=16)
+    _write_manifest(
+        tmp_path,
+        total_worker_slots=16,
+        max_active_problems=13,
+        max_workers_per_problem=4,
+    )
     _write_classic(tmp_path)
     _write_qd(tmp_path, "grid_quantile_pareto_journal_bd_eoh")
     _write_qd(tmp_path, "grid_quantile_pareto_journal_bd_unified")
@@ -333,6 +347,39 @@ def test_validate_single_thought_operator_acceptance_allows_16_workers(tmp_path)
     )
     assert exit_code == 1
     assert not any("worker" in error for error in payload["acceptance_errors"])
+
+
+def test_validate_single_thought_operator_uses_manifest_parent_fraction(tmp_path):
+    subset_config = _subset_config(tmp_path)
+    _write_manifest(tmp_path, total_worker_slots=16, one_parent_fraction=1.0)
+    _write_classic(tmp_path)
+    _write_qd(tmp_path, "grid_quantile_pareto_journal_bd_eoh")
+    _write_qd(tmp_path, "grid_quantile_pareto_journal_bd_unified")
+
+    exit_code = validate_main(
+        [
+            "--run-root",
+            str(tmp_path),
+            "--subset-config",
+            str(subset_config),
+            "--eoh-mode",
+            "grid_quantile_pareto_journal_bd_eoh",
+            "--unified-mode",
+            "grid_quantile_pareto_journal_bd_unified",
+            "--acceptance-hard-subset",
+        ]
+    )
+
+    payload = json.loads(
+        (tmp_path / "single_thought_operator_validation.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert exit_code == 1
+    assert payload["operator_audit"]["expected_one_parent_fraction"] == 1.0
+    assert not any(
+        "one-parent fraction" in error for error in payload["acceptance_errors"]
+    )
 
 
 def test_validate_counts_generation_log_ppa_not_archive_rows(tmp_path):

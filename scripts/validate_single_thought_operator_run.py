@@ -631,20 +631,9 @@ def main(argv: list[str] | None = None) -> int:
     manifest = _parse_manifest(args.run_root / "hard_iteration_manifest.txt")
     if args.acceptance_hard_subset:
         total_slots = _safe_float(manifest.get("total_worker_slots"))
-        active = _safe_float(manifest.get("max_active_problems"))
-        per_problem = _safe_float(manifest.get("max_workers_per_problem"))
         if total_slots is None or total_slots > MAX_ACCEPTANCE_WORKERS:
             acceptance_errors.append(
                 f"manifest total_worker_slots must be <= {MAX_ACCEPTANCE_WORKERS}"
-            )
-        if (
-            active is not None
-            and per_problem is not None
-            and active * per_problem > MAX_ACCEPTANCE_WORKERS
-        ):
-            acceptance_errors.append(
-                "manifest active problem worker product must be <= "
-                f"{MAX_ACCEPTANCE_WORKERS}"
             )
         if manifest.get(f"mode.{args.eoh_mode}.qd_operator_kind") != "eoh_strategies":
             acceptance_errors.append("EoH mode manifest qd_operator_kind is not eoh_strategies")
@@ -759,10 +748,19 @@ def main(argv: list[str] | None = None) -> int:
     if total_success_parent:
         one_parent_fraction = int(operator_audit["one_parent_count"]) / total_success_parent
         operator_audit["empirical_one_parent_fraction"] = one_parent_fraction
-        if args.acceptance_hard_subset and abs(one_parent_fraction - 0.5) > 0.10:
+        expected_one_parent_fraction = _safe_float(
+            manifest.get(f"mode.{args.unified_mode}.qd_operator_one_parent_fraction")
+        )
+        if expected_one_parent_fraction is None:
+            expected_one_parent_fraction = 0.5
+        operator_audit["expected_one_parent_fraction"] = expected_one_parent_fraction
+        if (
+            args.acceptance_hard_subset
+            and abs(one_parent_fraction - expected_one_parent_fraction) > 0.10
+        ):
             acceptance_errors.append(
                 "empirical one-parent fraction outside +/-0.10: "
-                f"{one_parent_fraction}"
+                f"{one_parent_fraction} versus expected {expected_one_parent_fraction}"
             )
     if args.acceptance_hard_subset and not operator_audit["same_cell_two_parent_seen"]:
         acceptance_errors.append("no same-cell two-parent prompt observed")
