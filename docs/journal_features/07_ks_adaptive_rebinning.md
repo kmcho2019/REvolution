@@ -153,14 +153,14 @@ acceptance config is:
 ```yaml
 qd_rebinning_kind: ks_triggered
 qd_rebinning_recent_generations: 3
-qd_rebinning_min_archive_members: 30
+qd_rebinning_min_archive_members: 20
 qd_rebinning_cooldown_generations: 3
 qd_rebinning_base_p_threshold: 0.05
 ```
 
 With this config, the runtime checks for drift after every completed
 generation once the archive is initialized, unless it is still in cooldown or
-has fewer than `30` retained archive members. The recent KS sample set contains
+has fewer than `20` retained archive members. The recent KS sample set contains
 valid-PPA archiveable insertion attempts from the last `3` completed
 generations. For example, the check at the end of generation `7` compares the
 current retained archive distribution against recent samples from generations
@@ -169,6 +169,21 @@ current retained archive distribution against recent samples from generations
 uses the same defaults except
 `qd_rebinning_min_archive_members: 10` so the smoke can exercise the path with
 fewer evaluations.
+
+The default minimum of `20` is chosen for the journal hard-gate configuration.
+A collapsed `2 x 1 x 2` Pareto archive with `qd_max_elites_per_cell: 5` can
+retain at most `20` active members, so this threshold lets KS checks run as
+soon as that localized geometry is saturated. It does not make the trigger
+fire by itself; recent valid-PPA samples still need to drift enough to pass
+the corrected KS threshold.
+
+If warmup finishes in generation `0` or `1`, the first generation `2` check
+can use recent samples from generations `0`, `1`, and `2`, assuming the archive
+is initialized, the retained archive has at least `20` members, and no cooldown
+is active. The generation `3` check then uses generations `1`, `2`, and `3`.
+This can break out of a localized collapsed geometry quickly when the recent
+valid-PPA samples contain broader descriptor values. It will not invent
+diversity if all valid-PPA samples remain concentrated in the collapsed region.
 
 ## Runtime Algorithm
 
@@ -444,7 +459,7 @@ KS-triggered config:
 ```yaml
 qd_rebinning_kind: ks_triggered
 qd_rebinning_recent_generations: 3
-qd_rebinning_min_archive_members: 30
+qd_rebinning_min_archive_members: 20
 qd_rebinning_cooldown_generations: 3
 qd_rebinning_base_p_threshold: 0.05
 ```
@@ -605,7 +620,7 @@ modes:
     qd_operator_two_parent_allow_intra_bin: true
     qd_rebinning_kind: ks_triggered
     qd_rebinning_recent_generations: 3
-    qd_rebinning_min_archive_members: 30
+    qd_rebinning_min_archive_members: 20
     qd_rebinning_cooldown_generations: 3
     qd_rebinning_base_p_threshold: 0.05
     seed: 42
@@ -679,7 +694,7 @@ The manifest must show:
 - adaptive-off mode has `qd_rebinning_kind=disabled`.
 - adaptive-on mode has `qd_rebinning_kind=ks_triggered`.
 - adaptive-on mode has `qd_rebinning_recent_generations=3`.
-- adaptive-on mode has `qd_rebinning_min_archive_members=30`.
+- adaptive-on mode has `qd_rebinning_min_archive_members=20`.
 - adaptive-on mode has `qd_rebinning_cooldown_generations=3`.
 - adaptive-on mode has `qd_rebinning_base_p_threshold=0.05`.
 
