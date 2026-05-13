@@ -215,6 +215,11 @@ Target deadline: `2026-05-12`
   long-running evaluation monitoring, a cheap subagent such as
   `gpt-5.3-codex-spark` may be used for progress checks and concise failure
   summaries.
+- For Feature 06 validation, cap the full matrix at `4` total worker slots. If
+  a repeated validation pass is needed after unchanged baseline modes have
+  completed, copy or symlink those baseline mode directories into the new run
+  root and rerun only the thought-only modes that require another pass, with
+  baseline provenance recorded in the validation notes.
 
 ## Final Validation Checklist
 

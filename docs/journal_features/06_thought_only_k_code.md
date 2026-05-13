@@ -1081,6 +1081,15 @@ bash scripts/run_hard_iteration_qd_vllm.sh \
   --mode matrix
 ```
 
+If the full matrix must be repeated after the unchanged baseline modes already
+completed, do not spend evaluator time rerunning those controls. Reuse the
+completed `classic`, `grid_quantile_pareto_journal_bd_eoh`, and
+`grid_quantile_pareto_journal_bd_unified` mode directories by copying them or
+linking them into the new run root, then rerun only the thought-only target or
+thought-only ablation modes that need another pass. Record the source run root
+for any copied or symlinked baseline directory in the validation notes so the
+comparison remains auditable.
+
 The manifest must show:
 
 - `reported_max_model_len >= 128000`.
