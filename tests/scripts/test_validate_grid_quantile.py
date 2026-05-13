@@ -133,6 +133,13 @@ def _write_problem(
         descriptor_profile="journal_logic_ff_width_3d",
         descriptor_axes=("logic_depth", "ff_depth", "comb_width_log"),
         occupied_cells=archive.occupied_count(),
+        rebinning={
+            "qd_rebinning_kind": "disabled",
+            "total_rebin_count": 0,
+            "last_rebin_generation": None,
+            "last_corrected_p_threshold": None,
+            "last_rebin_axes": [],
+        },
         visualization_files=artifacts.generated_files,
     )
     (root / "descriptor_health.json").write_text("{}", encoding="utf-8")

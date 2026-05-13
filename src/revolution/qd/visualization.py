@@ -72,9 +72,11 @@ def write_grid_quantile_visualizations_from_artifacts(problem_root: str | Path) 
     space = json.loads(space_path.read_text(encoding="utf-8"))
     assert space["archive_type"] == "grid_quantile"
     history = [
-        json.loads(line)
+        payload
         for line in history_path.read_text(encoding="utf-8").splitlines()
         if line.strip()
+        for payload in [json.loads(line)]
+        if "grid_quantile_geometry" in payload
     ]
     generated = _write_grid_quantile_bundle(
         output_dir=output_dir,

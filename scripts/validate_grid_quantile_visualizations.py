@@ -17,7 +17,19 @@ def _load_json(path: Path) -> dict[str, Any]:
 
 
 def _history_count(path: Path) -> int:
-    return sum(1 for line in path.read_text(encoding="utf-8").splitlines() if line.strip())
+    return sum(1 for item in _generation_history(path))
+
+
+def _generation_history(path: Path) -> list[dict[str, Any]]:
+    rows = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        payload = json.loads(line)
+        assert isinstance(payload, dict)
+        if "grid_quantile_geometry" in payload:
+            rows.append(payload)
+    return rows
 
 
 def _csv_count(path: Path) -> int:
@@ -101,11 +113,7 @@ def validate_problem(problem_root: Path) -> list[str]:
     elif data["frames"][-1].get("changed_cell_ids"):
         errors.append("clean final frame still has changed cells")
 
-    history = [
-        json.loads(line)
-        for line in history_path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
+    history = _generation_history(history_path)
     occupied_sequence = [int(snapshot["occupied_cells"]) for snapshot in history]
     cell_count_sequence = manifest.get("cell_count_sequence", [])
     if cell_count_sequence[:history_len] != occupied_sequence:
