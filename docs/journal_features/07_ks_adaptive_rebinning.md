@@ -107,6 +107,54 @@ sample sets. An axis may be tested even if the current archive geometry has
 only one effective bin for that axis. The geometry may later collapse or
 uncollapse during quantile recomputation.
 
+## Sample Sets And Cadence
+
+The KS test compares two concrete sample sets. Do not use the phrase "recent
+archive members" in implementation code or reports because it conflates the
+two sets.
+
+Retained archive members are the archive contents after the current generation
+has finished evaluation and after all archive insertions for that generation
+have been attempted:
+
+- for `scalar_elite`, this is the current elite retained in each occupied
+  cell.
+- for `pareto_front`, this is every current member retained in every occupied
+  cell front after bounded-front insertion and crowding eviction.
+- warmup-buffered `grid_quantile` samples are not retained archive members
+  until archive initialization replays them into real cells.
+- failed candidates, non-archiveable candidates, rejected insertion attempts,
+  and previously evicted front members are not retained archive members.
+
+Recent samples are archiveable insertion attempts from the last
+`qd_rebinning_recent_generations` completed generations, including the current
+generation:
+
+- before Feature 06, a recent sample is a successful archiveable code
+  candidate.
+- after Feature 06, a recent sample is a successful thought representative.
+- a recent sample remains in the recent window even if the archive later
+  rejects it or evicts it from a bounded Pareto front.
+
+The trigger runs once at the end of each completed generation. The current
+acceptance config is:
+
+```yaml
+qd_rebinning_kind: ks_triggered
+qd_rebinning_recent_generations: 3
+qd_rebinning_min_archive_members: 30
+qd_rebinning_cooldown_generations: 3
+qd_rebinning_base_p_threshold: 0.05
+```
+
+With this config, the runtime checks for drift after every completed
+generation once the archive is initialized, unless it is still in cooldown or
+has fewer than `30` retained archive members. After a re-bin, the runtime skips
+KS checks for the next `3` completed generations while the cooldown counter
+expires. The CVT smoke uses the same defaults except
+`qd_rebinning_min_archive_members: 10` so the smoke can exercise the path with
+fewer evaluations.
+
 ## Runtime Algorithm
 
 Run the trigger at generation boundaries, after all offspring in the generation
@@ -235,14 +283,25 @@ contract when enabled.
 ## Quantile Rebuild And Collapse
 
 For `grid_quantile`, the archive recomputes fresh quantile boundaries from the
-retained archive members:
+retained archive members using the existing `GridQuantileArchive` quantile
+algorithm. Do not introduce a new quantile or bin-splitting algorithm for
+Feature 07.
 
 ```text
 axis_values = [member.descriptors[axis_index] for member in retained_members]
-boundaries = [q25(axis_values), q50(axis_values), q75(axis_values)]
-boundaries = sorted unique boundary values
+sorted_values = sorted(axis_values)
+position = probability * (len(sorted_values) - 1)
+lower_index = floor(position)
+upper_index = ceil(position)
+quantile = linear interpolation between lower_index and upper_index
+boundaries = sorted unique [q25, q50, q75]
 effective_bins = len(boundaries) + 1
 ```
+
+This is the current `linear_interpolation_n_minus_1` method used by
+`GridQuantileArchive.quantile_method`. Cell assignment after re-binning keeps
+the existing rule: `bisect_right` over the frozen quantile boundaries. Boundary
+values map to the higher bin, matching the current archive behavior.
 
 If all values on an axis are identical, the boundary list is empty and the axis
 has one effective bin:
