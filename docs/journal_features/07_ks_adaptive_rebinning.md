@@ -17,7 +17,7 @@ acceptance target is the current journal path:
 
 The feature should not be journal-only. It should live at the QD archive layer
 and apply to every supported MAP-Elites archive geometry that can rebuild its
-cell assignment from retained members.
+cell assignment from a replay set of archiveable members.
 
 This document is part of the journal-methodology record. If implementation
 choices change while Feature 07 is built, update this spec in the same change
@@ -64,8 +64,8 @@ unit:
 The adaptive re-binning method has two parts:
 
 1. Detect descriptor drift with per-axis two-sample Kolmogorov-Smirnov tests.
-2. If drift is detected, rebuild the archive geometry and rebucket retained
-   archive members.
+2. If drift is detected, rebuild the archive geometry and replay archiveable
+   members into the new cells.
 
 The trigger compares two empirical distributions for each descriptor axis:
 
@@ -125,6 +125,10 @@ have been attempted:
   until archive initialization replays them into real cells.
 - failed candidates, non-archiveable candidates, rejected insertion attempts,
   and previously evicted front members are not retained archive members.
+
+Retained archive members are the archive-side KS baseline. They answer "what
+does the active archive currently represent?" They are not necessarily the full
+set replayed during a re-bin.
 
 Recent samples are archiveable insertion attempts from the last
 `qd_rebinning_recent_generations` completed generations, including the current
@@ -193,10 +197,10 @@ for each completed generation:
         record "no_rebin" drift check and return
 
     old_geometry = archive.describe_space()
-    retained_members = all current archive members
-    rebuild archive geometry from retained_members
+    replay_members = archiveable re-bin replay set
+    rebuild archive geometry from replay_members
     clear archive cells
-    reinsert every retained member
+    replay every replay member through normal archive insertion
     new_geometry = archive.describe_space()
     set cooldown to cooldown_generations
     record "rebin" event in archive history
@@ -216,27 +220,35 @@ Archive samples are retained archive members:
   cell.
 - unknown cell modes fail immediately.
 
-The rebuild uses retained archive members only. It does not use failed
-candidates, rejected candidates, recent samples that did not survive archive
-replacement, or old warmup-only records that are no longer retained.
+The re-bin replay set depends on cell mode:
 
-Previously evicted archiveable candidates do not reactivate in Feature 07. In
-local Pareto-front cell mode, a candidate can be edged out by the per-cell
-limit after Pareto-rank and NSGA-II crowding-distance eviction. That inactive
-candidate might have belonged in a useful cell after a later geometry change,
-but supporting that requires a separate inactive archiveable reservoir and a
-larger replay set. The first implementation keeps the state narrow: re-binning
-is a rebucket of the active retained archive, not a replay of all historical
-archiveable candidates.
+- `scalar_elite`: replay only the current retained scalar elites. Historical
+  scalar replacements are out of scope for Feature 07.
+- `pareto_front`: replay current retained front members plus archiveable
+  candidates that were previously evicted by the bounded per-cell Pareto-front
+  capacity.
+
+The Pareto-front replay pool is intentionally broader than the current active
+fronts. In local per-cell Pareto-front mode, a candidate can be edged out by
+the old cell's rank and NSGA-II crowding-distance competition. After re-binning,
+that same candidate may land in a different cell with different competitors and
+should be allowed to become active again if normal Pareto-front insertion keeps
+it.
+
+The replay pool still excludes failed candidates, non-archiveable candidates,
+format-invalid candidates, and duplicate-objective insertion attempts that were
+not evicted by bounded-front capacity. The replay pool is not used for the KS
+archive-distribution baseline; the KS archive baseline remains the current
+retained archive members.
 
 ## Re-Binning Behavior
 
 Re-binning means:
 
 ```text
-recompute geometry from retained archive members
+recompute geometry from the re-bin replay set
 clear archive cells
-rebucket all retained members under the new geometry
+replay all replay members under the new geometry
 rebuild each cell according to qd_cell_mode
 ```
 
@@ -262,17 +274,18 @@ archive artifacts use the new coordinates.
 
 Cell-mode rebuild behavior is exhaustive:
 
-- `scalar_elite`: reinsert retained members with scalar quality replacement.
-- `pareto_front`: reinsert retained members and reconstruct bounded Pareto
-  fronts with the configured PPA objectives.
+- `scalar_elite`: reinsert retained elites with scalar quality replacement.
+- `pareto_front`: replay retained and previously evicted archiveable members,
+  then reconstruct bounded Pareto fronts with the configured PPA objectives,
+  Pareto ranks, and NSGA-II crowding-distance eviction.
 - any unknown cell mode: fail immediately.
 
 Archive-geometry rebuild behavior is exhaustive:
 
-- `grid_quantile`: recompute quantile boundaries from retained members.
-- `grid`: recompute per-axis bounds from retained members and preserve the
+- `grid_quantile`: recompute quantile boundaries from the replay set.
+- `grid`: recompute per-axis bounds from the replay set and preserve the
   configured bin counts.
-- `cvt`: refit the descriptor scaler from retained members and regenerate
+- `cvt`: refit the descriptor scaler from the replay set and regenerate
   centroids with the configured deterministic seed.
 - any unknown archive geometry: fail immediately.
 
@@ -283,12 +296,11 @@ contract when enabled.
 ## Quantile Rebuild And Collapse
 
 For `grid_quantile`, the archive recomputes fresh quantile boundaries from the
-retained archive members using the existing `GridQuantileArchive` quantile
-algorithm. Do not introduce a new quantile or bin-splitting algorithm for
-Feature 07.
+re-bin replay set using the existing `GridQuantileArchive` quantile algorithm.
+Do not introduce a new quantile or bin-splitting algorithm for Feature 07.
 
 ```text
-axis_values = [member.descriptors[axis_index] for member in retained_members]
+axis_values = [member.descriptors[axis_index] for member in replay_members]
 sorted_values = sorted(axis_values)
 position = probability * (len(sorted_values) - 1)
 lower_index = floor(position)
@@ -373,11 +385,11 @@ corrected_p_threshold = 0.05 / 3 = 0.0167
 
 The archive then re-bins:
 
-1. Collect all retained archive members.
-2. Recompute quantile boundaries from those retained members.
-3. Collapse `ff_depth` to one bin because all retained values are `0`.
+1. Collect the re-bin replay set.
+2. Recompute quantile boundaries from that replay set.
+3. Collapse `ff_depth` to one bin because all replay values are `0`.
 4. Clear old cells.
-5. Reinsert every retained member under the new boundaries.
+5. Replay every replay member under the new boundaries.
 6. Rebuild each cell's bounded Pareto front.
 7. Record old geometry, new geometry, p-values, trigger axis, and counts.
 
@@ -387,14 +399,18 @@ If old geometry had an effective shape:
 logic_depth x ff_depth x width_log_est = 4 x 1 x 4
 ```
 
-and retained members after drift produce:
+and replay members after drift produce:
 
 ```text
 logic_depth x ff_depth x width_log_est = 4 x 1 x 3
 ```
 
 then old cell IDs such as `1,0,3` are no longer used for parent selection.
-Every retained member gets a new cell assignment under the rebuilt geometry.
+Every replay member gets a new cell assignment under the rebuilt geometry.
+
+If a candidate was previously evicted from an old crowded Pareto cell, it also
+gets replayed. It becomes active again only if it survives the bounded
+Pareto-front insertion in its new cell.
 
 ## Configuration
 
@@ -446,10 +462,14 @@ event records:
 - warmup state.
 - cooldown state.
 - retained member count.
+- replay member count.
+- previously evicted replay member count.
 - recent sample count.
 - old geometry summary.
 - new geometry summary for re-bin events.
-- reinserted member count for re-bin events.
+- replay attempt count for re-bin events.
+- final active member count after re-bin events.
+- reactivated previously evicted member count for re-bin events.
 
 `archive_space.json` records the current archive geometry, including:
 
@@ -828,16 +848,20 @@ the variance-envelope gates.
 - If no problem triggers a `rebin` event, the validator must still pass only if
   every `rebin_check` event records p-values above the corrected threshold.
 - If any problem triggers a `rebin` event:
-  - `reinserted_member_count` equals the retained member count from before the
+  - `replay_attempt_count` equals the replay member count used for the
     rebuild.
-  - no retained Pareto member is lost during rebucketing.
-  - no previously evicted inactive member reappears unless it was still part
-    of the retained archive before the rebuild.
+  - every replay member is attempted exactly once during rebucketing.
+  - final active membership is decided only by normal archive insertion in the
+    rebuilt geometry.
+  - previously evicted archiveable Pareto-front members may reactivate only by
+    surviving normal insertion in the rebuilt geometry.
+  - `reactivated_previously_evicted_member_count` is reported.
   - cooldown starts immediately after the event.
   - the next re-bin for that problem occurs only after cooldown expires.
 - Every `rebin` event records old geometry, new geometry, trigger axes,
-  p-values, corrected threshold, retained member count, and reinserted member
-  count.
+  p-values, corrected threshold, retained member count, replay member count,
+  replay attempt count, final active member count, and reactivated previously
+  evicted member count.
 - Quantile collapse is reported when an effective axis has one bin after
   rebuild.
 
@@ -887,12 +911,13 @@ capped at `8`. The smoke passes when:
 - Unit-test Bonferroni threshold calculation for one, two, and three axes.
 - Unit-test cooldown behavior.
 - Unit-test `disabled`, `ks_triggered`, and unknown re-binning config kinds.
-- Unit-test quantile recomputation from retained members only.
+- Unit-test quantile recomputation from the re-bin replay set.
 - Unit-test degenerate-axis quantile collapse.
 - Unit-test scalar-elite reinsertion after re-binning.
 - Unit-test Pareto-front reinsertion after re-binning.
-- Unit-test that previously evicted inactive members do not reappear during a
-  retained-member-only re-bin.
+- Unit-test that previously evicted Pareto-front members are replayed and may
+  reactivate when the rebuilt geometry assigns them to a cell where they
+  survive rank/crowding selection.
 - Unit-test unknown archive type and unknown cell mode failures.
 - Integration-test `grid_quantile` adaptive-on versus adaptive-off artifacts.
 - Integration-test CVT adaptive-on smoke artifacts and viewer export.
@@ -932,10 +957,12 @@ Target deadline: `2026-05-12`
 
 - [ ] 7.1 Store recent archiveable-candidate descriptor windows.
 - [ ] 7.2 Add KS test trigger with Bonferroni threshold and cooldown.
-- [ ] 7.3 Rebuild supported archive geometries from retained members, then
-  reinsert all retained members.
-- [ ] 7.4 Add archive-history, archive-space, descriptor-health, and summary
+- [ ] 7.3 Store the Pareto-front re-bin replay pool, including inactive
+  archiveable members evicted by bounded-front capacity.
+- [ ] 7.4 Rebuild supported archive geometries from the replay set, then replay
+  all replay members.
+- [ ] 7.5 Add archive-history, archive-space, descriptor-health, and summary
   reporting for re-binning decisions.
-- [ ] 7.5 Add strict adaptive-rebinning validation for the unified hard-subset
+- [ ] 7.6 Add strict adaptive-rebinning validation for the unified hard-subset
   matrix.
-- [ ] 7.6 Validate CVT size-control smoke and linked archive/PPA viewer export.
+- [ ] 7.7 Validate CVT size-control smoke and linked archive/PPA viewer export.
