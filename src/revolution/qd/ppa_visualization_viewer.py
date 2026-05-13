@@ -420,6 +420,11 @@ details summary {
     <label for="techniqueBSelect">B</label>
     <select id="techniqueBSelect"></select>
     <button class="icon-btn" id="perspectiveLockBtn" title="Lock archive perspectives">🔒</button>
+    <label for="archiveGeometryPerspectiveSelect">Archive</label>
+    <select id="archiveGeometryPerspectiveSelect">
+      <option value="native_timeline" selected>native_timeline</option>
+      <option value="final_fixed">final_fixed</option>
+    </select>
     <button class="icon-btn active" id="autoRotateBtn" title="Auto rotate 3D scenes">↻</button>
     <button class="icon-btn" id="explodeLayersBtn" title="Explode archive layers">⇅</button>
     <button class="icon-btn" id="resetBtn" title="Reset cameras and highlights">⟲</button>
@@ -597,6 +602,7 @@ const state = {
   rankGuideColorScheme: 'auto',
   projectedRankGuides: 'off',
   ppaScaleMode: 'current',
+  archiveGeometryPerspective: 'native_timeline',
   stepIndex: 0,
   timer: null,
   lockedPerspective: false,
@@ -697,6 +703,7 @@ function bindControls() {
     'rankScopeSelect',
     'sampleUniverseSelect',
     'rankFilterSelect',
+    'archiveGeometryPerspectiveSelect',
     'rankGuideMethodSelect',
     'rankGuideColorSelect',
     'projectedRankGuidesSelect',
@@ -710,6 +717,8 @@ function bindControls() {
       assertKnownRankGuideColorScheme(state.rankGuideColorScheme);
       state.projectedRankGuides = document.getElementById('projectedRankGuidesSelect').value;
       assertKnown(state.projectedRankGuides, ['off', 'on'], 'projected rank guides');
+      state.archiveGeometryPerspective = document.getElementById('archiveGeometryPerspectiveSelect').value;
+      assertKnown(state.archiveGeometryPerspective, ['native_timeline', 'final_fixed'], 'archive geometry perspective');
       render();
     });
   });
@@ -910,18 +919,48 @@ function ppaScaleRankFilter() {
   if (state.ppaScaleMode === 'final') return 'all';
   throw new Error('unknown PPA scale mode: ' + state.ppaScaleMode);
 }
+function activeCellSummaries(ds) {
+  if (state.archiveGeometryPerspective === 'native_timeline') return ds.cell_summaries_by_step_native_timeline || ds.cell_summaries_by_step;
+  if (state.archiveGeometryPerspective === 'final_fixed') return ds.cell_summaries_by_step;
+  throw new Error('unknown archive geometry perspective: ' + state.archiveGeometryPerspective);
+}
+function activeArchiveDefinition(ds) {
+  return activeArchiveSnapshot(ds).geometry;
+}
+function activeArchiveSnapshot(ds) {
+  if (state.archiveGeometryPerspective === 'final_fixed') {
+    const snapshots = ds.archive_geometry_snapshots || [];
+    const snapshot = snapshots.find((item) => item.source === 'final_archive_space') || snapshots[snapshots.length - 1];
+    return snapshot || {geometry_id: null, geometry: ds.archive_definition};
+  }
+  if (state.archiveGeometryPerspective !== 'native_timeline') throw new Error('unknown archive geometry perspective: ' + state.archiveGeometryPerspective);
+  const snapshots = ds.archive_geometry_snapshots || [];
+  if (!snapshots.length) return {geometry_id: null, geometry: ds.archive_definition};
+  const markers = ds.rebin_timeline_markers || [];
+  let geometryId = snapshots[snapshots.length - 1].geometry_id;
+  const step = stepName();
+  if (step !== 'final' && markers.length) {
+    const generation = Number(step);
+    geometryId = markers[0].old_geometry_id;
+    markers.forEach((marker) => {
+      if (generation >= Number(marker.generation)) geometryId = marker.new_geometry_id;
+    });
+  }
+  const snapshot = snapshots.find((item) => item.geometry_id === geometryId);
+  return snapshot || {geometry_id: null, geometry: ds.archive_definition};
+}
 function drawArchive(label, sceneName, technique) {
   const ds = dataset();
   const canvas = document.getElementById('archiveCanvas' + label);
   const ctx = setupCanvas(canvas);
-  const archive = ds.archive_definition;
+  const archive = activeArchiveDefinition(ds);
   const axes = archive.axes;
   const shape = effectiveShape(archive);
-  const cells = ((ds.cell_summaries_by_step[stepName()] || {})[technique] || {});
+  const cells = ((activeCellSummaries(ds)[stepName()] || {})[technique] || {});
   const camera = state.cameras[sceneName];
   document.getElementById('archive' + label + 'Title').textContent = 'Archive · ' + technique;
   document.getElementById('archive' + label + 'Badge').textContent = archive.archive_type;
-  document.getElementById('archive' + label + 'Frame').textContent = shape.join(' x ') + ' effective';
+  document.getElementById('archive' + label + 'Frame').textContent = shape.join(' x ') + ' effective · ' + state.archiveGeometryPerspective;
   clear(ctx, canvas);
   const projector = makeProjector(canvas, camera, 1.36);
   const sceneObjects = [];
@@ -954,8 +993,8 @@ function drawArchive(label, sceneName, technique) {
     }
   }
   const archiveSampleHitCount = drawArchiveSamples(ctx, projector, ds, technique, cells, sceneName, shape);
-  document.getElementById('axisSummary' + label).textContent = axisSummary(ds);
-  document.getElementById('axisDetail' + label).innerHTML = axisDetails(ds);
+  document.getElementById('axisSummary' + label).textContent = axisSummary(ds, archive);
+  document.getElementById('axisDetail' + label).innerHTML = axisDetails(ds, archive);
   document.getElementById('stats' + label).innerHTML = statsHtml((ds.technique_stats_by_step[stepName()] || {})[technique] || {});
   drawLayerPanel(label, technique, cells, shape);
   state.sceneInfo[sceneName] = {
@@ -964,6 +1003,8 @@ function drawArchive(label, sceneName, technique) {
     dimensionality: activeAxisCount(archive) >= 3 ? '3d' : '2d_slab',
     camera: {...camera},
     effective_shape: shape,
+    archive_geometry_perspective: state.archiveGeometryPerspective,
+    archive_geometry_id: activeArchiveSnapshot(ds).geometry_id,
     active_axes: axes.filter((axis) => !axis.collapsed).map((axis) => axis.name),
     collapsed_axes: axes.filter((axis) => axis.collapsed).map((axis) => axis.name),
     z_or_layer_range: [0, Math.max(0, shape[1] - 1)],
@@ -2239,12 +2280,12 @@ function sampleAxisLabels(sample, ds) {
   return labels.map((label, index) => 'sample ' + label + '=' + fmt(coord[index]));
 }
 function axisSummary(ds) {
-  const archive = ds.archive_definition;
+  const archive = arguments.length > 1 ? arguments[1] : ds.archive_definition;
   return 'X = ' + archive.axes[0].name + ' · Y = ' + archive.axes[2].name + ' · Z = ' + archive.axes[1].name +
     ' · collapsed: ' + (archive.collapsed_axes || []).join(', ') || 'none';
 }
 function axisDetails(ds) {
-  const archive = ds.archive_definition;
+  const archive = arguments.length > 1 ? arguments[1] : ds.archive_definition;
   const rows = archive.axes.map((axis) => {
     const intervals = (axis.intervals || []).map((item) => '[' + item.index + '] ' + fmt(item.lower_bound) + ' .. ' + fmt(item.upper_bound)).join('; ');
     return '<div><strong>' + axis.name + '</strong> bins ' + (axis.effective_bins || axis.bins || 'n/a') +
@@ -2252,7 +2293,10 @@ function axisDetails(ds) {
       '<br>' + intervals + '</div>';
   }).join('');
   const disclaimer = ds.archive_projection.disclaimer ? '<div class="badge">' + ds.archive_projection.disclaimer + '</div>' : '';
-  return '<summary>Axis bins / cutoffs / projection diagnostics</summary>' + rows + disclaimer;
+  const markerCount = (ds.rebin_timeline_markers || []).length;
+  return '<summary>Axis bins / cutoffs / projection diagnostics</summary>' +
+    '<div><strong>geometry perspective</strong> ' + state.archiveGeometryPerspective + ' · re-bin markers ' + markerCount + '</div>' +
+    rows + disclaimer;
 }
 function statsHtml(stats) {
   const hv = stats.hypervolume || {};
@@ -2302,6 +2346,7 @@ function debugState() {
     highlighted_sample_ids: Array.from(state.hoveredSampleIds),
     color_mode: state.colorMode,
     ppa_scale_mode: state.ppaScaleMode,
+    archive_geometry_perspective: state.archiveGeometryPerspective,
     rank_guide_mode: state.rankGuideMode,
     rank_guide_method: state.rankGuideMethod,
     rank_guide_color_scheme: state.rankGuideColorScheme,
@@ -2363,7 +2408,7 @@ function hoverFirstLayerCell(label) {
   const ds = dataset();
   const selected = selectedTechniques();
   const technique = label === 'B' ? selected[1] : selected[0];
-  const cells = ((ds.cell_summaries_by_step[stepName()] || {})[technique] || {});
+  const cells = ((activeCellSummaries(ds)[stepName()] || {})[technique] || {});
   const item = Array.from(document.querySelectorAll('#layerPanel' + label + ' .layer-cell.occupied'))[0];
   if (!item) return false;
   const summary = cells[item.dataset.cellId];

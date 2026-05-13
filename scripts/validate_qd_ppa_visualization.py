@@ -88,6 +88,13 @@ def validate_viewer(
         errors.append("rank scope default is not per_technique")
     if defaults.get("sample_universe") != "all_ppa_valid":
         errors.append("sample universe default is not all_ppa_valid")
+    if defaults.get("archive_geometry_perspective") not in (None, "native_timeline"):
+        errors.append("archive geometry perspective default is not native_timeline")
+    if defaults.get("archive_geometry_perspectives") not in (
+        None,
+        ["native_timeline", "final_fixed"],
+    ):
+        errors.append("archive geometry perspective order is not native_timeline | final_fixed")
 
     subset_keys = _load_subset(subset_config)
     manifest_keys = {problem["problem_key"] for problem in manifest.get("problems", [])}
@@ -115,6 +122,9 @@ def validate_viewer(
         "rankGuideMethodSelect",
         "rankGuideColorSelect",
         "projectedRankGuidesSelect",
+        "archiveGeometryPerspectiveSelect",
+        "native_timeline",
+        "final_fixed",
         "data-ppa-scale=\"current\"",
         "data-ppa-scale=\"final\"",
         "setPpaScaleMode",
@@ -261,6 +271,13 @@ def _validate_dataset(dataset: dict[str, Any], *, viewer_root: Path, strict: boo
     defaults = dataset.get("viewer_defaults", {})
     if defaults.get("ppa_scale_modes") != ["current", "final"]:
         errors.append(_prefix(dataset, "dataset PPA scale mode order is not current | final"))
+    if defaults.get("archive_geometry_perspective") not in (None, "native_timeline"):
+        errors.append(_prefix(dataset, "dataset archive perspective default is not native_timeline"))
+    if defaults.get("archive_geometry_perspectives") not in (
+        None,
+        ["native_timeline", "final_fixed"],
+    ):
+        errors.append(_prefix(dataset, "dataset archive perspective order is invalid"))
     if not samples:
         errors.append(_prefix(dataset, "dataset has no samples"))
         return errors
@@ -270,6 +287,7 @@ def _validate_dataset(dataset: dict[str, Any], *, viewer_root: Path, strict: boo
         errors.extend(_validate_step_ranks(dataset, samples, step, objective_keys))
         errors.extend(_validate_step_hypervolume(dataset, step))
     errors.extend(_validate_projection(dataset, strict=strict))
+    errors.extend(_validate_adaptive_geometry(dataset, strict=strict))
     errors.extend(_validate_source_hashes(dataset))
     return errors
 
@@ -304,6 +322,53 @@ def _validate_sample(
             errors.append(_prefix(dataset, f"sample missing finite objective {key}: {sample.get('sample_id')}"))
     if sample.get("archive_projection_status") == "missing_descriptors" and sample.get("archive_cell_id") is not None:
         errors.append(_prefix(dataset, "missing descriptor sample has archive cell"))
+    for key in (
+        "native_archive_cell_id",
+        "native_archive_geometry_id",
+        "final_fixed_archive_cell_id",
+        "final_fixed_archive_geometry_id",
+        "final_fixed_projection_status",
+    ):
+        if key not in sample:
+            errors.append(_prefix(dataset, f"sample missing adaptive archive field {key}: {sample.get('sample_id')}"))
+    return errors
+
+
+def _validate_adaptive_geometry(dataset: dict[str, Any], *, strict: bool) -> list[str]:
+    errors: list[str] = []
+    perspectives = dataset.get("archive_geometry_perspectives", [])
+    if perspectives and perspectives != ["native_timeline", "final_fixed"]:
+        errors.append(_prefix(dataset, "archive geometry perspectives are out of order"))
+    snapshots = dataset.get("archive_geometry_snapshots", [])
+    if not isinstance(snapshots, list) or not snapshots:
+        if strict:
+            errors.append(_prefix(dataset, "missing archive geometry snapshots"))
+        return errors
+    ids = {snapshot.get("geometry_id") for snapshot in snapshots}
+    if len(ids) != len(snapshots):
+        errors.append(_prefix(dataset, "archive geometry snapshot ids are not unique"))
+    final_snapshots = [snapshot for snapshot in snapshots if snapshot.get("source") == "final_archive_space"]
+    if len(final_snapshots) != 1:
+        errors.append(_prefix(dataset, "archive geometry snapshots must contain one final geometry"))
+    final_id = final_snapshots[0]["geometry_id"] if final_snapshots else None
+    for sample in dataset["samples"]:
+        if sample.get("final_fixed_archive_geometry_id") != final_id:
+            errors.append(_prefix(dataset, "final_fixed sample does not use final geometry id"))
+            break
+    markers = dataset.get("rebin_timeline_markers", [])
+    if markers and "cell_summaries_by_step_native_timeline" not in dataset:
+        errors.append(_prefix(dataset, "adaptive dataset missing native timeline cell summaries"))
+    for marker in markers:
+        old_id = marker.get("old_geometry_id")
+        new_id = marker.get("new_geometry_id")
+        if old_id == new_id:
+            errors.append(_prefix(dataset, "rebin marker old and new geometry ids match"))
+        if old_id not in ids or new_id not in ids:
+            errors.append(_prefix(dataset, "rebin marker references unknown geometry id"))
+        if not marker.get("trigger_axes"):
+            errors.append(_prefix(dataset, "rebin marker missing trigger axes"))
+        if marker.get("corrected_p_threshold") is None:
+            errors.append(_prefix(dataset, "rebin marker missing corrected threshold"))
     return errors
 
 
