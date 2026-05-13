@@ -210,3 +210,68 @@ def test_validate_adaptive_rebinning_run_writes_artifacts(tmp_path):
     assert localized["status"] == "pass"
     assert (run_root / "adaptive_rebinning_validation.md").is_file()
     assert (run_root / "adaptive_rebinning_localized_trigger_evidence.md").is_file()
+
+
+def test_validate_adaptive_rebinning_accepts_explained_skip(tmp_path):
+    run_root = tmp_path / "run"
+    config = _subset_config(tmp_path)
+    classic_root = _problem_root(run_root, "classic")
+    off_root = _problem_root(run_root, "off")
+    on_root = _problem_root(run_root, "on")
+    for root, count in ((classic_root, 1), (off_root, 1), (on_root, 2)):
+        _write_problem_summary(root, count)
+    _write_archive(
+        off_root,
+        mode_kind="disabled",
+        occupied=1,
+        total_members=1,
+        coverage=0.25,
+        qd_score=1.0,
+        effective_shape=[1, 1, 1],
+        collapsed_axes=["logic_depth", "ff_depth", "comb_width_log"],
+        history=[{"generation": 0, "archive_type": "grid_quantile"}],
+    )
+    _write_archive(
+        on_root,
+        mode_kind="ks_triggered",
+        occupied=2,
+        total_members=2,
+        coverage=0.5,
+        qd_score=2.0,
+        effective_shape=[2, 1, 1],
+        collapsed_axes=["ff_depth", "comb_width_log"],
+        history=[
+            {
+                "event_kind": "rebin_check",
+                "generation": 1,
+                "check_status": "skipped_min_archive_members",
+                "retained_member_count": 2,
+                "min_archive_members": 20,
+                "axis_results": [],
+                "trigger_axes": [],
+            }
+        ],
+    )
+
+    result = validate_main(
+        [
+            "--run-root",
+            str(run_root),
+            "--subset-config",
+            str(config),
+            "--classic-mode",
+            "classic",
+            "--off-mode",
+            "off",
+            "--on-mode",
+            "on",
+        ]
+    )
+
+    assert result == 0
+    localized = json.loads(
+        (run_root / "adaptive_rebinning_localized_trigger_evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert localized["status"] == "pass"

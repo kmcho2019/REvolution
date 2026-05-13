@@ -449,9 +449,8 @@ class QDEngine(EoHEngine):
         member: ArchiveMember,
         result: QDArchiveInsertResult,
     ) -> None:
+        _ = result
         self._qd_rebin_recent_members.append(member)
-        if result.decision in {"duplicate_objectives", "not_inserted"}:
-            return
         self._qd_rebin_replay_pool[member.candidate_id] = member
 
     def _recent_rebin_samples(self) -> list[ArchiveMember]:
@@ -538,19 +537,75 @@ class QDEngine(EoHEngine):
         assert self.qd_rebinning_kind == "ks_triggered"
         if not self._archive_initialized_for_rebinning():
             return
+        archive_members = [member for _, member in self._archive_members()]
+        check_base = {
+            "event_kind": "rebin_check",
+            "event_type": "rebin_check",
+            "generation": self.current_generation,
+            "archive_type": self.qd_archive_type,
+            "cell_mode": self.qd_cell_mode,
+            "qd_rebinning_kind": self.qd_rebinning_kind,
+            "recent_generations": self.qd_rebinning_recent_generations,
+            "min_archive_members": self.qd_rebinning_min_archive_members,
+            "base_p_threshold": self.qd_rebinning_base_p_threshold,
+            "retained_member_count": len(archive_members),
+            "replay_member_count": len(self._qd_rebin_replay_pool),
+        }
         if self._qd_rebin_cooldown_remaining > 0:
+            self._append_rebin_history_event(
+                {
+                    **check_base,
+                    "check_status": "skipped_cooldown",
+                    "cooldown_remaining": self._qd_rebin_cooldown_remaining,
+                    "active_axis_count": 0,
+                    "axis_results": [],
+                    "trigger_axes": [],
+                    "drift_detected": False,
+                }
+            )
             self._qd_rebin_cooldown_remaining -= 1
             return
 
-        archive_members = [member for _, member in self._archive_members()]
         if len(archive_members) < self.qd_rebinning_min_archive_members:
+            self._append_rebin_history_event(
+                {
+                    **check_base,
+                    "check_status": "skipped_min_archive_members",
+                    "active_axis_count": 0,
+                    "axis_results": [],
+                    "trigger_axes": [],
+                    "drift_detected": False,
+                }
+            )
             return
         recent_samples = self._recent_rebin_samples()
         if not recent_samples:
+            self._append_rebin_history_event(
+                {
+                    **check_base,
+                    "check_status": "skipped_no_recent_samples",
+                    "recent_sample_count": 0,
+                    "active_axis_count": 0,
+                    "axis_results": [],
+                    "trigger_axes": [],
+                    "drift_detected": False,
+                }
+            )
             return
 
         axis_results = self._ks_axis_results(archive_members, recent_samples)
         if not axis_results:
+            self._append_rebin_history_event(
+                {
+                    **check_base,
+                    "check_status": "skipped_no_active_axes",
+                    "recent_sample_count": len(recent_samples),
+                    "active_axis_count": 0,
+                    "axis_results": [],
+                    "trigger_axes": [],
+                    "drift_detected": False,
+                }
+            )
             return
         corrected_threshold = self.qd_rebinning_base_p_threshold / len(axis_results)
         self._qd_last_corrected_threshold = corrected_threshold
@@ -560,22 +615,14 @@ class QDEngine(EoHEngine):
             if float(result["ks_p_value"]) < corrected_threshold
         )
         check_event = {
-            "event_kind": "rebin_check",
-            "event_type": "rebin_check",
-            "generation": self.current_generation,
-            "archive_type": self.qd_archive_type,
-            "cell_mode": self.qd_cell_mode,
-            "qd_rebinning_kind": self.qd_rebinning_kind,
-            "recent_generations": self.qd_rebinning_recent_generations,
-            "base_p_threshold": self.qd_rebinning_base_p_threshold,
+            **check_base,
+            "check_status": "tested",
             "corrected_p_threshold": corrected_threshold,
             "active_axis_count": len(axis_results),
             "axis_results": axis_results,
             "trigger_axes": list(trigger_axes),
             "drift_detected": bool(trigger_axes),
-            "retained_member_count": len(archive_members),
             "recent_sample_count": len(recent_samples),
-            "replay_member_count": len(self._qd_rebin_replay_pool),
         }
         self._append_rebin_history_event(check_event)
         if not trigger_axes:

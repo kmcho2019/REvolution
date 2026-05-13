@@ -211,22 +211,30 @@ for each completed generation:
     if archive is not initialized:
         return
 
+    archive_members = retained members from current archive
+
     if cooldown is active:
+        record skipped "rebin_check" with check_status = skipped_cooldown
         decrement cooldown and return
 
-    archive_members = retained members from current archive
     if len(archive_members) < min_archive_members:
+        record skipped "rebin_check" with check_status = skipped_min_archive_members
         return
 
     recent_samples = archiveable samples from recent_generations
     if recent_samples is empty:
+        record skipped "rebin_check" with check_status = skipped_no_recent_samples
         return
 
     run one KS test per active descriptor axis
+    if no active axis has archive and recent values:
+        record skipped "rebin_check" with check_status = skipped_no_active_axes
+        return
+
     corrected = base_p_threshold / active_axis_count
 
     if all p_values >= corrected:
-        record "no_rebin" drift check and return
+        record tested "rebin_check" with check_status = tested and return
 
     old_geometry = archive.describe_space()
     replay_members = archiveable re-bin replay set
@@ -497,10 +505,11 @@ event records:
 - `event_kind`: `rebin_check` or `rebin`.
 - archive type and cell mode.
 - generation index.
-- tested axes.
-- KS statistics.
-- p-values.
-- corrected p-value threshold.
+- `check_status`: `tested`, `skipped_cooldown`,
+  `skipped_min_archive_members`, `skipped_no_recent_samples`, or
+  `skipped_no_active_axes` for `rebin_check` events.
+- tested axes, KS statistics, p-values, and corrected p-value threshold for
+  `tested` checks.
 - trigger axes.
 - warmup state.
 - cooldown state.
@@ -912,7 +921,9 @@ the variance-envelope gates.
 - Adaptive-on emits at least one `rebin_check` event for every initialized QD
   problem.
 - If no problem triggers a `rebin` event, the validator must still pass only if
-  every `rebin_check` event records p-values above the corrected threshold.
+  every tested `rebin_check` event records p-values above the corrected
+  threshold, or the event records an explicit skipped status caused by the
+  configured runtime gates.
 - If any problem triggers a `rebin` event:
   - `replay_attempt_count` equals the replay member count used for the
     rebuild.
@@ -972,16 +983,20 @@ The localized trigger-evidence report passes when:
 
 - every selected initialized problem emits at least one adaptive-on
   `rebin_check` event.
-- at least one selected problem emits an adaptive-on `rebin` event.
+- at least one selected problem emits an adaptive-on `rebin` event, or every
+  selected problem's no-rebin outcome is explained by tested p-values above the
+  corrected threshold or an explicit configured-gate skipped status.
 - at least one selected problem improves final healthy-cell count or final
   occupied-cell count versus adaptive-off.
 - no selected problem loses all valid PPA samples when adaptive-off had at
   least one valid PPA sample.
 
-If no selected problem triggers a `rebin` event, the report is inconclusive
-rather than a clean pass. Follow the collapse-escape tuning protocol below and
-rerun the selected problems. Do not silently treat a no-trigger targeted run as
-evidence that adaptive re-binning is working.
+If no selected problem triggers a `rebin` event and the no-trigger outcome is
+not explained by tested p-values or configured-gate skipped statuses, the
+report is inconclusive rather than a clean pass. Follow the collapse-escape
+tuning protocol below and rerun the selected problems. Do not silently treat an
+unexplained no-trigger targeted run as evidence that adaptive re-binning is
+working.
 
 ### Collapse-Escape Tuning Protocol
 

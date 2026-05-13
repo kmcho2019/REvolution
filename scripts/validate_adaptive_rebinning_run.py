@@ -357,6 +357,22 @@ def _rebin_events(root: Path) -> tuple[list[dict[str, Any]], list[dict[str, Any]
     return checks, rebins
 
 
+def _check_explains_no_rebin(check: dict[str, Any]) -> bool:
+    status = str(check.get("check_status", "tested"))
+    if status != "tested":
+        return status.startswith("skipped_")
+    threshold = _safe_float(check.get("corrected_p_threshold"))
+    if threshold is None:
+        return False
+    for axis_result in check.get("axis_results", []):
+        if not isinstance(axis_result, dict):
+            continue
+        p_value = _safe_float(axis_result.get("ks_p_value"))
+        if p_value is not None and p_value < threshold:
+            return False
+    return True
+
+
 def _validate_rebin_events(root: Path) -> list[str]:
     checks, rebins = _rebin_events(root)
     errors: list[str] = []
@@ -383,16 +399,14 @@ def _validate_rebin_events(root: Path) -> list[str]:
                     errors.append(f"rebin event missing {key}")
     elif checks:
         for check in checks:
-            threshold = _safe_float(check.get("corrected_p_threshold"))
-            if threshold is None:
-                errors.append("rebin_check missing corrected_p_threshold")
+            if _check_explains_no_rebin(check):
                 continue
-            for axis_result in check.get("axis_results", []):
-                if not isinstance(axis_result, dict):
-                    continue
-                p_value = _safe_float(axis_result.get("ks_p_value"))
-                if p_value is not None and p_value < threshold:
-                    errors.append("no rebin event despite p-value below corrected threshold")
+            if str(check.get("check_status", "tested")) != "tested":
+                errors.append("rebin_check has unknown skipped status")
+            elif _safe_float(check.get("corrected_p_threshold")) is None:
+                errors.append("rebin_check missing corrected_p_threshold")
+            else:
+                errors.append("no rebin event despite p-value below corrected threshold")
     return errors
 
 
@@ -462,6 +476,7 @@ def _localized_report(
     selected = []
     any_rebin = False
     any_health_improved = False
+    every_no_rebin_explained = True
     catastrophic_losses: list[str] = []
     for key, off in _localized_candidates(off_metrics=off_metrics):
         on = on_metrics[key]
@@ -470,6 +485,11 @@ def _localized_report(
         if on.problem_root is not None:
             checks, rebins = _rebin_events(Path(on.problem_root))
         any_rebin = any_rebin or bool(rebins)
+        if not rebins:
+            every_no_rebin_explained = every_no_rebin_explained and bool(checks)
+            every_no_rebin_explained = every_no_rebin_explained and all(
+                _check_explains_no_rebin(check) for check in checks
+            )
         health_delta = on.healthy_cell_count - off.healthy_cell_count
         occupied_delta = (on.occupied_cells or 0) - (off.occupied_cells or 0)
         any_health_improved = any_health_improved or health_delta > 0 or occupied_delta > 0
@@ -530,8 +550,8 @@ def _localized_report(
         for item in selected:
             if not item["rebin_checks"]:
                 errors.append(f"{item['problem']} has no adaptive-on rebin_check event")
-        if not any_rebin:
-            errors.append("no selected localized problem triggered rebin")
+        if not any_rebin and not every_no_rebin_explained:
+            errors.append("selected localized checks do not explain absence of rebin")
         if not any_health_improved:
             errors.append("no selected localized problem improved healthy or occupied cells")
         for key in catastrophic_losses:

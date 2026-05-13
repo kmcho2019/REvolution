@@ -175,6 +175,73 @@ def test_qd_engine_rebin_recent_window_uses_generation(tmp_path, monkeypatch):
     ]
 
 
+def test_qd_engine_rebin_replay_keeps_scalar_rejects(tmp_path, monkeypatch):
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_archive_type="grid_quantile",
+        qd_descriptor_profile="journal_logic_ff_width_3d",
+        qd_grid_quantile_warmup_successes=2,
+        qd_rebinning_kind="ks_triggered",
+        qd_rebinning_recent_generations=1,
+        qd_rebinning_min_archive_members=2,
+        qd_rebinning_base_p_threshold=0.99,
+    )
+    artifact_root = tmp_path / "artifacts"
+    engine.logger = SimpleNamespace(log_dir=str(artifact_root))
+    old = _qd_member(
+        "old",
+        generation=0,
+        descriptors=(0.0, 0.0, 0.0),
+        insertion_index=1,
+        quality_score=10.0,
+    )
+    far = _qd_member(
+        "far",
+        generation=0,
+        descriptors=(100.0, 0.0, 100.0),
+        insertion_index=2,
+        quality_score=1.0,
+    )
+    rejected = _qd_member(
+        "rejected",
+        generation=0,
+        descriptors=(10.0, 0.0, 10.0),
+        insertion_index=3,
+        quality_score=9.0,
+    )
+    recent_members = [
+        _qd_member(
+            f"recent-{index}",
+            generation=1,
+            descriptors=(200.0 + index, 0.0, 200.0 + index),
+            insertion_index=100 + index,
+        )
+        for index in range(4)
+    ]
+    engine.success_archive.rebuild_from_records(
+        [old, far],
+        initialization_mode="warmup_complete",
+    )
+    reject_result = engine.success_archive.insert(rejected)
+    assert reject_result.decision == "not_inserted"
+    engine._qd_rebin_replay_pool = {member.candidate_id: member for member in [old, far]}
+    engine._record_rebin_sample(rejected, reject_result)
+    engine._qd_rebin_replay_pool.update(
+        {member.candidate_id: member for member in recent_members}
+    )
+    engine._qd_rebin_recent_members = list(recent_members)
+    engine.current_generation = 1
+
+    engine._maybe_adaptive_rebin()
+
+    rebin_event = json.loads(
+        (artifact_root / "archive_history.jsonl").read_text(encoding="utf-8").splitlines()[-1]
+    )
+    assert rebin_event["event_kind"] == "rebin"
+    assert rebin_event["replay_member_count"] == 7
+
+
 def test_qd_engine_default_grid_axes_include_power_for_sequential_problem(tmp_path, monkeypatch):
     problem_spec = ProblemSpec(
         benchmark_name="RTLLM",
@@ -1394,11 +1461,13 @@ def test_qd_engine_ks_rebin_triggers_and_cools_down(tmp_path, monkeypatch):
     engine._maybe_adaptive_rebin()
 
     history_after_cooldown = [
-        line
+        json.loads(line)
         for line in (artifact_root / "archive_history.jsonl").read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
-    assert len(history_after_cooldown) == 2
+    assert len(history_after_cooldown) == 3
+    assert history_after_cooldown[-1]["event_kind"] == "rebin_check"
+    assert history_after_cooldown[-1]["check_status"] == "skipped_cooldown"
     assert engine._qd_rebin_cooldown_remaining == 2
 
 
