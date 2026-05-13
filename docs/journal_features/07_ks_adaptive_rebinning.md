@@ -319,6 +319,12 @@ Archive-geometry rebuild behavior is exhaustive:
   centroids with the configured deterministic seed.
 - any unknown archive geometry: fail immediately.
 
+Uniform `grid` archives require nonzero lower/upper ranges. If every replay
+member has the same value on a grid axis, rebuild that axis as a one-unit
+interval centered on the shared value and keep the configured bin count. This
+keeps the uniform-grid archive valid without inventing a new collapse behavior
+that only `grid_quantile` currently supports.
+
 The first full acceptance path is `grid_quantile`. `cvt` support is validated
 with a smoke run. Uniform `grid` support should follow the same archive-layer
 contract when enabled.

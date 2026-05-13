@@ -71,6 +71,11 @@ class RevolutionBackendConfig:
     qd_operator_one_parent_fraction: float = 0.5
     qd_operator_archive_context_size: int = 4
     qd_operator_two_parent_allow_intra_bin: bool = True
+    qd_rebinning_kind: str = "disabled"
+    qd_rebinning_recent_generations: int = 3
+    qd_rebinning_min_archive_members: int = 20
+    qd_rebinning_cooldown_generations: int = 3
+    qd_rebinning_base_p_threshold: float = 0.05
 
 
 class RevolutionBackend(EvolutionBackend):
@@ -159,6 +164,11 @@ class RevolutionBackend(EvolutionBackend):
                 qd_operator_one_parent_fraction=self.config.qd_operator_one_parent_fraction,
                 qd_operator_archive_context_size=self.config.qd_operator_archive_context_size,
                 qd_operator_two_parent_allow_intra_bin=self.config.qd_operator_two_parent_allow_intra_bin,
+                qd_rebinning_kind=self.config.qd_rebinning_kind,
+                qd_rebinning_recent_generations=self.config.qd_rebinning_recent_generations,
+                qd_rebinning_min_archive_members=self.config.qd_rebinning_min_archive_members,
+                qd_rebinning_cooldown_generations=self.config.qd_rebinning_cooldown_generations,
+                qd_rebinning_base_p_threshold=self.config.qd_rebinning_base_p_threshold,
             )
         self.engine = engine_cls(**engine_kwargs)
 
@@ -214,6 +224,13 @@ class RevolutionBackend(EvolutionBackend):
                         "one_parent_fraction": self.config.qd_operator_one_parent_fraction,
                         "archive_context_size": self.config.qd_operator_archive_context_size,
                         "two_parent_allow_intra_bin": self.config.qd_operator_two_parent_allow_intra_bin,
+                    },
+                    "rebinning": {
+                        "kind": self.config.qd_rebinning_kind,
+                        "recent_generations": self.config.qd_rebinning_recent_generations,
+                        "min_archive_members": self.config.qd_rebinning_min_archive_members,
+                        "cooldown_generations": self.config.qd_rebinning_cooldown_generations,
+                        "base_p_threshold": self.config.qd_rebinning_base_p_threshold,
                     },
                 },
             )

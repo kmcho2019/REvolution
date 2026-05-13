@@ -10,6 +10,7 @@ import pytest
 from revolution.algorithm import Heuristic
 from revolution.qd.engine import QDEngine
 from revolution.qd.archive import GridQuantileArchive
+from revolution.qd.types import ArchiveMember
 from revolution.runtime.problem_spec import ProblemSpec
 
 
@@ -65,12 +66,79 @@ def _engine(
     return engine
 
 
+def _qd_member(
+    candidate_id: str,
+    *,
+    generation: int,
+    descriptors: tuple[float, ...],
+    insertion_index: int,
+    quality_score: float | None = None,
+) -> ArchiveMember:
+    candidate = Heuristic(
+        candidate_id,
+        "module m; endmodule",
+        "",
+        score=quality_score if quality_score is not None else float(insertion_index),
+        generation=generation,
+        status="success",
+    )
+    candidate.id = candidate_id
+    candidate.ppa_success = True
+    candidate.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    candidate.graph_metrics = {
+        "logic_depth": float(descriptors[0]),
+        "ff_depth": float(descriptors[1]),
+        "comb_width_log": float(descriptors[2]),
+    }
+    candidate.archive_insertion_index = insertion_index
+    return ArchiveMember(
+        candidate_id=candidate_id,
+        descriptors=descriptors,
+        quality_score=float(candidate.quality_score),
+        objectives={
+            "g_P": float(insertion_index),
+            "g_A": float(1000 - insertion_index),
+            "g_T": float(insertion_index % 17),
+        },
+        payload=candidate,
+        insertion_index=insertion_index,
+    )
+
+
 def test_qd_engine_phase_mode_defaults_follow_refine_diff_only(tmp_path, monkeypatch):
     engine = _engine(tmp_path, monkeypatch)
     engine.generation_mode = "diff"
     assert engine._phase_mode("fail") == "whole"
     assert engine._phase_mode("seed") == "whole"
     assert engine._phase_mode("refine") == "diff"
+
+
+def test_qd_engine_rejects_unknown_rebinning_kind(tmp_path, monkeypatch):
+    with pytest.raises(ValueError, match="Unsupported qd_rebinning_kind"):
+        _engine(tmp_path, monkeypatch, qd_rebinning_kind="manual")
+
+
+def test_qd_engine_rebin_recent_window_uses_generation(tmp_path, monkeypatch):
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_rebinning_kind="ks_triggered",
+        qd_rebinning_recent_generations=2,
+    )
+    engine._qd_rebin_recent_members = [
+        _qd_member("gen-0", generation=0, descriptors=(0.0, 0.0, 0.0), insertion_index=1),
+        _qd_member("gen-1", generation=1, descriptors=(1.0, 0.0, 1.0), insertion_index=2),
+        _qd_member("gen-2", generation=2, descriptors=(2.0, 0.0, 2.0), insertion_index=3),
+    ]
+    engine.current_generation = 2
+
+    recent = engine._recent_rebin_samples()
+
+    assert [member.candidate_id for member in recent] == ["gen-1", "gen-2"]
+    assert [member.candidate_id for member in engine._qd_rebin_recent_members] == [
+        "gen-1",
+        "gen-2",
+    ]
 
 
 def test_qd_engine_default_grid_axes_include_power_for_sequential_problem(tmp_path, monkeypatch):
@@ -1224,6 +1292,163 @@ def test_qd_engine_finalizes_partial_cvt_warmup_at_run_end(tmp_path, monkeypatch
     assert summary_payload["occupied_cells"] == 1
     assert history_payload["phase"] == "run_finalization_fallback"
     assert history_payload["generation"] == 1
+
+
+def test_qd_engine_ks_rebin_triggers_and_cools_down(tmp_path, monkeypatch):
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_archive_type="grid_quantile",
+        qd_descriptor_profile="journal_logic_ff_width_3d",
+        qd_grid_quantile_warmup_successes=4,
+        qd_cell_mode="pareto_front",
+        qd_max_elites_per_cell=50,
+        qd_rebinning_kind="ks_triggered",
+        qd_rebinning_recent_generations=1,
+        qd_rebinning_min_archive_members=20,
+        qd_rebinning_cooldown_generations=3,
+    )
+    artifact_root = tmp_path / "artifacts"
+    engine.logger = SimpleNamespace(log_dir=str(artifact_root))
+    old_members = [
+        _qd_member(
+            f"old-{index}",
+            generation=0,
+            descriptors=(float(index), 0.0, float(index)),
+            insertion_index=index + 1,
+        )
+        for index in range(20)
+    ]
+    recent_members = [
+        _qd_member(
+            f"recent-{index}",
+            generation=1,
+            descriptors=(100.0 + index, 0.0, 100.0 + index),
+            insertion_index=100 + index,
+        )
+        for index in range(20)
+    ]
+    engine.success_archive.rebuild_from_records(
+        old_members,
+        initialization_mode="warmup_complete",
+    )
+    engine._qd_rebin_replay_pool = {
+        member.candidate_id: member for member in [*old_members, *recent_members]
+    }
+    engine._qd_rebin_recent_members = list(recent_members)
+    engine.current_generation = 1
+
+    engine._maybe_adaptive_rebin()
+
+    history = [
+        json.loads(line)
+        for line in (artifact_root / "archive_history.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert [event["event_kind"] for event in history] == ["rebin_check", "rebin"]
+    rebin_event = history[-1]
+    assert rebin_event["trigger_axes"]
+    assert rebin_event["replay_member_count"] == 40
+    assert rebin_event["replay_attempt_count"] == 40
+    assert rebin_event["cooldown_remaining"] == 3
+    assert rebin_event["total_rebin_count"] == 1
+    assert engine._qd_rebin_count == 1
+    assert engine._qd_rebin_cooldown_remaining == 3
+    assert engine.success_archive.initialization_mode == "adaptive_rebin"
+
+    engine.current_generation = 2
+    engine._maybe_adaptive_rebin()
+
+    history_after_cooldown = [
+        line
+        for line in (artifact_root / "archive_history.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert len(history_after_cooldown) == 2
+    assert engine._qd_rebin_cooldown_remaining == 2
+
+
+def test_qd_engine_ks_rebin_replays_displaced_member(tmp_path, monkeypatch):
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_archive_type="grid_quantile",
+        qd_descriptor_profile="journal_logic_ff_width_3d",
+        qd_grid_quantile_warmup_successes=2,
+        qd_rebinning_kind="ks_triggered",
+        qd_rebinning_recent_generations=1,
+        qd_rebinning_min_archive_members=2,
+        qd_rebinning_base_p_threshold=0.5,
+    )
+    artifact_root = tmp_path / "artifacts"
+    engine.logger = SimpleNamespace(log_dir=str(artifact_root))
+    old = _qd_member(
+        "old",
+        generation=0,
+        descriptors=(0.0, 0.0, 0.0),
+        insertion_index=1,
+        quality_score=1.0,
+    )
+    far = _qd_member(
+        "far",
+        generation=0,
+        descriptors=(10.0, 0.0, 10.0),
+        insertion_index=2,
+        quality_score=0.5,
+    )
+    better = _qd_member(
+        "better",
+        generation=0,
+        descriptors=(0.1, 0.0, 0.1),
+        insertion_index=3,
+        quality_score=2.0,
+    )
+    support = _qd_member(
+        "support",
+        generation=0,
+        descriptors=(0.05, 0.0, 0.05),
+        insertion_index=4,
+        quality_score=1.5,
+    )
+    recent_members = [
+        _qd_member(
+            f"recent-{index}",
+            generation=1,
+            descriptors=(100.0 + index, 0.0, 100.0 + index),
+            insertion_index=100 + index,
+            quality_score=0.0,
+        )
+        for index in range(4)
+    ]
+    engine.success_archive.rebuild_from_records(
+        [old, far],
+        initialization_mode="warmup_complete",
+    )
+    support_result = engine.success_archive.insert(support)
+    assert support_result.replaced is True
+    result = engine.success_archive.insert(better)
+    assert result.replaced is True
+    assert {member.candidate_id for _, member in engine.success_archive.members()} == {
+        "better",
+        "far",
+    }
+    engine._qd_rebin_replay_pool = {
+        member.candidate_id: member
+        for member in [old, far, support, better, *recent_members]
+    }
+    engine._qd_rebin_recent_members = list(recent_members)
+    engine.current_generation = 1
+
+    engine._maybe_adaptive_rebin()
+
+    active_ids = {member.candidate_id for _, member in engine.success_archive.members()}
+    assert active_ids & {"old", "support"}
+    rebin_event = json.loads(
+        (artifact_root / "archive_history.jsonl").read_text(encoding="utf-8").splitlines()[-1]
+    )
+    assert rebin_event["event_kind"] == "rebin"
+    assert rebin_event["displaced_replay_member_count"] >= 1
+    assert rebin_event["reactivated_displaced_member_count"] >= 1
 
 
 def test_qd_engine_creates_targeted_mutation_prompt(tmp_path, monkeypatch):
