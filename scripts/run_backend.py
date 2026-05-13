@@ -432,6 +432,13 @@ def _build_backend(
             qd_operator_one_parent_fraction=args.qd_operator_one_parent_fraction,
             qd_operator_archive_context_size=args.qd_operator_archive_context_size,
             qd_operator_two_parent_allow_intra_bin=args.qd_operator_two_parent_allow_intra_bin,
+            representation_kind=args.representation_kind,
+            code_samples_per_thought=args.code_samples_per_thought,
+            representative_sample=args.representative_sample,
+            repair_kind=args.repair_kind,
+            repair_max_attempts_per_sample=args.repair_max_attempts_per_sample,
+            repair_max_attempts_per_thought=args.repair_max_attempts_per_thought,
+            repair_evidence=args.repair_evidence,
         )
         return RevolutionBackend(
             context=context,
@@ -964,6 +971,33 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         "--qd_operator_two_parent_allow_intra_bin",
         action=argparse.BooleanOptionalAction,
         default=True,
+    )
+    parser.add_argument(
+        "--representation_kind",
+        type=str,
+        default="code_individual",
+        choices=["code_individual", "thought_only"],
+    )
+    parser.add_argument("--code_samples_per_thought", type=int, default=4)
+    parser.add_argument(
+        "--representative_sample",
+        type=str,
+        default="best_successful_quality",
+        choices=["best_successful_quality"],
+    )
+    parser.add_argument(
+        "--repair_kind",
+        type=str,
+        default="none",
+        choices=["none", "bounded_local_repair"],
+    )
+    parser.add_argument("--repair_max_attempts_per_sample", type=int, default=0)
+    parser.add_argument("--repair_max_attempts_per_thought", type=int, default=0)
+    parser.add_argument(
+        "--repair_evidence",
+        type=str,
+        default="stage_scoped_logs",
+        choices=["stage_scoped_logs"],
     )
 
     # FunSearch-specific

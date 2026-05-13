@@ -96,6 +96,11 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
             qd_cell_mode="pareto_front",
             qd_max_elites_per_cell=5,
             qd_objectives="ppa",
+            representation_kind="thought_only",
+            code_samples_per_thought=4,
+            repair_kind="bounded_local_repair",
+            repair_max_attempts_per_sample=1,
+            repair_max_attempts_per_thought=4,
         ),
         base_save_path=str(tmp_path / "exp"),
     )
@@ -111,6 +116,11 @@ def test_revolution_backend_uses_qd_engine_for_revolution_qd(monkeypatch, tmp_pa
     assert captured["kwargs"]["qd_max_elites_per_cell"] == 5
     assert captured["kwargs"]["qd_objectives"] == "ppa"
     assert captured["kwargs"]["qd_descriptor_file"] is None
+    assert captured["kwargs"]["representation_kind"] == "thought_only"
+    assert captured["kwargs"]["code_samples_per_thought"] == 4
+    assert captured["kwargs"]["repair_kind"] == "bounded_local_repair"
+    assert captured["kwargs"]["repair_max_attempts_per_sample"] == 1
+    assert captured["kwargs"]["repair_max_attempts_per_thought"] == 4
     assert captured["kwargs"]["problem_spec"].problem_name == "Prob001"
     assert captured["kwargs"]["candidate_workers"] == 4
     assert captured["kwargs"]["problem_concurrency"] is services.problem_concurrency

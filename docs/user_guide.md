@@ -184,6 +184,28 @@ Current feature status:
   candidate interface and `eoh_v1` response shape for Feature 05, but its
   parent prompt payload excludes parent code, individual feedback, and
   code-level logs.
+- Feature 06 of the journal roadmap adds the thought-only representation path:
+  `representation.kind=thought_only`, `code_samples_per_thought=4`,
+  structured JSON `thought_spec_v1` prompts, and a unified
+  `journal_thought_only` prompt profile. The representation is intended to work
+  with both `eoh_strategies` and `single_thought_operator` so EoH/unified
+  operator effects can be separated from thought-only representation effects.
+  Required thought fields must be non-empty; unsupported or unspecified details
+  need explicit justified placeholders rather than `unknown` or blank values.
+  Invalid thought specs consume the thought slot and enter fail accounting
+  instead of being replaced by resampling, but they are excluded from parent
+  selection.
+  In thought-only mode, the operator produces the thought and all `k` samples
+  are generated through the same thought-conditioned code path. The EoH
+  thought-only ablation uses EoH thought-only prompt adapters rather than
+  generating and discarding EoH code. In the target mode, `population_size` remains a code-sample evaluation budget,
+  so `population_size=20` with `k=4` yields five thought individuals per
+  generation, including Gen0, via derived `thought_population_size=5`. Optional bounded
+  sample-local repair is specified as a separate repair budget; it does not
+  reduce the base `k` samples and is tracked separately for budget-normalized
+  metrics. `success_rate` is reporting-only and does not affect archive
+  replacement or parent selection. Primary acceptance keeps repair disabled,
+  while bounded repair is tested as an optional rescue/ablation path.
 - `qd_descriptor_file` may now define both `profiles:` and `grid_axes:` so the
   same YAML can control descriptor selection and per-axis grid bin/bounds
   settings.
@@ -656,6 +678,10 @@ VerilogEval-Spec-to-RTL iteration testing:
   `qd_cvt_warmup_successes`, `qd_fill_target_fraction`, and
   `qd_cell_reservoir`, so the same wrapper can drive bounded archive-tuning
   sweeps without shell edits.
+  The Feature 06 thought-only acceptance matrix extends this pattern with
+  EoH/unified no-thought controls plus EoH/unified thought-only modes, including
+  `grid_quantile_pareto_journal_thought_k4`, and caps live validation at four
+  simultaneous worker slots.
 - The March 2026 hard-subset archive-tuning screen selected the current
   `cvt_size_control` pack as the balanced default for this workflow:
   `qd_archive_type=cvt`, `qd_num_cells=16`,
@@ -881,7 +907,10 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
   wrapper forwards `qd_cell_mode`, `qd_max_elites_per_cell`, and
   `qd_objectives` from `matrix_defaults` or per-mode overrides, plus the
   Feature 05 `qd_operator_*` fields for EoH-versus-unified journal prompt
-  comparisons. Use `--smoke-subset N` for bounded pre-acceptance wiring
+  comparisons. Feature 06 adds pass-through for per-mode
+  `prompt_profile`, thought-only representation, and repair fields so the
+  EoH/unified no-thought controls and `k=4` thought-only ablations can run in
+  the same matrix. Use `--smoke-subset N` for bounded pre-acceptance wiring
   checks.
 - `scripts/report_hard_iteration_analysis.py`: summarize hard-subset classic-vs-QD runs into a markdown report plus JSON recommendations.
 - `scripts/report_pareto_analysis.py`: summarize hard-subset backend runs into Pareto-front figures plus per-backend hypervolume and frontier-size tables.
