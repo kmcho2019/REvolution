@@ -772,6 +772,8 @@ The audit command must emit:
 
 - `adaptive_rebinning_validation.json`.
 - `adaptive_rebinning_validation.md`.
+- `adaptive_rebinning_localized_trigger_evidence.json`.
+- `adaptive_rebinning_localized_trigger_evidence.md`.
 - non-zero exit status on any failed hard gate.
 
 ## Quantitative Acceptance Gates
@@ -896,6 +898,92 @@ the variance-envelope gates.
 - Quantile collapse is reported when an effective axis has one bin after
   rebuild.
 
+### Localized Trigger Evidence
+
+The full hard-subset matrix can be statistically valid even when no re-bin
+fires. That is not enough to validate the mechanism. Feature 07 also requires a
+targeted trigger-evidence report that focuses on problems where adaptive-off
+ends with localized archive geometry.
+
+Select up to three localized problems after the adaptive-off run:
+
+1. Require at least one valid PPA sample and an initialized QD archive.
+2. Prefer problems with one or more collapsed descriptor axes.
+3. Then prefer the smallest final effective cell count.
+4. If there is still a tie, prefer the smallest occupied-cell count.
+
+A problem is localized when either condition holds:
+
+- at least one configured descriptor axis collapsed to one effective bin.
+- final effective cell count is `4` or less.
+
+For each selected problem, run or inspect the matching adaptive-on result with
+the same seed and default Feature 07 config. The report must include:
+
+- selected problem ids and why each problem was selected.
+- adaptive-off final effective shape, collapsed axes, occupied cells, healthy
+  cells, retained member count, QD coverage, and QD score.
+- adaptive-on final effective shape, collapsed axes, occupied cells, healthy
+  cells, retained member count, QD coverage, and QD score.
+- every adaptive-on `rebin_check` event for the selected problems.
+- every adaptive-on `rebin` event for the selected problems.
+- deltas for effective cell count, occupied cells, healthy cells, QD coverage,
+  and QD score.
+
+A healthy cell is an occupied runtime archive cell with at least one retained
+member whose representative candidate has valid PPA and finite descriptor
+values for every configured descriptor axis. For `pareto_front`, a cell is
+healthy when at least one retained front member satisfies that condition.
+
+The localized trigger-evidence report passes when:
+
+- every selected initialized problem emits at least one adaptive-on
+  `rebin_check` event.
+- at least one selected problem emits an adaptive-on `rebin` event.
+- at least one selected problem improves final healthy-cell count or final
+  occupied-cell count versus adaptive-off.
+- no selected problem loses all valid PPA samples when adaptive-off had at
+  least one valid PPA sample.
+
+If no selected problem triggers a `rebin` event, the report is inconclusive
+rather than a clean pass. Follow the collapse-escape tuning protocol below and
+rerun the selected problems. Do not silently treat a no-trigger targeted run as
+evidence that adaptive re-binning is working.
+
+### Collapse-Escape Tuning Protocol
+
+Use this protocol only after the default Feature 07 config produces localized
+problems that do not trigger or do not improve archive health.
+
+Inspect the adaptive-on event stream before changing parameters:
+
+- If no `rebin_check` events exist, lower
+  `qd_rebinning_min_archive_members` for the targeted evidence run. Start with
+  `10`, matching the CVT smoke. Keep the full hard-subset default at `20`
+  unless the tuned value is adopted in the spec and the full matrix is rerun.
+- If checks exist but every p-value is far above the corrected threshold, do
+  not tune the trigger. The archive and recent samples do not show statistical
+  drift under the current descriptors.
+- If checks exist and p-values are close to the corrected threshold, run one
+  targeted sensitivity pass with `qd_rebinning_base_p_threshold: 0.10`.
+- If generation summaries show new descriptor regions but the recent window is
+  too diluted by older samples, run one targeted sensitivity pass with
+  `qd_rebinning_recent_generations: 2`.
+- If a re-bin fires, geometry remains collapsed, and broader valid-PPA samples
+  appear only during cooldown, run one targeted sensitivity pass with
+  `qd_rebinning_cooldown_generations: 1`.
+- If a re-bin fires and the replay set still has no descriptor diversity on the
+  collapsed axis, stop tuning re-binning parameters. The search has not yet
+  produced valid-PPA diversity for that axis. Record this as a no-escape case
+  and continue with more generations, different operators, or Feature 06
+  thought-only integration work.
+
+Every tuning attempt must produce a separate validation note with the exact
+parameter changes, selected problem ids, trigger events, health deltas, and
+conclusion. A tuned setting is not accepted as the Feature 07 default unless
+the spec, implementation config, and full hard-subset matrix are updated
+together.
+
 ## CVT Smoke And Visualization Guard
 
 Feature 07 also requires a smaller non-journal smoke for the CVT archive path.
@@ -957,6 +1045,10 @@ capped at `8`. The smoke passes when:
 - Integration-test CVT adaptive-on smoke artifacts and viewer export.
 - Integration-test adaptive viewer export with native-timeline and final-fixed
   geometry perspectives.
+- Integration-test localized trigger-evidence selection, report generation,
+  and health deltas.
+- Regression-test collapse-escape tuning notes for no-check, no-trigger, and
+  no-escape outcomes.
 - Regression-test the strict acceptance validator with synthetic passing and
   failing summaries.
 
@@ -1001,3 +1093,5 @@ Target deadline: `2026-05-12`
 - [ ] 7.6 Add strict adaptive-rebinning validation for the unified hard-subset
   matrix.
 - [ ] 7.7 Validate CVT size-control smoke and linked archive/PPA viewer export.
+- [ ] 7.8 Validate localized trigger evidence and collapse-escape tuning
+  reports.
