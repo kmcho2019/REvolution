@@ -48,13 +48,18 @@ archiveable offspring show distributional drift.
 
 Feature 06 thought-only individuals and k-code evaluation are separate work.
 Feature 07 must not implement Feature 06. It should be compatible with either
-runtime representation by treating "recent sample" as the archive insertion
-unit:
+runtime representation by treating the archiveable unit consistently:
 
-- before Feature 06 merges, the sample is the successful archiveable code
-  candidate that the current QD archive attempts to insert.
-- after Feature 06 merges, the sample is the successful thought
-  representative selected by the thought evaluation layer.
+- before Feature 06 merges, the archiveable unit is the successful code
+  candidate with valid PPA that the current QD archive attempts to insert.
+- after Feature 06 merges, the archiveable unit is the successful thought
+  representative selected by the thought evaluation layer, with descriptor
+  values from its representative valid-PPA code sample.
+
+The recent-window collector, re-bin replay pool, and artifact schema should use
+that same archiveable unit abstraction. Feature 07 must not assume that the
+runtime object is permanently a code-level candidate or permanently a
+thought-level individual.
 
 `scipy` is already a project dependency, so the first implementation can use
 `scipy.stats.ks_2samp` without adding a new dependency.
@@ -130,15 +135,17 @@ Retained archive members are the archive-side KS baseline. They answer "what
 does the active archive currently represent?" They are not necessarily the full
 set replayed during a re-bin.
 
-Recent samples are archiveable insertion attempts from the last
+Recent samples are valid-PPA archiveable insertion attempts from the last
 `qd_rebinning_recent_generations` completed generations, including the current
 generation:
 
 - before Feature 06, a recent sample is a successful archiveable code
-  candidate.
-- after Feature 06, a recent sample is a successful thought representative.
+  candidate with valid PPA.
+- after Feature 06, a recent sample is a successful thought representative
+  whose representative code sample has valid PPA.
 - a recent sample remains in the recent window even if the archive later
-  rejects it or evicts it from a bounded Pareto front.
+  rejects it, replaces it as a scalar elite, or evicts it from a bounded
+  Pareto front.
 
 The trigger runs once at the end of each completed generation. The current
 acceptance config is:
@@ -206,10 +213,11 @@ for each completed generation:
     record "rebin" event in archive history
 ```
 
-Recent-window samples are the same unit that the archive attempts to insert:
+Recent-window samples are the same archiveable unit that the archive attempts
+to insert:
 
 - current code-candidate QD modes record successful archiveable code
-  candidates.
+  candidates with valid PPA.
 - thought-only QD modes record successful thought representatives, not every
   code sample in a k-code evaluation.
 
@@ -220,26 +228,28 @@ Archive samples are retained archive members:
   cell.
 - unknown cell modes fail immediately.
 
-The re-bin replay set depends on cell mode:
+The re-bin replay set is all valid-PPA archiveable units retained in the
+archiveable replay pool:
 
-- `scalar_elite`: replay only the current retained scalar elites. Historical
-  scalar replacements are out of scope for Feature 07.
-- `pareto_front`: replay current retained front members plus archiveable
-  candidates that were previously evicted by the bounded per-cell Pareto-front
-  capacity.
+- current retained archive members.
+- scalar-elite candidates that were previously replaced by a stronger scalar
+  elite in the same old cell.
+- Pareto-front candidates that were previously evicted by bounded per-cell
+  Pareto-front capacity.
 
-The Pareto-front replay pool is intentionally broader than the current active
-fronts. In local per-cell Pareto-front mode, a candidate can be edged out by
-the old cell's rank and NSGA-II crowding-distance competition. After re-binning,
-that same candidate may land in a different cell with different competitors and
-should be allowed to become active again if normal Pareto-front insertion keeps
-it.
+The replay pool is intentionally broader than the current active archive. In
+`scalar_elite` mode, an old candidate can be replaced only because it shared a
+cell with a better scalar elite. In `pareto_front` mode, a candidate can be
+edged out by the old cell's Pareto-rank and NSGA-II crowding-distance
+competition. After re-binning, those candidates may land in different cells
+with different competitors and should be allowed to become active again if
+normal archive insertion keeps them.
 
 The replay pool still excludes failed candidates, non-archiveable candidates,
 format-invalid candidates, and duplicate-objective insertion attempts that were
-not evicted by bounded-front capacity. The replay pool is not used for the KS
-archive-distribution baseline; the KS archive baseline remains the current
-retained archive members.
+not displaced by archive capacity or replacement. The replay pool is not used
+for the KS archive-distribution baseline; the KS archive baseline remains the
+current retained archive members.
 
 ## Re-Binning Behavior
 
@@ -274,10 +284,11 @@ archive artifacts use the new coordinates.
 
 Cell-mode rebuild behavior is exhaustive:
 
-- `scalar_elite`: reinsert retained elites with scalar quality replacement.
-- `pareto_front`: replay retained and previously evicted archiveable members,
-  then reconstruct bounded Pareto fronts with the configured PPA objectives,
-  Pareto ranks, and NSGA-II crowding-distance eviction.
+- `scalar_elite`: replay all valid-PPA replay members, then keep the best
+  scalar elite per rebuilt cell.
+- `pareto_front`: replay all valid-PPA replay members, then reconstruct
+  bounded Pareto fronts with the configured PPA objectives, Pareto ranks, and
+  NSGA-II crowding-distance eviction.
 - any unknown cell mode: fail immediately.
 
 Archive-geometry rebuild behavior is exhaustive:
@@ -408,9 +419,10 @@ logic_depth x ff_depth x width_log_est = 4 x 1 x 3
 then old cell IDs such as `1,0,3` are no longer used for parent selection.
 Every replay member gets a new cell assignment under the rebuilt geometry.
 
-If a candidate was previously evicted from an old crowded Pareto cell, it also
-gets replayed. It becomes active again only if it survives the bounded
-Pareto-front insertion in its new cell.
+If a candidate was previously displaced from an old crowded cell, it also gets
+replayed. It becomes active again only if it survives normal insertion in its
+new cell: scalar quality replacement for `scalar_elite`, or bounded
+Pareto-front insertion for `pareto_front`.
 
 ## Configuration
 
@@ -463,13 +475,13 @@ event records:
 - cooldown state.
 - retained member count.
 - replay member count.
-- previously evicted replay member count.
+- displaced replay member count.
 - recent sample count.
 - old geometry summary.
 - new geometry summary for re-bin events.
 - replay attempt count for re-bin events.
 - final active member count after re-bin events.
-- reactivated previously evicted member count for re-bin events.
+- reactivated displaced member count for re-bin events.
 
 `archive_space.json` records the current archive geometry, including:
 
@@ -853,15 +865,15 @@ the variance-envelope gates.
   - every replay member is attempted exactly once during rebucketing.
   - final active membership is decided only by normal archive insertion in the
     rebuilt geometry.
-  - previously evicted archiveable Pareto-front members may reactivate only by
-    surviving normal insertion in the rebuilt geometry.
-  - `reactivated_previously_evicted_member_count` is reported.
+  - displaced archiveable members may reactivate only by surviving normal
+    insertion in the rebuilt geometry.
+  - `reactivated_displaced_member_count` is reported.
   - cooldown starts immediately after the event.
   - the next re-bin for that problem occurs only after cooldown expires.
 - Every `rebin` event records old geometry, new geometry, trigger axes,
   p-values, corrected threshold, retained member count, replay member count,
-  replay attempt count, final active member count, and reactivated previously
-  evicted member count.
+  replay attempt count, final active member count, displaced replay member
+  count, and reactivated displaced member count.
 - Quantile collapse is reported when an effective axis has one bin after
   rebuild.
 
@@ -915,9 +927,12 @@ capped at `8`. The smoke passes when:
 - Unit-test degenerate-axis quantile collapse.
 - Unit-test scalar-elite reinsertion after re-binning.
 - Unit-test Pareto-front reinsertion after re-binning.
-- Unit-test that previously evicted Pareto-front members are replayed and may
-  reactivate when the rebuilt geometry assigns them to a cell where they
-  survive rank/crowding selection.
+- Unit-test that displaced scalar-elite members are replayed and may reactivate
+  when the rebuilt geometry assigns them to a cell where they win scalar
+  replacement.
+- Unit-test that displaced Pareto-front members are replayed and may reactivate
+  when the rebuilt geometry assigns them to a cell where they survive
+  rank/crowding selection.
 - Unit-test unknown archive type and unknown cell mode failures.
 - Integration-test `grid_quantile` adaptive-on versus adaptive-off artifacts.
 - Integration-test CVT adaptive-on smoke artifacts and viewer export.
@@ -957,8 +972,9 @@ Target deadline: `2026-05-12`
 
 - [ ] 7.1 Store recent archiveable-candidate descriptor windows.
 - [ ] 7.2 Add KS test trigger with Bonferroni threshold and cooldown.
-- [ ] 7.3 Store the Pareto-front re-bin replay pool, including inactive
-  archiveable members evicted by bounded-front capacity.
+- [ ] 7.3 Store the re-bin replay pool, including inactive valid-PPA
+  archiveable members displaced by scalar replacement or bounded-front
+  capacity.
 - [ ] 7.4 Rebuild supported archive geometries from the replay set, then replay
   all replay members.
 - [ ] 7.5 Add archive-history, archive-space, descriptor-health, and summary
