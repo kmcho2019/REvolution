@@ -326,18 +326,16 @@ improve, simplify, refactor, explore, repair-by-rethinking, and two-parent
 fusion. These are phrased as internal design intentions, not as strategy
 arms; the runtime still records every offspring as
 `single_thought_operator` and does not reintroduce bandit routing.
-The prompt treats successful parents as evidence for interface, protocol, and
-cycle-timing invariants, but still asks for a real PPA or descriptor
-improvement rather than a cosmetic rewrite. It tells the model to return the
-requested DUT module by default. If a parent thought mentions a helper module
-such as `full_adder`, the prompt asks the model to translate that idea into
-inline logic rather than preserving the helper-module structure, unless the
-problem specification explicitly names extra modules. This avoids
-benchmark/reference module-name collisions while keeping the thought/code/
-feedback interface unchanged. Descriptor diversity should come from concrete
-architecture choices such as Boolean factoring, carry/compare sharing,
-counter widths, state encoding, required register placement, and compact
-datapath sharing.
+The prompt stays specification-driven: it uses successful parent and archive
+thoughts as high-level intent and descriptor-diversity hints, but asks the
+model to re-derive implementation details from the problem text rather than
+preserving parent state counts, counters, or timing assumptions. It tells the
+model to return the requested DUT module by default. If a parent thought
+mentions a helper module such as `full_adder`, the prompt asks the model to
+translate that idea into inline logic rather than preserving the helper-module
+structure, unless the problem specification explicitly names extra modules.
+This avoids benchmark/reference module-name collisions while keeping the
+thought/code/feedback interface unchanged.
 
 ### One-parent payload
 
