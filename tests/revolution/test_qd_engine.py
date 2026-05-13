@@ -105,6 +105,40 @@ def _qd_member(
     )
 
 
+def _archive_member(
+    candidate_id: str,
+    *,
+    generation: int,
+    descriptors: tuple[float, ...],
+    insertion_index: int,
+    quality_score: float | None = None,
+) -> ArchiveMember:
+    candidate = Heuristic(
+        candidate_id,
+        "module m; endmodule",
+        "",
+        score=quality_score if quality_score is not None else float(insertion_index),
+        generation=generation,
+        status="success",
+    )
+    candidate.id = candidate_id
+    candidate.ppa_success = True
+    candidate.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+    candidate.archive_insertion_index = insertion_index
+    return ArchiveMember(
+        candidate_id=candidate_id,
+        descriptors=descriptors,
+        quality_score=float(candidate.quality_score),
+        objectives={
+            "g_P": float(insertion_index),
+            "g_A": float(1000 - insertion_index),
+            "g_T": float(insertion_index % 17),
+        },
+        payload=candidate,
+        insertion_index=insertion_index,
+    )
+
+
 def test_qd_engine_phase_mode_defaults_follow_refine_diff_only(tmp_path, monkeypatch):
     engine = _engine(tmp_path, monkeypatch)
     engine.generation_mode = "diff"
@@ -1449,6 +1483,64 @@ def test_qd_engine_ks_rebin_replays_displaced_member(tmp_path, monkeypatch):
     assert rebin_event["event_kind"] == "rebin"
     assert rebin_event["displaced_replay_member_count"] >= 1
     assert rebin_event["reactivated_displaced_member_count"] >= 1
+
+
+def test_qd_engine_cvt_size_control_rebin_smoke(tmp_path, monkeypatch):
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_archive_type="cvt",
+        qd_descriptor_profile="size_control_3d",
+        qd_num_cells=32,
+        qd_cvt_warmup_successes=4,
+        qd_cell_mode="scalar_elite",
+        qd_rebinning_kind="ks_triggered",
+        qd_rebinning_recent_generations=1,
+        qd_rebinning_min_archive_members=10,
+    )
+    artifact_root = tmp_path / "artifacts"
+    engine.logger = SimpleNamespace(log_dir=str(artifact_root))
+    old_members = [
+        _archive_member(
+            f"old-{index}",
+            generation=0,
+            descriptors=(float(index), float(index % 5), float(index % 7)),
+            insertion_index=index + 1,
+        )
+        for index in range(40)
+    ]
+    recent_members = [
+        _archive_member(
+            f"recent-{index}",
+            generation=1,
+            descriptors=(100.0 + index, 20.0 + index % 5, 30.0 + index % 7),
+            insertion_index=100 + index,
+        )
+        for index in range(20)
+    ]
+    engine.success_archive.rebuild_from_records(
+        old_members,
+        initialization_mode="warmup_complete",
+    )
+    assert engine.success_archive.is_initialized is True
+    assert len(engine.success_archive.members()) >= 10
+    engine._qd_rebin_replay_pool = {
+        member.candidate_id: member for member in [*old_members, *recent_members]
+    }
+    engine._qd_rebin_recent_members = list(recent_members)
+    engine.current_generation = 1
+
+    engine._maybe_adaptive_rebin()
+
+    history = [
+        json.loads(line)
+        for line in (artifact_root / "archive_history.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    assert history[0]["event_kind"] == "rebin_check"
+    assert history[-1]["event_kind"] == "rebin"
+    assert engine.success_archive.is_initialized is True
+    assert engine.success_archive.initialization_mode == "adaptive_rebin"
 
 
 def test_qd_engine_creates_targeted_mutation_prompt(tmp_path, monkeypatch):
