@@ -326,6 +326,12 @@ improve, simplify, refactor, explore, repair-by-rethinking, and two-parent
 fusion. These are phrased as internal design intentions, not as strategy
 arms; the runtime still records every offspring as
 `single_thought_operator` and does not reintroduce bandit routing.
+The prompt also preserves successful-parent interface and protocol invariants
+so valid offspring remain common enough to warm the archive. It tells the
+model to return the requested DUT module by default and inline helper logic
+inside that module unless the specification explicitly names extra modules;
+this avoids benchmark/reference module-name collisions while keeping the
+thought/code/feedback interface unchanged.
 
 ### One-parent payload
 
