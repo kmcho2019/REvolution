@@ -37,7 +37,18 @@ if TYPE_CHECKING:
 
 
 # Literal Typing for strategies (M-F, M-S, M-E, M-R, M-I, C-F, ...)
-EvolStrategyMethod = Literal["initial", "M-F", "M-S", "M-E", "M-R", "M-I", "C-F", "M-T", "C-D"]
+EvolStrategyMethod = Literal[
+    "initial",
+    "M-F",
+    "M-S",
+    "M-E",
+    "M-R",
+    "M-I",
+    "C-F",
+    "M-T",
+    "C-D",
+    "single_thought_operator",
+]
 """
 Defines the set of all possible evolutionary strategies.
 - **initial**: The first set of candidates generated from the problem description.
@@ -159,6 +170,12 @@ class Heuristic:
     :type generation: int
     :param parent_ids: A list of IDs of the parent(s).
     :type parent_ids: list[str]
+    :param parent_count: Number of parents used by prompt routing when
+        recorded explicitly.
+    :type parent_count: int | None
+    :param requested_parent_count: Parent arity requested before any runtime
+        fallback to fewer available parents.
+    :type requested_parent_count: int | None
     :param status: The current evaluation status of the candidate.
     :type status: HeuristicStatus
     :param synthesis_success: Whether synthesis was successful.
@@ -222,6 +239,8 @@ class Heuristic:
         self.score: float = score
         self.generation: int = generation
         self.parent_ids: list[str] = parent_ids if parent_ids else []
+        self.parent_count: int | None = None
+        self.requested_parent_count: int | None = None
         # New attributes for synthesis and PPA
         self.status: HeuristicStatus = status  # Status can be 'new', 'success', 'failed_syntax', 'failed_functionality', 'failed_synthesis', 'failed_synthesis_functionality'
         self.synthesis_success: bool = False
@@ -1350,6 +1369,34 @@ class EoHEngine:
             return "success_pool"
         return "initial"
 
+    def _save_prompt_snapshot_artifacts(
+        self,
+        code_path: str,
+        meta_rec: dict[str, Any],
+    ) -> None:
+        prompt_text = meta_rec.get("prompt_text")
+        if not isinstance(prompt_text, str):
+            return
+        candidate_dir = os.path.dirname(code_path)
+        with open(os.path.join(candidate_dir, "prompt_snapshot.txt"), "w") as f:
+            f.write(prompt_text)
+        parent_ids = [
+            parent.id for parent in meta_rec.get("parents", []) if hasattr(parent, "id")
+        ]
+        payload = {
+            "strategy": meta_rec.get("strategy"),
+            "parent_count": meta_rec.get("parent_count"),
+            "requested_parent_count": meta_rec.get(
+                "requested_parent_count",
+                meta_rec.get("parent_count"),
+            ),
+            "parent_ids": parent_ids,
+            "origin_pool": self._resolve_offspring_origin_pool(meta_rec),
+            "resolved_mode": meta_rec.get("resolved_mode", self.generation_mode),
+        }
+        with open(os.path.join(candidate_dir, "prompt_snapshot.json"), "w") as f:
+            json.dump(payload, f, indent=2)
+
     def _materialize_offspring_batch(
         self,
         llm_results_with_meta: list[tuple[str | None, str | None, dict[str, Any]]],
@@ -1383,6 +1430,8 @@ class EoHEngine:
             is_format_ok = meta.get("format_ok", False)
             resolved_mode = meta_rec.get("resolved_mode", self.generation_mode)
             parent_ids = [p.id for p in meta_rec.get("parents", [])]
+            parent_count = meta_rec.get("parent_count")
+            requested_parent_count = meta_rec.get("requested_parent_count", parent_count)
             origin_pool = self._resolve_offspring_origin_pool(meta_rec)
 
             if not is_format_ok and self.require_strict_format:
@@ -1394,6 +1443,7 @@ class EoHEngine:
                     strategy,
                     None,
                 )
+                self._save_prompt_snapshot_artifacts(code_path, meta_rec)
                 self._save_format_error_artifacts(code_path, meta)
                 cand = Heuristic(
                     thought=thought or "",
@@ -1407,6 +1457,8 @@ class EoHEngine:
                 )
                 cand.code_file_path = code_path
                 cand.generated_mode = resolved_mode
+                cand.parent_count = parent_count
+                cand.requested_parent_count = requested_parent_count
                 new_offspring.append(cand)
                 continue
 
@@ -1450,6 +1502,7 @@ class EoHEngine:
                         strategy,
                         diff_to_save,
                     )
+                    self._save_prompt_snapshot_artifacts(code_path, meta_rec)
                     self._save_diff_error_artifacts(
                         code_path,
                         diff_to_save,
@@ -1471,6 +1524,8 @@ class EoHEngine:
                     cand.generated_mode = "diff"
                     cand.diff_apply_phase = diagnostics.get("phase")
                     cand.diff_apply_reason_code = reason_code
+                    cand.parent_count = parent_count
+                    cand.requested_parent_count = requested_parent_count
                     new_offspring.append(cand)
                     continue
             else:
@@ -1484,6 +1539,7 @@ class EoHEngine:
                 strategy,
                 diff_to_save,
             )
+            self._save_prompt_snapshot_artifacts(code_path, meta_rec)
             cand = Heuristic(
                 thought=thought or "",
                 code=final_code,
@@ -1495,6 +1551,8 @@ class EoHEngine:
             )
             cand.code_file_path = code_path
             cand.generated_mode = resolved_mode
+            cand.parent_count = parent_count
+            cand.requested_parent_count = requested_parent_count
             if resolved_mode == "diff":
                 cand.diff_apply_phase = self._last_diff_apply_diagnostics.get("phase")
                 cand.diff_apply_reason_code = self._last_diff_apply_diagnostics.get(

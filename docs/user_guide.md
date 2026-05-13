@@ -175,6 +175,15 @@ Current feature status:
   fail-pool size, total archive member count, coverage fail share, budget-time
   `p_fail` cap, effective fail share, budget/generation counts, and
   `archive`/`fail_pool`/`seed` source counts.
+- Journal operator controls are selected with
+  `--qd_operator_kind eoh_strategies|single_thought_operator`,
+  `--qd_operator_one_parent_fraction`,
+  `--qd_operator_archive_context_size`, and
+  `--qd_operator_two_parent_allow_intra_bin`. The
+  `single_thought_operator` mode keeps the current thought/code/feedback
+  candidate interface and `eoh_v1` response shape for Feature 05, but its
+  parent prompt payload excludes parent code, individual feedback, and
+  code-level logs.
 - `qd_descriptor_file` may now define both `profiles:` and `grid_axes:` so the
   same YAML can control descriptor selection and per-axis grid bin/bounds
   settings.
@@ -858,7 +867,7 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 ## 4. Utility scripts
 
 - `scripts/evolutionary_report_generator.py`: generate Markdown reports summarising a run (`--experiment_path path/to/exp/...`).
-- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, solved-only score/PPA deltas (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`) with regression checks, budget/fairness diagnostics, Pareto / multi-objective sections, and an extra QD archive section when `revolution_qd` summaries plus `archive_summary.json` sidecars are present. The loader now ignores `archive_summary.json` as a per-problem summary so QD runs are not double-counted (`--backend_run revolution=<path> --backend_run funsearch=<path> --backend_run eoh=<path> --backend_run codeevolve=<path>`).
+- `scripts/backend_comparison_report.py`: combine multiple backend experiment roots into one side-by-side markdown report with pass/fail emojis, per-problem status, designs-with-any-pass counts, valid PPA generated-sample counts, solved-only score/PPA deltas (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`) with regression checks, budget/fairness diagnostics, Pareto / multi-objective sections, and an extra QD archive section when `revolution_qd` summaries plus `archive_summary.json` sidecars are present. When a QD run generates valid PPA samples during warmup but retains no final PPA aggregate, the report uses the best generated valid PPA sample for score/PPA deltas while archive coverage remains in the QD sections. The loader now ignores `archive_summary.json` as a per-problem summary so QD runs are not double-counted (`--backend_run revolution=<path> --backend_run funsearch=<path> --backend_run eoh=<path> --backend_run codeevolve=<path>`).
 - `scripts/run_backend_ablation.py`: one-command ablation sweep runner for REvolution/FunSearch/EoH/CodeEvolve plus optional comparison report generation, multi-seed loops (`--seeds`), strict fairness checks, selectable primary budget axis (`candidate_evaluations|llm_calls|dual_gate`), backend selection via `--backends`, and command validation via `--dry_run`.
   - Also writes top-level snapshots under `save_root` as `<timestamp>_ablation_config.yaml` and `<timestamp>_ablation_config_meta.yaml`.
 - `scripts/run_backend.py`: backend-agnostic run orchestration for REvolution/FunSearch/EoH/CodeEvolve comparisons.
@@ -869,7 +878,10 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
   `cvt_struct`, `cvt_size_control`, `grid_quantile_journal_bd`, and custom
   Pareto-grid-quantile matrix entries from a frozen hard-subset config. The
   wrapper forwards `qd_cell_mode`, `qd_max_elites_per_cell`, and
-  `qd_objectives` from `matrix_defaults` or per-mode overrides.
+  `qd_objectives` from `matrix_defaults` or per-mode overrides, plus the
+  Feature 05 `qd_operator_*` fields for EoH-versus-unified journal prompt
+  comparisons. Use `--smoke-subset N` for bounded pre-acceptance wiring
+  checks.
 - `scripts/report_hard_iteration_analysis.py`: summarize hard-subset classic-vs-QD runs into a markdown report plus JSON recommendations.
 - `scripts/report_pareto_analysis.py`: summarize hard-subset backend runs into Pareto-front figures plus per-backend hypervolume and frontier-size tables.
 - `scripts/report_ppa_distribution.py`: summarize successful candidates into PPA-space scatter figures with score contours and projected Pareto fronts, best-candidate CSVs, and reference-normalized gain views.
@@ -888,6 +900,11 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
   member, distinct cells match `occupied_cells`, fronts stay within
   `max_elites_per_cell`, same-cell members are mutually non-dominated, and at
   least one accepted hard-subset problem produced a multi-member front.
+- `scripts/validate_single_thought_operator_run.py`: audit the Feature 05
+  hard-subset comparison. It checks full-subset coverage, unified-vs-EoH
+  quantitative gates, `single_thought_operator` artifact fields, parent counts,
+  and prompt snapshots for zero parent code, individual feedback, or
+  code-level logs.
 - `scripts/validate_grid_quantile_visualizations.py`: check generated
   grid-quantile HTML, PNG frames, slides, and manifest source hashes.
 - `scripts/render_grid_quantile_visualizations.py`: regenerate grid-quantile

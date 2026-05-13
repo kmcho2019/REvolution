@@ -117,6 +117,8 @@ def test_backend_comparison_report_generates_markdown(tmp_path):
     assert "Avg PPA Delta | PPA Delta (A/P/T) | PPA Trend (✅/➖/❌)" in text
     assert "✅ Pass (100.0%)" in text
     assert "Score/PPA aggregate metrics exclude failed designs" in text
+    assert "Valid PPA Samples" in text
+    assert "Valid PPA samples count generated samples with PPA metrics" in text
 
 
 def test_backend_comparison_report_excludes_failed_designs_from_aggregates(tmp_path):
@@ -189,9 +191,78 @@ def test_backend_comparison_report_excludes_failed_designs_from_aggregates(tmp_p
         "| +10.00% ± 0.00% ✅ / +10.00% ± 0.00% ✅ / +10.00% ± 0.00% ✅ |" in agg_row
     )
     assert (
-        "| 1/2 | +10.00% ± 0.00% ✅ | +10.00% ± 0.00% ✅ / +10.00% ± 0.00% ✅ / "
+        "| 1/2 (1 samples) | +10.00% ± 0.00% ✅ | +10.00% ± 0.00% ✅ / "
+        "+10.00% ± 0.00% ✅ / "
         "+10.00% ± 0.00% ✅ | ✅ 1 / ➖ 0 / ❌ 0 |" in agg_row
     )
+
+
+def test_backend_comparison_report_counts_warmup_ppa_samples(tmp_path):
+    qd_root = tmp_path / "revolution_qd"
+    _write_summary(
+        qd_root,
+        "Bench",
+        "ProbWarmup",
+        {
+            "benchmark_name": "Bench",
+            "problem_name": "ProbWarmup",
+            "accumulated_success_rates": {"functionality": 0.25, "synthesis_ppa": 0.25},
+            "backend_details": {"search_mode": "revolution_qd"},
+            "final_population_ppa": {"best_score": None, "best_metrics": {}},
+            "ref_ppa_metric": {"area": 100.0, "power": 2.0, "eff_clk_period": 1.0},
+            "total_runtime_seconds": 2.0,
+            "total_llm_api_calls": 3,
+        },
+    )
+    _write_generation_log(
+        qd_root,
+        "Bench",
+        "ProbWarmup",
+        [
+            {
+                "generation": 0,
+                "population_ppa_details": [
+                    {
+                        "id": "warmup",
+                        "score": 0.15,
+                        "ppa_metrics": {
+                            "area": 80.0,
+                            "power": 1.5,
+                            "eff_clk_period": 0.8,
+                        },
+                    }
+                ],
+            }
+        ],
+    )
+
+    output_path = tmp_path / "comparison.md"
+    cmd = [
+        sys.executable,
+        "scripts/backend_comparison_report.py",
+        "--backend_run",
+        f"revolution_qd={qd_root}",
+        "--output",
+        str(output_path),
+    ]
+    subprocess.run(cmd, check=True, cwd=Path(__file__).resolve().parents[2])
+    text = output_path.read_text(encoding="utf-8")
+
+    problem_row = next(
+        line
+        for line in text.splitlines()
+        if line.startswith("| `revolution_qd` | Bench | ProbWarmup |")
+    )
+    assert "| 1 | +15.00% ✅ |" in problem_row
+    assert "+20.00% ✅ / +25.00% ✅ / +20.00% ✅" in problem_row
+    assert "| +21.67% ✅ |" in problem_row
+
+    agg_row = next(
+        line
+        for line in text.splitlines()
+        if line.startswith("| `revolution_qd` | Bench | 1 |")
+    )
+    assert "| 1/1 (1 samples) | +21.67% ± 0.00% ✅ |" in agg_row
 
 
 def test_backend_comparison_report_accepts_codeevolve_label(tmp_path):

@@ -357,6 +357,7 @@ def test_pareto_archive_cells_csv_writes_one_row_per_member(tmp_path):
     assert {int(row["cell_member_count"]) for row in rows} == {2}
     assert {int(row["member_index"]) for row in rows} == {0, 1}
     assert {int(row["pareto_rank"]) for row in rows} == {1}
+    assert "parent_count" in rows[0]
     assert all(json.loads(row["objectives_json"]) for row in rows)
     assert space["occupied_cells"] == 1
     assert space["total_archive_members"] == 2

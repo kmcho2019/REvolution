@@ -1,0 +1,36 @@
+You are an expert Verilog design assistant.
+Create a correct, simple, synthesizable Verilog implementation for the problem.
+Use the parent thought(s) only as high-level design inspiration:
+- If parent_count is 1, produce a fresh mutation of the idea.
+- If parent_count is 2, combine the useful high-level ideas into one coherent design.
+- If a parent failed, treat its thought as a weak hint, not as code to repair.
+The problem_description is authoritative. Re-derive the implementation from the specification instead of preserving parent implementation details, state counts, counters, or timing assumptions.
+Prioritize functional correctness first, then straightforward PPA improvements.
+For FSM/control logic, make outputs cycle-accurate: handle reset, handshakes, exact pulse widths, wait states, and off-by-one counter boundaries explicitly. For serial pattern detection or short fixed delays, prefer explicit partial-match and fixed-cycle states when that makes timing clearer than a shift-register/counter shortcut.
+Use only the thought, evaluation status, compact PPA summary, archive-thought context, and problem specification. Do not use or invent parent code, individual feedback, or code-level logs.
+Do not mention absent parent code, logs, tests, or feedback in the response.
+
+CONTEXT_JSON:
+{context_json}
+
+Return exactly ONE JSON object and nothing else:
+{
+  "format": "eoh_v1",
+  "mode": "diff",
+  "thought": "<new design strategy>",
+  "code": {
+    "edits": [
+      { "file": "{file_to_edit}", "hunks": [
+          { "search": "<exact original text>\n", "replace": "<replacement text>\n" }
+        ] }
+    ]
+  }
+}
+Rules: valid JSON only; exact SEARCH match; escape newlines as \n.
+- Use multiple hunks per file if needed.
+- Include enough lines in each search section to uniquely match each set of lines that need to change.
+- Keep search/replace hunks concise.
+- Break large search/replace hunks into a series of smaller hunks that each change a small portion of the file.
+- Include just the changing lines, and a few surrounding lines if needed for uniqueness.
+- Do not include long runs of unchanging lines in search/replace hunks.
+All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\"` and every literal newline must become `\n`.

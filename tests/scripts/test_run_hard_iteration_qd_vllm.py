@@ -63,6 +63,10 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
                         "search_mode": "revolution_qd",
                         "qd_archive_type": "grid_quantile",
                         "qd_descriptor_profile": "journal_logic_ff_width_3d",
+                        "qd_operator_kind": "single_thought_operator",
+                        "qd_operator_one_parent_fraction": 0.5,
+                        "qd_operator_archive_context_size": 4,
+                        "qd_operator_two_parent_allow_intra_bin": True,
                     },
                     "cvt_theory_grounded": {
                         "search_mode": "revolution_qd",
@@ -143,6 +147,10 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "--qd_cell_mode scalar_elite" in normalized
     assert "--qd_max_elites_per_cell 1" in normalized
     assert "--qd_objectives ppa" in normalized
+    assert "--qd_operator_kind single_thought_operator" in normalized
+    assert "--qd_operator_one_parent_fraction 0.5" in normalized
+    assert "--qd_operator_archive_context_size 4" in normalized
+    assert "--qd_operator_two_parent_allow_intra_bin" in normalized
     assert "--population_size 20" in normalized
     assert "--num_generations 5" in normalized
     assert "--total_worker_slots 2" in normalized
@@ -166,6 +174,10 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "qd_cell_mode=scalar_elite" in manifest
     assert "qd_max_elites_per_cell=1" in manifest
     assert "qd_objectives=ppa" in manifest
+    assert "mode.grid_quantile_journal_bd.qd_operator_kind=single_thought_operator" in manifest
+    assert "mode.grid_quantile_journal_bd.qd_operator_one_parent_fraction=0.5" in manifest
+    assert "mode.grid_quantile_journal_bd.qd_operator_archive_context_size=4" in manifest
+    assert "mode.grid_quantile_journal_bd.qd_operator_two_parent_allow_intra_bin=true" in manifest
     assert f"--output {run_dir / 'hard_iteration_backend_comparison.md'}" in normalized
     assert f"--backend_run classic={run_dir / 'classic'}" in normalized
     assert f"--backend_run grid_struct={run_dir / 'grid_struct'}" in normalized

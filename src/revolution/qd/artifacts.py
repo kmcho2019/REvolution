@@ -86,6 +86,8 @@ def write_archive_cells_csv(
         "quality_score",
         "generation",
         "strategy",
+        "parent_count",
+        "requested_parent_count",
         "parent_arity",
         "code_file_path",
         "g_P",
@@ -109,6 +111,12 @@ def write_archive_cells_csv(
             member_indices[cell_id] = member_index + 1
             objectives = dict(member.objectives)
             parent_ids = getattr(candidate, "parent_ids", [])
+            parent_count = getattr(candidate, "parent_count", None)
+            requested_parent_count = getattr(
+                candidate,
+                "requested_parent_count",
+                parent_count,
+            )
             writer.writerow(
                 {
                     "cell_id": cell_id,
@@ -121,6 +129,8 @@ def write_archive_cells_csv(
                     "quality_score": float(member.quality_score),
                     "generation": getattr(candidate, "generation", None),
                     "strategy": getattr(candidate, "strategy", None),
+                    "parent_count": parent_count,
+                    "requested_parent_count": requested_parent_count,
                     "parent_arity": len(parent_ids),
                     "code_file_path": getattr(candidate, "code_file_path", None),
                     "g_P": float(objectives.get("g_P", 0.0)),
@@ -161,6 +171,8 @@ def write_global_pareto_archive_csv(
         "problem",
         "generation",
         "strategy",
+        "parent_count",
+        "requested_parent_count",
         "parent_arity",
         "code_file_path",
         "quality_score",
@@ -178,6 +190,12 @@ def write_global_pareto_archive_csv(
             candidate = member.payload
             objectives = dict(member.objectives)
             parent_ids = getattr(candidate, "parent_ids", [])
+            parent_count = getattr(candidate, "parent_count", None)
+            requested_parent_count = getattr(
+                candidate,
+                "requested_parent_count",
+                parent_count,
+            )
             writer.writerow(
                 {
                     "candidate_id": member.candidate_id,
@@ -185,6 +203,8 @@ def write_global_pareto_archive_csv(
                     "problem": problem,
                     "generation": getattr(candidate, "generation", None),
                     "strategy": getattr(candidate, "strategy", None),
+                    "parent_count": parent_count,
+                    "requested_parent_count": requested_parent_count,
                     "parent_arity": len(parent_ids),
                     "code_file_path": getattr(candidate, "code_file_path", None),
                     "quality_score": float(member.quality_score),
@@ -436,6 +456,12 @@ def write_candidate_archive_event(
         "candidate_id": candidate.id,
         "generation": candidate.generation,
         "strategy": candidate.strategy,
+        "parent_count": getattr(candidate, "parent_count", None),
+        "requested_parent_count": getattr(
+            candidate,
+            "requested_parent_count",
+            getattr(candidate, "parent_count", None),
+        ),
         "origin_pool": candidate.origin_pool,
         "generated_mode": candidate.generated_mode,
         "archive_type": archive.archive_type,
@@ -512,6 +538,12 @@ def _candidate_summary(
         "quality_score": float(quality_score) if quality_score is not None else None,
         "generation": candidate.generation,
         "strategy": candidate.strategy,
+        "parent_count": getattr(candidate, "parent_count", None),
+        "requested_parent_count": getattr(
+            candidate,
+            "requested_parent_count",
+            getattr(candidate, "parent_count", None),
+        ),
         "descriptor_tuple": list(descriptors) if descriptors is not None else None,
         "code_file_path": candidate.code_file_path,
     }

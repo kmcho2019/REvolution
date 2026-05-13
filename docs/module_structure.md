@@ -111,7 +111,7 @@
 - `qd_descriptor_probe.py`: descriptor/profile inspection helper for QD experiments.
 - `run_funsearch.py`: convenience wrapper for `run_backend.py --backend funsearch`.
 - `run_backend_ablation.py`: ablation sweep orchestrator across both backends with multi-seed support, strict fairness checks, and configurable budget-axis normalization (`candidate_evaluations`, `llm_calls`, `dual_gate`).
-- `backend_comparison_report.py`: side-by-side + aggregate backend report generator across experiment roots with pass/fail emoji status, any-pass design counts, solved-only score/PPA summaries (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`), PPA regression counts, budget/fairness diagnostics, and QD archive metrics when QD sidecars are present.
+- `backend_comparison_report.py`: side-by-side + aggregate backend report generator across experiment roots with pass/fail emoji status, any-pass design counts, valid PPA generated-sample counts, solved-only score/PPA summaries (including aggregate `PPA Delta (A/P/T)` and `Avg PPA Delta`), PPA regression counts, budget/fairness diagnostics, and QD archive metrics when QD sidecars are present.
 - `run_one_shot.py`: CLI for n-shot baselines that reuse the evaluation stack without evolution.
 - `archive_baseline.py`: archive utility for run roots and ablation roots with manifest/index metadata, copied run configs, preserved QD sidecars/plots, and compressed raw artifacts.
 - `report_design_space_analysis.py`: retrospective classical-vs-QD design-space report generator with per-problem generation-local vs accumulated PPA plots, cached-QD descriptor pairwise plots for graph-backed profiles, quick-reference sections, stable markdown indices, and `successful_candidates.csv` / `recommended_profile.json` exports.
@@ -127,6 +127,9 @@
   visualization rendering, and validation utilities.
 - `validate_pareto_front_run.py`: Phase 03 Pareto-front hard-subset audit for
   member counts, front bounds, and same-cell non-dominance.
+- `validate_single_thought_operator_run.py`: Feature 05 hard-subset audit for
+  the unified single-thought operator, including EoH-vs-unified metric gates,
+  parent-count artifacts, and prompt-snapshot leakage checks.
 - `export_qd_ppa_visualization.py` and `validate_qd_ppa_visualization.py`:
   Phase 03.1 static viewer export and validation for linked archive-space and
   PPA/Pareto inspection. The exporter can project classic candidates posthoc

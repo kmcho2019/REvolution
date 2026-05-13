@@ -31,6 +31,7 @@ class SummaryRow:
     power_improvement_pct: float | None
     period_improvement_pct: float | None
     avg_ppa_improvement_pct: float | None
+    valid_ppa_sample_count: int
     runtime_seconds: float
     llm_api_calls: int
     llm_prompt_tokens: int
@@ -281,6 +282,38 @@ def _load_qd_descriptor_health(summary_path: Path) -> dict[str, Any]:
     return payload
 
 
+def _load_generation_ppa_details(summary_path: Path) -> list[dict[str, Any]]:
+    details: list[dict[str, Any]] = []
+    generation_log_path = summary_path.parent / "generation_log.jsonl"
+    if not generation_log_path.is_file():
+        return details
+    for line in generation_log_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            payload = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(payload, dict):
+            continue
+        row_details = payload.get("population_ppa_details", [])
+        if not isinstance(row_details, list):
+            continue
+        details.extend(detail for detail in row_details if isinstance(detail, dict))
+    return details
+
+
+def _best_ppa_detail(details: list[dict[str, Any]]) -> dict[str, Any] | None:
+    scored_details: list[tuple[float, dict[str, Any]]] = []
+    for detail in details:
+        score = _safe_float(detail.get("score"))
+        if score is not None:
+            scored_details.append((score, detail))
+    if not scored_details:
+        return None
+    return max(scored_details, key=lambda item: item[0])[1]
+
+
 def _render_budget_fairness_section(rows: list[SummaryRow]) -> list[str]:
     grouped: dict[tuple[str, str], list[SummaryRow]] = {}
     for row in rows:
@@ -521,7 +554,7 @@ def _render_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: boo
     lines = [
         heading,
         "",
-        "| Backend | Benchmark | Designs | Func Any-Pass | Synth Any-Pass | Func Pass@1 Mean | Synth Pass@1 Mean | Valid Score Designs | Avg Score Delta | Score Trend (✅/➖/❌) | Valid PPA Designs | Avg PPA Delta | PPA Delta (A/P/T) | PPA Trend (✅/➖/❌) | PPA Regressions (A/P/T) | Runtime Mean ± CI (s) | Calls Mean ± CI |",
+        "| Backend | Benchmark | Designs | Func Any-Pass | Synth Any-Pass | Func Pass@1 Mean | Synth Pass@1 Mean | Valid Score Designs | Avg Score Delta | Score Trend (✅/➖/❌) | Valid PPA Designs / Samples | Avg PPA Delta | PPA Delta (A/P/T) | PPA Trend (✅/➖/❌) | PPA Regressions (A/P/T) | Runtime Mean ± CI (s) | Calls Mean ± CI |",
         "|:---|:---|---:|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|",
     ]
     for (backend, benchmark), group in sorted(grouped.items()):
@@ -537,6 +570,8 @@ def _render_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: boo
             for row in group
             if row.avg_ppa_improvement_pct is not None
         ]
+        valid_ppa_problem_count = sum(1 for row in group if row.valid_ppa_sample_count > 0)
+        valid_ppa_sample_count = sum(row.valid_ppa_sample_count for row in group)
         area_values = [
             row.area_improvement_pct
             for row in group
@@ -565,7 +600,7 @@ def _render_aggregate_section(rows: list[SummaryRow], *, group_by_benchmark: boo
             f"{len(score_values)}/{len(group)} | "
             f"{_format_mean_ci_percent(score_values, signed=True)} | "
             f"{_format_trend_counts(score_values)} | "
-            f"{len(avg_ppa_values)}/{len(group)} | "
+            f"{valid_ppa_problem_count}/{len(group)} ({valid_ppa_sample_count} samples) | "
             f"{_format_mean_ci_percent(avg_ppa_values, signed=True)} | "
             f"{_format_aggregate_ppa_deltas(area_values, power_values, period_values)} | "
             f"{_format_trend_counts(avg_ppa_values)} | "
@@ -598,6 +633,15 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
                 "synthesis_ppa": stage_rates.get("synthesis", 0.0),
             }
         final_ppa = payload.get("final_population_ppa", {})
+        if not isinstance(final_ppa, dict):
+            final_ppa = {}
+        generation_details = _load_generation_ppa_details(summary_path)
+        final_details = payload.get("final_population_ppa_details", [])
+        if not isinstance(final_details, list):
+            final_details = []
+        ppa_details = generation_details or [
+            detail for detail in final_details if isinstance(detail, dict)
+        ]
         best_metrics = (
             final_ppa.get("best_metrics", {})
             if isinstance(final_ppa.get("best_metrics", {}), dict)
@@ -657,6 +701,16 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
         functionality_rate = _safe_rate(rates.get("functionality", 0.0))
         synthesis_rate = _safe_rate(rates.get("synthesis_ppa", 0.0))
         best_score = _safe_float(final_ppa.get("best_score"))
+        best_detail = _best_ppa_detail(ppa_details)
+        if best_detail is not None and (best_score is None or not best_metrics):
+            if best_score is None:
+                best_score = _safe_float(best_detail.get("score"))
+            detail_metrics = best_detail.get("ppa_metrics", {})
+            if not best_metrics and isinstance(detail_metrics, dict):
+                best_metrics = detail_metrics
+        valid_ppa_sample_count = len(generation_details) or len(ppa_details)
+        if valid_ppa_sample_count == 0 and best_score is not None:
+            valid_ppa_sample_count = 1
         pareto_metrics = pareto_metrics_by_problem.get((benchmark_name, problem_name))
 
         score_improvement_pct: float | None = None
@@ -710,6 +764,7 @@ def _load_summary_rows(backend: str, root: Path) -> list[SummaryRow]:
                 power_improvement_pct=power_improvement_pct,
                 period_improvement_pct=period_improvement_pct,
                 avg_ppa_improvement_pct=avg_ppa_improvement_pct,
+                valid_ppa_sample_count=valid_ppa_sample_count,
                 runtime_seconds=float(payload.get("total_runtime_seconds", 0.0)),
                 llm_api_calls=int(payload.get("total_llm_api_calls", 0)),
                 llm_prompt_tokens=int(payload.get("total_llm_prompt_tokens", 0)),
@@ -787,6 +842,8 @@ def _render_markdown(rows: list[SummaryRow]) -> str:
         "",
         "Legend: `✅` pass/improvement, `❌` fail/regression, `➖` neutral.",
         "Score/PPA aggregate metrics exclude failed designs (no synthesis pass) and non-finite scores.",
+        "Valid PPA samples count generated samples with PPA metrics even when QD warmup or archive insertion later drops them.",
+        "When the final population has no retained PPA aggregate, Score/PPA deltas use the best generated valid PPA sample.",
         "Pareto hypervolume uses normalized improvement space against the zero-improvement reference point.",
         f"Multi-objective winner: `{pareto_winner or 'N/A'}` (mean hypervolume, then per-problem HV wins, then mean Pareto points).",
         "",
@@ -796,8 +853,8 @@ def _render_markdown(rows: list[SummaryRow]) -> str:
         [
         "## Per-Problem Metrics",
         "",
-        "| Backend | Benchmark | Problem | Functionality | Synthesis | Score Delta vs Ref | PPA Delta (A/P/T) | Avg PPA Delta | Runtime (s) | LLM Calls |",
-        "|:---|:---|:---|:---|:---|:---|:---|:---|---:|---:|",
+        "| Backend | Benchmark | Problem | Functionality | Synthesis | Valid PPA Samples | Score Delta vs Ref | PPA Delta (A/P/T) | Avg PPA Delta | Runtime (s) | LLM Calls |",
+        "|:---|:---|:---|:---|:---|---:|:---|:---|:---|---:|---:|",
         ]
     )
     for row in sorted(rows, key=lambda item: (item.benchmark, item.problem, item.backend)):
@@ -812,6 +869,7 @@ def _render_markdown(rows: list[SummaryRow]) -> str:
             f"| `{row.backend}` | {row.benchmark} | {row.problem} | "
             f"{_format_pass_rate(row.functionality_rate)} | "
             f"{_format_pass_rate(row.synthesis_rate)} | "
+            f"{row.valid_ppa_sample_count} | "
             f"{_format_delta(row.score_improvement_pct)} | "
             f"{ppa_components} | "
             f"{_format_delta(row.avg_ppa_improvement_pct)} | "
