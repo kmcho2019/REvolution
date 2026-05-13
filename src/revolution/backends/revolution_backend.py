@@ -67,6 +67,10 @@ class RevolutionBackendConfig:
     qd_refine_generation_mode: str = "auto"
     qd_crossover_generation_mode: str = "auto"
     qd_formal_mode: str = "auto"
+    qd_operator_kind: str = "eoh_strategies"
+    qd_operator_one_parent_fraction: float = 0.5
+    qd_operator_archive_context_size: int = 4
+    qd_operator_two_parent_allow_intra_bin: bool = True
 
 
 class RevolutionBackend(EvolutionBackend):
@@ -151,6 +155,10 @@ class RevolutionBackend(EvolutionBackend):
                 qd_backfill_generation_mode=self.config.qd_backfill_generation_mode,
                 qd_refine_generation_mode=self.config.qd_refine_generation_mode,
                 qd_crossover_generation_mode=self.config.qd_crossover_generation_mode,
+                qd_operator_kind=self.config.qd_operator_kind,
+                qd_operator_one_parent_fraction=self.config.qd_operator_one_parent_fraction,
+                qd_operator_archive_context_size=self.config.qd_operator_archive_context_size,
+                qd_operator_two_parent_allow_intra_bin=self.config.qd_operator_two_parent_allow_intra_bin,
             )
         self.engine = engine_cls(**engine_kwargs)
 
@@ -200,6 +208,12 @@ class RevolutionBackend(EvolutionBackend):
                         "backfill": self.config.qd_backfill_generation_mode,
                         "refine": self.config.qd_refine_generation_mode,
                         "crossover": self.config.qd_crossover_generation_mode,
+                    },
+                    "operator": {
+                        "kind": self.config.qd_operator_kind,
+                        "one_parent_fraction": self.config.qd_operator_one_parent_fraction,
+                        "archive_context_size": self.config.qd_operator_archive_context_size,
+                        "two_parent_allow_intra_bin": self.config.qd_operator_two_parent_allow_intra_bin,
                     },
                 },
             )

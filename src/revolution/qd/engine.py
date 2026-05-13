@@ -68,6 +68,8 @@ from revolution.qd.visualization import write_grid_quantile_visualizations_from_
 
 _ARCHIVE_ONLY_DESCRIPTOR_PROFILES = {"journal_logic_ff_width_3d"}
 JournalParentSource = Literal["archive", "fail_pool", "seed"]
+QDOperatorKind = Literal["eoh_strategies", "single_thought_operator"]
+SINGLE_THOUGHT_OPERATOR_STRATEGY = "single_thought_operator"
 
 
 class QDEngine(EoHEngine):
@@ -96,6 +98,10 @@ class QDEngine(EoHEngine):
         qd_backfill_generation_mode: str = "auto",
         qd_refine_generation_mode: str = "auto",
         qd_crossover_generation_mode: str = "auto",
+        qd_operator_kind: str = "eoh_strategies",
+        qd_operator_one_parent_fraction: float = 0.5,
+        qd_operator_archive_context_size: int = 4,
+        qd_operator_two_parent_allow_intra_bin: bool = True,
         **kwargs: Any,
     ) -> None:
         super().__init__(*args, **kwargs)
@@ -111,6 +117,12 @@ class QDEngine(EoHEngine):
             raise ValueError("qd_max_elites_per_cell must be > 0.")
         if not 0.0 <= float(qd_two_parent_probability) <= 1.0:
             raise ValueError("qd_two_parent_probability must be between 0 and 1.")
+        if qd_operator_kind not in {"eoh_strategies", "single_thought_operator"}:
+            raise ValueError(f"Unsupported qd_operator_kind '{qd_operator_kind}'.")
+        if not 0.0 <= float(qd_operator_one_parent_fraction) <= 1.0:
+            raise ValueError("qd_operator_one_parent_fraction must be between 0 and 1.")
+        if qd_operator_archive_context_size < 0:
+            raise ValueError("qd_operator_archive_context_size must be >= 0.")
         self.qd_cell_mode: QDCellMode = cast(QDCellMode, qd_cell_mode)
         self.qd_max_elites_per_cell = int(qd_max_elites_per_cell)
         self.qd_objectives: QDObjectiveMode = cast(QDObjectiveMode, qd_objectives)
@@ -127,6 +139,10 @@ class QDEngine(EoHEngine):
         self.qd_backfill_generation_mode = qd_backfill_generation_mode
         self.qd_refine_generation_mode = qd_refine_generation_mode
         self.qd_crossover_generation_mode = qd_crossover_generation_mode
+        self.qd_operator_kind: QDOperatorKind = cast(QDOperatorKind, qd_operator_kind)
+        self.qd_operator_one_parent_fraction = float(qd_operator_one_parent_fraction)
+        self.qd_operator_archive_context_size = int(qd_operator_archive_context_size)
+        self.qd_operator_two_parent_allow_intra_bin = bool(qd_operator_two_parent_allow_intra_bin)
         self.success_strats = list(self._qd_success_strategies())
         self.success_strategy_stats = {
             strategy: {"count": 0, "value": 0.0}
@@ -444,6 +460,12 @@ class QDEngine(EoHEngine):
                 "cell_member_count": insert_result.front_size,
                 "pareto_rank": insert_result.pareto_rank,
                 "crowding_distance": insert_result.crowding_distance,
+                "parent_count": getattr(candidate, "parent_count", None),
+                "requested_parent_count": getattr(
+                    candidate,
+                    "requested_parent_count",
+                    getattr(candidate, "parent_count", None),
+                ),
                 "parent_arity": len(getattr(candidate, "parent_ids", [])),
                 "global_archive_size": (
                     global_update.archive_size if global_update is not None else None
@@ -982,11 +1004,32 @@ class QDEngine(EoHEngine):
         )
         return cast(Heuristic, winner.member.payload)
 
-    def _sample_two_success_parents(self) -> list[Heuristic]:
+    def _sample_two_success_parents(
+        self,
+        *,
+        allow_intra_bin: bool = False,
+    ) -> list[Heuristic]:
         if self.qd_cell_mode != "pareto_front":
             return self._sample_success_parents(2)
         by_cell = self._ranked_success_members_by_cell()
         cell_ids = sorted(by_cell)
+        if not cell_ids:
+            return []
+        if allow_intra_bin:
+            first_cell = random.choice(cell_ids)
+            first = self._crowded_tournament(by_cell[first_cell])
+            same_cell_alternatives = [
+                ranked_member
+                for ranked_member in by_cell[first_cell]
+                if ranked_member.member.candidate_id != first.id
+            ]
+            if same_cell_alternatives:
+                return [first, self._crowded_tournament(same_cell_alternatives)]
+            other_cells = [cell_id for cell_id in cell_ids if cell_id != first_cell]
+            if other_cells:
+                second_cell = random.choice(other_cells)
+                return [first, self._crowded_tournament(by_cell[second_cell])]
+            return [first]
         if len(cell_ids) < 2:
             return self._sample_success_parents(1)
         first_cell = random.choice(cell_ids)
@@ -1281,6 +1324,102 @@ class QDEngine(EoHEngine):
             "}\n"
         )
 
+    def _archive_context_sample(self, exclude_ids: set[str]) -> list[Heuristic]:
+        """Sample compact thought context from archive members."""
+        if self.qd_operator_archive_context_size == 0:
+            return []
+        candidates = [
+            cast(Heuristic, member.payload)
+            for _, member in self.success_archive.members()
+            if isinstance(member.payload, Heuristic)
+            and member.candidate_id not in exclude_ids
+        ]
+        if not candidates:
+            return []
+        sample_size = min(self.qd_operator_archive_context_size, len(candidates))
+        return random.sample(candidates, sample_size)
+
+    def _format_archive_context_entry(
+        self,
+        candidate: Heuristic,
+    ) -> dict[str, Any]:
+        entry: dict[str, Any] = {
+            "thought": candidate.thought,
+            "evaluation_status": (
+                "succeeded"
+                if candidate.status == "success" and candidate.ppa_success
+                else "failed"
+            ),
+        }
+        if candidate.status == "success" and candidate.ppa_success:
+            entry["quality_score"] = float(
+                getattr(candidate, "quality_score", candidate.score)
+            )
+        return entry
+
+    def _format_parent_for_single_thought_operator(
+        self,
+        parent: Heuristic,
+        example_num: int,
+    ) -> dict[str, Any]:
+        status = (
+            "succeeded"
+            if parent.status == "success" and parent.ppa_success
+            else "failed"
+        )
+        payload: dict[str, Any] = {
+            "example": example_num,
+            "thought": parent.thought,
+            "evaluation_status": status,
+        }
+        if status == "succeeded":
+            gains = compute_ppa_gains(parent.ppa_metrics, self.ref_ppa_metrics)
+            ppa_summary = {
+                "quality_score": float(getattr(parent, "quality_score", parent.score)),
+            }
+            for objective_name in self._objective_names():
+                if objective_name in gains:
+                    ppa_summary[objective_name] = float(gains[objective_name])
+            payload["ppa_summary"] = ppa_summary
+        return payload
+
+    def _create_prompt_single_thought_operator(
+        self,
+        parents: list[Heuristic],
+        *,
+        archive_context: list[Heuristic] | None = None,
+    ) -> str:
+        """Create the unified journal thought-generation prompt."""
+        if len(parents) not in {1, 2}:
+            raise ValueError("single_thought_operator requires one or two parents.")
+        parent_payloads = [
+            self._format_parent_for_single_thought_operator(parent, index)
+            for index, parent in enumerate(parents, start=1)
+        ]
+        context_obj: dict[str, Any] = {
+            "task": SINGLE_THOUGHT_OPERATOR_STRATEGY,
+            "parent_count": len(parents),
+            "problem_description": self.problem_description,
+        }
+        if len(parent_payloads) == 1:
+            context_obj["parent"] = parent_payloads[0]
+        else:
+            context_obj["parents"] = parent_payloads
+        if archive_context is None:
+            archive_context = self._archive_context_sample({parent.id for parent in parents})
+        if archive_context:
+            context_obj["archive_context"] = [
+                self._format_archive_context_entry(candidate)
+                for candidate in archive_context
+            ]
+        tpl = self.prompts.read("evolve/single_thought_operator/whole")
+        if not tpl:
+            raise FileNotFoundError(
+                "Missing prompt template: "
+                "evolve/single_thought_operator/whole"
+            )
+        return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+
     def _materialize_offspring(
         self,
         llm_results_with_meta: list[tuple[str | None, str | None, dict[str, Any]]],
@@ -1391,21 +1530,273 @@ class QDEngine(EoHEngine):
         llm_requests = []
         request_meta: list[dict[str, Any]] = []
 
-        if self.fail_pool and budget.fail_budget > 0:
-            fail_strategies: list[EvolStrategyMethodFail] = (
-                list(CLASSIC_FAIL_STRATEGIES)
-                if not self._uses_descriptor_guided_generation()
-                else ["M-F", "M-E"]
-            )
-            fail_selected: set[EvolStrategyMethodFail] = set()
-            for _ in range(budget.fail_budget):
-                strat_name, prob_dist = self._select_strategy("fail", fail_strategies, fail_selected)
-                if strat_name is None or prob_dist is None:
-                    continue
-                fail_selected.add(strat_name)
-                parent = random.choice(self.fail_pool)
-                mode = self._phase_mode("fail")
-                prompt_text = self._with_mode(mode, getattr(self, f"_create_prompt_{strat_name.replace('-', '_')}"), [parent])
+        if self.qd_operator_kind == "single_thought_operator":
+            mode = "whole"
+            if self.fail_pool and budget.fail_budget > 0:
+                for _ in range(budget.fail_budget):
+                    parent = random.choice(self.fail_pool)
+                    prompt_text = self._create_prompt_single_thought_operator(
+                        [parent],
+                        archive_context=self._archive_context_sample({parent.id}),
+                    )
+                    llm_requests.append(
+                        self._build_prompt_request(
+                            prompt=prompt_text,
+                            mode=mode,
+                            system_prompt=self._get_generation_system_prompt(mode),
+                        )
+                    )
+                    request_meta.append(
+                        {
+                            "strategy": SINGLE_THOUGHT_OPERATOR_STRATEGY,
+                            "parents": [parent],
+                            "parent_count": 1,
+                            "requested_parent_count": 1,
+                            "origin_pool": "fail_pool",
+                            "resolved_mode": mode,
+                            "prompt_text": prompt_text,
+                        }
+                    )
+
+            success_total_requests = budget.backfill_budget + budget.refine_budget
+            for _ in range(success_total_requests):
+                wants_two = random.random() >= self.qd_operator_one_parent_fraction
+                requested_parent_count = 2 if wants_two else 1
+                parents = (
+                    self._sample_two_success_parents(
+                        allow_intra_bin=self.qd_operator_two_parent_allow_intra_bin,
+                    )
+                    if wants_two
+                    else self._sample_success_parents(1)
+                )
+                if wants_two and len(parents) < 2:
+                    parents = self._sample_success_parents(1)
+                if not parents:
+                    break
+                if len(parents) > 2:
+                    parents = parents[:2]
+                if len(parents) == 2 and parents[0].id == parents[1].id:
+                    alternatives = [
+                        cand for cand in self._success_view() if cand.id != parents[0].id
+                    ]
+                    if not alternatives:
+                        parents = parents[:1]
+                    else:
+                        parents[1] = random.choice(alternatives)
+                prompt_text = self._create_prompt_single_thought_operator(
+                    parents,
+                    archive_context=self._archive_context_sample(
+                        {parent.id for parent in parents}
+                    ),
+                )
+                llm_requests.append(
+                    self._build_prompt_request(
+                        prompt=prompt_text,
+                        mode=mode,
+                        system_prompt=self._get_generation_system_prompt(mode),
+                    )
+                )
+                request_meta.append(
+                    {
+                        "strategy": SINGLE_THOUGHT_OPERATOR_STRATEGY,
+                        "parents": parents,
+                        "parent_count": len(parents),
+                        "requested_parent_count": requested_parent_count,
+                        "origin_pool": "success_pool",
+                        "resolved_mode": mode,
+                        "prompt_text": prompt_text,
+                    }
+                )
+        else:
+            if self.fail_pool and budget.fail_budget > 0:
+                fail_strategies: list[EvolStrategyMethodFail] = (
+                    list(CLASSIC_FAIL_STRATEGIES)
+                    if not self._uses_descriptor_guided_generation()
+                    else ["M-F", "M-E"]
+                )
+                fail_selected: set[EvolStrategyMethodFail] = set()
+                for _ in range(budget.fail_budget):
+                    strat_name, prob_dist = self._select_strategy(
+                        "fail",
+                        fail_strategies,
+                        fail_selected,
+                    )
+                    if strat_name is None or prob_dist is None:
+                        continue
+                    fail_selected.add(strat_name)
+                    parent = random.choice(self.fail_pool)
+                    mode = self._phase_mode("fail")
+                    prompt_text = self._with_mode(
+                        mode,
+                        getattr(self, f"_create_prompt_{strat_name.replace('-', '_')}"),
+                        [parent],
+                    )
+                    llm_requests.append(
+                        self._build_prompt_request(
+                            prompt=prompt_text,
+                            mode=mode,
+                            system_prompt=self._get_generation_system_prompt(mode),
+                        )
+                    )
+                    request_meta.append(
+                        {
+                            "strategy": strat_name,
+                            "parents": [parent],
+                            "origin_pool": "fail_pool",
+                            "resolved_mode": mode,
+                        }
+                    )
+                    for key, value in prob_dist.items():
+                        strategy_avg_selection_probabilities["fail_pool"][key] = (
+                            strategy_avg_selection_probabilities["fail_pool"].get(
+                                key,
+                                0.0,
+                            )
+                            + value
+                        )
+
+            success_selected: set[EvolStrategyMethodSuccess] = set()
+            success_total_requests = budget.backfill_budget + budget.refine_budget
+            for idx in range(success_total_requests):
+                if not self._uses_descriptor_guided_generation():
+                    arity = self._success_parent_arity()
+                    if arity == 2:
+                        available = ["C-F"]
+                    elif arity == 1:
+                        available = ["M-S", "M-E", "M-R", "M-I"]
+                    else:
+                        available = list(CLASSIC_SUCCESS_STRATEGIES)
+                        if len(self.success_pool) < 2 and "C-F" in available:
+                            available.remove("C-F")
+                    selected_name, prob_dist = self._select_strategy(
+                        "success",
+                        available,
+                        success_selected,
+                    )
+                    if selected_name is None or prob_dist is None:
+                        continue
+                    strat_name = selected_name
+                    success_selected.add(strat_name)
+                    parents = (
+                        self._sample_two_success_parents()
+                        if strat_name == "C-F"
+                        else self._sample_success_parents(1)
+                    )
+                    if not parents:
+                        break
+                    mode = self._phase_mode("crossover" if strat_name == "C-F" else "refine")
+                    for key, value in prob_dist.items():
+                        strategy_avg_selection_probabilities["success_pool"][key] = (
+                            strategy_avg_selection_probabilities["success_pool"].get(
+                                key,
+                                0.0,
+                            )
+                            + value
+                        )
+                elif budget.phase == "fill" or idx < budget.backfill_budget:
+                    arity = self._success_parent_arity()
+                    if arity is None:
+                        available = ["M-T", "M-E"]
+                        if len(self.success_pool) > 1:
+                            available.append("C-D")
+                    elif arity == 2:
+                        available: list[EvolStrategyMethodSuccess] = ["C-D"]
+                    else:
+                        available = ["M-T", "M-E"]
+                    selected_name, prob_dist = self._select_strategy(
+                        "success",
+                        available,
+                        success_selected,
+                    )
+                    if selected_name is None or prob_dist is None:
+                        continue
+                    strat_name = selected_name
+                    success_selected.add(strat_name)
+                    parents = (
+                        self._sample_diverse_success_parents()
+                        if strat_name == "C-D"
+                        else self._sample_success_parents(1)
+                    )
+                    if not parents:
+                        break
+                    mode = self._phase_mode("crossover" if strat_name == "C-D" else "backfill")
+                    for key, value in prob_dist.items():
+                        strategy_avg_selection_probabilities["success_pool"][key] = (
+                            strategy_avg_selection_probabilities["success_pool"].get(
+                                key,
+                                0.0,
+                            )
+                            + value
+                        )
+                else:
+                    arity = self._success_parent_arity()
+                    if arity is None:
+                        parent_count = (
+                            2
+                            if idx == success_total_requests - 1 and len(self.success_pool) > 1
+                            else 1
+                        )
+                        parents = self._sample_success_parents(parent_count)
+                    elif arity == 2:
+                        parents = self._sample_two_success_parents()
+                    else:
+                        parents = self._sample_success_parents(1)
+                    if not parents:
+                        break
+                    if arity is None:
+                        available = ["M-S", "M-R", "M-I"]
+                        if len(self.success_pool) > 1:
+                            available.append("C-F")
+                    elif arity == 2:
+                        available = ["C-F"]
+                    else:
+                        available = ["M-S", "M-R", "M-I"]
+                    selected_name, prob_dist = self._select_strategy(
+                        "success",
+                        available,
+                        success_selected,
+                    )
+                    if selected_name is None or prob_dist is None:
+                        continue
+                    strat_name = selected_name
+                    success_selected.add(strat_name)
+                    mode = self._phase_mode("crossover" if strat_name == "C-F" else "refine")
+                    for key, value in prob_dist.items():
+                        strategy_avg_selection_probabilities["success_pool"][key] = (
+                            strategy_avg_selection_probabilities["success_pool"].get(
+                                key,
+                                0.0,
+                            )
+                            + value
+                        )
+
+                if strat_name in {"C-F", "C-D"} and len(parents) < 2:
+                    parents = self._sample_success_parents(2)
+                    if len(parents) < 2:
+                        continue
+                if strat_name not in {"C-F", "C-D"}:
+                    prompt_text = self._with_mode(
+                        mode,
+                        getattr(self, f"_create_prompt_{strat_name.replace('-', '_')}"),
+                        [parents[0]],
+                    )
+                else:
+                    if parents[0].id == parents[1].id:
+                        alt = [
+                            cand
+                            for cand in self.success_pool
+                            if cand.id != parents[0].id
+                        ]
+                        if not alt:
+                            continue
+                        parents[1] = random.choice(alt)
+                    prompt_builder = (
+                        self._create_prompt_C_F
+                        if strat_name == "C-F"
+                        else self._create_prompt_C_D
+                    )
+                    prompt_text = self._with_mode(mode, prompt_builder, parents)
+
                 llm_requests.append(
                     self._build_prompt_request(
                         prompt=prompt_text,
@@ -1416,153 +1807,11 @@ class QDEngine(EoHEngine):
                 request_meta.append(
                     {
                         "strategy": strat_name,
-                        "parents": [parent],
-                        "origin_pool": "fail_pool",
+                        "parents": parents,
+                        "origin_pool": "success_pool",
                         "resolved_mode": mode,
                     }
                 )
-                for key, value in prob_dist.items():
-                    strategy_avg_selection_probabilities["fail_pool"][key] = (
-                        strategy_avg_selection_probabilities["fail_pool"].get(key, 0.0)
-                        + value
-                    )
-
-        success_selected: set[EvolStrategyMethodSuccess] = set()
-        success_total_requests = budget.backfill_budget + budget.refine_budget
-        for idx in range(success_total_requests):
-            if not self._uses_descriptor_guided_generation():
-                arity = self._success_parent_arity()
-                if arity == 2:
-                    available = ["C-F"]
-                elif arity == 1:
-                    available = ["M-S", "M-E", "M-R", "M-I"]
-                else:
-                    available = list(CLASSIC_SUCCESS_STRATEGIES)
-                    if len(self.success_pool) < 2 and "C-F" in available:
-                        available.remove("C-F")
-                selected_name, prob_dist = self._select_strategy(
-                    "success",
-                    available,
-                    success_selected,
-                )
-                if selected_name is None or prob_dist is None:
-                    continue
-                strat_name = selected_name
-                success_selected.add(strat_name)
-                parents = (
-                    self._sample_two_success_parents()
-                    if strat_name == "C-F"
-                    else self._sample_success_parents(1)
-                )
-                if not parents:
-                    break
-                mode = self._phase_mode("crossover" if strat_name == "C-F" else "refine")
-                for key, value in prob_dist.items():
-                    strategy_avg_selection_probabilities["success_pool"][key] = (
-                        strategy_avg_selection_probabilities["success_pool"].get(key, 0.0)
-                        + value
-                    )
-            elif budget.phase == "fill" or idx < budget.backfill_budget:
-                arity = self._success_parent_arity()
-                if arity is None:
-                    available = ["M-T", "M-E"]
-                    if len(self.success_pool) > 1:
-                        available.append("C-D")
-                elif arity == 2:
-                    available: list[EvolStrategyMethodSuccess] = ["C-D"]
-                else:
-                    available = ["M-T", "M-E"]
-                selected_name, prob_dist = self._select_strategy(
-                    "success",
-                    available,
-                    success_selected,
-                )
-                if selected_name is None or prob_dist is None:
-                    continue
-                strat_name = selected_name
-                success_selected.add(strat_name)
-                parents = (
-                    self._sample_diverse_success_parents()
-                    if strat_name == "C-D"
-                    else self._sample_success_parents(1)
-                )
-                if not parents:
-                    break
-                mode = self._phase_mode("crossover" if strat_name == "C-D" else "backfill")
-                for key, value in prob_dist.items():
-                    strategy_avg_selection_probabilities["success_pool"][key] = (
-                        strategy_avg_selection_probabilities["success_pool"].get(key, 0.0)
-                        + value
-                    )
-            else:
-                arity = self._success_parent_arity()
-                if arity is None:
-                    parent_count = (
-                        2
-                        if idx == success_total_requests - 1 and len(self.success_pool) > 1
-                        else 1
-                    )
-                    parents = self._sample_success_parents(parent_count)
-                elif arity == 2:
-                    parents = self._sample_two_success_parents()
-                else:
-                    parents = self._sample_success_parents(1)
-                if not parents:
-                    break
-                if arity is None:
-                    available = ["M-S", "M-R", "M-I"]
-                    if len(self.success_pool) > 1:
-                        available.append("C-F")
-                elif arity == 2:
-                    available = ["C-F"]
-                else:
-                    available = ["M-S", "M-R", "M-I"]
-                selected_name, prob_dist = self._select_strategy(
-                    "success",
-                    available,
-                    success_selected,
-                )
-                if selected_name is None or prob_dist is None:
-                    continue
-                strat_name = selected_name
-                success_selected.add(strat_name)
-                mode = self._phase_mode("crossover" if strat_name == "C-F" else "refine")
-                for key, value in prob_dist.items():
-                    strategy_avg_selection_probabilities["success_pool"][key] = (
-                        strategy_avg_selection_probabilities["success_pool"].get(key, 0.0)
-                        + value
-                    )
-
-            if strat_name in {"C-F", "C-D"} and len(parents) < 2:
-                parents = self._sample_success_parents(2)
-                if len(parents) < 2:
-                    continue
-            if strat_name not in {"C-F", "C-D"}:
-                prompt_text = self._with_mode(mode, getattr(self, f"_create_prompt_{strat_name.replace('-', '_')}"), [parents[0]])
-            else:
-                if parents[0].id == parents[1].id:
-                    alt = [cand for cand in self.success_pool if cand.id != parents[0].id]
-                    if not alt:
-                        continue
-                    parents[1] = random.choice(alt)
-                prompt_builder = self._create_prompt_C_F if strat_name == "C-F" else self._create_prompt_C_D
-                prompt_text = self._with_mode(mode, prompt_builder, parents)
-
-            llm_requests.append(
-                self._build_prompt_request(
-                    prompt=prompt_text,
-                    mode=mode,
-                    system_prompt=self._get_generation_system_prompt(mode),
-                )
-            )
-            request_meta.append(
-                {
-                    "strategy": strat_name,
-                    "parents": parents,
-                    "origin_pool": "success_pool",
-                    "resolved_mode": mode,
-                }
-            )
 
         if llm_requests:
             llm_results = asyncio.run(

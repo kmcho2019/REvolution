@@ -12,7 +12,7 @@ from revolution.qd.archive import (
     GridQuantileArchive,
     dominates,
 )
-from revolution.qd.artifacts import write_archive_cells_csv
+from revolution.qd.artifacts import write_archive_cells_csv, write_descriptor_health_files
 from revolution.qd.types import ArchiveMember
 
 
@@ -357,6 +357,7 @@ def test_pareto_archive_cells_csv_writes_one_row_per_member(tmp_path):
     assert {int(row["cell_member_count"]) for row in rows} == {2}
     assert {int(row["member_index"]) for row in rows} == {0, 1}
     assert {int(row["pareto_rank"]) for row in rows} == {1}
+    assert "parent_count" in rows[0]
     assert all(json.loads(row["objectives_json"]) for row in rows)
     assert space["occupied_cells"] == 1
     assert space["total_archive_members"] == 2
@@ -587,6 +588,144 @@ def test_grid_quantile_archive_buffers_warmup_then_replays_samples():
     assert space["warmup_replay_results"][0]["inserted"] is True
     assert space["warmup_initialization_samples"][0]["generation_candidate_index"] == 1
     assert space["quantile_boundaries_hash"] == archive.quantile_boundaries_hash
+
+
+def test_grid_quantile_descriptor_health_separates_live_and_replay(tmp_path):
+    archive = GridQuantileArchive(
+        ("logic_depth", "ff_depth", "comb_width_log"),
+        warmup_successes=5,
+        cell_mode="pareto_front",
+        max_elites_per_cell=4,
+        objective_names=("g_P", "g_A"),
+    )
+    samples = [
+        ("cand-a", (3.0, 0.0, 2.0), {"g_P": 0.3, "g_A": 0.2}),
+        ("cand-b", (3.0, 0.0, 2.0), {"g_P": 0.4, "g_A": 0.3}),
+        ("cand-c", (3.0, 0.0, 2.0), {"g_P": 0.5, "g_A": 0.4}),
+        ("cand-d", (3.0, 0.0, 2.0), {"g_P": 0.6, "g_A": 0.5}),
+        ("cand-e", (3.0, 0.0, 4.0), {"g_P": 0.7, "g_A": 0.6}),
+    ]
+    observations = []
+    for index, (candidate_id, descriptors, objectives) in enumerate(samples, start=1):
+        result = _insert(
+            archive,
+            candidate_id,
+            descriptors,
+            float(index),
+            {"id": candidate_id},
+            objectives,
+        )
+        assert result.decision == "warmup_buffered"
+        observations.append(
+            {
+                "decision": result.decision,
+                "descriptor_values": {
+                    "logic_depth": descriptors[0],
+                    "ff_depth": descriptors[1],
+                    "comb_width_log": descriptors[2],
+                },
+            }
+        )
+
+    archive.finalize_pending()
+    payload = write_descriptor_health_files(
+        json_path=tmp_path / "descriptor_health.json",
+        report_path=tmp_path / "descriptor_health_report.md",
+        archive=archive,
+        descriptor_axes=("logic_depth", "ff_depth", "comb_width_log"),
+        descriptor_profile="journal_logic_ff_width_3d",
+        observations=observations,
+    )
+
+    assert payload["decision_counts"] == {"warmup_buffered": 5}
+    assert payload["live_decision_counts"] == {"warmup_buffered": 5}
+    assert sum(payload["replay_decision_counts"].values()) == 5
+    assert payload["initialization_mode"] == "run_finalization_fallback"
+    assert payload["initialized"] is True
+    assert payload["effective_shape"] == [1, 1, 2]
+    assert payload["active_effective_axes"] == 1
+    assert payload["collapsed_axes"] == ["logic_depth", "ff_depth"]
+
+    report_text = (tmp_path / "descriptor_health_report.md").read_text(encoding="utf-8")
+    assert "## Live Decision Counts" in report_text
+    assert "## Grid-Quantile Initialization" in report_text
+    assert "- `warmup_buffered`: 5" in report_text
+    assert "- effective_shape: `1x1x2`" in report_text
+    assert "### Warmup Replay Decision Counts" in report_text
+
+
+def test_grid_quantile_descriptor_health_reports_fully_collapsed_shape(tmp_path):
+    archive = GridQuantileArchive(
+        ("logic_depth", "ff_depth", "comb_width_log"),
+        warmup_successes=3,
+    )
+    observations = []
+    for index in range(3):
+        descriptors = (1.0, 0.0, 2.0)
+        result = _insert(
+            archive,
+            f"cand-{index}",
+            descriptors,
+            float(index),
+            {"id": index},
+        )
+        observations.append(
+            {
+                "decision": result.decision,
+                "descriptor_values": {
+                    "logic_depth": descriptors[0],
+                    "ff_depth": descriptors[1],
+                    "comb_width_log": descriptors[2],
+                },
+            }
+        )
+
+    archive.finalize_pending()
+    payload = write_descriptor_health_files(
+        json_path=tmp_path / "descriptor_health.json",
+        report_path=tmp_path / "descriptor_health_report.md",
+        archive=archive,
+        descriptor_axes=("logic_depth", "ff_depth", "comb_width_log"),
+        descriptor_profile="journal_logic_ff_width_3d",
+        observations=observations,
+    )
+
+    assert payload["effective_shape"] == [1, 1, 1]
+    assert payload["active_effective_axes"] == 0
+    assert payload["collapsed_axes"] == [
+        "logic_depth",
+        "ff_depth",
+        "comb_width_log",
+    ]
+    assert "effective_shape: `1x1x1`" in (
+        tmp_path / "descriptor_health_report.md"
+    ).read_text(encoding="utf-8")
+
+
+def test_non_grid_quantile_descriptor_health_has_no_replay_fields(tmp_path):
+    archive = GridArchive(
+        [GridAxisSpec(name="g_A", bins=2, lower_bound=0.0, upper_bound=1.0)]
+    )
+    result = _insert(archive, "cand-a", (0.5,), 1.0, {"id": "cand-a"})
+    payload = write_descriptor_health_files(
+        json_path=tmp_path / "descriptor_health.json",
+        report_path=tmp_path / "descriptor_health_report.md",
+        archive=archive,
+        descriptor_axes=("g_A",),
+        descriptor_profile="test_grid",
+        observations=[
+            {
+                "decision": result.decision,
+                "descriptor_values": {"g_A": 0.5},
+            }
+        ],
+    )
+
+    assert payload["decision_counts"] == {"filled_empty": 1}
+    assert payload["live_decision_counts"] == {"filled_empty": 1}
+    assert "replay_decision_counts" not in payload
+    report_text = (tmp_path / "descriptor_health_report.md").read_text(encoding="utf-8")
+    assert "Grid-Quantile Initialization" not in report_text
 
 
 def test_grid_quantile_archive_delays_until_two_active_axes():

@@ -117,6 +117,8 @@ def test_backend_comparison_report_generates_markdown(tmp_path):
     assert "Avg PPA Delta | PPA Delta (A/P/T) | PPA Trend (✅/➖/❌)" in text
     assert "✅ Pass (100.0%)" in text
     assert "Score/PPA aggregate metrics exclude failed designs" in text
+    assert "Valid PPA Samples" in text
+    assert "Valid PPA samples count generated samples with PPA metrics" in text
 
 
 def test_backend_comparison_report_excludes_failed_designs_from_aggregates(tmp_path):
@@ -189,9 +191,78 @@ def test_backend_comparison_report_excludes_failed_designs_from_aggregates(tmp_p
         "| +10.00% ± 0.00% ✅ / +10.00% ± 0.00% ✅ / +10.00% ± 0.00% ✅ |" in agg_row
     )
     assert (
-        "| 1/2 | +10.00% ± 0.00% ✅ | +10.00% ± 0.00% ✅ / +10.00% ± 0.00% ✅ / "
+        "| 1/2 (1 samples) | +10.00% ± 0.00% ✅ | +10.00% ± 0.00% ✅ / "
+        "+10.00% ± 0.00% ✅ / "
         "+10.00% ± 0.00% ✅ | ✅ 1 / ➖ 0 / ❌ 0 |" in agg_row
     )
+
+
+def test_backend_comparison_report_counts_warmup_ppa_samples(tmp_path):
+    qd_root = tmp_path / "revolution_qd"
+    _write_summary(
+        qd_root,
+        "Bench",
+        "ProbWarmup",
+        {
+            "benchmark_name": "Bench",
+            "problem_name": "ProbWarmup",
+            "accumulated_success_rates": {"functionality": 0.25, "synthesis_ppa": 0.25},
+            "backend_details": {"search_mode": "revolution_qd"},
+            "final_population_ppa": {"best_score": None, "best_metrics": {}},
+            "ref_ppa_metric": {"area": 100.0, "power": 2.0, "eff_clk_period": 1.0},
+            "total_runtime_seconds": 2.0,
+            "total_llm_api_calls": 3,
+        },
+    )
+    _write_generation_log(
+        qd_root,
+        "Bench",
+        "ProbWarmup",
+        [
+            {
+                "generation": 0,
+                "population_ppa_details": [
+                    {
+                        "id": "warmup",
+                        "score": 0.15,
+                        "ppa_metrics": {
+                            "area": 80.0,
+                            "power": 1.5,
+                            "eff_clk_period": 0.8,
+                        },
+                    }
+                ],
+            }
+        ],
+    )
+
+    output_path = tmp_path / "comparison.md"
+    cmd = [
+        sys.executable,
+        "scripts/backend_comparison_report.py",
+        "--backend_run",
+        f"revolution_qd={qd_root}",
+        "--output",
+        str(output_path),
+    ]
+    subprocess.run(cmd, check=True, cwd=Path(__file__).resolve().parents[2])
+    text = output_path.read_text(encoding="utf-8")
+
+    problem_row = next(
+        line
+        for line in text.splitlines()
+        if line.startswith("| `revolution_qd` | Bench | ProbWarmup |")
+    )
+    assert "| 1 | +15.00% ✅ |" in problem_row
+    assert "+20.00% ✅ / +25.00% ✅ / +20.00% ✅" in problem_row
+    assert "| +21.67% ✅ |" in problem_row
+
+    agg_row = next(
+        line
+        for line in text.splitlines()
+        if line.startswith("| `revolution_qd` | Bench | 1 |")
+    )
+    assert "| 1/1 (1 samples) | +21.67% ± 0.00% ✅ |" in agg_row
 
 
 def test_backend_comparison_report_accepts_codeevolve_label(tmp_path):
@@ -345,6 +416,100 @@ def test_backend_comparison_report_ignores_qd_sidecar_summary_and_renders_qd_sec
     assert "wire_ctrl_assign_3d" in text
     assert "ctrl_depth_est" in text
     assert "filled_empty=2, not_inserted=3, replaced_elite=1" in text
+
+
+def test_backend_comparison_report_renders_live_and_replay_decisions(tmp_path):
+    qd_root = tmp_path / "revolution"
+    problem_dir = qd_root / "model-x" / "Bench" / "ProbGridQuantile"
+    problem_dir.mkdir(parents=True, exist_ok=True)
+    (problem_dir / "ProbGridQuantile_summary.json").write_text(
+        json.dumps(
+            {
+                "benchmark_name": "Bench",
+                "problem_name": "ProbGridQuantile",
+                "backend_details": {
+                    "search_mode": "revolution_qd",
+                    "qd_config": {"archive_type": "grid_quantile"},
+                },
+                "accumulated_success_rates": {
+                    "functionality": 1.0,
+                    "synthesis_ppa": 1.0,
+                },
+                "final_population_ppa": {
+                    "best_score": 0.1,
+                    "best_metrics": {
+                        "area": 90.0,
+                        "power": 0.9,
+                        "eff_clk_period": 0.9,
+                    },
+                },
+                "ref_ppa_metric": {
+                    "area": 100.0,
+                    "power": 1.0,
+                    "eff_clk_period": 1.0,
+                },
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    (problem_dir / "descriptor_health.json").write_text(
+        json.dumps(
+            {
+                "archive_type": "grid_quantile",
+                "descriptor_profile": "journal_logic_ff_width_3d",
+                "descriptor_axes": ["logic_depth", "ff_depth", "comb_width_log"],
+                "observation_count": 50,
+                "archive_entry_count": 2,
+                "collapsed_axes": [],
+                "decision_counts": {"warmup_buffered": 50},
+                "live_decision_counts": {"warmup_buffered": 50},
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    (problem_dir / "archive_space.json").write_text(
+        json.dumps(
+            {
+                "archive_type": "grid_quantile",
+                "initialization_mode": "run_finalization_fallback",
+                "initialized": True,
+                "warmup_successes": 120,
+                "warmup_buffer_size": 0,
+                "initialization_sample_count": 50,
+                "effective_shape": [1, 1, 1],
+                "active_effective_axes": 0,
+                "collapsed_axes": ["logic_depth", "ff_depth", "comb_width_log"],
+                "warmup_replay_results": [
+                    {"decision": "filled_empty"},
+                    {"decision": "pareto_inserted"},
+                    *({"decision": "duplicate_objectives"} for _ in range(48)),
+                ],
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    output_path = tmp_path / "comparison.md"
+    cmd = [
+        sys.executable,
+        "scripts/backend_comparison_report.py",
+        "--backend_run",
+        f"revolution={qd_root}",
+        "--output",
+        str(output_path),
+    ]
+    subprocess.run(cmd, check=True, cwd=Path(__file__).resolve().parents[2])
+    text = output_path.read_text(encoding="utf-8")
+
+    assert "init=run_finalization_fallback, shape=1x1x1" in text
+    assert "live warmup_buffered=50" in text
+    assert (
+        "replay duplicate_objectives=48, filled_empty=1, pareto_inserted=1"
+        in text
+    )
 
 
 def test_backend_comparison_report_renders_pareto_sections(tmp_path):

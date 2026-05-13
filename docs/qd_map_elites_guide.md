@@ -742,11 +742,24 @@ over archive-handled successful candidates and current archive elites so the
 run output itself shows whether a chosen descriptor set is actually separating
 solutions.
 
+For grid-quantile archives, descriptor health separates live insertion
+decisions from warmup replay/finalization. `decision_counts` remains a live
+decision alias for compatibility; new reports also expose
+`live_decision_counts`, `replay_decision_counts`,
+`warmup_replay_decision_counts`, `initialization_mode`, `initialized`,
+`warmup_buffer_size`, `initialization_sample_count`, `effective_shape`,
+`active_effective_axes`, and final `collapsed_axes`. This makes cases such as
+`live warmup_buffered=50; replay filled_empty=1, pareto_inserted=1,
+duplicate_objectives=48` explicit instead of looking like pending warmup.
+
 Report/archive consumers:
 
 - `scripts/backend_comparison_report.py`
   - renders a `QD Descriptor Health` section when descriptor-health sidecars
     are present beside problem summaries
+  - counts generated valid PPA samples from `generation_log.jsonl`, so
+    warmup-only successes remain visible even when archive insertion does not
+    retain them
 - `scripts/archive_baseline.py`
   - preserves descriptor-health sidecars in archived QD runs so later summary
     review does not silently lose axis-collapse diagnostics
@@ -877,6 +890,11 @@ For grid-quantile journal runs:
 - inspect `archive_space.json` first to see pending warmup buffer samples,
   initialization samples, replay results, quantile boundaries, effective bins,
   collapsed axes, and the boundary hash
+- Feature 05's `single_thought_operator` is an operator-routing change, not a
+  thought-only data-model change. It keeps the current thought/code/feedback
+  candidate records so it can be compared against the EoH prompt profile, but
+  its parent prompt payload contains only parent thoughts, evaluation status,
+  success-side PPA summaries, and compact archive-thought context.
 - in Pareto-front cell mode, `archive_cells.csv` has one row per archive
   member rather than one row per occupied cell. Use `total_archive_members`,
   `mean_front_size`, and `max_front_size` for front breadth; use distinct
@@ -892,6 +910,10 @@ For grid-quantile journal runs:
   artifacts as Phase 02 acceptance evidence
 - run `scripts/validate_pareto_front_run.py` before treating a Phase 03
   Pareto-front hard-subset run as accepted
+- run `scripts/validate_single_thought_operator_run.py` before treating the
+  Feature 05 unified single-thought-operator hard-subset comparison as
+  accepted. That validator checks the EoH-vs-unified paired metrics and audits
+  prompt snapshots for code, individual feedback, and code-level log leakage.
 - use `scripts/export_qd_ppa_visualization.py` to generate
   `visualization/qd_ppa_viewer/index.html` from completed classic and QD runs,
   then run `scripts/validate_qd_ppa_visualization.py` before treating the
