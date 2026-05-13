@@ -94,6 +94,10 @@ Server-side evaluation resources are limited for this feature branch. Keep
 all local smoke runs, validation runs, and multi-config matrix runs at or
 below `16` total workers. When running multiple modes in parallel, split the
 worker budget so the sum across active configs never exceeds `16`. For
+single-mode smoke or validation runs, `HARD_SUBSET_MAX_ACTIVE_PROBLEMS` may
+be raised to `8` or `13` with `HARD_SUBSET_MAX_WORKERS_PER_PROBLEM=4` so the
+worker budget is spread across more benchmark problems and the run completes
+faster. Keep `HARD_SUBSET_TOTAL_WORKER_SLOTS` as the hard cap. For
 long-running evaluations, progress monitoring may be delegated to a cheap
 subagent such as `gpt-5.3-codex-spark`; keep that subagent scoped to progress
 checks, failure summaries, and actionable status updates.
@@ -335,7 +339,16 @@ mentions a helper module such as `full_adder`, the prompt asks the model to
 translate that idea into inline logic rather than preserving the helper-module
 structure, unless the problem specification explicitly names extra modules.
 This avoids benchmark/reference module-name collisions while keeping the
-thought/code/feedback interface unchanged.
+thought/code/feedback interface unchanged. Prompt-performance tuning should
+stay within this same single-operator contract: favor compact behavioral RTL,
+built-in operators, reductions, and shared datapath expressions over manually
+expanded arithmetic, comparators, muxes, counters, or decoders when the
+problem statement permits synthesis to infer the compact implementation.
+For recurring hard-subset failure modes, this includes translating bit-level
+adder-stage ideas into compact concatenated arithmetic inside the requested
+module, and driving requested next-state-only outputs directly with the
+minimized next-state expression rather than outputting the present state or
+leaving a computed next-state wire unused.
 
 ### One-parent payload
 
@@ -812,7 +825,7 @@ HARD_SUBSET_DIFF_MAX_TOKENS=128000 \
 HARD_SUBSET_POPULATION_SIZE=20 \
 HARD_SUBSET_NUM_GENERATIONS=5 \
 HARD_SUBSET_TOTAL_WORKER_SLOTS=16 \
-HARD_SUBSET_MAX_ACTIVE_PROBLEMS=4 \
+HARD_SUBSET_MAX_ACTIVE_PROBLEMS=13 \
 HARD_SUBSET_MAX_WORKERS_PER_PROBLEM=4 \
 HARD_SUBSET_SAVE_PATH=exp/journal_single_thought_operator_hard_subset \
 bash scripts/run_hard_iteration_qd_vllm.sh \
