@@ -27,6 +27,14 @@ def _load_validator_module():
     return module
 
 
+class _OptionPage:
+    def __init__(self, values: list[str]) -> None:
+        self.values = values
+
+    def eval_on_selector_all(self, _selector: str, _script: str) -> list[str]:
+        return self.values
+
+
 def test_strict_visual_case_matrix_is_explicit() -> None:
     validator = _load_validator_module()
     cases = validator.STRICT_VISUAL_CASES
@@ -37,6 +45,19 @@ def test_strict_visual_case_matrix_is_explicit() -> None:
         ("combinational_ppa_2d", "RTLLM/Prob004_adder_8bit", "ppa", "2d"),
         ("combinational_projected_archive", "VerilogEval-Spec-to-RTL/Prob135_m2014_q6b", "archive", "2d_slab"),
     )
+
+
+def test_compare_pair_uses_available_non_classic_backend() -> None:
+    validator = _load_validator_module()
+    errors: list[str] = []
+
+    pair = validator._compare_pair(
+        _OptionPage(["classic", "grid_quantile_pareto_journal_thought_k4"]),
+        errors,
+    )
+
+    assert pair == ("classic", "grid_quantile_pareto_journal_thought_k4")
+    assert errors == []
 
 
 def test_export_and_validate_qd_ppa_visualization_cli(tmp_path: Path) -> None:

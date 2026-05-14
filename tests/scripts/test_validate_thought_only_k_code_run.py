@@ -120,7 +120,7 @@ def _write_mode(
     )
 
 
-def _write_control_mode(root: Path, mode: str) -> None:
+def _write_control_mode(root: Path, mode: str, *, sample_count: int = 1) -> None:
     problem_root = root / mode / "RTLLM" / "Prob004_adder_8bit"
     problem_root.mkdir(parents=True)
     summary = {
@@ -132,7 +132,10 @@ def _write_control_mode(root: Path, mode: str) -> None:
             "average_score": 0.4,
             "best_metrics": {"area": 90.0, "power": 0.9},
         },
-        "final_population_ppa_details": [{"id": "control"}],
+        "final_population_ppa_details": [
+            {"id": f"control_{index}"}
+            for index in range(sample_count)
+        ],
         "ref_ppa_metric": {"area": 100.0, "power": 1.0},
     }
     (problem_root / "Prob004_adder_8bit_summary.json").write_text(
@@ -197,6 +200,24 @@ def test_validate_thought_only_k_code_run_rejects_wrong_k(tmp_path):
         (tmp_path / "thought_only_k_code_validation.json").read_text(encoding="utf-8")
     )
     assert any("expected 4" in error for error in payload["errors"])
+
+
+def test_validate_thought_only_k_code_run_accepts_lower_representative_count(
+    tmp_path,
+):
+    subset = _subset_config(tmp_path)
+    _write_manifest(tmp_path)
+    _write_control_mode(tmp_path, "classic")
+    _write_control_mode(tmp_path, "grid_quantile_pareto_journal_bd_eoh")
+    _write_control_mode(
+        tmp_path,
+        "grid_quantile_pareto_journal_bd_unified",
+        sample_count=4,
+    )
+    _write_mode(tmp_path, "grid_quantile_pareto_journal_eoh_thought_k4")
+    _write_mode(tmp_path, "grid_quantile_pareto_journal_thought_k4")
+
+    assert validate_main(_args(tmp_path, subset)) == 0
 
 
 def test_validate_thought_only_k_code_run_rejects_target_collapse(tmp_path):

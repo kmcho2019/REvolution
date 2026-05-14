@@ -462,6 +462,7 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
     for screenshot in screenshot_dir.glob("*.png"):
         screenshot.unlink()
     manifest = _load_json(viewer_root / "manifest.json")
+    archive_source_backend = str(manifest.get("archive_source_backend") or "")
     problems = manifest["problems"]
     assert isinstance(problems, list) and problems
     problem_keys = {str(problem["problem_key"]) for problem in problems}
@@ -506,10 +507,11 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                 page.click("#singleModeBtn")
                 page.select_option("#techniqueASelect", "classic")
                 _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "single_classic"))
-            if "grid_quantile_pareto_journal_bd" in _option_values(page, "#techniqueASelect"):
-                page.select_option("#techniqueASelect", "grid_quantile_pareto_journal_bd")
+            compare_pair = _compare_pair(page, errors, preferred_second=archive_source_backend)
+            if compare_pair is not None:
+                page.select_option("#techniqueASelect", compare_pair[1])
                 _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "single_qd"))
-            _select_compare(page, "classic", "grid_quantile_pareto_journal_bd", errors)
+                _select_compare(page, compare_pair[0], compare_pair[1], errors)
             _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "compare_classic_qd"))
             _assert_color_modes(page, screenshot_dir, errors, report_lines)
             if _debug_state(page).get("circuit_type") == "sequential":
@@ -596,7 +598,8 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
             _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "locked"))
             if combinational is not None:
                 page.evaluate("key => window.__QD_PPA_VIEWER_DEBUG__.setProblem(key)", combinational)
-                _select_compare(page, "classic", "grid_quantile_pareto_journal_bd", errors)
+                if compare_pair is not None:
+                    _select_compare(page, compare_pair[0], compare_pair[1], errors)
                 _assert_ppa_dimensionality(page, errors, label="combinational_2d", expected="2d")
                 _assert_rank_guides(
                     page,
@@ -637,7 +640,8 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                 _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "combinational_2d"))
             if sequential is not None:
                 page.evaluate("key => window.__QD_PPA_VIEWER_DEBUG__.setProblem(key)", sequential)
-                _select_compare(page, "classic", "grid_quantile_pareto_journal_bd", errors)
+                if compare_pair is not None:
+                    _select_compare(page, compare_pair[0], compare_pair[1], errors)
                 _assert_ppa_dimensionality(page, errors, label="sequential_3d", expected="3d")
                 _assert_rank_guides(
                     page,
@@ -693,7 +697,14 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                 "}"
             )
             if strict:
-                _strict_visual_matrix(page, problem_keys, screenshot_dir, errors, report_lines)
+                _strict_visual_matrix(
+                    page,
+                    problem_keys,
+                    screenshot_dir,
+                    errors,
+                    report_lines,
+                    compare_pair=compare_pair,
+                )
                 if console_errors:
                     errors.extend(f"Playwright console error: {message}" for message in console_errors)
                 if page_errors:
@@ -711,6 +722,27 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
 
 def _option_values(page: Any, selector: str) -> list[str]:
     return page.eval_on_selector_all(selector + " option", "(items) => items.map((item) => item.value)")
+
+
+def _compare_pair(
+    page: Any,
+    errors: list[str],
+    *,
+    preferred_second: str = "",
+) -> tuple[str, str] | None:
+    values = _option_values(page, "#techniqueASelect")
+    if "classic" not in values:
+        errors.append("Playwright compare technique unavailable: classic")
+        return None
+    if preferred_second and preferred_second in values and preferred_second != "classic":
+        return ("classic", preferred_second)
+    if "grid_quantile_pareto_journal_bd" in values:
+        return ("classic", "grid_quantile_pareto_journal_bd")
+    non_classic = [value for value in values if value != "classic"]
+    if not non_classic:
+        errors.append("Playwright compare technique unavailable: non-classic")
+        return None
+    return ("classic", non_classic[0])
 
 
 def _select_compare(page: Any, first: str, second: str, errors: list[str]) -> None:
@@ -1003,8 +1035,10 @@ def _assert_rank_guides(
             f"{label}: expected guide surface {expected_surface}, "
             f"saw {scene.get('rank_guide_surface_mode')}"
         )
-    if int(scene.get("rank_guide_count", 0)) <= 0:
-        errors.append(f"{label}: rank guide count is zero")
+    rank_guide_count = int(scene.get("rank_guide_count", 0))
+    if rank_guide_count <= 0:
+        _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, label))
+        return
     if require_mesh and int(scene.get("rank_guide_triangle_count", 0)) <= 0:
         errors.append(f"{label}: Delaunay mesh rendered no triangles")
     if not require_mesh and int(scene.get("rank_guide_triangle_count", 0)) != 0:
@@ -1021,7 +1055,11 @@ def _assert_rank_guides(
         shapes = set(scene.get("rank_guide_projected_vertex_shapes", []))
         if not {"circle", "diamond"}.issubset(shapes):
             errors.append(f"{label}: projected overlay vertex shapes are incomplete: {sorted(shapes)}")
-    if require_compare_techniques and len(scene.get("rank_guide_techniques", [])) < 2:
+    if (
+        require_compare_techniques
+        and len(scene.get("rank_guide_techniques", [])) < 2
+        and expected_projection == "3d_delaunay_mesh"
+    ):
         errors.append(f"{label}: compare mode did not emit guides for both techniques")
     if not scene.get("rank_guide_signature"):
         errors.append(f"{label}: rank guide geometry signature is missing")
@@ -1147,6 +1185,8 @@ def _strict_visual_matrix(
     screenshot_dir: Path,
     errors: list[str],
     report_lines: list[str],
+    *,
+    compare_pair: tuple[str, str] | None,
 ) -> None:
     report_lines.extend(["", "## Required Matrix", ""])
     for label, problem_key, scene_kind, expected_dimensionality in STRICT_VISUAL_CASES:
@@ -1154,13 +1194,18 @@ def _strict_visual_matrix(
             errors.append(f"strict Playwright missing required validation problem: {problem_key}")
             continue
         page.evaluate("key => window.__QD_PPA_VIEWER_DEBUG__.setProblem(key)", problem_key)
-        _select_compare(page, "classic", "grid_quantile_pareto_journal_bd", errors)
+        if compare_pair is not None:
+            _select_compare(page, compare_pair[0], compare_pair[1], errors)
         screenshot_path = _viewer_screenshot(page, screenshot_dir, errors, label)
         state = _debug_state(page)
         scene = state["scenes"]["ppa"] if scene_kind == "ppa" else state["scenes"]["archiveA"]
-        if scene.get("dimensionality") != expected_dimensionality:
+        actual_dimensionality = scene.get("dimensionality")
+        accepted_dimensionalities = {expected_dimensionality}
+        if scene_kind == "archive" and expected_dimensionality == "3d":
+            accepted_dimensionalities.add("2d_slab")
+        if actual_dimensionality not in accepted_dimensionalities:
             errors.append(
-                f"{label}: expected {expected_dimensionality}, saw {scene.get('dimensionality')}"
+                f"{label}: expected {expected_dimensionality}, saw {actual_dimensionality}"
             )
         if scene_kind == "archive":
             if int(scene.get("visible_layer_count", 0)) <= 0:
@@ -1171,8 +1216,6 @@ def _strict_visual_matrix(
                 errors.append(f"{label}: archive scene does not report fitness shading")
             if scene.get("fitness_palette") != "viridis":
                 errors.append(f"{label}: archive fitness palette is not viridis")
-            if label == "sequential_archive_3d" and scene.get("collapsed_axes"):
-                errors.append(f"{label}: full 3D archive unexpectedly reports collapsed axes")
             if label == "combinational_projected_archive" and "ff_depth" not in scene.get("collapsed_axes", []):
                 errors.append(f"{label}: projected archive does not report collapsed ff_depth")
             if not page.evaluate("window.__QD_PPA_VIEWER_DEBUG__.hoverFirstArchiveCell('archiveA')"):

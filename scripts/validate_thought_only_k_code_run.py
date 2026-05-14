@@ -127,6 +127,7 @@ def _mean_improvement(
 def _empty_metrics() -> dict[str, float | None]:
     return {
         "valid_design_count": 0.0,
+        "valid_representative_count": 0.0,
         "functional_pass_rate": None,
         "synthesis_ppa_pass_rate": None,
         "average_quality_score": None,
@@ -172,7 +173,8 @@ def _summary_metrics(
     if not isinstance(ref_metrics, dict):
         ref_metrics = {}
     return {
-        "valid_design_count": float(len(ppa_details)),
+        "valid_design_count": 1.0 if ppa_details else 0.0,
+        "valid_representative_count": float(len(ppa_details)),
         "functional_pass_rate": _safe_float(rates.get("functionality")),
         "synthesis_ppa_pass_rate": _safe_float(rates.get("synthesis_ppa")),
         "average_quality_score": average_quality,

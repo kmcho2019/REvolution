@@ -226,6 +226,11 @@ def _read_csv(path: Path) -> list[dict[str, str]]:
     return rows
 
 
+def _read_optional_csv(path: Path) -> list[dict[str, str]]:
+    with path.open(encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
 def _reference_from_row(row: dict[str, str]) -> dict[str, float | None]:
     return {
         "area": finite_float(row.get("ref_area")),
@@ -624,6 +629,13 @@ def _project_sample(
             "archive_projection_status": "missing_descriptors",
             "projection_type": "none",
         }
+    if not _archive_initialized(space):
+        return {
+            "archive_cell_id": None,
+            "archive_indices": None,
+            "archive_projection_status": "archive_uninitialized",
+            "projection_type": "none",
+        }
     archive_type = space["archive_type"]
     if archive_type == "grid_quantile":
         indices = [
@@ -712,7 +724,7 @@ def _cell_summaries_by_step(samples: list[dict[str, Any]], step_names: list[str]
     for step_name in step_names:
         step_summary: dict[str, dict[str, Any]] = {}
         for sample in _visible_samples(samples, step_name):
-            if sample["archive_projection_status"] == "missing_descriptors":
+            if sample["archive_cell_id"] is None:
                 continue
             technique = sample["technique"]
             cell_id = sample["archive_cell_id"]
@@ -797,7 +809,7 @@ def _technique_stats_by_step(
             cells = {
                 sample["archive_cell_id"]
                 for sample in technique_samples
-                if sample["archive_projection_status"] != "missing_descriptors"
+                if sample["archive_cell_id"] is not None
             }
             step_stats[technique] = {
                 "sample_count": len(technique_samples),
@@ -810,7 +822,7 @@ def _technique_stats_by_step(
                 "projected_archive_sample_count": sum(
                     1
                     for sample in technique_samples
-                    if sample["archive_projection_status"] != "missing_descriptors"
+                    if sample["archive_cell_id"] is not None
                 ),
                 "occupied_projected_cells": len(cells),
                 "hypervolume": hypervolume_payload(
@@ -871,16 +883,11 @@ def _load_archive_context(problem_dir: Path | None, *, strict: bool) -> dict[str
     assert space_path.is_file()
     space = _load_json_dict(space_path)
     archive_type = space["archive_type"]
-    if archive_type == "grid_quantile":
-        if strict and not bool(space.get("initialized", False)):
-            raise AssertionError(f"grid_quantile archive is not initialized: {space_path}")
-    elif archive_type == "grid":
+    if archive_type in ("grid_quantile", "grid"):
         pass
     elif archive_type == "cvt":
         geometry = space.get("space_geometry")
         assert isinstance(geometry, dict)
-        if strict and not bool(geometry.get("initialized", False)):
-            raise AssertionError(f"cvt archive is not initialized: {space_path}")
     else:
         raise AssertionError(f"unknown archive type: {archive_type}")
     return {
@@ -894,14 +901,14 @@ def _load_archive_context(problem_dir: Path | None, *, strict: bool) -> dict[str
 def _load_archive_cells(path: Path) -> dict[str, dict[str, str]]:
     if not path.is_file():
         return {}
-    rows = _read_csv(path)
+    rows = _read_optional_csv(path)
     return {row["candidate_id"]: row for row in rows}
 
 
 def _load_global_pareto_ids(path: Path) -> set[str]:
     if not path.is_file():
         return set()
-    return {row["candidate_id"] for row in _read_csv(path)}
+    return {row["candidate_id"] for row in _read_optional_csv(path)}
 
 
 def _find_problem_dir(
@@ -999,9 +1006,28 @@ def _archive_axis_names(space: dict[str, Any]) -> tuple[str, ...]:
     return tuple(str(axis["name"]) for axis in axes)
 
 
+def _archive_initialized(space: dict[str, Any]) -> bool:
+    archive_type = space["archive_type"]
+    if archive_type == "grid_quantile":
+        return bool(space.get("initialized", False))
+    if archive_type == "cvt":
+        geometry = space.get("space_geometry")
+        assert isinstance(geometry, dict)
+        return bool(geometry.get("initialized", False))
+    if archive_type == "grid":
+        return True
+    raise AssertionError(f"unknown archive type: {archive_type}")
+
+
 def _archive_projection_metadata(space: dict[str, Any]) -> dict[str, Any]:
     archive_type = space["archive_type"]
     axes = _archive_axis_names(space)
+    if not _archive_initialized(space):
+        return {
+            "rendering": "regular_cells",
+            "projection_method": None,
+            "disclaimer": "Archive bins were not initialized; PPA samples are shown without cell projection.",
+        }
     if archive_type == "cvt" and len(axes) > 3:
         return {
             "rendering": "projected_grid",

@@ -825,7 +825,11 @@ Archive events for thought-only mode must link:
 
 Summary and report files must expose both levels:
 
-- thought-level counts and pass rates, used for acceptance comparisons.
+- thought-level valid-problem counts and pass rates, used for acceptance
+  comparisons.
+- representative-sample counts, reported for budget accounting but not used as
+  a hard aggregate regression gate because thought-only mode intentionally
+  evolves `population_size / k` representatives per generation.
 - code-sample-level pass rates and success-rate distributions, used as
   diagnostic evidence.
 - repair-attempt counts, repair success rates, and budget-normalized metrics
@@ -1254,7 +1258,8 @@ representation_ablation = grid_quantile_pareto_journal_eoh_thought_k4
 The target must not substantially degrade versus the unified no-thought control
 on:
 
-- valid design count.
+- valid design count, interpreted as the hard-subset problem count with at
+  least one synthesis/PPA-valid representative.
 - functional any-pass problem count.
 - synthesis/PPA any-pass problem count.
 - functional pass rate.
@@ -1263,6 +1268,10 @@ on:
 - average PPA improvement over reference.
 - Pareto/front breadth or linked visualization checks when those artifacts are
   touched.
+- linked visualization exports must preserve valid PPA samples even when a
+  hard problem produces fewer successful representatives than the quantile
+  archive warmup threshold; those samples must be marked as unprojected rather
+  than assigned to fake cells.
 
 Mean paired deltas are not sufficient by themselves. The target also fails the
 hard-subset gate if any individual problem collapses to zero valid designs,
