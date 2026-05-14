@@ -36,6 +36,9 @@ Environment overrides:
   HARD_SUBSET_QD_OPERATOR_ONE_PARENT_FRACTION Single-operator one-parent fraction override
   HARD_SUBSET_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE Single-operator archive-context size override
   HARD_SUBSET_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN Single-operator intra-bin toggle override
+  HARD_SUBSET_PROMPT_PROFILE    Prompt profile override (defaults to config value)
+  HARD_SUBSET_REPRESENTATION_KIND Representation kind override
+  HARD_SUBSET_CODE_SAMPLES_PER_THOUGHT Code samples per thought override
   HARD_SUBSET_SMOKE_SUBSET      Limit selected problems to the first N entries
   PYTHON_BIN                    Python binary (default: <repo>/.venv/bin/python if present, else python3)
 
@@ -229,6 +232,16 @@ emit_scalar(
     "CONFIG_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN",
     defaults.get("qd_operator_two_parent_allow_intra_bin", True),
 )
+representation_defaults = defaults.get("representation", {})
+repair_defaults = defaults.get("repair", {})
+emit_scalar("CONFIG_PROMPT_PROFILE", defaults.get("prompt_profile", ""))
+emit_scalar("CONFIG_REPRESENTATION_KIND", representation_defaults.get("kind", "code_individual"))
+emit_scalar("CONFIG_CODE_SAMPLES_PER_THOUGHT", representation_defaults.get("code_samples_per_thought", 4))
+emit_scalar("CONFIG_REPRESENTATIVE_SAMPLE", representation_defaults.get("representative_sample", "best_successful_quality"))
+emit_scalar("CONFIG_REPAIR_KIND", repair_defaults.get("kind", "none"))
+emit_scalar("CONFIG_REPAIR_MAX_ATTEMPTS_PER_SAMPLE", repair_defaults.get("max_attempts_per_sample", 0))
+emit_scalar("CONFIG_REPAIR_MAX_ATTEMPTS_PER_THOUGHT", repair_defaults.get("max_attempts_per_thought", 0))
+emit_scalar("CONFIG_REPAIR_EVIDENCE", repair_defaults.get("evidence", "stage_scoped_logs"))
 emit_scalar("CONFIG_SEED", defaults["seed"])
 emit_scalar("CONFIG_SMOKE_SUBSET", smoke_subset)
 emit_array("CONFIG_BENCHMARKS", benchmarks)
@@ -284,6 +297,28 @@ for mode_name, mode_cfg in cfg["modes"].items():
         f"{prefix}_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN",
         mode_cfg.get("qd_operator_two_parent_allow_intra_bin", ""),
     )
+    representation_cfg = mode_cfg.get("representation", {})
+    repair_cfg = mode_cfg.get("repair", {})
+    emit_scalar(f"{prefix}_PROMPT_PROFILE", mode_cfg.get("prompt_profile", ""))
+    emit_scalar(f"{prefix}_REPRESENTATION_KIND", representation_cfg.get("kind", ""))
+    emit_scalar(
+        f"{prefix}_CODE_SAMPLES_PER_THOUGHT",
+        representation_cfg.get("code_samples_per_thought", ""),
+    )
+    emit_scalar(
+        f"{prefix}_REPRESENTATIVE_SAMPLE",
+        representation_cfg.get("representative_sample", ""),
+    )
+    emit_scalar(f"{prefix}_REPAIR_KIND", repair_cfg.get("kind", ""))
+    emit_scalar(
+        f"{prefix}_REPAIR_MAX_ATTEMPTS_PER_SAMPLE",
+        repair_cfg.get("max_attempts_per_sample", ""),
+    )
+    emit_scalar(
+        f"{prefix}_REPAIR_MAX_ATTEMPTS_PER_THOUGHT",
+        repair_cfg.get("max_attempts_per_thought", ""),
+    )
+    emit_scalar(f"{prefix}_REPAIR_EVIDENCE", repair_cfg.get("evidence", ""))
 PY
 )"
 
@@ -394,6 +429,14 @@ QD_OPERATOR_KIND="${HARD_SUBSET_QD_OPERATOR_KIND:-${CONFIG_QD_OPERATOR_KIND}}"
 QD_OPERATOR_ONE_PARENT_FRACTION="${HARD_SUBSET_QD_OPERATOR_ONE_PARENT_FRACTION:-${CONFIG_QD_OPERATOR_ONE_PARENT_FRACTION}}"
 QD_OPERATOR_ARCHIVE_CONTEXT_SIZE="${HARD_SUBSET_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE:-${CONFIG_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE}}"
 QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN="${HARD_SUBSET_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN:-${CONFIG_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN}}"
+PROMPT_PROFILE="${HARD_SUBSET_PROMPT_PROFILE:-${CONFIG_PROMPT_PROFILE}}"
+REPRESENTATION_KIND="${HARD_SUBSET_REPRESENTATION_KIND:-${CONFIG_REPRESENTATION_KIND}}"
+CODE_SAMPLES_PER_THOUGHT="${HARD_SUBSET_CODE_SAMPLES_PER_THOUGHT:-${CONFIG_CODE_SAMPLES_PER_THOUGHT}}"
+REPRESENTATIVE_SAMPLE="${HARD_SUBSET_REPRESENTATIVE_SAMPLE:-${CONFIG_REPRESENTATIVE_SAMPLE}}"
+REPAIR_KIND="${HARD_SUBSET_REPAIR_KIND:-${CONFIG_REPAIR_KIND}}"
+REPAIR_MAX_ATTEMPTS_PER_SAMPLE="${HARD_SUBSET_REPAIR_MAX_ATTEMPTS_PER_SAMPLE:-${CONFIG_REPAIR_MAX_ATTEMPTS_PER_SAMPLE}}"
+REPAIR_MAX_ATTEMPTS_PER_THOUGHT="${HARD_SUBSET_REPAIR_MAX_ATTEMPTS_PER_THOUGHT:-${CONFIG_REPAIR_MAX_ATTEMPTS_PER_THOUGHT}}"
+REPAIR_EVIDENCE="${HARD_SUBSET_REPAIR_EVIDENCE:-${CONFIG_REPAIR_EVIDENCE}}"
 SEED="${HARD_SUBSET_SEED:-${CONFIG_SEED}}"
 TIMEOUT_S="${HARD_SUBSET_TIMEOUT_S:-0}"
 SAVE_ROOT="${HARD_SUBSET_SAVE_PATH:-${REPO_ROOT}/exp/hard_iteration_qd}"
@@ -431,6 +474,14 @@ qd_operator_kind=${QD_OPERATOR_KIND}
 qd_operator_one_parent_fraction=${QD_OPERATOR_ONE_PARENT_FRACTION}
 qd_operator_archive_context_size=${QD_OPERATOR_ARCHIVE_CONTEXT_SIZE}
 qd_operator_two_parent_allow_intra_bin=${QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN}
+prompt_profile=${PROMPT_PROFILE}
+representation_kind=${REPRESENTATION_KIND}
+code_samples_per_thought=${CODE_SAMPLES_PER_THOUGHT}
+representative_sample=${REPRESENTATIVE_SAMPLE}
+repair_kind=${REPAIR_KIND}
+repair_max_attempts_per_sample=${REPAIR_MAX_ATTEMPTS_PER_SAMPLE}
+repair_max_attempts_per_thought=${REPAIR_MAX_ATTEMPTS_PER_THOUGHT}
+repair_evidence=${REPAIR_EVIDENCE}
 seed=${SEED}
 smoke_subset=${CONFIG_SMOKE_SUBSET}
 EOF
@@ -483,6 +534,14 @@ for mode_name in "${MODES[@]}"; do
   mode_operator_one_parent_var="MODE_${upper_mode}_QD_OPERATOR_ONE_PARENT_FRACTION"
   mode_operator_archive_context_var="MODE_${upper_mode}_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE"
   mode_operator_two_parent_intra_var="MODE_${upper_mode}_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN"
+  mode_prompt_profile_var="MODE_${upper_mode}_PROMPT_PROFILE"
+  mode_representation_kind_var="MODE_${upper_mode}_REPRESENTATION_KIND"
+  mode_code_samples_var="MODE_${upper_mode}_CODE_SAMPLES_PER_THOUGHT"
+  mode_representative_sample_var="MODE_${upper_mode}_REPRESENTATIVE_SAMPLE"
+  mode_repair_kind_var="MODE_${upper_mode}_REPAIR_KIND"
+  mode_repair_sample_cap_var="MODE_${upper_mode}_REPAIR_MAX_ATTEMPTS_PER_SAMPLE"
+  mode_repair_thought_cap_var="MODE_${upper_mode}_REPAIR_MAX_ATTEMPTS_PER_THOUGHT"
+  mode_repair_evidence_var="MODE_${upper_mode}_REPAIR_EVIDENCE"
 
   search_mode="${!search_mode_var}"
   archive_type="${!archive_type_var}"
@@ -500,6 +559,14 @@ for mode_name in "${MODES[@]}"; do
   resolved_operator_one_parent_fraction="${!mode_operator_one_parent_var}"
   resolved_operator_archive_context_size="${!mode_operator_archive_context_var}"
   resolved_operator_two_parent_allow_intra_bin="${!mode_operator_two_parent_intra_var}"
+  resolved_prompt_profile="${!mode_prompt_profile_var}"
+  resolved_representation_kind="${!mode_representation_kind_var}"
+  resolved_code_samples_per_thought="${!mode_code_samples_var}"
+  resolved_representative_sample="${!mode_representative_sample_var}"
+  resolved_repair_kind="${!mode_repair_kind_var}"
+  resolved_repair_max_attempts_per_sample="${!mode_repair_sample_cap_var}"
+  resolved_repair_max_attempts_per_thought="${!mode_repair_thought_cap_var}"
+  resolved_repair_evidence="${!mode_repair_evidence_var}"
   if [[ -z "${resolved_num_cells}" ]]; then
     resolved_num_cells="${NUM_CELLS}"
   fi
@@ -539,6 +606,30 @@ for mode_name in "${MODES[@]}"; do
   if [[ -z "${resolved_operator_two_parent_allow_intra_bin}" ]]; then
     resolved_operator_two_parent_allow_intra_bin="${QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN}"
   fi
+  if [[ -z "${resolved_prompt_profile}" ]]; then
+    resolved_prompt_profile="${PROMPT_PROFILE}"
+  fi
+  if [[ -z "${resolved_representation_kind}" ]]; then
+    resolved_representation_kind="${REPRESENTATION_KIND}"
+  fi
+  if [[ -z "${resolved_code_samples_per_thought}" ]]; then
+    resolved_code_samples_per_thought="${CODE_SAMPLES_PER_THOUGHT}"
+  fi
+  if [[ -z "${resolved_representative_sample}" ]]; then
+    resolved_representative_sample="${REPRESENTATIVE_SAMPLE}"
+  fi
+  if [[ -z "${resolved_repair_kind}" ]]; then
+    resolved_repair_kind="${REPAIR_KIND}"
+  fi
+  if [[ -z "${resolved_repair_max_attempts_per_sample}" ]]; then
+    resolved_repair_max_attempts_per_sample="${REPAIR_MAX_ATTEMPTS_PER_SAMPLE}"
+  fi
+  if [[ -z "${resolved_repair_max_attempts_per_thought}" ]]; then
+    resolved_repair_max_attempts_per_thought="${REPAIR_MAX_ATTEMPTS_PER_THOUGHT}"
+  fi
+  if [[ -z "${resolved_repair_evidence}" ]]; then
+    resolved_repair_evidence="${REPAIR_EVIDENCE}"
+  fi
   mode_root="${SAVE_PATH}/${mode_name}"
 
   {
@@ -558,6 +649,14 @@ for mode_name in "${MODES[@]}"; do
     echo "mode.${mode_name}.qd_operator_one_parent_fraction=${resolved_operator_one_parent_fraction}"
     echo "mode.${mode_name}.qd_operator_archive_context_size=${resolved_operator_archive_context_size}"
     echo "mode.${mode_name}.qd_operator_two_parent_allow_intra_bin=${resolved_operator_two_parent_allow_intra_bin}"
+    echo "mode.${mode_name}.prompt_profile=${resolved_prompt_profile}"
+    echo "mode.${mode_name}.representation.kind=${resolved_representation_kind}"
+    echo "mode.${mode_name}.representation.code_samples_per_thought=${resolved_code_samples_per_thought}"
+    echo "mode.${mode_name}.representation.representative_sample=${resolved_representative_sample}"
+    echo "mode.${mode_name}.repair.kind=${resolved_repair_kind}"
+    echo "mode.${mode_name}.repair.max_attempts_per_sample=${resolved_repair_max_attempts_per_sample}"
+    echo "mode.${mode_name}.repair.max_attempts_per_thought=${resolved_repair_max_attempts_per_thought}"
+    echo "mode.${mode_name}.repair.evidence=${resolved_repair_evidence}"
   } >> "${SAVE_PATH}/hard_iteration_manifest.txt"
 
   CMD=("${PYTHON_BIN}" "scripts/run_backend.py")
@@ -586,6 +685,9 @@ for mode_name in "${MODES[@]}"; do
   CMD+=("--save_path" "${mode_root}")
   CMD+=("--no-backend_subdir")
   CMD+=("--seed" "${SEED}")
+  if [[ -n "${resolved_prompt_profile}" ]]; then
+    CMD+=("--prompt_profile" "${resolved_prompt_profile}")
+  fi
 
   if [[ "${search_mode}" == "revolution_qd" ]]; then
     CMD+=("--qd_archive_type" "${archive_type}")
@@ -605,6 +707,13 @@ for mode_name in "${MODES[@]}"; do
     else
       CMD+=("--no-qd_operator_two_parent_allow_intra_bin")
     fi
+    CMD+=("--representation_kind" "${resolved_representation_kind}")
+    CMD+=("--code_samples_per_thought" "${resolved_code_samples_per_thought}")
+    CMD+=("--representative_sample" "${resolved_representative_sample}")
+    CMD+=("--repair_kind" "${resolved_repair_kind}")
+    CMD+=("--repair_max_attempts_per_sample" "${resolved_repair_max_attempts_per_sample}")
+    CMD+=("--repair_max_attempts_per_thought" "${resolved_repair_max_attempts_per_thought}")
+    CMD+=("--repair_evidence" "${resolved_repair_evidence}")
     if [[ "${archive_type}" == "cvt" ]]; then
       CMD+=("--qd_cvt_warmup_successes" "${resolved_cvt_warmup}")
     fi

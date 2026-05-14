@@ -18,6 +18,8 @@ Supported archive geometries:
 
 - `grid`: uniform-binned MAP-Elites archive
 - `cvt`: frozen-scaler CVT archive with warm-up buffering
+- `grid_quantile`: static four-bin quantile grid for journal behavior
+  descriptors
 
 The main runtime lives in [engine.py](../src/revolution/qd/engine.py).
 
@@ -42,6 +44,70 @@ All three QD geometries support `--qd_cell_mode scalar_elite` and
 non-dominated PPA front per cell using `--qd_max_elites_per_cell` and
 `--qd_objectives ppa`; the active objectives are `g_P`/`g_A` for
 combinational tasks and `g_P`/`g_A`/`g_T` for sequential tasks.
+
+### Feature 06 Thought-Only Target
+
+The Feature 06 journal target is documented in
+[06_thought_only_k_code.md](journal_features/06_thought_only_k_code.md). It
+changes the evolutionary unit from one code candidate to one thought/design
+strategy represented as structured JSON `thought_spec_v1` and evaluated by
+`k=4` generated code samples. Thought fields are required to be non-empty; when
+the problem omits a detail, the thought must state a justified assumption or
+non-applicability placeholder rather than `unknown` or a blank field. Invalid
+thought specs follow the existing code-candidate format-failure convention:
+they consume the thought slot, write validation-error artifacts, enter fail
+accounting, are excluded from parent selection, and are not replaced by
+resampling.
+
+The target configuration is:
+
+```yaml
+qd_operator_kind: single_thought_operator
+representation:
+  kind: thought_only
+  code_samples_per_thought: 4
+  representative_sample: best_successful_quality
+repair:
+  kind: none
+```
+
+In this mode, `population_size` is still interpreted as a code-sample
+evaluation budget. A generation with `population_size=20` and
+`code_samples_per_thought=4` therefore produces five thoughts, evaluates four
+code samples for each thought, and inserts at most five thought representatives
+into the archive. All four samples are generated through the same
+thought-conditioned code-generation path; operator-returned code is not counted
+as a sample in thought-only mode. The EoH thought-only ablation uses EoH
+thought-only prompt adapters rather than generating and discarding EoH code.
+Gen0 follows the same grouping instead of starting from ordinary code candidates. The derived `thought_population_size`
+must be recorded in run manifests and summaries. `num_generations` keeps the existing meaning, so total base code samples are
+`population_size * (num_generations + 1)` and total base thoughts are
+`thought_population_size * (num_generations + 1)`. Partial/all-success thoughts
+use the best successful code sample by scalar PPA quality as the representative.
+All-fail thoughts enter the fail pool once. `success_rate` is reported for
+analysis but is not a descriptor axis, Pareto objective, replacement score,
+parent-source allocation input, or parent-sampling weight.
+Valid all-fail thoughts remain eligible as fail-pool parents; invalid thought
+specs do not.
+Failed sibling samples from partial-success thoughts remain diagnostic artifacts
+only; they are not included in later thought mutation prompts. All-fail
+thoughts selected from the fail pool expose only the thought and coarse
+`evaluation_status = "failed"` to mutation prompts. Successful parent thoughts
+may expose a compact representative PPA summary, but never representative code,
+logs, repair transcripts, failed sibling evidence, or `success_rate`.
+
+Feature 06 keeps the operator layer orthogonal to the representation layer. The
+acceptance matrix therefore includes EoH no-thought
+`grid_quantile_pareto_journal_bd_eoh`, unified no-thought
+`grid_quantile_pareto_journal_bd_unified`, EoH thought-only
+`grid_quantile_pareto_journal_eoh_thought_k4`, and unified thought-only
+`grid_quantile_pareto_journal_thought_k4` modes, with live validation capped at
+four simultaneous worker slots. Primary acceptance keeps repair disabled.
+Optional bounded repair is still tested and may be enabled only in a separately
+declared rescue or ablation run. When enabled, it is reported as a separate
+repair budget rather than being folded into the base `k=4` code-sample budget.
+Repair caps of `0` disable the loop; small caps such as one or two rounds are
+tracked as extra LLM/evaluator calls for budget-normalized metrics.
 
 ### Descriptor family to mode map
 
@@ -914,6 +980,13 @@ For grid-quantile journal runs:
   Feature 05 unified single-thought-operator hard-subset comparison as
   accepted. That validator checks the EoH-vs-unified paired metrics and audits
   prompt snapshots for code, individual feedback, and code-level log leakage.
+- for Feature 06 thought-only runs, inspect each `thought_evaluation.json`
+  before reading individual code-sample directories. The archive member is the
+  thought representative, not every successful code sample, and acceptance
+  metrics should be paired at problem/thought-representative granularity rather
+  than raw code-sample row granularity. Use the EoH/unified no-thought controls
+  and EoH/unified thought-only modes together to separate operator regressions
+  from representation regressions.
 - use `scripts/export_qd_ppa_visualization.py` to generate
   `visualization/qd_ppa_viewer/index.html` from completed classic and QD runs,
   then run `scripts/validate_qd_ppa_visualization.py` before treating the
