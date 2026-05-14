@@ -647,6 +647,23 @@ function selectedTechniques() {
   const b = document.getElementById('techniqueBSelect').value;
   return state.mode === 'single' ? [a] : [a, b].filter((value, index, all) => value && all.indexOf(value) === index);
 }
+function hasFinalArchiveSamples(problemKey) {
+  const ds = DATASETS[problemKey];
+  if (!ds) return false;
+  const summaries = ds.cell_summaries_by_step_native_timeline || ds.cell_summaries_by_step || {};
+  const finalStep = String((ds.steps || []).slice(-1)[0] || 'final');
+  const byTechnique = summaries.final || summaries[finalStep] || {};
+  return Object.values(byTechnique).some((cells) => (
+    Object.values(cells || {}).some((cell) => (cell.sample_ids || []).length > 0)
+  ));
+}
+function preferredInitialProblem() {
+  return (
+    MANIFEST.problems.find((problem) => problem.circuit_type === 'sequential' && hasFinalArchiveSamples(problem.problem_key))
+    || MANIFEST.problems.find((problem) => hasFinalArchiveSamples(problem.problem_key))
+    || MANIFEST.problems[0]
+  );
+}
 function init() {
   const problemSelect = document.getElementById('problemSelect');
   MANIFEST.problems.forEach((problem) => {
@@ -655,7 +672,7 @@ function init() {
     option.textContent = problem.problem_key + ' (' + problem.circuit_type + ')';
     problemSelect.appendChild(option);
   });
-  const preferred = MANIFEST.problems.find((problem) => problem.problem_key === 'VerilogEval-Spec-to-RTL/Prob151_review2015_fsm');
+  const preferred = preferredInitialProblem();
   if (preferred) problemSelect.value = preferred.problem_key;
   problemSelect.addEventListener('change', () => { populateTechniques(); render(); });
   populateTechniques();
