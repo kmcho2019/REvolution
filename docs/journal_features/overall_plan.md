@@ -94,7 +94,7 @@ stable while the first implementation lands.
 | Pareto-front archive / multiobjective MAP-Elites | Implemented | 2026-05-06 | [03_pareto_front_archive.md](03_pareto_front_archive.md) | Replaces one elite per cell with bounded PPA fronts; full hard-subset acceptance passed at `exp/journal_pareto_front_hard_subset/20260505_135953`. |
 | Two-tier archive + fail handling | Implemented | 2026-05-07 | [04_two_tier_fail_pool.md](04_two_tier_fail_pool.md) | Runtime scheduling/reporting and full hard-subset acceptance passed at `exp/journal_two_tier_fail_pool_hard_subset/20260511_034341`. |
 | Single thought mutation operator | Implemented | 2026-05-08 | [05_single_mutation_operator.md](05_single_mutation_operator.md) | Adds `qd_operator_kind=single_thought_operator` as the unified journal operator while preserving the current code-individual candidate shape. |
-| Thought-only individuals + k-code evaluation | In progress | 2026-05-10 | [06_thought_only_k_code.md](06_thought_only_k_code.md) | Runtime path, prompt adapters, config pass-through, and focused tests are implemented in the feature branch; full hard-subset acceptance still compares `k=4` thought-only runs against EoH and unified no-thought controls under a four-worker cap. |
+| Thought-only individuals + k-code evaluation | Implemented | 2026-05-10 | [06_thought_only_k_code.md](06_thought_only_k_code.md) | Runtime path, prompt adapters, config pass-through, focused tests, strict validator, and full hard-subset acceptance passed at `exp/journal_thought_only_k4_validation_reuse/20260514_075747` under a four-worker cap. |
 | KS-triggered re-binning + reporting polish | Planned | 2026-05-12 | [07_ks_adaptive_rebinning.md](07_ks_adaptive_rebinning.md) | Last because it depends on stable thought/archive semantics. |
 
 ## Core Feature Checklist
@@ -106,7 +106,7 @@ Initial target: 2026-05-12
 - [x] 3. Pareto-front archive / multiobjective MAP-Elites - target 2026-05-06
 - [x] 4. Two-tier archive + fail handling - target 2026-05-07
 - [x] 5. Single thought mutation operator - target 2026-05-08
-- [ ] 6. Thought-only individuals + k-code evaluation - target 2026-05-10
+- [x] 6. Thought-only individuals + k-code evaluation - target 2026-05-10
 - [ ] 7. KS-triggered re-binning + reporting polish - target 2026-05-12
 
 ## Roadmap And ETA
@@ -186,7 +186,7 @@ Target deadline: `2026-05-10`
   pool.
 - [x] 6.8 Add optional bounded sample-local repair with explicit per-sample and
   per-thought caps.
-- [ ] 6.9 Validate the hard-subset matrix across classic, EoH no-thought,
+- [x] 6.9 Validate the hard-subset matrix across classic, EoH no-thought,
   unified no-thought, EoH thought-only, and unified thought-only modes without
   exceeding four simultaneous workers.
 

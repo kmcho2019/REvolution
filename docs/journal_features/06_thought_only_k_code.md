@@ -1357,6 +1357,34 @@ Feature-specific acceptance gates:
 - repair attempts never reduce `code_samples_per_thought`; budget-normalized
   metrics include base sample calls plus repair calls.
 
+## Accepted Validation Run
+
+The current Feature 06 implementation satisfies the gates above with this
+validation bundle:
+
+- config: `exp/journal_thought_only_k4_configs/hard_subset_thought_only_k4.yaml`.
+- validation root:
+  `exp/journal_thought_only_k4_validation_reuse/20260514_075747`.
+- unchanged baseline/control source root:
+  `exp/journal_thought_only_k4_hard_subset/20260513_150042`.
+- target rerun source root:
+  `exp/journal_thought_only_k4_target_rerun/20260514_041752`.
+- reuse method: symlink unchanged baseline/control mode directories and the
+  target-only rerun into the validation root, with provenance recorded in
+  `validation_provenance.md`.
+- worker cap: the target rerun used four total worker slots.
+- strict validator result: `0` errors, `0` warnings, and `722` thought
+  evaluations checked.
+- report family: backend comparison, final analysis, Pareto analysis,
+  PPA-distribution analysis, design-space analysis, and strict QD/PPA viewer
+  export validation.
+
+The unified thought-only target
+`grid_quantile_pareto_journal_thought_k4` completed all 13 hard-subset
+problems with 13/13 functional any-pass, 13/13 synthesis/PPA any-pass, 261
+valid PPA samples, average score delta `+19.02%`, and average PPA delta
+`+21.94%` in `backend_comparison.md`.
+
 ## Documentation Requirements
 
 Update docs and comments only where they help users run or review the feature.
@@ -1450,5 +1478,5 @@ Target deadline: `2026-05-10`
   repair-budget reports.
 - [x] 6.11 Add strict validation for the thought-only hard-subset acceptance
   matrix.
-- [ ] 6.12 Run the full four-worker hard-subset acceptance matrix and pass the
+- [x] 6.12 Run the full four-worker hard-subset acceptance matrix and pass the
   quantitative gates.
