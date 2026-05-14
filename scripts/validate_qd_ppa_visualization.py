@@ -1468,8 +1468,18 @@ def _hover_first_ppa_point_with_mouse(page: Any) -> bool:
 
 def _hover_first_archive_sample_with_mouse(page: Any, scene_name: str, canvas_selector: str) -> bool:
     hit = page.evaluate(
-        "scene => state.hitMaps[scene].find(item => item.kind === 'archiveSample')",
-        scene_name,
+        "payload => {"
+        " const canvas = document.querySelector(payload.canvas);"
+        " if (!canvas) return null;"
+        " const rect = canvas.getBoundingClientRect();"
+        " const hits = (state.hitMaps[payload.scene] || [])"
+        "   .filter((item) => item.kind === 'archiveSample');"
+        " return hits.find((item) => {"
+        "   const el = document.elementFromPoint(rect.left + item.x, rect.top + item.y);"
+        "   return el === canvas;"
+        " }) || hits[0] || null;"
+        "}",
+        {"scene": scene_name, "canvas": canvas_selector},
     )
     if not isinstance(hit, dict):
         return False
