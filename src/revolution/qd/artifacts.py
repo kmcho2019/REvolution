@@ -83,6 +83,10 @@ def write_archive_cells_csv(
         "pareto_rank",
         "crowding_distance",
         "candidate_id",
+        "thought_id",
+        "representative_sample_id",
+        "thought_sample_ids_json",
+        "thought_success_rate",
         "quality_score",
         "generation",
         "strategy",
@@ -111,6 +115,7 @@ def write_archive_cells_csv(
             member_indices[cell_id] = member_index + 1
             objectives = dict(member.objectives)
             parent_ids = getattr(candidate, "parent_ids", [])
+            thought_sample_ids = getattr(candidate, "thought_sample_ids", [])
             parent_count = getattr(candidate, "parent_count", None)
             requested_parent_count = getattr(
                 candidate,
@@ -126,6 +131,14 @@ def write_archive_cells_csv(
                     "pareto_rank": ranked_member.pareto_rank,
                     "crowding_distance": ranked_member.crowding_distance,
                     "candidate_id": member.candidate_id,
+                    "thought_id": getattr(candidate, "thought_id", None),
+                    "representative_sample_id": getattr(
+                        candidate,
+                        "thought_representative_sample_id",
+                        None,
+                    ),
+                    "thought_sample_ids_json": json.dumps(thought_sample_ids),
+                    "thought_success_rate": getattr(candidate, "thought_success_rate", None),
                     "quality_score": float(member.quality_score),
                     "generation": getattr(candidate, "generation", None),
                     "strategy": getattr(candidate, "strategy", None),
@@ -167,6 +180,10 @@ def write_global_pareto_archive_csv(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = [
         "candidate_id",
+        "thought_id",
+        "representative_sample_id",
+        "thought_sample_ids_json",
+        "thought_success_rate",
         "benchmark",
         "problem",
         "generation",
@@ -190,6 +207,7 @@ def write_global_pareto_archive_csv(
             candidate = member.payload
             objectives = dict(member.objectives)
             parent_ids = getattr(candidate, "parent_ids", [])
+            thought_sample_ids = getattr(candidate, "thought_sample_ids", [])
             parent_count = getattr(candidate, "parent_count", None)
             requested_parent_count = getattr(
                 candidate,
@@ -199,6 +217,14 @@ def write_global_pareto_archive_csv(
             writer.writerow(
                 {
                     "candidate_id": member.candidate_id,
+                    "thought_id": getattr(candidate, "thought_id", None),
+                    "representative_sample_id": getattr(
+                        candidate,
+                        "thought_representative_sample_id",
+                        None,
+                    ),
+                    "thought_sample_ids_json": json.dumps(thought_sample_ids),
+                    "thought_success_rate": getattr(candidate, "thought_success_rate", None),
                     "benchmark": benchmark,
                     "problem": problem,
                     "generation": getattr(candidate, "generation", None),
@@ -482,6 +508,19 @@ def write_candidate_archive_event(
     assignment.setdefault("cell_id", insert_result.cell_id)
     payload = {
         "candidate_id": candidate.id,
+        "thought_id": getattr(candidate, "thought_id", None),
+        "representative_sample_id": getattr(
+            candidate,
+            "thought_representative_sample_id",
+            None,
+        ),
+        "thought_sample_ids": list(getattr(candidate, "thought_sample_ids", []) or []),
+        "thought_success_rate": getattr(candidate, "thought_success_rate", None),
+        "thought_aggregate_status": getattr(
+            candidate,
+            "thought_aggregate_status",
+            None,
+        ),
         "generation": candidate.generation,
         "strategy": candidate.strategy,
         "parent_count": getattr(candidate, "parent_count", None),
@@ -563,6 +602,14 @@ def _candidate_summary(
     quality_score = getattr(candidate, "quality_score", candidate.score)
     return {
         "candidate_id": candidate.id,
+        "thought_id": getattr(candidate, "thought_id", None),
+        "representative_sample_id": getattr(
+            candidate,
+            "thought_representative_sample_id",
+            None,
+        ),
+        "thought_sample_ids": list(getattr(candidate, "thought_sample_ids", []) or []),
+        "thought_success_rate": getattr(candidate, "thought_success_rate", None),
         "quality_score": float(quality_score) if quality_score is not None else None,
         "generation": candidate.generation,
         "strategy": candidate.strategy,

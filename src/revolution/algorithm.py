@@ -268,6 +268,14 @@ class Heuristic:
         self.generated_mode: Literal["whole", "diff"] | None = None
         self.diff_apply_phase: str | None = None
         self.diff_apply_reason_code: str | None = None
+        self.thought_id: str | None = None
+        self.code_sample_index: int | None = None
+        self.sample_generation_thought: str | None = None
+        self.repair_attempt_index: int = 0
+        self.thought_aggregate_status: str | None = None
+        self.thought_success_rate: float | None = None
+        self.thought_sample_ids: list[str] = []
+        self.thought_representative_sample_id: str | None = None
 
     def __repr__(self) -> str:
         """String representation for debugging and logging."""

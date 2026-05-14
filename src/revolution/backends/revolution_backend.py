@@ -76,6 +76,13 @@ class RevolutionBackendConfig:
     qd_rebinning_min_archive_members: int = 20
     qd_rebinning_cooldown_generations: int = 3
     qd_rebinning_base_p_threshold: float = 0.05
+    representation_kind: str = "code_individual"
+    code_samples_per_thought: int = 4
+    representative_sample: str = "best_successful_quality"
+    repair_kind: str = "none"
+    repair_max_attempts_per_sample: int = 0
+    repair_max_attempts_per_thought: int = 0
+    repair_evidence: str = "stage_scoped_logs"
 
 
 class RevolutionBackend(EvolutionBackend):
@@ -169,6 +176,13 @@ class RevolutionBackend(EvolutionBackend):
                 qd_rebinning_min_archive_members=self.config.qd_rebinning_min_archive_members,
                 qd_rebinning_cooldown_generations=self.config.qd_rebinning_cooldown_generations,
                 qd_rebinning_base_p_threshold=self.config.qd_rebinning_base_p_threshold,
+                representation_kind=self.config.representation_kind,
+                code_samples_per_thought=self.config.code_samples_per_thought,
+                representative_sample=self.config.representative_sample,
+                repair_kind=self.config.repair_kind,
+                repair_max_attempts_per_sample=self.config.repair_max_attempts_per_sample,
+                repair_max_attempts_per_thought=self.config.repair_max_attempts_per_thought,
+                repair_evidence=self.config.repair_evidence,
             )
         self.engine = engine_cls(**engine_kwargs)
 
@@ -232,6 +246,23 @@ class RevolutionBackend(EvolutionBackend):
                         "cooldown_generations": self.config.qd_rebinning_cooldown_generations,
                         "base_p_threshold": self.config.qd_rebinning_base_p_threshold,
                     },
+                    "representation": {
+                        "kind": self.config.representation_kind,
+                        "code_samples_per_thought": self.config.code_samples_per_thought,
+                        "representative_sample": self.config.representative_sample,
+                        "thought_population_size": (
+                            self.config.population_size
+                            // self.config.code_samples_per_thought
+                            if self.config.representation_kind == "thought_only"
+                            else self.config.population_size
+                        ),
+                    },
+                    "repair": {
+                        "kind": self.config.repair_kind,
+                        "max_attempts_per_sample": self.config.repair_max_attempts_per_sample,
+                        "max_attempts_per_thought": self.config.repair_max_attempts_per_thought,
+                        "evidence": self.config.repair_evidence,
+                    },
                 },
             )
 
@@ -242,6 +273,27 @@ class RevolutionBackend(EvolutionBackend):
             "max_evaluations",
             int(self.config.population_size * (self.config.num_generations + 1)),
         )
+        if self.config.representation_kind == "thought_only":
+            run_budget.setdefault(
+                "base_code_samples_per_generation",
+                self.config.population_size,
+            )
+            run_budget.setdefault(
+                "code_samples_per_thought",
+                self.config.code_samples_per_thought,
+            )
+            run_budget.setdefault(
+                "thought_population_size",
+                self.config.population_size // self.config.code_samples_per_thought,
+            )
+            run_budget.setdefault(
+                "max_base_thoughts",
+                (
+                    self.config.population_size
+                    // self.config.code_samples_per_thought
+                )
+                * (self.config.num_generations + 1),
+            )
         run_budget.setdefault("max_llm_calls", metadata.get("max_llm_calls_per_problem"))
         run_budget.setdefault("max_runtime_seconds", metadata.get("max_runtime_seconds"))
         run_budget.setdefault("evaluation_mode", metadata.get("evaluation_mode"))

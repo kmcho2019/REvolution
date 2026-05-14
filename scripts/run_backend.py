@@ -437,6 +437,13 @@ def _build_backend(
             qd_rebinning_min_archive_members=args.qd_rebinning_min_archive_members,
             qd_rebinning_cooldown_generations=args.qd_rebinning_cooldown_generations,
             qd_rebinning_base_p_threshold=args.qd_rebinning_base_p_threshold,
+            representation_kind=args.representation_kind,
+            code_samples_per_thought=args.code_samples_per_thought,
+            representative_sample=args.representative_sample,
+            repair_kind=args.repair_kind,
+            repair_max_attempts_per_sample=args.repair_max_attempts_per_sample,
+            repair_max_attempts_per_thought=args.repair_max_attempts_per_thought,
+            repair_evidence=args.repair_evidence,
         )
         return RevolutionBackend(
             context=context,
@@ -980,6 +987,33 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--qd_rebinning_min_archive_members", type=int, default=20)
     parser.add_argument("--qd_rebinning_cooldown_generations", type=int, default=3)
     parser.add_argument("--qd_rebinning_base_p_threshold", type=float, default=0.05)
+    parser.add_argument(
+        "--representation_kind",
+        type=str,
+        default="code_individual",
+        choices=["code_individual", "thought_only"],
+    )
+    parser.add_argument("--code_samples_per_thought", type=int, default=4)
+    parser.add_argument(
+        "--representative_sample",
+        type=str,
+        default="best_successful_quality",
+        choices=["best_successful_quality"],
+    )
+    parser.add_argument(
+        "--repair_kind",
+        type=str,
+        default="none",
+        choices=["none", "bounded_local_repair"],
+    )
+    parser.add_argument("--repair_max_attempts_per_sample", type=int, default=0)
+    parser.add_argument("--repair_max_attempts_per_thought", type=int, default=0)
+    parser.add_argument(
+        "--repair_evidence",
+        type=str,
+        default="stage_scoped_logs",
+        choices=["stage_scoped_logs"],
+    )
 
     # FunSearch-specific
     parser.add_argument("--fs_initial_population_size", type=int, default=4)

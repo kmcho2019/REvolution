@@ -315,6 +315,51 @@ def test_missing_descriptors_stay_in_ppa_and_out_of_cells(tmp_path: Path) -> Non
     assert "classic" not in dataset["cell_summaries_by_step"]["final"]
 
 
+def test_strict_export_keeps_uninitialized_quantile_samples_out_of_cells(
+    tmp_path: Path,
+) -> None:
+    run_root, classic_root, qd_root = _write_run(tmp_path)
+    problem_dir = qd_root / "model" / "RTLLM" / "Prob001"
+    space = _grid_quantile_space()
+    space["initialized"] = False
+    space["num_cells"] = 0
+    for axis in space["axes"]:
+        axis["effective_bins"] = 0
+        axis["quantile_boundaries"] = []
+    _write_json(problem_dir / "archive_space.json", space)
+    (problem_dir / "archive_cells.csv").write_text("candidate_id\n", encoding="utf-8")
+
+    result = export_qd_ppa_visualization(
+        run_root=run_root,
+        backend_runs=(
+            BackendRun("classic", classic_root),
+            BackendRun("grid_quantile_pareto_journal_bd", qd_root),
+        ),
+        archive_source_backend="grid_quantile_pareto_journal_bd",
+        output_dir=run_root / "visualization" / "uninitialized",
+        subset_config=None,
+        selected_problem="RTLLM/Prob001",
+        asset_mode="inline",
+        strict=True,
+        recover_classic_descriptors=False,
+    )
+    dataset = json.loads(result.dataset_paths[0].read_text(encoding="utf-8"))
+
+    assert dataset["archive_definition"]["initialized"] is False
+    assert dataset["archive_projection"]["disclaimer"]
+    assert {
+        sample["archive_projection_status"]
+        for sample in dataset["samples"]
+    } == {"archive_uninitialized"}
+    assert all(sample["archive_cell_id"] is None for sample in dataset["samples"])
+    assert dataset["cell_summaries_by_step"]["final"] == {}
+    assert all(
+        stats["projected_archive_sample_count"] == 0
+        for technique, stats in dataset["technique_stats_by_step"]["final"].items()
+        if technique != "_pooled_visible"
+    )
+
+
 def test_projection_rules_cover_grid_quantile_grid_and_cvt() -> None:
     grid_quantile = _grid_quantile_space()
     assert _project_sample(

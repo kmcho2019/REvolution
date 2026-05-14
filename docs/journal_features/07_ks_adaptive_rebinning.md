@@ -52,15 +52,16 @@ evaluation, PPA scoring, Pareto objectives, or prompt construction. It only
 changes the archive cell coordinate system when the retained archive and recent
 archiveable offspring show distributional drift.
 
-Feature 06 thought-only individuals and k-code evaluation are separate work.
-Feature 07 must not implement Feature 06. It should be compatible with either
-runtime representation by treating the archiveable unit consistently:
+Feature 06 thought-only individuals and k-code evaluation have landed in
+`wip/journal-extension-2026`. Feature 07 therefore supports both runtime
+representations by treating the archiveable unit consistently:
 
-- before Feature 06 merges, the archiveable unit is the successful code
-  candidate with valid PPA that the current QD archive attempts to insert.
-- after Feature 06 merges, the archiveable unit is the successful thought
-  representative selected by the thought evaluation layer, with descriptor
-  values from its representative valid-PPA code sample.
+- in code-level QD, the archiveable unit is the successful code candidate with
+  valid PPA that the QD archive attempts to insert.
+- in thought-only QD, the archiveable unit is the successful thought
+  representative selected by the thought evaluation layer. Its descriptor
+  values, objectives, scalar quality, and artifact links come from the selected
+  representative valid-PPA code sample.
 
 The recent-window collector, re-bin replay pool, and artifact schema should use
 that same archiveable unit abstraction. Feature 07 must not assume that the
@@ -145,9 +146,9 @@ Recent samples are valid-PPA archiveable insertion attempts from the last
 `qd_rebinning_recent_generations` completed generations, including the current
 generation:
 
-- before Feature 06, a recent sample is a successful archiveable code
-  candidate with valid PPA.
-- after Feature 06, a recent sample is a successful thought representative
+- in code-level QD, a recent sample is a successful archiveable code candidate
+  with valid PPA.
+- in thought-only QD, a recent sample is a successful thought representative
   whose representative code sample has valid PPA.
 - a recent sample remains in the recent window even if the archive later
   rejects it, replaces it as a scalar elite, or evicts it from a bounded
@@ -691,9 +692,9 @@ HARD_SUBSET_MAX_TOKENS=128000 \
 HARD_SUBSET_DIFF_MAX_TOKENS=128000 \
 HARD_SUBSET_POPULATION_SIZE=20 \
 HARD_SUBSET_NUM_GENERATIONS=5 \
-HARD_SUBSET_TOTAL_WORKER_SLOTS=8 \
-HARD_SUBSET_MAX_ACTIVE_PROBLEMS=4 \
-HARD_SUBSET_MAX_WORKERS_PER_PROBLEM=2 \
+HARD_SUBSET_TOTAL_WORKER_SLOTS=16 \
+HARD_SUBSET_MAX_ACTIVE_PROBLEMS=13 \
+HARD_SUBSET_MAX_WORKERS_PER_PROBLEM=8 \
 HARD_SUBSET_SAVE_PATH=exp/journal_adaptive_rebinning_hard_subset \
 bash scripts/run_hard_iteration_qd_vllm.sh \
   --config exp/journal_adaptive_rebinning_configs/hard_subset_adaptive_rebinning.yaml \
@@ -705,9 +706,9 @@ The manifest must show:
 - `reported_max_model_len >= 128000`.
 - `population_size=20`.
 - `num_generations=5`.
-- `total_worker_slots=8`.
-- `max_active_problems=4`.
-- `max_workers_per_problem=2`.
+- `total_worker_slots=16`.
+- `max_active_problems=13` or a documented higher problem-concurrency value.
+- `max_workers_per_problem=8`.
 - `max_tokens=128000`.
 - `diff_max_tokens=128000`.
 - `seed=42`.
@@ -1027,8 +1028,8 @@ Inspect the adaptive-on event stream before changing parameters:
 - If a re-bin fires and the replay set still has no descriptor diversity on the
   collapsed axis, stop tuning re-binning parameters. The search has not yet
   produced valid-PPA diversity for that axis. Record this as a no-escape case
-  and continue with more generations, different operators, or Feature 06
-  thought-only integration work.
+  and continue with more generations, different operators, or a different
+  thought-only prompt/evaluation profile.
 
 Every tuning attempt must produce a separate validation note with the exact
 parameter changes, selected problem ids, trigger events, health deltas, and

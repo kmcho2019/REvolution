@@ -72,6 +72,18 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
                         "qd_rebinning_min_archive_members": 20,
                         "qd_rebinning_cooldown_generations": 3,
                         "qd_rebinning_base_p_threshold": 0.05,
+                        "prompt_profile": "journal_thought_only",
+                        "representation": {
+                            "kind": "thought_only",
+                            "code_samples_per_thought": 4,
+                            "representative_sample": "best_successful_quality",
+                        },
+                        "repair": {
+                            "kind": "none",
+                            "max_attempts_per_sample": 0,
+                            "max_attempts_per_thought": 0,
+                            "evidence": "stage_scoped_logs",
+                        },
                     },
                     "cvt_theory_grounded": {
                         "search_mode": "revolution_qd",
@@ -161,6 +173,14 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "--qd_rebinning_min_archive_members 20" in normalized
     assert "--qd_rebinning_cooldown_generations 3" in normalized
     assert "--qd_rebinning_base_p_threshold 0.05" in normalized
+    assert "--prompt_profile journal_thought_only" in normalized
+    assert "--representation_kind thought_only" in normalized
+    assert "--code_samples_per_thought 4" in normalized
+    assert "--representative_sample best_successful_quality" in normalized
+    assert "--repair_kind none" in normalized
+    assert "--repair_max_attempts_per_sample 0" in normalized
+    assert "--repair_max_attempts_per_thought 0" in normalized
+    assert "--repair_evidence stage_scoped_logs" in normalized
     assert "--population_size 20" in normalized
     assert "--num_generations 5" in normalized
     assert "--total_worker_slots 2" in normalized
@@ -193,6 +213,10 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "mode.grid_quantile_journal_bd.qd_rebinning_min_archive_members=20" in manifest
     assert "mode.grid_quantile_journal_bd.qd_rebinning_cooldown_generations=3" in manifest
     assert "mode.grid_quantile_journal_bd.qd_rebinning_base_p_threshold=0.05" in manifest
+    assert "mode.grid_quantile_journal_bd.prompt_profile=journal_thought_only" in manifest
+    assert "mode.grid_quantile_journal_bd.representation.kind=thought_only" in manifest
+    assert "mode.grid_quantile_journal_bd.representation.code_samples_per_thought=4" in manifest
+    assert "mode.grid_quantile_journal_bd.repair.kind=none" in manifest
     assert f"--output {run_dir / 'hard_iteration_backend_comparison.md'}" in normalized
     assert f"--backend_run classic={run_dir / 'classic'}" in normalized
     assert f"--backend_run grid_struct={run_dir / 'grid_struct'}" in normalized

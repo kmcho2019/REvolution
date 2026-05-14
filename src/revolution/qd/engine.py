@@ -18,6 +18,7 @@ from revolution.algorithm import (
     CLASSIC_FAIL_STRATEGIES,
     CLASSIC_SUCCESS_STRATEGIES,
     EoHEngine,
+    EvolStrategyMethod,
     EvolStrategyMethodFail,
     EvolStrategyMethodSuccess,
     Heuristic,
@@ -56,6 +57,15 @@ from revolution.qd.scheduler import (
     qd_target_cells,
     split_qd_budget,
 )
+from revolution.qd.thought_only import (
+    CodeSample,
+    RepairKind,
+    RepresentationKind,
+    ThoughtEvaluation,
+    ThoughtIndividual,
+    parse_thought_spec,
+    render_thought_spec,
+)
 from revolution.qd.types import (
     ArchiveMember,
     GlobalParetoInsertResult,
@@ -74,6 +84,7 @@ _ARCHIVE_ONLY_DESCRIPTOR_PROFILES = {"journal_logic_ff_width_3d"}
 JournalParentSource = Literal["archive", "fail_pool", "seed"]
 QDOperatorKind = Literal["eoh_strategies", "single_thought_operator"]
 SINGLE_THOUGHT_OPERATOR_STRATEGY = "single_thought_operator"
+THOUGHT_ONLY_CODE_STRATEGY = "thought_only_code"
 
 
 class QDEngine(EoHEngine):
@@ -111,6 +122,13 @@ class QDEngine(EoHEngine):
         qd_rebinning_min_archive_members: int = 20,
         qd_rebinning_cooldown_generations: int = 3,
         qd_rebinning_base_p_threshold: float = 0.05,
+        representation_kind: str = "code_individual",
+        code_samples_per_thought: int = 4,
+        representative_sample: str = "best_successful_quality",
+        repair_kind: str = "none",
+        repair_max_attempts_per_sample: int = 0,
+        repair_max_attempts_per_thought: int = 0,
+        repair_evidence: str = "stage_scoped_logs",
         **kwargs: Any,
     ) -> None:
         super().__init__(*args, **kwargs)
@@ -143,6 +161,45 @@ class QDEngine(EoHEngine):
                 raise ValueError("qd_rebinning_cooldown_generations must be > 0.")
             if not 0.0 < float(qd_rebinning_base_p_threshold) < 1.0:
                 raise ValueError("qd_rebinning_base_p_threshold must be between 0 and 1.")
+        if representation_kind not in {"code_individual", "thought_only"}:
+            raise ValueError(f"Unsupported representation_kind '{representation_kind}'.")
+        if code_samples_per_thought <= 0:
+            raise ValueError("code_samples_per_thought must be > 0.")
+        if representative_sample != "best_successful_quality":
+            raise ValueError(
+                "representative_sample must be 'best_successful_quality'."
+            )
+        if representation_kind == "thought_only" and (
+            self.population_size % int(code_samples_per_thought) != 0
+        ):
+            raise ValueError(
+                "population_size must be divisible by code_samples_per_thought "
+                "in thought_only mode"
+            )
+        if repair_kind not in {"none", "bounded_local_repair"}:
+            raise ValueError(f"Unsupported repair_kind '{repair_kind}'.")
+        if repair_max_attempts_per_sample < 0:
+            raise ValueError("repair_max_attempts_per_sample must be >= 0.")
+        if repair_max_attempts_per_thought < 0:
+            raise ValueError("repair_max_attempts_per_thought must be >= 0.")
+        if repair_evidence != "stage_scoped_logs":
+            raise ValueError("repair_evidence must be 'stage_scoped_logs'.")
+        if repair_kind == "none" and (
+            repair_max_attempts_per_sample != 0
+            or repair_max_attempts_per_thought != 0
+        ):
+            raise ValueError("repair.kind none requires zero repair caps.")
+        if repair_kind == "bounded_local_repair" and repair_max_attempts_per_thought <= 0:
+            raise ValueError(
+                "repair.kind bounded_local_repair requires max_attempts_per_thought > 0."
+            )
+        if repair_max_attempts_per_thought > (
+            int(code_samples_per_thought) * int(repair_max_attempts_per_sample)
+        ):
+            raise ValueError(
+                "repair_max_attempts_per_thought must be <= "
+                "code_samples_per_thought * repair_max_attempts_per_sample."
+            )
         self.qd_cell_mode: QDCellMode = cast(QDCellMode, qd_cell_mode)
         self.qd_max_elites_per_cell = int(qd_max_elites_per_cell)
         self.qd_objectives: QDObjectiveMode = cast(QDObjectiveMode, qd_objectives)
@@ -168,6 +225,23 @@ class QDEngine(EoHEngine):
         self.qd_rebinning_min_archive_members = int(qd_rebinning_min_archive_members)
         self.qd_rebinning_cooldown_generations = int(qd_rebinning_cooldown_generations)
         self.qd_rebinning_base_p_threshold = float(qd_rebinning_base_p_threshold)
+        self.representation_kind: RepresentationKind = cast(
+            RepresentationKind,
+            representation_kind,
+        )
+        self.code_samples_per_thought = int(code_samples_per_thought)
+        self.representative_sample = representative_sample
+        self.thought_population_size = (
+            self.population_size // self.code_samples_per_thought
+            if self.representation_kind == "thought_only"
+            else self.population_size
+        )
+        self.repair_kind: RepairKind = cast(RepairKind, repair_kind)
+        self.repair_max_attempts_per_sample = int(repair_max_attempts_per_sample)
+        self.repair_max_attempts_per_thought = int(repair_max_attempts_per_thought)
+        self.repair_evidence = repair_evidence
+        self.thought_evaluations: list[ThoughtEvaluation] = []
+        self._thought_serial = 0
         self.success_strats = list(self._qd_success_strategies())
         self.success_strategy_stats = {
             strategy: {"count": 0, "value": 0.0}
@@ -979,6 +1053,13 @@ class QDEngine(EoHEngine):
             "last_rebin_axes": list(self._qd_last_rebin_axes),
             "rebin_recent_sample_count": len(self._recent_rebin_samples()),
             "rebin_replay_member_count": len(self._qd_rebin_replay_pool),
+            "representation_kind": self.representation_kind,
+            "code_samples_per_thought": self.code_samples_per_thought,
+            "thought_population_size": self.thought_population_size,
+            "base_code_sample_budget_per_generation": self.population_size,
+            "repair_kind": self.repair_kind,
+            "repair_max_attempts_per_sample": self.repair_max_attempts_per_sample,
+            "repair_max_attempts_per_thought": self.repair_max_attempts_per_thought,
         }
         if isinstance(self.success_archive, GridQuantileArchive):
             snapshot["grid_quantile_geometry"] = (
@@ -1175,6 +1256,10 @@ class QDEngine(EoHEngine):
         self._write_qd_artifacts(snapshot)
 
     def initialize_population(self) -> None:
+        if self.representation_kind == "thought_only":
+            self._initialize_thought_population()
+            self._rebuild_archive_from_success_pool()
+            return
         super().initialize_population()
         self._rebuild_archive_from_success_pool()
 
@@ -1260,6 +1345,14 @@ class QDEngine(EoHEngine):
             empty_cells_remaining=self.success_archive.occupied_count() < self.success_archive.num_cells,
             fail_share_cap=self._fail_pool_archive_member_ratio(),
         )
+
+    def _split_thought_generation_budget(self) -> QDBudgetSplit:
+        original_lambda = self.num_offspring_lambda
+        try:
+            self.num_offspring_lambda = self.thought_population_size
+            return self._split_generation_budget()
+        finally:
+            self.num_offspring_lambda = original_lambda
 
     def _sample_success_parents(self, count: int) -> list[Heuristic]:
         if self.qd_cell_mode == "pareto_front":
@@ -1718,6 +1811,1044 @@ class QDEngine(EoHEngine):
             )
         return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
 
+    def _thought_generation_system_prompt(self) -> str:
+        prompt = self.prompts.read("system/thought_spec")
+        if prompt:
+            return prompt
+        return (
+            "You are an expert Verilog design strategist. Return exactly one "
+            "valid JSON object with format thought_spec_v1 and no code."
+        )
+
+    def _next_thought_id(self) -> str:
+        self._thought_serial += 1
+        return f"g{self.current_generation:03d}_thought_{self._thought_serial:04d}"
+
+    def _generation_dir(self, generation: int) -> str:
+        model_name_cleaned = self.llm.model_name.replace("/", "_")
+        path = os.path.join(
+            self.base_save_path,
+            model_name_cleaned,
+            self.benchmark_name,
+            self.problem_name,
+            f"Gen{generation}",
+        )
+        os.makedirs(path, exist_ok=True)
+        return path
+
+    def _thought_dir(self, generation: int, thought_id: str) -> str:
+        path = os.path.join(self._generation_dir(generation), thought_id)
+        os.makedirs(path, exist_ok=True)
+        return path
+
+    def _write_json_file(self, path: str, payload: dict[str, Any]) -> None:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(payload, f, indent=2)
+
+    def _write_thought_artifacts(self, thought: ThoughtIndividual) -> None:
+        thought_dir = self._thought_dir(thought.generation, thought.thought_id)
+        self._write_json_file(
+            os.path.join(thought_dir, "thought.json"),
+            {
+                "thought_id": thought.thought_id,
+                "generation": thought.generation,
+                "thought_spec": thought.thought_spec,
+                "parent_ids": thought.parent_ids,
+                "parent_count": thought.parent_count,
+                "parent_source": thought.parent_source,
+                "qd_operator_kind": thought.qd_operator_kind,
+                "strategy": thought.strategy,
+                "raw_response": thought.raw_response,
+            },
+        )
+        with open(os.path.join(thought_dir, "thought.txt"), "w", encoding="utf-8") as f:
+            f.write(render_thought_spec(thought.thought_spec))
+        with open(
+            os.path.join(thought_dir, "thought_prompt_snapshot.txt"),
+            "w",
+            encoding="utf-8",
+        ) as f:
+            f.write(thought.prompt_text)
+
+    def _write_invalid_thought_artifacts(
+        self,
+        *,
+        thought_id: str,
+        generation: int,
+        raw_response: str,
+        errors: list[str],
+        meta_rec: dict[str, Any],
+    ) -> ThoughtEvaluation:
+        thought_dir = self._thought_dir(generation, thought_id)
+        payload = {
+            "thought_id": thought_id,
+            "generation": generation,
+            "aggregate_status": "invalid_thought",
+            "validation_errors": errors,
+            "raw_response": raw_response,
+            "parent_ids": [parent.id for parent in meta_rec.get("parents", [])],
+            "parent_source": meta_rec["parent_source"],
+            "strategy": meta_rec["strategy"],
+        }
+        self._write_json_file(os.path.join(thought_dir, "thought_validation_error.json"), payload)
+        with open(
+            os.path.join(thought_dir, "thought_prompt_snapshot.txt"),
+            "w",
+            encoding="utf-8",
+        ) as f:
+            f.write(meta_rec["prompt_text"])
+        evaluation = ThoughtEvaluation(
+            thought_id=thought_id,
+            generation=generation,
+            code_samples_per_thought=self.code_samples_per_thought,
+            sample_ids=[],
+            sample_statuses=[],
+            success_count=0,
+            success_rate=0.0,
+            aggregate_status="invalid_thought",
+            repair_kind=self.repair_kind,
+            repair_attempts_used=0,
+            representative_sample_id=None,
+            representative_quality_score=None,
+            representative_ppa_metrics={},
+            representative_descriptor_values={},
+            parent_ids=payload["parent_ids"],
+            parent_source=meta_rec["parent_source"],
+            strategy=meta_rec["strategy"],
+            qd_operator_kind=self.qd_operator_kind,
+            prompt_profile=self.prompts.profile,
+            representation_kind=self.representation_kind,
+            population_size=self.population_size,
+            thought_population_size=self.thought_population_size,
+            validation_errors=errors,
+            repair_config=self._repair_config_dict(),
+        )
+        self._write_thought_evaluation(evaluation)
+        return evaluation
+
+    def _write_thought_evaluation(self, evaluation: ThoughtEvaluation) -> None:
+        thought_dir = self._thought_dir(evaluation.generation, evaluation.thought_id)
+        self._write_json_file(
+            os.path.join(thought_dir, "thought_evaluation.json"),
+            evaluation.to_json_dict(),
+        )
+
+    def _create_prompt_thought_only_seed(self) -> str:
+        context_obj = {
+            "task": "initial_thought",
+            "problem_description": self.problem_description,
+            "output_format": "thought_spec_v1",
+        }
+        tpl = self.prompts.read("thought_only/generate_thought")
+        if tpl:
+            return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+        return self._fallback_thought_prompt(context_obj)
+
+    def _create_prompt_single_thought_operator_thought_only(
+        self,
+        parents: list[Heuristic],
+        *,
+        archive_context: list[Heuristic] | None = None,
+    ) -> str:
+        if len(parents) not in {1, 2}:
+            raise ValueError("single_thought_operator requires one or two parents.")
+        parent_payloads = [
+            self._format_parent_for_single_thought_operator(parent, index)
+            for index, parent in enumerate(parents, start=1)
+        ]
+        context_obj: dict[str, Any] = {
+            "task": SINGLE_THOUGHT_OPERATOR_STRATEGY,
+            "output_format": "thought_spec_v1",
+            "parent_count": len(parents),
+            "problem_description": self.problem_description,
+        }
+        if len(parent_payloads) == 1:
+            context_obj["parent"] = parent_payloads[0]
+        else:
+            context_obj["parents"] = parent_payloads
+        if archive_context is None:
+            archive_context = self._archive_context_sample({parent.id for parent in parents})
+        if archive_context:
+            context_obj["archive_context"] = [
+                self._format_archive_context_entry(candidate)
+                for candidate in archive_context
+            ]
+        tpl = self.prompts.read("evolve/single_thought_operator/thought")
+        if tpl:
+            return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+        return self._fallback_thought_prompt(context_obj)
+
+    def _create_prompt_eoh_thought_only(
+        self,
+        strategy: str,
+        parents: list[Heuristic],
+    ) -> str:
+        context_obj: dict[str, Any] = {
+            "task": "eoh_thought_only_adapter",
+            "strategy": strategy,
+            "output_format": "thought_spec_v1",
+            "problem_description": self.problem_description,
+            "parents": [
+                self._format_parent_for_single_thought_operator(parent, index)
+                for index, parent in enumerate(parents, start=1)
+            ],
+        }
+        if len(parents) == 1:
+            context_obj["parent"] = context_obj["parents"][0]
+        tpl = self.prompts.read(f"evolve/{strategy}/thought")
+        if tpl:
+            return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+        return self._fallback_thought_prompt(context_obj)
+
+    def _fallback_thought_prompt(self, context_obj: dict[str, Any]) -> str:
+        return (
+            "Create one detailed Verilog design thought for the problem.\n"
+            "Use parent thoughts only as design-strategy hints. Do not use or "
+            "invent parent code, feedback, logs, failure explanations, sibling "
+            "sample details, or repair transcripts.\n\n"
+            "CONTEXT_JSON:\n"
+            f"{json.dumps(context_obj, indent=2)}\n\n"
+            "Return exactly ONE JSON object and nothing else:\n"
+            "{\n"
+            '  "format": "thought_spec_v1",\n'
+            '  "summary": "<one or two sentences naming the architecture>",\n'
+            '  "interface_contract": "<module/interface behavior from the problem>",\n'
+            '  "timing_and_protocol": "<reset, latency, handshakes, pulses, off-by-one boundaries>",\n'
+            '  "state_and_datapath_plan": "<registers, counters, datapath operations, output derivation>",\n'
+            '  "edge_cases": "<boundary values and rare states>",\n'
+            '  "ppa_intent": "<area/timing/power choices after correctness>",\n'
+            '  "implementation_constraints": "<single DUT module and benchmark constraints>"\n'
+            "}\n"
+            "Every field must be a meaningful non-empty string. If a detail is "
+            "not specified, use an explicit justified placeholder such as "
+            "\"not specified by problem; assume ...\". Do not include code."
+        )
+
+    def _create_prompt_thought_only_code(self, thought: ThoughtIndividual) -> str:
+        context_obj = {
+            "task": "code_from_thought",
+            "problem_description": self.problem_description,
+            "thought_spec": thought.thought_spec,
+            "thought_id": thought.thought_id,
+        }
+        tpl = self.prompts.read("thought_only/code/whole")
+        if tpl:
+            return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+        return (
+            "Implement the RTL described by the thought_spec. The problem "
+            "description is authoritative when it conflicts with the thought.\n\n"
+            "CONTEXT_JSON:\n"
+            f"{json.dumps(context_obj, indent=2)}\n\n"
+            "Return exactly ONE JSON object and nothing else:\n"
+            "{\n"
+            '  "format": "eoh_v1",\n'
+            '  "mode": "whole",\n'
+            '  "thought": "<brief implementation rationale for this sample>",\n'
+            '  "code": "<full, runnable Verilog as one JSON string>"\n'
+            "}\n"
+            "Do not include parent code, feedback, logs, repair transcripts, "
+            "or sibling code samples."
+        )
+
+    def _create_prompt_thought_only_repair(
+        self,
+        thought: ThoughtIndividual,
+        candidate: Heuristic,
+    ) -> str:
+        context_obj = {
+            "task": "sample_local_repair",
+            "problem_description": self.problem_description,
+            "thought_spec": thought.thought_spec,
+            "failure_stage": candidate.status,
+            "sample_code": candidate.code,
+            "sample_local_feedback": candidate.feedback,
+        }
+        tpl = self.prompts.read("thought_only/repair/whole")
+        if tpl:
+            return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+        return (
+            "Repair this one code sample using only the thought_spec, the "
+            "sample code, the coarse failure stage, and sample-local feedback.\n\n"
+            "CONTEXT_JSON:\n"
+            f"{json.dumps(context_obj, indent=2)}\n\n"
+            "Return exactly ONE JSON object and nothing else:\n"
+            "{\n"
+            '  "format": "eoh_v1",\n'
+            '  "mode": "whole",\n'
+            '  "thought": "<repair rationale>",\n'
+            '  "code": "<full repaired Verilog as one JSON string>"\n'
+            "}"
+        )
+
+    def _build_thought_requests(
+        self,
+        budget: QDBudgetSplit,
+    ) -> tuple[list[Any], list[dict[str, Any]]]:
+        llm_requests: list[Any] = []
+        request_meta: list[dict[str, Any]] = []
+
+        for _ in range(budget.seed_budget):
+            prompt_text = self._create_prompt_thought_only_seed()
+            llm_requests.append(
+                self._build_prompt_request(
+                    prompt=prompt_text,
+                    mode="whole",
+                    system_prompt=self._thought_generation_system_prompt(),
+                )
+            )
+            request_meta.append(
+                {
+                    "strategy": "initial",
+                    "parents": [],
+                    "parent_count": 0,
+                    "requested_parent_count": 0,
+                    "origin_pool": "initial",
+                    "parent_source": "seed",
+                    "prompt_text": prompt_text,
+                }
+            )
+
+        if self.qd_operator_kind == "single_thought_operator":
+            self._append_single_operator_thought_requests(
+                budget,
+                llm_requests,
+                request_meta,
+            )
+            return llm_requests, request_meta
+
+        self._append_eoh_thought_requests(budget, llm_requests, request_meta)
+        return llm_requests, request_meta
+
+    def _append_single_operator_thought_requests(
+        self,
+        budget: QDBudgetSplit,
+        llm_requests: list[Any],
+        request_meta: list[dict[str, Any]],
+    ) -> None:
+        if self.fail_pool and budget.fail_budget > 0:
+            for _ in range(budget.fail_budget):
+                parent = random.choice(self.fail_pool)
+                prompt_text = self._create_prompt_single_thought_operator_thought_only(
+                    [parent],
+                    archive_context=self._archive_context_sample({parent.id}),
+                )
+                llm_requests.append(
+                    self._build_prompt_request(
+                        prompt=prompt_text,
+                        mode="whole",
+                        system_prompt=self._thought_generation_system_prompt(),
+                    )
+                )
+                request_meta.append(
+                    {
+                        "strategy": SINGLE_THOUGHT_OPERATOR_STRATEGY,
+                        "parents": [parent],
+                        "parent_count": 1,
+                        "requested_parent_count": 1,
+                        "origin_pool": "fail_pool",
+                        "parent_source": "fail_pool",
+                        "prompt_text": prompt_text,
+                    }
+                )
+
+        success_total_requests = budget.backfill_budget + budget.refine_budget
+        for _ in range(success_total_requests):
+            wants_two = random.random() >= self.qd_operator_one_parent_fraction
+            requested_parent_count = 2 if wants_two else 1
+            parents = (
+                self._sample_two_success_parents(
+                    allow_intra_bin=self.qd_operator_two_parent_allow_intra_bin,
+                )
+                if wants_two
+                else self._sample_success_parents(1)
+            )
+            if wants_two and len(parents) < 2:
+                parents = self._sample_success_parents(1)
+            if not parents:
+                break
+            if len(parents) > 2:
+                parents = parents[:2]
+            if len(parents) == 2 and parents[0].id == parents[1].id:
+                alternatives = [
+                    cand for cand in self._success_view() if cand.id != parents[0].id
+                ]
+                if not alternatives:
+                    parents = parents[:1]
+                else:
+                    parents[1] = random.choice(alternatives)
+            prompt_text = self._create_prompt_single_thought_operator_thought_only(
+                parents,
+                archive_context=self._archive_context_sample(
+                    {parent.id for parent in parents}
+                ),
+            )
+            llm_requests.append(
+                self._build_prompt_request(
+                    prompt=prompt_text,
+                    mode="whole",
+                    system_prompt=self._thought_generation_system_prompt(),
+                )
+            )
+            request_meta.append(
+                {
+                    "strategy": SINGLE_THOUGHT_OPERATOR_STRATEGY,
+                    "parents": parents,
+                    "parent_count": len(parents),
+                    "requested_parent_count": requested_parent_count,
+                    "origin_pool": "success_pool",
+                    "parent_source": "archive",
+                    "prompt_text": prompt_text,
+                }
+            )
+
+    def _append_eoh_thought_requests(
+        self,
+        budget: QDBudgetSplit,
+        llm_requests: list[Any],
+        request_meta: list[dict[str, Any]],
+    ) -> None:
+        if self.fail_pool and budget.fail_budget > 0:
+            fail_strategies: list[EvolStrategyMethodFail] = (
+                list(CLASSIC_FAIL_STRATEGIES)
+                if not self._uses_descriptor_guided_generation()
+                else ["M-F", "M-E"]
+            )
+            fail_selected: set[EvolStrategyMethodFail] = set()
+            for _ in range(budget.fail_budget):
+                strat_name, _ = self._select_strategy(
+                    "fail",
+                    fail_strategies,
+                    fail_selected,
+                )
+                if strat_name is None:
+                    continue
+                fail_selected.add(strat_name)
+                parent = random.choice(self.fail_pool)
+                prompt_text = self._create_prompt_eoh_thought_only(strat_name, [parent])
+                llm_requests.append(
+                    self._build_prompt_request(
+                        prompt=prompt_text,
+                        mode="whole",
+                        system_prompt=self._thought_generation_system_prompt(),
+                    )
+                )
+                request_meta.append(
+                    {
+                        "strategy": strat_name,
+                        "parents": [parent],
+                        "parent_count": 1,
+                        "requested_parent_count": 1,
+                        "origin_pool": "fail_pool",
+                        "parent_source": "fail_pool",
+                        "prompt_text": prompt_text,
+                    }
+                )
+
+        success_selected: set[EvolStrategyMethodSuccess] = set()
+        success_total_requests = budget.backfill_budget + budget.refine_budget
+        for idx in range(success_total_requests):
+            if self._uses_descriptor_guided_generation() and (
+                budget.phase == "fill" or idx < budget.backfill_budget
+            ):
+                available: list[EvolStrategyMethodSuccess] = ["M-T", "M-E"]
+                if len(self.success_pool) > 1:
+                    available.append("C-D")
+            else:
+                available = ["M-S", "M-E", "M-R", "M-I"]
+                if len(self.success_pool) > 1:
+                    available.append("C-F")
+            strat_name, _ = self._select_strategy(
+                "success",
+                available,
+                success_selected,
+            )
+            if strat_name is None:
+                continue
+            success_selected.add(strat_name)
+            parents = (
+                self._sample_diverse_success_parents()
+                if strat_name == "C-D"
+                else
+                self._sample_two_success_parents()
+                if strat_name == "C-F"
+                else self._sample_success_parents(1)
+            )
+            if not parents:
+                break
+            if strat_name in {"C-D", "C-F"} and len(parents) < 2:
+                continue
+            prompt_text = self._create_prompt_eoh_thought_only(strat_name, parents)
+            llm_requests.append(
+                self._build_prompt_request(
+                    prompt=prompt_text,
+                    mode="whole",
+                    system_prompt=self._thought_generation_system_prompt(),
+                )
+            )
+            request_meta.append(
+                {
+                    "strategy": strat_name,
+                    "parents": parents,
+                    "parent_count": len(parents),
+                    "requested_parent_count": len(parents),
+                    "origin_pool": "success_pool",
+                    "parent_source": "archive",
+                    "prompt_text": prompt_text,
+                }
+            )
+
+    def _materialize_thought(
+        self,
+        result: tuple[str | None, str | None, dict[str, Any]],
+        meta_rec: dict[str, Any],
+    ) -> tuple[ThoughtIndividual | None, ThoughtEvaluation | None]:
+        thought_id = self._next_thought_id()
+        thought_text, code_text, meta = result
+        raw_response = str(meta.get("raw") or thought_text or code_text or "")
+        thought_spec, errors = parse_thought_spec(raw_response)
+        if thought_spec is None:
+            invalid_eval = self._write_invalid_thought_artifacts(
+                thought_id=thought_id,
+                generation=self.current_generation,
+                raw_response=raw_response,
+                errors=errors,
+                meta_rec=meta_rec,
+            )
+            return None, invalid_eval
+
+        parents = meta_rec.get("parents", [])
+        thought = ThoughtIndividual(
+            thought_id=thought_id,
+            generation=self.current_generation,
+            thought_spec=thought_spec,
+            raw_response=raw_response,
+            parent_ids=[parent.id for parent in parents],
+            parent_count=int(meta_rec["parent_count"]),
+            parent_source=str(meta_rec["parent_source"]),
+            qd_operator_kind=self.qd_operator_kind,
+            strategy=str(meta_rec["strategy"]),
+            prompt_text=str(meta_rec["prompt_text"]),
+        )
+        self._write_thought_artifacts(thought)
+        return thought, None
+
+    def _save_thought_code_sample(
+        self,
+        *,
+        thought: ThoughtIndividual,
+        sample_index: int,
+        code_content: str,
+        prompt_text: str,
+        meta: dict[str, Any],
+    ) -> str:
+        sample_dir = os.path.join(
+            self._thought_dir(thought.generation, thought.thought_id),
+            f"code_sample_{sample_index}",
+        )
+        os.makedirs(sample_dir, exist_ok=True)
+        code_path = os.path.join(sample_dir, "code.sv")
+        with open(code_path, "w", encoding="utf-8") as f:
+            f.write(self._normalize_code_text(str(code_content)))
+        with open(os.path.join(sample_dir, "thought.txt"), "w", encoding="utf-8") as f:
+            f.write(render_thought_spec(thought.thought_spec))
+        with open(
+            os.path.join(sample_dir, "prompt_snapshot.txt"),
+            "w",
+            encoding="utf-8",
+        ) as f:
+            f.write(prompt_text)
+        self._write_json_file(
+            os.path.join(sample_dir, "prompt_snapshot.json"),
+            {
+                "strategy": THOUGHT_ONLY_CODE_STRATEGY,
+                "thought_id": thought.thought_id,
+                "sample_index": sample_index,
+                "parent_ids": thought.parent_ids,
+                "origin_pool": thought.parent_source,
+                "resolved_mode": "whole",
+            },
+        )
+        self._write_json_file(os.path.join(sample_dir, "llm_meta.json"), meta)
+        self._copy_misc_files(sample_dir)
+        return code_path
+
+    def _materialize_code_sample(
+        self,
+        thought: ThoughtIndividual,
+        sample_index: int,
+        result: tuple[str | None, str | None, dict[str, Any]],
+        prompt_text: str,
+    ) -> Heuristic:
+        sample_thought, code_content, meta = result
+        is_format_ok = bool(meta.get("format_ok", False))
+        material_to_save = code_content or meta.get("raw", "") or ""
+        code_path = self._save_thought_code_sample(
+            thought=thought,
+            sample_index=sample_index,
+            code_content=material_to_save,
+            prompt_text=prompt_text,
+            meta=meta,
+        )
+        if not is_format_ok and self.require_strict_format:
+            self._save_format_error_artifacts(code_path, meta)
+        origin_pool = {
+            "seed": "initial",
+            "archive": "success_pool",
+            "fail_pool": "fail_pool",
+        }[thought.parent_source]
+        cand = Heuristic(
+            thought=render_thought_spec(thought.thought_spec),
+            code=material_to_save,
+            feedback=("" if is_format_ok else f"FORMAT_ERROR: {meta.get('error', 'unknown')}"),
+            generation=thought.generation,
+            parent_ids=thought.parent_ids,
+            status=("new" if is_format_ok else "failed_format"),
+            strategy=cast(EvolStrategyMethod, thought.strategy),
+            origin_pool=cast(Any, origin_pool),
+        )
+        cand.code_file_path = code_path
+        cand.generated_mode = "whole"
+        cand.parent_count = thought.parent_count
+        cand.requested_parent_count = thought.parent_count
+        cand.thought_id = thought.thought_id
+        cand.code_sample_index = sample_index
+        cand.sample_generation_thought = sample_thought or ""
+        return cand
+
+    def _generate_code_samples_for_thought(
+        self,
+        thought: ThoughtIndividual,
+    ) -> list[Heuristic]:
+        prompt_text = self._create_prompt_thought_only_code(thought)
+        results = asyncio.run(
+            self.llm.generate_n_responses(
+                prompt=prompt_text,
+                n=self.code_samples_per_thought,
+                temperature=self.default_llm_temp,
+                top_p=self.default_llm_top_p,
+                max_tokens=self.default_llm_max_tokens,
+                generation_mode="whole",
+                system_prompt_override=self._get_generation_system_prompt("whole"),
+            )
+        )
+        if len(results) < self.code_samples_per_thought:
+            missing = self.code_samples_per_thought - len(results)
+            print(
+                f"WARNING: LLM returned {len(results)}/{self.code_samples_per_thought} "
+                f"code samples for {thought.thought_id}. Padding {missing} missing samples."
+            )
+            for _ in range(missing):
+                results.append(
+                    (
+                        None,
+                        None,
+                        {
+                            "format_ok": False,
+                            "error": "missing_response",
+                            "raw": "",
+                            "parsed_mode": "whole",
+                        },
+                    )
+                )
+        return [
+            self._materialize_code_sample(thought, index, result, prompt_text)
+            for index, result in enumerate(results[: self.code_samples_per_thought])
+        ]
+
+    def _materialize_repair_sample(
+        self,
+        thought: ThoughtIndividual,
+        parent: Heuristic,
+        repair_index: int,
+        result: tuple[str | None, str | None, dict[str, Any]],
+        prompt_text: str,
+    ) -> Heuristic:
+        _, code_content, meta = result
+        is_format_ok = bool(meta.get("format_ok", False))
+        material_to_save = code_content or meta.get("raw", "") or ""
+        sample_index = int(getattr(parent, "code_sample_index"))
+        repair_dir = os.path.join(
+            os.path.dirname(parent.code_file_path),
+            f"repair_attempt_{repair_index}",
+        )
+        os.makedirs(repair_dir, exist_ok=True)
+        code_path = os.path.join(repair_dir, "code.sv")
+        with open(code_path, "w", encoding="utf-8") as f:
+            f.write(self._normalize_code_text(str(material_to_save)))
+        with open(os.path.join(repair_dir, "prompt_snapshot.txt"), "w", encoding="utf-8") as f:
+            f.write(prompt_text)
+        self._write_json_file(os.path.join(repair_dir, "llm_meta.json"), meta)
+        if not is_format_ok and self.require_strict_format:
+            self._save_format_error_artifacts(code_path, meta)
+        cand = Heuristic(
+            thought=render_thought_spec(thought.thought_spec),
+            code=material_to_save,
+            feedback=("" if is_format_ok else f"FORMAT_ERROR: {meta.get('error', 'unknown')}"),
+            generation=thought.generation,
+            parent_ids=[parent.id],
+            status=("new" if is_format_ok else "failed_format"),
+            strategy=cast(EvolStrategyMethod, thought.strategy),
+            origin_pool=parent.origin_pool,
+        )
+        cand.code_file_path = code_path
+        cand.generated_mode = "whole"
+        cand.parent_count = thought.parent_count
+        cand.requested_parent_count = thought.parent_count
+        cand.thought_id = thought.thought_id
+        cand.code_sample_index = sample_index
+        cand.repair_attempt_index = repair_index
+        return cand
+
+    def _repair_failed_code_samples(
+        self,
+        thought: ThoughtIndividual,
+        samples: list[Heuristic],
+    ) -> tuple[list[Heuristic], int]:
+        if self.repair_kind == "none":
+            return samples, 0
+        repaired_samples = list(samples)
+        attempts_used = 0
+        for idx, sample in enumerate(samples):
+            if sample.status == "success":
+                continue
+            per_sample_attempts = 0
+            current = sample
+            while (
+                current.status != "success"
+                and per_sample_attempts < self.repair_max_attempts_per_sample
+                and attempts_used < self.repair_max_attempts_per_thought
+            ):
+                repair_index = per_sample_attempts + 1
+                prompt_text = self._create_prompt_thought_only_repair(thought, current)
+                result = asyncio.run(
+                    self.llm.generate_response(
+                        prompt_text,
+                        self.default_llm_temp,
+                        self.default_llm_top_p,
+                        self.default_llm_max_tokens,
+                        generation_mode="whole",
+                        system_prompt_override=self._get_generation_system_prompt("whole"),
+                    )
+                )
+                repair_sample = self._materialize_repair_sample(
+                    thought,
+                    current,
+                    repair_index,
+                    result,
+                    prompt_text,
+                )
+                self._evaluate_candidates([repair_sample])
+                attempts_used += 1
+                per_sample_attempts += 1
+                current = repair_sample
+                repaired_samples[idx] = repair_sample
+                if repair_sample.status == "success":
+                    break
+        return repaired_samples, attempts_used
+
+    def _code_sample_summary(self, sample: Heuristic) -> CodeSample:
+        return CodeSample(
+            thought_id=str(getattr(sample, "thought_id")),
+            sample_index=int(getattr(sample, "code_sample_index")),
+            candidate_id=sample.id,
+            status=sample.status,
+            code_file_path=sample.code_file_path,
+            quality_score=(
+                float(getattr(sample, "quality_score"))
+                if getattr(sample, "quality_score", None) is not None
+                else None
+            ),
+            ppa_success=bool(sample.ppa_success),
+            ppa_metrics=dict(sample.ppa_metrics),
+            descriptor_values=dict(sample.descriptor_values),
+            repair_attempts=int(getattr(sample, "repair_attempt_index", 0) or 0),
+        )
+
+    def _repair_config_dict(self) -> dict[str, Any]:
+        return {
+            "kind": self.repair_kind,
+            "max_attempts_per_sample": self.repair_max_attempts_per_sample,
+            "max_attempts_per_thought": self.repair_max_attempts_per_thought,
+            "evidence": self.repair_evidence,
+        }
+
+    def _select_representative_sample(
+        self,
+        samples: list[Heuristic],
+    ) -> Heuristic | None:
+        successful = [sample for sample in samples if sample.status == "success"]
+        if not successful:
+            return None
+        return max(
+            successful,
+            key=lambda sample: float(getattr(sample, "quality_score", sample.score)),
+        )
+
+    def _build_all_fail_parent(
+        self,
+        thought: ThoughtIndividual,
+        evaluation: ThoughtEvaluation,
+    ) -> Heuristic:
+        status = "failed_functionality"
+        if evaluation.sample_statuses:
+            status = evaluation.sample_statuses[0]
+        origin_pool = {
+            "seed": "initial",
+            "archive": "success_pool",
+            "fail_pool": "fail_pool",
+        }[thought.parent_source]
+        parent = Heuristic(
+            thought=render_thought_spec(thought.thought_spec),
+            code="",
+            feedback="",
+            generation=thought.generation,
+            parent_ids=thought.parent_ids,
+            status=cast(Any, status),
+            strategy=cast(EvolStrategyMethod, thought.strategy),
+            origin_pool=cast(Any, origin_pool),
+        )
+        parent.id = thought.thought_id
+        parent.code_file_path = os.path.join(
+            self._thought_dir(thought.generation, thought.thought_id),
+            "thought_evaluation.json",
+        )
+        parent.thought_id = thought.thought_id
+        parent.thought_aggregate_status = evaluation.aggregate_status
+        parent.thought_success_rate = evaluation.success_rate
+        parent.thought_sample_ids = evaluation.sample_ids
+        return parent
+
+    def _aggregate_thought(
+        self,
+        thought: ThoughtIndividual,
+        samples: list[Heuristic],
+        repair_attempts_used: int,
+    ) -> tuple[ThoughtEvaluation, Heuristic | None, Heuristic | None]:
+        sample_summaries = [self._code_sample_summary(sample) for sample in samples]
+        sample_ids = [summary.candidate_id for summary in sample_summaries]
+        sample_statuses = [summary.status for summary in sample_summaries]
+        success_count = sum(1 for status in sample_statuses if status == "success")
+        success_rate = success_count / self.code_samples_per_thought
+        if success_count == 0:
+            aggregate_status: Literal["all_failed", "partial_success", "all_success"] = "all_failed"
+        elif success_count == self.code_samples_per_thought:
+            aggregate_status = "all_success"
+        else:
+            aggregate_status = "partial_success"
+        representative = self._select_representative_sample(samples)
+        representative_id = representative.id if representative is not None else None
+        representative_quality = (
+            float(getattr(representative, "quality_score", representative.score))
+            if representative is not None
+            else None
+        )
+        representative_descriptor_values: dict[str, float] = {}
+        if representative is not None:
+            representative_descriptors = self._descriptor_tuple(representative)
+            if representative_descriptors is not None:
+                representative_descriptor_values = {
+                    axis: float(value)
+                    for axis, value in zip(
+                        self._archive_axes(),
+                        representative_descriptors,
+                    )
+                }
+                representative.descriptor_values.update(representative_descriptor_values)
+        evaluation = ThoughtEvaluation(
+            thought_id=thought.thought_id,
+            generation=thought.generation,
+            code_samples_per_thought=self.code_samples_per_thought,
+            sample_ids=sample_ids,
+            sample_statuses=sample_statuses,
+            success_count=success_count,
+            success_rate=success_rate,
+            aggregate_status=aggregate_status,
+            repair_kind=self.repair_kind,
+            repair_attempts_used=repair_attempts_used,
+            representative_sample_id=representative_id,
+            representative_quality_score=representative_quality,
+            representative_ppa_metrics=(
+                dict(representative.ppa_metrics) if representative is not None else {}
+            ),
+            representative_descriptor_values=representative_descriptor_values,
+            parent_ids=thought.parent_ids,
+            parent_source=thought.parent_source,
+            strategy=thought.strategy,
+            qd_operator_kind=self.qd_operator_kind,
+            prompt_profile=self.prompts.profile,
+            representation_kind=self.representation_kind,
+            population_size=self.population_size,
+            thought_population_size=self.thought_population_size,
+            sample_records=[summary.to_json_dict() for summary in sample_summaries],
+            repair_config=self._repair_config_dict(),
+        )
+        self._write_thought_evaluation(evaluation)
+        if representative is not None:
+            representative.thought_id = thought.thought_id
+            representative.thought_aggregate_status = aggregate_status
+            representative.thought_success_rate = success_rate
+            representative.thought_sample_ids = sample_ids
+            representative.thought_representative_sample_id = representative_id
+            return evaluation, representative, None
+        return evaluation, None, self._build_all_fail_parent(thought, evaluation)
+
+    def _run_thought_generation(
+        self,
+        budget: QDBudgetSplit,
+    ) -> tuple[list[ThoughtEvaluation], list[Heuristic], list[Heuristic], list[Heuristic]]:
+        llm_requests, request_meta = self._build_thought_requests(budget)
+        if not llm_requests:
+            return [], [], [], []
+        thought_results = asyncio.run(
+            self.llm.generate_batch_responses(
+                llm_requests,
+                self.default_llm_temp,
+                self.default_llm_top_p,
+                self.default_llm_max_tokens,
+            )
+        )
+        if len(thought_results) < len(request_meta):
+            missing = len(request_meta) - len(thought_results)
+            print(
+                f"WARNING: LLM returned {len(thought_results)}/{len(request_meta)} "
+                f"thoughts. Padding {missing} invalid thoughts."
+            )
+            for _ in range(missing):
+                thought_results.append(
+                    (
+                        None,
+                        None,
+                        {
+                            "format_ok": False,
+                            "error": "missing_response",
+                            "raw": "",
+                            "parsed_mode": None,
+                        },
+                    )
+                )
+
+        evaluations: list[ThoughtEvaluation] = []
+        representatives: list[Heuristic] = []
+        fail_parents: list[Heuristic] = []
+        all_samples: list[Heuristic] = []
+
+        for result, meta_rec in zip(thought_results, request_meta, strict=False):
+            thought, invalid_eval = self._materialize_thought(result, meta_rec)
+            if invalid_eval is not None:
+                evaluations.append(invalid_eval)
+                self.thought_evaluations.append(invalid_eval)
+                continue
+            assert thought is not None
+            samples = self._generate_code_samples_for_thought(thought)
+            self._evaluate_candidates(samples)
+            samples, repair_attempts_used = self._repair_failed_code_samples(
+                thought,
+                samples,
+            )
+            evaluation, representative, fail_parent = self._aggregate_thought(
+                thought,
+                samples,
+                repair_attempts_used,
+            )
+            evaluations.append(evaluation)
+            self.thought_evaluations.append(evaluation)
+            all_samples.extend(samples)
+            if representative is not None:
+                representatives.append(representative)
+            if fail_parent is not None:
+                fail_parents.append(fail_parent)
+
+        return evaluations, representatives, fail_parents, all_samples
+
+    def _insert_thought_results(
+        self,
+        representatives: list[Heuristic],
+        fail_parents: list[Heuristic],
+    ) -> tuple[int, int]:
+        inserted, replaced = self._insert_successes(representatives)
+        self._update_fail_pool(fail_parents)
+        return inserted, replaced
+
+    def _initialize_thought_population(self) -> None:
+        print(
+            f"\n--- Initializing Thought Population "
+            f"(Thoughts: {self.thought_population_size}, "
+            f"Code Samples: {self.population_size}) ---"
+        )
+        self.gen_start_time = time.time()
+        budget = QDBudgetSplit(
+            total_budget=self.thought_population_size,
+            target_cells=self.thought_population_size,
+            occupied_cells=0,
+            fail_share=0.0,
+            coverage_fail_share=None,
+            fail_share_cap=None,
+            fail_budget=0,
+            success_budget=self.thought_population_size,
+            phase="warmup",
+            seed_budget=self.thought_population_size,
+            backfill_budget=0,
+            refine_budget=0,
+        )
+        evaluations, representatives, fail_parents, all_samples = self._run_thought_generation(budget)
+        self._insert_thought_results(representatives, fail_parents)
+        if self.logger:
+            self._log_generation_stats(
+                representatives + fail_parents,
+                time.time() - self.gen_start_time,
+                defaultdict(float),
+                defaultdict(float),
+                {"initial": {"initial": 1.0}},
+            )
+        print(
+            f"Generated {len(evaluations)} thoughts and {len(all_samples)} code samples."
+        )
+
+    def _evolve_one_thought_generation(self):
+        self.current_generation += 1
+        print(f"\n--- Starting Thought-Only QD Generation {self.current_generation} ---")
+        self.gen_start_time = time.time()
+        budget = self._split_thought_generation_budget()
+        evaluations, representatives, fail_parents, all_samples = self._run_thought_generation(budget)
+        if not evaluations:
+            return "STOP"
+
+        inserted, replaced = self._insert_thought_results(representatives, fail_parents)
+        self._maybe_adaptive_rebin()
+        gen_runtime = time.time() - self.gen_start_time
+        qd_snapshot = self._build_qd_snapshot(
+            inserted=inserted,
+            replaced=replaced,
+            budget=budget,
+            runtime_sec=gen_runtime,
+        )
+        qd_snapshot["representation_kind"] = self.representation_kind
+        qd_snapshot["code_samples_per_thought"] = self.code_samples_per_thought
+        qd_snapshot["thought_population_size"] = self.thought_population_size
+        qd_snapshot["generated_thought_count"] = len(evaluations)
+        qd_snapshot["generated_code_sample_count"] = len(all_samples)
+        qd_snapshot["generated_parent_source_counts"] = {
+            "archive": sum(1 for item in evaluations if item.parent_source == "archive"),
+            "fail_pool": sum(1 for item in evaluations if item.parent_source == "fail_pool"),
+            "seed": sum(1 for item in evaluations if item.parent_source == "seed"),
+        }
+        if self.logger:
+            self._log_generation_stats(
+                representatives + fail_parents,
+                gen_runtime,
+                defaultdict(float),
+                defaultdict(float),
+                {"thought_only": {}},
+            )
+            self._write_qd_artifacts(qd_snapshot)
+
+        print(
+            f"--- Thought-Only QD Gen {self.current_generation} Complete. "
+            f"Archive({self.success_archive.occupied_count()}), Inserted({inserted}), "
+            f"Replaced({replaced}), Fail({len(self.fail_pool)}) ---"
+        )
+        return None
+
     def _materialize_offspring(
         self,
         llm_results_with_meta: list[tuple[str | None, str | None, dict[str, Any]]],
@@ -1788,6 +2919,9 @@ class QDEngine(EoHEngine):
         return inserted, replaced
 
     def evolve_one_generation(self):
+        if self.representation_kind == "thought_only":
+            return self._evolve_one_thought_generation()
+
         self.current_generation += 1
         print(f"\n--- Starting QD Generation {self.current_generation} ---")
         self.gen_start_time = time.time()
