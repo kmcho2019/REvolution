@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 
-MAX_ACCEPTANCE_WORKERS = 8
+MAX_ACCEPTANCE_WORKERS = 16
 QD_SCORE_FLOOR_FRACTION = 0.05
 
 
@@ -718,7 +718,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.acceptance_hard_subset:
         total_slots = _safe_float(manifest.get("total_worker_slots"))
         if total_slots is None or total_slots > MAX_ACCEPTANCE_WORKERS:
-            acceptance_errors.append("manifest total_worker_slots must be <= 8")
+            acceptance_errors.append("manifest total_worker_slots must be <= 16")
         if manifest.get(f"mode.{args.off_mode}.qd_rebinning_kind") != "disabled":
             acceptance_errors.append("adaptive-off manifest qd_rebinning_kind is not disabled")
         if manifest.get(f"mode.{args.on_mode}.qd_rebinning_kind") != "ks_triggered":
