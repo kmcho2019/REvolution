@@ -924,6 +924,9 @@ the variance-envelope gates.
   every tested `rebin_check` event records p-values above the corrected
   threshold, or the event records an explicit skipped status caused by the
   configured runtime gates.
+- A `grid_quantile` archive that initializes only during run-finalization
+  fallback is exempt from the per-problem `rebin_check` requirement because no
+  completed generation remains after initialization where the trigger can run.
 - If any problem triggers a `rebin` event:
   - `replay_attempt_count` equals the replay member count used for the
     rebuild.
@@ -985,18 +988,19 @@ The localized trigger-evidence report passes when:
   `rebin_check` event.
 - at least one selected problem emits an adaptive-on `rebin` event, or every
   selected problem's no-rebin outcome is explained by tested p-values above the
-  corrected threshold or an explicit configured-gate skipped status.
+  corrected threshold, an explicit configured-gate skipped status, or
+  run-finalization fallback initialization after the last generation.
 - at least one selected problem improves final healthy-cell count or final
   occupied-cell count versus adaptive-off.
 - no selected problem loses all valid PPA samples when adaptive-off had at
   least one valid PPA sample.
 
 If no selected problem triggers a `rebin` event and the no-trigger outcome is
-not explained by tested p-values or configured-gate skipped statuses, the
-report is inconclusive rather than a clean pass. Follow the collapse-escape
-tuning protocol below and rerun the selected problems. Do not silently treat an
-unexplained no-trigger targeted run as evidence that adaptive re-binning is
-working.
+not explained by tested p-values, configured-gate skipped statuses, or
+run-finalization fallback initialization, the report is inconclusive rather
+than a clean pass. Follow the collapse-escape tuning protocol below and rerun
+the selected problems. Do not silently treat an unexplained no-trigger targeted
+run as evidence that adaptive re-binning is working.
 
 ### Collapse-Escape Tuning Protocol
 

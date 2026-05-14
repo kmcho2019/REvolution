@@ -35,6 +35,7 @@ class ProblemMetrics:
     collapsed_axes: list[str]
     healthy_cell_count: int
     initialized: bool
+    initialization_mode: str | None
     errors: list[str]
 
 
@@ -227,6 +228,7 @@ def _collect_problem_metrics(
             collapsed_axes=[],
             healthy_cell_count=0,
             initialized=False,
+            initialization_mode=None,
             errors=[f"missing problem root for {mode}"],
         )
 
@@ -280,6 +282,12 @@ def _collect_problem_metrics(
             archive_space.get("initialized", archive_space.get("archive_type") == "grid"),
         )
     )
+    initialization_mode = archive_summary.get(
+        "initialization_mode",
+        archive_space.get("initialization_mode"),
+    )
+    if initialization_mode is not None:
+        initialization_mode = str(initialization_mode)
     return ProblemMetrics(
         benchmark=benchmark,
         problem=problem,
@@ -298,6 +306,7 @@ def _collect_problem_metrics(
         collapsed_axes=[str(axis) for axis in collapsed_axes],
         healthy_cell_count=_healthy_cells(rows),
         initialized=initialized,
+        initialization_mode=initialization_mode,
         errors=errors,
     )
 
@@ -423,13 +432,18 @@ def _adaptive_problem_audits(
             root = Path(item.problem_root)
             checks, rebins = _rebin_events(root)
             errors.extend(_validate_rebin_events(root))
-            if item.initialized and not checks:
+            if (
+                item.initialized
+                and not checks
+                and item.initialization_mode != "run_finalization_fallback"
+            ):
                 errors.append("initialized adaptive problem has no rebin_check event")
         audits.append(
             {
                 "problem": key,
                 "problem_root": item.problem_root,
                 "initialized": item.initialized,
+                "initialization_mode": item.initialization_mode,
                 "rebin_check_count": len(checks),
                 "rebin_count": len(rebins),
                 "errors": errors,
@@ -486,10 +500,15 @@ def _localized_report(
             checks, rebins = _rebin_events(Path(on.problem_root))
         any_rebin = any_rebin or bool(rebins)
         if not rebins:
-            every_no_rebin_explained = every_no_rebin_explained and bool(checks)
-            every_no_rebin_explained = every_no_rebin_explained and all(
-                _check_explains_no_rebin(check) for check in checks
-            )
+            if checks:
+                every_no_rebin_explained = every_no_rebin_explained and all(
+                    _check_explains_no_rebin(check) for check in checks
+                )
+            else:
+                every_no_rebin_explained = (
+                    every_no_rebin_explained
+                    and on.initialization_mode == "run_finalization_fallback"
+                )
         health_delta = on.healthy_cell_count - off.healthy_cell_count
         occupied_delta = (on.occupied_cells or 0) - (off.occupied_cells or 0)
         any_health_improved = any_health_improved or health_delta > 0 or occupied_delta > 0
@@ -509,6 +528,7 @@ def _localized_report(
                     "occupied_cells": off.occupied_cells,
                     "healthy_cell_count": off.healthy_cell_count,
                     "retained_member_count": off.total_archive_members,
+                    "initialization_mode": off.initialization_mode,
                     "qd_coverage": off.qd_coverage,
                     "qd_score": off.qd_score,
                 },
@@ -518,6 +538,7 @@ def _localized_report(
                     "occupied_cells": on.occupied_cells,
                     "healthy_cell_count": on.healthy_cell_count,
                     "retained_member_count": on.total_archive_members,
+                    "initialization_mode": on.initialization_mode,
                     "qd_coverage": on.qd_coverage,
                     "qd_score": on.qd_score,
                 },
@@ -548,7 +569,11 @@ def _localized_report(
     errors: list[str] = []
     if selected:
         for item in selected:
-            if not item["rebin_checks"]:
+            if (
+                not item["rebin_checks"]
+                and item["adaptive_on"]["initialization_mode"]
+                != "run_finalization_fallback"
+            ):
                 errors.append(f"{item['problem']} has no adaptive-on rebin_check event")
         if not any_rebin and not every_no_rebin_explained:
             errors.append("selected localized checks do not explain absence of rebin")

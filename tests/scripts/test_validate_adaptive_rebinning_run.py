@@ -69,6 +69,7 @@ def _write_archive(
     effective_shape: list[int],
     collapsed_axes: list[str],
     history: list[dict],
+    initialization_mode: str | None = None,
 ) -> None:
     summary = {
         "archive_type": "grid_quantile",
@@ -97,6 +98,8 @@ def _write_archive(
         "effective_shape": effective_shape,
         "collapsed_axes": collapsed_axes,
     }
+    if initialization_mode is not None:
+        space["initialization_mode"] = initialization_mode
     (root / "archive_space.json").write_text(json.dumps(space), encoding="utf-8")
     (root / "descriptor_health.json").write_text("{}", encoding="utf-8")
     (root / "descriptor_health_report.md").write_text("# Descriptor Health\n", encoding="utf-8")
@@ -274,4 +277,62 @@ def test_validate_adaptive_rebinning_accepts_explained_skip(tmp_path):
             encoding="utf-8"
         )
     )
+    assert localized["status"] == "pass"
+
+
+def test_validate_adaptive_rebinning_accepts_finalization_fallback(tmp_path):
+    run_root = tmp_path / "run"
+    config = _subset_config(tmp_path)
+    classic_root = _problem_root(run_root, "classic")
+    off_root = _problem_root(run_root, "off")
+    on_root = _problem_root(run_root, "on")
+    for root, count in ((classic_root, 1), (off_root, 1), (on_root, 2)):
+        _write_problem_summary(root, count)
+    _write_archive(
+        off_root,
+        mode_kind="disabled",
+        occupied=1,
+        total_members=1,
+        coverage=0.25,
+        qd_score=1.0,
+        effective_shape=[1, 1, 1],
+        collapsed_axes=["logic_depth", "ff_depth", "comb_width_log"],
+        history=[{"generation": 0, "archive_type": "grid_quantile"}],
+    )
+    _write_archive(
+        on_root,
+        mode_kind="ks_triggered",
+        occupied=2,
+        total_members=2,
+        coverage=0.5,
+        qd_score=2.0,
+        effective_shape=[1, 1, 1],
+        collapsed_axes=["logic_depth", "ff_depth", "comb_width_log"],
+        history=[],
+        initialization_mode="run_finalization_fallback",
+    )
+
+    result = validate_main(
+        [
+            "--run-root",
+            str(run_root),
+            "--subset-config",
+            str(config),
+            "--classic-mode",
+            "classic",
+            "--off-mode",
+            "off",
+            "--on-mode",
+            "on",
+        ]
+    )
+
+    assert result == 0
+    payload = json.loads((run_root / "adaptive_rebinning_validation.json").read_text(encoding="utf-8"))
+    localized = json.loads(
+        (run_root / "adaptive_rebinning_localized_trigger_evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert payload["valid"] is True
     assert localized["status"] == "pass"
