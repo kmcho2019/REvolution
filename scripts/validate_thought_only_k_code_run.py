@@ -240,6 +240,48 @@ def _validate_metric_regression(
     return checked
 
 
+def _validate_per_problem_acceptance(
+    *,
+    expected: list[dict[str, str]],
+    metrics_by_mode: dict[str, list[dict[str, float | None]]],
+    target_mode: str,
+    control_mode: str,
+    errors: list[str],
+) -> None:
+    target_rows = metrics_by_mode.get(target_mode, [])
+    control_rows = metrics_by_mode.get(control_mode, [])
+    for item, target_row, control_row in zip(
+        expected, target_rows, control_rows, strict=False
+    ):
+        problem = item["problem"]
+        hard_gates = (
+            ("valid_design_count", "valid designs"),
+            ("functional_pass_rate", "functional pass rate"),
+            ("synthesis_ppa_pass_rate", "synthesis/PPA pass rate"),
+        )
+        for metric_name, label in hard_gates:
+            control_value = control_row.get(metric_name)
+            target_value = target_row.get(metric_name)
+            if control_value is None or float(control_value) <= 0.0:
+                continue
+            if target_value is None or float(target_value) <= 0.0:
+                errors.append(
+                    f"{target_mode} collapsed to zero {label} on {problem} "
+                    f"while {control_mode} had {control_value:.4f}"
+                )
+        for metric_name, label in (
+            ("average_quality_score", "average quality score"),
+            ("average_ppa_improvement", "average PPA improvement"),
+        ):
+            control_value = control_row.get(metric_name)
+            target_value = target_row.get(metric_name)
+            if control_value is not None and target_value is None:
+                errors.append(
+                    f"{target_mode} is missing {label} on {problem} while "
+                    f"{control_mode} had {control_value:.4f}"
+                )
+
+
 def validate(args: argparse.Namespace) -> ValidationResult:
     run_root = Path(args.run_root)
     expected = _expected_problems(Path(args.subset_config))
@@ -272,6 +314,7 @@ def validate(args: argparse.Namespace) -> ValidationResult:
             root = _problem_root(run_root, mode, item["benchmark"], item["problem"])
             if root is None:
                 errors.append(f"{mode}: missing problem root for {item['problem']}")
+                metrics_by_mode[mode].append(_summary_metrics({}))
                 continue
             summary = _problem_summary(root, item["problem"])
             metrics_by_mode[mode].append(_summary_metrics(summary))
@@ -294,6 +337,13 @@ def validate(args: argparse.Namespace) -> ValidationResult:
         control_mode=args.unified_control_mode,
         errors=errors,
         warnings=warnings,
+    )
+    _validate_per_problem_acceptance(
+        expected=expected,
+        metrics_by_mode=metrics_by_mode,
+        target_mode=args.thought_only_mode,
+        control_mode=args.unified_control_mode,
+        errors=errors,
     )
 
     return ValidationResult(

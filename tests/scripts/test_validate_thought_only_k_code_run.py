@@ -32,7 +32,7 @@ def _write_manifest(root: Path) -> None:
     )
 
 
-def _write_mode(root: Path, mode: str, *, k: int = 4) -> None:
+def _write_mode(root: Path, mode: str, *, k: int = 4, collapsed: bool = False) -> None:
     problem_root = root / mode / "RTLLM" / "Prob004_adder_8bit"
     thought_root = problem_root / "Gen0" / "g000_thought_0001"
     thought_root.mkdir(parents=True)
@@ -51,7 +51,17 @@ def _write_mode(root: Path, mode: str, *, k: int = 4) -> None:
                     "evidence": "stage_scoped_logs",
                 },
             }
-        }
+        },
+        "accumulated_success_rates": {
+            "functionality": 0.0 if collapsed else 0.5,
+            "synthesis_ppa": 0.0 if collapsed else 0.25,
+        },
+        "final_population_ppa": {
+            "average_score": None if collapsed else 0.4,
+            "best_metrics": {} if collapsed else {"area": 90.0, "power": 0.9},
+        },
+        "final_population_ppa_details": [] if collapsed else [{"id": "thought"}],
+        "ref_ppa_metric": {"area": 100.0, "power": 1.0},
     }
     (problem_root / "Prob004_adder_8bit_summary.json").write_text(
         json.dumps(summary),
@@ -160,3 +170,22 @@ def test_validate_thought_only_k_code_run_rejects_wrong_k(tmp_path):
         (tmp_path / "thought_only_k_code_validation.json").read_text(encoding="utf-8")
     )
     assert any("expected 4" in error for error in payload["errors"])
+
+
+def test_validate_thought_only_k_code_run_rejects_target_collapse(tmp_path):
+    subset = _subset_config(tmp_path)
+    _write_manifest(tmp_path)
+    _write_control_mode(tmp_path, "classic")
+    _write_control_mode(tmp_path, "grid_quantile_pareto_journal_bd_eoh")
+    _write_control_mode(tmp_path, "grid_quantile_pareto_journal_bd_unified")
+    _write_mode(tmp_path, "grid_quantile_pareto_journal_eoh_thought_k4")
+    _write_mode(tmp_path, "grid_quantile_pareto_journal_thought_k4", collapsed=True)
+
+    assert validate_main(_args(tmp_path, subset)) == 1
+    payload = json.loads(
+        (tmp_path / "thought_only_k_code_validation.json").read_text(encoding="utf-8")
+    )
+    assert any(
+        "collapsed to zero functional pass rate" in error
+        for error in payload["errors"]
+    )

@@ -1262,6 +1262,14 @@ on:
 - Pareto/front breadth or linked visualization checks when those artifacts are
   touched.
 
+Mean paired deltas are not sufficient by themselves. The target also fails the
+hard-subset gate if any individual problem collapses to zero valid designs,
+zero functional pass rate, or zero synthesis/PPA pass rate while the unified
+no-thought control has a positive value for that metric. If the unified control
+has average quality score or average PPA improvement for a problem, the target
+must also report the corresponding value. This prevents a complete miss on one
+problem from being hidden by aggregate variance across the 13-problem subset.
+
 The same metrics must also be reported versus `classic`, the EoH no-thought
 operator baseline, and the EoH thought-only representation ablation.
 Classic-relative comparison is a guardrail for paper claims: if the target is
