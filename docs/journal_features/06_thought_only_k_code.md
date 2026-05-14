@@ -1216,6 +1216,8 @@ The full hard-subset run is satisfactory only if every hard gate passes:
 - `backend_comparison.md` reports valid designs, functionality pass rate,
   synthesis/PPA pass rate, average quality score, and average PPA improvement
   for every backend.
+- strict validation derives those metrics from the same problem-summary and
+  generation-log PPA detail sources as `backend_comparison.md`.
 - target artifacts contain `thought_evaluation.json` for every generated
   thought.
 - every target thought has exactly four code-sample records.

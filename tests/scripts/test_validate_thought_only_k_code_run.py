@@ -32,10 +32,22 @@ def _write_manifest(root: Path) -> None:
     )
 
 
-def _write_mode(root: Path, mode: str, *, k: int = 4, collapsed: bool = False) -> None:
+def _write_mode(
+    root: Path,
+    mode: str,
+    *,
+    k: int = 4,
+    collapsed: bool = False,
+    generation_details_only: bool = False,
+) -> None:
     problem_root = root / mode / "RTLLM" / "Prob004_adder_8bit"
     thought_root = problem_root / "Gen0" / "g000_thought_0001"
     thought_root.mkdir(parents=True)
+    ppa_detail = {
+        "id": "thought",
+        "score": 0.4,
+        "ppa_metrics": {"area": 90.0, "power": 0.9},
+    }
     summary = {
         "backend_details": {
             "qd_config": {
@@ -57,16 +69,27 @@ def _write_mode(root: Path, mode: str, *, k: int = 4, collapsed: bool = False) -
             "synthesis_ppa": 0.0 if collapsed else 0.25,
         },
         "final_population_ppa": {
-            "average_score": None if collapsed else 0.4,
-            "best_metrics": {} if collapsed else {"area": 90.0, "power": 0.9},
+            "average_score": None if collapsed or generation_details_only else 0.4,
+            "best_metrics": (
+                {}
+                if collapsed or generation_details_only
+                else {"area": 90.0, "power": 0.9}
+            ),
         },
-        "final_population_ppa_details": [] if collapsed else [{"id": "thought"}],
+        "final_population_ppa_details": (
+            [] if collapsed or generation_details_only else [ppa_detail]
+        ),
         "ref_ppa_metric": {"area": 100.0, "power": 1.0},
     }
     (problem_root / "Prob004_adder_8bit_summary.json").write_text(
         json.dumps(summary),
         encoding="utf-8",
     )
+    if generation_details_only:
+        (problem_root / "generation_log.jsonl").write_text(
+            json.dumps({"population_ppa_details": [ppa_detail]}) + "\n",
+            encoding="utf-8",
+        )
     evaluation = {
         "thought_id": "g000_thought_0001",
         "code_samples_per_thought": k,
@@ -146,7 +169,11 @@ def test_validate_thought_only_k_code_run_accepts_valid_artifacts(tmp_path):
     _write_control_mode(tmp_path, "grid_quantile_pareto_journal_bd_eoh")
     _write_control_mode(tmp_path, "grid_quantile_pareto_journal_bd_unified")
     _write_mode(tmp_path, "grid_quantile_pareto_journal_eoh_thought_k4")
-    _write_mode(tmp_path, "grid_quantile_pareto_journal_thought_k4")
+    _write_mode(
+        tmp_path,
+        "grid_quantile_pareto_journal_thought_k4",
+        generation_details_only=True,
+    )
 
     assert validate_main(_args(tmp_path, subset)) == 0
     payload = json.loads(

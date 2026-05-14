@@ -59,16 +59,18 @@ def _problem_root(run_root: Path, mode: str, benchmark: str, problem: str) -> Pa
     return matches[-1] if matches else None
 
 
-def _problem_summary(root: Path, problem: str) -> dict[str, Any]:
+def _problem_summary(root: Path, problem: str) -> tuple[Path, dict[str, Any]]:
     direct = root / f"{problem}_summary.json"
     if direct.is_file():
-        return _load_json(direct)
+        return direct, _load_json(direct)
     summaries = [
         path
         for path in root.glob("*_summary.json")
         if path.name not in {"archive_summary.json", "global_pareto_summary.json"}
     ]
-    return _load_json(summaries[0]) if summaries else {}
+    if summaries:
+        return summaries[0], _load_json(summaries[0])
+    return direct, {}
 
 
 def _safe_float(value: Any) -> float | None:
@@ -79,13 +81,39 @@ def _safe_float(value: Any) -> float | None:
     return parsed
 
 
-def _mean_improvement(summary: dict[str, Any]) -> float | None:
-    final_ppa = summary.get("final_population_ppa", {})
-    ref_metrics = summary.get("ref_ppa_metric", {})
-    if not isinstance(final_ppa, dict) or not isinstance(ref_metrics, dict):
+def _load_generation_ppa_details(summary_path: Path) -> list[dict[str, Any]]:
+    details: list[dict[str, Any]] = []
+    generation_log_path = summary_path.parent / "generation_log.jsonl"
+    if not generation_log_path.is_file():
+        return details
+    for line in generation_log_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        payload = json.loads(line)
+        assert isinstance(payload, dict)
+        row_details = payload.get("population_ppa_details", [])
+        assert isinstance(row_details, list)
+        details.extend(detail for detail in row_details if isinstance(detail, dict))
+    return details
+
+
+def _best_ppa_detail(details: list[dict[str, Any]]) -> dict[str, Any] | None:
+    scored_details: list[tuple[float, dict[str, Any]]] = []
+    for detail in details:
+        score = _safe_float(detail.get("score"))
+        if score is not None:
+            scored_details.append((score, detail))
+    if not scored_details:
         return None
-    best_metrics = final_ppa.get("best_metrics", {})
-    if not isinstance(best_metrics, dict):
+    return max(scored_details, key=lambda item: item[0])[1]
+
+
+def _mean_improvement(
+    *,
+    best_metrics: dict[str, Any],
+    ref_metrics: dict[str, Any],
+) -> float | None:
+    if not best_metrics or not ref_metrics:
         return None
     gains: list[float] = []
     for key in ("area", "power", "eff_clk_period"):
@@ -96,21 +124,62 @@ def _mean_improvement(summary: dict[str, Any]) -> float | None:
     return statistics.fmean(gains) if gains else None
 
 
-def _summary_metrics(summary: dict[str, Any]) -> dict[str, float | None]:
+def _empty_metrics() -> dict[str, float | None]:
+    return {
+        "valid_design_count": 0.0,
+        "functional_pass_rate": None,
+        "synthesis_ppa_pass_rate": None,
+        "average_quality_score": None,
+        "average_ppa_improvement": None,
+    }
+
+
+def _summary_metrics(
+    *,
+    summary: dict[str, Any],
+    summary_path: Path,
+) -> dict[str, float | None]:
     rates = summary.get("accumulated_success_rates", {})
     if not isinstance(rates, dict):
         rates = {}
     final_ppa = summary.get("final_population_ppa", {})
     if not isinstance(final_ppa, dict):
         final_ppa = {}
+    generation_details = _load_generation_ppa_details(summary_path)
     details = summary.get("final_population_ppa_details", [])
-    valid_design_count = len(details) if isinstance(details, list) else 0
+    if not isinstance(details, list):
+        details = []
+    ppa_details = generation_details or [
+        detail for detail in details if isinstance(detail, dict)
+    ]
+    best_metrics = final_ppa.get("best_metrics", {})
+    if not isinstance(best_metrics, dict):
+        best_metrics = {}
+    best_detail = _best_ppa_detail(ppa_details)
+    if best_detail is not None and not best_metrics:
+        detail_metrics = best_detail.get("ppa_metrics", {})
+        assert isinstance(detail_metrics, dict)
+        best_metrics = detail_metrics
+    quality_scores = [
+        score
+        for detail in ppa_details
+        if (score := _safe_float(detail.get("score"))) is not None
+    ]
+    average_quality = _safe_float(final_ppa.get("average_score"))
+    if average_quality is None and quality_scores:
+        average_quality = statistics.fmean(quality_scores)
+    ref_metrics = summary.get("ref_ppa_metric", {})
+    if not isinstance(ref_metrics, dict):
+        ref_metrics = {}
     return {
-        "valid_design_count": float(valid_design_count),
+        "valid_design_count": float(len(ppa_details)),
         "functional_pass_rate": _safe_float(rates.get("functionality")),
         "synthesis_ppa_pass_rate": _safe_float(rates.get("synthesis_ppa")),
-        "average_quality_score": _safe_float(final_ppa.get("average_score")),
-        "average_ppa_improvement": _mean_improvement(summary),
+        "average_quality_score": average_quality,
+        "average_ppa_improvement": _mean_improvement(
+            best_metrics=best_metrics,
+            ref_metrics=ref_metrics,
+        ),
     }
 
 
@@ -314,10 +383,12 @@ def validate(args: argparse.Namespace) -> ValidationResult:
             root = _problem_root(run_root, mode, item["benchmark"], item["problem"])
             if root is None:
                 errors.append(f"{mode}: missing problem root for {item['problem']}")
-                metrics_by_mode[mode].append(_summary_metrics({}))
+                metrics_by_mode[mode].append(_empty_metrics())
                 continue
-            summary = _problem_summary(root, item["problem"])
-            metrics_by_mode[mode].append(_summary_metrics(summary))
+            summary_path, summary = _problem_summary(root, item["problem"])
+            metrics_by_mode[mode].append(
+                _summary_metrics(summary=summary, summary_path=summary_path)
+            )
             if mode not in thought_only_modes:
                 continue
             _validate_summary(
