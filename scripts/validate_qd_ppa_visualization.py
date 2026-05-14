@@ -978,6 +978,7 @@ def _assert_color_modes(
         )
         if not active:
             errors.append(f"Playwright visible color control did not activate {color_mode}")
+        state = _debug_state(page)
         legend = page.locator("#ppaLegend").inner_text().lower()
         if color_mode not in legend:
             errors.append(f"Playwright legend does not describe {color_mode} mode")
@@ -992,8 +993,16 @@ def _assert_color_modes(
                 errors.append("Playwright fitness legend does not document clipping")
             if "mean active ppa improvement" not in legend:
                 errors.append("Playwright fitness legend does not name the metric")
-        if "shape" not in legend or "classic" not in legend:
-            errors.append(f"Playwright compare legend does not include technique shapes in {color_mode} mode")
+        selected = [str(item) for item in state.get("selected_techniques", [])]
+        if len(selected) >= 2:
+            if "shape" not in legend:
+                errors.append(f"Playwright compare legend does not include technique shapes in {color_mode} mode")
+            for technique in selected:
+                if technique.lower() not in legend:
+                    errors.append(
+                        f"Playwright compare legend missing selected technique "
+                        f"{technique} in {color_mode} mode"
+                    )
         _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, f"color_{color_mode}"))
     colors = page.evaluate("() => [rankColor(1), rankColor(2), rankColor(3), rankColor(4)]")
     assert isinstance(colors, list)
@@ -1026,10 +1035,10 @@ def _assert_color_modes(
         non_classic = [scale for name, scale in technique_radii.items() if name != "classic"]
         if non_classic and max(float(scale) for scale in non_classic) <= float(technique_radii["classic"]):
             errors.append(f"Playwright non-classic technique markers are not larger: {technique_radii}")
-    state = _debug_state(page)
     reference_labels = state.get("reference_axis_labels")
-    if not isinstance(reference_labels, list) or len(reference_labels) != 3:
-        errors.append(f"Playwright sequential reference axis labels are missing: {reference_labels}")
+    expected_label_count = 3 if state.get("circuit_type") == "sequential" else 2
+    if not isinstance(reference_labels, list) or len(reference_labels) != expected_label_count:
+        errors.append(f"Playwright reference axis labels are missing: {reference_labels}")
     elif not all(str(label).startswith("ref ") and "=" in str(label) for label in reference_labels):
         errors.append(f"Playwright reference axis labels are malformed: {reference_labels}")
     reference_tooltip = str(state.get("reference_tooltip_preview") or "")
