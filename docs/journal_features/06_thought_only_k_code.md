@@ -1304,9 +1304,12 @@ target and control have at least one synthesis/PPA-valid representative. If
 fewer than four paired non-empty problem values exist for a metric, use the
 floor only and require a written validation note.
 
-Do not accept Feature 06 on a cherry-picked rerun. If the declared final run
-fails a gate, the feature remains open unless a new full matrix is declared and
-validated from scratch.
+Do not accept Feature 06 on an untracked cherry-picked rerun. If the declared
+final run fails a gate, the feature remains open unless a new validation root is
+declared. That root may reuse unchanged baseline mode directories by copy or
+symlink as described above, but it must contain all five required modes,
+document baseline provenance, regenerate the report family, and pass the strict
+Feature 06 validator.
 
 Feature-specific acceptance gates:
 
