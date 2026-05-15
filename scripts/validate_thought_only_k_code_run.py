@@ -11,7 +11,7 @@ from typing import Any
 import yaml
 
 
-MAX_WORKERS = 4
+MAX_WORKERS = 16
 
 
 @dataclass

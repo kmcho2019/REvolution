@@ -295,6 +295,10 @@ def _history_errors(
     if not history:
         return ["archive_history.jsonl is empty"]
 
+    adaptive_rebin_seen = any(
+        snapshot.get("event_kind") == "rebin" or snapshot.get("event_type") == "rebin"
+        for snapshot in history
+    )
     transitions = 0
     was_initialized = False
     saw_initialized = False
@@ -302,6 +306,8 @@ def _history_errors(
     last_coverage: float | None = None
     last_best: float | None = None
     for snapshot in history:
+        if snapshot.get("event_kind") in {"rebin_check", "rebin"} or snapshot.get("event_type") in {"rebin_check", "rebin"}:
+            continue
         geometry = snapshot.get("grid_quantile_geometry")
         if not isinstance(geometry, dict):
             errors.append("history snapshot missing grid_quantile_geometry")
@@ -324,21 +330,21 @@ def _history_errors(
             continue
 
         saw_initialized = True
-        if geometry.get("effective_shape") != effective_shape:
+        if not adaptive_rebin_seen and geometry.get("effective_shape") != effective_shape:
             errors.append("history effective_shape mismatch")
-        if geometry.get("collapsed_axes") != collapsed_axes:
+        if not adaptive_rebin_seen and geometry.get("collapsed_axes") != collapsed_axes:
             errors.append("history collapsed_axes mismatch")
-        if geometry.get("quantile_boundaries_hash") != boundary_hash:
+        if not adaptive_rebin_seen and geometry.get("quantile_boundaries_hash") != boundary_hash:
             errors.append("history boundary hash mismatch")
 
         occupied = int(snapshot["occupied_cells"])
         coverage = float(snapshot["coverage"])
         best = snapshot.get("best_quality")
-        if last_occupied is not None and occupied < last_occupied:
+        if not adaptive_rebin_seen and last_occupied is not None and occupied < last_occupied:
             errors.append("post-init occupied_cells decreased")
-        if last_coverage is not None and coverage < last_coverage:
+        if not adaptive_rebin_seen and last_coverage is not None and coverage < last_coverage:
             errors.append("post-init coverage decreased")
-        if best is not None and last_best is not None and float(best) < last_best:
+        if not adaptive_rebin_seen and best is not None and last_best is not None and float(best) < last_best:
             errors.append("post-init best_quality decreased")
         last_occupied = occupied
         last_coverage = coverage

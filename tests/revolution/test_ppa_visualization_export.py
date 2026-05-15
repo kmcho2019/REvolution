@@ -209,6 +209,7 @@ def test_export_writes_projected_classic_dataset(tmp_path: Path) -> None:
     assert "drawPpa2d(" in html
     assert "rankScopeSelect" in html
     assert "advancedPanel" in html
+    assert "archiveGeometryPerspectiveSelect" in html
     assert 'data-ppa-scale="final"' in html
     assert "setPpaScaleMode" in html
     dataset = json.loads(result.dataset_paths[0].read_text(encoding="utf-8"))
@@ -221,11 +222,68 @@ def test_export_writes_projected_classic_dataset(tmp_path: Path) -> None:
     assert qd["mode_global_pareto_member"] is True
     assert dataset["viewer_defaults"]["coordinate_modes"] == ["raw", "improvement", "normalized"]
     assert dataset["viewer_defaults"]["ppa_scale_modes"] == ["current", "final"]
+    assert dataset["viewer_defaults"]["archive_geometry_perspective"] == "native_timeline"
+    assert dataset["archive_geometry_perspectives"] == ["native_timeline", "final_fixed"]
+    assert len(dataset["archive_geometry_snapshots"]) == 1
     assert dataset["schema_version"] == "qd_ppa_problem.v2"
     assert classic["pareto_rank_final"] == 1
     assert qd["pareto_rank_final"] == 1
     assert dataset["technique_stats_by_step"]["final"]["classic"]["rank1_count"] == 1
     assert dataset["technique_stats_by_step"]["final"]["_pooled_visible"]["hypervolume"]["method"] == "exact_recursive"
+
+
+def test_export_records_adaptive_rebin_geometry(tmp_path: Path) -> None:
+    run_root, classic_root, qd_root = _write_run(tmp_path)
+    qd_problem = qd_root / "model" / "RTLLM" / "Prob001"
+    old_geometry = {
+        **_grid_quantile_space(),
+        "effective_shape": [1, 1, 2],
+        "axes": [
+            {"name": "logic_depth", "effective_bins": 1, "quantile_boundaries": []},
+            {"name": "ff_depth", "effective_bins": 1, "quantile_boundaries": []},
+            {"name": "comb_width_log", "effective_bins": 2, "quantile_boundaries": [1.5]},
+        ],
+    }
+    new_geometry = _grid_quantile_space()
+    (qd_problem / "archive_history.jsonl").write_text(
+        json.dumps(
+            {
+                "event_kind": "rebin",
+                "generation": 1,
+                "total_rebin_count": 1,
+                "trigger_axes": ["logic_depth"],
+                "corrected_p_threshold": 0.0167,
+                "axis_results": [{"axis": "logic_depth", "ks_p_value": 0.001}],
+                "old_geometry": old_geometry,
+                "new_geometry": new_geometry,
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    result = export_qd_ppa_visualization(
+        run_root=run_root,
+        backend_runs=(
+            BackendRun("classic", classic_root),
+            BackendRun("grid_quantile_pareto_journal_bd", qd_root),
+        ),
+        archive_source_backend="grid_quantile_pareto_journal_bd",
+        output_dir=run_root / "visualization" / "adaptive",
+        subset_config=None,
+        selected_problem="RTLLM/Prob001",
+        asset_mode="inline",
+        strict=True,
+        recover_classic_descriptors=False,
+    )
+    dataset = json.loads(result.dataset_paths[0].read_text(encoding="utf-8"))
+    qd = next(sample for sample in dataset["samples"] if sample["technique"] != "classic")
+
+    assert dataset["rebin_timeline_markers"][0]["trigger_axes"] == ["logic_depth"]
+    assert len(dataset["archive_geometry_snapshots"]) >= 2
+    assert "cell_summaries_by_step_native_timeline" in dataset
+    assert qd["native_archive_geometry_id"] == dataset["rebin_timeline_markers"][0]["old_geometry_id"]
+    assert qd["final_fixed_archive_geometry_id"] != qd["native_archive_geometry_id"]
 
 
 def test_missing_descriptors_stay_in_ppa_and_out_of_cells(tmp_path: Path) -> None:

@@ -101,6 +101,37 @@ def test_grid_archive_clamps_extreme_values_to_edge_bins():
     assert high_cell == "3"
 
 
+def test_grid_archive_rebuild_recomputes_bounds():
+    archive = GridArchive(
+        [GridAxisSpec(name="g_A", bins=4, lower_bound=0.0, upper_bound=1.0)]
+    )
+    records = [
+        _member("low", (10.0,), 0.5, {"id": "low"}),
+        _member("high", (18.0,), 0.7, {"id": "high"}),
+    ]
+
+    archive.rebuild_from_records(records, initialization_mode="adaptive_rebin")
+
+    assert archive.axes[0].bins == 4
+    assert archive.axes[0].lower_bound == pytest.approx(10.0)
+    assert archive.axes[0].upper_bound == pytest.approx(18.0)
+    assert {member.candidate_id for _, member in archive.members()} == {"low", "high"}
+
+
+def test_grid_archive_rebuild_pads_degenerate_bounds():
+    archive = GridArchive(
+        [GridAxisSpec(name="g_A", bins=4, lower_bound=0.0, upper_bound=1.0)]
+    )
+
+    archive.rebuild_from_records(
+        [_member("same", (3.0,), 0.5, {"id": "same"})],
+        initialization_mode="adaptive_rebin",
+    )
+
+    assert archive.axes[0].lower_bound == pytest.approx(2.5)
+    assert archive.axes[0].upper_bound == pytest.approx(3.5)
+
+
 def test_grid_archive_rejects_dimension_mismatch():
     archive = GridArchive(
         [GridAxisSpec(name="g_A", bins=4, lower_bound=0.0, upper_bound=1.0)]
@@ -548,6 +579,66 @@ def test_grid_quantile_archive_assigns_boundary_values_to_higher_bins():
     assert archive.cell_id_for((35.0,)) == "3"
 
 
+def test_grid_quantile_rebuild_uses_existing_quantiles():
+    archive = GridQuantileArchive(("logic_depth",), warmup_successes=2)
+    records = [
+        _member(f"cand-{index}", (value,), float(index), {"id": index})
+        for index, value in enumerate([0.0, 10.0, 20.0, 30.0, 40.0], start=1)
+    ]
+
+    results = archive.rebuild_from_records(
+        records,
+        initialization_mode="adaptive_rebin",
+    )
+
+    assert set(results) == {record.candidate_id for record in records}
+    assert archive.is_initialized is True
+    assert archive.initialization_mode == "adaptive_rebin"
+    assert archive.quantile_boundaries == ((10.0, 20.0, 30.0),)
+    assert archive.effective_bins == (4,)
+
+
+def test_grid_quantile_rebuild_can_reactivate_scalar_member():
+    archive = GridQuantileArchive(("logic_depth",), warmup_successes=2)
+    old = _member("old", (0.0,), 1.0, {"id": "old"}, insertion_index=1)
+    far = _member("far", (10.0,), 0.5, {"id": "far"}, insertion_index=2)
+    better = _member("better", (0.1,), 2.0, {"id": "better"}, insertion_index=3)
+
+    archive.insert(old)
+    archive.insert(far)
+    archive.insert(better)
+
+    assert {member.candidate_id for _, member in archive.members()} == {
+        "better",
+        "far",
+    }
+
+    archive.rebuild_from_records(
+        [old, better, far],
+        initialization_mode="adaptive_rebin",
+    )
+
+    assert {member.candidate_id for _, member in archive.members()} == {
+        "old",
+        "better",
+        "far",
+    }
+
+
+def test_grid_quantile_rebuild_collapses_degenerate_axis():
+    archive = GridQuantileArchive(("ff_depth",), warmup_successes=2)
+    records = [
+        _member(f"cand-{index}", (0.0,), float(index), {"id": index})
+        for index in range(4)
+    ]
+
+    archive.rebuild_from_records(records, initialization_mode="adaptive_rebin")
+
+    assert archive.quantile_boundaries == ((),)
+    assert archive.effective_bins == (1,)
+    assert archive.describe_space()["collapsed_axes"] == ["ff_depth"]
+
+
 def test_grid_quantile_archive_buffers_warmup_then_replays_samples():
     archive = GridQuantileArchive(("logic_depth", "ff_depth"), warmup_successes=2)
     payload_a = SimpleNamespace(
@@ -635,6 +726,7 @@ def test_grid_quantile_descriptor_health_separates_live_and_replay(tmp_path):
         descriptor_axes=("logic_depth", "ff_depth", "comb_width_log"),
         descriptor_profile="journal_logic_ff_width_3d",
         observations=observations,
+        recent_samples=[],
     )
 
     assert payload["decision_counts"] == {"warmup_buffered": 5}
@@ -688,6 +780,7 @@ def test_grid_quantile_descriptor_health_reports_fully_collapsed_shape(tmp_path)
         descriptor_axes=("logic_depth", "ff_depth", "comb_width_log"),
         descriptor_profile="journal_logic_ff_width_3d",
         observations=observations,
+        recent_samples=[],
     )
 
     assert payload["effective_shape"] == [1, 1, 1]
@@ -719,6 +812,7 @@ def test_non_grid_quantile_descriptor_health_has_no_replay_fields(tmp_path):
                 "descriptor_values": {"g_A": 0.5},
             }
         ],
+        recent_samples=[],
     )
 
     assert payload["decision_counts"] == {"filled_empty": 1}

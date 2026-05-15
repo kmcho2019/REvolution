@@ -41,7 +41,7 @@ def test_strict_visual_case_matrix_is_explicit() -> None:
 
     assert cases == (
         ("sequential_ppa_3d", "RTLLM/Prob015_multi_pipe_8bit", "ppa", "3d"),
-        ("sequential_archive_3d", "VerilogEval-Spec-to-RTL/Prob151_review2015_fsm", "archive", "3d"),
+        ("sequential_archive_3d", "RTLLM/Prob015_multi_pipe_8bit", "archive", "3d"),
         ("combinational_ppa_2d", "RTLLM/Prob004_adder_8bit", "ppa", "2d"),
         ("combinational_projected_archive", "VerilogEval-Spec-to-RTL/Prob135_m2014_q6b", "archive", "2d_slab"),
     )

@@ -36,9 +36,19 @@ Environment overrides:
   HARD_SUBSET_QD_OPERATOR_ONE_PARENT_FRACTION Single-operator one-parent fraction override
   HARD_SUBSET_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE Single-operator archive-context size override
   HARD_SUBSET_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN Single-operator intra-bin toggle override
+  HARD_SUBSET_QD_REBINNING_KIND Adaptive re-binning kind override
+  HARD_SUBSET_QD_REBINNING_RECENT_GENERATIONS Recent-window override
+  HARD_SUBSET_QD_REBINNING_MIN_ARCHIVE_MEMBERS Minimum archive member override
+  HARD_SUBSET_QD_REBINNING_COOLDOWN_GENERATIONS Cooldown override
+  HARD_SUBSET_QD_REBINNING_BASE_P_THRESHOLD KS base-p threshold override
   HARD_SUBSET_PROMPT_PROFILE    Prompt profile override (defaults to config value)
   HARD_SUBSET_REPRESENTATION_KIND Representation kind override
   HARD_SUBSET_CODE_SAMPLES_PER_THOUGHT Code samples per thought override
+  HARD_SUBSET_REPRESENTATIVE_SAMPLE Representative selection override
+  HARD_SUBSET_REPAIR_KIND       Repair kind override
+  HARD_SUBSET_REPAIR_MAX_ATTEMPTS_PER_SAMPLE Repair sample cap override
+  HARD_SUBSET_REPAIR_MAX_ATTEMPTS_PER_THOUGHT Repair thought cap override
+  HARD_SUBSET_REPAIR_EVIDENCE   Repair evidence override
   HARD_SUBSET_SMOKE_SUBSET      Limit selected problems to the first N entries
   PYTHON_BIN                    Python binary (default: <repo>/.venv/bin/python if present, else python3)
 
@@ -232,6 +242,23 @@ emit_scalar(
     "CONFIG_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN",
     defaults.get("qd_operator_two_parent_allow_intra_bin", True),
 )
+emit_scalar("CONFIG_QD_REBINNING_KIND", defaults.get("qd_rebinning_kind", "disabled"))
+emit_scalar(
+    "CONFIG_QD_REBINNING_RECENT_GENERATIONS",
+    defaults.get("qd_rebinning_recent_generations", 3),
+)
+emit_scalar(
+    "CONFIG_QD_REBINNING_MIN_ARCHIVE_MEMBERS",
+    defaults.get("qd_rebinning_min_archive_members", 20),
+)
+emit_scalar(
+    "CONFIG_QD_REBINNING_COOLDOWN_GENERATIONS",
+    defaults.get("qd_rebinning_cooldown_generations", 3),
+)
+emit_scalar(
+    "CONFIG_QD_REBINNING_BASE_P_THRESHOLD",
+    defaults.get("qd_rebinning_base_p_threshold", 0.05),
+)
 representation_defaults = defaults.get("representation", {})
 repair_defaults = defaults.get("repair", {})
 emit_scalar("CONFIG_PROMPT_PROFILE", defaults.get("prompt_profile", ""))
@@ -296,6 +323,23 @@ for mode_name, mode_cfg in cfg["modes"].items():
     emit_scalar(
         f"{prefix}_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN",
         mode_cfg.get("qd_operator_two_parent_allow_intra_bin", ""),
+    )
+    emit_scalar(f"{prefix}_QD_REBINNING_KIND", mode_cfg.get("qd_rebinning_kind", ""))
+    emit_scalar(
+        f"{prefix}_QD_REBINNING_RECENT_GENERATIONS",
+        mode_cfg.get("qd_rebinning_recent_generations", ""),
+    )
+    emit_scalar(
+        f"{prefix}_QD_REBINNING_MIN_ARCHIVE_MEMBERS",
+        mode_cfg.get("qd_rebinning_min_archive_members", ""),
+    )
+    emit_scalar(
+        f"{prefix}_QD_REBINNING_COOLDOWN_GENERATIONS",
+        mode_cfg.get("qd_rebinning_cooldown_generations", ""),
+    )
+    emit_scalar(
+        f"{prefix}_QD_REBINNING_BASE_P_THRESHOLD",
+        mode_cfg.get("qd_rebinning_base_p_threshold", ""),
     )
     representation_cfg = mode_cfg.get("representation", {})
     repair_cfg = mode_cfg.get("repair", {})
@@ -429,6 +473,11 @@ QD_OPERATOR_KIND="${HARD_SUBSET_QD_OPERATOR_KIND:-${CONFIG_QD_OPERATOR_KIND}}"
 QD_OPERATOR_ONE_PARENT_FRACTION="${HARD_SUBSET_QD_OPERATOR_ONE_PARENT_FRACTION:-${CONFIG_QD_OPERATOR_ONE_PARENT_FRACTION}}"
 QD_OPERATOR_ARCHIVE_CONTEXT_SIZE="${HARD_SUBSET_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE:-${CONFIG_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE}}"
 QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN="${HARD_SUBSET_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN:-${CONFIG_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN}}"
+QD_REBINNING_KIND="${HARD_SUBSET_QD_REBINNING_KIND:-${CONFIG_QD_REBINNING_KIND}}"
+QD_REBINNING_RECENT_GENERATIONS="${HARD_SUBSET_QD_REBINNING_RECENT_GENERATIONS:-${CONFIG_QD_REBINNING_RECENT_GENERATIONS}}"
+QD_REBINNING_MIN_ARCHIVE_MEMBERS="${HARD_SUBSET_QD_REBINNING_MIN_ARCHIVE_MEMBERS:-${CONFIG_QD_REBINNING_MIN_ARCHIVE_MEMBERS}}"
+QD_REBINNING_COOLDOWN_GENERATIONS="${HARD_SUBSET_QD_REBINNING_COOLDOWN_GENERATIONS:-${CONFIG_QD_REBINNING_COOLDOWN_GENERATIONS}}"
+QD_REBINNING_BASE_P_THRESHOLD="${HARD_SUBSET_QD_REBINNING_BASE_P_THRESHOLD:-${CONFIG_QD_REBINNING_BASE_P_THRESHOLD}}"
 PROMPT_PROFILE="${HARD_SUBSET_PROMPT_PROFILE:-${CONFIG_PROMPT_PROFILE}}"
 REPRESENTATION_KIND="${HARD_SUBSET_REPRESENTATION_KIND:-${CONFIG_REPRESENTATION_KIND}}"
 CODE_SAMPLES_PER_THOUGHT="${HARD_SUBSET_CODE_SAMPLES_PER_THOUGHT:-${CONFIG_CODE_SAMPLES_PER_THOUGHT}}"
@@ -474,6 +523,11 @@ qd_operator_kind=${QD_OPERATOR_KIND}
 qd_operator_one_parent_fraction=${QD_OPERATOR_ONE_PARENT_FRACTION}
 qd_operator_archive_context_size=${QD_OPERATOR_ARCHIVE_CONTEXT_SIZE}
 qd_operator_two_parent_allow_intra_bin=${QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN}
+qd_rebinning_kind=${QD_REBINNING_KIND}
+qd_rebinning_recent_generations=${QD_REBINNING_RECENT_GENERATIONS}
+qd_rebinning_min_archive_members=${QD_REBINNING_MIN_ARCHIVE_MEMBERS}
+qd_rebinning_cooldown_generations=${QD_REBINNING_COOLDOWN_GENERATIONS}
+qd_rebinning_base_p_threshold=${QD_REBINNING_BASE_P_THRESHOLD}
 prompt_profile=${PROMPT_PROFILE}
 representation_kind=${REPRESENTATION_KIND}
 code_samples_per_thought=${CODE_SAMPLES_PER_THOUGHT}
@@ -534,6 +588,11 @@ for mode_name in "${MODES[@]}"; do
   mode_operator_one_parent_var="MODE_${upper_mode}_QD_OPERATOR_ONE_PARENT_FRACTION"
   mode_operator_archive_context_var="MODE_${upper_mode}_QD_OPERATOR_ARCHIVE_CONTEXT_SIZE"
   mode_operator_two_parent_intra_var="MODE_${upper_mode}_QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN"
+  mode_rebinning_kind_var="MODE_${upper_mode}_QD_REBINNING_KIND"
+  mode_rebinning_recent_var="MODE_${upper_mode}_QD_REBINNING_RECENT_GENERATIONS"
+  mode_rebinning_min_var="MODE_${upper_mode}_QD_REBINNING_MIN_ARCHIVE_MEMBERS"
+  mode_rebinning_cooldown_var="MODE_${upper_mode}_QD_REBINNING_COOLDOWN_GENERATIONS"
+  mode_rebinning_base_p_var="MODE_${upper_mode}_QD_REBINNING_BASE_P_THRESHOLD"
   mode_prompt_profile_var="MODE_${upper_mode}_PROMPT_PROFILE"
   mode_representation_kind_var="MODE_${upper_mode}_REPRESENTATION_KIND"
   mode_code_samples_var="MODE_${upper_mode}_CODE_SAMPLES_PER_THOUGHT"
@@ -559,6 +618,11 @@ for mode_name in "${MODES[@]}"; do
   resolved_operator_one_parent_fraction="${!mode_operator_one_parent_var}"
   resolved_operator_archive_context_size="${!mode_operator_archive_context_var}"
   resolved_operator_two_parent_allow_intra_bin="${!mode_operator_two_parent_intra_var}"
+  resolved_rebinning_kind="${!mode_rebinning_kind_var}"
+  resolved_rebinning_recent_generations="${!mode_rebinning_recent_var}"
+  resolved_rebinning_min_archive_members="${!mode_rebinning_min_var}"
+  resolved_rebinning_cooldown_generations="${!mode_rebinning_cooldown_var}"
+  resolved_rebinning_base_p_threshold="${!mode_rebinning_base_p_var}"
   resolved_prompt_profile="${!mode_prompt_profile_var}"
   resolved_representation_kind="${!mode_representation_kind_var}"
   resolved_code_samples_per_thought="${!mode_code_samples_var}"
@@ -606,6 +670,21 @@ for mode_name in "${MODES[@]}"; do
   if [[ -z "${resolved_operator_two_parent_allow_intra_bin}" ]]; then
     resolved_operator_two_parent_allow_intra_bin="${QD_OPERATOR_TWO_PARENT_ALLOW_INTRA_BIN}"
   fi
+  if [[ -z "${resolved_rebinning_kind}" ]]; then
+    resolved_rebinning_kind="${QD_REBINNING_KIND}"
+  fi
+  if [[ -z "${resolved_rebinning_recent_generations}" ]]; then
+    resolved_rebinning_recent_generations="${QD_REBINNING_RECENT_GENERATIONS}"
+  fi
+  if [[ -z "${resolved_rebinning_min_archive_members}" ]]; then
+    resolved_rebinning_min_archive_members="${QD_REBINNING_MIN_ARCHIVE_MEMBERS}"
+  fi
+  if [[ -z "${resolved_rebinning_cooldown_generations}" ]]; then
+    resolved_rebinning_cooldown_generations="${QD_REBINNING_COOLDOWN_GENERATIONS}"
+  fi
+  if [[ -z "${resolved_rebinning_base_p_threshold}" ]]; then
+    resolved_rebinning_base_p_threshold="${QD_REBINNING_BASE_P_THRESHOLD}"
+  fi
   if [[ -z "${resolved_prompt_profile}" ]]; then
     resolved_prompt_profile="${PROMPT_PROFILE}"
   fi
@@ -649,6 +728,11 @@ for mode_name in "${MODES[@]}"; do
     echo "mode.${mode_name}.qd_operator_one_parent_fraction=${resolved_operator_one_parent_fraction}"
     echo "mode.${mode_name}.qd_operator_archive_context_size=${resolved_operator_archive_context_size}"
     echo "mode.${mode_name}.qd_operator_two_parent_allow_intra_bin=${resolved_operator_two_parent_allow_intra_bin}"
+    echo "mode.${mode_name}.qd_rebinning_kind=${resolved_rebinning_kind}"
+    echo "mode.${mode_name}.qd_rebinning_recent_generations=${resolved_rebinning_recent_generations}"
+    echo "mode.${mode_name}.qd_rebinning_min_archive_members=${resolved_rebinning_min_archive_members}"
+    echo "mode.${mode_name}.qd_rebinning_cooldown_generations=${resolved_rebinning_cooldown_generations}"
+    echo "mode.${mode_name}.qd_rebinning_base_p_threshold=${resolved_rebinning_base_p_threshold}"
     echo "mode.${mode_name}.prompt_profile=${resolved_prompt_profile}"
     echo "mode.${mode_name}.representation.kind=${resolved_representation_kind}"
     echo "mode.${mode_name}.representation.code_samples_per_thought=${resolved_code_samples_per_thought}"
@@ -702,6 +786,11 @@ for mode_name in "${MODES[@]}"; do
     CMD+=("--qd_operator_kind" "${resolved_operator_kind}")
     CMD+=("--qd_operator_one_parent_fraction" "${resolved_operator_one_parent_fraction}")
     CMD+=("--qd_operator_archive_context_size" "${resolved_operator_archive_context_size}")
+    CMD+=("--qd_rebinning_kind" "${resolved_rebinning_kind}")
+    CMD+=("--qd_rebinning_recent_generations" "${resolved_rebinning_recent_generations}")
+    CMD+=("--qd_rebinning_min_archive_members" "${resolved_rebinning_min_archive_members}")
+    CMD+=("--qd_rebinning_cooldown_generations" "${resolved_rebinning_cooldown_generations}")
+    CMD+=("--qd_rebinning_base_p_threshold" "${resolved_rebinning_base_p_threshold}")
     if [[ "${resolved_operator_two_parent_allow_intra_bin,,}" == "true" ]]; then
       CMD+=("--qd_operator_two_parent_allow_intra_bin")
     else

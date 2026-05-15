@@ -169,6 +169,8 @@ def export_qd_ppa_visualization(
                 "final_archive_members",
                 "viewer_pooled_pareto_members",
             ],
+            "archive_geometry_perspective": "native_timeline",
+            "archive_geometry_perspectives": ["native_timeline", "final_fixed"],
         },
         "source_artifacts": {
             "ppa_candidates.csv": _file_digest(ppa_path),
@@ -277,6 +279,7 @@ def _build_problem_dataset(
     objective_keys = active_objective_keys(circuit_type)
     raw_metrics = active_raw_metrics(circuit_type)
     axis_names = _archive_axis_names(archive_context["space"])
+    geometry_timeline = _archive_geometry_timeline(archive_context)
     classic_dir_matches = _classic_dir_matches(
         backend_paths=backend_paths,
         rows=rows,
@@ -302,6 +305,7 @@ def _build_problem_dataset(
             objective_keys=objective_keys,
             raw_metrics=raw_metrics,
             archive_context=archive_context,
+            geometry_timeline=geometry_timeline,
             backend_context=backend_contexts[row["backend"]],
             design_index=design_index,
             axis_names=axis_names,
@@ -317,6 +321,13 @@ def _build_problem_dataset(
     step_names = [str(step) for step in steps] + ["final"]
     _compute_rank_payloads(samples, step_names, objective_keys)
     cell_summaries = _cell_summaries_by_step(samples, step_names)
+    native_cell_summaries = _cell_summaries_by_step(
+        samples,
+        step_names,
+        cell_id_key="native_archive_cell_id",
+        status_key="native_archive_projection_status",
+        projection_type_key="native_projection_type",
+    )
     technique_stats = _technique_stats_by_step(samples, step_names, objective_keys)
     techniques = sorted({sample["technique"] for sample in samples})
     source_paths = _problem_source_paths(
@@ -349,10 +360,16 @@ def _build_problem_dataset(
                 "final_archive_members",
                 "viewer_pooled_pareto_members",
             ],
+            "archive_geometry_perspective": "native_timeline",
+            "archive_geometry_perspectives": ["native_timeline", "final_fixed"],
         },
         "techniques": {technique: {"label": technique} for technique in techniques},
         "samples": samples,
+        "archive_geometry_perspectives": ["native_timeline", "final_fixed"],
+        "archive_geometry_snapshots": geometry_timeline["snapshots"],
+        "rebin_timeline_markers": geometry_timeline["markers"],
         "cell_summaries_by_step": cell_summaries,
+        "cell_summaries_by_step_native_timeline": native_cell_summaries,
         "technique_stats_by_step": technique_stats,
         "source_artifacts": {
             path.name: _file_digest(path)
@@ -372,6 +389,7 @@ def _sample_from_row(
     objective_keys: tuple[str, ...],
     raw_metrics: tuple[str, ...],
     archive_context: dict[str, Any],
+    geometry_timeline: dict[str, Any],
     backend_context: dict[str, Any],
     design_index: dict[tuple[str, str, str, str], dict[str, str]],
     axis_names: tuple[str, ...],
@@ -425,6 +443,20 @@ def _sample_from_row(
         descriptors=descriptors,
         technique=backend,
     )
+    native_cell_id = _first_text(qd_event.get("cell_id"), archive_row.get("cell_id"))
+    native_geometry_id = _geometry_id_for_generation(
+        geometry_timeline,
+        int(finite_float(row["generation"]) or 0),
+    )
+    native_status = "missing_descriptors"
+    native_indices = None
+    if native_cell_id and not native_cell_id.startswith("warmup:"):
+        native_status = "native"
+        native_indices = [int(part) for part in native_cell_id.split(",")]
+    elif projection["archive_projection_status"] != "missing_descriptors":
+        native_cell_id = projection["archive_cell_id"]
+        native_indices = projection["archive_indices"]
+        native_status = "projected"
     mode_global = candidate_id in backend_context["global_pareto_ids"]
     local_archive_member = bool(archive_row)
     quality_score = _first_float(
@@ -468,6 +500,15 @@ def _sample_from_row(
         "archive_indices": projection["archive_indices"],
         "archive_projection_status": projection["archive_projection_status"],
         "projection_type": projection["projection_type"],
+        "native_archive_cell_id": native_cell_id or None,
+        "native_archive_indices": native_indices,
+        "native_archive_geometry_id": native_geometry_id,
+        "native_archive_projection_status": native_status,
+        "native_projection_type": "native" if native_status == "native" else projection["projection_type"],
+        "final_fixed_archive_cell_id": projection["archive_cell_id"],
+        "final_fixed_archive_indices": projection["archive_indices"],
+        "final_fixed_archive_geometry_id": geometry_timeline["final_geometry_id"],
+        "final_fixed_projection_status": projection["archive_projection_status"],
         "pareto_rank_by_step": {"per_technique": {}, "pooled_visible": {}},
         "pareto_rank_final": None,
         "local_archive_member": local_archive_member,
@@ -719,15 +760,22 @@ def _visible_samples(samples: list[dict[str, Any]], step_name: str) -> list[dict
     return [sample for sample in samples if int(sample["generation"]) <= step]
 
 
-def _cell_summaries_by_step(samples: list[dict[str, Any]], step_names: list[str]) -> dict[str, Any]:
+def _cell_summaries_by_step(
+    samples: list[dict[str, Any]],
+    step_names: list[str],
+    *,
+    cell_id_key: str = "archive_cell_id",
+    status_key: str = "archive_projection_status",
+    projection_type_key: str = "projection_type",
+) -> dict[str, Any]:
     summaries: dict[str, Any] = {}
     for step_name in step_names:
         step_summary: dict[str, dict[str, Any]] = {}
         for sample in _visible_samples(samples, step_name):
-            if sample["archive_cell_id"] is None:
+            if sample[status_key] == "missing_descriptors" or sample[cell_id_key] is None:
                 continue
             technique = sample["technique"]
-            cell_id = sample["archive_cell_id"]
+            cell_id = sample[cell_id_key]
             assert cell_id is not None
             cells = step_summary.setdefault(technique, {})
             cell = cells.setdefault(
@@ -739,7 +787,7 @@ def _cell_summaries_by_step(samples: list[dict[str, Any]], step_names: list[str]
                     "rank1_count": 0,
                     "best_quality_score": None,
                     "best_mean_improvement": None,
-                    "projection_type": sample["projection_type"],
+                    "projection_type": sample[projection_type_key],
                 },
             )
             cell["sample_ids"].append(sample["sample_id"])
@@ -895,7 +943,106 @@ def _load_archive_context(problem_dir: Path | None, *, strict: bool) -> dict[str
         "space": space,
         "space_path": space_path,
         "archive_cells_path": problem_dir / "archive_cells.csv",
+        "archive_history_path": problem_dir / "archive_history.jsonl",
     }
+
+
+def _geometry_id(geometry: dict[str, Any]) -> str:
+    encoded = json.dumps(geometry, sort_keys=True, separators=(",", ":")).encode(
+        "utf-8"
+    )
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _archive_geometry_timeline(archive_context: dict[str, Any]) -> dict[str, Any]:
+    final_geometry = archive_context["space"]
+    final_id = _geometry_id(final_geometry)
+    snapshots_by_id: dict[str, dict[str, Any]] = {}
+    markers: list[dict[str, Any]] = []
+    history_path = archive_context["archive_history_path"]
+    history = _load_jsonl(history_path) if history_path.is_file() else []
+    for event in history:
+        kind = str(event.get("event_kind", event.get("event_type", "")))
+        if kind != "rebin":
+            continue
+        old_geometry = event["old_geometry"]
+        new_geometry = event["new_geometry"]
+        assert isinstance(old_geometry, dict)
+        assert isinstance(new_geometry, dict)
+        old_id = str(event.get("old_geometry_id") or _geometry_id(old_geometry))
+        new_id = str(event.get("new_geometry_id") or _geometry_id(new_geometry))
+        generation = int(event["generation"])
+        snapshots_by_id.setdefault(
+            old_id,
+            {
+                "geometry_id": old_id,
+                "generation": generation,
+                "rebin_count": int(event.get("total_rebin_count", 1)) - 1,
+                "source": "rebin_old_geometry",
+                "geometry": old_geometry,
+            },
+        )
+        snapshots_by_id[new_id] = {
+            "geometry_id": new_id,
+            "generation": generation,
+            "rebin_count": int(event.get("total_rebin_count", 1)),
+            "source": "rebin_new_geometry",
+            "geometry": new_geometry,
+        }
+        axis_results = [
+            {
+                "axis": result.get("axis"),
+                "ks_p_value": result.get("ks_p_value"),
+                "ks_statistic": result.get("ks_statistic"),
+            }
+            for result in event.get("axis_results", [])
+            if isinstance(result, dict)
+        ]
+        markers.append(
+            {
+                "generation": generation,
+                "trigger_axes": list(event.get("trigger_axes", [])),
+                "corrected_p_threshold": event.get("corrected_p_threshold"),
+                "axis_results": axis_results,
+                "old_geometry_id": old_id,
+                "new_geometry_id": new_id,
+            }
+        )
+    snapshots_by_id[final_id] = {
+        "geometry_id": final_id,
+        "generation": "final",
+        "rebin_count": int(final_geometry.get("total_rebin_count", len(markers)) or 0),
+        "source": "final_archive_space",
+        "geometry": final_geometry,
+    }
+    ordered = sorted(
+        snapshots_by_id.values(),
+        key=lambda item: (
+            10**9 if item["generation"] == "final" else int(item["generation"]),
+            int(item["rebin_count"]),
+            str(item["source"]),
+        ),
+    )
+    return {
+        "snapshots": ordered,
+        "markers": sorted(markers, key=lambda item: int(item["generation"])),
+        "final_geometry_id": final_id,
+    }
+
+
+def _geometry_id_for_generation(
+    geometry_timeline: dict[str, Any],
+    generation: int,
+) -> str:
+    markers = geometry_timeline["markers"]
+    if not markers:
+        return str(geometry_timeline["final_geometry_id"])
+    active = str(markers[0]["old_geometry_id"])
+    for marker in markers:
+        if generation < int(marker["generation"]):
+            return active
+        active = str(marker["new_geometry_id"])
+    return active
 
 
 def _load_archive_cells(path: Path) -> dict[str, dict[str, str]]:
@@ -1078,6 +1225,17 @@ def _load_json_dict(path: Path) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert isinstance(payload, dict)
     return payload
+
+
+def _load_jsonl(path: Path) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        payload = json.loads(line)
+        assert isinstance(payload, dict)
+        rows.append(payload)
+    return rows
 
 
 def _file_digest(path: Path) -> dict[str, Any]:

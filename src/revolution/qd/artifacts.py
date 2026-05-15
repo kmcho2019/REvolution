@@ -314,6 +314,18 @@ def write_qd_summary_files(
         "qd_score": latest["qd_score"],
         "best_quality": latest["best_quality"],
         "mean_quality": latest["mean_quality"],
+        "qd_rebinning_kind": latest.get("qd_rebinning_kind", "disabled"),
+        "qd_rebinning_recent_generations": latest.get("qd_rebinning_recent_generations"),
+        "qd_rebinning_min_archive_members": latest.get("qd_rebinning_min_archive_members"),
+        "qd_rebinning_cooldown_generations": latest.get("qd_rebinning_cooldown_generations"),
+        "qd_rebinning_base_p_threshold": latest.get("qd_rebinning_base_p_threshold"),
+        "total_rebin_count": latest.get("total_rebin_count", 0),
+        "last_rebin_generation": latest.get("last_rebin_generation"),
+        "last_corrected_p_threshold": latest.get("last_corrected_p_threshold"),
+        "rebin_cooldown_remaining": latest.get("rebin_cooldown_remaining", 0),
+        "last_rebin_axes": latest.get("last_rebin_axes", []),
+        "rebin_recent_sample_count": latest.get("rebin_recent_sample_count", 0),
+        "rebin_replay_member_count": latest.get("rebin_replay_member_count", 0),
         "descriptor_profile": descriptor_profile,
         "descriptor_axes": list(descriptor_axes),
         "descriptor_health_files": (
@@ -368,6 +380,18 @@ def write_qd_summary_files(
         "qd_score": latest["qd_score"],
         "best_quality": latest["best_quality"],
         "mean_quality": latest["mean_quality"],
+        "qd_rebinning_kind": latest.get("qd_rebinning_kind", "disabled"),
+        "qd_rebinning_recent_generations": latest.get("qd_rebinning_recent_generations"),
+        "qd_rebinning_min_archive_members": latest.get("qd_rebinning_min_archive_members"),
+        "qd_rebinning_cooldown_generations": latest.get("qd_rebinning_cooldown_generations"),
+        "qd_rebinning_base_p_threshold": latest.get("qd_rebinning_base_p_threshold"),
+        "total_rebin_count": latest.get("total_rebin_count", 0),
+        "last_rebin_generation": latest.get("last_rebin_generation"),
+        "last_corrected_p_threshold": latest.get("last_corrected_p_threshold"),
+        "rebin_cooldown_remaining": latest.get("rebin_cooldown_remaining", 0),
+        "last_rebin_axes": latest.get("last_rebin_axes", []),
+        "rebin_recent_sample_count": latest.get("rebin_recent_sample_count", 0),
+        "rebin_replay_member_count": latest.get("rebin_replay_member_count", 0),
         "descriptor_profile": descriptor_profile,
         "descriptor_axes": list(descriptor_axes),
         "descriptor_health_files": (
@@ -412,6 +436,7 @@ def write_archive_space_files(
     descriptor_profile: str | None,
     descriptor_axes: tuple[str, ...],
     occupied_cells: int,
+    rebinning: dict[str, Any],
     visualization_files: tuple[str, ...] = (),
 ) -> None:
     """Write machine-readable and human-readable archive-space descriptions."""
@@ -420,6 +445,7 @@ def write_archive_space_files(
     payload["descriptor_axes"] = list(descriptor_axes)
     payload["artifact_dir"] = str(Path(json_path).parent)
     payload["occupied_cells"] = occupied_cells
+    payload.update(rebinning)
     payload["visualization_files"] = list(visualization_files)
     Path(json_path).write_text(json.dumps(payload, indent=2), encoding="utf-8")
     Path(report_path).write_text(_format_archive_space_report(payload), encoding="utf-8")
@@ -433,6 +459,7 @@ def write_descriptor_health_files(
     descriptor_axes: tuple[str, ...],
     descriptor_profile: str | None,
     observations: list[dict[str, Any]],
+    recent_samples: list[ArchiveMember],
 ) -> dict[str, Any]:
     """Write per-problem descriptor health diagnostics for the current run."""
     payload = _build_descriptor_health_payload(
@@ -440,6 +467,7 @@ def write_descriptor_health_files(
         descriptor_axes=descriptor_axes,
         descriptor_profile=descriptor_profile,
         observations=observations,
+        recent_samples=recent_samples,
     )
     Path(json_path).write_text(json.dumps(payload, indent=2), encoding="utf-8")
     Path(report_path).write_text(_format_descriptor_health_report(payload), encoding="utf-8")
@@ -727,6 +755,7 @@ def _build_descriptor_health_payload(
     descriptor_axes: tuple[str, ...],
     descriptor_profile: str | None,
     observations: list[dict[str, Any]],
+    recent_samples: list[ArchiveMember],
 ) -> dict[str, Any]:
     members = archive.members()
     archive_values_by_axis = {axis: [] for axis in descriptor_axes}
@@ -747,6 +776,11 @@ def _build_descriptor_health_payload(
                 continue
             observation_values_by_axis[axis].append(float(values[axis]))
 
+    recent_values_by_axis = {axis: [] for axis in descriptor_axes}
+    for member in recent_samples:
+        for axis, value in zip(descriptor_axes, member.descriptors):
+            recent_values_by_axis[axis].append(float(value))
+
     axis_health: list[dict[str, Any]] = []
     collapsed_axes: list[str] = []
     for axis in descriptor_axes:
@@ -762,6 +796,9 @@ def _build_descriptor_health_payload(
                 "axis": axis,
                 "observation_stats": observation_stats,
                 "archive_stats": archive_stats,
+                "recent_window_stats": _value_stats(
+                    recent_values_by_axis.get(axis, [])
+                ),
                 "collapsed_in_archive": collapsed,
             }
         )
@@ -772,6 +809,7 @@ def _build_descriptor_health_payload(
         "descriptor_profile": descriptor_profile,
         "descriptor_axes": list(descriptor_axes),
         "observation_count": len(observations),
+        "recent_window_sample_count": len(recent_samples),
         "archive_entry_count": len(members),
         "occupied_cells": archive.occupied_count(),
         "total_archive_members": len(members),

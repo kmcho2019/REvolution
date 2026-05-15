@@ -7,6 +7,7 @@ QDSearchMode = Literal["revolution", "revolution_qd"]
 QDArchiveType = Literal["grid", "cvt", "grid_quantile"]
 QDCellMode = Literal["scalar_elite", "pareto_front"]
 QDObjectiveMode = Literal["ppa"]
+QDRebinningKind = Literal["disabled", "ks_triggered"]
 QDPhaseName = Literal["fail", "seed", "backfill", "refine", "crossover"]
 QDGenerationMode = Literal["auto", "whole", "diff"]
 QDArchiveDecision = Literal[
@@ -95,6 +96,13 @@ class QDArchive(Protocol):
     def cell_id_for(self, descriptors: tuple[float, ...]) -> str: ...
 
     def insert(self, member: ArchiveMember) -> QDArchiveInsertResult: ...
+
+    def rebuild_from_records(
+        self,
+        records: list[ArchiveMember],
+        *,
+        initialization_mode: str,
+    ) -> dict[str, QDArchiveInsertResult]: ...
 
     def describe_space(self) -> dict[str, Any]: ...
 

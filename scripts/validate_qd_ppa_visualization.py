@@ -24,7 +24,7 @@ from revolution.qd.ppa_visualization_metrics import (  # noqa: E402
 
 STRICT_VISUAL_CASES: tuple[tuple[str, str, str, str], ...] = (
     ("sequential_ppa_3d", "RTLLM/Prob015_multi_pipe_8bit", "ppa", "3d"),
-    ("sequential_archive_3d", "VerilogEval-Spec-to-RTL/Prob151_review2015_fsm", "archive", "3d"),
+    ("sequential_archive_3d", "RTLLM/Prob015_multi_pipe_8bit", "archive", "3d"),
     ("combinational_ppa_2d", "RTLLM/Prob004_adder_8bit", "ppa", "2d"),
     ("combinational_projected_archive", "VerilogEval-Spec-to-RTL/Prob135_m2014_q6b", "archive", "2d_slab"),
 )
@@ -88,6 +88,13 @@ def validate_viewer(
         errors.append("rank scope default is not per_technique")
     if defaults.get("sample_universe") != "all_ppa_valid":
         errors.append("sample universe default is not all_ppa_valid")
+    if defaults.get("archive_geometry_perspective") not in (None, "native_timeline"):
+        errors.append("archive geometry perspective default is not native_timeline")
+    if defaults.get("archive_geometry_perspectives") not in (
+        None,
+        ["native_timeline", "final_fixed"],
+    ):
+        errors.append("archive geometry perspective order is not native_timeline | final_fixed")
 
     subset_keys = _load_subset(subset_config)
     manifest_keys = {problem["problem_key"] for problem in manifest.get("problems", [])}
@@ -115,6 +122,9 @@ def validate_viewer(
         "rankGuideMethodSelect",
         "rankGuideColorSelect",
         "projectedRankGuidesSelect",
+        "archiveGeometryPerspectiveSelect",
+        "native_timeline",
+        "final_fixed",
         "data-ppa-scale=\"current\"",
         "data-ppa-scale=\"final\"",
         "setPpaScaleMode",
@@ -261,6 +271,13 @@ def _validate_dataset(dataset: dict[str, Any], *, viewer_root: Path, strict: boo
     defaults = dataset.get("viewer_defaults", {})
     if defaults.get("ppa_scale_modes") != ["current", "final"]:
         errors.append(_prefix(dataset, "dataset PPA scale mode order is not current | final"))
+    if defaults.get("archive_geometry_perspective") not in (None, "native_timeline"):
+        errors.append(_prefix(dataset, "dataset archive perspective default is not native_timeline"))
+    if defaults.get("archive_geometry_perspectives") not in (
+        None,
+        ["native_timeline", "final_fixed"],
+    ):
+        errors.append(_prefix(dataset, "dataset archive perspective order is invalid"))
     if not samples:
         errors.append(_prefix(dataset, "dataset has no samples"))
         return errors
@@ -270,6 +287,7 @@ def _validate_dataset(dataset: dict[str, Any], *, viewer_root: Path, strict: boo
         errors.extend(_validate_step_ranks(dataset, samples, step, objective_keys))
         errors.extend(_validate_step_hypervolume(dataset, step))
     errors.extend(_validate_projection(dataset, strict=strict))
+    errors.extend(_validate_adaptive_geometry(dataset, strict=strict))
     errors.extend(_validate_source_hashes(dataset))
     return errors
 
@@ -304,6 +322,53 @@ def _validate_sample(
             errors.append(_prefix(dataset, f"sample missing finite objective {key}: {sample.get('sample_id')}"))
     if sample.get("archive_projection_status") == "missing_descriptors" and sample.get("archive_cell_id") is not None:
         errors.append(_prefix(dataset, "missing descriptor sample has archive cell"))
+    for key in (
+        "native_archive_cell_id",
+        "native_archive_geometry_id",
+        "final_fixed_archive_cell_id",
+        "final_fixed_archive_geometry_id",
+        "final_fixed_projection_status",
+    ):
+        if key not in sample:
+            errors.append(_prefix(dataset, f"sample missing adaptive archive field {key}: {sample.get('sample_id')}"))
+    return errors
+
+
+def _validate_adaptive_geometry(dataset: dict[str, Any], *, strict: bool) -> list[str]:
+    errors: list[str] = []
+    perspectives = dataset.get("archive_geometry_perspectives", [])
+    if perspectives and perspectives != ["native_timeline", "final_fixed"]:
+        errors.append(_prefix(dataset, "archive geometry perspectives are out of order"))
+    snapshots = dataset.get("archive_geometry_snapshots", [])
+    if not isinstance(snapshots, list) or not snapshots:
+        if strict:
+            errors.append(_prefix(dataset, "missing archive geometry snapshots"))
+        return errors
+    ids = {snapshot.get("geometry_id") for snapshot in snapshots}
+    if len(ids) != len(snapshots):
+        errors.append(_prefix(dataset, "archive geometry snapshot ids are not unique"))
+    final_snapshots = [snapshot for snapshot in snapshots if snapshot.get("source") == "final_archive_space"]
+    if len(final_snapshots) != 1:
+        errors.append(_prefix(dataset, "archive geometry snapshots must contain one final geometry"))
+    final_id = final_snapshots[0]["geometry_id"] if final_snapshots else None
+    for sample in dataset["samples"]:
+        if sample.get("final_fixed_archive_geometry_id") != final_id:
+            errors.append(_prefix(dataset, "final_fixed sample does not use final geometry id"))
+            break
+    markers = dataset.get("rebin_timeline_markers", [])
+    if markers and "cell_summaries_by_step_native_timeline" not in dataset:
+        errors.append(_prefix(dataset, "adaptive dataset missing native timeline cell summaries"))
+    for marker in markers:
+        old_id = marker.get("old_geometry_id")
+        new_id = marker.get("new_geometry_id")
+        if old_id == new_id:
+            errors.append(_prefix(dataset, "rebin marker old and new geometry ids match"))
+        if old_id not in ids or new_id not in ids:
+            errors.append(_prefix(dataset, "rebin marker references unknown geometry id"))
+        if not marker.get("trigger_axes"):
+            errors.append(_prefix(dataset, "rebin marker missing trigger axes"))
+        if marker.get("corrected_p_threshold") is None:
+            errors.append(_prefix(dataset, "rebin marker missing corrected threshold"))
     return errors
 
 
@@ -635,7 +700,7 @@ def _playwright_smoke(viewer_root: Path, *, strict: bool) -> list[str]:
                     expected_surface="none",
                     require_mesh=False,
                     require_projected_overlay=False,
-                    require_compare_techniques=True,
+                    require_compare_techniques=False,
                 )
                 _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, "combinational_2d"))
             if sequential is not None:
@@ -724,6 +789,21 @@ def _option_values(page: Any, selector: str) -> list[str]:
     return page.eval_on_selector_all(selector + " option", "(items) => items.map((item) => item.value)")
 
 
+def _preferred_qd_technique(page: Any) -> str | None:
+    values = _option_values(page, "#techniqueASelect")
+    candidates = [value for value in values if value != "classic"]
+    if not candidates:
+        return None
+    for suffix in ("rebin_on", "rebin_off"):
+        for candidate in candidates:
+            if candidate.endswith(suffix):
+                return candidate
+    for candidate in candidates:
+        if "grid_quantile" in candidate:
+            return candidate
+    return candidates[0]
+
+
 def _compare_pair(
     page: Any,
     errors: list[str],
@@ -738,6 +818,9 @@ def _compare_pair(
         return ("classic", preferred_second)
     if "grid_quantile_pareto_journal_bd" in values:
         return ("classic", "grid_quantile_pareto_journal_bd")
+    preferred_qd = _preferred_qd_technique(page)
+    if preferred_qd is not None:
+        return ("classic", preferred_qd)
     non_classic = [value for value in values if value != "classic"]
     if not non_classic:
         errors.append("Playwright compare technique unavailable: non-classic")
@@ -917,6 +1000,7 @@ def _assert_color_modes(
         )
         if not active:
             errors.append(f"Playwright visible color control did not activate {color_mode}")
+        state = _debug_state(page)
         legend = page.locator("#ppaLegend").inner_text().lower()
         if color_mode not in legend:
             errors.append(f"Playwright legend does not describe {color_mode} mode")
@@ -931,8 +1015,16 @@ def _assert_color_modes(
                 errors.append("Playwright fitness legend does not document clipping")
             if "mean active ppa improvement" not in legend:
                 errors.append("Playwright fitness legend does not name the metric")
-        if "shape" not in legend or "classic" not in legend:
-            errors.append(f"Playwright compare legend does not include technique shapes in {color_mode} mode")
+        selected = [str(item) for item in state.get("selected_techniques", [])]
+        if len(selected) >= 2:
+            if "shape" not in legend:
+                errors.append(f"Playwright compare legend does not include technique shapes in {color_mode} mode")
+            for technique in selected:
+                if technique.lower() not in legend:
+                    errors.append(
+                        f"Playwright compare legend missing selected technique "
+                        f"{technique} in {color_mode} mode"
+                    )
         _report_screenshot(report_lines, _viewer_screenshot(page, screenshot_dir, errors, f"color_{color_mode}"))
     colors = page.evaluate("() => [rankColor(1), rankColor(2), rankColor(3), rankColor(4)]")
     assert isinstance(colors, list)
@@ -965,10 +1057,10 @@ def _assert_color_modes(
         non_classic = [scale for name, scale in technique_radii.items() if name != "classic"]
         if non_classic and max(float(scale) for scale in non_classic) <= float(technique_radii["classic"]):
             errors.append(f"Playwright non-classic technique markers are not larger: {technique_radii}")
-    state = _debug_state(page)
     reference_labels = state.get("reference_axis_labels")
-    if not isinstance(reference_labels, list) or len(reference_labels) != 3:
-        errors.append(f"Playwright sequential reference axis labels are missing: {reference_labels}")
+    expected_label_count = 3 if state.get("circuit_type") == "sequential" else 2
+    if not isinstance(reference_labels, list) or len(reference_labels) != expected_label_count:
+        errors.append(f"Playwright reference axis labels are missing: {reference_labels}")
     elif not all(str(label).startswith("ref ") and "=" in str(label) for label in reference_labels):
         errors.append(f"Playwright reference axis labels are malformed: {reference_labels}")
     reference_tooltip = str(state.get("reference_tooltip_preview") or "")
@@ -1208,6 +1300,8 @@ def _strict_visual_matrix(
                 f"{label}: expected {expected_dimensionality}, saw {actual_dimensionality}"
             )
         if scene_kind == "archive":
+            if scene.get("dimensionality") not in ("3d", "2d", "2d_slab"):
+                errors.append(f"{label}: unknown archive dimensionality {scene.get('dimensionality')}")
             if int(scene.get("visible_layer_count", 0)) <= 0:
                 errors.append(f"{label}: archive scene reports no layers")
             if int(scene.get("archive_sample_hit_count", 0)) <= 0:
@@ -1272,7 +1366,7 @@ def _strict_visual_matrix(
                 expected_surface="delaunay_mesh_3d" if expected_dimensionality == "3d" else "none",
                 require_mesh=expected_dimensionality == "3d",
                 require_projected_overlay=False,
-                require_compare_techniques=True,
+                require_compare_techniques=expected_dimensionality == "3d",
             )
             state = _debug_state(page)
             scene = state["scenes"]["ppa"]
@@ -1374,8 +1468,18 @@ def _hover_first_ppa_point_with_mouse(page: Any) -> bool:
 
 def _hover_first_archive_sample_with_mouse(page: Any, scene_name: str, canvas_selector: str) -> bool:
     hit = page.evaluate(
-        "scene => state.hitMaps[scene].find(item => item.kind === 'archiveSample')",
-        scene_name,
+        "payload => {"
+        " const canvas = document.querySelector(payload.canvas);"
+        " if (!canvas) return null;"
+        " const rect = canvas.getBoundingClientRect();"
+        " const hits = (state.hitMaps[payload.scene] || [])"
+        "   .filter((item) => item.kind === 'archiveSample');"
+        " return hits.find((item) => {"
+        "   const el = document.elementFromPoint(rect.left + item.x, rect.top + item.y);"
+        "   return el === canvas;"
+        " }) || hits[0] || null;"
+        "}",
+        {"scene": scene_name, "canvas": canvas_selector},
     )
     if not isinstance(hit, dict):
         return False

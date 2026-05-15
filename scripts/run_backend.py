@@ -432,6 +432,11 @@ def _build_backend(
             qd_operator_one_parent_fraction=args.qd_operator_one_parent_fraction,
             qd_operator_archive_context_size=args.qd_operator_archive_context_size,
             qd_operator_two_parent_allow_intra_bin=args.qd_operator_two_parent_allow_intra_bin,
+            qd_rebinning_kind=args.qd_rebinning_kind,
+            qd_rebinning_recent_generations=args.qd_rebinning_recent_generations,
+            qd_rebinning_min_archive_members=args.qd_rebinning_min_archive_members,
+            qd_rebinning_cooldown_generations=args.qd_rebinning_cooldown_generations,
+            qd_rebinning_base_p_threshold=args.qd_rebinning_base_p_threshold,
             representation_kind=args.representation_kind,
             code_samples_per_thought=args.code_samples_per_thought,
             representative_sample=args.representative_sample,
@@ -972,6 +977,16 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         action=argparse.BooleanOptionalAction,
         default=True,
     )
+    parser.add_argument(
+        "--qd_rebinning_kind",
+        type=str,
+        default="disabled",
+        choices=["disabled", "ks_triggered"],
+    )
+    parser.add_argument("--qd_rebinning_recent_generations", type=int, default=3)
+    parser.add_argument("--qd_rebinning_min_archive_members", type=int, default=20)
+    parser.add_argument("--qd_rebinning_cooldown_generations", type=int, default=3)
+    parser.add_argument("--qd_rebinning_base_p_threshold", type=float, default=0.05)
     parser.add_argument(
         "--representation_kind",
         type=str,

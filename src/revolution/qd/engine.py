@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import asyncio
 import datetime
+import hashlib
 import json
+import math
 import os
 import random
 import re
@@ -70,10 +72,12 @@ from revolution.qd.types import (
     QDArchiveInsertResult,
     QDCellMode,
     QDObjectiveMode,
+    QDRebinningKind,
     RankedArchiveMember,
 )
 from revolution.runtime.problem_spec import CircuitType
 from revolution.qd.visualization import write_grid_quantile_visualizations_from_artifacts
+from scipy.stats import ks_2samp
 
 
 _ARCHIVE_ONLY_DESCRIPTOR_PROFILES = {"journal_logic_ff_width_3d"}
@@ -113,6 +117,11 @@ class QDEngine(EoHEngine):
         qd_operator_one_parent_fraction: float = 0.5,
         qd_operator_archive_context_size: int = 4,
         qd_operator_two_parent_allow_intra_bin: bool = True,
+        qd_rebinning_kind: str = "disabled",
+        qd_rebinning_recent_generations: int = 3,
+        qd_rebinning_min_archive_members: int = 20,
+        qd_rebinning_cooldown_generations: int = 3,
+        qd_rebinning_base_p_threshold: float = 0.05,
         representation_kind: str = "code_individual",
         code_samples_per_thought: int = 4,
         representative_sample: str = "best_successful_quality",
@@ -141,6 +150,17 @@ class QDEngine(EoHEngine):
             raise ValueError("qd_operator_one_parent_fraction must be between 0 and 1.")
         if qd_operator_archive_context_size < 0:
             raise ValueError("qd_operator_archive_context_size must be >= 0.")
+        if qd_rebinning_kind not in {"disabled", "ks_triggered"}:
+            raise ValueError(f"Unsupported qd_rebinning_kind '{qd_rebinning_kind}'.")
+        if qd_rebinning_kind == "ks_triggered":
+            if qd_rebinning_recent_generations <= 0:
+                raise ValueError("qd_rebinning_recent_generations must be > 0.")
+            if qd_rebinning_min_archive_members <= 0:
+                raise ValueError("qd_rebinning_min_archive_members must be > 0.")
+            if qd_rebinning_cooldown_generations <= 0:
+                raise ValueError("qd_rebinning_cooldown_generations must be > 0.")
+            if not 0.0 < float(qd_rebinning_base_p_threshold) < 1.0:
+                raise ValueError("qd_rebinning_base_p_threshold must be between 0 and 1.")
         if representation_kind not in {"code_individual", "thought_only"}:
             raise ValueError(f"Unsupported representation_kind '{representation_kind}'.")
         if code_samples_per_thought <= 0:
@@ -200,6 +220,11 @@ class QDEngine(EoHEngine):
         self.qd_operator_one_parent_fraction = float(qd_operator_one_parent_fraction)
         self.qd_operator_archive_context_size = int(qd_operator_archive_context_size)
         self.qd_operator_two_parent_allow_intra_bin = bool(qd_operator_two_parent_allow_intra_bin)
+        self.qd_rebinning_kind: QDRebinningKind = cast(QDRebinningKind, qd_rebinning_kind)
+        self.qd_rebinning_recent_generations = int(qd_rebinning_recent_generations)
+        self.qd_rebinning_min_archive_members = int(qd_rebinning_min_archive_members)
+        self.qd_rebinning_cooldown_generations = int(qd_rebinning_cooldown_generations)
+        self.qd_rebinning_base_p_threshold = float(qd_rebinning_base_p_threshold)
         self.representation_kind: RepresentationKind = cast(
             RepresentationKind,
             representation_kind,
@@ -231,6 +256,13 @@ class QDEngine(EoHEngine):
         self.qd_two_parent_attempts = 0
         self.qd_two_parent_fallbacks = 0
         self._archive_insertion_index = 0
+        self._qd_rebin_recent_members: list[ArchiveMember] = []
+        self._qd_rebin_replay_pool: dict[str, ArchiveMember] = {}
+        self._qd_rebin_cooldown_remaining = 0
+        self._qd_rebin_count = 0
+        self._qd_last_rebin_axes: tuple[str, ...] = ()
+        self._qd_last_rebin_generation: int | None = None
+        self._qd_last_corrected_threshold: float | None = None
 
     def _uses_descriptor_guided_generation(self) -> bool:
         return self.qd_descriptor_profile not in _ARCHIVE_ONLY_DESCRIPTOR_PROFILES
@@ -429,6 +461,13 @@ class QDEngine(EoHEngine):
         self.success_reservoir = {}
         self.qd_descriptor_observations = []
         self._archive_insertion_index = 0
+        self._qd_rebin_recent_members = []
+        self._qd_rebin_replay_pool = {}
+        self._qd_rebin_cooldown_remaining = 0
+        self._qd_rebin_count = 0
+        self._qd_last_rebin_axes = ()
+        self._qd_last_rebin_generation = None
+        self._qd_last_corrected_threshold = None
         for cand in self.success_pool:
             descriptors = self._descriptor_tuple(cand)
             if descriptors is None:
@@ -439,6 +478,7 @@ class QDEngine(EoHEngine):
             before_qd_score = self._archive_qd_score()
             result = self.success_archive.insert(member)
             global_update = self._insert_global_pareto(member)
+            self._record_rebin_sample(member, result)
             if isinstance(self.success_archive, GridQuantileArchive) and result.decision == "warmup_buffered":
                 self.success_reservoir.setdefault(result.cell_id, deque(maxlen=1)).appendleft(cand)
             self._write_candidate_qd_event(
@@ -468,6 +508,240 @@ class QDEngine(EoHEngine):
 
     def _archive_ranked_members(self) -> list[tuple[str, RankedArchiveMember]]:
         return self.success_archive.ranked_members()
+
+    def _archive_initialized_for_rebinning(self) -> bool:
+        if isinstance(self.success_archive, GridArchive):
+            return True
+        if isinstance(self.success_archive, GridQuantileArchive):
+            return self.success_archive.is_initialized
+        if isinstance(self.success_archive, CVTArchive):
+            return self.success_archive.is_initialized
+        raise ValueError(f"Unsupported qd_archive_type '{self.qd_archive_type}'.")
+
+    def _record_rebin_sample(
+        self,
+        member: ArchiveMember,
+        result: QDArchiveInsertResult,
+    ) -> None:
+        _ = result
+        self._qd_rebin_recent_members.append(member)
+        self._qd_rebin_replay_pool[member.candidate_id] = member
+
+    def _recent_rebin_samples(self) -> list[ArchiveMember]:
+        min_generation = self.current_generation - self.qd_rebinning_recent_generations + 1
+        self._qd_rebin_recent_members = [
+            member
+            for member in self._qd_rebin_recent_members
+            if int(getattr(member.payload, "generation", 0)) >= min_generation
+        ]
+        return list(self._qd_rebin_recent_members)
+
+    def _rebin_replay_members(
+        self,
+        archive_members: list[ArchiveMember],
+    ) -> list[ArchiveMember]:
+        for member in archive_members:
+            self._qd_rebin_replay_pool.setdefault(member.candidate_id, member)
+        return sorted(
+            self._qd_rebin_replay_pool.values(),
+            key=lambda member: (member.insertion_index, member.candidate_id),
+        )
+
+    def _geometry_id(self, geometry: dict[str, Any]) -> str:
+        encoded = json.dumps(geometry, sort_keys=True, separators=(",", ":")).encode(
+            "utf-8"
+        )
+        return hashlib.sha256(encoded).hexdigest()
+
+    def _append_rebin_history_event(self, event: dict[str, Any]) -> None:
+        path = self._archive_history_path()
+        if path is None:
+            return
+        append_archive_history(path=path, snapshot=event)
+
+    def _ks_axis_results(
+        self,
+        archive_members: list[ArchiveMember],
+        recent_samples: list[ArchiveMember],
+    ) -> list[dict[str, Any]]:
+        results: list[dict[str, Any]] = []
+        for index, axis in enumerate(self._archive_axes()):
+            archive_values = [
+                float(member.descriptors[index])
+                for member in archive_members
+                if math.isfinite(float(member.descriptors[index]))
+            ]
+            recent_values = [
+                float(member.descriptors[index])
+                for member in recent_samples
+                if math.isfinite(float(member.descriptors[index]))
+            ]
+            if not archive_values or not recent_values:
+                continue
+            test = ks_2samp(archive_values, recent_values)
+            results.append(
+                {
+                    "axis": axis,
+                    "archive_count": len(archive_values),
+                    "recent_count": len(recent_values),
+                    "ks_statistic": float(test.statistic),
+                    "ks_p_value": float(test.pvalue),
+                }
+            )
+        return results
+
+    def _record_rebin_reservoir(
+        self,
+        member: ArchiveMember,
+        result: QDArchiveInsertResult,
+    ) -> None:
+        if result.replaced:
+            for payload in result.removed_payloads:
+                previous_payload = cast(Heuristic | None, payload)
+                if previous_payload is not None:
+                    self._record_reservoir_candidate(result.cell_id, previous_payload)
+            return
+        if result.inserted:
+            return
+        self._record_reservoir_candidate(result.cell_id, cast(Heuristic, member.payload))
+
+    def _maybe_adaptive_rebin(self) -> None:
+        if self.qd_rebinning_kind == "disabled":
+            return
+        assert self.qd_rebinning_kind == "ks_triggered"
+        if not self._archive_initialized_for_rebinning():
+            return
+        archive_members = [member for _, member in self._archive_members()]
+        check_base = {
+            "event_kind": "rebin_check",
+            "event_type": "rebin_check",
+            "generation": self.current_generation,
+            "archive_type": self.qd_archive_type,
+            "cell_mode": self.qd_cell_mode,
+            "qd_rebinning_kind": self.qd_rebinning_kind,
+            "recent_generations": self.qd_rebinning_recent_generations,
+            "min_archive_members": self.qd_rebinning_min_archive_members,
+            "base_p_threshold": self.qd_rebinning_base_p_threshold,
+            "retained_member_count": len(archive_members),
+            "replay_member_count": len(self._qd_rebin_replay_pool),
+        }
+        if self._qd_rebin_cooldown_remaining > 0:
+            self._append_rebin_history_event(
+                {
+                    **check_base,
+                    "check_status": "skipped_cooldown",
+                    "cooldown_remaining": self._qd_rebin_cooldown_remaining,
+                    "active_axis_count": 0,
+                    "axis_results": [],
+                    "trigger_axes": [],
+                    "drift_detected": False,
+                }
+            )
+            self._qd_rebin_cooldown_remaining -= 1
+            return
+
+        if len(archive_members) < self.qd_rebinning_min_archive_members:
+            self._append_rebin_history_event(
+                {
+                    **check_base,
+                    "check_status": "skipped_min_archive_members",
+                    "active_axis_count": 0,
+                    "axis_results": [],
+                    "trigger_axes": [],
+                    "drift_detected": False,
+                }
+            )
+            return
+        recent_samples = self._recent_rebin_samples()
+        if not recent_samples:
+            self._append_rebin_history_event(
+                {
+                    **check_base,
+                    "check_status": "skipped_no_recent_samples",
+                    "recent_sample_count": 0,
+                    "active_axis_count": 0,
+                    "axis_results": [],
+                    "trigger_axes": [],
+                    "drift_detected": False,
+                }
+            )
+            return
+
+        axis_results = self._ks_axis_results(archive_members, recent_samples)
+        if not axis_results:
+            self._append_rebin_history_event(
+                {
+                    **check_base,
+                    "check_status": "skipped_no_active_axes",
+                    "recent_sample_count": len(recent_samples),
+                    "active_axis_count": 0,
+                    "axis_results": [],
+                    "trigger_axes": [],
+                    "drift_detected": False,
+                }
+            )
+            return
+        corrected_threshold = self.qd_rebinning_base_p_threshold / len(axis_results)
+        self._qd_last_corrected_threshold = corrected_threshold
+        trigger_axes = tuple(
+            str(result["axis"])
+            for result in axis_results
+            if float(result["ks_p_value"]) < corrected_threshold
+        )
+        check_event = {
+            **check_base,
+            "check_status": "tested",
+            "corrected_p_threshold": corrected_threshold,
+            "active_axis_count": len(axis_results),
+            "axis_results": axis_results,
+            "trigger_axes": list(trigger_axes),
+            "drift_detected": bool(trigger_axes),
+            "recent_sample_count": len(recent_samples),
+        }
+        self._append_rebin_history_event(check_event)
+        if not trigger_axes:
+            return
+
+        replay_members = self._rebin_replay_members(archive_members)
+        old_geometry = self.success_archive.describe_space()
+        old_active_ids = {member.candidate_id for member in archive_members}
+        replay_results = self.success_archive.rebuild_from_records(
+            replay_members,
+            initialization_mode="adaptive_rebin",
+        )
+        self.success_reservoir = {}
+        for member in replay_members:
+            result = replay_results[member.candidate_id]
+            self._record_rebin_reservoir(member, result)
+        self._qd_rebin_count += 1
+        self._qd_last_rebin_axes = trigger_axes
+        self._qd_last_rebin_generation = self.current_generation
+        self._qd_rebin_cooldown_remaining = self.qd_rebinning_cooldown_generations
+        self.success_pool = self._success_view()
+
+        new_geometry = self.success_archive.describe_space()
+        new_active_ids = {member.candidate_id for _, member in self._archive_members()}
+        displaced_ids = {member.candidate_id for member in replay_members} - old_active_ids
+        rebin_event = dict(check_event)
+        rebin_event.update(
+            {
+                "event_kind": "rebin",
+                "event_type": "rebin",
+                "old_geometry_id": self._geometry_id(old_geometry),
+                "new_geometry_id": self._geometry_id(new_geometry),
+                "old_geometry": old_geometry,
+                "new_geometry": new_geometry,
+                "replay_member_count": len(replay_members),
+                "replay_attempt_count": len(replay_results),
+                "final_active_member_count": len(new_active_ids),
+                "displaced_replay_member_count": len(displaced_ids),
+                "reactivated_displaced_member_count": len(displaced_ids & new_active_ids),
+                "cooldown_generations": self.qd_rebinning_cooldown_generations,
+                "cooldown_remaining": self._qd_rebin_cooldown_remaining,
+                "total_rebin_count": self._qd_rebin_count,
+            }
+        )
+        self._append_rebin_history_event(rebin_event)
 
     def _insert_global_pareto(
         self,
@@ -767,6 +1041,18 @@ class QDEngine(EoHEngine):
             "new_archive_members": inserted,
             "replaced_cells": replaced,
             "runtime_seconds": runtime_sec,
+            "qd_rebinning_kind": self.qd_rebinning_kind,
+            "qd_rebinning_recent_generations": self.qd_rebinning_recent_generations,
+            "qd_rebinning_min_archive_members": self.qd_rebinning_min_archive_members,
+            "qd_rebinning_cooldown_generations": self.qd_rebinning_cooldown_generations,
+            "qd_rebinning_base_p_threshold": self.qd_rebinning_base_p_threshold,
+            "total_rebin_count": self._qd_rebin_count,
+            "last_rebin_generation": self._qd_last_rebin_generation,
+            "last_corrected_p_threshold": self._qd_last_corrected_threshold,
+            "rebin_cooldown_remaining": self._qd_rebin_cooldown_remaining,
+            "last_rebin_axes": list(self._qd_last_rebin_axes),
+            "rebin_recent_sample_count": len(self._recent_rebin_samples()),
+            "rebin_replay_member_count": len(self._qd_rebin_replay_pool),
             "representation_kind": self.representation_kind,
             "code_samples_per_thought": self.code_samples_per_thought,
             "thought_population_size": self.thought_population_size,
@@ -844,6 +1130,7 @@ class QDEngine(EoHEngine):
                 descriptor_axes=self._archive_axes(),
                 descriptor_profile=self.qd_descriptor_profile,
                 observations=self.qd_descriptor_observations,
+                recent_samples=self._recent_rebin_samples(),
             )
             descriptor_health_files = (
                 os.path.basename(descriptor_health_json_path),
@@ -871,6 +1158,17 @@ class QDEngine(EoHEngine):
                 descriptor_profile=self.qd_descriptor_profile,
                 descriptor_axes=self._archive_axes(),
                 occupied_cells=self.success_archive.occupied_count(),
+                rebinning={
+                    "qd_rebinning_kind": self.qd_rebinning_kind,
+                    "qd_rebinning_recent_generations": self.qd_rebinning_recent_generations,
+                    "qd_rebinning_min_archive_members": self.qd_rebinning_min_archive_members,
+                    "qd_rebinning_cooldown_generations": self.qd_rebinning_cooldown_generations,
+                    "qd_rebinning_base_p_threshold": self.qd_rebinning_base_p_threshold,
+                    "total_rebin_count": self._qd_rebin_count,
+                    "last_rebin_generation": self._qd_last_rebin_generation,
+                    "last_corrected_p_threshold": self._qd_last_corrected_threshold,
+                    "last_rebin_axes": list(self._qd_last_rebin_axes),
+                },
                 visualization_files=visualization_artifacts.generated_files,
             )
             if isinstance(self.success_archive, GridQuantileArchive):
@@ -2516,6 +2814,7 @@ class QDEngine(EoHEngine):
             return "STOP"
 
         inserted, replaced = self._insert_thought_results(representatives, fail_parents)
+        self._maybe_adaptive_rebin()
         gen_runtime = time.time() - self.gen_start_time
         qd_snapshot = self._build_qd_snapshot(
             inserted=inserted,
@@ -2589,6 +2888,7 @@ class QDEngine(EoHEngine):
             before_qd_score = self._archive_qd_score()
             result = self.success_archive.insert(member)
             global_update = self._insert_global_pareto(member)
+            self._record_rebin_sample(member, result)
             if result.inserted:
                 inserted += 1
             if result.replaced:
@@ -2963,6 +3263,7 @@ class QDEngine(EoHEngine):
         self._evaluate_candidates(new_offspring)
         inserted, replaced = self._insert_successes([cand for cand in new_offspring if cand.status == "success"])
         self._update_fail_pool([cand for cand in new_offspring if cand.status != "success"])
+        self._maybe_adaptive_rebin()
 
         for cand in new_offspring:
             if cand.origin_pool == "fail_pool" and cand.status == "success":

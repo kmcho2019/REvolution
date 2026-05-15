@@ -208,6 +208,38 @@ def test_gen0_generates_thought_population_and_k_samples(tmp_path, monkeypatch):
     assert engine.fail_pool == []
 
 
+def test_thought_only_generation_runs_adaptive_rebin_hook(tmp_path, monkeypatch):
+    llm = _ThoughtOnlyLLM(
+        thought_payloads=[
+            _thought_json("initial 0"),
+            _thought_json("initial 1"),
+            _thought_json("next 0"),
+            _thought_json("next 1"),
+        ],
+        code_payloads=[
+            ["module high_success; endmodule", "module low_success; endmodule"],
+            ["module high_success; endmodule", "module low_success; endmodule"],
+            ["module high_success; endmodule", "module low_success; endmodule"],
+            ["module high_success; endmodule", "module low_success; endmodule"],
+        ],
+    )
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        llm,
+        qd_rebinning_kind="ks_triggered",
+        qd_rebinning_min_archive_members=1,
+    )
+    monkeypatch.setattr(engine, "_evaluate_candidates", _evaluate_by_code)
+    engine.initialize_population()
+    calls: list[int] = []
+    monkeypatch.setattr(engine, "_maybe_adaptive_rebin", lambda: calls.append(engine.current_generation))
+
+    engine.evolve_one_generation()
+
+    assert calls == [1]
+
+
 def test_invalid_thought_consumes_slot_without_parent_selection(tmp_path, monkeypatch):
     llm = _ThoughtOnlyLLM(
         thought_payloads=["not json", _thought_json("valid thought")],

@@ -67,6 +67,11 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
                         "qd_operator_one_parent_fraction": 0.5,
                         "qd_operator_archive_context_size": 4,
                         "qd_operator_two_parent_allow_intra_bin": True,
+                        "qd_rebinning_kind": "ks_triggered",
+                        "qd_rebinning_recent_generations": 3,
+                        "qd_rebinning_min_archive_members": 20,
+                        "qd_rebinning_cooldown_generations": 3,
+                        "qd_rebinning_base_p_threshold": 0.05,
                         "prompt_profile": "journal_thought_only",
                         "representation": {
                             "kind": "thought_only",
@@ -163,6 +168,11 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "--qd_operator_one_parent_fraction 0.5" in normalized
     assert "--qd_operator_archive_context_size 4" in normalized
     assert "--qd_operator_two_parent_allow_intra_bin" in normalized
+    assert "--qd_rebinning_kind ks_triggered" in normalized
+    assert "--qd_rebinning_recent_generations 3" in normalized
+    assert "--qd_rebinning_min_archive_members 20" in normalized
+    assert "--qd_rebinning_cooldown_generations 3" in normalized
+    assert "--qd_rebinning_base_p_threshold 0.05" in normalized
     assert "--prompt_profile journal_thought_only" in normalized
     assert "--representation_kind thought_only" in normalized
     assert "--code_samples_per_thought 4" in normalized
@@ -198,6 +208,11 @@ def test_run_hard_iteration_qd_script_dry_run_prints_expected_matrix(tmp_path):
     assert "mode.grid_quantile_journal_bd.qd_operator_one_parent_fraction=0.5" in manifest
     assert "mode.grid_quantile_journal_bd.qd_operator_archive_context_size=4" in manifest
     assert "mode.grid_quantile_journal_bd.qd_operator_two_parent_allow_intra_bin=true" in manifest
+    assert "mode.grid_quantile_journal_bd.qd_rebinning_kind=ks_triggered" in manifest
+    assert "mode.grid_quantile_journal_bd.qd_rebinning_recent_generations=3" in manifest
+    assert "mode.grid_quantile_journal_bd.qd_rebinning_min_archive_members=20" in manifest
+    assert "mode.grid_quantile_journal_bd.qd_rebinning_cooldown_generations=3" in manifest
+    assert "mode.grid_quantile_journal_bd.qd_rebinning_base_p_threshold=0.05" in manifest
     assert "mode.grid_quantile_journal_bd.prompt_profile=journal_thought_only" in manifest
     assert "mode.grid_quantile_journal_bd.representation.kind=thought_only" in manifest
     assert "mode.grid_quantile_journal_bd.representation.code_samples_per_thought=4" in manifest

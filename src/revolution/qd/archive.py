@@ -575,6 +575,37 @@ class GridArchive:
         cell_id = self.cell_id_for(member.descriptors)
         return self._insert_cell_member(cell_id, member)
 
+    def rebuild_from_records(
+        self,
+        records: list[ArchiveMember],
+        *,
+        initialization_mode: str,
+    ) -> dict[str, QDArchiveInsertResult]:
+        _ = initialization_mode
+        assert records
+        axes = []
+        for index, axis in enumerate(self.axes):
+            values = [float(record.descriptors[index]) for record in records]
+            lower = min(values)
+            upper = max(values)
+            if lower == upper:
+                lower -= 0.5
+                upper += 0.5
+            axes.append(
+                GridAxisSpec(
+                    name=axis.name,
+                    bins=axis.bins,
+                    lower_bound=lower,
+                    upper_bound=upper,
+                )
+            )
+        self.axes = tuple(axes)
+        self._fronts.clear()
+        results = {}
+        for record in records:
+            results[record.candidate_id] = self.insert(record)
+        return results
+
     def elite_for_cell(self, cell_id: str) -> GridArchiveEntry | None:
         front = self._fronts.get(cell_id)
         if front is None:
@@ -889,6 +920,30 @@ class GridQuantileArchive:
         if len(self._warmup_buffer) < self.warmup_successes:
             return {}
         return self._initialize_from_warmup("run_finalization_fallback")
+
+    def rebuild_from_records(
+        self,
+        records: list[ArchiveMember],
+        *,
+        initialization_mode: str,
+    ) -> dict[str, QDArchiveInsertResult]:
+        assert records
+        self._warmup_buffer.clear()
+        self._fronts.clear()
+        self.quantile_boundaries = self._boundaries_for_records(records)
+        self.effective_bins = tuple(
+            len(boundaries) + 1 for boundaries in self.quantile_boundaries
+        )
+        self.num_cells = math.prod(self.effective_bins)
+        self.initialized = True
+        self.initialization_mode = initialization_mode
+        self.initialization_sample_count = len(records)
+        self.warmup_replay_results = []
+        results = {}
+        for record in records:
+            result = self._insert_initialized(record)
+            results[record.candidate_id] = result
+        return results
 
     def elite_for_cell(self, cell_id: str) -> GridArchiveEntry | None:
         front = self._fronts.get(cell_id)
@@ -1231,6 +1286,20 @@ class CVTArchive:
         return self._initialize_records(
             warmup_records,
             initialization_mode="run_finalization_fallback",
+        )
+
+    def rebuild_from_records(
+        self,
+        records: list[ArchiveMember],
+        *,
+        initialization_mode: str,
+    ) -> dict[str, QDArchiveInsertResult]:
+        assert records
+        self._fronts.clear()
+        self._warmup_buffer.clear()
+        return self._initialize_records(
+            records,
+            initialization_mode=initialization_mode,
         )
 
     def elite_for_cell(self, cell_id: str) -> GridArchiveEntry | None:
