@@ -906,6 +906,8 @@ class LLMInterface:
                                 if raw:
                                     thought_loose, code_loose = self.parse_thought_and_code(raw)
                                     out.append((thought_loose, code_loose, {"format_ok": False, "error": f"strict-parse failed: {err}", "raw": raw, "parsed_mode": None}))
+                                else:
+                                    out.append((None, None, {"format_ok": False, "error": "empty-response", "raw": "", "parsed_mode": None}))
 
                         # Concurrently request the remaining responses.
                         num_remaining = n - len(out)
@@ -947,6 +949,8 @@ class LLMInterface:
                             if raw:
                                 thought_loose, code_loose = self.parse_thought_and_code(raw)
                                 out.append((thought_loose, code_loose, {"format_ok": False, "error": f"strict-parse failed: {err}", "raw": raw, "parsed_mode": None}))
+                            else:
+                                out.append((None, None, {"format_ok": False, "error": "empty-response", "raw": "", "parsed_mode": None}))
                     return out
 
                 except BadRequestError as e:
