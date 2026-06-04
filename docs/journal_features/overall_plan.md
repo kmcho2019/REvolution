@@ -97,6 +97,15 @@ stable while the first implementation lands.
 | Thought-only individuals + k-code evaluation | Implemented | 2026-05-10 | [06_thought_only_k_code.md](06_thought_only_k_code.md) | Runtime path, prompt adapters, config pass-through, focused tests, strict validator, and full hard-subset acceptance passed at `exp/journal_thought_only_k4_validation_reuse/20260514_075747` under a four-worker cap. |
 | KS-triggered re-binning + reporting polish | Planned | 2026-05-12 | [07_ks_adaptive_rebinning.md](07_ks_adaptive_rebinning.md) | Last because it depends on stable thought/archive semantics. |
 
+## Misc Journal-Extension Specs
+
+The `misc/` specs cover engineering features that support the journal-extension
+workflow but are not core MAP-Elites methodology contributions.
+
+| Feature | Status | Spec | Notes |
+| --- | --- | --- | --- |
+| GEPA prompt tuning for PromptStore profiles | Scaffolded | [misc/01_gepa_prompt_tuning.md](misc/01_gepa_prompt_tuning.md) | Optional DSPy/GEPA tuning loop for strict concatenated prompt bundles, focused first on `journal_thought_only`, with proxy scoring, reports, and final hard-subset validation gates. |
+
 ## Core Feature Checklist
 
 Initial target: 2026-05-12

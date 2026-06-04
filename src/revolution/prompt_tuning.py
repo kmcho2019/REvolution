@@ -1,3 +1,17 @@
+"""Prompt-profile tuning helpers for GEPA campaigns.
+
+The architecture is intentionally narrow:
+
+1. Convert one `PromptStore` profile into one strict concat bundle.
+2. Let GEPA mutate that bundle as a single text candidate.
+3. Materialize each candidate back into a temporary prompt profile.
+4. Score the resulting RTL/QD artifacts with deterministic gates.
+
+This module does not import GEPA or DSPy at module import time. Those packages
+live in the optional `prompt-tuning` dependency group, so the CLI imports them
+only after the user has opted into that group.
+"""
+
 from __future__ import annotations
 
 import hashlib
@@ -26,18 +40,13 @@ JOURNAL_THOUGHT_ONLY_KEYS: tuple[str, ...] = (
     "thought_only/repair/whole",
 )
 
-PROXY_PROBLEMS: tuple[tuple[str, str], ...] = (
-    ("RTLLM", "Prob015_multi_pipe_8bit"),
-    ("RTLLM", "Prob045_alu"),
-    ("VerilogEval-Spec-to-RTL", "Prob116_m2014_q3"),
-    ("VerilogEval-Spec-to-RTL", "Prob153_gshare"),
-)
-
 HARD_SUBSET_CONFIG = Path("data/configs/hard_iteration_subset.yaml")
 
 
 @dataclass(frozen=True)
 class PromptBundle:
+    """One strict concatenated prompt profile and its parsed sections."""
+
     profile: str
     sections: dict[str, str]
     text: str
@@ -45,7 +54,25 @@ class PromptBundle:
 
 
 @dataclass(frozen=True)
+class PromptTuningProblem:
+    """One benchmark/problem pair used by a tuning proxy or validation gate."""
+
+    benchmark: str
+    problem: str
+
+    @staticmethod
+    def from_mapping(item: Mapping[str, Any]) -> "PromptTuningProblem":
+        benchmark = item["benchmark"]
+        problem = item["problem"]
+        assert isinstance(benchmark, str)
+        assert isinstance(problem, str)
+        return PromptTuningProblem(benchmark=benchmark, problem=problem)
+
+
+@dataclass(frozen=True)
 class ProxySettings:
+    """Small RTL/QD budget used inside a GEPA prompt-tuning campaign."""
+
     population_size: int = 8
     num_generations: int = 2
     total_worker_slots: int = 8
@@ -60,7 +87,22 @@ class ProxySettings:
 
 
 @dataclass(frozen=True)
+class PromptTuningConfig:
+    """All profile-specific choices required for a tuning campaign."""
+
+    required_prompt_keys: tuple[str, ...]
+    proxy_problems: tuple[PromptTuningProblem, ...]
+    proxy_settings: ProxySettings
+
+    @property
+    def problem_pairs(self) -> tuple[tuple[str, str], ...]:
+        return tuple((item.benchmark, item.problem) for item in self.proxy_problems)
+
+
+@dataclass(frozen=True)
 class ProblemMetrics:
+    """Metrics extracted for one completed RTL/QD problem run."""
+
     benchmark: str
     problem: str
     functionality_pass_rate: float
@@ -75,6 +117,8 @@ class ProblemMetrics:
 
 @dataclass(frozen=True)
 class CandidateScore:
+    """Deterministic score and diagnostics for one candidate run root."""
+
     status: str
     scalar_score: float
     errors: list[str]
@@ -85,6 +129,8 @@ class CandidateScore:
 
 @dataclass(frozen=True)
 class GateResult:
+    """Strict final validation result for optimized-vs-baseline comparison."""
+
     passed: bool
     errors: list[str]
     warnings: list[str]
@@ -92,11 +138,44 @@ class GateResult:
     deltas: dict[str, float | None]
 
 
+def default_prompt_tuning_config(settings: ProxySettings) -> PromptTuningConfig:
+    """Return the current thought-only GEPA proxy configuration."""
+
+    return PromptTuningConfig(
+        required_prompt_keys=JOURNAL_THOUGHT_ONLY_KEYS,
+        proxy_settings=settings,
+        proxy_problems=(
+            PromptTuningProblem("RTLLM", "Prob015_multi_pipe_8bit"),
+            PromptTuningProblem("RTLLM", "Prob045_alu"),
+            PromptTuningProblem("VerilogEval-Spec-to-RTL", "Prob116_m2014_q3"),
+            PromptTuningProblem("VerilogEval-Spec-to-RTL", "Prob153_gshare"),
+        ),
+    )
+
+
+def load_prompt_tuning_problems(path: Path) -> tuple[PromptTuningProblem, ...]:
+    """Load proxy problems from YAML/JSON.
+
+    Accepted shapes are either a top-level list of `{benchmark, problem}` rows
+    or a mapping with a `problems` key containing that list.
+    """
+
+    payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if isinstance(payload, dict):
+        payload = payload["problems"]
+    assert isinstance(payload, list)
+    return tuple(PromptTuningProblem.from_mapping(item) for item in payload)
+
+
 def prompt_bundle_hash(text: str) -> str:
+    """Hash a bundle exactly as GEPA and reports see it."""
+
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
 def format_prompt_bundle(sections: Mapping[str, str], ordered_keys: Sequence[str]) -> str:
+    """Serialize prompt sections into the native `PromptStore` concat format."""
+
     blocks: list[str] = []
     for raw_key in ordered_keys:
         key = _normalize_key(raw_key)
@@ -114,6 +193,8 @@ def format_prompt_bundle(sections: Mapping[str, str], ordered_keys: Sequence[str
 
 
 def parse_prompt_bundle(text: str, expected_keys: Sequence[str]) -> dict[str, str]:
+    """Parse a concat bundle and fail on any non-exact section shape."""
+
     expected = tuple(_normalize_key(key) for key in expected_keys)
     expected_set = set(expected)
     sections: dict[str, str] = {}
@@ -155,6 +236,8 @@ def export_prompt_bundle(
     profile: str,
     expected_keys: Sequence[str] = JOURNAL_THOUGHT_ONLY_KEYS,
 ) -> PromptBundle:
+    """Read a profile from disk and return its strict concat bundle."""
+
     store = PromptStore(root_dir=str(prompt_root), profile=profile)
     sections: dict[str, str] = {}
     for raw_key in expected_keys:
@@ -182,6 +265,8 @@ def materialize_prompt_profile(
     expected_keys: Sequence[str] = JOURNAL_THOUGHT_ONLY_KEYS,
     overwrite: bool = False,
 ) -> PromptBundle:
+    """Write a strict bundle back to `data/prompts/<profile>` style files."""
+
     target_dir = prompt_root / profile
     if target_dir.exists():
         if not overwrite:
@@ -210,6 +295,8 @@ def changed_prompt_sections(
     baseline: Mapping[str, str],
     candidate: Mapping[str, str],
 ) -> list[str]:
+    """Return prompt keys whose text differs between two parsed bundles."""
+
     return [
         key
         for key in sorted(set(baseline) | set(candidate))
@@ -220,6 +307,8 @@ def changed_prompt_sections(
 def require_prompt_tuning_dependencies(
     importer: Callable[[str], Any] = importlib.import_module,
 ) -> dict[str, str]:
+    """Verify optional optimizer packages are installed before a campaign."""
+
     versions: dict[str, str] = {}
     missing: list[str] = []
     for module_name in ("dspy", "gepa"):
@@ -239,6 +328,8 @@ def require_prompt_tuning_dependencies(
 
 
 def load_env_file(path: Path = Path("/workspace/.env")) -> None:
+    """Load the shared workspace environment file when it exists."""
+
     if path.is_file():
         from dotenv import load_dotenv
 
@@ -246,6 +337,8 @@ def load_env_file(path: Path = Path("/workspace/.env")) -> None:
 
 
 def preflight_rtl_vllm(settings: ProxySettings) -> str:
+    """Return the vLLM model id after enforcing the required context window."""
+
     result = preflight_vllm_model(
         host=settings.vllm_host,
         port=settings.vllm_port,
@@ -270,13 +363,15 @@ def run_proxy_evaluation(
     prompt_root: Path,
     prompt_profile: str,
     run_root: Path,
-    settings: ProxySettings,
+    config: PromptTuningConfig,
     model_name: str,
-    extra_args: Sequence[str] = (),
 ) -> None:
+    """Run the real RTL/QD proxy for one materialized prompt profile."""
+
     run_root.mkdir(parents=True, exist_ok=True)
-    benchmarks = list(dict.fromkeys(benchmark for benchmark, _ in PROXY_PROBLEMS))
-    problems = [problem for _, problem in PROXY_PROBLEMS]
+    settings = config.proxy_settings
+    benchmarks = list(dict.fromkeys(item.benchmark for item in config.proxy_problems))
+    problems = [item.problem for item in config.proxy_problems]
     cmd = [
         sys.executable,
         str(repo_root / "scripts" / "run_backend.py"),
@@ -370,7 +465,6 @@ def run_proxy_evaluation(
         "0",
         "--repair_evidence",
         "stage_scoped_logs",
-        *extra_args,
     ]
     completed = subprocess.run(cmd, cwd=repo_root, text=True)
     if completed.returncode != 0:
@@ -378,6 +472,8 @@ def run_proxy_evaluation(
 
 
 def load_subset_problems(config_path: Path) -> list[tuple[str, str]]:
+    """Load the frozen hard-subset benchmark/problem list."""
+
     payload = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     assert isinstance(payload, dict)
     selected = payload.get("selected_problems")
@@ -554,6 +650,8 @@ def load_problem_metrics(
     benchmark: str,
     problem: str,
 ) -> tuple[ProblemMetrics | None, list[str], list[str]]:
+    """Load one problem summary plus QD and thought-only sidecar diagnostics."""
+
     errors: list[str] = []
     warnings: list[str] = []
     summary_path = _problem_summary_path(run_root, benchmark, problem)
@@ -592,6 +690,8 @@ def load_problem_metrics(
 
 
 def aggregate_metrics(rows: Sequence[ProblemMetrics]) -> dict[str, float | int | None]:
+    """Aggregate per-problem metrics into the campaign/validation score surface."""
+
     score_values = [row.average_score for row in rows if row.average_score is not None]
     ppa_values = [
         row.average_ppa_improvement
@@ -623,25 +723,29 @@ def aggregate_metrics(rows: Sequence[ProblemMetrics]) -> dict[str, float | int |
 
 def score_run_root(
     run_root: Path,
-    problems: Sequence[tuple[str, str]] = PROXY_PROBLEMS,
+    problems: Sequence[PromptTuningProblem],
     *,
     require_valid_ppa_each_problem: bool = True,
 ) -> CandidateScore:
+    """Score a completed run root over an explicit problem list."""
+
     errors: list[str] = []
     warnings: list[str] = []
     rows: list[ProblemMetrics] = []
-    for benchmark, problem in problems:
+    for problem_ref in problems:
         metrics, problem_errors, problem_warnings = load_problem_metrics(
             run_root,
-            benchmark,
-            problem,
+            problem_ref.benchmark,
+            problem_ref.problem,
         )
         errors.extend(problem_errors)
         warnings.extend(problem_warnings)
         if metrics is None:
             continue
         if require_valid_ppa_each_problem and metrics.valid_ppa_sample_count == 0:
-            errors.append(f"{benchmark}/{problem}: zero valid PPA samples")
+            errors.append(
+                f"{problem_ref.benchmark}/{problem_ref.problem}: zero valid PPA samples"
+            )
         rows.append(metrics)
     aggregates = aggregate_metrics(rows)
     scalar_score = _candidate_scalar_score(aggregates)
@@ -683,9 +787,13 @@ def validate_optimized_against_baselines(
     min_improvement_pp: float = 1.0,
     require_full_subset: bool = True,
 ) -> GateResult:
-    problems = load_subset_problems(subset_config)
-    if require_full_subset and len(problems) != 13:
-        raise ValueError(f"Expected 13 hard-subset problems, got {len(problems)}")
+    problem_pairs = load_subset_problems(subset_config)
+    if require_full_subset and len(problem_pairs) != 13:
+        raise ValueError(f"Expected 13 hard-subset problems, got {len(problem_pairs)}")
+    problems = tuple(
+        PromptTuningProblem(benchmark, problem)
+        for benchmark, problem in problem_pairs
+    )
     scores = {
         "classic": score_run_root(
             classic_root,

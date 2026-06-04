@@ -13,6 +13,9 @@
 - Experimental `revolution_qd` search mode with grid and CVT archive support, configurable descriptor axes, archive-event reporting, and retrospective-analysis-driven descriptor profiles.
 - End-to-end evaluation pipeline: Icarus Verilog for syntax/functional checks, Yosys + OpenROAD for PPA, and post-synthesis regression.
 - Unified LLM client with retry/backoff, prompt templating, diff/whole generation modes, and multi-backend support (OpenAI, OpenRouter, DeepSeek, Gemini, vLLM).
+- Optional GEPA prompt-tuning scaffold for `PromptStore` profiles, focused first
+  on `journal_thought_only` and documented under the journal-extension `misc/`
+  specs.
 - Detailed JSONL logging, per-problem summaries, and prebuilt scripts for table generation and visualization.
 - Benchmarks bundled from VerilogEval, RTLLM, and CVDP with reusable PDK assets.
 
@@ -22,6 +25,7 @@ The `docs/` directory contains deeper dives:
 
 - `docs/implementation_details.md` – architecture and component responsibilities.
 - `docs/journal_features/overall_plan.md` – journal-extension hub based on the `qd-theory-grounded-descriptors` branch, with the QD feature roadmap, ETA checklist, implementation rules, and links to per-feature specs.
+- `docs/journal_features/misc/01_gepa_prompt_tuning.md` – DSPy/GEPA prompt-tuning scaffold for strict `PromptStore` bundle optimization, reports, proxy scoring, and final hard-subset validation gates.
 - `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, long-budget classic-vs-QD runner, the formal `final_analysis/` bundle workflow, and the current archive-tuning-backed QD default recommendation for that workflow.
 - `scripts/report_design_space_analysis.py` – retrospective classical-vs-QD design-space analysis over completed runs, with per-problem generation-local vs accumulated PPA/feature plots, cached-QD descriptor views for graph-backed profiles, aggregate pooled views, candidate CSV export, and markdown indices.
 - `scripts/report_qd_feature_space.py` – deep post-run QD feature-space analysis over finished backend roots, including candidate tables, collapse diagnostics, regression summaries, and PCA/t-SNE plots.

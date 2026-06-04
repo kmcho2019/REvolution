@@ -7,15 +7,20 @@ import pytest
 
 from revolution.prompt_tuning import (
     JOURNAL_THOUGHT_ONLY_KEYS,
-    PROXY_PROBLEMS,
+    ProxySettings,
+    default_prompt_tuning_config,
     export_prompt_bundle,
     format_prompt_bundle,
+    load_prompt_tuning_problems,
     materialize_prompt_profile,
     parse_prompt_bundle,
     require_prompt_tuning_dependencies,
     score_run_root,
     validate_optimized_against_baselines,
 )
+
+
+PROXY_PROBLEMS = default_prompt_tuning_config(ProxySettings()).proxy_problems
 
 
 def _write_profile(root: Path, profile: str) -> dict[str, str]:
@@ -96,8 +101,13 @@ def _write_problem(
 
 
 def _write_proxy_run(run_root: Path, *, valid_ppa: int = 1) -> None:
-    for benchmark, problem in PROXY_PROBLEMS:
-        _write_problem(run_root, benchmark, problem, valid_ppa=valid_ppa)
+    for problem_ref in PROXY_PROBLEMS:
+        _write_problem(
+            run_root,
+            problem_ref.benchmark,
+            problem_ref.problem,
+            valid_ppa=valid_ppa,
+        )
 
 
 def _subset_config(path: Path, problems: list[tuple[str, str]]) -> None:
@@ -165,10 +175,25 @@ def test_dependency_preflight_reports_missing_dependency():
         require_prompt_tuning_dependencies(importer)
 
 
+def test_load_prompt_tuning_problems_accepts_mapping_shape(tmp_path):
+    path = tmp_path / "proxy.yaml"
+    path.write_text(
+        "problems:\n"
+        "  - benchmark: RTLLM\n"
+        "    problem: Prob045_alu\n",
+        encoding="utf-8",
+    )
+
+    problems = load_prompt_tuning_problems(path)
+
+    assert problems[0].benchmark == "RTLLM"
+    assert problems[0].problem == "Prob045_alu"
+
+
 def test_scorer_rejects_zero_valid_ppa_problem(tmp_path):
     _write_proxy_run(tmp_path, valid_ppa=0)
 
-    score = score_run_root(tmp_path)
+    score = score_run_root(tmp_path, PROXY_PROBLEMS)
 
     assert score.status == "failed"
     assert score.scalar_score == 0.0

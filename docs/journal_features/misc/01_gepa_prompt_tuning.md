@@ -3,7 +3,9 @@
 Status: planned implementation scaffold.
 
 This feature adds a prompt-tuning framework for `PromptStore` profiles using
-DSPy/GEPA. The first target is `data/prompts/journal_thought_only`, because the
+GEPA, with DSPy installed as part of the optional prompt-tuning dependency
+surface for future DSPy module adapters. The first target is
+`data/prompts/journal_thought_only`, because the
 Feature 06 thought-only path has one main thought operator plus an optional
 repair prompt and is small enough to optimize as one coherent text artifact.
 The implementation must stay general enough to tune other prompt profiles after
@@ -89,7 +91,11 @@ dspy>=2.6.27
 gepa>=0.1.1
 ```
 
-The tuning runner must fail at startup if either import is unavailable and
+The active optimizer path is GEPA's `optimize_anything` API. The tuning runner
+imports it only after dependency preflight, then gives GEPA one candidate
+parameter named `prompt_bundle`. DSPy is dependency-checked and kept available
+for future prompt-module adapters; it is not the current candidate-search
+engine. The runner must fail at startup if either package is unavailable and
 should tell the operator to run `uv sync --group prompt-tuning`.
 
 OpenAI credentials are loaded from:
@@ -208,7 +214,7 @@ seed: 42
 max_tokens: 128000
 ```
 
-Proxy problems:
+Default proxy problems:
 
 ```text
 RTLLM/Prob015_multi_pipe_8bit
@@ -216,6 +222,17 @@ RTLLM/Prob045_alu
 VerilogEval-Spec-to-RTL/Prob116_m2014_q3
 VerilogEval-Spec-to-RTL/Prob153_gshare
 ```
+
+The default proxy list is encoded in `PromptTuningConfig`, not in the scoring
+function. Campaigns can replace it with:
+
+```bash
+--proxy-problem-file path/to/problems.yaml
+```
+
+The file may be either a top-level list of `{benchmark, problem}` rows or a
+mapping with a `problems:` list. This keeps the default reproducible while
+making other profiles and smaller/larger proxy sets explicit.
 
 Each proxy problem must have at least one valid PPA sample for the candidate to
 receive a nonzero score. This gate is intentionally strict: a prompt that
@@ -388,7 +405,8 @@ Run a campaign:
 ```bash
 uv run --group prompt-tuning python scripts/run_gepa_prompt_tuning.py \
   --optimizer-model gpt-5.5 \
-  --max-metric-calls 3
+  --max-metric-calls 3 \
+  --proxy-problem-file exp/gepa_proxy_problems.yaml
 ```
 
 Regenerate a campaign report:

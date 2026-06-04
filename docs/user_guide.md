@@ -77,6 +77,12 @@ default `--diff_max_tokens 1024` was left unchanged.
 
 - `data/bench/<suite>/<problem>` holds the benchmark Verilog specs, testbenches, reference designs, and `synthesis_top_module_names.json` mapping required for synthesis.
 - `data/prompts/<profile>` contains prompt templates consumed by `PromptStore`. Copy the `default` profile to author your own variants.
+- `scripts/run_gepa_prompt_tuning.py` is an optional journal-extension prompt
+  tuning scaffold for `PromptStore` profiles. It exports a profile as one
+  strict concat bundle, asks GEPA to optimize that bundle, materializes
+  candidate profiles, scores real RTL/QD proxy artifacts, and writes campaign
+  reports. The first target is `journal_thought_only`; see
+  `docs/journal_features/misc/01_gepa_prompt_tuning.md` for details.
 - `pdk/` stores Liberty/LEF/GDS resources used by the synthesis flow. The paths are resolved automatically by `SynthesisEvaluator`.
 
 ## 3. Running experiments
@@ -948,6 +954,14 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/run_diff_prompt_suite.py`: self-contained prompt-optimization suite for diff mode with per-run objective scoring and case-level hard-pass/safe-reject diagnostics.
 - `scripts/summarize_diff_prompt_suite.py`: cross-run leaderboard/report generator for prompt-suite outputs (`summary.md`, `summary.json`, and CSV exports for plotting); also emits explicit zero-run summaries when all inputs are skipped runs.
 - `scripts/run_diff_prompt_optimization_loop.py`: first prompt-search loop runner that evaluates multiple prompt candidates via `run_diff_prompt_suite.py` and ranks them by `summary.objective_score`.
+- `scripts/run_gepa_prompt_tuning.py`: optional DSPy/GEPA prompt-tuning runner
+  for full `PromptStore` profile bundles. Run `uv sync --group prompt-tuning`
+  first. The default proxy problem list can be replaced with
+  `--proxy-problem-file`, and final acceptance should be checked with
+  `scripts/validate_gepa_prompt_tuning_run.py`.
+- `scripts/report_gepa_prompt_tuning.py` and
+  `scripts/validate_gepa_prompt_tuning_run.py`: report regeneration and strict
+  classic-vs-baseline-vs-optimized validation for GEPA prompt-tuning campaigns.
 - `scripts/gen0_report_generator.py`: inspect `Gen0/best_candidate` snapshots, check syntax/simulation/synthesis status, and optionally export Markdown (`--save_markdown`).
 - `scripts/generate_cutoff_compile_result_variants.sh`: reproduce paper tables with a specified gate cutoff (`--gate 50` by default).
 - `scripts/generate_visualizations*.py` and `plot_problem_pareto.py`: create PPA scatter plots or aggregate charts.

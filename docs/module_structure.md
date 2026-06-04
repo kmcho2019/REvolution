@@ -81,6 +81,10 @@
 - `llm.py`: unified async LLM client with retry/backoff, token tracking, and JSON parsing helpers.
 - `logging.py`: `EoHLogger` for JSONL generation logs, per-run summaries, and reward statistics.
 - `prompt_store.py`: filesystem-backed prompt templating system with concatenated bundle support and tolerant `safe_format`.
+- `prompt_tuning.py`: strict `PromptStore` bundle export/materialization,
+  GEPA proxy-run scoring helpers, and final prompt-optimization validation
+  gates. The detailed feature spec is
+  `docs/journal_features/misc/01_gepa_prompt_tuning.md`.
 - `vllm_preflight.py`: lightweight `/v1/models` preflight helpers for vLLM connectivity and `max_model_len` checks.
 - `configuration.py`: helpers for loading CLI config files (including legacy snapshot compatibility), validating options, and recording runnable snapshot + metadata-sidecar files.
 - `utils.py`: utility helpers (for example `StreamRedirector`).
@@ -119,6 +123,13 @@
 - `run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with hard-task selection, aggregate token/runtime comparisons, and diff failure catalog generation.
 - `run_diff_mode_diagnostics.py`: repeated real-LLM diff stress harness producing strict-parse/apply failure catalogs across curated edge cases, including worst-case failure sample retention.
 - `run_diff_prompt_optimization_loop.py`: prompt-candidate loop runner that calls `run_diff_prompt_suite.py` per candidate and ranks prompts by objective score.
+- `run_gepa_prompt_tuning.py`: optional GEPA campaign runner for full
+  `PromptStore` profile bundles. It uses the `prompt-tuning` dependency group,
+  materializes temporary prompt profiles, runs and scores RTL/QD proxy artifacts,
+  and writes campaign reports.
+- `report_gepa_prompt_tuning.py` and `validate_gepa_prompt_tuning_run.py`:
+  report regeneration plus strict final classic-vs-baseline-vs-optimized
+  validation for prompt-tuning campaigns.
 - `run_test.sh`, `run_regression_test.sh`, `run_cvdp_test.sh`: shell wrappers for regression suites.
 - `generate_*`, `plot_problem_pareto.py`, `evolutionary_report_generator.py`: reporting and visualisation utilities.
 - `render_grid_quantile_visualizations.py`,
@@ -151,6 +162,10 @@
 - `tests/scripts/test_run_diff_mode_benchmark.py`: validates hard-task selection and aggregate reporting helpers for whole-vs-diff benchmarks.
 - `tests/scripts/test_run_diff_mode_diagnostics.py`: validates diagnostics skip behavior and result aggregation paths.
 - `tests/scripts/test_run_diff_prompt_optimization_loop.py`: validates prompt-loop ranking and skipped-run handling.
+- `tests/revolution/test_prompt_tuning.py` and
+  `tests/scripts/test_gepa_prompt_tuning_scripts.py`: validate strict prompt
+  bundle parsing, materialization, dependency preflight, artifact scoring,
+  fake-evaluator campaigns, report generation, and final GEPA gate enforcement.
 
 ## Generated artefacts
 
