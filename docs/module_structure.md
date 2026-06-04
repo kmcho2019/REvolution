@@ -123,10 +123,13 @@
 - `run_diff_mode_benchmark.py`: whole-vs-diff benchmark harness with hard-task selection, aggregate token/runtime comparisons, and diff failure catalog generation.
 - `run_diff_mode_diagnostics.py`: repeated real-LLM diff stress harness producing strict-parse/apply failure catalogs across curated edge cases, including worst-case failure sample retention.
 - `run_diff_prompt_optimization_loop.py`: prompt-candidate loop runner that calls `run_diff_prompt_suite.py` per candidate and ranks prompts by objective score.
-- `run_gepa_prompt_tuning.py`: optional GEPA campaign runner for full
-  `PromptStore` profile bundles. It uses the `prompt-tuning` dependency group,
-  materializes temporary prompt profiles, runs and scores RTL/QD proxy artifacts,
-  and writes campaign reports.
+- `run_gepa_prompt_tuning.py`: DSPy/GEPA campaign runner for full
+  `PromptStore` profile bundles. It configures the DSPy reflection model,
+  gives GEPA one strict prompt bundle candidate, materializes temporary prompt
+  profiles, runs and scores RTL/QD proxy artifacts, and writes campaign
+  reports.
+- `data/configs/gepa_prompt_tuning_proxy_problems.yaml`: default proxy
+  benchmark/problem list for GEPA prompt-tuning campaigns.
 - `report_gepa_prompt_tuning.py` and `validate_gepa_prompt_tuning_run.py`:
   report regeneration plus strict final classic-vs-baseline-vs-optimized
   validation for prompt-tuning campaigns.
@@ -164,8 +167,8 @@
 - `tests/scripts/test_run_diff_prompt_optimization_loop.py`: validates prompt-loop ranking and skipped-run handling.
 - `tests/revolution/test_prompt_tuning.py` and
   `tests/scripts/test_gepa_prompt_tuning_scripts.py`: validate strict prompt
-  bundle parsing, materialization, dependency preflight, artifact scoring,
-  fake-evaluator campaigns, report generation, and final GEPA gate enforcement.
+  bundle parsing, materialization, artifact scoring, fake-evaluator campaigns,
+  report generation, and final GEPA gate enforcement.
 
 ## Generated artefacts
 

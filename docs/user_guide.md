@@ -954,10 +954,13 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/run_diff_prompt_suite.py`: self-contained prompt-optimization suite for diff mode with per-run objective scoring and case-level hard-pass/safe-reject diagnostics.
 - `scripts/summarize_diff_prompt_suite.py`: cross-run leaderboard/report generator for prompt-suite outputs (`summary.md`, `summary.json`, and CSV exports for plotting); also emits explicit zero-run summaries when all inputs are skipped runs.
 - `scripts/run_diff_prompt_optimization_loop.py`: first prompt-search loop runner that evaluates multiple prompt candidates via `run_diff_prompt_suite.py` and ranks them by `summary.objective_score`.
-- `scripts/run_gepa_prompt_tuning.py`: optional DSPy/GEPA prompt-tuning runner
-  for full `PromptStore` profile bundles. Run `uv sync --group prompt-tuning`
-  first. The default proxy problem list can be replaced with
-  `--proxy-problem-file`, and final acceptance should be checked with
+- `scripts/run_gepa_prompt_tuning.py`: DSPy/GEPA prompt-tuning runner for full
+  `PromptStore` profile bundles. Run `uv sync` first. The runner configures a
+  DSPy reflection LM, gives GEPA one strict concat bundle to optimize, and
+  scores each materialized candidate from real RTL/QD artifacts. The default
+  proxy problem list is `data/configs/gepa_prompt_tuning_proxy_problems.yaml`
+  and can be replaced with `--proxy-problem-file`; final acceptance should be
+  checked with
   `scripts/validate_gepa_prompt_tuning_run.py`.
 - `scripts/report_gepa_prompt_tuning.py` and
   `scripts/validate_gepa_prompt_tuning_run.py`: report regeneration and strict

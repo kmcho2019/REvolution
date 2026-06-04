@@ -104,7 +104,7 @@ workflow but are not core MAP-Elites methodology contributions.
 
 | Feature | Status | Spec | Notes |
 | --- | --- | --- | --- |
-| GEPA prompt tuning for PromptStore profiles | Scaffolded | [misc/01_gepa_prompt_tuning.md](misc/01_gepa_prompt_tuning.md) | Optional DSPy/GEPA tuning loop for strict concatenated prompt bundles, focused first on `journal_thought_only`, with proxy scoring, reports, and final hard-subset validation gates. |
+| GEPA prompt tuning for PromptStore profiles | Scaffolded | [misc/01_gepa_prompt_tuning.md](misc/01_gepa_prompt_tuning.md) | DSPy/GEPA tuning loop for strict concatenated prompt bundles, focused first on `journal_thought_only`, with proxy scoring, reports, and final hard-subset validation gates. |
 
 ## Core Feature Checklist
 

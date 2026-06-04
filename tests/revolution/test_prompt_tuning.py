@@ -7,20 +7,19 @@ import pytest
 
 from revolution.prompt_tuning import (
     JOURNAL_THOUGHT_ONLY_KEYS,
-    ProxySettings,
-    default_prompt_tuning_config,
     export_prompt_bundle,
     format_prompt_bundle,
     load_prompt_tuning_problems,
     materialize_prompt_profile,
     parse_prompt_bundle,
-    require_prompt_tuning_dependencies,
     score_run_root,
     validate_optimized_against_baselines,
 )
 
 
-PROXY_PROBLEMS = default_prompt_tuning_config(ProxySettings()).proxy_problems
+PROXY_PROBLEMS = load_prompt_tuning_problems(
+    Path("data/configs/gepa_prompt_tuning_proxy_problems.yaml")
+)
 
 
 def _write_profile(root: Path, profile: str) -> dict[str, str]:
@@ -163,16 +162,6 @@ def test_bundle_parser_rejects_missing_duplicate_and_extra_sections():
     )
     with pytest.raises(ValueError, match="Unexpected prompt section"):
         parse_prompt_bundle(extra, JOURNAL_THOUGHT_ONLY_KEYS)
-
-
-def test_dependency_preflight_reports_missing_dependency():
-    def importer(name: str):
-        if name == "gepa":
-            raise ImportError(name)
-        return object()
-
-    with pytest.raises(RuntimeError, match="uv sync --group prompt-tuning"):
-        require_prompt_tuning_dependencies(importer)
 
 
 def test_load_prompt_tuning_problems_accepts_mapping_shape(tmp_path):

@@ -1,15 +1,13 @@
 # Misc 01: GEPA Prompt Tuning
 
-Status: planned implementation scaffold.
+Status: scaffolded implementation; real validation still pending.
 
 This feature adds a prompt-tuning framework for `PromptStore` profiles using
-GEPA, with DSPy installed as part of the optional prompt-tuning dependency
-surface for future DSPy module adapters. The first target is
-`data/prompts/journal_thought_only`, because the
-Feature 06 thought-only path has one main thought operator plus an optional
-repair prompt and is small enough to optimize as one coherent text artifact.
-The implementation must stay general enough to tune other prompt profiles after
-the first path is proven.
+DSPy and GEPA. The first target is `data/prompts/journal_thought_only`,
+because the Feature 06 thought-only path has one main thought operator plus an
+optional repair prompt and is small enough to optimize as one coherent text
+artifact. The implementation must stay general enough to tune other prompt
+profiles after the first path is proven.
 
 This is a `misc/` journal-extension feature rather than a core methodology
 feature. The journal methodology contributions are the archive/operator/QD
@@ -78,25 +76,37 @@ parser keeps the final artifact compatible with normal `PromptStore` loading.
 
 ## Environment And Dependencies
 
-Optimizer dependencies are isolated from the main runtime dependency list:
+DSPy and GEPA are normal project dependencies, not an optional install group:
 
 ```bash
-uv sync --group prompt-tuning
+uv sync
 ```
 
-The `prompt-tuning` dependency group includes:
+The project dependency list includes:
 
 ```text
 dspy>=2.6.27
 gepa>=0.1.1
 ```
 
-The active optimizer path is GEPA's `optimize_anything` API. The tuning runner
-imports it only after dependency preflight, then gives GEPA one candidate
-parameter named `prompt_bundle`. DSPy is dependency-checked and kept available
-for future prompt-module adapters; it is not the current candidate-search
-engine. The runner must fail at startup if either package is unavailable and
-should tell the operator to run `uv sync --group prompt-tuning`.
+The runner has the same conceptual split as the DSPy GEPA examples:
+
+1. config: command-line flags set optimizer model, temperature, token budget,
+   proxy problems, and RTL/QD worker budget;
+2. dataset/task surface: the prompt bundle is the candidate, and proxy RTL/QD
+   problems are loaded from `PromptTuningConfig` or `--proxy-problem-file`;
+3. fitness function: candidate bundles are materialized, evaluated, scored,
+   and returned to GEPA with diagnostic side information;
+4. optimization loop: GEPA proposes new prompt bundles from the score and
+   diagnostics.
+
+In the currently resolved package set, DSPy exposes `dspy.LM` but does not
+expose `dspy.GEPA`. The active optimizer path therefore imports
+`gepa.optimize_anything`, configures a `dspy.LM`, calls `dspy.configure(lm=lm)`,
+and passes a small DSPy-backed reflection callable to GEPA. If a later resolved
+DSPy package exposes `dspy.GEPA`, the optimizer call can be swapped without
+changing the bundle parser, materializer, proxy evaluator, scorer, or final
+validator.
 
 OpenAI credentials are loaded from:
 
@@ -104,10 +114,12 @@ OpenAI credentials are loaded from:
 /workspace/.env
 ```
 
-The default optimizer model is:
+The default optimizer settings are:
 
 ```text
-gpt-5.5
+optimizer_model: openai/gpt-5.5
+optimizer_temperature: 1.0
+optimizer_max_tokens: 32000
 ```
 
 RTL evaluation uses the local vLLM endpoint:
@@ -136,7 +148,9 @@ prompt_root: data/prompts
 baseline_profile: journal_thought_only
 optimized_profile: journal_thought_only_gepa
 save_root: exp/gepa_prompt_tuning
-optimizer_model: gpt-5.5
+optimizer_model: openai/gpt-5.5
+optimizer_temperature: 1.0
+optimizer_max_tokens: 32000
 ```
 
 Per campaign, the runner creates:
@@ -214,7 +228,13 @@ seed: 42
 max_tokens: 128000
 ```
 
-Default proxy problems:
+Default proxy problems live in:
+
+```text
+data/configs/gepa_prompt_tuning_proxy_problems.yaml
+```
+
+Current default rows:
 
 ```text
 RTLLM/Prob015_multi_pipe_8bit
@@ -223,8 +243,8 @@ VerilogEval-Spec-to-RTL/Prob116_m2014_q3
 VerilogEval-Spec-to-RTL/Prob153_gshare
 ```
 
-The default proxy list is encoded in `PromptTuningConfig`, not in the scoring
-function. Campaigns can replace it with:
+The default proxy list is loaded from YAML, not hard-coded in the runner or
+scoring function. Campaigns can replace it with:
 
 ```bash
 --proxy-problem-file path/to/problems.yaml
@@ -403,8 +423,8 @@ compares `classic`, baseline thought-only, and optimized thought-only across all
 Run a campaign:
 
 ```bash
-uv run --group prompt-tuning python scripts/run_gepa_prompt_tuning.py \
-  --optimizer-model gpt-5.5 \
+uv run python scripts/run_gepa_prompt_tuning.py \
+  --optimizer-model openai/gpt-5.5 \
   --max-metric-calls 3 \
   --proxy-problem-file exp/gepa_proxy_problems.yaml
 ```
@@ -412,7 +432,7 @@ uv run --group prompt-tuning python scripts/run_gepa_prompt_tuning.py \
 Regenerate a campaign report:
 
 ```bash
-uv run --group prompt-tuning python scripts/report_gepa_prompt_tuning.py \
+uv run python scripts/report_gepa_prompt_tuning.py \
   --campaign-root exp/gepa_prompt_tuning/<timestamp>
 ```
 
@@ -436,7 +456,7 @@ Unit tests:
 - bundle parser rejects duplicate sections;
 - bundle parser rejects unexpected sections;
 - materialized candidate profile preserves the exact prompt key set;
-- dependency preflight gives a clear failure when `dspy` or `gepa` is absent;
+- direct imports fail immediately if `dspy` or `gepa` is absent;
 - synthetic evaluator path runs without network;
 - scorer rejects missing summaries;
 - scorer rejects worker errors;
@@ -448,7 +468,7 @@ Unit tests:
 
 Integration smokes:
 
-- `uv sync --group prompt-tuning` creates a usable `.venv`;
+- `uv sync` creates a usable `.venv`;
 - `python -c "import dspy, gepa"` succeeds inside that environment;
 - baseline bundle candidate can be exported and materialized;
 - a synthetic optimized bundle can be written to a temporary prompt profile;
@@ -471,10 +491,9 @@ Stage 1: worktree and dependency setup
 
 - [x] Create `feat/journal-gepa-prompt-tuning` from latest
   `wip/journal-extension-2026`.
-- [x] Add `prompt-tuning` dependency group.
-- [x] Resolve and install `dspy` and `gepa` with `uv sync --group
-  prompt-tuning`.
-- [x] Add startup dependency preflight.
+- [x] Add `dspy` and `gepa` to default project dependencies.
+- [x] Resolve and install `dspy` and `gepa` with `uv sync`.
+- [x] Use direct package imports for fail-fast startup behavior.
 
 Stage 2: strict prompt bundle tooling
 

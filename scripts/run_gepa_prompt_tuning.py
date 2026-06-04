@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""Run GEPA tuning for one strict `PromptStore` profile bundle.
+
+The runner keeps the flow deliberately linear: configure DSPy, export the seed
+bundle, let GEPA propose replacement bundles, evaluate each materialized
+profile with the proxy RTL/QD run, then write campaign reports.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -7,9 +14,14 @@ import os
 import shlex
 import subprocess
 import sys
-from dataclasses import dataclass
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
+
+import dspy
+import gepa
+from gepa.optimize_anything import EngineConfig, GEPAConfig, ReflectionConfig
+from gepa.optimize_anything import optimize_anything
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT / "src") not in sys.path:
@@ -28,7 +40,6 @@ from revolution.prompt_tuning import (  # noqa: E402
     parse_prompt_bundle,
     preflight_rtl_vllm,
     render_campaign_markdown,
-    require_prompt_tuning_dependencies,
     run_proxy_evaluation,
     score_run_root,
     write_json,
@@ -37,16 +48,10 @@ from revolution.prompt_tuning import (  # noqa: E402
 
 DEFAULT_SAVE_ROOT = PROJECT_ROOT / "exp" / "gepa_prompt_tuning"
 DEFAULT_PROMPT_ROOT = PROJECT_ROOT / "data" / "prompts"
-
-
-@dataclass(frozen=True)
-class GepaApi:
-    """GEPA entry points loaded from the optional prompt-tuning dependency group."""
-
-    optimize_anything: Callable[..., Any]
-    EngineConfig: type
-    GEPAConfig: type
-    ReflectionConfig: type
+DEFAULT_PROXY_PROBLEM_FILE = (
+    PROJECT_ROOT / "data" / "configs" / "gepa_prompt_tuning_proxy_problems.yaml"
+)
+ReflectionPrompt = str | list[dict[str, Any]]
 
 
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -57,13 +62,15 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--baseline-profile", default="journal_thought_only")
     parser.add_argument("--optimized-profile", default="journal_thought_only_gepa")
     parser.add_argument("--save-root", type=Path, default=DEFAULT_SAVE_ROOT)
-    parser.add_argument("--optimizer-model", default="gpt-5.5")
+    parser.add_argument("--optimizer-model", default="openai/gpt-5.5")
+    parser.add_argument("--optimizer-temperature", type=float, default=1.0)
+    parser.add_argument("--optimizer-max-tokens", type=int, default=32000)
     parser.add_argument("--max-metric-calls", type=int, default=3)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
         "--proxy-problem-file",
         type=Path,
-        default=None,
+        default=DEFAULT_PROXY_PROBLEM_FILE,
         help="YAML/JSON list of {benchmark, problem} rows for the proxy evaluator.",
     )
     parser.add_argument("--overwrite-optimized-profile", action="store_true")
@@ -82,21 +89,45 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def _load_gepa_api() -> GepaApi:
-    """Import the actual optimizer after dependency preflight has passed."""
+def _dependency_versions() -> dict[str, str]:
+    """Return optimizer package versions for campaign provenance."""
 
-    import dspy
-    from gepa.optimize_anything import EngineConfig, GEPAConfig, ReflectionConfig
-    from gepa.optimize_anything import optimize_anything
+    return {
+        "dspy": str(getattr(dspy, "__version__", "installed")),
+        "gepa": str(getattr(gepa, "__version__", "installed")),
+    }
 
-    if not hasattr(dspy, "LM"):
-        raise RuntimeError("Installed dspy package does not expose dspy.LM")
-    return GepaApi(
-        optimize_anything=optimize_anything,
-        EngineConfig=EngineConfig,
-        GEPAConfig=GEPAConfig,
-        ReflectionConfig=ReflectionConfig,
+
+def _configure_dspy_reflection_lm(
+    args: argparse.Namespace,
+) -> Callable[[ReflectionPrompt], str]:
+    """Configure DSPy and return the GEPA reflection callable."""
+
+    api_key = os.environ["OPENAI_API_KEY"]
+    lm = dspy.LM(
+        args.optimizer_model,
+        temperature=args.optimizer_temperature,
+        max_tokens=args.optimizer_max_tokens,
+        api_key=api_key,
     )
+    dspy.configure(lm=lm)
+
+    def reflect(prompt: ReflectionPrompt) -> str:
+        if isinstance(prompt, str):
+            outputs = lm(prompt=prompt)
+        elif isinstance(prompt, list):
+            outputs = lm(messages=prompt)
+        else:
+            raise TypeError(f"Unsupported reflection prompt type: {type(prompt).__name__}")
+        if isinstance(outputs, str):
+            return outputs
+        assert isinstance(outputs, list)
+        assert outputs
+        first = outputs[0]
+        assert isinstance(first, str)
+        return first
+
+    return reflect
 
 
 def _campaign_config(args: argparse.Namespace) -> PromptTuningConfig:
@@ -107,14 +138,8 @@ def _campaign_config(args: argparse.Namespace) -> PromptTuningConfig:
         vllm_min_model_len=args.vllm_min_model_len,
         vllm_preflight_timeout_s=args.vllm_preflight_timeout_s,
     )
-    config = default_prompt_tuning_config(settings)
-    if args.proxy_problem_file is None:
-        return config
-    return PromptTuningConfig(
-        required_prompt_keys=config.required_prompt_keys,
-        proxy_settings=settings,
-        proxy_problems=load_prompt_tuning_problems(args.proxy_problem_file.resolve()),
-    )
+    problems = load_prompt_tuning_problems(args.proxy_problem_file.resolve())
+    return default_prompt_tuning_config(settings, problems)
 
 
 def _candidate_bundle(candidate: dict[str, str] | str) -> str:
@@ -183,11 +208,15 @@ def _write_candidate_report(
     (candidate_dir / "report.md").write_text("\n".join(lines), encoding="utf-8")
 
 
-def _build_gepa_config(args: argparse.Namespace, campaign_root: Path, api: GepaApi):
+def _build_gepa_config(
+    args: argparse.Namespace,
+    campaign_root: Path,
+    reflection_lm: Callable[[ReflectionPrompt], str],
+) -> GEPAConfig:
     """Build the small GEPA search budget for this prompt campaign."""
 
-    return api.GEPAConfig(
-        engine=api.EngineConfig(
+    return GEPAConfig(
+        engine=EngineConfig(
             run_dir=str(campaign_root / "gepa_state"),
             seed=args.seed,
             max_metric_calls=args.max_metric_calls,
@@ -197,8 +226,8 @@ def _build_gepa_config(args: argparse.Namespace, campaign_root: Path, api: GepaA
             display_progress_bar=False,
             raise_on_exception=True,
         ),
-        reflection=api.ReflectionConfig(
-            reflection_lm=args.optimizer_model,
+        reflection=ReflectionConfig(
+            reflection_lm=reflection_lm,
             reflection_minibatch_size=1,
             module_selector="all",
             skip_perfect_score=False,
@@ -215,10 +244,12 @@ def run_campaign(args: argparse.Namespace) -> dict[str, Any]:
     load_env_file()
     if not os.environ.get("OPENAI_API_KEY"):
         raise RuntimeError("OPENAI_API_KEY is not set after loading /workspace/.env")
-    versions = require_prompt_tuning_dependencies()
-    gepa_api = _load_gepa_api()
+    versions = _dependency_versions()
+    reflection_lm = _configure_dspy_reflection_lm(args)
     tuning_config = _campaign_config(args)
 
+    # Campaign artifacts are append-only and timestamped so failed candidates
+    # remain inspectable after GEPA chooses a winner.
     ts = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
     campaign_root = args.save_root.resolve() / ts
     bundle_dir = campaign_root / "bundles"
@@ -235,6 +266,8 @@ def run_campaign(args: argparse.Namespace) -> dict[str, Any]:
     )
     (bundle_dir / "seed_prompt_bundle.txt").write_text(baseline.text, encoding="utf-8")
 
+    # Real proxy runs use vLLM preflight; tests can inject a local evaluator
+    # command that writes the same artifacts without touching network/model I/O.
     model_name = "external_evaluator"
     if args.evaluator_command is None:
         model_name = preflight_rtl_vllm(tuning_config.proxy_settings)
@@ -245,6 +278,8 @@ def run_campaign(args: argparse.Namespace) -> dict[str, Any]:
     counter = {"value": 0}
 
     def evaluate(candidate: dict[str, str]) -> tuple[float, dict[str, Any]]:
+        """Materialize one GEPA candidate, run the proxy, and score artifacts."""
+
         counter["value"] += 1
         candidate_id = f"cand_{counter['value']:03d}"
         candidate_dir = campaign_root / "candidates" / candidate_id
@@ -320,7 +355,7 @@ def run_campaign(args: argparse.Namespace) -> dict[str, Any]:
             "score": row["score"],
         }
 
-    result = gepa_api.optimize_anything(
+    result = optimize_anything(
         seed_candidate={"prompt_bundle": baseline.text},
         evaluator=evaluate,
         objective=(
@@ -334,7 +369,7 @@ def run_campaign(args: argparse.Namespace) -> dict[str, Any]:
             "problems. Missing sections, duplicate sections, malformed bundles, "
             "or zero valid-PPA proxy problems receive score zero."
         ),
-        config=_build_gepa_config(args, campaign_root, gepa_api),
+        config=_build_gepa_config(args, campaign_root, reflection_lm),
     )
 
     best = result.best_candidate
@@ -361,6 +396,8 @@ def run_campaign(args: argparse.Namespace) -> dict[str, Any]:
         "baseline_profile": args.baseline_profile,
         "optimized_profile": args.optimized_profile,
         "optimizer_model": args.optimizer_model,
+        "optimizer_temperature": args.optimizer_temperature,
+        "optimizer_max_tokens": args.optimizer_max_tokens,
         "dependency_versions": versions,
         "proxy_settings": as_jsonable(tuning_config.proxy_settings),
         "proxy_problems": [

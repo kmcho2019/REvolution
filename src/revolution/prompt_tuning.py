@@ -7,15 +7,14 @@ The architecture is intentionally narrow:
 3. Materialize each candidate back into a temporary prompt profile.
 4. Score the resulting RTL/QD artifacts with deterministic gates.
 
-This module does not import GEPA or DSPy at module import time. Those packages
-live in the optional `prompt-tuning` dependency group, so the CLI imports them
-only after the user has opted into that group.
+The GEPA runner imports DSPy and GEPA directly. This module stays dependency
+agnostic in practice because it only owns prompt bundles, proxy settings,
+artifact scoring, and final validation.
 """
 
 from __future__ import annotations
 
 import hashlib
-import importlib
 import json
 import math
 import shutil
@@ -24,7 +23,7 @@ import subprocess
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Callable, Mapping, Sequence
+from typing import Any, Mapping, Sequence
 
 import yaml
 
@@ -138,18 +137,17 @@ class GateResult:
     deltas: dict[str, float | None]
 
 
-def default_prompt_tuning_config(settings: ProxySettings) -> PromptTuningConfig:
-    """Return the current thought-only GEPA proxy configuration."""
+def default_prompt_tuning_config(
+    settings: ProxySettings,
+    proxy_problems: Sequence[PromptTuningProblem],
+) -> PromptTuningConfig:
+    """Return the thought-only GEPA configuration for an explicit proxy set."""
 
+    assert proxy_problems
     return PromptTuningConfig(
         required_prompt_keys=JOURNAL_THOUGHT_ONLY_KEYS,
         proxy_settings=settings,
-        proxy_problems=(
-            PromptTuningProblem("RTLLM", "Prob015_multi_pipe_8bit"),
-            PromptTuningProblem("RTLLM", "Prob045_alu"),
-            PromptTuningProblem("VerilogEval-Spec-to-RTL", "Prob116_m2014_q3"),
-            PromptTuningProblem("VerilogEval-Spec-to-RTL", "Prob153_gshare"),
-        ),
+        proxy_problems=tuple(proxy_problems),
     )
 
 
@@ -302,29 +300,6 @@ def changed_prompt_sections(
         for key in sorted(set(baseline) | set(candidate))
         if baseline.get(key) != candidate.get(key)
     ]
-
-
-def require_prompt_tuning_dependencies(
-    importer: Callable[[str], Any] = importlib.import_module,
-) -> dict[str, str]:
-    """Verify optional optimizer packages are installed before a campaign."""
-
-    versions: dict[str, str] = {}
-    missing: list[str] = []
-    for module_name in ("dspy", "gepa"):
-        try:
-            module = importer(module_name)
-        except ImportError:
-            missing.append(module_name)
-            continue
-        versions[module_name] = str(getattr(module, "__version__", "installed"))
-    if missing:
-        raise RuntimeError(
-            "Missing prompt-tuning dependencies: "
-            + ", ".join(missing)
-            + ". Run `uv sync --group prompt-tuning` in this worktree."
-        )
-    return versions
 
 
 def load_env_file(path: Path = Path("/workspace/.env")) -> None:
@@ -939,6 +914,8 @@ def render_campaign_markdown(payload: Mapping[str, Any]) -> str:
         f"- Baseline profile: `{payload.get('baseline_profile', '')}`",
         f"- Optimized profile: `{payload.get('optimized_profile', '')}`",
         f"- Optimizer model: `{payload.get('optimizer_model', '')}`",
+        f"- Optimizer temperature: `{payload.get('optimizer_temperature', '')}`",
+        f"- Optimizer max tokens: `{payload.get('optimizer_max_tokens', '')}`",
         f"- Selected hash: `{selected.get('bundle_hash', '') if isinstance(selected, dict) else ''}`",
         "",
         "## Candidate Ranking",
