@@ -93,6 +93,10 @@ def test_gepa_runner_fake_evaluator_and_report(tmp_path, monkeypatch):
             str(save_root),
             "--max-metric-calls",
             "1",
+            "--proxy-population-size",
+            "12",
+            "--proxy-num-generations",
+            "3",
             "--evaluator-command",
             f"{sys.executable} {fake_eval} --run-root {{run_root}}",
         ]
@@ -102,6 +106,8 @@ def test_gepa_runner_fake_evaluator_and_report(tmp_path, monkeypatch):
 
     assert (campaign_root / "campaign.json").is_file()
     assert (campaign_root / "campaign.md").is_file()
+    assert payload["proxy_settings"]["population_size"] == 12
+    assert payload["proxy_settings"]["num_generations"] == 3
     assert (prompt_root / "journal_thought_only_gepa").is_dir()
     assert payload["selected_candidate"]["bundle_hash"]
 

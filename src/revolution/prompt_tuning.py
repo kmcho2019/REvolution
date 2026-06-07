@@ -72,8 +72,8 @@ class PromptTuningProblem:
 class ProxySettings:
     """Small RTL/QD budget used inside a GEPA prompt-tuning campaign."""
 
-    population_size: int = 8
-    num_generations: int = 2
+    population_size: int = 20
+    num_generations: int = 5
     total_worker_slots: int = 8
     max_active_problems: int = 4
     max_workers_per_problem: int = 4

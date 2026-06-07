@@ -198,8 +198,9 @@ operator passes an explicit overwrite flag.
 
 ## Optimization Proxy
 
-Optimization uses a small real-eval thought-only QD proxy. It is not the final
-acceptance matrix. It is the affordable inner loop for ranking prompt bundles.
+Optimization uses a real-eval thought-only QD proxy. It is not the final
+acceptance matrix, but it must be large enough that the zero-valid-PPA hard
+gate measures prompt quality rather than an under-budgeted search.
 
 Proxy mode:
 
@@ -219,14 +220,46 @@ qd_operator_kind: single_thought_operator
 representation_kind: thought_only
 code_samples_per_thought: 4
 repair_kind: none
-population_size: 8
-num_generations: 2
+population_size: 20
+num_generations: 5
 total_worker_slots: 8
 max_active_problems: 4
 max_workers_per_problem: 4
 seed: 42
 max_tokens: 128000
 ```
+
+The runner exposes these as CLI knobs:
+
+```bash
+--proxy-population-size 20
+--proxy-num-generations 5
+--proxy-total-worker-slots 8
+--proxy-max-active-problems 4
+--proxy-max-workers-per-problem 4
+```
+
+The default budget intentionally matches the hard-subset evolutionary budget.
+A 2026-06-07 baseline budget sweep on the four default proxy problems showed
+that cheaper budgets were not reliable enough for the strict zero-valid-PPA
+candidate gate:
+
+| Budget | Candidate budget | Status | Valid PPA | Designs with PPA | Failure |
+|:---|---:|:---|---:|---:|:---|
+| `population_size=8`, `num_generations=2` | 24 | failed | not used as default | fewer than 4 | `Prob116_m2014_q3` had zero valid PPA in the prior GEPA run |
+| `population_size=16`, `num_generations=4` | 80 | failed | 34 | 3 | `Prob153_gshare` had zero valid PPA |
+| `population_size=20`, `num_generations=5` | 120 | ok | 58 | 4 | none |
+
+The passing sweep root was:
+
+```text
+exp/gepa_budget_sweep/20260607_095900_gepa_budget_sweep
+```
+
+This budget is expensive for GEPA inner-loop use, but the smaller tested
+budgets converted stochastic under-search into candidate score zero. If a
+future campaign needs faster iteration, reduce the proxy problem set explicitly
+or run a new budget sweep and record the evidence before changing the default.
 
 Default proxy problems live in:
 

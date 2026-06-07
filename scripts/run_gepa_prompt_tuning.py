@@ -67,6 +67,11 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--optimizer-max-tokens", type=int, default=32000)
     parser.add_argument("--max-metric-calls", type=int, default=3)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--proxy-population-size", type=int, default=20)
+    parser.add_argument("--proxy-num-generations", type=int, default=5)
+    parser.add_argument("--proxy-total-worker-slots", type=int, default=8)
+    parser.add_argument("--proxy-max-active-problems", type=int, default=4)
+    parser.add_argument("--proxy-max-workers-per-problem", type=int, default=4)
     parser.add_argument(
         "--proxy-problem-file",
         type=Path,
@@ -132,6 +137,11 @@ def _configure_dspy_reflection_lm(
 
 def _campaign_config(args: argparse.Namespace) -> PromptTuningConfig:
     settings = ProxySettings(
+        population_size=args.proxy_population_size,
+        num_generations=args.proxy_num_generations,
+        total_worker_slots=args.proxy_total_worker_slots,
+        max_active_problems=args.proxy_max_active_problems,
+        max_workers_per_problem=args.proxy_max_workers_per_problem,
         seed=args.seed,
         vllm_host=args.vllm_host,
         vllm_port=args.vllm_port,
@@ -241,6 +251,16 @@ def run_campaign(args: argparse.Namespace) -> dict[str, Any]:
 
     if args.max_metric_calls < 1:
         raise ValueError("--max-metric-calls must be >= 1")
+    if args.proxy_population_size < 1:
+        raise ValueError("--proxy-population-size must be >= 1")
+    if args.proxy_num_generations < 0:
+        raise ValueError("--proxy-num-generations must be >= 0")
+    if args.proxy_total_worker_slots < 1:
+        raise ValueError("--proxy-total-worker-slots must be >= 1")
+    if args.proxy_max_active_problems < 1:
+        raise ValueError("--proxy-max-active-problems must be >= 1")
+    if args.proxy_max_workers_per_problem < 1:
+        raise ValueError("--proxy-max-workers-per-problem must be >= 1")
     load_env_file()
     if not os.environ.get("OPENAI_API_KEY"):
         raise RuntimeError("OPENAI_API_KEY is not set after loading /workspace/.env")
