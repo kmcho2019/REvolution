@@ -109,6 +109,9 @@ class ProblemMetrics:
     valid_ppa_sample_count: int
     average_score: float | None
     average_ppa_improvement: float | None
+    area_improvement: float | None
+    power_improvement: float | None
+    clock_improvement: float | None
     qd_coverage: float | None
     occupied_cells: int | None
     qd_score: float | None
@@ -559,11 +562,22 @@ def _best_detail_metrics(details: Sequence[Mapping[str, Any]]) -> dict[str, Any]
 def _mean_ppa_improvement(best_metrics: Mapping[str, Any], ref_metrics: Mapping[str, Any]) -> float | None:
     gains: list[float] = []
     for key in ("area", "power", "eff_clk_period"):
-        best = _safe_float(best_metrics.get(key))
-        ref = _safe_float(ref_metrics.get(key))
-        if best is not None and ref is not None and ref != 0.0:
-            gains.append((ref - best) / ref)
+        gain = _metric_improvement(best_metrics, ref_metrics, key)
+        if gain is not None:
+            gains.append(gain)
     return statistics.fmean(gains) if gains else None
+
+
+def _metric_improvement(
+    best_metrics: Mapping[str, Any],
+    ref_metrics: Mapping[str, Any],
+    key: str,
+) -> float | None:
+    best = _safe_float(best_metrics.get(key))
+    ref = _safe_float(ref_metrics.get(key))
+    if best is None or ref is None or ref == 0.0:
+        return None
+    return (ref - best) / ref
 
 
 def _average_score(summary: Mapping[str, Any], details: Sequence[Mapping[str, Any]]) -> float | None:
@@ -655,6 +669,9 @@ def load_problem_metrics(
         valid_ppa_sample_count=len(details),
         average_score=_average_score(summary, details),
         average_ppa_improvement=_mean_ppa_improvement(best_metrics, ref_metrics),
+        area_improvement=_metric_improvement(best_metrics, ref_metrics, "area"),
+        power_improvement=_metric_improvement(best_metrics, ref_metrics, "power"),
+        clock_improvement=_metric_improvement(best_metrics, ref_metrics, "eff_clk_period"),
         qd_coverage=qd_coverage,
         occupied_cells=occupied_cells,
         qd_score=qd_score,
@@ -673,6 +690,9 @@ def aggregate_metrics(rows: Sequence[ProblemMetrics]) -> dict[str, float | int |
         for row in rows
         if row.average_ppa_improvement is not None
     ]
+    area_values = [row.area_improvement for row in rows if row.area_improvement is not None]
+    power_values = [row.power_improvement for row in rows if row.power_improvement is not None]
+    clock_values = [row.clock_improvement for row in rows if row.clock_improvement is not None]
     coverage_values = [row.qd_coverage for row in rows if row.qd_coverage is not None]
     occupied_values = [row.occupied_cells for row in rows if row.occupied_cells is not None]
     qd_score_values = [row.qd_score for row in rows if row.qd_score is not None]
@@ -690,6 +710,9 @@ def aggregate_metrics(rows: Sequence[ProblemMetrics]) -> dict[str, float | int |
         "designs_with_valid_ppa": sum(1 for row in rows if row.valid_ppa_sample_count > 0),
         "average_score": statistics.fmean(score_values) if score_values else None,
         "average_ppa_improvement": statistics.fmean(ppa_values) if ppa_values else None,
+        "area_improvement": statistics.fmean(area_values) if area_values else None,
+        "power_improvement": statistics.fmean(power_values) if power_values else None,
+        "clock_improvement": statistics.fmean(clock_values) if clock_values else None,
         "qd_coverage": statistics.fmean(coverage_values) if coverage_values else None,
         "occupied_cells": statistics.fmean(occupied_values) if occupied_values else None,
         "qd_score": statistics.fmean(qd_score_values) if qd_score_values else None,
@@ -751,6 +774,27 @@ def _candidate_scalar_score(aggregates: Mapping[str, float | int | None]) -> flo
         + 0.05 * coverage
         + 0.05 * qd_score
     )
+
+
+def candidate_objective_scores(score: CandidateScore) -> dict[str, float]:
+    """Return higher-is-better objective scores for GEPA Pareto tracking."""
+
+    aggregates = score.aggregates
+    problem_count = max(float(aggregates.get("problem_count") or 1.0), 1.0)
+    designs_with_ppa = float(aggregates.get("designs_with_valid_ppa") or 0.0)
+    valid_ppa = float(aggregates.get("valid_ppa_sample_count") or 0.0)
+    return {
+        "all_problems_have_valid_ppa": 1.0 if score.status == "ok" else 0.0,
+        "designs_with_valid_ppa": designs_with_ppa / problem_count,
+        "functionality_pass_rate": float(aggregates.get("functionality_pass_rate") or 0.0),
+        "synthesis_pass_rate": float(aggregates.get("synthesis_pass_rate") or 0.0),
+        "valid_ppa_sample_count": min(valid_ppa / 58.0, 1.0),
+        "area_improvement": max(float(aggregates.get("area_improvement") or 0.0), 0.0),
+        "power_improvement": max(float(aggregates.get("power_improvement") or 0.0), 0.0),
+        "clock_improvement": max(float(aggregates.get("clock_improvement") or 0.0), 0.0),
+        "average_score": max(float(aggregates.get("average_score") or 0.0), 0.0),
+        "qd_coverage": max(float(aggregates.get("qd_coverage") or 0.0), 0.0),
+    }
 
 
 def validate_optimized_against_baselines(

@@ -292,6 +292,19 @@ receive a nonzero score. This gate is intentionally strict: a prompt that
 improves one problem while collapsing another is not useful for hard-subset
 acceptance.
 
+GEPA also receives a multi-objective `scores` side-info dictionary for Pareto
+tracking. These scores are all higher-is-better and prioritize:
+
+1. every proxy problem having at least one valid PPA sample;
+2. functionality and synthesis pass rates;
+3. valid PPA sample count;
+4. separate area, power, and effective-clock-period improvements;
+5. aggregate score/PPA and QD health metrics.
+
+The scalar score remains the final ranking value. The side-info scores give
+GEPA more structure during reflection and candidate selection without allowing
+a candidate that loses all valid PPA on one problem to pass the hard gate.
+
 ## Candidate Scoring
 
 Candidate score is deterministic and derived only from written artifacts.

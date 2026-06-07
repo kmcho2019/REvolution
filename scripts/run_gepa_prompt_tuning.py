@@ -31,6 +31,7 @@ from revolution.prompt_tuning import (  # noqa: E402
     PromptTuningConfig,
     ProxySettings,
     as_jsonable,
+    candidate_objective_scores,
     changed_prompt_sections,
     default_prompt_tuning_config,
     export_prompt_bundle,
@@ -361,14 +362,17 @@ def run_campaign(args: argparse.Namespace) -> dict[str, Any]:
             row["errors"] = score.errors
             row["warnings"] = score.warnings
             score_payload = as_jsonable(score)
+            objective_scores = candidate_objective_scores(score)
         except Exception as exc:
             row["errors"] = [str(exc)]
             score_payload = {"status": "failed", "errors": row["errors"]}
+            objective_scores = {"all_problems_have_valid_ppa": 0.0}
         candidate_rows.append(row)
         _write_candidate_report(candidate_dir, row, score_payload)
         return float(row["score"]), {
             "candidate_id": candidate_id,
             "status": row["status"],
+            "scores": objective_scores,
             "errors": row["errors"],
             "warnings": row["warnings"],
             "run_root": row["run_root"],
