@@ -106,7 +106,7 @@ def _dependency_versions() -> dict[str, str]:
 
 def _configure_dspy_reflection_lm(
     args: argparse.Namespace,
-) -> Callable[[ReflectionPrompt], str]:
+) -> tuple[dspy.LM, Callable[[ReflectionPrompt], str]]:
     """Configure DSPy and return the GEPA reflection callable."""
 
     api_key = os.environ["OPENAI_API_KEY"]
@@ -133,7 +133,60 @@ def _configure_dspy_reflection_lm(
         assert isinstance(first, str)
         return first
 
-    return reflect
+    return lm, reflect
+
+
+def _openai_usage_summary(lm: dspy.LM) -> dict[str, Any]:
+    """Summarize DSPy/LiteLLM usage without writing prompt text to disk."""
+
+    def jsonable_usage(value: Any) -> Any:
+        if value is None or isinstance(value, str | int | float | bool):
+            return value
+        if isinstance(value, dict):
+            return {str(key): jsonable_usage(item) for key, item in value.items()}
+        if isinstance(value, list | tuple):
+            return [jsonable_usage(item) for item in value]
+        model_dump = getattr(value, "model_dump", None)
+        if callable(model_dump):
+            return jsonable_usage(model_dump())
+        to_dict = getattr(value, "to_dict", None)
+        if callable(to_dict):
+            return jsonable_usage(to_dict())
+        return str(value)
+
+    entries: list[dict[str, Any]] = []
+    totals: dict[str, int] = {}
+    total_cost = 0.0
+    known_cost_count = 0
+    for entry in lm.history:
+        usage = entry.get("usage", {})
+        assert isinstance(usage, dict)
+        usage_payload = jsonable_usage(usage)
+        assert isinstance(usage_payload, dict)
+        cost = entry.get("cost")
+        if isinstance(cost, int | float):
+            total_cost += float(cost)
+            known_cost_count += 1
+        for key, value in usage.items():
+            if isinstance(value, int):
+                totals[key] = totals.get(key, 0) + value
+        entries.append(
+            {
+                "timestamp": entry.get("timestamp"),
+                "uuid": entry.get("uuid"),
+                "model": entry.get("model"),
+                "response_model": entry.get("response_model"),
+                "usage": usage_payload,
+                "cost": cost,
+            }
+        )
+    return {
+        "call_count": len(entries),
+        "known_cost_count": known_cost_count,
+        "total_known_cost_usd": total_cost,
+        "usage_totals": totals,
+        "entries": entries,
+    }
 
 
 def _campaign_config(args: argparse.Namespace) -> PromptTuningConfig:
@@ -266,7 +319,7 @@ def run_campaign(args: argparse.Namespace) -> dict[str, Any]:
     if not os.environ.get("OPENAI_API_KEY"):
         raise RuntimeError("OPENAI_API_KEY is not set after loading /workspace/.env")
     versions = _dependency_versions()
-    reflection_lm = _configure_dspy_reflection_lm(args)
+    lm, reflection_lm = _configure_dspy_reflection_lm(args)
     tuning_config = _campaign_config(args)
 
     # Campaign artifacts are append-only and timestamped so failed candidates
@@ -415,6 +468,9 @@ def run_campaign(args: argparse.Namespace) -> dict[str, Any]:
         "profile_path": str(args.prompt_root.resolve() / args.optimized_profile),
         "score": selected_row["score"],
     }
+    openai_usage = _openai_usage_summary(lm)
+    usage_path = campaign_root / "openai_usage.json"
+    write_json(usage_path, openai_usage)
     payload = {
         "campaign_root": str(campaign_root),
         "baseline_profile": args.baseline_profile,
@@ -432,6 +488,13 @@ def run_campaign(args: argparse.Namespace) -> dict[str, Any]:
         "selected_candidate": selected,
         "candidates": candidate_rows,
         "gepa_result": result.to_dict(),
+        "openai_usage_path": str(usage_path),
+        "openai_usage_summary": {
+            "call_count": openai_usage["call_count"],
+            "known_cost_count": openai_usage["known_cost_count"],
+            "total_known_cost_usd": openai_usage["total_known_cost_usd"],
+            "usage_totals": openai_usage["usage_totals"],
+        },
     }
     write_json(campaign_root / "campaign.json", payload)
     (campaign_root / "campaign.md").write_text(

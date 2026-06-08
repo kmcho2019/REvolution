@@ -951,6 +951,7 @@ def as_jsonable(value: Any) -> Any:
 def render_campaign_markdown(payload: Mapping[str, Any]) -> str:
     candidates = list(payload.get("candidates", []))
     selected = payload.get("selected_candidate", {})
+    usage = payload.get("openai_usage_summary", {})
     lines = [
         "# GEPA Prompt Tuning Report",
         "",
@@ -961,6 +962,8 @@ def render_campaign_markdown(payload: Mapping[str, Any]) -> str:
         f"- Optimizer temperature: `{payload.get('optimizer_temperature', '')}`",
         f"- Optimizer max tokens: `{payload.get('optimizer_max_tokens', '')}`",
         f"- Selected hash: `{selected.get('bundle_hash', '') if isinstance(selected, dict) else ''}`",
+        f"- OpenAI calls: `{usage.get('call_count', 'N/A') if isinstance(usage, dict) else 'N/A'}`",
+        f"- OpenAI known cost USD: `{usage.get('total_known_cost_usd', 'N/A') if isinstance(usage, dict) else 'N/A'}`",
         "",
         "## Candidate Ranking",
         "",
