@@ -7,6 +7,7 @@ import pytest
 
 from revolution.prompt_tuning import (
     JOURNAL_THOUGHT_ONLY_KEYS,
+    _candidate_scalar_score,
     export_prompt_bundle,
     format_prompt_bundle,
     load_prompt_tuning_problems,
@@ -187,6 +188,35 @@ def test_scorer_rejects_zero_valid_ppa_problem(tmp_path):
     assert score.status == "failed"
     assert score.scalar_score == 0.0
     assert any("zero valid PPA" in error for error in score.errors)
+
+
+def test_candidate_scalar_score_prioritizes_ppa_after_validity_gate():
+    high_validity = {
+        "functionality_pass_rate": 1.0,
+        "synthesis_pass_rate": 1.0,
+        "valid_ppa_sample_count": 32,
+        "average_score": 0.05,
+        "average_ppa_improvement": 0.05,
+        "area_improvement": 0.05,
+        "power_improvement": 0.05,
+        "clock_improvement": 0.0,
+        "qd_coverage": 0.0,
+        "qd_score": 0.0,
+    }
+    better_ppa = {
+        "functionality_pass_rate": 0.6,
+        "synthesis_pass_rate": 0.6,
+        "valid_ppa_sample_count": 4,
+        "average_score": 0.25,
+        "average_ppa_improvement": 0.35,
+        "area_improvement": 0.20,
+        "power_improvement": 0.50,
+        "clock_improvement": 0.0,
+        "qd_coverage": 0.0,
+        "qd_score": 0.0,
+    }
+
+    assert _candidate_scalar_score(better_ppa) > _candidate_scalar_score(high_validity)
 
 
 def test_validator_enforces_no_regression_and_improvement(tmp_path):

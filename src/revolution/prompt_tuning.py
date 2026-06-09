@@ -759,21 +759,24 @@ def score_run_root(
 
 
 def _candidate_scalar_score(aggregates: Mapping[str, float | int | None]) -> float:
+    def positive(key: str) -> float:
+        return max(float(aggregates.get(key) or 0.0), 0.0)
+
     functionality = float(aggregates.get("functionality_pass_rate") or 0.0)
     synthesis = float(aggregates.get("synthesis_pass_rate") or 0.0)
     valid_ppa = min(float(aggregates.get("valid_ppa_sample_count") or 0.0) / 32.0, 1.0)
-    average_score = max(float(aggregates.get("average_score") or 0.0), 0.0)
-    ppa = max(float(aggregates.get("average_ppa_improvement") or 0.0), 0.0)
-    coverage = max(float(aggregates.get("qd_coverage") or 0.0), 0.0)
-    qd_score = min(max(float(aggregates.get("qd_score") or 0.0) / 10.0, 0.0), 1.0)
+    qd_score = min(positive("qd_score") / 10.0, 1.0)
     return (
-        0.20 * functionality
-        + 0.20 * synthesis
-        + 0.20 * valid_ppa
-        + 0.15 * average_score
-        + 0.15 * ppa
-        + 0.05 * coverage
-        + 0.05 * qd_score
+        0.30 * positive("average_ppa_improvement")
+        + 0.20 * positive("average_score")
+        + 0.15 * positive("power_improvement")
+        + 0.15 * positive("area_improvement")
+        + 0.05 * positive("clock_improvement")
+        + 0.05 * synthesis
+        + 0.04 * functionality
+        + 0.03 * valid_ppa
+        + 0.02 * positive("qd_coverage")
+        + 0.01 * qd_score
     )
 
 

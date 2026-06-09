@@ -406,10 +406,10 @@ GEPA also receives a multi-objective `scores` side-info dictionary for Pareto
 tracking. These scores are all higher-is-better and prioritize:
 
 1. every proxy problem having at least one valid PPA sample;
-2. functionality and synthesis pass rates;
-3. valid PPA sample count;
-4. separate area, power, and effective-clock-period improvements;
-5. aggregate score/PPA and QD health metrics.
+2. aggregate PPA improvement and average score;
+3. separate area, power, and effective-clock-period improvements;
+4. functionality, synthesis, and valid-PPA count as tie-breakers;
+5. QD health metrics when the short proxy budget produces meaningful archive data.
 
 The scalar score remains the final ranking value. The side-info scores give
 GEPA more structure during reflection and candidate selection without allowing
@@ -441,18 +441,26 @@ Hard failures:
 
 Aggregate metrics:
 
+- average PPA improvement from reference area/power/timing;
+- average score;
+- average area, power, and clock improvement;
 - functionality pass rate;
 - synthesis/PPA pass rate;
 - valid PPA sample count;
 - number of designs with at least one valid PPA sample;
-- average score;
-- average PPA improvement from reference area/power/timing;
 - QD coverage;
 - occupied cells;
 - QD score.
 
-The scalar score is only for ranking candidates inside a campaign. It is not the
-final publication claim. The final claim comes from the full hard-subset
+The scalar ranking is PPA-first after the hard eligibility gate. A candidate
+with at least one valid PPA sample on every proxy problem should beat a more
+valid-looking candidate when it has materially better PPA and score metrics.
+Functionality, synthesis, and valid-PPA count remain useful diagnostics and
+tie-breakers, but they should not dominate prompt selection once the candidate
+is viable.
+
+The scalar score is only for ranking candidates inside a campaign. It is not
+the final publication claim. The final claim comes from the full hard-subset
 validation gate below.
 
 ## Report Requirements
@@ -566,8 +574,9 @@ The proxy run then evaluates the four configured problems. If
 `RTLLM/Prob045_alu` has zero valid PPA samples, the candidate score is zero
 even if the other three problems improved. If all four problems have valid PPA
 samples, the runner computes aggregate functionality, synthesis, valid-PPA,
-score, PPA-improvement, and archive-health metrics and returns that scalar score
-plus diagnostic side information to GEPA.
+score, PPA-improvement, and archive-health metrics, ranks viable candidates
+primarily by PPA/score improvement, and returns that scalar score plus
+diagnostic side information to GEPA.
 
 After the campaign, the selected bundle is materialized as
 `data/prompts/journal_thought_only_gepa`. The final hard-subset validation then
