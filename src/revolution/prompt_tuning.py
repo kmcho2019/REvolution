@@ -77,6 +77,7 @@ class ProxySettings:
     total_worker_slots: int = 8
     max_active_problems: int = 4
     max_workers_per_problem: int = 4
+    qd_grid_quantile_warmup_successes: int = 20
     seed: int = 42
     max_tokens: int = 128000
     vllm_host: str = "host.docker.internal"
@@ -409,7 +410,7 @@ def run_proxy_evaluation(
         "--qd_num_cells",
         "16",
         "--qd_grid_quantile_warmup_successes",
-        "20",
+        str(settings.qd_grid_quantile_warmup_successes),
         "--qd_fill_target_fraction",
         "0.25",
         "--qd_cell_reservoir",

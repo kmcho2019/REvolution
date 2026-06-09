@@ -1,0 +1,30 @@
+description: >-
+  Quick GEPA inner-loop proxy for thought-only prompt tuning. This list is
+  intentionally small so GEPA can run more prompt proposals per wall-clock
+  hour before final validation returns to the full hard-subset matrix.
+recommended_settings:
+  population_size: 8
+  num_generations: 1
+  total_worker_slots: 8
+  max_active_problems: 2
+  max_workers_per_problem: 4
+  qd_grid_quantile_warmup_successes: 8
+evidence:
+  probe_root: exp/gepa_proxy_probe/20260608_120541_gepa_quick_proxy_probe_2p_8x1
+  runtime_seconds: 247.54
+  status: ok
+  valid_ppa_sample_count: 8
+  designs_with_valid_ppa: 2
+  functionality_pass_rate: 1.0
+  synthesis_pass_rate: 1.0
+problems:
+  - benchmark: RTLLM
+    problem: Prob015_multi_pipe_8bit
+    reason: >-
+      Medium sequential design with prior reliable valid-PPA generation and
+      a meaningful area/power/timing target.
+  - benchmark: RTLLM
+    problem: Prob041_traffic_light
+    reason: >-
+      Smaller sequential/control design that completed quickly while still
+      producing valid PPA and a measurable PPA improvement signal.

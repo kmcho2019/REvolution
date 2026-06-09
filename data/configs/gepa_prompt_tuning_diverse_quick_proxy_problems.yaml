@@ -1,0 +1,33 @@
+description: >-
+  More diverse GEPA inner-loop proxy for thought-only prompt tuning. This keeps
+  the one-generation quick budget but covers control, sequential datapath,
+  combinational/datapath, and VerilogEval specification styles before final
+  hard-subset validation.
+recommended_settings:
+  population_size: 8
+  num_generations: 1
+  total_worker_slots: 16
+  max_active_problems: 4
+  max_workers_per_problem: 4
+  qd_grid_quantile_warmup_successes: 8
+problems:
+  - benchmark: RTLLM
+    problem: Prob015_multi_pipe_8bit
+    reason: >-
+      Medium sequential pipeline design with prior reliable valid-PPA
+      generation and area/power/timing signal.
+  - benchmark: RTLLM
+    problem: Prob041_traffic_light
+    reason: >-
+      Smaller control/FSM design that makes prompt changes pay attention to
+      reset, protocol, and stable outputs.
+  - benchmark: RTLLM
+    problem: Prob045_alu
+    reason: >-
+      Datapath-heavy ALU design with reliable valid-PPA generation and a
+      different area/power tradeoff surface from the control examples.
+  - benchmark: VerilogEval-Spec-to-RTL
+    problem: Prob116_m2014_q3
+    reason: >-
+      VerilogEval specification-style problem included to keep the proxy from
+      overfitting to RTLLM phrasing and interfaces.

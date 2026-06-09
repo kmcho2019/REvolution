@@ -1,0 +1,41 @@
+description: >-
+  Fast but more diverse RTLLM-only GEPA proxy for thought-only prompt tuning.
+  This is the recommended inner-loop proxy when the two-design quick proxy is
+  too narrow but VerilogEval problems are still too unreliable at an 8 x 1
+  budget.
+recommended_settings:
+  population_size: 8
+  num_generations: 1
+  total_worker_slots: 12
+  max_active_problems: 3
+  max_workers_per_problem: 4
+  qd_grid_quantile_warmup_successes: 8
+evidence:
+  source_probe_root: exp/gepa_prompt_tuning/20260608_162459_gepa_diverse_quick_proxy_probe/20260608_162508
+  accepted_probe_root: exp/gepa_prompt_tuning/20260608_163625_gepa_rtllm_diverse_proxy_probe/20260608_163635
+  runtime_seconds: 452.98
+  status: ok
+  scalar_score: 0.43958074172876116
+  valid_ppa_sample_count: 10
+  designs_with_valid_ppa: 3
+  functionality_pass_rate: 0.8333333333333334
+  synthesis_pass_rate: 0.8333333333333334
+  average_ppa_improvement: 0.21803928813100804
+  note: >-
+    The mixed RTLLM/VerilogEval 4-design probe failed only because
+    VerilogEval-Spec-to-RTL/Prob116_m2014_q3 produced zero valid PPA samples.
+    The three RTLLM problems below produced valid PPA in that same probe.
+problems:
+  - benchmark: RTLLM
+    problem: Prob015_multi_pipe_8bit
+    reason: >-
+      Medium sequential pipeline design with area, power, and timing signal.
+  - benchmark: RTLLM
+    problem: Prob041_traffic_light
+    reason: >-
+      Control/FSM design with reset, protocol, and stable-output pressure.
+  - benchmark: RTLLM
+    problem: Prob045_alu
+    reason: >-
+      Datapath-heavy ALU design with a different PPA tradeoff surface from the
+      sequential and control examples.

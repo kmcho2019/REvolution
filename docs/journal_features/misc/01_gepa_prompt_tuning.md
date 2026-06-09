@@ -237,6 +237,7 @@ The runner exposes these as CLI knobs:
 --proxy-total-worker-slots 8
 --proxy-max-active-problems 4
 --proxy-max-workers-per-problem 4
+--proxy-qd-grid-quantile-warmup-successes 20
 ```
 
 The default budget intentionally matches the hard-subset evolutionary budget.
@@ -260,6 +261,115 @@ This budget is expensive for GEPA inner-loop use, but the smaller tested
 budgets converted stochastic under-search into candidate score zero. If a
 future campaign needs faster iteration, reduce the proxy problem set explicitly
 or run a new budget sweep and record the evidence before changing the default.
+
+### Quick Inner-Loop Proxy
+
+GEPA needs many prompt proposals to move beyond one-off prompt perturbations.
+The default four-problem, `20 x 5` proxy is validation-grade, but it is too
+slow for exploratory GEPA iteration. For faster optimizer development, use the
+explicit quick proxy config:
+
+```text
+data/configs/gepa_prompt_tuning_quick_proxy_problems.yaml
+```
+
+Recommended runner settings:
+
+```bash
+--proxy-problem-file data/configs/gepa_prompt_tuning_quick_proxy_problems.yaml
+--proxy-population-size 8
+--proxy-num-generations 1
+--proxy-total-worker-slots 8
+--proxy-max-active-problems 2
+--proxy-max-workers-per-problem 4
+--proxy-qd-grid-quantile-warmup-successes 8
+```
+
+The selected problems are:
+
+```text
+RTLLM/Prob015_multi_pipe_8bit
+RTLLM/Prob041_traffic_light
+```
+
+This pair was chosen after probing smaller real-eval budgets on 2026-06-08:
+
+| Probe | Problems | Status | Evidence |
+|:---|:---|:---|:---|
+| `12 x 3` | `Prob015`, `Prob045`, `Prob041`, `Prob116` | stopped | too slow for GEPA inner-loop use |
+| `12 x 3` | `Prob015`, `Prob045` | stopped | still too slow for quick iteration |
+| `8 x 1` | `Prob015`, `Prob041` | accepted | finished in `247.54s`, status `ok`, `8` valid PPA samples, `2` designs with valid PPA, functionality pass rate `1.0`, synthesis pass rate `1.0` |
+
+Probe root:
+
+```text
+exp/gepa_proxy_probe/20260608_120541_gepa_quick_proxy_probe_2p_8x1
+```
+
+`Prob015_multi_pipe_8bit` is a medium sequential design with reliable prior
+valid-PPA generation and a meaningful area/power/timing target.
+`Prob041_traffic_light` is a smaller control design that completed quickly
+while still producing valid PPA and a clear PPA-improvement signal.
+
+This quick proxy is not final acceptance. It is an optimizer inner loop for
+more GEPA iterations per wall-clock hour. The observed quick probe had useful
+valid-PPA, functionality, synthesis, score, area, power, and timing signals,
+but QD coverage and occupied-cell metrics were not informative in the one
+generation budget. Final acceptance still requires the full hard-subset matrix
+and the strict validation gates below.
+
+### Diverse RTLLM Quick Proxy
+
+When the two-design proxy is too narrow for PPA-oriented prompt tuning, use the
+RTLLM-diverse quick proxy:
+
+```text
+data/configs/gepa_prompt_tuning_rtllm_diverse_quick_proxy_problems.yaml
+```
+
+Recommended runner settings:
+
+```bash
+--proxy-problem-file data/configs/gepa_prompt_tuning_rtllm_diverse_quick_proxy_problems.yaml
+--proxy-population-size 8
+--proxy-num-generations 1
+--proxy-total-worker-slots 12
+--proxy-max-active-problems 3
+--proxy-max-workers-per-problem 4
+--proxy-qd-grid-quantile-warmup-successes 8
+```
+
+The selected problems are:
+
+```text
+RTLLM/Prob015_multi_pipe_8bit
+RTLLM/Prob041_traffic_light
+RTLLM/Prob045_alu
+```
+
+This proxy covers sequential pipeline behavior, control/FSM behavior, and a
+datapath-heavy ALU. A mixed four-design probe also tried
+`VerilogEval-Spec-to-RTL/Prob116_m2014_q3`, but that design produced zero
+valid PPA samples at the `8 x 1` budget and therefore failed the hard scorer
+gate. VerilogEval coverage should be retained for higher-budget validation, not
+for this fast inner loop.
+
+Accepted probe evidence from 2026-06-08:
+
+| Proxy | Runtime | Status | Valid PPA | Designs with PPA | Func | Synth | Avg PPA |
+|:---|---:|:---|---:|---:|---:|---:|---:|
+| RTLLM-diverse `8 x 1` | `452.98s` | `ok` | `10` | `3` | `0.8333` | `0.8333` | `0.2180` |
+
+Accepted probe root:
+
+```text
+exp/gepa_prompt_tuning/20260608_163625_gepa_rtllm_diverse_proxy_probe/20260608_163635
+```
+
+This is slower than the two-design quick proxy but gives GEPA a more diverse
+PPA and correctness signal. Use it for prompt searches intended to improve PPA,
+then validate the selected prompt on the full hard subset against classic and
+the unoptimized thought-only baseline.
 
 Default proxy problems live in:
 

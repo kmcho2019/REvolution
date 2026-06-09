@@ -959,8 +959,12 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
   DSPy reflection LM, gives GEPA one strict concat bundle to optimize, and
   scores each materialized candidate from real RTL/QD artifacts. The default
   proxy problem list is `data/configs/gepa_prompt_tuning_proxy_problems.yaml`
-  and can be replaced with `--proxy-problem-file`; final acceptance should be
-  checked with
+  and can be replaced with `--proxy-problem-file`. Use
+  `data/configs/gepa_prompt_tuning_quick_proxy_problems.yaml` plus
+  `--proxy-population-size 8 --proxy-num-generations 1
+  --proxy-max-active-problems 2
+  --proxy-qd-grid-quantile-warmup-successes 8` for faster GEPA inner-loop
+  iteration; final acceptance should be checked with
   `scripts/validate_gepa_prompt_tuning_run.py`.
 - `scripts/report_gepa_prompt_tuning.py` and
   `scripts/validate_gepa_prompt_tuning_run.py`: report regeneration and strict
