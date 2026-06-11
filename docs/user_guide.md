@@ -920,6 +920,32 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 - `scripts/report_final_analysis_bundle.py`: generate the formal `final_analysis/` directory for a finished hard-subset run root.
 - `scripts/report_qd_problem_histograms.py`: emit per-problem CVT successful-candidate histograms, projected centroid/division overlays, and cumulative history views into `qd_feature_histograms/` under each problem directory.
 - `data/configs/qd_descriptor_profiles_hard_iteration_large.yaml`: dedicated large-profile follow-up descriptor config for the hard-subset workflow, using the frozen `hard_iteration_large_struct10d` profile and coarse grid bins.
+- `scripts/build_cvdp_debug_subset.py`: build the locked CVDP debug subset
+  (`data/configs/cvdp_debug_subset.yaml`): deterministic seeded selection of
+  medium-difficulty tasks balanced across challenge categories, with dataset
+  sha256 provenance embedded for drift detection.
+- `scripts/build_realbench_manifest.py`: generate the RealBench module
+  manifest tree under `data/bench/RealBench/` (gitignored; regenerate on
+  demand) from the upstream dataset at `exp/RealBench`. Prompts must be
+  decrypted first (`make -C exp/RealBench decrypt`). `--validate` runs every
+  task's golden reference through the strict iverilog harness and records
+  `harness_validated` plus a failure reason per manifest entry; locked
+  subsets only draw from validated tasks. e203 tasks compile with the
+  upstream `DISABLE_SV_ASSERTION` define, and e203-style
+  `Total mismatched samples is N out of M` summaries are parsed alongside
+  the VerilogEval-style `Mismatches:` protocol.
+- `scripts/build_realbench_debug_subset.py`: build the locked RealBench debug
+  subset (`data/configs/realbench_debug_subset.yaml`): seeded family-balanced
+  selection over harness-validated module tasks with deterministic top-up
+  when a family pool is small, embedding the manifest sha256.
+- Benchmark capability metadata: every `ProblemSpec` now carries a
+  `BenchmarkCapabilities` snapshot
+  (`src/revolution/runtime/benchmark_capabilities.py`) declaring functional /
+  synthesis / post-synthesis / reference-PPA support, `ppa_mode`
+  (`reference_normalized`, `absolute_only`, or `none`), harness kind, aux
+  files, timeout, and license tag. CVDP reference-normalized PPA requests are
+  suppressed with an explicit note; run summaries embed the snapshot under
+  `backend_details.problem_spec.benchmark_capabilities`.
 - `scripts/validate_grid_quantile_run.py`: audit a `grid_quantile_journal_bd`
   run against static-boundary, warmup, cell-assignment, and visualization
   invariants. Add `--acceptance-hard-subset` for the Phase 02 full hard-subset

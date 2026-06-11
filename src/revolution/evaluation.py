@@ -141,6 +141,8 @@ class VerilogEvaluator:
         output_directory: str | None = None,
         simulation_timeout_seconds: int | None = None,
         enable_vcd_probe: bool = False,
+        include_dirs: list[str] | None = None,
+        defines: list[str] | None = None,
     ) -> dict[str, Any]:
         """
         Compiles and simulates the given Verilog files.
@@ -167,6 +169,14 @@ class VerilogEvaluator:
 
         :param simulation_timeout_seconds: Timeout for simulation execution in seconds. Defaults to 60.
         :type simulation_timeout_seconds: int
+
+        :param include_dirs: Optional directories added as ``-I`` include search
+            paths (benchmarks whose sources use \\`include directives).
+        :type include_dirs: list[str] | None
+
+        :param defines: Optional preprocessor macros added as ``-D`` flags
+            (for example RealBench's upstream ``DISABLE_SV_ASSERTION`` guard).
+        :type defines: list[str] | None
 
         :return: Dictionary containing the following keys:
 
@@ -288,6 +298,10 @@ class VerilogEvaluator:
         # --- 2. Compile Verilog files ---
         compile_cmd_list = [self.iverilog_executable]
         compile_cmd_list.extend(self.base_iverilog_flags)
+        for include_dir in include_dirs or []:
+            compile_cmd_list.extend(["-I", include_dir])
+        for define in defines or []:
+            compile_cmd_list.append(f"-D{define}")
         compile_cmd_list.extend(["-s", top_module_name])  # Specify top module
         compile_cmd_list.extend(["-o", compiled_vvp_file])
         compile_cmd_list.extend(dut_files)  # Add the generated Verilog file(s)

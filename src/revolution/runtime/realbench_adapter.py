@@ -159,12 +159,28 @@ def build_realbench_problem_spec(
             "refine": "diff",
             "crossover": "whole",
         },
-        metadata={
-            "subset": str(realbench_record.get("subset", "module")),
-            "supports_formal": str(supports_formal).lower(),
-        },
+        metadata=_build_realbench_metadata(realbench_record, supports_formal),
         capabilities=capabilities,
     )
+
+
+def _build_realbench_metadata(
+    realbench_record: dict[str, Any],
+    supports_formal: bool,
+) -> dict[str, str]:
+    metadata = {
+        "subset": str(realbench_record.get("subset", "module")),
+        "supports_formal": str(supports_formal).lower(),
+    }
+    family = _optional_str(realbench_record.get("family"))
+    if family:
+        metadata["family"] = family
+    raw_defines = realbench_record.get("compile_defines", [])
+    if isinstance(raw_defines, list):
+        defines = ",".join(str(item).strip() for item in raw_defines if str(item).strip())
+        if defines:
+            metadata["compile_defines"] = defines
+    return metadata
 
 
 def load_realbench_reference_ppa_metrics(

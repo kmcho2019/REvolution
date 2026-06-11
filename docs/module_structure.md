@@ -81,7 +81,8 @@
     tooltips, and linked hover debug hooks.
 - `backends/funsearch_backend.py`: FunSearch-style RTL backend (islands, signature clusters, reset/reseed, budgeted loop).
 - `runtime/problem_context.py`: benchmark/problem path and metadata resolution.
-- `runtime/problem_spec.py`: benchmark capability layer and default descriptor / generation-mode preferences.
+- `runtime/benchmark_capabilities.py`: declarative per-suite/per-problem benchmark capability model (`BenchmarkCapabilities`, `resolve_benchmark_capabilities`) with family defaults, `ppa_mode` derivation, and CVDP reference-normalized-PPA suppression.
+- `runtime/problem_spec.py`: benchmark capability layer and default descriptor / generation-mode preferences; specs embed the resolved `BenchmarkCapabilities` snapshot.
 - `runtime/parallelism.py`: shared parallelism config resolution, Manager-backed elastic slot coordination, and per-problem worker leasing helpers used by both runners and backends.
 - `runtime/structural_evaluator.py`: structural descriptor extraction helpers for Yosys-like stats payloads.
 - `runtime/candidate_evaluator.py`: backend-agnostic format/syntax/functionality/synthesis/PPA evaluation orchestration with `strict_ablation` and `search_accelerated` modes.

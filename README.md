@@ -781,6 +781,9 @@ Use `scripts/gen0_report_generator.py --experiment_path exp/<run>/<model>` to au
 - `scripts/generate_compiled_table.py` and friends: batch aggregations across experiments.
 - `scripts/plot_problem_pareto.py`: recreate the PPA scatter plots for selected problems.
 - `scripts/prompt_file_manager.py`: manage concatenated prompt bundles for `PromptStore`.
+- `scripts/build_cvdp_debug_subset.py`: build the locked, category-balanced CVDP debug-subset manifest (`data/configs/cvdp_debug_subset.yaml`) with dataset sha256 provenance.
+- `scripts/build_realbench_manifest.py`: generate the RealBench module-manifest tree under `data/bench/RealBench/` from an upstream checkout (`exp/RealBench`), including per-task golden harness validation via `--validate`.
+- `scripts/build_realbench_debug_subset.py`: build the locked, family-balanced RealBench debug-subset manifest (`data/configs/realbench_debug_subset.yaml`) from harness-validated tasks.
 
 ## Testing and Validation
 

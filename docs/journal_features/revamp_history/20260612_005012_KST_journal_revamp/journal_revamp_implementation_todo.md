@@ -18,10 +18,10 @@
 - [x] Build locked 10-task CVDP debug subset.
 - [x] Implement CVDP functional harness integration (pre-existing CVDPEvaluator validated end-to-end via bounded stub-DUT smoke).
 - [ ] Add CVDP absolute-only PPA path only if synthesis is reliable.
-- [ ] Implement RealBench manifest generation from `exp/RealBench`.
-- [ ] Build locked 12-task RealBench debug subset.
-- [ ] Implement RealBench functional harness integration.
-- [ ] Add RealBench synthesis/PPA support only when deterministic.
+- [x] Implement RealBench manifest generation from `exp/RealBench`.
+- [x] Build locked 12-task RealBench debug subset.
+- [x] Implement RealBench functional harness integration (strict iverilog path; 38/60 golden-validated tasks; per-task validation and failure reasons recorded in the manifest).
+- [ ] Add RealBench synthesis/PPA support only when deterministic (manifest currently marks only dependency-free, support-free tasks `supports_synthesis: true`; synthesis flow itself not yet validated on them).
 - [ ] Add benchmark-family aware summary reporting.
 - [ ] Add `scripts/validate_journal_revamp_run.py`.
 - [ ] Add seed manifest and rerun ledger outputs.

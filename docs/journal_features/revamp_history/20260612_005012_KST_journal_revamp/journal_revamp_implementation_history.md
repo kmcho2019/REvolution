@@ -132,3 +132,55 @@ Remaining CVDP item: absolute-only PPA path is intentionally deferred until
 synthesis reliability on CVDP DUTs is demonstrated; the capability model
 already exposes the `enable_synthesis` opt-in and clamps reference-normalized
 claims.
+
+## 2026-06-12 03:30 KST
+
+RealBench integration milestone (workstream A):
+
+- Dataset facts (exp/RealBench, MIT license, IPRC-DIP): 60 module tasks
+  (aes=6, sdc=14, e203_hbirdv2=40) plus 4 system tasks (not integrated).
+  Prompts ship gpg-encrypted; `make -C exp/RealBench decrypt` (passphrase in
+  the upstream Makefile) produces the `.md` specs. Each task's
+  `verification/` dir is self-contained: `{module}_testbench.sv` (top module
+  name varies per task), `{module}_stimulus_gen.sv`, `{module}_ref.sv`
+  (golden renamed `ref_<module>`), bundled dependency/defines `.v` sources,
+  and a verilator-5-targeted Makefile. Installed verilator is 4.038 (no
+  `--binary`/`--timing`), so the official flow cannot run here; the
+  integration uses the framework's strict iverilog path instead.
+- Added `scripts/build_realbench_manifest.py`: deterministic manifest-tree
+  generator (prompt text mirrors upstream `generate_problem.py` family
+  defines notes; `test.sv` = testbench + stimulus + ref concatenation;
+  `golden.v` kept out of the compile set to avoid module-name collision with
+  candidates; `support/*.v` copied per task; per-entry size signals for the
+  future long-model probe; tree-level manifest sha256). `--validate` runs
+  every golden through the harness and records `harness_validated` /
+  `harness_failure_reason` per entry.
+- Evaluator extensions: `VerilogEvaluator.evaluate` gained `include_dirs`
+  (`-I`) and `defines` (`-D`); `CandidateEvaluator` resolves
+  `problem_spec.aux_files` into extra compile units + include dirs and
+  `metadata.compile_defines` into `-D` flags; mismatch parsing extracted to
+  `parse_mismatch_count` with a fallback for the VerilogEval-v1-style
+  `Total mismatched samples is N out of M` summary that e203 testbenches
+  emit (RTLLM/VerilogEval behavior unchanged: primary `Mismatches:` protocol
+  takes precedence).
+- e203 dialect fix: support sources guard SV assertions behind upstream's
+  `DISABLE_SV_ASSERTION`; manifest entries for the family carry
+  `compile_defines: [DISABLE_SV_ASSERTION]`. This plus the protocol fallback
+  moved golden validation from 7/60 to 38/60 tasks
+  (aes=3, sdc=4, e203=31). The 22 excluded tasks have recorded reasons:
+  iverilog cannot parse some sdc/aes harness constructs (const array init,
+  malformed-statement SV, procedural drives of implicit wires), and 7 tasks
+  run but their goldens mismatch (assertion/X-check-dependent behavior,
+  including sdc_controller). Exclusions stay in the manifest as
+  `harness_validated: false` so coverage claims remain honest.
+- Locked debug subset `data/configs/realbench_debug_subset.yaml`
+  (12 tasks, seed 42): aes 3 (all validated aes), sdc 4, e203 5 via
+  deterministic depth-by-depth top-up; embeds the manifest sha256.
+- Repo decision: `data/bench/RealBench/` is generated and gitignored
+  (~12 MB, rebuildable deterministically); the generator, locked subset, and
+  docs are tracked.
+- Docs updated: README utilities, user_guide section 4, module_structure,
+  GUIDELINES.md (CLAUDE/AGENTS symlink target) Where-To-Look and commands.
+- Validation: full pytest 644 passed / 4 skipped; ruff + pyright clean on
+  touched files; golden determinism spot-checked (two identical replays per
+  sampled task) and the full sweep is itself a deterministic replay artifact.

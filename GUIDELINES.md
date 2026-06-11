@@ -32,6 +32,13 @@
   [src/revolution/runtime/candidate_evaluator.py](src/revolution/runtime/candidate_evaluator.py),
   [src/revolution/runtime/problem_context.py](src/revolution/runtime/problem_context.py),
   [src/revolution/runtime/problem_spec.py](src/revolution/runtime/problem_spec.py)
+- Benchmark capability model and journal benchmark integration:
+  [src/revolution/runtime/benchmark_capabilities.py](src/revolution/runtime/benchmark_capabilities.py),
+  [src/revolution/runtime/cvdp_evaluator.py](src/revolution/runtime/cvdp_evaluator.py),
+  [src/revolution/runtime/realbench_adapter.py](src/revolution/runtime/realbench_adapter.py),
+  [scripts/build_cvdp_debug_subset.py](scripts/build_cvdp_debug_subset.py),
+  [scripts/build_realbench_manifest.py](scripts/build_realbench_manifest.py),
+  [scripts/build_realbench_debug_subset.py](scripts/build_realbench_debug_subset.py)
 - Descriptor extraction:
   [src/revolution/runtime/structural_evaluator.py](src/revolution/runtime/structural_evaluator.py),
   [src/revolution/rtl_descriptor_evaluator.py](src/revolution/rtl_descriptor_evaluator.py),
@@ -96,6 +103,9 @@
 - `bash scripts/run_hard_iteration_one_shot_vllm.sh --dry-run`: inspect the resumable hard-subset vanilla baseline batches without running them.
 - `python scripts/build_hard_iteration_subset.py --one-shot-root exp/hard_iteration_one_shot_rerun_<date> --output-config data/configs/hard_iteration_subset.yaml`: freeze the hard iteration subset from a valid post-fix one-shot rerun.
 - `bash scripts/run_hard_iteration_qd_vllm.sh --dry-run`: inspect the classic + QD hard-subset matrix commands before running them live.
+- `python scripts/build_cvdp_debug_subset.py`: regenerate the locked CVDP debug-subset manifest (`data/configs/cvdp_debug_subset.yaml`).
+- `python scripts/build_realbench_manifest.py --validate`: generate the RealBench manifest tree under `data/bench/RealBench/` (gitignored) from `exp/RealBench` with per-task golden harness validation; decrypt prompts first via `make -C exp/RealBench decrypt`.
+- `python scripts/build_realbench_debug_subset.py`: regenerate the locked RealBench debug-subset manifest (`data/configs/realbench_debug_subset.yaml`) from harness-validated tasks.
 - `python scripts/report_qd_feature_space.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd/<run_tag>/classic --backend_run cvt_struct=exp/hard_iteration_qd/<run_tag>/cvt_struct --output-dir exp/hard_iteration_qd/<run_tag>/feature_analysis`: generate the deep post-run QD feature-space report, candidate table, and recommended profile artifacts.
 - `python scripts/report_design_space_analysis.py --help`: inspect the standalone retrospective design-space analysis CLI, including `--backend_run name=path`, feature selection precedence, and aggregate PPA options.
 - `python scripts/report_design_space_analysis.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd/<run_tag>/classic --backend_run cvt_struct=exp/hard_iteration_qd/<run_tag>/cvt_struct --output-dir exp/hard_iteration_qd/<run_tag>/design_space_analysis`: generate per-problem generation-local vs accumulated PPA plots, all-backend plus classic-vs-QD pairwise feature-space plots, quick-reference markdown indices, and `successful_candidates.csv`.
