@@ -27,7 +27,7 @@
 - [ ] Add seed manifest and rerun ledger outputs.
 - [ ] Add paired-delta and bootstrap statistical report outputs.
 - [x] Add non-echoing DeepSeek `DEEPSEEK_API_KEY` preflight documentation.
-- [ ] Build locked `realbench_long_model_probe` with at least 8 long RealBench tasks.
+- [x] Build locked `realbench_long_model_probe` with at least 8 long RealBench tasks (`data/configs/realbench_long_model_probe.yaml`: 8 largest harness-validated tasks by prompt+harness+support bytes, all e203).
 - [ ] Run local vLLM and DeepSeek on the RealBench model-capability probe.
 - [ ] Freeze whether RealBench final claims use local vLLM or a symmetric DeepSeek arm.
 - [ ] Audit `run_backend.py` elastic scheduling options for journal runs.

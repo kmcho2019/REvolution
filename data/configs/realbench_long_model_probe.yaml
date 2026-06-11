@@ -1,0 +1,46 @@
+version: 1
+subset_name: realbench_long_model_probe_v1
+selection:
+  realbench_root: data/bench/RealBench
+  manifest_sha256: d59a8ac0df6eaf8dcc738776cd9c44771b9beda5fa3c50aabce48028aa02ecb9
+  require_harness_validated: true
+  probe_size: 8
+  rule: rank harness-validated module tasks by descending (prompt_bytes + test_sv_bytes
+    + support_bytes), tie-break by problem_name, take first probe_size
+  subset_size: 8
+tasks:
+- problem_name: e203_core
+  family: e203_hbirdv2
+  size_rank_bytes: 868843
+- problem_name: e203_exu
+  family: e203_hbirdv2
+  size_rank_bytes: 556198
+- problem_name: e203_exu_alu
+  family: e203_hbirdv2
+  size_rank_bytes: 330969
+- problem_name: e203_biu
+  family: e203_hbirdv2
+  size_rank_bytes: 300970
+- problem_name: e203_lsu
+  family: e203_hbirdv2
+  size_rank_bytes: 292757
+- problem_name: e203_lsu_ctrl
+  family: e203_hbirdv2
+  size_rank_bytes: 286473
+- problem_name: e203_ifu
+  family: e203_hbirdv2
+  size_rank_bytes: 273692
+- problem_name: e203_ifu_ifetch
+  family: e203_hbirdv2
+  size_rank_bytes: 228887
+benchmarks:
+  RealBench:
+    problems:
+    - e203_biu
+    - e203_core
+    - e203_exu
+    - e203_exu_alu
+    - e203_ifu
+    - e203_ifu_ifetch
+    - e203_lsu
+    - e203_lsu_ctrl
