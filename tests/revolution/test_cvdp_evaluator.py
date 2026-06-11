@@ -53,6 +53,15 @@ def test_cvdp_record_lookup_and_selection(tmp_path):
     assert ids == ["cvdp_b"]
 
 
+def test_select_cvdp_ids_all_sentinel_selects_every_record(tmp_path):
+    dataset = tmp_path / "cvdp.jsonl"
+    _write_dataset(dataset)
+
+    assert select_cvdp_ids(dataset, ["all"], None) == ["cvdp_a", "cvdp_b"]
+    assert select_cvdp_ids(dataset, [], None) == ["cvdp_a", "cvdp_b"]
+    assert select_cvdp_ids(dataset, ["ALL"], ["cvdp_b"]) == ["cvdp_b"]
+
+
 def test_build_cvdp_problem_context(tmp_path):
     dataset = tmp_path / "cvdp.jsonl"
     _write_dataset(dataset)

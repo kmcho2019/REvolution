@@ -828,7 +828,11 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         "--cvdp_categories",
         nargs="+",
         default=["cid002", "cid003"],
-        help="CVDP category filter used when benchmark includes cvdp.",
+        help=(
+            "CVDP category filter used when benchmark includes cvdp. "
+            "Entries match challenge ids (cid002) or difficulty labels "
+            "(medium); pass 'all' to select every dataset record."
+        ),
     )
     parser.add_argument(
         "--cvdp_simulation_timeout_s",

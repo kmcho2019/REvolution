@@ -44,12 +44,19 @@ def select_cvdp_ids(
     allowed_categories: list[str],
     selected_ids: list[str] | None = None,
 ) -> list[str]:
-    """Select CVDP IDs filtered by categories and optional explicit id list."""
+    """Select CVDP IDs filtered by categories and optional explicit id list.
+
+    ``allowed_categories`` entries match any label in a record's ``categories``
+    list (challenge ids such as ``cid002`` or difficulty labels such as
+    ``medium``). An empty list or the sentinel ``"all"`` selects every record
+    in the dataset, still respecting ``selected_ids`` when provided.
+    """
     path = Path(jsonl_path)
     if not path.is_file():
         return []
 
     allowed = {category.lower() for category in allowed_categories}
+    select_all = not allowed or "all" in allowed
     selected_set = set(selected_ids) if selected_ids else None
     ids: list[str] = []
     with path.open("r", encoding="utf-8") as handle:
@@ -67,7 +74,7 @@ def select_cvdp_ids(
             if selected_set is not None and record_id not in selected_set:
                 continue
             categories = [str(c).lower() for c in payload.get("categories", [])]
-            if any(category in allowed for category in categories):
+            if select_all or any(category in allowed for category in categories):
                 ids.append(record_id)
     return ids
 

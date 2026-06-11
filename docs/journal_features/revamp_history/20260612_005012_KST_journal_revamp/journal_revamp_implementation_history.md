@@ -97,3 +97,38 @@ touched files, `pyright` clean on the three touched runtime modules.
 Deferred: user-facing docs pass (README/user_guide/module_structure) for the
 capability model is intentionally batched with the CVDP/RealBench end-to-end
 integration milestone so benchmark docs land once, coherently.
+
+## 2026-06-12 02:00 KST
+
+CVDP integration milestone (workstream A):
+
+- Dataset profile (cvdp_v1.0.2 no-commercial): 302 records across cid002 (94),
+  cid003 (78), cid004 (55), cid007 (40), cid016 (35); 140 medium / 162 easy.
+- `select_cvdp_ids` now supports full-dataset discovery: an empty filter or
+  the `all` sentinel selects every record (difficulty labels such as `medium`
+  were already usable because they live in the same `categories` list).
+  `--cvdp_categories` help text documents this; default filter unchanged.
+- Added `scripts/build_cvdp_debug_subset.py`: deterministic, category-balanced
+  locked subset builder (per-category seeded shuffle over sorted eligible ids,
+  seed recorded; dataset sha256 provenance embedded). Generated the locked
+  debug manifest `data/configs/cvdp_debug_subset.yaml`:
+  10 medium tasks, 2 per challenge category, seed 42.
+- Bounded harness smoke (no LLM): ran `CVDPEvaluator` end-to-end on locked
+  task `cvdp_copilot_kogge_stone_adder_0007` with a stub DUT in this
+  container. Harness materialization, src/.env rewrite, pytest+cocotb run,
+  and classification all worked: status `failed_functionality` with
+  format/syntax stages true — a clean classified failure, not an
+  environment/dependency error. cocotb 2.0.0.dev0 and pytest 8.4.1 confirmed
+  in `.venv`; the evaluator bypasses the upstream docker-compose path by
+  running pytest directly.
+- DeepSeek preflight: `.env` loaded with non-echoing shell test;
+  `DEEPSEEK_API_KEY` confirmed present (length-only check, value never
+  printed). This satisfies the credential-preflight item of the debug gate.
+- Validation: ruff clean on touched files; pyright clean on touched modules;
+  focused pytest for cvdp evaluator + subset builder (9 passed) and
+  `tests/scripts/test_run_backend.py` (28 passed).
+
+Remaining CVDP item: absolute-only PPA path is intentionally deferred until
+synthesis reliability on CVDP DUTs is demonstrated; the capability model
+already exposes the `enable_synthesis` opt-in and clamps reference-normalized
+claims.

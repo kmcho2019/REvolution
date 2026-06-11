@@ -14,9 +14,9 @@
 - [x] Inspect `/workspace/baselines` before deciding whether FunSearch, CodeEvolve, or EoH comparisons need reruns.
 - [x] Audit benchmark metadata and define capability schema.
 - [x] Add tests for capability metadata and no-reference PPA suppression.
-- [ ] Implement CVDP task discovery for all records in `cvdp_v1.0.2`.
-- [ ] Build locked 10-task CVDP debug subset.
-- [ ] Implement CVDP functional harness integration.
+- [x] Implement CVDP task discovery for all records in `cvdp_v1.0.2`.
+- [x] Build locked 10-task CVDP debug subset.
+- [x] Implement CVDP functional harness integration (pre-existing CVDPEvaluator validated end-to-end via bounded stub-DUT smoke).
 - [ ] Add CVDP absolute-only PPA path only if synthesis is reliable.
 - [ ] Implement RealBench manifest generation from `exp/RealBench`.
 - [ ] Build locked 12-task RealBench debug subset.
@@ -26,7 +26,7 @@
 - [ ] Add `scripts/validate_journal_revamp_run.py`.
 - [ ] Add seed manifest and rerun ledger outputs.
 - [ ] Add paired-delta and bootstrap statistical report outputs.
-- [ ] Add non-echoing DeepSeek `DEEPSEEK_API_KEY` preflight documentation.
+- [x] Add non-echoing DeepSeek `DEEPSEEK_API_KEY` preflight documentation.
 - [ ] Build locked `realbench_long_model_probe` with at least 8 long RealBench tasks.
 - [ ] Run local vLLM and DeepSeek on the RealBench model-capability probe.
 - [ ] Freeze whether RealBench final claims use local vLLM or a symmetric DeepSeek arm.
