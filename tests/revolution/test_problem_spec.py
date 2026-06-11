@@ -105,6 +105,55 @@ def test_build_cvdp_problem_spec_keeps_functional_only_and_large_problem_modes(t
     assert spec.testbench_top_module == "tb"
 
 
+def test_build_problem_spec_attaches_consistent_capability_snapshot(tmp_path):
+    bench = tmp_path / "RTLLM"
+    bench.mkdir(parents=True, exist_ok=True)
+    (bench / "Prob001_ppa.txt").write_text(
+        "tns,wns,eff_clk_period,power,area\n0,0,0.55,1,1\n",
+        encoding="utf-8",
+    )
+    spec = build_problem_spec(_context(tmp_path, "RTLLM"), supports_reference_ppa=True)
+
+    assert spec.capabilities is not None
+    assert spec.capabilities.benchmark_family == "rtllm"
+    assert spec.capabilities.ppa_mode == "reference_normalized"
+    assert spec.capabilities.supports_synthesis == spec.supports_synthesis
+    assert spec.capabilities.supports_reference_ppa == spec.supports_reference_ppa
+    assert spec.capabilities.top_module == spec.top_module
+
+
+def test_build_cvdp_problem_spec_suppresses_reference_normalized_ppa(tmp_path):
+    spec = build_cvdp_problem_spec(
+        _context(tmp_path, "cvdp", "cid002_demo"),
+        cvdp_record={"categories": ["cid002"]},
+        supports_reference_ppa=True,
+    )
+
+    assert spec.quality_mode == "functional_only"
+    assert spec.supports_reference_ppa is False
+    assert spec.supports_synthesis is False
+    assert spec.capabilities is not None
+    assert spec.capabilities.ppa_mode == "none"
+    assert any(
+        "reference_normalized_ppa_suppressed" in note
+        for note in spec.capabilities.notes
+    )
+
+
+def test_build_cvdp_problem_spec_synthesis_opt_in_stays_absolute_only(tmp_path):
+    spec = build_cvdp_problem_spec(
+        _context(tmp_path, "cvdp", "cid002_demo"),
+        cvdp_record={"categories": ["cid002"]},
+        supports_reference_ppa=True,
+        enable_synthesis=True,
+    )
+
+    assert spec.supports_synthesis is True
+    assert spec.quality_mode == "functional_only"
+    assert spec.capabilities is not None
+    assert spec.capabilities.ppa_mode == "absolute_only"
+
+
 def test_load_problem_context_resolves_tb_module(tmp_path):
     bench = tmp_path / "RTLLM"
     bench.mkdir(parents=True, exist_ok=True)

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 __all__ = [
     "ArtifactWriter",
+    "BenchmarkCapabilities",
     "CandidateEvaluation",
     "CandidateEvaluator",
     "CandidateStatus",
@@ -30,6 +31,7 @@ __all__ = [
     "load_realbench_manifest",
     "load_realbench_record",
     "load_realbench_reference_ppa_metrics",
+    "resolve_benchmark_capabilities",
     "resolve_synthesis_top_module_name",
     "resolve_testbench_top_module",
     "resolve_top_module_name",
@@ -39,6 +41,14 @@ __all__ = [
 
 _EXPORT_MAP = {
     "ArtifactWriter": ("revolution.runtime.run_artifacts", "ArtifactWriter"),
+    "BenchmarkCapabilities": (
+        "revolution.runtime.benchmark_capabilities",
+        "BenchmarkCapabilities",
+    ),
+    "resolve_benchmark_capabilities": (
+        "revolution.runtime.benchmark_capabilities",
+        "resolve_benchmark_capabilities",
+    ),
     "CandidateEvaluation": (
         "revolution.runtime.candidate_evaluator",
         "CandidateEvaluation",
@@ -127,6 +137,10 @@ _EXPORT_MAP = {
 
 if TYPE_CHECKING:
     from revolution.rtl_descriptor_evaluator import RTLDescriptorEvaluator
+    from revolution.runtime.benchmark_capabilities import (
+        BenchmarkCapabilities,
+        resolve_benchmark_capabilities,
+    )
     from revolution.runtime.candidate_evaluator import (
         CandidateEvaluation,
         CandidateEvaluator,

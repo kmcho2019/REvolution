@@ -4,6 +4,10 @@ import json
 from pathlib import Path
 from typing import Any
 
+from revolution.runtime.benchmark_capabilities import (
+    derive_quality_mode,
+    resolve_benchmark_capabilities,
+)
 from revolution.runtime.problem_context import (
     ProblemContext,
     resolve_testbench_top_module_from_path,
@@ -116,10 +120,21 @@ def build_realbench_problem_spec(
     testbench_top_module = str(
         realbench_record.get("testbench_top_module") or context.testbench_top_module
     )
-    supports_synthesis = bool(realbench_record.get("supports_synthesis", True))
     supports_formal = bool(realbench_record.get("supports_formal", False))
     aux_files = tuple(str(item) for item in realbench_record.get("aux_files", []) or [])
-    quality_mode = "ppa" if supports_synthesis and supports_reference_ppa else "functional_only"
+    capabilities = resolve_benchmark_capabilities(
+        context.benchmark_name,
+        supports_reference_ppa=supports_reference_ppa,
+        supports_synthesis=bool(realbench_record.get("supports_synthesis", True)),
+        top_module=top_module,
+        aux_files=aux_files,
+        default_timeout_s=_optional_float(realbench_record.get("timeout_s")),
+        clock_metadata=_optional_str_mapping(realbench_record.get("clock_metadata")),
+        reset_metadata=_optional_str_mapping(realbench_record.get("reset_metadata")),
+        license_tag=_optional_str(realbench_record.get("license_tag")),
+    )
+    supports_synthesis = capabilities.supports_synthesis
+    quality_mode = derive_quality_mode(capabilities)
     descriptor_profile = "hybrid_phys_seq" if quality_mode == "ppa" else "rtl_core"
     return ProblemSpec(
         benchmark_name=context.benchmark_name,
@@ -148,6 +163,7 @@ def build_realbench_problem_spec(
             "subset": str(realbench_record.get("subset", "module")),
             "supports_formal": str(supports_formal).lower(),
         },
+        capabilities=capabilities,
     )
 
 
@@ -181,6 +197,27 @@ def load_realbench_reference_ppa_metrics(
         "power": power,
         "area": area,
     }
+
+
+def _optional_str(value: Any) -> str | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    return value.strip()
+
+
+def _optional_float(value: Any) -> float | None:
+    if isinstance(value, bool) or value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _optional_str_mapping(value: Any) -> dict[str, str] | None:
+    if not isinstance(value, dict) or not value:
+        return None
+    return {str(key): str(item) for key, item in value.items()}
 
 
 def _resolve_required_path(root: Path, record: dict[str, Any], key: str) -> Path:

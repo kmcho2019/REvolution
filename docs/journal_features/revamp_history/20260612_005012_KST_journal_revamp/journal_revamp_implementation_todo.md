@@ -10,10 +10,10 @@
 - [x] Add evolutionary-baseline archive references to revamp notes.
 - [x] Add coding and git practice guardrails to revamp scaffold.
 - [x] Add method-evolution rule allowing the seven pillars to change when evidence and narrative improve.
-- [ ] Read frozen conference intro/method/experiment/result files before manuscript edits.
-- [ ] Inspect `/workspace/baselines` before deciding whether FunSearch, CodeEvolve, or EoH comparisons need reruns.
-- [ ] Audit benchmark metadata and define capability schema.
-- [ ] Add tests for capability metadata and no-reference PPA suppression.
+- [x] Read frozen conference intro/method/experiment/result files before manuscript edits.
+- [x] Inspect `/workspace/baselines` before deciding whether FunSearch, CodeEvolve, or EoH comparisons need reruns.
+- [x] Audit benchmark metadata and define capability schema.
+- [x] Add tests for capability metadata and no-reference PPA suppression.
 - [ ] Implement CVDP task discovery for all records in `cvdp_v1.0.2`.
 - [ ] Build locked 10-task CVDP debug subset.
 - [ ] Implement CVDP functional harness integration.

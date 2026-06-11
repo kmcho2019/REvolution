@@ -73,3 +73,35 @@ def test_build_realbench_problem_context_and_spec(tmp_path):
     assert spec.default_descriptor_profile == "hybrid_phys_seq"
     assert spec.phase_generation_defaults["backfill"] == "diff"
     assert ppa["area"] == 120.0
+    assert spec.capabilities is not None
+    assert spec.capabilities.benchmark_family == "realbench"
+    assert spec.capabilities.ppa_mode == "reference_normalized"
+    assert spec.capabilities.workload_class == "large"
+    assert spec.capabilities.aux_files == ("module_a/spec.md",)
+    assert spec.capabilities.top_module == "rb_top"
+
+
+def test_build_realbench_problem_spec_without_synthesis_is_functional_only(tmp_path):
+    root, _ = _build_realbench_root(tmp_path)
+    loaded = load_realbench_record(root, "rb_mod_a")
+    assert loaded is not None
+    loaded = dict(loaded)
+    loaded["supports_synthesis"] = False
+
+    context = build_realbench_problem_context(
+        benchmark_name="RealBench",
+        problem_name="rb_mod_a",
+        realbench_root=root,
+        realbench_record=loaded,
+    )
+    spec = build_realbench_problem_spec(
+        context,
+        realbench_record=loaded,
+        supports_reference_ppa=True,
+    )
+
+    assert spec.supports_synthesis is False
+    assert spec.quality_mode == "functional_only"
+    assert spec.default_descriptor_profile == "rtl_core"
+    assert spec.capabilities is not None
+    assert spec.capabilities.ppa_mode == "none"

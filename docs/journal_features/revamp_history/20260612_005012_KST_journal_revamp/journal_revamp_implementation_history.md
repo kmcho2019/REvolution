@@ -52,3 +52,48 @@ Next implementation checkpoint:
 
 - Add links from the journal-feature index docs.
 - Start benchmark capability schema and scheduler telemetry design.
+
+## 2026-06-12 01:30 KST
+
+Read the frozen ASP-DAC sources (`main.tex`, intro, method, experiments,
+result table) before any methodology edits. Confirmed the original claims being
+extended: local-search motivation, Thought/Code/Feedback individuals, scalar
+weighted PPA fitness, dual-population loop, six prompt operators, UCB-softmax
+selection, VerilogEval/RTLLM evidence, and the 200-sample ablation.
+
+Inspected `/workspace/baselines` (FunSearch, CodeEvolve, EoH archives plus the
+hard-subset vanilla CSV). Decision: keep them as retrospective context for
+narrative and reviewer planning; any baseline that enters a final TCAD table
+must be rerun under the locked revamp manifests, seeds, model policy, token
+budgets, scheduler policy, and statistics. No rerun is scheduled until the
+final benchmark/seed manifests are frozen.
+
+Implemented the benchmark capability model (workstream A foundation):
+
+- Added `src/revolution/runtime/benchmark_capabilities.py`: per-problem
+  `BenchmarkCapabilities` snapshot (functional/synthesis/post-synth/reference
+  PPA support, `ppa_mode`, harness kind, workload class, top module,
+  clock/reset metadata, aux files, timeout, license tag, suppression notes)
+  resolved from suite-family defaults plus per-problem facts.
+- CVDP hard rule encoded: reference-normalized PPA requests are suppressed
+  with an explicit note (`reference_normalized_ppa_suppressed`); CVDP can only
+  be `absolute_only` (synthesis opt-in) or `none`.
+- `problem_spec.py` and `realbench_adapter.py` now derive
+  `supports_synthesis`, `supports_reference_ppa`, and `quality_mode` from the
+  capability snapshot instead of `benchmark_name.lower()` switches; behavior
+  for existing suites is unchanged and covered by tests.
+- `build_cvdp_problem_spec` gained an explicit `enable_synthesis` opt-in for
+  the future absolute-only CVDP PPA path.
+- Run summaries now embed `backend_details.problem_spec.benchmark_capabilities`
+  via `revolution_backend._annotate_summary` so reports can read what each
+  suite may legitimately claim.
+- Tests: new `tests/revolution/test_benchmark_capabilities.py` plus extended
+  `test_problem_spec.py` / `test_realbench_adapter.py` covering capability
+  metadata and no-reference PPA suppression.
+
+Validation: full `pytest` (631 passed, 4 skipped), `ruff check` clean on
+touched files, `pyright` clean on the three touched runtime modules.
+
+Deferred: user-facing docs pass (README/user_guide/module_structure) for the
+capability model is intentionally batched with the CVDP/RealBench end-to-end
+integration milestone so benchmark docs land once, coherently.

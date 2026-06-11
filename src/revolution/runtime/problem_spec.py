@@ -4,6 +4,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
+from revolution.runtime.benchmark_capabilities import (
+    BenchmarkCapabilities,
+    canonical_benchmark_family,
+    derive_quality_mode,
+    family_defaults,
+    family_infers_circuit_type,
+    resolve_benchmark_capabilities,
+)
 from revolution.runtime.problem_context import (
     ProblemContext,
     resolve_synthesis_top_module_name,
@@ -50,10 +58,11 @@ class ProblemSpec:
     default_descriptor_profile: str = "rtl_core"
     phase_generation_defaults: dict[str, str] = field(default_factory=dict)
     metadata: dict[str, str] = field(default_factory=dict)
+    capabilities: BenchmarkCapabilities | None = None
 
 
 def _default_phase_generation_defaults(benchmark_name: str) -> dict[str, str]:
-    if benchmark_name.lower() in {"cvdp", "realbench"}:
+    if family_defaults(benchmark_name).workload_class == "large":
         return dict(_LARGE_BENCH_PHASE_DEFAULTS)
     return dict(_SMALL_BENCH_PHASE_DEFAULTS)
 
@@ -63,11 +72,12 @@ def _default_descriptor_profile(
     circuit_type: CircuitType,
     quality_mode: QualityMode,
 ) -> str:
+    family = canonical_benchmark_family(benchmark_name)
     if quality_mode == "functional_only":
         return "rtl_core"
-    if benchmark_name.lower() == "cvdp":
+    if family == "cvdp":
         return "rtl_core"
-    if benchmark_name.lower() == "realbench":
+    if family == "realbench":
         return "hybrid_phys_seq"
     if circuit_type == "combinational":
         return "hybrid_comb_default"
@@ -109,31 +119,32 @@ def build_problem_spec(
     reference_sources = (
         (str(context.ref_sv_path),) if context.ref_sv_path is not None else ()
     )
-    inferred_circuit_type = infer_circuit_type_from_reference_ppa_path(
-        context.benchmark_path / f"{context.problem_name}_ppa.txt"
+    top_module = resolve_synthesis_top_module_name(context)
+    capabilities = resolve_benchmark_capabilities(
+        benchmark_name,
+        supports_reference_ppa=supports_reference_ppa,
+        top_module=top_module,
     )
-    if benchmark_name.lower() in {"rtllm", "verilogeval-spec-to-rtl"}:
-        circuit_type = inferred_circuit_type
-        quality_mode: QualityMode = "ppa" if supports_reference_ppa else "functional_only"
-    elif benchmark_name.lower() == "realbench":
-        circuit_type = "unknown"
-        quality_mode = "ppa" if supports_reference_ppa else "functional_only"
+    quality_mode = derive_quality_mode(capabilities)
+    if family_infers_circuit_type(benchmark_name):
+        circuit_type = infer_circuit_type_from_reference_ppa_path(
+            context.benchmark_path / f"{context.problem_name}_ppa.txt"
+        )
     else:
         circuit_type = "unknown"
-        quality_mode = "functional_only"
 
     return ProblemSpec(
         benchmark_name=benchmark_name,
         problem_name=context.problem_name,
         prompt_text=context.problem_description,
-        top_module=resolve_synthesis_top_module_name(context),
+        top_module=top_module,
         testbench_top_module=resolve_testbench_top_module(context),
         benchmark_root=context.benchmark_path,
         reference_sources=reference_sources,
         test_harness=str(context.test_sv_path),
-        supports_synthesis=benchmark_name.lower() != "cvdp",
+        supports_synthesis=capabilities.supports_synthesis,
         supports_formal=False,
-        supports_reference_ppa=supports_reference_ppa,
+        supports_reference_ppa=capabilities.supports_reference_ppa,
         quality_mode=quality_mode,
         circuit_type=circuit_type,
         default_descriptor_profile=_default_descriptor_profile(
@@ -142,6 +153,7 @@ def build_problem_spec(
             quality_mode,
         ),
         phase_generation_defaults=_default_phase_generation_defaults(benchmark_name),
+        capabilities=capabilities,
     )
 
 
@@ -150,15 +162,28 @@ def build_cvdp_problem_spec(
     *,
     cvdp_record: dict[str, object],
     supports_reference_ppa: bool = False,
+    enable_synthesis: bool = False,
 ) -> ProblemSpec:
-    """Build a normalized spec for CVDP JSONL records."""
+    """Build a normalized spec for CVDP JSONL records.
+
+    CVDP never uses reference-normalized PPA: a ``supports_reference_ppa``
+    request is suppressed by the capability model and recorded in
+    ``capabilities.notes``. ``enable_synthesis`` opts a record into the
+    absolute-only PPA path once synthesis is known to be reliable.
+    """
 
     raw_categories = cvdp_record.get("categories", [])
     if isinstance(raw_categories, list):
         categories = tuple(str(cat) for cat in raw_categories)
     else:
         categories = ()
-    quality_mode: QualityMode = "ppa" if supports_reference_ppa else "functional_only"
+    capabilities = resolve_benchmark_capabilities(
+        context.benchmark_name,
+        supports_reference_ppa=supports_reference_ppa,
+        supports_synthesis=True if enable_synthesis else None,
+        top_module="TopModule",
+    )
+    quality_mode = derive_quality_mode(capabilities)
     return ProblemSpec(
         benchmark_name=context.benchmark_name,
         problem_name=context.problem_name,
@@ -168,9 +193,9 @@ def build_cvdp_problem_spec(
         benchmark_root=context.benchmark_path,
         reference_sources=(),
         test_harness="pytest",
-        supports_synthesis=supports_reference_ppa,
+        supports_synthesis=capabilities.supports_synthesis,
         supports_formal=False,
-        supports_reference_ppa=supports_reference_ppa,
+        supports_reference_ppa=capabilities.supports_reference_ppa,
         quality_mode=quality_mode,
         circuit_type="unknown",
         default_descriptor_profile=_default_descriptor_profile(
@@ -182,4 +207,5 @@ def build_cvdp_problem_spec(
             context.benchmark_name
         ),
         metadata={"categories": ",".join(categories)},
+        capabilities=capabilities,
     )

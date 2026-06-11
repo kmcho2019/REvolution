@@ -201,14 +201,15 @@ class RevolutionBackend(EvolutionBackend):
         backend_details.setdefault("num_generations", self.config.num_generations)
         backend_details.setdefault("search_mode", self.config.search_mode)
         if self.context.problem_spec is not None:
-            backend_details.setdefault(
-                "problem_spec",
-                {
-                    "quality_mode": self.context.problem_spec.quality_mode,
-                    "circuit_type": self.context.problem_spec.circuit_type,
-                    "default_descriptor_profile": self.context.problem_spec.default_descriptor_profile,
-                },
-            )
+            problem_spec_details: dict[str, object] = {
+                "quality_mode": self.context.problem_spec.quality_mode,
+                "circuit_type": self.context.problem_spec.circuit_type,
+                "default_descriptor_profile": self.context.problem_spec.default_descriptor_profile,
+            }
+            capabilities = self.context.problem_spec.capabilities
+            if capabilities is not None:
+                problem_spec_details["benchmark_capabilities"] = capabilities.as_dict()
+            backend_details.setdefault("problem_spec", problem_spec_details)
         if self.config.search_mode == "revolution_qd":
             backend_details.setdefault(
                 "qd_config",
