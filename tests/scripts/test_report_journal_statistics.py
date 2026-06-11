@@ -86,7 +86,13 @@ def test_main_writes_paired_outputs(tmp_path, capsys):
     assert best["paired_count"] == 3
     assert best["missing_treatment_count"] == 1
     assert best["losses"] == 1  # missing treatment counted as loss
-    assert abs(best["mean_delta"] - 0.10) < 1e-9
+    # Gate-bearing mean is penalized: floor = worst observed value (0.10),
+    # so the missing unit contributes delta 0.0 -> (3 * 0.10 + 0.0) / 4.
+    assert best["imputed_loss_count"] == 1
+    assert best["ci_method"] == "cluster_bootstrap_penalized"
+    assert abs(best["mean_delta"] - 0.075) < 1e-9
+    assert abs(best["complete_case_mean_delta"] - 0.10) < 1e-9
+    assert "per_seed_mean_deltas" in payload
 
     with (output / "paired_deltas.csv").open() as handle:
         rows = list(csv.DictReader(handle))
@@ -121,12 +127,68 @@ def test_main_reference_gate_profile_evaluates_thresholds(tmp_path):
     payload = json.loads((output / "statistical_tests.json").read_text(encoding="utf-8"))
     gate_names = {gate["name"] for gate in payload["gates"]}
     assert "mean_paired_best_quality_delta" in gate_names
+    assert "hypervolume_log_ratio_mean" in gate_names
     best_gate = next(
         gate for gate in payload["gates"] if gate["name"] == "mean_paired_best_quality_delta"
     )
     assert best_gate["passed"] is True  # +0.10 >= +0.03
     win_gate = next(gate for gate in payload["gates"] if gate["name"] == "win_rate_non_tied")
     assert win_gate["passed"] is True
+    # Only 4 non-tied pairs: the predeclared sample-size floor must fail.
+    pair_gate = next(
+        gate
+        for gate in payload["gates"]
+        if gate["name"] == "win_rate_non_tied_pair_count"
+    )
+    assert pair_gate["passed"] is False
+    assert payload["gates_passed"] is False
+    assert payload["equivalence_gates"]
+    assert "hypervolume_log_ratio" in payload
+
+
+def test_multi_pair_emits_loso_and_epsilon_sensitivity(tmp_path):
+    baselines: list[Path] = []
+    treatments: list[Path] = []
+    for seed in ("1001", "1002", "1003"):
+        baseline = tmp_path / f"classic_{seed}"
+        treatment = tmp_path / f"qd_{seed}"
+        for idx in range(3):
+            _write_summary(
+                baseline, "RTLLM", f"Prob{idx:03d}", best_score=0.10, functionality=0.5
+            )
+            _write_summary(
+                treatment, "RTLLM", f"Prob{idx:03d}", best_score=0.18, functionality=0.8
+            )
+        baselines.append(baseline)
+        treatments.append(treatment)
+    output = tmp_path / "stats_multi"
+
+    code = report_journal_statistics.main(
+        [
+            "--pair",
+            f"1001={baselines[0]}={treatments[0]}",
+            "--pair",
+            f"1002={baselines[1]}={treatments[1]}",
+            "--pair",
+            f"1003={baselines[2]}={treatments[2]}",
+            "--output-dir",
+            str(output),
+            "--gate-profile",
+            "reference_ppa",
+        ]
+    )
+
+    assert code == 0
+    payload = json.loads((output / "statistical_tests.json").read_text(encoding="utf-8"))
+    loso = payload["leave_one_seed_out_penalized"]
+    assert set(loso) == {"1001", "1002", "1003"}
+    for seed_label in loso:
+        best = loso[seed_label]["best_quality"]
+        assert abs(best["mean_delta"] - 0.08) < 1e-9
+    epsilon = payload["hypervolume_log_ratio"]["epsilon_sensitivity"]
+    assert set(epsilon) == {"1e-06", "1e-12"}
+    for entry in epsilon.values():
+        assert "mean" in entry and "ci_low" in entry
 
 
 def test_main_fails_on_missing_root(tmp_path):

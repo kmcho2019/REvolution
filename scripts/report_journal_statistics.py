@@ -27,6 +27,7 @@ import argparse
 import csv
 import importlib.util
 import json
+import math
 import sys
 from pathlib import Path
 from typing import Any
@@ -39,7 +40,8 @@ from revolution.journal_stats import (  # noqa: E402
     GateCheck,
     PairedSample,
     PairedSummary,
-    bootstrap_mean_ci,
+    cluster_bootstrap_mean_ci,
+    evaluate_equivalence_gate,
     evaluate_functional_gates,
     evaluate_reference_ppa_gates,
     summarize_paired_metric,
@@ -114,17 +116,87 @@ def build_paired_samples(
     return samples
 
 
-def hypervolume_relative_stats(
+HYPERVOLUME_EPSILON = 1e-9
+
+
+def hypervolume_log_ratio_stats(
     samples: list[PairedSample], *, seed: int
-) -> tuple[float | None, float | None, float | None]:
-    relative_deltas = [
-        (sample.treatment - sample.baseline) / sample.baseline
+) -> dict[str, object]:
+    """Predeclared hypervolume gate statistic.
+
+    Per unit: log((HV_t + eps)/(HV_b + eps)) with eps=1e-9. Missing
+    treatment where the baseline exists is imputed HV_t = 0 (penalized);
+    units with zero baseline or zero treatment hypervolume are counted and
+    reported rather than silently dropped. CI is a cluster bootstrap over
+    problems.
+    """
+
+    log_ratios_by_cluster: dict[str, list[float]] = {}
+    baseline_zero = treatment_zero = imputed = 0
+    for sample in samples:
+        if sample.baseline is None:
+            continue
+        treatment = sample.treatment
+        if treatment is None:
+            treatment = 0.0
+            imputed += 1
+        if sample.baseline <= 0.0:
+            baseline_zero += 1
+        if treatment <= 0.0:
+            treatment_zero += 1
+        cluster = "/".join(sample.unit_id.split("/")[1:])
+        log_ratios_by_cluster.setdefault(cluster, []).append(
+            math.log((treatment + HYPERVOLUME_EPSILON) / (sample.baseline + HYPERVOLUME_EPSILON))
+        )
+    mean, ci_low, ci_high = cluster_bootstrap_mean_ci(
+        log_ratios_by_cluster, seed=seed
+    )
+    epsilon_sensitivity = {}
+    for eps in (1e-6, 1e-12):
+        alt_by_cluster: dict[str, list[float]] = {}
+        for sample in samples:
+            if sample.baseline is None:
+                continue
+            treatment = sample.treatment if sample.treatment is not None else 0.0
+            cluster = "/".join(sample.unit_id.split("/")[1:])
+            alt_by_cluster.setdefault(cluster, []).append(
+                math.log((treatment + eps) / (sample.baseline + eps))
+            )
+        alt_mean, alt_low, _ = cluster_bootstrap_mean_ci(alt_by_cluster, seed=seed)
+        epsilon_sensitivity[f"{eps:g}"] = {"mean": alt_mean, "ci_low": alt_low}
+    return {
+        "mean_log_ratio": mean,
+        "ci_low": ci_low,
+        "ci_high": ci_high,
+        "epsilon": HYPERVOLUME_EPSILON,
+        "epsilon_sensitivity": epsilon_sensitivity,
+        "baseline_zero_units": baseline_zero,
+        "treatment_zero_units": treatment_zero,
+        "imputed_missing_treatment_units": imputed,
+    }
+
+
+def resolve_metric_floor(
+    metric: str, samples: list[PairedSample]
+) -> float | None:
+    """Predeclared penalization floors for missing-treatment imputation.
+
+    Pass-indicator metrics floor at 0. Quality/PPA metrics floor at the
+    worst observed value across both arms (so imputation is at least as bad
+    as any real outcome). Hypervolume uses the log-ratio statistic instead.
+    """
+
+    if metric in ("functional_any_pass", "valid_ppa_any_pass"):
+        return 0.0
+    if metric == "hypervolume":
+        return None
+    observed = [
+        value
         for sample in samples
-        if sample.baseline is not None
-        and sample.treatment is not None
-        and sample.baseline > 0.0
+        for value in (sample.baseline, sample.treatment)
+        if value is not None
     ]
-    return bootstrap_mean_ci(relative_deltas, seed=seed)
+    return min(observed) if observed else None
 
 
 def write_paired_deltas_csv(
@@ -180,9 +252,10 @@ def write_markdown(
         "Deltas are treatment minus baseline on problem-seed units. "
         "`avg_ppa_improvement` and pass metrics use fraction scale.",
         "",
-        "| Metric | Units | Paired | Missing-T (loss) | Mean Δ | 95% CI | "
+        "| Metric | Units | Paired | Missing-T (loss) | Imputed | "
+        "Mean Δ (gate) | 95% cluster CI | Complete-case Δ | "
         "Win rate (non-tied) | Sign-test p |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for metric in METRICS:
         summary = summaries[metric]
@@ -198,8 +271,9 @@ def write_markdown(
         p_value = "n/a" if summary.sign_test_p is None else f"{summary.sign_test_p:.4f}"
         lines.append(
             f"| {metric} | {summary.unit_count} | {summary.paired_count} | "
-            f"{summary.missing_treatment_count} | {_format_float(summary.mean_delta)} | "
-            f"{ci} | {win} | {p_value} |"
+            f"{summary.missing_treatment_count} | {summary.imputed_loss_count} | "
+            f"{_format_float(summary.mean_delta)} | {ci} | "
+            f"{_format_float(summary.complete_case_mean_delta)} | {win} | {p_value} |"
         )
     if gates:
         lines.extend(
@@ -269,10 +343,47 @@ def main(argv: list[str] | None = None) -> int:
     )
     summaries = {
         metric: summarize_paired_metric(
-            metric, samples[metric], seed=args.bootstrap_seed
+            metric,
+            samples[metric],
+            seed=args.bootstrap_seed,
+            missing_treatment_floor=resolve_metric_floor(metric, samples[metric]),
         )
         for metric in METRICS
     }
+    # Per-seed complete-case mean deltas (descriptive) plus true
+    # leave-one-seed-out recomputation of the penalized gate statistic.
+    per_seed_means: dict[str, dict[str, float | None]] = {}
+    loso_gate_stats: dict[str, dict[str, dict[str, float | None]]] = {}
+    for seed_label, _, _ in args.pair:
+        per_seed_means[seed_label] = {}
+        loso_gate_stats[seed_label] = {}
+        for metric in METRICS:
+            deltas = [
+                sample.delta
+                for sample in samples[metric]
+                if sample.unit_id.startswith(f"{seed_label}/")
+                and sample.delta is not None
+            ]
+            per_seed_means[seed_label][metric] = (
+                sum(deltas) / len(deltas) if deltas else None
+            )
+            if len(args.pair) > 1:
+                held_out = [
+                    sample
+                    for sample in samples[metric]
+                    if not sample.unit_id.startswith(f"{seed_label}/")
+                ]
+                loso_summary = summarize_paired_metric(
+                    metric,
+                    held_out,
+                    seed=args.bootstrap_seed,
+                    missing_treatment_floor=resolve_metric_floor(metric, held_out),
+                )
+                loso_gate_stats[seed_label][metric] = {
+                    "mean_delta": loso_summary.mean_delta,
+                    "ci_low": loso_summary.bootstrap_ci_low,
+                    "ci_high": loso_summary.bootstrap_ci_high,
+                }
     # Benchmark-family breakdown: unit ids are "<seed>/<benchmark>/<problem>",
     # so families never blend (CVDP functional metrics stay separate from
     # reference-normalized suites).
@@ -295,8 +406,10 @@ def main(argv: list[str] | None = None) -> int:
         }
 
     gates: list[GateCheck] = []
+    hypervolume_stats: dict[str, object] = {}
+    equivalence_gates: list[GateCheck] = []
     if args.gate_profile == "reference_ppa":
-        hv_mean, hv_low, _ = hypervolume_relative_stats(
+        hypervolume_stats = hypervolume_log_ratio_stats(
             samples["hypervolume"], seed=args.bootstrap_seed
         )
         treatment_valid = sum(
@@ -309,14 +422,21 @@ def main(argv: list[str] | None = None) -> int:
             for sample in samples["valid_ppa_any_pass"]
             if (sample.baseline or 0.0) > 0.0
         )
+        hv_mean = hypervolume_stats["mean_log_ratio"]
+        hv_low = hypervolume_stats["ci_low"]
         gates = evaluate_reference_ppa_gates(
             best_quality=summaries["best_quality"],
             avg_ppa_improvement=summaries["avg_ppa_improvement"],
-            hypervolume_relative_improvement=hv_mean,
-            hypervolume_ci_low=hv_low,
+            hypervolume_log_ratio_mean=(
+                hv_mean if isinstance(hv_mean, float) else None
+            ),
+            hypervolume_log_ratio_ci_low=(
+                hv_low if isinstance(hv_low, float) else None
+            ),
             treatment_valid_ppa_any_pass=treatment_valid,
             baseline_valid_ppa_any_pass=baseline_valid,
         )
+        equivalence_gates = evaluate_equivalence_gate(summaries["best_quality"])
     elif args.gate_profile == "functional":
         functional = summaries["functional_any_pass"]
         delta_points = (
@@ -346,9 +466,18 @@ def main(argv: list[str] | None = None) -> int:
             }
             for benchmark, metrics in per_benchmark.items()
         },
+        "per_seed_mean_deltas": per_seed_means,
+        "leave_one_seed_out_penalized": loso_gate_stats,
+        "hypervolume_log_ratio": hypervolume_stats,
         "gate_profile": args.gate_profile,
         "gates": [check.as_dict() for check in gates],
         "gates_passed": all(check.passed for check in gates) if gates else None,
+        "equivalence_gates": [check.as_dict() for check in equivalence_gates],
+        "equivalence_passed": (
+            all(check.passed for check in equivalence_gates)
+            if equivalence_gates
+            else None
+        ),
     }
     (args.output_dir / "statistical_tests.json").write_text(
         json.dumps(payload, indent=2), encoding="utf-8"

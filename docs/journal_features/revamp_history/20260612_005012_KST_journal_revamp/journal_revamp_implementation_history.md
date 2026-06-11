@@ -269,3 +269,61 @@ Validation and statistics surfaces milestone (workstream E):
   all new modules; 14 new tests cover bootstrap determinism, sign-test
   exactness, missing-as-loss accounting, gate thresholds, synthetic run-tree
   joins, and validator failure modes.
+
+## 2026-06-12 08:30 KST
+
+Journal narrative + adversarial review milestone (workstream F), and the
+statistics revisions it forced:
+
+- Wrote `docs/journal_features/journal_narrative.md` and ran three full
+  adversarial review rounds with four personas (TCAD editor, skeptical
+  Reviewer 2, EDA methodology, reproducibility/statistics). Round-1: all
+  blocked (16 consolidated issues). Round-2: all round-1 issues resolved
+  except narrow consensus defects. Round-3: editor, EDA, and statistics
+  personas SIGNED OFF; Reviewer 2 blocked on one hypervolume
+  axis-composition clause, fixed in revision 3 (round-4 focused re-check
+  pending). Records: `narrative_review_round1.md`,
+  `narrative_review_round2_round3.md`.
+- The review forced real statistics upgrades (now implemented + tested):
+  cluster bootstrap (problems as clusters, seed replicates intact),
+  penalized gate statistics (missing-treatment floor imputation as the
+  gate-bearing analysis, complete-case beside), TOST-style equivalence for
+  Branch B (±0.03 CI containment + pair-count floor), HV log-ratio gate
+  statistic with epsilon sensitivity, win-rate gates with non-tied floor +
+  sign-test p, true leave-one-seed-out on the penalized statistic.
+- The narrative now predeclares: the PPA measurement model (floorplan-stage
+  proxies, piecewise eff-clk, reg2reg-only constraints, per-circuit-type
+  axis composition), final benchmark scales (20-problem held-out
+  reference set; 30 fresh CVDP; 26 fresh RealBench), an exhaustive
+  monotone branch-decision table, a component-attribution ablation matrix
+  with seeds and parity criterion, budget currency (candidate evaluations,
+  ±10% auxiliary skew rule), candidate-pool declarations (with the QD k−1
+  logging gap named as a pre-finals engine fix), oracle-overfitting
+  equivalence spot-checks, and the RealBench harness disclosure.
+
+## 2026-06-12 09:00 KST
+
+Fast-iteration validation set (user-requested, recorded as standing
+infrastructure):
+
+- Problem: hard-subset comparisons (13 problems, 20 pop x 5 gens) cost
+  ~1,560 candidate evaluations and hours of wall-clock per arm, and its
+  low-functionality problems rarely produce valid-PPA samples — the wrong
+  instrument for quick "did this variant help PPA?" checks.
+- Added `scripts/build_fast_iteration_subset.py` + locked
+  `data/configs/fast_iteration_subset.yaml` + guide
+  `docs/journal_features/09_fast_iteration_validation_set.md`.
+  Deterministic rule over the 202-problem one-shot pool (sha256
+  provenance): functionality >= 0.6, gates in [150, 3000], hard-subset
+  excluded, top gate-count per (benchmark x circuit-type) bucket, top-up
+  capped at 3 per benchmark. Result: 6 problems (PE/MAC, rule90,
+  mux256to1v, fixed-point adder, popcount255, multi_16bit) — 3/3 per
+  benchmark, 3 sequential / 3 combinational, all classic PPA-headroom
+  design spaces with 0.8-1.0 one-shot functionality.
+- Recommended budget embedded in the config: pop 10 x 3 gens, k=4, long
+  token budgets, elastic 12 slots — ~240 candidate evals per arm (~15% of
+  the hard-subset matrix) with high PPA-sample flow.
+- Honesty: tuning/dev artifact only; never publication evidence; the
+  future held-out final set must exclude these 6 problems plus the 13
+  hard-subset problems (now also recorded in the narrative's
+  contamination-control section).

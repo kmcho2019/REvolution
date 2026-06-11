@@ -47,14 +47,15 @@
 - [ ] Compare against at least one simpler descriptor profile.
 - [ ] Freeze the selected descriptor profile before final publication runs.
 - [ ] Write descriptor rationale in `docs/journal_features/journal_narrative.md`.
-- [ ] Create `docs/journal_features/journal_narrative.md`.
+- [x] Create `docs/journal_features/journal_narrative.md` (revision 3 after three adversarial rounds; claims contract with measurement model, predeclared scales, branch lattice, ablation matrix, statistical protocol).
+- [x] Build the fast-iteration validation subset for quick classic-vs-variant loops (`data/configs/fast_iteration_subset.yaml`, `scripts/build_fast_iteration_subset.py`, `docs/journal_features/09_fast_iteration_validation_set.md`): 6 high-functionality large-headroom problems, pop 10 × 3 gens ≈ 15% of hard-subset matrix cost; tuning artifact only, excluded from the future held-out set.
 - [ ] Record any proposed new method idea in implementation history before large experiments.
 - [ ] Accept new method ideas only if they improve or preserve gates and strengthen the narrative.
-- [ ] Run TCAD editor adversarial narrative review.
-- [ ] Run skeptical Reviewer 2 adversarial narrative review.
-- [ ] Run hardware/EDA methodology adversarial narrative review.
-- [ ] Run reproducibility/statistics adversarial narrative review.
-- [ ] Revise narrative or downgrade claims until all personas sign off.
+- [x] Run TCAD editor adversarial narrative review (BLOCK r1/r2 → SIGNOFF r3).
+- [x] Run skeptical Reviewer 2 adversarial narrative review (BLOCK r1/r2/r3 → SIGNOFF r4).
+- [x] Run hardware/EDA methodology adversarial narrative review (BLOCK r1/r2 → SIGNOFF r3).
+- [x] Run reproducibility/statistics adversarial narrative review (BLOCK r1/r2 → SIGNOFF r3).
+- [x] Revise narrative or downgrade claims until all personas sign off (narrative revision 3 accepted; 16 round-1 issues + consensus round-2/3 defects fixed in narrative and statistics code; records in `narrative_review_round1.md`, `narrative_review_round2_round3.md`).
 - [ ] Run seed-42 debug gate across hard subset, CVDP, and RealBench.
 - [ ] Freeze benchmark lists, seeds, prompts, configs, scheduler policy, and tool versions.
 - [ ] Run 5-seed final publication experiments.
