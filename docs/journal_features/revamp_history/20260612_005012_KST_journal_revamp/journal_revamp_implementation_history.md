@@ -231,3 +231,41 @@ Scheduler telemetry + throughput gate milestone (workstream B):
 - Validation: full pytest 653 passed / 4 skipped; ruff + pyright clean on
   touched modules. Live-run occupancy telemetry on a real vLLM run is
   deferred to the seed-42 debug gate, which will exercise the same writer.
+
+## 2026-06-12 06:00 KST
+
+Validation and statistics surfaces milestone (workstream E):
+
+- `src/revolution/journal_stats.py`: paired problem-seed statistics —
+  seeded percentile bootstrap CIs, exact two-sided sign test, win rate over
+  non-tied pairs, and the goal-spec rule that missing treatment data where
+  the baseline succeeded counts as a treatment loss. Gate evaluators encode
+  the predeclared thresholds for reference-PPA suites (+0.03 best quality,
+  +0.05 avg PPA, +5% hypervolume, CI low > 0, 60% win rate, valid-PPA count)
+  and functional suites (+5 points pass rate, CI low > 0).
+- `scripts/report_journal_statistics.py`: joins classic/QD run roots via the
+  same loader as `backend_comparison_report.py` (identical metric semantics),
+  pools problem-seed units across repeated `--pair <seed>=<base>=<treat>`
+  arguments, and emits `paired_deltas.csv` (per-unit status records
+  `missing_treatment_counted_as_loss` explicitly), `statistical_tests.json`
+  (with per-benchmark family breakdown so CVDP functional metrics never
+  blend with reference-normalized suites), and `statistical_tests.md`.
+  Percent metrics are converted to fraction scale at load so the gate
+  thresholds are evaluated exactly as predeclared.
+- `scripts/validate_journal_revamp_run.py`: validates one run root against
+  locked subset configs (coverage per benchmark), config-snapshot presence
+  and expected seed, scheduler-telemetry presence/health, and QD per-problem
+  artifacts (`archive_summary.json`, `qd_metrics.json`,
+  `descriptor_health.json`), nonzero archive occupancy, and no total
+  descriptor collapse. JSON+MD reports, nonzero exit on failure.
+- `data/configs/journal_seed_manifest.yaml`: pre-registered seed manifest —
+  debug seed 42 (never publication evidence), final seeds 1001-1005 frozen
+  before any final-gate run.
+- `scripts/journal_rerun_ledger.py`: append-only JSONL ledger
+  (`revamp_history/.../rerun_ledger.jsonl`) recording purpose, run root,
+  seeds, git commit, and config-snapshot sha for every journal-relevant
+  launch.
+- Validation: full pytest 667 passed / 4 skipped; ruff + pyright clean on
+  all new modules; 14 new tests cover bootstrap determinism, sign-test
+  exactness, missing-as-loss accounting, gate thresholds, synthetic run-tree
+  joins, and validator failure modes.

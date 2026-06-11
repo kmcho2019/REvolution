@@ -22,10 +22,10 @@
 - [x] Build locked 12-task RealBench debug subset.
 - [x] Implement RealBench functional harness integration (strict iverilog path; 38/60 golden-validated tasks; per-task validation and failure reasons recorded in the manifest).
 - [ ] Add RealBench synthesis/PPA support only when deterministic (manifest currently marks only dependency-free, support-free tasks `supports_synthesis: true`; synthesis flow itself not yet validated on them).
-- [ ] Add benchmark-family aware summary reporting.
-- [ ] Add `scripts/validate_journal_revamp_run.py`.
-- [ ] Add seed manifest and rerun ledger outputs.
-- [ ] Add paired-delta and bootstrap statistical report outputs.
+- [x] Add benchmark-family aware summary reporting (`per_benchmark` breakdown in `statistical_tests.json`; unit ids are seed/benchmark/problem so families never blend).
+- [x] Add `scripts/validate_journal_revamp_run.py` (locked-coverage, config-seed, scheduler-telemetry, QD artifact/occupancy/collapse checks; JSON+MD reports; nonzero exit on failure).
+- [x] Add seed manifest and rerun ledger outputs (`data/configs/journal_seed_manifest.yaml` pre-registers debug seed 42 and final seeds 1001-1005; `scripts/journal_rerun_ledger.py` appends launch records with git commit + config sha).
+- [x] Add paired-delta and bootstrap statistical report outputs (`src/revolution/journal_stats.py` + `scripts/report_journal_statistics.py` emitting `paired_deltas.csv`, `statistical_tests.json`, `statistical_tests.md` with missing-treatment-as-loss and predeclared gate profiles).
 - [x] Add non-echoing DeepSeek `DEEPSEEK_API_KEY` preflight documentation.
 - [x] Build locked `realbench_long_model_probe` with at least 8 long RealBench tasks (`data/configs/realbench_long_model_probe.yaml`: 8 largest harness-validated tasks by prompt+harness+support bytes, all e203).
 - [ ] Run local vLLM and DeepSeek on the RealBench model-capability probe.
