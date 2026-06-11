@@ -64,6 +64,7 @@ from revolution.runtime.parallelism import (  # noqa: E402
     build_problem_concurrency_controller,
     reject_legacy_cli_options,
     resolve_backend_parallelism_config,
+    summarize_scheduler_telemetry,
     translate_backend_legacy_parallelism_config,
 )
 from revolution.utils import StreamRedirector  # noqa: E402
@@ -1396,6 +1397,34 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Summary results saved to: {summary_results_path}")
         print(f"Total run time: {end_time - start_time:.2f} seconds")
         if runtime is not None:
+            try:
+                telemetry_events = runtime.drain_telemetry_events()
+                telemetry_summary = summarize_scheduler_telemetry(
+                    telemetry_events,
+                    total_worker_slots=resolved_parallelism.total_worker_slots,
+                )
+                telemetry_summary["run_wall_seconds"] = end_time - start_time
+                telemetry_summary["parallelism_config"] = {
+                    "total_worker_slots": resolved_parallelism.total_worker_slots,
+                    "max_active_problems": resolved_parallelism.max_active_problems,
+                    "max_workers_per_problem": resolved_parallelism.max_workers_per_problem,
+                    "problem_processes": resolved_parallelism.problem_processes,
+                }
+                telemetry_path = os.path.join(
+                    master_log_dir, f"{run_datetime}_{args.backend}_scheduler_telemetry.json"
+                )
+                events_path = os.path.join(
+                    master_log_dir,
+                    f"{run_datetime}_{args.backend}_scheduler_telemetry_events.jsonl",
+                )
+                with open(telemetry_path, "w", encoding="utf-8") as handle:
+                    json.dump(telemetry_summary, handle, indent=2)
+                with open(events_path, "w", encoding="utf-8") as handle:
+                    for event in telemetry_events:
+                        handle.write(json.dumps(event) + "\n")
+                print(f"Scheduler telemetry saved to: {telemetry_path}")
+            except Exception as exc:  # pragma: no cover - telemetry must not break runs
+                print(f"WARNING: failed to write scheduler telemetry: {exc}")
             runtime.close()
     if interrupted:
         return 130

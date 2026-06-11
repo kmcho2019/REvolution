@@ -30,12 +30,12 @@
 - [x] Build locked `realbench_long_model_probe` with at least 8 long RealBench tasks (`data/configs/realbench_long_model_probe.yaml`: 8 largest harness-validated tasks by prompt+harness+support bytes, all e203).
 - [ ] Run local vLLM and DeepSeek on the RealBench model-capability probe.
 - [ ] Freeze whether RealBench final claims use local vLLM or a symmetric DeepSeek arm.
-- [ ] Audit `run_backend.py` elastic scheduling options for journal runs.
-- [ ] Audit `runtime/parallelism.py` for worker idle time and oversubscription.
-- [ ] Add scheduler telemetry: wall time, eval/sec, occupancy, wait/active time.
-- [ ] Add adaptive queueing or work stealing if telemetry shows idle workers.
-- [ ] Build fixed evaluator replay or bounded smoke harness for scheduler gate.
-- [ ] Show at least 25 percent scheduling wall-clock improvement with unchanged outcomes.
+- [x] Audit `run_backend.py` elastic scheduling options for journal runs.
+- [x] Audit `runtime/parallelism.py` for worker idle time and oversubscription.
+- [x] Add scheduler telemetry: wall time, eval/sec, occupancy, wait/active time (coordinator event log + `summarize_scheduler_telemetry` + per-run `*_scheduler_telemetry.json` + evaluator timeout counters in summaries).
+- [x] Add adaptive queueing or work stealing if telemetry shows idle workers (fair-share extra-slot granting replaces first-come-takes-all; a bounded re-poll variant was tried, measured harmful (-6 to -10% vs fixed), and removed with evidence recorded).
+- [x] Build fixed evaluator replay or bounded smoke harness for scheduler gate (`scripts/run_scheduler_replay_benchmark.py`).
+- [x] Show at least 25 percent scheduling wall-clock improvement with unchanged outcomes (46.0% at scale 0.5, identical outcome digests; evidence: `scheduler_gate_report_20260612.json`).
 - [ ] Reproduce current QD underperformance against classic on hard subset.
 - [ ] Root-cause descriptor collapse, archive occupancy, parent selection, repair budget, and thought/code mismatch.
 - [ ] Fix QD performance issues or narrow claims explicitly.

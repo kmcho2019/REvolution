@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import os
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from enum import Enum
@@ -217,6 +218,20 @@ class CandidateEvaluator:
         self.accelerated_skip_score = accelerated_skip_score
         self.aux_source_files, self.aux_include_dirs = self._resolve_aux_sources()
         self.compile_defines = self._resolve_compile_defines()
+        self._telemetry_lock = threading.Lock()
+        # Evaluator-side scheduler telemetry. evaluator_retries is structurally
+        # zero today (the evaluator never retries); the field exists so reports
+        # can show it explicitly instead of omitting it.
+        self.telemetry_counters: dict[str, int] = {
+            "candidates_evaluated": 0,
+            "rtl_simulation_timeouts": 0,
+            "synthesis_failures": 0,
+            "evaluator_retries": 0,
+        }
+
+    def _bump_telemetry(self, key: str, amount: int = 1) -> None:
+        with self._telemetry_lock:
+            self.telemetry_counters[key] = self.telemetry_counters.get(key, 0) + amount
 
     def _resolve_compile_defines(self) -> list[str]:
         """Parse benchmark compile defines from the problem-spec metadata.
@@ -454,6 +469,9 @@ class CandidateEvaluator:
                 dynamic_metrics=dynamic_metrics,
             )
 
+        self._bump_telemetry("candidates_evaluated")
+        if sim_results["status"] == "simulation_timeout":
+            self._bump_telemetry("rtl_simulation_timeouts")
         stages["syntax"] = sim_results["status"] == "success"
         sim_stdout = str(sim_results.get("simulation_stdout", ""))
         mismatch_count = parse_mismatch_count(sim_stdout)
@@ -516,6 +534,8 @@ class CandidateEvaluator:
             )
         )
         synth_success = bool(synth_results.get("synthesis_success"))
+        if not synth_success:
+            self._bump_telemetry("synthesis_failures")
         post_synth_success = bool(synth_results.get("synthesis_functionality_success"))
         ppa_success = bool(synth_results.get("ppa_success"))
         ppa_metrics = _coerce_metric_dict(synth_results.get("ppa_metrics"))

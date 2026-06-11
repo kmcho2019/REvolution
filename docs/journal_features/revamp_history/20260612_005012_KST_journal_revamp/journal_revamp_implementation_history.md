@@ -184,3 +184,50 @@ RealBench integration milestone (workstream A):
 - Validation: full pytest 644 passed / 4 skipped; ruff + pyright clean on
   touched files; golden determinism spot-checked (two identical replays per
   sampled task) and the full sweep is itself a deterministic replay artifact.
+
+## 2026-06-12 05:00 KST
+
+Scheduler telemetry + throughput gate milestone (workstream B):
+
+- Telemetry: `ElasticSlotCoordinator` now records an event log
+  (open/close/lease/lease_end with monotonic timestamps, batch size,
+  target vs granted workers) into Manager-backed shared state;
+  `summarize_scheduler_telemetry` aggregates wall time, busy-worker
+  integral, mean occupancy, peak busy workers, and per-problem active
+  seconds / lease counts / busy worker-seconds / requested-vs-granted
+  shortfall seconds. `run_backend.py` writes
+  `<ts>_<backend>_scheduler_telemetry.json` plus a raw events JSONL next to
+  the run log. `CandidateEvaluator` counts candidates evaluated, RTL
+  simulation timeouts, synthesis failures, and (structurally zero today)
+  evaluator retries; `revolution_backend` embeds the counters in
+  `backend_details.evaluator_telemetry`.
+- Scheduling policy fix: extra-slot granting is now fair-share capped
+  (`total_worker_slots // active_problems` workers per problem) instead of
+  first-come-takes-all, so an early lease cannot drain the pool while a
+  sibling starts a long batch single-handed; the cap widens automatically as
+  problems close. Two pre-existing tests encoding the greedy policy were
+  updated with comments.
+- Negative result, recorded deliberately: a bounded re-poll ("wait briefly
+  for a fuller grant") was implemented and measured HARMFUL on the replay
+  gate (-6.1% to -10.5% vs the fixed baseline) because all problems poll and
+  short batches stall instead of finishing and releasing slots (convoy). The
+  mechanism was removed; per-generation re-leasing plus fair-share granting
+  captures the win without waiting.
+- Gate harness: `scripts/run_scheduler_replay_benchmark.py` replays one
+  seeded heterogeneous workload (8 problems, 3 generations, two
+  synthesis-heavy long-tail problems, think-time between batches) through
+  the real pool/coordinator machinery under `fixed` (static equal split,
+  the goal's fixed per-problem worker baseline) and `elastic` policies,
+  asserting identical candidate-outcome digests.
+- Gate result (scale 0.5, 16 slots): fixed 19.52s vs elastic 10.54s ->
+  46.0% wall-clock reduction with `outcomes_match=true`; elastic mean
+  occupancy 0.658, heavy problems ramp to 8 workers after short problems
+  close. Evidence archived at
+  `revamp_history/20260612_005012_KST_journal_revamp/scheduler_gate_report_20260612.json`.
+  Caveat recorded: at very small scales (0.12) constant pool/Manager
+  overheads compress the measured gain (~21%); the gate is defined at
+  scale 0.5 where modeled latencies dominate, mirroring minutes-scale real
+  evaluations.
+- Validation: full pytest 653 passed / 4 skipped; ruff + pyright clean on
+  touched modules. Live-run occupancy telemetry on a real vLLM run is
+  deferred to the seed-42 debug gate, which will exercise the same writer.

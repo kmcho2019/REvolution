@@ -12,6 +12,7 @@ from revolution.runtime.parallelism import (
     reject_legacy_cli_options,
     resolve_backend_parallelism_config,
     resolve_evolution_parallelism_config,
+    summarize_scheduler_telemetry,
     translate_backend_legacy_parallelism_config,
     translate_evolution_legacy_parallelism_config,
 )
@@ -187,8 +188,9 @@ def test_elastic_controller_releases_extra_slots_after_exception():
 
     try:
         try:
+            # Fair-share grant: 4 slots / 2 active problems -> 1 extra each.
             with controller_a.lease_candidate_workers(4) as workers:
-                assert workers == 3
+                assert workers == 2
                 raise RuntimeError("boom")
         except RuntimeError:
             pass
@@ -213,8 +215,9 @@ def test_elastic_coordinator_close_problem_reclaims_leaked_slots():
     try:
         coordinator.open_problem("a")
         coordinator.open_problem("b")
+        # Fair-share grant: 4 slots / 2 active problems -> 1 extra slot cap.
         granted = coordinator.try_acquire_extra_slots("a", 2)
-        assert granted == 2
+        assert granted == 1
 
         coordinator.close_problem("a")
         snapshot = coordinator.snapshot()
@@ -225,6 +228,109 @@ def test_elastic_coordinator_close_problem_reclaims_leaked_slots():
     assert snapshot["base_slots_in_use"] == 1
     assert snapshot["extra_slots_in_use"] == 0
     assert snapshot["problem_extra_slots"] == {}
+
+
+def test_lease_records_telemetry_events():
+    runtime = build_elastic_parallelism_runtime(_elastic_config(), task_count=4)
+    assert runtime is not None
+    controller = build_problem_concurrency_controller(
+        runtime.config,
+        problem_id="a",
+        handles=runtime.handles,
+    )
+    try:
+        controller.open_problem()
+        with controller.lease_candidate_workers(4):
+            pass
+        controller.close_problem()
+        events = runtime.drain_telemetry_events()
+    finally:
+        runtime.close()
+
+    kinds = [event["event"] for event in events]
+    assert kinds == ["open", "lease", "lease_end", "close"]
+    lease = events[1]
+    assert lease["problem"] == "a"
+    assert lease["batch_size"] == 4
+    assert lease["target_workers"] == 4
+    lease_end = events[2]
+    assert lease_end["lease_seconds"] >= 0.0
+
+
+def test_summarize_scheduler_telemetry_aggregates_events():
+    events = [
+        {"event": "open", "problem": "a", "t": 0.0},
+        {"event": "open", "problem": "b", "t": 0.0},
+        {
+            "event": "lease",
+            "problem": "a",
+            "t": 1.0,
+            "batch_size": 4,
+            "target_workers": 4,
+            "granted_workers": 3,
+        },
+        {
+            "event": "lease_end",
+            "problem": "a",
+            "t": 3.0,
+            "granted_workers": 3,
+            "target_workers": 4,
+            "lease_seconds": 2.0,
+        },
+        {"event": "close", "problem": "b", "t": 4.0},
+        {"event": "close", "problem": "a", "t": 5.0},
+    ]
+    summary = summarize_scheduler_telemetry(events, total_worker_slots=4)
+
+    assert summary["wall_seconds"] == 5.0
+    assert summary["peak_busy_workers"] == 4  # 2 base + 2 extra during lease
+    # Busy integral: 2 base slots over [0,1), 4 workers over [1,3),
+    # 2 over [3,4), 1 over [4,5) -> 13 worker-seconds; 13 / (5s * 4 slots).
+    assert abs(float(summary["busy_worker_seconds"]) - 13.0) < 1e-9
+    assert abs(float(summary["mean_occupancy_fraction"]) - 0.65) < 1e-9
+    problem_a = summary["problems"]["a"]
+    assert problem_a["active_seconds"] == 5.0
+    assert problem_a["lease_count"] == 1
+    assert problem_a["busy_worker_seconds"] == 6.0
+    assert problem_a["shortfall_worker_seconds"] == 2.0
+    assert problem_a["granted_workers_max"] == 3
+    assert summary["problems"]["b"]["active_seconds"] == 4.0
+
+
+def test_summarize_scheduler_telemetry_empty_events():
+    summary = summarize_scheduler_telemetry([], total_worker_slots=8)
+    assert summary["wall_seconds"] == 0.0
+    assert summary["problems"] == {}
+
+
+def test_fair_share_extra_slot_cap_widens_as_problems_close():
+    config = ResolvedParallelismConfig(
+        total_worker_slots=8,
+        max_active_problems=8,
+        max_workers_per_problem=8,
+        problem_processes=4,
+        candidate_worker_limit=8,
+    )
+    runtime = build_elastic_parallelism_runtime(config, task_count=4)
+    assert runtime is not None
+    coordinator = ElasticSlotCoordinator(runtime.handles)
+    try:
+        for problem in ("a", "b", "c", "d"):
+            coordinator.open_problem(problem)
+        # 8 slots / 4 active problems -> fair share 2 workers -> 1 extra cap.
+        assert coordinator.try_acquire_extra_slots("a", 7) == 1
+        for problem in ("b", "c"):
+            coordinator.close_problem(problem)
+        # 8 slots / 2 active problems -> fair share 4 workers -> cap 3 extras
+        # total; "a" already owns 1, so 2 more are granted.
+        assert coordinator.try_acquire_extra_slots("a", 7) == 2
+        coordinator.release_extra_slots("a", 3)
+        coordinator.close_problem("d")
+        # Lone survivor may take everything beyond its base slot.
+        assert coordinator.try_acquire_extra_slots("a", 7) == 7
+    finally:
+        coordinator.close_problem("a")
+        runtime.close()
 
 
 def test_elastic_controller_enforces_per_problem_cap():

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import contextlib
 import multiprocessing
+import time
 from dataclasses import dataclass
 from typing import Any, Iterator, Sequence
 
@@ -253,6 +254,7 @@ class ElasticParallelismHandles:
     extra_slots_in_use: Any
     active_problem_ids: Any
     problem_extra_slots: Any
+    telemetry_events: Any | None = None
 
 
 @dataclass
@@ -273,8 +275,18 @@ class ElasticParallelismRuntime:
             extra_slots_in_use=manager.Value("i", 0),
             active_problem_ids=manager.dict(),
             problem_extra_slots=manager.dict(),
+            telemetry_events=manager.list(),
         )
         return cls(config=config, handles=handles, _manager=manager)
+
+    def drain_telemetry_events(self) -> list[dict[str, object]]:
+        """Return a plain-list copy of recorded scheduler telemetry events."""
+
+        events = self.handles.telemetry_events
+        if events is None:
+            return []
+        with self.handles.lock:
+            return [dict(event) for event in events]
 
     def close(self) -> None:
         manager = self._manager
@@ -290,6 +302,19 @@ class ElasticSlotCoordinator:
     def __init__(self, handles: ElasticParallelismHandles) -> None:
         self._handles = handles
 
+    def _record_event(self, event: dict[str, object]) -> None:
+        """Append one telemetry event (caller must hold the shared lock).
+
+        Timestamps use ``time.monotonic()``; on Linux this is the boot-wide
+        CLOCK_MONOTONIC, so values from different problem processes share one
+        timeline.
+        """
+
+        events = self._handles.telemetry_events
+        if events is None:
+            return
+        events.append(event)
+
     def open_problem(self, problem_id: str) -> None:
         if not problem_id:
             return
@@ -298,6 +323,9 @@ class ElasticSlotCoordinator:
                 return
             self._handles.active_problem_ids[problem_id] = True
             self._handles.base_slots_in_use.value += 1
+            self._record_event(
+                {"event": "open", "problem": problem_id, "t": time.monotonic()}
+            )
 
     def close_problem(self, problem_id: str) -> None:
         if not problem_id:
@@ -310,6 +338,9 @@ class ElasticSlotCoordinator:
                     0,
                     int(self._handles.base_slots_in_use.value) - 1,
                 )
+                self._record_event(
+                    {"event": "close", "problem": problem_id, "t": time.monotonic()}
+                )
             if leaked_extra_slots > 0:
                 self._handles.extra_slots_in_use.value = max(
                     0,
@@ -317,6 +348,16 @@ class ElasticSlotCoordinator:
                 )
 
     def try_acquire_extra_slots(self, problem_id: str, requested_slots: int) -> int:
+        """Grant up to ``requested_slots`` extra workers, fair-share capped.
+
+        A problem may hold at most its fair share of total workers
+        (``total_worker_slots // active_problems``, minus its base slot) in
+        extra slots. The cap prevents one early requester from draining the
+        pool while a sibling starts a long batch single-handed, and it widens
+        automatically as problems close: with two survivors on a 16-slot
+        pool, each may grow to 8 workers.
+        """
+
         if requested_slots <= 0:
             return 0
         with self._handles.lock:
@@ -329,10 +370,17 @@ class ElasticSlotCoordinator:
             )
             if available_slots <= 0:
                 return 0
-            granted_slots = min(int(requested_slots), int(available_slots))
+            active_problems = max(1, len(self._handles.active_problem_ids))
+            fair_extra_cap = max(
+                0, (self._handles.total_worker_slots // active_problems) - 1
+            )
+            owned_slots = int(self._handles.problem_extra_slots.get(problem_id, 0))
+            allowed_slots = max(0, fair_extra_cap - owned_slots)
+            granted_slots = min(
+                int(requested_slots), int(available_slots), int(allowed_slots)
+            )
             if granted_slots <= 0:
                 return 0
-            owned_slots = int(self._handles.problem_extra_slots.get(problem_id, 0))
             self._handles.problem_extra_slots[problem_id] = owned_slots + granted_slots
             self._handles.extra_slots_in_use.value += granted_slots
             return granted_slots
@@ -355,6 +403,49 @@ class ElasticSlotCoordinator:
                 int(self._handles.extra_slots_in_use.value) - released_slots,
             )
 
+    def record_lease(
+        self,
+        problem_id: str,
+        *,
+        batch_size: int,
+        target_workers: int,
+        granted_workers: int,
+    ) -> float:
+        started = time.monotonic()
+        with self._handles.lock:
+            self._record_event(
+                {
+                    "event": "lease",
+                    "problem": problem_id,
+                    "t": started,
+                    "batch_size": int(batch_size),
+                    "target_workers": int(target_workers),
+                    "granted_workers": int(granted_workers),
+                }
+            )
+        return started
+
+    def record_lease_end(
+        self,
+        problem_id: str,
+        *,
+        target_workers: int,
+        granted_workers: int,
+        lease_started: float,
+    ) -> None:
+        ended = time.monotonic()
+        with self._handles.lock:
+            self._record_event(
+                {
+                    "event": "lease_end",
+                    "problem": problem_id,
+                    "t": ended,
+                    "granted_workers": int(granted_workers),
+                    "target_workers": int(target_workers),
+                    "lease_seconds": float(ended - lease_started),
+                }
+            )
+
     def snapshot(self) -> dict[str, object]:
         with self._handles.lock:
             return {
@@ -364,6 +455,119 @@ class ElasticSlotCoordinator:
                 "active_problem_ids": sorted(self._handles.active_problem_ids.keys()),
                 "problem_extra_slots": dict(self._handles.problem_extra_slots),
             }
+
+
+def summarize_scheduler_telemetry(
+    events: list[dict[str, object]],
+    *,
+    total_worker_slots: int,
+) -> dict[str, object]:
+    """Aggregate coordinator telemetry events into a run-level summary.
+
+    Computes run wall time (first open to last close), a worker-occupancy
+    integral over the busy-slot timeline (base slots while a problem is open
+    plus granted extra workers while a lease is active), and per-problem
+    activity: active seconds, lease counts, requested-vs-granted worker
+    shortfall seconds (the non-blocking analogue of wait time), and busy
+    worker-seconds.
+    """
+
+    def _as_float(value: object, default: float = 0.0) -> float:
+        return float(value) if isinstance(value, (int, float)) else default
+
+    def _as_int(value: object, default: int = 0) -> int:
+        return int(value) if isinstance(value, (int, float)) else default
+
+    def _t(event: dict[str, object]) -> float:
+        return _as_float(event.get("t"))
+
+    ordered = sorted(events, key=_t)
+    if not ordered:
+        return {
+            "total_worker_slots": int(total_worker_slots),
+            "wall_seconds": 0.0,
+            "mean_occupancy_fraction": 0.0,
+            "peak_busy_workers": 0,
+            "problems": {},
+        }
+
+    start_t = _t(ordered[0])
+    end_t = _t(ordered[-1])
+    wall_seconds = max(0.0, end_t - start_t)
+
+    # Build a busy-worker step timeline: open/close toggle the base slot,
+    # lease/lease_end toggle (granted_workers - 1) extra busy workers (the
+    # base slot already accounts for one running worker).
+    deltas: list[tuple[float, int]] = []
+    per_problem: dict[str, dict[str, float]] = {}
+    open_at: dict[str, float] = {}
+    for event in ordered:
+        kind = str(event.get("event", ""))
+        problem = str(event.get("problem", ""))
+        timestamp = _t(event)
+        stats = per_problem.setdefault(
+            problem,
+            {
+                "active_seconds": 0.0,
+                "lease_count": 0.0,
+                "busy_worker_seconds": 0.0,
+                "shortfall_worker_seconds": 0.0,
+                "granted_workers_max": 0.0,
+            },
+        )
+        if kind == "open":
+            open_at[problem] = timestamp
+            deltas.append((timestamp, 1))
+        elif kind == "close":
+            opened = open_at.pop(problem, None)
+            if opened is not None:
+                stats["active_seconds"] += max(0.0, timestamp - opened)
+            deltas.append((timestamp, -1))
+        elif kind == "lease":
+            stats["lease_count"] += 1
+            granted = _as_int(event.get("granted_workers"), 1)
+            stats["granted_workers_max"] = max(
+                stats["granted_workers_max"], float(granted)
+            )
+            deltas.append((timestamp, max(0, granted - 1)))
+        elif kind == "lease_end":
+            granted = _as_int(event.get("granted_workers"), 1)
+            target = _as_int(event.get("target_workers"), granted)
+            lease_seconds = _as_float(event.get("lease_seconds"))
+            stats["busy_worker_seconds"] += granted * lease_seconds
+            stats["shortfall_worker_seconds"] += max(0, target - granted) * lease_seconds
+            deltas.append((timestamp, -max(0, granted - 1)))
+
+    busy_integral = 0.0
+    peak_busy = 0
+    current_busy = 0
+    previous_t = start_t
+    for timestamp, delta in sorted(deltas, key=lambda item: item[0]):
+        busy_integral += current_busy * max(0.0, timestamp - previous_t)
+        current_busy = max(0, current_busy + delta)
+        peak_busy = max(peak_busy, current_busy)
+        previous_t = timestamp
+
+    denominator = wall_seconds * max(1, int(total_worker_slots))
+    mean_occupancy = (busy_integral / denominator) if denominator > 0 else 0.0
+    return {
+        "total_worker_slots": int(total_worker_slots),
+        "wall_seconds": wall_seconds,
+        "busy_worker_seconds": busy_integral,
+        "mean_occupancy_fraction": mean_occupancy,
+        "peak_busy_workers": peak_busy,
+        "problems": {
+            problem: {
+                "active_seconds": stats["active_seconds"],
+                "lease_count": int(stats["lease_count"]),
+                "busy_worker_seconds": stats["busy_worker_seconds"],
+                "shortfall_worker_seconds": stats["shortfall_worker_seconds"],
+                "granted_workers_max": int(stats["granted_workers_max"]),
+            }
+            for problem, stats in sorted(per_problem.items())
+            if problem
+        },
+    }
 
 
 class ProblemConcurrencyController:
@@ -436,9 +640,21 @@ class ElasticProblemConcurrencyController(ProblemConcurrencyController):
             target_workers - 1,
         )
         effective_workers = 1 + granted_extra_slots
+        lease_started = self._coordinator.record_lease(
+            self._problem_id,
+            batch_size=batch_size,
+            target_workers=target_workers,
+            granted_workers=effective_workers,
+        )
         try:
             yield effective_workers
         finally:
+            self._coordinator.record_lease_end(
+                self._problem_id,
+                target_workers=target_workers,
+                granted_workers=effective_workers,
+                lease_started=lease_started,
+            )
             self._coordinator.release_extra_slots(
                 self._problem_id,
                 granted_extra_slots,

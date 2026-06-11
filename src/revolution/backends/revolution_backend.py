@@ -210,6 +210,10 @@ class RevolutionBackend(EvolutionBackend):
             if capabilities is not None:
                 problem_spec_details["benchmark_capabilities"] = capabilities.as_dict()
             backend_details.setdefault("problem_spec", problem_spec_details)
+        evaluator = getattr(self.services, "candidate_evaluator", None)
+        counters = getattr(evaluator, "telemetry_counters", None)
+        if isinstance(counters, dict) and counters:
+            backend_details.setdefault("evaluator_telemetry", dict(counters))
         if self.config.search_mode == "revolution_qd":
             backend_details.setdefault(
                 "qd_config",
