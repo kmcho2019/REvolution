@@ -36,6 +36,10 @@
   plan.
 - `07_ks_adaptive_rebinning.md`: KS-triggered adaptive re-binning and final
   integration plan.
+- `resources/`: manuscript submodules for the journal-extension paper work.
+  `conference_submission_paper/` is the frozen ASP-DAC 2026 reference source;
+  `journal_draft/` is the working TCAD extension draft. See
+  `resources/README.md` before editing either paper repository.
 
 ## `src/revolution/`
 

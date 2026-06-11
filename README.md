@@ -22,6 +22,8 @@ The `docs/` directory contains deeper dives:
 
 - `docs/implementation_details.md` – architecture and component responsibilities.
 - `docs/journal_features/overall_plan.md` – journal-extension hub based on the `qd-theory-grounded-descriptors` branch, with the QD feature roadmap, ETA checklist, implementation rules, and links to per-feature specs.
+- `docs/journal_features/resources/README.md` – manuscript submodule guide for
+  the frozen ASP-DAC 2026 conference paper and the working TCAD journal draft.
 - `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, long-budget classic-vs-QD runner, the formal `final_analysis/` bundle workflow, and the current archive-tuning-backed QD default recommendation for that workflow.
 - `scripts/report_design_space_analysis.py` – retrospective classical-vs-QD design-space analysis over completed runs, with per-problem generation-local vs accumulated PPA/feature plots, cached-QD descriptor views for graph-backed profiles, aggregate pooled views, candidate CSV export, and markdown indices.
 - `scripts/report_qd_feature_space.py` – deep post-run QD feature-space analysis over finished backend roots, including candidate tables, collapse diagnostics, regression summaries, and PCA/t-SNE plots.

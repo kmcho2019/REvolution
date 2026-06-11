@@ -8,6 +8,7 @@
 - Use [docs/qd_map_elites_guide.md](docs/qd_map_elites_guide.md) for the QD/MAP-Elites runtime flow, descriptor extraction paths, archive artifact layout, and generation/run traces.
 - Use [docs/REvolution_specification.md](docs/REvolution_specification.md) for the paper-plus-implementation specification view.
 - Use [docs/revolution_qd_map_elites_implementation_plan.md](docs/revolution_qd_map_elites_implementation_plan.md) for the current QD/MAP-Elites feature status and staged roadmap.
+- Use [docs/journal_features/resources/README.md](docs/journal_features/resources/README.md) before editing paper sources; it explains the frozen ASP-DAC 2026 conference-paper submodule and the working TCAD journal-draft submodule.
 - Use [docs/hard_iteration_subset_workflow.md](docs/hard_iteration_subset_workflow.md) for the hard-subset baseline freeze flow, resumable one-shot commands, and long-budget classic-vs-QD matrix entrypoints.
 - Use [docs/method_interaction_and_evolutionary_loop.md](docs/method_interaction_and_evolutionary_loop.md) when you need the classic REvolution data flow or generation loop explained end to end.
 - Use [docs/diff_mode.md](docs/diff_mode.md) when the change touches diff-mode generation, apply policy, or diff diagnostics.
@@ -53,6 +54,10 @@
   [src/revolution/prompt_store.py](src/revolution/prompt_store.py),
   [data/prompts/](data/prompts),
   [docs/diff_mode.md](docs/diff_mode.md)
+- Journal paper sources:
+  [docs/journal_features/resources/README.md](docs/journal_features/resources/README.md),
+  [docs/journal_features/resources/conference_submission_paper/](docs/journal_features/resources/conference_submission_paper/),
+  [docs/journal_features/resources/journal_draft/](docs/journal_features/resources/journal_draft/)
 
 ## Project Structure & Module Organization
 - `src/revolution/`: core package. Start with `algorithm.py` for classic REvolution, `backends/` for runner adapters, `runtime/` for evaluation/problem abstractions, and `qd/` for the new archive/scoring/scheduler substrate.
@@ -63,6 +68,9 @@
 - `data/configs/`: reusable config examples, including QD descriptor profile and grid-axis configuration.
 - `pdk/`: synthesis assets used by the OpenROAD flow.
 - `docs/`: project documentation and implementation notes.
+  `docs/journal_features/resources/` contains paper-source submodules:
+  `conference_submission_paper/` is the frozen ASP-DAC 2026 source and
+  `journal_draft/` is the working TCAD manuscript.
 - `exp/`: generated run output and intentionally gitignored.
 
 ## Canonical Entry Points

@@ -21,6 +21,22 @@ grid/CVT archive draft rather than on the older main checkout alone.
 
 Initial target: `2026-05-12`
 
+## Paper Repositories
+
+The LaTeX sources for the paper are separate Git submodules under
+`docs/journal_features/resources/`:
+
+- `resources/conference_submission_paper/` is the frozen ASP-DAC 2026
+  conference paper source. Use it as the submitted reference for comparison and
+  citation alignment. Do not edit or push it during normal journal-extension
+  work.
+- `resources/journal_draft/` is the active TCAD journal-extension draft. Put
+  methodology, figure, table, and manuscript changes there, then update the
+  parent repository's submodule pointer after committing inside the paper repo.
+
+See `resources/README.md` for initialization commands and submodule working
+rules.
+
 ## Journal Design Locks
 
 These decisions come from the journal-extension brainstorm and should stay
