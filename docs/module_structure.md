@@ -36,6 +36,13 @@
   plan.
 - `07_ks_adaptive_rebinning.md`: KS-triggered adaptive re-binning and final
   integration plan.
+- `08_journal_revamp_goal.md`: June 2026 TCAD revamp goal spec covering CVDP
+  and RealBench integration, QD performance repair, descriptor evidence,
+  narrative review, quantitative publication gates, and faster evaluation
+  scheduling.
+- `revamp_history/`: timestamped goal-scaffold directories for journal revamp
+  work. Each scaffold contains the plan, todo list, goal template,
+  implementation history, and adversarial-review tracking files.
 - `resources/`: manuscript submodules for the journal-extension paper work.
   `conference_submission_paper/` is the frozen ASP-DAC 2026 reference source;
   `journal_draft/` is the working TCAD extension draft. See

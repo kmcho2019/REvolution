@@ -37,6 +37,19 @@ The LaTeX sources for the paper are separate Git submodules under
 See `resources/README.md` for initialization commands and submodule working
 rules.
 
+## Revamp Planning
+
+The June 2026 TCAD revamp is tracked in
+[`08_journal_revamp_goal.md`](08_journal_revamp_goal.md). Its timestamped
+goal-scaffold, todo list, adversarial-review prompt, and implementation history
+live under
+`revamp_history/20260612_005012_KST_journal_revamp/`.
+
+This revamp plan adds benchmark-breadth work for CVDP and RealBench,
+QD-vs-classic performance repair, descriptor-rationale evidence, stronger
+journal narrative gates, and faster evaluation scheduling requirements on top
+of the earlier feature specs below.
+
 ## Journal Design Locks
 
 These decisions come from the journal-extension brainstorm and should stay
@@ -55,9 +68,11 @@ stable while the first implementation lands.
 - PPA scalar quality remains useful for legacy comparison, representative-code
   selection, and post-hoc reports. It should not drive multiobjective archive
   replacement after Pareto-front archive support lands.
-- RTL design diversity is defined as architecture depth, temporal scheduling
-  depth, and spatial allocation width. The descriptor trio maps those concepts
-  to `logic_depth`, `ff_depth`, and `comb_width_log`.
+- The initial RTL diversity hypothesis is architecture depth, temporal
+  scheduling depth, and spatial allocation width, mapped to `logic_depth`,
+  `ff_depth`, and `comb_width_log`. The TCAD revamp may replace this descriptor
+  profile if another behavior space gives better PPA search behavior, stronger
+  diversity metrics, and a more persuasive RTL-design-space narrative.
 - The first archive geometry is a quantile adaptive grid. KS-triggered
   re-binning is deliberately later because it needs stable answers for recent
   samples, archive members, and Pareto-front rebuild semantics.
@@ -71,8 +86,9 @@ stable while the first implementation lands.
 ## Deferred Or Out Of Scope For This Pass
 
 - Learned or encoder-based descriptors inspired by AURORA, VQ-Elites, or
-  AutoQD are deferred. The first pass should leave a clean descriptor-profile
-  seam, not implement learned behavior spaces.
+  AutoQD are not the default first-pass target. They may be explored during the
+  revamp only if their cost, determinism, interpretability, and empirical gains
+  satisfy the descriptor-selection gates.
 - CVT and high-dimensional learned behavior spaces are deferred for journal
   ablations after the 3D adaptive grid is stable.
 - Failure-pattern summaries are allowed as a future descriptive context, but
@@ -105,25 +121,27 @@ stable while the first implementation lands.
 
 | Feature | Status | Deadline | Spec | Notes |
 | --- | --- | --- | --- | --- |
-| BD trio: logic depth, FF depth, width | Planned | 2026-05-03 | [01_bd_trio.md](01_bd_trio.md) | First because it is mostly additive and gives the archive stable axes. |
+| Initial BD trio: logic depth, FF depth, width | Planned | 2026-05-03 | [01_bd_trio.md](01_bd_trio.md) | Initial descriptor hypothesis; the revamp may replace it if another profile has stronger PPA, diversity, and narrative evidence. |
 | Initial QD binning: static quantile grid | Planned | 2026-05-04 | [02_quantile_binning.md](02_quantile_binning.md) | Adds the first journal archive geometry before dynamic re-binning. |
 | Pareto-front archive / multiobjective MAP-Elites | Implemented | 2026-05-06 | [03_pareto_front_archive.md](03_pareto_front_archive.md) | Replaces one elite per cell with bounded PPA fronts; full hard-subset acceptance passed at `exp/journal_pareto_front_hard_subset/20260505_135953`. |
 | Two-tier archive + fail handling | Implemented | 2026-05-07 | [04_two_tier_fail_pool.md](04_two_tier_fail_pool.md) | Runtime scheduling/reporting and full hard-subset acceptance passed at `exp/journal_two_tier_fail_pool_hard_subset/20260511_034341`. |
 | Single thought mutation operator | Implemented | 2026-05-08 | [05_single_mutation_operator.md](05_single_mutation_operator.md) | Adds `qd_operator_kind=single_thought_operator` as the unified journal operator while preserving the current code-individual candidate shape. |
 | Thought-only individuals + k-code evaluation | Implemented | 2026-05-10 | [06_thought_only_k_code.md](06_thought_only_k_code.md) | Runtime path, prompt adapters, config pass-through, focused tests, strict validator, and full hard-subset acceptance passed at `exp/journal_thought_only_k4_validation_reuse/20260514_075747` under a four-worker cap. |
 | KS-triggered re-binning + reporting polish | Planned | 2026-05-12 | [07_ks_adaptive_rebinning.md](07_ks_adaptive_rebinning.md) | Last because it depends on stable thought/archive semantics. |
+| TCAD journal revamp execution goal | Planned | 2026-06-12 | [08_journal_revamp_goal.md](08_journal_revamp_goal.md) | Integrates CVDP/RealBench, QD performance repair, descriptor evidence, narrative signoff, statistical gates, and scheduler throughput requirements. |
 
 ## Core Feature Checklist
 
 Initial target: 2026-05-12
 
-- [ ] 1. BD trio: logic depth, FF depth, width - target 2026-05-03
+- [ ] 1. Initial BD trio: logic depth, FF depth, width - target 2026-05-03
 - [ ] 2. Initial QD binning: static quantile grid - target 2026-05-04
 - [x] 3. Pareto-front archive / multiobjective MAP-Elites - target 2026-05-06
 - [x] 4. Two-tier archive + fail handling - target 2026-05-07
 - [x] 5. Single thought mutation operator - target 2026-05-08
 - [x] 6. Thought-only individuals + k-code evaluation - target 2026-05-10
 - [ ] 7. KS-triggered re-binning + reporting polish - target 2026-05-12
+- [ ] 8. TCAD journal revamp execution goal - target 2026-06-12
 
 ## Roadmap And ETA
 

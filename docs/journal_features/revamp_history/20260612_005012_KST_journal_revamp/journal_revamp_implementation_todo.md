@@ -1,0 +1,67 @@
+# Journal Revamp Implementation TODO
+
+- [x] Create `feat/journal-revamp-20260612-005012-kst` from `wip/journal-extension-2026`.
+- [x] Commit staged manuscript-resource setup before new revamp edits.
+- [x] Generate goal-scaffold directory under `docs/journal_features/revamp_history/`.
+- [x] Add top-level `docs/journal_features/08_journal_revamp_goal.md`.
+- [x] Add pointer to the revamp goal from journal-feature index docs.
+- [x] Add original ASP-DAC submission reading path to the revamp goal.
+- [x] Add ruminations coverage audit to the revamp goal.
+- [x] Add evolutionary-baseline archive references to revamp notes.
+- [x] Add coding and git practice guardrails to revamp scaffold.
+- [x] Add method-evolution rule allowing the seven pillars to change when evidence and narrative improve.
+- [ ] Read frozen conference intro/method/experiment/result files before manuscript edits.
+- [ ] Inspect `/workspace/baselines` before deciding whether FunSearch, CodeEvolve, or EoH comparisons need reruns.
+- [ ] Audit benchmark metadata and define capability schema.
+- [ ] Add tests for capability metadata and no-reference PPA suppression.
+- [ ] Implement CVDP task discovery for all records in `cvdp_v1.0.2`.
+- [ ] Build locked 10-task CVDP debug subset.
+- [ ] Implement CVDP functional harness integration.
+- [ ] Add CVDP absolute-only PPA path only if synthesis is reliable.
+- [ ] Implement RealBench manifest generation from `exp/RealBench`.
+- [ ] Build locked 12-task RealBench debug subset.
+- [ ] Implement RealBench functional harness integration.
+- [ ] Add RealBench synthesis/PPA support only when deterministic.
+- [ ] Add benchmark-family aware summary reporting.
+- [ ] Add `scripts/validate_journal_revamp_run.py`.
+- [ ] Add seed manifest and rerun ledger outputs.
+- [ ] Add paired-delta and bootstrap statistical report outputs.
+- [ ] Add non-echoing DeepSeek `DEEPSEEK_API_KEY` preflight documentation.
+- [ ] Build locked `realbench_long_model_probe` with at least 8 long RealBench tasks.
+- [ ] Run local vLLM and DeepSeek on the RealBench model-capability probe.
+- [ ] Freeze whether RealBench final claims use local vLLM or a symmetric DeepSeek arm.
+- [ ] Audit `run_backend.py` elastic scheduling options for journal runs.
+- [ ] Audit `runtime/parallelism.py` for worker idle time and oversubscription.
+- [ ] Add scheduler telemetry: wall time, eval/sec, occupancy, wait/active time.
+- [ ] Add adaptive queueing or work stealing if telemetry shows idle workers.
+- [ ] Build fixed evaluator replay or bounded smoke harness for scheduler gate.
+- [ ] Show at least 25 percent scheduling wall-clock improvement with unchanged outcomes.
+- [ ] Reproduce current QD underperformance against classic on hard subset.
+- [ ] Root-cause descriptor collapse, archive occupancy, parent selection, repair budget, and thought/code mismatch.
+- [ ] Fix QD performance issues or narrow claims explicitly.
+- [ ] Ensure repair and k-code samples are charged as real budget.
+- [ ] Freeze one final QD target config before final runs.
+- [ ] Evaluate `logic_depth`, `ff_depth`, and `comb_width_log` descriptor health.
+- [ ] Define candidate alternate behavior descriptor profiles before final experiments.
+- [ ] Evaluate descriptor candidates for PPA improvement, diversity metrics, collapse, stability, and narrative strength.
+- [ ] Compare against at least one simpler descriptor profile.
+- [ ] Freeze the selected descriptor profile before final publication runs.
+- [ ] Write descriptor rationale in `docs/journal_features/journal_narrative.md`.
+- [ ] Create `docs/journal_features/journal_narrative.md`.
+- [ ] Record any proposed new method idea in implementation history before large experiments.
+- [ ] Accept new method ideas only if they improve or preserve gates and strengthen the narrative.
+- [ ] Run TCAD editor adversarial narrative review.
+- [ ] Run skeptical Reviewer 2 adversarial narrative review.
+- [ ] Run hardware/EDA methodology adversarial narrative review.
+- [ ] Run reproducibility/statistics adversarial narrative review.
+- [ ] Revise narrative or downgrade claims until all personas sign off.
+- [ ] Run seed-42 debug gate across hard subset, CVDP, and RealBench.
+- [ ] Freeze benchmark lists, seeds, prompts, configs, scheduler policy, and tool versions.
+- [ ] Run 5-seed final publication experiments.
+- [ ] Verify reference-PPA suite gates.
+- [ ] Verify CVDP functional pass-rate gate.
+- [ ] Verify RealBench deterministic replay and any-pass gates.
+- [ ] Verify descriptor gates.
+- [ ] Verify scheduler gates.
+- [ ] Update journal manuscript methodology/results in `resources/journal_draft/`.
+- [ ] Record final evidence paths in implementation history.

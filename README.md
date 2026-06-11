@@ -22,6 +22,9 @@ The `docs/` directory contains deeper dives:
 
 - `docs/implementation_details.md` – architecture and component responsibilities.
 - `docs/journal_features/overall_plan.md` – journal-extension hub based on the `qd-theory-grounded-descriptors` branch, with the QD feature roadmap, ETA checklist, implementation rules, and links to per-feature specs.
+- `docs/journal_features/08_journal_revamp_goal.md` – TCAD revamp goal spec for
+  CVDP/RealBench integration, QD performance repair, descriptor evidence,
+  narrative signoff, statistical gates, and faster evaluation scheduling.
 - `docs/journal_features/resources/README.md` – manuscript submodule guide for
   the frozen ASP-DAC 2026 conference paper and the working TCAD journal draft.
 - `docs/hard_iteration_subset_workflow.md` – hard-subset baseline freeze workflow, resumable one-shot command, long-budget classic-vs-QD runner, the formal `final_analysis/` bundle workflow, and the current archive-tuning-backed QD default recommendation for that workflow.
