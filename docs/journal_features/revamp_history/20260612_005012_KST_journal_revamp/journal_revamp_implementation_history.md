@@ -1040,3 +1040,28 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Chain self-driving: R-C auto-started 15:57:33; its classic arm
   completed rc=0 in 8 minutes; variant running. Remaining: R-C ->
   R-A' -> R-B failure-regime.
+
+## 2026-06-12 18:20 KST — R-C cap corrected pre-verdict; trio degeneracy widens
+
+- Coverage pre-check before the R-C verdict (same discipline that
+  caught the R-B gap): the R-B variant archives (identical frozen
+  target) show the fast subset accumulates only 11-12 archive
+  observations at pop 12 x 3, so the queued R-C patience cap of 16
+  was UNREACHABLE - a guaranteed-null screen. The cap was scaled for
+  the 20x5 hard subset (~30 observations). R-C killed mid-variant
+  (solo pkills), launcher regenerated with warmup_max_buffer=10
+  (>= warmup_successes 8, < 12 observations, leaving 1-2 archive-
+  enabled generations), artifacts wiped, relaunched clean at
+  16:16:55. Chain intact.
+- MAJOR P2 finding from the same archives: the journal trio is
+  degenerate on 4/6 fast-subset problems TOO (pe, mux256to1v,
+  popcount255, rotate100: all three axes collapsed, every observation
+  warmup_buffered) - and these are mid-size 150-3000-gate PPA-margin
+  designs, not the small spec-exact problems from the hard-subset
+  diagnosis. Even the two problems that initialized carry one
+  collapsed axis each (multi_16bit: logic_depth; sub_64bit:
+  ff_depth) with 2-4 occupied cells. The trio's degeneracy is the
+  dominant archive pathology across BOTH subsets; the bake-off's
+  warmup-completion readout is now the headline criterion, and the
+  graph/testability + activity + 2-axis profiles must be judged
+  primarily on it.
