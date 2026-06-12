@@ -85,12 +85,26 @@ def load_cvdp_difficulty_map(jsonl_path: Path) -> dict[str, str]:
     return difficulty
 
 
+def load_excluded_ids(config_paths: list[Path]) -> frozenset[str]:
+    """Collect benchmark ids from locked subset manifests for exclusion."""
+
+    excluded: set[str] = set()
+    for path in config_paths:
+        payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+        benchmarks = payload["benchmarks"]
+        assert isinstance(benchmarks, dict), f"malformed manifest: {path}"
+        for entry in benchmarks.values():
+            excluded.update(str(pid) for pid in entry["problems"])
+    return frozenset(excluded)
+
+
 def select_balanced_subset(
     *,
     jsonl_path: Path,
     difficulty: str,
     per_category: int,
     seed: int,
+    exclude_ids: frozenset[str] = frozenset(),
 ) -> dict[str, list[str]]:
     """Select a deterministic per-category sample at the requested difficulty."""
 
@@ -102,6 +116,7 @@ def select_balanced_subset(
             record_id
             for record_id in category_index[cid]
             if difficulty_map.get(record_id) == difficulty.lower()
+            and record_id not in exclude_ids
         ]
         if not eligible:
             continue
@@ -120,6 +135,8 @@ def build_manifest_payload(
     per_category: int,
     seed: int,
     selection: dict[str, list[str]],
+    exclude_configs: list[Path],
+    exclude_ids: frozenset[str],
 ) -> dict[str, Any]:
     all_ids = sorted(pid for ids in selection.values() for pid in ids)
     dataset_sha256 = hashlib.sha256(jsonl_path.read_bytes()).hexdigest()
@@ -143,6 +160,8 @@ def build_manifest_payload(
                 "eligible ids, take first per_category, store sorted"
             ),
             "subset_size": len(all_ids),
+            "excluded_configs": [str(path) for path in exclude_configs],
+            "excluded_id_count": len(exclude_ids),
         },
         "categories": {cid: list(ids) for cid, ids in sorted(selection.items())},
         "benchmarks": {
@@ -186,6 +205,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Number of tasks selected per challenge category.",
     )
     parser.add_argument("--seed", type=int, default=42, help="Deterministic seed.")
+    parser.add_argument(
+        "--exclude-config",
+        type=Path,
+        action="append",
+        default=[],
+        help="Locked subset manifest whose benchmark ids are excluded "
+        "(repeatable; predeclared rule for fresh final slices).",
+    )
     return parser.parse_args(argv)
 
 
@@ -196,11 +223,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: dataset not found: {jsonl_path}", file=sys.stderr)
         return 2
 
+    exclude_ids = load_excluded_ids(args.exclude_config)
     selection = select_balanced_subset(
         jsonl_path=jsonl_path,
         difficulty=args.difficulty,
         per_category=args.per_category,
         seed=args.seed,
+        exclude_ids=exclude_ids,
     )
     if not selection:
         print(
@@ -216,6 +245,8 @@ def main(argv: list[str] | None = None) -> int:
         per_category=args.per_category,
         seed=args.seed,
         selection=selection,
+        exclude_configs=list(args.exclude_config),
+        exclude_ids=exclude_ids,
     )
     args.output_config.parent.mkdir(parents=True, exist_ok=True)
     args.output_config.write_text(
