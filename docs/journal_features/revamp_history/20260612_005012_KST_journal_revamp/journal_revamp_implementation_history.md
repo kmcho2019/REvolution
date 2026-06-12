@@ -573,3 +573,22 @@ starts from an unusually consistent failure signature: PPA-quality
 losses at functionality parity, QD wall 1.5-1.8x classic at equal
 candidate budget, retained-spread collapse, and only 3 distinct
 thoughts per generation at pop 12 / k=4.
+
+## 2026-06-13 00:45 KST
+
+Formal P2 correlation script landed
+(scripts/report_descriptor_objective_correlation.py + tests): Pearson r
+WITHIN each problem, median-|r| aggregation across problems, min-sample
+floor, archive-bias caveat embedded. First run on the three tuning QD
+roots FLIPS the exploratory pooled verdicts: logic_depth = REDUNDANT
+(median |r| >= 0.8; mechanistically plausible - combinational depth IS
+the critical-path/timing axis), ff_depth and comb_width_log = OK. This
+is exactly why pooled correlation was disallowed. Decision deferred to
+hard-subset data (richer problems, 13 vs 6; pair running since 08:56)
+before any profile action; if confirmed, the bake-off's candidate
+profiles need a timing-decoupled depth variant (e.g., depth normalized
+by cell count) or logic_depth's diversity claim is dropped per the
+predeclared bound. Hard-subset G4/P1 pair separately confirmed launched
+(earlier chain step-2 never started - the wrapper died in the pkill
+incident and step-1 survived as an orphan; 'RUNNING' checks now use
+artifacts, not pgrep self-matches).
