@@ -1002,3 +1002,24 @@ fallback; R-D k=2 (already running on OpenRouter).
   -0.188) carry this caveat. Screen PROMOTE/DEMOTE bands judge the
   pair-internal delta and stay sound.
 - R-B variant arm started 15:33:34 under the cap.
+
+## 2026-06-12 17:30 KST — screen-coverage gap found; failure-regime subset locked
+
+- Live mechanism probe on the R-B variant arm: parent sources were
+  seed 19 / archive 52 / fail_pool 0 across six problems - the v3
+  fast subset (selected for min functionality 0.6) keeps the fail
+  pool empty, so FAILURE-PATH candidates never fire there. The
+  imminent R-B fast-screen verdict is therefore COVERAGE-LIMITED:
+  a null delta cannot refute the hypothesis (the arms differ only in
+  dormant machinery). Instrument limitation recorded: the v3 subset
+  screens always-on mechanisms (operators, archive, realization
+  prompts); failure-path mechanisms need the failure regime.
+- Locked data/configs/failure_regime_screen_subset.yaml (v1): the
+  five VerilogEval hard-subset problems with QD pass rates 3-26%
+  from the diagnosis (m2014_q3, review2015_fsm, alu, fsmonehot,
+  circuit7), pop 12 x 3 gens, 32k cap, primary readouts include
+  per-arm pass rates and fail_pool parent counts.
+- exp/rb_failure_regime_launch.sh generated and QUEUED at the chain
+  tail (exp/queue_after_ra.sh watches the R-A' completion marker).
+  Chain: R-B fast (variant finishing) -> R-C -> R-A' -> R-B
+  failure-regime.

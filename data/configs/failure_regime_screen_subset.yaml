@@ -1,0 +1,46 @@
+version: 1
+subset_name: failure_regime_screen_subset_v1
+purpose: "targeted screen for FAILURE-PATH repair candidates (fail-parent
+  feedback, repair budgets, spec-first realization on spec-exact problems);
+  TUNING/DEV artifact only - never publication evidence. The v3 fast subset
+  cannot screen these candidates: it was selected for high functionality
+  (min 0.6), so the QD fail pool stays empty and failure-path mechanisms
+  never fire (observed: R-B variant arm drew 0 fail_pool parents across
+  six problems)."
+selection:
+  source: P1 mechanistic diagnosis on exp/fast_iter/hard_subset_42
+    (history 2026-06-12 13:05) - the five VerilogEval hard-subset problems
+    with the lowest QD thought-mode functional pass rates.
+  rule: hard-subset problems with QD sample pass rate <= 26%, descending
+    failure severity; classic pass behavior spans 0-100% so both
+    failure-recovery and transcription regimes are represented.
+  qd_pass_rates:
+    Prob116_m2014_q3: 0.03
+    Prob151_review2015_fsm: 0.12
+    Prob045_alu: 0.15
+    Prob150_review2015_fsmonehot: 0.21
+    Prob098_circuit7: 0.26
+  subset_size: 5
+recommended_budget:
+  population_size: 12
+  num_generations: 3
+  code_samples_per_thought: 4
+  max_tokens: 32768
+  diff_max_tokens: 32768
+  total_worker_slots: 12
+  max_active_problems: 5
+  max_workers_per_problem: 4
+  evaluation_mode: strict_ablation
+  notes: OpenRouter 32k completion cap (provider-forced deviation,
+    history 2026-06-12 16:50); same-provider-same-budget both arms.
+    Primary readouts beyond paired best-quality - per-arm functional
+    pass rates and fail_pool parent counts (the mechanism must actually
+    fire for the screen to be informative).
+benchmarks:
+  VerilogEval-Spec-to-RTL:
+    problems:
+      - Prob045_alu
+      - Prob098_circuit7
+      - Prob116_m2014_q3
+      - Prob150_review2015_fsmonehot
+      - Prob151_review2015_fsm
