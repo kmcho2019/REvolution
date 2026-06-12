@@ -1230,3 +1230,23 @@ fallback; R-D k=2 (already running on OpenRouter).
   existed.
 - Ablation matrix: classic seed-1001 ~70% done (65 generation-log
   lines over 13 problems, zero retries, 4127 files in 5 min).
+
+## 2026-06-12 23:35 KST — first matrix contrast: unification not free
+
+- classic_unified vs classic, seed 1001 (13/13 paired, no
+  imputations): mean best-quality delta -0.090, 1W/9L/3T. Parity:
+  api_calls ratio 0.999 (excellent), completion tokens 1.201 (+20%,
+  unified emits longer outputs) - the loss direction is a-fortiori
+  valid under the extra tokens. Reading for Branch C floor leg (i):
+  the parity-or-better claim FAILS on this seed - removing the
+  six-strategy suite costs ~0.09 on the classic substrate; the
+  one-factor attribution itself (the floor's real content) is now
+  measured. Seeds 1002-1003 confirm.
+- Regime pattern repeats a third time: unified ties/wins exactly on
+  the spec-exact VerilogEval problems (m2014_q3, m2014_q6b,
+  fsmonehot ties; fsm +0.096) and loses on the RTLLM PPA-margin
+  problems (circuit7 -0.320, alu -0.294, adder -0.190). Thought-style
+  prompting is regime-sensitive, not uniformly weaker - manuscript
+  framing for both the operator section and the Branch C claims.
+- qd_six_operators seed 1001 (the operator-claim licensing contrast)
+  started 22:29:03; classic_unified arm completed in 51 min.
