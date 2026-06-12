@@ -511,3 +511,22 @@ detached (exp/fast_iter/fast_iter_v3_20260612). QD signal persists on
 v2: best-quality 0W/4L/1T at -0.103 with functionality parity - the QD
 arm also ran 1.58x classic wall at equal candidate budget, noted for
 budget-symmetry accounting.
+
+## 2026-06-12 20:30 KST
+
+P2 first descriptor-objective evidence (exploratory, from the v1/v2
+fast-pair QD archives on disk, n=38 pooled members): |r| vs g_P/g_A/g_T:
+logic_depth 0.23/0.17/0.14 (healthy); ff_depth 0.94/0.73/0.67 with
+spread only 0..3 (the redundancy suspect is ff_depth on these problems,
+NOT comb_width_log at 0.37/0.33/0.33). METHOD CAVEAT recorded: pooling
+across problems inflates r via problem-level effects - the formal P2
+analysis must compute within-problem correlations and aggregate by
+cluster, and needs hard-subset data (fast-subset problems are
+PPA-headroom-easy with shallow FF structure). Lead candidate profile to
+pre-register stays {logic_depth, ff_depth, rent_exponent} with the
+2-axis control; the bake-off decides.
+
+Also: held-out 20-problem reference EVIDENCE set locked (commit
+81e6edcec1; stratified seed-7777 rule, no functionality filter,
+exclusion list embedded). v3 pair in flight: classic arm finished in
+10 min (sub_64bit fast); QD arm running since 07:41.
