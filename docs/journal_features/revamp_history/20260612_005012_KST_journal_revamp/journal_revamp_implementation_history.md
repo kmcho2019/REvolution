@@ -889,3 +889,27 @@ fallback; R-D k=2 (already running on OpenRouter).
   still happens only by the narrative's frozen rule.
 - k2 variant arm: 4/6 problems done; sub_64bit and multi_16bit at
   gen 1 and progressing (no stalls under the retry fix).
+
+## 2026-06-12 15:15 KST — k2 screen verdict: DEMOTE (degraded screen)
+
+- The OpenRouter stall recurred on the k2 VARIANT arm (10 ESTAB
+  connections, 36 min, zero timeout warnings). Root cause deeper than
+  SDK retries: OpenRouter keep-alive bytes defeat httpx read timeouts
+  on non-streaming requests, so the 600 s SDK timeout never fires on
+  a glacial provider. fix(llm) 4a9e6d9355 wraps all three completion
+  call sites in asyncio.wait_for(request_timeout_seconds) with
+  TimeoutError added to the retry-caught set; also fixed a
+  pre-existing leak where six tests stubbed global asyncio.sleep via
+  raw pytest.MonkeyPatch() (never undone), exposed by the new
+  deadline test. Suite green (474 passed).
+- Variant arm killed per the same pre-registered fallback (rc=143 at
+  14:01:56); launcher completed stats + both ledger appends.
+- k2 verdict on the DEGRADED screen (4 paired; sub_64bit imputed as
+  loss; multi_16bit unpaired - both heavies lost to stalls, an honest
+  limitation): penalized mean best-quality delta -0.141, paired-only
+  -0.063, 1W/2L/2T; popcount255 -0.262 dominates. Against the k=4
+  baselines (-0.086/-0.188) there is no credible improvement signal:
+  DEMOTE k=2 as a standalone repair. The ideation-diversity
+  hypothesis alone does not close the gap.
+- R-B screen (failure feedback) auto-started behind k2 with both the
+  retry fix and the hard deadline in effect.
