@@ -200,6 +200,7 @@ def validate_entry_with_golden(
     entry: dict[str, Any],
     *,
     simulation_timeout_s: int = 180,
+    verilator_fallback: bool = False,
 ) -> dict[str, Any]:
     """Run the task's golden source through the strict iverilog harness.
 
@@ -251,12 +252,50 @@ def validate_entry_with_golden(
             failure_reason = f"no mismatch summary (status={status})"
         else:
             failure_reason = f"golden mismatches={mismatch_count} (status={status})"
-    return {
+    payload = {
         "harness_validated": validated,
         "harness_status": status,
         "harness_mismatch_count": mismatch_count,
         "harness_failure_reason": failure_reason,
     }
+    if validated or not verilator_fallback:
+        return payload
+
+    # Retry iverilog-rejected goldens through the verilator-5 harness;
+    # rescued tasks are marked so the runtime dispatches the matching
+    # evaluator (functional_harness_kind -> VerilatorEvaluator).
+    from revolution.verilator_evaluation import VerilatorEvaluator
+
+    vl_evaluator = VerilatorEvaluator(
+        default_simulation_timeout_seconds=simulation_timeout_s,
+    )
+    with tempfile.TemporaryDirectory() as tmp:
+        candidate = Path(tmp) / f"{entry['problem_name']}.sv"
+        candidate.write_text(golden_path.read_text(encoding="utf-8"), encoding="utf-8")
+        vl_result = vl_evaluator.evaluate(
+            [str(candidate), *aux_sources] if aux_sources else str(candidate),
+            str(output_root / str(entry["test_sv_path"])),
+            None,
+            top_module_name=str(entry["testbench_top_module"]),
+            output_directory=tmp,
+            include_dirs=include_dirs or None,
+            defines=defines or None,
+        )
+    vl_stdout = str(vl_result.get("simulation_stdout", ""))
+    vl_mismatches = parse_mismatch_count(vl_stdout)
+    if str(vl_result.get("status")) == "success" and vl_mismatches == 0:
+        return {
+            "harness_validated": True,
+            "harness_status": "verilator_success",
+            "harness_mismatch_count": 0,
+            "harness_failure_reason": None,
+            "functional_harness_kind": "verilator_testbench",
+            "iverilog_failure_reason": failure_reason,
+        }
+    payload["verilator_fallback_reason"] = (
+        f"status={vl_result.get('status')} mismatches={vl_mismatches}"
+    )
+    return payload
 
 
 def generate_manifest(
@@ -266,6 +305,7 @@ def generate_manifest(
     families: list[str] | None = None,
     validate: bool = False,
     validation_timeout_s: int = 180,
+    verilator_fallback: bool = False,
 ) -> dict[str, Any]:
     info = load_benchmark_info(source_root)
     selected_families = sorted(families) if families else sorted(info)
@@ -287,6 +327,7 @@ def generate_manifest(
                         output_root,
                         entry,
                         simulation_timeout_s=validation_timeout_s,
+                        verilator_fallback=verilator_fallback,
                     )
                 )
                 print(
@@ -350,6 +391,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "record harness_validated per manifest entry.",
     )
     parser.add_argument(
+        "--verilator-fallback",
+        action="store_true",
+        help="Retry iverilog-rejected goldens through the verilator-5 "
+        "harness and mark rescued tasks functional_harness_kind="
+        "verilator_testbench.",
+    )
+    parser.add_argument(
         "--validation-timeout-s",
         type=int,
         default=180,
@@ -376,6 +424,7 @@ def main(argv: list[str] | None = None) -> int:
             families=args.families,
             validate=args.validate,
             validation_timeout_s=args.validation_timeout_s,
+            verilator_fallback=args.verilator_fallback,
         )
     except FileNotFoundError as exc:
         print(f"error: {exc}", file=sys.stderr)

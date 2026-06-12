@@ -192,3 +192,54 @@ def test_validate_entry_records_failure_reason(tmp_path, monkeypatch):
     assert result["harness_validated"] is True
     assert result["harness_mismatch_count"] == 0
     assert result["harness_failure_reason"] is None
+
+
+def test_verilator_fallback_rescues_iverilog_rejected_golden(tmp_path, monkeypatch):
+    source_root = _write_source_tree(tmp_path)
+    output_root = tmp_path / "out"
+    output_root.mkdir()
+    manifest = build_realbench_manifest.generate_manifest(
+        source_root=source_root, output_root=output_root
+    )
+    entry = manifest["problems"][0]
+
+    class _FailingIverilog:
+        def __init__(self, **kwargs):
+            pass
+
+        def evaluate(self, *args, **kwargs):
+            return {
+                "status": "compilation_error",
+                "compilation_stderr": "syntax error: assert property",
+                "simulation_stdout": "",
+            }
+
+    class _PassingVerilator:
+        def __init__(self, **kwargs):
+            pass
+
+        def evaluate(self, *args, **kwargs):
+            return {
+                "status": "success",
+                "simulation_stdout": "Hint: Total mismatched samples is 0 out of 9 samples\n",
+            }
+
+    import revolution.evaluation as evaluation_module
+    import revolution.verilator_evaluation as verilator_module
+
+    monkeypatch.setattr(evaluation_module, "VerilogEvaluator", _FailingIverilog)
+    monkeypatch.setattr(verilator_module, "VerilatorEvaluator", _PassingVerilator)
+
+    rescued = build_realbench_manifest.validate_entry_with_golden(
+        output_root, entry, verilator_fallback=True
+    )
+    assert rescued["harness_validated"] is True
+    assert rescued["harness_status"] == "verilator_success"
+    assert rescued["functional_harness_kind"] == "verilator_testbench"
+    assert "assert property" in rescued["iverilog_failure_reason"]
+
+    unrescued = build_realbench_manifest.validate_entry_with_golden(
+        output_root, entry, verilator_fallback=False
+    )
+    assert unrescued["harness_validated"] is False
+    assert "functional_harness_kind" not in unrescued
