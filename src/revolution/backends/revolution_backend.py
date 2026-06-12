@@ -30,6 +30,7 @@ class RevolutionBackendConfig:
     ucb_c: float = 2.0
     generation_mode: str = "whole"
     population_pool_mode: str = "dual"
+    classic_operator_kind: str = "eoh_strategies"
     diff_apply_policy: str = "hybrid"
     diff_max_tokens: int = 1024
     diff_compact_context: bool = True
@@ -135,6 +136,7 @@ class RevolutionBackend(EvolutionBackend):
             ucb_c=self.config.ucb_c,
             generation_mode=self.config.generation_mode,
             population_pool_mode=self.config.population_pool_mode,
+            classic_operator_kind=self.config.classic_operator_kind,
             diff_apply_policy=self.config.diff_apply_policy,
             diff_max_tokens=self.config.diff_max_tokens,
             diff_compact_context=self.config.diff_compact_context,

@@ -416,6 +416,7 @@ class EoHEngine:
         diff_fuzzy_margin: float = 0.03,
         champion_metrics_config: list[dict[str, Any]] | None = None,
         population_pool_mode: PopulationPoolMode = "dual",
+        classic_operator_kind: str = "eoh_strategies",
         require_strict_format: bool = True,
         prompt_profile: str = "default",
         prompt_root: str | None = None,
@@ -495,6 +496,12 @@ class EoHEngine:
             ]
         else:
             self.champion_metrics_config = champion_metrics_config
+
+        if classic_operator_kind not in {"eoh_strategies", "single_thought_operator"}:
+            raise ValueError(f"Unsupported classic_operator_kind '{classic_operator_kind}'.")
+        if classic_operator_kind == "single_thought_operator" and generation_mode != "whole":
+            raise ValueError("classic single_thought_operator supports whole mode only.")
+        self.classic_operator_kind = classic_operator_kind
 
         # Population pool mode + single-pool storage
         self.population_pool_mode: PopulationPoolMode = population_pool_mode
@@ -3621,6 +3628,41 @@ class EoHEngine:
         finally:
             self.generation_mode = old_mode
 
+
+    def _format_parent_for_unified_operator(self, parent: "Heuristic", example_num: int) -> dict[str, Any]:
+        """Compact parent payload for the unified operator: thought and status
+        only (no code, no feedback) - the one-factor contrast removes the six
+        strategy prompts and nothing else."""
+        status = "succeeded" if parent.status == "success" and parent.ppa_success else "failed"
+        payload: dict[str, Any] = {
+            "example": example_num,
+            "thought": parent.thought,
+            "evaluation_status": status,
+        }
+        if status == "succeeded":
+            payload["quality_score"] = float(getattr(parent, "quality_score", parent.score))
+        return payload
+
+    def _create_prompt_unified_classic(self, parents: list["Heuristic"]) -> str:
+        """Whole-mode unified operator prompt on the classic substrate."""
+        assert len(parents) in {1, 2}, "unified operator takes one or two parents"
+        payloads = [
+            self._format_parent_for_unified_operator(parent, index)
+            for index, parent in enumerate(parents, start=1)
+        ]
+        context_obj: dict[str, Any] = {
+            "task": "single_thought_operator",
+            "parent_count": len(parents),
+            "problem_description": self.problem_description,
+        }
+        if len(payloads) == 1:
+            context_obj["parent"] = payloads[0]
+        else:
+            context_obj["parents"] = payloads
+        tpl = self.prompts.read("evolve/single_thought_operator/whole")
+        assert tpl, "missing prompt template: evolve/single_thought_operator/whole"
+        return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+
     def evolve_one_generation(self):
         """Performs one generation of the REvolution algorithm."""
         self.current_generation += 1
@@ -3671,22 +3713,29 @@ class EoHEngine:
         # Generate from "failed" parents (M-F, M-S/E/R/I)
         if fail_view:
             for _ in range(num_from_fail):
-                strat_name, prob_dist_dict = self._select_strategy(
-                    "fail", self.fail_strats, fail_strategies_selected_this_gen
-                )
-                if strat_name is None or prob_dist_dict is None:
-                    print("No valid fail strategies available. Skipping...")
-                    continue
-                fail_strategies_selected_this_gen.add(strat_name)
-                parents = random.choices(
-                    fail_view, k=strategies[strat_name]["num_parents"]
-                )
+                if self.classic_operator_kind == "single_thought_operator":
+                    strat_name, prob_dist_dict = "single_thought_operator", {}
+                    parents = random.choices(fail_view, k=1)
+                else:
+                    strat_name, prob_dist_dict = self._select_strategy(
+                        "fail", self.fail_strats, fail_strategies_selected_this_gen
+                    )
+                    if strat_name is None or prob_dist_dict is None:
+                        print("No valid fail strategies available. Skipping...")
+                        continue
+                    fail_strategies_selected_this_gen.add(strat_name)
+                    parents = random.choices(
+                        fail_view, k=strategies[strat_name]["num_parents"]
+                    )
 
                 # Respect configured generation mode for failed parents as well.
                 # Initial generation remains whole-mode, but post-gen0 diff mode should
                 # still exercise failed-parent repair attempts for token/perf comparisons.
                 req_mode = self.generation_mode
-                prompt_text = self._with_mode(req_mode, strategies[strat_name]["func"], parents) # Switches prompt_text based on req_mode
+                if strat_name == "single_thought_operator":
+                    prompt_text = self._create_prompt_unified_classic(parents)
+                else:
+                    prompt_text = self._with_mode(req_mode, strategies[strat_name]["func"], parents) # Switches prompt_text based on req_mode
                 request_system_prompt = self._get_generation_system_prompt(req_mode)
                 llm_request = self._build_prompt_request(
                     prompt=prompt_text,
@@ -3716,15 +3765,18 @@ class EoHEngine:
             if len(success_view) < 2 and "C-F" in available_success_strategies:
                 available_success_strategies.remove("C-F")
             for _ in range(num_from_success):
-                strat_name, prob_dist_dict = self._select_strategy(
-                    "success",
-                    available_success_strategies,
-                    success_strategies_selected_this_gen,
-                )
-                if strat_name is None or prob_dist_dict is None:
-                    print("No valid success strategies available. Skipping...")
-                    continue
-                success_strategies_selected_this_gen.add(strat_name)
+                if self.classic_operator_kind == "single_thought_operator":
+                    strat_name, prob_dist_dict = "single_thought_operator", {}
+                else:
+                    strat_name, prob_dist_dict = self._select_strategy(
+                        "success",
+                        available_success_strategies,
+                        success_strategies_selected_this_gen,
+                    )
+                    if strat_name is None or prob_dist_dict is None:
+                        print("No valid success strategies available. Skipping...")
+                        continue
+                    success_strategies_selected_this_gen.add(strat_name)
 
                 # Weighted parent choice by score among successes
                 base = min(p.score for p in success_view) if success_view else 0.0
@@ -3736,15 +3788,20 @@ class EoHEngine:
                     ]
                 else: # dual-mode, no accentuation, with base weight 0.1, score linearly weighs parent selection probability
                     weights = [c.score - base + 0.1 for c in success_view]
+                if strat_name == "single_thought_operator":
+                    # Mirror the QD target operator's one_parent_fraction 0.5.
+                    arity = 2 if len(success_view) >= 2 and random.random() >= 0.5 else 1
+                else:
+                    arity = strategies[strat_name]["num_parents"]
                 parents = random.choices(
                     success_view,
                     weights=weights,
-                    k=strategies[strat_name]["num_parents"],
+                    k=arity,
                 )
 
                 # Ensure different parents for C-F
                 if (
-                    strat_name == "C-F"
+                    strat_name in ("C-F", "single_thought_operator")
                     and len(parents) == 2
                     and parents[0].id == parents[1].id
                 ):
@@ -3758,7 +3815,10 @@ class EoHEngine:
 
                 # This snippet allows inherited classes to override default system prompt
                 req_mode = self.generation_mode  # respect the engine's original/global setting if parent(s) isn't from fail_pool or is a success
-                prompt_text = self._with_mode(req_mode, strategies[strat_name]["func"], parents) # Switches prompt_text based on req_mode
+                if strat_name == "single_thought_operator":
+                    prompt_text = self._create_prompt_unified_classic(parents)
+                else:
+                    prompt_text = self._with_mode(req_mode, strategies[strat_name]["func"], parents) # Switches prompt_text based on req_mode
                 request_system_prompt = self._get_generation_system_prompt(req_mode)
                 llm_request = self._build_prompt_request(
                     prompt=prompt_text,
@@ -3850,6 +3910,9 @@ class EoHEngine:
                             reward = 1.0
 
             cand.reward_from_parent = reward
+            if strategy_name == "single_thought_operator":
+                # Unified mode has no bandit: nothing to attribute.
+                continue
             # Populate the correct reward dictionary based on the pool type
             if parent_pool_type == "fail":
                 fail_rewards_this_gen[strategy_name] += reward
