@@ -829,3 +829,29 @@ fallback; R-D k=2 (already running on OpenRouter).
   local-vLLM G1a calibration; screens are judged on quality-delta
   bands, and any runtime gating on API-side runs needs an OpenRouter
   re-baseline first (instrument caveat).
+
+## 2026-06-12 14:10 KST — stall root-caused; chain four deep
+
+- k2 classic-arm stall root cause: AsyncOpenAI retries internally
+  (default 2) before our 15-attempt loop sees the exception, so one
+  hung OpenRouter provider blocks 3x the 600 s request timeout per
+  loop attempt with zero retry evidence in the launch log; three
+  sockets sat ESTAB for 38+ min. fix(llm) c12eb80369 pins client
+  max_retries=0 (we own retry/backoff; fast failure lets OpenRouter
+  re-route to a healthy provider).
+- Pre-registered fallback executed: killed the stuck classic arm at
+  12:57 (rc=143; pattern 'save_path ...clas[s]ic' to avoid pkill
+  self-match). Five classic problems were already complete; the k2
+  screen therefore pairs 5/6 problems (Prob011_multi_16bit unpaired,
+  excluded by paired stats; recorded as a screen caveat). The variant
+  arm relaunched at 12:57:38 as a fresh process under the fixed
+  client. Later screens run fresh classic arms and are unaffected.
+- R-A' implemented: journal_thought_only_specfirst profile - the
+  realization template now instructs spec-first re-derivation of
+  interfaces, indexing, tables, and equations, treating thought_spec
+  transcriptions as an untrusted paraphrase; thought template
+  untouched (one factor). Launcher exp/specfirst_ra_launch.sh queued
+  behind R-C on its completion marker (exp/queue_after_rc.sh).
+- Screen chain: k2 variant (RUNNING) -> R-B fail feedback -> R-C
+  warmup patience -> R-A' spec-first; each one-factor vs the frozen
+  target, all OpenRouter, seeds 42, locked v3 subset.
