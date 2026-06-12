@@ -1023,3 +1023,20 @@ fallback; R-D k=2 (already running on OpenRouter).
   tail (exp/queue_after_ra.sh watches the R-A' completion marker).
   Chain: R-B fast (variant finishing) -> R-C -> R-A' -> R-B
   failure-regime.
+
+## 2026-06-12 17:55 KST — R-B fast verdict; chain rolling clean
+
+- R-B fast screen complete - the FIRST clean 6/6-paired screen (both
+  arms rc=0, no imputed losses, ledgered). Verdict: mean best-quality
+  delta -0.177, 0W/4L/2T -> DEMOTE on this subset, WITH the
+  pre-recorded coverage caveat: fail_pool was empty (mechanism
+  dormant), so this measures the frozen QD target with inert R-B
+  machinery. Properly read, it is a REPLICATION of the baseline QD
+  deficit under the new regime (OpenRouter + 32k): -0.177 sits in
+  the band of the local-vLLM 128k baselines (-0.086 / -0.188),
+  i.e. the gap transfers across provider and budget - useful
+  instrument evidence. R-B's decisive test remains the queued
+  failure-regime screen where the fail pool populates.
+- Chain self-driving: R-C auto-started 15:57:33; its classic arm
+  completed rc=0 in 8 minutes; variant running. Remaining: R-C ->
+  R-A' -> R-B failure-regime.
