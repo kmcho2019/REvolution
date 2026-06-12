@@ -721,3 +721,22 @@ recorded its first two problem wins (identify which two as the lead
 diagnostic for what QD does right). Next: MDE re-run on hard-subset
 variance, correlation re-run on hard-subset archives, k-ablation pair
 on OpenRouter via the generated launcher.
+
+## 2026-06-13 07:45 KST
+
+Post-convergence analyses + first OpenRouter repair screen:
+
+- MDE on hard-subset variance: continuous MDE ~0.12 at 13x5 and 20x3 -
+  the +0.03 best-quality gate stays under-powered at planned scales;
+  freeze-time ratchet input archived (exp/fast_iter/mde_hard_subset).
+- Descriptor correlation on hard-subset archives: ALL THREE axes OK -
+  logic_depth's fast-subset REDUNDANT verdict was a small-n artifact;
+  the trio passes the redundancy bound on the best available data
+  (exp/fast_iter/descriptor_correlation_hard). Bake-off still compares
+  pre-registered profiles, but nothing forces replacement.
+- QD's two hard-subset wins: Prob049_signal_generator and
+  Prob135_m2014_q6b - lead diagnostics for what the archive does right.
+- k=2 ablation pair launched on OpenRouter via the generated launcher
+  (exp/fast_iter/k_ablation_k2; classic arm 12:16:01) - the first
+  screened repair candidate on the signed-off instrument, isolating the
+  ideation-diversity hypothesis (6 thoughts/gen at k=2 vs 3 at k=4).
