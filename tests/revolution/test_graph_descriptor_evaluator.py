@@ -195,3 +195,125 @@ def test_empty_rent_metrics_return_neutral_gated_exponent():
     assert metrics["rent_exponent"] == pytest.approx(0.0)
     assert metrics["rent_confidence"] == pytest.approx(0.0)
     assert metrics["rent_exponent_confidence_gated"] == pytest.approx(0.5)
+
+
+def test_logic_depth_ground_truth_mixed_chain(tmp_path: Path):
+    """Four distinct ops in a chain: depth is exactly 4 (literature: levels
+    of logic between sequential/IO boundaries)."""
+    code_path = tmp_path / "chain4.sv"
+    code_path.write_text(
+        "module chain4(input logic a, b, c, d, e, output logic y);\n"
+        "  logic w1, w2, w3;\n"
+        "  assign w1 = a & b;\n"
+        "  assign w2 = w1 | c;\n"
+        "  assign w3 = w2 ^ d;\n"
+        "  assign y = w3 & e;\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    metrics = GraphDescriptorEvaluator().extract_metrics(
+        code_file_path=code_path, top_module_name="chain4"
+    )
+    assert metrics["logic_depth"] == pytest.approx(4.0)
+
+
+def test_ff_depth_ground_truth_pipeline(tmp_path: Path):
+    """A 3-stage register pipeline has sequential depth exactly 3."""
+    code_path = tmp_path / "pipe3.sv"
+    code_path.write_text(
+        "module pipe3(input logic clk, input logic d, output logic q);\n"
+        "  logic s1, s2;\n"
+        "  always_ff @(posedge clk) begin\n"
+        "    s1 <= d; s2 <= s1; q <= s2;\n"
+        "  end\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    metrics = GraphDescriptorEvaluator().extract_metrics(
+        code_file_path=code_path, top_module_name="pipe3"
+    )
+    assert metrics["ff_depth"] == pytest.approx(3.0)
+
+
+def test_ff_depth_counter_feedback_counts_loop_once(tmp_path: Path):
+    """Sequential feedback (accumulator) is SCC-collapsed, not unrolled: the
+    register in the loop contributes its weight once on the PI->PO path.
+    DOCUMENTED LIBERTY: control ports (clk/en/rst) are excluded from data
+    dependency tracing, so an enable-only-reachable register reports 0."""
+    acc = tmp_path / "acc.sv"
+    acc.write_text(
+        "module acc(input logic clk, input logic [3:0] din, output logic [3:0] q);\n"
+        "  always_ff @(posedge clk) q <= q + din;\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    metrics = GraphDescriptorEvaluator().extract_metrics(
+        code_file_path=acc, top_module_name="acc"
+    )
+    assert metrics["ff_depth"] == pytest.approx(1.0)
+
+    enable_only = tmp_path / "cnt.sv"
+    enable_only.write_text(
+        "module cnt(input logic clk, input logic en, output logic [3:0] q);\n"
+        "  always_ff @(posedge clk) if (en) q <= q + 4'd1;\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    metrics = GraphDescriptorEvaluator().extract_metrics(
+        code_file_path=enable_only, top_module_name="cnt"
+    )
+    assert metrics["ff_depth"] == pytest.approx(0.0)
+
+
+def test_logic_depth_survives_very_deep_chain(tmp_path: Path):
+    """Regression: recursive traversal hit Python's recursion limit on long
+    combinational chains; the iterative walk must not."""
+    stages = 1500
+    lines = [
+        "module deep(input logic a, input logic b, output logic y);",
+        "  logic w0;",
+        "  assign w0 = a ^ b;",
+    ]
+    for i in range(1, stages):
+        lines.append(f"  logic w{i};")
+        lines.append(f"  assign w{i} = w{i-1} ^ a;")
+    lines.append(f"  assign y = w{stages-1};")
+    lines.append("endmodule")
+    code_path = tmp_path / "deep.sv"
+    code_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    metrics = GraphDescriptorEvaluator().extract_metrics(
+        code_file_path=code_path, top_module_name="deep"
+    )
+    assert metrics["logic_depth"] == pytest.approx(float(stages))
+
+
+def test_rent_exponent_orders_chain_below_dense(tmp_path: Path):
+    """Sanity ordering from Rent literature: a 1D chain partitions with few
+    boundary pins (low p); dense reconvergent logic partitions badly
+    (higher p). Also: extraction is deterministic."""
+    chain = tmp_path / "rchain.sv"
+    lines = ["module rchain(input logic a, input logic b, output logic y);", "  logic w0;", "  assign w0 = a ^ b;"]
+    for i in range(1, 24):
+        lines.append(f"  logic w{i};")
+        lines.append(f"  assign w{i} = w{i-1} ^ a;")
+    lines.append("  assign y = w23;")
+    lines.append("endmodule")
+    chain.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    dense = tmp_path / "rdense.sv"
+    dlines = ["module rdense(input logic [7:0] a, output logic [7:0] y);"]
+    for i in range(8):
+        terms = " ^ ".join(f"a[{j}]" for j in range(8) if j != i)
+        dlines.append(f"  assign y[{i}] = {terms};")
+    dlines.append("endmodule")
+    dense.write_text("\n".join(dlines) + "\n", encoding="utf-8")
+
+    evaluator = GraphDescriptorEvaluator()
+    chain_metrics = evaluator.extract_metrics(code_file_path=chain, top_module_name="rchain")
+    chain_again = evaluator.extract_metrics(code_file_path=chain, top_module_name="rchain")
+    dense_metrics = evaluator.extract_metrics(code_file_path=dense, top_module_name="rdense")
+
+    assert chain_metrics["rent_exponent"] == pytest.approx(chain_again["rent_exponent"])
+    assert 0.0 <= chain_metrics["rent_exponent"] <= 1.0
+    assert 0.0 <= dense_metrics["rent_exponent"] <= 1.0
+    assert chain_metrics["rent_exponent"] < dense_metrics["rent_exponent"]

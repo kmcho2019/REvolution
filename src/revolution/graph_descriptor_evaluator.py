@@ -408,34 +408,87 @@ class GraphDescriptorEvaluator:
         }
 
     def _extract_logic_depth(self, graph: GraphModel) -> int:
-        """Count non-buffer combinational cells between PI/FF-Q and PO/FF-D boundaries."""
+        """Count non-buffer combinational cells between PI/FF-Q and PO/FF-D boundaries.
+
+        Longest path is computed iteratively (no Python recursion limit on
+        deep combinational chains). Combinational cycles are cut at the bit
+        where the walk re-enters its own path (contributing depth 0 there);
+        results computed under such a cut are NOT memoized, so a bit that is
+        also reachable through cycle-free paths keeps its true depth.
+        """
 
         memo: dict[int, int] = {}
 
-        def bit_depth(bit: int, visiting: set[int]) -> int:
-            if bit in graph.module_input_bits or bit in graph.sequential_output_bits:
-                return 0
-            cached = memo.get(bit)
-            if cached is not None:
-                return cached
-            if bit in visiting:
-                return 0
-            driver_name = graph.bit_output_cell.get(bit)
-            if driver_name is None:
-                return 0
-            cell = graph.cells[driver_name]
-            if cell.is_sequential:
-                return 0
-            input_bits = self._cell_input_bits(cell)
-            if not input_bits:
-                return 0
-            input_depth = max(bit_depth(input_bit, visiting | {bit}) for input_bit in input_bits)
-            depth = input_depth if self._is_buffer_cell(cell.cell_type) else input_depth + 1
-            memo[bit] = depth
-            return depth
+        def bit_depth_iterative(root: int) -> int:
+            # Each frame: (bit, input_iter, best_input_depth, tainted).
+            on_path: set[int] = set()
+            results: dict[int, tuple[int, bool]] = {}
+
+            def boundary_depth(bit: int) -> tuple[int, bool] | None:
+                if bit in graph.module_input_bits or bit in graph.sequential_output_bits:
+                    return 0, False
+                cached = memo.get(bit)
+                if cached is not None:
+                    return cached, False
+                driver_name = graph.bit_output_cell.get(bit)
+                if driver_name is None:
+                    return 0, False
+                cell = graph.cells[driver_name]
+                if cell.is_sequential:
+                    return 0, False
+                if not self._cell_input_bits(cell):
+                    return 0, False
+                return None
+
+            immediate = boundary_depth(root)
+            if immediate is not None:
+                return immediate[0]
+            stack: list[list] = [[root, None, 0, False]]
+            on_path.add(root)
+            while stack:
+                frame = stack[-1]
+                bit = frame[0]
+                if frame[1] is None:
+                    cell = graph.cells[graph.bit_output_cell[bit]]
+                    frame.append(cell)
+                    frame[1] = iter(self._cell_input_bits(cell))
+                advanced = False
+                for input_bit in frame[1]:
+                    known = results.get(input_bit)
+                    if known is not None:
+                        frame[2] = max(frame[2], known[0])
+                        frame[3] = frame[3] or known[1]
+                        continue
+                    if input_bit in on_path:
+                        frame[3] = True  # cycle cut: contributes 0, taints
+                        continue
+                    immediate = boundary_depth(input_bit)
+                    if immediate is not None:
+                        frame[2] = max(frame[2], immediate[0])
+                        frame[3] = frame[3] or immediate[1]
+                        continue
+                    stack.append([input_bit, None, 0, False])
+                    on_path.add(input_bit)
+                    advanced = True
+                    break
+                if advanced:
+                    continue
+                cell = frame[4]
+                depth = frame[2] if self._is_buffer_cell(cell.cell_type) else frame[2] + 1
+                tainted = frame[3]
+                results[bit] = (depth, tainted)
+                if not tainted:
+                    memo[bit] = depth
+                on_path.discard(bit)
+                stack.pop()
+                if stack:  # fold the finished child into its parent frame
+                    parent = stack[-1]
+                    parent[2] = max(parent[2], depth)
+                    parent[3] = parent[3] or tainted
+            return results[root][0]
 
         endpoints = graph.module_output_bits | graph.sequential_input_bits
-        return max((bit_depth(bit, set()) for bit in endpoints), default=0)
+        return max((bit_depth_iterative(bit) for bit in endpoints), default=0)
 
     def _extract_ff_depth(self, graph: GraphModel) -> int:
         """Count FF boundaries on PI-to-PO dependency paths without unrolling feedback cycles."""
@@ -445,25 +498,66 @@ class GraphDescriptorEvaluator:
         edges: dict[str, set[str]] = {pi_node: set(), po_node: set()}
         source_memo: dict[int, frozenset[str]] = {}
 
-        def bit_sources(bit: int, visiting: set[int]) -> set[str]:
-            if bit in graph.module_input_bits:
-                return {pi_node}
-            cached = source_memo.get(bit)
-            if cached is not None:
-                return set(cached)
-            if bit in visiting:
-                return set()
-            driver_name = graph.bit_output_cell.get(bit)
-            if driver_name is None:
-                return set()
-            cell = graph.cells[driver_name]
-            if cell.is_sequential:
-                return {driver_name}
-            sources: set[str] = set()
-            for input_bit in self._cell_input_bits(cell):
-                sources.update(bit_sources(input_bit, visiting | {bit}))
-            source_memo[bit] = frozenset(sources)
-            return sources
+        def bit_sources(root: int, _visiting: set[int]) -> set[str]:
+            # Iterative with taint-aware memoization: combinational-cycle
+            # cuts contribute no sources and poison neither the memo nor
+            # cycle-free paths through the same bit.
+            def immediate(bit: int) -> tuple[set[str], bool] | None:
+                if bit in graph.module_input_bits:
+                    return {pi_node}, False
+                cached = source_memo.get(bit)
+                if cached is not None:
+                    return set(cached), False
+                driver_name = graph.bit_output_cell.get(bit)
+                if driver_name is None:
+                    return set(), False
+                if graph.cells[driver_name].is_sequential:
+                    return {driver_name}, False
+                return None
+
+            known = immediate(root)
+            if known is not None:
+                return known[0]
+            on_path = {root}
+            results: dict[int, tuple[set[str], bool]] = {}
+            stack: list[list] = [[root, None, set(), False]]
+            while stack:
+                frame = stack[-1]
+                bit = frame[0]
+                if frame[1] is None:
+                    cell = graph.cells[graph.bit_output_cell[bit]]
+                    frame[1] = iter(self._cell_input_bits(cell))
+                advanced = False
+                for input_bit in frame[1]:
+                    done = results.get(input_bit)
+                    if done is not None:
+                        frame[2] |= done[0]
+                        frame[3] = frame[3] or done[1]
+                        continue
+                    if input_bit in on_path:
+                        frame[3] = True
+                        continue
+                    base = immediate(input_bit)
+                    if base is not None:
+                        frame[2] |= base[0]
+                        frame[3] = frame[3] or base[1]
+                        continue
+                    stack.append([input_bit, None, set(), False])
+                    on_path.add(input_bit)
+                    advanced = True
+                    break
+                if advanced:
+                    continue
+                results[bit] = (frame[2], frame[3])
+                if not frame[3]:
+                    source_memo[bit] = frozenset(frame[2])
+                on_path.discard(bit)
+                stack.pop()
+                if stack:
+                    parent = stack[-1]
+                    parent[2] |= frame[2]
+                    parent[3] = parent[3] or frame[3]
+            return results[root][0]
 
         for cell in graph.cells.values():
             if not cell.is_sequential:
