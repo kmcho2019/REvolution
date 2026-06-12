@@ -1065,3 +1065,17 @@ fallback; R-D k=2 (already running on OpenRouter).
   warmup-completion readout is now the headline criterion, and the
   graph/testability + activity + 2-axis profiles must be judged
   primarily on it.
+
+## 2026-06-12 18:45 KST — R-C cap 10 -> 8 (exposure arithmetic)
+
+- Observation-flow arithmetic from live archives: at pop 12 x k 4 only
+  ~3 valid thought-representatives reach the archive per generation
+  (~11-12 over the whole fast run), so cap 10 fires around gen 2-3
+  and the fallback is live for barely the final generation. Cap 8
+  (= warmup_successes, the earliest legal firing point) roughly
+  doubles the live window. R-C killed/relaunched once more BEFORE any
+  verdict (exposure engineering; the PROMOTE/DEMOTE rule is
+  untouched). Honest limitation recorded: even at cap 8 the fast
+  budget yields only ~1-2 archive-enabled generations - if the
+  verdict is INCONCLUSIVE, R-C's real trial is the hard-subset 20x5
+  promotion pair (~30 observations, cap 16).
