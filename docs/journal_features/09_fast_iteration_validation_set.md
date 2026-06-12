@@ -95,11 +95,98 @@ the hard subset, then to the gates.
   count) — no variant's results influenced the problem choice, and the
   rule is deterministic from the locked CSV (sha256 in the config).
 
-## Future calibration
+## Instrument requirements (the subset is gated, not a convenience)
 
-After the first few fast-subset runs, record observed wall-clock and
-per-problem valid-PPA sample counts in the revamp history. If a problem
-turns out to dominate wall-clock (slow synthesis) or saturate (every
-candidate hits the same PPA point, no discrimination), replace it by
-re-running the builder with adjusted bounds — and bump the subset version
-rather than editing the locked file in place.
+The fast subset may only be used for promote/demote decisions once it has
+passed its own signoff gates. Requirements, predeclared:
+
+- **R1 Speed.** A full pair (classic arm + variant arm + statistics) must
+  fit a tight loop: each arm ≤ 100 minutes wall-clock on the shared
+  endpoint at the recommended budget, no single problem consuming more
+  than half an arm's wall time (a dominant problem is a prune candidate).
+- **R2 PPA signal flow.** Every problem must yield enough functionally
+  passing candidates with PPA metrics that paired PPA deltas are
+  populated in every arm — the failure mode of the hard subset for this
+  purpose.
+- **R3 Discrimination (PPA margin).** Designs must be large enough, and
+  their implementation spaces wide enough, that candidate quality
+  *spreads* within a problem; a problem where every candidate lands on
+  the same PPA point cannot distinguish methods and must be replaced.
+- **R4 Screening validity.** The instrument must reproduce the known
+  hard-subset ordering for a predeclared calibration pair before its
+  verdicts are trusted: a screen that cannot detect a known difference is
+  decorative.
+- **R5 Stability.** The calibration pair's verdict must agree in sign
+  across two seeds, or the inconclusive band must be widened and the
+  escalation rule used.
+- **R6 Honesty.** Tuning/dev artifact only; never publication evidence;
+  excluded from the held-out final set; both arms always identical in
+  budget, seed, scheduler, and evaluation mode; every pair recorded in
+  the rerun ledger.
+
+## Quantitative signoff gates
+
+Mechanical gates G1–G3 are checked per pair by
+`scripts/validate_fast_iteration_pair.py` (writes
+`fast_iter_gate_report.json/md`, nonzero exit on failure). Calibration
+gates G4–G5 are evaluated once per subset version and recorded in the
+revamp history with run roots.
+
+| Gate | Requirement | Threshold |
+| --- | --- | --- |
+| G1a | Arm wall-clock (scheduler telemetry `run_wall_seconds`) | ≤ 6,000 s per arm |
+| G1b | No dominant problem | no problem > 50% of arm wall |
+| G2 | Valid-PPA candidate flow | every problem ≥ 6 distinct successful candidates with PPA metrics (generation logs ∪ final population) per arm |
+| G3 | Discrimination | candidate quality-score IQR ≥ 0.02 on ≥ 4 of 6 problems per arm |
+| G4 | Screening validity (calibration) | sign of the fast-subset mean paired best-quality delta for the predeclared pair (classic vs `grid_quantile_pareto_journal_bd_unified_rebin_on` thought-only k=4, seed 42) agrees with the hard-subset seed-42 result; if either delta lies in (−0.02, +0.02) the comparison is inconclusive and the subset must be revised or the band widened explicitly |
+| G5 | Stability (calibration) | same-pair verdict sign agrees across seeds 42 and 1001, with the same inconclusive band |
+
+If any gate fails: adjust the subset by re-running the builder with
+revised bounds (or pruning the offending problem), bump
+`subset_name` to `fast_iteration_subset_v2`, and re-run the full gate
+set. Never edit the locked file in place; never tune the subset on a
+variant's results (only on instrument properties: speed, signal flow,
+spread, and the fixed calibration pair).
+
+## Decision bands for everyday use
+
+Once the instrument is signed off, a pair's screening verdict comes from
+the paired best-quality mean delta (`statistical_tests.json`):
+
+- **PROMOTE** (variant ≥ +0.02): graduate the change to the hard subset.
+- **DEMOTE** (variant ≤ −0.02): reject or rework the change.
+- **INCONCLUSIVE** (between): escalate to the hard subset — with 6
+  problems and 1 seed the instrument cannot resolve small effects, and
+  over-reading it is exactly the failure the bands prevent.
+
+Verdicts are screening signals only and never enter publication evidence
+or the branch-decision table.
+
+## Calibration protocol and current status
+
+1. Run the calibration pair (classic vs the QD primary target) at seed 42
+   under the recommended budget; check G1–G3 with the pair validator.
+   *Status: first pair (pop 10) ran 2026-06-12 and exposed an engine
+   constraint (population must be divisible by k=4); corrected pop-12
+   pair in flight.*
+2. When the hard-subset seed-42 reproduction (QD-repair workstream)
+   lands, evaluate G4 against it. *Status: pending the hard-subset run.*
+3. Run the calibration pair at seed 1001 for G5. *Status: pending.*
+4. Record gate reports and the signoff (or revision) decision in the
+   revamp history; only then do PROMOTE/DEMOTE verdicts count.
+
+Observed so far (pop-10 pilot, classic arm only — the QD arm of that
+pilot crashed on the divisibility constraint, so these are
+collection-path readings, not gate evidence): arm wall 4159 s (within
+G1a), but the pair validator run against the pilot fails G1b/G2/G3 —
+`Prob108_rule90` alone accounts for ~100% of arm wall (prune candidate),
+`Prob016_fixed_point_adder` and `Prob108_rule90` produced fewer than 6
+valid-PPA candidates, and only one problem cleared the 0.02 IQR floor at
+the pilot's 10-candidate populations. Decision rule: wait for the
+corrected pop-12 pair, re-run the validator, then either sign off v1 or
+cut `fast_iteration_subset_v2` (likely: replace `Prob108_rule90` with the
+next eligible VE sequential problem by the deterministic rule, and
+re-examine `Prob016_fixed_point_adder`'s PPA flow). Threshold
+recalibration (e.g., the 0.02 IQR floor against observed quality scales)
+is allowed at v2 only with the rationale recorded — never after the
+instrument is signed off.

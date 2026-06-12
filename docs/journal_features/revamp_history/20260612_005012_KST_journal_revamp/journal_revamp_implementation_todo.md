@@ -48,7 +48,12 @@
 - [ ] Freeze the selected descriptor profile before final publication runs.
 - [ ] Write descriptor rationale in `docs/journal_features/journal_narrative.md`.
 - [x] Create `docs/journal_features/journal_narrative.md` (revision 3 after three adversarial rounds; claims contract with measurement model, predeclared scales, branch lattice, ablation matrix, statistical protocol).
-- [x] Build the fast-iteration validation subset for quick classic-vs-variant loops (`data/configs/fast_iteration_subset.yaml`, `scripts/build_fast_iteration_subset.py`, `docs/journal_features/09_fast_iteration_validation_set.md`): 6 high-functionality large-headroom problems, pop 10 × 3 gens ≈ 15% of hard-subset matrix cost; tuning artifact only, excluded from the future held-out set.
+- [x] Build the fast-iteration validation subset for quick classic-vs-variant loops (`data/configs/fast_iteration_subset.yaml`, `scripts/build_fast_iteration_subset.py`, `docs/journal_features/09_fast_iteration_validation_set.md`): 6 high-functionality large-headroom problems, pop 12 × 3 gens ≈ 18% of hard-subset matrix cost; tuning artifact only, excluded from the future held-out set.
+- [x] Define the fast-iteration instrument spec: requirements R1-R6, quantitative signoff gates G1-G5, PROMOTE/DEMOTE/INCONCLUSIVE decision bands, and the calibration protocol (doc 09) plus the mechanical per-pair checker `scripts/validate_fast_iteration_pair.py` (G1 wall/dominance, G2 PPA flow, G3 discrimination, verdict banding).
+- [ ] Complete the corrected pop-12 calibration pair (classic vs QD target, seed 42) and run `validate_fast_iteration_pair.py` on it (G1-G3).
+- [ ] Evaluate G4 screening validity once the hard-subset seed-42 reproduction exists (sign agreement on the predeclared calibration pair).
+- [ ] Run the seed-1001 calibration pair for G5 stability.
+- [ ] Sign off `fast_iteration_subset_v1` or cut v2 (pilot evidence already flags `Prob108_rule90` wall-clock dominance and `Prob016_fixed_point_adder` PPA flow; any threshold recalibration must be recorded with rationale) and record the signoff decision in the revamp history.
 - [ ] Record any proposed new method idea in implementation history before large experiments.
 - [ ] Accept new method ideas only if they improve or preserve gates and strengthen the narrative.
 - [x] Run TCAD editor adversarial narrative review (BLOCK r1/r2 → SIGNOFF r3).

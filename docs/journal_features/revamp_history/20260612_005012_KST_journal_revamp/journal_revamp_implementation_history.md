@@ -327,3 +327,38 @@ infrastructure):
   future held-out final set must exclude these 6 problems plus the 13
   hard-subset problems (now also recorded in the narrative's
   contamination-control section).
+
+## 2026-06-12 12:00 KST
+
+Fast-iteration instrument formalized as a GATED workstream (user
+request): requirements, signoff gates, and mechanical validation added.
+
+- Doc 09 gained the instrument spec: requirements R1-R6 (speed, PPA
+  signal flow, discrimination margin, screening validity, stability,
+  honesty), quantitative gates G1-G5 (arm wall <= 6000 s and no problem
+  > 50% of arm wall; every problem >= 6 valid-PPA candidates per arm;
+  quality IQR >= 0.02 on >= 4/6 problems; sign agreement with the
+  hard-subset seed-42 ordering on the predeclared calibration pair with a
+  +/-0.02 inconclusive band; cross-seed verdict stability on seeds
+  42/1001), PROMOTE / DEMOTE / INCONCLUSIVE decision bands (+/-0.02 on
+  the paired best-quality delta; inconclusive escalates to the hard
+  subset), and a calibration protocol. Revisions only by version bump
+  with recorded rationale; the subset is never tuned on a variant's
+  results.
+- Added `scripts/validate_fast_iteration_pair.py` (+5 tests): checks
+  G1-G3 from run artifacts (scheduler telemetry wall, per-problem
+  runtimes, distinct successful candidates with PPA metrics from
+  generation logs ∪ final population, score IQR) and maps a stats JSON to
+  the verdict bands; writes `fast_iter_gate_report.json/md`.
+- First real-data reading (pop-10 pilot classic arm; collection-path
+  evidence only since that pilot's QD arm hit the divisibility
+  constraint): G1a passes (4159 s) but `Prob108_rule90` alone is ~100% of
+  arm wall (G1b prune candidate), `Prob016_fixed_point_adder` and
+  `Prob108_rule90` are under the 6-candidate PPA-flow floor (G2), and
+  only one problem clears the 0.02 IQR floor (G3) at 10-candidate
+  populations. Decision deferred to the corrected pop-12 pair currently
+  running; likely outcome is `fast_iteration_subset_v2` replacing
+  `Prob108_rule90` via the deterministic rule.
+- Scaffold plan gained workstream F2; TODO gained the four calibration
+  items (pop-12 pair gates, G4 vs hard subset, G5 seed-1001 pair,
+  signoff-or-v2 decision).

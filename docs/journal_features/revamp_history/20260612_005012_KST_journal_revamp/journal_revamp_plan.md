@@ -270,6 +270,21 @@ Add validation and reporting surfaces that make claims hard to fake:
 
 Reports must not blend CVDP absolute PPA with reference-normalized suites.
 
+### F2. Fast-Iteration Screening Instrument
+
+Maintain a small, gated validation subset for quick classic-vs-variant
+PPA comparisons so repair/descriptor iteration does not pay the
+hard-subset matrix cost per check. Spec, requirements (R1-R6),
+quantitative signoff gates (G1-G5: wall-clock and dominance, valid-PPA
+flow, discrimination IQR, screening validity against the hard subset,
+cross-seed stability), PROMOTE/DEMOTE/INCONCLUSIVE decision bands, and
+the calibration protocol live in
+`docs/journal_features/09_fast_iteration_validation_set.md`. Per-pair
+gates are checked mechanically by
+`scripts/validate_fast_iteration_pair.py`. The subset is a tuning
+artifact only: never publication evidence, excluded from the held-out
+final set, and revised only by version bump with recorded rationale.
+
 ### F. Narrative
 
 Create `docs/journal_features/journal_narrative.md`. It must connect reviewer
