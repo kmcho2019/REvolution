@@ -871,3 +871,21 @@ fallback; R-D k=2 (already running on OpenRouter).
   bake-off. TODO updated accordingly.
 - k2 variant arm healthy under the retry fix (continuous file output
   since 12:57; no stalls).
+
+## 2026-06-12 14:50 KST — P2 profiles pre-registered
+
+- doc 11_descriptor_profile_preregistration.md registers the four
+  bake-off profiles before any bake-off run: the initial trio,
+  journal_graph_testability_3d (rtl_cyclomatic_total_log,
+  reconv_sink_ratio, scoap_signal_smoothness - NEW),
+  activity_control_3d (existing), journal_simple_2d
+  (wire_count_log_est, assign_count - NEW 2-axis control). New
+  entries added additively to data/configs/qd_descriptor_profiles.yaml
+  and validated through load_descriptor_profiles +
+  _validate_descriptor_axes.
+- Predeclared one extra bake-off measurement (warmup-completion rate
+  and per-axis collapse counts), motivated by the P1 finding that the
+  trio cannot form quantile boundaries on small designs. Selection
+  still happens only by the narrative's frozen rule.
+- k2 variant arm: 4/6 problems done; sub_64bit and multi_16bit at
+  gen 1 and progressing (no stalls under the retry fix).

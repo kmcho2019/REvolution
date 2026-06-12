@@ -30,7 +30,7 @@ EVERY item below checked AND spot-verified against artifacts.
 - [ ] Write descriptor rationale in `docs/journal_features/journal_narrative.md`.
 - [ ] Verify descriptor gates.
 - [ ] P2: Quantify descriptor-objective |correlation| per axis on tuning runs; replace or strip the diversity claim of any axis with |r| >= 0.8 to an objective.
-- [ ] P2: Pre-register the named candidate descriptor profiles (initial trio, graph/testability, activity, simpler 2-axis control) before any bake-off run.
+- [x] P2: Pre-register the named candidate descriptor profiles BEFORE any bake-off run (doc 11_descriptor_profile_preregistration.md: journal_logic_ff_width_3d, journal_graph_testability_3d, activity_control_3d, journal_simple_2d; additive YAML registration validated via load_descriptor_profiles; added predeclared warmup-completion/collapse measurement motivated by the P1 diagnosis).
 
 - [ ] P2: Cross-validate logic_depth against yosys `ltp` (independent longest-topological-path implementation; first probe produced no output on $-op netlists - determine required flags/techmap, calibrate buffer/FF semantics deltas, then add a comparison test).
 - [ ] P2: Port and build RentCon, then cross-validate rent_exponent RANKINGS on the fast-subset netlists (relative axis: rank agreement, not absolute p). Recon 2026-06-13: vendored source bundles MLPart (min-cut partitioning - the classic Rent methodology, ideal reference); g++ 11 build fails on the bundled gsl's 2008 configure ('cannot create executables') and missing <strings.h> for strcasecmp; recipe = system libgsl or updated config.guess + forced includes/-fpermissive; then the Dockerfile layer.
