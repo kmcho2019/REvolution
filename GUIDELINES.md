@@ -1,124 +1,20 @@
 # Repository Guidelines
 
-## Repo Map
-- Start with [README.md](README.md) for the project overview, environment setup, and primary run commands.
-- Use [docs/user_guide.md](docs/user_guide.md) for CLI usage, benchmark workflows, and validation guidance.
-- Use [docs/module_structure.md](docs/module_structure.md) for a file-by-file breakdown of the codebase.
-- Use [docs/implementation_details.md](docs/implementation_details.md) for subsystem-level architecture details.
-- Use [docs/qd_map_elites_guide.md](docs/qd_map_elites_guide.md) for the QD/MAP-Elites runtime flow, descriptor extraction paths, archive artifact layout, and generation/run traces.
-- Use [docs/REvolution_specification.md](docs/REvolution_specification.md) for the paper-plus-implementation specification view.
-- Use [docs/revolution_qd_map_elites_implementation_plan.md](docs/revolution_qd_map_elites_implementation_plan.md) for the current QD/MAP-Elites feature status and staged roadmap.
-- Use [docs/journal_features/08_journal_revamp_goal.md](docs/journal_features/08_journal_revamp_goal.md) for the June 2026 TCAD revamp plan, including benchmark-integration gates, QD repair targets, descriptor-evidence requirements, narrative signoff, and scheduler throughput gates.
+## Where Things Are
+
+The repo map, where-to-look-by-task index, project structure, canonical
+entry points, command reference, and output/artifact orientation live in
+[README.md](README.md) ("Repository Guide" section). This file keeps only
+practices: the journal-revamp onboarding order below, coding style and
+simplicity rules, testing, local validation, and commit standards.
+
+## Journal Revamp Onboarding
+
 - Journal-revamp onboarding (read in this order when implementing the TCAD goal):
   [docs/journal_features/revamp_ruminations_20260612.md](docs/journal_features/revamp_ruminations_20260612.md) is the original intent;
   [docs/journal_features/journal_narrative.md](docs/journal_features/journal_narrative.md) is the ACCEPTED claims contract (gates/branch rules frozen — it wins on any conflict);
   in `docs/journal_features/revamp_history/20260612_005012_KST_journal_revamp/`: `goal_template.md` is the v2 objective, `journal_revamp_plan.md` the P1–P5 execution plan, `journal_revamp_implementation_todo.md` the phase-grouped checklist (sign-off requires every item checked and spot-verified), `journal_revamp_adversarial_prompt.md` the sign-off process, `journal_revamp_implementation_history.md` the evidence log, `rerun_ledger.jsonl` the run ledger; `*_v1_initial.md` files are archived originals.
   Locked artifacts live in `data/configs/` (seed manifest, subsets, probe); revise only by version bump with recorded rationale.
-- Use [docs/journal_features/resources/README.md](docs/journal_features/resources/README.md) before editing paper sources; it explains the frozen ASP-DAC 2026 conference-paper submodule and the working TCAD journal-draft submodule.
-- Use [docs/hard_iteration_subset_workflow.md](docs/hard_iteration_subset_workflow.md) for the hard-subset baseline freeze flow, resumable one-shot commands, and long-budget classic-vs-QD matrix entrypoints.
-- Use [docs/method_interaction_and_evolutionary_loop.md](docs/method_interaction_and_evolutionary_loop.md) when you need the classic REvolution data flow or generation loop explained end to end.
-- Use [docs/diff_mode.md](docs/diff_mode.md) when the change touches diff-mode generation, apply policy, or diff diagnostics.
-
-## Where To Look By Task
-- Runner/CLI wiring:
-  [scripts/run_backend.py](scripts/run_backend.py),
-  [scripts/run_evolution.py](scripts/run_evolution.py),
-  [src/revolution/backends/revolution_backend.py](src/revolution/backends/revolution_backend.py),
-  [src/revolution/runtime/parallelism.py](src/revolution/runtime/parallelism.py)
-- Classic REvolution loop:
-  [src/revolution/algorithm.py](src/revolution/algorithm.py)
-- QD runtime and archives:
-  [src/revolution/qd/engine.py](src/revolution/qd/engine.py),
-  [src/revolution/qd/archive.py](src/revolution/qd/archive.py),
-  [src/revolution/qd/descriptors.py](src/revolution/qd/descriptors.py),
-  [src/revolution/qd/artifacts.py](src/revolution/qd/artifacts.py)
-- Evaluation stack:
-  [src/revolution/evaluation.py](src/revolution/evaluation.py),
-  [src/revolution/runtime/candidate_evaluator.py](src/revolution/runtime/candidate_evaluator.py),
-  [src/revolution/runtime/problem_context.py](src/revolution/runtime/problem_context.py),
-  [src/revolution/runtime/problem_spec.py](src/revolution/runtime/problem_spec.py)
-- Benchmark capability model and journal benchmark integration:
-  [src/revolution/runtime/benchmark_capabilities.py](src/revolution/runtime/benchmark_capabilities.py),
-  [src/revolution/runtime/cvdp_evaluator.py](src/revolution/runtime/cvdp_evaluator.py),
-  [src/revolution/runtime/realbench_adapter.py](src/revolution/runtime/realbench_adapter.py),
-  [scripts/build_cvdp_debug_subset.py](scripts/build_cvdp_debug_subset.py),
-  [scripts/build_realbench_manifest.py](scripts/build_realbench_manifest.py),
-  [scripts/build_realbench_debug_subset.py](scripts/build_realbench_debug_subset.py)
-- Descriptor extraction:
-  [src/revolution/runtime/structural_evaluator.py](src/revolution/runtime/structural_evaluator.py),
-  [src/revolution/rtl_descriptor_evaluator.py](src/revolution/rtl_descriptor_evaluator.py),
-  [src/revolution/simulation_descriptor_evaluator.py](src/revolution/simulation_descriptor_evaluator.py)
-- Reporting and experiment summaries:
-  [scripts/backend_comparison_report.py](scripts/backend_comparison_report.py),
-  [scripts/archive_baseline.py](scripts/archive_baseline.py),
-  [scripts/report_design_space_analysis.py](scripts/report_design_space_analysis.py),
-  [src/revolution/qd/design_space_report_support.py](src/revolution/qd/design_space_report_support.py),
-  [src/revolution/qd/feature_space_analysis.py](src/revolution/qd/feature_space_analysis.py),
-  [src/revolution/qd/successful_candidate_catalog.py](src/revolution/qd/successful_candidate_catalog.py),
-  [src/revolution/qd/visualization.py](src/revolution/qd/visualization.py)
-- Hard subset selection and iteration matrix:
-  [scripts/build_hard_iteration_subset.py](scripts/build_hard_iteration_subset.py),
-  [scripts/run_hard_iteration_one_shot_vllm.sh](scripts/run_hard_iteration_one_shot_vllm.sh),
-  [scripts/run_hard_iteration_qd_vllm.sh](scripts/run_hard_iteration_qd_vllm.sh),
-  [scripts/report_hard_iteration_analysis.py](scripts/report_hard_iteration_analysis.py),
-  [scripts/report_design_space_analysis.py](scripts/report_design_space_analysis.py),
-  [scripts/report_qd_feature_space.py](scripts/report_qd_feature_space.py)
-- Prompt and diff surfaces:
-  [src/revolution/prompt_store.py](src/revolution/prompt_store.py),
-  [data/prompts/](data/prompts),
-  [docs/diff_mode.md](docs/diff_mode.md)
-- Journal paper sources:
-  [docs/journal_features/resources/README.md](docs/journal_features/resources/README.md),
-  [docs/journal_features/resources/conference_submission_paper/](docs/journal_features/resources/conference_submission_paper/),
-  [docs/journal_features/resources/journal_draft/](docs/journal_features/resources/journal_draft/)
-- Journal revamp planning:
-  [docs/journal_features/08_journal_revamp_goal.md](docs/journal_features/08_journal_revamp_goal.md),
-  [docs/journal_features/revamp_history/](docs/journal_features/revamp_history/)
-
-## Project Structure & Module Organization
-- `src/revolution/`: core package. Start with `algorithm.py` for classic REvolution, `backends/` for runner adapters, `runtime/` for evaluation/problem abstractions, and `qd/` for the new archive/scoring/scheduler substrate.
-- `scripts/`: runnable entry points and utilities. `run_backend.py` is the canonical runner with shared elastic parallelism controls, `run_evolution.py` is the legacy REvolution entry point that still resolves the same elastic settings, `run_backend_ablation.py` is the fairness-controlled sweep runner, `run_backend_qd_smoke_vllm.sh` is the repeatable QD smoke harness, and `run_qd_retrospective_redo_vllm.sh` is the long-budget retrospective redo harness.
-- `tests/revolution/` and `tests/scripts/`: unit tests for framework modules and script helpers. The closest matching `test_<module>.py` file is usually the fastest way to see intended behavior.
-- `data/bench/`: benchmark suites used by CLI runs (`RTLLM`, `VerilogEval-*`, `cvdp`).
-- `data/prompts/`: prompt templates grouped by profile and strategy/mode. QD-specific targeted/diverse operators live here too.
-- `data/configs/`: reusable config examples, including QD descriptor profile and grid-axis configuration.
-- `pdk/`: synthesis assets used by the OpenROAD flow.
-- `docs/`: project documentation and implementation notes.
-  `docs/journal_features/resources/` contains paper-source submodules:
-  `conference_submission_paper/` is the frozen ASP-DAC 2026 source and
-  `journal_draft/` is the working TCAD manuscript.
-- `exp/`: generated run output and intentionally gitignored.
-
-## Canonical Entry Points
-- Use `scripts/run_backend.py` for most new work. It is the canonical backend-selectable runner and the main place where `search_mode`, QD config, and benchmark wiring meet.
-- Treat `scripts/run_evolution.py` as the legacy REvolution-focused runner. Keep it working, but prefer `run_backend.py` when adding new backend or QD-facing surfaces. Both entry points now use the shared elastic parallelism controls (`--total_worker_slots`, `--max_active_problems`, `--max_workers_per_problem`) and translate older config-file-only keys with warnings.
-- Treat `docs/revolution_qd_map_elites_implementation_plan.md` as the canonical history/status log for QD work. User-facing guidance belongs in `README.md`, `docs/user_guide.md`, and `docs/qd_map_elites_guide.md`.
-
-## Build, Test, and Development Commands
-- `uv sync`: install pinned dependencies from `pyproject.toml` and `uv.lock` into `.venv`.
-- `source .venv/bin/activate`: activate local environment for development.
-- `pytest`: run all tests under `tests/`.
-- `pytest --cov=src/revolution --cov-report=term-missing`: run tests with coverage details.
-- `python scripts/run_backend.py --help`: canonical backend-selectable runner help.
-- `bash scripts/run_backend_qd_smoke_vllm.sh --dry-run`: inspect the repeatable
-  QD smoke matrix before running live grid/CVT validation.
-- `python scripts/run_evolution.py --help`: view all evolutionary run options.
-- `python scripts/run_evolution.py --benchmarks RTLLM --model_name gpt-4.1-mini --total_worker_slots 10`: example multi-generation run.
-- `python scripts/run_one_shot.py --benchmarks VerilogEval-Spec-to-RTL --num_samples 20`: example n-shot baseline run.
-- `bash scripts/run_hard_iteration_one_shot_vllm.sh --dry-run`: inspect the resumable hard-subset vanilla baseline batches without running them.
-- `python scripts/build_hard_iteration_subset.py --one-shot-root exp/hard_iteration_one_shot_rerun_<date> --output-config data/configs/hard_iteration_subset.yaml`: freeze the hard iteration subset from a valid post-fix one-shot rerun.
-- `bash scripts/run_hard_iteration_qd_vllm.sh --dry-run`: inspect the classic + QD hard-subset matrix commands before running them live.
-- `python scripts/build_cvdp_debug_subset.py`: regenerate the locked CVDP debug-subset manifest (`data/configs/cvdp_debug_subset.yaml`).
-- `python scripts/build_realbench_manifest.py --validate`: generate the RealBench manifest tree under `data/bench/RealBench/` (gitignored) from `exp/RealBench` with per-task golden harness validation; decrypt prompts first via `make -C exp/RealBench decrypt`.
-- `python scripts/build_realbench_debug_subset.py`: regenerate the locked RealBench debug-subset manifest (`data/configs/realbench_debug_subset.yaml`) from harness-validated tasks.
-- `python scripts/run_scheduler_replay_benchmark.py --scale 0.5`: run the scheduler throughput gate (fixed per-problem split vs elastic fair-share leasing on one deterministic replay workload; requires identical outcome digests and >=25% wall-clock reduction).
-- `python scripts/validate_fast_iteration_pair.py --classic-root <root> --variant-root <root> --output-dir <dir>`: check a fast-iteration pair against the instrument signoff gates (wall-clock/dominance, PPA flow, discrimination, verdict bands).
-- `python scripts/build_fast_iteration_subset.py`: regenerate the locked fast-iteration validation subset (`data/configs/fast_iteration_subset.yaml`; 6 high-functionality, PPA-headroom problems for quick classic-vs-variant loops at pop 10 x 3 gens — see `docs/journal_features/09_fast_iteration_validation_set.md`).
-- `python scripts/report_qd_feature_space.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd/<run_tag>/classic --backend_run cvt_struct=exp/hard_iteration_qd/<run_tag>/cvt_struct --output-dir exp/hard_iteration_qd/<run_tag>/feature_analysis`: generate the deep post-run QD feature-space report, candidate table, and recommended profile artifacts.
-- `python scripts/report_design_space_analysis.py --help`: inspect the standalone retrospective design-space analysis CLI, including `--backend_run name=path`, feature selection precedence, and aggregate PPA options.
-- `python scripts/report_design_space_analysis.py --subset-config data/configs/hard_iteration_subset.yaml --backend_run classic=exp/hard_iteration_qd/<run_tag>/classic --backend_run cvt_struct=exp/hard_iteration_qd/<run_tag>/cvt_struct --output-dir exp/hard_iteration_qd/<run_tag>/design_space_analysis`: generate per-problem generation-local vs accumulated PPA plots, all-backend plus classic-vs-QD pairwise feature-space plots, quick-reference markdown indices, and `successful_candidates.csv`.
-- `python scripts/qd_descriptor_probe.py --archive_type grid --circuit_type sequential`: inspect the current QD descriptor-axis selection and requirements.
-- `bash scripts/run_qd_retrospective_redo_vllm.sh --dry-run`: inspect the tracked long-budget retrospective redo matrix without launching live jobs.
 
 ## Coding Style & Naming Conventions
 - Target Python 3.11+, 4-space indentation, and UTF-8 text files.
@@ -203,17 +99,3 @@ Signed-off-by: Name <email>
 - Check for malformed content: raw `\n`, missing blank lines, trailing spaces, bad indentation, or malformed `type(scope): subject`.
 - If reviewing a branch, run the same checks for each commit in `<base>..HEAD`.
 - PRs should include: purpose of change, impacted configs/commands, test evidence, and relevant output paths (for example `exp/<model>/...`) when experiment flow is affected.
-
-## Output And Artifact Orientation
-- Runtime outputs normally land under `exp/` unless a script overrides `--save_path`.
-- QD runs now emit archive-side artifacts in each problem directory, including:
-  - `archive_history.jsonl`
-  - `archive_cells.csv`
-  - `archive_summary.json`
-  - `qd_metrics.json`
-  - `archive_space.json`
-  - `archive_space_report.md`
-  - `descriptor_health.json`
-  - `descriptor_health_report.md`
-  - per-candidate `qd_archive_event.json`
-- If you need to understand one candidate decision or one archive cell outcome, start from the run tree artifact files before digging into engine internals.
