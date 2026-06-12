@@ -607,3 +607,13 @@ logic_depth_ltp* metrics are name-filtered by descriptor-axis
 selection. Item (b) (profile-agnostic axis rendering) stays open and
 gates any P2 profile swap. Hard-subset pair progress: 2/13 classic
 problems at ~30 min.
+
+## 2026-06-13 02:15 KST
+
+RentCon build reconnaissance: the vendored source (UCSD 2008) bundles
+MLPart - real min-cut partitioning, the classic-methodology Rent
+reference we want. Build under g++ 11 fails on (1) the bundled gsl's
+ancient configure and (2) pre-C++11 header leniency (strcasecmp needs
+<strings.h>). Porting recipe recorded in the TODO; port deferred to a
+dedicated offline session (P2, off the critical path). Hard-subset
+pair: 7/13 classic problems at ~75 min.
