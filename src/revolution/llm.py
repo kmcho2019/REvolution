@@ -95,6 +95,10 @@ class LLMInterface:
         self.client_args: dict[str, Any] = {
             "api_key": api_key,
             "timeout": float(request_timeout_seconds),
+            # SDK-internal retries (default 2) stack multiplicatively with
+            # this class's own retry loop - a hung provider then blocks for
+            # 3x request_timeout per loop attempt. We own retry/backoff.
+            "max_retries": 0,
         }
 
         if api_backend == "openai":

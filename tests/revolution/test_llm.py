@@ -846,3 +846,8 @@ async def test_generate_batch_feedback_forwards_overrides(mocker):
     kwargs = llm.generate_feedback.await_args.kwargs
     assert kwargs["system_prompt_override"] == "sys"
     assert kwargs["user_prompt_override"] == "usr"
+
+
+def test_sdk_internal_retries_disabled():
+    llm = LLMInterface(api_key="k")
+    assert llm.client_args["max_retries"] == 0
