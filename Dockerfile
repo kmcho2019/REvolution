@@ -39,8 +39,22 @@ RUN apt-get update && apt-get install -y \
     libxi6 \
     libxrandr2 \
     zlib1g-dev \
+    sudo \
+    locales \
+    ripgrep \
+    jq \
+    htop \
+    vim \
+    tmux \
+    unzip \
+    rsync \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
+
+# 2.05 Generate a UTF-8 locale (silences perl/tool locale warnings).
+RUN locale-gen en_US.UTF-8
+ENV LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
 
 # 2.1 Install bison 3.5 to avoid issues with verilator
 RUN apt-get purge -y bison || true
@@ -114,7 +128,9 @@ ARG USERNAME=user
 ARG USER_UID=1000
 ARG USER_GID=1000
 RUN groupadd --gid $USER_GID $USERNAME && \
-    useradd --uid $USER_UID --gid $USER_GID -m -s /bin/bash $USERNAME
+    useradd --uid $USER_UID --gid $USER_GID -m -s /bin/bash $USERNAME && \
+    echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME && \
+    chmod 0440 /etc/sudoers.d/$USERNAME
 # 8.5 Create workspace directory and set permissions
 RUN mkdir -p /workspace && chown -R $USERNAME:$USERNAME /workspace
 
