@@ -281,13 +281,19 @@ class LLMInterface:
         OpenRouter sends keep-alive bytes on non-streaming requests, which
         defeats httpx read timeouts - a glacial provider can hold the
         connection open indefinitely without tripping the SDK timeout.
-        asyncio.wait_for bounds the whole request; TimeoutError feeds the
-        caller's retry loop.
+        asyncio.wait_for is not enough either: it awaits the cancelled
+        task, and anyio/httpx cleanup can hang on a dead-but-open socket.
+        So the deadline abandons the task - cancel without awaiting - and
+        raises immediately; the orphan dies when the client closes.
         """
-        return await asyncio.wait_for(
-            client.chat.completions.create(**kwargs),
-            timeout=self.request_timeout_seconds,
-        )
+        task = asyncio.ensure_future(client.chat.completions.create(**kwargs))
+        done, _ = await asyncio.wait({task}, timeout=self.request_timeout_seconds)
+        if not done:
+            task.cancel()
+            raise TimeoutError(
+                f"LLM request exceeded {self.request_timeout_seconds:.0f}s deadline"
+            )
+        return task.result()
 
     async def _update_stats(
         self,

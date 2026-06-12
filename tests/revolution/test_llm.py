@@ -856,3 +856,34 @@ async def test_create_with_deadline_cancels_hung_requests():
 
     with pytest.raises(TimeoutError):
         await llm._create_with_deadline(_HungClient(), model="m", messages=[])
+
+
+@pytest.mark.asyncio
+async def test_deadline_fires_even_when_cancellation_hangs():
+    import asyncio
+
+    llm = LLMInterface(api_key="k", request_timeout_seconds=0.05)
+
+    class _UnkillableCompletions:
+        cancels = 0
+
+        async def create(self, **kwargs):
+            while True:
+                try:
+                    await asyncio.sleep(10)
+                except asyncio.CancelledError:
+                    # Swallow the deadline's cancel (simulating transport
+                    # cleanup that never finishes) but honor the second one
+                    # so event-loop teardown can finish.
+                    type(self).cancels += 1
+                    if type(self).cancels >= 2:
+                        raise
+
+    class _Client:
+        chat = type("Chat", (), {"completions": _UnkillableCompletions()})()
+
+    with pytest.raises(TimeoutError):
+        await asyncio.wait_for(
+            llm._create_with_deadline(_Client(), model="m", messages=[]),
+            timeout=2.0,  # the outer guard fails the test if the deadline hangs
+        )
