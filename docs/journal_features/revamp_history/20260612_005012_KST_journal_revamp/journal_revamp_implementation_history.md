@@ -985,3 +985,20 @@ fallback; R-D k=2 (already running on OpenRouter).
 - All three queued launchers regenerated in place (watcher chain
   paths unchanged); stalled R-B killed (solo pkill), artifacts wiped,
   relaunched clean under the 32k cap.
+
+## 2026-06-12 17:10 KST — 32k cap validated operationally; effect measured
+
+- R-B classic arm under the 32k cap: ALL 6/6 problems completed in
+  14 minutes, rc=0, ZERO retry lines - including multi_16bit and
+  sub_64bit which never finished on OpenRouter at 128k across three
+  prior arms. The cap is operationally confirmed as the stall fix.
+- Cap-effect measurement (classic@32k vs k2's classic@128k, same
+  seed/config, single-seed run-to-run comparison so provider variance
+  is entangled): mean best-quality delta -0.035 over 5 comparable
+  problems, dominated by sub_64bit -0.153; mux256to1v and rotate100
+  identical; pe -0.005; popcount255 -0.019. Instrument consequence:
+  WITHIN-pair deltas remain valid (both arms share provider and cap);
+  cross-era comparisons to local-vLLM 128k baselines (k=4 -0.086 /
+  -0.188) carry this caveat. Screen PROMOTE/DEMOTE bands judge the
+  pair-internal delta and stay sound.
+- R-B variant arm started 15:33:34 under the cap.
