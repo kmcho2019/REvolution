@@ -432,6 +432,7 @@ def _build_backend(
             qd_operator_kind=args.qd_operator_kind,
             qd_operator_one_parent_fraction=args.qd_operator_one_parent_fraction,
             qd_operator_archive_context_size=args.qd_operator_archive_context_size,
+            qd_operator_fail_feedback_chars=args.qd_operator_fail_feedback_chars,
             qd_operator_two_parent_allow_intra_bin=args.qd_operator_two_parent_allow_intra_bin,
             qd_rebinning_kind=args.qd_rebinning_kind,
             qd_rebinning_recent_generations=args.qd_rebinning_recent_generations,
@@ -977,6 +978,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     )
     parser.add_argument("--qd_operator_one_parent_fraction", type=float, default=0.5)
     parser.add_argument("--qd_operator_archive_context_size", type=int, default=4)
+    parser.add_argument("--qd_operator_fail_feedback_chars", type=int, default=0)
     parser.add_argument(
         "--qd_operator_two_parent_allow_intra_bin",
         action=argparse.BooleanOptionalAction,

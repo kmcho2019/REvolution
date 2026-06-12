@@ -116,6 +116,7 @@ class QDEngine(EoHEngine):
         qd_operator_kind: str = "eoh_strategies",
         qd_operator_one_parent_fraction: float = 0.5,
         qd_operator_archive_context_size: int = 4,
+        qd_operator_fail_feedback_chars: int = 0,
         qd_operator_two_parent_allow_intra_bin: bool = True,
         qd_rebinning_kind: str = "disabled",
         qd_rebinning_recent_generations: int = 3,
@@ -150,6 +151,8 @@ class QDEngine(EoHEngine):
             raise ValueError("qd_operator_one_parent_fraction must be between 0 and 1.")
         if qd_operator_archive_context_size < 0:
             raise ValueError("qd_operator_archive_context_size must be >= 0.")
+        if qd_operator_fail_feedback_chars < 0:
+            raise ValueError("qd_operator_fail_feedback_chars must be >= 0.")
         if qd_rebinning_kind not in {"disabled", "ks_triggered"}:
             raise ValueError(f"Unsupported qd_rebinning_kind '{qd_rebinning_kind}'.")
         if qd_rebinning_kind == "ks_triggered":
@@ -219,6 +222,7 @@ class QDEngine(EoHEngine):
         self.qd_operator_kind: QDOperatorKind = cast(QDOperatorKind, qd_operator_kind)
         self.qd_operator_one_parent_fraction = float(qd_operator_one_parent_fraction)
         self.qd_operator_archive_context_size = int(qd_operator_archive_context_size)
+        self.qd_operator_fail_feedback_chars = int(qd_operator_fail_feedback_chars)
         self.qd_operator_two_parent_allow_intra_bin = bool(qd_operator_two_parent_allow_intra_bin)
         self.qd_rebinning_kind: QDRebinningKind = cast(QDRebinningKind, qd_rebinning_kind)
         self.qd_rebinning_recent_generations = int(qd_rebinning_recent_generations)
@@ -1772,6 +1776,13 @@ class QDEngine(EoHEngine):
                 if objective_name in gains:
                     ppa_summary[objective_name] = float(gains[objective_name])
             payload["ppa_summary"] = ppa_summary
+        elif self.qd_operator_fail_feedback_chars > 0:
+            payload["failure_stage"] = str(parent.status)
+            feedback_text = str(getattr(parent, "feedback", "") or "").strip()
+            if feedback_text:
+                payload["failure_feedback"] = feedback_text[
+                    : self.qd_operator_fail_feedback_chars
+                ]
         return payload
 
     def _create_prompt_single_thought_operator(

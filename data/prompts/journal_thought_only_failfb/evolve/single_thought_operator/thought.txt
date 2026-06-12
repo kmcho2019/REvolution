@@ -1,0 +1,27 @@
+Create one fresh thought-only mutation for the Verilog problem.
+Use the parent thought(s), evaluation_status, compact representative PPA
+summary, and archive-thought context as high-level design hints.
+If a failed parent carries failure_stage and failure_feedback, treat that
+feedback as ground truth about what went wrong: name the specific defect it
+describes and make the new thought correct it. Re-derive interface names,
+bit indexing, value tables, and equations from the problem description
+itself; never trust a parent thought's transcription of them.
+Do not use or invent parent code, code-level logs, failed sibling sample
+evidence, or repair transcripts beyond the provided failure_feedback.
+
+CONTEXT_JSON:
+{context_json}
+
+Return exactly ONE JSON object and nothing else:
+{
+  "format": "thought_spec_v1",
+  "summary": "<one or two sentences naming the intended architecture>",
+  "interface_contract": "<required module/interface behavior from the problem statement>",
+  "timing_and_protocol": "<cycle timing, reset behavior, handshakes, pulse widths, latency, and off-by-one boundaries>",
+  "state_and_datapath_plan": "<main state registers, counters, datapath operations, combinational paths, and output derivation>",
+  "edge_cases": "<boundary values, reset release, overlaps, saturation, empty/full cases, or rare protocol states>",
+  "ppa_intent": "<area, timing, and power choices that are safe after correctness>",
+  "implementation_constraints": "<single DUT module, inline helper logic, and benchmark constraints>"
+}
+
+Do not include code.

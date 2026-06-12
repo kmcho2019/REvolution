@@ -70,6 +70,7 @@ class RevolutionBackendConfig:
     qd_operator_kind: str = "eoh_strategies"
     qd_operator_one_parent_fraction: float = 0.5
     qd_operator_archive_context_size: int = 4
+    qd_operator_fail_feedback_chars: int = 0
     qd_operator_two_parent_allow_intra_bin: bool = True
     qd_rebinning_kind: str = "disabled"
     qd_rebinning_recent_generations: int = 3
@@ -170,6 +171,7 @@ class RevolutionBackend(EvolutionBackend):
                 qd_operator_kind=self.config.qd_operator_kind,
                 qd_operator_one_parent_fraction=self.config.qd_operator_one_parent_fraction,
                 qd_operator_archive_context_size=self.config.qd_operator_archive_context_size,
+                qd_operator_fail_feedback_chars=self.config.qd_operator_fail_feedback_chars,
                 qd_operator_two_parent_allow_intra_bin=self.config.qd_operator_two_parent_allow_intra_bin,
                 qd_rebinning_kind=self.config.qd_rebinning_kind,
                 qd_rebinning_recent_generations=self.config.qd_rebinning_recent_generations,
@@ -242,6 +244,7 @@ class RevolutionBackend(EvolutionBackend):
                         "kind": self.config.qd_operator_kind,
                         "one_parent_fraction": self.config.qd_operator_one_parent_fraction,
                         "archive_context_size": self.config.qd_operator_archive_context_size,
+                        "fail_feedback_chars": self.config.qd_operator_fail_feedback_chars,
                         "two_parent_allow_intra_bin": self.config.qd_operator_two_parent_allow_intra_bin,
                     },
                     "rebinning": {

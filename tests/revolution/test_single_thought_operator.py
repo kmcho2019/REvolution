@@ -398,3 +398,32 @@ def test_eoh_operator_kind_keeps_strategy_selection_path(tmp_path, monkeypatch):
     assert result == "STOP"
     assert selected
     assert selected[0][0] == "success"
+
+
+def test_single_thought_failed_parent_feedback_opt_in_truncates(
+    tmp_path,
+    monkeypatch,
+):
+    engine = _engine(tmp_path, monkeypatch, qd_operator_fail_feedback_chars=24)
+    parent = Heuristic(
+        "failed idea",
+        "module failed_parent; endmodule",
+        "Mismatch on f: K-map row bits swapped relative to spec",
+        generation=0,
+        status="failed_functionality",
+    )
+    parent.id = "failed_parent"
+
+    prompt = engine._create_prompt_single_thought_operator([parent], archive_context=[])
+    context = _context_from_prompt(prompt)
+
+    assert context["parent"]["evaluation_status"] == "failed"
+    assert context["parent"]["failure_stage"] == "failed_functionality"
+    assert context["parent"]["failure_feedback"] == "Mismatch on f: K-map row"
+    assert "code" not in context["parent"]
+    assert "module failed_parent" not in prompt
+
+
+def test_single_thought_fail_feedback_rejects_negative_budget(tmp_path, monkeypatch):
+    with pytest.raises(ValueError, match="qd_operator_fail_feedback_chars"):
+        _engine(tmp_path, monkeypatch, qd_operator_fail_feedback_chars=-1)
