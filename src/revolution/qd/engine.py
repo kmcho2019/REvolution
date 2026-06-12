@@ -2793,8 +2793,11 @@ class QDEngine(EoHEngine):
         evaluations, representatives, fail_parents, all_samples = self._run_thought_generation(budget)
         self._insert_thought_results(representatives, fail_parents)
         if self.logger:
+            # Log every evaluated code sample, not just per-thought
+            # representatives: gate-bearing pools require both arms'
+            # evaluated histories to be structurally identical.
             self._log_generation_stats(
-                representatives + fail_parents,
+                all_samples,
                 time.time() - self.gen_start_time,
                 defaultdict(float),
                 defaultdict(float),
@@ -2834,7 +2837,7 @@ class QDEngine(EoHEngine):
         }
         if self.logger:
             self._log_generation_stats(
-                representatives + fail_parents,
+                all_samples,
                 gen_runtime,
                 defaultdict(float),
                 defaultdict(float),

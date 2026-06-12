@@ -350,3 +350,37 @@ def test_bounded_repair_uses_separate_cap_and_keeps_k(tmp_path, monkeypatch):
     assert engine.thought_evaluations[0].repair_attempts_used == 1
     assert engine.thought_evaluations[0].success_count == 1
     assert engine.thought_evaluations[0].success_rate == 0.5
+
+
+def test_generation_log_records_all_evaluated_samples(tmp_path, monkeypatch):
+    """Gate-bearing pools need the FULL evaluated history of both arms.
+
+    Thought-only mode previously logged only per-thought representatives
+    plus fail parents, omitting the other k-1 evaluated samples; the
+    narrative names this as a pre-finals engine obligation.
+    """
+    llm = _ThoughtOnlyLLM(
+        thought_payloads=[_thought_json("thought 0"), _thought_json("thought 1")],
+        code_payloads=[
+            ["module low_success; endmodule", "module high_success; endmodule"],
+            ["module fail; endmodule", "module high_success; endmodule"],
+        ],
+    )
+    engine = _engine(tmp_path, monkeypatch, llm)
+    monkeypatch.setattr(engine, "_evaluate_candidates", _evaluate_by_code)
+    logged: list[list] = []
+    monkeypatch.setattr(
+        engine,
+        "_log_generation_stats",
+        lambda population, *args, **kwargs: logged.append(list(population)),
+    )
+    engine.logger = object()  # truthy: enable the logging branch
+
+    engine.initialize_population()
+
+    assert len(logged) == 1
+    # 2 thoughts x k=2 code samples: every evaluated sample is logged,
+    # not just the 2 representatives.
+    assert len(logged[0]) == 4
+    statuses = {cand.status for cand in logged[0]}
+    assert "failed_functionality" in statuses  # non-representatives included

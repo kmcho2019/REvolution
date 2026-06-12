@@ -474,3 +474,23 @@ these runs (wall parity suggests budgets comparable).
 Also: the /goal launch of goal_template v2.1 failed the 4000-char limit
 (4414 after the user's adversarial-prompt-path addition); template
 compressed below the limit without dropping any section.
+
+## 2026-06-12 18:30 KST
+
+P1 continuation: instrument v2 + the blocking QD logging fix.
+
+- Subset builder gained `--exclude-problems` (instrument-property
+  exclusions only) and `--subset-name`; generated
+  `data/configs/fast_iteration_subset_v2.yaml` excluding Prob108_rule90
+  (wall dominance + PPA flow + missing-treatment) and
+  Prob016_fixed_point_adder (PPA flow). Deterministic replacements:
+  Prob105_rotate100, Prob017_fixed_point_substractor (still 3/3 per
+  benchmark, 3 seq / 3 comb). v2 calibration pair relaunched detached
+  (exp/fast_iter/fast_iter_v2_20260612, classic arm started 06:19:58).
+- QD thought-mode generation logging now records ALL evaluated code
+  samples (`all_samples`) at both call sites instead of representatives
+  + fail parents, closing the narrative's pre-finals engine obligation;
+  regression test asserts 2 thoughts x k=2 logs 4 samples including
+  non-representatives. Pyright: 2 pre-existing errors at engine.py
+  587-588 (KS-rebinning scipy attribute types) recorded as prior debt,
+  untouched by this change; 55 QD tests pass.
