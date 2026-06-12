@@ -662,3 +662,27 @@ the v3 pairs. Tolerance: coarse not-broken + same-ballpark check (small
 N); any systematic gap is recorded and triggers the same-provider rule
 for all comparisons. The hard-subset QD arm is still on its final
 problem; handoff canary follows its completion.
+
+## 2026-06-13 05:00 KST
+
+INCIDENT, corrected within one iteration: a premature GPU_7_FREE canary
+was created and immediately REMOVED. Root cause: pgrep -f with BRE
+alternation ('a\|b') in an ERE context matched nothing and reported
+zero processes while the QD arm was alive (now verified: 9 workers,
+final problems including gshare). Liveness checks now use plain ERE
+('a|b') and the canary is only written after a verified-empty audit
+plus the launcher's own 'all done' line.
+
+Second discovery from the same audit: the running 'hard subset' pair is
+actually an 11-problem HYBRID - the sed/regex launcher surgery left
+Prob048_pe and Prob011_multi_16bit (fast-subset strays) in and dropped
+four hard problems (adder_8bit, multi_pipe_8bit, fsm, parallel2serial).
+Consequences, decided per the no-new-local-runs directive: (1) G4 is
+evaluated on the 9-problem GENUINE-hard intersection (sign agreement on
+ordering is the gate's intent; the intersection is recorded honestly as
+such); (2) the two stray problems are excluded from the G4/P1 analysis
+(they are tuning-instrument problems); (3) the four missing hard
+problems are NOT rerun locally - if a full 13-problem reference is
+needed later it runs via OpenRouter under the same-provider-both-arms
+rule. Launcher templates get generated from problem lists in configs,
+never sed surgery, going forward.
