@@ -89,10 +89,15 @@ RUN git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD.git /
     ldconfig && \
     rm -rf /tmp/OpenROAD
 
-# 6. Install Verilator (rev v4.036-114-g0cd4a57ad)
-RUN git clone https://github.com/verilator/verilator.git /tmp/verilator && \
+# 6. Install Verilator v5.030 (RealBench's pinned version; needs the
+# v5-only --binary/--timing/--coverage-line flags its harness uses).
+# Replaces the original v4.036 pin: no REvolution evaluator invokes
+# verilator, so the swap has no effect on existing flows.
+RUN apt-get update && apt-get install -y help2man --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/* && \
+    git clone https://github.com/verilator/verilator.git /tmp/verilator && \
     cd /tmp/verilator && \
-    git checkout 0cd4a57ad && \
+    git checkout v5.030 && \
     autoconf && \
     ./configure && \
     make -j$(nproc) && \

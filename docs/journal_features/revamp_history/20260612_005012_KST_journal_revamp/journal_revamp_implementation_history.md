@@ -362,3 +362,32 @@ request): requirements, signoff gates, and mechanical validation added.
 - Scaffold plan gained workstream F2; TODO gained the four calibration
   items (pop-12 pair gates, G4 vs hard subset, G5 seed-1001 pair,
   signoff-or-v2 decision).
+
+## 2026-06-12 13:00 KST
+
+Verilator v4.036 -> v5.030 replacement (validated before replacing):
+
+- Findings: upstream RealBench pins `verilator=5.030`
+  (exp/RealBench/conda_env.yml) and its per-task Makefile needs v5-only
+  flags (`--binary`, `--timing`, `--coverage-line`); our image pinned
+  v4.036 (July 2020). Grep over src/scripts/tests/configs confirms no
+  REvolution evaluator invokes verilator, so the swap is zero-risk. The
+  formal leg of `run_verify.py` needs JasperGold (commercial) and stays
+  permanently out of scope.
+- Validation first, in a temp prefix: built v5.030 from source and ran
+  the OFFICIAL `make compile run` flow on five tasks spanning every
+  iverilog failure class. All five pass with 0 mismatches: aes_sbox
+  (0/1535), aes_key_expand_128 (const-array exclusion, 0/177),
+  sd_data_serial_host (procedural-wire exclusion, 0/15301), e203_biu
+  (SVA exclusion, 0/222), and sdc_controller (0/23932) - whose golden
+  mismatched 21,852 samples under the strict iverilog harness, proving
+  that exclusion was harness-dialect semantics, not a bad golden
+  (direct evidence for the manuscript's RealBench disclosure).
+- Replacement: Dockerfile section 6 now builds v5.030 (help2man added -
+  without it verilator's `make install` dies after binaries but before
+  the data files, leaving a broken install that still reports a
+  version). With sudo granted in the running container, v5.030 was also
+  rebuilt and installed live into /usr/local (replacing v4.036 in
+  place), verified by `verilator --version` and a no-overrides official
+  flow run - the live container matches the image definition exactly,
+  so no rebuild is required.
