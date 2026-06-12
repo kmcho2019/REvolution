@@ -1263,3 +1263,22 @@ fallback; R-D k=2 (already running on OpenRouter).
   external-validation citation (evidence map updated implicitly via
   this entry).
 - Matrix: qd_six_operators seed-1001 mid-run (zero retries).
+
+## 2026-06-13 00:55 KST — verilator golden sweep launched in parallel
+
+- Realization: the 60-task golden re-sweep is CPU-only while the
+  ablation matrix is OpenRouter-latency-bound, so they can overlap
+  with negligible interference (sweep runs nice -15, single job;
+  matrix runtimes are not gate-bearing and the budget axis is
+  candidate evaluations). Launched
+  build_realbench_manifest --validate --verilator-fallback into a
+  NEW root (data/bench/RealBench_v2_sweep) - the locked v1 manifest
+  at data/bench/RealBench stays untouched until subsets are
+  re-locked from the reviewed v2.
+- Baseline for comparison: v1 manifest validates 38/60 tasks under
+  iverilog. The fallback should recover a meaningful share of the
+  22 exclusions (dialect/assertion mismatches), each marked
+  functional_harness_kind=verilator_testbench for runtime dispatch.
+- Matrix: qd_six_operators seed-1001 at gen 2-3 on stragglers
+  (~2 h arm; the six-operator QD arm is the most expensive), zero
+  retries.
