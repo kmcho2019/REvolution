@@ -817,7 +817,8 @@ class LLMInterface:
                     InternalServerError,
                 ) as e:
                     print(
-                        f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}"
+                        f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}",
+                        flush=True,
                     )
                     if attempt + 1 == self.max_retries:
                         print("Max retries reached. Failing the request.")
@@ -832,7 +833,8 @@ class LLMInterface:
                         f"An unexpected, error occurred in generate_response: {e}"
                     )
                     print(
-                        f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}"
+                        f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}",
+                        flush=True,
                     )
                     if attempt + 1 == self.max_retries:
                         print("Max retries reached. Failing the request.")
@@ -1098,7 +1100,8 @@ class LLMInterface:
                     InternalServerError,
                 ) as e:
                     print(
-                        f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}"
+                        f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}",
+                        flush=True,
                     )
                     if attempt + 1 == self.max_retries:
                         print("Max retries reached. Failing the request.")

@@ -27,6 +27,7 @@ set -uo pipefail
 cd /workspace
 source .venv/bin/activate
 set -a; source .env; set +a
+export PYTHONUNBUFFERED=1
 
 TAG={tag}
 ROOT="exp/fast_iter/${{TAG}}"
@@ -36,7 +37,7 @@ COMMON=(--benchmarks {benchmarks}
         --problems {problems}
         --model_name {model} --api_backend {api_backend}{vllm_flags}
         --population_size {population} --num_generations {generations} --seed {seed}
-        --max_tokens 128000 --diff_max_tokens 128000
+        --max_tokens {max_tokens} --diff_max_tokens {max_tokens}
         --total_worker_slots {slots} --max_active_problems {active} --max_workers_per_problem {per_problem})
 
 echo "=== classic arm start: $(date -u +%H:%M:%S) ==="
@@ -90,6 +91,12 @@ def main(argv: list[str] | None = None) -> int:
     model = args.model or (
         "openai/gpt-oss-120b" if args.api_backend == "openrouter" else "openai-gpt-oss-120b"
     )
+    # OpenRouter providers cannot serve 128k-completion requests for the
+    # heavy fast-subset problems within the request deadline (3 consecutive
+    # gen-1 stalls); observed real completions average 2-4k tokens, so a
+    # 32k ceiling preserves them while bounding the pathological tail.
+    # Local vLLM keeps the research-grade 128k ceiling.
+    max_tokens = 32768 if args.api_backend == "openrouter" else 128000
     vllm_flags = (
         "\n        --vllm_host host.docker.internal --vllm_port 8000"
         if args.api_backend == "vllm"
@@ -102,6 +109,7 @@ def main(argv: list[str] | None = None) -> int:
         model=shlex.quote(model),
         api_backend=args.api_backend,
         vllm_flags=vllm_flags,
+        max_tokens=max_tokens,
         population=args.population,
         generations=args.generations,
         seed=args.seed,
