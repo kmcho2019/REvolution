@@ -108,7 +108,7 @@ def test_main_writes_locked_config(tmp_path, capsys):
     payload = yaml.safe_load(output.read_text(encoding="utf-8"))
     assert payload["subset_name"] == "fast_iteration_subset_v1"
     assert len(payload["selection"]["source_csv_sha256"]) == 64
-    assert payload["recommended_budget"]["population_size"] == 10
+    assert payload["recommended_budget"]["population_size"] == 12
     assert payload["recommended_budget"]["num_generations"] == 3
     total = sum(
         len(body["problems"]) for body in payload["benchmarks"].values()

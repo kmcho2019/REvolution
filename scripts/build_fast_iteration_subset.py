@@ -171,7 +171,7 @@ def build_config_payload(
             "subset_size": len(selected),
         },
         "recommended_budget": {
-            "population_size": 10,
+            "population_size": 12,  # divisible by k=4 (thought_only constraint)
             "num_generations": 3,
             "code_samples_per_thought": 4,
             "max_tokens": 128000,
@@ -181,8 +181,8 @@ def build_config_payload(
             "max_workers_per_problem": 4,
             "evaluation_mode": "strict_ablation",
             "notes": (
-                "~240 candidate evaluations total (6 problems x (10 init + "
-                "3x10 offspring)) vs ~1560 for the 13-problem 20x5 hard-subset "
+                "~288 candidate evaluations total (6 problems x (12 init + "
+                "3x12 offspring)) vs ~1560 for the 13-problem 20x5 hard-subset "
                 "matrix; high functionality keeps valid-PPA sample flow high "
                 "so paired PPA deltas are populated"
             ),

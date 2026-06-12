@@ -43,11 +43,11 @@ combinational — all canonical PPA design spaces):
 
 ## Recommended budget (embedded in the config)
 
-Population 10, 3 generations, `k=4` thought-only for QD arms,
+Population 12 (divisible by k=4, a thought_only-mode engine constraint), 3 generations, `k=4` thought-only for QD arms,
 `--max_tokens 128000 --diff_max_tokens 128000`, elastic
 `--total_worker_slots 12 --max_active_problems 6
---max_workers_per_problem 4`, `strict_ablation` evaluation. That is ~240
-candidate evaluations per arm (6 × (10 + 3×10)) — ~15% of the hard-subset
+--max_workers_per_problem 4`, `strict_ablation` evaluation. That is ~288
+candidate evaluations per arm (6 × (12 + 3×12)) — ~15% of the hard-subset
 matrix cost — and because pass rates are high, nearly all of it produces
 PPA signal.
 
@@ -59,7 +59,7 @@ python scripts/run_backend.py --backend revolution \
   --problems Prob048_pe Prob016_fixed_point_adder Prob011_multi_16bit \
              Prob108_rule90 Prob021_mux256to1v Prob030_popcount255 \
   --model_name /models/openai-gpt-oss-120b --api_backend vllm \
-  --population_size 10 --num_generations 3 --seed 42 \
+  --population_size 12 --num_generations 3 --seed 42 \
   --max_tokens 128000 --diff_max_tokens 128000 \
   --total_worker_slots 12 --max_active_problems 6 --max_workers_per_problem 4 \
   --save_path exp/fast_iter/<tag>/classic
