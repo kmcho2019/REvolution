@@ -592,3 +592,18 @@ predeclared bound. Hard-subset G4/P1 pair separately confirmed launched
 (earlier chain step-2 never started - the wrapper died in the pkill
 incident and step-1 survived as an orphan; 'RUNNING' checks now use
 artifacts, not pgrep self-matches).
+
+## 2026-06-13 01:30 KST
+
+Visualizer-compatibility risk register: items (a) and (c) CLOSED with
+evidence. Grep audit of every population_ppa_details consumer:
+pareto_analysis (HV pool) is the fix's intended beneficiary; the
+backend comparison report and statistics now see symmetric evaluated
+histories for both arms; the three validate_*_run.py audits collect
+details without count invariants; plot/catalog scripts tolerate more
+rows; the Pareto visualizer and per-problem histograms read archive
+artifacts and never touch generation-log details. Additive
+logic_depth_ltp* metrics are name-filtered by descriptor-axis
+selection. Item (b) (profile-agnostic axis rendering) stays open and
+gates any P2 profile swap. Hard-subset pair progress: 2/13 classic
+problems at ~30 min.
