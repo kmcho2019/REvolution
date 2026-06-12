@@ -1,90 +1,77 @@
-# Journal Revamp Adversarial Review Prompt
+# Journal Revamp Adversarial Review Prompt v2
 
-Use this prompt for sub-agent or human review of the journal narrative and
-experiment plan. The reviewer must be critical and must not assume the plan is
-good because it is detailed.
+Status: v2 (2026-06-12). v1 archived as
+`journal_revamp_adversarial_prompt_v1_initial.md`. v2 hardens the sign-off
+so it can only be granted when the full original intent
+(`docs/journal_features/revamp_ruminations_20260612.md`) is met: verify
+artifacts on disk, never prose. The four personas are unchanged (TCAD
+editor; skeptical Reviewer 2; hardware/EDA methodology;
+reproducibility/statistics). The burden of proof is on the authors.
 
-## Materials To Review
+## Hard preconditions (any failure ⇒ automatic `block`, stop reviewing)
 
-- `docs/journal_features/08_journal_revamp_goal.md`
-- `docs/journal_features/journal_narrative.md`
-- `docs/journal_features/resources/conference_submission_paper/main.tex`
-- `docs/journal_features/resources/conference_submission_paper/content/1_intro/v_camera.tex`
-- `docs/journal_features/resources/conference_submission_paper/content/3_method/v_camera.tex`
-- `docs/journal_features/resources/conference_submission_paper/content/4_expnrst/v_camera.tex`
-- `docs/journal_features/resources/conference_submission_paper/table/result.tex`
-- `baselines/20260316_120539__447c0128__funsearch/`
-- `baselines/20260316_120708__447c0128__codeevolve/`
-- `baselines/20260316_120813__447c0128__eoh/`
-- final benchmark manifests and seed manifests
-- final statistical reports
-- descriptor-health reports
-- scheduler telemetry reports
-- manuscript methodology/results text in `docs/journal_features/resources/journal_draft/`
+1. **TODO completeness**: every item in
+   `journal_revamp_implementation_todo.md` is checked `[x]`. Then
+   spot-verify at least 5 randomly chosen checked items against their
+   named artifacts/commands — a checkmark without verifiable evidence is
+   a block.
+2. **Claims-contract integrity**: `journal_narrative.md` gate thresholds,
+   branch table, pools, and budget rules are unchanged since acceptance
+   (diff against the accepted revision recorded in
+   `narrative_review_round2_round3.md`), except additions explicitly
+   re-reviewed pre-freeze (e.g., RealBench retention update).
+3. **Ledger coverage**: every final-gate and probe run root appears in
+   `rerun_ledger.jsonl` with config sha; seeds match
+   `data/configs/journal_seed_manifest.yaml` (42 never in evidence;
+   finals exactly 1001–1005).
+4. **Disjointness**: held-out/fresh final sets share no problem with the
+   hard subset, fast-iteration subset, or debug slices (check the locked
+   YAMLs mechanically).
 
-## Reviewer Persona
+## Mechanical gate verification (run, do not trust)
 
-Choose exactly one persona per review:
+- Re-run `scripts/validate_journal_revamp_run.py` on each final run root
+  (locked coverage, seed, telemetry, QD artifacts) — must exit 0.
+- Re-read `statistical_tests.json` per suite: penalized cluster-bootstrap
+  statistics only; confirm the branch decision row follows mechanically
+  from the recorded gate booleans; recompute at least one gate by hand
+  from `paired_deltas.csv`.
+- Fast-iteration instrument: signed off (G1–G5 evidence in history)
+  before any PROMOTE verdict was relied on.
+- Scheduler claim: replay-gate report present AND live-run occupancy
+  telemetry shown beside the 46% figure with its synthetic-replay caveat.
+- Verilator-5 re-sweep: manifest version, per-task validation records,
+  and the narrative retention table agree with each other.
 
-1. TCAD editor deciding whether the extension is substantial enough beyond
-   ASP-DAC.
-2. Skeptical Reviewer 2 looking for overclaims, post-hoc metrics, cherry-picked
-   tasks, and arbitrary method choices.
-3. Hardware/EDA methodology reviewer checking whether RTL descriptors,
-   synthesis metrics, benchmark harnesses, and PPA claims are technically
-   defensible.
-4. Reproducibility/statistics reviewer checking locked seeds, paired tests,
-   missing data handling, confidence intervals, run ledgers, and fairness of
-   classic-vs-QD comparisons.
+## Intent verification (the un-fudgeable part)
 
-## Review Instructions
+Confirm each original-intent pillar is met IN EVIDENCE, not described:
 
-Assume the burden of proof is on the authors. Identify the strongest reason a
-TCAD reviewer should reject or require major revision. Be specific: cite files,
-figures, tables, commands, artifacts, or missing evidence.
+1. **Performance**: QD meets the branch-A/B definitions on held-out
+   statistics, or the manuscript follows the Branch C content floor
+   (unified-operator one-factor result + transferable root-cause). A
+   tuning-set win presented as a headline is a block.
+2. **BD thesis**: the frozen descriptor profile was pre-registered;
+   descriptor-objective correlations reported; bake-off followed the
+   predeclared rule; each axis carries a plain-language RTL design-space
+   rationale; collapse cases are labeled per family, not hidden.
+3. **Benchmarks**: CVDP and RealBench evidence comes from end-to-end
+   evolutionary runs on locked slices; CVDP PPA absolute-only; RealBench
+   claims scoped to the harness-validated subset with the retention
+   table; deterministic-replay evidence present.
+4. **Narrative**: the manuscript story matches the narrative file; no
+   bandit/operator claims beyond the licensed ablation arms; budget
+   symmetry (candidate evaluations, ±10% auxiliary skew) reported.
+5. **Models**: probe-frozen model arm applied symmetrically; no key
+   material anywhere in artifacts.
 
-Do not accept generic statements such as "QD improves diversity" or "larger
-benchmarks were added" unless the evidence supports the exact claim. Check that
-CVDP does not use invalid reference-normalized PPA and that RealBench results
-are deterministic enough for publication.
+## Output
 
-Do not require the final MAP-Elites behavior descriptor to be the original
-`logic_depth`, `ff_depth`, `comb_width_log` trio. Instead, verify that the
-selected descriptor profile was predeclared before final runs, improves or
-preserves PPA-search evidence, gives non-decorative diversity metrics, remains
-stable across seeds/families, and has a persuasive RTL-design-space rationale.
-
-Check the scheduler claims separately from the search-quality claims. A faster
-run is only valid if candidate outcomes are unchanged or the comparison is
-otherwise controlled.
-
-Check model capability claims separately from method claims. If DeepSeek was
-used for RealBench, verify that `DEEPSEEK_API_KEY` was not leaked, the
-RealBench long-model probe was locked before use, and DeepSeek was applied
-symmetrically to classic and QD rather than used as one-sided rescue.
-
-If FunSearch, CodeEvolve, or EoH baselines are mentioned in final claims, verify
-that they were rerun or revalidated under the same locked problems, seeds,
-model policy, token budgets, scheduler policy, evaluator settings, and
-statistics. Retrospective archived results alone are not enough for a headline
-TCAD comparison.
-
-If the final method changes the original seven journal-extension pillars,
-evaluate the replacement structure directly. The change is acceptable only if
-it makes the method easier to explain, improves or preserves fair performance
-evidence, and avoids turning the manuscript into an unrelated feature list.
-
-## Required Output
-
-Return:
-
-- Persona name.
-- Verdict: `sign_off`, `minor_revision`, or `block`.
-- Top 3 blocking or high-risk issues.
-- Exact claim changes required, if any.
-- Exact extra evidence required, if any.
-- Whether the narrative is clear, persuasive, and non-awkward.
-- Whether the quantitative gates are strong enough to prevent metric hacking.
-
-A `sign_off` verdict is allowed only if the narrative and evidence would be
-credible to a skeptical TCAD reviewer.
+Persona name; verdict `sign_off` / `minor_revision` / `block`; the
+strongest rejection reason a real TCAD reviewer would raise; per-failed
+item: the exact file/command checked and what was missing; exact claim
+changes or extra evidence required; whether the narrative is clear,
+persuasive, non-awkward; whether the gates as evidenced (not as written)
+prevented metric hacking. `sign_off` is permitted only when ALL hard
+preconditions pass, ALL mechanical verifications pass, and ALL five
+intent pillars are met in evidence.

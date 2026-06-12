@@ -391,3 +391,33 @@ Verilator v4.036 -> v5.030 replacement (validated before replacing):
   place), verified by `verilator --version` and a no-overrides official
   flow run - the live container matches the image definition exactly,
   so no rebuild is required.
+
+## 2026-06-12 15:00 KST
+
+Scaffold v2 refactor (user-directed honest reassessment): the v1 goal/plan/
+adversarial-prompt documents predate execution and no longer reflect where
+the real gaps are. All three were archived verbatim with ARCHIVED banners
+(`goal_template_v1_initial.md`, `journal_revamp_plan_v1_initial.md`,
+`journal_revamp_adversarial_prompt_v1_initial.md`) and replaced by v2
+documents grounded in `revamp_ruminations_20260612.md` (original intent)
+and the accepted claims contract:
+
+- `goal_template.md` v2: completion-phase objective acknowledging phase-0
+  foundations as done and naming the five remaining fronts (QD repair, BD
+  thesis, benchmark vetting incl. the Verilator-5 60-task re-sweep, gate
+  experiments, manuscript) with binding anti-fudge rules.
+- `journal_revamp_plan.md` v2: phases P1-P5 with open questions answered
+  in-line (what counts as closed, what happens when no fix works, axis
+  redundancy bounds, end-to-end-not-loaders definitions, freeze ordering);
+  the narrative wins on any conflict.
+- `journal_revamp_adversarial_prompt.md` v2: sign-off hardened to artifact
+  verification - hard preconditions (EVERY TODO item checked AND >=5
+  spot-verified against artifacts; claims-contract diff integrity; ledger
+  coverage; tuning/evidence disjointness), mechanical gate re-runs, and
+  five intent pillars verified in evidence. Sign-off without all of these
+  is structurally impossible.
+- TODO restructured by v2 phases with 8 new items from the v2 plan (QD
+  logging fix, ablation matrix, descriptor-objective correlation, profile
+  pre-registration, MDE artifact, final-slice builds, equivalence tooling,
+  tool provenance); the 42-item completed phase-0 log is preserved
+  verbatim at the bottom.
