@@ -1250,3 +1250,16 @@ fallback; R-D k=2 (already running on OpenRouter).
   framing for both the operator section and the Branch C claims.
 - qd_six_operators seed 1001 (the operator-claim licensing contrast)
   started 22:29:03; classic_unified arm completed in 51 min.
+
+## 2026-06-12 23:55 KST — ltp cross-validation closed with run data
+
+- Audited the rb_failure_regime_v2 artifacts for the online yosys
+  ltp cross-check: logic_depth_ltp_delta persisted on 32 candidates
+  with 31x delta=0.0 (exact agreement with yosys's independent
+  longest-topological-path) and 1x delta=1.0 (the documented
+  buffer-skip liberty). The P2 cross-validation item is closed on
+  production evidence rather than a synthetic probe. Manuscript
+  measurement-model section gains this as the logic_depth
+  external-validation citation (evidence map updated implicitly via
+  this entry).
+- Matrix: qd_six_operators seed-1001 mid-run (zero retries).
