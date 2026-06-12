@@ -29,6 +29,10 @@ EVERY item below checked AND spot-verified against artifacts.
 - [ ] P2: Quantify descriptor-objective |correlation| per axis on tuning runs; replace or strip the diversity claim of any axis with |r| >= 0.8 to an objective.
 - [ ] P2: Pre-register the named candidate descriptor profiles (initial trio, graph/testability, activity, simpler 2-axis control) before any bake-off run.
 
+- [ ] P2: Cross-validate logic_depth against yosys `ltp` (independent longest-topological-path implementation; first probe produced no output on $-op netlists - determine required flags/techmap, calibrate buffer/FF semantics deltas, then add a comparison test).
+- [ ] P2: Build RentCon (already vendored at .rentcon/RentCon-180515, DOC+Source) in a separate workdir and cross-validate rent_exponent RANKINGS on the fast-subset netlists (relative axis: rank agreement is the criterion, not absolute p).
+- [ ] P2: Optionally add KaHyPar-based min-cut partitioning as a second Rent reference if RentCon proves insufficient; HAL/netlistx deprioritized (heavy frameworks, low marginal value over RentCon+yosys).
+
 ## P3 — Benchmark vetting
 - [ ] Add CVDP absolute-only PPA path only if synthesis is reliable.
 - [ ] Add RealBench synthesis/PPA support only when deterministic (manifest currently marks only dependency-free, support-free tasks `supports_synthesis: true`; synthesis flow itself not yet validated on them).
