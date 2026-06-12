@@ -1,0 +1,62 @@
+version: 1
+subset_name: holdout_reference_subset_v1
+purpose: held-out reference-PPA EVIDENCE set for final gates; disjoint from all tuning
+  artifacts (hard subset, fast-iteration instrument all versions, debug slices); never
+  used for repair, screening, or descriptor selection
+selection:
+  source_csv: baselines/hard_iteration_subset_vanilla_openai_gpt_oss_120b.csv
+  source_csv_sha256: a9803fc75ac9249c7f9d7e5c6231c30d9083a215194a58cea2410e94dce07fee
+  seed: 7777
+  min_gates: 50
+  functionality_filter: none (evidence sets must not bias easy)
+  rule: stratified proportional over (benchmark x circuit_type) with largest-remainder
+    rounding; seeded shuffle per bucket (random.Random(f'{seed}:{benchmark}:{type}'))
+  excluded_problems:
+  - Prob004_adder_8bit
+  - Prob011_multi_16bit
+  - Prob015_multi_pipe_8bit
+  - Prob016_fixed_point_adder
+  - Prob017_fixed_point_substractor
+  - Prob019_sub_64bit
+  - Prob021_mux256to1v
+  - Prob024_fsm
+  - Prob030_popcount255
+  - Prob037_parallel2serial
+  - Prob041_traffic_light
+  - Prob045_alu
+  - Prob048_pe
+  - Prob049_signal_generator
+  - Prob098_circuit7
+  - Prob105_rotate100
+  - Prob108_rule90
+  - Prob116_m2014_q3
+  - Prob135_m2014_q6b
+  - Prob150_review2015_fsmonehot
+  - Prob151_review2015_fsm
+  - Prob153_gshare
+  subset_size: 20
+benchmarks:
+  RTLLM:
+    problems:
+    - Prob009_div_16bit
+    - Prob012_multi_8bit
+    - Prob014_multi_pipe_4bit
+    - Prob023_up_down_counter
+    - Prob026_asyn_fifo
+    - Prob027_LIFObuffer
+    - Prob039_serial2parallel
+    - Prob042_width_8to16
+    - Prob043_RAM
+  VerilogEval-Spec-to-RTL:
+    problems:
+    - Prob017_mux2to1v
+    - Prob018_mux256to1
+    - Prob023_vector100r
+    - Prob066_edgecapture
+    - Prob068_countbcd
+    - Prob073_dff16e
+    - Prob082_lfsr32
+    - Prob097_mux9to1v
+    - Prob118_history_shift
+    - Prob124_rule110
+    - Prob155_lemmings4
