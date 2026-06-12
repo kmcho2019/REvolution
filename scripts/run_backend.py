@@ -1217,6 +1217,13 @@ def _discover_tasks(args: argparse.Namespace) -> list[tuple[str, str, argparse.N
         for problem in selected:
             if problem in all_problems:
                 tasks.append((benchmark, problem, args))
+    if args.problems:
+        matched = {problem for _, problem, _ in tasks}
+        missing = [p for p in args.problems if p not in matched]
+        # A mistyped or mis-benchmarked problem must fail loudly, not
+        # silently shrink the run (2026-06-12: Prob045_alu dropped from a
+        # locked screen because it was listed under the wrong benchmark).
+        assert not missing, f"problems not found in any listed benchmark: {missing}"
     return tasks
 
 

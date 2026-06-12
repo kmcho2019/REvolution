@@ -849,3 +849,13 @@ def test_run_backend_calls_vllm_preflight_and_prints_warning(monkeypatch, tmp_pa
     captured = capsys.readouterr()
     assert "[vLLM preflight]" in captured.out
     assert "WARNING: short context" in captured.out
+
+
+def test_discover_tasks_fails_loudly_on_unmatched_problem():
+    class Args:
+        backend = "revolution"
+        benchmarks = ["VerilogEval-Spec-to-RTL"]
+        problems = ["Prob045_alu"]  # RTLLM problem: wrong benchmark
+
+    with pytest.raises(AssertionError, match="Prob045_alu"):
+        _discover_tasks(Args())

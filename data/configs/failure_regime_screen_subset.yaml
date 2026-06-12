@@ -1,5 +1,5 @@
-version: 1
-subset_name: failure_regime_screen_subset_v1
+version: 2
+subset_name: failure_regime_screen_subset_v2
 purpose: "targeted screen for FAILURE-PATH repair candidates (fail-parent
   feedback, repair budgets, spec-first realization on spec-exact problems);
   TUNING/DEV artifact only - never publication evidence. The v3 fast subset
@@ -36,10 +36,17 @@ recommended_budget:
     Primary readouts beyond paired best-quality - per-arm functional
     pass rates and fail_pool parent counts (the mechanism must actually
     fire for the screen to be informative).
+revision_rationale: "v2 (2026-06-12): Prob045_alu is an RTLLM problem and was
+  mis-listed under VerilogEval-Spec-to-RTL in v1; run_backend silently
+  dropped it, so the first screen ran 4/5 problems (both arms identically -
+  internally valid; alu coverable by a supplementary pair). run_backend now
+  fails loudly on unmatched problems."
 benchmarks:
-  VerilogEval-Spec-to-RTL:
+  RTLLM:
     problems:
       - Prob045_alu
+  VerilogEval-Spec-to-RTL:
+    problems:
       - Prob098_circuit7
       - Prob116_m2014_q3
       - Prob150_review2015_fsmonehot
