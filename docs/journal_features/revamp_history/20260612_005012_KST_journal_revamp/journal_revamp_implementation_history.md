@@ -494,3 +494,20 @@ P1 continuation: instrument v2 + the blocking QD logging fix.
   non-representatives. Pyright: 2 pre-existing errors at engine.py
   587-588 (KS-rebinning scipy attribute types) recorded as prior debt,
   untouched by this change; 55 QD tests pass.
+
+## 2026-06-12 19:30 KST
+
+Instrument v2 pair completed (classic 732s, QD 1154s - the pair now runs
+in ~31 min vs ~2.7h; rule90 removal achieved R1). Two checker semantic
+fixes from real data, recorded in doc 09: G1b dominance is now measured
+against the SUM of per-problem runtimes (problems run concurrently, so
+every problem looked dominant vs the wall), and G3 discrimination is
+measured on the BASELINE arm only (variant spread collapse is comparison
+signal, not instrument failure). With corrected semantics v2 passes G1
+fully; G2 fails only on Prob017_fixed_point_substractor (both arms under
+the PPA-flow floor) and G3 baseline is 3/6 vs floor 4. Cut
+fast_iteration_subset_v3 swapping in Prob019_sub_64bit; v3 pair launched
+detached (exp/fast_iter/fast_iter_v3_20260612). QD signal persists on
+v2: best-quality 0W/4L/1T at -0.103 with functionality parity - the QD
+arm also ran 1.58x classic wall at equal candidate budget, noted for
+budget-symmetry accounting.

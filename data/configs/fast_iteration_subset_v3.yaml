@@ -1,0 +1,82 @@
+version: 1
+subset_name: fast_iteration_subset_v3
+purpose: "fast classic-vs-journal-variant validation loop; TUNING/DEV artifact only\
+  \ \u2014 never publication evidence; the held-out final problem set must exclude\
+  \ these problems"
+selection:
+  source_csv: baselines/hard_iteration_subset_vanilla_openai_gpt_oss_120b.csv
+  source_csv_sha256: a9803fc75ac9249c7f9d7e5c6231c30d9083a215194a58cea2410e94dce07fee
+  min_functionality: 0.6
+  min_gates: 150.0
+  max_gates: 3000.0
+  per_benchmark_cap: 3
+  excluded_hard_subset_problems: 13
+  instrument_excluded_problems:
+  - Prob016_fixed_point_adder
+  - Prob017_fixed_point_substractor
+  - Prob108_rule90
+  rule: filter by functionality/gate band, exclude hard subset; top gate-count problem
+    per (benchmark x circuit_type) bucket, then top up by gate count with per-benchmark
+    cap
+  subset_size: 6
+recommended_budget:
+  population_size: 12
+  num_generations: 3
+  code_samples_per_thought: 4
+  max_tokens: 128000
+  diff_max_tokens: 128000
+  total_worker_slots: 12
+  max_active_problems: 6
+  max_workers_per_problem: 4
+  evaluation_mode: strict_ablation
+  notes: ~288 candidate evaluations total (6 problems x (12 init + 3x12 offspring))
+    vs ~1560 for the 13-problem 20x5 hard-subset matrix; high functionality keeps
+    valid-PPA sample flow high so paired PPA deltas are populated
+problems_detail:
+- benchmark: RTLLM
+  problem: Prob048_pe
+  reference_gate_count: 1730.0
+  circuit_type: sequential
+  one_shot_functionality_rate: 1.0
+  selection_stage: bucket_top
+- benchmark: VerilogEval-Spec-to-RTL
+  problem: Prob021_mux256to1v
+  reference_gate_count: 1574.0
+  circuit_type: combinational
+  one_shot_functionality_rate: 0.8
+  selection_stage: bucket_top
+- benchmark: VerilogEval-Spec-to-RTL
+  problem: Prob030_popcount255
+  reference_gate_count: 633.0
+  circuit_type: combinational
+  one_shot_functionality_rate: 1.0
+  selection_stage: gate_count_top_up
+- benchmark: VerilogEval-Spec-to-RTL
+  problem: Prob105_rotate100
+  reference_gate_count: 561.0
+  circuit_type: sequential
+  one_shot_functionality_rate: 1.0
+  selection_stage: bucket_top
+- benchmark: RTLLM
+  problem: Prob011_multi_16bit
+  reference_gate_count: 532.0
+  circuit_type: sequential
+  one_shot_functionality_rate: 1.0
+  selection_stage: gate_count_top_up
+- benchmark: RTLLM
+  problem: Prob019_sub_64bit
+  reference_gate_count: 412.0
+  circuit_type: combinational
+  one_shot_functionality_rate: 1.0
+  selection_stage: bucket_top
+benchmarks:
+  RTLLM:
+    problems:
+    - Prob011_multi_16bit
+    - Prob019_sub_64bit
+    - Prob048_pe
+  VerilogEval-Spec-to-RTL:
+    problems:
+    - Prob021_mux256to1v
+    - Prob030_popcount255
+    - Prob105_rotate100

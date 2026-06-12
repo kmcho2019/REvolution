@@ -135,9 +135,9 @@ revamp history with run roots.
 | Gate | Requirement | Threshold |
 | --- | --- | --- |
 | G1a | Arm wall-clock (scheduler telemetry `run_wall_seconds`) | ≤ 6,000 s per arm |
-| G1b | No dominant problem | no problem > 50% of arm wall |
+| G1b | No dominant problem | no problem > 50% of the SUM of per-problem runtimes (problems run concurrently, so the arm wall is not the basis) |
 | G2 | Valid-PPA candidate flow | every problem ≥ 6 distinct successful candidates with PPA metrics (generation logs ∪ final population) per arm |
-| G3 | Discrimination | candidate quality-score IQR ≥ 0.02 on ≥ 4 of 6 problems per arm |
+| G3 | Discrimination | candidate quality-score IQR ≥ 0.02 on ≥ 4 of 6 problems on the BASELINE arm only (discrimination is an instrument property; a variant whose spread collapses must fail the comparison, not the instrument) |
 | G4 | Screening validity (calibration) | sign of the fast-subset mean paired best-quality delta for the predeclared pair (classic vs `grid_quantile_pareto_journal_bd_unified_rebin_on` thought-only k=4, seed 42) agrees with the hard-subset seed-42 result; if either delta lies in (−0.02, +0.02) the comparison is inconclusive and the subset must be revised or the band widened explicitly |
 | G5 | Stability (calibration) | same-pair verdict sign agrees across seeds 42 and 1001, with the same inconclusive band |
 

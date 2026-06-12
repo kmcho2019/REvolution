@@ -134,18 +134,25 @@ def evaluate_pair(
                 "passed": wall is not None and wall <= max_arm_wall_seconds,
             }
         )
+        # Problems run concurrently, so dominance is measured against the
+        # SUM of per-problem runtimes (the serial work), not the arm wall.
+        runtimes = [
+            problem["runtime_seconds"]
+            for problem in arm["problems"].values()
+            if problem["runtime_seconds"] is not None
+        ]
+        total_runtime = sum(runtimes)
         dominant = [
             (key, problem["runtime_seconds"])
             for key, problem in arm["problems"].items()
             if problem["runtime_seconds"] is not None
-            and wall is not None
-            and wall > 0
-            and problem["runtime_seconds"] > dominance_fraction * wall
+            and total_runtime > 0
+            and problem["runtime_seconds"] > dominance_fraction * total_runtime
         ]
         checks.append(
             {
                 "name": f"G1_no_dominant_problem_{arm_name}",
-                "required": f"no problem > {dominance_fraction:.0%} of arm wall",
+                "required": f"no problem > {dominance_fraction:.0%} of summed runtime",
                 "observed": ", ".join(f"{k}={v:.0f}s" for k, v in dominant) or "none",
                 "passed": not dominant,
             }
@@ -163,19 +170,22 @@ def evaluate_pair(
                 "passed": not low_signal and bool(arm["problems"]),
             }
         )
-        iqr_pass_count = sum(
-            1
-            for problem in arm["problems"].values()
-            if problem["quality_iqr"] is not None and problem["quality_iqr"] >= min_iqr
-        )
-        checks.append(
-            {
-                "name": f"G3_discrimination_{arm_name}",
-                "required": f">= {min_iqr_problems} problems with quality IQR >= {min_iqr:g}",
-                "observed": float(iqr_pass_count),
-                "passed": iqr_pass_count >= min_iqr_problems,
-            }
-        )
+    # G3 discrimination is an INSTRUMENT property, so it is measured on the
+    # baseline (classic) arm only: a variant whose quality spread collapses
+    # should fail the comparison, not invalidate the instrument.
+    iqr_pass_count = sum(
+        1
+        for problem in classic["problems"].values()
+        if problem["quality_iqr"] is not None and problem["quality_iqr"] >= min_iqr
+    )
+    checks.append(
+        {
+            "name": "G3_discrimination_baseline",
+            "required": f">= {min_iqr_problems} baseline problems with quality IQR >= {min_iqr:g}",
+            "observed": float(iqr_pass_count),
+            "passed": iqr_pass_count >= min_iqr_problems,
+        }
+    )
     return checks
 
 

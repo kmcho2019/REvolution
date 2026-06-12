@@ -59,6 +59,25 @@ def _write_arm(
     )
 
 
+
+
+def _write_extra_problem(root, name, *, runtime_seconds):
+    problem_dir = root / "_models_demo" / "RTLLM" / name
+    problem_dir.mkdir(parents=True, exist_ok=True)
+    details = [
+        {"id": f"{name}-c{c}", "score": 0.1 + 0.02 * c, "ppa_metrics": {"area": 1.0}}
+        for c in range(8)
+    ]
+    (problem_dir / "generation_log.jsonl").write_text(
+        json.dumps({"generation": 1, "population_ppa_details": details}) + "\n",
+        encoding="utf-8",
+    )
+    (problem_dir / f"{name}_summary.json").write_text(
+        json.dumps({"total_runtime_seconds": runtime_seconds,
+                    "final_population_ppa_details": details[:3]}),
+        encoding="utf-8",
+    )
+
 def test_passing_pair(tmp_path, capsys):
     classic = tmp_path / "classic"
     variant = tmp_path / "variant"
@@ -120,14 +139,14 @@ def test_low_ppa_flow_fails_g2(tmp_path):
     failing = {c["name"] for c in report["checks"] if not c["passed"]}
     assert "G2_valid_ppa_flow_variant" in failing
     # G3 also fails: 3 candidates cannot form an IQR sample.
-    assert "G3_discrimination_variant" in failing
+    assert "G3_discrimination_baseline" not in failing  # variant spread no longer gates the instrument
 
 
 def test_saturated_scores_fail_g3(tmp_path):
     classic = tmp_path / "classic"
     variant = tmp_path / "variant"
-    _write_arm(classic)
-    _write_arm(variant, score_spread=0.0)  # all candidates identical
+    _write_arm(classic, score_spread=0.0)  # baseline saturated -> instrument fails
+    _write_arm(variant)
 
     code = validate_fast_iteration_pair.main(
         [
@@ -147,7 +166,8 @@ def test_wall_clock_and_dominance_fail_g1(tmp_path):
     classic = tmp_path / "classic"
     variant = tmp_path / "variant"
     _write_arm(classic, wall_seconds=7000.0)  # over budget
-    _write_arm(variant, runtime_seconds=2900.0, wall_seconds=3000.0)  # dominant
+    _write_arm(variant, problems=1, runtime_seconds=2900.0, wall_seconds=3000.0)
+    _write_extra_problem(variant, "Tiny", runtime_seconds=10.0)  # 2900 of 2910 summed
 
     code = validate_fast_iteration_pair.main(
         [
