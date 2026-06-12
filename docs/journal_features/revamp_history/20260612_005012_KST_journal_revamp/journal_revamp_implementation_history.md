@@ -1215,3 +1215,18 @@ fallback; R-D k=2 (already running on OpenRouter).
   table.
 - Ablation matrix healthy: classic seed-1001 on all 13 hard-subset
   problems since 20:40:49.
+
+## 2026-06-12 22:40 KST — P4 fresh slice locked; disjointness verified
+
+- data/configs/cvdp_final_30_subset.yaml locked: seed 1337, 6 medium
+  tasks per category across the 5 categories (per-category 5 yields
+  only 25 - recorded), debug ids excluded with provenance, dataset
+  sha256 embedded. Disjoint from the debug slice (verified empty
+  intersection).
+- Holdout disjointness audit: the 20-problem held-out reference
+  subset intersects NEITHER the 13-problem hard subset NOR the
+  6-problem fast v3 subset (both intersections empty) - the holdout
+  remains valid for final gates despite being locked before v3
+  existed.
+- Ablation matrix: classic seed-1001 ~70% done (65 generation-log
+  lines over 13 problems, zero retries, 4127 files in 5 min).
