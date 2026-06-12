@@ -1200,3 +1200,18 @@ fallback; R-D k=2 (already running on OpenRouter).
 - The predeclared 5-arm ablation matrix LAUNCHED (exp/ablation_matrix,
   15 runs, seeds 1001-1003, hard subset 20x5, 32k cap, parity
   artifact per contrast). Classic seed-1001 arm started.
+
+## 2026-06-12 22:10 KST — P2 bake-off staged behind the matrix
+
+- Three bake-off pair launchers generated from the locked v3 subset
+  (graph_testability, activity, simple_2d - the trio's pair is the
+  existing R-B-fast baseline replication) and QUEUED behind the
+  ablation matrix (exp/queue_bakeoff_after_matrix.sh waits for the
+  'matrix all done' marker, then runs the three pairs sequentially).
+- feat(reporting): report_descriptor_bakeoff.py applies the frozen
+  rule mechanically (delta -> occupancy tie-break -> 0.25 floor) and
+  surfaces warmup-completion + collapse counts as the pre-registered
+  headline evidence. The freeze decision will cite the generated
+  table.
+- Ablation matrix healthy: classic seed-1001 on all 13 hard-subset
+  problems since 20:40:49.
