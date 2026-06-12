@@ -855,3 +855,19 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Screen chain: k2 variant (RUNNING) -> R-B fail feedback -> R-C
   warmup patience -> R-A' spec-first; each one-factor vs the frozen
   target, all OpenRouter, seeds 42, locked v3 subset.
+
+## 2026-06-12 14:30 KST — P4 builder exclusions; visualizer risk-b check
+
+- feat(cvdp) 87a1914d79 (amended): build_cvdp_debug_subset gains a
+  repeatable --exclude-config flag loading ids from locked manifests,
+  filtering before the seeded shuffle, and recording exclusion
+  provenance - the predeclared mechanism for the fresh 30-task final
+  slice (seed 1337, debug ids excluded). 6 tests green.
+- Visualizer risk item b checked at code level: 3-axis profiles render
+  profile-agnostically (preferred order only for the journal trio,
+  natural-order fallback otherwise, honest 2d downgrade on degenerate
+  axes). Gap: 2-axis profiles skip with a recorded reason - rendering
+  must be extended before the 2-axis control arm ships in the P2
+  bake-off. TODO updated accordingly.
+- k2 variant arm healthy under the retry fix (continuous file output
+  since 12:57; no stalls).
