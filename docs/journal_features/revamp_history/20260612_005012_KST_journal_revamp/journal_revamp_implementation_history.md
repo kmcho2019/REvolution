@@ -617,3 +617,18 @@ ancient configure and (2) pre-C++11 header leniency (strcasecmp needs
 <strings.h>). Porting recipe recorded in the TODO; port deferred to a
 dedicated offline session (P2, off the critical path). Hard-subset
 pair: 7/13 classic problems at ~75 min.
+
+## 2026-06-13 03:00 KST
+
+MDE analysis script landed (scripts/report_mde_analysis.py + tests):
+seeded simulation faithful to the gate machinery (cluster bootstrap,
+CI-low>0). PRELIMINARY run on fast-pair variance (sd_problem=0.116,
+sd_seed=0.078, 6 problems - small sample): continuous MDE 0.08 at 20x5
+(gate threshold +0.03 is under-powered), 0.12 at 13x5; binary MDE ~20pp
+at 30 tasks x 5 seeds (the +5pp CVDP gate with CI-low>0 is likely
+infeasible), no MDE within grid at 10 tasks. This confirms the round-1
+statistics persona's warning. Per the predeclared ratchet, the
+freeze-time decision (re-run on hard-subset variance first) is: raise
+counts where affordable, otherwise the affected gate DROPS its claim -
+thresholds are not retuned. Hard-subset pair: classic arm done rc=0 in
+52 min; QD arm in flight (4/13 at first check).
