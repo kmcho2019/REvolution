@@ -55,7 +55,7 @@ EVERY item below checked AND spot-verified against artifacts.
 - [ ] Verify RealBench deterministic replay and any-pass gates.
 - [ ] Verify scheduler gates.
 - [ ] P4: Archive the MDE/power analysis (one-way ratchet: counts may rise, never fall; infeasible gate drops its claim).
-- [ ] P4: Build the held-out 20-problem reference-PPA set (excluding hard + fast subsets), the 30-task fresh CVDP slice (seed 1337, debug ids excluded), and the 26-task fresh RealBench slice.
+- [ ] P4: Build the 26-task fresh RealBench slice (validated minus debug; awaits the post-sweep manifest re-lock). DONE PARTS: held-out 20-problem reference set verified disjoint from hard AND fast-v3 (audit 2026-06-12); fresh CVDP-30 locked at data/configs/cvdp_final_30_subset.yaml (seed 1337, 6x5 categories, debug ids excluded with provenance).
 - [ ] P4: Add yosys equivalence spot-check tooling and run it on showcased candidates + sampled 10% of archive elites.
 - [ ] P4: Emit the tool-provenance statement (exact iverilog/yosys/OpenROAD/verilator versions) with the config freeze.
 
