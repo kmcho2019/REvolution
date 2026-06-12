@@ -1179,3 +1179,24 @@ fallback; R-D k=2 (already running on OpenRouter).
   the mechanism removes most of the gap; the full-mechanism test
   (rb_failure_regime_v2: fixed engine, v2 subset with alu restored,
   fresh classic arm) launched.
+
+## 2026-06-12 21:45 KST — SCREEN PHASE CLOSED; ablation matrix launched
+
+- rb_failure_regime_v2 (full mechanism, payload live-verified, alu
+  restored): pass rates moved exactly as the mechanism predicts -
+  m2014_q3 3%->15% (5x, converting the catastrophic loss into an
+  exact best-quality TIE), circuit7 26%->62%, fsmonehot 21%->40%,
+  fsm 12%->17%, alu regressed 15%->2% (its sampled feedback was
+  PPA-flavored - misdirection case for the dossier). Quality verdict:
+  mean -0.086, 0W/2L/2T (circuit7 -0.320 dominates; alu unpaired) ->
+  DEMOTE by the predeclared bands. Conclusion: failure feedback
+  repairs candidate VALIDITY, not peak quality - the quality ceiling
+  is set by archive/selection behavior on valid candidates, which is
+  the P2 axis problem.
+- Screen ledger FINAL: k=2 DEMOTE, R-C DEMOTE (fired), R-A' DEMOTE,
+  R-B fast = replication, R-B failure-regime DEMOTE (fired, with
+  regime-scoped positives). P1 proceeds per predeclared Branch C
+  with the strongest root-cause dossier of the project.
+- The predeclared 5-arm ablation matrix LAUNCHED (exp/ablation_matrix,
+  15 runs, seeds 1001-1003, hard subset 20x5, 32k cap, parity
+  artifact per contrast). Classic seed-1001 arm started.
