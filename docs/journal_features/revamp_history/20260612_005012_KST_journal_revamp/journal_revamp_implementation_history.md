@@ -740,3 +740,50 @@ Post-convergence analyses + first OpenRouter repair screen:
   (exp/fast_iter/k_ablation_k2; classic arm 12:16:01) - the first
   screened repair candidate on the signed-off instrument, isolating the
   ideation-diversity hypothesis (6 thoughts/gen at k=2 vs 3 at k=4).
+
+## 2026-06-12 13:05 KST — P1 mechanistic diagnosis (hard-subset-42 artifacts)
+
+Systematic pass over the QD arm's per-problem artifacts
+(exp/fast_iter/hard_subset_42/qd; tables reproduced in the analysis
+below) found three distinct failure regimes:
+
+1. Realization pass-rate collapse on spec-exact problems (the big
+   losses). QD evaluated exactly 120 samples/problem (30 thoughts x 4)
+   with zero repair (repair_kind=none everywhere). Functional pass
+   rates: m2014_q3 3% (4/120) vs classic 68 valid logged; alu 15% vs
+   classic ~100%. Mechanism, verified on
+   m2014_q3 Gen0/g000_thought_0001: the thought TRANSCRIBES the spec
+   and gets it wrong - it re-declared `input [3:0] x` with its own bit
+   mapping while the spec's Karnaugh map indexes x[1]..x[4], then
+   stated SOP product terms over the wrong indices; all 4 realizations
+   followed the thought (33/100 mismatches) even though the K-map is
+   present in the realization prompt and the template already says the
+   problem description is authoritative. One bad transcription poisons
+   all k samples; classic never transcribes (code prompts answer the
+   spec directly).
+2. No actionable failure feedback in thought space. fail_pool parents
+   ARE selected (15/30 thoughts on m2014_q3) but
+   _format_parent_for_single_thought_operator serializes only
+   {thought, evaluation_status:"failed"} - no failure stage, no
+   mismatch counts, no error excerpt (engine.py ~1750). The model
+   repeats the same misunderstanding for 5 generations. Classic's
+   operators carry parent code + feedback.
+3. Archive degeneracy on small designs. 4/11 problems never exited
+   grid-quantile warmup (every observation warmup_buffered; pe 30/30,
+   circuit7 11/11, fsmonehot 15/15; m2014_q3 only 3 valid
+   observations) because all three journal-trio axes collapsed
+   (unique_count=1). Those problems ran with no functioning archive;
+   coverage misleadingly reports 1.0 on a 1-cell space. Direct P2
+   coupling: the trio is degenerate exactly on small hard problems.
+
+Inverse evidence: where the machinery worked, QD won - m2014_q6b
+(+0.088) is the only problem with a healthy 6-cell archive; QD's pass
+rate also BEATS classic exactly where classic collapses (m2014_q6b
+24% vs 3%, fsmonehot 21% vs 2%, fsm 12% vs 0%), i.e. thought-mode
+ideation is genuinely stronger on under-determined problems and
+weaker on spec-exact transcription problems.
+
+Screened repair agenda (one factor per screen, fast subset):
+R-A' spec-first realization prompt-profile variant; R-B failure
+feedback in fail-parent thought payloads; R-C collapsed-axis warmup
+fallback; R-D k=2 (already running on OpenRouter).
