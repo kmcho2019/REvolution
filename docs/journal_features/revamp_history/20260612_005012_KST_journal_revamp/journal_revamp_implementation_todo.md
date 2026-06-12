@@ -6,6 +6,7 @@ preserved verbatim at the bottom. The v2 adversarial sign-off requires
 EVERY item below checked AND spot-verified against artifacts.
 
 ## P1 — QD repair
+- [ ] OPERATIONAL: GPU handed off after the hard-subset pair completes (canary /workspace/GPU_7_FREE_*); all subsequent LLM runs use --api_backend openrouter (same-provider-both-arms rule for anything gate-bearing).
 - [ ] Reproduce current QD underperformance against classic on hard subset.
 - [ ] Root-cause descriptor collapse, archive occupancy, parent selection, repair budget, and thought/code mismatch.
 - [ ] Fix QD performance issues or narrow claims explicitly.

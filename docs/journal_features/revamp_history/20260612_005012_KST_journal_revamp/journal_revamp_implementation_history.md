@@ -632,3 +632,19 @@ freeze-time decision (re-run on hard-subset variance first) is: raise
 counts where affordable, otherwise the affected gate DROPS its claim -
 thresholds are not retuned. Hard-subset pair: classic arm done rc=0 in
 52 min; QD arm in flight (4/13 at first check).
+
+## 2026-06-13 04:00 KST
+
+GPU HANDOFF DIRECTIVE (user): a lab colleague needs the GPU serving
+gpt-oss-120b. Effective immediately: NO new local-vLLM runs. The
+in-flight hard-subset QD arm (the last running job, final problem)
+completes, then the GPU is formally handed off with a visible canary
+file /workspace/GPU_7_FREE_<timestamp> created only after verifying no
+REvolution process is alive. Fallback for all subsequent LLM runs:
+--api_backend openrouter with OPENROUTER_API_KEY from .env (presence
+verified non-echoing; openai/gpt-oss-120b is available via OpenRouter,
+keeping the model family). FAIRNESS NOTE recorded: provider-side
+serving differences are acceptable for fast-subset screening, but any
+gate-bearing comparison must run BOTH arms on the same provider, and a
+provider switch before finals must be recorded in the ledger and the
+tool-provenance statement.
