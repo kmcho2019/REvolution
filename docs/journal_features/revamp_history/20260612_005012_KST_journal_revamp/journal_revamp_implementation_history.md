@@ -700,3 +700,24 @@ still governs anything gate-bearing; the tool-provenance statement
 must name the provider per run. Probe ran concurrently with the QD arm
 since it never touches the local GPU (sequencing correction noted).
 QD arm: still on its final problems (9 workers).
+
+## 2026-06-13 07:15 KST — CONVERGENCE MILESTONE
+
+Hard-subset pair completed (classic_rc=0 qd_rc=0, ledgered). GPU
+formally handed off: canary /workspace/GPU_7_FREE_20260612_121425
+created after the launcher's own completion line plus a
+self-match-proof process audit (pgrep bracket pattern).
+
+G4 PASSES on the 9-problem genuine-hard intersection (strays pe and
+multi_16bit excluded): best-quality mean delta -0.0803, 2W/7L/0T,
+missing_t=0 - same sign as both fast-subset verdicts. INSTRUMENT v3
+FULLY SIGNED OFF (G1-G5). Every subsequent repair candidate gets a
+~30-minute trustworthy screen on OpenRouter.
+
+P1 reproduction is formal: the QD target loses on genuine hard
+problems at 20x5 (seed 42). Functionality ties 9/9 - on this subset at
+this budget the deficit is PURE PPA QUALITY, not solved counts. QD
+recorded its first two problem wins (identify which two as the lead
+diagnostic for what QD does right). Next: MDE re-run on hard-subset
+variance, correlation re-run on hard-subset archives, k-ablation pair
+on OpenRouter via the generated launcher.

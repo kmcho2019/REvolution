@@ -6,16 +6,16 @@ preserved verbatim at the bottom. The v2 adversarial sign-off requires
 EVERY item below checked AND spot-verified against artifacts.
 
 ## P1 — QD repair
-- [ ] OPERATIONAL: GPU handed off after the hard-subset pair completes (canary /workspace/GPU_7_FREE_*); all subsequent LLM runs use --api_backend openrouter (same-provider-both-arms rule for anything gate-bearing).
-- [ ] Reproduce current QD underperformance against classic on hard subset.
+- [x] OPERATIONAL: GPU handed off (canary /workspace/GPU_7_FREE_20260612_121425 with evidence trail) after the hard-subset pair completed (canary /workspace/GPU_7_FREE_*); all subsequent LLM runs use --api_backend openrouter (same-provider-both-arms rule for anything gate-bearing).
+- [x] Reproduce current QD underperformance against classic on hard subset (9-problem genuine intersection, seed 42, 20x5: best-quality -0.080, 2W/7L, functionality 9/9 ties - deficit is pure PPA quality; run exp/fast_iter/hard_subset_42, ledgered; 11-problem hybrid caveat recorded).
 - [ ] Root-cause descriptor collapse, archive occupancy, parent selection, repair budget, and thought/code mismatch.
 - [ ] Fix QD performance issues or narrow claims explicitly.
 - [ ] Ensure repair and k-code samples are charged as real budget.
 - [ ] Freeze one final QD target config before final runs.
 - [x] P1: Complete the corrected pop-12 calibration pair (classic vs QD target, seed 42) and run `validate_fast_iteration_pair.py` on it (G1-G3 FAILED: rule90 wall dominance, PPA-flow floor, 1/6 discrimination -> subset v2 required; report at exp/fast_iter/fast_iter_20260612b/gate).
-- [ ] Evaluate G4 screening validity once the hard-subset seed-42 reproduction exists (sign agreement on the predeclared calibration pair).
+- [x] Evaluate G4 screening validity (PASS: hard-subset 9-problem genuine intersection best-quality -0.080 with 2W/7L matches the fast-subset DEMOTE sign; both fast verdicts -0.086/-0.188).
 - [x] Run the seed-1001 calibration pair for G5 stability (PASS: DEMOTE both seeds, -0.086 @ 42 vs -0.188 @ 1001, identical 0W/5L/1T shape; gates G1-G3 pass on both pairs).
-- [ ] Sign off `fast_iteration_subset_v1` or cut v2 (pilot evidence already flags `Prob108_rule90` wall-clock dominance and `Prob016_fixed_point_adder` PPA flow; any threshold recalibration must be recorded with rationale) and record the signoff decision in the revamp history.
+- [x] INSTRUMENT SIGNED OFF at v3 (G1-G5 all pass; evidence: v3 + v3_s1001 gate reports, hard-subset intersection G4). Original line: Sign off `fast_iteration_subset_v1` or cut v2 (pilot evidence already flags `Prob108_rule90` wall-clock dominance and `Prob016_fixed_point_adder` PPA flow; any threshold recalibration must be recorded with rationale) and record the signoff decision in the revamp history.
 - [x] P1: Fix QD thought-mode generation logging to record every evaluated code sample's PPA details (+ regression test) BEFORE any gate-bearing run (engine logs all_samples at both thought-mode sites; test_generation_log_records_all_evaluated_samples).
 - [ ] P1: Run the predeclared 5-arm ablation matrix (narrative ablation section; seeds 1001-1003, hard subset) and record per-arm evidence.
 
