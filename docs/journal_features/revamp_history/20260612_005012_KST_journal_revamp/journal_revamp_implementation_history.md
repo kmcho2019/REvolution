@@ -686,3 +686,17 @@ problems are NOT rerun locally - if a full 13-problem reference is
 needed later it runs via OpenRouter under the same-provider-both-arms
 rule. Launcher templates get generated from problem lists in configs,
 never sed surgery, going forward.
+
+## 2026-06-13 06:00 KST
+
+OpenRouter parity probe PASSES (step 2 of the fallback validation):
+gen-0 probe, 3 fast-subset problems x 8 samples of openai/gpt-oss-120b
+via OpenRouter, evaluated locally. Functionality 0.875 (multi_16bit) /
+1.0 (popcount255) / 1.0 (rotate100), pooled 23/24 = 96% vs the ~1.0
+local-vLLM reference; syntax 100% everywhere; run ledgered
+(exp/openrouter_parity_probe). Verdict: not broken, same ballpark -
+cleared for fast-subset screening. The same-provider-both-arms rule
+still governs anything gate-bearing; the tool-provenance statement
+must name the provider per run. Probe ran concurrently with the QD arm
+since it never touches the local GPU (sequencing correction noted).
+QD arm: still on its final problems (9 workers).
