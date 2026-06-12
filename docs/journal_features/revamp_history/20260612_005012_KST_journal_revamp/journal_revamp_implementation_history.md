@@ -560,3 +560,16 @@ compatibility adopted as a standing plan rule with a three-item risk
 register (all-samples logging semantics, profile-agnostic axes, additive
 side metrics). G5 seed-1001 pair: classic arm done rc=0 in ~11 min, QD
 arm in flight; hard-subset G4/P1 pair queued behind it.
+
+## 2026-06-13 00:00 KST
+
+G5 stability PASSES: the v3 instrument gives the same verdict sign on
+seeds 42 and 1001 (DEMOTE; best-quality -0.0855 vs -0.1884, both
+0W/5L/1T, both pairs passing G1-G3). Instrument sign-off now pends only
+G4 (hard-subset seed-42 sign agreement); the hard-subset 20x5 pair is
+running. The QD-target gap is now reproduced across four completed
+pairs with zero QD wins on any paired PPA unit - the repair phase
+starts from an unusually consistent failure signature: PPA-quality
+losses at functionality parity, QD wall 1.5-1.8x classic at equal
+candidate budget, retained-spread collapse, and only 3 distinct
+thoughts per generation at pop 12 / k=4.

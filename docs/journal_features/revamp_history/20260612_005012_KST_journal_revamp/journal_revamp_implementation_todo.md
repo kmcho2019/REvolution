@@ -13,7 +13,7 @@ EVERY item below checked AND spot-verified against artifacts.
 - [ ] Freeze one final QD target config before final runs.
 - [x] P1: Complete the corrected pop-12 calibration pair (classic vs QD target, seed 42) and run `validate_fast_iteration_pair.py` on it (G1-G3 FAILED: rule90 wall dominance, PPA-flow floor, 1/6 discrimination -> subset v2 required; report at exp/fast_iter/fast_iter_20260612b/gate).
 - [ ] Evaluate G4 screening validity once the hard-subset seed-42 reproduction exists (sign agreement on the predeclared calibration pair).
-- [ ] Run the seed-1001 calibration pair for G5 stability.
+- [x] Run the seed-1001 calibration pair for G5 stability (PASS: DEMOTE both seeds, -0.086 @ 42 vs -0.188 @ 1001, identical 0W/5L/1T shape; gates G1-G3 pass on both pairs).
 - [ ] Sign off `fast_iteration_subset_v1` or cut v2 (pilot evidence already flags `Prob108_rule90` wall-clock dominance and `Prob016_fixed_point_adder` PPA flow; any threshold recalibration must be recorded with rationale) and record the signoff decision in the revamp history.
 - [x] P1: Fix QD thought-mode generation logging to record every evaluated code sample's PPA details (+ regression test) BEFORE any gate-bearing run (engine logs all_samples at both thought-mode sites; test_generation_log_records_all_evaluated_samples).
 - [ ] P1: Run the predeclared 5-arm ablation matrix (narrative ablation section; seeds 1001-1003, hard subset) and record per-arm evidence.
