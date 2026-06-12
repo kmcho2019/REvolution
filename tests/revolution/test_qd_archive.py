@@ -866,3 +866,40 @@ def test_grid_quantile_archive_describes_pending_assignment():
     assert assignment["archive_type"] == "grid_quantile"
     assert assignment["initialized"] is False
     assert assignment["assignment_status"] == "warmup_pending"
+
+
+def test_grid_quantile_warmup_patience_initializes_collapsed_space():
+    archive = GridQuantileArchive(
+        ("logic_depth", "ff_depth"), warmup_successes=4, warmup_max_buffer=6
+    )
+
+    for index in range(5):
+        result = _insert(archive, f"cand-{index}", (2.0, 0.0), float(index), {"id": index})
+        assert result.decision == "warmup_buffered"
+    assert archive.is_initialized is False
+
+    _insert(archive, "cand-5", (2.0, 0.0), 5.0, {"id": 5})
+
+    assert archive.is_initialized is True
+    assert archive.initialization_mode == "warmup_patience_fallback"
+    assert archive.effective_bins == (1, 1)
+    assert archive.num_cells == 1
+    assert archive.cell_id_for((2.0, 0.0)) == "0,0"
+    assert archive.elite_for_cell("0,0") is not None
+
+
+def test_grid_quantile_warmup_patience_default_off_buffers_forever():
+    archive = GridQuantileArchive(("logic_depth",), warmup_successes=2)
+
+    for index in range(50):
+        _insert(archive, f"cand-{index}", (3.0,), float(index), {"id": index})
+
+    assert archive.is_initialized is False
+    assert archive.warmup_buffer_size() == 50
+
+
+def test_grid_quantile_warmup_max_buffer_validation():
+    with pytest.raises(ValueError, match="warmup_max_buffer"):
+        GridQuantileArchive(("a",), warmup_successes=5, warmup_max_buffer=3)
+    with pytest.raises(ValueError, match="warmup_max_buffer"):
+        GridQuantileArchive(("a",), warmup_successes=5, warmup_max_buffer=-1)

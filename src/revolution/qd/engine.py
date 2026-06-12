@@ -103,6 +103,7 @@ class QDEngine(EoHEngine):
         qd_two_parent_probability: float = 0.5,
         qd_cvt_warmup_successes: int | None = None,
         qd_grid_quantile_warmup_successes: int = 20,
+        qd_grid_quantile_warmup_max_buffer: int = 0,
         qd_descriptor_profile: str | None = None,
         qd_descriptor_axes: tuple[str, ...] = (),
         qd_descriptor_file: str | None = None,
@@ -209,6 +210,7 @@ class QDEngine(EoHEngine):
         self.qd_two_parent_probability = float(qd_two_parent_probability)
         self.qd_cvt_warmup_successes = qd_cvt_warmup_successes
         self.qd_grid_quantile_warmup_successes = int(qd_grid_quantile_warmup_successes)
+        self.qd_grid_quantile_warmup_max_buffer = int(qd_grid_quantile_warmup_max_buffer)
         self.qd_descriptor_profile = qd_descriptor_profile
         self.qd_descriptor_axes = tuple(qd_descriptor_axes)
         self.qd_descriptor_file = qd_descriptor_file
@@ -354,6 +356,7 @@ class QDEngine(EoHEngine):
         return GridQuantileArchive(
             axes=axes,
             warmup_successes=self.qd_grid_quantile_warmup_successes,
+            warmup_max_buffer=self.qd_grid_quantile_warmup_max_buffer,
             cell_mode=self.qd_cell_mode,
             max_elites_per_cell=self.qd_max_elites_per_cell,
             objective_names=self._objective_names(),

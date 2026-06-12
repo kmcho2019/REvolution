@@ -412,6 +412,7 @@ def _build_backend(
             qd_neighbor_k=args.qd_neighbor_k,
             qd_cvt_warmup_successes=args.qd_cvt_warmup_successes,
             qd_grid_quantile_warmup_successes=args.qd_grid_quantile_warmup_successes,
+            qd_grid_quantile_warmup_max_buffer=args.qd_grid_quantile_warmup_max_buffer,
             qd_quality_mode=args.qd_quality_mode,
             qd_alpha=args.qd_alpha,
             qd_beta=args.qd_beta,
@@ -914,6 +915,7 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
     parser.add_argument("--qd_neighbor_k", type=int, default=8)
     parser.add_argument("--qd_cvt_warmup_successes", type=int, default=None)
     parser.add_argument("--qd_grid_quantile_warmup_successes", type=int, default=20)
+    parser.add_argument("--qd_grid_quantile_warmup_max_buffer", type=int, default=0)
     parser.add_argument(
         "--qd_quality_mode",
         type=str,

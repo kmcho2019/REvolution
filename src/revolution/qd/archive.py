@@ -663,6 +663,7 @@ class GridQuantileArchive:
         axes: list[str] | tuple[str, ...],
         *,
         warmup_successes: int,
+        warmup_max_buffer: int = 0,
         cell_mode: QDCellMode = "scalar_elite",
         max_elites_per_cell: int = 1,
         objective_names: tuple[str, ...] = (),
@@ -671,6 +672,10 @@ class GridQuantileArchive:
             raise ValueError("GridQuantileArchive requires at least one axis.")
         if warmup_successes <= 0:
             raise ValueError("GridQuantileArchive requires warmup_successes > 0.")
+        if warmup_max_buffer < 0:
+            raise ValueError("warmup_max_buffer must be >= 0.")
+        if 0 < warmup_max_buffer < warmup_successes:
+            raise ValueError("warmup_max_buffer must be >= warmup_successes when set.")
         _validate_cell_mode(cell_mode)
         if max_elites_per_cell <= 0:
             raise ValueError("max_elites_per_cell must be > 0.")
@@ -681,6 +686,7 @@ class GridQuantileArchive:
         self.max_elites_per_cell = int(max_elites_per_cell)
         self.objective_names = tuple(objective_names)
         self.warmup_successes = int(warmup_successes)
+        self.warmup_max_buffer = int(warmup_max_buffer)
         self.num_cells = 0
         self._fronts: dict[str, list[ArchiveMember]] = {}
         self._warmup_buffer: list[ArchiveMember] = []
@@ -898,6 +904,12 @@ class GridQuantileArchive:
             warmup_index = len(self._warmup_buffer)
             if warmup_index >= self.warmup_successes and self._warmup_geometry_ready():
                 self._initialize_from_warmup()
+            elif self.warmup_max_buffer and warmup_index >= self.warmup_max_buffer:
+                # Patience fallback: degenerate descriptor axes (no quantile
+                # boundaries possible) must not buffer forever - initialize
+                # the collapsed space so elites, archive context, and
+                # ks-rebinning can still operate in-run.
+                self._initialize_from_warmup("warmup_patience_fallback")
             return QDArchiveInsertResult(
                 cell_id=f"warmup:{warmup_index}",
                 inserted=False,
