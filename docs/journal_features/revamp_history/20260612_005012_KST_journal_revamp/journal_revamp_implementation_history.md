@@ -1128,3 +1128,22 @@ fallback; R-D k=2 (already running on OpenRouter).
   strategy selection; prompt contains no parent code/feedback;
   default path byte-identical.
 - R-A' variant arm started 17:31:28 (classic rc=0 in 18 min).
+
+## 2026-06-12 19:20 KST — arm 2 landed; R-A' verdict; final screen running
+
+- feat(classic) 25c0beb898: classic_operator_kind implements ablation
+  arm 2 (classic + unified operator) per the recorded spec - pool
+  allocation and weighted parent draw unchanged, UCB-softmax and the
+  six strategy prompts bypassed, one whole-mode unified prompt per
+  offspring, no bandit attribution, default path byte-identical.
+  Full suite green (483 passed). ALL FIVE predeclared ablation arms
+  are now runnable.
+- R-A' fast verdict: mean best-quality delta -0.126, 0W/4L/2T ->
+  DEMOTE as a standalone fast-subset repair (slightly above the
+  -0.177 baseline replication, within single-seed noise). Coverage
+  note: the high-pass-rate subset leaves little transcription
+  failure for spec-first realization to fix; if the failure-regime
+  R-B shows pass-rate recovery, an R-A' failure-regime screen is the
+  natural follow-up (launcher generator + locked subset ready).
+- R-B failure-regime screen auto-started 17:59:16 (the last queued
+  screen; the one whose mechanism coverage is guaranteed).
