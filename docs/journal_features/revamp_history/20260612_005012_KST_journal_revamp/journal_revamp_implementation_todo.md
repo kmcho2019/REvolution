@@ -11,7 +11,7 @@ EVERY item below checked AND spot-verified against artifacts.
 - [ ] Fix QD performance issues or narrow claims explicitly.
 - [ ] Ensure repair and k-code samples are charged as real budget.
 - [ ] Freeze one final QD target config before final runs.
-- [ ] Complete the corrected pop-12 calibration pair (classic vs QD target, seed 42) and run `validate_fast_iteration_pair.py` on it (G1-G3).
+- [x] P1: Complete the corrected pop-12 calibration pair (classic vs QD target, seed 42) and run `validate_fast_iteration_pair.py` on it (G1-G3 FAILED: rule90 wall dominance, PPA-flow floor, 1/6 discrimination -> subset v2 required; report at exp/fast_iter/fast_iter_20260612b/gate).
 - [ ] Evaluate G4 screening validity once the hard-subset seed-42 reproduction exists (sign agreement on the predeclared calibration pair).
 - [ ] Run the seed-1001 calibration pair for G5 stability.
 - [ ] Sign off `fast_iteration_subset_v1` or cut v2 (pilot evidence already flags `Prob108_rule90` wall-clock dominance and `Prob016_fixed_point_adder` PPA flow; any threshold recalibration must be recorded with rationale) and record the signoff decision in the revamp history.

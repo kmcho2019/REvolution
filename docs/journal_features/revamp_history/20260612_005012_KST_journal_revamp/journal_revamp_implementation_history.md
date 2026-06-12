@@ -446,3 +446,31 @@ goal_template v2.1 (user-directed evidence audit of v2's strong claims):
   no-reference PPA rating is conditionally covered via the absolute-only
   opt-in; per-suite summaries are covered by the per-benchmark statistics
   breakdown) are recorded here as explicit decisions.
+
+## 2026-06-12 17:00 KST
+
+P1 calibration: pop-12 fast-subset pair completed (classic 4795s, QD
+4937s, both rc=0; ledgered). Instrument gate report
+(exp/fast_iter/fast_iter_20260612b/gate): G1a passes both arms; G1b/G2/G3
+FAIL identically to the pilot — Prob108_rule90 consumes ~100% of each
+arm's wall, Prob016_fixed_point_adder and rule90 under the 6-candidate
+PPA-flow floor, discrimination 1/6. Decision per the calibration
+protocol: cut fast_iteration_subset_v2 excluding both problems on
+instrument properties (wall dominance, PPA flow) — never on variant
+results — and re-run the calibration pair.
+
+First QD-vs-classic reproduction signal (directional only; instrument
+not signed off): functionality at perfect parity (6/6 ties) while QD
+loses ALL paired PPA units — best-quality mean delta -0.143 (0W/5L,
+penalized), avg-PPA -0.202, hypervolume log-delta -0.029, and one
+missing-treatment unit (QD produced no valid-PPA candidate where classic
+did). The gap is PPA-quality-specific, not pass-rate. Root-cause
+hypothesis queue for P1: (1) ideation-diversity collapse — pop 12 with
+thought-only k=4 yields only 3 distinct thoughts/generation vs classic's
+12 independent candidates; (2) identify the missing-treatment problem
+and its archive/descriptor artifacts; (3) repair/k budget accounting on
+these runs (wall parity suggests budgets comparable).
+
+Also: the /goal launch of goal_template v2.1 failed the 4000-char limit
+(4414 after the user's adversarial-prompt-path addition); template
+compressed below the limit without dropping any section.

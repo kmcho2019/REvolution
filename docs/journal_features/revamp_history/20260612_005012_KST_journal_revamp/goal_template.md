@@ -3,22 +3,21 @@
 Status: v2.1 (2026-06-12). v1 archived as `goal_template_v1_initial.md`;
 the v2 draft overstated foundation completeness and was corrected after an
 evidence audit (see the implementation history). Use this text when
-starting the completion-phase goal:
+starting the completion-phase goal (3887 chars, fits the 4000 limit):
 
 ```text
 /goal Objective: Complete the REvolution TCAD journal revamp on branch
 feat/journal-revamp-20260612-005012-kst so that code, experiments,
 reports, and manuscript support the same claims under the ACCEPTED claims
-contract docs/journal_features/journal_narrative.md (frozen: gates,
-branch table, pools, budget rules — it wins on any conflict). Execute
-the phase plan docs/journal_features/revamp_history/
+contract docs/journal_features/journal_narrative.md (frozen; wins on any conflict). Execute
+the phase plan docs/.../
 20260612_005012_KST_journal_revamp/journal_revamp_plan.md (P1-P5), track
 journal_revamp_implementation_todo.md (phase-grouped; sign-off requires
 EVERY item checked and spot-verified), and log evidence in
 journal_revamp_implementation_history.md plus rerun_ledger.jsonl.
 Original intent: docs/journal_features/revamp_ruminations_20260612.md.
 
-Honest starting state — foundations landed WITH open conditions, verify
+Starting — foundations landed WITH open conditions, verify
 before relying on them: capability model, locked subsets/probe, scheduler
 telemetry + fair-share (46% on synthetic replay; live occupancy still
 unproven), cluster-bootstrap statistics/validator/ledger/seed-manifest,
@@ -38,16 +37,14 @@ a plain-language design-space rationale in the narrative. (3) CVDP and
 RealBench evidenced by end-to-end evolutionary runs on locked slices
 (CVDP PPA absolute-only; RealBench scoped to the harness-validated
 subset with the v5 re-sweep retention table); model arm frozen by the
-locked probe, symmetrically. (4) Seed-42 debug gate, then 5-seed finals
-(1001-1005) on disjoint held-out/fresh sets with every narrative gate
-evaluated mechanically. (5) Manuscript updated in resources/journal_draft
+locked probe, symmetrically. (4) Manuscript updated in resources/journal_draft
 per the selected branch with the four case-study artifacts.
 
 Verification surface: validate_journal_revamp_run.py exit 0 per run
 root; report_journal_statistics.py gate booleans + paired_deltas.csv;
 validate_fast_iteration_pair.py reports; descriptor-health and
 correlation artifacts; manifest/subset sha256 locks; ledger entries with
-config hashes; the v2 adversarial prompt executed with all four personas
+config hashes; the v2 adversarial prompt (docs/.../20260612_005012_KST_journal_revamp/journal_revamp_adversarial_prompt.md) executed with all four personas
 returning sign_off.
 
 Constraints: thresholds/branch rules/pools/budget rules never revised
@@ -69,11 +66,6 @@ instrument once signed off (PROMOTE/DEMOTE/INCONCLUSIVE); promote to
 hard subset on PROMOTE only; record negative results; root-cause from
 artifacts before changing code; new method ideas go in the history
 before large experiments.
-
-Blocked stop condition: stop and report when a gate fails with no
-narrative-sanctioned path (fix or predeclared narrowing), when the vLLM
-endpoint is down past one retry cycle, or when an action would require
-revising a frozen rule — with the evidence that would unlock progress.
 
 Completion: every TODO item checked and spot-verified; all narrative
 gates mechanically evaluated; four-persona v2 adversarial sign-off on
