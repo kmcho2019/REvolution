@@ -462,9 +462,7 @@ async def test_generate_response_empty_content_then_success(mocker):
     create = patch_async_openai(mocker, [empty, good])
     # no-op sleep
     mock_sleep = AsyncMock()
-    pytest.MonkeyPatch().setattr(
-        "revolution.llm.asyncio.sleep", mock_sleep, raising=False
-    )
+    mocker.patch("revolution.llm.asyncio.sleep", mock_sleep)
 
     llm = LLMInterface(api_key="k", max_retries=2)
     t, c, meta = await llm.generate_response("prompt")
@@ -501,9 +499,7 @@ async def test_generate_response_retriable_then_success(
     )
     # no-op sleep
     mock_sleep = AsyncMock()
-    pytest.MonkeyPatch().setattr(
-        "revolution.llm.asyncio.sleep", mock_sleep, raising=False
-    )
+    mocker.patch("revolution.llm.asyncio.sleep", mock_sleep)
 
     llm = LLMInterface(api_key="k", max_retries=2)
     t, c, meta = await llm.generate_response("p")
@@ -521,9 +517,7 @@ async def test_generate_response_max_retries_fails(mocker, patch_simple_exceptio
     )
     # no-op sleep
     mock_sleep = AsyncMock()
-    pytest.MonkeyPatch().setattr(
-        "revolution.llm.asyncio.sleep", mock_sleep, raising=False
-    )
+    mocker.patch("revolution.llm.asyncio.sleep", mock_sleep)
 
     llm = LLMInterface(api_key="k", max_retries=3)
     t, c, meta = await llm.generate_response("p")
@@ -653,9 +647,7 @@ async def test_generate_n_responses_retriable_errors_until_fail(
     create = patch_async_openai(mocker, [Rate("rl")] * 3)
     # no-op sleep
     mock_sleep = AsyncMock()
-    pytest.MonkeyPatch().setattr(
-        "revolution.llm.asyncio.sleep", mock_sleep, raising=False
-    )
+    mocker.patch("revolution.llm.asyncio.sleep", mock_sleep)
 
     llm = LLMInterface(api_key="k", max_retries=3)
     out = await llm.generate_n_responses("p", n=4)
@@ -716,9 +708,7 @@ async def test_generate_feedback_retriable_then_success(
     create = patch_async_openai(mocker, [Timeout("t"), completion])
     # no-op sleep
     mock_sleep = AsyncMock()
-    pytest.MonkeyPatch().setattr(
-        "revolution.llm.asyncio.sleep", mock_sleep, raising=False
-    )
+    mocker.patch("revolution.llm.asyncio.sleep", mock_sleep)
 
     llm = LLMInterface(api_key="k", max_retries=2)
     out = await llm.generate_feedback("prob", "code", "log")
@@ -733,9 +723,7 @@ async def test_generate_feedback_max_retries_failure(mocker, patch_simple_except
     create = patch_async_openai(mocker, [Internal("x"), Internal("x"), Internal("x")])
     # no-op sleep
     mock_sleep = AsyncMock()
-    pytest.MonkeyPatch().setattr(
-        "revolution.llm.asyncio.sleep", mock_sleep, raising=False
-    )
+    mocker.patch("revolution.llm.asyncio.sleep", mock_sleep)
 
     llm = LLMInterface(api_key="k", max_retries=3)
     out = await llm.generate_feedback("prob", "code", "log")
@@ -851,3 +839,20 @@ async def test_generate_batch_feedback_forwards_overrides(mocker):
 def test_sdk_internal_retries_disabled():
     llm = LLMInterface(api_key="k")
     assert llm.client_args["max_retries"] == 0
+
+
+@pytest.mark.asyncio
+async def test_create_with_deadline_cancels_hung_requests():
+    import asyncio
+
+    llm = LLMInterface(api_key="k", request_timeout_seconds=0.05)
+
+    class _HungCompletions:
+        async def create(self, **kwargs):
+            await asyncio.sleep(10)
+
+    class _HungClient:
+        chat = type("Chat", (), {"completions": _HungCompletions()})()
+
+    with pytest.raises(TimeoutError):
+        await llm._create_with_deadline(_HungClient(), model="m", messages=[])

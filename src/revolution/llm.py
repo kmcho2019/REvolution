@@ -90,6 +90,7 @@ class LLMInterface:
             1, int(max_empty_response_attempts)
         )  # Prevent expensive retry storms on blank completions.
         self.base_delay: float = base_delay  # Base delay in seconds for backoff
+        self.request_timeout_seconds: float = float(request_timeout_seconds)
 
         # Configure arguments for the AsyncOpenAI client based on the backend
         self.client_args: dict[str, Any] = {
@@ -271,6 +272,23 @@ class LLMInterface:
             print("--- Debug logging has been disabled. ---")
 
     # Method for managing API call count in a thread-safe manner
+
+    async def _create_with_deadline(
+        self, client: AsyncOpenAI, **kwargs: Any
+    ) -> ChatCompletion:
+        """Hard wall-clock cap per request.
+
+        OpenRouter sends keep-alive bytes on non-streaming requests, which
+        defeats httpx read timeouts - a glacial provider can hold the
+        connection open indefinitely without tripping the SDK timeout.
+        asyncio.wait_for bounds the whole request; TimeoutError feeds the
+        caller's retry loop.
+        """
+        return await asyncio.wait_for(
+            client.chat.completions.create(**kwargs),
+            timeout=self.request_timeout_seconds,
+        )
+
     async def _update_stats(
         self,
         completion: ChatCompletion,
@@ -721,7 +739,8 @@ class LLMInterface:
         async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
                 try:
-                    chat_completion = await client.chat.completions.create(
+                    chat_completion = await self._create_with_deadline(
+                        client,
                         messages=[
                             {
                                 "role": "system",
@@ -785,6 +804,7 @@ class LLMInterface:
                     continue
 
                 except (
+                    TimeoutError,
                     APIConnectionError,
                     RateLimitError,
                     APITimeoutError,
@@ -878,7 +898,8 @@ class LLMInterface:
         async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
                 try:
-                    chat_completion = await client.chat.completions.create(
+                    chat_completion = await self._create_with_deadline(
+                        client,
                         messages=[
                             {"role": "system", "content": system_prompt_content},
                             {"role": "user", "content": prompt},
@@ -1064,6 +1085,7 @@ class LLMInterface:
                         return results
 
                 except (
+                    TimeoutError,
                     APIConnectionError,
                     RateLimitError,
                     APITimeoutError,
@@ -1203,7 +1225,8 @@ class LLMInterface:
         async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
                 try:
-                    chat_completion = await client.chat.completions.create(
+                    chat_completion = await self._create_with_deadline(
+                        client,
                         messages=[
                             {"role": "system", "content": system_prompt_content},
                             {"role": "user", "content": user_prompt},
@@ -1232,6 +1255,7 @@ class LLMInterface:
                         # return self._parse_feedback_response(raw_content.strip())
 
                 except (
+                    TimeoutError,
                     APIConnectionError,
                     RateLimitError,
                     APITimeoutError,
