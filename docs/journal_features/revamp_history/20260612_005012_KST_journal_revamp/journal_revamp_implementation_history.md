@@ -1102,3 +1102,29 @@ fallback; R-D k=2 (already running on OpenRouter).
   neither PROMOTEs, P1 proceeds per the predeclared Branch C
   narrowing with its content floor, and the load-bearing fix moves
   to the P2 bake-off (trio degeneracy), which is fully tooled.
+
+## 2026-06-12 18:50 KST — ablation-matrix readiness audit; arm-2 gap
+
+- Audited the predeclared 5-arm matrix (narrative §ablation) for
+  runnability: arm 1 classic, arm 3 full-QD-with-six-operators
+  (--qd_operator_kind eoh_strategies), arm 4 scalar elites
+  (--qd_cell_mode scalar_elite), and arm 5 the frozen target are all
+  launchable today. ARM 2 (classic + unified operator, the Branch C
+  floor leg i) has NO engine support: single_thought_operator exists
+  only on the QD path; classic EoHEngine cannot bypass the
+  six-strategy suite.
+- Arm-2 design spec (one factor: replace the six strategy prompts
+  with the unified operator; nothing else changes): hoist
+  _format_parent_for_single_thought_operator and the archive-free
+  core of _create_prompt_single_thought_operator from QDEngine into
+  EoHEngine (QDEngine keeps archive-context injection on top); add
+  classic_operator_kind config/CLI ('eoh_strategies' default |
+  'single_thought_operator'); in the classic offspring path, when
+  unified: skip UCB-softmax strategy selection, draw parents from
+  the existing success/fail pools with arity 1 or 2 at the target's
+  one_parent_fraction 0.5 (mirroring the QD target operator policy),
+  label strategy 'single_thought_operator' in logs. Charged
+  evaluations unchanged. Regression tests: unified-classic bypasses
+  strategy selection; prompt contains no parent code/feedback;
+  default path byte-identical.
+- R-A' variant arm started 17:31:28 (classic rc=0 in 18 min).
