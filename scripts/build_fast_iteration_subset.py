@@ -140,6 +140,7 @@ def build_config_payload(
     csv_path: Path,
     selected: list[dict[str, Any]],
     params: dict[str, Any],
+    subset_name: str = "fast_iteration_subset_v1",
 ) -> dict[str, Any]:
     repo_root = Path(__file__).resolve().parent.parent
     try:
@@ -153,7 +154,7 @@ def build_config_payload(
         )
     return {
         "version": 1,
-        "subset_name": "fast_iteration_subset_v1",
+        "subset_name": subset_name,
         "purpose": (
             "fast classic-vs-journal-variant validation loop; TUNING/DEV "
             "artifact only — never publication evidence; the held-out final "
@@ -216,6 +217,20 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--max-gates", type=float, default=3000.0)
     parser.add_argument("--subset-size", type=int, default=6)
     parser.add_argument("--per-benchmark-cap", type=int, default=3)
+    parser.add_argument(
+        "--subset-name",
+        type=str,
+        default="fast_iteration_subset_v1",
+        help="Manifest subset_name; bump the version on any revision.",
+    )
+    parser.add_argument(
+        "--exclude-problems",
+        nargs="+",
+        default=[],
+        help="Problems excluded on INSTRUMENT properties (wall-clock "
+        "dominance, PPA flow, saturation) - never on variant results. "
+        "Record the rationale in the revamp history.",
+    )
     return parser.parse_args(argv)
 
 
@@ -226,6 +241,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     pool = load_problem_pool(args.source_csv)
     excluded = load_excluded_problems(args.hard_subset_config)
+    excluded |= set(args.exclude_problems)
     selected = select_fast_subset(
         pool,
         excluded=excluded,
@@ -245,12 +261,14 @@ def main(argv: list[str] | None = None) -> int:
     payload = build_config_payload(
         csv_path=args.source_csv,
         selected=selected,
+        subset_name=args.subset_name,
         params={
             "min_functionality": args.min_functionality,
             "min_gates": args.min_gates,
             "max_gates": args.max_gates,
             "per_benchmark_cap": args.per_benchmark_cap,
-            "excluded_hard_subset_problems": len(excluded),
+            "excluded_hard_subset_problems": len(excluded) - len(args.exclude_problems),
+            "instrument_excluded_problems": sorted(args.exclude_problems),
         },
     )
     args.output_config.parent.mkdir(parents=True, exist_ok=True)
