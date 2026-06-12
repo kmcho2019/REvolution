@@ -805,3 +805,27 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Remaining screened candidates: R-A' spec-first realization template,
   R-C collapsed-axis warmup fallback (engine; doubles as the P2 fix
   for trio degeneracy on small designs).
+
+## 2026-06-12 13:55 KST — R-C implemented; screen chain three deep
+
+- feat(qd) eae4a2bbd8 (amended subject): GridQuantileArchive gains
+  warmup_max_buffer (default 0 = frozen behavior). When the warmup
+  buffer hits the cap without viable quantile geometry, the collapsed
+  space initializes in-run (mode warmup_patience_fallback) so cell
+  elites, operator archive context, and ks-rebinning can operate -
+  directly fixes the 4/11 hard-subset problems that buffered all run.
+  Full tests/revolution suite green (472 passed, 4 skipped).
+- R-C screen launcher generated (exp/warmup_patience_rc_launch.sh,
+  frozen target + --qd_grid_quantile_warmup_max_buffer 16) and queued
+  behind R-B on a completion-marker watcher (exp/queue_after_rb.sh
+  greps for 'all done' in exp/fail_feedback_rb.log; process-based
+  wait would fire early since R-B has not started).
+- k2 pair status: classic arm 5/6 problems done in ~9 min;
+  Prob011_multi_16bit hung at gen 1 in an OpenRouter request since
+  12:23 (client envelope: 600 s request timeout, 15 retries with
+  backoff - recoverable). Decision recorded: do not kill; if still
+  stalled next check, either accept a 5-problem classic arm (drop the
+  problem pairwise) or relaunch. OpenRouter wall times invalidate the
+  local-vLLM G1a calibration; screens are judged on quality-delta
+  bands, and any runtime gating on API-side runs needs an OpenRouter
+  re-baseline first (instrument caveat).
