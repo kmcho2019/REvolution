@@ -37,6 +37,7 @@ from revolution.configuration import (  # noqa: E402
     snapshot_run_configuration,
 )
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator  # noqa: E402
+from revolution.verilator_evaluation import VerilatorEvaluator  # noqa: E402
 from revolution.llm import LLMInterface  # noqa: E402
 from revolution.prompt_store import PromptStore  # noqa: E402
 from revolution.runtime import (  # noqa: E402
@@ -289,10 +290,19 @@ def _build_backend(
             realbench_record=record,
             supports_reference_ppa=bool(ref_ppa_metrics),
         )
+        functional_evaluator = verilog_evaluator
+        capabilities = problem_spec.capabilities
+        if (
+            capabilities is not None
+            and capabilities.functional_harness_kind == "verilator_testbench"
+        ):
+            functional_evaluator = VerilatorEvaluator(
+                default_simulation_timeout_seconds=args.rtl_simulation_timeout_s,
+            )
         candidate_evaluator = CandidateEvaluator(
             context=problem_context,
             problem_description=problem_context.problem_description,
-            verilog_evaluator=verilog_evaluator,
+            verilog_evaluator=functional_evaluator,
             synthesis_evaluator=synthesis_evaluator,
             ref_ppa_metrics=ref_ppa_metrics,
             problem_spec=problem_spec,
@@ -314,10 +324,19 @@ def _build_backend(
             problem_context,
             supports_reference_ppa=bool(ref_ppa_metrics),
         )
+        functional_evaluator = verilog_evaluator
+        capabilities = problem_spec.capabilities
+        if (
+            capabilities is not None
+            and capabilities.functional_harness_kind == "verilator_testbench"
+        ):
+            functional_evaluator = VerilatorEvaluator(
+                default_simulation_timeout_seconds=args.rtl_simulation_timeout_s,
+            )
         candidate_evaluator = CandidateEvaluator(
             context=problem_context,
             problem_description=problem_context.problem_description,
-            verilog_evaluator=verilog_evaluator,
+            verilog_evaluator=functional_evaluator,
             synthesis_evaluator=synthesis_evaluator,
             ref_ppa_metrics=ref_ppa_metrics,
             problem_spec=problem_spec,

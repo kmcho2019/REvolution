@@ -105,3 +105,32 @@ def test_build_realbench_problem_spec_without_synthesis_is_functional_only(tmp_p
     assert spec.default_descriptor_profile == "rtl_core"
     assert spec.capabilities is not None
     assert spec.capabilities.ppa_mode == "none"
+
+
+def test_realbench_record_can_select_verilator_harness(tmp_path):
+    root, record = _build_realbench_root(tmp_path)
+    loaded = load_realbench_record(root, "rb_mod_a")
+    assert loaded is not None
+    loaded["functional_harness_kind"] = "verilator_testbench"
+
+    context = build_realbench_problem_context(
+        benchmark_name="RealBench",
+        problem_name="rb_mod_a",
+        realbench_root=root,
+        realbench_record=loaded,
+    )
+    spec = build_realbench_problem_spec(
+        context,
+        realbench_record=loaded,
+        supports_reference_ppa=False,
+    )
+
+    assert spec.capabilities is not None
+    assert spec.capabilities.functional_harness_kind == "verilator_testbench"
+
+    default_spec = build_realbench_problem_spec(
+        context,
+        realbench_record={k: v for k, v in loaded.items() if k != "functional_harness_kind"},
+        supports_reference_ppa=False,
+    )
+    assert default_spec.capabilities.functional_harness_kind == "iverilog_testbench"

@@ -126,6 +126,9 @@ def build_realbench_problem_spec(
         context.benchmark_name,
         supports_reference_ppa=supports_reference_ppa,
         supports_synthesis=bool(realbench_record.get("supports_synthesis", True)),
+        functional_harness_kind=_optional_str(
+            realbench_record.get("functional_harness_kind")
+        ),
         top_module=top_module,
         aux_files=aux_files,
         default_timeout_s=_optional_float(realbench_record.get("timeout_s")),
