@@ -965,3 +965,23 @@ fallback; R-D k=2 (already running on OpenRouter).
 - R-B screen (clean relaunch) healthy at 13 min: pe and mux256to1v
   done; multi_16bit and sub_64bit at gen 0 - the abandon-deadline's
   first real-world test rides on these two.
+
+## 2026-06-12 16:50 KST — root cause of the recurring stalls: 128k ceiling
+
+- py-spy stack dumps + per-problem log inspection resolved the
+  recurring gen-1 stall: with --max_tokens 128000 NO OpenRouter
+  provider finishes the heavy problems' requests (multi_16bit,
+  sub_64bit - big parent-code prompts) inside the 600 s deadline, so
+  the retry loop ground on invisibly: worker stdout is BLOCK-BUFFERED
+  when redirected to problem_run.log, hiding every retry line. The
+  same problems completed fine on local vLLM (multi_16bit 1463 s);
+  observed real completions average 2-4k tokens.
+- fix(llm) 5922e6bbc7 (amended): generated launchers now pin a 32k
+  completion ceiling on OpenRouter (128k retained for local vLLM per
+  the research-setting rule), export PYTHONUNBUFFERED=1, and the
+  retry print flushes. Recorded as a provider-forced instrument
+  deviation; gate-bearing comparisons keep both arms at the same
+  provider and budget.
+- All three queued launchers regenerated in place (watcher chain
+  paths unchanged); stalled R-B killed (solo pkill), artifacts wiped,
+  relaunched clean under the 32k cap.
