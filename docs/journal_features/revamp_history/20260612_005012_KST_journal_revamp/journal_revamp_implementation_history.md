@@ -1079,3 +1079,26 @@ fallback; R-D k=2 (already running on OpenRouter).
   budget yields only ~1-2 archive-enabled generations - if the
   verdict is INCONCLUSIVE, R-C's real trial is the hard-subset 20x5
   promotion pair (~30 observations, cap 16).
+
+## 2026-06-12 18:30 KST — R-C verdict: DEMOTE (mechanism live, no rescue)
+
+- Proof of firing: 4/6 variant problems initialized via
+  warmup_patience_fallback (multi_16bit 3 cells, pe 1, popcount255 2,
+  rotate100 1); sub_64bit and mux256to1v initialized normally this
+  run (16 and 4 cells - collapse is sampling-dependent at this
+  budget). The engine feature works in production.
+- Quality: mean best-quality delta -0.165, 1W/5L -> DEMOTE as a
+  standalone repair. With the fallback demonstrably live, a 1-3-cell
+  archive operating for the final generation(s) provides no usable
+  diversity pressure. This strengthens the P2 conclusion: when the
+  trio is degenerate, no warmup policy rescues the archive - the
+  axes themselves are the problem. The patience flag stays default-
+  off in the target; it remains valuable as liveness/metrics hygiene
+  and for late-variance problems, and appropriate at hard-subset
+  scale (cap 16) where observation flow is real.
+- Screen ledger so far: k=2 DEMOTE, R-B fast = baseline replication
+  (coverage-limited), R-C DEMOTE. Remaining: R-A' (always-on,
+  running since 17:13:08) and R-B failure-regime (queued). If
+  neither PROMOTEs, P1 proceeds per the predeclared Branch C
+  narrowing with its content floor, and the load-bearing fix moves
+  to the P2 bake-off (trio degeneracy), which is fully tooled.
