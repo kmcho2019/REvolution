@@ -930,3 +930,26 @@ fallback; R-D k=2 (already running on OpenRouter).
   stopping) if any positive QD claim is to survive review.
 - R-B screen progressing fast under the deadline fix (classic arm
   4/6 done in 12 min; sub_64bit completed where it previously hung).
+
+## 2026-06-12 16:00 KST — deadline v2 (abandon semantics); R-B relaunched clean
+
+- The R-B classic arm stalled AGAIN with the asyncio.wait_for deadline
+  active and zero timeout lines: wait_for awaits the cancelled task,
+  and anyio/httpx cleanup can hang forever on a dead-but-open socket -
+  the timer fired but the await never returned. fix(llm) 397bb0d6fe
+  replaces it with asyncio.wait + cancel WITHOUT awaiting: raise
+  TimeoutError immediately, abandon the orphan (it dies when the
+  client closes). Test simulates a task that swallows its first
+  cancel; suite green (38 passed).
+- Operational incident (pkill discipline rule extended): a compound
+  command that killed the old R-B tree AND relaunched it self-matched
+  - pkill saw the relaunch text 'fail_feedback_rb_launch.sh' in the
+  same command line and killed the shell mid-sequence (exit 144),
+  leaving the original stalled processes orphaned and the launcher
+  dead (which would have silently broken the R-C/R-A' chain). RULE:
+  kill commands run SOLO - never in a compound that mentions the
+  target name verbatim.
+- Recovery: orphans killed (solo bracket-pattern pkill), partial
+  artifacts wiped, R-B relaunched fresh at 14:47:01 into the same log
+  so the queue_after_rb.sh watcher still chains R-C -> R-A'. All
+  screen arms from here run with abandon-deadline semantics.
