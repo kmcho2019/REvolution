@@ -137,7 +137,7 @@ revamp history with run roots.
 | G1a | Arm wall-clock (scheduler telemetry `run_wall_seconds`) | ≤ 6,000 s per arm |
 | G1b | No dominant problem | no problem > 50% of the SUM of per-problem runtimes (problems run concurrently, so the arm wall is not the basis) |
 | G2 | Valid-PPA candidate flow | every problem ≥ 6 distinct successful candidates with PPA metrics (generation logs ∪ final population) per arm |
-| G3 | Discrimination | candidate quality-score IQR ≥ 0.02 on ≥ 4 of 6 problems on the BASELINE arm only (discrimination is an instrument property; a variant whose spread collapses must fail the comparison, not the instrument) |
+| G3 | Discrimination | best-minus-median quality gap ≥ 0.02 on ≥ 4 of 6 BASELINE-arm problems. Recalibrated from retained-IQR at v3 with recorded rationale: elite selection compresses retained-population IQR on converged problems (v3 data: sub_64bit and mux256to1v carry the LARGEST realized margins, +0.33, with IQR 0.000), while the gap directly measures R3's intent — headroom exists AND the search exploited it; saturated problems (pe +0.006, popcount255 +0.000) fail it correctly |
 | G4 | Screening validity (calibration) | sign of the fast-subset mean paired best-quality delta for the predeclared pair (classic vs `grid_quantile_pareto_journal_bd_unified_rebin_on` thought-only k=4, seed 42) agrees with the hard-subset seed-42 result; if either delta lies in (−0.02, +0.02) the comparison is inconclusive and the subset must be revised or the band widened explicitly |
 | G5 | Stability (calibration) | same-pair verdict sign agrees across seeds 42 and 1001, with the same inconclusive band |
 

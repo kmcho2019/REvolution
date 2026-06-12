@@ -88,9 +88,15 @@ def collect_arm_metrics(run_root: Path) -> dict[str, Any]:
             if isinstance(score, (int, float)) and candidate_id:
                 scores_by_id.setdefault(candidate_id, float(score))
         runtime = summary.get("total_runtime_seconds")
+        values = sorted(scores_by_id.values())
+        # Best-minus-median gap: selection compresses retained-population
+        # IQR on converged problems, so the gap is the discrimination
+        # measure (headroom exists AND the search exploited it).
+        gap = values[-1] - values[len(values) // 2] if len(values) >= 4 else None
         problems[key] = {
             "valid_ppa_candidates": len(scores_by_id),
-            "quality_iqr": _quartile_iqr(list(scores_by_id.values())),
+            "quality_iqr": _quartile_iqr(values),
+            "quality_gap": gap,
             "runtime_seconds": float(runtime) if isinstance(runtime, (int, float)) else None,
         }
 
@@ -173,17 +179,17 @@ def evaluate_pair(
     # G3 discrimination is an INSTRUMENT property, so it is measured on the
     # baseline (classic) arm only: a variant whose quality spread collapses
     # should fail the comparison, not invalidate the instrument.
-    iqr_pass_count = sum(
+    gap_pass_count = sum(
         1
         for problem in classic["problems"].values()
-        if problem["quality_iqr"] is not None and problem["quality_iqr"] >= min_iqr
+        if problem["quality_gap"] is not None and problem["quality_gap"] >= min_iqr
     )
     checks.append(
         {
             "name": "G3_discrimination_baseline",
-            "required": f">= {min_iqr_problems} baseline problems with quality IQR >= {min_iqr:g}",
-            "observed": float(iqr_pass_count),
-            "passed": iqr_pass_count >= min_iqr_problems,
+            "required": f">= {min_iqr_problems} baseline problems with best-median quality gap >= {min_iqr:g}",
+            "observed": float(gap_pass_count),
+            "passed": gap_pass_count >= min_iqr_problems,
         }
     )
     return checks

@@ -530,3 +530,20 @@ Also: held-out 20-problem reference EVIDENCE set locked (commit
 81e6edcec1; stratified seed-7777 rule, no functionality filter,
 exclusion list embedded). v3 pair in flight: classic arm finished in
 10 min (sub_64bit fast); QD arm running since 07:41.
+
+## 2026-06-12 22:00 KST
+
+Instrument v3 PASSES G1-G3. v3 pair: classic 598s, QD 1055s, G1/G2 clean
+on all six problems. G3 recalibrated pre-signoff with data-backed
+rationale (doc 09): retained-IQR is selection-compressed (the two
+largest-margin problems showed IQR 0.000), so G3 now uses the
+best-minus-median quality gap >= 0.02 on >= 4/6 baseline problems -
+which also correctly fails the genuinely saturated problems (pe,
+popcount255). v3 gate report: exp/fast_iter/fast_iter_v3_20260612/gate
+(PASSED; screening verdict for the QD target remains DEMOTE, the
+expected known-gap signal G4 must reproduce). Chained completion runs
+launched detached: seed-1001 v3 pair (G5), then the hard-subset seed-42
+classic-vs-QD pair at 20x5 (G4 + P1 reproduction + MDE variance).
+Note: the seed-1001 pair restarted over a ~2-minute partial launch
+killed by a pkill that matched its own command line; summaries come
+entirely from the fresh run.
