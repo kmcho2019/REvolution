@@ -787,3 +787,21 @@ Screened repair agenda (one factor per screen, fast subset):
 R-A' spec-first realization prompt-profile variant; R-B failure
 feedback in fail-parent thought payloads; R-C collapsed-axis warmup
 fallback; R-D k=2 (already running on OpenRouter).
+
+## 2026-06-12 13:40 KST — R-B implemented and queued
+
+- feat(qd) ecb7615f5c: --qd_operator_fail_feedback_chars (default 0 =
+  frozen-target behavior unchanged) adds failure_stage + truncated
+  failure_feedback to failed parent payloads in the single-thought
+  operator; new journal_thought_only_failfb prompt profile permits the
+  feedback and directs re-derivation of interfaces/indexing/value
+  tables from the spec. Tests: opt-in truncation + negative-budget
+  rejection + existing exclusion tests green (11 passed); ruff clean;
+  pyright debt limited to 2 pre-existing scipy-stub errors.
+- R-B screen launcher generated from the locked v3 subset
+  (exp/fail_feedback_rb_launch.sh, OpenRouter both arms) and QUEUED
+  behind the running k2 pair via exp/queue_after_k2.sh (waits for the
+  k2 launcher process to exit, warns if 'all done' is missing).
+- Remaining screened candidates: R-A' spec-first realization template,
+  R-C collapsed-axis warmup fallback (engine; doubles as the P2 fix
+  for trio degeneracy on small designs).
