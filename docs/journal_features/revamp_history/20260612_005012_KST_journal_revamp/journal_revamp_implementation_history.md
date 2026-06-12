@@ -1159,3 +1159,23 @@ fallback; R-D k=2 (already running on OpenRouter).
   best 0.347 (classic cruises), circuit7 0.012, fsmonehot 0.001,
   fsm -0.279 (classic struggles where QD pass rates led in the
   diagnosis).
+
+## 2026-06-12 20:10 KST — R-B payload bug found live; degraded screen near parity
+
+- Live-probe correction: my earlier 'mechanism live-verified' note
+  matched the TEMPLATE text, not the payload. Re-checking for the
+  JSON key showed ZERO of twenty fail_pool prompts carried
+  failure_feedback: _build_all_fail_parent hardcoded feedback="" on
+  thought-level wrappers, so parent.feedback was always empty even
+  though per-sample analyses existed on disk. fix(qd) e77f9c5c8f
+  propagates the first non-empty sample feedback onto the wrapper
+  (+regression test; a stale test asserting the old thought-purity
+  behavior updated deliberately; 484 passed).
+- The DEGRADED screen (failure_stage + spec-re-derivation
+  instruction, no feedback evidence) still scored mean -0.0022,
+  1W/1L/2T on 4 problems - near PARITY with classic on the failure
+  regime, against -0.13..-0.18 fast-subset deficits. Pass rates:
+  m2014_q3 3%->8%, fsmonehot 21%->29%. The regime itself plus half
+  the mechanism removes most of the gap; the full-mechanism test
+  (rb_failure_regime_v2: fixed engine, v2 subset with alu restored,
+  fresh classic arm) launched.
