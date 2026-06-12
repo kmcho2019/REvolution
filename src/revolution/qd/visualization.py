@@ -397,6 +397,22 @@ def _grid_quantile_events(output_dir: Path) -> list[dict[str, Any]]:
 def _grid_quantile_render_layout(space: dict[str, Any]) -> dict[str, Any]:
     axis_names = [axis["name"] for axis in space["axes"]]
     effective_shape = list(space["effective_shape"])
+    if len(axis_names) == 2 and len(effective_shape) == 2:
+        # 2-axis profiles render through the 3-axis path via a virtual
+        # single-bin slice axis, so frame and viewer code stay unchanged.
+        active = [
+            name for name, bins in zip(axis_names, effective_shape) if int(bins) > 1
+        ]
+        return {
+            "axis_layout": {"x": axis_names[0], "y": axis_names[1], "z": "(flat)"},
+            "axis_indices": [0, 1, None],
+            "render_shape": [int(effective_shape[0]), int(effective_shape[1]), 1],
+            "active_axis_names": active,
+            "slice_axis": "(flat)",
+            "slice_count": 1,
+            "visualization_mode": "2d" if len(active) == 2 else "skipped",
+            "skip_reason": None if len(active) == 2 else "fewer than two active axes",
+        }
     if len(axis_names) != 3 or len(effective_shape) != 3:
         return {
             "axis_layout": {},
@@ -406,7 +422,7 @@ def _grid_quantile_render_layout(space: dict[str, Any]) -> dict[str, Any]:
             "slice_axis": None,
             "slice_count": 0,
             "visualization_mode": "skipped",
-            "skip_reason": "grid_quantile visualizer supports 3-axis journal profiles",
+            "skip_reason": "grid_quantile visualizer supports 2- or 3-axis profiles",
         }
     if {"logic_depth", "ff_depth", "comb_width_log"}.issubset(axis_names):
         render_names = ["logic_depth", "comb_width_log", "ff_depth"]
@@ -443,7 +459,11 @@ def _grid_quantile_indices(space: dict[str, Any], descriptors: list[float]) -> l
 
 
 def _render_indices(indices: list[int], render: dict[str, Any]) -> list[int]:
-    return [indices[index] for index in render["axis_indices"]]
+    # A None entry is the virtual single-bin axis of a 2-axis profile.
+    return [
+        indices[index] if index is not None else 0
+        for index in render["axis_indices"]
+    ]
 
 
 def _grid_quantile_timeline(
