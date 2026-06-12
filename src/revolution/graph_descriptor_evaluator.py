@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import shlex
 import subprocess
 import tempfile
@@ -92,6 +93,7 @@ class GraphModel:
     combinational_output_to_inputs: dict[int, tuple[int, ...]]
     bit_output_cell: dict[int, str]
     cell_output_bits: dict[str, tuple[int, ...]]
+    ltp_length: int | None = None
 
 
 class GraphDescriptorEvaluator:
@@ -185,11 +187,15 @@ class GraphDescriptorEvaluator:
             hierarchy_cmd = f"hierarchy -check -top {shlex.quote(top_module_name)};"
         else:
             hierarchy_cmd = "hierarchy -auto-top;"
+        # ltp -noff is yosys's independent longest-topological-path pass;
+        # its length is logged and parsed as a continuous cross-check on
+        # our logic_depth (ours skips buffers, so ours <= ltp).
         script = (
             f"read_verilog -sv {shlex.quote(str(path))}; "
             f"{hierarchy_cmd} "
             "proc; opt; flatten; opt; "
-            f"write_json {shlex.quote(str(json_path))}"
+            f"write_json {shlex.quote(str(json_path))}; "
+            "ltp -noff"
         )
         command = [self.yosys_path, "-Q", "-p", script]
         try:
@@ -213,6 +219,9 @@ class GraphDescriptorEvaluator:
         json_path.unlink(missing_ok=True)
         if not isinstance(payload, dict):
             return None
+        ltp_match = re.search(r"Longest topological path in .* \(length=(\d+)\)", completed.stdout or "")
+        if ltp_match is not None:
+            payload["__ltp_length__"] = int(ltp_match.group(1))
         return payload
 
     def _build_graph_model(
@@ -361,6 +370,7 @@ class GraphDescriptorEvaluator:
             combinational_output_to_inputs=combinational_output_to_inputs,
             bit_output_cell=bit_output_cell,
             cell_output_bits=cell_output_bits,
+            ltp_length=(payload.get("__ltp_length__") if isinstance(payload.get("__ltp_length__"), int) else None),
         )
 
     def _empty_graph_model(self) -> GraphModel:
@@ -400,12 +410,18 @@ class GraphDescriptorEvaluator:
 
     def _extract_journal_bd_metrics(self, graph: GraphModel) -> dict[str, float]:
         combinational_cells = sum(1 for cell in graph.cells.values() if not cell.is_sequential)
-        return {
-            "logic_depth": float(self._extract_logic_depth(graph)),
+        logic_depth = float(self._extract_logic_depth(graph))
+        metrics = {
+            "logic_depth": logic_depth,
             "ff_depth": float(self._extract_ff_depth(graph)),
             "comb_width_log": math.log1p(float(combinational_cells)),
             "combinational_cells": float(combinational_cells),
         }
+        if graph.ltp_length is not None:
+            # Online cross-check: yosys ltp counts buffers, ours skips them.
+            metrics["logic_depth_ltp"] = float(graph.ltp_length)
+            metrics["logic_depth_ltp_delta"] = float(graph.ltp_length) - logic_depth
+        return metrics
 
     def _extract_logic_depth(self, graph: GraphModel) -> int:
         """Count non-buffer combinational cells between PI/FF-Q and PO/FF-D boundaries.

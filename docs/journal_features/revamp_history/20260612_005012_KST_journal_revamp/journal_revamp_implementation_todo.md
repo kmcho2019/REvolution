@@ -33,6 +33,7 @@ EVERY item below checked AND spot-verified against artifacts.
 - [ ] P2: Build RentCon (already vendored at .rentcon/RentCon-180515, DOC+Source) in a separate workdir and cross-validate rent_exponent RANKINGS on the fast-subset netlists (relative axis: rank agreement is the criterion, not absolute p).
 - [ ] P2: Optionally add KaHyPar-based min-cut partitioning as a second Rent reference if RentCon proves insufficient; HAL/netlistx deprioritized (heavy frameworks, low marginal value over RentCon+yosys).
 
+- [ ] P2: Visualizer compatibility check after the all-samples logging fix (cumulative-history views: retained vs evaluated semantics) and profile-agnostic axis rendering before any descriptor-profile swap; record findings in doc 03_1 or the history.
 ## P3 — Benchmark vetting
 - [ ] Add CVDP absolute-only PPA path only if synthesis is reliable.
 - [ ] Add RealBench synthesis/PPA support only when deterministic (manifest currently marks only dependency-free, support-free tasks `supports_synthesis: true`; synthesis flow itself not yet validated on them).

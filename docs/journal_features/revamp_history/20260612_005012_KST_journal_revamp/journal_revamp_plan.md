@@ -90,6 +90,30 @@ solutions, thought lineage, evaluated-history scalar comparison, failure
 panel); baseline treatment decision (revalidate under locks or label
 retrospective); final evidence paths recorded in the history.
 
+## Standing rules: visualizer compatibility
+
+The Pareto visualizer (docs/journal_features/03_1_pareto_visualization.md,
+src/revolution/qd/visualization.py and the report scripts that feed it)
+is a maintained surface: every change to archive artifacts, descriptor
+profiles, or generation logging must keep it working or extend it, with
+the check recorded. Known risk register (P2 items track resolution):
+(a) the QD all-samples logging fix enlarges generation_log
+population_ppa_details - cumulative-history views must be re-checked for
+retained-vs-evaluated semantics; (b) a descriptor-profile swap changes
+axis names/count - the viewer must render profile-agnostically (no
+journal-trio hardcoding); (c) new side metrics (logic_depth_ltp*) are
+additive and must be ignored gracefully.
+
+## Standing rules: external tooling
+
+Decision (2026-06-12): in-loop descriptors stay in-process (validated,
+milliseconds); yosys `ltp -noff` rides the existing per-candidate yosys
+script as a continuous online cross-check (`logic_depth_ltp`,
+`logic_depth_ltp_delta`; ours <= ltp by the buffer-skip liberty);
+RentCon (vendored at .rentcon/) is built as a pinned dependency and used
+OFFLINE for rank-agreement validation and final characterization, never
+in-loop; KaHyPar only if RentCon proves insufficient.
+
 ## Standing rules
 
 Method-evolution rule unchanged (ideas may reshape pillars only with

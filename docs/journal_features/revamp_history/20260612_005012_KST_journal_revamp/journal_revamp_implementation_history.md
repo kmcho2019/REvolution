@@ -547,3 +547,16 @@ classic-vs-QD pair at 20x5 (G4 + P1 reproduction + MDE variance).
 Note: the seed-1001 pair restarted over a ~2-minute partial launch
 killed by a pkill that matched its own command line; summaries come
 entirely from the fresh run.
+
+## 2026-06-12 23:00 KST
+
+External-tooling decision + ltp online cross-check landed: in-loop
+descriptors stay in-process; `ltp -noff` appended to the evaluator's
+existing yosys script with `logic_depth_ltp` / `logic_depth_ltp_delta`
+emitted per candidate (ground truth: depth 4 vs ltp 4, delta 0; earlier
+probe silence was the -q flag suppressing yosys logs). RentCon stays an
+offline pinned-dependency reference; KaHyPar fallback only. Visualizer
+compatibility adopted as a standing plan rule with a three-item risk
+register (all-samples logging semantics, profile-agnostic axes, additive
+side metrics). G5 seed-1001 pair: classic arm done rc=0 in ~11 min, QD
+arm in flight; hard-subset G4/P1 pair queued behind it.
