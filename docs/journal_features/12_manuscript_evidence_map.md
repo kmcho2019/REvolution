@@ -70,6 +70,20 @@ carry into the narrowed claim set:
   bake-off table (scripts/report_descriptor_bakeoff.py output, when
   the queued pairs land).
 
+## Regime-split observation (cross-substrate, manuscript central thread)
+
+Thought-style prompting is regime-sensitive, not uniformly weaker.
+Three independent substrates show the same split:
+1. QD target vs classic (hard_subset_42): QD's pass rates beat classic
+   exactly where classic collapses (m2014_q6b 24% vs 3%, fsmonehot
+   21% vs 2%, fsm 12% vs 0%) and QD's only wins are there.
+2. Failure-regime screens: near-parity overall (degraded -0.0022)
+   vs -0.13..-0.18 on PPA-margin fast problems.
+3. Classic substrate ablation (classic_unified seed 1001 formal
+   per-benchmark split): RTLLM (PPA-margin) -0.134 0W/7L/0T vs
+   VerilogEval (spec-exact) -0.038 1W/2L/3T
+   (exp/ablation_matrix/stats/classic_unified_seed1001).
+
 ## Pending slots (fill when verdicts land)
 
 - Ablation matrix per-contrast tables: exp/ablation_matrix/stats/.
