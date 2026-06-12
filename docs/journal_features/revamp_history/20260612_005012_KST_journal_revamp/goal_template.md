@@ -1,56 +1,81 @@
-# Goal Template v2 — TCAD Revamp Completion Phase
+# Paste-Ready Goal Template v2.1
 
-Status: v2 (2026-06-12), written after the phase-0 foundations landed.
-v1 is archived verbatim as `goal_template_v1_initial.md`. Original intent:
-`docs/journal_features/revamp_ruminations_20260612.md`. Claims contract
-(accepted by four adversarial personas, frozen):
-`docs/journal_features/journal_narrative.md`.
+Status: v2.1 (2026-06-12). v1 archived as `goal_template_v1_initial.md`;
+the v2 draft overstated foundation completeness and was corrected after an
+evidence audit (see the implementation history). Use this text when
+starting the completion-phase goal:
 
----
+```text
+/goal Objective: Complete the REvolution TCAD journal revamp on branch
+feat/journal-revamp-20260612-005012-kst so that code, experiments,
+reports, and manuscript support the same claims under the ACCEPTED claims
+contract docs/journal_features/journal_narrative.md (frozen: gates,
+branch table, pools, budget rules — it wins on any conflict). Execute
+the phase plan docs/journal_features/revamp_history/
+20260612_005012_KST_journal_revamp/journal_revamp_plan.md (P1-P5), track
+journal_revamp_implementation_todo.md (phase-grouped; sign-off requires
+EVERY item checked and spot-verified), and log evidence in
+journal_revamp_implementation_history.md plus rerun_ledger.jsonl.
+Original intent: docs/journal_features/revamp_ruminations_20260612.md.
 
-Objective: Complete the REvolution TCAD journal revamp to the accepted
-claims contract. Phase-0 foundations are DONE (benchmark capability model;
-CVDP + RealBench integration with locked debug subsets and probe; scheduler
-telemetry + fair-share leasing with a passed 46% replay gate; cluster-
-bootstrap statistics, run validator, seed manifest, rerun ledger; accepted
-journal narrative; gated fast-iteration instrument; Verilator 5.030).
-What remains is the science and the evidence:
+Honest starting state — foundations landed WITH open conditions, verify
+before relying on them: capability model, locked subsets/probe, scheduler
+telemetry + fair-share (46% on synthetic replay; live occupancy still
+unproven), cluster-bootstrap statistics/validator/ledger/seed-manifest,
+Verilator 5.030 (official flow validated 5/5), narrative accepted by four
+personas. NOT yet true: no end-to-end evolutionary run has completed on
+CVDP or RealBench; the fast-iteration instrument is NOT signed off (pilot
+failed G1b/G2/G3; G4/G5 pending; v2 subset likely); narrative acceptance
+carries open pre-freeze obligations (QD k-sample logging fix, MDE
+artifact, RealBench retention update after the verilator-5 re-sweep).
 
-1. QD repair: reproduce, root-cause, and close (or explicitly narrow via
-   the narrative's branch table) the classic-vs-QD gap on the tuning sets;
-   freeze one final QD config. Fix the QD thought-mode generation-log gap
-   (all k evaluated samples recorded) BEFORE any gate-bearing run.
-2. BD thesis: establish the behavior-descriptor feature set with basis,
-   evidence, and narrative — descriptor-objective correlation quantified,
-   candidate profiles compared under the predeclared bake-off rule, one
-   profile frozen pre-finals with a plain-language design-space rationale
-   written into the narrative. Decorative diversity is failure.
-3. Benchmark vetting: end-to-end evolutionary runs (not loaders) on CVDP
-   and RealBench debug slices; the Verilator-5 60-task golden re-sweep
-   with manifest version bump and subset/probe re-locks; the RealBench
-   long-model probe run on both arms and the model arm frozen.
-4. Gates: seed-42 debug gate across all suites; MDE analysis; freeze
-   everything; 5-seed finals on the held-out/fresh sets; evaluate every
-   gate with the shipped statistics machinery; apply the branch decision
-   mechanically.
-5. Manuscript: rewrite method/results in `resources/journal_draft/` per
-   the narrative and the selected branch, with the four case-study
-   artifacts and final evidence paths recorded.
+Outcome (what must be true at the end): (1) QD-vs-classic resolved on
+held-out statistics via the narrative branch table — win, equivalence
+with coverage edge, or Branch C with its content floor; never a
+tuning-set headline. (2) A frozen, pre-registered BD descriptor profile
+with quantified descriptor-objective correlations, bake-off evidence, and
+a plain-language design-space rationale in the narrative. (3) CVDP and
+RealBench evidenced by end-to-end evolutionary runs on locked slices
+(CVDP PPA absolute-only; RealBench scoped to the harness-validated
+subset with the v5 re-sweep retention table); model arm frozen by the
+locked probe, symmetrically. (4) Seed-42 debug gate, then 5-seed finals
+(1001-1005) on disjoint held-out/fresh sets with every narrative gate
+evaluated mechanically. (5) Manuscript updated in resources/journal_draft
+per the selected branch with the four case-study artifacts.
 
-Anti-fudge rules (binding): gate thresholds, branch rules, pools, and
-budget rules are frozen in the narrative and may not be revised after
-final runs begin; locked artifacts change only by version bump with
-recorded rationale; every journal-relevant launch goes in the rerun
-ledger; tuning (hard subset, fast subset, debug slices) and evidence
-(held-out + fresh sets) stay disjoint; missing data follows the
-penalized-as-loss statistics; budget symmetry is candidate evaluations
-with ±10% auxiliary skew reported.
+Verification surface: validate_journal_revamp_run.py exit 0 per run
+root; report_journal_statistics.py gate booleans + paired_deltas.csv;
+validate_fast_iteration_pair.py reports; descriptor-health and
+correlation artifacts; manifest/subset sha256 locks; ledger entries with
+config hashes; the v2 adversarial prompt executed with all four personas
+returning sign_off.
 
-Completion requires the v2 adversarial sign-off
-(`journal_revamp_adversarial_prompt.md`): every item in
-`journal_revamp_implementation_todo.md` checked off AND spot-verified
-against artifacts, every narrative gate evaluated with its mechanical
-checker, and all four personas signing off on the final evidence-plus-
-manuscript package. A failed gate is closed by fixing the implementation
-or narrowing the claim through the predeclared branch table — never by
-adjusting the gate.
+Constraints: thresholds/branch rules/pools/budget rules never revised
+after final runs begin; locked artifacts change only by version bump
+with recorded rationale; tuning (hard subset, fast subset, debug slices)
+disjoint from evidence sets; missing data penalized-as-loss; budget
+symmetry = candidate evaluations with ±10% auxiliary skew reported;
+conference_submission_paper frozen; never print DEEPSEEK_API_KEY;
+preserve unrelated worktree changes; GUIDELINES.md practices (simplicity
+rules, signed multi-line atomic commits, post-commit inspection).
+
+Boundaries: src/revolution + scripts + tests for code; data/configs for
+locks; docs/journal_features for planning; exp/ for runs; local vLLM
+first (--max_tokens 128000 --diff_max_tokens 128000); DeepSeek only as
+the predeclared symmetric escalation arm.
+
+Iteration policy: screen every candidate change on the fast-iteration
+instrument once signed off (PROMOTE/DEMOTE/INCONCLUSIVE); promote to
+hard subset on PROMOTE only; record negative results; root-cause from
+artifacts before changing code; new method ideas go in the history
+before large experiments.
+
+Blocked stop condition: stop and report when a gate fails with no
+narrative-sanctioned path (fix or predeclared narrowing), when the vLLM
+endpoint is down past one retry cycle, or when an action would require
+revising a frozen rule — with the evidence that would unlock progress.
+
+Completion: every TODO item checked and spot-verified; all narrative
+gates mechanically evaluated; four-persona v2 adversarial sign-off on
+the full evidence-plus-manuscript package.
+```

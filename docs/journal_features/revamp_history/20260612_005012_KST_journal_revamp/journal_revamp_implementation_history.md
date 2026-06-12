@@ -421,3 +421,28 @@ and the accepted claims contract:
   pre-registration, MDE artifact, final-slice builds, equivalence tooling,
   tool provenance); the 42-item completed phase-0 log is preserved
   verbatim at the bottom.
+
+## 2026-06-12 16:00 KST
+
+goal_template v2.1 (user-directed evidence audit of v2's strong claims):
+
+- Audit findings: v2's "Phase-0 DONE" overstated three things. (1) CVDP
+  and RealBench have loaders/harnesses/smokes but NO completed end-to-end
+  evolutionary run (the ruminations define integration as end-to-end runs
+  with passing candidates). (2) The fast-iteration instrument is not
+  signed off: the pop-10 pilot failed G1b/G2/G3 and G4/G5 calibration is
+  pending. (3) Narrative acceptance carries open pre-freeze obligations
+  (QD k-sample logging fix, MDE artifact, retention update after the
+  verilator-5 re-sweep). The scheduler 46% figure is synthetic-replay
+  only until live occupancy lands. Genuinely done: capability model,
+  locked subsets/probe, statistics/validator/ledger/seed-manifest,
+  Verilator 5.030 validation, four-persona narrative acceptance.
+- Rewrote goal_template.md in the paste-ready /goal contract format of
+  .skills/goal-scaffold (outcome, verification surface, constraints,
+  boundaries, iteration policy, blocked stop condition), linking the plan,
+  TODO, history, ledger, ruminations, and narrative, with the honest
+  starting state stated inline so the implementer cannot inherit the
+  overstatement. Intent-coverage soft spots named during the audit (CVDP
+  no-reference PPA rating is conditionally covered via the absolute-only
+  opt-in; per-suite summaries are covered by the per-benchmark statistics
+  breakdown) are recorded here as explicit decisions.
