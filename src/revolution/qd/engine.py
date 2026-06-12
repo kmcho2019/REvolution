@@ -2602,10 +2602,16 @@ class QDEngine(EoHEngine):
         self,
         thought: ThoughtIndividual,
         evaluation: ThoughtEvaluation,
+        samples: list[Heuristic] = (),
     ) -> Heuristic:
         status = "failed_functionality"
         if evaluation.sample_statuses:
             status = evaluation.sample_statuses[0]
+        # Carry sample-level evaluation feedback onto the thought-level
+        # wrapper: fail-parent payloads read parent.feedback, and a
+        # hardcoded "" silently disabled failure_feedback injection
+        # (found live on the first failure-regime screen).
+        feedback = next((s.feedback for s in samples if s.feedback), "")
         origin_pool = {
             "seed": "initial",
             "archive": "success_pool",
@@ -2614,7 +2620,7 @@ class QDEngine(EoHEngine):
         parent = Heuristic(
             thought=render_thought_spec(thought.thought_spec),
             code="",
-            feedback="",
+            feedback=feedback,
             generation=thought.generation,
             parent_ids=thought.parent_ids,
             status=cast(Any, status),
@@ -2704,7 +2710,7 @@ class QDEngine(EoHEngine):
             representative.thought_sample_ids = sample_ids
             representative.thought_representative_sample_id = representative_id
             return evaluation, representative, None
-        return evaluation, None, self._build_all_fail_parent(thought, evaluation)
+        return evaluation, None, self._build_all_fail_parent(thought, evaluation, samples)
 
     def _run_thought_generation(
         self,

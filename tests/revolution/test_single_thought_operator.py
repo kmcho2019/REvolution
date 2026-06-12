@@ -427,3 +427,66 @@ def test_single_thought_failed_parent_feedback_opt_in_truncates(
 def test_single_thought_fail_feedback_rejects_negative_budget(tmp_path, monkeypatch):
     with pytest.raises(ValueError, match="qd_operator_fail_feedback_chars"):
         _engine(tmp_path, monkeypatch, qd_operator_fail_feedback_chars=-1)
+
+
+def test_all_fail_parent_carries_sample_feedback(tmp_path, monkeypatch):
+    from revolution.qd.thought_only import ThoughtEvaluation, ThoughtIndividual
+
+    engine = _engine(tmp_path, monkeypatch)
+    thought = ThoughtIndividual(
+        thought_id="g000_thought_0001",
+        generation=0,
+        thought_spec={
+            "format": "thought_spec_v1",
+            "summary": "plan",
+            "interface_contract": "i",
+            "timing_and_protocol": "t",
+            "state_and_datapath_plan": "s",
+            "edge_cases": "e",
+            "ppa_intent": "p",
+            "implementation_constraints": "c",
+        },
+        raw_response="{}",
+        parent_ids=[],
+        parent_count=0,
+        parent_source="seed",
+        qd_operator_kind="single_thought_operator",
+        strategy="single_thought_operator",
+        prompt_text="p",
+    )
+    evaluation = ThoughtEvaluation(
+        thought_id="g000_thought_0001",
+        generation=0,
+        code_samples_per_thought=2,
+        sample_ids=["s0", "s1"],
+        sample_statuses=["failed_functionality", "failed_functionality"],
+        success_count=0,
+        success_rate=0.0,
+        aggregate_status="all_failed",
+        repair_kind="none",
+        repair_attempts_used=0,
+        representative_sample_id=None,
+        representative_quality_score=None,
+        representative_ppa_metrics={},
+        representative_descriptor_values={},
+        parent_ids=[],
+        parent_source="seed",
+        strategy="single_thought_operator",
+        qd_operator_kind="single_thought_operator",
+        prompt_profile="journal_thought_only",
+        representation_kind="thought_only",
+        population_size=2,
+        thought_population_size=1,
+        sample_records=[],
+        repair_config={},
+    )
+    sample_a = Heuristic("t", "code", "", generation=0, status="failed_functionality")
+    sample_b = Heuristic(
+        "t", "code", "K-map row bits swapped vs spec", generation=0,
+        status="failed_functionality",
+    )
+
+    parent = engine._build_all_fail_parent(thought, evaluation, [sample_a, sample_b])
+
+    assert parent.feedback == "K-map row bits swapped vs spec"
+    assert parent.id == "g000_thought_0001"

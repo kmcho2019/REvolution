@@ -273,7 +273,9 @@ def test_all_fail_thought_enters_fail_pool_as_thought_parent(tmp_path, monkeypat
     assert len(engine.fail_pool) == 1
     assert engine.fail_pool[0].id == engine.thought_evaluations[0].thought_id
     assert engine.fail_pool[0].code == ""
-    assert engine.fail_pool[0].feedback == ""
+    # Sample-level feedback is propagated so fail-parent payloads can
+    # carry failure_feedback when the flag enables it.
+    assert engine.fail_pool[0].feedback == "sample-local simulation failure"
     assert engine.thought_evaluations[0].aggregate_status == "all_failed"
 
 
