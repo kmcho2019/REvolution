@@ -9,6 +9,11 @@
 - Use [docs/REvolution_specification.md](docs/REvolution_specification.md) for the paper-plus-implementation specification view.
 - Use [docs/revolution_qd_map_elites_implementation_plan.md](docs/revolution_qd_map_elites_implementation_plan.md) for the current QD/MAP-Elites feature status and staged roadmap.
 - Use [docs/journal_features/08_journal_revamp_goal.md](docs/journal_features/08_journal_revamp_goal.md) for the June 2026 TCAD revamp plan, including benchmark-integration gates, QD repair targets, descriptor-evidence requirements, narrative signoff, and scheduler throughput gates.
+- Journal-revamp onboarding (read in this order when implementing the TCAD goal):
+  [docs/journal_features/revamp_ruminations_20260612.md](docs/journal_features/revamp_ruminations_20260612.md) is the original intent;
+  [docs/journal_features/journal_narrative.md](docs/journal_features/journal_narrative.md) is the ACCEPTED claims contract (gates/branch rules frozen — it wins on any conflict);
+  in `docs/journal_features/revamp_history/20260612_005012_KST_journal_revamp/`: `goal_template.md` is the v2 objective, `journal_revamp_plan.md` the P1–P5 execution plan, `journal_revamp_implementation_todo.md` the phase-grouped checklist (sign-off requires every item checked and spot-verified), `journal_revamp_adversarial_prompt.md` the sign-off process, `journal_revamp_implementation_history.md` the evidence log, `rerun_ledger.jsonl` the run ledger; `*_v1_initial.md` files are archived originals.
+  Locked artifacts live in `data/configs/` (seed manifest, subsets, probe); revise only by version bump with recorded rationale.
 - Use [docs/journal_features/resources/README.md](docs/journal_features/resources/README.md) before editing paper sources; it explains the frozen ASP-DAC 2026 conference-paper submodule and the working TCAD journal-draft submodule.
 - Use [docs/hard_iteration_subset_workflow.md](docs/hard_iteration_subset_workflow.md) for the hard-subset baseline freeze flow, resumable one-shot commands, and long-budget classic-vs-QD matrix entrypoints.
 - Use [docs/method_interaction_and_evolutionary_loop.md](docs/method_interaction_and_evolutionary_loop.md) when you need the classic REvolution data flow or generation loop explained end to end.
@@ -124,6 +129,20 @@
 - Prefer extending existing report/artifact paths before inventing new top-level scripts or sidecar formats.
 - For QD changes, keep grid and CVT behavior aligned where possible: shared config semantics, shared artifact naming, and shared reporting surfaces.
 
+### Implementation Simplicity Rules
+1. Write extremely simple, "skimmable" code.
+2. Minimize possible states: fewer arguments; remove or narrow any state.
+3. Use discriminated unions to reduce the states code can be in.
+4. Exhaustively handle multi-type objects; fail on unknown types.
+5. Don't write defensive code; trust the types.
+6. Assert when loading data; be opinionated about parameters — nothing optional unless strictly required.
+7. Remove any changes that are not strictly required.
+8. Bias for fewer lines of code; no complex or clever code.
+9. Don't split into too many functions; early returns are great.
+10. Use asserts instead of try/except or defaults when something must exist.
+11. Never pass overrides unless strictly necessary; keep argument counts low; required arguments are never optional.
+12. Use Google Python docstring format for public modules/classes/functions and non-obvious helpers; add concise comments only where they make intent easier to skim and maintain.
+
 ## Testing Guidelines
 - Testing framework: `pytest` (configured in `pyproject.toml` with `tests/` as test root).
 - Name files `test_<module>.py` and test functions `test_<behavior>`.
@@ -152,6 +171,15 @@
 - When using `git commit -s`, do not manually add another `Signed-off-by:` line
   in the message body. Each commit should end with exactly one sign-off footer
   for the repository author identity.
+- Use signed multi-line commits going forward; never single-line for new work:
+```bash
+git commit -s -m "docs: add completion goal" \
+  -m "Explain why agents must use docs/specs.md before handoff." \
+  -m "Keep the body wrapped so terminal git output stays readable."
+```
+- The "Golden Seven": blank line between subject and body; subject ≤ 50 chars, capitalized, no trailing period, imperative mood ("If applied, this commit will <subject>"); body wrapped at 72 chars; body explains what and why, not how (context, why this solution, side effects/breaking changes).
+- Keep commits atomic: one logical change per commit — an "and" in the subject means split it.
+- Immediately after committing, inspect the stored message (`git log --format=%B -n 1`) and confirm: no raw `\n` text, no malformed/missing `Signed-off-by`, proper `type(scope): subject` form.
 - Preferred message template:
 ```text
 feat(reporting): add reproducible experiment archiving for run outputs
