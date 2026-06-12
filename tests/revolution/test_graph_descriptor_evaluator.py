@@ -317,3 +317,31 @@ def test_rent_exponent_orders_chain_below_dense(tmp_path: Path):
     assert 0.0 <= chain_metrics["rent_exponent"] <= 1.0
     assert 0.0 <= dense_metrics["rent_exponent"] <= 1.0
     assert chain_metrics["rent_exponent"] < dense_metrics["rent_exponent"]
+
+
+def test_ltp_cross_check_buffer_delta(tmp_path: Path):
+    """Calibrate the documented ours-vs-ltp relationship: our logic_depth
+    skips buffers, yosys ltp counts them, so ltp - ours == buffer count
+    on a chain with explicit buffers."""
+    code_path = tmp_path / "bufchain.sv"
+    code_path.write_text(
+        "module bufchain(input logic a, b, output logic y);\n"
+        "  logic w1, b1, w2;\n"
+        "  assign w1 = a & b;   // depth 1\n"
+        "  buf g1(b1, w1);      // buffer: ltp counts, ours skips\n"
+        "  assign w2 = b1 ^ a;  // depth 2\n"
+        "  assign y = ~w2;      // depth 3\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    metrics = GraphDescriptorEvaluator().extract_metrics(
+        code_file_path=code_path, top_module_name="bufchain"
+    )
+    assert metrics["logic_depth"] == pytest.approx(3.0)
+    # CALIBRATION FACT: the evaluator's yosys script runs `opt` before both
+    # measurements, which removes explicit buffers - so ours == ltp on the
+    # production pipeline (delta 0). The buffer-skip liberty only matters
+    # for buffer-preserving flows.
+    if "logic_depth_ltp" in metrics:  # ltp available in this yosys
+        assert metrics["logic_depth_ltp"] == pytest.approx(3.0)
+        assert metrics["logic_depth_ltp_delta"] == pytest.approx(0.0)

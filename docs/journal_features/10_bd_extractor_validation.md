@@ -30,7 +30,12 @@ Defects found and FIXED:
 
 Documented liberties: buffer cells contribute 0 (delay-weighted depth is
 out of scope); combinational-cycle edges contribute depth 0 at the cut
-point (yosys-synthesized netlists rarely contain them).
+point (yosys-synthesized netlists rarely contain them). Online
+cross-check calibration: the evaluator's yosys script runs `opt` before
+both measurements, which removes explicit buffers, so logic_depth ==
+logic_depth_ltp (delta 0) is the production expectation; nonzero deltas
+flag either buffer-preserving cells we classify as buffers or a real
+divergence worth investigating.
 
 ## ff_depth — sequential (pipeline) depth on PI→PO data paths
 
