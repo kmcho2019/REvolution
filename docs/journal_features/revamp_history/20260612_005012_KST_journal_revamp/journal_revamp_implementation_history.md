@@ -1147,3 +1147,15 @@ fallback; R-D k=2 (already running on OpenRouter).
   natural follow-up (launcher generator + locked subset ready).
 - R-B failure-regime screen auto-started 17:59:16 (the last queued
   screen; the one whose mechanism coverage is guaranteed).
+
+## 2026-06-12 19:40 KST — failure-regime R-B: mechanism live-verified
+
+- Mid-run probe of the failure-regime variant arm: parent sources
+  seed 12 / fail_pool 8 / archive 7, and ALL 8 fail_pool thought
+  prompts carry the failure_feedback payload - the R-B machinery
+  fires on this subset exactly as designed (vs 0 fail_pool draws on
+  the fast subset). Whatever the verdict, the screen is informative.
+- Classic baseline on the regime (recorded pre-verdict): m2014_q3
+  best 0.347 (classic cruises), circuit7 0.012, fsmonehot 0.001,
+  fsm -0.279 (classic struggles where QD pass rates led in the
+  diagnosis).
