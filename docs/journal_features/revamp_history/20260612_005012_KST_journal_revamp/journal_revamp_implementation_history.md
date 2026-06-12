@@ -913,3 +913,20 @@ fallback; R-D k=2 (already running on OpenRouter).
   hypothesis alone does not close the gap.
 - R-B screen (failure feedback) auto-started behind k2 with both the
   retry fix and the hard deadline in effect.
+
+## 2026-06-12 15:40 KST — budget parity measured: CONFOUNDED toward QD
+
+- scripts/report_budget_parity.py (+3 tests) reads both arms'
+  per-problem summary accounting and emits per-problem + aggregate
+  variant/classic ratios with a +/-10% parity verdict.
+- Hard-subset-42 pair: api_calls ratio 1.125, completion_tokens 1.253,
+  prompt_tokens 0.703 -> CONFOUNDED
+  (exp/fast_iter/hard_subset_42/budget_parity). At equal pop x gens
+  the QD target consumed ~25% more completion tokens than classic and
+  still lost: the P1 deficit holds a fortiori under compute
+  accounting, but the asymmetry must be disclosed, every promoted-fix
+  hard-subset pair must ship this artifact, and the finals freeze
+  must pick a budget-matching rule (e.g. token-budget-equalized
+  stopping) if any positive QD claim is to survive review.
+- R-B screen progressing fast under the deadline fix (classic arm
+  4/6 done in 12 min; sub_64bit completed where it previously hung).

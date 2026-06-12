@@ -10,7 +10,7 @@ EVERY item below checked AND spot-verified against artifacts.
 - [x] Reproduce current QD underperformance against classic on hard subset (9-problem genuine intersection, seed 42, 20x5: best-quality -0.080, 2W/7L, functionality 9/9 ties - deficit is pure PPA quality; run exp/fast_iter/hard_subset_42, ledgered; 11-problem hybrid caveat recorded).
 - [ ] Root-cause descriptor collapse, archive occupancy, parent selection, repair budget, and thought/code mismatch.
 - [ ] Fix QD performance issues or narrow claims explicitly.
-- [ ] Ensure repair and k-code samples are charged as real budget.
+- [x] Ensure repair and k-code samples are charged as real budget (charging verified in summary accounting; scripts/report_budget_parity.py measures arm parity: hard-subset-42 verdict CONFOUNDED - QD +12.5% calls / +25.3% completion tokens / -29.7% prompt tokens vs classic at equal pop x gens; classic wins with less compute - disclose in narrative, and any promoted-fix hard-subset pair must report this artifact; budget-matched protocol decision goes to the freeze).
 - [ ] Freeze one final QD target config before final runs.
 - [x] P1: Complete the corrected pop-12 calibration pair (classic vs QD target, seed 42) and run `validate_fast_iteration_pair.py` on it (G1-G3 FAILED: rule90 wall dominance, PPA-flow floor, 1/6 discrimination -> subset v2 required; report at exp/fast_iter/fast_iter_20260612b/gate).
 - [x] Evaluate G4 screening validity (PASS: hard-subset 9-problem genuine intersection best-quality -0.080 with 2W/7L matches the fast-subset DEMOTE sign; both fast verdicts -0.086/-0.188).
