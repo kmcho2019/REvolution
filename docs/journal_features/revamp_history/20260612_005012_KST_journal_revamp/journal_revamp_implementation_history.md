@@ -648,3 +648,17 @@ serving differences are acceptable for fast-subset screening, but any
 gate-bearing comparison must run BOTH arms on the same provider, and a
 provider switch before finals must be recorded in the ledger and the
 tool-provenance statement.
+
+## 2026-06-13 04:30 KST
+
+OpenRouter validation step 1 PASSED: openai/gpt-oss-120b responds
+correctly via OpenRouter (exact requested content, finish_reason=stop,
+sane usage; key loaded from .env, never printed). Step 2 (performance
+parity) protocol, to run AFTER the GPU handoff so the card is not
+re-occupied: a bounded gen-0-style probe on 3 fast-subset problems x 8
+samples via --api_backend openrouter, comparing functionality rates
+against the same problems' local-vLLM gen-0 rates already on disk from
+the v3 pairs. Tolerance: coarse not-broken + same-ballpark check (small
+N); any systematic gap is recorded and triggers the same-provider rule
+for all comparisons. The hard-subset QD arm is still on its final
+problem; handoff canary follows its completion.
