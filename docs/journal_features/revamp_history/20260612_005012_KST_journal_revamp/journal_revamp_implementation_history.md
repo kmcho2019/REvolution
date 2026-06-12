@@ -953,3 +953,15 @@ fallback; R-D k=2 (already running on OpenRouter).
   artifacts wiped, R-B relaunched fresh at 14:47:01 into the same log
   so the queue_after_rb.sh watcher still chains R-C -> R-A'. All
   screen arms from here run with abandon-deadline semantics.
+
+## 2026-06-12 16:20 KST — 2-axis visualizer rendering landed
+
+- feat(qd) 6eaed4f274: 2-axis descriptor spaces render through the
+  existing 3-axis pipeline via a virtual single-bin '(flat)' slice
+  axis (axis_indices None entry maps to bin 0); collapsed second
+  axis still skips honestly; 3-axis layouts byte-identical. 49 tests
+  green including the end-to-end engine visualization test. The
+  pre-registered journal_simple_2d control arm is unblocked.
+- R-B screen (clean relaunch) healthy at 13 min: pe and mux256to1v
+  done; multi_16bit and sub_64bit at gen 0 - the abandon-deadline's
+  first real-world test rides on these two.
