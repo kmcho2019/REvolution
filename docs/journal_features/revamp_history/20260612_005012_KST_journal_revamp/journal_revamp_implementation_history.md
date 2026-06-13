@@ -1388,3 +1388,33 @@ fallback; R-D k=2 (already running on OpenRouter).
   as the archived pre-flip state.
 - Matrix: qd_scalar_elites seed-1001 at gen 4-5 stragglers, zero
   retries; bake-off watcher confirmed alive.
+
+## 2026-06-13 08:00 KST — OPERATOR LICENSING: unification helps WITHIN QD
+
+- Within-QD licensing pairing (the narrative's actual operator
+  contrast), seed 1001: qd_target (unified operator) vs
+  qd_six_operators, both on the QD substrate. Delta (target - six)
+  = +0.040, 5W/3L/5T, cluster-bootstrap 95% CI [+0.0007, +0.090] -
+  ENTIRELY ABOVE 0. By the predeclared rule (CI low > 0 = "better"),
+  the unified operator is statistically better than the six-operator
+  suite within QD on this seed. Empirically direction-verified
+  (multi_pipe_8bit six=0.243 target=0.512). The operator-unification
+  headline is LICENSED within QD (pending seeds 1002-1003 for the
+  pooled decision; qd_target_seed1002 not yet run).
+- Substrate-dependence is the mechanistic story: the SAME unified
+  operator is WORSE than six operators on the CLASSIC substrate
+  (classic_unified vs classic: -0.090 seed1001 / -0.102 seed1002,
+  both CIs below 0) but BETTER than six operators within QD. Reading:
+  the six hand-engineered operators manufacture the exploration that
+  the archive supplies for free in QD; remove the archive and you
+  need them back. Coherent one-factor attribution - exactly what the
+  matrix was built to produce.
+- All QD/unified arms vs classic, both seeds (best-quality, loses):
+  classic_unified -0.090/-0.102, qd_six_operators -0.118/-0.130,
+  qd_scalar_elites -0.128 (call ratio 1.39 - most confounded),
+  qd_target -0.078 (best QD arm, 3W, +38% calls). Branch C holds
+  across seeds: the package does not beat classic at this budget.
+- Scalar-vs-pareto cells: qd_scalar_elites -0.128 vs qd_target
+  -0.078 (both vs classic, seed 1001) -> pareto cells contribute
+  ~+0.05 within the package, a positive component attribution for
+  the Pareto-front design.

@@ -87,7 +87,11 @@ Three independent substrates show the same split:
 ## Pending slots (fill when verdicts land)
 
 - Ablation matrix per-contrast tables: exp/ablation_matrix/stats/.
-- Operator-claim licensing contrast: qd_six_operators vs qd_target.
-- Branch C floor leg (i): classic_unified vs classic.
+- Operator-claim licensing contrast: qd_six_operators vs qd_target
+  -> seed 1001 LICENSED (unified +0.040, CI [+0.0007,+0.090] above 0;
+  stats/licensing_sixop_vs_target_seed1001); substrate-dependent
+  (unified worse on classic, better within QD). Seeds 1002-3 pending.
+- Branch C floor leg (i): classic_unified vs classic -> -0.090/-0.102
+  (seeds 1001/1002), CIs below 0; floor leg measured.
 - Bake-off decision table + profile freeze rationale.
 - Finals (5-seed) gate statistics and branch decision.
