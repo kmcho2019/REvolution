@@ -158,6 +158,12 @@ Three mechanisms, each with a verified exhibit (full paths in doc 12):
 - Ablation seeds 1002-1003 + qd_target/scalar 1002-3 → pooled operator decision (F2/F3)
 - Bake-off triple → mechanical profile freeze (report_descriptor_bakeoff.py)
 
+> **Operational reminder (run each wake):** `bash exp/run_licensing_pairings.sh`
+> — idempotent; emits the within-QD `qd_six_operators` vs `qd_target`
+> licensing pairing (the F2/F3 input) for every seed whose both roots
+> exist. The matrix launcher does NOT emit this; it must be run separately.
+> Then re-pull §3.3 from `exp/ablation_matrix/stats/licensing_*`.
+
 **Decisions requiring judgment at freeze (P4):**
 - MDE ratchet: raise counts or drop the +0.03 best-quality gate (under-powered at 13×5; MDE 0.12). `exp/fast_iter/mde_hard_subset`
 - Budget-matching rule for any positive QD claim (M2): token-equalized stopping vs disclosed asymmetry.
