@@ -1418,3 +1418,20 @@ fallback; R-D k=2 (already running on OpenRouter).
   -0.078 (both vs classic, seed 1001) -> pareto cells contribute
   ~+0.05 within the package, a positive component attribution for
   the Pareto-front design.
+
+## 2026-06-13 08:20 KST — bake-off verdict tool real-data-validated
+
+- report_descriptor_bakeoff.py smoke-run against a real trio-profile
+  archive set (rb_failure_regime_v2 variant): correctly extracts
+  warmup-completion 40%, median occupancy 0.12, per-axis collapse
+  counts (logic_depth 1, ff_depth 2, comb_width_log 1), and fires the
+  occupancy-floor FAIL flag (0.12 < 0.25). The P2 verdict is now a
+  single validated command when the three bake-off pairs land - no
+  artifact-shape surprises.
+- Foreshadowing: the trio FAILS the 0.25 occupancy floor on this
+  subset, consistent with M5/F6 (trio degeneracy). The formal bake-off
+  uses the v3 fast subset, but the direction is clear - the
+  alternative profiles need only clear the floor the trio cannot.
+- Matrix: qd_scalar_elites seed-1002 near complete (zero retries);
+  qd_target seed-1002 not yet started, so the seed-1002 licensing
+  replication (F2) is ~2 arms out.
