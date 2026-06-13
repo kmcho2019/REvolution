@@ -243,3 +243,35 @@ def test_verilator_fallback_rescues_iverilog_rejected_golden(tmp_path, monkeypat
     )
     assert unrescued["harness_validated"] is False
     assert "functional_harness_kind" not in unrescued
+
+
+def test_verilator_primary_validates_and_times(tmp_path, monkeypatch):
+    source_root = _write_source_tree(tmp_path)
+    output_root = tmp_path / "out"
+    output_root.mkdir()
+    manifest = build_realbench_manifest.generate_manifest(
+        source_root=source_root, output_root=output_root
+    )
+    entry = manifest["problems"][0]
+
+    class _PassingVerilator:
+        def __init__(self, **kwargs):
+            pass
+
+        def evaluate(self, *args, **kwargs):
+            return {
+                "status": "success",
+                "simulation_stdout": "Hint: Total mismatched samples is 0 out of 9 samples\n",
+            }
+
+    import revolution.verilator_evaluation as verilator_module
+
+    monkeypatch.setattr(verilator_module, "VerilatorEvaluator", _PassingVerilator)
+
+    result = build_realbench_manifest.validate_entry_with_golden(
+        output_root, entry, primary_harness="verilator"
+    )
+
+    assert result["harness_validated"] is True
+    assert result["functional_harness_kind"] == "verilator_testbench"
+    assert result["harness_duration_s"] >= 0.0
