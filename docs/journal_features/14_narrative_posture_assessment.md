@@ -13,8 +13,8 @@ assessment, not a claims change.
 | # | Conference criticism | Journal answer | Status (evidence) |
 | --- | --- | --- | --- |
 | 1 | Weighted-sum PPA biases search | Pareto-front cells (no scalar weight) | Implemented; performance value is seed-noise (F5). Defensible as *principled removal of a biasing knob*, not a measured win. |
-| 2 | EoH operators arbitrary | One unified thought-operator | **Strong (F2/F3).** |
-| 3 | Bandit/UCB claimed, never ablated | Bandit removed; operator ablated | **Strongest result — directly fixes the conference's weakest point.** |
+| 2 | EoH operators arbitrary | One unified thought-operator | **Parity within QD (F2): one operator = six, no cost** — answers the criticism, but only within QD (F9). |
+| 3 | Bandit/UCB claimed, never ablated | Bandit removed; operator ablated | **Ablated (F2, 3-seed): the missing ablation now exists** — verdict is parity, QD-entangled. |
 | 4 | Benchmarks too small | CVDP + RealBench integrated | Integrated, **not yet demonstrated** as meaningful PPA wins. |
 | 5 | No diversity | QD MAP-Elites + BD trio | Implemented; **value unproven, BD justification weak** (M5, bake-off pending). |
 
@@ -58,7 +58,7 @@ defensible than "we win":
 
 Reframed thesis: *"When does quality-diverse, thought-level structure help
 LLM-driven RTL search, and when does it not — characterized rigorously,
-with operator simplification as a standalone positive."*
+with operator simplification as a within-QD no-cost result (parity, F2)."*
 
 ## Reviewer-muster verdict (candid)
 
