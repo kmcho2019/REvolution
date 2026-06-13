@@ -20,10 +20,12 @@ from pathlib import Path
 YOSYS_SCRIPT = """
 read_verilog -sv {gold}
 prep -top {gold_top}
+flatten {gold_top}
 rename {gold_top} gold_top
 design -stash gold
 read_verilog -sv {gate}
 prep -top {gate_top}
+flatten {gate_top}
 rename {gate_top} gate_top
 design -stash gate
 design -copy-from gold -as gold_top gold_top

@@ -87,3 +87,26 @@ def test_separate_gold_gate_top_names(tmp_path):
         gold, gate, top="top", gold_top="RefModule", gate_top="top"
     )
     assert result["verdict"] == "PROVEN"
+
+
+@pytest.mark.skipif(not yosys_available, reason="yosys binary required")
+def test_multi_module_candidate_is_flattened_and_proven(tmp_path):
+    # Structural adder using a helper submodule (the real-candidate shape
+    # that broke design -copy-from before the flatten fix).
+    gold = tmp_path / "ref.sv"
+    gate = tmp_path / "cand.sv"
+    gold.write_text(
+        "module RefModule(input [1:0] a, input [1:0] b, output [2:0] y);\n"
+        "  assign y = a + b;\nendmodule\n", encoding="utf-8")
+    gate.write_text(
+        "module ha(input x, input y, output s, output c);\n"
+        "  assign s = x ^ y; assign c = x & y;\nendmodule\n"
+        "module TopModule(input [1:0] a, input [1:0] b, output [2:0] y);\n"
+        "  wire c0; ha h0(a[0], b[0], y[0], c0);\n"
+        "  wire s1, c1; ha h1(a[1], b[1], s1, c1);\n"
+        "  wire c2; ha h2(s1, c0, y[1], c2);\n"
+        "  assign y[2] = c1 | c2;\nendmodule\n", encoding="utf-8")
+
+    result = check_equivalence.check_pair(
+        gold, gate, top="x", gold_top="RefModule", gate_top="TopModule")
+    assert result["verdict"] == "PROVEN"
