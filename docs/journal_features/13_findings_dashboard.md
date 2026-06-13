@@ -103,6 +103,17 @@ of loss (vs 58%), circuit7 + adder_8bit persistent. [H: 2026-06-13 09:35, 11:15]
 
 ---
 
+### F8 — Why classic wins: champion never refined `MEASURED` (mechanism)
+Generation trajectories (seed 1001): on losses QD's best NEVER improves
+past gen-0 (adder flat 0.14, circuit7 flat 0.012, q6b flat −0.013) while
+classic climbs — despite QD evaluating ≥ as many candidates. Two
+confirmed causes: (M-i) parents sampled from diverse archive cells, not
+the champion; (M-ii) thought-only regenerates code from scratch ("do not
+refer to parent code") → no code-level hill-climbing. QD wins only on
+architectural-leap problems (multi_pipe 0.254→0.512). Fix plan in doc 15:
+thought-guided incremental realization (B), champion lane (A). The
+deficit is tunable, not fundamental. [H: 2026-06-13 12:55]
+
 ## 3. Experiment result tables
 
 ### 3.1 Repair screens (fast subset, OpenRouter 32k, all DEMOTED)
@@ -207,6 +218,7 @@ Three mechanisms, each with a verified exhibit (full paths in doc 12):
 | --- | --- |
 | **This** — current findings, organized by topic | doc 13 (here) |
 | **Strategic posture** — contribution vs reviewer muster, the reframe | doc 14 |
+| **Why classic wins + fix plan** — mechanism, ranked fixes | doc 15 |
 | Chronological audit trail with full evidence | `revamp_history/.../journal_revamp_implementation_history.md` |
 | Manuscript element → artifact path | doc 12 (evidence map) |
 | Phase-grouped open/done checklist | `revamp_history/.../journal_revamp_implementation_todo.md` |
