@@ -14,9 +14,10 @@ full evidence; when it cites `exp/...` that is the raw artifact.
 `PRELIMINARY` one seed, replication pending ·
 `MECHANISM-VERIFIED` process confirmed live, outcome tracked separately.
 
-**Last refreshed:** 2026-06-13 08:10 KST. Refresh the tables below from
-`exp/ablation_matrix/stats/` and `exp/fast_iter/*/stats/` when new runs
-land; keep finding IDs stable.
+**Last refreshed:** 2026-06-13 11:15 KST (seeds 1001-1002 of the matrix
+landed; F2 replicated, F5 downgraded, F7 confirmed). Refresh the tables
+below from `exp/ablation_matrix/stats/` and `exp/fast_iter/*/stats/`
+when new runs land; keep finding IDs stable.
 
 ---
 
@@ -30,8 +31,9 @@ land; keep finding IDs stable.
 | P4 | Gates / freeze | **Tooling complete.** All slices locked. Open: MDE ratchet + budget-rule *decisions*, seed-42 debug gate, 5-seed finals. |
 | P5 | Manuscript | **Kicked off.** Evidence map (doc 12) binds elements to artifacts; prose pending finals. |
 
-**Running now:** 5-arm ablation matrix (seed 1002, `qd_scalar_elites`);
-bake-off chain queued behind it. **No engineering blockers on any track.**
+**Running now:** 5-arm ablation matrix seed 1003 (`classic` arm; seeds
+1001-1002 complete); bake-off chain queued behind it. **No engineering
+blockers on any track.**
 
 ---
 
