@@ -137,3 +137,20 @@ def test_main_fails_without_manifest(tmp_path):
     )
 
     assert code == 2
+
+
+def test_exclude_config_removes_locked_tasks(tmp_path):
+    locked = tmp_path / "locked.yaml"
+    locked.write_text(
+        yaml.safe_dump({"benchmarks": {"RealBench": {"problems": ["aes_a"]}}}),
+        encoding="utf-8",
+    )
+
+    exclude_ids = build_realbench_debug_subset.load_excluded_ids([locked])
+    assert exclude_ids == frozenset({"aes_a"})
+
+    selection = build_realbench_debug_subset.select_balanced_subset(
+        _manifest(), per_family=4, seed=42, exclude_ids=exclude_ids
+    )
+    selected = {pid for ids in selection.values() for pid in ids}
+    assert "aes_a" not in selected

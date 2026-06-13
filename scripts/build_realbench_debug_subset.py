@@ -45,10 +45,24 @@ def load_manifest(realbench_root: Path) -> dict[str, Any]:
     return payload
 
 
+def load_excluded_ids(config_paths: list[Path]) -> frozenset[str]:
+    """Collect task ids from locked subset manifests for exclusion."""
+
+    excluded: set[str] = set()
+    for path in config_paths:
+        payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+        benchmarks = payload["benchmarks"]
+        assert isinstance(benchmarks, dict), f"malformed manifest: {path}"
+        for entry in benchmarks.values():
+            excluded.update(str(pid) for pid in entry["problems"])
+    return frozenset(excluded)
+
+
 def eligible_tasks_by_family(
     manifest: dict[str, Any],
     *,
     require_validated: bool = True,
+    exclude_ids: frozenset[str] = frozenset(),
 ) -> dict[str, list[str]]:
     by_family: dict[str, list[str]] = {}
     for entry in manifest.get("problems", []):
@@ -60,7 +74,7 @@ def eligible_tasks_by_family(
             continue
         family = str(entry.get("family", "unknown"))
         name = str(entry.get("problem_name", "")).strip()
-        if name:
+        if name and name not in exclude_ids:
             by_family.setdefault(family, []).append(name)
     for names in by_family.values():
         names.sort()
@@ -74,6 +88,7 @@ def select_balanced_subset(
     seed: int,
     subset_size: int | None = None,
     require_validated: bool = True,
+    exclude_ids: frozenset[str] = frozenset(),
 ) -> dict[str, list[str]]:
     """Select a deterministic family-balanced sample of eligible tasks.
 
@@ -83,7 +98,9 @@ def select_balanced_subset(
     in sorted family order, from each family's remaining shuffled tasks.
     """
 
-    by_family = eligible_tasks_by_family(manifest, require_validated=require_validated)
+    by_family = eligible_tasks_by_family(
+        manifest, require_validated=require_validated, exclude_ids=exclude_ids
+    )
     shuffled_by_family: dict[str, list[str]] = {}
     for family in sorted(by_family):
         eligible = by_family[family]
@@ -191,6 +208,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Total locked subset size; shortfalls against per-family "
         "balance are topped up deterministically from larger families.",
     )
+    parser.add_argument(
+        "--exclude-config",
+        type=Path,
+        action="append",
+        default=[],
+        help="Locked subset manifest whose task ids are excluded (repeatable).",
+    )
     parser.add_argument("--seed", type=int, default=42, help="Deterministic seed.")
     parser.add_argument(
         "--allow-unvalidated",
@@ -208,12 +232,14 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
 
+    exclude_ids = load_excluded_ids(args.exclude_config)
     selection = select_balanced_subset(
         manifest,
         per_family=args.per_family,
         seed=args.seed,
         subset_size=args.subset_size,
         require_validated=not args.allow_unvalidated,
+        exclude_ids=exclude_ids,
     )
     if not selection:
         print("error: no eligible RealBench tasks found", file=sys.stderr)

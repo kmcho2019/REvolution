@@ -1,0 +1,71 @@
+version: 1
+subset_name: realbench_final_26_v1
+selection:
+  realbench_root: data/bench/RealBench_v2_sweep
+  manifest_sha256: 6b5bb5cb91bc39dc6bd7f0e0daa54bb19f58a03a33848cc82cda47cfadfccce0
+  require_harness_validated: true
+  per_family: 9
+  seed: 1337
+  rule: 'per family: seeded shuffle (random.Random(f''{seed}:{family}'')) over lexicographically
+    sorted harness-validated module tasks, take first per_family, then top up depth-by-depth
+    in sorted family order until subset_size; store sorted'
+  subset_size: 26
+families:
+  aes:
+  - aes_cipher_top
+  - aes_inv_cipher_top
+  - aes_key_expand_128
+  e203_hbirdv2:
+  - e203_clk_ctrl
+  - e203_clkgate
+  - e203_exu_alu_csrctrl
+  - e203_exu_commit
+  - e203_exu_csr
+  - e203_exu_disp
+  - e203_exu_oitf
+  - e203_ifu
+  - e203_ifu_ift2icb
+  - e203_ifu_litebpu
+  - e203_ifu_minidec
+  - e203_irq_sync
+  - e203_itcm_ctrl
+  - e203_lsu
+  - e203_reset_ctrl
+  sdc:
+  - sd_bd
+  - sd_cmd_master
+  - sd_cmd_serial_host
+  - sd_data_master
+  - sd_data_serial_host
+  - sd_rx_fifo
+  - sd_tx_fifo
+  - sdc_controller
+benchmarks:
+  RealBench:
+    problems:
+    - aes_cipher_top
+    - aes_inv_cipher_top
+    - aes_key_expand_128
+    - e203_clk_ctrl
+    - e203_clkgate
+    - e203_exu_alu_csrctrl
+    - e203_exu_commit
+    - e203_exu_csr
+    - e203_exu_disp
+    - e203_exu_oitf
+    - e203_ifu
+    - e203_ifu_ift2icb
+    - e203_ifu_litebpu
+    - e203_ifu_minidec
+    - e203_irq_sync
+    - e203_itcm_ctrl
+    - e203_lsu
+    - e203_reset_ctrl
+    - sd_bd
+    - sd_cmd_master
+    - sd_cmd_serial_host
+    - sd_data_master
+    - sd_data_serial_host
+    - sd_rx_fifo
+    - sd_tx_fifo
+    - sdc_controller
