@@ -525,3 +525,18 @@ def test_seeded_realization_prompt_carries_parent_code(tmp_path, monkeypatch):
     prompt = engine._create_prompt_thought_only_code_seeded(thought)
     assert "assign y = a & b" in prompt          # parent code seeded
     assert "code_from_thought_seeded" in prompt
+
+
+def test_champion_lane_validation_and_draw(tmp_path, monkeypatch):
+    import pytest as _pytest
+    with _pytest.raises(ValueError, match="qd_champion_lane_fraction"):
+        _engine(tmp_path, monkeypatch, qd_champion_lane_fraction=1.5)
+    # fraction=1.0 with a populated pareto archive => every parent is the champion
+    engine = _engine(tmp_path, monkeypatch, qd_champion_lane_fraction=1.0)
+    champ = _success_parent("champ", candidate_id="champ", area=10.0)
+    champ.quality_score = 9.9
+    monkeypatch.setattr(engine, "_ranked_success_members_by_cell", lambda: {"0,0": ["x"]})
+    monkeypatch.setattr(engine, "_global_best_success_member", lambda: champ)
+    monkeypatch.setattr(engine, "_crowded_tournament", lambda members: _success_parent("other", candidate_id="other", area=20.0))
+    parents = engine._sample_success_parents(4)
+    assert all(p.id == "champ" for p in parents)

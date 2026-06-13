@@ -463,6 +463,7 @@ def _build_backend(
             representation_kind=args.representation_kind,
             code_samples_per_thought=args.code_samples_per_thought,
             qd_thought_code_seeded=args.qd_thought_code_seeded,
+            qd_champion_lane_fraction=args.qd_champion_lane_fraction,
             representative_sample=args.representative_sample,
             repair_kind=args.repair_kind,
             repair_max_attempts_per_sample=args.repair_max_attempts_per_sample,
@@ -1036,6 +1037,8 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         default=False,
         help="Seed thought realization with the best parent code (doc 15 Fix B).",
     )
+    parser.add_argument("--qd_champion_lane_fraction", type=float, default=0.0,
+        help="Fraction of QD parents drawn from the global best (doc 15 Fix A champion lane).")
     parser.add_argument(
         "--representative_sample",
         type=str,

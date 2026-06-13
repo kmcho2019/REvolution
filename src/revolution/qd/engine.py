@@ -127,6 +127,7 @@ class QDEngine(EoHEngine):
         representation_kind: str = "code_individual",
         code_samples_per_thought: int = 4,
         qd_thought_code_seeded: bool = False,
+        qd_champion_lane_fraction: float = 0.0,
         representative_sample: str = "best_successful_quality",
         repair_kind: str = "none",
         repair_max_attempts_per_sample: int = 0,
@@ -238,6 +239,9 @@ class QDEngine(EoHEngine):
         )
         self.code_samples_per_thought = int(code_samples_per_thought)
         self.qd_thought_code_seeded = bool(qd_thought_code_seeded)
+        if not 0.0 <= float(qd_champion_lane_fraction) <= 1.0:
+            raise ValueError("qd_champion_lane_fraction must be in [0, 1].")
+        self.qd_champion_lane_fraction = float(qd_champion_lane_fraction)
         self.representative_sample = representative_sample
         self.thought_population_size = (
             self.population_size // self.code_samples_per_thought
@@ -1363,15 +1367,38 @@ class QDEngine(EoHEngine):
         finally:
             self.num_offspring_lambda = original_lambda
 
+    def _global_best_success_member(self) -> Heuristic | None:
+        """Highest-quality archive member (the champion), for the champion
+        lane (doc 15 Fix A) that biases a fraction of parents toward
+        refining the current best instead of pure diverse-cell sampling."""
+        best: Heuristic | None = None
+        for _, member in self.success_archive.members():
+            payload = member.payload
+            if not isinstance(payload, Heuristic):
+                continue
+            if best is None or float(member.quality_score) > float(
+                getattr(best, "quality_score", best.score)
+            ):
+                best = payload
+        return best
+
     def _sample_success_parents(self, count: int) -> list[Heuristic]:
         if self.qd_cell_mode == "pareto_front":
             by_cell = self._ranked_success_members_by_cell()
             if by_cell:
                 cell_ids = sorted(by_cell)
+                champion = (
+                    self._global_best_success_member()
+                    if self.qd_champion_lane_fraction > 0.0
+                    else None
+                )
                 parents: list[Heuristic] = []
                 for _ in range(count):
-                    cell_id = random.choice(cell_ids)
-                    parents.append(self._crowded_tournament(by_cell[cell_id]))
+                    if champion is not None and random.random() < self.qd_champion_lane_fraction:
+                        parents.append(champion)  # champion lane: refine the best
+                    else:
+                        cell_id = random.choice(cell_ids)
+                        parents.append(self._crowded_tournament(by_cell[cell_id]))
                 return parents
         success_view = self._success_view()
         if not success_view:
