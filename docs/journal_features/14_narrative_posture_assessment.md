@@ -33,13 +33,19 @@ not the triumphant Branch A.**
 A *characterization* contribution, not a victory lap — and it is more
 defensible than "we win":
 
-1. **Operator simplification (the publishable spine, F2/F3).** The unified
-   operator is parity-or-better than the six-operator suite *within QD*
-   (pooled 2-seed +0.024, CI [+0.0035,+0.0465] above 0) and *worse* on the
-   classic substrate. Clean mechanism: the archive supplies the
-   exploration the hand-engineered operators otherwise manufacture. **This
-   is the ablation criticism #3 said was missing.** Standalone journal
-   delta independent of QD's fate.
+1. **Operator simplification (the publishable spine, F2/F3) — but
+   QD-entangled, NOT standalone (F9).** The unified operator is
+   parity-or-better than the six-operator suite *within QD* (pooled 2-seed
+   +0.024, CI [+0.0035,+0.0465] above 0) yet *worse* on the classic
+   substrate (pooled −0.092, CI [−0.149,−0.037]). Clean mechanism: the
+   archive supplies the exploration the hand-engineered operators
+   otherwise manufacture. **This is the ablation criticism #3 said was
+   missing** — but the earlier hope that it is "independent of QD's fate"
+   is **falsified (F9)**: it only wins inside QD. Consequence: the
+   narrative's Branch C floor leg (i) (a simplification win independent of
+   QD) is **not met**, predeclaring venue reassessment if the finals land
+   in Branch C. The operator story therefore stands only as a *within-QD*
+   result, which makes closing the QD-vs-classic gap (Fix B) load-bearing.
 2. **Regime-sensitivity (F4).** Thought/QD search is competitive on
    under-determined/spec-exact problems, weaker on PPA-margin ones — with
    a mechanism. Explains the conference result instead of apologizing.
