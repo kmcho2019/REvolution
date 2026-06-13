@@ -1282,3 +1282,18 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Matrix: qd_six_operators seed-1001 at gen 2-3 on stragglers
   (~2 h arm; the six-operator QD arm is the most expensive), zero
   retries.
+
+## 2026-06-13 01:30 KST — sweep verdict: 17/22 recovered; fresh-26 locked
+
+- Golden sweep (overlapped with the matrix, niced): 55/60 validated -
+  38 iverilog (identical to v1, environment consistent) + 17
+  verilator rescues (marked verilator_testbench for runtime
+  dispatch); 5 goldens compile-broken in both harnesses
+  (e203_extend_csr, e203_exu_alu_muldiv, e203_srams,
+  sd_fifo_rx/tx_filler). Coverage 63% -> 92%. v2 manifest at
+  data/bench/RealBench_v2_sweep (sha 6b5bb5cb...); locked v1 runtime
+  root untouched pending the retention-table EDA-persona re-review.
+- RealBench builder gains --exclude-config (CVDP-pattern);
+  data/configs/realbench_final_26_subset.yaml locked from v2
+  (seed 1337, debug excluded, disjoint, all families).
+- Matrix: qd_six_operators seed-1001 still running (~2h arm).

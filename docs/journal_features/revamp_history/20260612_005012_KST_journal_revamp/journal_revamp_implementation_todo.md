@@ -41,7 +41,7 @@ EVERY item below checked AND spot-verified against artifacts.
 - [ ] Add CVDP absolute-only PPA path only if synthesis is reliable.
 - [ ] Add RealBench synthesis/PPA support only when deterministic (manifest currently marks only dependency-free, support-free tasks `supports_synthesis: true`; synthesis flow itself not yet validated on them).
 - [ ] Add a verilator-5 harness path behind the capability model (`functional_harness_kind: verilator_testbench`): per-candidate verilate+build+run with `Total mismatched samples` parsing; account for per-candidate C++ compile cost (seconds for small modules, minutes for e203_core) in budget/timeout settings.
-- [ ] Re-run the RealBench golden-validation sweep under verilator 5 (`build_realbench_manifest.py --validate --simulator verilator5`); expect recovery of most of the 22 iverilog-excluded tasks (dialect limits and assertion-semantics mismatches); version-bump the manifest and re-lock the debug subset and long-model probe if coverage changes.
+- [x] Re-run the RealBench golden-validation sweep with the verilator fallback (build_realbench_manifest.py --validate --verilator-fallback): 17/22 exclusions RECOVERED (55/60 validated, 92%); v2 manifest at data/bench/RealBench_v2_sweep (sha 6b5bb5cb...) with rescued tasks marked verilator_testbench; 5 goldens compile-broken in both harnesses. Runtime root promotion + debug-subset/probe re-lock pend the retention-table EDA re-review (next item).
 - [ ] If the expanded subset should enter final claims: update the narrative's RealBench disclosure section (retention table, harness description) BEFORE the finals freeze and run a focused EDA-persona re-review of that section; otherwise keep iverilog as primary and use verilator 5 for cross-validation evidence only.
 - [ ] Run local vLLM and DeepSeek on the RealBench model-capability probe.
 - [ ] Freeze whether RealBench final claims use local vLLM or a symmetric DeepSeek arm.
@@ -55,7 +55,7 @@ EVERY item below checked AND spot-verified against artifacts.
 - [ ] Verify RealBench deterministic replay and any-pass gates.
 - [ ] Verify scheduler gates.
 - [ ] P4: Archive the MDE/power analysis (one-way ratchet: counts may rise, never fall; infeasible gate drops its claim).
-- [ ] P4: Build the 26-task fresh RealBench slice (validated minus debug; awaits the post-sweep manifest re-lock). DONE PARTS: held-out 20-problem reference set verified disjoint from hard AND fast-v3 (audit 2026-06-12); fresh CVDP-30 locked at data/configs/cvdp_final_30_subset.yaml (seed 1337, 6x5 categories, debug ids excluded with provenance).
+- [x] P4: Build the 26-task fresh RealBench slice (data/configs/realbench_final_26_subset.yaml from the v2 sweep manifest: seed 1337, debug ids excluded, disjoint-verified, aes 3 / e203 15 / sdc 8). DONE PARTS: held-out 20-problem reference set verified disjoint from hard AND fast-v3 (audit 2026-06-12); fresh CVDP-30 locked at data/configs/cvdp_final_30_subset.yaml (seed 1337, 6x5 categories, debug ids excluded with provenance).
 - [ ] P4: Add yosys equivalence spot-check tooling and run it on showcased candidates + sampled 10% of archive elites.
 - [ ] P4: Emit the tool-provenance statement (exact iverilog/yosys/OpenROAD/verilator versions) with the config freeze.
 
