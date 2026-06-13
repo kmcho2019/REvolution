@@ -1707,3 +1707,27 @@ fallback; R-D k=2 (already running on OpenRouter).
   DIVERSITY claim separately from the (null) PPA ranking, and ideally
   be re-checked on RealBench-large designs (where the trio's small-
   design collapse may not bind). Surfacing for the team.
+
+## 2026-06-13 23:40 KST — B+A verdict: champion lane HURTS (F13); Fix B alone wins
+
+- Combined B+A (mechanism verified live: 164 seeded prompts + champion
+  concentration) vs classic: -0.128, 0W/4/2, CI [-0.238,-0.023].
+- SURPRISE: B+A (-0.128) is WORSE than Fix B alone (-0.087). The
+  champion lane, even with code-seeding, drags B down - mux256to1v
+  went from a TIE under B alone to -0.330 under B+A. Concentration
+  sacrifices the coverage that was finding ties.
+- This CORRECTS the F11 hypothesis ("A only pays off with B"). Actual
+  finding: champion lane is HARMFUL (alone null+popcount harm; with B,
+  -0.04 worse). Fix A / champion lane is ABANDONED.
+- WINNING CONFIG: Fix B alone (-0.087) = code-seeded realization with
+  normal diverse parent selection. Halves the frozen deficit; the
+  diversity (diverse parents) does useful work finding ties, so don't
+  concentrate.
+- Remaining gap to parity = the anchoring outliers (sub_64bit B+A flat
+  -0.02->-0.0 vs classic 0.30; champion lane did NOT fix anchoring,
+  expected). Named next experiment: hybrid B' - split each thought's
+  k=4 samples between seeded (refinement) and whole-regen (leap) so
+  architectural escape is preserved alongside refinement. This
+  directly targets the sub_64bit/mux anchoring.
+- Parity ladder: frozen -0.177; A -0.167; B -0.087 (best); B+A -0.128.
+  Branch B (parity) not yet reached; Fix B + B' hybrid is the path.

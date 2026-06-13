@@ -115,6 +115,18 @@ Branch C** — making Fix B (closing the QD-vs-classic gap to reach
 Branch B/A, where the floor leg is moot) load-bearing, not optional.
 `exp/ablation_matrix/stats/floorleg_classic_unified_pooled` [H: 2026-06-13 13:40]
 
+### F13 — Champion lane HURTS; Fix B alone is the winning config `MEASURED`
+Parity-fix ladder (vs classic, v3): frozen −0.177 → Fix A −0.167
+(null) → **Fix B −0.087 (BEST, deficit halved)** → B+A −0.128 (A drags
+B down). Adding the champion lane to B turned mux256to1v from a tie
+into −0.330: concentration sacrifices the coverage that finds ties.
+CORRECTS F11 — champion lane is not coupled-helpful, it is HARMFUL;
+**Fix A / champion lane is ABANDONED.** Winning config = code-seeded
+realization with NORMAL diverse parent selection. Remaining gap to
+parity is the anchoring outliers (sub_64bit flat ~0 vs classic 0.30;
+F10) → next experiment is hybrid B′ (split k samples: seeded refinement
++ whole-regen leaps). `exp/fast_iter/fixba_combined/` [H: 2026-06-13 23:40]
+
 ### F12 — Bake-off: no profile improves PPA; cheap control is diversity-healthiest `MEASURED`
 Mechanical verdict (v3, quality-first rule): activity −0.103 (1/4/1) >
 simple_2d −0.131 > trio −0.177 > graph_testability −0.186. **No profile
@@ -127,7 +139,7 @@ Freeze is a DECISION (flagged, not auto-made): activity wins quality-
 first but has high collapse; simple_2d/graph win diversity-health.
 `exp/fast_iter/bakeoff_verdict` [H: 2026-06-13 22:40]
 
-### F11 — Fix A (champion lane) alone fails; mechanisms are COUPLED `MEASURED`
+### F11 — Fix A (champion lane) alone fails `MEASURED` (coupling hypothesis SUPERSEDED by F13)
 Champion lane alone: −0.167 (0/4/2) ≈ frozen target −0.177 — NO help,
 and it HURT popcount255 (Fix B tied it, A lost −0.285). Reason: biasing
 parents to the champion is pointless if realization then regenerates its
