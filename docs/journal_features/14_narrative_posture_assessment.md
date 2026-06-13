@@ -81,6 +81,22 @@ That converts Branch C → A/B.
 checkbox to the **storyline-deciding experiment** (tracked in the plan /
 dashboard, not left implicit in P3).
 
+**Feasibility — RESOLVED 2026-06-13 (M8).** Initial blocker: only 5/55
+validated RealBench tasks were marked `supports_synthesis`, and the 5 are
+small (aes sboxes, crc) — the large e203 designs that the hypothesis
+needs were excluded. BUT this is a false negative: the marking is the
+conservative `supports_synthesis = not dependencies and not support_files`
+heuristic, and a direct yosys probe synthesizes the large e203 modules
+cleanly with their support files (alu_bjp 67, branchslv 587, alu_dpath
+2143 cells; 0 errors). So the storyline-decider IS feasible. **Unlock
+(scope decision):** relax the manifest heuristic, thread support/aux
+files into `SynthesisEvaluator.evaluate` (single-file today — mirror the
+verilator harness fix), and re-validate the full yosys+OpenROAD+descriptor
+PPA flow on 2-3 large modules. The yosys step (the hardest unknown) is
+already confirmed; OpenROAD floorplan + descriptor extraction on large
+designs is the remaining validation. This is the highest-leverage
+engineering investment for the storyline.
+
 ## Recommendation
 
 1. Finish the bake-off — decides whether the diversity contribution has
