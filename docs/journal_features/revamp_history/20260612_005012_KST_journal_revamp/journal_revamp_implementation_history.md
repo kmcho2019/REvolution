@@ -1666,3 +1666,19 @@ fallback; R-D k=2 (already running on OpenRouter).
   seeded refinement and whole-regen leaps).
 - Parity-fix ladder so far (vs classic, v3): frozen -0.177; Fix B
   -0.087 (halved); Fix A -0.167 (null); B+A pending.
+
+## 2026-06-13 22:10 KST — bake-off pair 1 (graph_testability): coverage yes, quality no
+
+- graph_testability vs classic: quality -0.186 (0/5/1) - NOT better
+  than the trio (-0.177). BUT archive health much better:
+  warmup-complete 67% (trio 40%), median occupancy 0.50 (trio 0.12,
+  which FAILS the 0.25 floor). So the graph/testability profile
+  ESCAPES the trio degeneracy (M5) - it maintains a populated, diverse
+  archive where the naive trio collapses - without improving PPA.
+- Early P2 read (partial - activity + simple_2d still pending): the
+  diversity contribution (criticism #5) may be salvageable as a
+  COVERAGE claim (graph_testability holds the archive open) rather
+  than a PPA-win claim. The trio itself fails the occupancy floor, so
+  it cannot support a diversity claim. Formal bake-off verdict
+  deferred to the full 3-profile mechanical table
+  (report_descriptor_bakeoff) once all pairs land.
