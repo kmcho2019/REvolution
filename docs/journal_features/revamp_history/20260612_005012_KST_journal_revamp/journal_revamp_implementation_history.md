@@ -1731,3 +1731,20 @@ fallback; R-D k=2 (already running on OpenRouter).
   directly targets the sub_64bit/mux anchoring.
 - Parity ladder: frozen -0.177; A -0.167; B -0.087 (best); B+A -0.128.
   Branch B (parity) not yet reached; Fix B + B' hybrid is the path.
+
+## 2026-06-14 00:00 KST — B' hybrid built and launched
+
+- feat(qd) 582c168d7f: --qd_seed_sample_fraction splits a thought's
+  k samples between seeded realization (refinement) and whole-regen
+  (leap); default 1.0 = pure Fix B. Per-sample prompt tracked so
+  snapshots stay M6-verifiable. Champion lane (Fix A) abandoned per
+  F13 (it hurt). 66 neighbor tests green.
+- B' screen launched directly (OpenRouter now free after matrix +
+  bake-off + B/A/B+A): frozen target + --qd_thought_code_seeded
+  --qd_seed_sample_fraction 0.5 vs classic on v3 (exp/fixbprime_hybrid,
+  classic arm 23:42). Hypothesis: 0.5 keeps 2/4 samples as leaps,
+  recovering the sub_64bit architectural leap that pure Fix B anchored
+  away, while keeping refinement on the rest -> push below Fix B's
+  -0.087 toward parity.
+- Parity ladder: frozen -0.177; A -0.167; B -0.087 (current best);
+  B+A -0.128; B' pending.
