@@ -73,6 +73,13 @@ claim. [H: 2026-06-12 23:35], doc 12 §regime-split.
 the Pareto-front cell design adds ~+0.05 over scalar elites within QD.
 [H: 2026-06-13 08:00]
 
+### F6 — Failure feedback repairs VALIDITY, not peak quality `MECHANISM-VERIFIED`
+Full R-B mechanism (payload live-verified) moved pass rates exactly as
+predicted — m2014_q3 3%→15%, circuit7 26%→62%, fsmonehot 21%→40% — yet
+DEMOTED on best-quality (−0.086). Conclusion: the quality ceiling is set
+by archive/selection on *valid* candidates → the P2 axis problem, not
+the feedback problem. [H: 2026-06-12 21:45]
+
 ### F7 — The QD deficit is LOCALIZED, not diffuse `MEASURED` (seed 1001)
 58% of the total best-quality loss vs classic concentrates in 3 of 13
 problems (circuit7, alu, adder_8bit). circuit7 (−0.320) and adder_8bit
@@ -85,13 +92,6 @@ method is catastrophic on a specific intrinsic-limitation handful and
 competitive-to-winning elsewhere, and the arm-variant problems are
 where F2/F3 operator/cell choices act. Showcase + failure-panel
 selection follows directly. Seed 1002 will confirm. [H: 2026-06-13 09:35]
-
-### F6 — Failure feedback repairs VALIDITY, not peak quality `MECHANISM-VERIFIED`
-Full R-B mechanism (payload live-verified) moved pass rates exactly as
-predicted — m2014_q3 3%→15%, circuit7 26%→62%, fsmonehot 21%→40% — yet
-DEMOTED on best-quality (−0.086). Conclusion: the quality ceiling is set
-by archive/selection on *valid* candidates → the P2 axis problem, not
-the feedback problem. [H: 2026-06-12 21:45]
 
 ---
 
