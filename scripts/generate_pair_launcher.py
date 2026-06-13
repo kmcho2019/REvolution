@@ -38,7 +38,7 @@ COMMON=(--benchmarks {benchmarks}
         --model_name {model} --api_backend {api_backend}{vllm_flags}
         --population_size {population} --num_generations {generations} --seed {seed}
         --max_tokens {max_tokens} --diff_max_tokens {max_tokens}
-        --total_worker_slots {slots} --max_active_problems {active} --max_workers_per_problem {per_problem})
+        --total_worker_slots {slots} --max_active_problems {active} --max_workers_per_problem {per_problem}{extra_common})
 
 echo "=== classic arm start: $(date -u +%H:%M:%S) ==="
 python scripts/run_backend.py --backend revolution "${{COMMON[@]}}" \\
@@ -77,6 +77,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--population", type=int, default=12)
     parser.add_argument("--generations", type=int, default=3)
     parser.add_argument("--variant-flags", required=True, help="Verbatim extra flags for the variant arm.")
+    parser.add_argument("--extra-common", default="", help="Flags appended to BOTH arms' COMMON block (e.g. --cvdp_jsonl PATH or --realbench_root PATH).")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
 
@@ -102,6 +103,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.api_backend == "vllm"
         else ""
     )
+    extra_common = (
+        "\n        " + args.extra_common.strip() if args.extra_common.strip() else ""
+    )
     script = TEMPLATE.format(
         tag=shlex.quote(args.tag),
         benchmarks=" ".join(shlex.quote(b) for b in benchmarks),
@@ -119,6 +123,7 @@ def main(argv: list[str] | None = None) -> int:
         variant_flags=args.variant_flags,
         purpose=args.purpose,
         variant_summary=args.variant_flags[:80],
+        extra_common=extra_common,
     )
     args.output.write_text(script, encoding="utf-8")
     args.output.chmod(0o755)

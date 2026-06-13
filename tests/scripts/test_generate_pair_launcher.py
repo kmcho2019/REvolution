@@ -80,3 +80,22 @@ def test_openrouter_caps_completion_budget(tmp_path):
         ]
     )
     assert "--max_tokens 128000" in out.read_text(encoding="utf-8")
+
+
+def test_extra_common_appended_to_both_arms(tmp_path):
+    config = tmp_path / "subset.yaml"
+    config.write_text(
+        yaml.safe_dump({"benchmarks": {"cvdp": {"problems": ["cvdp_x_0001"]}}}),
+        encoding="utf-8",
+    )
+    out = tmp_path / "launch.sh"
+    mod.main([
+        "--subset-config", str(config), "--tag", "t", "--purpose", "p",
+        "--variant-flags", "--qd_objectives ppa",
+        "--extra-common", "--cvdp_jsonl data/bench/cvdp/x.jsonl",
+        "--output", str(out),
+    ])
+    script = out.read_text(encoding="utf-8")
+    # appears once in the shared COMMON block (both arms inherit it)
+    assert script.count("--cvdp_jsonl data/bench/cvdp/x.jsonl") == 1
+    assert "COMMON=(" in script and "--cvdp_jsonl" in script.split("COMMON=(")[1].split(")")[0]
