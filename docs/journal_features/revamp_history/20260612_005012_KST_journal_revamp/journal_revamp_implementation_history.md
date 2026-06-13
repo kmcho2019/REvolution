@@ -1644,3 +1644,25 @@ fallback; R-D k=2 (already running on OpenRouter).
 - NET: viability needle MOVED for the first time. Parity (Branch B)
   now looks reachable with B+A and/or B' tuning; the -0.45 anchoring
   outlier is the specific thing to fix next.
+
+## 2026-06-13 21:40 KST — Fix A null alone; mechanisms coupled (F11); B+A queued
+
+- Fix A (champion lane 0.5) vs classic: -0.167, 0W/4/2 - essentially
+  the frozen-target -0.177, NO help. It even HURT popcount255 (Fix B
+  tied it at 0.000; Fix A lost -0.285).
+- Mechanistic reading (clean): champion lane is useless WITHOUT
+  code-seeding - picking the champion as parent is pointless if the
+  realization then regenerates its code from scratch (indirection
+  penalty intact). So Fix A and Fix B are NOT independent; A only
+  pays off stacked with B. This also explains the popcount harm:
+  concentrating on a champion you can't refine wastes budget diverse
+  sampling would have spent finding the tie.
+- DECISION: run the combined B+A (champion lane refining the
+  champion's actual code) as the key parity experiment. Queued after
+  the bake-off (exp/queue_fixba_after_bakeoff.sh) to not disrupt the
+  running P2 bake-off; B+A lands ~2h out. If B+A reaches parity ->
+  hard-subset pair -> Branch B. If still short, the named obstacle is
+  the sub_64bit anchoring (F10) -> hybrid B' (split k samples between
+  seeded refinement and whole-regen leaps).
+- Parity-fix ladder so far (vs classic, v3): frozen -0.177; Fix B
+  -0.087 (halved); Fix A -0.167 (null); B+A pending.

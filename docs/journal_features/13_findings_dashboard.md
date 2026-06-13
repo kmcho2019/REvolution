@@ -115,6 +115,15 @@ Branch C** — making Fix B (closing the QD-vs-classic gap to reach
 Branch B/A, where the floor leg is moot) load-bearing, not optional.
 `exp/ablation_matrix/stats/floorleg_classic_unified_pooled` [H: 2026-06-13 13:40]
 
+### F11 — Fix A (champion lane) alone fails; mechanisms are COUPLED `MEASURED`
+Champion lane alone: −0.167 (0/4/2) ≈ frozen target −0.177 — NO help,
+and it HURT popcount255 (Fix B tied it, A lost −0.285). Reason: biasing
+parents to the champion is pointless if realization then regenerates its
+code from scratch (the indirection penalty still applies). So Fix A and
+Fix B are NOT independent — A only pays off WITH B (pick the champion AND
+refine its actual code). Combined B+A is the key parity config (queued
+after bake-off). `exp/fast_iter/fixa_champion_lane/` [H: 2026-06-13 21:40]
+
 ### F10 — Fix B halves the deficit but anchors on leaps `MEASURED`
 First intervention to MOVE the QD-vs-classic gap: code-seeded
 realization scores −0.087 (0W/3L/3T, CI [−0.237,−0.002]) vs the
@@ -220,7 +229,7 @@ Three mechanisms, each with a verified exhibit (full paths in doc 12):
 **Pending verdicts (self-driving):**
 - Ablation seeds 1002-1003 + qd_target/scalar 1002-3 → pooled operator decision (F2/F3)
 - Bake-off triple → mechanical profile freeze (report_descriptor_bakeoff.py)
-- **Parity screens (load-bearing per F9), REPRIORITIZED ahead of the bake-off** (exp/queue_priority_after_matrix.sh): Fix B (code-seeded realization) → Fix A (champion lane, fraction 0.5) → bake-off triple. Combined B+A held in reserve. Gate each vs classic on ±0.02 + the F8 gen-0-climb signature; PROMOTE → hard-subset pair → re-open Branch A/B (and moot the F9 floor-leg risk).
+- Parity screens DONE: Fix B −0.087 (deficit halved, F10), Fix A −0.167 (no help alone, F11 — mechanisms coupled). **Combined B+A QUEUED after bake-off** (exp/queue_fixba_after_bakeoff.sh) = the key remaining parity experiment. If B+A reaches parity → hard-subset pair → Branch B; else consider hybrid B′ (preserve leap samples, fix the sub_64bit anchoring).
 
 > **Operational reminder (run each wake):** `bash exp/run_licensing_pairings.sh`
 > — idempotent; emits the within-QD `qd_six_operators` vs `qd_target`
