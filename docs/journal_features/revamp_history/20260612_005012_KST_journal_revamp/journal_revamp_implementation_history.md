@@ -1315,3 +1315,25 @@ fallback; R-D k=2 (already running on OpenRouter).
   (and equivalents for seeds 1002-1003), plus budget parity.
 - qd_scalar_elites seed-1001 started 00:24:22; six-op arm took 115
   min (the matrix's most expensive, as expected).
+
+## 2026-06-13 02:15 KST — narrative retention update + EDA re-review
+
+- RealBench disclosure rewritten per the predeclared pre-freeze
+  update path: dual-harness capability-model description (strict
+  iverilog primary; verilator 5.030 dispatch per manifest entry,
+  matching upstream's Verilator-5 target), v2 retention 55/60
+  (aes 6/6, sdc 12/14, e203 37/40; 38+17 split), 5 exclusions with
+  recorded reasons, same-recorded-harness-both-arms rule. v1 text in
+  git history.
+- Focused EDA-persona re-review of the section, findings recorded:
+  ACCEPT with one REQUIRED addition (applied): verilator two-state
+  semantics can under-detect X-propagation mismatches vs four-state
+  iverilog, and the 17 rescued tasks lack an iverilog cross-check by
+  construction - pass claims there are scoped to two-state semantics
+  and the retention table marks harness per task. Reviewed and
+  retained: per-task harness fixed across arms (no within-pair
+  asymmetry), difficulty-proxy comparison, subset labeling rule.
+- Remaining before v2 promotion to the runtime root: re-lock the
+  12-task debug subset and the long-model probe from the v2 pool
+  (pool changed 38->55, so the seeded selections change - do this
+  deliberately next wake, diffing old vs new slices).
