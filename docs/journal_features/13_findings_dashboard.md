@@ -144,8 +144,8 @@ deficit is tunable, not fundamental. [H: 2026-06-13 12:55]
 
 | Arm | Isolates | seed 1001 | seed 1002 | seed 1003 |
 | --- | --- | --- | --- | --- |
-| classic_unified | unification on classic (Branch C floor) | −0.090 (1/9/3) | −0.102 (1/10/2) | running |
-| qd_six_operators | six ops within QD | −0.118 (2/10/1) | −0.130 (1/11/1) | running |
+| classic_unified | unification on classic (Branch C floor) | −0.090 (1/9/3) | −0.102 (1/10/2) | −0.084 (2/10/1) |
+| qd_six_operators | six ops within QD | −0.118 (2/10/1) | −0.130 (1/11/1) | −0.078 (1/10/2) |
 | qd_scalar_elites | scalar vs pareto cells | −0.128 (1/10/2) | −0.075 (1/10/2) | running |
 | qd_target | the full package | −0.078 (3/8/2) | −0.100 (1/10/2) | running |
 
