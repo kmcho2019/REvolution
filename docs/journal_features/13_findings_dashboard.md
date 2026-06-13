@@ -43,14 +43,16 @@ Decision: predeclared **Branch C** (narrowed claims + content floor).
 The deficit is *pure PPA quality* — functionality tied 9/9 on the
 genuine-hard intersection. [H: 2026-06-12 21:45]
 
-### F2 — Operator unification is LICENSED within QD `PRELIMINARY` (seed 1001)
+### F2 — Operator unification is LICENSED within QD `REPLICATED` (2 seeds; 1003 pending)
 Within-QD pairing (`qd_target` vs `qd_six_operators`, both on the QD
-substrate — the narrative's actual operator contrast): unified operator
-**+0.040, CI [+0.0007, +0.090] entirely above 0** → "better" by the
-predeclared rule, not just parity. Direction empirically verified.
-Pooled seeds 1001-1003 decide the headline; 1002-3 pending.
-`exp/ablation_matrix/stats/licensing_sixop_vs_target_seed1001`
-[H: 2026-06-13 08:00]
+substrate — the narrative's actual operator contrast). **Pooled 2-seed
+(the formal rule): +0.024, CI [+0.0035, +0.0465] entirely above 0 →
+"better".** Per-seed: 1001 +0.040 (CI>0, better), 1002 +0.006 (CI
+[−0.030,+0.043], parity — `gshare` excluded as missing_baseline, which
+conservatively understates the unified arm). Direction positive both
+seeds, no reversal. Seed 1003 → formal 3-seed pool.
+`exp/ablation_matrix/stats/licensing_{pooled,sixop_vs_target_seed*}`
+[H: 2026-06-13 11:15]
 
 ### F3 — Operator unification is SUBSTRATE-DEPENDENT `MEASURED`
 The same unified operator is **worse** on the classic substrate
@@ -68,10 +70,13 @@ vs 3%); (b) failure-regime near-parity vs −0.13..−0.18 elsewhere;
 −0.038 (1W/2L/3T). Explains the conference result and scopes the journal
 claim. [H: 2026-06-12 23:35], doc 12 §regime-split.
 
-### F5 — Pareto cells contribute positively within the package `PRELIMINARY` (seed 1001)
-`qd_target` (−0.078) beats `qd_scalar_elites` (−0.128) vs classic →
-the Pareto-front cell design adds ~+0.05 over scalar elites within QD.
-[H: 2026-06-13 08:00]
+### F5 — Pareto vs scalar cells: SEED-DEPENDENT, not robust `INCONCLUSIVE`
+Seed 1001 favored Pareto cells (`qd_target` −0.078 vs `qd_scalar_elites`
+−0.128, +0.05) but seed 1002 INVERTS it (target −0.100 vs scalar
+−0.075, −0.025). The cell-mode contribution is within seed noise at
+this budget — no robust positive attribution. Honest downgrade from the
+earlier seed-1001 reading; seed 1003 may break the tie but the effect
+is small either way. [H: 2026-06-13 08:00, 11:15]
 
 ### F6 — Failure feedback repairs VALIDITY, not peak quality `MECHANISM-VERIFIED`
 Full R-B mechanism (payload live-verified) moved pass rates exactly as
@@ -80,7 +85,7 @@ DEMOTED on best-quality (−0.086). Conclusion: the quality ceiling is set
 by archive/selection on *valid* candidates → the P2 axis problem, not
 the feedback problem. [H: 2026-06-12 21:45]
 
-### F7 — The QD deficit is LOCALIZED, not diffuse `MEASURED` (seed 1001)
+### F7 — The QD deficit is LOCALIZED, not diffuse `CONFIRMED` (2 seeds)
 58% of the total best-quality loss vs classic concentrates in 3 of 13
 problems (circuit7, alu, adder_8bit). circuit7 (−0.320) and adder_8bit
 (−0.189) show IDENTICAL deltas across all four arms → no QD
@@ -91,7 +96,8 @@ six-op/target −0.199). Reading: "uniformly worse" is wrong — the
 method is catastrophic on a specific intrinsic-limitation handful and
 competitive-to-winning elsewhere, and the arm-variant problems are
 where F2/F3 operator/cell choices act. Showcase + failure-panel
-selection follows directly. Seed 1002 will confirm. [H: 2026-06-13 09:35]
+selection follows directly. Seed-1002 confirms: worst-3 = 62%
+of loss (vs 58%), circuit7 + adder_8bit persistent. [H: 2026-06-13 09:35, 11:15]
 
 ---
 
@@ -115,10 +121,10 @@ selection follows directly. Seed 1002 will confirm. [H: 2026-06-13 09:35]
 
 | Arm | Isolates | seed 1001 | seed 1002 | seed 1003 |
 | --- | --- | --- | --- | --- |
-| classic_unified | unification on classic (Branch C floor) | −0.090 (1/9/3) | −0.102 (1/10/2) | pending |
-| qd_six_operators | six ops within QD | −0.118 (2/10/1) | −0.130 (1/11/1) | pending |
-| qd_scalar_elites | scalar vs pareto cells | −0.128 (1/10/2) | pending | pending |
-| qd_target | the full package | −0.078 (3/8/2) | pending | pending |
+| classic_unified | unification on classic (Branch C floor) | −0.090 (1/9/3) | −0.102 (1/10/2) | running |
+| qd_six_operators | six ops within QD | −0.118 (2/10/1) | −0.130 (1/11/1) | running |
+| qd_scalar_elites | scalar vs pareto cells | −0.128 (1/10/2) | −0.075 (1/10/2) | running |
+| qd_target | the full package | −0.078 (3/8/2) | −0.100 (1/10/2) | running |
 
 CIs (seed 1001): classic_unified [−0.156,−0.028], six_op [−0.179,−0.059],
 scalar [−0.183,−0.075], target [−0.158,+0.008]. All exclude 0 except
@@ -128,7 +134,7 @@ qd_target (touches it) → every arm loses to classic, target least so.
 
 | Pairing | seed 1001 | seeds 1002-3 |
 | --- | --- | --- |
-| qd_target − qd_six_operators (both QD) | **+0.040 (5/3/5), CI [+0.001,+0.090]** | pending |
+| qd_target − qd_six_operators (both QD) | **+0.040 (5/3/5), CI [+0.001,+0.090]** | 1002 +0.006 (4/4/4); **pooled +0.024, CI [+0.004,+0.047]** |
 
 Positive = unified better. Seed-1001 CI above 0 → licensed (F2).
 **The formal decision is the POOLED cluster-bootstrap across all seeds**

@@ -1490,3 +1490,26 @@ fallback; R-D k=2 (already running on OpenRouter).
   elsewhere"; failure panel = circuit7/adder (arm-invariant),
   operator-effect showcase = multi_pipe_8bit/m2014_q6b (arm-variant).
   Recorded F7 in doc 13. Seed 1002 will confirm the localization.
+
+## 2026-06-13 11:15 KST — seed-1002 lands: F2 replicates, F5 inverts, F7 holds
+
+- F2 (operator licensing) REPLICATES. Pooled 2-seed (the formal rule):
+  qd_target - qd_six_operators = +0.024, CI [+0.0035, +0.0465] above 0
+  -> "better". Per-seed 1002 +0.006 (parity; gshare excluded as
+  missing_baseline -> conservatively understates unified). No sign
+  reversal. M6 caught the 12/13 paired count - the unpaired unit is
+  the predeclared conservative missing-baseline exclusion, not a bug.
+- F5 (pareto vs scalar cells) DOWNGRADED to INCONCLUSIVE. seed 1002
+  inverts seed 1001: target -0.100 vs scalar -0.075 (scalar better
+  by 0.025), opposite of seed-1001's +0.05 for pareto. Cell-mode
+  effect is within seed noise at this budget - honest retraction of
+  the earlier positive reading.
+- F7 (localization) CONFIRMED across 2 seeds: seed-1002 worst-3 carry
+  62% of loss (seed-1001 58%); circuit7 and adder_8bit persistent in
+  the worst-3.
+- F3 (substrate dependence) reinforced: unified BETTER within QD
+  (pooled +0.024) vs WORSE on classic (-0.102 seed1002 confirms
+  -0.090 seed1001).
+- All seed-1002 vs-classic: classic_unified -0.102, six_op -0.130,
+  scalar -0.075, target -0.100. Matrix moved to seed 1003 (classic
+  arm started 10:58).
