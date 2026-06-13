@@ -1378,3 +1378,13 @@ fallback; R-D k=2 (already running on OpenRouter).
   durations recorded. The dual-harness dispatch machinery remains in
   the codebase (harmless, tested) but no manifest entry exercises
   the iverilog path for RealBench anymore.
+
+## 2026-06-13 03:20 KST — post-flip verification and cleanup
+
+- Both locked RealBench slices resolve fully against the promoted
+  verilator-only root (debug-12 and fresh-26: every task
+  harness-validated). Superseded v2_sweep root removed (12 MB; its
+  sha and findings live in the history); v1_iverilog root retained
+  as the archived pre-flip state.
+- Matrix: qd_scalar_elites seed-1001 at gen 4-5 stragglers, zero
+  retries; bake-off watcher confirmed alive.
