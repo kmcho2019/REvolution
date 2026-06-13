@@ -1682,3 +1682,28 @@ fallback; R-D k=2 (already running on OpenRouter).
   it cannot support a diversity claim. Formal bake-off verdict
   deferred to the full 3-profile mechanical table
   (report_descriptor_bakeoff) once all pairs land.
+
+## 2026-06-13 22:40 KST — bake-off verdict (F12) + occupancy confound (M9)
+
+- Full 3-profile bake-off done; report_descriptor_bakeoff verdict
+  (exp/fast_iter/bakeoff_verdict). Quality-first ranking: activity
+  -0.103 (1/4/1, the only profile with a win) > simple_2d -0.131 >
+  trio -0.177 > graph_testability -0.186.
+- F12 headline: NO profile improves PPA over classic (all -0.10..-0.19)
+  - the descriptor choice is NOT the PPA lever, consistent with
+  F6/F10 (gap is indirection + archive/selection). Diversity health
+  by collapse count: simple_2d 2 < graph_testability 8 < activity 12
+  < trio 14 - the cheap 2-axis control is the MOST collapse-resistant;
+  descriptor sophistication bought no diversity health.
+- M9 (metric flaw): the occupancy tie-break (occupied/total) is gamed
+  by collapse - the trio reads occ=1.00 because it collapses to one
+  fully-occupied cell. The collapse count is the truer signal. The
+  freeze tie-break should use collapse, not raw occupancy.
+- DECISION FLAGGED (not auto-made): profile freeze is hard-to-reverse.
+  By the frozen quality-first rule activity wins, but (a) it has high
+  collapse (12), (b) no profile improves PPA, (c) the diversity claim
+  is best supported by simple_2d/graph_testability (low collapse).
+  Recommend: freeze decision should weigh collapse-health for the
+  DIVERSITY claim separately from the (null) PPA ranking, and ideally
+  be re-checked on RealBench-large designs (where the trio's small-
+  design collapse may not bind). Surfacing for the team.

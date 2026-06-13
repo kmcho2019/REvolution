@@ -115,6 +115,18 @@ Branch C** — making Fix B (closing the QD-vs-classic gap to reach
 Branch B/A, where the floor leg is moot) load-bearing, not optional.
 `exp/ablation_matrix/stats/floorleg_classic_unified_pooled` [H: 2026-06-13 13:40]
 
+### F12 — Bake-off: no profile improves PPA; cheap control is diversity-healthiest `MEASURED`
+Mechanical verdict (v3, quality-first rule): activity −0.103 (1/4/1) >
+simple_2d −0.131 > trio −0.177 > graph_testability −0.186. **No profile
+beats classic on PPA** — the descriptor choice is not the PPA lever
+(consistent F6/F10: gap is indirection + selection, not axes). Diversity
+health by COLLAPSE count: simple_2d (2) > graph_testability (8) >
+activity (12) > trio (14) — the deliberately-cheap 2-axis control is the
+most collapse-resistant; sophistication bought no diversity health.
+Freeze is a DECISION (flagged, not auto-made): activity wins quality-
+first but has high collapse; simple_2d/graph win diversity-health.
+`exp/fast_iter/bakeoff_verdict` [H: 2026-06-13 22:40]
+
 ### F11 — Fix A (champion lane) alone fails; mechanisms are COUPLED `MEASURED`
 Champion lane alone: −0.167 (0/4/2) ≈ frozen target −0.177 — NO help,
 and it HURT popcount255 (Fix B tied it, A lost −0.285). Reason: biasing
@@ -219,6 +231,7 @@ Three mechanisms, each with a verified exhibit (full paths in doc 12):
 | M4 | logic_depth externally validated: 31/32 production candidates agree exactly with yosys ltp. | `CONFIRMED` [H: 23:55] |
 | M5 | Descriptor trio survives redundancy bound (all axes \|r\|<0.8) but degenerates on small/mid designs → warmup-completion is the bake-off headline criterion. | `CONFIRMED` [H: 18:20] |
 | M6 | Verification-before-verdict discipline caught 6 instrument/mechanism defects before they misled (empty pools, unreachable caps, dropped problems, template false-positive, hardcoded-empty feedback, licensing dir-vs-completion). | process note |
+| M9 | Bake-off occupancy tie-break is CONFOUNDED by collapse: a fully-collapsed 1-cell archive scores occ=1.00 (trio), gaming the metric. The per-axis COLLAPSE count is the truer diversity signal; the freeze tie-break should use it, not raw occupied/total. | `MEASURED` [H: 2026-06-13 22:40] |
 | M8 | **Storyline-decider is FEASIBLE.** Large RealBench e203 modules synthesize cleanly in yosys with support files (alu_bjp 67, branchslv 587, alu_dpath 2143 cells, 0 errors) — `supports_synthesis: false` is a FALSE NEGATIVE from the `not support_files` heuristic, only 5/55 marked synthesizable. Unlock = relax heuristic + thread aux into SynthesisEvaluator (single-file today) + re-validate full yosys+OpenROAD+descriptor flow. Converts the storyline-decider from possibly-infeasible to feasible-pending-integration. | `MEASURED` [H: 2026-06-13 12:35] |
 | M7 | Equivalence spot-check, COMPLETE picture: SOUND on fully-specified problems (adder_8bit candidate formally PROVEN vs ref — QD's solution genuinely correct, not testbench-lucky) but over-rejects on don't-care/unreachable inputs (q6b FSM testbench-pass yet NOT_PROVEN). Tool hardened on real data: separate gold/gate top names + submodule flatten. P4 spot-check scope = fully-specified problems, or care-set constraints. | `MEASURED` (2 real candidates) [H: 2026-06-13 11:55, 12:15] |
 
