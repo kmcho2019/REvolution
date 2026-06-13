@@ -1297,3 +1297,21 @@ fallback; R-D k=2 (already running on OpenRouter).
   data/configs/realbench_final_26_subset.yaml locked from v2
   (seed 1337, debug excluded, disjoint, all families).
 - Matrix: qd_six_operators seed-1001 still running (~2h arm).
+
+## 2026-06-13 01:50 KST — qd_six_operators vs classic measured
+
+- qd_six_operators vs classic, seed 1001 (13/13 paired): mean
+  -0.118, 2W/10L/1T; parity GOOD on the cost axes that matter
+  (calls 1.06, completion 0.955). Per-benchmark: RTLLM -0.129,
+  VerilogEval -0.105 - thought-mode-with-six-prompts loses on both
+  regimes, unlike the unified operator's regime split.
+- NOTE for the operator headline: the narrative's licensing contrast
+  is WITHIN QD (six-operator suite vs unified operator, both on the
+  QD substrate) = qd_six_operators vs qd_target pairing per seed,
+  NOT vs classic. The matrix launcher only emits vs-classic stats;
+  when qd_target seed-1001 lands, run the extra pairing manually:
+  report_journal_statistics --pair
+  "1001=ROOT/qd_six_operators/seed_1001/revolution=ROOT/qd_target/seed_1001/revolution"
+  (and equivalents for seeds 1002-1003), plus budget parity.
+- qd_scalar_elites seed-1001 started 00:24:22; six-op arm took 115
+  min (the matrix's most expensive, as expected).
