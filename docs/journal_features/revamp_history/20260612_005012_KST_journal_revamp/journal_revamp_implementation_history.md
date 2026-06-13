@@ -1450,3 +1450,21 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Matrix: qd_scalar_elites seed-1002 finishing (gshare straggler,
   zero retries); qd_target seed-1002 next, then the seed-1002
   licensing replication of F2.
+
+## 2026-06-13 09:15 KST — licensing-helper completion bug caught + fixed
+
+- The licensing helper (added last wake) gated on DIRECTORY existence,
+  which a just-started arm satisfies. It fired the seed-1002 pairing
+  against a 0/13-complete qd_target, producing a garbage paired_count=0
+  delta -0.327 - which, uncaught, would have read as F2 FAILING to
+  replicate with an inverted sign. Caught immediately by checking
+  paired_count, not the 'done' message (M6 discipline).
+- Fix: completion now requires each root to have the full hard-subset
+  count (13) of per-problem '{Prob}_summary.json' files. Subtlety
+  recorded: the per-problem completion summary is filename
+  Prob*_summary.json; a PATH-glob also matches QD artifacts like
+  global_pareto_summary.json (10 false positives) - the helper uses
+  -name (filename) match. Premature seed-1002 output discarded.
+- Seed-1001 licensing (F2) intact and unaffected: paired=13,
+  +0.040, 5/3/5, CI [+0.0007, +0.090]. qd_target seed-1002 in
+  progress (0/13); F2 replication still pending its completion.
