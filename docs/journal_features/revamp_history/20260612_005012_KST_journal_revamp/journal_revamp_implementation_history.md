@@ -1513,3 +1513,21 @@ fallback; R-D k=2 (already running on OpenRouter).
 - All seed-1002 vs-classic: classic_unified -0.102, six_op -0.130,
   scalar -0.075, target -0.100. Matrix moved to seed 1003 (classic
   arm started 10:58).
+
+## 2026-06-13 11:55 KST — M7: equivalence over-rejects on don't-cares
+
+- Ran check_equivalence on a real archive elite (m2014_q6b, QD's
+  +0.088 win problem) vs the benchmark reference. Two findings:
+  (1) tool bug - benchmark convention is candidate=TopModule vs
+  reference=RefModule, so a single --top gave a false NOT_PROVEN;
+  fixed with --gold-top/--gate-top (commit 3a0cd12779, the synthetic
+  smoke test used the same name both sides and hid it).
+  (2) Methodology (M7): even with correct names the testbench-passing
+  elite is NOT_PROVEN - m2014_q6b is a 6-state FSM in a 3-bit
+  encoding (2 unreachable codes), and yosys combinational equiv
+  over-rejects on those don't-care/unreachable inputs. So formal
+  equivalence is the WRONG oracle for don't-care problems; the
+  don't-care-aware testbench is correct. P4 equivalence spot-check
+  must be scoped to fully-specified problems or use care-set
+  constraints - recorded in the dashboard open-decisions. Caught now
+  rather than at the P4 freeze.

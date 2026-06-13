@@ -173,7 +173,8 @@ Three mechanisms, each with a verified exhibit (full paths in doc 12):
 | M3 | RealBench → verilator-only: identical 55/60 coverage, timing median 2.2s (10× fear wrong). Single upstream-matching harness. | `CONFIRMED` [H: 03:00] |
 | M4 | logic_depth externally validated: 31/32 production candidates agree exactly with yosys ltp. | `CONFIRMED` [H: 23:55] |
 | M5 | Descriptor trio survives redundancy bound (all axes \|r\|<0.8) but degenerates on small/mid designs → warmup-completion is the bake-off headline criterion. | `CONFIRMED` [H: 18:20] |
-| M6 | Verification-before-verdict discipline caught 5 instrument/mechanism defects before they misled (empty pools, unreachable caps, dropped problems, template false-positive, hardcoded-empty feedback). | process note |
+| M6 | Verification-before-verdict discipline caught 6 instrument/mechanism defects before they misled (empty pools, unreachable caps, dropped problems, template false-positive, hardcoded-empty feedback, licensing dir-vs-completion). | process note |
+| M7 | Formal equiv over-rejects on don't-care / unreachable-state inputs: testbench-passing candidates read NOT_PROVEN (m2014_q6b FSM, 2 unreachable codes). The P4 equivalence spot-check is meaningful only for fully-specified problems, or must constrain to the care/reachable set; the don't-care-aware testbench is the appropriate oracle otherwise. | `MEASURED` [H: 2026-06-13 11:55] |
 
 ---
 
@@ -193,6 +194,7 @@ Three mechanisms, each with a verified exhibit (full paths in doc 12):
 - MDE ratchet: raise counts or drop the +0.03 best-quality gate (under-powered at 13×5; MDE 0.12). `exp/fast_iter/mde_hard_subset`
 - Budget-matching rule for any positive QD claim (M2): token-equalized stopping vs disclosed asymmetry.
 - Profile freeze: which of the 4 pre-registered profiles (or hybrid keeping logic_depth, M4).
+- Equivalence spot-check scope (M7): restrict to fully-specified problems or add care-set/reachable-state constraints; do NOT report bare NOT_PROVEN on don't-care problems as a defect.
 
 **Remaining execution:** CVDP/RealBench debug pairs · seed-42 debug gate · 5-seed finals (1001-1005) · manuscript.
 
