@@ -27,7 +27,7 @@ when new runs land; keep finding IDs stable.
 | --- | --- | --- |
 | P1 | QD repair | **CLOSED → Branch C** (narrowed claims). Screens all DEMOTED; ablation matrix running for component attribution. |
 | P2 | BD / descriptor thesis | **In progress.** 4 profiles pre-registered (doc 11); bake-off queued behind matrix; mechanical verdict table ready. |
-| P3 | Benchmark vetting | **Mostly done.** RealBench flipped to verilator-only (55/60). CVDP/RealBench end-to-end debug pairs pending (next OpenRouter slot). |
+| P3 | Benchmark vetting | **Mostly done.** RealBench verilator-only (55/60). **RealBench QD-vs-classic is the STORYLINE-DECIDER (doc 14): the one experiment that could convert Branch C→A/B — QD diversity may only pay off on larger designs.** Debug pairs pending next OpenRouter slot. |
 | P4 | Gates / freeze | **Tooling complete.** All slices locked. Open: MDE ratchet + budget-rule *decisions*, seed-42 debug gate, 5-seed finals. |
 | P5 | Manuscript | **Kicked off.** Evidence map (doc 12) binds elements to artifacts; prose pending finals. |
 
@@ -205,6 +205,7 @@ Three mechanisms, each with a verified exhibit (full paths in doc 12):
 | Want… | Go to |
 | --- | --- |
 | **This** — current findings, organized by topic | doc 13 (here) |
+| **Strategic posture** — contribution vs reviewer muster, the reframe | doc 14 |
 | Chronological audit trail with full evidence | `revamp_history/.../journal_revamp_implementation_history.md` |
 | Manuscript element → artifact path | doc 12 (evidence map) |
 | Phase-grouped open/done checklist | `revamp_history/.../journal_revamp_implementation_todo.md` |
