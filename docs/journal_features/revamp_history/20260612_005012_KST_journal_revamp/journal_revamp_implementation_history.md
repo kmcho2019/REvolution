@@ -1561,3 +1561,24 @@ fallback; R-D k=2 (already running on OpenRouter).
   F2 result. If Fix B fails -> floor leg (i) is unmet and venue
   reassessment is the predeclared path. The bake-off (descriptor
   value) and RealBench storyline (M8) carry the same load.
+
+## 2026-06-13 14:00 KST — Fix A built; parity screens reprioritized
+
+- feat(qd) 766bee94dc: Fix A champion lane
+  (--qd_champion_lane_fraction, default 0.0) draws a fraction of QD
+  parents from the global-best member instead of pure diverse-cell
+  sampling - the second confirmed why-classic-wins mechanism (F8
+  parent-selection dilution). Both load-bearing fixes (B code-seeded,
+  A champion lane) now built, opt-in, one-factor screenable; suite
+  green.
+- REPRIORITIZED the post-matrix queue (F9 made the parity fixes
+  project-critical, so they should not wait behind the P2 bake-off):
+  killed the two old watchers, created exp/queue_priority_after_matrix.sh
+  = matrix-done -> Fix B (code_seeded) -> Fix A (champion 0.5) ->
+  bake-off triple. Combined B+A launcher generated and held in
+  reserve (run only if B and A are individually partial - keeps the
+  attribution one-factor). Screen each vs classic on the +/-0.02
+  bands AND the F8 signature (does the champion now climb past
+  gen-0).
+- Matrix: qd_six_operators seed-1003 running; ~2 arms to go before
+  the priority screens fire.

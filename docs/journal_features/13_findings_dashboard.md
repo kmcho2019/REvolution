@@ -205,7 +205,7 @@ Three mechanisms, each with a verified exhibit (full paths in doc 12):
 **Pending verdicts (self-driving):**
 - Ablation seeds 1002-1003 + qd_target/scalar 1002-3 → pooled operator decision (F2/F3)
 - Bake-off triple → mechanical profile freeze (report_descriptor_bakeoff.py)
-- **Fix B screen** (thought-guided incremental realization, doc 15 — the parity attempt) QUEUED behind bake-off (exp/queue_fixb_after_bakeoff.sh); gate vs classic on the ±0.02 bands. If PROMOTE → hard-subset pair → re-open Branch A/B.
+- **Parity screens (load-bearing per F9), REPRIORITIZED ahead of the bake-off** (exp/queue_priority_after_matrix.sh): Fix B (code-seeded realization) → Fix A (champion lane, fraction 0.5) → bake-off triple. Combined B+A held in reserve. Gate each vs classic on ±0.02 + the F8 gen-0-climb signature; PROMOTE → hard-subset pair → re-open Branch A/B (and moot the F9 floor-leg risk).
 
 > **Operational reminder (run each wake):** `bash exp/run_licensing_pairings.sh`
 > — idempotent; emits the within-QD `qd_six_operators` vs `qd_target`
