@@ -131,6 +131,10 @@ qd_target (touches it) → every arm loses to classic, target least so.
 | qd_target − qd_six_operators (both QD) | **+0.040 (5/3/5), CI [+0.001,+0.090]** | pending |
 
 Positive = unified better. Seed-1001 CI above 0 → licensed (F2).
+**The formal decision is the POOLED cluster-bootstrap across all seeds**
+(narrative rule: pooled CI above −0.03 = parity, CI low > 0 = better),
+emitted to `stats/licensing_pooled` by the helper once ≥2 seeds complete
+— not the per-seed CIs above, which only track replication.
 
 ---
 
