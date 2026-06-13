@@ -1435,3 +1435,18 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Matrix: qd_scalar_elites seed-1002 near complete (zero retries);
   qd_target seed-1002 not yet started, so the seed-1002 licensing
   replication (F2) is ~2 arms out.
+
+## 2026-06-13 08:40 KST — debug-pair readiness probe (zero LLM)
+
+- Confirmed both end-to-end debug slices build through their adapters
+  without any LLM call: CVDP-10 (3/3 sampled contexts build from the
+  locked dataset) and RealBench-12 (4/4 sampled specs build). Key
+  check: every sampled RealBench debug task resolves
+  functional_harness_kind=verilator_testbench, so the carried-forward
+  debug-12 runs under the single clean harness post-flip - the
+  iverilog path is not exercised. Task #14 is de-risked at task-load;
+  only the runtime question (does a run produce a passing candidate)
+  remains and needs an OpenRouter slot after the matrix+bake-off.
+- Matrix: qd_scalar_elites seed-1002 finishing (gshare straggler,
+  zero retries); qd_target seed-1002 next, then the seed-1002
+  licensing replication of F2.
