@@ -462,6 +462,7 @@ def _build_backend(
             qd_rebinning_base_p_threshold=args.qd_rebinning_base_p_threshold,
             representation_kind=args.representation_kind,
             code_samples_per_thought=args.code_samples_per_thought,
+            qd_thought_code_seeded=args.qd_thought_code_seeded,
             representative_sample=args.representative_sample,
             repair_kind=args.repair_kind,
             repair_max_attempts_per_sample=args.repair_max_attempts_per_sample,
@@ -1029,6 +1030,12 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         choices=["code_individual", "thought_only"],
     )
     parser.add_argument("--code_samples_per_thought", type=int, default=4)
+    parser.add_argument(
+        "--qd_thought_code_seeded",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Seed thought realization with the best parent code (doc 15 Fix B).",
+    )
     parser.add_argument(
         "--representative_sample",
         type=str,

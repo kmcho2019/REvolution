@@ -490,3 +490,38 @@ def test_all_fail_parent_carries_sample_feedback(tmp_path, monkeypatch):
 
     assert parent.feedback == "K-map row bits swapped vs spec"
     assert parent.id == "g000_thought_0001"
+
+
+def test_best_parent_code_picks_highest_quality_successful(tmp_path, monkeypatch):
+    engine = _engine(tmp_path, monkeypatch)
+    lo = _success_parent("plan-lo", candidate_id="p_lo", area=90.0)
+    lo.code = "module lo; endmodule"
+    lo.quality_score = 0.2
+    hi = _success_parent("plan-hi", candidate_id="p_hi", area=80.0)
+    hi.code = "module hi; endmodule"
+    hi.quality_score = 0.9
+    failed = Heuristic("bad", "module bad; endmodule", "", generation=0, status="failed_syntax")
+
+    assert engine._best_parent_code([lo, hi, failed]) == "module hi; endmodule"
+    assert engine._best_parent_code([failed]) == ""  # no successful coded parent
+
+
+def test_seeded_realization_prompt_carries_parent_code(tmp_path, monkeypatch):
+    from revolution.qd.thought_only import ThoughtIndividual
+
+    engine = _engine(tmp_path, monkeypatch, qd_thought_code_seeded=True)
+    spec = {
+        "format": "thought_spec_v1", "summary": "s", "interface_contract": "i",
+        "timing_and_protocol": "t", "state_and_datapath_plan": "d",
+        "edge_cases": "e", "ppa_intent": "p", "implementation_constraints": "c",
+    }
+    thought = ThoughtIndividual(
+        thought_id="g001_thought_0001", generation=1, thought_spec=spec,
+        raw_response="{}", parent_ids=["p_hi"], parent_count=1,
+        parent_source="archive", qd_operator_kind="single_thought_operator",
+        strategy="single_thought_operator", prompt_text="p",
+        parent_code="module hi; assign y = a & b; endmodule",
+    )
+    prompt = engine._create_prompt_thought_only_code_seeded(thought)
+    assert "assign y = a & b" in prompt          # parent code seeded
+    assert "code_from_thought_seeded" in prompt

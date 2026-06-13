@@ -46,6 +46,10 @@ class ThoughtIndividual:
     qd_operator_kind: str
     strategy: str
     prompt_text: str
+    parent_code: str = ""
+    """Best successful parent's RTL, stashed for code-seeded realization
+    (thought-guided incremental realization, doc 15 Fix B); empty when no
+    successful coded parent exists (e.g. seed thoughts)."""
 
 
 @dataclass(frozen=True)

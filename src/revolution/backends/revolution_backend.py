@@ -81,6 +81,7 @@ class RevolutionBackendConfig:
     qd_rebinning_base_p_threshold: float = 0.05
     representation_kind: str = "code_individual"
     code_samples_per_thought: int = 4
+    qd_thought_code_seeded: bool = False
     representative_sample: str = "best_successful_quality"
     repair_kind: str = "none"
     repair_max_attempts_per_sample: int = 0
@@ -184,6 +185,7 @@ class RevolutionBackend(EvolutionBackend):
                 qd_rebinning_base_p_threshold=self.config.qd_rebinning_base_p_threshold,
                 representation_kind=self.config.representation_kind,
                 code_samples_per_thought=self.config.code_samples_per_thought,
+                qd_thought_code_seeded=self.config.qd_thought_code_seeded,
                 representative_sample=self.config.representative_sample,
                 repair_kind=self.config.repair_kind,
                 repair_max_attempts_per_sample=self.config.repair_max_attempts_per_sample,

@@ -126,6 +126,7 @@ class QDEngine(EoHEngine):
         qd_rebinning_base_p_threshold: float = 0.05,
         representation_kind: str = "code_individual",
         code_samples_per_thought: int = 4,
+        qd_thought_code_seeded: bool = False,
         representative_sample: str = "best_successful_quality",
         repair_kind: str = "none",
         repair_max_attempts_per_sample: int = 0,
@@ -236,6 +237,7 @@ class QDEngine(EoHEngine):
             representation_kind,
         )
         self.code_samples_per_thought = int(code_samples_per_thought)
+        self.qd_thought_code_seeded = bool(qd_thought_code_seeded)
         self.representative_sample = representative_sample
         self.thought_population_size = (
             self.population_size // self.code_samples_per_thought
@@ -2038,6 +2040,53 @@ class QDEngine(EoHEngine):
             "\"not specified by problem; assume ...\". Do not include code."
         )
 
+    def _best_parent_code(self, parents: list[Heuristic]) -> str:
+        """Highest-quality successful parent's RTL, for code-seeded
+        realization (doc 15 Fix B). Empty when no parent has working code."""
+        coded = [
+            p for p in parents
+            if getattr(p, "status", None) == "success"
+            and isinstance(getattr(p, "code", None), str)
+            and p.code.strip()
+        ]
+        if not coded:
+            return ""
+        best = max(coded, key=lambda p: float(getattr(p, "quality_score", p.score)))
+        return best.code
+
+    def _create_prompt_thought_only_code_seeded(self, thought: ThoughtIndividual) -> str:
+        """Thought-guided incremental realization: evolve the parent's
+        working RTL toward the thought's intent, preserving compatible
+        low-level structure (restores code-level hill-climbing)."""
+        context_obj = {
+            "task": "code_from_thought_seeded",
+            "problem_description": self.problem_description,
+            "thought_spec": thought.thought_spec,
+            "thought_id": thought.thought_id,
+            "parent_code": thought.parent_code,
+        }
+        tpl = self.prompts.read("thought_only/code/seeded")
+        if tpl:
+            return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+        return (
+            "Evolve the parent RTL toward the design intent in thought_spec. "
+            "The problem description is authoritative when it conflicts with "
+            "the thought. Preserve and refine the parent's working low-level "
+            "structure where compatible with the thought; rewrite only the "
+            "parts the thought's architecture requires. Re-derive interface "
+            "names, bit indexing, and value tables from the problem "
+            "description, never the parent code.\n\n"
+            "CONTEXT_JSON:\n"
+            f"{json.dumps(context_obj, indent=2)}\n\n"
+            "Return exactly ONE JSON object and nothing else:\n"
+            "{\n"
+            '  "format": "eoh_v1",\n'
+            '  "mode": "whole",\n'
+            '  "thought": "<brief note on what was preserved vs changed>",\n'
+            '  "code": "<full, runnable Verilog as one JSON string>"\n'
+            "}\n"
+        )
+
     def _create_prompt_thought_only_code(self, thought: ThoughtIndividual) -> str:
         context_obj = {
             "task": "code_from_thought",
@@ -2342,6 +2391,7 @@ class QDEngine(EoHEngine):
             qd_operator_kind=self.qd_operator_kind,
             strategy=str(meta_rec["strategy"]),
             prompt_text=str(meta_rec["prompt_text"]),
+            parent_code=self._best_parent_code(parents),
         )
         self._write_thought_artifacts(thought)
         return thought, None
@@ -2433,7 +2483,10 @@ class QDEngine(EoHEngine):
         self,
         thought: ThoughtIndividual,
     ) -> list[Heuristic]:
-        prompt_text = self._create_prompt_thought_only_code(thought)
+        if self.qd_thought_code_seeded and thought.parent_code:
+            prompt_text = self._create_prompt_thought_only_code_seeded(thought)
+        else:
+            prompt_text = self._create_prompt_thought_only_code(thought)
         results = asyncio.run(
             self.llm.generate_n_responses(
                 prompt=prompt_text,
