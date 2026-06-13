@@ -1582,3 +1582,33 @@ fallback; R-D k=2 (already running on OpenRouter).
   gen-0).
 - Matrix: qd_six_operators seed-1003 running; ~2 arms to go before
   the priority screens fire.
+
+## 2026-06-13 20:10 KST — MATRIX COMPLETE; F2 downgrades to PARITY
+
+- qd_target seed-1003 done; ablation matrix ALL DONE (15 runs). The
+  priority queue (Fix B -> Fix A -> bake-off) watcher is alive and
+  fires within its 300s poll.
+- FORMAL 3-seed pooled F2 (the operator headline): +0.0107,
+  13W/13L/12T, CI [-0.0059, +0.0302]. CI low -0.006 spans 0 -> NOT
+  "better"; but > -0.03 -> PASSES parity-or-better at PARITY. The
+  2-seed "better" (CI above 0) did NOT replicate: seed-1003 came in
+  -0.015 (4/6/3), pulling the pool down. HONEST headline correction:
+  the unified operator is statistically EQUIVALENT to the
+  six-operator suite within QD - a no-cost simplification (removes
+  criticisms #2/#3), not an improvement. Combined with F9 (costs
+  -0.09 on classic), the operator story is "one operator suffices
+  WITHIN QD at no cost," entangled with QD.
+- F5 final (3 seeds): pareto vs scalar = +0.050/-0.026/+0.014 (mean
+  +0.013); 2/3 lean pareto but sign flips, within noise -> stays
+  INCONCLUSIVE; pareto defensible as principled (criticism #1) not a
+  measured win.
+- F1 reconfirmed: qd_target vs classic -0.078/-0.101/-0.092 all 3
+  seeds.
+- NET: with the matrix done, the journal's standing positives are
+  (a) operator simplification at PARITY within QD (F2), (b) the
+  principled Pareto/no-weighted-sum design (F1-criticism answer).
+  Both are "no-cost" not "win." Whether there is a performance WIN
+  hinges entirely on the now-firing Fix B/A parity screens and the
+  bake-off/RealBench storyline. The stakes from F9 are unchanged and
+  now sharper: parity (Branch B) is the realistic ceiling unless
+  Fix B/A move the needle.

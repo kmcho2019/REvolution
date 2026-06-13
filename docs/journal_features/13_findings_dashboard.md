@@ -45,16 +45,18 @@ Decision: predeclared **Branch C** (narrowed claims + content floor).
 The deficit is *pure PPA quality* — functionality tied 9/9 on the
 genuine-hard intersection. [H: 2026-06-12 21:45]
 
-### F2 — Operator unification is LICENSED within QD `REPLICATED` (2 seeds; 1003 pending)
-Within-QD pairing (`qd_target` vs `qd_six_operators`, both on the QD
-substrate — the narrative's actual operator contrast). **Pooled 2-seed
-(the formal rule): +0.024, CI [+0.0035, +0.0465] entirely above 0 →
-"better".** Per-seed: 1001 +0.040 (CI>0, better), 1002 +0.006 (CI
-[−0.030,+0.043], parity — `gshare` excluded as missing_baseline, which
-conservatively understates the unified arm). Direction positive both
-seeds, no reversal. Seed 1003 → formal 3-seed pool.
-`exp/ablation_matrix/stats/licensing_{pooled,sixop_vs_target_seed*}`
-[H: 2026-06-13 11:15]
+### F2 — Operator unification LICENSED at PARITY within QD `CONFIRMED` (3-seed pooled)
+Within-QD pairing (`qd_target` vs `qd_six_operators`, both QD substrate
+— the narrative's operator contrast). **Formal 3-seed pooled: +0.011,
+13W/13L/12T, CI [−0.0059, +0.0302] — within the ±0.03 parity band and CI
+low > −0.03 ⇒ PASSES "parity-or-better" at PARITY (not "better").**
+Per-seed: 1001 +0.040 (better), 1002 +0.006 (parity), 1003 −0.015
+(parity). The 2-seed read of "better" did NOT hold; the unified operator
+is statistically EQUIVALENT to the six-operator suite within QD. Still a
+valid simplification: one unified operator replaces the six arbitrary
+EoH operators + unablated bandit (criticisms #2/#3) at **no cost within
+QD** — but only within QD (F9: it costs −0.09 on the classic substrate).
+`exp/ablation_matrix/stats/licensing_pooled` [H: 2026-06-13 20:10]
 
 ### F3 — Operator unification is SUBSTRATE-DEPENDENT `MEASURED`
 The same unified operator is **worse** on the classic substrate
@@ -72,13 +74,13 @@ vs 3%); (b) failure-regime near-parity vs −0.13..−0.18 elsewhere;
 −0.038 (1W/2L/3T). Explains the conference result and scopes the journal
 claim. [H: 2026-06-12 23:35], doc 12 §regime-split.
 
-### F5 — Pareto vs scalar cells: SEED-DEPENDENT, not robust `INCONCLUSIVE`
-Seed 1001 favored Pareto cells (`qd_target` −0.078 vs `qd_scalar_elites`
-−0.128, +0.05) but seed 1002 INVERTS it (target −0.100 vs scalar
-−0.075, −0.025). The cell-mode contribution is within seed noise at
-this budget — no robust positive attribution. Honest downgrade from the
-earlier seed-1001 reading; seed 1003 may break the tie but the effect
-is small either way. [H: 2026-06-13 08:00, 11:15]
+### F5 — Pareto vs scalar cells: small, seed-dependent `INCONCLUSIVE` (3 seeds)
+qd_target − qd_scalar_elites (both vs classic): seed1001 +0.050,
+seed1002 −0.026, seed1003 +0.014 (mean +0.013). 2 of 3 seeds favor
+Pareto cells but the sign flips and the magnitude is within noise — no
+robust attribution. Pareto cells are defensible as the principled
+no-weighted-sum design (criticism #1), not as a measured performance
+win. [H: 2026-06-13 08:00, 11:15, 20:10]
 
 ### F6 — Failure feedback repairs VALIDITY, not peak quality `MECHANISM-VERIFIED`
 Full R-B mechanism (payload live-verified) moved pass rates exactly as
@@ -157,7 +159,7 @@ qd_target (touches it) → every arm loses to classic, target least so.
 
 | Pairing | seed 1001 | seeds 1002-3 |
 | --- | --- | --- |
-| qd_target − qd_six_operators (both QD) | **+0.040 (5/3/5), CI [+0.001,+0.090]** | 1002 +0.006 (4/4/4); **pooled +0.024, CI [+0.004,+0.047]** |
+| qd_target − qd_six_operators (both QD) | 1001 +0.040 / 1002 +0.006 / 1003 −0.015 | **3-seed pooled +0.011, CI [−0.006,+0.030] → PARITY (passes parity-or-better)** |
 
 Positive = unified better. Seed-1001 CI above 0 → licensed (F2).
 **The formal decision is the POOLED cluster-bootstrap across all seeds**

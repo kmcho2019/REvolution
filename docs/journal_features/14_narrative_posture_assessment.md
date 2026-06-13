@@ -35,8 +35,10 @@ defensible than "we win":
 
 1. **Operator simplification (the publishable spine, F2/F3) — but
    QD-entangled, NOT standalone (F9).** The unified operator is
-   parity-or-better than the six-operator suite *within QD* (pooled 2-seed
-   +0.024, CI [+0.0035,+0.0465] above 0) yet *worse* on the classic
+   parity-or-better than the six-operator suite *within QD* (formal
+   3-seed pooled +0.011, CI [−0.006,+0.030] — PARITY, passes the
+   parity-or-better bar but is NOT "better"; the 2-seed "better" did not
+   replicate) yet *worse* on the classic
    substrate (pooled −0.092, CI [−0.149,−0.037]). Clean mechanism: the
    archive supplies the exploration the hand-engineered operators
    otherwise manufacture. **This is the ablation criticism #3 said was
