@@ -174,7 +174,7 @@ Three mechanisms, each with a verified exhibit (full paths in doc 12):
 | M4 | logic_depth externally validated: 31/32 production candidates agree exactly with yosys ltp. | `CONFIRMED` [H: 23:55] |
 | M5 | Descriptor trio survives redundancy bound (all axes \|r\|<0.8) but degenerates on small/mid designs → warmup-completion is the bake-off headline criterion. | `CONFIRMED` [H: 18:20] |
 | M6 | Verification-before-verdict discipline caught 6 instrument/mechanism defects before they misled (empty pools, unreachable caps, dropped problems, template false-positive, hardcoded-empty feedback, licensing dir-vs-completion). | process note |
-| M7 | Formal equiv over-rejects on don't-care / unreachable-state inputs: testbench-passing candidates read NOT_PROVEN (m2014_q6b FSM, 2 unreachable codes). The P4 equivalence spot-check is meaningful only for fully-specified problems, or must constrain to the care/reachable set; the don't-care-aware testbench is the appropriate oracle otherwise. | `MEASURED` [H: 2026-06-13 11:55] |
+| M7 | Equivalence spot-check, COMPLETE picture: SOUND on fully-specified problems (adder_8bit candidate formally PROVEN vs ref — QD's solution genuinely correct, not testbench-lucky) but over-rejects on don't-care/unreachable inputs (q6b FSM testbench-pass yet NOT_PROVEN). Tool hardened on real data: separate gold/gate top names + submodule flatten. P4 spot-check scope = fully-specified problems, or care-set constraints. | `MEASURED` (2 real candidates) [H: 2026-06-13 11:55, 12:15] |
 
 ---
 
