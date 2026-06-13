@@ -115,6 +115,19 @@ Branch C** — making Fix B (closing the QD-vs-classic gap to reach
 Branch B/A, where the floor leg is moot) load-bearing, not optional.
 `exp/ablation_matrix/stats/floorleg_classic_unified_pooled` [H: 2026-06-13 13:40]
 
+### F10 — Fix B halves the deficit but anchors on leaps `MEASURED`
+First intervention to MOVE the QD-vs-classic gap: code-seeded
+realization scores −0.087 (0W/3L/3T, CI [−0.237,−0.002]) vs the
+frozen-target −0.177 baseline on the same v3 subset — **deficit
+halved**, 3 losses → ties. F8 signature partially restored
+(mux256to1v champion climbs 0→0.305 at gen-2; frozen was flat). BUT a
+new failure mode: on sub_64bit classic leaps to 0.454 at gen-1 while
+Fix B stays ~0 — seeding ANCHORS to the parent architecture and blocks
+the leap (−0.454 dominates the mean). Still DEMOTE alone; directionally
+validated. Next: Fix A (running), combined B+A (reserve), and a hybrid
+B′ (mix seeded refinement + whole-regen leap samples) to keep escape.
+`exp/fast_iter/fixb_code_seeded/` [H: 2026-06-13 21:10]
+
 ### F8 — Why classic wins: champion never refined `MEASURED` (mechanism)
 Generation trajectories (seed 1001): on losses QD's best NEVER improves
 past gen-0 (adder flat 0.14, circuit7 flat 0.012, q6b flat −0.013) while

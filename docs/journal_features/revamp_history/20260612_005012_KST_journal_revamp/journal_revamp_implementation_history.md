@@ -1612,3 +1612,35 @@ fallback; R-D k=2 (already running on OpenRouter).
   bake-off/RealBench storyline. The stakes from F9 are unchanged and
   now sharper: parity (Branch B) is the realistic ceiling unless
   Fix B/A move the needle.
+
+## 2026-06-13 21:10 KST — Fix B verdict: deficit HALVED, anchoring regression (F10)
+
+- Fix B (code-seeded realization) screen done. Mechanism verified live
+  first (M6): 188 seeded-realization prompts carrying real parent_code
+  vs 84 whole-regen fallbacks - code-seeding genuinely active, no
+  repeat of the R-B payload bug.
+- Verdict vs classic (fast v3): -0.087, 0W/3L/3T, CI [-0.237,-0.002].
+  Still DEMOTE on the strict +/-0.02 band BUT the first intervention
+  to materially move the gap: the frozen-target baseline replication
+  on this subset was -0.177, so Fix B HALVES the deficit, converting
+  mux256to1v/popcount255/rotate100 losses into ties.
+- F8 signature partially restored: mux256to1v champion climbs
+  0->0.305 at gen-2 (frozen target was flat); multi_16bit/pe show
+  weak gen0->1 climbs. So code-seeding does restore some code-level
+  hill-climbing.
+- NEW failure mode (anchoring): sub_64bit - classic leaps to 0.454 at
+  gen-1 (a better architecture) while Fix B stays ~0 because seeding
+  from the parent code anchors it to the worse architecture and
+  blocks the leap. This single problem (-0.454) dominates Fix B's
+  mean. The flip side of the indirection penalty: refinement restored,
+  but architectural escape suppressed.
+- Implications: (a) Fix A (champion lane) running now - attacks the
+  other mechanism, may stack. (b) Combined B+A (held in reserve) now
+  worth running given B is partial-positive. (c) B' hybrid idea: keep
+  a fraction of samples whole-regen (leap) alongside seeded
+  (refinement) so escape is preserved - the k=4 budget already mixes
+  84 whole + 188 seeded, but a deliberate per-thought split could
+  balance it. Logged for the post-screen decision.
+- NET: viability needle MOVED for the first time. Parity (Branch B)
+  now looks reachable with B+A and/or B' tuning; the -0.45 anchoring
+  outlier is the specific thing to fix next.
