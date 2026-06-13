@@ -1337,3 +1337,22 @@ fallback; R-D k=2 (already running on OpenRouter).
   12-task debug subset and the long-model probe from the v2 pool
   (pool changed 38->55, so the seeded selections change - do this
   deliberately next wake, diffing old vs new slices).
+
+## 2026-06-13 02:40 KST — harness simplification: verilator-first probe
+
+- Decision discussion (user): the dual-harness design is
+  path-dependent complexity - iverilog-primary existed only because
+  the environment shipped verilator 4.038 at integration time; with
+  5.030 in place, verilator-only matches the upstream RealBench flow
+  exactly, removes the per-task dispatch state, and unifies the
+  two-state caveat. Agreed contingent on two measurements: (1)
+  verilator-first coverage of ALL 60 goldens (the fallback sweep only
+  tried verilator on the 22 iverilog failures), (2) per-task timing
+  (per-candidate verilation is ~10x iverilog on mid-size modules -
+  the finals budget multiplier must be known, and a too-slow tail
+  becomes a predeclared evaluable-within-budget retention rule, not
+  a reason to keep two engines).
+- feat: --primary-harness verilator sweep mode with
+  harness_duration_s recorded in every path; v3 sweep launched niced
+  into data/bench/RealBench_v3_verilator (locked roots untouched).
+- Matrix: qd_scalar_elites seed-1001 finishing.
