@@ -81,26 +81,20 @@ language outside those checks is "testbench-passing variants."
 | RealBench, harness-validated module subset | Functional pass rate; family-scoped absolute PPA only where single-file synthesis is valid | All validated tasks excluding the 12-task debug slice (26 fresh); debug-slice results reported separately as tuning data |
 
 RealBench disclosure (revised 2026-06-13 pre-freeze, per the
-predeclared retention-update path; v1 text archived in git history):
-evaluation uses a per-task functional harness behind the capability
-model. The primary harness is strict iverilog built from the upstream
-verification sources (testbench + stimulus + renamed golden reference
-compiled together; e203 sources use upstream's `DISABLE_SV_ASSERTION`
-switch). Tasks whose golden fails iverilog but passes the strict
-Verilator 5.030 harness (`--binary --timing`, same mismatch parsing)
-are dispatched to verilator via `functional_harness_kind` recorded per
-manifest entry — matching the official RealBench flow's Verilator-5
-target. Under the v2 sweep manifest, 55 of 60 module tasks pass golden
-validation (aes 6/6, sdc 12/14, e203 37/40; 38 iverilog + 17
-verilator); the 5 exclusions carry recorded per-task compile failures
-in both harnesses. Within any paired comparison both arms evaluate
-every task under the same recorded harness. Caveat (EDA re-review
+predeclared retention-update path; earlier texts archived in git
+history): RealBench evaluation uses a single strict Verilator 5.030
+harness (`--binary --timing`, upstream verification sources: testbench
++ stimulus + renamed golden reference compiled together; e203 sources
+use upstream's `DISABLE_SV_ASSERTION` switch) — the same simulator
+family the official RealBench flow targets. Under the
+verilator-primary manifest, 55 of 60 module tasks pass golden
+validation (aes 6/6, sdc 12/14, e203 37/40; per-task durations
+recorded, median 2.2 s); the 5 exclusions carry recorded reasons
+(4 compile failures, 1 golden-mismatch task). Caveat (EDA re-review
 2026-06-13): verilator's two-state evaluation can under-detect
-X-propagation mismatches relative to four-state iverilog, and the 17
-verilator-dispatched tasks have no iverilog cross-check by
-construction; functional pass claims on those tasks are therefore
-scoped to two-state semantics, and the manuscript's retention table
-marks the harness per task. The
+X-propagation mismatches relative to four-state simulation; this
+applies uniformly to the whole benchmark and functional pass claims
+are scoped to two-state semantics. The
 manuscript reports this retention table, a retained-vs-excluded
 difficulty-proxy comparison using the manifest's size signals, and labels
 every claim "harness-validated RealBench module subset" — never bare

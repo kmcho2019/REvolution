@@ -1356,3 +1356,25 @@ fallback; R-D k=2 (already running on OpenRouter).
   harness_duration_s recorded in every path; v3 sweep launched niced
   into data/bench/RealBench_v3_verilator (locked roots untouched).
 - Matrix: qd_scalar_elites seed-1001 finishing.
+
+## 2026-06-13 03:00 KST — HARNESS FLIP EXECUTED: RealBench is verilator-only
+
+- v3 verilator-primary sweep results settled both gates decisively:
+  coverage 55/60 IDENTICAL to dual-harness (validated pools equal as
+  sets; the 5 exclusions are the same tasks, one now failing as
+  golden-mismatch 2182 rather than compile), and timing demolished
+  the 10x fear - median 2.2 s, p90 11.1 s, max 23.9 s per golden;
+  fresh-26 sums to 90 s. Per-candidate verilation is
+  iverilog-comparable at module scale.
+- Flip executed: v3 manifest promoted to the runtime root
+  (data/bench/RealBench, sha 1e920b58...; v1 root preserved as
+  RealBench_v1_iverilog); fresh-26 re-anchored to v3 (identical 26
+  names verified) as v2 of its lock; debug-12 names CARRIED FORWARD
+  with recorded rationale (a re-draw over the 55-task pool keeps
+  only 3/12 and collides with the locked fresh-26 - disjointness
+  preserved by carrying forward; all 12 remain validated under v3).
+- Narrative disclosure simplified to the single-harness text: one
+  simulator family (upstream's), uniform two-state caveat, per-task
+  durations recorded. The dual-harness dispatch machinery remains in
+  the codebase (harmless, tested) but no manifest entry exercises
+  the iverilog path for RealBench anymore.

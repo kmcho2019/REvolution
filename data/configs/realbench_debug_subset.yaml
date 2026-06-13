@@ -1,8 +1,8 @@
-version: 1
-subset_name: realbench_debug_subset_v1
+version: 2
+subset_name: realbench_debug_subset_v2
 selection:
   realbench_root: data/bench/RealBench
-  manifest_sha256: d59a8ac0df6eaf8dcc738776cd9c44771b9beda5fa3c50aabce48028aa02ecb9
+  manifest_sha256: 1e920b588db4b03f4b36b92c9dbe8c7e91905c4d54bb4342335d2caf098275ae
   require_harness_validated: true
   per_family: 4
   seed: 42
@@ -10,6 +10,11 @@ selection:
     sorted harness-validated module tasks, take first per_family, then top up depth-by-depth
     in sorted family order until subset_size; store sorted'
   subset_size: 12
+  revision_rationale: 'v2 (2026-06-13): the 12 task names are carried forward from
+    v1 (originally drawn from the 38-task iverilog-validated pool) rather than re-shuffled
+    over the 55-task v3 pool - a re-draw would keep only 3/12 and collide with the
+    locked fresh-26 slice. All 12 remain harness-validated under the verilator-primary
+    v3 manifest; provenance re-anchored accordingly.'
 families:
   aes:
   - aes_inv_sbox
