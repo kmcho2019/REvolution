@@ -127,6 +127,7 @@ class QDEngine(EoHEngine):
         representation_kind: str = "code_individual",
         code_samples_per_thought: int = 4,
         qd_thought_code_seeded: bool = False,
+        qd_seed_sample_fraction: float = 1.0,
         qd_champion_lane_fraction: float = 0.0,
         representative_sample: str = "best_successful_quality",
         repair_kind: str = "none",
@@ -239,6 +240,9 @@ class QDEngine(EoHEngine):
         )
         self.code_samples_per_thought = int(code_samples_per_thought)
         self.qd_thought_code_seeded = bool(qd_thought_code_seeded)
+        if not 0.0 <= float(qd_seed_sample_fraction) <= 1.0:
+            raise ValueError("qd_seed_sample_fraction must be in [0, 1].")
+        self.qd_seed_sample_fraction = float(qd_seed_sample_fraction)
         if not 0.0 <= float(qd_champion_lane_fraction) <= 1.0:
             raise ValueError("qd_champion_lane_fraction must be in [0, 1].")
         self.qd_champion_lane_fraction = float(qd_champion_lane_fraction)
@@ -2506,18 +2510,14 @@ class QDEngine(EoHEngine):
         cand.sample_generation_thought = sample_thought or ""
         return cand
 
-    def _generate_code_samples_for_thought(
-        self,
-        thought: ThoughtIndividual,
-    ) -> list[Heuristic]:
-        if self.qd_thought_code_seeded and thought.parent_code:
-            prompt_text = self._create_prompt_thought_only_code_seeded(thought)
-        else:
-            prompt_text = self._create_prompt_thought_only_code(thought)
+    def _generate_n_for_prompt(self, prompt_text: str, n: int) -> list[tuple]:
+        """Generate and pad n code-sample responses from one realization prompt."""
+        if n <= 0:
+            return []
         results = asyncio.run(
             self.llm.generate_n_responses(
                 prompt=prompt_text,
-                n=self.code_samples_per_thought,
+                n=n,
                 temperature=self.default_llm_temp,
                 top_p=self.default_llm_top_p,
                 max_tokens=self.default_llm_max_tokens,
@@ -2525,28 +2525,32 @@ class QDEngine(EoHEngine):
                 system_prompt_override=self._get_generation_system_prompt("whole"),
             )
         )
-        if len(results) < self.code_samples_per_thought:
-            missing = self.code_samples_per_thought - len(results)
-            print(
-                f"WARNING: LLM returned {len(results)}/{self.code_samples_per_thought} "
-                f"code samples for {thought.thought_id}. Padding {missing} missing samples."
+        while len(results) < n:
+            results.append(
+                (None, None, {"format_ok": False, "error": "missing_response", "raw": "", "parsed_mode": "whole"})
             )
-            for _ in range(missing):
-                results.append(
-                    (
-                        None,
-                        None,
-                        {
-                            "format_ok": False,
-                            "error": "missing_response",
-                            "raw": "",
-                            "parsed_mode": "whole",
-                        },
-                    )
-                )
+        return results[:n]
+
+    def _generate_code_samples_for_thought(
+        self,
+        thought: ThoughtIndividual,
+    ) -> list[Heuristic]:
+        k = self.code_samples_per_thought
+        if self.qd_thought_code_seeded and thought.parent_code:
+            # B' hybrid: split k between seeded refinement and whole-regen
+            # leaps so architectural escape is preserved (fraction=1.0 = pure
+            # Fix B; <1.0 keeps that many whole-regen "leap" samples).
+            n_seeded = max(0, min(k, round(k * self.qd_seed_sample_fraction)))
+            seeded_p = self._create_prompt_thought_only_code_seeded(thought)
+            whole_p = self._create_prompt_thought_only_code(thought)
+            pairs = [(r, seeded_p) for r in self._generate_n_for_prompt(seeded_p, n_seeded)]
+            pairs += [(r, whole_p) for r in self._generate_n_for_prompt(whole_p, k - n_seeded)]
+        else:
+            whole_p = self._create_prompt_thought_only_code(thought)
+            pairs = [(r, whole_p) for r in self._generate_n_for_prompt(whole_p, k)]
         return [
             self._materialize_code_sample(thought, index, result, prompt_text)
-            for index, result in enumerate(results[: self.code_samples_per_thought])
+            for index, (result, prompt_text) in enumerate(pairs[:k])
         ]
 
     def _materialize_repair_sample(

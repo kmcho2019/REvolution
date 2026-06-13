@@ -540,3 +540,21 @@ def test_champion_lane_validation_and_draw(tmp_path, monkeypatch):
     monkeypatch.setattr(engine, "_crowded_tournament", lambda members: _success_parent("other", candidate_id="other", area=20.0))
     parents = engine._sample_success_parents(4)
     assert all(p.id == "champ" for p in parents)
+
+
+def test_seed_sample_fraction_splits_seeded_and_whole(tmp_path, monkeypatch):
+    import pytest as _pytest
+    with _pytest.raises(ValueError, match="qd_seed_sample_fraction"):
+        _engine(tmp_path, monkeypatch, qd_thought_code_seeded=True, qd_seed_sample_fraction=1.5)
+    from revolution.qd.thought_only import ThoughtIndividual
+    engine = _engine(tmp_path, monkeypatch, qd_thought_code_seeded=True, qd_seed_sample_fraction=0.5, code_samples_per_thought=4)
+    spec = {k: "x" for k in ("format","summary","interface_contract","timing_and_protocol","state_and_datapath_plan","edge_cases","ppa_intent","implementation_constraints")}
+    th = ThoughtIndividual(thought_id="g1_t1", generation=1, thought_spec=spec, raw_response="{}",
+        parent_ids=["p"], parent_count=1, parent_source="archive", qd_operator_kind="single_thought_operator",
+        strategy="single_thought_operator", prompt_text="p", parent_code="module hi; assign y=a; endmodule")
+    calls = []
+    monkeypatch.setattr(engine, "_generate_n_for_prompt", lambda prompt, n: (calls.append((("seeded" if "code_from_thought_seeded" in prompt else "whole"), n)) or [(None,None,{"format_ok":False,"error":"x","raw":"","parsed_mode":"whole"})]*n))
+    monkeypatch.setattr(engine, "_materialize_code_sample", lambda *a: object())
+    engine._generate_code_samples_for_thought(th)
+    # 4 samples, fraction 0.5 -> 2 seeded + 2 whole
+    assert ("seeded", 2) in calls and ("whole", 2) in calls
