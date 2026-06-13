@@ -103,6 +103,16 @@ of loss (vs 58%), circuit7 + adder_8bit persistent. [H: 2026-06-13 09:35, 11:15]
 
 ---
 
+### F9 — Branch C floor leg (i) FAILS the parity rule `CONFIRMED` (3 seeds)
+`classic_unified` vs classic pooled (39 paired): −0.092, 4W/29L/6T,
+CI [−0.149, −0.037] — CI low far below the −0.03 parity bar. Operator
+unification is NOT an independent simplification win; it costs ~0.09 on
+the classic substrate (only helps *within* QD, F2). Per the frozen
+narrative this predeclares **venue reassessment IF the finals land in
+Branch C** — making Fix B (closing the QD-vs-classic gap to reach
+Branch B/A, where the floor leg is moot) load-bearing, not optional.
+`exp/ablation_matrix/stats/floorleg_classic_unified_pooled` [H: 2026-06-13 13:40]
+
 ### F8 — Why classic wins: champion never refined `MEASURED` (mechanism)
 Generation trajectories (seed 1001): on losses QD's best NEVER improves
 past gen-0 (adder flat 0.14, circuit7 flat 0.012, q6b flat −0.013) while
@@ -202,6 +212,12 @@ Three mechanisms, each with a verified exhibit (full paths in doc 12):
 > licensing pairing (the F2/F3 input) for every seed whose both roots
 > exist. The matrix launcher does NOT emit this; it must be run separately.
 > Then re-pull §3.3 from `exp/ablation_matrix/stats/licensing_*`.
+
+**Strategic risk (NEW, F9):** Branch C floor leg (i) fails the parity
+rule on the tuning ablation → venue reassessment is predeclared *if the
+finals land in Branch C*. Mitigation path: Fix B + bake-off + RealBench
+storyline must move the finals into Branch B/A (floor leg moot) or supply
+an independent simplification win. This is now the project's central risk.
 
 **Decisions requiring judgment at freeze (P4):**
 - MDE ratchet: raise counts or drop the +0.03 best-quality gate (under-powered at 13×5; MDE 0.12). `exp/fast_iter/mde_hard_subset`

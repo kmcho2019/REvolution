@@ -1531,3 +1531,33 @@ fallback; R-D k=2 (already running on OpenRouter).
   must be scoped to fully-specified problems or use care-set
   constraints - recorded in the dashboard open-decisions. Caught now
   rather than at the P4 freeze.
+
+## 2026-06-13 13:40 KST — Branch C floor leg (i) FAILS parity rule (3 seeds)
+
+- classic_unified seed-1003 landed (13/13 paired, M6 clean): -0.084,
+  CI [-0.154,-0.022]. Floor leg now 3-seed consistent: -0.090/-0.102/
+  -0.084. POOLED 3-seed (the formal rule, 39 paired): delta -0.092,
+  4W/29L/6T, CI [-0.1487,-0.0370]
+  (stats/floorleg_classic_unified_pooled).
+- IMPLICATION (frozen-narrative consequence, surfaced not resolved):
+  Branch C floor leg (i) is "the unified-operator one-factor ablation
+  showing parity-or-better (a real simplification result independent
+  of QD's fate)"; the predeclared rule requires the CI entirely above
+  -0.03. CI low -0.149 << -0.03 -> FAILS. On the classic substrate,
+  unifying the six operators COSTS ~0.09; the simplification is NOT an
+  independent win. The only positive operator result is the WITHIN-QD
+  contrast (F2: unified >= six within QD, pooled CI above 0) - but
+  that is entangled with QD, exactly what floor leg (i) was meant to
+  be independent of.
+- The narrative predeclares: if floor leg (i) is not achieved, Branch
+  C triggers venue reassessment instead of a TCAD submission. This is
+  CONDITIONAL: the floor leg only binds IF the FINAL held-out gates
+  land in Branch C (row 5). It is moot if the finals land in Branch
+  B-scoped/B/A.
+- CONSEQUENCE for strategy: Fix B (code-seeded realization, queued) is
+  now LOAD-BEARING, not just storyline-strengthening. If Fix B closes
+  the QD-vs-classic gap -> finals can land in Branch B/A where the
+  floor leg is moot, and the operator story stands as the within-QD
+  F2 result. If Fix B fails -> floor leg (i) is unmet and venue
+  reassessment is the predeclared path. The bake-off (descriptor
+  value) and RealBench storyline (M8) carry the same load.
