@@ -1468,3 +1468,25 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Seed-1001 licensing (F2) intact and unaffected: paired=13,
   +0.040, 5/3/5, CI [+0.0007, +0.090]. qd_target seed-1002 in
   progress (0/13); F2 replication still pending its completion.
+
+## 2026-06-13 09:35 KST — F7: deficit localization (seed-1001 cross-arm)
+
+- Per-problem best-quality delta vs classic across all 4 seed-1001
+  arms. The aggregate -0.08..-0.13 decomposes into a localized
+  structure: 3/13 problems carry 58% of the negative mass
+  (circuit7 -0.320, alu -0.277, adder_8bit -0.189). circuit7 and
+  adder_8bit show byte-identical deltas across ALL arms -> every QD
+  configuration converges to the same candidate (no improvement over
+  the gen-0 seed); these are intrinsic-limitation problems.
+- Arm-INVARIANT losers (config doesn't matter): circuit7, alu,
+  adder_8bit, fsm, traffic_light. Arm-VARIANT (config moves the
+  needle, i.e. where F2/F3 act): multi_pipe_8bit (target +0.276 /
+  scalar -0.183), m2014_q6b (c_unified ties / six-op -0.199),
+  review2015_fsm (c_unified +0.096 win / scalar -0.125). Three
+  problems are pure ties for all arms (m2014_q3, fsmonehot, partly
+  q6b).
+- Manuscript impact: F1 "QD loses" sharpened to "QD is catastrophic
+  on ~3 intrinsic-limitation problems and competitive/winning
+  elsewhere"; failure panel = circuit7/adder (arm-invariant),
+  operator-effect showcase = multi_pipe_8bit/m2014_q6b (arm-variant).
+  Recorded F7 in doc 13. Seed 1002 will confirm the localization.
