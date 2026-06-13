@@ -19,12 +19,12 @@ from pathlib import Path
 
 YOSYS_SCRIPT = """
 read_verilog -sv {gold}
-prep -top {top}
-rename {top} gold_top
+prep -top {gold_top}
+rename {gold_top} gold_top
 design -stash gold
 read_verilog -sv {gate}
-prep -top {top}
-rename {top} gate_top
+prep -top {gate_top}
+rename {gate_top} gate_top
 design -stash gate
 design -copy-from gold -as gold_top gold_top
 design -copy-from gate -as gate_top gate_top
@@ -36,10 +36,19 @@ equiv_status -assert
 """
 
 
-def check_pair(gold: Path, gate: Path, top: str) -> dict[str, object]:
-    """Run the yosys equivalence flow for one gold/gate pair."""
+def check_pair(
+    gold: Path, gate: Path, top: str, gold_top: str | None = None, gate_top: str | None = None
+) -> dict[str, object]:
+    """Run the yosys equivalence flow for one gold/gate pair.
 
-    script = YOSYS_SCRIPT.format(gold=gold, gate=gate, top=top)
+    ``top`` sets both module names; ``gold_top``/``gate_top`` override
+    per side (benchmark convention: candidate ``TopModule`` vs reference
+    ``RefModule``).
+    """
+
+    script = YOSYS_SCRIPT.format(
+        gold=gold, gate=gate, gold_top=gold_top or top, gate_top=gate_top or top
+    )
     with tempfile.NamedTemporaryFile("w", suffix=".ys", delete=False) as handle:
         handle.write(script)
         script_path = handle.name
@@ -73,14 +82,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--gold", type=Path, required=True, help="Reference .sv")
     parser.add_argument("--gate", type=Path, action="append", required=True,
                         help="Candidate .sv (repeatable).")
-    parser.add_argument("--top", required=True, help="Top module name (same in both).")
+    parser.add_argument("--top", default="TopModule", help="Default top module name for both sides.")
+    parser.add_argument("--gold-top", default=None, help="Override reference top (e.g. RefModule).")
+    parser.add_argument("--gate-top", default=None, help="Override candidate top (e.g. TopModule).")
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args(argv)
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     results = []
     for index, gate in enumerate(args.gate):
-        result = check_pair(args.gold, gate, args.top)
+        result = check_pair(args.gold, gate, args.top, args.gold_top, args.gate_top)
         log_path = args.output_dir / f"equiv_{index:03d}_{gate.stem}.log"
         log_path.write_text(result.pop("log"), encoding="utf-8")
         result["log_path"] = str(log_path)

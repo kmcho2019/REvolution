@@ -74,3 +74,16 @@ def test_inequivalent_pair_is_not_proven_and_main_reports(tmp_path, capsys):
     verdicts = {Path(p["gate"]).name: p["verdict"] for p in report["pairs"]}
     assert verdicts == {"good.sv": "PROVEN", "bad.sv": "NOT_PROVEN"}
     assert all(Path(p["log_path"]).is_file() for p in report["pairs"])
+
+
+@pytest.mark.skipif(not yosys_available, reason="yosys binary required")
+def test_separate_gold_gate_top_names(tmp_path):
+    gold = tmp_path / "ref.sv"
+    gate = tmp_path / "cand.sv"
+    gold.write_text(GOLD.replace("module top", "module RefModule"), encoding="utf-8")
+    gate.write_text(EQUIVALENT, encoding="utf-8")  # module top
+
+    result = check_equivalence.check_pair(
+        gold, gate, top="top", gold_top="RefModule", gate_top="top"
+    )
+    assert result["verdict"] == "PROVEN"
