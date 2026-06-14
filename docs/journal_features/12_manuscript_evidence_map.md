@@ -1,9 +1,12 @@
 # 12. Manuscript Evidence Map (P5 kickoff)
 
-Status: living index started 2026-06-12 after the P1 screen phase
-closed. Maps each planned manuscript element to its evidence paths so
-the P5 rewrite cites artifacts, not memory. Update as the ablation
-matrix, bake-off, and finals land.
+Status: living index started 2026-06-12; refreshed 2026-06-14 after the
+investigation arc closed (win-path retired F20, core verified reliable
+M12, all freeze decisions settled). Maps each planned manuscript element
+to its evidence paths so the P5 rewrite cites artifacts, not memory.
+Only the 5-seed finals numbers remain pending. The manuscript itself
+lives in the journal_draft Overleaf submodule — author there against
+this map; the frozen claims contract is journal_narrative.md.
 
 ## Branch context
 
@@ -84,14 +87,61 @@ Three independent substrates show the same split:
    VerilogEval (spec-exact) -0.038 1W/2L/3T
    (exp/ablation_matrix/stats/classic_unified_seed1001).
 
-## Pending slots (fill when verdicts land)
+## RealBench-scale capability finding (criticism #4, NEW central result)
 
-- Ablation matrix per-contrast tables: exp/ablation_matrix/stats/.
-- Operator-claim licensing contrast: qd_six_operators vs qd_target
-  -> seed 1001 LICENSED (unified +0.040, CI [+0.0007,+0.090] above 0;
-  stats/licensing_sixop_vs_target_seed1001); substrate-dependent
-  (unified worse on classic, better within QD). Seeds 1002-3 pending.
-- Branch C floor leg (i): classic_unified vs classic -> -0.090/-0.102
-  (seeds 1001/1002), CIs below 0; floor leg measured.
-- Bake-off decision table + profile freeze rationale.
-- Finals (5-seed) gate statistics and branch decision.
+The conference reviewers' "benchmarks too small" critique is answered at
+real-CPU scale — and the answer is a *characterization*, not a win
+(F18-F20, M11-M12 in doc 13; history 2026-06-14).
+- Harness: the candidate eval pipeline runs end-to-end on real e203 CPU
+  modules (yosys+OpenROAD PPA + post-synth check + BD descriptors);
+  validated on the golden e203_exu_decode (53 KB), no LLM (M11).
+- Storyline-decider (classic vs QD, 7 dependency-complete e203 modules
+  4.7-53 KB, gpt-oss-120b, isolated deterministic re-eval): valid
+  candidates appear ONLY on the 2 smallest modules (<6 KB), classic 4
+  >= QD 2; the larger modules (incl. decode) get 0 valid. QD shows more
+  behavioral diversity but converts it into fewer valid candidates
+  (diverse-but-wrong). exp/fast_iter/capability_remap/grade_mismatch_compare.json.
+- Manuscript framing: at real-CPU scale the binding limit is the LLM's
+  systematic spec-comprehension, NOT search structure or operator
+  design - extends the regime-sensitivity thread (below) and bounds the
+  diversity claim (#5). Disclose the two artifacts caught + fixed en
+  route (missing-include confound F19; parallel-eval contention M12).
+
+## Methodology threats & resolutions (methods / threats-to-validity)
+
+- M12 parallel-eval contention: heavy 14-way runs spuriously fail valid
+  candidates; CONFINED to heavy runs (core 12-way small-problem eval
+  verified reliable: isolated re-eval matches run exactly, qd_target
+  Prob116 9=9, Prob153 2=2). Finals use reliable eval; report as a
+  measurement caveat. (doc 13 M12)
+- Include confound F19: e203 candidates omit the e203_defines.v include
+  -> die at preprocessing; fixed by force-including the design's entry
+  header (disclosed benchmark-construction choice making e203 comparable
+  to self-contained VerilogEval/RTLLM).
+- Feedback-LLM is unreliable for verdicts ("testbench missing"
+  hallucination); trust run status_counts / raw eval. (doc 13 M6)
+
+## Landed verdicts (were pending at kickoff)
+
+- Operator-claim licensing (F2): qd_six_operators vs qd_target POOLED
+  3-seed +0.011, CI [-0.006,+0.030] -> PARITY (passes the one-sided
+  parity bound; the 2-seed "better" did not replicate). Within-QD only;
+  unified worse on the classic substrate (F3/F9).
+  exp/ablation_matrix/stats/licensing_pooled.
+- Branch C floor leg (i) (F9): classic_unified vs classic pooled -0.092,
+  CI [-0.149,-0.037] -> FAILS the parity rule; the simplification is
+  NOT independent of QD. Predeclares venue reassessment if finals land
+  Branch C. exp/ablation_matrix/stats/floorleg_classic_unified_pooled.
+- Bake-off + profile freeze: FROZEN journal_logic_ff_width_3d (the trio)
+  per the predeclared rule (no candidate qualifies). Disclosures:
+  comb_width_log~area (size proxy, drop diversity claim, keep
+  logic_depth+ff_depth); trio not most collapse-resistant (F12).
+- Finals decisions settled: keep 13x5 + drop the +0.03 win-gate (moot);
+  disclose token asymmetry (no matching); equivalence spot-check on
+  fully-specified problems only.
+
+## Pending (only the finals numbers remain)
+
+- 5-seed finals RUNNING (seeds 1004-1005 -> exp/ablation_matrix,
+  bo03wrum8); pooled F1/F2/F4 + licensing across 5 seeds land on
+  completion. This is the LAST evidence input before the write-up.
