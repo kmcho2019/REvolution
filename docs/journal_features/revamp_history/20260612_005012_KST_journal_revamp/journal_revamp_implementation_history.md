@@ -2259,3 +2259,36 @@ fallback; R-D k=2 (already running on OpenRouter).
   corrected (F20: QD does not win, on clean evidence) AND the core results
   were stress-tested and found robust. The journal's characterization
   posture is now on firmer evidentiary ground than before.
+
+## 2026-06-14 11:20 KST — Descriptor profile FROZEN (task #6): trio stays, per rule
+
+- Applied the predeclared bake-off freeze rule (journal_narrative.md
+  §"Why the descriptor axes mean something") to the bake-off data
+  (F12 / exp/fast_iter/bakeoff_verdict/descriptor_bakeoff.json).
+- Rule: rank candidate profiles by QD-vs-classic paired best-quality
+  delta; winner must ALSO pass occupancy>=0.25 median + collapse gates +
+  plain-language design meaning per axis; ELSE the fallback trio stays.
+- Data: best-quality delta activity -0.103 > simple_2d -0.131 > trio
+  -0.177 > graph -0.186 (none beats classic). Collapse (M9, lower=better):
+  simple_2d 2 < graph 8 < activity 12 < trio 14. Occupancy floor: all pass.
+- Application: activity ranks 1st on quality but its 3 axes collapse on
+  3-5/6 problems (fails collapse gate) AND require dynamic icarus_vcd
+  metrics incompatible with the verilator harness; simple_2d is
+  collapse-healthy but its axes (wire_count_log_est, assign_count) are
+  code-size proxies, not the architectural BD thesis; graph_testability is
+  worst on quality. No candidate qualifies as a winner.
+- DECISION: FREEZE journal_logic_ff_width_3d (logic_depth, ff_depth,
+  comb_width_log) - the fallback trio - exactly as the rule prescribes.
+- Manuscript disclosures (predeclared): (a) comb_width_log correlates with
+  area by construction -> name it a size proxy, drop its diversity claim,
+  keep logic_depth + ff_depth as the diversity axes (the precise
+  correlation number to be reported from the descriptor report); (b) the
+  frozen thesis profile is NOT the most collapse-resistant (simple_2d is)
+  - BD sophistication did not buy diversity health (a characterization
+  finding, F12), to be stated honestly rather than hidden.
+- This is a rule-driven decision (not free judgment): the predeclared
+  rule + data force the trio. The one judgment (simple_2d's axes lack
+  thesis design-meaning) is documented transparently.
+- Unblocks the finals' descriptor config (task #9). The locked
+  data/configs/qd_descriptor_profiles.yaml is unchanged (it holds all
+  profiles); the FROZEN CHOICE for finals = journal_logic_ff_width_3d.
