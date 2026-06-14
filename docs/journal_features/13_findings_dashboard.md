@@ -118,6 +118,21 @@ Branch C** — making Fix B (closing the QD-vs-classic gap to reach
 Branch B/A, where the floor leg is moot) load-bearing, not optional.
 `exp/ablation_matrix/stats/floorleg_classic_unified_pooled` [H: 2026-06-13 13:40]
 
+### F16 — Storyline-decider run INVALID: RealBench functional-eval gap `MEASURED`
+The large-module QD-vs-classic run produced 0 valid candidates on BOTH
+arms — but it's an eval-wiring bug, NOT a result: the RealBench adapter
+resolves the top module from synthesis_top_module_names.json (a
+VerilogEval convention, absent in the RealBench root) and defaults to
+`TopModule` instead of the manifest's top_module (e203_biu), so every
+candidate fails compile on the name mismatch. Functional candidate eval
+also needs aux/defines (config.v/e203_defines.v) threaded like synthesis
+got (steps 1-3). Process miss: validated SYNTHESIS (M10) but not the
+candidate functional eval before the full run. OPEN QUESTION (the real
+risk): even with correct wiring, can the LLM implement 40KB e203 CPU
+blocks at all? The candidate feedback shows genuine structural errors
+beyond macros. Run killed (invalid); decision surfaced.
+`exp/fast_iter/realbench_large_storyline/` [H: 2026-06-14 06:45]
+
 ### F15 — Fix B does NOT transfer to the hard subset `MEASURED` (parity path closed)
 Fix B hard-subset (seed 42, 20×5, 13 problems): −0.116 (1/10/2, CI
 [−0.210,−0.037]) — vs frozen QD on the SAME subset ~−0.09 (matrix

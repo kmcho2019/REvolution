@@ -1905,3 +1905,42 @@ fallback; R-D k=2 (already running on OpenRouter).
   NON-degenerate on large designs, vs M5 collapse on small ones).
 - ~hours (large-module synth+OpenROAD per candidate). Gate on
   completion.
+
+## 2026-06-14 06:45 KST — storyline-decider run INVALID (F16); decision point
+
+- The launched large-module run produced 0 valid candidates on BOTH
+  arms (classic 0/48 each). Investigated rather than concluded:
+  - Root cause: RealBench adapter reads top module from
+    synthesis_top_module_names.json (VerilogEval convention) which the
+    RealBench root lacks -> defaults to 'TopModule' not e203_biu ->
+    every candidate fails compile on name mismatch. Plus functional
+    candidate eval needs aux/defines (config.v/e203_defines.v)
+    threaded like synthesis (steps 1-3) - candidate feedback cites
+    undefined E203 macros.
+  - So the run is INVALID (eval-wiring), NOT a QD-vs-classic result.
+    Killed it (was burning OpenRouter on a broken comparison).
+- PROCESS LESSON: I validated SYNTHESIS on the golden (M10) but did
+  NOT validate the candidate FUNCTIONAL eval on a RealBench-large
+  module before launching the full run. The M6 'verify mechanism
+  before verdict' discipline applies to runs, not just screens - I
+  should have run one candidate (or the golden) through the functional
+  eval first.
+- OPEN STRATEGIC QUESTION (the real risk, beyond wiring): even with
+  correct top-module + aux wiring, can the LLM implement 40KB e203 CPU
+  blocks (BIU, decode) correctly AT ALL? The candidate feedback shows
+  real structural errors (ifdef-in-ternary, multi-driver, submodule
+  interface mismatches) beyond the macro/wiring issues. If the LLM
+  cannot produce a single functionally-valid large-module candidate,
+  the PPA-win storyline-decider is impossible regardless of wiring -
+  you cannot compare PPA when nothing passes.
+- DECISION SURFACED (not auto-pursued): (A) invest in fixing RealBench
+  functional-eval wiring (top-module resolution + functional aux/
+  defines) THEN validate the golden through functional eval THEN
+  re-run - accepting the LLM-capability risk; or (B) accept that the
+  large-module win-path is likely blocked by LLM capability and commit
+  to the characterization framing (operator parity F2, coverage-
+  diversity F12, regime-sensitivity F4, honest root-cause F7/F8/F15).
+  Recommend a BOUNDED next step: fix wiring + validate the GOLDEN
+  through functional eval (cheap, no LLM) - if the golden can't pass,
+  it's a harness limit; if it passes, the question is purely LLM
+  capability, testable with a small smoke before any full run.
