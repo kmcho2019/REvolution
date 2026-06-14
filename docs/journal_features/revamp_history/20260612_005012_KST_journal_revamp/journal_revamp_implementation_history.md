@@ -2564,3 +2564,33 @@ fallback; R-D k=2 (already running on OpenRouter).
   verdict (esp. alu) + the proper paired CI. CAVEAT: single seed, 5/13.
 - Doc 16 V3 (champion-lane / overlay-weight tuning) remains as a fallback
   knob if neither V1 nor V2 cleanly reaches parity.
+
+## 2026-06-14 16:25 KST — V2 (NSGA-II) DECISIVE (10/13): net-neutral vs V1
+
+- V2 vs V1 vs classic, 10/13 (alu landed - the swing):
+  alu: V2-cls -0.017 vs V1-cls -0.256 (+0.238 vs V1) -> NSGA-II CLOSED the
+    biggest residual (preferring high-quality rank-1 worked here).
+  multi_pipe: +0.048 vs V1 -> helped.
+  BUT parallel2serial -0.069 vs V1 (worse); m2014_q6b -0.199 vs V1 (was
+    PARITY in V1, now a big deficit - NSGA-II over-exploited, lost the
+    cell-diversity that found the right spec-exact approach);
+    traffic_light -0.014.
+  NET: MEAN V2-classic -0.0444 vs MEAN V1-classic -0.0448 (same 10) -> a
+  WASH. NSGA-II REDISTRIBUTES the deficit (exploitation gains traded for
+  diversity losses) but does NOT improve the net.
+- VERDICT: NSGA-II global-rank selection is net-neutral vs the simpler
+  cell-crowded-tournament. So V1 (code_individual overlay, near-parity
+  -0.033, NO selection change) is the BETTER contribution - same
+  performance, simpler. The big win was the indirection removal (user's
+  first idea); NSGA-II (user's second idea) is a clean ABLATION showing
+  principled global selection trades exploitation for diversity
+  (net-neutral) - a methodological data point, not the headline.
+- DECISION: do NOT pursue V3 (hybrid/tuning) - V1 already achieves
+  near-parity with the simplest change; per the "don't convolute code"
+  rule, V1 is the contribution. Keep V2's nsga2_global_rank flag (it's a
+  clean, tested option + a reportable ablation) but default stays
+  cell_crowded_tournament. Both are now validated, behind one flag.
+- NEXT: let V2 finish (3 left: gshare/fsm/fsmonehot, all parity in V1 ->
+  net unlikely to change) + its proper CI; then the smooth-QD
+  contribution = V1, needing multi-seed confirmation (finals-level) once
+  the queue frees. CAVEAT: single seed.
