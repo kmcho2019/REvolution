@@ -2049,3 +2049,33 @@ fallback; R-D k=2 (already running on OpenRouter).
   any pass, a full QD-vs-classic large run is justified.
 - Running in the background (harness-tracked); result will be recorded
   here on completion.
+
+## 2026-06-14 ~09:00 KST — decode smoke: health confirmed + PRE-REGISTERED criteria
+
+- Smoke confirmed actively generating (not stalled): run_backend process
+  multi-threaded, 18 established OpenRouter TCP connections, etime
+  climbing. Empty per-problem log is expected — with max_tokens 64000 on
+  a reasoning model emitting a ~1234-line module, each of the 8 attempts
+  (4 parallel) takes several minutes; first generation still in flight.
+- PRE-REGISTERED interpretation (decided BEFORE the result, to avoid
+  post-hoc rationalization — M6 discipline). Of the 8 classic gen-0
+  attempts at e203_exu_decode:
+  * PASS (LLM-capable): >=1 attempt is FUNCTIONALLY VALID (status
+    success, 0 mismatches over the 100000-sample equivalence). Even 1/8
+    proves the model CAN implement a decode-class module -> a full
+    QD-vs-classic large run is justified; proceed to build a
+    dependency-complete large subset (mix sequential modules so the
+    journal_logic_ff_width_3d BD spreads; decode is comb-only).
+  * WEAK (marginal): 0 functionally valid BUT >=1 COMPILES (syntactically
+    plausible decode RTL, fails only on mismatches). The model produces
+    structurally-reasonable decode but not bit-exact -> win-path is
+    marginal; options: larger token budget, more attempts, or a smaller
+    dependency-complete module (disp 14KB) as the headline.
+  * FAIL (LLM-blocked): 0 compile / structurally broken output -> the
+    model cannot produce decode-class RTL; the large-module win-path is
+    dead. Commit the finals to the characterization framing (Branch C,
+    doc 14) — already the evidence-supported posture.
+- Note on cost/latency: 64000-token budget is generous (chosen so
+  truncation cannot masquerade as incapability). If the smoke PASSES, the
+  full run's budget should be re-calibrated (the decode golden is
+  ~15-18k tokens of code; 32-40k may suffice and run far faster).
