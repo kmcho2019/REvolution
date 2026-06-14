@@ -2543,3 +2543,24 @@ fallback; R-D k=2 (already running on OpenRouter).
   individuals closes V1's residual on the 3 exploitation problems (alu,
   parallel2serial, multi_pipe) -> parity-or-better -> positive QD
   contribution. Verdict pending V2 completion (~1.5-2.5h at 3-way).
+
+## 2026-06-14 16:10 KST — V2 (NSGA-II) interim 5/13: MIXED, not a clean win
+
+- Early V2 vs V1 vs classic (5/13 problems, best-quality):
+  Prob004 tie; Prob024 tie; Prob015_multi_pipe (residual) V2 -0.004 vs cls
+  / +0.048 vs V1 -> NSGA-II CLOSED this residual; Prob037_parallel2serial
+  (residual) V2 -0.228 vs cls / -0.078 vs V1 -> NSGA-II did NOT help, got
+  WORSE than V1; Prob041_traffic_light V2 -0.044 vs V1 -> regressed.
+- READ: NSGA-II global-rank selection REDISTRIBUTES the deficit rather than
+  uniformly closing it - helps multi_pipe but regresses parallel2serial +
+  traffic_light. Net on these 5 ~ wash-or-slightly-worse vs V1. The global
+  rank preference may over-exploit, losing the cell-diversity that helped
+  some problems. The DECISIVE Prob045_alu (-0.256, biggest residual) is
+  NOT yet done - it's the swing; if NSGA-II closes alu, V2 swings to a win.
+- IMPLICATION (interim): if V2 does not clearly beat V1, then V1 (the
+  simpler code_individual overlay, -0.033, no selection change) is the
+  better/simpler contribution - the indirection-removal was the big win,
+  and NSGA-II may be an unnecessary complication. Decide on the full V2
+  verdict (esp. alu) + the proper paired CI. CAVEAT: single seed, 5/13.
+- Doc 16 V3 (champion-lane / overlay-weight tuning) remains as a fallback
+  knob if neither V1 nor V2 cleanly reaches parity.
