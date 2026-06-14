@@ -2519,3 +2519,27 @@ fallback; R-D k=2 (already running on OpenRouter).
   contribution: "QD as a parity-quality diversity augmentation" answering
   criticisms #1 (weighted-sum bias, via NSGA-II) + #5 (diversity). This is
   the salvage the user proposed, now within reach.
+
+## 2026-06-14 15:50 KST — V1 formal verdict + V2 (NSGA-II) LAUNCHED
+
+- V1 done (rc=0). Formal paired stats (single seed 1001,
+  stats_vs_classic_1001): best_quality mean_delta -0.0332,
+  avg_ppa_improvement -0.0428, hypervolume -0.0155, functional_any_pass
+  +0.000 (TIE), valid_ppa_any_pass +0.000 (TIE); 13 paired, 0 missing.
+  KEY: V1 TIES classic on functionality (pass rate) - the deficit is
+  PURELY PPA quality, and small (-0.033). Hypervolume -0.016 (better than
+  best_quality) shows the archive's diversity gives reasonable coverage.
+  Single seed; the cluster-bootstrap CI across seeds is the formal parity
+  verdict (finals-level); the -0.033 mean is at the parity boundary.
+- V2 (NSGA-II global-rank selection) LAUNCHED (bxogb4n9v),
+  exp/fast_iter/smooth_qd_nsga2/seed_1001. Verified the novel
+  nsga2_global_rank path runs cleanly in a real generation loop (config
+  confirms qd_parent_selection=nsga2_global_rank + code_individual; no
+  errors) - validates V2 end-to-end beyond the unit test. Same config as
+  V1 except the selection mode, so V1-vs-V2 isolates it. Stats vs classic
+  AND vs V1 emitted on completion. Low 3-way concurrency (finals still
+  running). isolated re-verify best candidates after (M12).
+- Hypothesis under test: NSGA-II's preference for high-quality rank-1
+  individuals closes V1's residual on the 3 exploitation problems (alu,
+  parallel2serial, multi_pipe) -> parity-or-better -> positive QD
+  contribution. Verdict pending V2 completion (~1.5-2.5h at 3-way).
