@@ -216,7 +216,11 @@ class CandidateEvaluator:
         self.evaluation_mode = evaluation_mode
         self.accelerated_synthesis_top_k = accelerated_synthesis_top_k
         self.accelerated_skip_score = accelerated_skip_score
-        self.aux_source_files, self.aux_include_dirs = self._resolve_aux_sources()
+        (
+            self.aux_source_files,
+            self.aux_include_dirs,
+            self.force_include_headers,
+        ) = self._resolve_aux_sources()
         self.compile_defines = self._resolve_compile_defines()
         self._telemetry_lock = threading.Lock()
         # Evaluator-side scheduler telemetry. evaluator_retries is structurally
@@ -246,36 +250,78 @@ class CandidateEvaluator:
         raw = self.problem_spec.metadata.get("compile_defines", "")
         return [token.strip() for token in raw.split(",") if token.strip()]
 
-    def _resolve_aux_sources(self) -> tuple[list[str], list[str]]:
-        """Resolve benchmark aux files into compile units and include dirs.
+    def _resolve_aux_sources(self) -> tuple[list[str], list[str], list[str]]:
+        """Resolve benchmark aux files into compile units, include dirs, and headers.
 
         Aux files declared by a problem spec (for example RealBench bundled
-        dependency modules and defines headers) are resolved against the
-        benchmark root. Verilog sources become extra compile units for the
-        pre-synthesis simulation; every aux parent directory becomes an
-        ``-I`` include path so \\`include directives in candidate or harness
-        code resolve.
+        dependency modules and defines headers) split into two kinds:
+
+        - module sources (contain a ``module`` declaration): extra compile units
+          for the pre-synthesis simulation and synthesis.
+        - defines/config headers (no ``module``): NOT compile units. Their names
+          are returned as force-include headers, because verilator preprocesses
+          each file independently, so a candidate that uses the design's global
+          macros (e.g. e203 ``E203_XLEN``) resolves them only if it
+          \\`include`s the header itself. The LLM is told to but often omits the
+          line, which would otherwise fail every candidate at preprocessing and
+          mask its real logic. Only "entry" headers are returned (a header that
+          another header already \\`include`s — e203_defines.v -> config.v — is
+          dropped so it is not double-included).
+
+        Every aux parent becomes an ``-I`` include path so the force-includes and
+        any harness \\`include directives resolve.
         """
 
         if self.problem_spec is None or not self.problem_spec.aux_files:
-            return [], []
+            return [], [], []
         root = Path(self.problem_spec.benchmark_root)
         sources: list[str] = []
         include_dirs: list[str] = []
+        headers: list[tuple[str, str]] = []
         for raw in self.problem_spec.aux_files:
             path = Path(raw)
             if not path.is_absolute():
                 path = root / path
-            if not path.is_file():
+            if not path.is_file() or path.suffix not in {".v", ".sv", ".vh", ".svh"}:
                 continue
-            resolved = str(path.resolve())
-            if path.suffix in {".v", ".sv", ".vh", ".svh"}:
+            parent = str(path.parent.resolve())
+            if parent not in include_dirs:
+                include_dirs.append(parent)
+            text = path.read_text(encoding="utf-8", errors="ignore")
+            if re.search(r"(?m)^\s*module\b", text):
+                resolved = str(path.resolve())
                 if path.suffix in {".v", ".sv"} and resolved not in sources:
                     sources.append(resolved)
-                parent = str(path.parent.resolve())
-                if parent not in include_dirs:
-                    include_dirs.append(parent)
-        return sources, include_dirs
+            else:
+                headers.append((path.name, text))
+        force_includes = [
+            name
+            for name, _ in headers
+            if not any(other != name and name in text for other, text in headers)
+        ]
+        return sources, include_dirs, force_includes
+
+    def _forced_header_path(self, item: CandidateWorkItem) -> str:
+        """Return the candidate path to compile, force-including design headers.
+
+        Verilator preprocesses each file independently, so a candidate that uses
+        a design's global macros (e.g. e203 ``E203_XLEN``) resolves them only if
+        it \\`include`s the defines header. The LLM is instructed to but often
+        omits the line; without this every e203 candidate fails preprocessing,
+        masking its real logic. Writes a sibling file with the missing
+        \\`include lines prepended and returns its path; ``item.code`` and the
+        original ``code_file_path`` (used for metrics, feedback, and archival)
+        are left untouched. Idempotent: same inputs -> same file. A no-op when
+        the problem has no header aux or the candidate already includes them.
+        """
+        missing = [h for h in self.force_include_headers if h not in item.code]
+        if not missing:
+            return item.code_file_path
+        includes = "".join(f'`include "{h}"\n' for h in missing)
+        src = Path(item.code_file_path)
+        patched = src.with_name(f"{src.stem}__with_headers{src.suffix}")
+        patched.write_text(includes + item.code, encoding="utf-8")
+        return str(patched)
 
     def calculate_fitness_score(self, ppa_metrics: dict[str, float]) -> tuple[float, dict[str, float]]:
         """Compute the QD quality score using the REvolution PPA equation."""
@@ -433,10 +479,11 @@ class CandidateEvaluator:
         enable_dynamic_probe = bool(
             self.descriptor_requirements.get("requires_dynamic_metrics", False)
         )
+        dut_path = self._forced_header_path(item)
         generated_sources: str | list[str] = (
-            [item.code_file_path, *self.aux_source_files]
+            [dut_path, *self.aux_source_files]
             if self.aux_source_files
-            else item.code_file_path
+            else dut_path
         )
         sim_results = _coerce_result_dict(
             self.verilog_evaluator.evaluate(
@@ -519,11 +566,12 @@ class CandidateEvaluator:
         mismatch_count = pre_synthesis.mismatch_count
         dynamic_metrics = dict(pre_synthesis.dynamic_metrics)
 
-        report_base_path = item.code_file_path.rsplit(".", 1)[0]
+        dut_path = self._forced_header_path(item)
+        report_base_path = dut_path.rsplit(".", 1)[0]
         output_dir = os.path.dirname(item.code_file_path)
         synth_results = _coerce_result_dict(
             self.synthesis_evaluator.evaluate(
-                item.code_file_path,
+                dut_path,
                 self.context.problem_name,
                 self.synthesis_top_module_name,
                 output_dir,
