@@ -2657,3 +2657,26 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Linked from the dashboard navigation. This accelerates the paper: once
   the multi-seed + finals CIs land, the numbers slot in and the spine
   ports to LaTeX, then the four-persona adversarial sign-off.
+
+## 2026-06-14 ~19:30 KST — V1 seed 1002 (early): parity is SEED-SENSITIVE
+
+- V1 (code_individual, cell-tournament) seed 1002 vs classic 1002, 13/13
+  (lower bound, run wrapping up): MEAN -0.0553 (1W/8L/4T), 9/13 parity.
+  WORSE than seed 1001's -0.033. Worst: parallel2serial -0.469 (vs -0.150
+  on 1001), m2014_q6b -0.151 (vs 0 on 1001), traffic_light -0.066.
+- READ: the smooth-QD parity is SEED-SENSITIVE - single-seed 1001 (-0.033)
+  was optimistic; 2-seed V1 mean ~-0.044. Per-problem deltas swing widely
+  across seeds (the multi-seed confirmation is doing exactly its job:
+  revealing variance the single seed hid). This is V1 (the baseline
+  variant); V2 (NSGA-II, the contribution, -0.011 on seed 1001) replication
+  on seeds 1002-1003 is the decisive data, plus the pooled
+  cluster-bootstrap CI (problems as clusters) - the FORMAL verdict, which
+  accounts for this variance.
+- EXPECTATION MANAGEMENT: the parity claim may land as "within the parity
+  band by the pooled CI" rather than a tight -0.01; or it may not pass the
+  -0.03 bar if the variance is large. Honest either way - the contribution
+  framing ("parity-quality diversity augmentation") needs the pooled CI low
+  > -0.03; if it lands marginally outside, the framing becomes "near-parity
+  (CI [...]) with a localized residual," still a positive principled result
+  vs the radical build's -0.10. CAVEAT: lower bound (13/13 data, finishing);
+  V2 1002/1003 + pooled CI pending.
