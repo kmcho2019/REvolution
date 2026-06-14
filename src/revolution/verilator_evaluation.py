@@ -40,8 +40,21 @@ class VerilatorEvaluator:
         simulation_timeout_seconds: int | None = None,
         include_dirs: list[str] | None = None,
         defines: list[str] | None = None,
+        enable_vcd_probe: bool = False,
     ) -> dict[str, Any]:
-        """Verilate and run one candidate; same result keys as the iverilog path."""
+        """Verilate and run one candidate; same result keys as the iverilog path.
+
+        ``enable_vcd_probe`` exists only to match the iverilog evaluator's
+        signature. Dynamic-activity descriptors source from ``icarus_vcd``,
+        which the verilator harness cannot produce, so a True value here is a
+        configuration error (a dynamic descriptor profile paired with a
+        verilator-only benchmark) and is rejected rather than silently
+        yielding empty dynamic metrics.
+        """
+        assert not enable_vcd_probe, (
+            "VerilatorEvaluator does not support icarus_vcd dynamic-activity "
+            "probing; use a static descriptor profile on verilator benchmarks."
+        )
 
         dut_files = (
             [generated_sv_file]

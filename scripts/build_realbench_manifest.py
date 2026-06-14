@@ -450,6 +450,14 @@ def generate_manifest(
         }
     manifest_path = output_root / "module_manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    # Derived synthesis-top-module map: the runtime resolves the synthesis top
+    # module by reading ``<root>/synthesis_top_module_names.json`` keyed by
+    # problem_name. Emit it from the manifest so the manifest stays the single
+    # source of truth and the runtime never falls back to the "TopModule" default.
+    top_module_map = {str(e["problem_name"]): str(e["top_module"]) for e in entries}
+    (output_root / "synthesis_top_module_names.json").write_text(
+        json.dumps(top_module_map, indent=2, sort_keys=True), encoding="utf-8"
+    )
     return manifest
 
 

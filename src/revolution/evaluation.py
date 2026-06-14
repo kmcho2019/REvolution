@@ -738,6 +738,8 @@ class SynthesisEvaluator:
                 output_directory,
                 verilog_evaluator,
                 simulation_timeout_s=effective_simulation_timeout_s,
+                include_dirs=include_dirs,
+                defines=defines,
             )
         )
 
@@ -913,9 +915,16 @@ class SynthesisEvaluator:
         output_dir: str,
         verilog_evaluator: VerilogEvaluator,
         simulation_timeout_s: int = 300,
+        include_dirs: tuple[str, ...] = (),
+        defines: tuple[str, ...] = (),
     ) -> tuple[bool, str]:
         """
         Runs a functional simulation on the synthesized netlist using the provided testbench.
+
+        ``include_dirs`` and ``defines`` are forwarded to the testbench compile
+        so that a testbench which \\`include`s a defines header (e.g. the e203
+        modules' ``e203_defines.v``) and uses its macros in its own port
+        declarations still compiles against the gate-level netlist.
 
         :param synthesized_netlist: Path to the synthesized netlist file.
         :param test_sv: Path to the testbench Verilog file.
@@ -947,6 +956,8 @@ class SynthesisEvaluator:
             ref_sv_file=ref_sv,
             top_module_name=tb_top_module,
             simulation_timeout_seconds=simulation_timeout_s,
+            include_dirs=list(include_dirs) or None,
+            defines=list(defines) or None,
             # Don't use output_directory here, if we pass the synthesized_netlist its .syn suffix will differentiate it from the rtl simulation
         )
 
@@ -962,9 +973,17 @@ class SynthesisEvaluator:
             # Looks for "Mismatches: 0" in the output (VerilogEvalv2)
             # or checks for "===========Your Design Passed===========" in the output (RTLLMv2)
             m_match = re.search(r"^Mismatches: (\d+)", output, re.M)
+            # RealBench e203 harnesses emit a v1-style summary instead of the
+            # VerilogEval-v2 line; mirror parse_mismatch_count's fallback so the
+            # post-synthesis check accepts the same passing runs as pre-synthesis.
+            realbench_match = re.search(
+                r"Total mismatched samples is (\d+) out of", output
+            )
             if (
-                m_match and int(m_match.group(1)) == 0
-            ) or "===========Your Design Passed===========" in output:
+                (m_match and int(m_match.group(1)) == 0)
+                or (realbench_match and int(realbench_match.group(1)) == 0)
+                or "===========Your Design Passed===========" in output
+            ):
                 return True, log
 
         return False, log
