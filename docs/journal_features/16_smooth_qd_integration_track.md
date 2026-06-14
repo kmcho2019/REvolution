@@ -67,8 +67,8 @@ bundled with it.
   classic seed 1001). **This is the cheapest test of the whole thesis:**
   if V1 reaches parity, the indirection was indeed the culprit and QD
   survives as a parity+diversity contribution with NO new code.
-- **V2 — V1 + NSGA-II global non-domination-rank selection (SPEC below;
-  needs implementation).** Replaces the per-cell crowded-tournament parent
+- **V2 — V1 + NSGA-II global non-domination-rank selection (IMPLEMENTED
+  2026-06-14, commit 0ee4a8a983; not yet launched).** Replaces the per-cell crowded-tournament parent
   sampling with global NSGA-II rank+crowding selection. Tests the user's
   specific selection idea. Gate it behind V1's result (only build if V1
   shows a residual gap that better selection could close, OR to

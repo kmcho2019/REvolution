@@ -2468,3 +2468,29 @@ fallback; R-D k=2 (already running on OpenRouter).
   stats.
 - NEXT: let V1 finish (full 13 + stats_vs_classic_1001 paired CI), then
   implement V2 cleanly per doc 16 (1 flag + 1 helper + unit test).
+
+## 2026-06-14 15:15 KST — V2 (NSGA-II global selection) IMPLEMENTED
+
+- Implemented the smooth-QD V2 selection mode (doc 16, user-proposed),
+  commit 0ee4a8a983. Flag qd_parent_selection={cell_crowded_tournament
+  (default), nsga2_global_rank}. The nsga2 mode ranks ALL success
+  members by global non-domination rank + crowding (reusing the existing
+  archive.ranked_front - no new ranking math), fills rank-by-rank to
+  population_size with a crowding tie-break, then draws parents (champion
+  lane still applies). Routed in _sample_success_parents and
+  _sample_two_success_parents. Plumbed run_backend -> revolution_backend
+  -> RevolutionEngine. Kept minimal per doc 16 (1 flag + 1 helper +
+  branch), well within the "don't convolute" budget.
+- Validation: new unit test test_ranked_front_global_nsga2_ordering
+  (global rank assignment + crowding boundary tie-break) PASSES; 227 QD
+  tests pass (no regression); ruff clean; no NEW pyright errors (3
+  pre-existing: scipy KS .statistic/.pvalue + a tuple[()] at engine 2740).
+  CLI exposes --qd_parent_selection with choices.
+- NOT launched yet: queued behind the running gpt-oss finals (bo03wrum8)
+  + smooth-QD V1 (ba2bipcz3) to avoid M12 contention/budget overlap. When
+  the queue frees, run V2 (code_individual + nsga2_global_rank) vs classic
+  seed 1001 on the fast subset, same config as V1, per doc 16 eval
+  protocol; isolated re-verify best candidates.
+- Motivation recap: V1 (8/13) landed at -0.056 with the deficit
+  concentrated on exploitation-heavy PPA-margin problems; V2's preference
+  for high-quality rank-1 individuals directly targets that residual.
