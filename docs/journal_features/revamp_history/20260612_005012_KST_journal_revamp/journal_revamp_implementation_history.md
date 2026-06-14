@@ -2348,3 +2348,36 @@ fallback; R-D k=2 (already running on OpenRouter).
   pure characterization toward a scale-dependent win - a major upside.
 - Two background jobs now: gpt-oss finals (bo03wrum8), DeepSeek probe
   (bbnvi9ucq). Both notify on completion.
+
+## 2026-06-14 14:00 KST — F21 verdict (DeepSeek) + F22 launched (smooth QD)
+
+- F21 DeepSeek probe VERDICT (isolated re-eval, classic, 12 cand/module):
+  deepseek-v4-pro vs gpt-oss-120b: decode 0 valid 100% vs 100% (unchanged);
+  disp 0 valid 6.35% vs 21%; branchslv 0 valid 7.69% vs 25%. A stronger
+  model gets MUCH closer on mid/small modules (~3x lower mismatch) but
+  STILL 0 valid; largest module unchanged/hopeless. Leans MODEL-GENERAL
+  (win-path doesn't cleanly reopen - no valid candidate = no PPA compare),
+  but the 6-8% on disp/branchslv is close -> more attempts MIGHT cross
+  (uncertain lever). Manuscript value: a model-strength GRADIENT
+  strengthens the criticism-#4 characterization.
+- F22 SMOOTH QD (user idea) LAUNCHED. Realization: ALL prior QD arms used
+  representation_kind=thought_only (the radical break blamed for the loss,
+  F7/F8). The default representation_kind=code_individual (DIRECT code) was
+  NEVER tested as a QD arm. The smooth config -
+  revolution_qd + code_individual + eoh_strategies (classic operators) +
+  qd_champion_lane_fraction 0.5 + frozen BD-trio archive - is classic's
+  quality machinery WITH a MAP-Elites diversity overlay, removing the
+  indirection while keeping the archive (F12: archive is not the PPA
+  lever). Hypothesis: classic-parity quality + diversity -> salvages QD as
+  a POSITIVE contribution (parity+diversity, not "QD wins quality").
+  Running: code_individual QD seed 1001 vs existing classic seed 1001 on
+  the 13-problem fast subset (exp/fast_iter/smooth_qd_code_individual,
+  ba2bipcz3, low concurrency to protect the finals). Config validated
+  (accepted: code_individual + revolution_qd + eoh + champion lane 0.5).
+- Synthesis of the two user ideas: (1) stronger model (DeepSeek) eases but
+  does not remove the large-module ceiling; (2) smooth QD integration is
+  the more promising path to a POSITIVE QD contribution on the small
+  benchmarks where candidates ARE valid. If F22 reaches parity, the
+  journal gains a real QD contribution beyond pure characterization.
+- Three jobs tonight: gpt-oss finals (bo03wrum8, running), DeepSeek probe
+  (bbnvi9ucq, DONE), smooth-QD (ba2bipcz3, running).

@@ -249,7 +249,46 @@ thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
 
-### F21 — Stronger-model probe: does deepseek-v4-pro reopen the win-path? `IN PROGRESS`
+### F22 — Smooth QD integration (code_individual): untested salvage path `IN PROGRESS`
+Key realization (user-prompted): every QD arm we ran used
+`representation_kind=thought_only` — the RADICAL break (thought→code
+indirection) that the diagnosis blames for the loss (F7/F8). The
+codebase's DEFAULT, `representation_kind=code_individual` (direct-code
+QD), was NEVER tested as a QD arm. The smooth-integration config —
+`revolution_qd + code_individual + eoh_strategies` (classic's
+multi-operator suite) `+ qd_champion_lane_fraction 0.5` (refine the
+champion, addresses selection-dilution F8) `+ the frozen BD-trio archive`
+— is classic's quality machinery WITH a MAP-Elites diversity overlay,
+not a replacement. It removes the diagnosed harm (indirection) while
+keeping the actual QD contribution (archive/BD; F12 says the archive is
+NOT the PPA lever, so it shouldn't hurt). **Hypothesis:** classic-parity
+quality + added BD-space diversity → salvages QD as a POSITIVE
+contribution ("QD as a diversity-preserving augmentation achieving
+quality parity," not "QD wins quality"). RUNNING: code_individual QD
+seed 1001 vs the existing classic seed 1001 on the 13-problem fast subset
+(`exp/fast_iter/smooth_qd_code_individual`, low concurrency to protect the
+finals). **Pre-registered (M6):** parity (pooled CI low > −0.03) →
+contribution survives; clear deficit → the indirection wasn't the whole
+story. Isolated re-verify (M12) before trusting counts. [H: 2026-06-14 14:00]
+
+### F21 — Stronger-model probe: closer but still 0 valid (leans model-general) `MEASURED`
+**VERDICT (isolated re-eval, classic arm, 12 candidates/module):**
+deepseek-v4-pro vs gpt-oss-120b — decode (53 KB) 0 valid, 100% vs 100%
+(unchanged, hopeless for both); disp (14 KB) 0 valid, **6.35%** vs 21%;
+branchslv (5.9 KB) 0 valid, **7.69%** vs 25%. So a stronger model gets
+MUCH CLOSER on the mid/small modules (mismatch ~3× lower) but STILL
+produces 0 functionally-valid candidates, and the largest module is
+unchanged. **Read:** leans MODEL-GENERAL — the win-path does NOT cleanly
+reopen (0 valid → no PPA comparison). BUT the 6–8% mismatch on disp/
+branchslv is close, so more v4-pro attempts on the *closest* modules
+MIGHT cross to valid — a remaining (uncertain) lever, not a hard wall.
+The largest-module ceiling (decode 100% both) is genuinely model-general.
+Manuscript value: a model-strength GRADIENT (capability improves with
+model strength but doesn't cross the validity threshold on real CPU
+modules) — strengthens the criticism-#4 characterization either way.
+`exp/fast_iter/deepseek_capability_probe` [H: 2026-06-14 14:00]
+
+### F21-orig — Stronger-model probe (deepseek-v4-pro): launched `SUPERSEDED by verdict above`
 F18-F20 established the capability ceiling for **gpt-oss-120b**. Open
 question (user-prompted): is the ceiling MODEL-SPECIFIC or model-general?
 Probe (`exp/fast_iter/deepseek_capability_probe`, classic arm,
