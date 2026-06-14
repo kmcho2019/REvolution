@@ -124,20 +124,32 @@ reframes the feasibility question entirely: synthesis feasibility was the
 designs big enough to exhibit QD's hypothesized architectural-room
 advantage are too big for the model to implement; the dependency-complete
 modules it might implement (≤14 KB) are in the same small-design regime
-where QD already loses (F1/F15). The mid-size smoke (F19) is mapping the
-exact ceiling; pending its result, the strongest form of the win-path
-(large designs) is **LLM-capability-blocked**.
+where QD already loses (F1/F15).
 
-## Recommendation
+**RESOLVED — win-path RETIRED on honest evidence (F19/F20, 2026-06-14).**
+A confounding artifact was first removed: candidates were dying at
+preprocessing because they omitted the e203_defines.v include, masking
+their logic (F19, fixed). With the fair harness, the honest
+storyline-decider (classic vs QD, 7 dependency-complete modules
+4.7–53 KB) returned **0/7 valid on BOTH arms** (F20) — every candidate
+compiles but is functionally wrong, and QD's diverse thought-level search
+does NOT break the classic monoculture. The squeeze is therefore
+confirmed and binding: the win-path's strongest form is **dead**, not
+unproven. Crucially this is a *content* result, not a null — at real-CPU
+scale the limiting factor is the LLM's systematic spec-comprehension, not
+search/operator design, which directly answers criticism #4 with a
+RealBench-scale finding and bounds the diversity claim (#5).
+
+## Recommendation (updated 2026-06-14 — now evidence-decided)
 
 1. Finish the bake-off — decides whether the diversity contribution has
-   any legs at all.
+   any legs at all on the small benchmarks where candidates ARE valid.
 2. ~~Prioritize RealBench QD-vs-classic on the larger modules~~ —
-   **superseded (F18).** The win-path's strongest form is
-   capability-blocked: the LLM cannot implement the large modules. Await
-   the mid-size ceiling (F19); if even disp (14 KB) fails, retire the
-   win-path and stop spending on it.
-3. Decide consciously, now, that the team is writing the **characterization
-   paper** — the evidence supports it; it does not support "we win." F18
-   strengthens this: the win-path that might have flipped the verdict is
-   now evidence-blocked, not merely unproven.
+   **DONE and RETIRED (F20).** Both arms 0/7 valid; no PPA-win is
+   possible. Stop spending on the win-path. Fold the RealBench-large
+   result in as a *characterization* contribution: "at real-CPU scale,
+   LLM spec-comprehension — not QD search structure — is the binding
+   limit; quality-diversity cannot rescue it."
+3. Write the **characterization paper** — now the evidence-decided
+   conclusion, not a judgement call. The one experiment that could have
+   flipped the verdict to "we win" has been run honestly and did not.

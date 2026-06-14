@@ -25,23 +25,27 @@ when new runs land; keep finding IDs stable.
 
 | Phase | Title | State |
 | --- | --- | --- |
-| P1 | QD repair | **CLOSED → Branch C.** All screens + ablation + parity fixes done; Fix B halved the FAST deficit but did NOT transfer to hard (F15) — realization-side parity path closed. Only win-path left: RealBench-large (#16). |
+| P1 | QD repair | **CLOSED → Branch C (now evidence-decided).** All screens + ablation + parity fixes done; Fix B halved the FAST deficit but did NOT transfer to hard (F15). The last win-path lever — RealBench-large (#16) — is now RETIRED: both classic and QD score 0/7 valid on dependency-complete e203 modules (F20), so no PPA-win is possible. Branch C is the conclusion on evidence, not assumption. |
 | P2 | BD / descriptor thesis | **In progress.** 4 profiles pre-registered (doc 11); bake-off queued behind matrix; mechanical verdict table ready. |
 | P3 | Benchmark vetting | **Mostly done.** RealBench verilator-only (55/60). **RealBench QD-vs-classic is the STORYLINE-DECIDER (doc 14): the one experiment that could convert Branch C→A/B — QD diversity may only pay off on larger designs.** Debug pairs pending next OpenRouter slot. |
 | P4 | Gates / freeze | **Tooling complete.** All slices locked. Open: MDE ratchet + budget-rule *decisions*, seed-42 debug gate, 5-seed finals. |
 | P5 | Manuscript | **Kicked off.** Evidence map (doc 12) binds elements to artifacts; prose pending finals. |
 
-**Win-path status (#16):** the eval pipeline is now FIXED and validated
-END-TO-END (F16 RESOLVED) — the golden e203_exu_decode (53 KB) passes the
-full runtime evaluate_candidate (pre-synth functional → yosys+OpenROAD
-PPA → post-synth check → journal BD-trio descriptors), no LLM, status
-`success`. The dependency-complete census (F17) shows decode + disp are
-the large viable modules; the original biu/lsu subset was mostly
-dependency-incomplete (the other reason the first run failed). **Only
-open question left: can the LLM implement decode-class modules?** — now
-cheap to settle with a 1-module OpenRouter smoke before committing to a
-full QD-vs-classic large run. The PPA win-path test still stands: does QD
-diversity pay off where designs have architectural room (vs F1/F15).
+**Win-path status (#16): CONCLUDED — RETIRED on honest evidence (F20).**
+The full investigation ran its course: infra was fixed + validated
+end-to-end (F16/M11), the dependency-complete census mapped the viable
+modules (F17), a confounding missing-include artifact was caught and
+fixed (F19), and the honest post-fix storyline-decider (classic vs QD,
+7 modules) came back **0/7 valid on BOTH arms** (F20). The LLM
+(gpt-oss-120b) produces structurally-valid but functionally-WRONG e203
+modules at every size; QD diversity does not break the spec-comprehension
+bottleneck. The "QD beats classic on RealBench-large PPA" headline is
+impossible (no valid candidate to compare). **This is not a wasted leg:**
+it converts criticism #4 (small benchmarks) into a real RealBench-scale
+result and extends the regime-sensitivity thread (F4) — the binding
+limit at real-CPU scale is LLM spec-comprehension, not search structure.
+**The finals are the CHARACTERIZATION paper (Branch C), now decided on
+evidence, not assumption.**
 
 ---
 
@@ -236,6 +240,26 @@ is running to settle the actual win-path hypothesis — does diverse
 thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
+
+### F20 — Storyline-decider SETTLED: BOTH arms 0/7 on RealBench-large `MEASURED`
+The honest, post-fix storyline-decider (classic vs QD, same budget/seed,
+7 dependency-complete e203 modules 4.7–53 KB, gpt-oss-120b): **both arms
+0/7 valid, every candidate `failed_functionality`** (compiles, simulates,
+fails on mismatch). QD's diverse thought-level search did NOT break the
+classic monoculture: diversity cannot rescue a spec-comprehension
+bottleneck. **This conclusively answers the win-path question** — the
+RealBench-large "QD beats classic on PPA" headline is impossible because
+neither arm produces a single valid candidate to compare PPA on. The
+win-path is RETIRED on honest evidence (not an artifact — F19 fixed the
+include confound; the failure mode is genuine functional incorrectness).
+**The result is CONTENT, not a null** (addresses criticisms #4+#5): at
+real-CPU scale the binding bottleneck is the LLM's systematic
+spec-comprehension, not search structure or operator design — extending
+the regime-sensitivity thread (F4) from small benchmarks to RealBench.
+Graded mismatch comparison (does QD reduce error magnitude / diversify
+the error vs classic's monoculture?) pending
+(`exp/fast_iter/capability_remap/grade_mismatch_compare.json`).
+[H: 2026-06-14 10:10]
 
 ### F15 — Fix B does NOT transfer to the hard subset `MEASURED` (parity path closed)
 Fix B hard-subset (seed 42, 20×5, 13 problems): −0.116 (1/10/2, CI

@@ -2153,3 +2153,35 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Lesson (M6 reinforced): a 0/N capability result MUST be ground-truthed
   before interpretation - twice now the LLM-feedback prose ("testbench
   missing") and an aggregate 0-count nearly drove a wrong verdict.
+
+## 2026-06-14 10:10 KST — F20: storyline-decider SETTLED; win-path RETIRED
+
+- Honest post-fix storyline-decider complete. Classic re-map: 7
+  dependency-complete e203 modules (4.7-53KB), 0/7 valid, all
+  failed_functionality. QD arm (same budget/seed, journal BD profile,
+  thought_only + code_samples_per_thought 4): ALSO 0/7 valid, all
+  failed_functionality (16 candidates/module).
+- CONCLUSION: both classic and QD produce structurally-valid but
+  functionally-WRONG implementations of every dependency-complete e203
+  module. QD's diverse thought-level search does NOT break the classic
+  monoculture spec-misread. The "QD beats classic on RealBench-large
+  PPA" headline is impossible (no valid candidate to compare PPA on).
+  The win-path is RETIRED on honest evidence (F19 removed the include
+  confound; the failure is genuine functional incorrectness).
+- This is CONTENT, not a null. It converts conference criticism #4
+  (benchmarks too small) into a real RealBench-scale result and extends
+  the regime-sensitivity thread (F4): at real-CPU scale the binding
+  bottleneck is the LLM's systematic spec-comprehension, NOT search
+  structure or operator design. It also bounds the diversity claim (#5):
+  diversity cannot rescue a spec-comprehension bottleneck.
+- Strategic docs updated: dashboard win-path block -> RETIRED; P1 ->
+  Branch C evidence-decided; doc 14 recommendation -> win-path done,
+  characterization paper is the evidence-decided conclusion.
+- Graded mismatch comparison (classic monoculture vs QD diversity in
+  mismatch space; does either get closer to correct?) running in
+  background -> grade_mismatch_compare.json. Refinement only; does not
+  change the verdict.
+- The journal's posture is now firmly: a rigorous CHARACTERIZATION paper
+  answering criticisms #1-3 (bias removal + the missing ablation) and #4
+  (RealBench-scale capability finding), with #5 (diversity) bounded
+  honestly. No "we win" claim - and now we KNOW, having run the decider.
