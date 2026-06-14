@@ -1840,3 +1840,27 @@ fallback; R-D k=2 (already running on OpenRouter).
   unknowns (yosys + OpenROAD on large designs) are both confirmed.
   Task #16 go/no-go is now a pure cost/value call, not a feasibility
   gamble. Probe artifacts in /tmp/orprobe (yosys.log, openroad.log).
+
+## 2026-06-14 05:00 KST — task #16 step 1 DONE: synth aux-threading (validated)
+
+- Decision: built the win-path (task #16) rather than defer a 4th time -
+  F15 closed realization parity, M10 confirmed RealBench-large is
+  feasible, the user keeps asking "what's next/what fixes", and the
+  remaining work is reversible additive plumbing.
+- feat(synth) 2ba630bab9: SynthesisEvaluator gains aux_files/
+  include_dirs/defines (all default empty -> byte-identical behavior
+  for VerilogEval/RTLLM single-file tasks); ref.yosys.tcl gains
+  __DEFINES__/__INCDIRS__/__AUX_READ__ placeholders. Validated on the
+  REAL flow (not a probe): e203_exu_alu_dpath (2143 cells) + support +
+  DISABLE_SV_ASSERTION -> synth_success + OpenROAD floorplan. Full
+  suite green (739 passed, 4 skipped) - zero regression on the
+  load-bearing synthesis path.
+- REMAINING task #16 steps (next cron fire continues): (2) relax the
+  manifest supports_synthesis heuristic to allow support_files;
+  (3) wire aux_files/defines from the RealBench problem spec through
+  candidate_evaluator -> SynthesisEvaluator (the runtime path QD runs
+  use); (4) re-lock a synthesis-capable large-module RealBench subset;
+  (5) run QD-vs-classic on RealBench-large with PPA + Pareto-coverage
+  readouts (the storyline-decider). Stopped at the tested step-1
+  boundary rather than rush step 3 (another load-bearing path) at the
+  end of a long turn.
