@@ -465,6 +465,7 @@ def _build_backend(
             qd_thought_code_seeded=args.qd_thought_code_seeded,
             qd_seed_sample_fraction=args.qd_seed_sample_fraction,
             qd_champion_lane_fraction=args.qd_champion_lane_fraction,
+            qd_parent_selection=args.qd_parent_selection,
             representative_sample=args.representative_sample,
             repair_kind=args.repair_kind,
             repair_max_attempts_per_sample=args.repair_max_attempts_per_sample,
@@ -1042,6 +1043,10 @@ def _build_parser() -> tuple[argparse.ArgumentParser, argparse.ArgumentParser]:
         help="Fraction of k samples that are seeded vs whole-regen leaps (B\u2032 hybrid; 1.0=pure Fix B).")
     parser.add_argument("--qd_champion_lane_fraction", type=float, default=0.0,
         help="Fraction of QD parents drawn from the global best (doc 15 Fix A champion lane).")
+    parser.add_argument("--qd_parent_selection", type=str, default="cell_crowded_tournament",
+        choices=["cell_crowded_tournament", "nsga2_global_rank"],
+        help="QD parent selection: per-cell crowded tournament (default) or global "
+             "NSGA-II non-domination-rank + crowding (smooth-QD V2, doc 16).")
     parser.add_argument(
         "--representative_sample",
         type=str,

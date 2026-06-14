@@ -32,6 +32,7 @@ from revolution.qd.archive import (
     GridAxisSpec,
     GridQuantileArchive,
     active_ppa_objectives,
+    ranked_front,
 )
 from revolution.qd.artifacts import (
     append_archive_history,
@@ -129,6 +130,7 @@ class QDEngine(EoHEngine):
         qd_thought_code_seeded: bool = False,
         qd_seed_sample_fraction: float = 1.0,
         qd_champion_lane_fraction: float = 0.0,
+        qd_parent_selection: str = "cell_crowded_tournament",
         representative_sample: str = "best_successful_quality",
         repair_kind: str = "none",
         repair_max_attempts_per_sample: int = 0,
@@ -246,6 +248,11 @@ class QDEngine(EoHEngine):
         if not 0.0 <= float(qd_champion_lane_fraction) <= 1.0:
             raise ValueError("qd_champion_lane_fraction must be in [0, 1].")
         self.qd_champion_lane_fraction = float(qd_champion_lane_fraction)
+        if qd_parent_selection not in {"cell_crowded_tournament", "nsga2_global_rank"}:
+            raise ValueError(
+                f"Unsupported qd_parent_selection '{qd_parent_selection}'."
+            )
+        self.qd_parent_selection = qd_parent_selection
         self.representative_sample = representative_sample
         self.thought_population_size = (
             self.population_size // self.code_samples_per_thought
@@ -1386,7 +1393,49 @@ class QDEngine(EoHEngine):
                 best = payload
         return best
 
+    def _nsga2_global_pool(self) -> list[Heuristic]:
+        """Global NSGA-II parent pool (smooth-QD V2, doc 16).
+
+        Ranks ALL success members by global non-domination rank then crowding
+        distance (reusing ``ranked_front``), fills rank-by-rank to
+        ``population_size``, and crowding-trims the boundary front via the sort
+        key. Unlike the per-cell crowded tournament, selection here is the
+        classic NSGA-II environmental rule applied across the whole archive,
+        answering the weighted-sum bias (#1) with principled multi-objective
+        selection while preferring high-quality rank-1 individuals.
+        """
+        members = [member for _, member in self.success_archive.members()]
+        if not members:
+            return []
+        ranked = ranked_front(members, self._objective_names())
+        ranked.sort(
+            key=lambda r: (
+                r.pareto_rank,
+                -r.crowding_distance,
+                r.member.insertion_index,
+                r.member.candidate_id,
+            )
+        )
+        return [
+            cast(Heuristic, r.member.payload) for r in ranked[: self.population_size]
+        ]
+
     def _sample_success_parents(self, count: int) -> list[Heuristic]:
+        if self.qd_parent_selection == "nsga2_global_rank":
+            pool = self._nsga2_global_pool()
+            if pool:
+                champion = (
+                    self._global_best_success_member()
+                    if self.qd_champion_lane_fraction > 0.0
+                    else None
+                )
+                parents: list[Heuristic] = []
+                for _ in range(count):
+                    if champion is not None and random.random() < self.qd_champion_lane_fraction:
+                        parents.append(champion)  # champion lane: refine the best
+                    else:
+                        parents.append(random.choice(pool))
+                return parents
         if self.qd_cell_mode == "pareto_front":
             by_cell = self._ranked_success_members_by_cell()
             if by_cell:
@@ -1440,6 +1489,8 @@ class QDEngine(EoHEngine):
         *,
         allow_intra_bin: bool = False,
     ) -> list[Heuristic]:
+        if self.qd_parent_selection == "nsga2_global_rank":
+            return self._sample_success_parents(2)
         if self.qd_cell_mode != "pareto_front":
             return self._sample_success_parents(2)
         by_cell = self._ranked_success_members_by_cell()

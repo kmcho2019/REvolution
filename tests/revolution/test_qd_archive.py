@@ -903,3 +903,49 @@ def test_grid_quantile_warmup_max_buffer_validation():
         GridQuantileArchive(("a",), warmup_successes=5, warmup_max_buffer=3)
     with pytest.raises(ValueError, match="warmup_max_buffer"):
         GridQuantileArchive(("a",), warmup_successes=5, warmup_max_buffer=-1)
+
+
+def test_ranked_front_global_nsga2_ordering():
+    """Smooth-QD V2 (doc 16): global non-domination rank + crowding ordering.
+
+    The global NSGA-II parent pool sorts members by (pareto_rank,
+    -crowding_distance, insertion_index, candidate_id). Verify global rank
+    assignment (a mutually non-dominated trade-off front = rank 1; a
+    dominated member = rank 2) and the crowding tie-break (objective-extreme
+    boundary members get infinite distance and sort ahead of the interior).
+    """
+    from revolution.qd.archive import ranked_front
+
+    objs = ("g_P", "g_A")
+    members = [
+        _member("A", (0.0,), 0.0, objectives={"g_P": 0.9, "g_A": 0.1}),
+        _member("B", (0.0,), 0.0, objectives={"g_P": 0.5, "g_A": 0.5}),
+        _member("C", (0.0,), 0.0, objectives={"g_P": 0.1, "g_A": 0.9}),
+        _member("D", (0.0,), 0.0, objectives={"g_P": 0.4, "g_A": 0.4}),  # dominated by B
+    ]
+    ranked = ranked_front(members, objs)
+    by_id = {r.member.candidate_id: r for r in ranked}
+
+    assert by_id["A"].pareto_rank == 1
+    assert by_id["B"].pareto_rank == 1
+    assert by_id["C"].pareto_rank == 1
+    assert by_id["D"].pareto_rank == 2  # B dominates D (0.5>=0.4 on both, > on both)
+
+    assert by_id["A"].crowding_distance == float("inf")  # boundary
+    assert by_id["C"].crowding_distance == float("inf")  # boundary
+    assert by_id["B"].crowding_distance < float("inf")  # interior
+
+    order = [
+        r.member.candidate_id
+        for r in sorted(
+            ranked,
+            key=lambda r: (
+                r.pareto_rank,
+                -r.crowding_distance,
+                r.member.insertion_index,
+                r.member.candidate_id,
+            ),
+        )
+    ]
+    assert order[-1] == "D"  # dominated member sorts last
+    assert order[0] in ("A", "C")  # a boundary rank-1 member sorts first

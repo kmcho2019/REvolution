@@ -84,6 +84,7 @@ class RevolutionBackendConfig:
     qd_thought_code_seeded: bool = False
     qd_seed_sample_fraction: float = 1.0
     qd_champion_lane_fraction: float = 0.0
+    qd_parent_selection: str = "cell_crowded_tournament"
     representative_sample: str = "best_successful_quality"
     repair_kind: str = "none"
     repair_max_attempts_per_sample: int = 0
@@ -190,6 +191,7 @@ class RevolutionBackend(EvolutionBackend):
                 qd_thought_code_seeded=self.config.qd_thought_code_seeded,
                 qd_seed_sample_fraction=self.config.qd_seed_sample_fraction,
                 qd_champion_lane_fraction=self.config.qd_champion_lane_fraction,
+                qd_parent_selection=self.config.qd_parent_selection,
                 representative_sample=self.config.representative_sample,
                 repair_kind=self.config.repair_kind,
                 repair_max_attempts_per_sample=self.config.repair_max_attempts_per_sample,
