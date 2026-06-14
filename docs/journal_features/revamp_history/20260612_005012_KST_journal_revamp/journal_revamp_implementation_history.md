@@ -1944,3 +1944,37 @@ fallback; R-D k=2 (already running on OpenRouter).
   through functional eval (cheap, no LLM) - if the golden can't pass,
   it's a harness limit; if it passes, the question is purely LLM
   capability, testable with a small smoke before any full run.
+
+## 2026-06-14 07:10 KST — F16 fully root-caused; salvage path identified
+
+- Bounded golden probes (no LLM) fully characterized the large-module
+  blocker chain:
+  1. Top module defaults to 'TopModule' (adapter reads missing
+     synthesis_top_module_names.json) instead of the manifest
+     top_module. Fix: use manifest top_module. Small.
+  2. Functional macros (E203_XLEN etc.) RESOLVE once the support
+     incdir is passed - the golden `include "e203_defines.v"` finds it
+     with +incdir+support. Verilator preprocesses PER FILE (unlike
+     yosys read_verilog -defer's shared context), which is why M10
+     synthesis worked on the same aux but functional eval did not.
+     My VerilatorEvaluator likely mis-passed the incdir; small fix.
+  3. REAL blocker: large INTEGRATION modules have incomplete
+     dependency closure. e203_biu instantiates sirv_gnrl_icb_arbt/
+     buffer/splt which are NOT in its manifest aux_files -> cannot
+     compile or synthesize standalone. LEAF modules (e203_exu_alu_dpath,
+     M10-validated 2143 cells) ARE dependency-complete.
+- SALVAGE PATH (makes the win-path tractable without a full
+  dependency-closure project): build the large subset ONLY from
+  dependency-complete large modules - those whose GOLDEN passes the
+  functional+synthesis eval standalone. alu_dpath qualifies; biu does
+  not. Validate each large candidate-module's golden first, keep the
+  complete ones.
+- Remaining after salvage: (a) top-module fix + incdir fix (small),
+  (b) re-pick subset to dependency-complete large modules, (c) the
+  OPEN LLM-CAPABILITY RISK (can the model implement even a complete
+  large module correctly? - the only way to know is a small smoke on
+  one complete large module once wiring is fixed).
+- This is a precisely-costed decision now: ~2 small wiring fixes + a
+  golden-validation re-pick + a 1-module LLM smoke, THEN decide on the
+  full run. Recommend doing the bounded smoke before any multi-hour
+  run (M6). Surfaced for the user; not auto-pursued further tonight.
