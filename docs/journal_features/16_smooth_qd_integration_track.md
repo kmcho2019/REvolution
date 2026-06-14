@@ -200,13 +200,29 @@ sank the radical version.
 
 ## 9. Decision log & open questions
 
-- 2026-06-14: track opened; V1 (code_individual overlay) launched as the
-  cheapest test (F22). thought_only + unified operator are droppable per
-  user; this track does not use them.
-- OPEN: does V1 reach parity? (pending) — decides whether V2 is a rescue
-  or a methodology-strengthener.
-- OPEN: pool-draw rule in V2 (uniform vs rank-weighted) — pick after V1.
-- OPEN: should the archive cells stay grid_quantile or simplify to a
-  pure NSGA-II population with BD only for reporting? Keep cells for now
-  (the diversity coverage claim needs them); revisit if V2 underperforms.
-- CONSTRAINT: keep ≤ one new flag + one helper (§6); re-spec if larger.
+- 2026-06-14: track opened; V1 (code_individual overlay) launched.
+- 2026-06-14: **V1 RESULT — near-parity (best_quality -0.033, functional
+  TIE, hypervolume -0.016; single seed 1001).** Dropping thought_only
+  (indirection) recovered nearly all the lost performance (-0.10 -> -0.033,
+  F22). The indirection WAS the main culprit. Deficit concentrated on 3
+  exploitation problems (alu, parallel2serial, multi_pipe).
+- 2026-06-14: **V2 RESULT — NSGA-II global-rank selection is NET-NEUTRAL
+  vs V1.** It closed alu (+0.238 vs V1) and multi_pipe but regressed
+  m2014_q6b (-0.199, was parity) and parallel2serial; net V2-classic
+  -0.044 = V1-classic -0.045 (same 10 problems). NSGA-II redistributes the
+  deficit (exploitation gains vs diversity losses) but does not improve the
+  net. A clean, reportable ABLATION (answers #1 via principled selection)
+  - not a performance necessity.
+- **DECISION (2026-06-14): V1 is the smooth-QD contribution.** Simplest
+  change, near-parity, functional tie. NSGA-II stays as a tested flag
+  (`qd_parent_selection=nsga2_global_rank`) + a reportable ablation;
+  default remains cell_crowded_tournament. **V3 (hybrid / overlay tuning)
+  is NOT pursued** - V1 already reaches near-parity with the minimal
+  change; adding complexity violates the "don't convolute" rule for no net
+  gain. thought_only + unified operator remain dropped.
+- OPEN: multi-seed confirmation of V1 (finals-level) - single seed so far;
+  extend to seeds 1002-1005 once the queue frees. The formal parity
+  verdict is the pooled cluster-bootstrap CI (low > -0.03).
+- OPEN: V1's residual is 3 exploitation problems; the honest framing is
+  "near-parity quality + diversity," not "QD wins quality" (consistent
+  with F4 regime-sensitivity).
