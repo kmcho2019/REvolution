@@ -2113,3 +2113,43 @@ fallback; R-D k=2 (already running on OpenRouter).
   win-path is capability-blocked and the finals commit to characterization
   (Branch C). Note: all 6 are combinational (ff_depth 0) - a BD-spread
   problem for journal_logic_ff_width_3d even if they pass.
+
+## 2026-06-14 09:30 KST — F19: the smokes were CONFOUNDED; harness fixed
+
+- Both capability smokes (decode F18; mid-size 6 EXU modules) returned 0
+  valid, which looked like a comprehensive LLM-capability wall. M6
+  ground-truthing overturned the interpretation for the small modules.
+- The wbck candidates are plausible, COMPLETE implementations that fail
+  ONLY because they use E203_XLEN without `include "e203_defines.v"`.
+  The e203 modules depend on a project-global defines header; verilator
+  preprocesses per-file, so a candidate resolves the macros only if it
+  includes the header. The prompt tells the LLM to (line 67) but it
+  routinely omits the line -> every candidate dies at preprocessing,
+  masking its logic.
+- FIX (commit d289e1c226): classify aux into module-sources vs
+  defines-headers (no module decl); force-include the ENTRY header
+  (e203_defines.v, not the config.v it transitively pulls in) into the
+  candidate file used for BOTH functional (verilator per-file) and synth
+  (yosys reads candidate before aux) compiles. item.code and the
+  archived code_file_path stay raw for metrics/feedback/M6.
+- Validated: goldens still pass (they self-include); saved wbck
+  candidates now COMPILE and reach functional eval. ruff+pyright clean;
+  59 targeted tests pass.
+- TRUE signal (post-fix): candidates compile but are functionally WRONG.
+  wbck: 6610/16021 mismatches (~41%), and ALL candidates get the
+  IDENTICAL mismatch count -> a systematic same spec-misread (the
+  F7/F4 mechanism), not random. So the win-path capability concern is
+  genuine, but its magnitude was over-stated by the artifact.
+- Correction to F18: the decode 0/24 is real but was measured through
+  the confounded harness; decode candidates also had genuine syntax/
+  incompleteness errors, but the clean signal awaits the re-map.
+- Honest re-map LAUNCHED: exp/fast_iter/capability_remap, all 7
+  dependency-complete modules (decode + 6 mid-size), classic, post-fix.
+- Disclosed methodology choice (must appear in the paper): force-
+  including the design's global defines header makes the e203 task
+  (implement the logic) comparable to the self-contained VerilogEval/
+  RTLLM problems, instead of also testing "remember the CPU's global
+  include boilerplate."
+- Lesson (M6 reinforced): a 0/N capability result MUST be ground-truthed
+  before interpretation - twice now the LLM-feedback prose ("testbench
+  missing") and an aggregate 0-count nearly drove a wrong verdict.

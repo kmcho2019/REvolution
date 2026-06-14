@@ -170,7 +170,16 @@ grow the large-sequential pool. NOTE for BD: decode is purely
 combinational (ff_depth 0), so the subset must mix sequential modules for
 the journal_logic_ff_width_3d trio to spread across all three axes.
 
-### F18 — gpt-oss-120b CANNOT implement the largest module (decode) `MEASURED`
+### F18 — decode capability smoke: 0/24 valid, but CONFOUNDED `SUPERSEDED by F19`
+**CORRECTION (2026-06-14 ~09:30):** the "0 valid → capability-blocked"
+reading below was measured through a CONFOUNDED harness — candidates
+omit `\`include "e203_defines.v"` and died at preprocessing on undefined
+macros, masking their real logic (see F19 for the confound + fix). The
+0/24 count is real, but the *interpretation* (LLM-incapable) was
+premature; decode candidates DID also carry genuine syntax/incompleteness
+errors, but the clean signal awaits the post-fix re-map. Original entry
+retained below for the audit trail.
+
 Bounded capability smoke (classic, gpt-oss-120b/OpenRouter, 8×gen,
 seed 42) on e203_exu_decode: **24 candidates, 0 functionally valid.**
 The candidates are 181–647 lines vs the 1234-line golden — i.e. ~half-
@@ -190,6 +199,31 @@ where QD already LOSES (F1/F15). The mid-size smoke (F19) maps exactly
 where the model's ceiling falls. Process note: trust the run's
 `status_counts`/raw eval for verdicts, never the feedback-LLM prose.
 [H: 2026-06-14 09:10]
+
+### F19 — The smokes were CONFOUNDED by a missing-include; harness fixed `MEASURED`
+The mid-size smoke (6 dependency-complete EXU modules, 4.7–14 KB) also
+returned **0/6 valid each** — which looked like a comprehensive
+capability wall. M6 ground-truthing overturned the interpretation: the
+small wbck candidates are *plausible, complete* implementations that
+fail **only** because they use `E203_XLEN` without `\`include
+"e203_defines.v"`. The e203 modules depend on a project-global defines
+header; verilator preprocesses each file independently, so a candidate
+resolves the macros only if it includes the header — the LLM is told to
+(prompt line 67) but routinely omits the one line, failing every
+candidate at preprocessing. **Fix (commit d289e1c226):** classify aux
+into module-sources vs defines-headers; force-include the entry header
+into the candidate file for both functional and synth compiles
+(`item.code`/archive stay raw). Validated: goldens still pass; saved
+wbck candidates now COMPILE and reach functional eval. **TRUE signal
+(post-fix):** candidates compile but are functionally WRONG — wbck gets
+6610/16021 mismatches (~41%), and *all candidates get the identical
+mismatch count*, i.e. a SYSTEMATIC same spec-misread (the F7/F4
+mechanism), not random noise. So the capability concern is genuine, but
+its magnitude was over-stated by the artifact. Honest per-module ceiling
+is being re-mapped (`exp/fast_iter/capability_remap`, all 7 modules,
+post-fix). Disclosed methodology choice: force-including the design's
+global header makes the e203 task ("implement the logic") comparable to
+the self-contained VerilogEval/RTLLM problems. [H: 2026-06-14 09:30]
 
 ### F15 — Fix B does NOT transfer to the hard subset `MEASURED` (parity path closed)
 Fix B hard-subset (seed 42, 20×5, 13 problems): −0.116 (1/10/2, CI
