@@ -31,9 +31,12 @@ when new runs land; keep finding IDs stable.
 | P4 | Gates / freeze | **Tooling complete.** All slices locked. Open: MDE ratchet + budget-rule *decisions*, seed-42 debug gate, 5-seed finals. |
 | P5 | Manuscript | **Kicked off.** Evidence map (doc 12) binds elements to artifacts; prose pending finals. |
 
-**Running now:** 5-arm ablation matrix seed 1003 (`classic` arm; seeds
-1001-1002 complete); bake-off chain queued behind it. **No engineering
-blockers on any track.**
+**Running now:** the STORYLINE-DECIDER — QD(+Fix B) vs classic on 4 large
+synth-validated e203 modules (38-54KB; exp/fast_iter/realbench_large_storyline).
+Task #16 steps 1-4 done (synth aux-threading, runtime wiring, truthful
+synth-validation, 34/40 e203 synth-capable); this run is step 5. The PPA
+win-path test: does QD diversity pay off where designs have architectural
+room (vs the small-problem losses F1/F15).
 
 ---
 

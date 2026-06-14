@@ -1,0 +1,20 @@
+version: 1
+subset_name: realbench_large_subset_v1
+purpose: "STORYLINE-DECIDER (doc 14/M10): QD-vs-classic on LARGE RealBench
+  designs, where diversity/architectural exploration should pay off if the
+  journal thesis holds (the regime small RTLLM/VerilogEval couldn't expose).
+  TUNING/dev artifact. Modules are e203 blocks that are BOTH harness-validated
+  and synthesis-validated (RealBench_v4_synth manifest), picked large-but-
+  tractable (2-3s golden synth; cores at 66-84s excluded as too slow for an
+  evolutionary loop)."
+selection:
+  realbench_root: data/bench/RealBench_v4_synth
+  manifest_note: v4 synth-validated (34/40 e203 support synthesis)
+  rule: large synth+harness-validated e203 blocks with fast golden synth
+benchmarks:
+  RealBench:
+    problems:
+      - e203_exu_decode
+      - e203_biu
+      - e203_ifu_ift2icb
+      - e203_lsu_ctrl

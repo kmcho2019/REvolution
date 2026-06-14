@@ -1883,3 +1883,25 @@ fallback; R-D k=2 (already running on OpenRouter).
 - REMAINING: step 4b (lock a large-module subset from the v4
   synth-validated set) + step 5 (run QD-vs-classic on RealBench-large,
   the storyline-decider). Next fire gates the sweep and proceeds.
+
+## 2026-06-14 06:10 KST — STORYLINE-DECIDER LAUNCHED (task #16 step 5)
+
+- Step 4 result: v4 synth-validation sweep marked 34/40 e203 modules
+  supports_synthesis=true, including large architectural blocks
+  (exu_decode 54KB, biu, ift2icb, lsu_ctrl, core/cpu/exu). Cores synth
+  in 66-84s (too slow for an evolutionary loop); picked large-but-fast
+  (2-3s) blocks.
+- Step 4b: locked data/configs/realbench_large_subset.yaml - 4 large
+  e203 blocks (decode/biu/ift2icb/lsu_ctrl, 38-54KB), all
+  synth+harness validated in RealBench_v4_synth.
+- Step 5 LAUNCHED: classic vs QD(frozen target + Fix B code-seeded,
+  the best realization config) on the large subset, seed 42, pop 12 x
+  3 gens, --realbench_root RealBench_v4_synth
+  (exp/fast_iter/realbench_large_storyline, classic arm 06:10). THE
+  test of whether QD diversity pays off on large designs with
+  architectural room - the only remaining path to beating classic
+  (F1/F15 closed small-problem parity). Readouts: best-quality delta
+  + per-problem; descriptor health (do the journal axes finally
+  NON-degenerate on large designs, vs M5 collapse on small ones).
+- ~hours (large-module synth+OpenROAD per candidate). Gate on
+  completion.
