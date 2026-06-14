@@ -47,6 +47,10 @@ LLM-infeasible. The "QD beats classic on RealBench-large PPA" headline is
 unsupported. **This is not a wasted leg:** it converts criticism #4 into
 a real RealBench-scale result and extends the regime-sensitivity thread
 (F4) — the binding limit at real-CPU scale is LLM spec-comprehension.
+**REOPENED as a probe (F21):** the ceiling was established for
+gpt-oss-120b; a deepseek-v4-pro capability probe is now testing whether
+a stronger model clears the large modules (→ win-path reopens) or also
+fails (→ ceiling is model-general). Verdict pending.
 **The finals are the CHARACTERIZATION paper (Branch C), now decided on
 evidence, not assumption.**
 
@@ -244,6 +248,24 @@ is running to settle the actual win-path hypothesis — does diverse
 thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
+
+### F21 — Stronger-model probe: does deepseek-v4-pro reopen the win-path? `IN PROGRESS`
+F18-F20 established the capability ceiling for **gpt-oss-120b**. Open
+question (user-prompted): is the ceiling MODEL-SPECIFIC or model-general?
+Probe (`exp/fast_iter/deepseek_capability_probe`, classic arm,
+deepseek-v4-pro via the direct DeepSeek API, low 2-way concurrency to
+protect the running gpt-oss finals): the 3 modules gpt-oss FAILED —
+decode (53 KB, 100% mismatch), disp (14 KB, 21% — closest), branchslv
+(5.9 KB, 25%). **Pre-registered interpretation (M6):** (a) if v4-pro
+produces ≥1 functionally-valid candidate on a module gpt-oss got 0 on
+(esp. decode/disp) → capability GAIN → the RealBench-large win-path
+REOPENS → run DeepSeek QD-vs-classic on the viable modules (potential
+Branch A/B); (b) if v4-pro also gets 0 valid on those → the ceiling is
+MODEL-GENERAL → strengthens the characterization (large-CPU RTL is hard
+for current LLMs, not just a weak model). CAVEAT: isolated-re-verify any
+"valid" v4-pro candidate (M12 lesson) before trusting it; small modules
+have weak coverage (F20). Note: any DeepSeek gate-bearing comparison runs
+DeepSeek on BOTH arms (same-provider rule). [H: 2026-06-14 13:40]
 
 ### F20 — Storyline-decider (CORRECTED, isolated re-eval): QD does not win `MEASURED`
 The parallel run's "0/7" was a SECOND artifact (see M12: 14-way

@@ -2316,3 +2316,35 @@ fallback; R-D k=2 (already running on OpenRouter).
   manuscript (#15). Next: build + launch the finals (seeds 1004-1005 for
   the F1/F2 arms) replicating the matrix arm configs exactly, with the
   M12 safeguard (isolated re-verification of best candidates).
+
+## 2026-06-14 13:40 KST — F21: stronger-model (deepseek-v4-pro) capability probe LAUNCHED
+
+- User suggestion: if gpt-oss-120b fails on hard tasks (RealBench), try a
+  stronger model - DeepSeek, available via API + .env. Excellent idea: the
+  F18-F20 ceiling is gpt-oss-120b-SPECIFIC; a stronger model could reopen
+  the win-path.
+- Confirmed access: .env has DEEPSEEK_API_KEY; run_backend supports
+  --api_backend deepseek (base_url api.deepseek.com); direct API offers
+  deepseek-v4-pro (flagship, reasoning) + deepseek-v4-flash. Preflight on
+  v4-pro returned content (DSV4_OK) + reasoning tokens.
+- Probe: exp/fast_iter/deepseek_capability_probe, classic arm,
+  deepseek-v4-pro, on the 3 modules gpt-oss FAILED - decode (53KB, 100%
+  mismatch), disp (14KB, 21% closest), branchslv (5.9KB, 25%). pop 6,
+  1 gen, max_tokens 64000, seed 42. LOW concurrency (2-way) to avoid
+  contending with the running gpt-oss finals (M12).
+- PRE-REGISTERED interpretation (M6, decided before result):
+  * GAIN: v4-pro gets >=1 valid on a gpt-oss-0 module (esp decode/disp)
+    -> win-path REOPENS -> DeepSeek QD-vs-classic on the viable modules
+    (potential Branch A/B headline). Same-provider rule: DeepSeek on BOTH
+    arms.
+  * MODEL-GENERAL: v4-pro also 0 valid -> ceiling is not just a weak
+    model; large-CPU RTL is hard for current LLMs -> strengthens the
+    characterization.
+- CAVEAT: isolated-re-verify any "valid" v4-pro candidate (M12) before
+  trusting; small modules have weak coverage (alu_csrctrl 27 samples, F20).
+- This does NOT change the gpt-oss-120b core results (F1/F2 finals running
+  separately); it tests model-generality of the RealBench-large ceiling.
+  If DeepSeek reopens the win-path, the journal story could shift from
+  pure characterization toward a scale-dependent win - a major upside.
+- Two background jobs now: gpt-oss finals (bo03wrum8), DeepSeek probe
+  (bbnvi9ucq). Both notify on completion.
