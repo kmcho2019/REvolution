@@ -2680,3 +2680,23 @@ fallback; R-D k=2 (already running on OpenRouter).
   (CI [...]) with a localized residual," still a positive principled result
   vs the radical build's -0.10. CAVEAT: lower bound (13/13 data, finishing);
   V2 1002/1003 + pooled CI pending.
+
+## 2026-06-14 ~20:30 KST — V2 seed 1002 (13/13-data LB): V2>V1 REPLICATES
+
+- V2 (NSGA-II) seed 1002 vs V1 vs classic (13/13-data lower bound, rc
+  pending): V2-classic -0.0354, V1-classic -0.0537, V2-V1 +0.0183.
+  -> NSGA-II's advantage over V1 REPLICATES (seed 1001 was +0.022). Robust
+  across both seeds, though the per-problem driver shifts (alu drove
+  seed 1001: V2 +0.238 vs V1; parallel2serial drives seed 1002: V2 -0.371
+  vs V1 -0.469 = +0.098). Net V2>V1 holds.
+- Both variants are seed-sensitive on the ABSOLUTE delta: V2 seed1001
+  -0.011, seed1002 -0.035 -> 2-seed V2 mean ~-0.023 (WITHIN the +-0.03
+  parity band). V1: -0.032/-0.054 -> ~-0.043.
+- READ: the contribution (V2) is tracking toward parity - 2-seed mean
+  -0.023 inside the band, and NSGA-II robustly beats the cell-tournament
+  baseline. Whether the pooled cluster-bootstrap CI low clears -0.03 is
+  the formal verdict (seed 1003 pending); seed-sensitivity means the CI
+  could span -0.03 - if so the framing is "near-parity (CI [...]) with a
+  localized residual," still a positive principled result. CAVEAT: V2 1002
+  is a 13/13-data lower bound (final could be slightly better); seed 1003
+  + the stats step give the verdict.
