@@ -339,6 +339,48 @@ def validate_entry_with_golden(
     return payload
 
 
+def validate_synthesis_with_golden(
+    output_root: Path,
+    entry: dict[str, Any],
+    *,
+    synthesis_timeout_s: int = 600,
+) -> dict[str, Any]:
+    """Run the task's golden through the real yosys+OpenROAD synthesis flow
+    (with support files) and record supports_synthesis based on the ACTUAL
+    result, not the conservative not-support_files heuristic. Reuses the
+    aux-capable SynthesisEvaluator (M10-validated on large e203 designs)."""
+
+    import tempfile
+    import time
+
+    from revolution.evaluation import SynthesisEvaluator
+
+    start = time.monotonic()
+    golden_path = output_root / str(entry["golden_sv_path"])
+    aux = tuple(
+        str(output_root / a) for a in entry.get("aux_files", [])
+        if str(a).endswith((".v", ".sv"))
+    )
+    incdirs = tuple(sorted({str(Path(a).parent) for a in aux}))
+    defines = tuple(str(d) for d in entry.get("compile_defines", []))
+    top = str(entry["top_module"])
+    se = SynthesisEvaluator()
+    with tempfile.TemporaryDirectory() as tmp:
+        cand = Path(tmp) / f"{entry['problem_name']}.sv"
+        cand.write_text(golden_path.read_text(encoding="utf-8"), encoding="utf-8")
+        ok, _log = se._run_synthesis(
+            str(cand), entry["problem_name"], top, tmp,
+            str(Path(tmp) / "rep"), str(Path(tmp) / f"{entry['problem_name']}.syn.v"),
+            synthesis_timeout_s=synthesis_timeout_s,
+            aux_files=aux, include_dirs=incdirs, defines=defines,
+        )
+    return {
+        "supports_synthesis": bool(ok),
+        "synthesis_validated": True,
+        "synthesis_duration_s": round(time.monotonic() - start, 1),
+    }
+
+
 def generate_manifest(
     *,
     source_root: Path,
@@ -348,6 +390,8 @@ def generate_manifest(
     validation_timeout_s: int = 180,
     verilator_fallback: bool = False,
     primary_harness: str = "iverilog",
+    validate_synthesis: bool = False,
+    synthesis_timeout_s: int = 600,
 ) -> dict[str, Any]:
     info = load_benchmark_info(source_root)
     selected_families = sorted(families) if families else sorted(info)
@@ -376,6 +420,16 @@ def generate_manifest(
                 print(
                     f"[validate] {module}: "
                     f"{'ok' if entry['harness_validated'] else entry['harness_failure_reason']}"
+                )
+            if validate_synthesis:
+                entry.update(
+                    validate_synthesis_with_golden(
+                        output_root, entry, synthesis_timeout_s=synthesis_timeout_s
+                    )
+                )
+                print(
+                    f"[synth] {module}: supports_synthesis="
+                    f"{entry['supports_synthesis']} ({entry.get('synthesis_duration_s')}s)"
                 )
             entries.append(entry)
 
@@ -441,6 +495,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "under the upstream Verilator-5 flow with per-task durations.",
     )
     parser.add_argument(
+        "--validate-synthesis",
+        action="store_true",
+        help="Run the real yosys+OpenROAD flow on each golden and mark "
+        "supports_synthesis truthfully (overrides the conservative heuristic).",
+    )
+    parser.add_argument(
         "--verilator-fallback",
         action="store_true",
         help="Retry iverilog-rejected goldens through the verilator-5 "
@@ -476,6 +536,7 @@ def main(argv: list[str] | None = None) -> int:
             validation_timeout_s=args.validation_timeout_s,
             verilator_fallback=args.verilator_fallback,
             primary_harness=args.primary_harness,
+            validate_synthesis=args.validate_synthesis,
         )
     except FileNotFoundError as exc:
         print(f"error: {exc}", file=sys.stderr)

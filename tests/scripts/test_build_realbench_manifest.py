@@ -275,3 +275,30 @@ def test_verilator_primary_validates_and_times(tmp_path, monkeypatch):
     assert result["harness_validated"] is True
     assert result["functional_harness_kind"] == "verilator_testbench"
     assert result["harness_duration_s"] >= 0.0
+
+
+def test_validate_synthesis_marks_supports_synthesis(tmp_path, monkeypatch):
+    source_root = _write_source_tree(tmp_path)
+    output_root = tmp_path / "out"
+    output_root.mkdir()
+    manifest = build_realbench_manifest.generate_manifest(
+        source_root=source_root, output_root=output_root
+    )
+    entry = manifest["problems"][0]
+
+    class _PassSynth:
+        def __init__(self, **kw): pass
+        def _run_synthesis(self, *a, **k): return True, "ok"
+
+    import revolution.evaluation as ev
+    monkeypatch.setattr(ev, "SynthesisEvaluator", _PassSynth)
+    res = build_realbench_manifest.validate_synthesis_with_golden(output_root, entry)
+    assert res["supports_synthesis"] is True
+    assert res["synthesis_validated"] is True
+
+    class _FailSynth:
+        def __init__(self, **kw): pass
+        def _run_synthesis(self, *a, **k): return False, "err"
+    monkeypatch.setattr(ev, "SynthesisEvaluator", _FailSynth)
+    res2 = build_realbench_manifest.validate_synthesis_with_golden(output_root, entry)
+    assert res2["supports_synthesis"] is False
