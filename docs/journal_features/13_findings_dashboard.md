@@ -251,6 +251,22 @@ thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
 
+### F23 — Smooth QD reaches NEAR-PARITY; NSGA-II (V2) is the config `MEASURED`
+The smooth-integration salvage WORKS (single seed 1001, vs classic).
+Two-step result: V1 (code_individual, drop indirection) -0.032; **V2 (V1 +
+NSGA-II global-rank selection) -0.011, functional TIE, 12/13 within parity
+band** - V2 best (V2-V1 = +0.022). NSGA-II closed the biggest residual
+(alu +0.238 vs V1) + fsm151 + multi_pipe; only parallel2serial (-0.219,
+likely intrinsic-limitation, F7) remains a real deficit. So smooth-QD is
+essentially at parity except ~1 problem. **The QD contribution = V2**: it
+answers criticism #1 (principled NSGA-II selection, no scalar weight) AND
+matches classic quality + adds diversity (#5) - "QD as a parity-quality
+diversity augmentation." NOTE: an interim 10/13 read wrongly called V2
+net-neutral (mid-run best_score; corrected at full 13/13, history
+2026-06-14 18:00). CAVEAT: single seed; multi-seed (1002-1003) queued -
+the alu win (+0.238) must replicate; pooled cluster-bootstrap CI is the
+formal parity verdict. `exp/fast_iter/smooth_qd_nsga2` [H: 2026-06-14 18:00]
+
 ### F22 — Smooth QD (code_individual) NEAR-PARITY; V2 implemented `MEASURED`
 The smooth-integration thesis is substantially VINDICATED. Full 13-problem
 V1 (code_individual + eoh operators + champion lane 0.5 + BD-trio archive)

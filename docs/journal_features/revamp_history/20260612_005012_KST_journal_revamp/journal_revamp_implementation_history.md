@@ -2594,3 +2594,35 @@ fallback; R-D k=2 (already running on OpenRouter).
   net unlikely to change) + its proper CI; then the smooth-QD
   contribution = V1, needing multi-seed confirmation (finals-level) once
   the queue frees. CAVEAT: single seed.
+
+## 2026-06-14 18:00 KST — CORRECTION: V2 (NSGA-II) is BETTER than V1 (full 13/13)
+
+- RETRACTS the 16:25 "V2 net-neutral / V1 is the contribution" entry,
+  which was based on a PREMATURE 10/13 read. The full 13/13 (V2 run
+  complete, rc=0) and proper paired stats REVERSE it:
+  * V2-classic best_quality -0.0109 (functional TIE, hypervolume -0.0035)
+    vs V1-classic -0.0318. V2-V1 = +0.0223 (V2 BETTER).
+  * V2 within parity band 12/13 vs V1 10/13.
+- Why the 10/13 read was wrong: m2014_q6b read as V2 -0.199 mid-run but
+  RECOVERED to +0.000 by run-end (the generation_ppa.best_score was from
+  incomplete generations - the run found the good candidate late). Plus
+  V2's late problems (fsm151 +0.096) favored it. So the 10/13 subset
+  under-counted V2. SECOND time partial-run data misled a verdict (cf.
+  F20); lesson reinforced: compute best-quality only from FULLY completed
+  runs, never mid-generation.
+- CORRECTED per-problem V2-V1 (13/13): alu +0.238 (V2 closed the biggest
+  residual), multi_pipe +0.048, fsm151 +0.096 (V2 wins); parallel2serial
+  -0.069, gshare -0.027, traffic_light -0.014 (V2 small losses); rest tie.
+  Net V2 clearly ahead. The ONLY remaining real V2 deficit is
+  parallel2serial (-0.219 vs classic) - likely an intrinsic-limitation
+  problem (F7 localized-deficit pattern).
+- CORRECTED CONCLUSION: NSGA-II global-rank selection (the user's 2nd
+  idea) DOES help - V2 reaches NEAR-PARITY (-0.011, functional tie),
+  better than V1 (-0.032). So the smooth-QD contribution is V2 (NSGA-II)
+  - it both answers criticism #1 (principled selection) AND gives the
+  best performance. V1 (code_individual alone) is the necessary first
+  step (drops indirection); V2 adds the selection that closes alu.
+- IMPLICATION: multi-seed BOTH V1 and V2 (seeds 1002-1003) to confirm
+  (a) smooth-QD reaches parity, (b) V2 > V1 is robust (the single-seed
+  V2>V1 is driven by alu +0.238 - could be seed-specific; needs seeds).
+  CAVEAT: single seed; the alu win must replicate.

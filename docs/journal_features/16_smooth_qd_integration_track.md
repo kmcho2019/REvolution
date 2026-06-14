@@ -206,20 +206,24 @@ sank the radical version.
   (indirection) recovered nearly all the lost performance (-0.10 -> -0.033,
   F22). The indirection WAS the main culprit. Deficit concentrated on 3
   exploitation problems (alu, parallel2serial, multi_pipe).
-- 2026-06-14: **V2 RESULT — NSGA-II global-rank selection is NET-NEUTRAL
-  vs V1.** It closed alu (+0.238 vs V1) and multi_pipe but regressed
-  m2014_q6b (-0.199, was parity) and parallel2serial; net V2-classic
-  -0.044 = V1-classic -0.045 (same 10 problems). NSGA-II redistributes the
-  deficit (exploitation gains vs diversity losses) but does not improve the
-  net. A clean, reportable ABLATION (answers #1 via principled selection)
-  - not a performance necessity.
-- **DECISION (2026-06-14): V1 is the smooth-QD contribution.** Simplest
-  change, near-parity, functional tie. NSGA-II stays as a tested flag
-  (`qd_parent_selection=nsga2_global_rank`) + a reportable ablation;
-  default remains cell_crowded_tournament. **V3 (hybrid / overlay tuning)
-  is NOT pursued** - V1 already reaches near-parity with the minimal
-  change; adding complexity violates the "don't convolute" rule for no net
-  gain. thought_only + unified operator remain dropped.
+- 2026-06-14: **V2 RESULT (CORRECTED, full 13/13) — NSGA-II is BETTER
+  than V1, NEAR-PARITY.** V2-classic best_quality -0.011 (functional TIE,
+  hypervolume -0.0035), 12/13 within the parity band, vs V1-classic -0.032
+  (10/13). V2-V1 = +0.022. NSGA-II closed alu (+0.238 vs V1, the biggest
+  residual) + fsm151 (+0.096) + multi_pipe (+0.048); small losses on
+  parallel2serial/gshare/traffic_light; rest tie. (An earlier 10/13 read
+  wrongly called it "net-neutral" - mid-run best_score on incomplete
+  generations; m2014_q6b recovered to parity by run-end. Retracted in
+  history 2026-06-14 18:00.)
+- **DECISION (2026-06-14, corrected): V2 (NSGA-II global selection) is the
+  smooth-QD contribution.** It both answers criticism #1 (principled
+  multi-objective selection, no scalar weight) AND gives the best
+  performance (near-parity -0.011). V1 (code_individual) is the necessary
+  first step (drops the harmful indirection); V2 adds the selection that
+  closes the exploitation residual (alu). Default stays
+  cell_crowded_tournament; nsga2_global_rank is the contribution config.
+  thought_only + unified operator remain dropped. V3 (hybrid/tuning) is
+  unnecessary - V2 is at near-parity.
 - OPEN: multi-seed confirmation of V1 (finals-level) - single seed so far;
   extend to seeds 1002-1005 once the queue frees. The formal parity
   verdict is the pooled cluster-bootstrap CI (low > -0.03).
