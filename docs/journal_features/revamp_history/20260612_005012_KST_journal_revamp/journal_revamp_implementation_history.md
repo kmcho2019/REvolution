@@ -2292,3 +2292,27 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Unblocks the finals' descriptor config (task #9). The locked
   data/configs/qd_descriptor_profiles.yaml is unchanged (it holds all
   profiles); the FROZEN CHOICE for finals = journal_logic_ff_width_3d.
+
+## 2026-06-14 11:35 KST — Remaining finals decisions SETTLED (MDE, budget, equiv)
+
+- User opted to keep going autonomously (settle decisions -> finals ->
+  manuscript, committing budget as needed). Settled the 3 remaining P4
+  freeze decisions; all simplify because QD does NOT win, which moots the
+  power/budget concerns for a positive claim:
+  1. MDE ratchet -> keep 13x5; DROP the +0.03 best-quality WIN gate as
+     moot. Under-power (MDE 0.12) only bites a small positive-win claim,
+     which we aren't making. F1 deficit reported descriptively with
+     cluster-bootstrap CIs; F2 within-QD parity uses the one-sided bound
+     (CI low > -0.03), already passed tight at 3-seed pooled
+     ([-0.006,+0.030]); 5 seeds only tightens. No count ratchet (saves
+     budget).
+  2. Budget-matching (M2) -> disclose asymmetry; no token-matched re-runs.
+     F1 holds DESPITE QD's +12-38% token advantage (conservative); F2 is
+     within-QD, verify token comparability + disclose.
+  3. Equivalence spot-check (M7) -> restrict to fully-specified problems;
+     don't-care NOT_PROVEN noted as a method limitation, not a defect.
+- Net: ALL freeze decisions are now resolved (profile=trio, MDE, budget,
+  equiv). The only remaining execution is the 5-seed finals (#9) and the
+  manuscript (#15). Next: build + launch the finals (seeds 1004-1005 for
+  the F1/F2 arms) replicating the matrix arm configs exactly, with the
+  M12 safeguard (isolated re-verification of best candidates).
