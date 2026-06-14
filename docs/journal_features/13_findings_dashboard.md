@@ -219,11 +219,23 @@ wbck candidates now COMPILE and reach functional eval. **TRUE signal
 6610/16021 mismatches (~41%), and *all candidates get the identical
 mismatch count*, i.e. a SYSTEMATIC same spec-misread (the F7/F4
 mechanism), not random noise. So the capability concern is genuine, but
-its magnitude was over-stated by the artifact. Honest per-module ceiling
-is being re-mapped (`exp/fast_iter/capability_remap`, all 7 modules,
-post-fix). Disclosed methodology choice: force-including the design's
-global header makes the e203 task ("implement the logic") comparable to
-the self-contained VerilogEval/RTLLM problems. [H: 2026-06-14 09:30]
+its magnitude was over-stated by the artifact. Disclosed methodology
+choice: force-including the design's global header makes the e203 task
+("implement the logic") comparable to the self-contained VerilogEval/
+RTLLM problems. [H: 2026-06-14 09:30]
+
+**HONEST RE-MAP RESULT (post-fix, classic, 2026-06-14 09:55):** all 7
+dependency-complete modules (decode 53 KB + 6 mid-size 4.7–14 KB) →
+**0/8 valid each**, status_counts ALL `failed_functionality` (candidates
+COMPILE and reach simulation, then fail on mismatch — the fix worked in
+the run; not syntax/include). So the capability ceiling is now GENUINE,
+not an artifact: gpt-oss-120b produces structurally-valid but
+functionally-WRONG implementations of every dependency-complete e203
+module, classic arm. The QD arm (`exp/fast_iter/capability_remap/qd`)
+is running to settle the actual win-path hypothesis — does diverse
+thought-level search break the classic monoculture error (all classic
+candidates share the identical mismatch) and get closer to correct? See
+F20. [H: 2026-06-14 09:55]
 
 ### F15 — Fix B does NOT transfer to the hard subset `MEASURED` (parity path closed)
 Fix B hard-subset (seed 42, 20×5, 13 problems): −0.116 (1/10/2, CI
