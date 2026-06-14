@@ -12,8 +12,9 @@ set CLKGATE_MAP_FILE ${PDK_DIR}/cells_clkgate.v
 set LATCH_MAP_FILE ${PDK_DIR}/cells_latch.v
 set ADDER_MAP_FILE ${PDK_DIR}/cells_adders.v
 
-# Read verilog files
-read_verilog -defer -sv $VERILOG_FILE
+# Read verilog files (candidate + optional support/aux modules)
+read_verilog -defer -sv __DEFINES____INCDIRS__ $VERILOG_FILE
+__AUX_READ__
 
 # Read standard cells and macros as blackbox inputs
 read_liberty -lib ${LIBERTY_PATH}

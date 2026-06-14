@@ -663,6 +663,9 @@ class SynthesisEvaluator:
         ref_sv_file: str | None,
         simulation_timeout_s: int | None = None,
         synthesis_timeout_s: int | None = None,
+        aux_files: tuple[str, ...] = (),
+        include_dirs: tuple[str, ...] = (),
+        defines: tuple[str, ...] = (),
     ) -> dict[str, bool | str | None | dict[str, Any]]:
         """
         Performs synthesis, PPA analysis, and post-synthesis verification.
@@ -706,6 +709,9 @@ class SynthesisEvaluator:
             report_base_path,
             synthesized_netlist_path,
             synthesis_timeout_s=effective_synthesis_timeout_s,
+            aux_files=aux_files,
+            include_dirs=include_dirs,
+            defines=defines,
         )
 
         if not synthesis_success:
@@ -778,6 +784,9 @@ class SynthesisEvaluator:
         report_base_path: str,
         synthesized_netlist_path: str,
         synthesis_timeout_s: int = 300,
+        aux_files: tuple[str, ...] = (),
+        include_dirs: tuple[str, ...] = (),
+        defines: tuple[str, ...] = (),
     ) -> tuple[bool, str]:
         """
         Runs the Yosys and OpenROAD synthesis script.
@@ -805,6 +814,9 @@ class SynthesisEvaluator:
             output_directory,
             clk_period,
             output_file,
+            aux_files=aux_files,
+            include_dirs=include_dirs,
+            defines=defines,
         )
         openroad_script_path = self._create_openroad_script(
             sdc_file_path, synth_top_module_name, output_directory, output_file
@@ -1012,6 +1024,9 @@ class SynthesisEvaluator:
         output_directory: str,
         clk_period: float,
         output_file: str,
+        aux_files: tuple[str, ...] = (),
+        include_dirs: tuple[str, ...] = (),
+        defines: tuple[str, ...] = (),
     ) -> str:
         """Creates a Yosys synthesis script from a template.
 
@@ -1020,15 +1035,31 @@ class SynthesisEvaluator:
         :param output_directory: Directory to save the generated Yosys script.
         :param clk_period: Clock period in nanoseconds.
         :param output_file: Name of the output file for the synthesized netlist.
+        :param aux_files: Support/dependency .v files read alongside the
+            candidate (multi-module RealBench designs). Empty for self-contained
+            single-file tasks (VerilogEval/RTLLM) — then the read line is
+            byte-identical to the prior template.
+        :param include_dirs: ``-I`` search paths for the reads.
+        :param defines: Preprocessor macros (e.g. DISABLE_SV_ASSERTION) applied
+            to every read.
         :return: Path to the generated Yosys script.
         """
         yosys_ref = os.path.join(self.ref_dir_path, "ref.yosys.tcl")
         yosys_gen = f"{output_directory}/{module_name}.yosys.tcl"
+        define_flags = "".join(f" -D{d}" for d in defines)
+        incdir_flags = "".join(f" -I{os.path.abspath(d)}" for d in include_dirs)
+        aux_read = "\n".join(
+            f"read_verilog -defer -sv{define_flags}{incdir_flags} {os.path.abspath(a)}"
+            for a in aux_files
+        )
 
         with open(yosys_ref, "r") as infile:
             with open(yosys_gen, "w") as outfile:
                 text = infile.read()
                 text = text.replace("__VERILOG_FILE__", os.path.abspath(verilog_file))
+                text = text.replace("__DEFINES__", define_flags)
+                text = text.replace("__INCDIRS__", incdir_flags)
+                text = text.replace("__AUX_READ__", aux_read)
                 text = text.replace(
                     "__MODULE_NAME__", module_name
                 )  # Reverted to using module_name directly as we now extract it from the Verilog file
