@@ -2029,3 +2029,23 @@ fallback; R-D k=2 (already running on OpenRouter).
 - REMAINING open question (now cheap): can the LLM implement decode-class
   modules? Settle with a 1-module OpenRouter smoke before any full
   QD-vs-classic large run. Infra risk is retired; capability risk stands.
+
+## 2026-06-14 08:50 KST — LLM-capability smoke LAUNCHED (decode, bounded)
+
+- Acting on the F16/M11 result (golden decode validated end-to-end), and
+  per the pre-stated plan (golden-success unlocks a 1-module smoke before
+  any full run), launched a bounded LLM-capability smoke:
+  exp/decode_capability_smoke_launch.sh -> exp/fast_iter/decode_capability_smoke.
+- Config: classic arm only, e203_exu_decode ONLY, gpt-oss-120b via
+  OpenRouter, population 8 x 2 generations, seed 42, max_tokens 64000
+  (generous to avoid truncation masking capability on a 1234-line module),
+  --realbench_root data/bench/RealBench_v4_synth.
+- OpenRouter preflight passed (models 200; gpt-oss-120b reachable; a
+  PREFLIGHT_OK completion returned content + reasoning, cost ~8e-5).
+- The single question: does ANY of the 8+ attempts produce a
+  functionally-valid decode (passes the 100000-sample equivalence)? If
+  zero pass, the large-module win-path is LLM-capability-blocked and the
+  finals commit to the characterization framing (Branch C, doc 14). If
+  any pass, a full QD-vs-classic large run is justified.
+- Running in the background (harness-tracked); result will be recorded
+  here on completion.
