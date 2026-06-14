@@ -124,12 +124,31 @@ EXISTS (reuse, do not reinvent):
   per-cell parent sampling — the insertion point for V2).
 
 NEEDS IMPLEMENTATION (V2 only, minimal):
-- A global fast-non-dominated-sort + crowding selection over the archive
-  membership (compose the existing `dominates`/crowding helpers).
-- One flag, e.g. `--qd_parent_selection {cell_crowded_tournament,
-  nsga2_global_rank}` (default = current behavior), routing
-  `_sample_success_parents` to the new path when set.
-- Pool-size cap parameter (default = population_size).
+- **The global ranking helper ALREADY EXISTS:** `archive.ranked_front(
+  members, objective_names)` (archive.py:99) returns RankedArchiveMember
+  with global one-based `pareto_rank` + NSGA-II `crowding_distance`
+  (fast-non-dominated-sort + `_crowding_distances`). It is currently
+  called PER-CELL; V2 calls it ONCE on the GLOBAL success-member set. No
+  new ranking/crowding code.
+- One flag `--qd_parent_selection {cell_crowded_tournament,
+  nsga2_global_rank}` (default = current), plumbed run_backend →
+  revolution_backend → `RevolutionEngine.__init__` → stored on self.
+- In `_sample_success_parents` (engine.py:1389), add a branch: when the
+  flag is `nsga2_global_rank`, build the global pool =
+  `ranked_front(<all success archive members>, self._objective_names())`,
+  sort by `(pareto_rank, -crowding_distance, insertion_index,
+  candidate_id)`, take the top min(N, pool_size) as the parent pool, then
+  draw parents from it (champion lane still applies). N default =
+  population_size. The boundary-front crowding trim is automatic from the
+  sort key.
+- Raw global member access: trace the member list feeding
+  `_archive_ranked_members()` / `_ranked_success_members_by_cell()` and
+  pass the flat (un-binned) success members to `ranked_front`.
+- **Unit test** (tests/revolution/): synthetic 2-objective member set →
+  assert front ordering (rank 1 = non-dominated set) and crowding
+  tie-break (boundary points preferred) match NSGA-II.
+- Estimated size: 1 flag (≈3 plumb sites) + ≈20-line branch + 1 test.
+  If it exceeds this, STOP and re-spec (the abstraction is wrong).
 
 ## 6. Implementation plan (clean, gated, reversible)
 
