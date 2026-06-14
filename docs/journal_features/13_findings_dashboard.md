@@ -251,31 +251,24 @@ thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
 
-### F22 — Smooth QD integration (code_individual): untested salvage path `IN PROGRESS`
-Key realization (user-prompted): every QD arm we ran used
-`representation_kind=thought_only` — the RADICAL break (thought→code
-indirection) that the diagnosis blames for the loss (F7/F8). The
-codebase's DEFAULT, `representation_kind=code_individual` (direct-code
-QD), was NEVER tested as a QD arm. The smooth-integration config —
-`revolution_qd + code_individual + eoh_strategies` (classic's
-multi-operator suite) `+ qd_champion_lane_fraction 0.5` (refine the
-champion, addresses selection-dilution F8) `+ the frozen BD-trio archive`
-— is classic's quality machinery WITH a MAP-Elites diversity overlay,
-not a replacement. It removes the diagnosed harm (indirection) while
-keeping the actual QD contribution (archive/BD; F12 says the archive is
-NOT the PPA lever, so it shouldn't hurt). **Hypothesis:** classic-parity
-quality + added BD-space diversity → salvages QD as a POSITIVE
-contribution ("QD as a diversity-preserving augmentation achieving
-quality parity," not "QD wins quality"). RUNNING: code_individual QD
-seed 1001 vs the existing classic seed 1001 on the 13-problem fast subset
-(`exp/fast_iter/smooth_qd_code_individual`, low concurrency to protect the
-finals). **PRELIMINARY (3/13, best-quality delta):** 2/3 EXACT parity
-(Prob004 +0.000, Prob024 +0.000) + 1 concentrated PPA-margin deficit
-(Prob015 multi_pipe -0.209) - a BIG improvement over thought_only QD
-(lost everywhere, F1); residual fits F4 (exploitation-heavy problems) ->
-V2/champion-tuning target. Full 13-problem delta pending. **Pre-registered (M6):** parity (pooled CI low > −0.03) →
-contribution survives; clear deficit → the indirection wasn't the whole
-story. Isolated re-verify (M12) before trusting counts. [H: 2026-06-14 14:00]
+### F22 — Smooth QD (code_individual) NEAR-PARITY; V2 implemented `MEASURED`
+The smooth-integration thesis is substantially VINDICATED. Full 13-problem
+V1 (code_individual + eoh operators + champion lane 0.5 + BD-trio archive)
+vs classic seed 1001, best-quality delta: **MEAN -0.032 (3W/3L/7T),
+10/13 within the parity band** - a dramatic improvement over thought_only
+QD (-0.08..-0.13, F1) and right at the frozen parity boundary. The ENTIRE
+deficit is 3 exploitation-heavy PPA-margin problems (alu -0.256,
+parallel2serial -0.150, multi_pipe -0.052); the other 10 are tied (7) or
+better (3). So removing the thought->code indirection recovered nearly
+all the lost performance - the indirection WAS the main culprit (F7/F8).
+Whether V1 PASSES the frozen rule (cluster-bootstrap CI low > -0.03) is
+borderline given the alu outlier; the launcher's paired CI is the verdict
+(single seed; finals need multi-seed). **V2 (NSGA-II global-rank
+selection, IMPLEMENTED commit 0ee4a8a983, doc 16) is queued** - it
+prefers high-quality rank-1 individuals, directly targeting the 3
+exploitation problems that are V1's whole residual. If V2 closes them ->
+parity-or-better -> a genuine POSITIVE QD contribution (parity + diversity,
+answering #1 + #5). `exp/fast_iter/smooth_qd_code_individual` [H: 2026-06-14 15:30]
 
 ### F21 — Stronger-model probe: closer but still 0 valid (leans model-general) `MEASURED`
 **VERDICT (isolated re-eval, classic arm, 12 candidates/module):**

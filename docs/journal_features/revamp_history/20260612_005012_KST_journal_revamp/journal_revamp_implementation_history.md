@@ -2494,3 +2494,28 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Motivation recap: V1 (8/13) landed at -0.056 with the deficit
   concentrated on exploitation-heavy PPA-margin problems; V2's preference
   for high-quality rank-1 individuals directly targets that residual.
+
+## 2026-06-14 15:30 KST — F22 V1 FULL verdict: code_individual-QD near-parity (-0.032)
+
+- Full 13-problem V1 best-quality delta (generation_ppa.best_score) vs
+  classic seed 1001: MEAN -0.032 (3W/3L/7T), 10/13 within parity band.
+  Deficit entirely on 3 exploitation-heavy PPA-margin problems:
+  Prob045_alu -0.256, Prob037_parallel2serial -0.150, Prob015_multi_pipe
+  -0.052. Other 10: 7 ties (incl. the hard m2014_q3, fsm, gshare, fsmonehot
+  at 0.000/+0.034) + 3 small wins (traffic_light +0.006, signal_generator
+  +0.004, gshare +0.034).
+- VERDICT: the smooth-integration thesis is substantially vindicated.
+  Dropping thought_only (-> code_individual) recovered nearly all the lost
+  performance: -0.10 (thought_only QD, F1) -> -0.032 (code_individual QD).
+  The indirection WAS the main culprit (F7/F8). V1 is at the parity
+  boundary; whether it PASSES the frozen rule (cluster-bootstrap CI low
+  > -0.03) is borderline (the alu -0.256 outlier widens the CI) - the
+  launcher's paired CI is the formal verdict; single seed.
+- V2 (NSGA-II global-rank selection) is the targeted next step: it prefers
+  high-quality rank-1 individuals, directly addressing the 3 exploitation
+  problems that ARE V1's entire residual. Implemented (0ee4a8a983),
+  launcher ready (exp/smooth_qd_nsga2_launch.sh), queued behind V1+finals.
+- If V2 closes the residual -> parity-or-better -> a genuine POSITIVE QD
+  contribution: "QD as a parity-quality diversity augmentation" answering
+  criticisms #1 (weighted-sum bias, via NSGA-II) + #5 (diversity). This is
+  the salvage the user proposed, now within reach.
