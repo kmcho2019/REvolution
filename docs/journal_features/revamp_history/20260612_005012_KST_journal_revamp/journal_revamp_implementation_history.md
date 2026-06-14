@@ -1815,3 +1815,28 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Fix B (--qd_thought_code_seeded) stays in the codebase as the best
   realization config and a documented fast-subset result; not a
   general parity fix.
+
+## 2026-06-14 04:15 KST — storyline-decider validated end-to-end (M10)
+
+- After F15 (realization parity closed), validated the ONLY remaining
+  win-path (RealBench-large, task #16) end-to-end via a manual probe
+  that does NOT touch load-bearing SynthesisEvaluator:
+  1. yosys (ref.yosys.tcl + aux reads + DISABLE_SV_ASSERTION) on
+     e203_exu_alu_dpath (2143 cells) -> mapped 191KB netlist, rc=0.
+  2. real ref.openroad.tcl on that netlist -> rc=0, COMPLETES the
+     floorplan: design area 2525 u^2, tns -10.94, wns -0.21, power
+     reported (timing unmet at the 10ps max-effort constraint, same
+     for both arms - expected; metrics extract cleanly).
+- M10: the M8 OpenROAD-on-large unknown is CLEARED. The full PPA flow
+  works on large e203 designs. Task #16 is no longer a feasibility
+  question - it is confirmed-feasible PLUMBING: (1) relax the
+  supports_synthesis heuristic, (2) thread aux/support files +
+  per-task defines into SynthesisEvaluator (additive, aux default
+  ()), (3) wire aux through candidate_evaluator, (4) re-lock a
+  synthesis-capable large-module subset, (5) run QD-vs-classic.
+- STRATEGIC: after the F15 negative (realization parity doesn't
+  transfer), this is the positive counterweight - the win-path over
+  classic is technically alive and now low-risk to build. The hard
+  unknowns (yosys + OpenROAD on large designs) are both confirmed.
+  Task #16 go/no-go is now a pure cost/value call, not a feasibility
+  gamble. Probe artifacts in /tmp/orprobe (yosys.log, openroad.log).
