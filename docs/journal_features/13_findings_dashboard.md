@@ -25,25 +25,28 @@ when new runs land; keep finding IDs stable.
 
 | Phase | Title | State |
 | --- | --- | --- |
-| P1 | QD repair | **CLOSED → Branch C (now evidence-decided).** All screens + ablation + parity fixes done; Fix B halved the FAST deficit but did NOT transfer to hard (F15). The last win-path lever — RealBench-large (#16) — is now RETIRED: both classic and QD score 0/7 valid on dependency-complete e203 modules (F20), so no PPA-win is possible. Branch C is the conclusion on evidence, not assumption. |
+| P1 | QD repair | **CLOSED → Branch C (now evidence-decided).** All screens + ablation + parity fixes done; Fix B halved the FAST deficit but did NOT transfer to hard (F15). The last win-path lever — RealBench-large (#16) — does NOT deliver a win: isolated re-eval shows valid candidates only on the 2 smallest e203 modules with classic 4 ≥ QD 2, and 0 valid on the larger ones (F20; the parallel run's "0/7" was an artifact, M12). So no QD PPA-win at scale. Branch C is the conclusion on evidence, not assumption. |
 | P2 | BD / descriptor thesis | **In progress.** 4 profiles pre-registered (doc 11); bake-off queued behind matrix; mechanical verdict table ready. |
 | P3 | Benchmark vetting | **Mostly done.** RealBench verilator-only (55/60). **RealBench QD-vs-classic is the STORYLINE-DECIDER (doc 14): the one experiment that could convert Branch C→A/B — QD diversity may only pay off on larger designs.** Debug pairs pending next OpenRouter slot. |
 | P4 | Gates / freeze | **Tooling complete.** All slices locked. Open: MDE ratchet + budget-rule *decisions*, seed-42 debug gate, 5-seed finals. |
 | P5 | Manuscript | **Kicked off.** Evidence map (doc 12) binds elements to artifacts; prose pending finals. |
 
-**Win-path status (#16): CONCLUDED — RETIRED on honest evidence (F20).**
-The full investigation ran its course: infra was fixed + validated
-end-to-end (F16/M11), the dependency-complete census mapped the viable
-modules (F17), a confounding missing-include artifact was caught and
-fixed (F19), and the honest post-fix storyline-decider (classic vs QD,
-7 modules) came back **0/7 valid on BOTH arms** (F20). The LLM
-(gpt-oss-120b) produces structurally-valid but functionally-WRONG e203
-modules at every size; QD diversity does not break the spec-comprehension
-bottleneck. The "QD beats classic on RealBench-large PPA" headline is
-impossible (no valid candidate to compare). **This is not a wasted leg:**
-it converts criticism #4 (small benchmarks) into a real RealBench-scale
-result and extends the regime-sensitivity thread (F4) — the binding
-limit at real-CPU scale is LLM spec-comprehension, not search structure.
+**Win-path status (#16): CONCLUDED — QD does not win (F20).**
+The full investigation ran its course: infra fixed + validated end-to-end
+(F16/M11), dependency-complete census (F17), a missing-include confound
+caught and fixed (F19), AND a parallel-eval reliability artifact caught
+and worked around with isolated re-eval (M12). The corrected,
+authoritative storyline-decider (isolated re-eval, classic vs QD, 7
+modules): **the LLM produces valid candidates only on the 2 SMALLEST
+modules (<6 KB); classic 4 valid ≥ QD 2; larger modules (incl. decode
+53 KB) 0 valid** (F20). QD shows more behavioral diversity but converts
+it into FEWER valid candidates (diverse-but-wrong). So **QD does not beat
+classic at RealBench scale**: the buildable modules are back in the small
+regime where classic already wins (F1), and the large-design regime is
+LLM-infeasible. The "QD beats classic on RealBench-large PPA" headline is
+unsupported. **This is not a wasted leg:** it converts criticism #4 into
+a real RealBench-scale result and extends the regime-sensitivity thread
+(F4) — the binding limit at real-CPU scale is LLM spec-comprehension.
 **The finals are the CHARACTERIZATION paper (Branch C), now decided on
 evidence, not assumption.**
 
@@ -228,38 +231,52 @@ choice: force-including the design's global header makes the e203 task
 ("implement the logic") comparable to the self-contained VerilogEval/
 RTLLM problems. [H: 2026-06-14 09:30]
 
-**HONEST RE-MAP RESULT (post-fix, classic, 2026-06-14 09:55):** all 7
-dependency-complete modules (decode 53 KB + 6 mid-size 4.7–14 KB) →
-**0/8 valid each**, status_counts ALL `failed_functionality` (candidates
-COMPILE and reach simulation, then fail on mismatch — the fix worked in
-the run; not syntax/include). So the capability ceiling is now GENUINE,
-not an artifact: gpt-oss-120b produces structurally-valid but
-functionally-WRONG implementations of every dependency-complete e203
-module, classic arm. The QD arm (`exp/fast_iter/capability_remap/qd`)
+**RE-MAP RESULT (post-fix, classic, 2026-06-14 09:55) — [PARTLY CORRECTED
+by M12/F20]:** the parallel run reported all 7 modules 0/8 valid, all
+`failed_functionality`. **This count is UNRELIABLE** — isolated re-eval
+(F20) recovers 4 valid classic candidates the parallel run spuriously
+failed under contention (M12). What IS robust here: the fix worked
+(candidates COMPILE and reach simulation, not syntax/include), and the
+LARGER modules genuinely get 0 valid even in isolation. The valid
+candidates appear only on the 2 smallest modules — see F20 for the
+corrected counts. The QD arm (`exp/fast_iter/capability_remap/qd`)
 is running to settle the actual win-path hypothesis — does diverse
 thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
 
-### F20 — Storyline-decider SETTLED: BOTH arms 0/7 on RealBench-large `MEASURED`
-The honest, post-fix storyline-decider (classic vs QD, same budget/seed,
-7 dependency-complete e203 modules 4.7–53 KB, gpt-oss-120b): **both arms
-0/7 valid, every candidate `failed_functionality`** (compiles, simulates,
-fails on mismatch). QD's diverse thought-level search did NOT break the
-classic monoculture: diversity cannot rescue a spec-comprehension
-bottleneck. **This conclusively answers the win-path question** — the
-RealBench-large "QD beats classic on PPA" headline is impossible because
-neither arm produces a single valid candidate to compare PPA on. The
-win-path is RETIRED on honest evidence (not an artifact — F19 fixed the
-include confound; the failure mode is genuine functional incorrectness).
-**The result is CONTENT, not a null** (addresses criticisms #4+#5): at
-real-CPU scale the binding bottleneck is the LLM's systematic
-spec-comprehension, not search structure or operator design — extending
-the regime-sensitivity thread (F4) from small benchmarks to RealBench.
-Graded mismatch comparison (does QD reduce error magnitude / diversify
-the error vs classic's monoculture?) pending
-(`exp/fast_iter/capability_remap/grade_mismatch_compare.json`).
-[H: 2026-06-14 10:10]
+### F20 — Storyline-decider (CORRECTED, isolated re-eval): QD does not win `MEASURED`
+The parallel run's "0/7" was a SECOND artifact (see M12: 14-way
+contention caused spurious failures). The authoritative measurement is
+ISOLATED, deterministic re-eval of every saved candidate, both arms
+(`grade_mismatch_compare.json`). True per-module valid-candidate counts
+(of 16 attempts each), classic vs QD:
+
+| module | KB | classic | QD | best mismatch (both) |
+| --- | --- | --- | --- | --- |
+| decode | 53 | 0 | 0 | ~100% |
+| disp | 14 | 0 | 0 | ~21% |
+| longpwbck | 7.5 | 0 | 0 | ~85% |
+| branchslv | 5.9 | 0 | 0 | ~25% |
+| **alu_csrctrl** | 5.6 | **2** | **1** | 0% (valid) |
+| wbck | 4.8 | 0 | 0 | ~33% |
+| **alu_rglr** | 4.7 | **2** | **1** | 0% (valid) |
+
+Totals: classic 4 valid, QD 2 valid. **Findings:** (1) the LLM produces
+valid candidates ONLY on the 2 SMALLEST modules (<6 KB) — the larger
+modules (decode/disp/longpwbck/branchslv/wbck) get 0 valid even in
+isolation; (2) where comparison is possible, **classic ≥ QD** (4 vs 2) —
+QD does NOT win; (3) QD shows MORE behavioral diversity (more distinct
+mismatch values, e.g. disp 7 vs 4; alu_rglr 6 vs 4) but converts it into
+FEWER valid candidates — diverse-but-wrong, not closer-to-correct (best
+mismatch is ~identical across arms per module). **Win-path verdict
+(unchanged in conclusion, corrected in evidence):** QD does not beat
+classic at RealBench scale; the buildable modules are back in the small
+regime where classic already wins (F1), and the large-design regime is
+LLM-infeasible (decode 0 valid, 100% mismatch). CAVEAT: small modules
+have weak coverage (alu_csrctrl only 27 compared samples vs wbck 16021),
+so their "valid" is weak evidence — the strongest reading is the
+gradient, not the 4-vs-2 count. [H: 2026-06-14 10:35]
 
 ### F15 — Fix B does NOT transfer to the hard subset `MEASURED` (parity path closed)
 Fix B hard-subset (seed 42, 20×5, 13 problems): −0.116 (1/10/2, CI
@@ -415,6 +432,7 @@ Three mechanisms, each with a verified exhibit (full paths in doc 12):
 | M4 | logic_depth externally validated: 31/32 production candidates agree exactly with yosys ltp. | `CONFIRMED` [H: 23:55] |
 | M5 | Descriptor trio survives redundancy bound (all axes \|r\|<0.8) but degenerates on small/mid designs → warmup-completion is the bake-off headline criterion. | `CONFIRMED` [H: 18:20] |
 | M6 | Verification-before-verdict discipline caught 6 instrument/mechanism defects before they misled (empty pools, unreachable caps, dropped problems, template false-positive, hardcoded-empty feedback, licensing dir-vs-completion). | process note |
+| M12 | **Parallel evaluation UNDER-COUNTS valid candidates (contention) — THREAT TO VALIDITY.** The capability_remap run (14 worker slots, 7 modules × heavy synth) marked deterministically-VALID candidates as `failed_functionality`; isolated re-eval recovers them (classic 4 valid vs the run's 0 — F20). The functional eval is deterministic (verilator seeds `$urandom` stably; verified 3× identical), so the failures are ENVIRONMENTAL: concurrent verilator C++ builds + yosys/OpenROAD exhaust CPU/memory and spuriously fail. **Implications:** (1) final QD-vs-classic gates MUST use reliable eval — cap worker counts and/or isolated re-verification of best candidates; never trust raw parallel-run valid counts. (2) Prior parallel runs (F1/F2/F15 core comparisons) may carry similar noise — load-dependent (they DID produce scores, so less severe than the 14-way RealBench run), but the finals must re-verify. Caught by M6 ground-truthing of an F20 contradiction. | `MEASURED` [H: 2026-06-14 10:35] |
 | M11 | **Candidate-eval path validated END-TO-END (closes the M10 gap).** M10 proved the standalone synth flow; M11 proves the actual runtime `evaluate_candidate` the QD/classic loop calls. Golden e203_exu_decode (53 KB) → status `success` through pre-synth functional + synth+PPA + post-synth check + journal BD-trio extraction, no LLM. Took 4 wiring fixes (F16) found by golden probing. Lesson reinforced (M6): validate the integration path, not just the component — M10's synth-only proof missed 3 of the 4 gaps. | `MEASURED` [H: 2026-06-14 07:55] |
 | M10 | **Storyline-decider validated END-TO-END.** The full PPA flow (yosys+aux → OpenROAD floorplan → metrics) completes on the largest e203 module (alu_dpath 2143 cells): rc=0, design area 2525 µm², tns/wns/power extracted. M8's remaining unknown (OpenROAD-on-large) is CLEARED. Task #16 is confirmed-feasible plumbing, not a feasibility risk: relax manifest heuristic + thread aux through SynthesisEvaluator + re-lock subset + run QD-vs-classic. The win-path is technically viable. | `MEASURED` [H: 2026-06-14 04:15] |
 | M9 | Bake-off occupancy tie-break is CONFOUNDED by collapse: a fully-collapsed 1-cell archive scores occ=1.00 (trio), gaming the metric. The per-axis COLLAPSE count is the truer diversity signal; the freeze tie-break should use it, not raw occupied/total. | `MEASURED` [H: 2026-06-13 22:40] |

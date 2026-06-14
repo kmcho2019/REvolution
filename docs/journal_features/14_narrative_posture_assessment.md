@@ -126,28 +126,35 @@ advantage are too big for the model to implement; the dependency-complete
 modules it might implement (≤14 KB) are in the same small-design regime
 where QD already loses (F1/F15).
 
-**RESOLVED — win-path RETIRED on honest evidence (F19/F20, 2026-06-14).**
-A confounding artifact was first removed: candidates were dying at
-preprocessing because they omitted the e203_defines.v include, masking
-their logic (F19, fixed). With the fair harness, the honest
-storyline-decider (classic vs QD, 7 dependency-complete modules
-4.7–53 KB) returned **0/7 valid on BOTH arms** (F20) — every candidate
-compiles but is functionally wrong, and QD's diverse thought-level search
-does NOT break the classic monoculture. The squeeze is therefore
-confirmed and binding: the win-path's strongest form is **dead**, not
-unproven. Crucially this is a *content* result, not a null — at real-CPU
-scale the limiting factor is the LLM's systematic spec-comprehension, not
-search/operator design, which directly answers criticism #4 with a
-RealBench-scale finding and bounds the diversity claim (#5).
+**RESOLVED — win-path does NOT deliver a win (F19/F20, 2026-06-14).**
+Two artifacts had to be removed before a fair read: (1) candidates dying
+at preprocessing on the omitted e203_defines.v include (F19, fixed); and
+(2) the parallel run spuriously failing valid candidates under 14-way
+contention (M12, worked around with isolated deterministic re-eval). The
+corrected, authoritative storyline-decider (isolated re-eval, classic vs
+QD, 7 dependency-complete modules 4.7–53 KB): **valid candidates appear
+only on the 2 smallest modules (<6 KB), classic 4 ≥ QD 2; the larger
+modules (incl. decode 53 KB) get 0 valid.** QD shows more behavioral
+diversity but converts it into FEWER valid candidates — diverse-but-wrong,
+not closer-to-correct. So **QD does not beat classic at RealBench scale**:
+the buildable modules are back in the small regime where classic already
+wins (F1), and the large-design regime is LLM-infeasible. Crucially this
+is a *content* result, not a null — the limiting factor at scale is the
+LLM's systematic spec-comprehension, answering criticism #4 with a
+RealBench-scale finding and bounding the diversity claim (#5). CAVEAT:
+the smallest modules have weak coverage (alu_csrctrl 27 compared samples),
+so the gradient (large→infeasible, small→classic-wins) is the robust
+reading, not the precise 4-vs-2 count.
 
 ## Recommendation (updated 2026-06-14 — now evidence-decided)
 
 1. Finish the bake-off — decides whether the diversity contribution has
    any legs at all on the small benchmarks where candidates ARE valid.
 2. ~~Prioritize RealBench QD-vs-classic on the larger modules~~ —
-   **DONE and RETIRED (F20).** Both arms 0/7 valid; no PPA-win is
-   possible. Stop spending on the win-path. Fold the RealBench-large
-   result in as a *characterization* contribution: "at real-CPU scale,
+   **DONE (F20): QD does not win.** classic 4 ≥ QD 2 valid (only on the
+   smallest modules); no PPA-win. Stop spending on the win-path. Fold the
+   RealBench-large result in as a *characterization* contribution: "at
+   real-CPU scale,
    LLM spec-comprehension — not QD search structure — is the binding
    limit; quality-diversity cannot rescue it."
 3. Write the **characterization paper** — now the evidence-decided

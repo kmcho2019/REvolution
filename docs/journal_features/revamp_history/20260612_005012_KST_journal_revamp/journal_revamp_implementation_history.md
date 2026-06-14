@@ -2185,3 +2185,46 @@ fallback; R-D k=2 (already running on OpenRouter).
   answering criticisms #1-3 (bias removal + the missing ablation) and #4
   (RealBench-scale capability finding), with #5 (diversity) bounded
   honestly. No "we win" claim - and now we KNOW, having run the decider.
+
+## 2026-06-14 10:35 KST — M12 + F20 CORRECTION: parallel-eval artifact; QD still doesn't win
+
+- CORRECTION to the 10:10 F20 entry. The "0/7 valid both arms" was a
+  SECOND artifact. The graded mismatch refinement surfaced a
+  contradiction: isolated re-eval of saved candidates showed classic
+  alu_csrctrl + alu_rglr each have valid candidates (status=success, 0
+  mismatch, synth+ppa) that the parallel RUN marked failed_functionality.
+- Diagnosis (M6): the functional eval is DETERMINISTIC (verilator seeds
+  $urandom stably; same candidate re-eval'd 3x gives identical 0/27). The
+  failed candidate even self-includes e203_defines.v (not the F19
+  confound). Fix committed 09:48:47, before the run (09:49:20). So the
+  cause is ENVIRONMENTAL: the parallel run (14 worker slots, 7 modules x
+  heavy verilator C++ build + yosys/OpenROAD) spuriously failed valid
+  candidates under resource contention. = M12.
+- CORRECTED authoritative numbers (isolated, deterministic re-eval of all
+  16 candidates/module, both arms): valid candidates appear ONLY on the 2
+  smallest modules - alu_csrctrl (5.6KB): classic 2 / QD 1; alu_rglr
+  (4.7KB): classic 2 / QD 1. All larger modules (decode 53KB, disp 14KB,
+  longpwbck, branchslv, wbck): 0 valid both arms. Totals classic 4, QD 2.
+- CONCLUSION (unchanged, corrected evidence): QD does NOT beat classic at
+  RealBench scale. classic 4 >= QD 2. QD shows MORE behavioral diversity
+  (more distinct mismatch values: disp 7 vs 4, alu_rglr 6 vs 4) but
+  converts it into FEWER valid candidates - diverse-but-wrong, not
+  closer-to-correct (per-module best mismatch ~identical across arms). The
+  buildable modules are small (back in the regime where classic wins, F1);
+  the large regime is LLM-infeasible (decode 100% mismatch).
+- CAVEAT: small modules have weak test coverage (alu_csrctrl only 27
+  compared samples vs wbck 16021). So the gradient is the robust reading,
+  not the precise 4-vs-2 count.
+- M12 is a THREAT TO VALIDITY for the finals: final QD-vs-classic gates
+  MUST use reliable eval (cap worker counts AND/OR isolated re-verify best
+  candidates). Prior parallel runs (F1/F2/F15) may carry load-dependent
+  noise (they produced scores, so less severe) - the finals must
+  re-verify rather than trust raw parallel valid counts.
+- Lesson (M6, third time): a 0/N capability/run result MUST be
+  ground-truthed before interpretation. The graded refinement (almost
+  skipped as "nice-to-have") is what caught this verdict-overturning
+  artifact. Never trust an aggregate count without spot re-eval.
+- Docs reconciled: F20 rewritten with the table; M12 added; dashboard
+  status block + P1 + doc 14 recommendation corrected from "0/7" to
+  "classic >= QD, valid only on smallest modules"; F19 re-map paragraph
+  flagged. Strategic conclusion (characterization paper) stands.
