@@ -267,7 +267,11 @@ contribution ("QD as a diversity-preserving augmentation achieving
 quality parity," not "QD wins quality"). RUNNING: code_individual QD
 seed 1001 vs the existing classic seed 1001 on the 13-problem fast subset
 (`exp/fast_iter/smooth_qd_code_individual`, low concurrency to protect the
-finals). **Pre-registered (M6):** parity (pooled CI low > −0.03) →
+finals). **PRELIMINARY (3/13, best-quality delta):** 2/3 EXACT parity
+(Prob004 +0.000, Prob024 +0.000) + 1 concentrated PPA-margin deficit
+(Prob015 multi_pipe -0.209) - a BIG improvement over thought_only QD
+(lost everywhere, F1); residual fits F4 (exploitation-heavy problems) ->
+V2/champion-tuning target. Full 13-problem delta pending. **Pre-registered (M6):** parity (pooled CI low > −0.03) →
 contribution survives; clear deficit → the indirection wasn't the whole
 story. Isolated re-verify (M12) before trusting counts. [H: 2026-06-14 14:00]
 

@@ -2408,3 +2408,32 @@ fallback; R-D k=2 (already running on OpenRouter).
   methodology story; if V1 has a residual gap, V2 (better selection) is
   the rescue. Do NOT implement V2 before V1's result (avoid premature/
   convoluted code). thought_only + unified operator are dropped per user.
+
+## 2026-06-14 14:30 KST — F22 PRELIMINARY signal (3/13): code_individual QD ~ parity
+
+- Early best-quality read on the first 3 completed V1 problems (from
+  generation_ppa.best_score, max across gens), code_individual-QD vs the
+  existing classic seed 1001:
+  * Prob004_adder_8bit: QD +0.330 = classic +0.330 -> +0.000 (PARITY)
+  * Prob024_fsm:        QD +0.683 = classic +0.683 -> +0.000 (PARITY)
+  * Prob015_multi_pipe_8bit: QD +0.027 vs classic +0.236 -> -0.209
+  mean -0.070 (driven entirely by Prob015); 2/3 EXACT parity.
+- STRONG preliminary support for the user's smooth-integration thesis:
+  removing the thought_only indirection (code_individual) + keeping
+  classic operators + champion lane (0.5) + the BD archive recovers
+  classic-PARITY on most problems - vs thought_only QD which lost
+  EVERYWHERE (F1 -0.08..-0.13). The indirection WAS the main culprit.
+- Residual deficit is CONCENTRATED on a PPA-margin problem (Prob015
+  pipelined multiplier), consistent with F4 regime-sensitivity (QD weaker
+  where exploitation matters more than exploration). This is exactly the
+  pattern V2 (NSGA-II global rank selection, preferring high-quality
+  rank-1) or champion-lane-fraction tuning (more exploitation) could
+  address.
+- CAVEAT: only 3/13 problems; success-count proxy showed QD with fewer
+  total successes (expected - QD trades exploitation for exploration).
+  The full 13-problem paired delta (computed when V1 finishes) is the
+  decision metric; isolated re-verify best candidates (M12) before final.
+- Implication for the track (doc 16): if the full V1 lands near parity
+  with a concentrated PPA-margin deficit, V2 (NSGA-II selection) is
+  warranted as a targeted fix for those problems - and the residual is a
+  diagnosable, addressable pattern, not a diffuse failure.
