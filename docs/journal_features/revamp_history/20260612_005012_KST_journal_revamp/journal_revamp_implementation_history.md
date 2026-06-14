@@ -2640,3 +2640,20 @@ fallback; R-D k=2 (already running on OpenRouter).
   seed showed near-parity (-0.011); 3-seed pooled CI low > -0.03 = parity
   claim holds. CAVEAT: best_quality from COMPLETED runs only (the
   partial-run lesson, twice-learned: F20 + the V2 10/13 error).
+
+## 2026-06-14 ~18:40 KST — Manuscript draft spine (doc 17) for the compute wait
+
+- Runs mid-flight (multi-seed bn94s0so5 on run 1/4; finals 3/10) - no new
+  results to act on, and partial-run data is off-limits (the F20 + V2-10/13
+  lesson). Used the wait for forward progress on the DELIVERABLE (#15):
+  drafted docs/journal_features/17_manuscript_draft_spine.md - abstract,
+  contribution list, results synthesis (claim->evidence->number), case
+  study, predeclared disclosures, and the gating-before-submission list.
+- It is a SPINE for the author to adapt into the journal_draft Overleaf
+  submodule (LaTeX), NOT the paper itself. Single-seed numbers marked
+  [seed1001]; pooled-CI-dependent claims marked [CONFIRM]. Grounded in the
+  frozen narrative + doc 12 (evidence map) + doc 13/14/16. Honest framing:
+  characterization spine + the positive smooth-QD parity contribution.
+- Linked from the dashboard navigation. This accelerates the paper: once
+  the multi-seed + finals CIs land, the numbers slot in and the spine
+  ports to LaTeX, then the four-persona adversarial sign-off.

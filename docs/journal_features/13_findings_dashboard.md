@@ -554,6 +554,7 @@ an independent simplification win. This is now the project's central risk.
 | **Strategic posture** — contribution vs reviewer muster, the reframe | doc 14 |
 | **Why classic wins + fix plan** — mechanism, ranked fixes | doc 15 |
 | **Smooth QD integration track** — design/specs, NSGA-II selection, variant ladder | doc 16 |
+| **Manuscript draft spine** — abstract/contributions/results synthesis for Overleaf | doc 17 |
 | Chronological audit trail with full evidence | `revamp_history/.../journal_revamp_implementation_history.md` |
 | Manuscript element → artifact path | doc 12 (evidence map) |
 | Phase-grouped open/done checklist | `revamp_history/.../journal_revamp_implementation_todo.md` |
