@@ -25,7 +25,7 @@ when new runs land; keep finding IDs stable.
 
 | Phase | Title | State |
 | --- | --- | --- |
-| P1 | QD repair | **CLOSED → Branch C** (narrowed claims). Screens all DEMOTED; ablation matrix running for component attribution. |
+| P1 | QD repair | **CLOSED → Branch C.** All screens + ablation + parity fixes done; Fix B halved the FAST deficit but did NOT transfer to hard (F15) — realization-side parity path closed. Only win-path left: RealBench-large (#16). |
 | P2 | BD / descriptor thesis | **In progress.** 4 profiles pre-registered (doc 11); bake-off queued behind matrix; mechanical verdict table ready. |
 | P3 | Benchmark vetting | **Mostly done.** RealBench verilator-only (55/60). **RealBench QD-vs-classic is the STORYLINE-DECIDER (doc 14): the one experiment that could convert Branch C→A/B — QD diversity may only pay off on larger designs.** Debug pairs pending next OpenRouter slot. |
 | P4 | Gates / freeze | **Tooling complete.** All slices locked. Open: MDE ratchet + budget-rule *decisions*, seed-42 debug gate, 5-seed finals. |
@@ -114,6 +114,19 @@ narrative this predeclares **venue reassessment IF the finals land in
 Branch C** — making Fix B (closing the QD-vs-classic gap to reach
 Branch B/A, where the floor leg is moot) load-bearing, not optional.
 `exp/ablation_matrix/stats/floorleg_classic_unified_pooled` [H: 2026-06-13 13:40]
+
+### F15 — Fix B does NOT transfer to the hard subset `MEASURED` (parity path closed)
+Fix B hard-subset (seed 42, 20×5, 13 problems): −0.116 (1/10/2, CI
+[−0.210,−0.037]) — vs frozen QD on the SAME subset ~−0.09 (matrix
+qd_target −0.078/−0.101/−0.092). So Fix B is NOT better on the hard
+subset; the fast-subset halving (−0.177→−0.087) was a fast-subset
+ARTIFACT (that mix had refinement-amenable problems + 3 pre-existing
+ties). On harder/more-architectural problems code-seeding anchors
+(parallel2serial −0.486, fsmonehot −0.329, circuit7 −0.320 dominate;
+multi_pipe +0.087 is the lone win). **Realization-side fixes do not
+reach PPA parity on the real evaluation set — that path is closed.**
+Remaining win-path: RealBench-large (task #16) or the characterization
+framing. `exp/fast_iter/fixb_hard_subset/` [H: 2026-06-14 03:40]
 
 ### F14 — B′ hybrid worse; Fix B (all-seeded) is the ceiling `MEASURED`
 B′ (fraction 0.5, half whole-regen leaps) = −0.141, WORSE than pure

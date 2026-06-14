@@ -1789,3 +1789,29 @@ fallback; R-D k=2 (already running on OpenRouter).
   fix is fast-subset-specific and the PPA story stays Branch C.
 - Next gates: Fix B hard-subset verdict (~3h) + the still-pending
   RealBench-large storyline (task #16) for an actual win.
+
+## 2026-06-14 03:40 KST — Fix B does NOT transfer to hard subset (F15)
+
+- Fix B hard-subset confirmation (seed 42, 20x5, 13 problems) vs
+  classic: -0.116, 1W/10L/2T, CI [-0.210,-0.037]. Frozen QD on the
+  same subset (matrix qd_target) is -0.078/-0.101/-0.092 (~-0.09).
+- CONCLUSION: Fix B is NOT better than frozen on the hard subset; the
+  fast-subset deficit-halving (-0.177->-0.087) did NOT transfer. It
+  was a fast-subset artifact - that mix had refinement-amenable
+  problems and 3 pre-existing ties. On the hard subset the
+  architectural/anchoring losers dominate (parallel2serial -0.486,
+  fsmonehot -0.329, circuit7 -0.320; multi_pipe +0.087 the lone win).
+- STRATEGIC: the realization-side parity path is CLOSED. Fix B is a
+  fast-subset improvement that does not generalize. Combined with the
+  matrix (F1/F2-parity/F9 floor-leg fail) and bake-off (F12 no PPA
+  win), the journal's PPA story is firmly "QD loses to classic by
+  ~0.09-0.12 on the real set; realization fixes don't close it."
+- The ONLY remaining path to a performance WIN over classic is
+  RealBench-large (task #16). Otherwise the journal is a
+  characterization paper (Branch C / B-scoped): operator parity (F2),
+  coverage-diversity (F12), regime-sensitivity (F4), honest
+  root-cause (F7/F8/F10/F15). Surfacing the task-#16 decision as now
+  load-bearing for whether ANY win exists.
+- Fix B (--qd_thought_code_seeded) stays in the codebase as the best
+  realization config and a documented fast-subset result; not a
+  general parity fix.
