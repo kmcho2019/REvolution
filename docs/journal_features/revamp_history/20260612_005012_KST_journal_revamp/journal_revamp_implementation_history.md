@@ -1864,3 +1864,22 @@ fallback; R-D k=2 (already running on OpenRouter).
   readouts (the storyline-decider). Stopped at the tested step-1
   boundary rather than rush step 3 (another load-bearing path) at the
   end of a long turn.
+
+## 2026-06-14 05:30 KST — task #16 steps 1-3 done; step-4 synth sweep launched
+
+- Steps 1-3 of the win-path built, tested, committed:
+  - step 1 (2ba630bab9): SynthesisEvaluator + ref.yosys.tcl aux/define
+    threading (739 tests green; real-flow validated on alu_dpath).
+  - step 3 (b8affae671): candidate_evaluator forwards aux/defines to
+    runtime synthesis (87 targeted tests).
+  - step 2 (6d40cee6e1): --validate-synthesis marks supports_synthesis
+    truthfully via the real flow (replaces the false-negative
+    heuristic).
+- step 4 LAUNCHED (background, niced): synthesis-validation sweep on
+  the e203_hbirdv2 family into data/bench/RealBench_v4_synth - runs
+  the real yosys+OpenROAD flow on each golden to produce a TRUE
+  synth-capable large-module set. ~30-60 min CPU. Locked roots
+  untouched (new root).
+- REMAINING: step 4b (lock a large-module subset from the v4
+  synth-validated set) + step 5 (run QD-vs-classic on RealBench-large,
+  the storyline-decider). Next fire gates the sweep and proceeds.
