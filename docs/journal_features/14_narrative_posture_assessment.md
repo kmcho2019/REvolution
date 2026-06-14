@@ -28,6 +28,24 @@ the ruminations, unfixed. If the paper pitch is "our fancier search
 wins," it has no result to stand on. We are tracking **Branch C / B-scoped,
 not the triumphant Branch A.**
 
+> **UPDATE 2026-06-14 — the posture improved: a POSITIVE QD contribution
+> now exists (F22/F23, doc 16).** The "QD loses −0.08 to −0.13" verdict was
+> specific to the RADICAL `thought_only` build. A *smooth* integration —
+> direct-code QD (`code_individual`, drops the harmful indirection) +
+> global NSGA-II non-domination-rank selection — reaches **near-parity:
+> best_quality −0.011, functional TIE, 12/13 within the parity band**
+> (single seed 1001; multi-seed 1002-1003 confirming now). The deficit
+> collapsed from −0.10 to −0.011, concentrated on ~1 intrinsic-limitation
+> problem (parallel2serial). So the pitch is no longer "we win" NOR pure
+> characterization — it is **"QD/MAP-Elites as a parity-quality diversity
+> augmentation: NSGA-II selection over an archive removes the weighted-sum
+> bias (#1) and adds behavioral diversity (#5) at no quality cost vs a
+> strong classic baseline."** That is a *positive, principled* contribution
+> a reviewer can accept, and it directly converts criticisms #1 and #5 from
+> "implemented, value unproven" to "implemented, parity-demonstrated."
+> Pending: the 3-seed pooled cluster-bootstrap CI (the formal parity
+> verdict) + the alu/quality win replicating across seeds.
+
 ## The stronger storyline the work actually produced
 
 A *characterization* contribution, not a victory lap — and it is more
