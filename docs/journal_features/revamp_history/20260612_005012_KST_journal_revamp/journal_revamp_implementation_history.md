@@ -2626,3 +2626,17 @@ fallback; R-D k=2 (already running on OpenRouter).
   (a) smooth-QD reaches parity, (b) V2 > V1 is robust (the single-seed
   V2>V1 is driven by alu +0.238 - could be seed-specific; needs seeds).
   CAVEAT: single seed; the alu win must replicate.
+
+## 2026-06-14 18:05 KST — smooth-QD multi-seed confirmation LAUNCHED
+
+- After the V2-is-better correction, launched the combined multi-seed
+  confirmation (bn94s0so5): V1 (cell_crowded_tournament) AND V2
+  (nsga2_global_rank) for seeds 1002+1003, low 3-way concurrency
+  alongside the finals. Emits 3-seed pooled cluster-bootstrap CIs vs
+  classic for both -> (a) does smooth-QD reach parity, (b) is V2>V1 robust
+  (the +0.022 / alu +0.238 must replicate across seeds, not seed-1001
+  luck). exp/smooth_qd_multiseed_launch.sh.
+- This is the formal verdict step for the QD contribution (V2). Single
+  seed showed near-parity (-0.011); 3-seed pooled CI low > -0.03 = parity
+  claim holds. CAVEAT: best_quality from COMPLETED runs only (the
+  partial-run lesson, twice-learned: F20 + the V2 10/13 error).
