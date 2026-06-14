@@ -2437,3 +2437,34 @@ fallback; R-D k=2 (already running on OpenRouter).
   with a concentrated PPA-margin deficit, V2 (NSGA-II selection) is
   warranted as a targeted fix for those problems - and the residual is a
   diagnosable, addressable pattern, not a diffuse failure.
+
+## 2026-06-14 14:45 KST — F22 fuller read (8/13): closer but not parity; V2 warranted
+
+- The rosy 3/13 read (2/3 exact parity) was optimistically partial. Fuller
+  8/13 best-quality read (generation_ppa.best_score, max across gens),
+  code_individual-QD vs classic seed 1001:
+  TIE: Prob004 +0.000, Prob024 +0.000, Prob098 +0.000
+  QD+: Prob041 +0.006, Prob049 +0.004
+  QD-: Prob015 -0.052, Prob037 -0.150, Prob045_alu -0.256
+  MEAN -0.056 (2W/3L/3T), 5/8 within the parity band.
+- READ: code_individual-QD is CLEARLY better than thought_only QD
+  (F1 -0.08..-0.13) - removing the indirection helped a lot - but is NOT
+  yet at parity. The residual deficit is CONCENTRATED on 3 PPA-margin /
+  exploitation-heavy problems (alu, parallel2serial, multi_pipe), the same
+  F4/F7 regime where the archive's diversity-exploration costs
+  exploitation. NOT a diffuse failure.
+- IMPLICATION: V2 (NSGA-II global non-domination-rank selection, doc 16)
+  is WARRANTED - it preferentially selects high-quality rank-1
+  individuals, directly targeting the exploitation deficit on those
+  problems. Alternatively/additionally, raising qd_champion_lane_fraction
+  (more exploitation) is a cheap knob. The user's NSGA-II idea is
+  well-motivated by this exact residual pattern.
+- CAVEATS: single seed; run-reported best_score (not yet isolated
+  re-verified, though V1 ran at low 3-way concurrency so M12 risk is low);
+  8/13 problems (full 13 + the launcher's proper cluster-bootstrap CI
+  pending - the CI, not the mean, is the frozen parity verdict, and at
+  -0.056 mean with high per-problem variance the CI low COULD still be
+  within -0.03). Decide V2-as-rescue vs V2-as-strengthener on the proper
+  stats.
+- NEXT: let V1 finish (full 13 + stats_vs_classic_1001 paired CI), then
+  implement V2 cleanly per doc 16 (1 flag + 1 helper + unit test).
