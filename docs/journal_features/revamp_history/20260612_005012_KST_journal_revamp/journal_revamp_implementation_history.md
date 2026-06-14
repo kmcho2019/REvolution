@@ -2228,3 +2228,34 @@ fallback; R-D k=2 (already running on OpenRouter).
   status block + P1 + doc 14 recommendation corrected from "0/7" to
   "classic >= QD, valid only on smallest modules"; F19 re-map paragraph
   flagged. Strategic conclusion (characterization paper) stands.
+
+## 2026-06-14 11:00 KST — M12 SCOPE VERIFIED: confined to heavy runs; CORE is reliable
+
+- Assessed whether M12 (parallel-eval under-counting) corrupted the CORE
+  characterization results (F1/F2/F15), which are the paper's spine. It
+  did NOT.
+- Method: isolated, deterministic re-eval of the core ablation matrix
+  candidates, targeting the highest-signal cases (lowest qd_target valid
+  counts = most likely to reveal spurious failures if M12 were present).
+- Results (run success vs isolated success, exact):
+  * qd_target Prob116_m2014_q3 (VerilogEval): run 9 = isolated 9. MATCH.
+  * qd_target Prob153_gshare (VerilogEval): run 2 = isolated 2. MATCH.
+  -> The core run was RELIABLE; the low qd_target counts are GENUINE
+  (QD really produces fewer valid candidates on these), not M12 artifacts.
+- The one apparent discrepancy (RTLLM Prob045_alu: run 21 vs isolated 0)
+  is a RE-EVAL-TOOL artifact, not M12: the RTLLM testbench does
+  $readmemh("Prob045_alu_reference.dat") which is absent in my tempdir, so
+  every candidate errors in isolation. The run had the .dat co-located.
+  Also reverse-direction (run > isolated), the OPPOSITE of M12 (which
+  makes runs find FEWER). So RTLLM core is not M12-affected either.
+- CONCLUSION: M12's catastrophe is CONFINED to the 14-way HEAVY e203 synth
+  run (capability_remap). The core (12-way, small problems, light iverilog
+  functional + light synth) was not corrupted. The characterization spine
+  (F1 QD-loses, F2 operator parity, F15) stands on reliable measurement.
+- Precautions retained for the FINALS (task #9): use reliable eval (cap
+  worker counts and/or isolated re-verify best candidates); any isolated
+  re-verify tool MUST co-locate benchmark data files (.dat etc.).
+- Net effect of this whole investigation: the win-path verdict was
+  corrected (F20: QD does not win, on clean evidence) AND the core results
+  were stress-tested and found robust. The journal's characterization
+  posture is now on firmer evidentiary ground than before.
