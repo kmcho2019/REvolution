@@ -105,11 +105,39 @@ already confirmed; OpenROAD floorplan + descriptor extraction on large
 designs is the remaining validation. This is the highest-leverage
 engineering investment for the storyline.
 
+**Synthesis feasibility — CLOSED 2026-06-14 (M10/M11, F16).** The whole
+harness path is now validated end-to-end: the golden e203_exu_decode
+(53 KB, largest dependency-complete module) passes the full runtime
+`evaluate_candidate` (pre-synth functional → yosys+OpenROAD PPA →
+post-synth check → BD-trio descriptors). The four eval-wiring gaps
+(top-module resolution, post-synth include/defines, post-synth parser,
+verilator vcd-probe) are fixed. So the *tooling* can run the
+storyline-decider. The engineering investment paid off.
+
+**BUT a NEW, harder blocker emerged — LLM CAPABILITY (F18, 2026-06-14).**
+The storyline-decider needs the LLM to produce *functionally-valid
+candidates* on large modules, and it cannot. A bounded capability smoke
+(gpt-oss-120b, 24 attempts) on decode yielded **0 valid** — the model
+emits incomplete (~half-size), syntactically-broken decoders. This
+reframes the feasibility question entirely: synthesis feasibility was the
+*easy* blocker; capability is the *binding* one. **The squeeze:** the
+designs big enough to exhibit QD's hypothesized architectural-room
+advantage are too big for the model to implement; the dependency-complete
+modules it might implement (≤14 KB) are in the same small-design regime
+where QD already loses (F1/F15). The mid-size smoke (F19) is mapping the
+exact ceiling; pending its result, the strongest form of the win-path
+(large designs) is **LLM-capability-blocked**.
+
 ## Recommendation
 
 1. Finish the bake-off — decides whether the diversity contribution has
    any legs at all.
-2. Prioritize RealBench QD-vs-classic on the larger modules as the
-   storyline-decider, with PPA-improvement and Pareto-coverage readouts.
+2. ~~Prioritize RealBench QD-vs-classic on the larger modules~~ —
+   **superseded (F18).** The win-path's strongest form is
+   capability-blocked: the LLM cannot implement the large modules. Await
+   the mid-size ceiling (F19); if even disp (14 KB) fails, retire the
+   win-path and stop spending on it.
 3. Decide consciously, now, that the team is writing the **characterization
-   paper** — the evidence supports it; it does not support "we win."
+   paper** — the evidence supports it; it does not support "we win." F18
+   strengthens this: the win-path that might have flipped the verdict is
+   now evidence-blocked, not merely unproven.
