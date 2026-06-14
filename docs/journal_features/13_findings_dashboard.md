@@ -14,10 +14,12 @@ full evidence; when it cites `exp/...` that is the raw artifact.
 `PRELIMINARY` one seed, replication pending ·
 `MECHANISM-VERIFIED` process confirmed live, outcome tracked separately.
 
-**Last refreshed:** 2026-06-13 11:15 KST (seeds 1001-1002 of the matrix
-landed; F2 replicated, F5 downgraded, F7 confirmed). Refresh the tables
-below from `exp/ablation_matrix/stats/` and `exp/fast_iter/*/stats/`
-when new runs land; keep finding IDs stable.
+**Last refreshed:** 2026-06-14 14:30 KST. Investigation arc closed
+(win-path retired F20 then probed F21/F22; core verified reliable M12;
+all freeze decisions settled). RUNNING: 5-seed finals (bo03wrum8),
+smooth-QD V1 (F22, ba2bipcz3). Refresh tables from
+`exp/ablation_matrix/stats/` and `exp/fast_iter/*/stats/` when runs land;
+keep finding IDs stable.
 
 ---
 
@@ -26,10 +28,10 @@ when new runs land; keep finding IDs stable.
 | Phase | Title | State |
 | --- | --- | --- |
 | P1 | QD repair | **CLOSED → Branch C (now evidence-decided).** All screens + ablation + parity fixes done; Fix B halved the FAST deficit but did NOT transfer to hard (F15). The last win-path lever — RealBench-large (#16) — does NOT deliver a win: isolated re-eval shows valid candidates only on the 2 smallest e203 modules with classic 4 ≥ QD 2, and 0 valid on the larger ones (F20; the parallel run's "0/7" was an artifact, M12). So no QD PPA-win at scale. Branch C is the conclusion on evidence, not assumption. |
-| P2 | BD / descriptor thesis | **In progress.** 4 profiles pre-registered (doc 11); bake-off queued behind matrix; mechanical verdict table ready. |
-| P3 | Benchmark vetting | **Mostly done.** RealBench verilator-only (55/60). **RealBench QD-vs-classic is the STORYLINE-DECIDER (doc 14): the one experiment that could convert Branch C→A/B — QD diversity may only pay off on larger designs.** Debug pairs pending next OpenRouter slot. |
-| P4 | Gates / freeze | **Tooling complete.** All slices locked. Open: MDE ratchet + budget-rule *decisions*, seed-42 debug gate, 5-seed finals. |
-| P5 | Manuscript | **Kicked off.** Evidence map (doc 12) binds elements to artifacts; prose pending finals. |
+| P2 | BD / descriptor thesis | **DONE.** Bake-off complete (F12); profile FROZEN to the trio per the predeclared rule (§6). NEW: smooth-QD track (doc 16, F22) tests QD as a parity+diversity augmentation. |
+| P3 | Benchmark vetting | **DONE.** RealBench verilator-only (55/60). Storyline-decider CONCLUDED: QD does not win at scale (F20); stronger-model probe closer-but-still-0 (F21). |
+| P4 | Gates / freeze | **DONE.** All freeze decisions settled (profile, MDE, budget rule, equivalence scope — §6). 5-seed finals RUNNING (bo03wrum8). |
+| P5 | Manuscript | **Ready to write.** Evidence map refreshed (doc 12); lives in journal_draft Overleaf submodule; awaits finals numbers (user-authored). |
 
 **Win-path status (#16): CONCLUDED — QD does not win (F20).**
 The full investigation ran its course: infra fixed + validated end-to-end
