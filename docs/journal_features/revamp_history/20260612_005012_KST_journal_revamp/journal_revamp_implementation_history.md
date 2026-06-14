@@ -2381,3 +2381,30 @@ fallback; R-D k=2 (already running on OpenRouter).
   journal gains a real QD contribution beyond pure characterization.
 - Three jobs tonight: gpt-oss finals (bo03wrum8, running), DeepSeek probe
   (bbnvi9ucq, DONE), smooth-QD (ba2bipcz3, running).
+
+## 2026-06-14 14:15 KST — Smooth QD integration track DESIGN DOC (doc 16)
+
+- User refined the smooth-integration idea: drop thought_only + unified
+  operator; build on light MAP-Elites overlay + Pareto cells + NSGA-II
+  non-domination-RANK selection (fill rank 1,2,... to a cap, crowding-
+  distance tie-break within the cut-off rank). Keep classic performance;
+  answer methodological criticisms (#1 weighted-sum bias, #5 diversity).
+  Keep code un-convoluted; record specs in detail.
+- Wrote docs/journal_features/16_smooth_qd_integration_track.md: design
+  principles, a variant ladder (V0 classic baseline; V1 = code_individual
+  overlay = the running F22; V2 = +NSGA-II global rank selection, spec'd;
+  V3 = overlay-weighting knobs), the NSGA-II selection algorithm spec,
+  a codebase-support inventory, a minimal flag-gated implementation plan
+  (<=1 flag + 1 helper, reusing pareto_analysis.dominates/pareto_ranks +
+  engine._crowded_tournament), the evaluation protocol (vs classic,
+  frozen parity rule, M12 reliable eval, same provider), and the reframed
+  POSITIVE contribution ("QD as a parity-quality diversity augmentation").
+- Codebase inventory confirms the building blocks EXIST: code_individual
+  representation (default, untested as QD), pareto_front cells,
+  dominates/pareto_ranks (non-domination), _crowded_tournament (crowding).
+  V1 needs ZERO new code; V2 needs ~1 flag + ~1 helper (clean).
+- SEQUENCING decision: get V1's result first. If V1 reaches parity, the
+  core thesis is proven with no new code and V2 only strengthens the
+  methodology story; if V1 has a residual gap, V2 (better selection) is
+  the rescue. Do NOT implement V2 before V1's result (avoid premature/
+  convoluted code). thought_only + unified operator are dropped per user.
