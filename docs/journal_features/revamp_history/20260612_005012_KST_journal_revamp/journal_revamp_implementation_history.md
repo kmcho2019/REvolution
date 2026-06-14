@@ -1978,3 +1978,54 @@ fallback; R-D k=2 (already running on OpenRouter).
   golden-validation re-pick + a 1-module LLM smoke, THEN decide on the
   full run. Recommend doing the bounded smoke before any multi-hour
   run (M6). Surfaced for the user; not auto-pursued further tonight.
+
+## 2026-06-14 07:55 KST — F16 RESOLVED: RealBench-large eval pipeline validated end-to-end
+
+- Continued the F16 train of thought with bounded golden probes (no LLM)
+  and FIXED the large-module eval pipeline. Commit f275b5a9c2.
+- Four wiring gaps, each isolated by probing the golden e203_exu_decode:
+  1. Top module defaulted to 'TopModule' (runtime reads
+     synthesis_top_module_names.json, absent in the RealBench root).
+     FIX: manifest builder emits it from the manifest top_module (single
+     source of truth); backfilled to RealBench, _v1_iverilog, _v4_synth.
+  2. Post-synthesis functionality check did not thread include_dirs/
+     defines -> the e203 testbench (which `include`s e203_defines.v and
+     uses its macros in its own ports) failed to compile vs the
+     gate-level netlist. FIX: thread include_dirs/defines into
+     _check_synthesis_functionality + caller.
+  3. Post-synth pass parser only knew VerilogEval (`Mismatches: 0`) and
+     RTLLM (`Your Design Passed`); the e203 harness emits `Total
+     mismatched samples is N out of M`. FIX: mirror
+     parse_mismatch_count's fallback so post-synth accepts the same
+     passing runs as pre-synth.
+  4. VerilatorEvaluator lacked enable_vcd_probe (passed by the candidate
+     evaluator). FIX: accept it, assert False (icarus_vcd dynamic
+     metrics incompatible with the verilator harness -> fail loudly).
+- END-TO-END PROOF (M11): golden e203_exu_decode (53 KB, largest
+  dependency-complete e203 module) passes the full runtime
+  evaluate_candidate -> status `success`, synth+synth_func+ppa all True,
+  PPA area 714 / power 2.55e-4, journal BD trio extracted (logic_depth 0,
+  ff_depth 0, comb_width_log 6.51), archiveable, benchmark golden intact.
+- Two earlier-probe red herrings cleared: the biu macro failure was
+  genuine missing submodule deps (not an evaluator bug); the decode macro
+  failure in my first probe was my own RELATIVE incdir/aux paths under
+  the evaluator's cwd=out_dir change (absolute paths compile fine).
+- Dependency-complete census (F17): 13/40 e203 goldens lint clean
+  standalone with manifest aux; only 2 are >=10 KB (decode 53 KB, disp
+  14 KB). Large integration modules (biu/core/lsu) miss submodules
+  (e203_clkgate, sirv_1cyc_sram_ctrl) -> the original storyline subset was
+  mostly dependency-incomplete (the other reason that run failed).
+  Salvage: build the large win-path subset from dependency-complete
+  modules; near-misses (biu, core) recoverable by adding e203_clkgate.
+- Contamination incident + recovery: my first integration probe used the
+  benchmark golden.v directly as the candidate code_file_path, so
+  synthesis overwrote it with the netlist. Restored decode's v4_synth
+  golden.v from the clean v3 copy (54374 B, Nuclei header); scanned all
+  v4_synth goldens for the Yosys header -> only decode was hit, now
+  clean. In a real run the candidate path is per-candidate in the run
+  dir, so this is a test-harness-only hazard; probes now use a temp file.
+- Validation: ruff + pyright clean on touched modules; pytest -k
+  'verilator or synthesis or realbench or candidate_eval' -> 59 passed.
+- REMAINING open question (now cheap): can the LLM implement decode-class
+  modules? Settle with a 1-module OpenRouter smoke before any full
+  QD-vs-classic large run. Infra risk is retired; capability risk stands.

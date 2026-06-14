@@ -31,12 +31,17 @@ when new runs land; keep finding IDs stable.
 | P4 | Gates / freeze | **Tooling complete.** All slices locked. Open: MDE ratchet + budget-rule *decisions*, seed-42 debug gate, 5-seed finals. |
 | P5 | Manuscript | **Kicked off.** Evidence map (doc 12) binds elements to artifacts; prose pending finals. |
 
-**Running now:** the STORYLINE-DECIDER — QD(+Fix B) vs classic on 4 large
-synth-validated e203 modules (38-54KB; exp/fast_iter/realbench_large_storyline).
-Task #16 steps 1-4 done (synth aux-threading, runtime wiring, truthful
-synth-validation, 34/40 e203 synth-capable); this run is step 5. The PPA
-win-path test: does QD diversity pay off where designs have architectural
-room (vs the small-problem losses F1/F15).
+**Win-path status (#16):** the eval pipeline is now FIXED and validated
+END-TO-END (F16 RESOLVED) — the golden e203_exu_decode (53 KB) passes the
+full runtime evaluate_candidate (pre-synth functional → yosys+OpenROAD
+PPA → post-synth check → journal BD-trio descriptors), no LLM, status
+`success`. The dependency-complete census (F17) shows decode + disp are
+the large viable modules; the original biu/lsu subset was mostly
+dependency-incomplete (the other reason the first run failed). **Only
+open question left: can the LLM implement decode-class modules?** — now
+cheap to settle with a 1-module OpenRouter smoke before committing to a
+full QD-vs-classic large run. The PPA win-path test still stands: does QD
+diversity pay off where designs have architectural room (vs F1/F15).
 
 ---
 
@@ -118,20 +123,52 @@ Branch C** — making Fix B (closing the QD-vs-classic gap to reach
 Branch B/A, where the floor leg is moot) load-bearing, not optional.
 `exp/ablation_matrix/stats/floorleg_classic_unified_pooled` [H: 2026-06-13 13:40]
 
-### F16 — Storyline-decider run INVALID: RealBench functional-eval gap `MEASURED`
-The large-module QD-vs-classic run produced 0 valid candidates on BOTH
-arms — but it's an eval-wiring bug, NOT a result: the RealBench adapter
-resolves the top module from synthesis_top_module_names.json (a
-VerilogEval convention, absent in the RealBench root) and defaults to
-`TopModule` instead of the manifest's top_module (e203_biu), so every
-candidate fails compile on the name mismatch. Functional candidate eval
-also needs aux/defines (config.v/e203_defines.v) threaded like synthesis
-got (steps 1-3). Process miss: validated SYNTHESIS (M10) but not the
-candidate functional eval before the full run. OPEN QUESTION (the real
-risk): even with correct wiring, can the LLM implement 40KB e203 CPU
-blocks at all? The candidate feedback shows genuine structural errors
-beyond macros. Run killed (invalid); decision surfaced.
-`exp/fast_iter/realbench_large_storyline/` [H: 2026-06-14 06:45]
+### F16 — RealBench-large eval pipeline FIXED + validated end-to-end `RESOLVED`
+The invalid storyline run (0 valid candidates both arms) was an
+eval-wiring bug, not a result. Bounded golden-decode probes (no LLM)
+isolated FOUR gaps, each now fixed (commit f275b5a9c2):
+1. Top module defaulted to `TopModule` — the runtime reads
+   synthesis_top_module_names.json (absent in the RealBench root).
+   FIX: the manifest builder now emits that file from the manifest
+   top_module (single source of truth); backfilled to existing roots.
+2. Post-synthesis functionality check did not thread include_dirs/
+   defines, so a testbench that `include`s e203_defines.v and uses its
+   macros in its own ports failed to compile vs the gate-level netlist.
+   FIX: thread include_dirs/defines into `_check_synthesis_functionality`.
+3. Post-synth pass parser only knew VerilogEval/RTLLM formats; the e203
+   testbench emits `Total mismatched samples is N out of M`. FIX: mirror
+   parse_mismatch_count's fallback so post-synth accepts the same runs as
+   pre-synth.
+4. VerilatorEvaluator lacked `enable_vcd_probe`; FIX: accept it and
+   assert False (icarus_vcd dynamic metrics are incompatible with the
+   verilator harness — fail loudly on misconfig).
+**END-TO-END PROOF (M6):** the golden e203_exu_decode (53 KB, the
+largest dependency-complete e203 module) now passes the FULL runtime
+`evaluate_candidate` — pre-synth functional, yosys+OpenROAD synth+PPA
+(area 714, power 2.55e-4), post-synth check, AND journal BD-trio
+extraction (logic_depth 0, ff_depth 0, comb_width_log 6.51) — status
+`success`, archiveable, benchmark golden intact. Earlier probe failures
+were a mix of genuine missing-submodule deps (biu) and my probe passing
+RELATIVE paths under the evaluator's cwd change (not an evaluator bug).
+The ONLY remaining open question is now cheap to test: can the LLM
+implement decode-class modules? (testable with a 1-module smoke). See
+F17 for which modules are win-path-viable. [H: 2026-06-14 07:55]
+
+### F17 — Dependency-complete e203 census defines the win-path subset `MEASURED`
+Standalone verilator lint of all 40 e203 goldens with their manifest aux
+shows 13/40 are dependency-complete; only 2 are ≥10 KB: **e203_exu_decode
+(53 KB — the largest, validated end-to-end F16)** and e203_exu_disp
+(14 KB). LEAF modules are complete; large INTEGRATION modules are NOT —
+e203_biu/e203_core miss `e203_clkgate`, e203_lsu/e203_lsu_ctrl miss
+`sirv_1cyc_sram_ctrl` (submodules instantiated but absent from aux_files).
+Consequence: the original storyline subset (biu/ift2icb/lsu_ctrl) was
+mostly dependency-INCOMPLETE — a second reason the F16 run failed.
+SALVAGE: build the large win-path subset from dependency-complete modules
+only. Near-misses (biu, core) are recoverable by adding `e203_clkgate`
+(itself a complete 1.9 KB aux module) to their closure — a cheap way to
+grow the large-sequential pool. NOTE for BD: decode is purely
+combinational (ff_depth 0), so the subset must mix sequential modules for
+the journal_logic_ff_width_3d trio to spread across all three axes.
 
 ### F15 — Fix B does NOT transfer to the hard subset `MEASURED` (parity path closed)
 Fix B hard-subset (seed 42, 20×5, 13 problems): −0.116 (1/10/2, CI
@@ -287,6 +324,7 @@ Three mechanisms, each with a verified exhibit (full paths in doc 12):
 | M4 | logic_depth externally validated: 31/32 production candidates agree exactly with yosys ltp. | `CONFIRMED` [H: 23:55] |
 | M5 | Descriptor trio survives redundancy bound (all axes \|r\|<0.8) but degenerates on small/mid designs → warmup-completion is the bake-off headline criterion. | `CONFIRMED` [H: 18:20] |
 | M6 | Verification-before-verdict discipline caught 6 instrument/mechanism defects before they misled (empty pools, unreachable caps, dropped problems, template false-positive, hardcoded-empty feedback, licensing dir-vs-completion). | process note |
+| M11 | **Candidate-eval path validated END-TO-END (closes the M10 gap).** M10 proved the standalone synth flow; M11 proves the actual runtime `evaluate_candidate` the QD/classic loop calls. Golden e203_exu_decode (53 KB) → status `success` through pre-synth functional + synth+PPA + post-synth check + journal BD-trio extraction, no LLM. Took 4 wiring fixes (F16) found by golden probing. Lesson reinforced (M6): validate the integration path, not just the component — M10's synth-only proof missed 3 of the 4 gaps. | `MEASURED` [H: 2026-06-14 07:55] |
 | M10 | **Storyline-decider validated END-TO-END.** The full PPA flow (yosys+aux → OpenROAD floorplan → metrics) completes on the largest e203 module (alu_dpath 2143 cells): rc=0, design area 2525 µm², tns/wns/power extracted. M8's remaining unknown (OpenROAD-on-large) is CLEARED. Task #16 is confirmed-feasible plumbing, not a feasibility risk: relax manifest heuristic + thread aux through SynthesisEvaluator + re-lock subset + run QD-vs-classic. The win-path is technically viable. | `MEASURED` [H: 2026-06-14 04:15] |
 | M9 | Bake-off occupancy tie-break is CONFOUNDED by collapse: a fully-collapsed 1-cell archive scores occ=1.00 (trio), gaming the metric. The per-axis COLLAPSE count is the truer diversity signal; the freeze tie-break should use it, not raw occupied/total. | `MEASURED` [H: 2026-06-13 22:40] |
 | M8 | **Storyline-decider is FEASIBLE.** Large RealBench e203 modules synthesize cleanly in yosys with support files (alu_bjp 67, branchslv 587, alu_dpath 2143 cells, 0 errors) — `supports_synthesis: false` is a FALSE NEGATIVE from the `not support_files` heuristic, only 5/55 marked synthesizable. Unlock = relax heuristic + thread aux into SynthesisEvaluator (single-file today) + re-validate full yosys+OpenROAD+descriptor flow. Converts the storyline-decider from possibly-infeasible to feasible-pending-integration. | `MEASURED` [H: 2026-06-13 12:35] |
