@@ -1748,3 +1748,27 @@ fallback; R-D k=2 (already running on OpenRouter).
   -0.087 toward parity.
 - Parity ladder: frozen -0.177; A -0.167; B -0.087 (current best);
   B+A -0.128; B' pending.
+
+## 2026-06-14 00:38 KST — B' worse (F14); Fix B is the ceiling; promote Fix B
+
+- B' hybrid (fraction 0.5) vs classic: -0.141, 1W/4/1 - WORSE than
+  pure Fix B (-0.087). sub_64bit still anchored (B' [-0.02->-0.0] vs
+  classic ->0.454): the 2 whole-regen leap samples did NOT find the
+  better architecture, and halving the seeded samples diluted the
+  refinement that helped elsewhere (mux256to1v lost its tie again).
+- Monotonic in seed fraction: 1.0 -0.087 > 0.5 -0.141 > 0.0 ~-0.177.
+  So Fix B at fraction 1.0 (all samples code-seeded, diverse parents)
+  is the OPTIMUM of this lever. No further fraction tuning warranted.
+- Mechanistic conclusion: anchoring on sub_64bit-class problems is
+  INTRINSIC to thought->code indirection - thought-only QD cannot
+  express the specific low-level architecture classic's direct code
+  evolution finds, regardless of seeded/leap sample mix. The residual
+  -0.087 is the floor of realization-side fixes.
+- DECISIONS: (1) Fix B alone is the frozen parity config. (2) Stop
+  realization-side fraction tuning (trend is clear). (3) PROMOTE Fix B
+  to a hard-subset pair to confirm the deficit-halving on the real
+  evaluation set (vs the -0.086/-0.188 baselines). (4) Re-elevate the
+  RealBench-large storyline (task #16) as the path to an actual WIN,
+  since small-problem PPA parity is unreachable via realization fixes.
+- Final fast-subset parity ladder: frozen -0.177 | A -0.167 | B+A
+  -0.128 | B' -0.141 | Fix B -0.087 (BEST).

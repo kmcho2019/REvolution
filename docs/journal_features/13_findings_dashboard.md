@@ -115,6 +115,19 @@ Branch C** — making Fix B (closing the QD-vs-classic gap to reach
 Branch B/A, where the floor leg is moot) load-bearing, not optional.
 `exp/ablation_matrix/stats/floorleg_classic_unified_pooled` [H: 2026-06-13 13:40]
 
+### F14 — B′ hybrid worse; Fix B (all-seeded) is the ceiling `MEASURED`
+B′ (fraction 0.5, half whole-regen leaps) = −0.141, WORSE than pure
+Fix B −0.087; sub_64bit stayed anchored (flat ~0 vs classic 0.454 — the
+leap samples did NOT recover it) and fewer seeded samples diluted the
+refinement. Monotonic: more seeding is better (1.0 −0.087 > 0.5 −0.141
+> 0.0 −0.177). **Fix B at fraction 1.0 is the optimum of this lever**;
+anchoring on sub_64bit-class problems is intrinsic to thought→code
+indirection, not fixable by sample mix. Deficit HALVED (−0.177→−0.087)
+but NOT closed; parity not reached on the fast subset. Next: promote
+Fix B to a hard-subset pair (confirm on the real set) + pivot to
+RealBench-large (task #16) for an actual win. `exp/fast_iter/fixbprime_hybrid/`
+[H: 2026-06-14 00:38]
+
 ### F13 — Champion lane HURTS; Fix B alone is the winning config `MEASURED`
 Parity-fix ladder (vs classic, v3): frozen −0.177 → Fix A −0.167
 (null) → **Fix B −0.087 (BEST, deficit halved)** → B+A −0.128 (A drags
