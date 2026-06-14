@@ -1772,3 +1772,20 @@ fallback; R-D k=2 (already running on OpenRouter).
   since small-problem PPA parity is unreachable via realization fixes.
 - Final fast-subset parity ladder: frozen -0.177 | A -0.167 | B+A
   -0.128 | B' -0.141 | Fix B -0.087 (BEST).
+
+## 2026-06-14 00:40 KST — Fix B hard-subset confirmation pair launched
+
+- Launched the Fix B promotion experiment on the real evaluation set:
+  classic vs frozen-target+--qd_thought_code_seeded, hard subset (13
+  problems), seed 42, 20pop x 5gen - directly comparable to the
+  original hard_subset_42 baselines (-0.086 best-quality / the
+  -0.188 fast verdicts). exp/fixb_hard_subset, classic arm 00:40.
+  ~3h (classic ~1h + Fix B QD arm ~2h).
+- Purpose: confirm the fast-subset deficit-halving (-0.177->-0.087)
+  holds on the hard subset. If Fix B roughly halves the hard-subset
+  deficit too, that is the manuscript's "code-seeded realization
+  materially narrows the QD-vs-classic gap" result (Branch B-leaning
+  on PPA, still not a win). If it doesn't transfer, the realization
+  fix is fast-subset-specific and the PPA story stays Branch C.
+- Next gates: Fix B hard-subset verdict (~3h) + the still-pending
+  RealBench-large storyline (task #16) for an actual win.
