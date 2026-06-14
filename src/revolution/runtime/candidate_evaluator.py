@@ -531,6 +531,9 @@ class CandidateEvaluator:
                 self.verilog_evaluator,
                 str(self.context.test_sv_path),
                 str(self.context.ref_sv_path) if self.context.ref_sv_path else None,
+                aux_files=tuple(self.aux_source_files),
+                include_dirs=tuple(self.aux_include_dirs),
+                defines=tuple(self.compile_defines),
             )
         )
         synth_success = bool(synth_results.get("synthesis_success"))
