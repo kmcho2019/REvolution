@@ -2079,3 +2079,37 @@ fallback; R-D k=2 (already running on OpenRouter).
   truncation cannot masquerade as incapability). If the smoke PASSES, the
   full run's budget should be re-calibrated (the decode golden is
   ~15-18k tokens of code; 32-40k may suffice and run far faster).
+
+## 2026-06-14 09:10 KST — F18: decode capability smoke = decisive NEGATIVE (valid)
+
+- decode (53KB, largest dependency-complete) capability smoke completed
+  (rc=0, ~11 min, 57 LLM calls, ~$0.10): 24 candidates across 3
+  generations, status_counts = failed_* for ALL, 0 functionally valid.
+  "No functionally correct and synthesizable solution found."
+- Candidate sizes 181-647 lines vs golden 1234 -> the model produces
+  INCOMPLETE decoders (~half-size), with genuine syntax errors (wire
+  decls inside procedural/function blocks, unexpected endfunction,
+  duplicate ports, 7'b???, stray comma after endmodule).
+- VALIDITY (M6, critical): the code_feedback.txt prose repeatedly claims
+  "the testbench file is missing" - this looked like the F16 bug
+  resurfacing. Ground-truthed it: re-ran a saved candidate through the
+  validated evaluate_candidate -> the testbench WAS found; the candidate
+  failed on ITS OWN syntax (failed_syntax, `unexpected wire` at line
+  347). So "testbench missing" is the FEEDBACK-LLM hallucinating, not a
+  real eval bug. The F16 fixes hold; the smoke is a VALID capability test.
+  Lesson: for verdicts trust the run's status_counts / raw evaluator
+  output, NEVER the LLM-generated feedback prose.
+- Strategic read: the win-path's premise (QD diversity pays off on
+  LARGER designs with architectural room) is now at real risk. The
+  largest dependency-complete module is LLM-infeasible. The modules the
+  model might handle (<=14KB) are adjacent to the small-problem regime
+  where QD already LOSES (F1/F15). A genuine capability-vs-design-space
+  squeeze.
+- NEXT (running): mid-size capability smoke (F19) on the 6 dependency-
+  complete EXU modules 4.7-14KB (disp/longpwbck/branchslv/alu_csrctrl/
+  wbck/alu_rglr), all golden-validated end-to-end first (M6; confirms the
+  F16 fixes generalize beyond decode - they do, 6/6 golden success). Maps
+  the model's exact ceiling. If even disp (14KB) fails, the large-module
+  win-path is capability-blocked and the finals commit to characterization
+  (Branch C). Note: all 6 are combinational (ff_depth 0) - a BD-spread
+  problem for journal_logic_ff_width_3d even if they pass.

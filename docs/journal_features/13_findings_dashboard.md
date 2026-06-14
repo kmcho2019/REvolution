@@ -170,6 +170,27 @@ grow the large-sequential pool. NOTE for BD: decode is purely
 combinational (ff_depth 0), so the subset must mix sequential modules for
 the journal_logic_ff_width_3d trio to spread across all three axes.
 
+### F18 — gpt-oss-120b CANNOT implement the largest module (decode) `MEASURED`
+Bounded capability smoke (classic, gpt-oss-120b/OpenRouter, 8×gen,
+seed 42) on e203_exu_decode: **24 candidates, 0 functionally valid.**
+The candidates are 181–647 lines vs the 1234-line golden — i.e. ~half-
+size or less, INCOMPLETE — and carry genuine Verilog errors (wire decls
+inside procedural blocks, `unexpected endfunction`, duplicate ports,
+`7'b???`, stray comma after `endmodule`). **Smoke VALIDITY confirmed
+(M6):** re-evaluating a saved candidate through the validated
+`evaluate_candidate` shows the testbench WAS found and it failed on the
+candidate's OWN syntax — the "testbench file is missing" repeated in
+`code_feedback.txt` is the FEEDBACK-LLM hallucinating (it misreads the
+sim log), NOT a real eval bug; my F16 fixes hold. **Strategic
+implication (the live risk to the win-path):** the win-path premise is
+"QD pays off on LARGER designs with architectural room" — but the
+largest dependency-complete module is LLM-INFEASIBLE, and the modules
+the LLM might handle (≤14 KB, F17) sit in the same small-design regime
+where QD already LOSES (F1/F15). The mid-size smoke (F19) maps exactly
+where the model's ceiling falls. Process note: trust the run's
+`status_counts`/raw eval for verdicts, never the feedback-LLM prose.
+[H: 2026-06-14 09:10]
+
 ### F15 — Fix B does NOT transfer to the hard subset `MEASURED` (parity path closed)
 Fix B hard-subset (seed 42, 20×5, 13 problems): −0.116 (1/10/2, CI
 [−0.210,−0.037]) — vs frozen QD on the SAME subset ~−0.09 (matrix
