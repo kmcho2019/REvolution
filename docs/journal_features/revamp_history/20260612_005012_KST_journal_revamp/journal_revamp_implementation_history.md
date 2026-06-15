@@ -2700,3 +2700,25 @@ fallback; R-D k=2 (already running on OpenRouter).
   localized residual," still a positive principled result. CAVEAT: V2 1002
   is a 13/13-data lower bound (final could be slightly better); seed 1003
   + the stats step give the verdict.
+
+## 2026-06-15 ~02:00 KST — 3-seed V1 baseline: NSGA-II is NECESSARY for parity
+
+- 3-seed V1 (code_individual, cell-tournament) vs classic: seed1001
+  -0.032, seed1002 -0.054, seed1003 -0.050 (13/13-data LB) -> pooled mean
+  -0.045 (n=39, 28/39 within parity). V1 ALONE does NOT reach parity
+  (-0.045 outside the -0.03 band).
+- V2 (NSGA-II) beats V1 by ~+0.020 each seed (+0.022/+0.018 on 1001/1002)
+  -> PROJECTED V2 3-seed pooled ~-0.025 (at the parity edge). So NSGA-II
+  is NECESSARY, not optional: indirection-removal (V1) recovers -0.10 ->
+  -0.045; NSGA-II selection (V2) closes the remainder to ~-0.025. This
+  firmly settles the earlier flip-flop (V1-is-contribution was wrong on
+  both data and now on 3-seed trajectory): the contribution is
+  code_individual + NSGA-II together.
+- FORMAL VERDICT still pending: V2 seed 1003 (run 4/4, not started) +
+  the pooled cluster-bootstrap CI. The -0.025 projection is at the parity
+  boundary, so the CI low could land just inside or just outside -0.03 ->
+  framing is either "parity" or "near-parity (CI [...]) with a localized
+  residual (parallel2serial)". Both positive vs the radical -0.10.
+- CAVEAT: V1 1003 is a 13/13-data lower bound; V2 1003 pending; the
+  projection assumes V2-V1 ~+0.02 holds on seed 1003.
+- Finals at 6/10 arms.
