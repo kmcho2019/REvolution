@@ -75,7 +75,12 @@ genuine-hard intersection. [H: 2026-06-12 21:45]
 **5-SEED FINALS (official): qd_target − qd_six_operators pooled +0.001,
 cluster-bootstrap CI [−0.008, +0.011], sign-test p=1.0, win-rate 48.8%
 (coin-flip) — dead-on PARITY, well within ±0.03 (tighter than the
-3-seed).** _(Source: exp/ablation_matrix/stats/final_5seed_F2_qt_vs_six.)_ The unified
+3-seed).** _(Source: exp/ablation_matrix/stats/final_5seed_F2_qt_vs_six.)_
+**Contract-compliant per journal_narrative.md §decision-rule: the
+penalized (gate-bearing) CI == complete-case (no floor-imputation
+triggered), CI low −0.008 > −0.03 ⇒ passes the frozen parity rule; and
+LOSO penalized parity holds in ALL 5 leave-one-seed-out folds (worst,
+drop-1001, CI low −0.026 > −0.03) — robust to any single seed.** The unified
 operator = the six-operator suite + un-ablated bandit, within QD, at no
 cost — the ablation criticisms #2/#3 demanded, confirmed at 5 seeds.
 _(Original 3-seed entry below.)_

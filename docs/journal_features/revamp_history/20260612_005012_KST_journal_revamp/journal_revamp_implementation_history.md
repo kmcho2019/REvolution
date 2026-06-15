@@ -2854,3 +2854,24 @@ fallback; R-D k=2 (already running on OpenRouter).
   posture (doc 14), and the spine (doc 17) from 3-seed to 5-seed; this also
   resolves the standing user "+2 seeds vs accept" decision in the robust
   direction. User can stop b8uiq09yz to accept the 3-seed result instead.
+
+## 2026-06-15 ~20:00 KST — Contract-compliance verification of F1/F2 stats
+
+- Pre-manuscript de-risk: confirmed the official F1/F2 numbers satisfy the
+  FROZEN decision rule in journal_narrative.md (penalized cluster-bootstrap
+  95% CI of the best-quality delta, parity = CI entirely above -0.03).
+- report_journal_statistics ALWAYS computes the penalized (gate-bearing)
+  mean/CI as the default `mean_delta`/`bootstrap_ci_*` fields; --gate-profile
+  only toggles threshold pass/fail checks. So the numbers already in the
+  docs ARE the penalized statistic. Verified penalized == complete-case for
+  both F1 and F2 (no missing-treatment floor-imputation was triggered).
+- F2 (operator parity): penalized CI [-0.0076,+0.0114], CI low > -0.03 PASS.
+  LOSO penalized (leave-one-seed-out) parity holds in ALL 5 folds:
+  drop-1001 [-0.0255,+0.0082], drop-1002 [-0.0135,+0.0109], drop-1003
+  [-0.0028,+0.0121], drop-1004 [-0.0065,+0.0220], drop-1005 [-0.0081,
+  +0.0154]. Worst fold CI low -0.0255 > -0.03 -> robust to any single seed.
+- F1 (QD vs classic): penalized == complete-case -0.0927, CI
+  [-0.1491,-0.0357], entirely <0 (loss), unchanged.
+- Recorded in doc 13 (F2) + doc 12 (landed verdict). No verdict change; this
+  CONFIRMS the operator-parity claim meets the frozen contract's exact
+  decision rule and its robustness check. No code/data change.

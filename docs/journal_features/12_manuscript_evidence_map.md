@@ -126,7 +126,10 @@ real-CPU scale — and the answer is a *characterization*, not a win
 - Operator-claim licensing (F2): qd_target vs qd_six_operators POOLED
   5-seed +0.001, CI [-0.008,+0.011] -> clean PARITY (sign-test p=1.0,
   win-rate 48.8% coin-flip, well within +-0.03; supersedes the 3-seed
-  +0.011/[-0.006,+0.030]; the 2-seed "better" did not replicate). Within-QD only;
+  +0.011/[-0.006,+0.030]; the 2-seed "better" did not replicate).
+  CONTRACT-COMPLIANT: penalized (gate-bearing) CI == complete-case (no
+  floor-imputation), CI low -0.008 > -0.03; LOSO penalized parity holds
+  in all 5 leave-one-seed-out folds (worst -0.026 > -0.03). Within-QD only;
   unified worse on the classic substrate (F3/F9).
   exp/ablation_matrix/stats/ (5-seed finals 1001-1005).
 - Branch C floor leg (i) (F9): classic_unified vs classic pooled -0.092,
