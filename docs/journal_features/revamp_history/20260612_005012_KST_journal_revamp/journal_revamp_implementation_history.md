@@ -2722,3 +2722,38 @@ fallback; R-D k=2 (already running on OpenRouter).
 - CAVEAT: V1 1003 is a 13/13-data lower bound; V2 1003 pending; the
   projection assumes V2-V1 ~+0.02 holds on seed 1003.
 - Finals at 6/10 arms.
+
+## 2026-06-15 ~05:30 KST — Smooth-QD 3-seed pooled CI VERDICT (conservative LB)
+
+- 3-seed pooled cluster-bootstrap (problems as clusters, 10k resamples,
+  my DIY ahead of the launcher's official stats; V2 1003 at 13/13-data
+  = conservative lower bound):
+  * V2 (NSGA-II): mean -0.0263, 95% CI [-0.0768, +0.0135], n=39.
+    -> NO SIGNIFICANT DIFFERENCE from classic (CI includes 0), BUT does
+    NOT meet the frozen tight-parity bar (CI low -0.077 < -0.03). The CI
+    is WIDE due to high cross-problem variance (the localized residual,
+    esp. parallel2serial -0.2..-0.5; F7 pattern).
+  * V1 (cell-tournament): mean -0.0444, CI [-0.0955, -0.0072] -> entirely
+    < 0 = SIGNIFICANTLY WORSE than classic. Confirms NSGA-II is necessary.
+- HONEST VERDICT (calibrating down from the single-seed optimism): the
+  smooth-QD contribution (V2) is NOT a demonstrated TIGHT parity by the
+  frozen rule (CI low doesn't clear -0.03). The supportable claim is
+  weaker but still POSITIVE:
+  "QD/MAP-Elites + NSGA-II selection as a diversity augmentation at NO
+  STATISTICALLY SIGNIFICANT quality cost vs classic (3-seed pooled CI
+  includes 0), closing the gap from the radical thought_only build (-0.10,
+  significantly worse) and the cell-tournament variant (-0.044,
+  significantly worse)." The variance is LOCALIZED (a few
+  intrinsic-limitation problems), so per-problem most are at/near parity.
+- CAVEAT: conservative LB (V2 1003 wrapping up) - the mean may improve
+  slightly but the CI WIDTH (variance-driven) won't, so the
+  not-tight-parity / no-significant-difference verdict is robust. The
+  launcher's official report_journal_statistics CI (on V2 1003 rc=0) is
+  the authoritative number; this DIY cluster-bootstrap is a faithful
+  estimate.
+- MANUSCRIPT IMPACT: doc 14/17 framing must say "no significant
+  difference / near-parity with localized variance," NOT "demonstrated
+  parity." Still answers #1 (principled selection) + #5 (diversity) with
+  a no-significant-cost result - a defensible positive contribution, just
+  honestly hedged. Consider: more seeds would tighten the CI if a
+  stronger claim is needed (the variance, not the mean, is the limiter).

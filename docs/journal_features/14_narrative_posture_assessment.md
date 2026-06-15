@@ -32,17 +32,20 @@ not the triumphant Branch A.**
 > now exists (F22/F23, doc 16).** The "QD loses −0.08 to −0.13" verdict was
 > specific to the RADICAL `thought_only` build. A *smooth* integration —
 > direct-code QD (`code_individual`, drops the harmful indirection) +
-> global NSGA-II non-domination-rank selection — reaches **near-parity:
-> best_quality −0.011, functional TIE, 12/13 within the parity band**
-> (single seed 1001; multi-seed 1002-1003 confirming now). The deficit
-> collapsed from −0.10 to −0.011, concentrated on ~1 intrinsic-limitation
-> problem (parallel2serial). So the pitch is no longer "we win" NOR pure
-> characterization — it is **"QD/MAP-Elites as a parity-quality diversity
+> global NSGA-II non-domination-rank selection — reaches **no statistically significant quality cost** vs classic
+> (3-seed pooled −0.026, cluster-bootstrap CI [−0.077,+0.014], includes 0;
+> V1 alone is significantly worse, CI entirely <0 — NSGA-II is necessary).
+> NOTE: this is "no significant difference," NOT demonstrated tight parity
+> (the CI is wide from localized cross-problem variance). The deficit
+> collapsed from −0.10 to −0.026 (3-seed pooled), the residual concentrated
+> on ~1 intrinsic-limitation problem (parallel2serial). So the pitch is no longer "we win" NOR pure
+> characterization — it is **"QD/MAP-Elites as a no-significant-cost diversity
 > augmentation: NSGA-II selection over an archive removes the weighted-sum
-> bias (#1) and adds behavioral diversity (#5) at no quality cost vs a
-> strong classic baseline."** That is a *positive, principled* contribution
+> bias (#1) and adds behavioral diversity (#5) at NO statistically
+> significant quality cost vs a strong classic baseline (CI includes 0)."** That is a *positive, principled* contribution
 > a reviewer can accept, and it directly converts criticisms #1 and #5 from
-> "implemented, value unproven" to "implemented, parity-demonstrated."
+> "implemented, value unproven" to "implemented, no-significant-cost
+> (CI includes 0)."
 > Pending: the 3-seed pooled cluster-bootstrap CI (the formal parity
 > verdict) + the alu/quality win replicating across seeds.
 

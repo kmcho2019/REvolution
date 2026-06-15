@@ -21,9 +21,10 @@ helps. We study quality-diversity (QD/MAP-Elites) for LLM RTL search and
 report a characterization plus a positive, principled contribution.
 **(1)** Replacing the scalar objective with Pareto-front archive cells and
 **global NSGA-II non-domination-rank selection** removes the weighted-sum
-bias and supplies behavioral diversity **at quality parity** with a strong
-direct-code baseline `[CONFIRM: seed1001 best_quality −0.011, functional
-tie, 12/13 within the parity band]`. **(2)** A single unified thought-level
+bias and supplies behavioral diversity **at no statistically significant quality
+cost** vs a strong direct-code baseline `[3-seed pooled −0.026,
+cluster-bootstrap CI [−0.077,+0.014], includes 0; NSGA-II necessary — V1
+alone significantly worse]`. **(2)** A single unified thought-level
 operator matches the six-operator EoH suite + bandit within QD at no cost
 `[seed-pooled +0.011, CI within ±0.03 — parity]`, supplying the operator
 ablation prior work lacked. **(3)** We characterize *regime-sensitivity*:
