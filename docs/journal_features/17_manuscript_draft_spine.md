@@ -39,12 +39,15 @@ asymmetry; an eval-concurrency artifact we caught and corrected).
 
 ## Contributions (draft list)
 
-1. **Smooth QD integration that reaches parity (the positive result).**
-   Direct-code individuals + a MAP-Elites archive + global NSGA-II
-   non-domination-rank selection (crowding tie-break) = a
-   diversity-preserving augmentation of classic search, at quality parity
-   `[CONFIRM]`. Answers conference criticisms #1 (weighted-sum bias) and
-   #5 (no diversity) with a *demonstrated* (not just implemented) result.
+1. **Smooth QD integration at no significant quality cost (the positive
+   result).** Direct-code individuals + a MAP-Elites archive + global
+   NSGA-II non-domination-rank selection (crowding tie-break) = a
+   diversity-preserving augmentation of classic search, statistically
+   indistinguishable from the classic baseline `[3-seed pooled −0.026, CI
+   [−0.077,+0.014], includes 0 — no significant difference, not tight
+   parity; NSGA-II necessary, V1 alone significantly worse]`. Answers
+   conference criticisms #1 (weighted-sum bias) and #5 (no diversity) with
+   a no-significant-cost result (not just implemented).
 2. **The operator ablation prior work lacked (#2/#3).** One unified
    thought-operator = the six-operator suite + un-ablated bandit, within
    QD, at parity `[seed-pooled, F2]`; substrate-dependent (F3).
@@ -62,14 +65,17 @@ asymmetry; an eval-concurrency artifact we caught and corrected).
 
 ## Results synthesis (per planned section — claim → evidence → number)
 
-- **Smooth-QD parity (headline positive).** code_individual QD removes the
-  thought→code indirection that sank the radical build (−0.10 → −0.033
-  `[seed1001]`); adding NSGA-II selection closes the exploitation residual
-  (alu +0.238 vs the cell-tournament variant) → best_quality −0.011,
-  functional tie, hypervolume −0.0035, 12/13 within parity `[seed1001;
-  CONFIRM multi-seed 1002-1003 running, bn94s0so5]`. Residual ≈ 1
-  intrinsic-limitation problem (parallel2serial). Table: per-problem
-  delta vs classic; ablation V1 (cell tournament) vs V2 (NSGA-II).
+- **Smooth-QD (headline positive).** code_individual QD removes the
+  thought→code indirection that sank the radical build (−0.10 → V1 3-seed
+  −0.045, still significantly worse, CI [−0.096,−0.007]); adding NSGA-II
+  selection (necessary) closes most of the residual → **V2 3-seed pooled
+  −0.026, cluster-bootstrap CI [−0.077,+0.014] — statistically
+  indistinguishable from classic (CI includes 0), not tight parity (CI low
+  < −0.03), variance localized** to ~1 intrinsic-limitation problem
+  (parallel2serial). Per-problem most are at/near parity. Functional tie.
+  Table: per-problem delta vs classic; ablation V1 (cell tournament) vs V2
+  (NSGA-II). `[conservative LB; launcher official CI pending V2 1003 rc=0;
+  more seeds would tighten — variance, not mean, is the limiter]`.
   Source: `exp/fast_iter/smooth_qd_{code_individual,nsga2}` + doc 16.
 - **Operator parity (F2).** Pooled 3-seed +0.011, CI [−0.006, +0.030].
   Source: `exp/ablation_matrix/stats/licensing_pooled` `[CONFIRM 5-seed
