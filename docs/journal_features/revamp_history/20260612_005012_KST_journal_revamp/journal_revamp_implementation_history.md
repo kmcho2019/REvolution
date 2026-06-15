@@ -2781,3 +2781,32 @@ fallback; R-D k=2 (already running on OpenRouter).
   defensible TCAD contribution) vs +2 seeds for a potential tight-parity
   claim. Docs (F23/doc14/doc17) calibrated to the "no significant cost"
   framing.
+
+## 2026-06-15 ~14:00 KST — 5-SEED FINALS verdict: F1 + F2 confirmed; SCIENCE LOCKED
+
+- All 10 finals arms effectively done (qd_target 1005 at 13/13-data, the
+  last, wrapping up = conservative LB). Authoritative 5-seed pooled
+  cluster-bootstrap (problems as clusters):
+  * F1 (qd_target - classic): mean -0.0955, CI [-0.152,-0.038], n=65 ->
+    entirely <0 = radical thought_only QD SIGNIFICANTLY LOSES. Confirms
+    the conference-criticism reality at 5 seeds (was -0.08..-0.13, 2-3
+    seeds).
+  * F2 (qd_target - qd_six_operators): mean -0.0022, CI [-0.012,+0.009],
+    n=64 -> tight, within +-0.03, CI low > -0.03 = PASSES PARITY cleanly
+    (tighter than the 3-seed [-0.006,+0.030]). The operator-unification
+    ablation (criticisms #2/#3) confirmed at 5 seeds.
+- SCIENCE NOW LOCKED (the complete authoritative result set):
+  * F1 (5-seed): radical QD loses (-0.096, CI<0).
+  * F2 (5-seed): operator parity within QD (-0.002, CI [-0.012,+0.009]).
+  * Smooth-QD (3-seed, F23): V2/NSGA-II no significant quality cost vs
+    classic (-0.025, CI [-0.075,+0.015] includes 0; NSGA-II necessary).
+  * Characterization: F3 substrate, F4 regime-sensitivity, F7 localization,
+    F18-F21 RealBench-scale capability, M1-M12 methodology.
+- The journal story is complete + honest: a rigorous CHARACTERIZATION
+  (when/why QD helps, answering criticisms #1-4 with the missing ablation
+  + RealBench-scale finding) PLUS a POSITIVE smooth-QD contribution
+  (no-significant-cost diversity augmentation via NSGA-II).
+- CAVEAT: qd_target 1005 is a 13/13-data LB; the launcher's official 5-seed
+  stats + the final qd_target 1005 will confirm, but the CIs are
+  unambiguous (F1 entirely <0; F2 tight within +-0.03). Only the manuscript
+  write-up (#15, spine ready) remains.

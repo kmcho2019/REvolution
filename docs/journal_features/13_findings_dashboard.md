@@ -60,13 +60,22 @@ evidence, not assumption.**
 
 ## 2. Headline findings
 
-### F1 — QD does not beat classic on best-quality at this budget `CONFIRMED`
-Every QD/unified arm loses to classic across both seeds (see §3.2).
+### F1 — QD does not beat classic on best-quality at this budget `CONFIRMED` (5-seed)
+**5-SEED FINALS: qd_target − classic pooled −0.096, cluster-bootstrap CI
+[−0.152, −0.038] (entirely < 0) — the radical thought_only QD
+SIGNIFICANTLY loses.** (Earlier 2-3 seed reads −0.08..−0.13 confirmed.)
+Every QD/unified arm loses to classic (see §3.2).
 Decision: predeclared **Branch C** (narrowed claims + content floor).
 The deficit is *pure PPA quality* — functionality tied 9/9 on the
 genuine-hard intersection. [H: 2026-06-12 21:45]
 
-### F2 — Operator unification LICENSED at PARITY within QD `CONFIRMED` (3-seed pooled)
+### F2 — Operator unification at clean PARITY within QD `CONFIRMED` (5-seed)
+**5-SEED FINALS: qd_target − qd_six_operators pooled −0.0022,
+cluster-bootstrap CI [−0.012, +0.009] — tight, within ±0.03, CI low >
+−0.03 ⇒ PASSES parity cleanly (tighter than the 3-seed).** The unified
+operator = the six-operator suite + un-ablated bandit, within QD, at no
+cost — the ablation criticisms #2/#3 demanded, confirmed at 5 seeds.
+_(Original 3-seed entry below.)_
 Within-QD pairing (`qd_target` vs `qd_six_operators`, both QD substrate
 — the narrative's operator contrast). **Formal 3-seed pooled: +0.011,
 13W/13L/12T, CI [−0.0059, +0.0302] — within the ±0.03 parity band and CI
