@@ -2833,3 +2833,24 @@ fallback; R-D k=2 (already running on OpenRouter).
 - SCIENCE FULLY LOCKED with official authoritative numbers. The only
   remaining work is the manuscript write-up (#15, user's Overleaf) and the
   standing user decision on whether to add +2 smooth-QD seeds.
+
+## 2026-06-15 ~17:11 KST — DECISION: extend smooth-QD to 5 seeds (queue now free)
+
+- Context: with the finals done (above), the only evidentiary ASYMMETRY
+  left is that the headline POSITIVE result (smooth-QD V2/NSGA-II) rests on
+  3 seeds while the characterization (F1/F2) rests on 5. A reviewer would
+  flag the uneven seed support on the central positive claim.
+- The constraint that previously deferred this (protect the finals'
+  compute) is gone. Launched exp/smooth_qd_5seed_launch.sh (bg b8uiq09yz):
+  V1 (cell_crowded_tournament) AND V2 (nsga2_global_rank) at seeds 1004,
+  1005, MATCHED 3-way concurrency to the existing 1001-1003 smooth-QD runs
+  (eval-condition consistency; avoids M12), then 5-seed pooled vs classic
+  (1001-1005) for both arms -> exp/fast_iter/smooth_qd_*/stats_5seed_vs_classic.
+- Purpose: bring V2's "no significant quality cost vs classic" verdict and
+  the V1-vs-V2 "NSGA-II necessary" ablation to the same 5-seed standard as
+  F1/F2. This STRENGTHENS an already-publishable 3-seed result; it does not
+  rescue it. Does NOT change the locked F1/F2/F18-21 science.
+- On completion: read 5-seed smooth-QD pooled, update F23 (doc 13), the
+  posture (doc 14), and the spine (doc 17) from 3-seed to 5-seed; this also
+  resolves the standing user "+2 seeds vs accept" decision in the robust
+  direction. User can stop b8uiq09yz to accept the 3-seed result instead.
