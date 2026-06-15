@@ -472,17 +472,20 @@ deficit is tunable, not fundamental. [H: 2026-06-13 12:55]
 | classic_unified | unification on classic (Branch C floor) | −0.090 (1/9/3) | −0.102 (1/10/2) | −0.084 (2/10/1) |
 | qd_six_operators | six ops within QD | −0.118 (2/10/1) | −0.130 (1/11/1) | −0.078 (1/10/2) |
 | qd_scalar_elites | scalar vs pareto cells | −0.128 (1/10/2) | −0.075 (1/10/2) | −0.106 (0/11/2) |
-| qd_target | the full package | −0.078 (3/8/2) | −0.100 (1/10/2) | running |
+| qd_target | the full package | −0.078 (3/8/2) | −0.100 (1/10/2) | −0.092 (1/9/3) |
 
 CIs (seed 1001): classic_unified [−0.156,−0.028], six_op [−0.179,−0.059],
-scalar [−0.183,−0.075], target [−0.158,+0.008]. All exclude 0 except
-qd_target (touches it) → every arm loses to classic, target least so.
+scalar [−0.183,−0.075], target [−0.158,+0.008] (touched 0 at 1 seed).
+**5-SEED POOLED (authoritative): qd_target − classic −0.096, CI
+[−0.152,−0.038] — every arm loses to classic, qd_target least so but now
+clearly (CI excludes 0). Per-seed qd_target − classic: −0.078 / −0.101 /
+−0.092 / −0.097 / −0.104 (seeds 1001-1005, all <0).**
 
 ### 3.3 Within-QD licensing (the operator headline contrast)
 
 | Pairing | seed 1001 | seeds 1002-3 |
 | --- | --- | --- |
-| qd_target − qd_six_operators (both QD) | 1001 +0.040 / 1002 +0.006 / 1003 −0.015 | **3-seed pooled +0.011, CI [−0.006,+0.030] → PARITY (passes parity-or-better)** |
+| qd_target − qd_six_operators (both QD) | +0.040 / +0.006 / −0.015 / −0.023 / −0.013 (1001-1005) | **5-SEED pooled −0.002, CI [−0.012,+0.009] → clean PARITY (within ±0.03, tighter than 3-seed +0.011/[−0.006,+0.030])** |
 
 Positive = unified better. Seed-1001 CI above 0 → licensed (F2).
 **The formal decision is the POOLED cluster-bootstrap across all seeds**

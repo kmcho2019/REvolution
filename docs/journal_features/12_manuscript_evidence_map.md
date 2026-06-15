@@ -123,11 +123,12 @@ real-CPU scale — and the answer is a *characterization*, not a win
 
 ## Landed verdicts (were pending at kickoff)
 
-- Operator-claim licensing (F2): qd_six_operators vs qd_target POOLED
-  3-seed +0.011, CI [-0.006,+0.030] -> PARITY (passes the one-sided
-  parity bound; the 2-seed "better" did not replicate). Within-QD only;
+- Operator-claim licensing (F2): qd_target vs qd_six_operators POOLED
+  5-seed -0.002, CI [-0.012,+0.009] -> clean PARITY (within +-0.03, CI
+  low > -0.03; tighter than the 3-seed +0.011/[-0.006,+0.030] which it
+  supersedes; the 2-seed "better" did not replicate). Within-QD only;
   unified worse on the classic substrate (F3/F9).
-  exp/ablation_matrix/stats/licensing_pooled.
+  exp/ablation_matrix/stats/ (5-seed finals 1001-1005).
 - Branch C floor leg (i) (F9): classic_unified vs classic pooled -0.092,
   CI [-0.149,-0.037] -> FAILS the parity rule; the simplification is
   NOT independent of QD. Predeclares venue reassessment if finals land
@@ -142,6 +143,12 @@ real-CPU scale — and the answer is a *characterization*, not a win
 
 ## Pending (only the finals numbers remain)
 
-- 5-seed finals RUNNING (seeds 1004-1005 -> exp/ablation_matrix,
-  bo03wrum8); pooled F1/F2/F4 + licensing across 5 seeds land on
-  completion. This is the LAST evidence input before the write-up.
+- 5-seed finals LANDED (seeds 1004-1005 -> exp/ablation_matrix,
+  bo03wrum8): pooled F1 qd_target - classic -0.096, CI [-0.152,-0.038]
+  (QD loses, all 5 seeds <0); F2 qd_target - qd_six_operators -0.002, CI
+  [-0.012,+0.009] (clean parity). Computed from completed runs (qd_target
+  1005 a 13/13-data conservative LB; the launcher's official pooled stats
+  confirm at rc=0). F4 is a descriptive per-benchmark split (already
+  characterized above), not a separate pool. This was the LAST evidence
+  input before the write-up; the manuscript spine (doc 17) now carries
+  the confirmed numbers.
