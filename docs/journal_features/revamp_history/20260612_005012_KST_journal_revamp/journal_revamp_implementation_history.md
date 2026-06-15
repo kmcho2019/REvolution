@@ -2810,3 +2810,26 @@ fallback; R-D k=2 (already running on OpenRouter).
   stats + the final qd_target 1005 will confirm, but the CIs are
   unambiguous (F1 entirely <0; F2 tight within +-0.03). Only the manuscript
   write-up (#15, spine ready) remains.
+
+## 2026-06-15 ~17:10 KST — FINALS rc=0; official 5-seed F1/F2 confirmed
+
+- bo03wrum8 completed (exit 0): qd_target seed 1005 done rc=0 17:04:38,
+  "matrix all done". All 5 seeds (1001-1005) of all arms complete.
+- Recomputed from COMPLETED data (1005 no longer a 13/13 LB) AND ran the
+  OFFICIAL report_journal_statistics 5-seed pooled. Both agree to 4dp:
+  * F1 qd_target - classic best_quality -0.093, cluster-bootstrap CI
+    [-0.149,-0.036], 13 clusters, sign-test p=1.3e-05, win-rate 21%.
+    Per-seed -0.078/-0.101/-0.092/-0.097/-0.096 (all <0). QD SIGNIFICANTLY
+    LOSES. (LB had read -0.096; final -0.093 - 1005 improved at run-end.)
+  * F2 qd_target - qd_six_operators best_quality +0.001, cluster-bootstrap
+    CI [-0.008,+0.011], 13 clusters, sign-test p=1.0, win-rate 48.8%
+    (coin-flip). DEAD-ON PARITY. (LB read -0.002; final +0.001.)
+    Per-seed +0.040/+0.006/-0.015/-0.023/-0.005.
+  * Source: exp/ablation_matrix/stats/final_5seed_F1_qt_vs_classic and
+    final_5seed_F2_qt_vs_six (official tool, all runs rc=0).
+- Propagated official numbers + provenance (sign-test p, win-rate, source
+  paths) across docs 12, 13, 17. LB numbers retired; verdicts UNCHANGED
+  (the LB was a sound conservative estimate).
+- SCIENCE FULLY LOCKED with official authoritative numbers. The only
+  remaining work is the manuscript write-up (#15, user's Overleaf) and the
+  standing user decision on whether to add +2 smooth-QD seeds.

@@ -61,18 +61,21 @@ evidence, not assumption.**
 ## 2. Headline findings
 
 ### F1 — QD does not beat classic on best-quality at this budget `CONFIRMED` (5-seed)
-**5-SEED FINALS: qd_target − classic pooled −0.096, cluster-bootstrap CI
-[−0.152, −0.038] (entirely < 0) — the radical thought_only QD
-SIGNIFICANTLY loses.** (Earlier 2-3 seed reads −0.08..−0.13 confirmed.)
+**5-SEED FINALS (official report_journal_statistics): qd_target −
+classic pooled −0.093, cluster-bootstrap CI [−0.149, −0.036], 13
+clusters, sign-test p=1.3e-05 — the radical thought_only QD
+SIGNIFICANTLY loses.** _(Source:
+exp/ablation_matrix/stats/final_5seed_F1_qt_vs_classic; DIY matches to 4dp.)_ (Earlier 2-3 seed reads −0.08..−0.13 confirmed.)
 Every QD/unified arm loses to classic (see §3.2).
 Decision: predeclared **Branch C** (narrowed claims + content floor).
 The deficit is *pure PPA quality* — functionality tied 9/9 on the
 genuine-hard intersection. [H: 2026-06-12 21:45]
 
 ### F2 — Operator unification at clean PARITY within QD `CONFIRMED` (5-seed)
-**5-SEED FINALS: qd_target − qd_six_operators pooled −0.0022,
-cluster-bootstrap CI [−0.012, +0.009] — tight, within ±0.03, CI low >
-−0.03 ⇒ PASSES parity cleanly (tighter than the 3-seed).** The unified
+**5-SEED FINALS (official): qd_target − qd_six_operators pooled +0.001,
+cluster-bootstrap CI [−0.008, +0.011], sign-test p=1.0, win-rate 48.8%
+(coin-flip) — dead-on PARITY, well within ±0.03 (tighter than the
+3-seed).** _(Source: exp/ablation_matrix/stats/final_5seed_F2_qt_vs_six.)_ The unified
 operator = the six-operator suite + un-ablated bandit, within QD, at no
 cost — the ablation criticisms #2/#3 demanded, confirmed at 5 seeds.
 _(Original 3-seed entry below.)_
@@ -476,16 +479,16 @@ deficit is tunable, not fundamental. [H: 2026-06-13 12:55]
 
 CIs (seed 1001): classic_unified [−0.156,−0.028], six_op [−0.179,−0.059],
 scalar [−0.183,−0.075], target [−0.158,+0.008] (touched 0 at 1 seed).
-**5-SEED POOLED (authoritative): qd_target − classic −0.096, CI
-[−0.152,−0.038] — every arm loses to classic, qd_target least so but now
-clearly (CI excludes 0). Per-seed qd_target − classic: −0.078 / −0.101 /
-−0.092 / −0.097 / −0.104 (seeds 1001-1005, all <0).**
+**5-SEED POOLED (official): qd_target − classic −0.093, CI
+[−0.149,−0.036], sign-test p=1.3e-05 — every arm loses to classic,
+qd_target least so but clearly (CI excludes 0). Per-seed: −0.078 /
+−0.101 / −0.092 / −0.097 / −0.096 (seeds 1001-1005, all <0).**
 
 ### 3.3 Within-QD licensing (the operator headline contrast)
 
 | Pairing | seed 1001 | seeds 1002-3 |
 | --- | --- | --- |
-| qd_target − qd_six_operators (both QD) | +0.040 / +0.006 / −0.015 / −0.023 / −0.013 (1001-1005) | **5-SEED pooled −0.002, CI [−0.012,+0.009] → clean PARITY (within ±0.03, tighter than 3-seed +0.011/[−0.006,+0.030])** |
+| qd_target − qd_six_operators (both QD) | +0.040 / +0.006 / −0.015 / −0.023 / −0.005 (1001-1005) | **5-SEED pooled +0.001, CI [−0.008,+0.011], p=1.0, win-rate 48.8% → clean PARITY (coin-flip; tighter than 3-seed +0.011/[−0.006,+0.030])** |
 
 Positive = unified better. Seed-1001 CI above 0 → licensed (F2).
 **The formal decision is the POOLED cluster-bootstrap across all seeds**

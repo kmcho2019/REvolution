@@ -26,7 +26,7 @@ cost** vs a strong direct-code baseline `[3-seed pooled −0.026,
 cluster-bootstrap CI [−0.077,+0.014], includes 0; NSGA-II necessary — V1
 alone significantly worse]`. **(2)** A single unified thought-level
 operator matches the six-operator EoH suite + bandit within QD at no cost
-`[5-seed pooled −0.002, CI [−0.012,+0.009] — clean parity]`, supplying the operator
+`[5-seed pooled +0.001, CI [−0.008,+0.011], p=1.0 — clean parity]`, supplying the operator
 ablation prior work lacked. **(3)** We characterize *regime-sensitivity*:
 thought/QD search is competitive on spec-exact problems and weaker on
 PPA-margin ones, with a mechanism, explaining (not apologizing for) the
@@ -50,7 +50,7 @@ asymmetry; an eval-concurrency artifact we caught and corrected).
    a no-significant-cost result (not just implemented).
 2. **The operator ablation prior work lacked (#2/#3).** One unified
    thought-operator = the six-operator suite + un-ablated bandit, within
-   QD, at parity `[5-seed pooled −0.002, CI [−0.012,+0.009], F2]`; substrate-dependent (F3).
+   QD, at parity `[5-seed pooled +0.001, CI [−0.008,+0.011], F2]`; substrate-dependent (F3).
 3. **Regime-sensitivity characterization (#4 partial, central thread).**
    When thought/QD helps vs not, across substrates, with a mechanism (F4,
    F7 — the deficit is localized to intrinsic-limitation problems).
@@ -66,8 +66,8 @@ asymmetry; an eval-concurrency artifact we caught and corrected).
 ## Results synthesis (per planned section — claim → evidence → number)
 
 - **Smooth-QD (headline positive).** code_individual QD removes the
-  thought→code indirection that sank the radical build (−0.096, 5-seed CI
-  [−0.152,−0.038] → V1 3-seed
+  thought→code indirection that sank the radical build (−0.093, 5-seed CI
+  [−0.149,−0.036] → V1 3-seed
   −0.045, still significantly worse, CI [−0.096,−0.007]); adding NSGA-II
   selection (necessary) closes most of the residual → **V2 3-seed pooled
   −0.026, cluster-bootstrap CI [−0.077,+0.014] — statistically
@@ -78,10 +78,10 @@ asymmetry; an eval-concurrency artifact we caught and corrected).
   (NSGA-II). `[conservative LB; launcher official CI pending V2 1003 rc=0;
   more seeds would tighten — variance, not mean, is the limiter]`.
   Source: `exp/fast_iter/smooth_qd_{code_individual,nsga2}` + doc 16.
-- **Operator parity (F2).** **5-seed pooled −0.0022, CI [−0.012,
-  +0.009]** (within ±0.03, CI low > −0.03 ⇒ clean parity, tighter
-  than the 3-seed +0.011/[−0.006,+0.030]; the sign flip is within-parity
-  noise). Source: `exp/ablation_matrix/stats/` 5-seed finals.
+- **Operator parity (F2).** **5-seed pooled +0.001, CI [−0.008,
+  +0.011]**, sign-test p=1.0, win-rate 48.8% (coin-flip) — dead-on parity,
+  well within ±0.03 (tighter than the 3-seed +0.011/[−0.006,+0.030]).
+  Source: `exp/ablation_matrix/stats/final_5seed_F2_qt_vs_six` (official).
 - **Substrate dependence (F3).** classic_unified vs classic −0.090/−0.102.
 - **Regime-sensitivity (F4).** Pass-rate wins where classic collapses
   (m2014_q6b 24% vs 3%) vs PPA-margin losses; classic_unified per-bench
@@ -116,9 +116,10 @@ descriptor axis). Best source problem: Prob135_m2014_q6b (healthy archive).
 
 - ~~Multi-seed pooled CI for the smooth-QD claim~~ DONE (3-seed, F23):
   no significant cost, CI includes 0.
-- ~~5-seed finals pooled F1/F2~~ DONE: F1 −0.096 CI [−0.152,−0.038]
-  (QD loses); F2 −0.002 CI [−0.012,+0.009] (parity). F4 is descriptive
-  (per-benchmark split, doc 12), not a separate pool.
+- ~~5-seed finals pooled F1/F2~~ DONE (official, all runs rc=0): F1
+  −0.093 CI [−0.149,−0.036] p=1.3e-05 (QD loses); F2 +0.001 CI
+  [−0.008,+0.011] p=1.0 (parity). F4 is descriptive (per-benchmark split,
+  doc 12), not a separate pool.
 - Then port this spine into the Overleaf LaTeX, build the tables/figures
   from the cited artifact paths, and run the four-persona adversarial
   sign-off (`journal_revamp_adversarial_prompt.md`).
