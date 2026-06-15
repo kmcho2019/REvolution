@@ -2757,3 +2757,27 @@ fallback; R-D k=2 (already running on OpenRouter).
   a no-significant-cost result - a defensible positive contribution, just
   honestly hedged. Consider: more seeds would tighten the CI if a
   stronger claim is needed (the variance, not the mean, is the limiter).
+
+## 2026-06-15 ~06:30 KST — Smooth-QD multi-seed COMPLETE; verdict FINAL
+
+- All 4 multi-seed runs rc=0 (V1+V2 seeds 1002-1003). Official launcher
+  pooled stats (report_journal_statistics, 39 paired) CONFIRM my DIY
+  cluster-bootstrap to 3 dp:
+  * V2 (NSGA-II): best_quality -0.0247, CI [-0.075,+0.015] (includes 0,
+    functional TIE 0.000, hypervolume -0.0197). = statistically
+    INDISTINGUISHABLE from classic; NOT tight parity (CI low < -0.03).
+  * V1 (cell-tournament): -0.0449, CI [-0.096,-0.007] (entirely <0,
+    functional TIE). = significantly worse -> NSGA-II NECESSARY.
+- VERDICT FINAL (no longer LB): the smooth-QD contribution is "QD +
+  NSGA-II diversity augmentation at NO statistically significant quality
+  cost vs a strong classic baseline (3-seed CI includes 0, functional
+  tie), with NSGA-II selection necessary." Answers #1 (principled
+  selection) + #5 (diversity). Honest, positive, hedged (not "tight
+  parity" - variance localized to ~1 problem, parallel2serial).
+- Task #18 multi-seed leg DONE. Remaining for #18: (optional) more seeds
+  to chase tight parity IF wanted (variance is the limiter, not the mean);
+  fold the verdict into the manuscript (#15, spine already calibrated).
+- USER DECISION OUTSTANDING: accept "no significant cost" (recommended -
+  defensible TCAD contribution) vs +2 seeds for a potential tight-parity
+  claim. Docs (F23/doc14/doc17) calibrated to the "no significant cost"
+  framing.

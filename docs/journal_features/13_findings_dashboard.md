@@ -266,8 +266,9 @@ significant quality cost vs a strong classic baseline (CI includes 0),"**
 answering #1 (principled selection, no scalar weight) + #5 (diversity) —
 a positive, honestly-hedged contribution, NOT "demonstrated tight
 parity." More seeds would tighten the CI (variance, not mean, is the
-limiter). CONSERVATIVE LB (V2 1003 wrapping up; launcher official stats
-to confirm). `exp/fast_iter/smooth_qd_nsga2` [H: 2026-06-15 05:30]
+limiter). **FINAL (all 3 seeds rc=0): official launcher stats CONFIRM
+the estimate to 3 dp — V2 -0.0247, CI [-0.075,+0.015], functional TIE;
+V1 -0.0449, CI [-0.096,-0.007].** `exp/fast_iter/smooth_qd_nsga2/stats_pooled_vs_classic` [H: 2026-06-15 05:30, 06:30 FINAL]
 
 ### F22 — Smooth QD (code_individual) NEAR-PARITY; V2 implemented `MEASURED`
 The smooth-integration thesis is substantially VINDICATED. Full 13-problem
