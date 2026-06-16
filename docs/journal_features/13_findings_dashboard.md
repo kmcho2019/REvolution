@@ -320,7 +320,13 @@ gpt-oss-120b capability wall. Validation level: the cocotb harness is
 confirmed to compile candidates + run the functional assertions (F26: 7/12
 reached assertions + failed), but **no PASS has been observed** (CVDP
 withholds goldens; a hand-written-correct-solution pass-confirmation is the
-residual validation). Also disclose: perceptron_0006 excluded (exceeded
+residual validation). **Task-consistency cross-check (rules out a "broken
+task" explanation):** sync_lifo's spec says reset active-high; the cocotb
+test's `reset_dut(active=False)` drives reset high-then-low = an active-high
+pulse — consistent with the spec (the "active low" code comment is a
+misleading copy-paste, the behavior is correct). So a spec-following
+candidate is reset correctly; the 0/9 is genuine difficulty, not a
+task-polarity artifact. Also disclose: perceptron_0006 excluded (exceeded
 gpt-oss-120b's 131k window at Gen2 — itself a #4 size signal). [H: 2026-06-16]
 
 ### F26 — CVDP harness is OPERATIONAL locally; the probe's 0% is GENUINE difficulty `MEASURED`
