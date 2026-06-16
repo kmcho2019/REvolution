@@ -46,11 +46,14 @@ every answer to the five conference criticisms is evidence-backed:
   +0.032]). The positive contribution answering #1 (no scalar weight) + #5
   (diversity). Source: `exp/fast_iter/smooth_qd_nsga2/stats_5seed_vs_classic/`
   and `exp/fast_iter/smooth_qd_code_individual/stats_5seed_vs_classic/`.
-- **F18–F21 — at RealBench (real-CPU e203) scale the binding limit is LLM
-  spec-comprehension, not search structure** — answers #4 as a
-  characterization (a stronger model narrows but does not cross the gap).
-  Source: `exp/fast_iter/capability_remap/grade_mismatch_compare.json`,
-  `exp/fast_iter/deepseek_capability_probe/`.
+- **F18–F21 + F27 — on harder/newer benchmarks the binding limit is LLM
+  spec-comprehension, not search structure** — answers #4 via TWO
+  independent benchmarks: RealBench e203 (0 valid on large modules,
+  gpt-oss-120b + deepseek) AND CVDP (0/9 functional pass, classic =
+  qd_target = qd_v2). Neither classic nor QD clears the functional bar, so
+  QD's diversity can't help. Source:
+  `exp/fast_iter/capability_remap/`, `exp/fast_iter/deepseek_capability_probe/`,
+  `exp/cvdp_debug_probe/`.
 
 **Where to read more:** doc 17 = the paper's story (abstract /
 contributions / results synthesis, with every number + source path); §2
