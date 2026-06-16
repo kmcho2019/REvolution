@@ -3079,3 +3079,23 @@ fallback; R-D k=2 (already running on OpenRouter).
   exp/cvdp_debug_probe_launch.sh. Expect signal on the easier tasks (passes),
   ties at 0 on the hardest. On completion: read functional-any-pass deltas
   (classic vs qd_target, classic vs V2); if informative, scale to 5 seeds.
+
+## 2026-06-16 ~17:30 KST — CVDP probe: perceptron_0006 context overflow; pruned to 9 tasks
+
+- The classic arm completed 9/10 tasks but STALLED on cvdp_copilot_perceptron_0006:
+  the Gen2 prompt hit 114303 input tokens (+32768 output) > gpt-oss-120b's
+  131072 window -> repeated 400 context-length errors. The backend retried the
+  (non-retryable) 400 fifteen times with up to 4096s (68-min) backoff -> a
+  multi-hour stall. Killed the run.
+- Root cause: NOT the task context (perceptron_0006's raw input is only ~5k
+  tokens); it's accumulated population/candidate context at Gen2 (perceptron
+  candidates are large) overflowing the window. Only perceptron_0006 bloated;
+  the other 9 tasks completed. Two robustness gaps noted (backend, out of probe
+  scope): (a) non-retryable 400s should not be retried with huge backoff;
+  (b) prompts should be truncated to the model window.
+- #4-relevant finding: CVDP tasks are large enough that some overflow
+  gpt-oss-120b's 131k window during evolution - concrete evidence CVDP is a
+  bigger/harder benchmark than RTLLM/VerilogEval.
+- ACTION: prune perceptron_0006; relaunch qd_target + qd_v2 on the remaining 9
+  CVDP debug tasks (seed 42), reuse the completed classic 9-task summaries for
+  the comparison. exp/cvdp_debug_probe2.
