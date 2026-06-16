@@ -388,11 +388,11 @@ modules are 20–100% mismatched (min-mismatch fracs {0.21, 0.25, 0.33–0.41,
 stones to recombine. **Binding constraint = base-model spec-comprehension +
 the discontinuous correctness landscape, NOT the search algorithm** — which is
 why #4 is correctly framed as a capability characterization.
-**Future-work levers (by leverage):** (1) **CVDP easy tier** [RUNNING,
-exp/cvdp_easy_probe] — the untested *capable-but-hard* regime where QD's
-diversity could actually help (medium was 0/9; easy should yield some valid
-seeds → first real QD-vs-classic where the LLM is capable on a harder-than-
-conference benchmark); (2) **stronger base model** on the hard benchmarks
+**Future-work levers (by leverage):** (1) ~~CVDP capable-regime test~~ **DONE
+— sweet-spot FALSIFIED (F31/F32):** after the F30 interface fix, classic = V2
+on both easy (9/10) and medium (7/10, the genuine capable-but-hard regime) —
+QD found no solution classic missed, so the hypothesized sweet spot does not
+exist for this model. (2) **stronger base model** on the hard benchmarks
 (does the ceiling lift?); (3) **hierarchical / decomposition generation** —
 the real framework fix for "too large for one-shot," a genuine method
 contribution; (4) **richer functional feedback** (detailed cocotb failure →

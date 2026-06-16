@@ -83,29 +83,41 @@ if gv2.is_file():
 
 # CVDP easy-tier tasks-solved (any-pass /10), post-F30 interface fix. The earlier
 # CVDP "0/9" (medium) was a wiring confound (F30), NOT capability — do not cite it.
-cv = {}
-gce = Path("exp/cvdp_easy_fixed/grade_cvdp_easy.json")
-if gce.is_file():
-    d = json.loads(gce.read_text())
-    for arm in ("classic", "qd_v2"):
-        cv[arm] = sum(1 for v in d.get(arm, {}).values() if v.get("any_pass"))
+def cvdp_solved(path: str) -> dict:
+    out = {}
+    p = Path(path)
+    if p.is_file():
+        d = json.loads(p.read_text())
+        for arm in ("classic", "qd_v2"):
+            out[arm] = sum(1 for v in d.get(arm, {}).values() if v.get("any_pass"))
+    return out
+
+
+cv = cvdp_solved("exp/cvdp_easy_fixed/grade_cvdp_easy.json")     # easy tier
+cm = cvdp_solved("exp/cvdp_medium_fixed/grade_cvdp_medium.json")  # medium (capable-but-hard)
+
+
+def cvcell(arm: str) -> str:
+    e, m = cv.get(arm), cm.get(arm)
+    return f"{e if e is not None else '--'} / {m if m is not None else '--'}"
 
 lines.append("\\begin{table}[t]")
 lines.append("\\centering")
 lines.append("\\caption{Capability at harder/newer-benchmark scale --- no method beats "
              "classic. RealBench: functionally-valid candidates on 7 dependency-complete "
              "e203 modules (valids only on the 2 smallest; 0 on all 5 larger for every arm). "
-             "CVDP (easy tier, after the interface fix): tasks solved (any-pass) of 10 --- the "
-             "LLM is capable (9/10) and QD ties classic. The binding limit is LLM capability, "
+             "CVDP (after the interface fix): tasks solved (any-pass) of 10 on the easy and "
+             "medium tiers --- the LLM is capable (9/10, 7/10) and QD ties classic on both, "
+             "including the capable-but-hard medium tier. The binding limit is LLM capability, "
              "not search.}")
 lines.append("\\label{tab:capability}")
 lines.append("\\begin{tabular}{lcc}")
 lines.append("\\toprule")
-lines.append("Arm & RealBench valid (/7) & CVDP-easy solved (/10) \\\\")
+lines.append("Arm & RealBench valid (/7) & CVDP solved easy/med (/10) \\\\")
 lines.append("\\midrule")
-lines.append(f"classic & {rb.get('classic','--')} & {cv.get('classic','--')} \\\\")
+lines.append(f"classic & {rb.get('classic','--')} & {cvcell('classic')} \\\\")
 lines.append(f"qd\\_target (radical QD) & {rb.get('qd_target','--')} & -- \\\\")
-lines.append(f"smooth-QD V2 (\\emph{{our method}}) & {rb.get('qd_v2','--')} & {cv.get('qd_v2','--')} \\\\")
+lines.append(f"smooth-QD V2 (\\emph{{our method}}) & {rb.get('qd_v2','--')} & {cvcell('qd_v2')} \\\\")
 lines.append("\\bottomrule")
 lines.append("\\end{tabular}")
 lines.append("\\end{table}")
