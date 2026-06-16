@@ -3115,3 +3115,20 @@ fallback; R-D k=2 (already running on OpenRouter).
   (F26, 7/12 reached assertions); no PASS observed (CVDP withholds goldens).
   Residual validation = hand-write one correct solution + confirm PASS
   (attempting next, time-boxed). Recorded F27, scorecard updated.
+
+## 2026-06-16 ~19:30 KST — Close the gap: smooth-QD V2 vs classic on RealBench (user-greenlit)
+
+- User chose to close the one experimental gap: smooth-QD V2 (code_individual
+  + NSGA-II, our chosen method) was never run on RealBench (only classic +
+  qd_target were, F20). Then move on to manuscript artifact prep.
+- LAUNCHED V2 on the same 7 dependency-complete e203 modules, same budget/seed
+  as the classic + qd_target arms (pop8 x 1gen, seed 42, RealBench_v4_synth,
+  max_tokens 64000). exp/fast_iter/capability_remap/qd_v2; launcher
+  exp/capability_remap_v2_launch.sh.
+- On completion: grade V2's candidates with exp/grade_mismatch_compare.py
+  (isolated re-eval per candidate = the M12 mitigation; reliable regardless of
+  run concurrency), compare valid counts + min-mismatch to classic (4 valid,
+  small modules only) and qd_target (2 valid). EXPECTATION: V2 also bounded by
+  the capability ceiling (~0-2 valid, 0 on large) -> confirms no method beats
+  classic on RealBench; completes the #4 "our chosen method on both harder
+  benchmarks" story. Then: manuscript artifact prep (tables + case-study figs).
