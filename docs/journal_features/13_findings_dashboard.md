@@ -268,6 +268,24 @@ thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
 
+### F24 — Case-study equivalence needs a fully-specified problem `MEASURED`
+The narrative's case-study artifact "archive heatmap with equivalence-
+checked Pareto solutions" needs TWO source problems, not one. The
+predeclared heatmap source Prob135_m2014_q6b has a DON'T-CARE reference
+(`default: Y1 = 1'bx` for y in {6,7}), so its 8 archive/cell solutions are
+testbench-valid but NOT formally equivalence-provable: yosys returns 0/8
+PROVEN (all NOT_PROVEN, "1 unproven $equiv cell" — candidates pick concrete
+values in the don't-care region). This is exactly the case the frozen scope
+rule anticipates ("equivalence spot-check on fully-specified problems
+only", doc 12). HARNESS VALIDATED: on the fully-specified
+Prob150_review2015_fsmonehot (0 don't-cares, sequential FSM),
+scripts/check_equivalence.py proves 1/1 EQUIV (equiv_induct handles state).
+RECOMMENDATION for the manuscript: keep Prob135 for the multi-cell archive
+heatmap (disclose its solutions as testbench-validated — spec has a
+don't-care, formal equivalence out of scope), and report the equivalence
+pass-rate on a fully-specified problem (Prob150, 1/1). Artifacts:
+`exp/fast_iter/hard_subset_42/qd/.../Prob{135_m2014_q6b,150_review2015_fsmonehot}/equivalence_spotcheck`. [H: 2026-06-16]
+
 ### F23 — Smooth QD: NO SIGNIFICANT quality cost vs classic (5-seed) `MEASURED`
 The smooth-integration salvage works, now confirmed at 5 seeds (matching
 the F1/F2 standard — the evidentiary asymmetry is closed). Two-step: V1

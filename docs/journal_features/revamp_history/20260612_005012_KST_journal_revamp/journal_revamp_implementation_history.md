@@ -2904,3 +2904,27 @@ fallback; R-D k=2 (already running on OpenRouter).
 - The full evidence base is now LOCKED at 5 seeds: F1 (QD loses), F2
   (operator parity), F23 (smooth-QD no significant cost), F18-21 (RealBench
   capability). Only the manuscript write-up (#15, user's Overleaf) remains.
+
+## 2026-06-16 ~08:00 KST — F24: case-study equivalence feasibility (don't-care split)
+
+- Pre-manuscript de-risk on the case-study artifact "archive heatmap with
+  equivalence-checked Pareto solutions". Ran scripts/check_equivalence.py
+  (yosys equiv_make/equiv_simple/equiv_induct) on the predeclared source
+  Prob135_m2014_q6b archive (8 cell solutions vs RefModule).
+- RESULT: 0/8 PROVEN (all NOT_PROVEN, "1 unproven $equiv cell"). Cause is
+  NOT a harness bug: the Prob135 reference has a DON'T-CARE output
+  (default: Y1 = 1'bx for {y,w} >= 0xc, i.e. y in {6,7}). Candidates emit
+  concrete values there -> testbench-valid (testbench only exercises
+  specified inputs) but not formally equivalent to an x-output spec. This
+  is exactly the case journal_narrative.md's frozen scope rule anticipates:
+  "equivalence spot-check on fully-specified problems only" (doc 12).
+- HARNESS VALIDATED on a fully-specified problem: Prob150_review2015_fsmonehot
+  (0 don't-cares, sequential FSM) -> 1/1 PROVEN. equiv_induct handles state.
+  So the tool is correct; the Prob135 result is a property of its spec.
+- ACTION: case-study artifact SPLIT (recorded F24, doc 13; doc 12 + doc 17
+  case-study sections). Prob135 -> archive heatmap (disclose solutions as
+  testbench-validated, spec has a don't-care). Fully-specified problem
+  (Prob150) -> the equivalence pass-rate the narrative requires. No single
+  hard-subset VerilogEval problem is both multi-cell AND fully specified.
+- Artifacts: exp/fast_iter/hard_subset_42/qd/.../Prob{135_m2014_q6b,
+  150_review2015_fsmonehot}/equivalence_spotcheck/ (gitignored run outputs).

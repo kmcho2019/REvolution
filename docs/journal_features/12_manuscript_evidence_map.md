@@ -42,11 +42,16 @@ carry into the narrowed claim set:
 
 ## Case-study artifacts (four planned)
 
-- Archive heatmap with equivalence-checked solutions: best source =
-  Prob135_m2014_q6b (the only healthy 6-cell archive, QD +0.088;
-  exp/fast_iter/hard_subset_42/qd/.../Prob135_m2014_q6b/
-  grid_quantile_* visualization artifacts); equivalence via
-  scripts/check_equivalence.py.
+- Archive heatmap: source = Prob135_m2014_q6b (the only healthy 6-cell
+  archive, QD +0.088; exp/fast_iter/hard_subset_42/qd/.../Prob135_m2014_q6b/
+  grid_quantile_* visualization artifacts).
+- Equivalence-checked solutions (SPLIT from the heatmap per F24): Prob135
+  has a don't-care reference (Y1=1'bx), so its solutions are testbench-valid
+  but not formally equivalence-provable (0/8 PROVEN) — out of the frozen
+  "fully-specified problems only" scope. Report the equivalence pass-rate on
+  the fully-specified Prob150_review2015_fsmonehot instead (1/1 PROVEN,
+  harness-validated). equivalence via scripts/check_equivalence.py ->
+  exp/fast_iter/hard_subset_42/qd/.../Prob{135_m2014_q6b,150_review2015_fsmonehot}/equivalence_spotcheck.
 - Thought lineage: m2014_q3 failure-regime v2 chain (gen-1 fail_pool
   thought with feedback -> 3/4-success child;
   exp/fast_iter/rb_failure_regime_v2/variant/.../Prob116_m2014_q3/).

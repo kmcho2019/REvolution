@@ -101,10 +101,15 @@ asymmetry; an eval-concurrency artifact we caught and corrected).
 
 ## Case study (four artifacts, per the narrative §"What the case study must show")
 
-Archive heatmap w/ equivalence-checked Pareto solutions; a thought/lineage
-crossing descriptor cells; the scalar-vs-QD comparison from full evaluated
-history; one predeclared failure panel (a structurally-collapsed
-descriptor axis). Best source problem: Prob135_m2014_q6b (healthy archive).
+Archive heatmap (Prob135_m2014_q6b, healthy 6-8 cell archive); a
+thought/lineage crossing descriptor cells; the scalar-vs-QD comparison from
+full evaluated history; one predeclared failure panel (a structurally-
+collapsed descriptor axis). NOTE (F24): the equivalence-checked-solutions
+claim is SPLIT from the Prob135 heatmap — Prob135 has a don't-care
+reference (0/8 formally provable; testbench-valid only), so report the
+equivalence pass-rate on the fully-specified Prob150_review2015_fsmonehot
+(1/1 PROVEN, harness-validated), per the frozen "fully-specified problems
+only" scope. Disclose Prob135 solutions as testbench-validated.
 
 ## Disclosures the paper MUST carry (predeclared)
 
