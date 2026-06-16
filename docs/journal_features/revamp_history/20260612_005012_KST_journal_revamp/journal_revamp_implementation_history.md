@@ -3229,3 +3229,22 @@ fallback; R-D k=2 (already running on OpenRouter).
   + run the fixed classic-vs-V2 easy-tier comparison, grade by isolation -> the
   TRUE QD-vs-classic signal in the capable-but-hard regime (the original goal of
   the easy-tier probe, now unblocked by the F30 fix).
+
+## 2026-06-16 ~23:30 KST — F31: fixed CVDP easy tier — classic 9/10 = V2 9/10 (QD doesn't help in capable regime)
+
+- Ran fixed-prompt classic + smooth-QD V2 on the 10 easy CVDP tasks (seed 42,
+  pop20x5gen), graded by isolated re-eval (exp/grade_cvdp_isolated.py, after
+  fixing it: process-group kill + 25s timeout + early-exit any-pass + 30-cap;
+  the first grader stalled for an hour on hanging sims with ineffective
+  timeouts -> orphan vvp zombies).
+- RESULT: classic solves 9/10, V2 solves 9/10 (both miss only perfect_squares)
+  -> grade_cvdp_easy.json. F30 CONFIRMED AT SCALE (LLM is capable on easy CVDP
+  with the interface; the 0/9-0/10 was the confound). And QD does NOT help in
+  the capable regime: classic = V2 = 9/10 (consistent with F1).
+- The "capable-but-hard sweet spot" (F29 hypothesis) did NOT materialize: easy
+  CVDP is capable-and-easy. So across the difficulty spectrum QD ties (small/
+  easy) or is capped (hard RealBench), never wins. Recorded F31; rewrote the
+  convoluted §0 #4 bullet cleanly; updated the §9 scorecard.
+- CVDP thread CLOSED: F30 (confound found+fixed+tested) + F31 (capable-regime
+  tie). Net: a stronger, coherent #4 story (QD doesn't win on a newer working
+  benchmark either), with a real bug fix shipped (fix(cvdp) commit).

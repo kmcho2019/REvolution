@@ -46,22 +46,20 @@ every answer to the five conference criticisms is evidence-backed:
   +0.032]). The positive contribution answering #1 (no scalar weight) + #5
   (diversity). Source: `exp/fast_iter/smooth_qd_nsga2/stats_5seed_vs_classic/`
   and `exp/fast_iter/smooth_qd_code_individual/stats_5seed_vs_classic/`.
-- **F18–F21 + F27 — on harder/newer benchmarks the binding limit is LLM
-  spec-comprehension, not search structure** — answers #4 via TWO
-  independent benchmarks: RealBench e203 (0 valid on large modules,
-  gpt-oss-120b + deepseek) AND CVDP (0/9 functional pass — **but see F30: the CVDP 0s
-  were an interface-wiring confound, now fixed; that ceiling claim is
-  retracted pending the fixed re-run; RealBench is unaffected**). On RealBench our chosen method V2 was also tested
-  (F28): classic 4 ≥ V2 3 > qd_target 2 (all on the 2 smallest modules,
-  0 on the 5 larger) — V2 doesn't beat classic either. Neither classic nor
-  QD clears the functional bar on the large designs, so QD's diversity
-  can't help. Source:
-  `exp/fast_iter/capability_remap/`, `exp/fast_iter/deepseek_capability_probe/`,
-  `exp/cvdp_debug_probe/`.
+- **F18–F21, F28, F30–F31 — on harder/newer benchmarks QD never beats
+  classic; the limit is LLM capability, not search.** Two benchmarks:
+  **RealBench e203** — a genuine capability ceiling: 0 valid on the 5 larger
+  modules for every arm; on the 2 smallest classic 4 ≥ V2 3 > qd_target 2
+  (F18–F21, F28; deepseek-v4-pro also 0 on large). **CVDP** — the initial 0/9
+  was an interface-wiring confound (F30, fixed); with the fix the LLM solves
+  **9/10** easy tasks and **classic = V2 = 9/10** — QD adds no value in the
+  capable regime (F31). So across the spectrum QD ties (small/easy) or is
+  capped (hard), never wins. Sources: `exp/fast_iter/capability_remap/`,
+  `exp/cvdp_easy_fixed/grade_cvdp_easy.json`, `exp/fast_iter/deepseek_capability_probe/`.
 
 **Where to read more:** doc 17 = the paper's story (abstract /
 contributions / results synthesis, with every number + source path); §2
-below = per-finding detail (F1–F30, M1–M14); doc 14 = the candid
+below = per-finding detail (F1–F31, M1–M14); doc 14 = the candid
 reviewer-muster read; doc 12 = claim→artifact-path map. Full chronology in
 `revamp_history/.../journal_revamp_implementation_history.md`.
 
@@ -311,6 +309,24 @@ is running to settle the actual win-path hypothesis — does diverse
 thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
+
+### F31 — Fixed CVDP (easy tier): LLM solves 9/10; classic = V2 (QD doesn't help in the capable regime) `MEASURED`
+With the F30 fix, the fixed-prompt easy-tier run (classic + smooth-QD V2, 10
+tasks, seed 42, pop20×5gen), graded by isolated re-eval (M14 mitigation,
+`exp/grade_cvdp_isolated.py` → `grade_cvdp_easy.json`; early-exit any-pass,
+30-candidate sample, 25s process-group-killed timeout): **classic solves 9/10
+tasks, smooth-QD V2 solves 9/10 — a TIE** (both miss only perfect_squares).
+**Two conclusions:** (1) **F30 confirmed at scale** — the LLM is highly
+capable on easy CVDP once it sees the interface (9/10), so the prior 0/9–0/10
+was entirely the wiring confound, not capability. (2) **QD does NOT help in
+the capable regime** — classic = V2 = 9/10; diversity adds no value when the
+LLM already solves the task (consistent with F1). **The hoped-for
+"capable-but-hard sweet spot" (F29) did not materialize**: easy CVDP is
+*capable-and-easy* (both solve it). So across the difficulty spectrum QD never
+beats classic — small (F1/F23 tie/no-cost), easy-CVDP (9/10 tie),
+hard-RealBench (capability ceiling, F28). Caveat: any-pass within a 30-sample,
+seed 42 (debug); a finer pass-rate comparison wasn't run (M14 + hanging-sim
+intractability), but the any-pass tie is robust. [H: 2026-06-16]
 
 ### F30 — CVDP "capability ceiling" was an INTERFACE-WIRING CONFOUND (F19-class); fixed `MEASURED`
 **The CVDP 0-valid results (F27 medium 0/9, easy probe 0/10) are NOT a
