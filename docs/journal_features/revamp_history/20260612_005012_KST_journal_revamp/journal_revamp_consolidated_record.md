@@ -47,7 +47,7 @@ defensible story is the characterization + the smooth-QD result.
 | 1 | Weighted-sum PPA biases search | Pareto-front cells + NSGA-II selection (no scalar weight) | Answered as **no-significant-cost** (F23) |
 | 2 | EoH operators arbitrary | One unified thought-operator | **Parity within QD** (F2) |
 | 3 | Bandit claimed, never ablated | Bandit removed; operator ablated | **Ablation exists; parity** (F2) |
-| 4 | Benchmarks too small | CVDP + RealBench (real e203 CPU) integrated | **Characterization**: LLM spec-comprehension is the binding limit at scale (F18–F21) |
+| 4 | Benchmarks too small | CVDP + RealBench (real e203 CPU) integrated + tested | **Characterization**: QD never beats classic on harder benchmarks — RealBench-large capability ceiling (F18–F21, F28); CVDP confound fixed (F30) → LLM solves 9/10 easy, QD ties classic (F31) |
 | 5 | No diversity | QD MAP-Elites + BD trio + NSGA-II | **Diversity at no-significant-cost** (F23) |
 
 **The four locked results (official `report_journal_statistics`, penalized
@@ -465,13 +465,13 @@ Honest status of each goal outcome / verification / completion criterion.
 | Verify: descriptor health / correlation artifacts | **MET** | F12; descriptor_correlation_hard. |
 | Verify: manifest/subset sha256 locks + ledger | **MET** | data/configs locks; rerun_ledger.jsonl. |
 | Verify: four-persona v2 sign-off on full evidence+manuscript | **PENDING** | Narrative got four-persona sign-off; the full-package v2 sign-off needs the manuscript. |
-| Completion: every TODO checked + spot-verified | **5 open** | 2 RentCon (deprioritized, non-gate-bearing), 2 CVDP (this row + criterion 3), 1 manuscript (#15). |
+| Completion: every TODO checked + spot-verified | **3 open** | 2 RentCon (deprioritized, non-gate-bearing), 1 manuscript (#15). CVDP end-to-end now DONE (F30 fix + F31). |
 
 **Bottom line vs the goal:** the goal is substantially met **as a Branch-C
-characterization + the smooth-QD positive contribution**, with two final-gate
-items (held-out QD-vs-classic, CVDP end-to-end) consciously **scoped out as
-documented limitations**, and the **manuscript (#15)** as the remaining
-deliverable. The descriptor-collapse validator failure on QD is itself
+characterization + the smooth-QD positive contribution**, with the held-out QD-vs-classic gate consciously **scoped out as a
+documented limitation** (CVDP end-to-end was instead completed after fixing
+the F30 interface confound — F31), and the **manuscript (#15)** as the
+remaining deliverable. The descriptor-collapse validator failure on QD is itself
 evidence for the characterization (M13).
 
 ---
