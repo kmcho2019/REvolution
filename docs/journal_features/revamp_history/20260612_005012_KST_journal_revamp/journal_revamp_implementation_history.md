@@ -3248,3 +3248,22 @@ fallback; R-D k=2 (already running on OpenRouter).
 - CVDP thread CLOSED: F30 (confound found+fixed+tested) + F31 (capable-regime
   tie). Net: a stronger, coherent #4 story (QD doesn't win on a newer working
   benchmark either), with a real bug fix shipped (fix(cvdp) commit).
+
+## 2026-06-16 ~23:55 KST — CVDP MEDIUM tier (fixed): the actual capable-but-hard test
+
+- Correcting my prior "medium re-run = low value" call: easy CVDP was
+  capable-AND-easy (both 9/10, tie — no room for QD). The MEDIUM tier is the
+  genuine capable-but-hard regime (LLM may solve SOME but not all) -> the one
+  place QD's diversity could actually help (the F29 sweet-spot hypothesis).
+  So it IS the highest-value remaining experiment.
+- LAUNCHED classic + smooth-QD V2 (fixed prompt, F30) on 10 smallest-context
+  medium tasks (scrambler, fifo_async, factorial, bus_arbiter, neuromorphic_
+  array, ...; seed 42, pop20x5gen). Selected by prompt+module size < ~6k
+  tokens to avoid context overflow (the F30 fix lengthens prompts by adding
+  input.context, so overflow risk rises on larger designs - perceptron
+  excluded). exp/cvdp_medium_fixed; launcher exp/cvdp_medium_fixed_launch.sh.
+- On completion: grade by isolated re-eval (exp/grade_cvdp_isolated.py).
+  OUTCOMES: if the LLM solves some-but-not-all AND V2 > classic -> the
+  long-sought "QD helps in the capable-but-hard regime" result (flips #4 to a
+  positive). If V2 = classic -> reinforces "QD never wins" across the full
+  spectrum. Either way it's the decisive test of the remaining open hypothesis.
