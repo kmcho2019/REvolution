@@ -3212,3 +3212,20 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Live re-validation (binary_to_gray, fixed): candidates now have the correct
   interface; functional pass-rate confirmation + the full fixed CVDP re-run
   (classic vs V2, easy+medium) are the next steps.
+
+## 2026-06-16 ~22:30 KST — F30 end-to-end confirmed; M14 (run under-reports CVDP)
+
+- Live re-validation (binary_to_gray, fixed prompt): the LLM's candidate is
+  correct + lint-clean + right-interface (binary_in/gray_out/WIDTH) AND PASSES
+  the cocotb harness in ISOLATED re-eval (rc=0). So F30 is confirmed end-to-end:
+  CVDP is solvable; the "capability ceiling" was the interface confound.
+- M14 (NEW): the IN-RUN CVDP functional eval reported functionality=0.0 for
+  that same isolated-passing candidate -> the in-run path under-reports passes
+  (M12-class). The feedback-LLM "testbench missing" is the M6 hallucination
+  (harness is present + sound). IMPLICATION: CVDP classic-vs-QD must be graded
+  by ISOLATED re-eval (per-candidate harness materialization + pytest), like
+  F20 for RealBench - NOT the run's counts.
+- NEXT: write a CVDP isolated-grading script (analogue of grade_mismatch_compare.py)
+  + run the fixed classic-vs-V2 easy-tier comparison, grade by isolation -> the
+  TRUE QD-vs-classic signal in the capable-but-hard regime (the original goal of
+  the easy-tier probe, now unblocked by the F30 fix).
