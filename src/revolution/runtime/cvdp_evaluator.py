@@ -90,6 +90,25 @@ def build_cvdp_problem_context(
     root = Path(jsonl_path).resolve().parent
     placeholder = root / f"{cvdp_id}.placeholder"
     prompt_text = str(cvdp_record.get("input", {}).get("prompt", "")).strip()
+    # Thread the provided source files (the module(s) to edit) into the prompt.
+    # CVDP tasks are edit/fix tasks: the buggy module — and crucially its exact
+    # port/parameter interface that the cocotb harness drives — lives in
+    # input.context, NOT in the prompt text. Omitting it makes the model invent
+    # port names, so every candidate fails the harness on interface mismatch
+    # regardless of logic (a wiring confound, not a capability limit).
+    context_files = cvdp_record.get("input", {}).get("context", {})
+    blocks = [
+        f"\n\n--- {fname} ---\n```systemverilog\n{str(content).strip()}\n```"
+        for fname, content in (context_files or {}).items()
+        if str(content).strip()
+    ]
+    if blocks:
+        prompt_text = (
+            prompt_text
+            + "\n\nProvided source file(s) to edit — produce the corrected "
+            + "version, preserving the module name and its exact port/parameter "
+            + "interface:" + "".join(blocks)
+        )
     return ProblemContext(
         benchmark_name=benchmark_name,
         problem_name=cvdp_id,

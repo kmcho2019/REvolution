@@ -80,6 +80,33 @@ def test_build_cvdp_problem_context(tmp_path):
     assert context.benchmark_name == "cvdp"
 
 
+def test_build_cvdp_problem_context_threads_input_context(tmp_path):
+    """input.context source files (the module + its interface to edit) must be
+    threaded into problem_description; omitting them makes the model invent port
+    names and fail the harness on interface mismatch (the F30 wiring confound)."""
+    dataset = tmp_path / "cvdp.jsonl"
+    record = {
+        "id": "cvdp_edit",
+        "categories": ["cid002", "easy"],
+        "input": {
+            "prompt": "Fix the lint issues.",
+            "context": {"rtl/foo.sv": "module foo #(parameter WIDTH=4)(input [WIDTH-1:0] a, output b);"},
+        },
+        "output": {"context": {"rtl/foo.sv": ""}},
+        "harness": {"files": {}},
+    }
+    dataset.write_text(json.dumps(record) + "\n", encoding="utf-8")
+    rec = load_cvdp_record(dataset, "cvdp_edit")
+    assert rec is not None
+    context = build_cvdp_problem_context(
+        benchmark_name="cvdp", cvdp_id="cvdp_edit", jsonl_path=dataset, cvdp_record=rec
+    )
+    pd = context.problem_description
+    assert "Fix the lint issues." in pd
+    assert "module foo" in pd and "WIDTH" in pd  # the interface reaches the model
+    assert "rtl/foo.sv" in pd
+
+
 def test_cvdp_evaluator_success_path(monkeypatch, tmp_path):
     dataset = tmp_path / "cvdp.jsonl"
     _write_dataset(dataset)
