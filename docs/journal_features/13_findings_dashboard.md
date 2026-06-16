@@ -17,10 +17,12 @@ full evidence; when it cites `exp/...` that is the raw artifact.
 **Last refreshed:** 2026-06-16 (held-out gap found, F25). The ablations +
 characterization + smooth-QD are complete and 5-seed-locked **on the
 tuning hard subset** — correctly scoped for the ablations (F2/F3), but the
-frozen narrative requires the QD-vs-classic FINAL gate AND the smooth-QD
-headline on the **20-problem held-out reference set**, which has NOT been
-run (F25). That held-out final gate is the main remaining experiment; the
-manuscript (#15) follows it. Finding IDs are stable.
+frozen narrative's final gate on the **20-problem held-out reference set**
+was, BY DECISION (2026-06-16), NOT run — the expected Branch-C-confirmed
+outcome does not change the story, so the results are reported scoped as
+tuning-set results with the held-out confirmation **disclosed as a stated
+limitation / future work** (F25, doc 17 Disclosures). The remaining work is
+the manuscript (#15). Finding IDs are stable.
 
 ---
 
@@ -303,7 +305,7 @@ thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
 
-### F25 — Held-out final gate NOT YET RUN (QD-vs-classic headline is tuning-set only) `BLOCKER`
+### F25 — Held-out final gate not run; tuning-set-scoped by decision `SCOPED — documented limitation`
 The frozen narrative requires the QD-vs-classic FINAL gate + the branch
 decision "Evaluated on the held-out/fresh final sets after the 5-seed runs"
 (journal_narrative.md L224/L232); the 13-problem hard subset is explicitly
@@ -315,14 +317,20 @@ hard+fast) has **0 runs.** So goal criterion (1) — "QD-vs-classic resolved
 on HELD-OUT statistics; never a tuning-set headline" — is **NOT met.** (F2's
 operator ablation on the hard subset IS correct — the ablation protocol is
 predeclared on the tuning set and "never enters held-out gate statistics.")
-**Action:** run classic + qd_target (and smooth-QD V2) on the 20 held-out
-problems × 5 seeds, then evaluate the branch table. **Expected:** Branch C
-confirmed (QD loses −0.093 on tuning → very likely loses on held-out), but
-it must be run for a valid non-tuning headline. **Caveat:** Branch C floor
-leg (i) requires the operator simplification to be "independent of QD's
-fate" — F9 falsified that (within-QD only), so the frozen narrative
-predeclares venue reassessment UNLESS the new smooth-QD contribution (F23)
-is accepted as carrying the #1/#5 legs. [H: 2026-06-16]
+**DECISION (2026-06-16, user): the held-out final gate will NOT be run** —
+the expected outcome (Branch C confirmed, QD loses −0.093 on tuning → near-
+certain on held-out) does not change the story, so the multi-day compute is
+not justified for a confirmatory negative. The QD-vs-classic + smooth-QD
+results are therefore reported **scoped as tuning-set (hard-subset)
+results** — which the narrative explicitly permits ("hard-subset final
+numbers are reported scoped as tuning-set results") — with the **held-out
+confirmation disclosed as a stated limitation / future work** in the
+manuscript (see doc 17 Disclosures). **Caveat the paper MUST carry:** Branch
+C floor leg (i) requires the operator simplification "independent of QD's
+fate" — F9 falsified that (within-QD only); the manuscript leans on the new
+smooth-QD contribution (F23) for the #1/#5 legs and discloses the held-out
+gate as unrun. This is now a documented limitation, not an open task.
+[H: 2026-06-16]
 
 ### F24 — Case-study equivalence needs a fully-specified problem `MEASURED`
 The narrative's case-study artifact "archive heatmap with equivalence-

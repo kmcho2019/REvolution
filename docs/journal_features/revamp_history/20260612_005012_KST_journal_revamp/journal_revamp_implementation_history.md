@@ -2958,3 +2958,25 @@ fallback; R-D k=2 (already running on OpenRouter).
   (venue) decision, not just compute.
 - NEXT: surfaced to the user for scope confirmation before committing the
   multi-day held-out run (recorded F25, doc 13).
+
+## 2026-06-16 ~10:30 KST — DECISION (user): do NOT run held-out gate; document the gap
+
+- Following F25, asked the user how to scope the held-out final gate
+  (classic+qd_target+V2 / classic+qd_target only / don't run). User chose
+  DON'T RUN; document the gap.
+- Rationale: the expected outcome is Branch C confirmed (QD loses -0.093 on
+  the tuning subset -> near-certain to lose on the 20-problem held-out too),
+  so the ~2-3-day held-out run is a confirmatory negative that does not
+  change the story. The narrative explicitly permits reporting hard-subset
+  numbers "scoped as tuning-set results."
+- Documented as a DISCLOSED LIMITATION (not a hidden gap):
+  * F25 reframed BLOCKER -> "SCOPED - documented limitation" (doc 13).
+  * Added to doc 17 "Disclosures the paper MUST carry": QD-vs-classic (F1) +
+    smooth-QD (F23) are tuning-set-scoped; held-out is future work; the
+    operator ablation F2 is unaffected (tuning-set by protocol); Branch C
+    floor leg (i) unmet (F9) so #1/#5 rest on the smooth-QD contribution.
+  * Added to the consolidated record §1 status + §6 caveats; corrected the
+    dashboard "all experiments complete" header; corrected the todo
+    "5-seed final publication experiments" item.
+- No runs launched. The manuscript (#15) is the remaining work; it must
+  carry the held-out limitation honestly.

@@ -21,9 +21,14 @@ and the frozen claims contract (`docs/journal_features/journal_narrative.md`,
 which wins on any conflict). Where a number here cites `exp/...`, that is
 the raw artifact directory.
 
-**Status as of 2026-06-16: all experiments complete; the evidence base is
-LOCKED at 5 seeds.** Only the manuscript write-up into the Overleaf
-`journal_draft` remains (user-authored).
+**Status as of 2026-06-16:** the ablations, characterization, and smooth-QD
+contribution are complete and 5-seed-locked **on the tuning hard subset**.
+The frozen narrative's QD-vs-classic FINAL gate on the 20-problem held-out
+reference set was, by decision (2026-06-16), **NOT run** (the Branch-C-
+confirmed outcome is a confirmatory negative; held-out is disclosed as a
+stated limitation / future work — see §6 and F25). All QD-vs-classic and
+smooth-QD numbers are therefore **tuning-set-scoped**. Remaining work: the
+manuscript write-up into the Overleaf `journal_draft` (user-authored).
 
 ---
 
@@ -380,6 +385,15 @@ subset (F15) → motivated the smooth-QD reframe (§3.2).
 - **Contract compliance verified:** F1/F2 use the penalized (gate-bearing)
   statistic the frozen rule requires (penalized == complete-case here, no
   imputation triggered); F2 parity holds in all 5 LOSO folds.
+- **Held-out final gate not run (F25) — disclosed limitation.** The
+  narrative's QD-vs-classic final gate + branch decision are predeclared on
+  the 20-problem held-out reference set; only the tuning hard subset was run.
+  By decision (2026-06-16) the held-out gate was not executed (Branch-C-
+  confirmed outcome = confirmatory negative). Consequence the manuscript
+  carries: F1 (QD loses) and F23 (smooth-QD) are TUNING-SET-SCOPED, held-out
+  is future work; the operator ablation F2 is unaffected (tuning-set protocol
+  by design); the #1/#5 answers rest on the smooth-QD contribution (F23), not
+  a held-out gate (Branch C floor leg (i) unmet, F9).
 
 ---
 

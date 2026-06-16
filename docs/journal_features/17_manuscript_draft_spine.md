@@ -119,6 +119,18 @@ only" scope. Disclose Prob135 solutions as testbench-validated.
   (simple_2d is) — sophistication didn't buy diversity health (F12).
 - Two evaluation artifacts caught and corrected mid-study (include-confound
   F19; parallel-eval contention M12) — disclosed as methodology rigor.
+- **Held-out final gate not run (F25).** The QD-vs-classic verdict (F1) and
+  the smooth-QD headline (F23) are computed on the 13-problem hard subset,
+  which the narrative scopes as a TUNING set; the predeclared 20-problem
+  held-out reference gate (`data/configs/holdout_reference_subset.yaml`) was
+  NOT executed (decision 2026-06-16: the Branch-C-confirmed outcome is a
+  confirmatory negative not worth the multi-day compute). All QD-vs-classic
+  and smooth-QD numbers must be stated as **tuning-set-scoped**, with the
+  held-out confirmation named as **future work**. The operator ablation (F2)
+  is unaffected — its protocol is predeclared on the tuning set. Branch C
+  floor leg (i) ("simplification independent of QD") is not met (F9), so the
+  paper rests the #1/#5 answers on the smooth-QD contribution (F23), not on
+  a held-out QD-vs-classic gate.
 
 ## Open before submission (gating)
 
