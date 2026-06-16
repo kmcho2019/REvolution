@@ -1,6 +1,16 @@
 # 16. Smooth QD Integration Track — design & specs
 
-**Status:** OPEN design track started 2026-06-14 (user-initiated). Goal:
+> **RESULT (2026-06-16, 5-seed) — track CLOSED, contribution CONFIRMED.**
+> V1 and V2 are built, run, and verdicted; the plan/variant-ladder language
+> below is the design-time record. Verdict lives in **F23 (doc 13)**: V2
+> (V1 + NSGA-II global-rank selection) reaches **no statistically
+> significant quality cost vs classic — 5-seed pooled −0.016, CI
+> [−0.045,+0.007], includes 0**; V1 alone is significantly worse (−0.034,
+> CI [−0.066,−0.009]) so **NSGA-II is necessary** (benefit V2−V1 +0.018, CI
+> [+0.005,+0.032], demonstrated). Residual localized to alu/parallel2serial
+> (capability limit). V3 (overlay knobs) was NOT needed.
+
+**Status:** CLOSED 2026-06-16 (was OPEN design track 2026-06-14, user-initiated). Goal:
 salvage QD/MAP-Elites as a POSITIVE contribution by integrating it
 *smoothly* into the classic REvolution baseline, instead of the radical
 `thought_only` break that loses to classic (F1/F15). Records the design,
