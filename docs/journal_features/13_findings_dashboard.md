@@ -29,17 +29,22 @@ every answer to the five conference criticisms is evidence-backed:
 - **F1 — the radical `thought_only` QD LOSES to classic** (5-seed −0.093,
   cluster-bootstrap CI [−0.149, −0.036], sign-test p=1.3e-05). Reported
   honestly, not hidden.
+  Source: `exp/ablation_matrix/stats/final_5seed_F1_qt_vs_classic/statistical_tests.json`.
 - **F2 — operator unification at clean PARITY within QD** (5-seed +0.001,
   CI [−0.008, +0.011], p=1.0, robust in all 5 leave-one-seed-out folds) —
   the missing operator ablation (criticisms #2/#3).
+  Source: `exp/ablation_matrix/stats/final_5seed_F2_qt_vs_six/statistical_tests.json`.
 - **F23 — SMOOTH-QD (V2 = code_individual + NSGA-II selection) adds
   diversity at NO significant quality cost** vs classic (5-seed −0.016, CI
   [−0.045, +0.007]); NSGA-II is necessary (V2−V1 +0.018, CI [+0.005,
   +0.032]). The positive contribution answering #1 (no scalar weight) + #5
-  (diversity).
+  (diversity). Source: `exp/fast_iter/smooth_qd_nsga2/stats_5seed_vs_classic/`
+  and `exp/fast_iter/smooth_qd_code_individual/stats_5seed_vs_classic/`.
 - **F18–F21 — at RealBench (real-CPU e203) scale the binding limit is LLM
   spec-comprehension, not search structure** — answers #4 as a
   characterization (a stronger model narrows but does not cross the gap).
+  Source: `exp/fast_iter/capability_remap/grade_mismatch_compare.json`,
+  `exp/fast_iter/deepseek_capability_probe/`.
 
 **Where to read more:** doc 17 = the paper's story (abstract /
 contributions / results synthesis, with every number + source path); §2
@@ -310,7 +315,7 @@ RECOMMENDATION for the manuscript: keep Prob135 for the multi-cell archive
 heatmap (disclose its solutions as testbench-validated — spec has a
 don't-care, formal equivalence out of scope), and report the equivalence
 pass-rate on a fully-specified problem (Prob150, 1/1). Artifacts:
-`exp/fast_iter/hard_subset_42/qd/.../Prob{135_m2014_q6b,150_review2015_fsmonehot}/equivalence_spotcheck`. [H: 2026-06-16]
+`exp/fast_iter/hard_subset_42/qd/revolution/openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob{135_m2014_q6b,150_review2015_fsmonehot}/equivalence_spotcheck`. [H: 2026-06-16]
 
 ### F23 — Smooth QD: NO SIGNIFICANT quality cost vs classic (5-seed) `MEASURED`
 The smooth-integration salvage works, now confirmed at 5 seeds (matching

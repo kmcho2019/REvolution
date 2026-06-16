@@ -23,7 +23,7 @@ carry into the narrowed claim set:
 ## Root-cause dossier (method/results sections)
 
 1. Transcription poisoning (spec-exact regime):
-   exp/fast_iter/hard_subset_42/qd/.../Prob116_m2014_q3/Gen0/
+   exp/fast_iter/hard_subset_42/qd/revolution/openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob116_m2014_q3/Gen0/
    g000_thought_0001/ (wrong interface indexing in thought, all four
    realizations follow it; K-map present in realization prompt).
    History entry 2026-06-12 13:05.
@@ -43,7 +43,7 @@ carry into the narrowed claim set:
 ## Case-study artifacts (four planned)
 
 - Archive heatmap: source = Prob135_m2014_q6b (the only healthy 6-cell
-  archive, QD +0.088; exp/fast_iter/hard_subset_42/qd/.../Prob135_m2014_q6b/
+  archive, QD +0.088; exp/fast_iter/hard_subset_42/qd/revolution/openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob135_m2014_q6b/
   grid_quantile_* visualization artifacts).
 - Equivalence-checked solutions (SPLIT from the heatmap per F24): Prob135
   has a don't-care reference (Y1=1'bx), so its solutions are testbench-valid
@@ -51,15 +51,15 @@ carry into the narrowed claim set:
   "fully-specified problems only" scope. Report the equivalence pass-rate on
   the fully-specified Prob150_review2015_fsmonehot instead (1/1 PROVEN,
   harness-validated). equivalence via scripts/check_equivalence.py ->
-  exp/fast_iter/hard_subset_42/qd/.../Prob{135_m2014_q6b,150_review2015_fsmonehot}/equivalence_spotcheck.
+  exp/fast_iter/hard_subset_42/qd/revolution/openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob{135_m2014_q6b,150_review2015_fsmonehot}/equivalence_spotcheck.
 - Thought lineage: m2014_q3 failure-regime v2 chain (gen-1 fail_pool
   thought with feedback -> 3/4-success child;
-  exp/fast_iter/rb_failure_regime_v2/variant/.../Prob116_m2014_q3/).
+  exp/fast_iter/rb_failure_regime_v2/variant/revolution/openai_gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob116_m2014_q3/).
 - Evaluated-history scalar comparison: generation_log.jsonl
   (all-samples logging fix) classic vs QD on hard_subset_42.
 - Failure panel: alu feedback-misdirection case (PPA-flavored
   feedback on functional failures, pass rate 15%->2%;
-  rb_failure_regime_v2/variant/.../Prob045_alu/).
+  rb_failure_regime_v2/variant/revolution/openai_gpt-oss-120b/RTLLM/Prob045_alu/).
 
 ## Measurement-model section inputs
 
