@@ -14,7 +14,7 @@ question, with precise paths. §4 is the decision log. §5 is the dead-ends
 
 **Relationship to the other docs.** This is the consolidated complement to:
 the topic-indexed findings dashboard (`docs/journal_features/13_findings_dashboard.md`,
-findings F1–F24 / M1–M12), the chronological audit log
+findings F1–F32 / M1–M14), the chronological audit log
 (`journal_revamp_implementation_history.md`, 65+ dated entries), the
 manuscript spine (`docs/journal_features/17_manuscript_draft_spine.md`),
 and the frozen claims contract (`docs/journal_features/journal_narrative.md`,
@@ -318,6 +318,33 @@ subset (F15) → motivated the smooth-QD reframe (§3.2).
   the equivalence pass-rate. Artifacts:
   `exp/fast_iter/hard_subset_42/qd/revolution/openai-gpt-oss-120b/VerilogEval-Spec-to-RTL/Prob{135_m2014_q6b,150_review2015_fsmonehot}/equivalence_spotcheck/`.
 
+### 3.8 CVDP — the newer benchmark, the interface confound, and the capable-regime tests (F26–F32, M14)
+
+- **Question:** does our method beat classic on CVDP — a newer/harder cocotb
+  benchmark, the regime where QD's diversity might pay off? (Criticism #4.)
+- **First-ever revolution+CVDP runs** (prior CVDP touched only the CodeEvolve
+  baseline). The harness is local cocotb+iverilog (`SIM=icarus`, no Docker);
+  validated operational (F26) and PASS-validated (a correct solution passes).
+- **The F30 confound (the key finding) + fix.** `build_cvdp_problem_context`
+  set the prompt to `input.prompt` only, dropping `input.context` — the module
+  to edit AND its exact interface. The model invented port names → every
+  candidate failed on interface mismatch → an apparent "capability ceiling"
+  (0/9 medium, 0/10 easy) that was actually a wiring confound (F19-class).
+  **Fixed** (`fix(cvdp)`, thread `input.context` + preserve-interface
+  instruction; regression test). M14: the in-run CVDP functional eval
+  under-reports — grade by **isolated re-eval** (`exp/grade_cvdp_isolated.py`),
+  the F20 discipline.
+- **Capable-regime results (post-fix, isolated-graded, seed 42):**
+  * Easy tier (F31): classic 9/10 = V2 9/10 — the LLM is capable, QD ties.
+  * Medium tier (F32, the capable-but-hard sweet-spot test): classic 7/10 =
+    V2 7/10, identical solved set — **the F29 sweet-spot hypothesis is
+    falsified.** QD found no solution classic missed.
+  Sources: `exp/cvdp_easy_fixed/grade_cvdp_easy.json`,
+  `exp/cvdp_medium_fixed/grade_cvdp_medium.json`.
+- **Net:** a real bug fixed (CVDP is now a working benchmark), and QD ties
+  classic across CVDP difficulty — completing the spectrum-wide "QD never
+  beats classic" characterization (with RealBench-large the capability ceiling).
+
 ---
 
 ## 4. Major decisions log
@@ -412,6 +439,9 @@ subset (F15) → motivated the smooth-QD reframe (§3.2).
 | F12 descriptor bake-off | no profile wins | `exp/fast_iter/bakeoff_verdict/`, `exp/fast_iter/descriptor_correlation_hard/` |
 | F10–F15 QD repairs | Fix B halves fast, fails hard | `exp/fast_iter/fixb_hard_subset/`, `exp/fast_iter/fixbprime_hybrid/` |
 | F24 equivalence (don't-care split) | Prob135 0/8, Prob150 1/1 | `…/VerilogEval-Spec-to-RTL/Prob{135_m2014_q6b,150_review2015_fsmonehot}/equivalence_spotcheck/` |
+| F30 CVDP interface confound (FIXED) | input.context dropped from prompt → fixed + tested | `src/revolution/runtime/cvdp_evaluator.py`, `tests/revolution/test_cvdp_evaluator.py` |
+| F31 CVDP easy, post-fix (isolated-graded) | classic 9/10 = V2 9/10 (tie) | `exp/cvdp_easy_fixed/grade_cvdp_easy.json` |
+| F32 CVDP medium, capable-but-hard (sweet-spot test) | classic 7/10 = V2 7/10 — falsified | `exp/cvdp_medium_fixed/grade_cvdp_medium.json` |
 | Budget asymmetry (M2) | calls 1.125, tokens 1.253 | `exp/fast_iter/hard_subset_42/budget_parity/` |
 | Raw ablation runs (all arms/seeds) | per-problem generation logs | `exp/ablation_matrix/<arm>/seed_<n>/revolution/openai_gpt-oss-120b/<suite>/<Prob>/generation_log.jsonl` |
 
