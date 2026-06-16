@@ -50,14 +50,17 @@ every answer to the five conference criticisms is evidence-backed:
   spec-comprehension, not search structure** — answers #4 via TWO
   independent benchmarks: RealBench e203 (0 valid on large modules,
   gpt-oss-120b + deepseek) AND CVDP (0/9 functional pass, classic =
-  qd_target = qd_v2). Neither classic nor QD clears the functional bar, so
-  QD's diversity can't help. Source:
+  qd_target = qd_v2). On RealBench our chosen method V2 was also tested
+  (F28): classic 4 ≥ V2 3 > qd_target 2 (all on the 2 smallest modules,
+  0 on the 5 larger) — V2 doesn't beat classic either. Neither classic nor
+  QD clears the functional bar on the large designs, so QD's diversity
+  can't help. Source:
   `exp/fast_iter/capability_remap/`, `exp/fast_iter/deepseek_capability_probe/`,
   `exp/cvdp_debug_probe/`.
 
 **Where to read more:** doc 17 = the paper's story (abstract /
 contributions / results synthesis, with every number + source path); §2
-below = per-finding detail (F1–F27, M1–M13); doc 14 = the candid
+below = per-finding detail (F1–F28, M1–M13); doc 14 = the candid
 reviewer-muster read; doc 12 = claim→artifact-path map. Full chronology in
 `revamp_history/.../journal_revamp_implementation_history.md`.
 
@@ -307,6 +310,24 @@ is running to settle the actual win-path hypothesis — does diverse
 thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
+
+### F28 — Smooth-QD V2 on RealBench: 3 valid, classic ≥ V2 > qd_target (gap closed) `MEASURED`
+Closed the one experimental gap (user-greenlit 2026-06-16): smooth-QD V2
+(code_individual + NSGA-II, our chosen method) on the same 7 dependency-
+complete e203 modules as the classic + qd_target arms (pop8×1gen, seed 42),
+graded by isolated re-eval (`exp/grade_mismatch_v2.py` → `grade_mismatch_v2.json`,
+the M12 mitigation). **TOTAL valid: classic 4 ≥ qd_v2 3 > qd_target 2** — all
+valids on the 2 SMALLEST modules (alu_csrctrl, alu_rglr); **0 valid on all 5
+larger modules (wbck/branchslv/disp/longpwbck/decode) for EVERY arm.** So V2
+beats the radical qd_target (consistent with V2 being the better QD form) but
+**still does not beat classic**; the capability ceiling on the large modules
+dominates all arms. Nuance: V2 got CLOSER on longpwbck (min-mismatch 0.66 vs
+classic 0.86 / qd_target 0.88 — diversity narrowing the gap) but not valid.
+Caveat (per F20): the small modules have weak coverage, so the robust reading
+is "no method beats classic; all tie at 0 on the large modules," not the
+precise 4/3/2. **This completes the #4 story: on BOTH harder benchmarks
+(RealBench + CVDP, F27) our chosen method V2 does NOT beat classic — the
+binding limit is LLM capability, not search.** [H: 2026-06-16]
 
 ### F27 — CVDP debug probe: 0/9 functional pass, classic = QD (capability ceiling, mirrors RealBench) `MEASURED`
 The user-greenlit CVDP debug-seed probe (seed 42, pop20×5gen, 9 tasks after

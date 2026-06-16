@@ -3132,3 +3132,20 @@ fallback; R-D k=2 (already running on OpenRouter).
   the capability ceiling (~0-2 valid, 0 on large) -> confirms no method beats
   classic on RealBench; completes the #4 "our chosen method on both harder
   benchmarks" story. Then: manuscript artifact prep (tables + case-study figs).
+
+## 2026-06-16 ~20:00 KST — Gap closed: smooth-QD V2 on RealBench (F28)
+
+- V2 (code_individual + NSGA-II) ran on the 7 e203 modules (pop8x1gen, seed
+  42), graded by isolated re-eval (exp/grade_mismatch_v2.py). TOTAL valid:
+  classic 4 >= qd_v2 3 > qd_target 2 - all valids on the 2 smallest modules
+  (alu_csrctrl, alu_rglr); 0 valid on all 5 larger modules for every arm.
+- V2 > qd_target (the radical thought_only) is consistent with V2 being the
+  better QD form; V2 < classic (still doesn't beat it). V2 got closer on
+  longpwbck (min-mismatch 0.66 vs classic 0.86) - diversity narrowing the gap
+  but not crossing. Caveat: small-module coverage is weak (F20), so the robust
+  reading is "no method beats classic; all 0 on large", not the precise 4/3/2.
+- COMPLETES the #4 story: on BOTH harder benchmarks (RealBench F28 + CVDP
+  F27), our chosen method V2 does NOT beat classic; the binding limit is LLM
+  capability, not search. Recorded F28; updated §0 + scorecard.
+- NEXT (per user plan): manuscript artifact prep (result tables + RealBench/
+  CVDP capability table + 4 case-study figures).
