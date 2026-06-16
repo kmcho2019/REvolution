@@ -449,6 +449,33 @@ All raw run roots: `exp/ablation_matrix/` (5 arms × 5 seeds), `exp/fast_iter/`
 
 ---
 
-_Maintenance: refresh §1/§3/§7 numbers from `exp/ablation_matrix/stats/`
-and `exp/fast_iter/*/stats_*` if any run is re-executed; keep finding IDs
+## 9. Goal-criteria scorecard (vs goal_template.md, 2026-06-16)
+
+Honest status of each goal outcome / verification / completion criterion.
+"SCOPED OUT" = a conscious documented-limitation decision, not a silent gap.
+
+| Goal item | Status | Evidence / note |
+|---|---|---|
+| **(1)** QD-vs-classic on HELD-OUT statistics | **SCOPED OUT** | Ran on the tuning hard subset (F1 −0.093); the 20-problem held-out gate was not run by decision 2026-06-16 (Branch-C-confirmed = confirmatory negative). Disclosed limitation (F25, doc 17). |
+| **(2)** Frozen, pre-registered BD profile + correlations + rationale | **MET** | journal_logic_ff_width_3d frozen (F12); descriptor-objective correlations measured (descriptor_correlation_hard); rationale + comb_width_log size-proxy disclosure in the narrative. |
+| **(3)** CVDP + RealBench end-to-end on locked slices | **PARTIAL** | RealBench MET (classic-vs-QD end-to-end on e203, F18–F21, `exp/fast_iter/capability_remap`). **CVDP NOT run end-to-end** (smoke only, `exp/codeevolve_cvdp_*_smoke`) — same class as held-out; recommend scope-out + document (the #4 answer is carried by RealBench). |
+| **(4)** Manuscript per branch + 4 case-study artifacts | **PENDING** | Manuscript = the remaining deliverable (#15, user-authored). The 4 artifacts have verified source data; equivalence resolved (F24). |
+| Verify: report_journal_statistics gates | **MET** | F1/F2 official + LOSO; `exp/ablation_matrix/stats/final_5seed_*`. |
+| Verify: validate_journal_revamp_run.py exit 0 per root | **classic MET; QD FAIL** | classic seed_1001 PASS; qd_target seed_1001 FAIL (exit 1) on descriptor collapse — 4/13 problems (adder_8bit, circuit7, fsmonehot total-collapse; gshare zero-occupancy). This is the **characterized descriptor-degeneracy** phenomenon (M13), not a new bug — disclosed, not a clean gate pass. `exp/ablation_matrix/stats/validate_{classic,qd_target}_1001`. |
+| Verify: descriptor health / correlation artifacts | **MET** | F12; descriptor_correlation_hard. |
+| Verify: manifest/subset sha256 locks + ledger | **MET** | data/configs locks; rerun_ledger.jsonl. |
+| Verify: four-persona v2 sign-off on full evidence+manuscript | **PENDING** | Narrative got four-persona sign-off; the full-package v2 sign-off needs the manuscript. |
+| Completion: every TODO checked + spot-verified | **5 open** | 2 RentCon (deprioritized, non-gate-bearing), 2 CVDP (this row + criterion 3), 1 manuscript (#15). |
+
+**Bottom line vs the goal:** the goal is substantially met **as a Branch-C
+characterization + the smooth-QD positive contribution**, with two final-gate
+items (held-out QD-vs-classic, CVDP end-to-end) consciously **scoped out as
+documented limitations**, and the **manuscript (#15)** as the remaining
+deliverable. The descriptor-collapse validator failure on QD is itself
+evidence for the characterization (M13).
+
+---
+
+_Maintenance: refresh §1/§3/§7/§9 from `exp/ablation_matrix/stats/` and
+`exp/fast_iter/*/stats_*` if any run is re-executed; keep finding IDs
 (F#/M#) stable and aligned with doc 13._

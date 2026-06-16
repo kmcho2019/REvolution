@@ -2980,3 +2980,32 @@ fallback; R-D k=2 (already running on OpenRouter).
     "5-seed final publication experiments" item.
 - No runs launched. The manuscript (#15) is the remaining work; it must
   carry the held-out limitation honestly.
+
+## 2026-06-16 ~11:30 KST — Completed goal-criteria audit; scorecard + M13
+
+- Continued the goal_template.md re-review beyond criterion (1). Findings:
+  * Criterion (2) descriptor profile: MET (F12).
+  * Criterion (3) CVDP + RealBench end-to-end: RealBench MET (F18-21,
+    capability_remap classic-vs-QD on e203); CVDP NOT run end-to-end (smoke
+    only, exp/codeevolve_cvdp_*_smoke) -> same class as the held-out gate.
+  * Criterion (4) manuscript + 4 case-study artifacts: manuscript PENDING
+    (#15); artifacts ready (F24).
+  * Verification surface: report_journal_statistics MET; descriptor
+    health/correlation MET; manifest/seed locks + ledger MET;
+    validate_journal_revamp_run.py -> classic PASS, qd_target FAIL (M13);
+    four-persona v2 sign-off on full package PENDING (needs manuscript).
+- M13 (NEW): ran validate_journal_revamp_run.py on the finals. classic
+  seed_1001 PASS; qd_target seed_1001 FAIL (exit 1) on fatal descriptor
+  collapse on 4/13 problems (adder_8bit, circuit7, fsmonehot all-axes;
+  gshare zero-occupancy). This MECHANICALLY confirms the descriptor-
+  degeneracy characterization (F12/root-cause dossier); the verification-
+  surface "exit 0 per root" is met for classic, not QD - disclosed as the
+  characterized phenomenon. Artifacts:
+  exp/ablation_matrix/stats/validate_{classic,qd_target}_1001.
+- Added a Goal-criteria scorecard (consolidated record §9): goal
+  substantially MET as a Branch-C characterization + smooth-QD, with held-out
+  (criterion 1) and CVDP end-to-end (criterion 3) SCOPED OUT as documented
+  limitations, and the manuscript (#15) the remaining deliverable.
+- CVDP end-to-end is the one same-class item still awaiting a user decision
+  (recommend scope-out + document, consistent with held-out; #4 carried by
+  RealBench). Surfaced to the user.
