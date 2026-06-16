@@ -14,12 +14,38 @@ full evidence; when it cites `exp/...` that is the raw artifact.
 `PRELIMINARY` one seed, replication pending ·
 `MECHANISM-VERIFIED` process confirmed live, outcome tracked separately.
 
-**Last refreshed:** 2026-06-14 14:30 KST. Investigation arc closed
-(win-path retired F20 then probed F21/F22; core verified reliable M12;
-all freeze decisions settled). RUNNING: 5-seed finals (bo03wrum8),
-smooth-QD V1 (F22, ba2bipcz3). Refresh tables from
-`exp/ablation_matrix/stats/` and `exp/fast_iter/*/stats/` when runs land;
-keep finding IDs stable.
+**Last refreshed:** 2026-06-16 08:00 KST. **ALL EXPERIMENTS COMPLETE; the
+evidence base is LOCKED at 5 seeds.** Only the manuscript write-up remains
+(#15, user-authored Overleaf). Finding IDs are stable.
+
+---
+
+## 0. Bottom line (read this first)
+
+The journal is a rigorous **CHARACTERIZATION** of when QD/thought-level
+structure helps LLM RTL search, plus **one positive contribution** — and
+every answer to the five conference criticisms is evidence-backed:
+
+- **F1 — the radical `thought_only` QD LOSES to classic** (5-seed −0.093,
+  cluster-bootstrap CI [−0.149, −0.036], sign-test p=1.3e-05). Reported
+  honestly, not hidden.
+- **F2 — operator unification at clean PARITY within QD** (5-seed +0.001,
+  CI [−0.008, +0.011], p=1.0, robust in all 5 leave-one-seed-out folds) —
+  the missing operator ablation (criticisms #2/#3).
+- **F23 — SMOOTH-QD (V2 = code_individual + NSGA-II selection) adds
+  diversity at NO significant quality cost** vs classic (5-seed −0.016, CI
+  [−0.045, +0.007]); NSGA-II is necessary (V2−V1 +0.018, CI [+0.005,
+  +0.032]). The positive contribution answering #1 (no scalar weight) + #5
+  (diversity).
+- **F18–F21 — at RealBench (real-CPU e203) scale the binding limit is LLM
+  spec-comprehension, not search structure** — answers #4 as a
+  characterization (a stronger model narrows but does not cross the gap).
+
+**Where to read more:** doc 17 = the paper's story (abstract /
+contributions / results synthesis, with every number + source path); §2
+below = per-finding detail (F1–F24, M1–M12); doc 14 = the candid
+reviewer-muster read; doc 12 = claim→artifact-path map. Full chronology in
+`revamp_history/.../journal_revamp_implementation_history.md`.
 
 ---
 
@@ -30,8 +56,8 @@ keep finding IDs stable.
 | P1 | QD repair | **CLOSED → Branch C (now evidence-decided).** All screens + ablation + parity fixes done; Fix B halved the FAST deficit but did NOT transfer to hard (F15). The last win-path lever — RealBench-large (#16) — does NOT deliver a win: isolated re-eval shows valid candidates only on the 2 smallest e203 modules with classic 4 ≥ QD 2, and 0 valid on the larger ones (F20; the parallel run's "0/7" was an artifact, M12). So no QD PPA-win at scale. Branch C is the conclusion on evidence, not assumption. |
 | P2 | BD / descriptor thesis | **DONE.** Bake-off complete (F12); profile FROZEN to the trio per the predeclared rule (§6). NEW: smooth-QD track (doc 16, F22) tests QD as a parity+diversity augmentation. |
 | P3 | Benchmark vetting | **DONE.** RealBench verilator-only (55/60). Storyline-decider CONCLUDED: QD does not win at scale (F20); stronger-model probe closer-but-still-0 (F21). |
-| P4 | Gates / freeze | **DONE.** All freeze decisions settled (profile, MDE, budget rule, equivalence scope — §6). 5-seed finals RUNNING (bo03wrum8). |
-| P5 | Manuscript | **Ready to write.** Evidence map refreshed (doc 12); lives in journal_draft Overleaf submodule; awaits finals numbers (user-authored). |
+| P4 | Gates / freeze | **DONE.** All freeze decisions settled (profile, MDE, budget rule, equivalence scope — §6). 5-seed finals COMPLETE; F1/F2 locked (§0/§2). |
+| P5 | Manuscript | **Ready to write.** Spine (doc 17) carries every confirmed 5-seed number + source path; evidence base + case study de-risked (F24); lives in journal_draft Overleaf submodule (user-authored). |
 
 **Win-path status (#16): CONCLUDED — QD does not win (F20).**
 The full investigation ran its course: infra fixed + validated end-to-end
@@ -49,10 +75,10 @@ LLM-infeasible. The "QD beats classic on RealBench-large PPA" headline is
 unsupported. **This is not a wasted leg:** it converts criticism #4 into
 a real RealBench-scale result and extends the regime-sensitivity thread
 (F4) — the binding limit at real-CPU scale is LLM spec-comprehension.
-**REOPENED as a probe (F21):** the ceiling was established for
-gpt-oss-120b; a deepseek-v4-pro capability probe is now testing whether
-a stronger model clears the large modules (→ win-path reopens) or also
-fails (→ ceiling is model-general). Verdict pending.
+**Probe CONCLUDED (F21):** the deepseek-v4-pro capability probe narrowed
+the mismatch (disp 21%→6%, branchslv 25%→8%) but still produced 0 valid on
+the large modules → the ceiling is MODEL-GENERAL, not gpt-oss-120b-specific.
+Win-path stays closed.
 **The finals are the CHARACTERIZATION paper (Branch C), now decided on
 evidence, not assumption.**
 
