@@ -305,28 +305,27 @@ thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
 
-### F26 — CVDP debug probe: the functional HARNESS is the blocker, not compute `MEASURED`
+### F26 — CVDP harness is OPERATIONAL locally; the probe's 0% is GENUINE difficulty `MEASURED`
 User greenlit a debug-seed CVDP probe (2026-06-16). **First-ever
 revolution+CVDP run** — all prior CVDP runs used the CodeEvolve baseline.
-Findings: **(1) the path RUNS** — classic seed-42 on
-cvdp_copilot_generic_nbit_counter_0039 generated 12 candidates;
-format/diff/syntax checks pass; reference-PPA calc + summary emitted.
-Invocation gotcha: CVDP needs `--cvdp_categories all` (else `select_cvdp_ids`
-throws `NoneType` and `_discover_tasks` asserts the id missing). **(2) 0%
-functionality** — no candidate passed the cocotb functional test (this CVDP
-task is a non-trivial multi-mode counter: binary/Johnson/Gray/Ring +
-typedef-enum spec; at least one candidate had a real SystemVerilog syntax
-error). **(3) The 0% CANNOT be ground-truthed in this environment:** the
-dataset withholds the golden (`output.response` empty), the reference
-harness is Docker-based (`__OSS_SIM_IMAGE__`; **Docker unavailable here**),
-and the per-candidate `pytest.log` is written to a cleaned-up temp run_root.
-cocotb IS installed and the evaluator runs `pytest` locally, but whether 0%
-is genuine difficulty or a cocotb harness false-negative is **UNRESOLVED.**
-**Consequence:** CVDP functional testing is **infra-blocked (harness
-validation), not compute-blocked** — a meaningful classic-vs-QD CVDP
-comparison needs the cocotb harness validated/fixed first (an F16-style
-effort, with NO golden to validate against). This is why CVDP never got past
-smoke. `exp/cvdp_probe_precheck/classic`. [H: 2026-06-16]
+**The path runs and the cocotb functional harness WORKS LOCALLY** (NOT
+Docker-blocked — `test_runner.py` uses `cocotb_tools.runner` with
+`SIM=icarus`; the evaluator correctly localizes the `.env`
+`VERILOG_SOURCES`/`PYTHONPATH` from container paths). Ground-truthed by
+re-running all 12 classic seed-42 candidates through the harness:
+**5/12 COMPILE_FAIL (iverilog exit 2), 7/12 compiled + ran the cocotb test
+then FUNCTIONAL-FAIL, 0 pass.** The 7 func-fails prove the harness reaches
+the functional assertions. **So the 0% is GENUINE**, not a harness
+artifact: `cvdp_copilot_generic_nbit_counter_0039` is a hard multi-mode
+counter (binary/Johnson/Gray/Ring + typedef-enum) and the tiny pop4×2gen run
+produced syntax errors + functionally-wrong solutions. **(Corrects this
+finding's first version, which wrongly concluded "infra-blocked / can't
+ground-truth".)** Invocation gotcha: CVDP needs `--cvdp_categories all`
+(else `select_cvdp_ids` throws and `_discover_tasks` asserts). **Consequence:
+CVDP IS testable** — a real classic-vs-QD CVDP comparison is feasible (run
+the proper debug probe with adequate budget). Early #4-relevant signal: CVDP
+is genuinely HARDER than RTLLM/VerilogEval (classic scored 0% on a hard task
+at small budget). `exp/cvdp_probe_precheck/classic`. [H: 2026-06-16]
 
 ### F25 — Held-out final gate not run; tuning-set-scoped by decision `SCOPED — documented limitation`
 The frozen narrative requires the QD-vs-classic FINAL gate + the branch
