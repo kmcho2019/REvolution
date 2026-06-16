@@ -3189,3 +3189,26 @@ fallback; R-D k=2 (already running on OpenRouter).
 - On completion: read functional-any-pass (classic vs V2). Other levers
   (stronger model, hierarchical generation, richer feedback) recorded in F29
   as future work.
+
+## 2026-06-16 ~22:00 KST — F30: CVDP "ceiling" was an interface-wiring confound; FIXED
+
+- Ground-truthing the easy-tier 0/10 (classic 0/10 even on trivial
+  binary_to_gray) exposed an F19-class confound. build_cvdp_problem_context
+  set problem_description = input.prompt ONLY, dropping input.context (the
+  buggy module to edit + its exact interface binary_in/gray_out/WIDTH). The
+  model invented port names (binary/gray/N) -> every candidate failed the
+  cocotb harness on INTERFACE MISMATCH regardless of logic.
+- Proof: (1) a probe candidate had correct logic (gray=bin^(bin>>1)) but wrong
+  ports; (2) a hand-written correct-interface solution PASSES the harness
+  (rc=0 -> harness sound, CAN pass); (3) with the fix, candidates now emit the
+  correct interface (binary_in/gray_out/WIDTH confirmed in the re-run).
+- FIX (committed): thread input.context source files into the prompt +
+  preserve-interface instruction + regression test (6/6 CVDP tests pass; ruff
+  + pyright clean on the module). Killed the confounded easy probe.
+- CONSEQUENCE: F27/F28/§0 CVDP "capability ceiling" is RETRACTED pending the
+  fixed re-run -> CVDP is testable + likely largely solvable; the fixed re-run
+  gives the true classic-vs-QD signal (the capable-but-hard regime). RealBench
+  (F18-21) UNAFFECTED (interface provided there; real large-design ceiling).
+- Live re-validation (binary_to_gray, fixed): candidates now have the correct
+  interface; functional pass-rate confirmation + the full fixed CVDP re-run
+  (classic vs V2, easy+medium) are the next steps.

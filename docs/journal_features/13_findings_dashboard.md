@@ -49,8 +49,9 @@ every answer to the five conference criticisms is evidence-backed:
 - **F18–F21 + F27 — on harder/newer benchmarks the binding limit is LLM
   spec-comprehension, not search structure** — answers #4 via TWO
   independent benchmarks: RealBench e203 (0 valid on large modules,
-  gpt-oss-120b + deepseek) AND CVDP (0/9 functional pass, classic =
-  qd_target = qd_v2). On RealBench our chosen method V2 was also tested
+  gpt-oss-120b + deepseek) AND CVDP (0/9 functional pass — **but see F30: the CVDP 0s
+  were an interface-wiring confound, now fixed; that ceiling claim is
+  retracted pending the fixed re-run; RealBench is unaffected**). On RealBench our chosen method V2 was also tested
   (F28): classic 4 ≥ V2 3 > qd_target 2 (all on the 2 smallest modules,
   0 on the 5 larger) — V2 doesn't beat classic either. Neither classic nor
   QD clears the functional bar on the large designs, so QD's diversity
@@ -60,7 +61,7 @@ every answer to the five conference criticisms is evidence-backed:
 
 **Where to read more:** doc 17 = the paper's story (abstract /
 contributions / results synthesis, with every number + source path); §2
-below = per-finding detail (F1–F29, M1–M13); doc 14 = the candid
+below = per-finding detail (F1–F30, M1–M13); doc 14 = the candid
 reviewer-muster read; doc 12 = claim→artifact-path map. Full chronology in
 `revamp_history/.../journal_revamp_implementation_history.md`.
 
@@ -311,6 +312,29 @@ thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
 
+### F30 — CVDP "capability ceiling" was an INTERFACE-WIRING CONFOUND (F19-class); fixed `MEASURED`
+**The CVDP 0-valid results (F27 medium 0/9, easy probe 0/10) are NOT a
+capability ceiling — they are a prompt-wiring artifact.** `build_cvdp_problem_context`
+set `problem_description = input.prompt` ONLY, dropping `input.context` — the
+buggy module to edit AND its **exact port/parameter interface** the cocotb
+harness drives. The model never saw the interface → invented port names
+(`binary`/`gray`/`N`) while the harness drives `binary_in`/`gray_out`/`WIDTH`
+→ every candidate failed on **interface mismatch regardless of logic**.
+**Proof chain:** (1) a probe candidate had CORRECT logic
+(`gray = binary ^ (binary>>1)`) but wrong ports; (2) a hand-written
+correct-interface solution PASSES the harness (returncode 0 — so the harness
+is sound and CAN pass); (3) with the fix, candidates now emit the correct
+interface (`binary_in`/`gray_out`/`WIDTH` confirmed in the re-run). **Fix
+(committed):** thread `input.context` source files into the prompt with a
+preserve-the-interface instruction + regression test. **Consequence: the
+CVDP "capability ceiling" framing in F27/F28/§0 is RETRACTED pending the
+fixed re-run** — CVDP is testable and likely largely solvable; a fixed re-run
+gives the TRUE classic-vs-QD signal (the capable-but-hard regime). **RealBench
+(F18–F21) is UNAFFECTED** — those are genuinely large designs with a real
+ceiling (the interface is provided there). This is the THIRD eval-wiring
+confound caught by ground-truthing a surprising 0 (cf. F19, M12) — the M6
+discipline earned its keep again. [H: 2026-06-16]
+
 ### F29 — Why the framework fails at scale: search amplifies capability; correctness is near-binary `ANALYSIS`
 Synthesis of the harder-benchmark results (F18–F21, F27, F28) into a
 root-cause + future-work map (manuscript limitations/future-work content).
@@ -354,7 +378,7 @@ precise 4/3/2. **This completes the #4 story: on BOTH harder benchmarks
 (RealBench + CVDP, F27) our chosen method V2 does NOT beat classic — the
 binding limit is LLM capability, not search.** [H: 2026-06-16]
 
-### F27 — CVDP debug probe: 0/9 functional pass, classic = QD (capability ceiling, mirrors RealBench) `MEASURED`
+### F27 — CVDP debug probe: 0/9 functional pass `MEASURED` — but CORRECTED by F30 (interface-wiring confound, not capability)
 The user-greenlit CVDP debug-seed probe (seed 42, pop20×5gen, 9 tasks after
 pruning the context-overflowing perceptron_0006) completed cleanly (no
 overflow on the 9). **Result: 0/9 functional pass for ALL THREE arms —
