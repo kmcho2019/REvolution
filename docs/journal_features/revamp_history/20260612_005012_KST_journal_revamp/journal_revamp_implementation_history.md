@@ -3056,3 +3056,26 @@ fallback; R-D k=2 (already running on OpenRouter).
   Decision point surfaced to the user: invest in CVDP harness validation
   (F16-style, uncertain payoff given no-Docker/no-golden) vs keep CVDP as
   integration-evidence-only. #4 remains carried by RealBench.
+
+## 2026-06-16 ~16:00 KST — CVDP harness validated (F26 corrected); debug probe launched
+
+- Ground-truthed the CVDP cocotb harness (re-ran all 12 classic probe
+  candidates): 5/12 compile-fail, 7/12 compile+func-fail, 0 pass. The 7
+  func-fails prove the harness compiles + runs the cocotb test locally
+  (iverilog, SIM=icarus; NOT Docker). So F26's first conclusion
+  ("infra-blocked") was WRONG -> corrected: the harness is operational and
+  the 0% is GENUINE difficulty (generic_nbit_counter_0039 is a hard
+  multi-mode counter). CVDP IS testable.
+- De-risked the QD-on-CVDP path: qd_target 1-task pre-check ran clean (rc=0),
+  produced archive_summary/qd_metrics/descriptor_health; occupied_cells=0
+  because 0 candidates passed functionality on the hard task (archive only
+  admits valid candidates) -> correct behavior, not a QD failure.
+- Invocation gotcha recorded: CVDP runs need --cvdp_categories all (else
+  select_cvdp_ids throws -> _discover_tasks asserts the id missing).
+- LAUNCHED the user-greenlit debug-seed probe: classic + qd_target +
+  smooth-QD V2 on the 10-task locked CVDP debug subset, seed 42, pop20x5gen,
+  8-wide concurrency (moderate, to avoid M12 synth contention), then pairwise
+  functional-any-pass stats. exp/cvdp_debug_probe; launcher
+  exp/cvdp_debug_probe_launch.sh. Expect signal on the easier tasks (passes),
+  ties at 0 on the hardest. On completion: read functional-any-pass deltas
+  (classic vs qd_target, classic vs V2); if informative, scale to 5 seeds.
