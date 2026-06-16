@@ -61,7 +61,7 @@ every answer to the five conference criticisms is evidence-backed:
 
 **Where to read more:** doc 17 = the paper's story (abstract /
 contributions / results synthesis, with every number + source path); §2
-below = per-finding detail (F1–F30, M1–M13); doc 14 = the candid
+below = per-finding detail (F1–F30, M1–M14); doc 14 = the candid
 reviewer-muster read; doc 12 = claim→artifact-path map. Full chronology in
 `revamp_history/.../journal_revamp_implementation_history.md`.
 
@@ -331,9 +331,14 @@ CVDP "capability ceiling" framing in F27/F28/§0 is RETRACTED pending the
 fixed re-run** — CVDP is testable and likely largely solvable; a fixed re-run
 gives the TRUE classic-vs-QD signal (the capable-but-hard regime). **RealBench
 (F18–F21) is UNAFFECTED** — those are genuinely large designs with a real
-ceiling (the interface is provided there). This is the THIRD eval-wiring
-confound caught by ground-truthing a surprising 0 (cf. F19, M12) — the M6
-discipline earned its keep again. [H: 2026-06-16]
+ceiling (the interface is provided there). **END-TO-END CONFIRMED:** with
+the fix, the LLM's own binary_to_gray candidate is correct + lint-clean +
+right-interface AND PASSES the cocotb harness in isolated re-eval (rc=0) —
+so CVDP is solvable; the ceiling was the confound. (Note M14: the in-run
+CVDP functional eval still under-reports that pass — grade CVDP by isolated
+re-eval, à la F20.) This is the THIRD eval-wiring confound caught by
+ground-truthing a surprising 0 (cf. F19, M12) — the M6 discipline earned its
+keep again. [H: 2026-06-16]
 
 ### F29 — Why the framework fails at scale: search amplifies capability; correctness is near-binary `ANALYSIS`
 Synthesis of the harder-benchmark results (F18–F21, F27, F28) into a
@@ -737,6 +742,7 @@ Three mechanisms, each with a verified exhibit (full paths in doc 12):
 | M6 | Verification-before-verdict discipline caught 6 instrument/mechanism defects before they misled (empty pools, unreachable caps, dropped problems, template false-positive, hardcoded-empty feedback, licensing dir-vs-completion). | process note |
 | M12 | **Parallel evaluation UNDER-COUNTS valid candidates (contention) — THREAT TO VALIDITY.** The capability_remap run (14 worker slots, 7 modules × heavy synth) marked deterministically-VALID candidates as `failed_functionality`; isolated re-eval recovers them (classic 4 valid vs the run's 0 — F20). The functional eval is deterministic (verilator seeds `$urandom` stably; verified 3× identical), so the failures are ENVIRONMENTAL: concurrent verilator C++ builds + yosys/OpenROAD exhaust CPU/memory and spuriously fail. **Implications:** (1) final QD-vs-classic gates MUST use reliable eval — cap worker counts and/or isolated re-verification of best candidates; never trust raw parallel-run valid counts. (2) Prior parallel runs (F1/F2/F15 core comparisons) may carry similar noise — load-dependent. **SCOPE NOW VERIFIED (2026-06-14 11:00): M12 is CONFINED to heavy-load runs; the core is reliable.** Isolated re-eval of the core ablation matrix's highest-asymmetry cases EXACTLY matches the run: qd_target Prob116 9=9, Prob153 2=2 (VerilogEval). The RTLLM Prob045 "discrepancy" (run 21 vs isolated 0) is a re-eval-tool artifact (testbench `$readmemh` of a `.dat` file absent in my tempdir) and is reverse-direction (not M12). So the core small-problem results (12-way, light iverilog jobs) were NOT corrupted; only the 14-way HEAVY e203 synth run (capability_remap) was. The finals should still use reliable eval as a precaution (cap workers / isolated re-verify best candidates), and any isolated re-verify tool must co-locate benchmark data files. Caught by M6 ground-truthing of an F20 contradiction. | `MEASURED` [H: 2026-06-14 10:35, 11:00] |
 | M13 | **`validate_journal_revamp_run.py` mechanically CONFIRMS structural descriptor degeneracy on QD finals (5-seed).** classic seed_1001 PASSES (coverage 13/13, config+seed snapshot, telemetry occ 0.39); **ALL 5 qd_target seeds FAIL (exit 1)** on fatal descriptor collapse. **Cross-seed pattern: circuit7 collapses in 5/5 seeds and fsmonehot in 4/5** (structural collapsers — FSM/one-hot designs where logic_depth/ff_depth/comb_width barely vary, occupied_cells=1, all 3 axes collapsed); adder_8bit / gshare / m2014_q3 collapse sporadically (1/5 each, zero-occupancy or all-axes). So ~2/13 problems structurally collapse the frozen trio across seeds — the SAME degeneracy the root-cause dossier + F12 characterize, now mechanically + reproducibly confirmed. **Consequence:** the verification-surface "validate exit 0 per run root" is met for classic but NOT for QD — disclosed as the characterized phenomenon (the collapse IS the finding), not a hidden gate failure. Artifacts: `exp/ablation_matrix/stats/validate_{classic,qd_target}_{1001..1005}`. | `CONFIRMED` (5-seed) [H: 2026-06-16] |
+| M14 | **In-run CVDP functional eval UNDER-REPORTS (grade by isolated re-eval).** The fixed binary_to_gray run reported functionality=0.0, yet the run's own correct candidate PASSES the cocotb harness in isolated re-eval (rc=0). The in-run CVDP functional path under-counts passes (M12-class); the feedback-LLM "provided testbench is missing" is the M6 hallucination (the harness is present + sound, F26). **Implication:** CVDP classic-vs-QD comparisons must be graded by ISOLATED re-eval (materialize harness + pytest per candidate), NOT the run's reported counts — the discipline F20 used for RealBench. | `MEASURED` [H: 2026-06-16] |
 | M11 | **Candidate-eval path validated END-TO-END (closes the M10 gap).** M10 proved the standalone synth flow; M11 proves the actual runtime `evaluate_candidate` the QD/classic loop calls. Golden e203_exu_decode (53 KB) → status `success` through pre-synth functional + synth+PPA + post-synth check + journal BD-trio extraction, no LLM. Took 4 wiring fixes (F16) found by golden probing. Lesson reinforced (M6): validate the integration path, not just the component — M10's synth-only proof missed 3 of the 4 gaps. | `MEASURED` [H: 2026-06-14 07:55] |
 | M10 | **Storyline-decider validated END-TO-END.** The full PPA flow (yosys+aux → OpenROAD floorplan → metrics) completes on the largest e203 module (alu_dpath 2143 cells): rc=0, design area 2525 µm², tns/wns/power extracted. M8's remaining unknown (OpenROAD-on-large) is CLEARED. Task #16 is confirmed-feasible plumbing, not a feasibility risk: relax manifest heuristic + thread aux through SynthesisEvaluator + re-lock subset + run QD-vs-classic. The win-path is technically viable. | `MEASURED` [H: 2026-06-14 04:15] |
 | M9 | Bake-off occupancy tie-break is CONFOUNDED by collapse: a fully-collapsed 1-cell archive scores occ=1.00 (trio), gaming the metric. The per-axis COLLAPSE count is the truer diversity signal; the freeze tie-break should use it, not raw occupied/total. | `MEASURED` [H: 2026-06-13 22:40] |
