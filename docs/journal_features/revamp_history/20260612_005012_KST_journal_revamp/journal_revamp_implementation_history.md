@@ -2928,3 +2928,33 @@ fallback; R-D k=2 (already running on OpenRouter).
   hard-subset VerilogEval problem is both multi-cell AND fully specified.
 - Artifacts: exp/fast_iter/hard_subset_42/qd/.../Prob{135_m2014_q6b,
   150_review2015_fsmonehot}/equivalence_spotcheck/ (gitignored run outputs).
+
+## 2026-06-16 ~10:00 KST — BLOCKER FOUND (F25): held-out final gate not yet run
+
+- Re-reviewed state against goal_template.md (user opened it). Goal criterion
+  (1) requires "QD-vs-classic resolved on HELD-OUT statistics ... never a
+  tuning-set headline." The frozen narrative (journal_narrative.md L224/L232)
+  requires the final gate + branch decision "Evaluated on the held-out/fresh
+  final sets after the 5-seed runs"; the hard subset is explicitly a TUNING
+  set.
+- FINDING: the 5-seed F1 (QD-vs-classic) and F23 (smooth-QD) ran on the
+  13-problem HARD SUBSET (= hard_iteration_subset.yaml, the tuning set). The
+  20-problem held-out reference set (data/configs/holdout_reference_subset.yaml,
+  seed 7777, disjoint from hard+fast: 9 RTLLM + 11 VerilogEval) has 0 runs.
+  So the QD-vs-classic FINAL verdict is currently tuning-set-only -> goal
+  criterion (1) NOT met. This corrects earlier "all experiments complete"
+  statements (the ablations are complete + correctly scoped; the held-out
+  FINAL GATE is the missing layer). F2 operator ablation on the hard subset
+  remains correct (ablation protocol is predeclared on the tuning set).
+- The ablation matrix arm configs are in exp/finals_matrix_1004_1005_launch.sh
+  (classic = --backend revolution, no extra flags; qd_target = the full QD
+  flag set; smooth-QD V2 = code_individual + eoh + champion_lane 0.5 +
+  nsga2_global_rank). Held-out runs reuse these verbatim, swapping only the
+  --problems list (the 20 held-out) and --save_path.
+- Caveat surfaced: Branch C floor leg (i) requires the operator
+  simplification independent of QD (F9 falsified -> within-QD only), so the
+  frozen narrative predeclares venue reassessment unless the new smooth-QD
+  contribution (F23) is accepted as carrying #1/#5. This is a strategic
+  (venue) decision, not just compute.
+- NEXT: surfaced to the user for scope confirmation before committing the
+  multi-day held-out run (recorded F25, doc 13).
