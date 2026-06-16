@@ -60,7 +60,7 @@ every answer to the five conference criticisms is evidence-backed:
 
 **Where to read more:** doc 17 = the paper's story (abstract /
 contributions / results synthesis, with every number + source path); §2
-below = per-finding detail (F1–F28, M1–M13); doc 14 = the candid
+below = per-finding detail (F1–F29, M1–M13); doc 14 = the candid
 reviewer-muster read; doc 12 = claim→artifact-path map. Full chronology in
 `revamp_history/.../journal_revamp_implementation_history.md`.
 
@@ -310,6 +310,31 @@ is running to settle the actual win-path hypothesis — does diverse
 thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
+
+### F29 — Why the framework fails at scale: search amplifies capability; correctness is near-binary `ANALYSIS`
+Synthesis of the harder-benchmark results (F18–F21, F27, F28) into a
+root-cause + future-work map (manuscript limitations/future-work content).
+**Mechanism:** (1) classic and QD are a SEARCH/REFINEMENT layer on top of LLM
+generation — they amplify capability the base model already has, which on
+hard designs is **~0 functionally-valid seeds** (model-general: deepseek-v4-pro
+also 0, F21). (2) RTL functional correctness is **near-binary with no
+climbable gradient**: the best *failing* candidates on the unsolved RealBench
+modules are 20–100% mismatched (min-mismatch fracs {0.21, 0.25, 0.33–0.41,
+0.66–0.88, 1.0}) — a chasm, not a slope. So QD's diversity yields
+*diverse-wrongness*, not correctness; there are no partial-success stepping
+stones to recombine. **Binding constraint = base-model spec-comprehension +
+the discontinuous correctness landscape, NOT the search algorithm** — which is
+why #4 is correctly framed as a capability characterization.
+**Future-work levers (by leverage):** (1) **CVDP easy tier** [RUNNING,
+exp/cvdp_easy_probe] — the untested *capable-but-hard* regime where QD's
+diversity could actually help (medium was 0/9; easy should yield some valid
+seeds → first real QD-vs-classic where the LLM is capable on a harder-than-
+conference benchmark); (2) **stronger base model** on the hard benchmarks
+(does the ceiling lift?); (3) **hierarchical / decomposition generation** —
+the real framework fix for "too large for one-shot," a genuine method
+contribution; (4) **richer functional feedback** (detailed cocotb failure →
+targeted repair) — climbs the gradient only where mismatch is already small.
+[H: 2026-06-16]
 
 ### F28 — Smooth-QD V2 on RealBench: 3 valid, classic ≥ V2 > qd_target (gap closed) `MEASURED`
 Closed the one experimental gap (user-greenlit 2026-06-16): smooth-QD V2

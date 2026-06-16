@@ -3169,3 +3169,23 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Both scripts pass ruff. Manuscript (#15) now has reproducible drop-in
   tables + 2 of 4 case-study figures; the bespoke 2 + the prose are the
   user's to finish in Overleaf.
+
+## 2026-06-16 ~21:00 KST — Root-cause-at-scale analysis (F29) + CVDP easy-tier probe launched
+
+- Recorded F29 (ANALYSIS): why classic AND QD fail on harder benchmarks. The
+  framework is a search/refinement layer that amplifies base-LLM capability;
+  on hard designs the base LLM yields ~0 valid seeds (model-general, F21), and
+  RTL correctness is near-binary (best failing candidates 20-100% mismatched -
+  a chasm, not a climbable gradient), so QD diversity = diverse-wrongness with
+  no stepping stones. Binding constraint = base capability + discontinuous
+  landscape, not search. This is the manuscript's future-work/limitations
+  content.
+- Highest-leverage future-work lever, LAUNCHED: CVDP EASY tier (the dataset
+  has 162 easy tasks; we only tested medium = 0/9). Tests classic vs smooth-QD
+  V2 on 10 smallest-context easy tasks (seed 42, pop20x5gen, 8-wide), the one
+  untested CAPABLE-BUT-HARD regime where QD's diversity could help. If V2 >=
+  classic there, #4 gains a "QD helps where the LLM is capable" result.
+  exp/cvdp_easy_probe; launcher exp/cvdp_easy_probe_launch.sh.
+- On completion: read functional-any-pass (classic vs V2). Other levers
+  (stronger model, hierarchical generation, richer feedback) recorded in F29
+  as future work.
