@@ -3149,3 +3149,23 @@ fallback; R-D k=2 (already running on OpenRouter).
   capability, not search. Recorded F28; updated §0 + scorecard.
 - NEXT (per user plan): manuscript artifact prep (result tables + RealBench/
   CVDP capability table + 4 case-study figures).
+
+## 2026-06-16 ~20:30 KST — Manuscript artifact prep (tables + figures)
+
+- Per the user plan (after closing the V2-on-RealBench gap), began manuscript
+  artifact prep -> docs/journal_features/manuscript_artifacts/ (drop-in for the
+  Overleaf; mechanical generation, not prose).
+- scripts/build_manuscript_tables.py -> tables.tex: Table 1 (5-seed hard-subset
+  contrasts F1/F2/F23/F3 with CIs + sign-p, read from the stats JSONs) and
+  Table 2 (RealBench+CVDP capability counts from the grading artifacts).
+- scripts/build_manuscript_figures.py -> figures/: scalar_vs_qd_Prob135.pdf
+  (classic 0.035 vs QD 0.123 trajectory) + archive_heatmap_Prob135.png (the
+  healthy 6-cell archive, logic_depth x comb_width_log, best 0.123). Both
+  verified sensible.
+- README.md documents artifacts, regeneration commands, caption caveats
+  (comb_width_log size-proxy; Prob135 is a regime-positive case not the
+  aggregate), and the 2 still-bespoke figures (thought-lineage Prob116,
+  failure panel Prob045) with source dirs.
+- Both scripts pass ruff. Manuscript (#15) now has reproducible drop-in
+  tables + 2 of 4 case-study figures; the bespoke 2 + the prose are the
+  user's to finish in Overleaf.
