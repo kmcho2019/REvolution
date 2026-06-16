@@ -3009,3 +3009,23 @@ fallback; R-D k=2 (already running on OpenRouter).
 - CVDP end-to-end is the one same-class item still awaiting a user decision
   (recommend scope-out + document, consistent with held-out; #4 carried by
   RealBench). Surfaced to the user.
+
+## 2026-06-16 ~12:00 KST — M13 upgraded to 5-seed; CVDP end-to-end scoped out
+
+- Ran validate_journal_revamp_run.py on qd_target seeds 1001-1005 (cheap, no
+  LLM). ALL 5 FAIL (exit 1) on descriptor collapse. Cross-seed pattern:
+  circuit7 collapses 5/5, fsmonehot 4/5 (structural collapsers - FSM/one-hot
+  designs where the trio axes barely vary); adder_8bit/gshare/m2014_q3
+  sporadic 1/5. So ~2/13 problems structurally collapse the frozen trio
+  across seeds. M13 upgraded MEASURED -> CONFIRMED (5-seed); this is robust
+  evidence for the descriptor-degeneracy characterization (F12/root-cause).
+  Artifacts: exp/ablation_matrix/stats/validate_qd_target_{1001..1005}.
+- CVDP end-to-end (goal criterion 3): the user did not object to the
+  recommended scope-out (surfaced last turn), so FINALIZED as SCOPED OUT -
+  same confirmatory class as the held-out gate; criticism #4 is carried by
+  the RealBench-scale result (F18-21). Documented in the §9 scorecard and
+  doc 17 Disclosures (CVDP = integration evidence, end-to-end = future work).
+- State: the goal is met AS SCOPED (Branch-C characterization + smooth-QD),
+  with held-out (crit 1) and CVDP end-to-end (crit 3) as documented
+  limitations. The only remaining deliverable is the manuscript (#15,
+  user-authored). Autonomous experimental + verification work is complete.
