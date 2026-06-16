@@ -33,12 +33,15 @@ not the triumphant Branch A.**
 > specific to the RADICAL `thought_only` build. A *smooth* integration —
 > direct-code QD (`code_individual`, drops the harmful indirection) +
 > global NSGA-II non-domination-rank selection — reaches **no statistically significant quality cost** vs classic
-> (3-seed pooled −0.026, cluster-bootstrap CI [−0.077,+0.014], includes 0;
-> V1 alone is significantly worse, CI entirely <0 — NSGA-II is necessary).
+> (5-seed pooled −0.016, cluster-bootstrap CI [−0.045,+0.007], includes 0,
+> sign-test p=0.17; V1 alone is significantly worse, −0.034 CI
+> [−0.066,−0.009] — and NSGA-II's benefit is now statistically demonstrated,
+> V2−V1 +0.018 CI [+0.005,+0.032] entirely >0, NSGA-II necessary).
 > NOTE: this is "no significant difference," NOT demonstrated tight parity
-> (the CI is wide from localized cross-problem variance). The deficit
-> collapsed from −0.10 to −0.026 (3-seed pooled), the residual concentrated
-> on ~1 intrinsic-limitation problem (parallel2serial). So the pitch is no longer "we win" NOR pure
+> (the CI low −0.045 still < −0.03 from localized cross-problem variance).
+> The deficit collapsed from −0.10 to −0.016 (5-seed pooled), the residual
+> concentrated on the PPA-margin problems (alu −0.153, parallel2serial
+> −0.086; a capability limit, not a seed-count one). So the pitch is no longer "we win" NOR pure
 > characterization — it is **"QD/MAP-Elites as a no-significant-cost diversity
 > augmentation: NSGA-II selection over an archive removes the weighted-sum
 > bias (#1) and adds behavioral diversity (#5) at NO statistically
@@ -46,8 +49,12 @@ not the triumphant Branch A.**
 > a reviewer can accept, and it directly converts criticisms #1 and #5 from
 > "implemented, value unproven" to "implemented, no-significant-cost
 > (CI includes 0)."
-> Pending: the 3-seed pooled cluster-bootstrap CI (the formal parity
-> verdict) + the alu/quality win replicating across seeds.
+> RESOLVED 2026-06-16: 5-seed pooled CI landed (above); the smooth-QD
+> contribution now rests on 5 seeds, matching F1/F2. The standing "+2 seeds
+> vs accept" decision is settled — the extra seeds tightened the CI and
+> demonstrated NSGA-II's benefit (CI>0), but tight parity is unreachable
+> because the residual variance is a capability limit on alu/parallel2serial,
+> not seed noise. "No significant cost" is the correct, final framing.
 
 ## The stronger storyline the work actually produced
 

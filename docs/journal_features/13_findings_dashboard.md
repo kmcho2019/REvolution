@@ -268,24 +268,27 @@ thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
 
-### F23 — Smooth QD: NO SIGNIFICANT quality cost vs classic (3-seed) `MEASURED`
-The smooth-integration salvage works, calibrated honestly at 3 seeds.
-Two-step: V1 (code_individual, drop indirection) recovers -0.10 -> -0.045
-but is SIGNIFICANTLY worse (3-seed CI [-0.096,-0.007], entirely <0); **V2
-(V1 + NSGA-II global-rank selection) is statistically INDISTINGUISHABLE
-from classic — 3-seed pooled -0.026, cluster-bootstrap CI [-0.077,+0.014]
-(includes 0).** NSGA-II is NECESSARY (V1 alone fails). The CI does NOT
-clear the frozen tight-parity bar (low > -0.03) because variance is high,
-concentrated in a localized intrinsic-limitation handful (parallel2serial
--0.2..-0.5; F7); per-problem most are at/near parity. **Supportable
-claim: "QD + NSGA-II diversity augmentation at NO statistically
-significant quality cost vs a strong classic baseline (CI includes 0),"**
-answering #1 (principled selection, no scalar weight) + #5 (diversity) —
-a positive, honestly-hedged contribution, NOT "demonstrated tight
-parity." More seeds would tighten the CI (variance, not mean, is the
-limiter). **FINAL (all 3 seeds rc=0): official launcher stats CONFIRM
-the estimate to 3 dp — V2 -0.0247, CI [-0.075,+0.015], functional TIE;
-V1 -0.0449, CI [-0.096,-0.007].** `exp/fast_iter/smooth_qd_nsga2/stats_pooled_vs_classic` [H: 2026-06-15 05:30, 06:30 FINAL]
+### F23 — Smooth QD: NO SIGNIFICANT quality cost vs classic (5-seed) `MEASURED`
+The smooth-integration salvage works, now confirmed at 5 seeds (matching
+the F1/F2 standard — the evidentiary asymmetry is closed). Two-step: V1
+(code_individual, drop indirection) recovers -0.10 -> SIGNIFICANTLY worse
+(5-seed -0.034, CI [-0.066,-0.009], entirely <0); **V2 (V1 + NSGA-II
+global-rank selection) is statistically INDISTINGUISHABLE from classic —
+5-seed pooled -0.016, cluster-bootstrap CI [-0.045,+0.007] (includes 0),
+sign-test p=0.17.** The +2 seeds TIGHTENED the CI ([-0.077,+0.014] ->
+[-0.045,+0.007]) and moved the mean toward 0 (-0.026 -> -0.016); per-seed
+V2 is robust (-0.011/-0.034/-0.029/+0.007/-0.014, no outlier). **NSGA-II
+is NECESSARY and its benefit is now STATISTICALLY DEMONSTRATED: V2 - V1
++0.018, CI [+0.005,+0.032], entirely >0.** The CI still does NOT clear the
+frozen tight-parity bar (low > -0.03) because the residual variance is
+localized to the exploitation-heavy PPA-margin problems (alu -0.153,
+parallel2serial -0.086 pooled; F7) — a capability limit, not a seed-count
+one (confirms "variance, not mean, is the limiter"). **Supportable claim:
+"QD + NSGA-II diversity augmentation at NO statistically significant
+quality cost vs a strong classic baseline (CI includes 0),"** answering
+#1 (principled selection, no scalar weight) + #5 (diversity) — a positive,
+honestly-hedged contribution, NOT "demonstrated tight parity." Official
+5-seed: penalized == complete-case (no imputation). `exp/fast_iter/smooth_qd_{code_individual,nsga2}/stats_5seed_vs_classic` [H: 2026-06-16 ~07:00 5-SEED FINAL]
 
 ### F22 — Smooth QD (code_individual) NEAR-PARITY; V2 implemented `MEASURED`
 The smooth-integration thesis is substantially VINDICATED. Full 13-problem

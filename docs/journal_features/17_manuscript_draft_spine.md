@@ -22,9 +22,10 @@ report a characterization plus a positive, principled contribution.
 **(1)** Replacing the scalar objective with Pareto-front archive cells and
 **global NSGA-II non-domination-rank selection** removes the weighted-sum
 bias and supplies behavioral diversity **at no statistically significant quality
-cost** vs a strong direct-code baseline `[3-seed pooled −0.026,
-cluster-bootstrap CI [−0.077,+0.014], includes 0; NSGA-II necessary — V1
-alone significantly worse]`. **(2)** A single unified thought-level
+cost** vs a strong direct-code baseline `[5-seed pooled −0.016,
+cluster-bootstrap CI [−0.045,+0.007], includes 0, p=0.17; NSGA-II benefit
+demonstrated, V2−V1 +0.018 CI [+0.005,+0.032]; V1 alone significantly
+worse]`. **(2)** A single unified thought-level
 operator matches the six-operator EoH suite + bandit within QD at no cost
 `[5-seed pooled +0.001, CI [−0.008,+0.011], p=1.0 — clean parity]`, supplying the operator
 ablation prior work lacked. **(3)** We characterize *regime-sensitivity*:
@@ -43,9 +44,10 @@ asymmetry; an eval-concurrency artifact we caught and corrected).
    result).** Direct-code individuals + a MAP-Elites archive + global
    NSGA-II non-domination-rank selection (crowding tie-break) = a
    diversity-preserving augmentation of classic search, statistically
-   indistinguishable from the classic baseline `[3-seed pooled −0.026, CI
-   [−0.077,+0.014], includes 0 — no significant difference, not tight
-   parity; NSGA-II necessary, V1 alone significantly worse]`. Answers
+   indistinguishable from the classic baseline `[5-seed pooled −0.016, CI
+   [−0.045,+0.007], includes 0 — no significant difference, not tight
+   parity; NSGA-II benefit demonstrated (V2−V1 +0.018, CI [+0.005,+0.032]),
+   V1 alone significantly worse]`. Answers
    conference criticisms #1 (weighted-sum bias) and #5 (no diversity) with
    a no-significant-cost result (not just implemented).
 2. **The operator ablation prior work lacked (#2/#3).** One unified
@@ -67,16 +69,17 @@ asymmetry; an eval-concurrency artifact we caught and corrected).
 
 - **Smooth-QD (headline positive).** code_individual QD removes the
   thought→code indirection that sank the radical build (−0.093, 5-seed CI
-  [−0.149,−0.036] → V1 3-seed
-  −0.045, still significantly worse, CI [−0.096,−0.007]); adding NSGA-II
-  selection (necessary) closes most of the residual → **V2 3-seed pooled
-  −0.026, cluster-bootstrap CI [−0.077,+0.014] — statistically
-  indistinguishable from classic (CI includes 0), not tight parity (CI low
-  < −0.03), variance localized** to ~1 intrinsic-limitation problem
-  (parallel2serial). Per-problem most are at/near parity. Functional tie.
-  Table: per-problem delta vs classic; ablation V1 (cell tournament) vs V2
-  (NSGA-II). `[conservative LB; launcher official CI pending V2 1003 rc=0;
-  more seeds would tighten — variance, not mean, is the limiter]`.
+  [−0.149,−0.036]) → V1 5-seed −0.034, still significantly worse, CI
+  [−0.066,−0.009]; adding NSGA-II selection closes most of the residual →
+  **V2 5-seed pooled −0.016, cluster-bootstrap CI [−0.045,+0.007] —
+  statistically indistinguishable from classic (CI includes 0, p=0.17),
+  not tight parity (CI low < −0.03), variance localized** to the PPA-margin
+  problems (alu −0.153, parallel2serial −0.086). NSGA-II's benefit is
+  statistically demonstrated (V2−V1 +0.018, CI [+0.005,+0.032] entirely
+  >0). Per-seed V2 robust (no outlier). Functional tie. Table: per-problem
+  delta vs classic; ablation V1 (cell tournament) vs V2 (NSGA-II). Source:
+  `exp/fast_iter/smooth_qd_{code_individual,nsga2}/stats_5seed_vs_classic`
+  (official, penalized == complete-case).
   Source: `exp/fast_iter/smooth_qd_{code_individual,nsga2}` + doc 16.
 - **Operator parity (F2).** **5-seed pooled +0.001, CI [−0.008,
   +0.011]**, sign-test p=1.0, win-rate 48.8% (coin-flip) — dead-on parity,
@@ -114,8 +117,9 @@ descriptor axis). Best source problem: Prob135_m2014_q6b (healthy archive).
 
 ## Open before submission (gating)
 
-- ~~Multi-seed pooled CI for the smooth-QD claim~~ DONE (3-seed, F23):
-  no significant cost, CI includes 0.
+- ~~Multi-seed pooled CI for the smooth-QD claim~~ DONE (5-seed, F23):
+  V2 −0.016 CI [−0.045,+0.007] no significant cost (CI includes 0);
+  NSGA-II benefit V2−V1 +0.018 CI [+0.005,+0.032]. Matches F1/F2 standard.
 - ~~5-seed finals pooled F1/F2~~ DONE (official, all runs rc=0): F1
   −0.093 CI [−0.149,−0.036] p=1.3e-05 (QD loses); F2 +0.001 CI
   [−0.008,+0.011] p=1.0 (parity). F4 is descriptive (per-benchmark split,

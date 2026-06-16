@@ -2875,3 +2875,32 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Recorded in doc 13 (F2) + doc 12 (landed verdict). No verdict change; this
   CONFIRMS the operator-parity claim meets the frozen contract's exact
   decision rule and its robustness check. No code/data change.
+
+## 2026-06-16 ~07:00 KST — Smooth-QD 5-SEED verdict: headline confirmed + strengthened
+
+- b8uiq09yz done (exit 0): V1+V2 seeds 1004,1005 all rc=0; both arms now
+  5-seed (1001-1005). Official report_journal_statistics 5-seed pooled vs
+  classic (penalized == complete-case; DIY matches to 4dp):
+  * V2 (NSGA-II, HEADLINE) - classic: -0.0161, CI [-0.045,+0.007],
+    sign-test p=0.17 -> NO significant quality cost (CI includes 0). The +2
+    seeds TIGHTENED the CI ([-0.077,+0.014] -> [-0.045,+0.007]) and moved
+    the mean toward 0 (-0.026 -> -0.016). Per-seed robust:
+    -0.011/-0.034/-0.029/+0.007/-0.014 (no outlier).
+  * V1 (no NSGA-II) - classic: -0.0337, CI [-0.066,-0.009], entirely <0 ->
+    significantly worse. NSGA-II necessary.
+  * NSGA-II benefit (V2 - V1): +0.0176, CI [+0.005,+0.032], entirely >0 ->
+    now STATISTICALLY DEMONSTRATED (not just "V1 worse vs classic").
+  * Residual V2 deficit localized to PPA-margin problems: alu -0.153,
+    parallel2serial -0.086 (pooled) -> a capability limit, not seed noise.
+    Confirms "variance, not mean, is the limiter": tight parity (CI low >
+    -0.03) is unreachable by adding seeds.
+  Source: exp/fast_iter/smooth_qd_{code_individual,nsga2}/stats_5seed_vs_classic.
+- IMPACT: the headline POSITIVE contribution now rests on 5 seeds, matching
+  the F1/F2 characterization standard -> the evidentiary asymmetry is
+  CLOSED. The standing user "+2 seeds vs accept" decision is RESOLVED: extra
+  seeds improved the estimate (tighter CI, demonstrated NSGA-II benefit) but
+  "no significant cost" remains the correct, final framing (not tight
+  parity). Propagated to F23 (doc 13), posture (doc 14), spine (doc 17).
+- The full evidence base is now LOCKED at 5 seeds: F1 (QD loses), F2
+  (operator parity), F23 (smooth-QD no significant cost), F18-21 (RealBench
+  capability). Only the manuscript write-up (#15, user's Overleaf) remains.
