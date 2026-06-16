@@ -153,6 +153,10 @@ the e203 post-synth parser, and the verilator vcd-probe assert. Key code:
   threshold pass/fail checks.
 - `scripts/check_equivalence.py` — yosys formal equivalence spot-check
   (`equiv_make` / `equiv_simple` / `equiv_induct`; handles sequential).
+- **Tool provenance (captured 2026-06-16, to ship with the config freeze):**
+  Yosys 0.54+29 (git sha1 7b0c1fe49); Verilator 5.030 (2024-10-27 rev
+  v5.030); Icarus Verilog 12.0 (stable, v12_0); OpenROAD v2.0-22560-gb571c4b471.
+  Synthesis/PPA on Nangate45 (typical corner).
 
 ### 2.7 Locked configuration artifacts (`data/configs/`)
 
