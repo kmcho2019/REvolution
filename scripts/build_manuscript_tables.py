@@ -81,20 +81,31 @@ if gv2.is_file():
     d = json.loads(gv2.read_text())
     rb["qd_v2"] = sum(v.get("valid", 0) for v in d.get("qd_v2", {}).values())
 
+# CVDP easy-tier tasks-solved (any-pass /10), post-F30 interface fix. The earlier
+# CVDP "0/9" (medium) was a wiring confound (F30), NOT capability — do not cite it.
+cv = {}
+gce = Path("exp/cvdp_easy_fixed/grade_cvdp_easy.json")
+if gce.is_file():
+    d = json.loads(gce.read_text())
+    for arm in ("classic", "qd_v2"):
+        cv[arm] = sum(1 for v in d.get(arm, {}).values() if v.get("any_pass"))
+
 lines.append("\\begin{table}[t]")
 lines.append("\\centering")
-lines.append("\\caption{Capability at harder/newer-benchmark scale. Functionally-valid candidates. "
-             "RealBench: 7 dependency-complete e203 modules (valids only on the 2 smallest; "
-             "0 on all 5 larger for every arm). CVDP: 9 cocotb design tasks. No method beats "
-             "classic; the binding limit is LLM spec-comprehension, not search.}")
+lines.append("\\caption{Capability at harder/newer-benchmark scale --- no method beats "
+             "classic. RealBench: functionally-valid candidates on 7 dependency-complete "
+             "e203 modules (valids only on the 2 smallest; 0 on all 5 larger for every arm). "
+             "CVDP (easy tier, after the interface fix): tasks solved (any-pass) of 10 --- the "
+             "LLM is capable (9/10) and QD ties classic. The binding limit is LLM capability, "
+             "not search.}")
 lines.append("\\label{tab:capability}")
 lines.append("\\begin{tabular}{lcc}")
 lines.append("\\toprule")
-lines.append("Arm & RealBench valid (/7) & CVDP valid (/9) \\\\")
+lines.append("Arm & RealBench valid (/7) & CVDP-easy solved (/10) \\\\")
 lines.append("\\midrule")
-lines.append(f"classic & {rb.get('classic','--')} & 0 \\\\")
-lines.append(f"qd\\_target (radical QD) & {rb.get('qd_target','--')} & 0 \\\\")
-lines.append(f"smooth-QD V2 (\\emph{{our method}}) & {rb.get('qd_v2','--')} & 0 \\\\")
+lines.append(f"classic & {rb.get('classic','--')} & {cv.get('classic','--')} \\\\")
+lines.append(f"qd\\_target (radical QD) & {rb.get('qd_target','--')} & -- \\\\")
+lines.append(f"smooth-QD V2 (\\emph{{our method}}) & {rb.get('qd_v2','--')} & {cv.get('qd_v2','--')} \\\\")
 lines.append("\\bottomrule")
 lines.append("\\end{tabular}")
 lines.append("\\end{table}")
