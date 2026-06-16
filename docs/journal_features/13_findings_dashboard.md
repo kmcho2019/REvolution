@@ -54,7 +54,7 @@ every answer to the five conference criticisms is evidence-backed:
 
 **Where to read more:** doc 17 = the paper's story (abstract /
 contributions / results synthesis, with every number + source path); §2
-below = per-finding detail (F1–F26, M1–M13); doc 14 = the candid
+below = per-finding detail (F1–F27, M1–M13); doc 14 = the candid
 reviewer-muster read; doc 12 = claim→artifact-path map. Full chronology in
 `revamp_history/.../journal_revamp_implementation_history.md`.
 
@@ -304,6 +304,24 @@ is running to settle the actual win-path hypothesis — does diverse
 thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
+
+### F27 — CVDP debug probe: 0/9 functional pass, classic = QD (capability ceiling, mirrors RealBench) `MEASURED`
+The user-greenlit CVDP debug-seed probe (seed 42, pop20×5gen, 9 tasks after
+pruning the context-overflowing perceptron_0006) completed cleanly (no
+overflow on the 9). **Result: 0/9 functional pass for ALL THREE arms —
+classic 0, qd_target 0, qd_v2 0** (`exp/cvdp_debug_probe/{classic,qd_target,
+qd_v2}`, `stats_*`). Per-task all zero. So on this newer/harder benchmark,
+QD's diversity cannot manifest an advantage because **no candidate clears
+the functional bar** — the binding limit is LLM spec-comprehension, not
+search. **This MIRRORS the RealBench capability ceiling (F18–F21): criticism
+#4 ("benchmarks too small") is now answered by TWO independent harder
+benchmarks** (real-CPU e203 + CVDP cocotb design tasks), both showing the
+gpt-oss-120b capability wall. Validation level: the cocotb harness is
+confirmed to compile candidates + run the functional assertions (F26: 7/12
+reached assertions + failed), but **no PASS has been observed** (CVDP
+withholds goldens; a hand-written-correct-solution pass-confirmation is the
+residual validation). Also disclose: perceptron_0006 excluded (exceeded
+gpt-oss-120b's 131k window at Gen2 — itself a #4 size signal). [H: 2026-06-16]
 
 ### F26 — CVDP harness is OPERATIONAL locally; the probe's 0% is GENUINE difficulty `MEASURED`
 User greenlit a debug-seed CVDP probe (2026-06-16). **First-ever

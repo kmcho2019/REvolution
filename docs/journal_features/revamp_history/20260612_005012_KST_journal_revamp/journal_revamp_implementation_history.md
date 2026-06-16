@@ -3099,3 +3099,19 @@ fallback; R-D k=2 (already running on OpenRouter).
 - ACTION: prune perceptron_0006; relaunch qd_target + qd_v2 on the remaining 9
   CVDP debug tasks (seed 42), reuse the completed classic 9-task summaries for
   the comparison. exp/cvdp_debug_probe2.
+
+## 2026-06-16 ~18:30 KST — CVDP debug probe DONE: 0/9 both arms (F27)
+
+- probe2 (qd_target + qd_v2 on the 9 viable tasks, reusing classic 9) completed
+  rc=0, no context overflow. RESULT: 0/9 functional pass for ALL THREE arms
+  (classic 0, qd_target 0, qd_v2 0); per-task all zero.
+- INTERPRETATION (F27): on CVDP (newer/harder cocotb design tasks),
+  gpt-oss-120b clears the functional bar on 0/9 tasks at pop20x5gen -> QD's
+  diversity cannot manifest an advantage (nothing valid to diversify). This
+  MIRRORS the RealBench capability ceiling (F18-21). So criticism #4 is now
+  answered by TWO independent harder benchmarks (e203 + CVDP), both showing
+  the LLM-capability wall, not a search-structure limit.
+- Validation level: harness confirmed to compile + run cocotb assertions
+  (F26, 7/12 reached assertions); no PASS observed (CVDP withholds goldens).
+  Residual validation = hand-write one correct solution + confirm PASS
+  (attempting next, time-boxed). Recorded F27, scorecard updated.
