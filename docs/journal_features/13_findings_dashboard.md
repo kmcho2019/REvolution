@@ -52,14 +52,15 @@ every answer to the five conference criticisms is evidence-backed:
   modules for every arm; on the 2 smallest classic 4 ≥ V2 3 > qd_target 2
   (F18–F21, F28; deepseek-v4-pro also 0 on large). **CVDP** — the initial 0/9
   was an interface-wiring confound (F30, fixed); with the fix the LLM solves
-  **9/10** easy tasks and **classic = V2 = 9/10** — QD adds no value in the
-  capable regime (F31). So across the spectrum QD ties (small/easy) or is
+  **9/10 easy and 7/10 medium tasks, with classic = V2 on both** — QD adds no
+  value even in the capable-but-hard regime; the sweet-spot hypothesis is
+  falsified (F31/F32). So across the spectrum QD ties (small/easy) or is
   capped (hard), never wins. Sources: `exp/fast_iter/capability_remap/`,
   `exp/cvdp_easy_fixed/grade_cvdp_easy.json`, `exp/fast_iter/deepseek_capability_probe/`.
 
 **Where to read more:** doc 17 = the paper's story (abstract /
 contributions / results synthesis, with every number + source path); §2
-below = per-finding detail (F1–F31, M1–M14); doc 14 = the candid
+below = per-finding detail (F1–F32, M1–M14); doc 14 = the candid
 reviewer-muster read; doc 12 = claim→artifact-path map. Full chronology in
 `revamp_history/.../journal_revamp_implementation_history.md`.
 
@@ -309,6 +310,23 @@ is running to settle the actual win-path hypothesis — does diverse
 thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
+
+### F32 — CVDP medium tier (capable-but-hard): classic 7/10 = V2 7/10; sweet-spot hypothesis FALSIFIED `MEASURED`
+The decisive test of the F29 "capable-but-hard sweet spot" — the one regime
+where QD's diversity could plausibly help. Fixed-prompt medium CVDP (classic +
+smooth-QD V2, 10 smallest-context tasks, seed 42, pop20×5gen), isolated-graded
+(`exp/cvdp_medium_fixed/grade_cvdp_medium.json`): **classic solves 7/10, V2
+solves 7/10 — and they solve the EXACT SAME 7, miss the SAME 3** (bus_arbiter,
+fifo_async, neuromorphic_array). Medium IS genuinely the capable-but-hard
+regime (7/10 vs easy's 9/10 — the LLM solves fewer), and **even there QD does
+not help**: V2 found no solution classic missed. **The sweet-spot hypothesis
+is FALSIFIED.** Combined with small (F1 lose / F23 no-cost), easy-CVDP (9/10
+tie, F31), and hard-RealBench (capability ceiling, F28), this completes the
+picture: **QD never beats classic across the ENTIRE difficulty spectrum** —
+the capable-but-hard regime included. QD is a no-significant-cost diversity
+augmentation, never a winner. Caveat: any-pass (30-sample, seed 42); a finer
+pass-rate comparison wasn't run, but the identical solved set is a strong
+negative for "QD finds solutions classic misses." [H: 2026-06-16]
 
 ### F31 — Fixed CVDP (easy tier): LLM solves 9/10; classic = V2 (QD doesn't help in the capable regime) `MEASURED`
 With the F30 fix, the fixed-prompt easy-tier run (classic + smooth-QD V2, 10

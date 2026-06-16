@@ -3267,3 +3267,21 @@ fallback; R-D k=2 (already running on OpenRouter).
   long-sought "QD helps in the capable-but-hard regime" result (flips #4 to a
   positive). If V2 = classic -> reinforces "QD never wins" across the full
   spectrum. Either way it's the decisive test of the remaining open hypothesis.
+
+## 2026-06-17 ~00:30 KST — F32: CVDP medium (capable-but-hard) — 7/10 tie; sweet-spot FALSIFIED
+
+- Graded the fixed medium-tier run by isolated re-eval: classic 7/10, V2 7/10,
+  solving the EXACT SAME 7 tasks and missing the SAME 3 (bus_arbiter,
+  fifo_async, neuromorphic_array). exp/cvdp_medium_fixed/grade_cvdp_medium.json.
+- Medium is genuinely the capable-but-hard regime (7/10 < easy 9/10), and even
+  there QD ties classic -> the F29 sweet-spot hypothesis is FALSIFIED. QD found
+  no solution classic missed.
+- COMPLETES the #4/QD characterization across the FULL spectrum: small (F1
+  lose / F23 no-cost), easy CVDP (9/10 tie), medium CVDP capable-but-hard (7/10
+  tie), hard RealBench (capability ceiling). QD is a no-significant-cost
+  diversity augmentation, NEVER a winner anywhere tested. Recorded F32; updated
+  §0 + the sweet-spot note (F29). Caveat: any-pass, seed 42 (debug); finer
+  pass-rate not run but identical solved-set is a strong negative.
+- The CVDP arc end-to-end: integration confound found (F30) + fixed + tested,
+  then easy (F31) + medium (F32) -> CVDP is a working benchmark on which QD
+  ties classic. Net: a real bug fix shipped + a clean, complete #4 story.
