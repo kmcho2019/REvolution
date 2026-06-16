@@ -3029,3 +3029,30 @@ fallback; R-D k=2 (already running on OpenRouter).
   with held-out (crit 1) and CVDP end-to-end (crit 3) as documented
   limitations. The only remaining deliverable is the manuscript (#15,
   user-authored). Autonomous experimental + verification work is complete.
+
+## 2026-06-16 ~13:00 KST — CVDP debug probe (user greenlit): functional harness is the blocker (F26)
+
+- User chose "Yes - debug-seed probe first" for CVDP. Ran the FIRST-EVER
+  revolution+CVDP run (all prior CVDP runs used the CodeEvolve baseline).
+- The path RUNS: classic seed-42 on cvdp_copilot_generic_nbit_counter_0039,
+  pop4 x 2gen, 12 candidates, format/diff/syntax pass, reference-PPA + summary
+  emitted (exp/cvdp_probe_precheck/classic). Invocation gotcha recorded: CVDP
+  needs --cvdp_categories all (else select_cvdp_ids throws NoneType ->
+  _discover_tasks asserts the id missing).
+- BUT 0% functionality. CANNOT be ground-truthed here: dataset withholds the
+  golden (output.response empty); reference harness is Docker-based
+  (__OSS_SIM_IMAGE__) and Docker is UNAVAILABLE; per-candidate pytest.log is
+  in a cleaned-up temp run_root. cocotb IS installed; the evaluator runs
+  pytest locally. So genuine-difficulty vs harness-false-negative is
+  UNRESOLVED.
+- CONCLUSION (F26): CVDP functional testing is INFRA-blocked (cocotb harness
+  validation), NOT compute-blocked. A meaningful classic-vs-QD CVDP
+  comparison needs the harness validated/fixed first (F16-style, and with NO
+  golden to validate against). This corrects the earlier "CVDP = confirmatory
+  negative like held-out" framing: CVDP is a DIFFERENT, harder benchmark with
+  an open outcome, but its eval harness is the binding constraint here.
+- Did NOT proceed to the full 3-arm probe (would just produce more
+  un-ground-truthable 0%s). Recorded F26, updated the §9 scorecard + doc 17.
+  Decision point surfaced to the user: invest in CVDP harness validation
+  (F16-style, uncertain payoff given no-Docker/no-golden) vs keep CVDP as
+  integration-evidence-only. #4 remains carried by RealBench.

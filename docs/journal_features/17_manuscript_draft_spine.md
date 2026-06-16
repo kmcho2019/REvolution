@@ -131,11 +131,16 @@ only" scope. Disclose Prob135 solutions as testbench-validated.
   floor leg (i) ("simplification independent of QD") is not met (F9), so the
   paper rests the #1/#5 answers on the smooth-QD contribution (F23), not on
   a held-out QD-vs-classic gate.
-- **CVDP end-to-end not run (same class, scoped out 2026-06-16).** CVDP is
-  integrated + smoke-validated but has no gate-bearing classic-vs-QD run;
-  criticism #4 ("benchmarks too small") is carried by the RealBench-scale
-  result (F18–F21), so CVDP is disclosed as integration evidence with the
-  end-to-end run named as future work — not a measured QD-vs-classic claim.
+- **CVDP end-to-end not run — functional harness infra-blocked (F26).** A
+  debug-seed probe (2026-06-16) confirmed the revolution+CVDP path runs but
+  its cocotb functional evaluation cannot be ground-truthed in this
+  environment (the dataset withholds reference solutions; the reference
+  harness is Docker-based and Docker is unavailable), so functional pass
+  rate — CVDP's headline metric — is not measurable here without an
+  F16-style harness-validation effort. CVDP is disclosed as **integration
+  evidence**; criticism #4 ("benchmarks too small") is carried by the
+  RealBench-scale result (F18–F21), and a validated CVDP comparison is named
+  as future work — not a measured QD-vs-classic claim.
 
 ## Open before submission (gating)
 

@@ -54,7 +54,7 @@ every answer to the five conference criticisms is evidence-backed:
 
 **Where to read more:** doc 17 = the paper's story (abstract /
 contributions / results synthesis, with every number + source path); §2
-below = per-finding detail (F1–F25, M1–M13); doc 14 = the candid
+below = per-finding detail (F1–F26, M1–M13); doc 14 = the candid
 reviewer-muster read; doc 12 = claim→artifact-path map. Full chronology in
 `revamp_history/.../journal_revamp_implementation_history.md`.
 
@@ -304,6 +304,29 @@ is running to settle the actual win-path hypothesis — does diverse
 thought-level search break the classic monoculture error (all classic
 candidates share the identical mismatch) and get closer to correct? See
 F20. [H: 2026-06-14 09:55]
+
+### F26 — CVDP debug probe: the functional HARNESS is the blocker, not compute `MEASURED`
+User greenlit a debug-seed CVDP probe (2026-06-16). **First-ever
+revolution+CVDP run** — all prior CVDP runs used the CodeEvolve baseline.
+Findings: **(1) the path RUNS** — classic seed-42 on
+cvdp_copilot_generic_nbit_counter_0039 generated 12 candidates;
+format/diff/syntax checks pass; reference-PPA calc + summary emitted.
+Invocation gotcha: CVDP needs `--cvdp_categories all` (else `select_cvdp_ids`
+throws `NoneType` and `_discover_tasks` asserts the id missing). **(2) 0%
+functionality** — no candidate passed the cocotb functional test (this CVDP
+task is a non-trivial multi-mode counter: binary/Johnson/Gray/Ring +
+typedef-enum spec; at least one candidate had a real SystemVerilog syntax
+error). **(3) The 0% CANNOT be ground-truthed in this environment:** the
+dataset withholds the golden (`output.response` empty), the reference
+harness is Docker-based (`__OSS_SIM_IMAGE__`; **Docker unavailable here**),
+and the per-candidate `pytest.log` is written to a cleaned-up temp run_root.
+cocotb IS installed and the evaluator runs `pytest` locally, but whether 0%
+is genuine difficulty or a cocotb harness false-negative is **UNRESOLVED.**
+**Consequence:** CVDP functional testing is **infra-blocked (harness
+validation), not compute-blocked** — a meaningful classic-vs-QD CVDP
+comparison needs the cocotb harness validated/fixed first (an F16-style
+effort, with NO golden to validate against). This is why CVDP never got past
+smoke. `exp/cvdp_probe_precheck/classic`. [H: 2026-06-16]
 
 ### F25 — Held-out final gate not run; tuning-set-scoped by decision `SCOPED — documented limitation`
 The frozen narrative requires the QD-vs-classic FINAL gate + the branch
