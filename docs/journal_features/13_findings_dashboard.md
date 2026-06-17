@@ -6,7 +6,10 @@ is the orthogonal complement to the chronological audit log
 (`revamp_history/.../journal_revamp_implementation_history.md`, 63+
 dated entries) and the manuscript artifact index (doc 12). When a
 finding cites `[H: YYYY-MM-DD HH:MM]` that is the history entry with the
-full evidence; when it cites `exp/...` that is the raw artifact.
+full evidence; when it cites `exp/...` that is the raw artifact. For
+**readable summary reports** of the headline experiments (per-problem
+cross-arm bundles + isolated-grade per-task tables), see
+`revamp_history/.../experiment_reports_index.md`.
 
 **Confidence legend.**
 `CONFIRMED` replicated across seeds / multiple substrates ·

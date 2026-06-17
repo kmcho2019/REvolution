@@ -3339,3 +3339,33 @@ fallback; R-D k=2 (already running on OpenRouter).
   35,180 -> 0, HEAD unchanged (fb33e132), branch + all reachable commits
   intact (git fsck clean). Future commits no longer print the warning.
   Safe maintenance only — no content or history change.
+
+## 2026-06-17 ~17:00 KST — Generated human-readable experiment reports + index
+
+- Generated readable summary reports for the headline experiments behind the
+  consolidated-record §7 evidence index, so the per-problem / per-task results
+  can be inspected without reading raw JSON.
+- QD/ablation comparisons (F1, F2, F3/F9, F23-V2, F23-V1): cross-arm
+  `backend_comparison.md` bundles via `scripts/report_final_analysis_bundle.py`
+  on seed 1001 (representative; pooled gate stats stay in each
+  `statistical_tests.md`). All five confirm `classic` as multi-objective winner.
+  Written to each comparison's `…/final_analysis_seed1001/`.
+- CVDP/RealBench: authoritative isolated-grade per-task tables. Added a new
+  committed reporting script `scripts/render_grade_summary.py` (+ test
+  `tests/scripts/test_render_grade_summary.py`, 3 cases, pytest/ruff/pyright
+  clean) that renders the grade JSONs (auto-detects CVDP vs RealBench schema,
+  merges disjoint arms). Produced `grade_realbench_summary.md` (classic 4 /
+  qd_v2 3 / qd 2 valid of 112; F29 chasm visible in the `best` column),
+  `grade_cvdp_easy_summary.md` (9/10 = 9/10), `grade_cvdp_medium_summary.md`
+  (7/10 = 7/10, identical task-by-task).
+- KEY CAVEAT enforced in the reports + index: for CVDP/RealBench the in-run
+  `report_generator` functional column under-reports (M12/M14); the
+  isolated-grade summary is authoritative. The in-run `report_generator`
+  per-benchmark tables were also generated (syntax/synth/PPA value) but flagged.
+- Indexed everything in a new committed doc
+  `revamp_history/.../experiment_reports_index.md` (finding -> report path ->
+  headline number -> what-to-look-for + regenerate commands); added pointers
+  from consolidated-record §7 and doc 13's header.
+- The generated reports live next to runs under `exp/` (git-ignored, like the
+  runs); the committed artifacts are the renderer, its test, the index, and the
+  pointers. No experimental conclusions changed — this is presentation only.

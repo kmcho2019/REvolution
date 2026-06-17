@@ -450,6 +450,11 @@ subset (F15) → motivated the smooth-QD reframe (§3.2).
 All raw run roots: `exp/ablation_matrix/` (5 arms × 5 seeds), `exp/fast_iter/`
 (~33 experiment dirs). The run ledger is `rerun_ledger.jsonl` in this folder.
 
+**Readable summary reports** for the headline experiments (per-problem cross-arm
+bundles + isolated-grade per-task tables, generated via the report scripts) are
+indexed in [`experiment_reports_index.md`](experiment_reports_index.md) — open
+those to inspect the results behind these paths without reading raw JSON.
+
 ---
 
 ## 8. Reproduction guide
