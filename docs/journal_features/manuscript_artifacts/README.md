@@ -14,6 +14,14 @@ underlying runs change; numbers/figures trace to the cited run directories.
 | `draft_results_section.md` | Prose DRAFT of the Results section (§5.1–5.6 + Limitations), calibrated to the frozen narrative; for the author to adapt — not pushed to Overleaf | hand-drafted against doc 13 / tables.tex |
 | `draft_abstract_contributions.md` | Prose DRAFT of the Abstract + Contributions list (supersedes the doc-17 spine sketch; incorporates the CVDP F30–F32 arc) | hand-drafted against doc 13 |
 | `draft_discussion_conclusion.md` | Prose DRAFT of the Discussion (§6: why QD doesn't win — F29 mechanism; operator simplification; negative-result framing; future work) + Conclusion (§7) | hand-drafted against doc 13 |
+| `draft_methods_section.md` | Prose DRAFT of the Method (§3: framework/knobs, descriptors, benchmarks/subsets, statistics protocol, functional eval + reliability disclosures + tool versions) | hand-drafted against consolidated record §2/§6/§8 |
+| `draft_introduction_section.md` | Prose DRAFT of the Introduction (§1: LLM evolutionary RTL, the conference REvolution, the five criticisms, the characterization framing) | hand-drafted against doc 13 / narrative |
+
+**Section drafts now cover the full core narrative** (Intro · Methods · Results ·
+Discussion · Conclusion · Abstract · Contributions). Still author-owned:
+**Related Work** (needs real citations — not drafted to avoid fabricating
+references), the two **bespoke figures** (thought-lineage, failure panel), and
+final assembly/refinement in the Overleaf `journal_draft`.
 
 ## Figure caption caveats (carry into the paper)
 

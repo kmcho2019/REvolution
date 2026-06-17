@@ -3314,3 +3314,19 @@ fallback; R-D k=2 (already running on OpenRouter).
 - All calibrated to the frozen narrative; numbers verified. Listed in the
   manuscript_artifacts README. Remaining draftable sections: Methods (stats
   protocol, benchmarks, eval-reliability disclosures) and Introduction.
+
+## 2026-06-17 ~02:00 KST — Drafted Methods + Introduction; core manuscript narrative complete
+
+- Added draft_methods_section.md (§3: framework/knobs, frozen descriptors,
+  benchmarks/locked subsets, paired-cluster-bootstrap protocol + parity rule,
+  functional eval + reliability disclosures + tool versions) and
+  draft_introduction_section.md (§1: context, the conference REvolution, the
+  five criticisms, the characterization framing).
+- The manuscript draft package now covers the FULL core narrative: Introduction,
+  Methods, Results, Discussion, Conclusion, Abstract, Contributions (+ tables.tex
+  Tables 1-2 + 2 case-study figures). All drafts in manuscript_artifacts/, for
+  the author to adapt into Overleaf (NOT pushed there), calibrated to the frozen
+  narrative, numbers verified.
+- Deliberately NOT drafted (author-owned): Related Work (needs real citations -
+  avoided to not fabricate references), the 2 bespoke figures (thought-lineage,
+  failure panel), and final Overleaf assembly/refinement.
