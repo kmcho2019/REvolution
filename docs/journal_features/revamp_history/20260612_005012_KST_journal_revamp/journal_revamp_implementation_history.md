@@ -3285,3 +3285,17 @@ fallback; R-D k=2 (already running on OpenRouter).
 - The CVDP arc end-to-end: integration confound found (F30) + fixed + tested,
   then easy (F31) + medium (F32) -> CVDP is a working benchmark on which QD
   ties classic. Net: a real bug fix shipped + a clean, complete #4 story.
+
+## 2026-06-17 ~01:00 KST — Drafted the manuscript Results section (user-requested)
+
+- User chose "draft a manuscript section". Wrote a prose DRAFT of the Results
+  section -> docs/journal_features/manuscript_artifacts/draft_results_section.md
+  (for the author to adapt into Overleaf; NOT pushed there).
+- Structure: 5.1 setup; 5.2 operator simplification (F2, substrate-dependent
+  F3); 5.3 smooth-QD no-significant-cost + NSGA-II necessary (F23); 5.4 radical
+  QD loses + regime sensitivity (F1/F4/F7); 5.5 harder-benchmark capability
+  (RealBench F18-21/F28 + CVDP F30/F31/F32); 5.6 summary; + predeclared
+  Limitations (F25 held-out, M2 budget, eval artifacts, M13, CVDP granularity).
+- Calibrated to the frozen narrative (no-significant-cost not win; tuning-set-
+  scoped per F25). All numbers verified against doc 13 / tables.tex. Listed in
+  the manuscript_artifacts README.
