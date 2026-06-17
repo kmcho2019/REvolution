@@ -3330,3 +3330,12 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Deliberately NOT drafted (author-owned): Related Work (needs real citations -
   avoided to not fabricate references), the 2 bespoke figures (thought-lineage,
   failure panel), and final Overleaf assembly/refinement.
+
+## 2026-06-17 ~02:30 KST — Repo hygiene: cleared 35k unreachable loose objects
+
+- The git gc warning printed on every commit (~50x this session) was from
+  unreachable pre-amend commit objects accumulating (35,180 loose objects).
+  Removed the stale .git/gc.log and ran `git gc --prune=now`: loose objects
+  35,180 -> 0, HEAD unchanged (fb33e132), branch + all reachable commits
+  intact (git fsck clean). Future commits no longer print the warning.
+  Safe maintenance only — no content or history change.
