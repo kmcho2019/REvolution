@@ -12,6 +12,8 @@ underlying runs change; numbers/figures trace to the cited run directories.
 | `figures/scalar_vs_qd_Prob135.pdf` | Case-study: classic vs QD best-quality trajectory on Prob135 (QD reaches 0.123 vs classic 0.035 — the +0.088 healthy-archive case) | `python scripts/build_manuscript_figures.py` |
 | `figures/archive_heatmap_Prob135.png` | Case-study: the healthy 6-cell QD archive (logic_depth × comb_width_log, best 0.123) | (copied by the figures script) |
 | `draft_results_section.md` | Prose DRAFT of the Results section (§5.1–5.6 + Limitations), calibrated to the frozen narrative; for the author to adapt — not pushed to Overleaf | hand-drafted against doc 13 / tables.tex |
+| `draft_abstract_contributions.md` | Prose DRAFT of the Abstract + Contributions list (supersedes the doc-17 spine sketch; incorporates the CVDP F30–F32 arc) | hand-drafted against doc 13 |
+| `draft_discussion_conclusion.md` | Prose DRAFT of the Discussion (§6: why QD doesn't win — F29 mechanism; operator simplification; negative-result framing; future work) + Conclusion (§7) | hand-drafted against doc 13 |
 
 ## Figure caption caveats (carry into the paper)
 

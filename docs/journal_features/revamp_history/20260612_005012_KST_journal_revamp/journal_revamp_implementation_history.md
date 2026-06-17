@@ -3299,3 +3299,18 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Calibrated to the frozen narrative (no-significant-cost not win; tuning-set-
   scoped per F25). All numbers verified against doc 13 / tables.tex. Listed in
   the manuscript_artifacts README.
+
+## 2026-06-17 ~01:30 KST — Drafted Abstract+Contributions and Discussion+Conclusion
+
+- Continued the manuscript-section drafting (user-directed). Added to
+  docs/journal_features/manuscript_artifacts/ (drafts for the author; NOT pushed
+  to Overleaf):
+  * draft_abstract_contributions.md — polished Abstract + 5-item Contributions,
+    incorporating the completed CVDP arc (F30-F32); supersedes the doc-17 spine
+    sketch.
+  * draft_discussion_conclusion.md — Discussion (§6.1 why QD doesn't win, the
+    F29 mechanism; §6.2 operator simplification; §6.3 negative-result framing;
+    §6.4 future work) + Conclusion (§7).
+- All calibrated to the frozen narrative; numbers verified. Listed in the
+  manuscript_artifacts README. Remaining draftable sections: Methods (stats
+  protocol, benchmarks, eval-reliability disclosures) and Introduction.
