@@ -27,8 +27,10 @@ The frozen narrative's QD-vs-classic FINAL gate on the 20-problem held-out
 reference set was, by decision (2026-06-16), **NOT run** (the Branch-C-
 confirmed outcome is a confirmatory negative; held-out is disclosed as a
 stated limitation / future work — see §6 and F25). All QD-vs-classic and
-smooth-QD numbers are therefore **tuning-set-scoped**. Remaining work: the
-manuscript write-up into the Overleaf `journal_draft` (user-authored).
+smooth-QD numbers are therefore **tuning-set-scoped**. The full manuscript
+prose is now DRAFTED (`manuscript_artifacts/`, for the author to assemble into
+the Overleaf `journal_draft`); author-owned remainder: Related Work, the 2
+bespoke figures, assembly, and the four-persona sign-off.
 
 ---
 
