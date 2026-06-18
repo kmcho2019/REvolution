@@ -34,6 +34,7 @@ METHOD_ORDER = (
 FITNESS_EPSILON = 0.03
 HV_EPSILON = 1e-9
 REFERENCE_METHOD = "classic_revolution"
+PPA_METRICS = ("area", "power", "timing_or_clock_period", "fitness")
 
 
 def build_report(
@@ -93,6 +94,11 @@ def build_report(
         for payload in per_method.values()
         for row in payload["archive"]
     ]
+    correlation_rows = [
+        row
+        for payload in per_method.values()
+        for row in payload["descriptor_correlations"]
+    ]
     return {
         "version": 1,
         "phase": phase,
@@ -107,6 +113,7 @@ def build_report(
         "anytime_metrics": anytime_rows,
         "qd_summary": qd_rows,
         "archive_metrics": archive_rows,
+        "descriptor_correlations": correlation_rows,
         "comparison_matrix": comparison_rows,
         "problem_metrics": problem_rows,
         "artifact_roots": {
@@ -143,6 +150,11 @@ def load_method_result(method: str, result_dir: Path, repo_root: Path) -> dict[s
         "failure_breakdown": failure_breakdown_rows(method, candidates),
         "anytime_metrics": build_anytime_rows(method, candidates, repo_root),
         "qd_summary": qd_summary_row(method, candidates, archive, descriptors),
+        "descriptor_correlations": descriptor_correlation_rows(
+            method,
+            candidates,
+            descriptors,
+        ),
         "archive": archive.to_dict("records"),
         "generation": per_generation.to_dict("records"),
     }
@@ -321,6 +333,82 @@ def qd_summary_row(
         "common_audit_entropy_bits": audit_entropy,
         "common_audit_entropy_normalized": entropy_normalized(audit_entropy, audit_total),
     }
+
+
+def descriptor_correlation_rows(
+    method: str,
+    candidates: pd.DataFrame,
+    descriptors: pd.DataFrame,
+) -> list[dict[str, Any]]:
+    rows = []
+    for descriptor_space in ("internal", "common_audit"):
+        rows.extend(
+            descriptor_space_correlation_rows(
+                method,
+                candidates,
+                descriptors,
+                descriptor_space,
+            )
+        )
+    return rows
+
+
+def descriptor_space_correlation_rows(
+    method: str,
+    candidates: pd.DataFrame,
+    descriptors: pd.DataFrame,
+    descriptor_space: str,
+) -> list[dict[str, Any]]:
+    if descriptor_space == "internal":
+        axes_column = "descriptor_axes"
+        vector_column = "descriptor_vector"
+    elif descriptor_space == "common_audit":
+        axes_column = "common_audit_axes"
+        vector_column = "common_audit_descriptor_vector"
+    else:
+        raise AssertionError(f"unknown descriptor space: {descriptor_space}")
+
+    valid = candidates.loc[
+        candidates["valid_ppa"].eq(True),
+        ["problem_id", "candidate_id", *PPA_METRICS],
+    ].copy()
+    merged = valid.merge(
+        descriptors[
+            [
+                "problem_id",
+                "candidate_id",
+                axes_column,
+                vector_column,
+            ]
+        ],
+        on=["problem_id", "candidate_id"],
+        how="inner",
+    )
+    values: dict[tuple[str, str], dict[str, list[float]]] = {}
+    for record in merged.to_dict("records"):
+        axes = parse_axes(record[axes_column])
+        vector = parse_float_vector(record[vector_column])
+        assert len(axes) == len(vector), (method, descriptor_space, record["candidate_id"])
+        for axis, axis_value in zip(axes, vector, strict=True):
+            for metric in PPA_METRICS:
+                metric_value = record[metric]
+                if not is_finite(metric_value):
+                    continue
+                bucket = values.setdefault((axis, metric), {"x": [], "y": []})
+                bucket["x"].append(axis_value)
+                bucket["y"].append(float(metric_value))
+
+    return [
+        {
+            "method_name": method,
+            "descriptor_space": descriptor_space,
+            "descriptor_axis": axis,
+            "metric": metric,
+            "pearson_r": pearson(bucket["x"], bucket["y"]),
+            "sample_count": len(bucket["x"]),
+        }
+        for (axis, metric), bucket in sorted(values.items())
+    ]
 
 
 def ppa_points(
@@ -582,6 +670,10 @@ def render_markdown(report: dict[str, Any]) -> str:
             ],
         ),
         "",
+        "## Descriptor/PPA Correlations",
+        "",
+        "The JSON report includes Pearson correlations between descriptor axes and PPA/fitness metrics for internal and common-audit descriptor spaces.",
+        "",
         "## Robustness Funnel",
         "",
         markdown_table(
@@ -730,6 +822,11 @@ def write_figures(report: dict[str, Any], output_dir: Path) -> dict[str, str]:
         "qd_common_audit_entropy": output_dir / "qd_common_audit_entropy.png",
         "qd_common_audit_cells_heatmap": output_dir
         / "qd_common_audit_cells_heatmap.png",
+        "descriptor_common_audit_ppa_correlation": output_dir
+        / "descriptor_common_audit_ppa_correlation.png",
+        "descriptor_internal_ppa_correlation": output_dir
+        / "descriptor_internal_ppa_correlation.png",
+        "manual_bd_ppa_correlation": output_dir / "manual_bd_ppa_correlation.png",
     }
     plot_anytime(
         report["anytime_metrics"],
@@ -760,6 +857,25 @@ def write_figures(report: dict[str, Any], output_dir: Path) -> dict[str, str]:
         "common_audit_occupied_cells",
         "Common-Audit Occupied Cells",
         figures["qd_common_audit_cells_heatmap"],
+    )
+    plot_descriptor_correlation_heatmap(
+        report["descriptor_correlations"],
+        "common_audit",
+        "Common-Audit Descriptor/PPA Correlation",
+        figures["descriptor_common_audit_ppa_correlation"],
+    )
+    plot_descriptor_correlation_heatmap(
+        report["descriptor_correlations"],
+        "internal",
+        "Internal Descriptor/PPA Correlation",
+        figures["descriptor_internal_ppa_correlation"],
+    )
+    plot_descriptor_correlation_heatmap(
+        report["descriptor_correlations"],
+        "internal",
+        "Manual-BD/PPA Correlation",
+        figures["manual_bd_ppa_correlation"],
+        method="landing_smooth_qd_manual_bd",
     )
     return {name: path.as_posix() for name, path in figures.items()}
 
@@ -840,6 +956,50 @@ def plot_archive_heatmap(
     for y, method in enumerate(methods):
         for x, problem in enumerate(problems):
             axis.text(x, y, str(int(pivot.loc[method, problem])), ha="center", va="center")
+    fig.colorbar(image, ax=axis, fraction=0.025, pad=0.02)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+
+
+def plot_descriptor_correlation_heatmap(
+    rows: list[dict[str, Any]],
+    descriptor_space: str,
+    title: str,
+    output_path: Path,
+    method: str | None = None,
+) -> None:
+    frame = pd.DataFrame(rows)
+    assert not frame.empty
+    frame = frame.loc[frame["descriptor_space"].eq(descriptor_space)].copy()
+    if method is not None:
+        frame = frame.loc[frame["method_name"].eq(method)].copy()
+    assert not frame.empty, (descriptor_space, method)
+    frame["row_label"] = [
+        descriptor_row_label(row, method is None)
+        for row in frame.to_dict("records")
+    ]
+    row_labels = sorted(str(value) for value in frame["row_label"].unique())
+    pivot = pd.DataFrame(
+        index=pd.Index(row_labels),
+        columns=pd.Index(PPA_METRICS),
+        dtype=float,
+    )
+    for row in frame.to_dict("records"):
+        pivot.loc[str(row["row_label"]), str(row["metric"])] = row["pearson_r"]
+    values = pivot.fillna(0.0)
+    fig, axis = plt.subplots(
+        figsize=(8.0, max(4.8, len(row_labels) * 0.32))
+    )
+    image = axis.imshow(values.to_numpy(dtype=float), cmap="coolwarm", vmin=-1, vmax=1)
+    axis.set_title(title)
+    axis.set_xticks(range(len(PPA_METRICS)), PPA_METRICS, rotation=25, ha="right")
+    axis.set_yticks(range(len(row_labels)), row_labels)
+    for y, label in enumerate(row_labels):
+        for x, metric in enumerate(PPA_METRICS):
+            value = pivot.loc[label, metric]
+            text = "-" if pd.isna(value) else f"{float(value):.2f}"
+            axis.text(x, y, text, ha="center", va="center", fontsize=7)
     fig.colorbar(image, ax=axis, fraction=0.025, pad=0.02)
     fig.tight_layout()
     fig.savefig(output_path, dpi=180)
@@ -944,6 +1104,38 @@ def cell_entropy(frame: pd.DataFrame, column: str) -> float | None:
     counts = pd.Series(cells).value_counts()
     total = float(counts.sum())
     return -sum((count / total) * math.log2(count / total) for count in counts)
+
+
+def parse_axes(value: Any) -> list[str]:
+    axes = json.loads(str(value))
+    assert isinstance(axes, list)
+    return [str(axis) for axis in axes]
+
+
+def parse_float_vector(value: Any) -> list[float]:
+    vector = json.loads(str(value))
+    assert isinstance(vector, list)
+    return [float(item) for item in vector]
+
+
+def pearson(xs: list[float], ys: list[float]) -> float | None:
+    assert len(xs) == len(ys)
+    if len(xs) < 2:
+        return None
+    x_mean = sum(xs) / len(xs)
+    y_mean = sum(ys) / len(ys)
+    numerator = sum((x - x_mean) * (y - y_mean) for x, y in zip(xs, ys, strict=True))
+    x_denom = sum((x - x_mean) ** 2 for x in xs)
+    y_denom = sum((y - y_mean) ** 2 for y in ys)
+    if x_denom == 0.0 or y_denom == 0.0:
+        return None
+    return numerator / math.sqrt(x_denom * y_denom)
+
+
+def descriptor_row_label(row: dict[str, Any], include_method: bool) -> str:
+    if include_method:
+        return f"{row['method_name']}:{row['descriptor_axis']}"
+    return str(row["descriptor_axis"])
 
 
 def entropy_evenness(entropy: float | None, occupied_cells: float | None) -> float | None:

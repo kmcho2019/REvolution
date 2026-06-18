@@ -66,6 +66,10 @@ def test_build_report_marks_gate0_and_hv_win(tmp_path: Path) -> None:
     assert report["anytime_summary"][0]["final_generation"] == 1
     assert report["qd_summary"][0]["common_audit_coverage"] == 1 / 256
     assert report["qd_summary"][0]["common_audit_entropy_bits"] == 0.0
+    assert any(
+        row["descriptor_space"] == "common_audit"
+        for row in report["descriptor_correlations"]
+    )
     assert leaderboard["classic_revolution"]["duplicate_netlist_count"] == 0
 
 
@@ -79,6 +83,14 @@ def test_main_writes_markdown_and_json(tmp_path: Path) -> None:
         power=0.9,
         fitness=0.1,
         netlist_hash="classic_hash",
+    )
+    _write_standard_dir(
+        results_root,
+        "landing_smooth_qd_manual_bd",
+        area=85.0,
+        power=0.85,
+        fitness=0.15,
+        netlist_hash="manual_hash",
     )
     output_md = tmp_path / "report.md"
     output_json = tmp_path / "report.json"
@@ -108,6 +120,13 @@ def test_main_writes_markdown_and_json(tmp_path: Path) -> None:
     assert (figure_dir / "qd_common_audit_coverage.png").read_bytes().startswith(b"\x89PNG")
     assert (figure_dir / "qd_common_audit_entropy.png").read_bytes().startswith(b"\x89PNG")
     assert (figure_dir / "qd_common_audit_cells_heatmap.png").read_bytes().startswith(b"\x89PNG")
+    assert (figure_dir / "descriptor_common_audit_ppa_correlation.png").read_bytes().startswith(
+        b"\x89PNG"
+    )
+    assert (figure_dir / "descriptor_internal_ppa_correlation.png").read_bytes().startswith(
+        b"\x89PNG"
+    )
+    assert (figure_dir / "manual_bd_ppa_correlation.png").read_bytes().startswith(b"\x89PNG")
 
 
 def _write_reference(tmp_path: Path) -> Path:
@@ -135,11 +154,20 @@ def _write_standard_dir(
     problem_id = "Bench/ProbA"
     archive_type = "none" if method == "classic_revolution" else "grid_quantile"
     archive_cell_id = None if method == "classic_revolution" else "0,0,0"
+    descriptor_axes = "[]"
+    descriptor_vector = "[]"
+    if method == "landing_smooth_qd_manual_bd":
+        descriptor_axes = '["logic_depth", "ff_depth", "comb_width_log"]'
+        descriptor_vector = "[1.0, 2.0, 3.0]"
+    elif method != "classic_revolution":
+        descriptor_axes = '["motif_logic_ratio", "motif_control_ratio"]'
+        descriptor_vector = "[0.1, 0.2]"
     candidates = pd.DataFrame(
         [
             {
                 "method_name": method,
                 "problem_id": problem_id,
+                "candidate_id": "candidate-0",
                 "benchmark_source": "Bench",
                 "syntax_pass": True,
                 "functionality_pass": True,
@@ -160,6 +188,7 @@ def _write_standard_dir(
             {
                 "method_name": method,
                 "problem_id": problem_id,
+                "candidate_id": "candidate-1",
                 "benchmark_source": "Bench",
                 "syntax_pass": True,
                 "functionality_pass": False,
@@ -219,8 +248,8 @@ def _write_standard_dir(
                 "problem_id": problem_id,
                 "seed": 1001,
                 "candidate_id": "candidate-0",
-                "descriptor_axes": "[]",
-                "descriptor_vector": "[]",
+                "descriptor_axes": descriptor_axes,
+                "descriptor_vector": descriptor_vector,
                 "common_audit_axes": (
                     '["motif_logic_ratio", "motif_control_ratio", '
                     '"motif_arith_ratio", "motif_diversity"]'

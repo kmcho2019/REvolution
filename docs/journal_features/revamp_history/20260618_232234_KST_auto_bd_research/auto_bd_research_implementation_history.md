@@ -2561,3 +2561,86 @@ file \
 ```
 
 Result: all five report figures are valid PNG images.
+
+## 2026-06-19 06:17 KST
+
+Extended the centralized seed-1 Auto-BD report with descriptor/PPA
+correlation evidence.
+
+Code changes:
+
+- `scripts/report_auto_bd_standard_results.py` now emits
+  `descriptor_correlations` in the central JSON report.
+- Correlations are computed from standardized candidate and descriptor
+  tables by joining on `(problem_id, candidate_id)`.
+- Internal descriptor and fixed common-audit descriptor spaces are kept
+  separate so method-specific BDs do not get compared as if they shared
+  axes.
+- The report now generates three correlation figures:
+  - `descriptor_common_audit_ppa_correlation.png`
+  - `descriptor_internal_ppa_correlation.png`
+  - `manual_bd_ppa_correlation.png`
+
+Regenerated artifacts:
+
+- `auto_bd_seed1_centralized_report.md`
+- `auto_bd_seed1_centralized_report.json`
+- `auto_bd_seed1_figures/descriptor_common_audit_ppa_correlation.png`
+- `auto_bd_seed1_figures/descriptor_internal_ppa_correlation.png`
+- `auto_bd_seed1_figures/manual_bd_ppa_correlation.png`
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 2 passed in 3.61s after fixing an initial dataframe merge
+column-collision bug.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+Artifact checks:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+p=Path('docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json')
+payload=json.loads(p.read_text(encoding='utf-8'))
+rows=payload['descriptor_correlations']
+assert rows
+assert {row['descriptor_space'] for row in rows} == {'internal', 'common_audit'}
+manual=[row for row in rows if row['method_name']=='landing_smooth_qd_manual_bd' and row['descriptor_space']=='internal']
+assert manual
+for name in ['descriptor_common_audit_ppa_correlation','descriptor_internal_ppa_correlation','manual_bd_ppa_correlation']:
+    fig=Path(payload['figure_paths'][name])
+    assert fig.read_bytes().startswith(b'\x89PNG'), name
+print('descriptor correlation artifact check ok')
+PY
+```
+
+Result: `descriptor correlation artifact check ok`.

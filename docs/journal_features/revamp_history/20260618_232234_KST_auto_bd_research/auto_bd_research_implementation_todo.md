@@ -99,7 +99,7 @@ evidence and rationale.
 - [x] Include robustness funnel and failure breakdown.
 - [x] Include PPA anytime and hypervolume curves.
 - [x] Include QD score, coverage, entropy, and archive visualizations.
-- [ ] Include descriptor/manual-BD/PPA correlation heatmaps.
+- [x] Include descriptor/manual-BD/PPA correlation heatmaps.
 - [x] Include canonical-netlist uniqueness and duplicate-cell leakage.
 - [x] Include common-audit archive QD score and coverage.
 - [x] Include motif-signature and PPA-relevant diversity.

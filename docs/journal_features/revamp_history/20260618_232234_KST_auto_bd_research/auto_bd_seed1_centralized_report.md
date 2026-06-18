@@ -46,6 +46,10 @@ Coverage and entropy are reported in the fixed common-audit space so methods wit
 | `netlist_motif_occupancy` | `grid_quantile` | 26 | 3.8403 | 5.4977 | 8 | 0.0052 | -3.0274 | 2.6138 | 0.2469 |
 | `synthesis_trajectory_nod` | `grid_quantile` | 31 | 4.0109 | 5.7798 | 11 | 0.0072 | -2.0643 | 2.8120 | 0.2657 |
 
+## Descriptor/PPA Correlations
+
+The JSON report includes Pearson correlations between descriptor axes and PPA/fitness metrics for internal and common-audit descriptor spaces.
+
 ## Robustness Funnel
 
 | Method | Total | Syntax | Functionality | Synthesis | OpenROAD | Valid PPA |
@@ -98,6 +102,9 @@ The JSON report includes per-generation anytime rows for each method.
 
 - `anytime_mean_best_fitness`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/anytime_mean_best_fitness.png`
 - `anytime_mean_hypervolume`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/anytime_mean_hypervolume.png`
+- `descriptor_common_audit_ppa_correlation`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/descriptor_common_audit_ppa_correlation.png`
+- `descriptor_internal_ppa_correlation`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/descriptor_internal_ppa_correlation.png`
+- `manual_bd_ppa_correlation`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/manual_bd_ppa_correlation.png`
 - `qd_common_audit_cells_heatmap`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/qd_common_audit_cells_heatmap.png`
 - `qd_common_audit_coverage`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/qd_common_audit_coverage.png`
 - `qd_common_audit_entropy`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/qd_common_audit_entropy.png`
