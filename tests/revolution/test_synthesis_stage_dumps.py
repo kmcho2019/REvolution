@@ -1,7 +1,11 @@
+import shutil
 from pathlib import Path
 from types import SimpleNamespace
 
-from revolution.evaluation import SynthesisEvaluator
+import pytest
+
+from revolution.auto_bd.netlist_hash import canonical_netlist_hash
+from revolution.evaluation import SynthesisEvaluator, _run_command
 
 
 def make_proc(returncode=0, stdout="", stderr="", timed_out=False):
@@ -62,3 +66,41 @@ def test_run_yosys_stage_dumps_reports_timeout(mocker, tmp_path: Path):
 
     assert result["stage_dump_success"] is False
     assert "timeout" in (tmp_path / "top.stnod.yosys.log").read_text(encoding="utf-8")
+
+
+def test_stage_dump_final_snapshot_matches_baseline_yosys_netlist(tmp_path: Path):
+    yosys = shutil.which("yosys")
+    if yosys is None:
+        pytest.skip()
+
+    candidate = tmp_path / "candidate.sv"
+    baseline_netlist = tmp_path / "candidate.syn.v"
+    candidate.write_text(
+        "module top(input a, input b, output y);\n"
+        "  assign y = a & b;\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    evaluator = SynthesisEvaluator(yosys_path=yosys)
+    baseline_script = evaluator._create_yosys_script(
+        verilog_file=str(candidate),
+        module_name="top",
+        output_directory=str(tmp_path),
+        clk_period=0.01,
+        output_file=str(baseline_netlist),
+    )
+    baseline = _run_command([yosys, baseline_script], timeout_s=60)
+    stage_result = evaluator.run_yosys_stage_dumps(
+        verilog_file=str(candidate),
+        synth_top_module_name="top",
+        output_directory=str(tmp_path),
+        synthesis_timeout_s=60,
+    )
+
+    assert baseline.returncode == 0
+    assert stage_result["stage_dump_success"] is True
+    final_stage = Path(stage_result["stage_dump_verilog_paths"][-1])
+    assert final_stage.is_file()
+    assert canonical_netlist_hash(baseline_netlist.read_text(encoding="utf-8")) == (
+        canonical_netlist_hash(final_stage.read_text(encoding="utf-8"))
+    )

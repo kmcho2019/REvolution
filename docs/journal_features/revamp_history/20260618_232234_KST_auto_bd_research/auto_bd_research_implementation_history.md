@@ -1832,3 +1832,72 @@ TODO status:
 - marked ST-NOD runtime sidecar wiring complete
 - marked ST-NOD trajectory feature extraction complete
 - left observational-equivalence validation and development run open
+
+## 2026-06-18 - ST-NOD Observational Equivalence Test
+
+Added a live Yosys regression test proving that the ST-NOD sidecar final
+snapshot matches the baseline Yosys final netlist for a tiny design.
+
+Changed test:
+
+- `tests/revolution/test_synthesis_stage_dumps.py`
+
+Equivalence rule:
+
+- baseline path: `SynthesisEvaluator._create_yosys_script(...)`
+- ST-NOD path: `SynthesisEvaluator.run_yosys_stage_dumps(...)`
+- comparison: canonical netlist hash of baseline output versus
+  `07_buffered.v`
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_synthesis_stage_dumps.py::test_stage_dump_final_snapshot_matches_baseline_yosys_netlist -q
+```
+
+Result: 1 passed in 59.12 seconds.
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_synthesis_stage_dumps.py \
+  tests/revolution/test_auto_bd_stage_dumps.py
+```
+
+Result: 5 passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  src/revolution/auto_bd/stage_dumps.py \
+  src/revolution/evaluation.py \
+  tests/revolution/test_synthesis_stage_dumps.py \
+  tests/revolution/test_auto_bd_stage_dumps.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  src/revolution/auto_bd \
+  src/revolution/evaluation.py \
+  tests/revolution/test_synthesis_stage_dumps.py \
+  tests/revolution/test_auto_bd_stage_dumps.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  src/revolution/auto_bd \
+  src/revolution/evaluation.py \
+  tests/revolution/test_synthesis_stage_dumps.py \
+  tests/revolution/test_auto_bd_stage_dumps.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+TODO status:
+
+- marked ST-NOD observational-equivalence test complete
+- left motif-plus-trajectory combination, cost check, and development
+  seed-1 run open

@@ -69,7 +69,7 @@ evidence and rationale.
 
 - [x] Implement synthesis-stage dump script writer.
 - [x] Wire observational dump execution behind the ST-NOD method arm.
-- [ ] Add ST-NOD observational-equivalence test against baseline synthesis.
+- [x] Add ST-NOD observational-equivalence test against baseline synthesis.
 - [x] Implement synthesis-trajectory feature extraction.
 - [ ] Combine trajectory features with motif occupancy.
 - [ ] Compare motif-only versus trajectory-motif descriptors.
