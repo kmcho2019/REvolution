@@ -3396,3 +3396,29 @@ fallback; R-D k=2 (already running on OpenRouter).
   smooth V2 −0.016 parity) and a where-next / narrative section. All numbers
   spot-verified against the copied artifacts; all relative links resolve.
   Presentation/synthesis only — no new experiments, no conclusions changed.
+
+## 2026-06-18 — RealBench reference PPA: diagnosis + generation started (M15)
+
+- Diagnosed why RealBench produced no PPA-improvement scores. Root cause:
+  reference PPA was never generated — the engine reads it only from
+  pre-synthesized `<root>/<problem>_ppa.txt` (algorithm.py:_calculate_reference_ppa);
+  RTLLM ships 46 such files, RealBench shipped 0. Proved (hands-on Yosys→OpenROAD)
+  the golden synthesizes cleanly (alu_csrctrl area 225 µm² / power 1.11e-4 W), so
+  this was an un-run generation step, not a limitation — operationalizing the
+  feasibility M8/M10/M11 had shown.
+- Added `scripts/generate_realbench_reference_ppa.py`: synthesizes each golden via
+  the SAME candidate Yosys+OpenROAD path (`_run_synthesis` + `_parse_ppa_log` with
+  the candidate evaluator's aux/define resolution), writes the canonical
+  `tns,wns,eff_clk_period,power,area` file. Generated **34/34 synth-capable e203
+  modules** (RealBench_v4_synth), 0 failures; valid non-zero power+area
+  (area 5–26,433 µm², power 1.6e-6–1.3 W). Files are local — the RealBench tree is
+  git-ignored/regenerated — so the committed deliverables are the script + docs.
+- Surfaced two harness bugs that still block full PPA SCORING (documented, not
+  fixed this pass): (a) the post-synth functional gate errors on
+  TIMESCALEMOD/WIDTHTRUNC for a subset of modules (blocks candidate PPA), (b) STA
+  timing is degenerate (tns/wns=0, clock unconstrained) so PPA-improvement is
+  power+area-only. Also confirmed the low functional solve rate is GENUINE model
+  difficulty (no F30-style prompt/interface confound).
+- Docs: new `docs/journal_features/realbench_reference_ppa.md` (diagnosis,
+  process, consumption paths, remaining work incl. manifest ppa_path version bump
+  + folding generation into build_realbench_manifest.py); doc 13 finding M15.
