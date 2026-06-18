@@ -113,7 +113,7 @@ neutral, one is even positive, and the regression localizes to two pieces.**
 | Quantile binning | 50.6 vs 46.3 | **+25.8 vs +23.6** | **+33.1 vs +30.1** | 0.107 vs 0.100 (8 vs 5) | **journal wins** | [04](exp_artifacts/04_component_quantile_binning/) |
 | BD trio (descriptors) | 50.8 vs 50.9 | +22.6 vs +26.5 | +28.6 vs +33.0 | 0.087 vs 0.112 (3 vs 10) | classic wins (HV) | [06](exp_artifacts/06_component_bd_trio/) |
 | Per-cell Pareto cells | **53.7** vs 49.1 | +20.9 vs +21.8 | +26.4 vs +27.5 | 0.087 vs 0.097 (2 vs 6) | mixed: best pass@1, worst quality | [05](exp_artifacts/05_component_pareto_front_cells/) |
-| **Thought-only representation** | **67.9** vs 49.7 | +19.0 vs +28.8 | **+21.9 vs +37.0** | classic wins | **trades PPA for pass-rate** | [02](exp_artifacts/02_component_thought_only/) |
+| **Thought-only representation** | **67.9** vs 49.7 | +19.0 vs +28.8 | **+21.9 vs +37.0** | 0.059 vs 0.121 (2 vs 8) | **trades PPA for pass-rate** | [02](exp_artifacts/02_component_thought_only/) |
 | **Single unified operator** | 46.0 vs 47.1 | +17.4 vs +19.5 | +20.8 vs +24.1 | 0.062 vs 0.078 (2 vs 5) | **weakest; fails func gate** | [03](exp_artifacts/03_component_single_operator/) |
 
 ### 3a. Thought-only blocks code-level hill-climbing (the central mechanism)
@@ -160,6 +160,46 @@ single operator) on top of a benign archive, and the regressions compound.
 | Other BD profiles (bake-off) | Screen structural / size-control / large-struct descriptor profiles for one that beats classic | No profile wins the multi-objective crown; the frozen `journal_logic_ff_width_3d` trio was chosen on collapse-resistance, not a quality win | `.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_compact_vs_baselines_*`; main `exp/fast_iter/bakeoff_verdict/` |
 | KS adaptive rebinning | Re-bin the archive when the descriptor distribution drifts, to fight cell collapse | Modest score/PPA recovery over rebin-off (+18.1 vs +15.6) but does not reach classic; trigger rarely executes on this subset | [01](exp_artifacts/01_integrated_v2_vs_classic/) (rebin_on arm) |
 | Champion-lane / parent-selection repairs ("Fix A/B/B′") | Re-introduce code-level exploitation into QD via a champion lane and seeding | Halved the deficit on the fast subset but **did not transfer** to the hard subset | main `exp/fast_iter/fixb_hard_subset/`, `fixbprime_hybrid/` |
+
+### 4.1 Salvage-attempt results (data)
+
+The attempts split into two metric families, so two tables. **Descriptor /
+archive variants** carry full backend-comparison aggregates (same columns as §3);
+the **direct QD-vs-classic repair attempts** were screened with the paired
+penalized best-quality statistic on small single-seed subsets.
+
+**(a) Descriptor & archive-maintenance variants** — 13-problem hard subset, seed
+42, 240 calls/design; each compared to the classic baseline *from its own run*.
+
+| Variant (vs its run's classic) | Func pass@1 (var / classic) | Avg score Δ (var / classic) | Avg PPA Δ (var / classic) | Pareto HV wins (var / classic) | Verdict |
+|---|---|---|---|---|---|
+| Rent's-exponent BD (`cvt_theory_grounded`) | 36.6% / 54.6% | +24.0% / +21.5% | +30.3% / +26.9% | 1 / 9 | **lost** — pass@1 −18pp, HV 1 vs 9; the score/PPA "edge" is an artifact of averaging over fewer scorable designs |
+| KS adaptive rebinning (`rebin_on`, cf. §2a) | 46.3% / 48.5% | +18.1% / +27.6% | +21.3% / +34.5% | 0 / 10 | **lost** — recovers a little over rebin-off but stays far below classic |
+| Structural BD bake-off (4 profiles) | 31.7–41.4% / 54.6% | +24.4–31.1% / +21.5% | +30.0–40.1% / +26.9% | ≤1 each / 9 | **no profile wins** the multi-objective crown; higher score/PPA deltas again sit on fewer functionally-valid designs |
+
+*(Rent BD + bake-off: source `.worktrees/qd-theory-grounded-descriptors/exp/hard_iteration_qd_theory_vs_baseline_20260326_160434/`, artifact [07](exp_artifacts/07_variant_rent_exponent_bd/). KS rebinning: artifact [01](exp_artifacts/01_integrated_v2_vs_classic/).)*
+
+**(b) Direct QD-vs-classic repair attempts** — paired penalized best-quality Δ vs
+classic, single seed. "fast" = 6-problem instrument subset, "hard" = 13-problem
+subset. All negative; none reaches the −0.03 parity margin.
+
+| Repair attempt | What it added | Subset (n, seeds) | best-quality Δ | 95% CI | Verdict (finding) |
+|---|---|---|---|---|---|
+| Fix A — champion-lane elitism alone | a quality "champion" parent lane | fast (6, 1) | −0.167 | [−0.317, −0.041] | fails (F11) |
+| Fix B — code-seeded archive | seed the archive with code individuals | fast (6, 1) | −0.087 | [−0.237, −0.002] | halves the fast deficit, anchors on leaps (F10) |
+| Fix B — on the hard subset | (as above, harder problems) | hard (13, 1) | −0.116 | [−0.210, −0.037] | **does not transfer to hard** (F15) |
+| Fix B+A — combined | champion lane + code-seeding | fast (6, 1) | −0.128 | [−0.238, −0.023] | champion lane *hurts*; Fix B alone is the ceiling (F13) |
+| Fix B′ — hybrid | hybrid variant | fast (12, 1) | −0.141 | [−0.290, −0.014] | worse than Fix B (F14) |
+
+*(Source: `exp/fast_iter/{fixa_champion_lane,fixb_code_seeded,fixb_hard_subset,fixba_combined,fixbprime_hybrid}/stats/statistical_tests.md`.)*
+
+**Read of 4.1:** descriptor/archive tweaks (table a) don't rescue quality —
+consistent with §3, the deficit is in *representation + operator*, not the
+archive — and direct selection-side repairs (table b) top out **below parity on
+the hard subset**. Note that two of the ideas that *partly* helped here —
+seeding/refining from strong code individuals (Fix B) and a champion lane —
+survive into the landing variant, but only once the thought-only + single-operator
+substrate is dropped.
 
 The throughline: tweaking the **descriptor** or the **archive maintenance** does
 not rescue quality, because the deficit is in **representation + operator**, not
@@ -323,6 +363,177 @@ In rough order of leverage:
   classic.
 - Keep the **measurement disclosures** (eval-contention under-report, the CVDP
   interface fix) visible — they are credibility, not liability.
+
+---
+
+## Addendum A — The smooth-QD algorithm (V1 & V2), step by step
+
+This addendum documents exactly what smooth-QD does each generation, so the
+mechanism in §5–§6 is reproducible. Implementation: `src/revolution/qd/engine.py`
+(`evolve_one_generation`, `_sample_success_parents`, `_nsga2_global_pool`,
+`_insert_successes`) and `src/revolution/qd/archive.py` (`GridQuantileArchive`).
+**V1 and V2 are identical except for one knob** — the archive-lane parent
+selection rule (`qd_parent_selection`).
+
+### A.0 Configuration at a glance
+
+| Knob | Value | Role |
+|---|---|---|
+| `representation_kind` | `code_individual` | evolve real RTL code (so code-level hill-climbing works) |
+| `qd_operator_kind` | `eoh_strategies` | the six hand-engineered EoH operators, chosen per request by the adaptive bandit |
+| `qd_archive_type` | `grid_quantile` | behavioral archive; cell boundaries set by **quantiles** of the observed descriptor distribution (≈64 cells, 3 axes) |
+| `qd_descriptor_profile` | `journal_logic_ff_width_3d` | the 3 axes: logic depth, FF depth, log-combinational-size |
+| `qd_cell_mode` | `pareto_front` | each cell keeps a **Pareto front** over the PPA objective vector, not one scalar elite |
+| `qd_objectives` | `ppa` | multi-objective (area / power / timing) — **no scalar weighting** |
+| `qd_champion_lane_fraction` | `0.5` | half of archive-lane parents are the global-best elite (exploitation) |
+| `qd_two_parent_probability` | `0.5` | half of success offspring are 2-parent (crossover) |
+| `qd_grid_quantile_warmup_successes` | `8` | successes collected before quantile bin boundaries are fixed |
+| `qd_parent_selection` | **V1 `cell_crowded_tournament` / V2 `nsga2_global_rank`** | **the only V1→V2 difference** |
+| `population_size` / `num_generations` | `20` / `5` | budget-matched to classic (240 LLM calls/design) |
+
+### A.1 The generation loop (verbal)
+
+1. **Initialize.** Generate an initial population of RTL *code* directly from the
+   problem spec (the classic REvolution initializer). Evaluate each candidate:
+   functional simulation → synthesis → PPA proxies (Yosys/OpenROAD). The
+   functionally-valid designs ("successes") are binned into the archive; the
+   first 8 form the warmup that fixes the quantile bin boundaries.
+2. **For each of 5 generations**, split the generation's LLM-call budget into
+   three lanes:
+   - **Seed lane** — a few fresh designs straight from the spec (restart
+     diversity; larger early, tapering later).
+   - **Fail lane** — pick a previously-failed candidate and apply an EoH repair
+     operator (recover validity).
+   - **Success lane** — the core evolutionary step (steps 3–5 below).
+3. **Select parents** for each success-lane offspring (see A.2). Decide 1 vs 2
+   parents by `qd_two_parent_probability` (0.5); 2-parent requests become
+   crossover.
+4. **Apply an operator.** The adaptive bandit picks one EoH operator (targeted
+   mutation or crossover) for the request. The prompt carries the parent code
+   **plus archive-diversity context** — e.g. a target under-filled behavioral
+   cell to steer toward — then the LLM generates the offspring code.
+5. **Evaluate** all offspring (sim → synth → PPA) and **insert** the valid ones
+   into the archive (see A.3), updating the global Pareto front.
+6. **Finalize.** Return the best archive elite as the run's design; the whole
+   archive is also a deliverable — a set of behaviorally-diverse, Pareto-optimal
+   valid designs (the trade-off frontier classic does not produce).
+
+```mermaid
+flowchart TD
+    A["Initialize: generate initial RTL-code population from the problem spec"] --> B["Evaluate each: simulate, then synthesize, then measure PPA"]
+    B --> C["Bin the functionally-valid designs into the QD archive<br/>grid_quantile cells, per-cell Pareto front"]
+    C --> D{"Repeat for 5 generations"}
+    D --> E["Split this generation's LLM-call budget into 3 lanes:<br/>seed / fail / success"]
+    E --> F["Seed lane: a few fresh designs straight from the spec"]
+    E --> G["Fail lane: take a failed candidate, apply an EoH repair operator"]
+    E --> H["Success lane: select parents from the archive,<br/>apply a bandit-chosen EoH operator"]
+    F --> I["Evaluate all new offspring: simulate, synthesize, PPA"]
+    G --> I
+    H --> I
+    I --> J["Insert valid offspring into the archive<br/>and update the global Pareto front"]
+    J --> D
+    D -->|"5 generations done"| K["Finalize: best archive elite = result;<br/>whole archive = diverse Pareto deliverable"]
+```
+
+### A.2 Parent selection — where V1 and V2 differ
+
+Every success-lane parent comes from one of two lanes:
+
+- **Champion lane** (both V1 and V2; probability `qd_champion_lane_fraction` =
+  0.5): the parent **is the current global-best elite**. The LLM is asked to
+  refine the single best design so far. This is the **code-level hill-climbing /
+  exploitation** that classic REvolution relies on, re-introduced into QD — and
+  it is why smooth-QD recovers the PPA optimization the thought-only v2 lost.
+- **Archive lane** (the other 0.5): draw from the diversity archive. This is the
+  only place V1 and V2 differ:
+  - **V1 — `cell_crowded_tournament`**: pick a **uniformly-random occupied
+    cell**, then run a **crowded binary tournament** inside it (sample two
+    members, keep the one with the better non-domination rank, breaking ties by
+    larger crowding distance). Every behavioral cell gets equal selection
+    pressure regardless of its quality.
+  - **V2 — `nsga2_global_rank`**: rank **all** archive members **globally** by
+    NSGA-II non-domination rank, then crowding distance; keep the top
+    `population_size` as the pool; draw uniformly from it. Selection is biased
+    toward globally rank-1 (best trade-off) designs, while crowding keeps the
+    pool diverse.
+
+**Why V2 closes the gap.** V1 spends as much of the archive lane evolving from
+weak cells as from strong ones, diluting exploitation. V2's global
+non-domination ranking concentrates the archive lane on the best stepping-stones
+*without* collapsing diversity (crowding preserves spread) — so the search
+exploits good designs harder. That single change moves the 5-seed best-quality
+delta from **−0.034 (significantly worse, V1)** to **−0.016 (parity, V2)**.
+
+```mermaid
+flowchart TD
+    A["Success lane needs a parent"] --> B{"Champion lane?<br/>probability = 0.5"}
+    B -->|yes| C["Return the current GLOBAL-BEST elite<br/>LLM refines the best design = exploitation / code hill-climbing"]
+    B -->|"no: archive lane"| D{"qd_parent_selection rule"}
+    D -->|"V1: cell_crowded_tournament"| E["Pick a uniformly-random occupied cell"]
+    E --> F["Crowded binary tournament inside that cell:<br/>sample 2 members, keep the better by<br/>non-domination rank, then crowding distance"]
+    F --> G["Return the winner"]
+    D -->|"V2: nsga2_global_rank"| H["Rank ALL archive members globally:<br/>NSGA-II non-domination rank, then crowding distance"]
+    H --> I["Keep the top population_size as the pool"]
+    I --> J["Return a uniformly-random member of the pool"]
+    C --> K["Parent ready: build operator prompt and call the LLM"]
+    G --> K
+    J --> K
+```
+
+### A.3 Archive insertion — quantile binning + per-cell Pareto fronts
+
+When a valid offspring is inserted:
+
+1. **Descriptors.** Compute the 3 behavioral descriptors (logic depth, FF depth,
+   log-combinational-size) from the synthesized netlist.
+2. **Warmup / binning.** Until 8 successes have been seen the archive buffers
+   candidates; at 8 it fixes **per-axis quantile boundaries** so that cells are
+   roughly equally populated. (Quantile binning adapts the grid to the *actual*
+   descriptor distribution, avoiding the empty/overfull cells a fixed grid
+   suffers — this is the one journal component that individually helped, §3c.)
+3. **Cell assignment.** Map the descriptors through the quantile boundaries to a
+   single cell.
+4. **Per-cell Pareto keep-rule.** Each cell holds a **Pareto front** over the PPA
+   objective vector (area / power / timing). A new candidate joins the cell's
+   front if it is non-dominated there; any members it now dominates are evicted.
+   (Contrast classic / scalar-elite QD, which keeps just one design per cell by a
+   weighted score — the Pareto cells are how the scalar-weight bias is removed.)
+5. **Global Pareto front.** A global non-dominated front is maintained across all
+   cells; its best member is the **champion** used by the champion lane (A.2).
+
+```mermaid
+flowchart TD
+    A["New functionally-valid candidate"] --> B["Compute its 3 behavioral descriptors:<br/>logic depth, FF depth, log-combinational-size"]
+    B --> C{"Archive warmed up?<br/>at least 8 successes seen"}
+    C -->|no| D["Buffer the candidate; once 8 are collected,<br/>set quantile bin boundaries per axis<br/>so cells are equally populated"]
+    C -->|yes| E["Map the descriptors to one cell<br/>via the quantile boundaries"]
+    E --> F{"Is that cell empty?"}
+    F -->|empty| G["Insert as the cell's first member"]
+    F -->|occupied| H["Compare against the cell's Pareto front<br/>over the PPA vector area / power / timing"]
+    H --> I{"Non-dominated in the cell?"}
+    I -->|yes| J["Add to the cell's Pareto front;<br/>evict any now-dominated members"]
+    I -->|no| K["Reject, or hold in the cell reservoir"]
+    D --> L["Also update the GLOBAL Pareto front<br/>its best member = the champion"]
+    G --> L
+    J --> L
+```
+
+### A.4 Summary — what changed, lane by lane
+
+| Lane / piece | Classic | Original v2 | Smooth-QD V1 | Smooth-QD V2 |
+|---|---|---|---|---|
+| Individuals | code | thought-only | **code** | **code** |
+| Operators | 6 EoH + bandit | single unified | **6 EoH + bandit** | **6 EoH + bandit** |
+| Exploitation | population elitism | (archive only) | champion lane 0.5 | champion lane 0.5 |
+| Exploration / diversity | none | per-cell archive | per-cell crowded tournament | **global NSGA-II rank** |
+| Archive | none | quantile + Pareto cells | quantile + Pareto cells | quantile + Pareto cells |
+| Objective | scalar PPA | multi-objective | multi-objective | multi-objective |
+| 5-seed best-quality Δ vs classic | — | −0.093 | −0.034 | **−0.016 (parity)** |
+
+The progression is the story in one table: re-introduce code + the six operators
+(V1 closes most of the gap), then fix selection with global NSGA-II (V2 reaches
+parity), keeping the quantile + Pareto archive throughout for the diversity
+deliverable.
 
 ---
 
