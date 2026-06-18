@@ -88,7 +88,7 @@ mux-heavy, and logic-rewritten solutions.
 ## 10. Implementation Status
 
 Implemented as a descriptor profile and synthesized-netlist extraction
-path. Not yet run on the development subset.
+path. Seed-1 development run completed.
 
 ## 11. Experimental Setup
 
@@ -102,13 +102,23 @@ path. Not yet run on the development subset.
 
 ## 12. Results
 
-Not run.
+Seed-1 development Gate 0 passed:
+
+- covered problems: 6
+- missing problems: 0
+- classic-minus-motif problem delta: 0
+- classic-minus-motif problem-seed delta: 0
+- report: `seed1_preliminary_report.md`
+- coverage artifact:
+  `../../auto_bd_gate0_coverage_seed1_netlist_motif_occupancy.json`
 
 ## 13. Accept / Reject Decision
 
-Pending.
+Promote to seed-3 screening candidate; reject as the final Auto-BD
+method for now.
 
 ## 14. Reason
 
-No experimental evidence yet. The method is ready for a development
-seed-1 run once the run matrix includes its arm.
+The method passed preliminary Gate 0 and has a clear hardware-native
+rationale, but it still needs PPA, hypervolume, common-audit QD, and
+structural diversity evidence against the control methods.

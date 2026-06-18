@@ -62,8 +62,8 @@ evidence and rationale.
 - [x] Add motif extraction tests with small Yosys JSON/netlist fixtures.
 - [x] Add descriptor stability tests for signal renaming.
 - [x] Add descriptor stability tests for formatting-only RTL changes.
-- [ ] Run development subset and generate the method report.
-- [ ] Write accept/reject decision before moving to ST-NOD.
+- [x] Run development subset and generate the method report.
+- [x] Write accept/reject decision before moving to ST-NOD.
 
 ## P4 - ST-NOD
 

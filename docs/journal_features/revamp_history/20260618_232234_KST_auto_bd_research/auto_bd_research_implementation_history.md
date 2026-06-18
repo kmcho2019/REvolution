@@ -1591,3 +1591,59 @@ TODO status:
 - marked motif extraction, signal-renaming stability, and formatting
   stability tests complete
 - left development subset run/report and accept/reject decision open
+
+## 2026-06-18 - Netlist Motif Occupancy Seed-1 Run
+
+Ran the `netlist_motif_occupancy` development seed-1 arm on the locked
+six-problem subset.
+
+Commands:
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python - <<'PY'
+...
+PY
+```
+
+The wrapper executed the run-matrix manifest command and the two locked
+benchmark commands for the motif arm.
+
+Run policy:
+
+- phase: `development_preliminary_seed1`
+- seed: `1001`
+- model: `openai/gpt-oss-120b`
+- endpoint: `http://20.0.0.103:8000/v1/models`
+- vLLM preflight: `max_model_len=131072`
+- REvolution token budgets: `--max_tokens 128000`,
+  `--diff_max_tokens 128000`
+
+Artifacts:
+
+- `exp/auto_bd_research/development_preliminary_seed1/netlist_motif_occupancy/seed_1001/run_manifest.json`
+- `exp/auto_bd_research/development_preliminary_seed1/netlist_motif_occupancy/seed_1001/revolution/openai_gpt-oss-120b/20260618_184839_revolution_summary_results.txt`
+- `exp/auto_bd_research/development_preliminary_seed1/netlist_motif_occupancy/seed_1001/revolution/openai_gpt-oss-120b/20260618_185911_revolution_summary_results.txt`
+- `auto_bd_gate0_coverage_seed1_netlist_motif_occupancy.json`
+- `auto_bd_methods/02_netlist_motif_occupancy/seed1_preliminary_report.md`
+- `auto_bd_methods/02_netlist_motif_occupancy/accept_reject.md`
+
+Results:
+
+- RTLLM runtime: 564.57 seconds
+- VerilogEval runtime: 548.10 seconds
+- covered problems: 6
+- missing problems: 0
+- classic-minus-motif problem delta: 0
+- motif-minus-classic problem delta: 0
+- classic-minus-motif problem-seed delta: 0
+
+Decision:
+
+- promote motif occupancy to seed-3 screening candidate
+- reject as the selected final method for now until PPA/hypervolume,
+  common-audit QD, and structural-diversity evidence exists
+
+TODO status:
+
+- marked motif development run/report complete
+- marked motif accept/reject decision complete
