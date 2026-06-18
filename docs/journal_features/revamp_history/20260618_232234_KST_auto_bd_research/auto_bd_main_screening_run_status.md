@@ -8,7 +8,7 @@
 
 | Level | Total | Complete | Partial | Pending | Runs Complete | Standard Results |
 | --- | --- | --- | --- | --- | --- | --- |
-| Manifest | 12 | 0 | 0 | 12 | 0 | 0 |
+| Manifest | 12 | 12 | 0 | 0 | 0 | 0 |
 | Benchmark Command | 24 | 0 | 0 | 24 | 0 | 0 |
 | Arm/Seed | 12 | 0 | 0 | 12 | 0 | 0 |
 

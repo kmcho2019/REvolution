@@ -89,7 +89,7 @@ def entry_status(row: Any) -> dict[str, Any]:
     ]
     if len(completed) == len(row["problems"]):
         status = "complete"
-    elif save_path.exists():
+    elif benchmark_run_path(save_path, benchmark).exists():
         status = "partial"
     else:
         status = "pending"
@@ -143,12 +143,18 @@ def arm_seed_status_rows(entry_rows: list[dict[str, Any]]) -> list[dict[str, Any
 
 def problem_summary_path(save_path: Path, benchmark: str, problem: str) -> Path:
     return (
+        benchmark_run_path(save_path, benchmark)
+        / problem
+        / f"{problem}_summary.json"
+    )
+
+
+def benchmark_run_path(save_path: Path, benchmark: str) -> Path:
+    return (
         save_path
         / "revolution"
         / "openai_gpt-oss-120b"
         / benchmark
-        / problem
-        / f"{problem}_summary.json"
     )
 
 

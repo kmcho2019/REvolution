@@ -3451,3 +3451,116 @@ PY
 ```
 
 Result: `main screening status artifact check ok`.
+
+## 2026-06-18 22:42 UTC
+
+Generated all seed-3 main-screening run manifests.
+
+Manifest batch command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+import shlex
+import subprocess
+from pathlib import Path
+
+matrix = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_main_screening_run_matrix.json"
+)
+payload = json.loads(matrix.read_text())
+for index, row in enumerate(payload["manifest_commands"], start=1):
+    print(f"[{index}/{len(payload['manifest_commands'])}] {row['arm_name']} seed {row['seed']}", flush=True)
+    subprocess.run(shlex.split(row["command_string"]), check=True)
+PY
+```
+
+Result: wrote 12 ignored `exp/` run manifests:
+
+- 4 promoted arms
+- 3 seeds per arm
+- phase: `main_screening`
+- seed policy: `screening_seed3`
+
+Status-helper fix:
+
+- Corrected `scripts/report_auto_bd_run_matrix_status.py` so a
+  manifest-only save directory remains `pending`.
+- A benchmark command becomes `partial` only after its benchmark run tree
+  exists.
+
+Refreshed status command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_run_matrix_status.py \
+  --matrix \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_matrix.json \
+  --output-json \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.json \
+  --output-md \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.md
+```
+
+Current seed-3 status:
+
+- manifest commands: 12 complete, 0 pending
+- benchmark commands: 0 complete, 24 pending
+- arm/seed pairs: 0 complete, 12 pending
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_run_matrix_status.py
+```
+
+Result: 2 passed in 1.40s.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_run_matrix_status.py \
+  tests/scripts/test_report_auto_bd_run_matrix_status.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/report_auto_bd_run_matrix_status.py \
+  tests/scripts/test_report_auto_bd_run_matrix_status.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/report_auto_bd_run_matrix_status.py \
+  tests/scripts/test_report_auto_bd_run_matrix_status.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+Artifact check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+p = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_main_screening_run_status.json"
+)
+payload = json.loads(p.read_text())
+assert payload["manifest_summary"] == {"complete": 12, "total": 12}
+assert payload["entry_summary"] == {"pending": 24, "total": 24}
+assert payload["arm_seed_summary"] == {"pending": 12, "total": 12}
+print("main screening manifest status check ok")
+PY
+```
+
+Result: `main screening manifest status check ok`.

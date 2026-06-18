@@ -24,10 +24,13 @@ def test_build_status_reports_pending_and_standard_complete(tmp_path, monkeypatc
     _write_problem_summary(complete_root, "RTLLM", "P0")
     _write_standard_results(complete_root / "standard_results")
     (tmp_path / "exp" / "complete" / "run_manifest.json").write_text("{}", encoding="utf-8")
+    pending_manifest = tmp_path / "exp" / "pending" / "run_manifest.json"
+    pending_manifest.parent.mkdir(parents=True)
+    pending_manifest.write_text("{}", encoding="utf-8")
 
     payload = mod.build_status(matrix)
 
-    assert payload["manifest_summary"] == {"total": 2, "complete": 1, "pending": 1}
+    assert payload["manifest_summary"] == {"total": 2, "complete": 2}
     assert payload["entry_summary"] == {"total": 2, "complete": 1, "pending": 1}
     assert payload["arm_seed_summary"] == {
         "total": 2,
