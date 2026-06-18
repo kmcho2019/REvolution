@@ -1017,3 +1017,127 @@ Operational note: an initial parallel `uv run` validation attempt for
 pytest, ruff, and pyright stalled before reaching the tools, likely due
 to environment setup contention. Those validation processes were stopped
 and replaced with sequential `uv run --active` commands.
+
+## 2026-06-19 02:23 KST
+
+Executed the landing Smooth-QD manual-BD / NSGA-II development-subset
+seed-1 baseline from the generated run matrix.
+
+Preflight:
+
+```bash
+curl -sS --max-time 10 http://20.0.0.103:8000/v1/models
+```
+
+Result:
+
+- model ID: `openai/gpt-oss-120b`
+- `max_model_len`: 131072
+
+Run policy:
+
+- phase: `development_preliminary_seed1`
+- seed: `1001`
+- method arm: `landing_smooth_qd_manual_bd`
+- backend: `revolution_qd`
+- descriptor profile: `journal_logic_ff_width_3d`
+- archive: `grid_quantile`, warmup successes 8
+- cell mode: Pareto front, max elites per cell 5
+- parent selection: `nsga2_global_rank`
+- champion-lane fraction: 0.5
+- model: `openai/gpt-oss-120b`
+- `--vllm_min_model_len 131072`
+- `--max_tokens 128000`
+- `--diff_max_tokens 128000`
+- population size 12, generations 3
+- strict-ablation evaluation
+- worker policy: 12 total slots, 6 active problems, 4 workers per
+  problem
+
+Executed the two `landing_smooth_qd_manual_bd` commands from
+`auto_bd_development_run_matrix.json`:
+
+- RTLLM: `Prob011_multi_16bit`, `Prob019_sub_64bit`, `Prob048_pe`
+- VerilogEval-Spec-to-RTL: `Prob021_mux256to1v`,
+  `Prob030_popcount255`, `Prob105_rotate100`
+
+Run artifacts:
+
+- `exp/auto_bd_research/development_preliminary_seed1/landing_smooth_qd_manual_bd/seed_1001/run_manifest.json`
+- `exp/auto_bd_research/development_preliminary_seed1/landing_smooth_qd_manual_bd/seed_1001/revolution/openai_gpt-oss-120b/20260618_170319_revolution_summary_results.txt`
+- `exp/auto_bd_research/development_preliminary_seed1/landing_smooth_qd_manual_bd/seed_1001/revolution/openai_gpt-oss-120b/20260618_171307_revolution_summary_results.txt`
+- `exp/auto_bd_research/development_preliminary_seed1/landing_smooth_qd_manual_bd/seed_1001/revolution/openai_gpt-oss-120b/20260618_170319_revolution_scheduler_telemetry.json`
+- `exp/auto_bd_research/development_preliminary_seed1/landing_smooth_qd_manual_bd/seed_1001/revolution/openai_gpt-oss-120b/20260618_171307_revolution_scheduler_telemetry.json`
+
+Run completion:
+
+- RTLLM group completed in 550.23 seconds.
+- VerilogEval-Spec-to-RTL group completed in 530.33 seconds.
+
+Generated coverage artifact:
+
+- `auto_bd_gate0_coverage_seed1_landing_smooth_qd_manual_bd.json`
+
+Coverage result for landing Smooth-QD manual-BD, development subset, seed
+1001:
+
+| Problem | Summary | PPA Artifacts | Best Score |
+| --- | --- | ---: | ---: |
+| `RTLLM/Prob011_multi_16bit` | success | 27 | 0.15328258385427165 |
+| `RTLLM/Prob019_sub_64bit` | success | 45 | 0.452712179958205 |
+| `RTLLM/Prob048_pe` | success | 24 | 0.006579168080201192 |
+| `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | success | 38 | 0.4231863785854045 |
+| `VerilogEval-Spec-to-RTL/Prob030_popcount255` | success | 45 | 0.28511627906976744 |
+| `VerilogEval-Spec-to-RTL/Prob105_rotate100` | success | 40 | 0.04155040525406675 |
+
+Gate 0 comparison against original REvolution seed-1 `C`:
+
+```json
+{
+  "classic_minus_manual": [],
+  "manual_minus_classic": [],
+  "classic_seed_minus_manual": []
+}
+```
+
+Result: the landing Smooth-QD manual-BD baseline covers all six
+development seed-1 problems covered by original REvolution.
+
+Implementation note:
+
+- Fixed `scripts/summarize_auto_bd_gate0.py` to ignore QD sidecar
+  summaries such as `archive_summary.json` and `global_pareto_summary.json`.
+  It now reads only `<problem>_summary.json` per problem.
+
+Validation:
+
+```bash
+uv tool run ty check \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+```
+
+Result: 2 passed in 1.26s.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.

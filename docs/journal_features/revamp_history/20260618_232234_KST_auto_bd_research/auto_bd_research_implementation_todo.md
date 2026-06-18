@@ -29,7 +29,7 @@ evidence and rationale.
 ## P1 - Baselines And Gate 0
 
 - [x] Reproduce original REvolution on the development subset.
-- [ ] Reproduce landing Smooth-QD manual-BD / NSGA-II baseline on the
+- [x] Reproduce landing Smooth-QD manual-BD / NSGA-II baseline on the
   development subset.
 - [x] Record classic REvolution valid-PPA coverage set `C`.
 - [ ] Verify Gate 0: candidate Auto-BD methods must cover every problem in

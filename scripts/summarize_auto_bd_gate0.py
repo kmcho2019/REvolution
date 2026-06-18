@@ -47,6 +47,8 @@ def build_summary(inputs: Gate0Inputs) -> dict[str, Any]:
     statuses = load_summary_statuses(inputs.run_dir)
     problems = []
     for summary_path in sorted(inputs.run_dir.glob("*/*/*_summary.json")):
+        if summary_path.name != f"{summary_path.parent.name}_summary.json":
+            continue
         problem_dir = summary_path.parent
         benchmark = problem_dir.parent.name
         problem = problem_dir.name

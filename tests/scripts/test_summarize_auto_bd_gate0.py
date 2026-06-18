@@ -77,6 +77,8 @@ def _write_problem(problem_dir: Path, *, has_ppa: bool) -> None:
         json.dumps(summary),
         encoding="utf-8",
     )
+    (problem_dir / "archive_summary.json").write_text("{}", encoding="utf-8")
+    (problem_dir / "global_pareto_summary.json").write_text("{}", encoding="utf-8")
     if has_ppa:
         sample_dir = problem_dir / "Gen0" / "sample"
         sample_dir.mkdir(parents=True)
