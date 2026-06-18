@@ -740,6 +740,7 @@ class SynthesisEvaluator:
                 simulation_timeout_s=effective_simulation_timeout_s,
                 include_dirs=include_dirs,
                 defines=defines,
+                aux_files=aux_files,
             )
         )
 
@@ -917,6 +918,7 @@ class SynthesisEvaluator:
         simulation_timeout_s: int = 300,
         include_dirs: tuple[str, ...] = (),
         defines: tuple[str, ...] = (),
+        aux_files: tuple[str, ...] = (),
     ) -> tuple[bool, str]:
         """
         Runs a functional simulation on the synthesized netlist using the provided testbench.
@@ -925,6 +927,14 @@ class SynthesisEvaluator:
         so that a testbench which \\`include`s a defines header (e.g. the e203
         modules' ``e203_defines.v``) and uses its macros in its own port
         declarations still compiles against the gate-level netlist.
+
+        ``aux_files`` are the design's dependency compile-units (e.g. the e203
+        modules' ``sirv_gnrl_*.v`` bundles). They are compiled alongside the
+        gate-level netlist because multi-module testbenches instantiate those
+        dependency modules directly in their environment; the flattened netlist
+        defines only the DUT, so without the aux sources verilator fails with
+        "Cannot find module". They do not collide with the DUT (different module
+        names) and the testbench references — not \\`include`s — them.
 
         :param synthesized_netlist: Path to the synthesized netlist file.
         :param test_sv: Path to the testbench Verilog file.
@@ -951,7 +961,8 @@ class SynthesisEvaluator:
             generated_sv_file=[
                 synthesized_netlist,
                 pdk_verilog_lib,
-            ],  # Pass synthesized netlist and PDK lib
+                *aux_files,
+            ],  # netlist + PDK lib + dependency compile-units the testbench needs
             test_sv_file=test_sv,
             ref_sv_file=ref_sv,
             top_module_name=tb_top_module,
@@ -1004,21 +1015,29 @@ class SynthesisEvaluator:
         :param clk_period: Clock period in nanoseconds.
         :return: Path to the generated SDC file.
         """
-        clk_ports = []
         clk_pattern = r"\b(clk|Clock|clock|Clk|CLK|CK|ck)\w*"
 
         with open(verilog_file, "r") as inFile:
-            lines = inFile.read().split(";")
-            for line in lines:
-                if f"module {module_name}" in line:
-                    ob = line.find("(")
-                    cb = line.rfind(")")
-                    matches = re.findall(clk_pattern, line[ob : cb - 1])
-                    if matches:
-                        clk_ports.extend(matches)
-                    else:
-                        clk_ports.append("f_clk")
-                break
+            text = inFile.read()
+        # Strip comments first: the prior split-on-';' + unconditional break only
+        # ever inspected the text before the FIRST ';', so any module with a
+        # license header (e.g. the RealBench e203 goldens, whose Apache header
+        # contains a ';') yielded NO create_clock at all -> OpenROAD STA ran
+        # unconstrained and reported tns/wns = 0 for every design.
+        text = re.sub(r"//[^\n]*", "", text)
+        text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+        # Capture the module header (`module <name> ...` up to the first ';') and
+        # pull clock ports from its port list. A purely combinational module
+        # yields none and is correctly left unconstrained.
+        header_match = re.search(
+            rf"\bmodule\s+{re.escape(module_name)}\b(.*?);", text, re.S
+        )
+        clk_ports: list[str] = []
+        if header_match is not None:
+            header = header_match.group(1)
+            open_paren = header.find("(")
+            port_region = header[open_paren:] if open_paren != -1 else header
+            clk_ports = list(dict.fromkeys(re.findall(clk_pattern, port_region)))
 
         sdc_lines = []
         sdc_lines.append(f"current_design {module_name}\n")

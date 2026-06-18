@@ -3422,3 +3422,36 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Docs: new `docs/journal_features/realbench_reference_ppa.md` (diagnosis,
   process, consumption paths, remaining work incl. manifest ppa_path version bump
   + folding generation into build_realbench_manifest.py); doc 13 finding M15.
+
+## 2026-06-18 — RealBench PPA harness: fixed bugs 1-3, characterized bug 4
+
+- Fixed the three PPA-scoring harness bugs in the shared evaluation flow:
+  - **Bug 1 (timescale):** added `--timescale-override 1ns/1ps` to the verilator
+    command (`verilator_evaluation.py`) — Yosys netlists carry no `timescale, so
+    the netlist+testbench post-synth re-sim tripped verilator's TIMESCALEMOD.
+    Validated: e203_exu_alu_csrctrl now passes the post-synth func check.
+  - **Bug 2 (SDC clock):** rewrote `_create_sdc_file` (`evaluation.py`). The old
+    parser split on ';' and inspected only the chunk before the first ';', so a
+    license-header ';' (every e203 golden) hid the module → no create_clock → STA
+    unconstrained → tns/wns=0 for ALL designs. New parser strips comments, finds
+    the module header, extracts clock ports. Regenerated all 34 references:
+    **23/34 now carry real timing** (biu eff_clk 0.6 ns, ifu 2.56 ns); the rest
+    are combinational/wrappers (correctly 0).
+  - **Bug 3 (post-synth aux deps):** `_check_synthesis_functionality` now compiles
+    the design's `sirv_gnrl_*` aux dependency bundles alongside the netlist;
+    multi-module testbenches instantiate them and the flattened netlist defines
+    only the DUT, so they were "Cannot find module" before. Validated gone for
+    biu/lsu.
+- **Bug 4 (NOT fixed, characterized):** with 1+3, multi-dep modules now COMPILE
+  in the post-synth check but the gate-level SIM of sequential CPU modules
+  mismatches the reference (biu 50/222 samples, first at t=205) — gate-level
+  X-propagation / reset modelling, a genuine verification problem. So candidate
+  PPA scoring now works end-to-end for combinational/dep-free modules; sequential
+  modules need gate-sim hardening OR accepting PPA on the pre-synth RTL gate
+  (a research-design decision; documented as remaining-work option).
+- Validation: new `tests/revolution/test_synthesis_sdc_clock.py` (4 cases, SDC
+  regression incl. the license-header case); 42 existing evaluation+verilator
+  tests still pass; ruff + pyright clean on touched files.
+- Docs: `realbench_reference_ppa.md` §5 (fixes) + updated diagnosis/remaining
+  work; doc 13 M15 updated. Reference `_ppa.txt` regenerated (local; tree
+  git-ignored).

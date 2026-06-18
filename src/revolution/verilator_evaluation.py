@@ -80,6 +80,12 @@ class VerilatorEvaluator:
             "--binary",
             "--timing",
             "-Wno-fatal",
+            # Force a uniform timescale: Yosys-emitted gate-level netlists carry no
+            # `timescale, so the post-synthesis re-sim of (netlist + testbench) trips
+            # verilator's TIMESCALEMOD check when the testbench declares one. Overriding
+            # makes pre- and post-synthesis compiles timescale-consistent.
+            "--timescale-override",
+            "1ns/1ps",
             "--top-module",
             top_module_name,
             "-Mdir",
