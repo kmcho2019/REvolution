@@ -9,6 +9,11 @@ RANDOM_DESCRIPTOR_FILE = (
     "20260618_232234_KST_auto_bd_research/"
     "auto_bd_methods/00_random_descriptor/descriptor_profile.yaml"
 )
+YOSYS_STAT_DESCRIPTOR_FILE = (
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_methods/01_yosys_stat_bd/descriptor_profile.yaml"
+)
 
 
 class _FakeVerilogEvaluator:
@@ -431,6 +436,50 @@ def test_candidate_evaluator_extracts_random_hash_descriptor(tmp_path):
         "random_hash_2",
     )
     assert all(0.0 <= value < 1.0 for value in result.descriptor_values.values())
+
+
+def test_candidate_evaluator_extracts_yosys_stat_descriptor(tmp_path):
+    context = _context(tmp_path)
+    code_path = tmp_path / "candidate.sv"
+    code_path.write_text("module TopA; endmodule\n", encoding="utf-8")
+    evaluator = CandidateEvaluator(
+        context=context,
+        problem_description="desc",
+        verilog_evaluator=_FakeVerilogEvaluator(
+            {
+                "status": "success",
+                "simulation_stdout": "Mismatches: 0\n",
+                "simulation_stderr": "",
+                "compilation_stderr": "",
+            }
+        ),
+        synthesis_evaluator=_FakeSynthesisEvaluator(
+            {
+                "synthesis_success": True,
+                "synthesis_functionality_success": True,
+                "ppa_success": True,
+                "ppa_metrics": {"power": 0.9, "area": 90.0, "eff_clk_period": 0.9},
+                "structural_metrics": {
+                    "total_cells": 24.0,
+                    "seq_ratio": 0.25,
+                    "mux_ratio": 0.5,
+                    "cell_count_log": 24.0,
+                },
+            }
+        ),
+        ref_ppa_metrics={"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
+        descriptor_profile="yosys_stat_compact_3d",
+        descriptor_file=YOSYS_STAT_DESCRIPTOR_FILE,
+    )
+
+    result = evaluator.evaluate_candidate(
+        CandidateWorkItem(code="module TopA; endmodule", code_file_path=str(code_path))
+    )
+
+    assert result.status == "success"
+    assert result.descriptor_values["cell_count_log"] == pytest.approx(3.2188758248682006)
+    assert result.descriptor_values["seq_ratio"] == pytest.approx(0.25)
+    assert result.descriptor_values["mux_ratio"] == pytest.approx(0.5)
 
 
 def test_candidate_evaluator_search_accelerated_throttles_synthesis(tmp_path):

@@ -571,3 +571,93 @@ PYTHONPATH=src /workspace/.venv/bin/python -m pyright \
 ```
 
 Result: 0 errors, 0 warnings, 0 informations.
+
+## 2026-06-19 01:11 KST
+
+Implemented the simple Yosys-stat BD control as the next control arm
+after the random descriptor.
+
+Added:
+
+- `auto_bd_methods/01_yosys_stat_bd/descriptor_profile.yaml`
+- `auto_bd_methods/01_yosys_stat_bd/config.yaml`
+- `auto_bd_methods/01_yosys_stat_bd/method_card.md`
+
+Primary descriptor profile:
+
+- `cell_count_log`
+- `seq_ratio`
+- `mux_ratio`
+
+Rationale:
+
+- keep the first Yosys-stat control three-dimensional like the landing
+  manual-BD baseline
+- use synthesized-netlist structural metrics that already exist in the
+  evaluator
+- avoid a new backend branch or broad experimental-mode configuration
+  while still testing whether simple implementation-size/composition
+  statistics beat the current manual descriptors
+
+Predeclared ablation:
+
+- `yosys_stat_mix_4d`, adding `adder_ratio`, if the compact profile
+  collapses or fails on arithmetic-heavy tasks
+
+Status: implemented but not run. Reports and accept/reject decisions are
+still pending until baseline coverage and development-subset runs exist.
+
+Validation:
+
+```bash
+uv tool run ty check \
+  src/revolution/qd/descriptors.py \
+  src/revolution/runtime/candidate_evaluator.py
+```
+
+Result: all checks passed.
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python -m pytest \
+  tests/revolution/test_qd_descriptors.py \
+  tests/revolution/test_candidate_evaluator.py \
+  tests/revolution/test_auto_bd_method_specs.py
+```
+
+Result: 45 passed in 26.83s.
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/ruff check \
+  tests/revolution/test_qd_descriptors.py \
+  tests/revolution/test_candidate_evaluator.py \
+  src/revolution/qd/descriptors.py \
+  src/revolution/runtime/candidate_evaluator.py
+```
+
+Result: all checks passed.
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python -m pyright \
+  src/revolution/qd/descriptors.py \
+  src/revolution/runtime/candidate_evaluator.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python - <<'PY'
+from pathlib import Path
+import yaml
+base = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_methods/01_yosys_stat_bd"
+)
+for name in ["config.yaml", "descriptor_profile.yaml"]:
+    payload = yaml.safe_load((base / name).read_text(encoding="utf-8"))
+    assert isinstance(payload, dict), name
+print("yosys-stat method yaml ok")
+PY
+```
+
+Result: `yosys-stat method yaml ok`.

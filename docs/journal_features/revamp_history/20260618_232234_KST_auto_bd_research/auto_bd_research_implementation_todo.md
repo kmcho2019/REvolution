@@ -50,8 +50,8 @@ evidence and rationale.
 
 - [x] Implement random descriptor QD.
 - [x] Ensure random descriptor control is deterministic per candidate.
-- [ ] Implement simple Yosys-stat BD.
-- [ ] Produce method cards for both controls.
+- [x] Implement simple Yosys-stat BD.
+- [x] Produce method cards for both controls.
 - [ ] Generate per-method reports for both controls.
 - [ ] Write accept/reject decisions for both controls.
 - [ ] Use control results to sanity-check the report and gates.

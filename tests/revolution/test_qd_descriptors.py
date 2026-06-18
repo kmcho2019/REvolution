@@ -17,6 +17,11 @@ RANDOM_DESCRIPTOR_FILE = (
     "20260618_232234_KST_auto_bd_research/"
     "auto_bd_methods/00_random_descriptor/descriptor_profile.yaml"
 )
+YOSYS_STAT_DESCRIPTOR_FILE = (
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_methods/01_yosys_stat_bd/descriptor_profile.yaml"
+)
 
 
 def test_load_descriptor_profiles_includes_hybrid_defaults():
@@ -242,6 +247,23 @@ def test_random_hash_profile_requires_auto_bd_hash_metrics():
     assert axes == ["random_hash_0", "random_hash_1", "random_hash_2"]
     assert requirements["requires_synthesis"] is True
     assert requirements["requires_auto_bd_hash"] is True
+
+
+def test_yosys_stat_profile_uses_synthesis_metrics_only():
+    axes = resolve_descriptor_axes(
+        profile_name="yosys_stat_compact_3d",
+        explicit_axes=None,
+        descriptor_file=YOSYS_STAT_DESCRIPTOR_FILE,
+        archive_type="grid_quantile",
+        circuit_type="sequential",
+    )
+    requirements = descriptor_requirements(axes)
+
+    assert axes == ["cell_count_log", "seq_ratio", "mux_ratio"]
+    assert requirements["requires_synthesis"] is True
+    assert requirements["requires_ppa"] is False
+    assert requirements["requires_graph_metrics"] is False
+    assert requirements["requires_auto_bd_hash"] is False
 
 
 def test_resolve_descriptor_axes_rejects_unknown_profile():
