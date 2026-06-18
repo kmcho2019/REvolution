@@ -64,6 +64,8 @@ def test_build_report_marks_gate0_and_hv_win(tmp_path: Path) -> None:
     assert robustness["classic_revolution"]["total_candidates"] == 2
     assert failures[("classic_revolution", "testbench_functional_failure")] == 1
     assert report["anytime_summary"][0]["final_generation"] == 1
+    assert report["qd_summary"][0]["common_audit_coverage"] == 1 / 256
+    assert report["qd_summary"][0]["common_audit_entropy_bits"] == 0.0
     assert leaderboard["classic_revolution"]["duplicate_netlist_count"] == 0
 
 
@@ -103,6 +105,9 @@ def test_main_writes_markdown_and_json(tmp_path: Path) -> None:
     assert payload["normalization"]["hypervolume_reference_point"] == 0.0
     assert (figure_dir / "anytime_mean_best_fitness.png").read_bytes().startswith(b"\x89PNG")
     assert (figure_dir / "anytime_mean_hypervolume.png").read_bytes().startswith(b"\x89PNG")
+    assert (figure_dir / "qd_common_audit_coverage.png").read_bytes().startswith(b"\x89PNG")
+    assert (figure_dir / "qd_common_audit_entropy.png").read_bytes().startswith(b"\x89PNG")
+    assert (figure_dir / "qd_common_audit_cells_heatmap.png").read_bytes().startswith(b"\x89PNG")
 
 
 def _write_reference(tmp_path: Path) -> Path:
@@ -128,6 +133,8 @@ def _write_standard_dir(
     result_dir = results_root / method / "seed_1001" / "standard_results"
     result_dir.mkdir(parents=True)
     problem_id = "Bench/ProbA"
+    archive_type = "none" if method == "classic_revolution" else "grid_quantile"
+    archive_cell_id = None if method == "classic_revolution" else "0,0,0"
     candidates = pd.DataFrame(
         [
             {
@@ -146,6 +153,8 @@ def _write_standard_dir(
                 "fitness": fitness,
                 "canonical_netlist_hash": netlist_hash,
                 "motif_signature_hash": f"{netlist_hash}_motif",
+                "archive_cell_id": archive_cell_id,
+                "common_audit_cell_id": "audit_motif4:0,0,0,0",
                 "generation": 0,
             },
             {
@@ -164,6 +173,8 @@ def _write_standard_dir(
                 "fitness": None,
                 "canonical_netlist_hash": None,
                 "motif_signature_hash": None,
+                "archive_cell_id": None,
+                "common_audit_cell_id": None,
                 "generation": 1,
             }
         ]
@@ -174,6 +185,7 @@ def _write_standard_dir(
             {
                 "method_name": method,
                 "problem_id": problem_id,
+                "generation": 0,
                 "runtime_seconds": 1.0,
                 "llm_api_calls": 2,
             }
@@ -184,11 +196,40 @@ def _write_standard_dir(
             {
                 "method_name": method,
                 "problem_id": problem_id,
+                "seed": 1001,
+                "archive_type": archive_type,
+                "internal_occupied_cells": None
+                if method == "classic_revolution"
+                else 1,
+                "internal_qd_score": None
+                if method == "classic_revolution"
+                else fitness,
+                "common_audit_bins": 4,
+                "common_audit_total_cells": 256,
                 "common_audit_occupied_cells": 1,
+                "common_audit_coverage": 1 / 256,
                 "common_audit_qd_score": fitness,
             }
         ]
     ).to_parquet(result_dir / "archive_snapshots.parquet", index=False)
+    pd.DataFrame(
+        [
+            {
+                "method_name": method,
+                "problem_id": problem_id,
+                "seed": 1001,
+                "candidate_id": "candidate-0",
+                "descriptor_axes": "[]",
+                "descriptor_vector": "[]",
+                "common_audit_axes": (
+                    '["motif_logic_ratio", "motif_control_ratio", '
+                    '"motif_arith_ratio", "motif_diversity"]'
+                ),
+                "common_audit_descriptor_vector": "[0.1, 0.2, 0.3, 0.4]",
+                "common_audit_cell_id": "audit_motif4:0,0,0,0",
+            }
+        ]
+    ).to_parquet(result_dir / "descriptor_vectors.parquet", index=False)
     (result_dir / "method_summary.json").write_text(
         json.dumps(
             {

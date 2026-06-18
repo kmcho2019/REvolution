@@ -33,6 +33,19 @@ Status: preliminary development-subset report.
 | `netlist_motif_occupancy` | 192 | 0.2350 | 0/4/2 | 0.0606 | 1/3/2 | 64 | 128 | 37 | 13 | 8 | -3.0274 | 2818.0163 | 576 |
 | `synthesis_trajectory_nod` | 205 | 0.2511 | 0/5/1 | 0.1208 | 2/3/1 | 72 | 133 | 52 | 13 | 11 | -2.0643 | 2732.1768 | 576 |
 
+## QD Archive Metrics
+
+Coverage and entropy are reported in the fixed common-audit space so methods with different internal BDs remain comparable.
+
+| Method | Archive | Internal Cells | Internal QD | Internal Entropy | Audit Cells | Audit Coverage | Audit QD | Audit Entropy | Audit Entropy Norm |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `classic_revolution` | `none` | - | - | - | 12 | 0.0078 | 2.3163 | 2.8589 | 0.2701 |
+| `landing_smooth_qd_manual_bd` | `grid_quantile` | 15 | 2.5282 | 5.1224 | 9 | 0.0059 | 1.8526 | 2.6377 | 0.2492 |
+| `random_descriptor_qd` | `grid_quantile` | 39 | 6.1505 | 5.5345 | 8 | 0.0052 | 1.7008 | 2.6551 | 0.2508 |
+| `simple_yosys_stat_bd` | `grid_quantile` | 23 | 3.6027 | 5.4489 | 11 | 0.0072 | 2.0779 | 2.8840 | 0.2725 |
+| `netlist_motif_occupancy` | `grid_quantile` | 26 | 3.8403 | 5.4977 | 8 | 0.0052 | -3.0274 | 2.6138 | 0.2469 |
+| `synthesis_trajectory_nod` | `grid_quantile` | 31 | 4.0109 | 5.7798 | 11 | 0.0072 | -2.0643 | 2.8120 | 0.2657 |
+
 ## Robustness Funnel
 
 | Method | Total | Syntax | Functionality | Synthesis | OpenROAD | Valid PPA |
@@ -85,6 +98,9 @@ The JSON report includes per-generation anytime rows for each method.
 
 - `anytime_mean_best_fitness`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/anytime_mean_best_fitness.png`
 - `anytime_mean_hypervolume`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/anytime_mean_hypervolume.png`
+- `qd_common_audit_cells_heatmap`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/qd_common_audit_cells_heatmap.png`
+- `qd_common_audit_coverage`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/qd_common_audit_coverage.png`
+- `qd_common_audit_entropy`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/qd_common_audit_entropy.png`
 
 ## Per-Problem Win/Loss Matrix
 

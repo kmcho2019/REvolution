@@ -2467,3 +2467,97 @@ TODO status:
   centralized report
 - left QD entropy/archive visualizations and descriptor-correlation
   heatmaps open
+
+## 2026-06-19 06:05 KST
+
+Extended the centralized seed-1 Auto-BD report with QD/archive metrics
+and archive visualizations.
+
+Code changes:
+
+- `scripts/report_auto_bd_standard_results.py` now loads
+  `descriptor_vectors.parquet` and emits `qd_summary` plus
+  `archive_metrics` in the central JSON report.
+- The QD summary reports internal occupied cells/internal QD score where
+  available, fixed common-audit occupied cells, common-audit coverage,
+  common-audit QD score, common-audit entropy, and normalized
+  common-audit entropy.
+- Entropy is computed over `(problem_id, archive_cell_id)` occupancy so
+  the metric is not inflated by merging different benchmark problems into
+  one descriptor space.
+- `write_figures` now emits three QD/archive figures in addition to the
+  existing anytime plots:
+  - `qd_common_audit_coverage.png`
+  - `qd_common_audit_entropy.png`
+  - `qd_common_audit_cells_heatmap.png`
+
+Regenerated artifacts:
+
+- `auto_bd_seed1_centralized_report.md`
+- `auto_bd_seed1_centralized_report.json`
+- `auto_bd_seed1_figures/qd_common_audit_coverage.png`
+- `auto_bd_seed1_figures/qd_common_audit_entropy.png`
+- `auto_bd_seed1_figures/qd_common_audit_cells_heatmap.png`
+
+Report-generation command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_standard_results.py \
+  --results-root exp/auto_bd_research/development_preliminary_seed1 \
+  --repo-root . \
+  --output-md \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.md \
+  --output-json \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --figure-dir \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures
+```
+
+Result:
+
+- wrote the central markdown report
+- wrote the central JSON report
+- generated the three new QD/archive PNGs
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 2 passed in 34.93s.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+PNG validation:
+
+```bash
+file \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/*.png
+```
+
+Result: all five report figures are valid PNG images.

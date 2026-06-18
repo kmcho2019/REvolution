@@ -98,7 +98,7 @@ evidence and rationale.
 - [x] Emit standardized results files and `run_manifest.json`.
 - [x] Include robustness funnel and failure breakdown.
 - [x] Include PPA anytime and hypervolume curves.
-- [ ] Include QD score, coverage, entropy, and archive visualizations.
+- [x] Include QD score, coverage, entropy, and archive visualizations.
 - [ ] Include descriptor/manual-BD/PPA correlation heatmaps.
 - [x] Include canonical-netlist uniqueness and duplicate-cell leakage.
 - [x] Include common-audit archive QD score and coverage.

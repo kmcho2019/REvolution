@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -78,10 +79,19 @@ def build_report(
         anytime_summary_row(method, payload["anytime_metrics"])
         for method, payload in per_method.items()
     ]
+    qd_rows = [
+        payload["qd_summary"]
+        for payload in per_method.values()
+    ]
     problem_rows = [
         row
         for payload in per_method.values()
         for row in payload["problem_metrics"]
+    ]
+    archive_rows = [
+        row
+        for payload in per_method.values()
+        for row in payload["archive"]
     ]
     return {
         "version": 1,
@@ -95,6 +105,8 @@ def build_report(
         "failure_breakdown": failure_rows,
         "anytime_summary": anytime_summary_rows,
         "anytime_metrics": anytime_rows,
+        "qd_summary": qd_rows,
+        "archive_metrics": archive_rows,
         "comparison_matrix": comparison_rows,
         "problem_metrics": problem_rows,
         "artifact_roots": {
@@ -118,6 +130,7 @@ def load_method_result(method: str, result_dir: Path, repo_root: Path) -> dict[s
     candidates = pd.read_parquet(result_dir / "candidates.parquet")
     per_generation = pd.read_parquet(result_dir / "per_generation_metrics.parquet")
     archive = pd.read_parquet(result_dir / "archive_snapshots.parquet")
+    descriptors = pd.read_parquet(result_dir / "descriptor_vectors.parquet")
     summary = load_json(result_dir / "method_summary.json")
     problem_rows = [
         problem_metric_row(method, str(problem_id), group, repo_root)
@@ -129,6 +142,7 @@ def load_method_result(method: str, result_dir: Path, repo_root: Path) -> dict[s
         "robustness": robustness_row(method, candidates),
         "failure_breakdown": failure_breakdown_rows(method, candidates),
         "anytime_metrics": build_anytime_rows(method, candidates, repo_root),
+        "qd_summary": qd_summary_row(method, candidates, archive, descriptors),
         "archive": archive.to_dict("records"),
         "generation": per_generation.to_dict("records"),
     }
@@ -270,6 +284,42 @@ def anytime_summary_row(method: str, rows: list[dict[str, Any]]) -> dict[str, An
         "final_mean_hypervolume": final["mean_hypervolume"],
         "auc_mean_best_fitness": mean(row["mean_best_fitness"] for row in rows),
         "auc_mean_hypervolume": mean(row["mean_hypervolume"] for row in rows),
+    }
+
+
+def qd_summary_row(
+    method: str,
+    candidates: pd.DataFrame,
+    archive: pd.DataFrame,
+    descriptors: pd.DataFrame,
+) -> dict[str, Any]:
+    assert not archive.empty, method
+    assert not descriptors.empty, method
+    archive_types = sorted(str(value) for value in archive["archive_type"].dropna().unique())
+    assert archive_types, method
+    audit_total = finite_sum(archive["common_audit_total_cells"].tolist())
+    assert audit_total is not None and audit_total > 0
+    audit_cells = int(finite_sum(archive["common_audit_occupied_cells"].tolist()) or 0.0)
+    audit_entropy = cell_entropy(descriptors, "common_audit_cell_id")
+    internal_cells = finite_sum(archive["internal_occupied_cells"].tolist())
+    internal_entropy = cell_entropy(
+        candidates.loc[candidates["valid_ppa"].eq(True)],
+        "archive_cell_id",
+    )
+    return {
+        "method_name": method,
+        "archive_type": "+".join(archive_types),
+        "problem_count": int(archive["problem_id"].nunique()),
+        "internal_occupied_cells": none_or_int(internal_cells),
+        "internal_qd_score": finite_sum(archive["internal_qd_score"].tolist()),
+        "internal_entropy_bits": internal_entropy,
+        "internal_entropy_evenness": entropy_evenness(internal_entropy, internal_cells),
+        "common_audit_total_cells": int(audit_total),
+        "common_audit_occupied_cells": audit_cells,
+        "common_audit_coverage": audit_cells / audit_total,
+        "common_audit_qd_score": finite_sum(archive["common_audit_qd_score"].tolist()),
+        "common_audit_entropy_bits": audit_entropy,
+        "common_audit_entropy_normalized": entropy_normalized(audit_entropy, audit_total),
     }
 
 
@@ -498,6 +548,40 @@ def render_markdown(report: dict[str, Any]) -> str:
             ],
         ),
         "",
+        "## QD Archive Metrics",
+        "",
+        "Coverage and entropy are reported in the fixed common-audit space so methods with different internal BDs remain comparable.",
+        "",
+        markdown_table(
+            [
+                "Method",
+                "Archive",
+                "Internal Cells",
+                "Internal QD",
+                "Internal Entropy",
+                "Audit Cells",
+                "Audit Coverage",
+                "Audit QD",
+                "Audit Entropy",
+                "Audit Entropy Norm",
+            ],
+            [
+                [
+                    code(row["method_name"]),
+                    code(row["archive_type"]),
+                    row["internal_occupied_cells"] or "-",
+                    fmt(row["internal_qd_score"]),
+                    fmt(row["internal_entropy_bits"]),
+                    row["common_audit_occupied_cells"],
+                    fmt(row["common_audit_coverage"]),
+                    fmt(row["common_audit_qd_score"]),
+                    fmt(row["common_audit_entropy_bits"]),
+                    fmt(row["common_audit_entropy_normalized"]),
+                ]
+                for row in report["qd_summary"]
+            ],
+        ),
+        "",
         "## Robustness Funnel",
         "",
         markdown_table(
@@ -642,6 +726,10 @@ def write_figures(report: dict[str, Any], output_dir: Path) -> dict[str, str]:
     figures = {
         "anytime_mean_best_fitness": output_dir / "anytime_mean_best_fitness.png",
         "anytime_mean_hypervolume": output_dir / "anytime_mean_hypervolume.png",
+        "qd_common_audit_coverage": output_dir / "qd_common_audit_coverage.png",
+        "qd_common_audit_entropy": output_dir / "qd_common_audit_entropy.png",
+        "qd_common_audit_cells_heatmap": output_dir
+        / "qd_common_audit_cells_heatmap.png",
     }
     plot_anytime(
         report["anytime_metrics"],
@@ -654,6 +742,24 @@ def write_figures(report: dict[str, Any], output_dir: Path) -> dict[str, str]:
         "mean_hypervolume",
         "Mean Hypervolume",
         figures["anytime_mean_hypervolume"],
+    )
+    plot_qd_bar(
+        report["qd_summary"],
+        "common_audit_coverage",
+        "Common-Audit Coverage",
+        figures["qd_common_audit_coverage"],
+    )
+    plot_qd_bar(
+        report["qd_summary"],
+        "common_audit_entropy_normalized",
+        "Normalized Common-Audit Entropy",
+        figures["qd_common_audit_entropy"],
+    )
+    plot_archive_heatmap(
+        report["archive_metrics"],
+        "common_audit_occupied_cells",
+        "Common-Audit Occupied Cells",
+        figures["qd_common_audit_cells_heatmap"],
     )
     return {name: path.as_posix() for name, path in figures.items()}
 
@@ -682,6 +788,59 @@ def plot_anytime(
     axis.set_ylabel(ylabel)
     axis.grid(True, alpha=0.3)
     axis.legend(fontsize=7, ncols=2)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+
+
+def plot_qd_bar(
+    rows: list[dict[str, Any]],
+    metric_name: str,
+    ylabel: str,
+    output_path: Path,
+) -> None:
+    frame = pd.DataFrame(rows)
+    assert not frame.empty
+    methods = ordered_methods(frame["method_name"].tolist())
+    frame = frame.set_index("method_name").loc[methods]
+    fig, axis = plt.subplots(figsize=(8.0, 4.8))
+    axis.bar(range(len(frame)), frame[metric_name].fillna(0.0))
+    axis.set_xticks(range(len(frame)), methods, rotation=35, ha="right")
+    axis.set_ylabel(ylabel)
+    axis.grid(True, axis="y", alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+
+
+def plot_archive_heatmap(
+    rows: list[dict[str, Any]],
+    metric_name: str,
+    title: str,
+    output_path: Path,
+) -> None:
+    frame = pd.DataFrame(rows)
+    assert not frame.empty
+    pivot = frame.pivot_table(
+        index="method_name",
+        columns="problem_id",
+        values=metric_name,
+        aggfunc="sum",
+    ).fillna(0.0)
+    methods = ordered_methods(pivot.index.tolist())
+    problems = sorted(str(value) for value in pivot.columns)
+    pivot = pivot.reindex(index=methods, columns=problems)
+    fig, axis = plt.subplots(
+        figsize=(max(8.0, len(problems) * 1.25), max(4.8, len(methods) * 0.55))
+    )
+    image = axis.imshow(pivot.to_numpy(dtype=float), cmap="Blues", aspect="auto")
+    axis.set_title(title)
+    axis.set_xticks(range(len(problems)), problems, rotation=40, ha="right")
+    axis.set_yticks(range(len(methods)), methods)
+    for y, method in enumerate(methods):
+        for x, problem in enumerate(problems):
+            axis.text(x, y, str(int(pivot.loc[method, problem])), ha="center", va="center")
+    fig.colorbar(image, ax=axis, fraction=0.025, pad=0.02)
     fig.tight_layout()
     fig.savefig(output_path, dpi=180)
     plt.close(fig)
@@ -743,6 +902,13 @@ def finite_max(values: list[Any]) -> float | None:
     return max(finite)
 
 
+def finite_sum(values: list[Any]) -> float | None:
+    finite = [float(value) for value in values if is_finite(value)]
+    if not finite:
+        return None
+    return sum(finite)
+
+
 def mean(values: Any) -> float:
     finite = [float(value) for value in values if is_finite(value)]
     assert finite
@@ -757,6 +923,39 @@ def is_finite(value: Any) -> bool:
 
 def nunique(frame: pd.DataFrame, column: str) -> int:
     return int(frame[column].dropna().nunique())
+
+
+def none_or_int(value: float | None) -> int | None:
+    if value is None:
+        return None
+    return int(value)
+
+
+def cell_entropy(frame: pd.DataFrame, column: str) -> float | None:
+    assert "problem_id" in frame.columns
+    assert column in frame.columns
+    cell_frame = frame.loc[frame[column].notna() & frame[column].ne("")]
+    if cell_frame.empty:
+        return None
+    cells = [
+        f"{row['problem_id']}::{row[column]}"
+        for row in cell_frame[["problem_id", column]].to_dict("records")
+    ]
+    counts = pd.Series(cells).value_counts()
+    total = float(counts.sum())
+    return -sum((count / total) * math.log2(count / total) for count in counts)
+
+
+def entropy_evenness(entropy: float | None, occupied_cells: float | None) -> float | None:
+    if entropy is None or occupied_cells is None or occupied_cells <= 1:
+        return None
+    return entropy / math.log2(occupied_cells)
+
+
+def entropy_normalized(entropy: float | None, total_cells: float) -> float | None:
+    if entropy is None or total_cells <= 1:
+        return None
+    return entropy / math.log2(total_cells)
 
 
 def runtime_seconds(rows: list[dict[str, Any]]) -> float:
@@ -790,6 +989,17 @@ def method_sort_key(item: tuple[str, Path]) -> tuple[int, str]:
     if method in METHOD_ORDER:
         return (METHOD_ORDER.index(method), method)
     return (len(METHOD_ORDER), method)
+
+
+def ordered_methods(values: list[Any]) -> list[str]:
+    names = sorted({str(value) for value in values})
+    return sorted(
+        names,
+        key=lambda method: (
+            METHOD_ORDER.index(method) if method in METHOD_ORDER else len(METHOD_ORDER),
+            method,
+        ),
+    )
 
 
 def code(value: object) -> str:
