@@ -3369,3 +3369,30 @@ fallback; R-D k=2 (already running on OpenRouter).
 - The generated reports live next to runs under `exp/` (git-ignored, like the
   runs); the committed artifacts are the renderer, its test, the index, and the
   pointers. No experimental conclusions changed — this is presentation only.
+
+## 2026-06-18 — Colleague progress briefing (v2-journal-vs-classic) assembled
+
+- Built a self-contained weekly briefing for colleagues at
+  `revamp_history/.../20260618_briefing/` (README.md + exp_artifacts/).
+- Recovered the original "v2 journal proposal vs classic" evidence from the
+  per-feature journal worktrees (`.worktrees/journal-*`, `qd-theory-grounded-*`)
+  via 4 parallel extraction agents reading each run's `backend_comparison.md` /
+  `final_analysis`. Confirmed the integrated v2 run
+  (`journal-ks-adaptive-rebinning/.../journal_adaptive_rebinning_hard_subset/20260513_153507`,
+  13-prob hard subset, pop20/gen5/seed42, 240 calls/design): classic +27.6%
+  score / +34.5% PPA / HV 0.104 vs v2 +15.6% / +19.1% / HV 0.063.
+- Copied 20 report files into `20260618_briefing/exp_artifacts/` (numbered
+  01–10: integrated v2, the 5 component ablations, the Rent's-exponent BD
+  variant, the landing smooth-QD V1/V2, the locked 5-seed F1, CVDP/RealBench)
+  with an index README mapping each to its source worktree path + significance.
+- Key accuracy note logged for the briefing: the integrated ks-adaptive arm uses
+  `representation_kind=code_individual` (default) + single thought-operator; the
+  *thought-only* piece is isolated in 02 and run rigorously as the 5-seed
+  `qd_target` (−0.093 best-quality). The component analysis localizes the
+  regression to thought-only (raises pass@1 67.9 vs 49.7 but lowers PPA +21.9 vs
+  +37.0 — blocks code hill-climbing) + the single operator (fails the func gate,
+  −0.186); the archive is benign (quantile binning individually wins).
+- Briefing presents the landing progression (v2 −0.093 → smooth V1 −0.034 →
+  smooth V2 −0.016 parity) and a where-next / narrative section. All numbers
+  spot-verified against the copied artifacts; all relative links resolve.
+  Presentation/synthesis only — no new experiments, no conclusions changed.
