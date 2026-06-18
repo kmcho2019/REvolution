@@ -12,6 +12,9 @@ from typing import Any
 from revolution.auto_bd.motif_descriptor import motif_occupancy_descriptor_values
 from revolution.auto_bd.netlist_hash import canonical_netlist_hash
 from revolution.auto_bd.random_descriptor import random_hash_descriptor_values
+from revolution.auto_bd.trajectory_descriptor import (
+    synthesis_trajectory_descriptor_values,
+)
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
 from revolution.graph_descriptor_evaluator import GraphDescriptorEvaluator
 from revolution.runtime.problem_context import (
@@ -369,6 +372,7 @@ class CandidateEvaluator:
         descriptor_metrics.update(result.graph_metrics)
         descriptor_metrics.update(result.physical_metrics)
         descriptor_metrics.update(self._extract_auto_bd_netlist_metrics(result))
+        descriptor_metrics.update(self._extract_auto_bd_stage_metrics(result))
         descriptor_metrics.update(
             {
                 axis: float(result.score_components[axis])
@@ -398,6 +402,19 @@ class CandidateEvaluator:
         if needs_motif:
             values.update(motif_occupancy_descriptor_values(netlist_text))
         return values
+
+    def _extract_auto_bd_stage_metrics(
+        self,
+        result: CandidateEvaluation,
+    ) -> dict[str, float]:
+        if not self.descriptor_requirements.get("requires_auto_bd_stage_dumps", False):
+            return {}
+        assert result.synthesis_result is not None
+        paths = tuple(
+            Path(str(path))
+            for path in result.synthesis_result["stage_dump_verilog_paths"]
+        )
+        return synthesis_trajectory_descriptor_values(paths)
 
     def _enrich_result(
         self,
@@ -661,6 +678,20 @@ class CandidateEvaluator:
         # stub-outs (absurdly low PPA) instead of the gate-level functional pass.
         if synth_success and not self.gate_level_functional_recheck:
             post_synth_success = self._passes_synthesis_sanity(ppa_metrics, structural_metrics)
+        if synth_success and ppa_success and self.descriptor_requirements.get(
+            "requires_auto_bd_stage_dumps",
+            False,
+        ):
+            stage_dump_result = self.synthesis_evaluator.run_yosys_stage_dumps(
+                verilog_file=dut_path,
+                synth_top_module_name=self.synthesis_top_module_name,
+                output_directory=output_dir,
+                aux_files=tuple(self.aux_source_files),
+                include_dirs=tuple(self.aux_include_dirs),
+                defines=tuple(self.compile_defines),
+            )
+            synth_results.update(stage_dump_result)
+            ppa_success = bool(stage_dump_result.get("stage_dump_success"))
         rtl_metrics = self.rtl_descriptor_evaluator.extract_metrics(
             code_text=item.code,
             code_file_path=item.code_file_path,

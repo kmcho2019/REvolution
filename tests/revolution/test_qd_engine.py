@@ -832,6 +832,60 @@ def test_qd_engine_extracts_motif_descriptors(tmp_path, monkeypatch):
     assert engine._descriptor_tuple(cand) == pytest.approx(tuple(values.values()))
 
 
+def test_qd_engine_extracts_stnod_descriptors(tmp_path, monkeypatch):
+    cfg = tmp_path / "profiles.yaml"
+    cfg.write_text(
+        "profiles:\n"
+        "  stnod_trajectory_5d:\n"
+        "    - stnod_cell_growth_log\n"
+        "    - stnod_logic_swing\n"
+        "    - stnod_control_swing\n"
+        "    - stnod_arith_swing\n"
+        "    - stnod_diversity_swing\n",
+        encoding="utf-8",
+    )
+    read_stage = tmp_path / "00_read.v"
+    final_stage = tmp_path / "07_buffered.v"
+    read_stage.write_text(
+        "module m(input a, output y);\n"
+        "  INV_X1 u0 (.A(a), .ZN(y));\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    final_stage.write_text(
+        "module m(input a, input b, output y);\n"
+        "  ADD_X1 u0 (.A(a), .B(b), .SUM(n1));\n"
+        "  INV_X1 u1 (.A(n1), .ZN(y));\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_descriptor_profile="stnod_trajectory_5d",
+        qd_descriptor_file=str(cfg),
+        qd_grid_axes=(),
+    )
+    cand = Heuristic("t", "module m; endmodule", "", score=0.5, generation=0, status="success")
+    cand.ppa_success = True
+    cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+
+    values = engine._extract_candidate_descriptor_values(
+        cand,
+        {
+            "synthesis_success": True,
+            "ppa_success": True,
+            "stage_dump_verilog_paths": [str(read_stage), str(final_stage)],
+        },
+    )
+    cand.descriptor_values = values
+
+    assert values["stnod_cell_growth_log"] == pytest.approx(0.4054651081081645)
+    assert values["stnod_logic_swing"] == pytest.approx(0.5)
+    assert values["stnod_arith_swing"] == pytest.approx(0.5)
+    assert engine._descriptor_tuple(cand) == pytest.approx(tuple(values.values()))
+
+
 def test_qd_engine_builds_grid_archive_from_descriptor_file(tmp_path, monkeypatch):
     cfg = tmp_path / "qd.yaml"
     cfg.write_text(

@@ -18,6 +18,9 @@ from typing import Any, Literal, cast
 from revolution.auto_bd.motif_descriptor import motif_occupancy_descriptor_values
 from revolution.auto_bd.netlist_hash import canonical_netlist_hash
 from revolution.auto_bd.random_descriptor import random_hash_descriptor_values
+from revolution.auto_bd.trajectory_descriptor import (
+    synthesis_trajectory_descriptor_values,
+)
 from revolution.algorithm import (
     CLASSIC_FAIL_STRATEGIES,
     CLASSIC_SUCCESS_STRATEGIES,
@@ -428,6 +431,13 @@ class QDEngine(EoHEngine):
             descriptor_requirements(self._archive_axes()).get("requires_auto_bd_motif")
         )
 
+    def _requires_auto_bd_stage_metrics(self) -> bool:
+        return bool(
+            descriptor_requirements(self._archive_axes()).get(
+                "requires_auto_bd_stage_dumps"
+            )
+        )
+
     def _extract_candidate_descriptor_values(
         self,
         cand: Heuristic,
@@ -435,23 +445,34 @@ class QDEngine(EoHEngine):
     ) -> dict[str, float]:
         needs_hash = self._requires_auto_bd_hash_metrics()
         needs_motif = self._requires_auto_bd_motif_metrics()
-        if not (needs_hash or needs_motif):
+        needs_stage = self._requires_auto_bd_stage_metrics()
+        if not (needs_hash or needs_motif or needs_stage):
             return {}
         if not (
             synthesis_result.get("synthesis_success")
             and synthesis_result.get("ppa_success")
         ):
             return {}
-        path = Path(str(synthesis_result["synthesized_netlist_path"]))
-        assert path.is_file(), f"missing synthesized netlist: {path}"
-        netlist_text = path.read_text(encoding="utf-8", errors="ignore")
         values: dict[str, float] = {}
-        if needs_hash:
+        if needs_hash or needs_motif:
+            path = Path(str(synthesis_result["synthesized_netlist_path"]))
+            assert path.is_file(), f"missing synthesized netlist: {path}"
+            netlist_text = path.read_text(encoding="utf-8", errors="ignore")
+            if needs_hash:
+                values.update(
+                    random_hash_descriptor_values(canonical_netlist_hash(netlist_text))
+                )
+            if needs_motif:
+                values.update(motif_occupancy_descriptor_values(netlist_text))
+        if needs_stage:
             values.update(
-                random_hash_descriptor_values(canonical_netlist_hash(netlist_text))
+                synthesis_trajectory_descriptor_values(
+                    tuple(
+                        Path(str(path))
+                        for path in synthesis_result["stage_dump_verilog_paths"]
+                    )
+                )
             )
-        if needs_motif:
-            values.update(motif_occupancy_descriptor_values(netlist_text))
         return values
 
     def _phase_mode(self, phase: str) -> Literal["whole", "diff"]:

@@ -32,15 +32,27 @@ class _FakeVerilogEvaluator:
 
 
 class _FakeSynthesisEvaluator:
-    def __init__(self, result):
+    def __init__(
+        self,
+        result: dict[str, object],
+        stage_dump_result: dict[str, object] | None = None,
+    ):
         self.result = result
+        self.stage_dump_result = stage_dump_result or {}
         self.calls = 0
+        self.stage_dump_calls = 0
         self.call_args: list[tuple[tuple[object, ...], dict[str, object]]] = []
+        self.stage_dump_call_args: list[tuple[tuple[object, ...], dict[str, object]]] = []
 
     def evaluate(self, *args, **kwargs):
         self.calls += 1
         self.call_args.append((args, kwargs))
         return dict(self.result)
+
+    def run_yosys_stage_dumps(self, *args, **kwargs):
+        self.stage_dump_calls += 1
+        self.stage_dump_call_args.append((args, kwargs))
+        return dict(self.stage_dump_result)
 
 
 def _context(tmp_path: Path) -> ProblemContext:
@@ -534,6 +546,130 @@ def test_candidate_evaluator_extracts_motif_descriptor(tmp_path):
     assert result.descriptor_values["motif_control_ratio"] == pytest.approx(0.5)
     assert result.descriptor_values["motif_arith_ratio"] == pytest.approx(0.0)
     assert result.descriptor_values["motif_diversity"] == pytest.approx(1.0)
+
+
+def test_candidate_evaluator_runs_stnod_stage_dumps_for_stage_profile(tmp_path):
+    context = _context(tmp_path)
+    code_path = tmp_path / "candidate.sv"
+    read_stage = tmp_path / "00_read.v"
+    final_stage = tmp_path / "07_buffered.v"
+    descriptor_file = tmp_path / "profiles.yaml"
+    code_path.write_text("module TopA; endmodule\n", encoding="utf-8")
+    read_stage.write_text(
+        "module TopA(input a, output y);\n"
+        "  INV_X1 u0 (.A(a), .ZN(y));\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    final_stage.write_text(
+        "module TopA(input a, input b, output y);\n"
+        "  ADD_X1 u0 (.A(a), .B(b), .SUM(n1));\n"
+        "  INV_X1 u1 (.A(n1), .ZN(y));\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    descriptor_file.write_text(
+        "profiles:\n"
+        "  stnod_trajectory_5d:\n"
+        "    - stnod_cell_growth_log\n"
+        "    - stnod_logic_swing\n"
+        "    - stnod_control_swing\n"
+        "    - stnod_arith_swing\n"
+        "    - stnod_diversity_swing\n",
+        encoding="utf-8",
+    )
+    synthesis = _FakeSynthesisEvaluator(
+        {
+            "synthesis_success": True,
+            "synthesis_functionality_success": True,
+            "ppa_success": True,
+            "ppa_metrics": {"power": 0.9, "area": 90.0, "eff_clk_period": 0.9},
+            "structural_metrics": {"total_cells": 2.0},
+        },
+        stage_dump_result={
+            "stage_dump_success": True,
+            "stage_dump_verilog_paths": [str(read_stage), str(final_stage)],
+        },
+    )
+    evaluator = CandidateEvaluator(
+        context=context,
+        problem_description="desc",
+        verilog_evaluator=_FakeVerilogEvaluator(
+            {
+                "status": "success",
+                "simulation_stdout": "Mismatches: 0\n",
+                "simulation_stderr": "",
+                "compilation_stderr": "",
+            }
+        ),
+        synthesis_evaluator=synthesis,
+        ref_ppa_metrics={"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
+        descriptor_profile="stnod_trajectory_5d",
+        descriptor_file=str(descriptor_file),
+    )
+
+    result = evaluator.evaluate_candidate(
+        CandidateWorkItem(code="module TopA; endmodule", code_file_path=str(code_path))
+    )
+
+    assert result.status == "success"
+    assert synthesis.stage_dump_calls == 1
+    assert result.descriptor_values["stnod_cell_growth_log"] == pytest.approx(
+        0.4054651081081645
+    )
+    assert result.descriptor_values["stnod_logic_swing"] == pytest.approx(0.5)
+    assert result.descriptor_values["stnod_arith_swing"] == pytest.approx(0.5)
+
+
+def test_candidate_evaluator_rejects_failed_stnod_stage_dump(tmp_path):
+    context = _context(tmp_path)
+    code_path = tmp_path / "candidate.sv"
+    descriptor_file = tmp_path / "profiles.yaml"
+    code_path.write_text("module TopA; endmodule\n", encoding="utf-8")
+    descriptor_file.write_text(
+        "profiles:\n"
+        "  stnod_trajectory_5d:\n"
+        "    - stnod_cell_growth_log\n"
+        "    - stnod_logic_swing\n"
+        "    - stnod_control_swing\n"
+        "    - stnod_arith_swing\n"
+        "    - stnod_diversity_swing\n",
+        encoding="utf-8",
+    )
+    synthesis = _FakeSynthesisEvaluator(
+        {
+            "synthesis_success": True,
+            "synthesis_functionality_success": True,
+            "ppa_success": True,
+            "ppa_metrics": {"power": 0.9, "area": 90.0, "eff_clk_period": 0.9},
+            "structural_metrics": {"total_cells": 2.0},
+        },
+        stage_dump_result={"stage_dump_success": False},
+    )
+    evaluator = CandidateEvaluator(
+        context=context,
+        problem_description="desc",
+        verilog_evaluator=_FakeVerilogEvaluator(
+            {
+                "status": "success",
+                "simulation_stdout": "Mismatches: 0\n",
+                "simulation_stderr": "",
+                "compilation_stderr": "",
+            }
+        ),
+        synthesis_evaluator=synthesis,
+        ref_ppa_metrics={"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
+        descriptor_profile="stnod_trajectory_5d",
+        descriptor_file=str(descriptor_file),
+    )
+
+    result = evaluator.evaluate_candidate(
+        CandidateWorkItem(code="module TopA; endmodule", code_file_path=str(code_path))
+    )
+
+    assert result.status == "failed_synthesis"
+    assert result.ppa_success is False
+    assert result.descriptor_values == {}
 
 
 def test_candidate_evaluator_search_accelerated_throttles_synthesis(tmp_path):

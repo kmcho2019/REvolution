@@ -110,6 +110,11 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "motif_control_ratio": DescriptorDefinition("motif_control_ratio", "auto_bd_motif", requires_synthesis=True),
     "motif_arith_ratio": DescriptorDefinition("motif_arith_ratio", "auto_bd_motif", requires_synthesis=True),
     "motif_diversity": DescriptorDefinition("motif_diversity", "auto_bd_motif", requires_synthesis=True),
+    "stnod_cell_growth_log": DescriptorDefinition("stnod_cell_growth_log", "auto_bd_stage_dumps", requires_synthesis=True),
+    "stnod_logic_swing": DescriptorDefinition("stnod_logic_swing", "auto_bd_stage_dumps", requires_synthesis=True),
+    "stnod_control_swing": DescriptorDefinition("stnod_control_swing", "auto_bd_stage_dumps", requires_synthesis=True),
+    "stnod_arith_swing": DescriptorDefinition("stnod_arith_swing", "auto_bd_stage_dumps", requires_synthesis=True),
+    "stnod_diversity_swing": DescriptorDefinition("stnod_diversity_swing", "auto_bd_stage_dumps", requires_synthesis=True),
 }
 
 
@@ -334,6 +339,10 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (0.0, 1.0)
     if axis.startswith("motif_"):
         return (0.0, 1.0)
+    if axis == "stnod_cell_growth_log":
+        return (-8.0, 8.0)
+    if axis.startswith("stnod_"):
+        return (0.0, 1.0)
     if axis in {"wire_cell_ratio_est", "resource_sharing_ratio_est"}:
         return (0.0, 4.0)
     if axis == "ltp_noff":
@@ -390,6 +399,9 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
         "requires_auto_bd_motif": any(
             registry[axis].source_tool == "auto_bd_motif" for axis in axes
         ),
+        "requires_auto_bd_stage_dumps": any(
+            registry[axis].source_tool == "auto_bd_stage_dumps" for axis in axes
+        ),
     }
 
 
@@ -408,6 +420,9 @@ def summarize_descriptor_axes(axes: list[str] | tuple[str, ...]) -> list[dict[st
             "requires_simulation": registry[axis].requires_simulation,
             "requires_graph_metrics": registry[axis].source_tool == "yosys_graph",
             "requires_auto_bd_motif": registry[axis].source_tool == "auto_bd_motif",
+            "requires_auto_bd_stage_dumps": (
+                registry[axis].source_tool == "auto_bd_stage_dumps"
+            ),
         }
         for axis in axes
     ]

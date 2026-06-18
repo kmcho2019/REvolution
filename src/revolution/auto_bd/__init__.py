@@ -24,6 +24,10 @@ from revolution.auto_bd.stage_dumps import (
     YosysStageDumpPlan,
     write_yosys_stage_dump_script,
 )
+from revolution.auto_bd.trajectory_descriptor import (
+    STNOD_TRAJECTORY_AXES,
+    synthesis_trajectory_descriptor_values,
+)
 
 __all__ = [
     "AUTO_BD_METHODS_DIR",
@@ -39,6 +43,8 @@ __all__ = [
     "RANDOM_HASH_AXES",
     "random_hash_descriptor_values",
     "STNOD_STAGE_NAMES",
+    "STNOD_TRAJECTORY_AXES",
+    "synthesis_trajectory_descriptor_values",
     "validate_method_registry",
     "write_yosys_stage_dump_script",
     "YosysStageDumpPlan",

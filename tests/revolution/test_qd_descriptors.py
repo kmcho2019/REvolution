@@ -292,6 +292,39 @@ def test_motif_profile_uses_auto_bd_motif_metrics():
     assert requirements["requires_auto_bd_hash"] is False
 
 
+def test_stnod_profile_uses_stage_dump_metrics(tmp_path: Path):
+    descriptor_file = tmp_path / "profiles.yaml"
+    descriptor_file.write_text(
+        "profiles:\n"
+        "  stnod_trajectory_5d:\n"
+        "    - stnod_cell_growth_log\n"
+        "    - stnod_logic_swing\n"
+        "    - stnod_control_swing\n"
+        "    - stnod_arith_swing\n"
+        "    - stnod_diversity_swing\n",
+        encoding="utf-8",
+    )
+    axes = resolve_descriptor_axes(
+        profile_name="stnod_trajectory_5d",
+        explicit_axes=None,
+        descriptor_file=descriptor_file,
+        archive_type="grid_quantile",
+        circuit_type="sequential",
+    )
+    requirements = descriptor_requirements(axes)
+
+    assert axes == [
+        "stnod_cell_growth_log",
+        "stnod_logic_swing",
+        "stnod_control_swing",
+        "stnod_arith_swing",
+        "stnod_diversity_swing",
+    ]
+    assert requirements["requires_synthesis"] is True
+    assert requirements["requires_auto_bd_stage_dumps"] is True
+    assert requirements["requires_auto_bd_motif"] is False
+
+
 def test_resolve_descriptor_axes_rejects_unknown_profile():
     with pytest.raises(KeyError, match="Unknown descriptor profile"):
         resolve_descriptor_axes(
