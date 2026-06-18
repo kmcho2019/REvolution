@@ -3166,3 +3166,195 @@ bash -n \
 ```
 
 Result: passed.
+
+## 2026-06-18 22:29 UTC
+
+Ran and reported the seed-1 ST-NOD motif-plus-trajectory ablation.
+
+Preflight:
+
+```bash
+curl -sS --max-time 10 http://20.0.0.103:8000/v1/models
+```
+
+Result: `openai/gpt-oss-120b` was available with `max_model_len` 131072.
+
+Manifest command:
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/build_auto_bd_run_manifest.py \
+  --config-path \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_run_configs/development/synthesis_trajectory_motif_nod.yaml \
+  --phase development \
+  --output \
+  exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_motif_nod/seed_1001/run_manifest.json
+```
+
+Result: wrote the hybrid ablation run manifest.
+
+Run commands:
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks RTLLM \
+  --problems Prob011_multi_16bit Prob019_sub_64bit Prob048_pe \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 12 \
+  --num_generations 3 \
+  --evaluation_mode strict_ablation \
+  --total_worker_slots 12 \
+  --max_active_problems 6 \
+  --max_workers_per_problem 4 \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 300 \
+  --post_synthesis_simulation_timeout_s 300 \
+  --seed 1001 \
+  --save_path \
+  exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_motif_nod/seed_1001 \
+  --search_mode revolution_qd \
+  --qd_archive_type grid_quantile \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 5 \
+  --qd_objectives ppa \
+  --qd_champion_lane_fraction 0.5 \
+  --qd_parent_selection nsga2_global_rank \
+  --qd_two_parent_probability 0.5 \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_descriptor_profile stnod_motif_trajectory_9d \
+  --qd_descriptor_file \
+  /workspace/.worktrees/journal-auto-bd-exp-20260618/docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/03_synthesis_trajectory_nod/descriptor_profile.yaml
+```
+
+Result: RTLLM completed in 652.53 seconds.
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks VerilogEval-Spec-to-RTL \
+  --problems Prob021_mux256to1v Prob030_popcount255 Prob105_rotate100 \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 12 \
+  --num_generations 3 \
+  --evaluation_mode strict_ablation \
+  --total_worker_slots 12 \
+  --max_active_problems 6 \
+  --max_workers_per_problem 4 \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 300 \
+  --post_synthesis_simulation_timeout_s 300 \
+  --seed 1001 \
+  --save_path \
+  exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_motif_nod/seed_1001 \
+  --search_mode revolution_qd \
+  --qd_archive_type grid_quantile \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 5 \
+  --qd_objectives ppa \
+  --qd_champion_lane_fraction 0.5 \
+  --qd_parent_selection nsga2_global_rank \
+  --qd_two_parent_probability 0.5 \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_descriptor_profile stnod_motif_trajectory_9d \
+  --qd_descriptor_file \
+  /workspace/.worktrees/journal-auto-bd-exp-20260618/docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/03_synthesis_trajectory_nod/descriptor_profile.yaml
+```
+
+Result: VerilogEval completed in 655.33 seconds.
+
+Standard result command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/build_auto_bd_standard_results.py \
+  --run-dir \
+  exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_motif_nod/seed_1001/revolution/openai_gpt-oss-120b \
+  --output-dir \
+  exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_motif_nod/seed_1001/standard_results \
+  --method-name synthesis_trajectory_motif_nod \
+  --method-family synthesis_trajectory_nod \
+  --descriptor-version stnod_motif_trajectory_9d \
+  --phase development_preliminary_seed1 \
+  --seed 1001 \
+  --run-manifest \
+  exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_motif_nod/seed_1001/run_manifest.json
+```
+
+Result:
+
+- candidates: 288
+- valid PPA: 198
+- unique canonical netlists: 77
+- unique motif signatures: 45
+- common-audit occupied cells: 16
+- common-audit QD score: 1.7144
+
+Gate 0 command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/summarize_auto_bd_gate0.py \
+  --run-dir \
+  exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_motif_nod/seed_1001/revolution/openai_gpt-oss-120b \
+  --method-name synthesis_trajectory_motif_nod \
+  --phase development_preliminary_seed1 \
+  --seed 1001 \
+  --output \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_gate0_coverage_seed1_synthesis_trajectory_motif_nod.json
+```
+
+Result: Gate 0 PASS with 6 covered classic problems and no missing
+classic problems.
+
+Central report command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_standard_results.py \
+  --results-root exp/auto_bd_research/development_preliminary_seed1 \
+  --output-md \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_hybrid_ablation_report.md \
+  --output-json \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_hybrid_ablation_report.json \
+  --figure-dir \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed1_hybrid_ablation
+```
+
+Result: wrote the hybrid-ablation central Markdown, JSON, and figures.
+
+Decision:
+
+- `synthesis_trajectory_motif_nod` passes Gate 0.
+- It improves diversity versus motif-only and trajectory-only:
+  77 unique canonical netlists and 16 common-audit occupied cells.
+- It does not improve seed-1 PPA/HV over trajectory-only ST-NOD:
+  198 valid PPA versus 205, mean best fitness 0.2380 versus 0.2511,
+  and mean hypervolume 0.1204 versus 0.1208.
+- Decision: do not promote the hybrid ablation to seed-3 screening;
+  keep trajectory-only ST-NOD as the promoted method.
+
+Generated docs:
+
+- `auto_bd_seed1_hybrid_ablation_report.md`
+- `auto_bd_seed1_hybrid_ablation_report.json`
+- `auto_bd_gate0_coverage_seed1_synthesis_trajectory_motif_nod.json`
+- updated `auto_bd_standard_results_seed1.md`
+- `auto_bd_methods/03_synthesis_trajectory_nod/seed1_hybrid_ablation_report.md`
+- `auto_bd_methods/03_synthesis_trajectory_nod/hybrid_ablation_accept_reject.md`

@@ -72,7 +72,7 @@ evidence and rationale.
 - [x] Add ST-NOD observational-equivalence test against baseline synthesis.
 - [x] Implement synthesis-trajectory feature extraction.
 - [x] Combine trajectory features with motif occupancy.
-- [ ] Compare motif-only versus trajectory-motif descriptors.
+- [x] Compare motif-only versus trajectory-motif descriptors.
 - [x] Verify in-loop descriptor cost is acceptable or cached.
 - [x] Run development subset and generate the method report.
 - [x] Write accept/reject decision with Gate 0 explicitly evaluated.

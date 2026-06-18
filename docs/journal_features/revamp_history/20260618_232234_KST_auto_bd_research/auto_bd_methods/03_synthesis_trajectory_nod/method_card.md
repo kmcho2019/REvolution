@@ -112,9 +112,13 @@ arm. The observational sidecar script writer, runtime execution hook,
 trajectory features, descriptor profile, and run-matrix arm are
 implemented.
 
-The `synthesis_trajectory_motif_nod` ablation is implemented but not yet
-run. It exists only to compare motif-only descriptors against a
-trajectory-plus-final-motif descriptor under the same substrate.
+The `synthesis_trajectory_motif_nod` ablation exists only to compare
+motif-only descriptors against a trajectory-plus-final-motif descriptor
+under the same substrate. Its seed-1 run is documented in
+`seed1_hybrid_ablation_report.md`. It passed Gate 0 and improved
+common-audit diversity, but it did not improve seed-1 PPA/HV over
+trajectory-only ST-NOD. `hybrid_ablation_accept_reject.md` therefore
+rejects it for seed-3 promotion.
 
 Initial seed-1 execution failed because the legacy QD descriptor
 extraction path attempted to read ST-NOD stage paths without first
