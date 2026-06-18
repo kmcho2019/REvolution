@@ -1,0 +1,39 @@
+# Auto-BD Research Scaffold
+
+Start here.
+
+Controlling contract:
+
+- `auto_bd_research_plan.md`
+
+Execution checklist:
+
+- `auto_bd_research_implementation_todo.md`
+
+Locked inputs and run policy:
+
+- `auto_bd_subset_lock.yaml`
+- `auto_bd_task_catalog.md`
+- `auto_bd_run_policy_lock.yaml`
+
+Evidence log:
+
+- `auto_bd_research_implementation_history.md`
+
+Goal template:
+
+- `goal_template.md`
+
+Independent validation:
+
+- `auto_bd_research_adversarial_prompt.md`
+- `auto_bd_research_subagent_validation_report.md`
+
+Historical intent only:
+
+- `auto_bd_plan_sketch.md`
+- `auto_bd_ruminations.md`
+
+When documents conflict, `auto_bd_research_plan.md` wins.
+`auto_bd_plan_sketch.md` and `auto_bd_ruminations.md` preserve initial
+intent and brainstorming, but they are not the active contract.

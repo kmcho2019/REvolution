@@ -1,0 +1,207 @@
+version: 1
+lock_name: auto_bd_run_policy_lock_v1
+status: initial_lock_before_auto_bd_method_comparison
+source_of_truth:
+  plan: docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_research_plan.md
+  subset_lock: docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_subset_lock.yaml
+  task_catalog: docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_task_catalog.json
+  seed_manifest: data/configs/journal_seed_manifest.yaml
+  descriptor_profiles: data/configs/qd_descriptor_profiles.yaml
+  baseline_guides:
+  - docs/qd_map_elites_guide.md
+  - docs/journal_features/16_smooth_qd_integration_track.md
+
+model_policy:
+  endpoint: http://20.0.0.103:8000/v1
+  model_id: openai/gpt-oss-120b
+  observed_max_model_len: 131072
+  required_min_model_len: 131072
+  max_tokens: 128000
+  diff_max_tokens: 128000
+  tiny_smoke_exception: true
+  asymmetric_model_fallback_allowed: false
+  preflight_command: curl -sS --max-time 10 http://20.0.0.103:8000/v1/models
+
+seed_policy:
+  statistical_unit: problem_seed_pair
+  missing_treatment_rule: counts_as_treatment_loss
+  debug:
+  - 42
+  preliminary_seed1:
+  - 1001
+  screening_seed3:
+  - 1001
+  - 1002
+  - 1003
+  final_seed5:
+  - 1001
+  - 1002
+  - 1003
+  - 1004
+  - 1005
+  heldout_minimum:
+  - 1001
+  - 1002
+  - 1003
+  heldout_preferred:
+  - 1001
+  - 1002
+  - 1003
+  - 1004
+  - 1005
+
+phase_policy:
+  development:
+    subset_role: development
+    seeds: preliminary_seed1
+    promoted_method_seeds: screening_seed3
+    population_size: 12
+    num_generations: 3
+    evaluation_mode: strict_ablation
+  main_screening:
+    subset_role: main_screening
+    seeds: screening_seed3
+    population_size: 20
+    num_generations: 5
+    evaluation_mode: search_accelerated
+    accelerated_synthesis_top_k: 1
+  final_main:
+    subset_role: main_screening
+    seeds: final_seed5
+    population_size: 20
+    num_generations: 5
+    evaluation_mode: search_accelerated
+    accelerated_synthesis_top_k: 1
+  heldout_validation:
+    subset_role: heldout_validation
+    seeds: heldout_minimum
+    preferred_seeds: heldout_preferred
+    population_size: 20
+    num_generations: 5
+    evaluation_mode: search_accelerated
+    accelerated_synthesis_top_k: 1
+    tuning_allowed: false
+
+worker_policy:
+  rule: use_the_same_worker_policy_for_every_compared_method_in_a_phase
+  development:
+    total_worker_slots: 12
+    max_active_problems: 6
+    max_workers_per_problem: 4
+  main_screening:
+    total_worker_slots: 13
+    max_active_problems: 13
+    max_workers_per_problem: 4
+  final_main:
+    total_worker_slots: 13
+    max_active_problems: 13
+    max_workers_per_problem: 4
+  ppa_remeasurement:
+    total_worker_slots: 4
+    max_active_problems: 4
+    max_workers_per_problem: 4
+  change_rule: reduce_or_increase_only_symmetrically_across_all_arms_and_log_reason
+
+budget_policy:
+  budget_axis: candidate_evaluations_and_llm_calls
+  main_reported_total_budget_per_problem: 240
+  auxiliary_compute_skew_threshold: 0.10
+  hidden_extra_repair_budget_allowed: false
+  report_valid_only_and_all_candidate_metrics: true
+
+baseline_arms:
+  classic_revolution:
+    backend: revolution
+    search_mode: revolution
+    representation_kind: code_individual
+    operator_kind: eoh_strategies
+    archive_type: none
+    role: gate_0_coverage_reference
+  landing_smooth_qd_manual_bd:
+    backend: revolution
+    search_mode: revolution_qd
+    mode_name: grid_quantile_pareto_journal_bd_eoh
+    representation_kind: code_individual
+    qd_operator_kind: eoh_strategies
+    qd_archive_type: grid_quantile
+    qd_descriptor_profile: journal_logic_ff_width_3d
+    qd_descriptor_axes:
+    - logic_depth
+    - ff_depth
+    - comb_width_log
+    qd_grid_quantile_warmup_successes: 8
+    qd_cell_mode: pareto_front
+    qd_max_elites_per_cell: 5
+    qd_objectives: ppa
+    qd_champion_lane_fraction: 0.5
+    qd_parent_selection: nsga2_global_rank
+    qd_two_parent_probability: 0.5
+    role: manual_bd_baseline_not_failed_original_v2
+
+control_arms:
+  random_descriptor_qd:
+    descriptor_rule: hash_canonical_netlist_hash_with_fixed_seed_to_cell
+    random_seed: 20260618
+    archive_cell_count_rule: match_landing_smooth_qd_manual_bd
+    insertion_policy_rule: match_landing_smooth_qd_manual_bd
+  simple_yosys_stat_bd:
+    descriptor_source: yosys_json_or_synthesis_stats
+    allowed_feature_families:
+    - total_cells
+    - sequential_cells
+    - mux_cells
+    - arithmetic_cells
+    - fanout_statistics
+    - level_histograms
+    reject_if_equivalent_to_manual_trio_or_final_fitness: true
+
+common_audit_space:
+  required: true
+  audit_spaces:
+  - manual_bd_trio_fixed_quantile_grid
+  - fixed_yosys_stat_grid
+  - fixed_motif_histogram_projection_or_cvt
+  fit_data_rule: development_and_baseline_data_only_before_main_comparison
+  report_internal_and_common_audit_qd_metrics: true
+
+descriptor_leakage_policy:
+  ppa_inputs_allowed: false
+  reference_ppa_inputs_allowed: false
+  fitness_inputs_allowed: false
+  heldout_fitting_allowed: false
+  posthoc_full_run_embedding_claimed_as_in_loop_allowed: false
+  descriptor_version_logged_per_candidate: true
+
+ppa_metric_policy:
+  objective_directions:
+    area: minimize
+    power: minimize
+    timing_or_effective_period: minimize
+  combinational_timing_weight: 0
+  sequential_metric_count: 3
+  combinational_metric_count: 2
+  hypervolume_reference_points_fixed_before_comparison: true
+  invalid_candidates_in_denominator_sensitive_metrics: true
+  ppa_remeasurement_required_for_final_elites: true
+
+toolchain_policy:
+  freeze_before_publication_claim: true
+  required_run_manifest_fields:
+  - git_commit
+  - branch
+  - config_hash
+  - subset_hash
+  - seed_list
+  - model_id
+  - endpoint
+  - prompt_policy_hash
+  - yosys_version
+  - abc_version
+  - openroad_version
+  - liberty_file_hash
+  - pdk_or_tech_config_hash
+  - constraints_hash
+  - timeout_policy
+  - budget_policy
+  - worker_count
+  - thread_policy
