@@ -70,6 +70,7 @@ def test_build_report_marks_gate0_and_hv_win(tmp_path: Path) -> None:
         row["descriptor_space"] == "common_audit"
         for row in report["descriptor_correlations"]
     )
+    assert report["representative_elites"][0]["selection_kind"] == "method_best_fitness"
     assert leaderboard["classic_revolution"]["duplicate_netlist_count"] == 0
 
 
@@ -168,6 +169,7 @@ def _write_standard_dir(
                 "method_name": method,
                 "problem_id": problem_id,
                 "candidate_id": "candidate-0",
+                "operator_name": "initial",
                 "benchmark_source": "Bench",
                 "syntax_pass": True,
                 "functionality_pass": True,
@@ -181,14 +183,20 @@ def _write_standard_dir(
                 "fitness": fitness,
                 "canonical_netlist_hash": netlist_hash,
                 "motif_signature_hash": f"{netlist_hash}_motif",
+                "descriptor_vector": descriptor_vector,
+                "common_audit_descriptor_vector": "[0.1, 0.2, 0.3, 0.4]",
                 "archive_cell_id": archive_cell_id,
                 "common_audit_cell_id": "audit_motif4:0,0,0,0",
+                "rtl_path": "exp/example/code.sv",
+                "netlist_path": "exp/example/code.syn.v",
+                "log_path": "exp/example/code_simulation.log",
                 "generation": 0,
             },
             {
                 "method_name": method,
                 "problem_id": problem_id,
                 "candidate_id": "candidate-1",
+                "operator_name": "initial",
                 "benchmark_source": "Bench",
                 "syntax_pass": True,
                 "functionality_pass": False,
@@ -202,13 +210,22 @@ def _write_standard_dir(
                 "fitness": None,
                 "canonical_netlist_hash": None,
                 "motif_signature_hash": None,
+                "descriptor_vector": "[]",
+                "common_audit_descriptor_vector": "[]",
                 "archive_cell_id": None,
                 "common_audit_cell_id": None,
+                "rtl_path": "exp/example/bad/code.sv",
+                "netlist_path": "",
+                "log_path": "exp/example/bad/code_simulation.log",
                 "generation": 1,
             }
         ]
     )
     candidates.to_parquet(result_dir / "candidates.parquet", index=False)
+    candidates.loc[candidates["valid_ppa"].eq(True)].to_parquet(
+        result_dir / "elites.parquet",
+        index=False,
+    )
     pd.DataFrame(
         [
             {

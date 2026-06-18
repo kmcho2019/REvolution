@@ -2644,3 +2644,82 @@ PY
 ```
 
 Result: `descriptor correlation artifact check ok`.
+
+## 2026-06-19 06:25 KST
+
+Added representative elite examples to the seed-1 centralized Auto-BD
+report.
+
+Code changes:
+
+- `scripts/report_auto_bd_standard_results.py` now loads
+  `elites.parquet` from each standard result directory.
+- The central JSON report now emits `representative_elites`.
+- The representative set includes one best-fitness elite per method and
+  one best-fitness elite for every `(method, problem)` pair.
+- Each elite row includes PPA, descriptor vector, common-audit vector,
+  archive cells, canonical netlist hash, motif-signature hash, RTL path,
+  netlist path, and log path.
+- The Markdown report includes a compact best-per-method table and keeps
+  the per-problem examples in the JSON artifact to avoid an oversized
+  report table.
+
+Regenerated artifacts:
+
+- `auto_bd_seed1_centralized_report.md`
+- `auto_bd_seed1_centralized_report.json`
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 2 passed in 99.81s.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+Artifact check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+p=Path('docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json')
+payload=json.loads(p.read_text(encoding='utf-8'))
+rows=payload['representative_elites']
+assert len(rows) == 42
+assert sum(row['selection_kind'] == 'method_best_fitness' for row in rows) == 6
+assert sum(row['selection_kind'] == 'problem_best_fitness' for row in rows) == 36
+for row in rows:
+    assert row['rtl_path']
+    assert row['netlist_path']
+    assert row['canonical_netlist_hash']
+print('representative elite artifact check ok')
+PY
+```
+
+Result: `representative elite artifact check ok`.

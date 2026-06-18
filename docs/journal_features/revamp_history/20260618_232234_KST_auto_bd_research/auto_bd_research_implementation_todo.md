@@ -103,7 +103,7 @@ evidence and rationale.
 - [x] Include canonical-netlist uniqueness and duplicate-cell leakage.
 - [x] Include common-audit archive QD score and coverage.
 - [x] Include motif-signature and PPA-relevant diversity.
-- [ ] Include representative elite examples.
+- [x] Include representative elite examples.
 - [x] Implement centralized cross-method report generation.
 - [x] Include leaderboard, gate matrix, per-problem win/loss matrix, and
   compute-cost comparison.

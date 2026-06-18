@@ -94,6 +94,11 @@ def build_report(
         for payload in per_method.values()
         for row in payload["archive"]
     ]
+    representative_rows = [
+        row
+        for payload in per_method.values()
+        for row in payload["representative_elites"]
+    ]
     correlation_rows = [
         row
         for payload in per_method.values()
@@ -113,6 +118,7 @@ def build_report(
         "anytime_metrics": anytime_rows,
         "qd_summary": qd_rows,
         "archive_metrics": archive_rows,
+        "representative_elites": representative_rows,
         "descriptor_correlations": correlation_rows,
         "comparison_matrix": comparison_rows,
         "problem_metrics": problem_rows,
@@ -138,6 +144,7 @@ def load_method_result(method: str, result_dir: Path, repo_root: Path) -> dict[s
     per_generation = pd.read_parquet(result_dir / "per_generation_metrics.parquet")
     archive = pd.read_parquet(result_dir / "archive_snapshots.parquet")
     descriptors = pd.read_parquet(result_dir / "descriptor_vectors.parquet")
+    elites = pd.read_parquet(result_dir / "elites.parquet")
     summary = load_json(result_dir / "method_summary.json")
     problem_rows = [
         problem_metric_row(method, str(problem_id), group, repo_root)
@@ -150,6 +157,7 @@ def load_method_result(method: str, result_dir: Path, repo_root: Path) -> dict[s
         "failure_breakdown": failure_breakdown_rows(method, candidates),
         "anytime_metrics": build_anytime_rows(method, candidates, repo_root),
         "qd_summary": qd_summary_row(method, candidates, archive, descriptors),
+        "representative_elites": representative_elite_rows(method, elites),
         "descriptor_correlations": descriptor_correlation_rows(
             method,
             candidates,
@@ -351,6 +359,50 @@ def descriptor_correlation_rows(
             )
         )
     return rows
+
+
+def representative_elite_rows(method: str, elites: pd.DataFrame) -> list[dict[str, Any]]:
+    assert not elites.empty, method
+    valid = elites.loc[elites["valid_ppa"].eq(True)].copy()
+    assert not valid.empty, method
+    rows = [representative_elite_row(method, "method_best_fitness", best_row(valid))]
+    for problem_id, group in valid.groupby("problem_id", sort=True):
+        row = representative_elite_row(
+            method,
+            "problem_best_fitness",
+            best_row(group),
+        )
+        row["problem_id"] = str(problem_id)
+        rows.append(row)
+    return rows
+
+
+def representative_elite_row(
+    method: str,
+    selection_kind: str,
+    row: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "method_name": method,
+        "selection_kind": selection_kind,
+        "problem_id": str(row["problem_id"]),
+        "candidate_id": str(row["candidate_id"]),
+        "generation": int(row["generation"]),
+        "operator_name": str(row["operator_name"]),
+        "fitness": finite_float(row["fitness"]),
+        "area": finite_float(row["area"]),
+        "power": finite_float(row["power"]),
+        "timing_or_clock_period": finite_float(row["timing_or_clock_period"]),
+        "archive_cell_id": empty_to_none(row["archive_cell_id"]),
+        "common_audit_cell_id": empty_to_none(row["common_audit_cell_id"]),
+        "canonical_netlist_hash": str(row["canonical_netlist_hash"]),
+        "motif_signature_hash": str(row["motif_signature_hash"]),
+        "rtl_path": str(row["rtl_path"]),
+        "netlist_path": str(row["netlist_path"]),
+        "log_path": str(row["log_path"]),
+        "descriptor_vector": str(row["descriptor_vector"]),
+        "common_audit_descriptor_vector": str(row["common_audit_descriptor_vector"]),
+    }
 
 
 def descriptor_space_correlation_rows(
@@ -673,6 +725,45 @@ def render_markdown(report: dict[str, Any]) -> str:
         "## Descriptor/PPA Correlations",
         "",
         "The JSON report includes Pearson correlations between descriptor axes and PPA/fitness metrics for internal and common-audit descriptor spaces.",
+        "",
+        "## Representative Elite Examples",
+        "",
+        "This compact table shows each method's best-fitness representative elite. The JSON report also includes per-problem best-fitness elite rows with RTL, netlist, and log paths.",
+        "",
+        markdown_table(
+            [
+                "Method",
+                "Problem",
+                "Gen",
+                "Op",
+                "Fitness",
+                "Area",
+                "Power",
+                "Timing",
+                "Archive Cell",
+                "Audit Cell",
+                "RTL",
+                "Netlist",
+            ],
+            [
+                [
+                    code(row["method_name"]),
+                    code(row["problem_id"]),
+                    row["generation"],
+                    code(row["operator_name"]),
+                    fmt(row["fitness"]),
+                    fmt(row["area"]),
+                    fmt(row["power"]),
+                    fmt(row["timing_or_clock_period"]),
+                    code(row["archive_cell_id"] or "-"),
+                    code(row["common_audit_cell_id"] or "-"),
+                    short_path(row["rtl_path"]),
+                    short_path(row["netlist_path"]),
+                ]
+                for row in report["representative_elites"]
+                if row["selection_kind"] == "method_best_fitness"
+            ],
+        ),
         "",
         "## Robustness Funnel",
         "",
@@ -1091,6 +1182,26 @@ def none_or_int(value: float | None) -> int | None:
     return int(value)
 
 
+def finite_float(value: Any) -> float | None:
+    if not is_finite(value):
+        return None
+    return float(value)
+
+
+def empty_to_none(value: Any) -> str | None:
+    if value in ("", None):
+        return None
+    if pd.isna(value):
+        return None
+    return str(value)
+
+
+def best_row(frame: pd.DataFrame) -> dict[str, Any]:
+    rows = frame.sort_values("fitness", ascending=False, na_position="last")
+    assert not rows.empty
+    return rows.iloc[0].to_dict()
+
+
 def cell_entropy(frame: pd.DataFrame, column: str) -> float | None:
     assert "problem_id" in frame.columns
     assert column in frame.columns
@@ -1209,6 +1320,16 @@ def fmt(value: object) -> str:
         return "-"
     assert isinstance(value, int | float | str)
     return f"{float(value):.4f}"
+
+
+def short_path(value: object) -> str:
+    if value in ("", None):
+        return "-"
+    path = Path(str(value))
+    parts = path.parts
+    if len(parts) <= 5:
+        return code(path.as_posix())
+    return code(Path("...", *parts[-5:]).as_posix())
 
 
 def load_json(path: Path) -> dict[str, Any]:

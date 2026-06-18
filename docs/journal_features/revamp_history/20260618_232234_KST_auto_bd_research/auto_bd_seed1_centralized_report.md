@@ -50,6 +50,19 @@ Coverage and entropy are reported in the fixed common-audit space so methods wit
 
 The JSON report includes Pearson correlations between descriptor axes and PPA/fitness metrics for internal and common-audit descriptor spaces.
 
+## Representative Elite Examples
+
+This compact table shows each method's best-fitness representative elite. The JSON report also includes per-problem best-fitness elite rows with RTL, netlist, and log paths.
+
+| Method | Problem | Gen | Op | Fitness | Area | Power | Timing | Archive Cell | Audit Cell | RTL | Netlist |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `classic_revolution` | `RTLLM/Prob019_sub_64bit` | 2 | `M-E` | 0.4823 | 340.0000 | 0.0002 | 0.0000 | `-` | `audit_motif4:2,0,1,0` | `.../RTLLM/Prob019_sub_64bit/Gen2/Prob019_sub_64bit_sample2_M-E/code.sv` | `.../RTLLM/Prob019_sub_64bit/Gen2/Prob019_sub_64bit_sample2_M-E/code.syn.v` |
+| `landing_smooth_qd_manual_bd` | `RTLLM/Prob019_sub_64bit` | 2 | `M-E` | 0.4527 | 394.0000 | 0.0003 | 0.0000 | `2,0,2` | `audit_motif4:3,0,0,0` | `.../RTLLM/Prob019_sub_64bit/Gen2/Prob019_sub_64bit_sample2_M-E/code.sv` | `.../RTLLM/Prob019_sub_64bit/Gen2/Prob019_sub_64bit_sample2_M-E/code.syn.v` |
+| `random_descriptor_qd` | `RTLLM/Prob019_sub_64bit` | 1 | `M-E` | 0.4527 | 394.0000 | 0.0003 | 0.0000 | `0,0,0` | `audit_motif4:3,0,0,0` | `.../RTLLM/Prob019_sub_64bit/Gen1/Prob019_sub_64bit_sample2_M-E/code.sv` | `.../RTLLM/Prob019_sub_64bit/Gen1/Prob019_sub_64bit_sample2_M-E/code.syn.v` |
+| `simple_yosys_stat_bd` | `RTLLM/Prob019_sub_64bit` | 1 | `M-E` | 0.4807 | 343.0000 | 0.0002 | 0.0000 | `0,0,3` | `audit_motif4:2,0,1,0` | `.../RTLLM/Prob019_sub_64bit/Gen1/Prob019_sub_64bit_sample7_M-E/code.sv` | `.../RTLLM/Prob019_sub_64bit/Gen1/Prob019_sub_64bit_sample7_M-E/code.syn.v` |
+| `netlist_motif_occupancy` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 2 | `C-D` | 0.4370 | 1394.0000 | 0.0005 | 0.0000 | `1,0,0,1` | `audit_motif4:3,0,0,1` | `.../VerilogEval-Spec-to-RTL/Prob021_mux256to1v/Gen2/Prob021_mux256to1v_sample2_C-D/code.sv` | `.../VerilogEval-Spec-to-RTL/Prob021_mux256to1v/Gen2/Prob021_mux256to1v_sample2_C-D/code.syn.v` |
+| `synthesis_trajectory_nod` | `RTLLM/Prob019_sub_64bit` | 3 | `M-E` | 0.4823 | 340.0000 | 0.0002 | 0.0000 | `0,0,1,0,0` | `audit_motif4:2,0,1,0` | `.../RTLLM/Prob019_sub_64bit/Gen3/Prob019_sub_64bit_sample3_M-E/code.sv` | `.../RTLLM/Prob019_sub_64bit/Gen3/Prob019_sub_64bit_sample3_M-E/code.syn.v` |
+
 ## Robustness Funnel
 
 | Method | Total | Syntax | Functionality | Synthesis | OpenROAD | Valid PPA |
