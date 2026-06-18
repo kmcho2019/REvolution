@@ -748,3 +748,153 @@ Result:
 - verified model ID `openai/gpt-oss-120b`
 - verified seed list `[1001]`
 - verified 64-character prompt-policy hash
+
+## 2026-06-19 01:48 KST
+
+Added a deterministic development run-matrix builder for the first
+comparable seed-1 phase.
+
+Added:
+
+- `scripts/build_auto_bd_run_matrix.py`
+- `tests/scripts/test_build_auto_bd_run_matrix.py`
+- `auto_bd_development_run_matrix.json`
+- `auto_bd_development_run_matrix.sh`
+- `auto_bd_run_configs/development/classic_revolution.yaml`
+- `auto_bd_run_configs/development/landing_smooth_qd_manual_bd.yaml`
+- `auto_bd_run_configs/development/random_descriptor_qd.yaml`
+- `auto_bd_run_configs/development/simple_yosys_stat_bd.yaml`
+
+The matrix expands the locked development subset into eight executable
+`run_backend.py` commands:
+
+- 4 arms: original REvolution, landing Smooth-QD manual-BD, random
+  descriptor QD, and simple Yosys-stat BD
+- 1 seed: `1001`
+- 2 benchmark groups: RTLLM and VerilogEval-Spec-to-RTL, grouped
+  separately so problem IDs cannot be accidentally cross-applied to the
+  wrong benchmark
+
+The generated commands use the locked policy:
+
+- model: `openai/gpt-oss-120b`
+- endpoint: `20.0.0.103:8000`
+- `--vllm_min_model_len 131072`
+- `--max_tokens 128000`
+- `--diff_max_tokens 128000`
+- population size 12, generations 3
+- strict-ablation evaluation
+- development worker policy: 12 total slots, 6 active problems, 4
+  workers per problem
+- locked RTL/synthesis/post-synthesis timeouts
+
+The matrix also emits one `run_manifest.json` command per arm/seed before
+the expensive LLM commands. I executed only those four manifest commands,
+not the LLM evolution commands.
+
+Generated manifests:
+
+- `exp/auto_bd_research/development_preliminary_seed1/classic_revolution/seed_1001/run_manifest.json`
+- `exp/auto_bd_research/development_preliminary_seed1/landing_smooth_qd_manual_bd/seed_1001/run_manifest.json`
+- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/run_manifest.json`
+- `exp/auto_bd_research/development_preliminary_seed1/simple_yosys_stat_bd/seed_1001/run_manifest.json`
+
+Validation:
+
+```bash
+uv tool run ty check scripts/build_auto_bd_run_matrix.py
+```
+
+Result: all checks passed.
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python -m pytest \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: 2 passed in 0.12s.
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/ruff check \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: all checks passed.
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python -m pyright \
+  scripts/build_auto_bd_run_matrix.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+Matrix checks:
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/build_auto_bd_run_matrix.py --phase development
+bash -n \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_development_run_matrix.sh
+```
+
+Result:
+
+- generated 8 run commands
+- generated 4 manifest commands
+- shell syntax check passed
+- JSON payload verified that command token lists start with `env`
+
+Manifest generation command:
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python - <<'PY'
+import json
+import shlex
+import subprocess
+from pathlib import Path
+payload = json.loads(Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_development_run_matrix.json"
+).read_text())
+for item in payload["manifest_commands"]:
+    subprocess.run(shlex.split(item["command_string"]), check=True)
+print("development run manifests generated:", len(payload["manifest_commands"]))
+PY
+```
+
+Result: 4 development run manifests generated.
+
+Fresh model preflight:
+
+First attempt incorrectly piped `curl` into a Python here-doc, so the
+here-doc consumed stdin and `curl` reported `Failed writing body`. The
+corrected command wrote the response to a temp JSON file and parsed it:
+
+```bash
+tmp_json=/tmp/auto_bd_vllm_models.json
+curl -sS --max-time 10 http://20.0.0.103:8000/v1/models > "$tmp_json"
+PYTHONPATH=src /workspace/.venv/bin/python - <<'PY'
+import json
+from pathlib import Path
+payload = json.loads(Path("/tmp/auto_bd_vllm_models.json").read_text())
+models = payload.get("data", [])
+assert models, "no models returned"
+model = models[0]
+print("model_id=", model.get("id"))
+print("max_model_len=", model.get("max_model_len"))
+assert model.get("id") == "openai/gpt-oss-120b"
+assert int(model.get("max_model_len")) >= 131072
+PY
+```
+
+Result:
+
+- model ID: `openai/gpt-oss-120b`
+- `max_model_len`: 131072
+
+No development baseline/control LLM run has been launched yet. The next
+step is to execute the generated matrix commands, starting with original
+REvolution and landing Smooth-QD manual-BD so Gate 0 coverage can be
+established before interpreting controls.
