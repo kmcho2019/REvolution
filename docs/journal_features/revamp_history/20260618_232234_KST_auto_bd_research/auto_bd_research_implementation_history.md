@@ -1417,3 +1417,32 @@ jq empty \
 ```
 
 Result: JSON parsed successfully.
+
+## 2026-06-18 18:30 UTC
+
+Added seed-1 preliminary reports and accept/reject records for both
+control methods.
+
+New random descriptor artifacts:
+
+- `auto_bd_methods/00_random_descriptor/seed1_preliminary_report.md`
+- `auto_bd_methods/00_random_descriptor/accept_reject.md`
+
+Decision:
+
+- retain as the required negative control
+- reject as a final Auto-BD method candidate
+
+New Yosys-stat BD artifacts:
+
+- `auto_bd_methods/01_yosys_stat_bd/seed1_preliminary_report.md`
+- `auto_bd_methods/01_yosys_stat_bd/accept_reject.md`
+
+Decision:
+
+- retain as a strong simple control
+- reject as the selected final Auto-BD method for now
+
+Updated both method cards so their status points to the seed-1 reports
+and decision files. Marked the P2 control report/decision checklist items
+complete. Broader P6 reporting and seed-3/seed-5 evaluation remain open.

@@ -81,7 +81,7 @@ stronger rationale or rejection.
 ## 10. Implementation Status
 
 Implemented as a descriptor profile and candidate-evaluator extraction
-path. Not yet run on the development subset.
+path. Development seed-1 run completed.
 
 ## 11. Experimental Setup
 
@@ -95,14 +95,15 @@ path. Not yet run on the development subset.
 
 ## 12. Results
 
-Not run.
+Seed-1 preliminary report: `seed1_preliminary_report.md`.
 
 ## 13. Accept / Reject Decision
 
-Pending.
+Retain as a required negative control. Reject as a final Auto-BD method
+candidate.
 
 ## 14. Reason
 
-No experimental evidence yet. This control is complete enough for a
-development-subset run once classic and landing Smooth-QD baseline
-coverage are reproduced.
+The control passes development seed-1 Gate 0, but its archive cells are
+intentionally meaningless. It is useful for comparison, not for the final
+journal method claim. Decision record: `accept_reject.md`.

@@ -88,7 +88,7 @@ logic/FF depth.
 ## 10. Implementation Status
 
 Implemented as a descriptor profile using existing structural metrics.
-No new runtime branch is required. Not yet run on the development subset.
+No new runtime branch is required. Development seed-1 run completed.
 
 ## 11. Experimental Setup
 
@@ -102,14 +102,16 @@ No new runtime branch is required. Not yet run on the development subset.
 
 ## 12. Results
 
-Not run.
+Seed-1 preliminary report: `seed1_preliminary_report.md`.
 
 ## 13. Accept / Reject Decision
 
-Pending.
+Retain as a strong simple control. Reject as the selected final Auto-BD
+method for now.
 
 ## 14. Reason
 
-No experimental evidence yet. This control is complete enough for a
-development-subset run once classic and landing Smooth-QD baseline
-coverage are reproduced.
+The control passes development seed-1 Gate 0, but it is still a coarse
+size/composition descriptor. It remains an important baseline for
+motif/ST-NOD methods, not the final method selection. Decision record:
+`accept_reject.md`.

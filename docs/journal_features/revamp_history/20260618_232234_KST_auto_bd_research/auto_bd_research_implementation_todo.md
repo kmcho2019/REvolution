@@ -52,9 +52,9 @@ evidence and rationale.
 - [x] Ensure random descriptor control is deterministic per candidate.
 - [x] Implement simple Yosys-stat BD.
 - [x] Produce method cards for both controls.
-- [ ] Generate per-method reports for both controls.
-- [ ] Write accept/reject decisions for both controls.
-- [ ] Use control results to sanity-check the report and gates.
+- [x] Generate per-method reports for both controls.
+- [x] Write accept/reject decisions for both controls.
+- [x] Use control results to sanity-check the report and gates.
 
 ## P3 - First Auto-BD Methods
 
