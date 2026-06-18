@@ -8,6 +8,8 @@ import traceback
 from pathlib import Path
 from typing import Any, Literal, NamedTuple
 
+from revolution.auto_bd.stage_dumps import write_yosys_stage_dump_script
+
 _NETLIST_INSTANCE_RE = re.compile(
     r"^\s*([\\$A-Za-z_][\\$A-Za-z0-9_]*)\s+([\\$A-Za-z_][\\$A-Za-z0-9_]*)\s*\(",
     re.M,
@@ -920,6 +922,58 @@ class SynthesisEvaluator:
             with open(report_path, "w", encoding="utf-8") as f:
                 f.write(f"--- SYNTHESIS/Physical Design FAILED: UNEXPECTED CRASH ---\n{error_msg}\n\nTraceback:\n{tb}\n")
             return False, report_path
+
+    def run_yosys_stage_dumps(
+        self,
+        *,
+        verilog_file: str,
+        synth_top_module_name: str,
+        output_directory: str,
+        synthesis_timeout_s: int | None = None,
+        aux_files: tuple[str, ...] = (),
+        include_dirs: tuple[str, ...] = (),
+        defines: tuple[str, ...] = (),
+    ) -> dict[str, Any]:
+        """Run an observational Yosys stage-dump pass for ST-NOD."""
+
+        output_path = Path(output_directory)
+        effective_timeout_s = (
+            self.default_synthesis_timeout_s
+            if synthesis_timeout_s is None
+            else int(synthesis_timeout_s)
+        )
+        plan = write_yosys_stage_dump_script(
+            verilog_file=Path(verilog_file),
+            module_name=synth_top_module_name,
+            output_directory=output_path,
+            pdk_path=Path(self.pdk_path),
+            ref_dir_path=Path(self.ref_dir_path),
+            clk_period_ps=self.clk_period * 1000,
+            aux_files=tuple(Path(path) for path in aux_files),
+            include_dirs=tuple(Path(path) for path in include_dirs),
+            defines=defines,
+        )
+        command = [self.yosys_path, str(plan.script_path)]
+        result = _run_command(command, timeout_s=effective_timeout_s)
+        log_path = output_path / f"{synth_top_module_name}.stnod.yosys.log"
+        with open(log_path, "w", encoding="utf-8") as handle:
+            handle.write(f"Command: {' '.join(command)}\n")
+            handle.write(f"Return Code: {result.returncode}\n")
+            handle.write(f"Timed Out: {result.timed_out}\n")
+            handle.write("Stdout:\n")
+            handle.write(result.stdout)
+            handle.write("\nStderr:\n")
+            handle.write(result.stderr)
+            handle.write("\n")
+
+        return {
+            "stage_dump_success": result.returncode == 0 and not result.timed_out,
+            "stage_dump_log_path": str(log_path),
+            "stage_dump_script_path": str(plan.script_path),
+            "stage_dump_dir": str(plan.stage_dir),
+            "stage_dump_json_paths": [str(path) for path in plan.json_paths()],
+            "stage_dump_verilog_paths": [str(path) for path in plan.verilog_paths()],
+        }
 
     # Method for post-synthesis functionality check/verification
     def _check_synthesis_functionality(
