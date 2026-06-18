@@ -1712,3 +1712,123 @@ TODO status:
 
 - marked ST-NOD stage-dump script writer complete
 - left runtime execution and observational-equivalence validation open
+
+## 2026-06-18 - ST-NOD Descriptor And Method Arm
+
+Implemented the first runnable ST-NOD descriptor profile and registered
+it as a development run-matrix arm.
+
+Changed code:
+
+- `src/revolution/auto_bd/trajectory_descriptor.py`
+- `src/revolution/qd/descriptors.py`
+- `src/revolution/runtime/candidate_evaluator.py`
+- `src/revolution/qd/engine.py`
+- `scripts/build_auto_bd_run_matrix.py`
+
+Method artifacts:
+
+- `auto_bd_methods/03_synthesis_trajectory_nod/descriptor_profile.yaml`
+- `auto_bd_methods/03_synthesis_trajectory_nod/config.yaml`
+- `auto_bd_methods/03_synthesis_trajectory_nod/method_card.md`
+- `auto_bd_run_configs/development/synthesis_trajectory_nod.yaml`
+- `auto_bd_development_run_matrix.json`
+- `auto_bd_development_run_matrix.sh`
+
+Descriptor axes:
+
+- `stnod_cell_growth_log`
+- `stnod_logic_swing`
+- `stnod_control_swing`
+- `stnod_arith_swing`
+- `stnod_diversity_swing`
+
+The descriptor uses Yosys stage-dump Verilog snapshots only. It does not
+consume PPA, fitness, reference PPA, or hypervolume inputs.
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_auto_bd_trajectory_descriptor.py \
+  tests/revolution/test_qd_descriptors.py::test_stnod_profile_uses_stage_dump_metrics \
+  tests/revolution/test_candidate_evaluator.py::test_candidate_evaluator_runs_stnod_stage_dumps_for_stage_profile \
+  tests/revolution/test_candidate_evaluator.py::test_candidate_evaluator_rejects_failed_stnod_stage_dump \
+  tests/revolution/test_qd_engine.py::test_qd_engine_extracts_stnod_descriptors
+```
+
+Result: 6 passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: 2 passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  src/revolution/auto_bd/trajectory_descriptor.py \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/qd/descriptors.py \
+  src/revolution/runtime/candidate_evaluator.py \
+  src/revolution/qd/engine.py \
+  tests/revolution/test_auto_bd_trajectory_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/revolution/test_candidate_evaluator.py \
+  tests/revolution/test_qd_engine.py \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  src/revolution/auto_bd \
+  src/revolution/qd/descriptors.py \
+  tests/revolution/test_auto_bd_trajectory_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  src/revolution/auto_bd \
+  src/revolution/qd/descriptors.py \
+  tests/revolution/test_auto_bd_trajectory_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+Runtime/QD source-only typecheck note:
+
+- `uv tool run ty check src/revolution/runtime/candidate_evaluator.py
+  src/revolution/qd/engine.py` still reports 7 existing diagnostics.
+- `pyright` on those two source files still reports 3 existing
+  diagnostics.
+- The remaining diagnostics are the previously recorded QD typing debt:
+  `_select_strategy` overloads, rebin event typing, redundant cast,
+  default tuple for a list parameter, and scipy result typing.
+
+Generated matrix check:
+
+```bash
+jq '{manifest_count: (.manifest_commands | length), entry_count: (.entries | length), arms: ([.entries[].arm_name] | unique)}' \
+  auto_bd_development_run_matrix.json
+```
+
+Result: 6 manifest commands and 12 entries, including
+`synthesis_trajectory_nod`.
+
+TODO status:
+
+- marked ST-NOD runtime sidecar wiring complete
+- marked ST-NOD trajectory feature extraction complete
+- left observational-equivalence validation and development run open

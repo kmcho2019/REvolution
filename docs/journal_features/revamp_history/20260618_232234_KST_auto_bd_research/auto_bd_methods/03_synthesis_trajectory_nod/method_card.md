@@ -32,17 +32,19 @@ run plan.script_path as a sidecar observation
 consume plan.json_paths() or plan.verilog_paths()
 ```
 
-Planned descriptor:
+Implemented descriptor:
 
 ```text
 for each stage:
     extract motif occupancy, cell counts, and motif signature
-compute trajectory deltas between adjacent stages
-emit a compact fixed-axis vector for archive insertion
+compute final-vs-initial cell-count growth
+compute motif-ratio swing across all stages
+emit stnod_trajectory_5d for archive insertion
 ```
 
-The stage-dump helper lives in
-`src/revolution/auto_bd/stage_dumps.py`.
+The stage-dump helper lives in `src/revolution/auto_bd/stage_dumps.py`.
+The trajectory descriptor lives in
+`src/revolution/auto_bd/trajectory_descriptor.py`.
 
 ## 5. Descriptor Fitting Protocol
 
@@ -57,7 +59,7 @@ The stage-dump helper lives in
 ## 6. Archive Integration
 
 - Archive type: `grid_quantile`
-- Internal descriptor dimensions: pending
+- Internal descriptor dimensions: 5
 - Internal binning/cell policy: quantile grid, warmup successes 8
 - Common audit descriptor: required by the centralized report
 - Common audit binning: fixed by the future report implementation
@@ -66,6 +68,9 @@ The stage-dump helper lives in
 
 - Stage names: `00_read`, `01_synth`, `02_opt`, `03_arithmap`,
   `04_dffmap`, `05_abc`, `06_clean`, `07_buffered`
+- Descriptor axes: `stnod_cell_growth_log`, `stnod_logic_swing`,
+  `stnod_control_swing`, `stnod_arith_swing`,
+  `stnod_diversity_swing`
 - Cell mode: `pareto_front`
 - Objectives: `ppa`
 - Parent selection: `nsga2_global_rank`
@@ -88,9 +93,10 @@ trajectory.
 
 ## 10. Implementation Status
 
-Partial. The observational sidecar script writer and path manifest are
-implemented. Runtime execution, observational-equivalence validation,
-trajectory features, descriptor profile, and development run are pending.
+Implemented, not run. The observational sidecar script writer, runtime
+execution hook, trajectory features, descriptor profile, and run-matrix
+arm are implemented. Observational-equivalence validation and the
+development run are pending.
 
 ## 11. Experimental Setup
 
@@ -114,4 +120,4 @@ Pending.
 
 No method-level experimental evidence exists yet. The next required step
 is to prove the sidecar stage-dump path is observationally equivalent to
-the baseline scoring synthesis path before it is used for descriptors.
+the baseline scoring synthesis path, then run seed-1 development Gate 0.
