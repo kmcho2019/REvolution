@@ -2929,3 +2929,121 @@ PY
 ```
 
 Result: `promotion decision artifact check ok`.
+
+## 2026-06-18 21:45 UTC
+
+Generated the promoted-arm seed-3 main screening run matrix.
+
+Scope:
+
+- Added `--arms` filtering to `scripts/build_auto_bd_run_matrix.py` so a
+  phase matrix can be restricted to promoted arms without editing the lock
+  policy.
+- Kept the seed-3 matrix restricted to `classic_revolution`,
+  `landing_smooth_qd_manual_bd`, `random_descriptor_qd`, and
+  `synthesis_trajectory_nod` based on the seed-1 promotion artifact.
+- Wrote exact per-arm configs under
+  `auto_bd_run_configs/main_screening/`.
+
+Generation command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/build_auto_bd_run_matrix.py \
+  --phase main_screening \
+  --arms classic_revolution landing_smooth_qd_manual_bd \
+  random_descriptor_qd synthesis_trajectory_nod
+```
+
+Result:
+
+- `auto_bd_main_screening_run_matrix.json`
+- `auto_bd_main_screening_run_matrix.sh`
+- 24 run entries: 4 arms x 3 seeds x 2 benchmark groups
+- 12 manifest commands
+- 13 main-screening problems: 7 RTLLM and 6 VerilogEval
+- 128k token and 131072 minimum model-length settings preserved
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: 3 passed in 1.03s.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+Matrix content check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+p = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_main_screening_run_matrix.json"
+)
+payload = json.loads(p.read_text())
+assert payload["phase"] == "main_screening"
+assert payload["arms"] == [
+    "classic_revolution",
+    "landing_smooth_qd_manual_bd",
+    "random_descriptor_qd",
+    "synthesis_trajectory_nod",
+]
+assert len(payload["manifest_commands"]) == 12
+assert len(payload["entries"]) == 24
+assert {entry["seed"] for entry in payload["entries"]} == {1001, 1002, 1003}
+assert {entry["benchmark"] for entry in payload["entries"]} == {
+    "RTLLM",
+    "VerilogEval-Spec-to-RTL",
+}
+assert all("--max_tokens 128000" in e["command_string"] for e in payload["entries"])
+assert all(
+    "--diff_max_tokens 128000" in e["command_string"]
+    for e in payload["entries"]
+)
+assert all(
+    "--vllm_min_model_len 131072" in e["command_string"]
+    for e in payload["entries"]
+)
+print("seed3 run matrix check ok")
+PY
+```
+
+Result: `seed3 run matrix check ok`.
+
+Shell validation:
+
+```bash
+bash -n \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_matrix.sh
+```
+
+Result: passed.

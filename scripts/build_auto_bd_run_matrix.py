@@ -52,6 +52,7 @@ def build_matrix(
     subset_lock_path: Path,
     output_dir: Path,
     run_root: Path,
+    arm_names: list[str] | None = None,
 ) -> dict[str, Any]:
     """Build command entries and write per-arm config locks."""
 
@@ -63,7 +64,7 @@ def build_matrix(
     seed_key = str(phase_body["seeds"])
     seeds = list_at(mapping_at(run_policy, "seed_policy"), seed_key)
     benchmark_groups = group_problems(list_at(mapping_at(subset_lock, subset_role), "problems"))
-    arm_configs = write_arm_configs(run_policy, phase, output_dir)
+    arm_configs = write_arm_configs(run_policy, phase, output_dir, arm_names)
 
     entries: list[dict[str, Any]] = []
     for arm_name, config_path in arm_configs.items():
@@ -101,6 +102,7 @@ def build_matrix(
         "run_policy": rel(run_policy_path),
         "subset_lock": rel(subset_lock_path),
         "run_root": rel(run_root),
+        "arms": list(arm_configs),
         "manifest_commands": manifest_commands(phase, arm_configs, run_root, seed_key, seeds),
         "entries": entries,
     }
@@ -112,6 +114,7 @@ def write_arm_configs(
     run_policy: Mapping[str, Any],
     phase: str,
     output_dir: Path,
+    arm_names: list[str] | None,
 ) -> dict[str, Path]:
     """Write exact per-arm run configs used for manifest hashing."""
 
@@ -134,8 +137,13 @@ def write_arm_configs(
             "synthesis_trajectory_nod",
         ),
     }
+    selected_arms = arm_names or list(arm_payloads)
+    assert selected_arms, "at least one arm is required"
+    unknown = sorted(set(selected_arms) - set(arm_payloads))
+    assert not unknown, f"unknown arms: {unknown}"
     output: dict[str, Path] = {}
-    for arm_name, arm_payload in arm_payloads.items():
+    for arm_name in selected_arms:
+        arm_payload = arm_payloads[arm_name]
         payload = {
             "arm_name": arm_name,
             "phase": phase,
@@ -382,6 +390,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--subset-lock", type=Path, default=DEFAULT_SUBSET_LOCK)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--run-root", type=Path, default=DEFAULT_RUN_ROOT)
+    parser.add_argument("--arms", nargs="*")
     args = parser.parse_args(argv)
 
     payload = build_matrix(
@@ -390,6 +399,7 @@ def main(argv: list[str] | None = None) -> int:
         subset_lock_path=args.subset_lock,
         output_dir=args.output_dir,
         run_root=args.run_root,
+        arm_names=args.arms,
     )
     print(f"Auto-BD run matrix entries: {len(payload['entries'])}")
     print(f"Auto-BD run matrix -> {args.output_dir / f'auto_bd_{args.phase}_run_matrix.json'}")

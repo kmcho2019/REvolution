@@ -89,6 +89,41 @@ def test_main_writes_json_payload(tmp_path):
     assert payload["entries"][0]["seed"] == 1001
 
 
+def test_build_matrix_filters_promoted_arms_for_screening(tmp_path):
+    paths = _write_inputs(tmp_path)
+
+    payload = mod.build_matrix(
+        phase="main_screening",
+        run_policy_path=paths["run_policy"],
+        subset_lock_path=paths["subset_lock"],
+        output_dir=tmp_path / "screening",
+        run_root=tmp_path / "exp",
+        arm_names=[
+            "classic_revolution",
+            "landing_smooth_qd_manual_bd",
+            "random_descriptor_qd",
+            "synthesis_trajectory_nod",
+        ],
+    )
+
+    assert payload["arms"] == [
+        "classic_revolution",
+        "landing_smooth_qd_manual_bd",
+        "random_descriptor_qd",
+        "synthesis_trajectory_nod",
+    ]
+    assert len(payload["manifest_commands"]) == 12
+    assert len(payload["entries"]) == 24
+    assert {
+        entry["arm_name"]
+        for entry in payload["entries"]
+    } == set(payload["arms"])
+    assert {
+        entry["seed"]
+        for entry in payload["entries"]
+    } == {1001, 1002, 1003}
+
+
 def _write_inputs(tmp_path: Path) -> dict[str, Path]:
     subset_lock = tmp_path / "subset.yaml"
     subset_lock.write_text(
@@ -99,6 +134,12 @@ def _write_inputs(tmp_path: Path) -> dict[str, Path]:
                         {"benchmark": "RTLLM", "problem": "ProbA"},
                         {"benchmark": "RTLLM", "problem": "ProbB"},
                         {"benchmark": "VerilogEval-Spec-to-RTL", "problem": "ProbC"},
+                    ]
+                },
+                "main_screening": {
+                    "problems": [
+                        {"benchmark": "RTLLM", "problem": "ProbD"},
+                        {"benchmark": "VerilogEval-Spec-to-RTL", "problem": "ProbE"},
                     ]
                 }
             },
@@ -117,7 +158,10 @@ def _write_inputs(tmp_path: Path) -> dict[str, Path]:
                     "max_tokens": 128000,
                     "diff_max_tokens": 128000,
                 },
-                "seed_policy": {"preliminary_seed1": [1001]},
+                "seed_policy": {
+                    "preliminary_seed1": [1001],
+                    "screening_seed3": [1001, 1002, 1003],
+                },
                 "phase_policy": {
                     "development": {
                         "subset_role": "development",
@@ -125,6 +169,14 @@ def _write_inputs(tmp_path: Path) -> dict[str, Path]:
                         "population_size": 12,
                         "num_generations": 3,
                         "evaluation_mode": "strict_ablation",
+                    },
+                    "main_screening": {
+                        "subset_role": "main_screening",
+                        "seeds": "screening_seed3",
+                        "population_size": 20,
+                        "num_generations": 5,
+                        "evaluation_mode": "search_accelerated",
+                        "accelerated_synthesis_top_k": 1,
                     }
                 },
                 "timeout_policy": {
@@ -136,6 +188,11 @@ def _write_inputs(tmp_path: Path) -> dict[str, Path]:
                     "development": {
                         "total_worker_slots": 12,
                         "max_active_problems": 6,
+                        "max_workers_per_problem": 4,
+                    },
+                    "main_screening": {
+                        "total_worker_slots": 13,
+                        "max_active_problems": 13,
                         "max_workers_per_problem": 4,
                     }
                 },
