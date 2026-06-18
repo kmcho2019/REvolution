@@ -1,0 +1,42 @@
+method_family: synthesis_trajectory_nod
+method_name: synthesis_trajectory_nod_grid_quantile
+status: partial_stage_dump_helper_only
+
+descriptor:
+  profile: pending
+  descriptor_file: pending
+  source: yosys_stage_dumps
+  stage_dump_helper: src/revolution/auto_bd/stage_dumps.py
+  stage_names:
+  - 00_read
+  - 01_synth
+  - 02_opt
+  - 03_arithmap
+  - 04_dffmap
+  - 05_abc
+  - 06_clean
+  - 07_buffered
+  fitting_protocol: none
+  forbidden_inputs:
+  - ppa
+  - reference_ppa
+  - fitness
+  - hypervolume
+
+observational_equivalence:
+  required: true
+  status: pending
+  rule: stage_dump_script_must_not_feed_scoring_netlist
+
+qd:
+  archive_type: grid_quantile
+  cell_mode: pareto_front
+  objectives: ppa
+  parent_selection: nsga2_global_rank
+  champion_lane_fraction: 0.5
+  operator_kind: eoh_strategies
+
+comparison_policy:
+  baseline_lock: ../../auto_bd_run_policy_lock.yaml
+  same_subsets_seeds_model_budget_as_baseline: true
+  report_internal_and_common_audit_space: true

@@ -67,7 +67,8 @@ evidence and rationale.
 
 ## P4 - ST-NOD
 
-- [ ] Implement synthesis-stage artifact dumping.
+- [x] Implement synthesis-stage dump script writer.
+- [ ] Wire observational dump execution behind the ST-NOD method arm.
 - [ ] Add ST-NOD observational-equivalence test against baseline synthesis.
 - [ ] Implement synthesis-trajectory feature extraction.
 - [ ] Combine trajectory features with motif occupancy.

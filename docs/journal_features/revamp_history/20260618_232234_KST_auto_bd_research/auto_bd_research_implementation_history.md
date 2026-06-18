@@ -1647,3 +1647,68 @@ TODO status:
 
 - marked motif development run/report complete
 - marked motif accept/reject decision complete
+
+## 2026-06-18 - ST-NOD Stage-Dump Helper
+
+Implemented the first ST-NOD infrastructure step as a sidecar Yosys
+stage-dump script writer.
+
+Changed code:
+
+- `src/revolution/auto_bd/stage_dumps.py`
+- `src/revolution/auto_bd/__init__.py`
+- `tests/revolution/test_auto_bd_stage_dumps.py`
+
+The helper writes an observational script that snapshots:
+
+- `00_read`
+- `01_synth`
+- `02_opt`
+- `03_arithmap`
+- `04_dffmap`
+- `05_abc`
+- `06_clean`
+- `07_buffered`
+
+The helper does not feed artifacts into the scoring synthesis/PPA path.
+Runtime execution, observational-equivalence validation, trajectory
+feature extraction, and descriptor-profile wiring are still pending.
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_auto_bd_stage_dumps.py
+```
+
+Result: 2 passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  src/revolution/auto_bd/stage_dumps.py \
+  src/revolution/auto_bd/__init__.py \
+  tests/revolution/test_auto_bd_stage_dumps.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  src/revolution/auto_bd \
+  tests/revolution/test_auto_bd_stage_dumps.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  src/revolution/auto_bd \
+  tests/revolution/test_auto_bd_stage_dumps.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+TODO status:
+
+- marked ST-NOD stage-dump script writer complete
+- left runtime execution and observational-equivalence validation open
