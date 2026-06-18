@@ -12,6 +12,12 @@ from revolution.qd.descriptors import (
     resolve_grid_axis_specs,
 )
 
+RANDOM_DESCRIPTOR_FILE = (
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_methods/00_random_descriptor/descriptor_profile.yaml"
+)
+
 
 def test_load_descriptor_profiles_includes_hybrid_defaults():
     profiles = load_descriptor_profiles()
@@ -221,6 +227,21 @@ def test_resolve_descriptor_axes_uses_journal_profile_for_comb_and_seq():
             circuit_type=circuit_type,
         )
         assert axes == ["logic_depth", "ff_depth", "comb_width_log"]
+
+
+def test_random_hash_profile_requires_auto_bd_hash_metrics():
+    axes = resolve_descriptor_axes(
+        profile_name="random_hash_3d",
+        explicit_axes=None,
+        descriptor_file=RANDOM_DESCRIPTOR_FILE,
+        archive_type="grid_quantile",
+        circuit_type="sequential",
+    )
+    requirements = descriptor_requirements(axes)
+
+    assert axes == ["random_hash_0", "random_hash_1", "random_hash_2"]
+    assert requirements["requires_synthesis"] is True
+    assert requirements["requires_auto_bd_hash"] is True
 
 
 def test_resolve_descriptor_axes_rejects_unknown_profile():

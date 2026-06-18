@@ -820,6 +820,7 @@ def test_evaluate_end_to_end_with_stubs(mocker, tmp_path):
     assert results["structural_metrics"]["seq_ratio"] == pytest.approx(1 / 3)
     assert results["physical_metrics"] == {}
     assert results["metrics_sidecar_path"] == rpt.replace(".rpt", ".metrics.json")
+    assert results["synthesized_netlist_path"] == str(Path(dut).with_suffix(".syn.v"))
     ppa = results["ppa_metrics"]
     assert isinstance(ppa, dict), f"ppa_metrics should be a dict, got {type(ppa)}"
 

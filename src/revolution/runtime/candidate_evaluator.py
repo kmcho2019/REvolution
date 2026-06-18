@@ -10,6 +10,8 @@ from pathlib import Path
 from typing import Any
 
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
+from revolution.auto_bd.netlist_hash import canonical_netlist_hash
+from revolution.auto_bd.random_descriptor import random_hash_descriptor_values
 from revolution.graph_descriptor_evaluator import GraphDescriptorEvaluator
 from revolution.runtime.problem_context import (
     ProblemContext,
@@ -365,6 +367,7 @@ class CandidateEvaluator:
         descriptor_metrics.update(result.dynamic_metrics)
         descriptor_metrics.update(result.graph_metrics)
         descriptor_metrics.update(result.physical_metrics)
+        descriptor_metrics.update(self._extract_auto_bd_hash_metrics(result))
         descriptor_metrics.update(
             {
                 axis: float(result.score_components[axis])
@@ -373,6 +376,20 @@ class CandidateEvaluator:
             }
         )
         return extract_descriptor_values(descriptor_metrics, self.descriptor_axes)
+
+    def _extract_auto_bd_hash_metrics(
+        self,
+        result: CandidateEvaluation,
+    ) -> dict[str, float]:
+        if not self.descriptor_requirements.get("requires_auto_bd_hash", False):
+            return {}
+        assert result.synthesis_result is not None
+        netlist_path = Path(str(result.synthesis_result["synthesized_netlist_path"]))
+        assert netlist_path.is_file()
+        netlist_hash = canonical_netlist_hash(
+            netlist_path.read_text(encoding="utf-8", errors="ignore")
+        )
+        return random_hash_descriptor_values(netlist_hash)
 
     def _enrich_result(
         self,

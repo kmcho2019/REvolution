@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import yaml
+import yaml  # type: ignore[reportMissingModuleSource]
 
 from revolution.runtime.problem_spec import CircuitType
 
@@ -103,6 +103,9 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "g_P": DescriptorDefinition("g_P", "ppa", requires_ppa=True),
     "g_A": DescriptorDefinition("g_A", "ppa", requires_ppa=True),
     "g_T": DescriptorDefinition("g_T", "ppa", requires_ppa=True),
+    "random_hash_0": DescriptorDefinition("random_hash_0", "auto_bd_hash", requires_synthesis=True),
+    "random_hash_1": DescriptorDefinition("random_hash_1", "auto_bd_hash", requires_synthesis=True),
+    "random_hash_2": DescriptorDefinition("random_hash_2", "auto_bd_hash", requires_synthesis=True),
 }
 
 
@@ -323,6 +326,8 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (0.0, 64.0)
     if axis in {"active_signal_ratio_est", "avg_toggle_rate_est"}:
         return (0.0, 1.0)
+    if axis.startswith("random_hash_"):
+        return (0.0, 1.0)
     if axis in {"wire_cell_ratio_est", "resource_sharing_ratio_est"}:
         return (0.0, 4.0)
     if axis == "ltp_noff":
@@ -372,6 +377,9 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
         ),
         "requires_graph_metrics": any(
             registry[axis].source_tool == "yosys_graph" for axis in axes
+        ),
+        "requires_auto_bd_hash": any(
+            registry[axis].source_tool == "auto_bd_hash" for axis in axes
         ),
     }
 

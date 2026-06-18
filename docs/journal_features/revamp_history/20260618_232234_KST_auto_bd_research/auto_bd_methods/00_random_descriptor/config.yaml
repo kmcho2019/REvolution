@@ -1,0 +1,35 @@
+method_family: random_descriptor
+method_name: random_hash_3d_grid_quantile_control
+status: implemented_not_run
+
+descriptor:
+  profile: random_hash_3d
+  descriptor_file: descriptor_profile.yaml
+  axes:
+  - random_hash_0
+  - random_hash_1
+  - random_hash_2
+  source: canonical_synthesized_netlist_hash
+  seed: 20260618_auto_bd_random_descriptor
+  fitting_protocol: none
+  forbidden_inputs:
+  - ppa
+  - reference_ppa
+  - fitness
+  - hypervolume
+
+qd:
+  archive_type: grid_quantile
+  descriptor_file: descriptor_profile.yaml
+  cell_mode: pareto_front
+  objectives: ppa
+  grid_quantile_warmup_successes: 8
+  max_elites_per_cell: 5
+  parent_selection: nsga2_global_rank
+  champion_lane_fraction: 0.5
+  operator_kind: eoh_strategies
+
+comparison_policy:
+  baseline_lock: ../../auto_bd_run_policy_lock.yaml
+  same_subsets_seeds_model_budget_as_baseline: true
+  report_internal_and_common_audit_space: true

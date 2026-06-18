@@ -4,6 +4,12 @@ import pytest
 
 from revolution.runtime import CandidateEvaluator, CandidateWorkItem, ProblemContext
 
+RANDOM_DESCRIPTOR_FILE = (
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_methods/00_random_descriptor/descriptor_profile.yaml"
+)
+
 
 class _FakeVerilogEvaluator:
     def __init__(self, result):
@@ -375,6 +381,56 @@ def test_candidate_evaluator_extracts_journal_descriptor_profile(tmp_path, monke
         "ff_depth": pytest.approx(2.0),
         "comb_width_log": pytest.approx(1.5),
     }
+
+
+def test_candidate_evaluator_extracts_random_hash_descriptor(tmp_path):
+    context = _context(tmp_path)
+    code_path = tmp_path / "candidate.sv"
+    netlist_path = tmp_path / "candidate.syn.v"
+    code_path.write_text("module TopA; endmodule\n", encoding="utf-8")
+    netlist_path.write_text(
+        "module TopA(input a, output y);\n"
+        "  INV_X1 u0 (.A(a), .ZN(y));\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    evaluator = CandidateEvaluator(
+        context=context,
+        problem_description="desc",
+        verilog_evaluator=_FakeVerilogEvaluator(
+            {
+                "status": "success",
+                "simulation_stdout": "Mismatches: 0\n",
+                "simulation_stderr": "",
+                "compilation_stderr": "",
+            }
+        ),
+        synthesis_evaluator=_FakeSynthesisEvaluator(
+            {
+                "synthesis_success": True,
+                "synthesis_functionality_success": True,
+                "ppa_success": True,
+                "ppa_metrics": {"power": 0.9, "area": 90.0, "eff_clk_period": 0.9},
+                "structural_metrics": {"total_cells": 1.0},
+                "synthesized_netlist_path": str(netlist_path),
+            }
+        ),
+        ref_ppa_metrics={"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
+        descriptor_profile="random_hash_3d",
+        descriptor_file=RANDOM_DESCRIPTOR_FILE,
+    )
+
+    result = evaluator.evaluate_candidate(
+        CandidateWorkItem(code="module TopA; endmodule", code_file_path=str(code_path))
+    )
+
+    assert result.status == "success"
+    assert tuple(result.descriptor_values) == (
+        "random_hash_0",
+        "random_hash_1",
+        "random_hash_2",
+    )
+    assert all(0.0 <= value < 1.0 for value in result.descriptor_values.values())
 
 
 def test_candidate_evaluator_search_accelerated_throttles_synthesis(tmp_path):

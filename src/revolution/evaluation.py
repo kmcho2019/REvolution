@@ -733,6 +733,7 @@ class SynthesisEvaluator:
                 "structural_metrics": {},
                 "physical_metrics": {},
                 "metrics_sidecar_path": None,
+                "synthesized_netlist_path": synthesized_netlist_path,
             }
 
         structural_metrics = self._extract_structural_metrics(synthesized_netlist_path)
@@ -767,6 +768,7 @@ class SynthesisEvaluator:
                         synthesis_log
                     ),
                     "metrics_sidecar_path": None,
+                    "synthesized_netlist_path": synthesized_netlist_path,
                 }
 
         ppa_metrics = self._parse_ppa_log(synthesis_log)
@@ -788,6 +790,7 @@ class SynthesisEvaluator:
             "structural_metrics": structural_metrics,
             "physical_metrics": physical_metrics,
             "metrics_sidecar_path": metrics_sidecar_path,
+            "synthesized_netlist_path": synthesized_netlist_path,
         }
 
     def _run_synthesis(
