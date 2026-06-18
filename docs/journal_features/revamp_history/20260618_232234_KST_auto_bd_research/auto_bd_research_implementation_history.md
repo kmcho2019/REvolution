@@ -898,3 +898,122 @@ No development baseline/control LLM run has been launched yet. The next
 step is to execute the generated matrix commands, starting with original
 REvolution and landing Smooth-QD manual-BD so Gate 0 coverage can be
 established before interpreting controls.
+
+## 2026-06-19 01:59 KST
+
+Executed the original REvolution development-subset seed-1 baseline from
+the generated run matrix. This was the first expensive LLM-backed
+development run for Gate 0 coverage.
+
+Preflight:
+
+```bash
+curl -sS --max-time 10 http://20.0.0.103:8000/v1/models
+```
+
+Result:
+
+- model ID: `openai/gpt-oss-120b`
+- `max_model_len`: 131072
+
+Run policy:
+
+- phase: `development_preliminary_seed1`
+- seed: `1001`
+- method arm: `classic_revolution`
+- backend: original `revolution`
+- model: `openai/gpt-oss-120b`
+- `--vllm_min_model_len 131072`
+- `--max_tokens 128000`
+- `--diff_max_tokens 128000`
+- population size 12, generations 3
+- strict-ablation evaluation
+- worker policy: 12 total slots, 6 active problems, 4 workers per
+  problem
+
+Executed the two `classic_revolution` commands from
+`auto_bd_development_run_matrix.json`:
+
+- RTLLM: `Prob011_multi_16bit`, `Prob019_sub_64bit`, `Prob048_pe`
+- VerilogEval-Spec-to-RTL: `Prob021_mux256to1v`,
+  `Prob030_popcount255`, `Prob105_rotate100`
+
+Run artifacts:
+
+- `exp/auto_bd_research/development_preliminary_seed1/classic_revolution/seed_1001/run_manifest.json`
+- `exp/auto_bd_research/development_preliminary_seed1/classic_revolution/seed_1001/revolution/openai_gpt-oss-120b/20260618_163442_revolution_summary_results.txt`
+- `exp/auto_bd_research/development_preliminary_seed1/classic_revolution/seed_1001/revolution/openai_gpt-oss-120b/20260618_164339_revolution_summary_results.txt`
+- `exp/auto_bd_research/development_preliminary_seed1/classic_revolution/seed_1001/revolution/openai_gpt-oss-120b/20260618_163442_revolution_scheduler_telemetry.json`
+- `exp/auto_bd_research/development_preliminary_seed1/classic_revolution/seed_1001/revolution/openai_gpt-oss-120b/20260618_164339_revolution_scheduler_telemetry.json`
+
+Run completion:
+
+- RTLLM group completed in 489.70 seconds.
+- VerilogEval-Spec-to-RTL group completed in 449.11 seconds.
+
+Added a repeatable Gate 0 summarizer:
+
+- `scripts/summarize_auto_bd_gate0.py`
+- `tests/scripts/test_summarize_auto_bd_gate0.py`
+
+Generated coverage artifact:
+
+- `auto_bd_gate0_coverage_seed1.json`
+
+Coverage result for original REvolution, development subset, seed 1001:
+
+| Problem | Summary | PPA Artifacts | Best Score |
+| --- | --- | ---: | ---: |
+| `RTLLM/Prob011_multi_16bit` | success | 16 | 0.3647038093317585 |
+| `RTLLM/Prob019_sub_64bit` | success | 43 | 0.48228021147642647 |
+| `RTLLM/Prob048_pe` | success | 27 | 0.005550298699281149 |
+| `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | success | 31 | 0.4231863785854045 |
+| `VerilogEval-Spec-to-RTL/Prob030_popcount255` | success | 48 | 0.28511627906976744 |
+| `VerilogEval-Spec-to-RTL/Prob105_rotate100` | success | 44 | 0.04155040525406675 |
+
+Gate 0 status:
+
+- provisional development seed-1 `C_problem` contains all six
+  development problems
+- provisional development seed-1 `C_problem_seed` contains all six
+  `(problem, seed=1001)` pairs
+- cross-method Gate 0 deltas remain open until the manual-BD and control
+  arms are run
+
+Validation:
+
+```bash
+uv tool run ty check \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+```
+
+Result: 2 passed in 1.03s.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+Operational note: an initial parallel `uv run` validation attempt for
+pytest, ruff, and pyright stalled before reaching the tools, likely due
+to environment setup contention. Those validation processes were stopped
+and replaced with sequential `uv run --active` commands.
