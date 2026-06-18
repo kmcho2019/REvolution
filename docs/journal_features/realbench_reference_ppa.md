@@ -127,6 +127,14 @@ layer to `quality_mode=ppa` for candidate scoring still needs the manifest wirin
    strength of the *pre-synthesis* RTL functional gate + synthesis (matching how
    reference PPA is generated), treating the gate-level re-sim as advisory — a
    research-design decision for the shared evaluation contract.
+   **Option (a) tried + rejected (2026-06-18):** `--x-initial 0`, `--x-initial
+   unique`, and `--x-initial 0 --x-assign 0` all yield the *identical* biu 50/222
+   mismatch, so it is **not** an X-initialization problem. The mismatches are
+   deterministic and concentrated on the ICB bus-handshake outputs
+   (`lsu2biu/ifu2biu/ppi *_icb_cmd_*/_rsp_*` ready/valid/data, first at t=205) —
+   a real gate-vs-RTL functional difference, not X-pessimism. So bug 4 needs
+   genuine per-module gate-level debugging; **option (b) is the pragmatic path**
+   to unblock candidate PPA scoring on sequential modules.
 3. **Extend coverage to aes/sdc** — only e203 is synthesis-validated today; the
    final-26 subset spans aes/e203/sdc, so aes/sdc need synth-validation first.
 
