@@ -112,175 +112,6 @@ PYTHONPATH=src /workspace/.venv/bin/python -m pyright \
 
 Result: 0 errors, 0 warnings, 0 informations.
 
-## 2026-06-18 18:02 UTC
-
-Fixed random-descriptor QD initialization and recorded the seed-1
-development control result.
-
-Initial failure:
-
-- Command: reran the two `random_descriptor_qd` entries from
-  `auto_bd_development_run_matrix.json`.
-- Artifacts:
-  - `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_172739_revolution_summary_results.txt`
-  - `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_172934_revolution_summary_results.txt`
-- Result: all six problems reported `initialization_failed`.
-- Root cause: valid-PPA candidates were generated, but the QD archive
-  could not initialize because `QDEngine` inherits
-  `_evaluate_candidate_pipeline` from `EoHEngine`; that path populated
-  standard metric dictionaries but did not populate
-  `candidate.descriptor_values`. The random-hash archive axes therefore
-  failed with missing `random_hash_*` descriptor metrics.
-
-Implementation fix:
-
-- Added an `EoHEngine._extract_candidate_descriptor_values(...)` hook for
-  descriptor values that are not standard structural/RTL/graph/physical
-  metrics.
-- Overrode the hook in `QDEngine` for descriptor profiles requiring
-  `requires_auto_bd_hash`.
-- Random descriptor values are computed from the synthesized netlist only
-  after synthesis and PPA succeed, using the canonical netlist hash.
-- Updated the Gate 0 summarizer to accept old two-column
-  `initialization_failed` summary lines, so failed rerun history can
-  remain in the same run directory without breaking later summaries.
-
-Rerun:
-
-```bash
-PYTHONPATH=src /workspace/.venv/bin/python - <<'PY'
-import json
-import subprocess
-from pathlib import Path
-
-matrix_path = Path(
-    "docs/journal_features/revamp_history/"
-    "20260618_232234_KST_auto_bd_research/"
-    "auto_bd_development_run_matrix.json"
-)
-payload = json.loads(matrix_path.read_text(encoding="utf-8"))
-entries = [
-    entry for entry in payload["entries"]
-    if entry["arm_name"] == "random_descriptor_qd"
-]
-assert len(entries) == 2
-for entry in entries:
-    subprocess.run(entry["command"], check=True)
-PY
-```
-
-Result:
-
-- RTLLM group completed in 546.17 seconds.
-- VerilogEval group completed in 781.54 seconds.
-- In-run model preflight passed for `openai/gpt-oss-120b` with
-  `max_model_len=131072`.
-
-Rerun artifacts:
-
-- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_173737_revolution_run_log.txt`
-- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_173737_revolution_summary_results.txt`
-- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_173737_revolution_scheduler_telemetry.json`
-- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_174705_revolution_run_log.txt`
-- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_174705_revolution_summary_results.txt`
-- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_174705_revolution_scheduler_telemetry.json`
-
-Generated Gate 0 artifact:
-
-- `auto_bd_gate0_coverage_seed1_random_descriptor_qd.json`
-
-Coverage summary:
-
-| Method | Covered | Missing | Gate 0 Delta vs Classic |
-| --- | ---: | ---: | --- |
-| `random_descriptor_qd` | 6 | 0 | none |
-
-Covered problems:
-
-- `RTLLM/Prob011_multi_16bit`
-- `RTLLM/Prob019_sub_64bit`
-- `RTLLM/Prob048_pe`
-- `VerilogEval-Spec-to-RTL/Prob021_mux256to1v`
-- `VerilogEval-Spec-to-RTL/Prob030_popcount255`
-- `VerilogEval-Spec-to-RTL/Prob105_rotate100`
-
-Gate 0 comparison against original REvolution seed-1 `C`:
-
-```json
-{
-  "classic_minus_random": [],
-  "random_minus_classic": [],
-  "classic_seed_minus_random": []
-}
-```
-
-Validation:
-
-```bash
-UV_LINK_MODE=copy uv run --active pytest \
-  tests/revolution/test_qd_engine.py -k 'random_hash or descriptor_tuple'
-```
-
-Result: 2 passed, 44 deselected.
-
-```bash
-UV_LINK_MODE=copy uv run --active pytest \
-  tests/scripts/test_summarize_auto_bd_gate0.py
-```
-
-Result: 3 passed.
-
-```bash
-UV_LINK_MODE=copy uv run --active ruff check \
-  src/revolution/algorithm.py \
-  src/revolution/qd/engine.py \
-  tests/revolution/test_qd_engine.py \
-  scripts/summarize_auto_bd_gate0.py \
-  tests/scripts/test_summarize_auto_bd_gate0.py
-```
-
-Result: all checks passed.
-
-```bash
-uv tool run ty check \
-  scripts/summarize_auto_bd_gate0.py \
-  tests/scripts/test_summarize_auto_bd_gate0.py
-```
-
-Result: all checks passed.
-
-```bash
-UV_LINK_MODE=copy uv run --active pyright \
-  scripts/summarize_auto_bd_gate0.py \
-  tests/scripts/test_summarize_auto_bd_gate0.py
-```
-
-Result: 0 errors, 0 warnings, 0 informations.
-
-```bash
-uv tool run ty check \
-  src/revolution/algorithm.py \
-  src/revolution/qd/engine.py \
-  tests/revolution/test_qd_engine.py
-```
-
-Result: failed with 82 diagnostics in pre-existing touched-file type
-debt. The failures include old strategy-type invariance in
-`algorithm.py`, old `_select_strategy` overload issues in `qd/engine.py`,
-and old test-helper typing issues in `test_qd_engine.py`. No diagnostic
-identified the new descriptor hook or random-hash extraction body.
-
-```bash
-UV_LINK_MODE=copy uv run --active pyright \
-  src/revolution/algorithm.py \
-  src/revolution/qd/engine.py \
-  tests/revolution/test_qd_engine.py
-```
-
-Result: failed with 69 existing diagnostics, primarily old
-`QDEngine`/archive union narrowing and `test_qd_engine.py` helper typing
-debt.
-
 ```bash
 uv tool run ty check src/revolution/auto_bd
 ```
@@ -1310,3 +1141,279 @@ UV_LINK_MODE=copy uv run --active pyright \
 ```
 
 Result: 0 errors, 0 warnings, 0 informations.
+
+## 2026-06-18 18:02 UTC
+
+Fixed random-descriptor QD initialization and recorded the seed-1
+development control result.
+
+Initial failure:
+
+- Command: reran the two `random_descriptor_qd` entries from
+  `auto_bd_development_run_matrix.json`.
+- Artifacts:
+  - `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_172739_revolution_summary_results.txt`
+  - `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_172934_revolution_summary_results.txt`
+- Result: all six problems reported `initialization_failed`.
+- Root cause: valid-PPA candidates were generated, but the QD archive
+  could not initialize because `QDEngine` inherits
+  `_evaluate_candidate_pipeline` from `EoHEngine`; that path populated
+  standard metric dictionaries but did not populate
+  `candidate.descriptor_values`. The random-hash archive axes therefore
+  failed with missing `random_hash_*` descriptor metrics.
+
+Implementation fix:
+
+- Added an `EoHEngine._extract_candidate_descriptor_values(...)` hook for
+  descriptor values that are not standard structural/RTL/graph/physical
+  metrics.
+- Overrode the hook in `QDEngine` for descriptor profiles requiring
+  `requires_auto_bd_hash`.
+- Random descriptor values are computed from the synthesized netlist only
+  after synthesis and PPA succeed, using the canonical netlist hash.
+- Updated the Gate 0 summarizer to accept old two-column
+  `initialization_failed` summary lines, so failed rerun history can
+  remain in the same run directory without breaking later summaries.
+
+Rerun:
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python - <<'PY'
+import json
+import subprocess
+from pathlib import Path
+
+matrix_path = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_development_run_matrix.json"
+)
+payload = json.loads(matrix_path.read_text(encoding="utf-8"))
+entries = [
+    entry for entry in payload["entries"]
+    if entry["arm_name"] == "random_descriptor_qd"
+]
+assert len(entries) == 2
+for entry in entries:
+    subprocess.run(entry["command"], check=True)
+PY
+```
+
+Result:
+
+- RTLLM group completed in 546.17 seconds.
+- VerilogEval group completed in 781.54 seconds.
+- In-run model preflight passed for `openai/gpt-oss-120b` with
+  `max_model_len=131072`.
+
+Rerun artifacts:
+
+- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_173737_revolution_run_log.txt`
+- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_173737_revolution_summary_results.txt`
+- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_173737_revolution_scheduler_telemetry.json`
+- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_174705_revolution_run_log.txt`
+- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_174705_revolution_summary_results.txt`
+- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260618_174705_revolution_scheduler_telemetry.json`
+
+Generated Gate 0 artifact:
+
+- `auto_bd_gate0_coverage_seed1_random_descriptor_qd.json`
+
+Coverage summary:
+
+| Method | Covered | Missing | Gate 0 Delta vs Classic |
+| --- | ---: | ---: | --- |
+| `random_descriptor_qd` | 6 | 0 | none |
+
+Covered problems:
+
+- `RTLLM/Prob011_multi_16bit`
+- `RTLLM/Prob019_sub_64bit`
+- `RTLLM/Prob048_pe`
+- `VerilogEval-Spec-to-RTL/Prob021_mux256to1v`
+- `VerilogEval-Spec-to-RTL/Prob030_popcount255`
+- `VerilogEval-Spec-to-RTL/Prob105_rotate100`
+
+Gate 0 comparison against original REvolution seed-1 `C`:
+
+```json
+{
+  "classic_minus_random": [],
+  "random_minus_classic": [],
+  "classic_seed_minus_random": []
+}
+```
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_qd_engine.py -k 'random_hash or descriptor_tuple'
+```
+
+Result: 2 passed, 44 deselected.
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+```
+
+Result: 3 passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  src/revolution/algorithm.py \
+  src/revolution/qd/engine.py \
+  tests/revolution/test_qd_engine.py \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+```bash
+uv tool run ty check \
+  src/revolution/algorithm.py \
+  src/revolution/qd/engine.py \
+  tests/revolution/test_qd_engine.py
+```
+
+Result: failed with 82 diagnostics in pre-existing touched-file type
+debt. The failures include old strategy-type invariance in
+`algorithm.py`, old `_select_strategy` overload issues in `qd/engine.py`,
+and old test-helper typing issues in `test_qd_engine.py`. No diagnostic
+identified the new descriptor hook or random-hash extraction body.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  src/revolution/algorithm.py \
+  src/revolution/qd/engine.py \
+  tests/revolution/test_qd_engine.py
+```
+
+Result: failed with 69 existing diagnostics, primarily old
+`QDEngine`/archive union narrowing and `test_qd_engine.py` helper typing
+debt.
+
+## 2026-06-18 18:25 UTC
+
+Ran the simple Yosys-stat BD seed-1 development control.
+
+Endpoint preflight before the run:
+
+```bash
+curl -s http://20.0.0.103:8000/v1/models
+```
+
+Result:
+
+- model ID: `openai/gpt-oss-120b`
+- `max_model_len`: 131072
+
+Command:
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python - <<'PY'
+import json
+import subprocess
+from pathlib import Path
+
+matrix_path = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_development_run_matrix.json"
+)
+payload = json.loads(matrix_path.read_text(encoding="utf-8"))
+entries = [
+    entry for entry in payload["entries"]
+    if entry["arm_name"] == "simple_yosys_stat_bd"
+]
+assert len(entries) == 2
+for entry in entries:
+    subprocess.run(entry["command"], check=True)
+PY
+```
+
+Result:
+
+- RTLLM group completed in 533.08 seconds.
+- VerilogEval group completed in 468.25 seconds.
+- In-run model preflight passed for `openai/gpt-oss-120b` with
+  `max_model_len=131072`.
+
+Run artifacts:
+
+- `exp/auto_bd_research/development_preliminary_seed1/simple_yosys_stat_bd/seed_1001/revolution/openai_gpt-oss-120b/20260618_180728_revolution_run_log.txt`
+- `exp/auto_bd_research/development_preliminary_seed1/simple_yosys_stat_bd/seed_1001/revolution/openai_gpt-oss-120b/20260618_180728_revolution_summary_results.txt`
+- `exp/auto_bd_research/development_preliminary_seed1/simple_yosys_stat_bd/seed_1001/revolution/openai_gpt-oss-120b/20260618_180728_revolution_scheduler_telemetry.json`
+- `exp/auto_bd_research/development_preliminary_seed1/simple_yosys_stat_bd/seed_1001/revolution/openai_gpt-oss-120b/20260618_181700_revolution_run_log.txt`
+- `exp/auto_bd_research/development_preliminary_seed1/simple_yosys_stat_bd/seed_1001/revolution/openai_gpt-oss-120b/20260618_181700_revolution_summary_results.txt`
+- `exp/auto_bd_research/development_preliminary_seed1/simple_yosys_stat_bd/seed_1001/revolution/openai_gpt-oss-120b/20260618_181700_revolution_scheduler_telemetry.json`
+
+Generated Gate 0 artifact:
+
+- `auto_bd_gate0_coverage_seed1_simple_yosys_stat_bd.json`
+
+Coverage summary:
+
+| Method | Covered | Missing | Gate 0 Delta vs Classic |
+| --- | ---: | ---: | --- |
+| `simple_yosys_stat_bd` | 6 | 0 | none |
+
+Covered problems:
+
+- `RTLLM/Prob011_multi_16bit`
+- `RTLLM/Prob019_sub_64bit`
+- `RTLLM/Prob048_pe`
+- `VerilogEval-Spec-to-RTL/Prob021_mux256to1v`
+- `VerilogEval-Spec-to-RTL/Prob030_popcount255`
+- `VerilogEval-Spec-to-RTL/Prob105_rotate100`
+
+Gate 0 comparison against original REvolution seed-1 `C`:
+
+```json
+{
+  "classic_minus_yosys": [],
+  "yosys_minus_classic": [],
+  "classic_seed_minus_yosys": []
+}
+```
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/summarize_auto_bd_gate0.py \
+  --run-dir \
+  exp/auto_bd_research/development_preliminary_seed1/simple_yosys_stat_bd/seed_1001/revolution/openai_gpt-oss-120b \
+  --method-name simple_yosys_stat_bd \
+  --phase development_preliminary_seed1 \
+  --seed 1001 \
+  --output \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_gate0_coverage_seed1_simple_yosys_stat_bd.json
+```
+
+Result: artifact generated successfully.
+
+```bash
+jq empty \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_gate0_coverage_seed1_simple_yosys_stat_bd.json
+```
+
+Result: JSON parsed successfully.
