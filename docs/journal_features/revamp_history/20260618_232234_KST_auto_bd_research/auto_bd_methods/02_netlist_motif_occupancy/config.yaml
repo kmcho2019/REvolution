@@ -1,0 +1,35 @@
+method_family: netlist_motif_occupancy
+method_name: netlist_motif_occupancy_4d_grid_quantile
+status: implemented_not_run
+
+descriptor:
+  profile: netlist_motif_occupancy_4d
+  descriptor_file: descriptor_profile.yaml
+  axes:
+  - motif_logic_ratio
+  - motif_control_ratio
+  - motif_arith_ratio
+  - motif_diversity
+  source: synthesized_netlist_cell_motifs
+  fitting_protocol: none
+  forbidden_inputs:
+  - ppa
+  - reference_ppa
+  - fitness
+  - hypervolume
+
+qd:
+  archive_type: grid_quantile
+  descriptor_file: descriptor_profile.yaml
+  cell_mode: pareto_front
+  objectives: ppa
+  grid_quantile_warmup_successes: 8
+  max_elites_per_cell: 5
+  parent_selection: nsga2_global_rank
+  champion_lane_fraction: 0.5
+  operator_kind: eoh_strategies
+
+comparison_policy:
+  baseline_lock: ../../auto_bd_run_policy_lock.yaml
+  same_subsets_seeds_model_budget_as_baseline: true
+  report_internal_and_common_audit_space: true

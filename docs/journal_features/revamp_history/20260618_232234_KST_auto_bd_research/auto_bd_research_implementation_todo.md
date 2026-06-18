@@ -58,10 +58,10 @@ evidence and rationale.
 
 ## P3 - First Auto-BD Methods
 
-- [ ] Implement netlist motif occupancy descriptor.
-- [ ] Add motif extraction tests with small Yosys JSON/netlist fixtures.
-- [ ] Add descriptor stability tests for signal renaming.
-- [ ] Add descriptor stability tests for formatting-only RTL changes.
+- [x] Implement netlist motif occupancy descriptor.
+- [x] Add motif extraction tests with small Yosys JSON/netlist fixtures.
+- [x] Add descriptor stability tests for signal renaming.
+- [x] Add descriptor stability tests for formatting-only RTL changes.
 - [ ] Run development subset and generate the method report.
 - [ ] Write accept/reject decision before moving to ST-NOD.
 

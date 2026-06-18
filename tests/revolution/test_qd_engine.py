@@ -778,6 +778,60 @@ def test_qd_engine_extracts_random_hash_descriptors(tmp_path, monkeypatch):
     assert engine._descriptor_tuple(cand) == pytest.approx(tuple(values.values()))
 
 
+def test_qd_engine_extracts_motif_descriptors(tmp_path, monkeypatch):
+    cfg = tmp_path / "profiles.yaml"
+    cfg.write_text(
+        "profiles:\n"
+        "  motif_4d:\n"
+        "    - motif_logic_ratio\n"
+        "    - motif_control_ratio\n"
+        "    - motif_arith_ratio\n"
+        "    - motif_diversity\n",
+        encoding="utf-8",
+    )
+    netlist = tmp_path / "candidate.syn.v"
+    netlist.write_text(
+        "module m(input a, input b, input s, output y);\n"
+        "  NAND2_X1 g0 (.A(a), .B(b), .ZN(n1));\n"
+        "  MUX2_X1 g1 (.A(n1), .B(b), .S(s), .Z(y));\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_descriptor_profile="motif_4d",
+        qd_descriptor_file=str(cfg),
+        qd_grid_axes=(),
+    )
+    cand = Heuristic(
+        "t",
+        "module m; endmodule",
+        "",
+        score=0.5,
+        generation=0,
+        status="success",
+    )
+    cand.ppa_success = True
+    cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+
+    values = engine._extract_candidate_descriptor_values(
+        cand,
+        {
+            "synthesis_success": True,
+            "ppa_success": True,
+            "synthesized_netlist_path": str(netlist),
+        },
+    )
+    cand.descriptor_values = values
+
+    assert values["motif_logic_ratio"] == pytest.approx(0.5)
+    assert values["motif_control_ratio"] == pytest.approx(0.5)
+    assert values["motif_arith_ratio"] == pytest.approx(0.0)
+    assert values["motif_diversity"] == pytest.approx(1.0)
+    assert engine._descriptor_tuple(cand) == pytest.approx(tuple(values.values()))
+
+
 def test_qd_engine_builds_grid_archive_from_descriptor_file(tmp_path, monkeypatch):
     cfg = tmp_path / "qd.yaml"
     cfg.write_text(

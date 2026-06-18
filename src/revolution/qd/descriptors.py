@@ -106,6 +106,10 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "random_hash_0": DescriptorDefinition("random_hash_0", "auto_bd_hash", requires_synthesis=True),
     "random_hash_1": DescriptorDefinition("random_hash_1", "auto_bd_hash", requires_synthesis=True),
     "random_hash_2": DescriptorDefinition("random_hash_2", "auto_bd_hash", requires_synthesis=True),
+    "motif_logic_ratio": DescriptorDefinition("motif_logic_ratio", "auto_bd_motif", requires_synthesis=True),
+    "motif_control_ratio": DescriptorDefinition("motif_control_ratio", "auto_bd_motif", requires_synthesis=True),
+    "motif_arith_ratio": DescriptorDefinition("motif_arith_ratio", "auto_bd_motif", requires_synthesis=True),
+    "motif_diversity": DescriptorDefinition("motif_diversity", "auto_bd_motif", requires_synthesis=True),
 }
 
 
@@ -328,6 +332,8 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (0.0, 1.0)
     if axis.startswith("random_hash_"):
         return (0.0, 1.0)
+    if axis.startswith("motif_"):
+        return (0.0, 1.0)
     if axis in {"wire_cell_ratio_est", "resource_sharing_ratio_est"}:
         return (0.0, 4.0)
     if axis == "ltp_noff":
@@ -381,6 +387,9 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
         "requires_auto_bd_hash": any(
             registry[axis].source_tool == "auto_bd_hash" for axis in axes
         ),
+        "requires_auto_bd_motif": any(
+            registry[axis].source_tool == "auto_bd_motif" for axis in axes
+        ),
     }
 
 
@@ -398,6 +407,7 @@ def summarize_descriptor_axes(axes: list[str] | tuple[str, ...]) -> list[dict[st
             "requires_synthesis": registry[axis].requires_synthesis,
             "requires_simulation": registry[axis].requires_simulation,
             "requires_graph_metrics": registry[axis].source_tool == "yosys_graph",
+            "requires_auto_bd_motif": registry[axis].source_tool == "auto_bd_motif",
         }
         for axis in axes
     ]

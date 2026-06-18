@@ -14,6 +14,11 @@ YOSYS_STAT_DESCRIPTOR_FILE = (
     "20260618_232234_KST_auto_bd_research/"
     "auto_bd_methods/01_yosys_stat_bd/descriptor_profile.yaml"
 )
+MOTIF_DESCRIPTOR_FILE = (
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_methods/02_netlist_motif_occupancy/descriptor_profile.yaml"
+)
 
 
 class _FakeVerilogEvaluator:
@@ -480,6 +485,55 @@ def test_candidate_evaluator_extracts_yosys_stat_descriptor(tmp_path):
     assert result.descriptor_values["cell_count_log"] == pytest.approx(3.2188758248682006)
     assert result.descriptor_values["seq_ratio"] == pytest.approx(0.25)
     assert result.descriptor_values["mux_ratio"] == pytest.approx(0.5)
+
+
+def test_candidate_evaluator_extracts_motif_descriptor(tmp_path):
+    context = _context(tmp_path)
+    code_path = tmp_path / "candidate.sv"
+    netlist_path = tmp_path / "candidate.syn.v"
+    code_path.write_text("module TopA; endmodule\n", encoding="utf-8")
+    netlist_path.write_text(
+        "module TopA(input a, input b, input s, output y);\n"
+        "  NAND2_X1 g0 (.A(a), .B(b), .ZN(n1));\n"
+        "  MUX2_X1 g1 (.A(n1), .B(b), .S(s), .Z(y));\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    evaluator = CandidateEvaluator(
+        context=context,
+        problem_description="desc",
+        verilog_evaluator=_FakeVerilogEvaluator(
+            {
+                "status": "success",
+                "simulation_stdout": "Mismatches: 0\n",
+                "simulation_stderr": "",
+                "compilation_stderr": "",
+            }
+        ),
+        synthesis_evaluator=_FakeSynthesisEvaluator(
+            {
+                "synthesis_success": True,
+                "synthesis_functionality_success": True,
+                "ppa_success": True,
+                "ppa_metrics": {"power": 0.9, "area": 90.0, "eff_clk_period": 0.9},
+                "structural_metrics": {"total_cells": 2.0},
+                "synthesized_netlist_path": str(netlist_path),
+            }
+        ),
+        ref_ppa_metrics={"power": 1.0, "area": 100.0, "eff_clk_period": 1.0},
+        descriptor_profile="netlist_motif_occupancy_4d",
+        descriptor_file=MOTIF_DESCRIPTOR_FILE,
+    )
+
+    result = evaluator.evaluate_candidate(
+        CandidateWorkItem(code="module TopA; endmodule", code_file_path=str(code_path))
+    )
+
+    assert result.status == "success"
+    assert result.descriptor_values["motif_logic_ratio"] == pytest.approx(0.5)
+    assert result.descriptor_values["motif_control_ratio"] == pytest.approx(0.5)
+    assert result.descriptor_values["motif_arith_ratio"] == pytest.approx(0.0)
+    assert result.descriptor_values["motif_diversity"] == pytest.approx(1.0)
 
 
 def test_candidate_evaluator_search_accelerated_throttles_synthesis(tmp_path):

@@ -1446,3 +1446,148 @@ Decision:
 Updated both method cards so their status points to the seed-1 reports
 and decision files. Marked the P2 control report/decision checklist items
 complete. Broader P6 reporting and seed-3/seed-5 evaluation remain open.
+
+## 2026-06-18 18:39 UTC
+
+Implemented the first non-control Auto-BD method:
+`netlist_motif_occupancy`.
+
+Code changes:
+
+- Added `src/revolution/auto_bd/motif_descriptor.py`.
+- Exposed `netlist_cell_instances(...)` from `netlist_hash.py`.
+- Registered motif axes in `src/revolution/qd/descriptors.py`:
+  `motif_logic_ratio`, `motif_control_ratio`, `motif_arith_ratio`, and
+  `motif_diversity`.
+- Added `requires_auto_bd_motif` descriptor requirements.
+- Wired motif extraction through both `CandidateEvaluator` and
+  `QDEngine` synthesized-netlist descriptor paths.
+- Extended `scripts/build_auto_bd_run_matrix.py` with the
+  `netlist_motif_occupancy` candidate-method arm.
+
+Method artifacts:
+
+- `auto_bd_methods/02_netlist_motif_occupancy/config.yaml`
+- `auto_bd_methods/02_netlist_motif_occupancy/descriptor_profile.yaml`
+- `auto_bd_methods/02_netlist_motif_occupancy/method_card.md`
+
+Run-policy and matrix updates:
+
+- Added `candidate_method_arms.netlist_motif_occupancy` to
+  `auto_bd_run_policy_lock.yaml`.
+- Regenerated `auto_bd_development_run_matrix.json` and
+  `auto_bd_development_run_matrix.sh`.
+- The development matrix now has 10 entries: classic, manual-BD, random,
+  Yosys-stat, and motif occupancy across RTLLM and VerilogEval.
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  src/revolution/auto_bd/motif_descriptor.py \
+  src/revolution/auto_bd/netlist_hash.py \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/qd/descriptors.py \
+  src/revolution/runtime/candidate_evaluator.py \
+  src/revolution/qd/engine.py \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/revolution/test_auto_bd_motif_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/revolution/test_candidate_evaluator.py \
+  tests/revolution/test_qd_engine.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_auto_bd_motif_descriptor.py
+```
+
+Result: 4 passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_qd_descriptors.py -k motif
+```
+
+Result: 1 passed, 26 deselected.
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_candidate_evaluator.py -k motif_descriptor
+```
+
+Result: 1 passed, 14 deselected.
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_qd_engine.py -k motif_descriptors
+```
+
+Result: 1 passed, 94 deselected.
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: 2 passed.
+
+```bash
+uv tool run ty check \
+  src/revolution/auto_bd \
+  src/revolution/qd/descriptors.py \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/revolution/test_auto_bd_motif_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  src/revolution/auto_bd \
+  src/revolution/qd/descriptors.py \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/revolution/test_auto_bd_motif_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+```bash
+uv tool run ty check \
+  src/revolution/runtime/candidate_evaluator.py \
+  src/revolution/qd/engine.py \
+  tests/revolution/test_candidate_evaluator.py \
+  tests/revolution/test_qd_engine.py
+```
+
+Result: failed with 103 existing diagnostics. The failures are the known
+runtime/QD test-helper typing debt: fake evaluators are not typed as
+`VerilogEvaluator`/`SynthesisEvaluator`, `_select_strategy` overloads are
+not narrowed for QD callers, and `test_qd_engine.py` assigns
+`SimpleNamespace` loggers and uses archive union attributes without
+narrowing.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  src/revolution/runtime/candidate_evaluator.py \
+  src/revolution/qd/engine.py \
+  tests/revolution/test_candidate_evaluator.py \
+  tests/revolution/test_qd_engine.py
+```
+
+Result: failed with 99 existing diagnostics in the same runtime/QD
+test-helper debt surface.
+
+TODO status:
+
+- marked motif implementation complete
+- marked motif extraction, signal-renaming stability, and formatting
+  stability tests complete
+- left development subset run/report and accept/reject decision open

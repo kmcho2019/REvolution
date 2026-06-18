@@ -30,8 +30,8 @@ def test_build_matrix_groups_by_benchmark_and_arm(tmp_path):
         run_root=tmp_path / "exp",
     )
 
-    assert len(payload["manifest_commands"]) == 4
-    assert len(payload["entries"]) == 8
+    assert len(payload["manifest_commands"]) == 5
+    assert len(payload["entries"]) == 10
     assert (tmp_path / "out" / "auto_bd_development_run_matrix.json").is_file()
     assert (tmp_path / "out" / "auto_bd_development_run_matrix.sh").is_file()
     arms = {entry["arm_name"] for entry in payload["entries"]}
@@ -40,6 +40,7 @@ def test_build_matrix_groups_by_benchmark_and_arm(tmp_path):
         "landing_smooth_qd_manual_bd",
         "random_descriptor_qd",
         "simple_yosys_stat_bd",
+        "netlist_motif_occupancy",
     }
     random_entry = next(
         entry for entry in payload["entries"]
@@ -47,6 +48,14 @@ def test_build_matrix_groups_by_benchmark_and_arm(tmp_path):
     )
     assert "--qd_descriptor_profile random_hash_3d" in random_entry["command_string"]
     assert "--benchmarks RTLLM --problems ProbA ProbB" in random_entry["command_string"]
+    motif_entry = next(
+        entry for entry in payload["entries"]
+        if entry["arm_name"] == "netlist_motif_occupancy"
+    )
+    assert (
+        "--qd_descriptor_profile netlist_motif_occupancy_4d"
+        in motif_entry["command_string"]
+    )
 
 
 def test_main_writes_json_payload(tmp_path):
@@ -131,6 +140,9 @@ def _write_inputs(tmp_path: Path) -> dict[str, Path]:
                 "control_arms": {
                     "random_descriptor_qd": {"descriptor_rule": "hash"},
                     "simple_yosys_stat_bd": {"descriptor_source": "yosys"},
+                },
+                "candidate_method_arms": {
+                    "netlist_motif_occupancy": {"descriptor_source": "motif"},
                 },
             },
             sort_keys=False,

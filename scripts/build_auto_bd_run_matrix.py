@@ -25,7 +25,7 @@ DEFAULT_RUN_POLICY = SCAFFOLD_DIR / "auto_bd_run_policy_lock.yaml"
 DEFAULT_SUBSET_LOCK = SCAFFOLD_DIR / "auto_bd_subset_lock.yaml"
 DEFAULT_OUTPUT_DIR = SCAFFOLD_DIR
 DEFAULT_RUN_ROOT = REPO_ROOT / "exp" / "auto_bd_research"
-CONTROL_CONFIGS = {
+METHOD_CONFIGS = {
     "random_descriptor_qd": SCAFFOLD_DIR
     / "auto_bd_methods"
     / "00_random_descriptor"
@@ -33,6 +33,10 @@ CONTROL_CONFIGS = {
     "simple_yosys_stat_bd": SCAFFOLD_DIR
     / "auto_bd_methods"
     / "01_yosys_stat_bd"
+    / "config.yaml",
+    "netlist_motif_occupancy": SCAFFOLD_DIR
+    / "auto_bd_methods"
+    / "02_netlist_motif_occupancy"
     / "config.yaml",
 }
 
@@ -117,6 +121,10 @@ def write_arm_configs(
         ),
         "random_descriptor_qd": mapping_at(mapping_at(run_policy, "control_arms"), "random_descriptor_qd"),
         "simple_yosys_stat_bd": mapping_at(mapping_at(run_policy, "control_arms"), "simple_yosys_stat_bd"),
+        "netlist_motif_occupancy": mapping_at(
+            mapping_at(run_policy, "candidate_method_arms"),
+            "netlist_motif_occupancy",
+        ),
     }
     output: dict[str, Path] = {}
     for arm_name, arm_payload in arm_payloads.items():
@@ -124,8 +132,8 @@ def write_arm_configs(
             "arm_name": arm_name,
             "phase": phase,
             "arm_policy": dict(arm_payload),
-            "method_config": rel(CONTROL_CONFIGS[arm_name])
-            if arm_name in CONTROL_CONFIGS
+            "method_config": rel(METHOD_CONFIGS[arm_name])
+            if arm_name in METHOD_CONFIGS
             else None,
         }
         path = config_dir / f"{arm_name}.yaml"
@@ -249,7 +257,7 @@ def arm_flags(arm_name: str) -> list[str]:
             "--qd_descriptor_profile",
             "random_hash_3d",
             "--qd_descriptor_file",
-            str(CONTROL_CONFIGS[arm_name].parent / "descriptor_profile.yaml"),
+            str(METHOD_CONFIGS[arm_name].parent / "descriptor_profile.yaml"),
         ]
     if arm_name == "simple_yosys_stat_bd":
         return [
@@ -257,7 +265,15 @@ def arm_flags(arm_name: str) -> list[str]:
             "--qd_descriptor_profile",
             "yosys_stat_compact_3d",
             "--qd_descriptor_file",
-            str(CONTROL_CONFIGS[arm_name].parent / "descriptor_profile.yaml"),
+            str(METHOD_CONFIGS[arm_name].parent / "descriptor_profile.yaml"),
+        ]
+    if arm_name == "netlist_motif_occupancy":
+        return [
+            *base_qd,
+            "--qd_descriptor_profile",
+            "netlist_motif_occupancy_4d",
+            "--qd_descriptor_file",
+            str(METHOD_CONFIGS[arm_name].parent / "descriptor_profile.yaml"),
         ]
     raise AssertionError(f"unknown Auto-BD arm: {arm_name}")
 

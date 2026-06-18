@@ -22,6 +22,11 @@ YOSYS_STAT_DESCRIPTOR_FILE = (
     "20260618_232234_KST_auto_bd_research/"
     "auto_bd_methods/01_yosys_stat_bd/descriptor_profile.yaml"
 )
+MOTIF_DESCRIPTOR_FILE = (
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_methods/02_netlist_motif_occupancy/descriptor_profile.yaml"
+)
 
 
 def test_load_descriptor_profiles_includes_hybrid_defaults():
@@ -263,6 +268,27 @@ def test_yosys_stat_profile_uses_synthesis_metrics_only():
     assert requirements["requires_synthesis"] is True
     assert requirements["requires_ppa"] is False
     assert requirements["requires_graph_metrics"] is False
+    assert requirements["requires_auto_bd_hash"] is False
+
+
+def test_motif_profile_uses_auto_bd_motif_metrics():
+    axes = resolve_descriptor_axes(
+        profile_name="netlist_motif_occupancy_4d",
+        explicit_axes=None,
+        descriptor_file=MOTIF_DESCRIPTOR_FILE,
+        archive_type="grid_quantile",
+        circuit_type="sequential",
+    )
+    requirements = descriptor_requirements(axes)
+
+    assert axes == [
+        "motif_logic_ratio",
+        "motif_control_ratio",
+        "motif_arith_ratio",
+        "motif_diversity",
+    ]
+    assert requirements["requires_synthesis"] is True
+    assert requirements["requires_auto_bd_motif"] is True
     assert requirements["requires_auto_bd_hash"] is False
 
 

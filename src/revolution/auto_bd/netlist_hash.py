@@ -54,6 +54,15 @@ def motif_signature_hash(source: str) -> str:
     return hashlib.sha256(signature.encode("utf-8")).hexdigest()
 
 
+def netlist_cell_instances(source: str) -> tuple[tuple[str, int], ...]:
+    """Return synthesized netlist cell types with pin arities."""
+
+    return tuple(
+        (cell_type, pin_count)
+        for cell_type, pin_count, _pins in _instances(source)
+    )
+
+
 def _canonical_instances(source: str) -> tuple[str, ...]:
     rows = []
     for cell_type, pin_count, pins in _instances(source):
@@ -96,4 +105,3 @@ def _positional_pin_count(port_blob: str) -> int:
 
 def _normalize_token(value: str) -> str:
     return re.sub(r"\s+", "", value)
-
