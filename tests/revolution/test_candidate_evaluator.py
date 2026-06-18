@@ -93,6 +93,39 @@ def test_candidate_evaluator_maps_functionality_failure(tmp_path):
     assert result.stage_statuses["functionality"] is False
 
 
+def test_passes_synthesis_sanity_rejects_stubs(tmp_path):
+    """Sanity-check mode (gate_level_functional_recheck=False) accepts genuine
+    designs but rejects yosys stub-outs that would report absurd PPA."""
+    evaluator = CandidateEvaluator(
+        context=_context(tmp_path),
+        problem_description="desc",
+        verilog_evaluator=_FakeVerilogEvaluator({"status": "success"}),
+        synthesis_evaluator=_FakeSynthesisEvaluator({}),
+        ref_ppa_metrics={"area": 1611.0, "power": 0.349},
+    )
+    # Genuine design close to the reference -> accepted.
+    assert evaluator._passes_synthesis_sanity(
+        {"area": 1600.0, "power": 0.3}, {"total_cells": 1500.0}
+    ) is True
+    # Stub: area orders of magnitude below the reference -> rejected.
+    assert evaluator._passes_synthesis_sanity(
+        {"area": 5.0, "power": 1e-6}, {"total_cells": 3.0}
+    ) is False
+    # Empty netlist -> rejected.
+    assert evaluator._passes_synthesis_sanity(
+        {"area": 100.0, "power": 0.1}, {"total_cells": 0.0}
+    ) is False
+    # Zero area -> rejected.
+    assert evaluator._passes_synthesis_sanity(
+        {"area": 0.0, "power": 0.1}, {"total_cells": 10.0}
+    ) is False
+    # No reference available -> only the non-zero + non-empty guards apply.
+    evaluator.ref_ppa_metrics = {}
+    assert evaluator._passes_synthesis_sanity(
+        {"area": 5.0, "power": 1e-6}, {"total_cells": 3.0}
+    ) is True
+
+
 def test_candidate_evaluator_success_path(tmp_path):
     context = _context(tmp_path)
     evaluator = CandidateEvaluator(

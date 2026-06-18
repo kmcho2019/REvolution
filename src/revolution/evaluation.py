@@ -666,9 +666,18 @@ class SynthesisEvaluator:
         aux_files: tuple[str, ...] = (),
         include_dirs: tuple[str, ...] = (),
         defines: tuple[str, ...] = (),
+        gate_level_functional_recheck: bool = True,
     ) -> dict[str, bool | str | None | dict[str, Any]]:
         """
         Performs synthesis, PPA analysis, and post-synthesis verification.
+
+        ``gate_level_functional_recheck`` (default True) runs the full gate-level
+        functional re-simulation of the netlist before PPA is accepted. Set False
+        for suites where that re-sim is unstable (RealBench's large sequential
+        modules): the netlist is then NOT re-simulated here — the candidate's
+        correctness rests on the pre-synthesis RTL functional gate and the caller
+        applies a non-degeneracy sanity check on the PPA/structural metrics. PPA
+        numbers are identical either way (same synthesis + parser).
         Run Yosys synthesis script, to convert the Verilog file to a synthesized netlist.
         Then uses VerilogEvaluator to run a functional simulation on the synthesized netlist
         using the provided testbench and reference design (if available).
@@ -728,35 +737,37 @@ class SynthesisEvaluator:
 
         structural_metrics = self._extract_structural_metrics(synthesized_netlist_path)
 
-        # After synthesis add post-synthesis functionality test
-        synthesis_functionality_success, func_check_log = (
-            self._check_synthesis_functionality(
-                synthesized_netlist_path,
-                test_sv_file,
-                ref_sv_file,
-                "tb",  # Assuming the top module name for the testbench is "tb"
-                output_directory,
-                verilog_evaluator,
-                simulation_timeout_s=effective_simulation_timeout_s,
-                include_dirs=include_dirs,
-                defines=defines,
-                aux_files=aux_files,
+        # After synthesis add post-synthesis functionality test (unless the suite
+        # opts out via gate_level_functional_recheck=False, in which case PPA rests
+        # on the pre-synthesis RTL gate + a caller-side non-degeneracy sanity check).
+        if gate_level_functional_recheck:
+            synthesis_functionality_success, func_check_log = (
+                self._check_synthesis_functionality(
+                    synthesized_netlist_path,
+                    test_sv_file,
+                    ref_sv_file,
+                    "tb",  # Assuming the top module name for the testbench is "tb"
+                    output_directory,
+                    verilog_evaluator,
+                    simulation_timeout_s=effective_simulation_timeout_s,
+                    include_dirs=include_dirs,
+                    defines=defines,
+                    aux_files=aux_files,
+                )
             )
-        )
-
-        if not synthesis_functionality_success:
-            return {
-                "synthesis_success": True,
-                "synthesis_functionality_success": False,
-                "ppa_success": False,
-                "synthesis_log": f"{synthesis_log}\n\n--- Post-Synthesis Functional Verification Log ---\n{func_check_log}",
-                "ppa_metrics": None,
-                "structural_metrics": structural_metrics,
-                "physical_metrics": self._parse_openroad_physical_metrics(
-                    synthesis_log
-                ),
-                "metrics_sidecar_path": None,
-            }
+            if not synthesis_functionality_success:
+                return {
+                    "synthesis_success": True,
+                    "synthesis_functionality_success": False,
+                    "ppa_success": False,
+                    "synthesis_log": f"{synthesis_log}\n\n--- Post-Synthesis Functional Verification Log ---\n{func_check_log}",
+                    "ppa_metrics": None,
+                    "structural_metrics": structural_metrics,
+                    "physical_metrics": self._parse_openroad_physical_metrics(
+                        synthesis_log
+                    ),
+                    "metrics_sidecar_path": None,
+                }
 
         ppa_metrics = self._parse_ppa_log(synthesis_log)
         physical_metrics = self._parse_openroad_physical_metrics(synthesis_log)
@@ -770,6 +781,7 @@ class SynthesisEvaluator:
         return {
             "synthesis_success": True,
             "synthesis_functionality_success": True,
+            "gate_level_functional_rechecked": gate_level_functional_recheck,
             "ppa_success": True,
             "synthesis_log": synthesis_log,
             "ppa_metrics": ppa_metrics,

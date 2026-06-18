@@ -104,6 +104,16 @@ def test_realbench_overrides_carry_problem_facts():
     assert caps.license_tag == "realbench-upstream"
 
 
+def test_realbench_uses_sanity_check_not_gate_level_functional_recheck():
+    """RealBench accepts PPA on the pre-synth RTL gate + a non-degeneracy sanity
+    check (its large sequential modules mismatch at gate level), so the gate-level
+    functional re-check is OFF; other synthesizable suites keep it ON."""
+    realbench = resolve_benchmark_capabilities("RealBench", supports_reference_ppa=True)
+    assert realbench.gate_level_functional_recheck is False
+    rtllm = resolve_benchmark_capabilities("RTLLM", supports_reference_ppa=True)
+    assert rtllm.gate_level_functional_recheck is True
+
+
 def test_unknown_family_uses_generic_defaults():
     caps = resolve_benchmark_capabilities("SomeNewSuite", supports_reference_ppa=True)
 
@@ -144,6 +154,7 @@ def test_as_dict_round_trip_is_json_friendly():
         "functional_harness_kind",
         "supports_synthesis",
         "supports_post_synth_check",
+        "gate_level_functional_recheck",
         "supports_reference_ppa",
         "ppa_mode",
         "quality_objective_policy",

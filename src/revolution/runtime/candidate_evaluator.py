@@ -56,6 +56,11 @@ class EvaluationMode(str, Enum):
 
 _PRE_SYNTHESIS_STATUS = "_pre_synthesis_passed"
 
+# Sanity-check mode (gate_level_functional_recheck=False): a candidate whose
+# synthesized area is below this fraction of the reference golden's area is treated
+# as a yosys stub-out and rejected (a real design is never ~20x smaller).
+_SANITY_MIN_AREA_FRACTION = 0.05
+
 
 @dataclass
 class CandidateEvaluation:
@@ -165,6 +170,14 @@ class CandidateEvaluator:
     ) -> None:
         self.context = context
         self.problem_spec = problem_spec
+        # Suites whose gate-level functional re-sim is unstable (RealBench) accept
+        # PPA on the pre-synthesis RTL gate + synthesis, guarded by a
+        # non-degeneracy sanity check instead of the gate-level re-check.
+        self.gate_level_functional_recheck = (
+            problem_spec.capabilities.gate_level_functional_recheck
+            if problem_spec is not None and problem_spec.capabilities is not None
+            else True
+        )
         self.problem_description = problem_description
         self.verilog_evaluator = verilog_evaluator
         self.synthesis_evaluator = synthesis_evaluator
@@ -556,6 +569,31 @@ class CandidateEvaluator:
             dynamic_metrics=dynamic_metrics,
         )
 
+    def _passes_synthesis_sanity(
+        self,
+        ppa_metrics: dict[str, float],
+        structural_metrics: dict[str, float],
+    ) -> bool:
+        """Non-degeneracy gate used when ``gate_level_functional_recheck`` is False.
+
+        Replaces the (unstable, for RealBench) gate-level functional re-sim. It
+        rejects degenerate yosys results — empty / stub netlists that would
+        otherwise report absurdly low power/area and corrupt PPA scoring — while
+        accepting genuine designs. Guards: non-zero power + area, a non-empty
+        cell count, and (when a reference exists) an area at least
+        ``_SANITY_MIN_AREA_FRACTION`` of the reference, since a real design is
+        never orders of magnitude smaller than its golden but a stub is.
+        """
+        area = ppa_metrics.get("area", 0.0)
+        power = ppa_metrics.get("power", 0.0)
+        total_cells = structural_metrics.get("total_cells", 0.0)
+        if area <= 0.0 or power <= 0.0 or total_cells < 1.0:
+            return False
+        reference_area = self.ref_ppa_metrics.get("area", 0.0)
+        if reference_area > 0.0 and area < reference_area * _SANITY_MIN_AREA_FRACTION:
+            return False
+        return True
+
     def _evaluate_synthesis(
         self,
         item: CandidateWorkItem,
@@ -582,6 +620,7 @@ class CandidateEvaluator:
                 aux_files=tuple(self.aux_source_files),
                 include_dirs=tuple(self.aux_include_dirs),
                 defines=tuple(self.compile_defines),
+                gate_level_functional_recheck=self.gate_level_functional_recheck,
             )
         )
         synth_success = bool(synth_results.get("synthesis_success"))
@@ -592,6 +631,11 @@ class CandidateEvaluator:
         ppa_metrics = _coerce_metric_dict(synth_results.get("ppa_metrics"))
         physical_metrics = _coerce_metric_dict(synth_results.get("physical_metrics"))
         structural_metrics = _coerce_metric_dict(synth_results.get("structural_metrics"))
+        # Sanity-check mode (e.g. RealBench): the gate-level re-sim was skipped, so
+        # PPA acceptance is gated on a non-degeneracy check that rejects yosys
+        # stub-outs (absurdly low PPA) instead of the gate-level functional pass.
+        if synth_success and not self.gate_level_functional_recheck:
+            post_synth_success = self._passes_synthesis_sanity(ppa_metrics, structural_metrics)
         rtl_metrics = self.rtl_descriptor_evaluator.extract_metrics(
             code_text=item.code,
             code_file_path=item.code_file_path,

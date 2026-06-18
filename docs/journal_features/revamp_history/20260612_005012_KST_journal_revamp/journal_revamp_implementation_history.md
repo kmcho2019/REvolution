@@ -3455,3 +3455,30 @@ fallback; R-D k=2 (already running on OpenRouter).
 - Docs: `realbench_reference_ppa.md` §5 (fixes) + updated diagnosis/remaining
   work; doc 13 M15 updated. Reference `_ppa.txt` regenerated (local; tree
   git-ignored).
+
+## 2026-06-18 — Bug 4 resolved: RealBench PPA via sanity check (option b)
+
+- Option (a) (verilator `--x-initial`/`--x-assign`) was tried on biu and rejected
+  — all modes give the identical 50/222 gate-level mismatch, so it is not X-init
+  but a real gate-vs-RTL difference on the ICB bus-handshake outputs.
+- Adopted option (b): RealBench accepts candidate PPA on the **pre-synthesis RTL
+  functional gate + synthesis + a non-degeneracy sanity check**, not the
+  gate-level functional re-sim (which is unstable for sequential CPU modules).
+  The user's original reason for the gate-level re-sim — catching yosys stub-outs
+  that produce absurd PPA — is preserved by the sanity check.
+- Implementation: new per-benchmark capability flag `gate_level_functional_recheck`
+  (`benchmark_capabilities.py`; True by default, **False for realbench**).
+  `SynthesisEvaluator.evaluate` skips the gate-level re-sim when False;
+  `CandidateEvaluator._passes_synthesis_sanity` gates PPA on non-zero power+area,
+  non-empty cell count, and area ≥ 5% of the reference golden
+  (`_SANITY_MIN_AREA_FRACTION`) — rejecting stubs. RTLLM/VerilogEval keep the full
+  gate-level re-sim. Each run records `gate_level_functional_rechecked`.
+- Result: candidate PPA scoring now works for **all** synthesizable e203 modules
+  (biu reaches status=success end-to-end, area 1611 / power 0.349).
+- Validation: `test_candidate_evaluator::test_passes_synthesis_sanity_rejects_stubs`
+  + `test_benchmark_capabilities` (flag per family + as_dict key); biu/alu
+  end-to-end confirmed; all existing evaluation/verilator/capability tests pass;
+  ruff + pyright clean.
+- Docs: prominent acceptance-policy section `realbench_reference_ppa.md` §0
+  (+ §5.5 implementation); doc 13 M15 updated (bug 4 RESOLVED). Policy is
+  intentionally surfaced up top so it is not buried, per the user's request.

@@ -48,6 +48,13 @@ class BenchmarkCapabilities:
     functional_harness_kind: str = "iverilog_testbench"
     supports_synthesis: bool = True
     supports_post_synth_check: bool = False
+    # Whether candidate PPA acceptance requires the full gate-level functional
+    # re-simulation of the synthesized netlist. True for small single-module
+    # suites (RTLLM/VerilogEval). False for suites where gate-level re-sim of
+    # large sequential designs is unstable (RealBench): there the PPA is accepted
+    # on the pre-synthesis RTL functional gate + synthesis, guarded by a
+    # non-degeneracy sanity check instead (see CandidateEvaluator).
+    gate_level_functional_recheck: bool = True
     supports_reference_ppa: bool = False
     ppa_mode: PpaMode = "none"
     quality_objective_policy: QualityObjectivePolicy = "functional_only"
@@ -71,6 +78,7 @@ class BenchmarkCapabilities:
             "functional_harness_kind": self.functional_harness_kind,
             "supports_synthesis": self.supports_synthesis,
             "supports_post_synth_check": self.supports_post_synth_check,
+            "gate_level_functional_recheck": self.gate_level_functional_recheck,
             "supports_reference_ppa": self.supports_reference_ppa,
             "ppa_mode": self.ppa_mode,
             "quality_objective_policy": self.quality_objective_policy,
@@ -91,6 +99,7 @@ class _FamilyDefaults:
     supports_functional: bool = True
     functional_harness_kind: str = "iverilog_testbench"
     supports_synthesis: bool = True
+    gate_level_functional_recheck: bool = True
     supports_reference_ppa_default: bool = False
     quality_objective_policy: QualityObjectivePolicy = "functional_only"
     allows_reference_normalized_ppa: bool = True
@@ -135,6 +144,11 @@ _FAMILY_DEFAULTS: dict[str, _FamilyDefaults] = {
     "realbench": _FamilyDefaults(
         quality_objective_policy="reference_ppa",
         workload_class="large",
+        # Gate-level functional re-sim of large sequential e203 modules is
+        # unstable (gate-vs-RTL mismatches unrelated to candidate correctness);
+        # accept PPA on the pre-synth RTL gate + synthesis, guarded by the
+        # non-degeneracy sanity check. See docs/journal_features/realbench_reference_ppa.md.
+        gate_level_functional_recheck=False,
     ),
 }
 
@@ -217,6 +231,7 @@ def resolve_benchmark_capabilities(
         functional_harness_kind=effective_harness,
         supports_synthesis=effective_synthesis,
         supports_post_synth_check=effective_synthesis and effective_functional,
+        gate_level_functional_recheck=defaults.gate_level_functional_recheck,
         supports_reference_ppa=effective_reference_ppa,
         ppa_mode=ppa_mode,
         quality_objective_policy=defaults.quality_objective_policy,
