@@ -21,7 +21,7 @@ evidence and rationale.
 - [x] Build the benchmark task catalog with inclusion/exclusion decisions.
 - [x] Record objective exclusion reasons for any skipped benchmark problem.
 - [x] Freeze seeds, model, phase budgets, and baseline-arm policy.
-- [ ] Freeze prompt hashes, timeout policy, and tool versions in run
+- [x] Freeze prompt hashes, timeout policy, and tool versions in run
   manifests.
 - [x] Freeze worker/thread/scheduler policy for comparable multithreaded
   runs.

@@ -661,3 +661,90 @@ PY
 ```
 
 Result: `yosys-stat method yaml ok`.
+
+## 2026-06-19 01:26 KST
+
+Added standardized Auto-BD run-manifest builder plumbing.
+
+Added:
+
+- `scripts/build_auto_bd_run_manifest.py`
+- `tests/scripts/test_build_auto_bd_run_manifest.py`
+
+Updated `auto_bd_run_policy_lock.yaml` with the manifest-freeze inputs
+that were previously only implicit in runner defaults:
+
+- timeout policy: RTL simulation, synthesis, post-synthesis simulation,
+  and CVDP simulation timeouts
+- prompt policy hash inputs: `data/prompts` plus prompt-building code
+  paths used by REvolution/Smooth-QD
+- toolchain hash paths: Nangate45 liberty file, PDK/technology config
+  tree, Yosys/ABC/OpenROAD reference scripts, and evaluator SDC/script
+  generation code
+
+The builder emits the required standard `run_manifest.json` fields from
+`src/revolution/auto_bd/results.py`, including config/subset hashes,
+prompt-policy hash, tool versions, timeout policy, budget policy, worker
+count, and thread policy. It records a standalone `abc` binary as
+unavailable when no external `abc` command is in `PATH`, instead of
+silently omitting the required field.
+
+Checklist update:
+
+- Marked `Freeze prompt hashes, timeout policy, and tool versions in run
+  manifests` complete because the builder now freezes those fields and a
+  real development manifest smoke was generated. Full per-run result
+  emission remains open under P6.
+
+Validation:
+
+```bash
+uv tool run ty check \
+  scripts/build_auto_bd_run_manifest.py \
+  src/revolution/auto_bd/results.py
+```
+
+Result: all checks passed.
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python -m pytest \
+  tests/scripts/test_build_auto_bd_run_manifest.py \
+  tests/revolution/test_auto_bd_results.py
+```
+
+Result: 5 passed in 15.23s.
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/ruff check \
+  scripts/build_auto_bd_run_manifest.py \
+  tests/scripts/test_build_auto_bd_run_manifest.py \
+  src/revolution/auto_bd/results.py
+```
+
+Result: all checks passed.
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python -m pyright \
+  scripts/build_auto_bd_run_manifest.py \
+  src/revolution/auto_bd/results.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+Manifest smoke:
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/build_auto_bd_run_manifest.py \
+  --config-path \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/01_yosys_stat_bd \
+  --phase development \
+  --output /tmp/auto_bd_yosys_stat_run_manifest.json
+```
+
+Result:
+
+- wrote `/tmp/auto_bd_yosys_stat_run_manifest.json`
+- verified model ID `openai/gpt-oss-120b`
+- verified seed list `[1001]`
+- verified 64-character prompt-policy hash

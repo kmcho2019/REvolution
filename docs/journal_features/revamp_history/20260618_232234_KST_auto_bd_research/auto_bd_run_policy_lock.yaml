@@ -82,6 +82,13 @@ phase_policy:
     accelerated_synthesis_top_k: 1
     tuning_allowed: false
 
+timeout_policy:
+  source: locked_from_scripts_run_backend_defaults_before_method_runs
+  rtl_simulation_timeout_s: 60
+  synthesis_timeout_s: 300
+  post_synthesis_simulation_timeout_s: 300
+  cvdp_simulation_timeout_s: 120
+
 worker_policy:
   rule: use_the_same_worker_policy_for_every_compared_method_in_a_phase
   development:
@@ -108,6 +115,14 @@ budget_policy:
   auxiliary_compute_skew_threshold: 0.10
   hidden_extra_repair_budget_allowed: false
   report_valid_only_and_all_candidate_metrics: true
+
+prompt_policy:
+  hash_paths:
+  - data/prompts
+  - src/revolution/llm.py
+  - src/revolution/backends/eoh_backend.py
+  - src/revolution/backends/revolution_backend.py
+  - src/revolution/qd/engine.py
 
 baseline_arms:
   classic_revolution:
@@ -186,6 +201,13 @@ ppa_metric_policy:
 
 toolchain_policy:
   freeze_before_publication_claim: true
+  liberty_file: pdk/Nangate45/Nangate45_typ.lib
+  pdk_or_tech_config_path: pdk/Nangate45
+  constraint_hash_paths:
+  - scripts/ref/ref.yosys.tcl
+  - scripts/ref/ref.abc.script
+  - scripts/ref/ref.openroad.tcl
+  - src/revolution/evaluation.py
   required_run_manifest_fields:
   - git_commit
   - branch
