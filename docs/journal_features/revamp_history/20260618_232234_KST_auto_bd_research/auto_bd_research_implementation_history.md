@@ -2811,3 +2811,121 @@ done
 
 Result: all four reports include source, Gate 0, representative elites,
 and `accept_reject.md` guidance.
+
+## 2026-06-19 06:39 KST
+
+Predeclared seed-3 promotion thresholds and generated the seed-1
+promotion decision artifact.
+
+Added:
+
+- `scripts/report_auto_bd_promotion_decisions.py`
+- `tests/scripts/test_report_auto_bd_promotion_decisions.py`
+- `auto_bd_seed1_promotion_decisions.md`
+- `auto_bd_seed1_promotion_decisions.json`
+
+Threshold policy:
+
+- Gate 0: cover every classic-covered problem; more than 5 percent
+  problem-seed misses is high risk.
+- Gate 1: no more than 5 percentage-point drop versus landing
+  Smooth-QD manual-BD in functionality, synthesis, OpenROAD, or valid-PPA
+  rates.
+- Gate 2: final sign-off requires at least 10 percent relative uplift in
+  mean best fitness or hypervolume, or two additional positive-PPA
+  problems.
+- Gate 3: final sign-off requires at least 15 percent QD-score uplift,
+  20 percent common-audit coverage uplift, or 25 percent unique-netlist
+  uplift.
+- Seed-1 development evidence is treated as underpowered for final
+  claims; it is used only for Gate 0, robustness, and seed-3 screening
+  promotion.
+
+Promotion result:
+
+- Retain `classic_revolution` as baseline comparator.
+- Retain `landing_smooth_qd_manual_bd` as baseline comparator.
+- Promote `random_descriptor_qd` as the seed-3 screening control because
+  it passes development Gate 0 and Gate 1.
+- Do not promote `simple_yosys_stat_bd`; it fails Gate 1 with a 6.25
+  percentage-point functionality/valid-PPA drop versus landing manual-BD.
+- Do not promote `netlist_motif_occupancy`; it fails Gate 1 with a 9.38
+  percentage-point functionality/valid-PPA drop.
+- Promote `synthesis_trajectory_nod` as the seed-3 Auto-BD method because
+  it passes development Gate 0 and Gate 1.
+
+Seed-3 screening arms:
+
+- `classic_revolution`
+- `landing_smooth_qd_manual_bd`
+- `random_descriptor_qd`
+- `synthesis_trajectory_nod`
+
+Generation command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_promotion_decisions.py \
+  --central-report-json \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --output-md \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_promotion_decisions.md \
+  --output-json \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_promotion_decisions.json
+```
+
+Result: wrote the Markdown and JSON promotion artifacts.
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+```
+
+Result: 1 passed in 0.61s.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_promotion_decisions.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/report_auto_bd_promotion_decisions.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/report_auto_bd_promotion_decisions.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+Artifact check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+p=Path('docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_promotion_decisions.json')
+payload=json.loads(p.read_text())
+assert payload['seed3_screening_arms'] == ['classic_revolution', 'landing_smooth_qd_manual_bd', 'random_descriptor_qd', 'synthesis_trajectory_nod']
+decisions={row['method_name']: row for row in payload['decisions']}
+assert decisions['synthesis_trajectory_nod']['decision'] == 'PROMOTE_TO_SEED3'
+assert decisions['random_descriptor_qd']['decision'] == 'PROMOTE_TO_SEED3'
+assert decisions['simple_yosys_stat_bd']['decision'] == 'DO_NOT_PROMOTE'
+assert decisions['netlist_motif_occupancy']['decision'] == 'DO_NOT_PROMOTE'
+assert payload['thresholds']['gate1_robustness']['max_functionality_drop_pp'] == 5.0
+print('promotion decision artifact check ok')
+PY
+```
+
+Result: `promotion decision artifact check ok`.

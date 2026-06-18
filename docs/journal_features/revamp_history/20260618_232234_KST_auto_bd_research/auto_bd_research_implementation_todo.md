@@ -112,8 +112,8 @@ evidence and rationale.
 
 ## P7 - Main And Held-Out Evaluation
 
-- [ ] Predeclare final sign-off thresholds after baseline MDE/power review.
-- [ ] Promote only methods that pass development-subset Gate 0 and
+- [x] Predeclare final sign-off thresholds after baseline MDE/power review.
+- [x] Promote only methods that pass development-subset Gate 0 and
   robustness gates.
 - [x] Produce seed-1 preliminary reports for fast sanity checks.
 - [ ] Produce seed-3 screening reports for promoted methods.
