@@ -2,6 +2,11 @@
 
 Status: preliminary development-subset artifact index.
 
+Centralized report:
+
+- `auto_bd_seed1_centralized_report.md`
+- `auto_bd_seed1_centralized_report.json`
+
 Generated with:
 
 ```bash

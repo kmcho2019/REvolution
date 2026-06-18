@@ -2153,3 +2153,115 @@ TODO status:
 - left PPA/hypervolume normalization, duplicate-cell leakage,
   PPA-relevant diversity, centralized reports, seed-3/seed-5 evaluation,
   and stronger functional correctness audits open
+
+## 2026-06-18 20:40 UTC
+
+Added the seed-1 centralized Auto-BD report generator and generated the
+first cross-method report from standard artifacts.
+
+Changed code:
+
+- `scripts/report_auto_bd_standard_results.py`
+- `tests/scripts/test_report_auto_bd_standard_results.py`
+
+Generated report artifacts:
+
+- `auto_bd_seed1_centralized_report.md`
+- `auto_bd_seed1_centralized_report.json`
+
+Report inputs:
+
+- `exp/auto_bd_research/development_preliminary_seed1/*/seed_1001/standard_results/`
+- reference PPA files under `data/bench/<benchmark>/<problem>_ppa.txt`
+
+PPA/HV normalization fixed for seed-1 reporting:
+
+- objective directions: minimize area, power, and effective clock
+- normalized improvement:
+  `(reference - candidate) / max(abs(reference), 1e-12)`
+- combinational problems use area/power
+- sequential problems add effective clock period
+- hypervolume uses normalized improvement space against zero improvement
+- negative objective improvements are clipped to zero inside HV
+- invalid candidates remain in robustness counts but are excluded from
+  valid-only PPA/HV
+
+Central report surfaces:
+
+- Gate 0 matrix for all six seed-1 arms
+- leaderboard with valid-PPA count, mean best fitness, mean HV, W/T/L
+  counts, netlist/motif diversity, common-audit QD, runtime, and LLM
+  calls
+- per-problem fitness/HV win-loss-tie matrix against classic REvolution
+- per-problem PPA/HV/diversity table with Pareto points,
+  reference-beating count, duplicate netlists, motif-signature diversity,
+  and unique canonical netlists on the PPA Pareto front
+
+Seed-1 summary:
+
+- all six current arms pass development seed-1 Gate 0
+- `classic_revolution` remains the strongest seed-1 mean-fitness and mean
+  HV reference
+- `random_descriptor_qd` and `synthesis_trajectory_nod` each have two
+  per-problem HV wins but no best-fitness wins under the 0.03 fitness
+  equivalence margin
+- `synthesis_trajectory_nod` has the highest unique canonical netlist
+  count and motif-signature count in this seed-1 report
+- motif-only remains weaker on mean HV and mean best fitness, matching
+  the earlier accept/reject caution
+
+Generation command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_standard_results.py \
+  --results-root exp/auto_bd_research/development_preliminary_seed1 \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.md \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json
+```
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 2 passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+TODO status:
+
+- marked PPA/HV normalization complete for the current seed-1 reporting
+  layer
+- marked motif-signature and PPA-relevant uniqueness checks complete
+- marked centralized cross-method report generation complete
+- marked leaderboard, gate matrix, per-problem win/loss matrix, and
+  compute-cost comparison complete
+- left per-method artifact report generation, robustness funnel,
+  anytime curves, archive entropy/heatmaps, descriptor correlation,
+  representative elites, seed-3/seed-5 evaluation, and functional audits
+  open

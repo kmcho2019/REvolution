@@ -1,0 +1,168 @@
+from __future__ import annotations
+
+import importlib.util
+import json
+import sys
+from pathlib import Path
+
+import pandas as pd
+
+_SCRIPT = (
+    Path(__file__).resolve().parent.parent.parent
+    / "scripts"
+    / "report_auto_bd_standard_results.py"
+)
+_SPEC = importlib.util.spec_from_file_location("report_auto_bd_standard_results", _SCRIPT)
+assert _SPEC is not None and _SPEC.loader is not None
+mod = importlib.util.module_from_spec(_SPEC)
+sys.modules.setdefault("report_auto_bd_standard_results", mod)
+_SPEC.loader.exec_module(mod)
+
+
+def test_build_report_marks_gate0_and_hv_win(tmp_path: Path) -> None:
+    repo_root = _write_reference(tmp_path)
+    results_root = tmp_path / "exp"
+    _write_standard_dir(
+        results_root,
+        "classic_revolution",
+        area=90.0,
+        power=0.9,
+        fitness=0.1,
+        netlist_hash="classic_hash",
+    )
+    _write_standard_dir(
+        results_root,
+        "netlist_motif_occupancy",
+        area=80.0,
+        power=0.8,
+        fitness=0.2,
+        netlist_hash="motif_hash",
+    )
+
+    report = mod.build_report(
+        results_root=results_root,
+        repo_root=repo_root,
+        phase="development_preliminary_seed1",
+        seed=1001,
+    )
+
+    gates = {row["method_name"]: row for row in report["gate_matrix"]}
+    leaderboard = {row["method_name"]: row for row in report["leaderboard"]}
+    comparisons = {
+        (row["method_name"], row["problem_id"]): row
+        for row in report["comparison_matrix"]
+    }
+    assert gates["netlist_motif_occupancy"]["gate0"] == "PASS"
+    assert leaderboard["netlist_motif_occupancy"]["hv_wins"] == 1
+    assert leaderboard["netlist_motif_occupancy"]["fitness_wins"] == 1
+    assert comparisons[("netlist_motif_occupancy", "Bench/ProbA")]["fitness_outcome"] == "W"
+    assert leaderboard["classic_revolution"]["duplicate_netlist_count"] == 0
+
+
+def test_main_writes_markdown_and_json(tmp_path: Path) -> None:
+    repo_root = _write_reference(tmp_path)
+    results_root = tmp_path / "exp"
+    _write_standard_dir(
+        results_root,
+        "classic_revolution",
+        area=90.0,
+        power=0.9,
+        fitness=0.1,
+        netlist_hash="classic_hash",
+    )
+    output_md = tmp_path / "report.md"
+    output_json = tmp_path / "report.json"
+
+    code = mod.main(
+        [
+            "--results-root",
+            str(results_root),
+            "--repo-root",
+            str(repo_root),
+            "--output-md",
+            str(output_md),
+            "--output-json",
+            str(output_json),
+        ]
+    )
+
+    assert code == 0
+    assert "Auto-BD Seed-1 Centralized Report" in output_md.read_text(encoding="utf-8")
+    payload = json.loads(output_json.read_text(encoding="utf-8"))
+    assert payload["normalization"]["hypervolume_reference_point"] == 0.0
+
+
+def _write_reference(tmp_path: Path) -> Path:
+    repo_root = tmp_path / "repo"
+    bench_dir = repo_root / "data" / "bench" / "Bench"
+    bench_dir.mkdir(parents=True)
+    (bench_dir / "ProbA_ppa.txt").write_text(
+        "tns,wns,eff_clk_period,power,area\n0,0,0,1.0,100.0\n",
+        encoding="utf-8",
+    )
+    return repo_root
+
+
+def _write_standard_dir(
+    results_root: Path,
+    method: str,
+    *,
+    area: float,
+    power: float,
+    fitness: float,
+    netlist_hash: str,
+) -> None:
+    result_dir = results_root / method / "seed_1001" / "standard_results"
+    result_dir.mkdir(parents=True)
+    problem_id = "Bench/ProbA"
+    candidates = pd.DataFrame(
+        [
+            {
+                "method_name": method,
+                "problem_id": problem_id,
+                "benchmark_source": "Bench",
+                "valid_ppa": True,
+                "area": area,
+                "power": power,
+                "timing_or_clock_period": 0.0,
+                "fitness": fitness,
+                "canonical_netlist_hash": netlist_hash,
+                "motif_signature_hash": f"{netlist_hash}_motif",
+                "generation": 0,
+            }
+        ]
+    )
+    candidates.to_parquet(result_dir / "candidates.parquet", index=False)
+    pd.DataFrame(
+        [
+            {
+                "method_name": method,
+                "problem_id": problem_id,
+                "runtime_seconds": 1.0,
+                "llm_api_calls": 2,
+            }
+        ]
+    ).to_parquet(result_dir / "per_generation_metrics.parquet", index=False)
+    pd.DataFrame(
+        [
+            {
+                "method_name": method,
+                "problem_id": problem_id,
+                "common_audit_occupied_cells": 1,
+                "common_audit_qd_score": fitness,
+            }
+        ]
+    ).to_parquet(result_dir / "archive_snapshots.parquet", index=False)
+    (result_dir / "method_summary.json").write_text(
+        json.dumps(
+            {
+                "method_name": method,
+                "valid_ppa_candidate_count": 1,
+                "unique_canonical_netlist_count": 1,
+                "unique_motif_signature_count": 1,
+                "common_audit_occupied_cells": 1,
+                "common_audit_qd_score": fitness,
+            }
+        ),
+        encoding="utf-8",
+    )

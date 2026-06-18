@@ -391,6 +391,20 @@ penalized/all-candidate views. If reference PPA is missing or unstable,
 mark the problem invalid for reference-normalized PPA before seeing
 method results.
 
+Current seed-1 centralized reports use the existing journal convention:
+
+- objective directions are minimize area, power, and effective clock
+- normalized improvement is
+  `(reference - candidate) / max(abs(reference), 1e-12)`
+- combinational problems use area/power objectives
+- sequential problems add effective clock period
+- hypervolume is measured in normalized improvement space against the
+  zero-improvement reference point
+- negative objective improvements are clipped to zero inside the
+  hypervolume calculation
+- invalid candidates count for robustness but are excluded from
+  valid-only PPA/HV
+
 ## Statistical Testing Plan
 
 Use phased reporting so long runs produce useful evidence before final
@@ -568,6 +582,9 @@ Report three diversity levels:
 
 The unique-netlist uplift gate cannot be satisfied by exact hash count
 alone. It must also show motif-signature or PPA-relevant diversity.
+The seed-1 centralized report records exact netlist uniqueness,
+motif-signature uniqueness, duplicate-netlist count, Pareto point count,
+and unique canonical netlists on the PPA Pareto front.
 
 ## ST-NOD Observational Equivalence Rule
 

@@ -39,9 +39,9 @@ evidence and rationale.
   OpenROAD, valid-PPA, PPA, and QD metrics.
 - [x] Add canonical synthesized-netlist hash extraction for valid
   candidates and elites.
-- [ ] Define motif-signature and PPA-relevant uniqueness checks.
+- [x] Define motif-signature and PPA-relevant uniqueness checks.
 - [x] Define common audit descriptor space and fixed binning.
-- [ ] Define PPA/hypervolume normalization, nadir points, clipping, and
+- [x] Define PPA/hypervolume normalization, nadir points, clipping, and
   invalid-candidate handling.
 - [x] Confirm method artifacts will be organized under
   `20260618_232234_KST_auto_bd_research/auto_bd_methods/`.
@@ -100,12 +100,12 @@ evidence and rationale.
 - [ ] Include PPA anytime and hypervolume curves.
 - [ ] Include QD score, coverage, entropy, and archive visualizations.
 - [ ] Include descriptor/manual-BD/PPA correlation heatmaps.
-- [ ] Include canonical-netlist uniqueness and duplicate-cell leakage.
+- [x] Include canonical-netlist uniqueness and duplicate-cell leakage.
 - [x] Include common-audit archive QD score and coverage.
-- [ ] Include motif-signature and PPA-relevant diversity.
+- [x] Include motif-signature and PPA-relevant diversity.
 - [ ] Include representative elite examples.
-- [ ] Implement centralized cross-method report generation.
-- [ ] Include leaderboard, gate matrix, per-problem win/loss matrix, and
+- [x] Implement centralized cross-method report generation.
+- [x] Include leaderboard, gate matrix, per-problem win/loss matrix, and
   compute-cost comparison.
 - [x] Link any large `exp/` artifacts from reports instead of copying them
   into docs.
