@@ -19,6 +19,11 @@ from revolution.auto_bd.random_descriptor import (
     RANDOM_HASH_AXES,
     random_hash_descriptor_values,
 )
+from revolution.auto_bd.stage_dumps import (
+    STNOD_STAGE_NAMES,
+    YosysStageDumpPlan,
+    write_yosys_stage_dump_script,
+)
 
 __all__ = [
     "AUTO_BD_METHODS_DIR",
@@ -33,5 +38,8 @@ __all__ = [
     "RANDOM_DESCRIPTOR_SEED",
     "RANDOM_HASH_AXES",
     "random_hash_descriptor_values",
+    "STNOD_STAGE_NAMES",
     "validate_method_registry",
+    "write_yosys_stage_dump_script",
+    "YosysStageDumpPlan",
 ]
