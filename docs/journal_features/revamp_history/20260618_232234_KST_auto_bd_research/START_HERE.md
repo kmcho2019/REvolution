@@ -26,6 +26,13 @@ Preliminary result indexes:
 - `auto_bd_seed1_centralized_report.md`
 - `auto_bd_seed1_centralized_report.json`
 
+Main-screening run control:
+
+- `auto_bd_main_screening_run_matrix.json`
+- `auto_bd_main_screening_run_matrix.sh`
+- `auto_bd_main_screening_run_status.md`
+- `auto_bd_main_screening_run_status.json`
+
 Goal template:
 
 - `goal_template.md`

@@ -3358,3 +3358,96 @@ Generated docs:
 - updated `auto_bd_standard_results_seed1.md`
 - `auto_bd_methods/03_synthesis_trajectory_nod/seed1_hybrid_ablation_report.md`
 - `auto_bd_methods/03_synthesis_trajectory_nod/hybrid_ablation_accept_reject.md`
+
+## 2026-06-18 22:36 UTC
+
+Added a seed-3 main-screening run-status helper.
+
+Scope:
+
+- Added `scripts/report_auto_bd_run_matrix_status.py`.
+- Added `tests/scripts/test_report_auto_bd_run_matrix_status.py`.
+- Generated:
+  - `auto_bd_main_screening_run_status.md`
+  - `auto_bd_main_screening_run_status.json`
+- Updated `START_HERE.md` to link the main-screening matrix and status
+  artifacts.
+
+Current seed-3 status:
+
+- manifest commands: 0 complete, 12 pending
+- benchmark commands: 0 complete, 24 pending
+- arm/seed pairs: 0 complete, 12 pending
+- promoted arms:
+  `classic_revolution`, `landing_smooth_qd_manual_bd`,
+  `random_descriptor_qd`, `synthesis_trajectory_nod`
+
+Generation command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_run_matrix_status.py \
+  --matrix \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_matrix.json \
+  --output-json \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.json \
+  --output-md \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.md
+```
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_run_matrix_status.py
+```
+
+Result: 2 passed in 0.72s.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_run_matrix_status.py \
+  tests/scripts/test_report_auto_bd_run_matrix_status.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/report_auto_bd_run_matrix_status.py \
+  tests/scripts/test_report_auto_bd_run_matrix_status.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/report_auto_bd_run_matrix_status.py \
+  tests/scripts/test_report_auto_bd_run_matrix_status.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+Artifact check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+p = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_main_screening_run_status.json"
+)
+payload = json.loads(p.read_text())
+assert payload["phase"] == "main_screening"
+assert payload["manifest_summary"] == {"pending": 12, "total": 12}
+assert payload["entry_summary"] == {"pending": 24, "total": 24}
+assert payload["arm_seed_summary"] == {"pending": 12, "total": 12}
+assert len(payload["next_pending_commands"]) == 4
+print("main screening status artifact check ok")
+PY
+```
+
+Result: `main screening status artifact check ok`.
