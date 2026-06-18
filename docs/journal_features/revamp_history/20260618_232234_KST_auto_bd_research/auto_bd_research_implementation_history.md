@@ -1901,3 +1901,131 @@ TODO status:
 - marked ST-NOD observational-equivalence test complete
 - left motif-plus-trajectory combination, cost check, and development
   seed-1 run open
+
+## 2026-06-18 - ST-NOD Seed-1 Preliminary Run
+
+Initial ST-NOD seed-1 execution failed during initialization. All six
+problems reported `initialization_failed` because successful synthesis/PPA
+candidates reached QD descriptor extraction before the legacy QD path had
+created `stage_dump_verilog_paths`.
+
+Fix:
+
+- commit `ac0e5d3a4c`:
+  `fix(auto-bd): Create ST-NOD dumps in QD`
+- preserved failed output:
+  `exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001/revolution/openai_gpt-oss-120b_failed_pre_c97c73a/`
+
+Validation before rerun:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_qd_engine.py::test_qd_engine_extracts_stnod_descriptors \
+  tests/revolution/test_qd_engine.py::test_qd_engine_runs_stnod_dumps_when_missing
+```
+
+Result: 2 passed in 22.60 seconds.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  src/revolution/qd/engine.py \
+  tests/revolution/test_qd_engine.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check src/revolution/qd/engine.py
+```
+
+Result: blocked by the previously recorded QD source typing debt
+(`_select_strategy` overloads, rebin event typing, redundant cast, and
+default tuple for a list parameter). No new ST-NOD branch diagnostic was
+introduced.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright src/revolution/qd/engine.py
+```
+
+Result: blocked by the previously recorded QD source typing debt
+(`ks_2samp` result typing and default tuple for a list parameter). No new
+ST-NOD branch diagnostic was introduced.
+
+Successful rerun:
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks RTLLM \
+  --problems Prob011_multi_16bit Prob019_sub_64bit Prob048_pe \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 12 \
+  --num_generations 3 \
+  --seed 1001 \
+  --save_path exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001 \
+  --search_mode revolution_qd \
+  --qd_descriptor_profile stnod_trajectory_5d
+```
+
+Result: 3/3 RTLLM problems succeeded in 528.97 seconds.
+
+```bash
+PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks VerilogEval-Spec-to-RTL \
+  --problems Prob021_mux256to1v Prob030_popcount255 Prob105_rotate100 \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 12 \
+  --num_generations 3 \
+  --seed 1001 \
+  --save_path exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001 \
+  --search_mode revolution_qd \
+  --qd_descriptor_profile stnod_trajectory_5d
+```
+
+Result: 3/3 VerilogEval problems succeeded in 554.05 seconds.
+
+Gate 0 summary:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/summarize_auto_bd_gate0.py \
+  --run-dir exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001/revolution/openai_gpt-oss-120b \
+  --method-name synthesis_trajectory_nod \
+  --phase development_preliminary_seed1 \
+  --seed 1001 \
+  --output docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_gate0_coverage_seed1_synthesis_trajectory_nod.json
+```
+
+Result:
+
+- covered problems: 6
+- missing problems: 0
+- classic-minus-ST-NOD problem delta: 0
+- classic-minus-ST-NOD problem-seed delta: 0
+
+Artifacts:
+
+- `auto_bd_methods/03_synthesis_trajectory_nod/seed1_preliminary_report.md`
+- `auto_bd_methods/03_synthesis_trajectory_nod/accept_reject.md`
+- `auto_bd_gate0_coverage_seed1_synthesis_trajectory_nod.json`
+
+TODO status:
+
+- marked ST-NOD in-loop cost check complete for seed-1
+- marked ST-NOD development run and report complete
+- marked ST-NOD accept/reject decision complete
+- left seed-3 screening, common-audit, PPA/hypervolume, and structural
+  diversity evidence open

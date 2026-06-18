@@ -73,9 +73,9 @@ evidence and rationale.
 - [x] Implement synthesis-trajectory feature extraction.
 - [ ] Combine trajectory features with motif occupancy.
 - [ ] Compare motif-only versus trajectory-motif descriptors.
-- [ ] Verify in-loop descriptor cost is acceptable or cached.
-- [ ] Run development subset and generate the method report.
-- [ ] Write accept/reject decision with Gate 0 explicitly evaluated.
+- [x] Verify in-loop descriptor cost is acceptable or cached.
+- [x] Run development subset and generate the method report.
+- [x] Write accept/reject decision with Gate 0 explicitly evaluated.
 
 ## P5 - Learned Or Codebook Variants
 

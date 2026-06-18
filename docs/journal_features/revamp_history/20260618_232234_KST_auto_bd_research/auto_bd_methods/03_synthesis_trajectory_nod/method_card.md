@@ -93,10 +93,18 @@ trajectory.
 
 ## 10. Implementation Status
 
-Implemented, not run. The observational sidecar script writer, runtime
-execution hook, trajectory features, descriptor profile, and run-matrix
-arm are implemented. Observational-equivalence validation and the
-development run are pending.
+Implemented and seed-1 development run completed. The observational
+sidecar script writer, runtime execution hook, trajectory features,
+descriptor profile, and run-matrix arm are implemented.
+
+Initial seed-1 execution failed because the legacy QD descriptor
+extraction path attempted to read ST-NOD stage paths without first
+creating the sidecar dumps. Commit `ac0e5d3a4c` fixed that path by
+running stage dumps when ST-NOD artifacts are missing.
+
+Observational-equivalence validation passed on the live Yosys fixture:
+the baseline final synthesized netlist hash matched the ST-NOD
+`07_buffered.v` final snapshot hash.
 
 ## 11. Experimental Setup
 
@@ -110,14 +118,37 @@ development run are pending.
 
 ## 12. Results
 
-Not run.
+Seed-1 development Gate 0 passed:
+
+- covered problems: 6
+- missing problems: 0
+- classic-minus-ST-NOD problem delta: 0
+- classic-minus-ST-NOD problem-seed delta: 0
+- report: `seed1_preliminary_report.md`
+- coverage artifact:
+  `../../auto_bd_gate0_coverage_seed1_synthesis_trajectory_nod.json`
+
+Runtime sanity:
+
+- RTLLM ST-NOD seed-1 run: 528.97 seconds
+- VerilogEval ST-NOD seed-1 run: 554.05 seconds
+- comparable motif seed-1 runs: 564.57 and 548.10 seconds
+
+The observed seed-1 runtime is in the same range as motif occupancy, so
+no cache is required before seed-3 screening.
 
 ## 13. Accept / Reject Decision
 
-Pending.
+Promote to seed-3 screening candidate; reject as the final Auto-BD
+method for now.
 
 ## 14. Reason
 
-No method-level experimental evidence exists yet. The next required step
-is to prove the sidecar stage-dump path is observationally equivalent to
-the baseline scoring synthesis path, then run seed-1 development Gate 0.
+The method passed preliminary Gate 0, has observational-equivalence
+evidence for the sidecar flow, and adds a more synthesis-native behavior
+signal than final-netlist motif occupancy alone.
+
+It is not yet acceptable as the selected method. The seed-1 result only
+proves coverage and artifact sanity. Seed-3 screening must still compare
+PPA, hypervolume, common-audit QD behavior, and structural diversity
+against motif-only, controls, manual BD, and classic REvolution.
