@@ -465,6 +465,17 @@ class QDEngine(EoHEngine):
             if needs_motif:
                 values.update(motif_occupancy_descriptor_values(netlist_text))
         if needs_stage:
+            if "stage_dump_verilog_paths" not in synthesis_result:
+                code_file_path = self._refresh_candidate_code_path(cand)
+                stage_dump_result = self.synthesis_evaluator.run_yosys_stage_dumps(
+                    verilog_file=code_file_path,
+                    synth_top_module_name=self._resolve_synthesis_top_module_name(),
+                    output_directory=os.path.dirname(code_file_path),
+                )
+                synthesis_result.update(stage_dump_result)
+                if not bool(stage_dump_result["stage_dump_success"]):
+                    synthesis_result["ppa_success"] = False
+                    return {}
             values.update(
                 synthesis_trajectory_descriptor_values(
                     tuple(

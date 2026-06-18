@@ -886,6 +886,82 @@ def test_qd_engine_extracts_stnod_descriptors(tmp_path, monkeypatch):
     assert engine._descriptor_tuple(cand) == pytest.approx(tuple(values.values()))
 
 
+def test_qd_engine_runs_stnod_dumps_when_missing(tmp_path, monkeypatch):
+    cfg = tmp_path / "profiles.yaml"
+    cfg.write_text(
+        "profiles:\n"
+        "  stnod_trajectory_5d:\n"
+        "    - stnod_cell_growth_log\n"
+        "    - stnod_logic_swing\n"
+        "    - stnod_control_swing\n"
+        "    - stnod_arith_swing\n"
+        "    - stnod_diversity_swing\n",
+        encoding="utf-8",
+    )
+
+    class StageDumpSynth(_DummySynth):
+        def __init__(self) -> None:
+            self.calls: list[dict[str, str]] = []
+
+        def run_yosys_stage_dumps(
+            self,
+            *,
+            verilog_file: str,
+            synth_top_module_name: str,
+            output_directory: str,
+        ) -> dict[str, object]:
+            self.calls.append(
+                {
+                    "verilog_file": verilog_file,
+                    "synth_top_module_name": synth_top_module_name,
+                    "output_directory": output_directory,
+                }
+            )
+            read_stage = Path(output_directory) / "00_read.v"
+            final_stage = Path(output_directory) / "07_buffered.v"
+            read_stage.write_text(
+                "module m(input a, output y);\n"
+                "  INV_X1 u0 (.A(a), .ZN(y));\n"
+                "endmodule\n",
+                encoding="utf-8",
+            )
+            final_stage.write_text(
+                "module m(input a, input b, output y);\n"
+                "  ADD_X1 u0 (.A(a), .B(b), .SUM(n1));\n"
+                "  INV_X1 u1 (.A(n1), .ZN(y));\n"
+                "endmodule\n",
+                encoding="utf-8",
+            )
+            return {
+                "stage_dump_success": True,
+                "stage_dump_verilog_paths": [str(read_stage), str(final_stage)],
+            }
+
+    synth = StageDumpSynth()
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        synthesis_evaluator=synth,
+        qd_descriptor_profile="stnod_trajectory_5d",
+        qd_descriptor_file=str(cfg),
+        qd_grid_axes=(),
+    )
+    code_path = tmp_path / "candidate.sv"
+    code_path.write_text("module m; endmodule\n", encoding="utf-8")
+    cand = Heuristic("t", "module m; endmodule", "", score=0.5, generation=0)
+    cand.code_file_path = str(code_path)
+    synthesis_result = {"synthesis_success": True, "ppa_success": True}
+
+    values = engine._extract_candidate_descriptor_values(cand, synthesis_result)
+
+    assert len(synth.calls) == 1
+    assert synth.calls[0]["verilog_file"] == str(code_path)
+    assert synth.calls[0]["output_directory"] == str(tmp_path)
+    assert synthesis_result["stage_dump_success"] is True
+    assert values["stnod_cell_growth_log"] == pytest.approx(0.4054651081081645)
+    assert values["stnod_arith_swing"] == pytest.approx(0.5)
+
+
 def test_qd_engine_builds_grid_archive_from_descriptor_file(tmp_path, monkeypatch):
     cfg = tmp_path / "qd.yaml"
     cfg.write_text(
