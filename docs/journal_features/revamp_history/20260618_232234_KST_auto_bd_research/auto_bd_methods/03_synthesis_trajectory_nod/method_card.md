@@ -42,6 +42,14 @@ compute motif-ratio swing across all stages
 emit stnod_trajectory_5d for archive insertion
 ```
 
+Implemented ablation descriptor:
+
+```text
+extract final synthesized-netlist motif occupancy
+extract the same stnod_trajectory_5d stage-swing features
+emit stnod_motif_trajectory_9d for archive insertion
+```
+
 The stage-dump helper lives in `src/revolution/auto_bd/stage_dumps.py`.
 The trajectory descriptor lives in
 `src/revolution/auto_bd/trajectory_descriptor.py`.
@@ -59,7 +67,8 @@ The trajectory descriptor lives in
 ## 6. Archive Integration
 
 - Archive type: `grid_quantile`
-- Internal descriptor dimensions: 5
+- Internal descriptor dimensions: 5 for `synthesis_trajectory_nod`, 9
+  for `synthesis_trajectory_motif_nod`
 - Internal binning/cell policy: quantile grid, warmup successes 8
 - Common audit descriptor: required by the centralized report
 - Common audit binning: fixed by the future report implementation
@@ -69,6 +78,11 @@ The trajectory descriptor lives in
 - Stage names: `00_read`, `01_synth`, `02_opt`, `03_arithmap`,
   `04_dffmap`, `05_abc`, `06_clean`, `07_buffered`
 - Descriptor axes: `stnod_cell_growth_log`, `stnod_logic_swing`,
+  `stnod_control_swing`, `stnod_arith_swing`,
+  `stnod_diversity_swing`
+- Ablation axes: `motif_logic_ratio`, `motif_control_ratio`,
+  `motif_arith_ratio`, `motif_diversity`,
+  `stnod_cell_growth_log`, `stnod_logic_swing`,
   `stnod_control_swing`, `stnod_arith_swing`,
   `stnod_diversity_swing`
 - Cell mode: `pareto_front`
@@ -93,9 +107,14 @@ trajectory.
 
 ## 10. Implementation Status
 
-Implemented and seed-1 development run completed. The observational
-sidecar script writer, runtime execution hook, trajectory features,
-descriptor profile, and run-matrix arm are implemented.
+Implemented and seed-1 development run completed for the trajectory-only
+arm. The observational sidecar script writer, runtime execution hook,
+trajectory features, descriptor profile, and run-matrix arm are
+implemented.
+
+The `synthesis_trajectory_motif_nod` ablation is implemented but not yet
+run. It exists only to compare motif-only descriptors against a
+trajectory-plus-final-motif descriptor under the same substrate.
 
 Initial seed-1 execution failed because the legacy QD descriptor
 extraction path attempted to read ST-NOD stage paths without first

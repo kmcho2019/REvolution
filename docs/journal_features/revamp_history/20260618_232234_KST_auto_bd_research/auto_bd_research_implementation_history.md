@@ -3047,3 +3047,122 @@ bash -n \
 ```
 
 Result: passed.
+
+## 2026-06-18 21:50 UTC
+
+Implemented the ST-NOD motif-plus-trajectory ablation.
+
+Scope:
+
+- Added `stnod_motif_trajectory_9d` to the ST-NOD descriptor profile.
+- Added `config_motif_trajectory.yaml` under the existing ST-NOD method
+  directory.
+- Added `synthesis_trajectory_motif_nod` to the locked run policy as an
+  ablation arm for motif-only versus trajectory-motif comparison.
+- Wired the ablation arm into `scripts/build_auto_bd_run_matrix.py`.
+- Updated tests so the hybrid profile requires both final-netlist motif
+  metrics and Yosys stage dumps.
+
+Status:
+
+- The descriptor combination is implemented.
+- The motif-only versus trajectory-motif experimental comparison is still
+  pending; no result/report claim was made in this entry.
+
+Development matrix refresh:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/build_auto_bd_run_matrix.py \
+  --phase development \
+  --output-dir \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research \
+  --run-root exp/auto_bd_research
+```
+
+Result: regenerated the development run matrix with 14 entries,
+including the new `synthesis_trajectory_motif_nod` ablation arm.
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/revolution/test_auto_bd_trajectory_descriptor.py
+```
+
+Result: 34 passed in 76.70s.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/revolution/test_qd_descriptors.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/revolution/test_qd_descriptors.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/build_auto_bd_run_matrix.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/revolution/test_qd_descriptors.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+Matrix content check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+p = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_development_run_matrix.json"
+)
+payload = json.loads(p.read_text())
+assert payload["phase"] == "development"
+assert payload["arms"][-1] == "synthesis_trajectory_motif_nod"
+assert len(payload["manifest_commands"]) == 7
+assert len(payload["entries"]) == 14
+hybrid = [
+    e for e in payload["entries"]
+    if e["arm_name"] == "synthesis_trajectory_motif_nod"
+]
+assert len(hybrid) == 2
+assert all(
+    "--qd_descriptor_profile stnod_motif_trajectory_9d" in e["command_string"]
+    for e in hybrid
+)
+assert all("--max_tokens 128000" in e["command_string"] for e in payload["entries"])
+assert all(
+    "--diff_max_tokens 128000" in e["command_string"]
+    for e in payload["entries"]
+)
+print("development hybrid matrix check ok")
+PY
+```
+
+Result: `development hybrid matrix check ok`.
+
+Shell validation:
+
+```bash
+bash -n \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_development_run_matrix.sh
+```
+
+Result: passed.

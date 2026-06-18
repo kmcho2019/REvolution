@@ -1,0 +1,47 @@
+method_family: synthesis_trajectory_nod
+method_name: synthesis_trajectory_motif_nod_grid_quantile
+status: implemented_not_run
+
+descriptor:
+  profile: stnod_motif_trajectory_9d
+  descriptor_file: descriptor_profile.yaml
+  source: synthesized_netlist_and_yosys_stage_dumps
+  final_netlist_helper: src/revolution/auto_bd/motif_descriptor.py
+  stage_dump_helper: src/revolution/auto_bd/stage_dumps.py
+  stage_names:
+  - 00_read
+  - 01_synth
+  - 02_opt
+  - 03_arithmap
+  - 04_dffmap
+  - 05_abc
+  - 06_clean
+  - 07_buffered
+  fitting_protocol: none
+  forbidden_inputs:
+  - ppa
+  - reference_ppa
+  - fitness
+  - hypervolume
+
+observational_equivalence:
+  required: true
+  status: pending
+  rule: stage_dump_script_must_not_feed_scoring_netlist
+
+qd:
+  archive_type: grid_quantile
+  descriptor_file: descriptor_profile.yaml
+  cell_mode: pareto_front
+  objectives: ppa
+  parent_selection: nsga2_global_rank
+  champion_lane_fraction: 0.5
+  operator_kind: eoh_strategies
+
+comparison_policy:
+  baseline_lock: ../../auto_bd_run_policy_lock.yaml
+  ablation_against:
+  - netlist_motif_occupancy
+  - synthesis_trajectory_nod
+  same_subsets_seeds_model_budget_as_baseline: true
+  report_internal_and_common_audit_space: true

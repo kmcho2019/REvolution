@@ -26,3 +26,9 @@ Code-facing method-family names, directory names, fitting protocol
 requirements, and forbidden descriptor inputs are centralized in
 `src/revolution/auto_bd/method_specs.py`. Add a new method family there
 before adding backend wiring, report code, or method-local configs.
+
+ST-NOD ablations stay inside `03_synthesis_trajectory_nod/` unless they
+become a genuinely separate method family. The
+`synthesis_trajectory_motif_nod` arm is one such ablation: it combines
+the motif-only final-netlist axes with the ST-NOD trajectory axes for the
+P4 motif-only versus trajectory-motif comparison.

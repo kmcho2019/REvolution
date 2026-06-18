@@ -71,7 +71,7 @@ evidence and rationale.
 - [x] Wire observational dump execution behind the ST-NOD method arm.
 - [x] Add ST-NOD observational-equivalence test against baseline synthesis.
 - [x] Implement synthesis-trajectory feature extraction.
-- [ ] Combine trajectory features with motif occupancy.
+- [x] Combine trajectory features with motif occupancy.
 - [ ] Compare motif-only versus trajectory-motif descriptors.
 - [x] Verify in-loop descriptor cost is acceptable or cached.
 - [x] Run development subset and generate the method report.

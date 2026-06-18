@@ -42,6 +42,10 @@ METHOD_CONFIGS = {
     / "auto_bd_methods"
     / "03_synthesis_trajectory_nod"
     / "config.yaml",
+    "synthesis_trajectory_motif_nod": SCAFFOLD_DIR
+    / "auto_bd_methods"
+    / "03_synthesis_trajectory_nod"
+    / "config_motif_trajectory.yaml",
 }
 
 
@@ -135,6 +139,10 @@ def write_arm_configs(
         "synthesis_trajectory_nod": mapping_at(
             mapping_at(run_policy, "candidate_method_arms"),
             "synthesis_trajectory_nod",
+        ),
+        "synthesis_trajectory_motif_nod": mapping_at(
+            mapping_at(run_policy, "candidate_method_arms"),
+            "synthesis_trajectory_motif_nod",
         ),
     }
     selected_arms = arm_names or list(arm_payloads)
@@ -296,6 +304,14 @@ def arm_flags(arm_name: str) -> list[str]:
             *base_qd,
             "--qd_descriptor_profile",
             "stnod_trajectory_5d",
+            "--qd_descriptor_file",
+            str(METHOD_CONFIGS[arm_name].parent / "descriptor_profile.yaml"),
+        ]
+    if arm_name == "synthesis_trajectory_motif_nod":
+        return [
+            *base_qd,
+            "--qd_descriptor_profile",
+            "stnod_motif_trajectory_9d",
             "--qd_descriptor_file",
             str(METHOD_CONFIGS[arm_name].parent / "descriptor_profile.yaml"),
         ]

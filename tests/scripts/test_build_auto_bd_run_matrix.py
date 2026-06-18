@@ -30,8 +30,8 @@ def test_build_matrix_groups_by_benchmark_and_arm(tmp_path):
         run_root=tmp_path / "exp",
     )
 
-    assert len(payload["manifest_commands"]) == 6
-    assert len(payload["entries"]) == 12
+    assert len(payload["manifest_commands"]) == 7
+    assert len(payload["entries"]) == 14
     assert (tmp_path / "out" / "auto_bd_development_run_matrix.json").is_file()
     assert (tmp_path / "out" / "auto_bd_development_run_matrix.sh").is_file()
     arms = {entry["arm_name"] for entry in payload["entries"]}
@@ -42,6 +42,7 @@ def test_build_matrix_groups_by_benchmark_and_arm(tmp_path):
         "simple_yosys_stat_bd",
         "netlist_motif_occupancy",
         "synthesis_trajectory_nod",
+        "synthesis_trajectory_motif_nod",
     }
     random_entry = next(
         entry for entry in payload["entries"]
@@ -62,6 +63,14 @@ def test_build_matrix_groups_by_benchmark_and_arm(tmp_path):
         if entry["arm_name"] == "synthesis_trajectory_nod"
     )
     assert "--qd_descriptor_profile stnod_trajectory_5d" in stnod_entry["command_string"]
+    hybrid_entry = next(
+        entry for entry in payload["entries"]
+        if entry["arm_name"] == "synthesis_trajectory_motif_nod"
+    )
+    assert (
+        "--qd_descriptor_profile stnod_motif_trajectory_9d"
+        in hybrid_entry["command_string"]
+    )
 
 
 def test_main_writes_json_payload(tmp_path):
@@ -207,6 +216,9 @@ def _write_inputs(tmp_path: Path) -> dict[str, Path]:
                 "candidate_method_arms": {
                     "netlist_motif_occupancy": {"descriptor_source": "motif"},
                     "synthesis_trajectory_nod": {"descriptor_source": "stage_dumps"},
+                    "synthesis_trajectory_motif_nod": {
+                        "descriptor_source": "motif_and_stage_dumps"
+                    },
                 },
             },
             sort_keys=False,

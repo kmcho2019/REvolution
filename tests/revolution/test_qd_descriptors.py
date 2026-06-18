@@ -27,6 +27,11 @@ MOTIF_DESCRIPTOR_FILE = (
     "20260618_232234_KST_auto_bd_research/"
     "auto_bd_methods/02_netlist_motif_occupancy/descriptor_profile.yaml"
 )
+STNOD_DESCRIPTOR_FILE = (
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_methods/03_synthesis_trajectory_nod/descriptor_profile.yaml"
+)
 
 
 def test_load_descriptor_profiles_includes_hybrid_defaults():
@@ -323,6 +328,32 @@ def test_stnod_profile_uses_stage_dump_metrics(tmp_path: Path):
     assert requirements["requires_synthesis"] is True
     assert requirements["requires_auto_bd_stage_dumps"] is True
     assert requirements["requires_auto_bd_motif"] is False
+
+
+def test_stnod_motif_trajectory_profile_uses_motif_and_stage_metrics():
+    axes = resolve_descriptor_axes(
+        profile_name="stnod_motif_trajectory_9d",
+        explicit_axes=None,
+        descriptor_file=STNOD_DESCRIPTOR_FILE,
+        archive_type="grid_quantile",
+        circuit_type="sequential",
+    )
+    requirements = descriptor_requirements(axes)
+
+    assert axes == [
+        "motif_logic_ratio",
+        "motif_control_ratio",
+        "motif_arith_ratio",
+        "motif_diversity",
+        "stnod_cell_growth_log",
+        "stnod_logic_swing",
+        "stnod_control_swing",
+        "stnod_arith_swing",
+        "stnod_diversity_swing",
+    ]
+    assert requirements["requires_synthesis"] is True
+    assert requirements["requires_auto_bd_motif"] is True
+    assert requirements["requires_auto_bd_stage_dumps"] is True
 
 
 def test_resolve_descriptor_axes_rejects_unknown_profile():
