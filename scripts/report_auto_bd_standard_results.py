@@ -9,6 +9,9 @@ import math
 from pathlib import Path
 from typing import Any
 
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 import pandas as pd
 
 from revolution.qd.pareto_analysis import (
@@ -563,6 +566,10 @@ def render_markdown(report: dict[str, Any]) -> str:
         "",
         "The JSON report includes per-generation anytime rows for each method.",
         "",
+        "## Figures",
+        "",
+        figure_list(report),
+        "",
         "## Per-Problem Win/Loss Matrix",
         "",
         markdown_table(
@@ -628,6 +635,63 @@ def render_markdown(report: dict[str, Any]) -> str:
         rows.append(f"- `{method}`: `{path}`")
     rows.append("")
     return "\n".join(rows)
+
+
+def write_figures(report: dict[str, Any], output_dir: Path) -> dict[str, str]:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    figures = {
+        "anytime_mean_best_fitness": output_dir / "anytime_mean_best_fitness.png",
+        "anytime_mean_hypervolume": output_dir / "anytime_mean_hypervolume.png",
+    }
+    plot_anytime(
+        report["anytime_metrics"],
+        "mean_best_fitness",
+        "Mean Best Fitness",
+        figures["anytime_mean_best_fitness"],
+    )
+    plot_anytime(
+        report["anytime_metrics"],
+        "mean_hypervolume",
+        "Mean Hypervolume",
+        figures["anytime_mean_hypervolume"],
+    )
+    return {name: path.as_posix() for name, path in figures.items()}
+
+
+def plot_anytime(
+    rows: list[dict[str, Any]],
+    metric_name: str,
+    ylabel: str,
+    output_path: Path,
+) -> None:
+    frame = pd.DataFrame(rows)
+    assert not frame.empty
+    fig, axis = plt.subplots(figsize=(8.0, 4.8))
+    for method in METHOD_ORDER:
+        method_frame = frame.loc[frame["method_name"].eq(method)].sort_values("generation")
+        if method_frame.empty:
+            continue
+        axis.plot(
+            method_frame["generation"],
+            method_frame[metric_name],
+            marker="o",
+            linewidth=1.8,
+            label=method,
+        )
+    axis.set_xlabel("Generation")
+    axis.set_ylabel(ylabel)
+    axis.grid(True, alpha=0.3)
+    axis.legend(fontsize=7, ncols=2)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+
+
+def figure_list(report: dict[str, Any]) -> str:
+    paths = report.get("figure_paths", {})
+    if not isinstance(paths, dict) or not paths:
+        return "No figure artifacts generated."
+    return "\n".join(f"- `{name}`: `{path}`" for name, path in sorted(paths.items()))
 
 
 def markdown_table(headers: list[str], rows: list[list[object]]) -> str:
@@ -761,6 +825,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--results-root", type=Path, required=True)
     parser.add_argument("--output-md", type=Path, required=True)
     parser.add_argument("--output-json", type=Path, required=True)
+    parser.add_argument("--figure-dir", type=Path)
     parser.add_argument("--repo-root", type=Path, default=REPO_ROOT)
     parser.add_argument("--phase", default="development_preliminary_seed1")
     parser.add_argument("--seed", type=int, default=1001)
@@ -772,6 +837,8 @@ def main(argv: list[str] | None = None) -> int:
         phase=args.phase,
         seed=args.seed,
     )
+    if args.figure_dir is not None:
+        report["figure_paths"] = write_figures(report, args.figure_dir)
     args.output_md.parent.mkdir(parents=True, exist_ok=True)
     args.output_md.write_text(render_markdown(report), encoding="utf-8")
     write_json(args.output_json, report)

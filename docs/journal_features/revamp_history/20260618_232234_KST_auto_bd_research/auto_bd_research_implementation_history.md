@@ -2368,3 +2368,102 @@ TODO status:
 - marked seed-1 preliminary reports complete
 - left plotted PPA/HV curves open; the JSON now has per-generation
   curve-ready data, but no chart artifacts
+
+## 2026-06-18 20:56 UTC
+
+Added plotted seed-1 anytime figures for the centralized Auto-BD report.
+
+Changed code:
+
+- `scripts/report_auto_bd_standard_results.py`
+- `tests/scripts/test_report_auto_bd_standard_results.py`
+
+Regenerated report artifacts:
+
+- `auto_bd_seed1_centralized_report.md`
+- `auto_bd_seed1_centralized_report.json`
+
+New figure artifacts:
+
+- `auto_bd_seed1_figures/anytime_mean_best_fitness.png`
+- `auto_bd_seed1_figures/anytime_mean_hypervolume.png`
+
+The Markdown and JSON reports now link these figure paths. The figures
+are generated from the same `anytime_metrics` rows used in the central
+JSON report, so the plotted curves and machine-readable metrics share one
+data source.
+
+Generation command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_standard_results.py \
+  --results-root exp/auto_bd_research/development_preliminary_seed1 \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.md \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --figure-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures
+```
+
+Artifact checks:
+
+```bash
+file docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/*.png
+```
+
+Result:
+
+- both figure files are 1440x864 PNG images
+
+```bash
+python - <<'PY'
+from pathlib import Path
+base = Path('docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures')
+for name in ['anytime_mean_best_fitness.png', 'anytime_mean_hypervolume.png']:
+    data = (base / name).read_bytes()
+    assert data.startswith(b'\x89PNG'), name
+    assert len(data) > 1000, name
+print('figure artifacts ok')
+PY
+```
+
+Result: `figure artifacts ok`.
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 2 passed in 99.16 seconds.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+TODO status:
+
+- marked PPA anytime and hypervolume curves complete for the seed-1
+  centralized report
+- left QD entropy/archive visualizations and descriptor-correlation
+  heatmaps open

@@ -80,6 +80,7 @@ def test_main_writes_markdown_and_json(tmp_path: Path) -> None:
     )
     output_md = tmp_path / "report.md"
     output_json = tmp_path / "report.json"
+    figure_dir = tmp_path / "figures"
 
     code = mod.main(
         [
@@ -91,6 +92,8 @@ def test_main_writes_markdown_and_json(tmp_path: Path) -> None:
             str(output_md),
             "--output-json",
             str(output_json),
+            "--figure-dir",
+            str(figure_dir),
         ]
     )
 
@@ -98,6 +101,8 @@ def test_main_writes_markdown_and_json(tmp_path: Path) -> None:
     assert "Auto-BD Seed-1 Centralized Report" in output_md.read_text(encoding="utf-8")
     payload = json.loads(output_json.read_text(encoding="utf-8"))
     assert payload["normalization"]["hypervolume_reference_point"] == 0.0
+    assert (figure_dir / "anytime_mean_best_fitness.png").read_bytes().startswith(b"\x89PNG")
+    assert (figure_dir / "anytime_mean_hypervolume.png").read_bytes().startswith(b"\x89PNG")
 
 
 def _write_reference(tmp_path: Path) -> Path:

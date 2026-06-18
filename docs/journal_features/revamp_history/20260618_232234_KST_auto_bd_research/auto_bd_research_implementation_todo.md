@@ -97,7 +97,7 @@ evidence and rationale.
 - [ ] Implement per-method report generation from artifacts.
 - [x] Emit standardized results files and `run_manifest.json`.
 - [x] Include robustness funnel and failure breakdown.
-- [ ] Include PPA anytime and hypervolume curves.
+- [x] Include PPA anytime and hypervolume curves.
 - [ ] Include QD score, coverage, entropy, and archive visualizations.
 - [ ] Include descriptor/manual-BD/PPA correlation heatmaps.
 - [x] Include canonical-netlist uniqueness and duplicate-cell leakage.

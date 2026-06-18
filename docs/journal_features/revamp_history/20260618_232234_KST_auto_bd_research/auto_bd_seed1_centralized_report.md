@@ -81,6 +81,11 @@ Status: preliminary development-subset report.
 
 The JSON report includes per-generation anytime rows for each method.
 
+## Figures
+
+- `anytime_mean_best_fitness`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/anytime_mean_best_fitness.png`
+- `anytime_mean_hypervolume`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures/anytime_mean_hypervolume.png`
+
 ## Per-Problem Win/Loss Matrix
 
 | Method | Problem | Fitness Delta | Fitness | HV Delta | HV |
