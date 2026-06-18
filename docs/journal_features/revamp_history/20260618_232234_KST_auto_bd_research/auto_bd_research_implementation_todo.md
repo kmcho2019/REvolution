@@ -32,15 +32,15 @@ evidence and rationale.
 - [x] Reproduce landing Smooth-QD manual-BD / NSGA-II baseline on the
   development subset.
 - [x] Record classic REvolution valid-PPA coverage set `C`.
-- [ ] Verify Gate 0: candidate Auto-BD methods must cover every problem in
+- [x] Verify Gate 0: candidate Auto-BD methods must cover every problem in
   `C`.
-- [ ] Report `C_problem` and `C_problem_seed` coverage deltas.
-- [ ] Add or identify report inputs for functionality, synthesis,
+- [x] Report `C_problem` and `C_problem_seed` coverage deltas.
+- [x] Add or identify report inputs for functionality, synthesis,
   OpenROAD, valid-PPA, PPA, and QD metrics.
-- [ ] Add canonical synthesized-netlist hash extraction for valid
+- [x] Add canonical synthesized-netlist hash extraction for valid
   candidates and elites.
 - [ ] Define motif-signature and PPA-relevant uniqueness checks.
-- [ ] Define common audit descriptor space and fixed binning.
+- [x] Define common audit descriptor space and fixed binning.
 - [ ] Define PPA/hypervolume normalization, nadir points, clipping, and
   invalid-candidate handling.
 - [x] Confirm method artifacts will be organized under
@@ -95,19 +95,19 @@ evidence and rationale.
 ## P6 - Reporting
 
 - [ ] Implement per-method report generation from artifacts.
-- [ ] Emit standardized results files and `run_manifest.json`.
+- [x] Emit standardized results files and `run_manifest.json`.
 - [ ] Include robustness funnel and failure breakdown.
 - [ ] Include PPA anytime and hypervolume curves.
 - [ ] Include QD score, coverage, entropy, and archive visualizations.
 - [ ] Include descriptor/manual-BD/PPA correlation heatmaps.
 - [ ] Include canonical-netlist uniqueness and duplicate-cell leakage.
-- [ ] Include common-audit archive QD score and coverage.
+- [x] Include common-audit archive QD score and coverage.
 - [ ] Include motif-signature and PPA-relevant diversity.
 - [ ] Include representative elite examples.
 - [ ] Implement centralized cross-method report generation.
 - [ ] Include leaderboard, gate matrix, per-problem win/loss matrix, and
   compute-cost comparison.
-- [ ] Link any large `exp/` artifacts from reports instead of copying them
+- [x] Link any large `exp/` artifacts from reports instead of copying them
   into docs.
 
 ## P7 - Main And Held-Out Evaluation

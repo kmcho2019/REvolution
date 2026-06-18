@@ -739,7 +739,9 @@ report from artifacts.
 
 ## Standard Result Schema
 
-Every method should emit standardized files under its method directory:
+Every method should emit standardized files under a run-local
+`standard_results/` directory and link those artifacts from the method
+report. Do not copy large `exp/` outputs into this docs directory.
 
 ```text
 results/

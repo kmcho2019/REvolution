@@ -20,6 +20,10 @@ Evidence log:
 
 - `auto_bd_research_implementation_history.md`
 
+Preliminary result indexes:
+
+- `auto_bd_standard_results_seed1.md`
+
 Goal template:
 
 - `goal_template.md`

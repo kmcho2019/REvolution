@@ -2029,3 +2029,127 @@ TODO status:
 - marked ST-NOD accept/reject decision complete
 - left seed-3 screening, common-audit, PPA/hypervolume, and structural
   diversity evidence open
+
+## 2026-06-18 20:22 UTC
+
+Added the standardized Auto-BD result collector and generated seed-1
+standard results for all current development arms.
+
+Changed code:
+
+- `scripts/build_auto_bd_standard_results.py`
+- `tests/scripts/test_build_auto_bd_standard_results.py`
+- `pyproject.toml`
+- `uv.lock`
+
+The collector emits the standard result schema from one REvolution run:
+
+- `candidates.parquet`
+- `elites.parquet`
+- `archive_snapshots.parquet`
+- `per_generation_metrics.parquet`
+- `per_problem_metrics.parquet`
+- `descriptor_vectors.parquet`
+- `netlist_hashes.parquet`
+- `method_summary.json`
+- `run_manifest.json`
+
+The common audit archive is fixed across methods:
+
+- axes: `motif_logic_ratio`, `motif_control_ratio`,
+  `motif_arith_ratio`, `motif_diversity`
+- bins per axis: 4
+- cell id prefix: `audit_motif4:`
+
+Generated standard result directories:
+
+- `exp/auto_bd_research/development_preliminary_seed1/classic_revolution/seed_1001/standard_results/`
+- `exp/auto_bd_research/development_preliminary_seed1/landing_smooth_qd_manual_bd/seed_1001/standard_results/`
+- `exp/auto_bd_research/development_preliminary_seed1/random_descriptor_qd/seed_1001/standard_results/`
+- `exp/auto_bd_research/development_preliminary_seed1/simple_yosys_stat_bd/seed_1001/standard_results/`
+- `exp/auto_bd_research/development_preliminary_seed1/netlist_motif_occupancy/seed_1001/standard_results/`
+- `exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001/standard_results/`
+
+Seed-1 method summaries:
+
+| Arm | Candidates | Valid PPA | Unique Netlists | Unique Motifs | Audit Cells | Audit QD |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `classic_revolution` | 288 | 209 | 70 | 43 | 12 | 2.3163 |
+| `landing_smooth_qd_manual_bd` | 288 | 219 | 61 | 33 | 9 | 1.8526 |
+| `random_descriptor_qd` | 288 | 213 | 64 | 41 | 8 | 1.7008 |
+| `simple_yosys_stat_bd` | 288 | 201 | 62 | 45 | 11 | 2.0779 |
+| `netlist_motif_occupancy` | 288 | 192 | 64 | 37 | 8 | -3.0274 |
+| `synthesis_trajectory_nod` | 288 | 205 | 72 | 52 | 11 | -2.0643 |
+
+Added scaffold index:
+
+- `auto_bd_standard_results_seed1.md`
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_build_auto_bd_standard_results.py \
+  tests/revolution/test_auto_bd_results.py
+```
+
+Result: 6 passed in 30.14 seconds.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/build_auto_bd_standard_results.py \
+  tests/scripts/test_build_auto_bd_standard_results.py \
+  src/revolution/auto_bd/results.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/build_auto_bd_standard_results.py \
+  tests/scripts/test_build_auto_bd_standard_results.py \
+  src/revolution/auto_bd/results.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/build_auto_bd_standard_results.py \
+  tests/scripts/test_build_auto_bd_standard_results.py \
+  src/revolution/auto_bd/results.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+Artifact check:
+
+```bash
+python - <<'PY'
+from pathlib import Path
+files = {
+    'candidates.parquet', 'elites.parquet', 'archive_snapshots.parquet',
+    'per_generation_metrics.parquet', 'per_problem_metrics.parquet',
+    'descriptor_vectors.parquet', 'netlist_hashes.parquet',
+    'method_summary.json', 'run_manifest.json'
+}
+base = Path('exp/auto_bd_research/development_preliminary_seed1')
+for path in sorted(base.glob('*/seed_1001/standard_results')):
+    found = {p.name for p in path.iterdir()}
+    assert found == files, path
+print('standard result file sets ok')
+PY
+```
+
+Result: `standard result file sets ok`.
+
+TODO status:
+
+- marked current seed-1 Gate 0 coverage and coverage-delta reporting
+  complete for all six current development arms
+- marked report-input identification, canonical netlist hashing, fixed
+  common-audit binning, standard result emission, common-audit QD
+  score/coverage, and exp-artifact linking complete
+- left PPA/hypervolume normalization, duplicate-cell leakage,
+  PPA-relevant diversity, centralized reports, seed-3/seed-5 evaluation,
+  and stronger functional correctness audits open
