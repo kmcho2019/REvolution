@@ -94,7 +94,7 @@ evidence and rationale.
 
 ## P6 - Reporting
 
-- [ ] Implement per-method report generation from artifacts.
+- [x] Implement per-method report generation from artifacts.
 - [x] Emit standardized results files and `run_manifest.json`.
 - [x] Include robustness funnel and failure breakdown.
 - [x] Include PPA anytime and hypervolume curves.

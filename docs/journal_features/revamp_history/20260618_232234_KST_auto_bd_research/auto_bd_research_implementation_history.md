@@ -2723,3 +2723,91 @@ PY
 ```
 
 Result: `representative elite artifact check ok`.
+
+## 2026-06-19 06:33 KST
+
+Implemented per-method artifact report generation for the seed-1
+Auto-BD method arms.
+
+Added:
+
+- `scripts/report_auto_bd_method_results.py`
+- `tests/scripts/test_report_auto_bd_method_results.py`
+
+Generated reports:
+
+- `auto_bd_methods/00_random_descriptor/seed1_artifact_report.md`
+- `auto_bd_methods/01_yosys_stat_bd/seed1_artifact_report.md`
+- `auto_bd_methods/02_netlist_motif_occupancy/seed1_artifact_report.md`
+- `auto_bd_methods/03_synthesis_trajectory_nod/seed1_artifact_report.md`
+
+The generator reads the centralized seed-1 JSON report, then writes one
+method-local report per configured Auto-BD method. Each report includes
+Gate 0 status, PPA/diversity summary, robustness funnel, QD archive
+metrics, representative elite examples, and the standard result root.
+Interpretation remains in each method's `accept_reject.md`.
+
+Generation command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_method_results.py \
+  --central-report-json \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --method-root \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods \
+  --output-name seed1_artifact_report.md
+```
+
+Result: wrote all four configured method reports.
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 3 passed in 101.70s.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_method_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/report_auto_bd_method_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/report_auto_bd_method_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+Report content check:
+
+```bash
+for f in docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/*/seed1_artifact_report.md; do
+  rg -n "^# |^## Gate 0|^## Representative Elites|accept_reject|Standard result root" "$f"
+done
+```
+
+Result: all four reports include source, Gate 0, representative elites,
+and `accept_reject.md` guidance.
