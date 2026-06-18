@@ -2265,3 +2265,106 @@ TODO status:
   anytime curves, archive entropy/heatmaps, descriptor correlation,
   representative elites, seed-3/seed-5 evaluation, and functional audits
   open
+
+## 2026-06-18 20:47 UTC
+
+Extended the seed-1 centralized report with robustness/failure and
+anytime evidence from the standard candidate tables.
+
+Changed code:
+
+- `scripts/report_auto_bd_standard_results.py`
+- `tests/scripts/test_report_auto_bd_standard_results.py`
+
+Regenerated artifacts:
+
+- `auto_bd_seed1_centralized_report.md`
+- `auto_bd_seed1_centralized_report.json`
+
+New report surfaces:
+
+- robustness funnel by method:
+  total candidates, syntax pass, functionality pass, synthesis pass,
+  OpenROAD pass, valid-PPA count, and corresponding rates
+- failure breakdown by method and failure reason
+- anytime summary by method:
+  final generation, final covered problems, final mean best fitness,
+  final mean hypervolume, mean-best-fitness AUC, and mean-HV AUC
+- machine-readable per-generation anytime rows in JSON:
+  `anytime_metrics`
+
+Seed-1 observations:
+
+- all six arms still pass Gate 0
+- `landing_smooth_qd_manual_bd` has the highest seed-1 valid-PPA rate
+  at 76.0 percent
+- `classic_revolution` remains strongest in final mean fitness and final
+  mean HV
+- `random_descriptor_qd` has the strongest seed-1 mean-best-fitness AUC
+  and mean-HV AUC, but this is exploratory seed-1 evidence only
+- `netlist_motif_occupancy` has the weakest seed-1 valid-PPA rate and
+  mean HV among current arms
+
+Generation command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_standard_results.py \
+  --results-root exp/auto_bd_research/development_preliminary_seed1 \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.md \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json
+```
+
+Report JSON checks:
+
+```bash
+jq '{robustness: (.robustness_funnel | length), failures: (.failure_breakdown | length), anytime_summary: (.anytime_summary | length), anytime_metrics: (.anytime_metrics | length)}' \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json
+```
+
+Result:
+
+- robustness rows: 6
+- failure rows: 19
+- anytime summary rows: 6
+- anytime metric rows: 24
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 2 passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+uv tool run ty check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: all checks passed.
+
+```bash
+UV_LINK_MODE=copy uv run --active pyright \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Result: 0 errors, 0 warnings, 0 informations.
+
+TODO status:
+
+- marked robustness funnel and failure breakdown complete
+- marked seed-1 preliminary reports complete
+- left plotted PPA/HV curves open; the JSON now has per-generation
+  curve-ready data, but no chart artifacts

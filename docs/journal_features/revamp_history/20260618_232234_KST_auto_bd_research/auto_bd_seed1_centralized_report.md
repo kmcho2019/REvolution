@@ -33,6 +33,54 @@ Status: preliminary development-subset report.
 | `netlist_motif_occupancy` | 192 | 0.2350 | 0/4/2 | 0.0606 | 1/3/2 | 64 | 128 | 37 | 13 | 8 | -3.0274 | 2818.0163 | 576 |
 | `synthesis_trajectory_nod` | 205 | 0.2511 | 0/5/1 | 0.1208 | 2/3/1 | 72 | 133 | 52 | 13 | 11 | -2.0643 | 2732.1768 | 576 |
 
+## Robustness Funnel
+
+| Method | Total | Syntax | Functionality | Synthesis | OpenROAD | Valid PPA |
+| --- | --- | --- | --- | --- | --- | --- |
+| `classic_revolution` | 288 | 275 (95.5%) | 209 (72.6%) | 209 (72.6%) | 209 (72.6%) | 209 (72.6%) |
+| `landing_smooth_qd_manual_bd` | 288 | 275 (95.5%) | 219 (76.0%) | 219 (76.0%) | 219 (76.0%) | 219 (76.0%) |
+| `random_descriptor_qd` | 288 | 248 (86.1%) | 213 (74.0%) | 213 (74.0%) | 213 (74.0%) | 213 (74.0%) |
+| `simple_yosys_stat_bd` | 288 | 257 (89.2%) | 201 (69.8%) | 201 (69.8%) | 201 (69.8%) | 201 (69.8%) |
+| `netlist_motif_occupancy` | 288 | 251 (87.2%) | 192 (66.7%) | 192 (66.7%) | 192 (66.7%) | 192 (66.7%) |
+| `synthesis_trajectory_nod` | 288 | 259 (89.9%) | 205 (71.2%) | 205 (71.2%) | 205 (71.2%) | 205 (71.2%) |
+
+## Failure Breakdown
+
+| Method | Failure Reason | Count |
+| --- | --- | --- |
+| `classic_revolution` | `failed_functionality` | 66 |
+| `classic_revolution` | `failed_syntax` | 13 |
+| `landing_smooth_qd_manual_bd` | `failed_functionality` | 56 |
+| `landing_smooth_qd_manual_bd` | `failed_syntax` | 13 |
+| `random_descriptor_qd` | `failed_functionality` | 35 |
+| `random_descriptor_qd` | `failed_syntax` | 22 |
+| `random_descriptor_qd` | `failed_diff` | 17 |
+| `random_descriptor_qd` | `failed_synthesis` | 1 |
+| `simple_yosys_stat_bd` | `failed_functionality` | 56 |
+| `simple_yosys_stat_bd` | `failed_diff` | 22 |
+| `simple_yosys_stat_bd` | `failed_syntax` | 9 |
+| `netlist_motif_occupancy` | `failed_functionality` | 59 |
+| `netlist_motif_occupancy` | `failed_syntax` | 18 |
+| `netlist_motif_occupancy` | `failed_diff` | 18 |
+| `netlist_motif_occupancy` | `failed_format` | 1 |
+| `synthesis_trajectory_nod` | `failed_functionality` | 53 |
+| `synthesis_trajectory_nod` | `failed_syntax` | 15 |
+| `synthesis_trajectory_nod` | `failed_diff` | 14 |
+| `synthesis_trajectory_nod` | `failed_synthesis_functionality` | 1 |
+
+## Anytime Summary
+
+| Method | Final Gen | Final Covered | Final Fitness | Final HV | Fitness AUC | HV AUC |
+| --- | --- | --- | --- | --- | --- | --- |
+| `classic_revolution` | 3 | 6 | 0.2671 | 0.1245 | 0.2327 | 0.0728 |
+| `landing_smooth_qd_manual_bd` | 3 | 6 | 0.2271 | 0.1059 | 0.2095 | 0.0643 |
+| `random_descriptor_qd` | 3 | 6 | 0.2645 | 0.1175 | 0.2451 | 0.0987 |
+| `simple_yosys_stat_bd` | 3 | 6 | 0.2512 | 0.1242 | 0.2262 | 0.0919 |
+| `netlist_motif_occupancy` | 3 | 6 | 0.2350 | 0.0606 | 0.2087 | 0.0416 |
+| `synthesis_trajectory_nod` | 3 | 6 | 0.2511 | 0.1208 | 0.2214 | 0.0789 |
+
+The JSON report includes per-generation anytime rows for each method.
+
 ## Per-Problem Win/Loss Matrix
 
 | Method | Problem | Fitness Delta | Fitness | HV Delta | HV |

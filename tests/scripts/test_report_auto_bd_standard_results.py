@@ -48,14 +48,22 @@ def test_build_report_marks_gate0_and_hv_win(tmp_path: Path) -> None:
 
     gates = {row["method_name"]: row for row in report["gate_matrix"]}
     leaderboard = {row["method_name"]: row for row in report["leaderboard"]}
+    robustness = {row["method_name"]: row for row in report["robustness_funnel"]}
     comparisons = {
         (row["method_name"], row["problem_id"]): row
         for row in report["comparison_matrix"]
+    }
+    failures = {
+        (row["method_name"], row["failure_reason"]): row["count"]
+        for row in report["failure_breakdown"]
     }
     assert gates["netlist_motif_occupancy"]["gate0"] == "PASS"
     assert leaderboard["netlist_motif_occupancy"]["hv_wins"] == 1
     assert leaderboard["netlist_motif_occupancy"]["fitness_wins"] == 1
     assert comparisons[("netlist_motif_occupancy", "Bench/ProbA")]["fitness_outcome"] == "W"
+    assert robustness["classic_revolution"]["total_candidates"] == 2
+    assert failures[("classic_revolution", "testbench_functional_failure")] == 1
+    assert report["anytime_summary"][0]["final_generation"] == 1
     assert leaderboard["classic_revolution"]["duplicate_netlist_count"] == 0
 
 
@@ -121,7 +129,12 @@ def _write_standard_dir(
                 "method_name": method,
                 "problem_id": problem_id,
                 "benchmark_source": "Bench",
+                "syntax_pass": True,
+                "functionality_pass": True,
+                "synthesis_pass": True,
+                "openroad_pass": True,
                 "valid_ppa": True,
+                "failure_reason": "",
                 "area": area,
                 "power": power,
                 "timing_or_clock_period": 0.0,
@@ -129,6 +142,24 @@ def _write_standard_dir(
                 "canonical_netlist_hash": netlist_hash,
                 "motif_signature_hash": f"{netlist_hash}_motif",
                 "generation": 0,
+            },
+            {
+                "method_name": method,
+                "problem_id": problem_id,
+                "benchmark_source": "Bench",
+                "syntax_pass": True,
+                "functionality_pass": False,
+                "synthesis_pass": False,
+                "openroad_pass": False,
+                "valid_ppa": False,
+                "failure_reason": "testbench_functional_failure",
+                "area": None,
+                "power": None,
+                "timing_or_clock_period": None,
+                "fitness": None,
+                "canonical_netlist_hash": None,
+                "motif_signature_hash": None,
+                "generation": 1,
             }
         ]
     )

@@ -96,7 +96,7 @@ evidence and rationale.
 
 - [ ] Implement per-method report generation from artifacts.
 - [x] Emit standardized results files and `run_manifest.json`.
-- [ ] Include robustness funnel and failure breakdown.
+- [x] Include robustness funnel and failure breakdown.
 - [ ] Include PPA anytime and hypervolume curves.
 - [ ] Include QD score, coverage, entropy, and archive visualizations.
 - [ ] Include descriptor/manual-BD/PPA correlation heatmaps.
@@ -115,7 +115,7 @@ evidence and rationale.
 - [ ] Predeclare final sign-off thresholds after baseline MDE/power review.
 - [ ] Promote only methods that pass development-subset Gate 0 and
   robustness gates.
-- [ ] Produce seed-1 preliminary reports for fast sanity checks.
+- [x] Produce seed-1 preliminary reports for fast sanity checks.
 - [ ] Produce seed-3 screening reports for promoted methods.
 - [ ] Select the simplest passing method by predeclared gates.
 - [ ] Produce seed-5 final report for the selected method when compute

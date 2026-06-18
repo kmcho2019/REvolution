@@ -57,6 +57,24 @@ def build_report(
         for method, payload in per_method.items()
     ]
     comparison_rows = per_problem_comparison_rows(per_method)
+    robustness_rows = [
+        payload["robustness"]
+        for payload in per_method.values()
+    ]
+    failure_rows = [
+        row
+        for payload in per_method.values()
+        for row in payload["failure_breakdown"]
+    ]
+    anytime_rows = [
+        row
+        for payload in per_method.values()
+        for row in payload["anytime_metrics"]
+    ]
+    anytime_summary_rows = [
+        anytime_summary_row(method, payload["anytime_metrics"])
+        for method, payload in per_method.items()
+    ]
     problem_rows = [
         row
         for payload in per_method.values()
@@ -70,6 +88,10 @@ def build_report(
         "normalization": normalization_payload(),
         "gate_matrix": gate_rows,
         "leaderboard": leaderboard_rows,
+        "robustness_funnel": robustness_rows,
+        "failure_breakdown": failure_rows,
+        "anytime_summary": anytime_summary_rows,
+        "anytime_metrics": anytime_rows,
         "comparison_matrix": comparison_rows,
         "problem_metrics": problem_rows,
         "artifact_roots": {
@@ -101,6 +123,9 @@ def load_method_result(method: str, result_dir: Path, repo_root: Path) -> dict[s
     return {
         "summary": summary,
         "problem_metrics": problem_rows,
+        "robustness": robustness_row(method, candidates),
+        "failure_breakdown": failure_breakdown_rows(method, candidates),
+        "anytime_metrics": build_anytime_rows(method, candidates, repo_root),
         "archive": archive.to_dict("records"),
         "generation": per_generation.to_dict("records"),
     }
@@ -149,6 +174,99 @@ def problem_metric_row(
         "duplicate_netlist_count": int(len(valid)) - nunique(valid, "canonical_netlist_hash"),
         "ppa_front_unique_netlist_count": len(ppa_front_hashes),
         "best_improvements": best_improvements(front, objective_metrics),
+    }
+
+
+def robustness_row(method: str, candidates: pd.DataFrame) -> dict[str, Any]:
+    total = int(len(candidates))
+    assert total > 0
+    return {
+        "method_name": method,
+        "total_candidates": total,
+        "syntax_pass": bool_count(candidates, "syntax_pass"),
+        "functionality_pass": bool_count(candidates, "functionality_pass"),
+        "synthesis_pass": bool_count(candidates, "synthesis_pass"),
+        "openroad_pass": bool_count(candidates, "openroad_pass"),
+        "valid_ppa": bool_count(candidates, "valid_ppa"),
+        "syntax_rate": bool_count(candidates, "syntax_pass") / total,
+        "functionality_rate": bool_count(candidates, "functionality_pass") / total,
+        "synthesis_rate": bool_count(candidates, "synthesis_pass") / total,
+        "openroad_rate": bool_count(candidates, "openroad_pass") / total,
+        "valid_ppa_rate": bool_count(candidates, "valid_ppa") / total,
+    }
+
+
+def failure_breakdown_rows(method: str, candidates: pd.DataFrame) -> list[dict[str, Any]]:
+    failures = candidates.loc[candidates["valid_ppa"].eq(False)].copy()
+    if failures.empty:
+        return []
+    counts = failures["failure_reason"].fillna("unknown").replace("", "unknown").value_counts()
+    return [
+        {
+            "method_name": method,
+            "failure_reason": str(reason),
+            "count": int(count),
+        }
+        for reason, count in counts.items()
+    ]
+
+
+def build_anytime_rows(
+    method: str,
+    candidates: pd.DataFrame,
+    repo_root: Path,
+) -> list[dict[str, Any]]:
+    generations = sorted(int(value) for value in candidates["generation"].dropna().unique())
+    problem_ids = sorted(str(value) for value in candidates["problem_id"].dropna().unique())
+    rows = []
+    for generation in generations:
+        best_values = []
+        hv_values = []
+        covered = 0
+        valid_count = 0
+        for problem_id in problem_ids:
+            problem_candidates = candidates.loc[
+                candidates["problem_id"].eq(problem_id)
+                & candidates["generation"].le(generation)
+                & candidates["valid_ppa"].eq(True)
+            ].copy()
+            if problem_candidates.empty:
+                continue
+            covered += 1
+            valid_count += int(len(problem_candidates))
+            best = finite_max(problem_candidates["fitness"].tolist())
+            if best is not None:
+                best_values.append(best)
+            benchmark, problem = problem_id.split("/", 1)
+            ref_metrics = load_reference_ppa(repo_root, benchmark, problem)
+            objective_metrics = objective_metrics_for_reference(ref_metrics)
+            points = ppa_points(problem_candidates, ref_metrics, objective_metrics)
+            front_indexes = pareto_front([row["point"] for row in points]) if points else []
+            hv_values.append(hypervolume([points[index]["point"] for index in front_indexes]))
+        rows.append(
+            {
+                "method_name": method,
+                "generation": generation,
+                "covered_problems": covered,
+                "valid_ppa_candidate_count": valid_count,
+                "mean_best_fitness": mean(best_values) if best_values else None,
+                "mean_hypervolume": mean(hv_values) if hv_values else None,
+            }
+        )
+    return rows
+
+
+def anytime_summary_row(method: str, rows: list[dict[str, Any]]) -> dict[str, Any]:
+    assert rows, method
+    final = rows[-1]
+    return {
+        "method_name": method,
+        "final_generation": final["generation"],
+        "final_covered_problems": final["covered_problems"],
+        "final_mean_best_fitness": final["mean_best_fitness"],
+        "final_mean_hypervolume": final["mean_hypervolume"],
+        "auc_mean_best_fitness": mean(row["mean_best_fitness"] for row in rows),
+        "auc_mean_hypervolume": mean(row["mean_hypervolume"] for row in rows),
     }
 
 
@@ -377,6 +495,74 @@ def render_markdown(report: dict[str, Any]) -> str:
             ],
         ),
         "",
+        "## Robustness Funnel",
+        "",
+        markdown_table(
+            [
+                "Method",
+                "Total",
+                "Syntax",
+                "Functionality",
+                "Synthesis",
+                "OpenROAD",
+                "Valid PPA",
+            ],
+            [
+                [
+                    code(row["method_name"]),
+                    row["total_candidates"],
+                    count_rate(row, "syntax_pass", "syntax_rate"),
+                    count_rate(row, "functionality_pass", "functionality_rate"),
+                    count_rate(row, "synthesis_pass", "synthesis_rate"),
+                    count_rate(row, "openroad_pass", "openroad_rate"),
+                    count_rate(row, "valid_ppa", "valid_ppa_rate"),
+                ]
+                for row in report["robustness_funnel"]
+            ],
+        ),
+        "",
+        "## Failure Breakdown",
+        "",
+        markdown_table(
+            ["Method", "Failure Reason", "Count"],
+            [
+                [
+                    code(row["method_name"]),
+                    code(row["failure_reason"]),
+                    row["count"],
+                ]
+                for row in report["failure_breakdown"]
+            ],
+        ),
+        "",
+        "## Anytime Summary",
+        "",
+        markdown_table(
+            [
+                "Method",
+                "Final Gen",
+                "Final Covered",
+                "Final Fitness",
+                "Final HV",
+                "Fitness AUC",
+                "HV AUC",
+            ],
+            [
+                [
+                    code(row["method_name"]),
+                    row["final_generation"],
+                    row["final_covered_problems"],
+                    fmt(row["final_mean_best_fitness"]),
+                    fmt(row["final_mean_hypervolume"]),
+                    fmt(row["auc_mean_best_fitness"]),
+                    fmt(row["auc_mean_hypervolume"]),
+                ]
+                for row in report["anytime_summary"]
+            ],
+        ),
+        "",
+        "The JSON report includes per-generation anytime rows for each method.",
+        "",
         "## Per-Problem Win/Loss Matrix",
         "",
         markdown_table(
@@ -482,6 +668,10 @@ def by_problem(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
     return {str(row["problem_id"]): row for row in rows}
 
 
+def bool_count(frame: pd.DataFrame, column: str) -> int:
+    return int(frame[column].eq(True).sum())
+
+
 def finite_max(values: list[Any]) -> float | None:
     finite = [float(value) for value in values if is_finite(value)]
     if not finite:
@@ -540,6 +730,12 @@ def method_sort_key(item: tuple[str, Path]) -> tuple[int, str]:
 
 def code(value: object) -> str:
     return f"`{value}`"
+
+
+def count_rate(row: dict[str, Any], count_name: str, rate_name: str) -> str:
+    count = int(row[count_name])
+    rate = float(row[rate_name])
+    return f"{count} ({rate:.1%})"
 
 
 def fmt(value: object) -> str:
