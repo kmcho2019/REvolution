@@ -105,7 +105,11 @@ def load_summary_statuses(run_dir: Path) -> dict[str, dict[str, str]]:
             if not line:
                 continue
             parts = line.split(",", 4)
-            assert len(parts) == 5, f"bad summary line in {path}: {line}"
+            assert len(parts) in {2, 5}, f"bad summary line in {path}: {line}"
+            if len(parts) == 2:
+                problem, status = parts
+                statuses[problem] = {"summary_status": status, "best_code_path": ""}
+                continue
             problem, status, best_code_path, _, _score = parts
             statuses[problem] = {
                 "summary_status": status,

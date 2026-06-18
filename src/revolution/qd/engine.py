@@ -12,8 +12,11 @@ import time
 import traceback
 from collections import defaultdict
 from collections import deque
+from pathlib import Path
 from typing import Any, Literal, cast
 
+from revolution.auto_bd.netlist_hash import canonical_netlist_hash
+from revolution.auto_bd.random_descriptor import random_hash_descriptor_values
 from revolution.algorithm import (
     CLASSIC_FAIL_STRATEGIES,
     CLASSIC_SUCCESS_STRATEGIES,
@@ -413,6 +416,30 @@ class QDEngine(EoHEngine):
         return bool(
             descriptor_requirements(self._archive_axes()).get("requires_graph_metrics")
         )
+
+    def _requires_auto_bd_hash_metrics(self) -> bool:
+        return bool(
+            descriptor_requirements(self._archive_axes()).get("requires_auto_bd_hash")
+        )
+
+    def _extract_candidate_descriptor_values(
+        self,
+        cand: Heuristic,
+        synthesis_result: dict[str, Any],
+    ) -> dict[str, float]:
+        if not self._requires_auto_bd_hash_metrics():
+            return {}
+        if not (
+            synthesis_result.get("synthesis_success")
+            and synthesis_result.get("ppa_success")
+        ):
+            return {}
+        path = Path(str(synthesis_result["synthesized_netlist_path"]))
+        assert path.is_file(), f"missing synthesized netlist: {path}"
+        netlist_hash = canonical_netlist_hash(
+            path.read_text(encoding="utf-8", errors="ignore")
+        )
+        return random_hash_descriptor_values(netlist_hash)
 
     def _phase_mode(self, phase: str) -> Literal["whole", "diff"]:
         if not self._uses_descriptor_guided_generation():

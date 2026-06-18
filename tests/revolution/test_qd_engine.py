@@ -357,7 +357,14 @@ def test_qd_engine_coerces_seed_diff_to_whole_even_from_problem_spec(tmp_path, m
 
 def test_qd_engine_rebuilds_archive_from_success_pool(tmp_path, monkeypatch):
     engine = _engine(tmp_path, monkeypatch)
-    cand = Heuristic("t", "module m; endmodule", "", score=0.5, generation=0, status="success")
+    cand = Heuristic(
+        "t",
+        "module m; endmodule",
+        "",
+        score=0.5,
+        generation=0,
+        status="success",
+    )
     cand.ppa_success = True
     cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
     engine.success_pool = [cand]
@@ -726,6 +733,49 @@ def test_qd_engine_uses_cvt_axes_for_descriptor_tuple(tmp_path, monkeypatch):
     assert descriptors is not None
     assert descriptors[0] == pytest.approx(0.25)
     assert descriptors[1] == pytest.approx(0.1)
+
+
+def test_qd_engine_extracts_random_hash_descriptors(tmp_path, monkeypatch):
+    cfg = tmp_path / "profiles.yaml"
+    cfg.write_text(
+        "profiles:\n"
+        "  random_hash_3d:\n"
+        "    - random_hash_0\n"
+        "    - random_hash_1\n"
+        "    - random_hash_2\n",
+        encoding="utf-8",
+    )
+    netlist = tmp_path / "candidate.syn.v"
+    netlist.write_text(
+        "module m(input a, output y);\n"
+        "  INV_X1 u0 (.A(a), .ZN(y));\n"
+        "endmodule\n",
+        encoding="utf-8",
+    )
+    engine = _engine(
+        tmp_path,
+        monkeypatch,
+        qd_descriptor_profile="random_hash_3d",
+        qd_descriptor_file=str(cfg),
+        qd_grid_axes=(),
+    )
+    cand = Heuristic("t", "module m; endmodule", "", score=0.5, generation=0, status="success")
+    cand.ppa_success = True
+    cand.ppa_metrics = {"power": 0.9, "area": 90.0, "eff_clk_period": 0.8}
+
+    values = engine._extract_candidate_descriptor_values(
+        cand,
+        {
+            "synthesis_success": True,
+            "ppa_success": True,
+            "synthesized_netlist_path": str(netlist),
+        },
+    )
+    cand.descriptor_values = values
+
+    assert tuple(values) == ("random_hash_0", "random_hash_1", "random_hash_2")
+    assert all(0.0 <= value < 1.0 for value in values.values())
+    assert engine._descriptor_tuple(cand) == pytest.approx(tuple(values.values()))
 
 
 def test_qd_engine_builds_grid_archive_from_descriptor_file(tmp_path, monkeypatch):

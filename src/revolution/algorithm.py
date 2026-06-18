@@ -1072,6 +1072,14 @@ class EoHEngine:
             top_module_name=top_module_name,
         )
 
+    def _extract_candidate_descriptor_values(
+        self,
+        cand: Heuristic,
+        synthesis_result: dict[str, Any],
+    ) -> dict[str, float]:
+        """Extract descriptor values that are not part of standard metrics."""
+        return {}
+
     def _evaluate_candidate_pipeline(
         self,
         cand: Heuristic,
@@ -1194,6 +1202,9 @@ class EoHEngine:
             )
             if callable(extract_graph_metrics)
             else {}
+        )
+        cand.descriptor_values = _coerce_float_metric_dict(
+            self._extract_candidate_descriptor_values(cand, synth_results)
         )
 
         if (

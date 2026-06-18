@@ -48,6 +48,19 @@ def test_main_writes_summary(tmp_path):
     assert payload["coverage_problem_seed_set"] == ["Bench/ProbA#seed=1001"]
 
 
+def test_load_summary_statuses_allows_failed_rerun_history(tmp_path):
+    run_dir = _write_run(tmp_path)
+    (run_dir / "20260617_summary_results.txt").write_text(
+        "ProbA,initialization_failed\n",
+        encoding="utf-8",
+    )
+
+    statuses = mod.load_summary_statuses(run_dir)
+
+    assert statuses["ProbA"]["summary_status"] == "success"
+    assert statuses["ProbA"]["best_code_path"] == "/tmp/ProbA/code.sv"
+
+
 def _write_run(tmp_path: Path) -> Path:
     run_dir = tmp_path / "run"
     run_dir.mkdir()
