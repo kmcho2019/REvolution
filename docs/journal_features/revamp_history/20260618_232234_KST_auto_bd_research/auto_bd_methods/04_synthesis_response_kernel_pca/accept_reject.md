@@ -80,6 +80,7 @@ ablation rather than the selected Auto-BD method.
 - Fitness W/T/L versus classic: 4/31/4.
 - Mean hypervolume: 0.1222 versus 0.1202 for classic.
 - Hypervolume W/T/L versus classic: 8/20/11.
+- Fixed PPA-grid coverage: 0.1090 versus 0.1074 for classic.
 - PPA-front unique netlists: 58.0 versus 54.0 for classic.
 - Unique canonical netlists: 300.0 versus 323.7 for classic.
 - Unique motif signatures: 217.7 versus 239.3 for classic.
@@ -100,25 +101,25 @@ lower than classic, HV improves by only about 1.6 percent rather than the
 predeclared 5 percent target, and diversity recovery is too small:
 PPA-front unique netlists improve by about 7.4 percent, below the 20
 percent target, while unique canonical netlists and common-audit cells
-regress.
+regress. Fixed PPA-grid coverage is only slightly above classic and below
+landing manual-BD.
 
 ## Remaining Evidence
 
 - `ANHV@1.5`.
 - Learned-BD scatter and descriptor/PPA correlation plots.
-- Fixed PPA-grid coverage/occupancy reporting.
 
 ## Acceptance Bar
 
 Future projected methods are final candidates only if they:
 
-- covers every classic-covered problem,
-- has valid-PPA rate drop <= 5 percentage points versus classic,
-- avoids scalar fitness collapse,
-- improves strict HV or `ANHV@1.5` by at least 5 percent paired versus
-  classic, or gives a documented comparable PPA-quality gain,
-- improves Pareto-front unique netlists by at least 20 percent,
-- holds at seed-3 before any seed-5 final run.
+- cover every classic-covered problem,
+- have valid-PPA rate drop <= 5 percentage points versus classic,
+- avoid scalar fitness collapse,
+- improve strict HV or `ANHV@1.5` by at least 5 percent paired versus
+  classic, or give a documented comparable PPA-quality gain,
+- improve Pareto-front unique netlists by at least 20 percent,
+- hold at seed-3 before any seed-5 final run.
 
 If it improves diversity while losing too much PPA or repair robustness,
 keep it as an ablation rather than the selected journal method.
@@ -127,5 +128,5 @@ keep it as an ablation rather than the selected journal method.
 
 Use `sr_random_relu_pca_qd` as an ablation. Do not run seed-5 for it
 under the current evidence. If compute permits, try `sr_rff_pca_qd` only
-as a kernel control after fixed PPA-grid reporting is available and keep
+as a kernel control after reviewing the fixed PPA-grid evidence and keep
 the same fitting/leakage rules.

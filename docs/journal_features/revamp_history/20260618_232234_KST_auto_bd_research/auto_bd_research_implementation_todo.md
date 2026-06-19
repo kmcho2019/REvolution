@@ -112,7 +112,7 @@ evidence and rationale.
 - [x] Include canonical-netlist uniqueness and duplicate-cell leakage.
 - [x] Include common-audit archive QD score and coverage.
 - [x] Include motif-signature and PPA-relevant diversity.
-- [ ] Include fixed PPA-grid coverage or occupancy for projected and
+- [x] Include fixed PPA-grid coverage or occupancy for projected and
   learned descriptor comparisons.
 - [x] Include representative elite examples.
 - [x] Implement centralized cross-method report generation.

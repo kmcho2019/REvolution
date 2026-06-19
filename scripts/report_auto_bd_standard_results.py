@@ -38,6 +38,9 @@ FITNESS_EPSILON = 0.03
 HV_EPSILON = 1e-9
 REFERENCE_METHOD = "classic_revolution"
 PPA_METRICS = ("area", "power", "timing_or_clock_period", "fitness")
+PPA_GRID_BINS = 4
+PPA_GRID_MIN = 0.0
+PPA_GRID_MAX = 1.0
 
 
 def build_report(
@@ -184,6 +187,8 @@ def problem_metric_row(
     points = ppa_points(valid, ref_metrics, objective_metrics)
     front_indexes = pareto_front([row["point"] for row in points]) if points else []
     front = [points[index] for index in front_indexes]
+    ppa_grid_cells = {ppa_grid_cell(row["point"]) for row in points}
+    ppa_grid_total_cells = PPA_GRID_BINS ** len(objective_metrics)
     best_fitness = finite_max(valid["fitness"].tolist())
     ppa_front_hashes = {
         str(row["canonical_netlist_hash"])
@@ -203,6 +208,9 @@ def problem_metric_row(
         },
         "pareto_point_count": len(front),
         "hypervolume": hypervolume([row["point"] for row in front]),
+        "ppa_grid_total_cells": ppa_grid_total_cells,
+        "ppa_grid_occupied_cells": len(ppa_grid_cells),
+        "ppa_grid_coverage": len(ppa_grid_cells) / ppa_grid_total_cells,
         "reference_beating_count": sum(
             1
             for row in points
@@ -490,6 +498,17 @@ def ppa_points(
     return rows
 
 
+def ppa_grid_cell(point: tuple[float, ...]) -> str:
+    assert point
+    width = (PPA_GRID_MAX - PPA_GRID_MIN) / PPA_GRID_BINS
+    parts = []
+    for value in point:
+        clipped = min(max(float(value), PPA_GRID_MIN), PPA_GRID_MAX)
+        bin_index = min(int((clipped - PPA_GRID_MIN) / width), PPA_GRID_BINS - 1)
+        parts.append(str(bin_index))
+    return "ppa_grid:" + ",".join(parts)
+
+
 def best_improvements(
     front: list[dict[str, Any]],
     objective_metrics: tuple[str, ...],
@@ -553,6 +572,12 @@ def leaderboard_row(
         "hv_wins": hv_result["wins"],
         "hv_ties": hv_result["ties"],
         "hv_losses": hv_result["losses"],
+        "ppa_grid_occupied_cells": sum(
+            int(row["ppa_grid_occupied_cells"]) for row in problem_rows
+        ),
+        "mean_ppa_grid_coverage": mean(
+            row["ppa_grid_coverage"] for row in problem_rows
+        ),
         "unique_canonical_netlist_count": int(summary["unique_canonical_netlist_count"]),
         "duplicate_netlist_count": sum(int(row["duplicate_netlist_count"]) for row in problem_rows),
         "unique_motif_signature_count": int(summary["unique_motif_signature_count"]),
@@ -665,6 +690,8 @@ def render_markdown(report: dict[str, Any]) -> str:
                 "Fitness W/T/L",
                 "Mean HV",
                 "HV W/T/L",
+                "PPA Grid Cells",
+                "PPA Grid Cov",
                 "Unique Netlists",
                 "Dup Netlists",
                 "Unique Motifs",
@@ -682,6 +709,8 @@ def render_markdown(report: dict[str, Any]) -> str:
                     f"{row['fitness_wins']}/{row['fitness_ties']}/{row['fitness_losses']}",
                     fmt(row["mean_hypervolume"]),
                     f"{row['hv_wins']}/{row['hv_ties']}/{row['hv_losses']}",
+                    row["ppa_grid_occupied_cells"],
+                    fmt(row["mean_ppa_grid_coverage"]),
                     row["unique_canonical_netlist_count"],
                     row["duplicate_netlist_count"],
                     row["unique_motif_signature_count"],
@@ -877,6 +906,8 @@ def render_markdown(report: dict[str, Any]) -> str:
                 "Valid PPA",
                 "Best Fitness",
                 "HV",
+                "PPA Grid Cells",
+                "PPA Grid Cov",
                 "Pareto Points",
                 "Ref-Beating",
                 "Unique Netlists",
@@ -891,6 +922,8 @@ def render_markdown(report: dict[str, Any]) -> str:
                     row["valid_ppa_candidate_count"],
                     fmt(row["best_fitness"]),
                     fmt(row["hypervolume"]),
+                    row["ppa_grid_occupied_cells"],
+                    fmt(row["ppa_grid_coverage"]),
                     row["pareto_point_count"],
                     row["reference_beating_count"],
                     row["unique_canonical_netlist_count"],
@@ -918,6 +951,7 @@ def write_figures(report: dict[str, Any], output_dir: Path) -> dict[str, str]:
         "anytime_mean_hypervolume": output_dir / "anytime_mean_hypervolume.png",
         "qd_common_audit_coverage": output_dir / "qd_common_audit_coverage.png",
         "qd_common_audit_entropy": output_dir / "qd_common_audit_entropy.png",
+        "ppa_grid_coverage": output_dir / "ppa_grid_coverage.png",
         "qd_common_audit_cells_heatmap": output_dir
         / "qd_common_audit_cells_heatmap.png",
         "descriptor_common_audit_ppa_correlation": output_dir
@@ -949,6 +983,12 @@ def write_figures(report: dict[str, Any], output_dir: Path) -> dict[str, str]:
         "common_audit_entropy_normalized",
         "Normalized Common-Audit Entropy",
         figures["qd_common_audit_entropy"],
+    )
+    plot_problem_metric_bar(
+        report["problem_metrics"],
+        "ppa_grid_coverage",
+        "Mean PPA-Grid Coverage",
+        figures["ppa_grid_coverage"],
     )
     plot_archive_heatmap(
         report["archive_metrics"],
@@ -1020,6 +1060,26 @@ def plot_qd_bar(
     fig, axis = plt.subplots(figsize=(8.0, 4.8))
     axis.bar(range(len(frame)), frame[metric_name].fillna(0.0))
     axis.set_xticks(range(len(frame)), methods, rotation=35, ha="right")
+    axis.set_ylabel(ylabel)
+    axis.grid(True, axis="y", alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=180)
+    plt.close(fig)
+
+
+def plot_problem_metric_bar(
+    rows: list[dict[str, Any]],
+    metric_name: str,
+    ylabel: str,
+    output_path: Path,
+) -> None:
+    frame = pd.DataFrame(rows)
+    assert not frame.empty
+    methods = ordered_methods(frame["method_name"].tolist())
+    means = frame.groupby("method_name")[metric_name].mean().reindex(methods)
+    fig, axis = plt.subplots(figsize=(8.0, 4.8))
+    axis.bar(range(len(means)), means.fillna(0.0))
+    axis.set_xticks(range(len(means)), methods, rotation=35, ha="right")
     axis.set_ylabel(ylabel)
     axis.grid(True, axis="y", alpha=0.3)
     fig.tight_layout()
@@ -1286,6 +1346,9 @@ def normalization_payload() -> dict[str, Any]:
         "improvement_formula": "(reference - candidate) / max(abs(reference), 1e-12)",
         "hypervolume_reference_point": 0.0,
         "hypervolume_negative_clipping": "clip each objective improvement at 0",
+        "ppa_grid_bins": PPA_GRID_BINS,
+        "ppa_grid_range": [PPA_GRID_MIN, PPA_GRID_MAX],
+        "ppa_grid_policy": "fixed problem-local grid over normalized PPA improvement",
         "combinational_objectives": ["area", "power"],
         "sequential_objectives": ["area", "power", "eff_clk_period"],
         "invalid_candidate_policy": "count for robustness, exclude from valid-only PPA/HV",

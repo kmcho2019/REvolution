@@ -159,11 +159,11 @@ Implemented:
   `sr_random_relu_pca_qd`.
 - Main seed-3 screening runs, standard results, centralized reports, and
   aggregate screening decision for `sr_random_relu_pca_qd`.
+- Fixed problem-local PPA-grid coverage reporting in centralized reports.
 
 Not implemented:
 
 - Random Fourier feature expansion.
-- Fixed PPA-grid coverage reporting for projected descriptors.
 
 ## 11. Experimental Setup
 
@@ -247,6 +247,7 @@ Seed-3 aggregate metrics:
 - Fitness W/T/L: 4/31/4 versus classic.
 - Mean hypervolume: 0.1222 versus 0.1202 for classic.
 - Hypervolume W/T/L: 8/20/11 versus classic.
+- Fixed PPA-grid coverage: 0.1090 versus 0.1074 for classic.
 - PPA-front unique netlists: 58.0 versus 54.0 for classic, about a 7.4
   percent uplift.
 - Unique canonical netlists: 300.0 versus 323.7 for classic.

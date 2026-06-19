@@ -66,6 +66,8 @@ def test_build_report_marks_gate0_and_hv_win(tmp_path: Path) -> None:
     assert report["anytime_summary"][0]["final_generation"] == 1
     assert report["qd_summary"][0]["common_audit_coverage"] == 1 / 256
     assert report["qd_summary"][0]["common_audit_entropy_bits"] == 0.0
+    assert leaderboard["classic_revolution"]["ppa_grid_occupied_cells"] == 1
+    assert leaderboard["classic_revolution"]["mean_ppa_grid_coverage"] == 1 / 16
     assert any(
         row["descriptor_space"] == "common_audit"
         for row in report["descriptor_correlations"]
@@ -118,8 +120,11 @@ def test_main_writes_markdown_and_json(tmp_path: Path) -> None:
     assert "Seed: `1001`" in report_text
     payload = json.loads(output_json.read_text(encoding="utf-8"))
     assert payload["normalization"]["hypervolume_reference_point"] == 0.0
+    assert payload["normalization"]["ppa_grid_bins"] == 4
+    assert payload["problem_metrics"][0]["ppa_grid_coverage"] == 1 / 16
     assert (figure_dir / "anytime_mean_best_fitness.png").read_bytes().startswith(b"\x89PNG")
     assert (figure_dir / "anytime_mean_hypervolume.png").read_bytes().startswith(b"\x89PNG")
+    assert (figure_dir / "ppa_grid_coverage.png").read_bytes().startswith(b"\x89PNG")
     assert (figure_dir / "qd_common_audit_coverage.png").read_bytes().startswith(b"\x89PNG")
     assert (figure_dir / "qd_common_audit_entropy.png").read_bytes().startswith(b"\x89PNG")
     assert (figure_dir / "qd_common_audit_cells_heatmap.png").read_bytes().startswith(b"\x89PNG")

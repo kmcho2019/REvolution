@@ -31,17 +31,17 @@ Status: generated from standardized result artifacts.
 
 ## Leaderboard
 
-| Method | Valid PPA | Mean Fitness | Fitness W/T/L | Mean HV | HV W/T/L | Unique Netlists | Dup Netlists | Unique Motifs | PPA-Front Netlists | Audit Cells | Audit QD | Runtime s | LLM Calls |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `classic_revolution` | 209 | 0.2671 | 0/6/0 | 0.1245 | 0/6/0 | 70 | 139 | 43 | 12 | 12 | 2.3163 | 2472.4182 | 576 |
-| `landing_smooth_qd_manual_bd` | 219 | 0.2271 | 0/5/1 | 0.1059 | 0/4/2 | 61 | 158 | 33 | 18 | 9 | 1.8526 | 2634.4162 | 576 |
-| `random_descriptor_qd` | 213 | 0.2645 | 0/6/0 | 0.1175 | 2/3/1 | 64 | 149 | 41 | 21 | 8 | 1.7008 | 2836.8772 | 576 |
-| `simple_yosys_stat_bd` | 201 | 0.2512 | 0/5/1 | 0.1242 | 1/3/2 | 62 | 139 | 45 | 16 | 11 | 2.0779 | 2488.3132 | 576 |
-| `netlist_motif_occupancy` | 192 | 0.2350 | 0/4/2 | 0.0606 | 1/3/2 | 64 | 128 | 37 | 13 | 8 | -3.0274 | 2818.0163 | 576 |
-| `synthesis_trajectory_nod` | 205 | 0.2511 | 0/5/1 | 0.1208 | 2/3/1 | 72 | 133 | 52 | 13 | 11 | -2.0643 | 2732.1768 | 576 |
-| `synthesis_trajectory_motif_nod` | 198 | 0.2380 | 0/5/1 | 0.1204 | 0/5/1 | 77 | 121 | 45 | 20 | 16 | 1.7144 | 3322.3451 | 576 |
-| `sr_raw_pca_qd` | 209 | 0.2404 | 0/5/1 | 0.1208 | 1/4/1 | 74 | 135 | 48 | 14 | 12 | 1.9663 | 2588.9913 | 576 |
-| `sr_random_relu_pca_qd` | 197 | 0.2536 | 1/4/1 | 0.1454 | 2/3/1 | 68 | 129 | 44 | 11 | 10 | 2.3765 | 2647.4207 | 576 |
+| Method | Valid PPA | Mean Fitness | Fitness W/T/L | Mean HV | HV W/T/L | PPA Grid Cells | PPA Grid Cov | Unique Netlists | Dup Netlists | Unique Motifs | PPA-Front Netlists | Audit Cells | Audit QD | Runtime s | LLM Calls |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `classic_revolution` | 209 | 0.2671 | 0/6/0 | 0.1245 | 0/6/0 | 12 | 0.0703 | 70 | 139 | 43 | 12 | 12 | 2.3163 | 2472.4182 | 576 |
+| `landing_smooth_qd_manual_bd` | 219 | 0.2271 | 0/5/1 | 0.1059 | 0/4/2 | 11 | 0.0755 | 61 | 158 | 33 | 18 | 9 | 1.8526 | 2634.4162 | 576 |
+| `random_descriptor_qd` | 213 | 0.2645 | 0/6/0 | 0.1175 | 2/3/1 | 12 | 0.0703 | 64 | 149 | 41 | 21 | 8 | 1.7008 | 2836.8772 | 576 |
+| `simple_yosys_stat_bd` | 201 | 0.2512 | 0/5/1 | 0.1242 | 1/3/2 | 12 | 0.0781 | 62 | 139 | 45 | 16 | 11 | 2.0779 | 2488.3132 | 576 |
+| `netlist_motif_occupancy` | 192 | 0.2350 | 0/4/2 | 0.0606 | 1/3/2 | 11 | 0.0677 | 64 | 128 | 37 | 13 | 8 | -3.0274 | 2818.0163 | 576 |
+| `synthesis_trajectory_nod` | 205 | 0.2511 | 0/5/1 | 0.1208 | 2/3/1 | 12 | 0.0781 | 72 | 133 | 52 | 13 | 11 | -2.0643 | 2732.1768 | 576 |
+| `synthesis_trajectory_motif_nod` | 198 | 0.2380 | 0/5/1 | 0.1204 | 0/5/1 | 13 | 0.0807 | 77 | 121 | 45 | 20 | 16 | 1.7144 | 3322.3451 | 576 |
+| `sr_raw_pca_qd` | 209 | 0.2404 | 0/5/1 | 0.1208 | 1/4/1 | 12 | 0.0703 | 74 | 135 | 48 | 14 | 12 | 1.9663 | 2588.9913 | 576 |
+| `sr_random_relu_pca_qd` | 197 | 0.2536 | 1/4/1 | 0.1454 | 2/3/1 | 12 | 0.0781 | 68 | 129 | 44 | 11 | 10 | 2.3765 | 2647.4207 | 576 |
 
 ## QD Archive Metrics
 
@@ -152,6 +152,7 @@ The JSON report includes per-generation anytime rows for each method.
 - `descriptor_common_audit_ppa_correlation`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed1/descriptor_common_audit_ppa_correlation.png`
 - `descriptor_internal_ppa_correlation`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed1/descriptor_internal_ppa_correlation.png`
 - `manual_bd_ppa_correlation`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed1/manual_bd_ppa_correlation.png`
+- `ppa_grid_coverage`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed1/ppa_grid_coverage.png`
 - `qd_common_audit_cells_heatmap`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed1/qd_common_audit_cells_heatmap.png`
 - `qd_common_audit_coverage`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed1/qd_common_audit_coverage.png`
 - `qd_common_audit_entropy`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed1/qd_common_audit_entropy.png`
@@ -217,62 +218,62 @@ The JSON report includes per-generation anytime rows for each method.
 
 ## Per-Problem PPA And Diversity
 
-| Method | Problem | Valid PPA | Best Fitness | HV | Pareto Points | Ref-Beating | Unique Netlists | Dup Netlists | PPA-Front Netlists | Objectives |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `classic_revolution` | `RTLLM/Prob011_multi_16bit` | 16 | 0.3647 | 0.0245 | 1 | 3 | 12 | 4 | 1 | area/power/eff_clk_period |
-| `classic_revolution` | `RTLLM/Prob019_sub_64bit` | 43 | 0.4823 | 0.4499 | 3 | 6 | 12 | 31 | 3 | area/power |
-| `classic_revolution` | `RTLLM/Prob048_pe` | 27 | 0.0056 | 0.0000 | 8 | 11 | 4 | 23 | 2 | area/power/eff_clk_period |
-| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 31 | 0.4232 | 0.2724 | 5 | 31 | 4 | 27 | 1 | area/power |
-| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 48 | 0.2851 | 0.0000 | 1 | 22 | 19 | 29 | 1 | area/power |
-| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 44 | 0.0416 | 0.0000 | 15 | 15 | 19 | 25 | 4 | area/power/eff_clk_period |
-| `landing_smooth_qd_manual_bd` | `RTLLM/Prob011_multi_16bit` | 27 | 0.1533 | 0.0000 | 14 | 0 | 18 | 9 | 7 | area/power/eff_clk_period |
-| `landing_smooth_qd_manual_bd` | `RTLLM/Prob019_sub_64bit` | 45 | 0.4527 | 0.3628 | 1 | 5 | 8 | 37 | 1 | area/power |
-| `landing_smooth_qd_manual_bd` | `RTLLM/Prob048_pe` | 24 | 0.0066 | 0.0000 | 13 | 12 | 5 | 19 | 2 | area/power/eff_clk_period |
-| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 38 | 0.4232 | 0.2724 | 8 | 38 | 3 | 35 | 1 | area/power |
-| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 45 | 0.2851 | 0.0000 | 1 | 23 | 17 | 28 | 1 | area/power |
-| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 40 | 0.0416 | 0.0000 | 24 | 24 | 10 | 30 | 6 | area/power/eff_clk_period |
-| `random_descriptor_qd` | `RTLLM/Prob011_multi_16bit` | 33 | 0.3643 | 0.0268 | 1 | 4 | 20 | 13 | 1 | area/power/eff_clk_period |
-| `random_descriptor_qd` | `RTLLM/Prob019_sub_64bit` | 36 | 0.4527 | 0.3628 | 1 | 2 | 6 | 30 | 1 | area/power |
-| `random_descriptor_qd` | `RTLLM/Prob048_pe` | 26 | 0.0066 | 0.0000 | 6 | 9 | 7 | 19 | 4 | area/power/eff_clk_period |
-| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 40 | 0.4370 | 0.3153 | 5 | 40 | 4 | 36 | 2 | area/power |
-| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 37 | 0.2850 | 0.0000 | 15 | 14 | 13 | 24 | 7 | area/power |
-| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 41 | 0.0416 | 0.0000 | 26 | 26 | 14 | 27 | 6 | area/power/eff_clk_period |
-| `simple_yosys_stat_bd` | `RTLLM/Prob011_multi_16bit` | 26 | 0.2536 | 0.0000 | 14 | 0 | 17 | 9 | 6 | area/power/eff_clk_period |
-| `simple_yosys_stat_bd` | `RTLLM/Prob019_sub_64bit` | 40 | 0.4807 | 0.4451 | 1 | 3 | 6 | 34 | 1 | area/power |
-| `simple_yosys_stat_bd` | `RTLLM/Prob048_pe` | 23 | 0.0119 | 0.0000 | 6 | 9 | 6 | 17 | 3 | area/power/eff_clk_period |
-| `simple_yosys_stat_bd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 28 | 0.4232 | 0.2724 | 1 | 28 | 4 | 24 | 1 | area/power |
-| `simple_yosys_stat_bd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 42 | 0.2966 | 0.0275 | 5 | 15 | 13 | 29 | 3 | area/power |
-| `simple_yosys_stat_bd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 42 | 0.0416 | 0.0000 | 16 | 16 | 16 | 26 | 2 | area/power/eff_clk_period |
-| `netlist_motif_occupancy` | `RTLLM/Prob011_multi_16bit` | 22 | 0.2966 | 0.0018 | 10 | 3 | 17 | 5 | 6 | area/power/eff_clk_period |
-| `netlist_motif_occupancy` | `RTLLM/Prob019_sub_64bit` | 40 | 0.3455 | 0.0462 | 2 | 4 | 8 | 32 | 1 | area/power |
-| `netlist_motif_occupancy` | `RTLLM/Prob048_pe` | 22 | 0.0026 | 0.0000 | 3 | 10 | 5 | 17 | 2 | area/power/eff_clk_period |
-| `netlist_motif_occupancy` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 34 | 0.4370 | 0.3153 | 5 | 34 | 4 | 30 | 2 | area/power |
-| `netlist_motif_occupancy` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 38 | 0.2851 | 0.0000 | 1 | 22 | 14 | 24 | 1 | area/power |
-| `netlist_motif_occupancy` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 36 | 0.0432 | 0.0000 | 1 | 25 | 16 | 20 | 1 | area/power/eff_clk_period |
-| `synthesis_trajectory_nod` | `RTLLM/Prob011_multi_16bit` | 31 | 0.2639 | 0.0000 | 5 | 0 | 24 | 7 | 5 | area/power/eff_clk_period |
-| `synthesis_trajectory_nod` | `RTLLM/Prob019_sub_64bit` | 41 | 0.4823 | 0.4499 | 1 | 5 | 10 | 31 | 1 | area/power |
-| `synthesis_trajectory_nod` | `RTLLM/Prob048_pe` | 26 | 0.0069 | 0.0000 | 4 | 10 | 6 | 20 | 2 | area/power/eff_clk_period |
-| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 31 | 0.4232 | 0.2724 | 4 | 31 | 3 | 28 | 1 | area/power |
-| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 36 | 0.2887 | 0.0026 | 2 | 18 | 14 | 22 | 2 | area/power |
-| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 40 | 0.0416 | 0.0000 | 20 | 21 | 15 | 25 | 2 | area/power/eff_clk_period |
-| `synthesis_trajectory_motif_nod` | `RTLLM/Prob011_multi_16bit` | 27 | 0.1930 | 0.0000 | 13 | 0 | 22 | 5 | 10 | area/power/eff_clk_period |
-| `synthesis_trajectory_motif_nod` | `RTLLM/Prob019_sub_64bit` | 41 | 0.4823 | 0.4499 | 2 | 12 | 13 | 28 | 2 | area/power |
-| `synthesis_trajectory_motif_nod` | `RTLLM/Prob048_pe` | 23 | 0.0026 | 0.0000 | 1 | 9 | 3 | 20 | 1 | area/power/eff_clk_period |
-| `synthesis_trajectory_motif_nod` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 27 | 0.4232 | 0.2724 | 9 | 27 | 3 | 24 | 1 | area/power |
-| `synthesis_trajectory_motif_nod` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 41 | 0.2851 | 0.0000 | 3 | 30 | 21 | 20 | 3 | area/power |
-| `synthesis_trajectory_motif_nod` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 39 | 0.0416 | 0.0000 | 14 | 14 | 15 | 24 | 3 | area/power/eff_clk_period |
-| `sr_raw_pca_qd` | `RTLLM/Prob011_multi_16bit` | 34 | 0.2065 | 0.0000 | 12 | 0 | 22 | 12 | 5 | area/power/eff_clk_period |
-| `sr_raw_pca_qd` | `RTLLM/Prob019_sub_64bit` | 47 | 0.4823 | 0.4499 | 2 | 9 | 15 | 32 | 1 | area/power |
-| `sr_raw_pca_qd` | `RTLLM/Prob048_pe` | 15 | 0.0008 | 0.0000 | 10 | 10 | 2 | 13 | 1 | area/power/eff_clk_period |
-| `sr_raw_pca_qd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 35 | 0.4232 | 0.2724 | 4 | 35 | 4 | 31 | 1 | area/power |
-| `sr_raw_pca_qd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 36 | 0.2883 | 0.0026 | 1 | 18 | 12 | 24 | 1 | area/power |
-| `sr_raw_pca_qd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 42 | 0.0416 | 0.0000 | 20 | 20 | 19 | 23 | 5 | area/power/eff_clk_period |
-| `sr_random_relu_pca_qd` | `RTLLM/Prob011_multi_16bit` | 31 | 0.2222 | 0.0016 | 4 | 3 | 22 | 9 | 4 | area/power/eff_clk_period |
-| `sr_random_relu_pca_qd` | `RTLLM/Prob019_sub_64bit` | 44 | 0.4823 | 0.4499 | 2 | 6 | 12 | 32 | 1 | area/power |
-| `sr_random_relu_pca_qd` | `RTLLM/Prob048_pe` | 15 | 0.0150 | 0.0000 | 3 | 8 | 4 | 11 | 2 | area/power/eff_clk_period |
-| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 35 | 0.4720 | 0.4184 | 3 | 35 | 7 | 28 | 2 | area/power |
-| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 31 | 0.2886 | 0.0026 | 1 | 14 | 12 | 19 | 1 | area/power |
-| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 41 | 0.0416 | 0.0000 | 15 | 15 | 11 | 30 | 1 | area/power/eff_clk_period |
+| Method | Problem | Valid PPA | Best Fitness | HV | PPA Grid Cells | PPA Grid Cov | Pareto Points | Ref-Beating | Unique Netlists | Dup Netlists | PPA-Front Netlists | Objectives |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `classic_revolution` | `RTLLM/Prob011_multi_16bit` | 16 | 0.3647 | 0.0245 | 5 | 0.0781 | 1 | 3 | 12 | 4 | 1 | area/power/eff_clk_period |
+| `classic_revolution` | `RTLLM/Prob019_sub_64bit` | 43 | 0.4823 | 0.4499 | 2 | 0.1250 | 3 | 6 | 12 | 31 | 3 | area/power |
+| `classic_revolution` | `RTLLM/Prob048_pe` | 27 | 0.0056 | 0.0000 | 1 | 0.0156 | 8 | 11 | 4 | 23 | 2 | area/power/eff_clk_period |
+| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 31 | 0.4232 | 0.2724 | 2 | 0.1250 | 5 | 31 | 4 | 27 | 1 | area/power |
+| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 48 | 0.2851 | 0.0000 | 1 | 0.0625 | 1 | 22 | 19 | 29 | 1 | area/power |
+| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 44 | 0.0416 | 0.0000 | 1 | 0.0156 | 15 | 15 | 19 | 25 | 4 | area/power/eff_clk_period |
+| `landing_smooth_qd_manual_bd` | `RTLLM/Prob011_multi_16bit` | 27 | 0.1533 | 0.0000 | 3 | 0.0469 | 14 | 0 | 18 | 9 | 7 | area/power/eff_clk_period |
+| `landing_smooth_qd_manual_bd` | `RTLLM/Prob019_sub_64bit` | 45 | 0.4527 | 0.3628 | 3 | 0.1875 | 1 | 5 | 8 | 37 | 1 | area/power |
+| `landing_smooth_qd_manual_bd` | `RTLLM/Prob048_pe` | 24 | 0.0066 | 0.0000 | 1 | 0.0156 | 13 | 12 | 5 | 19 | 2 | area/power/eff_clk_period |
+| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 38 | 0.4232 | 0.2724 | 2 | 0.1250 | 8 | 38 | 3 | 35 | 1 | area/power |
+| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 45 | 0.2851 | 0.0000 | 1 | 0.0625 | 1 | 23 | 17 | 28 | 1 | area/power |
+| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 40 | 0.0416 | 0.0000 | 1 | 0.0156 | 24 | 24 | 10 | 30 | 6 | area/power/eff_clk_period |
+| `random_descriptor_qd` | `RTLLM/Prob011_multi_16bit` | 33 | 0.3643 | 0.0268 | 5 | 0.0781 | 1 | 4 | 20 | 13 | 1 | area/power/eff_clk_period |
+| `random_descriptor_qd` | `RTLLM/Prob019_sub_64bit` | 36 | 0.4527 | 0.3628 | 2 | 0.1250 | 1 | 2 | 6 | 30 | 1 | area/power |
+| `random_descriptor_qd` | `RTLLM/Prob048_pe` | 26 | 0.0066 | 0.0000 | 1 | 0.0156 | 6 | 9 | 7 | 19 | 4 | area/power/eff_clk_period |
+| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 40 | 0.4370 | 0.3153 | 2 | 0.1250 | 5 | 40 | 4 | 36 | 2 | area/power |
+| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 37 | 0.2850 | 0.0000 | 1 | 0.0625 | 15 | 14 | 13 | 24 | 7 | area/power |
+| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 41 | 0.0416 | 0.0000 | 1 | 0.0156 | 26 | 26 | 14 | 27 | 6 | area/power/eff_clk_period |
+| `simple_yosys_stat_bd` | `RTLLM/Prob011_multi_16bit` | 26 | 0.2536 | 0.0000 | 4 | 0.0625 | 14 | 0 | 17 | 9 | 6 | area/power/eff_clk_period |
+| `simple_yosys_stat_bd` | `RTLLM/Prob019_sub_64bit` | 40 | 0.4807 | 0.4451 | 3 | 0.1875 | 1 | 3 | 6 | 34 | 1 | area/power |
+| `simple_yosys_stat_bd` | `RTLLM/Prob048_pe` | 23 | 0.0119 | 0.0000 | 1 | 0.0156 | 6 | 9 | 6 | 17 | 3 | area/power/eff_clk_period |
+| `simple_yosys_stat_bd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 28 | 0.4232 | 0.2724 | 2 | 0.1250 | 1 | 28 | 4 | 24 | 1 | area/power |
+| `simple_yosys_stat_bd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 42 | 0.2966 | 0.0275 | 1 | 0.0625 | 5 | 15 | 13 | 29 | 3 | area/power |
+| `simple_yosys_stat_bd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 42 | 0.0416 | 0.0000 | 1 | 0.0156 | 16 | 16 | 16 | 26 | 2 | area/power/eff_clk_period |
+| `netlist_motif_occupancy` | `RTLLM/Prob011_multi_16bit` | 22 | 0.2966 | 0.0018 | 4 | 0.0625 | 10 | 3 | 17 | 5 | 6 | area/power/eff_clk_period |
+| `netlist_motif_occupancy` | `RTLLM/Prob019_sub_64bit` | 40 | 0.3455 | 0.0462 | 2 | 0.1250 | 2 | 4 | 8 | 32 | 1 | area/power |
+| `netlist_motif_occupancy` | `RTLLM/Prob048_pe` | 22 | 0.0026 | 0.0000 | 1 | 0.0156 | 3 | 10 | 5 | 17 | 2 | area/power/eff_clk_period |
+| `netlist_motif_occupancy` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 34 | 0.4370 | 0.3153 | 2 | 0.1250 | 5 | 34 | 4 | 30 | 2 | area/power |
+| `netlist_motif_occupancy` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 38 | 0.2851 | 0.0000 | 1 | 0.0625 | 1 | 22 | 14 | 24 | 1 | area/power |
+| `netlist_motif_occupancy` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 36 | 0.0432 | 0.0000 | 1 | 0.0156 | 1 | 25 | 16 | 20 | 1 | area/power/eff_clk_period |
+| `synthesis_trajectory_nod` | `RTLLM/Prob011_multi_16bit` | 31 | 0.2639 | 0.0000 | 4 | 0.0625 | 5 | 0 | 24 | 7 | 5 | area/power/eff_clk_period |
+| `synthesis_trajectory_nod` | `RTLLM/Prob019_sub_64bit` | 41 | 0.4823 | 0.4499 | 3 | 0.1875 | 1 | 5 | 10 | 31 | 1 | area/power |
+| `synthesis_trajectory_nod` | `RTLLM/Prob048_pe` | 26 | 0.0069 | 0.0000 | 1 | 0.0156 | 4 | 10 | 6 | 20 | 2 | area/power/eff_clk_period |
+| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 31 | 0.4232 | 0.2724 | 2 | 0.1250 | 4 | 31 | 3 | 28 | 1 | area/power |
+| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 36 | 0.2887 | 0.0026 | 1 | 0.0625 | 2 | 18 | 14 | 22 | 2 | area/power |
+| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 40 | 0.0416 | 0.0000 | 1 | 0.0156 | 20 | 21 | 15 | 25 | 2 | area/power/eff_clk_period |
+| `synthesis_trajectory_motif_nod` | `RTLLM/Prob011_multi_16bit` | 27 | 0.1930 | 0.0000 | 5 | 0.0781 | 13 | 0 | 22 | 5 | 10 | area/power/eff_clk_period |
+| `synthesis_trajectory_motif_nod` | `RTLLM/Prob019_sub_64bit` | 41 | 0.4823 | 0.4499 | 3 | 0.1875 | 2 | 12 | 13 | 28 | 2 | area/power |
+| `synthesis_trajectory_motif_nod` | `RTLLM/Prob048_pe` | 23 | 0.0026 | 0.0000 | 1 | 0.0156 | 1 | 9 | 3 | 20 | 1 | area/power/eff_clk_period |
+| `synthesis_trajectory_motif_nod` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 27 | 0.4232 | 0.2724 | 2 | 0.1250 | 9 | 27 | 3 | 24 | 1 | area/power |
+| `synthesis_trajectory_motif_nod` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 41 | 0.2851 | 0.0000 | 1 | 0.0625 | 3 | 30 | 21 | 20 | 3 | area/power |
+| `synthesis_trajectory_motif_nod` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 39 | 0.0416 | 0.0000 | 1 | 0.0156 | 14 | 14 | 15 | 24 | 3 | area/power/eff_clk_period |
+| `sr_raw_pca_qd` | `RTLLM/Prob011_multi_16bit` | 34 | 0.2065 | 0.0000 | 5 | 0.0781 | 12 | 0 | 22 | 12 | 5 | area/power/eff_clk_period |
+| `sr_raw_pca_qd` | `RTLLM/Prob019_sub_64bit` | 47 | 0.4823 | 0.4499 | 2 | 0.1250 | 2 | 9 | 15 | 32 | 1 | area/power |
+| `sr_raw_pca_qd` | `RTLLM/Prob048_pe` | 15 | 0.0008 | 0.0000 | 1 | 0.0156 | 10 | 10 | 2 | 13 | 1 | area/power/eff_clk_period |
+| `sr_raw_pca_qd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 35 | 0.4232 | 0.2724 | 2 | 0.1250 | 4 | 35 | 4 | 31 | 1 | area/power |
+| `sr_raw_pca_qd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 36 | 0.2883 | 0.0026 | 1 | 0.0625 | 1 | 18 | 12 | 24 | 1 | area/power |
+| `sr_raw_pca_qd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 42 | 0.0416 | 0.0000 | 1 | 0.0156 | 20 | 20 | 19 | 23 | 5 | area/power/eff_clk_period |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob011_multi_16bit` | 31 | 0.2222 | 0.0016 | 4 | 0.0625 | 4 | 3 | 22 | 9 | 4 | area/power/eff_clk_period |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob019_sub_64bit` | 44 | 0.4823 | 0.4499 | 3 | 0.1875 | 2 | 6 | 12 | 32 | 1 | area/power |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob048_pe` | 15 | 0.0150 | 0.0000 | 1 | 0.0156 | 3 | 8 | 4 | 11 | 2 | area/power/eff_clk_period |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 35 | 0.4720 | 0.4184 | 2 | 0.1250 | 3 | 35 | 7 | 28 | 2 | area/power |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 31 | 0.2886 | 0.0026 | 1 | 0.0625 | 1 | 14 | 12 | 19 | 1 | area/power |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 41 | 0.0416 | 0.0000 | 1 | 0.0156 | 15 | 15 | 11 | 30 | 1 | area/power/eff_clk_period |
 
 ## Artifact Roots
 

@@ -27,13 +27,13 @@ Status: generated from standardized result artifacts.
 
 ## Leaderboard
 
-| Method | Valid PPA | Mean Fitness | Fitness W/T/L | Mean HV | HV W/T/L | Unique Netlists | Dup Netlists | Unique Motifs | PPA-Front Netlists | Audit Cells | Audit QD | Runtime s | LLM Calls |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `classic_revolution` | 730 | 0.2826 | 0/13/0 | 0.1166 | 0/13/0 | 301 | 429 | 220 | 52 | 36 | 8.1817 | 22108.9745 | 3120 |
-| `landing_smooth_qd_manual_bd` | 799 | 0.2934 | 2/10/1 | 0.1244 | 4/8/1 | 320 | 479 | 226 | 59 | 40 | 8.4343 | 20690.8142 | 3120 |
-| `random_descriptor_qd` | 635 | 0.2772 | 2/10/1 | 0.1202 | 3/8/2 | 315 | 320 | 213 | 66 | 37 | 7.6486 | 23597.8466 | 3120 |
-| `synthesis_trajectory_nod` | 644 | 0.2857 | 1/10/2 | 0.1164 | 3/7/3 | 282 | 362 | 207 | 64 | 41 | 9.5132 | 23383.4313 | 3120 |
-| `sr_random_relu_pca_qd` | 652 | 0.2702 | 0/12/1 | 0.1175 | 3/7/3 | 310 | 342 | 224 | 62 | 35 | 7.5394 | 23741.0423 | 3120 |
+| Method | Valid PPA | Mean Fitness | Fitness W/T/L | Mean HV | HV W/T/L | PPA Grid Cells | PPA Grid Cov | Unique Netlists | Dup Netlists | Unique Motifs | PPA-Front Netlists | Audit Cells | Audit QD | Runtime s | LLM Calls |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `classic_revolution` | 730 | 0.2826 | 0/13/0 | 0.1166 | 0/13/0 | 31 | 0.1094 | 301 | 429 | 220 | 52 | 36 | 8.1817 | 22108.9745 | 3120 |
+| `landing_smooth_qd_manual_bd` | 799 | 0.2934 | 2/10/1 | 0.1244 | 4/8/1 | 33 | 0.1154 | 320 | 479 | 226 | 59 | 40 | 8.4343 | 20690.8142 | 3120 |
+| `random_descriptor_qd` | 635 | 0.2772 | 2/10/1 | 0.1202 | 3/8/2 | 32 | 0.1034 | 315 | 320 | 213 | 66 | 37 | 7.6486 | 23597.8466 | 3120 |
+| `synthesis_trajectory_nod` | 644 | 0.2857 | 1/10/2 | 0.1164 | 3/7/3 | 33 | 0.1118 | 282 | 362 | 207 | 64 | 41 | 9.5132 | 23383.4313 | 3120 |
+| `sr_random_relu_pca_qd` | 652 | 0.2702 | 0/12/1 | 0.1175 | 3/7/3 | 33 | 0.1118 | 310 | 342 | 224 | 62 | 35 | 7.5394 | 23741.0423 | 3120 |
 
 ## QD Archive Metrics
 
@@ -123,6 +123,7 @@ The JSON report includes per-generation anytime rows for each method.
 - `descriptor_common_audit_ppa_correlation`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed3_seed1003/descriptor_common_audit_ppa_correlation.png`
 - `descriptor_internal_ppa_correlation`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed3_seed1003/descriptor_internal_ppa_correlation.png`
 - `manual_bd_ppa_correlation`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed3_seed1003/manual_bd_ppa_correlation.png`
+- `ppa_grid_coverage`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed3_seed1003/ppa_grid_coverage.png`
 - `qd_common_audit_cells_heatmap`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed3_seed1003/qd_common_audit_cells_heatmap.png`
 - `qd_common_audit_coverage`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed3_seed1003/qd_common_audit_coverage.png`
 - `qd_common_audit_entropy`: `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed3_seed1003/qd_common_audit_entropy.png`
@@ -199,73 +200,73 @@ The JSON report includes per-generation anytime rows for each method.
 
 ## Per-Problem PPA And Diversity
 
-| Method | Problem | Valid PPA | Best Fitness | HV | Pareto Points | Ref-Beating | Unique Netlists | Dup Netlists | PPA-Front Netlists | Objectives |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `classic_revolution` | `RTLLM/Prob004_adder_8bit` | 82 | 0.3815 | 0.1510 | 16 | 42 | 27 | 55 | 3 | area/power |
-| `classic_revolution` | `RTLLM/Prob015_multi_pipe_8bit` | 34 | 0.2243 | 0.0000 | 12 | 0 | 32 | 2 | 12 | area/power/eff_clk_period |
-| `classic_revolution` | `RTLLM/Prob024_fsm` | 35 | 0.6835 | 0.3406 | 4 | 25 | 20 | 15 | 3 | area/power |
-| `classic_revolution` | `RTLLM/Prob037_parallel2serial` | 32 | 0.2283 | 0.0119 | 1 | 9 | 25 | 7 | 1 | area/power/eff_clk_period |
-| `classic_revolution` | `RTLLM/Prob041_traffic_light` | 56 | 0.4266 | 0.3507 | 4 | 49 | 47 | 9 | 3 | area/power |
-| `classic_revolution` | `RTLLM/Prob045_alu` | 81 | 0.4119 | 0.2421 | 4 | 81 | 69 | 12 | 4 | area/power |
-| `classic_revolution` | `RTLLM/Prob049_signal_generator` | 54 | 0.2603 | 0.0208 | 9 | 50 | 12 | 42 | 4 | area/power/eff_clk_period |
-| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob098_circuit7` | 77 | 0.0120 | 0.0000 | 17 | 17 | 13 | 64 | 6 | area/power |
-| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob116_m2014_q3` | 86 | 0.4654 | 0.3984 | 16 | 86 | 16 | 70 | 4 | area/power |
-| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` | 97 | 0.2636 | 0.0000 | 28 | 0 | 6 | 91 | 3 | area/power |
-| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 62 | 0.3297 | 0.0000 | 34 | 59 | 10 | 52 | 4 | area/power |
-| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 13 | -0.1438 | 0.0000 | 1 | 0 | 13 | 0 | 1 | area/power/eff_clk_period |
-| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 21 | 0.1309 | 0.0007 | 6 | 2 | 11 | 10 | 4 | area/power/eff_clk_period |
-| `landing_smooth_qd_manual_bd` | `RTLLM/Prob004_adder_8bit` | 82 | 0.3815 | 0.1510 | 16 | 50 | 28 | 54 | 1 | area/power |
-| `landing_smooth_qd_manual_bd` | `RTLLM/Prob015_multi_pipe_8bit` | 31 | 0.0611 | 0.0000 | 14 | 0 | 30 | 1 | 13 | area/power/eff_clk_period |
-| `landing_smooth_qd_manual_bd` | `RTLLM/Prob024_fsm` | 29 | 0.6835 | 0.3406 | 1 | 21 | 20 | 9 | 1 | area/power |
-| `landing_smooth_qd_manual_bd` | `RTLLM/Prob037_parallel2serial` | 36 | 0.4686 | 0.0911 | 2 | 5 | 23 | 13 | 1 | area/power/eff_clk_period |
-| `landing_smooth_qd_manual_bd` | `RTLLM/Prob041_traffic_light` | 77 | 0.4403 | 0.3671 | 20 | 75 | 37 | 40 | 3 | area/power |
-| `landing_smooth_qd_manual_bd` | `RTLLM/Prob045_alu` | 85 | 0.4140 | 0.2483 | 4 | 85 | 76 | 9 | 3 | area/power |
-| `landing_smooth_qd_manual_bd` | `RTLLM/Prob049_signal_generator` | 67 | 0.2598 | 0.0170 | 53 | 53 | 19 | 48 | 13 | area/power/eff_clk_period |
-| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob098_circuit7` | 48 | 0.0120 | 0.0000 | 16 | 16 | 10 | 38 | 4 | area/power |
-| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob116_m2014_q3` | 98 | 0.4654 | 0.3984 | 58 | 98 | 19 | 79 | 4 | area/power |
-| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` | 106 | 0.2641 | 0.0000 | 2 | 0 | 8 | 98 | 1 | area/power |
-| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 66 | 0.3297 | 0.0000 | 27 | 64 | 11 | 55 | 5 | area/power |
-| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 7 | -0.1450 | 0.0000 | 4 | 0 | 7 | 0 | 4 | area/power/eff_clk_period |
-| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 67 | 0.1796 | 0.0034 | 18 | 44 | 32 | 35 | 6 | area/power/eff_clk_period |
-| `random_descriptor_qd` | `RTLLM/Prob004_adder_8bit` | 73 | 0.3815 | 0.1510 | 16 | 59 | 36 | 37 | 1 | area/power |
-| `random_descriptor_qd` | `RTLLM/Prob015_multi_pipe_8bit` | 74 | 0.2412 | 0.0000 | 17 | 0 | 67 | 7 | 13 | area/power/eff_clk_period |
-| `random_descriptor_qd` | `RTLLM/Prob024_fsm` | 25 | 0.6835 | 0.3406 | 1 | 14 | 19 | 6 | 1 | area/power |
-| `random_descriptor_qd` | `RTLLM/Prob037_parallel2serial` | 27 | 0.0089 | 0.0000 | 23 | 0 | 17 | 10 | 13 | area/power/eff_clk_period |
-| `random_descriptor_qd` | `RTLLM/Prob041_traffic_light` | 42 | 0.4736 | 0.4259 | 9 | 35 | 32 | 10 | 4 | area/power |
-| `random_descriptor_qd` | `RTLLM/Prob045_alu` | 55 | 0.4061 | 0.2247 | 3 | 55 | 49 | 6 | 2 | area/power |
-| `random_descriptor_qd` | `RTLLM/Prob049_signal_generator` | 53 | 0.2598 | 0.0209 | 45 | 45 | 19 | 34 | 13 | area/power/eff_clk_period |
-| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob098_circuit7` | 62 | 0.0120 | 0.0000 | 29 | 29 | 7 | 55 | 4 | area/power |
-| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob116_m2014_q3` | 49 | 0.4654 | 0.3984 | 1 | 49 | 14 | 35 | 1 | area/power |
-| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` | 84 | 0.3310 | 0.0000 | 1 | 1 | 10 | 74 | 1 | area/power |
-| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 43 | 0.3297 | 0.0000 | 27 | 40 | 13 | 30 | 5 | area/power |
-| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 8 | -0.1235 | 0.0000 | 1 | 0 | 6 | 2 | 1 | area/power/eff_clk_period |
-| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 40 | 0.1337 | 0.0008 | 14 | 7 | 26 | 14 | 7 | area/power/eff_clk_period |
-| `synthesis_trajectory_nod` | `RTLLM/Prob004_adder_8bit` | 77 | 0.3815 | 0.1510 | 24 | 60 | 29 | 48 | 1 | area/power |
-| `synthesis_trajectory_nod` | `RTLLM/Prob015_multi_pipe_8bit` | 42 | 0.0303 | 0.0000 | 21 | 0 | 41 | 1 | 20 | area/power/eff_clk_period |
-| `synthesis_trajectory_nod` | `RTLLM/Prob024_fsm` | 16 | 0.5845 | 0.2170 | 3 | 7 | 13 | 3 | 3 | area/power |
-| `synthesis_trajectory_nod` | `RTLLM/Prob037_parallel2serial` | 31 | 0.5200 | 0.1327 | 5 | 8 | 24 | 7 | 2 | area/power/eff_clk_period |
-| `synthesis_trajectory_nod` | `RTLLM/Prob041_traffic_light` | 41 | 0.4403 | 0.3387 | 6 | 32 | 37 | 4 | 5 | area/power |
-| `synthesis_trajectory_nod` | `RTLLM/Prob045_alu` | 52 | 0.4164 | 0.2550 | 1 | 52 | 49 | 3 | 1 | area/power |
-| `synthesis_trajectory_nod` | `RTLLM/Prob049_signal_generator` | 61 | 0.2598 | 0.0193 | 53 | 58 | 19 | 42 | 14 | area/power/eff_clk_period |
-| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob098_circuit7` | 70 | 0.0120 | 0.0000 | 25 | 25 | 4 | 66 | 1 | area/power |
-| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob116_m2014_q3` | 79 | 0.4654 | 0.3984 | 27 | 79 | 12 | 67 | 2 | area/power |
-| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` | 84 | 0.2641 | 0.0000 | 17 | 0 | 8 | 76 | 1 | area/power |
-| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 52 | 0.3297 | 0.0000 | 30 | 42 | 13 | 39 | 3 | area/power |
-| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 12 | -0.1262 | 0.0000 | 3 | 0 | 11 | 1 | 3 | area/power/eff_clk_period |
-| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 27 | 0.1356 | 0.0010 | 10 | 13 | 22 | 5 | 8 | area/power/eff_clk_period |
-| `sr_random_relu_pca_qd` | `RTLLM/Prob004_adder_8bit` | 80 | 0.3815 | 0.1510 | 16 | 53 | 38 | 42 | 2 | area/power |
-| `sr_random_relu_pca_qd` | `RTLLM/Prob015_multi_pipe_8bit` | 58 | 0.2113 | 0.0052 | 17 | 3 | 55 | 3 | 17 | area/power/eff_clk_period |
-| `sr_random_relu_pca_qd` | `RTLLM/Prob024_fsm` | 29 | 0.6835 | 0.3406 | 3 | 10 | 13 | 16 | 2 | area/power |
-| `sr_random_relu_pca_qd` | `RTLLM/Prob037_parallel2serial` | 21 | 0.0633 | 0.0002 | 4 | 4 | 14 | 7 | 2 | area/power/eff_clk_period |
-| `sr_random_relu_pca_qd` | `RTLLM/Prob041_traffic_light` | 62 | 0.4378 | 0.3730 | 9 | 56 | 49 | 13 | 6 | area/power |
-| `sr_random_relu_pca_qd` | `RTLLM/Prob045_alu` | 63 | 0.4112 | 0.2395 | 1 | 63 | 56 | 7 | 1 | area/power |
-| `sr_random_relu_pca_qd` | `RTLLM/Prob049_signal_generator` | 58 | 0.2598 | 0.0193 | 42 | 51 | 17 | 41 | 9 | area/power/eff_clk_period |
-| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob098_circuit7` | 31 | 0.0120 | 0.0000 | 12 | 12 | 5 | 26 | 3 | area/power |
-| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob116_m2014_q3` | 76 | 0.4654 | 0.3984 | 41 | 76 | 16 | 60 | 3 | area/power |
-| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` | 87 | 0.2636 | 0.0000 | 10 | 0 | 8 | 79 | 4 | area/power |
-| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 50 | 0.3297 | 0.0000 | 25 | 49 | 12 | 38 | 6 | area/power |
-| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 17 | -0.1422 | 0.0000 | 4 | 0 | 13 | 4 | 3 | area/power/eff_clk_period |
-| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 20 | 0.1356 | 0.0009 | 4 | 4 | 14 | 6 | 4 | area/power/eff_clk_period |
+| Method | Problem | Valid PPA | Best Fitness | HV | PPA Grid Cells | PPA Grid Cov | Pareto Points | Ref-Beating | Unique Netlists | Dup Netlists | PPA-Front Netlists | Objectives |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `classic_revolution` | `RTLLM/Prob004_adder_8bit` | 82 | 0.3815 | 0.1510 | 1 | 0.0625 | 16 | 42 | 27 | 55 | 3 | area/power |
+| `classic_revolution` | `RTLLM/Prob015_multi_pipe_8bit` | 34 | 0.2243 | 0.0000 | 4 | 0.0625 | 12 | 0 | 32 | 2 | 12 | area/power/eff_clk_period |
+| `classic_revolution` | `RTLLM/Prob024_fsm` | 35 | 0.6835 | 0.3406 | 5 | 0.3125 | 4 | 25 | 20 | 15 | 3 | area/power |
+| `classic_revolution` | `RTLLM/Prob037_parallel2serial` | 32 | 0.2283 | 0.0119 | 1 | 0.0156 | 1 | 9 | 25 | 7 | 1 | area/power/eff_clk_period |
+| `classic_revolution` | `RTLLM/Prob041_traffic_light` | 56 | 0.4266 | 0.3507 | 8 | 0.5000 | 4 | 49 | 47 | 9 | 3 | area/power |
+| `classic_revolution` | `RTLLM/Prob045_alu` | 81 | 0.4119 | 0.2421 | 1 | 0.0625 | 4 | 81 | 69 | 12 | 4 | area/power |
+| `classic_revolution` | `RTLLM/Prob049_signal_generator` | 54 | 0.2603 | 0.0208 | 3 | 0.0469 | 9 | 50 | 12 | 42 | 4 | area/power/eff_clk_period |
+| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob098_circuit7` | 77 | 0.0120 | 0.0000 | 1 | 0.0625 | 17 | 17 | 13 | 64 | 6 | area/power |
+| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob116_m2014_q3` | 86 | 0.4654 | 0.3984 | 2 | 0.1250 | 16 | 86 | 16 | 70 | 4 | area/power |
+| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` | 97 | 0.2636 | 0.0000 | 1 | 0.0625 | 28 | 0 | 6 | 91 | 3 | area/power |
+| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 62 | 0.3297 | 0.0000 | 1 | 0.0625 | 34 | 59 | 10 | 52 | 4 | area/power |
+| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 13 | -0.1438 | 0.0000 | 1 | 0.0156 | 1 | 0 | 13 | 0 | 1 | area/power/eff_clk_period |
+| `classic_revolution` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 21 | 0.1309 | 0.0007 | 2 | 0.0312 | 6 | 2 | 11 | 10 | 4 | area/power/eff_clk_period |
+| `landing_smooth_qd_manual_bd` | `RTLLM/Prob004_adder_8bit` | 82 | 0.3815 | 0.1510 | 1 | 0.0625 | 16 | 50 | 28 | 54 | 1 | area/power |
+| `landing_smooth_qd_manual_bd` | `RTLLM/Prob015_multi_pipe_8bit` | 31 | 0.0611 | 0.0000 | 3 | 0.0469 | 14 | 0 | 30 | 1 | 13 | area/power/eff_clk_period |
+| `landing_smooth_qd_manual_bd` | `RTLLM/Prob024_fsm` | 29 | 0.6835 | 0.3406 | 5 | 0.3125 | 1 | 21 | 20 | 9 | 1 | area/power |
+| `landing_smooth_qd_manual_bd` | `RTLLM/Prob037_parallel2serial` | 36 | 0.4686 | 0.0911 | 2 | 0.0312 | 2 | 5 | 23 | 13 | 1 | area/power/eff_clk_period |
+| `landing_smooth_qd_manual_bd` | `RTLLM/Prob041_traffic_light` | 77 | 0.4403 | 0.3671 | 8 | 0.5000 | 20 | 75 | 37 | 40 | 3 | area/power |
+| `landing_smooth_qd_manual_bd` | `RTLLM/Prob045_alu` | 85 | 0.4140 | 0.2483 | 2 | 0.1250 | 4 | 85 | 76 | 9 | 3 | area/power |
+| `landing_smooth_qd_manual_bd` | `RTLLM/Prob049_signal_generator` | 67 | 0.2598 | 0.0170 | 3 | 0.0469 | 53 | 53 | 19 | 48 | 13 | area/power/eff_clk_period |
+| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob098_circuit7` | 48 | 0.0120 | 0.0000 | 1 | 0.0625 | 16 | 16 | 10 | 38 | 4 | area/power |
+| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob116_m2014_q3` | 98 | 0.4654 | 0.3984 | 2 | 0.1250 | 58 | 98 | 19 | 79 | 4 | area/power |
+| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` | 106 | 0.2641 | 0.0000 | 1 | 0.0625 | 2 | 0 | 8 | 98 | 1 | area/power |
+| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 66 | 0.3297 | 0.0000 | 1 | 0.0625 | 27 | 64 | 11 | 55 | 5 | area/power |
+| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 7 | -0.1450 | 0.0000 | 2 | 0.0312 | 4 | 0 | 7 | 0 | 4 | area/power/eff_clk_period |
+| `landing_smooth_qd_manual_bd` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 67 | 0.1796 | 0.0034 | 2 | 0.0312 | 18 | 44 | 32 | 35 | 6 | area/power/eff_clk_period |
+| `random_descriptor_qd` | `RTLLM/Prob004_adder_8bit` | 73 | 0.3815 | 0.1510 | 1 | 0.0625 | 16 | 59 | 36 | 37 | 1 | area/power |
+| `random_descriptor_qd` | `RTLLM/Prob015_multi_pipe_8bit` | 74 | 0.2412 | 0.0000 | 6 | 0.0938 | 17 | 0 | 67 | 7 | 13 | area/power/eff_clk_period |
+| `random_descriptor_qd` | `RTLLM/Prob024_fsm` | 25 | 0.6835 | 0.3406 | 5 | 0.3125 | 1 | 14 | 19 | 6 | 1 | area/power |
+| `random_descriptor_qd` | `RTLLM/Prob037_parallel2serial` | 27 | 0.0089 | 0.0000 | 1 | 0.0156 | 23 | 0 | 17 | 10 | 13 | area/power/eff_clk_period |
+| `random_descriptor_qd` | `RTLLM/Prob041_traffic_light` | 42 | 0.4736 | 0.4259 | 6 | 0.3750 | 9 | 35 | 32 | 10 | 4 | area/power |
+| `random_descriptor_qd` | `RTLLM/Prob045_alu` | 55 | 0.4061 | 0.2247 | 1 | 0.0625 | 3 | 55 | 49 | 6 | 2 | area/power |
+| `random_descriptor_qd` | `RTLLM/Prob049_signal_generator` | 53 | 0.2598 | 0.0209 | 4 | 0.0625 | 45 | 45 | 19 | 34 | 13 | area/power/eff_clk_period |
+| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob098_circuit7` | 62 | 0.0120 | 0.0000 | 1 | 0.0625 | 29 | 29 | 7 | 55 | 4 | area/power |
+| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob116_m2014_q3` | 49 | 0.4654 | 0.3984 | 2 | 0.1250 | 1 | 49 | 14 | 35 | 1 | area/power |
+| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` | 84 | 0.3310 | 0.0000 | 1 | 0.0625 | 1 | 1 | 10 | 74 | 1 | area/power |
+| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 43 | 0.3297 | 0.0000 | 1 | 0.0625 | 27 | 40 | 13 | 30 | 5 | area/power |
+| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 8 | -0.1235 | 0.0000 | 1 | 0.0156 | 1 | 0 | 6 | 2 | 1 | area/power/eff_clk_period |
+| `random_descriptor_qd` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 40 | 0.1337 | 0.0008 | 2 | 0.0312 | 14 | 7 | 26 | 14 | 7 | area/power/eff_clk_period |
+| `synthesis_trajectory_nod` | `RTLLM/Prob004_adder_8bit` | 77 | 0.3815 | 0.1510 | 1 | 0.0625 | 24 | 60 | 29 | 48 | 1 | area/power |
+| `synthesis_trajectory_nod` | `RTLLM/Prob015_multi_pipe_8bit` | 42 | 0.0303 | 0.0000 | 3 | 0.0469 | 21 | 0 | 41 | 1 | 20 | area/power/eff_clk_period |
+| `synthesis_trajectory_nod` | `RTLLM/Prob024_fsm` | 16 | 0.5845 | 0.2170 | 5 | 0.3125 | 3 | 7 | 13 | 3 | 3 | area/power |
+| `synthesis_trajectory_nod` | `RTLLM/Prob037_parallel2serial` | 31 | 0.5200 | 0.1327 | 3 | 0.0469 | 5 | 8 | 24 | 7 | 2 | area/power/eff_clk_period |
+| `synthesis_trajectory_nod` | `RTLLM/Prob041_traffic_light` | 41 | 0.4403 | 0.3387 | 7 | 0.4375 | 6 | 32 | 37 | 4 | 5 | area/power |
+| `synthesis_trajectory_nod` | `RTLLM/Prob045_alu` | 52 | 0.4164 | 0.2550 | 2 | 0.1250 | 1 | 52 | 49 | 3 | 1 | area/power |
+| `synthesis_trajectory_nod` | `RTLLM/Prob049_signal_generator` | 61 | 0.2598 | 0.0193 | 3 | 0.0469 | 53 | 58 | 19 | 42 | 14 | area/power/eff_clk_period |
+| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob098_circuit7` | 70 | 0.0120 | 0.0000 | 1 | 0.0625 | 25 | 25 | 4 | 66 | 1 | area/power |
+| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob116_m2014_q3` | 79 | 0.4654 | 0.3984 | 2 | 0.1250 | 27 | 79 | 12 | 67 | 2 | area/power |
+| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` | 84 | 0.2641 | 0.0000 | 1 | 0.0625 | 17 | 0 | 8 | 76 | 1 | area/power |
+| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 52 | 0.3297 | 0.0000 | 1 | 0.0625 | 30 | 42 | 13 | 39 | 3 | area/power |
+| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 12 | -0.1262 | 0.0000 | 2 | 0.0312 | 3 | 0 | 11 | 1 | 3 | area/power/eff_clk_period |
+| `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 27 | 0.1356 | 0.0010 | 2 | 0.0312 | 10 | 13 | 22 | 5 | 8 | area/power/eff_clk_period |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob004_adder_8bit` | 80 | 0.3815 | 0.1510 | 1 | 0.0625 | 16 | 53 | 38 | 42 | 2 | area/power |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob015_multi_pipe_8bit` | 58 | 0.2113 | 0.0052 | 5 | 0.0781 | 17 | 3 | 55 | 3 | 17 | area/power/eff_clk_period |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob024_fsm` | 29 | 0.6835 | 0.3406 | 5 | 0.3125 | 3 | 10 | 13 | 16 | 2 | area/power |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob037_parallel2serial` | 21 | 0.0633 | 0.0002 | 1 | 0.0156 | 4 | 4 | 14 | 7 | 2 | area/power/eff_clk_period |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob041_traffic_light` | 62 | 0.4378 | 0.3730 | 8 | 0.5000 | 9 | 56 | 49 | 13 | 6 | area/power |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob045_alu` | 63 | 0.4112 | 0.2395 | 1 | 0.0625 | 1 | 63 | 56 | 7 | 1 | area/power |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob049_signal_generator` | 58 | 0.2598 | 0.0193 | 4 | 0.0625 | 42 | 51 | 17 | 41 | 9 | area/power/eff_clk_period |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob098_circuit7` | 31 | 0.0120 | 0.0000 | 1 | 0.0625 | 12 | 12 | 5 | 26 | 3 | area/power |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob116_m2014_q3` | 76 | 0.4654 | 0.3984 | 2 | 0.1250 | 41 | 76 | 16 | 60 | 3 | area/power |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` | 87 | 0.2636 | 0.0000 | 1 | 0.0625 | 10 | 0 | 8 | 79 | 4 | area/power |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 50 | 0.3297 | 0.0000 | 1 | 0.0625 | 25 | 49 | 12 | 38 | 6 | area/power |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 17 | -0.1422 | 0.0000 | 1 | 0.0156 | 4 | 0 | 13 | 4 | 3 | area/power/eff_clk_period |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 20 | 0.1356 | 0.0009 | 2 | 0.0312 | 4 | 4 | 14 | 6 | 4 | area/power/eff_clk_period |
 
 ## Artifact Roots
 

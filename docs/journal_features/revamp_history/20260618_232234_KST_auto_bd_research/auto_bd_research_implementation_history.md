@@ -9082,3 +9082,81 @@ Results:
 - `ty check`: pass
 - `ruff check`: not run because no source file was modified
 - pyright: not run because no source file was modified
+
+## 2026-06-19 - Added Fixed PPA-Grid Reporting
+
+Scope:
+
+- Added fixed problem-local PPA-grid occupancy and coverage metrics to the
+  centralized Auto-BD report generator.
+- The grid uses the same normalized improvement points as strict HV,
+  clips each objective to `[0, 1]`, and uses 4 bins per active PPA
+  objective.
+- Regenerated development seed-1 and main seed-3 centralized reports and
+  figures so projected/learned descriptor comparisons include the metric.
+- Updated the seed-3 aggregate screening report, SR kernel PCA method
+  card, accept/reject record, and TODO.
+
+Report regeneration:
+
+```bash
+SCAFFOLD=docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research
+UV_LINK_MODE=copy uv run --active python scripts/report_auto_bd_standard_results.py \
+  --results-root exp/auto_bd_research/development_preliminary_seed1 \
+  --output-md ${SCAFFOLD}/auto_bd_seed1_centralized_report.md \
+  --output-json ${SCAFFOLD}/auto_bd_seed1_centralized_report.json \
+  --figure-dir ${SCAFFOLD}/figures/seed1 \
+  --phase development_preliminary_seed1 \
+  --seed 1001
+for s in 1001 1002 1003; do
+  UV_LINK_MODE=copy uv run --active python scripts/report_auto_bd_standard_results.py \
+    --results-root exp/auto_bd_research/main_screening_screening_seed3 \
+    --output-md ${SCAFFOLD}/auto_bd_seed3_seed${s}_centralized_report.md \
+    --output-json ${SCAFFOLD}/auto_bd_seed3_seed${s}_centralized_report.json \
+    --figure-dir ${SCAFFOLD}/figures/seed3_seed${s} \
+    --phase main_screening \
+    --seed ${s}
+done
+```
+
+Seed-3 fixed PPA-grid aggregate:
+
+- classic REvolution: 31.3 cells, 0.1074 coverage
+- landing Smooth-QD manual-BD: 32.7 cells, 0.1138 coverage
+- random descriptor QD: 32.7 cells, 0.1078 coverage
+- ST-NOD: 31.7 cells, 0.1102 coverage
+- `sr_random_relu_pca_qd`: 31.7 cells, 0.1090 coverage
+
+Decision impact:
+
+- The fixed PPA-grid evidence does not change the ReLU PCA decision.
+- `sr_random_relu_pca_qd` is slightly above classic on PPA-grid coverage
+  but remains below landing manual-BD and still fails the robustness,
+  HV, and diversity promotion bars.
+
+Validation:
+
+```bash
+git diff --check
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_run_matrix_status.py
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+UV_LINK_MODE=copy uv tool run ty check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+UV_LINK_MODE=copy uv run --active python -m pyright \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Results:
+
+- `git diff --check`: pass
+- pytest: 8 passed
+- `ruff check`: pass
+- `ty check`: pass
+- pyright: 0 errors, 0 warnings, 0 informations
