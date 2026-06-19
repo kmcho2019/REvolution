@@ -1,10 +1,11 @@
 # Synthesis-Response Kernel PCA Decision
 
-Decision: reject `sr_raw_pca_qd` as the selected final method. Promote
-`sr_random_relu_pca_qd` only to seed-3 screening, not to final-method
-status.
+Decision: reject `sr_raw_pca_qd` as the selected final method. Reject
+`sr_random_relu_pca_qd` after seed-3 screening as a selected final
+method.
 
 Current status: seed-1 development evaluated for `sr_raw_pca_qd` and
+`sr_random_relu_pca_qd`; seed-3 main screening evaluated for
 `sr_random_relu_pca_qd`.
 
 ## Raw PCA Evidence
@@ -56,7 +57,7 @@ about 16.7 percent, below the 20 percent target.
   `../../auto_bd_gate0_coverage_seed1_sr_random_relu_pca_qd.json`.
 - Centralized report: `../../auto_bd_seed1_centralized_report.md`.
 
-Decision: promote to seed-3 screening only.
+Decision: seed-1 promoted to seed-3 screening only.
 
 Reason: the result passes the hard coverage gate, keeps valid-PPA drop
 within the 5 percentage-point seed-1 tolerance, avoids scalar-fitness
@@ -69,15 +70,47 @@ uplift while recovering diversity. If PPA-front unique netlists or
 common-audit coverage remain below classic, frame ReLU PCA as a PPA/HV
 ablation rather than the selected Auto-BD method.
 
+## Random ReLU PCA Seed-3 Evidence
+
+- Seed-3 Gate 0: pass, 3/3 seeds, 13/13 classic-covered problems each
+  seed.
+- Average valid PPA: 635.3/1560 versus 735.0/1560 for classic.
+- Valid-PPA rate delta versus classic: -6.39 percentage points.
+- Mean best fitness: 0.2691 versus 0.2776 for classic.
+- Fitness W/T/L versus classic: 4/31/4.
+- Mean hypervolume: 0.1222 versus 0.1202 for classic.
+- Hypervolume W/T/L versus classic: 8/20/11.
+- PPA-front unique netlists: 58.0 versus 54.0 for classic.
+- Unique canonical netlists: 300.0 versus 323.7 for classic.
+- Unique motif signatures: 217.7 versus 239.3 for classic.
+- Common-audit occupied cells: 38.0 versus 39.3 for classic.
+- Common-audit QD score: 8.0503 versus 8.0494 for classic.
+- Centralized reports:
+  `../../auto_bd_seed3_seed1001_centralized_report.md`,
+  `../../auto_bd_seed3_seed1002_centralized_report.md`, and
+  `../../auto_bd_seed3_seed1003_centralized_report.md`.
+- Aggregate report: `../../auto_bd_seed3_screening_report.md`.
+
+Decision: reject as the selected final method and do not promote to
+seed-5 final evaluation.
+
+Reason: Gate 0 still passes, but the seed-3 sign-off bar is not met.
+The valid-PPA rate drop exceeds 5 percentage points, mean fitness is
+lower than classic, HV improves by only about 1.6 percent rather than the
+predeclared 5 percent target, and diversity recovery is too small:
+PPA-front unique netlists improve by about 7.4 percent, below the 20
+percent target, while unique canonical netlists and common-audit cells
+regress.
+
 ## Remaining Evidence
 
-- Strict zero-reference HV and `ANHV@1.5`.
+- `ANHV@1.5`.
 - Learned-BD scatter and descriptor/PPA correlation plots.
-- Seed-3 screening for `sr_random_relu_pca_qd`.
+- Fixed PPA-grid coverage/occupancy reporting.
 
 ## Acceptance Bar
 
-The method is a final candidate only if it:
+Future projected methods are final candidates only if they:
 
 - covers every classic-covered problem,
 - has valid-PPA rate drop <= 5 percentage points versus classic,
@@ -92,7 +125,7 @@ keep it as an ablation rather than the selected journal method.
 
 ## Next Use
 
-Run `sr_random_relu_pca_qd` on the seed-3 screening phase before trying
-`sr_rff_pca_qd`. Do not proceed to seed-5 unless seed-3 confirms that
-the HV uplift is robust and the diversity regressions are resolved or
-clearly justified.
+Use `sr_random_relu_pca_qd` as an ablation. Do not run seed-5 for it
+under the current evidence. If compute permits, try `sr_rff_pca_qd` only
+as a kernel control after fixed PPA-grid reporting is available and keep
+the same fitting/leakage rules.

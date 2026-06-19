@@ -23,6 +23,7 @@ Status: generated from standardized result artifacts.
 | `landing_smooth_qd_manual_bd` | PASS | 13 | 13 | - |
 | `random_descriptor_qd` | PASS | 13 | 13 | - |
 | `synthesis_trajectory_nod` | PASS | 13 | 13 | - |
+| `sr_random_relu_pca_qd` | PASS | 13 | 13 | - |
 
 ## Leaderboard
 
@@ -32,6 +33,7 @@ Status: generated from standardized result artifacts.
 | `landing_smooth_qd_manual_bd` | 799 | 0.2934 | 2/10/1 | 0.1244 | 4/8/1 | 320 | 479 | 226 | 59 | 40 | 8.4343 | 20690.8142 | 3120 |
 | `random_descriptor_qd` | 635 | 0.2772 | 2/10/1 | 0.1202 | 3/8/2 | 315 | 320 | 213 | 66 | 37 | 7.6486 | 23597.8466 | 3120 |
 | `synthesis_trajectory_nod` | 644 | 0.2857 | 1/10/2 | 0.1164 | 3/7/3 | 282 | 362 | 207 | 64 | 41 | 9.5132 | 23383.4313 | 3120 |
+| `sr_random_relu_pca_qd` | 652 | 0.2702 | 0/12/1 | 0.1175 | 3/7/3 | 310 | 342 | 224 | 62 | 35 | 7.5394 | 23741.0423 | 3120 |
 
 ## QD Archive Metrics
 
@@ -43,6 +45,7 @@ Coverage and entropy are reported in the fixed common-audit space so methods wit
 | `landing_smooth_qd_manual_bd` | `grid_quantile` | 65 | 14.9228 | 6.3449 | 40 | 0.0120 | 8.4343 | 4.4786 | 0.3828 |
 | `random_descriptor_qd` | `grid_quantile` | 206 | 42.5121 | 7.2577 | 37 | 0.0111 | 7.6486 | 4.3645 | 0.3730 |
 | `synthesis_trajectory_nod` | `grid_quantile` | 124 | 16.2522 | 6.4233 | 41 | 0.0123 | 9.5132 | 4.5676 | 0.3904 |
+| `sr_random_relu_pca_qd` | `grid_quantile` | 101 | 13.9811 | 6.1465 | 35 | 0.0105 | 7.5394 | 4.4332 | 0.3789 |
 
 ## Descriptor/PPA Correlations
 
@@ -58,6 +61,7 @@ This compact table shows each method's best-fitness representative elite. The JS
 | `landing_smooth_qd_manual_bd` | `RTLLM/Prob024_fsm` | 5 | `C-F` | 0.6835 | 24.0000 | 0.0020 | 0.1400 | `0,0,0` | `audit_motif4:1,0,0,2` | `.../RTLLM/Prob024_fsm/Gen5/Prob024_fsm_sample4_C-F/code.sv` | `.../RTLLM/Prob024_fsm/Gen5/Prob024_fsm_sample4_C-F/code.syn.v` |
 | `random_descriptor_qd` | `RTLLM/Prob024_fsm` | 2 | `M-E` | 0.6835 | 24.0000 | 0.0020 | 0.1400 | `warmup:8` | `audit_motif4:1,0,0,2` | `.../RTLLM/Prob024_fsm/Gen2/Prob024_fsm_sample10_M-E/code.sv` | `.../RTLLM/Prob024_fsm/Gen2/Prob024_fsm_sample10_M-E/code.syn.v` |
 | `synthesis_trajectory_nod` | `RTLLM/Prob024_fsm` | 4 | `M-E` | 0.5845 | 30.0000 | 0.0027 | 0.2000 | `warmup:8` | `audit_motif4:1,0,0,2` | `.../RTLLM/Prob024_fsm/Gen4/Prob024_fsm_sample5_M-E/code.sv` | `.../RTLLM/Prob024_fsm/Gen4/Prob024_fsm_sample5_M-E/code.syn.v` |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob024_fsm` | 1 | `M-E` | 0.6835 | 24.0000 | 0.0020 | 0.1400 | `warmup:8` | `audit_motif4:1,0,0,2` | `.../RTLLM/Prob024_fsm/Gen1/Prob024_fsm_sample10_M-E/code.sv` | `.../RTLLM/Prob024_fsm/Gen1/Prob024_fsm_sample10_M-E/code.syn.v` |
 
 ## Robustness Funnel
 
@@ -67,6 +71,7 @@ This compact table shows each method's best-fitness representative elite. The JS
 | `landing_smooth_qd_manual_bd` | 1560 | 1462 (93.7%) | 799 (51.2%) | 799 (51.2%) | 799 (51.2%) | 799 (51.2%) |
 | `random_descriptor_qd` | 1560 | 1351 (86.6%) | 635 (40.7%) | 635 (40.7%) | 635 (40.7%) | 635 (40.7%) |
 | `synthesis_trajectory_nod` | 1560 | 1350 (86.5%) | 644 (41.3%) | 644 (41.3%) | 644 (41.3%) | 644 (41.3%) |
+| `sr_random_relu_pca_qd` | 1560 | 1338 (85.8%) | 652 (41.8%) | 652 (41.8%) | 652 (41.8%) | 652 (41.8%) |
 
 ## Failure Breakdown
 
@@ -92,6 +97,12 @@ This compact table shows each method's best-fitness representative elite. The JS
 | `synthesis_trajectory_nod` | `failed_synthesis_functionality` | 19 |
 | `synthesis_trajectory_nod` | `failed_synthesis` | 5 |
 | `synthesis_trajectory_nod` | `failed_format` | 2 |
+| `sr_random_relu_pca_qd` | `failed_functionality` | 660 |
+| `sr_random_relu_pca_qd` | `failed_diff` | 125 |
+| `sr_random_relu_pca_qd` | `failed_syntax` | 94 |
+| `sr_random_relu_pca_qd` | `failed_synthesis_functionality` | 25 |
+| `sr_random_relu_pca_qd` | `failed_format` | 3 |
+| `sr_random_relu_pca_qd` | `failed_synthesis` | 1 |
 
 ## Anytime Summary
 
@@ -101,6 +112,7 @@ This compact table shows each method's best-fitness representative elite. The JS
 | `landing_smooth_qd_manual_bd` | 5 | 13 | 0.2934 | 0.1244 | 0.2620 | 0.1002 |
 | `random_descriptor_qd` | 5 | 13 | 0.2772 | 0.1202 | 0.2670 | 0.0990 |
 | `synthesis_trajectory_nod` | 5 | 13 | 0.2857 | 0.1164 | 0.2539 | 0.0951 |
+| `sr_random_relu_pca_qd` | 5 | 13 | 0.2702 | 0.1175 | 0.2411 | 0.1056 |
 
 The JSON report includes per-generation anytime rows for each method.
 
@@ -171,6 +183,19 @@ The JSON report includes per-generation anytime rows for each method.
 | `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 0.0000 | T | 0.0000 | T |
 | `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 0.0176 | T | 0.0000 | T |
 | `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 0.0047 | T | 0.0003 | W |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob004_adder_8bit` | 0.0000 | T | 0.0000 | T |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob015_multi_pipe_8bit` | -0.0130 | T | 0.0052 | W |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob024_fsm` | 0.0000 | T | 0.0000 | T |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob037_parallel2serial` | -0.1651 | L | -0.0117 | L |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob041_traffic_light` | 0.0112 | T | 0.0223 | W |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob045_alu` | -0.0007 | T | -0.0026 | L |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob049_signal_generator` | -0.0004 | T | -0.0015 | L |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob098_circuit7` | 0.0000 | T | 0.0000 | T |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob116_m2014_q3` | 0.0000 | T | 0.0000 | T |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` | 0.0000 | T | 0.0000 | T |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 0.0000 | T | 0.0000 | T |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 0.0016 | T | 0.0000 | T |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 0.0047 | T | 0.0002 | W |
 
 ## Per-Problem PPA And Diversity
 
@@ -228,6 +253,19 @@ The JSON report includes per-generation anytime rows for each method.
 | `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 52 | 0.3297 | 0.0000 | 30 | 42 | 13 | 39 | 3 | area/power |
 | `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 12 | -0.1262 | 0.0000 | 3 | 0 | 11 | 1 | 3 | area/power/eff_clk_period |
 | `synthesis_trajectory_nod` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 27 | 0.1356 | 0.0010 | 10 | 13 | 22 | 5 | 8 | area/power/eff_clk_period |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob004_adder_8bit` | 80 | 0.3815 | 0.1510 | 16 | 53 | 38 | 42 | 2 | area/power |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob015_multi_pipe_8bit` | 58 | 0.2113 | 0.0052 | 17 | 3 | 55 | 3 | 17 | area/power/eff_clk_period |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob024_fsm` | 29 | 0.6835 | 0.3406 | 3 | 10 | 13 | 16 | 2 | area/power |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob037_parallel2serial` | 21 | 0.0633 | 0.0002 | 4 | 4 | 14 | 7 | 2 | area/power/eff_clk_period |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob041_traffic_light` | 62 | 0.4378 | 0.3730 | 9 | 56 | 49 | 13 | 6 | area/power |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob045_alu` | 63 | 0.4112 | 0.2395 | 1 | 63 | 56 | 7 | 1 | area/power |
+| `sr_random_relu_pca_qd` | `RTLLM/Prob049_signal_generator` | 58 | 0.2598 | 0.0193 | 42 | 51 | 17 | 41 | 9 | area/power/eff_clk_period |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob098_circuit7` | 31 | 0.0120 | 0.0000 | 12 | 12 | 5 | 26 | 3 | area/power |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob116_m2014_q3` | 76 | 0.4654 | 0.3984 | 41 | 76 | 16 | 60 | 3 | area/power |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob135_m2014_q6b` | 87 | 0.2636 | 0.0000 | 10 | 0 | 8 | 79 | 4 | area/power |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob150_review2015_fsmonehot` | 50 | 0.3297 | 0.0000 | 25 | 49 | 12 | 38 | 6 | area/power |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob151_review2015_fsm` | 17 | -0.1422 | 0.0000 | 4 | 0 | 13 | 4 | 3 | area/power/eff_clk_period |
+| `sr_random_relu_pca_qd` | `VerilogEval-Spec-to-RTL/Prob153_gshare` | 20 | 0.1356 | 0.0009 | 4 | 4 | 14 | 6 | 4 | area/power/eff_clk_period |
 
 ## Artifact Roots
 
@@ -235,3 +273,4 @@ The JSON report includes per-generation anytime rows for each method.
 - `landing_smooth_qd_manual_bd`: `exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1003/standard_results`
 - `random_descriptor_qd`: `exp/auto_bd_research/main_screening_screening_seed3/random_descriptor_qd/seed_1003/standard_results`
 - `synthesis_trajectory_nod`: `exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1003/standard_results`
+- `sr_random_relu_pca_qd`: `exp/auto_bd_research/main_screening_screening_seed3/sr_random_relu_pca_qd/seed_1003/standard_results`

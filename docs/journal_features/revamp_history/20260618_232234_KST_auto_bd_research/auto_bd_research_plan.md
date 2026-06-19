@@ -402,6 +402,7 @@ PPA quality:
 - top-k average fitness
 - strict zero-reference PPA hypervolume
 - acceptable-nadir normalized hypervolume, such as `ANHV@1.5`
+- PPA-grid coverage under a fixed problem-local PPA grid
 - power, area, and timing improvements
 - anytime best-fitness curve
 - anytime strict-HV and `ANHV@1.5` curves
@@ -430,6 +431,19 @@ Descriptor quality:
 - learned-BD scatter colored by area, power, timing, and fitness when the
   method uses learned or projected descriptors
 - descriptor-axis correlation with PPA metrics and benchmark identity
+
+Required visualizations for projected or learned descriptors:
+
+- fitness anytime curve
+- strict HV anytime curve
+- `ANHV@1.5` anytime curve
+- per-problem Pareto fronts with method overlays
+- PPA-grid occupancy or PPA-front unique-netlist count by method
+- common-audit descriptor occupancy heatmap
+- learned-BD scatter colored by area, power, timing, and fitness
+- descriptor-axis correlations with PPA metrics and benchmark identity
+- problem-seed paired delta plot versus classic REvolution
+- representative elites per learned-BD region
 
 Failure taxonomy:
 
@@ -597,6 +611,26 @@ stricter than a generic QD gain:
 If the method improves diversity but loses too much PPA or repair
 robustness, report it as an ablation rather than the final journal
 method.
+
+## Implementation Organization
+
+Auto-BD experimentation must stay modular enough to compare variants
+without turning the backend into a collection of special cases. New
+variant code should follow `GUIDELINES.md` and `AGENTS.md`:
+
+- keep descriptor-family logic in the nearest Auto-BD module, not spread
+  across unrelated runtime call sites;
+- use explicit method/profile names and fail on unknown descriptor kinds;
+- keep argument lists narrow and required values required;
+- prefer typed data structures and discriminated variants over optional
+  fields and broad dictionaries at public boundaries;
+- add docstrings for public entry points and short comments only where
+  synthesis-response plumbing is not obvious;
+- keep each method's fitting artifacts, method card, reports, and
+  accept/reject decision under its `auto_bd_methods/` directory;
+- run `ty` on touched source modules as the primary type check, with
+  pyright retained as secondary compatibility evidence while repo
+  guidance still asks for it.
 
 ## Anti-Hack Rules
 

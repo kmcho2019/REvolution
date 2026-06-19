@@ -157,11 +157,13 @@ Implemented:
 - Development seed-1 runs, standard results, Gate 0 coverage artifacts,
   and method-local artifact reports for `sr_raw_pca_qd` and
   `sr_random_relu_pca_qd`.
+- Main seed-3 screening runs, standard results, centralized reports, and
+  aggregate screening decision for `sr_random_relu_pca_qd`.
 
 Not implemented:
 
 - Random Fourier feature expansion.
-- Seed-3 SR-PCA screening runs.
+- Fixed PPA-grid coverage reporting for projected descriptors.
 
 ## 11. Experimental Setup
 
@@ -225,6 +227,33 @@ Seed-1 metrics:
 - Common-audit occupied cells: 10 versus 12 for classic.
 - Common-audit QD score: 2.3765 versus 2.3163 for classic.
 
+Main seed-3 `sr_random_relu_pca_qd` result:
+
+- standard results:
+  `exp/auto_bd_research/main_screening_screening_seed3/sr_random_relu_pca_qd/seed_*/standard_results`
+- centralized reports:
+  `../../auto_bd_seed3_seed1001_centralized_report.md`,
+  `../../auto_bd_seed3_seed1002_centralized_report.md`, and
+  `../../auto_bd_seed3_seed1003_centralized_report.md`
+- aggregate report: `../../auto_bd_seed3_screening_report.md`
+
+Seed-3 aggregate metrics:
+
+- Gate 0: pass, 3/3 seeds, 13/13 classic-covered problems each seed.
+- Average valid PPA: 635.3/1560 versus 735.0/1560 for classic.
+- Valid-PPA rate: 0.4073 versus 0.4712 for classic, a 6.39
+  percentage-point drop.
+- Mean best fitness: 0.2691 versus 0.2776 for classic.
+- Fitness W/T/L: 4/31/4 versus classic.
+- Mean hypervolume: 0.1222 versus 0.1202 for classic.
+- Hypervolume W/T/L: 8/20/11 versus classic.
+- PPA-front unique netlists: 58.0 versus 54.0 for classic, about a 7.4
+  percent uplift.
+- Unique canonical netlists: 300.0 versus 323.7 for classic.
+- Unique motif signatures: 217.7 versus 239.3 for classic.
+- Common-audit occupied cells: 38.0 versus 39.3 for classic.
+- Common-audit QD score: 8.0503 versus 8.0494 for classic.
+
 Frozen development fitting artifact:
 
 - artifact:
@@ -286,8 +315,8 @@ Required plots:
 Reject `sr_raw_pca_qd` as a selected final method; keep it as the first
 projected baseline.
 
-Promote `sr_random_relu_pca_qd` only to seed-3 screening. Do not promote
-it to final-method status from seed-1 evidence.
+Reject `sr_random_relu_pca_qd` as a selected final method after seed-3
+screening. Keep it as an AutoQD-style projected descriptor ablation.
 
 ## 14. Reason
 
@@ -298,10 +327,10 @@ beat classic REvolution, common-audit coverage only ties classic, and
 PPA-front unique-netlist uplift is below the predeclared 20 percent
 target.
 
-`sr_random_relu_pca_qd` is PPA-quality-promising but diversity-risky.
-Gate 0 passes, valid-PPA drop is within the 5 percentage-point seed-1
-tolerance, and mean HV improves by about 16.8 percent. However,
-PPA-front unique netlists, common-audit occupied cells, and valid-PPA
-count all regress versus classic. Seed-3 must show that the HV uplift is
-robust and that diversity recovers before this can become a journal
-method.
+`sr_random_relu_pca_qd` was PPA-quality-promising at seed-1 but did not
+survive seed-3 screening. Gate 0 still passes, but valid-PPA rate drops
+by 6.39 percentage points versus classic, mean fitness is lower, mean HV
+is only about 1.6 percent higher than classic, and diversity does not
+recover enough: PPA-front unique netlists improve by about 7.4 percent,
+below the 20 percent target, while unique canonical netlists and
+common-audit cells regress.

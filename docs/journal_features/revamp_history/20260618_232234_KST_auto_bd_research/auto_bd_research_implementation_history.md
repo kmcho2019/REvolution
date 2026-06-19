@@ -8958,3 +8958,127 @@ Results:
 
 - `git diff --check`: pass
 - pytest: 5 passed
+
+## 2026-06-19 - Completed ReLU PCA Seed-3 Screening
+
+Scope:
+
+- Ran all six pending `sr_random_relu_pca_qd` main-screening benchmark
+  commands for seeds 1001, 1002, and 1003 across RTLLM and VerilogEval.
+- Built standard-results artifacts for all three seeds.
+- Regenerated the seed-3 centralized reports, run-matrix status, method
+  card, accept/reject record, TODO, and aggregate screening report.
+- Added explicit plan/TODO requirements for fixed PPA-grid coverage and
+  clean, typed, modular Auto-BD variant organization.
+
+Run command:
+
+```bash
+jq -r '.entries[] | select(.arm_name=="sr_random_relu_pca_qd") | .command_string' \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_matrix.json |
+while IFS= read -r cmd; do
+  eval "$cmd"
+done
+```
+
+Run results:
+
+- seed 1001 RTLLM: completed, 2179.92 seconds
+- seed 1001 VerilogEval: completed, 2341.63 seconds
+- seed 1002 RTLLM: completed, 2060.16 seconds
+- seed 1002 VerilogEval: completed, 2318.58 seconds
+- seed 1003 RTLLM: completed, 2169.10 seconds
+- seed 1003 VerilogEval: completed, 2166.58 seconds
+- All commands used `openai/gpt-oss-120b`,
+  `--vllm_min_model_len 131072`, `--max_tokens 128000`, and
+  `--diff_max_tokens 128000`.
+
+Standard-results command:
+
+```bash
+for s in 1001 1002 1003; do
+  UV_LINK_MODE=copy uv run --active python scripts/build_auto_bd_standard_results.py \
+    --run-dir exp/auto_bd_research/main_screening_screening_seed3/sr_random_relu_pca_qd/seed_${s}/revolution/openai_gpt-oss-120b \
+    --output-dir exp/auto_bd_research/main_screening_screening_seed3/sr_random_relu_pca_qd/seed_${s}/standard_results \
+    --method-name sr_random_relu_pca_qd \
+    --method-family synthesis_response_kernel_pca \
+    --descriptor-version sr_random_relu_pca_v1 \
+    --phase main_screening \
+    --seed ${s} \
+    --run-manifest exp/auto_bd_research/main_screening_screening_seed3/sr_random_relu_pca_qd/seed_${s}/run_manifest.json
+done
+```
+
+Standard-results summaries:
+
+- seed 1001: 1560 candidates, 616 valid PPA, 291 unique canonical
+  netlists, 212 unique motif signatures, 39 common-audit cells
+- seed 1002: 1560 candidates, 638 valid PPA, 299 unique canonical
+  netlists, 217 unique motif signatures, 40 common-audit cells
+- seed 1003: 1560 candidates, 652 valid PPA, 310 unique canonical
+  netlists, 224 unique motif signatures, 35 common-audit cells
+
+Report regeneration:
+
+```bash
+for s in 1001 1002 1003; do
+  UV_LINK_MODE=copy uv run --active python scripts/report_auto_bd_standard_results.py \
+    --results-root exp/auto_bd_research/main_screening_screening_seed3 \
+    --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed3_seed${s}_centralized_report.md \
+    --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed3_seed${s}_centralized_report.json \
+    --figure-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed3_seed${s} \
+    --phase main_screening \
+    --seed ${s}
+done
+
+UV_LINK_MODE=copy uv run --active python scripts/report_auto_bd_run_matrix_status.py \
+  --matrix docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_matrix.json \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.json \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.md
+```
+
+Seed-3 aggregate for `sr_random_relu_pca_qd` versus classic:
+
+- Gate 0: pass, 3/3 seeds, no missing classic-covered problems.
+- Average valid PPA: 635.3/1560 versus 735.0/1560.
+- Valid-PPA rate: 0.4073 versus 0.4712, a 6.39 percentage-point drop.
+- Mean best fitness: 0.2691 versus 0.2776.
+- Fitness W/T/L: 4/31/4.
+- Mean hypervolume: 0.1222 versus 0.1202.
+- Hypervolume W/T/L: 8/20/11.
+- PPA-front unique netlists: 58.0 versus 54.0.
+- Unique canonical netlists: 300.0 versus 323.7.
+- Unique motif signatures: 217.7 versus 239.3.
+- Common-audit occupied cells: 38.0 versus 39.3.
+- Common-audit QD score: 8.0503 versus 8.0494.
+
+Decision:
+
+- Reject `sr_random_relu_pca_qd` as the selected final method.
+- Do not promote it to seed-5 final evaluation.
+- Reason: Gate 0 passes, but the valid-PPA drop exceeds the 5 percentage
+  point bar, mean fitness is lower than classic, HV uplift is only about
+  1.6 percent, and PPA-front unique-netlist uplift is about 7.4 percent,
+  below the 20 percent diversity target.
+
+Validation:
+
+```bash
+git diff --check
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_run_matrix_status.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+UV_LINK_MODE=copy uv tool run ty check \
+  scripts/build_auto_bd_standard_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/report_auto_bd_run_matrix_status.py
+```
+
+Results:
+
+- `git diff --check`: pass
+- pytest: 8 passed
+- `ty check`: pass
+- `ruff check`: not run because no source file was modified
+- pyright: not run because no source file was modified

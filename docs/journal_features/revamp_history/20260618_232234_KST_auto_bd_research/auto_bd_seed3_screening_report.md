@@ -19,14 +19,15 @@ artifacts for seeds 1001, 1002, and 1003.
 | `landing_smooth_qd_manual_bd` | 3/3 | 797.0 | 0.5109 | 0.2887 | 6/30/3 | 0.1284 | 9/22/8 | 339.7 | 59.3 | 39.7 | 8.5144 |
 | `random_descriptor_qd` | 3/3 | 648.3 | 0.4156 | 0.2764 | 6/28/5 | 0.1154 | 7/21/11 | 293.0 | 56.0 | 38.0 | 7.8712 |
 | `synthesis_trajectory_nod` | 3/3 | 632.0 | 0.4051 | 0.2832 | 5/30/4 | 0.1211 | 7/21/11 | 284.0 | 58.3 | 39.0 | 8.7738 |
+| `sr_random_relu_pca_qd` | 3/3 | 635.3 | 0.4073 | 0.2691 | 4/31/4 | 0.1222 | 8/20/11 | 300.0 | 58.0 | 38.0 | 8.0503 |
 
 ## Screening Interpretation
 
-All four seed-3 arms pass Gate 0 on the 13-problem main subset for all
+All five seed-3 arms pass Gate 0 on the 13-problem main subset for all
 three seeds. This means the promoted QD arms did not miss any
 classic-covered problem at the problem level.
 
-Neither promoted Auto-BD arm is a clean final-method candidate:
+No promoted Auto-BD arm is a clean final-method candidate:
 
 - `random_descriptor_qd` remains useful as a control but has lower
   valid-PPA rate, mean HV, unique netlists, and audit QD than the landing
@@ -39,15 +40,22 @@ Neither promoted Auto-BD arm is a clean final-method candidate:
   though it remains a useful synthesis-response control and provides the
   best current evidence that hardware-native synthesis descriptors can
   organize archives differently.
+- `sr_random_relu_pca_qd` is not the hoped-for recovery from the seed-1
+  result. It passes Gate 0, but its average valid-PPA rate is 40.7
+  percent versus 47.1 percent for classic and 51.1 percent for landing
+  manual-BD. Its average HV is only about 1.6 percent above classic,
+  below the predeclared 5 percent seed-3 bar, while average fitness,
+  unique canonical netlists, and common-audit cells all trail classic.
+  PPA-front unique netlists improve from 54.0 to 58.0 versus classic,
+  but that is about 7.4 percent, below the 20 percent target.
 
 ## Decision
 
-Do not select ST-NOD as the final journal method from seed-3 evidence.
-Keep it as a baseline/control for synthesis-response descriptors and move
-to the P5 projected method family:
-`04_synthesis_response_kernel_pca/`.
+Do not select ST-NOD or `sr_random_relu_pca_qd` as the final journal
+method from seed-3 evidence.
 
-The next candidate should be `sr_raw_pca_qd` followed by
-`sr_random_relu_pca_qd`, with frozen fitting artifacts and no PPA,
-fitness, hypervolume, testbench pass-rate, reference PPA, or problem-ID
-descriptor leakage.
+Keep ST-NOD as the hardware-native synthesis-response control. Keep
+`sr_random_relu_pca_qd` as a projected AutoQD-style ablation that passes
+Gate 0 but does not justify seed-5 final evaluation. The next P5 method,
+if compute permits, should be `sr_rff_pca_qd` as a kernel control only
+after the report gap for fixed PPA-grid coverage is closed.
