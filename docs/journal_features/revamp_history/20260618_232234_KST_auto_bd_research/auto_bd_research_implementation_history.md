@@ -7460,3 +7460,199 @@ PY
 ```
 
 Result: `stnod seed1002 rtllm status check ok`.
+
+## 2026-06-19 14:26 UTC
+
+Completed and packaged the seed-3 main-screening
+`synthesis_trajectory_nod` seed 1002 run pair.
+
+Model endpoint preflight:
+
+```bash
+curl -s http://20.0.0.103:8000/v1/models
+```
+
+Result:
+
+- model ID: `openai/gpt-oss-120b`
+- `max_model_len`: 131072
+
+VerilogEval run command:
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks VerilogEval-Spec-to-RTL \
+  --problems Prob098_circuit7 Prob116_m2014_q3 Prob135_m2014_q6b Prob150_review2015_fsmonehot Prob151_review2015_fsm Prob153_gshare \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 20 \
+  --num_generations 5 \
+  --evaluation_mode search_accelerated \
+  --accelerated_synthesis_top_k 1 \
+  --total_worker_slots 13 \
+  --max_active_problems 13 \
+  --max_workers_per_problem 4 \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 300 \
+  --post_synthesis_simulation_timeout_s 300 \
+  --seed 1002 \
+  --save_path /workspace/.worktrees/journal-auto-bd-exp-20260618/exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1002 \
+  --search_mode revolution_qd \
+  --qd_archive_type grid_quantile \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 5 \
+  --qd_objectives ppa \
+  --qd_champion_lane_fraction 0.5 \
+  --qd_parent_selection nsga2_global_rank \
+  --qd_two_parent_probability 0.5 \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_descriptor_profile stnod_trajectory_5d \
+  --qd_descriptor_file /workspace/.worktrees/journal-auto-bd-exp-20260618/docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/03_synthesis_trajectory_nod/descriptor_profile.yaml
+```
+
+Result:
+
+- arm: `synthesis_trajectory_nod`
+- seed: 1002
+- benchmark group: `VerilogEval-Spec-to-RTL`
+- run time: 2339.00 seconds
+- run log:
+  `exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1002/revolution/openai_gpt-oss-120b/20260619_134444_revolution_run_log.txt`
+- summary:
+  `exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1002/revolution/openai_gpt-oss-120b/20260619_134444_revolution_summary_results.txt`
+- scheduler telemetry:
+  `exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1002/revolution/openai_gpt-oss-120b/20260619_134444_revolution_scheduler_telemetry.json`
+- final ST-NOD `07_buffered.v` snapshots observed: 265
+
+Problem outcomes:
+
+| Problem | Status | Best Score |
+| --- | --- | --- |
+| `Prob098_circuit7` | `success` | 0.01200564971751411 |
+| `Prob116_m2014_q3` | `success` | 0.46535233160621764 |
+| `Prob135_m2014_q6b` | `success` | 0.33104633781763826 |
+| `Prob150_review2015_fsmonehot` | `success` | 0.32968627450980387 |
+| `Prob151_review2015_fsm` | `success` | -0.12591398161867956 |
+| `Prob153_gshare` | `success` | 0.10246689907185018 |
+
+Packaging command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/build_auto_bd_standard_results.py \
+  --run-dir exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1002/revolution/openai_gpt-oss-120b \
+  --output-dir exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1002/standard_results \
+  --method-name synthesis_trajectory_nod \
+  --method-family synthesis_trajectory_nod \
+  --descriptor-version stnod_trajectory_5d \
+  --phase main_screening \
+  --seed 1002 \
+  --run-manifest exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1002/run_manifest.json
+```
+
+Generated standard result root:
+
+`exp/auto_bd_research/main_screening_screening_seed3/synthesis_trajectory_nod/seed_1002/standard_results`
+
+Generated files:
+
+- `archive_snapshots.parquet`
+- `candidates.parquet`
+- `descriptor_vectors.parquet`
+- `elites.parquet`
+- `method_summary.json`
+- `netlist_hashes.parquet`
+- `per_generation_metrics.parquet`
+- `per_problem_metrics.parquet`
+- `run_manifest.json`
+
+Method summary:
+
+| Metric | Value |
+| --- | ---: |
+| `candidate_count` | 1560 |
+| `valid_ppa_candidate_count` | 600 |
+| `problem_count` | 13 |
+| `unique_canonical_netlist_count` | 290 |
+| `unique_motif_signature_count` | 197 |
+| `common_audit_bins` | 4 |
+| `common_audit_total_cells` | 256 |
+| `common_audit_occupied_cells` | 37 |
+| `common_audit_qd_score` | 8.154124885405766 |
+
+Refreshed status command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_run_matrix_status.py
+```
+
+Current seed-3 status:
+
+- manifest commands: 12 complete, 0 pending
+- benchmark commands: 22 complete, 2 pending
+- arm/seed pairs: 11 standard-results complete, 1 pending
+- `synthesis_trajectory_nod` seed 1002: standard results complete, 2/2 benchmark groups complete
+- next pending: `synthesis_trajectory_nod` seed 1003 RTLLM and VerilogEval
+
+Artifact check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+status_path = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_main_screening_run_status.json"
+)
+summary_path = Path(
+    "exp/auto_bd_research/main_screening_screening_seed3/"
+    "synthesis_trajectory_nod/seed_1002/standard_results/"
+    "method_summary.json"
+)
+stage_root = Path(
+    "exp/auto_bd_research/main_screening_screening_seed3/"
+    "synthesis_trajectory_nod/seed_1002/revolution/"
+    "openai_gpt-oss-120b/VerilogEval-Spec-to-RTL"
+)
+status = json.loads(status_path.read_text())
+summary = json.loads(summary_path.read_text())
+assert status["manifest_summary"] == {"complete": 12, "total": 12}
+assert status["entry_summary"] == {"complete": 22, "pending": 2, "total": 24}
+assert status["arm_seed_summary"] == {
+    "pending": 1,
+    "standard_results_complete": 11,
+    "total": 12,
+}
+entry = next(
+    item
+    for item in status["arm_seed_status"]
+    if item["arm_name"] == "synthesis_trajectory_nod"
+    and item["seed"] == 1002
+)
+assert entry["status"] == "standard_results_complete"
+assert entry["benchmark_groups_complete"] == 2
+assert summary["method_name"] == "synthesis_trajectory_nod"
+assert summary["phase"] == "main_screening"
+assert summary["seed"] == 1002
+assert summary["candidate_count"] == 1560
+assert summary["valid_ppa_candidate_count"] == 600
+assert summary["unique_canonical_netlist_count"] == 290
+assert summary["unique_motif_signature_count"] == 197
+assert summary["common_audit_occupied_cells"] == 37
+assert len(list(stage_root.rglob("*.stnod.stages/07_buffered.v"))) == 265
+print("stnod seed1002 standard results check ok")
+PY
+```
+
+Result: `stnod seed1002 standard results check ok`.
