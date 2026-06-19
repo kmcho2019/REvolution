@@ -120,6 +120,11 @@ _REGISTRY: dict[str, DescriptorDefinition] = {
     "sr_pca_2": DescriptorDefinition("sr_pca_2", "auto_bd_sr_pca", requires_synthesis=True),
     "sr_pca_3": DescriptorDefinition("sr_pca_3", "auto_bd_sr_pca", requires_synthesis=True),
     "sr_pca_4": DescriptorDefinition("sr_pca_4", "auto_bd_sr_pca", requires_synthesis=True),
+    "sr_vq_0": DescriptorDefinition("sr_vq_0", "auto_bd_sr_vq", requires_synthesis=True),
+    "sr_vq_1": DescriptorDefinition("sr_vq_1", "auto_bd_sr_vq", requires_synthesis=True),
+    "sr_vq_2": DescriptorDefinition("sr_vq_2", "auto_bd_sr_vq", requires_synthesis=True),
+    "sr_vq_3": DescriptorDefinition("sr_vq_3", "auto_bd_sr_vq", requires_synthesis=True),
+    "sr_vq_4": DescriptorDefinition("sr_vq_4", "auto_bd_sr_vq", requires_synthesis=True),
 }
 
 
@@ -201,6 +206,20 @@ def load_sr_pca_artifact_path(path: str | Path | None) -> Path:
     profile_path = Path(path)
     payload = _load_descriptor_config(profile_path)
     artifact_path = payload["sr_pca_artifact"]
+    assert isinstance(artifact_path, str)
+    resolved = Path(artifact_path)
+    if resolved.is_absolute():
+        return resolved
+    return profile_path.parent / resolved
+
+
+def load_sr_vq_artifact_path(path: str | Path | None) -> Path:
+    """Load the frozen SR-VQ artifact path from a descriptor-profile file."""
+
+    assert path is not None
+    profile_path = Path(path)
+    payload = _load_descriptor_config(profile_path)
+    artifact_path = payload["sr_vq_artifact"]
     assert isinstance(artifact_path, str)
     resolved = Path(artifact_path)
     if resolved.is_absolute():
@@ -362,7 +381,7 @@ def _default_grid_bounds(axis: str) -> tuple[float, float]:
         return (-8.0, 8.0)
     if axis.startswith("stnod_"):
         return (0.0, 1.0)
-    if axis.startswith("sr_pca_"):
+    if axis.startswith("sr_pca_") or axis.startswith("sr_vq_"):
         return (-3.0, 3.0)
     if axis in {"wire_cell_ratio_est", "resource_sharing_ratio_est"}:
         return (0.0, 4.0)
@@ -426,6 +445,9 @@ def descriptor_requirements(axes: list[str] | tuple[str, ...]) -> dict[str, bool
         "requires_auto_bd_sr_pca": any(
             registry[axis].source_tool == "auto_bd_sr_pca" for axis in axes
         ),
+        "requires_auto_bd_sr_vq": any(
+            registry[axis].source_tool == "auto_bd_sr_vq" for axis in axes
+        ),
     }
 
 
@@ -448,6 +470,7 @@ def summarize_descriptor_axes(axes: list[str] | tuple[str, ...]) -> list[dict[st
                 registry[axis].source_tool == "auto_bd_stage_dumps"
             ),
             "requires_auto_bd_sr_pca": registry[axis].source_tool == "auto_bd_sr_pca",
+            "requires_auto_bd_sr_vq": registry[axis].source_tool == "auto_bd_sr_vq",
         }
         for axis in axes
     ]

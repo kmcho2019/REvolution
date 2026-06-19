@@ -130,10 +130,16 @@ _METHOD_SPECS: tuple[AutoBDMethodSpec, ...] = (
         family="vq_implementation_codebook",
         directory_name="07_vq_implementation_codebook",
         title="VQ Implementation-Style Codebook",
-        descriptor_inputs=("motif_or_trajectory_vectors",),
+        descriptor_inputs=(
+            "synthesis_stats",
+            "motif_occupancy",
+            "yosys_stage_dumps",
+            "stage_cell_count_deltas",
+            "stage_motif_ratios",
+        ),
         fitting_protocol="fixed_offline",
         requires_synthesis=True,
-        requires_stage_dumps=False,
+        requires_stage_dumps=True,
         requires_fitting_artifacts=True,
     ),
 )

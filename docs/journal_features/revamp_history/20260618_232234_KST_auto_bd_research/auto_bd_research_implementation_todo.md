@@ -92,13 +92,13 @@ evidence and rationale.
   training candidate list, and excluded data.
 - [ ] Implement AURORA-style encoder only if fixed-vector methods are
   stable but insufficient.
-- [ ] Implement `sr_vq_codebook_qd` only if codebook regions can be
+- [x] Implement `sr_vq_codebook_qd` only if codebook regions can be
   labeled by motif/trajectory enrichment.
 - [x] Keep method cards, reports, and accept/reject decisions for rejected
   learned/codebook variants.
-- [ ] Verify experimental modes do not spread backend logic across
+- [x] Verify experimental modes do not spread backend logic across
   unrelated call sites or create unnecessary abstractions.
-- [ ] Verify Auto-BD variants remain typed, modular, and exhaustive over
+- [x] Verify Auto-BD variants remain typed, modular, and exhaustive over
   descriptor/method kinds.
 
 ## P6 - Reporting

@@ -30,8 +30,8 @@ def test_build_matrix_groups_by_benchmark_and_arm(tmp_path):
         run_root=tmp_path / "exp",
     )
 
-    assert len(payload["manifest_commands"]) == 10
-    assert len(payload["entries"]) == 20
+    assert len(payload["manifest_commands"]) == 11
+    assert len(payload["entries"]) == 22
     assert (tmp_path / "out" / "auto_bd_development_run_matrix.json").is_file()
     assert (tmp_path / "out" / "auto_bd_development_run_matrix.sh").is_file()
     arms = {entry["arm_name"] for entry in payload["entries"]}
@@ -46,6 +46,7 @@ def test_build_matrix_groups_by_benchmark_and_arm(tmp_path):
         "sr_raw_pca_qd",
         "sr_random_relu_pca_qd",
         "sr_rff_pca_qd",
+        "sr_vq_codebook_qd",
     }
     random_entry = next(
         entry for entry in payload["entries"]
@@ -100,6 +101,15 @@ def test_build_matrix_groups_by_benchmark_and_arm(tmp_path):
     assert (
         "04_synthesis_response_kernel_pca/descriptor_profile_rff.yaml"
         in sr_rff_entry["command_string"]
+    )
+    sr_vq_entry = next(
+        entry for entry in payload["entries"]
+        if entry["arm_name"] == "sr_vq_codebook_qd"
+    )
+    assert "--qd_descriptor_profile sr_vq_3d" in sr_vq_entry["command_string"]
+    assert (
+        "07_vq_implementation_codebook/descriptor_profile.yaml"
+        in sr_vq_entry["command_string"]
     )
 
 
@@ -254,6 +264,7 @@ def _write_inputs(tmp_path: Path) -> dict[str, Path]:
                         "descriptor_source": "sr_random_relu_pca_artifact"
                     },
                     "sr_rff_pca_qd": {"descriptor_source": "sr_rff_pca_artifact"},
+                    "sr_vq_codebook_qd": {"descriptor_source": "sr_vq_artifact"},
                 },
             },
             sort_keys=False,

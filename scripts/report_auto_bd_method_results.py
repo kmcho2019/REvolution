@@ -16,6 +16,7 @@ METHOD_DIRS = {
     "sr_raw_pca_qd": "04_synthesis_response_kernel_pca",
     "sr_random_relu_pca_qd": "04_synthesis_response_kernel_pca",
     "sr_rff_pca_qd": "04_synthesis_response_kernel_pca",
+    "sr_vq_codebook_qd": "07_vq_implementation_codebook",
 }
 
 
@@ -30,8 +31,11 @@ def build_reports(
     assert central_report_json.is_file(), central_report_json
     assert method_root.is_dir(), method_root
     report = load_json(central_report_json)
+    report_methods = {str(row["method_name"]) for row in report["leaderboard"]}
     outputs = {}
     for method, directory in METHOD_DIRS.items():
+        if method not in report_methods:
+            continue
         method_dir = method_root / directory
         assert method_dir.is_dir(), method_dir
         output_path = method_dir / method_output_name(method, output_name)

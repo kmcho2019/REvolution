@@ -9,6 +9,7 @@ from revolution.qd.descriptors import (
     load_grid_axis_specs,
     load_descriptor_profiles,
     load_sr_pca_artifact_path,
+    load_sr_vq_artifact_path,
     resolve_descriptor_axes,
     resolve_grid_axis_specs,
 )
@@ -42,6 +43,11 @@ SR_RFF_PCA_DESCRIPTOR_FILE = (
     "docs/journal_features/revamp_history/"
     "20260618_232234_KST_auto_bd_research/"
     "auto_bd_methods/04_synthesis_response_kernel_pca/descriptor_profile_rff.yaml"
+)
+SR_VQ_DESCRIPTOR_FILE = (
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_methods/07_vq_implementation_codebook/descriptor_profile.yaml"
 )
 
 
@@ -488,6 +494,24 @@ def test_sr_rff_pca_profile_resolves_artifact():
     assert axes == ["sr_pca_0", "sr_pca_1", "sr_pca_2"]
     assert artifact_path.is_file()
     assert "sr_rff_pca_artifact.json" in artifact_path.as_posix()
+
+
+def test_sr_vq_profile_resolves_artifact_and_requirements():
+    axes = resolve_descriptor_axes(
+        profile_name="sr_vq_3d",
+        explicit_axes=None,
+        descriptor_file=SR_VQ_DESCRIPTOR_FILE,
+        archive_type="grid",
+        circuit_type="sequential",
+    )
+    requirements = descriptor_requirements(axes)
+    artifact_path = load_sr_vq_artifact_path(SR_VQ_DESCRIPTOR_FILE)
+
+    assert axes == ["sr_vq_0", "sr_vq_1", "sr_vq_2"]
+    assert requirements["requires_synthesis"] is True
+    assert requirements["requires_auto_bd_sr_vq"] is True
+    assert artifact_path.is_file()
+    assert "sr_vq_codebook_artifact.json" in artifact_path.as_posix()
 
 
 def test_load_descriptor_profiles_accepts_custom_file(tmp_path: Path):

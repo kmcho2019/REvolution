@@ -9517,3 +9517,161 @@ Next:
 - If no projected method passes, either revisit ST-NOD seed-3 evidence or
   propose a simpler hardware-native variant before moving to VQ/codebook
   or AURORA-style encoders.
+
+## 2026-06-20 KST - Add SR-VQ Codebook Method Arm
+
+Context:
+
+- Seed-3 projected-method evidence did not produce a clean selected
+  method candidate.
+- ST-NOD remains the strongest common-audit diversity control but failed
+  the robustness final bar.
+- Random ReLU PCA and RFF PCA are useful ablations but did not produce
+  enough PPA or common-audit uplift to justify seed-5.
+- The next staged P5 option is a VQ/codebook descriptor over the same
+  hardware-native synthesis-response feature substrate.
+
+Implementation:
+
+- Added `src/revolution/auto_bd/sr_vq_descriptor.py`.
+- Added frozen SR-VQ artifact export/import, deterministic k-means
+  fitting, centroid PCA-layout coordinates, and region labels from
+  motif/trajectory feature enrichment.
+- Wired `sr_vq_*` axes through the QD descriptor registry and runtime
+  descriptor extraction path.
+- Added `scripts/build_sr_vq_artifacts.py` to fit artifacts only from
+  valid development/warmup candidates and emit standardized fitting
+  evidence.
+- Added `sr_vq_codebook_qd` to the development run matrix and reporting
+  method lists.
+- Added method-local config, descriptor profile, method card, and frozen
+  fitting artifact under
+  `auto_bd_methods/07_vq_implementation_codebook/`.
+- Kept the runtime wiring narrow: the backend addition shares the
+  existing synthesis-response raw-feature path instead of adding a
+  separate experimental evaluator.
+
+Frozen fitting artifact:
+
+- artifact:
+  `docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/07_vq_implementation_codebook/fitting_artifacts/sr_vq_codebook_dev_seed1001/sr_vq_codebook_artifact.json`
+- training source:
+  `exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001/standard_results`
+- training candidates: 205 valid development candidates
+- descriptor version: `sr_vq_codebook_v1`
+- codebook size: 16
+- k-means seed: `20260618`
+- feature schema hash:
+  `505c9fb648a6a2bd2dadca0e8f1ed30de567bd00df4d72fef2ec385ece47421a`
+- scaler hash:
+  `4d2b9bbe7cfb8841e11ead36c893f092693ddccc5e624312f1036687c927d5cf`
+- codebook hash:
+  `393ade44dc56ed7e99cdf563610c270ebc1619741183c2a1c7fb5655c828aa35`
+- layout hash:
+  `f7d9fe786f7c8e63a356f016f402750ced332bd212cb4472a1e8cd46bf6b407c`
+- descriptor hash:
+  `a1d9cf5abe52c98e432b35b684261429583dc6f9fed00452b4b633159e54d54b`
+
+Artifact build command:
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/build_sr_vq_artifacts.py \
+  --standard-results-dir exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_nod/seed_1001/standard_results \
+  --output-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/07_vq_implementation_codebook/fitting_artifacts/sr_vq_codebook_dev_seed1001 \
+  --method-name sr_vq_codebook_qd \
+  --codebook-size 16 \
+  --dimensions 3 \
+  --kmeans-seed 20260618 \
+  --kmeans-iterations 32
+```
+
+Validation:
+
+```bash
+git diff --check
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/revolution/test_auto_bd_method_specs.py \
+  tests/scripts/test_build_sr_vq_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+UV_LINK_MODE=copy uv run --active ruff check \
+  src/revolution/auto_bd/sr_vq_descriptor.py \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/auto_bd/method_specs.py \
+  src/revolution/qd/descriptors.py \
+  src/revolution/qd/__init__.py \
+  src/revolution/qd/engine.py \
+  scripts/build_sr_vq_artifacts.py \
+  scripts/build_auto_bd_run_matrix.py \
+  scripts/report_auto_bd_method_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/report_auto_bd_promotion_decisions.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/revolution/test_auto_bd_method_specs.py \
+  tests/scripts/test_build_sr_vq_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+UV_LINK_MODE=copy uv tool run ty check \
+  src/revolution/auto_bd/sr_vq_descriptor.py \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/auto_bd/method_specs.py \
+  src/revolution/qd/descriptors.py \
+  src/revolution/qd/__init__.py \
+  src/revolution/qd/engine.py \
+  scripts/build_sr_vq_artifacts.py \
+  scripts/build_auto_bd_run_matrix.py \
+  scripts/report_auto_bd_method_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/report_auto_bd_promotion_decisions.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/revolution/test_auto_bd_method_specs.py \
+  tests/scripts/test_build_sr_vq_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+UV_LINK_MODE=copy uv run --active python -m pyright \
+  src/revolution/auto_bd/sr_vq_descriptor.py \
+  src/revolution/auto_bd/__init__.py \
+  src/revolution/auto_bd/method_specs.py \
+  src/revolution/qd/descriptors.py \
+  src/revolution/qd/__init__.py \
+  src/revolution/qd/engine.py \
+  scripts/build_sr_vq_artifacts.py \
+  scripts/build_auto_bd_run_matrix.py \
+  scripts/report_auto_bd_method_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/report_auto_bd_promotion_decisions.py \
+  tests/revolution/test_auto_bd_sr_pca_descriptor.py \
+  tests/revolution/test_qd_descriptors.py \
+  tests/revolution/test_auto_bd_method_specs.py \
+  tests/scripts/test_build_sr_vq_artifacts.py \
+  tests/scripts/test_build_auto_bd_run_matrix.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+```
+
+Results:
+
+- `git diff --check`: pass
+- focused pytest: 54 passed
+- `ruff check`: pass
+- `ty check`: pass
+- pyright: 0 errors, 0 warnings, 0 informations
+
+Next:
+
+- Run the `sr_vq_codebook_qd` seed-1 development sanity check.
+- Package standard results and Gate 0 evidence.
+- Accept or reject seed-3 promotion using the same seed-1 promotion
+  decision script and method-local report flow.

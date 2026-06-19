@@ -17,6 +17,7 @@ AUTO_BD_METHODS = {
     "sr_raw_pca_qd",
     "sr_random_relu_pca_qd",
     "sr_rff_pca_qd",
+    "sr_vq_codebook_qd",
 }
 CONTROL_METHODS = {
     "random_descriptor_qd",

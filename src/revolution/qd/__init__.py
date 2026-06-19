@@ -29,6 +29,7 @@ from revolution.qd.descriptors import (
     load_grid_axis_specs,
     load_descriptor_profiles,
     load_sr_pca_artifact_path,
+    load_sr_vq_artifact_path,
     resolve_descriptor_axes,
     resolve_grid_axis_specs,
 )
@@ -75,6 +76,7 @@ __all__ = [
     "load_grid_axis_specs",
     "load_descriptor_profiles",
     "load_sr_pca_artifact_path",
+    "load_sr_vq_artifact_path",
     "normalize_code_hash",
     "qd_fail_share",
     "qd_target_cells",

@@ -1,0 +1,57 @@
+method_family: vq_implementation_codebook
+method_name: sr_vq_codebook_qd
+status: fitting_artifact_ready_runtime_ready_not_run
+
+descriptor:
+  profile: sr_vq_3d
+  descriptor_file: descriptor_profile.yaml
+  raw_feature_schema: synthesis_response_raw_v1
+  raw_features:
+  - final_yosys_stats
+  - final_motif_occupancy
+  - stnod_trajectory_swings
+  - per_stage_motif_ratios
+  - per_stage_cell_count_deltas
+  codebook_size: 16
+  codebook_layout: centroid_pca_3d
+  kmeans_seed: 20260618
+  kmeans_iterations: 32
+  fitting_protocol: fixed_offline
+  training_data: predeclared_development_or_warmup_candidates_only
+  fitting_artifact: fitting_artifacts/sr_vq_codebook_dev_seed1001/sr_vq_codebook_artifact.json
+  frozen_artifacts:
+    raw_feature_schema_hash: 505c9fb648a6a2bd2dadca0e8f1ed30de567bd00df4d72fef2ec385ece47421a
+    scaler_hash: 4d2b9bbe7cfb8841e11ead36c893f092693ddccc5e624312f1036687c927d5cf
+    codebook_hash: 393ade44dc56ed7e99cdf563610c270ebc1619741183c2a1c7fb5655c828aa35
+    centroid_layout_hash: f7d9fe786f7c8e63a356f016f402750ced332bd212cb4472a1e8cd46bf6b407c
+    descriptor_hash: a1d9cf5abe52c98e432b35b684261429583dc6f9fed00452b4b633159e54d54b
+  excluded_data:
+  - held_out_problems
+  - main_screening_candidates
+  - final_evaluation_candidates
+  forbidden_inputs:
+  - ppa
+  - reference_ppa
+  - fitness
+  - hypervolume
+  - testbench_pass_percentage
+  - problem_id
+
+qd:
+  archive_type: grid_quantile
+  descriptor_file: descriptor_profile.yaml
+  cell_mode: pareto_front
+  objectives: ppa
+  grid_quantile_warmup_successes: 8
+  max_elites_per_cell: 5
+  parent_selection: nsga2_global_rank
+  champion_lane_fraction: 0.5
+  operator_kind: eoh_strategies
+
+comparison_policy:
+  baseline_lock: ../../auto_bd_run_policy_lock.yaml
+  same_subsets_seeds_model_budget_as_baseline: true
+  report_internal_and_common_audit_space: true
+  fit_before_evaluation: true
+  posthoc_fit_is_visualization_only: true
+  require_codebook_region_labels: true

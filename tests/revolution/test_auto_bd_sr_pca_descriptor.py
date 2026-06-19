@@ -19,6 +19,14 @@ from revolution.auto_bd.sr_pca_descriptor import (
     sr_raw_feature_values,
     transform_sr_raw_pca,
 )
+from revolution.auto_bd.sr_vq_descriptor import (
+    SR_VQ_AXES,
+    SR_VQ_DESCRIPTOR_VERSION,
+    fit_sr_vq_artifact,
+    sr_vq_artifact_from_json,
+    sr_vq_artifact_to_json,
+    transform_sr_vq,
+)
 from revolution.auto_bd.stage_dumps import STNOD_STAGE_NAMES
 from revolution.qd.engine import QDEngine
 
@@ -146,6 +154,38 @@ def test_sr_rff_pca_artifact_round_trips() -> None:
     assert len(descriptor) == 3
 
 
+def test_sr_vq_artifact_round_trips() -> None:
+    matrix = np.array(
+        [
+            [float((row + 1) * (col + 2)) for col in range(len(sr_raw_feature_axes()))]
+            for row in range(20)
+        ],
+        dtype=float,
+    )
+
+    artifact = fit_sr_vq_artifact(
+        matrix,
+        codebook_size=4,
+        dimensions=3,
+        kmeans_seed=123,
+        kmeans_iterations=8,
+    )
+    payload = sr_vq_artifact_to_json(artifact)
+    loaded = sr_vq_artifact_from_json(payload)
+    raw_values = {
+        axis: float(index)
+        for index, axis in enumerate(sr_raw_feature_axes())
+    }
+
+    descriptor = transform_sr_vq(loaded, raw_values)
+
+    assert loaded.descriptor_hash == artifact.descriptor_hash
+    assert loaded.descriptor_version == SR_VQ_DESCRIPTOR_VERSION
+    assert len(loaded.cluster_labels) == 4
+    assert len(descriptor) == 3
+    assert list(SR_VQ_AXES[:3]) == ["sr_vq_0", "sr_vq_1", "sr_vq_2"]
+
+
 def test_qd_engine_extracts_sr_pca_descriptor_values(tmp_path: Path) -> None:
     stage_paths = _write_stage_files(tmp_path, "candidate")
     netlist_path = tmp_path / "code.syn.v"
@@ -191,6 +231,60 @@ def test_qd_engine_extracts_sr_pca_descriptor_values(tmp_path: Path) -> None:
     )
 
     assert set(values) == {"sr_pca_0", "sr_pca_1", "sr_pca_2"}
+    assert all(isinstance(value, float) for value in values.values())
+
+
+def test_qd_engine_extracts_sr_vq_descriptor_values(tmp_path: Path) -> None:
+    stage_paths = _write_stage_files(tmp_path, "candidate")
+    netlist_path = tmp_path / "code.syn.v"
+    netlist_path.write_text(_netlist_text(("AND2_X1", "MUX2_X1", "ADD_X1")), encoding="utf-8")
+    matrix = np.array(
+        [
+            [float((row + 1) * (col + 2)) for col in range(len(sr_raw_feature_axes()))]
+            for row in range(20)
+        ],
+        dtype=float,
+    )
+    artifact = fit_sr_vq_artifact(
+        matrix,
+        codebook_size=4,
+        dimensions=3,
+        kmeans_seed=123,
+        kmeans_iterations=8,
+    )
+    artifact_path = tmp_path / "sr_vq_codebook_artifact.json"
+    artifact_path.write_text(
+        json.dumps(sr_vq_artifact_to_json(artifact), indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    descriptor_file = tmp_path / "descriptor_profile.yaml"
+    descriptor_file.write_text(
+        "sr_vq_artifact: sr_vq_codebook_artifact.json\n"
+        "profiles:\n"
+        "  sr_vq_3d:\n"
+        "    - sr_vq_0\n"
+        "    - sr_vq_1\n"
+        "    - sr_vq_2\n",
+        encoding="utf-8",
+    )
+    engine = object.__new__(QDEngine)
+    engine.qd_archive_type = "grid"
+    engine.qd_grid_axes = ("sr_vq_0", "sr_vq_1", "sr_vq_2")
+    engine.qd_descriptor_file = str(descriptor_file)
+    engine._sr_vq_artifact = None
+
+    values = QDEngine._extract_candidate_descriptor_values(
+        engine,
+        cast(Any, object()),
+        {
+            "synthesis_success": True,
+            "ppa_success": True,
+            "synthesized_netlist_path": netlist_path.as_posix(),
+            "stage_dump_verilog_paths": [path.as_posix() for path in stage_paths],
+        },
+    )
+
+    assert set(values) == {"sr_vq_0", "sr_vq_1", "sr_vq_2"}
     assert all(isinstance(value, float) for value in values.values())
 
 

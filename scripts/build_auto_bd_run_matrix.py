@@ -58,6 +58,10 @@ METHOD_CONFIGS = {
     / "auto_bd_methods"
     / "04_synthesis_response_kernel_pca"
     / "config_rff.yaml",
+    "sr_vq_codebook_qd": SCAFFOLD_DIR
+    / "auto_bd_methods"
+    / "07_vq_implementation_codebook"
+    / "config.yaml",
 }
 
 
@@ -167,6 +171,10 @@ def write_arm_configs(
         "sr_rff_pca_qd": mapping_at(
             mapping_at(run_policy, "candidate_method_arms"),
             "sr_rff_pca_qd",
+        ),
+        "sr_vq_codebook_qd": mapping_at(
+            mapping_at(run_policy, "candidate_method_arms"),
+            "sr_vq_codebook_qd",
         ),
     }
     selected_arms = arm_names or list(arm_payloads)
@@ -362,6 +370,14 @@ def arm_flags(arm_name: str) -> list[str]:
             "sr_pca_3d",
             "--qd_descriptor_file",
             str(METHOD_CONFIGS[arm_name].parent / "descriptor_profile_rff.yaml"),
+        ]
+    if arm_name == "sr_vq_codebook_qd":
+        return [
+            *base_qd,
+            "--qd_descriptor_profile",
+            "sr_vq_3d",
+            "--qd_descriptor_file",
+            str(METHOD_CONFIGS[arm_name].parent / "descriptor_profile.yaml"),
         ]
     raise AssertionError(f"unknown Auto-BD arm: {arm_name}")
 
