@@ -4288,3 +4288,126 @@ PY
 ```
 
 Result: `classic seed1002 standard results check ok`.
+
+## 2026-06-19 02:10 UTC
+
+Completed the next seed-3 main-screening benchmark command.
+
+Model endpoint preflight:
+
+```bash
+curl -sS --max-time 10 http://20.0.0.103:8000/v1/models
+```
+
+Result:
+
+- model ID: `openai/gpt-oss-120b`
+- `max_model_len`: 131072
+
+Run command:
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks RTLLM \
+  --problems Prob004_adder_8bit Prob015_multi_pipe_8bit Prob024_fsm Prob037_parallel2serial Prob041_traffic_light Prob045_alu Prob049_signal_generator \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 20 \
+  --num_generations 5 \
+  --evaluation_mode search_accelerated \
+  --accelerated_synthesis_top_k 1 \
+  --total_worker_slots 13 \
+  --max_active_problems 13 \
+  --max_workers_per_problem 4 \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 300 \
+  --post_synthesis_simulation_timeout_s 300 \
+  --seed 1003 \
+  --save_path /workspace/.worktrees/journal-auto-bd-exp-20260618/exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1003 \
+  --search_mode revolution \
+  --classic_operator_kind eoh_strategies \
+  --representation_kind code_individual
+```
+
+Result:
+
+- arm: `classic_revolution`
+- seed: 1003
+- benchmark group: `RTLLM`
+- run time: 1907.04 seconds
+- run log:
+  `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1003/revolution/openai_gpt-oss-120b/20260619_013848_revolution_run_log.txt`
+- summary:
+  `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1003/revolution/openai_gpt-oss-120b/20260619_013848_revolution_summary_results.txt`
+- scheduler telemetry:
+  `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1003/revolution/openai_gpt-oss-120b/20260619_013848_revolution_scheduler_telemetry.json`
+
+Problem outcomes:
+
+| Problem | Status | Best Score |
+| --- | --- | --- |
+| `Prob004_adder_8bit` | `success` | 0.38154412826809186 |
+| `Prob015_multi_pipe_8bit` | `success` | 0.22434044941785722 |
+| `Prob024_fsm` | `success` | 0.6834970284641851 |
+| `Prob037_parallel2serial` | `success` | 0.2283492764287466 |
+| `Prob041_traffic_light` | `success` | 0.42657225853304287 |
+| `Prob045_alu` | `success` | 0.41190387016229707 |
+| `Prob049_signal_generator` | `success` | 0.26025712884096003 |
+
+Refreshed status command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_run_matrix_status.py \
+  --matrix \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_matrix.json \
+  --output-json \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.json \
+  --output-md \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.md
+```
+
+Current seed-3 status:
+
+- manifest commands: 12 complete, 0 pending
+- benchmark commands: 5 complete, 19 pending
+- arm/seed pairs: 2 standard-results complete, 1 partial, 9 pending
+- `classic_revolution` seed 1003: partial, 1/2 benchmark groups complete
+
+Artifact check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+p = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_main_screening_run_status.json"
+)
+payload = json.loads(p.read_text())
+assert payload["manifest_summary"] == {"complete": 12, "total": 12}
+assert payload["entry_summary"] == {"complete": 5, "pending": 19, "total": 24}
+assert payload["arm_seed_summary"] == {
+    "partial": 1,
+    "pending": 9,
+    "standard_results_complete": 2,
+    "total": 12,
+}
+entry = payload["arm_seed_status"][2]
+assert entry["arm_name"] == "classic_revolution"
+assert entry["seed"] == 1003
+assert entry["status"] == "partial"
+assert entry["benchmark_groups_complete"] == 1
+print("classic seed1003 rttlm status check ok")
+PY
+```
+
+Result: `classic seed1003 rttlm status check ok`.
