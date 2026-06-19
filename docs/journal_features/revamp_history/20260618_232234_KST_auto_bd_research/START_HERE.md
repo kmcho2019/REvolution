@@ -25,6 +25,7 @@ Preliminary result indexes:
 - `auto_bd_standard_results_seed1.md`
 - `auto_bd_seed1_centralized_report.md`
 - `auto_bd_seed1_centralized_report.json`
+- `auto_bd_seed3_screening_report.md`
 
 Main-screening run control:
 

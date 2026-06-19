@@ -121,7 +121,7 @@ evidence and rationale.
 - [x] Promote only methods that pass development-subset Gate 0 and
   robustness gates.
 - [x] Produce seed-1 preliminary reports for fast sanity checks.
-- [ ] Produce seed-3 screening reports for promoted methods.
+- [x] Produce seed-3 screening reports for promoted methods.
 - [ ] Select the simplest passing method by predeclared gates.
 - [ ] Produce seed-5 final report for the selected method when compute
   permits.

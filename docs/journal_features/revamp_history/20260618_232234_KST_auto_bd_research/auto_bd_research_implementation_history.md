@@ -8087,3 +8087,66 @@ Results:
 - ruff: pass
 - ty: pass
 - pyright: 0 errors
+
+## 2026-06-19 - Generated Seed-3 Screening Reports
+
+Generated reports:
+
+- `auto_bd_seed3_seed1001_centralized_report.md`
+- `auto_bd_seed3_seed1001_centralized_report.json`
+- `auto_bd_seed3_seed1002_centralized_report.md`
+- `auto_bd_seed3_seed1002_centralized_report.json`
+- `auto_bd_seed3_seed1003_centralized_report.md`
+- `auto_bd_seed3_seed1003_centralized_report.json`
+- `auto_bd_seed3_screening_report.md`
+- `figures/seed3_seed1001/`
+- `figures/seed3_seed1002/`
+- `figures/seed3_seed1003/`
+
+Generation commands:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_standard_results.py \
+  --results-root exp/auto_bd_research/main_screening_screening_seed3 \
+  --phase main_screening \
+  --seed 1001 \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed3_seed1001_centralized_report.md \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed3_seed1001_centralized_report.json \
+  --figure-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed3_seed1001
+```
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_standard_results.py \
+  --results-root exp/auto_bd_research/main_screening_screening_seed3 \
+  --phase main_screening \
+  --seed 1002 \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed3_seed1002_centralized_report.md \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed3_seed1002_centralized_report.json \
+  --figure-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed3_seed1002
+```
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_standard_results.py \
+  --results-root exp/auto_bd_research/main_screening_screening_seed3 \
+  --phase main_screening \
+  --seed 1003 \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed3_seed1003_centralized_report.md \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed3_seed1003_centralized_report.json \
+  --figure-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed3_seed1003
+```
+
+Screening summary:
+
+- All promoted seed-3 arms pass Gate 0 for all three seeds on all 13
+  main-screening problems.
+- `synthesis_trajectory_nod` has the highest average common-audit QD
+  score, 8.7738.
+- `synthesis_trajectory_nod` is not a final-method candidate from this
+  evidence because average valid-PPA rate is 40.5 percent versus 47.1
+  percent for classic REvolution and 51.1 percent for landing
+  Smooth-QD manual-BD.
+- Decision: keep ST-NOD as a synthesis-response control, then proceed to
+  the P5 `synthesis_response_kernel_pca` family.
