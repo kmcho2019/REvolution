@@ -9268,3 +9268,252 @@ Next:
 
 - Run `sr_rff_pca_qd` seed-1 development before considering any seed-3
   promotion.
+
+## 2026-06-19 - RFF PCA Seed-1 Preliminary
+
+Goal:
+
+- Evaluate `sr_rff_pca_qd` as the random Fourier feature kernel control
+  after the random-ReLU PCA seed-3 rejection.
+- Keep the run on the locked development subset and seed-1 budget before
+  considering any seed-3 promotion.
+
+Preflight:
+
+```bash
+curl -sS --max-time 10 http://20.0.0.103:8000/v1/models
+```
+
+Result:
+
+- available model: `openai/gpt-oss-120b`
+- reported `max_model_len`: `131072`
+- locked run commands used `--vllm_min_model_len 131072`,
+  `--max_tokens 128000`, and `--diff_max_tokens 128000`.
+
+Run-matrix refresh:
+
+```bash
+uv run --active python scripts/build_auto_bd_run_matrix.py \
+  --phase development
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/build_auto_bd_run_manifest.py \
+  --config-path docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_run_configs/development/sr_rff_pca_qd.yaml \
+  --phase development \
+  --output exp/auto_bd_research/development_preliminary_seed1/sr_rff_pca_qd/seed_1001/run_manifest.json
+```
+
+Evolution runs:
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks RTLLM \
+  --problems Prob011_multi_16bit Prob019_sub_64bit Prob048_pe \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 12 \
+  --num_generations 3 \
+  --evaluation_mode strict_ablation \
+  --total_worker_slots 12 \
+  --max_active_problems 6 \
+  --max_workers_per_problem 4 \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 300 \
+  --post_synthesis_simulation_timeout_s 300 \
+  --seed 1001 \
+  --save_path exp/auto_bd_research/development_preliminary_seed1/sr_rff_pca_qd/seed_1001 \
+  --search_mode revolution_qd \
+  --qd_archive_type grid_quantile \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 5 \
+  --qd_objectives ppa \
+  --qd_champion_lane_fraction 0.5 \
+  --qd_parent_selection nsga2_global_rank \
+  --qd_two_parent_probability 0.5 \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_descriptor_profile sr_pca_3d \
+  --qd_descriptor_file docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/04_synthesis_response_kernel_pca/descriptor_profile_rff.yaml
+
+env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks VerilogEval-Spec-to-RTL \
+  --problems Prob021_mux256to1v Prob030_popcount255 Prob105_rotate100 \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 12 \
+  --num_generations 3 \
+  --evaluation_mode strict_ablation \
+  --total_worker_slots 12 \
+  --max_active_problems 6 \
+  --max_workers_per_problem 4 \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 300 \
+  --post_synthesis_simulation_timeout_s 300 \
+  --seed 1001 \
+  --save_path exp/auto_bd_research/development_preliminary_seed1/sr_rff_pca_qd/seed_1001 \
+  --search_mode revolution_qd \
+  --qd_archive_type grid_quantile \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 5 \
+  --qd_objectives ppa \
+  --qd_champion_lane_fraction 0.5 \
+  --qd_parent_selection nsga2_global_rank \
+  --qd_two_parent_probability 0.5 \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_descriptor_profile sr_pca_3d \
+  --qd_descriptor_file docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/04_synthesis_response_kernel_pca/descriptor_profile_rff.yaml
+```
+
+Runtime artifacts:
+
+- RTLLM run log:
+  `exp/auto_bd_research/development_preliminary_seed1/sr_rff_pca_qd/seed_1001/revolution/openai_gpt-oss-120b/20260619_214836_revolution_run_log.txt`
+- VerilogEval run log:
+  `exp/auto_bd_research/development_preliminary_seed1/sr_rff_pca_qd/seed_1001/revolution/openai_gpt-oss-120b/20260619_215716_revolution_run_log.txt`
+- standard results:
+  `exp/auto_bd_research/development_preliminary_seed1/sr_rff_pca_qd/seed_1001/standard_results`
+
+Report generation:
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/build_auto_bd_standard_results.py \
+  --run-dir exp/auto_bd_research/development_preliminary_seed1/sr_rff_pca_qd/seed_1001/revolution/openai_gpt-oss-120b \
+  --output-dir exp/auto_bd_research/development_preliminary_seed1/sr_rff_pca_qd/seed_1001/standard_results \
+  --method-name sr_rff_pca_qd \
+  --method-family synthesis_response_kernel_pca \
+  --descriptor-version sr_rff_pca_v1 \
+  --phase development_preliminary_seed1 \
+  --seed 1001 \
+  --run-manifest exp/auto_bd_research/development_preliminary_seed1/sr_rff_pca_qd/seed_1001/run_manifest.json
+
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/summarize_auto_bd_gate0.py \
+  --run-dir exp/auto_bd_research/development_preliminary_seed1/sr_rff_pca_qd/seed_1001/revolution/openai_gpt-oss-120b \
+  --method-name sr_rff_pca_qd \
+  --phase development_preliminary_seed1 \
+  --seed 1001 \
+  --output docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_gate0_coverage_seed1_sr_rff_pca_qd.json
+
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/report_auto_bd_standard_results.py \
+  --results-root exp/auto_bd_research/development_preliminary_seed1 \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.md \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --figure-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures \
+  --phase development_preliminary_seed1 \
+  --seed 1001
+
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/report_auto_bd_method_results.py \
+  --central-report-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --method-root docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods \
+  --output-name seed1_artifact_report.md
+
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/report_auto_bd_promotion_decisions.py \
+  --central-report-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_promotion_decisions.md \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_promotion_decisions.json
+```
+
+Seed-1 evidence:
+
+- Gate 0: pass, 6/6 classic-covered problems.
+- Valid PPA: 197/288 versus 209/288 for classic REvolution.
+- Valid-PPA rate delta: -4.17 percentage points versus classic.
+- Mean best fitness: 0.2630 versus 0.2671 for classic.
+- Fitness W/T/L versus classic: 0/6/0.
+- Mean hypervolume: 0.1229 versus 0.1245 for classic.
+- Hypervolume W/T/L versus classic: 0/5/1.
+- Fixed PPA-grid coverage: 0.0703, equal to classic.
+- PPA-front unique netlists: 20 versus 12 for classic.
+- Unique canonical netlists: 63 versus 70 for classic.
+- Unique motif signatures: 43, equal to classic.
+- Common-audit occupied cells: 10 versus 12 for classic.
+- Common-audit QD score: 2.8111 versus 2.3163 for classic.
+
+Decision:
+
+- Reject `sr_rff_pca_qd` as a seed-3 promotion candidate under current
+  evidence.
+- Keep it as the random Fourier feature kernel control.
+
+Reason:
+
+- The method has a real diversity signal on PPA-front unique netlists,
+  but it does not improve PPA quality over classic and regresses
+  common-audit occupied cells.
+- Valid-PPA count matches the already rejected ReLU arm.
+- This is a useful ablation, not a selected-method candidate.
+
+Implementation note:
+
+- `scripts/report_auto_bd_promotion_decisions.py` now lists all current
+  Auto-BD arms explicitly so the script remains exhaustive and fails on
+  unknown future methods.
+- Auto-BD seed-3 promotion now requires a Gate 2 screening signal
+  against classic REvolution, not only Gate 0 and Gate 1 robustness.
+
+Validation:
+
+```bash
+git diff --check
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_promotion_decisions.py \
+  scripts/report_auto_bd_method_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/build_auto_bd_standard_results.py \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+UV_LINK_MODE=copy uv tool run ty check \
+  scripts/report_auto_bd_promotion_decisions.py \
+  scripts/report_auto_bd_method_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/build_auto_bd_standard_results.py \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+UV_LINK_MODE=copy uv run --active python -m pyright \
+  scripts/report_auto_bd_promotion_decisions.py \
+  scripts/report_auto_bd_method_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/build_auto_bd_standard_results.py \
+  scripts/summarize_auto_bd_gate0.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+```
+
+Results:
+
+- `git diff --check`: pass
+- method/standard report pytest: 4 passed
+- promotion-decision pytest: 1 passed
+- `ruff check`: pass
+- `ty check`: pass
+- pyright: 0 errors, 0 warnings, 0 informations
+
+Next:
+
+- Do not run seed-3 or seed-5 for RFF PCA under current evidence.
+- If no projected method passes, either revisit ST-NOD seed-3 evidence or
+  propose a simpler hardware-native variant before moving to VQ/codebook
+  or AURORA-style encoders.

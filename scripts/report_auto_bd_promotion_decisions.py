@@ -13,6 +13,10 @@ MANUAL_BASELINE = "landing_smooth_qd_manual_bd"
 AUTO_BD_METHODS = {
     "netlist_motif_occupancy",
     "synthesis_trajectory_nod",
+    "synthesis_trajectory_motif_nod",
+    "sr_raw_pca_qd",
+    "sr_random_relu_pca_qd",
+    "sr_rff_pca_qd",
 }
 CONTROL_METHODS = {
     "random_descriptor_qd",
@@ -21,7 +25,6 @@ CONTROL_METHODS = {
 ROBUSTNESS_DROP_LIMIT = 0.05
 FITNESS_RELATIVE_UPLIFT = 0.10
 HYPERVOLUME_RELATIVE_UPLIFT = 0.10
-POSITIVE_PROBLEM_UPLIFT = 2
 QD_SCORE_RELATIVE_UPLIFT = 0.15
 QD_COVERAGE_RELATIVE_UPLIFT = 0.20
 UNIQUE_NETLIST_RELATIVE_UPLIFT = 0.25
@@ -36,8 +39,9 @@ def build_decision_payload(report_path: Path) -> dict[str, Any]:
     robustness = by_method(report["robustness_funnel"])
     leaderboard = by_method(report["leaderboard"])
     manual = robustness[MANUAL_BASELINE]
+    reference = leaderboard[REFERENCE_METHOD]
     rows = [
-        decision_row(method, gates[method], robustness[method], leaderboard[method], manual)
+        decision_row(method, gates[method], robustness[method], leaderboard[method], manual, reference)
         for method in leaderboard
     ]
     return {
@@ -57,6 +61,7 @@ def decision_row(
     robust: dict[str, Any],
     leader: dict[str, Any],
     manual: dict[str, Any],
+    reference: dict[str, Any],
 ) -> dict[str, Any]:
     role = method_role(method)
     gate0 = gate["gate0"] == "PASS"
@@ -67,11 +72,13 @@ def decision_row(
         "valid_ppa_drop": float(manual["valid_ppa_rate"]) - float(robust["valid_ppa_rate"]),
     }
     robustness_pass = all(value <= ROBUSTNESS_DROP_LIMIT for value in drops.values())
+    optimization_pass = optimization_gate(role, leader, reference)
     return {
         "method_name": method,
         "role": role,
         "gate0": "PASS" if gate0 else "FAIL",
         "robustness_gate": "PASS" if robustness_pass else "FAIL",
+        "optimization_gate": "PASS" if optimization_pass else "FAIL",
         "functionality_drop_pp": drops["functionality_drop"] * 100,
         "synthesis_drop_pp": drops["synthesis_drop"] * 100,
         "openroad_drop_pp": drops["openroad_drop"] * 100,
@@ -81,8 +88,8 @@ def decision_row(
         "mean_hypervolume": float(leader["mean_hypervolume"]),
         "fitness_wtl": wtl(leader, "fitness"),
         "hypervolume_wtl": wtl(leader, "hv"),
-        "decision": decision_label(role, gate0, robustness_pass),
-        "decision_reason": decision_reason(role, gate0, robustness_pass, drops),
+        "decision": decision_label(role, gate0, robustness_pass, optimization_pass),
+        "decision_reason": decision_reason(role, gate0, robustness_pass, optimization_pass, drops),
     }
 
 
@@ -98,10 +105,32 @@ def method_role(method: str) -> str:
     raise AssertionError(f"unknown method: {method}")
 
 
-def decision_label(role: str, gate0: bool, robustness_pass: bool) -> str:
+def optimization_gate(role: str, leader: dict[str, Any], reference: dict[str, Any]) -> bool:
+    if role != "auto_bd_method":
+        return True
+    fitness_uplift = relative_uplift(leader["mean_best_fitness"], reference["mean_best_fitness"])
+    hv_uplift = relative_uplift(leader["mean_hypervolume"], reference["mean_hypervolume"])
+    return (
+        fitness_uplift >= FITNESS_RELATIVE_UPLIFT
+        or hv_uplift >= HYPERVOLUME_RELATIVE_UPLIFT
+        or int(leader["fitness_wins"]) > int(leader["fitness_losses"])
+        or int(leader["hv_wins"]) > int(leader["hv_losses"])
+    )
+
+
+def relative_uplift(value: int | float | str, reference: int | float | str) -> float:
+    return (float(value) - float(reference)) / abs(float(reference))
+
+
+def decision_label(
+    role: str,
+    gate0: bool,
+    robustness_pass: bool,
+    optimization_pass: bool,
+) -> str:
     if role in {"classic_baseline", "manual_bd_baseline"}:
         return "RETAIN_AS_COMPARATOR"
-    if gate0 and robustness_pass:
+    if gate0 and robustness_pass and optimization_pass:
         return "PROMOTE_TO_SEED3"
     return "DO_NOT_PROMOTE"
 
@@ -110,6 +139,7 @@ def decision_reason(
     role: str,
     gate0: bool,
     robustness_pass: bool,
+    optimization_pass: bool,
     drops: dict[str, float],
 ) -> str:
     if role in {"classic_baseline", "manual_bd_baseline"}:
@@ -119,7 +149,9 @@ def decision_reason(
     if not robustness_pass:
         worst = max(drops.items(), key=lambda item: item[1])
         return f"Fails Gate 1 robustness: {worst[0]} is {worst[1] * 100:.2f} pp."
-    return "Passes development Gate 0 and Gate 1 screening gates."
+    if not optimization_pass:
+        return "Fails Gate 2 screening signal versus classic REvolution."
+    return "Passes development Gate 0, Gate 1, and Gate 2 screening gates."
 
 
 def seed3_screening_arms(rows: list[dict[str, Any]]) -> list[str]:
@@ -150,7 +182,7 @@ def thresholds_payload() -> dict[str, Any]:
         "gate2_optimization": {
             "mean_best_fitness_relative_uplift": FITNESS_RELATIVE_UPLIFT,
             "mean_hypervolume_relative_uplift": HYPERVOLUME_RELATIVE_UPLIFT,
-            "additional_positive_ppa_problems": POSITIVE_PROBLEM_UPLIFT,
+            "problem_win_loss_signal": "fitness_wins > fitness_losses or hv_wins > hv_losses",
             "equivalence_margin": EQUIVALENCE_MARGIN,
         },
         "gate3_qd": {
@@ -200,7 +232,7 @@ def render_markdown(payload: dict[str, Any]) -> str:
                 [
                     ["Gate 0", "cover every classic-covered problem; >5% problem-seed misses is high risk"],
                     ["Gate 1", "<= 5 pp drop in functionality, synthesis, OpenROAD, and valid-PPA rates"],
-                    ["Gate 2", ">=10% mean fitness or HV uplift, or +2 positive-PPA problems"],
+                    ["Gate 2", ">=10% mean fitness/HV uplift or positive fitness/HV W/L"],
                     ["Gate 3", ">=15% QD score, >=20% coverage, or >=25% unique-netlist uplift"],
                     ["Equivalence", f"fitness margin {EQUIVALENCE_MARGIN:.2f}"],
                 ],
@@ -214,6 +246,7 @@ def render_markdown(payload: dict[str, Any]) -> str:
                     "Role",
                     "Gate 0",
                     "Gate 1",
+                    "Gate 2",
                     "Func Drop pp",
                     "Valid Drop pp",
                     "Fitness W/T/L",
@@ -227,6 +260,7 @@ def render_markdown(payload: dict[str, Any]) -> str:
                         row["role"],
                         row["gate0"],
                         row["robustness_gate"],
+                        row["optimization_gate"],
                         fmt(row["functionality_drop_pp"]),
                         fmt(row["valid_ppa_drop_pp"]),
                         row["fitness_wtl"],

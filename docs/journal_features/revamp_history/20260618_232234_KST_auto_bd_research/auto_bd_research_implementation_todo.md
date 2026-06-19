@@ -85,7 +85,7 @@ evidence and rationale.
   after fitting artifacts are frozen.
 - [x] Run `sr_random_relu_pca_qd` seed-3 screening and reject seed-5
   promotion because diversity did not recover enough.
-- [ ] Try `sr_rff_pca_qd` only as a kernel control after ReLU PCA is
+- [x] Try `sr_rff_pca_qd` only as a kernel control after ReLU PCA is
   understood.
 - [x] Define descriptor fitting protocol and frozen fitting artifacts for
   projected methods: feature schema, scaler, random map, PCA components,
@@ -94,7 +94,7 @@ evidence and rationale.
   stable but insufficient.
 - [ ] Implement `sr_vq_codebook_qd` only if codebook regions can be
   labeled by motif/trajectory enrichment.
-- [ ] Keep method cards, reports, and accept/reject decisions for rejected
+- [x] Keep method cards, reports, and accept/reject decisions for rejected
   learned/codebook variants.
 - [ ] Verify experimental modes do not spread backend logic across
   unrelated call sites or create unnecessary abstractions.

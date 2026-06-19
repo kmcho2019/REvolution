@@ -17,7 +17,7 @@ sys.modules.setdefault("report_auto_bd_promotion_decisions", mod)
 _SPEC.loader.exec_module(mod)
 
 
-def test_build_decision_payload_promotes_only_gate1_passes(tmp_path: Path) -> None:
+def test_build_decision_payload_promotes_only_screening_passes(tmp_path: Path) -> None:
     report_path = tmp_path / "central.json"
     report_path.write_text(json.dumps(_central_payload()), encoding="utf-8")
 
@@ -31,6 +31,7 @@ def test_build_decision_payload_promotes_only_gate1_passes(tmp_path: Path) -> No
     assert decisions["landing_smooth_qd_manual_bd"] == "RETAIN_AS_COMPARATOR"
     assert decisions["random_descriptor_qd"] == "PROMOTE_TO_SEED3"
     assert decisions["synthesis_trajectory_nod"] == "PROMOTE_TO_SEED3"
+    assert decisions["sr_rff_pca_qd"] == "DO_NOT_PROMOTE"
     assert decisions["simple_yosys_stat_bd"] == "DO_NOT_PROMOTE"
     assert decisions["netlist_motif_occupancy"] == "DO_NOT_PROMOTE"
     assert payload["seed3_screening_arms"] == [
@@ -49,6 +50,7 @@ def _central_payload() -> dict[str, object]:
         "simple_yosys_stat_bd",
         "netlist_motif_occupancy",
         "synthesis_trajectory_nod",
+        "sr_rff_pca_qd",
     ]
     return {
         "phase": "development_preliminary_seed1",
@@ -71,6 +73,7 @@ def _rate(method: str) -> float:
         "simple_yosys_stat_bd": 0.69,
         "netlist_motif_occupancy": 0.66,
         "synthesis_trajectory_nod": 0.72,
+        "sr_rff_pca_qd": 0.74,
     }
     return rates[method]
 
@@ -94,7 +97,7 @@ def _robust(method: str, rate: float) -> dict[str, object]:
 
 
 def _leader(method: str) -> dict[str, object]:
-    return {
+    row = {
         "method_name": method,
         "valid_ppa_candidate_count": 1,
         "mean_best_fitness": 0.1,
@@ -106,3 +109,12 @@ def _leader(method: str) -> dict[str, object]:
         "hv_ties": 1,
         "hv_losses": 0,
     }
+    if method == "synthesis_trajectory_nod":
+        row["hv_wins"] = 2
+        row["hv_ties"] = 0
+        row["hv_losses"] = 1
+    if method == "sr_rff_pca_qd":
+        row["hv_wins"] = 0
+        row["hv_ties"] = 0
+        row["hv_losses"] = 1
+    return row

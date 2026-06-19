@@ -2,11 +2,12 @@
 
 Decision: reject `sr_raw_pca_qd` as the selected final method. Reject
 `sr_random_relu_pca_qd` after seed-3 screening as a selected final
-method.
+method. Reject `sr_rff_pca_qd` after seed-1 development as a seed-3
+promotion candidate under current evidence.
 
 Current status: seed-1 development evaluated for `sr_raw_pca_qd` and
-`sr_random_relu_pca_qd`; seed-3 main screening evaluated for
-`sr_random_relu_pca_qd`.
+`sr_random_relu_pca_qd` and `sr_rff_pca_qd`; seed-3 main screening
+evaluated for `sr_random_relu_pca_qd`.
 
 ## Raw PCA Evidence
 
@@ -104,6 +105,38 @@ percent target, while unique canonical netlists and common-audit cells
 regress. Fixed PPA-grid coverage is only slightly above classic and below
 landing manual-BD.
 
+## Random Fourier Feature PCA Evidence
+
+- Seed-1 development Gate 0: pass.
+- Covered problems: 6.
+- Missing classic-covered problems: 0.
+- Valid PPA: 197/288 versus 209/288 for classic REvolution.
+- Valid-PPA rate delta versus classic: -4.17 percentage points.
+- Mean best fitness: 0.2630 versus 0.2671 for classic.
+- Fitness W/T/L versus classic: 0/6/0.
+- Mean hypervolume: 0.1229 versus 0.1245 for classic.
+- Hypervolume W/T/L versus classic: 0/5/1.
+- Fixed PPA-grid coverage: 0.0703, equal to classic.
+- Unique canonical netlists: 63 versus 70 for classic.
+- Unique motif signatures: 43, equal to classic.
+- PPA-front unique netlists: 20 versus 12 for classic.
+- Common-audit occupied cells: 10 versus 12 for classic.
+- Common-audit QD score: 2.8111 versus 2.3163 for classic.
+- Method report: `sr_rff_seed1_artifact_report.md`.
+- Coverage artifact:
+  `../../auto_bd_gate0_coverage_seed1_sr_rff_pca_qd.json`.
+- Centralized report: `../../auto_bd_seed1_centralized_report.md`.
+
+Decision: reject as a seed-3 promotion candidate under current
+evidence; keep as the random Fourier feature kernel control.
+
+Reason: RFF PCA has a useful diversity signal, especially PPA-front
+unique netlists, but it does not improve PPA quality over classic
+REvolution. Mean fitness and HV are slightly lower than classic, HV has
+no wins, common-audit occupied cells regress, and valid-PPA count matches
+the rejected ReLU arm. This is not enough to spend seed-3 compute unless
+the research plan explicitly wants a diversity-only ablation.
+
 ## Remaining Evidence
 
 - `ANHV@1.5`.
@@ -126,7 +159,5 @@ keep it as an ablation rather than the selected journal method.
 
 ## Next Use
 
-Use `sr_random_relu_pca_qd` as an ablation. Do not run seed-5 for it
-under the current evidence. If compute permits, try `sr_rff_pca_qd` only
-as a kernel control after reviewing the fixed PPA-grid evidence and keep
-the same fitting/leakage rules.
+Use `sr_random_relu_pca_qd` and `sr_rff_pca_qd` as ablations. Do not run
+seed-5 for either under the current evidence.
