@@ -5252,3 +5252,110 @@ PY
 ```
 
 Result: `landing smooth seed1002 pair status check ok`.
+
+## 2026-06-19 05:54 UTC
+
+Packaged standard results for the landing Smooth-QD manual-BD seed-1002
+main-screening run pair.
+
+Packaging command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/build_auto_bd_standard_results.py \
+  --run-dir exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1002/revolution/openai_gpt-oss-120b \
+  --output-dir exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1002/standard_results \
+  --method-name landing_smooth_qd_manual_bd \
+  --method-family smooth_qd_manual_bd \
+  --descriptor-version journal_logic_ff_width_3d \
+  --phase main_screening \
+  --seed 1002 \
+  --run-manifest exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1002/run_manifest.json
+```
+
+Standard-result files:
+
+- `archive_snapshots.parquet`
+- `candidates.parquet`
+- `descriptor_vectors.parquet`
+- `elites.parquet`
+- `method_summary.json`
+- `netlist_hashes.parquet`
+- `per_generation_metrics.parquet`
+- `per_problem_metrics.parquet`
+- `run_manifest.json`
+
+Method summary:
+
+```json
+{
+  "candidate_count": 1560,
+  "common_audit_occupied_cells": 41,
+  "common_audit_qd_score": 9.788517579864838,
+  "common_audit_total_cells": 256,
+  "method_name": "landing_smooth_qd_manual_bd",
+  "phase": "main_screening",
+  "problem_count": 13,
+  "seed": 1002,
+  "unique_canonical_netlist_count": 342,
+  "unique_motif_signature_count": 253,
+  "valid_ppa_candidate_count": 807
+}
+```
+
+Current seed-3 status after refresh:
+
+- benchmark commands: 10 complete, 14 pending
+- arm/seed pairs: 5 standard-results complete, 7 pending
+- `landing_smooth_qd_manual_bd` seed 1002: standard results complete
+
+Artifact check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+root = Path(
+    "exp/auto_bd_research/main_screening_screening_seed3/"
+    "landing_smooth_qd_manual_bd/seed_1002/standard_results"
+)
+required = {
+    "archive_snapshots.parquet",
+    "candidates.parquet",
+    "descriptor_vectors.parquet",
+    "elites.parquet",
+    "method_summary.json",
+    "netlist_hashes.parquet",
+    "per_generation_metrics.parquet",
+    "per_problem_metrics.parquet",
+    "run_manifest.json",
+}
+assert {p.name for p in root.iterdir() if p.is_file()} == required
+summary = json.loads((root / "method_summary.json").read_text())
+assert summary["method_name"] == "landing_smooth_qd_manual_bd"
+assert summary["candidate_count"] == 1560
+assert summary["valid_ppa_candidate_count"] == 807
+assert summary["unique_canonical_netlist_count"] == 342
+assert summary["unique_motif_signature_count"] == 253
+
+status_path = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_main_screening_run_status.json"
+)
+payload = json.loads(status_path.read_text())
+assert payload["arm_seed_summary"] == {
+    "pending": 7,
+    "standard_results_complete": 5,
+    "total": 12,
+}
+entry = payload["arm_seed_status"][4]
+assert entry["arm_name"] == "landing_smooth_qd_manual_bd"
+assert entry["seed"] == 1002
+assert entry["status"] == "standard_results_complete"
+print("landing smooth seed1002 standard results check ok")
+PY
+```
+
+Result: `landing smooth seed1002 standard results check ok`.
