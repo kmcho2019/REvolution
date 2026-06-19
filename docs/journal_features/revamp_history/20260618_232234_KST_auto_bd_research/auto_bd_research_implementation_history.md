@@ -7987,3 +7987,62 @@ PY
 ```
 
 Result: `stnod seed1003 standard results check ok`.
+
+## 2026-06-19 - Added SR-kernel-PCA Method Plan
+
+Motivation:
+
+- User feedback identified the current tested methods as useful controls
+  but still fixed descriptor designs.
+- The next AutoQD-inspired candidate should learn descriptor axes from
+  hardware-native synthesis-response vectors while avoiding PPA leakage.
+
+Scope:
+
+- Added `synthesis_response_kernel_pca` to the declarative method-family
+  registry in `src/revolution/auto_bd/method_specs.py`.
+- Added method scaffold:
+  `auto_bd_methods/04_synthesis_response_kernel_pca/`.
+- Updated the controlling plan, TODO, method catalog, and adversarial
+  validator requirements.
+
+Key requirements captured:
+
+- First variants: `sr_raw_pca_qd`, then `sr_random_relu_pca_qd`, then
+  `sr_rff_pca_qd`.
+- Later variants only if needed: `sr_vq_codebook_qd` and
+  `sr_contrastive_encoder_qd`.
+- Raw features may include final Yosys stats, motif occupancy, ST-NOD
+  swings, per-stage motif ratios, and per-stage cell-count deltas.
+- Descriptor inputs must exclude PPA, reference PPA, fitness,
+  hypervolume, testbench pass percentage, and problem ID.
+- In-loop descriptors require frozen feature-schema, scaler, random-map,
+  PCA, and descriptor-version hashes logged per candidate.
+- Post-hoc PCA after seeing evaluation runs is visualization only.
+
+Implementation status:
+
+- Runtime descriptor extraction is not implemented yet.
+- The method is planned as the first P5 projected/learned direction after
+  the completed seed-3 ST-NOD screening artifacts are reported.
+
+Validation:
+
+```bash
+git diff --check
+UV_LINK_MODE=copy uv run --active pytest tests/revolution/test_auto_bd_method_specs.py
+UV_LINK_MODE=copy uv run --active ruff check \
+  src/revolution/auto_bd/method_specs.py \
+  tests/revolution/test_auto_bd_method_specs.py
+UV_LINK_MODE=copy uv tool run ty check src/revolution/auto_bd/method_specs.py
+UV_LINK_MODE=copy uv run --active python -m pyright \
+  src/revolution/auto_bd/method_specs.py
+```
+
+Results:
+
+- `git diff --check`: pass
+- `pytest tests/revolution/test_auto_bd_method_specs.py`: 5 passed
+- `ruff check`: pass
+- `ty check src/revolution/auto_bd/method_specs.py`: pass
+- `pyright src/revolution/auto_bd/method_specs.py`: 0 errors

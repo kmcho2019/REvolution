@@ -10,9 +10,10 @@ Use one subdirectory per method:
 01_yosys_stat_bd/
 02_netlist_motif_occupancy/
 03_synthesis_trajectory_nod/
-04_contrastive_synthesis_response/
-05_aurora_netlist_encoder/
-06_vq_implementation_codebook/
+04_synthesis_response_kernel_pca/
+05_contrastive_synthesis_response/
+06_aurora_netlist_encoder/
+07_vq_implementation_codebook/
 99_final_selected_method/
 ```
 
@@ -32,3 +33,9 @@ become a genuinely separate method family. The
 `synthesis_trajectory_motif_nod` arm is one such ablation: it combines
 the motif-only final-netlist axes with the ST-NOD trajectory axes for the
 P4 motif-only versus trajectory-motif comparison.
+
+The first P5 projected/learned family is
+`04_synthesis_response_kernel_pca/`. It should stay simpler than neural
+encoders: fixed synthesis-response raw features, frozen scaler/random-map
+artifacts, PCA descriptors available at candidate insertion time, and no
+PPA or fitness leakage.

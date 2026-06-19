@@ -18,6 +18,7 @@ def test_method_registry_is_valid_and_ordered():
         "yosys_stat_bd",
         "netlist_motif_occupancy",
         "synthesis_trajectory_nod",
+        "synthesis_response_kernel_pca",
         "contrastive_synthesis_response",
         "aurora_netlist_encoder",
         "vq_implementation_codebook",
@@ -46,9 +47,10 @@ def test_learned_methods_require_fitting_artifacts():
     learned = {
         spec.family: spec
         for spec in method_specs()
-        if spec.family in {"aurora_netlist_encoder", "vq_implementation_codebook"}
+        if spec.requires_fitting_artifacts
     }
 
+    assert learned["synthesis_response_kernel_pca"].requires_fitting_artifacts
     assert learned["aurora_netlist_encoder"].requires_fitting_artifacts
     assert learned["vq_implementation_codebook"].requires_fitting_artifacts
     assert method_spec("netlist_motif_occupancy").fitting_protocol == "none"

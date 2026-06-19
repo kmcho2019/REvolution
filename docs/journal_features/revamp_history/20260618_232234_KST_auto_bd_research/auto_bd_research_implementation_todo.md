@@ -79,13 +79,18 @@ evidence and rationale.
 
 ## P5 - Learned Or Codebook Variants
 
-- [ ] Try PCA/random projection over stable motif/trajectory vectors before
-  neural methods.
+- [ ] Add `sr_raw_pca_qd` over stable synthesis-response vectors as the
+  first projected baseline.
+- [ ] Add `sr_random_relu_pca_qd` as the main SR-kernel-PCA candidate only
+  after fitting artifacts are frozen.
+- [ ] Try `sr_rff_pca_qd` only as a kernel control after ReLU PCA is
+  understood.
 - [ ] Define descriptor fitting protocol and frozen fitting artifacts for
-  any projected/learned method.
+  projected methods: feature schema, scaler, random map, PCA components,
+  training candidate list, and excluded data.
 - [ ] Implement AURORA-style encoder only if fixed-vector methods are
   stable but insufficient.
-- [ ] Implement VQ/codebook descriptor only if codebook regions can be
+- [ ] Implement `sr_vq_codebook_qd` only if codebook regions can be
   labeled by motif/trajectory enrichment.
 - [ ] Keep method cards, reports, and accept/reject decisions for rejected
   learned/codebook variants.

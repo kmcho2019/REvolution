@@ -59,6 +59,9 @@ Automatic FAIL preconditions:
     invalid-candidate handling.
 16. Unique-netlist uplift is based only on exact hash count and not supported
     by motif-signature or PPA-relevant diversity.
+17. A Synthesis-Response PCA/kernel-PCA method is claimed as an in-loop
+    descriptor without frozen feature-schema, scaler, random-map, PCA, and
+    descriptor-version hashes logged per candidate.
 
 Mechanical checks:
 1. Recompute or inspect the original REvolution valid-PPA coverage set C.
@@ -118,6 +121,10 @@ Mechanical checks:
     docs with commands, configs, artifacts, and limitations.
 24. If commits exist, inspect commit messages and sign-offs according to
     the repository guidance.
+25. For Synthesis-Response PCA/kernel-PCA methods, confirm learned-BD
+    scatter plots, descriptor/PPA correlations, common-audit occupancy,
+    paired problem-seed deltas, strict-HV, and `ANHV@1.5` are present before
+    accepting a final-method claim.
 
 Paper-facing checks:
 1. Does the selected method have a real hardware-specific idea, or is it

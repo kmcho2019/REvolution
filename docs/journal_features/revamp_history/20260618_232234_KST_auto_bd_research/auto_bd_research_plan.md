@@ -34,6 +34,14 @@ The preferred first serious method is ST-NOD:
 > candidate by the synthesized netlist motifs it creates and by how those
 > motifs transform across Yosys synthesis stages.
 
+The preferred next AutoQD-inspired method is Synthesis-Response Kernel
+MAP-Elites:
+
+> Learn descriptor axes from hardware-native synthesis-response feature
+> vectors using frozen random-kernel PCA, without using PPA labels,
+> fitness, hypervolume, reference PPA, testbench pass rate, or problem ID
+> as descriptor inputs.
+
 ## Source Of Truth
 
 - Full plan: `auto_bd_research_plan.md`
@@ -175,7 +183,69 @@ Candidate features:
 This is the primary journal-candidate direction because it is specific to
 generated RTL and synthesis, not a direct port of robotics QD.
 
-### Direction 4: RTL-Native Contrastive Descriptor
+### Direction 4: Synthesis-Response Kernel MAP-Elites
+
+This is the first P5 projected/learned candidate and should be attempted
+before neural encoders. It uses fixed synthesis-response observations,
+a frozen random nonlinear feature map, and PCA/whitening to form the
+archive descriptor.
+
+Pipeline:
+
+```text
+RTL candidate
+normal test/synthesis/PPA path
+hardware-native raw feature vector
+frozen standardization
+fixed random nonlinear feature map
+frozen PCA / whitening
+MAP-Elites archive insertion
+```
+
+Raw features may include:
+
+- final Yosys statistics
+- final synthesized-netlist motif occupancy
+- ST-NOD trajectory swings
+- per-stage motif ratios
+- per-stage cell-count deltas
+- optional cheap graph/pathlet statistics after the base vector is stable
+
+Raw features must not include:
+
+- PPA, fitness, hypervolume, or reference/golden PPA
+- testbench pass percentage
+- problem ID as a direct feature
+
+Evaluate variants in this order:
+
+1. `sr_raw_pca_qd`: standardized synthesis-response features plus PCA.
+2. `sr_random_relu_pca_qd`: fixed random ReLU expansion plus PCA; main
+   AutoQD-style candidate.
+3. `sr_rff_pca_qd`: random Fourier features plus PCA; kernel control.
+4. `sr_vq_codebook_qd`: VQ/codebook only after PCA variants are
+   understood.
+5. `sr_contrastive_encoder_qd`: self-supervised learned encoder only if
+   the simpler projected methods fail.
+
+The method card must state the fitting protocol, training candidate list,
+excluded data, feature schema hash, scaler hash, random-map hash, PCA
+component hash, and descriptor version. Every candidate must log those
+artifact hashes and the resulting descriptor vector. PCA fitted after
+seeing the full evaluation run is post-hoc visualization only and cannot
+be claimed as the in-loop descriptor.
+
+The paper rationale should be:
+
+1. manual BDs are low-capacity and arbitrary;
+2. final-netlist descriptors miss synthesis-response behavior;
+3. ST-NOD captures response but still hand-selects axes;
+4. random nonlinear features approximate a broad kernel over hardware
+   behavior;
+5. PCA extracts independent implementation-variation directions;
+6. the archive explores automatically discovered synthesis-behavior modes.
+
+### Direction 5: RTL-Native Contrastive Descriptor
 
 If ST-NOD is promising, test a more novel variant:
 
@@ -193,11 +263,11 @@ Possible implementation:
 This may produce a clearer paper story: the archive explores
 implementation strategies, not only structures.
 
-### Direction 5: AURORA-Style Encoder
+### Direction 6: AURORA-Style Encoder
 
-Try this only after fixed motif/trajectory vectors exist. Preferred
-inputs are tabular motif/trajectory vectors first, then Yosys JSON graphs
-only if simpler inputs fail.
+Try this only after fixed synthesis-response PCA or kernel-PCA variants
+exist and are insufficient. Preferred inputs are tabular motif/trajectory
+vectors first, then Yosys JSON graphs only if simpler inputs fail.
 
 Possible encoders:
 
@@ -209,7 +279,7 @@ Possible encoders:
 Use the latent vector only as BD input. Do not use PPA, reference PPA, or
 fitness as encoder inputs.
 
-### Direction 6: VQ / Implementation-Style Codebook
+### Direction 7: VQ / Implementation-Style Codebook
 
 Learn a finite codebook of implementation styles and use codebook IDs or
 codebook coordinates as archive cells. This may be more interpretable
@@ -330,9 +400,11 @@ PPA quality:
 - best fitness per problem
 - average and median best fitness
 - top-k average fitness
-- PPA hypervolume
+- strict zero-reference PPA hypervolume
+- acceptable-nadir normalized hypervolume, such as `ANHV@1.5`
 - power, area, and timing improvements
 - anytime best-fitness curve
+- anytime strict-HV and `ANHV@1.5` curves
 
 QD archive quality:
 
@@ -355,6 +427,9 @@ Descriptor quality:
 - duplicate-netlist leakage across cells
 - motif enrichment per archive region
 - representative RTL/netlist strategy examples
+- learned-BD scatter colored by area, power, timing, and fitness when the
+  method uses learned or projected descriptors
+- descriptor-axis correlation with PPA metrics and benchmark identity
 
 Failure taxonomy:
 
@@ -428,6 +503,8 @@ Required reporting:
 - anytime curve endpoint and area-under-curve comparison
 - mean and median effects
 - practical effect sizes, not p-values alone
+- paired problem-seed log ratio deltas such as
+  `log((metric_method + eps) / (metric_classic + eps))`
 
 If several methods are explored on the same main subset, treat
 non-selected comparisons as exploratory or apply a stated multiple-testing
@@ -502,6 +579,24 @@ Before large runs, the researcher must predeclare the quantitative
 thresholds and the minimum effect size needed for sign-off. Thresholds
 may be tightened after baseline MDE/power analysis, but not after final
 method results are known.
+
+For Synthesis-Response Kernel PCA candidates, the seed-3 promotion bar is
+stricter than a generic QD gain:
+
+- Gate 0 passes with no missing classic-covered problems.
+- valid-PPA rate drop is <= 5 percentage points versus classic
+  REvolution.
+- scalar fitness does not collapse relative to classic or landing
+  Smooth-QD manual-BD.
+- strict HV or `ANHV@1.5` improves by at least 5 percent in paired
+  problem-seed comparisons versus classic, or the method has a
+  predeclared equivalent PPA-quality gain.
+- Pareto-front unique netlists improve by at least 20 percent.
+- The uplift is visible at seed-3 before any seed-5 final claim.
+
+If the method improves diversity but loses too much PPA or repair
+robustness, report it as an ablation rather than the final journal
+method.
 
 ## Anti-Hack Rules
 
@@ -670,9 +765,10 @@ docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/
     01_yosys_stat_bd/
     02_netlist_motif_occupancy/
     03_synthesis_trajectory_nod/
-    04_contrastive_synthesis_response/
-    05_aurora_netlist_encoder/
-    06_vq_implementation_codebook/
+    04_synthesis_response_kernel_pca/
+    05_contrastive_synthesis_response/
+    06_aurora_netlist_encoder/
+    07_vq_implementation_codebook/
     99_final_selected_method/
 ```
 

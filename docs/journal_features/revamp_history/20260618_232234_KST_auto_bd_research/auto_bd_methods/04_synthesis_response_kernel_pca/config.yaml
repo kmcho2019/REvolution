@@ -1,0 +1,60 @@
+method_family: synthesis_response_kernel_pca
+method_name: sr_random_relu_pca_qd
+status: planned_not_implemented
+
+descriptor:
+  profile: sr_pca_3d
+  descriptor_file: descriptor_profile.yaml
+  raw_feature_schema: synthesis_response_v1
+  raw_features:
+  - final_yosys_stats
+  - final_motif_occupancy
+  - stnod_trajectory_swings
+  - per_stage_motif_ratios
+  - per_stage_cell_count_deltas
+  random_feature_map: relu
+  random_feature_count: 128
+  pca_dimensions: 3
+  fitting_protocol: fixed_offline
+  training_data: predeclared_development_or_warmup_candidates_only
+  excluded_data:
+  - held_out_problems
+  - final_evaluation_candidates
+  forbidden_inputs:
+  - ppa
+  - reference_ppa
+  - fitness
+  - hypervolume
+  - testbench_pass_percentage
+  - problem_id
+  frozen_artifacts:
+  - raw_feature_schema_hash
+  - scaler_hash
+  - random_feature_map_hash
+  - pca_component_hash
+  - descriptor_version
+
+planned_variants:
+- sr_raw_pca_qd
+- sr_random_relu_pca_qd
+- sr_rff_pca_qd
+- sr_vq_codebook_qd
+- sr_contrastive_encoder_qd
+
+qd:
+  archive_type: grid_quantile
+  descriptor_file: descriptor_profile.yaml
+  cell_mode: pareto_front
+  objectives: ppa
+  grid_quantile_warmup_successes: 8
+  max_elites_per_cell: 5
+  parent_selection: nsga2_global_rank
+  champion_lane_fraction: 0.5
+  operator_kind: eoh_strategies
+
+comparison_policy:
+  baseline_lock: ../../auto_bd_run_policy_lock.yaml
+  same_subsets_seeds_model_budget_as_baseline: true
+  report_internal_and_common_audit_space: true
+  fit_before_evaluation: true
+  posthoc_fit_is_visualization_only: true

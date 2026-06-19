@@ -9,6 +9,7 @@ MethodFamily = Literal[
     "yosys_stat_bd",
     "netlist_motif_occupancy",
     "synthesis_trajectory_nod",
+    "synthesis_response_kernel_pca",
     "contrastive_synthesis_response",
     "aurora_netlist_encoder",
     "vq_implementation_codebook",
@@ -24,7 +25,14 @@ AUTO_BD_SCAFFOLD_DIR = Path(
     "docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research"
 )
 AUTO_BD_METHODS_DIR = AUTO_BD_SCAFFOLD_DIR / "auto_bd_methods"
-FORBIDDEN_DESCRIPTOR_INPUTS = ("ppa", "reference_ppa", "fitness", "hypervolume")
+FORBIDDEN_DESCRIPTOR_INPUTS = (
+    "ppa",
+    "reference_ppa",
+    "fitness",
+    "hypervolume",
+    "testbench_pass_percentage",
+    "problem_id",
+)
 
 
 @dataclass(frozen=True)
@@ -83,8 +91,24 @@ _METHOD_SPECS: tuple[AutoBDMethodSpec, ...] = (
         requires_fitting_artifacts=False,
     ),
     AutoBDMethodSpec(
+        family="synthesis_response_kernel_pca",
+        directory_name="04_synthesis_response_kernel_pca",
+        title="Synthesis-Response Kernel PCA QD",
+        descriptor_inputs=(
+            "synthesis_stats",
+            "motif_occupancy",
+            "yosys_stage_dumps",
+            "stage_cell_count_deltas",
+            "stage_motif_ratios",
+        ),
+        fitting_protocol="fixed_offline",
+        requires_synthesis=True,
+        requires_stage_dumps=True,
+        requires_fitting_artifacts=True,
+    ),
+    AutoBDMethodSpec(
         family="contrastive_synthesis_response",
-        directory_name="04_contrastive_synthesis_response",
+        directory_name="05_contrastive_synthesis_response",
         title="Contrastive Synthesis Response",
         descriptor_inputs=("synthesized_netlist", "reference_netlist", "yosys_stage_dumps"),
         fitting_protocol="none",
@@ -94,7 +118,7 @@ _METHOD_SPECS: tuple[AutoBDMethodSpec, ...] = (
     ),
     AutoBDMethodSpec(
         family="aurora_netlist_encoder",
-        directory_name="05_aurora_netlist_encoder",
+        directory_name="06_aurora_netlist_encoder",
         title="AURORA-Style Netlist Encoder",
         descriptor_inputs=("motif_or_trajectory_vectors",),
         fitting_protocol="fixed_offline",
@@ -104,7 +128,7 @@ _METHOD_SPECS: tuple[AutoBDMethodSpec, ...] = (
     ),
     AutoBDMethodSpec(
         family="vq_implementation_codebook",
-        directory_name="06_vq_implementation_codebook",
+        directory_name="07_vq_implementation_codebook",
         title="VQ Implementation-Style Codebook",
         descriptor_inputs=("motif_or_trajectory_vectors",),
         fitting_protocol="fixed_offline",
@@ -148,7 +172,8 @@ def validate_method_registry() -> None:
 
 
 def _validate_method_spec(spec: AutoBDMethodSpec) -> None:
-    assert spec.directory_name.startswith(("00_", "01_", "02_", "03_", "04_", "05_", "06_"))
+    directory_prefix, _, _ = spec.directory_name.partition("_")
+    assert directory_prefix.isdigit()
     assert ".." not in Path(spec.directory_name).parts
     assert not set(spec.descriptor_inputs).intersection(FORBIDDEN_DESCRIPTOR_INPUTS)
     match spec.fitting_protocol:

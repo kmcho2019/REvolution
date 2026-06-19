@@ -33,6 +33,11 @@ Main-screening run control:
 - `auto_bd_main_screening_run_status.md`
 - `auto_bd_main_screening_run_status.json`
 
+Method catalog:
+
+- `auto_bd_methods/README.md`
+- `auto_bd_methods/04_synthesis_response_kernel_pca/method_card.md`
+
 Goal template:
 
 - `goal_template.md`
