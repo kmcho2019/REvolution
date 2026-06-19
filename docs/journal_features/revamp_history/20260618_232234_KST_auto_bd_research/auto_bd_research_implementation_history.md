@@ -9675,3 +9675,242 @@ Next:
 - Package standard results and Gate 0 evidence.
 - Accept or reject seed-3 promotion using the same seed-1 promotion
   decision script and method-local report flow.
+
+## 2026-06-20 KST - Evaluate SR-VQ Seed-1 Development
+
+Context:
+
+- `sr_vq_codebook_qd` had a frozen fixed-offline descriptor artifact and
+  runtime wiring but no run evidence.
+- The active goal requires each new method to receive a method card,
+  report, and accept/reject decision before moving on.
+
+Preflight:
+
+```bash
+curl -sS http://20.0.0.103:8000/v1/models
+```
+
+Result:
+
+- model: `openai/gpt-oss-120b`
+- `max_model_len`: 131072
+
+Run commands:
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/build_auto_bd_run_manifest.py \
+  --config-path docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_run_configs/development/sr_vq_codebook_qd.yaml \
+  --phase development \
+  --output exp/auto_bd_research/development_preliminary_seed1/sr_vq_codebook_qd/seed_1001/run_manifest.json
+
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks RTLLM \
+  --problems Prob011_multi_16bit Prob019_sub_64bit Prob048_pe \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 12 \
+  --num_generations 3 \
+  --evaluation_mode strict_ablation \
+  --total_worker_slots 12 \
+  --max_active_problems 6 \
+  --max_workers_per_problem 4 \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 300 \
+  --post_synthesis_simulation_timeout_s 300 \
+  --seed 1001 \
+  --save_path /workspace/.worktrees/journal-auto-bd-exp-20260618/exp/auto_bd_research/development_preliminary_seed1/sr_vq_codebook_qd/seed_1001 \
+  --search_mode revolution_qd \
+  --qd_archive_type grid_quantile \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 5 \
+  --qd_objectives ppa \
+  --qd_champion_lane_fraction 0.5 \
+  --qd_parent_selection nsga2_global_rank \
+  --qd_two_parent_probability 0.5 \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_descriptor_profile sr_vq_3d \
+  --qd_descriptor_file /workspace/.worktrees/journal-auto-bd-exp-20260618/docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/07_vq_implementation_codebook/descriptor_profile.yaml
+
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks VerilogEval-Spec-to-RTL \
+  --problems Prob021_mux256to1v Prob030_popcount255 Prob105_rotate100 \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 12 \
+  --num_generations 3 \
+  --evaluation_mode strict_ablation \
+  --total_worker_slots 12 \
+  --max_active_problems 6 \
+  --max_workers_per_problem 4 \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 300 \
+  --post_synthesis_simulation_timeout_s 300 \
+  --seed 1001 \
+  --save_path /workspace/.worktrees/journal-auto-bd-exp-20260618/exp/auto_bd_research/development_preliminary_seed1/sr_vq_codebook_qd/seed_1001 \
+  --search_mode revolution_qd \
+  --qd_archive_type grid_quantile \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 5 \
+  --qd_objectives ppa \
+  --qd_champion_lane_fraction 0.5 \
+  --qd_parent_selection nsga2_global_rank \
+  --qd_two_parent_probability 0.5 \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_descriptor_profile sr_vq_3d \
+  --qd_descriptor_file /workspace/.worktrees/journal-auto-bd-exp-20260618/docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/07_vq_implementation_codebook/descriptor_profile.yaml
+```
+
+Runtime:
+
+- RTLLM half: 516.33 seconds.
+- VerilogEval half: 450.56 seconds.
+- Both halves completed successfully and wrote run logs plus scheduler
+  telemetry under
+  `exp/auto_bd_research/development_preliminary_seed1/sr_vq_codebook_qd/seed_1001/revolution/openai_gpt-oss-120b/`.
+
+Packaging and report commands:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/build_auto_bd_standard_results.py \
+  --run-dir exp/auto_bd_research/development_preliminary_seed1/sr_vq_codebook_qd/seed_1001/revolution/openai_gpt-oss-120b \
+  --output-dir exp/auto_bd_research/development_preliminary_seed1/sr_vq_codebook_qd/seed_1001/standard_results \
+  --method-name sr_vq_codebook_qd \
+  --method-family vq_implementation_codebook \
+  --descriptor-version sr_vq_codebook_v1 \
+  --phase development_preliminary_seed1 \
+  --seed 1001 \
+  --run-manifest exp/auto_bd_research/development_preliminary_seed1/sr_vq_codebook_qd/seed_1001/run_manifest.json
+
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/summarize_auto_bd_gate0.py \
+  --run-dir exp/auto_bd_research/development_preliminary_seed1/sr_vq_codebook_qd/seed_1001/revolution/openai_gpt-oss-120b \
+  --method-name sr_vq_codebook_qd \
+  --phase development_preliminary_seed1 \
+  --seed 1001 \
+  --output docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_gate0_coverage_seed1_sr_vq_codebook_qd.json
+
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/report_auto_bd_standard_results.py \
+  --results-root exp/auto_bd_research/development_preliminary_seed1 \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.md \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --figure-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_figures \
+  --phase development_preliminary_seed1 \
+  --seed 1001
+
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/report_auto_bd_method_results.py \
+  --central-report-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --method-root docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods \
+  --output-name seed1_artifact_report.md
+
+env PYTHONPATH=src /workspace/.venv/bin/python \
+  scripts/report_auto_bd_promotion_decisions.py \
+  --central-report-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_promotion_decisions.md \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_promotion_decisions.json
+```
+
+Seed-1 evidence:
+
+- Gate 0: pass, 6/6 classic-covered problems.
+- Valid PPA: 174/288 versus 209/288 for classic REvolution.
+- Valid-PPA rate delta: -15.62 percentage points versus classic.
+- Functionality/synthesis/OpenROAD rate delta: -15.62 percentage
+  points versus classic.
+- Mean best fitness: 0.2105 versus 0.2671 for classic.
+- Fitness W/T/L versus classic: 0/5/1.
+- Mean hypervolume: 0.1110 versus 0.1245 for classic.
+- Hypervolume W/T/L versus classic: 1/3/2.
+- Fixed PPA-grid coverage: 0.0599 versus 0.0703 for classic.
+- PPA-front unique netlists: 13 versus 12 for classic.
+- Unique canonical netlists: 45 versus 70 for classic.
+- Unique motif signatures: 30 versus 43 for classic.
+- Common-audit occupied cells: 9 versus 12 for classic.
+- Common-audit QD score: 0.8485 versus 2.3163 for classic.
+
+Decision:
+
+- Reject `sr_vq_codebook_qd` as a seed-3 promotion candidate.
+- Keep it as a documented VQ/codebook ablation.
+
+Reason:
+
+- The hard coverage gate passes, but the robustness drop is far beyond
+  the allowed 5 percentage-point seed-1 tolerance.
+- PPA quality and common-audit diversity both regress versus classic.
+- The slight PPA-front unique-netlist increase is not enough to justify
+  more compute.
+
+Artifacts:
+
+- Method report:
+  `auto_bd_methods/07_vq_implementation_codebook/seed1_artifact_report.md`
+- Decision:
+  `auto_bd_methods/07_vq_implementation_codebook/accept_reject.md`
+- Gate 0:
+  `auto_bd_gate0_coverage_seed1_sr_vq_codebook_qd.json`
+- Central report:
+  `auto_bd_seed1_centralized_report.md`
+- Promotion decisions:
+  `auto_bd_seed1_promotion_decisions.md`
+
+Validation:
+
+```bash
+git diff --check
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_method_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/report_auto_bd_promotion_decisions.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+UV_LINK_MODE=copy uv tool run ty check \
+  scripts/report_auto_bd_method_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/report_auto_bd_promotion_decisions.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+UV_LINK_MODE=copy uv run --active python -m pyright \
+  scripts/report_auto_bd_method_results.py \
+  scripts/report_auto_bd_standard_results.py \
+  scripts/report_auto_bd_promotion_decisions.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_promotion_decisions.py
+```
+
+Results:
+
+- `git diff --check`: pass
+- report pytest: 5 passed
+- `ruff check`: pass
+- `ty check`: pass
+- pyright: 0 errors, 0 warnings, 0 informations

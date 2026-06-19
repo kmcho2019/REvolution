@@ -34,6 +34,7 @@ Status: predeclared seed-3 screening decision from seed-1 development artifacts.
 | `sr_raw_pca_qd` | auto_bd_method | PASS | PASS | FAIL | 3.47 | 3.47 | 0/5/1 | 1/4/1 | DO_NOT_PROMOTE | Fails Gate 2 screening signal versus classic REvolution. |
 | `sr_random_relu_pca_qd` | auto_bd_method | PASS | FAIL | PASS | 7.64 | 7.64 | 1/4/1 | 2/3/1 | DO_NOT_PROMOTE | Fails Gate 1 robustness: functionality_drop is 7.64 pp. |
 | `sr_rff_pca_qd` | auto_bd_method | PASS | FAIL | FAIL | 7.64 | 7.64 | 0/6/0 | 0/5/1 | DO_NOT_PROMOTE | Fails Gate 1 robustness: functionality_drop is 7.64 pp. |
+| `sr_vq_codebook_qd` | auto_bd_method | PASS | FAIL | FAIL | 15.62 | 15.62 | 0/5/1 | 1/3/2 | DO_NOT_PROMOTE | Fails Gate 1 robustness: functionality_drop is 15.62 pp. |
 
 ## Seed-3 Screening Arms
 

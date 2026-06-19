@@ -82,11 +82,10 @@ Implemented:
   path.
 - Descriptor profile and method config.
 - Development-seed fitting artifact.
+- Seed-1 development run, standardized report, and accept/reject
+  decision.
 
-Pending:
-
-- Run seed-1 development sanity check.
-- Generate report and accept/reject decision.
+Decision: reject as a seed-3 promotion candidate under current evidence.
 
 Frozen fitting artifact:
 
@@ -115,3 +114,8 @@ Promote only if seed-1 passes Gate 0, avoids robustness regression, and
 shows a practical PPA or diversity signal that justifies seed-3 compute.
 If it only fragments the archive without PPA or common-audit value, reject
 as a codebook ablation.
+
+Seed-1 result: Gate 0 passes, but valid-PPA/functionality/synthesis/
+OpenROAD rates drop by 15.62 percentage points versus classic
+REvolution. The method is therefore rejected as a seed-3 promotion
+candidate and kept only as a VQ/codebook ablation.

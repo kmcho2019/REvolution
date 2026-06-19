@@ -29,6 +29,7 @@ Status: generated from standardized result artifacts.
 | `sr_raw_pca_qd` | PASS | 6 | 6 | - |
 | `sr_random_relu_pca_qd` | PASS | 6 | 6 | - |
 | `sr_rff_pca_qd` | PASS | 6 | 6 | - |
+| `sr_vq_codebook_qd` | PASS | 6 | 6 | - |
 
 ## Leaderboard
 
@@ -44,6 +45,7 @@ Status: generated from standardized result artifacts.
 | `sr_raw_pca_qd` | 209 | 0.2404 | 0/5/1 | 0.1208 | 1/4/1 | 12 | 0.0703 | 74 | 135 | 48 | 14 | 12 | 1.9663 | 2588.9913 | 576 |
 | `sr_random_relu_pca_qd` | 197 | 0.2536 | 1/4/1 | 0.1454 | 2/3/1 | 12 | 0.0781 | 68 | 129 | 44 | 11 | 10 | 2.3765 | 2647.4207 | 576 |
 | `sr_rff_pca_qd` | 197 | 0.2630 | 0/6/0 | 0.1229 | 0/5/1 | 12 | 0.0703 | 63 | 134 | 43 | 20 | 10 | 2.8111 | 2343.7925 | 576 |
+| `sr_vq_codebook_qd` | 174 | 0.2105 | 0/5/1 | 0.1110 | 1/3/2 | 8 | 0.0599 | 45 | 129 | 30 | 13 | 9 | 0.8485 | 2512.3603 | 576 |
 
 ## QD Archive Metrics
 
@@ -61,6 +63,7 @@ Coverage and entropy are reported in the fixed common-audit space so methods wit
 | `sr_raw_pca_qd` | `grid_quantile` | 27 | 4.7046 | 5.4744 | 12 | 0.0078 | 1.9663 | 2.8654 | 0.2707 |
 | `sr_random_relu_pca_qd` | `grid_quantile` | 25 | 5.2658 | 5.1562 | 10 | 0.0065 | 2.3765 | 2.7269 | 0.2576 |
 | `sr_rff_pca_qd` | `grid_quantile` | 19 | 4.1810 | 5.2490 | 10 | 0.0065 | 2.8111 | 2.6807 | 0.2533 |
+| `sr_vq_codebook_qd` | `grid_quantile` | 11 | 1.8219 | 6.5279 | 9 | 0.0059 | 0.8485 | 2.6088 | 0.2465 |
 
 ## Descriptor/PPA Correlations
 
@@ -82,6 +85,7 @@ This compact table shows each method's best-fitness representative elite. The JS
 | `sr_raw_pca_qd` | `RTLLM/Prob019_sub_64bit` | 1 | `M-E` | 0.4823 | 340.0000 | 0.0002 | 0.0000 | `0,2,0` | `audit_motif4:2,0,1,0` | `.../RTLLM/Prob019_sub_64bit/Gen1/Prob019_sub_64bit_sample5_M-E/code.sv` | `.../RTLLM/Prob019_sub_64bit/Gen1/Prob019_sub_64bit_sample5_M-E/code.syn.v` |
 | `sr_random_relu_pca_qd` | `RTLLM/Prob019_sub_64bit` | 1 | `M-E` | 0.4823 | 340.0000 | 0.0002 | 0.0000 | `0,2,0` | `audit_motif4:2,0,1,0` | `.../RTLLM/Prob019_sub_64bit/Gen1/Prob019_sub_64bit_sample5_M-E/code.sv` | `.../RTLLM/Prob019_sub_64bit/Gen1/Prob019_sub_64bit_sample5_M-E/code.syn.v` |
 | `sr_rff_pca_qd` | `RTLLM/Prob019_sub_64bit` | 1 | `M-E` | 0.4823 | 340.0000 | 0.0002 | 0.0000 | `2,2,0` | `audit_motif4:2,0,1,0` | `.../RTLLM/Prob019_sub_64bit/Gen1/Prob019_sub_64bit_sample2_M-E/code.sv` | `.../RTLLM/Prob019_sub_64bit/Gen1/Prob019_sub_64bit_sample2_M-E/code.syn.v` |
+| `sr_vq_codebook_qd` | `RTLLM/Prob019_sub_64bit` | 2 | `M-E` | 0.4538 | 392.0000 | 0.0003 | 0.0000 | `warmup:21` | `audit_motif4:3,0,0,0` | `.../RTLLM/Prob019_sub_64bit/Gen2/Prob019_sub_64bit_sample1_M-E/code.sv` | `.../RTLLM/Prob019_sub_64bit/Gen2/Prob019_sub_64bit_sample1_M-E/code.syn.v` |
 
 ## Robustness Funnel
 
@@ -97,6 +101,7 @@ This compact table shows each method's best-fitness representative elite. The JS
 | `sr_raw_pca_qd` | 288 | 261 (90.6%) | 209 (72.6%) | 209 (72.6%) | 209 (72.6%) | 209 (72.6%) |
 | `sr_random_relu_pca_qd` | 288 | 240 (83.3%) | 197 (68.4%) | 197 (68.4%) | 197 (68.4%) | 197 (68.4%) |
 | `sr_rff_pca_qd` | 288 | 246 (85.4%) | 197 (68.4%) | 197 (68.4%) | 197 (68.4%) | 197 (68.4%) |
+| `sr_vq_codebook_qd` | 288 | 220 (76.4%) | 174 (60.4%) | 174 (60.4%) | 174 (60.4%) | 174 (60.4%) |
 
 ## Failure Breakdown
 
@@ -137,6 +142,9 @@ This compact table shows each method's best-fitness representative elite. The JS
 | `sr_rff_pca_qd` | `failed_diff` | 21 |
 | `sr_rff_pca_qd` | `failed_syntax` | 20 |
 | `sr_rff_pca_qd` | `failed_format` | 1 |
+| `sr_vq_codebook_qd` | `failed_diff` | 49 |
+| `sr_vq_codebook_qd` | `failed_functionality` | 46 |
+| `sr_vq_codebook_qd` | `failed_syntax` | 19 |
 
 ## Anytime Summary
 
@@ -152,6 +160,7 @@ This compact table shows each method's best-fitness representative elite. The JS
 | `sr_raw_pca_qd` | 3 | 6 | 0.2404 | 0.1208 | 0.2206 | 0.0904 |
 | `sr_random_relu_pca_qd` | 3 | 6 | 0.2536 | 0.1454 | 0.2369 | 0.1202 |
 | `sr_rff_pca_qd` | 3 | 6 | 0.2630 | 0.1229 | 0.2340 | 0.0801 |
+| `sr_vq_codebook_qd` | 3 | 6 | 0.2105 | 0.1110 | 0.1950 | 0.0669 |
 
 The JSON report includes per-generation anytime rows for each method.
 
@@ -231,6 +240,12 @@ The JSON report includes per-generation anytime rows for each method.
 | `sr_rff_pca_qd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 0.0000 | T | 0.0000 | T |
 | `sr_rff_pca_qd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | -0.0002 | T | 0.0000 | T |
 | `sr_rff_pca_qd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 0.0000 | T | 0.0000 | T |
+| `sr_vq_codebook_qd` | `RTLLM/Prob011_multi_16bit` | -0.3223 | L | -0.0245 | L |
+| `sr_vq_codebook_qd` | `RTLLM/Prob019_sub_64bit` | -0.0285 | T | -0.0839 | L |
+| `sr_vq_codebook_qd` | `RTLLM/Prob048_pe` | 0.0000 | T | 0.0000 | T |
+| `sr_vq_codebook_qd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 0.0000 | T | 0.0000 | T |
+| `sr_vq_codebook_qd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 0.0115 | T | 0.0276 | W |
+| `sr_vq_codebook_qd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 0.0000 | T | 0.0000 | T |
 
 ## Per-Problem PPA And Diversity
 
@@ -296,6 +311,12 @@ The JSON report includes per-generation anytime rows for each method.
 | `sr_rff_pca_qd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 20 | 0.4232 | 0.2724 | 2 | 0.1250 | 1 | 20 | 4 | 16 | 1 | area/power |
 | `sr_rff_pca_qd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 42 | 0.2850 | 0.0000 | 1 | 0.0625 | 18 | 14 | 10 | 32 | 8 | area/power |
 | `sr_rff_pca_qd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 37 | 0.0416 | 0.0000 | 1 | 0.0156 | 16 | 16 | 12 | 25 | 3 | area/power/eff_clk_period |
+| `sr_vq_codebook_qd` | `RTLLM/Prob011_multi_16bit` | 11 | 0.0424 | 0.0000 | 1 | 0.0156 | 7 | 0 | 3 | 8 | 1 | area/power/eff_clk_period |
+| `sr_vq_codebook_qd` | `RTLLM/Prob019_sub_64bit` | 35 | 0.4538 | 0.3661 | 2 | 0.1250 | 1 | 4 | 9 | 26 | 1 | area/power |
+| `sr_vq_codebook_qd` | `RTLLM/Prob048_pe` | 18 | 0.0056 | 0.0000 | 1 | 0.0156 | 4 | 6 | 5 | 13 | 3 | area/power/eff_clk_period |
+| `sr_vq_codebook_qd` | `VerilogEval-Spec-to-RTL/Prob021_mux256to1v` | 34 | 0.4232 | 0.2724 | 2 | 0.1250 | 6 | 34 | 3 | 31 | 1 | area/power |
+| `sr_vq_codebook_qd` | `VerilogEval-Spec-to-RTL/Prob030_popcount255` | 35 | 0.2966 | 0.0276 | 1 | 0.0625 | 2 | 17 | 12 | 23 | 2 | area/power |
+| `sr_vq_codebook_qd` | `VerilogEval-Spec-to-RTL/Prob105_rotate100` | 41 | 0.0416 | 0.0000 | 1 | 0.0156 | 20 | 20 | 13 | 28 | 5 | area/power/eff_clk_period |
 
 ## Artifact Roots
 
@@ -309,3 +330,4 @@ The JSON report includes per-generation anytime rows for each method.
 - `sr_raw_pca_qd`: `exp/auto_bd_research/development_preliminary_seed1/sr_raw_pca_qd/seed_1001/standard_results`
 - `sr_random_relu_pca_qd`: `exp/auto_bd_research/development_preliminary_seed1/sr_random_relu_pca_qd/seed_1001/standard_results`
 - `sr_rff_pca_qd`: `exp/auto_bd_research/development_preliminary_seed1/sr_rff_pca_qd/seed_1001/standard_results`
+- `sr_vq_codebook_qd`: `exp/auto_bd_research/development_preliminary_seed1/sr_vq_codebook_qd/seed_1001/standard_results`
