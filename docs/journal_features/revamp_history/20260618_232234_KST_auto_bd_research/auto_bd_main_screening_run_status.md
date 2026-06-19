@@ -10,14 +10,14 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | Manifest | 12 | 12 | 0 | 0 | 0 | 0 |
 | Benchmark Command | 24 | 4 | 0 | 20 | 0 | 0 |
-| Arm/Seed | 12 | 0 | 0 | 10 | 1 | 1 |
+| Arm/Seed | 12 | 0 | 0 | 10 | 0 | 2 |
 
 ## Arm / Seed Status
 
 | Arm | Seed | Status | Benchmark Groups | Standard Results |
 | --- | --- | --- | --- | --- |
 | `classic_revolution` | 1001 | `standard_results_complete` | 2/2 | `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1001/standard_results` |
-| `classic_revolution` | 1002 | `runs_complete` | 2/2 | `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1002/standard_results` |
+| `classic_revolution` | 1002 | `standard_results_complete` | 2/2 | `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1002/standard_results` |
 | `classic_revolution` | 1003 | `pending` | 0/2 | `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1003/standard_results` |
 | `landing_smooth_qd_manual_bd` | 1001 | `pending` | 0/2 | `exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1001/standard_results` |
 | `landing_smooth_qd_manual_bd` | 1002 | `pending` | 0/2 | `exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1002/standard_results` |
