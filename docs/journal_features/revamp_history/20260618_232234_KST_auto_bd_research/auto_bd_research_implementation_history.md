@@ -8717,3 +8717,185 @@ Results:
 - ruff: pass
 - ty: pass
 - pyright: 0 errors
+
+## 2026-06-19 - Ran SR Random-ReLU PCA Seed-1
+
+Scope:
+
+- Ran `sr_random_relu_pca_qd` on the locked development seed-1 subset.
+- Used the frozen `sr_random_relu_pca_v1` descriptor artifact generated
+  from predeclared ST-NOD development data.
+- Regenerated standard results, centralized seed-1 reports, method-local
+  reports, figures, Gate 0 coverage, and decision docs.
+
+Model preflight:
+
+```bash
+curl -sS http://20.0.0.103:8000/v1/models
+```
+
+Result:
+
+- model: `openai/gpt-oss-120b`
+- `max_model_len`: 131072
+
+Run manifest:
+
+```bash
+jq -r '.manifest_commands[] |
+  select(.arm_name=="sr_random_relu_pca_qd") |
+  .command_string' \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_development_run_matrix.json |
+  bash
+```
+
+Result:
+
+- manifest:
+  `exp/auto_bd_research/development_preliminary_seed1/sr_random_relu_pca_qd/seed_1001/run_manifest.json`
+- manifest git commit: `2ccffdbc995e5b7378464a0662eca8148aedc342`
+- branch: `feat/journal-auto-bd-exp-20260618`
+
+Run commands:
+
+```bash
+jq -r '.entries[] |
+  select(.arm_name=="sr_random_relu_pca_qd" and .benchmark=="RTLLM") |
+  .command_string' \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_development_run_matrix.json |
+  bash
+
+jq -r '.entries[] |
+  select(.arm_name=="sr_random_relu_pca_qd" and .benchmark=="VerilogEval-Spec-to-RTL") |
+  .command_string' \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_development_run_matrix.json |
+  bash
+```
+
+Runtime:
+
+- RTLLM half: 542.09 seconds.
+- VerilogEval half: 473.29 seconds.
+- Built-in vLLM preflight passed for both benchmark halves.
+- Run commands used `--vllm_min_model_len 131072`.
+- Run commands used `--max_tokens 128000` and
+  `--diff_max_tokens 128000`.
+
+Standard result generation:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/build_auto_bd_standard_results.py \
+  --run-dir exp/auto_bd_research/development_preliminary_seed1/sr_random_relu_pca_qd/seed_1001/revolution/openai_gpt-oss-120b \
+  --output-dir exp/auto_bd_research/development_preliminary_seed1/sr_random_relu_pca_qd/seed_1001/standard_results \
+  --method-name sr_random_relu_pca_qd \
+  --method-family synthesis_response_kernel_pca \
+  --descriptor-version sr_random_relu_pca_v1 \
+  --phase development_preliminary_seed1 \
+  --seed 1001 \
+  --run-manifest exp/auto_bd_research/development_preliminary_seed1/sr_random_relu_pca_qd/seed_1001/run_manifest.json
+```
+
+Standard result summary:
+
+- candidates: 288
+- valid PPA candidates: 197
+- problem count: 6
+- unique canonical netlists: 68
+- unique motif signatures: 44
+- common-audit occupied cells: 10
+- common-audit QD score: 2.3765
+
+Generated reports and artifacts:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_standard_results.py \
+  --results-root exp/auto_bd_research/development_preliminary_seed1 \
+  --output-md docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.md \
+  --output-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --figure-dir docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/figures/seed1 \
+  --phase development_preliminary_seed1 \
+  --seed 1001
+
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_method_results.py \
+  --central-report-json docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json \
+  --method-root docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods \
+  --output-name seed1_artifact_report.md
+
+UV_LINK_MODE=copy uv run --active python \
+  scripts/summarize_auto_bd_gate0.py \
+  --run-dir exp/auto_bd_research/development_preliminary_seed1/sr_random_relu_pca_qd/seed_1001/revolution/openai_gpt-oss-120b \
+  --method-name sr_random_relu_pca_qd \
+  --phase development_preliminary_seed1 \
+  --seed 1001 \
+  --output docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_gate0_coverage_seed1_sr_random_relu_pca_qd.json
+```
+
+Generated docs:
+
+- `auto_bd_seed1_centralized_report.md`
+- `auto_bd_seed1_centralized_report.json`
+- `auto_bd_gate0_coverage_seed1_sr_random_relu_pca_qd.json`
+- `auto_bd_standard_results_seed1.md`
+- `auto_bd_methods/04_synthesis_response_kernel_pca/sr_random_relu_seed1_artifact_report.md`
+- `auto_bd_methods/04_synthesis_response_kernel_pca/sr_random_relu_seed1_preliminary_report.md`
+
+Seed-1 comparison against classic:
+
+- Gate 0: pass, 6/6 classic-covered problems, no missing problems.
+- Valid PPA: 197/288 versus 209/288 for classic.
+- Valid-PPA rate delta: -4.17 percentage points versus classic.
+- Mean best fitness: 0.2536 versus 0.2671 for classic.
+- Fitness W/T/L: 1/4/1.
+- Mean hypervolume: 0.1454 versus 0.1245 for classic.
+- Hypervolume W/T/L: 2/3/1.
+- Unique canonical netlists: 68 versus 70 for classic.
+- Unique motif signatures: 44 versus 43 for classic.
+- PPA-front unique netlists: 11 versus 12 for classic.
+- Common-audit occupied cells: 10 versus 12 for classic.
+- Common-audit QD score: 2.3765 versus 2.3163 for classic.
+
+Decision:
+
+- Promote `sr_random_relu_pca_qd` to seed-3 screening only.
+- Do not accept it as a final method from seed-1 evidence.
+- Reason: Gate 0 passes, valid-PPA drop stays within the 5 percentage
+  point tolerance, and HV improves by about 16.8 percent. Diversity is
+  weaker than classic on PPA-front unique netlists and common-audit
+  occupied cells, so seed-3 must show diversity recovery.
+
+Validation:
+
+```bash
+git diff --check
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_method_results.py \
+  tests/scripts/test_summarize_auto_bd_gate0.py
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+summary = json.loads(Path("exp/auto_bd_research/development_preliminary_seed1/sr_random_relu_pca_qd/seed_1001/standard_results/method_summary.json").read_text())
+assert summary["candidate_count"] == 288
+assert summary["valid_ppa_candidate_count"] == 197
+assert summary["unique_canonical_netlist_count"] == 68
+assert summary["unique_motif_signature_count"] == 44
+assert summary["common_audit_occupied_cells"] == 10
+
+report = json.loads(Path("docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_seed1_centralized_report.json").read_text())
+leader = next(row for row in report["leaderboard"] if row["method_name"] == "sr_random_relu_pca_qd")
+assert leader["valid_ppa_candidate_count"] == 197
+assert leader["fitness_wins"] == 1
+assert leader["hv_wins"] == 2
+print("sr_random_relu seed1001 standard results check ok")
+PY
+```
+
+Results:
+
+- `git diff --check`: pass
+- pytest: 7 passed
+- standard-results sanity: pass

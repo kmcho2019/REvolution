@@ -64,6 +64,7 @@ fixed cross-method diversity surface required by the controlling plan.
 | `synthesis_trajectory_nod` | 288 | 205 | 72 | 52 | 11 | -2.0643 |
 | `synthesis_trajectory_motif_nod` | 288 | 198 | 77 | 45 | 16 | 1.7144 |
 | `sr_raw_pca_qd` | 288 | 209 | 74 | 48 | 12 | 1.9663 |
+| `sr_random_relu_pca_qd` | 288 | 197 | 68 | 44 | 10 | 2.3765 |
 
 ## Artifact Paths
 
@@ -83,6 +84,8 @@ fixed cross-method diversity surface required by the controlling plan.
   `exp/auto_bd_research/development_preliminary_seed1/synthesis_trajectory_motif_nod/seed_1001/standard_results/`
 - `sr_raw_pca_qd`:
   `exp/auto_bd_research/development_preliminary_seed1/sr_raw_pca_qd/seed_1001/standard_results/`
+- `sr_random_relu_pca_qd`:
+  `exp/auto_bd_research/development_preliminary_seed1/sr_random_relu_pca_qd/seed_1001/standard_results/`
 
 ## Interpretation Notes
 
@@ -101,3 +104,7 @@ fixed cross-method diversity surface required by the controlling plan.
 - `sr_raw_pca_qd` is the first projected synthesis-response baseline, not
   a promoted final method. Its accept/reject decision lives in
   `auto_bd_methods/04_synthesis_response_kernel_pca/accept_reject.md`.
+- `sr_random_relu_pca_qd` is the first random-kernel synthesis-response
+  candidate. Its seed-1 evidence is mixed: Gate 0 passes and mean HV
+  improves versus classic, but valid-PPA rate and PPA-front uniqueness
+  regress.

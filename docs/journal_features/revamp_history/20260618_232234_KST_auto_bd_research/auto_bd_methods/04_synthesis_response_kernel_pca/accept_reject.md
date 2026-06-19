@@ -1,13 +1,13 @@
 # Synthesis-Response Kernel PCA Decision
 
-Decision: reject as the selected final method; keep as the first
-projected synthesis-response baseline.
+Decision: reject `sr_raw_pca_qd` as the selected final method. Promote
+`sr_random_relu_pca_qd` only to seed-3 screening, not to final-method
+status.
 
-Current status: seed-1 development evaluated for `sr_raw_pca_qd`.
-`sr_random_relu_pca_qd` is artifact-frozen and ready for its seed-1
-development run.
+Current status: seed-1 development evaluated for `sr_raw_pca_qd` and
+`sr_random_relu_pca_qd`.
 
-## Evidence
+## Raw PCA Evidence
 
 - Seed-1 development Gate 0: pass.
 - Covered problems: 6.
@@ -28,11 +28,52 @@ development run.
   `../../auto_bd_gate0_coverage_seed1_sr_raw_pca_qd.json`.
 - Centralized report: `../../auto_bd_seed1_centralized_report.md`.
 
-## Remaining Evidence For Later Projected Variants
+Decision: reject as a selected final method; keep as the first projected
+synthesis-response baseline.
+
+Reason: Gate 0 passes and diversity improves modestly, but PPA/HV does
+not improve over classic and PPA-front unique-netlist uplift is only
+about 16.7 percent, below the 20 percent target.
+
+## Random ReLU PCA Evidence
+
+- Seed-1 development Gate 0: pass.
+- Covered problems: 6.
+- Missing classic-covered problems: 0.
+- Valid PPA: 197/288 versus 209/288 for classic REvolution.
+- Valid-PPA rate delta versus classic: -4.17 percentage points.
+- Mean best fitness: 0.2536 versus 0.2671 for classic.
+- Fitness W/T/L versus classic: 1/4/1.
+- Mean hypervolume: 0.1454 versus 0.1245 for classic.
+- Hypervolume W/T/L versus classic: 2/3/1.
+- Unique canonical netlists: 68 versus 70 for classic.
+- Unique motif signatures: 44 versus 43 for classic.
+- PPA-front unique netlists: 11 versus 12 for classic.
+- Common-audit occupied cells: 10 versus 12 for classic.
+- Common-audit QD score: 2.3765 versus 2.3163 for classic.
+- Method report: `sr_random_relu_seed1_artifact_report.md`.
+- Coverage artifact:
+  `../../auto_bd_gate0_coverage_seed1_sr_random_relu_pca_qd.json`.
+- Centralized report: `../../auto_bd_seed1_centralized_report.md`.
+
+Decision: promote to seed-3 screening only.
+
+Reason: the result passes the hard coverage gate, keeps valid-PPA drop
+within the 5 percentage-point seed-1 tolerance, avoids scalar-fitness
+collapse, and improves mean HV by about 16.8 percent. It is not a final
+candidate because PPA-front unique netlists regress, common-audit
+coverage regresses, and valid-PPA count drops by 12 candidates.
+
+Seed-3 promotion condition: retain Gate 0 coverage and HV/PPA-quality
+uplift while recovering diversity. If PPA-front unique netlists or
+common-audit coverage remain below classic, frame ReLU PCA as a PPA/HV
+ablation rather than the selected Auto-BD method.
+
+## Remaining Evidence
 
 - Strict zero-reference HV and `ANHV@1.5`.
 - Learned-BD scatter and descriptor/PPA correlation plots.
-- Seed-3 screening only for variants that clear seed-1 gates.
+- Seed-3 screening for `sr_random_relu_pca_qd`.
 
 ## Acceptance Bar
 
@@ -49,21 +90,9 @@ The method is a final candidate only if it:
 If it improves diversity while losing too much PPA or repair robustness,
 keep it as an ablation rather than the selected journal method.
 
-## Rationale
-
-The method passes the hard coverage gate and preserves repair/PPA
-robustness on the seed-1 development subset. It also provides modest
-structural diversity uplift over classic REvolution.
-
-It is not strong enough to promote as the selected method. The PPA-front
-unique-netlist uplift is about 16.7 percent, below the 20 percent target,
-and the PPA/HV metrics do not improve over classic. The result is useful
-as a clean fixed-vector projected baseline and motivates trying the
-planned random-kernel expansion before PCA.
-
 ## Next Use
 
-Run `sr_random_relu_pca_qd` next. Its frozen fitting artifact uses the
-same leakage controls: no PPA, no fitness, no hypervolume, no reference
-PPA, no visible testbench pass percentage, and no problem ID as
-descriptor inputs.
+Run `sr_random_relu_pca_qd` on the seed-3 screening phase before trying
+`sr_rff_pca_qd`. Do not proceed to seed-5 unless seed-3 confirms that
+the HV uplift is robust and the diversity regressions are resolved or
+clearly justified.

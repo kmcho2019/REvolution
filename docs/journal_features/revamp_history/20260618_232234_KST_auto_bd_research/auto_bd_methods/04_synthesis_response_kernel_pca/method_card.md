@@ -142,8 +142,7 @@ and free of PPA leakage.
 
 ## 10. Implementation Status
 
-Seed-1 evaluated for `sr_raw_pca_qd`. The `sr_random_relu_pca_qd`
-artifact and run arm are frozen but not yet evaluated.
+Seed-1 evaluated for `sr_raw_pca_qd` and `sr_random_relu_pca_qd`.
 
 Implemented:
 
@@ -155,13 +154,13 @@ Implemented:
 - Development-seed fitting artifact for `sr_random_relu_pca_qd`.
 - Run-matrix arm generation for `sr_raw_pca_qd` and
   `sr_random_relu_pca_qd`.
-- Development seed-1 run, standard results, Gate 0 coverage artifact,
-  and method-local artifact report for `sr_raw_pca_qd`.
+- Development seed-1 runs, standard results, Gate 0 coverage artifacts,
+  and method-local artifact reports for `sr_raw_pca_qd` and
+  `sr_random_relu_pca_qd`.
 
 Not implemented:
 
 - Random Fourier feature expansion.
-- Seed-1 evolutionary run for `sr_random_relu_pca_qd`.
 - Seed-3 SR-PCA screening runs.
 
 ## 11. Experimental Setup
@@ -199,6 +198,32 @@ Seed-1 metrics:
 - Unique motif signatures: 48 versus 43 for classic.
 - Common-audit occupied cells: 12, equal to classic.
 - Common-audit QD score: 1.9663 versus 2.3163 for classic.
+
+Development seed-1 `sr_random_relu_pca_qd` result:
+
+- run root:
+  `exp/auto_bd_research/development_preliminary_seed1/sr_random_relu_pca_qd/seed_1001`
+- standard results:
+  `exp/auto_bd_research/development_preliminary_seed1/sr_random_relu_pca_qd/seed_1001/standard_results`
+- method report: `sr_random_relu_seed1_artifact_report.md`
+- Gate 0 artifact:
+  `../../auto_bd_gate0_coverage_seed1_sr_random_relu_pca_qd.json`
+- centralized report: `../../auto_bd_seed1_centralized_report.md`
+
+Seed-1 metrics:
+
+- Gate 0: pass, 6/6 classic-covered problems, no missing problems.
+- Valid PPA: 197/288 versus 209/288 for classic REvolution.
+- Valid-PPA rate delta: -4.17 percentage points versus classic.
+- Mean best fitness: 0.2536 versus 0.2671 for classic.
+- Fitness W/T/L: 1/4/1 versus classic.
+- Mean hypervolume: 0.1454 versus 0.1245 for classic.
+- Hypervolume W/T/L: 2/3/1 versus classic.
+- PPA-front unique netlists: 11 versus 12 for classic.
+- Unique canonical netlists: 68 versus 70 for classic.
+- Unique motif signatures: 44 versus 43 for classic.
+- Common-audit occupied cells: 10 versus 12 for classic.
+- Common-audit QD score: 2.3765 versus 2.3163 for classic.
 
 Frozen development fitting artifact:
 
@@ -258,7 +283,11 @@ Required plots:
 
 ## 13. Accept / Reject Decision
 
-Reject as a selected final method; keep as the first projected baseline.
+Reject `sr_raw_pca_qd` as a selected final method; keep it as the first
+projected baseline.
+
+Promote `sr_random_relu_pca_qd` only to seed-3 screening. Do not promote
+it to final-method status from seed-1 evidence.
 
 ## 14. Reason
 
@@ -267,4 +296,12 @@ in-loop without breaking seed-1 valid-PPA coverage. It does not yet show
 the material uplift required for a journal method: fitness and HV do not
 beat classic REvolution, common-audit coverage only ties classic, and
 PPA-front unique-netlist uplift is below the predeclared 20 percent
-target. Proceed to the planned random-kernel variant.
+target.
+
+`sr_random_relu_pca_qd` is PPA-quality-promising but diversity-risky.
+Gate 0 passes, valid-PPA drop is within the 5 percentage-point seed-1
+tolerance, and mean HV improves by about 16.8 percent. However,
+PPA-front unique netlists, common-audit occupied cells, and valid-PPA
+count all regress versus classic. Seed-3 must show that the HV uplift is
+robust and that diversity recovers before this can become a journal
+method.

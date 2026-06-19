@@ -83,6 +83,8 @@ evidence and rationale.
   first projected baseline.
 - [x] Add `sr_random_relu_pca_qd` as the main SR-kernel-PCA candidate only
   after fitting artifacts are frozen.
+- [ ] Run `sr_random_relu_pca_qd` seed-3 screening and require diversity
+  recovery before seed-5 consideration.
 - [ ] Try `sr_rff_pca_qd` only as a kernel control after ReLU PCA is
   understood.
 - [x] Define descriptor fitting protocol and frozen fitting artifacts for
