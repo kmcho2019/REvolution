@@ -5735,3 +5735,143 @@ PY
 ```
 
 Result: `landing smooth seed1003 standard results check ok`.
+
+## 2026-06-19 07:53 UTC
+
+Completed the first seed-3 main-screening command for
+`random_descriptor_qd` seed 1001.
+
+Model endpoint preflight:
+
+```bash
+curl -s http://20.0.0.103:8000/v1/models
+```
+
+Result:
+
+- model ID: `openai/gpt-oss-120b`
+- `max_model_len`: 131072
+
+Run command:
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks RTLLM \
+  --problems Prob004_adder_8bit Prob015_multi_pipe_8bit Prob024_fsm Prob037_parallel2serial Prob041_traffic_light Prob045_alu Prob049_signal_generator \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 20 \
+  --num_generations 5 \
+  --evaluation_mode search_accelerated \
+  --accelerated_synthesis_top_k 1 \
+  --total_worker_slots 13 \
+  --max_active_problems 13 \
+  --max_workers_per_problem 4 \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 300 \
+  --post_synthesis_simulation_timeout_s 300 \
+  --seed 1001 \
+  --save_path /workspace/.worktrees/journal-auto-bd-exp-20260618/exp/auto_bd_research/main_screening_screening_seed3/random_descriptor_qd/seed_1001 \
+  --search_mode revolution_qd \
+  --qd_archive_type grid_quantile \
+  --qd_grid_quantile_warmup_successes 8 \
+  --qd_cell_mode pareto_front \
+  --qd_max_elites_per_cell 5 \
+  --qd_objectives ppa \
+  --qd_champion_lane_fraction 0.5 \
+  --qd_parent_selection nsga2_global_rank \
+  --qd_two_parent_probability 0.5 \
+  --qd_operator_kind eoh_strategies \
+  --representation_kind code_individual \
+  --qd_descriptor_profile random_hash_3d \
+  --qd_descriptor_file /workspace/.worktrees/journal-auto-bd-exp-20260618/docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_methods/00_random_descriptor/descriptor_profile.yaml
+```
+
+Result:
+
+- arm: `random_descriptor_qd`
+- seed: 1001
+- benchmark group: `RTLLM`
+- run time: 2081.15 seconds
+- run log:
+  `exp/auto_bd_research/main_screening_screening_seed3/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260619_071756_revolution_run_log.txt`
+- summary:
+  `exp/auto_bd_research/main_screening_screening_seed3/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260619_071756_revolution_summary_results.txt`
+- scheduler telemetry:
+  `exp/auto_bd_research/main_screening_screening_seed3/random_descriptor_qd/seed_1001/revolution/openai_gpt-oss-120b/20260619_071756_revolution_scheduler_telemetry.json`
+
+Problem outcomes:
+
+| Problem | Status | Best Score |
+| --- | --- | --- |
+| `Prob004_adder_8bit` | `success` | 0.38154412826809186 |
+| `Prob015_multi_pipe_8bit` | `success` | 0.22434044941785722 |
+| `Prob024_fsm` | `success` | 0.66612657699927 |
+| `Prob037_parallel2serial` | `success` | 0.08458997628975556 |
+| `Prob041_traffic_light` | `success` | 0.4422688211086904 |
+| `Prob045_alu` | `success` | 0.40941260923845196 |
+| `Prob049_signal_generator` | `success` | 0.3047895385391292 |
+
+Refreshed status command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_run_matrix_status.py
+```
+
+Current seed-3 status:
+
+- manifest commands: 12 complete, 0 pending
+- benchmark commands: 13 complete, 11 pending
+- arm/seed pairs: 6 standard-results complete, 1 partial, 5 pending
+- `random_descriptor_qd` seed 1001: partial, 1/2 benchmark groups complete
+
+Artifact check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+p = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_main_screening_run_status.json"
+)
+payload = json.loads(p.read_text())
+assert payload["manifest_summary"] == {"complete": 12, "total": 12}
+assert payload["entry_summary"] == {"complete": 13, "pending": 11, "total": 24}
+assert payload["arm_seed_summary"] == {
+    "partial": 1,
+    "pending": 5,
+    "standard_results_complete": 6,
+    "total": 12,
+}
+entry = next(
+    item
+    for item in payload["arm_seed_status"]
+    if item["arm_name"] == "random_descriptor_qd"
+    and item["seed"] == 1001
+)
+assert entry["status"] == "partial"
+assert entry["benchmark_groups_complete"] == 1
+rtllm_entry = next(
+    item
+    for item in payload["entry_status"]
+    if item["arm_name"] == "random_descriptor_qd"
+    and item["seed"] == 1001
+    and item["benchmark"] == "RTLLM"
+)
+assert rtllm_entry["status"] == "complete"
+assert rtllm_entry["completed_problem_count"] == 7
+print("random descriptor seed1001 rttlm status check ok")
+PY
+```
+
+Result: `random descriptor seed1001 rttlm status check ok`.
