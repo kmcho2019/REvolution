@@ -10,7 +10,7 @@
 | --- | --- | --- | --- | --- | --- | --- |
 | Manifest | 12 | 12 | 0 | 0 | 0 | 0 |
 | Benchmark Command | 24 | 12 | 0 | 12 | 0 | 0 |
-| Arm/Seed | 12 | 0 | 0 | 6 | 1 | 5 |
+| Arm/Seed | 12 | 0 | 0 | 6 | 0 | 6 |
 
 ## Arm / Seed Status
 
@@ -21,7 +21,7 @@
 | `classic_revolution` | 1003 | `standard_results_complete` | 2/2 | `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1003/standard_results` |
 | `landing_smooth_qd_manual_bd` | 1001 | `standard_results_complete` | 2/2 | `exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1001/standard_results` |
 | `landing_smooth_qd_manual_bd` | 1002 | `standard_results_complete` | 2/2 | `exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1002/standard_results` |
-| `landing_smooth_qd_manual_bd` | 1003 | `runs_complete` | 2/2 | `exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1003/standard_results` |
+| `landing_smooth_qd_manual_bd` | 1003 | `standard_results_complete` | 2/2 | `exp/auto_bd_research/main_screening_screening_seed3/landing_smooth_qd_manual_bd/seed_1003/standard_results` |
 | `random_descriptor_qd` | 1001 | `pending` | 0/2 | `exp/auto_bd_research/main_screening_screening_seed3/random_descriptor_qd/seed_1001/standard_results` |
 | `random_descriptor_qd` | 1002 | `pending` | 0/2 | `exp/auto_bd_research/main_screening_screening_seed3/random_descriptor_qd/seed_1002/standard_results` |
 | `random_descriptor_qd` | 1003 | `pending` | 0/2 | `exp/auto_bd_research/main_screening_screening_seed3/random_descriptor_qd/seed_1003/standard_results` |
