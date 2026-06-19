@@ -3800,3 +3800,124 @@ PY
 ```
 
 Result: `classic seed1001 run status check ok`.
+
+## 2026-06-19 00:18 UTC
+
+Generated standard results for `classic_revolution` seed 1001 in the
+seed-3 main-screening matrix.
+
+Standard result command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/build_auto_bd_standard_results.py \
+  --run-dir \
+  exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1001/revolution/openai_gpt-oss-120b \
+  --output-dir \
+  exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1001/standard_results \
+  --method-name classic_revolution \
+  --method-family baseline \
+  --descriptor-version classic_revolution_v1 \
+  --phase main_screening \
+  --seed 1001 \
+  --run-manifest \
+  exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1001/run_manifest.json
+```
+
+Result:
+
+- standard result root:
+  `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1001/standard_results`
+- problems: 13
+- candidates: 1560
+- valid PPA candidates: 740
+- unique canonical netlists: 341
+- unique motif signatures: 248
+- common-audit occupied cells: 41
+- common-audit QD score: 8.552644534445314
+
+Standard files:
+
+```text
+archive_snapshots.parquet
+candidates.parquet
+descriptor_vectors.parquet
+elites.parquet
+method_summary.json
+netlist_hashes.parquet
+per_generation_metrics.parquet
+per_problem_metrics.parquet
+run_manifest.json
+```
+
+Refreshed status command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_run_matrix_status.py \
+  --matrix \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_matrix.json \
+  --output-json \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.json \
+  --output-md \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.md
+```
+
+Current seed-3 status:
+
+- manifest commands: 12 complete, 0 pending
+- benchmark commands: 2 complete, 22 pending
+- arm/seed pairs: 1 standard-results complete, 11 pending
+- `classic_revolution` seed 1001: standard results complete
+
+Artifact check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+files = {
+    "candidates.parquet",
+    "elites.parquet",
+    "archive_snapshots.parquet",
+    "per_generation_metrics.parquet",
+    "per_problem_metrics.parquet",
+    "descriptor_vectors.parquet",
+    "netlist_hashes.parquet",
+    "method_summary.json",
+    "run_manifest.json",
+}
+standard = Path(
+    "exp/auto_bd_research/main_screening_screening_seed3/"
+    "classic_revolution/seed_1001/standard_results"
+)
+assert {path.name for path in standard.iterdir()} == files
+summary = json.loads((standard / "method_summary.json").read_text())
+assert summary["method_name"] == "classic_revolution"
+assert summary["phase"] == "main_screening"
+assert summary["seed"] == 1001
+assert summary["problem_count"] == 13
+assert summary["candidate_count"] == 1560
+assert summary["valid_ppa_candidate_count"] == 740
+
+status_path = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_main_screening_run_status.json"
+)
+status = json.loads(status_path.read_text())
+assert status["arm_seed_summary"] == {
+    "pending": 11,
+    "standard_results_complete": 1,
+    "total": 12,
+}
+entry = status["arm_seed_status"][0]
+assert entry["arm_name"] == "classic_revolution"
+assert entry["seed"] == 1001
+assert entry["status"] == "standard_results_complete"
+print("classic seed1001 standard results check ok")
+PY
+```
+
+Result: `classic seed1001 standard results check ok`.
