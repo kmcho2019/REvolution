@@ -8046,3 +8046,44 @@ Results:
 - `ruff check`: pass
 - `ty check src/revolution/auto_bd/method_specs.py`: pass
 - `pyright src/revolution/auto_bd/method_specs.py`: 0 errors
+
+## 2026-06-19 - Fixed Seed Filtering For Central Reports
+
+Issue:
+
+- `scripts/report_auto_bd_standard_results.py` accepted `--seed`, but the
+  standard-results directory scan used every `seed_*` directory under a
+  multi-seed root and overwrote each method entry with the last sorted
+  seed.
+- This made seed-level reports unsafe for the completed seed-3 screening
+  root.
+
+Change:
+
+- Filter standard result directories with `seed_<requested_seed>`.
+- Render phase and seed explicitly in the Markdown report header.
+- Add a regression test that writes two seed directories and verifies the
+  requested seed is selected.
+
+Validation:
+
+```bash
+UV_LINK_MODE=copy uv run --active pytest \
+  tests/scripts/test_report_auto_bd_standard_results.py
+UV_LINK_MODE=copy uv run --active ruff check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+UV_LINK_MODE=copy uv tool run ty check \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+UV_LINK_MODE=copy uv run --active python -m pyright \
+  scripts/report_auto_bd_standard_results.py \
+  tests/scripts/test_report_auto_bd_standard_results.py
+```
+
+Results:
+
+- pytest: 3 passed
+- ruff: pass
+- ty: pass
+- pyright: 0 errors

@@ -113,7 +113,9 @@ def test_main_writes_markdown_and_json(tmp_path: Path) -> None:
     )
 
     assert code == 0
-    assert "Auto-BD Seed-1 Centralized Report" in output_md.read_text(encoding="utf-8")
+    report_text = output_md.read_text(encoding="utf-8")
+    assert "Auto-BD Centralized Report" in report_text
+    assert "Seed: `1001`" in report_text
     payload = json.loads(output_json.read_text(encoding="utf-8"))
     assert payload["normalization"]["hypervolume_reference_point"] == 0.0
     assert (figure_dir / "anytime_mean_best_fitness.png").read_bytes().startswith(b"\x89PNG")
@@ -128,6 +130,42 @@ def test_main_writes_markdown_and_json(tmp_path: Path) -> None:
         b"\x89PNG"
     )
     assert (figure_dir / "manual_bd_ppa_correlation.png").read_bytes().startswith(b"\x89PNG")
+
+
+def test_build_report_filters_requested_seed(tmp_path: Path) -> None:
+    repo_root = _write_reference(tmp_path)
+    results_root = tmp_path / "exp"
+    _write_standard_dir(
+        results_root,
+        "classic_revolution",
+        area=90.0,
+        power=0.9,
+        fitness=0.1,
+        netlist_hash="classic_seed1001",
+        seed=1001,
+    )
+    _write_standard_dir(
+        results_root,
+        "classic_revolution",
+        area=70.0,
+        power=0.7,
+        fitness=0.3,
+        netlist_hash="classic_seed1002",
+        seed=1002,
+    )
+
+    report = mod.build_report(
+        results_root=results_root,
+        repo_root=repo_root,
+        phase="main_screening",
+        seed=1002,
+    )
+
+    assert report["artifact_roots"]["classic_revolution"].endswith(
+        "classic_revolution/seed_1002/standard_results"
+    )
+    leaderboard = {row["method_name"]: row for row in report["leaderboard"]}
+    assert leaderboard["classic_revolution"]["mean_best_fitness"] == 0.3
 
 
 def _write_reference(tmp_path: Path) -> Path:
@@ -149,8 +187,9 @@ def _write_standard_dir(
     power: float,
     fitness: float,
     netlist_hash: str,
+    seed: int = 1001,
 ) -> None:
-    result_dir = results_root / method / "seed_1001" / "standard_results"
+    result_dir = results_root / method / f"seed_{seed}" / "standard_results"
     result_dir.mkdir(parents=True)
     problem_id = "Bench/ProbA"
     archive_type = "none" if method == "classic_revolution" else "grid_quantile"
@@ -242,7 +281,7 @@ def _write_standard_dir(
             {
                 "method_name": method,
                 "problem_id": problem_id,
-                "seed": 1001,
+                "seed": seed,
                 "archive_type": archive_type,
                 "internal_occupied_cells": None
                 if method == "classic_revolution"
@@ -263,7 +302,7 @@ def _write_standard_dir(
             {
                 "method_name": method,
                 "problem_id": problem_id,
-                "seed": 1001,
+                "seed": seed,
                 "candidate_id": "candidate-0",
                 "descriptor_axes": descriptor_axes,
                 "descriptor_vector": descriptor_vector,

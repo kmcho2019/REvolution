@@ -46,7 +46,7 @@ def build_report(
 ) -> dict[str, Any]:
     """Build centralized seed-level report data from standard result tables."""
 
-    result_dirs = standard_result_dirs(results_root)
+    result_dirs = standard_result_dirs(results_root, seed)
     assert REFERENCE_METHOD in result_dirs, f"missing {REFERENCE_METHOD}"
     per_method = {
         method: load_method_result(method, path, repo_root)
@@ -129,13 +129,13 @@ def build_report(
     }
 
 
-def standard_result_dirs(results_root: Path) -> dict[str, Path]:
+def standard_result_dirs(results_root: Path, seed: int) -> dict[str, Path]:
     assert results_root.is_dir(), f"missing results root: {results_root}"
     rows: dict[str, Path] = {}
-    for path in sorted(results_root.glob("*/seed_*/standard_results")):
+    for path in sorted(results_root.glob(f"*/seed_{seed}/standard_results")):
         assert path.is_dir()
         rows[path.parents[1].name] = path
-    assert rows, f"no standard_results directories under: {results_root}"
+    assert rows, f"no seed {seed} standard_results directories under: {results_root}"
     return rows
 
 
@@ -619,9 +619,13 @@ def outcome(delta: float, epsilon: float) -> str:
 
 def render_markdown(report: dict[str, Any]) -> str:
     rows = [
-        "# Auto-BD Seed-1 Centralized Report",
+        "# Auto-BD Centralized Report",
         "",
-        "Status: preliminary development-subset report.",
+        f"Phase: `{report['phase']}`",
+        "",
+        f"Seed: `{report['seed']}`",
+        "",
+        "Status: generated from standardized result artifacts.",
         "",
         "## Normalization",
         "",
