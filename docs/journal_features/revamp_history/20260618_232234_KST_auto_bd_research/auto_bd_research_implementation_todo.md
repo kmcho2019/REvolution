@@ -90,8 +90,8 @@ evidence and rationale.
 - [x] Define descriptor fitting protocol and frozen fitting artifacts for
   projected methods: feature schema, scaler, random map, PCA components,
   training candidate list, and excluded data.
-- [ ] Implement AURORA-style encoder only if fixed-vector methods are
-  stable but insufficient.
+- [x] Scope out AURORA-style encoder after fixed-vector and VQ methods
+  failed to meet robustness/uplift gates.
 - [x] Implement `sr_vq_codebook_qd` only if codebook regions can be
   labeled by motif/trajectory enrichment.
 - [x] Keep method cards, reports, and accept/reject decisions for rejected
@@ -128,13 +128,12 @@ evidence and rationale.
   robustness gates.
 - [x] Produce seed-1 preliminary reports for fast sanity checks.
 - [x] Produce seed-3 screening reports for promoted methods.
-- [ ] Select the simplest passing method by predeclared gates.
-- [ ] Produce seed-5 final report for the selected method when compute
-  permits.
-- [ ] Run held-out validation only after final method selection.
-- [ ] Run stronger functional correctness audit on finalists.
-- [ ] Re-run PPA extraction for best elites and hypervolume contributors.
-- [ ] Draft final selected method spec and paper-section outline.
+- [x] Select no Auto-BD method and record the final negative decision.
+- [x] Scope out seed-5 final report because no method passed selection.
+- [x] Scope out held-out validation because no method passed selection.
+- [x] Scope out stronger functional audit because there is no finalist.
+- [x] Scope out finalist PPA re-extraction because there is no finalist.
+- [x] Draft final negative-result paper-section outline.
 
 ## P8 - Validation And Handoff
 

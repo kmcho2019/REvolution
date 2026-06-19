@@ -9914,3 +9914,40 @@ Results:
 - `ruff check`: pass
 - `ty check`: pass
 - pyright: 0 errors, 0 warnings, 0 informations
+
+## 2026-06-20 KST - Record Final Negative Selection
+
+Context:
+
+- Seed-3 screening did not produce a final Auto-BD candidate.
+- `sr_rff_pca_qd` and `sr_vq_codebook_qd` were evaluated after that
+  screening report and also failed promotion gates.
+- The plan allows a documented negative finding when no method passes
+  Gate 0 plus robustness/uplift gates.
+
+Decision:
+
+- Select no Auto-BD method for seed-5 final evaluation.
+- Scope out AURORA-style encoder implementation for this goal.
+- Scope out seed-5, held-out validation, finalist functional audit, and
+  finalist PPA re-extraction because there is no selected finalist.
+
+Rationale:
+
+- The dominant failure is not descriptor capacity. Multiple descriptors
+  passed Gate 0 but reduced functionality/synthesis/OpenROAD/valid-PPA
+  rates or failed PPA/diversity uplift gates.
+- A neural AURORA-style encoder over the same motif/trajectory substrate
+  would add fitting/leakage/backend complexity without an evidence-backed
+  mechanism for preserving repair robustness.
+- A future AURORA effort should be a separate goal with a sharper
+  repair-preserving hypothesis.
+
+Artifact:
+
+- `auto_bd_final_negative_decision.md`
+
+Checklist update:
+
+- P5 AURORA item is closed as scoped out with evidence.
+- P7 final-selection items are closed as negative-selection scope-outs.
