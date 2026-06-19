@@ -3682,3 +3682,121 @@ PY
 ```
 
 Result: `first seed3 run status check ok`.
+
+## 2026-06-19 00:01 UTC
+
+Completed the paired seed-3 main-screening command for
+`classic_revolution` seed 1001.
+
+Model endpoint preflight:
+
+```bash
+curl -sS --max-time 10 http://20.0.0.103:8000/v1/models
+```
+
+Result:
+
+- model ID: `openai/gpt-oss-120b`
+- `max_model_len`: 131072
+
+Run command:
+
+```bash
+env PYTHONPATH=src /workspace/.venv/bin/python scripts/run_backend.py \
+  --backend revolution \
+  --benchmarks VerilogEval-Spec-to-RTL \
+  --problems Prob098_circuit7 Prob116_m2014_q3 Prob135_m2014_q6b Prob150_review2015_fsmonehot Prob151_review2015_fsm Prob153_gshare \
+  --api_backend vllm \
+  --vllm_host 20.0.0.103 \
+  --vllm_port 8000 \
+  --vllm_min_model_len 131072 \
+  --model_name openai/gpt-oss-120b \
+  --max_tokens 128000 \
+  --diff_max_tokens 128000 \
+  --population_size 20 \
+  --num_generations 5 \
+  --evaluation_mode search_accelerated \
+  --accelerated_synthesis_top_k 1 \
+  --total_worker_slots 13 \
+  --max_active_problems 13 \
+  --max_workers_per_problem 4 \
+  --rtl_simulation_timeout_s 60 \
+  --synthesis_timeout_s 300 \
+  --post_synthesis_simulation_timeout_s 300 \
+  --seed 1001 \
+  --save_path /workspace/.worktrees/journal-auto-bd-exp-20260618/exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1001 \
+  --search_mode revolution \
+  --classic_operator_kind eoh_strategies \
+  --representation_kind code_individual
+```
+
+Result:
+
+- arm: `classic_revolution`
+- seed: 1001
+- benchmark group: `VerilogEval-Spec-to-RTL`
+- run time: 2123.84 seconds
+- run log:
+  `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1001/revolution/openai_gpt-oss-120b/20260618_232439_revolution_run_log.txt`
+- summary:
+  `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1001/revolution/openai_gpt-oss-120b/20260618_232439_revolution_summary_results.txt`
+- scheduler telemetry:
+  `exp/auto_bd_research/main_screening_screening_seed3/classic_revolution/seed_1001/revolution/openai_gpt-oss-120b/20260618_232439_revolution_scheduler_telemetry.json`
+
+Problem outcomes:
+
+| Problem | Status | Best Score |
+| --- | --- | --- |
+| `Prob098_circuit7` | `success` | 0.01200564971751411 |
+| `Prob116_m2014_q3` | `success` | 0.46535233160621764 |
+| `Prob135_m2014_q6b` | `success` | 0.39769805680119585 |
+| `Prob150_review2015_fsmonehot` | `success` | 0.32968627450980387 |
+| `Prob151_review2015_fsm` | `success` | -0.21014555913884778 |
+| `Prob153_gshare` | `success` | 0.1631082617311034 |
+
+Refreshed status command:
+
+```bash
+UV_LINK_MODE=copy uv run --active python \
+  scripts/report_auto_bd_run_matrix_status.py \
+  --matrix \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_matrix.json \
+  --output-json \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.json \
+  --output-md \
+  docs/journal_features/revamp_history/20260618_232234_KST_auto_bd_research/auto_bd_main_screening_run_status.md
+```
+
+Current seed-3 status:
+
+- manifest commands: 12 complete, 0 pending
+- benchmark commands: 2 complete, 22 pending
+- arm/seed pairs: 0 standard-results complete, 1 runs-complete, 11 pending
+- `classic_revolution` seed 1001: runs complete, 2/2 benchmark groups complete
+
+Artifact check:
+
+```bash
+UV_LINK_MODE=copy uv run --active python - <<'PY'
+import json
+from pathlib import Path
+
+p = Path(
+    "docs/journal_features/revamp_history/"
+    "20260618_232234_KST_auto_bd_research/"
+    "auto_bd_main_screening_run_status.json"
+)
+payload = json.loads(p.read_text())
+assert payload["manifest_summary"] == {"complete": 12, "total": 12}
+assert payload["entry_summary"] == {"complete": 2, "pending": 22, "total": 24}
+assert payload["arm_seed_summary"] == {"pending": 11, "runs_complete": 1, "total": 12}
+entry = payload["arm_seed_status"][0]
+assert entry["arm_name"] == "classic_revolution"
+assert entry["seed"] == 1001
+assert entry["status"] == "runs_complete"
+assert entry["benchmark_groups_complete"] == 2
+print("classic seed1001 run status check ok")
+PY
+```
+
+Result: `classic seed1001 run status check ok`.
